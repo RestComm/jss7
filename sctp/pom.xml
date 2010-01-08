@@ -3,14 +3,14 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>mobicents-isup-stack-parent</artifactId>
-		<groupId>org.mobicents.ss7.isup</groupId>
-		<version>1.0.0.BETA1-SNAPSHOT</version>
+		<artifactId>mobicents-ss7-parent</artifactId>
+		<groupId>org.mobicents.ss7</groupId>
+		<version>1.0.0.BETA1</version>
 	</parent>
 
-	<artifactId>mobicents-isup-stack-api-impl</artifactId>
+	<artifactId>mobicents-sctp</artifactId>
 
-	<name>Mobicents ISDN User Part Stack Impl:: ${pom.artifactId}</name>
+	<name>Mobicents SCTP:: ${pom.artifactId}</name>
 
 	<dependencies>
 		<dependency>
@@ -18,18 +18,8 @@
 			<artifactId>log4j</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${pom.groupId}</groupId>
-			<artifactId>mobicents-isup-stack-api</artifactId>
-			<version>${pom.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>concurrent</groupId>
-			<artifactId>concurrent</artifactId>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

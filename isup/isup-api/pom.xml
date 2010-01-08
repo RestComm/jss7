@@ -2,9 +2,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-isup-stack-parent</artifactId>
-		<version>2.0.0.BETA1-SNAPSHOT</version>
+		<groupId>org.mobicents.ss7.isup</groupId>
+		<version>1.0.0.BETA1-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>mobicents-isup-stack-api</artifactId>
