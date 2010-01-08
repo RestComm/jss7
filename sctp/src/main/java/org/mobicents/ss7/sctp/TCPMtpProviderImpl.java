@@ -95,7 +95,7 @@ public class TCPMtpProviderImpl extends MTPProviderImpl {
 		readProperties();
 		initiateConnection();
 		
-		
+		//FIXME: add condition for StartFailed :)
 		
 
 	}
@@ -110,15 +110,15 @@ public class TCPMtpProviderImpl extends MTPProviderImpl {
 	private int serverPort = 1354;
 	// we need this since lower layer is very time sensitivie, lets deliver on
 	// different thread.
-	private ExecutorService executor = Executors.newFixedThreadPool(5);
+	//private ExecutorService executor = Executors.newFixedThreadPool(5);
 	// client part for streaming
 	private Selector connectSelector;
 	private Selector writeSelector;
 	private Selector readSelector;
 	private ByteBuffer readBuff = ByteBuffer.allocate(8192);
 	private ByteBuffer txBuff = ByteBuffer.allocate(8192);
-	private ExecutorService streamExecutor = Executors
-			.newSingleThreadExecutor();
+	//private ExecutorService streamExecutor = Executors
+	//		.newSingleThreadExecutor();
 	private Future streamFuture;
 	private boolean connected = false;
 	private SocketChannel socketChannel;
