@@ -1,52 +1,36 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 
-   <parent>
-		<groupId>org.mobicents</groupId>
-		<artifactId>mobicents-parent</artifactId>
-		<version>2.2-SNAPSHOT</version>
+	<parent>
+		<artifactId>ss7-parent</artifactId>
+		<groupId>org.mobicents.ss7</groupId>
+		<version>1.0.0.BETA1-SNAPSHOT</version>
 	</parent>
 
 
-	<artifactId>ss7-parent</artifactId>
-	<groupId>org.mobicents.ss7</groupId>
+	<artifactId>tcap-parent</artifactId>
+	<groupId>org.mobicents.ss7.tcap</groupId>
 	<version>1.0.0.BETA1-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
-	<name>Mobicents SS7 :: ${pom.artifactId}</name>
+	<name>Mobicents SS7 :: TCAP Parent  :: ${pom.artifactId}</name>
 	<properties>
 		<maven.test.skip>false</maven.test.skip>
 		<release.name>
 			${release.name.prefix}${parent.version}${release.name.suffix}
 		</release.name>
 		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
-		<!-- TMP -->
-		<concurrent.version>1.3.4</concurrent.version>
+
 	</properties>
-	<!-- TMP -->
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>concurrent</groupId>
-				<artifactId>concurrent</artifactId>
-				<version>${concurrent.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-	
+
 	<modules>
-		<module>sctp</module>
-		<module>sccp</module>
-		<module>isup</module>
-		<module>tcap</module>	
+		<module>tcap-api</module>
+		<module>tcap-impl</module>
 	</modules>
-	
-	
-	
-	
-	
+
 	<!--  -->
 	<build>
 		<plugins>
@@ -67,10 +51,12 @@
 						true
 					</resolveTransitiveDependencies>
 					<eclipseProjectName>
-						mobicents-ss7
+						mobicents-tcap-stack
 					</eclipseProjectName>
 				</configuration>
 			</plugin>
+
+
 		</plugins>
-	</build>	
+	</build>
 </project>

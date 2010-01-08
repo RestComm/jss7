@@ -3,14 +3,14 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>ss7-parent</artifactId>
-		<groupId>org.mobicents.ss7</groupId>
+		<artifactId>tcap-parent</artifactId>
+		<groupId>org.mobicents.ss7.tcap</groupId>
 		<version>1.0.0.BETA1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>sctp</artifactId>
+	<artifactId>tcap-impl</artifactId>
 
-	<name>Mobicents SS7 :: SCTP :: ${pom.artifactId}</name>
+	<name>Mobicents SS7 :: TCAP :: Impl :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<dependency>
@@ -18,8 +18,18 @@
 			<artifactId>log4j</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>tcap-api</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>concurrent</groupId>
+			<artifactId>concurrent</artifactId>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

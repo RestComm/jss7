@@ -3,14 +3,14 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>isup-parent</artifactId>
-		<groupId>org.mobicents.ss7.isup</groupId>
+		<artifactId>tcap-parent</artifactId>
+		<groupId>org.mobicents.ss7.tcap</groupId>
 		<version>1.0.0.BETA1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>isup-api</artifactId>
+	<artifactId>tcap-api</artifactId>
 
-	<name>Mobicents SS7 :: ISUP :: Api  :: ${pom.artifactId}</name>
+	<name>Mobicents SS7 :: TCAP :: Api  :: ${pom.artifactId}</name>
 
 	<properties>
 		<maven.test.skip>false</maven.test.skip>

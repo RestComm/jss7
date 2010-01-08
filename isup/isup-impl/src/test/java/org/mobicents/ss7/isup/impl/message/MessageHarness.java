@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import org.mobicents.ss7.SS7Provider;
+
 import org.mobicents.ss7.isup.ISUPClientTransaction;
 import org.mobicents.ss7.isup.ISUPListener;
 import org.mobicents.ss7.isup.ISUPMessageFactory;
@@ -22,6 +22,7 @@ import org.mobicents.ss7.isup.ISUPServerTransaction;
 import org.mobicents.ss7.isup.ISUPTransaction;
 import org.mobicents.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.ss7.isup.TransactionAlredyExistsException;
+import org.mobicents.ss7.isup.impl.message.ISUPMessageFactoryImpl;
 import org.mobicents.ss7.isup.message.ISUPMessage;
 import org.mobicents.ss7.isup.message.parameter.CircuitIdentificationCode;
 
@@ -88,62 +89,7 @@ public abstract class MessageHarness extends TestCase implements ISUPProvider{
 		
 		return out;
 	}
-	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPProvider#addListener(org.mobicents.ss7.isup.ISUPListener)
-	 */
-	public void addListener(ISUPListener listener) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPProvider#createClientTransaction(org.mobicents.ss7.isup.message.ISUPMessage)
-	 */
-	public ISUPClientTransaction createClientTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPProvider#createServerTransaction(org.mobicents.ss7.isup.message.ISUPMessage)
-	 */
-	public ISUPServerTransaction createServerTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPProvider#getMessageFactory()
-	 */
-	public ISUPMessageFactory getMessageFactory() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPProvider#getTransportProvider()
-	 */
-	public SS7Provider getTransportProvider() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPProvider#removeListener(org.mobicents.ss7.isup.ISUPListener)
-	 */
-	public void removeListener(ISUPListener listener) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPProvider#sendMessage(org.mobicents.ss7.isup.message.ISUPMessage)
-	 */
-	public void sendMessage(ISUPMessage msg) throws ParameterRangeInvalidException, IOException {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPProvider#sendMessage(org.mobicents.ss7.isup.ISUPTransaction)
-	 */
-	public void sendMessage(ISUPTransaction msg) throws ParameterRangeInvalidException, IOException {
-		// TODO Auto-generated method stub
-		
-	}
+	
 	protected abstract byte[] getDefaultBody();
 	protected abstract ISUPMessage getDefaultMessage();
 	
@@ -168,4 +114,36 @@ public abstract class MessageHarness extends TestCase implements ISUPProvider{
 	{
 		return 0xB0C;
 	}
+	
+
+	
+	//not used :)
+	public void addListener(ISUPListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+	public ISUPClientTransaction createClientTransaction(ISUPMessage msg)
+			throws TransactionAlredyExistsException, IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public ISUPServerTransaction createServerTransaction(ISUPMessage msg)
+			throws TransactionAlredyExistsException, IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public ISUPMessageFactory getMessageFactory() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public void removeListener(ISUPListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void sendMessage(ISUPMessage msg)
+			throws ParameterRangeInvalidException, IOException {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }
