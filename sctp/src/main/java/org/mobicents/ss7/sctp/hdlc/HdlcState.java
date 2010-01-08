@@ -25,7 +25,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-package org.mobicents.ss7.sctp;
+package org.mobicents.ss7.sctp.hdlc;
 
 /**
  * Represnts HDLC frame.

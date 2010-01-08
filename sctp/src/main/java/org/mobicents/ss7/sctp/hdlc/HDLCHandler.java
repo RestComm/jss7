@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mobicents.ss7.sctp;
+package org.mobicents.ss7.sctp.hdlc;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
