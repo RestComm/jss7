@@ -6,7 +6,7 @@
  */
 package org.mobicents.ss7.isup;
 
-import org.mobicents.ss7.SS7Provider;
+
 
 /**
  * Start time:09:07:18 2009-08-30<br>
@@ -17,6 +17,7 @@ import org.mobicents.ss7.SS7Provider;
  */
 public interface ISUPStack {
 
-	public SS7Provider getTransportProvider();
 	public ISUPProvider getIsupProvider();
+	public void stop();
+	public void start();
 }

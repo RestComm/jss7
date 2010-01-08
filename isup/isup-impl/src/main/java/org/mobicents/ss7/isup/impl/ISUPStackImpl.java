@@ -9,9 +9,10 @@ package org.mobicents.ss7.isup.impl;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.mobicents.ss7.SS7Provider;
+
 import org.mobicents.ss7.isup.ISUPProvider;
 import org.mobicents.ss7.isup.ISUPStack;
+import org.mobicents.ss7.sctp.MTPProvider;
 
 /**
  * Start time:12:14:57 2009-09-04<br>
@@ -21,7 +22,7 @@ import org.mobicents.ss7.isup.ISUPStack;
  */
 public class ISUPStackImpl implements ISUPStack {
 
-	private SS7Provider transportProvider;
+	private MTPProvider transportProvider;
 	private ISUPProviderImpl isupProvider;
 	
 
@@ -33,7 +34,7 @@ public class ISUPStackImpl implements ISUPStack {
 	private long _CLIENT_TRANSACTION_ANSWER_TIMEOUT=30*1000;
 	
 
-	public ISUPStackImpl(SS7Provider transportProvider) {
+	public ISUPStackImpl(MTPProvider transportProvider) {
 		super();
 		this.transportProvider = transportProvider;
 		
@@ -41,15 +42,6 @@ public class ISUPStackImpl implements ISUPStack {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.ss7.isup.ISUPStack#getTransportProvider()
-	 */
-	public SS7Provider getTransportProvider() {
-
-		return this.transportProvider;
-	}
 
 	public ISUPProvider getIsupProvider() {
 		return isupProvider;
@@ -58,15 +50,16 @@ public class ISUPStackImpl implements ISUPStack {
 	public void start() {
 		if (!started) {
 			configure();
-			this.transportProvider.addSS7PayloadListener(this.isupProvider);
+			this.transportProvider.addMtpListener(this.isupProvider);
 			this.started = true;
 		}
 	}
 
 	public void stop() {
 		if (started) {
-			this.transportProvider.removeSS7PayloadListener(this.isupProvider);
-			termiante();
+			this.transportProvider.removeMtpListener(this.isupProvider);
+			this.transportProvider.close();
+			terminate();
 			this.started = false;
 
 		}
@@ -86,7 +79,7 @@ public class ISUPStackImpl implements ISUPStack {
 	/**
 	 * 
 	 */
-	private void termiante() {
+	private void terminate() {
 		this.executor.shutdownNow();
 	}
 	//possibly something similar as in MGCP

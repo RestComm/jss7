@@ -28,7 +28,7 @@ package org.mobicents.ss7.isup;
 
 import java.io.IOException;
 
-import org.mobicents.ss7.SS7Provider;
+
 import org.mobicents.ss7.isup.message.ISUPMessage;
 
 /**
@@ -50,8 +50,6 @@ public interface ISUPProvider {
 //	 * @throws IOException
 //	 */
 //	public void sendMessage(ISUPTransaction msg) throws ParameterRangeInvalidException, IOException;
-	//For mtp?
-	public SS7Provider getTransportProvider();
 	
 	public void addListener(ISUPListener listener);
 	public void removeListener(ISUPListener listener);

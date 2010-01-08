@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.mobicents.ss7.SS7PayloadListener;
-import org.mobicents.ss7.SS7Provider;
 import org.mobicents.ss7.isup.ISUPClientTransaction;
 import org.mobicents.ss7.isup.ISUPListener;
 import org.mobicents.ss7.isup.ISUPMessageFactory;
@@ -74,6 +72,8 @@ import org.mobicents.ss7.isup.message.UnequippedCICMessage;
 import org.mobicents.ss7.isup.message.User2UserInformationMessage;
 import org.mobicents.ss7.isup.message.UserPartAvailableMessage;
 import org.mobicents.ss7.isup.message.UserPartTestMessage;
+import org.mobicents.ss7.sctp.MTPListener;
+import org.mobicents.ss7.sctp.MTPProvider;
 
 import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
 
@@ -83,9 +83,9 @@ import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-class ISUPProviderImpl implements ISUPProvider, SS7PayloadListener {
+class ISUPProviderImpl implements ISUPProvider,MTPListener {
 
-	private SS7Provider transportProvider;
+	private MTPProvider provider;
 	private final List<ISUPListener> listeners = new ArrayList<ISUPListener>();
 	private ISUPStackImpl stack;
 	private ISUPMessageFactory messageFactory;
@@ -97,21 +97,12 @@ class ISUPProviderImpl implements ISUPProvider, SS7PayloadListener {
 	 * @param messageFactoryImpl
 	 * 
 	 */
-	public ISUPProviderImpl(SS7Provider provider, ISUPStackImpl stackImpl) {
-		this.transportProvider = provider;
+	public ISUPProviderImpl(MTPProvider provider, ISUPStackImpl stackImpl) {
+		this.provider = provider;
 		this.stack = stackImpl;
 		this.messageFactory = new ISUPMessageFactoryImpl(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPProvider#getTransportProvider()
-	 */
-	public SS7Provider getTransportProvider() {
-
-		return transportProvider;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -133,14 +124,6 @@ class ISUPProviderImpl implements ISUPProvider, SS7PayloadListener {
 	 */
 	public void removeListener(ISUPListener listener) {
 		listeners.remove(listener);
-
-	}
-
-	/**
-	 * @param mtp
-	 */
-	void setTransportProvider(SS7Provider mtp) {
-		this.transportProvider = mtp;
 
 	}
 
@@ -200,7 +183,8 @@ class ISUPProviderImpl implements ISUPProvider, SS7PayloadListener {
 	public void sendMessage(ISUPMessage msg) throws ParameterRangeInvalidException, IOException {
 		if (msg.hasAllMandatoryParameters()) {
 			byte[] encoded = msg.encodeElement();
-			transportProvider.sendData(encoded);
+			//FIXME: add si/ssi
+			provider.send(0, 0, encoded);
 
 		} else {
 			throw new ParameterRangeInvalidException("Message does not have all madnatory parameters");
@@ -212,11 +196,11 @@ class ISUPProviderImpl implements ISUPProvider, SS7PayloadListener {
 	 * 
 	 * @see org.mobicents.ss7.SS7PayloadListener#receivedMessage(byte[])
 	 */
-	public void receivedMessage(byte[] message) {
-		DeliveryHandler dh = new DeliveryHandler(message);
+	public void receive(int si, int ssi, byte[] msg) {
+		DeliveryHandler dh = new DeliveryHandler(msg);
 		// possibly we should do here check on timer
 		this.stack.getExecutors().schedule(dh, 0, TimeUnit.MICROSECONDS);
-
+		//dh.run();
 	}
 
 	private final class DeliveryHandler implements Runnable {
@@ -1104,6 +1088,7 @@ class ISUPProviderImpl implements ISUPProvider, SS7PayloadListener {
 		this.transactionMap.remove(tx.getOriginalMessage().generateTransactionKey());
 	}
 
+	
 
 
 }
