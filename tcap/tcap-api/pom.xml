@@ -40,43 +40,6 @@
 					<target>1.5</target>
 				</configuration>
 			</plugin>
-
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>deploy</id>
-						<phase>install</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<condition property="jboss.dir" value="${jboss.home}"
-									else="${env.JBOSS_HOME}">
-									<isset property="jboss.home" />
-								</condition>
-								<copy file="target/${project.build.finalName}.jar" todir="${jboss.dir}/server/${node}/lib">
-
-								</copy>
-							</tasks>
-						</configuration>
-					</execution>
-					<execution>
-						<id>undeploy</id>
-						<phase>clean</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<delete
-									file="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}.jar" />
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 </project>

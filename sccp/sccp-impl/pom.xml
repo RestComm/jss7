@@ -33,6 +33,11 @@
 			<artifactId>concurrent</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.ss7</groupId>
+			<artifactId>sctp</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
