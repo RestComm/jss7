@@ -11,7 +11,7 @@
 	<artifactId>sctp</artifactId>
 
 	<name>Mobicents SS7 :: SCTP :: ${pom.artifactId}</name>
-
+	<description>This package provides abstraction on how bit stream is sent.</description>
 	<dependencies>
 		<dependency>
 			<groupId>log4j</groupId>
