@@ -13,13 +13,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.ss7.sctp.hdlc.HDLCHandler;
 
-public class TCPMtpProviderImpl extends MTPProviderImpl {
+public class TCPMtpProviderImpl extends MTPProviderImpl implements Runnable{
 
 	private static final Logger logger = Logger
 			.getLogger(TCPMtpProviderImpl.class);
@@ -63,12 +65,23 @@ public class TCPMtpProviderImpl extends MTPProviderImpl {
 
 	public void close() throws IllegalStateException {
 
+		
+		if(this.streamFuture!=null)
+		{
+			throw new IllegalStateException("Provider already stoped!");
+		}else
+		{
+			streamFuture.cancel(false);
+			streamFuture = null;
+		}
 		if (connected) {
-			this.listeners.clear();
-			if (this.streamFuture != null) {
-				this.streamFuture.cancel(false);
-				this.streamFuture = null;
+			if(streamFuture!=null)
+			{
+				streamFuture.cancel(false);
+				streamFuture = null;
 			}
+			this.listeners.clear();
+
 			try {
 				this.socketChannel.close();
 			} catch (IOException e) {
@@ -77,8 +90,9 @@ public class TCPMtpProviderImpl extends MTPProviderImpl {
 			}
 			this.socketChannel = null;
 			this.connected = false;
+			
 		} else {
-			throw new IllegalStateException("Provider already stoped!");
+			
 		}
 
 	}
@@ -86,14 +100,14 @@ public class TCPMtpProviderImpl extends MTPProviderImpl {
 	@Override
 	public void start() throws StartFailedException, IllegalStateException {
 		
-		if(connected)
+		if(this.streamFuture!=null)
 		{
 			throw new IllegalStateException("Provider is already started!");
 		}
 		
 		readProperties();
 		initiateConnection();
-		
+		this.streamFuture=streamExecutor.submit(this);
 		//FIXME: add condition for StartFailed :)
 		
 
@@ -116,8 +130,7 @@ public class TCPMtpProviderImpl extends MTPProviderImpl {
 	private Selector readSelector;
 	private ByteBuffer readBuff = ByteBuffer.allocate(8192);
 	private ByteBuffer txBuff = ByteBuffer.allocate(8192);
-	//private ExecutorService streamExecutor = Executors
-	//		.newSingleThreadExecutor();
+	private ExecutorService streamExecutor = Executors.newSingleThreadExecutor();
 	private Future streamFuture;
 	private boolean connected = false;
 	private SocketChannel socketChannel;
@@ -159,23 +172,32 @@ public class TCPMtpProviderImpl extends MTPProviderImpl {
 			connected = true;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			if(logger.isDebugEnabled())
+			{
+				e.printStackTrace();
+			}else
+			{
+				logger.info("Failed to connect due to: "+e.getMessage());
+			}
 		} finally {
-			if (!connected) {
-				// linkDown();
-				if (this.socketChannel != null) {
-					try {
-						this.socketChannel.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+			try {
+				if (!connected) {
+					// linkDown();
+					if (this.socketChannel != null) {
+						try {
+							this.socketChannel.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						this.socketChannel = null;
 					}
-					this.socketChannel = null;
-				}
 
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
-
 	}
 
 	public void run() {

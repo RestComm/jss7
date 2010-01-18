@@ -1,6 +1,7 @@
 package org.mobicents.ss7.sctp;
 
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.Properties;
 
 public class MTPProviderFactory {
@@ -10,7 +11,7 @@ public class MTPProviderFactory {
 	public static final String _POPERTY_DRIVER_CLASS="driver";
 	
 	public static final String _DRIVER_TCP="TCP_IP";
-	
+	private final static String[] _DRIVER_SUPPORTED = new String[]{_DRIVER_TCP};
 	public MTPProvider getProvider(Properties properties) throws IllegalArgumentException
 	{
 		if(properties==null)
@@ -21,10 +22,21 @@ public class MTPProviderFactory {
 		String d = properties.getProperty(_POPERTY_DRIVER_CLASS);
 		if(d == null)
 		{
-			throw new IllegalArgumentException("There is no property indicating driver!");
+			throw new IllegalArgumentException("There is no property indicating driver class! Add: "+_POPERTY_DRIVER_CLASS+", supported values: "+Arrays.toString(_DRIVER_SUPPORTED)+", or fqn class name");
 		}
 		
 		if(d.equals(_DRIVER_TCP))
+		{
+			try {
+				
+				MTPProviderImpl mtpProvider = new TCPMtpProviderImpl(properties);
+				mtpProvider.start();
+				return mtpProvider;
+			} catch (Exception e) {
+				
+				throw new IllegalArgumentException("Failed to create driver class.",e);
+			}
+		}else
 		{
 			try {
 				Class cc = Class.forName(d);
@@ -36,9 +48,6 @@ public class MTPProviderFactory {
 				
 				throw new IllegalArgumentException("Failed to create driver class.",e);
 			}
-		}else
-		{
-			throw new IllegalArgumentException("There is no driver class specified.");
 		}
 		
 		

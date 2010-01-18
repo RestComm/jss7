@@ -1,6 +1,5 @@
 package org.mobicents.ss7.sctp;
 
-import java.util.Properties;
 
 abstract class MTPProviderImpl implements MTPProvider{
 
