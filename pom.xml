@@ -18,9 +18,6 @@
 	<name>Mobicents SS7 :: ${pom.artifactId}</name>
 	<properties>
 		<maven.test.skip>false</maven.test.skip>
-		<release.name>
-			${release.name.prefix}${parent.version}${release.name.suffix}
-		</release.name>
 		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
 		<!-- TMP -->
 		<concurrent.version>1.3.4</concurrent.version>

@@ -12,6 +12,15 @@
 
 	<name>Mobicents SS7 :: SCTP :: ${pom.artifactId}</name>
 	<description>This package provides abstraction on how bit stream is sent.</description>
+	
+	
+	<properties>
+		<maven.test.skip>false</maven.test.skip>
+		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
+
+	</properties>
+	
+	
 	<dependencies>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -28,13 +37,27 @@
 		<finalName>${pom.artifactId}-${pom.version}</finalName>
 		<plugins>
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>RELEASE</version>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<groupId>org.mobicents.tools</groupId>
+				<version>
+					${mobicents.tools.mavenplugin.eclipse.version}
+				</version>
+				<inherited>false</inherited>
+				<executions />
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<classpathExcludes>
+						<exclude>xml-apis:xml-apis</exclude>
+						<exclude>jtidy:jtidy</exclude>
+					</classpathExcludes>
+					<resolveTransitiveDependencies>
+						true
+					</resolveTransitiveDependencies>
+					<eclipseProjectName>
+						mobicents-sctp-stack
+					</eclipseProjectName>
 				</configuration>
 			</plugin>
+			
 		</plugins>
 	</build>
 </project>

@@ -14,6 +14,7 @@
 package org.mobicents.ss7.sccp.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
@@ -45,10 +46,17 @@ public class SccpPeer {
     public SccpProvider getProvider(String fileName) throws Exception {
     	if(logger.isInfoEnabled())
     	{
-    		logger.info("Loading configuration properties:  "+fileName);
+    		logger.info("Loading configuration properties:  "+fileName+" from: "+getClass().getResource(fileName));
     	}
         Properties properties = new Properties();
-        properties.load(getClass().getResourceAsStream(fileName));
+        InputStream is = getClass().getResourceAsStream(fileName);
+        if(is == null)
+        {
+        	//its not in local CL - that means its just not aroung this class, not in the same jar, lets check global
+        	logger.info("Failed to find local resource: "+fileName+", checking context classloader: "+Thread.currentThread().getContextClassLoader().getResource(fileName));
+        	is = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
+        }
+        properties.load(is);
         
         if (driver.equals(INTEL_DRIVER)) {
             return new SccpIntelHDCProviderImpl(properties);
