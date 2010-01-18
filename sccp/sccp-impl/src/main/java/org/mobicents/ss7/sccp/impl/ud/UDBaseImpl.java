@@ -52,4 +52,5 @@ abstract class UDBaseImpl implements UDBase {
 	public void setpClass(ProtocolClass pClass) {
 		this.pClass = pClass;
 	}
+
 }

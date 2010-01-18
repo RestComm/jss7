@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.mobicents.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -38,6 +39,10 @@ public interface UDBase {
 
 	public SccpAddress getCallingParty();
 
+	public ProtocolClass getpClass();
+
+	public void setpClass(ProtocolClass pClass);
+	
 	public void decode(InputStream in) throws IOException;
 
 	public void encode(OutputStream out) throws IOException;

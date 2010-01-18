@@ -71,7 +71,7 @@ public class XUnitDataImpl  extends UDBaseImpl implements XUnitData {
 	public XUnitDataImpl() {
 	}
 
-	public XUnitDataImpl(byte hopCounter, ProtocolClass pClass, SccpAddressImpl calledParty, SccpAddressImpl callingParty, byte[] data) {
+	public XUnitDataImpl(byte hopCounter, ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty, byte[] data) {
 		super();
 		this.hopCounter = hopCounter;
 		this.pClass = pClass;
@@ -91,7 +91,7 @@ public class XUnitDataImpl  extends UDBaseImpl implements XUnitData {
 		this.segmentation = segmentation;
 		this.importance = importance;
 	}
-	
+
 	public byte getHopCounter() {
 		return hopCounter;
 	}
