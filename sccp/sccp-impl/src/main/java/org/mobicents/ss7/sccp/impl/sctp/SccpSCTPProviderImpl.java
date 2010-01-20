@@ -51,7 +51,7 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 	public void receive(int service, int subservice, byte[] arg2) {
 		// add check for SIO parts?
 		// if(logger.isInfoEnabled())
-		// logger.info("Received MSU on L4, service: "+service+",subservice: "+subservice+", data:\n"+mtp3.getLayer2().dump(arg2,arg2.length,false));
+	    //logger.info("Received MSU on L4, service: "+service+",subservice: "+subservice);
 		new DeliveryHandler(arg2).run();
 
 	}
@@ -133,6 +133,7 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logger.error("Failed to pass UD", e);
 			}
 
 		}

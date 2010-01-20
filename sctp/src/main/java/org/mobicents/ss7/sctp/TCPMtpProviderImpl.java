@@ -108,7 +108,6 @@ public class TCPMtpProviderImpl extends MTPProviderImpl implements Runnable{
 		readProperties();
 		initiateConnection();
 		this.streamFuture=streamExecutor.submit(this);
-		//FIXME: add condition for StartFailed :)
 		
 
 	}
