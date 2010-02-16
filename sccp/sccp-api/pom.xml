@@ -4,7 +4,7 @@
 
 	<parent>
 		<artifactId>sccp-parent</artifactId>
-		<groupId>org.mobicents.ss7.sccp</groupId>
+		<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 		<version>1.0.0.BETA1-SNAPSHOT</version>
 	</parent>
 

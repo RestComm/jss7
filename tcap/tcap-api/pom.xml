@@ -4,7 +4,7 @@
 
 	<parent>
 		<artifactId>tcap-parent</artifactId>
-		<groupId>org.mobicents.ss7.tcap</groupId>
+		<groupId>org.mobicents.protocols.ss7.tcap</groupId>
 		<version>1.0.0.BETA1-SNAPSHOT</version>
 	</parent>
 
@@ -26,7 +26,11 @@
 			<artifactId>junit</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+			<artifactId>sccp-api</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

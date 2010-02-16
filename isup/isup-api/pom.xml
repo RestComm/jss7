@@ -4,7 +4,7 @@
 
 	<parent>
 		<artifactId>isup-parent</artifactId>
-		<groupId>org.mobicents.ss7.isup</groupId>
+		<groupId>org.mobicents.protocols.ss7.isup</groupId>
 		<version>1.0.0.BETA1-SNAPSHOT</version>
 	</parent>
 
