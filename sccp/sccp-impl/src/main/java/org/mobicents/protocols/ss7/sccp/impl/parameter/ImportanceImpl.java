@@ -41,7 +41,7 @@ public class ImportanceImpl extends OptionalParameter implements Importance {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.sccp.OptionalParameter#decode(byte[])
+	 * @see org.mobicents.protocols.ss7.sccp.OptionalParameter#decode(byte[])
 	 */
 	@Override
 	public void decode(byte[] buffer) throws IOException {
@@ -52,7 +52,7 @@ public class ImportanceImpl extends OptionalParameter implements Importance {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.sccp.OptionalParameter#encode()
+	 * @see org.mobicents.protocols.ss7.sccp.OptionalParameter#encode()
 	 */
 	@Override
 	public byte[] encode() throws IOException {

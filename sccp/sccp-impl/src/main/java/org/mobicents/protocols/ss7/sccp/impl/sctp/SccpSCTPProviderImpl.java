@@ -4,33 +4,17 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.SocketChannel;
-import java.nio.channels.spi.SelectorProvider;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.sccp.SccpListener;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
 import org.mobicents.protocols.ss7.sccp.impl.ud.UnitDataImpl;
 import org.mobicents.protocols.ss7.sccp.impl.ud.XUnitDataImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.ss7.sctp.MTPListener;
-import org.mobicents.ss7.sctp.MTPProvider;
-import org.mobicents.ss7.sctp.MTPProviderFactory;
+import org.mobicents.protocols.ss7.sctp.MTPListener;
+import org.mobicents.protocols.ss7.sctp.MTPProvider;
+import org.mobicents.protocols.ss7.sctp.MTPProviderFactory;
 
 
 public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListener {
