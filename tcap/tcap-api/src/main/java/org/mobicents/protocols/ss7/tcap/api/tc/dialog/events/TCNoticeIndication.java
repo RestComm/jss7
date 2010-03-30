@@ -1,6 +1,6 @@
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
 
-import org.mobicents.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 public interface TCNoticeIndication extends DialogIndication{
 

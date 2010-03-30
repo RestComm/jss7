@@ -4,7 +4,7 @@ package org.mobicents.protocols.ss7.tcap.api.tc.dialog;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.ComponentRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.*;
-import org.mobicents.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 public interface Dialog {
 

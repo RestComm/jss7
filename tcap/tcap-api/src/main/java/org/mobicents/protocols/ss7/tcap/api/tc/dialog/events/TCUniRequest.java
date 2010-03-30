@@ -3,7 +3,7 @@
  */
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
 
-import org.mobicents.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * See Q.771 3.1.2.2.1
