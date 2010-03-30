@@ -39,7 +39,7 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPClientTransaction#sendRequest()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPClientTransaction#sendRequest()
 	 */
 	public void sendRequest() throws ParameterRangeInvalidException, IOException {
 
@@ -84,7 +84,7 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPTransactionImpl#doGeneralTimeout()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPTransactionImpl#doGeneralTimeout()
 	 */
 	@Override
 	protected void doGeneralTimeout() {
@@ -104,7 +104,7 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPTransaction#isTerminated()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPTransaction#isTerminated()
 	 */
 	public boolean isTerminated() {
 		return this.state == ISUPClientTransactionState.TERMINATED;
@@ -113,7 +113,7 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPTransaction#isTimedout()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPTransaction#isTimedout()
 	 */
 	public boolean isTimedout() {
 		return this.state == ISUPClientTransactionState.TIMEDOUT;

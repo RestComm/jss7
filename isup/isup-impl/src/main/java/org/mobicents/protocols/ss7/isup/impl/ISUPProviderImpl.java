@@ -130,7 +130,7 @@ class ISUPProviderImpl implements ISUPProvider, MTPListener {
      * (non-Javadoc)
      *
      * @see
-     * org.mobicents.ss7.isup.ISUPProvider#createClientTransaction(org.mobicents
+     * org.mobicents.protocols.ss7.isup.ISUPProvider#createClientTransaction(org.mobicents
      * .ss7.isup.message.ISUPMessage)
      */
     public ISUPClientTransaction createClientTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException {
@@ -148,7 +148,7 @@ class ISUPProviderImpl implements ISUPProvider, MTPListener {
      * (non-Javadoc)
      *
      * @see
-     * org.mobicents.ss7.isup.ISUPProvider#createServerTransaction(org.mobicents
+     * org.mobicents.protocols.ss7.isup.ISUPProvider#createServerTransaction(org.mobicents
      * .ss7.isup.message.ISUPMessage)
      */
     public ISUPServerTransaction createServerTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException {
@@ -166,7 +166,7 @@ class ISUPProviderImpl implements ISUPProvider, MTPListener {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.isup.ISUPProvider#getMessageFactory()
+     * @see org.mobicents.protocols.ss7.isup.ISUPProvider#getMessageFactory()
      */
     public ISUPMessageFactory getMessageFactory() {
         return this.messageFactory;
@@ -193,7 +193,7 @@ class ISUPProviderImpl implements ISUPProvider, MTPListener {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.SS7PayloadListener#receivedMessage(byte[])
+     * @see org.mobicents.protocols.ss7.SS7PayloadListener#receivedMessage(byte[])
      */
     public void receive(int si, int ssi, byte[] msg) {
         DeliveryHandler dh = new DeliveryHandler(msg);

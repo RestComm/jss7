@@ -90,7 +90,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createACM()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createACM()
 	 */
 	public AddressCompleteMessage createACM() {
 		return new AddressCompleteMessageImpl(providerImpl,_ACM_HOLDER.mandatoryCodes,_ACM_HOLDER.mandatoryVariableCodes,_ACM_HOLDER.optionalCodes,
@@ -100,7 +100,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createANM()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createANM()
 	 */
 	public AnswerMessage createANM() {
 		return new AnswerMessageImpl(providerImpl,_ANM_HOLDER.mandatoryCodes,_ANM_HOLDER.mandatoryVariableCodes,_ANM_HOLDER.optionalCodes,
@@ -110,7 +110,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createAPT()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createAPT()
 	 */
 	public ApplicationTransportMessage createAPT() {
 		return new ApplicationTransportMessageImpl(providerImpl);
@@ -119,7 +119,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createBLA()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createBLA()
 	 */
 	public BlockingAckMessage createBLA() {
 		return new BlockingAckMessageImpl(providerImpl,_BLA_HOLDER.mandatoryCodes,_BLA_HOLDER.mandatoryVariableCodes,_BLA_HOLDER.optionalCodes,
@@ -129,7 +129,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createBLO()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createBLO()
 	 */
 	public BlockingMessage createBLO() {
 		return new BlockingMessageImpl(providerImpl,_BLO_HOLDER.mandatoryCodes,_BLO_HOLDER.mandatoryVariableCodes,_BLO_HOLDER.optionalCodes,
@@ -139,7 +139,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createCCR()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createCCR()
 	 */
 	public ContinuityCheckRequestMessage createCCR() {
 		return new ContinuityCheckRequestMessageImpl(providerImpl,_CCR_HOLDER.mandatoryCodes,_CCR_HOLDER.mandatoryVariableCodes,_CCR_HOLDER.optionalCodes,
@@ -149,7 +149,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createCGB()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createCGB()
 	 */
 	public CircuitGroupBlockingMessage createCGB() {
 		return new CircuitGroupBlockingMessageImpl(providerImpl,_CGB_HOLDER.mandatoryCodes,_CGB_HOLDER.mandatoryVariableCodes,_CGB_HOLDER.optionalCodes,
@@ -159,7 +159,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createCGBA()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createCGBA()
 	 */
 	public CircuitGroupBlockingAckMessage createCGBA() {
 		return new CircuitGroupBlockingAckMessageImpl(providerImpl,_CGBA_HOLDER.mandatoryCodes,_CGBA_HOLDER.mandatoryVariableCodes,_CGBA_HOLDER.optionalCodes,
@@ -169,7 +169,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createCGU()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createCGU()
 	 */
 	public CircuitGroupUnblockingMessage createCGU() {
 		return new CircuitGroupUnblockingMessageImpl(providerImpl,_CGU_HOLDER.mandatoryCodes,_CGU_HOLDER.mandatoryVariableCodes,_CGU_HOLDER.optionalCodes,
@@ -179,7 +179,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createCGUA()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createCGUA()
 	 */
 	public CircuitGroupUnblockingAckMessage createCGUA() {
 		return new CircuitGroupUnblockingAckMessageImpl(providerImpl,_CGUA_HOLDER.mandatoryCodes,_CGUA_HOLDER.mandatoryVariableCodes,_CGUA_HOLDER.optionalCodes,
@@ -189,7 +189,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createCIM()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createCIM()
 	 */
 	public ChargeInformationMessage createCIM() {
 		return new ChargeInformationMessageImpl(providerImpl);
@@ -198,7 +198,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createCNF()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createCNF()
 	 */
 	public ConfusionMessage createCNF() {
 		return new ConfusionMessageImpl(providerImpl);
@@ -207,7 +207,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createCON()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createCON()
 	 */
 	public ConnectMessage createCON() {
 		return new ConnectMessageImpl(providerImpl);
@@ -216,7 +216,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createCOT()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createCOT()
 	 */
 	public ContinuityMessage createCOT() {
 		return new ContinuityMessageImpl(providerImpl);
@@ -225,7 +225,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createCPG()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createCPG()
 	 */
 	public CallProgressMessage createCPG() {
 		return new CallProgressMessageImpl(providerImpl,_CPG_HOLDER.mandatoryCodes,_CPG_HOLDER.mandatoryVariableCodes,_CPG_HOLDER.optionalCodes,
@@ -235,7 +235,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createCQM()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createCQM()
 	 */
 	public CircuitGroupQueryMessage createCQM() {
 		return new CircuitGroupQueryMessageImpl(providerImpl,_CQM_HOLDER.mandatoryCodes,_CQM_HOLDER.mandatoryVariableCodes,_CQM_HOLDER.optionalCodes,
@@ -245,7 +245,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createCQR()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createCQR()
 	 */
 	public CircuitGroupQueryResponseMessage createCQR() {
 		return new CircuitGroupQueryResponseMessageImpl(providerImpl,_CQR_HOLDER.mandatoryCodes,_CQR_HOLDER.mandatoryVariableCodes,_CQR_HOLDER.optionalCodes,
@@ -255,7 +255,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createFAA()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createFAA()
 	 */
 	public FacilityAcceptedMessage createFAA() {
 		return new FacilityAcceptedMessageImpl(providerImpl);
@@ -264,7 +264,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createFAC()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createFAC()
 	 */
 	public FacilityMessage createFAC() {
 		return new FacilityMessageImpl(providerImpl);
@@ -273,7 +273,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createFAR()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createFAR()
 	 */
 	public FacilityRequestMessage createFAR() {
 		return new FacilityRequestMessageImpl(providerImpl);
@@ -282,7 +282,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createFOT()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createFOT()
 	 */
 	public ForwardTransferMessage createFOT() {
 		return new ForwardTransferMessageImpl(providerImpl);
@@ -291,7 +291,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createFRJ()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createFRJ()
 	 */
 	public FacilityRejectedMessage createFRJ() {
 		return new FacilityRejectedMessageImpl(providerImpl);
@@ -300,7 +300,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createGRA()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createGRA()
 	 */
 	public CircuitGroupResetAckMessage createGRA() {
 		return new CircuitGroupResetAckMessageImpl(providerImpl,_GRA_HOLDER.mandatoryCodes,_GRA_HOLDER.mandatoryVariableCodes,_GRA_HOLDER.optionalCodes,
@@ -310,7 +310,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createGRS()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createGRS()
 	 */
 	public CircuitGroupResetMessage createGRS() {
 		return new CircuitGroupResetMessageImpl(providerImpl,_GRS_HOLDER.mandatoryCodes,_GRS_HOLDER.mandatoryVariableCodes,_GRS_HOLDER.optionalCodes,
@@ -320,7 +320,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createIAM()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createIAM()
 	 */
 	public InitialAddressMessage createIAM() {
 		return new InitialAddressMessageImpl(providerImpl,_IAM_HOLDER.mandatoryCodes,_IAM_HOLDER.mandatoryVariableCodes,_IAM_HOLDER.optionalCodes,
@@ -330,7 +330,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createIDR()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createIDR()
 	 */
 	public IdentificationRequestMessage createIDR() {
 		return new IdentificationRequestMessageImpl(providerImpl);
@@ -339,7 +339,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createINF()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createINF()
 	 */
 	public InformationMessage createINF() {
 		return new InformationMessageImpl(providerImpl);
@@ -348,7 +348,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createINR()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createINR()
 	 */
 	public InformationRequestMessage createINR() {
 		return new InformationRequestMessageImpl(providerImpl);
@@ -357,7 +357,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createIRS()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createIRS()
 	 */
 	public IdentificationResponseMessage createIRS() {
 		return new IdentificationResponseMessageImpl(providerImpl);
@@ -366,7 +366,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createLPA()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createLPA()
 	 */
 	public LoopbackAckMessage createLPA() {
 		return new LoopbackAckMessageImpl(providerImpl,_LPA_HOLDER.mandatoryCodes,_LPA_HOLDER.mandatoryVariableCodes,_LPA_HOLDER.optionalCodes,
@@ -376,7 +376,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createLPP()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createLPP()
 	 */
 	public LoopPreventionMessage createLPP() {
 		return new LoopPreventionMessageImpl(providerImpl);
@@ -385,7 +385,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createNRM()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createNRM()
 	 */
 	public NetworkResourceManagementMessage createNRM() {
 		return new NetworkResourceManagementMessageImpl(providerImpl);
@@ -394,7 +394,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createOLM()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createOLM()
 	 */
 	public OverloadMessage createOLM() {
 		return new OverloadMessageImpl(providerImpl,_OLM_HOLDER.mandatoryCodes,_OLM_HOLDER.mandatoryVariableCodes,_OLM_HOLDER.optionalCodes,
@@ -404,7 +404,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createPAM()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createPAM()
 	 */
 	public PassAlongMessage createPAM() {
 		return new PassAlongMessageImpl(providerImpl);
@@ -413,7 +413,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createPRI()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createPRI()
 	 */
 	public PreReleaseInformationMessage createPRI() {
 		return new PreReleaseInformationMessageImpl(providerImpl);
@@ -422,7 +422,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createREL()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createREL()
 	 */
 	public ReleaseMessage createREL() {
 		return new ReleaseMessageImpl(providerImpl,_REL_HOLDER.mandatoryCodes,_REL_HOLDER.mandatoryVariableCodes,_REL_HOLDER.optionalCodes,
@@ -432,7 +432,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createRES()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createRES()
 	 */
 	public ResumeMessage createRES() {
 		return new ResumeMessageImpl(providerImpl);
@@ -441,7 +441,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createRLC()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createRLC()
 	 */
 	public ReleaseCompleteMessage createRLC() {
 		return new ReleaseCompleteMessageImpl(providerImpl,_RLC_HOLDER.mandatoryCodes,_RLC_HOLDER.mandatoryVariableCodes,_RLC_HOLDER.optionalCodes,
@@ -451,7 +451,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createRSC()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createRSC()
 	 */
 	public ResetCircuitMessage createRSC() {
 		return new ResetCircuitMessageImpl(providerImpl,_RSC_HOLDER.mandatoryCodes,_RSC_HOLDER.mandatoryVariableCodes,_RSC_HOLDER.optionalCodes,
@@ -461,7 +461,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createSAM()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createSAM()
 	 */
 	public SubsequentAddressMessage createSAM() {
 		return new SubsequentAddressMessageImpl(providerImpl);
@@ -470,7 +470,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createSDN()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createSDN()
 	 */
 	public SubsequentDirectoryNumberMessage createSDN() {
 		return new SubsequentDirectoryNumberMessageImpl(providerImpl);
@@ -479,7 +479,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createSGM()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createSGM()
 	 */
 	public SegmentationMessage createSGM() {
 		return new SegmentationMessageImpl(providerImpl);
@@ -488,7 +488,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createSUS()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createSUS()
 	 */
 	public SuspendMessage createSUS() {
 		return new SuspendMessageImpl(providerImpl);
@@ -497,7 +497,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createUBA()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createUBA()
 	 */
 	public UnblockingAckMessage createUBA() {
 		return new UnblockingAckMessageImpl(providerImpl,_UBA_HOLDER.mandatoryCodes,_UBA_HOLDER.mandatoryVariableCodes,_UBA_HOLDER.optionalCodes,
@@ -507,7 +507,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createUBL()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createUBL()
 	 */
 	public UnblockingMessage createUBL() {
 		return new UnblockingMessageImpl(providerImpl,_UBL_HOLDER.mandatoryCodes,_UBL_HOLDER.mandatoryVariableCodes,_UBL_HOLDER.optionalCodes,
@@ -517,7 +517,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createUCIC()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createUCIC()
 	 */
 	public UnequippedCICMessage createUCIC() {
 		return new UnequippedCICMessageImpl(providerImpl,_UCIC_HOLDER.mandatoryCodes,_UCIC_HOLDER.mandatoryVariableCodes,_UCIC_HOLDER.optionalCodes,
@@ -527,7 +527,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createUPA()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createUPA()
 	 */
 	public UserPartAvailableMessage createUPA() {
 		return new UserPartAvailableMessageImpl(providerImpl);
@@ -536,7 +536,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createUPT()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createUPT()
 	 */
 	public UserPartTestMessage createUPT() {
 		return new UserPartTestMessageImpl(providerImpl);
@@ -545,7 +545,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createUSR()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createUSR()
 	 */
 	public User2UserInformationMessage createUSR() {
 		return new User2UserInformationMessageImpl(providerImpl);
@@ -554,7 +554,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageFactory#createCommand(int)
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createCommand(int)
 	 */
 	public ISUPMessage createCommand(int commandCode) {
 		switch (commandCode) {

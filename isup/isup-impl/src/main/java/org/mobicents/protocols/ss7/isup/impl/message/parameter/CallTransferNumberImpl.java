@@ -88,7 +88,7 @@ public class CallTransferNumberImpl extends AbstractNAINumber implements CallTra
 //		this.screeningIndicator = 3;
 	}
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.message.parameter.AbstractNumber#decodeBody(java.io.ByteArrayInputStream)
+	 * @see org.mobicents.protocols.ss7.isup.message.parameter.AbstractNumber#decodeBody(java.io.ByteArrayInputStream)
 	 */
 	@Override
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
@@ -101,7 +101,7 @@ public class CallTransferNumberImpl extends AbstractNAINumber implements CallTra
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.message.parameter.AbstractNumber#encodeBody(java.io.ByteArrayOutputStream)
+	 * @see org.mobicents.protocols.ss7.isup.message.parameter.AbstractNumber#encodeBody(java.io.ByteArrayOutputStream)
 	 */
 	/*
 	 * (non-Javadoc)
@@ -144,7 +144,7 @@ public class CallTransferNumberImpl extends AbstractNAINumber implements CallTra
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.message.parameter.ISUPParameter#getCode()
+	 * @see org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter#getCode()
 	 */
 	public int getCode() {
 		return this._PARAMETER_CODE;

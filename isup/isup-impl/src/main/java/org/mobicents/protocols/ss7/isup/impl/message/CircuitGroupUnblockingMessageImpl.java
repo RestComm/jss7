@@ -56,7 +56,7 @@ public class CircuitGroupUnblockingMessageImpl extends ISUPMessageImpl implement
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.mobicents.ss7.isup.ISUPMessageImpl#decodeMandatoryParameters(byte[],
+	 * org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryParameters(byte[],
 	 * int)
 	 */
 	@Override
@@ -98,7 +98,7 @@ public class CircuitGroupUnblockingMessageImpl extends ISUPMessageImpl implement
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.mobicents.ss7.isup.ISUPMessageImpl#decodeMandatoryVariableBody(byte
+	 * org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryVariableBody(byte
 	 * [], int)
 	 */
 	@Override
@@ -118,7 +118,7 @@ public class CircuitGroupUnblockingMessageImpl extends ISUPMessageImpl implement
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageImpl#decodeOptionalBody(byte[],
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeOptionalBody(byte[],
 	 * byte)
 	 */
 	@Override
@@ -130,7 +130,7 @@ public class CircuitGroupUnblockingMessageImpl extends ISUPMessageImpl implement
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageImpl#getMessageType()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getMessageType()
 	 */
 	@Override
 	public MessageType getMessageType() {
@@ -140,7 +140,7 @@ public class CircuitGroupUnblockingMessageImpl extends ISUPMessageImpl implement
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.mobicents.ss7.isup.ISUPMessageImpl#
+	 * @seeorg.mobicents.protocols.ss7.isup.ISUPMessageImpl#
 	 * getNumberOfMandatoryVariableLengthParameters()
 	 */
 	@Override
@@ -152,7 +152,7 @@ public class CircuitGroupUnblockingMessageImpl extends ISUPMessageImpl implement
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPMessageImpl#hasAllMandatoryParameters()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#hasAllMandatoryParameters()
 	 */
 	@Override
 	public boolean hasAllMandatoryParameters() {

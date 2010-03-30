@@ -57,7 +57,7 @@ public class ISUPServerTransactionImpl extends ISUPTransactionImpl implements IS
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPTransactionImpl#doGeneralTimeout()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPTransactionImpl#doGeneralTimeout()
 	 */
 	@Override
 	protected void doGeneralTimeout() {
@@ -77,7 +77,7 @@ public class ISUPServerTransactionImpl extends ISUPTransactionImpl implements IS
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPTransaction#isTerminated()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPTransaction#isTerminated()
 	 */
 	public boolean isTerminated() {
 		return this.state == ISUPServerTransactionState.TERMINATED;
@@ -86,7 +86,7 @@ public class ISUPServerTransactionImpl extends ISUPTransactionImpl implements IS
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPTransaction#isTimedout()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPTransaction#isTimedout()
 	 */
 	public boolean isTimedout() {
 		return this.state == ISUPServerTransactionState.TIMEDOUT;
@@ -104,7 +104,7 @@ public class ISUPServerTransactionImpl extends ISUPTransactionImpl implements IS
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.mobicents.ss7.isup.ISUPServerTransaction#sendAnswer(org.mobicents
+	 * org.mobicents.protocols.ss7.isup.ISUPServerTransaction#sendAnswer(org.mobicents
 	 * .ss7.isup.message.ISUPMessage)
 	 */
 	public void sendAnswer(ISUPMessage msg) throws ParameterRangeInvalidException, IllegalArgumentException, IOException {

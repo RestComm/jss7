@@ -401,7 +401,7 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 		return true;
 	}
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible()
+	 * @see org.mobicents.protocols.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible()
 	 */
 	@Override
 	protected boolean optionalPartIsPossible() {

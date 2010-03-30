@@ -64,7 +64,7 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPTransaction#getMessage()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPTransaction#getMessage()
 	 */
 	public ISUPMessage getOriginalMessage() {
 		return this.message;
@@ -73,7 +73,7 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPTransaction#getTransactionID()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPTransaction#getTransactionID()
 	 */
 	public TransactionID getTransactionID() {
 		return this.transactionID;
@@ -82,7 +82,7 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.ss7.isup.ISUPTransaction#isServerTransaction()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPTransaction#isServerTransaction()
 	 */
 	public boolean isServerTransaction() {
 		return this instanceof ISUPServerTransaction;

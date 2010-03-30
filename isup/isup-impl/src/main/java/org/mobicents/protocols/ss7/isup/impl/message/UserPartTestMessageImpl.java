@@ -37,7 +37,7 @@ public class UserPartTestMessageImpl extends ISUPMessageImpl implements UserPart
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPMessageImpl#decodeMandatoryParameters(byte[], int)
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryParameters(byte[], int)
 	 */
 	@Override
 	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
@@ -46,7 +46,7 @@ public class UserPartTestMessageImpl extends ISUPMessageImpl implements UserPart
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPMessageImpl#decodeMandatoryVariableBody(byte[], int)
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryVariableBody(byte[], int)
 	 */
 	@Override
 	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException {
@@ -55,7 +55,7 @@ public class UserPartTestMessageImpl extends ISUPMessageImpl implements UserPart
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPMessageImpl#decodeOptionalBody(byte[], byte)
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeOptionalBody(byte[], byte)
 	 */
 	@Override
 	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {
@@ -64,7 +64,7 @@ public class UserPartTestMessageImpl extends ISUPMessageImpl implements UserPart
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPMessageImpl#getMessageType()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getMessageType()
 	 */
 	@Override
 	public MessageType getMessageType() {
@@ -73,7 +73,7 @@ public class UserPartTestMessageImpl extends ISUPMessageImpl implements UserPart
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPMessageImpl#getNumberOfMandatoryVariableLengthParameters()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getNumberOfMandatoryVariableLengthParameters()
 	 */
 	@Override
 	protected int getNumberOfMandatoryVariableLengthParameters() {
@@ -82,7 +82,7 @@ public class UserPartTestMessageImpl extends ISUPMessageImpl implements UserPart
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPMessageImpl#hasAllMandatoryParameters()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#hasAllMandatoryParameters()
 	 */
 	@Override
 	public boolean hasAllMandatoryParameters() {

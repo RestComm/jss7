@@ -29,14 +29,14 @@ public class CircuitIdentificationCodeImpl extends AbstractParameter implements 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.message.parameter.CircuitIdentificationCode#getCIC()
+	 * @see org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode#getCIC()
 	 */
 	public long getCIC() {
 		return this.cic;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.message.parameter.CircuitIdentificationCode#setCIC(long)
+	 * @see org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode#setCIC(long)
 	 */
 	public void setCIC(long cic) {
 		this.cic = cic & 0x0FFF;
@@ -44,7 +44,7 @@ public class CircuitIdentificationCodeImpl extends AbstractParameter implements 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.message.parameter.ISUPParameter#getCode()
+	 * @see org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter#getCode()
 	 */
 	public int getCode() {
 		//Its not a real parameter.
@@ -52,7 +52,7 @@ public class CircuitIdentificationCodeImpl extends AbstractParameter implements 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPComponent#decodeElement(byte[])
+	 * @see org.mobicents.protocols.ss7.isup.ISUPComponent#decodeElement(byte[])
 	 */
 	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
 		if(b == null || b.length!=2)
@@ -65,7 +65,7 @@ public class CircuitIdentificationCodeImpl extends AbstractParameter implements 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.ISUPComponent#encodeElement()
+	 * @see org.mobicents.protocols.ss7.isup.ISUPComponent#encodeElement()
 	 */
 	public byte[] encodeElement() throws IOException {
 		byte[] b = new byte[2];

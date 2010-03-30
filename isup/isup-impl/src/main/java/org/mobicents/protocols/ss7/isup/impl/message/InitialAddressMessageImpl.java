@@ -725,7 +725,7 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 
 	
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.impl.ISUPMessageImpl#mandatoryVariablePartPossible()
+	 * @see org.mobicents.protocols.ss7.isup.impl.ISUPMessageImpl#mandatoryVariablePartPossible()
 	 */
 	@Override
 	protected boolean mandatoryVariablePartPossible() {
@@ -734,7 +734,7 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible()
+	 * @see org.mobicents.protocols.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible()
 	 */
 	@Override
 	protected boolean optionalPartIsPossible() {
