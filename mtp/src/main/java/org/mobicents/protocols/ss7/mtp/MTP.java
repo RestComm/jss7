@@ -132,7 +132,7 @@ public class MTP {
     /**
      * Deactivates link set.
      */
-    public void deactive() {
+    public void deactive() throws IOException {
         mtp3.stop();
     }
 }

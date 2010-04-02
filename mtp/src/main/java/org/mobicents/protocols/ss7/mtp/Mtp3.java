@@ -27,14 +27,13 @@
 package org.mobicents.protocols.ss7.mtp;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -53,15 +52,21 @@ public class Mtp3 implements Runnable {
     private final static int SERVICE_SCCP = 3;
     private final static int SERVICE_ISUP = 5;
     
+    /** Reference to the layer 4 */
     protected MtpUser mtpUser;
-    protected List<LinkSet> linkSets = new ArrayList<LinkSet>();
-    private final MTPThreadFactory mainThreadFactory;
-    protected Thread mainThread = null;
+    
     /**
-     * Event processor thread, this should be as low as possible :)
+     * I/O thread and Thread factory. 
+     * 
+     * This thread should have maximum available priority to prevent transmissions error.
      */
-    private final MTPThreadFactory processorThreadFactory;
-    private final ScheduledExecutorService _PROCESSOR;
+    protected Thread ioThread = null;
+    
+    /**
+     * Event processor thread and Factory, this should be as low as possible.
+     */
+    private final ScheduledExecutorService processor;
+    
     //private ScheduledExecutorService mtpTimer = Utils.getMtpTimer();
     /**
      * Flag indicating if we should notify upper layer
@@ -75,6 +80,9 @@ public class Mtp3 implements Runnable {
     
     /** List of signaling channels wrapped with MTP2*/
     private List<Mtp2> links;
+    
+    /** Active links */
+    private Linkset linkset = new Linkset();
     
     // ss7 has subservice as 1, q704 shows the same iirc
     //private int subservice = -1;
@@ -92,18 +100,33 @@ public class Mtp3 implements Runnable {
     protected String name;
     private Logger logger = Logger.getLogger(Mtp3.class);
 
+    private ScheduledExecutorService mtpTimer = Utils.getMtpTimer();
+    
     //public Mtp3Impl(String name, Mtp1 layer1) {
     public Mtp3(String name) {
         this.name = name;
-        this.mainThreadFactory = new MTPThreadFactory("MTP3TickThread[" + name + "]", Thread.MAX_PRIORITY);
-        this.processorThreadFactory = new MTPThreadFactory("MTP3ProcessorThread[" + name + "]", Thread.MIN_PRIORITY);
-        this._PROCESSOR = Executors.newSingleThreadScheduledExecutor(processorThreadFactory);
+        
+        //creating IO Thread.
+        ioThread = new Thread(this, "MTP2");
+        ioThread.setPriority(Thread.MAX_PRIORITY);
+        
+        processor = Executors.newSingleThreadScheduledExecutor();
     }
 
+    /**
+     * Assigns originated point code
+     * 
+     * @param opc the originated point code
+     */
     protected void setOpc(int opc) {
         this.opc = opc;
     }
 
+    /**
+     * Assigns destination point code.
+     * 
+     * @param dpc destination point code in decimal format.
+     */
     protected void setDpc(int dpc) {
         this.dpc = dpc;
     }
@@ -114,6 +137,7 @@ public class Mtp3 implements Runnable {
      * @param channels the list of signaling channels.
      */
     protected void setChannels(List<Mtp1> channels) {
+        //creating mtp layer 2 for each channel specified
         for (Mtp1 channel : channels) {
             this.links.add(new Mtp2(this, channel));
         }
@@ -127,85 +151,44 @@ public class Mtp3 implements Runnable {
         this.mtpUser = mtpUser;
     }
 
-    public void setLinkSets(List<LinkSet> linkSets) {
-
-        //FIXME: should this be better?
-        //just add, sort and fix indexes if needed to optimize searches.
-        for (LinkSet ls : linkSets) {
-            this.linkSets.add(ls);
-            for (Mtp2 mtp2 : ls.getLinks()) {
-                mtp2.setLayer3(this);
-                T1Action_SLTM sltm1 = new T1Action_SLTM();
-                T2Action_SLTM sltm2 = new T2Action_SLTM();
-                sltm1.mtp2 = mtp2;
-                sltm2.mtp2 = mtp2;
-                mtp2.setT1_SLTMTimerAction(sltm1);
-                mtp2.setT2_SLTMTimerAction(sltm2);
-            }
-        }
-
-        Collections.sort(this.linkSets, new LinkSetComparator());
-        for (int i = 0; i < this.linkSets.size(); i++) {
-            LinkSet ls = this.linkSets.get(i);
-            if (i != ls.getId()) {
-                throw new IllegalArgumentException("Linkset ID[" + ls.getId() + "] of link[" + ls.getName() + "] does not equal index, change id to be in range of linkset count <0,n-1>.");
-            }
-        }
-
-    }
-
+    /**
+     * Starts linkset.
+     * 
+     * @throws java.io.IOException
+     */
     public void start() throws IOException {
-        //initilaize debugger
-        Utils.getInstance().startDebug();
-
+        //starting main thread
+        started = true;
+        ioThread.start();
+        
         //starting links
         for (Mtp2 link : links) {
-            link._startLink();
-        }
-        
-        for (LinkSet ls : this.linkSets) {
-            for (Mtp2 mtp2 : ls.getLinks()) {
-
-                mtp2._startLink();
-
-            }
-        }
-
-        manageLinkSet();
-        started = true;
-        mainThread = mainThreadFactory.newThread(this);
-
-        mainThread.start();
-
+            link.startLink();
+        }        
     }
 
-    public void stop() {
+    public void stop() throws IOException {
         started = false;
-        for (LinkSet ls : this.linkSets) {
-            for (Mtp2 mtp2 : ls.getLinks()) {
-                mtp2._stopLink();
-            }
-        }
-        mainThread.stop();
-        Utils.getInstance().stopDebug();
+        for (Mtp2 link : links) {
+            link.startLink();
+        }        
     }
 
     public void run() {
         while (started) {
             try {
                 long thisTickStamp = System.currentTimeMillis();
-
-                for (LinkSet ls : this.linkSets) {
-                    ls.threadTick(thisTickStamp);
+                for (Mtp2 link : links) {
+                    link.threadTick(thisTickStamp);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
     }
 
     /**
+     * This method is called when new MSU is detected.
      * 
      * @param sio
      *            service information octet.
@@ -213,176 +196,100 @@ public class Mtp3 implements Runnable {
      *            service information field;
      */
     public void onMessage(int sio, byte[] sif, Mtp2 mtp2) {
-
-        ProcessorClass pc = new ProcessorClass();
-        pc.sio = sio;
-        pc.sif = sif;
-        pc.mtp2 = mtp2;
-        _PROCESSOR.execute(pc);
+        //creating handler for received message and schedule execution
+        MessageHandler handler = new MessageHandler(sio, sif, mtp2);
+        processor.execute(handler);
     }
-    private final int counter = 0;
-
-    public boolean send(byte sls, byte linksetId, int service, int subservice, byte[] msg) {
-
-        if (!this.l4IsUp) {
-            //??
-            return false;
-        }
-        Mtp2 mtp2 = findLink(sls, linksetId);
+    
+    /**
+     * Selects link for transmission using link selection indicator.
+     * 
+     * @param sls signaling link selection indicator.
+     * @return selected link.
+     */
+    private Mtp2 selectLink(byte sls) {
+        return null;
+    }
+    
+    public boolean send(byte sls, byte linksetId, int service, int subservice, byte[] msg) {        
+        //selecting link using sls
+        Mtp2 link = selectLink(sls);
+        
+        //creating message
         byte[] buffer = new byte[5 + msg.length];
-        writeRoutingLabel(buffer, mtp2);
+        writeRoutingLabel(buffer, sls);
+        
         buffer[0] = (byte) ((service & 0x0F) | ((subservice & 0x0F) << 4));
         System.arraycopy(msg, 0, buffer, 5, msg.length);
-        if (isL3Debug()) {
-            mtp2.trace("Scheduling MSU: " + Utils.dump(buffer, buffer.length, false));
-        }
-        return mtp2.queue(buffer);
-
+        return link.queue(buffer);
     }
 
-    private Mtp2 findLink(byte sls, byte linksetId) {
-
-        LinkSet ls = findLinkSet(linksetId);
-        List<Mtp2> activeLinksInLinkSet = ls.getActiveLinks();
-        Mtp2 found = null;
-        if (sls > 15 || sls < 0 || sls > activeLinksInLinkSet.size()) {
-            if (isL3Debug()) {
-                Utils.getInstance().append("Passed sls value[" + sls + "] is not good, determine arbitrary.");
-            }
-
-            int index = counter % activeLinksInLinkSet.size();
-            found = activeLinksInLinkSet.get(index);
-        } else {
-            found = activeLinksInLinkSet.get(sls);
-        }
-
-        return found;
+    public void linkInService(Mtp2 link) {
+        //restart traffic 
+        restartTraffic(link);
+        
+        //create and assign Tester;
+        Test tester = new Test(link);
+        link.test = tester;
+        
+        //start tester
+        tester.start();
     }
 
-    private LinkSet findLinkSet(byte linksetId) {
-        if (linksetId > this.linkSets.size() || linksetId < 0) {
-            if (isL3Debug()) {
-                Utils.getInstance().append("Passed linkset value[" + linksetId + "] is not good, determine arbitrary.");
-            }
-            linksetId = (byte) (linksetId % this.linkSets.size());
-        }
-
-        return this.linkSets.get(linksetId);
+    /**
+     * Notify that link is up.
+     * @param link
+     */
+    public void linkUp(Mtp2 link) {
+        linkset.add(link);
     }
+    
+    public void linkFailed(Mtp2 link) {
+        //remove this link from list of active links
+        linkset.remove(link);
 
-    protected void manageLinkSet() {
+        //restart initial alignment after T17 expires
+        link.start_T17();
 
-        for (LinkSet linkSet : this.linkSets) {
-            if (linkSet.getActiveLinks().size() != linkSet.getLinks().size()) //if(this.linkSet_notactive.size()>0)
-            {
-                linkSet.activateLink();
-                break;
-            }
+        //notify mtp user part
+        if (!linkset.isActive()) {
+            mtpUser.linkDown();
         }
     }
 
-    public void linkInService(Mtp2 mtp2) {
-        this.resetForInservice(mtp2);
-        //this.activeLinksInLinkSet.add(mtp2);
-        sendTRA(mtp2);
-        sendSLTM(mtp2);
-        manageLinkSet();
-    // schedule SLTM.
-    // start ACK supervision and redo of SLTM procedure after time.
-    }
-
-    public void linkFailed(Mtp2 mtp2) {
-
-        resetForInservice(mtp2);
-        //this.activeLinksInLinkSet.remove(mtp2);
-        //mtp2.start_T17();
-        //this.linkSet_notactive.put(mtp2.getSls(),mtp2);
-        //if(this.activeLinksInLinkSet.size()==0)
-        boolean hasUplinks = false;
-        for (LinkSet linkSet : this.linkSets) {
-            if (linkSet.getActiveLinks().size() > 0) {
-                hasUplinks = true;
-                break;
-            }
-        }
-        if (!hasUplinks) {
-            this.l4IsUp = false;
-            if (this.mtpUser != null) {
-                this.mtpUser.linkDown();
-            }
-        }
-        manageLinkSet();
-    }
-
-    private void resetForInservice(Mtp2 mtp2) {
-        mtp2.stop_T1_SLTM();
-        mtp2.stop_T2_SLTM();
-        mtp2.restartSltmTries();
-
-    }
-
-    private void sendTRA(Mtp2 mtp2) {
-        int subservice = mtp2.getSubService();
+    private void restartTraffic(Mtp2 link) {
+        int subservice = link.getSubService();
         //if (subservice == -1) {
         subservice = DEFAULT_SUB_SERVICE_TRA;
         //}
         byte[] buffer = new byte[6];
-        writeRoutingLabel(buffer, mtp2);
+        writeRoutingLabel(buffer, 0);
         // buffer[0] = (byte) (_SERVICE_TRA | ( subservice << 4));
         buffer[0] = (byte) 0xC0;
         // H0 and H1, see Q.704 section 15.11.2+
         buffer[5] = 0x17;
-        if (logger.isDebugEnabled() && isL3Debug()) {
-            // logger.debug("Link (" + name + ") Queue SLTM");
-            mtp2.trace("Queue TRA");
-        }
-        mtp2.queue(buffer);
+        link.queue(buffer);
     }
 
-    private void sendSLTM(Mtp2 mtp2) {
-        //lets stop
-        //int subservice = mtp2.getSubService();
-        //if (subservice == -1) {
-        //	subservice = _DEFAULT_SUB_SERVICE_TRA;
-        //}
-        byte[] sltm = new byte[7 + SLTM_PATTERN.length];
-        //sltm[0] = (byte) (_SERVICE_SLTM | ( subservice << 4));
-        // sltm[0] = _SERVICE_SLTM;
-        sltm[0] = (byte) 0xC1; // 1100 0001
-        writeRoutingLabel(sltm, mtp2);
-        sltm[5] = 0x11;
-        sltm[6] = (byte) (SLTM_PATTERN.length << 4);
-        System.arraycopy(SLTM_PATTERN, 0, sltm, 7, SLTM_PATTERN.length);
-
-        if (logger.isDebugEnabled() && isL3Debug()) {
-            // logger.debug("Link (" + name + ") Queue SLTM");
-            mtp2.trace("Queue SLTM");
-        }
-        mtp2.queue(sltm);
-        mtp2.incrementSltmTries();
-
-        if (!mtp2.isT1_SLTM()) {
-            mtp2.start_T1_SLTM();
-        //restart?
-        }
-        mtp2.start_T2_SLTM();
-
-    }
-
-    private void writeRoutingLabel(byte[] sif, Mtp2 mtp2) {
-        LinkSet ls = mtp2.getLinkSet();
-        int destinationPointCode = ls.getDpc();
-        int originationPointCode = ls.getOpc();
-        sif[1] = (byte) destinationPointCode;
-        sif[2] = (byte) (((destinationPointCode >> 8) & 0x3F) | ((originationPointCode & 0x03) << 6));
-        sif[3] = (byte) (originationPointCode >> 2);
-        //sif[4] = (byte) (((originationPointCode >> 10) & 0x0F) | ((mtp2.getSls() & 0x0F) << 4));
-        sif[4] = (byte) (((originationPointCode >> 10) & 0x0F) | ((0 & 0x0F) << 4));
-    }    // -6 cause we have in sif, sio+label+len of pattern - thats 1+4+1 = 6
+    private void writeRoutingLabel(byte[] sif, int sls) {
+        sif[1] = (byte) dpc;
+        sif[2] = (byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6));
+        sif[3] = (byte) (opc >> 2);
+        //sif[4] = (byte) (((opc >> 10) & 0x0F) | ((mtp2.getSls() & 0x0F) << 4));
+        sif[4] = (byte) (((opc>> 10) & 0x0F) | ((0 & 0x0F) << 4));
+    }   
+    
+    // -6 cause we have in sif, sio+label+len of pattern - thats 1+4+1 = 6
     private final static int SIF_PATTERN_OFFSET = 6;
 
+    /**
+     * Performs test message check.
+     * 
+     * @param sif the response test message
+     * @param pattern expected message content
+     * @return true if message content matches to specfied pattern
+     */
     private boolean checkPattern(byte[] sif, byte[] pattern) {
-
         if (sif.length - SIF_PATTERN_OFFSET != pattern.length) {
             return false;
         }
@@ -394,57 +301,104 @@ public class Mtp3 implements Runnable {
         return true;
     }
 
-    // /////////////////////////////
-    // Timers and Future handles //
-    // /////////////////////////////
-    private class T1Action_SLTM implements Runnable {
-
-        private Mtp2 mtp2;
-
+    protected class Test implements Runnable {
+        private Mtp2 link;
+        private int tryCount;
+        
+        //SLTM message buffer;
+        private byte[] sltm = new byte[7 + SLTM_PATTERN.length];
+        
+        private ScheduledFuture test;
+        
+        protected Test(Mtp2 link) {
+            this.link = link;
+        }
+    
+        /**
+         * 
+         */
+        public void start() {
+            //reset count of tries
+            tryCount = 0;
+            
+            //sending test message to the remote terminal
+            run();
+        }
+        
+        public void stop() {
+            //disable handler
+            test.cancel(false);
+        }
+        
+        /**
+         * This methods should be called to acknowledge that current tests is passed.
+         * 
+         */
+        public void ack() {
+            //disable current awaiting handler
+            test.cancel(false);
+            //reset number of tryies;
+            tryCount = 0;
+            //shcedule next ping
+            test = mtpTimer.schedule(this, Mtp3.TIMEOUT_T2_SLTM, TimeUnit.MILLISECONDS);
+        }
+        
+        /**
+         * Sends SLTM message using this link.
+         * 
+         * @param timeout  the amount of time in millesecond for awaiting response.
+         */
+        public void ping(long timeout) {
+            //prepearing test message
+            sltm[0] = (byte) 0xC1; // 1100 0001
+            writeRoutingLabel(sltm, 0);
+            sltm[5] = 0x11;
+            sltm[6] = (byte) (SLTM_PATTERN.length << 4);
+            System.arraycopy(SLTM_PATTERN, 0, sltm, 7, SLTM_PATTERN.length);
+            
+            //sending test message
+            link.queue(sltm);
+            
+            //incremeting number of tries.
+            tryCount++;
+            
+            //scheduling timeout
+            test = mtpTimer.schedule(this, timeout, TimeUnit.MILLISECONDS);
+        }
+        
         public void run() {
-            // so we can cleanly reschedule.
-            //T1_SLTM = null;
-            performSLTARetryProcedure(mtp2);
-        }
-    }
-
-    private class T2Action_SLTM implements Runnable {
-
-        private Mtp2 mtp2;
-
-        public void run() {
-            sendSLTM(mtp2);
-        }
-    }
-
-    private void performSLTARetryProcedure(Mtp2 mtp2) {
-        if (mtp2.getSltmTries() == 1) {
-            // we have second chance.
-            if (logger.isEnabledFor(Level.ERROR) && isL3Debug()) {
-                mtp2.trace("No valid SLTA received within Q.707_T1, trying again.");
+            switch (tryCount) {
+                case 0 :
+                    //sending first test message
+                    ping(Mtp3.TIMEOUT_T1_SLTM);
+                    break;
+                case 1 :
+                    //first message was not answered, sending second
+                    ping(Mtp3.TIMEOUT_T1_SLTM);
+                    break;
+                case 2 :
+                    //second message was not answered, report failure
+                    linkFailed(link);
+                    link.start_T17();
             }
-            sendSLTM(mtp2);
-        } else {
-            // this is failure, link must go down.
-            if (logger.isEnabledFor(Level.ERROR) && isL3Debug()) {
-                mtp2.trace("No valid SLTA received within Q.707_T1, faulting link.....");
-            }
-
-            mtp2.restartSltmTries();
-            mtp2.failLink();
-            //this will start IAM once more and rest buffers.
-            mtp2.start_T17();
-
         }
-
     }
-
-    private final class ProcessorClass implements Runnable {
+    
+    
+    
+    
+    private final class MessageHandler implements Runnable {
 
         private Mtp2 mtp2;
         private int sio;
         private byte[] sif;
 
+        public MessageHandler(int sio, byte[] sif, Mtp2 link) {
+            this.mtp2 = link;
+            this.sio = sio;
+            this.sif = sif;
+        }
+        
         public void run() {
 
             int subserviceIndicator = (sio >> 4) & 0x03;
@@ -465,6 +419,7 @@ public class Mtp3 implements Runnable {
             }
             switch (serviceIndicator) {
                 case LINK_MANAGEMENT:
+                    //FIX ME
                     break;
                 case LINK_TESTING:
                     int h0 = sif[4] & 0x0f;
@@ -481,7 +436,7 @@ public class Mtp3 implements Runnable {
                         byte[] slta = new byte[len + 7];
                         slta[0] = (byte) sio;
 
-                        writeRoutingLabel(slta, mtp2);
+                        writeRoutingLabel(slta, 0);
                         slta[5] = 0x021;
                         // +1 cause we copy LEN byte also.
                         System.arraycopy(sif, 5, slta, 6, len + 1);
@@ -510,10 +465,7 @@ public class Mtp3 implements Runnable {
 
                             }
 
-                            // logger.debug("Responding with SLTA");
-                            if (logger.isDebugEnabled() && isL3Debug()) {
-                                mtp2.trace("Responding with SLTA");
-                            }
+                            mtp2.trace("Responding with SLTA");
                         }
                         //FIXME: check for return flag
                         mtp2.queue(slta);
@@ -528,7 +480,7 @@ public class Mtp3 implements Runnable {
                         StringBuilder sb = new StringBuilder();
                         // check contidions for acceptance
                         boolean accepted = true;
-                        if (opc != mtp2.getLinkSet().getDpc()) {
+/*                        if (opc != mtp2.getLinkSet().getDpc()) {
                             if (logger.isTraceEnabled() && isL3Debug()) {
                                 sb.append("\nSLTA Acceptance failed, OPC = ").append(opc).append(" ,of SLTA does not match local DPC = ").append(
                                         mtp2.getLinkSet().getDpc());
@@ -543,7 +495,7 @@ public class Mtp3 implements Runnable {
                             }
                             accepted = false;
                         }
-
+*/
                         if (!checkPattern(sif, SLTM_PATTERN)) {
                             if (logger.isTraceEnabled() && isL3Debug()) {
                                 sb.append("\nSLTA Acceptance failed, sif pattern = ").append(Arrays.toString(sif)).append(
@@ -577,7 +529,7 @@ public class Mtp3 implements Runnable {
                             if (logger.isTraceEnabled() && isL3Debug()) {
                                 mtp2.trace("SLTA acceptance failed!!! Reason: " + sb);
                             }
-                            performSLTARetryProcedure(mtp2);
+                            //ignore it
                         }
 
                     } else {
@@ -597,7 +549,7 @@ public class Mtp3 implements Runnable {
                         //msbBuff.len = sif.len - 4 (routing label), after routing label there should be msg code
                         byte[] msgBuff = new byte[sif.length - 4];
                         System.arraycopy(sif, 4, msgBuff, 0, msgBuff.length);
-                        mtpUser.receive(mtp2.getSls(), mtp2.getLinkSet().getId(), SERVICE_SCCP, subserviceIndicator, msgBuff);
+//                        mtpUser.receive(mtp2.getSls(), mtp2.getLinkSet().getId(), SERVICE_SCCP, subserviceIndicator, msgBuff);
                     }
                     break;
                 case SERVICE_ISUP:
@@ -609,7 +561,7 @@ public class Mtp3 implements Runnable {
                         //msbBuff.len = sif.len - 4 (routing label), after routing label there should be msg code
                         byte[] msgBuff = new byte[sif.length - 4];
                         System.arraycopy(sif, 4, msgBuff, 0, msgBuff.length);
-                        mtpUser.receive(mtp2.getSls(), mtp2.getLinkSet().getId(), SERVICE_ISUP, subserviceIndicator, msgBuff);
+//                        mtpUser.receive(mtp2.getSls(), mtp2.getLinkSet().getId(), SERVICE_ISUP, subserviceIndicator, msgBuff);
                     }
                     break;
                 default:
@@ -647,20 +599,5 @@ public class Mtp3 implements Runnable {
 
     public void setL3Debug(boolean l3Debug) {
         this.l3Debug = l3Debug;
-    }
-
-    private class LinkSetComparator implements Comparator<LinkSet> {
-
-        public int compare(LinkSet o1, LinkSet o2) {
-            // TODO Auto-generated method stub
-            if (o2 == null) {
-                return 1;
-            } else if (o1 == null) {
-                return -1;
-            } else {
-                return o1.getId() - o2.getId();
-            }
-
-        }
     }
 }

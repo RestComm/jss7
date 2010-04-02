@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.mtp.Mtp3.Test;
 
 /**
  * 
@@ -184,12 +185,9 @@ public class Mtp2 {
     private int state;
     
     //MTP1 layer reference.
-    private Mtp1 layer1;    
+    private Mtp1 channel;    
     //MTP3 Layer reference
-    private Mtp3 layer3;
-    
-    private LinkSet linkSet;    
-//    private ArrayList<Mtp2Listener> listeners = new ArrayList();
+    private Mtp3 mtp3;
     
     private volatile boolean started;
     
@@ -279,8 +277,12 @@ public class Mtp2 {
      */
     private AtomicInteger sltmTries = new AtomicInteger(0);
 
+    protected Test test;
+    private static final Logger logger = Logger.getLogger(Mtp2.class);
+    
     public Mtp2(Mtp3 mtp3, Mtp1 channel) {
-        
+        this.channel = channel;
+        this.mtp3 = mtp3;
     }
     
     public Mtp2(String name) {
@@ -307,18 +309,6 @@ public class Mtp2 {
         for (int i = 0; i < this.transmissionBuffer.length; i++) {
             this.transmissionBuffer[i] = new Mtp2SendBuffer();
         }
-    }
-
-    // /////////////////////////////
-    // Setters/Getters/Accessors //
-    // /////////////////////////////
-    public void setLinkSet(LinkSet linkSet) {
-        this.linkSet = linkSet;
-//        this.listeners.add(0, linkSet);
-    }
-
-    public LinkSet getLinkSet() {
-        return this.linkSet;
     }
 
     public boolean isEmergency() {
@@ -380,26 +370,28 @@ public class Mtp2 {
      *            the implementation of MTP1 layer.
      */
     public void setLayer1(Mtp1 layer1) {
-        this.layer1 = layer1;
+        this.channel = layer1;
     }
 
     public void setLayer3(Mtp3 layer3) {
-        this.layer3 = layer3;
+        this.mtp3 = layer3;
 //        this.listeners.add(layer3);
     }
 
-    public void _startLink() throws IOException {
-
-        if (layer1 == null) {
+    public void startLink() throws IOException {
+        if (channel == null) {
             throw new IllegalStateException("Layer1 is not set in Layer2!");
         }
+        
         if (started) {
             throw new IllegalStateException("Link already running");
         }
-        layer1.open();
+        
+        channel.open();
         started = true;
 
         this.reset();
+        
         if (this.enabledL2Debug) {
             trace("Is out fo service now");
         }
@@ -417,7 +409,7 @@ public class Mtp2 {
 
     }
 
-    public void _stopLink() {
+    public void stopLink() {
         started = false;
         // poll.cancel(false);
         // stop_T2();
@@ -425,15 +417,15 @@ public class Mtp2 {
         // stop_T4();
         // stop_T17();
         reset();
-        this.layer1.close();
+        this.channel.close();
 
     // layer1.close();
     }
 
     public void _closeLink() {
-        _stopLink();
+        stopLink();
         //layer1.close();
-        layer1 = null;
+        channel = null;
     }
 
     // not used
@@ -479,11 +471,8 @@ public class Mtp2 {
     }
 
     public void failLink() {
-
         cleanupTimers();
         this.state = MTP2_OUT_OF_SERVICE;
-    // add change over?
-
     }
 
     public boolean queue(byte[] msg) {
@@ -823,7 +812,7 @@ public class Mtp2 {
     }
 
     private void processMSU(int len) {
-        if (this.layer3 != null) {
+        if (this.mtp3 != null) {
             int sio = rxFrame[3];
             int realLength = 0;
             if (len == 63) {
@@ -844,7 +833,7 @@ public class Mtp2 {
             }
             // FIXME: switch to this
             // System.arraycopy(rxFrame, 4, sif, 0, realLength);
-            layer3.onMessage(sio, sif, this);
+            mtp3.onMessage(sio, sif, this);
         }
     }
 
@@ -934,7 +923,7 @@ public class Mtp2 {
                     //if (this.layer3 != null) {
                     //	this.layer3.linkInService(this);
                     //}
-                    this.layer3.linkInService(this);
+                    this.mtp3.linkInService(this);
                     break;
             }
         }
@@ -960,7 +949,7 @@ public class Mtp2 {
             this.bsnErrors++;
             if (this.bsnErrors > 2) {
                 this.bsnErrors = 0;
-                this.layer3.linkFailed(this);
+                this.mtp3.linkFailed(this);
                 alignmentBroken("Broken BSN constrains: fsn_lasAcked = " + this.retransmissionFSN_LastAcked + ", fsn_LastSent = " + this.retransmissionFSN_LastSent + ", bsn = " + bsn);
             }
 
@@ -1066,7 +1055,7 @@ public class Mtp2 {
         if (this.enableDataTrace && enabledL2Debug) {
             //dataHolder.add(new BufferHolder(System.currentTimeMillis(),	 buff,len));
             // FIXME:
-            Utils.getInstance().addBuffer(this.sls, this.name, this.linkSet.getName(), this.linkSet.getId(), System.currentTimeMillis(), buff, len);
+//            Utils.getInstance().addBuffer(this.sls, this.name, this.linkSet.getName(), this.linkSet.getId(), System.currentTimeMillis(), buff, len);
         }
         // start HDLC alg
         while (i < len) {
@@ -1183,7 +1172,7 @@ public class Mtp2 {
             int bytesRead = 0;
             try {
 
-                bytesRead = layer1.read(rxBuffer);
+                bytesRead = channel.read(rxBuffer);
 
 
                 //this.trace("run called for "+ this.name+ " bytesRead = "+ bytesRead + " this.initiateAlign "+this.initiateAlign);
@@ -1210,7 +1199,7 @@ public class Mtp2 {
                 }
                 // notify MTP3 about failure.
                 state = MTP2_OUT_OF_SERVICE;
-                layer3.linkFailed(this);
+                mtp3.linkFailed(this);
             } catch (Exception ee) {
                 ee.printStackTrace();
                 // if (logger.isEnabledFor(Level.ERROR)) {
@@ -1223,13 +1212,13 @@ public class Mtp2 {
                 }
                 // notify MTP3 about failure.
                 state = MTP2_OUT_OF_SERVICE;
-                layer3.linkFailed(this);
+                mtp3.linkFailed(this);
             }
             try {
                 long currentTime = System.currentTimeMillis();
                 if (bytesRead > 0) {
                     processTx(bytesRead);
-                    layer1.write(txBuffer, bytesRead);
+                    channel.write(txBuffer, bytesRead);
                 } else {
                     //1ms == 8B ?
                     if (lastWriteStamp == 0) {
@@ -1245,7 +1234,7 @@ public class Mtp2 {
 
 
                     processTx(bytesRead);
-                    layer1.write(txBuffer, bytesRead);
+                    channel.write(txBuffer, bytesRead);
                 }
                 lastWriteStamp = currentTime;
             } catch (IOException e) {
@@ -1260,7 +1249,7 @@ public class Mtp2 {
                 }
                 // notify MTP3 about failure.
                 state = MTP2_OUT_OF_SERVICE;
-                layer3.linkFailed(this);
+                mtp3.linkFailed(this);
             } catch (Exception ee) {
                 ee.printStackTrace();
                 // if (logger.isEnabledFor(Level.ERROR)) {
@@ -1273,7 +1262,7 @@ public class Mtp2 {
                 }
                 // notify MTP3 about failure.
                 state = MTP2_OUT_OF_SERVICE;
-                layer3.linkFailed(this);
+                mtp3.linkFailed(this);
             }
 
 
@@ -1302,8 +1291,8 @@ public class Mtp2 {
         this.reset();
         if (this.state == MTP2_INSERVICE) {
 
-            if (this.layer3 != null) {
-                this.layer3.linkFailed(this);
+            if (this.mtp3 != null) {
+                this.mtp3.linkFailed(this);
             }
         }
         this.state = MTP2_OUT_OF_SERVICE;
@@ -1321,8 +1310,8 @@ public class Mtp2 {
         this.reset();
         if (this.state == MTP2_INSERVICE) {
 
-            if (this.layer3 != null) {
-                this.layer3.linkFailed(this);
+            if (this.mtp3 != null) {
+                this.mtp3.linkFailed(this);
             }
         }
 
@@ -1361,8 +1350,8 @@ public class Mtp2 {
             case MTP2_ALIGNED_READY:
             case MTP2_INSERVICE:
                 if (eCount >= 64) {
-                    if (this.layer3 != null) {
-                        layer3.linkFailed(this);
+                    if (this.mtp3 != null) {
+                        mtp3.linkFailed(this);
                     }
                     state = MTP2_OUT_OF_SERVICE;
                 }
@@ -1613,18 +1602,20 @@ public class Mtp2 {
 
     public boolean isT17() {
         return this.T17 != null;
-    }    // /////////////////////////////////////
+    }    
+    
+    // /////////////////////////////////////
     // Timers and Future handles for MTP 3//
     // /////////////////////////////////////
     private Runnable t1Action_SLTM = null;
     private Runnable t2Action_SLTM = null;
+    
     private ScheduledFuture T1_SLTM;
     private ScheduledFuture T2_SLTM;
 
     public void stop_T1_SLTM() {
         ScheduledFuture f = this.T1_SLTM;
         if (f != null && !f.isCancelled()) {
-
             this.T1_SLTM = null;
             f.cancel(false);
         }
@@ -1633,7 +1624,6 @@ public class Mtp2 {
     public void stop_T2_SLTM() {
         ScheduledFuture f = this.T2_SLTM;
         if (f != null && !f.isCancelled()) {
-
             this.T2_SLTM = null;
             f.cancel(false);
         }
@@ -1751,5 +1741,4 @@ public class Mtp2 {
     private static final int NEXT_INDICATOR(int x) {
         return (x + 1) % 2;
     }
-    private static final Logger logger = Logger.getLogger(Mtp2.class);
 }
