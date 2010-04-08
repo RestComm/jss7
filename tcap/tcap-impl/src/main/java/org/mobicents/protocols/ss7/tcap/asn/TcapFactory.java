@@ -21,7 +21,21 @@ public final class TcapFactory {
 		return new DialogPortionImpl();
 	}
 
-	public static DialogAPDU createDialogAPDU(AsnInputStream ais) throws ParseException {
+	public static DialogAPDU createDialogAPDU(AsnInputStream ais, int tag, boolean unidirectional) throws ParseException {
+		
+		if (unidirectional) {
+			// only one
+			if (tag != DialogAPDU._TAG_UNIDIRECTIONAL) {
+				throw new ParseException("Wrong tag for APDU, found: " + tag);
+			}
+			//craete UNIPDU
+		} else {
+
+			if (tag != DialogAPDU._TAG_REQUEST && tag != DialogAPDU._TAG_RESPONSE && tag != DialogAPDU._TAG_ABORT) {
+				throw new ParseException("Wrong tag for APDU, found: " + tag);
+			}
+			//create one of directional
+		}
 		return new DialogAPDU(){
 
 			public void decode(AsnInputStream ais) throws ParseException {
@@ -31,8 +45,7 @@ public final class TcapFactory {
 
 			public void encode(AsnOutputStream aos) throws ParseException {
 
-				byte[] b = new byte[]{
-						60, 15, (byte) 128, 2, 7, 1, (byte) 161, 9, 6, 7, 4, 0, 1, 1, 1, 3, 0
+				byte[] b = new byte[]{0x60, 15, (byte) 128, 2, 7, 1, (byte) 161, 9, 6, 7, 4, 0, 1, 1, 1, 3, 0
 					
 				};
 				try {
@@ -40,6 +53,16 @@ public final class TcapFactory {
 				} catch (IOException e) {
 					throw new ParseException(e);
 				}
+			}
+
+			public DialogAPDUType getType() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			public boolean isUniDirectional() {
+				// TODO Auto-generated method stub
+				return false;
 			}};
 	}
 }
