@@ -31,6 +31,11 @@
 			<artifactId>sccp-api</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.asn</groupId>
+			<artifactId>asn</artifactId>
+			<version>${mobicents.protocols.asn.version}</version>
+		</dependency>		
 	</dependencies>
 
 	<build>
