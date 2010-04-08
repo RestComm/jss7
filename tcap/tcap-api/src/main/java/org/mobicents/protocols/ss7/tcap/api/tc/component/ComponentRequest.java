@@ -1,5 +1,7 @@
 package org.mobicents.protocols.ss7.tcap.api.tc.component;
 
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+
 public interface ComponentRequest {
 
 	/**
@@ -7,5 +9,11 @@ public interface ComponentRequest {
 	 * @return
 	 */
 	public int getType();
+	
+	public Dialog getDialog();
+	
+	public int getInvokeId();
+	
+	public void setInvokeId(int id);
 	
 }
