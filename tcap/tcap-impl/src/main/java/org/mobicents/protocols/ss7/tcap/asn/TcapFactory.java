@@ -27,42 +27,61 @@ public final class TcapFactory {
 			// only one
 			if (tag != DialogAPDU._TAG_UNIDIRECTIONAL) {
 				throw new ParseException("Wrong tag for APDU, found: " + tag);
-			}
-			//craete UNIPDU
-		} else {
-
-			if (tag != DialogAPDU._TAG_REQUEST && tag != DialogAPDU._TAG_RESPONSE && tag != DialogAPDU._TAG_ABORT) {
-				throw new ParseException("Wrong tag for APDU, found: " + tag);
-			}
-			//create one of directional
-		}
-		return new DialogAPDU(){
-
-			public void decode(AsnInputStream ais) throws ParseException {
-				// TODO Auto-generated method stub
-				
-			}
-
-			public void encode(AsnOutputStream aos) throws ParseException {
-
-				byte[] b = new byte[]{0x60, 15, (byte) 128, 2, 7, 1, (byte) 161, 9, 6, 7, 4, 0, 1, 1, 1, 3, 0
-					
-				};
-				try {
-					aos.write(b);
-				} catch (IOException e) {
-					throw new ParseException(e);
-				}
-			}
-
-			public DialogAPDUType getType() {
-				// TODO Auto-generated method stub
+			}else
+			{
+				//craete UNIPDU
 				return null;
 			}
+			
+		} else {
 
-			public boolean isUniDirectional() {
-				// TODO Auto-generated method stub
-				return false;
-			}};
+			if(tag == DialogAPDU._TAG_REQUEST )
+			{
+				DialogRequestAPDUImpl d = new DialogRequestAPDUImpl();
+				d.decode(ais);
+				return d;
+			}
+			if (tag == DialogAPDU._TAG_RESPONSE ) {
+				
+				return null;
+				
+			}
+			
+			if(tag == DialogAPDU._TAG_ABORT)
+			{
+				return null;
+			}
+			
+			throw new ParseException("Wrong tag for APDU, found: " + tag);
+		}
+
+	}
+	public static ProtocolVersion createProtocolVersion()
+	{
+		return new ProtocolVersionImpl();
+	}
+	public static ProtocolVersion createProtocolVersion(AsnInputStream ais) throws ParseException
+	{
+		ProtocolVersionImpl pv = new ProtocolVersionImpl();
+		pv.decode(ais);
+		return pv;
+	}
+	public static ApplicationContextName createApplicationContextName()  {
+		ApplicationContextNameImpl acn = new ApplicationContextNameImpl();
+	
+		return acn;
+	}
+	public static ApplicationContextName createApplicationContextName(AsnInputStream ais) throws ParseException {
+		ApplicationContextNameImpl acn = new ApplicationContextNameImpl();
+		acn.decode(ais);
+		return acn;
+	}
+	public static UserInformation createUserInformation() {
+		return new UserInformationImpl();
+	}
+	public static UserInformation createUserInformation(AsnInputStream localAis) throws ParseException {
+		UserInformationImpl ui = new UserInformationImpl();
+		ui.decode(localAis);
+		return ui;
 	}
 }

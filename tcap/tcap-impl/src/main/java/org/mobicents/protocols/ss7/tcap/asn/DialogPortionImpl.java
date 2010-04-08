@@ -1,6 +1,7 @@
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
+import java.util.BitSet;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -69,14 +70,43 @@ public class DialogPortionImpl extends External implements DialogPortion {
 		this.dialogAPDU = dialogAPDU;
 	}
 
+	
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.asn.External#getEncodeBitStringType()
+	 */
 	@Override
-	public byte[] encodeType() throws AsnException {
+	public BitSet getEncodeBitStringType() throws AsnException {
+		throw new UnsupportedOperationException();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.asn.External#getEncodeType()
+	 */
+	@Override
+	public byte[] getEncodeType() throws AsnException {
 		if (this.dialogAPDU == null) {
 			throw new AsnException("No APDU!");
 		}
 		AsnOutputStream aos = new AsnOutputStream();
 		this.dialogAPDU.encode(aos);
 		return aos.toByteArray();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.asn.External#setEncodeBitStringType(java.util.BitSet)
+	 */
+	@Override
+	public void setEncodeBitStringType(BitSet data) {
+		throw new UnsupportedOperationException();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.asn.External#setEncodeType(byte[])
+	 */
+	@Override
+	public void setEncodeType(byte[] data) {
+		throw new UnsupportedOperationException();
 	}
 
 	public void encode(AsnOutputStream aos) throws ParseException {
