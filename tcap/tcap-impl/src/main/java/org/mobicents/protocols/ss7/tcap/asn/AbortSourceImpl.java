@@ -37,19 +37,31 @@ public class AbortSourceImpl implements AbortSource {
 	 * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols.asn.AsnInputStream)
 	 */
 	public void decode(AsnInputStream ais) throws ParseException {
-		int len;
+//		int len;
+//		try {
+//			len = ais.readLength();
+//
+//			if (len > ais.available()) {
+//				throw new ParseException("Not enough data: " + ais.available());
+//			}
+//
+//			int tag = ais.readTag();
+//			if (tag != Tag.INTEGER) {
+//				throw new ParseException("Expected INTEGER tag, found: " + tag);
+//
+//			}
+//			// y, its a bit of enum, should be ok to cast :)
+//			long t = ais.readInteger();
+//			this.type = AbortSourceType.Provider.getFromInt(t);
+//		} catch (IOException e) {
+//			throw new ParseException(e);
+//		} catch (AsnException e) {
+//			throw new ParseException(e);
+//		}
+
+		
 		try {
-			len = ais.readLength();
-
-			if (len > ais.available()) {
-				throw new ParseException("Not enough data: " + ais.available());
-			}
-
-			int tag = ais.readTag();
-			if (tag != Tag.INTEGER) {
-				throw new ParseException("Expected INTEGER tag, found: " + tag);
-
-			}
+			
 			// y, its a bit of enum, should be ok to cast :)
 			long t = ais.readInteger();
 			this.type = AbortSourceType.Provider.getFromInt(t);
@@ -58,7 +70,7 @@ public class AbortSourceImpl implements AbortSource {
 		} catch (AsnException e) {
 			throw new ParseException(e);
 		}
-
+		
 	}
 
 	/* (non-Javadoc)
@@ -68,16 +80,22 @@ public class AbortSourceImpl implements AbortSource {
 		if (type == null) {
 			throw new ParseException("No type set!");
 		}
+//		try {
+//			AsnOutputStream localAos = new AsnOutputStream();
+//			localAos.writeInteger(this.type.getType());
+//			byte[] b = localAos.toByteArray();
+//			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
+//			aos.writeLength(b.length);
+//			aos.write(b);
+//		} catch (IOException e) {
+//			throw new ParseException(e);
+//		}
 		try {
-			AsnOutputStream localAos = new AsnOutputStream();
-			localAos.writeInteger(this.type.getType());
-			byte[] b = localAos.toByteArray();
-			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
-			aos.writeLength(b.length);
-			aos.write(b);
-		} catch (IOException e) {
-			throw new ParseException(e);
-		}
+		
+		aos.writeInteger(_TAG_CLASS,_TAG,type.getType());
+	} catch (IOException e) {
+		throw new ParseException(e);
+	}
 
 	}
 
