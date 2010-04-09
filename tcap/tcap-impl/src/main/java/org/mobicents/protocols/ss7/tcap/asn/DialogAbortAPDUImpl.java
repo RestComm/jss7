@@ -12,104 +12,63 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
-import org.mobicents.protocols.ss7.tcap.asn.DialogAPDUType;
-import org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU;
-import org.mobicents.protocols.ss7.tcap.asn.ParseException;
-import org.mobicents.protocols.ss7.tcap.asn.ProtocolVersion;
-import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
 /**
  * @author baranowb
- * 
+ *
  */
-public class DialogRequestAPDUImpl implements DialogRequestAPDU {
+public class DialogAbortAPDUImpl implements DialogAbortAPDU {
 
-	private ApplicationContextName acn;
-	private UserInformation[] ui;
+	private AbortSource abortSource;
+	private UserInformation[] userInformation;
+	
+	
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#
-	 * getApplicationContextName()
+	/**
+	 * @return the abortSource
 	 */
-	public ApplicationContextName getApplicationContextName() {
-		return acn;
+	public AbortSource getAbortSource() {
+		return abortSource;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#getProtocolVersion
-	 * ()
+	/**
+	 * @param abortSource the abortSource to set
 	 */
-	public int getProtocolVersion() {
-
-		return 1;
+	public void setAbortSource(AbortSource abortSource) {
+		this.abortSource = abortSource;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#getUserInformation
-	 * ()
+	/**
+	 * @return the userInformation
 	 */
 	public UserInformation[] getUserInformation() {
-		return this.ui;
+		return userInformation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#
-	 * setApplicationContextName
-	 * (org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName)
+	/**
+	 * @param userInformation the userInformation to set
 	 */
-	public void setApplicationContextName(ApplicationContextName acn) {
-		this.acn = acn;
-
+	public void setUserInformation(UserInformation[] userInformation) {
+		this.userInformation = userInformation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#setUserInformation
-	 * (org.mobicents.protocols.ss7.tcap.asn.UserInformation[])
-	 */
-	public void setUserInformation(UserInformation[] ui) {
-		this.ui = ui;
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.tcap.asn.DialogAPDU#getType()
 	 */
 	public DialogAPDUType getType() {
-		return DialogAPDUType.Request;
+		return DialogAPDUType.Abort;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.tcap.asn.DialogAPDU#isUniDirectional()
 	 */
 	public boolean isUniDirectional() {
-
+		
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols
-	 * .asn.AsnInputStream)
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols.asn.AsnInputStream)
 	 */
 	public void decode(AsnInputStream ais) throws ParseException {
 		try {
@@ -128,18 +87,12 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(dataChunk));
 			int tag = localAis.readTag();
 			// optional protocol version
-			if (tag == ProtocolVersion._TAG_PROTOCOL_VERSION) {
-				// we have protocol version on a
-				// decode it
-				TcapFactory.createProtocolVersion(localAis);
-				tag = localAis.readTag();
+			if (tag != AbortSource._TAG) {
+				throw new ParseException("Expected Abort Source tag, found: " + tag);
 			}
-
+			this.abortSource = TcapFactory.createAbortSource(localAis);
 			// now there is mandatory part
-			if (tag != ApplicationContextName._TAG) {
-				throw new ParseException("Expected Application Context Name tag, found: " + tag);
-			}
-			this.acn = TcapFactory.createApplicationContextName(localAis);
+			
 
 			// optional sequence.
 			if (localAis.available() > 0) {
@@ -159,8 +112,8 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 					}
 					list.add(TcapFactory.createUserInformation(localAis));
 				}
-				this.ui = new UserInformation[list.size()];
-				this.ui = list.toArray(this.ui);
+				this.userInformation = new UserInformation[list.size()];
+				this.userInformation = list.toArray(this.userInformation);
 			}
 		} catch (IOException e) {
 			throw new ParseException(e);
@@ -170,17 +123,12 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
-	 * .asn.AsnOutputStream)
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
-
-		if (acn == null) {
-			throw new ParseException("No Application Context Name!");
+		if (abortSource == null) {
+			throw new ParseException("No Abort Source Name!");
 		}
 		try {
 			// lets not ommit protocol version, we check byte[] in tests, it screws them :)
@@ -189,8 +137,8 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 	
 			localAos.reset();
 			byte[] byteData = null;
-			if (ui != null) {
-				for (UserInformation _ui : ui) {
+			if (userInformation != null) {
+				for (UserInformation _ui : userInformation) {
 					_ui.encode(localAos);
 				}
 				byteData = localAos.toByteArray();
@@ -201,21 +149,21 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 				byteData = localAos.toByteArray();
 
 			}
-			ProtocolVersion pv = TcapFactory.createProtocolVersion();
-			pv.encode(localAos);
-			this.acn.encode(localAos);
+			
+			this.abortSource.encode(localAos);
 			
 			if (byteData != null) {
 				localAos.write(byteData);
 			}
 			byteData = localAos.toByteArray();
-			aos.writeTag(_TAG_CLASS, _TAG_PRIMITIVE, _TAG_REQUEST);
+			aos.writeTag(_TAG_CLASS, _TAG_PRIMITIVE, _TAG_ABORT);
 			aos.writeLength(byteData.length);
 			aos.write(byteData);
 
 		} catch (IOException e) {
 			throw new ParseException(e);
 		}
+
 
 	}
 

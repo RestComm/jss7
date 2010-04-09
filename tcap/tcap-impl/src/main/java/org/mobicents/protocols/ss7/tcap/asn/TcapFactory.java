@@ -30,7 +30,10 @@ public final class TcapFactory {
 			}else
 			{
 				//craete UNIPDU
-				return null;
+				
+				DialogUniAPDUImpl d = new DialogUniAPDUImpl();
+				d.decode(ais);
+				return d;
 			}
 			
 		} else {
@@ -42,14 +45,17 @@ public final class TcapFactory {
 				return d;
 			}
 			if (tag == DialogAPDU._TAG_RESPONSE ) {
-				
+				DialogResponseAPDUImpl d = new DialogResponseAPDUImpl();
+				d.decode(ais);
 				return null;
 				
 			}
 			
 			if(tag == DialogAPDU._TAG_ABORT)
 			{
-				return null;
+				DialogAbortAPDUImpl da = new DialogAbortAPDUImpl();
+				da.decode(ais);
+				return da;
 			}
 			
 			throw new ParseException("Wrong tag for APDU, found: " + tag);
@@ -83,5 +89,30 @@ public final class TcapFactory {
 		UserInformationImpl ui = new UserInformationImpl();
 		ui.decode(localAis);
 		return ui;
+	}
+	public static Result createResult() {
+		return new ResultImpl();
+	}
+	public static Result createResult(AsnInputStream localAis) throws ParseException {
+		ResultImpl ui = new ResultImpl();
+		ui.decode(localAis);
+		return ui;
+	}
+	public static ResultSourceDiagnostic createResultSourceDiagnostic() {
+		return new ResultSourceDiagnosticImpl();
+	}
+	public static ResultSourceDiagnostic createResultSourceDiagnostic(AsnInputStream localAis) throws ParseException {
+		ResultSourceDiagnosticImpl ui = new ResultSourceDiagnosticImpl();
+		ui.decode(localAis);
+		return ui;
+	}
+	public static AbortSource createAbortSource() {
+		AbortSourceImpl as = new AbortSourceImpl();
+		return as;
+	}
+	public static AbortSource createAbortSource(AsnInputStream localAis) throws ParseException {
+		AbortSourceImpl as = new AbortSourceImpl();
+		as.decode(localAis);
+		return as;
 	}
 }

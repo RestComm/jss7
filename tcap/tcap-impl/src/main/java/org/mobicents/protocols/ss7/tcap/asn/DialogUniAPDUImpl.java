@@ -14,7 +14,6 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.DialogAPDUType;
-import org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.ParseException;
 import org.mobicents.protocols.ss7.tcap.asn.ProtocolVersion;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
@@ -23,7 +22,7 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
  * @author baranowb
  * 
  */
-public class DialogRequestAPDUImpl implements DialogRequestAPDU {
+public class DialogUniAPDUImpl implements DialogUniAPDU {
 
 	private ApplicationContextName acn;
 	private UserInformation[] ui;
@@ -209,7 +208,7 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 				localAos.write(byteData);
 			}
 			byteData = localAos.toByteArray();
-			aos.writeTag(_TAG_CLASS, _TAG_PRIMITIVE, _TAG_REQUEST);
+			aos.writeTag(_TAG_CLASS, _TAG_PRIMITIVE, _TAG_UNIDIRECTIONAL);
 			aos.writeLength(byteData.length);
 			aos.write(byteData);
 

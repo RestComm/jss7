@@ -12,22 +12,21 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
-import org.mobicents.protocols.ss7.tcap.asn.DialogAPDUType;
-import org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU;
-import org.mobicents.protocols.ss7.tcap.asn.ParseException;
-import org.mobicents.protocols.ss7.tcap.asn.ProtocolVersion;
-import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
 /**
  * @author baranowb
  * 
  */
-public class DialogRequestAPDUImpl implements DialogRequestAPDU {
+public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 
+	//mandatory
 	private ApplicationContextName acn;
+	private Result result;
+	private ResultSourceDiagnostic diagnostic;
+	
+	//optional
 	private UserInformation[] ui;
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -84,14 +83,32 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 		this.ui = ui;
 
 	}
+	public Result getResult() {
 
+		return this.result;
+	}
+
+	public ResultSourceDiagnostic getResultSourceDiagnostic() {
+		return this.diagnostic;
+	}
+
+	public void setResult(Result acn) {
+		this.result = acn;
+
+	}
+
+	public void setResultSourceDiagnostic(ResultSourceDiagnostic acn) {
+		this.diagnostic = acn;
+
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.mobicents.protocols.ss7.tcap.asn.DialogAPDU#getType()
 	 */
 	public DialogAPDUType getType() {
-		return DialogAPDUType.Request;
+
+		return DialogAPDUType.Response;
 	}
 
 	/*
@@ -134,13 +151,25 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 				TcapFactory.createProtocolVersion(localAis);
 				tag = localAis.readTag();
 			}
-
-			// now there is mandatory part
+			
+			//mandatory
 			if (tag != ApplicationContextName._TAG) {
 				throw new ParseException("Expected Application Context Name tag, found: " + tag);
 			}
 			this.acn = TcapFactory.createApplicationContextName(localAis);
-
+			
+			tag = localAis.readTag();
+			if (tag != Result._TAG) {
+				throw new ParseException("Expected Result tag, found: " + tag);
+			}
+			this.result = TcapFactory.createResult(localAis);
+			tag = localAis.readTag();
+			if (tag != ResultSourceDiagnostic._TAG) {
+				throw new ParseException("Expected Result Source Diagnotstic tag, found: " + tag);
+			}
+			
+			this.diagnostic = TcapFactory.createResultSourceDiagnostic(localAis);
+			
 			// optional sequence.
 			if (localAis.available() > 0) {
 				// we have optional seq;
@@ -162,6 +191,7 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 				this.ui = new UserInformation[list.size()];
 				this.ui = list.toArray(this.ui);
 			}
+			
 		} catch (IOException e) {
 			throw new ParseException(e);
 		} catch (AsnException e) {
@@ -178,10 +208,20 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 	 * .asn.AsnOutputStream)
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
-
+		
 		if (acn == null) {
 			throw new ParseException("No Application Context Name!");
 		}
+		
+		if(result == null)
+		{
+			throw new ParseException("No Result!");
+		}
+		if(diagnostic == null)
+		{
+			throw new ParseException("No Result Source Diagnostic!");
+		}
+		
 		try {
 			// lets not ommit protocol version, we check byte[] in tests, it screws them :)
 
@@ -204,12 +244,13 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 			ProtocolVersion pv = TcapFactory.createProtocolVersion();
 			pv.encode(localAos);
 			this.acn.encode(localAos);
-			
+			this.result.encode(localAos);
+			this.diagnostic.encode(localAos);
 			if (byteData != null) {
 				localAos.write(byteData);
 			}
 			byteData = localAos.toByteArray();
-			aos.writeTag(_TAG_CLASS, _TAG_PRIMITIVE, _TAG_REQUEST);
+			aos.writeTag(_TAG_CLASS, _TAG_PRIMITIVE, _TAG_RESPONSE);
 			aos.writeLength(byteData.length);
 			aos.write(byteData);
 
@@ -218,5 +259,7 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 		}
 
 	}
+
+	
 
 }
