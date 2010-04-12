@@ -96,7 +96,7 @@ public class TCUniMessageImpl implements TCUniMessage {
 				this.dp = TcapFactory.createDialogPortion(localAis);
 				tag = localAis.readTag();
 			}
-			if (tag != Component._TAG) {
+			if (tag != Component._COMPONENT_TAG) {
 				throw new ParseException("Expected ComponentPortion tag, found: " + tag);
 			}
 			len = ais.readLength();
@@ -139,7 +139,7 @@ public class TCUniMessageImpl implements TCUniMessage {
 				}
 				data = localAos.toByteArray();
 				localAos.reset();
-				localAos.writeTag(Component._TAG_CLASS, Component._TAG_PC_PRIMITIVE, Component._TAG);
+				localAos.writeTag(Component._COMPONENT_TAG_CLASS, Component._COMPONENT_TAG_PC_PRIMITIVE, Component._COMPONENT_TAG);
 				localAos.writeLength(data.length);
 
 				localAos.write(data);

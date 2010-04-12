@@ -221,7 +221,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 				}
 				data = localAos.toByteArray();
 				localAos.reset();
-				localAos.writeTag(Component._TAG_CLASS, Component._TAG_PC_PRIMITIVE, Component._TAG);
+				localAos.writeTag(Component._COMPONENT_TAG_CLASS, Component._COMPONENT_TAG_PC_PRIMITIVE, Component._COMPONENT_TAG);
 				localAos.writeLength(data.length);
 
 				localAos.write(data);
