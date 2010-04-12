@@ -9,6 +9,8 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCodeType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
@@ -223,6 +225,14 @@ public final class TcapFactory {
 				c = new InvokeImpl();
 				c.decode(localAis);
 
+			}else if(tag == ReturnResult._TAG)
+			{
+				c = new ReturnResultImpl();
+				c.decode(localAis);
+			}else if(tag == ReturnResultLast._TAG)
+			{
+				c = new ReturnResultLastImpl();
+				c.decode(localAis);
 			}
 
 			if (c == null) {
