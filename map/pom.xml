@@ -1,0 +1,59 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<parent>
+		<artifactId>ss7-parent</artifactId>
+		<groupId>org.mobicents.protocols.ss7</groupId>
+		<version>1.0.0.BETA1-SNAPSHOT</version>
+	</parent>
+
+
+	<artifactId>map-parent</artifactId>
+	<groupId>org.mobicents.protocols.ss7.map</groupId>
+	<version>1.0.0.BETA1-SNAPSHOT</version>
+
+	<packaging>pom</packaging>
+
+	<name>Mobicents SS7 :: MAP Parent  :: ${pom.artifactId}</name>
+	<properties>
+		<maven.test.skip>false</maven.test.skip>
+		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
+		<mobicents.protocols.asn.version>1.0.0.BETA1-SNAPSHOT</mobicents.protocols.asn.version>
+	</properties>
+
+	<modules>
+		<module>map-api</module>
+		<module>map-impl</module>
+	</modules>
+
+	<!--  -->
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<groupId>org.mobicents.tools</groupId>
+				<version>
+					${mobicents.tools.mavenplugin.eclipse.version}
+				</version>
+				<inherited>false</inherited>
+				<executions />
+				<configuration>
+					<classpathExcludes>
+						<exclude>xml-apis:xml-apis</exclude>
+						<exclude>jtidy:jtidy</exclude>
+					</classpathExcludes>
+					<resolveTransitiveDependencies>
+						true
+					</resolveTransitiveDependencies>
+					<eclipseProjectName>
+						mobicents-map-stack
+					</eclipseProjectName>
+				</configuration>
+			</plugin>
+
+
+		</plugins>
+	</build>
+</project>
