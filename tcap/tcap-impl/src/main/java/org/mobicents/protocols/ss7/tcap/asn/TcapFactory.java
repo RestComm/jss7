@@ -9,6 +9,9 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCodeType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
@@ -222,16 +225,20 @@ public final class TcapFactory {
 
 			Component c = null;
 			if (tag == Invoke._TAG) {
-				c = new InvokeImpl();
+				c = createComponentInvoke();
 				c.decode(localAis);
 
 			}else if(tag == ReturnResult._TAG)
 			{
-				c = new ReturnResultImpl();
+				c =  createReturnResult();
 				c.decode(localAis);
 			}else if(tag == ReturnResultLast._TAG)
 			{
-				c = new ReturnResultLastImpl();
+				c =  createReturnResultLast();
+				c.decode(localAis);
+			} else if(tag == Reject._TAG)
+			{
+				c =  createReject();
 				c.decode(localAis);
 			}
 
@@ -244,7 +251,34 @@ public final class TcapFactory {
 		}
 	}
 
+	public static Reject createReject() {
+		
+		return new RejectImpl();
+	}
+
+	public static ReturnResultLast createReturnResultLast() {
+		
+		return new ReturnResultLastImpl();
+	}
+
+	public static ReturnResult createReturnResult() {
+		
+		return new ReturnResultImpl();
+	}
+
 	public static Invoke createComponentInvoke() {
 		return new InvokeImpl();
+	}
+	
+	
+	public static Problem createProblem(ProblemType pt, AsnInputStream ais) throws ParseException {
+		Problem p = createProblem(pt);
+		p.decode(ais);
+		return p;
+	}
+	public static Problem createProblem(ProblemType pt) {
+		Problem p = new ProblemImpl();
+		p.setType(pt);
+		return p;
 	}
 }

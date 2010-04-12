@@ -135,7 +135,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 			tag = localAis.readTag();
 			if (tag == _TAG_P) {
 				// primitive?
-				this.type = PAbortCauseType.BadlyFormattedTxPortion.getFromInt(localAis.readInteger());
+				this.type = PAbortCauseType.getFromInt(localAis.readInteger());
 
 				if (localAis.available() <= 0) {
 					// no dialog portion

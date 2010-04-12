@@ -64,7 +64,7 @@ public class ResultImpl implements Result {
 			}
 			// y, its a bit of enum, should be ok to cast :)
 			long t = ais.readInteger();
-			this.resultType = ResultType.RejectedPermanent.getFromInt(t);
+			this.resultType = ResultType.getFromInt(t);
 		} catch (IOException e) {
 			throw new ParseException(e);
 		} catch (AsnException e) {

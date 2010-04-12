@@ -90,7 +90,7 @@ public class ResultSourceDiagnosticImpl implements ResultSourceDiagnostic {
 					throw new ParseException("Not enough data.");
 				}
 				long t = ais.readInteger();
-				this.userType = DialogServiceUserType.AcnNotSupported.getFromInt(t);
+				this.userType = DialogServiceUserType.getFromInt(t);
 				return;
 			}
 
@@ -100,7 +100,7 @@ public class ResultSourceDiagnosticImpl implements ResultSourceDiagnostic {
 					throw new ParseException("Not enough data.");
 				}
 				long t = ais.readInteger();
-				this.providerType = DialogServiceProviderType.NoCommonDialogPortion.getFromInt(t);
+				this.providerType = DialogServiceProviderType.getFromInt(t);
 				return;
 			}
 			throw new ParseException("Expected on of Diagnostic tags, found: " + tag);
