@@ -30,7 +30,7 @@ public enum PAbortCauseType {
 		return type;
 	}
 
-	public PAbortCauseType getFromInt(long t) throws ParseException {
+	public static PAbortCauseType getFromInt(long t) throws ParseException {
 		if (t == 0) {
 			return UnrecogniedMessageType;
 		} else if (t == 1) {

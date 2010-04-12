@@ -29,7 +29,7 @@ public enum AbortSourceType {
 		return type;
 	}
 	
-	public AbortSourceType getFromInt(long t) throws ParseException {
+	public static AbortSourceType getFromInt(long t) throws ParseException {
 		if (t == 0) {
 			return User;
 		} else if (t == 1) {

@@ -17,7 +17,7 @@ public enum DialogServiceProviderType {
 		return type;
 	}
 
-	public DialogServiceProviderType getFromInt(long t) throws ParseException {
+	public static DialogServiceProviderType getFromInt(long t) throws ParseException {
 		if (t == 0) {
 			return Null;
 		} else if (t == 1) {

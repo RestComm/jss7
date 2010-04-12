@@ -18,7 +18,7 @@ public enum DialogServiceUserType {
 	}
 
 	
-	public DialogServiceUserType getFromInt(long t) throws ParseException {
+	public static DialogServiceUserType getFromInt(long t) throws ParseException {
 		if (t == 0) {
 			return Null;
 		} else if (t == 1) {

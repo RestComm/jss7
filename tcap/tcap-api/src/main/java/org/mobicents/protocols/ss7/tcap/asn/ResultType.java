@@ -25,7 +25,7 @@ public enum ResultType {
 		return type;
 	}
 
-	public ResultType getFromInt(long t) throws ParseException {
+	public static ResultType getFromInt(long t) throws ParseException {
 		if (t == 0) {
 			return Accepted;
 		} else if (t == 1) {
