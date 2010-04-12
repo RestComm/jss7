@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 
 public final class TcapFactory {
 
@@ -114,5 +115,10 @@ public final class TcapFactory {
 		AbortSourceImpl as = new AbortSourceImpl();
 		as.decode(localAis);
 		return as;
+	}
+
+	public static Component createComponent(AsnInputStream localAis) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

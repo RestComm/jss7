@@ -26,7 +26,7 @@ public class ProtocolVersionImpl implements ProtocolVersion {
 		_VALUE.set(0);
 		AsnOutputStream aos = new AsnOutputStream();
 		try {
-			aos.writeStringBinary(_VALUE,_TAG_PROTOCOL_VERSION_CLASS, _TAG_PROTOCOL_VERSION);
+			aos.writeStringBinary(_TAG_PROTOCOL_VERSION_CLASS, _TAG_PROTOCOL_VERSION,_VALUE);
 			_ENCODED_VALUE = aos.toByteArray();
 		} catch (AsnException e) {
 			// TODO Auto-generated catch block
