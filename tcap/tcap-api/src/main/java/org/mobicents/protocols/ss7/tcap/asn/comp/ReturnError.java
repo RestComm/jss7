@@ -26,6 +26,8 @@ public interface ReturnError extends Component {
 	
 	//mandatory
 	//that damn error code
+	public void setErrorCode(ErrorCode ec);
+	public ErrorCode getErrorCode();
 	
 	//paramter, optional
 	public void setParameter(Parameter p);
