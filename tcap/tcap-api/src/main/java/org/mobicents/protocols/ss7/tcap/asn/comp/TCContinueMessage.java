@@ -27,10 +27,10 @@ public interface TCContinueMessage extends Encodable {
 	public static final int _TAG_CLASS_DTX = Tag.CLASS_APPLICATION;
 	
 	//mandatory
-	public String getOriginatingTransactionId();
-	public void setOriginatingTransactionId(String t);
-	public String getDestinationTransactionId();
-	public void setDestinationTransactionId(String t);
+	public Long getOriginatingTransactionId();
+	public void setOriginatingTransactionId(Long t);
+	public Long getDestinationTransactionId();
+	public void setDestinationTransactionId(Long t);
 	//opt
 	public DialogPortion getDialogPortion();
 	public void setDialogPortion(DialogPortion dp);

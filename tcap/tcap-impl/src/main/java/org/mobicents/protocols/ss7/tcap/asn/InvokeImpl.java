@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
@@ -124,6 +125,11 @@ public class InvokeImpl implements Invoke {
 
 	}
 
+	public ComponentType getType() {
+
+		return ComponentType.Invoke;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -159,19 +165,18 @@ public class InvokeImpl implements Invoke {
 
 			if (tag == OperationCode._TAG_GLOBAL || tag == OperationCode._TAG_LOCAL) {
 				this.operationCode = TcapFactory.createOperationCode(tag, localAis);
-				if (localAis.available()<=0)
-				{
+				if (localAis.available() <= 0) {
 					return;
 				}
-				
+
 			} else {
 				throw new ParseException("Expected Local|Global Operation Code tag, found: " + tag);
 			}
-			
-				// optional parameter
-				tag = localAis.readTag();
-				this.parameter = TcapFactory.createParameter(tag, localAis);
-			
+
+			// optional parameter
+			tag = localAis.readTag();
+			this.parameter = TcapFactory.createParameter(tag, localAis);
+
 		} catch (IOException e) {
 			throw new ParseException(e);
 		} catch (AsnException e) {
@@ -198,14 +203,12 @@ public class InvokeImpl implements Invoke {
 			AsnOutputStream localAos = new AsnOutputStream();
 
 			localAos.writeInteger(_TAG_IID_CLASS, _TAG_IID, this.invokeId);
-			if(this.linkedId!=null)
-			{
-				localAos.writeInteger(_TAG_LID_CLASS, _TAG_LID, this.linkedId);	
+			if (this.linkedId != null) {
+				localAos.writeInteger(_TAG_LID_CLASS, _TAG_LID, this.linkedId);
 			}
-			
+
 			this.operationCode.encode(localAos);
-			if(this.parameter!=null)
-			{
+			if (this.parameter != null) {
 				this.parameter.encode(localAos);
 			}
 			byte[] data = localAos.toByteArray();

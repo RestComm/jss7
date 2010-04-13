@@ -99,8 +99,8 @@ public class TCUniMessageImpl implements TCUniMessage {
 			if (tag != Component._COMPONENT_TAG) {
 				throw new ParseException("Expected ComponentPortion tag, found: " + tag);
 			}
-			len = ais.readLength();
-			if (len < ais.available() || len == 0) {
+			len = localAis.readLength();
+			if (len < localAis.available() || len == 0) {
 				throw new ParseException("Not enough data");
 			}
 			List<Component> cps = new ArrayList<Component>();
@@ -149,6 +149,13 @@ public class TCUniMessageImpl implements TCUniMessage {
 			}
 			if (this.dp != null) {
 				this.dp.encode(localAos);
+				if(data!=null)
+				{
+					localAos.write(data);
+				}
+				data = localAos.toByteArray();
+			}else
+			{
 				if(data!=null)
 				{
 					localAos.write(data);

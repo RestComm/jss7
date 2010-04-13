@@ -4,7 +4,6 @@
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +23,8 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	private static final String _OCTET_STRING_ENCODE = "US-ASCII";
 
 	// mandatory
-	private String originatingTransactionId;
-	private String destiantionTransactionId;
+	private Long originatingTransactionId;
+	private Long destiantionTransactionId;
 	// opt
 	private DialogPortion dp;
 	// opt
@@ -49,7 +48,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage#
 	 * getDestinationTransactionId()
 	 */
-	public String getDestinationTransactionId() {
+	public Long getDestinationTransactionId() {
 
 		return this.destiantionTransactionId;
 	}
@@ -72,7 +71,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage#
 	 * getOriginatingTransactionId()
 	 */
-	public String getOriginatingTransactionId() {
+	public Long getOriginatingTransactionId() {
 
 		return this.originatingTransactionId;
 	}
@@ -95,7 +94,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage#
 	 * setDestinationTransactionId(java.lang.String)
 	 */
-	public void setDestinationTransactionId(String t) {
+	public void setDestinationTransactionId(Long t) {
 		this.destiantionTransactionId = t;
 
 	}
@@ -118,7 +117,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage#
 	 * setOriginatingTransactionId(java.lang.String)
 	 */
-	public void setOriginatingTransactionId(String t) {
+	public void setOriginatingTransactionId(Long t) {
 
 		this.originatingTransactionId = t;
 	}
@@ -149,9 +148,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 				throw new ParseException("Expected OriginatingTransactionId, found: " + tag);
 			}
 
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			localAis.readOctetString(bos);
-			this.originatingTransactionId = new String(bos.toByteArray(), _OCTET_STRING_ENCODE);
+			this.originatingTransactionId = localAis.readInteger();
 
 			tag = localAis.readTag();
 
@@ -159,9 +156,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 				throw new ParseException("Expected OriginatingTransactionId, found: " + tag);
 			}
 
-			bos.reset();
-			localAis.readOctetString(bos);
-			this.destiantionTransactionId = new String(bos.toByteArray(), _OCTET_STRING_ENCODE);
+			this.destiantionTransactionId = localAis.readInteger();
 
 			if (localAis.available() <= 0) {
 				return;
@@ -169,7 +164,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 
 			// we hav optional;
 			tag = localAis.readTag();
-			if (tag != DialogPortion._TAG) {
+			if (tag == DialogPortion._TAG) {
 				this.dp = TcapFactory.createDialogPortion(localAis);
 				if (localAis.available() <= 0) {
 					return;
@@ -177,8 +172,8 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 				tag = localAis.readTag();
 			}
 
-			len = ais.readLength();
-			if (len < ais.available() || len == 0) {
+			len = localAis.readLength();
+			if (len < localAis.available() || len == 0) {
 				throw new ParseException("Not enough data");
 			}
 			List<Component> cps = new ArrayList<Component>();
@@ -231,15 +226,17 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 			}
 
 			// write TX
-			localAos.writeStringOctet(_TAG_OTX, _TAG_CLASS_OTX, new ByteArrayInputStream(this.originatingTransactionId
-					.getBytes(_OCTET_STRING_ENCODE)));
-			localAos.writeStringOctet(_TAG_DTX, _TAG_CLASS_DTX, new ByteArrayInputStream(this.destiantionTransactionId
-					.getBytes(_OCTET_STRING_ENCODE)));
+			localAos.writeInteger(_TAG_CLASS_OTX, _TAG_OTX, (this.originatingTransactionId));
+			localAos.writeInteger(_TAG_CLASS_DTX, _TAG_DTX, (this.destiantionTransactionId));
 
 			if (this.dp != null) {
 				this.dp.encode(localAos);
-				if(data!=null)
-				{
+				if (data != null) {
+					localAos.write(data);
+				}
+				data = localAos.toByteArray();
+			} else {
+				if (data != null) {
 					localAos.write(data);
 				}
 				data = localAos.toByteArray();

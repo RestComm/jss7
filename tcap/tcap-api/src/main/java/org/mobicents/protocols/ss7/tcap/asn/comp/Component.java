@@ -17,6 +17,6 @@ public interface Component extends Encodable{
 	public static final int _COMPONENT_TAG_CLASS = Tag.CLASS_APPLICATION;
 	
 	
-	
+	public ComponentType getType();
 	
 }

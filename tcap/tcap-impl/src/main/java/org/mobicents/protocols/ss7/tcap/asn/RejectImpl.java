@@ -9,6 +9,7 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
@@ -72,6 +73,11 @@ public class RejectImpl implements Reject {
 
 		this.problem = p;
 
+	}
+
+	public ComponentType getType() {
+
+		return ComponentType.Reject;
 	}
 
 	/*

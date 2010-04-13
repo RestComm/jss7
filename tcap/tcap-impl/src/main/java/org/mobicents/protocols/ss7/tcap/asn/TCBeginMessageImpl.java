@@ -134,7 +134,7 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 
 			// we hav optional;
 			tag = localAis.readTag();
-			if (tag != DialogPortion._TAG) {
+			if (tag == DialogPortion._TAG) {
 				this.dp = TcapFactory.createDialogPortion(localAis);
 				if (localAis.available() <= 0) {
 					return;
@@ -142,8 +142,8 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 				tag = localAis.readTag();
 			}
 
-			len = ais.readLength();
-			if (len < ais.available() || len == 0) {
+			len = localAis.readLength();
+			if (len < localAis.available() || len == 0) {
 				throw new ParseException("Not enough data");
 			}
 			List<Component> cps = new ArrayList<Component>();
@@ -200,6 +200,13 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 
 			if (this.dp != null) {
 				this.dp.encode(localAos);
+				if(data!=null)
+				{
+					localAos.write(data);
+				}
+				data = localAos.toByteArray();
+			}else
+			{
 				if(data!=null)
 				{
 					localAos.write(data);

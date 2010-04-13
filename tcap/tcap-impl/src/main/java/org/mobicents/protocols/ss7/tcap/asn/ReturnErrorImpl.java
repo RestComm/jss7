@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCodeType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
@@ -17,71 +18,99 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
 
 /**
  * @author baranowb
- *
+ * 
  */
 public class ReturnErrorImpl implements ReturnError {
 
 	// mandatory
 	private Long invokeId;
-	
+
 	// mandatory
 	private ErrorCode errorCode;
-	
+
 	// optional
 	private Parameter parameter;
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError#getErrorCode()
 	 */
 	public ErrorCode getErrorCode() {
-		
+
 		return this.errorCode;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError#getInvokeId()
 	 */
 	public Long getInvokeId() {
-		
+
 		return this.invokeId;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError#getParameter()
 	 */
 	public Parameter getParameter() {
-		
+
 		return this.parameter;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError#setErrorCode(org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError#setErrorCode(org
+	 * .mobicents.protocols.ss7.tcap.asn.comp.ErrorCode)
 	 */
 	public void setErrorCode(ErrorCode ec) {
 		this.errorCode = ec;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError#setInvokeId(java.lang.Long)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError#setInvokeId(java
+	 * .lang.Long)
 	 */
 	public void setInvokeId(Long i) {
 		this.invokeId = i;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError#setParameter(org.mobicents.protocols.ss7.tcap.asn.comp.Parameter)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError#setParameter(org
+	 * .mobicents.protocols.ss7.tcap.asn.comp.Parameter)
 	 */
 	public void setParameter(Parameter p) {
 		this.parameter = p;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols.asn.AsnInputStream)
+	public ComponentType getType() {
+
+		return ComponentType.Error;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols
+	 * .asn.AsnInputStream)
 	 */
 	public void decode(AsnInputStream ais) throws ParseException {
-		
+
 		try {
 			int len = ais.readLength();
 			if (ais.available() < len) {
@@ -100,16 +129,13 @@ public class ReturnErrorImpl implements ReturnError {
 			this.invokeId = localAis.readInteger();
 
 			tag = localAis.readTag();
-			if(tag == ErrorCode._TAG_GLOBAL || tag == ErrorCode._TAG_LOCAL)
-			{
-				this.errorCode = TcapFactory.createErrorCode(tag == ErrorCode._TAG_GLOBAL? ErrorCodeType.Global: ErrorCodeType.Local);
-				if(localAis.available()<=0)
-				{
+			if (tag == ErrorCode._TAG_GLOBAL || tag == ErrorCode._TAG_LOCAL) {
+				this.errorCode = TcapFactory.createErrorCode(tag == ErrorCode._TAG_GLOBAL ? ErrorCodeType.Global : ErrorCodeType.Local);
+				if (localAis.available() <= 0) {
 					return;
 				}
-			}else
-			{
-				throw new ParseException("Expected Local|Globa error code, found: "+tag);
+			} else {
+				throw new ParseException("Expected Local|Globa error code, found: " + tag);
 			}
 			tag = localAis.readTag();
 			this.parameter = TcapFactory.createParameter(tag, localAis);
@@ -120,11 +146,15 @@ public class ReturnErrorImpl implements ReturnError {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols.asn.AsnOutputStream)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
+	 * .asn.AsnOutputStream)
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
-		
+
 		if (this.invokeId == null) {
 			throw new ParseException("Invoke ID not set!");
 		}
@@ -137,8 +167,7 @@ public class ReturnErrorImpl implements ReturnError {
 			localAos.writeInteger(_TAG_IID_CLASS, _TAG_IID, this.invokeId);
 
 			this.errorCode.encode(localAos);
-			if(this.parameter!=null)
-			{
+			if (this.parameter != null) {
 				this.parameter.encode(localAos);
 			}
 			byte[] data = localAos.toByteArray();

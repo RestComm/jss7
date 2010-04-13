@@ -12,6 +12,7 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
@@ -101,6 +102,11 @@ public class ReturnResultImpl implements ReturnResult {
 		this.parameter = p;
 	}
 
+	public ComponentType getType() {
+
+		return ComponentType.ReturnResult;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -157,7 +163,7 @@ public class ReturnResultImpl implements ReturnResult {
 				this.operationCode = opCodes.toArray(this.operationCode);
 
 				if (localAis.available() > 0) {
-					
+
 				} else {
 					return;
 				}
