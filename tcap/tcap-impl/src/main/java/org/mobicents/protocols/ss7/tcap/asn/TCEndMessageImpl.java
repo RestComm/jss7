@@ -109,7 +109,7 @@ public class TCEndMessageImpl implements TCEndMessage {
 	public void decode(AsnInputStream ais) throws ParseException {
 		try {
 			int len = ais.readLength();
-			if (len < ais.available()) {
+			if (len > ais.available()) {
 				throw new ParseException("Not enough data: " + ais.available());
 			}
 			if (len == 0x80) {
@@ -117,7 +117,10 @@ public class TCEndMessageImpl implements TCEndMessage {
 				throw new ParseException("Undefined len not supported");
 			}
 			byte[] data = new byte[len];
-			ais.read(data);
+			if(len!=ais.read(data))
+			{
+				throw new ParseException("Not enough data read.");
+			}
 			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(data));
 
 			int tag = localAis.readTag();

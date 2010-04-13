@@ -83,7 +83,10 @@ public class DialogAbortAPDUImpl implements DialogAbortAPDU {
 			// going the easy way; not going to work with undefined!
 			// this way we dont have to go through remaining len countdown
 			byte[] dataChunk = new byte[len];
-			ais.read(dataChunk);
+			if(len!=ais.read(dataChunk))
+			{
+				throw new ParseException("Not enough data read.");
+			}
 			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(dataChunk));
 			int tag = localAis.readTag();
 			// optional protocol version

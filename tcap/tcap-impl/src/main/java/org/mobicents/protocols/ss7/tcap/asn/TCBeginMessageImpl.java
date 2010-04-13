@@ -23,7 +23,7 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 
 	private static final String _OCTET_STRING_ENCODE = "US-ASCII";
 	// mandatory
-	private String originatingTransactionId;
+	private Long originatingTransactionId;
 	// opt
 	private DialogPortion dp;
 	// opt
@@ -58,7 +58,7 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#
 	 * getOriginatingTransactionId()
 	 */
-	public String getOriginatingTransactionId() {
+	public Long getOriginatingTransactionId() {
 
 		return this.originatingTransactionId;
 	}
@@ -93,7 +93,7 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#
 	 * setOriginatingTransactionId(java.lang.String)
 	 */
-	public void setOriginatingTransactionId(String t) {
+	public void setOriginatingTransactionId(Long t) {
 		this.originatingTransactionId = t;
 
 	}
@@ -108,7 +108,7 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 	public void decode(AsnInputStream ais) throws ParseException {
 		try {
 			int len = ais.readLength();
-			if (len < ais.available()) {
+			if (len > ais.available()) {
 				throw new ParseException("Not enough data: " + ais.available());
 			}
 			if (len == 0x80) {
@@ -116,7 +116,10 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 				throw new ParseException("Undefined len not supported");
 			}
 			byte[] data = new byte[len];
-			ais.read(data);
+			if(len!=ais.read(data))
+			{
+				throw new ParseException("Not enough data read!");
+			}
 			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(data));
 
 			int tag = localAis.readTag();
@@ -124,9 +127,8 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 				throw new ParseException("Expected OriginatingTransactionId, found: " + tag);
 			}
 
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			localAis.readOctetString(bos);
-			this.originatingTransactionId = new String(bos.toByteArray(), _OCTET_STRING_ENCODE);
+			
+			this.originatingTransactionId =localAis.readInteger();
 
 			if (localAis.available() <= 0) {
 				return;
@@ -195,8 +197,7 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 			
 
 			// write TX
-			localAos.writeStringOctet(_TAG_OTX, _TAG_CLASS_OTX, new ByteArrayInputStream(this.originatingTransactionId
-					.getBytes(_OCTET_STRING_ENCODE)));
+			localAos.writeInteger( _TAG_CLASS_OTX,_TAG_OTX, (this.originatingTransactionId));
 
 			if (this.dp != null) {
 				this.dp.encode(localAos);
