@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCodeType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCodeType;
@@ -12,6 +14,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
@@ -240,6 +243,10 @@ public final class TcapFactory {
 			{
 				c =  createReject();
 				c.decode(localAis);
+			}else if(tag == ReturnError._TAG)
+			{
+				c =  createReturnError();
+				c.decode(localAis);
 			}
 
 			if (c == null) {
@@ -269,7 +276,9 @@ public final class TcapFactory {
 	public static Invoke createComponentInvoke() {
 		return new InvokeImpl();
 	}
-	
+	public static ReturnError createReturnError() {
+		return new ReturnErrorImpl();
+	}
 	
 	public static Problem createProblem(ProblemType pt, AsnInputStream ais) throws ParseException {
 		Problem p = createProblem(pt);
@@ -279,6 +288,17 @@ public final class TcapFactory {
 	public static Problem createProblem(ProblemType pt) {
 		Problem p = new ProblemImpl();
 		p.setType(pt);
+		return p;
+	}
+	
+	public static ErrorCode createErrorCode(ErrorCodeType pt, AsnInputStream ais) throws ParseException {
+		ErrorCode p = createErrorCode(pt);
+		p.decode(ais);
+		return p;
+	}
+	public static ErrorCode createErrorCode(ErrorCodeType pt) {
+		ErrorCode p = new ErrorCodeImpl();
+		p.setErrorType(pt);
 		return p;
 	}
 }

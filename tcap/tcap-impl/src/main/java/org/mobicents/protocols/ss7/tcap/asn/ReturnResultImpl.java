@@ -70,7 +70,7 @@ public class ReturnResultImpl implements ReturnResult {
 	 * .Long)
 	 */
 	public void setInvokeId(Long i) {
-		if (i < -128 || i > 127) {
+		if ((i == null) || (i < -128 || i > 127)) {
 			throw new IllegalArgumentException("Invoke ID our of range: <-128,127>: " + i);
 		}
 		this.invokeId = i;
@@ -157,12 +157,12 @@ public class ReturnResultImpl implements ReturnResult {
 				this.operationCode = opCodes.toArray(this.operationCode);
 
 				if (localAis.available() > 0) {
-					tag = localAis.readTag();
+					
 				} else {
 					return;
 				}
 			}
-
+			tag = localAis.readTag();
 			this.parameter = TcapFactory.createParameter(tag, localAis);
 		} catch (IOException e) {
 			throw new ParseException(e);

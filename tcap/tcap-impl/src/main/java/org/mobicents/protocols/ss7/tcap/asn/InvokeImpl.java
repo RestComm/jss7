@@ -79,7 +79,7 @@ public class InvokeImpl implements Invoke {
 	 * .Integer)
 	 */
 	public void setInvokeId(Long i) {
-		if (i < -128 || i > 127) {
+		if ((i == null) || (i < -128 || i > 127)) {
 			throw new IllegalArgumentException("Invoke ID our of range: <-128,127>: " + i);
 		}
 		this.invokeId = i;
@@ -94,7 +94,7 @@ public class InvokeImpl implements Invoke {
 	 * .Integer)
 	 */
 	public void setLinkedId(Long i) {
-		if (i < -128 || i > 127) {
+		if ((i == null) || (i < -128 || i > 127)) {
 			throw new IllegalArgumentException("Invoke ID our of range: <-128,127>: " + i);
 		}
 		this.linkedId = i;
@@ -159,14 +159,19 @@ public class InvokeImpl implements Invoke {
 
 			if (tag == OperationCode._TAG_GLOBAL || tag == OperationCode._TAG_LOCAL) {
 				this.operationCode = TcapFactory.createOperationCode(tag, localAis);
-				tag = localAis.readTag();
+				if (localAis.available()<=0)
+				{
+					return;
+				}
+				
 			} else {
 				throw new ParseException("Expected Local|Global Operation Code tag, found: " + tag);
 			}
-			if (localAis.available() > 0) {
+			
 				// optional parameter
+				tag = localAis.readTag();
 				this.parameter = TcapFactory.createParameter(tag, localAis);
-			}
+			
 		} catch (IOException e) {
 			throw new ParseException(e);
 		} catch (AsnException e) {
