@@ -1,0 +1,46 @@
+package org.mobicents.protocols.ss7.map.api;
+
+public interface MAPDialog {
+
+	public void addServiceRequest(ServiceRequest serviceRequest);
+
+	public void addServiceResponse(ServiceResponse serviceResponse);
+
+	/**
+	 * This is equivalent of MAP User issuing the MAP-DELIMITER Service Request.
+	 * send() is called to explicitly request the transfer of the MAP protocol
+	 * data units to the peer entities.
+	 */
+	public void send();
+
+	/**
+	 * This is equvalent of MAP User issuing the MAP-CLOSE Service Request. This
+	 * service is used for releasing a previously established MAP dialogue. The
+	 * service may be invoked by either MAP service-user depending on rules
+	 * defined within the service-user.
+	 * 
+	 * <br/>
+	 * 
+	 * If prearrangedEnd is false, all the Service Primitive added to MAPDialog
+	 * and not sent yet, will be sent to peer.
+	 * 
+	 * <br/>
+	 * 
+	 * If prearrangedEnd is true, all the Service Primitive added to MAPDialog
+	 * and not sent yet, will not be sent to peer.
+	 * 
+	 * @param prearrangedEnd
+	 */
+	public void close(boolean prearrangedEnd);
+	
+	/**
+	 * This is equivalent to MAP User issuing the MAP-U-ABORT Service Request.
+	 * 
+	 * @param userReason
+	 */
+	//TODO : add DiagnosticInformation and SpecificInformation?
+	public void abort(int userReason);
+	
+	public void sendOpenServiceResponse();
+
+}

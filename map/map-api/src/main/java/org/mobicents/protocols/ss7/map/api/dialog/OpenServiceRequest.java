@@ -1,5 +1,7 @@
 package org.mobicents.protocols.ss7.map.api.dialog;
 
+import org.mobicents.protocols.ss7.map.api.DialogRequest;
+
 /**
  * ETS 300 974 - 5.4 Sequencing of services
  * 
@@ -14,7 +16,7 @@ package org.mobicents.protocols.ss7.map.api.dialog;
  * @author amit bhayani
  * 
  */
-public interface OpenServiceRequest {
+public interface OpenServiceRequest extends DialogRequest {
 
 	public long[] getApplicationContextName();
 

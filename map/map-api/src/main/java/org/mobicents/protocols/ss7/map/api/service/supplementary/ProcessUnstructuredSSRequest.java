@@ -11,5 +11,5 @@ import org.mobicents.protocols.ss7.map.api.ServiceRequest;
  * 
  */
 public interface ProcessUnstructuredSSRequest extends ServiceRequest {
-
+	public static final int SERVICE_PRIMITIVE = 1;
 }
