@@ -128,20 +128,20 @@ public class ReturnResultImpl implements ReturnResult {
 			}
 
 			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(data));
-			int a =localAis.getDataReadCount();
+
 			int tag = localAis.readTag();
 			if (tag != _TAG_IID) {
 				throw new ParseException("Expected InvokeID tag, found: " + tag);
 			}
-			a = localAis.getDataReadCount();
+	
 			this.invokeId = localAis.readInteger();
-			a = localAis.getDataReadCount();
+	
 			if (localAis.available() <= 0) {
 				return;
 			}
-			a = localAis.getDataReadCount();
+	
 			tag = localAis.readTag();
-			a = localAis.getDataReadCount();
+	
 			if (tag == Tag.SEQUENCE) {
 				// sequence of OperationCode
 				
