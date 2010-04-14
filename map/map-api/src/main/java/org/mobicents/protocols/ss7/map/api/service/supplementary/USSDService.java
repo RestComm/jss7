@@ -19,10 +19,25 @@ public interface USSDService {
 	public void setUSSDDataCodingScheme(byte ussdDataCodingSch);
 
 	/**
+	 * <p>
 	 * This parameter contains a string of unstructured information in an
 	 * Unstructured Supplementary Service Data operation. The string is sent
 	 * either by the mobile user or the network. The contents of a string sent
 	 * by the MS are interpreted by the network as specified in GSM 02.90.
+	 * </p>
+	 * <br/>
+	 * <p>
+	 * USSD String is OCTET STRING (SIZE (1..160))
+	 * </p>
+	 * 
+	 * <br/>
+	 * 
+	 * <p>
+	 * The structure of the contents of the USSD-String is dependent -- on the
+	 * USSD-DataCodingScheme as described in TS GSM 03.38.
+	 * </p>
+	 * 
+	 * 
 	 * 
 	 * @return
 	 */
