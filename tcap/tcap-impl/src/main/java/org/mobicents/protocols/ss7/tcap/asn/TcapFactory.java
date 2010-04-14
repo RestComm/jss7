@@ -59,7 +59,7 @@ public final class TcapFactory {
 			if (tag == DialogAPDU._TAG_RESPONSE) {
 				DialogResponseAPDUImpl d = new DialogResponseAPDUImpl();
 				d.decode(ais);
-				return null;
+				return d;
 
 			}
 

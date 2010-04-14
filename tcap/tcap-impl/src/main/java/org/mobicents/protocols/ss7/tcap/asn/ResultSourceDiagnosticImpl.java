@@ -8,6 +8,7 @@ import java.io.IOException;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 
 /**
  * @author baranowb
@@ -89,6 +90,11 @@ public class ResultSourceDiagnosticImpl implements ResultSourceDiagnostic {
 				if (len > ais.available()) {
 					throw new ParseException("Not enough data.");
 				}
+				tag = ais.readTag();
+				if(tag != Tag.INTEGER)
+				{
+					throw new ParseException("Expected Integer tag, found: "+tag);
+				}
 				long t = ais.readInteger();
 				this.userType = DialogServiceUserType.getFromInt(t);
 				return;
@@ -98,6 +104,11 @@ public class ResultSourceDiagnosticImpl implements ResultSourceDiagnostic {
 				len = ais.readLength();
 				if (len > ais.available()) {
 					throw new ParseException("Not enough data.");
+				}
+				tag = ais.readTag();
+				if(tag != Tag.INTEGER)
+				{
+					throw new ParseException("Expected Integer tag, found: "+tag);
 				}
 				long t = ais.readInteger();
 				this.providerType = DialogServiceProviderType.getFromInt(t);
