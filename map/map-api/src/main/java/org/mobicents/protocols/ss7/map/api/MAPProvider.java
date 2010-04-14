@@ -3,6 +3,8 @@ package org.mobicents.protocols.ss7.map.api;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 public interface MAPProvider {
+	
+	public static final int NETWORK_UNSTRUCTURED_SS_CONTEXT_V2 = 1;
 
 	/**
 	 * Creates a new Dialog. This is equivalent to issuing MAP_OPEN Service

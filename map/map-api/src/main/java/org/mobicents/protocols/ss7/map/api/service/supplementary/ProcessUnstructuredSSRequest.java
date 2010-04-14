@@ -10,6 +10,6 @@ import org.mobicents.protocols.ss7.map.api.ServiceRequest;
  * @author amit bhayani
  * 
  */
-public interface ProcessUnstructuredSSRequest extends ServiceRequest {
+public interface ProcessUnstructuredSSRequest extends ServiceRequest, USSDService {
 	public static final int SERVICE_PRIMITIVE = 1;
 }

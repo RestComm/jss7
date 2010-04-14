@@ -1,5 +1,5 @@
 package org.mobicents.protocols.ss7.map.api;
 
-public interface ServiceResponse {
+public interface ServiceResponse extends MAPMessage {
 
 }

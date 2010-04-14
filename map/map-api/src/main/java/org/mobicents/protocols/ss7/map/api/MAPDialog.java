@@ -2,8 +2,20 @@ package org.mobicents.protocols.ss7.map.api;
 
 public interface MAPDialog {
 
+	/**
+	 * Adds the {@code ServiceRequest} to this MAPDialog however the
+	 * ServiceRequest is not sent to remote end till send() is called
+	 * 
+	 * @param serviceRequest
+	 */
 	public void addServiceRequest(ServiceRequest serviceRequest);
 
+	/**
+	 * Adds the {@code serviceResponse} to this MAPDialog however the
+	 * serviceResponse is not sent to remote end till send() is called
+	 * 
+	 * @param serviceResponse
+	 */
 	public void addServiceResponse(ServiceResponse serviceResponse);
 
 	/**
@@ -32,15 +44,15 @@ public interface MAPDialog {
 	 * @param prearrangedEnd
 	 */
 	public void close(boolean prearrangedEnd);
-	
+
 	/**
 	 * This is equivalent to MAP User issuing the MAP-U-ABORT Service Request.
 	 * 
 	 * @param userReason
 	 */
-	//TODO : add DiagnosticInformation and SpecificInformation?
+	// TODO : add DiagnosticInformation and SpecificInformation?
 	public void abort(int userReason);
-	
+
 	public void sendOpenServiceResponse();
 
 }

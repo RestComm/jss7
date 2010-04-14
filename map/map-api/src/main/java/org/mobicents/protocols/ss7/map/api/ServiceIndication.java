@@ -1,5 +1,6 @@
 package org.mobicents.protocols.ss7.map.api;
 
-public interface ServiceIndication {
+public interface ServiceIndication extends MAPMessage {
+
 
 }
