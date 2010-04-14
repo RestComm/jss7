@@ -22,8 +22,8 @@ public interface TCEndMessage extends Encodable {
 	
 	
 	//mandatory
-	public String getDestinationTransactionId();
-	public void setDestinationTransactionId(String t);
+	public Long getDestinationTransactionId();
+	public void setDestinationTransactionId(Long t);
 	
 	//opt
 	public DialogPortion getDialogPortion();

@@ -37,7 +37,7 @@ public class TcContinueTest extends TestCase {
 		
 		//no idea how to check rest...?
 		
-		
+		//trace
 		byte[] b = new byte[]{
 		0x65,
 		0x16,
@@ -68,7 +68,7 @@ public class TcContinueTest extends TestCase {
 		//op code
 		0x02,
 		0x01,
-		0x37};
+		0x37 };
 		
 		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(b));
 		int tag = ais.readTag();
@@ -104,7 +104,7 @@ public class TcContinueTest extends TestCase {
 	@org.junit.Test
 	public void testBasicTCContinue_Long() throws IOException, ParseException {
 
-		
+		//trace
 		byte[] b = new byte[]{
 				//TCContinue
 				0x65,

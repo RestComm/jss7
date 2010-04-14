@@ -37,7 +37,7 @@ public class TcBeginTest extends TestCase {
 		
 		//no idea how to check rest...?
 		
-		
+		//trace
 		byte[] b = new byte[]{
 				//TCBegin
 				0x62,
@@ -98,7 +98,21 @@ public class TcBeginTest extends TestCase {
 		assertEquals("Expected TCInvoke",TCBeginMessage._TAG,tag);
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
 		
-	
+		assertEquals("Originating transaction id does not match",new Long(145031169L), tcm.getOriginatingTransactionId());
+		assertNotNull("Dialog portion should not be null",tcm.getDialogPortion());
+		
+		assertNull("Component portion should not be present",tcm.getComponent());
+		
+		
+		DialogPortion dp = tcm.getDialogPortion();
+		
+		assertFalse("Dialog should not be Uni",dp.isUnidirectional());
+		
+		DialogAPDU dapdu = dp.getDialogAPDU();
+		assertNotNull("APDU should not be null",dapdu);
+		assertEquals("Wrong APDU type",DialogAPDUType.Request, dapdu.getType());
+		DialogRequestAPDU dr = (DialogRequestAPDU) dapdu;
+		//rest is checked in dialog portion type!
 		AsnOutputStream aos = new AsnOutputStream();
 		tcm.encode(aos);
 		byte[] encoded = aos.toByteArray();

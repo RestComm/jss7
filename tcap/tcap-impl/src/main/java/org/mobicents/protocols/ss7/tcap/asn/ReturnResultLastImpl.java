@@ -127,25 +127,30 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 			}
 
 			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(data));
+			int a =localAis.getDataReadCount();
 			int tag = localAis.readTag();
 			if (tag != _TAG_IID) {
 				throw new ParseException("Expected InvokeID tag, found: " + tag);
 			}
+			a = localAis.getDataReadCount();
 			this.invokeId = localAis.readInteger();
+			a = localAis.getDataReadCount();
 			if (localAis.available() <= 0) {
 				return;
 			}
-
+			a = localAis.getDataReadCount();
 			tag = localAis.readTag();
+			a = localAis.getDataReadCount();
 			if (tag == Tag.SEQUENCE) {
 				// sequence of OperationCode
-				len = ais.readLength();
+				
+				len = localAis.readLength();
 				if (len == 0x80) {
 					throw new ParseException("Unspiecified length is not supported.");
 				}
 
 				data = new byte[len];
-				if (len != ais.read(data)) {
+				if (len != localAis.read(data)) {
 					throw new ParseException("Not enough data read.");
 				}
 				AsnInputStream sequenceStream = new AsnInputStream(new ByteArrayInputStream(data));

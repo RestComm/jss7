@@ -24,7 +24,7 @@ public class TCEndMessageImpl implements TCEndMessage {
 
 	private static final String _OCTET_STRING_ENCODE = "US-ASCII";
 	// mandatory
-	private String destinationTransactionId;
+	private Long destinationTransactionId;
 	// opt
 	private DialogPortion dp;
 	// opt
@@ -59,7 +59,7 @@ public class TCEndMessageImpl implements TCEndMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#
 	 * getOriginatingTransactionId()
 	 */
-	public String getDestinationTransactionId() {
+	public Long getDestinationTransactionId() {
 		          
 		return this.destinationTransactionId;
 	}
@@ -94,7 +94,7 @@ public class TCEndMessageImpl implements TCEndMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#
 	 * setOriginatingTransactionId(java.lang.String)
 	 */
-	public void setDestinationTransactionId(String t) {
+	public void setDestinationTransactionId(Long t) {
 		this.destinationTransactionId = t;
 
 	}
@@ -128,9 +128,8 @@ public class TCEndMessageImpl implements TCEndMessage {
 				throw new ParseException("Expected OriginatingTransactionId, found: " + tag);
 			}
 
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			localAis.readOctetString(bos);
-			this.destinationTransactionId = new String(bos.toByteArray(), _OCTET_STRING_ENCODE);
+			
+			this.destinationTransactionId = localAis.readInteger();
 
 			if (localAis.available() <= 0) {
 				return;
@@ -199,8 +198,7 @@ public class TCEndMessageImpl implements TCEndMessage {
 			
 
 			// write TX
-			localAos.writeStringOctet(_TAG_DTX, _TAG_CLASS_DTX, new ByteArrayInputStream(this.destinationTransactionId
-					.getBytes(_OCTET_STRING_ENCODE)));
+			localAos.writeInteger(_TAG_CLASS_DTX,_TAG_DTX,  (this.destinationTransactionId));
 
 			if (this.dp != null) {
 				this.dp.encode(localAos);
