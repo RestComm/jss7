@@ -87,7 +87,7 @@ public class ComponentPrimitiveFactoryImpl implements ComponentPrimitiveFactory 
 	 * createTCResultRequest(boolean)
 	 */
 	public TCResultRequest createTCResultRequest(boolean last) {
-		
+
 		TCResultRequestImpl t = new TCResultRequestImpl(last);
 
 		return t;
@@ -103,14 +103,12 @@ public class ComponentPrimitiveFactoryImpl implements ComponentPrimitiveFactory 
 		if (ret == null) {
 			throw new NullPointerException("Argument must not be null");
 		}
-		
-		if(ret.getType() == ComponentType.ReturnResult)
-		{
-			TCResultIndicationImpl t = new TCResultIndicationImpl((ReturnResult)ret);
+
+		if (ret.getType() == ComponentType.ReturnResult) {
+			TCResultIndicationImpl t = new TCResultIndicationImpl((ReturnResult) ret);
 			return t;
-		}else
-		{
-			TCResultIndicationImpl t = new TCResultIndicationImpl((ReturnResultLast)ret);
+		} else {
+			TCResultIndicationImpl t = new TCResultIndicationImpl((ReturnResultLast) ret);
 			return t;
 		}
 	}
