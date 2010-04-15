@@ -233,19 +233,19 @@ public final class TcapFactory {
 
 			}else if(tag == ReturnResult._TAG)
 			{
-				c =  createReturnResult();
+				c =  createComponentReturnResult();
 				c.decode(localAis);
 			}else if(tag == ReturnResultLast._TAG)
 			{
-				c =  createReturnResultLast();
+				c =  createComponentReturnResultLast();
 				c.decode(localAis);
 			} else if(tag == Reject._TAG)
 			{
-				c =  createReject();
+				c =  createComponentReject();
 				c.decode(localAis);
 			}else if(tag == ReturnError._TAG)
 			{
-				c =  createReturnError();
+				c =  createComponentReturnError();
 				c.decode(localAis);
 			}
 
@@ -258,17 +258,17 @@ public final class TcapFactory {
 		}
 	}
 
-	public static Reject createReject() {
+	public static Reject createComponentReject() {
 		
 		return new RejectImpl();
 	}
 
-	public static ReturnResultLast createReturnResultLast() {
+	public static ReturnResultLast createComponentReturnResultLast() {
 		
 		return new ReturnResultLastImpl();
 	}
 
-	public static ReturnResult createReturnResult() {
+	public static ReturnResult createComponentReturnResult() {
 		
 		return new ReturnResultImpl();
 	}
@@ -276,7 +276,7 @@ public final class TcapFactory {
 	public static Invoke createComponentInvoke() {
 		return new InvokeImpl();
 	}
-	public static ReturnError createReturnError() {
+	public static ReturnError createComponentReturnError() {
 		return new ReturnErrorImpl();
 	}
 	

@@ -1,8 +1,6 @@
 package org.mobicents.protocols.ss7.tcap.api;
 
-import org.mobicents.protocols.ss7.tcap.api.tc.component.ComponentPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.DialogPrimitiveFactory;
 
 public interface TCAPProvider {
 

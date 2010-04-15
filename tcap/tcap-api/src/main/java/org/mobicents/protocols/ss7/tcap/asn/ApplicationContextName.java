@@ -10,5 +10,14 @@ public interface ApplicationContextName extends Encodable{
 	public static final int _TAG_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
 	public static final boolean _TAG_PC_PRIMITIVE = false;
 	
-	
+	/**
+	 * @return the oid
+	 */
+	public long[] getOid();
+
+	/**
+	 * @param oid
+	 *            the oid to set
+	 */
+	public void setOid(long[] oid);
 }

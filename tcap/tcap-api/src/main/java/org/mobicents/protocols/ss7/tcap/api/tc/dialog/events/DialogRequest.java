@@ -16,4 +16,5 @@ public interface DialogRequest {
 	 */
 	public Dialog getDialog();
 
+	
 }

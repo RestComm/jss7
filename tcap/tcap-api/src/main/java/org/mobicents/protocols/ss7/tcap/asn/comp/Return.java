@@ -18,8 +18,8 @@ public interface Return extends Encodable,Component {
 	public static final int _TAG_IID_CLASS = Tag.CLASS_UNIVERSAL;
 	
 	//mandatory
-	public void setInvokeId(Long i);
-	public Long getInvokeId();
+	//public void setInvokeId(Long i);
+	//public Long getInvokeId();
 	
 	
 	//opt all

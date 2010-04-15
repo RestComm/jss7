@@ -13,7 +13,5 @@ public interface TCContinueIndication extends DialogIndication {
 
 	public UserInformation getUserInformation();
 
-	public SccpAddress getDestinationAddress();
-
 	public SccpAddress getOriginatingAddress();
 }
