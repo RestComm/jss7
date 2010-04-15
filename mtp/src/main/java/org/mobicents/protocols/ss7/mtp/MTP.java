@@ -28,6 +28,7 @@ package org.mobicents.protocols.ss7.mtp;
 
 import java.io.IOException;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  * Represent the entire Message Transfer Part
@@ -44,7 +45,8 @@ public class MTP {
     
     /** Destination point code */
     private int dpc;
-    
+
+    private SelectorFactory selectorFactory;    
     /** physical channels */
     private List<Mtp1> channels;
     
@@ -53,6 +55,9 @@ public class MTP {
     
     /** Represent MTP user part  */
     private MtpUser mtpUser;
+    
+    private Logger logger = Logger.getLogger(MTP.class);
+    
     
     /**
      * Gets the name of the linkset.
@@ -108,25 +113,35 @@ public class MTP {
         this.channels = channels;
     }
     
+    public void setSelectorFactory(SelectorFactory selectorFactory) {
+	this.selectorFactory = selectorFactory;
+    }
+    
     /**
      * Activates link set.
      */
     public void activate() throws IOException {
         //create mtp layer 3 instance
         mtp3 = new Mtp3(name);
-        
+	logger.info("Created MTP layer 3");
+	        
         //assigning physical channel
         mtp3.setChannels(channels);
+        logger.info("Channels are assigned to MTP layer 3");
         
         //assigning point codes
         mtp3.setOpc(opc);
         mtp3.setDpc(dpc);
+        logger.info("Point codes are configured");
         
         //set user part
         mtp3.setUserPart(mtpUser);
-        
+        logger.info("Assigned user part " +  mtpUser);
+    
+	mtp3.setSelectorFactory(selectorFactory);    
         //starting layer 3
         mtp3.start();
+
     }
     
     /**

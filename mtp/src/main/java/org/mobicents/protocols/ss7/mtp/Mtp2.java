@@ -250,7 +250,7 @@ public class Mtp2 {
      * if bsnErrors > 2, link fails. See Q.703 section 5.3.[1,2]
      */
     private int bsnErrors = 0;
-    private String name;    
+    protected String name;    
 
     // AERM variables. we use eCounter for AERM errors
     private static final int PROVING_ATTEMPTS_THRESHOLD = 5;
@@ -266,7 +266,7 @@ public class Mtp2 {
     /**
      * SLS, range is 0-15
      */
-    private byte sls = -1;
+    protected int sls = -1;
     /**
      * Subservice field of mtp msg. See Q.704.14.2.2
      */
@@ -280,20 +280,22 @@ public class Mtp2 {
     protected Test test;
     private static final Logger logger = Logger.getLogger(Mtp2.class);
     
-    public Mtp2(Mtp3 mtp3, Mtp1 channel) {
-        this.channel = channel;
+    public Mtp2(Mtp3 mtp3, Mtp1 channel, int sls) {    
+	this(mtp3.name + ":" + channel, sls, Utils._VALUE_NOT_SET);
+        this.channel = channel;        
         this.mtp3 = mtp3;
+        channel.setLink(this);
     }
     
     public Mtp2(String name) {
         this(name, Utils._VALUE_NOT_SET, Utils._VALUE_NOT_SET);
     }
 
-    public Mtp2(String name, byte sls) {
+    public Mtp2(String name, int sls) {
         this(name, sls, Utils._VALUE_NOT_SET);
     }
 
-    public Mtp2(String name, byte sls, int subservice) {
+    public Mtp2(String name, int sls, int subservice) {
         this.name = name;
         this.sls = sls;
         this.subservice = subservice;
@@ -329,11 +331,6 @@ public class Mtp2 {
 
     public int getSltmTries() {
         return this.sltmTries.get();
-    }
-
-    public byte getSls() {
-
-        return this.sls;
     }
 
     public int getState() {
@@ -373,6 +370,10 @@ public class Mtp2 {
         this.channel = layer1;
     }
 
+    public Mtp1 getChannel() {
+	return channel;
+    }
+    
     public void setLayer3(Mtp3 layer3) {
         this.mtp3 = layer3;
 //        this.listeners.add(layer3);
@@ -388,10 +389,11 @@ public class Mtp2 {
         }
         
         channel.open();
+        mtp3.selector.register(this);
         started = true;
 
         this.reset();
-        
+
         if (this.enabledL2Debug) {
             trace("Is out fo service now");
         }
@@ -405,8 +407,11 @@ public class Mtp2 {
         // t = this.threadFactory.newThread(this);
         // t.start();
         state = Mtp2.MTP2_OUT_OF_SERVICE;
-    //start_T17();
-
+        
+        //send Out of service indicator when link starts.
+        queueLSSU(Mtp2.FRAME_STATUS_INDICATION_OS);
+        processTx(16);
+	startInitialAlignment();
     }
 
     public void stopLink() {
@@ -435,7 +440,8 @@ public class Mtp2 {
 
     // should not be used
     protected void startInitialAlignment(boolean resetTxOffset) {
-
+	logger.info(String.format("(%s) Starting initial alignment", name));
+	
         // Comment from Oleg: this is done initialy to setup correct spot in tx
         // buffer: dunno, I just believe, for now.
         if (resetTxOffset) {
@@ -473,6 +479,9 @@ public class Mtp2 {
     public void failLink() {
         cleanupTimers();
         this.state = MTP2_OUT_OF_SERVICE;
+        
+        logger.info(String.format("(%s) Link Out of service", name));
+        start_T17();
     }
 
     public boolean queue(byte[] msg) {
@@ -640,6 +649,10 @@ public class Mtp2 {
                         }
                         start_T3();
                         this.state = MTP2_ALIGNED;
+                        
+                        if (logger.isDebugEnabled()) {
+                            logger.debug(String.format("(%s) Aligned", name));
+                        }
                         break;
                     case FRAME_STATUS_INDICATION_E:
                         // 1. stop t2
@@ -657,6 +670,10 @@ public class Mtp2 {
                         start_T3();
                         // 5. set state
                         this.state = MTP2_ALIGNED;
+
+                        if (logger.isDebugEnabled()) {
+                            logger.debug(String.format("(%s) Aligned", name));
+                        }
                         break;
                     default:
                     // logger.warn("Ingoring LSSU[" + _FRAME_NAMES[type]
@@ -690,6 +707,10 @@ public class Mtp2 {
                         this.futureProving = false;
                         // 7. set state
                         this.state = MTP2_PROVING;
+                        
+                        if (logger.isDebugEnabled()) {
+                            logger.debug(String.format("(%s) Proving", name));
+                        }
                         break;
                     case FRAME_STATUS_INDICATION_OS:
                         // we should invoke ALI first, but we cancel timer
@@ -720,6 +741,10 @@ public class Mtp2 {
                         start_T3();
                         // 4. swithc state
                         this.state = MTP2_ALIGNED;
+                        
+                        if (logger.isDebugEnabled()) {
+                            logger.debug(String.format("(%s) Aligned", name));
+                        }
                         break;
                     case FRAME_STATUS_INDICATION_E:
                         // NOTE: this one is not covered in Olegs src.
@@ -833,6 +858,10 @@ public class Mtp2 {
             }
             // FIXME: switch to this
             // System.arraycopy(rxFrame, 4, sif, 0, realLength);
+            
+            if (logger.isDebugEnabled()) {
+        	logger.debug(String.format("(%s) Delivering MSU to layer 3 ",name));
+    	    }
             mtp3.onMessage(sio, sif, this);
         }
     }
@@ -845,27 +874,20 @@ public class Mtp2 {
 
         int li = rxFrame[2] & 0x3f;
 
-        if (this.enableSuTrace && enabledL2Debug) {
-            String type = null;
-
-            if (li == 0) {
-                type = "FISU(";
-
-            } else if (li == 1 || li == 2) {
-                int lssuType = rxFrame[3] & 0x07;
-                type = "LSSU(" + FRAME_NAMES[lssuType];
-            } else {
-
-                type = "MSU(";
-            }
-            StringBuilder sbb = new StringBuilder();
-            sbb.append("Received frame, type = ").append(type).append(
-                    " sequencing, (fsn = ").append(fsn).append(", fib = ").append(fib).append(", bsn = ").append(bsn).append(
-                    ", bib = ").append(bib).append(")");
-
-            trace(sbb.toString());
-
+        if (logger.isTraceEnabled()) {
+    	    String type = null;
+    	    if (li == 0) {
+    		type = "FISU";
+    	    } else if (li == 1 || li == 2) {
+    		int lssuType = rxFrame[3]&0x07;
+    		type = "LSSU(" + FRAME_NAMES[lssuType]+ ")";
+    	    } else {
+    		type = "MSU";
+    	    }
+    	    logger.trace(String.format("(%s) Receive frame, type=%s, fsn=%d, fib=%d, bsn=%d, bib=%d", name, type, fsn, fib,bsn, bib));
+    	    
         }
+        
         //Why it was 5?
         if (li + 3 > rxLen) {
 
@@ -920,10 +942,12 @@ public class Mtp2 {
                     this.retransmissionFSN_LastAcked = bsn;
 
                     this.state = MTP2_INSERVICE;
-                    //if (this.layer3 != null) {
-                    //	this.layer3.linkInService(this);
-                    //}
-                    this.mtp3.linkInService(this);
+                    
+                    if (logger.isDebugEnabled()) {
+                        logger.debug(String.format("(%s) MTP now IN_SERVICE, Notifing layer 3", name));
+                    }
+                    
+                    mtp3.linkInService(this);
                     break;
             }
         }
@@ -1166,17 +1190,26 @@ public class Mtp2 {
 
     }
 
+    public void run() {
+	while (started) {
+    	    threadTick(System.currentTimeMillis());
+    	}
+    }
+    
     public void threadTick(long tickTimeStamp) {
-
         if (started) {
             int bytesRead = 0;
             try {
 
                 bytesRead = channel.read(rxBuffer);
-
-
+		if (logger.isTraceEnabled()) {
+		    logger.trace(String.format("(%s) Read %d bytes ", name, bytesRead));
+		}
                 //this.trace("run called for "+ this.name+ " bytesRead = "+ bytesRead + " this.initiateAlign "+this.initiateAlign);
 
+		if (bytesRead == 0) {
+		    return;
+		}
                 if (bytesRead > 0) {
                     // handle received data
                     processRx(rxBuffer, bytesRead);
@@ -1265,7 +1298,6 @@ public class Mtp2 {
                 mtp3.linkFailed(this);
             }
 
-
         }
 
 
@@ -1299,9 +1331,7 @@ public class Mtp2 {
         // NOTE: buffer is flushed on start alignment.
         start_T17();
 
-        if (enabledL2Debug) {
-            trace("Alignment not possible, initiating T17 for restart. Cause: " + cause);
-        }
+        logger.info(String.format("(%s) Alignment not possible, initiating T17 for restart. Cause: %s", name, cause));
     }
 
     private void alignmentBroken(String cause) {
@@ -1339,13 +1369,18 @@ public class Mtp2 {
         stop_T3();
         stop_T4();
         this.state = MTP2_ALIGNED_READY;
+        
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("(%s) Aligned ready", name));
+        }
     // now we wait for proper data
     }
 
     private void countError(String info) {
 
         eCount++;
-
+	logger.warn(String.format("(%s) Error detected: %s", name, info));
+	
         switch (state) {
             case MTP2_ALIGNED_READY:
             case MTP2_INSERVICE:
@@ -1509,10 +1544,7 @@ public class Mtp2 {
         private boolean initial = true;
 
         public void run() {
-            if (logger.isEnabledFor(Level.WARN) && enabledL2Debug) {
-
-                trace("-------- Restarting alignment '" + name + "'-----------");
-            }
+    	    logger.info(String.format("(%s) Restarting initial alignment", name));
             // there is somethin
             // T17.cancel(true);
             // T17 = null;
@@ -1535,7 +1567,9 @@ public class Mtp2 {
     private void stop_T2() {
         ScheduledFuture f = this.T2;
         if (f != null && !f.isCancelled()) {
-            // logger.warn("Kill T2");
+    	    if (logger.isDebugEnabled()) {
+                logger.debug(String.format("(%s) Kill T2", name));
+            }
             this.T2 = null;
             f.cancel(false);
         }

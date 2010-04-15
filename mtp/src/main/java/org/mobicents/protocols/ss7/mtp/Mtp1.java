@@ -34,6 +34,16 @@ import java.io.IOException;
  */
 public interface Mtp1 {
     /**
+     * Gets the code of this channel.
+     *
+     * @return the code of this channel.
+     */
+    public int getCode();
+    
+    public void setLink(Mtp2 link);
+    public Mtp2 getLink();
+    
+    /**
      * Reads upto buffer.length bytes from layer 1.
      * 
      * @param buffer reader buffer
@@ -48,6 +58,7 @@ public interface Mtp1 {
      * @param bytesRead 
      */
     public void write(byte[] buffer, int bytesRead) throws IOException;
+    
     
     /**
      * Open message tranfer part layer 1.

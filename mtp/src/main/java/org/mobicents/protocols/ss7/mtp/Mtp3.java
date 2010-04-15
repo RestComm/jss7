@@ -28,10 +28,11 @@ package org.mobicents.protocols.ss7.mtp;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-
+import java.util.Collection;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Level;
@@ -79,7 +80,7 @@ public class Mtp3 implements Runnable {
     private int opc;
     
     /** List of signaling channels wrapped with MTP2*/
-    private List<Mtp2> links;
+    private List<Mtp2> links = new ArrayList();
     
     /** Active links */
     private Linkset linkset = new Linkset();
@@ -102,6 +103,9 @@ public class Mtp3 implements Runnable {
 
     private ScheduledExecutorService mtpTimer = Utils.getMtpTimer();
     
+    private SelectorFactory selectorFactory;
+    protected LinkSelector selector;
+    
     //public Mtp3Impl(String name, Mtp1 layer1) {
     public Mtp3(String name) {
         this.name = name;
@@ -113,6 +117,11 @@ public class Mtp3 implements Runnable {
         processor = Executors.newSingleThreadScheduledExecutor();
     }
 
+    public void setSelectorFactory(SelectorFactory selectorFactory) {
+	this.selectorFactory = selectorFactory;
+	selector = new LinkSelector(selectorFactory.getSelector());
+    }
+    
     /**
      * Assigns originated point code
      * 
@@ -137,9 +146,10 @@ public class Mtp3 implements Runnable {
      * @param channels the list of signaling channels.
      */
     protected void setChannels(List<Mtp1> channels) {
-        //creating mtp layer 2 for each channel specified
+        //creating mtp layer 2 for each channel specified        
         for (Mtp1 channel : channels) {
-            this.links.add(new Mtp2(this, channel));
+    	    Mtp2 link = new Mtp2(this, channel, channel.getCode());
+            this.links.add(link);
         }
     }
     
@@ -170,15 +180,17 @@ public class Mtp3 implements Runnable {
     public void stop() throws IOException {
         started = false;
         for (Mtp2 link : links) {
-            link.startLink();
+    	    selector.unregister(link);
+            link.stopLink();
         }        
     }
 
     public void run() {
         while (started) {
             try {
+        	Collection<Mtp2> selected = selector.select(LinkSelector.READ, 20);
                 long thisTickStamp = System.currentTimeMillis();
-                for (Mtp2 link : links) {
+                for (Mtp2 link : selected) {
                     link.threadTick(thisTickStamp);
                 }
             } catch (Exception e) {
@@ -226,6 +238,9 @@ public class Mtp3 implements Runnable {
 
     public void linkInService(Mtp2 link) {
         //restart traffic 
+        if (logger.isDebugEnabled()) {
+    	    logger.debug(String.format("(%s) Sending Traffic Restart Allowed message", link.name));
+    	}
         restartTraffic(link);
         
         //create and assign Tester;
@@ -233,6 +248,9 @@ public class Mtp3 implements Runnable {
         link.test = tester;
         
         //start tester
+        if (logger.isDebugEnabled()) {
+    	    logger.debug(String.format("(%s) Starting link test procedure", link.name));
+        }
         tester.start();
     }
 
@@ -242,6 +260,7 @@ public class Mtp3 implements Runnable {
      */
     public void linkUp(Mtp2 link) {
         linkset.add(link);
+        logger.info(String.format("(%s) Link now IN_SERVICE", link.name));
     }
     
     public void linkFailed(Mtp2 link) {
@@ -249,10 +268,10 @@ public class Mtp3 implements Runnable {
         linkset.remove(link);
 
         //restart initial alignment after T17 expires
-        link.start_T17();
+        link.failLink();
 
         //notify mtp user part
-        if (!linkset.isActive()) {
+        if (!linkset.isActive() && mtpUser != null) {
             mtpUser.linkDown();
         }
     }
@@ -275,8 +294,8 @@ public class Mtp3 implements Runnable {
         sif[1] = (byte) dpc;
         sif[2] = (byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6));
         sif[3] = (byte) (opc >> 2);
-        //sif[4] = (byte) (((opc >> 10) & 0x0F) | ((mtp2.getSls() & 0x0F) << 4));
-        sif[4] = (byte) (((opc>> 10) & 0x0F) | ((0 & 0x0F) << 4));
+        sif[4] = (byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4));
+        //sif[4] = (byte) (((opc>> 10) & 0x0F) | ((0 & 0x0F) << 4));
     }   
     
     // -6 cause we have in sif, sio+label+len of pattern - thats 1+4+1 = 6
@@ -340,7 +359,10 @@ public class Mtp3 implements Runnable {
             //reset number of tryies;
             tryCount = 0;
             //shcedule next ping
-            test = mtpTimer.schedule(this, Mtp3.TIMEOUT_T2_SLTM, TimeUnit.MILLISECONDS);
+            test = mtpTimer.schedule(this, Mtp3.TIMEOUT_T2_SLTM, TimeUnit.SECONDS);
+            if (logger.isDebugEnabled()) {
+        	logger.debug(String.format("(%s) Test message acknowledged, Link test passed", link.name));
+            }
         }
         
         /**
@@ -351,7 +373,7 @@ public class Mtp3 implements Runnable {
         public void ping(long timeout) {
             //prepearing test message
             sltm[0] = (byte) 0xC1; // 1100 0001
-            writeRoutingLabel(sltm, 0);
+            writeRoutingLabel(sltm, link.sls);
             sltm[5] = 0x11;
             sltm[6] = (byte) (SLTM_PATTERN.length << 4);
             System.arraycopy(SLTM_PATTERN, 0, sltm, 7, SLTM_PATTERN.length);
@@ -363,7 +385,10 @@ public class Mtp3 implements Runnable {
             tryCount++;
             
             //scheduling timeout
-            test = mtpTimer.schedule(this, timeout, TimeUnit.MILLISECONDS);
+            test = mtpTimer.schedule(this, timeout, TimeUnit.SECONDS);
+            if (logger.isDebugEnabled()) {
+        	logger.debug(String.format("(%s) Test request, try number = %d", link.name, tryCount));
+            }
         }
         
         public void run() {
@@ -377,9 +402,11 @@ public class Mtp3 implements Runnable {
                     ping(Mtp3.TIMEOUT_T1_SLTM);
                     break;
                 case 2 :
+            	    if (logger.isDebugEnabled()) {
+            		logger.debug(String.format("(%s) SLTM message was not acknowledged, Link failed", link.name));
+            	    }
                     //second message was not answered, report failure
                     linkFailed(link);
-                    link.start_T17();
             }
         }
     }
@@ -412,131 +439,73 @@ public class Mtp3 implements Runnable {
             int opc = _getFromSif_OPC(sif, 0);
             int sls = _getFromSif_SLS(sif, 0);
 
-            if (logger.isTraceEnabled() && isL3Debug()) {
-                // logger.debug("Received MSSU [si=" + si + ", dpc=" + dpc +
-                // ", opc=" + opc + ", sls=" + sls + "]");
-                mtp2.trace("Received MSSU [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "]");
+            if (logger.isTraceEnabled()) {
+                logger.trace(String.format("(%s) Received MSSU [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "]", mtp2.name));
             }
             switch (serviceIndicator) {
                 case LINK_MANAGEMENT:
+                    int h0 = sif[4] & 0x0f;
+                    int h1 = (sif[4] & 0xf0) >>> 4;
+                    
+                    if (logger.isDebugEnabled()) {
+                	logger.debug(String.format("(%s) Signalling network management", mtp2.name));
+                    }
+                    
+                    if (h0 == 0) {
+                	if (logger.isDebugEnabled()) {
+                	    logger.debug(String.format("(%s) Changeover management", mtp2.name));
+                	}
+                    } else if (h0 == 7 && h1 == 1) {
+                	if (logger.isDebugEnabled()) {
+                	    logger.debug(String.format("(%s) TRA received", mtp2.name));
+                	}
+                    }
                     //FIX ME
                     break;
                 case LINK_TESTING:
-                    int h0 = sif[4] & 0x0f;
-                    int h1 = (sif[4] & 0xf0) >>> 4;
+                    h0 = sif[4] & 0x0f;
+                    h1 = (sif[4] & 0xf0) >>> 4;
 
                     int len = (sif[5] & 0xf0) >>> 4;
 
                     if (h0 == 1 && h1 == 1) {
-                        if (logger.isDebugEnabled() && isL3Debug()) {
-                            mtp2.trace("Received SLTM");
+                        if (logger.isTraceEnabled()) {
+                            logger.trace(String.format("(%s) Received SLTM", mtp2.name));
                         }
                         // receive SLTM from remote end
                         // create response
                         byte[] slta = new byte[len + 7];
+    
                         slta[0] = (byte) sio;
 
-                        writeRoutingLabel(slta, 0);
+                        writeRoutingLabel(slta, sls);
                         slta[5] = 0x021;
                         // +1 cause we copy LEN byte also.
                         System.arraycopy(sif, 5, slta, 6, len + 1);
 
-                        if (logger.isTraceEnabled() && isL3Debug()) {
-                            if (logger.isDebugEnabled()) {
-                                // logger.debug("Link(" + name + ") SLTA received");
-                                // lets validate SLTA we send. this is inverted
-                                // procedure that we do on SLTA
-                                int remote_OPC = opc;
-                                int remote_DPC = dpc;
-                                int remote_SLS = sls;
-
-                                // now lets get that from sif. shift by one, we include
-                                // SIO in byte[] buff
-                                int slta_OPC = _getFromSif_OPC(slta, 1);
-                                int slta_DPC = _getFromSif_DPC(slta, 1);
-                                int slta_SLS = _getFromSif_SLS(slta, 1);
-                                // check pattern?
-
-                                if (remote_OPC != slta_DPC || remote_DPC != slta_OPC || remote_SLS != slta_SLS) {
-                                    mtp2.trace("Failed check on sending SLTA, values do not match, remote SLTM/SLTA check will fail\n" + "remote OPC = " + remote_OPC + ", SLTA DPC = " + slta_DPC + ", remote DPC = " + remote_DPC + ", SLTA OPC = " + slta_OPC + ", remote SLS = " + remote_SLS + ", SLTA SLS = " + slta_SLS);
-
-                                // FIXME: add failure to SLTM checks here?
-                                }
-
-                            }
-
-                            mtp2.trace("Responding with SLTA");
+			if (logger.isTraceEnabled()) {
+                            logger.trace(String.format("(%s) Responding with SLTA", mtp2.name));
                         }
-                        //FIXME: check for return flag
                         mtp2.queue(slta);
                     } else if (h0 == 1 && h1 == 2) {
                         // receive SLTA from remote end
-                        if (logger.isTraceEnabled() && isL3Debug()) {
-
-                            mtp2.trace("Received SLTA");
+                        if (logger.isTraceEnabled()) {
+                            logger.trace(String.format("(%s) Received SLTA", mtp2.name));
                         }
-                        // stop Q707 timer T1
-                        mtp2.stop_T1_SLTM();
-                        StringBuilder sb = new StringBuilder();
-                        // check contidions for acceptance
-                        boolean accepted = true;
-/*                        if (opc != mtp2.getLinkSet().getDpc()) {
-                            if (logger.isTraceEnabled() && isL3Debug()) {
-                                sb.append("\nSLTA Acceptance failed, OPC = ").append(opc).append(" ,of SLTA does not match local DPC = ").append(
-                                        mtp2.getLinkSet().getDpc());
-                            }
-                            accepted = false;
+                        
+                        //checking pattern
+                        if (checkPattern(sif, SLTM_PATTERN)) {
+                    	    //test message is acknowledged
+                    	    mtp2.test.ack();
+                    	    
+                    	    //notify top layer that link is up
+                    	    if (!l4IsUp) {
+                    		l4IsUp = true;
+                    		linkUp(mtp2);
+                    	    }
                         }
-
-                        if (dpc != mtp2.getLinkSet().getOpc()) {
-                            if (logger.isTraceEnabled() && isL3Debug()) {
-                                sb.append("\nSLTA Acceptance failed, DPC = ").append(dpc).append(" ,of SLTA does not match local OPC = ").append(
-                                        mtp2.getLinkSet().getOpc());
-                            }
-                            accepted = false;
-                        }
-*/
-                        if (!checkPattern(sif, SLTM_PATTERN)) {
-                            if (logger.isTraceEnabled() && isL3Debug()) {
-                                sb.append("\nSLTA Acceptance failed, sif pattern = ").append(Arrays.toString(sif)).append(
-                                        " ,of SLTA does not match local pattern = ").append(Arrays.toString(SLTM_PATTERN));
-                            }
-                            accepted = false;
-                        }
-
-                        if (sls != mtp2.getSls()) {
-                            if (logger.isTraceEnabled() && isL3Debug()) {
-                                sb.append("\nSLTA Acceptance failed, sls  = ").append(sls).append(" ,of SLTA does not match local sls = ").append(
-                                        mtp2.getSls());
-                            }
-                            accepted = false;
-                        }
-
-                        if (accepted) {
-
-                            // reset counter.
-                            mtp2.restartSltmTries();
-
-
-                            if (!l4IsUp && mtpUser != null) {
-                                if (logger.isTraceEnabled() && isL3Debug()) {
-                                    mtp2.trace("XXX Notify layer 4 on success SLTM handshake");
-                                }
-                                l4IsUp = true;
-                                mtpUser.linkUp();
-                            }
-                        } else {
-                            if (logger.isTraceEnabled() && isL3Debug()) {
-                                mtp2.trace("SLTA acceptance failed!!! Reason: " + sb);
-                            }
-                            //ignore it
-                        }
-
                     } else {
-
-                        if (logger.isEnabledFor(Level.WARN) && isL3Debug()) {
-                            mtp2.trace("XXX Unexpected message type");
-                        }
+            		logger.warn(String.format("(%s) Unexpected message type", mtp2.name));
                     }
                     break;
                 case SERVICE_SCCP:
