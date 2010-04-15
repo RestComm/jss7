@@ -1,24 +1,30 @@
 package org.mobicents.protocols.ss7.tcap.api.tc.component;
 
+import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+
 public interface TCInvokeRequest extends ComponentRequest {
 
-	
-	public int getLinkedId();
+	//this is stack prop, identifies operation class, 
+	public void setInvokeClass(InvokeClass c);
+	public InvokeClass getInvokeClass();
+	public void setInvokeTimeout(long t);
+	public long getInvokeTimeout();
 
-	/**
-	 * 
-	 * @return oepartion element.
-	 */
-	public Operation getOperation();
 	
-	public void setLinkedId(int id);
+	//asn encoded
+	//public void setInvokeId(Long l);
+	//public Long getInvokeId();
+	
+	public void setLinkedId(Long l);
+	public Long getLinkedId();
+	
+	public void setOperation(OperationCode oc);
+	public OperationCode getOperation();
+	
+	public void setParameter(Parameter p);
+	public Parameter getParameter();
+	
 
-	/**
-	 * 
-	 * @return oepartion element.
-	 */
-	public void setOperation(Operation op);
-	
-	public void setTimeOut(long timeOutInMs);
 
 }

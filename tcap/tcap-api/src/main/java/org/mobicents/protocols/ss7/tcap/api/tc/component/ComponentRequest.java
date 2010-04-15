@@ -1,19 +1,17 @@
 package org.mobicents.protocols.ss7.tcap.api.tc.component;
 
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 
 public interface ComponentRequest {
 
-	/**
-	 * Returns type of component, each component is indetified by intiger code.
-	 * @return
-	 */
-	public int getType();
+
+	public ComponentType getType();
 	
 	public Dialog getDialog();
 	
-	public int getInvokeId();
+	public Long getInvokeId();
 	
-	public void setInvokeId(int id);
+	public void setInvokeId(Long id);
 	
 }

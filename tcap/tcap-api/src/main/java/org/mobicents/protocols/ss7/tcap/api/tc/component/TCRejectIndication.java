@@ -1,9 +1,9 @@
 package org.mobicents.protocols.ss7.tcap.api.tc.component;
 
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+
 public interface TCRejectIndication extends ComponentIndication {
 
-	public int getProblemCode();
-
-	public boolean isLastComponent();
+	public Problem getProblem();
 
 }

@@ -4,6 +4,8 @@
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
 /**
  * @author baranowb
@@ -11,25 +13,24 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  */
 public interface TCEndRequest extends DialogRequest {
 	/**
-	 * Sets QOS optional parameter.
-	 * 
+	 * Sets QOS optional parameter. Its passed to SCCP layer?
 	 * @param b
 	 */
-	public void setQOS(byte b) throws IllegalArgumentException;
+	public void setQOS(Byte b) throws IllegalArgumentException;
+	public Byte getQOS();
 
-	public byte getQOS();
+	//only getter, since we send via Dialog object, ID is ensured to be present.
 
-	public boolean isQOS();
-
+	
+	//those are actaully passed to ASN encoders, if those are present, DialogAPDU and portion is coded into messag
 	public ApplicationContextName getApplicationContextName();
-
 	public void setApplicationContextName(ApplicationContextName acn);
-
-	public UserInformation getUserInformation();
-
+	
+	public UserInformation getUserInformation();	
 	public void setUserInformation(UserInformation acn);
-
+	
+	
+	//local
 	public void setTermination(TerminationType t);
-
-	public TerminationType getTermination();
+	public TerminationType getTerminationType();
 }

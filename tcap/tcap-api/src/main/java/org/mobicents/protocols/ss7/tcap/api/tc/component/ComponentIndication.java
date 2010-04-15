@@ -1,6 +1,7 @@
 package org.mobicents.protocols.ss7.tcap.api.tc.component;
 
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 
 public interface ComponentIndication {
 
@@ -9,9 +10,9 @@ public interface ComponentIndication {
 	 * 
 	 * @return
 	 */
-	public int getType();
+	public ComponentType getType();
 
 	public Dialog getDialog();
 
-	public int getInvokeId();
+	public Long getInvokeId();
 }

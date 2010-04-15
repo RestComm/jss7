@@ -1,6 +1,5 @@
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog;
 
-
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.ComponentRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.*;
@@ -8,20 +7,6 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 public interface Dialog {
 
-	/**
-	 * Return last sent dialog portion. if this is server dialog, its set to
-	 * first received dialog portion.
-	 * 
-	 * @return
-	 */
-	public DialogPortion getDialogPortion();
-
-	/**
-	 * Sets dialog portion to be sent with next dialog request.
-	 * 
-	 * @param dp
-	 */
-	public void setDialogPortion(DialogPortion dp);
 
 	/**
 	 * returns this dialog ID. It MUST be unique at any given time in local
@@ -77,26 +62,30 @@ public interface Dialog {
 	 *         </ul>
 	 */
 	public boolean isEstabilished();
+
 	/**
 	 * 
 	 * @return <ul>
-	 *         <li><b>true </b></li> - if dialog is structured - its created with TC_BEGIN not TC_UNI
+	 *         <li><b>true </b></li> - if dialog is structured - its created
+	 *         with TC_BEGIN not TC_UNI
 	 *         <li><b>false</b></li> - otherwise
 	 *         </ul>
 	 */
 	public boolean isStructured();
 
-	////////////////////
+	// //////////////////
 	// Sender methods //
-	////////////////////
+	// //////////////////
 	/**
-	 * Schedules component to for sending.
+	 * Schedules component for sending. All components on list are queued. If
+	 * used passes cancel component, canceled component is removed and
+	 * indication passed to TC User
 	 * 
 	 * @param componentRequest
 	 */
 	public void sendComponent(ComponentRequest componentRequest);
 
-	// sender methods
+	// sender methods, propalby those will change!
 	public void sendBegin() throws TCAPSendException;
 
 	public void sendContinue() throws TCAPSendException;
@@ -105,7 +94,6 @@ public interface Dialog {
 
 	public void sendUni() throws TCAPSendException;
 
-	public void sendUAbort() throws TCAPSendException;
 
 	/**
 	 * Sends custom made dialog event
