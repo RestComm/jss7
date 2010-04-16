@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    
     <parent>
         <artifactId>ss7-parent</artifactId>
         <groupId>org.mobicents.protocols.ss7</groupId>
         <version>1.0.0.BETA1-SNAPSHOT</version>
     </parent>
+    
     <artifactId>MTP</artifactId>
     <groupId>org.mobicents.protocols.ss7.mtp</groupId>
     <version>1.0.0.BETA1-SNAPSHOT</version>
+    
     <packaging>jar</packaging>
+    
     <name>Mobicents SS7 :: Message Transfer Part:: ${pom.artifactId}</name>
     <properties>
-        <maven.test.skip>false</maven.test.skip>
+        <maven.test.skip>true</maven.test.skip>
         <mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
     </properties>
     <dependencies>
@@ -21,6 +25,11 @@
             <artifactId>log4j</artifactId>
             <version>1.2.12</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.1</version>
         </dependency>
     </dependencies>
 
