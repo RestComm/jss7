@@ -26,6 +26,8 @@
  */
 package org.mobicents.protocols.ss7.mtp;
 
+
+
 /**
  * Implements relation between link code and signaling link selection indicator.
  * 
