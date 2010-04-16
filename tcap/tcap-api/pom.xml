@@ -25,6 +25,7 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>provided</scope>
+			<version>${junit.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>

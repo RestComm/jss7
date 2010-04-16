@@ -26,11 +26,13 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>provided</scope>
+                        <version>${junit.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>concurrent</groupId>
 			<artifactId>concurrent</artifactId>
 			<scope>provided</scope>
+                        <version>${concurrent.version}</version>
 		</dependency>
 	</dependencies>
 
