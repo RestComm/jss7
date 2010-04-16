@@ -1,5 +1,6 @@
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog;
 
+import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.ComponentRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.*;
@@ -10,19 +11,11 @@ public interface Dialog {
 
 	/**
 	 * returns this dialog ID. It MUST be unique at any given time in local
-	 * stack.
+	 * stack. 
 	 * 
 	 * @return
 	 */
-	public long getDialogId();
-
-	/**
-	 * Sets local address used by this dialog. Its as "Originating Address" for
-	 * TC_BEGIN.
-	 * 
-	 * @param localAddress
-	 */
-	public void setLocalAddress(SccpAddress localAddress);
+	public Long getDialogId();
 
 	/**
 	 * Gets local sccp address
@@ -31,12 +24,6 @@ public interface Dialog {
 	 */
 	public SccpAddress getLocalAddress();
 
-	/**
-	 * Sets remote address used by this dialog. Its as "Destination Address".
-	 * 
-	 * @param localAddress
-	 */
-	public void setRemoteAddress(SccpAddress localAddress);
 
 	/**
 	 * Gets remote sccp address
@@ -50,8 +37,9 @@ public interface Dialog {
 	 * TC_INVOKE
 	 * 
 	 * @return
+	 * @throws TCAPException 
 	 */
-	public long getNewInvokeId();
+	public Long getNewInvokeId() throws TCAPException;
 
 	/**
 	 * 
