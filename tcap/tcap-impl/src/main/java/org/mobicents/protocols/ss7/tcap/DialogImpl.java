@@ -5,6 +5,7 @@ package org.mobicents.protocols.ss7.tcap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
@@ -13,6 +14,11 @@ import org.mobicents.protocols.ss7.tcap.api.tc.component.ComponentRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.TCInvokeRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.DialogRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
@@ -25,6 +31,9 @@ import org.mobicents.protocols.ss7.tcap.tc.component.TCInvokeRequestImpl;
  */
 public class DialogImpl implements Dialog {
 
+	//sent/received acn, holds last acn.
+	private ApplicationContextName acn;
+	
 	private Long localTransactionId;
 	private Long remoteTransactionId;
 
@@ -32,7 +41,7 @@ public class DialogImpl implements Dialog {
 	private SccpAddress remoteAddress;
 
 	private TRPseudoState state = TRPseudoState.Idle;
-	private boolean strutured  = true;
+	private boolean strutured = true;
 	// invokde ID space :)
 	private static final boolean _INVOKEID_TAKEN = true;
 	private static final boolean _INVOKEID_FREE = false;
@@ -40,14 +49,15 @@ public class DialogImpl implements Dialog {
 
 	private boolean[] invokeIDTable = new boolean[255];
 	private int freeCount = invokeIDTable.length;
-	
-	//damn.., this is for sent invocations, apparently TCAP is per client fsm.
+
+	// damn.., this is for sent invocations, apparently TCAP is per client fsm.
 	private TCInvokeRequestImpl[] operationsSent = new TCInvokeRequestImpl[invokeIDTable.length];
-	
-	
-	//scheduled components list
+	private ScheduledExecutorService executor;
+
+	// scheduled components list
 	private List<ComponentRequest> scheduledComponentList = new ArrayList<ComponentRequest>();
-	
+	private TCAProviderImpl provider;
+
 	
 	private static final int getIndexFromInvokeId(Long l) {
 		int tmp = l.intValue();
@@ -59,21 +69,26 @@ public class DialogImpl implements Dialog {
 		return new Long(tmp);
 	}
 
-
-	DialogImpl(SccpAddress localAddress, SccpAddress remoteAddress, Long origTransactionId) {
+	DialogImpl(SccpAddress localAddress, SccpAddress remoteAddress, Long origTransactionId, ScheduledExecutorService executor, TCAProviderImpl provider) {
 		super();
 		this.localAddress = localAddress;
 		this.remoteAddress = remoteAddress;
 		this.localTransactionId = origTransactionId;
-		if(origTransactionId>0)
-		{
+		this.executor = executor;
+		this.provider = provider;
+		if (origTransactionId > 0) {
 			this.strutured = true;
-		}else
-		{
+		} else {
 			this.strutured = false;
 		}
+		
 	}
-	
+
+	public void release() {
+		// TODO Auto-generated method stub
+
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -104,7 +119,10 @@ public class DialogImpl implements Dialog {
 				break;
 			}
 		}
-
+		if(r == null)
+		{
+			throw new TCAPException("No free invoke ID");
+		}
 		return r;
 	}
 
@@ -148,18 +166,68 @@ public class DialogImpl implements Dialog {
 	 */
 	public boolean isStructured() {
 
-		return false;
+		return this.strutured;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#send(org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest)
+	 */
+	public void send(TCBeginRequest event) throws TCAPSendException {
+		
+		if(this.isStructured())
+		{
+			
+		}
+		//build proper msg
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#send(org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest)
+	 */
+	public void send(TCContinueRequest event) throws TCAPSendException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#send(org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest)
+	 */
+	public void send(TCEndRequest event) throws TCAPSendException {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#send(org.mobicents
-	 * .protocols.ss7.tcap.api.tc.dialog.events.DialogRequest)
+	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#sendComponent(org
+	 * .mobicents.protocols.ss7.tcap.api.tc.component.ComponentRequest)
 	 */
-	public void send(DialogRequest event) throws TCAPSendException {
-		// TODO Auto-generated method stub
+	public void sendComponent(ComponentRequest componentRequest) {
+
+		// if(TC-UCANCEL-REQ)
+		// {
+		// Long cancelIID = ....
+		// if(this.operationsSent.contains(cancelIID))
+		// {
+		//
+		// }
+		// }else if(TC-U-REJECT)
+		// {
+		// Long cancelIID = ....
+		// if(this.operationsSent.contains(cancelIID))
+		// {
+		//
+		// }
+		// }else
+		// {
+
+		this.scheduledComponentList.add(componentRequest);
+
+		// }
 
 	}
 
@@ -170,41 +238,8 @@ public class DialogImpl implements Dialog {
 	 */
 	public void sendBegin() throws TCAPSendException {
 		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#sendComponent(org
-	 * .mobicents.protocols.ss7.tcap.api.tc.component.ComponentRequest)
-	 */
-	public void sendComponent(ComponentRequest componentRequest) {
-		
-		//if(TC-UCANCEL-REQ)
-		//{
-			//Long cancelIID = ....
-			//if(this.operationsSent.contains(cancelIID))
-			//{
-				//
-			//}
-		//}else if(TC-U-REJECT)
-		//{
-			//Long cancelIID = ....
-			//if(this.operationsSent.contains(cancelIID))
-			//{
-				//
-			//}
-		//}else
-		//{
-		
-			this.scheduledComponentList.add(componentRequest);
-		
-		//}
 		
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -285,23 +320,20 @@ public class DialogImpl implements Dialog {
 		this.remoteAddress = remoteAddress;
 	}
 
-	void processUni(TCUniMessage msg, SccpAddress localAddress, SccpAddress remoteAddress)
-	{
-		
+	void processUni(TCUniMessage msg, SccpAddress localAddress, SccpAddress remoteAddress) {
+
 	}
-	
-	void processBegin(TCBeginMessage msg, SccpAddress localAddress, SccpAddress remoteAddress)
-	{
-		
+
+	void processBegin(TCBeginMessage msg, SccpAddress localAddress, SccpAddress remoteAddress) {
+
 	}
-	
-	void processContinue(TCContinueMessage msg, SccpAddress localAddress, SccpAddress remoteAddress)
-	{
-		
+
+	void processContinue(TCContinueMessage msg, SccpAddress localAddress, SccpAddress remoteAddress) {
+
 	}
-	void processEnd(TCEndMessage msg, SccpAddress localAddress, SccpAddress remoteAddress)
-	{
-		
+
+	void processEnd(TCEndMessage msg, SccpAddress localAddress, SccpAddress remoteAddress) {
+
 	}
 
 }
