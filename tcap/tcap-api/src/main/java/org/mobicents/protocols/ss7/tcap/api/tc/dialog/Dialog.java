@@ -8,10 +8,9 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 public interface Dialog {
 
-
 	/**
 	 * returns this dialog ID. It MUST be unique at any given time in local
-	 * stack. 
+	 * stack.
 	 * 
 	 * @return
 	 */
@@ -23,7 +22,6 @@ public interface Dialog {
 	 * @return
 	 */
 	public SccpAddress getLocalAddress();
-
 
 	/**
 	 * Gets remote sccp address
@@ -37,7 +35,7 @@ public interface Dialog {
 	 * TC_INVOKE
 	 * 
 	 * @return
-	 * @throws TCAPException 
+	 * @throws TCAPException
 	 */
 	public Long getNewInvokeId() throws TCAPException;
 
@@ -82,11 +80,14 @@ public interface Dialog {
 
 	public void sendUni() throws TCAPSendException;
 
+	public void send(TCBeginRequest event) throws TCAPSendException;
+
+	public void send(TCContinueRequest event) throws TCAPSendException;
+
+	public void send(TCEndRequest event) throws TCAPSendException;
 
 	/**
-	 * Sends custom made dialog event
-	 * 
-	 * @param event
+	 * Programmer hook to release.
 	 */
-	public void send(DialogRequest event) throws TCAPSendException;
+	public void release();
 }
