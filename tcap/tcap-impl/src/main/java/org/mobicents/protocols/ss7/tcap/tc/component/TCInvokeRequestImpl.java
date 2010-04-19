@@ -3,6 +3,7 @@
  */
 package org.mobicents.protocols.ss7.tcap.tc.component;
 
+import org.mobicents.protocols.ss7.tcap.TRPseudoState;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.TCInvokeRequest;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
@@ -20,14 +21,12 @@ public class TCInvokeRequestImpl extends ComponentRequestImpl implements TCInvok
 
 	private final static long _DEFAULT_TIMEOUT = 10000;
 
-	//local to stack
-	private InvokeClass invokeClass;
+	// local to stack
+	private InvokeClass invokeClass = InvokeClass.Class1;
 	private long invokeTimeout = _DEFAULT_TIMEOUT;
-
+	private TRPseudoState state = TRPseudoState.Idle;
 	private Invoke invoke;
 
-	
-	
 	public TCInvokeRequestImpl() {
 		super();
 		this.invoke = (Invoke) super.component;
@@ -108,6 +107,21 @@ public class TCInvokeRequestImpl extends ComponentRequestImpl implements TCInvok
 		this.invoke.setParameter(parameter);
 	}
 
+	/**
+	 * @return the state
+	 */
+	public TRPseudoState getState() {
+		return state;
+	}
+
+	/**
+	 * @param state
+	 *            the state to set
+	 */
+	public void setState(TRPseudoState state) {
+		this.state = state;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -116,15 +130,14 @@ public class TCInvokeRequestImpl extends ComponentRequestImpl implements TCInvok
 	 * ()
 	 */
 	public ComponentType getType() {
-		//we dont have to deffer.
+		// we dont have to deffer.
 		return ComponentType.Invoke;
 	}
 
 	@Override
 	protected Component getEncodableComponent() {
-		
+
 		return TcapFactory.createComponentInvoke();
 	}
-
 
 }
