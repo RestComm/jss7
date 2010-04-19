@@ -7,6 +7,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -42,7 +44,10 @@ import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCBeginIndicationImpl;
  */
 public class TCAProviderImpl implements TCAPProvider, SccpListener {
 
+	
+	
 	private static final Logger logger = Logger.getLogger(TCAProviderImpl.class);
+	private ScheduledExecutorService executor;
 	// boundry for Uni directional dialogs :), tx id is always encoded
 	// on 4 octets, so this is its max value
 	private static final long _4_OCTETS_LONG_FILL = 4294967295l;
@@ -63,6 +68,8 @@ public class TCAProviderImpl implements TCAPProvider, SccpListener {
 
 		this.componentPrimitiveFactory = new ComponentPrimitiveFactoryImpl();
 		this.dialogPrimitiveFactory = new DialogPrimitiveFactoryImpl();
+		this.executor =  Executors.newSingleThreadScheduledExecutor();
+		
 	}
 
 	// some help methods... crude but will work for first impl.
@@ -135,7 +142,7 @@ public class TCAProviderImpl implements TCAPProvider, SccpListener {
 		if (remoteAddress == null) {
 			throw new NullPointerException("RemoteAddress must not be null");
 		}
-		DialogImpl di = new DialogImpl(localAddress, remoteAddress, id);
+		DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, this.executor);
 		this.dialogs.put(di.getDialogId(), di);
 		return di;
 	}
