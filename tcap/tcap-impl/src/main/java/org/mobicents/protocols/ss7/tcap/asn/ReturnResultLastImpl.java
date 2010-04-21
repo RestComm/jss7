@@ -19,6 +19,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
 /**
  * @author baranowb
+ * @author amit bhayani
  * 
  */
 public class ReturnResultLastImpl implements ReturnResultLast {
@@ -30,7 +31,7 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 	private OperationCode[] operationCode;
 
 	// optional
-	private Parameter parameter;
+	private Parameter[] parameters;
 
 	/*
 	 * (non-Javadoc)
@@ -57,9 +58,8 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 	 * 
 	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.Return#getParameter()
 	 */
-	public Parameter getParameter() {
-
-		return this.parameter;
+	public Parameter[] getParameters() {
+		return this.parameters;
 	}
 
 	/*
@@ -96,9 +96,8 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 	 * org.mobicents.protocols.ss7.tcap.asn.comp.Return#setParameter(org.mobicents
 	 * .protocols.ss7.tcap.asn.comp.Parameter)
 	 */
-	public void setParameter(Parameter p) {
-
-		this.parameter = p;
+	public void setParameters(Parameter[] p) {
+		this.parameters = p;
 	}
 
 	public ComponentType getType() {
@@ -140,6 +139,31 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 			}
 
 			tag = localAis.readTag();
+			
+			
+			/*
+			 * TODO
+			 * 
+			 * As per the definition of ASN in Q.773 the Return Result is defined as 
+			 * 
+			 * 
+			 * ReturnResult ::= SEQUENCE {
+                     invokeID             InvokeIdType,
+                     result               SEQUENCE {
+                            operationCode OPERATION,
+                            parameter     ANY DEFINED BY operationCode
+                     } OPTIONAL
+                 }
+
+
+			 * Hence the result is sequence of Operation Code and Parameter. The bellow decoding takes only sequence of Operation Code
+			 * and the Parameter which is wrong.
+			 * 
+			 * 
+			 * Look at trace from nad1053.pcap
+			 */			
+			
+			
 
 			if (tag == Tag.SEQUENCE) {
 				// sequence of OperationCode
@@ -173,7 +197,30 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 				}
 			}
 			tag = localAis.readTag();
-			this.parameter = TcapFactory.createParameter(tag, localAis);
+			
+			if (tag == Tag.SEQUENCE) {
+				
+				int length = localAis.readLength();
+				
+				List<Parameter> paramsList = new ArrayList<Parameter>();
+
+				while (localAis.available() > 0) {
+					// This is Parameter Tag
+					tag = localAis.readTag();
+					Parameter p = TcapFactory.createParameter(tag, localAis);
+					paramsList.add(p);
+				}
+				
+				this.parameters = new Parameter[paramsList.size()];
+				this.parameters = paramsList.toArray(this.parameters);
+				
+				paramsList.clear();				
+				
+			} else {
+				this.parameters = new Parameter[] { TcapFactory
+						.createParameter(tag, localAis) };
+			}				
+			
 		} catch (IOException e) {
 			throw new ParseException(e);
 		} catch (AsnException e) {
@@ -216,8 +263,28 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 				localAos.write(data);
 			}
 
-			if (parameter != null) {
-				parameter.encode(localAos);
+			if (this.parameters != null) {
+				if(this.parameters.length > 1 ){
+					
+					AsnOutputStream aosTemp = new AsnOutputStream();
+					for(Parameter p : this.parameters){
+						p.encode(aosTemp);
+					}
+					
+					byte[] paramData = aosTemp.toByteArray();
+					
+					//Sequence TAG
+					localAos.write(0x30);
+					
+					//Sequence Length
+					localAos.write(paramData.length);
+					
+					//Now write the Parameter's 
+					localAos.write(paramData);
+					
+				} else{
+					this.parameters[0].encode(localAos);
+				}
 			}
 
 			data = localAos.toByteArray();

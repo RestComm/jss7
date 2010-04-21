@@ -96,7 +96,9 @@ public class TCInvokeRequestImpl extends ComponentRequestImpl implements TCInvok
 	 * @return the parameter
 	 */
 	public Parameter getParameter() {
-		return this.invoke.getParameter();
+		//TODO this class will not be used clean it == Amit.
+		//return this.invoke.getParameter();
+		return null;
 	}
 
 	/**
@@ -104,7 +106,7 @@ public class TCInvokeRequestImpl extends ComponentRequestImpl implements TCInvok
 	 *            the parameter to set
 	 */
 	public void setParameter(Parameter parameter) {
-		this.invoke.setParameter(parameter);
+		//this.invoke.setParameter(parameter);
 	}
 
 	/**

@@ -376,7 +376,7 @@ public class TcContinueTest extends TestCase {
 		assertEquals("Wrong Operation Code type",OperationCodeType.Global, ocs[1].getOperationType());
 		assertEquals("Wrong Operation Code",new Long(0x00FF), ocs[1].getCode());
 		
-		assertNotNull("Parameter should not be null",rrl.getParameter());
+		assertNotNull("Parameter should not be null",rrl.getParameters());
 		
 		AsnOutputStream aos = new AsnOutputStream();
 		tcm.encode(aos);
@@ -776,7 +776,7 @@ public class TcContinueTest extends TestCase {
 		assertEquals("Wrong Operation Code type",OperationCodeType.Global, ocs[1].getOperationType());
 		assertEquals("Wrong Operation Code",new Long(0x00FF), ocs[1].getCode());
 		
-		assertNotNull("Parameter should not be null",rrl.getParameter());
+		assertNotNull("Parameter should not be null",rrl.getParameters());
 		
 		
 		AsnOutputStream aos = new AsnOutputStream();

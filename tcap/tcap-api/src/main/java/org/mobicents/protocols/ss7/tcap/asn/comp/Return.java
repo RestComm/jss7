@@ -9,6 +9,7 @@ import org.mobicents.protocols.ss7.tcap.asn.Encodable;
 /**
  * Super interface for Returns.
  * @author baranowb
+ * @author amit bhayani
  *
  */
 public interface Return extends Encodable,Component {
@@ -26,7 +27,7 @@ public interface Return extends Encodable,Component {
 	public void setOperationCode(OperationCode[] oc);
 	public OperationCode[] getOperationCode();
 	
-	public void setParameter(Parameter p);
-	public Parameter getParameter();
+	public void setParameters(Parameter[] p);
+	public Parameter[] getParameters();
 	
 }

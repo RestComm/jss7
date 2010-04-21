@@ -5,10 +5,13 @@ package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCodeType;
@@ -29,7 +32,7 @@ public class ReturnErrorImpl implements ReturnError {
 	private ErrorCode errorCode;
 
 	// optional
-	private Parameter parameter;
+	private Parameter[] parameters;
 
 	/*
 	 * (non-Javadoc)
@@ -56,9 +59,8 @@ public class ReturnErrorImpl implements ReturnError {
 	 * 
 	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError#getParameter()
 	 */
-	public Parameter getParameter() {
-
-		return this.parameter;
+	public Parameter[] getParameters() {
+		return this.parameters;
 	}
 
 	/*
@@ -92,8 +94,8 @@ public class ReturnErrorImpl implements ReturnError {
 	 * org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError#setParameter(org
 	 * .mobicents.protocols.ss7.tcap.asn.comp.Parameter)
 	 */
-	public void setParameter(Parameter p) {
-		this.parameter = p;
+	public void setParameters(Parameter[] p) {
+		this.parameters = p;
 
 	}
 
@@ -138,7 +140,30 @@ public class ReturnErrorImpl implements ReturnError {
 				throw new ParseException("Expected Local|Globa error code, found: " + tag);
 			}
 			tag = localAis.readTag();
-			this.parameter = TcapFactory.createParameter(tag, localAis);
+			
+			if (tag == Tag.SEQUENCE) {
+				
+				int length = localAis.readLength();
+				
+				List<Parameter> paramsList = new ArrayList<Parameter>();
+
+				while (localAis.available() > 0) {
+					// This is Parameter Tag
+					tag = localAis.readTag();
+					Parameter p = TcapFactory.createParameter(tag, localAis);
+					paramsList.add(p);
+				}
+				
+				this.parameters = new Parameter[paramsList.size()];
+				this.parameters = paramsList.toArray(this.parameters);
+				
+				paramsList.clear();				
+				
+			} else {
+				this.parameters = new Parameter[] { TcapFactory
+						.createParameter(tag, localAis) };
+			}	
+		
 		} catch (IOException e) {
 			throw new ParseException(e);
 		} catch (AsnException e) {
@@ -167,9 +192,31 @@ public class ReturnErrorImpl implements ReturnError {
 			localAos.writeInteger(_TAG_IID_CLASS, _TAG_IID, this.invokeId);
 
 			this.errorCode.encode(localAos);
-			if (this.parameter != null) {
-				this.parameter.encode(localAos);
+
+			if (this.parameters != null) {
+				if(this.parameters.length > 1 ){
+					
+					AsnOutputStream aosTemp = new AsnOutputStream();
+					for(Parameter p : this.parameters){
+						p.encode(aosTemp);
+					}
+					
+					byte[] paramData = aosTemp.toByteArray();
+					
+					//Sequence TAG
+					localAos.write(0x30);
+					
+					//Sequence Length
+					localAos.write(paramData.length);
+					
+					//Now write the Parameter's 
+					localAos.write(paramData);
+					
+				} else{
+					this.parameters[0].encode(localAos);
+				}
 			}
+			
 			byte[] data = localAos.toByteArray();
 			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
 			aos.writeLength(data.length);

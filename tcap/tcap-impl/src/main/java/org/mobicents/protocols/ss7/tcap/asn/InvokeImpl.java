@@ -11,6 +11,7 @@ import java.util.List;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
@@ -181,8 +182,11 @@ public class InvokeImpl implements Invoke {
 			// It could be SEQUENCE of PARAMETER
 			tag = localAis.readTag();
 
-			if (tag == 0x30) {
+			
+			if (tag == Tag.SEQUENCE) {
+				
 				int length = localAis.readLength();
+				
 				List<Parameter> paramsList = new ArrayList<Parameter>();
 
 				while (localAis.available() > 0) {

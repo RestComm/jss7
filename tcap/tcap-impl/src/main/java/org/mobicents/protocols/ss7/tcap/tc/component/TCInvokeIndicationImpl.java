@@ -54,7 +54,9 @@ public class TCInvokeIndicationImpl extends ComponentIndicationImpl implements T
 	 * getParameter()
 	 */
 	public Parameter getParameter() {
-		return this.invoke.getParameter();
+		//return this.invoke.getParameter();
+		//TODO This class will not be used, clean it == Amit
+		return null;
 	}
 
 	/*

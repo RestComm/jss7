@@ -60,7 +60,10 @@ public class TCResultRequestImpl extends ComponentRequestImpl implements TCResul
 	 * getParameter()
 	 */
 	public Parameter getParameter() {
-		return this._return.getParameter();
+		//return this._return.getParameter();
+		//return this.invoke.getParameter();
+		//TODO This class will not be used, clean it == Amit
+		return null;
 	}
 
 	/*
@@ -93,7 +96,7 @@ public class TCResultRequestImpl extends ComponentRequestImpl implements TCResul
 	 * setParameter(org.mobicents.protocols.ss7.tcap.asn.comp.Parameter)
 	 */
 	public void setParameter(Parameter p) {
-		this._return.setParameter(p);
+		//this._return.setParameter(p);
 
 	}
 

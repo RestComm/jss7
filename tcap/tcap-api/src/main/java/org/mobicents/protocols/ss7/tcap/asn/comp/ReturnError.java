@@ -7,6 +7,7 @@ import org.mobicents.protocols.asn.Tag;
 
 /**
  * @author baranowb
+ * @author amit bhayani
  *
  */
 public interface ReturnError extends Component {
@@ -30,6 +31,6 @@ public interface ReturnError extends Component {
 	public ErrorCode getErrorCode();
 	
 	//paramter, optional
-	public void setParameter(Parameter p);
-	public Parameter getParameter();
+	public void setParameters(Parameter[] p);
+	public Parameter[] getParameters();
 }

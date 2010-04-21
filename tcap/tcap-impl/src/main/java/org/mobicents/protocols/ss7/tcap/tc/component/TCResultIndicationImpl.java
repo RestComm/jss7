@@ -53,7 +53,10 @@ public class TCResultIndicationImpl extends ComponentIndicationImpl implements T
 	 * getParameter()
 	 */
 	public Parameter getParameter() {
-		return this._return.getParameter();
+		//return this._return.getParameter();
+		//return this.invoke.getParameter();
+		//TODO This class will not be used, clean it == Amit
+		return null;
 	}
 
 	/*
