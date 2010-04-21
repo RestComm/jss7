@@ -5,6 +5,8 @@ package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -16,6 +18,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author baranowb
+ * @author amit bhayani
  * 
  */
 public class InvokeImpl implements Invoke {
@@ -30,7 +33,7 @@ public class InvokeImpl implements Invoke {
 	private OperationCode operationCode;
 
 	// optional
-	private Parameter parameter;
+	private Parameter[] parameters;
 
 	/*
 	 * (non-Javadoc)
@@ -67,21 +70,21 @@ public class InvokeImpl implements Invoke {
 	 * 
 	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#getParameteR()
 	 */
-	public Parameter getParameter() {
+	public Parameter[] getParameters() {
 
-		return this.parameter;
+		return this.parameters;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setInvokeId(java.lang
-	 * .Integer)
+	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setInvokeId(java.lang
+	 *      .Integer)
 	 */
 	public void setInvokeId(Long i) {
 		if ((i == null) || (i < -128 || i > 127)) {
-			throw new IllegalArgumentException("Invoke ID our of range: <-128,127>: " + i);
+			throw new IllegalArgumentException(
+					"Invoke ID our of range: <-128,127>: " + i);
 		}
 		this.invokeId = i;
 
@@ -90,13 +93,13 @@ public class InvokeImpl implements Invoke {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setLinkedId(java.lang
-	 * .Integer)
+	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setLinkedId(java.lang
+	 *      .Integer)
 	 */
 	public void setLinkedId(Long i) {
 		if ((i == null) || (i < -128 || i > 127)) {
-			throw new IllegalArgumentException("Invoke ID our of range: <-128,127>: " + i);
+			throw new IllegalArgumentException(
+					"Invoke ID our of range: <-128,127>: " + i);
 		}
 		this.linkedId = i;
 	}
@@ -104,9 +107,8 @@ public class InvokeImpl implements Invoke {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setOperationCode(org
-	 * .mobicents.protocols.ss7.tcap.asn.comp.OperationCode)
+	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setOperationCode(org
+	 *      .mobicents.protocols.ss7.tcap.asn.comp.OperationCode)
 	 */
 	public void setOperationCode(OperationCode i) {
 		this.operationCode = i;
@@ -116,12 +118,11 @@ public class InvokeImpl implements Invoke {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setParameter(org.mobicents
-	 * .protocols.ss7.tcap.asn.comp.Parameter)
+	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setParameter(org.mobicents
+	 *      .protocols.ss7.tcap.asn.comp.Parameter)
 	 */
-	public void setParameter(Parameter p) {
-		this.parameter = p;
+	public void setParameters(Parameter[] p) {
+		this.parameters = p;
 
 	}
 
@@ -133,9 +134,8 @@ public class InvokeImpl implements Invoke {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols
-	 * .asn.AsnInputStream)
+	 * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols
+	 *      .asn.AsnInputStream)
 	 */
 	public void decode(AsnInputStream ais) throws ParseException {
 
@@ -148,7 +148,8 @@ public class InvokeImpl implements Invoke {
 			if (data.length != ais.read(data)) {
 				throw new ParseException("Not enought data read.");
 			}
-			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(data));
+			AsnInputStream localAis = new AsnInputStream(
+					new ByteArrayInputStream(data));
 			int tag = localAis.readTag();
 			if (tag != _TAG_IID) {
 				throw new ParseException("Expected InvokeID tag, found: " + tag);
@@ -163,19 +164,43 @@ public class InvokeImpl implements Invoke {
 				tag = localAis.readTag();
 			}
 
-			if (tag == OperationCode._TAG_GLOBAL || tag == OperationCode._TAG_LOCAL) {
-				this.operationCode = TcapFactory.createOperationCode(tag, localAis);
+			if (tag == OperationCode._TAG_GLOBAL
+					|| tag == OperationCode._TAG_LOCAL) {
+				this.operationCode = TcapFactory.createOperationCode(tag,
+						localAis);
 				if (localAis.available() <= 0) {
 					return;
 				}
 
 			} else {
-				throw new ParseException("Expected Local|Global Operation Code tag, found: " + tag);
+				throw new ParseException(
+						"Expected Local|Global Operation Code tag, found: "
+								+ tag);
 			}
 
-			// optional parameter
+			// It could be SEQUENCE of PARAMETER
 			tag = localAis.readTag();
-			this.parameter = TcapFactory.createParameter(tag, localAis);
+
+			if (tag == 0x30) {
+				int length = localAis.readLength();
+				List<Parameter> paramsList = new ArrayList<Parameter>();
+
+				while (localAis.available() > 0) {
+					// This is Parameter Tag
+					tag = localAis.readTag();
+					Parameter p = TcapFactory.createParameter(tag, localAis);
+					paramsList.add(p);
+				}
+				
+				this.parameters = new Parameter[paramsList.size()];
+				this.parameters = paramsList.toArray(this.parameters);
+				
+				paramsList.clear();				
+				
+			} else {
+				this.parameters = new Parameter[] { TcapFactory
+						.createParameter(tag, localAis) };
+			}
 
 		} catch (IOException e) {
 			throw new ParseException(e);
@@ -188,9 +213,8 @@ public class InvokeImpl implements Invoke {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
-	 * .asn.AsnOutputStream)
+	 * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
+	 *      .asn.AsnOutputStream)
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
 		if (this.invokeId == null) {
@@ -208,8 +232,29 @@ public class InvokeImpl implements Invoke {
 			}
 
 			this.operationCode.encode(localAos);
-			if (this.parameter != null) {
-				this.parameter.encode(localAos);
+			
+			if (this.parameters != null) {
+				if(this.parameters.length > 1 ){
+					
+					AsnOutputStream aosTemp = new AsnOutputStream();
+					for(Parameter p : this.parameters){
+						p.encode(aosTemp);
+					}
+					
+					byte[] paramData = aosTemp.toByteArray();
+					
+					//Sequence TAG
+					localAos.write(0x30);
+					
+					//Sequence Length
+					localAos.write(paramData.length);
+					
+					//Now write the Parameter's 
+					localAos.write(paramData);
+					
+				} else{
+					this.parameters[0].encode(localAos);
+				}
 			}
 			byte[] data = localAos.toByteArray();
 			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);

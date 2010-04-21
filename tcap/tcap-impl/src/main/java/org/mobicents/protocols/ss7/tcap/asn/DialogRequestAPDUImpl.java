@@ -11,13 +11,6 @@ import java.util.List;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
-import org.mobicents.protocols.ss7.tcap.asn.DialogAPDUType;
-import org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU;
-import org.mobicents.protocols.ss7.tcap.asn.ParseException;
-import org.mobicents.protocols.ss7.tcap.asn.ProtocolVersion;
-import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
 /**
  * @author baranowb
@@ -41,9 +34,7 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#getProtocolVersion
-	 * ()
+	 * @see org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#getProtocolVersion ()
 	 */
 	public int getProtocolVersion() {
 
@@ -53,9 +44,7 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#getUserInformation
-	 * ()
+	 * @see org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#getUserInformation ()
 	 */
 	public UserInformation[] getUserInformation() {
 		return this.ui;
@@ -76,9 +65,8 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#setUserInformation
-	 * (org.mobicents.protocols.ss7.tcap.asn.UserInformation[])
+	 * @see org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#setUserInformation
+	 *      (org.mobicents.protocols.ss7.tcap.asn.UserInformation[])
 	 */
 	public void setUserInformation(UserInformation[] ui) {
 		this.ui = ui;
@@ -107,9 +95,8 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols
-	 * .asn.AsnInputStream)
+	 * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols
+	 *      .asn.AsnInputStream)
 	 */
 	public void decode(AsnInputStream ais) throws ParseException {
 		try {
@@ -124,11 +111,11 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 			// going the easy way; not going to work with undefined!
 			// this way we dont have to go through remaining len countdown
 			byte[] dataChunk = new byte[len];
-			if(len!=ais.read(dataChunk))
-			{
+			if (len != ais.read(dataChunk)) {
 				throw new ParseException("Not enough data read.");
 			}
-			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(dataChunk));
+			AsnInputStream localAis = new AsnInputStream(
+					new ByteArrayInputStream(dataChunk));
 			int tag = localAis.readTag();
 			// optional protocol version
 			if (tag == ProtocolVersion._TAG_PROTOCOL_VERSION) {
@@ -140,24 +127,33 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 
 			// now there is mandatory part
 			if (tag != ApplicationContextName._TAG) {
-				throw new ParseException("Expected Application Context Name tag, found: " + tag);
+				throw new ParseException(
+						"Expected Application Context Name tag, found: " + tag);
 			}
 			this.acn = TcapFactory.createApplicationContextName(localAis);
 
 			// optional sequence.
 			if (localAis.available() > 0) {
 				// we have optional seq;
-				tag = localAis.readTag();
-				if (tag != Tag.SEQUENCE) {
-					throw new ParseException("Expected SEQUENCE tag, found: " + tag);
-				}
-				byte[] data = localAis.readSequence();
-				localAis = new AsnInputStream(new ByteArrayInputStream(data));
+
+				// TODO: The Q.773 defines SEQUENCE of USER INFORMATION, however all
+				// the traces shows no SEQUNECE and just one USER INFORMATION
+
+				// tag = localAis.readTag();
+				// if (tag != Tag.SEQUENCE) {
+				// throw new ParseException("Expected SEQUENCE tag, found: " +
+				// tag);
+				// }
+				// byte[] data = localAis.readSequence();
+				// localAis = new AsnInputStream(new
+				// ByteArrayInputStream(data));
+
 				List<UserInformation> list = new ArrayList<UserInformation>();
 				while (localAis.available() > 0) {
 					tag = localAis.readTag();
 					if (tag != UserInformation._TAG) {
-						throw new ParseException("Expected User Information tag, found: " + tag);
+						throw new ParseException(
+								"Expected User Information tag, found: " + tag);
 
 					}
 					list.add(TcapFactory.createUserInformation(localAis));
@@ -176,9 +172,8 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
-	 * .asn.AsnOutputStream)
+	 * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
+	 *      .asn.AsnOutputStream)
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
 
@@ -186,10 +181,11 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 			throw new ParseException("No Application Context Name!");
 		}
 		try {
-			// lets not ommit protocol version, we check byte[] in tests, it screws them :)
+			// lets not ommit protocol version, we check byte[] in tests, it
+			// screws them :)
 
 			AsnOutputStream localAos = new AsnOutputStream();
-	
+
 			localAos.reset();
 			byte[] byteData = null;
 			if (ui != null) {
@@ -199,15 +195,16 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 				byteData = localAos.toByteArray();
 				localAos.reset();
 
-				localAos.writeSequence(byteData);
+				//TODO : Commented out the Sequence. The trace is not showing this
+				//localAos.writeSequence(byteData);
 
-				byteData = localAos.toByteArray();
+				//byteData = localAos.toByteArray();
 
 			}
 			ProtocolVersion pv = TcapFactory.createProtocolVersion();
 			pv.encode(localAos);
 			this.acn.encode(localAos);
-			
+
 			if (byteData != null) {
 				localAos.write(byteData);
 			}

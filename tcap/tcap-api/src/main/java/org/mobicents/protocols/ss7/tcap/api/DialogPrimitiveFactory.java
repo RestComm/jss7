@@ -9,9 +9,10 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
-//import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortRequest;
 
 public interface DialogPrimitiveFactory {
 
@@ -23,6 +24,8 @@ public interface DialogPrimitiveFactory {
 
 	public TCUniRequest createUni(Dialog d);
 	
+	public TCUserAbortRequest createUserAbort(Dialog d);
+	
 	public TCBeginIndication createBeginIndication(Dialog d);
 
 	public TCContinueIndication createContinueIndication(Dialog d);
@@ -31,8 +34,8 @@ public interface DialogPrimitiveFactory {
 
 	public TCUniIndication createUniIndication(Dialog d);
 	
-
-	//public TCUserAbortRequest createUserAbort(Dialog d);
+	public TCUserAbortIndication createUserAbortIndication(Dialog d);
+	
 	
 	public ApplicationContextName createApplicationContextName();
 	

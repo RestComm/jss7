@@ -4,9 +4,10 @@
 package org.mobicents.protocols.ss7.tcap;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -19,17 +20,12 @@ import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcap.api.DialogPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
-import org.mobicents.protocols.ss7.tcap.api.tc.component.TCInvokeIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.component.TCInvokeRequest;
-import org.mobicents.protocols.ss7.tcap.api.tc.component.TCRejectIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.component.TCRejectRequest;
-import org.mobicents.protocols.ss7.tcap.api.tc.component.TCResultIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.component.TCResultRequest;
+import org.mobicents.protocols.ss7.tcap.api.TCListener;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.asn.DialogAPDU;
+import org.mobicents.protocols.ss7.tcap.asn.DialogPortion;
+import org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDUImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Return;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
@@ -44,9 +40,11 @@ import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCBeginIndicationImpl;
  */
 public class TCAProviderImpl implements TCAPProvider, SccpListener {
 
-	
-	
-	private static final Logger logger = Logger.getLogger(TCAProviderImpl.class);
+	private static final Logger logger = Logger
+			.getLogger(TCAProviderImpl.class);
+
+	private Set<TCListener> tcListeners = new HashSet<TCListener>();
+
 	private ScheduledExecutorService executor;
 	// boundry for Uni directional dialogs :), tx id is always encoded
 	// on 4 octets, so this is its max value
@@ -68,8 +66,32 @@ public class TCAProviderImpl implements TCAPProvider, SccpListener {
 
 		this.componentPrimitiveFactory = new ComponentPrimitiveFactoryImpl();
 		this.dialogPrimitiveFactory = new DialogPrimitiveFactoryImpl();
-		this.executor =  Executors.newSingleThreadScheduledExecutor();
-		
+		this.executor = Executors.newSingleThreadScheduledExecutor();
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#addTCListener(org.mobicents.protocols.ss7.tcap.api.TCListener)
+	 */
+	public void addTCListener(TCListener lst) {
+		if (this.tcListeners.contains(lst)) {
+
+		} else {
+			this.tcListeners.add(lst);
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#removeTCListener(org.mobicents.protocols.ss7.tcap.api.TCListener)
+	 */
+	public void removeTCListener(TCListener lst) {
+		this.tcListeners.remove(lst);
+
 	}
 
 	// some help methods... crude but will work for first impl.
@@ -111,9 +133,7 @@ public class TCAProviderImpl implements TCAPProvider, SccpListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.api.TCAPProvider#getDialogPrimitiveFactory
-	 * ()
+	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPProvider#getDialogPrimitiveFactory ()
 	 */
 	public DialogPrimitiveFactory getDialogPrimitiveFactory() {
 
@@ -123,18 +143,19 @@ public class TCAProviderImpl implements TCAPProvider, SccpListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.api.TCAPProvider#getNewDialog(org.mobicents
-	 * .protocols.ss7.sccp.parameter.SccpAddress,
-	 * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress)
+	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPProvider#getNewDialog(org.mobicents
+	 *      .protocols.ss7.sccp.parameter.SccpAddress,
+	 *      org.mobicents.protocols.ss7.sccp.parameter.SccpAddress)
 	 */
-	public Dialog getNewDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
+	public Dialog getNewDialog(SccpAddress localAddress,
+			SccpAddress remoteAddress) throws TCAPException {
 
 		Long id = this.getAvailableUniTxId();
 		return _getDialog(localAddress, remoteAddress, id);
 	}
 
-	private Dialog _getDialog(SccpAddress localAddress, SccpAddress remoteAddress, Long id) {
+	private Dialog _getDialog(SccpAddress localAddress,
+			SccpAddress remoteAddress, Long id) {
 		if (localAddress == null) {
 			throw new NullPointerException("LocalAddress must not be null");
 		}
@@ -142,7 +163,8 @@ public class TCAProviderImpl implements TCAPProvider, SccpListener {
 		if (remoteAddress == null) {
 			throw new NullPointerException("RemoteAddress must not be null");
 		}
-		DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, this.executor);
+		DialogImpl di = new DialogImpl(localAddress, remoteAddress, id,
+				this.executor, this);
 		this.dialogs.put(di.getDialogId(), di);
 		return di;
 	}
@@ -150,22 +172,24 @@ public class TCAProviderImpl implements TCAPProvider, SccpListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.api.TCAPProvider#getNewUnstructuredDialog
-	 * (org.mobicents.protocols.ss7.sccp.parameter.SccpAddress,
-	 * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress)
+	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPProvider#getNewUnstructuredDialog
+	 *      (org.mobicents.protocols.ss7.sccp.parameter.SccpAddress,
+	 *      org.mobicents.protocols.ss7.sccp.parameter.SccpAddress)
 	 */
-	public Dialog getNewUnstructuredDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
+	public Dialog getNewUnstructuredDialog(SccpAddress localAddress,
+			SccpAddress remoteAddress) throws TCAPException {
 		Long id = this.getAvailableTxId();
 		return _getDialog(localAddress, remoteAddress, id);
 	}
 
-	public void onMessage(SccpAddress localAddress, SccpAddress remoteAddress, byte[] asnData) {
+	public void onMessage(SccpAddress localAddress, SccpAddress remoteAddress,
+			byte[] asnData) {
 		try {
 			// FIXME: Qs state that OtxID and DtxID consittute to dialog id.....
 
 			// asnData - it should pass
-			AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(asnData));
+			AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(
+					asnData));
 
 			// this should have TC message tag :)
 			int tag = ais.readTag();
@@ -173,7 +197,8 @@ public class TCAProviderImpl implements TCAPProvider, SccpListener {
 			switch (tag) {
 			// continue first, usually we will get more of those. small perf
 			case TCContinueMessage._TAG:
-				TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
+				TCContinueMessage tcm = TcapFactory
+						.createTCContinueMessage(ais);
 				// received continue, destID == localDialogId(originatingTxId of
 				// begin);
 				Long dialogId = tcm.getDestinationTransactionId();
@@ -191,8 +216,57 @@ public class TCAProviderImpl implements TCAPProvider, SccpListener {
 				// received continue, destID == localDialogId(originatingTxId of
 				// begin);
 
-				di = (DialogImpl) this.getNewDialog(localAddress, remoteAddress);
+				di = (DialogImpl) this
+						.getNewDialog(localAddress, remoteAddress);
 				di.processBegin(tcb, localAddress, remoteAddress);
+
+				TCBeginIndicationImpl tcBeginIndicationImpl = (TCBeginIndicationImpl) this.dialogPrimitiveFactory
+						.createBeginIndication(di);
+
+				// TODO
+				// tcBeginIndicationImpl.setOriginatingAddress();
+				// tcBeginIndicationImpl.setDestinationAddress(dest);
+
+				DialogPortion dialogPortn = tcb.getDialogPortion();
+				if (dialogPortn != null) {
+					DialogAPDU dialogAPDU = dialogPortn.getDialogAPDU();
+
+					// TODO Since this is TCBeginMessage APDU should always be
+					// the Request, isn't it?
+					switch (dialogAPDU.getType()) {
+					case Request:
+						DialogRequestAPDUImpl dialogRequestAPDUImpl = (DialogRequestAPDUImpl) dialogAPDU;
+						tcBeginIndicationImpl
+								.setApplicationContextName(dialogRequestAPDUImpl
+										.getApplicationContextName());
+
+						// TODO DialogRequestAPDUImpl returns Array of
+						// UserInformation, but TCBeginIndicationImpl takes only
+						// UserInformation?
+						tcBeginIndicationImpl
+								.setUserInformation(dialogRequestAPDUImpl
+										.getUserInformation()[0]);
+						break;
+					case Response:
+						//TODO : Throw error?
+						break;
+					case Abort:
+						//TODO : Throw error?
+						break;
+					case UniDirectional:
+						//TODO : Throw Error?
+						break;
+					default:
+						//TODO : Throw Error?
+						break;
+					}
+				}
+
+				tcBeginIndicationImpl.setComponents(tcb.getComponent());
+
+				for (TCListener tcListener : this.tcListeners) {
+					tcListener.onTCBegin(tcBeginIndicationImpl);
+				}
 
 				break;
 
@@ -209,7 +283,8 @@ public class TCAProviderImpl implements TCAPProvider, SccpListener {
 
 			case TCUniMessage._TAG:
 				TCUniMessage tub = TcapFactory.createTCUniMessage(ais);
-				di = (DialogImpl) this.getNewUnstructuredDialog(localAddress, remoteAddress);
+				di = (DialogImpl) this.getNewUnstructuredDialog(localAddress,
+						remoteAddress);
 				di.processUni(tub, localAddress, remoteAddress);
 				break;
 			}

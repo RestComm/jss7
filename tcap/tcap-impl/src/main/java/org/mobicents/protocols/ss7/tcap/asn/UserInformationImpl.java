@@ -3,6 +3,7 @@
  */
 package org.mobicents.protocols.ss7.tcap.asn;
 
+import java.io.EOFException;
 import java.io.IOException;
 
 import org.mobicents.protocols.asn.AsnException;
@@ -15,6 +16,8 @@ import org.mobicents.protocols.asn.External;
  *
  */
 public class UserInformationImpl extends External implements UserInformation {
+	
+	byte[] userData = null;
 	//I have no idea how to hack this... 
 	
 
@@ -23,6 +26,25 @@ public class UserInformationImpl extends External implements UserInformation {
 	 */
 	@Override
 	public void decode(AsnInputStream ais) throws ParseException {
+		int length;
+		try {
+			
+			length = ais.readLength();
+			userData = new byte[length];
+			
+			
+			int redaData = ais.read(userData);
+			
+			if(redaData != length){
+				throw new EOFException("EOF reached before reading complete data for UserInformation");
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
 		// TODO Auto-generated method stub
 		//super.decode(ais);
 	}
@@ -33,19 +55,19 @@ public class UserInformationImpl extends External implements UserInformation {
 	@Override
 	public void encode(AsnOutputStream aos) throws ParseException {
 		//this will have EXTERNAL
-		AsnOutputStream localAsn = new AsnOutputStream();
-		try {
-			super.encode(localAsn);
-		} catch (AsnException e) {
-			throw new ParseException(e);
-		}
+//		AsnOutputStream localAsn = new AsnOutputStream();
+//		try {
+//			super.encode(localAsn);
+//		} catch (AsnException e) {
+//			throw new ParseException(e);
+//		}
 		
 		//now lets write ourselves
 		aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
-		byte[] externalData = localAsn.toByteArray();
-		aos.writeLength(externalData.length);
+		//byte[] externalData = localAsn.toByteArray();
+		aos.writeLength(userData.length);
 		try {
-			aos.write(externalData);
+			aos.write(userData);
 		} catch (IOException e) {
 			throw new ParseException(e);
 		}
@@ -55,6 +77,16 @@ public class UserInformationImpl extends External implements UserInformation {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public byte[] getUserData() {
+		return userData;
+	}
+
+	public void setUserData(byte[] userData) {
+		this.userData = userData;
+	}
+	
+	
 
 
 	

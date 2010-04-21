@@ -8,7 +8,7 @@ import org.mobicents.protocols.asn.Tag;
 public interface UserInformation extends Encodable {
 
 	public static final int _TAG = 0x1E;
-	public static final int _TAG_CLASS = Tag.CLASS_UNIVERSAL;
+	public static final int _TAG_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
 	public static final boolean _TAG_PC_PRIMITIVE = false;
 
 	public byte[] getEncodeType() throws AsnException;
@@ -18,6 +18,10 @@ public interface UserInformation extends Encodable {
 	public BitSet getEncodeBitStringType() throws AsnException;
 
 	public void setEncodeBitStringType(BitSet data);
+	
+	public byte[] getUserData();
+
+	public void setUserData(byte[] userData);
 
 	/**
 	 * @return the oid

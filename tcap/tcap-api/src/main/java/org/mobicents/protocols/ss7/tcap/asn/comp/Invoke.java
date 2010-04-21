@@ -7,6 +7,7 @@ import org.mobicents.protocols.asn.Tag;
 
 /**
  * @author baranowb
+ * @author amit bhayani
  *
  */
 public interface Invoke extends Component{
@@ -41,6 +42,6 @@ public interface Invoke extends Component{
 	public OperationCode getOperationCode();
 	
 	//optional
-	public void setParameter(Parameter p);
-	public Parameter getParameter();
+	public void setParameters(Parameter[] p);
+	public Parameter[] getParameters();
 }

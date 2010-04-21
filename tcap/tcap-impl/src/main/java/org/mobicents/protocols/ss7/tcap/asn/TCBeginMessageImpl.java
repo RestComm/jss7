@@ -4,7 +4,6 @@
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

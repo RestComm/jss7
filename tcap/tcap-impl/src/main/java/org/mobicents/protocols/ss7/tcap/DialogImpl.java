@@ -11,14 +11,12 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.ComponentRequest;
-import org.mobicents.protocols.ss7.tcap.api.tc.component.TCInvokeRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.DialogRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
-import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
@@ -198,7 +196,10 @@ public class DialogImpl implements Dialog {
 		
 	}
 
-
+	public void send(TCUserAbortRequest event) throws TCAPSendException {
+		// TODO Auto-generated method stub
+		
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -231,44 +232,46 @@ public class DialogImpl implements Dialog {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#sendBegin()
-	 */
-	public void sendBegin() throws TCAPSendException {
-		// TODO Auto-generated method stub
-		
-	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#sendContinue()
-	 */
-	public void sendContinue() throws TCAPSendException {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#sendEnd()
-	 */
-	public void sendEnd() throws TCAPSendException {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#sendUni()
-	 */
-	public void sendUni() throws TCAPSendException {
-		// TODO Auto-generated method stub
-
-	}
+	//TODO : Commented out by Amit. we dont need this
+	
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#sendBegin()
+//	 */
+//	public void sendBegin() throws TCAPSendException {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#sendContinue()
+//	 */
+//	public void sendContinue() throws TCAPSendException {
+//		// TODO Auto-generated method stub
+//
+//	}
+//
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#sendEnd()
+//	 */
+//	public void sendEnd() throws TCAPSendException {
+//		// TODO Auto-generated method stub
+//
+//	}
+//
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#sendUni()
+//	 */
+//	public void sendUni() throws TCAPSendException {
+//		// TODO Auto-generated method stub
+//
+//	}
 
 	// /////////////////
 	// LOCAL METHODS //

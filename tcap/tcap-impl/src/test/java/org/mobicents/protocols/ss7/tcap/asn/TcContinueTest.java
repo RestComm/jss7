@@ -90,7 +90,7 @@ public class TcContinueTest extends TestCase {
 		assertNull("Linked ID is not null", i.getLinkedId());
 		
 		assertNotNull("Operation code is null",i.getOperationCode());
-		assertNull("Parameter not null",i.getParameter());
+		assertNull("Parameter not null",i.getParameters());
 		OperationCode oc = i.getOperationCode();
 		assertEquals("Wrong operation type",OperationCodeType.Local, oc.getOperationType());
 		assertEquals("Wrong operation code", new Long(0x37),oc.getCode());
@@ -219,7 +219,7 @@ public class TcContinueTest extends TestCase {
 		assertNull("Linked ID is not null", i.getLinkedId());
 		
 		assertNotNull("Operation code is null",i.getOperationCode());
-		assertNotNull("Parameter null",i.getParameter());
+		assertNotNull("Parameter null",i.getParameters());
 		OperationCode oc = i.getOperationCode();
 		assertEquals("Wrong operation type",OperationCodeType.Local, oc.getOperationType());
 		assertEquals("Wrong operation code", new Long(42),oc.getCode());

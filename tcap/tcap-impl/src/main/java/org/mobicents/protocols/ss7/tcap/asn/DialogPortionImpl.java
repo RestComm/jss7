@@ -76,7 +76,7 @@ public class DialogPortionImpl extends External implements DialogPortion {
 	 * @see org.mobicents.protocols.asn.External#getEncodeBitStringType()
 	 */
 	@Override
-	public BitSet getEncodeBitStringType() throws AsnException {
+	public BitSet getEncodeBitStringType() {
 		throw new UnsupportedOperationException();
 	}
 

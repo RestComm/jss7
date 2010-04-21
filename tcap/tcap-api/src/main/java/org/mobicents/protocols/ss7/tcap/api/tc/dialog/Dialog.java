@@ -72,19 +72,24 @@ public interface Dialog {
 	public void sendComponent(ComponentRequest componentRequest);
 
 	// sender methods, propalby those will change!
-	public void sendBegin() throws TCAPSendException;
-
-	public void sendContinue() throws TCAPSendException;
-
-	public void sendEnd() throws TCAPSendException;
-
-	public void sendUni() throws TCAPSendException;
+	
+	//TODO : Commented out by Amit. Use the sendXXX(YYYRequest)
+	
+//	public void sendBegin() throws TCAPSendException;
+//
+//	public void sendContinue() throws TCAPSendException;
+//
+//	public void sendEnd() throws TCAPSendException;
+//
+//	public void sendUni() throws TCAPSendException;
 
 	public void send(TCBeginRequest event) throws TCAPSendException;
 
 	public void send(TCContinueRequest event) throws TCAPSendException;
 
 	public void send(TCEndRequest event) throws TCAPSendException;
+	
+	public void send(TCUserAbortRequest event) throws TCAPSendException;
 
 	/**
 	 * Programmer hook to release.

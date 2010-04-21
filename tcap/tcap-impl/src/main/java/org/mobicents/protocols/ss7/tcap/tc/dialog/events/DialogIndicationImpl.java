@@ -3,9 +3,9 @@
  */
 package org.mobicents.protocols.ss7.tcap.tc.dialog.events;
 
-import org.mobicents.protocols.ss7.tcap.api.tc.component.ComponentIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.DialogIndication;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 
 /**
  * @author baranowb
@@ -13,18 +13,18 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.DialogIndication;
  */
 public abstract class DialogIndicationImpl implements DialogIndication {
 
-	private ComponentIndication[] components;
+	private Component[] components;
 	private Dialog dialog;
 	/**
 	 * @return the components
 	 */
-	public ComponentIndication[] getComponents() {
+	public Component[] getComponents() {
 		return components;
 	}
 	/**
 	 * @param components the components to set
 	 */
-	public void setComponents(ComponentIndication[] components) {
+	public void setComponents(Component[] components) {
 		this.components = components;
 	}
 	/**
