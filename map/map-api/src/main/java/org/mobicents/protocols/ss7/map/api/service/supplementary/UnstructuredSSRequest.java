@@ -11,5 +11,4 @@ import org.mobicents.protocols.ss7.map.api.ServiceRequest;
  * 
  */
 public interface UnstructuredSSRequest extends ServiceRequest, USSDService {
-	public static final int SERVICE_PRIMITIVE = 2;
 }

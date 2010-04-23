@@ -1,6 +1,8 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-public interface USSDService {
+import org.mobicents.protocols.ss7.map.api.MAPMessage;
+
+public interface USSDService extends MAPMessage {
 
 	/**
 	 * This parameter contains the information of the alphabet and the language

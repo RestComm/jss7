@@ -1,5 +1,6 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
+import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.ServiceRequest;
 
 /**
@@ -11,5 +12,7 @@ import org.mobicents.protocols.ss7.map.api.ServiceRequest;
  * 
  */
 public interface ProcessUnstructuredSSRequest extends ServiceRequest, USSDService {
-	public static final int SERVICE_PRIMITIVE = 1;
+	
+	public static final int operationCode = MAPOperationCode.processUnstructuredSS_Request;
+	
 }

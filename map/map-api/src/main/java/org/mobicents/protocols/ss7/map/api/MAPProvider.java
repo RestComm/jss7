@@ -2,8 +2,13 @@ package org.mobicents.protocols.ss7.map.api;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
 public interface MAPProvider {
-	
+
 	public static final int NETWORK_UNSTRUCTURED_SS_CONTEXT_V2 = 1;
 
 	/**
@@ -45,7 +50,7 @@ public interface MAPProvider {
 	 */
 	public MAPDialog createNewDialog(int applicationCntx,
 			SccpAddress destAddress, byte[] destReference,
-			SccpAddress origAddress, byte[] origReference);
+			SccpAddress origAddress, byte[] origReference) throws MAPException;
 
 	/**
 	 * 
@@ -70,8 +75,7 @@ public interface MAPProvider {
 	 * @param mapServiceListener
 	 */
 	public void removeMAPServiceListener(MAPServiceListener mapServiceListener);
-	
-	
+
 	public MapServiceFactory getMapServiceFactory();
 
 }
