@@ -1,6 +1,8 @@
 package org.mobicents.protocols.ss7.tcap.asn;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.BitSet;
 
 import org.mobicents.protocols.asn.AsnException;
@@ -9,6 +11,53 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.External;
 import org.mobicents.protocols.asn.Tag;
 
+
+/**
+ * <p>
+ * As per the ITU-T Rec Q.773 Table 30/Q.773 – Dialogue Portion
+ * </p>
+ * <br/>
+ * <p>
+ * The DialogPortion consist of Dialogue Portion Tag (0x6B), Dialogue Portion
+ * Length; External Tag (0x28), External Length; Structured or unstructured
+ * dialogue
+ * </p>
+ * <br/>
+ * <p>
+ * As per the Table 33/Q.773 –Structured Dialogue is represented as
+ * </p>
+ * <br/>
+ * <p>
+ * Object Identifier Tag (0x06), Object Identifier Length; Dialogue-as-ID value;
+ * Single-ASN.1-type Tag (0xa0), Single-ASN.1-type Length; Dialogue PDU
+ * </p>
+ * <br/>
+ * <p>
+ * As per the Table 37/Q.773 – Dialogue-As-ID Value is represented OID. Please
+ * look {@link DialogPortionImpl._DIALG_STRUCTURED}
+ * </p>
+ * <br/>
+ * <p>
+ * As per the Table 34/Q.773 – Unstructured Dialogue is represented as
+ * </p>
+ * <br/>
+ * <p>
+ * Object Identifier Tag (0x06), Object Identifier Length; Unidialogue-as-ID
+ * value; Single-ASN.1-type Tag (0xa0), Single-ASN.1-type Length; Unidirectional
+ * Dialogue PDU
+ * </p>
+ * <br/>
+ * <p>
+ * As per the Table 36/Q.773 – Unidialogue-As-ID Value is represented as OID.
+ * Please look {@link DialogPortionImpl._DIALG_UNI}
+ * </p>
+ * 
+ * 
+ * 
+ * @author baranowb
+ * @author amit bhayani
+ * 
+ */
 public class DialogPortionImpl extends External implements DialogPortion {
 
 	//Encoded OID, dont like this....
@@ -19,6 +68,8 @@ public class DialogPortionImpl extends External implements DialogPortion {
 	
 	// MANDATORY - in sequence, our payload
 	private DialogAPDU dialogAPDU;
+	
+	private boolean uniDirectional;
 
 	public DialogPortionImpl() {
 		super();
@@ -35,7 +86,7 @@ public class DialogPortionImpl extends External implements DialogPortion {
 	 * org.mobicents.protocols.ss7.tcap.asn.DialogPortion#isUnidirectional()
 	 */
 	public boolean isUnidirectional() {
-		return _DIALG_UNI[5] == super.oidValue[5];
+		return this.uniDirectional;
 	}
 
 	/*
@@ -51,6 +102,7 @@ public class DialogPortionImpl extends External implements DialogPortion {
 		} else {
 			super.oidValue = _DIALG_STRUCTURED;
 		}
+		this.uniDirectional = flag;
 
 	}
 
@@ -148,19 +200,27 @@ public class DialogPortionImpl extends External implements DialogPortion {
 			int tag = ais.readTag();
 			if(tag != Tag.EXTERNAL)
 			{
-				throw new AsnException("Wrong value of tag, expected EXTERNAL, found: "+tag);
+				throw new AsnException(
+						"Wrong value of tag, expected EXTERNAL, found: " + tag);
 			}
 			super.decode(ais);
 
 			if (!isAsn() || !isOid()) {
 				throw new ParseException("Wrong encode(" + isOid() + ")/encoding(" + isAsn() + ") types");
 			}
+			
+			//Set whether Unidirectional
+			this.uniDirectional = Arrays.equals(_DIALG_UNI, this.getOidValue());
+			
+			byte[] dialogPdu = super.getEncodeType();
+			
+			AsnInputStream loaclAsnIS = new AsnInputStream(new ByteArrayInputStream(dialogPdu));
 
 			// now lets get APDU
-			tag = ais.readTag();// this sucks, depending on OID, it can have
+			tag = loaclAsnIS.readTag();// this sucks, depending on OID, it can have
 									// diff values.....
 		
-			this.dialogAPDU = TcapFactory.createDialogAPDU(ais, tag, isUnidirectional());
+			this.dialogAPDU = TcapFactory.createDialogAPDU(loaclAsnIS, tag, isUnidirectional());
 			
 		} catch (ParseException e) {
 

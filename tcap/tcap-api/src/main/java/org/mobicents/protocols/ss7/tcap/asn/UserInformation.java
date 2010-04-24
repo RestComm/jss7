@@ -18,10 +18,7 @@ public interface UserInformation extends Encodable {
 	public BitSet getEncodeBitStringType() throws AsnException;
 
 	public void setEncodeBitStringType(BitSet data);
-	
-	public byte[] getUserData();
 
-	public void setUserData(byte[] userData);
 
 	/**
 	 * @return the oid

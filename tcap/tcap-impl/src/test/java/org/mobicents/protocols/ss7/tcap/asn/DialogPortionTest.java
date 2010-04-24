@@ -19,8 +19,8 @@ import junit.framework.TestCase;
 public class DialogPortionTest extends TestCase {
 
 	public void testDialogPortion_UserInformation() throws Exception {
-		
-		//Hex dump is from wireshark trace for TCAP - MAP/USSD
+
+		// Hex dump is from wireshark trace for TCAP - MAP/USSD
 		byte[] b = new byte[] { 0x6b, 0x41, 0x28, 0x3f, 0x06, 0x07, 0x00, 0x11,
 				(byte) 0x86, 0x05, 0x01, 0x01, 0x01, (byte) 0xa0, 0x34, 0x60,
 				0x32, (byte) 0xa1, 0x09, 0x06, 0x07, 0x04, 0x00, 0x00, 0x01,
@@ -38,28 +38,43 @@ public class DialogPortionTest extends TestCase {
 
 		long[] oidValue = dpi.getOidValue();
 		Arrays.equals(new long[] { 0, 0, 17, 773, 1, 1, 1 }, oidValue);
-		
+
 		DialogAPDU dialogAPDU = dpi.getDialogAPDU();
-		
+
 		assertNotNull(dialogAPDU);
-		
+
 		assertEquals(DialogAPDUType.Request, dialogAPDU.getType());
-		
-		DialogRequestAPDU dialogRequestAPDU = (DialogRequestAPDU)dialogAPDU;
-		
-		ApplicationContextName acn = dialogRequestAPDU.getApplicationContextName();
-		
+
+		DialogRequestAPDU dialogRequestAPDU = (DialogRequestAPDU) dialogAPDU;
+
+		ApplicationContextName acn = dialogRequestAPDU
+				.getApplicationContextName();
+
 		assertNotNull(acn);
-		
-		assertTrue(Arrays.equals(new long[]{0,4,0,0,1,0,19,2}, acn.getOid()));
-		
+
+		assertTrue(Arrays.equals(new long[] { 0, 4, 0, 0, 1, 0, 19, 2 }, acn
+				.getOid()));
+
 		UserInformation[] userInfos = dialogRequestAPDU.getUserInformation();
-		
+
 		assertEquals(1, userInfos.length);
-		
-		UserInformation usrInfo = userInfos[0];
-		
-		
+
+		UserInformation userInformation = userInfos[0];
+
+		assertTrue(userInformation.isOid());
+
+		assertTrue(Arrays.equals(new long[] { 0, 4, 0, 0, 1, 1, 1, 1 },
+				userInformation.getOidValue()));
+
+		assertFalse(userInformation.isInteger());
+
+		assertTrue(userInformation.isAsn());
+		assertTrue(Arrays.equals(new byte[] { (byte) 0xa0, (byte) 0x80,
+				(byte) 0x80, 0x09, (byte) 0x96, 0x02, 0x24, (byte) 0x80, 0x03,
+				0x00, (byte) 0x80, 0x00, (byte) 0xf2, (byte) 0x81, 0x07,
+				(byte) 0x91, 0x13, 0x26, (byte) 0x98, (byte) 0x86, 0x03,
+				(byte) 0xf0, 0x00, 0x00 }, userInformation.getEncodeType()));
+
 	}
 
 	@org.junit.Test
@@ -113,7 +128,7 @@ public class DialogPortionTest extends TestCase {
 		DialogAPDU _apid = dpi.getDialogAPDU();
 		assertEquals(DialogAPDUType.Request, _apid.getType());
 		assertFalse(_apid.isUniDirectional());
-		DialogRequestAPDUTest apdu = (DialogRequestAPDUTest) _apid;
+		DialogRequestAPDU apdu = (DialogRequestAPDU) _apid;
 
 		// no idea how to check rest...?
 

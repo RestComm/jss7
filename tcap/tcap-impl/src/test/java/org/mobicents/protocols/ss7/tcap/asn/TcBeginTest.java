@@ -27,7 +27,11 @@ public class TcBeginTest extends TestCase {
 				+ Arrays.toString(expected) + "\n" + Arrays.toString(encoded),
 				same);
 	}
-	
+	/**
+	 * The data for this comes from nad1053.pcap USSD Wireshark Trace 2nd Packet
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	@org.junit.Test
 	public void testBasicTCBeginEncode() throws IOException, ParseException {
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage();
@@ -49,13 +53,15 @@ public class TcBeginTest extends TestCase {
 		diRequestAPDUImpl.setApplicationContextName(acn);
 
 		UserInformation userInfo = new UserInformationImpl();
-		byte[] userData = new byte[] { 0x28, 0x23, 0x06, 0x07, 0x04, 0x00,
-				0x00, 0x01, 0x01, 0x01, 0x01, (byte) 0xa0, 0x18, (byte) 0xa0,
-				(byte) 0x80, (byte) 0x80, 0x09, (byte) 0x96, 0x02, 0x24,
-				(byte) 0x80, 0x03, 0x00, (byte) 0x80, 0x00, (byte) 0xf2,
-				(byte) 0x81, 0x07, (byte) 0x91, 0x13, 0x26, (byte) 0x98,
-				(byte) 0x86, 0x03, (byte) 0xf0, 0x00, 0x00 };
-		userInfo.setUserData(userData);
+		userInfo.setOid(true);
+		userInfo.setOidValue(new long[] { 0, 4, 0, 0, 1, 1, 1, 1 });
+
+		userInfo.setAsn(true);
+		userInfo.setEncodeType(new byte[] { (byte) 0xa0, (byte) 0x80,
+				(byte) 0x80, 0x09, (byte) 0x96, 0x02, 0x24, (byte) 0x80, 0x03,
+				0x00, (byte) 0x80, 0x00, (byte) 0xf2, (byte) 0x81, 0x07,
+				(byte) 0x91, 0x13, 0x26, (byte) 0x98, (byte) 0x86, 0x03,
+				(byte) 0xf0, 0x00, 0x00 });		
 
 		diRequestAPDUImpl
 				.setUserInformation(new UserInformation[] { userInfo });
@@ -115,10 +121,6 @@ public class TcBeginTest extends TestCase {
 	@org.junit.Test
 	public void testBasicTCBegin() throws IOException, ParseException {
 
-		
-		
-		
-		
 		//no idea how to check rest...?
 		
 		//trace
