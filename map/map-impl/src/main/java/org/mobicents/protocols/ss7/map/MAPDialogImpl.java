@@ -14,6 +14,8 @@ import org.mobicents.protocols.ss7.map.api.ServiceResponse;
  * 
  */
 public class MAPDialogImpl implements MAPDialog {
+	
+	private MAPDialogState state = MAPDialogState.OPEN;
 
 	// Queue to hold the MAP Primitives
 	private List<ServiceRequest> serviceReqQueue = new ArrayList<ServiceRequest>();
@@ -32,6 +34,9 @@ public class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void addServiceRequest(ServiceRequest serviceRequest) {
+		if(this.state == MAPDialogState.UNCONFIRMED_CONTINUE){
+			//TODO Do not accept the primitive here yet
+		}
 		serviceReqQueue.add(serviceRequest);
 	}
 
@@ -44,7 +49,13 @@ public class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void send() {
-
+		if(this.state == MAPDialogState.OPEN){
+			//TODO this TC_BEGIN
+		} else if(this.state == MAPDialogState.CONFIRMED_CONTINUE){
+			//TODO this is TC_CONTINUE
+		}
+		
+		//TODO state where it should raise exception?
 	}
 
 	public void sendOpenServiceResponse() {
