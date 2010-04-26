@@ -18,7 +18,7 @@
 
 	<name>Mobicents SS7 :: TCAP Parent  :: ${pom.artifactId}</name>
 	<properties>
-		<maven.test.skip>false</maven.test.skip>
+		
 		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
 		<mobicents.protocols.asn.version>1.0.0.BETA1-SNAPSHOT</mobicents.protocols.asn.version>
 	</properties>
