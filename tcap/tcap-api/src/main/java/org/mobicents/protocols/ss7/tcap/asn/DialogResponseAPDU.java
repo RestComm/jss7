@@ -25,7 +25,7 @@ public interface DialogResponseAPDU extends DialogAPDU {
 	
 	
 	//opt
-	public UserInformation[] getUserInformation();
-	public void setUserInformation(UserInformation[] ui);
+	public UserInformation getUserInformation();
+	public void setUserInformation(UserInformation ui);
 	
 }

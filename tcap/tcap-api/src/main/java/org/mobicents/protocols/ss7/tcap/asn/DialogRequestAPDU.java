@@ -17,7 +17,7 @@ public interface DialogRequestAPDU extends DialogAPDU {
 	public ApplicationContextName getApplicationContextName();
 	public void setApplicationContextName(ApplicationContextName acn);
 	//opt
-	public UserInformation[] getUserInformation();
-	public void setUserInformation(UserInformation[] ui);
+	public UserInformation getUserInformation();
+	public void setUserInformation(UserInformation ui);
 	
 }
