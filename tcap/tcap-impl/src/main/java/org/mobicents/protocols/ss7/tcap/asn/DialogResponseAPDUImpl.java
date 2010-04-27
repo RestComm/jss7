@@ -25,7 +25,7 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 	private ResultSourceDiagnostic diagnostic;
 	
 	//optional
-	private UserInformation[] ui;
+	private UserInformation ui;
 	
 	/*
 	 * (non-Javadoc)
@@ -56,7 +56,7 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 	 * org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#getUserInformation
 	 * ()
 	 */
-	public UserInformation[] getUserInformation() {
+	public UserInformation getUserInformation() {
 		return this.ui;
 	}
 
@@ -79,7 +79,7 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 	 * org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#setUserInformation
 	 * (org.mobicents.protocols.ss7.tcap.asn.UserInformation[])
 	 */
-	public void setUserInformation(UserInformation[] ui) {
+	public void setUserInformation(UserInformation ui) {
 		this.ui = ui;
 
 	}
@@ -176,23 +176,25 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 			// optional sequence.
 			if (localAis.available() > 0) {
 				// we have optional seq;
-				tag = localAis.readTag();
-				if (tag != Tag.SEQUENCE) {
-					throw new ParseException("Expected SEQUENCE tag, found: " + tag);
-				}
-				byte[] data = localAis.readSequence();
-				localAis = new AsnInputStream(new ByteArrayInputStream(data));
-				List<UserInformation> list = new ArrayList<UserInformation>();
-				while (localAis.available() > 0) {
-					tag = localAis.readTag();
-					if (tag != UserInformation._TAG) {
-						throw new ParseException("Expected User Information tag, found: " + tag);
 
-					}
-					list.add(TcapFactory.createUserInformation(localAis));
+				// TODO: The Q.773 defines SEQUENCE of USER INFORMATION, however all
+				// the traces shows no SEQUNECE and just one USER INFORMATION
+
+				// tag = localAis.readTag();
+				// if (tag != Tag.SEQUENCE) {
+				// throw new ParseException("Expected SEQUENCE tag, found: " +
+				// tag);
+				// }
+				// byte[] data = localAis.readSequence();
+				// localAis = new AsnInputStream(new
+				// ByteArrayInputStream(data));
+
+				tag = localAis.readTag();
+				if(tag != UserInformation._TAG)
+				{
+					throw new ParseException("Expected UserInformation tag, found: "+tag);
 				}
-				this.ui = new UserInformation[list.size()];
-				this.ui = list.toArray(this.ui);
+				this.ui = TcapFactory.createUserInformation(localAis);
 			}
 			
 		} catch (IOException e) {
@@ -233,9 +235,8 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 			localAos.reset();
 			byte[] byteData = null;
 			if (ui != null) {
-				for (UserInformation _ui : ui) {
-					_ui.encode(localAos);
-				}
+				
+				ui.encode(localAos);
 				byteData = localAos.toByteArray();
 				localAos.reset();
 

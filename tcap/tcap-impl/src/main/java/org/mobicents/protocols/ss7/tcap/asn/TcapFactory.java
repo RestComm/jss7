@@ -72,7 +72,25 @@ public final class TcapFactory {
 		}
 
 	}
-
+	
+	public static DialogRequestAPDU createDialogAPDURequest()
+	{
+		return new DialogRequestAPDUImpl();
+	}
+	
+	public static DialogResponseAPDU createDialogAPDUResponse()
+	{
+		return new DialogResponseAPDUImpl();
+	}
+	
+	public static DialogUniAPDU createDialogAPDUUni()
+	{
+		return new DialogUniAPDUImpl();
+	}
+	public static DialogAbortAPDU createDialogAPDUAbort()
+	{
+		return new DialogAbortAPDUImpl();
+	}
 	public static ProtocolVersion createProtocolVersion() {
 		return new ProtocolVersionImpl();
 	}

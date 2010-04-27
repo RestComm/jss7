@@ -7,11 +7,16 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.tcap.DialogImpl;
+import org.mobicents.protocols.ss7.tcap.TCAProviderImpl;
+import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
+import org.mobicents.protocols.ss7.tcap.api.tc.component.OperationState;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
@@ -79,13 +84,13 @@ public class InvokeImpl implements Invoke {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setInvokeId(java.lang
-	 *      .Integer)
+	 * @see
+	 * org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setInvokeId(java.lang
+	 * .Integer)
 	 */
 	public void setInvokeId(Long i) {
 		if ((i == null) || (i < -128 || i > 127)) {
-			throw new IllegalArgumentException(
-					"Invoke ID our of range: <-128,127>: " + i);
+			throw new IllegalArgumentException("Invoke ID our of range: <-128,127>: " + i);
 		}
 		this.invokeId = i;
 
@@ -94,13 +99,13 @@ public class InvokeImpl implements Invoke {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setLinkedId(java.lang
-	 *      .Integer)
+	 * @see
+	 * org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setLinkedId(java.lang
+	 * .Integer)
 	 */
 	public void setLinkedId(Long i) {
 		if ((i == null) || (i < -128 || i > 127)) {
-			throw new IllegalArgumentException(
-					"Invoke ID our of range: <-128,127>: " + i);
+			throw new IllegalArgumentException("Invoke ID our of range: <-128,127>: " + i);
 		}
 		this.linkedId = i;
 	}
@@ -108,8 +113,9 @@ public class InvokeImpl implements Invoke {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setOperationCode(org
-	 *      .mobicents.protocols.ss7.tcap.asn.comp.OperationCode)
+	 * @see
+	 * org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setOperationCode(org
+	 * .mobicents.protocols.ss7.tcap.asn.comp.OperationCode)
 	 */
 	public void setOperationCode(OperationCode i) {
 		this.operationCode = i;
@@ -119,8 +125,9 @@ public class InvokeImpl implements Invoke {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setParameter(org.mobicents
-	 *      .protocols.ss7.tcap.asn.comp.Parameter)
+	 * @see
+	 * org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setParameter(org.mobicents
+	 * .protocols.ss7.tcap.asn.comp.Parameter)
 	 */
 	public void setParameters(Parameter[] p) {
 		this.parameters = p;
@@ -135,8 +142,9 @@ public class InvokeImpl implements Invoke {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols
-	 *      .asn.AsnInputStream)
+	 * @see
+	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols
+	 * .asn.AsnInputStream)
 	 */
 	public void decode(AsnInputStream ais) throws ParseException {
 
@@ -149,8 +157,7 @@ public class InvokeImpl implements Invoke {
 			if (data.length != ais.read(data)) {
 				throw new ParseException("Not enought data read.");
 			}
-			AsnInputStream localAis = new AsnInputStream(
-					new ByteArrayInputStream(data));
+			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(data));
 			int tag = localAis.readTag();
 			if (tag != _TAG_IID) {
 				throw new ParseException("Expected InvokeID tag, found: " + tag);
@@ -165,28 +172,23 @@ public class InvokeImpl implements Invoke {
 				tag = localAis.readTag();
 			}
 
-			if (tag == OperationCode._TAG_GLOBAL
-					|| tag == OperationCode._TAG_LOCAL) {
-				this.operationCode = TcapFactory.createOperationCode(tag,
-						localAis);
+			if (tag == OperationCode._TAG_GLOBAL || tag == OperationCode._TAG_LOCAL) {
+				this.operationCode = TcapFactory.createOperationCode(tag, localAis);
 				if (localAis.available() <= 0) {
 					return;
 				}
 
 			} else {
-				throw new ParseException(
-						"Expected Local|Global Operation Code tag, found: "
-								+ tag);
+				throw new ParseException("Expected Local|Global Operation Code tag, found: " + tag);
 			}
 
 			// It could be SEQUENCE of PARAMETER
 			tag = localAis.readTag();
 
-			
 			if (tag == Tag.SEQUENCE) {
-				
+
 				int length = localAis.readLength();
-				
+
 				List<Parameter> paramsList = new ArrayList<Parameter>();
 
 				while (localAis.available() > 0) {
@@ -195,15 +197,14 @@ public class InvokeImpl implements Invoke {
 					Parameter p = TcapFactory.createParameter(tag, localAis);
 					paramsList.add(p);
 				}
-				
+
 				this.parameters = new Parameter[paramsList.size()];
 				this.parameters = paramsList.toArray(this.parameters);
-				
-				paramsList.clear();				
-				
+
+				paramsList.clear();
+
 			} else {
-				this.parameters = new Parameter[] { TcapFactory
-						.createParameter(tag, localAis) };
+				this.parameters = new Parameter[] { TcapFactory.createParameter(tag, localAis) };
 			}
 
 		} catch (IOException e) {
@@ -217,8 +218,9 @@ public class InvokeImpl implements Invoke {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
-	 *      .asn.AsnOutputStream)
+	 * @see
+	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
+	 * .asn.AsnOutputStream)
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
 		if (this.invokeId == null) {
@@ -236,27 +238,27 @@ public class InvokeImpl implements Invoke {
 			}
 
 			this.operationCode.encode(localAos);
-			
+
 			if (this.parameters != null) {
-				if(this.parameters.length > 1 ){
-					
+				if (this.parameters.length > 1) {
+
 					AsnOutputStream aosTemp = new AsnOutputStream();
-					for(Parameter p : this.parameters){
+					for (Parameter p : this.parameters) {
 						p.encode(aosTemp);
 					}
-					
+
 					byte[] paramData = aosTemp.toByteArray();
-					
-					//Sequence TAG
+
+					// Sequence TAG
 					localAos.write(0x30);
-					
-					//Sequence Length
+
+					// Sequence Length
 					localAos.write(paramData.length);
-					
-					//Now write the Parameter's 
+
+					// Now write the Parameter's
 					localAos.write(paramData);
-					
-				} else{
+
+				} else {
 					this.parameters[0].encode(localAos);
 				}
 			}
@@ -266,6 +268,176 @@ public class InvokeImpl implements Invoke {
 			aos.write(data);
 		} catch (IOException e) {
 			throw new ParseException(e);
+		}
+
+	}
+
+	// TCAP state data, it is used ONLY on client side
+	private final static long _DEFAULT_TIMEOUT = 10000;
+
+	// local to stack
+	private InvokeClass invokeClass = InvokeClass.Class1;
+	private long invokeTimeout = _DEFAULT_TIMEOUT;
+	private OperationState state = OperationState.Idle;
+	private Future timerFuture;
+	private OperationTimerTask operationTimerTask = new OperationTimerTask();
+	private TCAProviderImpl provider;
+	private DialogImpl dialog;
+
+	/**
+	 * @return the invokeClass
+	 */
+	public InvokeClass getInvokeClass() {
+		return this.invokeClass;
+	}
+
+	/**
+	 * @param invokeClass
+	 *            the invokeClass to set
+	 */
+	public void setInvokeClass(InvokeClass invokeClass) {
+		this.invokeClass = invokeClass;
+	}
+
+	/**
+	 * @return the invokeTimeout
+	 */
+	public long getInvokeTimeout() {
+		return invokeTimeout;
+	}
+
+	/**
+	 * @param invokeTimeout
+	 *            the invokeTimeout to set
+	 */
+	public void setInvokeTimeout(long invokeTimeout) {
+		this.invokeTimeout = invokeTimeout;
+	}
+
+	//////////////////////
+	// set methods for //
+	// relevant data   //
+	/////////////////////
+	/**
+	 * @return the provider
+	 */
+	public TCAProviderImpl getProvider() {
+		return provider;
+	}
+
+	/**
+	 * @param provider the provider to set
+	 */
+	public void setProvider(TCAProviderImpl provider) {
+		this.provider = provider;
+	}
+
+	/**
+	 * @return the dialog
+	 */
+	public DialogImpl getDialog() {
+		return dialog;
+	}
+
+	/**
+	 * @param dialog the dialog to set
+	 */
+	public void setDialog(DialogImpl dialog) {
+		this.dialog = dialog;
+	}
+
+	/**
+	 * @return the state
+	 */
+	public OperationState getState() {
+		return state;
+	}
+
+	/**
+	 * @param state
+	 *            the state to set
+	 */
+	public synchronized void setState(OperationState state) {
+		if (this.dialog == null) {
+			// bad call on server side.
+			return;
+		}
+		OperationState old = this.state;
+		this.state = state;
+		if (old != state) {
+
+			switch (state) {
+			case Sent:
+				// start timer
+				this.startTimer();
+				break;
+			case Idle:
+			case Reject_W:
+				this.stopTimer();
+				dialog.operationEnded(this);
+			}
+			if (state == OperationState.Sent) {
+
+			} else if (state == OperationState.Idle || state == OperationState.Reject_W) {
+
+			}
+
+		}
+	}
+
+	public void onReturnResultLast() {
+		this.setState(OperationState.Idle);
+
+	}
+
+	public void onError() {
+		this.setState(OperationState.Idle);
+
+	}
+
+	public synchronized void startTimer() {
+		this.stopTimer();
+		this.timerFuture = this.provider.createOperationTimer(this.operationTimerTask, this.invokeTimeout);
+
+	}
+
+	public synchronized void stopTimer() {
+
+		if (this.timerFuture != null) {
+			this.timerFuture.cancel(false);
+			this.timerFuture = null;
+		}
+
+	}
+
+	public boolean isErrorReported() {
+		if (this.invokeClass == InvokeClass.Class1 || this.invokeClass == InvokeClass.Class2) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean isSuccessReported() {
+		if (this.invokeClass == InvokeClass.Class1 || this.invokeClass == InvokeClass.Class3) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private class OperationTimerTask implements Runnable {
+		InvokeImpl invoke;
+
+		public void run() {
+			synchronized (invoke) {
+				// op failed, we must delete it from dialog and notify!
+				timerFuture = null;
+				setState(OperationState.Idle);
+				// TC-L-CANCEL
+				((DialogImpl) invoke.dialog).operationTimedOut(invoke);
+			}
+
 		}
 
 	}

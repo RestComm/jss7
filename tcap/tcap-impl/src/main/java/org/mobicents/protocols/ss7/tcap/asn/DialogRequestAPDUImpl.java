@@ -19,7 +19,7 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 
 	private ApplicationContextName acn;
-	private UserInformation[] ui;
+	private UserInformation ui;
 
 	/*
 	 * (non-Javadoc)
@@ -46,7 +46,7 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 	 * 
 	 * @see org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#getUserInformation ()
 	 */
-	public UserInformation[] getUserInformation() {
+	public UserInformation getUserInformation() {
 		return this.ui;
 	}
 
@@ -68,7 +68,7 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 	 * @see org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#setUserInformation
 	 *      (org.mobicents.protocols.ss7.tcap.asn.UserInformation[])
 	 */
-	public void setUserInformation(UserInformation[] ui) {
+	public void setUserInformation(UserInformation ui) {
 		this.ui = ui;
 
 	}
@@ -148,18 +148,12 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 				// localAis = new AsnInputStream(new
 				// ByteArrayInputStream(data));
 
-				List<UserInformation> list = new ArrayList<UserInformation>();
-				while (localAis.available() > 0) {
-					tag = localAis.readTag();
-					if (tag != UserInformation._TAG) {
-						throw new ParseException(
-								"Expected User Information tag, found: " + tag);
-
-					}
-					list.add(TcapFactory.createUserInformation(localAis));
+				tag = localAis.readTag();
+				if(tag != UserInformation._TAG)
+				{
+					throw new ParseException("Expected UserInformation tag, found: "+tag);
 				}
-				this.ui = new UserInformation[list.size()];
-				this.ui = list.toArray(this.ui);
+				this.ui = TcapFactory.createUserInformation(localAis);
 			}
 		} catch (IOException e) {
 			throw new ParseException(e);
@@ -189,9 +183,8 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 			localAos.reset();
 			byte[] byteData = null;
 			if (ui != null) {
-				for (UserInformation _ui : ui) {
-					_ui.encode(localAos);
-				}
+				
+				ui.encode(localAos);
 				byteData = localAos.toByteArray();
 				localAos.reset();
 
