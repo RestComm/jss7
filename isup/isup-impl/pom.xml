@@ -16,7 +16,6 @@
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-	                <version>${log4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
@@ -26,14 +25,12 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-            		<version>${junit.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>concurrent</groupId>
 			<artifactId>concurrent</artifactId>
 			<scope>provided</scope>
-			<version>${concurrent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7</groupId>
