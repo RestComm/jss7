@@ -55,11 +55,11 @@ public class DialogPortionTest extends TestCase {
 		assertTrue(Arrays.equals(new long[] { 0, 4, 0, 0, 1, 0, 19, 2 }, acn
 				.getOid()));
 
-		UserInformation[] userInfos = dialogRequestAPDU.getUserInformation();
+		UserInformation userInfos = dialogRequestAPDU.getUserInformation();
 
-		assertEquals(1, userInfos.length);
+		assertNotNull(userInfos);
 
-		UserInformation userInformation = userInfos[0];
+		UserInformation userInformation = userInfos;
 
 		assertTrue(userInformation.isOid());
 

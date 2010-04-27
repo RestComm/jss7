@@ -64,7 +64,7 @@ public class TcBeginTest extends TestCase {
 				(byte) 0xf0, 0x00, 0x00 });		
 
 		diRequestAPDUImpl
-				.setUserInformation(new UserInformation[] { userInfo });
+				.setUserInformation(userInfo );
 
 		dp.setDialogAPDU(diRequestAPDUImpl);
 
