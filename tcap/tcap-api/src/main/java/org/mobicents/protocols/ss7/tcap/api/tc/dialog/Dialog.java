@@ -2,10 +2,17 @@ package org.mobicents.protocols.ss7.tcap.api.tc.dialog;
 
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
-import org.mobicents.protocols.ss7.tcap.api.tc.component.ComponentRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.*;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
+/**
+ * Inteface for class representing Dialog/Transaction. 
+ * @author baranowb
+ *
+ */
 public interface Dialog {
 
 	/**
@@ -30,15 +37,36 @@ public interface Dialog {
 	 */
 	public SccpAddress getRemoteAddress();
 
+
+	/**
+	 * Last sent/received ACN
+	 * @return the acn
+	 */
+	public ApplicationContextName getApplicationContextName() ;
+	/**
+	 * Last sent/received UI
+	 * @return the ui
+	 */
+	public UserInformation getUserInformation() ;
+	
 	/**
 	 * returns new, unique for this dialog, invocation id to be used in
-	 * TC_INVOKE
+	 * TC_INVOKE. If there is no free invoke id, it returns null
 	 * 
 	 * @return
-	 * @throws TCAPException
 	 */
 	public Long getNewInvokeId() throws TCAPException;
 
+	/**
+	 * Cancels INVOKE pending to be sent. It is equivalent of TC-U-CANCEL.
+	 * @return
+	 * <ul>
+	 * <li><b>true</b> - </li>
+	 * <li><b>false</b> - </li>
+	 * </ul>
+	 * @throws TCAPException - thrown if passed invoke id is wrong
+	 */
+	public boolean cancelInvocation(Long invokeId) throws TCAPException;
 	/**
 	 * 
 	 * @return <ul>
@@ -68,31 +96,23 @@ public interface Dialog {
 	 * indication passed to TC User
 	 * 
 	 * @param componentRequest
+	 * @throws TCAPSendException 
 	 */
-	public void sendComponent(ComponentRequest componentRequest);
-
-	// sender methods, propalby those will change!
+	public void sendComponent(Component componentRequest) throws TCAPSendException;
 	
-	//TODO : Commented out by Amit. Use the sendXXX(YYYRequest)
-	
-//	public void sendBegin() throws TCAPSendException;
-//
-//	public void sendContinue() throws TCAPSendException;
-//
-//	public void sendEnd() throws TCAPSendException;
-//
-//	public void sendUni() throws TCAPSendException;
-
 	public void send(TCBeginRequest event) throws TCAPSendException;
 
 	public void send(TCContinueRequest event) throws TCAPSendException;
 
 	public void send(TCEndRequest event) throws TCAPSendException;
-	
-	public void send(TCUserAbortRequest event) throws TCAPSendException;
 
 	/**
 	 * Programmer hook to release.
 	 */
 	public void release();
+
+	
+	public void  resetTimer(Long invokeId) throws TCAPException;
+
+	
 }
