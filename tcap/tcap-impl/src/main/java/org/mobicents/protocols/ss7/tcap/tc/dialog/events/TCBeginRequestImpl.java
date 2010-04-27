@@ -144,8 +144,8 @@ public class TCBeginRequestImpl extends DialogRequestImpl implements TCBeginRequ
 	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest#
 	 * setUserInformation(org.mobicents.protocols.ss7.tcap.asn.UserInformation)
 	 */
-	public void setUserInformation(UserInformation acn) {
-		this.userInformation = acn;
+	public void setUserInformation(UserInformation ui) {
+		this.userInformation = ui;
 
 	}
 
