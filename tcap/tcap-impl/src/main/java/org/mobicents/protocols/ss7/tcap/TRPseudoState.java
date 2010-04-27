@@ -13,5 +13,8 @@ public enum TRPseudoState {
 	
 	InitialReceived,InitialSent,
 	
-	Active;
+	Active,
+	//additional state to mark removal
+	Expunged
+	;
 }
