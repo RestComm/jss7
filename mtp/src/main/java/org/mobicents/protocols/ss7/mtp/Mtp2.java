@@ -118,7 +118,7 @@ public class Mtp2 {
         0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
     };    
     // this is buff size, in native, but we use actaull data
-    public final static int RX_TX_BUFF_SIZE = 64;    
+    public final static int RX_TX_BUFF_SIZE = 16;    
     // status indicator of out of alignment (SIO). This condition occurs when a
     // signal unit is received that has a
     // ones-density violation (the data field simulated a flag) or the SIF has
@@ -1205,94 +1205,33 @@ public class Mtp2 {
 		if (logger.isTraceEnabled()) {
 		    logger.trace(String.format("(%s) Read %d bytes ", name, bytesRead));
 		}
-                //this.trace("run called for "+ this.name+ " bytesRead = "+ bytesRead + " this.initiateAlign "+this.initiateAlign);
-
-		if (bytesRead == 0) {
-		    return;
-		}
+		
+		//we should not break even if read returns zero because we need to write anyway!
+		
                 if (bytesRead > 0) {
                     // handle received data
                     processRx(rxBuffer, bytesRead);
                 }
-
-            // prepare response for writting.
-            // the result of this action is a filled txBuffer.
-            // we only write if we did read?
-
-
             } catch (IOException e) {
                 e.printStackTrace();
-                // if (logger.isEnabledFor(Level.ERROR)) {
-                // logger.error(
-                // "Error during reading data from layer 1. Caused by",
-                // e);
-                // }
-                if (enabledL2Debug) {
-                    trace(Utils.createTrace(e));
-                }
                 // notify MTP3 about failure.
                 state = MTP2_OUT_OF_SERVICE;
                 mtp3.linkFailed(this);
             } catch (Exception ee) {
                 ee.printStackTrace();
-                // if (logger.isEnabledFor(Level.ERROR)) {
-                // logger.error(
-                // "Error during reading data from layer 1. Caused by",
-                // ee);
-                // }
-                if (enabledL2Debug) {
-                    trace(Utils.createTrace(ee));
-                }
                 // notify MTP3 about failure.
                 state = MTP2_OUT_OF_SERVICE;
                 mtp3.linkFailed(this);
             }
             try {
-                long currentTime = System.currentTimeMillis();
-                if (bytesRead > 0) {
-                    processTx(bytesRead);
-                    channel.write(txBuffer, bytesRead);
-                } else {
-                    //1ms == 8B ?
-                    if (lastWriteStamp == 0) {
-                        lastWriteStamp = currentTime;
-                        bytesRead = 16;
-                    } else {
-                        //thats legal!
-                        bytesRead = (int) (currentTime - lastWriteStamp);
-                        if (bytesRead > RX_TX_BUFF_SIZE) {
-                            bytesRead = RX_TX_BUFF_SIZE;
-                        }
-                    }
-
-
-                    processTx(bytesRead);
-                    channel.write(txBuffer, bytesRead);
-                }
-                lastWriteStamp = currentTime;
+                    processTx(RX_TX_BUFF_SIZE);
+                    channel.write(txBuffer, RX_TX_BUFF_SIZE);
             } catch (IOException e) {
                 e.printStackTrace();
-                // if (logger.isEnabledFor(Level.ERROR)) {
-                // logger.error(
-                // "Error during reading data from layer 1. Caused by",
-                // e);
-                // }
-                if (enabledL2Debug) {
-                    trace(Utils.createTrace(e));
-                }
-                // notify MTP3 about failure.
                 state = MTP2_OUT_OF_SERVICE;
                 mtp3.linkFailed(this);
             } catch (Exception ee) {
                 ee.printStackTrace();
-                // if (logger.isEnabledFor(Level.ERROR)) {
-                // logger.error(
-                // "Error during reading data from layer 1. Caused by",
-                // ee);
-                // }
-                if (enabledL2Debug) {
-                    trace(Utils.createTrace(ee));
-                }
                 // notify MTP3 about failure.
                 state = MTP2_OUT_OF_SERVICE;
                 mtp3.linkFailed(this);
