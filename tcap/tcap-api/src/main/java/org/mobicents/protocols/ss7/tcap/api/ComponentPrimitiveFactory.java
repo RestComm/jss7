@@ -1,28 +1,19 @@
 package org.mobicents.protocols.ss7.tcap.api;
 
-import org.mobicents.protocols.ss7.tcap.api.tc.component.TCInvokeIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.component.TCInvokeRequest;
-import org.mobicents.protocols.ss7.tcap.api.tc.component.TCRejectIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.component.TCRejectRequest;
-import org.mobicents.protocols.ss7.tcap.api.tc.component.TCResultIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.component.TCResultRequest;
+
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Return;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
 public interface ComponentPrimitiveFactory {
 
-	public TCInvokeRequest createTCInvokeRequest();
+	public Invoke createTCInvokeRequest();
 
-	public TCRejectRequest createTCRejectRequest();
+	public Reject createTCRejectRequest();
 
-	public TCResultRequest createTCResultRequest(boolean last);
-	
-	//hmm is this reasonable to have ?
-	public TCInvokeIndication createTCInvokeIndication(Invoke i);
+	public ReturnResultLast createTCResultLastRequest();
 
-	public TCRejectIndication createTCRejectIndication(Reject rej);
-
-	public TCResultIndication createTCResultRequest(Return ret);
+	public ReturnResult createTCResultRequest();
 
 }
