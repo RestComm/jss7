@@ -80,7 +80,6 @@ public class UserInformationTest extends TestCase {
 		byte[] userInfData = asnos.toByteArray();
 		
 		String s = TcBeginTest.dump(userInfData, userInfData.length, false);
-		System.out.println(s);
 		assertTrue(Arrays.equals(encodedData, userInfData));
 		
 		

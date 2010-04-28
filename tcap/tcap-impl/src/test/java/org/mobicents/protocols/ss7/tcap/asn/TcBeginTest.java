@@ -112,9 +112,7 @@ public class TcBeginTest extends TestCase {
 
 		byte[] encodedData = aos.toByteArray();
 
-		String s = dump(encodedData, encodedData.length, false);
-
-		System.out.println(s);
+		//Add more here?
 
 	}
 	
@@ -221,7 +219,7 @@ public class TcBeginTest extends TestCase {
 		byte[] b = new byte[]{
 			//TCBegin
 			0x62,
-				68,
+				46,
 				//org txid
 				//OrigTran ID (full)............ 145031169 
 				0x48,
@@ -236,7 +234,7 @@ public class TcBeginTest extends TestCase {
 				//empty
 				//comp portion
 				0x6C,
-				60,
+				38,
 				//invoke
 				(byte) 0xA1,
 					6,
@@ -250,68 +248,43 @@ public class TcBeginTest extends TestCase {
 					0x37,
 				//return result
 				(byte) 0xA7,
-					50,
+					28,
 					//inoke id
 					0x02,
 					0x01,
 					0x02,
 					//sequence start
 					0x30,
-					7,
+					23,
 					//	local operation
 						0x02,
 						0x01,
 						0x01,
-					// 	global operation
-						0x06,
-						0x02,
+						//parameter
+						(byte) 0xA0,//some tag.1
+						18,
+						(byte) 0x80,//some tag.1.1
+						2,
+						0x11,
+						0x11,
+						(byte) 0xA1,//some tag.1.2
+						04,
+						(byte)0x82, //some tag.1.3 ?
+						2,
 						0x00,
-						(byte) 0xFF,
-				//	parameter
-					0x30,
-					36,
-					(byte) 0xA0,//some tag.1
-					17,
-					(byte) 0x80,//some tag.1.1
-					2,
-					0x11,
-					0x11,
-					(byte) 0xA1,//some tag.1.2
-					04,
-					(byte)0x82, //some tag.1.3 ?
-					2,
-					0x00,
-					0x00,
-					(byte) 0x82,
-					//some tag.1.4
-					1,
-					12,
-					(byte)0x83, //some tag.1.5
-					2,
-					0x33,
-					0x33,
-					(byte) 0xA1,//some trash here
-					//tension indicator 2........ ???
-					//use value.................. ???
-					//some tag.2
-					3,
-					(byte) 0x80,//some tag.2.1
-					1,
-					-1,
-					(byte)0xA2, //some tag.3
-					3,
-					(byte) 0x80,//some tag.3.1
-					1,
-					-1,
-					(byte) 0xA3,//some tag.4
-					5,
-					(byte) 0x82,//some tag.4.1
-					3,
-					(byte) 0xAB,// - 85 serviceKey................... 123456 // dont care about this content, lets just make len correct
-					(byte) 0xCD,
-					(byte) 0xEF
+						0x00,
+						(byte) 0x82,
+						1,//some tag.1.4
+						12,
+						(byte)0x83, //some tag.1.5
+						2,
+						0x33,
+						0x33,
+						(byte) 0xA1,//some trash here
+						//tension indicator 2........ ???
+						//use value.................. ???
 				};
-		
+
 		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(b));
 		int tag = ais.readTag();
 		assertEquals("Expected TCBegin",TCBeginMessage._TAG,tag);
@@ -334,16 +307,13 @@ public class TcBeginTest extends TestCase {
 		ReturnResult rr = (ReturnResult) c;
 		assertEquals("Wrong invoke ID",new Long(2), rr.getInvokeId());
 		assertNotNull("Operation code should not be null", rr.getOperationCode());
-		assertEquals("Operation Code count is wrong ",2, rr.getOperationCode().length);
 		
-		OperationCode[] ocs = rr.getOperationCode();
+		OperationCode ocs = rr.getOperationCode();
 		
-		assertEquals("Wrong Operation Code type",OperationCodeType.Local, ocs[0].getOperationType());
-		assertEquals("Wrong Operation Code",new Long(1), ocs[0].getCode());
-		assertEquals("Wrong Operation Code type",OperationCodeType.Global, ocs[1].getOperationType());
-		assertEquals("Wrong Operation Code",new Long(0x00FF), ocs[1].getCode());
+		assertEquals("Wrong Operation Code type",OperationCodeType.Local, ocs.getOperationType());
+		assertEquals("Wrong Operation Code",new Long(1), ocs.getCode());
 		
-		assertNotNull("Parameter should not be null",rr.getParameters());
+		assertNotNull("Parameter should not be null",rr.getParameter());
 		
 		AsnOutputStream aos = new AsnOutputStream();
 		tcm.encode(aos);
@@ -521,7 +491,7 @@ public class TcBeginTest extends TestCase {
 		byte[] b = new byte[]{
 				//TCBegin
 				0x62,
-					68+44,
+					91,
 					//org txid
 					//OrigTran ID (full)............ 145031169 
 					0x48,
@@ -587,7 +557,7 @@ public class TcBeginTest extends TestCase {
 									//no user info?
 					//comp portion
 					0x6C,
-					60,
+					39,
 					//invoke
 					(byte) 0xA1,
 						6,
@@ -601,66 +571,43 @@ public class TcBeginTest extends TestCase {
 						0x37,
 					//return result last
 					(byte) 0xA2,
-						50,
+						29,
 						//inoke id
 						0x02,
 						0x01,
 						0x02,
 						//sequence start
 						0x30,
-						7,
-						//	local operation
-							0x02,
-							0x01,
-							0x01,
+						24,
 						// 	global operation
 							0x06,
 							0x02,
 							0x00,
 							(byte) 0xFF,
-					//	parameter
-						0x30,
-						36,
-						(byte) 0xA0,//some tag.1
-						17,
-						(byte) 0x80,//some tag.1.1
-						2,
-						0x11,
-						0x11,
-						(byte) 0xA1,//some tag.1.2
-						04,
-						(byte)0x82, //some tag.1.3 ?
-						2,
-						0x00,
-						0x00,
-						(byte) 0x82,
-						//some tag.1.4
-						1,
-						12,
-						(byte)0x83, //some tag.1.5
-						2,
-						0x33,
-						0x33,
-						(byte) 0xA1,//some trash here
-						//tension indicator 2........ ???
-						//use value.................. ???
-						//some tag.2
-						3,
-						(byte) 0x80,//some tag.2.1
-						1,
-						-1,
-						(byte)0xA2, //some tag.3
-						3,
-						(byte) 0x80,//some tag.3.1
-						1,
-						-1,
-						(byte) 0xA3,//some tag.4
-						5,
-						(byte) 0x82,//some tag.4.1
-						3,
-						(byte) 0xAB,// - 85 serviceKey................... 123456 // dont care about this content, lets just make len correct
-						(byte) 0xCD,
-						(byte) 0xEF
+						//	parameter
+							(byte) 0xA0,//some tag.1
+							18,
+							(byte) 0x80,//some tag.1.1
+							2,
+							0x11,
+							0x11,
+							(byte) 0xA1,//some tag.1.2
+							04,
+							(byte)0x82, //some tag.1.3 ?
+							2,
+							0x00,
+							0x00,
+							(byte) 0x82,
+							1,//some tag.1.4
+							12,
+							(byte)0x83, //some tag.1.5
+							2,
+							0x33,
+							0x33,
+							(byte) 0xA1,//some trash here
+							//tension indicator 2........ ???
+							//use value.................. ???
+							
 					};
 		
 		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(b));
@@ -710,16 +657,14 @@ public class TcBeginTest extends TestCase {
 		ReturnResultLast rrl = (ReturnResultLast) c;
 		assertEquals("Wrong invoke ID",new Long(2), rrl.getInvokeId());
 		assertNotNull("Operation code should not be null", rrl.getOperationCode());
-		assertEquals("Operation Code count is wrong ",2, rrl.getOperationCode().length);
+
 		
-		OperationCode[] ocs = rrl.getOperationCode();
+		OperationCode ocs = rrl.getOperationCode();
+
+		assertEquals("Wrong Operation Code type",OperationCodeType.Global, ocs.getOperationType());
+		assertEquals("Wrong Operation Code",new Long(0x00FF), ocs.getCode());
 		
-		assertEquals("Wrong Operation Code type",OperationCodeType.Local, ocs[0].getOperationType());
-		assertEquals("Wrong Operation Code",new Long(1), ocs[0].getCode());
-		assertEquals("Wrong Operation Code type",OperationCodeType.Global, ocs[1].getOperationType());
-		assertEquals("Wrong Operation Code",new Long(0x00FF), ocs[1].getCode());
-		
-		assertNotNull("Parameter should not be null",rrl.getParameters());
+		assertNotNull("Parameter should not be null",rrl.getParameter());
 		
 		
 		AsnOutputStream aos = new AsnOutputStream();
