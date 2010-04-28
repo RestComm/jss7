@@ -8,6 +8,12 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
+/**
+ * 
+ * * @author baranowb
+ * @author amit bhayani
+ *
+ */
 public interface DialogPrimitiveFactory {
 
 	public TCBeginRequest createBegin(Dialog d);
@@ -20,7 +26,7 @@ public interface DialogPrimitiveFactory {
 
 	//public TCUserAbortRequest createUserAbort(Dialog d);
 	
-	public ApplicationContextName createApplicationContextName();
+	public ApplicationContextName createApplicationContextName(long[] oid);
 	
 	public UserInformation createUserInformation();
 	

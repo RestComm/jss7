@@ -13,6 +13,7 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.OperationState;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
@@ -42,7 +43,6 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCUniMessage;
-import org.mobicents.protocols.ss7.tcap.tc.component.ComponentPrimitiveFactoryImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.DialogPrimitiveFactoryImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCBeginIndicationImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCContinueIndicationImpl;
@@ -906,6 +906,10 @@ public class DialogImpl implements Dialog {
 			throw new TCAPException("No operation with this ID");
 		}
 		invoke.startTimer();
+	}
+	
+	public TRPseudoState getState(){
+		return this.state;
 	}
 	
 	

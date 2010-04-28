@@ -3,11 +3,9 @@
  */
 package org.mobicents.protocols.ss7.tcap.tc.dialog.events;
 
-import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcap.api.DialogPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.DialogIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndication;
@@ -19,15 +17,11 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
-import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
-import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
-import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
-import org.mobicents.protocols.ss7.tcap.asn.comp.TCUniMessage;
 import org.mobicents.protocols.ss7.tcap.tc.component.ComponentPrimitiveFactoryImpl;
 
 /**
  * @author baranowb
+ * @author amit bhayani
  *
  */
 public class DialogPrimitiveFactoryImpl implements DialogPrimitiveFactory {
@@ -41,8 +35,8 @@ public class DialogPrimitiveFactoryImpl implements DialogPrimitiveFactory {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.DialogPrimitiveFactory#createApplicationContextName()
 	 */
-	public ApplicationContextName createApplicationContextName() {
-		return TcapFactory.createApplicationContextName();
+	public ApplicationContextName createApplicationContextName(long[] oid) {
+		return TcapFactory.createApplicationContextName(oid);
 	}
 	
 	/* (non-Javadoc)

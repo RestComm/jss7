@@ -1,12 +1,14 @@
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog;
 
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.*;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * Inteface for class representing Dialog/Transaction. 
@@ -113,6 +115,12 @@ public interface Dialog {
 
 	
 	public void  resetTimer(Long invokeId) throws TCAPException;
+	
+	/**
+	 * Returns the state of this Dialog
+	 * @return
+	 */
+	public TRPseudoState getState();
 
 	
 }

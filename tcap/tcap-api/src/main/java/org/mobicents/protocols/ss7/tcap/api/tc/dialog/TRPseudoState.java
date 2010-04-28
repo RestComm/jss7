@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mobicents.protocols.ss7.tcap;
+package org.mobicents.protocols.ss7.tcap.api.tc.dialog;
 
 /**
  * @author baranowb

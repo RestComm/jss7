@@ -22,6 +22,11 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCUniMessage;
 
+/**
+ * @author baranowb
+ * @author amit bhayani
+ *
+ */
 public final class TcapFactory {
 
 	public static DialogPortion createDialogPortion(AsnInputStream ais) throws ParseException {
@@ -101,9 +106,9 @@ public final class TcapFactory {
 		return pv;
 	}
 
-	public static ApplicationContextName createApplicationContextName() {
+	public static ApplicationContextName createApplicationContextName(long[] oid) {
 		ApplicationContextNameImpl acn = new ApplicationContextNameImpl();
-
+		acn.setOid(oid);
 		return acn;
 	}
 
