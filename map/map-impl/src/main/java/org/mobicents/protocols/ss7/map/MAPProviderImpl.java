@@ -74,19 +74,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		this.serviceListeners.add(mapServiceListener);
 	}
 
-	public MAPDialog createNewDialog(int applicationCntx,
+	public MAPDialog createNewDialog(MAPApplicationContext appCntx,
 			SccpAddress destAddress, byte[] destReference,
 			SccpAddress origAddress, byte[] origReference) throws MAPException {
 		
-		
-		MAPApplicationContext appCntx = MAPApplicationContext
-				.getInstance(applicationCntx);
-
-		if (appCntx == null) {
-			throw new MAPException(
-					"No Application Context matching for passed applicationCntx ");
-		}
-
 		Dialog tcapDialog;
 		try {
 			tcapDialog = tcapProvider.getNewDialog(origAddress, destAddress);

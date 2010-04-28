@@ -63,43 +63,5 @@ public class MAPOpenInfoTest extends TestCase {
 				(byte) 0x98, (byte) 0x86, 0x03, (byte) 0xf0}, data));
 		
 	}
-	
-	
-	
-	public final static String dump(byte[] buff, int size, boolean asBits) {
-		String s = "";
-		for (int i = 0; i < size; i++) {
-			String ss = null;
-			if(!asBits)
-			{
-				ss = Integer.toHexString(buff[i] & 0xff);
-			}
-			else
-			{
-				ss = Integer.toBinaryString(buff[i] & 0xff); 
-			}
-			ss = fillInZeroPrefix(ss,asBits);
-			s += " " + ss;
-		}
-		return s;
-	}
-	
-	public final static String fillInZeroPrefix(String ss, boolean asBits) {
-		if (asBits) {
-			if (ss.length() < 8) {
-				for (int j = ss.length(); j < 8; j++) {
-					ss = "0" + ss;
-				}
-			}
-		} else {
-			// hex
-			if (ss.length() < 2) {
-
-				ss = "0" + ss;
-			}
-		}
-
-		return ss;
-	}
 
 }

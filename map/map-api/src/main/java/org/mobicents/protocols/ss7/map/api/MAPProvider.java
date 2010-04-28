@@ -48,7 +48,7 @@ public interface MAPProvider {
 	 *            service descriptions, e.g. operator determined barring.
 	 * @return
 	 */
-	public MAPDialog createNewDialog(int applicationCntx,
+	public MAPDialog createNewDialog(MAPApplicationContext appCntx,
 			SccpAddress destAddress, byte[] destReference,
 			SccpAddress origAddress, byte[] origReference) throws MAPException;
 
