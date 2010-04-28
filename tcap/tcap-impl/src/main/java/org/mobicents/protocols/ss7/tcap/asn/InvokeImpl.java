@@ -14,7 +14,7 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.DialogImpl;
-import org.mobicents.protocols.ss7.tcap.TCAProviderImpl;
+import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.OperationState;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
@@ -281,7 +281,7 @@ public class InvokeImpl implements Invoke {
 	private OperationState state = OperationState.Idle;
 	private Future timerFuture;
 	private OperationTimerTask operationTimerTask = new OperationTimerTask();
-	private TCAProviderImpl provider;
+	private TCAPProviderImpl provider;
 	private DialogImpl dialog;
 
 	/**
@@ -321,14 +321,14 @@ public class InvokeImpl implements Invoke {
 	/**
 	 * @return the provider
 	 */
-	public TCAProviderImpl getProvider() {
+	public TCAPProviderImpl getProvider() {
 		return provider;
 	}
 
 	/**
 	 * @param provider the provider to set
 	 */
-	public void setProvider(TCAProviderImpl provider) {
+	public void setProvider(TCAPProviderImpl provider) {
 		this.provider = provider;
 	}
 

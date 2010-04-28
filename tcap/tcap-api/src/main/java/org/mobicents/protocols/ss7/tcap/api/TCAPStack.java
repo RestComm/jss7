@@ -13,5 +13,5 @@ public interface TCAPStack {
 
 	
 	public TCAPProvider getProvider();
-	
+	public void stop();
 }

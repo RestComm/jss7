@@ -86,7 +86,7 @@ public class DialogImpl implements Dialog {
 
 	// scheduled components list
 	private List<Component> scheduledComponentList = new ArrayList<Component>();
-	private TCAProviderImpl provider;
+	private TCAPProviderImpl provider;
 
 	private static final int getIndexFromInvokeId(Long l) {
 		int tmp = l.intValue();
@@ -101,7 +101,7 @@ public class DialogImpl implements Dialog {
 	//DialogImpl(SccpAddress localAddress, SccpAddress remoteAddress, Long origTransactionId, ScheduledExecutorService executor,
 	//		TCAProviderImpl provider, ApplicationContextName acn, UserInformation[] ui) {
 	 DialogImpl(SccpAddress localAddress, SccpAddress remoteAddress, Long
-		 origTransactionId, ScheduledExecutorService executor, TCAProviderImpl
+		 origTransactionId, boolean structured, ScheduledExecutorService executor, TCAPProviderImpl
 		 provider) {
 		super();
 		this.localAddress = localAddress;
@@ -116,7 +116,7 @@ public class DialogImpl implements Dialog {
 		} else {
 			this.structured = false;
 		}
-
+		this.structured = structured;
 	}
 
 	public void release() {
@@ -262,7 +262,7 @@ public class DialogImpl implements Dialog {
 		}
 
 		if (!this.isStructured()) {
-			throw new TCAPSendException("Unstructured dialogs do not use Continue");
+			throw new TCAPSendException("Unstructured dialogs do not use Begin");
 		}
 		
 		TCBeginMessageImpl tcbm = (TCBeginMessageImpl) TcapFactory.createTCBeginMessage();
@@ -551,7 +551,7 @@ public class DialogImpl implements Dialog {
 
 		int index = 0;
 		while (this.scheduledComponentList.size() > index) {
-			Component cr = this.scheduledComponentList.get(index++);
+			Component cr = this.scheduledComponentList.get(index);
 			// FIXME: add more ?
 			if (cr.getType() == ComponentType.Invoke) {
 				InvokeImpl in = (InvokeImpl) cr;
@@ -561,7 +561,7 @@ public class DialogImpl implements Dialog {
 				in.setState(OperationState.Sent);
 			}
 
-			res[index] = cr;
+			res[index++] = cr;
 
 		}
 

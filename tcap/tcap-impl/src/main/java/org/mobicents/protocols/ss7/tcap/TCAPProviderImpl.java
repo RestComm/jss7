@@ -43,9 +43,9 @@ import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCUniIndicationImpl;
  * @author baranowb
  * 
  */
-public class TCAProviderImpl implements TCAPProvider, SccpListener {
+public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
-	private static final Logger logger = Logger.getLogger(TCAProviderImpl.class);
+	private static final Logger logger = Logger.getLogger(TCAPProviderImpl.class);
 
 	// listenres
 	private List<TCListener> tcListeners = new ArrayList<TCListener>();
@@ -64,7 +64,7 @@ public class TCAProviderImpl implements TCAPProvider, SccpListener {
 	// explicitly...
 	private Map<Long, DialogImpl> dialogs = new HashMap<Long, DialogImpl>();
 
-	TCAProviderImpl(SccpProvider transportProvider, TCAPStackImpl stack) {
+	TCAPProviderImpl(SccpProvider transportProvider, TCAPStackImpl stack) {
 		super();
 		this.transportProvider = transportProvider;
 		this.stack = stack;
@@ -72,7 +72,7 @@ public class TCAProviderImpl implements TCAPProvider, SccpListener {
 		this.componentPrimitiveFactory = new ComponentPrimitiveFactoryImpl(this);
 		this.dialogPrimitiveFactory = new DialogPrimitiveFactoryImpl(this.componentPrimitiveFactory);
 		this._EXECUTOR = Executors.newSingleThreadScheduledExecutor();
-
+		this.transportProvider.setSccpListener(this);
 	}
 /*
 	 * (non-Javadoc)
@@ -156,10 +156,10 @@ public class TCAProviderImpl implements TCAPProvider, SccpListener {
 	public Dialog getNewDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
 
 		Long id = this.getAvailableUniTxId();
-		return _getDialog(localAddress, remoteAddress, id);
+		return _getDialog(localAddress, remoteAddress, id, true);
 	}
 
-	private Dialog _getDialog(SccpAddress localAddress, SccpAddress remoteAddress, Long id) {
+	private Dialog _getDialog(SccpAddress localAddress, SccpAddress remoteAddress, Long id, boolean structured) {
 		if (localAddress == null) {
 			throw new NullPointerException("LocalAddress must not be null");
 		}
@@ -167,7 +167,8 @@ public class TCAProviderImpl implements TCAPProvider, SccpListener {
 		if (remoteAddress == null) {
 			throw new NullPointerException("RemoteAddress must not be null");
 		}
-		DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, this._EXECUTOR, this);
+		DialogImpl di = new DialogImpl(localAddress, remoteAddress, id,structured, this._EXECUTOR, this);
+		
 		this.dialogs.put(di.getDialogId(), di);
 		return di;
 	}
@@ -182,7 +183,7 @@ public class TCAProviderImpl implements TCAPProvider, SccpListener {
 	 */
 	public Dialog getNewUnstructuredDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
 		Long id = this.getAvailableTxId();
-		return _getDialog(localAddress, remoteAddress, id);
+		return _getDialog(localAddress, remoteAddress, id,false);
 	}
 
 
