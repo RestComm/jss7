@@ -11,7 +11,7 @@ import org.mobicents.protocols.asn.Tag;
  *
  */
 public interface Invoke extends Component{
-
+	//FIXME: add dialog field!
 	//this is sequence
 	public static final int _TAG = 0x01;
 	public static final boolean _TAG_PC_PRIMITIVE = false;
