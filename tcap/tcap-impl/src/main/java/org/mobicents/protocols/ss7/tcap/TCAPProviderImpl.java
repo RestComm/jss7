@@ -155,7 +155,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	 */
 	public Dialog getNewDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
 
-		Long id = this.getAvailableUniTxId();
+		Long id = this.getAvailableTxId();
 		return _getDialog(localAddress, remoteAddress, id, true);
 	}
 
@@ -182,7 +182,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	 * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress)
 	 */
 	public Dialog getNewUnstructuredDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
-		Long id = this.getAvailableTxId();
+		Long id = this.getAvailableUniTxId();
 		return _getDialog(localAddress, remoteAddress, id,false);
 	}
 
