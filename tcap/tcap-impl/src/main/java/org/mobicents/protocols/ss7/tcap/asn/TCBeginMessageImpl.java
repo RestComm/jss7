@@ -4,6 +4,7 @@
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -127,7 +128,8 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 			}
 
 			
-			this.originatingTransactionId =localAis.readInteger();
+			//this.originatingTransactionId =localAis.readInteger();
+			this.originatingTransactionId = Utils.readTransactionId(localAis);
 
 			if (localAis.available() <= 0) {
 				return;
@@ -196,7 +198,8 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 			
 
 			// write TX
-			localAos.writeInteger( _TAG_CLASS_OTX,_TAG_OTX, (this.originatingTransactionId));
+			//localAos.writeInteger( _TAG_CLASS_OTX,_TAG_OTX, (this.originatingTransactionId));
+			Utils.writeTransactionId(localAos, this.originatingTransactionId, _TAG_CLASS_OTX, _TAG_OTX);
 
 			if (this.dp != null) {
 				this.dp.encode(localAos);

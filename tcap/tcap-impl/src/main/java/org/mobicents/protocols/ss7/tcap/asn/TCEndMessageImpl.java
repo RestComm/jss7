@@ -110,7 +110,7 @@ public class TCEndMessageImpl implements TCEndMessage {
 		try {
 			int len = ais.readLength();
 			if (len > ais.available()) {
-				throw new ParseException("Not enough data: " + ais.available());
+				throw new ParseException("Not enough data: " + ais.available()+", expected: "+len);
 			}
 			if (len == 0x80) {
 				//
@@ -129,8 +129,8 @@ public class TCEndMessageImpl implements TCEndMessage {
 			}
 
 			
-			this.destinationTransactionId = localAis.readInteger();
-
+			//this.destinationTransactionId = localAis.readInteger();
+			this.destinationTransactionId = Utils.readTransactionId(localAis);
 			if (localAis.available() <= 0) {
 				return;
 			}
@@ -198,7 +198,9 @@ public class TCEndMessageImpl implements TCEndMessage {
 			
 
 			// write TX
-			localAos.writeInteger(_TAG_CLASS_DTX,_TAG_DTX,  (this.destinationTransactionId));
+			//localAos.writeInteger(_TAG_CLASS_DTX, _TAG_DTX, (this.destinationTransactionId));
+			Utils.writeTransactionId(localAos,this.destinationTransactionId, _TAG_CLASS_DTX, _TAG_DTX);
+			
 
 			if (this.dp != null) {
 				this.dp.encode(localAos);

@@ -24,7 +24,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 
 	// mandatory
 	private Long originatingTransactionId;
-	private Long destiantionTransactionId;
+	private Long destinationTransactionId;
 	// opt
 	private DialogPortion dp;
 	// opt
@@ -50,7 +50,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 */
 	public Long getDestinationTransactionId() {
 
-		return this.destiantionTransactionId;
+		return this.destinationTransactionId;
 	}
 
 	/*
@@ -95,7 +95,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 * setDestinationTransactionId(java.lang.String)
 	 */
 	public void setDestinationTransactionId(Long t) {
-		this.destiantionTransactionId = t;
+		this.destinationTransactionId = t;
 
 	}
 
@@ -151,7 +151,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 				throw new ParseException("Expected OriginatingTransactionId, found: " + tag);
 			}
 
-			this.originatingTransactionId = localAis.readInteger();
+			this.originatingTransactionId = Utils.readTransactionId(localAis);
 
 			tag = localAis.readTag();
 
@@ -159,7 +159,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 				throw new ParseException("Expected OriginatingTransactionId, found: " + tag);
 			}
 
-			this.destiantionTransactionId = localAis.readInteger();
+			this.destinationTransactionId = Utils.readTransactionId(localAis);
 
 			if (localAis.available() <= 0) {
 				return;
@@ -206,7 +206,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 		if (this.originatingTransactionId == null) {
 			throw new ParseException("Expected Originating transaction ID.");
 		}
-		if (this.destiantionTransactionId == null) {
+		if (this.destinationTransactionId == null) {
 			throw new ParseException("Expected Destination transaction ID.");
 		}
 		try {
@@ -229,8 +229,11 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 			}
 
 			// write TX
-			localAos.writeInteger(_TAG_CLASS_OTX, _TAG_OTX, (this.originatingTransactionId));
-			localAos.writeInteger(_TAG_CLASS_DTX, _TAG_DTX, (this.destiantionTransactionId));
+			//localAos.writeInteger( _TAG_CLASS_OTX,_TAG_OTX, (this.originatingTransactionId));
+			Utils.writeTransactionId(localAos, this.originatingTransactionId, _TAG_CLASS_OTX, _TAG_OTX);
+			//localAos.writeInteger(_TAG_CLASS_DTX, _TAG_DTX, (this.destinationTransactionId));
+			Utils.writeTransactionId(localAos,this.destinationTransactionId, _TAG_CLASS_DTX, _TAG_DTX);
+			
 
 			if (this.dp != null) {
 				this.dp.encode(localAos);

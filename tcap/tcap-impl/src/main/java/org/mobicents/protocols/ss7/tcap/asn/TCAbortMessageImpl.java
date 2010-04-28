@@ -24,7 +24,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 
 	private static final String _OCTET_STRING_ENCODE = "US-ASCII";
 
-	private String destTxId;
+	private Long destTxId;
 	private PAbortCauseType type;
 	private DialogPortion dp;
 
@@ -34,7 +34,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage#
 	 * getDestinationTransactionId()
 	 */
-	public String getDestinationTransactionId() {
+	public Long getDestinationTransactionId() {
 
 		return destTxId;
 	}
@@ -68,7 +68,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage#
 	 * setDestinationTransactionId()
 	 */
-	public void setDestinationTransactionId(String t) {
+	public void setDestinationTransactionId(Long t) {
 		this.destTxId = t;
 
 	}
@@ -125,9 +125,8 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 			if (tag != _TAG_DTX) {
 				throw new ParseException("Expected Destination Tx ID tag, found: " + tag);
 			}
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			localAis.readOctetString(bos);
-			this.destTxId = new String(bos.toByteArray(), _OCTET_STRING_ENCODE);
+		
+			this.destTxId = Utils.readTransactionId(localAis);
 
 			if (localAis.available() <= 0) {
 				// end
@@ -176,7 +175,8 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 
 		try {
 			AsnOutputStream localAos = new AsnOutputStream();
-			localAos.writeStringOctet(_TAG_DTX, _TAG_CLASS_DTX, new ByteArrayInputStream(this.destTxId.getBytes(_OCTET_STRING_ENCODE)));
+			Utils.writeTransactionId(localAos, this.destTxId, _TAG_CLASS_DTX, _TAG_DTX);
+			
 			// FIXME: check if both are not null, should not be at the sime time
 			// != null
 			if (this.type != null) {

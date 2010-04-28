@@ -26,8 +26,8 @@ public interface TCAbortMessage extends Encodable{
 	public static final int _TAG_CLASS_DTX = Tag.CLASS_APPLICATION;
 	
 	//mandatory
-	public String getDestinationTransactionId();
-	public void setDestinationTransactionId(String t);
+	public Long getDestinationTransactionId();
+	public void setDestinationTransactionId(Long t);
 	
 	//optionals
 	public PAbortCauseType getPAbortCause();

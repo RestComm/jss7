@@ -28,10 +28,10 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 	private Long invokeId;
 
 	// optional: this is sequence
-	private OperationCode[] operationCode;
+	private OperationCode operationCode;
 
 	// optional
-	private Parameter[] parameters;
+	private Parameter parameter;
 
 	/*
 	 * (non-Javadoc)
@@ -48,7 +48,7 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 	 * 
 	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.Return#getOperationCode()
 	 */
-	public OperationCode[] getOperationCode() {
+	public OperationCode getOperationCode() {
 
 		return this.operationCode;
 	}
@@ -58,8 +58,8 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 	 * 
 	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.Return#getParameter()
 	 */
-	public Parameter[] getParameters() {
-		return this.parameters;
+	public Parameter getParameter() {
+		return this.parameter;
 	}
 
 	/*
@@ -84,7 +84,7 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 	 * org.mobicents.protocols.ss7.tcap.asn.comp.Return#setOperationCode(org
 	 * .mobicents.protocols.ss7.tcap.asn.comp.OperationCode[])
 	 */
-	public void setOperationCode(OperationCode[] oc) {
+	public void setOperationCode(OperationCode oc) {
 		this.operationCode = oc;
 
 	}
@@ -96,8 +96,8 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 	 * org.mobicents.protocols.ss7.tcap.asn.comp.Return#setParameter(org.mobicents
 	 * .protocols.ss7.tcap.asn.comp.Parameter)
 	 */
-	public void setParameters(Parameter[] p) {
-		this.parameters = p;
+	public void setParameter(Parameter p) {
+		this.parameter = p;
 	}
 
 	public ComponentType getType() {
@@ -131,96 +131,49 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 			if (tag != _TAG_IID) {
 				throw new ParseException("Expected InvokeID tag, found: " + tag);
 			}
-		
+
 			this.invokeId = localAis.readInteger();
-	
+
 			if (localAis.available() <= 0) {
 				return;
 			}
 
 			tag = localAis.readTag();
-			
-			
-			/*
-			 * TODO
-			 * 
-			 * As per the definition of ASN in Q.773 the Return Result is defined as 
-			 * 
-			 * 
-			 * ReturnResult ::= SEQUENCE {
-                     invokeID             InvokeIdType,
-                     result               SEQUENCE {
-                            operationCode OPERATION,
-                            parameter     ANY DEFINED BY operationCode
-                     } OPTIONAL
-                 }
-
-
-			 * Hence the result is sequence of Operation Code and Parameter. The bellow decoding takes only sequence of Operation Code
-			 * and the Parameter which is wrong.
-			 * 
-			 * 
-			 * Look at trace from nad1053.pcap
-			 */			
-			
-			
 
 			if (tag == Tag.SEQUENCE) {
 				// sequence of OperationCode
-				
+
 				len = localAis.readLength();
 				if (len == 0x80) {
 					throw new ParseException("Unspiecified length is not supported.");
 				}
 
 				data = new byte[len];
-				if (len != localAis.read(data)) {
-					throw new ParseException("Not enough data read.");
+				int tlen = localAis.read(data);
+				if (len != tlen) {
+					throw new ParseException("Not enough data read. Expected: " + len + ", actaul: " + tlen);
 				}
 				AsnInputStream sequenceStream = new AsnInputStream(new ByteArrayInputStream(data));
-				List<OperationCode> opCodes = new ArrayList<OperationCode>();
-				while (sequenceStream.available() > 0) {
-					tag = sequenceStream.readTag();
-					if (tag == OperationCode._TAG_GLOBAL || tag == OperationCode._TAG_LOCAL) {
-						opCodes.add(TcapFactory.createOperationCode(tag, sequenceStream));
-					} else {
-						throw new ParseException("Expected Global|Local operation code.");
-					}
-				}
-				this.operationCode = new OperationCode[opCodes.size()];
-				this.operationCode = opCodes.toArray(this.operationCode);
 
-				if (localAis.available() > 0) {
-
+				tag = sequenceStream.readTag();
+				if (tag == OperationCode._TAG_GLOBAL || tag == OperationCode._TAG_LOCAL) {
+					this.operationCode = TcapFactory.createOperationCode(tag, sequenceStream);
 				} else {
-					return;
+					throw new ParseException("Expected Global|Local operation code.");
 				}
-			}
-			tag = localAis.readTag();
-			
-			if (tag == Tag.SEQUENCE) {
-				
-				int length = localAis.readLength();
-				
-				List<Parameter> paramsList = new ArrayList<Parameter>();
 
-				while (localAis.available() > 0) {
-					// This is Parameter Tag
-					tag = localAis.readTag();
-					Parameter p = TcapFactory.createParameter(tag, localAis);
-					paramsList.add(p);
+				if (sequenceStream.available() > 0) {
+					tag = sequenceStream.readTag();
+				
+					this.parameter = TcapFactory.createParameter(tag, sequenceStream);
+					this.parameter.setPrimitive(sequenceStream.isTagPrimitive());
+				} else {
+					throw new ParseException("Not enought data to decode Parameter part of result!");
 				}
-				
-				this.parameters = new Parameter[paramsList.size()];
-				this.parameters = paramsList.toArray(this.parameters);
-				
-				paramsList.clear();				
-				
 			} else {
-				this.parameters = new Parameter[] { TcapFactory
-						.createParameter(tag, localAis) };
-			}				
-			
+				throw new ParseException("Expected SEQUENCE tag for OperationCode and Parameter part, found: " + tag);
+			}
+
 		} catch (IOException e) {
 			throw new ParseException(e);
 		} catch (AsnException e) {
@@ -244,49 +197,22 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 		try {
 			AsnOutputStream localAos = new AsnOutputStream();
 			byte[] data = null;
-			if (this.operationCode != null) {
-				for (OperationCode oc : this.operationCode) {
-					oc.encode(localAos);
-				}
+			if (this.operationCode != null && this.parameter != null) {
+				this.operationCode.encode(localAos);
+				this.parameter.encode(localAos);
 				data = localAos.toByteArray();
 				localAos.reset();
+			} else {
+				// FIXME: add checks for both present?
 			}
 
 			// form msg from top.
-
+			localAos.writeInteger(_TAG_IID_CLASS, _TAG_IID, this.invokeId);
 			if (data != null) {
-
-				localAos.writeInteger(_TAG_IID_CLASS, _TAG_IID, this.invokeId);
-
 				localAos.writeTag(Tag.CLASS_UNIVERSAL, false, Tag.SEQUENCE);
 				localAos.writeLength(data.length);
 				localAos.write(data);
 			}
-
-			if (this.parameters != null) {
-				if(this.parameters.length > 1 ){
-					
-					AsnOutputStream aosTemp = new AsnOutputStream();
-					for(Parameter p : this.parameters){
-						p.encode(aosTemp);
-					}
-					
-					byte[] paramData = aosTemp.toByteArray();
-					
-					//Sequence TAG
-					localAos.write(0x30);
-					
-					//Sequence Length
-					localAos.write(paramData.length);
-					
-					//Now write the Parameter's 
-					localAos.write(paramData);
-					
-				} else{
-					this.parameters[0].encode(localAos);
-				}
-			}
-
 			data = localAos.toByteArray();
 
 			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);

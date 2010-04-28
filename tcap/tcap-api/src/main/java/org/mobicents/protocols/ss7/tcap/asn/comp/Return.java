@@ -24,10 +24,10 @@ public interface Return extends Encodable,Component {
 	
 	
 	//opt all
-	public void setOperationCode(OperationCode[] oc);
-	public OperationCode[] getOperationCode();
+	public void setOperationCode(OperationCode oc);
+	public OperationCode getOperationCode();
 	
-	public void setParameters(Parameter[] p);
-	public Parameter[] getParameters();
+	public void setParameter(Parameter p);
+	public Parameter getParameter();
 	
 }

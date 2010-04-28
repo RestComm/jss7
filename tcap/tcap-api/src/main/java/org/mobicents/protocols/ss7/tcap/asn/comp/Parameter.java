@@ -11,8 +11,8 @@ import org.mobicents.protocols.ss7.tcap.asn.Encodable;
  *
  */
 public interface Parameter extends Encodable{
-	public static final int _TAG = 0x02;
-	public static final boolean _TAG_PRIMITIVE = true;
+	//public static final int _TAG = 0x02;
+	//public static final boolean _TAG_PRIMITIVE = true;
 	
 	
 	public byte[] getData();
@@ -39,4 +39,5 @@ public interface Parameter extends Encodable{
 	 * @param tagClass the tagClass to set
 	 */
 	public void setTagClass(int tagClass);
+
 }
