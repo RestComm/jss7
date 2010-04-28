@@ -1,6 +1,5 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-import org.mobicents.protocols.ss7.map.api.ServiceRequest;
 
 /**
  * This service is used between the HLR and the VLR and between the VLR and the
@@ -10,5 +9,5 @@ import org.mobicents.protocols.ss7.map.api.ServiceRequest;
  * @author amit bhayani
  * 
  */
-public interface UnstructuredSSRequest extends ServiceRequest, USSDService {
+public interface UnstructuredSSRequest extends  USSDService {
 }

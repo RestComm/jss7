@@ -49,5 +49,14 @@ public enum MAPApplicationContext {
 
 		return null;
 	}
+	
+	@Override
+	public String toString(){
+		StringBuffer s = new StringBuffer();
+		for(long l :  this.oid){
+			s.append(l).append(", ");
+		}
+		return s.toString();
+	}
 
 }

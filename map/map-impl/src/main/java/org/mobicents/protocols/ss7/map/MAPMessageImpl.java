@@ -8,11 +8,11 @@ import org.mobicents.protocols.ss7.map.api.MAPMessage;
  * @author amit bhayani
  * 
  */
-public class MAPMessageImpl implements MAPMessage {
-	private int invokeId;
+public abstract class MAPMessageImpl implements MAPMessage {
+	private long invokeId;
 	private MAPDialog mapDialog;
 
-	public int getInvokeId() {
+	public long getInvokeId() {
 		return this.invokeId;
 	}
 
@@ -20,7 +20,7 @@ public class MAPMessageImpl implements MAPMessage {
 		return this.mapDialog;
 	}
 
-	public void setInvokeId(int invokeId) {
+	public void setInvokeId(long invokeId) {
 		this.invokeId = invokeId;
 	}
 

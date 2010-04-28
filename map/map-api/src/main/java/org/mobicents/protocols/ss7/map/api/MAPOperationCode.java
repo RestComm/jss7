@@ -4,7 +4,7 @@ package org.mobicents.protocols.ss7.map.api;
  * Standard Operation Code included in Invoke. ETS 300 974: December 2000 (GSM
  * 09.02 version 5.15.1)
  * 
- * @author abhayani
+ * @author amit bhayani
  * 
  */
 public interface MAPOperationCode {

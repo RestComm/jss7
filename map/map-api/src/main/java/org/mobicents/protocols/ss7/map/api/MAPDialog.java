@@ -3,9 +3,11 @@ package org.mobicents.protocols.ss7.map.api;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public interface MAPDialog {
+
+	public Long getDialogId();
 
 	/**
 	 * Adds the {@code ServiceRequest} to this MAPDialog however the
@@ -13,22 +15,20 @@ public interface MAPDialog {
 	 * 
 	 * @param serviceRequest
 	 */
-	public void addServiceRequest(ServiceRequest serviceRequest);
-
+	// public void addServiceRequest(ServiceRequest serviceRequest);
 	/**
 	 * Adds the {@code serviceResponse} to this MAPDialog however the
 	 * serviceResponse is not sent to remote end till send() is called
 	 * 
 	 * @param serviceResponse
 	 */
-	public void addServiceResponse(ServiceResponse serviceResponse);
-
+	// public void addServiceResponse(ServiceResponse serviceResponse);
 	/**
 	 * This is equivalent of MAP User issuing the MAP-DELIMITER Service Request.
 	 * send() is called to explicitly request the transfer of the MAP protocol
 	 * data units to the peer entities.
 	 */
-	public void send();
+	public void send() throws MAPException;
 
 	/**
 	 * This is equvalent of MAP User issuing the MAP-CLOSE Service Request. This
@@ -58,6 +58,18 @@ public interface MAPDialog {
 	// TODO : add DiagnosticInformation and SpecificInformation?
 	public void abort(int userReason);
 
-	public void sendOpenServiceResponse();
+	
+	
+	public void addProcessUnstructuredSSRequest(byte ussdDataCodingScheme,
+			byte[] ussdString)  throws MAPException ;
+
+	public void addProcessUnstructuredSSResponse(byte ussdDataCodingScheme,
+			byte[] ussdString)  throws MAPException ;
+
+	public void addUnstructuredSSRequest(byte ussdDataCodingScheme,
+			byte[] ussdString)  throws MAPException ;
+
+	public void addUnstructuredSSResponse(byte ussdDataCodingScheme,
+			byte[] ussdString)  throws MAPException ;
 
 }

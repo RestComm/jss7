@@ -33,4 +33,6 @@ public abstract class USSDServiceImpl extends MAPMessageImpl implements
 	public void setUSSDString(byte[] ussdString) {
 		this.ussdString = ussdString;
 	}
+	
+
 }

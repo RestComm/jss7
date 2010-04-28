@@ -1,7 +1,5 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
-import org.mobicents.protocols.ss7.map.api.ServiceRequest;
 
 /**
  * This service is used between the MSC and the VLR and between the VLR and the
@@ -11,8 +9,7 @@ import org.mobicents.protocols.ss7.map.api.ServiceRequest;
  * @author amit bhayani
  * 
  */
-public interface ProcessUnstructuredSSRequest extends ServiceRequest, USSDService {
+public interface ProcessUnstructuredSSRequest extends  USSDService {
 	
-	public static final int operationCode = MAPOperationCode.processUnstructuredSS_Request;
 	
 }

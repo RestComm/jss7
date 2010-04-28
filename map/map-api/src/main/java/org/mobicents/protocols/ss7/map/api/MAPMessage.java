@@ -1,5 +1,6 @@
 package org.mobicents.protocols.ss7.map.api;
 
+
 /**
  * This is super interface for all service message in MAP
  * 
@@ -8,12 +9,14 @@ package org.mobicents.protocols.ss7.map.api;
  */
 public interface MAPMessage {
 
-	public int getInvokeId();
+	public long getInvokeId();
 
-	public void setInvokeId(int invokeId);
+	public void setInvokeId(long invokeId);
 
 	public MAPDialog getMAPDialog();
 
 	public void setMAPDialog(MAPDialog mapDialog);
+	
+
 
 }
