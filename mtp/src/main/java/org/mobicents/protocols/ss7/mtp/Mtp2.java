@@ -1196,6 +1196,33 @@ public class Mtp2 {
     	}
     }
     
+    public void doRead() {
+	if (started) {
+	    try {
+		int bytesRead = channel.read(rxBuffer);
+		if (bytesRead > 0) {
+		    processRx(rxBuffer, bytesRead);
+		}
+	    } catch (Exception e) {
+		state = MTP2_OUT_OF_SERVICE;
+		mtp3.linkFailed(this);
+	    }
+	}
+    }
+    
+    public void doWrite() {
+	if (!started) {
+	    return;
+	}
+	try {
+	    processTx(RX_TX_BUFF_SIZE);
+	    channel.write(txBuffer, RX_TX_BUFF_SIZE);
+	} catch (Exception e) {
+	    state = MTP2_OUT_OF_SERVICE;
+	    mtp3.linkFailed(this);
+	}
+    }
+    
     public void threadTick(long tickTimeStamp) {
         if (started) {
             int bytesRead = 0;

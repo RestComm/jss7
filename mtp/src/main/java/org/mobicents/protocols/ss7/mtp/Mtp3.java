@@ -191,7 +191,13 @@ public class Mtp3 implements Runnable {
         	Collection<Mtp2> selected = selector.select(LinkSelector.READ, 20);
                 long thisTickStamp = System.currentTimeMillis();
                 for (Mtp2 link : selected) {
-                    link.threadTick(thisTickStamp);
+                    //link.threadTick(thisTickStamp);
+                    link.doRead();
+                }
+                
+                selected = selector.select(LinkSelector.WRITE, 20);
+                for (Mtp2 link : selected) {
+            	    link.doWrite();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
