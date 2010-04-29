@@ -100,11 +100,15 @@ public class TcBeginTest extends TestCase {
 		p3.setData(new byte[] { (byte) 0x91, 0x13, 0x26, (byte) 0x88,
 				(byte) 0x83, 0x00, (byte) 0xf2 });
 		
+		Parameter p = TcapFactory.createParameter();
+		p.setTagClass(Tag.CLASS_UNIVERSAL);
+		p.setTag(0x04);
+		p.setParameters(new Parameter[]{p1,p2,p3});
+		//Parameter[] params = new Parameter[]{p1,p2,p3};
 		
-		Parameter[] params = new Parameter[]{p1,p2,p3};
 		
 		
-		invComp.setParameters(params);
+		invComp.setParameter(p);
 
 		tcm.setComponent(new Component[] { invComp });
 
