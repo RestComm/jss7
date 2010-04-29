@@ -31,6 +31,7 @@ public class ReturnErrorImpl implements ReturnError {
 	// mandatory
 	private ErrorCode errorCode;
 
+	//FIXME: check this aganist ASN and traces!
 	// optional
 	private Parameter[] parameters;
 

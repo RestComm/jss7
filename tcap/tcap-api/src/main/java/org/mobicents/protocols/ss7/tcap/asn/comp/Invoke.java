@@ -42,6 +42,6 @@ public interface Invoke extends Component{
 	public OperationCode getOperationCode();
 	
 	//optional
-	public void setParameters(Parameter[] p);
-	public Parameter[] getParameters();
+	public void setParameter(Parameter p);
+	public Parameter getParameter();
 }
