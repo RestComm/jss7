@@ -15,6 +15,7 @@ public interface DialogRequest {
 	 * @return
 	 */
 	public Dialog getDialog();
-
+	
+	public EventType getType();
 	
 }

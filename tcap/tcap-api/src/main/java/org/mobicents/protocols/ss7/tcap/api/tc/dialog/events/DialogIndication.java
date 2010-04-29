@@ -5,6 +5,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 
 public interface DialogIndication {
 
+	
 	/**
 	 * Return dialog for this indication
 	 * @return
@@ -16,4 +17,5 @@ public interface DialogIndication {
 	 */
 	public Component[] getComponents();
 	
+	public EventType getType();
 }
