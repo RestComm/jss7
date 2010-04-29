@@ -3,7 +3,10 @@
  */
 package org.mobicents.protocols.ss7.tcap.asn;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -48,7 +51,7 @@ public class ParameterImpl implements Parameter {
 	 */
 	public void setData(byte[] b) {
 		this.data = b;
-		if(data != null)
+		if (data != null)
 			this.setParameters(null);
 
 	}
@@ -60,9 +63,8 @@ public class ParameterImpl implements Parameter {
 	 * org.mobicents.protocols.ss7.tcap.asn.comp.Parameter#setPrimitive(boolean)
 	 */
 	public void setPrimitive(boolean b) {
-		if(this.parameters!= null && b)
-		{
-			//bad
+		if (this.parameters != null && b) {
+			// bad
 			throw new IllegalArgumentException("Can not set primitive flag since Parameter[] is present!");
 		}
 		this.primitive = b;
@@ -98,33 +100,42 @@ public class ParameterImpl implements Parameter {
 		this.tagClass = tagClass;
 	}
 
-
 	public Parameter[] getParameters() {
-		
-		if(this.parameters == null && !this.isPrimitive())
-		{
-			//we may want to decode
-			if(this.data == null)
-			{
+
+		if (this.parameters == null && !this.isPrimitive()) {
+			// we may want to decode
+			if (this.data == null) {
 				return this.parameters;
 			}
-			
-			//else we try to decode :)
-			
+			List<Parameter> paramsList = new ArrayList<Parameter>();
+			// else we try to decode :)
+			try {
+				AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(this.data));
+				while (ais.available() > 0) {
+					int tag = ais.readTag();
+					Parameter _p = TcapFactory.createParameter(tag, ais);
+					paramsList.add(_p);
+
+				}
+
+				this.parameters = new Parameter[paramsList.size()];
+				this.parameters = paramsList.toArray(this.parameters);
+			} catch (Exception e) {
+				throw new IllegalArgumentException("Failed to parse raw data into constrcuted parameter", e);
+			}
 		}
 		return this.parameters;
 	}
 
 	public void setParameters(Parameter[] paramss) {
 		this.parameters = paramss;
-		if(this.parameters != null)
-		{
+		if (this.parameters != null) {
 			this.setData(null);
 			this.setPrimitive(false);
 		}
-		
+
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -146,7 +157,7 @@ public class ParameterImpl implements Parameter {
 			data = new byte[len];
 			int tlen = ais.read(data);
 			if (tlen != len) {
-				throw new ParseException("Not enough data read, expected: "+len+", actaul: "+tlen);
+				throw new ParseException("Not enough data read, expected: " + len + ", actaul: " + tlen);
 			}
 
 		} catch (IOException e) {
@@ -167,12 +178,10 @@ public class ParameterImpl implements Parameter {
 		}
 
 		aos.writeTag(tagClass, primitive, tag);
-		if(data==null)
-		{
-		
+		if (data == null) {
+
 			AsnOutputStream localAos = new AsnOutputStream();
-			for(Parameter p:this.parameters)
-			{
+			for (Parameter p : this.parameters) {
 				p.encode(localAos);
 			}
 			data = localAos.toByteArray();
@@ -184,6 +193,5 @@ public class ParameterImpl implements Parameter {
 			throw new ParseException(e);
 		}
 	}
-
 
 }
