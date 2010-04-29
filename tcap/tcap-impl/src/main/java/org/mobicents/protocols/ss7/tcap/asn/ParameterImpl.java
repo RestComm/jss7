@@ -48,6 +48,8 @@ public class ParameterImpl implements Parameter {
 	 */
 	public void setData(byte[] b) {
 		this.data = b;
+		if(data != null)
+			this.setParameters(null);
 
 	}
 
@@ -58,7 +60,11 @@ public class ParameterImpl implements Parameter {
 	 * org.mobicents.protocols.ss7.tcap.asn.comp.Parameter#setPrimitive(boolean)
 	 */
 	public void setPrimitive(boolean b) {
-
+		if(this.parameters!= null && b)
+		{
+			//bad
+			throw new IllegalArgumentException("Can not set primitive flag since Parameter[] is present!");
+		}
 		this.primitive = b;
 	}
 
@@ -92,6 +98,33 @@ public class ParameterImpl implements Parameter {
 		this.tagClass = tagClass;
 	}
 
+
+	public Parameter[] getParameters() {
+		
+		if(this.parameters == null && !this.isPrimitive())
+		{
+			//we may want to decode
+			if(this.data == null)
+			{
+				return this.parameters;
+			}
+			
+			//else we try to decode :)
+			
+		}
+		return this.parameters;
+	}
+
+	public void setParameters(Parameter[] paramss) {
+		this.parameters = paramss;
+		if(this.parameters != null)
+		{
+			this.setData(null);
+			this.setPrimitive(false);
+		}
+		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -129,11 +162,21 @@ public class ParameterImpl implements Parameter {
 	 * .asn.AsnOutputStream)
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
-		if (data == null) {
+		if (data == null && parameters == null) {
 			throw new ParseException("Parameter data not set.");
 		}
 
 		aos.writeTag(tagClass, primitive, tag);
+		if(data==null)
+		{
+		
+			AsnOutputStream localAos = new AsnOutputStream();
+			for(Parameter p:this.parameters)
+			{
+				p.encode(localAos);
+			}
+			data = localAos.toByteArray();
+		}
 		aos.writeLength(data.length);
 		try {
 			aos.write(data);
@@ -142,14 +185,5 @@ public class ParameterImpl implements Parameter {
 		}
 	}
 
-	public Parameter[] getParameters() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setParameters(Parameter[] paramss) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }
