@@ -16,6 +16,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 public class ParameterImpl implements Parameter {
 
 	private byte[] data;
+	private Parameter[] parameters;
 	private boolean primitive = true;
 	private int tag;
 	private int tagClass;
@@ -101,6 +102,7 @@ public class ParameterImpl implements Parameter {
 	public void decode(AsnInputStream ais) throws ParseException {
 		try {
 			primitive = ais.isTagPrimitive();
+			tagClass = ais.getTagClass();
 			int len;
 
 			len = ais.readLength();
@@ -138,6 +140,16 @@ public class ParameterImpl implements Parameter {
 		} catch (IOException e) {
 			throw new ParseException(e);
 		}
+	}
+
+	public Parameter[] getParameters() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setParameters(Parameter[] paramss) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

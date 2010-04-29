@@ -167,7 +167,7 @@ public class ReturnResultImpl implements ReturnResult {
 					tag = sequenceStream.readTag();
 				
 					this.parameter = TcapFactory.createParameter(tag, sequenceStream);
-					this.parameter.setPrimitive(sequenceStream.isTagPrimitive());
+					
 				} else {
 					throw new ParseException("Not enought data to decode Parameter part of result!");
 				}

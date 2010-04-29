@@ -39,7 +39,7 @@ public class InvokeImpl implements Invoke {
 	private OperationCode operationCode;
 
 	// optional
-	private Parameter[] parameters;
+	private Parameter parameter;
 
 	/*
 	 * (non-Javadoc)
@@ -76,9 +76,9 @@ public class InvokeImpl implements Invoke {
 	 * 
 	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#getParameteR()
 	 */
-	public Parameter[] getParameters() {
+	public Parameter getParameter() {
 
-		return this.parameters;
+		return this.parameter;
 	}
 
 	/*
@@ -129,8 +129,8 @@ public class InvokeImpl implements Invoke {
 	 * org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#setParameter(org.mobicents
 	 * .protocols.ss7.tcap.asn.comp.Parameter)
 	 */
-	public void setParameters(Parameter[] p) {
-		this.parameters = p;
+	public void setParameter(Parameter p) {
+		this.parameter = p;
 
 	}
 
@@ -182,30 +182,12 @@ public class InvokeImpl implements Invoke {
 				throw new ParseException("Expected Local|Global Operation Code tag, found: " + tag);
 			}
 
-			// It could be SEQUENCE of PARAMETER
+			// It could be PARAMETER
 			tag = localAis.readTag();
+			this.parameter = TcapFactory.createParameter(tag, localAis);
+		
 
-			if (tag == Tag.SEQUENCE) {
-
-				int length = localAis.readLength();
-
-				List<Parameter> paramsList = new ArrayList<Parameter>();
-
-				while (localAis.available() > 0) {
-					// This is Parameter Tag
-					tag = localAis.readTag();
-					Parameter p = TcapFactory.createParameter(tag, localAis);
-					paramsList.add(p);
-				}
-
-				this.parameters = new Parameter[paramsList.size()];
-				this.parameters = paramsList.toArray(this.parameters);
-
-				paramsList.clear();
-
-			} else {
-				this.parameters = new Parameter[] { TcapFactory.createParameter(tag, localAis) };
-			}
+			
 
 		} catch (IOException e) {
 			throw new ParseException(e);
@@ -239,28 +221,8 @@ public class InvokeImpl implements Invoke {
 
 			this.operationCode.encode(localAos);
 
-			if (this.parameters != null) {
-				if (this.parameters.length > 1) {
-
-					AsnOutputStream aosTemp = new AsnOutputStream();
-					for (Parameter p : this.parameters) {
-						p.encode(aosTemp);
-					}
-
-					byte[] paramData = aosTemp.toByteArray();
-
-					// Sequence TAG
-					localAos.write(0x30);
-
-					// Sequence Length
-					localAos.write(paramData.length);
-
-					// Now write the Parameter's
-					localAos.write(paramData);
-
-				} else {
-					this.parameters[0].encode(localAos);
-				}
+			if (this.parameter != null) {		
+				this.parameter.encode(localAos);
 			}
 			byte[] data = localAos.toByteArray();
 			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
