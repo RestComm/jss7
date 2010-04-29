@@ -1,6 +1,7 @@
 package org.mobicents.protocols.ss7.tcap.tc.dialog.events;
 
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.AbortReason;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.EventType;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
@@ -21,6 +22,11 @@ public class TCUserAbortRequestImpl extends DialogRequestImpl implements
 
 	private AbortReason abortReason;
 
+	TCUserAbortRequestImpl() {
+		super(EventType.Abort);
+		// TODO Auto-generated constructor stub
+	}
+	
 	public AbortReason getAbortReason() {
 		return this.abortReason;
 	}

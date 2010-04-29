@@ -4,6 +4,7 @@
 package org.mobicents.protocols.ss7.tcap.tc.dialog.events;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.EventType;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
@@ -22,7 +23,7 @@ public class TCUniIndicationImpl extends DialogIndicationImpl implements TCUniIn
 	private UserInformation userInformation;
 
 	TCUniIndicationImpl() {
-		super();
+		super(EventType.Uni);
 		// TODO Auto-generated constructor stub
 	}
 

@@ -5,6 +5,7 @@ package org.mobicents.protocols.ss7.tcap.tc.dialog.events;
 
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.DialogIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.EventType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 
 /**
@@ -15,6 +16,14 @@ public abstract class DialogIndicationImpl implements DialogIndication {
 
 	private Component[] components;
 	private Dialog dialog;
+	private EventType type;
+	
+	
+	
+	protected DialogIndicationImpl(EventType type) {
+		super();
+		this.type = type;
+	}
 	/**
 	 * @return the components
 	 */
@@ -38,6 +47,12 @@ public abstract class DialogIndicationImpl implements DialogIndication {
 	 */
 	public void setDialog(Dialog dialog) {
 		this.dialog = dialog;
+	}
+	/**
+	 * @return the type
+	 */
+	public EventType getType() {
+		return type;
 	}
 	
 	

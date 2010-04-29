@@ -4,6 +4,7 @@
 package org.mobicents.protocols.ss7.tcap.tc.dialog.events;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.EventType;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
@@ -23,7 +24,7 @@ public class TCContinueIndicationImpl extends DialogIndicationImpl implements TC
 	private UserInformation userInformation;
 
 	TCContinueIndicationImpl() {
-		super();
+		super(EventType.Continue);
 		// TODO Auto-generated constructor stub
 	}
 

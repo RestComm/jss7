@@ -4,6 +4,7 @@
 package org.mobicents.protocols.ss7.tcap.tc.dialog.events;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.EventType;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
@@ -24,7 +25,7 @@ public class TCContinueRequestImpl extends DialogRequestImpl implements TCContin
 	
 	
 	TCContinueRequestImpl() {
-		super();
+		super(EventType.Continue);
 		// TODO Auto-generated constructor stub
 	}
 

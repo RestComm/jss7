@@ -3,6 +3,7 @@
  */
 package org.mobicents.protocols.ss7.tcap.tc.dialog.events;
 
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.EventType;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
@@ -22,7 +23,7 @@ public class TCEndRequestImpl extends DialogRequestImpl implements TCEndRequest 
 	private UserInformation userInformation;
 
 	TCEndRequestImpl() {
-		super();
+		super(EventType.End);
 		// TODO Auto-generated constructor stub
 	}
 

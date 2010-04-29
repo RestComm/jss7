@@ -4,6 +4,7 @@
 package org.mobicents.protocols.ss7.tcap.tc.dialog.events;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.EventType;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
@@ -23,7 +24,7 @@ public class TCBeginRequestImpl extends DialogRequestImpl implements TCBeginRequ
 
 	
 	TCBeginRequestImpl() {
-		super();
+		super(EventType.Begin);
 		// TODO Auto-generated constructor stub
 	}
 

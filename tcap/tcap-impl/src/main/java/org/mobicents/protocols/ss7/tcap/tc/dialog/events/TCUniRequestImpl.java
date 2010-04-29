@@ -4,6 +4,7 @@
 package org.mobicents.protocols.ss7.tcap.tc.dialog.events;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.EventType;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
@@ -21,7 +22,7 @@ public class TCUniRequestImpl extends DialogRequestImpl implements TCUniRequest 
 	private UserInformation userInformation;
 
 	TCUniRequestImpl() {
-		super();
+		super(EventType.Uni);
 		// TODO Auto-generated constructor stub
 	}
 
