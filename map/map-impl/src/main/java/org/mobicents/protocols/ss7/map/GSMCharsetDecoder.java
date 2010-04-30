@@ -1,0 +1,113 @@
+package org.mobicents.protocols.ss7.map;
+
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CoderResult;
+
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
+public class GSMCharsetDecoder extends CharsetDecoder {
+
+	byte[] mask = new byte[] { 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01 };
+
+	int bitpos = 0;
+	byte leftOver;
+
+	// TODO : What does escape mean?
+	static final byte ESCAPE = 0x1B;
+
+	/**
+	 * Constructs a Decoder.
+	 */
+	protected GSMCharsetDecoder(Charset cs, float averageCharsPerByte,
+			float maxCharsPerByte) {
+		super(cs, averageCharsPerByte, maxCharsPerByte);
+		implReset();
+	}
+
+	@Override
+	protected void implReset() {
+		bitpos = 0;
+		leftOver = 0;
+	}
+
+	// TODO is this ok?
+	@Override
+	protected CoderResult implFlush(CharBuffer out) {
+		return CoderResult.UNDERFLOW;
+	}
+
+	@Override
+	protected CoderResult decodeLoop(ByteBuffer in, CharBuffer out) {
+
+		while (in.hasRemaining()) {
+
+			// If CharBuffer doesnt have anything remaining, lets send OVERFLOW.
+			// But ideally this should never happen as size of out is calculated
+			// using the available bytes in in parameter
+			if (!out.hasRemaining()) {
+				return CoderResult.OVERFLOW;
+			}
+
+			// Read the first byte
+			byte data = in.get();
+
+			// take back-up of byte
+			byte tempData = data;
+
+			// System.out.println("data = "+ Integer.toBinaryString(data));
+
+			// the rest of bits that we don't need now but for next iteration
+			byte tempCurrHol = (byte) ((data & 0xFF) >>> (7 - bitpos));
+
+			// System.out.println("Current = "+
+			// Integer.toBinaryString(current));
+
+			// The bits that will be consumed for formation of current char
+			data = (byte) (data & mask[bitpos]);
+
+			if (bitpos != 0) {
+				// we don't have enough bits to form char, we need to use the
+				// bits
+				// from previous iteration
+
+				// Move the curent bits read to left and append the previous
+				// bits
+				data = (byte) (data << bitpos);
+				data = (byte) (data | leftOver);
+
+				// We have 7 bits now to form char
+				out.put((char) GSMCharset.BYTE_TO_CHAR[data]);
+
+				// This means we not only used previous 6 bits and 1 bit from
+				// current byte to form char, but now we also have 7 bits left
+				// over from current byte and hence we can get another char
+				if (bitpos == 6) {
+					data = (byte) (((tempData & 0xFE)) >>> 1);
+					out.put((char) GSMCharset.BYTE_TO_CHAR[data]);
+				}
+			} else {
+				// For this iteration we have all 7 bits to form the char
+				// from byte that we read
+				out.put((char) GSMCharset.BYTE_TO_CHAR[data]);
+			}
+
+			//assign the left over bits
+			leftOver = tempCurrHol;
+
+			bitpos++;
+			if (bitpos == 7) {
+				bitpos = 0;
+			}
+		}
+
+		return CoderResult.UNDERFLOW;
+
+	}
+
+}
