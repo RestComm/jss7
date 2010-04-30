@@ -1,5 +1,7 @@
 package org.mobicents.protocols.ss7.map.api;
 
+import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+
 /**
  * 
  * @author amit bhayani
@@ -58,18 +60,16 @@ public interface MAPDialog {
 	// TODO : add DiagnosticInformation and SpecificInformation?
 	public void abort(int userReason);
 
-	
-	
 	public void addProcessUnstructuredSSRequest(byte ussdDataCodingScheme,
-			byte[] ussdString)  throws MAPException ;
+			USSDString ussdString) throws MAPException;
 
 	public void addProcessUnstructuredSSResponse(byte ussdDataCodingScheme,
-			byte[] ussdString)  throws MAPException ;
+			USSDString ussdString) throws MAPException;
 
 	public void addUnstructuredSSRequest(byte ussdDataCodingScheme,
-			byte[] ussdString)  throws MAPException ;
+			USSDString ussdString) throws MAPException;
 
 	public void addUnstructuredSSResponse(byte ussdDataCodingScheme,
-			byte[] ussdString)  throws MAPException ;
+			USSDString ussdString) throws MAPException;
 
 }

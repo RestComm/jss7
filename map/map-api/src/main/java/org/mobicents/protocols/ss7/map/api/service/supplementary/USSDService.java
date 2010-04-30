@@ -43,12 +43,12 @@ public interface USSDService extends MAPMessage {
 	 * 
 	 * @return
 	 */
-	public byte[] getUSSDString();
+	public USSDString getUSSDString();
 
 	/**
 	 * 
 	 * @param ussdString
 	 */
-	public void setUSSDString(byte[] ussdString);
+	public void setUSSDString(USSDString ussdString);
 
 }

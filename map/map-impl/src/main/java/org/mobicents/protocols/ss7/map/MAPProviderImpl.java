@@ -19,6 +19,8 @@ import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
+import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.dialog.MAPOpenInfoImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSIndicationImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSIndicationImpl;
@@ -55,14 +57,15 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	private TCAPProvider tcapProvider = null;
 
+	private final MapServiceFactory mapServiceFactory = new MapServiceFactoryImpl();
 
 	public MAPProviderImpl(TCAPProvider tcapProvider) {
 		this.tcapProvider = tcapProvider;
 		this.tcapProvider.addTCListener(this);
 
 	}
-	
-	protected TCAPProvider getTCAPProvider(){
+
+	protected TCAPProvider getTCAPProvider() {
 		return this.tcapProvider;
 	}
 
@@ -75,9 +78,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	}
 
 	public MAPDialog createNewDialog(MAPApplicationContext appCntx,
-			SccpAddress destAddress, byte[] destReference,
-			SccpAddress origAddress, byte[] origReference) throws MAPException {
-		
+			SccpAddress destAddress, AddressString destReference,
+			SccpAddress origAddress, AddressString origReference) throws MAPException {
+
 		Dialog tcapDialog;
 		try {
 			tcapDialog = tcapProvider.getNewDialog(origAddress, destAddress);
@@ -89,8 +92,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	}
 
 	public MapServiceFactory getMapServiceFactory() {
-		// TODO Auto-generated method stub
-		return null;
+		return mapServiceFactory;
 	}
 
 	public void removeMAPDialogListener(MAPDialogListener mapDialogListener) {
@@ -261,8 +263,12 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 							// Second Parameter is ussd-String
 							data = parameters[1].getData();
 
+							USSDString ussdString = mapServiceFactory
+									.createUSSDString(data, null);
+							ussdString.decode();
+
 							ProcessUnstructuredSSIndicationImpl procUnSSInd = new ProcessUnstructuredSSIndicationImpl(
-									ussd_DataCodingScheme, data);
+									ussd_DataCodingScheme, ussdString);
 
 							procUnSSInd.setInvokeId(invokeId);
 
@@ -282,9 +288,12 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 							// Second Parameter is ussd-String
 							data = parameters[1].getData();
+							USSDString ussdString = mapServiceFactory
+									.createUSSDString(data, null);
+							ussdString.decode();
 
 							UnstructuredSSIndicationImpl procUnSSInd = new UnstructuredSSIndicationImpl(
-									ussd_DataCodingScheme, data);
+									ussd_DataCodingScheme, ussdString);
 
 							procUnSSInd.setInvokeId(invokeId);
 
@@ -297,6 +306,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				} catch (AsnException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (MAPException e) {
 					e.printStackTrace();
 				}
 

@@ -19,13 +19,13 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
  */
 public interface MAPOpenInfo {
 	
-	public byte[] getDestReference();
+	public AddressString getDestReference();
 
-	public void setDestReference(byte[] destReference);
+	public void setDestReference(AddressString destReference);
 	
-	public byte[] getOrigReference();
+	public AddressString getOrigReference();
 
-	public void setOrigReference(byte[] origReference);
+	public void setOrigReference(AddressString origReference);
 	
 	public MAPDialog getMAPDialog();
 	

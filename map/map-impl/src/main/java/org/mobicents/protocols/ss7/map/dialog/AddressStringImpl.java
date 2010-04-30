@@ -1,13 +1,13 @@
-package org.mobicents.protocols.ss7.map;
+package org.mobicents.protocols.ss7.map.dialog;
 
 import java.io.IOException;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.api.AddressNature;
-import org.mobicents.protocols.ss7.map.api.AddressString;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
+import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
+import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
 
 /**
  * 

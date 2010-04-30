@@ -3,14 +3,19 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
+import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
+import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
+import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAcceptInfo;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPCloseInfo;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPOpenInfo;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortInfo;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseInfo;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortInfo;
+import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSConfirm;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSConfirm;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -19,27 +24,44 @@ public class MAPExample implements MAPDialogListener, MAPServiceListener {
 
 	MAPProvider mapProvider;
 
+	MapServiceFactory servFact = mapProvider.getMapServiceFactory();
+
 	SccpAddress destAddress = null;
-	byte[] destReference = new byte[] { (byte) 0x96, 0x02, 0x24, (byte) 0x80,
-			0x03, 0x00, (byte) 0x80, 0x00, (byte) 0xf2 };
+
+	// The address created by passing the AddressNature, NumberingPlan and
+	// actual address
+	AddressString destReference = servFact.createAddressString(
+			AddressNature.international_number, NumberingPlan.land_mobile,
+			"204208300008002");
+
 	SccpAddress origAddress = null;
-	byte[] origReference = new byte[] { (byte) 0x91, 0x13, 0x26, (byte) 0x98,
-			(byte) 0x86, 0x03, (byte) 0xf0 };
+
+	AddressString origReference = servFact.createAddressString(
+			AddressNature.international_number, NumberingPlan.ISDN,
+			"31628968300");
 
 	public void run() throws Exception {
-		
+
+		// First create Dialog
 		MAPDialog mapDialog = mapProvider.createNewDialog(
 				MAPApplicationContext.networkUnstructuredSsContextV2,
 				destAddress, destReference, origAddress, origReference);
-		
+
+		// The dataCodingScheme is still byte, as I am not exactly getting how
+		// to encode/decode this.
 		byte ussdDataCodingScheme = 0x0f;
-		
+
 		// USSD String: *125*+31628839999#
-		byte[]  ussdString =  new byte[]{(byte)0xaa, (byte)0x98, (byte)0xac, (byte)0xa6, 0x5a, (byte)0xcd, 0x62, 0x36, 0x19, 0x0e, 0x37, (byte)0xcb, (byte)0xe5, 0x72, (byte)0xb9, 0x11};
-		
-		mapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString);
-		
-		//This will initiate the TC-BEGIN with INVOKE component
+		// The Charset is null, here we let system use default Charset (UTF-7 as
+		// explained in GSM 03.38. However if MAP User wants, it can set its own
+		// impl of Charset
+		USSDString ussdString = servFact.createUSSDString("*125*+31628839999#",
+				null);
+
+		mapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme,
+				ussdString);
+
+		// This will initiate the TC-BEGIN with INVOKE component
 		mapDialog.send();
 	}
 

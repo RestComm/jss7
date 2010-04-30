@@ -20,8 +20,24 @@ public class USSDStringImpl implements USSDString {
 
 	private Charset charset;
 
-	public USSDStringImpl() {
+	public USSDStringImpl(String ussdString, Charset charset) {
+		this.ussdString = ussdString;
+		this.charset = charset;
 
+		// set to default if not set by user
+		if (this.charset == null) {
+			this.charset = new GSMCharset("GSM", new String[] {});
+		}
+	}
+
+	public USSDStringImpl(byte[] encodedString, Charset charset) {
+		this.encodedString = encodedString;
+		this.charset = charset;
+
+		// set to default if not set by user
+		if (this.charset == null) {
+			this.charset = new GSMCharset("GSM", new String[] {});
+		}
 	}
 
 	public byte[] getEncodedString() {
@@ -31,24 +47,16 @@ public class USSDStringImpl implements USSDString {
 	public String getString() {
 		return this.ussdString;
 	}
-
-	public void setEncodedString(byte[] encodedString) {
-		this.encodedString = encodedString;
+	
+	public Charset getCharset() {
+		return this.charset;
 	}
 
-	public void setString(String ussdString) {
-		this.ussdString = ussdString;
-	}
 
 	public void decode() throws MAPException {
 
 		if (this.encodedString == null) {
 			throw new MAPException("encodedString byte[] is null");
-		}
-
-		// set to default if not set by user
-		if (this.charset == null) {
-			this.charset = new GSMCharset("GSM", new String[] {});
 		}
 
 		ByteBuffer bb = ByteBuffer.wrap(this.encodedString);
@@ -78,14 +86,6 @@ public class USSDStringImpl implements USSDString {
 		while (bb.hasRemaining()) {
 			encodedString[count++] = bb.get();
 		}
-	}
-
-	public Charset getCharset() {
-		return this.charset;
-	}
-
-	public void setCharset(Charset charset) {
-		this.charset = charset;
 	}
 
 }

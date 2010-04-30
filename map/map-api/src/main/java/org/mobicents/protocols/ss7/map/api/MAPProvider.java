@@ -1,5 +1,6 @@
 package org.mobicents.protocols.ss7.map.api;
 
+import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -49,8 +50,8 @@ public interface MAPProvider {
 	 * @return
 	 */
 	public MAPDialog createNewDialog(MAPApplicationContext appCntx,
-			SccpAddress destAddress, byte[] destReference,
-			SccpAddress origAddress, byte[] origReference) throws MAPException;
+			SccpAddress destAddress, AddressString destReference,
+			SccpAddress origAddress, AddressString origReference) throws MAPException;
 
 	/**
 	 * 

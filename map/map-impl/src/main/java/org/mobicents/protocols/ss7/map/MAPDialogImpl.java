@@ -9,6 +9,8 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogueAS;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
+import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.dialog.MAPOpenInfoImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
@@ -35,8 +37,8 @@ public class MAPDialogImpl implements MAPDialog {
 	// Application Context of this Dialog
 	private MAPApplicationContext appCntx;
 
-	private byte[] destReference;
-	private byte[] origReference;
+	private AddressString destReference;
+	private AddressString origReference;
 
 	protected MAPDialogImpl(MAPApplicationContext appCntx, Dialog tcapDialog,
 			MAPProviderImpl mapProviderImpl) {
@@ -46,8 +48,8 @@ public class MAPDialogImpl implements MAPDialog {
 	}
 
 	protected MAPDialogImpl(MAPApplicationContext appCntx, Dialog tcapDialog,
-			MAPProviderImpl mapProviderImpl, byte[] destReference,
-			byte[] origReference) {
+			MAPProviderImpl mapProviderImpl, AddressString destReference,
+			AddressString origReference) {
 		this(appCntx, tcapDialog, mapProviderImpl);
 
 		this.destReference = destReference;
@@ -121,7 +123,7 @@ public class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void addProcessUnstructuredSSRequest(byte ussdDataCodingScheme,
-			byte[] ussdString) throws MAPException {
+			USSDString ussdString) throws MAPException {
 
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider()
 				.getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -140,10 +142,11 @@ public class MAPDialogImpl implements MAPDialog {
 			p1.setTag(0x04);
 			p1.setData(new byte[] { ussdDataCodingScheme });
 
+			ussdString.encode();
 			Parameter p2 = TcapFactory.createParameter();
 			p2.setTagClass(Tag.CLASS_UNIVERSAL);
 			p2.setTag(0x04);
-			p2.setData(ussdString);
+			p2.setData(ussdString.getEncodedString());
 
 			Parameter[] params = new Parameter[] { p1, p2 };
 			invoke.setParameters(params);
@@ -159,19 +162,19 @@ public class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void addProcessUnstructuredSSResponse(byte ussdDataCodingScheme,
-			byte[] ussdString) throws MAPException {
+			USSDString ussdString) throws MAPException {
 		// TODO Auto-generated method stub
 
 	}
 
 	public void addUnstructuredSSRequest(byte ussdDataCodingScheme,
-			byte[] ussdString) throws MAPException {
+			USSDString ussdString) throws MAPException {
 		// TODO Auto-generated method stub
 
 	}
 
 	public void addUnstructuredSSResponse(byte ussdDataCodingScheme,
-			byte[] ussdString) throws MAPException {
+			USSDString ussdString) throws MAPException {
 		// TODO Auto-generated method stub
 
 	}

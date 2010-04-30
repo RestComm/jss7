@@ -1,4 +1,4 @@
-package org.mobicents.protocols.ss7.map.api;
+package org.mobicents.protocols.ss7.map.api.dialog;
 
 /**
  * -- 000 unknown -- 001 international number -- 010 national significant number --
