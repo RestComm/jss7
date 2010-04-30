@@ -25,7 +25,7 @@ public interface TCBeginMessage extends Encodable {
 	public Long getOriginatingTransactionId();
 	public void setOriginatingTransactionId(Long t);
 	
-	//opt
+	//opt FIXME: make this External?
 	public DialogPortion getDialogPortion();
 	public void setDialogPortion(DialogPortion dp);
 	//opt
