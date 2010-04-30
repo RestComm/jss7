@@ -17,7 +17,7 @@ public interface TCUniMessage extends Encodable {
 	public static final boolean _TAG_PC_PRIMITIVE = false;
 	public static final int _TAG_CLASS = Tag.CLASS_APPLICATION;
 	
-	//opt
+	//opt FIXME: make this External?
 	public DialogPortion getDialogPortion();
 	public void setDialogPortion(DialogPortion dp);
 	//mandatory

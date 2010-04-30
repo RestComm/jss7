@@ -18,4 +18,6 @@ public interface DialogIndication {
 	public Component[] getComponents();
 	
 	public EventType getType();
+	
+	public Byte getQos();
 }

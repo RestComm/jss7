@@ -16,6 +16,7 @@ public abstract class DialogIndicationImpl implements DialogIndication {
 
 	private Component[] components;
 	private Dialog dialog;
+	private Byte qos;
 	private EventType type;
 	
 	
@@ -53,6 +54,18 @@ public abstract class DialogIndicationImpl implements DialogIndication {
 	 */
 	public EventType getType() {
 		return type;
+	}
+	/**
+	 * @return the qos
+	 */
+	public Byte getQos() {
+		return qos;
+	}
+	/**
+	 * @param qos the qos to set
+	 */
+	public void setQos(Byte qos) {
+		this.qos = qos;
 	}
 	
 	

@@ -28,6 +28,7 @@ import org.mobicents.protocols.ss7.tcap.api.TCListener;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
+import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
@@ -37,7 +38,9 @@ import org.mobicents.protocols.ss7.tcap.tc.dialog.events.DialogPrimitiveFactoryI
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCBeginIndicationImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCContinueIndicationImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCEndIndicationImpl;
+import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCPAbortIndicationImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCUniIndicationImpl;
+import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCUserAbortIndicationImpl;
 
 /**
  * @author baranowb
@@ -234,11 +237,21 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 					di.processEnd(teb, localAddress, remoteAddress);
 				}
 				break;
-
-			case TCUniMessage._TAG:
+			case TCAbortMessage._TAG:
+				//this can be only TC-U-Abort, since TC-P-Abort is only local!
 				TCUniMessage tub = TcapFactory.createTCUniMessage(ais);
 				di = (DialogImpl) this.getNewUnstructuredDialog(localAddress, remoteAddress);
 				di.processUni(tub, localAddress, remoteAddress);
+				break;
+			case TCUniMessage._TAG:
+				TCAbortMessage tcuabort = TcapFactory.createTCAbortMessage(ais);
+				dialogId = tcuabort.getDestinationTransactionId();
+				di = this.dialogs.get(dialogId);
+				if (di == null) {
+					logger.error("No dialog/transaction for id: " + dialogId);
+				} else {
+					di.processAbort(tcuabort, localAddress, remoteAddress);
+				}
 				break;
 			}
 		} catch (Exception e) {
@@ -293,7 +306,32 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 			}
 		}
 	}
-
+	public void deliver(DialogImpl dialogImpl, TCPAbortIndicationImpl tcAbortIndication) {
+		try {
+			for (int index = 0; index < this.tcListeners.size(); index++) {
+				TCListener lst = this.tcListeners.get(index);
+				lst.onTCPAbort(tcAbortIndication);
+			}
+		} catch (Exception e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Received exception while delivering data to transport layer.", e);
+			}
+		}
+		
+	}
+	public void deliver(DialogImpl dialogImpl, TCUserAbortIndicationImpl tcAbortIndication) {
+		try {
+			for (int index = 0; index < this.tcListeners.size(); index++) {
+				TCListener lst = this.tcListeners.get(index);
+				lst.onTCUserAbort(tcAbortIndication);
+			}
+		} catch (Exception e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Received exception while delivering data to transport layer.", e);
+			}
+		}
+		
+	}
 	public void deliver(DialogImpl dialogImpl, TCUniIndicationImpl tcUniIndication) {
 		try {
 			for (int index = 0; index < this.tcListeners.size(); index++) {
@@ -343,5 +381,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 			}
 		}
 	}
+	
 
 }

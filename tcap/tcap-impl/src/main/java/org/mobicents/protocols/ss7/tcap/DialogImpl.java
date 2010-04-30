@@ -22,6 +22,7 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.DialogAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.DialogAPDUType;
+import org.mobicents.protocols.ss7.tcap.asn.DialogAbortAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.DialogPortion;
 import org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.DialogResponseAPDU;
@@ -39,6 +40,7 @@ import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
@@ -47,7 +49,9 @@ import org.mobicents.protocols.ss7.tcap.tc.dialog.events.DialogPrimitiveFactoryI
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCBeginIndicationImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCContinueIndicationImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCEndIndicationImpl;
+import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCPAbortIndicationImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCUniIndicationImpl;
+import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCUserAbortIndicationImpl;
 
 /**
  * @author baranowb
@@ -757,6 +761,7 @@ public class DialogImpl implements Dialog {
 
 		// now comps
 		tcEndIndication.setComponents(processOperationsState(tcEndIndication.getComponents()));
+		//FIXME: add ACN, UI, hooooow?
 		// lets deliver to provider
 		//change state before delivery
 		this.setState(TRPseudoState.Expunged);
@@ -764,7 +769,44 @@ public class DialogImpl implements Dialog {
 
 		
 	}
+	
+	void processAbort(TCAbortMessage msg, SccpAddress localAddress2, SccpAddress remoteAddress2) {
+		
+		// now set cause - it can have APDU or external ;[
+		//FIXME: handle external
+		if(msg.getPAbortCause()!=null)
+		{
+			//its remote TC-P-Abort?
+			//its TC-U-Abort
+			TCPAbortIndicationImpl tcAbortIndication = (TCPAbortIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider.getDialogPrimitiveFactory())
+			.createPAbortIndication(this);
+			tcAbortIndication.setPAbortCause(msg.getPAbortCause());
+			this.setState(TRPseudoState.Expunged);
+			this.provider.deliver(this, tcAbortIndication);
+		}else
+		{
+			//its TC-U-Abort
+			TCUserAbortIndicationImpl tcAbortIndication = (TCUserAbortIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider.getDialogPrimitiveFactory())
+			.createUAbortIndication(this);
+			//FIXME: it can have External in apdu, add handling
+			if(msg.getDialogPortion()!=null && msg.getDialogPortion().getDialogAPDU()!=null)
+			{
+				if(msg.getDialogPortion().getDialogAPDU().getType() == DialogAPDUType.Abort)
+				{
+					DialogAbortAPDU daapdu = (DialogAbortAPDU) msg.getDialogPortion().getDialogAPDU();
+					tcAbortIndication.setUserInformation(daapdu.getUserInformation());
+					tcAbortIndication.setAbortSource(daapdu.getAbortSource());
+				}
+			}
+			this.setState(TRPseudoState.Expunged);
+			this.provider.deliver(this, tcAbortIndication);
+		}
+		// lets deliver to provider
+		// change state before delivery
+		
 
+	}
+	
 	private Component[] processOperationsState(Component[] components) {
 		if (components == null) {
 			return null;
@@ -884,5 +926,7 @@ public class DialogImpl implements Dialog {
 	public TRPseudoState getState() {
 		return this.state;
 	}
+
+
 
 }

@@ -14,7 +14,9 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCPAbortIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
@@ -129,6 +131,16 @@ public class Server implements TCListener{
 		
 		
 		return status+unexpected;
+	}
+
+	public void onTCPAbort(TCPAbortIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onTCUserAbort(TCUserAbortIndication ind) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

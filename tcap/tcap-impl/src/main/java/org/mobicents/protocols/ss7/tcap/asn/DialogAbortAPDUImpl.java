@@ -20,7 +20,7 @@ import org.mobicents.protocols.asn.Tag;
 public class DialogAbortAPDUImpl implements DialogAbortAPDU {
 
 	private AbortSource abortSource;
-	private UserInformation[] userInformation;
+	private UserInformation userInformation;
 	
 	
 
@@ -41,14 +41,14 @@ public class DialogAbortAPDUImpl implements DialogAbortAPDU {
 	/**
 	 * @return the userInformation
 	 */
-	public UserInformation[] getUserInformation() {
+	public UserInformation getUserInformation() {
 		return userInformation;
 	}
 
 	/**
 	 * @param userInformation the userInformation to set
 	 */
-	public void setUserInformation(UserInformation[] userInformation) {
+	public void setUserInformation(UserInformation userInformation) {
 		this.userInformation = userInformation;
 	}
 
@@ -100,23 +100,25 @@ public class DialogAbortAPDUImpl implements DialogAbortAPDU {
 			// optional sequence.
 			if (localAis.available() > 0) {
 				// we have optional seq;
-				tag = localAis.readTag();
-				if (tag != Tag.SEQUENCE) {
-					throw new ParseException("Expected SEQUENCE tag, found: " + tag);
-				}
-				byte[] data = localAis.readSequence();
-				localAis = new AsnInputStream(new ByteArrayInputStream(data));
-				List<UserInformation> list = new ArrayList<UserInformation>();
-				while (localAis.available() > 0) {
-					tag = localAis.readTag();
-					if (tag != UserInformation._TAG) {
-						throw new ParseException("Expected User Information tag, found: " + tag);
 
-					}
-					list.add(TcapFactory.createUserInformation(localAis));
+				// TODO: The Q.773 defines SEQUENCE of USER INFORMATION, however all
+				// the traces shows no SEQUNECE and just one USER INFORMATION
+
+				// tag = localAis.readTag();
+				// if (tag != Tag.SEQUENCE) {
+				// throw new ParseException("Expected SEQUENCE tag, found: " +
+				// tag);
+				// }
+				// byte[] data = localAis.readSequence();
+				// localAis = new AsnInputStream(new
+				// ByteArrayInputStream(data));
+
+				tag = localAis.readTag();
+				if(tag != UserInformation._TAG)
+				{
+					throw new ParseException("Expected UserInformation tag, found: "+tag);
 				}
-				this.userInformation = new UserInformation[list.size()];
-				this.userInformation = list.toArray(this.userInformation);
+				this.userInformation = TcapFactory.createUserInformation(localAis);
 			}
 		} catch (IOException e) {
 			throw new ParseException(e);
@@ -141,15 +143,15 @@ public class DialogAbortAPDUImpl implements DialogAbortAPDU {
 			localAos.reset();
 			byte[] byteData = null;
 			if (userInformation != null) {
-				for (UserInformation _ui : userInformation) {
-					_ui.encode(localAos);
-				}
+				
+				userInformation.encode(localAos);
 				byteData = localAos.toByteArray();
 				localAos.reset();
 
-				localAos.writeSequence(byteData);
+				//TODO : Commented out the Sequence. The trace is not showing this
+				//localAos.writeSequence(byteData);
 
-				byteData = localAos.toByteArray();
+				//byteData = localAos.toByteArray();
 
 			}
 			

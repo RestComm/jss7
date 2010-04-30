@@ -29,20 +29,20 @@ public interface TCListener {
 	 */
 	public void onTCEnd(TCEndIndication ind);
 
-//	/**
-//	 * Invoked for TC-U-Abort primitive. See Q.771 3.1.2.2.2.4
-//	 * 
-//	 * @param ind
-//	 */
-//	public void onTCUserAbort(TCUserAbortIndication ind);
-//
-//	/**
-//	 * Invoked when dialog has been terminated by some unpredicatable
-//	 * environment cause. See Q.771 3.1.4.2
-//	 * 
-//	 * @param ind
-//	 */
-//	public void onTCPAbort(TCPAbortIndication ind);
+	/**
+	 * Invoked for TC-U-Abort primitive(P-Abort-Cause is present.). See Q.771 3.1.2.2.2.4
+	 * 
+	 * @param ind
+	 */
+	public void onTCUserAbort(TCUserAbortIndication ind);
+
+	/**
+	 * Invoked when dialog has been terminated by some unpredicatable
+	 * environment cause. See Q.771 3.1.4.2
+	 * 
+	 * @param ind
+	 */
+	public void onTCPAbort(TCPAbortIndication ind);
 
 	/**
 	 * Called once dialog is released. It is invoked once primitives are
