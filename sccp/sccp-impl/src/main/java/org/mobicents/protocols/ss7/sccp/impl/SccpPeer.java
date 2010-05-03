@@ -36,6 +36,7 @@ public class SccpPeer {
     public final static String INTEL_DRIVER = "INTEL_HDC";
     public final static String M3UA = "M3UA";
     public final static String ZAP = "ZAP";
+    public final static String TCP = "TCP";
     private String driver;
     
     /** Creates a new instance of SccpPeer */
@@ -62,7 +63,10 @@ public class SccpPeer {
             return new SccpIntelHDCProviderImpl(properties);
         } else if (driver.equals(M3UA)) {
             return new SccpM3UAProviderImpl(properties);
-        } else if(driver.equals(ZAP))
+        } else if (driver.equals(TCP))
+        {
+        	return new SccpSCTPProviderImpl(properties);
+        }else if(driver.equals(ZAP))
         {
         	return new SccpSCTPProviderImpl(properties);
         }else return new SccpProviderImpl(){
