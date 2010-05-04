@@ -48,11 +48,13 @@
 	</dependencyManagement>
 	
 	<modules>
+		<!-- 
 		<module>sctp</module>
+		 -->
+		 <module>mtp</module>
+		 <module>tcap</module>
+		 <module>isup</module>
 		<module>sccp</module>
-		<module>isup</module>
-		<module>tcap</module>
-		<module>mtp</module>
 	</modules>
 
 
