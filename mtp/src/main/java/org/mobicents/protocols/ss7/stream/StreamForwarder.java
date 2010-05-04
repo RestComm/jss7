@@ -21,8 +21,6 @@ public interface StreamForwarder {
 	public String getAddress();
 	
 	public void setLayer3(Mtp3 layer3);
-	public void setServiceIndicator(int i);
-	public void setSubServiceIndicator(int i);
 	public void start() throws Exception;
 	public void stop();
 
