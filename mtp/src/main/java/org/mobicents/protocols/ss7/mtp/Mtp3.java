@@ -229,17 +229,23 @@ public class Mtp3 implements Runnable {
         return null;
     }
     
-    public boolean send(byte sls, byte linksetId, int service, int subservice, byte[] msg) {        
+    public boolean send(byte[] msg) {  
+    	//method expects proper message, lets pray its ok :/ - this is a way to be aligned with dialogic cards.
         //selecting link using sls
-        Mtp2 link = selectLink(sls);
+    	//get sls;
+    	byte sls = (byte) _getFromSif_SLS(msg, 1);
+        Mtp2 link = this.selectLink(sls);
         
         //creating message
-        byte[] buffer = new byte[5 + msg.length];
-        writeRoutingLabel(buffer, sls);
+        //byte[] buffer = new byte[5 + msg.length];
+        //writeRoutingLabel(buffer, sls);
         
-        buffer[0] = (byte) ((service & 0x0F) | ((subservice & 0x0F) << 4));
-        System.arraycopy(msg, 0, buffer, 5, msg.length);
-        return link.queue(buffer);
+        //buffer[0] = (byte) ((service & 0x0F) | ((subservice & 0x0F) << 4));
+        //System.arraycopy(msg, 0, buffer, 5, msg.length);
+        //return link.queue(buffer);
+        //FIXME: should we copy ?
+        
+        return link.queue(msg);
     }
 
     public void linkInService(Mtp2 link) {
@@ -288,7 +294,7 @@ public class Mtp3 implements Runnable {
         subservice = DEFAULT_SUB_SERVICE_TRA;
         //}
         byte[] buffer = new byte[6];
-        writeRoutingLabel(buffer, 0);
+        writeRoutingLabel(buffer, 0,0,0,dpc,opc);
         // buffer[0] = (byte) (_SERVICE_TRA | ( subservice << 4));
         buffer[0] = (byte) 0xC0;
         // H0 and H1, see Q.704 section 15.11.2+
@@ -296,13 +302,7 @@ public class Mtp3 implements Runnable {
         link.queue(buffer);
     }
 
-    private void writeRoutingLabel(byte[] sif, int sls) {
-        sif[1] = (byte) dpc;
-        sif[2] = (byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6));
-        sif[3] = (byte) (opc >> 2);
-        sif[4] = (byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4));
-        //sif[4] = (byte) (((opc>> 10) & 0x0F) | ((0 & 0x0F) << 4));
-    }   
+   
     
     // -6 cause we have in sif, sio+label+len of pattern - thats 1+4+1 = 6
     private final static int SIF_PATTERN_OFFSET = 6;
@@ -378,8 +378,9 @@ public class Mtp3 implements Runnable {
          */
         public void ping(long timeout) {
             //prepearing test message
+            
+            writeRoutingLabel(sltm, 0,0,link.sls,dpc,opc);
             sltm[0] = (byte) 0xC1; // 1100 0001
-            writeRoutingLabel(sltm, link.sls);
             sltm[5] = 0x11;
             sltm[6] = (byte) (SLTM_PATTERN.length << 4);
             System.arraycopy(SLTM_PATTERN, 0, sltm, 7, SLTM_PATTERN.length);
@@ -482,9 +483,10 @@ public class Mtp3 implements Runnable {
                         // create response
                         byte[] slta = new byte[len + 7];
     
-                        slta[0] = (byte) sio;
+                        
 
-                        writeRoutingLabel(slta, sls);
+                        writeRoutingLabel(slta,0,0, sls,dpc,opc);
+                        slta[0] = (byte) sio;
                         slta[5] = 0x021;
                         // +1 cause we copy LEN byte also.
                         System.arraycopy(sif, 5, slta, 6, len + 1);
@@ -522,9 +524,13 @@ public class Mtp3 implements Runnable {
                     if (mtpUser != null) {
                         //lets create byte[] which is actuall upper layer msg.
                         //msbBuff.len = sif.len - 4 (routing label), after routing label there should be msg code
-                        byte[] msgBuff = new byte[sif.length - 4];
-                        System.arraycopy(sif, 4, msgBuff, 0, msgBuff.length);
+                        //byte[] msgBuff = new byte[sif.length - 4];
+                        //System.arraycopy(sif, 4, msgBuff, 0, msgBuff.length);
 //                        mtpUser.receive(mtp2.getSls(), mtp2.getLinkSet().getId(), SERVICE_SCCP, subserviceIndicator, msgBuff);
+                    	byte[] message = new byte[sif.length+1];
+                    	System.arraycopy(sif, 0, message, 1, sif.length);
+                    	message[0] = (byte) sio;
+                    	mtpUser.receive(message);
                     }
                     break;
                 case SERVICE_ISUP:
@@ -534,9 +540,13 @@ public class Mtp3 implements Runnable {
                     if (mtpUser != null) {
                         //lets create byte[] which is actuall upper layer msg.
                         //msbBuff.len = sif.len - 4 (routing label), after routing label there should be msg code
-                        byte[] msgBuff = new byte[sif.length - 4];
-                        System.arraycopy(sif, 4, msgBuff, 0, msgBuff.length);
+                        //byte[] msgBuff = new byte[sif.length - 4];
+                        //System.arraycopy(sif, 4, msgBuff, 0, msgBuff.length);
 //                        mtpUser.receive(mtp2.getSls(), mtp2.getLinkSet().getId(), SERVICE_ISUP, subserviceIndicator, msgBuff);
+                    	byte[] message = new byte[sif.length+1];
+                    	System.arraycopy(sif, 0, message, 1, sif.length);
+                    	message[0] = (byte) sio;
+                    	mtpUser.receive(message);
                     }
                     break;
                 default:
@@ -550,20 +560,42 @@ public class Mtp3 implements Runnable {
     // //////////////////
     // Helper methods //
     // //////////////////
-    private static final int _getFromSif_DPC(byte[] sif, int shift) {
+    public static final int _getFromSif_DPC(byte[] sif, int shift) {
         int dpc = (sif[0 + shift] & 0xff | ((sif[1 + shift] & 0x3f) << 8));
         return dpc;
     }
 
-    private static final int _getFromSif_OPC(byte[] sif, int shift) {
+    public static final int _getFromSif_OPC(byte[] sif, int shift) {
         int opc = ((sif[1 + shift] & 0xC0) >> 6) | ((sif[2 + shift] & 0xff) << 2) | ((sif[3 + shift] & 0x0f) << 10);
         return opc;
     }
 
-    private static final int _getFromSif_SLS(byte[] sif, int shift) {
+    public static final int _getFromSif_SLS(byte[] sif, int shift) {
         int sls = (sif[3 + shift] & 0xf0) >>> 4;
         return sls;
-    }    ////////////////
+    }    
+    public static final int _getFromSif_SI(byte[] data)
+    {
+    	
+        int serviceIndicator = data[0] & 0x0f;
+    	return serviceIndicator;
+    }
+    
+    public static final int _getFromSif_SSI(byte[] data)
+    {
+    	int subserviceIndicator = (data[0] >> 4) & 0x03;
+    	return subserviceIndicator;
+    }
+    
+    public static  void writeRoutingLabel(byte[] data,int si, int ssi, int sls, int dpc,int opc) {
+    	data[0] = (byte) (((ssi & 0x03) << 4) | (si & 0x0F));
+    	data[1] = (byte) dpc;
+    	data[2] = (byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6));
+    	data[3] = (byte) (opc >> 2);
+    	data[4] = (byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4));
+        //sif[4] = (byte) (((opc>> 10) & 0x0F) | ((0 & 0x0F) << 4));
+    }   
+    ////////////////
     // Debug Part //
     ////////////////
     private boolean l3Debug;

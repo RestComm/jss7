@@ -17,14 +17,9 @@ public interface MtpUser {
 
 	/**
 	 * 
-	 * @param service
-	 *            - type, this is generaly content of service part - contains
-	 *            constant defined for ISUP, SCCP or any other
-	 * @param subservice
-	 *            - as above, it contains other 4 bits of SIO byte.
 	 * @param msgBuff
 	 */
-	public void receive(byte sls,byte linksetId, int service, int subservice, byte[] msgBuff);
+	public void receive(byte[] msgBuff);
 
 
 }
