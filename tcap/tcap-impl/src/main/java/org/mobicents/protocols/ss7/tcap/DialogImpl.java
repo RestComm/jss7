@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.sccp.ActionReference;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
@@ -91,6 +92,9 @@ public class DialogImpl implements Dialog {
 	// scheduled components list
 	private List<Component> scheduledComponentList = new ArrayList<Component>();
 	private TCAPProviderImpl provider;
+
+	//used for sccp
+	private ActionReference actionReference;
 
 	private static final int getIndexFromInvokeId(Long l) {
 		int tmp = l.intValue();
@@ -299,7 +303,7 @@ public class DialogImpl implements Dialog {
 		try {
 			tcbm.encode(aos);
 			this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-					this.localAddress);
+					this.localAddress,this.actionReference);
 			this.setState(TRPseudoState.InitialSent);
 		} catch (Exception e) {
 			// FIXME: add proper handling here. TC-NOTICE ?
@@ -365,7 +369,7 @@ public class DialogImpl implements Dialog {
 			try {
 				tcbm.encode(aos);
 				this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-						this.localAddress);
+						this.localAddress,this.actionReference);
 				this.setState(TRPseudoState.Active);
 				this.scheduledComponentList.clear();
 			} catch (Exception e) {
@@ -396,7 +400,7 @@ public class DialogImpl implements Dialog {
 			try {
 				tcbm.encode(aos);
 				this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-						this.localAddress);
+						this.localAddress,this.actionReference);
 				this.scheduledComponentList.clear();
 			} catch (Exception e) {
 				// FIXME: add proper handling here. TC-NOTICE ?
@@ -447,7 +451,7 @@ public class DialogImpl implements Dialog {
 		try {
 			tcbm.encode(aos);
 			this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-					this.localAddress);
+					this.localAddress,this.actionReference);
 			this.setState(TRPseudoState.Expunged);
 			this.scheduledComponentList.clear();
 		} catch (Exception e) {
@@ -496,7 +500,7 @@ public class DialogImpl implements Dialog {
 		try {
 			msg.encode(aos);
 			this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-					this.localAddress);
+					this.localAddress,this.actionReference);
 			this.setState(TRPseudoState.Expunged);
 			this.scheduledComponentList.clear();
 		} catch (Exception e) {
@@ -608,7 +612,10 @@ public class DialogImpl implements Dialog {
 	void setRemoteAddress(SccpAddress remoteAddress) {
 		this.remoteAddress = remoteAddress;
 	}
-
+	 void setActionReference(ActionReference ar) {
+		this.actionReference = ar;
+		
+	}
 	void processUni(TCUniMessage msg, SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
 		// this is invoked ONLY for server.
 		if (state != TRPseudoState.Idle) {
@@ -926,6 +933,8 @@ public class DialogImpl implements Dialog {
 	public TRPseudoState getState() {
 		return this.state;
 	}
+
+	
 
 
 

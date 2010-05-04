@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.ss7.sccp.ActionReference;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -191,7 +192,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 
 
-	public void onMessage(SccpAddress localAddress, SccpAddress remoteAddress, byte[] asnData) {
+	public void onMessage(SccpAddress localAddress, SccpAddress remoteAddress, byte[] asnData, ActionReference ar) {
 		try {
 			// FIXME: Qs state that OtxID and DtxID consittute to dialog id.....
 
@@ -212,6 +213,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				if (di == null) {
 					logger.error("No dialog/transaction for id: " + dialogId);
 				} else {
+					di.setActionReference(ar);
 					di.processContinue(tcm, localAddress, remoteAddress);
 				}
 				break;
@@ -223,6 +225,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				// begin);
 
 				di = (DialogImpl) this.getNewDialog(localAddress, remoteAddress);
+				di.setActionReference(ar);
 				di.processBegin(tcb, localAddress, remoteAddress);
 
 				break;
@@ -235,13 +238,15 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 					logger.error("No dialog/transaction for id: " + dialogId);
 				} else {
 					di.processEnd(teb, localAddress, remoteAddress);
+					di.setActionReference(ar);
 				}
 				break;
 			case TCAbortMessage._TAG:
 				//this can be only TC-U-Abort, since TC-P-Abort is only local!
-				TCUniMessage tub = TcapFactory.createTCUniMessage(ais);
+				TCAbortMessage tub = TcapFactory.createTCAbortMessage(ais);
 				di = (DialogImpl) this.getNewUnstructuredDialog(localAddress, remoteAddress);
-				di.processUni(tub, localAddress, remoteAddress);
+				di.setActionReference(ar);
+				di.processAbort(tub, localAddress, remoteAddress);
 				break;
 			case TCUniMessage._TAG:
 				TCAbortMessage tcuabort = TcapFactory.createTCAbortMessage(ais);
@@ -259,10 +264,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		}
 	}
 	
-	public void send(byte[] data,Byte desiredQos, SccpAddress destinationAddress,SccpAddress orignatingAddress) throws IOException
+	public void send(byte[] data,Byte desiredQos, SccpAddress destinationAddress,SccpAddress orignatingAddress, ActionReference ar) throws IOException
 	{
 		//FIXME: add QOS
-			this.transportProvider.send(destinationAddress, orignatingAddress, data);
+			this.transportProvider.send(destinationAddress, orignatingAddress, data,ar);
 	}
 	
 	public void deliver(DialogImpl dialogImpl, TCBeginIndicationImpl msg) {
