@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.mobicents.protocols.ss7.sccp.ActionReference;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpParameterFactory;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
@@ -77,7 +78,7 @@ public class PipeSccpProviderImpl implements SccpProvider {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.sccp.SccpProvider#send(org.mobicents.protocols.ss7.sccp.parameter.SccpAddress, org.mobicents.protocols.ss7.sccp.parameter.SccpAddress, byte[])
 	 */
-	public void send(SccpAddress calledParty, SccpAddress callingParty,	byte[] data) throws IOException{
+	public void send(SccpAddress calledParty, SccpAddress callingParty,	byte[] data, ActionReference ar) throws IOException{
 		this.other.receiveData(calledParty,callingParty,data);
 
 	}
@@ -128,7 +129,7 @@ public class PipeSccpProviderImpl implements SccpProvider {
 
 		public void run() {
 			try{
-				listener.onMessage(calledParty, callingParty, data);
+				listener.onMessage(calledParty, callingParty, data, null);
 			}catch(Exception e )
 			{
 				e.printStackTrace();
