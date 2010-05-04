@@ -7,32 +7,50 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.mtp.Mtp3;
+import org.mobicents.protocols.ss7.sccp.ActionReference;
 import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.impl.ud.UnitDataImpl;
 import org.mobicents.protocols.ss7.sccp.impl.ud.XUnitDataImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.sctp.MTPListener;
-import org.mobicents.protocols.ss7.sctp.MTPProvider;
-import org.mobicents.protocols.ss7.sctp.MTPProviderFactory;
+import org.mobicents.protocols.ss7.stream.MTPListener;
+import org.mobicents.protocols.ss7.stream.MTPProvider;
+import org.mobicents.protocols.ss7.stream.MTPProviderFactory;
+
+
 
 
 public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListener {
 	private static final Logger logger = Logger.getLogger(SccpSCTPProviderImpl.class);
 
 	private MTPProvider mtpProvider;
-	
+	private boolean linkUp  =false;
+
+	private int opc;
+
+	private int dpc;
+
+	private int sls;
+
+	private int ssi;
+
+	private int si;
 
 	/** Creates a new instance of SccpProviderImpl */
 	public SccpSCTPProviderImpl(Properties props) {
 		this.mtpProvider = MTPProviderFactory.getInstance().getProvider(props);
 		this.mtpProvider.addMtpListener(this);
-		
+		this.opc = Integer.parseInt(props.getProperty("sccp.opc"));
+        this.dpc = Integer.parseInt(props.getProperty("sccp.dpc"));
+        this.sls = Integer.parseInt(props.getProperty("sccp.sls"));
+        this.ssi = Integer.parseInt(props.getProperty("sccp.ssf"));
+        this.si  = Integer.parseInt(props.getProperty("sccp.si"));
 	}
 
 
 
-	public void receive(int service, int subservice, byte[] arg2) {
+	public void receive(byte[] arg2) {
 		// add check for SIO parts?
 		// if(logger.isInfoEnabled())
 	    //logger.info("Received MSU on L4, service: "+service+",subservice: "+subservice);
@@ -42,19 +60,53 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 
 
 
-	public void send(SccpAddress calledParty, SccpAddress callingParty, byte[] data) throws IOException {
+
+	public void linkDown() {
+		//add more?
+		this.linkUp = false;
+		
+	}
+
+
+
+	public void linkUp() {
+		this.linkUp = true;
+		
+	}
+
+	public void send(SccpAddress calledParty, SccpAddress callingParty, byte[] data, ActionReference ar) throws IOException {
 		
 		//FIXME:
-		//if (this.linkIsUp) {
+		if (this.linkUp) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			UnitDataImpl unitData = new UnitDataImpl(new ProtocolClassImpl(0, 0), calledParty, callingParty, data);
 			unitData.encode(out);
 			byte[] buf = out.toByteArray();
 			// this.mtp3.send(si, ssf,buf);
 			//this.txBuffer.add(ByteBuffer.wrap(buf));
-			//FIXME: SLS, SI, SSI
-			this.mtpProvider.send(0, 0, buf);
-		//}
+
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			if(ar != null)
+			{
+				//we know how to route!
+				bos.write(ar.getBackRouteHeader());
+				bos.write(buf);
+				buf = bos.toByteArray();
+			}else
+			{
+				//we must build it. damn that Dialogic...
+				byte[] sif = new byte[5];
+				bos.write(sif);
+				bos.write(buf);
+				buf = bos.toByteArray();
+				Mtp3.writeRoutingLabel(buf, si, ssi, 0, dpc, opc);
+				
+			}
+			this.mtpProvider.send(buf);
+		}else
+		{
+			throw new IOException("Link is not up!");
+		}
 
 	}
 
@@ -77,7 +129,7 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 
 
 	private class DeliveryHandler implements Runnable {
-
+		//this is MTP3 message, we need to decode!
 		private byte[] msg;
 
 		public DeliveryHandler(byte[] msg) {
@@ -88,7 +140,8 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 		public void run() {
 			try {
 				if (listener != null) {
-					ByteArrayInputStream bin = new ByteArrayInputStream(msg);
+					//offset for sif !
+					ByteArrayInputStream bin = new ByteArrayInputStream(msg,5,msg.length);
 					DataInputStream in = new DataInputStream(bin);
 					int mt;
 
@@ -97,17 +150,19 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 					switch (mt) {
 					case UnitDataImpl._MT:
 						UnitDataImpl unitData = new UnitDataImpl();
+						unitData.setBackRouteHeader(msg);
 						unitData.decode(in);
 
-						listener.onMessage(unitData.getCalledParty(), unitData.getCallingParty(), unitData.getData());
+						listener.onMessage(unitData.getCalledParty(), unitData.getCallingParty(), unitData.getData(),unitData);
 
 						break;
 					// 0x11
 					case XUnitDataImpl._MT:
 						XUnitDataImpl xunitData = new XUnitDataImpl();
+						xunitData.setBackRouteHeader(msg);
 						xunitData.decode(in);
 
-						listener.onMessage(xunitData.getCalledParty(), xunitData.getCallingParty(), xunitData.getData());
+						listener.onMessage(xunitData.getCalledParty(), xunitData.getCallingParty(), xunitData.getData(),xunitData);
 						break;
 					default:
 						logger.error("Undefined message type!!!!! " + mt);
@@ -123,9 +178,5 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 		}
 
 	}
-	
-	public static void main(String[] args)
-	{
-		
-	}
+
 }

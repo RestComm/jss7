@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.mobicents.protocols.ss7.sccp.ActionReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
@@ -25,7 +26,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * 
  * @author Oleg Kulikov
  */
-public interface UDBase {
+public interface UDBase extends ActionReference {
 
 	public byte[] getData();
 

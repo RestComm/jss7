@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.sccp.ActionReference;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.intel.SccpIntelHDCProviderImpl;
 import org.mobicents.protocols.ss7.sccp.impl.m3ua.SccpM3UAProviderImpl;
@@ -71,20 +72,12 @@ public class SccpPeer {
         	return new SccpSCTPProviderImpl(properties);
         }else return new SccpProviderImpl(){
 
-			public void send(SccpAddressImpl calledParty,
-					SccpAddressImpl callingParty, byte[] data)
-					throws IOException {
+			public void send(SccpAddress calledParty, SccpAddress callingParty, byte[] data, ActionReference ar) throws IOException {
 				// TODO Auto-generated method stub
 				
 			}
 
 			public void shutdown() {
-				// TODO Auto-generated method stub
-				
-			}
-
-			public void send(SccpAddress calledParty, SccpAddress callingParty,
-					byte[] data) throws IOException {
 				// TODO Auto-generated method stub
 				
 			}};

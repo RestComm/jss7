@@ -41,47 +41,49 @@ public class Handler implements Runnable {
     }
     
     public void run() {
-        ByteArrayInputStream bin = new ByteArrayInputStream(packet);
+        ByteArrayInputStream bin = new ByteArrayInputStream(packet,5,packet.length);
         DataInputStream in = new DataInputStream(bin);
         
         try {
-            int o = in.readUnsignedByte();
-            
-            int ssf = o & 0xf0;
-            int si = o & 0x0f;
-            
-            int b1 = in.readUnsignedByte();
-            int b2 = in.readUnsignedByte();
-            int b3 = in.readUnsignedByte();
-            int b4 = in.readUnsignedByte();
-            
-            int dpc = ((b2 & 0x3f) << 8) | b1;
-            int opc = ((b4 & 0x0f) << 10) | (b3 << 2) | (b1 & 0xc0);
-            int sls = (b4 & 0xf0);
+//            int o = in.readUnsignedByte();
+//            
+//            int ssf = o & 0xf0;
+//            int si = o & 0x0f;
+//            
+//            int b1 = in.readUnsignedByte();
+//            int b2 = in.readUnsignedByte();
+//            int b3 = in.readUnsignedByte();
+//            int b4 = in.readUnsignedByte();
+//            
+//            int dpc = ((b2 & 0x3f) << 8) | b1;
+//            int opc = ((b4 & 0x0f) << 10) | (b3 << 2) | (b1 & 0xc0);
+//            int sls = (b4 & 0xf0);
             
             int mt = in.readUnsignedByte();
             switch (mt) {
             case UnitDataImpl._MT:
             	 UnitDataImpl unitData = new UnitDataImpl();
+            	 unitData.setBackRouteHeader(packet);
                  unitData.decode(in);
                  
                  synchronized(this) {
                      SccpListener listener = provider.getListener();
                      if (listener != null) {
                          listener.onMessage(unitData.getCalledParty(),
-                                 unitData.getCallingParty(), unitData.getData());
+                                 unitData.getCallingParty(), unitData.getData(),unitData);
                      }
                  }
 				//0x11
 			case XUnitDataImpl._MT:
 				XUnitDataImpl xunitData = new XUnitDataImpl();
+				xunitData.setBackRouteHeader(packet);
 				xunitData.decode(in);
 				
 				synchronized(this) {
                     SccpListener listener = provider.getListener();
                     if (listener != null) {
                         listener.onMessage(xunitData.getCalledParty(),
-                        		xunitData.getCallingParty(), xunitData.getData());
+                        		xunitData.getCallingParty(), xunitData.getData(),xunitData);
                     }
                 }
 				break;

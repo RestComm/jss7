@@ -16,15 +16,18 @@ package org.mobicents.protocols.ss7.sccp;
 
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.sccp.ud.UnitData;
+import org.mobicents.protocols.ss7.sccp.ud.XUnitData;
 
 /**
  *
  * @author Oleg Kulikov
+ * @author baranowb
  */
 public interface SccpListener {
-	//FIXME: make this UNIT aware.
+
 	//public void onMessage(UnitData UD);
 	//public void onMessage(XUnitData UD);
     public void onMessage(SccpAddress calledPartyAddress,
-            SccpAddress callingPartyAddress, byte[] data);
+            SccpAddress callingPartyAddress, byte[] data,ActionReference backReference );
 }
