@@ -14,7 +14,7 @@ public class MTPProviderFactory {
 	
 	public static final String _POPERTY_DRIVER_CLASS="driver";
 	
-	public static final String _DRIVER_TCP="TCP_IP";
+	public static final String _DRIVER_TCP="TCP";
 	private final static String[] _DRIVER_SUPPORTED = new String[]{_DRIVER_TCP};
 	public MTPProvider getProvider(Properties properties) throws IllegalArgumentException
 	{
