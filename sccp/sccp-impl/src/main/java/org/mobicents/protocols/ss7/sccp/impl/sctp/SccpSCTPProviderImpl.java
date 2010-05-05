@@ -116,7 +116,7 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 		// this.mtp3.stop();
 		// }
 		this.mtpProvider.removeMtpListener(this);
-		this.mtpProvider.close();
+		this.mtpProvider.stop();
 		this.mtpProvider = null;
 
 	}
