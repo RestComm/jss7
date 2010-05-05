@@ -10,5 +10,5 @@ public interface MTPProvider {
 
 	public void send(byte[] msg) throws IOException;
 
-	public void close() throws IllegalStateException;
+	public void stop() throws IllegalStateException;
 }

@@ -12,6 +12,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -49,6 +50,8 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 	public M3UserConnector(Properties properties) {
 		super();
 		this.properties.putAll(properties);
+		//wont send empty buffer
+		this.txBuff.limit(0);
 
 	}
 
@@ -81,12 +84,26 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 		this.hdlcHandler.addToTxBuffer(ByteBuffer.wrap(tlv.toByteArray()));
 	}
 
-	public void close() throws IllegalStateException {
-
+	@Override
+	public void start() throws StartFailedException, IllegalStateException {
 		
 		if(this.streamFuture!=null)
 		{
-			throw new IllegalStateException("Provider already stoped!");
+			throw new IllegalStateException("Provider is already started!");
+		}
+		
+		readProperties();
+		initiateConnection();
+		this.streamFuture=streamExecutor.submit(this);
+		
+
+	}
+	public void stop()  throws IllegalStateException 
+	{
+		if(this.streamFuture!=null)
+		{
+			//throw new IllegalStateException("Provider already stoped!");
+			return;
 		}else
 		{
 			streamFuture.cancel(false);
@@ -114,22 +131,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 		}
 
 	}
-
-	@Override
-	public void start() throws StartFailedException, IllegalStateException {
-		
-		if(this.streamFuture!=null)
-		{
-			throw new IllegalStateException("Provider is already started!");
-		}
-		
-		readProperties();
-		initiateConnection();
-		this.streamFuture=streamExecutor.submit(this);
-		
-
-	}
-
+	
 	private void readProperties() {
 		serverPort = Integer.parseInt(properties.getProperty(_PROPERTY_PORT, "" + serverPort));
 		serverAddress = properties.getProperty(_PROPERTY_IP, "" + serverAddress);
@@ -153,6 +155,16 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 	private SocketChannel socketChannel;
 	// private LinkedList<ByteBuffer> txBuffer = new LinkedList<ByteBuffer>();
 	private HDLCHandler hdlcHandler = new HDLCHandler();
+
+	
+	
+	
+	/**
+	 * @return the connected
+	 */
+	public boolean isConnected() {
+		return connected;
+	}
 
 	private void initiateConnection() {
 		try {
@@ -251,7 +263,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 					}
 
 					if (this.writeSelector.selectNow() > 0) {
-
+						
 						selectedKeys = this.writeSelector.selectedKeys()
 								.iterator();
 						// operate on keys set
@@ -325,6 +337,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 			for (ByteBuffer b : readResult) {
 				
 				//here we can have link status or msg
+		
 				TLVInputStream tlvInputStream = new TLVInputStream(new ByteArrayInputStream(b.array()));
 				int tag = tlvInputStream.readTag();
 				if(tag == Tag._TAG_LINK_DATA)
@@ -358,6 +371,12 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 	}
 
 	private void linkDown() {
+		this.linkUp = false;
+		this.txBuff.clear();
+		this.txBuff.limit(0);
+		this.readBuff.clear();
+		this.readBuff.limit(0);
+		
 		for (MTPListener lst : listeners) {
 			try {
 				lst.linkDown();
@@ -369,6 +388,11 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 	}
 
 	private void linkUp() {
+		this.txBuff.clear();
+		this.txBuff.limit(0);
+		this.readBuff.clear();
+		this.readBuff.limit(0);
+		this.linkUp = true;
 		for (MTPListener lst : listeners) {
 			try {
 				lst.linkUp();
@@ -376,6 +400,8 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 				e.printStackTrace();
 			}
 		}
+		
+		
 		
 	}
 
@@ -398,7 +424,6 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 			txBuff.clear();
 			this.hdlcHandler.processTx(txBuff);
 			txBuff.flip();
-	
 			socketChannel.write(txBuff);
 
 			if (txBuff.remaining() > 0) {

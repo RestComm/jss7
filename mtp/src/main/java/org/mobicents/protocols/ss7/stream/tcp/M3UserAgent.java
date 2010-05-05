@@ -15,6 +15,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -63,6 +64,13 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 	private HDLCHandler hdlcHandler = new HDLCHandler();
 	
 	
+	public M3UserAgent() {
+		super();
+		//wont send empty buffer
+		this.txBuff.limit(0);
+	}
+
+
 	///////////////////
 	// Some statics //
 	//////////////////
@@ -76,6 +84,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		tlv.reset();
 		tlv.writeLinkStatus(LinkStatus.LinkDown);
 		_LINK_STATE_DOWN = tlv.toByteArray();
+
 	}
 	
 	
@@ -85,6 +94,9 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 			logger.info("Received L4 Down event from layer3.");
 		}
 		this.linkUp = false;
+		this.txBuff.clear();
+		this.txBuff.limit(0);
+		this.readBuff.clear();
 		this.streamData(_LINK_STATE_DOWN);
 	}
 
@@ -94,14 +106,6 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		}
 		this.linkUp = true;
 		this.streamData(_LINK_STATE_UP);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.mtp.MtpUser#receive(byte, byte, int, int, byte[])
-	 */
-	public void receive(byte sls, byte linksetId, int service, int subservice, byte[] msgBuff) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void receive( byte[] msgBuff) {
@@ -162,6 +166,13 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 	}
 	
 	
+	/**
+	 * @return the connected
+	 */
+	public boolean isConnected() {
+		return connected;
+	}
+
 	///////////////////
 	// Bean methods //
 	//////////////////
@@ -210,6 +221,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 				// Wait for an event one of the registered channels
 				if (!connected) {
 
+
 					// block till we have someone subscribing for data.
 					this.connectSelector.select();
 
@@ -217,9 +229,9 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 					// operate on keys set
 					performKeyOperations(selectedKeys);
 
-				} else if (linkUp) {
+				//} else if (linkUp) {
+				} else {
 					// else we try I/O ops.
-			
 					if (this.readSelector.selectNow() > 0) {
 						selectedKeys = this.readSelector.selectedKeys().iterator();
 						// operate on keys set
@@ -288,8 +300,9 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		synchronized (this.hdlcHandler) {
 
 			//this.txBuffer.add(ByteBuffer.wrap(data));
-			ByteBuffer bb = ByteBuffer.allocate(2+data.length);
+			ByteBuffer bb = ByteBuffer.allocate(data.length);
 			bb.put(data);
+			bb.flip();
 			this.hdlcHandler.addToTxBuffer(bb);
 
 		}
@@ -376,7 +389,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 	}
 
 	private void write(SelectionKey key) throws IOException {
-
+		
 		SocketChannel socketChannel = (SocketChannel) key.channel();
 
 		// Write until there's not more data ?
@@ -396,12 +409,12 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		}
 		//while (!this.hdlcHandler.isTxBufferEmpty()) {
 		if (!this.hdlcHandler.isTxBufferEmpty()) {
+
 			//ByteBuffer buf = (ByteBuffer) txBuffer.get(0);
 			txBuff.clear();
 
 			this.hdlcHandler.processTx(txBuff);
 			txBuff.flip();
-			
 			socketChannel.write(txBuff);
 			
 			//if (buf.remaining() > 0) {

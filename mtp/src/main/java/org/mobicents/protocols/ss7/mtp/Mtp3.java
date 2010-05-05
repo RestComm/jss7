@@ -272,6 +272,9 @@ public class Mtp3 implements Runnable {
      */
     public void linkUp(Mtp2 link) {
         linkset.add(link);
+        if (linkset.isActive() && mtpUser != null) {
+            mtpUser.linkUp();
+        }
         logger.info(String.format("(%s) Link now IN_SERVICE", link.name));
     }
     

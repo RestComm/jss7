@@ -119,10 +119,10 @@ public class TLVInputStream extends FilterInputStream{
 	public LinkStatus readLinkStatus() throws IOException
 	{
 		//len == 1;
-		this.readLength();
+		len=this.readLength();
 		if(len != 1)
 		{
-			throw new IOException("Wrong link status length!");
+			throw new IOException("Wrong link status length: "+len);
 		}
 		if(this.available()<1)
 		{
@@ -134,7 +134,7 @@ public class TLVInputStream extends FilterInputStream{
 	}
 	public byte[] readLinkData() throws IOException 
 	{
-		this.readLength();
+		len = this.readLength();
 		if(len == 0x80)
 		{
 			//its undefined LEN...

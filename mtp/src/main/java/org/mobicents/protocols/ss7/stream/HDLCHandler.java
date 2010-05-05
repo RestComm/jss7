@@ -14,8 +14,10 @@ import org.mobicents.protocols.ss7.mtp.HdlcState;
 
 
 /**
- * Util class to handle hdlc stuff.
+ * Util class to handle hdlc stuff. 
  * 
+ * @author kulikof
+ * @author vralev
  * @author baranowb
  * 
  */
@@ -67,7 +69,7 @@ public class HDLCHandler {
 			0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78 };
 
 	//filler buffer, we need this to properly use hdlc. It needs contant stream of data, otherwise it consumes valid buffers from ends.
-	private static final byte[] _FILLER_BUFFER_ = new byte[] { 0x0 };
+	private static final byte[] _FILLER_BUFFER_ = new byte[] { 0x0};
 
 	public HDLCHandler() {
 		super();
@@ -136,6 +138,7 @@ public class HDLCHandler {
 			txBufferToFill.put((byte) 0);
 		}
 		ByteBuffer txFrame = this.txBuffer.get(0);
+		
 		for (int i = txBufferToFill.position(); i < txBufferToFill.capacity() && !this.txBuffer.isEmpty(); i++) {
 			if (txState.bits < 8) {
 				// need more bits
@@ -162,12 +165,14 @@ public class HDLCHandler {
 						return;
 					} else {
 						txFrame = this.txBuffer.get(0);
+						
 					}
 				}
 			}
 
 			txBufferToFill.put((byte) hdlc.fasthdlc_tx_run_nocheck(txState));
 		}
+		
 	}
 
 	/**
@@ -181,9 +186,9 @@ public class HDLCHandler {
 	public ByteBuffer[] processRx(ByteBuffer rxBuffer) {
 		List<ByteBuffer> receivedFrames = new ArrayList<ByteBuffer>();
 		int len = rxBuffer.limit();
-
 		while (rxBuffer.position() < len) {
 			while (rxState.bits <= 24 && rxBuffer.position() < len) {
+
 				int b = rxBuffer.get() & 0xff;
 				hdlc.fasthdlc_rx_load_nocheck(rxState, b);
 				if (rxState.state == 0) {
@@ -201,7 +206,7 @@ public class HDLCHandler {
 				// checking length and CRC of the received frame
 				if (hdlcRxBuffer.position() == 0) {
 					// nothing, empty frame.
-
+	
 				} else if (rxCRC == 0xF0B8) {
 					// good frame received
 					hdlcRxBuffer.flip();
@@ -252,6 +257,7 @@ public class HDLCHandler {
 				} else {
 
 					// rxFrame[rxLen++] = res;
+
 					hdlcRxBuffer.put((byte) res);
 					rxCRC = PPP_FCS(rxCRC, res & 0xff);
 				}
@@ -269,6 +275,6 @@ public class HDLCHandler {
 	}
 
 	
-
+	
 	
 }
