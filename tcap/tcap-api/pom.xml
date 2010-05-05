@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 			<artifactId>sccp-api</artifactId>
-			<version>${pom.version}</version>
+			<version>${sccp.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.asn</groupId>
@@ -43,7 +43,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>RELEASE</version>
+				<groupId>org.apache.maven.plugins</groupId>
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>

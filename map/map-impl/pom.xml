@@ -18,13 +18,7 @@
 		<mobicents.tools.mavenplugin.eclipse.version>
 			1.0.0.BETA2
 		</mobicents.tools.mavenplugin.eclipse.version>
-		<mobicents.protocols.asn.version>
-			1.0.0.BETA1-SNAPSHOT
-		</mobicents.protocols.asn.version>
-
-		<mobicents.protocols.tcap.version>
-			1.0.0.BETA1-SNAPSHOT
-		</mobicents.protocols.tcap.version>
+		
 	</properties>
 
 	<dependencies>
@@ -54,19 +48,19 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.asn</groupId>
 			<artifactId>asn</artifactId>
-			<version>${mobicents.protocols.asn.version}</version>
+			<version>${asn.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
 			<artifactId>tcap-impl</artifactId>
-			<version>${mobicents.protocols.tcap.version}</version>
+			<version>${tcap.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
 			<artifactId>tcap-api</artifactId>
-			<version>${mobicents.protocols.tcap.version}</version>
+			<version>${tcap.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -75,7 +69,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>RELEASE</version>
+				<groupId>org.apache.maven.plugins</groupId>
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>

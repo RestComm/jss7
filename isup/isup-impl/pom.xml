@@ -33,9 +33,19 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7</groupId>
-			<artifactId>sctp</artifactId>
-			<version>${pom.version}</version>
+			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+			<artifactId>sccp-api</artifactId>
+			<version>${sccp.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+			<artifactId>sccp-impl</artifactId>
+			<version>${sccp.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<artifactId>MTP</artifactId>
+			<version>${mtp.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -44,7 +54,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>RELEASE</version>
+				<groupId>org.apache.maven.plugins</groupId>
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
