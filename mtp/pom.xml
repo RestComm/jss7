@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<artifactId>ss7-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7</groupId>
-		<version>1.0.0.BETA1</version>
+		<version>1.0.0.BETA2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>MTP</artifactId>
@@ -75,7 +76,7 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
@@ -83,11 +84,11 @@
 						https://mobicents.googlecode.com/svn/tags/protocols/ss7/mtp
 					</tagBase>
 				</configuration>
-			</plugin>			
-			
+			</plugin>
+
 		</plugins>
 	</build>
-	
+
 	<scm>
 		<connection>
 			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/mtp
@@ -98,6 +99,6 @@
 		<url>
 			http://mobicents.googlecode.com/svn/trunk/protocols/ss7/mtp
 		</url>
-	</scm>	
-	
+	</scm>
+
 </project>
