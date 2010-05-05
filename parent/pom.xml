@@ -36,6 +36,7 @@
 		<concurrent.version>1.3.4</concurrent.version>
 		<log4j.version>1.2.14</log4j.version>
 		<junit.version>4.1</junit.version>
+		<compiler.plugin.version>2.0.2</compiler.plugin.version>
 		<compile.source>1.5</compile.source>
 	</properties>
 
@@ -179,6 +180,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${compiler.plugin.version}</version>
 				<configuration>
 					<source>${compile.source}</source>
 					<target>${compile.source}</target>
