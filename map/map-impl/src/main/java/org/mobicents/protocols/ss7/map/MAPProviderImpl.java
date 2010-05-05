@@ -10,6 +10,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
@@ -32,7 +33,9 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCPAbortIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
@@ -79,7 +82,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	public MAPDialog createNewDialog(MAPApplicationContext appCntx,
 			SccpAddress destAddress, AddressString destReference,
-			SccpAddress origAddress, AddressString origReference) throws MAPException {
+			SccpAddress origAddress, AddressString origReference)
+			throws MAPException {
 
 		Dialog tcapDialog;
 		try {
@@ -110,6 +114,77 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	public void dialogReleased(Dialog arg0) {
 		// TODO Auto-generated method stub
 
+	}
+
+	private void unstructuredSSRequest(Parameter parameter,
+			MAPDialogImpl mapDialogImpl, Long invokeId) throws MAPException {
+		if (parameter.getTag() == Tag.SEQUENCE) {
+			Parameter[] parameters = parameter.getParameters();
+
+			byte[] data = parameters[0].getData();
+
+			// First Parameter is ussd-DataCodingScheme
+			byte ussd_DataCodingScheme = data[0];
+
+			// Second Parameter is ussd-String
+			data = parameters[1].getData();
+			USSDString ussdString = mapServiceFactory.createUSSDString(data,
+					null);
+			ussdString.decode();
+
+			UnstructuredSSIndicationImpl unSSInd = new UnstructuredSSIndicationImpl(
+					ussd_DataCodingScheme, ussdString);
+
+			unSSInd.setInvokeId(invokeId);
+			unSSInd.setMAPDialog(mapDialogImpl);
+
+			for (MAPServiceListener serLis : this.serviceListeners) {
+				serLis.onUnstructuredSSIndication(unSSInd);
+			}
+		} else {
+			// TODO This is Error, what do we do next? Or should it even happen?
+			loger.error("Expected Parameter tag as SEQUENCE but received "
+					+ parameter.getTag());
+			throw new MAPException(
+					"Expected Parameter tag as SEQUENCE but received "
+							+ parameter.getTag());
+		}
+	}
+
+	public void processUnstructuredSSRequest(Parameter parameter,
+			MAPDialogImpl mapDialogImpl, Long invokeId) throws MAPException {
+		if (parameter.getTag() == Tag.SEQUENCE) {
+			Parameter[] parameters = parameter.getParameters();
+
+			byte[] data = parameters[0].getData();
+
+			// First Parameter is ussd-DataCodingScheme
+			byte ussd_DataCodingScheme = data[0];
+
+			// Second Parameter is ussd-String
+			data = parameters[1].getData();
+
+			USSDString ussdString = mapServiceFactory.createUSSDString(data,
+					null);
+			ussdString.decode();
+
+			ProcessUnstructuredSSIndicationImpl procUnSSInd = new ProcessUnstructuredSSIndicationImpl(
+					ussd_DataCodingScheme, ussdString);
+
+			procUnSSInd.setInvokeId(invokeId);
+			procUnSSInd.setMAPDialog(mapDialogImpl);
+
+			for (MAPServiceListener serLis : this.serviceListeners) {
+				serLis.onProcessUnstructuredSSIndication(procUnSSInd);
+			}
+		} else {
+			// TODO This is Error, what do we do next? Or should it even happen?
+			loger.error("Expected Parameter tag as SEQUENCE but received "
+					+ parameter.getTag());
+			throw new MAPException(
+					"Expected Parameter tag as SEQUENCE but received "
+							+ parameter.getTag());
+		}
 	}
 
 	public void onTCBegin(TCBeginIndication tcBeginIndication) {
@@ -253,55 +328,23 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 						if (oc.getCode() == MAPOperationCode.processUnstructuredSS_Request) {
 
-							Parameter[] parameters = invoke.getParameters();
-
-							byte[] data = parameters[0].getData();
-
-							// First Parameter is ussd-DataCodingScheme
-							byte ussd_DataCodingScheme = data[0];
-
-							// Second Parameter is ussd-String
-							data = parameters[1].getData();
-
-							USSDString ussdString = mapServiceFactory
-									.createUSSDString(data, null);
-							ussdString.decode();
-
-							ProcessUnstructuredSSIndicationImpl procUnSSInd = new ProcessUnstructuredSSIndicationImpl(
-									ussd_DataCodingScheme, ussdString);
-
-							procUnSSInd.setInvokeId(invokeId);
-
-							for (MAPServiceListener serLis : this.serviceListeners) {
-								serLis
-										.onProcessUnstructuredSSIndication(procUnSSInd);
-							}
+							Parameter parameter = invoke.getParameter();
+							this.processUnstructuredSSRequest(parameter,
+									mapDialogImpl, invokeId);
 
 						} else if (oc.getCode() == MAPOperationCode.unstructuredSS_Request) {
 
-							Parameter[] parameters = invoke.getParameters();
+							Parameter parameter = invoke.getParameter();
+							this.unstructuredSSRequest(parameter,
+									mapDialogImpl, invokeId);
 
-							byte[] data = parameters[0].getData();
-
-							// First Parameter is ussd-DataCodingScheme
-							byte ussd_DataCodingScheme = data[0];
-
-							// Second Parameter is ussd-String
-							data = parameters[1].getData();
-							USSDString ussdString = mapServiceFactory
-									.createUSSDString(data, null);
-							ussdString.decode();
-
-							UnstructuredSSIndicationImpl procUnSSInd = new UnstructuredSSIndicationImpl(
-									ussd_DataCodingScheme, ussdString);
-
-							procUnSSInd.setInvokeId(invokeId);
-
-							for (MAPServiceListener serLis : this.serviceListeners) {
-								serLis.onUnstructuredSSIndication(procUnSSInd);
-							}
+						} else {
+							loger
+									.error("Expected OC is MAPOperationCode.processUnstructuredSS_Request or MAPOperationCode.unstructuredSS_Request but received "
+											+ oc.getCode());
+							return;
 						}
-					}
+					} // end of for (Component c : comps)
 
 				} catch (AsnException e) {
 					e.printStackTrace();
@@ -321,8 +364,61 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	}
 
-	public void onTCContinue(TCContinueIndication arg0) {
-		// TODO Auto-generated method stub
+	public void onTCContinue(TCContinueIndication tcContinueIndication) {
+
+		tcContinueIndication.getApplicationContextName();
+		Dialog tcapDialog = tcContinueIndication.getDialog();
+
+		MAPDialogImpl mapDialogImpl = this.dialogs
+				.get(tcapDialog.getDialogId());
+
+		if (mapDialogImpl == null) {
+			loger.error("MAP Dialog not found for Dialog Id "
+					+ tcapDialog.getDialogId());
+			return;
+		}
+
+		Component[] components = tcContinueIndication.getComponents();
+
+		// Now let us decode the Components
+		for (Component c : components) {
+
+			try {
+
+				ComponentType compType = c.getType();
+
+				long invokeId = c.getInvokeId();
+
+				//TODO Does it make any difference if its Invoke, ReturnResult or ReturnResultLast?
+				if (compType == ComponentType.Invoke || compType == ComponentType.ReturnResult || compType == ComponentType.ReturnResultLast) {
+					Invoke invoke = (Invoke) c;
+
+					OperationCode oc = invoke.getOperationCode();
+
+					if (oc.getCode() == MAPOperationCode.processUnstructuredSS_Request) {
+
+						Parameter parameter = invoke.getParameter();
+						this.processUnstructuredSSRequest(parameter,
+								mapDialogImpl, invokeId);
+
+					} else if (oc.getCode() == MAPOperationCode.unstructuredSS_Request) {
+
+						Parameter parameter = invoke.getParameter();
+						this.unstructuredSSRequest(parameter, mapDialogImpl,
+								invokeId);
+
+					} else {
+						loger
+								.error("Expected OC is MAPOperationCode.processUnstructuredSS_Request or MAPOperationCode.unstructuredSS_Request but received "
+										+ oc.getCode());
+						return;
+					}
+				}//end of if
+			} catch (MAPException e) {
+				e.printStackTrace();
+			}
+
+		} // end of for (Component c : comps)
 
 	}
 
@@ -337,6 +433,16 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	}
 
 	public void onInvokeTimeout(Invoke arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void onTCPAbort(TCPAbortIndication arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void onTCUserAbort(TCUserAbortIndication arg0) {
 		// TODO Auto-generated method stub
 
 	}

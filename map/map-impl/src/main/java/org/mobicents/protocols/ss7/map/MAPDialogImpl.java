@@ -139,17 +139,21 @@ public class MAPDialogImpl implements MAPDialog {
 			// Sequence of Parameter
 			Parameter p1 = TcapFactory.createParameter();
 			p1.setTagClass(Tag.CLASS_UNIVERSAL);
-			p1.setTag(0x04);
+			p1.setTag(Tag.STRING_OCTET);
 			p1.setData(new byte[] { ussdDataCodingScheme });
 
 			ussdString.encode();
 			Parameter p2 = TcapFactory.createParameter();
 			p2.setTagClass(Tag.CLASS_UNIVERSAL);
-			p2.setTag(0x04);
+			p2.setTag(Tag.STRING_OCTET);
 			p2.setData(ussdString.getEncodedString());
-
-			Parameter[] params = new Parameter[] { p1, p2 };
-			invoke.setParameters(params);
+			
+			Parameter p = TcapFactory.createParameter();
+			p.setTagClass(Tag.CLASS_UNIVERSAL);
+			p.setTag(Tag.SEQUENCE);
+			p.setParameters(new Parameter[]{p1,p2});
+			
+			invoke.setParameter(p);
 
 			this.tcapDialog.sendComponent(invoke);
 
