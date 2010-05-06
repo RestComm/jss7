@@ -21,8 +21,14 @@ import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortReason;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+import org.mobicents.protocols.ss7.map.dialog.MAPCloseInfoImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPOpenInfoImpl;
+import org.mobicents.protocols.ss7.map.dialog.MAPProviderAbortInfoImpl;
+import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortChoiceImpl;
+import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortInfoImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSIndicationImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSIndicationImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -42,6 +48,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
@@ -366,7 +373,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	public void onTCContinue(TCContinueIndication tcContinueIndication) {
 
-		tcContinueIndication.getApplicationContextName();
+		ApplicationContextName acn = tcContinueIndication
+				.getApplicationContextName();
+
 		Dialog tcapDialog = tcContinueIndication.getDialog();
 
 		MAPDialogImpl mapDialogImpl = this.dialogs
@@ -376,6 +385,45 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			loger.error("MAP Dialog not found for Dialog Id "
 					+ tcapDialog.getDialogId());
 			return;
+		}
+
+		if (acn != null) {
+
+			MAPApplicationContext mapAcn = MAPApplicationContext
+					.getInstance(acn.getOid());
+
+			if (mapAcn == null | mapAcn != mapDialogImpl.getAppCntx()) {
+
+				// On receipt of the first TC-CONTINUE indication primitive for
+				// a dialogue, the MAP PM shall check the value of the
+				// application-context-name parameter. If this value matches the
+				// one used in the MAP-OPEN request primitive, the MAP PM shall
+				// issue a MAP-OPEN confirm primitive with the result parameter
+				// indicating "accepted", then process the following TC
+				// component handling indication primitives as described in
+				// clause 12.6, and then waits for a request primitive from its
+				// user or an indication primitive from TC, otherwise it shall
+				// issue a TC-U-ABORT request primitive with a MAP-providerAbort
+				// PDU indicating "abnormal dialogue" and a MAP-P-ABORT
+				// indication primitive with the "provider-reason" parameter
+				// indicating "abnormal dialogue".
+
+				// TODO : Send the TC-U-ABORT Request
+
+				MAPProviderAbortInfoImpl abortInfo = new MAPProviderAbortInfoImpl();
+				abortInfo.setMAPDialog(mapDialogImpl);
+				abortInfo
+						.setMAPProviderAbortReason(MAPProviderAbortReason.abnormalDialogue);
+
+				for (MAPDialogListener listener : this.dialogListeners) {
+					listener.onMAPProviderAbortInfo(abortInfo);
+				}
+
+				// Remove the MAPDialog
+				this.dialogs.remove(tcapDialog.getDialogId());
+
+			}
+
 		}
 
 		Component[] components = tcContinueIndication.getComponents();
@@ -389,8 +437,11 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 				long invokeId = c.getInvokeId();
 
-				//TODO Does it make any difference if its Invoke, ReturnResult or ReturnResultLast?
-				if (compType == ComponentType.Invoke || compType == ComponentType.ReturnResult || compType == ComponentType.ReturnResultLast) {
+				// TODO Does it make any difference if its Invoke, ReturnResult
+				// or ReturnResultLast?
+				if (compType == ComponentType.Invoke
+						|| compType == ComponentType.ReturnResult
+						|| compType == ComponentType.ReturnResultLast) {
 					Invoke invoke = (Invoke) c;
 
 					OperationCode oc = invoke.getOperationCode();
@@ -413,7 +464,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 										+ oc.getCode());
 						return;
 					}
-				}//end of if
+				}// end of if
 			} catch (MAPException e) {
 				e.printStackTrace();
 			}
@@ -422,13 +473,111 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	}
 
-	public void onTCEnd(TCEndIndication arg0) {
-		// TODO Auto-generated method stub
+	public void onTCEnd(TCEndIndication tcEndIndication) {
+
+		ApplicationContextName acn = tcEndIndication
+				.getApplicationContextName();
+
+		Dialog tcapDialog = tcEndIndication.getDialog();
+
+		MAPDialogImpl mapDialogImpl = this.dialogs.remove(tcapDialog
+				.getDialogId());
+
+		if (mapDialogImpl == null) {
+			loger.error("MAP Dialog not found for Dialog Id "
+					+ tcapDialog.getDialogId());
+			return;
+		}
+
+		MAPApplicationContext mapAcn = MAPApplicationContext.getInstance(acn
+				.getOid());
+
+		if (mapAcn == null | mapAcn != mapDialogImpl.getAppCntx()) {
+			// 12.1.6 Receipt of a TC-END ind
+			// On receipt of a TC-END indication primitive in the dialogue
+			// initiated state, the MAP PM shall check the value of the
+			// application-context-name parameter. If this value does not match
+			// the one used in the MAP-OPEN request primitive, the MAP PM shall
+			// discard any following component handling primitive and shall
+			// issue a MAP-P-ABORT indication primitive with the
+			// "provider-reason" parameter indicating "abnormal dialogue".
+
+			MAPProviderAbortInfoImpl abortInfo = new MAPProviderAbortInfoImpl();
+			abortInfo.setMAPDialog(mapDialogImpl);
+			abortInfo
+					.setMAPProviderAbortReason(MAPProviderAbortReason.abnormalDialogue);
+
+			for (MAPDialogListener listener : this.dialogListeners) {
+				listener.onMAPProviderAbortInfo(abortInfo);
+			}
+
+			return;
+		}
+
+		// Otherwise it shall issue a MAP-OPEN confirm primitive with the result
+		// parameter set to "accepted" and process the following TC component
+		// handling indication primitives as described in clause 12.6;
+
+		// TODO : Shoudl we issue MAP-OPEN here? Sounds illogical
+
+		Component[] components = tcEndIndication.getComponents();
+
+		// Now let us decode the Components
+		for (Component c : components) {
+
+			try {
+
+				ComponentType compType = c.getType();
+
+				long invokeId = c.getInvokeId();
+
+				// TODO Does it make any difference if its Invoke, ReturnResult
+				// or ReturnResultLast?
+				if (compType == ComponentType.Invoke
+						|| compType == ComponentType.ReturnResult
+						|| compType == ComponentType.ReturnResultLast) {
+					Invoke invoke = (Invoke) c;
+
+					OperationCode oc = invoke.getOperationCode();
+
+					if (oc.getCode() == MAPOperationCode.processUnstructuredSS_Request) {
+
+						Parameter parameter = invoke.getParameter();
+						this.processUnstructuredSSRequest(parameter,
+								mapDialogImpl, invokeId);
+
+					} else if (oc.getCode() == MAPOperationCode.unstructuredSS_Request) {
+
+						Parameter parameter = invoke.getParameter();
+						this.unstructuredSSRequest(parameter, mapDialogImpl,
+								invokeId);
+
+					} else {
+						loger
+								.error("Expected OC is MAPOperationCode.processUnstructuredSS_Request or MAPOperationCode.unstructuredSS_Request but received "
+										+ oc.getCode());
+						return;
+					}
+				}// end of if
+			} catch (MAPException e) {
+				e.printStackTrace();
+			}
+
+		} // end of for (Component c : comps)
+
+		// then it shall issue a MAP-CLOSE indication primitive and return to
+		// idle all state machines associated with the dialogue.
+		MAPCloseInfoImpl closeInfo = new MAPCloseInfoImpl();
+		closeInfo.setMAPDialog(mapDialogImpl);
+
+		for (MAPDialogListener listener : this.dialogListeners) {
+			listener.onMAPCloseInfo(closeInfo);
+		}
 
 	}
 
 	public void onTCUni(TCUniIndication arg0) {
-		// TODO Auto-generated method stub
+		// TODO Throw Exception or Ignore? This should never happen for MAP
 
 	}
 
@@ -437,13 +586,56 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	}
 
-	public void onTCPAbort(TCPAbortIndication arg0) {
-		// TODO Auto-generated method stub
+	public void onTCPAbort(TCPAbortIndication tcPAbortIndication) {
+		Dialog tcapDialog = tcPAbortIndication.getDialog();
+
+		MAPDialogImpl mapDialogImpl = this.dialogs.remove(tcapDialog
+				.getDialogId());
+
+		if (mapDialogImpl == null) {
+			loger.error("MAP Dialog not found for Dialog Id "
+					+ tcapDialog.getDialogId());
+			return;
+		}
+
+		PAbortCauseType pAbortCause = tcPAbortIndication.getPAbortCause();
+
+		MAPProviderAbortInfoImpl prAbortInfoImpl = new MAPProviderAbortInfoImpl();
+		prAbortInfoImpl.setMAPDialog(mapDialogImpl);
+		// TODO Mapping of MAPProviderAbortReason with PAbortCauseType ???
+		prAbortInfoImpl
+				.setMAPProviderAbortReason(MAPProviderAbortReason.abnormalDialogue);
+
+		for (MAPDialogListener listener : this.dialogListeners) {
+			listener.onMAPProviderAbortInfo(prAbortInfoImpl);
+		}
 
 	}
 
-	public void onTCUserAbort(TCUserAbortIndication arg0) {
-		// TODO Auto-generated method stub
+	public void onTCUserAbort(TCUserAbortIndication tcUserAbortIndication) {
+		Dialog tcapDialog = tcUserAbortIndication.getDialog();
+
+		MAPDialogImpl mapDialogImpl = this.dialogs.remove(tcapDialog
+				.getDialogId());
+
+		if (mapDialogImpl == null) {
+			loger.error("MAP Dialog not found for Dialog Id "
+					+ tcapDialog.getDialogId());
+			return;
+		}
+
+		MAPUserAbortInfo mapUserAbortInfoImpl = new MAPUserAbortInfoImpl();
+		mapUserAbortInfoImpl.setMAPDialog(mapDialogImpl);
+
+		// TODO mapping between the MAPUserAbortChoice and getAbortReason
+		MAPUserAbortChoiceImpl userAbortChoice = new MAPUserAbortChoiceImpl();
+		userAbortChoice.setUserSpecificReason();
+
+		mapUserAbortInfoImpl.setMAPUserAbortChoice(userAbortChoice);
+
+		for (MAPDialogListener listener : this.dialogListeners) {
+			listener.onMAPUserAbortInfo(mapUserAbortInfoImpl);
+		}
 
 	}
 

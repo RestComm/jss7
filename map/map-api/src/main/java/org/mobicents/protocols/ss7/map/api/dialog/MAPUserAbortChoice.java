@@ -34,8 +34,8 @@ public interface MAPUserAbortChoice {
 	
 	public boolean isProcedureCancellationReason();
 	
-	public MAPDialog getMAPDialog();
-	
-	public void setMAPDialog(MAPDialog mapDialog);
+//	public MAPDialog getMAPDialog();
+//	
+//	public void setMAPDialog(MAPDialog mapDialog);
 
 }

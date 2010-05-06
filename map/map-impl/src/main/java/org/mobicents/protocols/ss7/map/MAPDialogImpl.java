@@ -183,4 +183,10 @@ public class MAPDialogImpl implements MAPDialog {
 
 	}
 
+	public MAPApplicationContext getAppCntx() {
+		return appCntx;
+	}
+	
+	
+
 }
