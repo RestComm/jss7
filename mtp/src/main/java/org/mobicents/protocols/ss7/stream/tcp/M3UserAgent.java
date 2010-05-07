@@ -261,10 +261,10 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 					}
 
 					if (hdlcHandler.isTxBufferEmpty()) {
-						synchronized(this.writeSelector)
-						{
-							this.writeSelector.wait(5);
-						}
+//						synchronized(this.writeSelector)
+//						{
+//							this.writeSelector.wait(5);
+//						}
 						
 					}
 				}

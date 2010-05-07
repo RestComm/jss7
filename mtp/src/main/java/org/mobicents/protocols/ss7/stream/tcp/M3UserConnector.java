@@ -275,9 +275,9 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 						performKeyOperations(selectedKeys);
 
 					}
-					synchronized (this.writeSelector) {
-						this.writeSelector.wait(5);
-					}
+//					synchronized (this.writeSelector) {
+//						this.writeSelector.wait(5);
+//					}
 					
 				} catch (Exception ee) {
 					ee.printStackTrace();
