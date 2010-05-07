@@ -455,7 +455,8 @@ public class Mtp3 implements Runnable {
             
             //FIXME: change back to trace
             if (logger.isInfoEnabled()) {
-                logger.info(String.format("(%s) Received MSSU [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "] data: (%)", mtp2.name, Arrays.toString(sif)));
+                logger.info(
+                		String.format("(%s) Received MSSU [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "] data: ", mtp2.name)+ Arrays.toString(sif));
             }
             switch (serviceIndicator) {
                 case LINK_MANAGEMENT:
