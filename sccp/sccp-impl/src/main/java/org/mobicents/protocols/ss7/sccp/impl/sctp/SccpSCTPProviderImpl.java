@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -165,7 +166,7 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 						listener.onMessage(xunitData.getCalledParty(), xunitData.getCallingParty(), xunitData.getData(),xunitData);
 						break;
 					default:
-						logger.error("Undefined message type!!!!! " + mt);
+						logger.error("Undefined message type, MT:" + mt+", Message dump: \n"+Arrays.toString(msg));
 						
 					}
 				}
