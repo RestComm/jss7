@@ -452,9 +452,10 @@ public class Mtp3 implements Runnable {
             int dpc = _getFromSif_DPC(sif, 0);
             int opc = _getFromSif_OPC(sif, 0);
             int sls = _getFromSif_SLS(sif, 0);
-
-            if (logger.isTraceEnabled()) {
-                logger.trace(String.format("(%s) Received MSSU [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "] data: (%)", mtp2.name, Arrays.toString(sif)));
+            
+            //FIXME: change back to trace
+            if (logger.isInfoEnabled()) {
+                logger.info(String.format("(%s) Received MSSU [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "] data: (%)", mtp2.name, Arrays.toString(sif)));
             }
             switch (serviceIndicator) {
                 case LINK_MANAGEMENT:
