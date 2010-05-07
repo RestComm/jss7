@@ -81,7 +81,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 		}
 		TLVOutputStream tlv = new TLVOutputStream();
 		tlv.writeData(msg);
-		synchronized (this.hdlcHandler) { 
+		synchronized (this.writeSelector) { 
 			this.hdlcHandler.addToTxBuffer(ByteBuffer.wrap(tlv.toByteArray()));
 			this.hdlcHandler.notify();
 		}
@@ -344,7 +344,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 			for (ByteBuffer b : readResult) {
 				
 				//here we can have link status or msg
-				logger.info("Received data!");
+		
 				TLVInputStream tlvInputStream = new TLVInputStream(new ByteArrayInputStream(b.array()));
 				int tag = tlvInputStream.readTag();
 				if(tag == Tag._TAG_LINK_DATA)
@@ -378,7 +378,6 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 	}
 
 	private void linkDown() {
-		logger.error("LinkDOWN!");
 		this.linkUp = false;
 		this.txBuff.clear();
 		this.txBuff.limit(0);
@@ -396,7 +395,6 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 	}
 
 	private void linkUp() {
-		logger.error("LinkUP!");
 		this.txBuff.clear();
 		this.txBuff.limit(0);
 		this.readBuff.clear();
@@ -466,7 +464,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 	}
 
 	public void receive(byte[] arg2) {
-		logger.error("Receive data!");
+
 		// FIXME: add si/ssi decode?
 		//this.executor.execute(new DeliveryHandler(0, 0, arg2));
 		new DeliveryHandler( arg2).run();
