@@ -240,7 +240,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 	public void run() {
 		try {
 
-			while (true) {
+			while (runnable) {
 
 				try {
 					if (!connected) {
