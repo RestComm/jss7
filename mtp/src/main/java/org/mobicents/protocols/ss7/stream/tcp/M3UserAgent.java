@@ -81,10 +81,20 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 	static
 	{
 		TLVOutputStream tlv = new TLVOutputStream();
-		tlv.writeLinkStatus(LinkStatus.LinkUp);
+		try {
+			tlv.writeLinkStatus(LinkStatus.LinkUp);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		_LINK_STATE_UP = tlv.toByteArray();
 		tlv.reset();
-		tlv.writeLinkStatus(LinkStatus.LinkDown);
+		try {
+			tlv.writeLinkStatus(LinkStatus.LinkDown);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		_LINK_STATE_DOWN = tlv.toByteArray();
 
 	}
@@ -253,7 +263,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 					if (hdlcHandler.isTxBufferEmpty()) {
 						synchronized(this.writeSelector)
 						{
-							this.writeSelector.wait(20);
+							this.writeSelector.wait(5);
 						}
 						
 					}

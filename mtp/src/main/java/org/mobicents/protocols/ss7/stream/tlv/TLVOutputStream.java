@@ -5,6 +5,7 @@ package org.mobicents.protocols.ss7.stream.tlv;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * Simple stream to encode data
@@ -53,10 +54,13 @@ public class TLVOutputStream extends ByteArrayOutputStream {
 	 * Writes length in simple or indefinite form
 	 * 
 	 * @param l
+	 * @throws IOException 
 	 */
-	public void writeLength(int v) {
+	public void writeLength(int v) throws IOException {
 		if(v>0x7F)
 		{
+			//XXX: note there is super.count!!!!!!!
+			int count;
 			//long form
 			if ((v & 0xFF000000) > 0) {
 				count = 4;
@@ -68,12 +72,18 @@ public class TLVOutputStream extends ByteArrayOutputStream {
 				count = 1;
 			}
 			this.write(count | 0x80);
-			this.write((byte)(v>>24));
-			this.write((byte)(v>>16));
-			this.write((byte)(v>>8));
-			this.write((byte)(v));
-			
-			
+			// now we know how much bytes we need from V, for positive with MSB set
+			// on MSB-like octet, we need trailing 0x00, this L+1;
+			// FIXME: change this, tmp hack.
+			ByteBuffer bb = ByteBuffer.allocate(4);
+			bb.putInt(v);
+			bb.flip();
+			for (int c = 4 - count; c > 0; c--) {
+				bb.get();
+			}
+			byte[] dataToWrite = new byte[count];
+			bb.get(dataToWrite);
+			this.write(dataToWrite);
 			
 		}else
 		{	//short
@@ -83,7 +93,7 @@ public class TLVOutputStream extends ByteArrayOutputStream {
 		
 	}
 	
-	public void writeLinkStatus(LinkStatus ls)
+	public void writeLinkStatus(LinkStatus ls) throws IOException
 	{
 		this.writeTag(Tag.CLASS_APPLICATION, true, Tag._TAG_LINK_STATUS);
 		this.writeLength(1);
@@ -92,6 +102,7 @@ public class TLVOutputStream extends ByteArrayOutputStream {
 	
 	public void writeData(byte[] b) throws IOException
 	{
+		//74, -127, 0, 0, 0, -75,
 		this.writeTag(Tag.CLASS_APPLICATION, true, Tag._TAG_LINK_DATA);
 		this.writeLength(b.length);
 		this.write(b);

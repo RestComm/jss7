@@ -109,7 +109,7 @@ public class TLVInputStream extends FilterInputStream{
 		byte temp;
 		for (int i = 0; i < b; i++) {
 			temp = (byte) this.read();
-			len = (len << 8) | (0x00FF & temp);
+			len = (len << 8) | (0xFF & temp);
 		}
 
 		return len;

@@ -276,7 +276,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 
 					}
 					synchronized (this.writeSelector) {
-						this.writeSelector.wait(20);
+						this.writeSelector.wait(5);
 					}
 					
 				} catch (Exception ee) {
@@ -354,7 +354,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 					{
 						this.linkUp();
 					}
-					this.receive(b.array());
+					this.receive(tlvInputStream.readLinkData());
 				}else if (tag == Tag._TAG_LINK_STATUS)
 				{
 					LinkStatus ls = tlvInputStream.readLinkStatus();
