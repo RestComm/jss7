@@ -120,7 +120,8 @@ public class MTP {
     /**
      * Activates link set.
      */
-    public void activate() throws IOException {
+    public void start() throws IOException {
+    	try{
         //create mtp layer 3 instance
         mtp3 = new Mtp3(name);
 	logger.info("Created MTP layer 3");
@@ -135,19 +136,27 @@ public class MTP {
         logger.info("Point codes are configured");
         
         //set user part
-        mtp3.setUserPart(mtpUser);
+        if(mtpUser!=null)
+        {
+        	mtp3.setUserPart(mtpUser);
+        	mtpUser.setMtp3(mtp3);
+        }
         logger.info("Assigned user part " +  mtpUser);
     
-	mtp3.setSelectorFactory(selectorFactory);    
+        mtp3.setSelectorFactory(selectorFactory);    
         //starting layer 3
         mtp3.start();
-
+    	}catch(RuntimeException re)
+    	{
+    		re.printStackTrace();
+    		throw re;
+    	}
     }
     
     /**
      * Deactivates link set.
      */
-    public void deactive() throws IOException {
+    public void stop() throws IOException {
         mtp3.stop();
     }
 }

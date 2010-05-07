@@ -44,7 +44,7 @@ public class M3UserTest implements MTPListener{
 		this.mtp3 = new ExtendedMtp3("TEST_MTP");
 		
 		agent = new M3UserAgent();
-		agent.setLayer3(this.mtp3);
+		agent.setMtp3(this.mtp3);
 		agent.setAddress("127.0.0.1");
 		agent.setPort(1345);
 		

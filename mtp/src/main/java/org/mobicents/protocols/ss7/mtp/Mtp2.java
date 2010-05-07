@@ -207,7 +207,7 @@ public class Mtp2 {
     /**
      * Last write timestamp, it is required for case when we must start sending but nothing comes on wire.
      */
-    private long lastWriteStamp = 0;    
+   // private long lastWriteStamp = 0;    
     // Used only for LSSU, in some case we need to schedule LSSU frame, before
     // last is processed,
     private TxQueue txQueue = new TxQueue();
@@ -1199,28 +1199,28 @@ public class Mtp2 {
     public void doRead() {
 	if (started) {
 	    try {
-		int bytesRead = channel.read(rxBuffer);
-		if (bytesRead > 0) {
-		    processRx(rxBuffer, bytesRead);
-		}
+	    	int bytesRead = channel.read(rxBuffer);
+	    	if (bytesRead > 0) {
+	    		processRx(rxBuffer, bytesRead);
+	    	}
 	    } catch (Exception e) {
-		state = MTP2_OUT_OF_SERVICE;
-		mtp3.linkFailed(this);
+	    	state = MTP2_OUT_OF_SERVICE;
+			mtp3.linkFailed(this);
 	    }
 	}
     }
     
     public void doWrite() {
-	if (!started) {
-	    return;
-	}
-	try {
-	    processTx(RX_TX_BUFF_SIZE);
-	    channel.write(txBuffer, RX_TX_BUFF_SIZE);
-	} catch (Exception e) {
-	    state = MTP2_OUT_OF_SERVICE;
-	    mtp3.linkFailed(this);
-	}
+		if (!started) {
+		    return;
+		}
+		try {
+		    processTx(RX_TX_BUFF_SIZE);
+		    channel.write(txBuffer, RX_TX_BUFF_SIZE);
+		} catch (Exception e) {
+		    state = MTP2_OUT_OF_SERVICE;
+		    mtp3.linkFailed(this);
+		}
     }
     
     public void threadTick(long tickTimeStamp) {

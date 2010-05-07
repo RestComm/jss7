@@ -20,7 +20,7 @@ public interface StreamForwarder {
 	public void setAddress(String address) throws UnknownHostException;
 	public String getAddress();
 	
-	public void setLayer3(Mtp3 layer3);
+	public void setMtp3(Mtp3 layer3);
 	public void start() throws Exception;
 	public void stop();
 

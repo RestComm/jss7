@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.mtp.MTP;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.MtpUser;
 import org.mobicents.protocols.ss7.stream.HDLCHandler;
@@ -55,7 +56,8 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 	private ByteBuffer txBuff = ByteBuffer.allocate(8192);
 	
 
-	private Mtp3 layer3;
+	private Mtp3 mtp;
+	//private MTP mtp;
 	private boolean linkUp = false;
 	private Future runFuture;
 	
@@ -157,10 +159,10 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 
 	
 
-	public void setLayer3(Mtp3 layer3) {
-		this.layer3 = layer3;
-		if (layer3 != null) {
-			this.layer3.setUserPart(this);
+	public void setMtp3(Mtp3 mtp) {
+		this.mtp = mtp;
+		if (mtp != null) {
+			this.mtp.setUserPart(this);
 		}
 
 	}
@@ -249,10 +251,14 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 					}
 
 					if (hdlcHandler.isTxBufferEmpty()) {
-						Thread.currentThread().sleep(4);
+						synchronized(this.writeSelector)
+						{
+							this.writeSelector.wait(50);
+						}
+						
 					}
 				}
-
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -297,19 +303,20 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 
 		// And queue the data we want written
 		//synchronized (this.txBuffer) {
-		synchronized (this.hdlcHandler) {
+		//synchronized (this.hdlcHandler) {
+		synchronized (this.writeSelector) {
 
 			//this.txBuffer.add(ByteBuffer.wrap(data));
 			ByteBuffer bb = ByteBuffer.allocate(data.length);
 			bb.put(data);
 			bb.flip();
 			this.hdlcHandler.addToTxBuffer(bb);
-
+			// Finally, wake up our selecting thread so it can make the required
+			// changes
+			this.writeSelector.wakeup();
 		}
 
-		// Finally, wake up our selecting thread so it can make the required
-		// changes
-		this.writeSelector.wakeup();
+		
 	}
 
 	private void read(SelectionKey key) throws IOException {
@@ -354,7 +361,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 				if(tag == Tag._TAG_LINK_DATA)
 				{
 					byte[] data = tlvInputStream.readLinkData();
-					this.layer3.send( data);
+					this.mtp.send( data);
 				}else
 				{
 					logger.warn("Received weird message!");

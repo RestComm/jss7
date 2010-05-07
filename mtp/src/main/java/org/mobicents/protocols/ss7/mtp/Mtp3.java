@@ -189,7 +189,7 @@ public class Mtp3 implements Runnable {
         while (started) {
             try {
         	Collection<Mtp2> selected = selector.select(LinkSelector.READ, 20);
-                long thisTickStamp = System.currentTimeMillis();
+
                 for (Mtp2 link : selected) {
                     //link.threadTick(thisTickStamp);
                     link.doRead();
@@ -256,14 +256,20 @@ public class Mtp3 implements Runnable {
         restartTraffic(link);
         
         //create and assign Tester;
-        Test tester = new Test(link);
-        link.test = tester;
+        if(link.test == null)
+        {
+        	Test tester = new Test(link);
+        	link.test = tester;
         
-        //start tester
-        if (logger.isDebugEnabled()) {
-    	    logger.debug(String.format("(%s) Starting link test procedure", link.name));
+        	//start tester
+        	if (logger.isDebugEnabled()) {
+        		logger.debug(String.format("(%s) Starting link test procedure", link.name));
+        	}
+        	tester.start();
+        }else
+        {
+        	link.test.start();
         }
-        tester.start();
     }
 
     /**
@@ -336,7 +342,7 @@ public class Mtp3 implements Runnable {
         //SLTM message buffer;
         private byte[] sltm = new byte[7 + SLTM_PATTERN.length];
         
-        private ScheduledFuture test;
+        private ScheduledFuture testFuture;
         
         protected Test(Mtp2 link) {
             this.link = link;
@@ -355,7 +361,7 @@ public class Mtp3 implements Runnable {
         
         public void stop() {
             //disable handler
-            test.cancel(false);
+            testFuture.cancel(false);
         }
         
         /**
@@ -364,11 +370,11 @@ public class Mtp3 implements Runnable {
          */
         public void ack() {
             //disable current awaiting handler
-            test.cancel(false);
+            testFuture.cancel(false);
             //reset number of tryies;
             tryCount = 0;
             //shcedule next ping
-            test = mtpTimer.schedule(this, Mtp3.TIMEOUT_T2_SLTM, TimeUnit.SECONDS);
+            testFuture = mtpTimer.schedule(this, Mtp3.TIMEOUT_T2_SLTM, TimeUnit.SECONDS);
             if (logger.isDebugEnabled()) {
         	logger.debug(String.format("(%s) Test message acknowledged, Link test passed", link.name));
             }
@@ -395,7 +401,7 @@ public class Mtp3 implements Runnable {
             tryCount++;
             
             //scheduling timeout
-            test = mtpTimer.schedule(this, timeout, TimeUnit.SECONDS);
+            testFuture = mtpTimer.schedule(this, timeout, TimeUnit.SECONDS);
             if (logger.isDebugEnabled()) {
         	logger.debug(String.format("(%s) Test request, try number = %d", link.name, tryCount));
             }
@@ -420,9 +426,7 @@ public class Mtp3 implements Runnable {
             }
         }
     }
-    
-    
-    
+
     
     private final class MessageHandler implements Runnable {
 
@@ -437,7 +441,7 @@ public class Mtp3 implements Runnable {
         }
         
         public void run() {
-
+        	
             int subserviceIndicator = (sio >> 4) & 0x03;
             int serviceIndicator = sio & 0x0f;
 
@@ -487,14 +491,14 @@ public class Mtp3 implements Runnable {
                         byte[] slta = new byte[len + 7];
     
                         
-
-                        writeRoutingLabel(slta,0,0, sls,dpc,opc);
+                        //change order of opc/dpc in SLTA !
+                        writeRoutingLabel(slta,0,0, sls,opc,dpc);
                         slta[0] = (byte) sio;
                         slta[5] = 0x021;
                         // +1 cause we copy LEN byte also.
                         System.arraycopy(sif, 5, slta, 6, len + 1);
 
-			if (logger.isTraceEnabled()) {
+                        if (logger.isTraceEnabled()) {
                             logger.trace(String.format("(%s) Responding with SLTA", mtp2.name));
                         }
                         mtp2.queue(slta);
@@ -514,14 +518,18 @@ public class Mtp3 implements Runnable {
                     		l4IsUp = true;
                     		linkUp(mtp2);
                     	    }
+                        }else
+                        {
+                        	//logger.info("SLTA pattern does not match: \n"+Arrays.toString(sif)+"\n"+Arrays.toString(SLTM_PATTERN));
                         }
                     } else {
             		logger.warn(String.format("(%s) Unexpected message type", mtp2.name));
                     }
                     break;
                 case SERVICE_SCCP:
-                    if (logger.isEnabledFor(Level.WARN) && isL3Debug()) {
+                    if (logger.isEnabledFor(Level.TRACE) && isL3Debug()) {
                         mtp2.trace("XXX MSU Indicates SCCP");
+                		
                     }
 
                     if (mtpUser != null) {
@@ -537,8 +545,9 @@ public class Mtp3 implements Runnable {
                     }
                     break;
                 case SERVICE_ISUP:
-                    if (logger.isEnabledFor(Level.WARN) && isL3Debug()) {
+                    if (logger.isEnabledFor(Level.TRACE) && isL3Debug()) {
                         mtp2.trace("XXX MSU Indicates ISUP");
+                		
                     }
                     if (mtpUser != null) {
                         //lets create byte[] which is actuall upper layer msg.

@@ -20,6 +20,8 @@ public interface MtpUser {
 	 * @param msgBuff
 	 */
 	public void receive(byte[] msgBuff);
+	
+	public void setMtp3(Mtp3 mtp);
 
 
 }
