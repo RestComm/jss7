@@ -64,6 +64,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 	
 	//
 	private HDLCHandler hdlcHandler = new HDLCHandler();
+	private boolean runnable;
 	
 	
 	public M3UserAgent() {
@@ -190,7 +191,9 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 	//////////////////
 	public void start() throws Exception {
 		this.initServer();
+		runnable = true;
 		this.runFuture = this.executor.submit(this);
+		
 	}
 
 	public void stop() {
@@ -198,6 +201,8 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 			return;
 		this.runFuture.cancel(false);
 		this.runFuture = null;
+		runnable = false;
+		stopServer();
 	}
 
 	private void initServer() throws Exception {
@@ -219,13 +224,33 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		logger.info("Initiaited server on: "+this.address+":"+this.port);
 	}
 	
+	private void stopServer()
+	{
+		if(connected)
+		{
+			connected = false;
+			try {
+				this.readSelector.close();
+				this.writeSelector.close();
+				this.connectSelector.close();
+				this.serverSocketChannel.close();
+				this.channel.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+
+	}
+	
 	// ///////////////
 	// Server Side //
 	// ///////////////
 
 
 	public void run() {
-		while (true) {
+		while (runnable) {
 			try {
 
 				Iterator selectedKeys = null;
@@ -399,9 +424,18 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		channel.register(this.writeSelector, SelectionKey.OP_WRITE);
 
 		connected = true;
+		
 		if (logger.isInfoEnabled()) {
 			logger.info("Estabilished connection with: " + socket.getInetAddress() + ":" + socket.getPort());
 			
+		}
+		//lets strean state
+		if(linkUp)
+		{
+			this.streamData(_LINK_STATE_UP);
+		}else
+		{
+			this.streamData(_LINK_STATE_DOWN);
 		}
 	}
 

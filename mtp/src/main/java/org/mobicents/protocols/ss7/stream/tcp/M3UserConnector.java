@@ -45,6 +45,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 	private Properties properties = new Properties();
 	//used to indicate state of link
 	private boolean linkUp = false;
+	private boolean runnable;
 	
 	
 	public M3UserConnector(Properties properties) {
@@ -98,7 +99,9 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 		
 		readProperties();
 		initiateConnection();
+		this.runnable = true;
 		this.streamFuture=streamExecutor.submit(this);
+		
 		
 
 	}
@@ -112,6 +115,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 		{
 			streamFuture.cancel(false);
 			streamFuture = null;
+			this.runnable = false;
 		}
 		if (connected) {
 			if(streamFuture!=null)

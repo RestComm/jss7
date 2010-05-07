@@ -58,20 +58,7 @@ public class M3UserTest implements MTPListener{
 		
 		
 		
-		agent.start();
-		connector.start();
-		long startTime = System.currentTimeMillis();
-		while(!agent.isConnected() || !connector.isConnected())
-		{
-			Thread.currentThread().sleep(500);
-			if(startTime+5000<System.currentTimeMillis())
-			{
-				junit.framework.Assert.assertTrue("Failed to establish connection!",false);
-			}
-			
-		}
-		//0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15
-		Thread.currentThread().sleep(1000);
+		
 	}
 
 	/**
@@ -87,6 +74,21 @@ public class M3UserTest implements MTPListener{
 	@Test
 	public void testLinkState() throws Exception
 	{
+		
+		agent.start();
+		connector.start();
+		long startTime = System.currentTimeMillis();
+		while(!agent.isConnected() || !connector.isConnected())
+		{
+			Thread.currentThread().sleep(500);
+			if(startTime+5000<System.currentTimeMillis())
+			{
+				junit.framework.Assert.assertTrue("Failed to establish connection!",false);
+			}
+			
+		}
+		//0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15
+		Thread.currentThread().sleep(1000);
 		this.agent.linkUp();
 		Thread.currentThread().sleep(500);
 		this.agent.linkDown();
@@ -97,7 +99,33 @@ public class M3UserTest implements MTPListener{
 	}
 	
 	
-	
+	@Test
+	public void testLinkState2() throws Exception
+	{
+		
+		agent.start();
+		//0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15
+		Thread.currentThread().sleep(1000);
+		this.agent.linkUp();
+		connector.start();
+		long startTime = System.currentTimeMillis();
+		while(!agent.isConnected() || !connector.isConnected())
+		{
+			Thread.currentThread().sleep(500);
+			if(startTime+5000<System.currentTimeMillis())
+			{
+				junit.framework.Assert.assertTrue("Failed to establish connection!",false);
+			}
+			
+		}
+		
+		Thread.currentThread().sleep(500);
+		this.agent.linkDown();
+		Thread.currentThread().sleep(500);
+		Assert.assertTrue("Did not receive linkup!", this.linkUp);
+		Assert.assertTrue("Did not receive linkdown!", this.linkDown);
+		
+	}
 	
 	//MTPListener methods
 	
