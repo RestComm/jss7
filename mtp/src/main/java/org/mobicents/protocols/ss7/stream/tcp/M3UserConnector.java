@@ -205,13 +205,13 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 			connected = true;
 
 		} catch (Exception e) {
-			//if(logger.isDebugEnabled())
+			if(logger.isDebugEnabled())
 			{
 				e.printStackTrace();
-			}//else
-			//{
-			//	logger.info("Failed to connect due to: "+e.getMessage());
-			//}
+			}else
+			{
+				logger.info("Failed to connect due to: "+e.getMessage());
+			}
 		} finally {
 			try {
 				if (!connected) {
@@ -276,7 +276,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 
 					}
 					synchronized (this.writeSelector) {
-						this.writeSelector.wait(50);
+						this.writeSelector.wait(20);
 					}
 					
 				} catch (Exception ee) {
