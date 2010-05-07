@@ -202,7 +202,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		this.runFuture.cancel(false);
 		this.runFuture = null;
 		runnable = false;
-		stopServer();
+		
 	}
 
 	private void initServer() throws Exception {
@@ -298,6 +298,9 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 				e.printStackTrace();
 			}
 		}
+		
+		
+		stopServer();
 	}
 
 	private void performKeyOperations(Iterator selectedKeys) throws IOException {
