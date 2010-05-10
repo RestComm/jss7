@@ -8,6 +8,7 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message;
 
+import org.junit.Test;
 import org.mobicents.protocols.ss7.isup.message.AddressCompleteMessage;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators;
@@ -22,7 +23,8 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationC
  */
 public class ACMTest extends MessageHarness {
 
-	public void _testTwo_Params() throws Exception {
+	@Test
+	public void testTwo_Params() throws Exception {
 		//FIXME: for now we strip MTP part
 		//FIXME: This one fail!
 		byte[] message = getDefaultBody();
@@ -49,7 +51,7 @@ public class ACMTest extends MessageHarness {
 
 		CircuitIdentificationCode cic = acm.getCircuitIdentificationCode();
 		assertNotNull("CircuitIdentificationCode must not be null", cic);
-		assertEquals("CircuitIdentificationCode value does not match", cic.getCIC(), 0xD0C);
+		assertEquals("CircuitIdentificationCode value does not match", cic.getCIC(), getDefaultCIC());
 
 	}
 
@@ -58,7 +60,7 @@ public class ACMTest extends MessageHarness {
 		byte[] message = {
 
 		0x0C, (byte) 0x0B, 0x06, 0x01, 0x20, 0x01, 0x29, 0x01, 0x01, 0x12, 0x02, (byte) 0x82, (byte) 0x9C, 0x00
-
+		
 		};
 		return message;
 	}
