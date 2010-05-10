@@ -66,7 +66,13 @@ public class ISUPStackImpl implements ISUPStack {
     public void start() {
         if (!started) {
             configure();
-            this.mtpTransportProvider.addMtpListener(this.isupMtpProvider);
+            if(this.mtpTransportProvider!=null)
+            {
+            	this.mtpTransportProvider.addMtpListener(this.isupMtpProvider);
+            }else
+            {
+            	this.sccpTransportProvider.setSccpListener(this.isupSccpProvider);
+            }
             this.started = true;
         }
     }

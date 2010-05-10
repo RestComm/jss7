@@ -13,13 +13,16 @@ import org.mobicents.protocols.ss7.isup.ISUPServerTransaction;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.TransactionAlredyExistsException;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+import org.mobicents.protocols.ss7.sccp.ActionReference;
+import org.mobicents.protocols.ss7.sccp.SccpListener;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * Provider for sccp
  * @author baranowb
  *
  */
-public class ISUPSccpProviderImpl implements ISUPProvider {
+public class ISUPSccpProviderImpl implements ISUPProvider, SccpListener {
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.ISUPProvider#addListener(org.mobicents.protocols.ss7.isup.ISUPListener)
@@ -67,6 +70,11 @@ public class ISUPSccpProviderImpl implements ISUPProvider {
 	public void sendMessage(ISUPMessage msg) throws ParameterRangeInvalidException, IOException {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void onMessage(SccpAddress arg0, SccpAddress arg1, byte[] arg2, ActionReference arg3) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
