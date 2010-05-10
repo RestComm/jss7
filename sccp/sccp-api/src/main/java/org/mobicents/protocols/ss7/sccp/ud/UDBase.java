@@ -26,7 +26,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * 
  * @author Oleg Kulikov
  */
-public interface UDBase extends ActionReference {
+public interface UDBase{
 
 	public byte[] getData();
 

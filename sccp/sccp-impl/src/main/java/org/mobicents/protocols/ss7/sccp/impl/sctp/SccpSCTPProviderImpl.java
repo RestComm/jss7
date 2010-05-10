@@ -42,11 +42,13 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 	public SccpSCTPProviderImpl(Properties props) {
 		this.mtpProvider = MTPProviderFactory.getInstance().getProvider(props);
 		this.mtpProvider.addMtpListener(this);
+		//FIXME: move this to mtp provider?
 		this.opc = Integer.parseInt(props.getProperty("sccp.opc"));
         this.dpc = Integer.parseInt(props.getProperty("sccp.dpc"));
         this.sls = Integer.parseInt(props.getProperty("sccp.sls"));
         this.ssi = Integer.parseInt(props.getProperty("sccp.ssf"));
-        this.si  = Integer.parseInt(props.getProperty("sccp.si"));
+        //this.si  = Integer.parseInt(props.getProperty("sccp.si"));
+        this.si = Mtp3._SI_SERVICE_SCCP;
 	}
 
 
@@ -100,7 +102,7 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 				bos.write(sif);
 				bos.write(buf);
 				buf = bos.toByteArray();
-				Mtp3.writeRoutingLabel(buf, si, ssi, 0, dpc, opc);
+				Mtp3.writeRoutingLabel(buf, si, ssi, sls, dpc, opc);
 				
 			}
 			this.mtpProvider.send(buf);

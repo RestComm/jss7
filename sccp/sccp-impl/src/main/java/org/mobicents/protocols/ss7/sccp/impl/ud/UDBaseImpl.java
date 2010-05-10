@@ -6,6 +6,7 @@ package org.mobicents.protocols.ss7.sccp.impl.ud;
 
 
 import org.mobicents.protocols.ss7.mtp.Mtp3;
+import org.mobicents.protocols.ss7.sccp.ActionReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.sccp.ud.UDBase;
@@ -16,7 +17,7 @@ import org.mobicents.protocols.ss7.sccp.ud.UDBase;
  * @author baranowb
  * 
  */
-abstract class UDBaseImpl extends ActionReferenceImpl implements UDBase {
+abstract class UDBaseImpl extends ActionReference implements UDBase {
 
 	protected ProtocolClass pClass;
 	protected SccpAddress calledParty;
