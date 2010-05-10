@@ -4,6 +4,9 @@
 package org.mobicents.protocols.ss7.stream.tcp;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import junit.framework.Assert;
@@ -26,6 +29,12 @@ public class M3UserTest implements MTPListener{
 	private M3UserConnector connector;
 	private ExtendedMtp3 mtp3;
 	
+	
+
+
+	private boolean linkDown = false;
+	private boolean linkUp = false;
+	private List<byte[]> data;
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -38,7 +47,7 @@ public class M3UserTest implements MTPListener{
 		linkUp = false;
 		data = null;
 		
-		
+		data = new ArrayList<byte[]>();
 		
 		
 		this.mtp3 = new ExtendedMtp3("TEST_MTP");
@@ -103,10 +112,11 @@ public class M3UserTest implements MTPListener{
 	public void testLinkState2() throws Exception
 	{
 		
-		agent.start();
+		
 		//0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15
 		Thread.currentThread().sleep(1000);
 		this.agent.linkUp();
+		agent.start();
 		connector.start();
 		long startTime = System.currentTimeMillis();
 		while(!agent.isConnected() || !connector.isConnected())
@@ -118,7 +128,7 @@ public class M3UserTest implements MTPListener{
 			}
 			
 		}
-		
+		agent.streamData(new byte[]{1,2,3,4,5});
 		Thread.currentThread().sleep(500);
 		this.agent.linkDown();
 		Thread.currentThread().sleep(500);
@@ -127,14 +137,125 @@ public class M3UserTest implements MTPListener{
 		
 	}
 	
+	
+	@Test
+	public void testLinkState3() throws Exception
+	{
+		//test link transport cap
+		
+		//
+		Thread.currentThread().sleep(1000);
+		this.agent.linkUp();
+		agent.start();
+		connector.start();
+		long startTime = System.currentTimeMillis();
+		while(!agent.isConnected() || !connector.isConnected())
+		{
+			Thread.currentThread().sleep(500);
+			if(startTime+5000<System.currentTimeMillis())
+			{
+				junit.framework.Assert.assertTrue("Failed to establish connection!",false);
+			}
+			
+		}
+		ArrayList<byte[]> sendData = new ArrayList<byte[]>();
+		sendData.add(new byte[]{0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15});
+		sendData.add(new byte[]{1});
+		sendData.add(new byte[]{2});
+		sendData.add(new byte[]{1,2,3,4,5,6,7,8,89,90,124,46,67,27,28});
+		sendData.add(new byte[]{0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15});
+		sendData.add(new byte[]{0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15,0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15,0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15});
+		sendData.add(new byte[]{0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1});
+		sendData.add(new byte[]{1,1,1,1,1,1,1,1,1,12,2,33,4,54,5,56,6,67});
+		
+		
+		for(byte[] b:sendData)
+		{
+			agent.receive(b);
+		}
+		Thread.currentThread().sleep(500);
+		this.agent.linkDown();
+		Thread.currentThread().sleep(500);
+		Assert.assertTrue("Did not receive linkup!", this.linkUp);
+		Assert.assertTrue("Did not receive linkdown!", this.linkDown);
+		Assert.assertEquals("Not enough data received!",sendData.size(), data.size());
+		for(int index = 0;index<data.size();index++)
+		{
+			byte[] expected = sendData.get(index);
+			byte[] receveid = data.get(index);
+			Assert.assertTrue("Expected data does not match received:\n"+Arrays.toString(expected)+"\n"+Arrays.toString(receveid), Arrays.equals(expected, receveid));
+		}
+	}
+	@Test
+	public void testLinkState4() throws Exception
+	{
+		//test link transport cap
+		
+		
+		agent.start();
+		connector.start();
+		//
+		Thread.currentThread().sleep(1000);
+		this.agent.linkUp();
+		long startTime = System.currentTimeMillis();
+		while(!agent.isConnected() || !connector.isConnected())
+		{
+			Thread.currentThread().sleep(500);
+			if(startTime+5000<System.currentTimeMillis())
+			{
+				junit.framework.Assert.assertTrue("Failed to establish connection!",false);
+			}
+			
+		}
+		ArrayList<byte[]> sendData = new ArrayList<byte[]>();
+		sendData.add(new byte[]{0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15});
+		sendData.add(new byte[]{1});
+		sendData.add(new byte[]{2});
+		sendData.add(new byte[]{1,2,3,4,5,6,7,8,89,90,124,46,67,27,28});
+		sendData.add(new byte[]{0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15});
+		sendData.add(new byte[]{0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15,0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15,0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15});
+		sendData.add(new byte[]{0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1});
+		sendData.add(new byte[]{1,1,1,1,1,1,1,1,1,12,2,33,4,54,5,56,6,67});
+		
+		
+		for(byte[] b:sendData)
+		{
+			agent.receive(b);
+		}
+	
+		this.agent.linkDown();
+		Thread.currentThread().sleep(500);
+		Assert.assertTrue("Did not receive linkup!", this.linkUp);
+		Assert.assertTrue("Did not receive linkdown!", this.linkDown);
+		Assert.assertEquals("Not enough data received!",sendData.size(), data.size());
+		for(int index = 0;index<data.size();index++)
+		{
+			byte[] expected = sendData.get(index);
+			byte[] receveid = data.get(index);
+			Assert.assertTrue("Expected data does not match received:\n"+Arrays.toString(expected)+"\n"+Arrays.toString(receveid), Arrays.equals(expected, receveid));
+		}
+	}
+	
+	
+	@Test
+	public void testLinkStateReconnect() throws Exception
+	{
+		agent.start();
+		connector.start();
+
+		Thread.currentThread().sleep(500);
+		agent.linkUp();
+		Thread.currentThread().sleep(500);
+		agent.stop();
+		Thread.currentThread().sleep(500);
+		agent.linkDown();
+		agent.start();
+		Thread.currentThread().sleep(500);
+	}
+	
 	//MTPListener methods
-	
-	
 
 
-	private boolean linkDown = false;
-	private boolean linkUp = false;
-	private byte[] data;
 	public void linkDown() {
 		linkDown = true;
 		
@@ -146,7 +267,7 @@ public class M3UserTest implements MTPListener{
 	}
 
 	public void receive(byte[] msg) {
-		data = msg;
+		data.add(msg);
 		
 	}
 	

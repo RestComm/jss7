@@ -35,7 +35,7 @@ import org.mobicents.protocols.ss7.stream.tlv.Tag;
 /**
  * Simple server class. First draft limitations:
  *  - HDLC to ensure full frames 
- *  - signle client/server
+ *  - single client/server
  * @author baranowb
  *
  */
@@ -107,9 +107,10 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 			logger.info("Received L4 Down event from layer3.");
 		}
 		this.linkUp = false;
-		this.txBuff.clear();
-		this.txBuff.limit(0);
-		this.readBuff.clear();
+		//FIXME: proper actions here.
+		//this.txBuff.clear();
+		//this.txBuff.limit(0);
+		//this.readBuff.clear();
 		this.streamData(_LINK_STATE_DOWN);
 	}
 
@@ -130,7 +131,8 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 			TLVOutputStream tlv = new TLVOutputStream();
 			try {
 				tlv.writeData(msgBuff);
-				this.streamData(tlv.toByteArray());
+				byte[] data = tlv.toByteArray();
+				this.streamData(data);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -331,6 +333,9 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 	}
 
 	public void streamData(byte[] data) {
+		if(this.channel!=null)
+			connected = this.channel.isConnected();
+		
 		if (!connected) {
 			if (logger.isInfoEnabled()) {
 				logger.info("There is no client interested in data stream, ignoring. Message should be retransmited.");
@@ -400,6 +405,21 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 				{
 					byte[] data = tlvInputStream.readLinkData();
 					this.mtp.send( data);
+				}else if (tag == Tag._TAG_LINK_STATUS)
+				{
+					LinkStatus ls = tlvInputStream.readLinkStatus();
+					switch(ls)
+					{
+						case Query:
+							if(this.linkUp)
+							{
+								this.streamData(_LINK_STATE_UP);
+							}else
+							{
+								this.streamData(_LINK_STATE_DOWN);
+							}
+						
+					}
 				}else
 				{
 					logger.warn("Received weird message!");
@@ -438,7 +458,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 			this.streamData(_LINK_STATE_UP);
 		}else
 		{
-			this.streamData(_LINK_STATE_DOWN);
+			//this.streamData(_LINK_STATE_DOWN);
 		}
 	}
 

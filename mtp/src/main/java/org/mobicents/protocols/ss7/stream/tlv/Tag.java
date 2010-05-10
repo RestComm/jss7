@@ -26,8 +26,8 @@ public class Tag {
 	// The last five bits (bits 5 to 1) encode the number of the tag in tag octet
 	public static final int TAG_MASK = 0x1F;
 
-	public static final byte _TAG_LINK_STATUS = (byte) 0x15;
-	public static final byte _TAG_LINK_DATA = 0x0A;
+	public static final int _TAG_LINK_STATUS = 0x15;
+	public static final int _TAG_LINK_DATA = 0x0A;
 	
 
 	private Tag() {

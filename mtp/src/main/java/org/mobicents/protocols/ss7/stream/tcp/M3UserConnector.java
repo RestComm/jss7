@@ -113,31 +113,32 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 			return;
 		}else
 		{
+			this.runnable = false;
+			
+		}
+		
+			
+	
+
+	}
+	
+	private void stopClient()
+	{
+		if(streamFuture!=null)
+		{
 			streamFuture.cancel(false);
 			streamFuture = null;
-			this.runnable = false;
 		}
-		if (connected) {
-			if(streamFuture!=null)
-			{
-				streamFuture.cancel(false);
-				streamFuture = null;
-			}
-			this.listeners.clear();
+		this.listeners.clear();
 
-			try {
-				this.socketChannel.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			this.socketChannel = null;
-			this.connected = false;
-			
-		} else {
-			
+		try {
+			this.socketChannel.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
+		this.socketChannel = null;
+		this.connected = false;
 	}
 	
 	private void readProperties() {
@@ -292,6 +293,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		stopClient();
 	}
 
 	private void performKeyOperations(Iterator selectedKeys) throws IOException {
@@ -329,7 +331,10 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 		} catch (IOException e) {
 			// The remote forcibly closed the connection, cancel
 			// the selection key and close the channel.
-			e.printStackTrace();
+			if(logger.isDebugEnabled())
+			{
+				e.printStackTrace();
+			}
 			handleClose(key);
 			return;
 		}
@@ -382,11 +387,12 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 	}
 
 	private void linkDown() {
+		//FIXME: Proper acctions here?
 		this.linkUp = false;
-		this.txBuff.clear();
-		this.txBuff.limit(0);
-		this.readBuff.clear();
-		this.readBuff.limit(0);
+		//this.txBuff.clear();
+		//this.txBuff.limit(0);
+		//this.readBuff.clear();
+		//this.readBuff.limit(0);
 		
 		for (MTPListener lst : listeners) {
 			try {
@@ -399,10 +405,10 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 	}
 
 	private void linkUp() {
-		this.txBuff.clear();
-		this.txBuff.limit(0);
-		this.readBuff.clear();
-		this.readBuff.limit(0);
+		//this.txBuff.clear();
+		//this.txBuff.limit(0);
+		//this.readBuff.clear();
+		//this.readBuff.limit(0);
 		this.linkUp = true;
 		for (MTPListener lst : listeners) {
 			try {
@@ -416,12 +422,22 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 		
 	}
 
-	private void write(SelectionKey key) throws IOException {
+	private void write(SelectionKey key)  {
 		SocketChannel socketChannel = (SocketChannel) key.channel();
 
 		if (txBuff.remaining() > 0) {
 
-			socketChannel.write(txBuff);
+			try {
+				socketChannel.write(txBuff);
+			} catch (IOException e) {
+				
+				if(logger.isDebugEnabled())
+				{
+					e.printStackTrace();
+				}
+				handleClose(key);
+				return;
+			}
 			if (txBuff.remaining() > 0) {
 				// buffer filled.
 				return;
@@ -435,7 +451,17 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 			txBuff.clear();
 			this.hdlcHandler.processTx(txBuff);
 			txBuff.flip();
-			socketChannel.write(txBuff);
+			try {
+				socketChannel.write(txBuff);
+			} catch (IOException e) {
+				
+				if(logger.isDebugEnabled())
+				{
+					e.printStackTrace();
+				}
+				handleClose(key);
+				return;
+			}
 
 			if (txBuff.remaining() > 0) {
 				// ... or the socket's buffer fills up
@@ -447,12 +473,22 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 
 	}
 
-	private void handleClose(SelectionKey key) throws IOException {
+	private void handleClose(SelectionKey key) {
+		linkDown();
 		try {
+
 			SocketChannel socketChannel = (SocketChannel) key.channel();
 			key.cancel();
-			socketChannel.close();
-
+			try {
+				socketChannel.close();
+			} catch (IOException e) {
+				
+				if(logger.isDebugEnabled())
+				{
+					e.printStackTrace();
+				}
+			}
+			
 		} finally {
 			// linkDown();
 			connected = false;
