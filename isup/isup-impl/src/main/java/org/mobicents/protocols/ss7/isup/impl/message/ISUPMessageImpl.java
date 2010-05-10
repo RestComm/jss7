@@ -18,6 +18,7 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
+import org.mobicents.protocols.ss7.sccp.ActionReference;
 
 
 /**
@@ -28,7 +29,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-abstract class ISUPMessageImpl implements ISUPMessage {
+public abstract class ISUPMessageImpl implements ISUPMessage {
 
 	/**
 	 * To use one when encoding, created, possibly when decoding
@@ -71,6 +72,9 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 	
 	protected CircuitIdentificationCode cic;
 
+	//reference to MTP3 - 
+	protected ActionReference actionReference;
+	
 	public ISUPMessageImpl(Object source,Set<Integer> mandatoryCodes,Set<Integer> mandatoryVariableCodes,Set<Integer> optionalCodes,Map<Integer, Integer> mandatoryCode2Index,Map<Integer, Integer> mandatoryVariableCode2Index,Map<Integer, Integer> optionalCode2Index)  {
 		super();
 		this.source = source;
@@ -560,6 +564,20 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 	public void setCircuitIdentificationCode(CircuitIdentificationCode cic) {
 		this.cic = cic;
 		
+	}
+
+	/**
+	 * @return the actionReference
+	 */
+	public ActionReference getActionReference() {
+		return actionReference;
+	}
+
+	/**
+	 * @param actionReference the actionReference to set
+	 */
+	public void setActionReference(ActionReference actionReference) {
+		this.actionReference = actionReference;
 	}
 	
 	

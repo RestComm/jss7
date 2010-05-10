@@ -13,7 +13,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.mobicents.protocols.ss7.isup.ISUPServerTransaction;
 import org.mobicents.protocols.ss7.isup.ISUPTransaction;
 import org.mobicents.protocols.ss7.isup.TransactionID;
+import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageImpl;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+import org.mobicents.protocols.ss7.sccp.ActionReference;
 
 /**
  * Start time:12:57:29 2009-09-04<br>
@@ -23,29 +25,44 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
  */
 public abstract class ISUPTransactionImpl implements ISUPTransaction {
 
+	
+	
 	private static final AtomicLong txID = new AtomicLong(0);
 	protected final TransactionID transactionID = new TransactionID(txID.incrementAndGet());
-
+	//reference with backward routing label! Used for this tx
+	protected ActionReference actionReference;
+	
+	
 	protected ISUPMessage message;
 
-	protected ISUPProviderImpl provider;
+	protected ISUPMtpProviderImpl provider;
 	protected ISUPStackImpl stack;
 
 	protected Future generalTimeoutFuture;
 
-	public ISUPTransactionImpl(ISUPMessage message, ISUPProviderImpl provider, ISUPStackImpl stack) {
+	public ISUPTransactionImpl(ISUPMessage message, ISUPMtpProviderImpl provider, ISUPStackImpl stack,ActionReference ar) {
 		super();
 		this.message = message;
 		this.provider = provider;
 		this.stack = stack;
-		this.generalTimeoutFuture = stack.getExecutors().schedule(new ISUPTransactionTimeoutTask(this), stack.getTransactionGeneralTimeout(), TimeUnit.MILLISECONDS);
+		startGeneralTimer();
+		
+		if(ar == null)
+		{
+			this.actionReference = ((ISUPMessageImpl)message).getActionReference();
+		}else
+		{
+			this.actionReference = ar;
+		}
+		
 	}
 
-	public ISUPProviderImpl getProvider() {
+	
+	public ISUPMtpProviderImpl getProvider() {
 		return provider;
 	}
 
-	public void setProvider(ISUPProviderImpl provider) {
+	public void setProvider(ISUPMtpProviderImpl provider) {
 		this.provider = provider;
 	}
 
@@ -95,6 +112,10 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 			this.generalTimeoutFuture = null;
 		}
 	}
+	protected void startGeneralTimer() {
+		this.generalTimeoutFuture = stack.getExecutors().schedule(new ISUPTransactionTimeoutTask(this), stack.getTransactionGeneralTimeout(), TimeUnit.MILLISECONDS);
+		
+	}
 
 	protected abstract void doGeneralTimeout();
 
@@ -111,6 +132,20 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 			transaction.doGeneralTimeout();
 		}
 
+	}
+
+	/**
+	 * @return the actionReference
+	 */
+	public ActionReference getActionReference() {
+		return actionReference;
+	}
+
+	/**
+	 * @param actionReference the actionReference to set
+	 */
+	public void setActionReference(ActionReference actionReference) {
+		this.actionReference = actionReference;
 	}
 
 }

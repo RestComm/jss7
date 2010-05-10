@@ -435,4 +435,15 @@ public interface ISUPListener {
 	public void onTransactionEnded(ISUPClientTransaction tx);
 
 	public void onTransactionEnded(ISUPServerTransaction tx);
+
+	
+	//transport methods
+	/**
+	 * Method called when transport provider is not able to send/rcv messages, any calls to send methods after this callback will throw exception
+	 */
+	public void onTransportDown();
+	/**
+	 * Method called when transport provider is able to send/rcv messages, any calls to send methods after this callback are welcome.
+	 */
+	public void onTransportUp();
 }

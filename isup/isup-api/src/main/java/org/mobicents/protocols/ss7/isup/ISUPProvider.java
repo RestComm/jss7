@@ -32,7 +32,7 @@ import java.io.IOException;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 
 /**
- *
+ * @author baranowb
  * @author kulikov
  */
 public interface ISUPProvider {
@@ -58,4 +58,7 @@ public interface ISUPProvider {
 	public ISUPClientTransaction createClientTransaction(ISUPMessage msg) throws   TransactionAlredyExistsException, IllegalArgumentException; 
 	public ISUPServerTransaction createServerTransaction(ISUPMessage msg) throws   TransactionAlredyExistsException, IllegalArgumentException; 
     
+	
+	//FIXME: add sccp methods for connection creation
+	
 }

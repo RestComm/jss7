@@ -10,9 +10,11 @@ import java.io.IOException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.isup.ISUPClientTransaction;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+import org.mobicents.protocols.ss7.sccp.ActionReference;
 
 /**
  * Start time:13:34:09 2009-09-04<br>
@@ -21,7 +23,7 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements ISUPClientTransaction {
-
+	private static final Logger logger = Logger.getLogger(ISUPClientTransactionImpl.class);
 	protected Future receiveResponseTimeout;
 	protected ISUPClientTransactionState state = ISUPClientTransactionState.CREATED;
 
@@ -31,8 +33,8 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 	 * @param provider
 	 * @param stack
 	 */
-	public ISUPClientTransactionImpl(ISUPMessage message, ISUPProviderImpl provider, ISUPStackImpl stack) {
-		super(message, provider, stack);
+	public ISUPClientTransactionImpl(ISUPMessage message, ISUPMtpProviderImpl provider, ISUPStackImpl stack, ActionReference actionReference) {
+		super(message, provider, stack, actionReference);
 
 	}
 
@@ -67,13 +69,20 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 		case CREATED:
 			break;
 		case MESSAGE_SENT:
-			this.receiveResponseTimeout = stack.getExecutors().schedule(new ISUPClientTransactionTimeoutTask(this), stack.getClientTransactionAnswerTimeout(), TimeUnit.MILLISECONDS);
+			this.startTimer();
 			super.cancelGeneralTimer();
+			super.startGeneralTimer();
 			break;
 		case TERMINATED:
+			this.cancelGeneralTimer();
+			this.cancelTimer();
 			this.provider.onTransactionEnded(this);
+			
 			break;
 		case TIMEDOUT:
+			//just in case
+			this.cancelGeneralTimer();
+			this.cancelTimer();
 			this.provider.onTransactionTimeout(this);
 			break;
 		default:
@@ -81,6 +90,7 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 		}
 	}
 
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -92,7 +102,9 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 			switch (this.state) {
 			case CREATED:
 				super.generalTimeoutFuture = null;
+				this.cancelTimer();
 				this.setState(ISUPClientTransactionState.TIMEDOUT);
+				
 				break;
 			default:
 				//
@@ -123,12 +135,48 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 		return this.state;
 	}
 
-	void answerReceived() {
+	void answerReceived(ISUPMessage msg) {
 		synchronized (this.state) {
 			if (this.state != ISUPClientTransactionState.MESSAGE_SENT) {
 				return;
 			}
-			this.cancelReceiveAnswerTimer();
+			
+			switch (super.message.getMessageType().getCode()) {
+			case ISUPMessage._MESSAGE_CODE_IAM:
+				// see: http://en.wikipedia.org/wiki/ISDN_User_Part
+				switch (msg.getMessageType().getCode()) {
+				case ISUPMessage._MESSAGE_CODE_ANM:
+					// EOF
+					setState(ISUPClientTransactionState.TERMINATED);
+					break;
+				case ISUPMessage._MESSAGE_CODE_ACM:
+					// refresh timer?
+					cancelGeneralTimer();
+					startGeneralTimer();
+					
+				default:
+					logger.error("Request to received unknown answer: "+msg.getMessageType().getCode()+", for IAM tx");
+				}
+
+				break;
+				
+			case ISUPMessage._MESSAGE_CODE_REL:
+				
+				switch (msg.getMessageType().getCode()) {
+
+				case ISUPMessage._MESSAGE_CODE_RLC:
+					// EOF
+					setState(ISUPClientTransactionState.TERMINATED);
+				default:
+					logger.error("Request to received unknown answer: "+msg.getMessageType().getCode()+", for REL tx");
+				}
+				
+				default:
+					//default case
+					this.setState(ISUPClientTransactionState.TERMINATED);
+			}
+			
+			this.cancelTimer();
 			//FIXME: add transition to terminated
 		}
 	}
@@ -136,12 +184,16 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 	/**
 	 * 
 	 */
-	private void cancelReceiveAnswerTimer() {
+	private void cancelTimer() {
 		if (this.receiveResponseTimeout != null) {
 			this.receiveResponseTimeout.cancel(false);
 			this.receiveResponseTimeout = null;
 		}
 
+	}
+	private void startTimer() {
+		this.receiveResponseTimeout = stack.getExecutors().schedule(new ISUPClientTransactionTimeoutTask(this), stack.getClientTransactionAnswerTimeout(), TimeUnit.MILLISECONDS);
+		
 	}
 
 	private enum ISUPClientTransactionState {
