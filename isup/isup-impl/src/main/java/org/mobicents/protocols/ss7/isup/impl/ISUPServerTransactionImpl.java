@@ -3,6 +3,7 @@ package org.mobicents.protocols.ss7.isup.impl;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.isup.ISUPProvider;
 import org.mobicents.protocols.ss7.isup.ISUPServerTransaction;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
@@ -24,7 +25,7 @@ public class ISUPServerTransactionImpl extends ISUPTransactionImpl implements IS
 	 * @param provider
 	 * @param stack
 	 */
-	public ISUPServerTransactionImpl(ISUPMessage message, ISUPMtpProviderImpl provider, ISUPStackImpl stack, ActionReference actionReference) {
+	public ISUPServerTransactionImpl(ISUPMessage message, ISUPProviderBase provider, ISUPStackImpl stack, ActionReference actionReference) {
 		super(message, provider, stack,actionReference);
 
 	}

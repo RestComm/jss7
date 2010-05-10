@@ -33,7 +33,7 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 	 * @param provider
 	 * @param stack
 	 */
-	public ISUPClientTransactionImpl(ISUPMessage message, ISUPMtpProviderImpl provider, ISUPStackImpl stack, ActionReference actionReference) {
+	public ISUPClientTransactionImpl(ISUPMessage message, ISUPProviderBase provider, ISUPStackImpl stack, ActionReference actionReference) {
 		super(message, provider, stack, actionReference);
 
 	}

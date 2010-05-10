@@ -30,6 +30,7 @@ import java.io.IOException;
 
 
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * @author baranowb
@@ -37,12 +38,21 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
  */
 public interface ISUPProvider {
 	/**
-	 * Stateles messages send. No state is maintained.
+	 * Stateles message send over MTP. No state is maintained.
 	 * @param msg
 	 * @throws ParameterRangeInvalidException
 	 * @throws IOException
 	 */
 	public void sendMessage(ISUPMessage msg) throws ParameterRangeInvalidException, IOException;
+//	/**
+//	 * Stateles message send over SCCP. No state is maintained.
+//	 * @param called
+//	 * @param calling
+//	 * @param msg
+//	 * @throws ParameterRangeInvalidException
+//	 * @throws IOException
+//	 */
+//	public void sendMessage(SccpAddress called,SccpAddress calling,ISUPMessage msg) throws ParameterRangeInvalidException, IOException;
 //	/**
 //	 * Send message with use of session, it will allow us to receive timeout in case of bad behaviour.
 //	 * @param msg

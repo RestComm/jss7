@@ -34,7 +34,7 @@ public class ISUPStackImpl implements ISUPStack {
     
     private boolean started = false;
     private ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
-    private long _GENERAL_TRANSACTION_TIMEOUT = 60 * 1000;
+    private long _GENERAL_TRANSACTION_TIMEOUT = 120 * 1000;
     private long _CLIENT_TRANSACTION_ANSWER_TIMEOUT = 30 * 1000;
 
     public ISUPStackImpl(MTPProvider transportProvider, Properties properties) {
@@ -49,7 +49,7 @@ public class ISUPStackImpl implements ISUPStack {
         super();
         this.sccpTransportProvider = transportProvider;
 
-       // this.isupProvider = new ISUPSccpProviderImpl(this.sccpTransportProvider, this);
+       this.isupSccpProvider = new ISUPSccpProviderImpl(this.sccpTransportProvider, this);
 
     }
     

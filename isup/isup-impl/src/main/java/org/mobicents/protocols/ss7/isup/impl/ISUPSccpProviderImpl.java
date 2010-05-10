@@ -12,9 +12,13 @@ import org.mobicents.protocols.ss7.isup.ISUPProvider;
 import org.mobicents.protocols.ss7.isup.ISUPServerTransaction;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.TransactionAlredyExistsException;
+import org.mobicents.protocols.ss7.isup.TransactionKey;
+import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageFactoryImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageImpl;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.sccp.ActionReference;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
+import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -22,54 +26,46 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author baranowb
  *
  */
-public class ISUPSccpProviderImpl implements ISUPProvider, SccpListener {
+public class ISUPSccpProviderImpl extends ISUPProviderBase implements ISUPProvider, SccpListener {
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.ISUPProvider#addListener(org.mobicents.protocols.ss7.isup.ISUPListener)
-	 */
-	public void addListener(ISUPListener listener) {
-		// TODO Auto-generated method stub
-
+	
+	
+	
+	public ISUPSccpProviderImpl(SccpProvider sccpTransportProvider, ISUPStackImpl isupStackImpl) {
+		super(isupStackImpl);
+		super.messageFactory = new ISUPMessageFactoryImpl(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.ISUPProvider#createClientTransaction(org.mobicents.protocols.ss7.isup.message.ISUPMessage)
-	 */
 	public ISUPClientTransaction createClientTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return null;
+		TransactionKey key = msg.generateTransactionKey();
+        if (this.transactionMap.containsKey(key)) {
+            throw new TransactionAlredyExistsException("Transaction already exists for key: " + key);
+        }
+        ActionReference actionReference = ((ISUPMessageImpl)msg).getActionReference();
+        if(actionReference == null)
+        {
+        	//nothing :), SCCP will provide
+        }
+        ISUPClientTransactionImpl ctx = new ISUPClientTransactionImpl(msg, this, this.stack,actionReference);
+        this.transactionMap.put(msg.generateTransactionKey(), ctx);
+
+        return ctx;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.ISUPProvider#createServerTransaction(org.mobicents.protocols.ss7.isup.message.ISUPMessage)
-	 */
 	public ISUPServerTransaction createServerTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return null;
+		TransactionKey key = msg.generateTransactionKey();
+        if (this.transactionMap.containsKey(key)) {
+            throw new TransactionAlredyExistsException("Transaction already exists for key: " + key);
+        }
+        ISUPServerTransactionImpl stx = new ISUPServerTransactionImpl(msg, this, this.stack,((ISUPMessageImpl)msg).getActionReference());
+        this.transactionMap.put(msg.generateTransactionKey(), stx);
+
+        return stx;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.ISUPProvider#getMessageFactory()
-	 */
-	public ISUPMessageFactory getMessageFactory() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.ISUPProvider#removeListener(org.mobicents.protocols.ss7.isup.ISUPListener)
-	 */
-	public void removeListener(ISUPListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.ISUPProvider#sendMessage(org.mobicents.protocols.ss7.isup.message.ISUPMessage)
-	 */
 	public void sendMessage(ISUPMessage msg) throws ParameterRangeInvalidException, IOException {
-		// TODO Auto-generated method stub
-
+		throw new UnsupportedOperationException();
+		
 	}
 
 	public void onMessage(SccpAddress arg0, SccpAddress arg1, byte[] arg2, ActionReference arg3) {
@@ -77,4 +73,5 @@ public class ISUPSccpProviderImpl implements ISUPProvider, SccpListener {
 		
 	}
 
+	
 }

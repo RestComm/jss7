@@ -10,6 +10,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.mobicents.protocols.ss7.isup.ISUPProvider;
 import org.mobicents.protocols.ss7.isup.ISUPServerTransaction;
 import org.mobicents.protocols.ss7.isup.ISUPTransaction;
 import org.mobicents.protocols.ss7.isup.TransactionID;
@@ -35,12 +36,12 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 	
 	protected ISUPMessage message;
 
-	protected ISUPMtpProviderImpl provider;
+	protected ISUPProviderBase provider;
 	protected ISUPStackImpl stack;
 
 	protected Future generalTimeoutFuture;
 
-	public ISUPTransactionImpl(ISUPMessage message, ISUPMtpProviderImpl provider, ISUPStackImpl stack,ActionReference ar) {
+	public ISUPTransactionImpl(ISUPMessage message, ISUPProviderBase provider, ISUPStackImpl stack,ActionReference ar) {
 		super();
 		this.message = message;
 		this.provider = provider;
@@ -58,7 +59,7 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 	}
 
 	
-	public ISUPMtpProviderImpl getProvider() {
+	public ISUPProvider getProvider() {
 		return provider;
 	}
 

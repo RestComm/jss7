@@ -79,6 +79,7 @@ import org.mobicents.protocols.ss7.isup.message.UserPartAvailableMessage;
 import org.mobicents.protocols.ss7.isup.message.UserPartTestMessage;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.sccp.ActionReference;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.stream.MTPListener;
 import org.mobicents.protocols.ss7.stream.MTPProvider;
 
@@ -90,7 +91,7 @@ import org.mobicents.protocols.ss7.stream.MTPProvider;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-class ISUPMtpProviderImpl implements ISUPProvider, MTPListener {
+class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MTPListener {
 
     private MTPProvider mtpProvider;
 
@@ -119,9 +120,10 @@ class ISUPMtpProviderImpl implements ISUPProvider, MTPListener {
      *
      */
     public ISUPMtpProviderImpl(MTPProvider provider, ISUPStackImpl stackImpl, Properties props) {
-        this.mtpProvider = provider;
-        this.stack = stackImpl;
-        this.messageFactory = new ISUPMessageFactoryImpl(this);
+        
+    	super(stackImpl);
+    	this.mtpProvider = provider;
+    	super.messageFactory = new ISUPMessageFactoryImpl(this);
         this.opc = Integer.parseInt(props.getProperty("isup.opc"));
         this.dpc = Integer.parseInt(props.getProperty("isup.dpc"));
         this.sls = Integer.parseInt(props.getProperty("isup.sls"));
@@ -132,28 +134,6 @@ class ISUPMtpProviderImpl implements ISUPProvider, MTPListener {
         
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.mobicents.isup.ISUPProvider#addListener(org.mobicents.isup.ISUPListener
-     * )
-     */
-    public void addListener(ISUPListener listener) {
-        listeners.add(listener);
-
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @seeorg.mobicents.isup.ISUPProvider#removeListener(org.mobicents.isup.
-     * ISUPListener)
-     */
-    public void removeListener(ISUPListener listener) {
-        listeners.remove(listener);
-
-    }
 
     /*
      * (non-Javadoc)
@@ -197,16 +177,8 @@ class ISUPMtpProviderImpl implements ISUPProvider, MTPListener {
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPProvider#getMessageFactory()
-     */
-    public ISUPMessageFactory getMessageFactory() {
-        return this.messageFactory;
-    }
 
-    /*
+	/*
      * (non-Javadoc)
      *
      * @see
@@ -241,35 +213,6 @@ class ISUPMtpProviderImpl implements ISUPProvider, MTPListener {
             throw new ParameterRangeInvalidException("Message does not have all madnatory parameters");
         }
     }
-	public void linkDown() {
-		if(linkUp)
-		{
-			linkUp = false;
-			 for (ISUPListener l : this.listeners) {
-		            try {
-		                l.onTransportDown();
-		            } catch (Exception e) {
-		                e.printStackTrace();
-		            }
-		        }
-		}
-	}
-
-
-	public void linkUp() {
-		if(!linkUp)
-		{
-			linkUp = true;
-			 for (ISUPListener l : this.listeners) {
-		            try {
-		                l.onTransportUp();
-		            } catch (Exception e) {
-		                e.printStackTrace();
-		            }
-		        }
-		}
-		
-	}
 
 
 	public void receive(byte[] msg) {
@@ -1184,56 +1127,7 @@ class ISUPMtpProviderImpl implements ISUPProvider, MTPListener {
         }
     }
 
-    // FIXME: should we wait here to get all messages?
-    void onTransactionTimeout(ISUPClientTransaction tx) {
-        for (ISUPListener l : this.listeners) {
-            try {
-                l.onTransactionTimeout(tx);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    
 
-        this.transactionMap.remove(tx.getOriginalMessage().generateTransactionKey());
-
-    }
-
-    void onTransactionTimeout(ISUPServerTransaction tx) {
-        for (ISUPListener l : this.listeners) {
-            try {
-                l.onTransactionTimeout(tx);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        this.transactionMap.remove(tx.getOriginalMessage().generateTransactionKey());
-    }
-
-    void onTransactionEnded(ISUPClientTransaction tx) {
-        for (ISUPListener l : this.listeners) {
-            try {
-                l.onTransactionEnded(tx);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        this.transactionMap.remove(tx.getOriginalMessage().generateTransactionKey());
-    }
-
-    void onTransactionEnded(ISUPServerTransaction tx) {
-        for (ISUPListener l : this.listeners) {
-            try {
-                l.onTransactionEnded(tx);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        this.transactionMap.remove(tx.getOriginalMessage().generateTransactionKey());
-    }
-
-
-
+    
 }
