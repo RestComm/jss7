@@ -1,15 +1,13 @@
 /**
  * 
  */
-package org.mobicents.protocols.ss7.stream.tcp;
+package org.mobicents.protocols.ss7.stream;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.mobicents.protocols.ss7.stream.MTPListener;
-import org.mobicents.protocols.ss7.stream.MTPProvider;
 
 
 /**
