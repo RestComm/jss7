@@ -4,7 +4,6 @@
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -13,8 +12,6 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
-
-import sun.awt.image.ByteArrayImageSource;
 
 /**
  * @author baranowb
