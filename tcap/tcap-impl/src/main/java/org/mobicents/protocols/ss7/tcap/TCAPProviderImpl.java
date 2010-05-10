@@ -387,5 +387,15 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		}
 	}
 	
+	//FIXME: check how tcap handles that.
+	public void linkDown() {
+		// TODO Auto-generated method stub
+		
+	}
+	public void linkUp() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 
 }

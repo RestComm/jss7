@@ -1,32 +1,11 @@
 package org.mobicents.protocols.ss7.tcap.functional;
 
+import junit.framework.TestCase;
+
 import org.junit.Test;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.impl.PipeSccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
-import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
-import org.mobicents.protocols.ss7.tcap.api.TCAPException;
-import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
-import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
-import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
-import org.mobicents.protocols.ss7.tcap.api.TCListener;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
-import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
-
-import junit.framework.TestCase;
 
 /**
  * Test for call flow.
@@ -53,7 +32,7 @@ public class TCAPFunctionalTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		this.provider1 = new PipeSccpProviderImpl(this);
+		this.provider1 = new PipeSccpProviderImpl();
 		this.provider2 = this.provider1.getOther();
 		
 		//create some fake addresses.
