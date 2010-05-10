@@ -50,8 +50,8 @@ public class Mtp3 implements Runnable {
     
     private final static int LINK_MANAGEMENT = 0;
     private final static int LINK_TESTING = 1;
-    private final static int SERVICE_SCCP = 3;
-    private final static int SERVICE_ISUP = 5;
+    public final static int _SI_SERVICE_SCCP = 3;
+    public final static int _SI_SERVICE_ISUP = 5;
     
     /** Reference to the layer 4 */
     protected MtpUser mtpUser;
@@ -528,7 +528,7 @@ public class Mtp3 implements Runnable {
             		logger.warn(String.format("(%s) Unexpected message type", mtp2.name));
                     }
                     break;
-                case SERVICE_SCCP:
+                case _SI_SERVICE_SCCP:
                     if (logger.isEnabledFor(Level.TRACE) && isL3Debug()) {
                         mtp2.trace("XXX MSU Indicates SCCP");
                 		
@@ -546,7 +546,7 @@ public class Mtp3 implements Runnable {
                     	mtpUser.receive(message);
                     }
                     break;
-                case SERVICE_ISUP:
+                case _SI_SERVICE_ISUP:
                     if (logger.isEnabledFor(Level.TRACE) && isL3Debug()) {
                         mtp2.trace("XXX MSU Indicates ISUP");
                 		
