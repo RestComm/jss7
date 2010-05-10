@@ -16,8 +16,7 @@ package org.mobicents.protocols.ss7.sccp;
 
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.sccp.ud.UnitData;
-import org.mobicents.protocols.ss7.sccp.ud.XUnitData;
+
 
 /**
  *
@@ -30,4 +29,10 @@ public interface SccpListener {
 	//public void onMessage(XUnitData UD);
     public void onMessage(SccpAddress calledPartyAddress,
             SccpAddress callingPartyAddress, byte[] data,ActionReference backReference );
+    public void linkDown() ;
+
+
+	public void linkUp() ;
+		
+	
 }

@@ -66,14 +66,24 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 
 	public void linkDown() {
 		//add more?
-		this.linkUp = false;
+		if(linkUp)
+		{
+			this.linkUp = false;
+			if(listener!=null)
+					listener.linkDown();
+		}
 		
 	}
 
 
 
 	public void linkUp() {
-		this.linkUp = true;
+		if(!linkUp)
+		{
+			this.linkUp = true;
+			if(listener!=null)
+					listener.linkUp();
+		}
 		
 	}
 
