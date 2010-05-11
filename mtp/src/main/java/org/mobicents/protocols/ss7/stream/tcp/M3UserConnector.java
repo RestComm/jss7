@@ -371,8 +371,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 					{
 					case LinkDown:
 						this.linkDown();
-						//discard data? if any.
-						return;
+						continue;
 						//break;
 					case LinkUp:
 						this.linkUp();
@@ -388,6 +387,10 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 
 	private void linkDown() {
 		//FIXME: Proper acctions here?
+		if(logger.isInfoEnabled())
+		{
+			logger.info("Received LinkDown!");
+		}
 		this.linkUp = false;
 		//this.txBuff.clear();
 		//this.txBuff.limit(0);
@@ -409,6 +412,10 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 		//this.txBuff.limit(0);
 		//this.readBuff.clear();
 		//this.readBuff.limit(0);
+		if(logger.isInfoEnabled())
+		{
+			logger.info("Received LinkUp!");
+		}
 		this.linkUp = true;
 		for (MTPListener lst : listeners) {
 			try {

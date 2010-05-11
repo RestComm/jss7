@@ -28,6 +28,7 @@ public class PipeMtpProviderImpl implements MTPProvider {
 	public PipeMtpProviderImpl() {
 		super();
 		this.other = new PipeMtpProviderImpl(this);
+		_EXECUTOR= Executors.newSingleThreadScheduledExecutor();
 	}
 
 	
@@ -35,9 +36,10 @@ public class PipeMtpProviderImpl implements MTPProvider {
 	private PipeMtpProviderImpl(PipeMtpProviderImpl other) {
 		super();
 		this.other = other;
+		_EXECUTOR= Executors.newSingleThreadScheduledExecutor();
 	}
 
-
+	
 
 	/**
 	 * @return the other
@@ -46,8 +48,18 @@ public class PipeMtpProviderImpl implements MTPProvider {
 		return other;
 	}
 
+	public void indicateLinkUp()
+	{
+		if(this.listener!=null)
+			this.listener.linkUp();
+	}
 
-
+	public void indicateLinkDown()
+	{
+		if(this.listener!=null)
+			this.listener.linkDown();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.stream.MTPProvider#addMtpListener(org.mobicents.protocols.ss7.stream.MTPListener)
 	 */
@@ -79,10 +91,11 @@ public class PipeMtpProviderImpl implements MTPProvider {
 	 * @see org.mobicents.protocols.ss7.stream.MTPProvider#stop()
 	 */
 	public void stop() throws IllegalStateException {
-		// TODO Auto-generated method stub
+		_EXECUTOR.shutdown();
+		_EXECUTOR = null;
 
 	}
-	private ScheduledExecutorService _EXECUTOR = Executors.newSingleThreadScheduledExecutor();
+	private ScheduledExecutorService _EXECUTOR ;
 	private void receive(byte[] msg) {
 		
 		_EXECUTOR.schedule(new DataPasser(msg), 50,TimeUnit.MILLISECONDS);

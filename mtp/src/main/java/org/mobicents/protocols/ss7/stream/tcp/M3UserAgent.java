@@ -392,10 +392,18 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		//This will read everything, and if there is incomplete frame, it will retain its partial content
 		//so on next read it can continue to decode!
 		this.readBuff.flip();
+		if(logger.isInfoEnabled())
+		{
+			logger.info("Read data: "+readBuff+" --> "+Arrays.toString(readBuff.array()));
+		}
 		while((readResult = this.hdlcHandler.processRx(this.readBuff))!=null)
 		{
 			for(ByteBuffer b:readResult)
 			{
+				if(logger.isInfoEnabled())
+				{
+					logger.info("Processed data: "+b+" --> "+Arrays.toString(b.array()));
+				}
 				//byte sls = b.get();
 				//byte linksetId = b.get();
 				//this.layer3.send(sls,linksetId,si, ssf, b.array());
@@ -489,6 +497,10 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 
 			this.hdlcHandler.processTx(txBuff);
 			txBuff.flip();
+			if(logger.isInfoEnabled())
+			{
+				logger.info("Sending data: "+txBuff+" --> "+Arrays.toString(txBuff.array()));
+			}
 			socketChannel.write(txBuff);
 			
 			//if (buf.remaining() > 0) {
