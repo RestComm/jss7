@@ -292,8 +292,12 @@ public class Mtp3 implements Runnable {
         link.failLink();
 
         //notify mtp user part
-        if (!linkset.isActive() && mtpUser != null) {
-            mtpUser.linkDown();
+        if (!linkset.isActive() ) {
+        	l4IsUp = false;
+        	if(mtpUser != null)
+        	{
+        		mtpUser.linkDown();
+        	}
         }
     }
 
@@ -376,7 +380,7 @@ public class Mtp3 implements Runnable {
             //shcedule next ping
             testFuture = mtpTimer.schedule(this, Mtp3.TIMEOUT_T2_SLTM, TimeUnit.SECONDS);
             if (logger.isDebugEnabled()) {
-        	logger.debug(String.format("(%s) Test message acknowledged, Link test passed", link.name));
+            	logger.debug(String.format("(%s) Test message acknowledged, Link test passed", link.name));
             }
         }
         
@@ -517,8 +521,8 @@ public class Mtp3 implements Runnable {
                     	    
                     	    //notify top layer that link is up
                     	    if (!l4IsUp) {
-                    		l4IsUp = true;
-                    		linkUp(mtp2);
+                    	    	l4IsUp = true;
+                    	    	linkUp(mtp2);
                     	    }
                         }else
                         {
