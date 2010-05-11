@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.TransactionKey;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.AccessDeliveryInformationImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.AutomaticCongestionLevelImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CauseIndicatorsImpl;
@@ -98,7 +99,15 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
 
 	}
-
+	
+	public TransactionKey generateTransactionKey() {
+		if(cic == null)
+		{
+			throw new NullPointerException("CIC is not set in message");
+		}
+		TransactionKey tk = new TransactionKey("REL",this.cic.getCIC());
+		return tk;
+	}
 	
 	/*
 	 * (non-Javadoc)

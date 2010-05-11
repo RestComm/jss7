@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.TransactionKey;
 import org.mobicents.protocols.ss7.isup.Utils;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.AccessDeliveryInformationImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ApplicationTransportParameterImpl;
@@ -125,6 +126,16 @@ class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage {
 		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
 	}
 	
+	
+	public TransactionKey generateTransactionKey() {
+		if(cic == null)
+		{
+			throw new NullPointerException("CIC is not set in message");
+		}
+		TransactionKey tk = new TransactionKey("IAM",this.cic.getCIC());
+		return tk;
+	}
+
 
 	/*
 	 * (non-Javadoc)

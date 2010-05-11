@@ -16,7 +16,7 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
  *         </a>
  */
 public interface ISUPTransaction {
-	public TransactionID getTransactionID();
+	public TransactionKey getTransactionKey();
 	//public TransactionKey getTransactionKey();
 	public boolean isServerTransaction();
 	public ISUPMessage getOriginalMessage();

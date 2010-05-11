@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.TransactionKey;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.*;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.accessTransport.*;
 import org.mobicents.protocols.ss7.isup.message.AddressCompleteMessage;
@@ -104,12 +105,24 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
 	}
 
+	public TransactionKey generateTransactionKey() {
+		if(cic == null)
+		{
+			throw new NullPointerException("CIC is not set in message");
+		}
+		TransactionKey tk = new TransactionKey("IAM",this.cic.getCIC());
+		return tk;
+	}
+	
 	@Override
 	public boolean hasAllMandatoryParameters() {
-		if (super.f_Parameters.get(_INDEX_F_MessageType) == null || super.f_Parameters.get(_INDEX_F_MessageType).getCode() != MessageTypeImpl._PARAMETER_CODE) {
+		
+		if(super.f_Parameters.get(_INDEX_F_MessageType) == null)
+		{
 			return false;
 		}
-
+		
+	
 		if (super.f_Parameters.get(_INDEX_F_BackwardCallIndicators) == null || super.f_Parameters.get(_INDEX_F_BackwardCallIndicators).getCode() != BackwardCallIndicatorsImpl._PARAMETER_CODE) {
 			return false;
 		}

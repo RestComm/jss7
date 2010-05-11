@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.isup.ISUPClientTransaction;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.TransactionKey;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.sccp.ActionReference;
 
@@ -35,7 +36,7 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 	 */
 	public ISUPClientTransactionImpl(ISUPMessage message, ISUPProviderBase provider, ISUPStackImpl stack, ActionReference actionReference) {
 		super(message, provider, stack, actionReference);
-
+		
 	}
 
 	/*
@@ -98,6 +99,7 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 	 */
 	@Override
 	protected void doGeneralTimeout() {
+
 		synchronized (this.state) {
 			switch (this.state) {
 			case CREATED:
@@ -153,7 +155,7 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 					// refresh timer?
 					cancelGeneralTimer();
 					startGeneralTimer();
-					
+					break;
 				default:
 					logger.error("Request to received unknown answer: "+msg.getMessageType().getCode()+", for IAM tx");
 				}

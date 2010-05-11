@@ -113,7 +113,7 @@ public class ISUPServerTransactionImpl extends ISUPTransactionImpl implements IS
 	public void sendAnswer(ISUPMessage msg) throws ParameterRangeInvalidException, IllegalArgumentException, IOException {
 		synchronized (this.state) {
 			if (this.state != ISUPServerTransactionState.MESSAGE_RECEIVED || super.generalTimeoutFuture == null) {
-				throw new IOException("Bad transaction state, either transaction timed out or answer has been already sent back!");
+				throw new IOException("Bad transaction state, either transaction timed out or answer has been already sent back: "+this.state);
 			}
 
 			// now the whole state machine!
@@ -131,7 +131,7 @@ public class ISUPServerTransactionImpl extends ISUPTransactionImpl implements IS
 					cancelGeneralTimer();
 					startGeneralTimer();
 					this.provider.sendMessage(msg);
-					
+					break;
 				default:
 					logger.error("Request to send unknown answer: "+msg.getMessageType().getCode()+", for IAM tx");
 				}

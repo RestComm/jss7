@@ -37,6 +37,14 @@ public class ISUPSccpProviderImpl extends ISUPProviderBase implements ISUPProvid
 	}
 
 	public ISUPClientTransaction createClientTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException {
+		if(msg == null)
+    	{
+    		throw new IllegalArgumentException("Parameter is null");
+    	}
+    	if(msg.getCircuitIdentificationCode() == null)
+    	{
+    		throw new IllegalArgumentException("CIC is not set in message");
+    	}
 		TransactionKey key = msg.generateTransactionKey();
         if (this.transactionMap.containsKey(key)) {
             throw new TransactionAlredyExistsException("Transaction already exists for key: " + key);
@@ -53,6 +61,14 @@ public class ISUPSccpProviderImpl extends ISUPProviderBase implements ISUPProvid
 	}
 
 	public ISUPServerTransaction createServerTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException {
+		if(msg == null)
+    	{
+    		throw new IllegalArgumentException("Parameter is null");
+    	}
+    	if(msg.getCircuitIdentificationCode() == null)
+    	{
+    		throw new IllegalArgumentException("CIC is not set in message");
+    	}
 		TransactionKey key = msg.generateTransactionKey();
         if (this.transactionMap.containsKey(key)) {
             throw new TransactionAlredyExistsException("Transaction already exists for key: " + key);

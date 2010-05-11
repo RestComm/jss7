@@ -169,9 +169,12 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 	public void setTransaction(ISUPTransaction tx) {
 		this.tx = tx;
 	}
-	//FIXME: this must be done by each msg, to be implemented.
+	
 	public TransactionKey generateTransactionKey() {
-		return null;
+		//XXX: this must be done by each msg, to be implemented.
+		//NOTE: its subject to change!
+
+		throw new UnsupportedOperationException();
 	}
 
 	// ////////////////

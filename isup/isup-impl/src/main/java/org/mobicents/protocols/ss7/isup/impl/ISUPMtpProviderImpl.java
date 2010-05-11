@@ -97,7 +97,7 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MTPL
     private MTPProvider mtpProvider;
 
     
-    private boolean linkUp = false;
+   //private boolean linkUp = false;
     
     //preconfigured values of routing label.
 	private ActionReference actionReference;
@@ -142,6 +142,14 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MTPL
      * .ss7.isup.message.ISUPMessage)
      */
     public ISUPClientTransaction createClientTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException {
+    	if(msg == null)
+    	{
+    		throw new IllegalArgumentException("Parameter is null");
+    	}
+    	if(msg.getCircuitIdentificationCode() == null)
+    	{
+    		throw new IllegalArgumentException("CIC is not set in message");
+    	}
         TransactionKey key = msg.generateTransactionKey();
         if (this.transactionMap.containsKey(key)) {
             throw new TransactionAlredyExistsException("Transaction already exists for key: " + key);
@@ -165,6 +173,14 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MTPL
      * .ss7.isup.message.ISUPMessage)
      */
     public ISUPServerTransaction createServerTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException {
+    	if(msg == null)
+    	{
+    		throw new IllegalArgumentException("Parameter is null");
+    	}
+    	if(msg.getCircuitIdentificationCode() == null)
+    	{
+    		throw new IllegalArgumentException("CIC is not set in message");
+    	}
         TransactionKey key = msg.generateTransactionKey();
         if (this.transactionMap.containsKey(key)) {
             throw new TransactionAlredyExistsException("Transaction already exists for key: " + key);
@@ -209,7 +225,7 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MTPL
             mtpProvider.send(bos.toByteArray());
 
         } else {
-            throw new ParameterRangeInvalidException("Message does not have all madnatory parameters");
+            throw new ParameterRangeInvalidException("Message does not have all mandatory parameters");
         }
     }
 
@@ -272,7 +288,16 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MTPL
                
                 ISUPTransaction  tx =  preprocessIncomingMessage(msg,actionReference);
                 
-
+                for(int index = 0 ;index<listeners.size();index++)
+                {
+                	try{
+                		ISUPListener lst = listeners.get(index);
+                		lst.onMessage(msg);
+                	}catch(Exception e)
+                	{
+                		e.printStackTrace();
+                	}
+                }
 
                 
                 //post process for CTX
