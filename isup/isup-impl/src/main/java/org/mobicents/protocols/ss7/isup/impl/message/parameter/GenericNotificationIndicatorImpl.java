@@ -30,7 +30,7 @@ public class GenericNotificationIndicatorImpl extends AbstractParameter implemen
 
 	public GenericNotificationIndicatorImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public GenericNotificationIndicatorImpl(int[] notificationIndicator) {

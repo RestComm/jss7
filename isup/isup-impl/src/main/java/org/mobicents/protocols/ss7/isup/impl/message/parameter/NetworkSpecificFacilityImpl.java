@@ -44,7 +44,7 @@ public class NetworkSpecificFacilityImpl extends AbstractParameter implements Ne
 
 	public NetworkSpecificFacilityImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public NetworkSpecificFacilityImpl(boolean includeNetworkIdentification, byte typeOfNetworkIdentification, byte networkdIdentificationPlan, byte[] networkdIdentification,

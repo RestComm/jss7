@@ -26,7 +26,7 @@ public class EndOfOptionalParametersImpl extends AbstractParameter implements En
 
 	public EndOfOptionalParametersImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public EndOfOptionalParametersImpl(byte[] b) {

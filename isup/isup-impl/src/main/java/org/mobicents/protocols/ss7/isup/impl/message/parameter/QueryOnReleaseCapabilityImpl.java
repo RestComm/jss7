@@ -31,7 +31,7 @@ public class QueryOnReleaseCapabilityImpl extends AbstractParameter implements Q
 
 	public QueryOnReleaseCapabilityImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

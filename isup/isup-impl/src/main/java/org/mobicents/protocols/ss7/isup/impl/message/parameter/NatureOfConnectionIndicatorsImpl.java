@@ -36,7 +36,7 @@ public class NatureOfConnectionIndicatorsImpl extends AbstractParameter implemen
 
 	public NatureOfConnectionIndicatorsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public NatureOfConnectionIndicatorsImpl(byte satelliteIndicator, byte continuityCheckIndicator, boolean echoControlDeviceIndicator) {

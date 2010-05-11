@@ -39,7 +39,7 @@ public class GenericDigitsImpl extends AbstractParameter implements GenericDigit
 
 	public GenericDigitsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

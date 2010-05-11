@@ -26,14 +26,14 @@ public class ApplicationTransportMessageImpl extends ISUPMessageImpl implements 
 	 */
 	public ApplicationTransportMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public ApplicationTransportMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

@@ -34,7 +34,7 @@ public class TransmissionMediumUsedImpl extends AbstractParameter implements Tra
 
 	public TransmissionMediumUsedImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public TransmissionMediumUsedImpl(byte[] b) throws ParameterRangeInvalidException {

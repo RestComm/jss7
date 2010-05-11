@@ -31,7 +31,7 @@ public class CauseIndicatorsImpl extends AbstractParameter implements CauseIndic
 
 	public CauseIndicatorsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public CauseIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {

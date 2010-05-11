@@ -14,6 +14,7 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  *         </a>
  */
 public interface GVNSUserGroup extends AbstractNumberInterface, ISUPParameter {
+	//FIXME: fill this!
 	public static final int _PARAMETER_CODE = 0;
 	public int getGugLengthIndicator() ;
 

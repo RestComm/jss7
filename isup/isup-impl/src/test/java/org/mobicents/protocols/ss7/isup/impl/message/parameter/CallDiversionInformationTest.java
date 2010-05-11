@@ -23,7 +23,7 @@ public class CallDiversionInformationTest extends ParameterHarness {
 
 	public CallDiversionInformationTest() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 		super.badBodies.add(new byte[0]);
 		super.badBodies.add(new byte[2]);
 

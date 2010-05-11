@@ -30,12 +30,12 @@ public class HTRInformationImpl extends AbstractNAINumber implements HTRInformat
 
 	public HTRInformationImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public HTRInformationImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public HTRInformationImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator) {
@@ -45,7 +45,7 @@ public class HTRInformationImpl extends AbstractNAINumber implements HTRInformat
 
 	public HTRInformationImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

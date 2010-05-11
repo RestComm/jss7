@@ -23,7 +23,7 @@ public class CallOfferingTreatmentIndicatorsImpl extends AbstractParameter imple
 
 	private byte[] callOfferingTreatmentIndicators = null;
 
-	public CallOfferingTreatmentIndicatorsImpl() throws ParameterRangeInvalidException {
+	public CallOfferingTreatmentIndicatorsImpl() {
 		super();
 
 	}

@@ -26,14 +26,14 @@ public class PreReleaseInformationMessageImpl extends ISUPMessageImpl implements
 	 */
 	public PreReleaseInformationMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public PreReleaseInformationMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

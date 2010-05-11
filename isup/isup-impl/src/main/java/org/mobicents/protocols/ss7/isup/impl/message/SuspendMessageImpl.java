@@ -26,14 +26,14 @@ public class SuspendMessageImpl extends ISUPMessageImpl implements SuspendMessag
 	 */
 	public SuspendMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public SuspendMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

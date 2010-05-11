@@ -26,14 +26,14 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
 	 */
 	public ConnectMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public ConnectMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

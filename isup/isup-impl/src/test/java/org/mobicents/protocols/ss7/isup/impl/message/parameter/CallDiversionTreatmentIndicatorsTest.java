@@ -15,7 +15,7 @@ public class CallDiversionTreatmentIndicatorsTest extends ParameterHarness {
 	
 	public CallDiversionTreatmentIndicatorsTest() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 		//super.badBodies.add(new byte[0]);
 		
 		super.goodBodies.add(getBody1());

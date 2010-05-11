@@ -58,7 +58,7 @@ public abstract class AbstractPointCode extends AbstractParameter implements Abs
 
 	public AbstractPointCode() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 	public AbstractPointCode(byte[] b) throws ParameterRangeInvalidException{
 		super();

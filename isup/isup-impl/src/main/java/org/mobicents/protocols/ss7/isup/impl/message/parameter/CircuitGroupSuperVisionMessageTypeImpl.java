@@ -40,7 +40,7 @@ public class CircuitGroupSuperVisionMessageTypeImpl extends AbstractParameter im
 
 	public CircuitGroupSuperVisionMessageTypeImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

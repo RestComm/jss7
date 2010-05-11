@@ -28,22 +28,22 @@ public class SCFIDImpl extends NetworkRoutingNumberImpl implements SCFID{
 	// http://www.itu.int/ITU-T/asn1/database/itu-t/q/q1238.2/2000/IN-CS3-SSF-SCF-datatypes.html
 	public SCFIDImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public SCFIDImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public SCFIDImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public SCFIDImpl(String address, int numberingPlanIndicator, int natureOfAddressIndicator) {
 		super(address, numberingPlanIndicator, natureOfAddressIndicator);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public int getCode() {

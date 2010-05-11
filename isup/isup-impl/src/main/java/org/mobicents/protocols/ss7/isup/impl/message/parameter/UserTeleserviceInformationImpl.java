@@ -36,7 +36,7 @@ public class UserTeleserviceInformationImpl extends AbstractParameter implements
 
 	public UserTeleserviceInformationImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public UserTeleserviceInformationImpl(int codingStandard, int interpretation, int presentationMethod, int highLayerCharIdentification) {

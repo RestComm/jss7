@@ -25,7 +25,7 @@ public class CircuitIdentificationCodeImpl extends AbstractParameter implements 
 	 * 	
 	 */
 	public CircuitIdentificationCodeImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

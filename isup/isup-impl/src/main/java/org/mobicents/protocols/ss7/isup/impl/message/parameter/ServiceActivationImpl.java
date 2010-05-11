@@ -31,7 +31,7 @@ public class ServiceActivationImpl extends AbstractParameter implements ServiceA
 
 	public ServiceActivationImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ServiceActivationImpl(byte[] featureCodes) {

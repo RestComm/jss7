@@ -26,14 +26,14 @@ public class SubsequentDirectoryNumberMessageImpl extends ISUPMessageImpl implem
 	 */
 	public SubsequentDirectoryNumberMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public SubsequentDirectoryNumberMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

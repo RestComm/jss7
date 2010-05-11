@@ -36,7 +36,7 @@ public class ConnectionRequestImpl extends AbstractParameter implements Connecti
 
 	public ConnectionRequestImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ConnectionRequestImpl(int localReference, int signalingPointCode, int protocolClass, int credit) {

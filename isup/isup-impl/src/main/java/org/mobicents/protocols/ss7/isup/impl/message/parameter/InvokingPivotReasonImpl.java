@@ -30,7 +30,7 @@ public class InvokingPivotReasonImpl extends AbstractParameter implements Invoki
 
 	public InvokingPivotReasonImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

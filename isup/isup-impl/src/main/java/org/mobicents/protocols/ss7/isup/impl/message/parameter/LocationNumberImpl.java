@@ -41,17 +41,17 @@ public class LocationNumberImpl extends AbstractNAINumber implements LocationNum
 
 	public LocationNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public LocationNumberImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public LocationNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

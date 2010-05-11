@@ -26,14 +26,14 @@ public class SegmentationMessageImpl extends ISUPMessageImpl implements Segmenta
 	 */
 	public SegmentationMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public SegmentationMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

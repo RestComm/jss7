@@ -13,9 +13,8 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface InstructionIndicators extends ISUPParameter {
-	// FIXME: XXX
+	//FIXME: fill this!
 	public static final int _PARAMETER_CODE = 0;
-	//FIXME: add C defs
 	
 	/**
 	 * See Q.763 3.41 Transit at intermediate exchange indicator : transit

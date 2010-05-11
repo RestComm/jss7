@@ -35,7 +35,7 @@ public class MCIDRequestIndicatorsImpl extends AbstractParameter implements MCID
 
 	public MCIDRequestIndicatorsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public MCIDRequestIndicatorsImpl(boolean mcidRequest, boolean holdingRequested) {

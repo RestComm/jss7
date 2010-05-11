@@ -29,7 +29,7 @@ public class MLPPPrecedenceImpl extends AbstractParameter implements MLPPPrecede
 
 	public MLPPPrecedenceImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public MLPPPrecedenceImpl(byte[] b) throws ParameterRangeInvalidException {

@@ -38,12 +38,12 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 	 */
 	public CallingPartyNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
-	public CallingPartyNumberImpl() throws ParameterRangeInvalidException {
+	public CallingPartyNumberImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 	 */
 	public CallingPartyNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public CallingPartyNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int numberIncompleteIndicator, int addressRepresentationREstrictedIndicator,

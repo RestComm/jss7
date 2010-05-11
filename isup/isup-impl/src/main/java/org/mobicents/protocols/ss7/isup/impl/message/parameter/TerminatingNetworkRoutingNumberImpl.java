@@ -30,17 +30,17 @@ public class TerminatingNetworkRoutingNumberImpl extends AbstractNumber implemen
 
 	public TerminatingNetworkRoutingNumberImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public TerminatingNetworkRoutingNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public TerminatingNetworkRoutingNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public TerminatingNetworkRoutingNumberImpl(int numberingPlanIndicator) {

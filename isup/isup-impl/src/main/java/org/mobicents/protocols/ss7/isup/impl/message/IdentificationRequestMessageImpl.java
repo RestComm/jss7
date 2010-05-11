@@ -26,14 +26,14 @@ public class IdentificationRequestMessageImpl extends ISUPMessageImpl implements
 	 */
 	public IdentificationRequestMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public IdentificationRequestMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

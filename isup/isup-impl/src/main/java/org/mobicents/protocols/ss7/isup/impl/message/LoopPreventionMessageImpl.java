@@ -26,14 +26,14 @@ public class LoopPreventionMessageImpl extends ISUPMessageImpl implements LoopPr
 	 */
 	public LoopPreventionMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public LoopPreventionMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

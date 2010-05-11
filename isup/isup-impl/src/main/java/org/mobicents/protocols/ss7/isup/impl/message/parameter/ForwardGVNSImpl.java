@@ -44,7 +44,10 @@ public class ForwardGVNSImpl extends AbstractParameter implements ForwardGVNS{
 		super();
 		decodeElement(b);
 	}
+	public ForwardGVNSImpl()  {
+		super();
 
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

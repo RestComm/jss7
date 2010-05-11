@@ -35,12 +35,12 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
 	 */
 	public ConnectedNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ConnectedNumberImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
 	 */
 	public ConnectedNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ConnectedNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator, int screeningIndicator) {

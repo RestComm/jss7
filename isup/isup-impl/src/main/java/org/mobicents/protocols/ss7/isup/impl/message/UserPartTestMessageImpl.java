@@ -26,14 +26,14 @@ public class UserPartTestMessageImpl extends ISUPMessageImpl implements UserPart
 	 */
 	public UserPartTestMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public UserPartTestMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

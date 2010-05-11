@@ -34,17 +34,17 @@ public class GVNSUserGroupImpl extends AbstractNumber implements GVNSUserGroup{
 
 	public GVNSUserGroupImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public GVNSUserGroupImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public GVNSUserGroupImpl(String address) {
 		super(address);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

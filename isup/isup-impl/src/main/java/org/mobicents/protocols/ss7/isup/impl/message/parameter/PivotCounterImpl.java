@@ -30,7 +30,7 @@ public class PivotCounterImpl extends AbstractParameter implements PivotCounter 
 
 	public PivotCounterImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public PivotCounterImpl(int counter) {

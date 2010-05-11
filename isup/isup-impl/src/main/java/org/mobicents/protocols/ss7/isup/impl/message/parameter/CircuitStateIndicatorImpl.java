@@ -30,7 +30,7 @@ public class CircuitStateIndicatorImpl extends AbstractParameter implements Circ
 
 	public CircuitStateIndicatorImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

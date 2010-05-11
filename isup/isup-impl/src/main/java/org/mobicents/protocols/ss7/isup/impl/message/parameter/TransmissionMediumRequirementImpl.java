@@ -38,7 +38,7 @@ public class TransmissionMediumRequirementImpl extends AbstractParameter impleme
 
 	public TransmissionMediumRequirementImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	// Defualt indicate speech

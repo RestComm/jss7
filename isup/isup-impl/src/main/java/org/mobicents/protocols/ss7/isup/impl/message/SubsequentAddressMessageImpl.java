@@ -26,14 +26,14 @@ public class SubsequentAddressMessageImpl extends ISUPMessageImpl implements Sub
 	 */
 	public SubsequentAddressMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public SubsequentAddressMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

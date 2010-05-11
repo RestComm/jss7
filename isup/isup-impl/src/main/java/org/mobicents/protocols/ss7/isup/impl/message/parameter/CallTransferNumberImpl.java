@@ -32,12 +32,12 @@ public class CallTransferNumberImpl extends AbstractNAINumber implements CallTra
 	 */
 	public CallTransferNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public CallTransferNumberImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class CallTransferNumberImpl extends AbstractNAINumber implements CallTra
 	 */
 	public CallTransferNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public CallTransferNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator, int screeningIndicator) {

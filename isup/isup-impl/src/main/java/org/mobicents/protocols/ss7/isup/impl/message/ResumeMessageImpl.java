@@ -26,14 +26,14 @@ public class ResumeMessageImpl extends ISUPMessageImpl implements ResumeMessage 
 	 */
 	public ResumeMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public ResumeMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

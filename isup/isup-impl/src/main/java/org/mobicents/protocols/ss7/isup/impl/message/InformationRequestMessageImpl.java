@@ -26,14 +26,14 @@ public class InformationRequestMessageImpl extends ISUPMessageImpl implements In
 	 */
 	public InformationRequestMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public InformationRequestMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

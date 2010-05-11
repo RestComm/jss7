@@ -46,7 +46,7 @@ public class UserServiceInformationImpl extends AbstractParameter implements Use
 
 	public UserServiceInformationImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 	public UserServiceInformationImpl(byte[] b) throws ParameterRangeInvalidException {
 		super();

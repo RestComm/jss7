@@ -26,14 +26,14 @@ public class ContinuityMessageImpl extends ISUPMessageImpl implements Continuity
 	 */
 	public ContinuityMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public ContinuityMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

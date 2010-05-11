@@ -34,16 +34,16 @@ public abstract class CalledNumberImpl extends AbstractNAINumber implements Call
 
 	public CalledNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
-	public CalledNumberImpl() throws ParameterRangeInvalidException {
+	public CalledNumberImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public CalledNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public CalledNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator) {

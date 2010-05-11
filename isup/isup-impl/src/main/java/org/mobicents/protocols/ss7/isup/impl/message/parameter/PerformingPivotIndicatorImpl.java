@@ -35,7 +35,7 @@ public class PerformingPivotIndicatorImpl extends AbstractParameter implements P
 
 	public PerformingPivotIndicatorImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

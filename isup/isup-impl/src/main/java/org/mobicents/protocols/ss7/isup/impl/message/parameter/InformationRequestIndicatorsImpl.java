@@ -40,7 +40,7 @@ public class InformationRequestIndicatorsImpl extends AbstractParameter implemen
 
 	public InformationRequestIndicatorsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public InformationRequestIndicatorsImpl(boolean callingPartAddressRequestIndicator, boolean holdingIndicator, boolean callingpartysCategoryRequestIndicator,

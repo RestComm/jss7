@@ -28,7 +28,7 @@ public class EchoControlInformationImpl extends AbstractParameter implements Ech
 
 	public EchoControlInformationImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public EchoControlInformationImpl(int outgoingEchoControlDeviceInformationIndicator, int incomingEchoControlDeviceInformationIndicator, int outgoingEchoControlDeviceInformationRequestIndicator,

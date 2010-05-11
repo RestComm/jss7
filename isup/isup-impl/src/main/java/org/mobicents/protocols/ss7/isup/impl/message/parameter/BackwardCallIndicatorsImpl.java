@@ -47,7 +47,7 @@ public class BackwardCallIndicatorsImpl extends AbstractParameter implements Bac
 
 	private int sccpMethodIndicator = 0;
 
-	public BackwardCallIndicatorsImpl() throws ParameterRangeInvalidException {
+	public BackwardCallIndicatorsImpl() {
 
 	}
 

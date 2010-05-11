@@ -26,14 +26,14 @@ public class FacilityRejectedMessageImpl extends ISUPMessageImpl implements Faci
 	 */
 	public FacilityRejectedMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public FacilityRejectedMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

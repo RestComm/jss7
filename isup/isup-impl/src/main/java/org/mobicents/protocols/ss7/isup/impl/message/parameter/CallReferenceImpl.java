@@ -35,7 +35,7 @@ public class CallReferenceImpl extends AbstractParameter implements CallReferenc
 
 	public CallReferenceImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public CallReferenceImpl(int callIdentity, int signalingPointCode) {

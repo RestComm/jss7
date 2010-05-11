@@ -26,14 +26,14 @@ public class ConfusionMessageImpl extends ISUPMessageImpl implements ConfusionMe
 	 */
 	public ConfusionMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public ConfusionMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

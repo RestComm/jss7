@@ -24,11 +24,10 @@ public class TransimissionMediumRequierementPrimeImpl extends AbstractParameter 
 	
 
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
+	public TransimissionMediumRequierementPrimeImpl() {
+		super();
+		
+	}
 
 	public TransimissionMediumRequierementPrimeImpl(int transimissionMediumRequirement) {
 		super();

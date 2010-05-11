@@ -27,7 +27,7 @@ public class CalledINNumberImpl extends CalledNumberImpl implements CalledINNumb
 	 */
 	public CalledINNumberImpl(byte[] representation) throws ParameterRangeInvalidException{
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
@@ -35,11 +35,11 @@ public class CalledINNumberImpl extends CalledNumberImpl implements CalledINNumb
 	 */
 	public CalledINNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
-	public CalledINNumberImpl() throws ParameterRangeInvalidException {
+	public CalledINNumberImpl()  {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class CalledINNumberImpl extends CalledNumberImpl implements CalledINNumb
 	 */
 	public CalledINNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator) {
 		super(natureOfAddresIndicator, address, numberingPlanIndicator, addressRepresentationREstrictedIndicator);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public int getCode() {

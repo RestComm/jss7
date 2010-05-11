@@ -16,6 +16,7 @@ import junit.framework.TestCase;
 import org.mobicents.protocols.ss7.isup.ISUPClientTransaction;
 import org.mobicents.protocols.ss7.isup.ISUPListener;
 import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ISUPProvider;
 import org.mobicents.protocols.ss7.isup.ISUPServerTransaction;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
@@ -119,7 +120,12 @@ public abstract class MessageHarness extends TestCase implements ISUPProvider {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	public ISUPParameterFactory getParameterFactory() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public void removeListener(ISUPListener listener) {
 		// TODO Auto-generated method stub
 

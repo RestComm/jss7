@@ -64,9 +64,12 @@ public interface ISUPProvider {
 	public void addListener(ISUPListener listener);
 	public void removeListener(ISUPListener listener);
 	
+	public ISUPParameterFactory getParameterFactory(); 
 	public ISUPMessageFactory getMessageFactory();
 	public ISUPClientTransaction createClientTransaction(ISUPMessage msg) throws   TransactionAlredyExistsException, IllegalArgumentException; 
-	public ISUPServerTransaction createServerTransaction(ISUPMessage msg) throws   TransactionAlredyExistsException, IllegalArgumentException; 
+	public ISUPServerTransaction createServerTransaction(ISUPMessage msg) throws   TransactionAlredyExistsException, IllegalArgumentException;
+
+
     
 	
 	//FIXME: add sccp methods for connection creation

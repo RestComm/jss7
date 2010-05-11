@@ -35,7 +35,7 @@ public class RangeAndStatusImpl extends AbstractParameter implements RangeAndSta
 
 	public RangeAndStatusImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public RangeAndStatusImpl(byte range, byte[] status) {

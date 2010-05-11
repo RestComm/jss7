@@ -28,7 +28,7 @@ public class BackwardGVNSImpl extends AbstractParameter implements BackwardGVNS 
 		decodeElement(backwardGVNS);
 	}
 
-	public BackwardGVNSImpl() throws ParameterRangeInvalidException {
+	public BackwardGVNSImpl()  {
 		super();
 
 	}

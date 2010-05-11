@@ -30,7 +30,7 @@ public class AutomaticCongestionLevelImpl extends AbstractParameter implements A
 	
 	public AutomaticCongestionLevelImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 	public AutomaticCongestionLevelImpl(byte[] b) throws ParameterRangeInvalidException {
 		super();

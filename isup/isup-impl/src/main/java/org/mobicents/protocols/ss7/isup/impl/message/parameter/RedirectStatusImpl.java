@@ -28,7 +28,7 @@ public class RedirectStatusImpl extends AbstractParameter implements RedirectSta
 
 	public RedirectStatusImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public RedirectStatusImpl(byte[] b) throws ParameterRangeInvalidException {

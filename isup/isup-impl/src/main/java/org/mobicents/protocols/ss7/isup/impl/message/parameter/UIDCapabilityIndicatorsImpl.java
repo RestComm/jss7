@@ -34,7 +34,7 @@ public class UIDCapabilityIndicatorsImpl extends AbstractParameter implements UI
 
 	public UIDCapabilityIndicatorsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

@@ -24,18 +24,18 @@ public class CorrelationIDImpl extends GenericDigitsImpl implements CorrelationI
 
 	public CorrelationIDImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public CorrelationIDImpl(byte[] b) throws ParameterRangeInvalidException {
 		super(b);
 
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public CorrelationIDImpl(int encodignScheme, int typeOfDigits, int[] digits) {
 		super(encodignScheme, typeOfDigits, digits);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	// FIXME: Q.1218 -- weird document.... Oleg is this correct? or should it be

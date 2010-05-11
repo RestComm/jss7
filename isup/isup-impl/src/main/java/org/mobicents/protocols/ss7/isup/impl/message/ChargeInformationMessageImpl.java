@@ -26,14 +26,14 @@ public class ChargeInformationMessageImpl extends ISUPMessageImpl implements Cha
 	 */
 	public ChargeInformationMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public ChargeInformationMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

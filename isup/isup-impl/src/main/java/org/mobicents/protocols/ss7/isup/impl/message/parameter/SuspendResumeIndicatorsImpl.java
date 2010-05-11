@@ -28,7 +28,7 @@ public class SuspendResumeIndicatorsImpl extends AbstractParameter implements Su
 
 	public SuspendResumeIndicatorsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public SuspendResumeIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {

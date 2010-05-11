@@ -28,7 +28,7 @@ public class RedirectingNumberImpl extends AbstractNAINumber implements Redirect
 
 	public RedirectingNumberImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public RedirectingNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationRestrictedIndicator) {
@@ -45,12 +45,12 @@ public class RedirectingNumberImpl extends AbstractNAINumber implements Redirect
 	 */
 	public RedirectingNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public RedirectingNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override

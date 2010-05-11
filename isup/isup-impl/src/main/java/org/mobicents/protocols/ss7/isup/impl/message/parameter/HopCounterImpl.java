@@ -32,7 +32,7 @@ public class HopCounterImpl extends AbstractParameter implements HopCounter{
 
 	public HopCounterImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public HopCounterImpl(int hopCounter) {

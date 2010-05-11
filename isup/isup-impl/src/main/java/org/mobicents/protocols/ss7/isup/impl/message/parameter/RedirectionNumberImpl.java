@@ -28,17 +28,17 @@ public class RedirectionNumberImpl extends AbstractNAINumber implements Redirect
 
 	public RedirectionNumberImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public RedirectionNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public RedirectionNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public RedirectionNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator) {

@@ -36,7 +36,7 @@ public class MCIDResponseIndicatorsImpl extends AbstractParameter implements MCI
 
 	public MCIDResponseIndicatorsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public MCIDResponseIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {

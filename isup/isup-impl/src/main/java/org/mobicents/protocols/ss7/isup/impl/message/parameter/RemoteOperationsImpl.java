@@ -32,7 +32,7 @@ public class RemoteOperationsImpl extends AbstractParameter implements RemoteOpe
 
 	public RemoteOperationsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {

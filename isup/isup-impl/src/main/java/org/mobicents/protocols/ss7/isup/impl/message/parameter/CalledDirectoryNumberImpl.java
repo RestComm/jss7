@@ -36,7 +36,7 @@ public class CalledDirectoryNumberImpl extends AbstractNAINumber implements Call
 	 */
 	public CalledDirectoryNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 		getNumberingPlanIndicator();
 	}
 
@@ -46,11 +46,11 @@ public class CalledDirectoryNumberImpl extends AbstractNAINumber implements Call
 	 */
 	public CalledDirectoryNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
-	public CalledDirectoryNumberImpl() throws ParameterRangeInvalidException {
+	public CalledDirectoryNumberImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 	public CalledDirectoryNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator) {
 		super(natureOfAddresIndicator, address);

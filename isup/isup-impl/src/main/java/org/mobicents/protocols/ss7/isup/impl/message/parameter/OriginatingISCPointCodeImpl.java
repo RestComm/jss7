@@ -28,7 +28,7 @@ public class OriginatingISCPointCodeImpl extends AbstractPointCode implements Or
 
 	public OriginatingISCPointCodeImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 	public OriginatingISCPointCodeImpl(byte[] b) throws ParameterRangeInvalidException {
 		super(b);

@@ -30,7 +30,7 @@ public class CallTransferReferenceImpl extends AbstractParameter implements Call
 
 	public CallTransferReferenceImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public CallTransferReferenceImpl(int callTransferReference) {

@@ -26,14 +26,14 @@ public class FacilityMessageImpl extends ISUPMessageImpl implements FacilityMess
 	 */
 	public FacilityMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public FacilityMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

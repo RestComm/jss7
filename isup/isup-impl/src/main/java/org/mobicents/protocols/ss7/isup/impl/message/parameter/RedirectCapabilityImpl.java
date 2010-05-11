@@ -25,7 +25,10 @@ public class RedirectCapabilityImpl extends AbstractParameter implements Redirec
 	
 
 	private byte[] capabilities;
-
+	public RedirectCapabilityImpl()  {
+		super();
+		
+	}
 	public RedirectCapabilityImpl(byte[] capabilities) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(capabilities);

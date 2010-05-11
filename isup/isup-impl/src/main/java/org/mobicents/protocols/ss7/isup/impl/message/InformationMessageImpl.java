@@ -26,14 +26,14 @@ public class InformationMessageImpl extends ISUPMessageImpl implements Informati
 	 */
 	public InformationMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public InformationMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

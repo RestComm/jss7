@@ -23,22 +23,22 @@ public class OriginalCalledINNumberImpl extends CalledNumberImpl implements Orig
 
 	public OriginalCalledINNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public OriginalCalledINNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public OriginalCalledINNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator) {
 		super(natureOfAddresIndicator, address, numberingPlanIndicator, addressRepresentationREstrictedIndicator);
-		// TODO Auto-generated constructor stub
+		
 	}
 
-	public OriginalCalledINNumberImpl() throws ParameterRangeInvalidException {
+	public OriginalCalledINNumberImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public int getCode() {

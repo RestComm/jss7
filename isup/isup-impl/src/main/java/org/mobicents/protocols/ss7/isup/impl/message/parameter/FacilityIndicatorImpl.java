@@ -30,7 +30,7 @@ public class FacilityIndicatorImpl extends AbstractParameter implements Facility
 
 	public FacilityIndicatorImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public FacilityIndicatorImpl(int facilityIndicator) {

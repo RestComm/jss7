@@ -38,7 +38,7 @@ public class ParameterCompatibilityInformationImpl extends AbstractParameter imp
 
 	public ParameterCompatibilityInformationImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

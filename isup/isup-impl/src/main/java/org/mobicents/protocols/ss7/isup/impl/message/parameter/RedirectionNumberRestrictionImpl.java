@@ -31,7 +31,7 @@ public class RedirectionNumberRestrictionImpl extends AbstractParameter implemen
 
 	public RedirectionNumberRestrictionImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public RedirectionNumberRestrictionImpl(byte[] b) throws ParameterRangeInvalidException {

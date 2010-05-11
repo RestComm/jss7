@@ -26,14 +26,14 @@ public class ForwardTransferMessageImpl extends ISUPMessageImpl implements Forwa
 	 */
 	public ForwardTransferMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public ForwardTransferMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

@@ -28,7 +28,7 @@ public class PivotRoutingIndicatorsImpl extends AbstractParameter implements Piv
 
 	public PivotRoutingIndicatorsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public PivotRoutingIndicatorsImpl(byte[] pivotRoutingIndicators) throws ParameterRangeInvalidException {

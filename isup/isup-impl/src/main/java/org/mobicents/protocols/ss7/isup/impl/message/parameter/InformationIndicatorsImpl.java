@@ -39,7 +39,7 @@ public class InformationIndicatorsImpl extends AbstractParameter implements Info
 
 	public InformationIndicatorsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public InformationIndicatorsImpl(int callingPartyAddressResponseIndicator, boolean holdProvidedIndicator, boolean callingPartysCategoryResponseIndicator,

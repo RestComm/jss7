@@ -28,12 +28,12 @@ public class SignalingPointCodeImpl extends AbstractPointCode implements Signali
 
 	public SignalingPointCodeImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public SignalingPointCodeImpl(byte[] b) throws ParameterRangeInvalidException {
 		super(b);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

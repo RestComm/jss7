@@ -33,7 +33,7 @@ public class ClosedUserGroupInterlockCodeImpl extends AbstractParameter implemen
 
 	public ClosedUserGroupInterlockCodeImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**

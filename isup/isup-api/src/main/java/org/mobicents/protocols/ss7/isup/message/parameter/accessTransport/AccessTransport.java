@@ -15,5 +15,6 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface AccessTransport extends ISUPParameter {
+	//FIXME: fill this!
 	public static final int _PARAMETER_CODE = 0x03;
 }

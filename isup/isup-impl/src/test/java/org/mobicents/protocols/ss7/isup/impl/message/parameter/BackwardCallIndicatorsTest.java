@@ -27,7 +27,7 @@ public class BackwardCallIndicatorsTest extends ParameterHarness {
 
 	public BackwardCallIndicatorsTest() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 		super.badBodies.add(new byte[1]);
 		super.badBodies.add(new byte[3]);
 

@@ -24,22 +24,22 @@ public class SubsequentNumberImpl extends AbstractNAINumber implements Subsequen
 
 	public SubsequentNumberImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public SubsequentNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public SubsequentNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public SubsequentNumberImpl(String address) {
 		super(0, address);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

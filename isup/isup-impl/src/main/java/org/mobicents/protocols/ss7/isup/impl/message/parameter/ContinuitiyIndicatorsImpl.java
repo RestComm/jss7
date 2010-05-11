@@ -37,7 +37,7 @@ public class ContinuitiyIndicatorsImpl extends AbstractParameter implements Cont
 
 	public ContinuitiyIndicatorsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ContinuitiyIndicatorsImpl(boolean continuityCheck) {

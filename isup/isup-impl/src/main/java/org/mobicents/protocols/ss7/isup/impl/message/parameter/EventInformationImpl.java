@@ -34,7 +34,7 @@ public class EventInformationImpl extends AbstractParameter implements EventInfo
 
 	public EventInformationImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public EventInformationImpl(int eventIndicator) {

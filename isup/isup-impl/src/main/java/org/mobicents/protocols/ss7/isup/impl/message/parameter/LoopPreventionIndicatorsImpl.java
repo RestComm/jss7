@@ -30,6 +30,11 @@ public class LoopPreventionIndicatorsImpl extends AbstractParameter implements L
 	private boolean response ;
 	private int responseIndicator;
 
+	public LoopPreventionIndicatorsImpl() {
+		super();
+		
+	}
+	
 	public LoopPreventionIndicatorsImpl(boolean response, int responseIndicator) {
 		super();
 		this.response = response;

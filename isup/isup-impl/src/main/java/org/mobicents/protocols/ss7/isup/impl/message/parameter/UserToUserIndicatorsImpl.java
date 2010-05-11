@@ -36,7 +36,7 @@ public class UserToUserIndicatorsImpl extends AbstractParameter implements UserT
 
 	public UserToUserIndicatorsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public UserToUserIndicatorsImpl(boolean response, int serviceOne, int serviceTwo, int serviceThree, boolean networkDiscardIndicator) {

@@ -33,7 +33,7 @@ public class CollectCallRequestImpl extends AbstractParameter implements Collect
 
 	public CollectCallRequestImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public CollectCallRequestImpl(byte[] b) throws ParameterRangeInvalidException {

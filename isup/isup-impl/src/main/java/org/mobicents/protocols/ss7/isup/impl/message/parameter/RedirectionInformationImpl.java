@@ -39,7 +39,9 @@ public class RedirectionInformationImpl extends AbstractParameter implements Red
 		this.setRedirectionCounter(redirectionCounter);
 		this.setRedirectionReason(redirectionReason);
 	}
-
+	public RedirectionInformationImpl() {
+		super();
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

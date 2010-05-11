@@ -14,5 +14,6 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  *         </a>
  */
 public interface UserServiceInformation extends ISUPParameter {
+	//FIXME: fill this!
 	public static final int _PARAMETER_CODE = 0x1D;
 }

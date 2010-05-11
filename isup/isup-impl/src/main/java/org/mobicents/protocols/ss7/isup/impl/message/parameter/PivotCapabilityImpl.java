@@ -28,7 +28,7 @@ public class PivotCapabilityImpl extends AbstractParameter implements PivotCapab
 
 	public PivotCapabilityImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

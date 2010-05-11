@@ -30,7 +30,7 @@ public class ApplicationTransportParameterImpl extends AbstractParameter impleme
 	
 
 	
-	public ApplicationTransportParameterImpl() throws ParameterRangeInvalidException{
+	public ApplicationTransportParameterImpl(){
 		super();
 
 	}

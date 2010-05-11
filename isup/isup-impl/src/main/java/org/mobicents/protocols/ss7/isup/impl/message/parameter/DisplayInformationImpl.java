@@ -34,7 +34,7 @@ public class DisplayInformationImpl extends AbstractParameter implements Display
 
 	public DisplayInformationImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

@@ -33,11 +33,12 @@ public class CallDiversionInformationImpl extends AbstractParameter implements C
 		this.redirectingReason = redirectingReason;
 	}
 
-	public CallDiversionInformationImpl() throws ParameterRangeInvalidException {
-
+	public CallDiversionInformationImpl()  {
+		super();
 	}
 
 	public CallDiversionInformationImpl(byte[] b) throws ParameterRangeInvalidException {
+		super();
 		decodeElement(b);
 	}
 

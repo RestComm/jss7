@@ -26,14 +26,14 @@ public class PassAlongMessageImpl extends ISUPMessageImpl implements PassAlongMe
 	 */
 	public PassAlongMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public PassAlongMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

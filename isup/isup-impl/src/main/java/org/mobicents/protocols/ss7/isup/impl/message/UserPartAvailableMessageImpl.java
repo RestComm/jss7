@@ -26,14 +26,14 @@ public class UserPartAvailableMessageImpl extends ISUPMessageImpl implements Use
 	 */
 	public UserPartAvailableMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public UserPartAvailableMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

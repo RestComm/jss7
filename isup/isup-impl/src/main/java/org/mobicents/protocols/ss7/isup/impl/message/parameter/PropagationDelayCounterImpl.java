@@ -25,7 +25,7 @@ public class PropagationDelayCounterImpl extends AbstractParameter implements Pr
 
 	public PropagationDelayCounterImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public PropagationDelayCounterImpl(byte[] b) throws ParameterRangeInvalidException {

@@ -26,14 +26,14 @@ public class NetworkResourceManagementMessageImpl extends ISUPMessageImpl implem
 	 */
 	public NetworkResourceManagementMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public NetworkResourceManagementMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

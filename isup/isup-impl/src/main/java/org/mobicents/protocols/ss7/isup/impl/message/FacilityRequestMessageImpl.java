@@ -26,14 +26,14 @@ public class FacilityRequestMessageImpl extends ISUPMessageImpl implements Facil
 	 */
 	public FacilityRequestMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public FacilityRequestMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

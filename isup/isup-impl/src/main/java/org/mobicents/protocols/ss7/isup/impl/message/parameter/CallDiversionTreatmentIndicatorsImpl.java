@@ -30,7 +30,7 @@ public class CallDiversionTreatmentIndicatorsImpl extends AbstractParameter impl
 	
 	public CallDiversionTreatmentIndicatorsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 	public CallDiversionTreatmentIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException{
 		super();

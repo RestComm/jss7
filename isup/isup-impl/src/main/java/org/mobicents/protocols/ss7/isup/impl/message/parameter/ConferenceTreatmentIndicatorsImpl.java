@@ -35,7 +35,7 @@ public class ConferenceTreatmentIndicatorsImpl extends AbstractParameter impleme
 
 	public ConferenceTreatmentIndicatorsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

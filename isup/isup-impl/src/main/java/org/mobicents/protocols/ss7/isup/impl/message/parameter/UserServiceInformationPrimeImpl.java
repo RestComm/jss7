@@ -46,7 +46,7 @@ public class UserServiceInformationPrimeImpl extends AbstractParameter implement
 
 	public UserServiceInformationPrimeImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public UserServiceInformationPrimeImpl(byte[] b) throws ParameterRangeInvalidException {

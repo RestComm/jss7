@@ -27,7 +27,7 @@ public class NetworkRoutingNumberImpl extends AbstractNumber implements NetworkR
 
 	public NetworkRoutingNumberImpl(String address) {
 		super(address);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public NetworkRoutingNumberImpl(String address, int numberingPlanIndicator, int natureOfAddressIndicator) {
@@ -38,17 +38,17 @@ public class NetworkRoutingNumberImpl extends AbstractNumber implements NetworkR
 
 	public NetworkRoutingNumberImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public NetworkRoutingNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public NetworkRoutingNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

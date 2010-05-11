@@ -42,7 +42,7 @@ public class OptionalForwardCallIndicatorsImpl extends AbstractParameter impleme
 
 	public OptionalForwardCallIndicatorsImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

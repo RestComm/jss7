@@ -45,7 +45,7 @@ public class CircuitAssigmentMapImpl extends AbstractParameter implements Circui
 
 	public CircuitAssigmentMapImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

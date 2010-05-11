@@ -56,7 +56,7 @@ public class TransitNetworkSelectionImpl extends AbstractParameter implements Tr
 
 	public TransitNetworkSelectionImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public byte[] encodeElement() throws IOException {

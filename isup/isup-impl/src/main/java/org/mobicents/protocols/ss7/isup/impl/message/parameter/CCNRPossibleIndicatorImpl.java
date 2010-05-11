@@ -32,7 +32,7 @@ public class CCNRPossibleIndicatorImpl extends AbstractParameter implements CCNR
 
 	public CCNRPossibleIndicatorImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public CCNRPossibleIndicatorImpl(boolean ccnrPossible) {

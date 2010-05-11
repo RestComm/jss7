@@ -50,12 +50,12 @@ public class GenericNumberImpl extends AbstractNAINumber implements GenericNumbe
 
 	public GenericNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public GenericNumberImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

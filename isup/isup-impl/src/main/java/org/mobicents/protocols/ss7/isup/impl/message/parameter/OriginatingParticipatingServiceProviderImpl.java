@@ -34,17 +34,17 @@ public class OriginatingParticipatingServiceProviderImpl extends AbstractNumber 
 
 	public OriginatingParticipatingServiceProviderImpl(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public OriginatingParticipatingServiceProviderImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public OriginatingParticipatingServiceProviderImpl(String address) {
 		super(address);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*

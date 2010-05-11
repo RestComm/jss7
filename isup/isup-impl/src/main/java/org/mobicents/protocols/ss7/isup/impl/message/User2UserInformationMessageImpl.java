@@ -26,14 +26,14 @@ public class User2UserInformationMessageImpl extends ISUPMessageImpl implements 
 	 */
 	public User2UserInformationMessageImpl(Object source){
 		super(source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
 	 * 	
 	 */
 	public User2UserInformationMessageImpl() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/* (non-Javadoc)

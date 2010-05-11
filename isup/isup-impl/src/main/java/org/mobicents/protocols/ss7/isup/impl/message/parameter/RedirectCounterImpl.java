@@ -35,7 +35,7 @@ public class RedirectCounterImpl extends AbstractParameter implements RedirectCo
 
 	public RedirectCounterImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/*
