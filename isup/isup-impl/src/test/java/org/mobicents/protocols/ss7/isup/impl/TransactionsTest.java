@@ -88,6 +88,28 @@ public class TransactionsTest extends TestCase {
 		
 	}
 	
-	
+	public void testREL() throws Exception
+	{
+		
+		ClientREL client = new ClientREL(this.isupStack1);
+		ServerREL server = new ServerREL(this.isupStack2);
+		this.isupStack1.getIsupProvider().addListener(client);
+		this.isupStack2.getIsupProvider().addListener(server);
+		provider1.indicateLinkUp();
+		provider2.indicateLinkUp();
+		
+		
+		
+		server.start();
+		client.start();
+		
+		
+		Thread.currentThread().sleep(10000);
+		
+		assertTrue("Client status: "+client.getStatus(),client.isPassed());
+		assertTrue("Server status: "+server.getStatus(),server.isPassed());
+		
+		
+	}
 	
 }

@@ -111,11 +111,20 @@ public class ISUPServerTransactionImpl extends ISUPTransactionImpl implements IS
 	 * .ss7.isup.message.ISUPMessage)
 	 */
 	public void sendAnswer(ISUPMessage msg) throws ParameterRangeInvalidException, IllegalArgumentException, IOException {
+		if(msg == null)
+		{
+			throw new NullPointerException("Message can not be null");
+		}
+		
+		if(msg.getCircuitIdentificationCode() == null)
+		{
+			throw new IllegalArgumentException("CIC is not set in message.");
+		}
 		synchronized (this.state) {
 			if (this.state != ISUPServerTransactionState.MESSAGE_RECEIVED || super.generalTimeoutFuture == null) {
 				throw new IOException("Bad transaction state, either transaction timed out or answer has been already sent back: "+this.state);
 			}
-
+			
 			// now the whole state machine!
 			switch (super.message.getMessageType().getCode()) {
 			case ISUPMessage._MESSAGE_CODE_IAM:

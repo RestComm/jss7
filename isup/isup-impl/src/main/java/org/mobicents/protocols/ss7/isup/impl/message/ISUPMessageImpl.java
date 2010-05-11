@@ -211,6 +211,11 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 		// defined by the message type; thus, the names of the parameters and
 		// the length indicators are not
 		// included in the message.
+		if(this.cic == null)
+		{
+			//this will be changed to different exception
+			throw new IOException("CIC is not set!");
+		}
 		this.cic.encodeElement(bos);
 		for (ISUPParameter p : parameters.values()) {
 			// System.err.println("ENCODE F: "+p.getCode()+"---> "+Utils.toHex(p.encodeElement()));
