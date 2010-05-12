@@ -314,7 +314,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 	private void performKeyOperations(Iterator selectedKeys) throws IOException {
 		while (selectedKeys.hasNext()) {
 			SelectionKey key = (SelectionKey) selectedKeys.next();
-			selectedKeys.remove();
+			//selectedKeys.remove();
 
 			if (!key.isValid()) {
 				// handle disconnect here?

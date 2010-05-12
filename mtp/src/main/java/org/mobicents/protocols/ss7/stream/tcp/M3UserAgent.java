@@ -250,7 +250,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 	// Server Side //
 	// ///////////////
 
-
+	private long ll = System.currentTimeMillis();
 	public void run() {
 		while (runnable) {
 			try {
@@ -294,6 +294,23 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 //						}
 						
 					}
+					if(System.currentTimeMillis() -ll >20000)
+					{
+						if(this.linkUp)
+							{
+								this.streamData(_LINK_STATE_UP);
+							}else
+							{
+								this.streamData(_LINK_STATE_DOWN);
+							}
+					}
+					if(System.currentTimeMillis() - ll>35000)
+					{
+
+						this.streamData(new byte[10]);
+						ll = System.currentTimeMillis();
+					}
+					
 				}
 				
 			} catch (Exception e) {
@@ -310,7 +327,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		while (selectedKeys.hasNext()) {
 
 			SelectionKey key = (SelectionKey) selectedKeys.next();
-			selectedKeys.remove();
+			//selectedKeys.remove();
 
 			if (!key.isValid()) {
 				// handle disconnect here?
