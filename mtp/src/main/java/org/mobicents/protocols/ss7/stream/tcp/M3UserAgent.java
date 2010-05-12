@@ -300,10 +300,11 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		while (selectedKeys.hasNext()) {
 
 			SelectionKey key = (SelectionKey) selectedKeys.next();
-			selectedKeys.remove();
+			//selectedKeys.remove();
 
 			if (!key.isValid()) {
 				// handle disconnect here?
+				logger.error("Key became invalid: "+key);
 				continue;
 			}
 

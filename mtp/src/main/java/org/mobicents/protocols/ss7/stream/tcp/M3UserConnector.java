@@ -298,7 +298,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 	private void performKeyOperations(Iterator selectedKeys) throws IOException {
 		while (selectedKeys.hasNext()) {
 			SelectionKey key = (SelectionKey) selectedKeys.next();
-			selectedKeys.remove();
+			//selectedKeys.remove();
 
 			if (!key.isValid()) {
 				// handle disconnect here?
@@ -437,9 +437,9 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 				socketChannel.write(txBuff);
 			} catch (IOException e) {
 
-				if (logger.isDebugEnabled()) {
+				//if (logger.isDebugEnabled()) {
 					e.printStackTrace();
-				}
+				//}
 				handleClose(key);
 				return;
 			}
@@ -460,9 +460,9 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 				socketChannel.write(txBuff);
 			} catch (IOException e) {
 
-				if (logger.isDebugEnabled()) {
+				//if (logger.isDebugEnabled()) {
 					e.printStackTrace();
-				}
+				//}
 				handleClose(key);
 				return;
 			}
