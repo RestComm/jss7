@@ -269,7 +269,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 												+ ":"
 												+ this.serverPort);
 							}
-							Thread.currentThread().sleep(5000);
+							Thread.currentThread().sleep(10000);
 						}
 						continue;
 					}
@@ -277,7 +277,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 
 					// else we try I/O ops.
 					if (this.readSelector.selectNow() > 0) {
-						logger.info("Performing read operation");
+
 						selectedKeys = this.readSelector.selectedKeys()
 								.iterator();
 						// operate on keys set
@@ -318,6 +318,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 
 			if (!key.isValid()) {
 				// handle disconnect here?
+				logger.error("Key has become invalid: "+key);
 				continue;
 			}
 

@@ -126,8 +126,8 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 
 
 		// layer3 has something important, lets write.
-		if(linkUp)
-		{
+		//if(linkUp)
+		//{
 			TLVOutputStream tlv = new TLVOutputStream();
 			try {
 				tlv.writeData(msgBuff);
@@ -138,7 +138,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 				e.printStackTrace();
 			}
 			
-		}
+		//}
 	}
 	
 	
@@ -505,8 +505,11 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 			{
 				logger.info("Sending data: "+txBuff);
 			}
-			socketChannel.write(txBuff);
-			
+			int sentCount = socketChannel.write(txBuff);
+			if(logger.isInfoEnabled())
+			{
+				logger.info("Sent data count: "+sentCount);
+			}
 			//if (buf.remaining() > 0) {
 			if(txBuff.remaining()>0)
 			{
