@@ -233,7 +233,24 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 			disconnect();
 			
 		}
-
+		if (this.connectSelector != null && this.connectSelector.isOpen()) {
+			try {
+				this.connectSelector.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	
+		}
+		if(this.serverSocketChannel!=null)
+		{
+			try {
+				this.serverSocketChannel.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	// ///////////////
@@ -539,14 +556,14 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		}
 		this.channel = null;
 
-		if (this.connectSelector != null && this.connectSelector.isOpen()) {
-			try {
-				this.connectSelector.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		if (this.connectSelector != null && this.connectSelector.isOpen()) {
+//			try {
+//				this.connectSelector.close();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 
 		if (this.readSelector != null && this.readSelector.isOpen()) {
 			try {
