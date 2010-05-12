@@ -84,7 +84,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 		tlv.writeData(msg);
 		synchronized (this.writeSelector) { 
 			this.hdlcHandler.addToTxBuffer(ByteBuffer.wrap(tlv.toByteArray()));
-			this.hdlcHandler.notify();
+			this.writeSelector.notify();
 		}
 		
 	}
