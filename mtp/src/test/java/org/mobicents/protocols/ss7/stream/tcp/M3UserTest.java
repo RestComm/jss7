@@ -172,6 +172,7 @@ public class M3UserTest implements MTPListener{
 		for(byte[] b:sendData)
 		{
 			agent.receive(b);
+			Thread.currentThread().sleep(500);
 		}
 		Thread.currentThread().sleep(500);
 		this.agent.linkDown();

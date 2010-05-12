@@ -479,7 +479,11 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		//while (!txBuffer.isEmpty()) {
 		if(txBuff.remaining()>0)
 		{
-			socketChannel.write(txBuff);
+			int  sentDataCount = socketChannel.write(txBuff);
+			if(logger.isInfoEnabled())
+			{
+				logger.info("Sent data: "+sentDataCount);
+			}
 			if(txBuff.remaining()>0)
 			{
 				//buffer filled.

@@ -262,7 +262,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 
 					// else we try I/O ops.
 					if (this.readSelector.selectNow() > 0) {
-
+						logger.info("Performing read operation");
 						selectedKeys = this.readSelector.selectedKeys()
 								.iterator();
 						// operate on keys set
@@ -322,7 +322,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 		// FIXME: we must ensure that we have whole frame here?
 		// Clear out our read buffer so it's ready for new data
 		this.readBuff.clear();
-
+		
 		// Attempt to read off the channel
 		int numRead = -1;
 		try {
