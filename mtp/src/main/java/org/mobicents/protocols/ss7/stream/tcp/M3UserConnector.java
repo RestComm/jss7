@@ -348,6 +348,10 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 
 		ByteBuffer[] readResult = null;
 		this.readBuff.flip();
+		if(logger.isInfoEnabled())
+		{
+			logger.info("Received data: "+this.readBuff);
+		}
 		while ((readResult = this.hdlcHandler.processRx(this.readBuff)) != null) {
 
 			for (ByteBuffer b : readResult) {

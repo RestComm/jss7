@@ -499,7 +499,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 			txBuff.flip();
 			if(logger.isInfoEnabled())
 			{
-				logger.info("Sending data: "+txBuff+" --> "+Arrays.toString(txBuff.array()));
+				logger.info("Sending data: "+txBuff);
 			}
 			socketChannel.write(txBuff);
 			

@@ -91,8 +91,11 @@ public class PipeMtpProviderImpl implements MTPProvider {
 	 * @see org.mobicents.protocols.ss7.stream.MTPProvider#stop()
 	 */
 	public void stop() throws IllegalStateException {
-		_EXECUTOR.shutdown();
-		_EXECUTOR = null;
+		if(_EXECUTOR!=null)
+		{
+			_EXECUTOR.shutdown();
+			_EXECUTOR = null;
+		}
 
 	}
 	private ScheduledExecutorService _EXECUTOR ;
