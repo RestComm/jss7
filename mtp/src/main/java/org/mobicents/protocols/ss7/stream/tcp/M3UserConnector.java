@@ -230,6 +230,21 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 						}
 						this.socketChannel = null;
 					}
+					if(this.connectSelector != null)
+					{
+						this.connectSelector.close();
+					}
+					
+					if(this.writeSelector != null)
+					{
+						this.writeSelector.close();
+					}
+					
+					if(this.readSelector != null)
+					{
+						this.readSelector.close();
+					}
+					
 
 				}
 			} catch (Exception e) {
