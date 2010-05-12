@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.mobicents.protocols.ss7.stream.tcp;
 
 import java.io.ByteArrayInputStream;
@@ -10,19 +7,19 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.ClosedSelectorException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.mtp.MTP;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.MtpUser;
 import org.mobicents.protocols.ss7.stream.HDLCHandler;
@@ -32,15 +29,7 @@ import org.mobicents.protocols.ss7.stream.tlv.TLVInputStream;
 import org.mobicents.protocols.ss7.stream.tlv.TLVOutputStream;
 import org.mobicents.protocols.ss7.stream.tlv.Tag;
 
-/**
- * Simple server class. First draft limitations:
- *  - HDLC to ensure full frames 
- *  - single client/server
- * @author baranowb
- *
- */
-public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
-
+public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 	private static final Logger logger = Logger.getLogger(M3UserAgent.class);
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 	private int port = 1354;
@@ -54,33 +43,22 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 	private boolean connected = false;
 	private ByteBuffer readBuff = ByteBuffer.allocate(8192);
 	private ByteBuffer txBuff = ByteBuffer.allocate(8192);
-	
 
 	private Mtp3 mtp;
-	//private MTP mtp;
+	// private MTP mtp;
 	private boolean linkUp = false;
 	private Future runFuture;
-	
-	
+
 	//
 	private HDLCHandler hdlcHandler = new HDLCHandler();
 	private boolean runnable;
-	
-	
-	public M3UserAgent() {
-		super();
-		//wont send empty buffer
-		this.txBuff.limit(0);
-	}
 
-
-	///////////////////
+	// /////////////////
 	// Some statics //
-	//////////////////
+	// ////////////////
 	private static final byte[] _LINK_STATE_UP;
 	private static final byte[] _LINK_STATE_DOWN;
-	static
-	{
+	static {
 		TLVOutputStream tlv = new TLVOutputStream();
 		try {
 			tlv.writeLinkStatus(LinkStatus.LinkUp);
@@ -99,51 +77,13 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		_LINK_STATE_DOWN = tlv.toByteArray();
 
 	}
-	
-	
-	// LAYER4
-	public void linkDown() {
-		if (logger.isInfoEnabled()) {
-			logger.info("Received L4 Down event from layer3.");
-		}
-		this.linkUp = false;
-		//FIXME: proper actions here.
-		//this.txBuff.clear();
-		//this.txBuff.limit(0);
-		//this.readBuff.clear();
-		this.streamData(_LINK_STATE_DOWN);
+
+	public M3UserAgent() {
+		super();
+		// wont send empty buffer
+		this.txBuff.limit(0);
 	}
 
-	public void linkUp() {
-		if (logger.isInfoEnabled()) {
-			logger.info("Received L4 Up event from layer3.");
-		}
-		this.linkUp = true;
-		this.streamData(_LINK_STATE_UP);
-	}
-
-	public void receive( byte[] msgBuff) {
-
-
-		// layer3 has something important, lets write.
-		//if(linkUp)
-		//{
-			TLVOutputStream tlv = new TLVOutputStream();
-			try {
-				tlv.writeData(msgBuff);
-				byte[] data = tlv.toByteArray();
-				this.streamData(data);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		//}
-	}
-	
-	
-	
-	
 	///////////////////////
 	// Setters & Getters //
 	///////////////////////
@@ -187,32 +127,9 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 	public boolean isConnected() {
 		return connected;
 	}
-
-	///////////////////
-	// Bean methods //
-	//////////////////
-	public void start() throws Exception {
-		this.initServer();
-		runnable = true;
-		this.runFuture = this.executor.submit(this);
-		
-	}
-
-	public void stop() {
-		if(this.runFuture == null)
-			return;
-		this.runFuture.cancel(false);
-		this.runFuture = null;
-		runnable = false;
-		
-	}
-
-	private void initServer() throws Exception {
-		// Create a new selector
-		//this.readSelector = SelectorProvider.provider().openSelector();
-		//this.writeSelector = SelectorProvider.provider().openSelector();
+	
+	public void start() throws IOException {
 		this.connectSelector = SelectorProvider.provider().openSelector();
-		// Create a new non-blocking server socket channel
 		this.serverSocketChannel = ServerSocketChannel.open();
 		serverSocketChannel.configureBlocking(false);
 
@@ -223,15 +140,18 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		// Register the server socket channel, indicating an interest in
 		// accepting new connections
 		serverSocketChannel.register(this.connectSelector, SelectionKey.OP_ACCEPT);
-		logger.info("Initiaited server on: "+this.address+":"+this.port);
+		System.err.println("Initiaited server on: " + this.address + ":" + this.port);
+
+		runnable = true;
+		this.runFuture = this.executor.submit(this);
+
 	}
-	
-	private void stopServer()
-	{
-		if(connected)
-		{
-			disconnect();
-			
+
+	public void stop() {
+		if (this.runFuture != null) {
+			this.runFuture.cancel(false);
+			this.runFuture = null;
+			runnable = false;
 		}
 		if (this.connectSelector != null && this.connectSelector.isOpen()) {
 			try {
@@ -240,10 +160,9 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	
+
 		}
-		if(this.serverSocketChannel!=null)
-		{
+		if (this.serverSocketChannel != null) {
 			try {
 				this.serverSocketChannel.close();
 			} catch (IOException e) {
@@ -252,16 +171,13 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 			}
 		}
 	}
-	
-	// ///////////////
-	// Server Side //
-	// ///////////////
 
-
-	public void run() {
-		while (runnable) {
-			try {
-
+	public void run()
+	{
+		while(runnable)
+		{
+			try
+			{
 				Iterator selectedKeys = null;
 
 				// Wait for an event one of the registered channels
@@ -278,6 +194,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 				//} else if (linkUp) {
 				} else {
 					// else we try I/O ops.
+				
 					if (this.readSelector.selectNow() > 0) {
 						selectedKeys = this.readSelector.selectedKeys().iterator();
 						// operate on keys set
@@ -302,16 +219,21 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 						
 					}
 				}
-				
-			} catch (Exception e) {
+			}catch(ClosedSelectorException cse)
+			{
+				cse.printStackTrace();
+				//check for server selector?
+				disconnect();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
 		
 		
-		stopServer();
 	}
-
+	
 	private void performKeyOperations(Iterator selectedKeys) throws IOException {
 
 		while (selectedKeys.hasNext()) {
@@ -321,7 +243,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 
 			if (!key.isValid()) {
 				// handle disconnect here?
-				logger.error("Key became invalid: "+key);
+				System.err.println("Key became invalid: "+key);
 				continue;
 			}
 
@@ -339,37 +261,106 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		}
 
 	}
-
-	public void streamData(byte[] data) {
-		//if(this.channel!=null)
-		//	connected = this.channel.isConnected();
-		
-		if (!connected) {
-			if (logger.isInfoEnabled()) {
-				logger.info("There is no client interested in data stream, ignoring. Message should be retransmited.");
-
+	
+	private void accept(SelectionKey key) throws IOException {
+		if(connected)
+		{
+			//if(logger.isInfoEnabled())
+			{
+				System.err.println("Second client not supported yet.");
 			}
+			
 			return;
 		}
+		ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
+		
+		
+		this.channel = serverSocketChannel.accept();
+		this.writeSelector = SelectorProvider.provider().openSelector();
+		this.readSelector = SelectorProvider.provider().openSelector();
+		Socket socket = channel.socket();
+		
+		this.channel.configureBlocking(false);
+		this.channel.register(this.readSelector, SelectionKey.OP_READ);
+		this.channel.register(this.writeSelector, SelectionKey.OP_WRITE);
+		
 
-		// And queue the data we want written
-		//synchronized (this.txBuffer) {
-		//synchronized (this.hdlcHandler) {
-		synchronized (this.writeSelector) {
+		this.connected = true;
+		
+		//if (logger.isInfoEnabled()) {
+			System.err.println("Estabilished connection with: " + socket.getInetAddress() + ":" + socket.getPort());
+			
+		//}
+		
+		//if (connected) {
+		//	serverSocketChannel.close();
+		//	return;
+		//}
+		//lets strean state
+		if(linkUp)
+		{
+			this.streamData(_LINK_STATE_UP);
+		}else
+		{
+			//this.streamData(_LINK_STATE_DOWN);
+		}
+	}
+	
+	private void write(SelectionKey key) throws IOException {
+		
+		SocketChannel socketChannel = (SocketChannel) key.channel();
 
-			//this.txBuffer.add(ByteBuffer.wrap(data));
-			ByteBuffer bb = ByteBuffer.allocate(data.length);
-			bb.put(data);
-			bb.flip();
-			this.hdlcHandler.addToTxBuffer(bb);
-			// Finally, wake up our selecting thread so it can make the required
-			// changes
-			this.writeSelector.wakeup();
+		// Write until there's not more data ?
+		
+		//while (!txBuffer.isEmpty()) {
+		if(txBuff.remaining()>0)
+		{
+			int  sentDataCount = socketChannel.write(txBuff);
+			//if(logger.isInfoEnabled())
+			{
+				System.err.println("Sent data: "+sentDataCount);
+			}
+			if(txBuff.remaining()>0)
+			{
+				//buffer filled.
+				return;
+			}else
+			{
+				
+			}
+		}
+		//while (!this.hdlcHandler.isTxBufferEmpty()) {
+		if (!this.hdlcHandler.isTxBufferEmpty()) {
+
+			//ByteBuffer buf = (ByteBuffer) txBuffer.get(0);
+			txBuff.clear();
+
+			this.hdlcHandler.processTx(txBuff);
+			txBuff.flip();
+			//if(logger.isInfoEnabled())
+			{
+				System.err.println("Sending data: "+txBuff);
+			}
+			int sentCount = socketChannel.write(txBuff);
+			//if(logger.isInfoEnabled())
+			{
+				System.err.println("Sent data count: "+sentCount);
+			}
+			//if (buf.remaining() > 0) {
+			if(txBuff.remaining()>0)
+			{
+				// ... or the socket's buffer fills up
+				return;
+			}
+			//buf.clear();
+			//txBuff.clear();
+			//txBuffer.remove(0);
+			
+
 		}
 
-		
 	}
-
+	
 	private void read(SelectionKey key) throws IOException {
 		SocketChannel socketChannel = (SocketChannel) key.channel();
 
@@ -401,17 +392,17 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		//This will read everything, and if there is incomplete frame, it will retain its partial content
 		//so on next read it can continue to decode!
 		this.readBuff.flip();
-		if(logger.isInfoEnabled())
+		//if(logger.isInfoEnabled())
 		{
-			logger.info("Read data: "+readBuff);
+			System.err.println("Read data: "+readBuff);
 		}
 		while((readResult = this.hdlcHandler.processRx(this.readBuff))!=null)
 		{
 			for(ByteBuffer b:readResult)
 			{
-				if(logger.isInfoEnabled())
+				//if(logger.isInfoEnabled())
 				{
-					logger.info("Processed data: "+b);
+					System.err.println("Processed data: "+b);
 				}
 				//byte sls = b.get();
 				//byte linksetId = b.get();
@@ -447,105 +438,29 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		//this.layer3.send(si, ssf, this.readBuff.array());
 
 	}
-
-	private void accept(SelectionKey key) throws IOException {
-		if(connected)
-		{
-			if(logger.isInfoEnabled())
-			{
-				logger.info("Second client not supported yet.");
-			}
-			
-			return;
-		}
-		ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
-		
-		
-		this.channel = serverSocketChannel.accept();
-		this.writeSelector = SelectorProvider.provider().openSelector();
-		this.readSelector = SelectorProvider.provider().openSelector();
-		Socket socket = channel.socket();
-		this.channel.configureBlocking(false);
-
-		this.channel.register(this.readSelector, SelectionKey.OP_READ);
-		this.channel.register(this.writeSelector, SelectionKey.OP_WRITE);
-
-		this.connected = true;
-		
-		if (logger.isInfoEnabled()) {
-			logger.info("Estabilished connection with: " + socket.getInetAddress() + ":" + socket.getPort());
-			
-		}
-		
-		//if (connected) {
-		//	serverSocketChannel.close();
-		//	return;
+	private void handleClose(SelectionKey key) {
+		//if (logger.isInfoEnabled()) {
+			System.err.println("Handling key close operations: " + key);
 		//}
-		//lets strean state
-		if(linkUp)
-		{
-			this.streamData(_LINK_STATE_UP);
-		}else
-		{
-			//this.streamData(_LINK_STATE_DOWN);
+		linkDown();
+		try {
+			disconnect();
+		} finally {
+			// linkDown();
+			//connected = false;
+			// synchronized (this.hdlcHandler) {
+			synchronized (this.writeSelector) {
+				// this is to ensure buffer does not have any bad data.
+				// this.txBuffer.clear();
+				this.hdlcHandler.clearTxBuffer();
+
+			}
 		}
+		return;
 	}
-
-	private void write(SelectionKey key) throws IOException {
-		
-		SocketChannel socketChannel = (SocketChannel) key.channel();
-
-		// Write until there's not more data ?
-		
-		//while (!txBuffer.isEmpty()) {
-		if(txBuff.remaining()>0)
-		{
-			int  sentDataCount = socketChannel.write(txBuff);
-			if(logger.isInfoEnabled())
-			{
-				logger.info("Sent data: "+sentDataCount);
-			}
-			if(txBuff.remaining()>0)
-			{
-				//buffer filled.
-				return;
-			}else
-			{
-				
-			}
-		}
-		//while (!this.hdlcHandler.isTxBufferEmpty()) {
-		if (!this.hdlcHandler.isTxBufferEmpty()) {
-
-			//ByteBuffer buf = (ByteBuffer) txBuffer.get(0);
-			txBuff.clear();
-
-			this.hdlcHandler.processTx(txBuff);
-			txBuff.flip();
-			if(logger.isInfoEnabled())
-			{
-				logger.info("Sending data: "+txBuff);
-			}
-			int sentCount = socketChannel.write(txBuff);
-			if(logger.isInfoEnabled())
-			{
-				logger.info("Sent data count: "+sentCount);
-			}
-			//if (buf.remaining() > 0) {
-			if(txBuff.remaining()>0)
-			{
-				// ... or the socket's buffer fills up
-				return;
-			}
-			//buf.clear();
-			//txBuff.clear();
-			//txBuffer.remove(0);
-			
-
-		}
-
-	}
+	
 	private void disconnect() {
+		System.err.println("AGENT: DISCONNECT!");
 		if (this.channel != null) {
 			try {
 				this.channel.close();
@@ -555,15 +470,6 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 			}
 		}
 		this.channel = null;
-
-//		if (this.connectSelector != null && this.connectSelector.isOpen()) {
-//			try {
-//				this.connectSelector.close();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
 
 		if (this.readSelector != null && this.readSelector.isOpen()) {
 			try {
@@ -586,29 +492,79 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 
 		
 	}
-	
-	private void handleClose(SelectionKey key) {
-		if (logger.isInfoEnabled()) {
-			logger.info("Handling key close operations: " + key);
-		}
-		linkDown();
-		try {
-			disconnect();
-		} finally {
-			// linkDown();
-			//connected = false;
-			// synchronized (this.hdlcHandler) {
-			synchronized (this.writeSelector) {
-				// this is to ensure buffer does not have any bad data.
-				// this.txBuffer.clear();
-				this.hdlcHandler.clearTxBuffer();
+	/**
+	 * Method used internaly - this one sends actuall data to remote end.
+	 * @param data
+	 */
+	public void streamData(byte[] data) {
+		//if(this.channel!=null)
+		//	connected = this.channel.isConnected();
+		
+		if (!connected) {
+			//if (logger.isInfoEnabled()) {
+				System.err.println("There is no client interested in data stream, ignoring. Message should be retransmited.");
 
-			}
+			//}
+			return;
 		}
-		return;
+
+		// And queue the data we want written
+		//synchronized (this.txBuffer) {
+		//synchronized (this.hdlcHandler) {
+		synchronized (this.writeSelector) {
+
+			//this.txBuffer.add(ByteBuffer.wrap(data));
+			ByteBuffer bb = ByteBuffer.allocate(data.length);
+			bb.put(data);
+			bb.flip();
+			this.hdlcHandler.addToTxBuffer(bb);
+			// Finally, wake up our selecting thread so it can make the required
+			// changes
+			this.writeSelector.wakeup();
+		}
+		System.err.println("Passed data to stream.");
+		
+	}
+	////////////
+	// LAYER4 //
+	////////////
+	public void linkDown() {
+		//if (logger.isInfoEnabled()) {
+			System.err.println("Received L4 Down event from layer3.");
+		//}
+		this.linkUp = false;
+		//FIXME: proper actions here.
+		//this.txBuff.clear();
+		//this.txBuff.limit(0);
+		//this.readBuff.clear();
+		this.streamData(_LINK_STATE_DOWN);
 	}
 
+	public void linkUp() {
+		//if (logger.isInfoEnabled()) {
+			System.err.println("Received L4 Up event from layer3.");
+		//}
+		this.linkUp = true;
+		this.streamData(_LINK_STATE_UP);
+	}
 
-	
+	public void receive( byte[] msgBuff) {
+
+
+		// layer3 has something important, lets write.
+		//if(linkUp)
+		//{
+			TLVOutputStream tlv = new TLVOutputStream();
+			try {
+				tlv.writeData(msgBuff);
+				byte[] data = tlv.toByteArray();
+				this.streamData(data);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		//}
+	}
+
 }
-
