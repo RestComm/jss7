@@ -209,8 +209,8 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 
 	private void initServer() throws Exception {
 		// Create a new selector
-		this.readSelector = SelectorProvider.provider().openSelector();
-		this.writeSelector = SelectorProvider.provider().openSelector();
+		//this.readSelector = SelectorProvider.provider().openSelector();
+		//this.writeSelector = SelectorProvider.provider().openSelector();
 		this.connectSelector = SelectorProvider.provider().openSelector();
 		// Create a new non-blocking server socket channel
 		this.serverSocketChannel = ServerSocketChannel.open();
@@ -230,17 +230,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 	{
 		if(connected)
 		{
-			connected = false;
-			try {
-				this.readSelector.close();
-				this.writeSelector.close();
-				this.connectSelector.close();
-				this.serverSocketChannel.close();
-				this.channel.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			disconnect();
 			
 		}
 
@@ -260,7 +250,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 				// Wait for an event one of the registered channels
 				if (!connected) {
 
-
+					
 					// block till we have someone subscribing for data.
 					this.connectSelector.select();
 
@@ -441,28 +431,38 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 	}
 
 	private void accept(SelectionKey key) throws IOException {
-
+		if(connected)
+		{
+			if(logger.isInfoEnabled())
+			{
+				logger.info("Second client not supported yet.");
+			}
+			
+			return;
+		}
 		ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
 		
-
-		channel = serverSocketChannel.accept();
+		
+		this.channel = serverSocketChannel.accept();
+		this.writeSelector = SelectorProvider.provider().openSelector();
+		this.readSelector = SelectorProvider.provider().openSelector();
 		Socket socket = channel.socket();
-		channel.configureBlocking(false);
+		this.channel.configureBlocking(false);
 
-		channel.register(this.readSelector, SelectionKey.OP_READ);
-		channel.register(this.writeSelector, SelectionKey.OP_WRITE);
+		this.channel.register(this.readSelector, SelectionKey.OP_READ);
+		this.channel.register(this.writeSelector, SelectionKey.OP_WRITE);
 
-		connected = true;
+		this.connected = true;
 		
 		if (logger.isInfoEnabled()) {
 			logger.info("Estabilished connection with: " + socket.getInetAddress() + ":" + socket.getPort());
 			
 		}
 		
-		if (connected) {
-			serverSocketChannel.close();
-			return;
-		}
+		//if (connected) {
+		//	serverSocketChannel.close();
+		//	return;
+		//}
 		//lets strean state
 		if(linkUp)
 		{
@@ -527,30 +527,70 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		}
 
 	}
-
-	
-	private void handleClose(SelectionKey key) throws IOException {
-		if(logger.isInfoEnabled())
-		{
-			logger.info("Handling key close operations: "+key);
+	private void disconnect() {
+		if (this.channel != null) {
+			try {
+				this.channel.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		this.channel = null;
+
+		if (this.connectSelector != null && this.connectSelector.isOpen()) {
+			try {
+				this.connectSelector.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		if (this.readSelector != null && this.readSelector.isOpen()) {
+			try {
+				this.readSelector.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		if (this.writeSelector != null && this.writeSelector.isOpen()) {
+			try {
+				this.writeSelector.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		this.connected = false;
+
+		
+	}
+	
+	private void handleClose(SelectionKey key) {
+		if (logger.isInfoEnabled()) {
+			logger.info("Handling key close operations: " + key);
+		}
+		linkDown();
 		try {
-			SocketChannel socketChannel = (SocketChannel) key.channel();
-			key.cancel();
-			socketChannel.close();
-			key.selector().close();
+			disconnect();
 		} finally {
-			connected = false;
-			//synchronized (this.txBuffer) {
+			// linkDown();
+			//connected = false;
+			// synchronized (this.hdlcHandler) {
 			synchronized (this.writeSelector) {
 				// this is to ensure buffer does not have any bad data.
-				//this.txBuffer.clear();
+				// this.txBuffer.clear();
 				this.hdlcHandler.clearTxBuffer();
 
 			}
 		}
 		return;
 	}
+
+
 	
 }
 
