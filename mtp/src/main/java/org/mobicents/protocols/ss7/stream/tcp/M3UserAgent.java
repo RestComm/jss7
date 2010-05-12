@@ -333,8 +333,8 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 	}
 
 	public void streamData(byte[] data) {
-		if(this.channel!=null)
-			connected = this.channel.isConnected();
+		//if(this.channel!=null)
+		//	connected = this.channel.isConnected();
 		
 		if (!connected) {
 			if (logger.isInfoEnabled()) {
@@ -394,7 +394,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		this.readBuff.flip();
 		if(logger.isInfoEnabled())
 		{
-			logger.info("Read data: "+readBuff+" --> "+Arrays.toString(readBuff.array()));
+			logger.info("Read data: "+readBuff);
 		}
 		while((readResult = this.hdlcHandler.processRx(this.readBuff))!=null)
 		{
@@ -402,7 +402,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 			{
 				if(logger.isInfoEnabled())
 				{
-					logger.info("Processed data: "+b+" --> "+Arrays.toString(b.array()));
+					logger.info("Processed data: "+b);
 				}
 				//byte sls = b.get();
 				//byte linksetId = b.get();
@@ -535,7 +535,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		} finally {
 			connected = false;
 			//synchronized (this.txBuffer) {
-			synchronized (this.hdlcHandler) {
+			synchronized (this.writeSelector) {
 				// this is to ensure buffer does not have any bad data.
 				//this.txBuffer.clear();
 				this.hdlcHandler.clearTxBuffer();

@@ -23,7 +23,7 @@ import org.mobicents.protocols.ss7.stream.MTPListener;
  * @author baranowb
  *
  */
-public class M3UserTest2 implements MTPListener{
+public class M3User2Test implements MTPListener{
 	
 	// ^ thats why i prefered mtps as interfacess......
 	private M3UserAgent agent;
@@ -99,10 +99,12 @@ public class M3UserTest2 implements MTPListener{
 		//test link transport cap
 		
 		
-		agent.start();
 		connector.start();
+		Thread.sleep(20000);
+		
+		agent.start();
 		//
-		Thread.currentThread().sleep(1000);
+		Thread.currentThread().sleep(2500);
 		this.agent.linkUp();
 		long startTime = System.currentTimeMillis();
 		while(!agent.isConnected() || !connector.isConnected())

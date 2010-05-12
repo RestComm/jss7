@@ -269,7 +269,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 												+ ":"
 												+ this.serverPort);
 							}
-							Thread.currentThread().sleep(10000);
+							Thread.currentThread().sleep(2000);
 						}
 						continue;
 					}
@@ -373,7 +373,10 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 			for (ByteBuffer b : readResult) {
 				
 				//here we can have link status or msg
-		
+				if(logger.isInfoEnabled())
+				{
+					logger.info("Processed data: "+b);
+				}
 				TLVInputStream tlvInputStream = new TLVInputStream(new ByteArrayInputStream(b.array()));
 				int tag = tlvInputStream.readTag();
 				if(tag == Tag._TAG_LINK_DATA)
@@ -397,6 +400,9 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 						this.linkUp();
 						continue;
 					}
+				}else
+				{
+					logger.warn("Received weird message!");
 				}
 				
 			}
