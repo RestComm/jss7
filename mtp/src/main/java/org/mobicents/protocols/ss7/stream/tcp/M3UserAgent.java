@@ -375,7 +375,8 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 			numRead = socketChannel.read(this.readBuff);
 		} catch (IOException e) {
 			// The remote forcibly closed the connection, cancel
-			// the selection key and close the channel.
+			// the selection key and close the channel
+			e.printStackTrace();
 			handleClose(key);
 			return;
 		}
@@ -442,10 +443,7 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 	private void accept(SelectionKey key) throws IOException {
 
 		ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
-		if (connected) {
-			serverSocketChannel.close();
-			return;
-		}
+		
 
 		channel = serverSocketChannel.accept();
 		Socket socket = channel.socket();
@@ -459,6 +457,11 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 		if (logger.isInfoEnabled()) {
 			logger.info("Estabilished connection with: " + socket.getInetAddress() + ":" + socket.getPort());
 			
+		}
+		
+		if (connected) {
+			serverSocketChannel.close();
+			return;
 		}
 		//lets strean state
 		if(linkUp)
@@ -527,11 +530,15 @@ public class M3UserAgent implements StreamForwarder , MtpUser, Runnable{
 
 	
 	private void handleClose(SelectionKey key) throws IOException {
+		if(logger.isInfoEnabled())
+		{
+			logger.info("Handling key close operations: "+key);
+		}
 		try {
 			SocketChannel socketChannel = (SocketChannel) key.channel();
 			key.cancel();
 			socketChannel.close();
-
+			key.selector().close();
 		} finally {
 			connected = false;
 			//synchronized (this.txBuffer) {

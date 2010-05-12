@@ -264,7 +264,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 						if (!connected) {
 							if (logger.isEnabledFor(Level.ERROR)) {
 								logger
-										.error("Faield to connect to stream server at "
+										.error("Failed to connect to stream server at "
 												+ this.serverAddress
 												+ ":"
 												+ this.serverPort);
@@ -276,6 +276,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 					Iterator selectedKeys = null;
 
 					// else we try I/O ops.
+					
 					if (this.readSelector.selectNow() > 0) {
 
 						selectedKeys = this.readSelector.selectedKeys()
@@ -298,6 +299,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 //					synchronized (this.writeSelector) {
 //						this.writeSelector.wait(5);
 //					}
+					connected = socketChannel.isConnected();
 					
 				} catch (Exception ee) {
 					ee.printStackTrace();
@@ -347,10 +349,10 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 		} catch (IOException e) {
 			// The remote forcibly closed the connection, cancel
 			// the selection key and close the channel.
-			if(logger.isDebugEnabled())
-			{
+			//if(logger.isDebugEnabled())
+			//{
 				e.printStackTrace();
-			}
+			//}
 			handleClose(key);
 			return;
 		}
@@ -507,6 +509,10 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 	}
 
 	private void handleClose(SelectionKey key) {
+		if(logger.isInfoEnabled())
+		{
+			logger.info("Handling key close operations: "+key);
+		}
 		linkDown();
 		try {
 
@@ -514,12 +520,18 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable{
 			key.cancel();
 			try {
 				socketChannel.close();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				
-				if(logger.isDebugEnabled())
-				{
+				//if(logger.isDebugEnabled())
+				//{
 					e.printStackTrace();
-				}
+				//}
+			}
+			try {
+				key.selector().close();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
 		} finally {
