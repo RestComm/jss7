@@ -186,8 +186,9 @@ public class ParameterImpl implements Parameter {
 			}
 			data = localAos.toByteArray();
 		}
-		aos.writeLength(data.length);
+		
 		try {
+			aos.writeLength(data.length);
 			aos.write(data);
 		} catch (IOException e) {
 			throw new ParseException(e);
