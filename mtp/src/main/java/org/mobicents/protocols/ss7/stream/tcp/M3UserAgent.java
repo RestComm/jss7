@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.stream.tlv.TLVInputStream;
 import org.mobicents.protocols.ss7.stream.tlv.TLVOutputStream;
 import org.mobicents.protocols.ss7.stream.tlv.Tag;
 
-public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
+public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAgentMBean {
 	private static final Logger logger = Logger.getLogger(M3UserAgent.class);
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 	private int port = 1345;
@@ -349,7 +349,7 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 			if(logger.isInfoEnabled())
 			{
 				logger.info("Sending data: "+txBuff);
-				logger.info(" -> "+Arrays.toString(txBuff.array()));
+
 			}
 			int sentCount = socketChannel.write(txBuff);
 			if(logger.isInfoEnabled())
@@ -557,7 +557,12 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 		this.linkUp = true;
 		this.streamData(_LINK_STATE_UP);
 	}
-
+	public void receive(String msg)
+	{
+		this.receive(msg.getBytes());
+		
+	}
+	
 	public void receive( byte[] msgBuff) {
 
 

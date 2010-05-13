@@ -73,13 +73,10 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 	public M3UserConnector(Properties properties) {
 		this();
 		this.properties.putAll(properties);
-		
-
 	}
 	public M3UserConnector() {
 		super();
-		
-		
+
 		// wont send empty buffer
 		this.txBuff.limit(0);
 
@@ -99,7 +96,8 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 	}
 
 	public void stop() throws IllegalStateException {
-		if (this.streamFuture != null) {
+		
+		if (this.streamFuture == null) {
 			// throw new IllegalStateException("Provider already stoped!");
 			return;
 		} else {
@@ -109,7 +107,17 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 				streamFuture = null;
 			}
 			this.listeners.clear();
-
+			if(this.connectSelector!=null)
+			{
+				try{
+					this.connectSelector.wakeup();
+				}catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+				
+			disconnect();
 			
 		}
 
@@ -175,15 +183,19 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 		
 			try {
 
-				this.socketChannel = SocketChannel.open();
-				this.socketChannel.configureBlocking(false);
-				this.connectSelector = SelectorProvider.provider().openSelector();
-
-				this.socketChannel.register(this.connectSelector, SelectionKey.OP_CONNECT);
-
 				
-				while(!connected)
+				
+				while(!connected && runnable)
 				{
+					this.socketChannel = SocketChannel.open();
+					this.socketChannel.configureBlocking(false);
+					this.connectSelector = SelectorProvider.provider().openSelector();
+
+					this.socketChannel.register(this.connectSelector, SelectionKey.OP_CONNECT);
+					if(logger.isInfoEnabled())
+					{
+						logger.info("Trying connection to: "+this.serverAddress+":"+this.serverPort);
+					}
 					// Kick off connection establishment: must be done after each connector.select(); !
 					this.socketChannel.connect(new InetSocketAddress(this.serverAddress, this.serverPort));
 
@@ -270,6 +282,10 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 		this.readSelector = SelectorProvider.provider().openSelector();
 		this.socketChannel.register(this.readSelector, SelectionKey.OP_READ);
 		this.socketChannel.register(this.writeSelector, SelectionKey.OP_WRITE);
+		if(logger.isInfoEnabled())
+		{
+			logger.info("Connected to server,  "+this.socketChannel.socket().getRemoteSocketAddress()+":"+this.socketChannel.socket().getPort()+", local connection "+this.socketChannel.socket().getLocalAddress()+":"+this.socketChannel.socket().getLocalPort());
+		}
 		connected = true;
 	}
 	
