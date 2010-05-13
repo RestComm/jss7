@@ -175,26 +175,36 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 
 				this.socketChannel.register(this.connectSelector, SelectionKey.OP_CONNECT);
 
-				// Kick off connection establishment
-				this.socketChannel.connect(new InetSocketAddress(this.serverAddress, this.serverPort));
-
+				
 				while(!connected)
 				{
+					// Kick off connection establishment: must be done after each connector.select(); !
+					this.socketChannel.connect(new InetSocketAddress(this.serverAddress, this.serverPort));
+
 					if (this.connectSelector.select() > 0) {
 						Set<SelectionKey> selectedKeys=this.connectSelector.selectedKeys();
 						try{
 							performKeyOperations(selectedKeys.iterator());
-						}catch(IOException ioe)
+						}catch(java.net.ConnectException ce)
+						{
+							//this is ok
+							if(logger.isDebugEnabled())
+							{
+								logger.debug("Connection failure:",ce);
+							}
+							//propably fail to connect, lets wait 5s
+							waitReconnect();
+						}
+						catch(IOException ioe)
 						{
 							ioe.printStackTrace();
 							//propably fail to connect, lets wait 5s
-							try {
-								Thread.currentThread().sleep(5000);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+							waitReconnect();
 						}
+					}else
+					{
+						//sleep
+						//waitReconnect();
 					}
 				}
 			} catch (IOException e) {
@@ -206,6 +216,15 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 		
 	}
 	
+	private void waitReconnect()
+	{
+		try {
+			Thread.currentThread().sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	private void performKeyOperations(Iterator<SelectionKey> selectedKeys) throws IOException {
 		while (selectedKeys.hasNext()) {

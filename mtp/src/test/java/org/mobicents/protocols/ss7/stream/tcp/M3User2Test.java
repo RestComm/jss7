@@ -100,30 +100,30 @@ public class M3User2Test implements MTPListener{
 		
 		
 		connector.start();
-		Thread.sleep(20000);
+		Thread.sleep(15000);
 		
 		agent.start();
 		//
-		Thread.currentThread().sleep(2500);
-		this.agent.linkUp();
+		Thread.currentThread().sleep(7000);
+		
 		long startTime = System.currentTimeMillis();
 		while(!agent.isConnected() || !connector.isConnected())
 		{
 			Thread.currentThread().sleep(500);
-			if(startTime+5000<System.currentTimeMillis())
+			if(startTime+15000<System.currentTimeMillis())
 			{
 				junit.framework.Assert.assertTrue("Failed to establish connection!",false);
 			}
 			
 		}
-		
+		this.agent.linkUp();
 		
 		
 		agent.receive(sendData.get(index++));
 		
 		Thread.currentThread().sleep(20000);
 		this.agent.linkDown();
-		
+		Thread.currentThread().sleep(100);
 		Assert.assertTrue("Did not receive linkup!", this.linkUp);
 		Assert.assertTrue("Did not receive linkdown!", this.linkDown);
 		Assert.assertEquals("Not enough data received1!",sendData.size(), rcvConnector.size());
