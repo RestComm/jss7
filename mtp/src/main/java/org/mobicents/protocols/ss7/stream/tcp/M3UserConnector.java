@@ -71,13 +71,19 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 	private HDLCHandler hdlcHandler = new HDLCHandler();
 
 	public M3UserConnector(Properties properties) {
-		super();
+		this();
 		this.properties.putAll(properties);
+		
+
+	}
+	public M3UserConnector() {
+		super();
+		
+		
 		// wont send empty buffer
 		this.txBuff.limit(0);
 
 	}
-
 	@Override
 	public void start() throws StartFailedException, IllegalStateException {
 
