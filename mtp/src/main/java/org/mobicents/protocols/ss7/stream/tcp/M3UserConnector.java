@@ -151,7 +151,11 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 					// }
 					// connected = socketChannel.isConnected();
 
-				} catch (Exception ee) {
+				} catch(java.nio.channels.ClosedSelectorException e)
+				{
+					e.printStackTrace();
+					disconnect();
+				}catch (Exception ee) {
 					ee.printStackTrace();
 					System.err.println("Something failed: " + ee);
 				}
@@ -203,10 +207,11 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 	}
 	
 	
-	private void performKeyOperations(Iterator selectedKeys) throws IOException {
+	private void performKeyOperations(Iterator<SelectionKey> selectedKeys) throws IOException {
 		while (selectedKeys.hasNext()) {
-			SelectionKey key = (SelectionKey) selectedKeys.next();
-			// selectedKeys.remove();
+			SelectionKey key =  selectedKeys.next();
+			//THIS MUST BE PRESENT!
+			selectedKeys.remove();
 
 			if (!key.isValid()) {
 				// handle disconnect here?
@@ -530,7 +535,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 		tlv.writeData(msg);
 		synchronized (this.writeSelector) {
 			this.hdlcHandler.addToTxBuffer(ByteBuffer.wrap(tlv.toByteArray()));
-			this.writeSelector.notify();
+			//this.writeSelector.notify();
 		}
 
 	}

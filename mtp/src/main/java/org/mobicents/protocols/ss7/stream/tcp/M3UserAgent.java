@@ -15,6 +15,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -170,6 +171,7 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 				e.printStackTrace();
 			}
 		}
+		disconnect();
 	}
 
 	public void run()
@@ -234,12 +236,13 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 		
 	}
 	
-	private void performKeyOperations(Iterator selectedKeys) throws IOException {
+	private void performKeyOperations(Iterator<SelectionKey> selectedKeys) throws IOException {
 
 		while (selectedKeys.hasNext()) {
 
-			SelectionKey key = (SelectionKey) selectedKeys.next();
-			//selectedKeys.remove();
+			SelectionKey key = selectedKeys.next();
+			//THIS MUST BE PRESENT!
+			selectedKeys.remove();
 
 			if (!key.isValid()) {
 				// handle disconnect here?
