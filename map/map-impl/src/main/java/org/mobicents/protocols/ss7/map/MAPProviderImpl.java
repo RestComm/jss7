@@ -158,7 +158,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		}
 	}
 
-	public void processUnstructuredSSRequest(Parameter parameter,
+	private void processUnstructuredSSRequest(Parameter parameter,
 			MAPDialogImpl mapDialogImpl, Long invokeId) throws MAPException {
 		if (parameter.getTag() == Tag.SEQUENCE) {
 			Parameter[] parameters = parameter.getParameters();

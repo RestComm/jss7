@@ -18,6 +18,9 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
@@ -63,12 +66,33 @@ public class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void abort(int userReason) {
-		// TODO Auto-generated method stub
-
+		TCUserAbortRequest userAbort = this.mapProviderImpl.getTCAPProvider()
+		.getDialogPrimitiveFactory().createUAbort(this.tcapDialog);
+		
+		//TODO : Take care of userReason
+		
+//		try {
+//			this.tcapDialog.send(userAbort);
+//		} catch (TCAPSendException e) {
+//			throw new MAPException(e.getMessage(), e);
+//		}
 	}
 
-	public void close(boolean prearrangedEnd) {
+	public void close(boolean prearrangedEnd) throws MAPException {
+		TCEndRequest endRequest = this.mapProviderImpl.getTCAPProvider()
+				.getDialogPrimitiveFactory().createEnd(this.tcapDialog);
+		if(!prearrangedEnd){
+			endRequest.setTermination(TerminationType.Basic);
+		} else{
+			endRequest.setTermination(TerminationType.PreArranged);
+		}
+		
 
+		try {
+			this.tcapDialog.send(endRequest);
+		} catch (TCAPSendException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
 	}
 
 	public void send() throws MAPException {
@@ -247,8 +271,43 @@ public class MAPDialogImpl implements MAPDialog {
 
 	public void addUnstructuredSSRequest(byte ussdDataCodingScheme,
 			USSDString ussdString) throws MAPException {
-		// TODO Auto-generated method stub
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider()
+				.getComponentPrimitiveFactory().createTCInvokeRequest();
 
+		try {
+			invoke.setInvokeId(this.tcapDialog.getNewInvokeId());
+
+			// Operation Code
+			OperationCode oc = TcapFactory.createOperationCode(false,
+					(long) MAPOperationCode.unstructuredSS_Request);
+			invoke.setOperationCode(oc);
+
+			// Sequence of Parameter
+			Parameter p1 = TcapFactory.createParameter();
+			p1.setTagClass(Tag.CLASS_UNIVERSAL);
+			p1.setTag(Tag.STRING_OCTET);
+			p1.setData(new byte[] { ussdDataCodingScheme });
+
+			ussdString.encode();
+			Parameter p2 = TcapFactory.createParameter();
+			p2.setTagClass(Tag.CLASS_UNIVERSAL);
+			p2.setTag(Tag.STRING_OCTET);
+			p2.setData(ussdString.getEncodedString());
+
+			Parameter p = TcapFactory.createParameter();
+			p.setTagClass(Tag.CLASS_UNIVERSAL);
+			p.setTag(Tag.SEQUENCE);
+			p.setParameters(new Parameter[] { p1, p2 });
+
+			invoke.setParameter(p);
+
+			this.tcapDialog.sendComponent(invoke);
+
+		} catch (TCAPException e) {
+			throw new MAPException(e.getMessage(), e);
+		} catch (TCAPSendException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
 	}
 
 	public void addUnstructuredSSResponse(long invokeId, boolean lastResult,

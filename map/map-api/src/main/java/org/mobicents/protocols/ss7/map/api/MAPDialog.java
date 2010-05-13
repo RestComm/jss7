@@ -50,7 +50,7 @@ public interface MAPDialog {
 	 * 
 	 * @param prearrangedEnd
 	 */
-	public void close(boolean prearrangedEnd);
+	public void close(boolean prearrangedEnd) throws MAPException;
 
 	/**
 	 * This is equivalent to MAP User issuing the MAP-U-ABORT Service Request.
