@@ -53,7 +53,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 	// ////////////////////
 
 	private String serverAddress = "127.0.0.1";
-	private int serverPort = 1354;
+	private int serverPort = 1345;
 	// we need this since lower layer is very time sensitivie, lets deliver on
 	// different thread.
 	// private ExecutorService executor = Executors.newFixedThreadPool(5);
