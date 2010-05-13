@@ -63,13 +63,13 @@ public interface MAPDialog {
 	public void addProcessUnstructuredSSRequest(byte ussdDataCodingScheme,
 			USSDString ussdString) throws MAPException;
 
-	public void addProcessUnstructuredSSResponse(byte ussdDataCodingScheme,
+	public void addProcessUnstructuredSSResponse(long invokeId, boolean lastResult, byte ussdDataCodingScheme,
 			USSDString ussdString) throws MAPException;
 
 	public void addUnstructuredSSRequest(byte ussdDataCodingScheme,
 			USSDString ussdString) throws MAPException;
 
-	public void addUnstructuredSSResponse(byte ussdDataCodingScheme,
+	public void addUnstructuredSSResponse(long invokeId, boolean lastResult, byte ussdDataCodingScheme,
 			USSDString ussdString) throws MAPException;
 
 }

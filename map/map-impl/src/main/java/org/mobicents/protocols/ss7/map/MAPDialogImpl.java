@@ -17,12 +17,14 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Return;
 
 /**
  * 
@@ -115,7 +117,37 @@ public class MAPDialogImpl implements MAPDialog {
 		} else if (this.tcapDialog.getState() == TRPseudoState.Active) {
 			// Its Active send TC-CONTINUE
 
-		} else {
+			TCContinueRequest tcContinueReq = this.mapProviderImpl
+					.getTCAPProvider().getDialogPrimitiveFactory()
+					.createContinue(this.tcapDialog);
+
+			try {
+				this.tcapDialog.send(tcContinueReq);
+			} catch (TCAPSendException e) {
+				throw new MAPException(e.getMessage(), e);
+			}
+
+		} else if (this.tcapDialog.getState() == TRPseudoState.InitialReceived) {
+			// Its first Reply to TC-Begin
+
+			TCContinueRequest tcContinueReq = this.mapProviderImpl
+					.getTCAPProvider().getDialogPrimitiveFactory()
+					.createContinue(this.tcapDialog);
+
+			ApplicationContextName acn = this.mapProviderImpl
+					.getTCAPProvider()
+					.getDialogPrimitiveFactory()
+					.createApplicationContextName(
+							MAPApplicationContext.networkUnstructuredSsContextV2
+									.getOID());
+
+			tcContinueReq.setApplicationContextName(acn);
+
+			try {
+				this.tcapDialog.send(tcContinueReq);
+			} catch (TCAPSendException e) {
+				throw new MAPException(e.getMessage(), e);
+			}
 
 		}
 
@@ -147,12 +179,12 @@ public class MAPDialogImpl implements MAPDialog {
 			p2.setTagClass(Tag.CLASS_UNIVERSAL);
 			p2.setTag(Tag.STRING_OCTET);
 			p2.setData(ussdString.getEncodedString());
-			
+
 			Parameter p = TcapFactory.createParameter();
 			p.setTagClass(Tag.CLASS_UNIVERSAL);
 			p.setTag(Tag.SEQUENCE);
-			p.setParameters(new Parameter[]{p1,p2});
-			
+			p.setParameters(new Parameter[] { p1, p2 });
+
 			invoke.setParameter(p);
 
 			this.tcapDialog.sendComponent(invoke);
@@ -165,9 +197,51 @@ public class MAPDialogImpl implements MAPDialog {
 
 	}
 
-	public void addProcessUnstructuredSSResponse(byte ussdDataCodingScheme,
-			USSDString ussdString) throws MAPException {
-		// TODO Auto-generated method stub
+	public void addProcessUnstructuredSSResponse(long invokeId,
+			boolean lastResult, byte ussdDataCodingScheme, USSDString ussdString)
+			throws MAPException {
+		try {
+			Return returnResult = null;
+
+			if (lastResult) {
+				returnResult = this.mapProviderImpl.getTCAPProvider()
+						.getComponentPrimitiveFactory()
+						.createTCResultLastRequest();
+			} else {
+				returnResult = this.mapProviderImpl.getTCAPProvider()
+						.getComponentPrimitiveFactory().createTCResultRequest();
+			}
+
+			returnResult.setInvokeId(invokeId);
+
+			// Operation Code
+			OperationCode oc = TcapFactory.createOperationCode(false,
+					(long) MAPOperationCode.processUnstructuredSS_Request);
+			returnResult.setOperationCode(oc);
+
+			// Sequence of Parameter
+			Parameter p1 = TcapFactory.createParameter();
+			p1.setTagClass(Tag.CLASS_UNIVERSAL);
+			p1.setTag(Tag.STRING_OCTET);
+			p1.setData(new byte[] { ussdDataCodingScheme });
+
+			ussdString.encode();
+			Parameter p2 = TcapFactory.createParameter();
+			p2.setTagClass(Tag.CLASS_UNIVERSAL);
+			p2.setTag(Tag.STRING_OCTET);
+			p2.setData(ussdString.getEncodedString());
+
+			Parameter p = TcapFactory.createParameter();
+			p.setTagClass(Tag.CLASS_UNIVERSAL);
+			p.setTag(Tag.SEQUENCE);
+			p.setParameters(new Parameter[] { p1, p2 });
+
+			returnResult.setParameter(p);
+
+			this.tcapDialog.sendComponent(returnResult);
+		} catch (TCAPSendException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
 
 	}
 
@@ -177,16 +251,57 @@ public class MAPDialogImpl implements MAPDialog {
 
 	}
 
-	public void addUnstructuredSSResponse(byte ussdDataCodingScheme,
-			USSDString ussdString) throws MAPException {
-		// TODO Auto-generated method stub
+	public void addUnstructuredSSResponse(long invokeId, boolean lastResult,
+			byte ussdDataCodingScheme, USSDString ussdString)
+			throws MAPException {
 
+		try {
+			Return returnResult = null;
+
+			if (lastResult) {
+				returnResult = this.mapProviderImpl.getTCAPProvider()
+						.getComponentPrimitiveFactory()
+						.createTCResultLastRequest();
+			} else {
+				returnResult = this.mapProviderImpl.getTCAPProvider()
+						.getComponentPrimitiveFactory().createTCResultRequest();
+			}
+
+			returnResult.setInvokeId(invokeId);
+
+			// Operation Code
+			OperationCode oc = TcapFactory.createOperationCode(false,
+					(long) MAPOperationCode.unstructuredSS_Request);
+			returnResult.setOperationCode(oc);
+
+			// Sequence of Parameter
+			Parameter p1 = TcapFactory.createParameter();
+			p1.setTagClass(Tag.CLASS_UNIVERSAL);
+			p1.setTag(Tag.STRING_OCTET);
+			p1.setData(new byte[] { ussdDataCodingScheme });
+
+			ussdString.encode();
+			Parameter p2 = TcapFactory.createParameter();
+			p2.setTagClass(Tag.CLASS_UNIVERSAL);
+			p2.setTag(Tag.STRING_OCTET);
+			p2.setData(ussdString.getEncodedString());
+
+			Parameter p = TcapFactory.createParameter();
+			p.setTagClass(Tag.CLASS_UNIVERSAL);
+			p.setTag(Tag.SEQUENCE);
+			p.setParameters(new Parameter[] { p1, p2 });
+
+			returnResult.setParameter(p);
+
+			this.tcapDialog.sendComponent(returnResult);
+
+		} catch (TCAPSendException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
 	}
 
 	public MAPApplicationContext getAppCntx() {
 		return appCntx;
 	}
-	
-	
 
 }
