@@ -14,6 +14,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -348,6 +349,7 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 			if(logger.isInfoEnabled())
 			{
 				logger.info("Sending data: "+txBuff);
+				logger.info(" -> "+Arrays.toString(txBuff.array()));
 			}
 			int sentCount = socketChannel.write(txBuff);
 			if(logger.isInfoEnabled())
@@ -562,10 +564,12 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 		// layer3 has something important, lets write.
 		//if(linkUp)
 		//{
+			logger.info("Sending data["+msgBuff.length+"] -> "+Arrays.toString(msgBuff));
 			TLVOutputStream tlv = new TLVOutputStream();
 			try {
 				tlv.writeData(msgBuff);
 				byte[] data = tlv.toByteArray();
+				logger.info("TLV Data["+data.length+"] -> "+Arrays.toString(data));
 				this.streamData(data);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

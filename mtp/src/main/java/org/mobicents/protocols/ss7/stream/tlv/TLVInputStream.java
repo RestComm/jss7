@@ -82,7 +82,7 @@ public class TLVInputStream extends FilterInputStream{
 	
 	
 	public int readLength() throws IOException {
-		len = -1;
+		len = 0;
 
 		byte b = (byte) this.read();
 
@@ -140,6 +140,7 @@ public class TLVInputStream extends FilterInputStream{
 			//its undefined LEN...
 			throw new UnsupportedOperationException();
 		}
+		System.err.println();
 		byte[] data = new byte[len];
 		int read = super.read(data);
 		if(read != data.length)
