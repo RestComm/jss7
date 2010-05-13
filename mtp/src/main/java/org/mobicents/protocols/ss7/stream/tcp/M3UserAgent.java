@@ -141,7 +141,10 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 		// Register the server socket channel, indicating an interest in
 		// accepting new connections
 		serverSocketChannel.register(this.connectSelector, SelectionKey.OP_ACCEPT);
-		System.err.println("Initiaited server on: " + this.address + ":" + this.port);
+		if(logger.isInfoEnabled())
+			{
+				logger.info("Initiaited server on: " + this.address + ":" + this.port);
+			}
 
 		runnable = true;
 		this.runFuture = this.executor.submit(this);
@@ -246,7 +249,9 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 
 			if (!key.isValid()) {
 				// handle disconnect here?
-				System.err.println("Key became invalid: "+key);
+				if(logger.isInfoEnabled()){
+					logger.info("Key became invalid: "+key);
+				}
 				continue;
 			}
 
@@ -268,9 +273,9 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 	private void accept(SelectionKey key) throws IOException {
 		if(connected)
 		{
-			//if(logger.isInfoEnabled())
+			if(logger.isInfoEnabled())
 			{
-				System.err.println("Second client not supported yet.");
+				logger.info("Second client not supported yet.");
 			}
 			
 			return;
@@ -290,10 +295,10 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 
 		this.connected = true;
 		
-		//if (logger.isInfoEnabled()) {
-			System.err.println("Estabilished connection with: " + socket.getInetAddress() + ":" + socket.getPort());
+		if (logger.isInfoEnabled()) {
+			logger.info("Estabilished connection with: " + socket.getInetAddress() + ":" + socket.getPort());
 			
-		//}
+		}
 		
 		//if (connected) {
 		//	serverSocketChannel.close();
@@ -319,9 +324,9 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 		if(txBuff.remaining()>0)
 		{
 			int  sentDataCount = socketChannel.write(txBuff);
-			//if(logger.isInfoEnabled())
+			if(logger.isInfoEnabled())
 			{
-				System.err.println("Sent data: "+sentDataCount);
+				logger.info("Sent data: "+sentDataCount);
 			}
 			if(txBuff.remaining()>0)
 			{
@@ -340,14 +345,14 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 
 			this.hdlcHandler.processTx(txBuff);
 			txBuff.flip();
-			//if(logger.isInfoEnabled())
+			if(logger.isInfoEnabled())
 			{
-				System.err.println("Sending data: "+txBuff);
+				logger.info("Sending data: "+txBuff);
 			}
 			int sentCount = socketChannel.write(txBuff);
-			//if(logger.isInfoEnabled())
+			if(logger.isInfoEnabled())
 			{
-				System.err.println("Sent data count: "+sentCount);
+				logger.info("Sent data count: "+sentCount);
 			}
 			//if (buf.remaining() > 0) {
 			if(txBuff.remaining()>0)
@@ -395,17 +400,17 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 		//This will read everything, and if there is incomplete frame, it will retain its partial content
 		//so on next read it can continue to decode!
 		this.readBuff.flip();
-		//if(logger.isInfoEnabled())
+		if(logger.isInfoEnabled())
 		{
-			System.err.println("Read data: "+readBuff);
+			logger.info("Read data: "+readBuff);
 		}
 		while((readResult = this.hdlcHandler.processRx(this.readBuff))!=null)
 		{
 			for(ByteBuffer b:readResult)
 			{
-				//if(logger.isInfoEnabled())
+				if(logger.isInfoEnabled())
 				{
-					System.err.println("Processed data: "+b);
+					logger.info("Processed data: "+b);
 				}
 				//byte sls = b.get();
 				//byte linksetId = b.get();
@@ -442,9 +447,9 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 
 	}
 	private void handleClose(SelectionKey key) {
-		//if (logger.isInfoEnabled()) {
-			System.err.println("Handling key close operations: " + key);
-		//}
+		if (logger.isInfoEnabled()) {
+			logger.info("Handling key close operations: " + key);
+		}
 		linkDown();
 		try {
 			disconnect();
@@ -463,7 +468,7 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 	}
 	
 	private void disconnect() {
-		System.err.println("AGENT: DISCONNECT!");
+		
 		if (this.channel != null) {
 			try {
 				this.channel.close();
@@ -504,10 +509,10 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 		//	connected = this.channel.isConnected();
 		
 		if (!connected) {
-			//if (logger.isInfoEnabled()) {
-				System.err.println("There is no client interested in data stream, ignoring. Message should be retransmited.");
+			if (logger.isInfoEnabled()) {
+				logger.info("There is no client interested in data stream, ignoring. Message should be retransmited.");
 
-			//}
+			}
 			return;
 		}
 
@@ -525,16 +530,16 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 			// changes
 			this.writeSelector.wakeup();
 		}
-		System.err.println("Passed data to stream.");
+		
 		
 	}
 	////////////
 	// LAYER4 //
 	////////////
 	public void linkDown() {
-		//if (logger.isInfoEnabled()) {
-			System.err.println("Received L4 Down event from layer3.");
-		//}
+		if (logger.isInfoEnabled()) {
+			logger.info("Received L4 Down event from layer3.");
+		}
 		this.linkUp = false;
 		//FIXME: proper actions here.
 		//this.txBuff.clear();
@@ -544,9 +549,9 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 	}
 
 	public void linkUp() {
-		//if (logger.isInfoEnabled()) {
-			System.err.println("Received L4 Up event from layer3.");
-		//}
+		if (logger.isInfoEnabled()) {
+			logger.info("Received L4 Up event from layer3.");
+		}
 		this.linkUp = true;
 		this.streamData(_LINK_STATE_UP);
 	}

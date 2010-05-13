@@ -157,7 +157,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 					disconnect();
 				}catch (Exception ee) {
 					ee.printStackTrace();
-					System.err.println("Something failed: " + ee);
+					logger.error("Something failed: ",ee);
 				}
 			}
 			disconnect();
@@ -199,8 +199,8 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.err.println("DISS1");
+				
+				logger.error("Failed to connect: ",e);
 				disconnect();
 			}
 		
@@ -215,7 +215,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 
 			if (!key.isValid()) {
 				// handle disconnect here?
-				System.err.println("Key has become invalid: " + key);
+				logger.error("Key has become invalid: " + key);
 				continue;
 			}
 
@@ -280,17 +280,17 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 
 		ByteBuffer[] readResult = null;
 		this.readBuff.flip();
-		// if (logger.isInfoEnabled()) {
-		System.err.println("Received data: " + this.readBuff);
-		// }
+	    if (logger.isInfoEnabled()) {
+	    	logger.info("Received data: " + this.readBuff);
+		 }
 		while ((readResult = this.hdlcHandler.processRx(this.readBuff)) != null) {
 
 			for (ByteBuffer b : readResult) {
 
 				// here we can have link status or msg
-				// if (logger.isInfoEnabled()) {
-				System.err.println("Processed data: " + b);
-				// }
+				 if (logger.isInfoEnabled()) {
+					 logger.info("Processed data: " + b);
+				 }
 				TLVInputStream tlvInputStream = new TLVInputStream(new ByteArrayInputStream(b.array()));
 				int tag = tlvInputStream.readTag();
 				if (tag == Tag._TAG_LINK_DATA) {
@@ -368,9 +368,9 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 	}
 
 	private void handleClose(SelectionKey key) {
-		// if (logger.isInfoEnabled()) {
-		System.err.println("Handling key close operations: " + key);
-		// }
+		if (logger.isInfoEnabled()) {
+			logger.info("Handling key close operations: " + key);
+		 }
 		linkDown();
 		try {
 			disconnect();
@@ -433,9 +433,9 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 	
 	private void linkDown() {
 		// FIXME: Proper acctions here?
-		// if (logger.isInfoEnabled()) {
-		System.err.println("Received LinkDown!");
-		// }
+		if (logger.isInfoEnabled()) {
+			logger.info("Received LinkDown!");
+		}
 		this.linkUp = false;
 		// this.txBuff.clear();
 		// this.txBuff.limit(0);
@@ -457,9 +457,9 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 		// this.txBuff.limit(0);
 		// this.readBuff.clear();
 		// this.readBuff.limit(0);
-		// if (logger.isInfoEnabled()) {
-		System.err.println("Received LinkUp!");
-		// }
+		if (logger.isInfoEnabled()) {
+			logger.info("Received LinkUp!");
+		}
 		this.linkUp = true;
 		for (MTPListener lst : listeners) {
 			try {
