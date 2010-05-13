@@ -90,7 +90,7 @@ public class M3UserTest implements MTPListener{
 		while(!agent.isConnected() || !connector.isConnected())
 		{
 			Thread.currentThread().sleep(500);
-			if(startTime+5000<System.currentTimeMillis())
+			if(startTime+15000<System.currentTimeMillis())
 			{
 				junit.framework.Assert.assertTrue("Failed to establish connection!",false);
 			}
@@ -122,7 +122,7 @@ public class M3UserTest implements MTPListener{
 		while(!agent.isConnected() || !connector.isConnected())
 		{
 			Thread.currentThread().sleep(500);
-			if(startTime+5000<System.currentTimeMillis())
+			if(startTime+15000<System.currentTimeMillis())
 			{
 				junit.framework.Assert.assertTrue("Failed to establish connection!",false);
 			}
@@ -152,7 +152,7 @@ public class M3UserTest implements MTPListener{
 		while(!agent.isConnected() || !connector.isConnected())
 		{
 			Thread.currentThread().sleep(500);
-			if(startTime+5000<System.currentTimeMillis())
+			if(startTime+15000<System.currentTimeMillis())
 			{
 				junit.framework.Assert.assertTrue("Failed to establish connection!",false);
 			}
@@ -202,7 +202,7 @@ public class M3UserTest implements MTPListener{
 		while(!agent.isConnected() || !connector.isConnected())
 		{
 			Thread.currentThread().sleep(500);
-			if(startTime+5000<System.currentTimeMillis())
+			if(startTime+15000<System.currentTimeMillis())
 			{
 				junit.framework.Assert.assertTrue("Failed to establish connection!",false);
 			}
@@ -244,7 +244,16 @@ public class M3UserTest implements MTPListener{
 		agent.start();
 		connector.start();
 
+	long startTime = System.currentTimeMillis();
+	while(!agent.isConnected() || !connector.isConnected())
+	{
 		Thread.currentThread().sleep(500);
+		if(startTime+15000<System.currentTimeMillis())
+		{
+			junit.framework.Assert.assertTrue("Failed to establish connection!",false);
+		}
+		
+	}
 		agent.linkUp();
 		Thread.currentThread().sleep(500);
 		agent.stop();
