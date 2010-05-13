@@ -34,7 +34,7 @@ import org.mobicents.protocols.ss7.stream.tlv.Tag;
 public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 	private static final Logger logger = Logger.getLogger(M3UserAgent.class);
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
-	private int port = 1354;
+	private int port = 1345;
 	private InetAddress address;
 	private ServerSocketChannel serverSocketChannel;
 	private SocketChannel channel;
@@ -564,12 +564,11 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable {
 		// layer3 has something important, lets write.
 		//if(linkUp)
 		//{
-			logger.info("Sending data["+msgBuff.length+"] -> "+Arrays.toString(msgBuff));
+
 			TLVOutputStream tlv = new TLVOutputStream();
 			try {
 				tlv.writeData(msgBuff);
 				byte[] data = tlv.toByteArray();
-				logger.info("TLV Data["+data.length+"] -> "+Arrays.toString(data));
 				this.streamData(data);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
