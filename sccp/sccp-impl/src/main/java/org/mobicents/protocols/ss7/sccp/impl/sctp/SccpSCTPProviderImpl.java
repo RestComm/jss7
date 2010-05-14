@@ -10,6 +10,7 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.sccp.ActionReference;
+import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.impl.ud.UnitDataImpl;
@@ -57,7 +58,7 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 		// add check for SIO parts?
 		// if(logger.isInfoEnabled())
 	    //logger.info("Received MSU on L4, service: "+service+",subservice: "+subservice);
-		new DeliveryHandler(arg2).run();
+		new DeliveryHandler(arg2, super.listener).run();
 
 	}
 
@@ -141,18 +142,19 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 
 
 
-	private class DeliveryHandler implements Runnable {
+	private static class DeliveryHandler implements Runnable {
 		//this is MTP3 message, we need to decode!
 		private byte[] msg;
-
-		public DeliveryHandler(byte[] msg) {
+		private SccpListener listener;
+		public DeliveryHandler(byte[] msg,SccpListener listener) {
 			super();
 			this.msg = msg;
+			this.listener = listener;
 		}
 
 		public void run() {
 			try {
-				if (listener != null) {
+				if (this.listener != null) {
 					//offset for sif !
 					ByteArrayInputStream bin = new ByteArrayInputStream(msg,5,msg.length);
 					DataInputStream in = new DataInputStream(bin);
@@ -166,7 +168,7 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 						unitData.setBackRouteHeader(msg);
 						unitData.decode(in);
 
-						listener.onMessage(unitData.getCalledParty(), unitData.getCallingParty(), unitData.getData(),unitData);
+						this.listener.onMessage(unitData.getCalledParty(), unitData.getCallingParty(), unitData.getData(),unitData);
 
 						break;
 					// 0x11
@@ -175,7 +177,7 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 						xunitData.setBackRouteHeader(msg);
 						xunitData.decode(in);
 
-						listener.onMessage(xunitData.getCalledParty(), xunitData.getCallingParty(), xunitData.getData(),xunitData);
+						this.listener.onMessage(xunitData.getCalledParty(), xunitData.getCallingParty(), xunitData.getData(),xunitData);
 						break;
 					default:
 						logger.error("Undefined message type, MT:" + mt+", Message dump: \n"+Arrays.toString(msg));
@@ -191,5 +193,6 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 		}
 
 	}
+
 
 }
