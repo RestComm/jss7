@@ -30,8 +30,12 @@ public interface MapServiceFactory {
 	public UnstructuredSSResponse createUnstructuredSsRequestResponse(
 			int invokeID, byte ussdDataCodingScheme, USSDString ussdString);
 
+	public USSDString createUSSDString(String ussdString);
+	
 	public USSDString createUSSDString(String ussdString, Charset charSet);
 
+	public USSDString createUSSDString(byte[] ussdString);
+	
 	public USSDString createUSSDString(byte[] ussdString, Charset charSet);
 	
 	public AddressString createAddressString(AddressNature addNature, NumberingPlan numPlan, String address);

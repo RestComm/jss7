@@ -13,10 +13,8 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortInfo;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseInfo;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortInfo;
 import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSConfirm;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSConfirm;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
@@ -95,19 +93,8 @@ public class MAPExample implements MAPDialogListener, MAPServiceListener {
 
 	}
 
-	public void onProcessUnstructuredSSConfirm(
-			ProcessUnstructuredSSConfirm procUnstrCnfrm) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public void onProcessUnstructuredSSIndication(
 			ProcessUnstructuredSSIndication procUnstrInd) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void onUnstructuredSSConfirm(UnstructuredSSConfirm unstrCnfrm) {
 		// TODO Auto-generated method stub
 
 	}

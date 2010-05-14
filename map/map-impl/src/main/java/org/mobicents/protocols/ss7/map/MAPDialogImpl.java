@@ -53,8 +53,8 @@ public class MAPDialogImpl implements MAPDialog {
 	}
 
 	protected MAPDialogImpl(MAPApplicationContext appCntx, Dialog tcapDialog,
-			MAPProviderImpl mapProviderImpl, AddressString destReference,
-			AddressString origReference) {
+			MAPProviderImpl mapProviderImpl, AddressString origReference,
+			AddressString destReference) {
 		this(appCntx, tcapDialog, mapProviderImpl);
 
 		this.destReference = destReference;
@@ -67,26 +67,31 @@ public class MAPDialogImpl implements MAPDialog {
 
 	public void abort(int userReason) {
 		TCUserAbortRequest userAbort = this.mapProviderImpl.getTCAPProvider()
-		.getDialogPrimitiveFactory().createUAbort(this.tcapDialog);
-		
-		//TODO : Take care of userReason
-		
-//		try {
-//			this.tcapDialog.send(userAbort);
-//		} catch (TCAPSendException e) {
-//			throw new MAPException(e.getMessage(), e);
-//		}
+				.getDialogPrimitiveFactory().createUAbort(this.tcapDialog);
+
+		// TODO : Take care of userReason
+
+		// try {
+		// this.tcapDialog.send(userAbort);
+		// } catch (TCAPSendException e) {
+		// throw new MAPException(e.getMessage(), e);
+		// }
 	}
 
 	public void close(boolean prearrangedEnd) throws MAPException {
 		TCEndRequest endRequest = this.mapProviderImpl.getTCAPProvider()
 				.getDialogPrimitiveFactory().createEnd(this.tcapDialog);
-		if(!prearrangedEnd){
+		if (!prearrangedEnd) {
 			endRequest.setTermination(TerminationType.Basic);
-		} else{
+		} else {
 			endRequest.setTermination(TerminationType.PreArranged);
 		}
-		
+
+		ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider()
+				.getDialogPrimitiveFactory().createApplicationContextName(
+						this.appCntx.getOID());
+
+		endRequest.setApplicationContextName(acn);
 
 		try {
 			this.tcapDialog.send(endRequest);

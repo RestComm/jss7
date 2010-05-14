@@ -7,6 +7,11 @@ import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class MAPStackImpl implements MAPStack {
 	
 	private TCAPStack tcapStack = null;
@@ -21,8 +26,7 @@ public class MAPStackImpl implements MAPStack {
 	}
 
 	public MAPProvider getMAPProvider() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.mapProvider;
 	}
 
 	

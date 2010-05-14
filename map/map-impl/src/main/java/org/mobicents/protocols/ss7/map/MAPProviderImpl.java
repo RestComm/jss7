@@ -88,8 +88,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	}
 
 	public MAPDialog createNewDialog(MAPApplicationContext appCntx,
-			SccpAddress destAddress, AddressString destReference,
-			SccpAddress origAddress, AddressString origReference)
+			SccpAddress origAddress, AddressString origReference,
+			SccpAddress destAddress, AddressString destReference)
 			throws MAPException {
 
 		Dialog tcapDialog;
@@ -98,7 +98,11 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		} catch (TCAPException e) {
 			throw new MAPException(e.getMessage(), e);
 		}
-		MAPDialog dialog = new MAPDialogImpl(appCntx, tcapDialog, this);
+		MAPDialogImpl dialog = new MAPDialogImpl(appCntx, tcapDialog, this,
+				origReference, destReference);
+
+		dialogs.put(dialog.getDialogId(), dialog);
+
 		return dialog;
 	}
 
@@ -522,48 +526,51 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 		Component[] components = tcEndIndication.getComponents();
 
-		// Now let us decode the Components
-		for (Component c : components) {
+		if (components != null) {
+			// Now let us decode the Components
+			for (Component c : components) {
 
-			try {
+				try {
 
-				ComponentType compType = c.getType();
+					ComponentType compType = c.getType();
 
-				long invokeId = c.getInvokeId();
+					long invokeId = c.getInvokeId();
 
-				// TODO Does it make any difference if its Invoke, ReturnResult
-				// or ReturnResultLast?
-				if (compType == ComponentType.Invoke
-						|| compType == ComponentType.ReturnResult
-						|| compType == ComponentType.ReturnResultLast) {
-					Invoke invoke = (Invoke) c;
+					// TODO Does it make any difference if its Invoke,
+					// ReturnResult
+					// or ReturnResultLast?
+					if (compType == ComponentType.Invoke
+							|| compType == ComponentType.ReturnResult
+							|| compType == ComponentType.ReturnResultLast) {
+						Invoke invoke = (Invoke) c;
 
-					OperationCode oc = invoke.getOperationCode();
+						OperationCode oc = invoke.getOperationCode();
 
-					if (oc.getCode() == MAPOperationCode.processUnstructuredSS_Request) {
+						if (oc.getCode() == MAPOperationCode.processUnstructuredSS_Request) {
 
-						Parameter parameter = invoke.getParameter();
-						this.processUnstructuredSSRequest(parameter,
-								mapDialogImpl, invokeId);
+							Parameter parameter = invoke.getParameter();
+							this.processUnstructuredSSRequest(parameter,
+									mapDialogImpl, invokeId);
 
-					} else if (oc.getCode() == MAPOperationCode.unstructuredSS_Request) {
+						} else if (oc.getCode() == MAPOperationCode.unstructuredSS_Request) {
 
-						Parameter parameter = invoke.getParameter();
-						this.unstructuredSSRequest(parameter, mapDialogImpl,
-								invokeId);
+							Parameter parameter = invoke.getParameter();
+							this.unstructuredSSRequest(parameter,
+									mapDialogImpl, invokeId);
 
-					} else {
-						loger
-								.error("Expected OC is MAPOperationCode.processUnstructuredSS_Request or MAPOperationCode.unstructuredSS_Request but received "
-										+ oc.getCode());
-						return;
-					}
-				}// end of if
-			} catch (MAPException e) {
-				e.printStackTrace();
-			}
+						} else {
+							loger
+									.error("Expected OC is MAPOperationCode.processUnstructuredSS_Request or MAPOperationCode.unstructuredSS_Request but received "
+											+ oc.getCode());
+							return;
+						}
+					}// end of if
+				} catch (MAPException e) {
+					e.printStackTrace();
+				}
 
-		} // end of for (Component c : comps)
+			} // end of for (Component c : comps)
+		}//end of if (components != null)
 
 		// then it shall issue a MAP-CLOSE indication primitive and return to
 		// idle all state machines associated with the dialogue.

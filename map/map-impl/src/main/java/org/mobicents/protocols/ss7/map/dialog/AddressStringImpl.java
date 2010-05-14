@@ -30,7 +30,6 @@ public class AddressStringImpl implements AddressString {
 	private boolean isExtension;
 
 	protected AddressStringImpl() {
-
 	}
 
 	public AddressStringImpl(AddressNature addressNature,

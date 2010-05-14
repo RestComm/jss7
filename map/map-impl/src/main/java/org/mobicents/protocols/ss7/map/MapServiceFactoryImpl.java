@@ -57,10 +57,18 @@ public class MapServiceFactoryImpl implements MapServiceFactory {
 	public USSDString createUSSDString(String ussdString, Charset charset) {
 		return new USSDStringImpl(ussdString, charset);
 	}
+	
+	public USSDString createUSSDString(String ussdString) {
+		return new USSDStringImpl(ussdString, null);
+	}	
 
 	public USSDString createUSSDString(byte[] ussdString, Charset charset) {
 		return new USSDStringImpl(ussdString, charset);
 	}
+	
+	public USSDString createUSSDString(byte[] ussdString) {
+		return new USSDStringImpl(ussdString, null);
+	}	
 
 	public AddressString createAddressString(AddressNature addNature,
 			NumberingPlan numPlan, String address) {
