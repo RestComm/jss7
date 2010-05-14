@@ -56,6 +56,7 @@ import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCUserAbortIndicationIm
 
 /**
  * @author baranowb
+ * @author amit bhayani
  * 
  */
 public class DialogImpl implements Dialog {
@@ -445,6 +446,32 @@ public class DialogImpl implements Dialog {
 		} else {
 			throw new TCAPSendException("Termination TYPE must be present");
 		}
+		
+		
+		if (event.getApplicationContextName() != null) {
+
+			// set dialog portion
+			DialogPortion dp = TcapFactory.createDialogPortion();
+			dp.setUnidirectional(false);
+			DialogResponseAPDU apdu = TcapFactory.createDialogAPDUResponse();
+			dp.setDialogAPDU(apdu);
+			
+			apdu.setApplicationContextName(event.getApplicationContextName());
+			if (event.getUserInformation() != null) {
+				apdu.setUserInformation(event.getUserInformation());
+			}
+			
+			// WHERE THE HELL THIS COMES FROM!!!!
+			// WHEN REJECTED IS USED !!!!!
+			Result res = TcapFactory.createResult();
+			res.setResultType(ResultType.Accepted);
+			ResultSourceDiagnostic rsd = TcapFactory.createResultSourceDiagnostic();
+			rsd.setDialogServiceUserType(DialogServiceUserType.Null);
+			apdu.setResultSourceDiagnostic(rsd);
+			apdu.setResult(res);
+			tcbm.setDialogPortion(dp);
+
+		}		
 
 		// FIXME: SPECS SAY HERE UI/ACN CAN BE SENT, HOOOOOOOWWW!?
 		AsnOutputStream aos = new AsnOutputStream();
@@ -736,7 +763,7 @@ public class DialogImpl implements Dialog {
 			}
 			tcContinueIndication.setOriginatingAddress(remoteAddress);
 			// now comps
-			tcContinueIndication.setComponents(processOperationsState(tcContinueIndication.getComponents()));
+			tcContinueIndication.setComponents(processOperationsState(msg.getComponent()));
 			//change state
 			this.setState(TRPseudoState.Active);
 			// lets deliver to provider
@@ -751,7 +778,7 @@ public class DialogImpl implements Dialog {
 			tcContinueIndication.setOriginatingAddress(remoteAddress);
 
 			// now comps
-			tcContinueIndication.setComponents(processOperationsState(tcContinueIndication.getComponents()));
+			tcContinueIndication.setComponents(processOperationsState(msg.getComponent()));
 			// lets deliver to provider
 			this.provider.deliver(this, tcContinueIndication);
 
@@ -768,6 +795,25 @@ public class DialogImpl implements Dialog {
 
 		// now comps
 		tcEndIndication.setComponents(processOperationsState(tcEndIndication.getComponents()));
+		
+		DialogPortion dialogPortion = msg.getDialogPortion();
+		if (dialogPortion != null) {
+			DialogAPDU apdu = dialogPortion.getDialogAPDU();
+			if (apdu.getType() != DialogAPDUType.Response) {
+				throw new TCAPException("Received non-Response APDU: " + apdu.getType() + ". Dialog: " + this);
+			}
+			DialogResponseAPDU responseAPDU = (DialogResponseAPDU) apdu;
+			// this will be present if APDU is present.
+			if (!responseAPDU.getApplicationContextName().equals(this.lastACN)) {
+				this.lastACN = responseAPDU.getApplicationContextName();
+			}
+			if (responseAPDU.getUserInformation() != null) {
+				this.lastUI = responseAPDU.getUserInformation();
+			}
+			tcEndIndication.setApplicationContextName(responseAPDU.getApplicationContextName());
+			tcEndIndication.setUserInformation(responseAPDU.getUserInformation());
+			
+		}
 		//FIXME: add ACN, UI, hooooow?
 		// lets deliver to provider
 		//change state before delivery
