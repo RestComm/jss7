@@ -53,16 +53,16 @@ public class ApplicationContextNameImpl implements ApplicationContextName {
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
 		// TODO Auto-generated method stub
-		if(this.oid == null)
-		{
+		if (this.oid == null) {
 			throw new ParseException("No OID value set!");
 		}
-		AsnOutputStream localAOS = new AsnOutputStream();
-		localAOS.writeObjectIdentifier(this.oid);
-		byte[] oidEncoded = localAOS.toByteArray();
-		aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
-		aos.writeLength(oidEncoded.length);
 		try {
+			AsnOutputStream localAOS = new AsnOutputStream();
+			localAOS.writeObjectIdentifier(this.oid);
+			byte[] oidEncoded = localAOS.toByteArray();
+			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
+			aos.writeLength(oidEncoded.length);
+
 			aos.write(oidEncoded);
 		} catch (IOException e) {
 			throw new ParseException(e);
