@@ -285,7 +285,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 		this.socketChannel.register(this.writeSelector, SelectionKey.OP_WRITE);
 		if(logger.isInfoEnabled())
 		{
-			logger.info("Connected to server,  "+this.socketChannel.socket().getRemoteSocketAddress()+":"+this.socketChannel.socket().getPort()+", local connection "+this.socketChannel.socket().getLocalAddress()+":"+this.socketChannel.socket().getLocalPort());
+			logger.info("Connected to server,  "+this.socketChannel.socket().getRemoteSocketAddress()+", local connection "+this.socketChannel.socket().getLocalAddress()+":"+this.socketChannel.socket().getLocalPort());
 		}
 		connected = true;
 	}

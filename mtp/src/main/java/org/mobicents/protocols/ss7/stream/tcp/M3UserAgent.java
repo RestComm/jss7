@@ -422,6 +422,10 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 				if(tag == Tag._TAG_LINK_DATA)
 				{
 					byte[] data = tlvInputStream.readLinkData();
+					if(logger.isInfoEnabled())
+					{
+						logger.info("Send MSU to MTP3: "+Arrays.toString(data));
+					}
 					this.mtp.send( data);
 				}else if (tag == Tag._TAG_LINK_STATUS)
 				{
