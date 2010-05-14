@@ -569,7 +569,7 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 		// layer3 has something important, lets write.
 		//if(linkUp)
 		//{
-
+			logger.info("Preparing MSU to stream: "+Arrays.toString(msgBuff));
 			TLVOutputStream tlv = new TLVOutputStream();
 			try {
 				tlv.writeData(msgBuff);

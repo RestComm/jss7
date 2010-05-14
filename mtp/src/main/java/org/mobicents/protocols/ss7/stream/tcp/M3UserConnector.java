@@ -14,6 +14,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -331,6 +332,9 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 				// here we can have link status or msg
 				 if (logger.isInfoEnabled()) {
 					 logger.info("Processed data: " + b);
+					 byte[] tmp  = new byte[b.limit()];
+					 System.arraycopy(b.array(), 0, tmp, 0, tmp.length);
+					 logger.info("MSU from stream: "+Arrays.toString(tmp));
 				 }
 				TLVInputStream tlvInputStream = new TLVInputStream(new ByteArrayInputStream(b.array()));
 				int tag = tlvInputStream.readTag();
