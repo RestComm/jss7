@@ -3,6 +3,9 @@
  */
 package org.mobicents.protocols.ss7.sccp;
 
+import java.util.Arrays;
+
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 
 /**
@@ -12,6 +15,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3;
  *
  */
 public class ActionReference {
+	private static final Logger logger = Logger.getLogger(ActionReference.class);
 	//used for forging mtp3 message, 
 	private byte[] mtp3Header;
 	public void setBackRouteHeader(byte[] data)
@@ -24,6 +28,10 @@ public class ActionReference {
 		int ssi = Mtp3._getFromSif_SSI(data);
 		this.mtp3Header = new byte[5];
 		Mtp3.writeRoutingLabel(mtp3Header, si, ssi, sls, remotePointCode, thisPointCode);
+		if(logger.isInfoEnabled())
+		{
+			logger.info("DPC["+remotePointCode+"] OPC["+thisPointCode+"] SLS["+sls+"] SI["+si+"] SSI["+ssi+"] Label"+Arrays.toString(mtp3Header));
+		}
 	}
 
 	/**

@@ -113,6 +113,10 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 				bos.write(sif);
 				bos.write(buf);
 				buf = bos.toByteArray();
+				if(logger.isInfoEnabled())
+				{
+					logger.info("Sccp TCP Provider default MTP3 Label: DPC["+dpc+"] OPC["+opc+"] SLS["+sls+"] SI["+si+"] SSI["+ssi+"]");
+				}
 				Mtp3.writeRoutingLabel(buf, si, ssi, sls, dpc, opc);
 				
 			}
@@ -193,6 +197,5 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 		}
 
 	}
-
 
 }
