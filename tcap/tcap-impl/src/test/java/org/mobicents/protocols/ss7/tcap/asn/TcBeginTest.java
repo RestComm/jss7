@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
+import org.junit.Test;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -678,7 +679,49 @@ public class TcBeginTest extends TestCase {
 		compareArrays(b,encoded);
 
 	}
-	
+	@Test
+	public void testRealTrace() throws Exception
+	{
+		byte[] TCAP= new byte[]{
+				//TCBeginTag
+				98, 
+				//len
+				-127, -113, 
+					//Orig tx Tag
+					72, 
+						//tx id len
+						4, 
+							110, 0, 2, 78, 
+					//Dialog portion tag		
+					107,
+					//DP len
+					30, 
+						40, 28, 6, 7, 0, 17, -122, 5, 1, 1, 1, -96, 17, 96, 15, -128, 2, 7, -128, -95, 9, 6, 7, 4, 0, 0, 1, 0, 50, 1, 
+					//Component portion
+					108,
+					//undefined len
+					-128, 
+						//Invoke tag
+						-95,
+						//invoke len
+						99, 
+						2,    1,    0,    2,    1,    0,   48,   91, -128,   1,
+						8, -126,    8, -124,   16, -105,   32, -125,   32, 104, 
+						6, -125,    7,    3,   19,    9,   50,   38,   89,  24, 
+					 -123,    1,   10, -118,    8, -124, -109, -105,   32, 115, 
+					    0,    2,    1,  -69,    5, -128,    3, -128, -112, -93, 
+					 -100,    1,   12,  -97,   50,    8,   82,    0,     7, 50, 
+					    1,   86,    4,  -14,  -65,   53,    3, -125,     1, 17, 
+					  -97,   54,    5,  -11,   51,    3,    0,    1,   -97, 55, 
+					    7, -111, -105,   32,  115,    0,    2,  -15,   -97, 57, 
+					    8,    2,    1,   80,   65,   49, -128,  116,    97, 
+					 //end tag!
+					 0, 0};
+		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(TCAP));
+		int tag = ais.readTag();
+		assertEquals("Expected TCBegin",TCBeginMessage._TAG,tag);
+		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
+	}
 	public final static String dump(byte[] buff, int size, boolean asBits) {
 		String s = "";
 		for (int i = 0; i < size; i++) {

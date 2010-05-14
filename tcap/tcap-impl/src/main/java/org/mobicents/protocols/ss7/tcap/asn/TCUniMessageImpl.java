@@ -109,7 +109,12 @@ public class TCUniMessageImpl implements TCUniMessage {
 			List<Component> cps = new ArrayList<Component>();
 			// its iterator :)
 			while (localAis.available() > 0) {
-				cps.add(TcapFactory.createComponent(localAis));
+				Component c = TcapFactory.createComponent(localAis);
+				if(c == null)
+				{
+					break;
+				}
+				cps.add(c);
 			}
 
 			this.component = new Component[cps.size()];

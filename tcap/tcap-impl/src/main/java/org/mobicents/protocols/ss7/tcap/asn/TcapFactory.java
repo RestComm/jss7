@@ -269,6 +269,10 @@ public final class TcapFactory {
 			{
 				c =  createComponentReturnError();
 				c.decode(localAis);
+				//FIXME: tmp support for undefined LEN
+			} else if(tag == 0 && localAis.readLength() == 0)
+			{
+				return null;
 			}
 
 			if (c == null) {
