@@ -646,4 +646,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	}
 
+	public MAPDialog getMAPDialog(Long dialogId) {
+		return this.dialogs.get(dialogId);
+	}
+
 }

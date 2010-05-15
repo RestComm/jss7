@@ -78,5 +78,7 @@ public interface MAPProvider {
 	public void removeMAPServiceListener(MAPServiceListener mapServiceListener);
 
 	public MapServiceFactory getMapServiceFactory();
+	
+	public MAPDialog getMAPDialog(Long dialogId);
 
 }
