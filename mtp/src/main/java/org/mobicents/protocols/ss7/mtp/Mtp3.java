@@ -446,8 +446,8 @@ public class Mtp3 implements Runnable {
         
         public void run() {
         	
-            int subserviceIndicator = (sio >> 4) & 0x03;
-            int serviceIndicator = sio & 0x0f;
+            int subserviceIndicator = (sio >> 4) & 0x0F;
+            int serviceIndicator = sio & 0x0F;
 
             // int dpc = (sif[0] & 0xff | ((sif[1] & 0x3f) << 8));
             // int opc = ((sif[1] & 0xC0) >> 6) | ((sif[2] & 0xff) << 2) | ((sif[3]
