@@ -601,12 +601,14 @@ public class Mtp3 implements Runnable {
     
     public static final int _getFromSif_SSI(byte[] data)
     {
-    	int subserviceIndicator = (data[0] >> 4) & 0x03;
+    	//see Q.704.14.2 
+    	int subserviceIndicator = (data[0] >> 4) & 0x0F;
     	return subserviceIndicator;
     }
     
     public static  void writeRoutingLabel(byte[] data,int si, int ssi, int sls, int dpc,int opc) {
-    	data[0] = (byte) (((ssi & 0x03) << 4) | (si & 0x0F));
+    	//see Q.704.14.2
+    	data[0] = (byte) (((ssi & 0x0F) << 4) | (si & 0x0F));
     	data[1] = (byte) dpc;
     	data[2] = (byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6));
     	data[3] = (byte) (opc >> 2);
