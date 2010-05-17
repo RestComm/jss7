@@ -279,6 +279,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 		{
 			throw new IOException("Not in correct time, will retry connection shortly");
 		}
+		connected = true;
 		this.writeSelector = SelectorProvider.provider().openSelector();
 		this.readSelector = SelectorProvider.provider().openSelector();
 		this.socketChannel.register(this.readSelector, SelectionKey.OP_READ);
@@ -287,7 +288,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 		{
 			logger.info("Connected to server,  "+this.socketChannel.socket().getRemoteSocketAddress()+", local connection "+this.socketChannel.socket().getLocalAddress()+":"+this.socketChannel.socket().getLocalPort());
 		}
-		connected = true;
+		
 	}
 	
 	private void read(SelectionKey key) throws IOException {
@@ -444,7 +445,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 		}
 		this.socketChannel = null;
 
-		if (this.connectSelector != null && this.connectSelector.isOpen()) {
+		if (this.connectSelector != null) {
 			try {
 				this.connectSelector.close();
 			} catch (IOException e) {
@@ -453,7 +454,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 			}
 		}
 
-		if (this.readSelector != null && this.readSelector.isOpen()) {
+		if (this.readSelector != null ) {
 			try {
 				this.readSelector.close();
 			} catch (IOException e) {
@@ -462,7 +463,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 			}
 		}
 
-		if (this.writeSelector != null && this.writeSelector.isOpen()) {
+		if (this.writeSelector != null ) {
 			try {
 				this.writeSelector.close();
 			} catch (IOException e) {
