@@ -156,7 +156,9 @@ public class DialogImpl implements Dialog {
 		}
 		// find new...
 		Long r = null;
-		for (int index = 0; index < this.invokeIDTable.length; index++) {
+		//tmp for test.
+		//for (int index = 0; index < this.invokeIDTable.length; index++) {
+		for (int index = _INVOKE_TABLE_SHIFT; index < this.invokeIDTable.length; index++) {
 			if (this.invokeIDTable[index] == _INVOKEID_FREE) {
 				freeCount--;
 				this.invokeIDTable[index] = _INVOKEID_TAKEN;
