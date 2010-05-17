@@ -226,7 +226,8 @@ public class Mtp3 implements Runnable {
      * @return selected link.
      */
     private Mtp2 selectLink(byte sls) {
-        return null;
+    	
+        return linkset.select(sls);
     }
     
     public boolean send(byte[] msg) {  
@@ -235,6 +236,15 @@ public class Mtp3 implements Runnable {
     	//get sls;
     	byte sls = (byte) _getFromSif_SLS(msg, 1);
         Mtp2 link = this.selectLink(sls);
+        
+        if(logger.isInfoEnabled())
+        {
+        	logger.info(String.format("MTP3 passes MSU to layer 2, (%s) ", link!=null ? link.name: "NO LINK"));
+        }
+        if(link == null)
+        {
+        	return false;
+        }
         
         //creating message
         //byte[] buffer = new byte[5 + msg.length];
