@@ -230,7 +230,7 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 				cse.printStackTrace();
 				//check for server selector?
 				disconnect();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
