@@ -243,6 +243,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				break;
 			case TCAbortMessage._TAG:
 				//this can be only TC-U-Abort, since TC-P-Abort is only local!
+				//FIXME: add cehck for dialog.
 				TCAbortMessage tub = TcapFactory.createTCAbortMessage(ais);
 				di = (DialogImpl) this.getNewUnstructuredDialog(localAddress, remoteAddress);
 				di.setActionReference(ar);

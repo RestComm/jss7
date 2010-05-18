@@ -158,7 +158,7 @@ public class DialogImpl implements Dialog {
 		Long r = null;
 		//tmp for test.
 		//for (int index = 0; index < this.invokeIDTable.length; index++) {
-		for (int index = _INVOKE_TABLE_SHIFT; index < this.invokeIDTable.length; index++) {
+		for (int index = _INVOKE_TABLE_SHIFT+1; index < this.invokeIDTable.length; index++) {
 			if (this.invokeIDTable[index] == _INVOKEID_FREE) {
 				freeCount--;
 				this.invokeIDTable[index] = _INVOKEID_TAKEN;
@@ -982,7 +982,14 @@ public class DialogImpl implements Dialog {
 		return this.state;
 	}
 
-	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		
+		return super.toString()+": Local["+this.localTransactionId+"] Remote["+this.remoteTransactionId+"], LocalAddress["+localAddress+"] RemoteAddress["+this.remoteAddress+"]";
+	}
 
 
 
