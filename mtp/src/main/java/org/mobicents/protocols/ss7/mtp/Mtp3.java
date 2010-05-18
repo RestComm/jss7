@@ -237,9 +237,9 @@ public class Mtp3 implements Runnable {
     	byte sls = (byte) _getFromSif_SLS(msg, 1);
         Mtp2 link = this.selectLink(sls);
         
-        if(logger.isInfoEnabled())
+        if(logger.isDebugEnabled())
         {
-        	logger.info(String.format("MTP3 passes MSU to layer 2, (%s) ", link!=null ? link.name: "NO LINK"));
+        	logger.debug(String.format("MTP3 passes MSU to layer 2, (%s) ", link!=null ? link.name: "NO LINK"));
         }
         if(link == null)
         {
@@ -291,7 +291,10 @@ public class Mtp3 implements Runnable {
         if (linkset.isActive() && mtpUser != null) {
             mtpUser.linkUp();
         }
-        logger.info(String.format("(%s) Link now IN_SERVICE", link.name));
+        if(logger.isInfoEnabled())
+        {
+        	logger.info(String.format("(%s) Link now IN_SERVICE", link.name));
+        }
     }
     
     public void linkFailed(Mtp2 link) {
@@ -416,8 +419,9 @@ public class Mtp3 implements Runnable {
             
             //scheduling timeout
             testFuture = mtpTimer.schedule(this, timeout, TimeUnit.SECONDS);
-            if (logger.isDebugEnabled()) {
-        	logger.debug(String.format("(%s) Test request, try number = %d", link.name, tryCount));
+            if(logger.isDebugEnabled())
+            {
+            	logger.debug(String.format("(%s) Test request, try number = %d", link.name, tryCount));
             }
         }
         
@@ -432,8 +436,9 @@ public class Mtp3 implements Runnable {
                     ping(Mtp3.TIMEOUT_T1_SLTM);
                     break;
                 case 2 :
-            	    if (logger.isDebugEnabled()) {
-            		logger.debug(String.format("(%s) SLTM message was not acknowledged, Link failed", link.name));
+                	if(logger.isDebugEnabled())
+                    {
+                    	logger.debug(String.format("(%s) SLTM message was not acknowledged, Link failed", link.name));
             	    }
                     //second message was not answered, report failure
                     linkFailed(link);
@@ -468,8 +473,9 @@ public class Mtp3 implements Runnable {
             int sls = _getFromSif_SLS(sif, 0);
             
             //FIXME: change back to trace
-            if (logger.isInfoEnabled()) {
-                logger.info(
+            if(logger.isTraceEnabled())
+            {
+            	logger.trace(
                 		String.format("(%s) Received MSSU [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "] data: ", mtp2.name)+ Arrays.toString(sif));
             }
             switch (serviceIndicator) {

@@ -284,9 +284,9 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 		this.readSelector = SelectorProvider.provider().openSelector();
 		this.socketChannel.register(this.readSelector, SelectionKey.OP_READ);
 		this.socketChannel.register(this.writeSelector, SelectionKey.OP_WRITE);
-		if(logger.isInfoEnabled())
-		{
-			logger.info("Connected to server,  "+this.socketChannel.socket().getRemoteSocketAddress()+", local connection "+this.socketChannel.socket().getLocalAddress()+":"+this.socketChannel.socket().getLocalPort());
+		if(logger.isDebugEnabled())
+        {
+        	logger.debug("Connected to server,  "+this.socketChannel.socket().getRemoteSocketAddress()+", local connection "+this.socketChannel.socket().getLocalAddress()+":"+this.socketChannel.socket().getLocalPort());
 		}
 		
 	}
@@ -323,20 +323,15 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 
 		ByteBuffer[] readResult = null;
 		this.readBuff.flip();
-	    if (logger.isInfoEnabled()) {
-	    	logger.info("Received data: " + this.readBuff);
+		if(logger.isDebugEnabled())
+        {
+        	logger.debug("Received data: " + this.readBuff);
 		 }
 		while ((readResult = this.hdlcHandler.processRx(this.readBuff)) != null) {
 
 			for (ByteBuffer b : readResult) {
 
 				// here we can have link status or msg
-				 if (logger.isInfoEnabled()) {
-					 logger.info("Processed data: " + b);
-					 byte[] tmp  = new byte[b.limit()];
-					 System.arraycopy(b.array(), 0, tmp, 0, tmp.length);
-					 logger.info("MSU from stream: "+Arrays.toString(tmp));
-				 }
 				TLVInputStream tlvInputStream = new TLVInputStream(new ByteArrayInputStream(b.array()));
 				int tag = tlvInputStream.readTag();
 				if (tag == Tag._TAG_LINK_DATA) {
@@ -414,8 +409,9 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 	}
 
 	private void handleClose(SelectionKey key) {
-		if (logger.isInfoEnabled()) {
-			logger.info("Handling key close operations: " + key);
+		if(logger.isDebugEnabled())
+        {
+        	logger.debug("Handling key close operations: " + key);
 		 }
 		linkDown();
 		try {

@@ -325,10 +325,7 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 		if(txBuff.remaining()>0)
 		{
 			int  sentDataCount = socketChannel.write(txBuff);
-			if(logger.isInfoEnabled())
-			{
-				logger.info("Sent data: "+sentDataCount);
-			}
+			
 			if(txBuff.remaining()>0)
 			{
 				//buffer filled.
@@ -346,16 +343,8 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 
 			this.hdlcHandler.processTx(txBuff);
 			txBuff.flip();
-			if(logger.isInfoEnabled())
-			{
-				logger.info("Sending data: "+txBuff);
+			socketChannel.write(txBuff);
 
-			}
-			int sentCount = socketChannel.write(txBuff);
-			if(logger.isInfoEnabled())
-			{
-				logger.info("Sent data count: "+sentCount);
-			}
 			//if (buf.remaining() > 0) {
 			if(txBuff.remaining()>0)
 			{
@@ -402,18 +391,12 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 		//This will read everything, and if there is incomplete frame, it will retain its partial content
 		//so on next read it can continue to decode!
 		this.readBuff.flip();
-		if(logger.isInfoEnabled())
-		{
-			logger.info("Read data: "+readBuff);
-		}
+		
 		while((readResult = this.hdlcHandler.processRx(this.readBuff))!=null)
 		{
 			for(ByteBuffer b:readResult)
 			{
-				if(logger.isInfoEnabled())
-				{
-					logger.info("Processed data: "+b);
-				}
+				
 				//byte sls = b.get();
 				//byte linksetId = b.get();
 				//this.layer3.send(sls,linksetId,si, ssf, b.array());
@@ -422,10 +405,7 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 				if(tag == Tag._TAG_LINK_DATA)
 				{
 					byte[] data = tlvInputStream.readLinkData();
-					if(logger.isInfoEnabled())
-					{
-						logger.info("Send MSU to MTP3: "+Arrays.toString(data));
-					}
+					
 					this.mtp.send( data);
 				}else if (tag == Tag._TAG_LINK_STATUS)
 				{
@@ -453,8 +433,9 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 
 	}
 	private void handleClose(SelectionKey key) {
-		if (logger.isInfoEnabled()) {
-			logger.info("Handling key close operations: " + key);
+		if(logger.isDebugEnabled())
+        {
+        	logger.debug("Handling key close operations: " + key);
 		}
 		linkDown();
 		try {
@@ -573,7 +554,6 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 		// layer3 has something important, lets write.
 		//if(linkUp)
 		//{
-			logger.info("Preparing MSU to stream: "+Arrays.toString(msgBuff));
 			TLVOutputStream tlv = new TLVOutputStream();
 			try {
 				tlv.writeData(msgBuff);
@@ -587,4 +567,5 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 		//}
 	}
 
+	
 }
