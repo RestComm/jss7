@@ -242,12 +242,19 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				}
 				break;
 			case TCAbortMessage._TAG:
-				//this can be only TC-U-Abort, since TC-P-Abort is only local!
-				//FIXME: add cehck for dialog.
+				//this can be only TC-U-Abort, since TC-P-Abort is only local?
 				TCAbortMessage tub = TcapFactory.createTCAbortMessage(ais);
-				di = (DialogImpl) this.getNewUnstructuredDialog(localAddress, remoteAddress);
-				di.setActionReference(ar);
-				di.processAbort(tub, localAddress, remoteAddress);
+//				di = (DialogImpl) this.getNewUnstructuredDialog(localAddress, remoteAddress);
+//				di.setActionReference(ar);
+//				di.processAbort(tub, localAddress, remoteAddress);
+				dialogId = tub.getDestinationTransactionId();
+				di = this.dialogs.get(dialogId);
+				if (di == null) {
+					logger.error("No dialog/transaction for id: " + dialogId);
+				} else {
+					di.processAbort(tub, localAddress, remoteAddress);
+					di.setActionReference(ar);
+				}
 				break;
 			case TCUniMessage._TAG:
 				TCAbortMessage tcuabort = TcapFactory.createTCAbortMessage(ais);
