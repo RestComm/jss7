@@ -237,8 +237,9 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				if (di == null) {
 					logger.error("No dialog/transaction for id: " + dialogId);
 				} else {
-					di.processEnd(teb, localAddress, remoteAddress);
 					di.setActionReference(ar);
+					di.processEnd(teb, localAddress, remoteAddress);
+					
 				}
 				break;
 			case TCAbortMessage._TAG:
@@ -252,8 +253,9 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				if (di == null) {
 					logger.error("No dialog/transaction for id: " + dialogId);
 				} else {
-					di.processAbort(tub, localAddress, remoteAddress);
 					di.setActionReference(ar);
+					di.processAbort(tub, localAddress, remoteAddress);
+					
 				}
 				break;
 			case TCUniMessage._TAG:

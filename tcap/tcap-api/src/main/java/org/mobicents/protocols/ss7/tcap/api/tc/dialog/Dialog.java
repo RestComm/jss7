@@ -6,6 +6,8 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
@@ -108,6 +110,9 @@ public interface Dialog {
 
 	public void send(TCEndRequest event) throws TCAPSendException;
 
+	public void send(TCUserAbortRequest event) throws TCAPSendException;
+	
+	public void send(TCUniRequest event) throws TCAPSendException;
 	/**
 	 * Programmer hook to release.
 	 */

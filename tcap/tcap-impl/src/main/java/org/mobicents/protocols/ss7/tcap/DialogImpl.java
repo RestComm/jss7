@@ -19,7 +19,10 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
+import org.mobicents.protocols.ss7.tcap.asn.AbortSource;
+import org.mobicents.protocols.ss7.tcap.asn.AbortSourceType;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.DialogAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.DialogAPDUType;
@@ -33,6 +36,7 @@ import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
 import org.mobicents.protocols.ss7.tcap.asn.Result;
 import org.mobicents.protocols.ss7.tcap.asn.ResultSourceDiagnostic;
 import org.mobicents.protocols.ss7.tcap.asn.ResultType;
+import org.mobicents.protocols.ss7.tcap.asn.TCAbortMessageImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TCBeginMessageImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TCContinueMessageImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TCEndMessageImpl;
@@ -62,7 +66,7 @@ import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCUserAbortIndicationIm
 public class DialogImpl implements Dialog {
 
 	// timeout of remove task after TC_END
-	private static final int _REMOVE_TIMEOUT = 60000;
+	private static final int _REMOVE_TIMEOUT = 30000;
 
 	private static final Logger logger = Logger.getLogger(DialogImpl.class);
 
@@ -493,12 +497,13 @@ public class DialogImpl implements Dialog {
 		}
 	}
 
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#sendUni()
 	 */
-	public void sendUni(TCUniRequest event) throws TCAPSendException {
+	public void send(TCUniRequest event) throws TCAPSendException {
 		if (this.isStructured()) {
 			throw new TCAPSendException("Structured dialogs do not use Uni");
 		}
@@ -542,7 +547,51 @@ public class DialogImpl implements Dialog {
 		}
 
 	}
+	public void send(TCUserAbortRequest event) throws TCAPSendException
+	{
+		//is abort allowed in "Active" state ?
+		if(!isStructured())
+		{
+			throw new TCAPSendException("Unstructured dialog can not be aborted!");
+		}
+		
+		if(this.state == TRPseudoState.InitialReceived || this.state == TRPseudoState.InitialSent || this.state == TRPseudoState.Active)
+		{
+			//allowed
+			if( event.getUserInformation() == null)
+			{
+				throw new IllegalArgumentException("User information MUST be present.");
+			}
+			DialogPortion dp = TcapFactory.createDialogPortion();
+			DialogAbortAPDU dapdu = TcapFactory.createDialogAPDUAbort();
+			AbortSource as = TcapFactory.createAbortSource();
+			as.setAbortSourceType(AbortSourceType.User);
+			dapdu.setAbortSource(as);
+			dapdu.setUserInformation(event.getUserInformation());
+			dp.setDialogAPDU(dapdu);
+			TCAbortMessageImpl msg = (TCAbortMessageImpl) TcapFactory.createTCAbortMessage();
+			msg.setDestinationTransactionId(this.remoteTransactionId);
+			msg.setDialogPortion(dp);
+			
+			//no components 
+			//...
+			AsnOutputStream aos = new AsnOutputStream();
+			try {
+				msg.encode(aos);
+				this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
+						this.localAddress,this.actionReference);
+				this.setState(TRPseudoState.Expunged);
+				this.scheduledComponentList.clear();
+			} catch (Exception e) {
+				// FIXME: add proper handling here. TC-NOTICE ?
+				// FIXME: remove freshly added invokes to free invoke ID??
+				if (logger.isEnabledFor(Level.ERROR)) {
+					logger.error("Failed to send message: ", e);
+				}
 
+			}
+		}
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -831,8 +880,8 @@ public class DialogImpl implements Dialog {
 		//FIXME: handle external
 		if(msg.getPAbortCause()!=null)
 		{
-			//its remote TC-P-Abort?
-			//its TC-U-Abort
+
+			//its TC-P-Abort
 			TCPAbortIndicationImpl tcAbortIndication = (TCPAbortIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider.getDialogPrimitiveFactory())
 			.createPAbortIndication(this);
 			tcAbortIndication.setPAbortCause(msg.getPAbortCause());

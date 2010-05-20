@@ -28,6 +28,8 @@ public interface TCUserAbortRequest extends DialogRequest {
 
 	public void setUserInformation(UserInformation acn);
 
+	//FIXME: Docs mention Abort Reason, even some example values are shown, but NO DEFINITION....
+	
 	//User defined data, anything... if this is set, it coded as dialogue portion
 	//public External getAbortReason();
 
