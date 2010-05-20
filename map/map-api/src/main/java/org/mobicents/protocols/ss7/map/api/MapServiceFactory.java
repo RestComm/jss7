@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 
 import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
@@ -39,5 +40,7 @@ public interface MapServiceFactory {
 	public USSDString createUSSDString(byte[] ussdString, Charset charSet);
 	
 	public AddressString createAddressString(AddressNature addNature, NumberingPlan numPlan, String address);
+	
+	public MAPUserAbortChoice createMAPUserAbortChoice();
 
 }

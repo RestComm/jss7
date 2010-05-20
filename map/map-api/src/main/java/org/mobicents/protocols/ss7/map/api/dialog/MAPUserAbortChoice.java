@@ -1,6 +1,5 @@
 package org.mobicents.protocols.ss7.map.api.dialog;
 
-import org.mobicents.protocols.ss7.map.api.MAPDialog;
 
 /**
  * MAP-UserAbortChoice ::= CHOICE {

@@ -1,5 +1,6 @@
 package org.mobicents.protocols.ss7.map.api;
 
+import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 
 /**
@@ -57,8 +58,7 @@ public interface MAPDialog {
 	 * 
 	 * @param userReason
 	 */
-	// TODO : add DiagnosticInformation and SpecificInformation?
-	public void abort(int userReason);
+	public void abort(MAPUserAbortChoice mapUserAbortChoice) throws MAPException;
 
 	public void addProcessUnstructuredSSRequest(byte ussdDataCodingScheme,
 			USSDString ussdString) throws MAPException;

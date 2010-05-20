@@ -10,8 +10,10 @@ import org.mobicents.protocols.ss7.map.api.MAPDialogueAS;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.dialog.MAPOpenInfoImpl;
+import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortInfoImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
@@ -32,7 +34,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Return;
 /**
  * 
  * MAP-DialoguePDU ::= CHOICE {
- *    map-open                 [0] MAP-OpenInfo,
+ *   map-open                 [0] MAP-OpenInfo,
  *   map-accept               [1] MAP-AcceptInfo,
  *   map-close                [2] MAP-CloseInfo,
  *   map-refuse               [3] MAP-RefuseInfo,
@@ -73,17 +75,36 @@ public class MAPDialogImpl implements MAPDialog {
 		return tcapDialog.getDialogId();
 	}
 
-	public void abort(int userReason) {
-		TCUserAbortRequest userAbort = this.mapProviderImpl.getTCAPProvider()
+	public void abort(MAPUserAbortChoice mapUserAbortChoice) throws MAPException {
+		TCUserAbortRequest tcUserAbort = this.mapProviderImpl.getTCAPProvider()
 				.getDialogPrimitiveFactory().createUAbort(this.tcapDialog);
 
-		// TODO : Take care of userReason
+		MAPUserAbortInfoImpl mapUserAbortInfoImpl = new MAPUserAbortInfoImpl();
+		mapUserAbortInfoImpl.setMAPUserAbortChoice(mapUserAbortChoice);
 
-		// try {
-		// this.tcapDialog.send(userAbort);
-		// } catch (TCAPSendException e) {
-		// throw new MAPException(e.getMessage(), e);
-		// }
+		AsnOutputStream localasnOs = new AsnOutputStream();
+		try {
+			mapUserAbortInfoImpl.encode(localasnOs);
+		} catch (IOException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+
+		UserInformation userInformation = TcapFactory.createUserInformation();
+
+		userInformation.setOid(true);
+		userInformation.setOidValue(MAPDialogueAS.MAP_DialogueAS.getOID());
+
+		userInformation.setAsn(true);
+		userInformation.setEncodeType(localasnOs.toByteArray());
+
+		tcUserAbort.setUserInformation(userInformation);
+
+
+//		 try {
+//			this.tcapDialog.send(tcUserAbort);
+//		} catch (TCAPSendException e) {
+//			throw new MAPException(e.getMessage(), e);
+//		}
 	}
 
 	public void close(boolean prearrangedEnd) throws MAPException {
