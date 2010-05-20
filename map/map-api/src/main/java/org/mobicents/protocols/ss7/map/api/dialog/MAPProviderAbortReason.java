@@ -18,7 +18,7 @@ public enum MAPProviderAbortReason {
 		this.code = code;
 	}
 
-	public MAPProviderAbortReason getInstance(int code) {
+	public static MAPProviderAbortReason getInstance(int code) {
 		switch (code) {
 		case 0:
 			return abnormalDialogue;

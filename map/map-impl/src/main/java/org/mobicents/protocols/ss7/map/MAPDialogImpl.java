@@ -54,6 +54,8 @@ public class MAPDialogImpl implements MAPDialog {
 
 	private AddressString destReference;
 	private AddressString origReference;
+	
+	private boolean mapAcceptInfoFired = false;
 
 	protected MAPDialogImpl(MAPApplicationContext appCntx, Dialog tcapDialog,
 			MAPProviderImpl mapProviderImpl) {
@@ -396,5 +398,15 @@ public class MAPDialogImpl implements MAPDialog {
 	public MAPApplicationContext getAppCntx() {
 		return appCntx;
 	}
+
+	public boolean isMapAcceptInfoFired() {
+		return mapAcceptInfoFired;
+	}
+
+	public void setMapAcceptInfoFired(boolean mapAcceptInfoFired) {
+		this.mapAcceptInfoFired = mapAcceptInfoFired;
+	}
+	
+	
 
 }

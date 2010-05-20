@@ -44,11 +44,11 @@ public class MAPAcceptInfoImpl implements MAPAcceptInfo {
 	}
 	
 	public void decode(AsnInputStream ais) throws AsnException, IOException, MAPException{
-		
+		//TODO I donno what is here?
 	}
 	
 	public void encode(AsnOutputStream asnOS) throws IOException, MAPException{
-		
+		//TODO I donno what is here?
 	}
 
 }

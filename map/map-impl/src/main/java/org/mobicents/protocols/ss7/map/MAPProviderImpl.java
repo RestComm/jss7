@@ -10,6 +10,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
@@ -24,6 +25,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+import org.mobicents.protocols.ss7.map.dialog.MAPAcceptInfoImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPCloseInfoImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPOpenInfoImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPProviderAbortInfoImpl;
@@ -34,6 +36,7 @@ import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSIndic
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
+import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
@@ -42,7 +45,9 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCPAbortIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
@@ -375,6 +380,48 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	}
 
+	private void fireTCUAbort(Dialog tcapDialog, MAPDialogImpl mapDialog)
+			throws MAPException {
+
+		this.dialogs.remove(mapDialog.getDialogId());
+
+		TCUserAbortRequest tcUserAbort = this.getTCAPProvider()
+				.getDialogPrimitiveFactory().createUAbort(tcapDialog);
+
+		MAPProviderAbortInfoImpl mapProviderAbortInfo = new MAPProviderAbortInfoImpl();
+		mapProviderAbortInfo.setMAPDialog(mapDialog);
+		mapProviderAbortInfo
+				.setMAPProviderAbortReason(MAPProviderAbortReason.abnormalDialogue);
+
+		AsnOutputStream localasnOs = new AsnOutputStream();
+		try {
+			mapProviderAbortInfo.encode(localasnOs);
+		} catch (IOException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+
+		UserInformation userInformation = TcapFactory.createUserInformation();
+
+		userInformation.setOid(true);
+		userInformation.setOidValue(MAPDialogueAS.MAP_DialogueAS.getOID());
+
+		userInformation.setAsn(true);
+		userInformation.setEncodeType(localasnOs.toByteArray());
+
+		tcUserAbort.setUserInformation(userInformation);
+
+		try {
+			tcapDialog.send(tcUserAbort);
+		} catch (TCAPSendException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+
+		for (MAPDialogListener listener : this.dialogListeners) {
+			listener.onMAPProviderAbortInfo(mapProviderAbortInfo);
+		}
+
+	}
+
 	public void onTCContinue(TCContinueIndication tcContinueIndication) {
 
 		ApplicationContextName acn = tcContinueIndication
@@ -391,44 +438,50 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			return;
 		}
 
-		if (acn != null) {
-
-			MAPApplicationContext mapAcn = MAPApplicationContext
-					.getInstance(acn.getOid());
-
-			if (mapAcn == null | mapAcn != mapDialogImpl.getAppCntx()) {
-
-				// On receipt of the first TC-CONTINUE indication primitive for
-				// a dialogue, the MAP PM shall check the value of the
-				// application-context-name parameter. If this value matches the
-				// one used in the MAP-OPEN request primitive, the MAP PM shall
-				// issue a MAP-OPEN confirm primitive with the result parameter
-				// indicating "accepted", then process the following TC
-				// component handling indication primitives as described in
-				// clause 12.6, and then waits for a request primitive from its
-				// user or an indication primitive from TC, otherwise it shall
-				// issue a TC-U-ABORT request primitive with a MAP-providerAbort
-				// PDU indicating "abnormal dialogue" and a MAP-P-ABORT
-				// indication primitive with the "provider-reason" parameter
-				// indicating "abnormal dialogue".
-
-				// TODO : Send the TC-U-ABORT Request
-
-				MAPProviderAbortInfoImpl abortInfo = new MAPProviderAbortInfoImpl();
-				abortInfo.setMAPDialog(mapDialogImpl);
-				abortInfo
-						.setMAPProviderAbortReason(MAPProviderAbortReason.abnormalDialogue);
-
-				for (MAPDialogListener listener : this.dialogListeners) {
-					listener.onMAPProviderAbortInfo(abortInfo);
+		// On receipt of the first TC-CONTINUE indication primitive for
+		// a dialogue, the MAP PM shall check the value of the
+		// application-context-name parameter. If this value matches the
+		// one used in the MAP-OPEN request primitive, the MAP PM shall
+		// issue a MAP-OPEN confirm primitive with the result parameter
+		// indicating "accepted", then process the following TC
+		// component handling indication primitives as described in
+		// clause 12.6, and then waits for a request primitive from its
+		// user or an indication primitive from TC, otherwise it shall
+		// issue a TC-U-ABORT request primitive with a MAP-providerAbort
+		// PDU indicating "abnormal dialogue" and a MAP-P-ABORT
+		// indication primitive with the "provider-reason" parameter
+		// indicating "abnormal dialogue".		
+		if (!mapDialogImpl.isMapAcceptInfoFired()) {
+			if (acn == null) {
+				try {
+					fireTCUAbort(tcapDialog, mapDialogImpl);
+				} catch (MAPException e) {
+					this.loger.error(e);
 				}
+			} else {
+				MAPApplicationContext mapAcn = MAPApplicationContext
+						.getInstance(acn.getOid());
+				if (mapAcn == null | mapAcn != mapDialogImpl.getAppCntx()) {
+					try {
+						fireTCUAbort(tcapDialog, mapDialogImpl);
+					} catch (MAPException e) {
+						this.loger.error(e);
+					}
+				} else {
+					
+					// Fire MAPAcceptInfo
+					MAPAcceptInfoImpl mapAcceptInfo = new MAPAcceptInfoImpl();
+					mapAcceptInfo.setMAPDialog(mapDialogImpl);
 
-				// Remove the MAPDialog
-				this.dialogs.remove(tcapDialog.getDialogId());
+					for (MAPDialogListener listener : this.dialogListeners) {
+						listener.onMAPAcceptInfo(mapAcceptInfo);
+					}
+					
+					mapDialogImpl.setMapAcceptInfoFired(true);
+				}
+			}// end of if (acn == null)
 
-			}
-
-		}
+		}// end of if(!mapDialogImpl.isMapAcceptInfoFired())
 
 		Component[] components = tcContinueIndication.getComponents();
 
@@ -570,7 +623,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				}
 
 			} // end of for (Component c : comps)
-		}//end of if (components != null)
+		}// end of if (components != null)
 
 		// then it shall issue a MAP-CLOSE indication primitive and return to
 		// idle all state machines associated with the dialogue.
