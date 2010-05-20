@@ -56,7 +56,7 @@ public class MAPOpenInfoTest extends TestCase {
 
 	}
 
-	// @org.junit.Test
+	@org.junit.Test
 	public void testEncode() throws Exception {
 
 		MapServiceFactory servFact = new MapServiceFactoryImpl();

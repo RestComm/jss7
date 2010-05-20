@@ -1,6 +1,12 @@
 package org.mobicents.protocols.ss7.map.api.dialog;
 
 /**
+ * See ETS 300974 Table 5.3/7
+ * 
+ * ResourceUnavailableReason ::= ENUMERATED {
+ *    shortTermResourceLimitation (0),
+ *    longTermResourceLimitation (1)}
+ *
  * 
  * @author amit bhayani
  * 
@@ -15,7 +21,7 @@ public enum ResourceUnavailableReason {
 		this.code = code;
 	}
 
-	public ResourceUnavailableReason getInstance(int code) {
+	public static ResourceUnavailableReason getInstance(int code) {
 		switch (code) {
 		case 0:
 			return shortTermResourceLimitation;

@@ -31,6 +31,14 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Return;
 
 /**
  * 
+ * MAP-DialoguePDU ::= CHOICE {
+ *    map-open                 [0] MAP-OpenInfo,
+ *   map-accept               [1] MAP-AcceptInfo,
+ *   map-close                [2] MAP-CloseInfo,
+ *   map-refuse               [3] MAP-RefuseInfo,
+ *   map-userAbort            [4] MAP-UserAbortInfo,
+ *   map-providerAbort        [5] MAP-ProviderAbortInfo}
+ * 
  * @author amit bhayani
  * 
  */
