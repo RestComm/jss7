@@ -1,6 +1,6 @@
 package org.mobicents.protocols.ss7.stream.tcp;
 
-class StartFailedException extends Exception {
+public class StartFailedException extends Exception {
 
 	public StartFailedException() {
 		super();
