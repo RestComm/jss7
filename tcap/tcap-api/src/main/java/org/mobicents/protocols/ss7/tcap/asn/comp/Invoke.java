@@ -4,6 +4,7 @@
 package org.mobicents.protocols.ss7.tcap.asn.comp;
 
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 
 /**
  * @author baranowb
@@ -26,6 +27,14 @@ public interface Invoke extends Component{
 	public static final boolean _TAG_LID_PC_PRIMITIVE = true;
 	public static final int _TAG_LID_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
 	
+	
+	//local, relevant only for send
+	public InvokeClass getInvokeClass();
+	/**
+	 * 
+	 * @param invokeClass
+	 */
+	public void setInvokeClass(InvokeClass invokeClass);
 	
 	//hate this isSetThing, so lets use objects.
 	

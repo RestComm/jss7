@@ -258,7 +258,13 @@ public class InvokeImpl implements Invoke {
 	 *            the invokeClass to set
 	 */
 	public void setInvokeClass(InvokeClass invokeClass) {
-		this.invokeClass = invokeClass;
+		if(invokeClass!=null)
+		{
+			this.invokeClass = invokeClass;
+		}else
+		{
+			//
+		}
 	}
 
 	/**

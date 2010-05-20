@@ -4,7 +4,7 @@
 package org.mobicents.protocols.ss7.tcap.api.tc.component;
 
 /**
- * Class of operation, 
+ * Class of invoke type, ref Q.771 2.3.1.3
  * @author baranowb
  *
  */
