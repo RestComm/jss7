@@ -43,7 +43,13 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 
 	/** Creates a new instance of SccpProviderImpl */
 	public SccpSCTPProviderImpl(Properties props) {
-		this.mtpProvider = MTPProviderFactory.getInstance().getProvider(props);
+		this(MTPProviderFactory.getInstance().getProvider(props),props);
+		
+		
+	}
+
+	public SccpSCTPProviderImpl(MTPProvider provider,Properties props) {
+		this.mtpProvider = provider;
 		this.mtpProvider.addMtpListener(this);
 		//FIXME: move this to mtp provider?
 		this.opc = Integer.parseInt(props.getProperty("sccp.opc"));
@@ -53,8 +59,6 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
         //this.si  = Integer.parseInt(props.getProperty("sccp.si"));
         this.si = Mtp3._SI_SERVICE_SCCP;
 	}
-
-
 
 	public void receive(byte[] arg2) {
 		// add check for SIO parts?
