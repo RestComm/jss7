@@ -1,5 +1,7 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
+import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
+
 
 /**
  * This service is used between the MSC and the VLR and between the VLR and the
@@ -11,5 +13,8 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
  */
 public interface ProcessUnstructuredSSRequest extends  USSDService {
 	
+	public void setMSISDNAddressString(AddressString msisdnAddr);
+	
+	public AddressString getMSISDNAddressString();
 	
 }

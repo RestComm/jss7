@@ -12,6 +12,7 @@ import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+import org.mobicents.protocols.ss7.map.dialog.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPOpenInfoImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortInfoImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
@@ -33,13 +34,10 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Return;
 
 /**
  * 
- * MAP-DialoguePDU ::= CHOICE {
- *   map-open                 [0] MAP-OpenInfo,
- *   map-accept               [1] MAP-AcceptInfo,
- *   map-close                [2] MAP-CloseInfo,
- *   map-refuse               [3] MAP-RefuseInfo,
- *   map-userAbort            [4] MAP-UserAbortInfo,
- *   map-providerAbort        [5] MAP-ProviderAbortInfo}
+ * MAP-DialoguePDU ::= CHOICE { map-open [0] MAP-OpenInfo, map-accept [1]
+ * MAP-AcceptInfo, map-close [2] MAP-CloseInfo, map-refuse [3] MAP-RefuseInfo,
+ * map-userAbort [4] MAP-UserAbortInfo, map-providerAbort [5]
+ * MAP-ProviderAbortInfo}
  * 
  * @author amit bhayani
  * 
@@ -54,7 +52,7 @@ public class MAPDialogImpl implements MAPDialog {
 
 	private AddressString destReference;
 	private AddressString origReference;
-	
+
 	private boolean mapAcceptInfoFired = false;
 
 	protected MAPDialogImpl(MAPApplicationContext appCntx, Dialog tcapDialog,
@@ -77,7 +75,8 @@ public class MAPDialogImpl implements MAPDialog {
 		return tcapDialog.getDialogId();
 	}
 
-	public void abort(MAPUserAbortChoice mapUserAbortChoice) throws MAPException {
+	public void abort(MAPUserAbortChoice mapUserAbortChoice)
+			throws MAPException {
 		TCUserAbortRequest tcUserAbort = this.mapProviderImpl.getTCAPProvider()
 				.getDialogPrimitiveFactory().createUAbort(this.tcapDialog);
 
@@ -101,12 +100,11 @@ public class MAPDialogImpl implements MAPDialog {
 
 		tcUserAbort.setUserInformation(userInformation);
 
-
-//		 try {
-//			this.tcapDialog.send(tcUserAbort);
-//		} catch (TCAPSendException e) {
-//			throw new MAPException(e.getMessage(), e);
-//		}
+		try {
+			this.tcapDialog.send(tcUserAbort);
+		} catch (TCAPSendException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
 	}
 
 	public void close(boolean prearrangedEnd) throws MAPException {
@@ -215,7 +213,7 @@ public class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void addProcessUnstructuredSSRequest(byte ussdDataCodingScheme,
-			USSDString ussdString) throws MAPException {
+			USSDString ussdString, AddressString msisdn) throws MAPException {
 
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider()
 				.getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -239,11 +237,28 @@ public class MAPDialogImpl implements MAPDialog {
 			p2.setTagClass(Tag.CLASS_UNIVERSAL);
 			p2.setTag(Tag.STRING_OCTET);
 			p2.setData(ussdString.getEncodedString());
+			
+			Parameter p3 = null;
+			if(msisdn != null){
+				AsnOutputStream asnOs = new AsnOutputStream();
+				((AddressStringImpl)msisdn).encode(asnOs);
+				byte[] msisdndata = asnOs.toByteArray();
+				
+				 p3 = TcapFactory.createParameter();
+				 p3.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
+				 p3.setTag(0x00);
+				 p3.setData(msisdndata);
+			}
 
 			Parameter p = TcapFactory.createParameter();
 			p.setTagClass(Tag.CLASS_UNIVERSAL);
 			p.setTag(Tag.SEQUENCE);
-			p.setParameters(new Parameter[] { p1, p2 });
+			
+			if(p3!=null){
+				p.setParameters(new Parameter[] { p1, p2, p3 });
+			} else {
+				p.setParameters(new Parameter[] { p1, p2 });
+			}
 
 			invoke.setParameter(p);
 
@@ -406,7 +421,5 @@ public class MAPDialogImpl implements MAPDialog {
 	public void setMapAcceptInfoFired(boolean mapAcceptInfoFired) {
 		this.mapAcceptInfoFired = mapAcceptInfoFired;
 	}
-	
-	
 
 }

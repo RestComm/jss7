@@ -72,6 +72,10 @@ public class Client implements MAPDialogListener, MAPServiceListener {
 		AddressString destReference = this.mapServiceFactory
 				.createAddressString(AddressNature.international_number,
 						NumberingPlan.land_mobile, "204208300008002");
+		
+		AddressString msisdn = this.mapServiceFactory
+		.createAddressString(AddressNature.international_number,
+				NumberingPlan.ISDN, "31628838002");		
 
 		clientDialog = this.mapProvider.createNewDialog(appCnt,
 				this.thisAddress, orgiReference, this.remoteAddress,
@@ -80,7 +84,7 @@ public class Client implements MAPDialogListener, MAPServiceListener {
 		USSDString ussdString = this.mapServiceFactory
 				.createUSSDString(MAPFunctionalTest.USSD_STRING);
 
-		clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString);
+		clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString, msisdn);
 
 		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
 

@@ -25,6 +25,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+import org.mobicents.protocols.ss7.map.dialog.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPAcceptInfoImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPCloseInfoImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPOpenInfoImpl;
@@ -189,6 +190,26 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 			procUnSSInd.setInvokeId(invokeId);
 			procUnSSInd.setMAPDialog(mapDialogImpl);
+			
+			//MSISDN
+			if(parameters.length > 2){
+				Parameter msisdnParam = parameters[2];
+				if(msisdnParam.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC && msisdnParam.getTag() == 0x00){
+					byte[] msisdnData = msisdnParam.getData();
+					
+					AsnInputStream ansIS = new AsnInputStream(new ByteArrayInputStream(msisdnData));
+					
+					AddressStringImpl msisdnAddStr = new AddressStringImpl();
+					try {
+						msisdnAddStr.decode(ansIS);
+						procUnSSInd.setMSISDNAddressString(msisdnAddStr);
+					} catch (IOException e) {
+						loger.error("Error while decoding the MSISDN AddressString ", e);
+					}
+				}
+			}
+			
+			
 
 			for (MAPServiceListener serLis : this.serviceListeners) {
 				serLis.onProcessUnstructuredSSIndication(procUnSSInd);
@@ -450,7 +471,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		// issue a TC-U-ABORT request primitive with a MAP-providerAbort
 		// PDU indicating "abnormal dialogue" and a MAP-P-ABORT
 		// indication primitive with the "provider-reason" parameter
-		// indicating "abnormal dialogue".		
+		// indicating "abnormal dialogue".
 		if (!mapDialogImpl.isMapAcceptInfoFired()) {
 			if (acn == null) {
 				try {
@@ -468,7 +489,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 						this.loger.error(e);
 					}
 				} else {
-					
+
 					// Fire MAPAcceptInfo
 					MAPAcceptInfoImpl mapAcceptInfo = new MAPAcceptInfoImpl();
 					mapAcceptInfo.setMAPDialog(mapDialogImpl);
@@ -476,7 +497,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					for (MAPDialogListener listener : this.dialogListeners) {
 						listener.onMAPAcceptInfo(mapAcceptInfo);
 					}
-					
+
 					mapDialogImpl.setMapAcceptInfoFired(true);
 				}
 			}// end of if (acn == null)
@@ -658,13 +679,34 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			return;
 		}
 
-		PAbortCauseType pAbortCause = tcPAbortIndication.getPAbortCause();
-
 		MAPProviderAbortInfoImpl prAbortInfoImpl = new MAPProviderAbortInfoImpl();
 		prAbortInfoImpl.setMAPDialog(mapDialogImpl);
+
+		PAbortCauseType pAbortCause = tcPAbortIndication.getPAbortCause();
+
 		// TODO Mapping of MAPProviderAbortReason with PAbortCauseType ???
-		prAbortInfoImpl
-				.setMAPProviderAbortReason(MAPProviderAbortReason.abnormalDialogue);
+		switch (pAbortCause) {
+		case UnrecogniedMessageType:
+			prAbortInfoImpl
+					.setMAPProviderAbortReason(MAPProviderAbortReason.abnormalDialogue);
+			break;
+		case UnrecognizedTxID:
+			prAbortInfoImpl
+					.setMAPProviderAbortReason(MAPProviderAbortReason.abnormalDialogue);
+			break;
+		case BadlyFormattedTxPortion:
+			prAbortInfoImpl
+					.setMAPProviderAbortReason(MAPProviderAbortReason.abnormalDialogue);
+			break;
+		case IncorrectTxPortion:
+			prAbortInfoImpl
+					.setMAPProviderAbortReason(MAPProviderAbortReason.abnormalDialogue);
+			break;
+		case ResourceLimitation:
+			prAbortInfoImpl
+					.setMAPProviderAbortReason(MAPProviderAbortReason.abnormalDialogue);
+			break;
+		}
 
 		for (MAPDialogListener listener : this.dialogListeners) {
 			listener.onMAPProviderAbortInfo(prAbortInfoImpl);

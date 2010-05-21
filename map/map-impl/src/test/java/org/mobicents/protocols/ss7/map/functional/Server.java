@@ -11,6 +11,7 @@ import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
+import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAcceptInfo;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPCloseInfo;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPOpenInfo;
@@ -26,7 +27,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class Server implements MAPDialogListener, MAPServiceListener {
 
@@ -115,7 +116,9 @@ public class Server implements MAPDialogListener, MAPServiceListener {
 	public void onProcessUnstructuredSSIndication(
 			ProcessUnstructuredSSIndication procUnstrInd) {
 		String ussdString = procUnstrInd.getUSSDString().getString();
-		logger.debug("Received ProcessUnstructuredSSIndication " + ussdString);
+		AddressString msisdn = procUnstrInd.getMSISDNAddressString();
+		logger.debug("Received ProcessUnstructuredSSIndication " + ussdString
+				+ " from MSISDN " + msisdn.getAddress());
 
 		if (!ussdString.equals(MAPFunctionalTest.USSD_STRING)) {
 			this.finished = false;

@@ -55,9 +55,14 @@ public class MAPExample implements MAPDialogListener, MAPServiceListener {
 		// impl of Charset
 		USSDString ussdString = servFact.createUSSDString("*125*+31628839999#",
 				null);
+		
+		
+		AddressString msisdn = this.servFact
+		.createAddressString(AddressNature.international_number,
+				NumberingPlan.ISDN, "31628838002");				
 
 		mapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme,
-				ussdString);
+				ussdString, msisdn);
 
 		// This will initiate the TC-BEGIN with INVOKE component
 		mapDialog.send();

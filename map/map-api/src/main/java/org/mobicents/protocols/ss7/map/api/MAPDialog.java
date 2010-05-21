@@ -1,5 +1,6 @@
 package org.mobicents.protocols.ss7.map.api;
 
+import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 
@@ -58,18 +59,33 @@ public interface MAPDialog {
 	 * 
 	 * @param userReason
 	 */
-	public void abort(MAPUserAbortChoice mapUserAbortChoice) throws MAPException;
+	public void abort(MAPUserAbortChoice mapUserAbortChoice)
+			throws MAPException;
 
+	/**
+	 * Add's a new ProcessUnstructuredSSRequest as Component.
+	 * 
+	 * @param ussdDataCodingScheme
+	 *            The Data Coding Scheme for this USSD String as defined in GSM
+	 *            03.38
+	 * @param ussdString
+	 *            Ussd String
+	 * @param msisdn
+	 *            The MSISDN in {@link AddressString} format. This is optional
+	 * @throws MAPException
+	 */
 	public void addProcessUnstructuredSSRequest(byte ussdDataCodingScheme,
-			USSDString ussdString) throws MAPException;
+			USSDString ussdString, AddressString msisdn) throws MAPException;
 
-	public void addProcessUnstructuredSSResponse(long invokeId, boolean lastResult, byte ussdDataCodingScheme,
-			USSDString ussdString) throws MAPException;
+	public void addProcessUnstructuredSSResponse(long invokeId,
+			boolean lastResult, byte ussdDataCodingScheme, USSDString ussdString)
+			throws MAPException;
 
 	public void addUnstructuredSSRequest(byte ussdDataCodingScheme,
 			USSDString ussdString) throws MAPException;
 
-	public void addUnstructuredSSResponse(long invokeId, boolean lastResult, byte ussdDataCodingScheme,
-			USSDString ussdString) throws MAPException;
+	public void addUnstructuredSSResponse(long invokeId, boolean lastResult,
+			byte ussdDataCodingScheme, USSDString ussdString)
+			throws MAPException;
 
 }
