@@ -57,7 +57,12 @@ public class TLVOutputStream extends ByteArrayOutputStream {
 	 * @throws IOException 
 	 */
 	public void writeLength(int v) throws IOException {
-		if(v>0x7F)
+		if(v == 0x80)
+		{
+			this.write(0x80);
+			return;
+		}
+		else if(v>0x7F)
 		{
 			//XXX: note there is super.count!!!!!!!
 			int count;
