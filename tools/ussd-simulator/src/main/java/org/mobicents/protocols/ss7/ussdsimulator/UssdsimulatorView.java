@@ -534,12 +534,14 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,MA
 		//dont set more, until statics are defined!
 		gt.setDigits("5557779");
 		peer1Address.setGlobalTitle(gt);
+                peer1Address.setGlobalTitleIndicator(4);//for GT 100
 
 		peer2Address = sccpProvider.getSccpParameterFactory().getSccpAddress();
 		gt = sccpProvider.getSccpParameterFactory().getGlobalTitle100();
 		//dont set more, until statics are defined!
 		gt.setDigits("5888879");
 		peer2Address.setGlobalTitle(gt);
+                peer2Address.setGlobalTitleIndicator(4);//for GT 100
 
                 //map/ussd part
                 mapUssdAppContext = MAPApplicationContext.networkUnstructuredSsContextV2;
@@ -587,7 +589,10 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,MA
                 }
             }
         try {
-            clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString);
+            AddressString msisdn = this.mapStack.getMAPProvider().getMapServiceFactory()
+		.createAddressString(AddressNature.international_number,
+				NumberingPlan.ISDN, "31628838002");
+            clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString,msisdn);
             clientDialog.send();
             this._field_punch_display.setText("");
             this._keypad_button_break.setEnabled(true);
