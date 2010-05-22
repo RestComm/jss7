@@ -40,7 +40,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Return;
  * MAP-ProviderAbortInfo}
  * 
  * @author amit bhayani
- * 
+ * @author baranowb
  */
 public class MAPDialogImpl implements MAPDialog {
 
@@ -108,6 +108,9 @@ public class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void close(boolean prearrangedEnd) throws MAPException {
+		
+		if(this.tcapDialog.getState() == TRPseudoState.Active)
+		{
 		TCEndRequest endRequest = this.mapProviderImpl.getTCAPProvider()
 				.getDialogPrimitiveFactory().createEnd(this.tcapDialog);
 		if (!prearrangedEnd) {
@@ -127,6 +130,27 @@ public class MAPDialogImpl implements MAPDialog {
 		} catch (TCAPSendException e) {
 			throw new MAPException(e.getMessage(), e);
 		}
+		
+		}else if(this.tcapDialog.getState()==TRPseudoState.InitialReceived || this.tcapDialog.getState()==TRPseudoState.InitialSent)
+		{
+			//its subject for abort?
+			TCUserAbortRequest abortRequest=this.mapProviderImpl.getTCAPProvider()
+			.getDialogPrimitiveFactory().createUAbort(this.tcapDialog);
+			ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider()
+			.getDialogPrimitiveFactory().createApplicationContextName(
+					this.appCntx.getOID());
+			abortRequest.setApplicationContextName(acn);
+			
+			try {
+				this.tcapDialog.send(abortRequest);
+			} catch (TCAPSendException e) {
+				throw new MAPException(e.getMessage(), e);
+			}
+		}else
+		{
+			//FIXME:??
+		}
+			
 	}
 
 	public void send() throws MAPException {
