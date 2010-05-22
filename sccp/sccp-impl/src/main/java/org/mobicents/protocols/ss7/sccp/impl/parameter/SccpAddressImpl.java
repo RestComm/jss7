@@ -84,9 +84,16 @@ public class SccpAddressImpl implements SccpAddress {
             case 4 :
                 globalTitle = new GT0100Impl();
                 break;
+                default:
+                	throw new IOException("Uknown GT: "+globalTitleIndicator);
         }
         if(globalTitle!=null)
+        {
         	globalTitle.decode(in);
+        }else
+        {
+        	//FIXME: read it anyway?
+        }
     }
     
     public byte[] encode() throws IOException {
@@ -229,6 +236,7 @@ public class SccpAddressImpl implements SccpAddress {
 
 	public void setGlobalTitle(GlobalTitle globalTitle) {
 		this.globalTitle = globalTitle;
+
 	}
     
 
