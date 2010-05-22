@@ -341,6 +341,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					dialogs.put(mapDialogImpl.getDialogId(), mapDialogImpl);
 
 					MAPOpenInfoImpl mapOpenInfoImpl = new MAPOpenInfoImpl();
+					mapOpenInfoImpl.setMAPDialog(mapDialogImpl);
 					mapOpenInfoImpl.decode(ais);
 
 					for (MAPDialogListener listener : this.dialogListeners) {
