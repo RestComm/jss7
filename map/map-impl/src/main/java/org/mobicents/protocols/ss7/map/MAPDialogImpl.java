@@ -2,6 +2,7 @@ package org.mobicents.protocols.ss7.map;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
@@ -43,7 +44,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Return;
  * @author baranowb
  */
 public class MAPDialogImpl implements MAPDialog {
-
+	private static final Logger logger = Logger.getLogger(MAPDialogImpl.class);
 	private Dialog tcapDialog = null;
 	private MAPProviderImpl mapProviderImpl = null;
 
@@ -108,7 +109,12 @@ public class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void close(boolean prearrangedEnd) throws MAPException {
-		
+
+		if(this.tcapDialog.getState()==TRPseudoState.InitialReceived )
+		{
+				//send continue
+				this.send();
+		}
 		if(this.tcapDialog.getState() == TRPseudoState.Active)
 		{
 		TCEndRequest endRequest = this.mapProviderImpl.getTCAPProvider()
@@ -131,21 +137,22 @@ public class MAPDialogImpl implements MAPDialog {
 			throw new MAPException(e.getMessage(), e);
 		}
 		
-		}else if(this.tcapDialog.getState()==TRPseudoState.InitialReceived || this.tcapDialog.getState()==TRPseudoState.InitialSent)
-		{
-			//its subject for abort?
-			TCUserAbortRequest abortRequest=this.mapProviderImpl.getTCAPProvider()
-			.getDialogPrimitiveFactory().createUAbort(this.tcapDialog);
-			ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider()
-			.getDialogPrimitiveFactory().createApplicationContextName(
-					this.appCntx.getOID());
-			abortRequest.setApplicationContextName(acn);
-			
-			try {
-				this.tcapDialog.send(abortRequest);
-			} catch (TCAPSendException e) {
-				throw new MAPException(e.getMessage(), e);
-			}
+//		}
+//		else if(this.tcapDialog.getState()==TRPseudoState.InitialReceived || this.tcapDialog.getState()==TRPseudoState.InitialSent)
+//		{
+//			//its subject for abort?
+//			TCUserAbortRequest abortRequest=this.mapProviderImpl.getTCAPProvider()
+//			.getDialogPrimitiveFactory().createUAbort(this.tcapDialog);
+//			ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider()
+//			.getDialogPrimitiveFactory().createApplicationContextName(
+//					this.appCntx.getOID());
+//			abortRequest.setApplicationContextName(acn);
+//			
+//			try {
+//				this.tcapDialog.send(abortRequest);
+//			} catch (TCAPSendException e) {
+//				throw new MAPException(e.getMessage(), e);
+//			}
 		}else
 		{
 			//FIXME:??
@@ -209,6 +216,7 @@ public class MAPDialogImpl implements MAPDialog {
 				throw new MAPException(e.getMessage(), e);
 			}
 
+			//FIXME: and I-Sent state handling?
 		} else if (this.tcapDialog.getState() == TRPseudoState.InitialReceived) {
 			// Its first Reply to TC-Begin
 
