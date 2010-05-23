@@ -56,6 +56,8 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
 /**
  * 
@@ -349,40 +351,11 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					}
 
 					// Now let us decode the Components
-					for (Component c : comps) {
-						ComponentType compType = c.getType();
-						if (compType != ComponentType.Invoke) {
-							// TODO This is Error, what do we do next? Or should
-							// it even happen?
-							loger
-									.error("Expected ComponentType.Invoke but received "
-											+ compType);
-							return;
-						}
-						Invoke invoke = (Invoke) c;
-
-						long invokeId = invoke.getInvokeId();
-						OperationCode oc = invoke.getOperationCode();
-
-						if (oc.getCode() == MAPOperationCode.processUnstructuredSS_Request) {
-
-							Parameter parameter = invoke.getParameter();
-							this.processUnstructuredSSRequest(parameter,
-									mapDialogImpl, invokeId);
-
-						} else if (oc.getCode() == MAPOperationCode.unstructuredSS_Request) {
-
-							Parameter parameter = invoke.getParameter();
-							this.unstructuredSSRequest(parameter,
-									mapDialogImpl, invokeId);
-
-						} else {
-							loger
-									.error("Expected OC is MAPOperationCode.processUnstructuredSS_Request or MAPOperationCode.unstructuredSS_Request but received "
-											+ oc.getCode());
-							return;
-						}
-					} // end of for (Component c : comps)
+					if(comps!=null)
+					{
+						processComponents(mapDialogImpl,comps);
+					}
+						// end of for (Component c : comps)
 
 				} catch (AsnException e) {
 					e.printStackTrace();
@@ -481,8 +454,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					this.loger.error(e);
 				}
 			} else {
-				MAPApplicationContext mapAcn = MAPApplicationContext
-						.getInstance(acn.getOid());
+				MAPApplicationContext mapAcn = MAPApplicationContext.getInstance(acn.getOid());
 				if (mapAcn == null | mapAcn != mapDialogImpl.getAppCntx()) {
 					try {
 						fireTCUAbort(tcapDialog, mapDialogImpl);
@@ -506,51 +478,14 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		}// end of if(!mapDialogImpl.isMapAcceptInfoFired())
 
 		Component[] components = tcContinueIndication.getComponents();
-
-		// Now let us decode the Components
-		for (Component c : components) {
-
-			try {
-
-				ComponentType compType = c.getType();
-
-				long invokeId = c.getInvokeId();
-
-				// TODO Does it make any difference if its Invoke, ReturnResult
-				// or ReturnResultLast?
-				if (compType == ComponentType.Invoke
-						|| compType == ComponentType.ReturnResult
-						|| compType == ComponentType.ReturnResultLast) {
-					Invoke invoke = (Invoke) c;
-
-					OperationCode oc = invoke.getOperationCode();
-
-					if (oc.getCode() == MAPOperationCode.processUnstructuredSS_Request) {
-
-						Parameter parameter = invoke.getParameter();
-						this.processUnstructuredSSRequest(parameter,
-								mapDialogImpl, invokeId);
-
-					} else if (oc.getCode() == MAPOperationCode.unstructuredSS_Request) {
-
-						Parameter parameter = invoke.getParameter();
-						this.unstructuredSSRequest(parameter, mapDialogImpl,
-								invokeId);
-
-					} else {
-						loger
-								.error("Expected OC is MAPOperationCode.processUnstructuredSS_Request or MAPOperationCode.unstructuredSS_Request but received "
-										+ oc.getCode());
-						return;
-					}
-				}// end of if
-			} catch (MAPException e) {
-				e.printStackTrace();
-			}
-
-		} // end of for (Component c : comps)
+		if(components!=null)
+		{
+			processComponents(mapDialogImpl,components);
+		}
 
 	}
+
+
 
 	public void onTCEnd(TCEndIndication tcEndIndication) {
 
@@ -603,48 +538,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 		if (components != null) {
 			// Now let us decode the Components
-			for (Component c : components) {
-
-				try {
-
-					ComponentType compType = c.getType();
-
-					long invokeId = c.getInvokeId();
-
-					// TODO Does it make any difference if its Invoke,
-					// ReturnResult
-					// or ReturnResultLast?
-					if (compType == ComponentType.Invoke
-							|| compType == ComponentType.ReturnResult
-							|| compType == ComponentType.ReturnResultLast) {
-						Invoke invoke = (Invoke) c;
-
-						OperationCode oc = invoke.getOperationCode();
-
-						if (oc.getCode() == MAPOperationCode.processUnstructuredSS_Request) {
-
-							Parameter parameter = invoke.getParameter();
-							this.processUnstructuredSSRequest(parameter,
-									mapDialogImpl, invokeId);
-
-						} else if (oc.getCode() == MAPOperationCode.unstructuredSS_Request) {
-
-							Parameter parameter = invoke.getParameter();
-							this.unstructuredSSRequest(parameter,
-									mapDialogImpl, invokeId);
-
-						} else {
-							loger
-									.error("Expected OC is MAPOperationCode.processUnstructuredSS_Request or MAPOperationCode.unstructuredSS_Request but received "
-											+ oc.getCode());
-							return;
-						}
-					}// end of if
-				} catch (MAPException e) {
-					e.printStackTrace();
-				}
-
-			} // end of for (Component c : comps)
+			processComponents(mapDialogImpl,components);
 		}// end of if (components != null)
 
 		// then it shall issue a MAP-CLOSE indication primitive and return to
@@ -657,6 +551,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		}
 
 	}
+
 
 	public void onTCUni(TCUniIndication arg0) {
 		// TODO Throw Exception or Ignore? This should never happen for MAP
@@ -742,6 +637,61 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	}
 
+	private void processComponents(MAPDialogImpl mapDialogImpl, Component[] components) {
+		//FIXME: Amit DOUBLE CHECK!
+		// Now let us decode the Components
+		for (Component c : components) {
+
+			try {
+
+				ComponentType compType = c.getType();
+
+				long invokeId = c.getInvokeId();
+
+				// TODO Does it make any difference if its Invoke, ReturnResult
+				// or ReturnResultLast?
+				Parameter parameter;
+				OperationCode oc;
+				if (compType == ComponentType.Invoke) {
+					Invoke comp = (Invoke) c;
+					oc = comp.getOperationCode();
+					parameter = comp.getParameter();
+				} else if (compType == ComponentType.ReturnResult) {
+					ReturnResult comp = (ReturnResult) c;
+					oc = comp.getOperationCode();
+					parameter = comp.getParameter();
+				} else if (compType == ComponentType.ReturnResultLast) {
+					ReturnResultLast comp = (ReturnResultLast) c;
+					oc = comp.getOperationCode();
+					parameter = comp.getParameter();
+				} else {
+					// FIXME: add rest
+					continue;
+				}
+
+				if (oc.getCode() == MAPOperationCode.processUnstructuredSS_Request) {
+
+					this.processUnstructuredSSRequest(parameter, mapDialogImpl, invokeId);
+
+				} else if (oc.getCode() == MAPOperationCode.unstructuredSS_Request) {
+
+					this.unstructuredSSRequest(parameter, mapDialogImpl, invokeId);
+
+				} else {
+					loger
+							.error("Expected OC is MAPOperationCode.processUnstructuredSS_Request or MAPOperationCode.unstructuredSS_Request but received "
+									+ oc.getCode());
+					return;
+				}// end of if
+
+			} catch (MAPException e) {
+				e.printStackTrace();
+			}
+		} // end of for (Component c : comps)
+		
+	}
+	
+	
 	public MAPDialog getMAPDialog(Long dialogId) {
 		return this.dialogs.get(dialogId);
 	}
