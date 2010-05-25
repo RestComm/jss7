@@ -312,6 +312,7 @@ public class DialogImpl implements Dialog {
 			this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
 					this.localAddress,this.actionReference);
 			this.setState(TRPseudoState.InitialSent);
+			this.scheduledComponentList.clear();
 		} catch (Exception e) {
 			// FIXME: add proper handling here. TC-NOTICE ?
 			// FIXME: remove freshly added invokes to free invoke ID??
