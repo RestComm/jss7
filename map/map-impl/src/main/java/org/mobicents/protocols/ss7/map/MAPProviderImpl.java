@@ -339,6 +339,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 					MAPDialogImpl mapDialogImpl = new MAPDialogImpl(mapAppCtx,
 							tcBeginIndication.getDialog(), this);
+					
+					mapDialogImpl.setMapAcceptInfoFired(true);
 
 					dialogs.put(mapDialogImpl.getDialogId(), mapDialogImpl);
 
