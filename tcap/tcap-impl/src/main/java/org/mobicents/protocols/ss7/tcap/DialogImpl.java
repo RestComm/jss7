@@ -845,8 +845,7 @@ public class DialogImpl implements Dialog {
 		TCEndIndicationImpl tcEndIndication = (TCEndIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider.getDialogPrimitiveFactory())
 				.createEndIndication(this);
 
-		// now comps
-		tcEndIndication.setComponents(processOperationsState(tcEndIndication.getComponents()));
+		
 		
 		DialogPortion dialogPortion = msg.getDialogPortion();
 		if (dialogPortion != null) {
@@ -866,6 +865,8 @@ public class DialogImpl implements Dialog {
 			tcEndIndication.setUserInformation(responseAPDU.getUserInformation());
 			
 		}
+		// now comps
+		tcEndIndication.setComponents(processOperationsState(msg.getComponent()));
 		//FIXME: add ACN, UI, hooooow?
 		// lets deliver to provider
 		//change state before delivery
