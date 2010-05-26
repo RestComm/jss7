@@ -4,11 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.mobicents.protocols.asn.AsnException;
+import junit.framework.TestCase;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.tcap.asn.DialogPortionImpl;
-import org.mobicents.protocols.ss7.tcap.asn.ParseException;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
@@ -16,9 +15,6 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCodeType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
-import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
-
-import junit.framework.TestCase;
 
 public class TcContinueTest extends TestCase {
 

@@ -564,6 +564,7 @@ public class DialogImpl implements Dialog {
 				throw new IllegalArgumentException("User information MUST be present.");
 			}
 			DialogPortion dp = TcapFactory.createDialogPortion();
+			dp.setUnidirectional(false);
 			DialogAbortAPDU dapdu = TcapFactory.createDialogAPDUAbort();
 			AbortSource as = TcapFactory.createAbortSource();
 			as.setAbortSourceType(AbortSourceType.User);

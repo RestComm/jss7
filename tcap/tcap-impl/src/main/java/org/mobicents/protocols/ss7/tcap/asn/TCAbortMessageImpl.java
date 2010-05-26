@@ -174,8 +174,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 			AsnOutputStream localAos = new AsnOutputStream();
 			Utils.writeTransactionId(localAos, this.destTxId, _TAG_CLASS_DTX, _TAG_DTX);
 			
-			// FIXME: check if both are not null, should not be at the sime time
-			// != null
+			// FIXME: check if both are not null, should not be at the sime time != null
 			if (this.type != null) {
 				localAos.writeTag(_TAG_CLASS_P, _TAG_P_PC_PRIMITIVE, _TAG_P);
 				localAos.writeInteger(_TAG_CLASS_P, _TAG_P, this.type.getType());
