@@ -4,9 +4,9 @@
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.accessTransport.*;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.accessTransport.AccessTransportImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.*;
-import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.*;
+import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.AccessTransport;
 
 /**
  * Simple factory.

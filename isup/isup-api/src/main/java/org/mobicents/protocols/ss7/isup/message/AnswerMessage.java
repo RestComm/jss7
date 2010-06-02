@@ -196,4 +196,9 @@ package org.mobicents.protocols.ss7.isup.message;
  */
 public interface AnswerMessage extends ISUPMessage {
 
+	/**
+	 * Answer Message, Q.763 reference table 22 <br> {@link AnswerMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x09;
+	
 }

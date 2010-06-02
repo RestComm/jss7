@@ -53,5 +53,9 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface SubsequentAddressMessage extends ISUPMessage {
-
+	/**
+	 * Subsequent Address Message, Q.763 reference table 35 <br>
+	 * {@link SubsequentAddressMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x02;
 }

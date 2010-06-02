@@ -79,5 +79,9 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface IdentificationResponseMessage extends ISUPMessage {
-
+	/**
+	 * Identification Response Message, Q.763 reference table 48 <br>
+	 * {@link IdentificationResponseMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x37;
 }

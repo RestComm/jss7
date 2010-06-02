@@ -70,5 +70,9 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface InformationRequestMessage extends ISUPMessage {
-
+	/**
+	 * Information Request Message, Q.763 reference table 31 <br>
+	 * {@link InformationRequestMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x03;
 }

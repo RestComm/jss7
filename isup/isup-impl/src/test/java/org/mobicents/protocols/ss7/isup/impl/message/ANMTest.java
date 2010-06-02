@@ -73,7 +73,7 @@ public class ANMTest extends MessageHarness {
 
 				0x0C
 				,(byte) 0x0B
-				,AnswerMessage._MESSAGE_CODE_ANM
+				,AnswerMessage.MESSAGE_CODE
 				//No mandatory varaible part, no ptr
 				,0x01 // ptr to optional part
 				

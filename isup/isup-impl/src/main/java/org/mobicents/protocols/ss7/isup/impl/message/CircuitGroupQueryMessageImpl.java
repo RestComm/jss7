@@ -8,14 +8,12 @@ package org.mobicents.protocols.ss7.isup.impl.message;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.RangeAndStatusImpl;
 import org.mobicents.protocols.ss7.isup.message.CircuitGroupQueryMessage;
-import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
 import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
 
@@ -28,7 +26,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
  */
 public class CircuitGroupQueryMessageImpl extends ISUPMessageImpl implements CircuitGroupQueryMessage {
 
-	public static final MessageType _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_CQM);
+	public static final MessageType _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 	private static final int _MANDATORY_VAR_COUNT = 1;
 	
 	static final int _INDEX_F_MessageType = 0;
@@ -75,8 +73,8 @@ public class CircuitGroupQueryMessageImpl extends ISUPMessageImpl implements Cir
 			}
 			try {
 				// Message Type
-				if (b[index] != this._MESSAGE_CODE_CQM) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_CQM);
+				if (b[index] != this.MESSAGE_CODE) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
 				}
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg

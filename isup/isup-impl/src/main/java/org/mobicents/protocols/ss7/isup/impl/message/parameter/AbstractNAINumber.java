@@ -10,7 +10,6 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.message.parameter.AbstractNAINumberInterface;

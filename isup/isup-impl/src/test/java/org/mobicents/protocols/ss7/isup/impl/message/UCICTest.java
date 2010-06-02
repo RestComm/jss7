@@ -26,7 +26,7 @@ public class UCICTest extends MessageHarness{
 				
 				0x0C
 				,(byte) 0x0B
-				,UnequippedCICMessage._MESSAGE_CODE_UCIC
+				,UnequippedCICMessage.MESSAGE_CODE
 
 		};
 

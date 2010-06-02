@@ -75,7 +75,7 @@ public class CQRTest extends MessageHarness {
 
 				0x0C
 				,(byte) 0x0B
-				,CircuitGroupQueryResponseMessage._MESSAGE_CODE_CQR
+				,CircuitGroupQueryResponseMessage.MESSAGE_CODE
 
 				,0x02 // ptr to variable part
 				,0x03

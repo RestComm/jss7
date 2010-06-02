@@ -80,4 +80,9 @@ package org.mobicents.protocols.ss7.isup.message;
  */
 public interface SegmentationMessage extends ISUPMessage {
 
+	/**
+	 * Segmentation Message, Q.763 reference table 49 <br>
+	 * {@link SegmentationMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x38;
 }

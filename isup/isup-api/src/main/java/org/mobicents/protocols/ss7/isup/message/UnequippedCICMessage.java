@@ -39,5 +39,9 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface UnequippedCICMessage extends ISUPMessage {
-
+	/**
+	 * Unequipped CIC Message, Q.763 reference table 39 <br>
+	 * {@link UnequippedCICMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x2E;
 }

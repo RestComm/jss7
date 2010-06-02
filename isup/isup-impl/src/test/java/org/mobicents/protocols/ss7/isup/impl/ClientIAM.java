@@ -148,7 +148,7 @@ public class ClientIAM implements ISUPListener {
 	 */
 	public void onMessage(ISUPMessage message) {
 		switch (message.getMessageType().getCode()) {
-		case ISUPMessage._MESSAGE_CODE_ACM:
+		case AddressCompleteMessage.MESSAGE_CODE:
 			if(_RCV_ACM)
 			{
 				passed = false;
@@ -166,7 +166,7 @@ public class ClientIAM implements ISUPListener {
 			}
 			_RCV_ACM = true;
 			break;
-		case ISUPMessage._MESSAGE_CODE_ANM:
+		case AnswerMessage.MESSAGE_CODE:
 			if(_RCV_ANM)
 			{
 				passed = false;

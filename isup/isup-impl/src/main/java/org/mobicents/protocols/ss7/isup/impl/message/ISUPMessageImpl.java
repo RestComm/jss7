@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.isup.ISUPTransaction;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.TransactionKey;
-import org.mobicents.protocols.ss7.isup.Utils;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.EndOfOptionalParametersImpl;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;

@@ -10,7 +10,6 @@ import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-
 import org.mobicents.protocols.ss7.isup.ISUPProvider;
 import org.mobicents.protocols.ss7.isup.ISUPStack;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;

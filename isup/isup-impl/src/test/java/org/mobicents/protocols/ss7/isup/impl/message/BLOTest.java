@@ -25,7 +25,7 @@ public class BLOTest extends MessageHarness{
 				
 				0x0C
 				,(byte) 0x0B
-				,BlockingMessage._MESSAGE_CODE_BLO
+				,BlockingMessage.MESSAGE_CODE
 
 		};
 		return message;

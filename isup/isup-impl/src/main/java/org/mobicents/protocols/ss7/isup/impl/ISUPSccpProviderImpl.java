@@ -6,8 +6,6 @@ package org.mobicents.protocols.ss7.isup.impl;
 import java.io.IOException;
 
 import org.mobicents.protocols.ss7.isup.ISUPClientTransaction;
-import org.mobicents.protocols.ss7.isup.ISUPListener;
-import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
 import org.mobicents.protocols.ss7.isup.ISUPProvider;
 import org.mobicents.protocols.ss7.isup.ISUPServerTransaction;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;

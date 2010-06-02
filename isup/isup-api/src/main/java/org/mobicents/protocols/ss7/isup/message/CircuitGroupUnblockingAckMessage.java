@@ -53,4 +53,9 @@ package org.mobicents.protocols.ss7.isup.message;
  */
 public interface CircuitGroupUnblockingAckMessage extends ISUPMessage {
 
+	/**
+	 * Circuit Group Unblocking Ack Message, Q.763 reference table 40 <br>
+	 * {@link CircuitGroupUnblockingAckMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x1B;
 }

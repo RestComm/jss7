@@ -109,7 +109,7 @@ public class ServerIAM implements ISUPListener {
 	public void onMessage(ISUPMessage message) {
 		try {
 			switch (message.getMessageType().getCode()) {
-			case ISUPMessage._MESSAGE_CODE_IAM:
+			case InitialAddressMessage.MESSAGE_CODE:
 				if (_RCV_IAM) {
 					passed = false;
 					status.append("Received IAM message more than once!\n");

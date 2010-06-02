@@ -48,5 +48,9 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface CircuitGroupResetAckMessage extends ISUPMessage {
-
+	/**
+	 * Circuit GroupReset Ack Message, Q.763 reference table 25 <br>
+	 * {@link CircuitGroupResetAckMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x29;
 }

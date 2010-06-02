@@ -58,7 +58,7 @@ public class GRSTest extends MessageHarness {
 
 				0x0C
 				,(byte) 0x0B
-				,CircuitGroupResetMessage._MESSAGE_CODE_GRS
+				,CircuitGroupResetMessage.MESSAGE_CODE
 
 				,0x01 // ptr to variable part
 				//no optional, so no pointer

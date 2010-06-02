@@ -56,5 +56,8 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface SuspendMessage extends ISUPMessage {
-
+	/**
+	 * Suspend Message, Q.763 reference table 38 <br> {@link SuspendMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x0D;
 }

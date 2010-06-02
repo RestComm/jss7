@@ -9,7 +9,6 @@ package org.mobicents.protocols.ss7.isup.impl.message;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.TransactionKey;
@@ -37,7 +36,6 @@ import org.mobicents.protocols.ss7.isup.message.parameter.AutomaticCongestionLev
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.DisplayInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.HTRInformation;
-import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
 import org.mobicents.protocols.ss7.isup.message.parameter.NetworkSpecificFacility;
 import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
@@ -59,7 +57,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  */
 class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 
-	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_REL);
+	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 
 	private static final int _MANDATORY_VAR_COUNT = 1;
 	// mandatory fixed L
@@ -84,6 +82,9 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 	static final int _INDEX_O_RedirectBackwardInformation = 14;
 	static final int _INDEX_O_EndOfOptionalParameters = 15;
 
+	//default, ident part of tx.
+	static final String IDENT="REL";
+	
 	ReleaseMessageImpl(Object source, byte[] b, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
 			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) throws ParameterRangeInvalidException {
 		this(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
@@ -105,7 +106,7 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 		{
 			throw new NullPointerException("CIC is not set in message");
 		}
-		TransactionKey tk = new TransactionKey("REL",this.cic.getCIC());
+		TransactionKey tk = new TransactionKey(IDENT,this.cic.getCIC());
 		return tk;
 	}
 	
@@ -135,8 +136,8 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 			}
 			try {
 				// Message Type
-				if (b[index] != this._MESSAGE_CODE_REL) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_REL);
+				if (b[index] != this.MESSAGE_CODE) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
 				}
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg

@@ -8,16 +8,13 @@ package org.mobicents.protocols.ss7.isup.impl.message;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitGroupSuperVisionMessageTypeImpl;
+import org.mobicents.protocols.ss7.isup.TransactionKey;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.RangeAndStatusImpl;
 import org.mobicents.protocols.ss7.isup.message.CircuitGroupResetAckMessage;
-import org.mobicents.protocols.ss7.isup.message.parameter.CircuitGroupSuperVisionMessageType;
-import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
 import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
 
@@ -30,7 +27,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
  */
 public class CircuitGroupResetAckMessageImpl extends ISUPMessageImpl implements CircuitGroupResetAckMessage {
 
-	public static final MessageType _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_GRA);
+	public static final MessageType _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 	private static final int _MANDATORY_VAR_COUNT = 1;
 	
 	static final int _INDEX_F_MessageType = 0;
@@ -52,6 +49,16 @@ public class CircuitGroupResetAckMessageImpl extends ISUPMessageImpl implements 
 
 	}
 
+
+	public TransactionKey generateTransactionKey() {
+		if(cic == null)
+		{
+			throw new NullPointerException("CIC is not set in message");
+		}
+		TransactionKey tk = new TransactionKey(CircuitGroupResetMessageImpl.IDENT,this.cic.getCIC());
+		return tk;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -78,8 +85,8 @@ public class CircuitGroupResetAckMessageImpl extends ISUPMessageImpl implements 
 			}
 			try {
 				// Message Type
-				if (b[index] != this._MESSAGE_CODE_GRA) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_GRA);
+				if (b[index] != this.MESSAGE_CODE) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
 				}
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg

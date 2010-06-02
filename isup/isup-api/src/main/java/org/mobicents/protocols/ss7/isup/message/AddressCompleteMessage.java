@@ -184,6 +184,12 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  */
 public interface AddressCompleteMessage extends ISUPMessage {
 
+	/**
+	 * Address Complete Message, Q.763 reference table 21 <br>
+	 * {@link AddressCompleteMessage}
+	 */
+	public static final int MESSAGE_CODE= 0x06;
+	
 	public void setBackwardCallIndicators(BackwardCallIndicators indicators);
 
 	public BackwardCallIndicators getBackwardCallIndicators();

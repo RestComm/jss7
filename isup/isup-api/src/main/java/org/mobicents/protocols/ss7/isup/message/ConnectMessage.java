@@ -158,5 +158,8 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface ConnectMessage extends ISUPMessage {
-
+	/**
+	 * Connect Message, Q.763 reference table 27 <br> {@link ConnectMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x07;
 }

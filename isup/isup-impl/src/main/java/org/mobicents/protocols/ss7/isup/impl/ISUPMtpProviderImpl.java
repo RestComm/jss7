@@ -9,16 +9,11 @@ package org.mobicents.protocols.ss7.isup.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.mobicents.protocols.ss7.isup.ISUPClientTransaction;
 import org.mobicents.protocols.ss7.isup.ISUPListener;
-import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
 import org.mobicents.protocols.ss7.isup.ISUPProvider;
 import org.mobicents.protocols.ss7.isup.ISUPServerTransaction;
 import org.mobicents.protocols.ss7.isup.ISUPTransaction;
@@ -28,59 +23,9 @@ import org.mobicents.protocols.ss7.isup.TransactionKey;
 import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageFactoryImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
-import org.mobicents.protocols.ss7.isup.message.AddressCompleteMessage;
-import org.mobicents.protocols.ss7.isup.message.AnswerMessage;
-import org.mobicents.protocols.ss7.isup.message.ApplicationTransportMessage;
-import org.mobicents.protocols.ss7.isup.message.BlockingAckMessage;
-import org.mobicents.protocols.ss7.isup.message.BlockingMessage;
-import org.mobicents.protocols.ss7.isup.message.CallProgressMessage;
-import org.mobicents.protocols.ss7.isup.message.ChargeInformationMessage;
-import org.mobicents.protocols.ss7.isup.message.CircuitGroupBlockingAckMessage;
-import org.mobicents.protocols.ss7.isup.message.CircuitGroupBlockingMessage;
-import org.mobicents.protocols.ss7.isup.message.CircuitGroupQueryMessage;
-import org.mobicents.protocols.ss7.isup.message.CircuitGroupQueryResponseMessage;
-import org.mobicents.protocols.ss7.isup.message.CircuitGroupResetAckMessage;
-import org.mobicents.protocols.ss7.isup.message.CircuitGroupResetMessage;
-import org.mobicents.protocols.ss7.isup.message.CircuitGroupUnblockingAckMessage;
-import org.mobicents.protocols.ss7.isup.message.CircuitGroupUnblockingMessage;
-import org.mobicents.protocols.ss7.isup.message.ConfusionMessage;
-import org.mobicents.protocols.ss7.isup.message.ConnectMessage;
-import org.mobicents.protocols.ss7.isup.message.ContinuityCheckRequestMessage;
-import org.mobicents.protocols.ss7.isup.message.ContinuityMessage;
-import org.mobicents.protocols.ss7.isup.message.FacilityAcceptedMessage;
-import org.mobicents.protocols.ss7.isup.message.FacilityMessage;
-import org.mobicents.protocols.ss7.isup.message.FacilityRejectedMessage;
-import org.mobicents.protocols.ss7.isup.message.FacilityRequestMessage;
-import org.mobicents.protocols.ss7.isup.message.ForwardTransferMessage;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
-import org.mobicents.protocols.ss7.isup.message.IdentificationRequestMessage;
-import org.mobicents.protocols.ss7.isup.message.IdentificationResponseMessage;
-import org.mobicents.protocols.ss7.isup.message.InformationMessage;
-import org.mobicents.protocols.ss7.isup.message.InformationRequestMessage;
-import org.mobicents.protocols.ss7.isup.message.InitialAddressMessage;
-import org.mobicents.protocols.ss7.isup.message.LoopPreventionMessage;
-import org.mobicents.protocols.ss7.isup.message.LoopbackAckMessage;
-import org.mobicents.protocols.ss7.isup.message.NetworkResourceManagementMessage;
-import org.mobicents.protocols.ss7.isup.message.OverloadMessage;
-import org.mobicents.protocols.ss7.isup.message.PassAlongMessage;
-import org.mobicents.protocols.ss7.isup.message.PreReleaseInformationMessage;
-import org.mobicents.protocols.ss7.isup.message.ReleaseCompleteMessage;
-import org.mobicents.protocols.ss7.isup.message.ReleaseMessage;
-import org.mobicents.protocols.ss7.isup.message.ResetCircuitMessage;
-import org.mobicents.protocols.ss7.isup.message.ResumeMessage;
-import org.mobicents.protocols.ss7.isup.message.SegmentationMessage;
-import org.mobicents.protocols.ss7.isup.message.SubsequentAddressMessage;
-import org.mobicents.protocols.ss7.isup.message.SubsequentDirectoryNumberMessage;
-import org.mobicents.protocols.ss7.isup.message.SuspendMessage;
-import org.mobicents.protocols.ss7.isup.message.UnblockingAckMessage;
-import org.mobicents.protocols.ss7.isup.message.UnblockingMessage;
-import org.mobicents.protocols.ss7.isup.message.UnequippedCICMessage;
-import org.mobicents.protocols.ss7.isup.message.User2UserInformationMessage;
-import org.mobicents.protocols.ss7.isup.message.UserPartAvailableMessage;
-import org.mobicents.protocols.ss7.isup.message.UserPartTestMessage;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.sccp.ActionReference;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.stream.MTPListener;
 import org.mobicents.protocols.ss7.stream.MTPProvider;
 
@@ -286,6 +231,7 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MTPL
                 ISUPMessage msg = messageFactory.createCommand(commandCode);
                 msg.decodeElement(payload);
                
+                //FIXME: add preprocessing? to ensure msg is valid?
                 ISUPTransaction  tx =  preprocessIncomingMessage(msg,actionReference);
                 
                 for(int index = 0 ;index<listeners.size();index++)

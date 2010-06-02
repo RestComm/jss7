@@ -52,5 +52,9 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface CircuitGroupUnblockingMessage extends ISUPMessage {
-
+	/**
+	 * Circuit Group Unblocking Message, Q.763 reference table 40 <br>
+	 * {@link CircuitGroupUnblockingMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x19;
 }

@@ -63,6 +63,12 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
  *         </a>
  */
 public interface ReleaseCompleteMessage extends ISUPMessage {
+	/**
+	 * Release Complete Message, Q.763 reference table 34 <br>
+	 * {@link ReleaseCompleteMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x10;
+	
 	public CauseIndicators getCauseIndicators();
 
 	public void setCauseIndicators(CauseIndicators v);

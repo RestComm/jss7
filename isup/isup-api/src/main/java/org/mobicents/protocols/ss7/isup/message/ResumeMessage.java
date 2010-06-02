@@ -57,5 +57,8 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface ResumeMessage extends ISUPMessage {
-
+	/**
+	 * Resume Message, Q.763 reference table 38 <br> {@link ResumeMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x0E;
 }

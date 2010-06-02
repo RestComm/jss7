@@ -26,7 +26,7 @@ public class OLMTest extends MessageHarness{
 				
 				0x0C
 				,(byte) 0x0B
-				,OverloadMessage._MESSAGE_CODE_OLM
+				,OverloadMessage.MESSAGE_CODE
 
 		};
 

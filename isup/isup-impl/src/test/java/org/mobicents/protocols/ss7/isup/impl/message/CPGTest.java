@@ -77,7 +77,7 @@ public class CPGTest extends MessageHarness{
 		byte[] message={
 				0x0C
 				,(byte) 0x0B
-				,CallProgressMessage._MESSAGE_CODE_CPG
+				,CallProgressMessage.MESSAGE_CODE
 				//EventInformation
 				,0x02
 				//no mandatory varialbe part, no pointer

@@ -109,7 +109,7 @@ public class ServerREL implements ISUPListener {
 	public void onMessage(ISUPMessage message) {
 		try {
 			switch (message.getMessageType().getCode()) {
-			case ISUPMessage._MESSAGE_CODE_REL:
+			case ReleaseMessage.MESSAGE_CODE:
 				if (_RCV_REL) {
 					passed = false;
 					status.append("Received REL message more than once!\n");

@@ -7,8 +7,22 @@
 package org.mobicents.protocols.ss7.isup.message;
 
 
-import org.mobicents.protocols.ss7.isup.message.parameter.*;
-import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.*;
+import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.AutomaticCongestionLevel;
+import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.DisplayInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.HTRInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.NetworkSpecificFacility;
+import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectBackwardInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectCounter;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.RemoteOperations;
+import org.mobicents.protocols.ss7.isup.message.parameter.SignalingPointCode;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.AccessTransport;
 
 /**
  * Start time:10:06:29 2009-07-23<br>
@@ -130,6 +144,12 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.*;
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public interface ReleaseMessage extends ISUPMessage {
+	
+	/**
+	 * Release Message, Q.763 reference table 33 <br> {@link ReleaseMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x0C;
+	
 	public CauseIndicators getCauseIndicators();
 
 	public void setCauseIndicators(CauseIndicators v);

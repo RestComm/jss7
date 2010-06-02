@@ -28,9 +28,7 @@ package org.mobicents.protocols.ss7.isup;
 
 import java.io.IOException;
 
-
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * @author baranowb

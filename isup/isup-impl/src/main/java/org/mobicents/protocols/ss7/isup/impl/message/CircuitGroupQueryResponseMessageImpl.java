@@ -8,18 +8,14 @@ package org.mobicents.protocols.ss7.isup.impl.message;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitStateIndicatorImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.FacilityIndicatorImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.RangeAndStatusImpl;
 import org.mobicents.protocols.ss7.isup.message.CircuitGroupQueryResponseMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitStateIndicator;
-import org.mobicents.protocols.ss7.isup.message.parameter.FacilityIndicator;
-import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
 import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
 
@@ -32,7 +28,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
  */
 public class CircuitGroupQueryResponseMessageImpl extends ISUPMessageImpl implements CircuitGroupQueryResponseMessage {
 
-	public static final MessageType _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_CQR);
+	public static final MessageType _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 	private static final int _MANDATORY_VAR_COUNT = 2;
 	
 	static final int _INDEX_F_MessageType = 0;
@@ -81,8 +77,8 @@ public class CircuitGroupQueryResponseMessageImpl extends ISUPMessageImpl implem
 			}
 			try {
 				// Message Type
-				if (b[index] != this._MESSAGE_CODE_CQR) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_CQR);
+				if (b[index] != this.MESSAGE_CODE) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
 				}
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg

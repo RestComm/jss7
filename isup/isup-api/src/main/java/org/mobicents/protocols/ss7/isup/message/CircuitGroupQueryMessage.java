@@ -46,5 +46,10 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface CircuitGroupQueryMessage extends ISUPMessage {
+	/**
+	 * Circuit Group Query Message, Q.763 reference table 21 <br>
+	 * {@link CircuitGroupQueryMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x2A;
 
 }

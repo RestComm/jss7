@@ -9,7 +9,6 @@ package org.mobicents.protocols.ss7.isup.impl.message;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.TransactionKey;
@@ -19,7 +18,6 @@ import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentifica
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.ReleaseCompleteMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
-import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
 
 /**
  * Start time:08:20:34 2009-07-18<br>
@@ -30,7 +28,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
  */
 class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompleteMessage {
 
-	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_RLC);
+	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 	private static final int _MANDATORY_VAR_COUNT = 0;
 
 	// mandatory fixed L
@@ -61,7 +59,7 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 		{
 			throw new NullPointerException("CIC is not set in message");
 		}
-		TransactionKey tk = new TransactionKey("REL",this.cic.getCIC());
+		TransactionKey tk = new TransactionKey(ReleaseMessageImpl.IDENT,this.cic.getCIC());
 		return tk;
 	}
 	
@@ -91,8 +89,8 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 			}
 			try {
 				// Message Type
-				if (b[index] != this._MESSAGE_CODE_RLC) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_RLC);
+				if (b[index] != this.MESSAGE_CODE) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
 				}
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg

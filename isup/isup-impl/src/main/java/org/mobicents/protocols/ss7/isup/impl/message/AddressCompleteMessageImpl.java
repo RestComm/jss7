@@ -10,12 +10,37 @@ package org.mobicents.protocols.ss7.isup.impl.message;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.TransactionKey;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.*;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.accessTransport.*;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.AccessDeliveryInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ApplicationTransportParameterImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.BackwardCallIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CCNRPossibleIndicatorImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallDiversionInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallReferenceImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CauseIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ConferenceTreatmentIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.EchoControlInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.EndOfOptionalParametersImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNotificationIndicatorImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.HTRInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.NetworkSpecificFacilityImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.OptionalBackwardCallIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ParameterCompatibilityInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.PivotRoutingBackwardInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectStatusImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectionNumberImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectionNumberRestrictionImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.RemoteOperationsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ServiceActivationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.TransmissionMediumUsedImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.UIDActionIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserToUserIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserToUserInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.accessTransport.AccessTransportImpl;
 import org.mobicents.protocols.ss7.isup.message.AddressCompleteMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransportParameter;
@@ -24,12 +49,10 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CCNRPossibleIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallDiversionInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
-import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.ConferenceTreatmentIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.EchoControlInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNotificationIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.HTRInformation;
-import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
 import org.mobicents.protocols.ss7.isup.message.parameter.NetworkSpecificFacility;
 import org.mobicents.protocols.ss7.isup.message.parameter.OptionalBackwardCallIndicators;
@@ -55,7 +78,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  */
 class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompleteMessage {
 
-	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_ACM);
+	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 
 	private static final int _MANDATORY_VAR_COUNT = 0;
 
@@ -110,7 +133,7 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 		{
 			throw new NullPointerException("CIC is not set in message");
 		}
-		TransactionKey tk = new TransactionKey("IAM",this.cic.getCIC());
+		TransactionKey tk = new TransactionKey(InitialAddressMessageImpl.IDENT,this.cic.getCIC());
 		return tk;
 	}
 	
@@ -354,8 +377,8 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 			}
 			try {
 				// Message Type
-				if (b[index] != this._MESSAGE_CODE_ACM) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_ACM);
+				if (b[index] != this.MESSAGE_CODE) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
 				}
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg

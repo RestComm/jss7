@@ -59,7 +59,7 @@ public class CQMTest extends MessageHarness {
 
 				0x0C
 				,(byte) 0x0B
-				,CircuitGroupQueryMessage._MESSAGE_CODE_CQM
+				,CircuitGroupQueryMessage.MESSAGE_CODE
 
 				,0x01 // ptr to variable part
 				//no optional, so no pointer

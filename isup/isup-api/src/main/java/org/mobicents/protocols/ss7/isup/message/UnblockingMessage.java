@@ -42,5 +42,8 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface UnblockingMessage extends ISUPMessage {
-
+	/**
+	 * Unblocking Message, Q.763 reference table 39 <br> {@link UnblockingMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x14;
 }

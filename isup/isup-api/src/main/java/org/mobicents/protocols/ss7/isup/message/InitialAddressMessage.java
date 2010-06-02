@@ -281,6 +281,13 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface InitialAddressMessage extends ISUPMessage {
+	
+	/**
+	 * Initial Address Message, Q.763 reference table 32 <br>
+	 * {@link InitialAddressMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x01;
+	
 	public NatureOfConnectionIndicators getNatureOfConnectionIndicators();
 
 	public void setNatureOfConnectionIndicators(NatureOfConnectionIndicators v);

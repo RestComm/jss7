@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.TransactionKey;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.BlockingMessage;
@@ -23,12 +24,15 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
  */
 public class BlockingMessageImpl extends ISUPMessageImpl implements BlockingMessage {
 
-	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_BLO);
+	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 
 	private static final int _MANDATORY_VAR_COUNT = 0;
 
 	static final int _INDEX_F_MessageType = 0;
 
+	//default, ident part of tx.
+	static final String IDENT="BLO";
+	
 	BlockingMessageImpl(Object source, byte[] b, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
 			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) throws ParameterRangeInvalidException {
 		this(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
@@ -44,6 +48,15 @@ public class BlockingMessageImpl extends ISUPMessageImpl implements BlockingMess
 		
 	}
 
+	public TransactionKey generateTransactionKey() {
+		if(cic == null)
+		{
+			throw new NullPointerException("CIC is not set in message");
+		}
+		TransactionKey tk = new TransactionKey(IDENT,this.cic.getCIC());
+		return tk;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -69,8 +82,8 @@ public class BlockingMessageImpl extends ISUPMessageImpl implements BlockingMess
 			}
 			try {
 				// Message Type
-				if (b[index] != this._MESSAGE_CODE_BLO) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_BLO);
+				if (b[index] != this.MESSAGE_CODE) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
 				}
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg

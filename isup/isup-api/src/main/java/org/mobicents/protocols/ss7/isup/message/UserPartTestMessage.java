@@ -56,5 +56,9 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface UserPartTestMessage extends ISUPMessage {
-
+	/**
+	 * User Part Test Message, Q.763 reference table 44 <br>
+	 * {@link UserPartTestMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x34;
 }

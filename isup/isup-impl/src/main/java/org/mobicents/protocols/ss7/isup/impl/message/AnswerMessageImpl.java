@@ -8,11 +8,9 @@ package org.mobicents.protocols.ss7.isup.impl.message;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.TransactionKey;
-import org.mobicents.protocols.ss7.isup.Utils;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.AccessDeliveryInformationImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ApplicationTransportParameterImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.BackwardCallIndicatorsImpl;
@@ -53,7 +51,6 @@ import org.mobicents.protocols.ss7.isup.message.parameter.DisplayInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.EchoControlInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNotificationIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
 import org.mobicents.protocols.ss7.isup.message.parameter.NetworkSpecificFacility;
 import org.mobicents.protocols.ss7.isup.message.parameter.OptionalBackwardCallIndicators;
@@ -77,7 +74,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  */
 class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage {
 
-	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_ANM);
+	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 	private static final int _MANDATORY_VAR_COUNT = 0;
 	
 	
@@ -132,7 +129,7 @@ class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage {
 		{
 			throw new NullPointerException("CIC is not set in message");
 		}
-		TransactionKey tk = new TransactionKey("IAM",this.cic.getCIC());
+		TransactionKey tk = new TransactionKey(InitialAddressMessageImpl.IDENT,this.cic.getCIC());
 		return tk;
 	}
 
@@ -162,8 +159,8 @@ class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage {
 			}
 			try {
 				// Message Type
-				if (b[index] != this._MESSAGE_CODE_ANM) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_ANM);
+				if (b[index] != this.MESSAGE_CODE) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
 				}
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg

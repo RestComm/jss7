@@ -76,5 +76,9 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface FacilityAcceptedMessage extends ISUPMessage {
-
+	/**
+	 * Facility Accepted Message, Q.763 reference table 42 <br>
+	 * {@link FacilityAcceptedMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x20;
 }

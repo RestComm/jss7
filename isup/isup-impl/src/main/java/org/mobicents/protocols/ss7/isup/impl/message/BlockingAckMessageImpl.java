@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.TransactionKey;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.BlockingAckMessage;
@@ -24,7 +25,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
  */
 public class BlockingAckMessageImpl extends ISUPMessageImpl implements BlockingAckMessage {
 
-	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_BLA);
+	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 
 	private static final int _MANDATORY_VAR_COUNT = 0;
 
@@ -45,6 +46,15 @@ public class BlockingAckMessageImpl extends ISUPMessageImpl implements BlockingA
 		
 	}
 
+	public TransactionKey generateTransactionKey() {
+		if(cic == null)
+		{
+			throw new NullPointerException("CIC is not set in message");
+		}
+		TransactionKey tk = new TransactionKey(BlockingMessageImpl.IDENT,this.cic.getCIC());
+		return tk;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -70,8 +80,8 @@ public class BlockingAckMessageImpl extends ISUPMessageImpl implements BlockingA
 			}
 			try {
 				// Message Type
-				if (b[index] != this._MESSAGE_CODE_BLA) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_BLA);
+				if (b[index] != this.MESSAGE_CODE) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
 				}
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg

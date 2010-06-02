@@ -26,7 +26,7 @@ public class BLATest extends MessageHarness{
 
 				0x0C
 				,(byte) 0x0B
-				,BlockingAckMessage._MESSAGE_CODE_BLA
+				,BlockingAckMessage.MESSAGE_CODE
 				
 
 		};

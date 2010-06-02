@@ -24,7 +24,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
  */
 public class UnequippedCICMessageImpl extends ISUPMessageImpl implements UnequippedCICMessage {
 
-	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_UCIC);
+	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 
 	private static final int _MANDATORY_VAR_COUNT = 0;
 
@@ -70,8 +70,8 @@ public class UnequippedCICMessageImpl extends ISUPMessageImpl implements Unequip
 			}
 			try {
 				// Message Type
-				if (b[index] != this._MESSAGE_CODE_UCIC) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_UCIC);
+				if (b[index] != this.MESSAGE_CODE) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
 				}
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg

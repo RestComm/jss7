@@ -26,7 +26,7 @@ public class UBATest extends MessageHarness{
 				
 				0x0C
 				,(byte) 0x0B
-				,UnblockingAckMessage._MESSAGE_CODE_UBA
+				,UnblockingAckMessage.MESSAGE_CODE
 
 		};
 

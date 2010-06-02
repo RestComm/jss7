@@ -8,6 +8,7 @@
 package org.mobicents.protocols.ss7.isup.impl.message;
 
 import org.mobicents.protocols.ss7.isup.impl.message.BlockingMessageImpl;
+import org.mobicents.protocols.ss7.isup.message.ContinuityCheckRequestMessage;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 
 /**
@@ -25,7 +26,7 @@ public class CCRTest extends MessageHarness{
 				
 				0x0C
 				,(byte) 0x0B
-				,BlockingMessageImpl._MESSAGE_CODE_CCR
+				,ContinuityCheckRequestMessage.MESSAGE_CODE
 
 		};
 		return message;

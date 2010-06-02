@@ -26,7 +26,7 @@ public class LPATest extends MessageHarness{
 				
 				0x0C
 				,(byte) 0x0B
-				,LoopbackAckMessage._MESSAGE_CODE_LPA
+				,LoopbackAckMessage.MESSAGE_CODE
 
 		};
 

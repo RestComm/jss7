@@ -31,7 +31,7 @@ public class CGBTest extends MessageHarness {
 		byte[] message={
 				0x0C
 				,(byte) 0x0B
-				,CircuitGroupBlockingMessage._MESSAGE_CODE_CGB
+				,CircuitGroupBlockingMessage.MESSAGE_CODE
 				//Circuit group supervision message type
 				,0x01 // hardware failure oriented
 				,0x01 // ptr to variable part
@@ -87,7 +87,7 @@ public class CGBTest extends MessageHarness {
 		byte[] message={
 				0x0C
 				,(byte) 0x0B
-				,CircuitGroupBlockingMessage._MESSAGE_CODE_CGB
+				,CircuitGroupBlockingMessage.MESSAGE_CODE
 				//Circuit group supervision message type
 				,0x01 // hardware failure oriented
 				,0x01 // ptr to variable part

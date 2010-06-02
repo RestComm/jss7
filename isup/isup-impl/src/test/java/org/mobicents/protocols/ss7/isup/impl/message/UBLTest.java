@@ -27,7 +27,7 @@ public class UBLTest extends MessageHarness{
 				
 				0x0C
 				,(byte) 0x0B
-				,UnblockingMessage._MESSAGE_CODE_UBL
+				,UnblockingMessage.MESSAGE_CODE
 
 		};
 

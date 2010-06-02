@@ -26,7 +26,7 @@ public class RSCTest extends MessageHarness{
 				
 				0x0C
 				,(byte) 0x0B
-				,ResetCircuitMessage._MESSAGE_CODE_RSC
+				,ResetCircuitMessage.MESSAGE_CODE
 
 		};
 

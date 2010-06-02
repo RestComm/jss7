@@ -12,13 +12,46 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.TransactionKey;
-import org.mobicents.protocols.ss7.isup.Utils;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.*;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.accessTransport.*;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CCSSImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallReferenceImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallingPartyCategoryImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallingPartyNumberImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ClosedUserGroupInterlockCodeImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ConnectionRequestImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ForwardCallIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ForwardGVNSImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericDigitsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNotificationIndicatorImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNumberImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericReferenceImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.LocationNumberImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.MLPPPrecedenceImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.NatureOfConnectionIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.NetworkManagementControlsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.NetworkSpecificFacilityImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.OptionalForwardCallIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.OriginalCalledNumberImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.OriginatingISCPointCodeImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ParameterCompatibilityInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.PropagationDelayCounterImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectingNumberImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectionInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.RemoteOperationsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ServiceActivationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.TransitNetworkSelectionImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.TransmissionMediumRequirementImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserServiceInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserServiceInformationPrimeImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserTeleserviceInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserToUserIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserToUserInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.accessTransport.AccessTransportImpl;
 import org.mobicents.protocols.ss7.isup.message.InitialAddressMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CCSS;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
@@ -33,7 +66,6 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNotificationIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericReference;
-import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.MLPPPrecedence;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
@@ -67,7 +99,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  */
 public class InitialAddressMessageImpl extends ISUPMessageImpl implements InitialAddressMessage {
 
-	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_IAM);
+	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 	private static final int _MANDATORY_VAR_COUNT = 1;
 	// mandatory fixed L
 	 static final int _INDEX_F_MessageType = 0;
@@ -124,6 +156,9 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 
 	}
 
+	//default, ident part of tx.
+	static final String IDENT="IAM";
+	
 
 	InitialAddressMessageImpl(Object source, byte[] b, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
 			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) throws ParameterRangeInvalidException {
@@ -146,7 +181,7 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 		{
 			throw new NullPointerException("CIC is not set in message");
 		}
-		TransactionKey tk = new TransactionKey("IAM",this.cic.getCIC());
+		TransactionKey tk = new TransactionKey(IDENT,this.cic.getCIC());
 		return tk;
 	}
 	
@@ -176,8 +211,8 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 			}
 			try {
 				// Message Type
-				if (b[index] != this._MESSAGE_CODE_IAM) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_IAM);
+				if (b[index] != this.MESSAGE_CODE) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
 				}
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg

@@ -70,7 +70,7 @@ public class CGUATest extends MessageHarness {
 
 				0x0C
 				,(byte) 0x0B
-				,CircuitGroupUnblockingAckMessage._MESSAGE_CODE_CGUA
+				,CircuitGroupUnblockingAckMessage.MESSAGE_CODE
 				//Circuit group supervision message type
 				,0x01 // hardware failure oriented
 				,0x01 // ptr to variable part

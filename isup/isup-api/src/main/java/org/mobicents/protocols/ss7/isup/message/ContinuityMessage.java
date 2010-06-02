@@ -49,5 +49,8 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface ContinuityMessage extends ISUPMessage {
-
+	/**
+	 * Continuity Message, Q.763 reference table 28 <br> {@link ContinuityMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x05;
 }

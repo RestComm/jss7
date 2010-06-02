@@ -65,7 +65,69 @@ import org.mobicents.protocols.ss7.isup.message.UnequippedCICMessage;
 import org.mobicents.protocols.ss7.isup.message.User2UserInformationMessage;
 import org.mobicents.protocols.ss7.isup.message.UserPartAvailableMessage;
 import org.mobicents.protocols.ss7.isup.message.UserPartTestMessage;
-import org.mobicents.protocols.ss7.isup.message.parameter.*;
+import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransportParameter;
+import org.mobicents.protocols.ss7.isup.message.parameter.AutomaticCongestionLevel;
+import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.BackwardGVNS;
+import org.mobicents.protocols.ss7.isup.message.parameter.CCNRPossibleIndicator;
+import org.mobicents.protocols.ss7.isup.message.parameter.CCSS;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallDiversionInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallHistoryInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallTransferNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.CircuitGroupSuperVisionMessageType;
+import org.mobicents.protocols.ss7.isup.message.parameter.CircuitStateIndicator;
+import org.mobicents.protocols.ss7.isup.message.parameter.ClosedUserGroupInterlockCode;
+import org.mobicents.protocols.ss7.isup.message.parameter.ConferenceTreatmentIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.ConnectedNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.ConnectionRequest;
+import org.mobicents.protocols.ss7.isup.message.parameter.DisplayInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.EchoControlInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.EventInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.ForwardCallIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.ForwardGVNS;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNotificationIndicator;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericReference;
+import org.mobicents.protocols.ss7.isup.message.parameter.HTRInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.MLPPPrecedence;
+import org.mobicents.protocols.ss7.isup.message.parameter.NatureOfConnectionIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.NetworkManagementControls;
+import org.mobicents.protocols.ss7.isup.message.parameter.NetworkSpecificFacility;
+import org.mobicents.protocols.ss7.isup.message.parameter.OptionalBackwardCallIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.OptionalForwardCallIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.OriginatingISCPointCode;
+import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingBackwardInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.PropagationDelayCounter;
+import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectBackwardInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectCounter;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectStatus;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionNumberRestriction;
+import org.mobicents.protocols.ss7.isup.message.parameter.RemoteOperations;
+import org.mobicents.protocols.ss7.isup.message.parameter.ServiceActivation;
+import org.mobicents.protocols.ss7.isup.message.parameter.SignalingPointCode;
+import org.mobicents.protocols.ss7.isup.message.parameter.TransimissionMediumRequierementPrime;
+import org.mobicents.protocols.ss7.isup.message.parameter.TransitNetworkSelection;
+import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumRequirement;
+import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumUsed;
+import org.mobicents.protocols.ss7.isup.message.parameter.UIDActionIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformationPrime;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.AccessTransport;
 
 
@@ -558,195 +620,195 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 */
 	public ISUPMessage createCommand(int commandCode) {
 		switch (commandCode) {
-		case ISUPMessage._MESSAGE_CODE_IAM:
+		case InitialAddressMessage.MESSAGE_CODE:
 			InitialAddressMessage IAM = createIAM();
 			return IAM;
-		case ISUPMessage._MESSAGE_CODE_ACM:
+		case AddressCompleteMessage.MESSAGE_CODE:
 			AddressCompleteMessage ACM = createACM();
 			return ACM;
-		case ISUPMessage._MESSAGE_CODE_REL:
+		case ReleaseMessage.MESSAGE_CODE:
 			ReleaseMessage REL = createREL();
 			return REL;
-		case ISUPMessage._MESSAGE_CODE_RLC:
+		case ReleaseCompleteMessage.MESSAGE_CODE:
 			ReleaseCompleteMessage RLC = createRLC();
 			return RLC;
 
-		case ISUPMessage._MESSAGE_CODE_APT:
+		case ApplicationTransportMessage.MESSAGE_CODE:
 			ApplicationTransportMessage APT = createAPT();
 			return APT;
 
-		case ISUPMessage._MESSAGE_CODE_ANM:
+		case AnswerMessage.MESSAGE_CODE:
 			AnswerMessage ANM = createANM();
 			return ANM;
 
-		case ISUPMessage._MESSAGE_CODE_CPG:
+		case CallProgressMessage.MESSAGE_CODE:
 			CallProgressMessage CPG = createCPG();
 			return CPG;
 
-		case ISUPMessage._MESSAGE_CODE_GRA:
+		case CircuitGroupResetAckMessage.MESSAGE_CODE:
 			CircuitGroupResetAckMessage GRA = createGRA();
 			return GRA;
 
-		case ISUPMessage._MESSAGE_CODE_CFN:
+		case ConfusionMessage.MESSAGE_CODE:
 			ConfusionMessage CFN = createCNF();
 			return CFN;
 
-		case ISUPMessage._MESSAGE_CODE_CON:
+		case ConnectMessage.MESSAGE_CODE:
 			ConnectMessage CON = createCON();
 			return CON;
 
-		case ISUPMessage._MESSAGE_CODE_COT:
+		case ContinuityMessage.MESSAGE_CODE:
 			ContinuityMessage COT = createCOT();
 			return COT;
 
-		case ISUPMessage._MESSAGE_CODE_FRJ:
+		case FacilityRejectedMessage.MESSAGE_CODE:
 			FacilityRejectedMessage FRJ = createFRJ();
 			return FRJ;
 
-		case ISUPMessage._MESSAGE_CODE_INF:
+		case InformationMessage.MESSAGE_CODE:
 			InformationMessage INF = createINF();
 			return INF;
 
-		case ISUPMessage._MESSAGE_CODE_INR:
+		case InformationRequestMessage.MESSAGE_CODE:
 			InformationRequestMessage INR = createINR();
 			return INR;
 
-		case ISUPMessage._MESSAGE_CODE_SAM:
+		case SubsequentAddressMessage.MESSAGE_CODE:
 			SubsequentAddressMessage SAM = createSAM();
 			return SAM;
 
-		case ISUPMessage._MESSAGE_CODE_SDN:
+		case SubsequentDirectoryNumberMessage.MESSAGE_CODE:
 			SubsequentDirectoryNumberMessage SDN = createSDN();
 			return SDN;
 
-		case ISUPMessage._MESSAGE_CODE_FOT:
+		case ForwardTransferMessage.MESSAGE_CODE:
 			ForwardTransferMessage FOT = createFOT();
 			return FOT;
 
-		case ISUPMessage._MESSAGE_CODE_RES:
+		case ResumeMessage.MESSAGE_CODE:
 			ResumeMessage RES = createRES();
 			return RES;
-		case ISUPMessage._MESSAGE_CODE_BLO:
+		case BlockingMessage.MESSAGE_CODE:
 			BlockingMessage BLO = createBLO();
 			return BLO;
 
-		case ISUPMessage._MESSAGE_CODE_BLA:
+		case BlockingAckMessage.MESSAGE_CODE:
 			BlockingAckMessage BLA = createBLA();
 			return BLA;
 
-		case ISUPMessage._MESSAGE_CODE_CCR:
+		case ContinuityCheckRequestMessage.MESSAGE_CODE:
 			ContinuityCheckRequestMessage CCR = createCCR();
 			return CCR;
 
-		case ISUPMessage._MESSAGE_CODE_LPA:
+		case LoopbackAckMessage.MESSAGE_CODE:
 			LoopbackAckMessage LPA = createLPA();
 			return LPA;
 
-		case ISUPMessage._MESSAGE_CODE_LPP:
+		case LoopPreventionMessage.MESSAGE_CODE:
 			LoopPreventionMessage LPP = createLPP();
 			return LPP;
 
-		case ISUPMessage._MESSAGE_CODE_OLM:
+		case OverloadMessage.MESSAGE_CODE:
 			OverloadMessage OLM = createOLM();
 			return OLM;
 
-		case ISUPMessage._MESSAGE_CODE_SUS:
+		case SuspendMessage.MESSAGE_CODE:
 			SuspendMessage SUS = createSUS();
 			return SUS;
 
-		case ISUPMessage._MESSAGE_CODE_RSC:
+		case ResetCircuitMessage.MESSAGE_CODE:
 			ResetCircuitMessage RSC = createRSC();
 			return RSC;
 
-		case ISUPMessage._MESSAGE_CODE_UBL:
+		case UnblockingMessage.MESSAGE_CODE:
 			UnblockingMessage UBL = createUBL();
 			return UBL;
 
-		case ISUPMessage._MESSAGE_CODE_UBA:
+		case UnblockingAckMessage.MESSAGE_CODE:
 			UnblockingAckMessage UBA = createUBA();
 			return UBA;
 
-		case ISUPMessage._MESSAGE_CODE_UCIC:
+		case UnequippedCICMessage.MESSAGE_CODE:
 			UnequippedCICMessage UCIC = createUCIC();
 			return UCIC;
 
-		case ISUPMessage._MESSAGE_CODE_CGB:
+		case CircuitGroupBlockingMessage.MESSAGE_CODE:
 			CircuitGroupBlockingMessage CGB = createCGB();
 			return CGB;
 
-		case ISUPMessage._MESSAGE_CODE_CGBA:
+		case CircuitGroupBlockingAckMessage.MESSAGE_CODE:
 			CircuitGroupBlockingAckMessage CGBA = createCGBA();
 			return CGBA;
 
-		case ISUPMessage._MESSAGE_CODE_CGU:
+		case CircuitGroupUnblockingMessage.MESSAGE_CODE:
 			CircuitGroupUnblockingMessage CGU = createCGU();
 			return CGU;
 
-		case ISUPMessage._MESSAGE_CODE_CGUA:
+		case CircuitGroupUnblockingAckMessage.MESSAGE_CODE:
 			CircuitGroupUnblockingAckMessage CGUA = createCGUA();
 			return CGUA;
 
-		case ISUPMessage._MESSAGE_CODE_GRS:
+		case CircuitGroupResetMessage.MESSAGE_CODE:
 			CircuitGroupResetMessage GRS = createGRS();
 			return GRS;
 
-		case ISUPMessage._MESSAGE_CODE_CQR:
+		case CircuitGroupQueryResponseMessage.MESSAGE_CODE:
 			CircuitGroupQueryResponseMessage CQR = createCQR();
 			return CQR;
 
-		case ISUPMessage._MESSAGE_CODE_CQM:
+		case CircuitGroupQueryMessage.MESSAGE_CODE:
 			CircuitGroupQueryMessage CQM = createCQM();
 			return CQM;
 
-		case ISUPMessage._MESSAGE_CODE_FAA:
+		case FacilityAcceptedMessage.MESSAGE_CODE:
 			FacilityAcceptedMessage FAA = createFAA();
 			return FAA;
 
-		case ISUPMessage._MESSAGE_CODE_FAR:
+		case FacilityRequestMessage.MESSAGE_CODE:
 			FacilityRequestMessage FAR = createFAR();
 			return FAR;
 
-		case ISUPMessage._MESSAGE_CODE_PAM:
+		case PassAlongMessage.MESSAGE_CODE:
 			PassAlongMessage PAM = createPAM();
 			return PAM;
 
-		case ISUPMessage._MESSAGE_CODE_PRI:
+		case PreReleaseInformationMessage.MESSAGE_CODE:
 			PreReleaseInformationMessage PRI = createPRI();
 			return PRI;
 
-		case ISUPMessage._MESSAGE_CODE_FAC:
+		case FacilityMessage.MESSAGE_CODE:
 			FacilityMessage FAC = createFAC();
 			return FAC;
 
-		case ISUPMessage._MESSAGE_CODE_NRM:
+		case NetworkResourceManagementMessage.MESSAGE_CODE:
 			NetworkResourceManagementMessage NRM = createNRM();
 			return NRM;
 
-		case ISUPMessage._MESSAGE_CODE_IDR:
+		case IdentificationRequestMessage.MESSAGE_CODE:
 			IdentificationRequestMessage IDR = createIDR();
 			return IDR;
 
-		case ISUPMessage._MESSAGE_CODE_IRS:
+		case IdentificationResponseMessage.MESSAGE_CODE:
 			IdentificationResponseMessage IRS = createIRS();
 			return IRS;
 
-		case ISUPMessage._MESSAGE_CODE_SGM:
+		case SegmentationMessage.MESSAGE_CODE:
 			SegmentationMessage SGM = createSGM();
 			return SGM;
 
-		case ISUPMessage._MESSAGE_CODE_CIM:
+		case ChargeInformationMessage.MESSAGE_CODE:
 			ChargeInformationMessage CIM = createCIM();
 			return CIM;
 
-		case ISUPMessage._MESSAGE_CODE_UPA:
+		case UserPartAvailableMessage.MESSAGE_CODE:
 			UserPartAvailableMessage UPA = createUPA();
 			return UPA;
 
-		case ISUPMessage._MESSAGE_CODE_UPT:
+		case UserPartTestMessage.MESSAGE_CODE:
 			UserPartTestMessage UPT = createUPT();
 			return UPT;
 
-		case ISUPMessage._MESSAGE_CODE_USR:
+		case User2UserInformationMessage.MESSAGE_CODE:
 			User2UserInformationMessage USR = createUSR();
 			return USR;
 		default:
@@ -897,7 +959,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		optionalCodeToIndex.put(RedirectStatus._PARAMETER_CODE, AddressCompleteMessageImpl._INDEX_O_RedirectStatus);
 		
 		MessageIndexingPlaceHolder ACM_HOLDER = new MessageIndexingPlaceHolder();
-		ACM_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_ACM;
+		ACM_HOLDER.commandCode = AddressCompleteMessage.MESSAGE_CODE;
 		ACM_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		ACM_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		ACM_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -972,7 +1034,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		
 		
 		MessageIndexingPlaceHolder ANM_HOLDER = new MessageIndexingPlaceHolder();
-		ANM_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_ANM;
+		ANM_HOLDER.commandCode = AnswerMessage.MESSAGE_CODE;
 		ANM_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		ANM_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		ANM_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -991,9 +1053,10 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		_ANM_HOLDER = ANM_HOLDER;
 		
 		//FIXME: APT
+		
 		//BLO
 		MessageIndexingPlaceHolder BLO_HOLDER = new MessageIndexingPlaceHolder();
-		BLO_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_BLO;
+		BLO_HOLDER.commandCode = BlockingMessage.MESSAGE_CODE;
 		BLO_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		BLO_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		BLO_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1012,7 +1075,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		_BLO_HOLDER = BLO_HOLDER;
 		//BLA
 		MessageIndexingPlaceHolder BLA_HOLDER = new MessageIndexingPlaceHolder();
-		BLA_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_BLA;
+		BLA_HOLDER.commandCode = BlockingAckMessage.MESSAGE_CODE;
 		BLA_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		BLA_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		BLA_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1097,7 +1160,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		
 		
 		MessageIndexingPlaceHolder CPG_HOLDER = new MessageIndexingPlaceHolder();
-		CPG_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_CPG;
+		CPG_HOLDER.commandCode = CallProgressMessage.MESSAGE_CODE;
 		CPG_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		CPG_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		CPG_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1124,7 +1187,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		mandatoryVariableCodeToIndex.put(RangeAndStatus._PARAMETER_CODE, CircuitGroupBlockingMessageImpl._INDEX_V_RangeAndStatus);
 		
 		MessageIndexingPlaceHolder CGB_HOLDER = new MessageIndexingPlaceHolder();
-		CGB_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_CGB;
+		CGB_HOLDER.commandCode = CircuitGroupBlockingMessage.MESSAGE_CODE;
 		CGB_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		CGB_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		CGB_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1150,7 +1213,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		mandatoryVariableCodeToIndex.put(RangeAndStatus._PARAMETER_CODE, CircuitGroupBlockingAckMessageImpl._INDEX_V_RangeAndStatus);
 		
 		MessageIndexingPlaceHolder CGBA_HOLDER = new MessageIndexingPlaceHolder();
-		CGBA_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_CGBA;
+		CGBA_HOLDER.commandCode = CircuitGroupBlockingAckMessage.MESSAGE_CODE;
 		CGBA_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		CGBA_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		CGBA_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1173,7 +1236,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		mandatoryVariableCodeToIndex.put(RangeAndStatus._PARAMETER_CODE, CircuitGroupQueryMessageImpl._INDEX_V_RangeAndStatus);
 		
 		MessageIndexingPlaceHolder CQM_HOLDER = new MessageIndexingPlaceHolder();
-		CQM_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_CQM;
+		CQM_HOLDER.commandCode = CircuitGroupQueryResponseMessage.MESSAGE_CODE;
 		CQM_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		CQM_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		CQM_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1199,7 +1262,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		mandatoryVariableCodeToIndex.put(CircuitStateIndicator._PARAMETER_CODE, CircuitGroupQueryResponseMessageImpl._INDEX_V_CircuitStateIndicator);
 		
 		MessageIndexingPlaceHolder CQR_HOLDER = new MessageIndexingPlaceHolder();
-		CQR_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_CQR;
+		CQR_HOLDER.commandCode = CircuitGroupQueryMessage.MESSAGE_CODE;
 		CQR_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		CQR_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		CQR_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1223,7 +1286,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		
 		
 		MessageIndexingPlaceHolder GRS_HOLDER = new MessageIndexingPlaceHolder();
-		GRS_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_GRS;
+		GRS_HOLDER.commandCode = CircuitGroupResetMessage.MESSAGE_CODE;
 		GRS_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		GRS_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		GRS_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1249,7 +1312,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		
 		
 		MessageIndexingPlaceHolder GRA_HOLDER = new MessageIndexingPlaceHolder();
-		GRA_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_GRA;
+		GRA_HOLDER.commandCode = CircuitGroupResetAckMessage.MESSAGE_CODE;
 		GRA_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		GRA_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		GRA_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1276,7 +1339,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		mandatoryVariableCodeToIndex.put(RangeAndStatus._PARAMETER_CODE, CircuitGroupUnblockingMessageImpl._INDEX_V_RangeAndStatus);
 		
 		MessageIndexingPlaceHolder CGU_HOLDER = new MessageIndexingPlaceHolder();
-		CGU_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_CGU;
+		CGU_HOLDER.commandCode = CircuitGroupUnblockingMessage.MESSAGE_CODE;
 		CGU_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		CGU_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		CGU_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1303,7 +1366,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		mandatoryVariableCodeToIndex.put(RangeAndStatus._PARAMETER_CODE, CircuitGroupUnblockingAckMessageImpl._INDEX_V_RangeAndStatus);
 		
 		MessageIndexingPlaceHolder CGUA_HOLDER = new MessageIndexingPlaceHolder();
-		CGUA_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_CGUA;
+		CGUA_HOLDER.commandCode = CircuitGroupUnblockingAckMessage.MESSAGE_CODE;
 		CGUA_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		CGUA_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		CGUA_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1326,7 +1389,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		//FIXME: COT
 		// CCR
 		MessageIndexingPlaceHolder CCR_HOLDER = new MessageIndexingPlaceHolder();
-		CCR_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_CCR;
+		CCR_HOLDER.commandCode = ContinuityCheckRequestMessage.MESSAGE_CODE;
 		CCR_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		CCR_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		CCR_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1432,7 +1495,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 
 		
 		MessageIndexingPlaceHolder IAM_HOLDER = new MessageIndexingPlaceHolder();
-		IAM_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_IAM;
+		IAM_HOLDER.commandCode = InitialAddressMessage.MESSAGE_CODE;
 		IAM_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		IAM_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		IAM_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1453,7 +1516,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		
 		// LPA
 		MessageIndexingPlaceHolder LPA_HOLDER = new MessageIndexingPlaceHolder();
-		LPA_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_LPA;
+		LPA_HOLDER.commandCode = LoopbackAckMessage.MESSAGE_CODE;
 		LPA_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		LPA_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		LPA_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1474,7 +1537,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		//FIXME: NRM
 		// OLM
 		MessageIndexingPlaceHolder OLM_HOLDER = new MessageIndexingPlaceHolder();
-		OLM_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_OLM;
+		OLM_HOLDER.commandCode = OverloadMessage.MESSAGE_CODE;
 		OLM_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		OLM_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		OLM_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1532,7 +1595,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		optionalCodeToIndex.put(RedirectBackwardInformation._PARAMETER_CODE, ReleaseMessageImpl._INDEX_O_RedirectBackwardInformation);
 		
 		MessageIndexingPlaceHolder REL_HOLDER = new MessageIndexingPlaceHolder();
-		REL_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_REL;
+		REL_HOLDER.commandCode = ReleaseMessage.MESSAGE_CODE;
 		REL_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		REL_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		REL_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1556,7 +1619,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		optionalCodeToIndex.put(CauseIndicators._PARAMETER_CODE, ReleaseCompleteMessageImpl._INDEX_O_CauseIndicators);
 		
 		MessageIndexingPlaceHolder RLC_HOLDER = new MessageIndexingPlaceHolder();
-		RLC_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_RLC;
+		RLC_HOLDER.commandCode = ReleaseCompleteMessage.MESSAGE_CODE;
 		RLC_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		RLC_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		RLC_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1577,7 +1640,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 
 		// RSC
 		MessageIndexingPlaceHolder RSC_HOLDER = new MessageIndexingPlaceHolder();
-		RSC_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_RSC;
+		RSC_HOLDER.commandCode = ResetCircuitMessage.MESSAGE_CODE;
 		RSC_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		RSC_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		RSC_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1601,7 +1664,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		//FIXME: SUS
 		// UBL
 		MessageIndexingPlaceHolder UBL_HOLDER = new MessageIndexingPlaceHolder();
-		UBL_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_UBL;
+		UBL_HOLDER.commandCode = UnblockingMessage.MESSAGE_CODE;
 		UBL_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		UBL_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		UBL_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1620,7 +1683,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		_UBL_HOLDER = UBL_HOLDER;
 		// UBA
 		MessageIndexingPlaceHolder UBA_HOLDER = new MessageIndexingPlaceHolder();
-		UBA_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_UBA;
+		UBA_HOLDER.commandCode = UnblockingAckMessage.MESSAGE_CODE;
 		UBA_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		UBA_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		UBA_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
@@ -1639,7 +1702,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		_UBA_HOLDER = UBA_HOLDER;
 		// UCIC
 		MessageIndexingPlaceHolder UCIC_HOLDER = new MessageIndexingPlaceHolder();
-		UCIC_HOLDER.commandCode = ISUPMessage._MESSAGE_CODE_UCIC;
+		UCIC_HOLDER.commandCode = UnequippedCICMessage.MESSAGE_CODE;
 		UCIC_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
 		UCIC_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
 		UCIC_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);

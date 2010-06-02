@@ -8,10 +8,38 @@ package org.mobicents.protocols.ss7.isup.impl.message;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.*;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.AccessDeliveryInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ApplicationTransportParameterImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.BackwardCallIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.BackwardGVNSImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CCNRPossibleIndicatorImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallDiversionInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallHistoryInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallReferenceImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallTransferNumberImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ConferenceTreatmentIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ConnectedNumberImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.EchoControlInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.EventInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNotificationIndicatorImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNumberImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.NetworkSpecificFacilityImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.OptionalBackwardCallIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ParameterCompatibilityInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.PivotRoutingBackwardInformationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectStatusImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectionNumberImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectionNumberRestrictionImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.RemoteOperationsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ServiceActivationImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.TransmissionMediumUsedImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.UIDActionIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserToUserIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserToUserInformationImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.accessTransport.AccessTransportImpl;
 import org.mobicents.protocols.ss7.isup.message.CallProgressMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
@@ -30,7 +58,6 @@ import org.mobicents.protocols.ss7.isup.message.parameter.EchoControlInformation
 import org.mobicents.protocols.ss7.isup.message.parameter.EventInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNotificationIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
 import org.mobicents.protocols.ss7.isup.message.parameter.NetworkSpecificFacility;
 import org.mobicents.protocols.ss7.isup.message.parameter.OptionalBackwardCallIndicators;
@@ -55,7 +82,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  */
 public class CallProgressMessageImpl extends ISUPMessageImpl implements CallProgressMessage {
 
-	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_CPG);
+	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 	private static final int _MANDATORY_VAR_COUNT = 0;
 
 	static final int _INDEX_F_MessageType = 0;
@@ -135,8 +162,8 @@ public class CallProgressMessageImpl extends ISUPMessageImpl implements CallProg
 			}
 			try {
 				// Message Type
-				if (b[index] != this._MESSAGE_CODE_CPG) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_CPG);
+				if (b[index] != this.MESSAGE_CODE) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
 				}
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg

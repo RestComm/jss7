@@ -13,8 +13,21 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.isup.ISUPClientTransaction;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.TransactionKey;
+import org.mobicents.protocols.ss7.isup.message.AddressCompleteMessage;
+import org.mobicents.protocols.ss7.isup.message.AnswerMessage;
+import org.mobicents.protocols.ss7.isup.message.BlockingAckMessage;
+import org.mobicents.protocols.ss7.isup.message.BlockingMessage;
+import org.mobicents.protocols.ss7.isup.message.CircuitGroupBlockingAckMessage;
+import org.mobicents.protocols.ss7.isup.message.CircuitGroupBlockingMessage;
+import org.mobicents.protocols.ss7.isup.message.CircuitGroupResetAckMessage;
+import org.mobicents.protocols.ss7.isup.message.CircuitGroupResetMessage;
+import org.mobicents.protocols.ss7.isup.message.CircuitGroupUnblockingMessage;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+import org.mobicents.protocols.ss7.isup.message.InitialAddressMessage;
+import org.mobicents.protocols.ss7.isup.message.ReleaseCompleteMessage;
+import org.mobicents.protocols.ss7.isup.message.ReleaseMessage;
+import org.mobicents.protocols.ss7.isup.message.UnblockingAckMessage;
+import org.mobicents.protocols.ss7.isup.message.UnblockingMessage;
 import org.mobicents.protocols.ss7.sccp.ActionReference;
 
 /**
@@ -36,7 +49,7 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 	 */
 	public ISUPClientTransactionImpl(ISUPMessage message, ISUPProviderBase provider, ISUPStackImpl stack, ActionReference actionReference) {
 		super(message, provider, stack, actionReference);
-		
+
 	}
 
 	/*
@@ -78,10 +91,10 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 			this.cancelGeneralTimer();
 			this.cancelTimer();
 			this.provider.onTransactionEnded(this);
-			
+
 			break;
 		case TIMEDOUT:
-			//just in case
+			// just in case
 			this.cancelGeneralTimer();
 			this.cancelTimer();
 			this.provider.onTransactionTimeout(this);
@@ -91,11 +104,11 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 		}
 	}
 
-	
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.protocols.ss7.isup.ISUPTransactionImpl#doGeneralTimeout()
+	 * @see
+	 * org.mobicents.protocols.ss7.isup.ISUPTransactionImpl#doGeneralTimeout()
 	 */
 	@Override
 	protected void doGeneralTimeout() {
@@ -106,7 +119,7 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 				super.generalTimeoutFuture = null;
 				this.cancelTimer();
 				this.setState(ISUPClientTransactionState.TIMEDOUT);
-				
+
 				break;
 			default:
 				//
@@ -142,44 +155,128 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 			if (this.state != ISUPClientTransactionState.MESSAGE_SENT) {
 				return;
 			}
-			
+			this.cancelTimer();
+			// FIXME: add transition to terminated
 			switch (super.message.getMessageType().getCode()) {
-			case ISUPMessage._MESSAGE_CODE_IAM:
+
+			// Tx: IAM scenario
+			case InitialAddressMessage.MESSAGE_CODE:
 				// see: http://en.wikipedia.org/wiki/ISDN_User_Part
 				switch (msg.getMessageType().getCode()) {
-				case ISUPMessage._MESSAGE_CODE_ANM:
+				case AnswerMessage.MESSAGE_CODE:
 					// EOF
 					setState(ISUPClientTransactionState.TERMINATED);
 					break;
-				case ISUPMessage._MESSAGE_CODE_ACM:
+				case AddressCompleteMessage.MESSAGE_CODE:
 					// refresh timer?
 					cancelGeneralTimer();
 					startGeneralTimer();
 					break;
 				default:
-					logger.error("Request to received unknown answer: "+msg.getMessageType().getCode()+", for IAM tx");
+					logger.error("Request to received unknown answer: " + msg.getMessageType().getCode() + ", for IAM tx");
+					// EOF
+					setState(ISUPClientTransactionState.TERMINATED);
 				}
 
 				break;
-				
-			case ISUPMessage._MESSAGE_CODE_REL:
-				
+			// Tx: REL scenario
+			case ReleaseMessage.MESSAGE_CODE:
+
 				switch (msg.getMessageType().getCode()) {
 
-				case ISUPMessage._MESSAGE_CODE_RLC:
+				case ReleaseCompleteMessage.MESSAGE_CODE:
 					// EOF
 					setState(ISUPClientTransactionState.TERMINATED);
+					break;
 				default:
-					logger.error("Request to received unknown answer: "+msg.getMessageType().getCode()+", for REL tx");
+					logger.error("Request to received unknown answer: " + msg.getMessageType().getCode() + ", for REL tx");
+					// EOF
+					setState(ISUPClientTransactionState.TERMINATED);
+				}
+				break;
+				// Tx: UBL scenario
+			case UnblockingMessage.MESSAGE_CODE:
+
+				switch (msg.getMessageType().getCode()) {
+
+				case UnblockingAckMessage.MESSAGE_CODE:
+					// EOF
+					setState(ISUPClientTransactionState.TERMINATED);
+					break;
+				default:
+					logger.error("Request to received unknown answer: " + msg.getMessageType().getCode() + ", for UBL tx");
+					// EOF
+					setState(ISUPClientTransactionState.TERMINATED);
+				}
+				break;
+				//Tx: CGU scenario
+			case CircuitGroupUnblockingMessage.MESSAGE_CODE:
+
+				switch (msg.getMessageType().getCode()) {
+
+				case CircuitGroupBlockingAckMessage.MESSAGE_CODE:
+					// EOF
+					setState(ISUPClientTransactionState.TERMINATED);
+					break;
+				default:
+					logger.error("Request to received unknown answer: " + msg.getMessageType().getCode() + ", for CGU tx");
+					// EOF
+					setState(ISUPClientTransactionState.TERMINATED);
 				}
 				
+				break;
+				//Tx: GRS scenario
+			case CircuitGroupResetMessage.MESSAGE_CODE:
+
+				switch (msg.getMessageType().getCode()) {
+
+				case CircuitGroupResetAckMessage.MESSAGE_CODE:
+					// EOF
+					setState(ISUPClientTransactionState.TERMINATED);
+					break;
 				default:
-					//default case
-					this.setState(ISUPClientTransactionState.TERMINATED);
+					logger.error("Request to received unknown answer: " + msg.getMessageType().getCode() + ", for GRS tx");
+					// EOF
+					setState(ISUPClientTransactionState.TERMINATED);
+				}
+				break;
+				//Tx: CGB scenario
+			case CircuitGroupBlockingMessage.MESSAGE_CODE:
+
+				switch (msg.getMessageType().getCode()) {
+
+				case CircuitGroupBlockingAckMessage.MESSAGE_CODE:
+					// EOF
+					setState(ISUPClientTransactionState.TERMINATED);
+					break;
+				default:
+					logger.error("Request to received unknown answer: " + msg.getMessageType().getCode() + ", for CGB tx");
+					// EOF
+					setState(ISUPClientTransactionState.TERMINATED);
+				}
+				break;
+				//Tx: BLO scenario
+			case BlockingMessage.MESSAGE_CODE:
+
+				switch (msg.getMessageType().getCode()) {
+
+				case BlockingAckMessage.MESSAGE_CODE:
+					// EOF
+					setState(ISUPClientTransactionState.TERMINATED);
+					break;
+				default:
+					logger.error("Request to received unknown answer: " + msg.getMessageType().getCode() + ", for BLO tx");
+					// EOF
+					setState(ISUPClientTransactionState.TERMINATED);
+				}
+				break;
+				//for not handled or defined yet.
+			default:
+				// default case
+				this.setState(ISUPClientTransactionState.TERMINATED);
 			}
 			
-			this.cancelTimer();
-			//FIXME: add transition to terminated
+			
 		}
 	}
 
@@ -193,9 +290,11 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 		}
 
 	}
+
 	private void startTimer() {
-		this.receiveResponseTimeout = stack.getExecutors().schedule(new ISUPClientTransactionTimeoutTask(this), stack.getClientTransactionAnswerTimeout(), TimeUnit.MILLISECONDS);
-		
+		this.receiveResponseTimeout = stack.getExecutors().schedule(new ISUPClientTransactionTimeoutTask(this),
+				stack.getClientTransactionAnswerTimeout(), TimeUnit.MILLISECONDS);
+
 	}
 
 	private enum ISUPClientTransactionState {

@@ -73,5 +73,9 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface NetworkResourceManagementMessage extends ISUPMessage {
-
+	/**
+	 * Network Resource Management Message, Q.763 reference table 46 <br>
+	 * {@link NetworkResourceManagementMessage}
+	 */
+	public static final int MESSAGE_CODE = 0x32;
 }

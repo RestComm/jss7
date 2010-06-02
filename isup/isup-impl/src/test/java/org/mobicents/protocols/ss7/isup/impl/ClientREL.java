@@ -126,7 +126,7 @@ public class ClientREL implements ISUPListener {
 	 */
 	public void onMessage(ISUPMessage message) {
 		switch (message.getMessageType().getCode()) {
-		case ISUPMessage._MESSAGE_CODE_RLC:
+		case ReleaseCompleteMessage.MESSAGE_CODE:
 			if(_RCV_RLC)
 			{
 				passed = false;

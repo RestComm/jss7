@@ -40,5 +40,8 @@ package org.mobicents.protocols.ss7.isup.message;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface PassAlongMessage extends ISUPMessage {
-
+	/**
+	 * Pass-along Message, Q.763 reference table 43 <br> {@link PassAlongMessage}
+	 */
+	public static final int MESSAGE_CODE= 0x28;
 }
