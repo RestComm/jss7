@@ -141,6 +141,8 @@ public class ISUPServerTransactionImpl extends ISUPTransactionImpl implements IS
 
 			// now the whole state machine!
 			switch (super.message.getMessageType().getCode()) {
+			
+			//Tx: IAM scenario
 			case InitialAddressMessage.MESSAGE_CODE:
 				// see: http://en.wikipedia.org/wiki/ISDN_User_Part
 				switch (msg.getMessageType().getCode()) {
@@ -163,7 +165,7 @@ public class ISUPServerTransactionImpl extends ISUPTransactionImpl implements IS
 				}
 
 				break;
-
+				// Tx: REL scenario
 			case ReleaseMessage.MESSAGE_CODE:
 
 				switch (msg.getMessageType().getCode()) {
@@ -180,6 +182,7 @@ public class ISUPServerTransactionImpl extends ISUPTransactionImpl implements IS
 					throw new IllegalArgumentException("Wrong message type!");
 				}
 				break;
+				// Tx: UBL scenario
 			case UnblockingMessage.MESSAGE_CODE:
 
 				switch (msg.getMessageType().getCode()) {
