@@ -7,7 +7,6 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message;
 
-import org.mobicents.protocols.ss7.isup.impl.message.BlockingMessageImpl;
 import org.mobicents.protocols.ss7.isup.message.ContinuityCheckRequestMessage;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 
