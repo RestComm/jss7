@@ -816,7 +816,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		}
 	}
 	//private final static Map<Integer,MessageIndexingPlaceHolder> _COMMAND_CODE_2_COMMAND_INDEXES;
-	
+	//FIXME: make this go away.
 	
 	//ACM
 	private static final MessageIndexingPlaceHolder _ACM_HOLDER;

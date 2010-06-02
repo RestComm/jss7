@@ -1,5 +1,31 @@
 package org.mobicents.protocols.ss7.isup.message;
 
+import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransportParameter;
+import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.BackwardGVNS;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallHistoryInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
+import org.mobicents.protocols.ss7.isup.message.parameter.ConferenceTreatmentIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.ConnectedNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.DisplayInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.EchoControlInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNotificationIndicator;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.NetworkSpecificFacility;
+import org.mobicents.protocols.ss7.isup.message.parameter.OptionalBackwardCallIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingBackwardInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectStatus;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionNumberRestriction;
+import org.mobicents.protocols.ss7.isup.message.parameter.RemoteOperations;
+import org.mobicents.protocols.ss7.isup.message.parameter.ServiceActivation;
+import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumUsed;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.AccessTransport;
+
 /**
  * Start time:09:54:07 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
@@ -155,11 +181,6 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD>1</TD>
  * </TR>
  * <TR>
- * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Transmission Medium Used</TD>
- * <TD style="WIDTH: 145px">O</TD>
- * <TD>1</TD>
- * </TR>
- * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Display Information</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>1</TD>
@@ -200,5 +221,105 @@ public interface AnswerMessage extends ISUPMessage {
 	 * Answer Message, Q.763 reference table 22 <br> {@link AnswerMessage}
 	 */
 	public static final int MESSAGE_CODE = 0x09;
+
+	public void setBackwardCallIndicators(BackwardCallIndicators indicators);
+
+	public BackwardCallIndicators getBackwardCallIndicators();
+
+	public void setOptionalBakwardCallIndicators(OptionalBackwardCallIndicators value);
+
+	public OptionalBackwardCallIndicators getOptionalBakwardCallIndicators();
+
+	public void setCallReference(CallReference value);
+
+	public CallReference getCallReference();
 	
+	public void setUserToUserIndicators(UserToUserIndicators value);
+
+	public UserToUserIndicators getUserToUserIndicators();
+	
+	public void setUserToUserInformation(UserToUserInformation value);
+
+	public UserToUserInformation getUserToUserInformation();
+	
+	
+	public void setConnectedNumber(ConnectedNumber value);
+
+	public ConnectedNumber getConnectedNumber();
+	
+	public void setAccessTransport(AccessTransport value);
+
+	public AccessTransport getAccessTransport();
+
+	public void setGenericNotificationIndicator(GenericNotificationIndicator value);
+
+	public GenericNotificationIndicator getGenericNotificationIndicator();
+	
+	public void setCallHistoryInformation(CallHistoryInformation value);
+
+	public CallHistoryInformation getCallHistoryInformation();
+	
+	public void setTransmissionMediumUsed(TransmissionMediumUsed value);
+
+	public TransmissionMediumUsed getTransmissionMediumUsed();
+	
+	public void setGenericNumber(GenericNumber value);
+
+	public GenericNumber getGenericNumber();
+	
+	public void setEchoControlInformation(EchoControlInformation value);
+
+	public EchoControlInformation getEchoControlInformation();
+
+	public void setAccessDeliveryInformation(AccessDeliveryInformation value);
+
+	public AccessDeliveryInformation getAccessDeliveryInformation();
+
+	public void setRedirectionNumber(RedirectionNumber value);
+
+	public RedirectionNumber getRedirectionNumber();
+
+	public void setParameterCompatibilityInformation(ParameterCompatibilityInformation value);
+
+	public ParameterCompatibilityInformation getParameterCompatibilityInformation();
+
+	public void setNetworkSpecificFacility(NetworkSpecificFacility value);
+
+	public NetworkSpecificFacility getNetworkSpecificFacility();
+
+	public void setRemoteOperations(RemoteOperations value);
+
+	public RemoteOperations getRemoteOperations();
+
+	public void setServiceActivation(ServiceActivation value);
+
+	public RedirectionNumberRestriction getRedirectionNumberRestriction();
+
+	public void setRedirectionNumberRestriction(RedirectionNumberRestriction value);
+
+	public ServiceActivation getServiceActivation();
+
+	public void setBackwardGVNS(BackwardGVNS value);
+
+	public BackwardGVNS getBackwardGVNS();
+
+	public void setDisplayInformation(DisplayInformation value);
+
+	public DisplayInformation getDisplayInformation();
+
+	public void setConferenceTreatmentIndicators(ConferenceTreatmentIndicators value);
+
+	public ConferenceTreatmentIndicators getConferenceTreatmentIndicators();
+
+	public void setApplicationTransportParameter(ApplicationTransportParameter value);
+
+	public ApplicationTransportParameter getApplicationTransportParameter();
+	
+	public void setPivotRoutingBackwardInformation(PivotRoutingBackwardInformation value);
+
+	public PivotRoutingBackwardInformation getPivotRoutingBackwardInformation();
+
+	public void setRedirectStatus(RedirectStatus value);
+
+	public RedirectStatus getRedirectStatus();
 }

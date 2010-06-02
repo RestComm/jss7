@@ -59,6 +59,15 @@ public class CircuitGroupResetAckMessageImpl extends ISUPMessageImpl implements 
 		return tk;
 	}
 	
+	public void setRangeAndStatus(RangeAndStatus ras)
+	{
+		super.v_Parameters.put(_INDEX_V_RangeAndStatus, ras);
+	}
+	public RangeAndStatus getRangeAndStatus()
+	{
+		return (RangeAndStatus) super.v_Parameters.get(_INDEX_V_RangeAndStatus);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

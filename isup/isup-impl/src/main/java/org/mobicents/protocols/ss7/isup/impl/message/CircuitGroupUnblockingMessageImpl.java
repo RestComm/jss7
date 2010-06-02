@@ -63,6 +63,22 @@ public class CircuitGroupUnblockingMessageImpl extends ISUPMessageImpl implement
 		return tk;
 	}
 	
+	public void setSupervisionType(CircuitGroupSuperVisionMessageType ras)
+	{
+		super.f_Parameters.put(_INDEX_F_CircuitGroupSupervisionMessageType,ras);
+	}
+	public CircuitGroupSuperVisionMessageType getSupervisionType()
+	{
+		return (CircuitGroupSuperVisionMessageType) super.f_Parameters.get(_INDEX_F_CircuitGroupSupervisionMessageType);
+	}
+	public void setRangeAndStatus(RangeAndStatus ras)
+	{
+		super.v_Parameters.put(_INDEX_V_RangeAndStatus, ras);
+	}
+	public RangeAndStatus getRangeAndStatus()
+	{
+		return (RangeAndStatus) super.v_Parameters.get(_INDEX_V_RangeAndStatus);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -145,7 +161,7 @@ public class CircuitGroupUnblockingMessageImpl extends ISUPMessageImpl implement
 	 */
 	@Override
 	public MessageType getMessageType() {
-		return this._MESSAGE_TYPE;
+		return _MESSAGE_TYPE;
 	}
 
 	/*

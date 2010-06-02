@@ -58,7 +58,16 @@ public class CircuitGroupResetMessageImpl extends ISUPMessageImpl implements Cir
 		TransactionKey tk = new TransactionKey(IDENT,this.cic.getCIC());
 		return tk;
 	}
+
 	
+	public void setRangeAndStatus(RangeAndStatus ras)
+	{
+		super.v_Parameters.put(_INDEX_V_RangeAndStatus, ras);
+	}
+	public RangeAndStatus getRangeAndStatus()
+	{
+		return (RangeAndStatus) super.v_Parameters.get(_INDEX_V_RangeAndStatus);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -170,5 +179,4 @@ public class CircuitGroupResetMessageImpl extends ISUPMessageImpl implements Cir
 
 		return false;
 	}
-
 }
