@@ -12,9 +12,6 @@ import java.io.IOException;
 
 import org.mobicents.protocols.ss7.isup.ISUPComponent;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.MLPPPrecedenceImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.NatureOfConnectionIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.NetworkManagementControlsImpl;
 
 /**
  * Start time:13:20:04 2009-04-26<br>

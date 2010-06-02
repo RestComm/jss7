@@ -1,7 +1,6 @@
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallDiversionTreatmentIndicatorsImpl;
 /**
  * 
  * Start time:13:47:44 2009-04-23<br>

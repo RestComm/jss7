@@ -13,8 +13,6 @@ import java.io.IOException;
 
 import org.mobicents.protocols.ss7.isup.ISUPComponent;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.MCIDResponseIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.MLPPPrecedenceImpl;
 
 /**
  * Start time:17:14:12 2009-04-24<br>

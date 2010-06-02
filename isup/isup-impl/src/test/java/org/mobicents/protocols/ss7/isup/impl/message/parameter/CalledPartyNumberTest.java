@@ -14,9 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ISUPComponent;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledDirectoryNumberImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledINNumberImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 
 /**

@@ -12,11 +12,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-
 import org.mobicents.protocols.ss7.isup.ISUPComponent;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNumberImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.LocationNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 
 /**

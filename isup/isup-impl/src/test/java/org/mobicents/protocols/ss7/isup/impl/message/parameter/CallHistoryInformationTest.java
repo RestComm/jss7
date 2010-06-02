@@ -8,15 +8,11 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ISUPComponent;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallHistoryInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledDirectoryNumberImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledINNumberImpl;
 
 /**
  * Start time:14:11:03 2009-04-23<br>

@@ -10,7 +10,6 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import org.mobicents.protocols.ss7.isup.ISUPComponent;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.MCIDResponseIndicatorsImpl;
 
 
 /**

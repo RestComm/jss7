@@ -13,9 +13,6 @@ import java.util.Arrays;
 
 import org.mobicents.protocols.ss7.isup.ISUPComponent;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.EchoControlInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.EventInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNotificationIndicatorImpl;
 
 /**
  * Start time:11:34:01 2009-04-24<br>

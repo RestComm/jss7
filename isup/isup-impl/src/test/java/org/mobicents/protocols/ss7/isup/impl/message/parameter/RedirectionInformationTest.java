@@ -13,8 +13,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ISUPComponent;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectionInformationImpl;
 
 /**
  * Start time:20:07:45 2009-04-26<br>

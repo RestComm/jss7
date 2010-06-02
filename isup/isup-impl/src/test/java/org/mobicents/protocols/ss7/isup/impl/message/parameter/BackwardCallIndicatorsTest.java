@@ -9,11 +9,9 @@
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import org.mobicents.protocols.ss7.isup.ISUPComponent;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.BackwardCallIndicatorsImpl;
 
 /**
  * Start time:12:21:06 2009-04-23<br>

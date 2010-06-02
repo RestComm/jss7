@@ -14,11 +14,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import org.mobicents.protocols.ss7.isup.ISUPComponent;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledDirectoryNumberImpl;
-
-import junit.framework.TestCase;
 
 /**
  * Start time:09:16:42 2009-04-22<br>

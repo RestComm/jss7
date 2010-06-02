@@ -13,9 +13,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ISUPComponent;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.NetworkRoutingNumberImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.OptionalBackwardCallIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.OptionalForwardCallIndicatorsImpl;
 
 /**
  * Start time:16:20:47 2009-04-26<br>
