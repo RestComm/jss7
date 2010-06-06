@@ -43,7 +43,7 @@ import org.apache.log4j.Logger;
  * @author kulikov
  * @author baranowb
  */
-public class Mtp3 implements Runnable {
+public class Mtp3 implements Mtp2Listener, Runnable {
 
     public final static int TIMEOUT_T1_SLTM = 12;
     public final static int TIMEOUT_T2_SLTM = 90;
@@ -314,7 +314,25 @@ public class Mtp3 implements Runnable {
         }
     }
 
-    private void restartTraffic(Mtp2 link) {
+    
+    
+    /* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.mtp.Mtp2Listener#registerLink(org.mobicents.protocols.ss7.mtp.Mtp2)
+	 */
+	public void registerLink(Mtp2 mtp2) {
+		this.selector.register(mtp2);
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.mtp.Mtp2Listener#unregisterLink(org.mobicents.protocols.ss7.mtp.Mtp2)
+	 */
+	public void unregisterLink(Mtp2 mtp2) {
+		this.selector.unregister(mtp2);
+		
+	}
+
+	private void restartTraffic(Mtp2 link) {
         int subservice = link.getSubService();
         //if (subservice == -1) {
         subservice = DEFAULT_SUB_SERVICE_TRA;

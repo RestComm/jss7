@@ -187,7 +187,7 @@ public class Mtp2 {
     //MTP1 layer reference.
     private Mtp1 channel;    
     //MTP3 Layer reference
-    private Mtp3 mtp3;
+    private Mtp2Listener mtp3;
     
     private volatile boolean started;
     
@@ -374,7 +374,7 @@ public class Mtp2 {
 	return channel;
     }
     
-    public void setLayer3(Mtp3 layer3) {
+    public void setLayer3(Mtp2Listener layer3) {
         this.mtp3 = layer3;
 //        this.listeners.add(layer3);
     }
@@ -383,13 +383,15 @@ public class Mtp2 {
         if (channel == null) {
             throw new IllegalStateException("Layer1 is not set in Layer2!");
         }
-        
+        if (mtp3 == null) {
+            throw new IllegalStateException("Layer3 is not set in Layer2!");
+        }
         if (started) {
             throw new IllegalStateException("Link already running");
         }
-        
+       
         channel.open();
-        mtp3.selector.register(this);
+        mtp3.registerLink(this);
         started = true;
 
         this.reset();
@@ -415,23 +417,13 @@ public class Mtp2 {
     }
 
     public void stopLink() {
+    	mtp3.unregisterLink(this);
         started = false;
-        // poll.cancel(false);
-        // stop_T2();
-        // stop_T3();
-        // stop_T4();
-        // stop_T17();
         reset();
         this.channel.close();
 
-    // layer1.close();
     }
 
-    public void _closeLink() {
-        stopLink();
-        //layer1.close();
-        channel = null;
-    }
 
     // not used
     private void startInitialAlignment() {

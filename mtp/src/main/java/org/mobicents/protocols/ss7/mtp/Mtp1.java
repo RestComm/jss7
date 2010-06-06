@@ -33,50 +33,54 @@ import java.io.IOException;
  * @author kulikov
  */
 public interface Mtp1 {
-	//FIXME: Oleg whats that?
-    /**
-     * Gets the code of this channel.
-     *
-     * @return the code of this channel.
-     */
-    public int getCode();
-    /**
-     * Set MTP2 layer serving this MTP1
-     * @param link
-     */
-    public void setLink(Mtp2 link);
-    /**
-     * Get MTP2 latyer serving this MTP1
-     * @return
-     */
-    public Mtp2 getLink();
-    
-    /**
-     * Reads upto buffer.length bytes from layer 1.
-     * 
-     * @param buffer reader buffer
-     * @return the number of actualy read bytes.
-     */
-    public int read(byte[] buffer) throws IOException;
-    
-    /**
-     * Writes data to layer 1.
-     * 
-     * @param buffer the buffer containing data to write.
-     * @param bytesToWrite 
-     */
-    public void write(byte[] buffer, int bytesToWrite) throws IOException;
-    
-    
-    /**
-     * Open message tranfer part layer 1.
-     */
-    public void open() throws IOException;
-    
-    /**
-     * Close message tranfer part layer 1.
-     */
-    public void close();
+	// FIXME: Oleg whats that?
+	/**
+	 * Gets the code of this channel.
+	 * 
+	 * @return the code of this channel.
+	 */
+	public int getCode();
 
-    
+	/**
+	 * Set MTP2 layer serving this MTP1
+	 * 
+	 * @param link
+	 */
+	public void setLink(Mtp2 link);
+
+	/**
+	 * Get MTP2 latyer serving this MTP1
+	 * 
+	 * @return
+	 */
+	public Mtp2 getLink();
+
+	/**
+	 * Reads upto buffer.length bytes from layer 1.
+	 * 
+	 * @param buffer
+	 *            reader buffer
+	 * @return the number of actualy read bytes.
+	 */
+	public int read(byte[] buffer) throws IOException;
+
+	/**
+	 * Writes data to layer 1.
+	 * 
+	 * @param buffer
+	 *            the buffer containing data to write.
+	 * @param bytesToWrite
+	 */
+	public void write(byte[] buffer, int bytesToWrite) throws IOException;
+
+	/**
+	 * Open message tranfer part layer 1.
+	 */
+	public void open() throws IOException;
+
+	/**
+	 * Close message tranfer part layer 1.
+	 */
+	public void close();
+
 }
