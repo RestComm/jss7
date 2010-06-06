@@ -33,14 +33,22 @@ import java.io.IOException;
  * @author kulikov
  */
 public interface Mtp1 {
+	//FIXME: Oleg whats that?
     /**
      * Gets the code of this channel.
      *
      * @return the code of this channel.
      */
     public int getCode();
-    
+    /**
+     * Set MTP2 layer serving this MTP1
+     * @param link
+     */
     public void setLink(Mtp2 link);
+    /**
+     * Get MTP2 latyer serving this MTP1
+     * @return
+     */
     public Mtp2 getLink();
     
     /**
@@ -55,9 +63,9 @@ public interface Mtp1 {
      * Writes data to layer 1.
      * 
      * @param buffer the buffer containing data to write.
-     * @param bytesRead 
+     * @param bytesToWrite 
      */
-    public void write(byte[] buffer, int bytesRead) throws IOException;
+    public void write(byte[] buffer, int bytesToWrite) throws IOException;
     
     
     /**
