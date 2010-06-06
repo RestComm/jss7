@@ -281,24 +281,22 @@ public class Mtp2 {
     private static final Logger logger = Logger.getLogger(Mtp2.class);
     
     public Mtp2(Mtp3 mtp3, Mtp1 channel, int sls) {    
-	this(mtp3.name + ":" + channel, sls, Utils._VALUE_NOT_SET);
+	this(mtp3.name + ":" + channel, sls);
         this.channel = channel;        
         this.mtp3 = mtp3;
         channel.setLink(this);
     }
     
     public Mtp2(String name) {
-        this(name, Utils._VALUE_NOT_SET, Utils._VALUE_NOT_SET);
+        this(name, Utils._VALUE_NOT_SET);
     }
+
+   
 
     public Mtp2(String name, int sls) {
-        this(name, sls, Utils._VALUE_NOT_SET);
-    }
-
-    public Mtp2(String name, int sls, int subservice) {
         this.name = name;
         this.sls = sls;
-        this.subservice = subservice;
+ 
         // init HDLC
         hdlc.fasthdlc_precalc();
         hdlc.fasthdlc_init(rxState);
@@ -338,27 +336,6 @@ public class Mtp2 {
         return this.state;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.mobicents.media.server.impl.resource.ss7.factories.Mtp2#getSubService
-     * ()
-     */
-    public int getSubService() {
-
-        return this.subservice;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.mobicents.media.server.impl.resource.ss7.factories.Mtp2#setSubService()
-     */
-    public void setSubService(int subservice) {
-        this.subservice = subservice;
-    }
 
     /**
      * Assigns layer 1 implementation.
@@ -371,7 +348,7 @@ public class Mtp2 {
     }
 
     public Mtp1 getChannel() {
-	return channel;
+    	return channel;
     }
     
     public void setLayer3(Mtp2Listener layer3) {

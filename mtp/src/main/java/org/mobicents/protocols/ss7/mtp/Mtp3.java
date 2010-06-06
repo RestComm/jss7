@@ -333,9 +333,9 @@ public class Mtp3 implements Mtp2Listener, Runnable {
 	}
 
 	private void restartTraffic(Mtp2 link) {
-        int subservice = link.getSubService();
+        //int subservice = link.getSubService();
         //if (subservice == -1) {
-        subservice = DEFAULT_SUB_SERVICE_TRA;
+		int subservice = DEFAULT_SUB_SERVICE_TRA;
         //}
         byte[] buffer = new byte[6];
         writeRoutingLabel(buffer, 0,0,0,dpc,opc);
