@@ -16,11 +16,30 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
  *         </a>
  */
 public interface ISUPTransaction {
+	/**
+	 * Get unique transaction key associated with this transaction
+	 * @return
+	 */
 	public TransactionKey getTransactionKey();
-	//public TransactionKey getTransactionKey();
+	/**
+	 * Determine if this transaction is server.
+	 * @return
+	 */
 	public boolean isServerTransaction();
+	/**
+	 * Get original message whcih started this transaction
+	 * @return
+	 */
 	public ISUPMessage getOriginalMessage();
+	/**
+	 * Determine if transaction has terminated properly.
+	 * @return
+	 */
 	public boolean isTerminated();
+	/**
+	 * Determine if transaction has terminated properly.
+	 * @return
+	 */
 	public boolean isTimedout();
 	
 }

@@ -37,39 +37,23 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 public interface ISUPProvider {
 	/**
 	 * Stateles message send over MTP. No state is maintained.
+	 * 
 	 * @param msg
 	 * @throws ParameterRangeInvalidException
 	 * @throws IOException
 	 */
 	public void sendMessage(ISUPMessage msg) throws ParameterRangeInvalidException, IOException;
-//	/**
-//	 * Stateles message send over SCCP. No state is maintained.
-//	 * @param called
-//	 * @param calling
-//	 * @param msg
-//	 * @throws ParameterRangeInvalidException
-//	 * @throws IOException
-//	 */
-//	public void sendMessage(SccpAddress called,SccpAddress calling,ISUPMessage msg) throws ParameterRangeInvalidException, IOException;
-//	/**
-//	 * Send message with use of session, it will allow us to receive timeout in case of bad behaviour.
-//	 * @param msg
-//	 * @throws ParameterRangeInvalidException
-//	 * @throws IOException
-//	 */
-//	public void sendMessage(ISUPTransaction msg) throws ParameterRangeInvalidException, IOException;
-	
+
 	public void addListener(ISUPListener listener);
+
 	public void removeListener(ISUPListener listener);
-	
-	public ISUPParameterFactory getParameterFactory(); 
+
+	public ISUPParameterFactory getParameterFactory();
+
 	public ISUPMessageFactory getMessageFactory();
-	public ISUPClientTransaction createClientTransaction(ISUPMessage msg) throws   TransactionAlredyExistsException, IllegalArgumentException; 
-	public ISUPServerTransaction createServerTransaction(ISUPMessage msg) throws   TransactionAlredyExistsException, IllegalArgumentException;
 
+	public ISUPClientTransaction createClientTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException;
 
-    
-	
-	//FIXME: add sccp methods for connection creation
-	
+	public ISUPServerTransaction createServerTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException;
+
 }
