@@ -8,6 +8,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
+
 
 
 /**
@@ -123,6 +125,10 @@ public class PipeMtpProviderImpl implements MTPProvider {
 				e.printStackTrace();
 			}
 		}
+		
+	}
+	public void start() throws StartFailedException, IllegalStateException {
+		// TODO Auto-generated method stub
 		
 	}
 }
