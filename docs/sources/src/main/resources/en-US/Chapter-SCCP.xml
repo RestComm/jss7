@@ -1,0 +1,34 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="layer_sccp">
+
+	<title>Signaling Connection Control Part (SCCP) Layer</title>
+
+	<para>TODO Review and explain the example design/archictecture. Also,
+		provide interaction UML diagrams for "sucess" use cases.</para>
+	<section>
+		<title>Introduction</title>
+		<para>SCCP provides connectionless and connection-oriented network
+			services and global title translation (GTT) capabilities above MTP
+			Level 3. A global title is an address (e.g., a dialed 800 number,
+			calling card number, or mobile subscriber identification number)
+			which is translated by SCCP into a destination point code and
+			subsystem number. A subsystem number uniquely identifies an
+			application at the destination signaling point. SCCP is used as the
+			transport layer for TCAP-based services</para>
+	</section>
+	<section>
+		<title>Design and API Overview</title>
+		<para></para>
+	</section>
+	<section>
+		<title>Configuration</title>
+		<para></para>
+	</section>
+	<section>
+		<title>Example</title>
+		<para></para>
+	</section>
+</chapter>
+

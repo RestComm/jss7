@@ -1,0 +1,27 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="layer_map">
+
+	<title>MAP Layer</title>
+
+	<para>TODO Review and explain the example design/archictecture. Also,
+		provide interaction UML diagrams for "sucess" use cases.</para>
+	<section>
+		<title>Introduction</title>
+		<para></para>
+	</section>
+	<section>
+		<title>Design and API Overview</title>
+		<para></para>
+	</section>
+	<section>
+		<title>Configuration</title>
+		<para></para>
+	</section>
+	<section>
+		<title>Example</title>
+		<para></para>
+	</section>
+</chapter>
+

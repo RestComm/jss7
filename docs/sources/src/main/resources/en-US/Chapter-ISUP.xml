@@ -1,0 +1,26 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="layer_isup">
+
+	<title>ISDN User Part (ISUP) Layer</title>
+	
+	<para>TODO Review and explain the example design/archictecture. Also, provide interaction UML diagrams for "sucess" use cases.</para> 
+	<section>
+		<title>Introduction</title>
+		<para>The ISDN User Part (ISUP) defines the protocol used to set-up, manage, and release trunk circuits that carry voice and data between terminating line exchanges (e.g., between a calling party and a called party). ISUP is used for both ISDN and non-ISDN calls. However, calls that originate and terminate at the same switch do not use ISUP signaling.</para>
+	</section>
+	<section>
+		<title>Design and API Overview</title>
+		<para></para>
+	</section>
+	<section>
+		<title>Configuration</title>
+		<para></para>
+	</section>
+	<section>
+		<title>Example</title>
+		<para></para>
+	</section>
+</chapter>
+

@@ -1,0 +1,36 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="layer_tcap">
+
+	<title>Transaction Capabilities Applications Part (TCAP) Layer</title>
+
+	<para>TODO Review and explain the example design/archictecture. Also,
+		provide interaction UML diagrams for "sucess" use cases.</para>
+	<section>
+		<title>Introduction</title>
+		<para>TCAP supports the exchange of non-circuit related data between
+			applications across the SS7 network using the SCCP connectionless
+			service. Queries and responses sent between SSPs and SCPs are carried
+			in TCAP messages. For example, an SSP sends a TCAP query to determine
+			the routing number associated with a dialed 800/888 number and to
+			check the personal identification number (PIN) of a calling card
+			user. In mobile networks (IS-41 and GSM), TCAP carries Mobile
+			Application Part (MAP) messages sent between mobile switches and
+			databases to support user authentication, equipment identification,
+			and roaming.</para>
+	</section>
+	<section>
+		<title>Design and API Overview</title>
+		<para></para>
+	</section>
+	<section>
+		<title>Configuration</title>
+		<para></para>
+	</section>
+	<section>
+		<title>Example</title>
+		<para></para>
+	</section>
+</chapter>
+
