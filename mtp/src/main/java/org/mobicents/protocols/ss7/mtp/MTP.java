@@ -105,6 +105,20 @@ public class MTP {
     }
     
     /**
+	 * @return the opc
+	 */
+	public int getOpc() {
+		return opc;
+	}
+
+	/**
+	 * @return the dpc
+	 */
+	public int getDpc() {
+		return dpc;
+	}
+
+	/**
      * Assigns signalling channels.
      * 
      * @param channels the list of available physical channels.
@@ -124,7 +138,7 @@ public class MTP {
     	try{
         //create mtp layer 3 instance
         mtp3 = new Mtp3(name);
-	logger.info("Created MTP layer 3");
+        logger.info("Created MTP layer 3");
 	        
         //assigning physical channel
         mtp3.setChannels(channels);

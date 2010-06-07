@@ -16,10 +16,11 @@ public interface MtpUser {
 	public void linkDown();
 
 	/**
-	 * 
+	 * Callback from Layer4+. It expects properly encoded MTP3 message. It forwards data to MTP3
 	 * @param msgBuff
 	 */
 	public void receive(byte[] msgBuff);
+	
 	public void receive(String msg);
 	
 	public void setMtp3(Mtp3 mtp);

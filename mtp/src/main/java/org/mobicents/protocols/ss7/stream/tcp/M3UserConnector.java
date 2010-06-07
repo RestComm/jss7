@@ -7,14 +7,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channel;
-import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -23,11 +20,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.stream.HDLCHandler;
 import org.mobicents.protocols.ss7.stream.MTPListener;
-
 import org.mobicents.protocols.ss7.stream.tlv.LinkStatus;
 import org.mobicents.protocols.ss7.stream.tlv.TLVInputStream;
 import org.mobicents.protocols.ss7.stream.tlv.TLVOutputStream;
@@ -73,7 +68,8 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 
 	public M3UserConnector(Properties properties) {
 		this();
-		this.properties.putAll(properties);
+		if(properties!=null)
+			this.properties.putAll(properties);
 	}
 	public M3UserConnector() {
 		super();
@@ -124,6 +120,30 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 
 	}
 
+	/**
+	 * @return the serverAddress
+	 */
+	public String getServerAddress() {
+		return serverAddress;
+	}
+	/**
+	 * @param serverAddress the serverAddress to set
+	 */
+	public void setServerAddress(String serverAddress) {
+		this.serverAddress = serverAddress;
+	}
+	/**
+	 * @return the serverPort
+	 */
+	public int getServerPort() {
+		return serverPort;
+	}
+	/**
+	 * @param serverPort the serverPort to set
+	 */
+	public void setServerPort(int serverPort) {
+		this.serverPort = serverPort;
+	}
 	private void readProperties() {
 		serverPort = Integer.parseInt(properties.getProperty(_PROPERTY_PORT, "" + serverPort));
 		serverAddress = properties.getProperty(_PROPERTY_IP, "" + serverAddress);

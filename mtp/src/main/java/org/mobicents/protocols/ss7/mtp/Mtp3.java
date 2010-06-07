@@ -102,7 +102,7 @@ public class Mtp3 implements Mtp2Listener, Runnable {
     private Logger logger = Logger.getLogger(Mtp3.class);
 
     private ScheduledExecutorService mtpTimer = Utils.getMtpTimer();
-    
+
     private SelectorFactory selectorFactory;
     protected LinkSelector selector;
     
@@ -118,8 +118,8 @@ public class Mtp3 implements Mtp2Listener, Runnable {
     }
 
     public void setSelectorFactory(SelectorFactory selectorFactory) {
-	this.selectorFactory = selectorFactory;
-	selector = new LinkSelector(selectorFactory.getSelector());
+    	this.selectorFactory = selectorFactory;
+    	selector = new LinkSelector(selectorFactory.getSelector());
     }
     
     /**
@@ -127,7 +127,7 @@ public class Mtp3 implements Mtp2Listener, Runnable {
      * 
      * @param opc the originated point code
      */
-    protected void setOpc(int opc) {
+    public void setOpc(int opc) {
         this.opc = opc;
     }
 
@@ -136,16 +136,30 @@ public class Mtp3 implements Mtp2Listener, Runnable {
      * 
      * @param dpc destination point code in decimal format.
      */
-    protected void setDpc(int dpc) {
+    public void setDpc(int dpc) {
         this.dpc = dpc;
     }
     
     /**
+	 * @return the dpc
+	 */
+	public int getDpc() {
+		return dpc;
+	}
+
+	/**
+	 * @return the opc
+	 */
+	public int getOpc() {
+		return opc;
+	}
+
+	/**
      * Assigning channels.
      * 
      * @param channels the list of signaling channels.
      */
-    protected void setChannels(List<Mtp1> channels) {
+    public void setChannels(List<Mtp1> channels) {
         //creating mtp layer 2 for each channel specified        
         for (Mtp1 channel : channels) {
     	    Mtp2 link = new Mtp2(this, channel, channel.getCode());
