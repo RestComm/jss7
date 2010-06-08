@@ -42,7 +42,7 @@
 		</mediaobject>
 		<section>
 			<title>Supported hardware</title>
-			<para>There is variety of <acronym>SS7</acronym> hardware. Depending on driver, it provider different level of abstraction. &THIS.PLATFORM; <acronym>MTP</acronym> supports following:</para>
+			<para>There is variety of <acronym>SS7</acronym> hardware. Depending on driver, it provides different level of abstraction. &THIS.PLATFORM; &THIS.APPLICATION; supports following:</para>
 			<variablelist>
 				<varlistentry>
 					<term>Intel SS7 family board</term>
@@ -56,9 +56,7 @@
 					<listitem>
 						<para>There are hardware <acronym>TDM</acronym> devices wich share common driver
 								suite called Zaptel Telephony Driver Suite (Zaptel). Most devices sold
-								by Digium are members of the Zaptel family of hardware devices. Zaptel
-								driver allows access timeslots directly from Java VM without native
-								interface.
+								by Digium are members of the Zaptel family of hardware devices. 
 						</para>
 						<para>Zaptel cards provide only streaming capabilities. Each card requires full setup of <acronym>MTP</acronym> layers.</para>
 					</listitem>
@@ -322,7 +320,7 @@ mtp.start();
 	</section>
 	<section>
 		<title>Streaming</title>
-		<para>This layer(<literal>mtp</literal> module) supports basic streaming capabilities of mtp data. General overview is depicted on diagram below:</para>
+		<para>This layer(<literal>mtp</literal> module) supports basic streaming capabilities of mtp <acronym>MSU</acronym>. General overview is depicted on diagram below:</para>
 		<mediaobject>
 			<imageobject>
 				<imagedata width="300px" align="center"
