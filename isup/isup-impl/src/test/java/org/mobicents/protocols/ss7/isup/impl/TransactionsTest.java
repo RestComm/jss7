@@ -31,14 +31,14 @@ public class TransactionsTest extends TestCase {
 		props1.setProperty("isup.opc","123");
         props1.setProperty("isup.dpc","321");
         props1.setProperty("isup.sls","0");
-        props1.setProperty("isup.ssf","0");
+        props1.setProperty("isup.ssi","0");
 
         
         Properties props2 = new Properties();
 		props2.setProperty("isup.opc","321");
         props2.setProperty("isup.dpc","123");
         props2.setProperty("isup.sls","0");
-        props2.setProperty("isup.ssf","0");
+        props2.setProperty("isup.ssi","0");
 
         
         this.isupStack1 = new ISUPStackImpl(this.provider1, props1);
