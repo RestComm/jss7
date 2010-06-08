@@ -21,7 +21,7 @@ import org.mobicents.protocols.ss7.isup.message.ReleaseCompleteMessage;
 import org.mobicents.protocols.ss7.isup.message.ReleaseMessage;
 import org.mobicents.protocols.ss7.isup.message.UnblockingAckMessage;
 import org.mobicents.protocols.ss7.isup.message.UnblockingMessage;
-import org.mobicents.protocols.ss7.sccp.ActionReference;
+import org.mobicents.protocols.ss7.mtp.ActionReference;
 
 /**
  * Start time:13:34:09 2009-09-04<br>

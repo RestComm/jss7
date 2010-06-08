@@ -16,7 +16,7 @@ import org.mobicents.protocols.ss7.isup.ISUPTransaction;
 import org.mobicents.protocols.ss7.isup.TransactionKey;
 import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageImpl;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
-import org.mobicents.protocols.ss7.sccp.ActionReference;
+import org.mobicents.protocols.ss7.mtp.ActionReference;
 
 /**
  * Start time:12:57:29 2009-09-04<br>

@@ -24,8 +24,8 @@ import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageFactoryImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+import org.mobicents.protocols.ss7.mtp.ActionReference;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
-import org.mobicents.protocols.ss7.sccp.ActionReference;
 import org.mobicents.protocols.ss7.stream.MTPListener;
 import org.mobicents.protocols.ss7.stream.MTPProvider;
 
@@ -71,7 +71,7 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MTPL
         this.opc = Integer.parseInt(props.getProperty("isup.opc"));
         this.dpc = Integer.parseInt(props.getProperty("isup.dpc"));
         this.sls = Integer.parseInt(props.getProperty("isup.sls"));
-        this.ssi = Integer.parseInt(props.getProperty("isup.ssf"));
+        this.ssi = Integer.parseInt(props.getProperty("isup.ssi"));
         //this.si  = Integer.parseInt(props.getProperty("isup.si"));
         this.si = Mtp3._SI_SERVICE_ISUP;
         this.actionReference = new ActionReference(opc,dpc,sls,si,ssi);

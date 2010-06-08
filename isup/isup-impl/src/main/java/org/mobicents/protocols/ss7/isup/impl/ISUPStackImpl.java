@@ -12,7 +12,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.mobicents.protocols.ss7.isup.ISUPProvider;
 import org.mobicents.protocols.ss7.isup.ISUPStack;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.stream.MTPProvider;
 
 
@@ -28,8 +27,8 @@ public class ISUPStackImpl implements ISUPStack {
     private MTPProvider mtpTransportProvider;
     private ISUPMtpProviderImpl isupMtpProvider;
     
-    private SccpProvider sccpTransportProvider;
-    private ISUPSccpProviderImpl isupSccpProvider;
+    //private SccpProvider sccpTransportProvider;
+   // private ISUPSccpProviderImpl isupSccpProvider;
     
     private boolean started = false;
     private ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
@@ -44,13 +43,13 @@ public class ISUPStackImpl implements ISUPStack {
 
     }
 
-    public ISUPStackImpl(SccpProvider transportProvider) {
-        super();
-        this.sccpTransportProvider = transportProvider;
-
-       this.isupSccpProvider = new ISUPSccpProviderImpl(this.sccpTransportProvider, this);
-
-    }
+//    public ISUPStackImpl(SccpProvider transportProvider) {
+//        super();
+//        this.sccpTransportProvider = transportProvider;
+//
+//       this.isupSccpProvider = new ISUPSccpProviderImpl(this.sccpTransportProvider, this);
+//
+//    }
     
     public ISUPProvider getIsupProvider() {
     	if(isupMtpProvider!=null)
@@ -58,7 +57,8 @@ public class ISUPStackImpl implements ISUPStack {
     		return isupMtpProvider;
     	}else
     	{
-    		return this.isupSccpProvider;
+    		throw new UnsupportedOperationException();
+    		//return this.isupSccpProvider;
     	}
     }
 
@@ -70,7 +70,8 @@ public class ISUPStackImpl implements ISUPStack {
             	this.mtpTransportProvider.addMtpListener(this.isupMtpProvider);
             }else
             {
-            	this.sccpTransportProvider.setSccpListener(this.isupSccpProvider);
+            	//this.sccpTransportProvider.setSccpListener(this.isupSccpProvider);
+            	throw new UnsupportedOperationException();
             }
             this.started = true;
         }

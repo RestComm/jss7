@@ -17,7 +17,8 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
-import org.mobicents.protocols.ss7.sccp.ActionReference;
+import org.mobicents.protocols.ss7.mtp.ActionReference;
+
 
 
 /**

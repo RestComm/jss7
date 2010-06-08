@@ -27,11 +27,6 @@
             		<version>${junit.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
-			<artifactId>sccp-api</artifactId>
-			<version>${sccp.version}</version>
-		</dependency>
 	</dependencies>
 
 	<build>

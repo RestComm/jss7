@@ -33,16 +33,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
-			<artifactId>sccp-api</artifactId>
-			<version>${sccp.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
-			<artifactId>sccp-impl</artifactId>
-			<version>${sccp.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 			<artifactId>MTP</artifactId>
 			<version>${mtp.version}</version>
