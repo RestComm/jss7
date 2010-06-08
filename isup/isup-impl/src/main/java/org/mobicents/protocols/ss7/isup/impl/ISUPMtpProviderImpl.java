@@ -9,9 +9,11 @@ package org.mobicents.protocols.ss7.isup.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.isup.ISUPClientTransaction;
 import org.mobicents.protocols.ss7.isup.ISUPListener;
 import org.mobicents.protocols.ss7.isup.ISUPProvider;
@@ -39,6 +41,7 @@ import org.mobicents.protocols.ss7.stream.MTPProvider;
  */
 class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MTPListener {
 
+	private static final Logger logger = Logger.getLogger(ISUPMtpProviderImpl.class);
     private MTPProvider mtpProvider;
 
     
@@ -256,6 +259,7 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MTPL
             } catch (Exception e) {
                 // FIXME: what should we do here? send back?
                 e.printStackTrace();
+                logger.error("Failed on data: "+Arrays.toString(mtp3Frame));
             }
         }
     }

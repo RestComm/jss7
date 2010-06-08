@@ -86,4 +86,14 @@ public class MessageTypeImpl implements ISUPParameter , MessageType{
 		return code;
 	}
 
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		
+		return super.toString()+"-"+this.code;
+	}
+
 }

@@ -174,7 +174,7 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 		//XXX: this must be done by each msg, to be implemented.
 		//NOTE: its subject to change!
 
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException(""+getMessageType());
 	}
 
 	// ////////////////
