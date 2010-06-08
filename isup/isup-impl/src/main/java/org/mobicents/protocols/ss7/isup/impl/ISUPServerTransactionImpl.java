@@ -19,6 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.InitialAddressMessage;
 import org.mobicents.protocols.ss7.isup.message.ReleaseCompleteMessage;
 import org.mobicents.protocols.ss7.isup.message.ReleaseMessage;
+import org.mobicents.protocols.ss7.isup.message.ResetCircuitMessage;
 import org.mobicents.protocols.ss7.isup.message.UnblockingAckMessage;
 import org.mobicents.protocols.ss7.isup.message.UnblockingMessage;
 import org.mobicents.protocols.ss7.mtp.ActionReference;
@@ -276,6 +277,21 @@ public class ISUPServerTransactionImpl extends ISUPTransactionImpl implements IS
 
 		}
 
+	}
+	/**
+	 * This method is called after passed msg has been delivered
+	 * @param msg
+	 */
+	public void requestDelivered(ISUPMessage msg) {
+		switch (msg.getMessageType().getCode()) {
+		case ResetCircuitMessage.MESSAGE_CODE:
+			
+			this.setState(ISUPServerTransactionState.TERMINATED);
+			break;
+		default:
+			break;
+		}
+		
 	}
 
 }

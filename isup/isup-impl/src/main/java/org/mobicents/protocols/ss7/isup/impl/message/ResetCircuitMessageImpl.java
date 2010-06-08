@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.TransactionKey;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.ResetCircuitMessage;
@@ -23,13 +24,17 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
  *         </a>
  */
 public class ResetCircuitMessageImpl extends ISUPMessageImpl implements ResetCircuitMessage {
-
+	//reset indication I think.
 	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 
 	private static final int _MANDATORY_VAR_COUNT = 0;
 
 	static final int _INDEX_F_MessageType = 0;
 
+	//default, ident part of tx.
+	static final String IDENT="RST";
+	
+	
 	ResetCircuitMessageImpl(Object source, byte[] b, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
 			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) throws ParameterRangeInvalidException {
 		this(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
@@ -124,6 +129,22 @@ public class ResetCircuitMessageImpl extends ISUPMessageImpl implements ResetCir
 	@Override
 	public MessageType getMessageType() {
 		return this._MESSAGE_TYPE;
+	}
+
+	
+	
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageImpl#generateTransactionKey()
+	 */
+	@Override
+	public TransactionKey generateTransactionKey() {
+		
+		if(cic == null)
+		{
+			throw new NullPointerException("CIC is not set in message");
+		}
+		TransactionKey tk = new TransactionKey(IDENT,this.cic.getCIC());
+		return tk;
 	}
 
 	/*

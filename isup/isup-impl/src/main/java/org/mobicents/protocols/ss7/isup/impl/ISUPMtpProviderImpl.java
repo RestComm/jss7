@@ -254,6 +254,11 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MTPL
                 {
                 	ISUPClientTransactionImpl ctx = (ISUPClientTransactionImpl) tx;
                 	ctx.answerReceived(msg);
+                }else if( tx!=null)
+                {
+                	//its server
+                	ISUPServerTransactionImpl stx = (ISUPServerTransactionImpl) tx;
+                	stx.requestDelivered(msg);
                 }
 
             } catch (Exception e) {

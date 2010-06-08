@@ -26,6 +26,7 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.InitialAddressMessage;
 import org.mobicents.protocols.ss7.isup.message.ReleaseCompleteMessage;
 import org.mobicents.protocols.ss7.isup.message.ReleaseMessage;
+import org.mobicents.protocols.ss7.isup.message.ResetCircuitMessage;
 import org.mobicents.protocols.ss7.isup.message.UnblockingAckMessage;
 import org.mobicents.protocols.ss7.isup.message.UnblockingMessage;
 import org.mobicents.protocols.ss7.mtp.ActionReference;
@@ -84,9 +85,19 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 		case CREATED:
 			break;
 		case MESSAGE_SENT:
-			this.startTimer();
-			super.cancelGeneralTimer();
-			super.startGeneralTimer();
+			
+			//some txs are one shots :)
+			switch (this.message.getMessageType().getCode()) {
+			case ResetCircuitMessage.MESSAGE_CODE:
+				
+				this.setState(ISUPClientTransactionState.TERMINATED);
+				break;
+			default:
+				this.startTimer();
+				super.cancelGeneralTimer();
+				super.startGeneralTimer();
+			}
+			
 			break;
 		case TERMINATED:
 			this.cancelGeneralTimer();
