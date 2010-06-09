@@ -5,24 +5,283 @@
 
 	<title>Transaction Capabilities Applications Part (TCAP) Layer</title>
 
-	<para>TODO Review and explain the example design/archictecture. Also,
-		provide interaction UML diagrams for "sucess" use cases.</para>
+	<para></para>
 	<section>
 		<title>Introduction</title>
-		<para>TCAP supports the exchange of non-circuit related data between
-			applications across the SS7 network using the SCCP connectionless
+		<important><para>For better understanding of this chapter please read ITU-T Q.771 to Q.774.</para> </important>
+		<para><acronym>TCAP</acronym> supports the exchange of non-circuit related data between
+			applications across the <acronym>SS7</acronym> network using the <acronym>SCCP</acronym> connectionless
 			service. Queries and responses sent between SSPs and SCPs are carried
-			in TCAP messages. For example, an SSP sends a TCAP query to determine
+			in TCAP messages. For example, an SSP sends a <acronym>TCAP</acronym> query to determine
 			the routing number associated with a dialed 800/888 number and to
-			check the personal identification number (PIN) of a calling card
-			user. In mobile networks (IS-41 and GSM), TCAP carries Mobile
-			Application Part (MAP) messages sent between mobile switches and
+			check the personal identification number (<acronym>PIN</acronym>) of a calling card
+			user. In mobile networks (IS-41 and <acronym>GSM</acronym>), <acronym>TCAP</acronym> carries Mobile
+			Application Part (<acronym>MAP</acronym>) messages sent between mobile switches and
 			databases to support user authentication, equipment identification,
 			and roaming.</para>
+			<para>
+			<acronym>TCAP</acronym> messages and parameters are refered as <literal>primitives</literal>. Primitives are exchanged 
+				within logical entity called dialog. There are two types of dialogs:
+				<itemizedlist>
+					<listitem>
+						<para>Unstructured - short lived, it is created only to deliver single message (<literal>Unstructured primitive</literal>), after delivery dialog is invalidated. </para>
+					</listitem>
+					<listitem>
+						<para>Structured - long lived, it is created when exchange starts and lives until it is terminated. </para>
+					</listitem>
+				</itemizedlist>
+			</para>
+			<para>
+				<acronym>TCAP</acronym> defines following message types:
+			</para>			
+			<itemizedlist>
+				<listitem>
+					<para>Unstructured - creates Unstructured dialog. Unstructured dialog is invalidated once this message is either sent or consumed. It is meant for messages which dont require answer or interaction.</para>
+				</listitem>
+				<listitem>
+					<para>Begin - message sent to begin Structured dialog, it carries context information for dialog being created</para>
+				</listitem>
+				<listitem>
+					<para>Continue - continues Structured dialog</para>
+				</listitem>
+				<listitem>
+					<para>End - ends Structured dialog in graceful way</para>
+				</listitem>
+				<listitem>
+					<para>Abort - aborts Structured dialog</para>
+				</listitem>
+			</itemizedlist>
+			<para><acronym>TCAP</acronym> messages convey two types of information:</para>
+			<itemizedlist>
+				<listitem>
+					<para>components - elements which carry information on requested operation, their status and result.</para>
+				</listitem>
+				<listitem>
+					<para>dialog related - dialog context(application context name) and application specific information(user information)</para>
+				</listitem>
+			</itemizedlist>
 	</section>
 	<section>
 		<title>Design and API Overview</title>
-		<para></para>
+		<para>&THIS.PLATFORM; &THIS.APPLICATION; <acronym>TCAP</acronym> builds abstraction layer over protocol definition. 
+		It introduces simplified <acronym>API</acronym> in favor of <acronym>JAIN TCAP</acronym>.
+		<!-- is this correct use of "in favor" ? -->  
+		  </para>
+		  <para>All interactions are handled by <acronym>TCAP</acronym> Dialog. Dialog agregates local and remote transactions into single reference.
+		  It maintains state associated with both ends and supervises proper encoding and content of exchanged primitives.  
+		  Diagram below depicts logical structure of <acronym>TCAP</acronym> and application using it:</para>
+		  <mediaobject id="ss7_design_mtp_provider_1">
+			<imageobject>
+				<imagedata width="300px" align="center"
+				fileref="images/ss7-tcap-design-overview1.png" format="PNG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; &THIS.APPLICATION; TCAP Dialog
+				</para>
+			</caption>
+		</mediaobject>
+		  <note>
+		  	<para> TC and TR layers are explained in ITU-T Q.77X specifications. This <acronym>API</acronym> does not expose those layers directly.</para>
+		  </note>
+		  <section>
+		  	<title>TCAP Dialog overview</title>
+		  	<para><literal>TCAPDialog</literal> is a class representing two <acronym>TCAP</acronym> transactions(remote and local transaction form logical dialog).
+		  	 Messages(primitives) are exchanged by means of this  class. It is defined by following interface: 		  	 
+		  	</para>
+		  	<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.api.tc.dialog;
+
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.TCAPException;
+import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortRequest;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
+
+
+public interface Dialog {
+
+	/**
+	 * returns this dialog ID. It MUST be unique at any given time in local
+	 * stack.
+	 * 
+	 * @return
+	 */
+	public Long getDialogId();
+
+	/**
+	 * Gets local sccp address
+	 * 
+	 * @return
+	 */
+	public SccpAddress getLocalAddress();
+
+	/**
+	 * Gets remote sccp address
+	 * 
+	 * @return
+	 */
+	public SccpAddress getRemoteAddress();
+
+	/**
+	 * Last sent/received ACN
+	 * 
+	 * @return the acn
+	 */
+	public ApplicationContextName getApplicationContextName();
+
+	/**
+	 * Last sent/received UI
+	 * 
+	 * @return the ui
+	 */
+	public UserInformation getUserInformation();
+
+	/**
+	 * returns new, unique for this dialog, invocation id to be used in
+	 * TC_INVOKE. If there is no free invoke id, it returns null. Invoke ID is
+	 * freed once operation using it is canceled, timeouts or simply returns
+	 * final value.
+	 * 
+	 * @return
+	 */
+	public Long getNewInvokeId() throws TCAPException;
+
+	/**
+	 * Cancels INVOKE pending to be sent. It is equivalent to TC-U-CANCEL.
+	 * 
+	 * @return <ul>
+	 *         <li><b>true</b> - if operation has been success and invoke id has been
+	 			 return to pool of available ids.</li>
+	 *         <li><b>false</b> -</li>
+	 *         </ul>
+	 * @throws TCAPException
+	 *             - thrown if passed invoke id is wrong
+	 */
+	public boolean cancelInvocation(Long invokeId) throws TCAPException;
+
+	/**
+	 * 
+	 * @return <ul>
+	 *         <li><b>true </b></li> - if dialog is established(at least one
+	 *         TC_CONTINUE has been sent/received.)
+	 *         <li><b>false</b></li> - no TC_CONTINUE sent/received
+	 *         </ul>
+	 */
+	public boolean isEstabilished();
+
+	/**
+	 * 
+	 * @return <ul>
+	 *         <li><b>true </b></li> - if dialog is structured - its created
+	 *         with TC_BEGIN not TC_UNI
+	 *         <li><b>false</b></li> - otherwise
+	 *         </ul>
+	 */
+	public boolean isStructured();
+
+	// //////////////////
+	// Sender methods //
+	// //////////////////
+	/**
+	 * Schedules component for sending. All components on list are queued. 
+	 Components are sent once message primitive is issued.
+	 * 
+	 * @param componentRequest
+	 * @throws TCAPSendException
+	 */
+	public void sendComponent(Component componentRequest) throws TCAPSendException;
+	/**
+	 * Send initial primitive for Structured dialog. 
+	 * @param event
+	 * @throws TCAPSendException - thrown if dialog is in bad state, ie.
+	  Being has already been sent or dialog has been removed.
+	 */
+	public void send(TCBeginRequest event) throws TCAPSendException;
+	/**
+	 * Sends intermediate primitive for Structured dialog.
+	 * @param event
+	 * @throws TCAPSendException - thrown if dialog is in bad state, ie.
+	  Begin has not been sent or dialog has been removed.
+	 */
+	public void send(TCContinueRequest event) throws TCAPSendException;
+	/**
+	 * Sends dialog end request.
+	 * @param event
+	 * @throws TCAPSendException - thrown if dialog is in bad state, ie.
+	  Begin has not been sent or dialog has been removed.
+	 */
+	public void send(TCEndRequest event) throws TCAPSendException;
+	/**
+	 * Sends Abort primitive with indication to user as source of termination.
+	 * @param event
+	 * @throws TCAPSendException
+	 */
+	public void send(TCUserAbortRequest event) throws TCAPSendException;
+	/**
+	 * Sends unstructured dialog primitive. After this method returns dialog
+	  is expunged from stack as its life cycle reaches end.
+	 * @param event
+	 * @throws TCAPSendException
+	 */
+	public void send(TCUniRequest event) throws TCAPSendException;
+
+	/**
+	 * Programmer hook to release.
+	 */
+	public void release();
+	
+	/**
+	 * Resets timeout timer for particular operation.
+	 * @param invokeId
+	 * @throws TCAPException
+	 */
+	public void resetTimer(Long invokeId) throws TCAPException;
+
+	/**
+	 * Returns the state of this Dialog
+	 * 
+	 * @return
+	 */
+	public TRPseudoState getState();
+
+}]]>
+		  	</programlisting>
+		  	<para>
+		  	Each dialog has associated state machine which it follows. There are two types of dialogs, hence two machines are defined:
+		  	</para>
+		  	<mediaobject id="ss7_design_mtp_provider_1">
+				<imageobject>
+					<imagedata width="300px" align="center"
+					fileref="images/ss7-tcap-dialog-fsm1.png" format="PNG" />
+				</imageobject>
+				<caption>
+					<para>TCAP Structured Dialog FSM
+					</para>
+				</caption>
+			</mediaobject>
+		  	<mediaobject id="ss7_design_mtp_provider_1">
+				<imageobject>
+					<imagedata width="300px" align="center"
+					fileref="images/ss7-tcap-dialog-fsm2.png" format="PNG" />
+				</imageobject>
+				<caption>
+					<para>TCAP Unstructured Dialog FSM
+					</para>
+				</caption>
+			</mediaobject>
+			<para>Each dialog has associated separate invoke id space. This space includes all integer numbers from set of &lt;-128,127&gt;. Invoke id is reference number for operation related components, please refer to <xref linkend="operations"/> for more details.</para>
+		  </section>
+		  <section id="operations">
+		  	<title>Operation primitives
+		  	</title>
+		  	<para></para>
+		  </section>
 	</section>
 	<section>
 		<title>Configuration</title>

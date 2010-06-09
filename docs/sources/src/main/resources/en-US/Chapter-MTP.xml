@@ -253,9 +253,9 @@ public interface ChannelSelector {
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term></term>
+				<term>org.mobicents.protocols.ss7.mtp.ActionReference</term>
 				<listitem>
-					<para></para>
+					<para>This is utility class used by other layers. It extracts routing label from <acronym>MTP3</acronym> <acronym>MSU</acronym> and performs operation to create label ready to be used in answers.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
@@ -316,7 +316,7 @@ mtp.setUserPart(new MtpUserImpl());
 //initiate everything
 mtp.start();
 		</programlisting>
-		<note><para>For information on <literal>zap</literal> package, please refer to &THIS.PLATFORM; Media Server</para> </note>
+		<note><para>For information on <literal>zap</literal> package, please refer to &THIS.PLATFORM; Media Server documentation</para> </note>
 	</section>
 	<section>
 		<title>Streaming</title>
@@ -340,7 +340,7 @@ public class M3UserAgent implements StreamForwarder, MtpUser{
 ....
 }
 		</programlisting>
-		<para><literal>StreamForwarder</literal> is genric interface for implementation of classes capable of streaming data, it defines setters/getters for required information. It looks as follows:</para>
+		<para><literal>StreamForwarder</literal> is generic interface for implementation of classes capable of streaming data, it defines setters/getters for required information. It looks as follows:</para>
 		<programlisting language="Java" role="JAVA">
 package org.mobicents.protocols.ss7.stream;
 
@@ -379,7 +379,7 @@ public interface StreamForwarder {
 }
 		</programlisting>
 		<note><para>Default agent address is <literal>localhost</literal> and default port <literal>1345</literal>. </para> </note>
-		<para><literal>M3UserConnector</literal> acts as a streaming client. It is configured to connected to <literal>M3UserAgent</literal> and pass received data to <literal>MTPListener</literal>.
+		<para><literal>M3UserConnector</literal> acts as a streaming client. It is configured to connect to <literal>M3UserAgent</literal> and pass received data to <literal>MTPListener</literal>.
 		It is defined as follows:  </para>
 		<programlisting language="Java" role="JAVA">
 package org.mobicents.protocols.ss7.stream.tcp;
@@ -503,6 +503,166 @@ agent.start();
 connector.start();
 		
 		</programlisting>
+	</section>
+	<section>
+		<title>Provider abstraction</title>
+		<para>
+	This module provider abstraction layer to direct
+	<literal>MtpUser</literal>
+	interface access.
+	<literal>It allows to abstract way of accessing <action>mtp</action> streams. Diagram belows depicts general design:</literal>
+	</para>
+	<mediaobject id="ss7_design_mtp_provider_1">
+		<imageobject>
+			<imagedata width="300px" align="center"
+			fileref="images/ss7-tmp-design-overview2.png" format="PNG" />
+		</imageobject>
+		<caption>
+			<para>&THIS.PLATFORM; &THIS.APPLICATION; Provider abstraction
+			</para>
+		</caption>
+	</mediaobject>
+	<para>
+		Provider is defined in following way:
+	</para>
+	<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.stream;
+
+import java.io.IOException;
+
+public interface MTPProvider {
+	
+	/**
+	 * Add MTPListener for callbacks
+	 * @param lst
+	 */
+	public void addMtpListener(MTPListener lst);
+	/**
+	 * Remote listener
+	 * @param lst
+	 */
+	public void removeMtpListener(MTPListener lst);
+	/**
+	 * Push data down the stream - it expects properly formed Mtp3 messaghe
+	 * @param msg
+	 * @throws IOException
+	 */
+	public void send(byte[] msg) throws IOException;
+
+	/**
+	 * Stop provider.
+	 * @throws IllegalStateException
+	 */
+	public void stop() throws IllegalStateException;
+	/**
+	 * Start provider
+	 * @return
+	 * @throws StartFailedException
+	 * @throws IllegalStateException
+	 */
+	public void start() throws StartFailedException,IllegalStateException;
+}
+	</programlisting>
+	<para>
+		Listener for provider is defined in following way:
+	</para>
+	<programlisting>
+public interface MTPListener {
+	
+	/**
+	 * Called once proper MSU has been streamed to provider
+	 * @param msg
+	 */
+	public void receive(byte[] msg);
+	/**
+	 * Indicates that status message - linkUp has been received
+	 */
+	public void linkUp();
+	/**
+	 * Indicates that either peer sent status message - linkDown or connection has been lost
+	 */
+	public void linkDown();
+	
+}
+	</programlisting>
+	<para>
+	Provider implementation is create within factory. Factory class name is: <literal>org.mobicents.protocols.ss7.stream.MTPProvicerFactory</literal>. It decalres single method: <literal>public MTPProvider getProvider(Properties properties) throws IllegalArgumentException</literal>.
+	Properties passed to this method controll creation of provider implementation. Following properties are supported:
+	</para>
+	<variablelist>
+		<varlistentry>
+			<term>driver</term>
+			<listitem>
+				<para>Either fully qualified class name of provider or one of preconfigured values(<literal>TCP</literal>). </para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>provider specific</term>
+			<listitem>
+				<para>All provider specific configuration parameters.</para>
+			</listitem>
+		</varlistentry>
+	</variablelist>
+	<para>
+		Below is list of supported provider implementations and specific configuration parameters:
+	</para>
+	<itemizedlist>
+		<listitem>
+			<para>M3UserConnector - it is default provider for <literal>driver</literal> value of <literal>TCP</literal>. It supports following configuration properties:</para>
+			<table frame="all" pgwide="1">
+				<title>M3UserConnector's Configuration Properties</title>
+				<tgroup colsep="1" cols="4">
+				   	<colspec colnum="1" colname="c0"/>
+				    <colspec colnum="2" colname="c1"/>
+				    <colspec colnum="3" colname="c2"/>
+				    <colspec colnum="4" colname="c3"/>
+				    <thead>
+						<row>
+				    	    <entry>Property Name</entry>
+				   	    	<entry>Description</entry>
+				   	    	<entry>Property Type</entry>
+				   	    	<entry>Default Value</entry>
+				    	</row>
+					</thead>
+					<tbody>
+						<row>
+			   		<entry>server.ip</entry>
+			   	    <entry>Configures address to which this stack connects to receive stream of <acronym>MTP</acronym> <acronym>MSU</acronym>  </entry>
+			   	    <entry>java.lang.String</entry>
+			   	    <entry>localhost</entry>
+			    </row>
+			    <row>
+			   		<entry>server.port</entry>
+			   	    <entry>Configures port to which this stack connects.</entry>
+			   	    <entry>java.lang.String</entry>
+			   	    <entry>1345</entry>
+			    </row>
+					 </tbody>
+			    </tgroup>
+	        </table>
+		</listitem>
+		<!-- 
+		<listitem>
+			<para></para>
+		</listitem>
+		 -->
+	</itemizedlist>
+	
+	<para>Example code to use factory and provider looks as follow:</para>
+	<programlisting language="Java" role="JAVA">
+Properties properties = new Properties();
+properties.put("driver","TCP");
+properties.put("server.ip","192.156.81.1");
+properties.put("server.port","1023");
+MTPProvider provider = null;
+MTPPRoviderFactory factory = MTPPRoviderFactory.getInstance();
+provider = factory.getProvider(properties);
+
+byte[] msg = //properly formed MTP3 message
+provider.send(msg);
+	</programlisting>
+
+
 	</section>
 </chapter>
 

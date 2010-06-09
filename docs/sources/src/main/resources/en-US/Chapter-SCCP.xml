@@ -5,30 +5,252 @@
 
 	<title>Signaling Connection Control Part (SCCP) Layer</title>
 
-	<para>TODO Review and explain the example design/archictecture. Also,
-		provide interaction UML diagrams for "sucess" use cases.</para>
 	<section>
 		<title>Introduction</title>
 		<para>SCCP provides connectionless and connection-oriented network
-			services and global title translation (GTT) capabilities above MTP
+			services and global title translation (GTT) capabilities above <acronym>MTP</acronym>
 			Level 3. A global title is an address (e.g., a dialed 800 number,
 			calling card number, or mobile subscriber identification number)
 			which is translated by SCCP into a destination point code and
 			subsystem number. A subsystem number uniquely identifies an
-			application at the destination signaling point. SCCP is used as the
-			transport layer for TCAP-based services</para>
+			application at the destination signaling point. <acronym>SCCP</acronym> is used as the
+			transport layer for <acronym>TCAP</acronym>-based services</para>
+			<para><acronym>SCCP</acronym> data is sent between peers by means of Data Units (UDs)</para>
 	</section>
 	<section>
 		<title>Design and API Overview</title>
-		<para></para>
+		<important>
+			<para>Be aware of &THIS.VERSION; <acronym>SCCP</acronym> layer limitations. It does not support connection oriented communciation and data fragmentation! </para>
+		</important>
+		<para><acronym>SCCP</acronym> resides on top of <acronym>mtp</acronym> layer. Top overview is depicted on diagram below:</para>
+		<mediaobject id="ss7_design_mtp_provider_1">
+			<imageobject>
+				<imagedata width="300px" align="center"
+				fileref="images/ss7-sccp-design-overview1.png" format="PNG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; &THIS.APPLICATION; SCCP
+				</para>
+			</caption>
+		</mediaobject>
+		<para>As diagram depicts <literal>SCCP</literal> layer is provider centered. There is no stack. Provider has following definition:</para>
+		<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.sccp;
+
+import java.io.IOException;
+
+import org.mobicents.protocols.ss7.mtp.ActionReference;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
+public interface SccpProvider {
+	
+	/**
+	 * Sets sccp listener
+	 * @param listener
+	 */
+	public void setSccpListener(SccpListener listener);
+	/**
+	 * Retrieves listener
+	 * @return
+	 */
+	public SccpListener getListener();
+	/**
+	 * Removes listener
+	 */
+	public void removeListener();
+	
+	/**
+	 * Send sccp byte[] to desired addres.
+	 * @param calledParty - destination address of this message
+	 * @param callingParty - local address
+	 * @param data - byte[] encoded of sccp parameters
+	 * @param ar - reference with mtp3 routing label
+	 * @throws IOException
+	 */
+	public void send(SccpAddress calledParty, SccpAddress callingParty,
+			byte[] data,ActionReference ar) throws IOException;
+
+	public void shutdown();
+
+	public SccpUnitDataFactory getUnitDataFactory();
+
+	public SccpParameterFactory getSccpParameterFactory();
+}
+		</programlisting>
+		<para>Provider allows single listener to be registered with it. Listener is callled once proper <acronym>SCCP</acronym> message is received. Listener is defined as follows:</para>
+		<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.sccp;
+
+import org.mobicents.protocols.ss7.mtp.ActionReference;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
+public interface SccpListener {
+	/**
+	 * Called when proper data is received, it is partially decoded. This method is called with message payload.
+	 * @param calledPartyAddress - destination address
+	 * @param callingPartyAddress - originating address
+	 * @param data - payload of data unit
+	 * @param backReference - reference to be passed to provider send method.
+	 */
+	public void onMessage(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress, byte[] data, ActionReference backReference);
+	/**
+	 * Called when underlying link goes down.
+	 */
+	public void linkDown();
+	/**
+	 * Called when underlying link goes up.
+	 */
+	public void linkUp();
+
+}
+		</programlisting>
+		<section>
+			<title>SCCP Factory</title>
+			<para>Concrete provider instances are created by means of <literal>SccpFactory</literal>. Factory class: 
+			<literal>org.mobicents.protocols.ss7.sccp.SccpFactory</literal> declares single method:
+			<literal>public SccpProvider getProvider( Properties properties) </literal>.</para>
+			<para>Where passed properties contain configuration properties listed in <xref linkend="sccp_configuration"/> and provider specific options.</para>
+		</section>
+		<section id="sccp_providers">
+			<title>Supported providers</title>
+			<para><acronym>SCCP</acronym> supports following providers:</para>
+			<table frame="all" pgwide="1">
+				<title>Providers</title>
+				<tgroup colsep="1" cols="3">
+				   	<colspec colnum="1" colname="c0"/>
+				    <colspec colnum="2" colname="c1"/>
+				    <colspec colnum="3" colname="c2"/>
+				    <thead>
+						<row>
+				    	    <entry>driver name</entry>
+				   	    	<entry>Description</entry>
+				   	    	<entry>Configuration</entry>
+				    	</row>
+					</thead>
+					<tbody>
+						<row>
+			   				<entry>TCP</entry>
+			   	    		<entry>TCP providers, it relies on <acronym>MTP</acronym> Provider</entry>
+			   	    		<entry>Please refer to mtp provider configuration for <acronym>TCP</acronym> </entry>
+			   			 </row>
+			   			 <row>
+			   				<entry>INTEL</entry>
+			   	    		<entry></entry>
+			   	    		<entry></entry>
+			   			 </row>
+			   			 <row>
+			   				<entry>M3</entry>
+			   	    		<entry></entry>
+			   	    		<entry></entry>
+			   			 </row>
+			    	 </tbody>
+			    </tgroup>
+	        </table>
+		</section>
+		<!--  add this once everything is defined proeprly, now UDTs factory is not usable!
+		<section>
+			<title>Factories and data structures
+			</title>
+			<para></para>
+		</section>
+		 -->
 	</section>
-	<section>
+	<section id="sccp_configuration">
 		<title>Configuration</title>
-		<para></para>
+		<para> Each provider supports following configuration properties:</para>
+		<table frame="all" pgwide="1">
+				<title>Common Configuration Properties</title>
+				<tgroup colsep="1" cols="4">
+				   	<colspec colnum="1" colname="c0"/>
+				    <colspec colnum="2" colname="c1"/>
+				    <colspec colnum="3" colname="c2"/>
+				    <colspec colnum="4" colname="c3"/>
+				    <thead>
+						<row>
+				    	    <entry>Property Name</entry>
+				   	    	<entry>Description</entry>
+				   	    	<entry>Property Type</entry>
+				   	    	<entry>Default Value</entry>
+				    	</row>
+					</thead>
+					<tbody>
+						<row>
+				   			<entry>driver</entry>
+					   	    <entry>Configures driver of <acronym>SCCP</acronym> layer. </entry>
+					   	    <entry>java.lang.String</entry>
+					   	    <entry></entry>
+				    	</row>
+				    	<row>
+				   			<entry>isup.dpc</entry>
+				   	    	<entry>Default DPC used by ISUP layer for originating messages</entry>
+				   	    	<entry>java.lang.String</entry>
+				   	    	<entry></entry>
+				    	</row>
+				    	<row>
+				   			<entry>isup.opc</entry>
+				   	    	<entry>Default OPC used by ISUP layer for originating messages</entry>
+				   	    	<entry>java.lang.String</entry>
+				   	    	<entry></entry>
+				    	</row>
+				    	<row>
+				   			<entry>isup.sls</entry>
+				   	    	<entry>Default SLS used by ISUP layer for originating messages</entry>
+				   	    	<entry>java.lang.String</entry>
+				   	    	<entry></entry>
+				    	</row>
+				    	<row>
+				   			<entry>isup.ssi</entry>
+				   	    	<entry>Default SSI used by ISUP layer for originating messages</entry>
+				   	    	<entry>java.lang.String</entry>
+				   	    	<entry></entry>
+				    	</row>
+				 </tbody>
+		    </tgroup>
+		</table>
+		
 	</section>
 	<section>
 		<title>Example</title>
 		<para></para>
+		<programlisting language="Java" role="JAVA">
+
+Properties properties = new Properties();
+//mtp/sccp - name is the same
+properties.put("driver","TCP");
+properties.put("sccp.opc","12345");
+properties.put("sccp.dpc","5641");
+properties.put("sccp.sls","0");
+properties.put("sccp.ssi","0");
+
+//mtp
+properties.put("server.ip","192.156.81.1");
+properties.put("server.port","1023");
+
+SccProvider sccpProvider = SccpFactory.getInstance().getProvider(properties);
+sccpProvider.setListener(...);
+
+SccpParameterFactory paramFactory = sccpProvider.getSccpParameterFactory();
+SccpUnitDataFactory udFactory = sccpProvider.getSccpUnitDataFactory();
+
+SccpAddress peer1Address =  paramFactory.getSccpAddress();
+GlobalTitle gt = paramFactory.getGlobalTitle100();
+
+gt.setDigits("5557779");
+peer1Address.setGlobalTitle(gt);
+peer1Address.setGlobalTitleIndicator(4);//for GT 100
+
+SccpAddress peer2Address = paramFactory.getSccpAddress();
+gt = paramFactory.getGlobalTitle100();
+
+gt.setDigits("5888879");
+peer2Address.setGlobalTitle(gt);
+peer2Address.setGlobalTitleIndicator(4);//for GT 100
+
+byte[] tcapData = ....;
+// ActionReference is null, its originating call, defaults from conf will be used.
+sccpProvider.send(peer1,peer2,tcapData,null); 
+		</programlisting>
+		
 	</section>
 </chapter>
 
