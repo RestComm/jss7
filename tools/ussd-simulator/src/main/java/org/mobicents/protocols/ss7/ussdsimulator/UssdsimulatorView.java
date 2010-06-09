@@ -777,7 +777,7 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,MA
         this.stackProperties.put("sccp.opc", "13150");
         this.stackProperties.put("sccp.dpc", "31510");
         this.stackProperties.put("sccp.sls", "0");
-        this.stackProperties.put("sccp.ssf", "3");
+        this.stackProperties.put("sccp.ssi", "3");
 
 
         mtpLayer = new USSDSimultorMtpProvider(_field_peer_ip, _field_peer_port);
