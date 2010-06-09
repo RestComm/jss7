@@ -30,6 +30,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 /**
  *
  * @author Oleg Kulikov
+ * @deprecated
  */
 public class SccpPeer {
     
