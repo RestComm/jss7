@@ -18,6 +18,20 @@ public class ActionReference {
 	private static final Logger logger = Logger.getLogger(ActionReference.class);
 	//used for forging mtp3 message, 
 	private byte[] mtp3Header;
+	
+	public ActionReference(int opc,int dpc,int sls,int si,int ssi) {
+		super();
+		this.mtp3Header = new byte[5];
+		Mtp3.writeRoutingLabel(mtp3Header, si, ssi, sls, dpc, opc);
+	}
+	
+	public ActionReference()
+	{}
+	/**
+	 * Expects MTP3 MSU, it extracts routing labels and stores inside byte[], which can be copied directly after its created.
+	 * This method switches opc and dpc - so stored routing label is  ready to be used in answer message.
+	 * @param data
+	 */
 	public void setBackRouteHeader(byte[] data)
 	{
 		//here in data is whole message, we want first 5 bytes!
@@ -40,13 +54,4 @@ public class ActionReference {
 	public byte[] getBackRouteHeader() {
 		return mtp3Header;
 	}
-
-	public ActionReference(int opc,int dpc,int sls,int si,int ssi) {
-		super();
-		this.mtp3Header = new byte[5];
-		Mtp3.writeRoutingLabel(mtp3Header, si, ssi, sls, dpc, opc);
-	}
-	
-	public ActionReference()
-	{}
 }
