@@ -23,6 +23,7 @@ import java.net.InetAddress;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.ActionReference;
+import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.Handler;
@@ -71,8 +72,9 @@ public class SccpM3UAProviderImpl extends SccpProviderImpl implements Runnable, 
 		opc = Integer.parseInt(props.getProperty("sccp.opc"));
 		dpc = Integer.parseInt(props.getProperty("sccp.dpc"));
 		sls = Integer.parseInt(props.getProperty("sccp.sls"));
-		ssf = Integer.parseInt(props.getProperty("sccp.ssf"));
-		si = Integer.parseInt(props.getProperty("sccp.si"));
+		ssf = Integer.parseInt(props.getProperty("sccp.ssi"));
+		//si = Integer.parseInt(props.getProperty("sccp.si"));
+		this.si = Mtp3._SI_SERVICE_SCCP;
 
 		socket = new DatagramSocket(localPort, InetAddress.getByName(localAddress));
 		new Thread(this).start();

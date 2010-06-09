@@ -55,7 +55,7 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 		this.opc = Integer.parseInt(props.getProperty("sccp.opc"));
         this.dpc = Integer.parseInt(props.getProperty("sccp.dpc"));
         this.sls = Integer.parseInt(props.getProperty("sccp.sls"));
-        this.ssi = Integer.parseInt(props.getProperty("sccp.ssf"));
+        this.ssi = Integer.parseInt(props.getProperty("sccp.ssi"));
         //this.si  = Integer.parseInt(props.getProperty("sccp.si"));
         this.si = Mtp3._SI_SERVICE_SCCP;
 	}
