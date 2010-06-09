@@ -17,7 +17,7 @@ public interface MTPProvider {
 	 */
 	public void removeMtpListener(MTPListener lst);
 	/**
-	 * Push data down the stream - it expects properly formed Mtp3 messaghe
+	 * Push data down the stream - it expects properly formed Mtp3 message
 	 * @param msg
 	 * @throws IOException
 	 */

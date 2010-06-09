@@ -14,26 +14,30 @@
 
 package org.mobicents.protocols.ss7.sccp;
 
-
 import org.mobicents.protocols.ss7.mtp.ActionReference;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
-
 /**
- *
+ * 
  * @author Oleg Kulikov
  * @author baranowb
  */
 public interface SccpListener {
+	/**
+	 * Called when proper data is received, it is partially decoded. This method is called with message payload.
+	 * @param calledPartyAddress - destination address
+	 * @param callingPartyAddress - originating address
+	 * @param data - payload of data unit
+	 * @param backReference - reference to be passed to provider send method.
+	 */
+	public void onMessage(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress, byte[] data, ActionReference backReference);
+	/**
+	 * Called when underlying link goes down.
+	 */
+	public void linkDown();
+	/**
+	 * Called when underlying link goes up.
+	 */
+	public void linkUp();
 
-	//public void onMessage(UnitData UD);
-	//public void onMessage(XUnitData UD);
-    public void onMessage(SccpAddress calledPartyAddress,
-            SccpAddress callingPartyAddress, byte[] data,ActionReference backReference );
-    public void linkDown() ;
-
-
-	public void linkUp() ;
-		
-	
 }

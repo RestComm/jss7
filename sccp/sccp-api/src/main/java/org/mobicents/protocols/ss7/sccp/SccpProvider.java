@@ -25,14 +25,30 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author baranowb
  */
 public interface SccpProvider {
-
+	
+	/**
+	 * Sets sccp listener
+	 * @param listener
+	 */
 	public void setSccpListener(SccpListener listener);
-
+	/**
+	 * Retrieves listener
+	 * @return
+	 */
 	public SccpListener getListener();
-
+	/**
+	 * Removes listener
+	 */
 	public void removeListener();
-
-	//FIXME: add indication which unit data?
+	
+	/**
+	 * Send sccp byte[] to desired addres.
+	 * @param calledParty - destination address of this message
+	 * @param callingParty - local address
+	 * @param data - byte[] encoded of sccp parameters
+	 * @param ar - reference with mtp3 routing label
+	 * @throws IOException
+	 */
 	public void send(SccpAddress calledParty, SccpAddress callingParty,
 			byte[] data,ActionReference ar) throws IOException;
 

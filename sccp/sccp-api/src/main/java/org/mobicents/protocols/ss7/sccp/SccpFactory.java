@@ -27,7 +27,7 @@ import org.mobicents.protocols.ss7.stream.tcp.MTPProviderImpl;
 public class SccpFactory {
     
 	private final static SccpFactory _INSTANCE = new SccpFactory();
-	
+	public static final String _POPERTY_DRIVER_CLASS="driver";
 	
 	public static final String _DRIVER_TCP = "TCP";
 	private static final String _CLASS_TCP = "org.mobicents.protocols.ss7.sccp.impl.sctp.SccpSCTPProviderImpl";
@@ -45,13 +45,13 @@ public class SccpFactory {
     }
     
     
-    public SccpProvider getProvider(String driverName, Properties properties) {
+    public SccpProvider getProvider(Properties properties) {
     	if(properties==null)
 		{
 			throw new NullPointerException("Properties must not be null");
 			
 		}
-    	
+    	String driverName = properties.getProperty(_POPERTY_DRIVER_CLASS);
     	if(driverName==null)
 		{
 			throw new NullPointerException("Driver name must not be null");
