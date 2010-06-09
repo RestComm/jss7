@@ -21,7 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.sccp.ActionReference;
+import org.mobicents.protocols.ss7.mtp.ActionReference;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.Handler;

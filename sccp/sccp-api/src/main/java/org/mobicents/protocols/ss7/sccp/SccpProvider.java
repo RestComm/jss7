@@ -16,6 +16,7 @@ package org.mobicents.protocols.ss7.sccp;
 
 import java.io.IOException;
 
+import org.mobicents.protocols.ss7.mtp.ActionReference;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
