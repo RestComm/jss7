@@ -70,7 +70,7 @@
 		  <para>All interactions are handled by <acronym>TCAP</acronym> Dialog. Dialog agregates local and remote transactions into single reference.
 		  It maintains state associated with both ends and supervises proper encoding and content of exchanged primitives.  
 		  Diagram below depicts logical structure of <acronym>TCAP</acronym> and application using it:</para>
-		  <mediaobject id="ss7_design_mtp_provider_1">
+		  <mediaobject id="ss7_design_tcap_overview_1">
 			<imageobject>
 				<imagedata width="300px" align="center"
 				fileref="images/ss7-tcap-design-overview1.png" format="PNG" />

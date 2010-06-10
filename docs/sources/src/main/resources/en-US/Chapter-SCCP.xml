@@ -23,7 +23,7 @@
 			<para>Be aware of &THIS.VERSION; <acronym>SCCP</acronym> layer limitations. It does not support connection oriented communciation and data fragmentation! </para>
 		</important>
 		<para><acronym>SCCP</acronym> resides on top of <acronym>mtp</acronym> layer. Top overview is depicted on diagram below:</para>
-		<mediaobject id="ss7_design_mtp_provider_1">
+		<mediaobject id="ss7_design_sccp_overview_1">
 			<imageobject>
 				<imagedata width="300px" align="center"
 				fileref="images/ss7-sccp-design-overview1.png" format="PNG" />

@@ -4,15 +4,260 @@
 <chapter id="layer_isup">
 
 	<title>ISDN User Part (ISUP) Layer</title>
-	
-	<para>TODO Review and explain the example design/archictecture. Also, provide interaction UML diagrams for "sucess" use cases.</para> 
+
+	<para></para>
 	<section>
 		<title>Introduction</title>
-		<para>The ISDN User Part (ISUP) defines the protocol used to set-up, manage, and release trunk circuits that carry voice and data between terminating line exchanges (e.g., between a calling party and a called party). ISUP is used for both ISDN and non-ISDN calls. However, calls that originate and terminate at the same switch do not use ISUP signaling.</para>
+		<para>
+			The
+			<acronym>ISDN</acronym>
+			User Part (
+			<acronym>ISUP</acronym>
+			) defines the protocol used to set-up,
+			manage, and release trunk
+			circuits that carry voice and data between
+			terminating line exchanges
+			(e.g., between a calling party and a
+			called party).
+			<acronym>ISUP</acronym>
+			is used for both
+			<acronym>ISDN</acronym>
+			and non-
+			<acronym>ISDN</acronym>
+			calls.
+			However, calls that originate and terminate at the same switch
+			do not
+			use
+			<acronym>ISUP</acronym>
+			signaling.
+		</para>
+		<para>
+			<acronym>ISUP</acronym>
+			is defined in
+			<acronym>ITU-T</acronym>
+			<literal>Q.763</literal>
+			specification.
+		</para>
 	</section>
 	<section>
 		<title>Design and API Overview</title>
-		<para></para>
+		<note>
+			<para>
+				<acronym>SS7</acronym>
+				design allows
+				<acronym>ISUP</acronym>
+				to be used on top of
+				<acronym>SCCP</acronym>,
+				however currently &THIS.PLATFORM;
+				<acronym>ISUP</acronym>
+				does not support this use case.
+			</para>
+		</note>
+
+		<!-- something here? -->
+
+
+		<section>
+			<title>Transactions</title>
+			<note>
+				<para>For messages definition please refer to source or Q.763.
+				</para>
+			</note>
+			<para>
+				<acronym>ISUP</acronym>
+				specification declares only messages and parameters to pass
+				information about trunks and circuits setup.
+			&THIS.PLATFORM;
+				<acronym>ISUP</acronym>
+				introduces notion of transactions. Transaction groups messages
+				which logically belong to single interaction (like associating circuit to
+				call or releasing circuit).
+				Server transactions are used as reference for incoming request. It
+				provides means of sending answer back to originating peer.
+				Client transaction are used as reference for outgoing requests. It
+				provides means of sending request to remote peer.
+				Depending on type of action and messages involved, life time of transaction
+				varies. Diagram below depicts transaction scope:
+			</para>
+			<mediaobject id="ss7_design_isup_transactions_1">
+				<imageobject>
+					<imagedata width="300px" align="center"
+						fileref="images/ss7-isup-design-transaction-overview1.png" format="PNG" />
+				</imageobject>
+				<caption>
+					<para>
+						<acronym>ISUP</acronym>
+						transactions overview
+					</para>
+				</caption>
+			</mediaobject>
+			<note>
+				<para>Depending on transaction state machine messages #2 and #3 may
+					not be present.</para>
+			</note>
+			<para>
+				Following transactions types are defined by &THIS.PLATFORM;
+				<acronym>ISUP</acronym>
+				:
+				<table frame="all" pgwide="1">
+					<title>Transaction types</title>
+					<tgroup colsep="1" cols="4">
+						<colspec colnum="1" colname="c0" />
+						<colspec colnum="2" colname="c1" />
+						<colspec colnum="3" colname="c2" />
+						<colspec colnum="4" colname="c3" />
+						<thead>
+							<row>
+								<entry>Name</entry>
+								<entry>Initial message</entry>
+								<entry>Intermediate messages</entry>
+								<entry>Final message</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry>IAM</entry>
+								<entry>IAM</entry>
+								<entry>ACM</entry>
+								<entry>ANM</entry>
+							</row>
+							<row>
+								<entry>REL</entry>
+								<entry>REL</entry>
+								<entry></entry>
+								<entry>RLC</entry>
+							</row>
+							<row>
+								<entry>CGB</entry>
+								<entry>CGB</entry>
+								<entry></entry>
+								<entry>CGBA</entry>
+							</row>
+							<row>
+								<entry>GRS</entry>
+								<entry>GRS</entry>
+								<entry></entry>
+								<entry>GRA</entry>
+							</row>
+							<row>
+								<entry>CGU</entry>
+								<entry>CGU</entry>
+								<entry></entry>
+								<entry>CGUA</entry>
+							</row>
+							<row>
+								<entry>RSC</entry>
+								<entry>RSC</entry>
+								<entry></entry>
+								<entry></entry>
+							</row>
+							<row>
+								<entry>UBL</entry>
+								<entry>UBL</entry>
+								<entry></entry>
+								<entry>UBA</entry>
+							</row>
+							<!-- Here more will go. -->
+
+						</tbody>
+					</tgroup>
+				</table>
+
+			</para>
+			<para>Common part of transactions is defined as follows:</para>
+			<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.isup;
+
+import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+
+public interface ISUPTransaction {
+	/**
+	 * Get unique transaction key associated with this transaction
+	 * @return
+	 */
+	public TransactionKey getTransactionKey();
+	/**
+	 * Determine if this transaction is server.
+	 * @return
+	 */
+	public boolean isServerTransaction();
+	/**
+	 * Get original message which started this transaction
+	 * @return
+	 */
+	public ISUPMessage getOriginalMessage();
+	/**
+	 * Determine if transaction has terminated properly.
+	 * @return
+	 */
+	public boolean isTerminated();
+	/**
+	 * Determine if transaction has timeout.
+	 * @return
+	 */
+	public boolean isTimedout();
+	
+}
+			</programlisting>
+			
+			<para>Client transaction is defined as follows: </para>
+			<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.isup;
+
+import java.io.IOException;
+
+public interface ISUPClientTransaction extends ISUPTransaction {
+	/**
+	 * Send request for which this transaction has been created.
+	 * @throws ParameterRangeInvalidException
+	 * @throws IOException
+	 */
+	public void sendRequest() throws ParameterRangeInvalidException, IOException;
+	/**
+	 * State of this transaction
+	 * @return
+	 */
+	public ISUPClientTransactionState getState();
+}
+			</programlisting>
+			<para>Server transaction is defined accordingly to its role:</para>
+			<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.isup;
+
+import java.io.IOException;
+import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+
+public interface ISUPServerTransaction extends ISUPTransaction{
+	
+	/**
+	 * Send answer via this transaction.
+	 * @param msg
+	 * @throws ParameterRangeInvalidException
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 */
+	public void sendAnswer(ISUPMessage msg) throws ParameterRangeInvalidException,IllegalArgumentException, IOException;
+	/**
+	 * Get state of this transaction.
+	 * @return
+	 */
+	public ISUPServerTransactionState getState();
+	
+}
+			</programlisting>
+		</section>
+		<section>
+			<title>Factories</title>
+			<note>
+				<para>For messages definition please refer to source or Q.763.
+				</para>
+			</note>
+			<para></para>
+		</section>
+		<section>
+			<title>Stack</title>
+			<para></para>
+		</section>
 	</section>
 	<section>
 		<title>Configuration</title>
