@@ -61,7 +61,7 @@ public class Client implements TCListener{
 		invoke.setInvokeId(this.clientDialog.getNewInvokeId());
 		
 		invoke.setOperationCode(cpFactory.createOperationCode(true,new Long(12)));
-		
+		//no parameter
 		this.clientDialog.sendComponent(invoke);
 		
 		ApplicationContextName acn = this.tcapProvider.getDialogPrimitiveFactory().createApplicationContextName(TCAPFunctionalTest._ACN_);
