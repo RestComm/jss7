@@ -9,16 +9,18 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
 /**
  * @author baranowb
- *
+ * 
  */
 public interface TCUniIndication extends DialogIndication {
 
 	public Byte getQOS();
-	
-	//parts from DialogPortion, if present
+
+	// parts from DialogPortion, if present
 	public ApplicationContextName getApplicationContextName();
+
 	public UserInformation getUserInformation();
-	
+
 	public SccpAddress getDestinationAddress();
+
 	public SccpAddress getOriginatingAddress();
 }

@@ -8,7 +8,6 @@ public interface TCContinueIndication extends DialogIndication {
 
 	public Byte getQOS();
 
-	// parts from DialogPortion, if present
 	public ApplicationContextName getApplicationContextName();
 
 	public UserInformation getUserInformation();
