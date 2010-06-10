@@ -6,12 +6,19 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 public interface TCAPProvider {
 
 	/**
-	 * 
+	 * Create new structured dialog.
 	 * @param localAddress - desired local address
-	 * @param remoteAddress - initial remote address, it can change after 
+	 * @param remoteAddress - initial remote address, it can change after first TCContinue. 
 	 * @return
 	 */
 	public Dialog getNewDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException;
+	/**
+	 * Create new unstructured dialog.
+	 * @param localAddress
+	 * @param remoteAddress
+	 * @return
+	 * @throws TCAPException
+	 */
 	public Dialog getNewUnstructuredDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException;
 
 	///////////////

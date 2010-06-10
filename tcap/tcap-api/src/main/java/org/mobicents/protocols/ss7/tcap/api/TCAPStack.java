@@ -9,9 +9,13 @@ package org.mobicents.protocols.ss7.tcap.api;
  */
 public interface TCAPStack {
 
-	//FIXME: add address for listener ?
-
-	
+	/**
+	 * Returns stack provider.
+	 * @return
+	 */
 	public TCAPProvider getProvider();
+	/**
+	 * Stops this stack and transport layer(SCCP)
+	 */
 	public void stop();
 }
