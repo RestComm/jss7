@@ -21,6 +21,8 @@ package org.mobicents.protocols.ss7.tcap.api;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
@@ -38,5 +40,8 @@ public interface ComponentPrimitiveFactory {
 	public OperationCode createOperationCode(boolean isGlobal, Long code);
 	
 	public Parameter createParameter();
+	
 	public Parameter createParameter(int tag, int tagClass, boolean isPrimitive);
+	
+	public Problem createProblem(ProblemType pt);
 }

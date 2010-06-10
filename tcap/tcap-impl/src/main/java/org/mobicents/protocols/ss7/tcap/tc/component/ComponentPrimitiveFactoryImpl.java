@@ -10,6 +10,8 @@ import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
@@ -87,5 +89,8 @@ public class ComponentPrimitiveFactoryImpl implements ComponentPrimitiveFactory 
 		return p;
 	}
 	
-	
+	public Problem createProblem(ProblemType pt)
+	{
+		return TcapFactory.createProblem(pt);
+	}
 }

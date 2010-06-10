@@ -36,12 +36,6 @@ public interface Invoke extends Component{
 	 */
 	public void setInvokeClass(InvokeClass invokeClass);
 	
-	//hate this isSetThing, so lets use objects.
-	
-	//mandatory
-	//public void setInvokeId(Long i);
-	//public Long getInvokeId();
-	
 	//optional
 	public void setLinkedId(Long i);
 	public Long getLinkedId();

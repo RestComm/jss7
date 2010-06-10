@@ -26,14 +26,9 @@ public interface DialogPrimitiveFactory {
 	public TCUserAbortRequest createUAbort(Dialog d);
 	
 	public TCUniRequest createUni(Dialog d);
-
-	
-	//public TCUserAbortRequest createUserAbort(Dialog d);
 	
 	public ApplicationContextName createApplicationContextName(long[] oid);
 	
 	public UserInformation createUserInformation();
-	
-	
 	
 }

@@ -63,9 +63,16 @@ public interface Parameter extends Encodable {
 	// public static final boolean _TAG_PRIMITIVE = true;
 
 	public byte[] getData();
-
+	/**
+	 * Sets content as raw byte[]. invocation parameter must be encoded by user.
+	 * @param b
+	 */
 	public void setData(byte[] b);
 
+	/**
+	 * Determine if this parameter is of primitive type - not constructed.
+	 * @return
+	 */
 	public boolean isPrimitive();
 
 	public void setPrimitive(boolean b);
@@ -91,9 +98,15 @@ public interface Parameter extends Encodable {
 	 *            the tagClass to set
 	 */
 	public void setTagClass(int tagClass);
-
+	/**
+	 * Return decoded raw byte[] data.
+	 * @return
+	 */
 	public Parameter[] getParameters();
-
+	/**
+	 * Sets Parameter[]. Automaticly marks this object as constructed - {@link #isPrimitive()} will return false.
+	 * @param paramss
+	 */
 	public void setParameters(Parameter[] paramss);
 
 }

@@ -25,10 +25,5 @@ public interface OperationCode extends Encodable{
 	
 	public void setCode(Long i);
 	public Long getCode();
-	
-	
-	
-	
+
 }
-//private operationType;
-//private int code;
