@@ -1,8 +1,5 @@
 package org.mobicents.protocols.ss7.isup.message;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import org.mobicents.protocols.ss7.isup.ISUPComponent;
 import org.mobicents.protocols.ss7.isup.ISUPTransaction;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
@@ -20,12 +17,12 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
 public interface ISUPMessage extends ISUPComponent {
 
 	/**
-	 * @return <ul>
-	 *         <li><b>true</b> - if all requried parameters are set</li>
-	 *         <li><b>false</b> - otherwise</li>
-	 *         </ul>
+	 * Set mandatory field, CIC.
+	 * @return
 	 */
-	public boolean hasAllMandatoryParameters();
+	public CircuitIdentificationCode getCircuitIdentificationCode();
+
+	public void setCircuitIdentificationCode(CircuitIdentificationCode cic);
 
 	/**
 	 * Returns message code. See Q.763 Table 4. It simply return value of static
@@ -34,31 +31,46 @@ public interface ISUPMessage extends ISUPComponent {
 	 * @return
 	 */
 	public MessageType getMessageType();
-
-	public byte[] encodeElement() throws IOException;
-
-	public int encodeElement(ByteArrayOutputStream bos) throws IOException;
-
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException;
-
+	
+	/**
+	 * Adds parameter to this message.
+	 * @param param
+	 * @throws ParameterRangeInvalidException - thrown if parameter is not part of message.
+	 */
 	public void addParameter(ISUPParameter param) throws ParameterRangeInvalidException;
-
+	/**
+	 * Returns parameter with passed code.
+	 * @param parameterCode
+	 * @return
+	 * @throws ParameterRangeInvalidException - thrown if code does not match any parameter.
+	 */
 	public ISUPParameter getParameter(int parameterCode) throws ParameterRangeInvalidException;
-
+	/**
+	 * Removes parameter from this message.
+	 * @param parameterCode
+	 * @throws ParameterRangeInvalidException
+	 */
 	public void removeParameter(int parameterCode) throws ParameterRangeInvalidException;
-
+	
+	/**
+	 * Return reference to transaction if it exists.
+	 * @return
+	 */
 	public ISUPTransaction getTransaction();
 
 	/**
-	 * Generates TX key for fast matching, messages must have some part static,
-	 * so it can be used to match tx, other than that there is no way to match
-	 * incoming response to transaction
+	 * Generates TX key for fast matching.
 	 * 
 	 * @return
 	 */
 	public TransactionKey generateTransactionKey();
-	
-	public CircuitIdentificationCode getCircuitIdentificationCode();
-	public void setCircuitIdentificationCode(CircuitIdentificationCode cic);
+
+	/**
+	 * @return <ul>
+	 *         <li><b>true</b> - if all requried parameters are set</li>
+	 *         <li><b>false</b> - otherwise</li>
+	 *         </ul>
+	 */
+	public boolean hasAllMandatoryParameters();
 
 }
