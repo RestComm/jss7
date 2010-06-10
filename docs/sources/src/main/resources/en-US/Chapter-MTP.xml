@@ -634,7 +634,7 @@ public interface MTPListener {
 			    <row>
 			   		<entry>server.port</entry>
 			   	    <entry>Configures port to which this stack connects.</entry>
-			   	    <entry>java.lang.String</entry>
+			   	    <entry>java.lang.Integer</entry>
 			   	    <entry>1345</entry>
 			    </row>
 					 </tbody>

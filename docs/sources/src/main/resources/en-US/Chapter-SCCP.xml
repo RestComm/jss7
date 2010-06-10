@@ -181,25 +181,25 @@ public interface SccpListener {
 					   	    <entry></entry>
 				    	</row>
 				    	<row>
-				   			<entry>isup.dpc</entry>
+				   			<entry>sccp.dpc</entry>
 				   	    	<entry>Default DPC used by ISUP layer for originating messages</entry>
 				   	    	<entry>java.lang.String</entry>
 				   	    	<entry></entry>
 				    	</row>
 				    	<row>
-				   			<entry>isup.opc</entry>
+				   			<entry>sccp.opc</entry>
 				   	    	<entry>Default OPC used by ISUP layer for originating messages</entry>
 				   	    	<entry>java.lang.String</entry>
 				   	    	<entry></entry>
 				    	</row>
 				    	<row>
-				   			<entry>isup.sls</entry>
+				   			<entry>sccp.sls</entry>
 				   	    	<entry>Default SLS used by ISUP layer for originating messages</entry>
 				   	    	<entry>java.lang.String</entry>
 				   	    	<entry></entry>
 				    	</row>
 				    	<row>
-				   			<entry>isup.ssi</entry>
+				   			<entry>sccp.ssi</entry>
 				   	    	<entry>Default SSI used by ISUP layer for originating messages</entry>
 				   	    	<entry>java.lang.String</entry>
 				   	    	<entry></entry>
