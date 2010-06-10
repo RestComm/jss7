@@ -199,7 +199,7 @@ public interface ISUPTransaction {
 	
 }
 			</programlisting>
-			
+			<para>Above interface declares <literal>getTransactionKey</literal> method. It returns transaction key which is unique for certain transaction.</para>
 			<para>Client transaction is defined as follows: </para>
 			<programlisting language="Java" role="JAVA">
 package org.mobicents.protocols.ss7.isup;
@@ -252,11 +252,75 @@ public interface ISUPServerTransaction extends ISUPTransaction{
 				<para>For messages definition please refer to source or Q.763.
 				</para>
 			</note>
-			<para></para>
+			<para><acronym>ISUP</acronym> stack declares separate factories for messages and their parameters. However both interfaces are too big to have any use if mentioned in documentation.
+			Please refer to source for details.</para>
 		</section>
 		<section>
 			<title>Stack</title>
-			<para></para>
+			<para><acronym>ISUP</acronym> stack relies on <acronym>MTP</acronym> to provide transport. Stack interface is defined as follows: </para>
+			<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.isup;
+
+public interface ISUPStack {
+
+	public ISUPProvider getIsupProvider();
+
+	public void stop();
+
+	public void start();
+}
+			</programlisting>
+			<para>
+			Stack declares provider which allows user to access stack facilities, send messages statelesly and register listener. Provider is defined as follows:
+			</para>
+			<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.isup;
+
+import java.io.IOException;
+
+import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+
+public interface ISUPProvider {
+	/**
+	 * Stateles message send over MTP. No state is maintained.
+	 * 
+	 * @param msg
+	 * @throws ParameterRangeInvalidException
+	 * @throws IOException
+	 */
+	public void sendMessage(ISUPMessage msg) throws ParameterRangeInvalidException, IOException;
+
+	public void addListener(ISUPListener listener);
+
+	public void removeListener(ISUPListener listener);
+
+	public ISUPParameterFactory getParameterFactory();
+
+	public ISUPMessageFactory getMessageFactory();
+	/**
+	 * Create new client transaction if it does not exist.
+	 * @param msg
+	 * @return
+	 * @throws TransactionAlredyExistsException
+	 * @throws IllegalArgumentException
+	 */
+	public ISUPClientTransaction createClientTransaction(ISUPMessage msg) 
+			throws TransactionAlredyExistsException, IllegalArgumentException;
+	/**
+	 * Create new server transaction if it does not exist.
+	 * @param msg
+	 * @return
+	 * @throws TransactionAlredyExistsException
+	 * @throws IllegalArgumentException
+	 */
+	public ISUPServerTransaction createServerTransaction(ISUPMessage msg) 
+			throws TransactionAlredyExistsException, IllegalArgumentException;
+
+}
+			</programlisting>
+			<para>
+			Provider allows to register listener. Listener contains set of call backs useful for <acronym>ISUP</acronym> user. It is defined as follows: 
+			</para>
 		</section>
 	</section>
 	<section>
