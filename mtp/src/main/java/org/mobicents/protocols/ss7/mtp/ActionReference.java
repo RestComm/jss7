@@ -6,7 +6,7 @@ package org.mobicents.protocols.ss7.mtp;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.mtp.Mtp3;
+
 
 /**
  * This class is defined to allow Dialogic like communication with mtp3 layer - dialogic expects fully formed Mtp3 message in byte[].
