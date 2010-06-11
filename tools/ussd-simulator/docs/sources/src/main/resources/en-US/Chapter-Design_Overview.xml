@@ -1,0 +1,45 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "USSD_Simulator_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="design_overview">
+
+	<title>Design Overview</title>
+	
+	<para>&THIS.APPLICATION; is simple <acronym>AWT</acronym> application. It allows user to interact with <acronym>USSD</acronym> gateway just like mobile phone would.
+	User interface mimics keypad and phone display.
+	</para>
+	<para>
+	Application logic is built on top of &THIS.PLATFORM; <acronym>SS7</acronym> stack. Diagram below depicts &THIS.APPLICATION; top overview:</para>
+	<mediaobject id="ussd_simulator_design_general_1">
+		<imageobject>
+			<imagedata width="300px" align="center"
+			fileref="images/ussd-simulator-design-.png" format="PNG" />
+		</imageobject>
+		<caption>
+			<para>&THIS.PLATFORM; &THIS.APPLICATION; general design
+			</para>
+		</caption>
+	</mediaobject> 
+	<para>
+		&THIS.APPLICATION; sets up <acronym>SS7</acronym> stack with <literal>M3UserAgent</literal> as data source and sink for <acronym>MTP</acronym> layer.
+		As such it is eligible to also serve as data source for &THIS.PLATFORM; <acronym>JSLEE</acronym> <acronym>MAP</acronym> <acronym>RA</acronym> and <acronym>USSD</acronym> Gateway. 
+	</para>
+	<para>
+	&THIS.APPLICATION; user interface looks as follows:
+	</para>
+	<mediaobject id="ussd_simulator_design_general_2">
+		<imageobject>
+			<imagedata width="300px" align="center"
+			fileref="images/ussd-simulator-design-2.png" format="PNG" />
+		</imageobject>
+		<caption>
+			<para>&THIS.PLATFORM; &THIS.APPLICATION; user interface
+			</para>
+		</caption>
+	</mediaobject>
+	
+	<note>
+		<para>Please refer to &THIS.PLATFORM; <acronym>SS7</acronym> documentation for more details about stack setup and architecture.</para>
+	</note>
+</chapter>
+
