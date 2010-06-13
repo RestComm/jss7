@@ -303,6 +303,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				if (!userInfo.isOid()) {
 					// TODO : This is Error Send back TC-U-ABORT without
 					// intimating User
+					loger.error("userInfo.isOid() check failed");
 					return;
 				}
 
@@ -313,12 +314,14 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				if (mapDialAs == null) {
 					// TODO : This is Error Send back TC-U-ABORT without
 					// intimating User
+					loger.error("Expected MAPDialogueAS.MAP_DialogueAS but is null");
 					return;
 				}
 
 				if (!userInfo.isAsn()) {
 					// TODO : This is Error Send back TC-U-ABORT without
 					// intimating User
+					loger.error("userInfo.isAsn() check failed");
 					return;
 				}
 
@@ -340,9 +343,11 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					MAPDialogImpl mapDialogImpl = new MAPDialogImpl(mapAppCtx,
 							tcBeginIndication.getDialog(), this);
 					
+					this.loger.info("TCBegin dialog = "+ mapDialogImpl);
+					
 					mapDialogImpl.setMapAcceptInfoFired(true);
 
-					dialogs.put(mapDialogImpl.getDialogId(), mapDialogImpl);
+					this.dialogs.put(mapDialogImpl.getDialogId(), mapDialogImpl);
 
 					MAPOpenInfoImpl mapOpenInfoImpl = new MAPOpenInfoImpl();
 					mapOpenInfoImpl.setMAPDialog(mapDialogImpl);
@@ -358,6 +363,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 						processComponents(mapDialogImpl,comps);
 					}
 						// end of for (Component c : comps)
+					
+					this.loger.info("TCBegin dialog..isMapAcceptInfoFired() = "+ mapDialogImpl.isMapAcceptInfoFired());
 
 				} catch (AsnException e) {
 					e.printStackTrace();
@@ -370,6 +377,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			} else {
 				// TODO : This is Error Send back TC-U-ABORT without
 				// intimating User
+				loger.error("UserInfo is null");
 				return;
 			}
 
@@ -434,6 +442,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					+ tcapDialog.getDialogId());
 			return;
 		}
+		
+		loger.info("onTCContinue MAPDialog = "+ mapDialogImpl + " mapDialogImpl.isMapAcceptInfoFired() = "+mapDialogImpl.isMapAcceptInfoFired());
 
 		// On receipt of the first TC-CONTINUE indication primitive for
 		// a dialogue, the MAP PM shall check the value of the

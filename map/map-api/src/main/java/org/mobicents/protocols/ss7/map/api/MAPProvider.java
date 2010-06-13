@@ -49,36 +49,52 @@ public interface MAPProvider {
 	 *            service descriptions, e.g. operator determined barring.
 	 * @return
 	 */
-	public MAPDialog createNewDialog(MAPApplicationContext appCntx,			
+	public MAPDialog createNewDialog(MAPApplicationContext appCntx,
 			SccpAddress origAddress, AddressString origReference,
-			SccpAddress destAddress, AddressString destReference ) throws MAPException;
+			SccpAddress destAddress, AddressString destReference)
+			throws MAPException;
 
 	/**
+	 * Add MAP Dialog listener to the Stack
 	 * 
 	 * @param mapDialogListener
 	 */
 	public void addMAPDialogListener(MAPDialogListener mapDialogListener);
 
 	/**
+	 * Remove MAP DIalog Listener from the stack
 	 * 
 	 * @param mapDialogListener
 	 */
 	public void removeMAPDialogListener(MAPDialogListener mapDialogListener);
 
 	/**
+	 * Add MAP Service listener to the stack
 	 * 
 	 * @param mapServiceListener
 	 */
 	public void addMAPServiceListener(MAPServiceListener mapServiceListener);
 
 	/**
+	 * Remove MAP Service listener from the stack
 	 * 
 	 * @param mapServiceListener
 	 */
 	public void removeMAPServiceListener(MAPServiceListener mapServiceListener);
 
+	/**
+	 * Get the {@link MapServiceFactory}
+	 * 
+	 * @return
+	 */
 	public MapServiceFactory getMapServiceFactory();
-	
+
+	/**
+	 * Get {@link MAPDialog} corresponding to passed dialogId
+	 * 
+	 * @param dialogId
+	 * @return
+	 */
 	public MAPDialog getMAPDialog(Long dialogId);
 
 }

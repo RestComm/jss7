@@ -1,9 +1,14 @@
 package org.mobicents.protocols.ss7.map.api.dialog;
 
 /**
- * -- 000 unknown -- 001 international number -- 010 national significant number --
- * 011 network specific number -- 100 subscriber number -- 101 reserved -- 110
- * abbreviated number -- 111 reserved for extension
+ * -- 000 unknown 
+ * -- 001 international number 
+ * -- 010 national significant number 
+ * -- 011 network specific number 
+ * -- 100 subscriber number 
+ * -- 101 reserved 
+ * -- 110 abbreviated number 
+ * -- 111 reserved for extension
  * 
  * See also {@link AddressString}
  * 
@@ -12,9 +17,14 @@ package org.mobicents.protocols.ss7.map.api.dialog;
  */
 public enum AddressNature {
 
-	unknown(0), international_number(1), national_significant_number(2), network_specific_number(
-			3), subscriber_number(4), reserved(5), abbreviated_number(6), reserved_for_extension(
-			7);
+	unknown(0), 
+	international_number(1), 
+	national_significant_number(2), 
+	network_specific_number(3), 
+	subscriber_number(4), 
+	reserved(5), 
+	abbreviated_number(6), 
+	reserved_for_extension(7);
 
 	private int indicator;
 

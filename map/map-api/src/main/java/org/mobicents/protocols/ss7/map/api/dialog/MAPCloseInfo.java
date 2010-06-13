@@ -14,8 +14,18 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
  */
 public interface MAPCloseInfo {
 	
+	/**
+	 * Get the {@link MAPDialog} for which this event is fired
+	 * 
+	 * @return
+	 */
 	public MAPDialog getMAPDialog();
-	
+
+	/**
+	 * Set the {@link MAPDialog}
+	 * 
+	 * @param mapDialog
+	 */
 	public void setMAPDialog(MAPDialog mapDialog);
 
 }
