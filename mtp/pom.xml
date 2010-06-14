@@ -119,17 +119,6 @@
 				</configuration>
 			</plugin>
 
-
-<!-- 
-			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<configuration>
-					<tagBase>
-						https://mobicents.googlecode.com/svn/tags/protocols/ss7/mtp
-					</tagBase>
-				</configuration>
-			</plugin>
- -->
 		</plugins>
 	</build>
 	<profiles>
