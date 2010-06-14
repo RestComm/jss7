@@ -19,9 +19,6 @@
 	</section>
 	<section>
 		<title>Design and API Overview</title>
-		<important>
-			<para>Be aware of &THIS.VERSION; <acronym>SCCP</acronym> layer limitations. It does not support connection oriented communciation and data fragmentation! </para>
-		</important>
 		<para><acronym>SCCP</acronym> resides on top of <acronym>mtp</acronym> layer. Top overview is depicted on diagram below:</para>
 		<mediaobject id="ss7_design_sccp_overview_1">
 			<imageobject>
@@ -207,7 +204,15 @@ public interface SccpListener {
 				 </tbody>
 		    </tgroup>
 		</table>
-		
+		<section>
+			<title>Dependencies</title>
+			<para><acronym>SCCP</acronym> depends on following:</para>
+			<itemizedlist>
+				<listitem>
+					<para>MTP</para>
+				</listitem>
+			</itemizedlist>
+		</section>
 	</section>
 	<section>
 		<title>Example</title>

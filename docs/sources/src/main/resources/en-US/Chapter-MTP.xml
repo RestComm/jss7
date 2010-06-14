@@ -135,6 +135,43 @@ public interface Mtp1 {
 				</listitem>
 			</varlistentry>
 			<varlistentry>
+				<term>org.mobicents.protocols.ss7.mtp.SelectorFactory</term>
+				<listitem>
+					<para>This is simple factory interface with one method: <literal>public ChannelSelector getSelector();</literal>. This method returns concrete implementation of interface used for 
+					I/O select operations. Implementation is tied directly to layer 1 interface implementation. Concrete factory class should be provide along it.</para><para>It is defined as follows: </para>
+					<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.mtp;
+
+import java.util.Collection;
+
+public interface ChannelSelector {
+
+    /**
+     * Register specfield channel for IO.
+     *
+     * @param channel the channel to be registered.
+     */
+    public void register(Mtp1 channel);
+    
+    /**
+     * Unregisters channels
+     *
+     * @param channel to be unregistered 
+     */
+    public void unregister(Mtp1 channel);
+    
+    /**
+     * Gets channels ready for IO operations.
+     *
+     * @param key IO operations.
+     * @param timeout the wait timeout.
+     */
+    public Collection&lt;Mtp1&gt; select(int key, int timeout);
+}
+				 	</programlisting>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
 				<term>org.mobicents.protocols.ss7.mtp.Mtp2</term>
 				<listitem>
 					<para>This is concrete implementation of <acronym>MTP2</acronym> layer. 
@@ -211,47 +248,11 @@ public interface MtpUser {
 			<varlistentry>
 				<term>org.mobicents.protocols.ss7.mtp.MTP</term>
 				<listitem>
-					<para>This is class is simple proxy. It creates whole <acronym>MTP</acronym> layer and manages it. It expects <literal>DPC</literal>, <literal>OPC</literal>, list of <literal>Mtp1</literal> and <literal>MtpUser</literal> as target for callbacks.
+					<para>This class is simple proxy. It creates whole <acronym>MTP</acronym> layer and manages it. It expects <literal>DPC</literal>, <literal>OPC</literal>, list of <literal>Mtp1</literal> and <literal>MtpUser</literal> as target for callbacks.
 					Properties are set with standard accessors. This class defines <literal>start</literal> and <literal>stop</literal> methods. Each method performs actions according to its name.</para>
 				</listitem>
 			</varlistentry>
-			<varlistentry>
-				<term>org.mobicents.protocols.ss7.mtp.SelectorFactory</term>
-				<listitem>
-					<para>This is simple factory interface with one method: <literal>public ChannelSelector getSelector();</literal>. This method returns concrete implementation of interface used for 
-					I/O select operations. It is defined as follows: </para>
-					<programlisting language="Java" role="JAVA">
-package org.mobicents.protocols.ss7.mtp;
-
-import java.util.Collection;
-
-public interface ChannelSelector {
-
-    /**
-     * Register specfield channel for IO.
-     *
-     * @param channel the channel to be registered.
-     */
-    public void register(Mtp1 channel);
-    
-    /**
-     * Unregisters channels
-     *
-     * @param channel to be unregistered 
-     */
-    public void unregister(Mtp1 channel);
-    
-    /**
-     * Gets channels ready for IO operations.
-     *
-     * @param key IO operations.
-     * @param timeout the wait timeout.
-     */
-    public Collection&lt;Mtp1&gt; select(int key, int timeout);
-}
-				 	</programlisting>
-				</listitem>
-			</varlistentry>
+			
 			<varlistentry>
 				<term>org.mobicents.protocols.ss7.mtp.ActionReference</term>
 				<listitem>

@@ -433,11 +433,20 @@ public interface ISUPListener {
 					 </tbody>
 			    </tgroup>
 	        </table>
+	        <section>
+			<title>Dependencies</title>
+			<para><acronym>ISUP</acronym> depends on following:</para>
+			<itemizedlist>
+				<listitem>
+					<para>MTP</para>
+				</listitem>
+			</itemizedlist>
+		</section>
 	</section>
 	<section>
 		<title>Example</title>
 		<para></para>
-		<programlisting>
+		<programlisting language="Java" role="JAVA">
 package org.mobicents.protocols.ss7.isup.impl;
 
 import java.io.IOException;
@@ -494,12 +503,14 @@ public class ClientIAM implements ISUPListener {
 		this.parameterFactory = this.provider.getParameterFactory();
 	}
 
-	public void start() throws IllegalArgumentException, TransactionAlredyExistsException, ParameterRangeInvalidException, IOException {
+	public void start() throws IllegalArgumentException, TransactionAlredyExistsException
+		, ParameterRangeInvalidException, IOException {
 		InitialAddressMessage iam = this.factory.createIAM();
 
 		// create obligatory params!
 		NatureOfConnectionIndicators nais = this.parameterFactory.createNatureOfConnectionIndicators();
-		nais.setContinuityCheckIndicator(NatureOfConnectionIndicators._CCI_PERFORMED_ON_PREVIOUS_CIRCUIT);
+		nais.setContinuityCheckIndicator(
+			NatureOfConnectionIndicators._CCI_PERFORMED_ON_PREVIOUS_CIRCUIT);
 		nais.setEchoControlDeviceIndicator(NatureOfConnectionIndicators._ECDI_INCLUDED);
 		nais.setSatelliteIndicator(NatureOfConnectionIndicators._SI_TWO_SATELLITE);
 
@@ -513,7 +524,8 @@ public class ClientIAM implements ISUPListener {
 		// ?
 		cpg.setCallingPartyCategory((byte) 1);
 
-		TransmissionMediumRequirement tmr = this.parameterFactory.createTransmissionMediumRequirement();
+		TransmissionMediumRequirement tmr = this.
+			parameterFactory.createTransmissionMediumRequirement();
 		tmr.setTransimissionMediumRequirement(tmr._MEDIUM_14x64_KBIT_UNRESTRICTED);
 
 		CalledPartyNumber cpn = this.parameterFactory.createCalledPartyNumber();
@@ -555,8 +567,7 @@ public class ClientIAM implements ISUPListener {
 			//second, this terminates transaction
 			break;
 		default:
-			passed = false;
-			status.append("Received unexpected message, code: " + message.getMessageType().getCode() + "\n");
+
 		}
 
 	}

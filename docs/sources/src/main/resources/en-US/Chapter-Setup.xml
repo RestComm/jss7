@@ -35,8 +35,8 @@
 				    	<para>Subversion is used to manage its source code. Instructions for using Subversion, including install, can be found at <ulink url="http://svnbook.red-bean.com" /></para>
 				    </important>
 				    <para>Use SVN to checkout a specific release source, the base URL is &THIS.RELEASE_SOURCE_CODE_URL;, then add the specific release version, lets consider &THIS.VERSION;.</para>
-				    <programlisting>[usr]$ svn co &THIS.RELEASE_SOURCE_CODE_URL;/&THIS.VERSION; protocols-&THIS.APPLICATION.DIRNAME;-&THIS.VERSION;</programlisting>
-				    <note><para>Note that checkout contains sub directories(modules) - one for each layer of <acronym>SS7</acronym>. </para></note>				    
+				    <programlisting>[usr]$ svn co &THIS.RELEASE_SOURCE_CODE_URL;/${module}/&THIS.VERSION; &THIS.APPLICATION.DIRNAME;-${module}-&THIS.VERSION;</programlisting>
+				    <note><para>Note that source tree is divided into modules, one for each layer of <acronym>SS7</acronym>. </para></note>				    
   				</step>
 				<step>
 				    <title>Building the source code</title>
@@ -45,11 +45,10 @@
 				    </important>
 				    <para>Use Maven to build the binaries.</para>
 				    <programlisting>
-				    [usr]$ cd protocols&THIS.APPLICATION.DIRNAME;-&THIS.VERSION;
-				    [usr]$ cd ${module}
+				    [usr]$ cd &THIS.APPLICATION.DIRNAME;-${module}-&THIS.VERSION;
 				    [usr]$ mvn install
 				    </programlisting>
-				    <para>Once the process finishes you should have the <literal>binary</literal> jar files in the <filename>target</filename> directory of <literal>(sub)module</literal>. </para>
+				    <para>Once the process finishes you should have the <literal>binary</literal> jar files in the <filename>target</filename> directory of <literal>module</literal>. </para>
   				</step>
 			</procedure>      
 		</section>	
