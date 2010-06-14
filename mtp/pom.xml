@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>ss7-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7</groupId>
-		<version>1.0.0.BETA2-SNAPSHOT</version>
+		<version>1.0.0.BETA2</version>
 	</parent>
 
 	<artifactId>MTP</artifactId>
