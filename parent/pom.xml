@@ -2,6 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>org.mobicents</groupId>
+		<artifactId>mobicents-parent</artifactId>
+		<version>2.6</version>
+	</parent>
+
 	<artifactId>ss7-parent</artifactId>
 	<groupId>org.mobicents.protocols.ss7</groupId>
 	<version>1.0.0.BETA2-SNAPSHOT</version>
@@ -88,7 +94,8 @@
 		<map.version>1.0.0.BETA1-SNAPSHOT</map.version>
 		<isup.version>1.0.0.BETA1-SNAPSHOT</isup.version>
 	</properties>
-
+	
+	<!-- 
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -110,51 +117,8 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	 -->
 
-	<!--
-		modules> <module>sctp</module> <module>mtp</module>
-		<module>tcap</module> <module>isup</module> <module>sccp</module>
-		</modules
-	-->
-	<!-- 
-	<repositories>
-		<repository>
-			<id>jboss-public-repository-group</id>
-			<name>JBoss Public Maven Repository Group</name>
-			<url>
-				https://repository.jboss.org/nexus/content/groups/public/
-			</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>jboss-public-repository-group</id>
-			<name>JBoss Public Maven Repository Group</name>
-			<url>
-				https://repository.jboss.org/nexus/content/groups/public/
-			</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
- -->
 	<profiles>
 		<profile>
 			<id>maven-release</id>
@@ -178,6 +142,8 @@
 				</plugins>
 			</build>
 		</profile>
+
+		
 	</profiles>
 
 	<build>
