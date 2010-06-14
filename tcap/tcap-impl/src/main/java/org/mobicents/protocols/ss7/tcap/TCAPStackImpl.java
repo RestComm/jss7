@@ -43,6 +43,7 @@ public class TCAPStackImpl implements TCAPStack {
 		if(this.tcapProvider!=null)
 		{
 			this.sccpProvider.removeListener();
+			this.sccpProvider.shutdown();
 		}
 		
 	}
