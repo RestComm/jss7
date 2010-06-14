@@ -9,4 +9,5 @@ public interface MAPStack {
 	
 	public MAPProvider getMAPProvider();
 	
+	public void stop();
 }

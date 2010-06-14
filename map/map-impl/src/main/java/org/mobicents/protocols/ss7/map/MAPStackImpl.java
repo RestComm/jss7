@@ -29,6 +29,11 @@ public class MAPStackImpl implements MAPStack {
 		return this.mapProvider;
 	}
 
+	public void stop() {
+		this.tcapStack.stop();
+		
+	}
+
 	
 
 }
