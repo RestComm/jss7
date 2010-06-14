@@ -9,7 +9,7 @@
 
 	<artifactId>ss7-parent</artifactId>
 	<groupId>org.mobicents.protocols.ss7</groupId>
-	<version>1.0.0.BETA3-SNAPSHOT</version>
+	<version>1.0.0.BETA2-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
@@ -86,12 +86,12 @@
 		<compile.source>1.5</compile.source>
 
 		<!--  modules version -->
-		<asn.version>1.0.0.BETA1-SNAPSHOT</asn.version>
-		<mtp.version>1.0.0.BETA2-SNAPSHOT</mtp.version>
-		<sccp.version>1.0.0.BETA1-SNAPSHOT</sccp.version>
-		<tcap.version>1.0.0.BETA1-SNAPSHOT</tcap.version>
-		<map.version>1.0.0.BETA1-SNAPSHOT</map.version>
-		<isup.version>1.0.0.BETA1-SNAPSHOT</isup.version>
+		<asn.version>1.0.0.BETA1</asn.version>
+		<mtp.version>1.0.0.BETA2</mtp.version>
+		<sccp.version>1.0.0.BETA1</sccp.version>
+		<tcap.version>1.0.0.BETA1</tcap.version>
+		<map.version>1.0.0.BETA1</map.version>
+		<isup.version>1.0.0.BETA1</isup.version>
 	</properties>
 	
 	<!-- 
