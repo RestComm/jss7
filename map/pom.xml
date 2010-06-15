@@ -126,13 +126,13 @@
 	</profiles>
 	<scm>
 		<connection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/map/
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/map
 		</connection>
 		<developerConnection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/map/
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/map
 		</developerConnection>
 		<url>
-			http://mobicents.googlecode.com/svn/tags/protocols/ss7/map/
+			http://mobicents.googlecode.com/svn/trunk/protocols/ss7/map
 		</url>
 	</scm>
 	
