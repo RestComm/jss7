@@ -29,12 +29,10 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 			<artifactId>sccp-api</artifactId>
-			<version>${sccp.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.asn</groupId>
 			<artifactId>asn</artifactId>
-			<version>${asn.version}</version>
 		</dependency>		
 	</dependencies>
 

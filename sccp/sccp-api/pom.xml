@@ -23,7 +23,6 @@
 		<dependency>
 			<artifactId>MTP</artifactId>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
-			<version>${mtp.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>ss7-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7</groupId>
-		<version>1.0.0.BETA2</version>
+		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 
 
@@ -24,16 +24,6 @@
 		<module>tcap-api</module>
 		<module>tcap-impl</module>
 	</modules>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.mobicents.protocols.asn</groupId>
-				<artifactId>asn</artifactId>
-				<version>${asn.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<developers>
 		<developer>

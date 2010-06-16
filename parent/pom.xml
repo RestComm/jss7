@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -15,6 +16,120 @@
 
 	<name>Mobicents SS7 :: ${pom.artifactId}</name>
 
+
+
+	<properties>
+		<!-- maven.test.skip>false</maven.test.skip -->
+		<mobicents.tools.mavenplugin.eclipse.version>
+			1.0.0.BETA2
+		</mobicents.tools.mavenplugin.eclipse.version>
+		<concurrent.version>1.3.4</concurrent.version>
+		<log4j.version>1.2.14</log4j.version>
+		<junit.version>4.1</junit.version>
+		<compiler.plugin.version>2.0.2</compiler.plugin.version>
+		<compile.source>1.5</compile.source>
+
+		<!--  modules version -->
+		<asn.version>1.0.0.BETA2-SNAPSHOT</asn.version>
+		<mtp.version>1.0.0.BETA3-SNAPSHOT</mtp.version>
+		<sccp.version>1.0.0.BETA2-SNAPSHOT</sccp.version>
+		<tcap.version>1.0.0.BETA2-SNAPSHOT</tcap.version>
+		<map.version>1.0.0.BETA2-SNAPSHOT</map.version>
+		<isup.version>1.0.0.BETA2-SNAPSHOT</isup.version>
+	</properties>
+
+	<!-- declare our babies -->
+	<dependencyManagement>
+		<dependencies>
+			<!-- ASN -->
+			<dependency>
+				<groupId>org.mobicents.protocols.asn</groupId>
+				<artifactId>asn</artifactId>
+				<version>${asn.version}</version>
+			</dependency>
+			<!-- MTP -->
+			<dependency>
+				<artifactId>MTP</artifactId>
+				<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+				<version>${mtp.version}</version>
+			</dependency>
+			
+			<!-- ISUP -->
+			<dependency>
+				<artifactId>isup-api</artifactId>
+				<groupId>org.mobicents.protocols.ss7.isup</groupId>
+				<version>${isup.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>isup-impl</artifactId>
+				<groupId>org.mobicents.protocols.ss7.isup</groupId>
+				<version>${isup.version}</version>
+			</dependency>
+			
+			<!-- SCCP -->
+			<dependency>
+				<artifactId>sccp-api</artifactId>
+				<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+				<version>${sccp.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>sccp-impl</artifactId>
+				<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+				<version>${sccp.version}</version>
+			</dependency>
+			
+			<!-- TCAP -->
+			<dependency>
+				<artifactId>tcap-api</artifactId>
+				<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+				<version>${tcap.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>tcap-impl</artifactId>
+				<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+				<version>${tcap.version}</version>
+			</dependency>
+			
+			<!-- MAP -->
+			<dependency>
+				<artifactId>map-api</artifactId>
+				<groupId>org.mobicents.protocols.ss7.map</groupId>
+				<version>${map.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>map-impl</artifactId>
+				<groupId>org.mobicents.protocols.ss7.map</groupId>
+				<version>${map.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules />
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<version>2.0-beta-9</version>
+						<configuration>
+							<autoVersionSubmodules>
+								true
+							</autoVersionSubmodules>
+							<remoteTagging>true</remoteTagging>
+							<tagBase>
+								https://mobicents.googlecode.com/svn/tags/protocols/ss7/parent
+							</tagBase>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+
+	</profiles>
 	<developers>
 		<developer>
 			<id>oleg.kulikoff</id>
@@ -73,78 +188,6 @@
 			</url>
 		</snapshotRepository>
 	</distributionManagement>
-
-	<properties>
-		<!-- maven.test.skip>false</maven.test.skip -->
-		<mobicents.tools.mavenplugin.eclipse.version>
-			1.0.0.BETA2
-		</mobicents.tools.mavenplugin.eclipse.version>
-		<concurrent.version>1.3.4</concurrent.version>
-		<log4j.version>1.2.14</log4j.version>
-		<junit.version>4.1</junit.version>
-		<compiler.plugin.version>2.0.2</compiler.plugin.version>
-		<compile.source>1.5</compile.source>
-
-		<!--  modules version -->
-		<asn.version>1.0.0.BETA1</asn.version>
-		<mtp.version>1.0.0.BETA2</mtp.version>
-		<sccp.version>1.0.0.BETA1</sccp.version>
-		<tcap.version>1.0.0.BETA1</tcap.version>
-		<map.version>1.0.0.BETA1</map.version>
-		<isup.version>1.0.0.BETA1</isup.version>
-	</properties>
-	
-	<!-- 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>${log4j.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<scope>provided</scope>
-				<version>${junit.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>concurrent</groupId>
-				<artifactId>concurrent</artifactId>
-				<scope>provided</scope>
-				<version>${concurrent.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-	 -->
-
-	<profiles>
-		<profile>
-			<id>maven-release</id>
-			<modules />
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-release-plugin</artifactId>
-						<version>2.0-beta-9</version>
-						<configuration>
-							<autoVersionSubmodules>
-								true
-							</autoVersionSubmodules>
-							<remoteTagging>true</remoteTagging>
-							<tagBase>
-								https://mobicents.googlecode.com/svn/tags/protocols/ss7/parent
-							</tagBase>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		
-	</profiles>
-
 	<build>
 		<pluginManagement>
 			<plugins>
