@@ -54,8 +54,8 @@ public class M3UserTest implements MTPListener{
 		
 		agent = new M3UserAgent();
 		agent.setMtp3(this.mtp3);
-		agent.setAddress("127.0.0.1");
-		agent.setPort(1345);
+		agent.setLocalAddress("127.0.0.1");
+		agent.setLocalPort(1345);
 		
 		Properties props = new Properties();
 
@@ -63,7 +63,7 @@ public class M3UserTest implements MTPListener{
 		props.put("server.port", "1345");
 		
 		connector = new M3UserConnector(props);
-		connector.addMtpListener(this);
+		connector.addMTPListener(this);
 		
 		
 		
@@ -98,9 +98,9 @@ public class M3UserTest implements MTPListener{
 		}
 		//0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15
 		Thread.currentThread().sleep(1000);
-		this.agent.linkUp();
+		this.agent.getLinkStateProtocol().linkUp();
 		Thread.currentThread().sleep(500);
-		this.agent.linkDown();
+		this.agent.getLinkStateProtocol().linkDown();
 		Thread.currentThread().sleep(500);
 		Assert.assertTrue("Did not receive linkup!", this.linkUp);
 		Assert.assertTrue("Did not receive linkdown!", this.linkDown);
@@ -115,10 +115,11 @@ public class M3UserTest implements MTPListener{
 		
 		//0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15
 		Thread.currentThread().sleep(1000);
-		this.agent.linkUp();
+		this.agent.getLinkStateProtocol().linkUp();
 		agent.start();
 		connector.start();
 		long startTime = System.currentTimeMillis();
+		
 		while(!agent.isConnected() || !connector.isConnected())
 		{
 			Thread.currentThread().sleep(500);
@@ -128,9 +129,10 @@ public class M3UserTest implements MTPListener{
 			}
 			
 		}
-		agent.streamData(new byte[]{1,2,3,4,5});
+		
+		agent.getLinkStateProtocol().receive(new byte[]{1,2,3,4,5});
 		Thread.currentThread().sleep(500);
-		this.agent.linkDown();
+		this.agent.getLinkStateProtocol().linkDown();
 		Thread.currentThread().sleep(500);
 		Assert.assertTrue("Did not receive linkup!", this.linkUp);
 		Assert.assertTrue("Did not receive linkdown!", this.linkDown);
@@ -145,7 +147,7 @@ public class M3UserTest implements MTPListener{
 		
 		//
 		Thread.currentThread().sleep(1000);
-		this.agent.linkUp();
+		this.agent.getLinkStateProtocol().linkUp();
 		agent.start();
 		connector.start();
 		long startTime = System.currentTimeMillis();
@@ -158,6 +160,7 @@ public class M3UserTest implements MTPListener{
 			}
 			
 		}
+
 		ArrayList<byte[]> sendData = new ArrayList<byte[]>();
 		sendData.add(new byte[]{0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15});
 		sendData.add(new byte[]{1});
@@ -171,11 +174,11 @@ public class M3UserTest implements MTPListener{
 		
 		for(byte[] b:sendData)
 		{
-			agent.receive(b);
+			agent.getLinkStateProtocol().receive(b);
 			Thread.currentThread().sleep(1500);
 		}
 		Thread.currentThread().sleep(500);
-		this.agent.linkDown();
+		this.agent.getLinkStateProtocol().linkDown();
 		Thread.currentThread().sleep(500);
 		Assert.assertTrue("Did not receive linkup!", this.linkUp);
 		Assert.assertTrue("Did not receive linkdown!", this.linkDown);
@@ -197,7 +200,7 @@ public class M3UserTest implements MTPListener{
 		connector.start();
 		//
 		Thread.currentThread().sleep(1000);
-		this.agent.linkUp();
+		this.agent.getLinkStateProtocol().linkUp();
 		long startTime = System.currentTimeMillis();
 		while(!agent.isConnected() || !connector.isConnected())
 		{
@@ -208,6 +211,7 @@ public class M3UserTest implements MTPListener{
 			}
 			
 		}
+
 		ArrayList<byte[]> sendData = new ArrayList<byte[]>();
 		sendData.add(new byte[]{0, 0, 0, 0, 30, 15, 126, -86, -128, -128, -61, 46, 126, 0, 30, 15, 126, 0, 30, 15, 126, -86, -128, 0, 82, -90, 126, 0, 30, 15});
 		sendData.add(new byte[]{1});
@@ -219,12 +223,14 @@ public class M3UserTest implements MTPListener{
 		sendData.add(new byte[]{1,1,1,1,1,1,1,1,1,12,2,33,4,54,5,56,6,67});
 		
 		
-		for(byte[] b:sendData)
+		for(int index = 0; index<sendData.size();index++)
 		{
-			agent.receive(b);
+			byte[] b = sendData.get(index);
+
+			agent.getLinkStateProtocol().receive(b);
 		}
 	
-		this.agent.linkDown();
+		this.agent.getLinkStateProtocol().linkDown();
 		Thread.currentThread().sleep(500);
 		Assert.assertTrue("Did not receive linkup!", this.linkUp);
 		Assert.assertTrue("Did not receive linkdown!", this.linkDown);
@@ -254,11 +260,11 @@ public class M3UserTest implements MTPListener{
 		}
 		
 	}
-		agent.linkUp();
+		agent.getLinkStateProtocol().linkUp();
 		Thread.currentThread().sleep(500);
 		agent.stop();
 		Thread.currentThread().sleep(500);
-		agent.linkDown();
+		agent.getLinkStateProtocol().linkDown();
 		agent.start();
 		Thread.currentThread().sleep(500);
 	}

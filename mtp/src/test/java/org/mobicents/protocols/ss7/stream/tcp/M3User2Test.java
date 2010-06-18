@@ -58,8 +58,8 @@ public class M3User2Test implements MTPListener{
 		
 		agent = new M3UserAgent();
 		agent.setMtp3(this.mtp3);
-		agent.setAddress("127.0.0.1");
-		agent.setPort(1345);
+		agent.setLocalAddress("127.0.0.1");
+		agent.setLocalPort(1345);
 		
 		Properties props = new Properties();
 
@@ -67,7 +67,7 @@ public class M3User2Test implements MTPListener{
 		props.put("server.port", "1345");
 		
 		connector = new M3UserConnector(props);
-		connector.addMtpListener(this);
+		connector.addMTPListener(this);
 		
 		index = 0;
 		sendData = new ArrayList<byte[]>();
@@ -116,13 +116,13 @@ public class M3User2Test implements MTPListener{
 			}
 			
 		}
-		this.agent.linkUp();
+		this.agent.getLinkStateProtocol().linkUp();
 		
 		
-		agent.receive(sendData.get(index++));
+		this.agent.getLinkStateProtocol().receive(sendData.get(index++));
 		
 		Thread.currentThread().sleep(20000);
-		this.agent.linkDown();
+		this.agent.getLinkStateProtocol().linkDown();
 		Thread.currentThread().sleep(100);
 		Assert.assertTrue("Did not receive linkup!", this.linkUp);
 		Assert.assertTrue("Did not receive linkdown!", this.linkDown);
@@ -203,7 +203,7 @@ public class M3User2Test implements MTPListener{
 			rcvAgent.add(msg);
 			if(index<sendData.size())
 			{
-				agent.receive(sendData.get(index++));
+				agent.getLinkStateProtocol().receive(sendData.get(index++));
 			}
 			return true;
 		}
