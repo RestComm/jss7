@@ -150,6 +150,7 @@ public class Mtp2 {
     private final static int FRAME_STATUS_INDICATION_B = 5;
     private final static int FRAME_FISU = 6;
     
+    //matches frame code to frame name
     private final static String[] FRAME_NAMES;
     
 
@@ -1159,12 +1160,6 @@ public class Mtp2 {
 
     }
 
-    public void run() {
-	while (started) {
-    	    threadTick(System.currentTimeMillis());
-    	}
-    }
-    
     public void doRead() {
 	if (started) {
 	    try {
@@ -1192,51 +1187,7 @@ public class Mtp2 {
 		}
     }
     
-    public void threadTick(long tickTimeStamp) {
-        if (started) {
-            int bytesRead = 0;
-            try {
 
-                bytesRead = channel.read(rxBuffer);
-		if (logger.isTraceEnabled()) {
-		    logger.trace(String.format("(%s) Read %d bytes ", name, bytesRead));
-		}
-		
-		//we should not break even if read returns zero because we need to write anyway!
-		
-                if (bytesRead > 0) {
-                    // handle received data
-                    processRx(rxBuffer, bytesRead);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                // notify MTP3 about failure.
-                state = MTP2_OUT_OF_SERVICE;
-                mtp3.linkFailed(this);
-            } catch (Exception ee) {
-                ee.printStackTrace();
-                // notify MTP3 about failure.
-                state = MTP2_OUT_OF_SERVICE;
-                mtp3.linkFailed(this);
-            }
-            try {
-                    processTx(RX_TX_BUFF_SIZE);
-                    channel.write(txBuffer, RX_TX_BUFF_SIZE);
-            } catch (IOException e) {
-                e.printStackTrace();
-                state = MTP2_OUT_OF_SERVICE;
-                mtp3.linkFailed(this);
-            } catch (Exception ee) {
-                ee.printStackTrace();
-                // notify MTP3 about failure.
-                state = MTP2_OUT_OF_SERVICE;
-                mtp3.linkFailed(this);
-            }
-
-        }
-
-
-    }
     // //////////////////////////
     // PRIVATE HELPER METHODS //
     // //////////////////////////
