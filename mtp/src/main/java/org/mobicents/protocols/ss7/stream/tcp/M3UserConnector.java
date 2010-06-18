@@ -6,6 +6,8 @@ package org.mobicents.protocols.ss7.stream.tcp;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -21,8 +23,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.stream.HDLCHandler;
+import org.mobicents.protocols.ss7.stream.InterceptorHook;
+import org.mobicents.protocols.ss7.stream.LinkStateProtocol;
 import org.mobicents.protocols.ss7.stream.MTPListener;
+import org.mobicents.protocols.ss7.stream.StreamForwarder;
 import org.mobicents.protocols.ss7.stream.tlv.LinkStatus;
 import org.mobicents.protocols.ss7.stream.tlv.TLVInputStream;
 import org.mobicents.protocols.ss7.stream.tlv.TLVOutputStream;
@@ -32,18 +38,16 @@ import org.mobicents.protocols.ss7.stream.tlv.Tag;
  * @author baranowb
  * 
  */
-public class M3UserConnector extends MTPProviderImpl implements Runnable {
+public class M3UserConnector extends MTPProviderImpl implements Runnable , StreamForwarder{
 	public static final String _PROPERTY_IP = "server.ip";
 	public static final String _PROPERTY_PORT = "server.port";
 
 	private static final Logger logger = Logger.getLogger(M3UserConnector.class);
 
-	private List<MTPListener> listeners = new ArrayList<MTPListener>();
 	private Properties properties = new Properties();
-	// used to indicate state of link
-	private boolean linkUp = false;
-	private boolean runnable;
 
+	private boolean runnable;
+	private LinkStateProtocol linkStateProtocol = new LinkStateProtocol();
 	// ////////////////////
 	// Server variables //
 	// ////////////////////
@@ -58,24 +62,25 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 	private Selector writeSelector;
 	private Selector readSelector;
 	private ByteBuffer readBuff = ByteBuffer.allocate(8192);
-	private ByteBuffer txBuff = ByteBuffer.allocate(8192);
+	//private ByteBuffer txBuff = ByteBuffer.allocate(8192);
+	private ArrayList<ByteBuffer> dataToSend = new ArrayList<ByteBuffer>();
 	private ExecutorService streamExecutor = Executors.newSingleThreadExecutor();
 	private Future streamFuture;
 	private boolean connected = false;
 	private SocketChannel socketChannel;
-	// private LinkedList<ByteBuffer> txBuffer = new LinkedList<ByteBuffer>();
-	private HDLCHandler hdlcHandler = new HDLCHandler();
+
 
 	public M3UserConnector(Properties properties) {
 		this();
 		if(properties!=null)
 			this.properties.putAll(properties);
+		
+		
 	}
 	public M3UserConnector() {
 		super();
 
-		// wont send empty buffer
-		this.txBuff.limit(0);
+		linkStateProtocol.setStreamForwarder(this);
 
 	}
 	@Override
@@ -84,12 +89,14 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 		if (this.streamFuture != null) {
 			throw new IllegalStateException("Provider is already started!");
 		}
-
+		// wont send empty buffer
+		//this.txBuff.limit(0);
+		linkStateProtocol.reset();
 		readProperties();
 		// initiateConnection();
 		this.runnable = true;
 		this.streamFuture = streamExecutor.submit(this);
-
+		
 	}
 
 	public void stop() throws IllegalStateException {
@@ -103,7 +110,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 				streamFuture.cancel(false);
 				streamFuture = null;
 			}
-			this.listeners.clear();
+			
 			if(this.connectSelector!=null)
 			{
 				try{
@@ -117,33 +124,94 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 			disconnect();
 			
 		}
+		//FIXME: add remove listeners?
 
 	}
 
 	/**
 	 * @return the serverAddress
 	 */
-	public String getServerAddress() {
+	public String getRemoteAddress() {
 		return serverAddress;
 	}
 	/**
 	 * @param serverAddress the serverAddress to set
 	 */
-	public void setServerAddress(String serverAddress) {
+	public void setRemoteAddress(String serverAddress) {
 		this.serverAddress = serverAddress;
 	}
 	/**
 	 * @return the serverPort
 	 */
-	public int getServerPort() {
+	public int getRemotePort() {
 		return serverPort;
 	}
 	/**
 	 * @param serverPort the serverPort to set
 	 */
-	public void setServerPort(int serverPort) {
+	public void setRemotePort(int serverPort) {
 		this.serverPort = serverPort;
 	}
+	
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#setInterceptorHook(org.mobicents.protocols.ss7.stream.InterceptorHook)
+	 */
+	public void setInterceptorHook(InterceptorHook ih) {
+		this.linkStateProtocol.setInterceptorHook(ih);
+		
+	}
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#streamData(java.nio.ByteBuffer)
+	 */
+	public void streamData(ByteBuffer data) {
+		//FIXME: Amit/Oleg this has to be changed to something else!
+		//this.txBuff.put(data);
+		ByteBuffer toSendData = LinkStateProtocol.copyToPosition(data);
+		this.dataToSend.add(toSendData);
+		
+	}
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#getLocalAddress()
+	 */
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#setMtp3(org.mobicents.protocols.ss7.mtp.Mtp3)
+	 */
+	public void setMtp3(Mtp3 mtp) {
+		throw new UnsupportedOperationException();
+		
+	}
+	public String getLocalAddress() {
+		throw new UnsupportedOperationException();
+	}
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#getLocalPort()
+	 */
+	public int getLocalPort() {
+		throw new UnsupportedOperationException();
+	}
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#setLocalAddress(java.lang.String)
+	 */
+	public void setLocalAddress(String address) throws UnknownHostException {
+		throw new UnsupportedOperationException();
+		
+	}
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#setLocalPort(int)
+	 */
+	public void setLocalPort(int port) {
+		throw new UnsupportedOperationException();
+		
+	}
+	
+	public LinkStateProtocol getLinkStateProtocol()
+	{
+			return this.linkStateProtocol;
+	}
+	
 	private void readProperties() {
 		serverPort = Integer.parseInt(properties.getProperty(_PROPERTY_PORT, "" + serverPort));
 		serverAddress = properties.getProperty(_PROPERTY_IP, "" + serverAddress);
@@ -308,6 +376,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
         {
         	logger.debug("Connected to server,  "+this.socketChannel.socket().getRemoteSocketAddress()+", local connection "+this.socketChannel.socket().getLocalAddress()+":"+this.socketChannel.socket().getLocalPort());
 		}
+		this.linkStateProtocol.transportUp();
 		
 	}
 	
@@ -339,91 +408,42 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 			// same from our end and cancel the channel.
 			handleClose(key);
 			return;
+		}else if(numRead == this.readBuff.capacity())
+		{
+			return;
 		}
 
-		ByteBuffer[] readResult = null;
 		this.readBuff.flip();
 		if(logger.isDebugEnabled())
         {
         	logger.debug("Received data: " + this.readBuff);
 		 }
-		while ((readResult = this.hdlcHandler.processRx(this.readBuff)) != null) {
+		try{
+		this.linkStateProtocol.streamDataReceived(readBuff);
+		}catch(BufferOverflowException b)
+		{
+			b.printStackTrace();
+			throw b;
+		}
 
-			for (ByteBuffer b : readResult) {
 
-				// here we can have link status or msg
-				TLVInputStream tlvInputStream = new TLVInputStream(new ByteArrayInputStream(b.array()));
-				int tag = tlvInputStream.readTag();
-				if (tag == Tag._TAG_LINK_DATA) {
-					// this can happen if link goes up before we are;
-					if (!linkUp) {
-						this.linkUp();
-					}
-					this.receive(tlvInputStream.readLinkData());
-				} else if (tag == Tag._TAG_LINK_STATUS) {
-					LinkStatus ls = tlvInputStream.readLinkStatus();
-					switch (ls) {
-					case LinkDown:
-						this.linkDown();
-						continue;
-						// break;
-					case LinkUp:
-						this.linkUp();
-						continue;
-					}
-				} else {
-					logger.warn("Received weird message!");
+	}
+	private void write(SelectionKey key) throws IOException {
+		SocketChannel socketChannel = (SocketChannel) key.channel();
+
+		// Write until there's not more data ?
+		while (this.dataToSend.size() > 0) {
+			ByteBuffer txBuff = this.dataToSend.get(0);
+			while (txBuff.remaining() > 0) {
+				int sent = socketChannel.write(txBuff);
+				if (sent == 0) {
+					// buffer is filled?
+					// lets move content thats left
+					return;
 				}
 
 			}
-		}
-		this.readBuff.clear();
-
-	}
-	private void write(SelectionKey key) {
-		SocketChannel socketChannel = (SocketChannel) key.channel();
-
-		if (txBuff.remaining() > 0) {
-
-			try {
-				socketChannel.write(txBuff);
-			} catch (IOException e) {
-
-				// if (logger.isDebugEnabled()) {
-				e.printStackTrace();
-				// }
-				handleClose(key);
-				return;
-			}
-			if (txBuff.remaining() > 0) {
-				// buffer filled.
-				return;
-			} else {
-
-			}
-		}
-
-		if (!this.hdlcHandler.isTxBufferEmpty()) {
-
-			txBuff.clear();
-			this.hdlcHandler.processTx(txBuff);
-			txBuff.flip();
-			try {
-				socketChannel.write(txBuff);
-			} catch (IOException e) {
-
-				// if (logger.isDebugEnabled()) {
-				e.printStackTrace();
-				// }
-				handleClose(key);
-				return;
-			}
-
-			if (txBuff.remaining() > 0) {
-				// ... or the socket's buffer fills up
-				return;
-			}
-
+			this.dataToSend.remove(0);
 		}
 
 	}
@@ -433,8 +453,9 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
         {
         	logger.debug("Handling key close operations: " + key);
 		 }
-		linkDown();
+		
 		try {
+			
 			disconnect();
 		} finally {
 			// linkDown();
@@ -443,7 +464,7 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 			synchronized (this.writeSelector) {
 				// this is to ensure buffer does not have any bad data.
 				// this.txBuffer.clear();
-				this.hdlcHandler.clearTxBuffer();
+				
 
 			}
 		}
@@ -451,6 +472,11 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 	}
 	
 	private void disconnect() {
+		this.linkStateProtocol.transportDown();
+		this.linkStateProtocol.reset();
+		//this.txBuff.clear();
+		//this.txBuff.limit(0);
+		this.dataToSend.clear();
 		if (this.socketChannel != null) {
 			try {
 				this.socketChannel.close();
@@ -493,112 +519,29 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable {
 	
 	
 	
-	private void linkDown() {
-		// FIXME: Proper acctions here?
-		if (logger.isInfoEnabled()) {
-			logger.info("Received LinkDown!");
-		}
-		this.linkUp = false;
-		// this.txBuff.clear();
-		// this.txBuff.limit(0);
-		// this.readBuff.clear();
-		// this.readBuff.limit(0);
+	
 
-		for (MTPListener lst : listeners) {
-			try {
-				lst.linkDown();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 
-	}
-
-	private void linkUp() {
-		// this.txBuff.clear();
-		// this.txBuff.limit(0);
-		// this.readBuff.clear();
-		// this.readBuff.limit(0);
-		if (logger.isInfoEnabled()) {
-			logger.info("Received LinkUp!");
-		}
-		this.linkUp = true;
-		for (MTPListener lst : listeners) {
-			try {
-				lst.linkUp();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-	}
-
-	/**
-	 * Called internaly to trigger delivery to listeners.
-	 * @param arg2
-	 */
-	public void receive(byte[] arg2) {
-
-		// FIXME: add si/ssi decode?
-		// this.executor.execute(new DeliveryHandler(0, 0, arg2));
-		new DeliveryHandler(arg2).run();
-
-	}
-
-	private class DeliveryHandler implements Runnable {
-
-		private byte[] msg;
-
-		public DeliveryHandler(byte[] msg) {
-			super();
-
-			this.msg = msg;
-		}
-
-		public void run() {
-
-			for (MTPListener lst : listeners) {
-				try {
-					lst.receive(msg);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
-		}
-
-	}
 	//////////////////////
 	// Provider methods //
 	//////////////////////
-	public void addMtpListener(MTPListener lst) {
+	public void addMTPListener(MTPListener lst) {
 
 		if (lst == null) {
 			throw new NullPointerException("Listener must not be null.");
 		}
-		listeners.add(lst);
+		this.linkStateProtocol.addMTPListener(lst);
 	}
 
-	public void removeMtpListener(MTPListener lst) {
+	public void removeMTPListener(MTPListener lst) {
 		if (lst == null) {
 			throw new NullPointerException("Listener must not be null.");
 		}
-		if (!listeners.remove(lst)) {
-			throw new IllegalArgumentException("Listener is not in registered: " + lst);
-		}
+		this.linkStateProtocol.removeMTPListener(lst);
 	}
 
 	public void send(byte[] msg) throws IOException {
-		if (!linkUp) {
-			throw new IOException("Link is not up!");
-
-		}
-		TLVOutputStream tlv = new TLVOutputStream();
-		tlv.writeData(msg);
-		synchronized (this.writeSelector) {
-			this.hdlcHandler.addToTxBuffer(ByteBuffer.wrap(tlv.toByteArray()));
-			//this.writeSelector.notify();
-		}
+		this.linkStateProtocol.streamDataToSend(msg);
 
 	}
 

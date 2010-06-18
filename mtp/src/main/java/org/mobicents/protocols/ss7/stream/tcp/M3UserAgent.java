@@ -1,6 +1,5 @@
 package org.mobicents.protocols.ss7.stream.tcp;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -13,6 +12,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,15 +20,12 @@ import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
-import org.mobicents.protocols.ss7.mtp.MtpUser;
-import org.mobicents.protocols.ss7.stream.HDLCHandler;
+import org.mobicents.protocols.ss7.stream.InterceptorHook;
+import org.mobicents.protocols.ss7.stream.LinkStateProtocol;
+import org.mobicents.protocols.ss7.stream.MTPListener;
 import org.mobicents.protocols.ss7.stream.StreamForwarder;
-import org.mobicents.protocols.ss7.stream.tlv.LinkStatus;
-import org.mobicents.protocols.ss7.stream.tlv.TLVInputStream;
-import org.mobicents.protocols.ss7.stream.tlv.TLVOutputStream;
-import org.mobicents.protocols.ss7.stream.tlv.Tag;
 
-public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAgentMBean {
+public class M3UserAgent implements StreamForwarder, Runnable, M3UserAgentMBean {
 	private static final Logger logger = Logger.getLogger(M3UserAgent.class);
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 	private int port = 1345;
@@ -41,66 +38,46 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 	// we accept only one connection
 	private boolean connected = false;
 	private ByteBuffer readBuff = ByteBuffer.allocate(8192);
-	private ByteBuffer txBuff = ByteBuffer.allocate(8192);
+	private ArrayList<ByteBuffer> dataToSend = new ArrayList<ByteBuffer>();
+	//one that we use to send :)
+	//private ByteBuffer txBuff = ByteBuffer.allocate(8192);
 
-	private Mtp3 mtp;
-	// private MTP mtp;
-	private boolean linkUp = false;
 	private Future runFuture;
 
-	//
-	private HDLCHandler hdlcHandler = new HDLCHandler();
 	private boolean runnable;
+	private LinkStateProtocol linkStateProtocol;
 
 	// /////////////////
 	// Some statics //
 	// ////////////////
-	private static final byte[] _LINK_STATE_UP;
-	private static final byte[] _LINK_STATE_DOWN;
-	static {
-		TLVOutputStream tlv = new TLVOutputStream();
-		try {
-			tlv.writeLinkStatus(LinkStatus.LinkUp);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		_LINK_STATE_UP = tlv.toByteArray();
-		tlv.reset();
-		try {
-			tlv.writeLinkStatus(LinkStatus.LinkDown);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		_LINK_STATE_DOWN = tlv.toByteArray();
-
-	}
+	
 
 	public M3UserAgent() {
 		super();
 		// wont send empty buffer
-		this.txBuff.limit(0);
+		//this.txBuff.limit(0);
+		this.linkStateProtocol = new LinkStateProtocol();
+		this.linkStateProtocol.setStreamForwarder(this);
 	}
 
-	// /////////////////////
-	// Setters & Getters //
-	// /////////////////////
+	// ///////////////////////////
+	// StreamForwarder method  //
+	// //////////////////////////
 
-	public String getAddress() {
+	public String getLocalAddress() {
 		return this.address.toString();
 	}
 
-	public int getPort() {
+	public int getLocalPort() {
 		return this.port;
 	}
 
-	public void setAddress(String address) throws UnknownHostException {
+	public void setLocalAddress(String address) throws UnknownHostException {
 		this.address = InetAddress.getAllByName(address)[0];
 
 	}
 
-	public void setPort(int port) {
+	public void setLocalPort(int port) {
 		if (port > 0) {
 			this.port = port;
 		} else {
@@ -110,18 +87,63 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 	}
 
 	public void setMtp3(Mtp3 mtp) {
-		this.mtp = mtp;
-		if (mtp != null) {
-			this.mtp.setUserPart(this);
-		}
+		this.linkStateProtocol.setMtp3(mtp);
 
 	}
 
-	/**
-	 * @return the connected
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#addMTPListener(org.mobicents.protocols.ss7.stream.MTPListener)
 	 */
-	public boolean isConnected() {
-		return connected;
+	public void addMTPListener(MTPListener lst) {
+		throw new UnsupportedOperationException();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#getRemoteAddress()
+	 */
+	public String getRemoteAddress() {
+		throw new UnsupportedOperationException();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#getRemotePort()
+	 */
+	public int getRemotePort() {
+		throw new UnsupportedOperationException();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#removeMTPListener(org.mobicents.protocols.ss7.stream.MTPListener)
+	 */
+	public void removeMTPListener(MTPListener lst) {
+		throw new UnsupportedOperationException();
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#setRemoteAddress(java.lang.String)
+	 */
+	public void setRemoteAddress(String address) throws UnknownHostException {
+		throw new UnsupportedOperationException();
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#setRemotePort(int)
+	 */
+	public void setRemotePort(int port) {
+		throw new UnsupportedOperationException();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#streamData(java.nio.ByteBuffer)
+	 */
+	public void streamData(ByteBuffer data) {
+		//FIXME: Amit/Oleg this has to be changed to something else!
+		//this.txBuff.put(data);
+		ByteBuffer toSendData = LinkStateProtocol.copyToPosition(data);
+		this.dataToSend.add(toSendData);
+		
 	}
 
 	public void start() throws IOException {
@@ -206,14 +228,7 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 
 					}
 
-					if (hdlcHandler.isTxBufferEmpty()) {
-						// synchronized(this.writeSelector)
-						// {
-						// this.writeSelector.wait(5);
-						// }
-
-					}
-				}
+									}
 			} catch (ClosedSelectorException cse) {
 				cse.printStackTrace();
 				// check for server selector?
@@ -289,11 +304,7 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 		// return;
 		// }
 		// lets strean state
-		if (linkUp) {
-			this.streamData(_LINK_STATE_UP);
-		} else {
-			// this.streamData(_LINK_STATE_DOWN);
-		}
+		this.linkStateProtocol.transportUp();
 	}
 
 	private void write(SelectionKey key) throws IOException {
@@ -301,39 +312,24 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 		SocketChannel socketChannel = (SocketChannel) key.channel();
 
 		// Write until there's not more data ?
-
-		// while (!txBuffer.isEmpty()) {
-		if (txBuff.remaining() > 0) {
-			int sentDataCount = socketChannel.write(txBuff);
-
-			if (txBuff.remaining() > 0) {
-				// buffer filled.
-				return;
-			} else {
+		while (this.dataToSend.size() > 0) {
+			ByteBuffer txBuff = this.dataToSend.get(0);
+			if(txBuff == null)
+			{
+				this.dataToSend.remove(0);
+				continue;
+			}
+			while (txBuff.remaining() > 0) {
+				int sent = socketChannel.write(txBuff);
+				if (sent == 0) {
+					// buffer is filled?
+					// lets move content thats left
+					return;
+				}
 
 			}
+			this.dataToSend.remove(0);
 		}
-		// while (!this.hdlcHandler.isTxBufferEmpty()) {
-		if (!this.hdlcHandler.isTxBufferEmpty()) {
-
-			// ByteBuffer buf = (ByteBuffer) txBuffer.get(0);
-			txBuff.clear();
-
-			this.hdlcHandler.processTx(txBuff);
-			txBuff.flip();
-			socketChannel.write(txBuff);
-
-			// if (buf.remaining() > 0) {
-			if (txBuff.remaining() > 0) {
-				// ... or the socket's buffer fills up
-				return;
-			}
-			// buf.clear();
-			// txBuff.clear();
-			// txBuffer.remove(0);
-
-		}
-
 	}
 
 	private void read(SelectionKey key) throws IOException {
@@ -361,42 +357,15 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 			handleClose(key);
 			return;
 		}
-		// pass it on.
-		ByteBuffer[] readResult = null;
+	
 
 		// This will read everything, and if there is incomplete frame, it will
 		// retain its partial content
 		// so on next read it can continue to decode!
 		this.readBuff.flip();
 
-		while ((readResult = this.hdlcHandler.processRx(this.readBuff)) != null) {
-			for (ByteBuffer b : readResult) {
+		this.linkStateProtocol.streamDataReceived(this.readBuff);
 
-				// byte sls = b.get();
-				// byte linksetId = b.get();
-				// this.layer3.send(sls,linksetId,si, ssf, b.array());
-				TLVInputStream tlvInputStream = new TLVInputStream(new ByteArrayInputStream(b.array()));
-				int tag = tlvInputStream.readTag();
-				if (tag == Tag._TAG_LINK_DATA) {
-					byte[] data = tlvInputStream.readLinkData();
-
-					this.mtp.send(data);
-				} else if (tag == Tag._TAG_LINK_STATUS) {
-					LinkStatus ls = tlvInputStream.readLinkStatus();
-					switch (ls) {
-					case Query:
-						if (this.linkUp) {
-							this.streamData(_LINK_STATE_UP);
-						} else {
-							this.streamData(_LINK_STATE_DOWN);
-						}
-
-					}
-				} else {
-					logger.warn("Received weird message!");
-				}
-			}
-		}
 		this.readBuff.clear();
 		// this.layer3.send(si, ssf, this.readBuff.array());
 
@@ -406,7 +375,7 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 		if (logger.isDebugEnabled()) {
 			logger.debug("Handling key close operations: " + key);
 		}
-		linkDown();
+		
 		try {
 			disconnect();
 		} finally {
@@ -416,7 +385,7 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 			synchronized (this.writeSelector) {
 				// this is to ensure buffer does not have any bad data.
 				// this.txBuffer.clear();
-				this.hdlcHandler.clearTxBuffer();
+				
 
 			}
 		}
@@ -424,7 +393,11 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 	}
 
 	private void disconnect() {
-
+		this.linkStateProtocol.transportDown();
+		this.linkStateProtocol.reset();
+		
+		//this.txBuff.limit(0);
+		this.dataToSend.clear();
 		if (this.channel != null) {
 			try {
 				this.channel.close();
@@ -453,87 +426,23 @@ public class M3UserAgent implements StreamForwarder, MtpUser, Runnable, M3UserAg
 			}
 		}
 		this.connected = false;
+	
+		
 
 	}
 
-	/**
-	 * Method used internally - this one sends actual data to remote end.
-	 * 
-	 * @param data
-	 */
-	public void streamData(byte[] data) {
-		// if(this.channel!=null)
-		// connected = this.channel.isConnected();
 
-		if (!connected) {
-			if (logger.isInfoEnabled()) {
-				logger.info("There is no client interested in data stream, ignoring. Message should be retransmited.");
-
-			}
-			return;
-		}
-
-		// And queue the data we want written
-		// synchronized (this.txBuffer) {
-		// synchronized (this.hdlcHandler) {
-		synchronized (this.writeSelector) {
-
-			// this.txBuffer.add(ByteBuffer.wrap(data));
-			ByteBuffer bb = ByteBuffer.allocate(data.length);
-			bb.put(data);
-			bb.flip();
-			this.hdlcHandler.addToTxBuffer(bb);
-			// Finally, wake up our selecting thread so it can make the required
-			// changes
-			this.writeSelector.wakeup();
-		}
-
+	public void setInterceptorHook(InterceptorHook ih) {
+		this.linkStateProtocol.setInterceptorHook(ih);
+		
 	}
 
-	// //////////
-	// LAYER4 //
-	// //////////
-	public void linkDown() {
-		if (logger.isInfoEnabled()) {
-			logger.info("Received L4 Down event from layer3.");
-		}
-		this.linkUp = false;
-		// FIXME: proper actions here.
-		// this.txBuff.clear();
-		// this.txBuff.limit(0);
-		// this.readBuff.clear();
-		this.streamData(_LINK_STATE_DOWN);
+	public boolean isConnected() {
+		return this.connected;
 	}
-
-	public void linkUp() {
-		if (logger.isInfoEnabled()) {
-			logger.info("Received L4 Up event from layer3.");
-		}
-		this.linkUp = true;
-		this.streamData(_LINK_STATE_UP);
+	
+	public LinkStateProtocol getLinkStateProtocol()
+	{
+			return this.linkStateProtocol;
 	}
-
-	public void receive(String msg) {
-		this.receive(msg.getBytes());
-
-	}
-
-	public void receive(byte[] msgBuff) {
-
-		// layer3 has something important, lets write.
-		// if(linkUp)
-		// {
-		TLVOutputStream tlv = new TLVOutputStream();
-		try {
-			tlv.writeData(msgBuff);
-			byte[] data = tlv.toByteArray();
-			this.streamData(data);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		// }
-	}
-
 }

@@ -65,7 +65,7 @@ public class PipeMtpProviderImpl implements MTPProvider {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.stream.MTPProvider#addMtpListener(org.mobicents.protocols.ss7.stream.MTPListener)
 	 */
-	public void addMtpListener(MTPListener lst) {
+	public void addMTPListener(MTPListener lst) {
 		listener = lst;
 
 	}
@@ -73,7 +73,7 @@ public class PipeMtpProviderImpl implements MTPProvider {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.stream.MTPProvider#removeMtpListener(org.mobicents.protocols.ss7.stream.MTPListener)
 	 */
-	public void removeMtpListener(MTPListener lst) {
+	public void removeMTPListener(MTPListener lst) {
 		if(lst == this.listener)
 			this.listener = null;
 

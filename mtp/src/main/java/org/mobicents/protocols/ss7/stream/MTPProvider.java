@@ -12,12 +12,12 @@ public interface MTPProvider {
 	 * Add MTPListener for callbacks
 	 * @param lst
 	 */
-	public void addMtpListener(MTPListener lst);
+	public void addMTPListener(MTPListener lst);
 	/**
 	 * Remote listener
 	 * @param lst
 	 */
-	public void removeMtpListener(MTPListener lst);
+	public void removeMTPListener(MTPListener lst);
 	/**
 	 * Push data down the stream - it expects properly formed Mtp3 message
 	 * @param msg
