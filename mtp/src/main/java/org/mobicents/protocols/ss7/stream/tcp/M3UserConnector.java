@@ -24,10 +24,10 @@ import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
+import org.mobicents.protocols.ss7.mtp.Mtp3Listener;
 import org.mobicents.protocols.ss7.stream.HDLCHandler;
 import org.mobicents.protocols.ss7.stream.InterceptorHook;
 import org.mobicents.protocols.ss7.stream.LinkStateProtocol;
-import org.mobicents.protocols.ss7.stream.MTPListener;
 import org.mobicents.protocols.ss7.stream.StreamForwarder;
 import org.mobicents.protocols.ss7.stream.tlv.LinkStatus;
 import org.mobicents.protocols.ss7.stream.tlv.TLVInputStream;
@@ -525,19 +525,19 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable , Strea
 	//////////////////////
 	// Provider methods //
 	//////////////////////
-	public void addMTPListener(MTPListener lst) {
+	public void addMtp3Listener(Mtp3Listener lst) {
 
 		if (lst == null) {
 			throw new NullPointerException("Listener must not be null.");
 		}
-		this.linkStateProtocol.addMTPListener(lst);
+		this.linkStateProtocol.addMtp3Listener(lst);
 	}
 
-	public void removeMTPListener(MTPListener lst) {
+	public void removeMtp3Listener(Mtp3Listener lst) {
 		if (lst == null) {
 			throw new NullPointerException("Listener must not be null.");
 		}
-		this.linkStateProtocol.removeMTPListener(lst);
+		this.linkStateProtocol.removeMtp3Listener(lst);
 	}
 
 	public void send(byte[] msg) throws IOException {

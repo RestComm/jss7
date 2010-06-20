@@ -54,7 +54,7 @@ public class MTP {
     private Mtp3 mtp3;
     
     /** Represent MTP user part  */
-    private MtpUser mtpUser;
+    private Mtp3Listener mtp3Listener;
     
     private Logger logger = Logger.getLogger(MTP.class);
     
@@ -94,15 +94,7 @@ public class MTP {
     public void setDpc(int dpc) {
         this.dpc = dpc;
     }
-    
-    /**
-     * Assigns user part.
-     * 
-     * @param mtpUser the MTP user part.
-     */
-    public void setUserPart(MtpUser mtpUser) {
-        this.mtpUser = mtpUser;
-    }
+
     
     /**
 	 * @return the opc
@@ -131,33 +123,33 @@ public class MTP {
 	this.selectorFactory = selectorFactory;
     }
     
+    public Mtp3 getMtp3()
+    {
+    	return this.mtp3;
+    }
+    
     /**
      * Activates link set.
      */
     public void start() throws IOException {
     	try{
         //create mtp layer 3 instance
-        mtp3 = new Mtp3(name);
+       
         logger.info("Created MTP layer 3");
 	        
+       List<Mtp2> linkset = Mtp2Factory.getInstance().createMtpLinkSet(channels, name);
         //assigning physical channel
-        mtp3.setChannels(channels);
-        logger.info("Channels are assigned to MTP layer 3");
-        
-        //assigning point codes
-        mtp3.setOpc(opc);
-        mtp3.setDpc(dpc);
+       mtp3 = Mtp3Factory.getInstance().createMtp(linkset, name, opc, dpc, selectorFactory);
         logger.info("Point codes are configured");
         
         //set user part
-        if(mtpUser!=null)
+        if(mtp3Listener!=null)
         {
-        	mtp3.setUserPart(mtpUser);
-        	mtpUser.setMtp3(mtp3);
+        	mtp3.addMtp3Listener(mtp3Listener);
         }
-        logger.info("Assigned user part " +  mtpUser);
+        
     
-        mtp3.setSelectorFactory(selectorFactory);    
+           
         //starting layer 3
         mtp3.start();
     	}catch(RuntimeException re)

@@ -21,7 +21,7 @@ public class LinkSelector {
      * @param channel the channel to be registered.
      */
     public void register(Mtp2 link) {
-	selector.register(link.getChannel());
+	selector.register(link.getLayer1());
     }
     
     /**
@@ -30,7 +30,7 @@ public class LinkSelector {
      * @param channel to be unregistered 
      */
     public void unregister(Mtp2 link) {
-	selector.unregister(link.getChannel());
+	selector.unregister(link.getLayer1());
     }
     
     /**

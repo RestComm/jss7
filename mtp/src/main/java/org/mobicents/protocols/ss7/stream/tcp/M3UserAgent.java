@@ -20,9 +20,9 @@ import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
+import org.mobicents.protocols.ss7.mtp.Mtp3Listener;
 import org.mobicents.protocols.ss7.stream.InterceptorHook;
 import org.mobicents.protocols.ss7.stream.LinkStateProtocol;
-import org.mobicents.protocols.ss7.stream.MTPListener;
 import org.mobicents.protocols.ss7.stream.StreamForwarder;
 
 public class M3UserAgent implements StreamForwarder, Runnable, M3UserAgentMBean {
@@ -92,9 +92,9 @@ public class M3UserAgent implements StreamForwarder, Runnable, M3UserAgentMBean 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#addMTPListener(org.mobicents.protocols.ss7.stream.MTPListener)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#addMtp3Listener(org.mobicents.protocols.ss7.stream.MTPListener)
 	 */
-	public void addMTPListener(MTPListener lst) {
+	public void addMtp3Listener(Mtp3Listener lst) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -113,9 +113,9 @@ public class M3UserAgent implements StreamForwarder, Runnable, M3UserAgentMBean 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#removeMTPListener(org.mobicents.protocols.ss7.stream.MTPListener)
+	 * @see org.mobicents.protocols.ss7.stream.StreamForwarder#removeMtp3Listener(org.mobicents.protocols.ss7.stream.MTPListener)
 	 */
-	public void removeMTPListener(MTPListener lst) {
+	public void removeMtp3Listener(Mtp3Listener lst) {
 		throw new UnsupportedOperationException();
 		
 	}

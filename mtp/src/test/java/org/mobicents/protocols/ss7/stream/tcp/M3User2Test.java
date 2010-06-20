@@ -17,13 +17,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.mtp.Mtp2;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
-import org.mobicents.protocols.ss7.stream.MTPListener;
+import org.mobicents.protocols.ss7.mtp.Mtp3Listener;
+import org.mobicents.protocols.ss7.mtp.SelectorFactory;
 
 /**
  * @author baranowb
  *
  */
-public class M3User2Test implements MTPListener{
+public class M3User2Test implements Mtp3Listener{
 	
 	// ^ thats why i prefered mtps as interfacess......
 	private M3UserAgent agent;
@@ -54,7 +55,7 @@ public class M3User2Test implements MTPListener{
 		rcvConnector = new ArrayList<byte[]>();
 		rcvAgent = new ArrayList<byte[]>();
 		
-		this.mtp3 = new ExtendedMtp3("TEST_MTP");
+		this.mtp3 = new ExtendedMtp3();
 		
 		agent = new M3UserAgent();
 		agent.setMtp3(this.mtp3);
@@ -67,7 +68,7 @@ public class M3User2Test implements MTPListener{
 		props.put("server.port", "1345");
 		
 		connector = new M3UserConnector(props);
-		connector.addMTPListener(this);
+		connector.addMtp3Listener(this);
 		
 		index = 0;
 		sendData = new ArrayList<byte[]>();
@@ -166,39 +167,45 @@ public class M3User2Test implements MTPListener{
 	}
 	
 	
-	
-	
-	private class ExtendedMtp3 extends Mtp3
+	private class ExtendedMtp3 implements Mtp3
 	{
-
-		public ExtendedMtp3(String name) {
-			super(name);
-			// TODO Auto-generated constructor stub
-		}
-
+		private Mtp3Listener listener;
 
 		/* (non-Javadoc)
-		 * @see org.mobicents.protocols.ss7.mtp.Mtp3#linkFailed(org.mobicents.protocols.ss7.mtp.Mtp2)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3#addMtp3Listener(org.mobicents.protocols.ss7.mtp.Mtp3Listener)
 		 */
-		@Override
-		public void linkFailed(Mtp2 link) {
-			super.mtpUser.linkDown();
+		public void addMtp3Listener(Mtp3Listener lst) {
+			this.listener = lst;
+			
 		}
-
 
 		/* (non-Javadoc)
-		 * @see org.mobicents.protocols.ss7.mtp.Mtp3#linkUp(org.mobicents.protocols.ss7.mtp.Mtp2)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3#getDpc()
 		 */
-		@Override
-		public void linkUp(Mtp2 link) {
-			super.mtpUser.linkUp();
+		public int getDpc() {
+			// TODO Auto-generated method stub
+			return 0;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3#getOpc()
+		 */
+		public int getOpc() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3#removeMtp3Listener(org.mobicents.protocols.ss7.mtp.Mtp3Listener)
+		 */
+		public void removeMtp3Listener(Mtp3Listener lst) {
+			this.listener = null;
+			
+		}
 
 		/* (non-Javadoc)
 		 * @see org.mobicents.protocols.ss7.mtp.Mtp3#send(byte[])
 		 */
-		@Override
 		public boolean send(byte[] msg) {
 			rcvAgent.add(msg);
 			if(index<sendData.size())
@@ -207,9 +214,57 @@ public class M3User2Test implements MTPListener{
 			}
 			return true;
 		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3#setDpc(int)
+		 */
+		public void setDpc(int dpc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3#setLinks(java.util.List)
+		 */
+		public void setLinks(List<Mtp2> channels) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3#setOpc(int)
+		 */
+		public void setOpc(int opc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3#setSelectorFactory(org.mobicents.protocols.ss7.mtp.SelectorFactory)
+		 */
+		public void setSelectorFactory(SelectorFactory selectorFactory) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3#start()
+		 */
+		public void start() throws IOException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3#stop()
+		 */
+		public void stop() throws IOException {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
-
+	
 
 
 }

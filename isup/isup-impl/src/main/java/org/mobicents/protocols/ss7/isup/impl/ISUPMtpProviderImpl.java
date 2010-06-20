@@ -27,8 +27,8 @@ import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.mtp.ActionReference;
-import org.mobicents.protocols.ss7.mtp.Mtp3;
-import org.mobicents.protocols.ss7.stream.MTPListener;
+import org.mobicents.protocols.ss7.mtp.Mtp3Impl;
+import org.mobicents.protocols.ss7.mtp.Mtp3Listener;
 import org.mobicents.protocols.ss7.stream.MTPProvider;
 
 
@@ -39,7 +39,7 @@ import org.mobicents.protocols.ss7.stream.MTPProvider;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MTPListener {
+class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, Mtp3Listener {
 
 	private static final Logger logger = Logger.getLogger(ISUPMtpProviderImpl.class);
     private MTPProvider mtpProvider;
@@ -76,7 +76,7 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MTPL
         this.sls = Integer.parseInt(props.getProperty("isup.sls"));
         this.ssi = Integer.parseInt(props.getProperty("isup.ssi"));
         //this.si  = Integer.parseInt(props.getProperty("isup.si"));
-        this.si = Mtp3._SI_SERVICE_ISUP;
+        this.si = Mtp3Impl._SI_SERVICE_ISUP;
         this.actionReference = new ActionReference(opc,dpc,sls,si,ssi);
         
     }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
+import org.mobicents.protocols.ss7.mtp.Mtp3Listener;
 import org.mobicents.protocols.ss7.mtp.MtpUser;
 import org.mobicents.protocols.ss7.stream.tlv.LinkStatus;
 import org.mobicents.protocols.ss7.stream.tlv.TLVInputStream;
@@ -22,7 +23,7 @@ import org.mobicents.protocols.ss7.stream.tlv.Tag;
  * @author baranowb
  * 
  */
-public class LinkStateProtocol implements MtpUser {
+public class LinkStateProtocol implements Mtp3Listener {
 
 	private static final Logger logger = Logger.getLogger(LinkStateProtocol.class);
 	// /////////////////
@@ -72,15 +73,15 @@ public class LinkStateProtocol implements MtpUser {
 	// ////////////////
 	// Provider part //
 	// ////////////////
-	private ArrayList<MTPListener> mtpListeners = new ArrayList<MTPListener>();
+	private ArrayList<Mtp3Listener> mtpListeners = new ArrayList<Mtp3Listener>();
 
-	public void addMTPListener(MTPListener lst) {
+	public void addMtp3Listener(Mtp3Listener lst) {
 		if (lst != null && !this.mtpListeners.contains(lst)) {
 			this.mtpListeners.add(lst);
 		}
 	}
 
-	public void removeMTPListener(MTPListener lst) {
+	public void removeMtp3Listener(Mtp3Listener lst) {
 		if (lst != null && this.mtpListeners.contains(lst)) {
 			this.mtpListeners.remove(lst);
 		}
@@ -102,7 +103,7 @@ public class LinkStateProtocol implements MtpUser {
 			this.pushData(_LINK_STATE_DOWN);
 		} else {
 			//this is provider side
-			for(MTPListener lst:this.mtpListeners)
+			for(Mtp3Listener lst:this.mtpListeners)
 			{
 				try
 				{
@@ -128,7 +129,7 @@ public class LinkStateProtocol implements MtpUser {
 			this.pushData(_LINK_STATE_UP);
 		} else {
 			//this is provider side, linkup means also connection up :)
-			for(MTPListener lst:this.mtpListeners)
+			for(Mtp3Listener lst:this.mtpListeners)
 			{
 				try
 				{
@@ -190,16 +191,16 @@ public class LinkStateProtocol implements MtpUser {
 		{
 			if(mtp == null)
 			{
-				this.mtp3.setUserPart(null);
+				this.mtp3.removeMtp3Listener(this);
 			}else
 			{
-				this.mtp3.setUserPart(this);
+				//this.mtp3.addMtp3Listener(this);
 			}
 		}
 		this.mtp3 = mtp;
 		if(this.mtp3!=null)
 		{
-			this.mtp3.setUserPart(this);
+			this.mtp3.addMtp3Listener(this);
 		}
 	}
 
@@ -242,7 +243,7 @@ public class LinkStateProtocol implements MtpUser {
 								//?
 								linkUp();
 							}
-							for(MTPListener lst:this.mtpListeners)
+							for(Mtp3Listener lst:this.mtpListeners)
 							{
 								try{
 									lst.receive(linkData);

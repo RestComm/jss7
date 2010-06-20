@@ -67,7 +67,7 @@ public class ISUPStackImpl implements ISUPStack {
             configure();
             if(this.mtpTransportProvider!=null)
             {
-            	this.mtpTransportProvider.addMtpListener(this.isupMtpProvider);
+            	this.mtpTransportProvider.addMtp3Listener(this.isupMtpProvider);
             }else
             {
             	//this.sccpTransportProvider.setSccpListener(this.isupSccpProvider);
@@ -79,7 +79,7 @@ public class ISUPStackImpl implements ISUPStack {
 
     public void stop() {
         if (started) {
-            this.mtpTransportProvider.removeMtpListener(this.isupMtpProvider);
+            this.mtpTransportProvider.removeMtp3Listener(this.isupMtpProvider);
             this.mtpTransportProvider.stop();
             terminate();
             this.started = false;

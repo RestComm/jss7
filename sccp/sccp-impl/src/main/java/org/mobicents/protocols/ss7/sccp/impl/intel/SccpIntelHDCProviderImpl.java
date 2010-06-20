@@ -23,6 +23,7 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.ActionReference;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
+import org.mobicents.protocols.ss7.mtp.Mtp3Impl;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.Handler;
@@ -74,7 +75,7 @@ public class SccpIntelHDCProviderImpl extends SccpProviderImpl implements Runnab
 		sls = Integer.parseInt(props.getProperty("sccp.sls"));
 		ssf = Integer.parseInt(props.getProperty("sccp.ssi"));
 		//si = Integer.parseInt(props.getProperty("sccp.si"));
-		this.si = Mtp3._SI_SERVICE_SCCP;
+		this.si = Mtp3Impl._SI_SERVICE_SCCP;
 
 		ipc = new InterProcessCommunicator(src, dst);
 		logger.info("Started IPC");

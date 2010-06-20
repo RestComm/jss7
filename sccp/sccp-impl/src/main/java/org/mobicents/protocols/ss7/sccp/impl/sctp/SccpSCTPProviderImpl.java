@@ -10,6 +10,8 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.ActionReference;
+import org.mobicents.protocols.ss7.mtp.Mtp3Impl;
+import org.mobicents.protocols.ss7.mtp.Mtp3Listener;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
@@ -18,18 +20,18 @@ import org.mobicents.protocols.ss7.sccp.impl.ud.XUnitDataImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.sccp.ud.UDBase;
-import org.mobicents.protocols.ss7.stream.MTPListener;
+
 import org.mobicents.protocols.ss7.stream.MTPProvider;
 import org.mobicents.protocols.ss7.stream.MTPProviderFactory;
 
 
 
 
-public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListener {
+public class SccpSCTPProviderImpl extends SccpProviderImpl implements Mtp3Listener {
 	private static final Logger logger = Logger.getLogger(SccpSCTPProviderImpl.class);
 
 	private MTPProvider mtpProvider;
-	private boolean linkUp  =false;
+	private boolean linkUp  = false;
 
 	private int opc;
 
@@ -50,14 +52,14 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 
 	public SccpSCTPProviderImpl(MTPProvider provider,Properties props) {
 		this.mtpProvider = provider;
-		this.mtpProvider.addMtpListener(this);
+		this.mtpProvider.addMtp3Listener(this);
 		//FIXME: move this to mtp provider?
 		this.opc = Integer.parseInt(props.getProperty("sccp.opc"));
         this.dpc = Integer.parseInt(props.getProperty("sccp.dpc"));
         this.sls = Integer.parseInt(props.getProperty("sccp.sls"));
         this.ssi = Integer.parseInt(props.getProperty("sccp.ssi"));
         //this.si  = Integer.parseInt(props.getProperty("sccp.si"));
-        this.si = Mtp3._SI_SERVICE_SCCP;
+        this.si = Mtp3Impl._SI_SERVICE_SCCP;
 	}
 
 	public void receive(byte[] arg2) {
@@ -133,7 +135,7 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 				{
 					logger.info("Sccp TCP Provider default MTP3 Label: DPC["+dpc+"] OPC["+opc+"] SLS["+sls+"] SI["+si+"] SSI["+ssi+"]");
 				}
-				Mtp3.writeRoutingLabel(buf, si, ssi, sls, dpc, opc);
+				Mtp3Impl.writeRoutingLabel(buf, si, ssi, sls, dpc, opc);
 				
 			}
 			if(logger.isInfoEnabled())
@@ -153,7 +155,7 @@ public class SccpSCTPProviderImpl extends SccpProviderImpl implements MTPListene
 		// {
 		// this.mtp3.stop();
 		// }
-		this.mtpProvider.removeMtpListener(this);
+		this.mtpProvider.removeMtp3Listener(this);
 		this.mtpProvider.stop();
 		this.mtpProvider = null;
 

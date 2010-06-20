@@ -4,6 +4,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import org.mobicents.protocols.ss7.mtp.Mtp3;
+import org.mobicents.protocols.ss7.mtp.Mtp3Listener;
 
 
 
@@ -70,9 +71,9 @@ public interface StreamForwarder {
 	
 	public void setMtp3(Mtp3 mtp);
 	
-	public void addMTPListener(MTPListener lst);
+	public void addMtp3Listener(Mtp3Listener lst);
 	
-	public void removeMTPListener(MTPListener lst);
+	public void removeMtp3Listener(Mtp3Listener lst);
 	
 	//junit method
 	public LinkStateProtocol getLinkStateProtocol();

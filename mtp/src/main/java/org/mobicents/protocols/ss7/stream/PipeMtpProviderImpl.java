@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.mobicents.protocols.ss7.mtp.Mtp3Listener;
 import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
 
 
@@ -21,7 +22,7 @@ public class PipeMtpProviderImpl implements MTPProvider {
 
 	
 	private PipeMtpProviderImpl other;
-	private MTPListener listener;
+	private Mtp3Listener listener;
 	
 	
 	
@@ -65,7 +66,7 @@ public class PipeMtpProviderImpl implements MTPProvider {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.stream.MTPProvider#addMtpListener(org.mobicents.protocols.ss7.stream.MTPListener)
 	 */
-	public void addMTPListener(MTPListener lst) {
+	public void addMtp3Listener(Mtp3Listener lst) {
 		listener = lst;
 
 	}
@@ -73,7 +74,7 @@ public class PipeMtpProviderImpl implements MTPProvider {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.stream.MTPProvider#removeMtpListener(org.mobicents.protocols.ss7.stream.MTPListener)
 	 */
-	public void removeMTPListener(MTPListener lst) {
+	public void removeMtp3Listener(Mtp3Listener lst) {
 		if(lst == this.listener)
 			this.listener = null;
 
