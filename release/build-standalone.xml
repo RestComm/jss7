@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project name="ss7.release.sf" default="package" basedir=".">
 
-	<!-- Diameter Components Versions -->
+	<!-- Components Versions -->
 	<property name="RELEASE_VERSION" value="1.0.0.BETA1" />
 
 	<property name="parent_VERSION" value="1.0.0.BETA2" />
