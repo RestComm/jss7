@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<packaging>pom</packaging>
+	<artifactId>ss7-external-components-checkout</artifactId>
+	<groupId>org.mobicents</groupId>
+	<version>1.0</version>
+
+	<name>Mobicents :: SS7 :: ${pom.artifactId}</name>
+	
+	<properties>
+		<checkout.basedir>${checkout_base_dir}</checkout.basedir>
+		<checkout.username>mobicents-read-only</checkout.username>
+		<checkout.password></checkout.password>
+		
+		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/asn/asn-${asn_version}</asn.connectionURL>
+	</properties>
+	
+	<profiles>
+		<profile>
+			<id>checkout-asn</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-scm-plugin</artifactId>
+						<inherited>false</inherited>
+						<executions>
+							<execution>
+								<id>jain-slee-checkout</id>
+								<goals>
+									<goal>checkout</goal>
+								</goals>
+								<phase>validate</phase>
+								<configuration>
+									<scmVersion>HEAD</scmVersion>
+									<scmVersionType>revision</scmVersionType>
+									<skipCheckoutIfExists>true</skipCheckoutIfExists>
+									<checkoutDirectory>${checkout.basedir}/asn</checkoutDirectory>
+									<connectionUrl>${asn.connectionURL}</connectionUrl>
+									<username>${checkout.username}</username>
+									<password>${checkout.password}</password>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>update-asn</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-scm-plugin</artifactId>
+						<inherited>false</inherited>
+						<executions>
+							<execution>
+								<id>asn-update</id>
+								<goals>
+									<goal>update</goal>
+								</goals>
+								<phase>validate</phase>
+								<configuration>
+									<basedir>
+										${checkout.basedir}/asn
+									</basedir>
+									<scmVersion>HEAD</scmVersion>
+									<scmVersionType>revision</scmVersionType>
+									<connectionUrl>${asn.connectionURL}/</connectionUrl>
+									<username>${checkout.username}</username>
+									<password>${checkout.password}</password>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+		
+	<repositories>
+		<repository>
+			<id>jboss</id>
+			<name>JBoss Repository</name>
+			<url>http://repository.jboss.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>jboss-snapshots</id>
+			<name>JBoss Snapshot Repository</name>
+			<url>http://snapshots.jboss.org/maven2</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+</project>
