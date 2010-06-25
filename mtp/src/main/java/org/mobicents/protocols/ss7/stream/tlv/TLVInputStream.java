@@ -138,7 +138,7 @@ public class TLVInputStream extends FilterInputStream{
 		if(len == 0x80)
 		{
 			//its undefined LEN...
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("Undefined len is not supported!");
 		}
 
 		byte[] data = new byte[len];

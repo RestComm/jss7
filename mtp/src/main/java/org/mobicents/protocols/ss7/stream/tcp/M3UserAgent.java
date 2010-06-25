@@ -13,6 +13,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,7 +26,7 @@ import org.mobicents.protocols.ss7.stream.InterceptorHook;
 import org.mobicents.protocols.ss7.stream.LinkStateProtocol;
 import org.mobicents.protocols.ss7.stream.StreamForwarder;
 
-public class M3UserAgent implements StreamForwarder, Runnable, M3UserAgentMBean {
+public class M3UserAgent implements StreamForwarder, Runnable {
 	private static final Logger logger = Logger.getLogger(M3UserAgent.class);
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 	private int port = 1345;
@@ -141,7 +142,12 @@ public class M3UserAgent implements StreamForwarder, Runnable, M3UserAgentMBean 
 	public void streamData(ByteBuffer data) {
 		//FIXME: Amit/Oleg this has to be changed to something else!
 		//this.txBuff.put(data);
+		byte[] ddd = new byte[data.limit()];
+		System.arraycopy(data.array(), 0, ddd, 0, data.limit());
+		
+		
 		ByteBuffer toSendData = LinkStateProtocol.copyToPosition(data);
+		
 		this.dataToSend.add(toSendData);
 		
 	}
@@ -363,8 +369,13 @@ public class M3UserAgent implements StreamForwarder, Runnable, M3UserAgentMBean 
 		// retain its partial content
 		// so on next read it can continue to decode!
 		this.readBuff.flip();
-
-		this.linkStateProtocol.streamDataReceived(this.readBuff);
+		
+		try{
+			this.linkStateProtocol.streamDataReceived(this.readBuff);
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 
 		this.readBuff.clear();
 		// this.layer3.send(si, ssf, this.readBuff.array());

@@ -57,6 +57,7 @@ public class TLVOutputStream extends ByteArrayOutputStream {
 	 * @throws IOException 
 	 */
 	public void writeLength(int v) throws IOException {
+		
 		if(v == 0x80)
 		{
 			this.write(0x80);
@@ -76,6 +77,7 @@ public class TLVOutputStream extends ByteArrayOutputStream {
 			} else {
 				count = 1;
 			}
+			
 			this.write(count | 0x80);
 			// now we know how much bytes we need from V, for positive with MSB set
 			// on MSB-like octet, we need trailing 0x00, this L+1;

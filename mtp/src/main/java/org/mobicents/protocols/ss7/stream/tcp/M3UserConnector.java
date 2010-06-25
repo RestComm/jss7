@@ -419,11 +419,11 @@ public class M3UserConnector extends MTPProviderImpl implements Runnable , Strea
         	logger.debug("Received data: " + this.readBuff);
 		 }
 		try{
-		this.linkStateProtocol.streamDataReceived(readBuff);
-		}catch(BufferOverflowException b)
+			this.linkStateProtocol.streamDataReceived(readBuff);
+		}catch(Exception b)
 		{
 			b.printStackTrace();
-			throw b;
+			
 		}
 
 

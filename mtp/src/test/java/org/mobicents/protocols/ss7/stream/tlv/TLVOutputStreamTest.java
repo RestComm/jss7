@@ -39,5 +39,5 @@ public class TLVOutputStreamTest extends TestCase {
 		tlv.writeData(data);
 		assertTrue("Expected value does not match encoded! \n"+Arrays.toString(expected)+"\n"+Arrays.toString(data), Arrays.equals(expected, tlv.toByteArray()));
 	}
-	
+
 }

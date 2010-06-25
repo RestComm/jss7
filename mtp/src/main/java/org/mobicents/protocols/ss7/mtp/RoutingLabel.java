@@ -14,18 +14,18 @@ import org.apache.log4j.Logger;
  * @author baranowb
  *
  */
-public class ActionReference {
-	private static final Logger logger = Logger.getLogger(ActionReference.class);
+public class RoutingLabel {
+	private static final Logger logger = Logger.getLogger(RoutingLabel.class);
 	//used for forging mtp3 message, 
 	private byte[] mtp3Header;
 	
-	public ActionReference(int opc,int dpc,int sls,int si,int ssi) {
+	public RoutingLabel(int opc,int dpc,int sls,int si,int ssi) {
 		super();
 		this.mtp3Header = new byte[5];
 		Mtp3Impl.writeRoutingLabel(mtp3Header, si, ssi, sls, dpc, opc);
 	}
 	
-	public ActionReference()
+	public RoutingLabel()
 	{}
 	/**
 	 * Expects MTP3 MSU, it extracts routing labels and stores inside byte[], which can be copied directly after its created.

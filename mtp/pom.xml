@@ -8,7 +8,7 @@
 		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>MTP</artifactId>
+	<artifactId>mtp</artifactId>
 	<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 	<version>1.0.0.BETA3-SNAPSHOT</version>
 

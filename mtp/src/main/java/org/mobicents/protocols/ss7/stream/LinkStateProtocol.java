@@ -219,8 +219,9 @@ public class LinkStateProtocol implements Mtp3Listener {
 		// consume;
 
 		ByteBuffer[] readResult = null;
-
+		
 		while ((readResult = this.hdlcHandler.processRx(data)) != null) {
+		
 			for (ByteBuffer b : readResult) {
 
 				try {
@@ -228,16 +229,19 @@ public class LinkStateProtocol implements Mtp3Listener {
 					int tag = tlvInputStream.readTag();
 					if (tag == Tag._TAG_LINK_DATA) {
 						byte[] linkData = tlvInputStream.readLinkData();
-
+		
 						if (this.mtp3 != null) {
 							if(linkUp)
 							{
+		
 								this.mtp3.send(linkData);
 							}else
 							{
+		
 								//it just came after link went down. Do nothing?
 							}
 						} else {
+		
 							if(!linkUp)
 							{
 								//?
@@ -245,6 +249,7 @@ public class LinkStateProtocol implements Mtp3Listener {
 							}
 							for(Mtp3Listener lst:this.mtpListeners)
 							{
+							
 								try{
 									lst.receive(linkData);
 								}catch(Exception e)
@@ -313,13 +318,17 @@ public class LinkStateProtocol implements Mtp3Listener {
 	 */
 	public void streamDataToSend(byte[] data) throws IOException {
 		//check some preconditions?
+		try{
 		if (this.mtp3 != null) {
 			//we reside on MTP side
 			//this is called only when link is up
+			
 			if(transportUp)
 			{
+				
 				TLVOutputStream tlo = new TLVOutputStream();
 				tlo.writeData(data);
+				
 				pushData(tlo.toByteArray());
 			}else
 			{
@@ -330,13 +339,19 @@ public class LinkStateProtocol implements Mtp3Listener {
 			
 			if(this.linkUp && this.transportUp)
 			{
+				
 				TLVOutputStream tlo = new TLVOutputStream();
 				tlo.writeData(data);
+				
 				pushData(tlo.toByteArray());
 			}else
 			{
 				throw new IOException("Cannot send data, connection["+transportUp+"] link["+linkUp+"] is down: ");
 			}
+		}
+		}catch(Exception e)
+		{
+			e.printStackTrace();
 		}
 	}
 	/**
@@ -346,23 +361,28 @@ public class LinkStateProtocol implements Mtp3Listener {
 	private synchronized void  pushData(byte[] data) {
 		//encode
 		// this.txBuffer.add(ByteBuffer.wrap(data));
+		
 		ByteBuffer bb = ByteBuffer.allocate(data.length);
 		bb.put(data);
 		bb.flip();
+		
 		this.hdlcHandler.addToTxBuffer(bb);
+		
 		
 		
 		// while (!this.hdlcHandler.isTxBufferEmpty()) {
 		if (!this.hdlcHandler.isTxBufferEmpty()) {
-
+			
 			// ByteBuffer buf = (ByteBuffer) txBuffer.get(0);
 			txBuff.clear();
 			try{
+				
 				this.hdlcHandler.processTx(txBuff);
 			}catch(BufferOverflowException bbbb)
 			{
 				bbbb.printStackTrace();
 			}
+			
 			txBuff.flip();
 			this.streamForwarder.streamData(txBuff);
 			

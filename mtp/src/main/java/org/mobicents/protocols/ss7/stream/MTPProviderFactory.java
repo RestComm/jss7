@@ -34,7 +34,7 @@ public class MTPProviderFactory {
 			try {
 				
 				M3UserConnector mtpProvider = new M3UserConnector(properties);
-				mtpProvider.start();
+				//mtpProvider.start();
 				return mtpProvider;
 			} catch (Exception e) {
 				
@@ -46,7 +46,7 @@ public class MTPProviderFactory {
 				Class cc = Class.forName(d);
 				Constructor c =cc.getConstructor(Properties.class);
 				MTPProviderImpl mtpProvider = (MTPProviderImpl) c.newInstance(properties);
-				mtpProvider.start();
+				//mtpProvider.start();
 				return mtpProvider;
 			} catch (Exception e) {
 				

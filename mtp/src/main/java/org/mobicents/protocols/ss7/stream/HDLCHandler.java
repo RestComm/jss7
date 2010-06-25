@@ -69,7 +69,7 @@ public class HDLCHandler {
 			0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78 };
 
 	//filler buffer, we need this to properly use hdlc. It needs contant stream of data, otherwise it consumes valid buffers from ends.
-	private static final byte[] _FILLER_BUFFER_ = new byte[] { 0x0,(byte) 0xFF,(byte) 0xFF,0x0};
+	private static final byte[] _FILLER_BUFFER_ = new byte[] { (byte) 0xF0,(byte) 0x0F};
 
 	public HDLCHandler() {
 		super();
