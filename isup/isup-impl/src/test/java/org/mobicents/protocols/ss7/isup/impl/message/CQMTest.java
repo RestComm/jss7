@@ -30,7 +30,7 @@ public class CQMTest extends MessageHarness {
 		byte[] message = getDefaultBody();
 
 		//CircuitGroupQueryMessage grs=new CircuitGroupQueryMessageImpl(this,message);
-		CircuitGroupQueryMessage grs=super.messageFactory.createCQM();
+		CircuitGroupQueryMessage grs=super.messageFactory.createCQM(0);
 		grs.decodeElement(message);
 
 		
@@ -73,6 +73,6 @@ public class CQMTest extends MessageHarness {
 	}
 	@Override
 	protected ISUPMessage getDefaultMessage() {
-		return super.messageFactory.createCQM();
+		return super.messageFactory.createCQM(0);
 	}
 }

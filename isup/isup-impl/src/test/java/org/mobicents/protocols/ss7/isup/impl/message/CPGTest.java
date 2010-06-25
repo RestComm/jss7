@@ -28,7 +28,7 @@ public class CPGTest extends MessageHarness{
 		byte[] message = getDefaultBody();
 
 		//CallProgressMessage cpg=new CallProgressMessageImpl(this,message);
-		CallProgressMessage cpg=super.messageFactory.createCPG();
+		CallProgressMessage cpg=super.messageFactory.createCPG(0);
 		cpg.decodeElement(message);
 		assertNotNull(cpg.getParameter(EventInformation._PARAMETER_CODE));
 		assertNotNull(cpg.getParameter(BackwardCallIndicators._PARAMETER_CODE));
@@ -114,6 +114,6 @@ public class CPGTest extends MessageHarness{
 
 	@Override
 	protected ISUPMessage getDefaultMessage() {
-		return super.messageFactory.createCPG();
+		return super.messageFactory.createCPG(0);
 	}
 }

@@ -29,7 +29,7 @@ import org.mobicents.protocols.ss7.isup.message.ReleaseMessage;
 import org.mobicents.protocols.ss7.isup.message.ResetCircuitMessage;
 import org.mobicents.protocols.ss7.isup.message.UnblockingAckMessage;
 import org.mobicents.protocols.ss7.isup.message.UnblockingMessage;
-import org.mobicents.protocols.ss7.mtp.ActionReference;
+import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 
 
 /**
@@ -49,7 +49,7 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 	 * @param provider
 	 * @param stack
 	 */
-	public ISUPClientTransactionImpl(ISUPMessage message, ISUPProviderBase provider, ISUPStackImpl stack, ActionReference actionReference) {
+	public ISUPClientTransactionImpl(ISUPMessage message, ISUPProviderBase provider, ISUPStackImpl stack, RoutingLabel actionReference) {
 		super(message, provider, stack, actionReference);
 
 	}

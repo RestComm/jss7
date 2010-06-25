@@ -37,6 +37,6 @@ public class UBLTest extends MessageHarness{
 	}
 	@Override
 	protected ISUPMessage getDefaultMessage() {
-		return super.messageFactory.createUBL();
+		return super.messageFactory.createUBL(0);
 	}
 }

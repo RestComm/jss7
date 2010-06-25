@@ -17,9 +17,7 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
-import org.mobicents.protocols.ss7.mtp.ActionReference;
-
-
+import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 
 /**
  * Start time:14:09:04 2009-04-20<br>
@@ -69,34 +67,30 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 	protected Object source;
 
 	protected ISUPTransaction tx;
-	
+
 	protected CircuitIdentificationCode cic;
 
-	//reference to MTP3 - 
-	protected ActionReference actionReference;
-	
-	public ISUPMessageImpl(Object source,Set<Integer> mandatoryCodes,Set<Integer> mandatoryVariableCodes,Set<Integer> optionalCodes,Map<Integer, Integer> mandatoryCode2Index,Map<Integer, Integer> mandatoryVariableCode2Index,Map<Integer, Integer> optionalCode2Index)  {
+	// reference to MTP3 -
+	protected RoutingLabel actionReference;
+
+	public ISUPMessageImpl(Object source, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes,
+			Map<Integer, Integer> mandatoryCode2Index, Map<Integer, Integer> mandatoryVariableCode2Index,
+			Map<Integer, Integer> optionalCode2Index) {
 		super();
 		this.source = source;
-		
+
 		this.f_Parameters = new TreeMap<Integer, ISUPParameter>();
 		this.v_Parameters = new TreeMap<Integer, ISUPParameter>();
 		this.o_Parameters = new TreeMap<Integer, ISUPParameter>();
-		
-		
+
 		this.mandatoryCodes = mandatoryCodes;
 		this.mandatoryVariableCodes = mandatoryVariableCodes;
 		this.optionalCodes = optionalCodes;
-		
+
 		this.mandatoryCodeToIndex = mandatoryCode2Index;
 		this.mandatoryVariableCodeToIndex = mandatoryVariableCode2Index;
 		this.optionalCodeToIndex = optionalCode2Index;
-		
-		
-		
-		
-		
-		
+
 	}
 
 	/**
@@ -116,7 +110,7 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 	 *            - priority of the ISUP message
 	 */
 	public ISUPMessageImpl() {
-		//TODO, THIS WILL BE REMOVED!!
+		// TODO, THIS WILL BE REMOVED!!
 		mandatoryCodes = new HashSet<Integer>();
 		mandatoryVariableCodes = new HashSet<Integer>();
 		optionalCodes = new HashSet<Integer>();
@@ -127,11 +121,11 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 	}
 
 	/**
-	 * 	
+	 * 
 	 * @param source2
 	 */
 	public ISUPMessageImpl(Object source) {
-		//TODO, THIS WILL BE REMOVED!!
+		// TODO, THIS WILL BE REMOVED!!
 		mandatoryCodes = new HashSet<Integer>();
 		mandatoryVariableCodes = new HashSet<Integer>();
 		optionalCodes = new HashSet<Integer>();
@@ -139,7 +133,7 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 		mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
 		optionalCodeToIndex = new HashMap<Integer, Integer>();
 	}
-	
+
 	/**
 	 * @return <ul>
 	 *         <li><b>true</b> - if all requried parameters are set</li>
@@ -156,25 +150,24 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 	 */
 	public abstract MessageType getMessageType();
 
-	
-
 	// ///////////////
 	// TX MESSAGE //
 	// ///////////////
 
 	public ISUPTransaction getTransaction() {
-		
+
 		return this.tx;
 	}
+
 	public void setTransaction(ISUPTransaction tx) {
 		this.tx = tx;
 	}
-	
-	public TransactionKey generateTransactionKey() {
-		//XXX: this must be done by each msg, to be implemented.
-		//NOTE: its subject to change!
 
-		throw new UnsupportedOperationException(""+getMessageType());
+	public TransactionKey generateTransactionKey() {
+		// XXX: this must be done by each msg, to be implemented.
+		// NOTE: its subject to change!
+
+		throw new UnsupportedOperationException("" + getMessageType());
 	}
 
 	// ////////////////
@@ -211,9 +204,8 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 		// defined by the message type; thus, the names of the parameters and
 		// the length indicators are not
 		// included in the message.
-		if(this.cic == null)
-		{
-			//this will be changed to different exception
+		if (this.cic == null) {
+			// this will be changed to different exception
 			throw new IOException("CIC is not set!");
 		}
 		this.cic.encodeElement(bos);
@@ -235,38 +227,30 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 	 *            of optional part, otherwise it will encode this octet as zeros
 	 * @throws IOException
 	 */
-	protected void encodeMandatoryVariableParameters(Map<Integer, ISUPParameter> parameters, ByteArrayOutputStream bos, boolean isOptionalPartPresent) throws IOException {
+	protected void encodeMandatoryVariableParameters(Map<Integer, ISUPParameter> parameters, ByteArrayOutputStream bos,
+			boolean isOptionalPartPresent) throws IOException {
 		// bos.write(new byte[4]);
-		//byte[] pointers = new byte[parameters.size() + 1];
+		// byte[] pointers = new byte[parameters.size() + 1];
 		byte[] pointers = null;
-		//complicated
-		if(!mandatoryVariablePartPossible())
-		{
-			//we ommit pointer to this part, go straight for optional pointer.
-			if(optionalPartIsPossible())
-			{
-				if(isOptionalPartPresent)
-				{
-					pointers=new byte[]{0x01};
-				}else
-				{
-					//zeros
-					pointers=new byte[]{0x00};
+		// complicated
+		if (!mandatoryVariablePartPossible()) {
+			// we ommit pointer to this part, go straight for optional pointer.
+			if (optionalPartIsPossible()) {
+				if (isOptionalPartPresent) {
+					pointers = new byte[] { 0x01 };
+				} else {
+					// zeros
+					pointers = new byte[] { 0x00 };
 				}
 				bos.write(pointers);
-			}else
-			{
-				//do nothing?
+			} else {
+				// do nothing?
 			}
-			
-		}else
-		{
-			if(optionalPartIsPossible())
-			{
+
+		} else {
+			if (optionalPartIsPossible()) {
 				pointers = new byte[parameters.size() + 1];
-			}
-			else
-			{
+			} else {
 				pointers = new byte[parameters.size()];
 			}
 			ByteArrayOutputStream parametersBodyBOS = new ByteArrayOutputStream();
@@ -284,11 +268,12 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 				if (index == 0) {
 					lastParameterLength = currentParameterLength;
 
-					//This creates pointer to first mandatory variable param, check on optional is requried, since if its not defined
-					//by message, pointer is ommited.
-					pointers[index] = (byte) (parameters.size()+(optionalPartIsPossible()?1:0));
+					// This creates pointer to first mandatory variable param,
+					// check on optional is requried, since if its not defined
+					// by message, pointer is ommited.
+					pointers[index] = (byte) (parameters.size() + (optionalPartIsPossible() ? 1 : 0));
 				} else {
-			
+
 					pointers[index] = (byte) (pointers[index - 1] + lastParameterLength);
 					lastParameterLength = currentParameterLength;
 				}
@@ -296,32 +281,22 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 				parametersBodyBOS.write(currentParameterLength);
 				parametersBodyBOS.write(body);
 			}
-			
-			
-			//we ommit pointer to this part, go straight for optional pointer.
-			if(optionalPartIsPossible())
-			{
-				if(isOptionalPartPresent)
-				{
+
+			// we ommit pointer to this part, go straight for optional pointer.
+			if (optionalPartIsPossible()) {
+				if (isOptionalPartPresent) {
 					pointers[pointers.length - 1] = (byte) (pointers[pointers.length - 2] + lastParameterLength);
-				}else
-				{
-					//zeros
-					//pointers=new byte[]{0x00};
+				} else {
+					// zeros
+					// pointers=new byte[]{0x00};
 				}
-			}else
-			{
-				//do nothing?
+			} else {
+				// do nothing?
 			}
-			
+
 			bos.write(pointers);
 			bos.write(parametersBodyBOS.toByteArray());
 		}
-		
-		
-		
-	
-		
 
 	}
 
@@ -335,7 +310,8 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 	 */
 	protected void encodeOptionalParameters(Map<Integer, ISUPParameter> parameters, ByteArrayOutputStream bos) throws IOException {
 
-		// NOTE: parameters MUST have as last endOfOptionalParametersParameter+1 param
+		// NOTE: parameters MUST have as last endOfOptionalParametersParameter+1
+		// param
 		for (ISUPParameter p : parameters.values()) {
 
 			if (p == null)
@@ -361,22 +337,20 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
 		int index = 0;
 		index += this.decodeMandatoryParameters(b, index);
-	
-		if(mandatoryVariablePartPossible())
+
+		if (mandatoryVariablePartPossible())
 			index += this.decodeMandatoryVariableParameters(b, index);
-		
-		
-		if(!this.optionalPartIsPossible() ||b.length==index || b[index] == 0x0)
-		{
+
+		if (!this.optionalPartIsPossible() || b.length == index || b[index] == 0x0) {
 			return index;
 		}
-	
-		//moving pointer to possible location 
-		//index++;
-		
-		//+1 for pointer location :)
-		index+=b[index];
-		
+
+		// moving pointer to possible location
+		// index++;
+
+		// +1 for pointer location :)
+		index += b[index];
+
 		index += this.decodeOptionalParameters(b, index);
 		return index;
 	}
@@ -385,18 +359,21 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 	protected abstract int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException;
 
 	/**
-	 * decodes ptrs and returns offset from passed index value to first optional parameter parameter
+	 * decodes ptrs and returns offset from passed index value to first optional
+	 * parameter parameter
+	 * 
 	 * @param b
 	 * @param index
 	 * @return
 	 * @throws ParameterRangeInvalidException
 	 */
 	protected int decodeMandatoryVariableParameters(byte[] b, int index) throws ParameterRangeInvalidException {
-		//FIXME: possibly this should also be per msg, since if msg lacks proper parameter, decoding wotn pick this up and will throw
+		// FIXME: possibly this should also be per msg, since if msg lacks
+		// proper parameter, decoding wotn pick this up and will throw
 		// some bad output, which wont give a clue about reason...
 		int readCount = 0;
-		//int optionalOffset = 0;
-		
+		// int optionalOffset = 0;
+
 		if (b.length - index > 0) {
 
 			byte extPIndex = -1;
@@ -411,26 +388,27 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 					byte[] parameterBody = new byte[parameterLength];
 					System.arraycopy(b, parameterLengthIndex + 1, parameterBody, 0, parameterLength);
 					decodeMandatoryVariableBody(parameterBody, parameterIndex);
-					
+
 				}
 
-				//optionalOffset = b[index + readCount];
+				// optionalOffset = b[index + readCount];
 			} catch (ArrayIndexOutOfBoundsException aioobe) {
-				throw new ParameterRangeInvalidException("Failed to read parameter, to few octets in buffer, parameter index: " + extPIndex, aioobe);
+				throw new ParameterRangeInvalidException(
+						"Failed to read parameter, to few octets in buffer, parameter index: " + extPIndex, aioobe);
 			} catch (IllegalArgumentException e) {
 				throw new ParameterRangeInvalidException("Failed to parse, paramet index: " + extPIndex, e);
 			}
 		} else {
-			throw new ParameterRangeInvalidException("To few bytes to decode mandatory variable part. There should be atleast on byte to indicate optional part.");
+			throw new ParameterRangeInvalidException(
+					"To few bytes to decode mandatory variable part. There should be atleast on byte to indicate optional part.");
 		}
 
-		//return readCount + optionalOffset;
+		// return readCount + optionalOffset;
 		return readCount;
 	}
 
 	protected int decodeOptionalParameters(byte[] b, int index) throws ParameterRangeInvalidException {
 
-		
 		int localIndex = index;
 
 		int readCount = 0;
@@ -446,7 +424,7 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 					continue;
 				}
 				byte extPCode = -1;
-				byte assumedParameterLength=-1;
+				byte assumedParameterLength = -1;
 				try {
 
 					byte parameterCode = b[localIndex++];
@@ -469,7 +447,8 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 					}
 
 				} catch (ArrayIndexOutOfBoundsException aioobe) {
-					throw new ParameterRangeInvalidException("Failed to read parameter, to few octets in buffer, parameter code: "+extPCode+", assumed length: "+assumedParameterLength, aioobe);
+					throw new ParameterRangeInvalidException("Failed to read parameter, to few octets in buffer, parameter code: "
+							+ extPCode + ", assumed length: " + assumedParameterLength, aioobe);
 				} catch (IllegalArgumentException e) {
 					throw new ParameterRangeInvalidException("Failed to parse parameter: " + extPCode, e);
 				}
@@ -488,11 +467,12 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 	protected abstract void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException;
 
 	protected abstract int getNumberOfMandatoryVariableLengthParameters();
-	
+
 	protected abstract boolean optionalPartIsPossible();
+
 	protected boolean mandatoryVariablePartPossible() {
-		
-		return getNumberOfMandatoryVariableLengthParameters()!=0;
+
+		return getNumberOfMandatoryVariableLengthParameters() != 0;
 	}
 
 	// ////////////////////////
@@ -521,8 +501,9 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 			this.o_Parameters.put(index, param);
 			return;
 		}
-		
-		throw new ParameterRangeInvalidException("Parameter with code: " + paramCode + " is not defined in any type: mandatory, mandatory variable or optional");
+
+		throw new ParameterRangeInvalidException("Parameter with code: " + paramCode
+				+ " is not defined in any type: mandatory, mandatory variable or optional");
 	}
 
 	public ISUPParameter getParameter(int parameterCode) throws ParameterRangeInvalidException {
@@ -541,7 +522,8 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 			return this.o_Parameters.get(index);
 		}
 
-		throw new ParameterRangeInvalidException("Parameter with code: " + parameterCode + " is not defined in any type: mandatory, mandatory variable or optional");
+		throw new ParameterRangeInvalidException("Parameter with code: " + parameterCode
+				+ " is not defined in any type: mandatory, mandatory variable or optional");
 	}
 
 	public void removeParameter(int parameterCode) throws ParameterRangeInvalidException {
@@ -558,11 +540,13 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 			int index = this.optionalCodeToIndex.get(parameterCode);
 			this.o_Parameters.remove(index);
 		}
-		throw new ParameterRangeInvalidException("Parameter with code: " + parameterCode + " is not defined in any type: mandatory, mandatory variable or optional");
+		throw new ParameterRangeInvalidException("Parameter with code: " + parameterCode
+				+ " is not defined in any type: mandatory, mandatory variable or optional");
 	}
-	public String toString()
-	{
-		return super.toString()+"["+getMessageType().getCode()+"]: F"+this.f_Parameters+", V"+this.v_Parameters+", O"+this.o_Parameters;
+
+	public String toString() {
+		return super.toString() + "[" + getMessageType().getCode() + "]: F" + this.f_Parameters + ", V" + this.v_Parameters + ", O"
+				+ this.o_Parameters;
 	}
 
 	public CircuitIdentificationCode getCircuitIdentificationCode() {
@@ -571,25 +555,22 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 
 	public void setCircuitIdentificationCode(CircuitIdentificationCode cic) {
 		this.cic = cic;
-		
+
 	}
 
 	/**
 	 * @return the actionReference
 	 */
-	public ActionReference getActionReference() {
+	public RoutingLabel getRoutingLabel() {
 		return actionReference;
 	}
 
 	/**
-	 * @param actionReference the actionReference to set
+	 * @param actionReference
+	 *            the actionReference to set
 	 */
-	public void setActionReference(ActionReference actionReference) {
+	public void setRoutingLabel(RoutingLabel actionReference) {
 		this.actionReference = actionReference;
 	}
-	
-	
-	
-	
-	
+
 }

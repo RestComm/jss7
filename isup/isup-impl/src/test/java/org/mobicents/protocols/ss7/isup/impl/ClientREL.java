@@ -46,18 +46,13 @@ public class ClientREL implements ISUPListener {
 	}
 
 	public void start() throws IllegalArgumentException, TransactionAlredyExistsException, ParameterRangeInvalidException, IOException {
-		ReleaseMessage rel = this.factory.createREL();
-		
-		//InitialAddressMessage iam = this.factory.createIAM();
+		ReleaseMessage rel = this.factory.createREL(12);
 
 		// create obligatory params!
 		CauseIndicators ci = this.parameterFactory.createCauseIndicators();
 
 		rel.setCauseIndicators(ci);
-		
-		CircuitIdentificationCode cic = this.parameterFactory.createCircuitIdentificationCode();
-		cic.setCIC(12);
-		rel.setCircuitIdentificationCode(cic);
+
 		
 		ctx = this.provider.createClientTransaction(rel);
 

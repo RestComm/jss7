@@ -34,7 +34,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
-			<artifactId>MTP</artifactId>
+			<artifactId>mtp</artifactId>
 		</dependency>
 	</dependencies>
 

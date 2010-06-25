@@ -30,7 +30,7 @@ public class CGUTest extends MessageHarness {
 		byte[] message = getDefaultBody();
 
 		//CircuitGroupUnblockingMessage cgb=new CircuitGroupUnblockingMessageImpl(this,message);
-		CircuitGroupUnblockingMessage cgb=super.messageFactory.createCGU();
+		CircuitGroupUnblockingMessage cgb=super.messageFactory.createCGU(0);
 		cgb.decodeElement(message);
 
 		
@@ -89,6 +89,6 @@ public class CGUTest extends MessageHarness {
 
 	@Override
 	protected ISUPMessage getDefaultMessage() {
-		return super.messageFactory.createCGU();
+		return super.messageFactory.createCGU(0);
 	}
 }

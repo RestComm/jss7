@@ -40,6 +40,6 @@ public class RELTest extends MessageHarness{
 	}
 	@Override
 	protected ISUPMessage getDefaultMessage() {
-		return super.messageFactory.createREL();
+		return super.messageFactory.createREL(0);
 	}
 }

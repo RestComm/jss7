@@ -25,7 +25,7 @@ public class IAMTest extends MessageHarness{
 		byte[] message = getDefaultBody();
 
 		//InitialAddressMessageImpl iam=new InitialAddressMessageImpl(this,message);
-		InitialAddressMessage iam=super.messageFactory.createIAM();
+		InitialAddressMessage iam=super.messageFactory.createIAM(0);
 		iam.decodeElement(message);
 		assertNotNull(iam.getNatureOfConnectionIndicators());
 		assertNotNull(iam.getForwardCallIndicators());
@@ -77,6 +77,6 @@ public class IAMTest extends MessageHarness{
 	}
 	@Override
 	protected ISUPMessage getDefaultMessage() {
-		return super.messageFactory.createIAM();
+		return super.messageFactory.createIAM(0);
 	}
 }

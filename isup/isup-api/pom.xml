@@ -26,6 +26,10 @@
             		<version>${junit.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<artifactId>mtp</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -36,6 +36,6 @@ public class UCICTest extends MessageHarness{
 	}
 	@Override
 	protected ISUPMessage getDefaultMessage() {
-		return super.messageFactory.createUCIC();
+		return super.messageFactory.createUCIC(0);
 	}
 }

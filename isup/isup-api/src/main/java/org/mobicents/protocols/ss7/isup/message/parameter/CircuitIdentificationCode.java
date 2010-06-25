@@ -14,7 +14,7 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  */
 public interface CircuitIdentificationCode extends ISUPParameter {
 
-	public long getCIC();
-	public void setCIC(long cic);
+	public int getCIC();
+	public void setCIC(int cic);
 	
 }

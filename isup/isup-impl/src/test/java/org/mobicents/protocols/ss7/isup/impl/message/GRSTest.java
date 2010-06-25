@@ -30,7 +30,7 @@ public class GRSTest extends MessageHarness {
 		byte[] message = getDefaultBody();
 
 		//CircuitGroupResetMessage grs=new CircuitGroupResetMessageImpl(this,message);
-		CircuitGroupResetMessage grs=super.messageFactory.createGRS();
+		CircuitGroupResetMessage grs=super.messageFactory.createGRS(0);
 		grs.decodeElement(message);
 		
 		try{
@@ -72,6 +72,6 @@ public class GRSTest extends MessageHarness {
 	}
 	@Override
 	protected ISUPMessage getDefaultMessage() {
-		return super.messageFactory.createGRS();
+		return super.messageFactory.createGRS(0);
 	}
 }

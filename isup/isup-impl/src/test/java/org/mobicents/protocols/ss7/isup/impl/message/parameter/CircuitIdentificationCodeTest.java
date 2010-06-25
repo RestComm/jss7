@@ -56,7 +56,7 @@ public class CircuitIdentificationCodeTest extends ParameterHarness {
 		CircuitIdentificationCodeImpl bci = new CircuitIdentificationCodeImpl();
 		bci.decodeElement(getBody1());
 		String[] methodNames = { "getCIC"};
-		Object[] expectedValues = { (long)0xFFF };
+		Object[] expectedValues = { (int)0xFFF };
 		super.testValues(bci, methodNames, expectedValues);
 	}
 
@@ -65,7 +65,7 @@ public class CircuitIdentificationCodeTest extends ParameterHarness {
 		bci.decodeElement(getBody2());
 
 		String[] methodNames = { "getCIC"};
-		Object[] expectedValues = { (long)0xCAB };
+		Object[] expectedValues = { (int)0xCAB };
 		super.testValues(bci, methodNames, expectedValues);
 	}
 

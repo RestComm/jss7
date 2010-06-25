@@ -21,6 +21,7 @@ import org.mobicents.protocols.ss7.isup.ISUPProvider;
 import org.mobicents.protocols.ss7.isup.ISUPServerTransaction;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.TransactionAlredyExistsException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
 
@@ -32,7 +33,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationC
  */
 public abstract class MessageHarness extends TestCase implements ISUPProvider {
 
-	protected ISUPMessageFactory messageFactory = new ISUPMessageFactoryImpl(this);
+	protected ISUPMessageFactory messageFactory = new ISUPMessageFactoryImpl(this, new ISUPParameterFactoryImpl());
 
 	// FIXME: add code to check values :)
 	protected boolean makeCompare(byte[] b1, byte[] b2) {

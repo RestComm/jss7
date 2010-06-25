@@ -35,6 +35,6 @@ public class OLMTest extends MessageHarness{
 	}
 	@Override
 	protected ISUPMessage getDefaultMessage() {
-		return super.messageFactory.createOLM();
+		return super.messageFactory.createOLM(0);
 	}
 }

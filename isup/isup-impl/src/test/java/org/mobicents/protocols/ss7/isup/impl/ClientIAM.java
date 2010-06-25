@@ -51,7 +51,7 @@ public class ClientIAM implements ISUPListener {
 	}
 
 	public void start() throws IllegalArgumentException, TransactionAlredyExistsException, ParameterRangeInvalidException, IOException {
-		InitialAddressMessage iam = this.factory.createIAM();
+		InitialAddressMessage iam = this.factory.createIAM(12);
 
 		// create obligatory params!
 		NatureOfConnectionIndicators nais = this.parameterFactory.createNatureOfConnectionIndicators();
@@ -84,9 +84,6 @@ public class ClientIAM implements ISUPListener {
 		iam.setTransmissionMediumRequirement(tmr);
 		iam.setCalledPartyNumber(cpn);
 
-		CircuitIdentificationCode cic = this.parameterFactory.createCircuitIdentificationCode();
-		cic.setCIC(12);
-		iam.setCircuitIdentificationCode(cic);
 		
 		ctx = this.provider.createClientTransaction(iam);
 

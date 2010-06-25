@@ -20,7 +20,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationC
  */
 public class CircuitIdentificationCodeImpl extends AbstractParameter implements CircuitIdentificationCode {
 
-	private long cic;
+	private int cic;
 	/**
 	 * 	
 	 */
@@ -31,15 +31,15 @@ public class CircuitIdentificationCodeImpl extends AbstractParameter implements 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode#getCIC()
 	 */
-	public long getCIC() {
+	public int getCIC() {
 		return this.cic;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode#setCIC(long)
 	 */
-	public void setCIC(long cic) {
-		this.cic = cic & 0x0FFF;
+	public void setCIC(int cic) {
+		this.cic = cic & 0x0FFF; //Q.763 1.2
 
 	}
 

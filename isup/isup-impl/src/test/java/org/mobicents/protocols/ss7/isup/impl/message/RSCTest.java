@@ -35,6 +35,6 @@ public class RSCTest extends MessageHarness{
 	}
 	@Override
 	protected ISUPMessage getDefaultMessage() {
-		return super.messageFactory.createRSC();
+		return super.messageFactory.createRSC(0);
 	}
 }

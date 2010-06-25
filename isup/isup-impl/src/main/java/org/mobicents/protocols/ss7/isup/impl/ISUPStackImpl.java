@@ -13,7 +13,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.mobicents.protocols.ss7.isup.ISUPProvider;
 import org.mobicents.protocols.ss7.isup.ISUPStack;
 import org.mobicents.protocols.ss7.stream.MTPProvider;
-
+import org.mobicents.protocols.ss7.stream.PipeMtpProviderImpl;
+import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
 
 /**
  * Start time:12:14:57 2009-09-04<br>
@@ -23,104 +24,92 @@ import org.mobicents.protocols.ss7.stream.MTPProvider;
  */
 public class ISUPStackImpl implements ISUPStack {
 
+	private State state = State.IDLE;
+	private ISUPMtpProviderImpl isupMtpProvider;
 
-    private MTPProvider mtpTransportProvider;
-    private ISUPMtpProviderImpl isupMtpProvider;
-    
-    //private SccpProvider sccpTransportProvider;
-   // private ISUPSccpProviderImpl isupSccpProvider;
-    
-    private boolean started = false;
-    private ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
-    private long _GENERAL_TRANSACTION_TIMEOUT = 120 * 1000;
-    private long _CLIENT_TRANSACTION_ANSWER_TIMEOUT = 30 * 1000;
+	private ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
+	private long _GENERAL_TRANSACTION_TIMEOUT = 120 * 1000;
+	private long _CLIENT_TRANSACTION_ANSWER_TIMEOUT = 30 * 1000;
 
-    public ISUPStackImpl(MTPProvider transportProvider, Properties properties) {
-        super();
-        this.mtpTransportProvider = transportProvider;
+	public ISUPStackImpl() {
+		super();
 
-        this.isupMtpProvider = new ISUPMtpProviderImpl(this.mtpTransportProvider, this,properties);
+	}
+	//for tests only!
+	public ISUPStackImpl(MTPProvider provider1, Properties props1) {
+		this.isupMtpProvider = new ISUPMtpProviderImpl(provider1,this, props1);
+		this.state = State.CONFIGURED;
+	}
 
-    }
+	public ISUPProvider getIsupProvider() {
 
-//    public ISUPStackImpl(SccpProvider transportProvider) {
-//        super();
-//        this.sccpTransportProvider = transportProvider;
-//
-//       this.isupSccpProvider = new ISUPSccpProviderImpl(this.sccpTransportProvider, this);
-//
-//    }
-    
-    public ISUPProvider getIsupProvider() {
-    	if(isupMtpProvider!=null)
-    	{
-    		return isupMtpProvider;
-    	}else
-    	{
-    		throw new UnsupportedOperationException();
-    		//return this.isupSccpProvider;
-    	}
-    }
+		return isupMtpProvider;
 
-    public void start() {
-        if (!started) {
-            configure();
-            if(this.mtpTransportProvider!=null)
-            {
-            	this.mtpTransportProvider.addMtp3Listener(this.isupMtpProvider);
-            }else
-            {
-            	//this.sccpTransportProvider.setSccpListener(this.isupSccpProvider);
-            	throw new UnsupportedOperationException();
-            }
-            this.started = true;
-        }
-    }
+	}
 
-    public void stop() {
-        if (started) {
-            this.mtpTransportProvider.removeMtp3Listener(this.isupMtpProvider);
-            this.mtpTransportProvider.stop();
-            terminate();
-            this.started = false;
+	public void start() throws IllegalStateException, StartFailedException {
+		if (state != State.CONFIGURED) {
+			throw new IllegalStateException("Stack has not been configured or is already running!");
+		}
 
-        }
-    }
+		this.isupMtpProvider.start();
 
-    // ///////////////
-    // CONF METHOD //
-    // ///////////////
-    /**
+		this.state = State.RUNNING;
+
+	}
+
+	public void stop() {
+		if (state != State.RUNNING) {
+			throw new IllegalStateException("Stack is not running!");
+		}
+		this.isupMtpProvider.stop();
+		terminate();
+		this.state = State.CONFIGURED;
+	}
+
+	// ///////////////
+	// CONF METHOD //
+	// ///////////////
+	/**
      *
      */
-    private void configure() {
-        this.executor = Executors.newScheduledThreadPool(8);
+	public void configure(Properties props) {
+		if (state != State.IDLE) {
+			throw new IllegalStateException("Stack already been configured or is already running!");
+		}
+		this.isupMtpProvider = new ISUPMtpProviderImpl(this, props);
+		this.executor = Executors.newScheduledThreadPool(8);
+		this.state = State.CONFIGURED;
+	}
 
-    }
-
-    /**
+	/**
      *
      */
-    private void terminate() {
-        this.executor.shutdownNow();
-    }
-    //possibly something similar as in MGCP
+	private void terminate() {
+		this.executor.shutdownNow();
+	}
 
-    ScheduledExecutorService getExecutors() {
-        return this.executor;
-    }
+	// possibly something similar as in MGCP
 
-    /**
-     * @return
-     */
-    public long getTransactionGeneralTimeout() {
-        return _GENERAL_TRANSACTION_TIMEOUT;
-    }
+	ScheduledExecutorService getExecutors() {
+		return this.executor;
+	}
 
-    /**
-     * @return
-     */
-    public long getClientTransactionAnswerTimeout() {
-        return _CLIENT_TRANSACTION_ANSWER_TIMEOUT;
-    }
+	/**
+	 * @return
+	 */
+	public long getTransactionGeneralTimeout() {
+		return _GENERAL_TRANSACTION_TIMEOUT;
+	}
+
+	/**
+	 * @return
+	 */
+	public long getClientTransactionAnswerTimeout() {
+		return _CLIENT_TRANSACTION_ANSWER_TIMEOUT;
+	}
+
+	private enum State {
+		IDLE, CONFIGURED, RUNNING;
+	}
 }

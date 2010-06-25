@@ -56,6 +56,7 @@ import org.mobicents.protocols.ss7.isup.message.UnequippedCICMessage;
 import org.mobicents.protocols.ss7.isup.message.User2UserInformationMessage;
 import org.mobicents.protocols.ss7.isup.message.UserPartAvailableMessage;
 import org.mobicents.protocols.ss7.isup.message.UserPartTestMessage;
+import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
 
 /**
  * Start time:12:04:59 2009-09-04<br>
@@ -69,7 +70,8 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	InitialAddressMessage createIAM();
+	//InitialAddressMessage createIAM(CircuitIdentificationCode ci);
+	InitialAddressMessage createIAM(int cic);
 
 	/**
 	 * @return
@@ -79,7 +81,7 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	ReleaseMessage createREL();
+	ReleaseMessage createREL(int cic);
 
 	/**
 	 * @return
@@ -89,7 +91,7 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	ApplicationTransportMessage createAPT();
+	ApplicationTransportMessage createAPT(int cic);
 
 	/**
 	 * @return
@@ -99,7 +101,7 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	CallProgressMessage createCPG();
+	CallProgressMessage createCPG(int cic);
 
 	/**
 	 * @return
@@ -109,14 +111,14 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	ConfusionMessage createCNF();
+	ConfusionMessage createCNF(int cic);
 
 
 
 	/**
 	 * @return
 	 */
-	ConnectMessage createCON();
+	ConnectMessage createCON(int cic);
 
 	/**
 	 * @return
@@ -126,7 +128,7 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	FacilityRejectedMessage createFRJ();
+	FacilityRejectedMessage createFRJ(int cic);
 
 	/**
 	 * @return
@@ -136,32 +138,32 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	InformationRequestMessage createINR();
+	InformationRequestMessage createINR(int cic);
 
 	/**
 	 * @return
 	 */
-	SubsequentAddressMessage createSAM();
+	SubsequentAddressMessage createSAM(int cic);
 
 	/**
 	 * @return
 	 */
-	SubsequentDirectoryNumberMessage createSDN();
+	SubsequentDirectoryNumberMessage createSDN(int cic);
 
 	/**
 	 * @return
 	 */
-	ForwardTransferMessage createFOT();
+	ForwardTransferMessage createFOT(int cic);
 
 	/**
 	 * @return
 	 */
-	ResumeMessage createRES();
+	ResumeMessage createRES(int cic);
 
 	/**
 	 * @return
 	 */
-	BlockingMessage createBLO();
+	BlockingMessage createBLO(int cic);
 
 	/**
 	 * @return
@@ -171,7 +173,7 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	ContinuityCheckRequestMessage createCCR();
+	ContinuityCheckRequestMessage createCCR(int cic);
 
 	/**
 	 * @return
@@ -181,27 +183,27 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	LoopPreventionMessage createLPP();
+	LoopPreventionMessage createLPP(int cic);
 
 	/**
 	 * @return
 	 */
-	OverloadMessage createOLM();
+	OverloadMessage createOLM(int cic);
 
 	/**
 	 * @return
 	 */
-	SuspendMessage createSUS();
+	SuspendMessage createSUS(int cic);
 
 	/**
 	 * @return
 	 */
-	ResetCircuitMessage createRSC();
+	ResetCircuitMessage createRSC(int cic);
 
 	/**
 	 * @return
 	 */
-	UnblockingMessage createUBL();
+	UnblockingMessage createUBL(int cic);
 
 	/**
 	 * @return
@@ -211,12 +213,12 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	UnequippedCICMessage createUCIC();
+	UnequippedCICMessage createUCIC(int cic);
 
 	/**
 	 * @return
 	 */
-	CircuitGroupBlockingMessage createCGB();
+	CircuitGroupBlockingMessage createCGB(int cic);
 
 	/**
 	 * @return
@@ -226,7 +228,7 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	CircuitGroupUnblockingMessage createCGU();
+	CircuitGroupUnblockingMessage createCGU(int cic);
 
 	/**
 	 * @return
@@ -236,7 +238,7 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	CircuitGroupResetMessage createGRS();
+	CircuitGroupResetMessage createGRS(int cic);
 
 	/**
 	 * @return
@@ -246,7 +248,7 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	CircuitGroupQueryMessage createCQM();
+	CircuitGroupQueryMessage createCQM(int cic);
 
 	/**
 	 * @return
@@ -256,32 +258,32 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	FacilityRequestMessage createFAR();
+	FacilityRequestMessage createFAR(int cic);
 
 	/**
 	 * @return
 	 */
-	PassAlongMessage createPAM();
+	PassAlongMessage createPAM(int cic);
 
 	/**
 	 * @return
 	 */
-	PreReleaseInformationMessage createPRI();
+	PreReleaseInformationMessage createPRI(int cic);
 
 	/**
 	 * @return
 	 */
-	FacilityMessage createFAC();
+	FacilityMessage createFAC(int cic);
 
 	/**
 	 * @return
 	 */
-	NetworkResourceManagementMessage createNRM();
+	NetworkResourceManagementMessage createNRM(int cic);
 
 	/**
 	 * @return
 	 */
-	IdentificationRequestMessage createIDR();
+	IdentificationRequestMessage createIDR(int cic);
 
 	/**
 	 * @return
@@ -291,27 +293,27 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	SegmentationMessage createSGM();
+	SegmentationMessage createSGM(int cic);
 
 	/**
 	 * @return
 	 */
-	ChargeInformationMessage createCIM();
+	ChargeInformationMessage createCIM(int cic);
 
 	/**
 	 * @return
 	 */
-	UserPartAvailableMessage createUPA();
+	UserPartAvailableMessage createUPA(int cic);
 
 	/**
 	 * @return
 	 */
-	UserPartTestMessage createUPT();
+	UserPartTestMessage createUPT(int cic);
 
 	/**
 	 * @return
 	 */
-	User2UserInformationMessage createUSR();
+	User2UserInformationMessage createUSR(int cic);
 	
 	
 	ISUPMessage createCommand(int commandCode);

@@ -33,6 +33,6 @@ public class CCRTest extends MessageHarness{
 
 	@Override
 	protected ISUPMessage getDefaultMessage() {
-		return super.messageFactory.createCCR();
+		return super.messageFactory.createCCR(0);
 	}
 }

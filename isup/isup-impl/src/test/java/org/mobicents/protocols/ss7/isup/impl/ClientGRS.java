@@ -54,15 +54,11 @@ public class ClientGRS implements ISUPListener {
 	}
 
 	public void start() throws IllegalArgumentException, TransactionAlredyExistsException, ParameterRangeInvalidException, IOException {
-		CircuitGroupResetMessage grs = this.factory.createGRS();
+		CircuitGroupResetMessage grs = this.factory.createGRS(12);
 
 		
 		
 		// create obligatory params!
-		
-		CircuitIdentificationCode cic = this.parameterFactory.createCircuitIdentificationCode();
-		cic.setCIC(12);
-		grs.setCircuitIdentificationCode(cic);
 		
 		RangeAndStatus ras = this.parameterFactory.createRangeAndStatus();
 		ras.setRange((byte) 1);

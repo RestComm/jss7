@@ -47,7 +47,7 @@ public class CGBTest extends MessageHarness {
 		};
 
 		//CircuitGroupBlockingMessage cgb=new CircuitGroupBlockingMessageImpl(this,message);
-		CircuitGroupBlockingMessage cgb=super.messageFactory.createCGB();
+		CircuitGroupBlockingMessage cgb=super.messageFactory.createCGB(0);
 		cgb.decodeElement(message);
 
 		
@@ -106,6 +106,6 @@ public class CGBTest extends MessageHarness {
 
 	@Override
 	protected ISUPMessage getDefaultMessage() {
-		return super.messageFactory.createCGB();
+		return super.messageFactory.createCGB(0);
 	}
 }

@@ -16,7 +16,7 @@ import org.mobicents.protocols.ss7.isup.ISUPTransaction;
 import org.mobicents.protocols.ss7.isup.TransactionKey;
 import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageImpl;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
-import org.mobicents.protocols.ss7.mtp.ActionReference;
+import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 
 /**
  * Start time:12:57:29 2009-09-04<br>
@@ -26,14 +26,11 @@ import org.mobicents.protocols.ss7.mtp.ActionReference;
  */
 public abstract class ISUPTransactionImpl implements ISUPTransaction {
 
-	
-	
 	private static final AtomicLong txID = new AtomicLong(0);
 	protected TransactionKey transactionKey = null;
-	//reference with backward routing label! Used for this tx
-	protected ActionReference actionReference;
-	
-	
+	// reference with backward routing label! Used for this tx
+	protected RoutingLabel actionReference;
+
 	protected ISUPMessage message;
 
 	protected ISUPProviderBase provider;
@@ -41,40 +38,34 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 
 	protected Future generalTimeoutFuture;
 
-	public ISUPTransactionImpl(ISUPMessage message, ISUPProviderBase provider, ISUPStackImpl stack,ActionReference ar) {
+	public ISUPTransactionImpl(ISUPMessage message, ISUPProviderBase provider, ISUPStackImpl stack, RoutingLabel ar) {
 		super();
-		if(message == null)
-		{
+		if (message == null) {
 			throw new NullPointerException("Message can not be null!");
 		}
-		
-		if(provider == null)
-		{
+
+		if (provider == null) {
 			throw new NullPointerException("Provider can not be null!");
 		}
-		
-		if(stack == null)
-		{
+
+		if (stack == null) {
 			throw new NullPointerException("Stack can not be null!");
 		}
-		
+
 		this.message = message;
 		this.provider = provider;
 		this.stack = stack;
 		this.transactionKey = this.message.generateTransactionKey();
 		startGeneralTimer();
-		
-		if(ar == null)
-		{
-			this.actionReference = ((ISUPMessageImpl)message).getActionReference();
-		}else
-		{
+
+		if (ar == null) {
+			this.actionReference = ((ISUPMessageImpl) message).getRoutingLabel();
+		} else {
 			this.actionReference = ar;
 		}
-		
+
 	}
 
-	
 	public ISUPProvider getProvider() {
 		return provider;
 	}
@@ -104,14 +95,15 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 		return this.message;
 	}
 
-	public TransactionKey getTransactionKey()
-	{
+	public TransactionKey getTransactionKey() {
 		return this.transactionKey;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.protocols.ss7.isup.ISUPTransaction#isServerTransaction()
+	 * @see
+	 * org.mobicents.protocols.ss7.isup.ISUPTransaction#isServerTransaction()
 	 */
 	public boolean isServerTransaction() {
 		return this instanceof ISUPServerTransaction;
@@ -124,9 +116,11 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 			this.generalTimeoutFuture = null;
 		}
 	}
+
 	protected void startGeneralTimer() {
-		this.generalTimeoutFuture = stack.getExecutors().schedule(new ISUPTransactionTimeoutTask(this), stack.getTransactionGeneralTimeout(), TimeUnit.MILLISECONDS);
-		
+		this.generalTimeoutFuture = stack.getExecutors().schedule(new ISUPTransactionTimeoutTask(this),
+				stack.getTransactionGeneralTimeout(), TimeUnit.MILLISECONDS);
+
 	}
 
 	protected abstract void doGeneralTimeout();
@@ -149,14 +143,15 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 	/**
 	 * @return the actionReference
 	 */
-	public ActionReference getActionReference() {
+	public RoutingLabel getRoutingLabel() {
 		return actionReference;
 	}
 
 	/**
-	 * @param actionReference the actionReference to set
+	 * @param actionReference
+	 *            the actionReference to set
 	 */
-	public void setActionReference(ActionReference actionReference) {
+	public void setRoutingLabel(RoutingLabel actionReference) {
 		this.actionReference = actionReference;
 	}
 

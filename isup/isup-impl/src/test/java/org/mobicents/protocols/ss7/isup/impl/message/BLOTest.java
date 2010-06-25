@@ -33,6 +33,6 @@ public class BLOTest extends MessageHarness{
 
 	@Override
 	protected ISUPMessage getDefaultMessage() {
-		return super.messageFactory.createBLO();
+		return super.messageFactory.createBLO(0);
 	}
 }
