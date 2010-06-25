@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.mtp.ActionReference;
+import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
@@ -99,7 +99,7 @@ public class DialogImpl implements Dialog {
 	private TCAPProviderImpl provider;
 
 	//used for sccp
-	private ActionReference actionReference;
+	private RoutingLabel actionReference;
 
 	private static final int getIndexFromInvokeId(Long l) {
 		int tmp = l.intValue();
@@ -692,7 +692,7 @@ public class DialogImpl implements Dialog {
 	void setRemoteAddress(SccpAddress remoteAddress) {
 		this.remoteAddress = remoteAddress;
 	}
-	 void setActionReference(ActionReference ar) {
+	 void setRoutingLabel(RoutingLabel ar) {
 		this.actionReference = ar;
 		
 	}

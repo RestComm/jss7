@@ -1,4 +1,4 @@
-package org.mobicents.protocols.ss7.tcap.functional;
+package org.mobicents.protocols.ss7.tcap;
 
 import junit.framework.TestCase;
 
@@ -41,9 +41,9 @@ public class Client implements TCListener{
 	
 	private Dialog clientDialog;
 	
-	Client(SccpProvider sccpPprovider, TCAPFunctionalTest runningTestCase, SccpAddress thisAddress,SccpAddress remoteAddress) {
+	Client(TCAPStack stack, TCAPFunctionalTest runningTestCase, SccpAddress thisAddress,SccpAddress remoteAddress) {
 		super();
-		this.stack = new TCAPStackImpl(sccpPprovider);
+		this.stack = stack;
 		this.runningTestCase = runningTestCase;
 		this.thisAddress = thisAddress;
 		this.remoteAddress = remoteAddress;

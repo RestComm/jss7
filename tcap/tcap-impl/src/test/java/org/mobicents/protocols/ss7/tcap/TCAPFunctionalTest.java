@@ -1,4 +1,4 @@
-package org.mobicents.protocols.ss7.tcap.functional;
+package org.mobicents.protocols.ss7.tcap;
 
 import junit.framework.TestCase;
 
@@ -19,8 +19,13 @@ public class TCAPFunctionalTest extends TestCase {
 	private PipeSccpProviderImpl provider1;
 	private PipeSccpProviderImpl provider2;
 	
+	private TCAPStackImpl stack1;
+	private TCAPStackImpl stack2;
+	
 	private SccpAddress peer1Address;
 	private SccpAddress peer2Address;
+	
+	
 	
 	private Client client;
 	private Server server;
@@ -48,17 +53,23 @@ public class TCAPFunctionalTest extends TestCase {
 		gt.setDigits("5888879");
 		this.peer2Address.setGlobalTitle(gt);
 		
+		this.stack1 = new TCAPStackImpl(provider1);
+		this.stack2 = new TCAPStackImpl(provider2);
+		this.stack1.start();
+		this.stack2.start();
 		//create test classes
-		this.client = new Client(provider1,this, peer1Address, peer2Address);
-		this.server = new Server(provider2, this, peer2Address, peer1Address);
+		this.client = new Client(this.stack1,this, peer1Address, peer2Address);
+		this.server = new Server(this.stack2, this, peer2Address, peer1Address);
 	}
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	@Override
 	protected void tearDown() throws Exception {
-		// TODO Auto-generated method stub
+		this.stack1.stop();
+		this.stack2.stop();
 		super.tearDown();
+		
 	}
 	@Test
 	public void testSimpleTCWithDialog() throws Exception

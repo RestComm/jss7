@@ -1,4 +1,4 @@
-package org.mobicents.protocols.ss7.tcap.functional;
+package org.mobicents.protocols.ss7.tcap;
 
 import junit.framework.TestCase;
 
@@ -35,9 +35,9 @@ public class Server implements TCListener{
 	private boolean _S_recievedBegin,_S_sentContinue,_S_receivedEnd,_S_dialogReleased;
 	private String unexpected = "";
 	
-	Server(SccpProvider sccpPprovider, TestCase runningTestCase, SccpAddress thisAddress,SccpAddress remoteAddress) {
+	Server(TCAPStack stack, TestCase runningTestCase, SccpAddress thisAddress,SccpAddress remoteAddress) {
 		super();
-		this.stack = new TCAPStackImpl(sccpPprovider);
+		this.stack = stack;
 		this.runningTestCase = runningTestCase;
 		this.thisAddress = thisAddress;
 		this.remoteAddress = remoteAddress;

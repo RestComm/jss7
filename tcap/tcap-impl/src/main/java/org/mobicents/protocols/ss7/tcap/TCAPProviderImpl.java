@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap;
 
 import java.io.ByteArrayInputStream;
@@ -17,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.ss7.mtp.ActionReference;
+import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -75,8 +72,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 		this.componentPrimitiveFactory = new ComponentPrimitiveFactoryImpl(this);
 		this.dialogPrimitiveFactory = new DialogPrimitiveFactoryImpl(this.componentPrimitiveFactory);
-		this._EXECUTOR = Executors.newSingleThreadScheduledExecutor();
-		this.transportProvider.setSccpListener(this);
+		
 	}
 /*
 	 * (non-Javadoc)
@@ -192,7 +188,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 
 
-	public void onMessage(SccpAddress localAddress, SccpAddress remoteAddress, byte[] asnData, ActionReference ar) {
+	public void onMessage(SccpAddress localAddress, SccpAddress remoteAddress, byte[] asnData, RoutingLabel ar) {
 		try {
 			// FIXME: Qs state that OtxID and DtxID consittute to dialog id.....
 
@@ -213,7 +209,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				if (di == null) {
 					logger.error("No dialog/transaction for id: " + dialogId);
 				} else {
-					di.setActionReference(ar);
+					di.setRoutingLabel(ar);
 					di.processContinue(tcm, localAddress, remoteAddress);
 				}
 				break;
@@ -225,7 +221,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				// begin);
 
 				di = (DialogImpl) this.getNewDialog(localAddress, remoteAddress);
-				di.setActionReference(ar);
+				di.setRoutingLabel(ar);
 				di.processBegin(tcb, localAddress, remoteAddress);
 
 				break;
@@ -237,7 +233,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				if (di == null) {
 					logger.error("No dialog/transaction for id: " + dialogId);
 				} else {
-					di.setActionReference(ar);
+					di.setRoutingLabel(ar);
 					di.processEnd(teb, localAddress, remoteAddress);
 					
 				}
@@ -253,7 +249,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				if (di == null) {
 					logger.error("No dialog/transaction for id: " + dialogId);
 				} else {
-					di.setActionReference(ar);
+					di.setRoutingLabel(ar);
 					di.processAbort(tub, localAddress, remoteAddress);
 					
 				}
@@ -274,7 +270,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		}
 	}
 	
-	public void send(byte[] data,Byte desiredQos, SccpAddress destinationAddress,SccpAddress orignatingAddress, ActionReference ar) throws IOException
+	public void send(byte[] data,Byte desiredQos, SccpAddress destinationAddress,SccpAddress orignatingAddress, RoutingLabel ar) throws IOException
 	{
 		//FIXME: add QOS
 			this.transportProvider.send(destinationAddress, orignatingAddress, data,ar);
@@ -404,6 +400,16 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	}
 	public void linkUp() {
 		// TODO Auto-generated method stub
+		
+	}
+	void start() {
+		this._EXECUTOR = Executors.newSingleThreadScheduledExecutor();
+		this.transportProvider.addSccpListener(this);
+		
+	}
+	void stop() {
+		this._EXECUTOR.shutdown();
+		this.transportProvider.removeSccpListener(this);
 		
 	}
 	
