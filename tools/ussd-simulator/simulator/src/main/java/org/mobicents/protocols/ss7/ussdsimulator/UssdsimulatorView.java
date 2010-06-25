@@ -42,7 +42,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
-import org.mobicents.protocols.ss7.sccp.impl.sctp.SccpSCTPProviderImpl;
+import org.mobicents.protocols.ss7.sccp.impl.sctp.SccpDefaultProviderImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
@@ -764,7 +764,7 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,MA
 //    private TCAPStack tcapStack;
 //    private TCAPProvider tcapProvider;
     //this sucks...
-    private SccpSCTPProviderImpl sccpProvider;
+    private SccpDefaultProviderImpl sccpProvider;
     private MAPStack mapStack;
     //this we have to create
     private USSDSimultorMtpProvider mtpLayer;
@@ -795,11 +795,16 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,MA
         if(!this.mtpLayer.isLinkUp())
         {
             throw new StartFailedException();
+        }else
+        {
+        	this.mtpLayer.indicateLinkUp();
         }
-        this.sccpProvider = new SccpSCTPProviderImpl(this.mtpLayer, stackProperties);
+        this.sccpProvider = new SccpDefaultProviderImpl(this.mtpLayer, stackProperties);
+        this.mtpLayer.addMtp3Listener(sccpProvider);
         this.mapStack = new MAPStackImpl(sccpProvider);
         this.mapStack.getMAPProvider().addMAPDialogListener(this);
         this.mapStack.getMAPProvider().addMAPServiceListener(this);
+        this.mapStack.start();
         //indicate linkup, since we mockup now, its done by hand.
         //this method is called by M3UserConnector!
         this.sccpProvider.linkUp();

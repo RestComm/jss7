@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>ss7-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7</groupId>
-		<version>1.0.0.BETA2-SNAPSHOT</version>
+		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.mobicents.protocols.ss7.tools.ussd</groupId>
@@ -62,17 +62,18 @@
 			</dependency>
 			<dependency>
 				<groupId>org.mobicents.protocols.ss7.mtp</groupId>
-				<artifactId>MTP</artifactId>
+				<artifactId>mtp</artifactId>
 				<version>${mtp.version}</version>
 			</dependency>
 			
-			<!-- 
 			<dependency>
 				<groupId>concurrent</groupId>
 				<artifactId>concurrent</artifactId>
+				<version>${concurrent.version}</version>
 				<scope>provided</scope>
 			</dependency>
 			
+			<!-- 
 			<dependency>
 				<groupId>log4j</groupId>
 				<artifactId>log4j</artifactId>

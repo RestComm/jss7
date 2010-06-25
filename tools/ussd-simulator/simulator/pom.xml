@@ -50,7 +50,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
-			<artifactId>MTP</artifactId>
+			<artifactId>mtp</artifactId>
 		</dependency>
 
 		<dependency>
@@ -201,7 +201,7 @@
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.mobicents.protocols.ss7.mtp</groupId>
-									<artifactId>MTP</artifactId>
+									<artifactId>mtp</artifactId>
 									<type>jar</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>
