@@ -1,8 +1,13 @@
 package org.mobicents.protocols.ss7.map;
 
+import java.util.Properties;
+
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
+import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
+import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
 import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
@@ -16,24 +21,75 @@ public class MAPStackImpl implements MAPStack {
 	
 	private TCAPStack tcapStack = null;
 	
-	private MAPProvider mapProvider = null;
+	private MAPProviderImpl mapProvider = null;
+
+	private State state = State.IDLE;
 	
 	//TODO Not sure if SccpProvider should be passed as arg?
-	public MAPStackImpl(SccpProvider sccpProvider){
-		tcapStack = new TCAPStackImpl(sccpProvider);
-		TCAPProvider tacpProvider = tcapStack.getProvider();
-		mapProvider = new MAPProviderImpl(tacpProvider);
+	public MAPStackImpl(){
+		tcapStack = new TCAPStackImpl();
+		
+	}
+	//tests only!
+	public MAPStackImpl(SccpProvider sccpPprovider) {
+		this.tcapStack = new TCAPStackImpl(sccpPprovider);
+		TCAPProvider tcapProvider = tcapStack.getProvider();
+		mapProvider = new MAPProviderImpl(tcapProvider);
+		this.state = State.CONFIGURED;
 	}
 
 	public MAPProvider getMAPProvider() {
 		return this.mapProvider;
 	}
 
-	public void stop() {
-		this.tcapStack.stop();
-		
+	public void start() throws IllegalStateException, StartFailedException {
+		if (state != State.CONFIGURED) {
+			throw new IllegalStateException("Stack has not been configured or is already running!");
+		}
+		if(tcapStack!=null)
+		{
+			//this is null in junits!
+			this.tcapStack.start();
+		}
+		this.mapProvider.start();
+
+		this.state = State.RUNNING;
+
 	}
 
-	
+	public void stop() {
+		if (state != State.RUNNING) {
+			throw new IllegalStateException("Stack is not running!");
+		}
+		this.mapProvider.stop();
+		if(tcapStack!=null)
+		{
+			this.tcapStack.stop();
+		}
+		
+		this.state = State.CONFIGURED;
+	}
+
+	// ///////////////
+	// CONF METHOD //
+	// ///////////////
+	/**
+     *
+     */
+	public void configure(Properties props) {
+		if (state != State.IDLE) {
+			throw new IllegalStateException("Stack already been configured or is already running!");
+		}
+		tcapStack.configure(props);
+		TCAPProvider tcapProvider = tcapStack.getProvider();
+		mapProvider = new MAPProviderImpl(tcapProvider);
+		this.state  = State.CONFIGURED;
+	}
+
+
+
+	private enum State {
+		IDLE, CONFIGURED, RUNNING;
+	}
 
 }

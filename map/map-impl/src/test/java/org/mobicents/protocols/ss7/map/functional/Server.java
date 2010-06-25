@@ -46,10 +46,10 @@ public class Server implements MAPDialogListener, MAPServiceListener {
 	private boolean _S_recievedMAPOpenInfo, _S_recievedMAPCloseInfo;
 	private String unexpected = "";
 
-	Server(SccpProvider sccpPprovider, TestCase runningTestCase,
+	Server(MAPStack mapStack, TestCase runningTestCase,
 			SccpAddress thisAddress, SccpAddress remoteAddress) {
 		super();
-		this.mapStack = new MAPStackImpl(sccpPprovider);
+		this.mapStack = mapStack;
 		this.runningTestCase = runningTestCase;
 		this.thisAddress = thisAddress;
 		this.remoteAddress = remoteAddress;

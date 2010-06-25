@@ -79,7 +79,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	public MAPProviderImpl(TCAPProvider tcapProvider) {
 		this.tcapProvider = tcapProvider;
-		this.tcapProvider.addTCListener(this);
 
 	}
 
@@ -706,6 +705,15 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	
 	public MAPDialog getMAPDialog(Long dialogId) {
 		return this.dialogs.get(dialogId);
+	}
+
+	public void start() {
+		this.tcapProvider.addTCListener(this);
+	}
+
+	public void stop() {
+		this.tcapProvider.removeTCListener(this);
+		
 	}
 
 }

@@ -10,6 +10,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Test;
+import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.PipeSccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -30,6 +31,9 @@ public class MAPFunctionalTest extends TestCase {
 
 	private PipeSccpProviderImpl provider1;
 	private PipeSccpProviderImpl provider2;
+	
+	private MAPStackImpl stack1;
+	private MAPStackImpl stack2;
 	
 	private SccpAddress peer1Address;
 	private SccpAddress peer2Address;
@@ -63,9 +67,15 @@ public class MAPFunctionalTest extends TestCase {
 		gt.setDigits("5888879");
 		this.peer2Address.setGlobalTitle(gt);
 		
+		
+		this.stack1 = new MAPStackImpl(this.provider1);
+		this.stack2 = new MAPStackImpl(this.provider2);
+		
+		this.stack1.start();
+		this.stack2.start();
 		//create test classes
-		this.client = new Client(provider1,this, peer1Address, peer2Address);
-		this.server = new Server(provider2, this, peer2Address, peer1Address);
+		this.client = new Client(this.stack1,this, peer1Address, peer2Address);
+		this.server = new Server(this.stack2, this, peer2Address, peer1Address);
 	}
 	
 	
@@ -91,6 +101,8 @@ public class MAPFunctionalTest extends TestCase {
 	protected void tearDown() throws Exception {
 		// TODO Auto-generated method stub
 		super.tearDown();
+		this.stack1.stop();
+		this.stack2.stop();
 	}
 	@Test
 	public void testSimpleTCWithDialog() throws Exception

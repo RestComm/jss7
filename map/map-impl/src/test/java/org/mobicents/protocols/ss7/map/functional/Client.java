@@ -49,10 +49,10 @@ public class Client implements MAPDialogListener, MAPServiceListener {
 
 	private MAPDialog clientDialog;
 
-	Client(SccpProvider sccpPprovider, MAPFunctionalTest runningTestCase,
+	Client(MAPStack mapStack, MAPFunctionalTest runningTestCase,
 			SccpAddress thisAddress, SccpAddress remoteAddress) {
 		super();
-		this.mapStack = new MAPStackImpl(sccpPprovider);
+		this.mapStack = mapStack;
 		this.runningTestCase = runningTestCase;
 		this.thisAddress = thisAddress;
 		this.remoteAddress = remoteAddress;
