@@ -19,7 +19,7 @@
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<artifactId>MTP</artifactId>
+			<artifactId>mtp</artifactId>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 		</dependency>
 		<dependency>

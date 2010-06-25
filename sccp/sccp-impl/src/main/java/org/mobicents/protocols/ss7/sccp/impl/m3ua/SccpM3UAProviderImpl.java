@@ -14,30 +14,26 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.m3ua;
 
-import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Properties;
+
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.mtp.ActionReference;
-import org.mobicents.protocols.ss7.mtp.Mtp3;
-import org.mobicents.protocols.ss7.mtp.Mtp3Impl;
-import org.mobicents.protocols.ss7.sccp.SccpListener;
+import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import org.mobicents.protocols.ss7.sccp.impl.Handler;
 import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
-import org.mobicents.protocols.ss7.sccp.impl.ud.UnitDataImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.utils.*;
+import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
+import org.mobicents.protocols.ss7.utils.Utils;
+
+import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
 
 /**
  * 
  * @author Oleg Kulikov
+ * 
  */
 public class SccpM3UAProviderImpl extends SccpProviderImpl implements Runnable, SccpProvider {
 
@@ -50,36 +46,20 @@ public class SccpM3UAProviderImpl extends SccpProviderImpl implements Runnable, 
 	private int localPort;
 	private int remotePort;
 
-	private int opc;
-	private int dpc;
-	private int sls;
-	private int ssf;
-	private int si;
-
-	private PooledExecutor threadPool = new PooledExecutor(10);
+	//private PooledExecutor threadPool;
 	private boolean stopped = false;
 
 	private Logger logger = Logger.getLogger(SccpM3UAProviderImpl.class);
 
 	/** Creates a new instance of SccpM3UAProviderImpl */
-	public SccpM3UAProviderImpl(Properties props) throws Exception {
-		this.props = props;
+	public SccpM3UAProviderImpl(Properties props) {
+		super(props);
 		remoteAddress = props.getProperty("remote.address");
 		localAddress = props.getProperty("local.address");
 
 		localPort = Integer.parseInt(props.getProperty("local.port"));
 		remotePort = Integer.parseInt(props.getProperty("remote.port"));
 
-		opc = Integer.parseInt(props.getProperty("sccp.opc"));
-		dpc = Integer.parseInt(props.getProperty("sccp.dpc"));
-		sls = Integer.parseInt(props.getProperty("sccp.sls"));
-		ssf = Integer.parseInt(props.getProperty("sccp.ssi"));
-		//si = Integer.parseInt(props.getProperty("sccp.si"));
-		this.si = Mtp3Impl._SI_SERVICE_SCCP;
-
-		socket = new DatagramSocket(localPort, InetAddress.getByName(localAddress));
-		new Thread(this).start();
-		logger.info("Running main thread");
 	}
 
 	public void run() {
@@ -96,51 +76,46 @@ public class SccpM3UAProviderImpl extends SccpProviderImpl implements Runnable, 
 				byte[] data = new byte[packet.getLength()];
 				System.arraycopy(packet.getData(), 0, data, 0, data.length);
 
-				try {
-					logger.debug("--->" + Utils.hexDump(data));
-					threadPool.execute(new Handler(this, data));
-				} catch (InterruptedException ie) {
-					logger.error("Thread pool interrupted", ie);
-					stopped = true;
-				}
+				logger.debug("--->" + Utils.hexDump(data));
+				// threadPool.execute(new Handler(this, data));
+				super.receive(data);
+
 			} catch (Exception e) {
 				logger.error("I/O error occured while sending data to MTP3 driver", e);
 			}
 		}
 	}
 
-	public void send(SccpAddress calledParty, SccpAddress callingParty, byte[] data, ActionReference ar) throws IOException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		if (ar == null) {
-			byte b = (byte) (ssf << 4 | si);
-			out.write(b);
-			b = (byte) dpc;
-			out.write(b);
+	public void send(SccpAddress calledParty, SccpAddress callingParty, byte[] data, RoutingLabel ar) throws IOException {
 
-			b = (byte) (((dpc >> 8) & 0x3f) | ((opc & 0x03) << 6));
-			out.write(b);
-
-			b = (byte) (opc >> 2);
-			out.write(b);
-
-			b = (byte) (((opc >> 10) & 0x0f) | (sls << 4));
-			out.write(b);
-		} else {
-			out.write(ar.getBackRouteHeader());
-		}
-
-		UnitDataImpl unitData = new UnitDataImpl(new ProtocolClassImpl(0, 0), calledParty, callingParty, data);
-		unitData.encode(out);
-		byte[] buff = out.toByteArray();
+		byte[] buff = super.encodeToMSU(calledParty, callingParty, data, ar);
 
 		DatagramPacket packet = new DatagramPacket(buff, buff.length, InetAddress.getByName(remoteAddress), remotePort);
 		logger.debug(Utils.hexDump(buff));
 		socket.send(packet);
 	}
 
-	public void shutdown() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl#start()
+	 */
+	@Override
+	public void start() throws IllegalStateException, StartFailedException {
+		//this.threadPool = new PooledExecutor(10);
+		try {
+			socket = new DatagramSocket(localPort, InetAddress.getByName(localAddress));
+		} catch (Exception e) {
+			throw new StartFailedException(e);
+		}
+		new Thread(super.THREAD_GROUP, this).start();
+		logger.info("Running main thread");
+
+	}
+
+	public void stop() {
 		stopped = true;
-		threadPool.shutdownNow();
+		//threadPool.shutdownNow();
 		try {
 			socket.disconnect();
 			socket.close();

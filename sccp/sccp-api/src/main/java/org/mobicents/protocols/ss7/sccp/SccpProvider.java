@@ -16,7 +16,7 @@ package org.mobicents.protocols.ss7.sccp;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.mtp.ActionReference;
+import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -30,16 +30,12 @@ public interface SccpProvider {
 	 * Sets sccp listener
 	 * @param listener
 	 */
-	public void setSccpListener(SccpListener listener);
-	/**
-	 * Retrieves listener
-	 * @return
-	 */
-	public SccpListener getListener();
+	public void addSccpListener(SccpListener listener);
+
 	/**
 	 * Removes listener
 	 */
-	public void removeListener();
+	public void removeSccpListener(SccpListener listener);
 	
 	/**
 	 * Send sccp byte[] to desired addres.
@@ -50,9 +46,8 @@ public interface SccpProvider {
 	 * @throws IOException
 	 */
 	public void send(SccpAddress calledParty, SccpAddress callingParty,
-			byte[] data,ActionReference ar) throws IOException;
+			byte[] data,RoutingLabel ar) throws IOException;//FIXME: add support for UDTs?
 
-	public void shutdown();
 
 	public SccpUnitDataFactory getUnitDataFactory();
 

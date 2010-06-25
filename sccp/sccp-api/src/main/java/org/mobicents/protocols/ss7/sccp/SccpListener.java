@@ -14,7 +14,8 @@
 
 package org.mobicents.protocols.ss7.sccp;
 
-import org.mobicents.protocols.ss7.mtp.ActionReference;
+
+import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -28,9 +29,9 @@ public interface SccpListener {
 	 * @param calledPartyAddress - destination address
 	 * @param callingPartyAddress - originating address
 	 * @param data - payload of data unit
-	 * @param backReference - reference to be passed to provider send method.
+	 * @param backReference - reference to be passed to provider send method. It contains routing label, which should be used to send this message back.
 	 */
-	public void onMessage(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress, byte[] data, ActionReference backReference);
+	public void onMessage(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress, byte[] data, RoutingLabel backReference);
 	/**
 	 * Called when underlying link goes down.
 	 */
