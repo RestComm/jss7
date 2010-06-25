@@ -49,7 +49,7 @@
 			</dependency>
 			<!-- MTP -->
 			<dependency>
-				<artifactId>MTP</artifactId>
+				<artifactId>mtp</artifactId>
 				<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 				<version>${mtp.version}</version>
 			</dependency>
