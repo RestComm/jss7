@@ -173,8 +173,13 @@ public abstract class ParameterHarness extends TestCase {
 				if (v == null && expectedValues != null) {
 					fail("Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index] + " is null, but test values is not.");
 				}
-			
-				assertEquals("Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index], expectedValues[index], v);
+				if(expectedValues[index].getClass().isArray() )
+				{
+					assertTrue("Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index], Arrays.deepEquals(new Object[]{expectedValues[index]},new Object[]{ v}));
+				}else
+				{
+					assertEquals("Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index], expectedValues[index], v);
+				}
 
 			}
 

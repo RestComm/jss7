@@ -152,7 +152,10 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		this.providerImpl = providerImpl;
 		this.parameterFactory = parameterFactory;
 	}
+	public ISUPMessageFactoryImpl(ISUPParameterFactoryImpl parameterFactory) {
 
+		this.parameterFactory = parameterFactory;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

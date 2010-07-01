@@ -12,12 +12,12 @@ import java.util.Set;
 
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.TransactionKey;
-import org.mobicents.protocols.ss7.isup.Utils;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CauseIndicatorsImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.ReleaseCompleteMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.protocols.ss7.isup.util.ISUPUtility;
 
 /**
  * Start time:08:20:34 2009-07-18<br>
@@ -113,7 +113,7 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 	 */
 	@Override
 	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException {
-		throw new ParameterRangeInvalidException("This message has no mandatory parameters, unknown parameter index: " + parameterIndex + ", body: " + Utils.toHex(parameterBody));
+		throw new ParameterRangeInvalidException("This message has no mandatory parameters, unknown parameter index: " + parameterIndex + ", body: " + ISUPUtility.toHex(parameterBody));
 
 	}
 
