@@ -65,11 +65,14 @@ public class RangeAndStatusTest extends ParameterHarness {
 		assertTrue(!bci.isAffected((byte) 9));
 		assertTrue(bci.isAffected((byte) 10));
 		
-		
+		bci.setAffected((byte)9, true);
 		bci.setAffected((byte)10, false);
+		
 		assertTrue(!bci.isAffected((byte) 10));
+		assertTrue(bci.isAffected((byte) 9));
+		
 		byte[] stat = bci.getStatus();
-		assertTrue(Arrays.equals(new byte[]{0x0F,0x00}, stat));
+		assertTrue(Arrays.equals(new byte[]{0x0F,0x02}, stat));
 	}
 	
 	
