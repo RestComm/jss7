@@ -1,0 +1,55 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="design_overview">
+
+	<title>Design Overview</title>
+
+
+	<important>
+		<para>Be
+			aware, &THIS.PLATFORM; &THIS.APPLICATION;
+			is subject to changes as it is under active development!
+		</para>
+	</important>
+	<para>&THIS.PLATFORM; &THIS.APPLICATION;
+		<acronym>TCAP</acronym>
+		builds abstraction layer over protocol definition.
+		It introduces simplified
+		<acronym>API</acronym>
+		in favor of
+		<acronym>JAIN TCAP</acronym>
+		
+		<!-- is this correct use of "in favor" ? -->
+	</para>
+	<para>
+		All interactions are handled by
+		<acronym>TCAP</acronym>
+		Dialog. Dialog agregates local and remote transactions into single
+		reference.
+		It maintains state associated with both ends and supervises proper
+		encoding and content of exchanged primitives.
+		Diagram below depicts logical structure of
+		<acronym>TCAP</acronym>
+		and application using it:
+	</para>
+	<mediaobject id="ss7_design_tcap_overview_1">
+		<imageobject>
+			<imagedata width="300px" align="center"
+				fileref="images/ss7-tcap-design-overview1.png" format="PNG" />
+		</imageobject>
+		<caption>
+			<para>&THIS.PLATFORM; &THIS.APPLICATION;
+				TCAP Dialog
+			</para>
+		</caption>
+	</mediaobject>
+	<note>
+		<para>
+			TC and TR layers are explained in ITU-T Q.77X specifications. This
+			<acronym>API</acronym>
+			does not expose those layers directly.
+		</para>
+	</note>
+</chapter>
+

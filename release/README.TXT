@@ -19,6 +19,7 @@
 ------------------
 
   * ASN v@ASN_VERSION@
+  * Stream v@STREAM_VERSION@
   * MTP v@MTP_VERSION@
   * ISUP v@ISUP_VERSION@
   * SCCP v@SCCP_VERSION@

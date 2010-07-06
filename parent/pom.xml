@@ -28,9 +28,11 @@
 		<junit.version>4.1</junit.version>
 		<compiler.plugin.version>2.0.2</compiler.plugin.version>
 		<compile.source>1.5</compile.source>
+		<!-- mobicents but not strictly ss7 -->
+		<asn.version>1.0.0.BETA2-SNAPSHOT</asn.version>
+		<stream.version>1.0.0.BETA1-SNAPSHOT</stream.version>
 
 		<!--  modules version -->
-		<asn.version>1.0.0.BETA2-SNAPSHOT</asn.version>
 		<mtp.version>1.0.0.BETA3-SNAPSHOT</mtp.version>
 		<sccp.version>1.0.0.BETA2-SNAPSHOT</sccp.version>
 		<tcap.version>1.0.0.BETA2-SNAPSHOT</tcap.version>
@@ -46,6 +48,12 @@
 				<groupId>org.mobicents.protocols.asn</groupId>
 				<artifactId>asn</artifactId>
 				<version>${asn.version}</version>
+			</dependency>
+			<!-- STREAM -->
+			<dependency>
+				<groupId>org.mobicents.protocols.stream</groupId>
+				<artifactId>stream</artifactId>
+				<version>${stream.version}</version>
 			</dependency>
 			<!-- MTP -->
 			<dependency>

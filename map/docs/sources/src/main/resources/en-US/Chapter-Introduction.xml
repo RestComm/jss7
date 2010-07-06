@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="introduction">
+
+	<title>Introduction
+		to &THIS.PLATFORM;  &THIS.APPLICATION;
+	</title>
+	<important>
+		<para>For better understanding of this chapter please read GSM 09.02.
+		</para>
+	</important>
+	<para>
+		Mobile application part (
+		<acronym>MAP</acronym>
+		) is the protocol that is used to allow the
+		<acronym>GSM</acronym>
+		network nodes within the Network Switching Subsystem (
+		<acronym>NSS</acronym>
+		) to communicate with each other to provide services, such as roaming
+		capability, text messaging (
+		<acronym>SMS</acronym>
+		), Unstructured Supplementary Service Data (
+		<acronym>USSD</acronym>
+		) and subscriber authentication.
+		<acronym>MAP</acronym>
+		provides an application layer on which to build the services that
+		support a
+		<acronym>GSM</acronym>
+		network. This application layer provides a standardized set of
+		services.
+		<acronym>MAP</acronym>
+		uses the services of the
+		<acronym>SS7</acronym>
+		network, specifically the Signaling Connection Control Part (
+		<acronym>SCCP</acronym>
+		) and the Transaction Capabilities Application Part (
+		<acronym>TCAP</acronym>
+		)
+	</para>
+	<para>
+		MAP provides a number of services, which can be classified as
+
+
+
+		<itemizedlist>
+			<listitem>
+				<para>Mobility services</para>
+			</listitem>
+			<listitem>
+				<para>Location management services</para>
+			</listitem>
+			<listitem>
+				<para>Paging and search</para>
+			</listitem>
+			<listitem>
+				<para>Access management</para>
+			</listitem>
+			<listitem>
+				<para>Handover services</para>
+			</listitem>
+			<listitem>
+				<para>Authentication management</para>
+			</listitem>
+			<listitem>
+				<para>Security management</para>
+			</listitem>
+			<listitem>
+				<para>International mobile equipment identities management</para>
+			</listitem>
+			<listitem>
+				<para>Subscriber management</para>
+			</listitem>
+			<listitem>
+				<para>Identity management</para>
+			</listitem>
+			<listitem>
+				<para>Fault recovery</para>
+			</listitem>
+			<listitem>
+				<para>Subscriber information</para>
+			</listitem>
+			<listitem>
+				<para>Operation and maintenance</para>
+			</listitem>
+			<listitem>
+				<para>Subscriber tracing</para>
+			</listitem>
+			<listitem>
+				<para>Other operation and maintenance</para>
+			</listitem>
+			<listitem>
+				<para>Call handling</para>
+			</listitem>
+			<listitem>
+				<para>Supplementary services–related services</para>
+			</listitem>
+			<listitem>
+				<para>Short Message Service (SMS) management</para>
+			</listitem>
+			<listitem>
+				<para>Network-requested Packet Data Protocol (PDP) context
+					activation</para>
+			</listitem>
+			<listitem>
+				<para>Location service management</para>
+			</listitem>
+		</itemizedlist>
+
+
+	</para>
+	<para>
+		The &THIS.PLATFORM;
+		implementation of MAP is only capable of Supplementary
+		services–related services related to USSD as of today.
+	</para>
+
+	<para>
+		Within each of these service classifications, a number of messages are used
+		to communicate between the various network entities as defined by
+		each of the message sets. Within each message set is a predefined set
+		of parameters. These parameters may be optional or mandatory, as
+		defined by the standards.
+</para>
+
+	<section>
+		<title>Common MAP Services</title>
+		<para>Common MAP services are used with all the various services.
+			They do not fit within any one category because they can be used in
+			all the categories.</para>
+
+		<para>
+			The messages consist of
+
+			<itemizedlist>
+				<listitem>
+					<para>MAP_OPEN</para>
+				</listitem>
+				<listitem>
+					<para>MAP_CLOSE</para>
+				</listitem>
+				<listitem>
+					<para>MAP_DELIMITER</para>
+				</listitem>
+				<listitem>
+					<para>MAP_U_ABORT</para>
+				</listitem>
+				<listitem>
+					<para>MAP_P_ABORT</para>
+				</listitem>
+				<listitem>
+					<para>MAP_NOTICE</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</section>
+
+
+	<section>
+		<title>Supplementary Services–Related Services</title>
+		<para>These services are used to manage supplementary services:
+			</para>
+
+		<para>
+			The messages consist of
+
+			<itemizedlist>
+				<listitem>
+					<para>MAP_REGISTER_SS</para>
+				</listitem>
+				<listitem>
+					<para>MAP_ERASE_SS</para>
+				</listitem>
+				<listitem>
+					<para>MAP_ACTIVATE_SS</para>
+				</listitem>
+				<listitem>
+					<para>MAP_DEACTIVATE_SS</para>
+				</listitem>
+				<listitem>
+					<para>MAP_INTERROGATE_SS</para>
+				</listitem>
+				<listitem>
+					<para>MAP_REGISTER_PASSWORD</para>
+				</listitem>
+				<listitem>
+					<para>MAP_GET_PASSWORD</para>
+				</listitem>
+				<listitem>
+					<para>MAP_PROCESS_UNSTRUCTURED_SS_REQUEST</para>
+				</listitem>
+				<listitem>
+					<para>MAP_UNSTRUCTURED_SS_REQUEST</para>
+				</listitem>
+				<listitem>
+					<para>MAP_UNSTRUCTURED_SS_NOTIFY</para>
+				</listitem>
+				<listitem>
+					<para>MAP_SS_INVOCATION_NOTIFY</para>
+				</listitem>
+				<listitem>
+					<para>MAP_REGISTER_CC_ENTRY</para>
+				</listitem>
+				<listitem>
+					<para>MAP_ERASE_CC_ENTRY</para>
+				</listitem>
+			</itemizedlist>
+
+			<note>
+				<para>Of these Mobicents Impl of MAP only implements the Common MAP
+					Services and USSD services MAP_PROCESS_UNSTRUCTURED_SS_REQUEST,
+					MAP_UNSTRUCTURED_SS_REQUEST and
+					MAP_UNSTRUCTURED_SS_NOTIFY</para>
+			</note>
+
+		</para>
+	</section>
+
+
+</chapter>

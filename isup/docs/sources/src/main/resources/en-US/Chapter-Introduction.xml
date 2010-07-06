@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="introduction">
+
+	<title>Introduction
+		to &THIS.PLATFORM;  &THIS.APPLICATION;
+	</title>
+	<para>
+		The
+		<acronym>ISDN</acronym>
+		User Part (
+		<acronym>ISUP</acronym>
+		) defines the protocol used to set-up,
+		manage, and release trunk
+		circuits that carry voice and data between
+		terminating line exchanges
+		(e.g., between a calling party and a
+		called party).
+		<acronym>ISUP</acronym>
+		is used for both
+		<acronym>ISDN</acronym>
+		and non-
+		<acronym>ISDN</acronym>
+		calls.
+		However, calls that originate and terminate at the same switch
+		do not
+		use
+		<acronym>ISUP</acronym>
+		signaling.
+	</para>
+	<para>
+		<acronym>ISUP</acronym>
+		is defined in
+		<acronym>ITU-T</acronym>
+		<literal>Q.763</literal>
+		specification.
+	</para>
+
+
+</chapter>

@@ -7,6 +7,7 @@
 	<property name="parent_VERSION" value="1.0.0.BETA2" />
 
 	<property name="asn_VERSION" value="1.0.0.BETA1" />
+	<property name="stream_VERSION" value="1.0.0.BETA1" />
 	<property name="mtp_VERSION" value="1.0.0.BETA2" />
 	<property name="isup_VERSION" value="1.0.0.BETA1" />
 	<property name="sccp_VERSION" value="1.0.0.BETA1" />
@@ -14,6 +15,7 @@
 	<property name="map_VERSION" value="1.0.0.BETA1" />
 
 	<property name="asn_DOCS_VERSION" value="1.0.0.BETA1" />
+	<property name="stream_DOCS_VERSION" value="1.0.0.BETA1" />
 	<property name="mtp_DOCS_VERSION" value="1.0.0.BETA2" />
 	<property name="isup_DOCS_VERSION" value="1.0.0.BETA1" />
 	<property name="sccp_DOCS_VERSION" value="1.0.0.BETA1" />
@@ -46,10 +48,10 @@
 
 	<target name="init" />
 
-	<target name="checkout" depends="init,checkout-asn,checkout-protocol" />
-	<target name="build-src" depends="build-src-asn,build-src-protocol" />
+	<target name="checkout" depends="init,checkout-asn,checkout-stream,checkout-protocol" />
+	<target name="build-src" depends="build-src-asn,build-src-stream,build-src-protocol" />
 	<target name="prepare-text-content" depends="prepare-text-content-core" />
-	<target name="copy-jars" depends="copy-jars-asn,copy-jars-protocol" />
+	<target name="copy-jars" depends="copy-jars-asn,copy-jars-stream,copy-jars-protocol" />
 
 	<!-- Checkout section -->
 
@@ -57,6 +59,12 @@
 		<echo>Checkout Mobicents ASN (v${asn_VERSION}, Docs v${asn_DOCS_VERSION})</echo>
 		<exec executable="${mvn.executable}" dir="${ss7.release.sf}/../">
 			<arg line="-f external-components-checkout-standalone.xml validate -P checkout-asn -Dcheckout_base_dir=${checkout_base_dir} -Dasn_version=${asn_VERSION} -Ddocs_version=${asn_DOCS_VERSION}" />
+		</exec>
+	</target>
+	<target name="checkout-stream">
+		<echo>Checkout Mobicents Stream (v${stream_VERSION}, Docs v${stream_DOCS_VERSION})</echo>
+		<exec executable="${mvn.executable}" dir="${ss7.release.sf}/../">
+			<arg line="-f external-components-checkout-standalone.xml validate -P checkout-stream -Dcheckout_base_dir=${checkout_base_dir} -Dasn_version=${stream_VERSION} -Ddocs_version=${stream_DOCS_VERSION}" />
 		</exec>
 	</target>
 
@@ -123,7 +131,17 @@
 		</exec>
 		-->
 	</target>
-
+	
+	<target name="build-src-stream">
+		<exec executable="${mvn.executable}" dir="${checkout_base_dir}/stream">
+			<arg line="-f pom.xml clean install" />
+		</exec>
+		<!--
+			<exec executable="${mvn.executable}" dir="${checkout_base_dir}/asn/docs">
+				<arg line="-f pom.xml clean install -Pmobicents" />
+			</exec>
+			-->
+	</target>
 
 
 	<!-- Copy jars section -->
@@ -143,6 +161,21 @@
 		</copy>
 		-->
 	</target>
+	<target name="copy-jars-stream">
+			<copy todir="${zip_dir}/asn" failonerror="${failoncopy}">
+				<fileset dir="${checkout_base_dir}/stream/target">
+					<include name="stream-${asn_VERSION}.jar" />
+				</fileset>
+
+			</copy>
+			<!--
+			<copy todir="${zip_dir}/asn">
+				<fileset dir="${checkout_base_dir}/asn/docs/jdocbook-mobicents/target/docbook/publish/en-US/pdf">
+					<include name="*.pdf" />
+				</fileset>
+			</copy>
+			-->
+		</target>
 
 	<target name="copy-jars-protocol">
 
@@ -194,6 +227,7 @@
 				<replacetokens>
 					<token key="VERSION" value="${RELEASE_VERSION}" />
 					<token key="ASN_VERSION" value="${asn_VERSION}" />
+					<token key="STREAM_VERSION" value="${stream_VERSION}" />
 					<token key="MTP_VERSION" value="${mtp_VERSION}" />
 					<token key="ISUP_VERSION" value="${isup_VERSION}" />
 					<token key="SCCP_VERSION" value="${sccp_VERSION}" />

@@ -1,0 +1,36 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="design_overview">
+
+	<title>Design Overview</title>
+
+
+
+	<important>
+		<para>Be
+			aware, &THIS.PLATFORM; &THIS.APPLICATION;
+			is subject to changes as it is under active development!
+		</para>
+	</important>
+
+	<para>
+		<acronym>SCCP</acronym>
+		resides on top of
+		<acronym>mtp</acronym>
+		layer. Top overview is depicted on diagram below:
+	</para>
+	<mediaobject id="ss7_design_sccp_overview_1">
+		<imageobject>
+			<imagedata width="300px" align="center"
+				fileref="images/ss7-sccp-design-overview1.png" format="PNG" />
+		</imageobject>
+		<caption>
+			<para>&THIS.PLATFORM; &THIS.APPLICATION;
+				SCCP
+			</para>
+		</caption>
+	</mediaobject>
+
+</chapter>
+
