@@ -1,4 +1,4 @@
-package org.mobicents.protocols.ss7.mtp.provider;
+package org.mobicents.protocols;
 
 public class StartFailedException extends Exception {
 
