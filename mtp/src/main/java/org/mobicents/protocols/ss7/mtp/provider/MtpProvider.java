@@ -18,11 +18,6 @@ public interface MtpProvider {
 	 */
 	public void setMtpListener(MtpListener lst);
 
-	/**
-	 * Retrieves current listener
-	 * 
-	 * @return
-	 */
 
 	/**
 	 * Passes argument to MTP layers for processing. Passed buffer should not be
