@@ -2,10 +2,10 @@ package org.mobicents.protocols.ss7.isup.impl;
 
 import java.util.Properties;
 
-import org.mobicents.protocols.ss7.isup.ISUPStack;
-import org.mobicents.protocols.ss7.stream.PipeMtpProviderImpl;
-
 import junit.framework.TestCase;
+
+import org.mobicents.protocols.ss7.isup.ISUPStack;
+import org.mobicents.protocols.ss7.mtp.pipe.PipeMtpProviderImpl;
 
 
 public class TransactionsTest extends TestCase {

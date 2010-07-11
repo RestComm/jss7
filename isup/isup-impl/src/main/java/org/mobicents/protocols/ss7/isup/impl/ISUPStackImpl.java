@@ -10,11 +10,11 @@ import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.mobicents.protocols.ConfigurationException;
+import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.isup.ISUPProvider;
 import org.mobicents.protocols.ss7.isup.ISUPStack;
-import org.mobicents.protocols.ss7.stream.MTPProvider;
-import org.mobicents.protocols.ss7.stream.PipeMtpProviderImpl;
-import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
+import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 
 /**
  * Start time:12:14:57 2009-09-04<br>
@@ -36,7 +36,7 @@ public class ISUPStackImpl implements ISUPStack {
 
 	}
 	//for tests only!
-	public ISUPStackImpl(MTPProvider provider1, Properties props1) {
+	public ISUPStackImpl(MtpProvider provider1, Properties props1) {
 		this.isupMtpProvider = new ISUPMtpProviderImpl(provider1,this, props1);
 		this.state = State.CONFIGURED;
 	}
@@ -73,7 +73,7 @@ public class ISUPStackImpl implements ISUPStack {
 	/**
      *
      */
-	public void configure(Properties props) {
+	public void configure(Properties props) throws ConfigurationException{
 		if (state != State.IDLE) {
 			throw new IllegalStateException("Stack already been configured or is already running!");
 		}

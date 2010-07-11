@@ -2,7 +2,8 @@ package org.mobicents.protocols.ss7.sccp;
 
 import java.util.Properties;
 
-import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
+import org.mobicents.protocols.ConfigurationException;
+import org.mobicents.protocols.StartFailedException;
 
 /**
  * 
@@ -15,7 +16,7 @@ public interface SccpStack {
 
 	public void stop();
 
-	public void configure(Properties properties);
+	public void configure(Properties properties) throws ConfigurationException;
 
 	public SccpProvider getSccpProvider();
 

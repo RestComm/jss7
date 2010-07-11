@@ -40,7 +40,7 @@ public interface MtpProvider {
 	 * @throws IOException
 	 * @throws StartFailedException
 	 */
-	public void start() throws IOException, StartFailedException;
+	public void start() throws  StartFailedException;
 
 	/**
 	 * Stops this provider. This call clears all references, ie. listener is

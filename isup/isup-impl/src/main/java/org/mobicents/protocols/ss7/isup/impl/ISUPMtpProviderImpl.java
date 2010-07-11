@@ -14,6 +14,8 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ConfigurationException;
+import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.isup.ISUPClientTransaction;
 import org.mobicents.protocols.ss7.isup.ISUPListener;
 import org.mobicents.protocols.ss7.isup.ISUPProvider;
@@ -26,13 +28,12 @@ import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageFactoryImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
-import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.mtp.Mtp3Impl;
 import org.mobicents.protocols.ss7.mtp.Mtp3Listener;
-import org.mobicents.protocols.ss7.stream.MTPProvider;
-import org.mobicents.protocols.ss7.stream.MTPProviderFactory;
-import org.mobicents.protocols.ss7.stream.PipeMtpProviderImpl;
-import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
+import org.mobicents.protocols.ss7.mtp.RoutingLabel;
+import org.mobicents.protocols.ss7.mtp.provider.MtpListener;
+import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
+import org.mobicents.protocols.ss7.mtp.provider.MtpProviderFactory;
 
 /**
  * Start time:09:18:14 2009-07-18<br>
@@ -40,10 +41,10 @@ import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, Mtp3Listener {
+class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MtpListener {
 
 	private static final Logger logger = Logger.getLogger(ISUPMtpProviderImpl.class);
-	private MTPProvider mtpProvider;
+	private MtpProvider mtpProvider;
 
 	// private boolean linkUp = false;
 
@@ -54,12 +55,13 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, Mtp3
 	 * @param provider
 	 * @param stackImpl
 	 * @param messageFactoryImpl
+	 * @throws ConfigurationException 
 	 * 
 	 */
-	public ISUPMtpProviderImpl(ISUPStackImpl stackImpl, Properties props) {
+	public ISUPMtpProviderImpl(ISUPStackImpl stackImpl, Properties props) throws ConfigurationException {
 
 		super(stackImpl);
-		this.mtpProvider = MTPProviderFactory.getInstance().getProvider(props);
+		this.mtpProvider = MtpProviderFactory.getInstance().getProvider(props);
 		super.parameterFactory = new ISUPParameterFactoryImpl();
 		super.messageFactory = new ISUPMessageFactoryImpl(this,super.parameterFactory);
 		
@@ -73,7 +75,7 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, Mtp3
 
 	}
 	//tests only!
-	public ISUPMtpProviderImpl(MTPProvider provider1, ISUPStackImpl isupStackImpl, Properties props) {
+	public ISUPMtpProviderImpl(MtpProvider provider1, ISUPStackImpl isupStackImpl, Properties props) {
 		super(isupStackImpl);
 		this.mtpProvider = provider1;
 		super.parameterFactory = new ISUPParameterFactoryImpl();
@@ -258,13 +260,13 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, Mtp3
 	}
 
 	public void start() throws IllegalStateException, StartFailedException {
-		this.mtpProvider.addMtp3Listener(this);
+		this.mtpProvider.setMtpListener(this);
 		this.mtpProvider.start();
 
 	}
 
 	public void stop() {
-		this.mtpProvider.removeMtp3Listener(this);
+		
 		this.mtpProvider.stop();
 
 	}

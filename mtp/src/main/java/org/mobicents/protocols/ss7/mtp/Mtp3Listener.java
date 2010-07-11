@@ -16,7 +16,7 @@ public interface Mtp3Listener {
 	public void linkDown();
 
 	/**
-	 * Mtp3 invokes this method once proper MSU is detected. Arguemnt contains full Mtp3 MSU. 
+	 * Mtp3 invokes this method once proper MSU is detected. Argument contains full Mtp3 MSU. 
 	 * @param msgBuff
 	 */
 	public void receive(byte[] msgBuff); // http://pt.com/page/tutorials/ss7-tutorial/mtp

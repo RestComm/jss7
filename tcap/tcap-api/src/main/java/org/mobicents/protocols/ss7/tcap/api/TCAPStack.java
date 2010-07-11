@@ -5,7 +5,8 @@ package org.mobicents.protocols.ss7.tcap.api;
 
 import java.util.Properties;
 
-import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
+import org.mobicents.protocols.ConfigurationException;
+import org.mobicents.protocols.StartFailedException;
 
 /**
  * @author baranowb
@@ -25,5 +26,5 @@ public interface TCAPStack {
 	
 	public void start() throws IllegalStateException, StartFailedException;
 	
-	public void configure(Properties properties);
+	public void configure(Properties properties) throws ConfigurationException;
 }

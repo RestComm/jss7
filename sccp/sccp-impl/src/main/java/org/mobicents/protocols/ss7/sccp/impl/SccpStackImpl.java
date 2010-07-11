@@ -2,9 +2,10 @@ package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.util.Properties;
 
+import org.mobicents.protocols.ConfigurationException;
+import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
-import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
 
 /**
  * @author baranowb
@@ -25,7 +26,7 @@ public class SccpStackImpl implements SccpStack {
 	 * org.mobicents.protocols.ss7.sccp.SccpStack#configure(java.util.Properties
 	 * )
 	 */
-	public void configure(Properties properties) {
+	public void configure(Properties properties) throws ConfigurationException {
 		if (state != State.IDLE) {
 			throw new IllegalStateException("Stack already been configured or is already running!");
 		}

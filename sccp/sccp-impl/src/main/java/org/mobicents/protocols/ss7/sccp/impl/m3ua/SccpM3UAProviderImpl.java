@@ -21,19 +21,18 @@ import java.net.InetAddress;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ConfigurationException;
+import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
 import org.mobicents.protocols.ss7.utils.Utils;
-
-import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
 
 /**
  * 
  * @author Oleg Kulikov
- * 
+ * @deprecated - its obsolete now?
  */
 public class SccpM3UAProviderImpl extends SccpProviderImpl implements Runnable, SccpProvider {
 
@@ -52,14 +51,23 @@ public class SccpM3UAProviderImpl extends SccpProviderImpl implements Runnable, 
 	private Logger logger = Logger.getLogger(SccpM3UAProviderImpl.class);
 
 	/** Creates a new instance of SccpM3UAProviderImpl */
-	public SccpM3UAProviderImpl(Properties props) {
-		super(props);
+	public SccpM3UAProviderImpl() {
+		super();
+		
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl#configure(java.util.Properties)
+	 */
+	@Override
+	public void configure(Properties props) throws ConfigurationException {
 		remoteAddress = props.getProperty("remote.address");
 		localAddress = props.getProperty("local.address");
 
 		localPort = Integer.parseInt(props.getProperty("local.port"));
 		remotePort = Integer.parseInt(props.getProperty("remote.port"));
-
+		super.configure(props);
 	}
 
 	public void run() {

@@ -8,7 +8,8 @@ package org.mobicents.protocols.ss7.isup;
 
 import java.util.Properties;
 
-import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
+import org.mobicents.protocols.ConfigurationException;
+import org.mobicents.protocols.StartFailedException;
 
 /**
  * Start time:09:07:18 2009-08-30<br>
@@ -24,5 +25,5 @@ public interface ISUPStack {
 
 	public void start() throws IllegalStateException, StartFailedException;
 
-	public void configure(Properties props);
+	public void configure(Properties props) throws ConfigurationException;
 }

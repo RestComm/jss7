@@ -5,9 +5,10 @@ package org.mobicents.protocols.ss7.tcap;
 
 import java.util.Properties;
 
+import org.mobicents.protocols.ConfigurationException;
+import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 
@@ -64,7 +65,7 @@ public class TCAPStackImpl implements TCAPStack {
 	/**
      *
      */
-	public void configure(Properties props) {
+	public void configure(Properties props) throws ConfigurationException{
 		if (state != State.IDLE) {
 			throw new IllegalStateException("Stack already been configured or is already running!");
 		}

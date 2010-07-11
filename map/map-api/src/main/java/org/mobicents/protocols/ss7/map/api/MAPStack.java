@@ -2,7 +2,8 @@ package org.mobicents.protocols.ss7.map.api;
 
 import java.util.Properties;
 
-import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
+import org.mobicents.protocols.ConfigurationException;
+import org.mobicents.protocols.StartFailedException;
 
 /**
  * 
@@ -17,5 +18,5 @@ public interface MAPStack {
 	
 	public void start() throws IllegalStateException, StartFailedException;
 	
-	public void configure(Properties properties);
+	public void configure(Properties properties) throws ConfigurationException;
 }

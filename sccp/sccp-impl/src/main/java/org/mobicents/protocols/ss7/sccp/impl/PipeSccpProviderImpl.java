@@ -4,10 +4,12 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.io.IOException;
+import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpParameterFactory;
@@ -44,6 +46,14 @@ public class PipeSccpProviderImpl implements SccpProvider {
 	}
 
 
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.sccp.SccpProvider#configure(java.util.Properties)
+	 */
+	public void configure(Properties p) throws ConfigurationException {
+		// TODO Auto-generated method stub
+		
+	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.sccp.SccpProvider#getSccpParameterFactory()

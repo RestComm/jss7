@@ -15,19 +15,17 @@
 package org.mobicents.protocols.ss7.sccp.impl.intel;
 
 import java.io.IOException;
-import java.net.DatagramSocket;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ConfigurationException;
+import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.impl.intel.gt.InterProcessCommunicator;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
 import org.mobicents.protocols.ss7.utils.Utils;
-
-import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
 
 /**
  * 
@@ -46,18 +44,20 @@ public class SccpIntelHDCProviderImpl extends SccpProviderImpl implements Runnab
 	private Logger logger = Logger.getLogger(SccpIntelHDCProviderImpl.class);
 
 	/** Creates a new instance of SccpProviderImpl */
-	public SccpIntelHDCProviderImpl(Properties props) {
-		super(props);
-	
+	public SccpIntelHDCProviderImpl() {
+		super();
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl#configure(java.util.Properties)
+	 */
+	@Override
+	public void configure(Properties props) throws ConfigurationException {
 
 		src = Integer.parseInt(props.getProperty("module.src"));
 		dst = Integer.parseInt(props.getProperty("module.dest"));
-
-		ipc = new InterProcessCommunicator(src, dst);
-		logger.info("Started IPC");
-
-		
-		logger.info("Started main loop");
+		super.configure(props);
 	}
 
 	public synchronized void send(SccpAddress calledParty, SccpAddress callingParty, byte[] data, RoutingLabel ar) throws IOException {
@@ -108,12 +108,18 @@ public class SccpIntelHDCProviderImpl extends SccpProviderImpl implements Runnab
 	public void start() throws IllegalStateException, StartFailedException {
 		//this.threadPool = new PooledExecutor(10);
 		new Thread(super.THREAD_GROUP,this).start();
+		ipc = new InterProcessCommunicator(src, dst);
+		logger.info("Started IPC");
+
+		
+		logger.info("Started main loop");
 		
 	}
 
 	public void stop() {
 		//threadPool.shutdownNow();
 		stopped = true;
+		
 	}
 
 }

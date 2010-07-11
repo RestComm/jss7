@@ -36,7 +36,7 @@ public class MtpProviderFactory {
 	
 	public static final String DRIVER_M3UA = "m3ua";
 	
-	private MtpProviderFactory instance = new MtpProviderFactory();
+	private final static MtpProviderFactory instance = new MtpProviderFactory();
 	/**
 	 * 
 	 */
@@ -46,7 +46,7 @@ public class MtpProviderFactory {
 	/**
 	 * @return the instance
 	 */
-	public MtpProviderFactory getInstance() {
+	public static MtpProviderFactory getInstance() {
 		return instance;
 	}
 

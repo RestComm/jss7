@@ -4,29 +4,41 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.mtp.Mtp3Listener;
+import org.mobicents.protocols.ConfigurationException;
+import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
+import org.mobicents.protocols.ss7.mtp.provider.MtpListener;
+import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
+import org.mobicents.protocols.ss7.mtp.provider.MtpProviderFactory;
 import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.stream.MTPProvider;
-import org.mobicents.protocols.ss7.stream.MTPProviderFactory;
-import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
 
-public class SccpDefaultProviderImpl extends SccpProviderImpl implements Mtp3Listener {
+public class SccpDefaultProviderImpl extends SccpProviderImpl implements MtpListener {
 	private static final Logger logger = Logger.getLogger(SccpDefaultProviderImpl.class);
 
-	private MTPProvider mtpProvider;
+	private MtpProvider mtpProvider;
 	private boolean linkUp = false;
 
-	public SccpDefaultProviderImpl(Properties props) {
-		super(props);
-		this.mtpProvider = MTPProviderFactory.getInstance().getProvider(props);
+	public SccpDefaultProviderImpl() {
+		super();
+		
 
 	}
-	public SccpDefaultProviderImpl(MTPProvider mtpProvider,Properties props) {
-		super(props);
+	public SccpDefaultProviderImpl(MtpProvider mtpProvider) {
+		super();
 		this.mtpProvider =mtpProvider;
 
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl#configure(java.util.Properties)
+	 */
+	@Override
+	public void configure(Properties props) throws ConfigurationException {
+		
+		super.configure(props);
+		this.mtpProvider = MtpProviderFactory.getInstance().getProvider(props);
 	}
 	public void receive(byte[] arg2) {
 		// add check for SIO parts?
@@ -68,13 +80,13 @@ public class SccpDefaultProviderImpl extends SccpProviderImpl implements Mtp3Lis
 	}
 
 	public void start() throws IllegalStateException, StartFailedException {
-		this.mtpProvider.addMtp3Listener(this);
+		this.mtpProvider.setMtpListener(this);
 		this.mtpProvider.start();
 	}
 
 	public void stop() {
 
-		this.mtpProvider.removeMtp3Listener(this);
+		
 		this.mtpProvider.stop();
 
 	}

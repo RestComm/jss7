@@ -18,14 +18,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ConfigurationException;
+import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.mtp.Mtp3Impl;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
@@ -40,7 +40,6 @@ import org.mobicents.protocols.ss7.sccp.impl.ud.XUnitDataImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.sccp.ud.UDBase;
-import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
 
 /**
  * 
@@ -65,13 +64,22 @@ public abstract class SccpProviderImpl implements SccpProvider {
 	protected final SccpUnitDataFactory udFactory;
 	protected final SccpParameterFactory paramFactory;
 
-	protected final RoutingLabel routingLabel;
+	protected RoutingLabel routingLabel;
 	protected Executor executor;
 	protected int threadCount = 4;
-	public SccpProviderImpl(Properties props) {
+	public SccpProviderImpl() {
 		super();
 		this.paramFactory = new SccpParameterFactoryImpl();
 		this.udFactory = new SccpUnitDataFactoryImpl();
+	}
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.sccp.SccpProvider#configure(java.util.Properties)
+	 */
+	public void configure(Properties props) throws ConfigurationException {
+		
 
 		int opc = Integer.parseInt(props.getProperty(SccpProviderImpl.CONFIG_OPC));
 		int dpc = Integer.parseInt(props.getProperty(SccpProviderImpl.CONFIG_DPC));
@@ -82,6 +90,8 @@ public abstract class SccpProviderImpl implements SccpProvider {
 		this.threadCount = Integer.parseInt(props.getProperty(SccpProviderImpl.CONFIG_THREADS, ""+threadCount));
 		this.executor = Executors.newFixedThreadPool(this.threadCount);
 	}
+
+
 
 	/*
 	 * (non-Javadoc)

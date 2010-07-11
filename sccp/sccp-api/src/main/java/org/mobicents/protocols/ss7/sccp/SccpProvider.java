@@ -15,7 +15,9 @@
 package org.mobicents.protocols.ss7.sccp;
 
 import java.io.IOException;
+import java.util.Properties;
 
+import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
@@ -52,4 +54,6 @@ public interface SccpProvider {
 	public SccpUnitDataFactory getUnitDataFactory();
 
 	public SccpParameterFactory getSccpParameterFactory();
+	
+	public void configure(Properties p) throws ConfigurationException;
 }
