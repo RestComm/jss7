@@ -20,7 +20,6 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.InitialAddressMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
-import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.ForwardCallIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.NatureOfConnectionIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumRequirement;

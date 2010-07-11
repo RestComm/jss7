@@ -40,21 +40,20 @@ public class CGUTest extends MessageHarness {
 			if(RS == null)
 				return;
 			byte range = RS.getRange();
-			assertEquals("Range is wrong,",0x01, range);
+			assertEquals("Range is wrong,",0x11, range);
 			byte[] b=RS.getStatus();
 			assertNotNull("RangeAndStatus.getRange() is null",b);
 			if(b == null)
 			{
 				return;
 			}	
-			assertEquals("Length of param is wrong",4 ,b.length);
-			if(b.length != 4)
+			assertEquals("Length of param is wrong",3 ,b.length);
+			if(b.length != 3)
 				return;
 			assertTrue("RangeAndStatus.getRange() is wrong,", super.makeCompare(b, new byte[]{
 					0x02
 					,0x03
 					,0x04
-					,0x05
 					}));
 			
 		}catch(Exception e)
@@ -77,12 +76,12 @@ public class CGUTest extends MessageHarness {
 				,0x01 // ptr to variable part
 				//no optional, so no pointer
 				//RangeAndStatus._PARAMETER_CODE
-				,0x05
-				,0x01
+				,0x04
+				,0x11
 				,0x02
 				,0x03
 				,0x04
-				,0x05
+
 		};
 		return message;
 	}

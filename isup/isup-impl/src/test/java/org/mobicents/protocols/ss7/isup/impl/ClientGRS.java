@@ -14,19 +14,10 @@ import org.mobicents.protocols.ss7.isup.ISUPServerTransaction;
 import org.mobicents.protocols.ss7.isup.ISUPStack;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.protocols.ss7.isup.TransactionAlredyExistsException;
-import org.mobicents.protocols.ss7.isup.message.AddressCompleteMessage;
-import org.mobicents.protocols.ss7.isup.message.AnswerMessage;
 import org.mobicents.protocols.ss7.isup.message.CircuitGroupResetAckMessage;
 import org.mobicents.protocols.ss7.isup.message.CircuitGroupResetMessage;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
-import org.mobicents.protocols.ss7.isup.message.InitialAddressMessage;
-import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
-import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
-import org.mobicents.protocols.ss7.isup.message.parameter.ForwardCallIndicators;
-import org.mobicents.protocols.ss7.isup.message.parameter.NatureOfConnectionIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
-import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumRequirement;
 
 /**
  * @author baranowb
@@ -61,7 +52,7 @@ public class ClientGRS implements ISUPListener {
 		// create obligatory params!
 		
 		RangeAndStatus ras = this.parameterFactory.createRangeAndStatus();
-		ras.setRange((byte) 1);
+		ras.setRange((byte) 0x11);
 		ras.setStatus(new byte[]{1,2,3});
 		grs.setRangeAndStatus(ras);
 		ctx = this.provider.createClientTransaction(grs);

@@ -61,21 +61,20 @@ public class ServerGRS implements ISUPListener {
 					passed = false;
 					status.append("Received IAM message more than once!\n");
 				}
-			
+
 				_RCV_GRS = true;
 				this.stx = this.provider.createServerTransaction(message);
 				// send ACM
-				
+
 				CircuitGroupResetAckMessage gra = this.factory.createGRA();
 				gra.setCircuitIdentificationCode(message.getCircuitIdentificationCode());
 				CircuitGroupResetMessage grs = (CircuitGroupResetMessage) message;
-				
+
 				gra.setRangeAndStatus(grs.getRangeAndStatus());
 
-				
 				this.stx.sendAnswer(gra);
 				_SND_GRA = true;
-				
+
 				break;
 
 			default:
@@ -114,8 +113,6 @@ public class ServerGRS implements ISUPListener {
 			status.append("Received STX TERM more than once!\n");
 		}
 		_RCV_TX_TERM = true;
-		
-		
 
 	}
 
@@ -176,7 +173,7 @@ public class ServerGRS implements ISUPListener {
 	public String getStatus() {
 		status.append("GRS[" + _RCV_GRS + "]").append("\n");
 		status.append("GRA[" + _SND_GRA + "]").append("\n");
-		
+
 		status.append("TX TERM[" + _RCV_TX_TERM + "]").append("\n");
 		return status.toString();
 	}

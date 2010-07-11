@@ -18,7 +18,6 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.ReleaseCompleteMessage;
 import org.mobicents.protocols.ss7.isup.message.ReleaseMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
-import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
 
 /**
  * @author baranowb

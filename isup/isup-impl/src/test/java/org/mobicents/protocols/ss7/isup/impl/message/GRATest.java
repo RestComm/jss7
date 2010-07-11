@@ -46,14 +46,11 @@ public class GRATest extends MessageHarness {
 			{
 				return;
 			}	
-			assertEquals("Length of param is wrong",4 ,b.length);
-			if(b.length != 4)
+			assertEquals("Length of param is wrong",1 ,b.length);
+			if(b.length != 1)
 				return;
 			assertTrue("RangeAndStatus.getRange() is wrong,", super.makeCompare(b, new byte[]{
 					0x02
-					,0x03
-					,0x04
-					,0x05
 					}));
 		
 			
@@ -76,12 +73,10 @@ public class GRATest extends MessageHarness {
 				,0x01 // ptr to variable part
 				//no optional, so no pointer
 				//RangeAndStatus._PARAMETER_CODE
-				,0x05
+				,0x02
 				,0x01
 				,0x02
-				,0x03
-				,0x04
-				,0x05
+
 				
 		};
 
