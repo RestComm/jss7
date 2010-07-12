@@ -1,4 +1,4 @@
-package org.mobicents.protocols.ss7.sccp.impl.sctp;
+package org.mobicents.protocols.ss7.sccp.impl.provider.stream;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -10,10 +10,10 @@ import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.mtp.provider.MtpListener;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProviderFactory;
-import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
+import org.mobicents.protocols.ss7.sccp.impl.AbstractSccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
-public class SccpDefaultProviderImpl extends SccpProviderImpl implements MtpListener {
+public class SccpDefaultProviderImpl extends AbstractSccpProviderImpl implements MtpListener {
 	private static final Logger logger = Logger.getLogger(SccpDefaultProviderImpl.class);
 
 	private MtpProvider mtpProvider;

@@ -20,8 +20,8 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import org.mobicents.protocols.ss7.sccp.impl.intel.SccpIntelHDCProviderImpl;
-import org.mobicents.protocols.ss7.sccp.impl.sctp.SccpDefaultProviderImpl;
+import org.mobicents.protocols.ss7.sccp.impl.provider.intel.SccpIntelHDCProviderImpl;
+import org.mobicents.protocols.ss7.sccp.impl.provider.stream.SccpDefaultProviderImpl;
 
 /**
  * 
@@ -41,7 +41,7 @@ class SccpProviderFactory {
 
 	public SccpProvider getProvider(Properties properties) throws ConfigurationException {
 
-		String driver = properties.getProperty(SccpProviderImpl.CONFIG_PROVIDER, DRIVER_DEFAULT);
+		String driver = properties.getProperty(AbstractSccpProviderImpl.CONFIG_PROVIDER, DRIVER_DEFAULT);
 		SccpProvider p = null;
 		if (driver.toLowerCase().equals(DRIVER_INTEL)) {
 			p = new SccpIntelHDCProviderImpl();

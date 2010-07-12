@@ -12,7 +12,7 @@
  * usefulness of the software.
  */
 
-package org.mobicents.protocols.ss7.sccp.impl.intel.gt;
+package org.mobicents.protocols.ss7.sccp.impl.provider.intel.gt;
 
 import java.io.IOException;
 
@@ -24,23 +24,29 @@ import java.net.InetAddress;
  *
  * @author Oleg Kulikov
  */
-public class Receiver implements Runnable {
+public class Transmitter implements Runnable {
     
     private DatagramSocket socket = null;
     private InterProcessCommunicator board = null;
     
-    /** Creates a new instance of Receiver */
-    public Receiver(DatagramSocket socket, InterProcessCommunicator board) {
+    /** Creates a new instance of Transmitter */
+    public Transmitter(DatagramSocket socket, InterProcessCommunicator board) {
         this.socket = socket;
         this.board = board;
     }
-
+    
     public void run() {
         while (true) {
             try {
-                byte[] data = board.receive();
-                DatagramPacket packet = new DatagramPacket(data, data.length, InetAddress.getByName("80.69.146.235"), 9200);
-                socket.send(packet);
+                byte[] buffer = new byte[500];
+                DatagramPacket packet = new DatagramPacket(buffer, 500);
+                socket.receive(packet);
+                
+                int len = packet.getLength();
+                byte[] data = new byte[len];
+                
+                System.arraycopy(buffer, 0, data, 0, len);
+                board.send(data);
                 Thread.currentThread().sleep(10);
             } catch (Exception e) {
                 System.err.println("I/O Exception occured: Caused by " + e);

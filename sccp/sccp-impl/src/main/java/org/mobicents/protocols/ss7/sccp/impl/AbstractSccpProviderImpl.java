@@ -46,9 +46,9 @@ import org.mobicents.protocols.ss7.sccp.ud.UDBase;
  * @author Oleg Kulikov
  * @author baranowb
  */
-public abstract class SccpProviderImpl implements SccpProvider {
+public abstract class AbstractSccpProviderImpl implements SccpProvider {
 
-	private final static Logger logger = Logger.getLogger(SccpProviderImpl.class);
+	private final static Logger logger = Logger.getLogger(AbstractSccpProviderImpl.class);
 
 	protected static final ThreadGroup THREAD_GROUP = new ThreadGroup("Sccp-Provider");
 	
@@ -67,7 +67,7 @@ public abstract class SccpProviderImpl implements SccpProvider {
 	protected RoutingLabel routingLabel;
 	protected Executor executor;
 	protected int threadCount = 4;
-	public SccpProviderImpl() {
+	public AbstractSccpProviderImpl() {
 		super();
 		this.paramFactory = new SccpParameterFactoryImpl();
 		this.udFactory = new SccpUnitDataFactoryImpl();
@@ -81,13 +81,13 @@ public abstract class SccpProviderImpl implements SccpProvider {
 	public void configure(Properties props) throws ConfigurationException {
 		
 
-		int opc = Integer.parseInt(props.getProperty(SccpProviderImpl.CONFIG_OPC));
-		int dpc = Integer.parseInt(props.getProperty(SccpProviderImpl.CONFIG_DPC));
-		int sls = Integer.parseInt(props.getProperty(SccpProviderImpl.CONFIG_SLS));
-		int ssi = Integer.parseInt(props.getProperty(SccpProviderImpl.CONFIG_SSI));
+		int opc = Integer.parseInt(props.getProperty(AbstractSccpProviderImpl.CONFIG_OPC));
+		int dpc = Integer.parseInt(props.getProperty(AbstractSccpProviderImpl.CONFIG_DPC));
+		int sls = Integer.parseInt(props.getProperty(AbstractSccpProviderImpl.CONFIG_SLS));
+		int ssi = Integer.parseInt(props.getProperty(AbstractSccpProviderImpl.CONFIG_SSI));
 		int si = Mtp3Impl._SI_SERVICE_SCCP;
 		this.routingLabel = new RoutingLabel(opc, dpc, sls, si, ssi);
-		this.threadCount = Integer.parseInt(props.getProperty(SccpProviderImpl.CONFIG_THREADS, ""+threadCount));
+		this.threadCount = Integer.parseInt(props.getProperty(AbstractSccpProviderImpl.CONFIG_THREADS, ""+threadCount));
 		this.executor = Executors.newFixedThreadPool(this.threadCount);
 	}
 

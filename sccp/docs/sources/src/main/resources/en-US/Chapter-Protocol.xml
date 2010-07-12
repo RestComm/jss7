@@ -8,19 +8,59 @@
 	<section>
 		<title>API</title>
 		<section>
+			<title>Stack</title>
+			<para><acronym>SCCP</acronym>
+				stack relies on
+				<acronym>MTP</acronym>
+				to provide transport. Stack interface is defined as follows:</para>
+				<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.tcap.api;
+
+import java.util.Properties;
+
+public interface TCAPStack {
+
+	/**
+	 * Returns stack provider.
+	 * @return
+	 */
+	public TCAPProvider getProvider();
+	/**
+	 * Stops this stack and transport layer(SCCP)
+	 */
+	public void stop();
+	/**
+	 * Start stack and transport layer(SCCP)
+	 * @throws IllegalStateException - if stack is already running or not configured
+	 * @throws StartFailedException
+	 */
+	public void start() throws IllegalStateException, StartFailedException;
+	/**
+	 * Configure stack and transport layer.
+	 * @param properties
+	 * @throws ConfigurationException
+	 */
+	public void configure(Properties properties) throws ConfigurationException;
+}
+				</programlisting>
+		</section>
+		<section>
 			<title>Provider	</title>
 			<para>
-				As diagram depicts
-				<literal>SCCP</literal>
-				layer is provider centered. There is no stack. Provider has
-				following definition:
+				Stack declares provider which allows user to access stack
+				facilities,
+				send messages statelesly and register listener. Provider
+				is defined
+				as follows:
 			</para>
 			<programlisting language="Java" role="JAVA">
 package org.mobicents.protocols.ss7.sccp;
 
 import java.io.IOException;
+import java.util.Properties;
 
-import org.mobicents.protocols.ss7.mtp.ActionReference;
+import org.mobicents.protocols.ConfigurationException;
+import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 public interface SccpProvider {
@@ -29,16 +69,12 @@ public interface SccpProvider {
 	 * Sets sccp listener
 	 * @param listener
 	 */
-	public void setSccpListener(SccpListener listener);
-	/**
-	 * Retrieves listener
-	 * @return
-	 */
-	public SccpListener getListener();
+	public void addSccpListener(SccpListener listener);
+
 	/**
 	 * Removes listener
 	 */
-	public void removeListener();
+	public void removeSccpListener(SccpListener listener);
 	
 	/**
 	 * Send sccp byte[] to desired addres.
@@ -49,13 +85,20 @@ public interface SccpProvider {
 	 * @throws IOException
 	 */
 	public void send(SccpAddress calledParty, SccpAddress callingParty,
-			byte[] data,ActionReference ar) throws IOException;
+			byte[] data,RoutingLabel ar) throws IOException;//FIXME: add support for UDTs?
 
-	public void shutdown();
-
+	/**
+	 * UnitData factory instance.
+	 * @return
+	 */
 	public SccpUnitDataFactory getUnitDataFactory();
-
+	/**
+	 * Parameter factory instance.
+	 * @return
+	 */
 	public SccpParameterFactory getSccpParameterFactory();
+	
+	public void configure(Properties p) throws ConfigurationException;
 }
 		</programlisting>
 			<para>
@@ -130,27 +173,20 @@ public interface SccpListener {
 					</thead>
 					<tbody>
 						<row>
-							<entry>TCP</entry>
+							<entry>default</entry>
 							<entry>
-								TCP providers, it relies on
-								<acronym>MTP</acronym>
-								Provider
+								Default provider which relies on &THIS.PLATFORM; MTP provider. 
 							</entry>
 							<entry>
-								Please refer to mtp provider configuration for
-								<acronym>TCP</acronym>
+								Refer to MTP provider configuration.
 							</entry>
 						</row>
 						<row>
-							<entry>INTEL</entry>
+							<entry>intel_hdc</entry>
 							<entry></entry>
 							<entry></entry>
 						</row>
-						<row>
-							<entry>M3</entry>
-							<entry></entry>
-							<entry></entry>
-						</row>
+						
 					</tbody>
 				</tgroup>
 			</table>
@@ -177,14 +213,12 @@ public interface SccpListener {
 				</thead>
 				<tbody>
 					<row>
-						<entry>driver</entry>
+						<entry>sccp.provider</entry>
 						<entry>
-							Configures driver of
-							<acronym>SCCP</acronym>
-							layer.
+							Configures provider for this stack. It can contain one of predefined values or class name.
 						</entry>
 						<entry>java.lang.String</entry>
-						<entry></entry>
+						<entry>default</entry>
 					</row>
 					<row>
 						<entry>sccp.dpc</entry>
@@ -226,7 +260,12 @@ public interface SccpListener {
 
 Properties properties = new Properties();
 //mtp/sccp - name is the same
-properties.put("driver","TCP");
+properties.put("sccp.provider","default");
+//mtp properties
+properties.put("mtp.driver","m3ua");
+properties.put("mtp.address.remote","192.168.1.1");
+properties.put("mtp.address.local","192.168.1.202");
+//sccp
 properties.put("sccp.opc","12345");
 properties.put("sccp.dpc","5641");
 properties.put("sccp.sls","0");

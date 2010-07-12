@@ -50,9 +50,15 @@ public interface SccpProvider {
 	public void send(SccpAddress calledParty, SccpAddress callingParty,
 			byte[] data,RoutingLabel ar) throws IOException;//FIXME: add support for UDTs?
 
-
+	/**
+	 * UnitData factory instance.
+	 * @return
+	 */
 	public SccpUnitDataFactory getUnitDataFactory();
-
+	/**
+	 * Parameter factory instance.
+	 * @return
+	 */
 	public SccpParameterFactory getSccpParameterFactory();
 	
 	public void configure(Properties p) throws ConfigurationException;

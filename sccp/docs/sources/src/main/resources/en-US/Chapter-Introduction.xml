@@ -11,7 +11,9 @@
 		SCCP provides connectionless and connection-oriented network
 		services and global title translation (GTT) capabilities above
 		<acronym>MTP</acronym>
-		Level 3. A global title is an address (e.g., a dialed 800 number,
+		Level 3. SCCP provides also extended routing, flow control, segmentation and reassembly  of data service.
+		</para>
+		<para> A global title is an address (e.g., a dialed 800 number,
 		calling card number, or mobile subscriber identification number)
 		which is translated by SCCP into a destination point code and
 		subsystem number. A subsystem number uniquely identifies an

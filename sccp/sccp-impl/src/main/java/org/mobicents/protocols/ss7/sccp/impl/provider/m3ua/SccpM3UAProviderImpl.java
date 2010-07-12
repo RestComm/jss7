@@ -12,7 +12,7 @@
  * usefulness of the software.
  */
 
-package org.mobicents.protocols.ss7.sccp.impl.m3ua;
+package org.mobicents.protocols.ss7.sccp.impl.provider.m3ua;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -25,7 +25,7 @@ import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
+import org.mobicents.protocols.ss7.sccp.impl.AbstractSccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.utils.Utils;
 
@@ -34,7 +34,7 @@ import org.mobicents.protocols.ss7.utils.Utils;
  * @author Oleg Kulikov
  * @deprecated - its obsolete now?
  */
-public class SccpM3UAProviderImpl extends SccpProviderImpl implements Runnable, SccpProvider {
+public class SccpM3UAProviderImpl extends AbstractSccpProviderImpl implements Runnable, SccpProvider {
 
 	private DatagramSocket socket;
 

@@ -12,7 +12,7 @@
  * usefulness of the software.
  */
 
-package org.mobicents.protocols.ss7.sccp.impl.intel.gt;
+package org.mobicents.protocols.ss7.sccp.impl.provider.intel.gt;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
