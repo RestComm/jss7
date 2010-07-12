@@ -29,7 +29,6 @@ import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.mtp.Mtp3Impl;
-import org.mobicents.protocols.ss7.mtp.Mtp3Listener;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.mtp.provider.MtpListener;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
@@ -41,8 +40,14 @@ import org.mobicents.protocols.ss7.mtp.provider.MtpProviderFactory;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MtpListener {
+class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, MtpListener {
 
+	public static final String PROPERTY_OPC = "isup.opc";
+	public static final String PROPERTY_DPC = "isup.dpc";
+	public static final String PROPERTY_SLS = "isup.sls";
+	public static final String PROPERTY_SSI = "isup.ssi";
+	
+	
 	private static final Logger logger = Logger.getLogger(ISUPMtpProviderImpl.class);
 	private MtpProvider mtpProvider;
 
@@ -65,10 +70,10 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MtpL
 		super.parameterFactory = new ISUPParameterFactoryImpl();
 		super.messageFactory = new ISUPMessageFactoryImpl(this,super.parameterFactory);
 		
-		int opc = Integer.parseInt(props.getProperty("isup.opc"));
-		int dpc = Integer.parseInt(props.getProperty("isup.dpc"));
-		int sls = Integer.parseInt(props.getProperty("isup.sls"));
-		int ssi = Integer.parseInt(props.getProperty("isup.ssi"));
+		int opc = Integer.parseInt(props.getProperty(PROPERTY_OPC));
+		int dpc = Integer.parseInt(props.getProperty(PROPERTY_DPC));
+		int sls = Integer.parseInt(props.getProperty(PROPERTY_SLS));
+		int ssi = Integer.parseInt(props.getProperty(PROPERTY_SSI));
 		// this.si = Integer.parseInt(props.getProperty("isup.si"));
 		int si = Mtp3Impl._SI_SERVICE_ISUP;
 		this.actionReference = new RoutingLabel(opc, dpc, sls, si, ssi);
@@ -81,10 +86,10 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MtpL
 		super.parameterFactory = new ISUPParameterFactoryImpl();
 		super.messageFactory = new ISUPMessageFactoryImpl(this,super.parameterFactory);
 		
-		int opc = Integer.parseInt(props.getProperty("isup.opc"));
-		int dpc = Integer.parseInt(props.getProperty("isup.dpc"));
-		int sls = Integer.parseInt(props.getProperty("isup.sls"));
-		int ssi = Integer.parseInt(props.getProperty("isup.ssi"));
+		int opc = Integer.parseInt(props.getProperty(PROPERTY_OPC));
+		int dpc = Integer.parseInt(props.getProperty(PROPERTY_DPC));
+		int sls = Integer.parseInt(props.getProperty(PROPERTY_SLS));
+		int ssi = Integer.parseInt(props.getProperty(PROPERTY_SSI));
 		// this.si = Integer.parseInt(props.getProperty("isup.si"));
 		int si = Mtp3Impl._SI_SERVICE_ISUP;
 		this.actionReference = new RoutingLabel(opc, dpc, sls, si, ssi);
@@ -104,7 +109,7 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MtpL
 		if (msg.getCircuitIdentificationCode() == null) {
 			throw new IllegalArgumentException("CIC is not set in message");
 		}
-		TransactionKey key = msg.generateTransactionKey();
+		TransactionKey key = ((ISUPMessageImpl)msg).generateTransactionKey();
 		if (this.transactionMap.containsKey(key)) {
 			throw new TransactionAlredyExistsException("Transaction already exists for key: " + key);
 		}
@@ -113,7 +118,7 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MtpL
 			actionReference = this.actionReference;
 		}
 		ISUPClientTransactionImpl ctx = new ISUPClientTransactionImpl(msg, this, this.stack, actionReference);
-		this.transactionMap.put(msg.generateTransactionKey(), ctx);
+		this.transactionMap.put(((ISUPMessageImpl)msg).generateTransactionKey(), ctx);
 
 		return ctx;
 	}
@@ -132,12 +137,12 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MtpL
 		if (msg.getCircuitIdentificationCode() == null) {
 			throw new IllegalArgumentException("CIC is not set in message");
 		}
-		TransactionKey key = msg.generateTransactionKey();
+		TransactionKey key = ((ISUPMessageImpl)msg).generateTransactionKey();
 		if (this.transactionMap.containsKey(key)) {
 			throw new TransactionAlredyExistsException("Transaction already exists for key: " + key);
 		}
 		ISUPServerTransactionImpl stx = new ISUPServerTransactionImpl(msg, this, this.stack, ((ISUPMessageImpl) msg).getRoutingLabel());
-		this.transactionMap.put(msg.generateTransactionKey(), stx);
+		this.transactionMap.put(((ISUPMessageImpl)msg).generateTransactionKey(), stx);
 
 		return stx;
 
@@ -184,7 +189,7 @@ class ISUPMtpProviderImpl extends ISUPProviderBase implements ISUPProvider, MtpL
 
 	private ISUPTransaction preprocessIncomingMessage(ISUPMessage msg, RoutingLabel actionReference) {
 		// FIXME: should we create TX here?
-		TransactionKey tk = msg.generateTransactionKey();
+		TransactionKey tk = ((ISUPMessageImpl)msg).generateTransactionKey();
 		ISUPMessageImpl msgImpl = (ISUPMessageImpl) msg;
 		if (this.transactionMap.containsKey(tk)) {
 			// we have TX

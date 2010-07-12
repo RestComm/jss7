@@ -3,7 +3,6 @@ package org.mobicents.protocols.ss7.isup.message;
 import org.mobicents.protocols.ss7.isup.ISUPComponent;
 import org.mobicents.protocols.ss7.isup.ISUPTransaction;
 import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.TransactionKey;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
@@ -17,11 +16,14 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
 public interface ISUPMessage extends ISUPComponent {
 
 	/**
-	 * Set mandatory field, CIC.
+	 * Get mandatory field, CIC.
 	 * @return
 	 */
 	public CircuitIdentificationCode getCircuitIdentificationCode();
-
+	/**
+	 * Set mandatory field, CIC.
+	 * @return
+	 */
 	public void setCircuitIdentificationCode(CircuitIdentificationCode cic);
 
 	/**
@@ -57,13 +59,6 @@ public interface ISUPMessage extends ISUPComponent {
 	 * @return
 	 */
 	public ISUPTransaction getTransaction();
-
-	/**
-	 * Generates TX key for fast matching.
-	 * 
-	 * @return
-	 */
-	public TransactionKey generateTransactionKey();
 
 	/**
 	 * @return <ul>

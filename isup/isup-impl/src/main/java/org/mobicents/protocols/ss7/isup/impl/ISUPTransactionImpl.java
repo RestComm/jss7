@@ -33,12 +33,12 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 
 	protected ISUPMessage message;
 
-	protected ISUPProviderBase provider;
+	protected AbstractISUPProvider provider;
 	protected ISUPStackImpl stack;
 
 	protected Future generalTimeoutFuture;
 
-	public ISUPTransactionImpl(ISUPMessage message, ISUPProviderBase provider, ISUPStackImpl stack, RoutingLabel ar) {
+	public ISUPTransactionImpl(ISUPMessage message, AbstractISUPProvider provider, ISUPStackImpl stack, RoutingLabel ar) {
 		super();
 		if (message == null) {
 			throw new NullPointerException("Message can not be null!");
@@ -55,7 +55,7 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 		this.message = message;
 		this.provider = provider;
 		this.stack = stack;
-		this.transactionKey = this.message.generateTransactionKey();
+		this.transactionKey = ((ISUPMessageImpl)this.message).generateTransactionKey();
 		startGeneralTimer();
 
 		if (ar == null) {

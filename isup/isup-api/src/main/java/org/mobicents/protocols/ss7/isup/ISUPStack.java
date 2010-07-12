@@ -18,12 +18,26 @@ import org.mobicents.protocols.StartFailedException;
  * @author baranowb
  */
 public interface ISUPStack {
-
+	
+	/**
+	 * Get instance of provider.
+	 * @return
+	 */
 	public ISUPProvider getIsupProvider();
-
+	/**
+	 * Stop stack and all underlying resources.
+	 */
 	public void stop();
-
+	/**
+	 * Start stack and all underlying resources
+	 * @throws IllegalStateException - if stack is already running or is not configured yet.
+	 * @throws StartFailedException - if start failed for some other reason.
+	 */
 	public void start() throws IllegalStateException, StartFailedException;
-
+	/**
+	 * Configure this stack and its resources, like MTP.
+	 * @param props
+	 * @throws ConfigurationException
+	 */
 	public void configure(Properties props) throws ConfigurationException;
 }

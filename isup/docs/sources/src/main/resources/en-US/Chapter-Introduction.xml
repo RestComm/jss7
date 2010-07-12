@@ -12,11 +12,13 @@
 		<acronym>ISDN</acronym>
 		User Part (
 		<acronym>ISUP</acronym>
-		) defines the protocol used to set-up,
+		) is a protocol used to set-up,
 		manage, and release trunk
-		circuits that carry voice and data between
+		circuits voice
+		carry voice and data between
 		terminating line exchanges
-		(e.g., between a calling party and a
+		(e.g., between a
+		calling party and a
 		called party).
 		<acronym>ISUP</acronym>
 		is used for both
@@ -24,7 +26,7 @@
 		and non-
 		<acronym>ISDN</acronym>
 		calls.
-		However, calls that originate and terminate at the same switch
+		However, calls which originate and terminate at the same switch
 		do not
 		use
 		<acronym>ISUP</acronym>
@@ -37,6 +39,8 @@
 		<literal>Q.763</literal>
 		specification.
 	</para>
+	<para>ISUP supercedes TUP (Telephony User Part) as the standard for
+		call control between telephone exchanges.</para>
 
 
 </chapter>

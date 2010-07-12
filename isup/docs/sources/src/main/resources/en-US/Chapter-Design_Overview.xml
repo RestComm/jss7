@@ -38,13 +38,22 @@
 			&THIS.PLATFORM;
 		<acronym>ISUP</acronym>
 		introduces notion of transactions. Transaction groups messages
-		which logically belong to single interaction (like associating circuit to
+		which
+		logically belong to single interaction (like associating circuit to
 		call or releasing circuit).
-		Server transactions are used as reference for incoming request. It
-		provides means of sending answer back to originating peer.
-		Client transaction are used as reference for outgoing requests. It
-		provides means of sending request to remote peer.
-		Depending on type of action and messages involved, life time of transaction
+		Server transaction is used as reference for
+		incoming request. It
+		provides means of sending answer back to
+		originating peer.
+		Client transaction is used as reference for outgoing
+		requests. It
+		provides means of sending request to remote peer. Also
+		incoming answers will be delivered on client transaction which sent
+		it.
+	</para>
+	<para>
+		Depending on type of action and messages involved, life time of
+		transaction
 		varies. Diagram below depicts transaction scope:
 	</para>
 	<mediaobject id="ss7_design_isup_transactions_1">
@@ -132,6 +141,9 @@
 		</table>
 
 	</para>
-
+	<para>
+		Transactions are either terminated on receiving or sending final response or when
+		certain time elapses without answer. In both cases stack user is notified that transaction is no longer valid.
+	</para>
 </chapter>
 

@@ -49,7 +49,7 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 	 * @param provider
 	 * @param stack
 	 */
-	public ISUPClientTransactionImpl(ISUPMessage message, ISUPProviderBase provider, ISUPStackImpl stack, RoutingLabel actionReference) {
+	public ISUPClientTransactionImpl(ISUPMessage message, AbstractISUPProvider provider, ISUPStackImpl stack, RoutingLabel actionReference) {
 		super(message, provider, stack, actionReference);
 
 	}
@@ -183,6 +183,7 @@ public class ISUPClientTransactionImpl extends ISUPTransactionImpl implements IS
 					// refresh timer?
 					cancelGeneralTimer();
 					startGeneralTimer();
+					
 					break;
 				default:
 					logger.error("Request to received unknown answer: " + msg.getMessageType().getCode() + ", for IAM tx");

@@ -24,11 +24,14 @@ import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
  */
 public class ISUPStackImpl implements ISUPStack {
 
+	public static final String PROPERTY_CLIENT_T = "isup.opc";
+	public static final String PROPERTY_GENERAL_T = "isup.opc";
+	
 	private State state = State.IDLE;
 	private ISUPMtpProviderImpl isupMtpProvider;
 
 	private ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
-	private long _GENERAL_TRANSACTION_TIMEOUT = 120 * 1000;
+	private long _GENERAL_TRANSACTION_TIMEOUT = 40 * 1000;
 	private long _CLIENT_TRANSACTION_ANSWER_TIMEOUT = 30 * 1000;
 
 	public ISUPStackImpl() {
@@ -77,6 +80,8 @@ public class ISUPStackImpl implements ISUPStack {
 		if (state != State.IDLE) {
 			throw new IllegalStateException("Stack already been configured or is already running!");
 		}
+		this._CLIENT_TRANSACTION_ANSWER_TIMEOUT = Integer.parseInt(props.getProperty(PROPERTY_CLIENT_T,""+_CLIENT_TRANSACTION_ANSWER_TIMEOUT));
+		this._GENERAL_TRANSACTION_TIMEOUT = Integer.parseInt(props.getProperty(PROPERTY_CLIENT_T,""+_GENERAL_TRANSACTION_TIMEOUT));
 		this.isupMtpProvider = new ISUPMtpProviderImpl(this, props);
 		this.executor = Executors.newScheduledThreadPool(8);
 		this.state = State.CONFIGURED;

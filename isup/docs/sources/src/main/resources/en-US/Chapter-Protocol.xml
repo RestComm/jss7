@@ -4,8 +4,16 @@
 <chapter id="protocol">
 
 	<title>Protocol</title>
+
+
 	<section>
 		<title>API</title>
+		<para> &THIS.PLATFORM; &THIS.APPLICATION;
+			<acronym>API</acronym>
+			is transaction oriented. Transaction are used to exchanged messages
+			which contain parameter with some trunk specific information.
+		</para>
+		<para>Below are listed interface with short explanation.</para>
 		<section>
 			<title>Transaction </title>
 			<para>Common part of transactions is defined as follows:</para>
@@ -239,15 +247,84 @@ public interface ISUPListener {
 }
 			</programlisting>
 		</section>
+		<section>
+			<title>Messages</title>
+			<para>Each
+				messsage defines different setters and getters - since each message
+				type has different set of parameters. However all messages defined
+				by &THIS.PLATFORM; &THIS.APPLICATION;
+				have common part:
+			</para>
+			<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.isup.message;
+
+public interface ISUPMessage extends ISUPComponent {
+
+	/**
+	 * Get mandatory field, CIC.
+	 * @return
+	 */
+	public CircuitIdentificationCode getCircuitIdentificationCode();
+	/**
+	 * Set mandatory field, CIC.
+	 * @return
+	 */
+	public void setCircuitIdentificationCode(CircuitIdentificationCode cic);
+
+	/**
+	 * Returns message code. See Q.763 Table 4. It simply return value of static
+	 * constant, where value of parameter is value of MESSAGE_CODE
+	 * 
+	 * @return
+	 */
+	public MessageType getMessageType();
+	
+	/**
+	 * Adds parameter to this message.
+	 * @param param
+	 * @throws ParameterRangeInvalidException - thrown if parameter is not part of message.
+	 */
+	public void addParameter(ISUPParameter param) throws ParameterRangeInvalidException;
+	/**
+	 * Returns parameter with passed code.
+	 * @param parameterCode
+	 * @return
+	 * @throws ParameterRangeInvalidException - thrown if code does not match any parameter.
+	 */
+	public ISUPParameter getParameter(int parameterCode) throws ParameterRangeInvalidException;
+	/**
+	 * Removes parameter from this message.
+	 * @param parameterCode
+	 * @throws ParameterRangeInvalidException
+	 */
+	public void removeParameter(int parameterCode) throws ParameterRangeInvalidException;
+	
+	/**
+	 * Return reference to transaction if it exists.
+	 * @return
+	 */
+	public ISUPTransaction getTransaction();
+
+	/**
+	 * @return <ul>
+	 *         <li><b>true</b> - if all requried parameters are set</li>
+	 *         <li><b>false</b> - otherwise</li>
+	 *         </ul>
+	 */
+	public boolean hasAllMandatoryParameters();
+
+}
+			</programlisting>
+		</section>
 	</section>
 	<section>
 		<title>Configuration</title>
 		<para>
 			<acronym>ISUP</acronym>
-			stack supports following configuration parameters:
+			stack depends on MTP to provide transport. Please refer to MTP documentation for configuration options supported. Below is list of ISUP specific configuration properties:
 		</para>
 		<table frame="all" pgwide="1">
-			<title>M3UserConnector's Configuration Properties</title>
+			<title>ISUP Configuration Properties</title>
 			<tgroup colsep="1" cols="4">
 				<colspec colnum="1" colname="c0" />
 				<colspec colnum="2" colname="c1" />
@@ -303,10 +380,7 @@ public interface ISUPListener {
 					<row>
 						<entry>isup.general.timeout</entry>
 						<entry>
-							Value of timeout in milisecond. It controls timeout of client
-							transaction and server transaction. This value must be greater
-							than
-							<literal>isup.general.timeout</literal>
+							Value of timeout in millisecond. It controls how long transaction object lingers in stack before its released - in case no action is performed.
 						</entry>
 						<entry>java.lang.Long</entry>
 						<entry>120.000</entry>
