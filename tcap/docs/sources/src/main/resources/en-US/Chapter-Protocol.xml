@@ -731,8 +731,7 @@ public interface DialogIndication {
 	public Byte getQos();
 }]]>
 			</programlisting>
-			<para>&THIS.PLATFORM;
-				<acronym>TCAP</acronym>
+			<para><acronym>TCAP</acronym>
 				defines primitives :
 			</para>
 			<variablelist>
@@ -1201,8 +1200,8 @@ public interface DialogPrimitiveFactory {
 				<acronym>SCCP</acronym>
 				layer.
 				Please refer to
-				<xref linkend="layer_sccp" />
-				for details and examples.
+				<xref linkend="tcap_configuration" />
+				for details.
 			</para>
 			<para>&THIS.PLATFORM;
 				<acronym>TCAP</acronym>
@@ -1345,13 +1344,13 @@ public interface TCListener {
 		</section>
 	</section>
 
-	<section>
+	<section id="tcap_configuration">
 		<title>Configuration</title>
 		<para>
 			<acronym>TCAP</acronym>
 			layer does not require any config. However it requires properly set
 			<acronym>SCCP</acronym>
-			and its sublayers.
+			and its sublayers. Please refer to <literal>SCCP User Guide</literal> for supported configuration options.
 		</para>
 		<section>
 			<title>Dependencies</title>

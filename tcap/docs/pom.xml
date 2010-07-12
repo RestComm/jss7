@@ -75,6 +75,6 @@
 		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/tcap/docs</developerConnection>
 		<url>http://mobicents.googlecode.com/svn/trunk/protocols/ss7/tcap/docs</url>
 	</scm>
-</profiles>
+
 
 </project>
