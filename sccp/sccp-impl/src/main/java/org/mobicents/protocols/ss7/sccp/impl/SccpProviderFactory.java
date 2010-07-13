@@ -18,7 +18,6 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ConfigurationException;
-import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.provider.intel.SccpIntelHDCProviderImpl;
 import org.mobicents.protocols.ss7.sccp.impl.provider.stream.SccpDefaultProviderImpl;
@@ -26,6 +25,7 @@ import org.mobicents.protocols.ss7.sccp.impl.provider.stream.SccpDefaultProvider
 /**
  * 
  * @author Oleg Kulikov
+ * @author baranowb
  */
 class SccpProviderFactory {
 

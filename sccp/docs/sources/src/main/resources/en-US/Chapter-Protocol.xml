@@ -271,9 +271,6 @@ properties.put("sccp.dpc","5641");
 properties.put("sccp.sls","0");
 properties.put("sccp.ssi","0");
 
-//mtp
-properties.put("server.ip","192.156.81.1");
-properties.put("server.port","1023");
 
 SccProvider sccpProvider = SccpFactory.getInstance().getProvider(properties);
 sccpProvider.setListener(...);
