@@ -758,8 +758,27 @@ public interface MAPServiceListener {
 	<section>
 		<title>Configuration</title>
 		<para>MAP layer does not require any config. However it requires
-			properly set TCAP and its sublayers.</para>
-
+			properly set <acronym>TCAP</acronym> and its sublayers.
+			Please refer to <literal>TCAP User Guide</literal> for supported configuration options.
+		</para>
+		<section>
+			<title>Dependencies</title>
+			<para>
+				<acronym>MAP</acronym>
+				depends on following:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>MTP</para>
+				</listitem>
+				<listitem>
+					<para>SCCP</para>
+				</listitem>
+				<listitem>
+					<para>TCAP</para>
+				</listitem>
+			</itemizedlist>
+		</section>
 	</section>
 	<section>
 		<title>Example</title>
