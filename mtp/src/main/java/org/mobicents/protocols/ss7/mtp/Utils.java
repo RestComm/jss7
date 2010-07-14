@@ -171,14 +171,6 @@ public class Utils {
 		this.loggBuilder.append("\n"+s);
 	}
 	
-	public void startDebug() {
-		if(enabledL2Debug || enabledL3Debug)
-		{
-			//1s is enough time to get a lot of data(2ms is 16B transmision so, more time would cause OutOfMemory :))
-			this.debugFuture = mtpTimer.scheduleAtFixedRate(new LogginAction(), 1, 1, TimeUnit.SECONDS);
-		}
-		
-	}
 	public void stopDebug()
 	{
 		if(this.debugFuture!=null)
@@ -252,15 +244,6 @@ public class Utils {
 		
 	}
 	
-	private final static MTPThreadFactory timerThreadFactory = new MTPThreadFactory(
-			"MTPTimerTGroup", Thread.MAX_PRIORITY);
-	private final static ScheduledExecutorService mtpTimer = Executors
-			.newSingleThreadScheduledExecutor(timerThreadFactory);
-	
-	public static ScheduledExecutorService getMtpTimer()
-	{
-		return mtpTimer;
-	}
 	public void addBuffer(int sls, String name, String linkSetName, int linkSetId,
 			long currentTimeMillis, byte[] buff, int len) {
 		//hmm works better if method is implemented :)
