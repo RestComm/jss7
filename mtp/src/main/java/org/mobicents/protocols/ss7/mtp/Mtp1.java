@@ -27,12 +27,13 @@
 package org.mobicents.protocols.ss7.mtp;
 
 import java.io.IOException;
+import org.mobicents.protocols.stream.api.Stream;
 
 /**
  * @author baranowb
  * @author kulikov
  */
-public interface Mtp1 {
+public interface Mtp1 extends Stream {
 	// FIXME: Oleg whats that?
 	/**
 	 * Gets the code of this channel.
