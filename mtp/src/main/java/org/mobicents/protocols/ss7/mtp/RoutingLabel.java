@@ -24,7 +24,7 @@ public class RoutingLabel {
 	public RoutingLabel(int opc, int dpc, int sls, int si, int ssi) {
 		super();
 		this.mtp3Header = new byte[5];
-		Mtp3Impl.writeRoutingLabel(mtp3Header, si, ssi, sls, dpc, opc);
+		Mtp3.writeRoutingLabel(mtp3Header, si, ssi, sls, dpc, opc);
 	}
 
 	/**
@@ -54,13 +54,13 @@ public class RoutingLabel {
 	 */
 	public void setBackRouteHeader(byte[] data) {
 		// here in data is whole message, we want first 5 bytes!
-		int thisPointCode = Mtp3Impl._getFromSif_DPC(data, 1);
-		int remotePointCode = Mtp3Impl._getFromSif_OPC(data, 1);
-		int sls = Mtp3Impl._getFromSif_SLS(data, 1);
-		int si = Mtp3Impl._getFromSif_SI(data);
-		int ssi = Mtp3Impl._getFromSif_SSI(data);
+		int thisPointCode = Mtp3.dpc(data, 1);
+		int remotePointCode = Mtp3.opc(data, 1);
+		int sls = Mtp3.sls(data, 1);
+		int si = Mtp3.si(data);
+		int ssi = Mtp3.ssi(data);
 		// this.mtp3Header = new byte[5];
-		Mtp3Impl.writeRoutingLabel(mtp3Header, si, ssi, sls, remotePointCode, thisPointCode);
+		Mtp3.writeRoutingLabel(mtp3Header, si, ssi, sls, remotePointCode, thisPointCode);
 		if (logger.isInfoEnabled()) {
 			logger.info("DPC[" + remotePointCode + "] OPC[" + thisPointCode + "] SLS[" + sls + "] SI[" + si + "] SSI[" + ssi + "] Label"
 					+ Arrays.toString(mtp3Header));
