@@ -40,7 +40,7 @@ public interface MtpProvider {
 	 * @throws IOException
 	 * @throws StartFailedException
 	 */
-	public void start() throws  StartFailedException;
+	public void start() throws StartFailedException;
 
 	/**
 	 * Stops this provider. This call clears all references, ie. listener is
@@ -56,8 +56,10 @@ public interface MtpProvider {
 	 * @param p
 	 */
 	public void configure(Properties p) throws ConfigurationException;
+
 	/**
 	 * Checks if link is up;
+	 * 
 	 * @return
 	 */
 	public boolean isLinkUp();
