@@ -50,7 +50,7 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 	public static final String PROPERTY_LADDRESS = "mtp.address.local";
 	public static final String PROPERTY_RADDRESS = "mtp.address.remote";
 
-	private Stream remotePeerStream;
+	private DataLink remotePeerStream;
 	private StreamSelector selector;
 	private InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8998);
 	private InetSocketAddress remote = new InetSocketAddress("127.0.0.1", 1345);
@@ -137,6 +137,11 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 		{
 			logger.info("Starting M3UAProvider");
 		}
+		try {
+			this.remotePeerStream.register(this.selector);
+		} catch (IOException e) {
+			throw new StartFailedException(e);
+		}
 		this.run = true;
 		this.t = new Thread(r, "org.mobicents.ss7.M3-UA");
 		this.t.start();
@@ -155,6 +160,8 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 		{
 			logger.info("Stopping M3UAProvider");
 		}
+		this.selector.close();
+		this.remotePeerStream.close();
 		state = State.CONFIGURED;
 		this.run = false;
 		this.t = null;
@@ -191,6 +198,20 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 		if (oldLinkState == LinkState.ACTIVE && this.linkState != LinkState.ACTIVE) {
 			this.inputData.clear();
 		}
+		
+		if(oldLinkState!=linkState.ACTIVE && linkState == LinkState.ACTIVE)
+		{
+			if(this.listener!=null)
+			{
+				this.listener.linkUp();
+			}
+		}else if(oldLinkState==linkState.ACTIVE && linkState != LinkState.ACTIVE)
+		{
+			if(this.listener!=null)
+			{
+				this.listener.linkDown();
+			}
+		}
 
 	}
 
@@ -219,10 +240,14 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 	private class Runner implements Runnable {
 
 		public void run() {
+			
+			logger.info("Run LOOP: ---------- START ---------------");
+
 			while (run) {
 				try {
 					Collection<SelectorKey> keys = selector.selectNow(StreamSelector.OP_READ, 10);
 					for (SelectorKey key : keys) {
+						logger.info("Run LOOP: ---------- READ ---------------");
 						int len = key.getStream().read(rxBuffer);
 						deliverToListener(rxBuffer, len);
 
@@ -231,6 +256,8 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 					keys.clear();
 					keys = selector.selectNow(StreamSelector.OP_WRITE, 10);
 					for (SelectorKey key : keys) {
+						logger.info("Run LOOP: xxxxxxxxxxxxxxx WRITE xxxxxxxxxxxxxxxx");
+
 						while (inputData.size() >= 0) {
 							byte[] data = inputData.getFirst();
 							int count = key.getStream().write(data);
@@ -244,6 +271,7 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 						}
 
 					}
+					keys.clear();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
