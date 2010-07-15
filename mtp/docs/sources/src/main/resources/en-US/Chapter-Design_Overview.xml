@@ -31,6 +31,7 @@
 			</para>
 		</caption>
 	</mediaobject>
+
 	<section>
 		<title>Supported hardware</title>
 		<para>
@@ -63,8 +64,10 @@
 						There are hardware
 						<acronym>TDM</acronym>
 						devices wich share common driver
-						suite called Zaptel Telephony Driver Suite (Zaptel). Most devices sold
-						by Digium are members of the Zaptel family of hardware devices.
+						suite called Zaptel Telephony
+						Driver Suite (Zaptel). Most devices sold
+						by Digium are members of
+						the Zaptel family of hardware devices.
 					</para>
 					<para>
 						Zaptel cards provide only streaming capabilities. Each card
@@ -76,5 +79,46 @@
 			</varlistentry>
 		</variablelist>
 	</section>
+	<section>
+		<title>Provider abstraction</title>
+		<para>
+		&THIS.PLATFORM; &THIS.APPLICATION;
+			builds abstraction on MTP source with
+			<literal>MtpProvider</literal>
+			.
+			Upper layer stacks depend on provider as means of receiving and sending
+			<literal>MSU</literal>
+			.
+			Diagram belows depicts general design:
+		</para>
+		<mediaobject id="ss7_design_mtp_provider_1">
+			<imageobject>
+				<imagedata width="300px" align="center"
+					fileref="images/ss7-tmp-design-overview2.png" format="PNG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; &THIS.APPLICATION;
+					Provider abstraction
+				</para>
+			</caption>
+		</mediaobject>
+		<para>
+			Stack user provides proper implementation of
+			<literal>MTP3</literal>
+			(MSU source and sink) which can communicate with MtpProvider.
+			Depending on condition and demand user also provides provider
+			implementation. 
+		</para>
+		<para>
+			&THIS.PLATFORM; &THIS.APPLICATION; provides stack user with tools to create MTP3 source and provider:
+			
+		</para>
+		<itemizedlist>
+			<listitem><para>Mtp classes for ZAPtel driver</para> </listitem>
+			<listitem><para>MtpProvider interface abstraction</para> </listitem>
+			<listitem><para>Implementation of MtpProvider over &THIS.PLATFORM; Stream library</para> </listitem>
+		</itemizedlist>
+	</section>
+
 </chapter>
 
