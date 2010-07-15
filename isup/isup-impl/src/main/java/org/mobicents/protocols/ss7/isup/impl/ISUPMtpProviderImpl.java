@@ -28,7 +28,7 @@ import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageFactoryImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
-import org.mobicents.protocols.ss7.mtp.Mtp3Impl;
+import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.mtp.provider.MtpListener;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
@@ -75,7 +75,7 @@ class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, 
 		int sls = Integer.parseInt(props.getProperty(PROPERTY_SLS));
 		int ssi = Integer.parseInt(props.getProperty(PROPERTY_SSI));
 		// this.si = Integer.parseInt(props.getProperty("isup.si"));
-		int si = Mtp3Impl._SI_SERVICE_ISUP;
+		int si = Mtp3._SI_SERVICE_ISUP;
 		this.actionReference = new RoutingLabel(opc, dpc, sls, si, ssi);
 
 	}
@@ -91,7 +91,7 @@ class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, 
 		int sls = Integer.parseInt(props.getProperty(PROPERTY_SLS));
 		int ssi = Integer.parseInt(props.getProperty(PROPERTY_SSI));
 		// this.si = Integer.parseInt(props.getProperty("isup.si"));
-		int si = Mtp3Impl._SI_SERVICE_ISUP;
+		int si = Mtp3._SI_SERVICE_ISUP;
 		this.actionReference = new RoutingLabel(opc, dpc, sls, si, ssi);
 	}
 

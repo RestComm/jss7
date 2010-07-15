@@ -26,7 +26,7 @@ import java.util.concurrent.Executors;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.StartFailedException;
-import org.mobicents.protocols.ss7.mtp.Mtp3Impl;
+import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpParameterFactory;
@@ -85,7 +85,7 @@ public abstract class AbstractSccpProviderImpl implements SccpProvider {
 		int dpc = Integer.parseInt(props.getProperty(AbstractSccpProviderImpl.CONFIG_DPC));
 		int sls = Integer.parseInt(props.getProperty(AbstractSccpProviderImpl.CONFIG_SLS));
 		int ssi = Integer.parseInt(props.getProperty(AbstractSccpProviderImpl.CONFIG_SSI));
-		int si = Mtp3Impl._SI_SERVICE_SCCP;
+		int si = Mtp3._SI_SERVICE_SCCP;
 		this.routingLabel = new RoutingLabel(opc, dpc, sls, si, ssi);
 		this.threadCount = Integer.parseInt(props.getProperty(AbstractSccpProviderImpl.CONFIG_THREADS, ""+threadCount));
 		this.executor = Executors.newFixedThreadPool(this.threadCount);
