@@ -133,6 +133,10 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 		if (state != state.CONFIGURED) {
 			throw new StartFailedException("Provider not configured!");
 		}
+		if(logger.isInfoEnabled())
+		{
+			logger.info("Starting M3UAProvider");
+		}
 		this.run = true;
 		this.t = new Thread(r, "org.mobicents.ss7.M3-UA");
 		this.t.start();
@@ -147,6 +151,10 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 	 */
 	@Override
 	protected void doStop() {
+		if(logger.isInfoEnabled())
+		{
+			logger.info("Stopping M3UAProvider");
+		}
 		state = State.CONFIGURED;
 		this.run = false;
 		this.t = null;
@@ -174,6 +182,10 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 	 * .protocols.link.LinkState)
 	 */
 	public void onStateChange(LinkState linkState) {
+		if(logger.isInfoEnabled())
+		{
+			logger.info("Datalink change in M3UAProvider: "+linkState);
+		}
 		LinkState oldLinkState = this.linkState;
 		this.linkState = linkState;
 		if (oldLinkState == LinkState.ACTIVE && this.linkState != LinkState.ACTIVE) {
@@ -183,6 +195,10 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 	}
 
 	protected void deliverToListener(byte[] rxBuffer, int len) {
+		if(logger.isInfoEnabled())
+		{
+			logger.info("Delivering to M3UAProvider listener: "+this.listener+" - "+len);
+		}
 		// FIXME: sync this?
 		if (super.listener != null) {
 
