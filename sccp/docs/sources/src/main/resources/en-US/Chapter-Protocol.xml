@@ -263,8 +263,8 @@ Properties properties = new Properties();
 properties.put("sccp.provider","default");
 //mtp properties
 properties.put("mtp.driver","m3ua");
-properties.put("mtp.address.remote","192.168.1.1");
-properties.put("mtp.address.local","192.168.1.202");
+properties.put("mtp.address.remote","192.168.1.1:1234");
+properties.put("mtp.address.local","192.168.1.202:4321");
 //sccp
 properties.put("sccp.opc","12345");
 properties.put("sccp.dpc","5641");
