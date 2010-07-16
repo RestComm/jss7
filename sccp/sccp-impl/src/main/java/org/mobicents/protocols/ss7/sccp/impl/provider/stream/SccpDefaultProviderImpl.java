@@ -21,25 +21,33 @@ public class SccpDefaultProviderImpl extends AbstractSccpProviderImpl implements
 
 	public SccpDefaultProviderImpl() {
 		super();
-		
 
 	}
+
 	public SccpDefaultProviderImpl(MtpProvider mtpProvider) {
 		super();
-		this.mtpProvider =mtpProvider;
+		this.mtpProvider = mtpProvider;
 
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl#configure(java.util.Properties)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl#configure(java
+	 * .util.Properties)
 	 */
 	@Override
 	public void configure(Properties props) throws ConfigurationException {
-		
+
 		super.configure(props);
-		this.mtpProvider = MtpProviderFactory.getInstance().getProvider(props);
+		if (this.mtpProvider == null)// thats for case provider is passed as
+										// arg.
+		{
+			this.mtpProvider = MtpProviderFactory.getInstance().getProvider(props);
+		}
 	}
+
 	public void receive(byte[] arg2) {
 		// add check for SIO parts?
 		// if(logger.isInfoEnabled())
@@ -86,11 +94,8 @@ public class SccpDefaultProviderImpl extends AbstractSccpProviderImpl implements
 
 	public void stop() {
 
-		
 		this.mtpProvider.stop();
 
 	}
-
-	
 
 }

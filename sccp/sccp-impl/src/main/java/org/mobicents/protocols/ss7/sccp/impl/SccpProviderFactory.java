@@ -27,7 +27,7 @@ import org.mobicents.protocols.ss7.sccp.impl.provider.stream.SccpDefaultProvider
  * @author Oleg Kulikov
  * @author baranowb
  */
-class SccpProviderFactory {
+public class SccpProviderFactory {
 
 	private final static Logger logger = Logger.getLogger(SccpProviderFactory.class);
 	public final static String DRIVER_INTEL = "intel_hdc";
