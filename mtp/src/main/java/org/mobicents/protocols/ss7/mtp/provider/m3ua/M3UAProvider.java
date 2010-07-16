@@ -33,7 +33,6 @@ import org.mobicents.protocols.ss7.mtp.provider.AbstractMtpProviderImpl;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 import org.mobicents.protocols.stream.api.SelectorKey;
 import org.mobicents.protocols.stream.api.SelectorProvider;
-import org.mobicents.protocols.stream.api.Stream;
 import org.mobicents.protocols.stream.api.StreamSelector;
 
 /**
@@ -138,6 +137,7 @@ public class M3UAProvider extends AbstractMtpProviderImpl implements MtpProvider
 		}
 		try {
 			this.remotePeerStream.register(this.selector);
+			this.remotePeerStream.activate(); //indicate activation of this stream end.
 		} catch (IOException e) {
 			throw new StartFailedException(e);
 		}
