@@ -22,6 +22,7 @@ import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
@@ -42,10 +43,9 @@ import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
-import org.mobicents.protocols.ss7.sccp.impl.sctp.SccpDefaultProviderImpl;
+import org.mobicents.protocols.ss7.sccp.impl.provider.stream.SccpDefaultProviderImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.stream.tcp.StartFailedException;
 import org.mobicents.protocols.ss7.ussdsimulator.mtp.USSDSimultorMtpProvider;
 
 /**
@@ -764,24 +764,27 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,MA
 //    private TCAPStack tcapStack;
 //    private TCAPProvider tcapProvider;
     //this sucks...
-    private SccpDefaultProviderImpl sccpProvider;
     private MAPStack mapStack;
     //this we have to create
     private USSDSimultorMtpProvider mtpLayer;
-
+    private SccpDefaultProviderImpl sccpProvider;
     //method to init stacks
     private void initSS7() throws Exception
     {
         this.stackProperties = new Properties();
-        //fake values;
-        this.stackProperties.put("sccp.opc", "13150");
-        this.stackProperties.put("sccp.dpc", "31510");
-        this.stackProperties.put("sccp.sls", "0");
-        this.stackProperties.put("sccp.ssi", "3");
+
 
 
         mtpLayer = new USSDSimultorMtpProvider(_field_peer_ip, _field_peer_port);
-        mtpLayer.start();
+        mtpLayer.configure(stackProperties);
+        //mtpLayer.start();
+         this.sccpProvider = new SccpDefaultProviderImpl(this.mtpLayer);
+
+        this.mapStack = new MAPStackImpl(sccpProvider);
+        this.mapStack.getMAPProvider().addMAPDialogListener(this);
+        this.mapStack.getMAPProvider().addMAPServiceListener(this);
+       
+        this.mapStack.start();
         long startTime = System.currentTimeMillis();
         while(!mtpLayer.isLinkUp())
         {
@@ -795,23 +798,16 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,MA
         if(!this.mtpLayer.isLinkUp())
         {
             throw new StartFailedException();
-        }else
-        {
-        	this.mtpLayer.indicateLinkUp();
         }
-        this.sccpProvider = new SccpDefaultProviderImpl(this.mtpLayer, stackProperties);
-        this.mtpLayer.addMtp3Listener(sccpProvider);
-        this.mapStack = new MAPStackImpl(sccpProvider);
-        this.mapStack.getMAPProvider().addMAPDialogListener(this);
-        this.mapStack.getMAPProvider().addMAPServiceListener(this);
-        this.mapStack.start();
+
+       
         //indicate linkup, since we mockup now, its done by hand.
         //this method is called by M3UserConnector!
         this.sccpProvider.linkUp();
     }
 
 
-    //FIXME: add proper dialog kill
+    //FIXME: add proper dialog kill?
 
     private void terminateSS7()
     {
