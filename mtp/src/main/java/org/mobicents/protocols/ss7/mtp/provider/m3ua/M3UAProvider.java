@@ -19,8 +19,10 @@ package org.mobicents.protocols.ss7.mtp.provider.m3ua;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -71,7 +73,7 @@ public class M3UAProvider extends AbstractMtpProviderImpl implements MtpProvider
 	// ///////////
 	protected byte[] rxBuffer = new byte[172];
 	// private byte[] txBuffer = new byte[172];
-	protected LinkedList<byte[]> inputData = new LinkedList<byte[]>();
+	protected List<byte[]> inputData = new ArrayList<byte[]>();
 
 	/**
 	 * 
@@ -249,14 +251,14 @@ public class M3UAProvider extends AbstractMtpProviderImpl implements MtpProvider
 					for (SelectorKey key : keys) {
 
 						while (inputData.size() >= 0) {
-							byte[] data = inputData.getFirst();
+							byte[] data = inputData.get(0);
 							int count = key.getStream().write(data);
 							if (count != data.length) {
 								logger.error("Send count: " + count + ", does not match data: " + data.length);
 								// leave that buffer for resend op?
 								continue;
 							}
-							inputData.removeFirst();
+							inputData.remove(0);
 
 						}
 
