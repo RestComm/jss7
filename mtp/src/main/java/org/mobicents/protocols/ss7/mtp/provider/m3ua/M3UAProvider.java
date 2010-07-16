@@ -250,7 +250,7 @@ public class M3UAProvider extends AbstractMtpProviderImpl implements MtpProvider
 					keys = selector.selectNow(StreamSelector.OP_WRITE, 10);
 					for (SelectorKey key : keys) {
 
-						while (inputData.size() >= 0) {
+						while (inputData.size() > 0) {
 							byte[] data = inputData.get(0);
 							int count = key.getStream().write(data);
 							if (count != data.length) {
