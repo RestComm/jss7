@@ -137,7 +137,8 @@ public class M3UAProvider extends AbstractMtpProviderImpl implements MtpProvider
 		}
 		try {
 			this.remotePeerStream.register(this.selector);
-			this.remotePeerStream.activate(); //indicate activation of this stream end.
+			this.remotePeerStream.activate(); // indicate activation of this
+												// stream end.
 		} catch (IOException e) {
 			throw new StartFailedException(e);
 		}
@@ -233,13 +234,11 @@ public class M3UAProvider extends AbstractMtpProviderImpl implements MtpProvider
 
 		public void run() {
 
-			logger.info("Run LOOP: ---------- START ---------------");
-
 			while (run) {
 				try {
 					Collection<SelectorKey> keys = selector.selectNow(StreamSelector.OP_READ, 10);
 					for (SelectorKey key : keys) {
-						logger.info("Run LOOP: ---------- READ ---------------");
+
 						int len = key.getStream().read(rxBuffer);
 						deliverToListener(rxBuffer, len);
 
@@ -248,7 +247,6 @@ public class M3UAProvider extends AbstractMtpProviderImpl implements MtpProvider
 					keys.clear();
 					keys = selector.selectNow(StreamSelector.OP_WRITE, 10);
 					for (SelectorKey key : keys) {
-						logger.info("Run LOOP: xxxxxxxxxxxxxxx WRITE xxxxxxxxxxxxxxxx");
 
 						while (inputData.size() >= 0) {
 							byte[] data = inputData.getFirst();
