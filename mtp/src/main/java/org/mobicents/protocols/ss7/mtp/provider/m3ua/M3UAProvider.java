@@ -42,7 +42,7 @@ import org.mobicents.protocols.stream.api.StreamSelector;
  * @author baranowb
  * 
  */
-public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpProvider, LinkStateListener {
+public class M3UAProvider extends AbstractMtpProviderImpl implements MtpProvider, LinkStateListener {
 	// oleg is miss using M3UA term....
 
 	private Logger logger = Logger.getLogger(M3UAProvider.class);
@@ -50,29 +50,29 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 	public static final String PROPERTY_LADDRESS = "mtp.address.local";
 	public static final String PROPERTY_RADDRESS = "mtp.address.remote";
 
-	private DataLink remotePeerStream;
-	private StreamSelector selector;
-	private InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8998);
-	private InetSocketAddress remote = new InetSocketAddress("127.0.0.1", 1345);
+	protected DataLink remotePeerStream;
+	protected StreamSelector selector;
+	protected InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8998);
+	protected InetSocketAddress remote = new InetSocketAddress("127.0.0.1", 1345);
 
 	// //////////////
 	// Some state //
 	// //////////////
-	private State state = State.NOT_CONFIGURED;
-	private LinkState linkState = null;
+	protected State state = State.NOT_CONFIGURED;
+	protected LinkState linkState = null;
 	// ///////////////
 	// Thread part //
 	// ///////////////
-	private boolean run = false;
-	private Runner r = new Runner();
-	private Thread t = null;
+	protected boolean run = false;
+	protected Runner r = new Runner();
+	protected Thread t = null;
 
 	// ///////////
 	// Buffers //
 	// ///////////
-	private byte[] rxBuffer = new byte[172];
+	protected byte[] rxBuffer = new byte[172];
 	// private byte[] txBuffer = new byte[172];
-	private LinkedList<byte[]> inputData = new LinkedList<byte[]>();
+	protected LinkedList<byte[]> inputData = new LinkedList<byte[]>();
 
 	/**
 	 * 
@@ -133,8 +133,7 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 		if (state != state.CONFIGURED) {
 			throw new StartFailedException("Provider not configured!");
 		}
-		if(logger.isInfoEnabled())
-		{
+		if (logger.isInfoEnabled()) {
 			logger.info("Starting M3UAProvider");
 		}
 		try {
@@ -156,8 +155,7 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 	 */
 	@Override
 	protected void doStop() {
-		if(logger.isInfoEnabled())
-		{
+		if (logger.isInfoEnabled()) {
 			logger.info("Stopping M3UAProvider");
 		}
 		this.selector.close();
@@ -189,26 +187,21 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 	 * .protocols.link.LinkState)
 	 */
 	public void onStateChange(LinkState linkState) {
-		if(logger.isInfoEnabled())
-		{
-			logger.info("Datalink change in M3UAProvider: "+linkState);
+		if (logger.isInfoEnabled()) {
+			logger.info("Datalink change in M3UAProvider: " + linkState);
 		}
 		LinkState oldLinkState = this.linkState;
 		this.linkState = linkState;
 		if (oldLinkState == LinkState.ACTIVE && this.linkState != LinkState.ACTIVE) {
 			this.inputData.clear();
 		}
-		
-		if(oldLinkState!=linkState.ACTIVE && linkState == LinkState.ACTIVE)
-		{
-			if(this.listener!=null)
-			{
+
+		if (oldLinkState != linkState.ACTIVE && linkState == LinkState.ACTIVE) {
+			if (this.listener != null) {
 				this.listener.linkUp();
 			}
-		}else if(oldLinkState==linkState.ACTIVE && linkState != LinkState.ACTIVE)
-		{
-			if(this.listener!=null)
-			{
+		} else if (oldLinkState == linkState.ACTIVE && linkState != LinkState.ACTIVE) {
+			if (this.listener != null) {
 				this.listener.linkDown();
 			}
 		}
@@ -216,9 +209,8 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 	}
 
 	protected void deliverToListener(byte[] rxBuffer, int len) {
-		if(logger.isInfoEnabled())
-		{
-			logger.info("Delivering to M3UAProvider listener: "+this.listener+" - "+len);
+		if (logger.isInfoEnabled()) {
+			logger.info("Delivering to M3UAProvider listener: " + this.listener + " - " + len);
 		}
 		// FIXME: sync this?
 		if (super.listener != null) {
@@ -240,7 +232,7 @@ public final class M3UAProvider extends AbstractMtpProviderImpl implements MtpPr
 	private class Runner implements Runnable {
 
 		public void run() {
-			
+
 			logger.info("Run LOOP: ---------- START ---------------");
 
 			while (run) {
