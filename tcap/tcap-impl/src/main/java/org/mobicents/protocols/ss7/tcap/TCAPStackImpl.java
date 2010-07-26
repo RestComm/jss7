@@ -5,6 +5,7 @@ package org.mobicents.protocols.ss7.tcap;
 
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
@@ -13,10 +14,13 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 
 /**
+ * @author amit bhayani
  * @author baranowb
  * 
  */
 public class TCAPStackImpl implements TCAPStack {
+	
+	private static final Logger logger = Logger.getLogger(TCAPStackImpl.class);
 
 	private TCAPProviderImpl tcapProvider;
 	private State state = State.IDLE;
@@ -28,11 +32,13 @@ public class TCAPStackImpl implements TCAPStack {
 	}
 	//for tests only
 	public TCAPStackImpl(SccpProvider sccpPprovider) {
-		this.tcapProvider = new TCAPProviderImpl(sccpPprovider,this);
+		this.tcapProvider = new TCAPProviderImpl(sccpPprovider,this);		
+		this.sccpStack = new SccpStackImpl(sccpPprovider);
 		this.state = State.CONFIGURED;
 	}
 
 	public void start() throws IllegalStateException, StartFailedException {
+		logger.info("Starting ...");
 		if (state != State.CONFIGURED) {
 			throw new IllegalStateException("Stack has not been configured or is already running!");
 		}
