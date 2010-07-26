@@ -41,6 +41,7 @@ public abstract class MTPTask implements Runnable {
         if (!canceled) {
             perform();
         }
+        canceled = true;
     }
 
     public boolean isCanceled() {

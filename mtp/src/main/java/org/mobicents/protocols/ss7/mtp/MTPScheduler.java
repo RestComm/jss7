@@ -34,6 +34,8 @@ package org.mobicents.protocols.ss7.mtp;
 public class MTPScheduler {
     protected MTPTask[] tasks = new MTPTask[5];
     
+    MTPTask tempTask = null;
+    
     public void schedule(MTPTask task, int delay) {
         task.deadLine= System.currentTimeMillis() + delay;
         for (int i = 0; i < tasks.length; i++) {
@@ -51,8 +53,12 @@ public class MTPScheduler {
         long now = System.currentTimeMillis();
         for (int i = 0; i < tasks.length; i++) {
             if (tasks[i] != null && (tasks[i].deadLine <= now)) {
-                tasks[i].run();
-                tasks[i] = null;
+            	tempTask = tasks[i];
+            	tempTask.run();
+            	//tempTask = null;
+            	if (tasks[i].canceled) {
+            		tasks[i] = null;
+            	}
             } 
         }
     }

@@ -27,6 +27,7 @@
 package org.mobicents.protocols.ss7.mtp;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -1123,6 +1124,9 @@ public class Mtp2 {
         if (started) {
             try {
                 int bytesRead = channel.read(rxBuffer);
+                if(logger.isTraceEnabled()){
+                	logger.trace("READ <-- "+ Arrays.toString(rxBuffer));
+                }
                 if (bytesRead > 0) {
                     processRx(rxBuffer, bytesRead);
                 }
@@ -1141,6 +1145,9 @@ public class Mtp2 {
         try {
             processTx(RX_TX_BUFF_SIZE);
             channel.write(txBuffer, RX_TX_BUFF_SIZE);
+            if (logger.isTraceEnabled()) {
+            	logger.trace("Sending frame");
+            }
         } catch (Exception e) {
             state = MTP2_OUT_OF_SERVICE;
             logger.error(String.format("(%s) Can not write data to channel", name), e);
@@ -1224,14 +1231,13 @@ public class Mtp2 {
     private void countError(String info) {
 
         eCount++;
-        logger.warn(String.format("(%s) Error detected: %s, error count=%d", name, info, eCount));
+        //logger.warn(String.format("(%s) Error detected: %s, error count=%d", name, info, eCount));
 
         switch (state) {
             case MTP2_ALIGNED_READY:
             case MTP2_INSERVICE:
                 if (eCount >= 64) {
                     if (this.mtp3 != null) {
-                        logger.warn(String.format("(%s) Too many errors detected", name));
                         mtp3.linkFailed(this);
                     }
                     state = MTP2_OUT_OF_SERVICE;
