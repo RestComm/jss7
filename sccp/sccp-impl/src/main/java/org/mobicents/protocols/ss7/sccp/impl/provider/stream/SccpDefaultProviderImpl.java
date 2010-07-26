@@ -13,8 +13,15 @@ import org.mobicents.protocols.ss7.mtp.provider.MtpProviderFactory;
 import org.mobicents.protocols.ss7.sccp.impl.AbstractSccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
-public class SccpDefaultProviderImpl extends AbstractSccpProviderImpl implements MtpListener {
-	private static final Logger logger = Logger.getLogger(SccpDefaultProviderImpl.class);
+/**
+ * 
+ * @author amit bhayani
+ * @author baranowb
+ */
+public class SccpDefaultProviderImpl extends AbstractSccpProviderImpl implements
+		MtpListener {
+	private static final Logger logger = Logger
+			.getLogger(SccpDefaultProviderImpl.class);
 
 	private MtpProvider mtpProvider;
 	private boolean linkUp = false;
@@ -33,25 +40,26 @@ public class SccpDefaultProviderImpl extends AbstractSccpProviderImpl implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl#configure(java
-	 * .util.Properties)
+	 * @see org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl#configure(java
+	 *      .util.Properties)
 	 */
 	@Override
 	public void configure(Properties props) throws ConfigurationException {
 
 		super.configure(props);
 		if (this.mtpProvider == null)// thats for case provider is passed as
-										// arg.
+		// arg.
 		{
-			this.mtpProvider = MtpProviderFactory.getInstance().getProvider(props);
+			this.mtpProvider = MtpProviderFactory.getInstance().getProvider(
+					props);
 		}
 	}
 
 	public void receive(byte[] arg2) {
 		// add check for SIO parts?
 		// if(logger.isInfoEnabled())
-		// logger.info("Received MSU on L4, service: "+service+",subservice: "+subservice);
+		// logger.info("Received MSU on L4, service: "+service+",subservice:
+		// "+subservice);
 		super.receive(arg2);
 
 	}
@@ -75,7 +83,8 @@ public class SccpDefaultProviderImpl extends AbstractSccpProviderImpl implements
 
 	}
 
-	public void send(SccpAddress calledParty, SccpAddress callingParty, byte[] data, RoutingLabel ar) throws IOException {
+	public void send(SccpAddress calledParty, SccpAddress callingParty,
+			byte[] data, RoutingLabel ar) throws IOException {
 
 		// FIXME:
 		if (this.linkUp) {
@@ -88,6 +97,7 @@ public class SccpDefaultProviderImpl extends AbstractSccpProviderImpl implements
 	}
 
 	public void start() throws IllegalStateException, StartFailedException {
+		logger.info("Starting ...");
 		this.mtpProvider.setMtpListener(this);
 		this.mtpProvider.start();
 	}

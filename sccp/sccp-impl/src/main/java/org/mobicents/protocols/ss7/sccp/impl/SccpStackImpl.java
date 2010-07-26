@@ -2,22 +2,35 @@ package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
 
 /**
+ * @author amit bhayani
  * @author baranowb
  * 
  */
 public class SccpStackImpl implements SccpStack {
+	
+	private static final Logger logger = Logger.getLogger(SccpStackImpl.class);
 
 	private State state = State.IDLE;
 
 	private AbstractSccpProviderImpl sccpProvider;
 
 	private final static SccpProviderFactory factory = new SccpProviderFactory();
+	
+	public SccpStackImpl(){
+		
+	}
+	
+	public SccpStackImpl(SccpProvider sccpProvider){
+		this.sccpProvider = (AbstractSccpProviderImpl)sccpProvider;
+		this.state = State.CONFIGURED;
+	}	
 
 	/*
 	 * (non-Javadoc)
@@ -50,6 +63,7 @@ public class SccpStackImpl implements SccpStack {
 	 * @see org.mobicents.protocols.ss7.sccp.SccpStack#start()
 	 */
 	public void start() throws IllegalStateException, StartFailedException {
+		logger.info("Starting ...");
 		if (state != State.CONFIGURED) {
 			throw new IllegalStateException("Stack has not been configured or is already running!");
 		}
