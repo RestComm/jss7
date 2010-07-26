@@ -102,6 +102,26 @@
 
 		<plugins>
 			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<groupId>org.mobicents.tools</groupId>
+				<version>
+					${mobicents.tools.mavenplugin.eclipse.version}
+				</version>
+				<inherited>false</inherited>
+				<configuration>
+					<classpathExcludes>
+						<exclude>xml-apis:xml-apis</exclude>
+						<exclude>jtidy:jtidy</exclude>
+					</classpathExcludes>
+					<resolveTransitiveDependencies>
+						true
+					</resolveTransitiveDependencies>
+					<eclipseProjectName>
+						mobicents-ussd-simulator
+					</eclipseProjectName>
+				</configuration>
+			</plugin>
+			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<source>1.5</source>

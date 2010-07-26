@@ -7,9 +7,10 @@ package org.mobicents.protocols.ss7.ussdsimulator.mtp;
 
 
 import java.util.Properties;
+
 import javax.swing.JTextField;
 
-
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.mtp.provider.m3ua.M3UAProvider;
@@ -20,6 +21,8 @@ import org.mobicents.protocols.ss7.mtp.provider.m3ua.M3UAProvider;
  * @author baranowb
  */
 public class USSDSimultorMtpProvider extends M3UAProvider {//re-use M3UA, it should work ok :)
+	
+	private static final Logger logger = Logger.getLogger(USSDSimultorMtpProvider.class);
 
 	private static final String _DEFAULT_ADDRESS = "127.0.0.1";
 	private static final int _DEFAULT_PORT = 1345;
@@ -49,6 +52,9 @@ public class USSDSimultorMtpProvider extends M3UAProvider {//re-use M3UA, it sho
    
     @Override
     public void start() throws StartFailedException {
+    	
+    	logger.info("Starting ...");
+    	
         super.start();
 
          super.remotePeerStream.activate();
