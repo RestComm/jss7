@@ -15,6 +15,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author kulikov
+ * @author amit bhayani
  */
 public class MTPSchedulerTest implements Runnable {
 
@@ -24,6 +25,9 @@ public class MTPSchedulerTest implements Runnable {
     private boolean failed;
     
     private long stopTime;
+    
+    MTPTask task1 = null;
+    MTPTask task2 = null;
     
     public MTPSchedulerTest() {
     }
@@ -38,6 +42,8 @@ public class MTPSchedulerTest implements Runnable {
 
     @Before
     public void setUp() {
+    	task1 = new TestTask();
+    	task2 = new  TestTask1();
     }
 
     @After
@@ -61,6 +67,23 @@ public class MTPSchedulerTest implements Runnable {
         assertTrue("Task is not executed", done);
         assertFalse("Task executed more then one time", failed);
     }
+    
+    /**
+     * Test of schedule method, of class MTPScheduler.
+     */
+    @Test
+    public void testSchedule2() throws InterruptedException {
+        stopTime = System.currentTimeMillis() + 5000;
+        new Thread(this).start();
+        
+        Thread.currentThread().sleep(1000);
+        
+        scheduler.schedule(task2, 1000);
+        
+        Thread.currentThread().sleep(5000);
+        assertTrue("Task is not executed", done);
+        assertFalse("Task executed more then one time", failed);
+    }    
 
 
     /**
@@ -104,4 +127,14 @@ public class MTPSchedulerTest implements Runnable {
         }
         
     }
+    
+    private class TestTask1 extends MTPTask {
+
+        @Override
+        public void perform() {
+            this.cancel();
+            scheduler.schedule(task1, 1000);
+        }
+        
+    }    
 }
