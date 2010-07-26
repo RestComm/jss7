@@ -64,6 +64,7 @@ RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/swing-layout.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/swing-worker.jar"
 
 #now SS7
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/stream.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/asn.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/mtp.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/sccp-api.jar"

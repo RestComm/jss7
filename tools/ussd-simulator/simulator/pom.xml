@@ -54,6 +54,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.mobicents.protocols.stream</groupId>
+			<artifactId>stream</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>concurrent</groupId>
 			<artifactId>concurrent</artifactId>
 			<scope>provided</scope>
@@ -211,7 +216,18 @@
 										mtp.jar
 									</destFileName>
 								</artifactItem>
-
+								<artifactItem>
+									<groupId>org.mobicents.protocols.stream</groupId>
+									<artifactId>stream</artifactId>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										stream.jar
+									</destFileName>
+								</artifactItem>
 								<artifactItem>
 									<groupId>concurrent</groupId>
 									<artifactId>concurrent</artifactId>

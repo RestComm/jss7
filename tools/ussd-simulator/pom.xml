@@ -65,6 +65,12 @@
 				<artifactId>mtp</artifactId>
 				<version>${mtp.version}</version>
 			</dependency>
+
+			<dependency>
+				<groupId>org.mobicents.protocols.stream</groupId>
+				<artifactId>stream</artifactId>
+				<version>${stream.version}</version>
+			</dependency>
 			
 			<dependency>
 				<groupId>concurrent</groupId>
