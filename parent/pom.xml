@@ -29,15 +29,15 @@
 		<compiler.plugin.version>2.0.2</compiler.plugin.version>
 		<compile.source>1.5</compile.source>
 		<!-- mobicents but not strictly ss7 -->
-		<asn.version>1.0.0.BETA2-SNAPSHOT</asn.version>
-		<stream.version>1.0.0.BETA1-SNAPSHOT</stream.version>
+		<asn.version>1.0.0.BETA2</asn.version>
+		<stream.version>1.0.0.BETA1</stream.version>
 
 		<!--  modules version -->
-		<mtp.version>1.0.0.BETA3-SNAPSHOT</mtp.version>
-		<sccp.version>1.0.0.BETA2-SNAPSHOT</sccp.version>
-		<tcap.version>1.0.0.BETA2-SNAPSHOT</tcap.version>
-		<map.version>1.0.0.BETA2-SNAPSHOT</map.version>
-		<isup.version>1.0.0.BETA2-SNAPSHOT</isup.version>
+		<mtp.version>1.0.0.BETA3</mtp.version>
+		<sccp.version>1.0.0.BETA2</sccp.version>
+		<tcap.version>1.0.0.BETA2</tcap.version>
+		<map.version>1.0.0.BETA2</map.version>
+		<isup.version>1.0.0.BETA2</isup.version>
 	</properties>
 
 	<!-- declare our babies -->
