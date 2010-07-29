@@ -26,6 +26,7 @@
 		<mobicents.tools.mavenplugin.eclipse.version>
 			1.0.0.BETA2
 		</mobicents.tools.mavenplugin.eclipse.version>
+		<stream.version>1.0.0.BETA1</stream.version>
 	</properties>
 	<modules>
 		<module>mtp-impl</module>
