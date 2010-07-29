@@ -8,81 +8,46 @@
 		<version>1.0.0.BETA3</version>
 	</parent>
 
-	<artifactId>mtp</artifactId>
+	<artifactId>mtp-parent</artifactId>
 	<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 	<version>1.0.0.BETA3-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
-	<packaging>jar</packaging>
 
 	<name>
-		Mobicents SS7 :: Message Transfer Part:: ${pom.artifactId}
+		Mobicents SS7 :: Message Transfer Part :: Parent :: ${pom.artifactId}
 	</name>
 	<properties>
 		<mobicents.tools.mavenplugin.eclipse.version>
 			1.0.0.BETA2
 		</mobicents.tools.mavenplugin.eclipse.version>
 	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>org.mobicents.protocols.stream</groupId>
-			<artifactId>stream</artifactId>
-		</dependency>
-		<!-- non mobicents -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
-
-	<developers>
-		<developer>
-			<id>oleg.kulikoff</id>
-			<name>Oleg Kulikoff</name>
-			<email>oleg.kulikoff@gmail.com</email>
-			<organization>JBoss/Red Hat</organization>
-			<organizationUrl>http://www.redhat.com/</organizationUrl>
-			<roles>
-				<role>Active Developer</role>
-			</roles>
-			<timezone>+3</timezone>
-		</developer>
-		<developer>
-			<id>amit.bhayani</id>
-			<name>Amit Bhayani</name>
-			<email>amit.bhayani@gmail.com</email>
-			<organization>JBoss/Red Hat</organization>
-			<organizationUrl>http://www.redhat.com/</organizationUrl>
-			<roles>
-				<role>Active Developer</role>
-			</roles>
-			<timezone>+5.5</timezone>
-		</developer>
-		<developer>
-			<id>baranowb</id>
-			<name>Bartosz Baranowski</name>
-			<email>baranowb@gmail.com</email>
-			<organization>JBoss/Red Hat</organization>
-			<organizationUrl>http://www.redhat.com/</organizationUrl>
-			<roles>
-				<role>Active Developer</role>
-			</roles>
-			<timezone>+1</timezone>
-		</developer>
-	</developers>
-	<licenses>
-		<license>
-			<name>GNU GENERAL PUBLIC LICENSE</name>
-			<url>http://www.gnu.org/licenses/gpl.html</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
+	<modules>
+		<module>mtp-impl</module>
+	</modules>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.mobicents.protocols.stream</groupId>
+				<artifactId>stream</artifactId>
+				<version>${stream.version}</version>
+			</dependency>
+			<!-- non mobicents -->
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${log4j.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<scope>provided</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
 	<!--  -->
 	<build>
 		<plugins>
@@ -106,15 +71,7 @@
 					</eclipseProjectName>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<groupId>org.apache.maven.plugins</groupId>
-				<configuration>
-					<encoding>UTF-8</encoding>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
+			
 
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
