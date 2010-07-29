@@ -67,7 +67,7 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<delete failonerror="false" includeemtpydirs="true">
+								<delete failonerror="false" includeemptydirs="true">
 									<fileset dir="${basedir}/src" />
 								</delete>
 							</tasks>
