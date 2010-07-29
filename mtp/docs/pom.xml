@@ -68,7 +68,11 @@
 			</build>
 		</profile>
 	</profiles>
-
+	<scm>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/mtp</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/mtp</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk/protocols/ss7/mtp</url>
+	</scm>
 
 
 </project>
