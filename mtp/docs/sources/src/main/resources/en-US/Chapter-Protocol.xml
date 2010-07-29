@@ -336,7 +336,7 @@ public interface MtpProvider {
 			&THIS.PLATFORM; Stream library. </para>
 			<para>
 			It supports following configuration properties:</para>
-			<table frame="all" pgwide="1" id="table-mtp_properties_1">
+			<table frame="all" pgwide="1" id="table-mtp_properties_2">
 					<title>M3UAProvider configuration properties</title>
 					<tgroup cols="2" colsep="1">
 						<colspec colname="c1"/>
