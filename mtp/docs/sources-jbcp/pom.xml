@@ -6,7 +6,7 @@
 
 	<parent>
 		<artifactId>mobicents-mtp-docs</artifactId>
-		<groupId>org.mobicents.protocols.ss7.mpt.docs</groupId>
+		<groupId>org.mobicents.protocols.ss7.mtp.docs</groupId>
 		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 
@@ -67,7 +67,7 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<delete failonerror="false" includeemptydirs="true">
+								<delete failonerror="false" includeemtpydirs="true">
 									<fileset dir="${basedir}/src" />
 								</delete>
 							</tasks>
