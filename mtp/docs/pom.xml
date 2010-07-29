@@ -1,18 +1,17 @@
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>ss7-parent</artifactId>
-		<groupId>org.mobicents.protocols.ss7</groupId>
-		<version>1.0.0.BETA3</version>
+		<artifactId>mtp-parent</artifactId>
+		<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-mtp-docs</artifactId>
-	<groupId>org.mobicents.protocols.ss7.docs</groupId>
-	<version>1.0.0.BETA3-SNAPSHOT</version>
+	<groupId>org.mobicents.protocols.ss7.mpt.docs</groupId>
+	
 	<packaging>pom</packaging>
 
 	<properties>
@@ -47,8 +46,8 @@
 			<id>maven-release</id>
 			<modules>
 				<module>sources-mobicents</module>
-				<module>jdocbook-mobicents</module>
 				<module>sources-jbcp</module>
+				<module>jdocbook-mobicents</module>
 				<module>jdocbook-jbcp</module>
 			</modules>
 			<build>
@@ -61,7 +60,7 @@
 							<remoteTagging>true</remoteTagging>
 							<autoVersionSubmodules>true</autoVersionSubmodules>
 							<resume>false</resume>
-							<tagBase>https://mobicents.googlecode.com/svn/tags/protocols/ss7/mtp/docs</tagBase>
+							<tagBase>https://mobicents.googlecode.com/svn/tags/protocols/ss7/mtp</tagBase>
 							<preparationGoals>clean install</preparationGoals>
 						</configuration>
 					</plugin>
@@ -70,10 +69,6 @@
 		</profile>
 	</profiles>
 
-	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/mtp/docs</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/mtp/docs</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/trunk/protocols/ss7/mtp/docs</url>
-	</scm>
+
 
 </project>
