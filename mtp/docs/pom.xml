@@ -12,7 +12,7 @@
 
 	<artifactId>mobicents-mtp-docs</artifactId>
 	<groupId>org.mobicents.protocols.ss7.docs</groupId>
-	<version>1.0.0.BETA1-SNAPSHOT</version>
+	<version>1.0.0.BETA3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
