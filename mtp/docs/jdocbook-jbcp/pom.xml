@@ -69,11 +69,13 @@
 						</includes>
 					</imageResource>
 					<formats>
+						<!--
 						<format>
 							<formatName>pdf</formatName>
 							<stylesheetResource>classpath:/xslt/org/jboss/pdf.xsl</stylesheetResource>
 							<finalName>JBCP_${docs.bookid}_User_Guide.pdf</finalName>
 						</format>
+						-->
 						<format>
 							<formatName>html</formatName>
 							<stylesheetResource>classpath:/xslt/org/jboss/xhtml.xsl</stylesheetResource>
