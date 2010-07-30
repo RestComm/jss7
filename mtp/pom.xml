@@ -66,6 +66,7 @@
 		<profile>
 			<id>maven-release</id>
 			<modules>
+				<module>mtp-impl</module>
 				<module>docs</module>
 			</modules>
 			<build>
