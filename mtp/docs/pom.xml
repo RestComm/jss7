@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>mtp-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+		<artifactId>mtp-parent</artifactId>
 		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 
@@ -14,9 +14,9 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<docs.application.name>MTP Stack</docs.application.name>
+		<docs.application.name>MTP Library</docs.application.name>
 		<docs.application.dirname>mtp</docs.application.dirname>
-		<docs.bookid>MTPStack</docs.bookid>
+		<docs.bookid>MTPLibrary</docs.bookid>
 	</properties>
 
 	<modules>
@@ -49,7 +49,6 @@
 				<module>sources-jbcp</module>
 				<module>jdocbook-jbcp</module>
 			</modules>
-	
 			<build>
 				<plugins>
 					<plugin>
@@ -73,6 +72,5 @@
 		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/mtp</developerConnection>
 		<url>http://mobicents.googlecode.com/svn/trunk/protocols/ss7/mtp</url>
 	</scm>
-
 
 </project>

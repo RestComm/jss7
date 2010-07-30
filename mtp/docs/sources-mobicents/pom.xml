@@ -1,6 +1,5 @@
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -16,8 +15,8 @@
 		<THIS.PLATFORM>Mobicents</THIS.PLATFORM>
 		<JEE.PLATFORM>JBoss Application Server</JEE.PLATFORM>
 		<THIS.ISSUE_TRACKER_URL>http://code.google.com/p/mobicents/issues/list</THIS.ISSUE_TRACKER_URL>
-		<THIS.RELEASE_SOURCE_CODE_URL>http://mobicents.googlecode.com/svn/tags/protocols/ss7/${docs.application.dirname}</THIS.RELEASE_SOURCE_CODE_URL>
-		<THIS.TRUNK_SOURCE_CODE_URL>http://mobicents.googlecode.com/svn/trunk/protocols/ss7/${docs.application.dirname}</THIS.TRUNK_SOURCE_CODE_URL>
+		<THIS.RELEASE_SOURCE_CODE_URL>http://mobicents.googlecode.com/svn/tags/protocols/${docs.application.dirname}</THIS.RELEASE_SOURCE_CODE_URL>
+		<THIS.TRUNK_SOURCE_CODE_URL>http://mobicents.googlecode.com/svn/trunk/protocols/${docs.application.dirname}</THIS.TRUNK_SOURCE_CODE_URL>
 		<author.email.amit>abhayani (at) gmail.com</author.email.amit>
 		<author.email.bartosz>baranowb (at) gmail.com</author.email.bartosz>
 		<author.email.oleg>oleg.kulikoff (at) gmail.com</author.email.oleg>	

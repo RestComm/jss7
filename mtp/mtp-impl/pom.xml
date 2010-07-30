@@ -1,45 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>mtp-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+		<artifactId>mtp-parent</artifactId>
 		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mtp</artifactId>
 	<groupId>org.mobicents.protocols.ss7.mtp</groupId>
-
-
-	<packaging>jar</packaging>
-
-	<name>
-		Mobicents SS7 :: Message Transfer Part:: ${pom.artifactId}
-	</name>
-	<properties>
-		<mobicents.tools.mavenplugin.eclipse.version>
-			1.0.0.BETA2
-		</mobicents.tools.mavenplugin.eclipse.version>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>org.mobicents.protocols.stream</groupId>
-			<artifactId>stream</artifactId>
-		</dependency>
-		<!-- non mobicents -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
-
+	<artifactId>mtp</artifactId>
+	<name>Mobicents MTP Impl</name>
+	
 	<developers>
 		<developer>
 			<id>oleg.kulikoff</id>
@@ -83,30 +54,23 @@
 		</license>
 	</licenses>
 
-	<!--  -->
-	<build>
-		<plugins>
-			
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<groupId>org.apache.maven.plugins</groupId>
-				<configuration>
-					<encoding>UTF-8</encoding>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
 
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.2</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-
-		</plugins>
-	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.mobicents.protocols.stream</groupId>
+			<artifactId>stream</artifactId>
+		</dependency>
+		<!-- non mobicents -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 	
-
 </project>
