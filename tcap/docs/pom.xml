@@ -5,14 +5,14 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>ss7-parent</artifactId>
-		<groupId>org.mobicents.protocols.ss7</groupId>
-		<version>1.0.0.BETA3</version>
+		<artifactId>tcap-parent</artifactId>
+		<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+		<version>1.0.0.BETA2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-tcap-docs</artifactId>
-	<groupId>org.mobicents.protocols.ss7.docs</groupId>
-	<version>1.0.0.BETA1-SNAPSHOT</version>
+	<groupId>org.mobicents.protocols.ss7.tcap.docs</groupId>
+
 	<packaging>pom</packaging>
 
 	<properties>
