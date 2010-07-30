@@ -8,7 +8,7 @@ import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
+import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
@@ -26,7 +26,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author baranowb
  *
  */
-public class PipeSccpProviderImpl implements SccpProvider {
+public class PipeSccpProviderImpl extends AbstractSccpProviderImpl implements SccpProvider {
 
 	private PipeSccpProviderImpl other;
 	private SccpListener listener;//this is our test tcap stack
@@ -80,6 +80,11 @@ public class PipeSccpProviderImpl implements SccpProvider {
 
 	}
 
+	@Override
+	public void start() throws IllegalStateException, StartFailedException {
+		// TODO Auto-generated method stub
+		
+	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.sccp.SccpProvider#shutdown()
@@ -145,4 +150,5 @@ public class PipeSccpProviderImpl implements SccpProvider {
 		}
 		
 	}
+
 }
