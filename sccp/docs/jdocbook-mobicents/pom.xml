@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>mobicents-sccp-docs</artifactId>
 		<groupId>org.mobicents.protocols.ss7.sccp.docs</groupId>
-		<version>1.0.0.BETA2-SNAPSHOT</version>
+		<version>1.0.0.BETA2</version>
 	</parent>
 
 	<artifactId>mobicents-sccp-docs-jdocbook-mobicents</artifactId>
