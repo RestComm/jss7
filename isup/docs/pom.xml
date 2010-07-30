@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>isup-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7.isup</groupId>
-		<version>1.0.0.BETA2</version>
+		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-isup-docs</artifactId>
@@ -70,9 +70,9 @@
 	</profiles>
 
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/isup/isup-1.0.0.BETA2/docs</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/isup/isup-1.0.0.BETA2/docs</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/tags/protocols/ss7/isup/isup-1.0.0.BETA2/docs</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/isup/docs</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/isup/docs</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk/protocols/ss7/isup/docs</url>
 	</scm>
 
 </project>
