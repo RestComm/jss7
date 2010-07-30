@@ -1,11 +1,10 @@
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<parent>
 		<artifactId>mobicents-tcap-docs</artifactId>
 		<groupId>org.mobicents.protocols.ss7.tcap.docs</groupId>
-		<version>1.0.0.BETA2-SNAPSHOT</version>
+		<version>1.0.0.BETA2</version>
 	</parent>
 
 	<artifactId>mobicents-tcap-docs-jdocbook-jbcp</artifactId>
