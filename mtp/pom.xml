@@ -46,6 +46,7 @@
 	
 	<modules>
 		<module>mtp-impl</module>
+		<module>docs</module>
 	</modules>
 	
 	
