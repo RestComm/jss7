@@ -97,7 +97,9 @@
 	<profiles>
 		<profile>
 			<id>maven-release</id>
-			<modules />
+			<modules>
+				<module>docs</module>
+			</modules>
 			<build>
 				<plugins>
 					<plugin>
@@ -112,6 +114,7 @@
 							<tagBase>
 								https://mobicents.googlecode.com/svn/tags/protocols/ss7/tcap
 							</tagBase>
+							<preparationGoals>clean install</preparationGoals>
 						</configuration>
 					</plugin>
 				</plugins>
