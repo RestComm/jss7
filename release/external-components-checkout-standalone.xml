@@ -16,6 +16,8 @@
 		<checkout.password></checkout.password>
 		
 		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/asn/asn-${asn_version}</asn.connectionURL>
+		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/stream/stream-${stream_version}</stream.connectionURL>
+		
 	</properties>
 	
 	<profiles>

@@ -25,7 +25,38 @@
   * SCCP v@SCCP_VERSION@
   * TCAP v@TCAP_VERSION@
   * MAP v@MAP_VERSION@
+
   
+------------------
+SVN Trunk Checkout
+------------------
+
+http://mobicents.googlecode.com/svn/trunk/protocols/asn
+http://mobicents.googlecode.com/svn/trunk/protocols/stream
+http://mobicents.googlecode.com/svn/trunk/protocols/ss7
+
+
+------------------
+SVN Trunk Browse
+------------------
+
+http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/asn
+http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/stream
+http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/ss7  
+  
+------------------
+ SVN Tag Checkout
+------------------
+
+http://mobicents.googlecode.com/svn/tags/protocols/asn/@ASN_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/stream/@STREAM_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/ss7/parent/@PARENT_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/ss7/mtp/@MTP_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/ss7/sccp/@SCCP_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/ss7/tcap/@TCAP_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/ss7/map/@MAP_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/ss7/isup/@ISUP_VERSION@
+
 
   
 ----------------
