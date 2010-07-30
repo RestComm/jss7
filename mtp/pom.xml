@@ -83,6 +83,7 @@
 							<tagBase>
 								https://mobicents.googlecode.com/svn/tags/protocols/ss7/mtp
 							</tagBase>
+							<preparationGoals>clean install</preparationGoals>
 						</configuration>
 					</plugin>
 				</plugins>
