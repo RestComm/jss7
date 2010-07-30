@@ -117,6 +117,7 @@
 							<tagBase>
 								https://mobicents.googlecode.com/svn/tags/protocols/ss7/sccp
 							</tagBase>
+							<preparationGoals>clean install</preparationGoals>
 						</configuration>
 					</plugin>
 				</plugins>
