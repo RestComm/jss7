@@ -11,7 +11,7 @@
 
 	<artifactId>sccp-parent</artifactId>
 	<groupId>org.mobicents.protocols.ss7.sccp</groupId>
-	<version>1.0.0.BETA3-SNAPSHOT</version>
+	<version>1.0.0.BETA2-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
@@ -102,7 +102,9 @@
 	<profiles>
 		<profile>
 			<id>maven-release</id>
-			<modules />
+			<modules>	
+				<module>docs</module>
+			</modules>
 			<build>
 				<plugins>
 					<plugin>

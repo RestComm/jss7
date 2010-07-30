@@ -6,8 +6,8 @@
 
 	<parent>
 		<artifactId>mobicents-sccp-docs</artifactId>
-		<groupId>org.mobicents.protocols.ss7.docs</groupId>
-		<version>1.0.0.BETA1-SNAPSHOT</version>
+		<groupId>org.mobicents.protocols.ss7.sccp.docs</groupId>
+		<version>1.0.0.BETA2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-sccp-docs-sources-jbcp</artifactId>
