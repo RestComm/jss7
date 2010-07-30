@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>mobicents-isup-docs</artifactId>
 		<groupId>org.mobicents.protocols.ss7.map.docs</groupId>
-		<version>1.0.0.BETA2</version>
+		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-isup-docs-jdocbook-jbcp</artifactId>
