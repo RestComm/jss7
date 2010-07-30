@@ -11,7 +11,7 @@
 
 	<artifactId>tcap-parent</artifactId>
 	<groupId>org.mobicents.protocols.ss7.tcap</groupId>
-	<version>1.0.0.BETA2</version>
+	<version>1.0.0.BETA3-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
@@ -123,13 +123,13 @@
 	</profiles>
 	<scm>
 		<connection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/tcap/tcap-1.0.0.BETA2
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/tcap
 		</connection>
 		<developerConnection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/tcap/tcap-1.0.0.BETA2
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/tcap
 		</developerConnection>
 		<url>
-			http://mobicents.googlecode.com/svn/tags/protocols/ss7/tcap/tcap-1.0.0.BETA2
+			http://mobicents.googlecode.com/svn/trunk/protocols/ss7/tcap
 		</url>
 	</scm>
 
