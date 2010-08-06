@@ -161,7 +161,8 @@ public class M3UAProvider extends AbstractMtpProviderImpl implements MtpProvider
 		if (logger.isInfoEnabled()) {
 			logger.info("Stopping M3UAProvider");
 		}
-		this.selector.close();
+		//FIXME: Oleg is going to get it at some point.
+		//this.selector.close();
 		this.remotePeerStream.close();
 		state = State.CONFIGURED;
 		this.run = false;
