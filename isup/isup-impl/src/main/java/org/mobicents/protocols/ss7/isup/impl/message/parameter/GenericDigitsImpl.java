@@ -21,7 +21,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
  */
 public class GenericDigitsImpl extends AbstractParameter implements GenericDigits {
 
-	private int encodignScheme;
+	private int encodingScheme;
 	private int typeOfDigits;
 	private int[] digits;
 
@@ -30,9 +30,9 @@ public class GenericDigitsImpl extends AbstractParameter implements GenericDigit
 		decodeElement(b);
 	}
 
-	public GenericDigitsImpl(int encodignScheme, int typeOfDigits, int[] digits) {
+	public GenericDigitsImpl(int encodingScheme, int typeOfDigits, int[] digits) {
 		super();
-		this.encodignScheme = encodignScheme;
+		this.encodingScheme = encodingScheme;
 		this.typeOfDigits = typeOfDigits;
 		this.setDigits(digits);
 	}
@@ -52,7 +52,7 @@ public class GenericDigitsImpl extends AbstractParameter implements GenericDigit
 			throw new ParameterRangeInvalidException("byte[] must not be null or has size less than 2");
 		}
 		this.typeOfDigits = b[0] & 0x1F;
-		this.encodignScheme = (b[0] >> 5) & 0x07;
+		this.encodingScheme = (b[0] >> 5) & 0x07;
 		this.digits = new int[b.length - 1];
 
 		for (int index = 1; index < b.length; index++) {
@@ -80,12 +80,12 @@ public class GenericDigitsImpl extends AbstractParameter implements GenericDigit
 
 	}
 
-	public int getEncodignScheme() {
-		return encodignScheme;
+	public int getEncodingScheme() {
+		return encodingScheme;
 	}
 
-	public void setEncodignScheme(int encodignScheme) {
-		this.encodignScheme = encodignScheme;
+	public void setEncodingScheme(int encodingScheme) {
+		this.encodingScheme = encodingScheme;
 	}
 
 	public int getTypeOfDigits() {

@@ -58,9 +58,9 @@ public interface GenericDigits extends ISUPParameter {
 	 */
 	public static final int _TOD_BGCI = 3;
 	
-	public int getEncodignScheme();
+	public int getEncodingScheme();
 
-	public void setEncodignScheme(int encodignScheme) ;
+	public void setEncodingScheme(int encodingScheme) ;
 
 	public int getTypeOfDigits() ;
 
