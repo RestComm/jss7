@@ -71,7 +71,7 @@ public class GenericDigitsImpl extends AbstractParameter implements GenericDigit
 		byte[] b = new byte[this.digits.length + 1];
 
 		b[0] |= this.typeOfDigits & 0x1F;
-		b[0] |= ((this.encodignScheme & 0x07) << 5);
+		b[0] |= ((this.encodingScheme & 0x07) << 5);
 
 		for (int index = 1; index < b.length; index++) {
 			b[index] = (byte) this.digits[index - 1];
