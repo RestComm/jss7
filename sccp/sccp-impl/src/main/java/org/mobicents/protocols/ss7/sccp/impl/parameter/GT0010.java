@@ -27,16 +27,23 @@ import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
  * @author kulikov
  */
 public class GT0010 implements GlobalTitle {
-    private int nai;
+    /** Translation type */
+    private int tt;
+    /** address digits */
     private String digits;
     
-    public GT0010(int nai, String digits) {
-        this.nai = nai;
+    public GT0010() {
+        digits = "";
+    }
+    
+    public GT0010(int tt, String digits) {
+        this.tt = tt;
         this.digits = digits;
     }
 
     public void decode(InputStream in) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int b = in.read() & 0xff;        
+        tt = b;
     }
 
     public void encode(OutputStream in) throws IOException {
@@ -44,7 +51,7 @@ public class GT0010 implements GlobalTitle {
     }
 
     public int getTranslationType() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return tt;
     }
 
     public void setTranslationType(int translationType) {
@@ -68,7 +75,7 @@ public class GT0010 implements GlobalTitle {
     }
 
     public int getNatureOfAddress() {
-        return nai;
+        return tt;
     }
 
     public void setNatureOfAddress(int natureOfAddress) {

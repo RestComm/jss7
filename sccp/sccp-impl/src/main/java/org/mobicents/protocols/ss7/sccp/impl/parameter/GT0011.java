@@ -20,6 +20,8 @@ package org.mobicents.protocols.ss7.sccp.impl.parameter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import org.mobicents.protocols.ss7.indicator.EncodingScheme;
+import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 
 /**
@@ -27,30 +29,54 @@ import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
  * @author kulikov
  */
 public class GT0011 implements GlobalTitle {
-    private int nai;
+    private int tt;    
+    private NumberingPlan np;
+    private EncodingScheme es;
+    
     private String digits;
     
-    public GT0011(int nai, String digits) {
-        this.nai = nai;
+    public GT0011() {
+        digits = "";
+    }
+    
+    public GT0011(int tt, NumberingPlan np, String digits) {
+        this.tt = tt;
+        this.np = np;
         this.digits = digits;
+        this.es = digits.length() % 2 == 0 ? EncodingScheme.BCD_EVEN : EncodingScheme.BCD_ODD;
     }
 
     public void decode(InputStream in) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int b = in.read() & 0xff;        
+        tt = b;
+        
+        b = in.read() & 0xff;
+        
+        es = EncodingScheme.valueOf(b & 0x0f);
+        np = NumberingPlan.valueOf((b & 0xf0)>>4);
+        
+        digits = es.decodeDigits(in);
     }
 
-    public void encode(OutputStream in) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void encode(OutputStream out) throws IOException {
+        out.write(tt);
+        out.write((np.getValue() << 4) | es.getValue());
+        es.encodeDigits(digits, out);
     }
 
     public int getTranslationType() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return tt;
     }
 
     public void setTranslationType(int translationType) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    
+    public NumberingPlan getNp() {
+        return np;
+    }
+    
     public int getNumberingPlan() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -68,7 +94,7 @@ public class GT0011 implements GlobalTitle {
     }
 
     public int getNatureOfAddress() {
-        return nai;
+        return 0;
     }
 
     public void setNatureOfAddress(int natureOfAddress) {

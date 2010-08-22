@@ -20,6 +20,7 @@ package org.mobicents.protocols.ss7.sccp.impl.parameter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 
 /**
@@ -27,20 +28,73 @@ import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
  * @author kulikov
  */
 public class GT0001 implements GlobalTitle {
-    private int nai;
+    private NatureOfAddress nai;
     private String digits;
+    private boolean odd = false;
     
-    public GT0001(int nai, String digits) {
+    public GT0001() {
+        digits = "";
+    }
+    
+    public GT0001(NatureOfAddress nai, String digits) {
         this.nai = nai;
         this.digits = digits;
     }
 
     public void decode(InputStream in) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int b = in.read() & 0xff;
+        
+        nai = NatureOfAddress.valueOf(b & 0x7f);
+        odd = (b & 0x80) == 0x80;
+        
+        while (in.available() > 0) {
+            b = in.read() & 0xff;            
+            digits += Integer.toHexString(b & 0x0f) +
+                    Integer.toHexString((b & 0xf0) >> 4);
+        }
+        
+        if (odd) {
+            digits = digits.substring(1, digits.length() - 1);
+        }
     }
 
-    public void encode(OutputStream in) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void encode(OutputStream out) throws IOException {        
+        //determine if number of digits is even or odd
+        odd = (digits.length() % 2) != 0;
+        
+        //encoding first byte
+        int b = 0x00;
+        if (odd) {
+            b = b | (byte)0x80;
+        }
+        
+        //adding nature of address indicator
+        b = b | (byte) nai.getValue();
+        
+        //write first byte
+        out.write((byte)b);
+        
+        //writting digits
+        int count = odd ? digits.length() - 1 : digits.length();
+        for (int i = 0; i < count - 1; i+= 2) {
+            String ds1 = digits.substring(i, i + 1);
+            String ds2 = digits.substring(i + 1, i + 2);
+            
+            int d1 = Integer.parseInt(ds1,16);
+            int d2 = Integer.parseInt(ds2, 16);
+            
+            b = (byte) (d2 << 4 | d1);
+            out.write(b);
+        }
+        
+        //if number is odd append last digit with filler
+        if (odd) {
+            String ds1 = digits.substring(count, count + 1);
+            int d = Integer.parseInt(ds1);
+            
+            b = (byte)(d & 0x0f);
+            out.write(b);
+        }
     }
 
     public int getTranslationType() {
@@ -68,9 +122,13 @@ public class GT0001 implements GlobalTitle {
     }
 
     public int getNatureOfAddress() {
-        return nai;
+        return 0;//nai;
     }
 
+    public NatureOfAddress getNoA() {
+        return this.nai;
+    }
+    
     public void setNatureOfAddress(int natureOfAddress) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
