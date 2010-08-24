@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import org.mobicents.protocols.ss7.indicator.EncodingScheme;
+import org.mobicents.protocols.ss7.indicator.GTIndicator;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 
@@ -29,6 +30,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
  * @author kulikov
  */
 public class GT0011 implements GlobalTitle {
+    private final static GTIndicator gti = GTIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS;
     private int tt;    
     private NumberingPlan np;
     private EncodingScheme es;
@@ -68,44 +70,16 @@ public class GT0011 implements GlobalTitle {
         return tt;
     }
 
-    public void setTranslationType(int translationType) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    
     public NumberingPlan getNp() {
         return np;
     }
     
-    public int getNumberingPlan() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void setNumberingPlan(int numberingPlan) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public int getEncodingScheme() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void setEncodingScheme(int encodingScheme) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public int getNatureOfAddress() {
-        return 0;
-    }
-
-    public void setNatureOfAddress(int natureOfAddress) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public String getDigits() {
         return digits;
     }
 
-    public void setDigits(String digits) {
-        this.digits = digits;
+    public GTIndicator getIndicator() {
+        return gti;
     }
+    
 }
