@@ -75,7 +75,7 @@ public class GTFactory {
      */
     public static GlobalTitle getInstance(int tt, NumberingPlan np, NatureOfAddress noa, String digits) {
         //FIXME: this construction is wrong
-        return new GT0100(tt, np.getValue(), 0, noa.getValue(), digits);
+        return new GT0100(tt, np,  noa, digits);
     }
     
 }
