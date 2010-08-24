@@ -7,8 +7,6 @@ package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Arrays;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -16,7 +14,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.mobicents.protocols.ss7.indicator.GTIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 
