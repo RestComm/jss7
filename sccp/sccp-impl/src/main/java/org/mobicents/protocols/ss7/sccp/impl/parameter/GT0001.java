@@ -20,16 +20,15 @@ package org.mobicents.protocols.ss7.sccp.impl.parameter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import org.mobicents.protocols.ss7.indicator.GTIndicator;
+import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 
 /**
  *
  * @author kulikov
  */
-public class GT0001 implements GlobalTitle {
-    private GTIndicator gti = GTIndicator.GLOBAL_TITLE_INCLUDES_NATURE_OF_ADDRESS_INDICATOR_ONLY;
+public class GT0001 extends GlobalTitleImpl {
+    private GlobalTitleIndicator gti = GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_NATURE_OF_ADDRESS_INDICATOR_ONLY;
     private NatureOfAddress nai;
     private String digits;
     private boolean odd = false;
@@ -107,7 +106,7 @@ public class GT0001 implements GlobalTitle {
         return digits;
     }
 
-    public GTIndicator getIndicator() {
+    public GlobalTitleIndicator getIndicator() {
         return this.gti;
     }
 

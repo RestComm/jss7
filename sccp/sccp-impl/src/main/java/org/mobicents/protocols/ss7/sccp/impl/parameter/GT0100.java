@@ -22,18 +22,18 @@ import java.io.OutputStream;
 import java.io.IOException;
 
 import org.mobicents.protocols.ss7.indicator.EncodingScheme;
-import org.mobicents.protocols.ss7.indicator.GTIndicator;
+import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class GT0100 implements GlobalTitle {
+public class GT0100 extends GlobalTitleImpl {
 
-    private final static GTIndicator gti = GTIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_ONLY;
+    private final static GlobalTitleIndicator gti = 
+            GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS;
     private int translationType;
     private NumberingPlan numberingPlan;
     private EncodingScheme encodingScheme;
@@ -95,7 +95,7 @@ public class GT0100 implements GlobalTitle {
         return digits;
     }
 
-    public GTIndicator getIndicator() {
+    public GlobalTitleIndicator getIndicator() {
         return gti;
     }
 }

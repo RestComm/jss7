@@ -11,7 +11,7 @@ public class SccpParameterFactoryImpl implements SccpParameterFactory{
 
 	public GlobalTitle getGlobalTitle100() {
 		// TODO Auto-generated method stub
-		return new GT0100Impl();
+		return new GT0100();
 	}
 
 	public Importance getImportance() {

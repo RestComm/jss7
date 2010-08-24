@@ -20,47 +20,27 @@ package org.mobicents.protocols.ss7.sccp.impl.parameter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
+import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 
 /**
- *
+ * Super class for Global titles implementations.
+ * 
  * @author kulikov
  */
-public class GT0010 extends GlobalTitleImpl {
-    private final static GlobalTitleIndicator gti = GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_ONLY;
-    /** Translation type */
-    private int tt;
-    /** address digits */
-    private String digits;
+public abstract class GlobalTitleImpl implements GlobalTitle {
+    /**
+     * Decodes Global Title from binary input stream.
+     * 
+     * @param in the input stream
+     * @throws java.io.IOException
+     */
+    public abstract void decode(InputStream in) throws IOException;
     
-    public GT0010() {
-        digits = "";
-    }
-    
-    public GT0010(int tt, String digits) {
-        this.tt = tt;
-        this.digits = digits;
-    }
-
-    public void decode(InputStream in) throws IOException {
-        int b = in.read() & 0xff;        
-        tt = b;
-    }
-
-    public void encode(OutputStream in) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public int getTranslationType() {
-        return tt;
-    }
-
-    public String getDigits() {
-        return digits;
-    }
-
-    public GlobalTitleIndicator getIndicator() {
-        return gti;
-    }
-    
+    /**
+     * Encodes global title into binary output stream.
+     * 
+     * @param out the output stream.
+     * @throws java.io.IOException
+     */
+    public abstract void encode(OutputStream out) throws IOException;       
 }

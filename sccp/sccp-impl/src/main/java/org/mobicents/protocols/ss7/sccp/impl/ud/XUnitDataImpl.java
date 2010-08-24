@@ -75,8 +75,8 @@ public class XUnitDataImpl  extends UDBaseImpl implements XUnitData {
 		super();
 		this.hopCounter = hopCounter;
 		this.pClass = pClass;
-		super.calledParty = calledParty;
-		super.callingParty = callingParty;
+		super.calledParty = (SccpAddressImpl) calledParty;
+		super.callingParty = (SccpAddressImpl) callingParty;
 		super.data = data;
 	}
 
@@ -85,8 +85,8 @@ public class XUnitDataImpl  extends UDBaseImpl implements XUnitData {
 		super();
 		this.hopCounter = hopCounter;
 		super.pClass = pClass;
-		super.calledParty = calledParty;
-		super.callingParty = callingParty;
+		super.calledParty = (SccpAddressImpl) calledParty;
+		super.callingParty = (SccpAddressImpl) callingParty;
 		super.data = data;
 		this.segmentation = segmentation;
 		this.importance = importance;

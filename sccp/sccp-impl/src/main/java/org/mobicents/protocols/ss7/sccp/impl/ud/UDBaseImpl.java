@@ -7,6 +7,7 @@ package org.mobicents.protocols.ss7.sccp.impl.ud;
 
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.sccp.ud.UDBase;
@@ -20,8 +21,8 @@ import org.mobicents.protocols.ss7.sccp.ud.UDBase;
 abstract class UDBaseImpl extends RoutingLabel implements UDBase {
 
 	protected ProtocolClass pClass;
-	protected SccpAddress calledParty;
-	protected SccpAddress callingParty;
+	protected SccpAddressImpl calledParty;
+	protected SccpAddressImpl callingParty;
 	protected byte[] data;
 
 	public byte[] getData() {
@@ -33,11 +34,11 @@ abstract class UDBaseImpl extends RoutingLabel implements UDBase {
 	}
 
 	public void setCalledParty(SccpAddress calledParty) {
-		this.calledParty = calledParty;
+		this.calledParty = (SccpAddressImpl) calledParty;
 	}
 
 	public void setCallingParty(SccpAddress callingParty) {
-		this.callingParty = callingParty;
+		this.callingParty = (SccpAddressImpl) callingParty;
 	}
 
 	public SccpAddress getCalledParty() {

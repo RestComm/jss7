@@ -32,11 +32,13 @@ import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpParameterFactory;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpUnitDataFactory;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.AddressFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpParameterFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.ud.SccpUnitDataFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.ud.UnitDataImpl;
 import org.mobicents.protocols.ss7.sccp.impl.ud.XUnitDataImpl;
+import org.mobicents.protocols.ss7.sccp.parameter.AddressFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.sccp.ud.UDBase;
@@ -139,6 +141,10 @@ public abstract class AbstractSccpProviderImpl implements SccpProvider {
 		return udFactory;
 	}
 
+        public AddressFactory getAddressFactory() {
+            return new AddressFactoryImpl();
+        }
+        
 	public abstract void start() throws IllegalStateException, StartFailedException;
 
 	public abstract void stop();

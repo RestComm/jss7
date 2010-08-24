@@ -42,8 +42,8 @@ public class UnitDataImpl extends UDBaseImpl implements UnitData {
     public UnitDataImpl(ProtocolClass pClass, SccpAddress calledParty, 
             SccpAddress callingParty, byte[] data) {
     	super.pClass = pClass;
-        super.calledParty = calledParty;
-        super.callingParty = callingParty;
+        super.calledParty = (SccpAddressImpl)calledParty;
+        super.callingParty = (SccpAddressImpl)callingParty;
         super.data = data;
     }
 
