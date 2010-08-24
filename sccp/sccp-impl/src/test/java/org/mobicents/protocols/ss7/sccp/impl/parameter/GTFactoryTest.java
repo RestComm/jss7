@@ -79,7 +79,7 @@ public class GTFactoryTest {
      */
     @Test
     public void testGetInstance0100() {
-        GT0100Impl gt = (GT0100Impl) GTFactory.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.NATIONAL, "9023629581");
+        GT0100 gt = (GT0100) GTFactory.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.NATIONAL, "9023629581");
         assertEquals(0, gt.getTranslationType());
         //assertEquals(NumberingPlan.ISDN_TELEPHONY, gt.getNp());
         assertEquals("9023629581", gt.getDigits());
