@@ -15,41 +15,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
-
 package org.mobicents.protocols.ss7.sccp.parameter;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
+import org.mobicents.protocols.ss7.indicator.GTIndicator;
 
 /**
  * 
  * @author Oleg Kulikov
  */
 public interface GlobalTitle {
-    
-	public void decode(InputStream in) throws IOException;
 
-	public void encode(OutputStream in) throws IOException;
+    /**
+     * Defines fields included into the global title.
+     * @return
+     */
+    public GTIndicator getIndicator();
 
-	public int getTranslationType();
-
-	public void setTranslationType(int translationType);
-
-	public int getNumberingPlan();
-
-	public void setNumberingPlan(int numberingPlan);
-
-	public int getEncodingScheme();
-
-	public void setEncodingScheme(int encodingScheme);
-
-	public int getNatureOfAddress();
-
-	public void setNatureOfAddress(int natureOfAddress);
-
-	public String getDigits();
-
-	public void setDigits(String digits);
+    /**
+     * Address string.
+     * 
+     * @return
+     */
+    public String getDigits();
 
 }
