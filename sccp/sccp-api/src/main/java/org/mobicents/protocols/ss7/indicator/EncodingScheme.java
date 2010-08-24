@@ -60,7 +60,7 @@ public enum EncodingScheme {
         }
         
         if (value == 1) {
-            digits = digits.substring(1, digits.length() - 1);
+            digits = digits.substring(0, digits.length() - 1);
         }
         
         return digits;

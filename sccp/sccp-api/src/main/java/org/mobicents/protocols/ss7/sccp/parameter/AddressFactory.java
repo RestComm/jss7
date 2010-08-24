@@ -15,13 +15,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
-package org.mobicents.protocols.ss7.indicator;
+package org.mobicents.protocols.ss7.sccp.parameter;
 
 /**
  *
  * @author kulikov
  */
-public enum RtgIndicator {
-    ROUTING_BASED_ON_GLOBAL_TITLE,
-    ROUTING_BASED_ON_DPC_AND_SSN;    
+public interface AddressFactory {
+    
+    /**
+     * Creates SCCP address with routing based on 
+     * destination point code and subsytem number.
+     * 
+     * @param pointCode the destination point code
+     * @param ssn subsytem number
+     * @return the SCCP address object.
+     */
+    public SccpAddress getAddress(int pointCode, int ssn);
+    
+    /**
+     * Creates SCCP address with routing based on Global title.
+     * 
+     * @param gt Global title
+     * @param ssn subsytem number or 0 if unknown.
+     * @return the SCCP address object.
+     */
+    public SccpAddress getAddress(GlobalTitle gt, int ssn);
 }

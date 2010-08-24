@@ -17,7 +17,7 @@
  */
 package org.mobicents.protocols.ss7.sccp.parameter;
 
-import org.mobicents.protocols.ss7.indicator.GTIndicator;
+import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 
 /**
  * 
@@ -29,7 +29,7 @@ public interface GlobalTitle {
      * Defines fields included into the global title.
      * @return
      */
-    public GTIndicator getIndicator();
+    public GlobalTitleIndicator getIndicator();
 
     /**
      * Address string.

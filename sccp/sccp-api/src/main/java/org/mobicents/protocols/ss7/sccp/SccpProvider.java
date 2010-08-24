@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
+import org.mobicents.protocols.ss7.sccp.parameter.AddressFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -58,6 +59,14 @@ public interface SccpProvider {
 	 * @return
 	 */
 	public SccpUnitDataFactory getUnitDataFactory();
+        
+        /**
+         * SCCP address factory instance.
+         * 
+         * @return the factory instance.
+         */
+        public AddressFactory getAddressFactory();
+        
 	/**
 	 * Parameter factory instance.
 	 * @return

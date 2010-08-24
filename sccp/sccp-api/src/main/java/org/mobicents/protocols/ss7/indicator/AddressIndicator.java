@@ -23,26 +23,33 @@ package org.mobicents.protocols.ss7.indicator;
  */
 public class AddressIndicator {
     //Global title indicator
-    private GTIndicator gti;
+    private GlobalTitleIndicator globalTitleIndicator;
     //point code indicator
     private boolean pcPresent;
     //ssn indicator
     private boolean ssnPresent;
     //routing indicator             
-    private RtgIndicator rtg;
+    private RoutingIndicator routingIndicator;
+    
+    public AddressIndicator(boolean pcPresent, boolean ssnPresent, RoutingIndicator rti, GlobalTitleIndicator gti) {
+        this.pcPresent = pcPresent;
+        this.ssnPresent = ssnPresent;
+        this.routingIndicator = rti;
+        this.globalTitleIndicator = gti;
+    }
     
     public AddressIndicator(byte v) {
         pcPresent = (v & 0x01) == 0x01;
         ssnPresent = (v & 0x02) == 0x02;
-        gti = GTIndicator.valueOf((v >> 2) & 0x0f);
+        globalTitleIndicator = GlobalTitleIndicator.valueOf((v >> 2) & 0x0f);
         
-         rtg = ((v >> 6) & 0x01) == 0x01 ? 
-             RtgIndicator.ROUTING_BASED_ON_DPC_AND_SSN :
-             RtgIndicator.ROUTING_BASED_ON_GLOBAL_TITLE;
+        routingIndicator = ((v >> 6) & 0x01) == 0x01 ? 
+             RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN :
+             RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE;
     }
     
-    public GTIndicator getGlobalTitleIndicator() {
-        return gti;
+    public GlobalTitleIndicator getGlobalTitleIndicator() {
+        return globalTitleIndicator;
     }
     
     public boolean pcPresent() {
@@ -53,7 +60,27 @@ public class AddressIndicator {
         return ssnPresent;
     }
     
-    public RtgIndicator getRoutingIndicator() {
-        return rtg;
+    public RoutingIndicator getRoutingIndicator() {
+        return routingIndicator;
+    }
+    
+    public byte getValue() {
+        int b = 0;
+        
+        if (pcPresent) {
+            b |= 0x01;
+        }
+        
+        if (ssnPresent) {
+            b |= 0x02;
+        }
+        
+        b |= (globalTitleIndicator.getValue() << 2);
+        
+        if (routingIndicator == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
+            b |= 0x40;
+        }
+        
+        return (byte)b;
     }
 }
