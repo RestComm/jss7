@@ -19,16 +19,15 @@ public class SccpStackImpl implements SccpStack {
 
 	private State state = State.IDLE;
 
-	private AbstractSccpProviderImpl sccpProvider;
+	private SccpProviderImpl sccpProvider;
 
-	private final static SccpProviderFactory factory = new SccpProviderFactory();
 	
 	public SccpStackImpl(){
 		
 	}
 	
 	public SccpStackImpl(SccpProvider sccpProvider){
-		this.sccpProvider = (AbstractSccpProviderImpl)sccpProvider;
+		this.sccpProvider = (SccpProviderImpl)sccpProvider;
 		this.state = State.CONFIGURED;
 	}	
 
@@ -43,7 +42,8 @@ public class SccpStackImpl implements SccpStack {
 		if (state != State.IDLE) {
 			throw new IllegalStateException("Stack already been configured or is already running!");
 		}
-		this.sccpProvider = (AbstractSccpProviderImpl) factory.getProvider(properties);
+		this.sccpProvider = new SccpProviderImpl();
+                sccpProvider.configure(properties);
 		this.state = State.CONFIGURED;
 	}
 

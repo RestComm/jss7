@@ -22,7 +22,7 @@ import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import org.mobicents.protocols.ss7.sccp.impl.AbstractSccpProviderImpl;
+import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.impl.provider.intel.gt.InterProcessCommunicator;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.utils.Utils;
@@ -32,7 +32,7 @@ import org.mobicents.protocols.ss7.utils.Utils;
  * @author $Author: kulikoff $
  * @version $Revision: 1.1 $
  */
-public class SccpIntelHDCProviderImpl extends AbstractSccpProviderImpl implements Runnable, SccpProvider {
+public class SccpIntelHDCProviderImpl extends SccpProviderImpl implements Runnable, SccpProvider {
 
 	private InterProcessCommunicator ipc;
 
@@ -105,7 +105,7 @@ public class SccpIntelHDCProviderImpl extends AbstractSccpProviderImpl implement
 	 * @see org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl#start()
 	 */
 	@Override
-	public void start() throws IllegalStateException, StartFailedException {
+	public void start() throws IllegalStateException {
 		//this.threadPool = new PooledExecutor(10);
 		new Thread(super.THREAD_GROUP,this).start();
 		ipc = new InterProcessCommunicator(src, dst);

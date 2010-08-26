@@ -22,10 +22,9 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ConfigurationException;
-import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import org.mobicents.protocols.ss7.sccp.impl.AbstractSccpProviderImpl;
+import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.utils.Utils;
 
@@ -34,7 +33,7 @@ import org.mobicents.protocols.ss7.utils.Utils;
  * @author Oleg Kulikov
  * @deprecated - its obsolete now?
  */
-public class SccpM3UAProviderImpl extends AbstractSccpProviderImpl implements Runnable, SccpProvider {
+public class SccpM3UAProviderImpl extends SccpProviderImpl implements Runnable, SccpProvider {
 
 	private DatagramSocket socket;
 
@@ -109,12 +108,11 @@ public class SccpM3UAProviderImpl extends AbstractSccpProviderImpl implements Ru
 	 * @see org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl#start()
 	 */
 	@Override
-	public void start() throws IllegalStateException, StartFailedException {
+	public void start() throws IllegalStateException {
 		//this.threadPool = new PooledExecutor(10);
 		try {
 			socket = new DatagramSocket(localPort, InetAddress.getByName(localAddress));
 		} catch (Exception e) {
-			throw new StartFailedException(e);
 		}
 		new Thread(super.THREAD_GROUP, this).start();
 		logger.info("Running main thread");

@@ -41,7 +41,7 @@ public class SccpProviderFactory {
 
 	public SccpProvider getProvider(Properties properties) throws ConfigurationException {
 
-		String driver = properties.getProperty(AbstractSccpProviderImpl.CONFIG_PROVIDER, DRIVER_DEFAULT);
+		String driver = properties.getProperty(SccpProviderImpl.CONFIG_PROVIDER, DRIVER_DEFAULT);
 		SccpProvider p = null;
 		if (driver.toLowerCase().equals(DRIVER_INTEL)) {
 			p = new SccpIntelHDCProviderImpl();
@@ -64,7 +64,6 @@ public class SccpProviderFactory {
 			} 
 		
 		}
-		p.configure(properties);
 		return p;
 	}
 }

@@ -10,7 +10,7 @@ import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.mtp.provider.MtpListener;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProviderFactory;
-import org.mobicents.protocols.ss7.sccp.impl.AbstractSccpProviderImpl;
+import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -18,7 +18,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author amit bhayani
  * @author baranowb
  */
-public class SccpDefaultProviderImpl extends AbstractSccpProviderImpl implements
+public class SccpDefaultProviderImpl extends SccpProviderImpl implements
 		MtpListener {
 	private static final Logger logger = Logger
 			.getLogger(SccpDefaultProviderImpl.class);
@@ -96,10 +96,10 @@ public class SccpDefaultProviderImpl extends AbstractSccpProviderImpl implements
 
 	}
 
-	public void start() throws IllegalStateException, StartFailedException {
+	public void start() throws IllegalStateException {
 		logger.info("Starting ...");
 		this.mtpProvider.setMtpListener(this);
-		this.mtpProvider.start();
+//		this.mtpProvider.start();
 	}
 
 	public void stop() {
