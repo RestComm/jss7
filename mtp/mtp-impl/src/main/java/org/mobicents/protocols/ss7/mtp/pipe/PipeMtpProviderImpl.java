@@ -144,4 +144,20 @@ public class PipeMtpProviderImpl implements MtpProvider {
 		// TODO Auto-generated method stub
 		
 	}
+
+    public void setOriginalPointCode(int opc) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setAdjacentPointCode(int dpc) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int getAdjacentPointCode() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int getOriginalPointCode() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

@@ -278,4 +278,20 @@ public class M3UAProvider extends AbstractMtpProviderImpl implements MtpProvider
 		NOT_CONFIGURED, CONFIGURED, RUNNING;
 	}
 
+    public void setOriginalPointCode(int opc) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setAdjacentPointCode(int dpc) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int getAdjacentPointCode() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int getOriginalPointCode() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

@@ -14,54 +14,77 @@ import org.mobicents.protocols.StartFailedException;
  */
 public interface MtpProvider {
 
-	/**
-	 * Sets listener for MTP callbacks. If null is passed internal refence is
-	 * cleared.
-	 * 
-	 * @param lst
-	 */
-	public void setMtpListener(MtpListener lst);
+    /**
+     * Assigns originated point code
+     * 
+     * @param opc the originated point code
+     */
+    public void setOriginalPointCode(int opc);
 
-	/**
-	 * Passes argument to MTP layers for processing. Passed buffer should not be
-	 * reused after passing to this method!
-	 * 
-	 * @param msu
-	 * @throws IOException
-	 *             - when IO can not be performed, ie, link is not up.
-	 * @return
-	 */
-	public void send(byte[] msu) throws IOException;
+    /**
+     * Assigns destination point code.
+     * 
+     * @param dpc destination point code in decimal format.
+     */
+    public void setAdjacentPointCode(int dpc);
 
-	/**
-	 * Starts this provider implementation. Depending on internal it can start
-	 * local MTP process, or M3UA layer.
-	 * 
-	 * @throws IOException
-	 * @throws StartFailedException
-	 */
-	public void start() throws StartFailedException;
+    /**
+     * @return the dpc
+     */
+    public int getAdjacentPointCode();
 
-	/**
-	 * Stops this provider. This call clears all references, ie. listener is
-	 * cleared as {@link #setMtpListener(MtpListener)} with null argument.
-	 */
-	public void stop();
+    /**
+     * @return the opc
+     */
+    public int getOriginalPointCode();
 
-	/**
-	 * Method which configures implementation. Depending on implementation
-	 * different properties are supported. However each property starts with
-	 * "mtp." prefix.
-	 * 
-	 * @param p
-	 */
-	public void configure(Properties p) throws ConfigurationException;
+    /**
+     * Sets listener for MTP callbacks. If null is passed internal refence is
+     * cleared.
+     * 
+     * @param lst
+     */
+    public void setMtpListener(MtpListener lst);
 
-	/**
-	 * Checks if link is up;
-	 * 
-	 * @return
-	 */
-	public boolean isLinkUp();
+    /**
+     * Passes argument to MTP layers for processing. Passed buffer should not be
+     * reused after passing to this method!
+     * 
+     * @param msu
+     * @throws IOException
+     *             - when IO can not be performed, ie, link is not up.
+     * @return
+     */
+    public void send(byte[] msu) throws IOException;
 
+    /**
+     * Starts this provider implementation. Depending on internal it can start
+     * local MTP process, or M3UA layer.
+     * 
+     * @throws IOException
+     * @throws StartFailedException
+     */
+    public void start() throws StartFailedException;
+
+    /**
+     * Stops this provider. This call clears all references, ie. listener is
+     * cleared as {@link #setMtpListener(MtpListener)} with null argument.
+     */
+    public void stop();
+
+    /**
+     * Method which configures implementation. Depending on implementation
+     * different properties are supported. However each property starts with
+     * "mtp." prefix.
+     * 
+     * @param p
+     */
+    public void configure(Properties p) throws ConfigurationException;
+
+    /**
+     * Checks if link is up;
+     * 
+     * @return
+     */
+    public boolean isLinkUp();
 }
