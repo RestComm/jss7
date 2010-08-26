@@ -18,10 +18,10 @@
 package org.mobicents.protocols.ss7.sccp;
 
 import java.io.IOException;
-import java.util.Properties;
+import java.util.List;
 
-import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
+import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.AddressFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
@@ -50,15 +50,20 @@ public interface SccpProvider {
 	 * @param data - byte[] encoded of sccp parameters
 	 * @param ar - reference with mtp3 routing label
 	 * @throws IOException
+         * @deprecated 
 	 */
 	public void send(SccpAddress calledParty, SccpAddress callingParty,
 			byte[] data,RoutingLabel ar) throws IOException;//FIXME: add support for UDTs?
 
 	/**
-	 * UnitData factory instance.
-	 * @return
+	 * Send sccp byte[] to desired addres.
+	 * @param calledParty - destination address of this message
+	 * @param callingParty - local address
+	 * @param data - byte[] encoded of sccp parameters
+	 * @throws IOException
 	 */
-	public SccpUnitDataFactory getUnitDataFactory();
+	public void send(SccpAddress calledParty, SccpAddress callingParty,
+			byte[] data) throws IOException;//FIXME: add support for UDTs?
         
         /**
          * SCCP address factory instance.
@@ -67,11 +72,24 @@ public interface SccpProvider {
          */
         public AddressFactory getAddressFactory();
         
-	/**
-	 * Parameter factory instance.
-	 * @return
-	 */
-	public SccpParameterFactory getSccpParameterFactory();
-	
-	public void configure(Properties p) throws ConfigurationException;
+        /**
+         * Assigns linksets to the SCCP layer.
+         * 
+         * @param linksets the MTP linkset list.
+         */
+        public void setLinksets(List<MtpProvider> linksets);
+        
+        /**
+         * Starts SCCP layer.
+         * 
+         * @throws IllegalStateException if the SCCP has no assigned linksets. 
+         */
+        public void start() throws IllegalStateException;
+        
+        /**
+         * Stops SCCP layer.
+         * 
+         */
+        public void stop();
+        
 }
