@@ -22,13 +22,45 @@ import org.mobicents.protocols.ss7.m3ua.message.MessageFactory;
 import org.mobicents.protocols.ss7.m3ua.message.parm.ParameterFactory;
 
 /**
- *
+ * Service-provider class for selectors and M3UA channels.
  * @author kulikov
  */
 public interface M3UAProvider {
+    /**
+     * Opens new M3UA channel.
+     * 
+     * @return the new channel.
+     * @throws java.io.IOException
+     */
     public M3UAChannel openChannel() throws IOException;
+    
+    /**
+     * Opens new server channel.
+     * 
+     * @return new server channel.
+     * @throws java.io.IOException
+     */
     public M3UAServerChannel openServerChannel() throws IOException;
+    
+    /**
+     * Opens new M3UA multiplexer.
+     * 
+     * @return new selector.
+     * @throws java.io.IOException
+     */
     public M3UASelector openSelector() throws IOException; 
+    
+    /**
+     * Provides access to the message factory implementation.
+     * 
+     * @return message factory instance
+     */
     public MessageFactory getMessageFactory();
+    
+    /**
+     * Provides access to the parameter factory implementation.
+     * 
+     * @return parameter factory instance
+     */
     public ParameterFactory getParameterFactory();
 }
