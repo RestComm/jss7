@@ -75,4 +75,10 @@ public interface ProtocolData extends Parameter {
      */
     public byte[] getData();
 
+    /**
+     * Gets the message encoded as SS7 message signaling unit.
+     * 
+     * @return binary message signaling unit
+     */
+    public byte[] getMsu();
 }

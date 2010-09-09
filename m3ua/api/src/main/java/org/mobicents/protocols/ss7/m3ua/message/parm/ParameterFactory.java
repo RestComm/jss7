@@ -36,4 +36,14 @@ public interface ParameterFactory {
      * @return Protocol data parameter
      */
     public ProtocolData createProtocolData(int opc, int dpc, int si, int ni, int mp, int sls, byte[] data);
+    
+    /**
+     * Constructs Protocol Data parameter.
+     * 
+     * @param mp message priority
+     * @param msu the message signaling unit
+     * @return Protocol data parameter
+     */
+    public ProtocolData createProtocolData(int mp, byte[] msu);
+    
 }
