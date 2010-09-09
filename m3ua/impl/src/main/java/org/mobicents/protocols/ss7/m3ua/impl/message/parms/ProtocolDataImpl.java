@@ -47,7 +47,20 @@ public class ProtocolDataImpl extends ParameterImpl implements ProtocolData {
         this.mp = mp;
         this.sls = sls;
         this.data = data;
-        
+        encode();
+    }
+    
+    protected ProtocolDataImpl(int mp,  byte[] msu) {
+        this.data = new byte[msu.length - 5];
+        this.ni = (msu[0] >> 6) & 0xc0;
+        this.si = msu[0] & 0x0f;
+        this.opc = ((msu[2] & 0xC0) >> 6) | ((msu[3] & 0xff) << 2) | ((msu[4] & 0x0f) << 10);
+        this.dpc = (msu[1] & 0xff | ((msu[2] & 0x3f) << 8));
+        System.arraycopy(msu, 5, data, 0, data.length);
+        encode();
+    }   
+    
+    private void encode() {
         //create byte array taking into account data, point codes and indicators;
         this.value = new byte[data.length + 12];
         //insert data 
@@ -71,7 +84,6 @@ public class ProtocolDataImpl extends ParameterImpl implements ProtocolData {
         value[10] = (byte)(mp);
         value[11] = (byte)(sls);
     }
-    
     /**
      * Creates new parameter with specified value.
      * 
@@ -123,9 +135,27 @@ public class ProtocolDataImpl extends ParameterImpl implements ProtocolData {
     protected byte[] getValue() {
         return value;
     }
+
+    public byte[] getMsu() {
+        //create extended byte array
+        byte[] msu = new byte[data.length + 5];
+        
+        //encode service information octet and routing label
+        int ssi = ni << 2;
+	msu[0] = (byte) (((ssi & 0x0F) << 4) | (si & 0x0F));
+	msu[1] = (byte) dpc;
+	msu[2] = (byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6));
+	msu[3] = (byte) (opc >> 2);
+	msu[4] = (byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4));
+        
+        //copy data
+        System.arraycopy(data, 0, msu, 5, data.length);
+        return msu;
+    }
     
     @Override
     public String toString() {
         return String.format("Protocol data: opc=%d, dpc=%d, si=%d, ni=%d, sls=%d", opc, dpc, si, ni, sls);
     }
+
 }

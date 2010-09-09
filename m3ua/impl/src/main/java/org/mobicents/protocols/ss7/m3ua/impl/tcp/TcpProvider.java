@@ -35,7 +35,7 @@ import org.mobicents.protocols.ss7.m3ua.impl.message.parms.ParameterFactoryImpl;
  */
 public class TcpProvider implements M3UAProvider {
 
-    public static TcpProvider open() {
+    public static M3UAProvider open() {
         return new TcpProvider();
     }
     

@@ -30,6 +30,10 @@ public class ParameterFactoryImpl implements ParameterFactory {
         return new ProtocolDataImpl(opc, dpc, si, ni, mp, sls, data);
     }
     
+    public ProtocolData createProtocolData(int mp, byte[] msu) {
+        return new ProtocolDataImpl(mp, msu);
+    }
+    
     public ParameterImpl createParameter(int tag, byte[] value) {
         ParameterImpl p = null;
         switch (tag) {
@@ -42,5 +46,6 @@ public class ParameterFactoryImpl implements ParameterFactory {
         }
         return p;
     }
+
     
 }
