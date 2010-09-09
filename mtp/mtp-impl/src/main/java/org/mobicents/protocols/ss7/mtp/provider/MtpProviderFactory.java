@@ -21,7 +21,7 @@ import java.lang.reflect.Constructor;
 import java.util.Properties;
 
 import org.mobicents.protocols.ConfigurationException;
-import org.mobicents.protocols.ss7.mtp.provider.m3ua.M3UAProvider;
+import org.mobicents.protocols.ss7.mtp.provider.m3ua.Provider;
 
 /**
  * @author baranowb
@@ -58,7 +58,7 @@ public class MtpProviderFactory {
 		String d = props.getProperty(PROPERTY_MTP_DRIVER, DRIVER_M3UA);
 		if(d.toLowerCase().equals(DRIVER_M3UA))
 		{
-			p = new M3UAProvider();
+			p = new Provider();
 		}else
 		{
 			//try as class
