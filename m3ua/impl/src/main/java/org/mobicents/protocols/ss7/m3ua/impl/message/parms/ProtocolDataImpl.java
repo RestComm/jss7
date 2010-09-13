@@ -37,7 +37,10 @@ public class ProtocolDataImpl extends ParameterImpl implements ProtocolData {
     private byte[] data;
     
     private byte[] value;
-    
+
+    protected ProtocolDataImpl() {
+        this.tag = ParameterImpl.Protocol_Data;
+    }    
     protected ProtocolDataImpl(int opc, int dpc, int si, int ni, int mp, int sls, byte[] data) {
         this.tag = ParameterImpl.Protocol_Data;
         this.opc = opc;
@@ -50,10 +53,10 @@ public class ProtocolDataImpl extends ParameterImpl implements ProtocolData {
         encode();
     }
     
-    protected ProtocolDataImpl(int mp,  byte[] msu) {
-        this.tag = ParameterImpl.Protocol_Data;
+    protected void load(byte[] msu) {
         this.data = new byte[msu.length - 5];
-        this.ni = (msu[0] >> 6) & 0xc0;
+        this.ni = (msu[0] & 0xc0) >> 6;
+        this.mp = (msu[0] & 0x30) >> 4;
         this.si = msu[0] & 0x0f;
         this.opc = ((msu[2] & 0xC0) >> 6) | ((msu[3] & 0xff) << 2) | ((msu[4] & 0x0f) << 10);
         this.dpc = (msu[1] & 0xff | ((msu[2] & 0x3f) << 8));

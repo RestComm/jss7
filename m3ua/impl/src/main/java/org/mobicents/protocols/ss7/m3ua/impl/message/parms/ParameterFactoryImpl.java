@@ -31,7 +31,13 @@ public class ParameterFactoryImpl implements ParameterFactory {
     }
     
     public ProtocolData createProtocolData(int mp, byte[] msu) {
-        return new ProtocolDataImpl(mp, msu);
+        ProtocolDataImpl p = new ProtocolDataImpl();
+        p.load(msu);
+        return p;
+    }
+    
+    public ProtocolData createProtocolData(byte[] msu) {
+        return new ProtocolDataImpl(msu);
     }
     
     public ParameterImpl createParameter(int tag, byte[] value) {
