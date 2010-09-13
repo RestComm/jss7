@@ -137,28 +137,13 @@ public class Provider implements MtpProvider, Runnable {
      * @see org.mobicents.protocols.ss7.mtp.provider.MtpProvider#start()
      */
     public void start() throws StartFailedException {
+        logger.info("Starting M3UA provider");
         try {
-            selector = provider.openSelector();            
-            //opening channel, bind it local address and connect 
-            //to the remote address
-            channel = provider.openChannel();
-            channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-            
-            channel.bind(localAddress);
-            channel.connect(remoteAddress);
-            
-            //wait while connection will be established
-            while (!channel.finishConnect()) {
-                synchronized (this) {
-                    wait(10);
-                }
-            }
-            
-            //run main thread;
-            new Thread(this).start();
+            logger.info("Starting M3UA connector");
+            new Thread(new Connector(this), "M3UAConnector").start();
         } catch (Exception e) {
             throw new StartFailedException(e);
-        }
+        } 
     }
 
     public void setOriginalPointCode(int opc) {
@@ -194,6 +179,7 @@ public class Provider implements MtpProvider, Runnable {
         M3UAMessage msg = null;
         try {
             msg = channel.receive();
+            logger.info("Receive " + msg);
         } catch (IOException e) {
             logger.error("Unable to read message, caused by ", e);
             //TODO disconnect channel?
@@ -261,5 +247,60 @@ public class Provider implements MtpProvider, Runnable {
 
     public boolean isLinkUp() {
         return true;
+    }
+    
+    /**
+     * Starts connection creation in the background.
+     */
+    private class Connector implements Runnable {
+        private Runnable worker;
+        
+        public Connector(Runnable worker) {
+            this.worker = worker;
+        }
+        
+        public void run() {
+            boolean connected = false;
+            while (!connected) {
+                try {
+                    selector = provider.openSelector();            
+                    //opening channel, bind it local address and connect 
+                    //to the remote address
+                    channel = provider.openChannel();
+                    channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+            
+                    logger.info("Binding M3UA channel to " + localAddress);
+                    channel.bind(localAddress);
+            
+                    logger.info("Connecting M3UA channel to " + remoteAddress);
+                    channel.connect(remoteAddress);
+            
+                    //wait while connection will be established
+                    while (!channel.finishConnect()) {
+                        synchronized (this) {
+                            wait(10);
+                        }
+                    }
+            
+                    //run main thread;
+                    logger.info("Connected M3UA channel to " + remoteAddress);
+                    started = true;
+                    new Thread(worker).start();
+                    connected = true;
+                } catch (Exception e) {
+                    logger.warn("Can not connect to " + remoteAddress + ":" + e.getMessage());
+                    try {
+                        channel.close();
+                    } catch (IOException ie) {
+                    }
+                    //wait 5 second before reconnect
+                    try {
+                        synchronized(this) {wait(5000);}
+                    } catch (InterruptedException ex) {
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
