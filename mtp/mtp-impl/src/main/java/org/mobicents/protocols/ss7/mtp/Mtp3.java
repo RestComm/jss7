@@ -331,11 +331,11 @@ public class Mtp3 implements Runnable {
                         //byte[] msgBuff = new byte[sif.length - 4];
                         //System.arraycopy(sif, 4, msgBuff, 0, msgBuff.length);
 //                        mtpUser.receive(mtp2.getSls(), mtp2.getLinkSet().getId(), SERVICE_ISUP, subserviceIndicator, msgBuff);
-                        byte[] message = new byte[sif.length + 1];
-                        System.arraycopy(sif, 0, message, 1, sif.length);
-                        message[0] = (byte) sio;
+//                        byte[] message = new byte[sif.length + 1];
+//                        System.arraycopy(sif, 0, message, 1, sif.length);
+//                        message[0] = (byte) sio;
                         try {
-                            mtp3Listener.receive(message);
+                            mtp3Listener.receive(sif);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
