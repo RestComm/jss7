@@ -51,6 +51,7 @@ public class ProtocolDataImpl extends ParameterImpl implements ProtocolData {
     }
     
     protected ProtocolDataImpl(int mp,  byte[] msu) {
+        this.tag = ParameterImpl.Protocol_Data;
         this.data = new byte[msu.length - 5];
         this.ni = (msu[0] >> 6) & 0xc0;
         this.si = msu[0] & 0x0f;
