@@ -8,7 +8,7 @@ import org.mobicents.protocols.StartFailedException;
 /**
  * 
  * @author baranowb
- * 
+ * @deprecated 
  */
 public interface SccpStack {
 

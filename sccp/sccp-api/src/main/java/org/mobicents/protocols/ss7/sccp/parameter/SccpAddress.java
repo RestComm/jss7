@@ -17,16 +17,50 @@
  */
 package org.mobicents.protocols.ss7.sccp.parameter;
 
+import org.mobicents.protocols.ss7.indicator.AddressIndicator;
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+
 /**
- * @author baranowb
  * 
+ * 
+ * @author baranowb
+ * @author kulikov
  */
-public interface SccpAddress {
+public class SccpAddress {
 
-	public int getSignalingPointCode();
+    private GlobalTitle gt;
+    private int pc;
+    private int ssn;
 
-	public int getSubsystemNumber();
+    private AddressIndicator ai;
+    
+    public SccpAddress(GlobalTitle gt, int ssn) {
+        this.gt = gt;
+        this.ssn = ssn;
+        this.ai = new AddressIndicator(false, ssn != 0, 
+                RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt.getIndicator());
+    }
 
-	public GlobalTitle getGlobalTitle();
+    public SccpAddress(int pc, int ssn) {
+        this.pc = pc;
+        this.ssn = ssn;
+        this.ai = new AddressIndicator(pc != 0, ssn != 0, 
+                RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, gt.getIndicator());
+    }
 
+    public AddressIndicator getAddressIndicator() {
+        return this.ai;
+    }
+    
+    public int getSignalingPointCode() {
+        return pc;
+    }
+
+    public int getSubsystemNumber() {
+        return ssn;
+    }
+
+    public GlobalTitle getGlobalTitle() {
+        return gt;
+    }
 }

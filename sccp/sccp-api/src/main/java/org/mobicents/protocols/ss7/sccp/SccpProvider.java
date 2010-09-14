@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.mobicents.protocols.ss7.mtp.RoutingLabel;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
-import org.mobicents.protocols.ss7.sccp.parameter.AddressFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -64,13 +63,6 @@ public interface SccpProvider {
 	 */
 	public void send(SccpAddress calledParty, SccpAddress callingParty,
 			byte[] data) throws IOException;//FIXME: add support for UDTs?
-        
-        /**
-         * SCCP address factory instance.
-         * 
-         * @return the factory instance.
-         */
-        public AddressFactory getAddressFactory();
         
         /**
          * Assigns linksets to the SCCP layer.
