@@ -22,8 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressCodec;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -33,20 +32,22 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 public class UnitDataImpl {
 
     private static final int _MT = 0x09;
-    protected ProtocolClass pClass;
-    protected SccpAddressImpl calledParty;
-    protected SccpAddressImpl callingParty;
+    protected ProtocolClassImpl pClass;
+    protected SccpAddress calledParty;
+    protected SccpAddress callingParty;
     protected byte[] data;
 
+    private SccpAddressCodec addressCodec = new SccpAddressCodec();
+    
     /** Creates a new instance of UnitData */
     public UnitDataImpl() {
     }
 
-    public UnitDataImpl(ProtocolClass pClass, SccpAddress calledParty,
+    public UnitDataImpl(ProtocolClassImpl pClass, SccpAddress calledParty,
             SccpAddress callingParty, byte[] data) {
         this.pClass = pClass;
-        this.calledParty = (SccpAddressImpl) calledParty;
-        this.callingParty = (SccpAddressImpl) callingParty;
+        this.calledParty = (SccpAddress) calledParty;
+        this.callingParty = (SccpAddress) callingParty;
         this.data = data;
     }
 
@@ -58,7 +59,7 @@ public class UnitDataImpl {
         return callingParty;
     }
 
-    public ProtocolClass getpClass() {
+    public ProtocolClassImpl getpClass() {
         return pClass;
     }
 
@@ -71,8 +72,8 @@ public class UnitDataImpl {
 
         pClass.encode(out);
 
-        byte[] cdp = calledParty.encode();
-        byte[] cnp = callingParty.encode();
+        byte[] cdp = addressCodec.encode(calledParty);
+        byte[] cnp = addressCodec.encode(callingParty);
 
         int len = 3;
         out.write(len);
@@ -106,8 +107,7 @@ public class UnitDataImpl {
         byte[] buffer = new byte[len];
         in.read(buffer);
 
-        calledParty = new SccpAddressImpl();
-        calledParty.decode(buffer);
+        calledParty = addressCodec.decode(buffer);
 
         in.reset();
         cpaPointer = in.read() & 0xff;
@@ -119,8 +119,7 @@ public class UnitDataImpl {
         buffer = new byte[len];
         in.read(buffer);
 
-        callingParty = new SccpAddressImpl();
-        callingParty.decode(buffer);
+        callingParty = addressCodec.decode(buffer);
 
         in.reset();
         cpaPointer = in.read() & 0xff;

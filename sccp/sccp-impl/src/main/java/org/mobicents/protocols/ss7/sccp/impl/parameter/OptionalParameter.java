@@ -17,32 +17,14 @@
  */
 package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
-import org.mobicents.protocols.ss7.sccp.parameter.AddressFactory;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import java.io.IOException;
 
 /**
  *
  * @author kulikov
  */
-public class AddressFactoryImpl implements AddressFactory {
+public abstract class OptionalParameter {
+    public abstract void decode(byte[] buffer) throws IOException;
 
-    /**
-     * (Non Java-doc.)
-     * 
-     * @see org.mobicents.protocols.ss7.sccp.parameter.AddressFactory#getAddress(int, int) ;
-     */
-    public SccpAddress getAddress(int pointCode, int ssn) {
-        return new SccpAddressImpl(pointCode, ssn);
-    }
-
-    /**
-     * (Non Java-doc.)
-     * 
-     * @see org.mobicents.protocols.ss7.sccp.parameter.AddressFactory#getAddress(org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle, int) 
-     */
-    public SccpAddress getAddress(GlobalTitle gt, int ssn) {
-        return new SccpAddressImpl(gt, ssn);
-    }
-
+    public abstract byte[] encode() throws IOException;
 }

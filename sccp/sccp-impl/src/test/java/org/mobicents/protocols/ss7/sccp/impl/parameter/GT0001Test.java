@@ -16,6 +16,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
+import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import static org.junit.Assert.*;
 
 /**
@@ -25,6 +27,7 @@ import static org.junit.Assert.*;
 public class GT0001Test {
 
     private byte[] data = new byte[] {3,0x09,0x32,0x26,0x59,0x18};
+    private GT0001Codec codec = new GT0001Codec();
     
     public GT0001Test() {
     }
@@ -46,7 +49,7 @@ public class GT0001Test {
     }
 
     /**
-     * Test of decode method, of class GT0001.
+     * Test of decode method, of class GT0001Codec.
      */
     @Test
     public void testDecode() throws Exception {
@@ -54,8 +57,7 @@ public class GT0001Test {
         ByteArrayInputStream in = new ByteArrayInputStream(data);
         
         //create GT object and read data from stream
-        GT0001 gt1 = new GT0001();
-        gt1.decode(in);
+        GT0001 gt1 = (GT0001) codec.decode(in);
         
         //check results
         assertEquals(NatureOfAddress.NATIONAL, gt1.getNoA());
@@ -63,14 +65,14 @@ public class GT0001Test {
     }
 
     /**
-     * Test of encode method, of class GT0001.
+     * Test of encode method, of class GT0001Codec.
      */
     @Test
     public void testEncode() throws Exception {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         GT0001 gt = new GT0001(NatureOfAddress.NATIONAL, "9023629581");
         
-        gt.encode(bout);
+        codec.encode(gt, bout);
         
         byte[] res = bout.toByteArray();
         

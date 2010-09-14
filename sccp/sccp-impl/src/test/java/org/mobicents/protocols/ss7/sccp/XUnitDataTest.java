@@ -9,18 +9,14 @@ import java.io.ByteArrayOutputStream;
 
 import java.util.Arrays;
 
-import org.mobicents.protocols.ss7.sccp.impl.parameter.GT0100;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.GT0100Codec;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressCodec;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentationImpl;
 import org.mobicents.protocols.ss7.sccp.impl.ud.XUnitDataImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
-import org.mobicents.protocols.ss7.sccp.parameter.Importance;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
-import org.mobicents.protocols.ss7.sccp.ud.XUnitData;
 
 
 import junit.framework.TestCase;
@@ -29,8 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.AddressFactoryImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.GTFactory;
+import org.mobicents.protocols.ss7.sccp.ud.MessageType;
 import static org.junit.Assert.*;
 
 /**
@@ -38,18 +33,16 @@ import static org.junit.Assert.*;
  *
  */
 public class XUnitDataTest {
-    private AddressFactoryImpl factory = new AddressFactoryImpl();
-    
-    private static final GlobalTitle _CALLING_PARTY_GLOBAL_TITLE = GTFactory.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.NATIONAL, "1111111");//new GT0100(0, 1, 1, 1, "1111111");
-    private static SccpAddress _CALLING_PARTY = null;//new SccpAddressImpl(1, 1, 4, 1, 1234, 1, _CALLING_PARTY_GLOBAL_TITLE);
-    private static final GlobalTitle _CALLED_PARTY_GLOBAL_TITLE = GTFactory.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.NATIONAL, "22222222");//new GT0100(1, 1, 4, 2, "22222222");
-    private static SccpAddress _CALLED_PARTY = null;//new SccpAddressImpl(1, 1, 4, 1, 10922, 2, _CALLED_PARTY_GLOBAL_TITLE);
+    private static final GlobalTitle _CALLING_PARTY_GLOBAL_TITLE = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.NATIONAL, "1111111");//new GT0100Codec(0, 1, 1, 1, "1111111");
+    private static SccpAddress _CALLING_PARTY = null;//new SccpAddressCodec(1, 1, 4, 1, 1234, 1, _CALLING_PARTY_GLOBAL_TITLE);
+    private static final GlobalTitle _CALLED_PARTY_GLOBAL_TITLE = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.NATIONAL, "22222222");//new GT0100Codec(1, 1, 4, 2, "22222222");
+    private static SccpAddress _CALLED_PARTY = null;//new SccpAddressCodec(1, 1, 4, 1, 10922, 2, _CALLED_PARTY_GLOBAL_TITLE);
     private static final byte[] _DATA = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
     private static final byte[] _SEGMENTATION_REF = new byte[]{10, 11, 12, 45};
-    private static final Segmentation _SEGMENTATION = new SegmentationImpl(true, false, (byte) 1, _SEGMENTATION_REF);
-    private static final Importance _IMPORTANCE = new ImportanceImpl((byte) 4);
+    private static final SegmentationImpl _SEGMENTATION = new SegmentationImpl(true, false, (byte) 1, _SEGMENTATION_REF);
+    private static final ImportanceImpl _IMPORTANCE = new ImportanceImpl((byte) 4);
     private static final byte _HOPE_COUTNER = 14;
-    private static final ProtocolClass _PROTOCOL_CLASS = new ProtocolClassImpl();
+    private static final ProtocolClassImpl _PROTOCOL_CLASS = new ProtocolClassImpl();
     
 
     static {
@@ -59,8 +52,8 @@ public class XUnitDataTest {
 
     @Before
     public void setUp() {
-        _CALLING_PARTY = factory.getAddress(_CALLING_PARTY_GLOBAL_TITLE, 0);
-        _CALLED_PARTY = factory.getAddress(_CALLED_PARTY_GLOBAL_TITLE, 0);
+        _CALLING_PARTY = new SccpAddress(_CALLING_PARTY_GLOBAL_TITLE, 0);
+        _CALLED_PARTY = new SccpAddress(_CALLED_PARTY_GLOBAL_TITLE, 0);
     }
 
     @After
@@ -75,7 +68,7 @@ public class XUnitDataTest {
         ByteArrayOutputStream bas = new ByteArrayOutputStream(1);
         testObject.encode(bas);
         byte[] encoded = bas.toByteArray();
-        assertEquals("MT indicator must has wrong value.", XUnitData._MT, encoded[0]);
+        assertEquals("MT indicator must has wrong value.", MessageType.XUDT, (int)encoded[0]);
 
         //we loose MT. 
         byte[] toDecode = new byte[encoded.length - 1];
@@ -100,7 +93,7 @@ public class XUnitDataTest {
         ByteArrayOutputStream bas = new ByteArrayOutputStream(1);
         testObject.encode(bas);
         byte[] encoded = bas.toByteArray();
-        assertEquals("MT indicator must has wrong value.", XUnitData._MT, encoded[0]);
+        assertEquals("MT indicator must has wrong value.", MessageType.XUDT, encoded[0]);
 
         //we loose MT. 
         byte[] toDecode = new byte[encoded.length - 1];
@@ -124,7 +117,7 @@ public class XUnitDataTest {
         ByteArrayOutputStream bas = new ByteArrayOutputStream(1);
         testObject.encode(bas);
         byte[] encoded = bas.toByteArray();
-        assertEquals("MT indicator must has wrong value.", XUnitData._MT, encoded[0]);
+        assertEquals("MT indicator must has wrong value.", MessageType.XUDT, encoded[0]);
 
         //we loose MT. 
         byte[] toDecode = new byte[encoded.length - 1];

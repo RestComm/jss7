@@ -5,14 +5,12 @@ package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.sccp.parameter.Importance;
-import org.mobicents.protocols.ss7.sccp.parameter.OptionalParameter;
 
 /**
  * @author baranowb
  * 
  */
-public class ImportanceImpl extends OptionalParameter implements Importance {
+public class ImportanceImpl extends OptionalParameter{
 
 	
 	// default is lowest priority :)

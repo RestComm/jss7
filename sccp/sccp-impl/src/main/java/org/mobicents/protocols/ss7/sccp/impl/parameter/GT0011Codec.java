@@ -21,64 +21,45 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import org.mobicents.protocols.ss7.indicator.EncodingScheme;
-import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0011;
+import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 
 /**
  *
  * @author kulikov
  */
-public class GT0011 extends GlobalTitleImpl {
-    private final static GlobalTitleIndicator gti = GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_AND_ENCODING_SCHEME;
-    private int tt;    
-    private NumberingPlan np;
-    private EncodingScheme es;
+public class GT0011Codec extends GTCodec {
+    private GT0011 gt;
     
-    private String digits;
-    
-    public GT0011() {
-        digits = "";
+    public GT0011Codec() {
     }
     
-    public GT0011(int tt, NumberingPlan np, String digits) {
-        this.tt = tt;
-        this.np = np;
-        this.digits = digits;
-        this.es = digits.length() % 2 == 0 ? EncodingScheme.BCD_EVEN : EncodingScheme.BCD_ODD;
+    public GT0011Codec(GT0011 gt) {
+        this.gt = gt;
     }
-
-    public void decode(InputStream in) throws IOException {
+    
+    @Override
+    public GlobalTitle decode(InputStream in) throws IOException {
         int b = in.read() & 0xff;        
-        tt = b;
+        int tt = b;
         
         b = in.read() & 0xff;
         
-        es = EncodingScheme.valueOf(b & 0x0f);
-        np = NumberingPlan.valueOf((b & 0xf0)>>4);
+        EncodingScheme es = EncodingScheme.valueOf(b & 0x0f);
+        NumberingPlan np = NumberingPlan.valueOf((b & 0xf0)>>4);
         
-        digits = es.decodeDigits(in);
+        String digits = es.decodeDigits(in);
+        return new GT0011(tt, np, digits);
     }
 
+    @Override
     public void encode(OutputStream out) throws IOException {
-        out.write(tt);
-        out.write((np.getValue() << 4) | es.getValue());
+        String digits = gt.getDigits();
+        EncodingScheme es = digits.length() % 2 == 0 ? EncodingScheme.BCD_EVEN : EncodingScheme.BCD_ODD;
+        out.write(gt.getTranslationType());
+        out.write((gt.getNp().getValue() << 4) | es.getValue());
         es.encodeDigits(digits, out);
     }
 
-    public int getTranslationType() {
-        return tt;
-    }
-
-    public NumberingPlan getNp() {
-        return np;
-    }
-    
-    public String getDigits() {
-        return digits;
-    }
-
-    public GlobalTitleIndicator getIndicator() {
-        return gti;
-    }
-    
 }

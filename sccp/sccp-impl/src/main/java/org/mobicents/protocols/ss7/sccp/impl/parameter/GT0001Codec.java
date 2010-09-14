@@ -20,34 +20,33 @@ package org.mobicents.protocols.ss7.sccp.impl.parameter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
+import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 
 /**
  *
  * @author kulikov
  */
-public class GT0001 extends GlobalTitleImpl {
-    private GlobalTitleIndicator gti = GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_NATURE_OF_ADDRESS_INDICATOR_ONLY;
-    private NatureOfAddress nai;
-    private String digits;
-    private boolean odd = false;
-    
-    public GT0001() {
-        digits = "";
-    }
-    
-    public GT0001(NatureOfAddress nai, String digits) {
-        this.nai = nai;
-        this.digits = digits;
-    }
+public class GT0001Codec extends GTCodec {
 
-    public void decode(InputStream in) throws IOException {
+    private GT0001 gt;
+    
+    protected GT0001Codec() {
+    }
+    
+    public GT0001Codec(GT0001 gt) {
+        this.gt = gt;
+    }
+    
+    @Override
+    public GlobalTitle decode(InputStream in) throws IOException {
         int b = in.read() & 0xff;
         
-        nai = NatureOfAddress.valueOf(b & 0x7f);
-        odd = (b & 0x80) == 0x80;
+        NatureOfAddress nai = NatureOfAddress.valueOf(b & 0x7f);
+        boolean odd = (b & 0x80) == 0x80;
         
+        String digits = "";
         while (in.available() > 0) {
             b = in.read() & 0xff;            
             digits += Integer.toHexString(b & 0x0f) +
@@ -57,11 +56,14 @@ public class GT0001 extends GlobalTitleImpl {
         if (odd) {
             digits = digits.substring(1, digits.length() - 1);
         }
+        return new GT0001(nai, digits);
     }
 
+    @Override
     public void encode(OutputStream out) throws IOException {        
         //determine if number of digits is even or odd
-        odd = (digits.length() % 2) != 0;
+        String digits = gt.getDigits();
+        boolean odd = (digits.length() % 2) != 0;
         
         //encoding first byte
         int b = 0x00;
@@ -70,7 +72,7 @@ public class GT0001 extends GlobalTitleImpl {
         }
         
         //adding nature of address indicator
-        b = b | (byte) nai.getValue();
+        b = b | (byte) gt.getNoA().getValue();
         
         //write first byte
         out.write((byte)b);
@@ -96,18 +98,6 @@ public class GT0001 extends GlobalTitleImpl {
             b = (byte)(d & 0x0f);
             out.write(b);
         }
-    }
-
-    public NatureOfAddress getNoA() {
-        return this.nai;
-    }
-    
-    public String getDigits() {
-        return digits;
-    }
-
-    public GlobalTitleIndicator getIndicator() {
-        return this.gti;
     }
 
 }

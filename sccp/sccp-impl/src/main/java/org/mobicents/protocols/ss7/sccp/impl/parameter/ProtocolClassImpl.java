@@ -18,14 +18,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.sccp.parameter.MandatoryFixedParameter;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
-
 /**
  * 
  * @author Oleg Kulikov
  */
-public class ProtocolClassImpl extends MandatoryFixedParameter implements ProtocolClass {
+public class ProtocolClassImpl extends MandatoryFixedParameter  {
 
 	private int pClass;
 	private int msgHandling;

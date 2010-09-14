@@ -15,16 +15,18 @@ import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import static org.junit.Assert.*;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  *
  * @author kulikov
  */
-public class SccpAddressImplTest {
+public class SccpAddressTest {
 
+    private SccpAddressCodec codec = new SccpAddressCodec();
     private byte[] data = new byte[] {0x12, (byte)0x92, 0x00, 0x11, 0x04, (byte)0x97, 0x20, (byte)0x73, 0x00, (byte)0x92, 0x09};
     
-    public SccpAddressImplTest() {
+    public SccpAddressTest() {
     }
 
     @BeforeClass
@@ -44,12 +46,11 @@ public class SccpAddressImplTest {
     }
 
     /**
-     * Test of decode method, of class SccpAddressImpl.
+     * Test of decode method, of class SccpAddressCodec.
      */
     @Test
     public void testDecode() throws Exception {
-        SccpAddressImpl address = new SccpAddressImpl();
-        address.decode(data);
+        SccpAddress address = codec.decode(data);
 
         assertEquals(0, address.getSignalingPointCode());
         assertEquals(146, address.getSubsystemNumber());
@@ -57,17 +58,16 @@ public class SccpAddressImplTest {
     }
 
     /**
-     * Test of encode method, of class SccpAddressImpl.
+     * Test of encode method, of class SccpAddressCodec.
      */
     @Test
     public void testEncode() throws Exception {
-        AddressFactoryImpl factory = new AddressFactoryImpl();
-        GlobalTitle gt = GTFactory.getInstance(0, 
+        GlobalTitle gt = GlobalTitle.getInstance(0, 
                 NumberingPlan.ISDN_TELEPHONY, 
                 NatureOfAddress.INTERNATIONAL, 
                 "79023700299");
-        SccpAddressImpl address = (SccpAddressImpl) factory.getAddress(gt, 146);
-        byte[] bin = address.encode();
+        SccpAddress address = new SccpAddress(gt, 146);
+        byte[] bin = codec.encode(address);
         assertTrue("Wrong encoding", Arrays.equals(data, bin));
     }
 

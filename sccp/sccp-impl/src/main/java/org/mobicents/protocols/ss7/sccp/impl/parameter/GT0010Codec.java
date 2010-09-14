@@ -20,27 +20,34 @@ package org.mobicents.protocols.ss7.sccp.impl.parameter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0010;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 
 /**
- * Super class for Global titles implementations.
- * 
+ *
  * @author kulikov
  */
-public abstract class GlobalTitleImpl implements GlobalTitle {
-    /**
-     * Decodes Global Title from binary input stream.
-     * 
-     * @param in the input stream
-     * @throws java.io.IOException
-     */
-    public abstract void decode(InputStream in) throws IOException;
+public class GT0010Codec extends GTCodec {
     
-    /**
-     * Encodes global title into binary output stream.
-     * 
-     * @param out the output stream.
-     * @throws java.io.IOException
-     */
-    public abstract void encode(OutputStream out) throws IOException;       
+    private GT0010 gt;
+    
+    public GT0010Codec() {
+    }
+    
+    public GT0010Codec(GT0010 gt) {
+        this.gt = gt;
+    }
+    
+    @Override
+    public GlobalTitle decode(InputStream in) throws IOException {
+        int b = in.read() & 0xff;        
+        int tt = b;        
+        return new GT0010(tt, "");
+    }
+
+    @Override
+    public void encode(OutputStream in) throws IOException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

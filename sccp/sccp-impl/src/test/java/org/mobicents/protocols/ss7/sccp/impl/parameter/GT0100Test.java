@@ -16,6 +16,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
 
 /**
  *
@@ -24,6 +25,7 @@ import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 public class GT0100Test {
 
     private byte[] data = new byte[] {0, 0x12, 0x03, 0x09,0x32,0x26,0x59,0x18};
+    private GT0100Codec codec = new GT0100Codec();
     
     public GT0100Test() {
     }
@@ -53,8 +55,7 @@ public class GT0100Test {
         ByteArrayInputStream in = new ByteArrayInputStream(data);
         
         //create GT object and read data from stream
-        GT0100 gt1 = new GT0100();
-        gt1.decode(in);
+        GT0100 gt1 = (GT0100) codec.decode(in);
         
         //check results
         assertEquals(0, gt1.getTranslationType());
@@ -70,7 +71,7 @@ public class GT0100Test {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         GT0100 gt = new GT0100(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.NATIONAL, "9023629581");
         
-        gt.encode(bout);
+        codec.encode(gt, bout);
         
         byte[] res = bout.toByteArray();
         

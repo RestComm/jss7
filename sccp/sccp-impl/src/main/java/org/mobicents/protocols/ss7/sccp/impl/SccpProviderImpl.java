@@ -35,16 +35,12 @@ import org.mobicents.protocols.ss7.mtp.provider.MtpListener;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.AddressFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.Selector;
 import org.mobicents.protocols.ss7.sccp.impl.ud.UnitDataImpl;
 import org.mobicents.protocols.ss7.sccp.impl.ud.XUnitDataImpl;
-import org.mobicents.protocols.ss7.sccp.parameter.AddressFactory;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.sccp.ud.MessageType;
-import org.mobicents.protocols.ss7.sccp.ud.UDBase;
 
 /**
  * 
@@ -115,10 +111,6 @@ public class SccpProviderImpl implements SccpProvider, MtpListener {
             throw new NullPointerException();
         }
         this.listener = null;
-    }
-
-    public AddressFactory getAddressFactory() {
-        return new AddressFactoryImpl();
     }
 
     /**
@@ -193,14 +185,7 @@ public class SccpProviderImpl implements SccpProvider, MtpListener {
 
     protected byte[] encodeToMSU(SccpAddress calledParty, SccpAddress callingParty, byte[] data, RoutingLabel ar) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ProtocolClass pc = null;
-        if (ar instanceof UDBase) {
-            pc = ((UDBase) ar).getpClass();
-        }
-
-        if (pc == null) {
-            pc = new ProtocolClassImpl(0, 0);
-        }
+        ProtocolClassImpl pc = new ProtocolClassImpl(0, 0);
         UnitDataImpl unitData = new UnitDataImpl(pc, calledParty, callingParty, data);
         unitData.encode(out);
         byte[] buf = out.toByteArray();

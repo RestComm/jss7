@@ -25,13 +25,10 @@ import java.util.Arrays;
 
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressCodec;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentationImpl;
-import org.mobicents.protocols.ss7.sccp.parameter.Importance;
-import org.mobicents.protocols.ss7.sccp.parameter.OptionalParameter;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
+import org.mobicents.protocols.ss7.sccp.ud.Parameter;
 
 /**
  * See Q.713 4.18
@@ -56,36 +53,38 @@ public class XUnitDataImpl extends UnitDataImpl {
     // //////////////////
     // Variable parts //
     // //////////////////
-    //private SccpAddressImpl calledParty;
-    //private SccpAddressImpl callingParty;
+    //private SccpAddressCodec calledParty;
+    //private SccpAddressCodec callingParty;
     //private byte[] data;
     // //////////////////
     // Optional parts //
     // //////////////////
-    private Segmentation segmentation;
-    private Importance importance;
+    private SegmentationImpl segmentation;
+    private ImportanceImpl importance;
 
+    private SccpAddressCodec addressCodec = new SccpAddressCodec();
+    
     // EOP
     /** Creates a new instance of UnitData */
     public XUnitDataImpl() {
     }
 
-    public XUnitDataImpl(byte hopCounter, ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty, byte[] data) {
+    public XUnitDataImpl(byte hopCounter, ProtocolClassImpl pClass, SccpAddress calledParty, SccpAddress callingParty, byte[] data) {
         super();
         this.hopCounter = hopCounter;
         this.pClass = pClass;
-        super.calledParty = (SccpAddressImpl) calledParty;
-        super.callingParty = (SccpAddressImpl) callingParty;
+        super.calledParty = (SccpAddress) calledParty;
+        super.callingParty = (SccpAddress) callingParty;
         super.data = data;
     }
 
-    public XUnitDataImpl(byte hopCounter, ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty, byte[] data,
-            Segmentation segmentation, Importance importance) {
+    public XUnitDataImpl(byte hopCounter, ProtocolClassImpl pClass, SccpAddress calledParty, SccpAddress callingParty, byte[] data,
+            SegmentationImpl segmentation, ImportanceImpl importance) {
         super();
         this.hopCounter = hopCounter;
         super.pClass = pClass;
-        super.calledParty = (SccpAddressImpl) calledParty;
-        super.callingParty = (SccpAddressImpl) callingParty;
+        super.calledParty = calledParty;
+        super.callingParty =  callingParty;
         super.data = data;
         this.segmentation = segmentation;
         this.importance = importance;
@@ -99,19 +98,19 @@ public class XUnitDataImpl extends UnitDataImpl {
         this.hopCounter = hopCounter;
     }
 
-    public Segmentation getSegmentation() {
+    public SegmentationImpl getSegmentation() {
         return segmentation;
     }
 
-    public void setSegmentation(Segmentation segmentation) {
+    public void setSegmentation(SegmentationImpl segmentation) {
         this.segmentation = segmentation;
     }
 
-    public Importance getImportance() {
+    public ImportanceImpl getImportance() {
         return importance;
     }
 
-    public void setImportance(Importance importance) {
+    public void setImportance(ImportanceImpl importance) {
         this.importance = importance;
     }
 
@@ -125,8 +124,8 @@ public class XUnitDataImpl extends UnitDataImpl {
         }
         out.write(this.hopCounter);
 
-        byte[] cdp = calledParty.encode();
-        byte[] cnp = callingParty.encode();
+        byte[] cdp = addressCodec.encode(calledParty);
+        byte[] cnp = addressCodec.encode(callingParty);
 
         // we have 4 pointers, cdp,cnp,data and optionalm, cdp starts after 4
         // octests than
@@ -159,7 +158,7 @@ public class XUnitDataImpl extends UnitDataImpl {
 
         if (segmentation != null) {
             optionalPresent = true;
-            out.write(SegmentationImpl._PARAMETER_CODE);
+            out.write(Parameter.SEGMENTATION);
             byte[] b = segmentation.encode();
             out.write(b.length);
             out.write(b);
@@ -167,15 +166,14 @@ public class XUnitDataImpl extends UnitDataImpl {
 
         if (importance != null) {
             optionalPresent = true;
-            out.write(ImportanceImpl._PARAMETER_CODE);
+            out.write(Parameter.IMPORTANCE);
             byte[] b = importance.encode();
             out.write(b.length);
             out.write(b);
         }
 
         if (optionalPresent) {
-
-            out.write(OptionalParameter._EOP_.encode());
+            out.write(0x00);
         }
 
     }
@@ -200,8 +198,8 @@ public class XUnitDataImpl extends UnitDataImpl {
 
         byte[] buffer = new byte[len];
         in.read(buffer);
-        this.calledParty = new SccpAddressImpl();
-        this.calledParty.decode(buffer);
+
+        calledParty = addressCodec.decode(buffer);
 
         in.reset();
 
@@ -217,8 +215,7 @@ public class XUnitDataImpl extends UnitDataImpl {
         buffer = new byte[len];
         in.read(buffer);
 
-        callingParty = new SccpAddressImpl();
-        callingParty.decode(buffer);
+        callingParty = addressCodec.decode(buffer);
 
         in.reset();
         pointer = in.read() & 0xff;
@@ -260,11 +257,11 @@ public class XUnitDataImpl extends UnitDataImpl {
     private void decodeOptional(int code, byte[] buffer) throws IOException {
 
         switch (code) {
-            case SegmentationImpl._PARAMETER_CODE:
+            case Parameter.SEGMENTATION :
                 this.segmentation = new SegmentationImpl();
                 this.segmentation.decode(buffer);
                 break;
-            case ImportanceImpl._PARAMETER_CODE:
+            case Parameter.IMPORTANCE : 
                 this.importance = new ImportanceImpl();
                 this.importance.decode(buffer);
                 break;
