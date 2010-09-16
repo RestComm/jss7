@@ -137,6 +137,9 @@ public class Provider implements MtpProvider, Runnable {
      * @see org.mobicents.protocols.ss7.mtp.provider.MtpProvider#start()
      */
     public void start() throws StartFailedException {
+        if (this.started) {
+            return;
+        }
         logger.info("Starting M3UA provider");
         try {
             logger.info("Starting M3UA connector");
