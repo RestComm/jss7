@@ -95,6 +95,7 @@ public class Provider implements MtpProvider, Runnable {
      * .Properties)
      */
     public void configure(Properties p) throws ConfigurationException {
+    	//TODO: implement this.
     }
 
     /*
