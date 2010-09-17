@@ -13,7 +13,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 public interface MAPDialog {
 
 	/**
-	 * Returns this Dialog's ID. Thiis ID is actually TCAP's Dialog ID.
+	 * Returns this Dialog's ID. This ID is actually TCAP's Dialog ID.
 	 * {@link org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog}
 	 * 
 	 * @return
