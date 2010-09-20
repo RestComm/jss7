@@ -33,6 +33,7 @@
 
 		<!--  modules version -->
 		<mtp.version>1.0.0.BETA4-SNAPSHOT</mtp.version>
+		<m3ua.version>1.0.0.BETA3-SNAPSHOT</m3ua.version>
 		<sccp.version>1.0.0.BETA3-SNAPSHOT</sccp.version>
 		<tcap.version>1.0.0.BETA3-SNAPSHOT</tcap.version>
 		<map.version>1.0.0.BETA3-SNAPSHOT</map.version>
@@ -59,6 +60,18 @@
 				<artifactId>mtp</artifactId>
 				<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 				<version>${mtp.version}</version>
+			</dependency>
+
+			<!-- M3UA -->
+			<dependency>
+				<artifactId>m3ua-api</artifactId>
+				<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+				<version>${m3ua.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>m3ua-impl</artifactId>
+				<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+				<version>${m3ua.version}</version>
 			</dependency>
 			
 			<!-- ISUP -->
