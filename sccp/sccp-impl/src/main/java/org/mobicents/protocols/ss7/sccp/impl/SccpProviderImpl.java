@@ -48,7 +48,7 @@ import org.mobicents.protocols.ss7.sccp.ud.MessageType;
  * @author baranowb
  */
 public class SccpProviderImpl implements SccpProvider, MtpListener {
-
+	//FIXME: Make this abstract class.
     private final static Logger logger = Logger.getLogger(SccpProviderImpl.class);
     protected static final ThreadGroup THREAD_GROUP = new ThreadGroup("Sccp-Provider");
     public static final String CONFIG_PROVIDER = "sccp.provider";
