@@ -115,6 +115,7 @@ class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, 
 		}
 		RoutingLabel actionReference = ((ISUPMessageImpl) msg).getRoutingLabel();
 		if (actionReference == null) {
+			//FIXME: this is bad, remove before next rel.
 			actionReference = this.actionReference;
 		}
 		ISUPClientTransactionImpl ctx = new ISUPClientTransactionImpl(msg, this, this.stack, actionReference);
