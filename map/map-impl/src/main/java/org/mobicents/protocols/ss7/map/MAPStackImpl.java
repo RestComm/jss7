@@ -23,8 +23,7 @@ public class MAPStackImpl implements MAPStack {
 	private MAPProviderImpl mapProvider = null;
 
 	private State state = State.IDLE;
-	
-	//TODO Not sure if SccpProvider should be passed as arg?
+
 	public MAPStackImpl(){
 		tcapStack = new TCAPStackImpl();
 		
