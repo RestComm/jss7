@@ -29,6 +29,7 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 			<artifactId>sccp-api</artifactId>
+                        <version>1.0.0.BETA3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.asn</groupId>
