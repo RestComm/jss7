@@ -56,7 +56,7 @@ public class Provider implements MtpProvider, Runnable {
     private M3UAChannel channel;
     private M3UASelector selector;
     
-    private boolean started = false;
+    private volatile boolean started = false;
 
     private MtpListener listener;
     private Logger logger = Logger.getLogger(Provider.class);
@@ -142,6 +142,7 @@ public class Provider implements MtpProvider, Runnable {
             return;
         }
         logger.info("Starting M3UA provider");
+        this.started = true;
         try {
             logger.info("Starting M3UA connector");
             new Thread(new Connector(this), "M3UAConnector").start();
@@ -265,7 +266,7 @@ public class Provider implements MtpProvider, Runnable {
         
         public void run() {
             boolean connected = false;
-            while (!connected) {
+            while (!connected && started) {
                 try {
                     selector = provider.openSelector();            
                     //opening channel, bind it local address and connect 
