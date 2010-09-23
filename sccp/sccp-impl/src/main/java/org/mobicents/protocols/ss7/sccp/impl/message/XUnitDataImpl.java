@@ -15,20 +15,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
-package org.mobicents.protocols.ss7.sccp.impl.ud;
+package org.mobicents.protocols.ss7.sccp.impl.message;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import java.util.Arrays;
 
+import org.mobicents.protocols.ss7.sccp.impl.parameter.HopCounterImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressCodec;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentationImpl;
+import org.mobicents.protocols.ss7.sccp.message.MessageType;
+import org.mobicents.protocols.ss7.sccp.message.XUnitData;
+import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
+import org.mobicents.protocols.ss7.sccp.parameter.Importance;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.sccp.ud.Parameter;
+import org.mobicents.protocols.ss7.sccp.parameter.Parameter;
+import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
 
 /**
  * See Q.713 4.18
@@ -36,7 +42,7 @@ import org.mobicents.protocols.ss7.sccp.ud.Parameter;
  * @author Oleg Kulikov
  * @author baranowb
  */
-public class XUnitDataImpl extends UnitDataImpl {
+public class XUnitDataImpl extends SccpMessageImpl implements XUnitData {
 
     private static final byte _MT = 17;
     public static final int HOP_COUNT_NOT_SET = 16;
@@ -47,58 +53,40 @@ public class XUnitDataImpl extends UnitDataImpl {
     /**
      * See Q.713 3.18
      */
-    private byte hopCounter = HOP_COUNT_NOT_SET;
-    //private ProtocolClassImpl pClass;
+//    private byte hopCounter = HOP_COUNT_NOT_SET;
 
-    // //////////////////
-    // Variable parts //
-    // //////////////////
-    //private SccpAddressCodec calledParty;
-    //private SccpAddressCodec callingParty;
-    //private byte[] data;
-    // //////////////////
-    // Optional parts //
-    // //////////////////
+    private HopCounter hopCounter;
+    private ProtocolClassImpl pClass;
+    private SccpAddress calledParty;
+    private SccpAddress callingParty;
+    private byte[] data;
     private SegmentationImpl segmentation;
     private ImportanceImpl importance;
 
     private SccpAddressCodec addressCodec = new SccpAddressCodec();
     
-    // EOP
-    /** Creates a new instance of UnitData */
-    public XUnitDataImpl() {
-    }
 
-    public XUnitDataImpl(byte hopCounter, ProtocolClassImpl pClass, SccpAddress calledParty, SccpAddress callingParty, byte[] data) {
-        super();
+    protected XUnitDataImpl() {
+        super(MessageType.XUDT);
+    }
+    
+    protected XUnitDataImpl(HopCounter hopCounter, ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty) {
+        super(MessageType.XUDT);
         this.hopCounter = hopCounter;
-        this.pClass = pClass;
-        super.calledParty = (SccpAddress) calledParty;
-        super.callingParty = (SccpAddress) callingParty;
-        super.data = data;
+        this.pClass = (ProtocolClassImpl) pClass;
+        this.calledParty = calledParty;
+        this.callingParty = (SccpAddress) callingParty;
     }
 
-    public XUnitDataImpl(byte hopCounter, ProtocolClassImpl pClass, SccpAddress calledParty, SccpAddress callingParty, byte[] data,
-            SegmentationImpl segmentation, ImportanceImpl importance) {
-        super();
-        this.hopCounter = hopCounter;
-        super.pClass = pClass;
-        super.calledParty = calledParty;
-        super.callingParty =  callingParty;
-        super.data = data;
-        this.segmentation = segmentation;
-        this.importance = importance;
-    }
-
-    public byte getHopCounter() {
+    public HopCounter getHopCounter() {
         return hopCounter;
     }
 
-    public void setHopCounter(byte hopCounter) {
+    public void setHopCounter(HopCounter hopCounter) {
         this.hopCounter = hopCounter;
     }
 
-    public SegmentationImpl getSegmentation() {
+    public Segmentation getSegmentation() {
         return segmentation;
     }
 
@@ -106,8 +94,8 @@ public class XUnitDataImpl extends UnitDataImpl {
         this.segmentation = segmentation;
     }
 
-    public ImportanceImpl getImportance() {
-        return importance;
+    public Importance getImportance() {
+        return (Importance) importance;
     }
 
     public void setImportance(ImportanceImpl importance) {
@@ -116,13 +104,13 @@ public class XUnitDataImpl extends UnitDataImpl {
 
     @Override
     public void encode(OutputStream out) throws IOException {
-        out.write(_MT);
+        out.write(this.getType());
 
         pClass.encode(out);
-        if (this.hopCounter == HOP_COUNT_NOT_SET) {
+        if (this.hopCounter.getValue() == HOP_COUNT_NOT_SET) {
             throw new IOException("Failed parsing, hop counter is not set.");
         }
-        out.write(this.hopCounter);
+        out.write(this.hopCounter.getValue());
 
         byte[] cdp = addressCodec.encode(calledParty);
         byte[] cnp = addressCodec.encode(callingParty);
@@ -184,8 +172,8 @@ public class XUnitDataImpl extends UnitDataImpl {
         pClass = new ProtocolClassImpl();
         pClass.decode(in);
 
-        this.hopCounter = (byte) in.read();
-        if (this.hopCounter >= HOP_COUNT_HIGH_ || this.hopCounter <= HOP_COUNT_LOW_) {
+        this.hopCounter = new HopCounterImpl((byte) in.read());
+        if (this.hopCounter.getValue() >= HOP_COUNT_HIGH_ || this.hopCounter.getValue() <= HOP_COUNT_LOW_) {
             throw new IOException("Hop Counter must be between 1 and 5, it is: " + this.hopCounter);
         }
 
@@ -271,75 +259,34 @@ public class XUnitDataImpl extends UnitDataImpl {
         }
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((calledParty == null) ? 0 : calledParty.hashCode());
-        result = prime * result + ((callingParty == null) ? 0 : callingParty.hashCode());
-        result = prime * result + Arrays.hashCode(data);
-        result = prime * result + hopCounter;
-        result = prime * result + ((importance == null) ? 0 : importance.hashCode());
-        result = prime * result + ((pClass == null) ? 0 : pClass.hashCode());
-        result = prime * result + ((segmentation == null) ? 0 : segmentation.hashCode());
-        return result;
+    public void setImportance(Importance p) {
+        this.importance = (ImportanceImpl) p;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        XUnitDataImpl other = (XUnitDataImpl) obj;
-        if (calledParty == null) {
-            if (other.calledParty != null) {
-                return false;
-            }
-        } else if (!calledParty.equals(other.calledParty)) {
-            return false;
-        }
-        if (callingParty == null) {
-            if (other.callingParty != null) {
-                return false;
-            }
-        } else if (!callingParty.equals(other.callingParty)) {
-            return false;
-        }
-        if (!Arrays.equals(data, other.data)) {
-            return false;
-        }
-        if (hopCounter != other.hopCounter) {
-            return false;
-        }
-        if (importance == null) {
-            if (other.importance != null) {
-                return false;
-            }
-        } else if (!importance.equals(other.importance)) {
-            return false;
-        }
-        if (pClass == null) {
-            if (other.pClass != null) {
-                return false;
-            }
-        } else if (!pClass.equals(other.pClass)) {
-            return false;
-        }
-        if (segmentation == null) {
-            if (other.segmentation != null) {
-                return false;
-            }
-        } else if (!segmentation.equals(other.segmentation)) {
-            return false;
-        }
-        return true;
+    public void setSegmentation(Segmentation p) {
+        this.segmentation = (SegmentationImpl) p;
     }
+
+    public ProtocolClass getProtocolClass() {
+        return pClass;
+    }
+
+    public SccpAddress getCalledPartyAddress() {
+        return calledParty;
+    }
+
+    public SccpAddress getCallingPartyAddress() {
+        return callingParty;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
 }
 
 

@@ -4,13 +4,14 @@
 package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
 import java.io.IOException;
+import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 
 
 /**
  * @author baranowb
  * 
  */
-public class ImportanceImpl extends OptionalParameter{
+public class ImportanceImpl extends OptionalParameter implements Importance {
 
 	
 	// default is lowest priority :)
@@ -28,12 +29,8 @@ public class ImportanceImpl extends OptionalParameter{
 		this.importance = (byte) (importance & 0x07);
 	}
 
-	public byte getImportance() {
+	public int getValue() {
 		return importance;
-	}
-
-	public void setImportance(byte importance) {
-		this.importance = (byte) (importance & 0x07);
 	}
 
 	/*

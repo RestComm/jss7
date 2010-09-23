@@ -15,23 +15,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
-package org.mobicents.protocols.ss7.sccp.impl.ud;
+package org.mobicents.protocols.ss7.sccp.impl.message;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressCodec;
+import org.mobicents.protocols.ss7.sccp.message.MessageType;
+import org.mobicents.protocols.ss7.sccp.message.UnitData;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class UnitDataImpl {
+public class UnitDataImpl extends SccpMessageImpl implements UnitData {
 
-    private static final int _MT = 0x09;
     protected ProtocolClassImpl pClass;
     protected SccpAddress calledParty;
     protected SccpAddress callingParty;
@@ -39,16 +42,16 @@ public class UnitDataImpl {
 
     private SccpAddressCodec addressCodec = new SccpAddressCodec();
     
-    /** Creates a new instance of UnitData */
-    public UnitDataImpl() {
+    protected UnitDataImpl() {
+        super(MessageType.UDT);
     }
-
-    public UnitDataImpl(ProtocolClassImpl pClass, SccpAddress calledParty,
-            SccpAddress callingParty, byte[] data) {
-        this.pClass = pClass;
+    
+    protected UnitDataImpl(ProtocolClass pClass, SccpAddress calledParty,
+            SccpAddress callingParty) {
+        super(MessageType.UDT);
+        this.pClass = (ProtocolClassImpl) pClass;
         this.calledParty = (SccpAddress) calledParty;
         this.callingParty = (SccpAddress) callingParty;
-        this.data = data;
     }
 
     public SccpAddress getCalledParty() {
@@ -59,7 +62,7 @@ public class UnitDataImpl {
         return callingParty;
     }
 
-    public ProtocolClassImpl getpClass() {
+    public ProtocolClass getProtocolClass() {
         return pClass;
     }
 
@@ -130,4 +133,17 @@ public class UnitDataImpl {
         data = new byte[len];
         in.read(data);
     }
+
+    public SccpAddress getCalledPartyAddress() {
+        return this.calledParty;
+    }
+
+    public SccpAddress getCallingPartyAddress() {
+        return this.callingParty;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
 }

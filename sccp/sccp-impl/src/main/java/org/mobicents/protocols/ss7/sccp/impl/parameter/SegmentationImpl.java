@@ -5,6 +5,7 @@ package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
 
 /**
  * See Q.713 3.17
@@ -12,7 +13,7 @@ import java.util.Arrays;
  * @author baranowb
  * 
  */
-public class SegmentationImpl extends OptionalParameter  {
+public class SegmentationImpl extends OptionalParameter  implements Segmentation {
 
 	
 	private static final int _TRUE = 1;

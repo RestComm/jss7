@@ -17,12 +17,13 @@ package org.mobicents.protocols.ss7.sccp.impl.parameter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 
 /**
  * 
  * @author Oleg Kulikov
  */
-public class ProtocolClassImpl extends MandatoryFixedParameter  {
+public class ProtocolClassImpl extends MandatoryFixedParameter implements ProtocolClass {
 
 	private int pClass;
 	private int msgHandling;
@@ -36,20 +37,13 @@ public class ProtocolClassImpl extends MandatoryFixedParameter  {
 		this.msgHandling = msgHandling;
 	}
 
-	public int getpClass() {
+	public int getValue() {
 		return pClass;
 	}
 
-	public void setpClass(int pClass) {
-		this.pClass = pClass;
-	}
 
-	public int getMsgHandling() {
+	public int getHandling() {
 		return msgHandling;
-	}
-
-	public void setMsgHandling(int msgHandling) {
-		this.msgHandling = msgHandling;
 	}
 
 	public void decode(InputStream in) throws IOException {
