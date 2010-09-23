@@ -98,9 +98,6 @@ public class DialogImpl implements Dialog {
 	private List<Component> scheduledComponentList = new ArrayList<Component>();
 	private TCAPProviderImpl provider;
 
-	//used for sccp
-	private RoutingLabel actionReference;
-
 	private static final int getIndexFromInvokeId(Long l) {
 		int tmp = l.intValue();
 		return tmp + _INVOKE_TABLE_SHIFT;
@@ -310,7 +307,7 @@ public class DialogImpl implements Dialog {
 		try {
 			tcbm.encode(aos);
 			this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-					this.localAddress,this.actionReference);
+					this.localAddress);
 			this.setState(TRPseudoState.InitialSent);
 			this.scheduledComponentList.clear();
 		} catch (Exception e) {
@@ -377,7 +374,7 @@ public class DialogImpl implements Dialog {
 			try {
 				tcbm.encode(aos);
 				this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-						this.localAddress,this.actionReference);
+						this.localAddress);
 				this.setState(TRPseudoState.Active);
 				this.scheduledComponentList.clear();
 			} catch (Exception e) {
@@ -408,7 +405,7 @@ public class DialogImpl implements Dialog {
 			try {
 				tcbm.encode(aos);
 				this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-						this.localAddress,this.actionReference);
+						this.localAddress);
 				this.scheduledComponentList.clear();
 			} catch (Exception e) {
 				// FIXME: add proper handling here. TC-NOTICE ?
@@ -485,7 +482,7 @@ public class DialogImpl implements Dialog {
 		try {
 			tcbm.encode(aos);
 			this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-					this.localAddress,this.actionReference);
+					this.localAddress);
 			this.setState(TRPseudoState.Expunged);
 			this.scheduledComponentList.clear();
 		} catch (Exception e) {
@@ -535,7 +532,7 @@ public class DialogImpl implements Dialog {
 		try {
 			msg.encode(aos);
 			this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-					this.localAddress,this.actionReference);
+					this.localAddress);
 			this.setState(TRPseudoState.Expunged);
 			this.scheduledComponentList.clear();
 		} catch (Exception e) {
@@ -581,7 +578,7 @@ public class DialogImpl implements Dialog {
 			try {
 				msg.encode(aos);
 				this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-						this.localAddress,this.actionReference);
+						this.localAddress);
 				this.setState(TRPseudoState.Expunged);
 				this.scheduledComponentList.clear();
 			} catch (Exception e) {
@@ -691,10 +688,6 @@ public class DialogImpl implements Dialog {
 	 */
 	void setRemoteAddress(SccpAddress remoteAddress) {
 		this.remoteAddress = remoteAddress;
-	}
-	 void setRoutingLabel(RoutingLabel ar) {
-		this.actionReference = ar;
-		
 	}
 	void processUni(TCUniMessage msg, SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
 		// this is invoked ONLY for server.
