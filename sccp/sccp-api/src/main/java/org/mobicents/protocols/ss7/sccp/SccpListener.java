@@ -19,39 +19,20 @@
 package org.mobicents.protocols.ss7.sccp;
 
 
-import org.mobicents.protocols.ss7.mtp.RoutingLabel;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import java.io.Serializable;
+import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 
 /**
  * 
  * @author Oleg Kulikov
  * @author baranowb
  */
-public interface SccpListener {
-	/**
-	 * Called when proper data is received, it is partially decoded. This method is called with message payload.
-	 * @param calledPartyAddress - destination address
-	 * @param callingPartyAddress - originating address
-	 * @param data - payload of data unit
-	 * @param backReference - reference to be passed to provider send method. It contains routing label, which should be used to send this message back.
-         * @deprecated 
-	 */
-	public void onMessage(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress, byte[] data, RoutingLabel backReference);
-        
+public interface SccpListener extends Serializable {
 	/**
 	 * Called when proper data is received, it is partially decoded. This method is called with message payload.
 	 * @param calledPartyAddress - destination address
 	 * @param callingPartyAddress - originating address
 	 * @param data - payload of data unit
 	 */
-	public void onMessage(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress, byte[] data);
-	/**
-	 * Called when underlying link goes down.
-	 */
-	public void linkDown();
-	/**
-	 * Called when underlying link goes up.
-	 */
-	public void linkUp();
-
+	public void onMessage(SccpMessage message);
 }

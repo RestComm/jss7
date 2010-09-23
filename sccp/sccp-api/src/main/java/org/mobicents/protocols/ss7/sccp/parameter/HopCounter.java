@@ -15,13 +15,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
-package org.mobicents.protocols.ss7.sccp.ud;
+
+package org.mobicents.protocols.ss7.sccp.parameter;
 
 /**
- *
+ * Hop counter parameter
+ * 
+ * @author baranowb
  * @author kulikov
  */
-public class MessageType {
-    public final static int UDT = 0x09;
-    public final static int XUDT = 17;
+public interface HopCounter {
+    /**
+     * Gets the value of this parameter.
+     * 
+     * @return the value of this parameter.
+     */
+    public int getValue();
 }
