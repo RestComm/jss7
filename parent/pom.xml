@@ -33,7 +33,7 @@
 
 		<!--  modules version -->
 		<mtp.version>1.0.0.BETA4-SNAPSHOT</mtp.version>
-		<m3ua.version>1.0.0.BETA3-SNAPSHOT</m3ua.version>
+		<m3ua.version>1.0.0.BETA1-SNAPSHOT</m3ua.version>
 		<sccp.version>1.0.0.BETA3-SNAPSHOT</sccp.version>
 		<tcap.version>1.0.0.BETA3-SNAPSHOT</tcap.version>
 		<map.version>1.0.0.BETA3-SNAPSHOT</map.version>
