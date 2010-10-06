@@ -181,6 +181,22 @@ public class SccpProviderImpl extends AbstractSccpProvider implements SccpProvid
         }
     }
 
+    public void receive(final byte[] msu) { 
+        MessageHandler handler = new MessageHandler(msu);
+        executor.execute(handler);
+    }
+
+    public void send(SccpMessage message) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ((SccpMessageImpl) message).encode(out);
+        linksets.get(0).send(out.toByteArray());
+    }
+
+    public void linkUp() {
+    	//TODO:
+    }
+
+    public void linkDown() {
     	//TODO
     }
 
@@ -261,17 +277,39 @@ public class SccpProviderImpl extends AbstractSccpProvider implements SccpProvid
 //    		}
 //    	}
     }
-        public void run() {
-        	try{
-        	SccpMessageImpl msg = parse(data);
-        	//if msg == null, its not for us?
-        	if(msg!=null)
-        	{
-        		deliver(msg);
-        	}
-        	
-        	}catch(ParseException pe)
-        	{    
+     
+    protected void deliverLocaly(SccpMessage message)
+    {
+    	//SccpListener lst = listeners.get(message.getCalledPartyAddress());
+    	SccpListener lst = listener;
+    	if(lst!=null)
+    	{
+    		//eat careless user exception.
+    		try{
+    			lst.onMessage(message);
+    		}catch(RuntimeException re)
+    		{
+    			if(logger.isEnabledFor(Level.ERROR))
+    			{
+    				logger.error("Failed during SCCP message delivery.",re);
+    			}
+    		}
+    	}else
+    	{
+    		if(logger.isEnabledFor(Level.WARN))
+    		{
+    			logger.warn("No listener for: "+message.getCalledPartyAddress());
+    		}
+    	}
+    }
+
+	/**
+	 * Checks routing info for ougoing message. 
+	 * 
+	 * @param message
+	 
+	 */
+	public void checkOutgoingRoutes(SccpMessage message)
 	{
 		//check if PCs are -1, that means it should be local?
 		if(message.getCalledPartyAddress().getSignalingPointCode()<0 || stack.getRouter() == null)
@@ -293,7 +331,17 @@ public class SccpProviderImpl extends AbstractSccpProvider implements SccpProvid
             data = new ByteArrayInputStream(msu, 5, msu.length);
         }
 
-
+        public void run() {
+        	try{
+        	SccpMessageImpl msg = parse(data);
+        	//if msg == null, its not for us?
+        	if(msg!=null) 
+        	{
+        		deliver(msg);
+        	}
+        	
+        	}catch(ParseException pe)
+        	{
         		pe.printStackTrace();
         	}
     }
