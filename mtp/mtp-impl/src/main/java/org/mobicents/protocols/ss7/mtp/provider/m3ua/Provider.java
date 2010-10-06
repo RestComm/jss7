@@ -18,6 +18,7 @@
 package org.mobicents.protocols.ss7.mtp.provider.m3ua;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.channels.SelectionKey;
 import java.util.Collection;
@@ -49,8 +50,16 @@ import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
  * 
  */
 public class Provider implements MtpProvider, Runnable {
-    protected SocketAddress localAddress = null;
-    protected SocketAddress remoteAddress = null;
+	//Oleg name SUCKS!
+	
+	public static final String PROPERTY_LADDRESS = "mtp.address.local";
+	public static final String PROPERTY_RADDRESS = "mtp.address.remote";
+	
+	public static final String PROPERTY_APC = "mtp.apc";
+	public static final String PROPERTY_OPC = "mtp.opc";
+	
+    protected SocketAddress localAddress = new InetSocketAddress("127.0.0.1", 8998);;
+    protected SocketAddress remoteAddress = new InetSocketAddress("127.0.0.1", 1345);
     
     private M3UAProvider provider;
     private M3UAChannel channel;
@@ -59,7 +68,7 @@ public class Provider implements MtpProvider, Runnable {
     private volatile boolean started = false;
 
     private MtpListener listener;
-    private Logger logger = Logger.getLogger(Provider.class);
+    private static final Logger logger = Logger.getLogger(Provider.class);
     
     //outgoing message
     private TransferMessage tm;
@@ -94,9 +103,37 @@ public class Provider implements MtpProvider, Runnable {
      * org.mobicents.protocols.ss7.mtp.provider.MtpProvider#configure(java.util
      * .Properties)
      */
-    public void configure(Properties p) throws ConfigurationException {
-    	//TODO: implement this.
-    }
+	public void configure(Properties p) throws ConfigurationException {
+		try {
+			//check for non default address
+			String s = p.getProperty(PROPERTY_LADDRESS);
+			if (s != null) {
+				this.localAddress = parseStringAddress(s);
+			}
+
+			s = p.getProperty(PROPERTY_RADDRESS);
+			if (s != null) {
+				this.remoteAddress = parseStringAddress(s);
+			}
+
+			//opc/dpc
+			s = p.getProperty(PROPERTY_APC);
+			if(s == null)
+			{
+				throw new ConfigurationException("APC must be specified with: "+PROPERTY_APC+" property.");
+			}
+			this.apc = Integer.parseInt(s);
+			
+			s = p.getProperty(PROPERTY_OPC);
+			if(s == null)
+			{
+				throw new ConfigurationException("OPC must be specified with: "+PROPERTY_OPC+" property.");
+			}
+			this.opc = Integer.parseInt(s);
+		} catch (Exception e) {
+			throw new ConfigurationException(e);
+		}
+	}
 
     /*
      * (non-Javadoc)
@@ -308,4 +345,12 @@ public class Provider implements MtpProvider, Runnable {
             }
         }
     }
+    
+    
+    private static InetSocketAddress parseStringAddress(String s) {
+		String[] d = s.split(":");
+
+		return new InetSocketAddress(d[0], Integer.parseInt(d[1]));
+	}
+
 }

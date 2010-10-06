@@ -10,8 +10,11 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Test;
+import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
+import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.PipeSccpProviderImpl;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
@@ -55,17 +58,10 @@ public class MAPFunctionalTest extends TestCase {
 		this.provider2 = this.provider1.getOther();
 		
 		//create some fake addresses.
-		this.peer1Address = this.provider1.getSccpParameterFactory().getSccpAddress();
-		GlobalTitle gt = this.provider1.getSccpParameterFactory().getGlobalTitle100();
-		//dont set more, until statics are defined!
-		gt.setDigits("5557779");
-		this.peer1Address.setGlobalTitle(gt);
-		
-		this.peer2Address = this.provider1.getSccpParameterFactory().getSccpAddress();
-		gt = this.provider1.getSccpParameterFactory().getGlobalTitle100();
-		//dont set more, until statics are defined!
-		gt.setDigits("5888879");
-		this.peer2Address.setGlobalTitle(gt);
+		GT0100 gt = new GT0100(0, NumberingPlan.ISDN_MOBILE, NatureOfAddress.NATIONAL, "12");
+		this.peer1Address = new SccpAddress(gt, 0);
+		gt = new GT0100(0, NumberingPlan.ISDN_MOBILE, NatureOfAddress.NATIONAL, "3332");
+		this.peer2Address = new SccpAddress(gt, 0);
 		
 		
 		this.stack1 = new MAPStackImpl(this.provider1);

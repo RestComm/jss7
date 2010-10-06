@@ -28,6 +28,8 @@ import org.mobicents.protocols.ss7.m3ua.impl.message.ParameterImpl;
  * @author kulikov
  */
 public class ProtocolDataImpl extends ParameterImpl implements ProtocolData {
+	
+	//FIXME: Oleg why the hell this class does not reuse mtp.util class to manipulate RL ?
     private int opc;
     private int dpc;
     private int si;

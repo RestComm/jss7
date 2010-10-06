@@ -18,8 +18,6 @@
 
 package org.mobicents.protocols.ss7.sccp.message;
 
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * Unitdata (UDT)
@@ -28,10 +26,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author kulikov
  */
 public interface UnitData extends SccpMessage {
-    public ProtocolClass getProtocolClass();
-    public SccpAddress getCalledPartyAddress();
-    public SccpAddress getCallingPartyAddress();
-    
+        
     public byte[] getData();
     public void setData(byte[] data);
 }

@@ -9,6 +9,8 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.SccpStack;
+import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 
@@ -22,6 +24,7 @@ public class TCAPStackImpl implements TCAPStack {
     private TCAPProviderImpl tcapProvider;
     private State state = State.IDLE;
     private SccpProvider sccpProvider;
+    private SccpStack sccpStack;
     private static final Logger logger = Logger.getLogger(TCAPStackImpl.class);
 
     public TCAPStackImpl() {
@@ -40,18 +43,28 @@ public class TCAPStackImpl implements TCAPStack {
         if (state != State.CONFIGURED) {
             throw new IllegalStateException("Stack has not been configured or is already running!");
         }
-        this.tcapProvider.start();
+        if(sccpStack!=null)
+		{
+			//this is null in junits!
+			this.sccpStack.start();
+		}
+		this.tcapProvider.start();
 
-        this.state = State.RUNNING;
+		this.state = State.RUNNING;
+
 
     }
 
     public void stop() {
-        if (state != State.RUNNING) {
-            throw new IllegalStateException("Stack is not running!");
-        }
-        this.tcapProvider.stop();
-        this.state = State.CONFIGURED;
+    	if (state != State.RUNNING) {
+			throw new IllegalStateException("Stack is not running!");
+		}
+		this.tcapProvider.stop();
+		if(sccpStack!=null)
+		{
+			this.sccpStack.stop();
+		}
+		this.state = State.CONFIGURED;
     }
 
     // ///////////////
@@ -61,11 +74,14 @@ public class TCAPStackImpl implements TCAPStack {
      *
      */
     public void configure(Properties props) throws ConfigurationException {
-        if (state != State.IDLE) {
-            throw new IllegalStateException("Stack already been configured or is already running!");
-        }
-        this.tcapProvider = new TCAPProviderImpl(sccpProvider, this);
-        this.state = State.CONFIGURED;
+    	if (state != State.IDLE) {
+			throw new IllegalStateException("Stack already been configured or is already running!");
+		}
+		this.sccpStack = new SccpStackImpl();
+		this.sccpStack.configure(props);
+		//this.sccpProvider = this.sccpStack.getSccpProvider();
+		this.tcapProvider = new TCAPProviderImpl(this.sccpStack.getSccpProvider(), this);
+		this.state = State.CONFIGURED;
     }
 
     /*

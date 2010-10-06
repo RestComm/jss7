@@ -33,6 +33,8 @@ public interface Router extends Serializable {
      * @param calledPartyAddress
      * @param callingPartyAddress
      * @return the point code of linkset which will be used for routing
-     */
-    public int getRoute(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress);
+     */ // why two address objects? calledParty should be enough?
+    public int getRoute(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress); 
+    
+    //TODO: add methods to check add addresses for local routing.
 }

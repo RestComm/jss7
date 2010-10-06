@@ -19,12 +19,11 @@ package org.mobicents.protocols.ss7.sccp;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.List;
 
-import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * 
@@ -46,24 +45,22 @@ public interface SccpProvider extends Serializable {
      * @return parameter factory
      */
     public ParameterFactory getParameterFactory();
+   
+    //Next rel, with routing
+//    /**
+//     * Register listener for some adddress.
+//     * @param listener
+//     */
+//    public void registerSccpListener(SccpAddress localAddress,SccpListener listener);
+//
+//    /**
+//     * Removes listener
+//     */
+//    public void deregisterSccpListener(SccpAddress localAddress);
+    public void addSccpListener(SccpListener sccpListener);
+    public void removeSccpListener(SccpListener sccpListener);
     
-    /**
-     * Assigns router for SCCP service.
-     * 
-     * @param router
-     */
-    public void setRouter(Router router);
-    /**
-     * Sets sccp listener
-     * @param listener
-     */
-    public void addSccpListener(SccpListener listener);
-
-    /**
-     * Removes listener
-     */
-    public void removeSccpListener(SccpListener listener);
-
+    
     /**
      * Send sccp byte[] to desired addres.
      * @param calledParty - destination address of this message
@@ -73,23 +70,6 @@ public interface SccpProvider extends Serializable {
      */
     public void send(SccpMessage message) throws IOException;//FIXME: add support for UDTs?
 
-    /**
-     * Assigns linksets to the SCCP layer.
-     * 
-     * @param linksets the MTP linkset list.
-     */
-    public void setLinksets(List<MtpProvider> linksets);
 
-    /**
-     * Starts SCCP layer.
-     * 
-     * @throws IllegalStateException if the SCCP has no assigned linksets. 
-     */
-    public void start() throws Exception;
-
-    /**
-     * Stops SCCP layer.
-     * 
-     */
-    public void stop();
+   
 }
