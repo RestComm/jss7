@@ -39,7 +39,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+			<artifactId>sccp-api</artifactId>
+                        <version>1.0.0.BETA3-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 			<artifactId>sccp-impl</artifactId>
+                        <version>1.0.0.BETA3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.asn</groupId>
@@ -48,10 +54,12 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
 			<artifactId>tcap-impl</artifactId>
+                        <version>1.0.0.BETA3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
 			<artifactId>tcap-api</artifactId>
+                        <version>1.0.0.BETA3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
