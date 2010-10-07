@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
+	xmlns="urn:jboss:bean-deployer:2.0">
+
+	<!-- Endpoint definition  -->
+	<bean name="SccpService" class="org.mobicents.protocols.ss7.sccp.impl.SccpService">
+		<property name="jndiName">mobicents/ss7/sccp</property>
+	</bean>
+
+</deployment>

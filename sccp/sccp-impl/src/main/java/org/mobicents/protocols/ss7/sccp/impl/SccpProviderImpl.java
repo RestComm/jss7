@@ -36,7 +36,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author baranowb
  */
 public class SccpProviderImpl implements SccpProvider, Serializable {
-    private SccpStackImpl stack;
+    private transient SccpStackImpl stack;
     private HashMap<SccpAddress, SccpListener> listeners = new HashMap();
     
     private MessageFactoryImpl messageFactory;

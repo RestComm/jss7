@@ -22,12 +22,16 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.log4j.Logger;
+
 /**
  *
  * @author kulikov
  */
 public class SccpService {
 
+	private static final Logger logger = Logger.getLogger(SccpService.class);
+	
     private SccpStackImpl stack;
     private String jndiName;
     
@@ -40,6 +44,7 @@ public class SccpService {
     }
     
     public void start() throws Exception {
+    	logger.info("Starting SCCP stack...");
         stack = new SccpStackImpl();
         rebind(stack);
     }
@@ -68,7 +73,8 @@ public class SccpService {
             }
         }
 
-        ctx.bind(tokens[tokens.length - 1], stack);
+        ctx.bind(tokens[tokens.length - 1], stack.getSccpProvider());
+        logger.info("SCCP stack Started. SccpProvider bound to "+ this.jndiName);
     }
     
 /**

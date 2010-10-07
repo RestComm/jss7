@@ -1,0 +1,33 @@
+<assembly>
+	<id>stack</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<files>
+		<file>
+			<source>src/main/config/sccp-beans.xml</source>
+			<destName>META-INF/jboss-beans.xml</destName>
+		</file>
+		<file>
+			<source>src/main/config/jboss-structure.xml</source>
+			<destName>META-INF/jboss-structure.xml</destName>
+		</file>
+	</files>
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>/lib</outputDirectory>
+			<unpack>false</unpack>
+			<scope>runtime</scope>
+			<includes>
+				<include>org.mobicents.protocols.ss7.sccp:sccp-spi</include>
+				<include>org.mobicents.protocols.ss7.sccp:sccp-impl</include>
+			</includes>
+		</dependencySet>
+	</dependencySets>
+	<componentDescriptors>
+		<componentDescriptor>
+			src/main/assembly/common.xml
+		</componentDescriptor>
+	</componentDescriptors>
+</assembly>
