@@ -30,7 +30,6 @@
 			<groupId>concurrent</groupId>
 			<artifactId>concurrent</artifactId>
 			<scope>provided</scope>
-			<version>${concurrent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>

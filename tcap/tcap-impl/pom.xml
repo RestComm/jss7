@@ -16,7 +16,6 @@
 			<groupId>concurrent</groupId>
 			<artifactId>concurrent</artifactId>
 			<scope>provided</scope>
-			<version>${concurrent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.asn</groupId>
@@ -25,23 +24,19 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 			<artifactId>sccp-api</artifactId>
-                        <version>1.0.0.BETA3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 			<artifactId>sccp-impl</artifactId>
-                        <version>1.0.0.BETA3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>provided</scope>
-			<version>${junit.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
