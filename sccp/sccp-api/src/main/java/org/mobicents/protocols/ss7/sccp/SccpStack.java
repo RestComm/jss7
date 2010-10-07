@@ -25,6 +25,7 @@ import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 /**
  * 
  * @author baranowb
+ * @author kulikov
  */
 public interface SccpStack {
     public final static int UDT_ONLY = 1;

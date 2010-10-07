@@ -9,38 +9,76 @@
 		<title>API</title>
 		<section>
 			<title>Stack</title>
-			<para><acronym>SCCP</acronym>
+			<para>
+				<acronym>SCCP</acronym>
 				stack relies on
 				<acronym>MTP</acronym>
-				to provide transport. Stack interface is defined as follows:</para>
-				<programlisting language="Java" role="JAVA">
-package org.mobicents.protocols.ss7.tcap.api;
+				to provide transport. Stack interface is defined as follows:
+			</para>
+			<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.sccp;
 
-import java.util.Properties;
+import java.util.List;
 
-public interface TCAPStack {
+import org.mobicents.protocols.StartFailedException;
+import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 
-	/**
-	 * Returns stack provider.
-	 * @return
-	 */
-	public TCAPProvider getProvider();
-	/**
-	 * Stops this stack and transport layer(SCCP)
-	 */
-	public void stop();
-	/**
-	 * Start stack and transport layer(SCCP)
-	 * @throws IllegalStateException - if stack is already running or not configured
-	 * @throws StartFailedException
-	 */
-	public void start() throws IllegalStateException, StartFailedException;
-	/**
-	 * Configure stack and transport layer.
-	 * @param properties
-	 * @throws ConfigurationException
-	 */
-	public void configure(Properties properties) throws ConfigurationException;
+/**
+ * 
+ * @author baranowb
+ * @author kulikov
+ */
+public interface SccpStack {
+    public final static int UDT_ONLY = 1;
+    public final static int XUDT_ONLY = 2;
+    
+    /**
+     * Starts SCCP stack.
+     * 
+     * @throws java.lang.IllegalStateException
+     * @throws org.mobicents.protocols.StartFailedException
+     */
+    public void start() throws IllegalStateException, StartFailedException;
+    
+    /**
+     * Terminates SCCP stack.
+     * 
+     * @throws java.lang.IllegalStateException
+     * @throws org.mobicents.protocols.StartFailedException
+     */
+    public void stop();
+    
+    /**
+     * Assigns linksets. 
+     * 
+     * Current versions suppose static assignment. 
+     * For next versions implement link management functions.
+     * 
+     * @param linksets the list of available linksets.
+     */
+    public void setLinksets(List&lt;MtpProvider&gt; linksets);
+
+    /**
+     * Exposes SCCP provider object to SCCP user.
+     * 
+     * @return SCCP provider object.
+     */
+    public SccpProvider getSccpProvider();
+    
+    /**
+     * Allows to plug custom implementation of SCCP router 
+     * 
+     * @param router the router implementation.
+     */
+    public void setRouter(Router router);
+    
+    /**
+     * Defines transfer type for outgoing messages.
+     * 
+     * @param type the type of transfer. valid values are UDT_ONLY and XUDT_ONLY.
+     */
+    public void setTransferType(int type);
+
 }
 				</programlisting>
 		</section>
@@ -57,246 +95,129 @@ public interface TCAPStack {
 package org.mobicents.protocols.ss7.sccp;
 
 import java.io.IOException;
-import java.util.Properties;
+import java.io.Serializable;
 
-import org.mobicents.protocols.ConfigurationException;
-import org.mobicents.protocols.ss7.mtp.RoutingLabel;
+import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
+import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
-public interface SccpProvider {
-	
-	/**
-	 * Sets sccp listener
-	 * @param listener
-	 */
-	public void addSccpListener(SccpListener listener);
+public interface SccpProvider extends Serializable {
 
-	/**
-	 * Removes listener
-	 */
-	public void removeSccpListener(SccpListener listener);
-	
-	/**
-	 * Send sccp byte[] to desired addres.
-	 * @param calledParty - destination address of this message
-	 * @param callingParty - local address
-	 * @param data - byte[] encoded of sccp parameters
-	 * @param ar - reference with mtp3 routing label
-	 * @throws IOException
-	 */
-	public void send(SccpAddress calledParty, SccpAddress callingParty,
-			byte[] data,RoutingLabel ar) throws IOException;//FIXME: add support for UDTs?
+    /**
+     * Gets the access to message factory.
+     * 
+     * @return message factory.
+     */
+    public MessageFactory getMessageFactory();
 
-	/**
-	 * UnitData factory instance.
-	 * @return
-	 */
-	public SccpUnitDataFactory getUnitDataFactory();
-	/**
-	 * Parameter factory instance.
-	 * @return
-	 */
-	public SccpParameterFactory getSccpParameterFactory();
-	
-	public void configure(Properties p) throws ConfigurationException;
+    /**
+     * Gets the access to parameter factory.
+     * 
+     * @return parameter factory
+     */
+    public ParameterFactory getParameterFactory();
+   
+    /**
+     * Register listener for some adddress.
+     * @param listener
+     */
+    public void registerSccpListener(SccpAddress localAddress,SccpListener listener);
+
+    /**
+     * Removes listener
+     */
+    public void deregisterSccpListener(SccpAddress localAddress);
+    
+    
+    /**
+     * Sends message.
+     * 
+     * @param message the message to be sent.
+     * @param destination the address of the recipient.
+     * @throws IOException
+     */
+    public void send(SccpMessage message) throws IOException;
+
 }
 		</programlisting>
 			<para>
-				Provider allows single listener to be registered with it. Listener
-				is callled once proper
-				<acronym>SCCP</acronym>
-				message is received. Listener is defined as follows:
+				Provider allows to register listener per address. Listener will
+				be called whenever stack receives message which called
+				party equals
+				to that address.
+				Listener is defined as follows:
 			</para>
 			<programlisting language="Java" role="JAVA">
 package org.mobicents.protocols.ss7.sccp;
 
-import org.mobicents.protocols.ss7.mtp.ActionReference;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 
-public interface SccpListener {
+public interface SccpListener  {
 	/**
 	 * Called when proper data is received, it is partially decoded. This method is called with message payload.
 	 * @param calledPartyAddress - destination address
 	 * @param callingPartyAddress - originating address
 	 * @param data - payload of data unit
-	 * @param backReference - reference to be passed to provider send method.
 	 */
-	public void onMessage(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress, byte[] data, ActionReference backReference);
-	/**
-	 * Called when underlying link goes down.
-	 */
-	public void linkDown();
-	/**
-	 * Called when underlying link goes up.
-	 */
-	public void linkUp();
-
+	public void onMessage(SccpMessage message);
 }
+
 		</programlisting>
 		</section>
-		<section>
-			<title>SCCP Factory</title>
-			<para>
-				Concrete provider instances are created by means of
-				<literal>SccpFactory</literal>
-				. Factory class:
-				<literal>org.mobicents.protocols.ss7.sccp.SccpFactory</literal>
-				declares single method:
-				<literal>public SccpProvider getProvider( Properties properties)
-				</literal>
-				.
-			</para>
-			<para>
-				Where passed properties contain configuration properties listed in
-				<xref linkend="sccp_configuration" />
-				and provider specific options.
-			</para>
-		</section>
-		<section id="sccp_providers">
-			<title>Supported providers</title>
-			<para>
-				<acronym>SCCP</acronym>
-				supports following providers:
-			</para>
-			<table frame="all" pgwide="1">
-				<title>Providers</title>
-				<tgroup colsep="1" cols="3">
-					<colspec colnum="1" colname="c0" />
-					<colspec colnum="2" colname="c1" />
-					<colspec colnum="3" colname="c2" />
-					<thead>
-						<row>
-							<entry>driver name</entry>
-							<entry>Description</entry>
-							<entry>Configuration</entry>
-						</row>
-					</thead>
-					<tbody>
-						<row>
-							<entry>default</entry>
-							<entry>
-								Default provider which relies on &THIS.PLATFORM; MTP provider. 
-							</entry>
-							<entry>
-								Refer to MTP provider configuration.
-							</entry>
-						</row>
-						<row>
-							<entry>intel_hdc</entry>
-							<entry></entry>
-							<entry></entry>
-						</row>
-						
-					</tbody>
-				</tgroup>
-			</table>
-		</section>
-	</section>
-	<section id="sccp_configuration">
-		<title>Configuration</title>
-		<para> Each provider supports following configuration properties:
-		</para>
-		<table frame="all" pgwide="1">
-			<title>Common Configuration Properties</title>
-			<tgroup colsep="1" cols="4">
-				<colspec colnum="1" colname="c0" />
-				<colspec colnum="2" colname="c1" />
-				<colspec colnum="3" colname="c2" />
-				<colspec colnum="4" colname="c3" />
-				<thead>
-					<row>
-						<entry>Property Name</entry>
-						<entry>Description</entry>
-						<entry>Property Type</entry>
-						<entry>Default Value</entry>
-					</row>
-				</thead>
-				<tbody>
-					<row>
-						<entry>sccp.provider</entry>
-						<entry>
-							Configures provider for this stack. It can contain one of predefined values or class name.
-						</entry>
-						<entry>java.lang.String</entry>
-						<entry>default</entry>
-					</row>
-					<row>
-						<entry>sccp.dpc</entry>
-						<entry>Default DPC used by ISUP layer for originating messages
-						</entry>
-						<entry>java.lang.String</entry>
-						<entry></entry>
-					</row>
-					<row>
-						<entry>sccp.opc</entry>
-						<entry>Default OPC used by ISUP layer for originating messages
-						</entry>
-						<entry>java.lang.String</entry>
-						<entry></entry>
-					</row>
-					<row>
-						<entry>sccp.sls</entry>
-						<entry>Default SLS used by ISUP layer for originating messages
-						</entry>
-						<entry>java.lang.String</entry>
-						<entry></entry>
-					</row>
-					<row>
-						<entry>sccp.ssi</entry>
-						<entry>Default SSI used by ISUP layer for originating messages
-						</entry>
-						<entry>java.lang.String</entry>
-						<entry></entry>
-					</row>
-				</tbody>
-			</tgroup>
-		</table>
+
 
 	</section>
 	<section>
 		<title>Example</title>
-		<para></para>
+		<para>
+			Below is simple example how to use
+			<literal>SCCP</literal>.
+		</para>
 		<programlisting language="Java" role="JAVA">
+import org.mobicents.protocols.ss7.mtp.provider.m3ua.Provider;
+		
+//create linksets
+Properties p = new Properties();
+p.put("mtp.address.remote","192.168.1.35:1025");
+p.put("mtp.address.local","192.168.1.248:1000");
+p.put("mtp.apc","3516");
+p.put("mtp.opc","13500");
 
-Properties properties = new Properties();
-//mtp/sccp - name is the same
-properties.put("sccp.provider","default");
-//mtp properties
-properties.put("mtp.driver","m3ua");
-properties.put("mtp.address.remote","192.168.1.1:1234");
-properties.put("mtp.address.local","192.168.1.202:4321");
-//sccp
-properties.put("sccp.opc","12345");
-properties.put("sccp.dpc","5641");
-properties.put("sccp.sls","0");
-properties.put("sccp.ssi","0");
+MtpProvider linkset1 = new Provider();
+linkset1.configure(p);
 
+p.put("mtp.address.remote","192.168.1.35:1026");
+p.put("mtp.address.local","192.168.1.248:1001");
+p.put("mtp.apc","3517");
+p.put("mtp.opc","13501");
 
-SccProvider sccpProvider = SccpFactory.getInstance().getProvider(properties);
-sccpProvider.setListener(...);
+MtpProvider linkset2 = new Provider();
+linkset2.configure(p);
 
-SccpParameterFactory paramFactory = sccpProvider.getSccpParameterFactory();
-SccpUnitDataFactory udFactory = sccpProvider.getSccpUnitDataFactory();
+SccpStack stack = new SccpStackImpl();
+List&lt;MtpProvider&gt; linksets = new ArrayList&lt;MtpProvider&gt;();
+linksets.add(linkset1);
+linksets.add(linkset2);
 
-SccpAddress peer1Address =  paramFactory.getSccpAddress();
-GlobalTitle gt = paramFactory.getGlobalTitle100();
+stack.setLinksets(linksets);
+stack.setTransferType(SccpStack.XUDT_ONLY);
+stack.start(); //this will start Mtp also.
 
-gt.setDigits("5557779");
-peer1Address.setGlobalTitle(gt);
-peer1Address.setGlobalTitleIndicator(4);//for GT 100
+GlobalTitle gt1 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "321");
+SccpAddress  peer1Address = new SccpAddress(gt1, 0);
 
-SccpAddress peer2Address = paramFactory.getSccpAddress();
-gt = paramFactory.getGlobalTitle100();
+GlobalTitle gt2 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "4820013425");
+SccpAddress  peer2Address = new SccpAddress(gt2, 0);
 
-gt.setDigits("5888879");
-peer2Address.setGlobalTitle(gt);
-peer2Address.setGlobalTitleIndicator(4);//for GT 100
+stack.getSccpProvider().registerSccpListener(peer1Address,new SccpListener{....});
+HopCounter hc = stack.getSccpProvider().getParameterFactory().createHopCounter(3);
+ProtocolClass pc = stack.getSccpProvider().getParameterFactory().createProtocolClass(0);
+SccpMessage msg = stack.getSccpProvider().getMessageFactory().createXUnitData(hc,pc,peer2Address,peer1Address)
+stack.getSccpProvider().sendMessage(msg);
 
-byte[] tcapData = ....;
-// ActionReference is null, its originating call, defaults from conf will be used.
-sccpProvider.send(peer1,peer2,tcapData,null); 
 		</programlisting>
-
 	</section>
+
 </chapter>
 

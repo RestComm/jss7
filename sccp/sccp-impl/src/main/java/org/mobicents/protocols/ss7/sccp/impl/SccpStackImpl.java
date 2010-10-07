@@ -58,7 +58,7 @@ public class SccpStackImpl implements SccpStack, MtpListener {
     private static final Logger logger = Logger.getLogger(SccpStackImpl.class);
 
     public SccpStackImpl() {
-        sccpProvider = new SccpProviderImpl(this);
+        sccpProvider = new SccpProviderImpl(this); //why this is present? 
     }
 
     /**
@@ -72,22 +72,22 @@ public class SccpStackImpl implements SccpStack, MtpListener {
         this.state = State.CONFIGURED;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.mobicents.protocols.ss7.sccp.SccpStack#configure(java.util.Properties
-     * )
-     */
-    public void configure(Properties properties) throws ConfigurationException {
-        if (state != State.IDLE) {
-            throw new IllegalStateException("Stack already been configured or is already running!");
-        }
-        this.sccpProvider = new SccpProviderImpl(this);
-//        this.sccpProvider.configure(properties);
-
-        this.state = State.CONFIGURED;
-    }
+//    /*
+//     * (non-Javadoc)
+//     *
+//     * @see
+//     * org.mobicents.protocols.ss7.sccp.SccpStack#configure(java.util.Properties
+//     * )
+//     */
+//    public void configure(Properties properties) throws ConfigurationException {
+//        if (state != State.IDLE) {
+//            throw new IllegalStateException("Stack already been configured or is already running!");
+//        }
+//        this.sccpProvider = new SccpProviderImpl(this);
+////        this.sccpProvider.configure(properties);
+//
+//        this.state = State.CONFIGURED;
+//    }
 
     /*
      * (non-Javadoc)

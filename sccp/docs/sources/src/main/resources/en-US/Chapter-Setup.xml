@@ -26,6 +26,9 @@
 				<listitem>
 					<para>&THIS.PLATFORM; <acronym>MTP</acronym> library</para>
 				</listitem>
+				<listitem>
+					<para>&THIS.PLATFORM; M3UA library</para>
+				</listitem>
 			</itemizedlist>
 		</section>
 	</section>	
