@@ -46,30 +46,25 @@ public interface SccpProvider extends Serializable {
      */
     public ParameterFactory getParameterFactory();
    
-    //Next rel, with routing
-//    /**
-//     * Register listener for some adddress.
-//     * @param listener
-//     */
-//    public void registerSccpListener(SccpAddress localAddress,SccpListener listener);
-//
-//    /**
-//     * Removes listener
-//     */
-//    public void deregisterSccpListener(SccpAddress localAddress);
-    public void addSccpListener(SccpListener sccpListener);
-    public void removeSccpListener(SccpListener sccpListener);
+    /**
+     * Register listener for some adddress.
+     * @param listener
+     */
+    public void registerSccpListener(SccpAddress localAddress,SccpListener listener);
+
+    /**
+     * Removes listener
+     */
+    public void deregisterSccpListener(SccpAddress localAddress);
     
     
     /**
-     * Send sccp byte[] to desired addres.
-     * @param calledParty - destination address of this message
-     * @param callingParty - local address
-     * @param data - byte[] encoded of sccp parameters
+     * Sends message.
+     * 
+     * @param message the message to be sent.
+     * @param destination the address of the recipient.
      * @throws IOException
      */
-    public void send(SccpMessage message) throws IOException;//FIXME: add support for UDTs?
+    public void send(SccpMessage message) throws IOException;
 
-
-   
 }

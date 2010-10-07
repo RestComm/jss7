@@ -63,4 +63,35 @@ public class SccpAddress {
     public GlobalTitle getGlobalTitle() {
         return gt;
     }
+    
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof SccpAddress)) {
+            return false;
+        }
+        
+        SccpAddress address = (SccpAddress) other;
+        
+        boolean res = false;
+        
+        if (address.gt != null) {
+            res = gt != null && address.gt.equals(gt);
+        }
+        
+        if (!res) {
+            return false;
+        }
+        
+        return address.ssn == ssn && address.pc == pc;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.gt != null ? this.gt.hashCode() : 0);
+        hash = 37 * hash + this.pc;
+        hash = 37 * hash + this.ssn;
+        hash = 37 * hash + (this.ai != null ? this.ai.hashCode() : 0);
+        return hash;
+    }
 }

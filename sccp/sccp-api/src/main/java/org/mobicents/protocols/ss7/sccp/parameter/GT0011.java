@@ -81,4 +81,28 @@ public class GT0011  extends GlobalTitle {
         return gti;
     }
     
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof GlobalTitle)) {
+            return false;
+        }
+        
+        GlobalTitle gt = (GlobalTitle) other;
+        if (gt.getIndicator() != gti) {
+            return false;
+        }
+        
+        GT0011 gt1 = (GT0011)gt;
+        return gt1.tt == tt && gt1.np == np && gt1.digits.equals(digits);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + this.tt;
+        hash = 41 * hash + (this.np != null ? this.np.hashCode() : 0);
+        hash = 41 * hash + (this.digits != null ? this.digits.hashCode() : 0);
+        return hash;
+    }
+    
 }

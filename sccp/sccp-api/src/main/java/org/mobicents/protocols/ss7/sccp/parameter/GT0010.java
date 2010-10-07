@@ -63,4 +63,26 @@ public class GT0010  extends GlobalTitle {
         return gti;
     }
     
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof GlobalTitle)) {
+            return false;
+        }
+        
+        GlobalTitle gt = (GlobalTitle) other;
+        if (gt.getIndicator() != gti) {
+            return false;
+        }
+        
+        GT0010 gt1 = (GT0010)gt;
+        return gt1.digits.equals(digits);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 31 * hash + (this.digits != null ? this.digits.hashCode() : 0);
+        return hash;
+    }
+    
 }

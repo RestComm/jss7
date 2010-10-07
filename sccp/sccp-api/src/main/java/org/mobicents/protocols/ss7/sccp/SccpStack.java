@@ -17,42 +17,64 @@
  */
 package org.mobicents.protocols.ss7.sccp;
 
-import java.util.Properties;
+import java.util.List;
 
-import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.StartFailedException;
+import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 
 /**
  * 
  * @author baranowb
- * 
  */
 public interface SccpStack {
+    public final static int UDT_ONLY = 1;
+    public final static int XUDT_ONLY = 2;
+    
+    /**
+     * Starts SCCP stack.
+     * 
+     * @throws java.lang.IllegalStateException
+     * @throws org.mobicents.protocols.StartFailedException
+     */
+    public void start() throws IllegalStateException, StartFailedException;
+    
+    /**
+     * Terminates SCCP stack.
+     * 
+     * @throws java.lang.IllegalStateException
+     * @throws org.mobicents.protocols.StartFailedException
+     */
+    public void stop();
+    
+    /**
+     * Assigns linksets. 
+     * 
+     * Current versions suppose static assignment. 
+     * For next versions implement link management functions.
+     * 
+     * @param linksets the list of available linksets.
+     */
+    public void setLinksets(List<MtpProvider> linksets);
 
-	public void start() throws IllegalStateException, StartFailedException;
-
-	public void stop();
-
-	public void configure(Properties properties) throws ConfigurationException;
-
-	public SccpProvider getSccpProvider();
-
-	/**
-	 * Returns true in case SccpStack is managed by external entity. In case of
-	 * <b>true</b> it should not be started/stopped by TCAP for instance.
-	 * 
-	 * @return
-	 */
-	public boolean isManaged();
-	
-//	/**
-//	 * Should be set to true, in case this stack is managed by some entity other than TCAP for instance.
-//	 * @param flag
-//	 */
-//	public void setManaged(boolean flag);
-//	
-//	public void setRouter(Router router);
-//	
-//	public Router getRouter();
+    /**
+     * Exposes SCCP provider object to SCCP user.
+     * 
+     * @return SCCP provider object.
+     */
+    public SccpProvider getSccpProvider();
+    
+    /**
+     * Allows to plug custom implementation of SCCP router 
+     * 
+     * @param router the router implementation.
+     */
+    public void setRouter(Router router);
+    
+    /**
+     * Defines transfer type for outgoing messages.
+     * 
+     * @param type the type of transfer. valid values are UDT_ONLY and XUDT_ONLY.
+     */
+    public void setTransferType(int type);
 
 }

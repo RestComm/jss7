@@ -98,4 +98,31 @@ public class GT0100  extends GlobalTitle {
     public GlobalTitleIndicator getIndicator() {
         return gti;
     }
+    
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof GlobalTitle)) {
+            return false;
+        }
+        
+        GlobalTitle gt = (GlobalTitle) other;
+        if (gt.getIndicator() != gti) {
+            return false;
+        }
+        
+        GT0100 gt1 = (GT0100)gt;
+        return gt1.translationType == translationType && gt1.numberingPlan == numberingPlan &&
+                gt1.natureOfAddress == natureOfAddress && gt1.digits.equals(digits);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 61 * hash + this.translationType;
+        hash = 61 * hash + (this.numberingPlan != null ? this.numberingPlan.hashCode() : 0);
+        hash = 61 * hash + (this.natureOfAddress != null ? this.natureOfAddress.hashCode() : 0);
+        hash = 61 * hash + (this.digits != null ? this.digits.hashCode() : 0);
+        return hash;
+    }
+    
 }
