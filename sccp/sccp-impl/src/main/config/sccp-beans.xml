@@ -5,7 +5,7 @@
 
 	<!-- Endpoint definition  -->
 	<bean name="SccpService" class="org.mobicents.protocols.ss7.sccp.impl.SccpService">
-		<property name="jndiName">mobicents/ss7/sccp</property>
+		<property name="jndiName">java:/mobicents/ss7/sccp</property>
 	</bean>
 
 </deployment>

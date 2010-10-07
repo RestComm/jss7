@@ -68,7 +68,7 @@
 							src/main/assembly/pojo.xml
 						</descriptor>
 					</descriptors>
-					<finalName>${pom.artifactId}</finalName>
+					<finalName>a${pom.artifactId}</finalName>
 				</configuration>
 				<executions>
 					<execution>
