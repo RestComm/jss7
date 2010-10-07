@@ -40,8 +40,8 @@ public class ISUPServerTransactionImpl extends ISUPTransactionImpl implements IS
 	 * @param provider
 	 * @param stack
 	 */
-	public ISUPServerTransactionImpl(ISUPMessage message, AbstractISUPProvider provider, ISUPStackImpl stack, RoutingLabel actionReference) {
-		super(message, provider, stack, actionReference);
+	public ISUPServerTransactionImpl(ISUPMessage message, AbstractISUPProvider provider, ISUPStackImpl stack) {
+		super(message, provider, stack);
 
 	}
 

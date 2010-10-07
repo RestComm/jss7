@@ -42,19 +42,11 @@ import org.mobicents.protocols.ss7.mtp.provider.MtpProviderFactory;
  */
 class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, MtpListener {
 
-	public static final String PROPERTY_OPC = "isup.opc";
-	public static final String PROPERTY_DPC = "isup.dpc";
-	public static final String PROPERTY_SLS = "isup.sls";
-	public static final String PROPERTY_SSI = "isup.ssi";
-	
 	
 	private static final Logger logger = Logger.getLogger(ISUPMtpProviderImpl.class);
 	private MtpProvider mtpProvider;
 
-	// private boolean linkUp = false;
 
-	// preconfigured values of routing label.
-	private RoutingLabel actionReference;
 
 	/**
 	 * @param provider
@@ -69,14 +61,7 @@ class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, 
 		this.mtpProvider = MtpProviderFactory.getInstance().getProvider(props);
 		super.parameterFactory = new ISUPParameterFactoryImpl();
 		super.messageFactory = new ISUPMessageFactoryImpl(this,super.parameterFactory);
-		
-		int opc = Integer.parseInt(props.getProperty(PROPERTY_OPC));
-		int dpc = Integer.parseInt(props.getProperty(PROPERTY_DPC));
-		int sls = Integer.parseInt(props.getProperty(PROPERTY_SLS));
-		int ssi = Integer.parseInt(props.getProperty(PROPERTY_SSI));
-		// this.si = Integer.parseInt(props.getProperty("isup.si"));
-		int si = Mtp3._SI_SERVICE_ISUP;
-		this.actionReference = new RoutingLabel(opc, dpc, sls, si, ssi);
+
 
 	}
 	//tests only!
@@ -85,14 +70,7 @@ class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, 
 		this.mtpProvider = provider1;
 		super.parameterFactory = new ISUPParameterFactoryImpl();
 		super.messageFactory = new ISUPMessageFactoryImpl(this,super.parameterFactory);
-		
-		int opc = Integer.parseInt(props.getProperty(PROPERTY_OPC));
-		int dpc = Integer.parseInt(props.getProperty(PROPERTY_DPC));
-		int sls = Integer.parseInt(props.getProperty(PROPERTY_SLS));
-		int ssi = Integer.parseInt(props.getProperty(PROPERTY_SSI));
-		// this.si = Integer.parseInt(props.getProperty("isup.si"));
-		int si = Mtp3._SI_SERVICE_ISUP;
-		this.actionReference = new RoutingLabel(opc, dpc, sls, si, ssi);
+	
 	}
 
 	/*
@@ -113,12 +91,8 @@ class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, 
 		if (this.transactionMap.containsKey(key)) {
 			throw new TransactionAlredyExistsException("Transaction already exists for key: " + key);
 		}
-		RoutingLabel actionReference = ((ISUPMessageImpl) msg).getRoutingLabel();
-		if (actionReference == null) {
-			//FIXME: this is bad, remove before next rel.
-			actionReference = this.actionReference;
-		}
-		ISUPClientTransactionImpl ctx = new ISUPClientTransactionImpl(msg, this, this.stack, actionReference);
+	
+		ISUPClientTransactionImpl ctx = new ISUPClientTransactionImpl(msg, this, this.stack);
 		this.transactionMap.put(((ISUPMessageImpl)msg).generateTransactionKey(), ctx);
 
 		return ctx;
@@ -142,7 +116,7 @@ class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, 
 		if (this.transactionMap.containsKey(key)) {
 			throw new TransactionAlredyExistsException("Transaction already exists for key: " + key);
 		}
-		ISUPServerTransactionImpl stx = new ISUPServerTransactionImpl(msg, this, this.stack, ((ISUPMessageImpl) msg).getRoutingLabel());
+		ISUPServerTransactionImpl stx = new ISUPServerTransactionImpl(msg, this, this.stack);
 		this.transactionMap.put(((ISUPMessageImpl)msg).generateTransactionKey(), stx);
 
 		return stx;
@@ -166,12 +140,24 @@ class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, 
 
 			// provider expects properly encoded mtp3 layer frame!
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			ISUPMessageImpl msgImpl = (ISUPMessageImpl) msg;
-			if (msgImpl.getRoutingLabel() == null) {
-				bos.write(this.actionReference.getBackRouteHeader());
-			} else {
-				bos.write(msgImpl.getRoutingLabel().getBackRouteHeader());
-			}
+			
+			int opc = mtpProvider.getOriginalPointCode();
+	        int dpc = mtpProvider.getAdjacentPointCode();
+	        int si = Mtp3._SI_SERVICE_ISUP;//ISUP
+	        int ni = 2;//assume national
+	        int sls = 0;//mtp3 will select correct
+	        int ssi = ni << 2;
+
+	        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+	        //encoding routing label
+	        bout.write((byte) ssi);
+	        bout.write((byte) (((ssi & 0x0F) << 4) | (si & 0x0F)));
+	        bout.write((byte) dpc);
+	        bout.write((byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6)));
+	        bout.write((byte) (opc >> 2));
+	        bout.write((byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
+
+	   
 
 			bos.write(encoded);
 			mtpProvider.send(bos.toByteArray());
@@ -188,7 +174,7 @@ class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, 
 		// dh.run();
 	}
 
-	private ISUPTransaction preprocessIncomingMessage(ISUPMessage msg, RoutingLabel actionReference) {
+	private ISUPTransaction preprocessIncomingMessage(ISUPMessage msg) {
 		// FIXME: should we create TX here?
 		TransactionKey tk = ((ISUPMessageImpl)msg).generateTransactionKey();
 		ISUPMessageImpl msgImpl = (ISUPMessageImpl) msg;
@@ -196,14 +182,10 @@ class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, 
 			// we have TX
 
 			ISUPTransactionImpl tx = (ISUPTransactionImpl) this.transactionMap.get(tk);
-			if (tx.getRoutingLabel() == null) {
-				tx.setRoutingLabel(actionReference);
-			}
+			
 			msgImpl.setTransaction(tx);
 			return tx;
 		}
-
-		msgImpl.setRoutingLabel(actionReference);
 		return null;
 	}
 
@@ -225,8 +207,6 @@ class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, 
 		public void run() {
 
 			try {
-				RoutingLabel actionReference = new RoutingLabel();
-				actionReference.setBackRouteHeader(mtp3Frame);
 				int commandCode = mtp3Frame[5 + 2];// 5(RoutingLabel)+2(CIC) -
 													// http://pt.com/page/tutorials/ss7-tutorial/mtp
 				byte[] payload = new byte[mtp3Frame.length - 5];
@@ -236,7 +216,7 @@ class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, 
 				msg.decodeElement(payload);
 
 				// FIXME: add preprocessing? to ensure msg is valid?
-				ISUPTransaction tx = preprocessIncomingMessage(msg, actionReference);
+				ISUPTransaction tx = preprocessIncomingMessage(msg);
 
 				for (int index = 0; index < listeners.size(); index++) {
 					try {
@@ -268,13 +248,10 @@ class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, 
 	public void start() throws IllegalStateException, StartFailedException {
 		this.mtpProvider.setMtpListener(this);
 		this.mtpProvider.start();
-
 	}
 
 	public void stop() {
-		
 		this.mtpProvider.stop();
-
 	}
 
 }

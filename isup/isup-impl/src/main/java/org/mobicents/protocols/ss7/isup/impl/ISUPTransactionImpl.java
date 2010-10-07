@@ -28,8 +28,6 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 
 	private static final AtomicLong txID = new AtomicLong(0);
 	protected TransactionKey transactionKey = null;
-	// reference with backward routing label! Used for this tx
-	protected RoutingLabel actionReference;
 
 	protected ISUPMessage message;
 
@@ -38,7 +36,7 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 
 	protected Future generalTimeoutFuture;
 
-	public ISUPTransactionImpl(ISUPMessage message, AbstractISUPProvider provider, ISUPStackImpl stack, RoutingLabel ar) {
+	public ISUPTransactionImpl(ISUPMessage message, AbstractISUPProvider provider, ISUPStackImpl stack) {
 		super();
 		if (message == null) {
 			throw new NullPointerException("Message can not be null!");
@@ -57,12 +55,6 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 		this.stack = stack;
 		this.transactionKey = ((ISUPMessageImpl)this.message).generateTransactionKey();
 		startGeneralTimer();
-
-		if (ar == null) {
-			this.actionReference = ((ISUPMessageImpl) message).getRoutingLabel();
-		} else {
-			this.actionReference = ar;
-		}
 
 	}
 
@@ -138,21 +130,6 @@ public abstract class ISUPTransactionImpl implements ISUPTransaction {
 			transaction.doGeneralTimeout();
 		}
 
-	}
-
-	/**
-	 * @return the actionReference
-	 */
-	public RoutingLabel getRoutingLabel() {
-		return actionReference;
-	}
-
-	/**
-	 * @param actionReference
-	 *            the actionReference to set
-	 */
-	public void setRoutingLabel(RoutingLabel actionReference) {
-		this.actionReference = actionReference;
 	}
 
 }
