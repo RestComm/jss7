@@ -612,7 +612,8 @@ public class Mtp3 implements Runnable {
     }
     
     public static void writeRoutingLabel(byte[] data, int si, int ssi, int sls, int dpc, int opc) {
-        //see Q.704.14.2
+        //see Q.704.14.2 
+    	//TODO: move to use util class.
         data[0] = (byte) (((ssi & 0x0F) << 4) | (si & 0x0F));
         data[1] = (byte) dpc;
         data[2] = (byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6));

@@ -157,7 +157,8 @@ public class Mtp2 {
                     "ALIGNED", "PROVING", "ALIGNED_READY", "IN_SERVICE"
                 };
 
-    }    ////////////////////
+    }    
+    ////////////////////
     // MTP3 resoruces //
     ////////////////////
     protected SLTMTest sltmTest;

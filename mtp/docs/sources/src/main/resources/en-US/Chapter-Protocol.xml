@@ -84,53 +84,7 @@ public interface Mtp1 {
 					</programlisting>
 				</listitem>
 			</varlistentry>
-			<varlistentry>
-				<term>org.mobicents.protocols.ss7.mtp.SelectorFactory</term>
-				<listitem>
-					<para>
-						This is simple factory interface with one method:
-						<literal>public ChannelSelector getSelector();</literal>
-						. This method returns concrete implementation of interface used
-						for
-						I/O select operations. Implementation is tied directly to layer
-						1
-						interface implementation. Concrete factory class should be
-						provide
-						along it.
-					</para>
-					<para>It is defined as follows: </para>
-					<programlisting language="Java" role="JAVA">
-package org.mobicents.protocols.ss7.mtp;
-
-import java.util.Collection;
-
-public interface ChannelSelector {
-
-    /**
-     * Register specfield channel for IO.
-     *
-     * @param channel the channel to be registered.
-     */
-    public void register(Mtp1 channel);
-    
-    /**
-     * Unregisters channels
-     *
-     * @param channel to be unregistered 
-     */
-    public void unregister(Mtp1 channel);
-    
-    /**
-     * Gets channels ready for IO operations.
-     *
-     * @param key IO operations.
-     * @param timeout the wait timeout.
-     */
-    public Collection&lt;Mtp1&gt; select(int key, int timeout);
-}
-				 	</programlisting>
-				</listitem>
-			</varlistentry>
+			
 			<varlistentry>
 				<term>org.mobicents.protocols.ss7.mtp.Mtp2</term>
 				<listitem>
@@ -164,7 +118,7 @@ public interface ChannelSelector {
 							<para><literal>  public void setDpc(int dpc)</literal> - set remote <literal>point code</literal> </para>
 						</listitem>
 						<listitem>
-							<para><literal>public void setChannels(List&lt;Mtp1&gt; channels)</literal> - sets list of <literal>Mtp1</literal> concrete implementation. Each channel will be assigned <literal>Mtp2</literal> wrapper.</para>
+							<para><literal>public void setLinks(List&lt;Mtp2&gt; channels)</literal> - sets list of <literal>Mtp2</literal> links. Each channel should have <literal>Mtp1</literal> assigned.</para>
 						</listitem>
 						
 						<listitem>
@@ -226,56 +180,79 @@ import org.mobicents.protocols.StartFailedException;
 
 public interface MtpProvider {
 
-	/**
-	 * Sets listener for MTP callbacks. If null is passed internal refence is
-	 * cleared.
-	 * 
-	 * @param lst
-	 */
-	public void setMtpListener(MtpListener lst);
+    /**
+     * Assigns originated point code
+     * 
+     * @param opc the originated point code
+     */
+    public void setOriginalPointCode(int opc);
 
-	/**
-	 * Passes argument to MTP layers for processing. Passed buffer should not be
-	 * reused after passing to this method!
-	 * 
-	 * @param msu
-	 * @throws IOException
-	 *             - when IO can not be performed, ie, link is not up.
-	 * @return
-	 */
-	public void send(byte[] msu) throws IOException;
+    /**
+     * Assigns destination point code.
+     * 
+     * @param dpc destination point code in decimal format.
+     */
+    public void setAdjacentPointCode(int dpc);
 
-	/**
-	 * Starts this provider implementation. Depending on internal it can start
-	 * local MTP process, or M3UA layer.
-	 * 
-	 * @throws IOException
-	 * @throws StartFailedException
-	 */
-	public void start() throws StartFailedException;
+    /**
+     * @return the dpc
+     */
+    public int getAdjacentPointCode();
 
-	/**
-	 * Stops this provider. This call clears all references, ie. listener is
-	 * cleared as {@link #setMtpListener(MtpListener)} with null argument.
-	 */
-	public void stop();
+    /**
+     * @return the opc
+     */
+    public int getOriginalPointCode();
 
-	/**
-	 * Method which configures concrete classs. Depending on implementation
-	 * different properties are supported. However each property starts with
-	 * "mtp." prefix.
-	 * 
-	 * @param p
-	 */
-	public void configure(Properties p) throws ConfigurationException;
+    /**
+     * Sets listener for MTP callbacks. If null is passed internal refence is
+     * cleared.
+     * 
+     * @param lst
+     */
+    public void setMtpListener(MtpListener lst);
 
-	/**
-	 * Checks if link is up;
-	 * 
-	 * @return
-	 */
-	public boolean isLinkUp();
+    /**
+     * Passes argument to MTP layers for processing. Passed buffer should not be
+     * reused after passing to this method!
+     * 
+     * @param msu
+     * @throws IOException
+     *             - when IO can not be performed, ie, link is not up.
+     * @return
+     */
+    public void send(byte[] msu) throws IOException;
 
+    /**
+     * Starts this provider implementation. Depending on internal it can start
+     * local MTP process, or M3UA layer.
+     * 
+     * @throws IOException
+     * @throws StartFailedException
+     */
+    public void start() throws StartFailedException;
+
+    /**
+     * Stops this provider. This call clears all references, ie. listener is
+     * cleared as {@link #setMtpListener(MtpListener)} with null argument.
+     */
+    public void stop();
+
+    /**
+     * Method which configures implementation. Depending on implementation
+     * different properties are supported. However each property starts with
+     * "mtp." prefix.
+     * 
+     * @param p
+     */
+    public void configure(Properties p) throws ConfigurationException;
+
+    /**
+     * Checks if link is up;
+     * 
+     * @return
+     */
+    public boolean isLinkUp();
 }
 
 					</programlisting>
@@ -297,43 +274,14 @@ public interface MtpProvider {
 	</section>
 	<section>
 		<title>Configuration</title>
-		<para>Higher protocol layer requires following: </para>
-		<itemizedlist>
-			<listitem>
-				<para>Concrete implementation of provider in classpath</para>
-			</listitem>
-			<listitem>
-				<para>Properties with following values: </para>
-				<table frame="all" pgwide="1" id="table-mtp_properties_1">
-					<title>Mtp configuration properties</title>
-					<tgroup cols="2" colsep="1">
-						<colspec colname="c1"/>
-						<colspec colname="c2"/>
-						<thead>
-							<row>
-								<entry>Property name </entry>
-								<entry>Description</entry>
-							</row>
-						</thead>
-						<tbody>
-							<row>
-								<entry>mtp.driver</entry>
-								<entry>Fully qualified class name of concrete provider implementation.</entry>				
-							</row>
-							<row>
-								<entry>mtp.*</entry>
-								<entry>Any requiered property for provider. "*" should be replaced with name of property.</entry>				
-							</row>
-						</tbody>
-					</tgroup>
-				</table>
-			</listitem>
-		</itemizedlist>
-		<para></para>
+		<para><literal>MTP Providers</literal> support different properties based on implementation. However each property must start with <literal>mtp.</literal> prefix.</para>
+
 		<section>
-			<title>M3UAProvider</title>
-			<para> <literal>M3UAProvider</literal> is provider which is based on <literal>Datalink</literal>. <literal>Datalink</literal> is implementation of stream <acronym>API</acronym> from 
-			&THIS.PLATFORM; Stream library. </para>
+			<title>M3UA Provider</title>
+			<para> <literal>M3UA Provider</literal> is provider which enables higher layer to be integrated with M3 User Adaptation layer.
+			Implementation class of this provider is <filename>org.mobicents.protocols.ss7.mtp.provider.m3ua.Provider</filename>. It is based on
+			&THIS.PLATFORM; M3UA Library. 
+			</para>
 			<para>
 			It supports following configuration properties:</para>
 			<table frame="all" pgwide="1" id="table-mtp_properties_2">
@@ -358,14 +306,23 @@ public interface MtpProvider {
 								<entry>mtp.address.local</entry>
 								<entry>As above. It points to local address to which data link is bound.</entry>				
 							</row>
+							<row>
+								<entry>mtp.apc</entry>
+								<entry>Indicates adjacent point code (dpc for originating messages).</entry>				
+							</row>
+							<row>
+								<entry>mtp.opc</entry>
+								<entry>Indiactes oritinating point code.</entry>				
+							</row>
 						</tbody>
 					</tgroup>
 				</table>
-				<para>Example properties file to whcih will configure this provider look as foolows:</para>
+				<para>Example properties file which will configure this provider look as foolows:</para>
 				<programlisting>
-mtp.driver=m3ua
 mtp.address.remote=127.0.0.1:3434
 mtp.address.local=127.0.0.1:3435
+mtp.opc=13159
+mtp.apc=350
 				</programlisting>
 		</section>
 	</section>

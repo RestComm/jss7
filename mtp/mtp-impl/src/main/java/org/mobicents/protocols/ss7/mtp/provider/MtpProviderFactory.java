@@ -25,7 +25,7 @@ import org.mobicents.protocols.ss7.mtp.provider.m3ua.Provider;
 
 /**
  * @author baranowb
- *
+ * @deprecated ..... no words
  */
 public class MtpProviderFactory {
 	

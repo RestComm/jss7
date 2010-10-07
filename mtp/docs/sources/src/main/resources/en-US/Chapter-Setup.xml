@@ -23,6 +23,9 @@
 				<listitem>
 					<para>&THIS.PLATFORM; <literal>Stream</literal> library</para>
 				</listitem>
+				<listitem>
+					<para>&THIS.PLATFORM; <literal>M3UA</literal> library</para>
+				</listitem>
 			</itemizedlist>
 		</section>
 	</section>	
