@@ -58,20 +58,20 @@ public class TCAPStackImpl implements TCAPStack {
 		this.state = State.CONFIGURED;
     }
 
-    // ///////////////
-    // CONF METHOD //
-    // ///////////////
-    /**
-     *
-     */
-    public void configure(Properties props) throws ConfigurationException {
-    	if (state != State.IDLE) {
-			throw new IllegalStateException("Stack already been configured or is already running!");
-		}
-		//this.sccpProvider = this.sccpStack.getSccpProvider();
-		this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, address);
-		this.state = State.CONFIGURED;
-    }
+//    // ///////////////
+//    // CONF METHOD //
+//    // ///////////////
+//    /**
+//     *
+//     */
+//    public void configure(Properties props) throws ConfigurationException {
+//    	if (state != State.IDLE) {
+//			throw new IllegalStateException("Stack already been configured or is already running!");
+//		}
+//		//this.sccpProvider = this.sccpStack.getSccpProvider();
+//		this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, address);
+//		this.state = State.CONFIGURED;
+//    }
 
     /*
      * (non-Javadoc)

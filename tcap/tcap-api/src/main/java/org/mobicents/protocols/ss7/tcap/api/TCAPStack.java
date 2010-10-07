@@ -29,10 +29,10 @@ public interface TCAPStack {
 	 * @throws StartFailedException
 	 */
 	public void start() throws IllegalStateException, StartFailedException;
-	/**
-	 * Configure stack and transport layer.
-	 * @param properties
-	 * @throws ConfigurationException
-	 */
-	public void configure(Properties properties) throws ConfigurationException;
+//	/**
+//	 * Configure stack and transport layer.
+//	 * @param properties
+//	 * @throws ConfigurationException
+//	 */
+//	public void configure(Properties properties) throws ConfigurationException;
 }
