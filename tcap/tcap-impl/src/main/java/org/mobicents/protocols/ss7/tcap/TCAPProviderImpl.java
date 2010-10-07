@@ -70,10 +70,12 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     private TCAPStackImpl stack;    // originating TX id ~=Dialog, its direct mapping, but not described
     // explicitly...
     private Map<Long, DialogImpl> dialogs = new HashMap<Long, DialogImpl>();
-
-    TCAPProviderImpl(SccpProvider sccpProvider, TCAPStackImpl stack) {
+    private SccpAddress address;
+    
+    TCAPProviderImpl(SccpProvider sccpProvider, TCAPStackImpl stack, SccpAddress address) {
         super();
         this.sccpProvider = sccpProvider;
+        this.address = address;
         messageFactory = sccpProvider.getMessageFactory();
         parameterFactory = sccpProvider.getParameterFactory();
         this.stack = stack;
@@ -282,10 +284,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         }
     }
 
-    public void send(byte[] data, Byte desiredQos, SccpAddress destinationAddress, SccpAddress orignatingAddress) throws IOException {
+    public void send(byte[] data, Byte desiredQos, SccpAddress destinationAddress, SccpAddress originatingAddress) throws IOException {
         //FIXME: add QOS
         ProtocolClass pClass = parameterFactory.createProtocolClass(0, 0);
-        UnitData msg = messageFactory.createUnitData(pClass, orignatingAddress, destinationAddress);
+        UnitData msg = messageFactory.createUnitData(pClass, destinationAddress, originatingAddress);
         msg.setData(data);
         sccpProvider.send(msg);
     }
@@ -419,13 +421,13 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     void start() {
         this._EXECUTOR = Executors.newSingleThreadScheduledExecutor();
-        this.sccpProvider.addSccpListener(this);
+        this.sccpProvider.registerSccpListener(address, this);
 
     }
 
     void stop() {
         this._EXECUTOR.shutdown();
-        this.sccpProvider.removeSccpListener(this);
+        this.sccpProvider.deregisterSccpListener(address);
 
     }
 }
