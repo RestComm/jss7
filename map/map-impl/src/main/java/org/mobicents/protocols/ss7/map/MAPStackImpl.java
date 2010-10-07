@@ -7,6 +7,7 @@ import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
@@ -24,13 +25,8 @@ public class MAPStackImpl implements MAPStack {
 
 	private State state = State.IDLE;
 
-	public MAPStackImpl(){
-		tcapStack = new TCAPStackImpl();
-		
-	}
-	//tests only!
-	public MAPStackImpl(SccpProvider sccpPprovider) {
-		this.tcapStack = new TCAPStackImpl(sccpPprovider);
+	public MAPStackImpl(SccpProvider sccpPprovider, SccpAddress address) {
+		this.tcapStack = new TCAPStackImpl(sccpPprovider, address);
 		TCAPProvider tcapProvider = tcapStack.getProvider();
 		mapProvider = new MAPProviderImpl(tcapProvider);
 		this.state = State.CONFIGURED;
