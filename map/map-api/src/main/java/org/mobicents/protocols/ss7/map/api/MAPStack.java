@@ -18,5 +18,5 @@ public interface MAPStack {
 	
 	public void start() throws IllegalStateException, StartFailedException;
 	
-	public void configure(Properties properties) throws ConfigurationException;
+	//public void configure(Properties properties) throws ConfigurationException;
 }

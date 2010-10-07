@@ -595,6 +595,10 @@ public interface MAPStack {
 	
 	public MAPProvider getMAPProvider();
 	
+	public void stop();
+	
+	public void start() throws IllegalStateException, StartFailedException;
+
 }
 ]]>
 				</programlisting>

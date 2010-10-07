@@ -29,6 +29,7 @@ public class MAPStackImpl implements MAPStack {
 		this.tcapStack = new TCAPStackImpl(sccpPprovider, address);
 		TCAPProvider tcapProvider = tcapStack.getProvider();
 		mapProvider = new MAPProviderImpl(tcapProvider);
+		
 		this.state = State.CONFIGURED;
 	}
 
@@ -64,22 +65,22 @@ public class MAPStackImpl implements MAPStack {
 		this.state = State.CONFIGURED;
 	}
 
-	// ///////////////
-	// CONF METHOD //
-	// ///////////////
-	/**
-	 * @throws ConfigurationException 
-     *
-     */
-	public void configure(Properties props) throws ConfigurationException {
-		if (state != State.IDLE) {
-			throw new IllegalStateException("Stack already been configured or is already running!");
-		}
-		tcapStack.configure(props);
-		TCAPProvider tcapProvider = tcapStack.getProvider();
-		mapProvider = new MAPProviderImpl(tcapProvider);
-		this.state  = State.CONFIGURED;
-	}
+//	// ///////////////
+//	// CONF METHOD //
+//	// ///////////////
+//	/**
+//	 * @throws ConfigurationException 
+//     *
+//     */
+//	public void configure(Properties props) throws ConfigurationException {
+//		if (state != State.IDLE) {
+//			throw new IllegalStateException("Stack already been configured or is already running!");
+//		}
+//		tcapStack.configure(props);
+//		TCAPProvider tcapProvider = tcapStack.getProvider();
+//		mapProvider = new MAPProviderImpl(tcapProvider);
+//		this.state  = State.CONFIGURED;
+//	}
 
 
 
