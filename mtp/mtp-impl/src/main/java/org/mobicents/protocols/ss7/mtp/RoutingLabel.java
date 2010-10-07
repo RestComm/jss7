@@ -6,6 +6,7 @@ package org.mobicents.protocols.ss7.mtp;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.mtp.util.MTPUtility;
 
 /**
  * This class is defined to allow Dialogic like communication with mtp3 layer -
@@ -24,7 +25,7 @@ public class RoutingLabel {
 	public RoutingLabel(int opc, int dpc, int sls, int si, int ssi) {
 		super();
 		this.mtp3Header = new byte[5];
-		Mtp3.writeRoutingLabel(mtp3Header, si, ssi, sls, dpc, opc);
+		MTPUtility.writeRoutingLabel(mtp3Header, si, ssi, sls, dpc, opc);
 	}
 
 	/**
@@ -60,7 +61,7 @@ public class RoutingLabel {
 		int si = Mtp3.si(data);
 		int ssi = Mtp3.ssi(data);
 		// this.mtp3Header = new byte[5];
-		Mtp3.writeRoutingLabel(mtp3Header, si, ssi, sls, remotePointCode, thisPointCode);
+		MTPUtility.writeRoutingLabel(mtp3Header, si, ssi, sls, remotePointCode, thisPointCode);
 		if (logger.isInfoEnabled()) {
 			logger.info("DPC[" + remotePointCode + "] OPC[" + thisPointCode + "] SLS[" + sls + "] SI[" + si + "] SSI[" + ssi + "] Label"
 					+ Arrays.toString(mtp3Header));
