@@ -24,7 +24,10 @@
 					<para> &THIS.PLATFORM; <acronym>MTP</acronym> library </para>
 				</listitem>
 				<listitem>
-					<para> &THIS.PLATFORM; Stream library</para>
+					<para> &THIS.PLATFORM; <acronym>Stream</acronym> library</para>
+				</listitem>
+				<listitem>
+					<para> &THIS.PLATFORM; <acronym>M3UA</acronym> library</para>
 				</listitem>
 			</itemizedlist>
 		</section>

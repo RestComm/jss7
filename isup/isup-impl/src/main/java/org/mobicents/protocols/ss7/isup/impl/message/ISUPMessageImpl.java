@@ -70,9 +70,6 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 
 	protected CircuitIdentificationCode cic;
 
-	// reference to MTP3 -
-	protected RoutingLabel actionReference;
-
 	public ISUPMessageImpl(Object source, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes,
 			Map<Integer, Integer> mandatoryCode2Index, Map<Integer, Integer> mandatoryVariableCode2Index,
 			Map<Integer, Integer> optionalCode2Index) {
@@ -556,21 +553,6 @@ public abstract class ISUPMessageImpl implements ISUPMessage {
 	public void setCircuitIdentificationCode(CircuitIdentificationCode cic) {
 		this.cic = cic;
 
-	}
-
-	/**
-	 * @return the actionReference
-	 */
-	public RoutingLabel getRoutingLabel() {
-		return actionReference;
-	}
-
-	/**
-	 * @param actionReference
-	 *            the actionReference to set
-	 */
-	public void setRoutingLabel(RoutingLabel actionReference) {
-		this.actionReference = actionReference;
 	}
 
 }
