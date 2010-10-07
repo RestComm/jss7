@@ -207,10 +207,10 @@ class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, 
 		public void run() {
 
 			try {
-				int commandCode = mtp3Frame[5 + 2];// 5(RoutingLabel)+2(CIC) -
+				int commandCode = mtp3Frame[1 + 2];// 1(SI)+2(CIC) -
 													// http://pt.com/page/tutorials/ss7-tutorial/mtp
-				byte[] payload = new byte[mtp3Frame.length - 5];
-				System.arraycopy(mtp3Frame, 5, payload, 0, payload.length);
+				byte[] payload = new byte[mtp3Frame.length - 1];
+				System.arraycopy(mtp3Frame, 1, payload, 0, payload.length);
 				// for post processing
 				ISUPMessage msg = messageFactory.createCommand(commandCode);
 				msg.decodeElement(payload);
