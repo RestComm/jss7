@@ -9,14 +9,14 @@
 		<version>1.0.0.BETA4-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mobicents-isup-docs</artifactId>
+	<artifactId>mobicents-map-docs</artifactId>
 	<groupId>org.mobicents.protocols.ss7.map.docs</groupId>
 
 	<packaging>pom</packaging>
 
 	<properties>
 		<docs.application.name>MAP Stack</docs.application.name>
-		<docs.application.dirname>isup</docs.application.dirname>
+		<docs.application.dirname>map</docs.application.dirname>
 		<docs.bookid>MAPStack</docs.bookid>
 	</properties>
 

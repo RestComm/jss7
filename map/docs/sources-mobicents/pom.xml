@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>mobicents-isup-docs</artifactId>
+		<artifactId>mobicents-map-docs</artifactId>
 		<groupId>org.mobicents.protocols.ss7.map.docs</groupId>
 		<version>1.0.0.BETA4-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mobicents-isup-docs-sources-mobicents</artifactId>
+	<artifactId>mobicents-map-docs-sources-mobicents</artifactId>
 
 	<properties>
 		<THIS.PLATFORM>Mobicents</THIS.PLATFORM>
@@ -44,7 +44,7 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>${pom.groupId}</groupId>
-									<artifactId>mobicents-isup-docs-sources</artifactId>
+									<artifactId>mobicents-map-docs-sources</artifactId>
 									<version>${pom.version}</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>

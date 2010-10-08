@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<parent>
-		<artifactId>mobicents-isup-docs</artifactId>
+		<artifactId>mobicents-map-docs</artifactId>
 		<groupId>org.mobicents.protocols.ss7.map.docs</groupId>
 		<version>1.0.0.BETA4-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mobicents-isup-docs-jdocbook-jbcp</artifactId>
+	<artifactId>mobicents-map-docs-jdocbook-jbcp</artifactId>
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -29,7 +29,7 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>${pom.groupId}</groupId>
-									<artifactId>mobicents-isup-docs-sources-jbcp</artifactId>
+									<artifactId>mobicents-map-docs-sources-jbcp</artifactId>
 									<version>${pom.version}</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>
