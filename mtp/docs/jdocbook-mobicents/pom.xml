@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>mobicents-mtp-docs</artifactId>
 		<groupId>org.mobicents.protocols.ss7.mtp.docs</groupId>
-		<version>1.0.0.BETA4</version>
+		<version>1.0.0.BETA5-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-mtp-docs-jdocbook-mobicents</artifactId>

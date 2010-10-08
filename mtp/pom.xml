@@ -9,7 +9,7 @@
 
 	<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 	<artifactId>mtp-parent</artifactId>
-	<version>1.0.0.BETA4</version>
+	<version>1.0.0.BETA5-SNAPSHOT</version>
 	<name>Mobicents MTP Parent</name>
 	<packaging>pom</packaging>
 	
@@ -36,13 +36,13 @@
 	
 	<scm>
 		<connection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/mtp/mtp-1.0.0.BETA4
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/mtp
 		</connection>
 		<developerConnection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/mtp/mtp-1.0.0.BETA4
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/mtp
 		</developerConnection>
 		<url>
-			http://mobicents.googlecode.com/svn/tags/protocols/ss7/mtp/mtp-1.0.0.BETA4
+			http://mobicents.googlecode.com/svn/trunk/protocols/ss7/mtp
 		</url>
 	</scm>
 
