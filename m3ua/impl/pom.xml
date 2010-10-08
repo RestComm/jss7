@@ -30,6 +30,7 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
 			<artifactId>m3ua-api</artifactId>
+			<version>${pom.version}</version>
 		</dependency>
 	</dependencies>
 
