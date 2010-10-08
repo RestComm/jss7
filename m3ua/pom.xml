@@ -98,7 +98,9 @@
 		<profile>
 			<id>maven-release</id>
 			<modules>
+				<!-- If copy paste, please look... cmon 
 				<module>docs</module>
+				 -->
 			</modules>
 			<build>
 				<plugins>
