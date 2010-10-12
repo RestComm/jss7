@@ -2,20 +2,22 @@
 <project name="ss7.release.sf" default="package" basedir=".">
 
 	<!-- Components Versions -->
-	<property name="RELEASE_VERSION" value="1.0.0.BETA2" />
+	<property name="RELEASE_VERSION" value="1.0.0.BETA3" />
 
-	<property name="parent_VERSION" value="1.0.0.BETA3" />
+	<property name="parent_VERSION" value="1.0.0.BETA4" />
 
 	<property name="asn_VERSION" value="1.0.0.BETA2" />
 	<property name="stream_VERSION" value="1.0.0.BETA1" />
-	<property name="mtp_VERSION" value="1.0.0.BETA3" />
-	<property name="isup_VERSION" value="1.0.0.BETA2" />
-	<property name="sccp_VERSION" value="1.0.0.BETA2" />
-	<property name="tcap_VERSION" value="1.0.0.BETA2" />
-	<property name="map_VERSION" value="1.0.0.BETA2" />
+	<property name="m3ua_VERSION" value="1.0.0.BETA1" />
+	<property name="mtp_VERSION" value="1.0.0.BETA4" />
+	<property name="isup_VERSION" value="1.0.0.BETA3" />
+	<property name="sccp_VERSION" value="1.0.0.BETA3" />
+	<property name="tcap_VERSION" value="1.0.0.BETA3" />
+	<property name="map_VERSION" value="1.0.0.BETA3" />
 
 	<property name="asn_DOCS_VERSION" value="1.0.0.BETA1" />
 	<property name="stream_DOCS_VERSION" value="1.0.0.BETA1" />
+	<property name="m3ua_DOCS_VERSION" value="1.0.0.BETA1" />
 	<property name="mtp_DOCS_VERSION" value="1.0.0.BETA2" />
 	<property name="isup_DOCS_VERSION" value="1.0.0.BETA1" />
 	<property name="sccp_DOCS_VERSION" value="1.0.0.BETA1" />
@@ -74,19 +76,25 @@
 
 		<echo>Checkout SS7 Parent v${parent_VERSION}</echo>
 		<exec executable="${mvn.executable}" dir="${ss7.release.sf}/../">
-			<arg line="-f internal-components-checkout-standalone.xml validate -P checkout-resource -Dcheckout_base_dir=${checkout_base_dir} -Dprotocol_name=parent -Dprotocol_id=ss7 -Dprotocol_version=${parent_VERSION}" />
+			<arg line="-f internal-components-checkout-standalone.xml validate -P checkout-protocol -Dcheckout_base_dir=${checkout_base_dir} -Dprotocol_name=parent -Dprotocol_id=ss7 -Dprotocol_version=${parent_VERSION}" />
 		</exec>
 
+
+		<!-- For this rel, M3UA is different -->
+		<echo>Checkout SS7 m3ua Protocol v${m3ua_VERSION}</echo>
+		<exec executable="${mvn.executable}" dir="${ss7.release.sf}/../">
+			<arg line="-f internal-components-checkout-standalone.xml validate -P checkout-protocol -Dcheckout_base_dir=${checkout_base_dir} -Dprotocol_name=m3ua -Dprotocol_id=m3ua -Dprotocol_version=${m3ua_VERSION} -Ddocs_version=${mtp_DOCS_VERSION}" />
+		</exec>
 		<echo>Checkout SS7 mtp Protocol v${mtp_VERSION}</echo>
 		<exec executable="${mvn.executable}" dir="${ss7.release.sf}/../">
-			<arg line="-f internal-components-checkout-standalone.xml validate -P checkout-resource -Dcheckout_base_dir=${checkout_base_dir} -Dprotocol_name=mtp -Dprotocol_id=mtp -Dprotocol_version=${mtp_VERSION} -Ddocs_version=${mtp_DOCS_VERSION}" />
+			<arg line="-f internal-components-checkout-standalone.xml validate -P checkout-protocol -Dcheckout_base_dir=${checkout_base_dir} -Dprotocol_name=mtp -Dprotocol_id=mtp -Dprotocol_version=${mtp_VERSION} -Ddocs_version=${mtp_DOCS_VERSION}" />
 		</exec>
 
 		<for delimiter="," param="protocol.name" list="${PROTOCOLS_LIST}">
 			<sequential>
 				<echo>Checkout SS7 @{protocol.name} Protocol v${@{protocol.name}_VERSION}</echo>
 				<exec executable="${mvn.executable}" dir="${ss7.release.sf}/../">
-					<arg line="-f internal-components-checkout-standalone.xml validate -P checkout-protocol -Dcheckout_base_dir=${checkout_base_dir} -Dprotocol_name=@{protocol.name} -Dprotocol_version=${@{protocol.name}_VERSION} -Ddocs_version=${@{protocol.name}_DOCS_VERSION}" />
+					<arg line="-f internal-components-checkout-standalone.xml validate -P checkout-protocol -Dcheckout_base_dir=${checkout_base_dir} -Dprotocol_name=@{protocol.name} -Dprotocol_id=@{protocol.name} -Dprotocol_version=${@{protocol.name}_VERSION} -Ddocs_version=${@{protocol.name}_DOCS_VERSION}" />
 				</exec>
 			</sequential>
 		</for>
@@ -103,6 +111,11 @@
 			<arg line="-f pom.xml clean install" />
 		</exec>
 
+		<echo>Build SS7 m3ua Protocol v${m3ua_VERSION}</echo>
+		<exec executable="${mvn.executable}" dir="${checkout_base_dir}/m3ua">
+			<arg line="-f pom.xml clean install" />
+		</exec>
+
 		<echo>Build SS7 mtp Protocol v${mtp_VERSION}</echo>
 		<exec executable="${mvn.executable}" dir="${checkout_base_dir}/mtp">
 			<arg line="-f pom.xml clean install" />
@@ -113,7 +126,7 @@
 				<exec executable="${mvn.executable}" dir="${checkout_base_dir}/@{protocol.name}">
 					<arg line="-f pom.xml clean install" />
 				</exec>
-			
+
 			</sequential>
 		</for>
 
@@ -137,40 +150,40 @@
 	<target name="build-docs-protocol">
 
 
-			<echo>Build SS7 mtp Protocol v${mtp_VERSION}</echo>
-			<exec executable="${mvn.executable}" dir="${checkout_base_dir}/mtp/docs">
-				<arg line="-f pom.xml clean install" />
-			</exec>
-			<for delimiter="," param="protocol.name" list="${PROTOCOLS_LIST}">
-				<sequential>
-					<echo>Build Docs SS7 @{protocol.name} Protocol v${@{protocol.name}_VERSION}</echo>
+		<echo>Build SS7 mtp Protocol v${mtp_VERSION}</echo>
+		<exec executable="${mvn.executable}" dir="${checkout_base_dir}/mtp/docs">
+			<arg line="-f pom.xml clean install" />
+		</exec>
+		<for delimiter="," param="protocol.name" list="${PROTOCOLS_LIST}">
+			<sequential>
+				<echo>Build Docs SS7 @{protocol.name} Protocol v${@{protocol.name}_VERSION}</echo>
 
-			
-					<exec executable="${mvn.executable}" dir="${checkout_base_dir}/@{protocol.name}/docs">
-						<arg line="-f pom.xml clean install -Pmobicents" />
-					</exec>
-				
-				</sequential>
-			</for>
 
-		</target>
+				<exec executable="${mvn.executable}" dir="${checkout_base_dir}/@{protocol.name}/docs">
+					<arg line="-f pom.xml clean install -Pmobicents" />
+				</exec>
 
-		<target name="build-docs-asn">
+			</sequential>
+		</for>
 
-			<exec executable="${mvn.executable}" dir="${checkout_base_dir}/asn/docs">
-				<arg line="-f pom.xml clean install -Pmobicents" />
-			</exec>
+	</target>
 
-		</target>
+	<target name="build-docs-asn">
 
-		<target name="build-docs-stream">
+		<exec executable="${mvn.executable}" dir="${checkout_base_dir}/asn/docs">
+			<arg line="-f pom.xml clean install -Pmobicents" />
+		</exec>
 
-			<exec executable="${mvn.executable}" dir="${checkout_base_dir}/stream/docs">
-				<arg line="-f pom.xml clean install -Pmobicents" />
-			</exec>
+	</target>
 
-		</target>
-	
+	<target name="build-docs-stream">
+
+		<exec executable="${mvn.executable}" dir="${checkout_base_dir}/stream/docs">
+			<arg line="-f pom.xml clean install -Pmobicents" />
+		</exec>
+
+	</target>
+
 
 	<!-- Copy jars section -->
 
@@ -203,7 +216,14 @@
 			</fileset>
 
 		</copy>
-
+		<copy todir="${zip_dir}/m3ua" verbose="true" failonerror="${failoncopy}">
+			<fileset dir="${checkout_base_dir}/m3ua/api/target">
+				<include name="m3ua-api-${m3ua_VERSION}.jar" />
+			</fileset>
+			<fileset dir="${checkout_base_dir}/m3ua/impl/target">
+				<include name="m3ua-impl-${m3ua_VERSION}.jar" />
+			</fileset>
+		</copy>
 		<for delimiter="," param="protocol.name" list="${PROTOCOLS_LIST}">
 			<sequential>
 				<echo>Copy jars SS7 @{protocol.name} Protocol v${@{protocol.name}_VERSION}</echo>
@@ -221,50 +241,60 @@
 
 			</sequential>
 		</for>
+
+		<!-- copy sccp service. -->
+		<copy todir="${zip_dir}/sccp" verbose="true" failonerror="${failoncopy}">
+			
+			<fileset dir="${checkout_base_dir}/sccp/sccp-impl/target">
+				<include name="asccp-impl-stack" />
+			</fileset>
+		</copy>
 	</target>
 
 	<!-- Copy docs section -->
 
 	<target name="copy-docs-asn">
 
-			<copy todir="${zip_dir}/asn/docs">
-				<fileset dir="${checkout_base_dir}/asn/docs/jdocbook-mobicents/target/docbook/publish/en-US">
-					<include name="**" />
-				</fileset>
-			</copy>
+		<copy todir="${zip_dir}/asn/docs">
+			<fileset dir="${checkout_base_dir}/asn/docs/jdocbook-mobicents/target/docbook/publish/en-US">
+				<include name="**" />
+			</fileset>
+		</copy>
 
-		</target>
-		<target name="copy-docs-stream">
+	</target>
+	<target name="copy-docs-stream">
 
-			<copy todir="${zip_dir}/stream/docs">
-				<fileset dir="${checkout_base_dir}/stream/docs/jdocbook-mobicents/target/docbook/publish/en-US">
-					<include name="**" />
-				</fileset>
-			</copy>
-		</target>
+		<copy todir="${zip_dir}/stream/docs">
+			<fileset dir="${checkout_base_dir}/stream/docs/jdocbook-mobicents/target/docbook/publish/en-US">
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
 
-		<target name="copy-docs-protocol">
+	<target name="copy-docs-protocol">
 
-			<echo>Copy Docs SS7 mtp Protocol v${mtp_VERSION}</echo>
+		<echo>Copy Docs SS7 mtp Protocol v${mtp_VERSION}</echo>
 
-			<copy todir="${zip_dir}/mtp/docs">
-				<fileset dir="${checkout_base_dir}/mtp/docs/jdocbook-mobicents/target/docbook/publish/en-US/">
-					<include name="**" />
-				</fileset>
-			</copy>
+		<copy todir="${zip_dir}/mtp/docs">
+			<fileset dir="${checkout_base_dir}/mtp/docs/jdocbook-mobicents/target/docbook/publish/en-US/">
+				<include name="**" />
+			</fileset>
+		</copy>
 
-			<for delimiter="," param="protocol.name" list="${PROTOCOLS_LIST}">
-				<sequential>
-					<echo>Copy Docs SS7 @{protocol.name} Protocol v${@{protocol.name}_VERSION}</echo>
+		<!-- no m3ua docs -->
 
-					<copy todir="${zip_dir}/@{protocol.name}/docs">
-						<fileset dir="${checkout_base_dir}/@{protocol.name}/docs/jdocbook-mobicents/target/docbook/publish/en-US/">
-							<include name="**" />
-						</fileset>
-					</copy>
-				</sequential>
-			</for>
-		</target>
+		<for delimiter="," param="protocol.name" list="${PROTOCOLS_LIST}">
+			<sequential>
+				<echo>Copy Docs SS7 @{protocol.name} Protocol v${@{protocol.name}_VERSION}</echo>
+
+				<copy todir="${zip_dir}/@{protocol.name}/docs">
+					<fileset dir="${checkout_base_dir}/@{protocol.name}/docs/jdocbook-mobicents/target/docbook/publish/en-US/">
+						<include name="**" />
+					</fileset>
+				</copy>
+			</sequential>
+		</for>
+	</target>
 
 	<!-- Prepare text content section -->
 
@@ -276,6 +306,7 @@
 					<token key="ASN_VERSION" value="${asn_VERSION}" />
 					<token key="STREAM_VERSION" value="${stream_VERSION}" />
 					<token key="PARENT_VERSION" value="${parent_VERSION}" />
+					<token key="M3UA_VERSION" value="${m3ua_VERSION}" />
 					<token key="MTP_VERSION" value="${mtp_VERSION}" />
 					<token key="ISUP_VERSION" value="${isup_VERSION}" />
 					<token key="SCCP_VERSION" value="${sccp_VERSION}" />

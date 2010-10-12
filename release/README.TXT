@@ -20,6 +20,7 @@
 
   * ASN v@ASN_VERSION@
   * Stream v@STREAM_VERSION@
+  * M3UA v@M3UA_VERSION@
   * MTP v@MTP_VERSION@
   * ISUP v@ISUP_VERSION@
   * SCCP v@SCCP_VERSION@
@@ -48,14 +49,15 @@ http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/ss7
  SVN Tag Checkout
 ------------------
 
-http://mobicents.googlecode.com/svn/tags/protocols/asn/@ASN_VERSION@
-http://mobicents.googlecode.com/svn/tags/protocols/stream/@STREAM_VERSION@
-http://mobicents.googlecode.com/svn/tags/protocols/ss7/parent/@PARENT_VERSION@
-http://mobicents.googlecode.com/svn/tags/protocols/ss7/mtp/@MTP_VERSION@
-http://mobicents.googlecode.com/svn/tags/protocols/ss7/sccp/@SCCP_VERSION@
-http://mobicents.googlecode.com/svn/tags/protocols/ss7/tcap/@TCAP_VERSION@
-http://mobicents.googlecode.com/svn/tags/protocols/ss7/map/@MAP_VERSION@
-http://mobicents.googlecode.com/svn/tags/protocols/ss7/isup/@ISUP_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/asn/asn-@ASN_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/stream/stream-@STREAM_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/ss7/parent/ss7-@PARENT_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/ss7/m3ua-@M3UA_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/ss7/mtp/mtp-@MTP_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/ss7/sccp/sccp-@SCCP_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/ss7/tcap/tcap-@TCAP_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/ss7/map/map-@MAP_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/ss7/isup/isup-@ISUP_VERSION@
 
 
   
@@ -63,7 +65,8 @@ http://mobicents.googlecode.com/svn/tags/protocols/ss7/isup/@ISUP_VERSION@
  How to Use it?
 ----------------
 
- Please refer to documentation in each module for explanation.
+ Please refer to documentation in each module for detailed explanation.
+ 
 
 ------------------
  More Information

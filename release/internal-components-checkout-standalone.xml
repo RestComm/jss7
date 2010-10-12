@@ -38,54 +38,6 @@
 									<scmVersionType>revision</scmVersionType>
 									<skipCheckoutIfExists>false</skipCheckoutIfExists>
 									<checkoutDirectory>${checkout.basedir}/${protocol_name}</checkoutDirectory>
-									<connectionUrl>${protocol.connectionURL}/${protocol_name}/${protocol_name}-${protocol_version}</connectionUrl>
-									<username>${checkout.username}</username>
-									<password>${checkout.password}</password>
-								</configuration>
-							</execution>
-							<!-- 
-							<execution>
-								<id>ss7-core-docs-checkout</id>
-								<goals>
-									<goal>checkout</goal>
-								</goals>
-								<phase>validate</phase>
-								<configuration>
-									<scmVersion>HEAD</scmVersion>
-									<scmVersionType>revision</scmVersionType>
-									<skipCheckoutIfExists>false</skipCheckoutIfExists>
-									<checkoutDirectory>${checkout.basedir}/core/docs</checkoutDirectory>
-									<connectionUrl>${ss7.core.docs.connectionURL}-${docs_version}</connectionUrl>
-									<username>${checkout.username}</username>
-									<password>${checkout.password}</password>
-								</configuration>
-							</execution>
-							 -->
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>checkout-resource</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-scm-plugin</artifactId>
-						<inherited>false</inherited>
-						<executions>
-							<execution>
-								<id>checkout-resources</id>
-								<goals>
-									<goal>checkout</goal>
-								</goals>
-								<phase>validate</phase>
-								<configuration>
-									<scmVersion>HEAD</scmVersion>
-									<scmVersionType>revision</scmVersionType>
-									<skipCheckoutIfExists>false</skipCheckoutIfExists>
-									<checkoutDirectory>${checkout.basedir}/${protocol_name}</checkoutDirectory>
 									<connectionUrl>${protocol.connectionURL}/${protocol_name}/${protocol_id}-${protocol_version}</connectionUrl>
 									<username>${checkout.username}</username>
 									<password>${checkout.password}</password>
@@ -114,6 +66,7 @@
 				</plugins>
 			</build>
 		</profile>
+		
 	</profiles>
 	
 </project>
