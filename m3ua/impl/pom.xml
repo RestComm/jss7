@@ -9,7 +9,7 @@
 
 	<artifactId>m3ua-impl</artifactId>
 
-	<name>Mobicents SS7 :: M3UA :: Implementation</name>
+	<name>Mobicents SS7 :: M3UA :: Impl :: ${pom.artifactId}</name>
 
 	<properties>
 		<maven.test.skip>false</maven.test.skip>

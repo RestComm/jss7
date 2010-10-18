@@ -11,7 +11,7 @@
 
 	<artifactId>mobicents-isup-docs</artifactId>
 	<groupId>org.mobicents.protocols.ss7.isup.docs</groupId>
-
+	<name>Mobicents SS7 :: ISUP :: Docs :: Parent :: ${pom.artifactId}</name>
 	<packaging>pom</packaging>
 
 	<properties>

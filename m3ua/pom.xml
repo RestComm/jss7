@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 
@@ -15,7 +16,8 @@
 
 	<packaging>pom</packaging>
 
-	<name>Mobicents SS7 :: M3UA</name>
+	<name>Mobicents SS7 :: M3UA :: Parent :: ${pom.artifactId}</name>
+	
 	<properties>
 		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
 	</properties>
@@ -67,7 +69,7 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	<!--  -->
+	<!-- -->
 	<build>
 		<plugins>
 			<plugin>
@@ -98,9 +100,7 @@
 		<profile>
 			<id>maven-release</id>
 			<modules>
-				<!-- If copy paste, please look... cmon 
-				<module>docs</module>
-				 -->
+				<!-- If copy paste, please look... cmon <module>docs</module> -->
 			</modules>
 			<build>
 				<plugins>
@@ -124,8 +124,9 @@
 		</profile>
 		<profile>
 			<id>release</id>
-			<modules/>
-				
+			<modules>
+				<module>release</module>
+			</modules>
 			<!-- Add more if required -->
 		</profile>
 	</profiles>

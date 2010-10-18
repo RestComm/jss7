@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>mobicents-sccp-docs-sources</artifactId>
-
+	<name>Mobicents SS7 :: SCCP :: Docs :: Sources :: ${pom.artifactId}</name>
 	<properties>
 
 	</properties>

@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>mobicents-isup-docs-sources-mobicents</artifactId>
-
+	<name>Mobicents SS7 :: ISUP :: Docs :: Sources :: ${pom.artifactId}</name>
 	<properties>
 		<THIS.PLATFORM>Mobicents</THIS.PLATFORM>
 		<JEE.PLATFORM>JBoss Application Server</JEE.PLATFORM>

@@ -9,7 +9,7 @@
 
 	<artifactId>map-api</artifactId>
 
-	<name>Mobicents SS7 :: MAP :: Api  :: ${pom.artifactId}</name>
+	<name>Mobicents SS7 :: MAP :: Api :: ${pom.artifactId}</name>
 
 	<properties>
 		<maven.test.skip>false</maven.test.skip>

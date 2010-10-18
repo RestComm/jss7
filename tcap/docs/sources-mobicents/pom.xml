@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>mobicents-tcap-docs-sources-mobicents</artifactId>
-
+	<name>Mobicents SS7 :: TCAP :: Docs :: Sources :: ${pom.artifactId}</name>
 	<properties>
 		<THIS.PLATFORM>Mobicents</THIS.PLATFORM>
 		<JEE.PLATFORM>JBoss Application Server</JEE.PLATFORM>

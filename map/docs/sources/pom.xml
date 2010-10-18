@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>mobicents-map-docs-sources</artifactId>
-
+	<name>Mobicents SS7 :: MAP :: Docs :: Sources :: ${pom.artifactId}</name>
 	<properties>
 
 	</properties>

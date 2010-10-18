@@ -15,7 +15,7 @@
 
 	<packaging>pom</packaging>
 
-	<name>Mobicents SS7 :: MAP Parent  :: ${pom.artifactId}</name>
+	<name>Mobicents SS7 :: MAP :: Parent :: ${pom.artifactId}</name>
 	<properties>
 		<maven.test.skip>false</maven.test.skip>
 		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
@@ -130,6 +130,7 @@
 			<id>release</id>
 			<modules>
 				<module>docs</module>
+				<module>release</module>
 			</modules>
 			<!-- Add more if required -->
 		</profile>

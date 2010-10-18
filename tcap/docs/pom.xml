@@ -11,7 +11,7 @@
 
 	<artifactId>mobicents-tcap-docs</artifactId>
 	<groupId>org.mobicents.protocols.ss7.tcap.docs</groupId>
-
+	<name>Mobicents SS7 :: TCAP :: Docs :: Parent :: ${pom.artifactId}</name>
 	<packaging>pom</packaging>
 
 	<properties>

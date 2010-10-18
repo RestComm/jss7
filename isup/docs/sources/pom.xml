@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>mobicents-isup-docs-sources</artifactId>
-
+	<name>Mobicents SS7 :: ISUP :: Docs :: Sources :: ${pom.artifactId}</name>
 	<properties>
 
 	</properties>
