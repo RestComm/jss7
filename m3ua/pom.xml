@@ -122,6 +122,12 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>release</id>
+			<modules/>
+				
+			<!-- Add more if required -->
+		</profile>
 	</profiles>
 	<scm>
 		<connection>

@@ -120,6 +120,13 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>release</id>
+			<modules>
+				<module>docs</module>
+			</modules>
+			<!-- Add more if required -->
+		</profile>
 	</profiles>
 	<scm>
 		<connection>

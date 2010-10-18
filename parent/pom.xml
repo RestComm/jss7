@@ -232,8 +232,10 @@
 				</plugins>
 			</build>
 		</profile>
-
-
+		<profile>
+			<id>release</id>
+			<modules />
+		</profile>
 	</profiles>
 	<developers>
 		<developer>
