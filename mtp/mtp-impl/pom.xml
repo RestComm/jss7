@@ -9,7 +9,7 @@
 
 	<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 	<artifactId>mtp</artifactId>
-	<name>Mobicents MTP Impl</name>
+	<name>Mobicents SS7 :: MTP :: Impl :: ${pom.artifactId}</name>
 	
 	<developers>
 		<developer>

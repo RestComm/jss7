@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>mobicents-mtp-docs-sources-mobicents</artifactId>
-
+	<name>Mobicents SS7 :: MTP :: Docs :: Sources :: ${pom.artifactId}</name>
 	<properties>
 		<THIS.PLATFORM>Mobicents</THIS.PLATFORM>
 		<JEE.PLATFORM>JBoss Application Server</JEE.PLATFORM>

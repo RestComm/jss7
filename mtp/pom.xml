@@ -10,15 +10,11 @@
 	<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 	<artifactId>mtp-parent</artifactId>
 	<version>1.0.0.BETA5-SNAPSHOT</version>
-	<name>Mobicents MTP Parent</name>
+	<name>Mobicents SS7 :: MTP :: Parent :: ${pom.artifactId}</name>
 	<packaging>pom</packaging>
 	
 
 	<properties>
-	
-		<release.name>
-			${release.name.prefix}${parent.version}${release.name.suffix}
-		</release.name>
 
 		<!-- OTHER MOBICENTS COMPONENTS VERSIONS -->
 		<mobicents.tools.mavenplugin.eclipse.version>
@@ -77,6 +73,7 @@
 			<id>release</id>
 			<modules>
 				<module>docs</module>
+				<module>release</module>
 			</modules>
 			<!-- Add more if required -->
 		</profile>

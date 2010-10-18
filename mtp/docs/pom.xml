@@ -10,7 +10,7 @@
 
 	<artifactId>mobicents-mtp-docs</artifactId>
 	<groupId>org.mobicents.protocols.ss7.mtp.docs</groupId>
-	
+	<name>Mobicents SS7 :: MTP :: Docs :: Parent :: ${pom.artifactId}</name>
 	<packaging>pom</packaging>
 
 	<properties>

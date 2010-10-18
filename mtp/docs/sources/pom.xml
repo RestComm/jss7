@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>mobicents-mtp-docs-sources</artifactId>
-
+	<name>Mobicents SS7 :: MTP :: Docs :: Sources :: ${pom.artifactId}</name>
 	<properties>
 
 	</properties>
