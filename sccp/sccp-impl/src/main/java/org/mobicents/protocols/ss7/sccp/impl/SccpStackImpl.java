@@ -130,7 +130,6 @@ public class SccpStackImpl implements SccpStack, MtpListener {
     /* (non-Javadoc)
      * @see org.mobicents.protocols.ss7.sccp.SccpStack#setRouter(org.mobicents.protocols.ss7.sccp.Router)
      */
-    @Override
     public void setRouter(Router router) {
         //TODO: make router configurable through API(creation and route mgmgt)
         this.router = router;
