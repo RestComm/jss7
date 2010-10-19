@@ -288,7 +288,7 @@ public class Provider implements MtpProvider, Runnable {
     }
 
     public boolean isLinkUp() {
-        return true;
+        return true; //...... Oleg fix this....
     }
     
     /**
