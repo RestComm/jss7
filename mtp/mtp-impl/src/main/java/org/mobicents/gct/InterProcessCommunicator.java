@@ -12,7 +12,7 @@
  * usefulness of the software.
  */
 
-package org.mobicents.protocols.ss7.mtp.dialogic;
+package org.mobicents.gct;
 
 import java.io.IOException;
 

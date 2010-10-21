@@ -17,6 +17,7 @@
  */
 package org.mobicents.protocols.ss7.mtp.dialogic;
 
+import org.mobicents.gct.InterProcessCommunicator;
 import java.io.IOException;
 import java.util.Properties;
 import org.apache.log4j.Logger;
@@ -156,10 +157,10 @@ public class MtpImpl implements MtpProvider, Runnable {
      * @see org.mobicents.protocols.ss7.mtp.provider.MtpProvider#start() 
      */
     public void start() throws StartFailedException {
-        logger.info(String.format("Starting linkset :[opc=&d, adjacent=&d]", opc, dpc));
+        logger.info(String.format("Starting linkset :[opc=%d, adjacent=%d]", opc, dpc));
         
         ipc = new InterProcessCommunicator(src, dst);
-        logger.info(String.format("Succesfully accessed hardware:[opc=&d, adjacent=&d]", opc, dpc));
+        logger.info(String.format("Succesfully accessed hardware:[opc=%d, adjacent=%d]", opc, dpc));
         
         this.stopped = false;
         
@@ -208,7 +209,7 @@ public class MtpImpl implements MtpProvider, Runnable {
 
                 //receive message signal unit from harware
                 byte[] msu = ipc.receive();
-
+                logger.info("Packet received!!!!");
                 if (logger.isTraceEnabled()) {
                     logger.trace(Utils.hexDump("Packet received\n", msu));
                 }
@@ -218,7 +219,7 @@ public class MtpImpl implements MtpProvider, Runnable {
                     listener.receive(msu);
                 }
             } catch (Exception e) {
-                logger.error("I/O error occured while sending data to MTP3 driver", e);
+                logger.error("I/O error occured while reading data from MTP3 driver", e);
             }
         }
     }
