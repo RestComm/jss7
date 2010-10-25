@@ -59,6 +59,7 @@ public class SccpStackImpl implements SccpStack, MtpListener {
 
     public SccpStackImpl() {
         sccpProvider = new SccpProviderImpl(this); //why this is present? 
+        this.state = State.CONFIGURED;
     }
 
     /**

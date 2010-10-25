@@ -77,7 +77,7 @@ public class SccpService {
         logger.info("SCCP stack Started. SccpProvider bound to "+ this.jndiName);
     }
     
-/**
+    /**
      * Unbounds object under specified name.
      *
      * @param jndiName the JNDI name of the object to be unbound.

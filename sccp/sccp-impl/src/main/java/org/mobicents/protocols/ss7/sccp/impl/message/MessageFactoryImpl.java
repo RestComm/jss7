@@ -19,6 +19,9 @@ package org.mobicents.protocols.ss7.sccp.impl.message;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.MessageType;
 import org.mobicents.protocols.ss7.sccp.message.UnitData;
@@ -32,7 +35,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author kulikov
  */
 public class MessageFactoryImpl implements MessageFactory {
-
+	private static final Logger logger = Logger.getLogger(MessageFactoryImpl.class);
     public UnitData createUnitData(ProtocolClass pClass, SccpAddress calledParty,
             SccpAddress callingParty) {
         return new UnitDataImpl(pClass, calledParty, callingParty);
@@ -53,6 +56,9 @@ public class MessageFactoryImpl implements MessageFactory {
         }
         if (msg != null) {
             msg.decode(in);
+        }else if(logger.isEnabledFor(Level.WARN))
+        {
+        	logger.warn("No message implementation for MT: "+type);
         }
         return msg;
     }

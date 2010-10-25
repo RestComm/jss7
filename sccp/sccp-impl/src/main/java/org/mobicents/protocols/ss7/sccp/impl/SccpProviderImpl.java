@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
@@ -36,6 +38,8 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author baranowb
  */
 public class SccpProviderImpl implements SccpProvider, Serializable {
+	//TODO: Oleg, this is not serializable resource!
+	private static final Logger logger = Logger.getLogger(SccpProviderImpl.class);
     private transient SccpStackImpl stack;
     private HashMap<SccpAddress, SccpListener> listeners = new HashMap();
     
@@ -72,7 +76,17 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
      */
     protected void notify(SccpAddress address, SccpMessage message) {
         SccpListener listener = listeners.get(address);
-        listener.onMessage(message);
+        if(listener == null)
+        {
+        	if(logger.isEnabledFor(Level.WARN))
+        	{
+        		logger.warn("No listener could be found for address: "+address);
+        	}
+        	
+        }else
+        {
+        	listener.onMessage(message);
+        }
     }
 
     public void send(SccpMessage message) throws IOException {
