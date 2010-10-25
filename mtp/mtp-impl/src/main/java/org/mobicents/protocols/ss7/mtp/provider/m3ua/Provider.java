@@ -149,6 +149,7 @@ public class Provider implements MtpProvider, Runnable {
             ProtocolData data = provider.getParameterFactory().createProtocolData(0, msu);
             msg.setData(data);
             try {
+            	tm = msg;
                 sendReady = true;
                 txFailed = false;
                 sendCompleted.await(5, TimeUnit.SECONDS);
