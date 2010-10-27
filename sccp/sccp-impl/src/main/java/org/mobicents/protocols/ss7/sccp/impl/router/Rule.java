@@ -78,6 +78,11 @@ public class Rule {
     public int getNo() {
         return no;
     }
+    
+    protected void setNo(int no) {
+        this.no = no;
+    }
+    
     /**
      * Gets the pattern for rule selection.
      * 

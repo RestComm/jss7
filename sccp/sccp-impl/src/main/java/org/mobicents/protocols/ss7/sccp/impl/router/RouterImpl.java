@@ -18,12 +18,16 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -35,23 +39,37 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author kulikov
  */
 public class RouterImpl {
-    private final static String STORAGE = "/sccp-routing.cfg";
+    private final static String STORAGE = "sccp-routing.txt";
     private Route route;
     
     private File file;
     
+    private Logger logger = Logger.getLogger(RouterImpl.class);
     //rule list
-    private ArrayList rules = new ArrayList();
+    private ArrayList<Rule> rules = new ArrayList();
     
+    public RouterImpl() {
+        try {
+            file = new File(STORAGE);
+            load();
+        } catch (Exception e) {
+            logger.warn("Can not load rules from config: " + STORAGE);
+        }
+    }
     /**
      * Adds new rule for routing.
      * 
      * @param rule the new rule to be added.
      */
-    public void add(Rule rule) {
+    public void add(Rule rule) throws IOException {
         rule.no = rules.size();
         rules.add(rule);
-        //TODO add persistance
+        try {
+            store(rule);
+        } catch (Exception e) {
+            rules.remove(rule);
+            throw new IOException(e);
+        }
     }
     
     /**
@@ -59,9 +77,18 @@ public class RouterImpl {
      * 
      * @param rule
      */
-    public void remove(int no) {
+    public void remove(int no) throws IOException {
         rules.remove(no);
-        //TODO add persistance
+        //reorder rules
+        int i = 0;
+        for (Rule rule: rules) {
+            rule.setNo(i++);
+        }
+        
+        clean();
+        for (Rule rule: rules) {
+            store(rule);
+        }        
     }
     
     /**
@@ -73,12 +100,31 @@ public class RouterImpl {
         return rules;
     }
     
+    public void clean() throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file, false));
+        writer.write("");
+        writer.flush();
+        writer.close();
+    }
+    
     public Route route(SccpAddress calledPartyAddress) {
         return route;
     }
     
     private void store(Rule rule) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
         writer.write(rule.toString());
+        writer.newLine();
+        writer.flush();
+        writer.close();
+    }
+    
+    private void load() throws FileNotFoundException, IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            rules.add(Rule.getInstance(line));
+        }
+        reader.close();
     }
 }
