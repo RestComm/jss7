@@ -68,7 +68,7 @@ public class RouterImpl {
             store(rule);
         } catch (Exception e) {
             rules.remove(rule);
-            throw new IOException(e);
+            throw new IOException(e.getMessage());
         }
     }
     
