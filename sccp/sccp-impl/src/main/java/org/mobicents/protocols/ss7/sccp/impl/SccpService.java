@@ -54,6 +54,7 @@ public class SccpService {
     	logger.info("Starting SCCP stack...");
         stack = new SccpStackImpl();
         stack.setLinksets(linksets);
+        stack.start();
         rebind(stack);
     }
     

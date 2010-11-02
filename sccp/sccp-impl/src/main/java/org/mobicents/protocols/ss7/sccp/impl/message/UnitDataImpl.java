@@ -146,4 +146,9 @@ public class UnitDataImpl extends SccpMessageImpl implements UnitData {
         this.data = data;
     }
 
+    @Override
+    public String toString() {
+        return "UDT[calledPartyAddress=" + calledParty + ", callingPartyAddress=" + callingParty + "]";
+    }
+    
 }

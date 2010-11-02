@@ -34,10 +34,10 @@ public class GT0100  extends GlobalTitle {
 
     private final static GlobalTitleIndicator gti = 
             GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS;
-    private int translationType;
-    private NumberingPlan numberingPlan;
+    private int tt;
+    private NumberingPlan np;
     private EncodingScheme encodingScheme;
-    private NatureOfAddress natureOfAddress;
+    private NatureOfAddress na;
     private String digits = "";
 
     /** Creates a new instance of GT0100 */
@@ -46,9 +46,9 @@ public class GT0100  extends GlobalTitle {
 
     public GT0100(int translationType, NumberingPlan numberingPlan,
             NatureOfAddress natureOfAddress, String digits) {
-        this.translationType = translationType;
-        this.numberingPlan = numberingPlan;
-        this.natureOfAddress = natureOfAddress;
+        this.tt = translationType;
+        this.np = numberingPlan;
+        this.na = natureOfAddress;
         this.digits = digits;
         this.encodingScheme = digits.length() % 2 == 0 ? EncodingScheme.BCD_EVEN : EncodingScheme.BCD_ODD;
     }
@@ -58,37 +58,37 @@ public class GT0100  extends GlobalTitle {
         int b2 = in.read() & 0xff;
         int b3 = in.read() & 0xff;
 
-        translationType = b1;
+        tt = b1;
 
         encodingScheme = EncodingScheme.valueOf(b2 & 0x0f);
-        numberingPlan = NumberingPlan.valueOf((b2 & 0xf0) >> 4);
-        natureOfAddress = NatureOfAddress.valueOf(b3 & 0x7f);
+        np = NumberingPlan.valueOf((b2 & 0xf0) >> 4);
+        na = NatureOfAddress.valueOf(b3 & 0x7f);
 
         digits = encodingScheme.decodeDigits(in);
     }
 
     public void encode(OutputStream out) throws IOException {
-        out.write((byte) translationType);
+        out.write((byte) tt);
 
-        byte b = (byte) ((numberingPlan.getValue() << 4) | (encodingScheme.getValue()));
+        byte b = (byte) ((np.getValue() << 4) | (encodingScheme.getValue()));
         out.write(b);
 
-        b = (byte) (natureOfAddress.getValue() & 0x7f);
+        b = (byte) (na.getValue() & 0x7f);
         out.write(b);
 
         encodingScheme.encodeDigits(digits, out);
     }
 
     public int getTranslationType() {
-        return translationType;
+        return tt;
     }
 
     public NumberingPlan getNumberingPlan() {
-        return numberingPlan;
+        return np;
     }
 
     public NatureOfAddress getNatureOfAddress() {
-        return natureOfAddress;
+        return na;
     }
 
     public String getDigits() {
@@ -111,18 +111,22 @@ public class GT0100  extends GlobalTitle {
         }
         
         GT0100 gt1 = (GT0100)gt;
-        return gt1.translationType == translationType && gt1.numberingPlan == numberingPlan &&
-                gt1.natureOfAddress == natureOfAddress && gt1.digits.equals(digits);
+        return gt1.tt == tt && gt1.np == np &&
+                gt1.na == na && gt1.digits.equals(digits);
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 61 * hash + this.translationType;
-        hash = 61 * hash + (this.numberingPlan != null ? this.numberingPlan.hashCode() : 0);
-        hash = 61 * hash + (this.natureOfAddress != null ? this.natureOfAddress.hashCode() : 0);
+        hash = 61 * hash + this.tt;
+        hash = 61 * hash + (this.np != null ? this.np.hashCode() : 0);
+        hash = 61 * hash + (this.na != null ? this.na.hashCode() : 0);
         hash = 61 * hash + (this.digits != null ? this.digits.hashCode() : 0);
         return hash;
     }
     
+    @Override
+    public String toString() {
+        return "{tt=" + tt + ", np=" + np + ", na=" + na + ", digist=" + digits + "}";
+    }
 }

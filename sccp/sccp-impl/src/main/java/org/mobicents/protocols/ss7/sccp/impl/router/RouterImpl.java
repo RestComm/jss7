@@ -92,6 +92,21 @@ public class RouterImpl {
     }
     
     /**
+     * Looks up rule for translation.
+     * 
+     * @param calledParty called party address
+     * @return the rule with match to the called party address
+     */
+    public Rule find(SccpAddress calledParty) {
+        for (Rule rule : rules) {
+            if (rule.matches(calledParty)) {
+                return rule;
+            }
+        }
+        return null;
+    }
+    
+    /**
      * Gets the list of all rules.
      * 
      * @return list of rules.

@@ -91,4 +91,8 @@ public abstract class GlobalTitle {
         return new GT0100(tt, np,  noa, digits);
     }
     
+    @Override
+    public String toString() {
+        return getIndicator() + " " + getDigits();
+    }
 }

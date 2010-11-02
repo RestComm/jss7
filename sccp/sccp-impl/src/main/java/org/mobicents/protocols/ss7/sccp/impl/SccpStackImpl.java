@@ -108,6 +108,7 @@ public class SccpStackImpl implements SccpStack, MtpListener {
         logger.info("Starting ...");
         executor = Executors.newFixedThreadPool(1);
         if (linksets != null) {
+            logger.info("Linksets :" + linksets.size());
             for (MtpProvider linkset : linksets) {
                 linkset.setMtpListener(this);
                 try {
@@ -233,8 +234,7 @@ public class SccpStackImpl implements SccpStack, MtpListener {
         private SccpMessage message;
 
         protected MessageHandler(byte[] msu) {
-            //skip routing label
-            data = new ByteArrayInputStream(msu, 5, msu.length);
+            data = new ByteArrayInputStream(msu);
             message = null;
         }
 
@@ -245,6 +245,7 @@ public class SccpStackImpl implements SccpStack, MtpListener {
         private SccpMessage parse() throws IOException {
             // wrap stream with DataInputStream
             DataInputStream in = new DataInputStream(data);
+            
             int sio = 0;
             sio = in.read() & 0xff;
 
@@ -255,7 +256,10 @@ public class SccpStackImpl implements SccpStack, MtpListener {
             if (si != 3) {
                 return null;
             }
-
+            
+            //skip remaining 4 bytes
+            in.skip(4);
+            
             // determine message type
             int mt = in.readUnsignedByte();
             return ((MessageFactoryImpl) sccpProvider.getMessageFactory()).createMessage(mt, in);
@@ -265,6 +269,7 @@ public class SccpStackImpl implements SccpStack, MtpListener {
             if (message == null) {
                 try {
                     message = parse();
+                    logger.info("Receive message " + message);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return;

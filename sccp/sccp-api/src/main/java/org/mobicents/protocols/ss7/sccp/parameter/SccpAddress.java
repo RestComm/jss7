@@ -94,4 +94,9 @@ public class SccpAddress {
         hash = 37 * hash + (this.ai != null ? this.ai.hashCode() : 0);
         return hash;
     }
+    
+    @Override
+    public String toString() {
+        return "pc=" + pc + ",ssn=" + ssn + ",gt=" + gt;
+    }
 }

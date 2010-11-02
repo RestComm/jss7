@@ -10,8 +10,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
+import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import static org.junit.Assert.*;
 
 /**
@@ -19,7 +24,7 @@ import static org.junit.Assert.*;
  * @author kulikov
  */
 public class RuleTest {
-    private final static String RULE = "1; #ISDN_MOBILE#NATIONAL#9023629581# ; #ISDN_MOBILE#INTERNATIONAL#79023629581# ;linkset#14083#14155#0\n";
+    private final static String RULE = "1; # #NATIONAL#9023629581# ; # #INTERNATIONAL#79023629581# ;linkset#14083#14155#0\n";
     
     public RuleTest() {
     }
@@ -40,6 +45,23 @@ public class RuleTest {
     public void tearDown() {
     }
 
+    @Test
+    public void testMatches() {
+        Rule rule = Rule.getInstance(RULE);
+        SccpAddress address = new SccpAddress(GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "9023629581"), 0);
+        assertTrue(rule.matches(address));
+    }
+    
+    @Test
+    public void testTranslation() {
+        SccpAddress a1 = new SccpAddress(GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "9023629581"), 0);
+        Rule rule = Rule.getInstance(RULE);
+        
+        SccpAddress a2 = rule.translate(a1);
+        assertEquals(a2.getGlobalTitle().getIndicator(), GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_NATURE_OF_ADDRESS_INDICATOR_ONLY);
+        assertEquals(NatureOfAddress.INTERNATIONAL, ((GT0001)a2.getGlobalTitle()).getNoA());
+        assertEquals("79023629581", a2.getGlobalTitle().getDigits());
+    }
     /**
      * Test of getInstance method, of class Rule.
      */
@@ -47,11 +69,11 @@ public class RuleTest {
     public void testGetInstance() {
         Rule rule = Rule.getInstance(RULE);
         assertEquals(1, rule.getNo());
-        assertEquals(NumberingPlan.ISDN_MOBILE, rule.getPattern().getNumberingPlan());
+        assertEquals(null, rule.getPattern().getNumberingPlan());
         assertEquals(NatureOfAddress.NATIONAL, rule.getPattern().getNatureOfAddress());
         assertEquals("9023629581", rule.getPattern().getDigits());
         
-        assertEquals(NumberingPlan.ISDN_MOBILE, rule.getTranslation().getNumberingPlan());
+        assertEquals(null, rule.getTranslation().getNumberingPlan());
         assertEquals(NatureOfAddress.INTERNATIONAL, rule.getTranslation().getNatureOfAddress());
         assertEquals("79023629581", rule.getTranslation().getDigits());
         
@@ -66,8 +88,8 @@ public class RuleTest {
      */
     @Test
     public void testToString() {
-        AddressInformation ai = new AddressInformation(-1, NumberingPlan.ISDN_MOBILE, NatureOfAddress.NATIONAL, "9023629581", -1);
-        AddressInformation tr = new AddressInformation(-1, NumberingPlan.ISDN_MOBILE, NatureOfAddress.INTERNATIONAL, "79023629581", -1);
+        AddressInformation ai = new AddressInformation(-1, null, NatureOfAddress.NATIONAL, "9023629581", -1);
+        AddressInformation tr = new AddressInformation(-1, null, NatureOfAddress.INTERNATIONAL, "79023629581", -1);
         MTPInfo mtpInfo = new MTPInfo("linkset", 14083, 14155, 0);
         
         Rule rule = new Rule(1, ai, tr, mtpInfo);

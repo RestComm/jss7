@@ -23,6 +23,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0010;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0011;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
+import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -108,6 +109,33 @@ public class Rule {
      */
     public MTPInfo getMTPInfo() {
         return mtpInfo;
+    }
+    
+    /**
+     * Translate specified address according to the rule.
+     * 
+     * @param address the origin address
+     * @return translated address
+     */
+    public SccpAddress translate(SccpAddress address) {
+        //step #1. translate digits
+        //TODO enable expression
+        String digits = this.translation.getDigits();
+        
+        //step #2. translate global title
+        GlobalTitle gt = null;
+        if (translation.getNatureOfAddress() != null && translation.getTranslationType() == -1 && translation.getNumberingPlan() == null) {
+            gt = GlobalTitle.getInstance(translation.getNatureOfAddress(), digits);
+        } else if (translation.getNatureOfAddress() == null && translation.getTranslationType() != -1 && translation.getNumberingPlan() != null) {
+            gt = GlobalTitle.getInstance(translation.getTranslationType(), translation.getNumberingPlan(), digits);
+        } else if (translation.getNatureOfAddress() == null && translation.getTranslationType() != -1 && translation.getNumberingPlan() == null) {
+            gt = GlobalTitle.getInstance(translation.getTranslationType(), digits);
+        } else if (translation.getNatureOfAddress() != null && translation.getTranslationType() != -1 && translation.getNumberingPlan() != null) {
+            gt = GlobalTitle.getInstance(translation.getTranslationType(), translation.getNumberingPlan(), translation.getNatureOfAddress(), digits);
+        }
+        
+        //step #3. create new address object
+        return new SccpAddress(gt, translation.getSubsystem());
     }
     
     public boolean matches(SccpAddress address) {

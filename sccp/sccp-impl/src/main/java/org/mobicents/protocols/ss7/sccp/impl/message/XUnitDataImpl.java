@@ -287,6 +287,10 @@ public class XUnitDataImpl extends SccpMessageImpl implements XUnitData {
         this.data = data;
     }
 
+    @Override
+    public String toString() {
+        return "XUDT[calledPartyAddress=" + calledParty + ", callingPartyAddress=" + callingParty + "]";
+    }
 }
 
 

@@ -78,6 +78,7 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
         SccpListener listener = listeners.get(address);
         if(listener == null)
         {
+            logger.info("Registere listeners for: " + listeners.keySet());
         	if(logger.isEnabledFor(Level.WARN))
         	{
         		logger.warn("No listener could be found for address: "+address);
