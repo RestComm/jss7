@@ -40,20 +40,10 @@ public class TCAPStackImpl implements TCAPStack {
 
     public void start() throws IllegalStateException, StartFailedException {
         logger.info("Starting ...");
-        if (state != State.CONFIGURED) {
-            throw new IllegalStateException("Stack has not been configured or is already running!");
-        }
-		this.tcapProvider.start();
-
-		this.state = State.RUNNING;
-
-
+        tcapProvider.start();
     }
 
     public void stop() {
-    	if (state != State.RUNNING) {
-			throw new IllegalStateException("Stack is not running!");
-		}
 		this.tcapProvider.stop();
 		this.state = State.CONFIGURED;
     }
