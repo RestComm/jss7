@@ -32,7 +32,7 @@
 								<configuration>
 									<tasks>
 										<copy
-											todir="${basedir}/../../../release/${release.name}/tools/twiddle">
+											todir="${basedir}/../../release/${release.name}/twiddle">
 											<fileset dir="${basedir}/../cli/target/release">
 												<include name="**" />
 											</fileset>
