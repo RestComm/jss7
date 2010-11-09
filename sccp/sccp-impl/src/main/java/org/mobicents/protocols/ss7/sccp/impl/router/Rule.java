@@ -17,6 +17,8 @@
  */
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
@@ -30,8 +32,13 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  *
  * @author kulikov
  */
-public class Rule {
-    private final static String SEPARATOR = ";";
+public class Rule implements Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2147449454267320237L;
+
+	private final static String SEPARATOR = ";";
     
     /** the number of the rule */
     protected int no;    
@@ -80,7 +87,7 @@ public class Rule {
         return no;
     }
     
-    protected void setNo(int no) {
+    public void setNo(int no) {
         this.no = no;
     }
     

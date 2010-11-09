@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -13,6 +14,15 @@
 
 
 	<dependencies>
+
+		<dependency>
+			<!-- This comes in container. -->
+			<groupId>org.jboss.jbossas</groupId>
+			<artifactId>jboss-as-system-jmx</artifactId>
+			<version>${jboss.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
 			<artifactId>sccp-api</artifactId>
@@ -50,7 +60,7 @@
 					<target>1.5</target>
 				</configuration>
 			</plugin>
-		
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>

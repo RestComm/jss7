@@ -18,13 +18,20 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
+import java.io.Serializable;
+
 /**
  * Carries the MTP information.
  * 
  * @author kulikov
  */
-public class MTPInfo {
-    private final static String SEPARATOR = "#";
+public class MTPInfo implements Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2052079859277744722L;
+
+	private final static String SEPARATOR = "#";
     
     /** The identifier of MTP-SAP */
     private String name;    

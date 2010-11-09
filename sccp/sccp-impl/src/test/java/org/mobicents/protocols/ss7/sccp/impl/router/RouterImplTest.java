@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
+
 import static org.junit.Assert.*;
 
 /**

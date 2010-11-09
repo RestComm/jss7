@@ -18,6 +18,8 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 
@@ -26,8 +28,12 @@ import org.mobicents.protocols.ss7.indicator.NumberingPlan;
  * 
  * @author kulikov
  */
-public class AddressInformation {
-    private final static String SEPARATOR = "#";
+public class AddressInformation implements Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -4270636264251165348L;
+	private final static String SEPARATOR = "#";
     private final static String NULL = " ";
     
     /** translation type */

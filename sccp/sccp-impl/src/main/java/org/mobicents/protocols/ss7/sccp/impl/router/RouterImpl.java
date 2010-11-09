@@ -62,7 +62,7 @@ public class RouterImpl {
      * @param rule the new rule to be added.
      */
     public void add(Rule rule) throws IOException {
-        rule.no = rules.size();
+        rule.setNo(rules.size());
         rules.add(rule);
         try {
             store(rule);

@@ -60,5 +60,6 @@ public enum NumberingPlan {
             case 7 : return ISDN_MOBILE;
             default : return null;
         }
+        
     }
 }

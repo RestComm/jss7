@@ -18,6 +18,8 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -25,8 +27,12 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * 
  * @author kulikov
  */
-public class Route {
-    /** translated address */
+public class Route  implements Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1305958638683555285L;
+	/** translated address */
     protected SccpAddress address;
     /** mtp routing info */
     protected MTPInfo mtpInfo;

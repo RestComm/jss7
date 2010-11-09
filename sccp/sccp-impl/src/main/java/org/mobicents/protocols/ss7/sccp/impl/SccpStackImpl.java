@@ -137,6 +137,11 @@ public class SccpStackImpl implements SccpStack, MtpListener {
         this.router = router;
     }
 
+    public Router getRouter()
+    {
+    	return this.router;
+    }
+    
     private enum State {
         IDLE, CONFIGURED, RUNNING;
     }
