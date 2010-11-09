@@ -126,7 +126,7 @@ public class SccpAddRuleCommand extends AbstractSccpCommand {
 		out.println("         --numbering-plan       Specifies numberingplan to be used by SCCP to aid it in determinig correct network system.");
 		out.println("                                It is not mandatory. It requires one of enumerated values as argument: UNKNOWN,ISDN_TELEPHONY,DATA,TELEX");
 		out.println("                                ,MERITIME_MOBILE,LAND_MOBILE,ISDN_MOBILE.");
-		out.println("         --nature-of-address    Specifies nature of address to indicate scope of address. It is not mandatory. It requires on of enumerated.");
+		out.println("         --nature-of-address    Specifies nature of address to indicate scope of address. It is not mandatory. It requires one of enumerated");
 		out.println("                                values as argument: SPARE,SUBSCRIBER,UNKNOWN,NATIONAL,INTERNATIONAL.");
 		out.println("         --digits               Specifies string representation of number(digits). It is mandatory and requires argument.");
 		out.println("         --ssn                  Specifies subsystem number. It is not mandatory, if absent assumed value is \"-1\".");
