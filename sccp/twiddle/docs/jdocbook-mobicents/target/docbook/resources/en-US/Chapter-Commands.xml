@@ -1,0 +1,108 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SCCP_Twiddle_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="commands">
+
+	<title>Commands</title>
+	<para>This chapter explains how to use features inherited from <literal>Twiddle</literal>. Also it contains list of supported <literal>command</literal>s along with
+	comprehensive description of each <literal>command</literal> and <literal>options</literal> supported by specific <literal>command</literal>.</para>
+
+	<important>
+		<para>White spaces ARE NOT supported within argument values.</para>
+	</important>
+	<important>
+		<para>Specific shell characters must be escaped or value of argument must be quoted.</para>
+	</important>
+	<important>
+		<para>Some terminal intput include "\" - it indicates that command is continued from new line, if copy/paste is used on example, this sign should be removed.</para>
+	</important>
+	<note>
+		<para>Options can have long and short form. Short form <literal>-s</literal>, accept parameter without equal sign, ie: -slocalhost. 
+		Long options require equals sign, ie: --server=localhost</para>
+	</note>
+	<note>
+		<para>&THIS.PLATFORM; &THIS.APPLICATION; <literal>operations</literal> support long and short form. Operation options are specified ONLY in long form.</para>
+	</note>
+	<section id="twiddle_base">
+		<title>Twiddle</title>
+		<para>&THIS.PLATFORM; &THIS.APPLICATION; provide two scripts to run command line, <literal>Windows</literal> batch and <literal>*NIX</literal> bash script.
+		Both accept the same set of options/parameters:
+		</para>
+		<!--<screen>--><programlisting>
+			twiddle.sh [options] &lt;command&gt; [command_arguments]
+		<!--</screen>--></programlisting>
+		<itemizedlist>
+			<listitem>
+				<para>options - options which affect how <literal>Twiddle</literal> executes, ie. address of server, user name/password</para>
+			</listitem>
+			<listitem>
+				<para>command - command which should handle CLI invocation</para>
+			</listitem>
+			<listitem>
+				<para>command_arguments - options and arguments specific for command</para>
+			</listitem>
+		</itemizedlist>
+		<para>Following <literal>options</literal> can be passed directly to <literal>twiddle</literal>: </para>
+		<variablelist>
+			<varlistentry>
+				<term>--help-commands</term>
+				<listitem>
+					<para>displays available commands along with simple description.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>-H&lt;commandName&gt;</term>
+				<listitem>
+					<para>displays detailed help message for command with specified <literal>commandName</literal>. </para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>-D&lt;name&gt;[=&lt;value&gt;]</term>
+				<listitem>
+					<para>creates system property with specific name. If value is passed it is assigned to it.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>-s&lt;url&gt; or --server=&lt;url&gt;</term>
+				<listitem>
+					<para>specifies <literal>URL</literal> of RMI container. <literal>URL</literal> has following form: &lt;IP[:PORT]&gt;</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>-a&lt;name&gt; or --adapter=&lt;name&gt;</term>
+				<listitem>
+					<para>specifies <acronym>RMI</acronym> adapter to be used. Example value: jmx/rmi/RMIAdaptor</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>-u&lt;name&gt; or --user=&lt;name&gt; </term>
+				<listitem>
+					<para>specifies name of user to be used for AA</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>-p&lt;name&gt; or --password=&lt;name&gt; </term>
+				<listitem>
+					<para>specifies password for user to be used for AA</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>-q or --quiet</term>
+				<listitem>
+					<para>instructs <literal>Twiddle</literal> to execute without output</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+
+	</section>
+		
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Rule.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Command-add.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Command-list.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Command-remove.xml" />
+	
+	
+	
+
+</chapter>
+

@@ -1,0 +1,184 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SCCP_Twiddle_User_Guide.ent">%BOOK_ENTITIES;]>
+<section id="command.rule.add">
+
+	<title>rule.add</title>
+	<para>
+		<literal>route.add</literal>
+		allows to add new rule to
+		<acronym>SCCP</acronym>
+		routing engine. For structure of
+		<literal>Rule</literal>
+		refer to
+		<xref linkend="rule" />
+		section.
+		<literal>route.add</literal>
+		command supports three main options:
+	</para>
+	<table frame="all" pgwide="1">
+		<title>
+			Option table for
+			<literal>rule.add</literal>
+			command
+		</title>
+		<tgroup colsep="1" cols="3">
+			<colspec colnum="1" colname="c0" />
+			<colspec colnum="2" colname="c1" />
+			<colspec colnum="3" colname="c2" />
+			<thead>
+				<row>
+					<entry>Option</entry>
+					<entry>Name</entry>
+					<entry>Description</entry>
+
+				</row>
+			</thead>
+			<tbody>
+				<row>
+					<entry>-p</entry>
+					<entry>pattern</entry>
+					<entry>Indicates that following options must be intepreted as part
+						of pattern definition.</entry>
+				</row>
+				<row>
+					<entry>-t</entry>
+					<entry>translation</entry>
+					<entry>Indicates that following options must be intepreted as part
+						of translation definition.</entry>
+				</row>
+				<row>
+					<entry>-m</entry>
+					<entry>mtp info</entry>
+					<entry>Indicates that following options are part of mtp-info
+						definition.</entry>
+				</row>
+
+			</tbody>
+		</tgroup>
+	</table>
+	<section id="rule.add.pattern">
+		<title>Pattern options</title>
+		<para>
+			<literal>-p</literal>
+			option can be followed by following options:
+		</para>
+		<variablelist>
+			<varlistentry>
+				<term>--type
+				</term>
+				<listitem>
+					<para>Value indicating type of translation. It is not mandatory, if
+						absent assumed value is "-1". It requires integer argument.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>--numbering-plan
+				</term>
+				<listitem>
+					<para>Specifies numberingplan to be used by SCCP to aid it in
+						determinig correct network system. It is not mandatory. It
+						requires one of enumerated values as argument:
+						UNKNOWN,ISDN_TELEPHONY,DATA,TELEX,MERITIME_MOBILE,LAND_MOBILE,ISDN_MOBILE.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>--nature-of-address
+				</term>
+				<listitem>
+					<para>Specifies nature of address to indicate scope of address. It
+						is not mandatory. It requires one of enumerated values as
+						argument: SPARE,SUBSCRIBER,UNKNOWN,NATIONAL,INTERNATIONAL.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>--digits
+				</term>
+				<listitem>
+					<para>Specifies string representation of number(digits). It is
+						mandatory and requires argument.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>--ssn
+				</term>
+				<listitem>
+					<para>Specifies subsystem number. It is not mandatory, if absent
+						assumed value is "-1"". It requires integer argument.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+
+	</section>
+	<section id="rule.add.translation">
+		<title>Translation options</title>
+		<para>
+			Supports exactly the same options as
+			<xref linkend="rule.add.pattern" />
+		</para>
+	</section>
+	<section id="rule.add.mtp_info">
+		<title>MTP info options</title>
+		<para>
+			<literal>-m</literal> is optional.
+			It must be followed by following options:
+		</para>
+		<variablelist>
+			<varlistentry>
+				<term>--name
+				</term>
+				<listitem>
+					<para>Specifies name of mtp linkset. It is mandatory, requires
+						string argument.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>--opc
+				</term>
+				<listitem>
+					<para>Specifies originating point code. It is mandatory, requires
+						integer argument.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>--apc
+				</term>
+				<listitem>
+					<para>Specifies adjacent point code. It is mandatory, requires
+						integer argument.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>--sls
+				</term>
+				<listitem>
+					<para>Specifies signal link selector. It is mandatory, requires
+						integer argument.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+
+	</section>
+	<section id="rule.add.example">
+		<title>Example</title>
+		<para>Example calls to this command look as follows:</para>
+		<example>
+			<title>Add local Rule</title>
+			<!-- <screen> -->
+			<programlisting>
+twiddle.sh rule.add -p --digits=514613472 -t --digits=555555555 --numbering-plan=IDSN_MOBILE --ssn=15
+						<!-- </screen> --></programlisting>
+		</example>
+		<example>
+			<title>Add remote Rule</title>
+			<!-- <screen> -->
+			<programlisting>
+twiddle.sh rule.add -p --digits=514613472 -t --digits=555555555 --numbering-plan=IDSN_MOBILE \
+-m --name=primary --apc=124213456 --dpc=231566 --sls=1
+						<!-- </screen> --></programlisting>
+		</example>
+	</section>
+</section>	
+	
+
+

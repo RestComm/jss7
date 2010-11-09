@@ -1,0 +1,119 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SCCP_Twiddle_User_Guide.ent">%BOOK_ENTITIES;]>
+<section id="rule">
+
+	<title>Rule</title>
+	<para>
+		Implementation of
+		<acronym>SCCP</acronym>
+		routing mechanism makes routing decisions based on
+		<literal>rules</literal>
+		.
+		Each rule consits of three elements:
+	</para>
+	<variablelist>
+		<varlistentry>
+			<term>pattern</term>
+			<listitem>
+				<para>determines pattern to which destiantion address is compared.
+					It has complex structure which looks as follows:</para>
+				<variablelist>
+					<varlistentry>
+						<term>translation type</term>
+						<listitem>
+							<para>integer numer which is used in a network to indicate the
+								preferred method of global title analysis </para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>numbering plan</term>
+						<listitem>
+							<para>integer/enumerated value which inidcates which numbering
+								plan will be used for the global title. Its value aids the
+								routing system in determining the correct network system to
+								route message to.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>nature of address</term>
+						<listitem>
+							<para>integer/enumerated value which indicates address type.,
+								Specificaly it indicates the scope of the address value, such as whether it is
+								an international number (i.e. including the country code), a
+								"national" or domestic number (i.e. without country code), and
+								other formats such as "local" format.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>digits</term>
+						<listitem>
+							<para>actual address</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>sub-system number</term>
+						<listitem>
+							<para>identifies application in SCCP routing network.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>translation</term>
+			<listitem>
+				<para>
+					determines target for messages which destination address matches
+					pattern. It has exactly the same structure as
+					<literal>pattern</literal>
+					.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>mtp info</term>
+			<listitem>
+				<para>
+					determines mtp layer information. If
+					<literal>translation</literal>
+					does not indicate local address, this information is used to send
+					message through
+					<acronym>MTP</acronym>
+					layer. It has following structure:
+				</para>
+				<variablelist>
+					<varlistentry>
+						<term>name</term>
+						<listitem>
+							<para>name identifing one of link sets used by <acronym>SCCP</acronym> </para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>originating point code</term>
+						<listitem>
+							<para>local point code used as originating <acronym>MTP</acronym> address</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>adjacent point code</term>
+						<listitem>
+							<para>remote point code used as destination <acronym>MTP</acronym> address</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>signaling link selection</term>
+						<listitem>
+							<para>itendtifies link in set</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</listitem>
+
+		</varlistentry>
+	</variablelist>
+
+
+</section>	
+	
+
+

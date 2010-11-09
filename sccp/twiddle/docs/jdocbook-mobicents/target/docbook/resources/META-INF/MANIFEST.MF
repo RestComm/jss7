@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: baranowb
+Build-Jdk: 1.6.0_21
+Implementation-Title: org.mobicents.protocols.ss7.sccp.tools.twiddle.d
+ ocs:cli-twiddle-docs-sources-mobicents
+Implementation-URL: http://www.mobicents.org
+Implementation-Vendor-Id: JBoss, a Red Hat division
+Implementation-Version: 1.0.0.BETA4-SNAPSHOT
+SVN-Revision: 
+

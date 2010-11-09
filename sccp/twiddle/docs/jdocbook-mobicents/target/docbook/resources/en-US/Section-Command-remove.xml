@@ -1,0 +1,21 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SCCP_Twiddle_User_Guide.ent">%BOOK_ENTITIES;]>
+<section id="command.rule.remove">
+
+	<title>rule.remove</title>
+	<para><literal>route.remove</literal>  allows to remove rule to <acronym>SCCP</acronym> routing engine. </para>
+	<para><literal>route.remove</literal> supports only single, mandatory option: <literal>--number</literal>, which indicates rule number.</para>
+		
+	<section id="Example">
+		<title>Example</title>
+		<para>Example call to this command:</para>
+		<example>
+			<title>Remove rule #4</title>
+			<programlisting>
+./twiddle.sh rule.remove --number=4
+			</programlisting>
+		</example>
+		
+	</section>	
+		
+</section>	
