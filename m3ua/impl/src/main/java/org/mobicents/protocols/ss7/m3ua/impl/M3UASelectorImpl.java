@@ -78,7 +78,7 @@ public class M3UASelectorImpl implements M3UASelector {
                 if (k.isReadable()) {
                     list.add(k);
                 }
-            } else {
+            } else { //FIXME: Oleg this assumes by default that its write....
                 M3UASelectionKeyImpl k = (M3UASelectionKeyImpl) key.attachment();
                 ((M3UAChannelImpl)k.channel()).doWrite();
                 if (k.isWritable()) {
