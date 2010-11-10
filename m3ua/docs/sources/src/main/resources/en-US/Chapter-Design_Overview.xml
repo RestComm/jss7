@@ -1,0 +1,60 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "M3UA_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="design_overview">
+
+	<title>Design Overview</title>
+	<para>&THIS.PLATFORM; &THIS.APPLICATION;
+		provides user with
+		<acronym>NIO</acronym>
+		like transport abstraction.
+		User works with:
+	</para>
+	<itemizedlist>
+		<listitem>
+			<para>Channel provider - factory class which creates concrete
+				implementaion of channel, which hides transport details.</para>
+		</listitem>
+		<listitem>
+			<para>Selector - object which can be queried about state of channel
+				I/O operations.</para>
+		</listitem>
+		<listitem>
+			<para>Selection key - object encapsulating information about I/O
+				ready channel.</para>
+		</listitem>
+		<listitem>
+			<para>Channel - object handling I/O operation</para>
+		</listitem>
+		<listitem>
+			<para>
+				<literal>M3UA</literal>
+				Messages and Parameters - objects representing specific metadata,
+				like SS7 protocol message,
+				<literal>M3UA</literal> management messages, etc...
+			</para>
+		</listitem>
+	</itemizedlist>
+	<para>Diagram below depicts high level design:
+	</para>
+	<mediaobject>
+		<imageobject>
+			<imagedata
+				width="250px"
+				
+				align="center"
+				fileref="images/design_1.png"
+				format="PNG"/>
+		</imageobject>
+		<caption>
+			<para>&THIS.PLATFORM; &THIS.APPLICATION; top overview</para>
+		</caption>
+	</mediaobject>
+	<para>Currently &THIS.PLATFORM; &THIS.APPLICATION; supports following transports:</para>
+	<itemizedlist>
+		<listitem>
+			<para>TCP</para>
+		</listitem>
+	</itemizedlist>
+</chapter>
+

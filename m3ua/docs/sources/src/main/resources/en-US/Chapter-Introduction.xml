@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "M3UA_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="introduction">
+
+	<title>Introduction
+		to &THIS.PLATFORM;  &THIS.APPLICATION;
+	</title>
+	<para>
+		<acronym>M3UA</acronym>
+		stands for
+		<literal>MTP3 User Adaptation Layer</literal>
+		.
+		<acronym>M3UA</acronym>
+		addressses need of conecting
+		<literal>SS7</literal>
+		legacy services with IP entities like database servers.
+		In techincal terms
+		<acronym>M3UA</acronym>
+		allows to exchange signaling between
+		<literal>Switched Circuit Network</literal>
+		(SCN) border device(Signaling Gateway - SG) and Media Gateway
+		Controler(MGC) or Database server.
+	</para>
+	<para>
+		<acronym>M3UA</acronym>
+		transport mechanism covers following aspects:
+	</para>
+	<itemizedlist>
+		<listitem>
+			<para>Support for the transfer of all SS7 MTP3-User Part messages
+				(e.g.,
+				ISUP, SCCP, TUP, etc.)</para>
+		</listitem>
+		<listitem>
+			<para>Support for the seamless operation of MTP3-User protocol peers
+			</para>
+		</listitem>
+		<listitem>
+			<para>Support for the management of SCTP transport associations and
+				traffic between an SG and one or more MGCs or IP-resident
+				Databases</para>
+		</listitem>
+		<listitem>
+			<para>Support for MGC or IP-resident database process failover and
+				load
+				sharing</para>
+		</listitem>
+		<listitem>
+			<para>Support for the asynchronous reporting of status changes to
+				management</para>
+		</listitem>
+
+	</itemizedlist>
+	<para>Diagram below depicts <literal>M3UA</literal> relation to protocols:</para>
+	<mediaobject>
+		<imageobject>
+			<imagedata
+				width="300px"
+				align="center"
+				fileref="images/m3ua_layering.png"
+				format="PNG"/>
+		</imageobject>
+		<caption>
+			<para>M3UA relations</para>
+		</caption>
+	</mediaobject>
+</chapter>
