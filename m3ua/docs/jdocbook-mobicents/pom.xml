@@ -115,7 +115,7 @@
 									<tasks>
 										<!-- copy docs -->
 										<copy overwrite="true"
-											todir="${basedir}/../../../release/${release.name}/docs">
+											todir="${basedir}/../../release/${release.name}/docs">
 											<fileset dir="${basedir}/target/docbook/publish" />
 										</copy>
 									</tasks>

@@ -129,7 +129,7 @@
 			<id>release</id>
 			<modules>
 				<module>docs</module>
-				<module>twiddle/release</module>
+				<module>twiddle</module>
 				<module>release</module>
 			</modules>
 			<!-- Add more if required -->
