@@ -25,6 +25,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  */
 public class RuleTest {
     private final static String RULE = "1; # #NATIONAL#9023629581# ; # #INTERNATIONAL#79023629581# ;linkset#14083#14155#0\n";
+    private final static String RULE1 = "1; # #NATIONAL#9023629581# ; # #INTERNATIONAL#79023629581# ;\n";
     
     public RuleTest() {
     }
@@ -83,6 +84,21 @@ public class RuleTest {
         assertEquals(0, rule.getMTPInfo().getSls());
     }
 
+    @Test
+    public void testGetInstanceWithOptions() {
+        Rule rule = Rule.getInstance(RULE1);
+        assertEquals(1, rule.getNo());
+        assertEquals(null, rule.getPattern().getNumberingPlan());
+        assertEquals(NatureOfAddress.NATIONAL, rule.getPattern().getNatureOfAddress());
+        assertEquals("9023629581", rule.getPattern().getDigits());
+        
+        assertEquals(null, rule.getTranslation().getNumberingPlan());
+        assertEquals(NatureOfAddress.INTERNATIONAL, rule.getTranslation().getNatureOfAddress());
+        assertEquals("79023629581", rule.getTranslation().getDigits());
+        
+        assertEquals(null, rule.getMTPInfo());
+    }
+    
     /**
      * Test of toString method, of class Rule.
      */

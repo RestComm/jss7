@@ -76,7 +76,12 @@ public class Rule implements Serializable{
         int no = Integer.parseInt(tokens[0]);
         String addressInfo = tokens[1];
         String translation = tokens[2];
-        String mtpInfo = tokens[3];
+        
+        String mtpInfo = null;
+        try {
+            mtpInfo = tokens[3];
+        } catch (ArrayIndexOutOfBoundsException e) {
+        }
         
         return new Rule(no, AddressInformation.getInstance(addressInfo), 
                 AddressInformation.getInstance(translation),

@@ -119,6 +119,9 @@ public class MTPInfo implements Serializable{
     }
     
     public static MTPInfo getInstance(String s) {
+        if (s == null) {
+            return null;
+        }
         //use white space as separator
         String[] tokens = s.split(SEPARATOR);
         

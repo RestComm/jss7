@@ -216,7 +216,12 @@ public class SccpStackImpl implements SccpStack, MtpListener {
         //TODO: allow to set parameters?
         UnitData unitData = messageFactory.createUnitData(msg.getProtocolClass(), address, msg.getCallingPartyAddress());
         unitData.setData(msg.getData());
-        
+
+        //linkset not defined? send to local listener
+        if (rule.getMTPInfo() == null) {
+            sccpProvider.notify(unitData.getCalledPartyAddress(), msg);
+            return;
+        }
         //find linkset
         MtpProvider linkset = findLinkset(rule.getMTPInfo().getName());
         send(linkset, unitData, rule.getMTPInfo());
@@ -238,6 +243,12 @@ public class SccpStackImpl implements SccpStack, MtpListener {
         //TODO: allow to set parameters?
         UnitData unitData = messageFactory.createUnitData(msg.getProtocolClass(), address, msg.getCallingPartyAddress());
         unitData.setData(msg.getData());
+        
+        //linkset not defined? send to local listener
+        if (rule.getMTPInfo() == null) {
+            sccpProvider.notify(unitData.getCalledPartyAddress(), msg);
+            return;
+        }
         
         //find linkset
         MtpProvider linkset = findLinkset(rule.getMTPInfo().getName());
