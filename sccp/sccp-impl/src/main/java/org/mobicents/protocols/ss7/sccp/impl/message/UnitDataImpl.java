@@ -28,6 +28,7 @@ import org.mobicents.protocols.ss7.sccp.message.MessageType;
 import org.mobicents.protocols.ss7.sccp.message.UnitData;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.utils.Utils;
 
 /**
  *
@@ -148,7 +149,7 @@ public class UnitDataImpl extends SccpMessageImpl implements UnitData {
 
     @Override
     public String toString() {
-        return "UDT[calledPartyAddress=" + calledParty + ", callingPartyAddress=" + callingParty + "]";
+        return "UDT[calledPartyAddress=" + calledParty + ", callingPartyAddress=" + callingParty + "data length=" + data.length + "]";
     }
     
 }

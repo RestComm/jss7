@@ -48,7 +48,7 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
     
     SccpProviderImpl(SccpStackImpl stack) {
         this.stack = stack;
-        this.messageFactory = new MessageFactoryImpl();
+        this.messageFactory = stack.messageFactory;
         this.parameterFactory = new ParameterFactoryImpl();
     }
 

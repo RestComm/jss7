@@ -91,7 +91,6 @@ public class SccpAddress {
         hash = 37 * hash + (this.gt != null ? this.gt.hashCode() : 0);
         hash = 37 * hash + this.pc;
         hash = 37 * hash + this.ssn;
-        hash = 37 * hash + (this.ai != null ? this.ai.hashCode() : 0);
         return hash;
     }
     

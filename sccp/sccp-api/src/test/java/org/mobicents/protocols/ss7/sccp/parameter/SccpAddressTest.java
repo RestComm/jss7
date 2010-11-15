@@ -5,6 +5,7 @@
 
 package org.mobicents.protocols.ss7.sccp.parameter;
 
+import java.util.HashMap;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -13,6 +14,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.mobicents.protocols.ss7.indicator.AddressIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
+import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 
 /**
  *
@@ -48,7 +50,27 @@ public class SccpAddressTest {
         SccpAddress a1 = new SccpAddress(gt, 0);
         SccpAddress a2 = new SccpAddress(gt, 0);
         assertEquals(a1, a2);
+        assertEquals(a1.hashCode(), a2.hashCode());
     }
 
+    @Test
+    public void testEquals1() {
+        GlobalTitle gt = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "79023700271");
+        SccpAddress a1 = new SccpAddress(gt, 146);
+        
+        HashMap<SccpAddress, Integer> map = new HashMap();
+        map.put(a1, 1);
+        
+        SccpAddress a2 = new SccpAddress(gt, 146);
+        Integer i = map.get(a2);
+        
+        if (i == null) {
+            fail("Address did not match");
+        }
+        
+        assertEquals(1, i);
+    }
+    
+    
 
 }

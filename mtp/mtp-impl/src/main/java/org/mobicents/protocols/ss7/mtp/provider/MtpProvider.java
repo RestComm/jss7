@@ -10,10 +10,17 @@ import org.mobicents.protocols.StartFailedException;
  * Interface for classes able to provide MTP signaling.
  * 
  * @author baranowb
- * 
+ * @author kulikov
  */
 public interface MtpProvider {
 
+    /**
+     * Gets the name of this linkset.
+     * 
+     * @return
+     */
+    public String getName();
+    
     /**
      * Assigns originated point code
      * 

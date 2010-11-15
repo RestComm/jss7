@@ -34,6 +34,8 @@ import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
  */
 public class MtpImpl implements MtpProvider, Runnable {
 
+    private String linksetName;
+    
     //communicator with hardware
     private InterProcessCommunicator ipc;
     
@@ -57,6 +59,14 @@ public class MtpImpl implements MtpProvider, Runnable {
     private Logger logger = Logger.getLogger(MtpImpl.class);
 
     public MtpImpl() {
+    }
+    
+    public String getName() {
+        return linksetName;
+    }
+    
+    public void setName(String linksetName) {
+        this.linksetName = linksetName;
     }
     
     /**
@@ -209,7 +219,7 @@ public class MtpImpl implements MtpProvider, Runnable {
 
                 //receive message signal unit from harware
                 byte[] msu = ipc.receive();
-                logger.info("Packet received!!!!");
+                logger.info("Packet received!!!!" + msu.length );
                 if (logger.isTraceEnabled()) {
                     logger.trace(Utils.hexDump("Packet received\n", msu));
                 }

@@ -160,4 +160,12 @@ public class PipeMtpProviderImpl implements MtpProvider {
     public int getOriginalPointCode() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public String getName() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String getLinksetName() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

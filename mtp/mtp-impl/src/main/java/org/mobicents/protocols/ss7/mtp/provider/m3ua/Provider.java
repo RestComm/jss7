@@ -50,6 +50,7 @@ import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
  * 
  */
 public class Provider implements MtpProvider, Runnable {
+    private String name;
 	//Oleg name SUCKS!
 	
 	public static final String PROPERTY_LADDRESS = "mtp.address.local";
@@ -88,6 +89,14 @@ public class Provider implements MtpProvider, Runnable {
         provider = TcpProvider.open();
     }
 
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     public void setLocalAddress(SocketAddress localAddress) {
         this.localAddress = localAddress;
     }

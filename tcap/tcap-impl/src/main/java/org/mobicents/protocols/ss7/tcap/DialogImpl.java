@@ -332,7 +332,6 @@ public class DialogImpl implements Dialog {
 			throw new TCAPSendException("Unstructured dialogs do not use Continue");
 		}
 		if (this.state == TRPseudoState.InitialReceived) {
-
 			TCContinueMessageImpl tcbm = (TCContinueMessageImpl) TcapFactory.createTCContinueMessage();
 
 			if (event.getApplicationContextName() != null) {
@@ -771,7 +770,6 @@ public class DialogImpl implements Dialog {
 		this.setState(TRPseudoState.InitialReceived);
 		// lets deliver to provider
 		this.provider.deliver(this, tcBeginIndication);
-		
 
 	}
 

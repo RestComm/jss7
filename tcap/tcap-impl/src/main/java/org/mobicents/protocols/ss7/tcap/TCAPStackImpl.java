@@ -3,11 +3,8 @@
  */
 package org.mobicents.protocols.ss7.tcap;
 
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ConfigurationException;
-import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
@@ -38,8 +35,8 @@ public class TCAPStackImpl implements TCAPStack {
         this.state = State.CONFIGURED;
     }
 
-    public void start() throws IllegalStateException, StartFailedException {
-        logger.info("Starting ...");
+    public void start() throws IllegalStateException {
+        logger.info("Starting ..." + tcapProvider);
         tcapProvider.start();
     }
 

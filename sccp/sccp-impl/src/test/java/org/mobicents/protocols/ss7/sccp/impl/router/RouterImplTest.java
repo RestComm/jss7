@@ -42,7 +42,7 @@ public class RouterImplTest {
         rule2 = Rule.getInstance(RULE2);
         
         //cleans config file
-        RouterImpl router = new RouterImpl();
+        RouterImpl router = new RouterImpl("sccp-routing.txt");
         router.clean();
     }
 
@@ -56,7 +56,7 @@ public class RouterImplTest {
      */
     @Test
     public void testRouter() throws Exception {
-        RouterImpl router = new RouterImpl();
+        RouterImpl router = new RouterImpl("sccp-routing.txt");
         router.add(rule1);
         assertEquals(1, router.list().size());
         router.add(rule2);

@@ -147,11 +147,7 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 			
 			//check sequence tag tag
 			
-			
 			len = localAis.readLength();
-			if (len < localAis.available() || len == 0) {
-				throw new ParseException("Not enough data");
-			}
 			List<Component> cps = new ArrayList<Component>();
 			// its iterator :)
 			while (localAis.available() > 0) {

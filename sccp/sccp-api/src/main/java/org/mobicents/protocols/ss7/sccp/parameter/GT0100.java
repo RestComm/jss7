@@ -118,10 +118,10 @@ public class GT0100  extends GlobalTitle {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 61 * hash + this.tt;
-        hash = 61 * hash + (this.np != null ? this.np.hashCode() : 0);
-        hash = 61 * hash + (this.na != null ? this.na.hashCode() : 0);
-        hash = 61 * hash + (this.digits != null ? this.digits.hashCode() : 0);
+        hash = hash + this.tt;
+        hash = hash + (this.np != null ? 1 : 0);
+        hash = hash + (this.na != null ? 1 : 0);
+        hash = hash + (this.digits != null ? this.digits.hashCode() : 0);
         return hash;
     }
     

@@ -39,7 +39,6 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author kulikov
  */
 public class RouterImpl {
-    private final static String STORAGE = "sccp-routing.txt";
     private Route route;
     
     private File file;
@@ -48,12 +47,12 @@ public class RouterImpl {
     //rule list
     private ArrayList<Rule> rules = new ArrayList();
     
-    public RouterImpl() {
+    public RouterImpl(String path) {
         try {
-            file = new File(STORAGE);
+            file = new File(path);
             load();
         } catch (Exception e) {
-            logger.warn("Can not load rules from config: " + STORAGE);
+            logger.warn("Can not load rules from config: " + path, e);
         }
     }
     /**
