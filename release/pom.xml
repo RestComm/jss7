@@ -12,7 +12,7 @@
 
 	<artifactId>sources-checkout</artifactId>
 	<groupId>org.mobicents.protocols.ss7.release</groupId>
-	<version>1.0.0.BETA3-SNAPSHOT</version> <!-- ??? proper version? -->
+	<version>1.0.0.BETA5-SNAPSHOT</version> <!-- ??? proper version? -->
 
 	<properties>
 
@@ -20,23 +20,20 @@
 		<checkout.username>mobicents-read-only</checkout.username>
 		<checkout.password></checkout.password>
 
-			<!-- TAGS
+			<!-- TAGS -->
 		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/asn/asn-1.0.0.BETA2</asn.connectionURL>
 		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/srteam/stream-1.0.0.BETA1</stream.connectionURL>
 
-		<parent.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/parent/ss7-1.0.0.BETA4</parent.connectionURL>
-		<m3ua.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/m3ua/m3ua-1.0.0.BETA1</m3ua.connectionURL>
-		<mtp.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/mtp/mtp-1.0.0.BETA4</mtp.connectionURL>
-		<isup.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/isup/isup-1.0.0.BETA3</isup.connectionURL>
-		<sccp.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/sccp/sccp-1.0.0.BETA3</sccp.connectionURL>
-		<tcap.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/tcap/tcap-1.0.0.BETA3</tcap.connectionURL>
-		<map.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/map/map-1.0.0.BETA3</map.connectionURL>
- 		-->
-		<!-- TRUNK -->
-		
-	
-		
-	
+		<parent.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/parent/ss7-1.0.0.BETA5</parent.connectionURL>
+		<m3ua.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/m3ua/m3ua-1.0.0.BETA2</m3ua.connectionURL>
+		<mtp.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/mtp/mtp-1.0.0.BETA5</mtp.connectionURL>
+		<isup.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/isup/isup-1.0.0.BETA4</isup.connectionURL>
+		<sccp.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/sccp/sccp-1.0.0.BETA4</sccp.connectionURL>
+		<tcap.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/tcap/tcap-1.0.0.BETA4</tcap.connectionURL>
+		<map.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/map/map-1.0.0.BETA4</map.connectionURL>
+ 		
+		<!-- TRUNK 
+
 		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/asn</asn.connectionURL>
 		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/stream</stream.connectionURL>
 	
@@ -48,9 +45,8 @@
 		<tcap.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/protocols/ss7/tcap</tcap.connectionURL>
 		<map.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/protocols/ss7/map</map.connectionURL>
 		
-		
+		-->
 
-		<!-- -->
 	</properties>
 
 	<profiles>
