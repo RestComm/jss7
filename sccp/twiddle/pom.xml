@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>sccp-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7.sccp</groupId>
-		<version>1.0.0.BETA4</version>
+		<version>1.0.0.BETA5-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.mobicents.protocols.ss7.sccp.tools.twiddle</groupId>
@@ -183,9 +183,9 @@
 	</profiles>
 
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/sccp/sccp-1.0.0.BETA4</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/sccp/sccp-1.0.0.BETA4</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/tags/protocols/ss7/sccp/sccp-1.0.0.BETA4</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/jain-slee/tools/twiddle</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/jain-slee/tools/twiddle</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk/servers/jain-slee/tools/twiddle</url>
 	</scm>
 
 	<!-- -->
