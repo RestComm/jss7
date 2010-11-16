@@ -2,20 +2,19 @@
 <project name="ss7.release.sf" default="package" basedir=".">
 
 	<!-- Components Versions -->
-	<property name="release.version" value="1.0.0.BETA3" />
+	<property name="release.version" value="1.0.0.BETA5" />
 
 	<property name="paren.version" value="1.0.0.BETA4" />
 
 
-
 	<property name="asn.version" value="1.0.0.BETA2" />
 	<property name="stream.version" value="1.0.0.BETA1" />
-	<property name="m3ua.version" value="1.0.0.BETA1" />
-	<property name="mtp.version" value="1.0.0.BETA4" />
-	<property name="isup.version" value="1.0.0.BETA3" />
-	<property name="sccp.version" value="1.0.0.BETA3" />
-	<property name="tcap.version" value="1.0.0.BETA3" />
-	<property name="map.version" value="1.0.0.BETA3" />
+	<property name="m3ua.version" value="1.0.0.BETA2" />
+	<property name="mtp.version" value="1.0.0.BETA5" />
+	<property name="isup.version" value="1.0.0.BETA4" />
+	<property name="sccp.version" value="1.0.0.BETA4" />
+	<property name="tcap.version" value="1.0.0.BETA4" />
+	<property name="map.version" value="1.0.0.BETA4" />
 
 	<property name="protocols.build.list" value="parent,m3ua,mtp,isup,sccp,tcap,map" />
 	<property name="protocols.copy.list" value="m3ua,mtp,isup,sccp,tcap,map" />
