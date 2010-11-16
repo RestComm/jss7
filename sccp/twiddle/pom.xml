@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
@@ -7,7 +6,7 @@
 	<parent>
 		<artifactId>sccp-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7.sccp</groupId>
-		<version>1.0.0.BETA4-SNAPSHOT</version>
+		<version>1.0.0.BETA4</version>
 	</parent>
 
 	<groupId>org.mobicents.protocols.ss7.sccp.tools.twiddle</groupId>
@@ -28,7 +27,7 @@
 		<jboss.javaee.version>5.0.1.GA</jboss.javaee.version>
 		<jboss.security.version>2.0.3.SP1</jboss.security.version>
 		<getop.version>1.0.9</getop.version>
-		<sccp.version>1.0.0.BETA4-SNAPSHOT</sccp.version>
+		<sccp.version>1.0.0.BETA4</sccp.version>
 	</properties>
 
 
@@ -184,9 +183,9 @@
 	</profiles>
 
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/jain-slee/tools/twiddle</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/jain-slee/tools/twiddle</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/trunk/servers/jain-slee/tools/twiddle</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/sccp/sccp-1.0.0.BETA4</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/sccp/sccp-1.0.0.BETA4</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/tags/protocols/ss7/sccp/sccp-1.0.0.BETA4</url>
 	</scm>
 
 	<!-- -->
