@@ -13,6 +13,7 @@
 		<para>This User Guide introduces <acronym>SS7</acronym> <acronym>TCAP</acronym> Stack.</para>		
 	</abstract>
 	
+	<!-- 
 	<corpauthor>
 		<inlinemediaobject>
 			<imageobject>
@@ -25,6 +26,7 @@
 			</textobject>
 		</inlinemediaobject>
 	</corpauthor>
+	 -->
 	<copyright>
 		<year>&YEAR;</year>
 		<holder>Red Hat, Inc.</holder>

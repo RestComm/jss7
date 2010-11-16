@@ -26,6 +26,7 @@
 		</para>		
 	</abstract>
 	
+	<!-- 
 	<corpauthor>
 		<inlinemediaobject>
 			<imageobject>
@@ -38,6 +39,7 @@
 			</textobject>
 		</inlinemediaobject>
 	</corpauthor>
+	 -->
 	<copyright>
 		<year>&YEAR;</year>
 		<holder>Red Hat, Inc.</holder>

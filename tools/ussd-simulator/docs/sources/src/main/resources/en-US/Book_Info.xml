@@ -13,6 +13,7 @@
 		<para>This is guide to simple <acronym>USSD</acronym> simulator.</para>		
 	</abstract>
 	
+	<!-- 
 	<corpauthor>
 		<inlinemediaobject>
 			<imageobject>
@@ -25,6 +26,7 @@
 			</textobject>
 		</inlinemediaobject>
 	</corpauthor>
+	 -->
 	<copyright>
 		<year>&YEAR;</year>
 		<holder>Red Hat, Inc.</holder>
