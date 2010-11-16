@@ -11,7 +11,7 @@
 
 	<artifactId>sources-checkout</artifactId>
 	<groupId>org.mobicents.protocols.ss7.release</groupId>
-	<version>1.0.0.BETA6-SNAPSHOT</version> <!-- ??? proper version? -->
+	<version>1.0.0.BETA5-SNAPSHOT</version> <!-- ??? proper version? -->
 
 	<properties>
 
@@ -20,8 +20,8 @@
 		<checkout.password />
 
 			<!-- TAGS -->
-		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/asn/asn-1.0.0.BETA2</asn.connectionURL>
-		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/stream/stream-1.0.0.BETA1</stream.connectionURL>
+		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/asn/asn-1.0.0.BETA3</asn.connectionURL>
+		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/stream/stream-1.0.0.BETA2</stream.connectionURL>
 
 		<parent.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/parent/ss7-1.0.0.BETA5</parent.connectionURL>
 		<m3ua.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/m3ua/m3ua-1.0.0.BETA2</m3ua.connectionURL>
