@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
 
@@ -12,13 +11,13 @@
 
 	<artifactId>sources-checkout</artifactId>
 	<groupId>org.mobicents.protocols.ss7.release</groupId>
-	<version>1.0.0.BETA5-SNAPSHOT</version> <!-- ??? proper version? -->
+	<version>1.0.0.BETA5</version> <!-- ??? proper version? -->
 
 	<properties>
 
 		<checkout.basedir>${checkout.dir}</checkout.basedir>
 		<checkout.username>mobicents-read-only</checkout.username>
-		<checkout.password></checkout.password>
+		<checkout.password />
 
 			<!-- TAGS -->
 		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/asn/asn-1.0.0.BETA2</asn.connectionURL>
@@ -238,9 +237,9 @@
 	</profiles>
 
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/release</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/release</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/trunk/protocols/ss7/release</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/release/release-1.0.0.BETA5</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/release/release-1.0.0.BETA5</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/tags/protocols/ss7/release/release-1.0.0.BETA5</url>
 	</scm>
 
 	<repositories>
