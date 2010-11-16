@@ -79,6 +79,7 @@
 							src/main/assembly/pojo.xml
 						</descriptor>
 					</descriptors>
+					<!-- this is doubled in sccp-beans -->
 					<finalName>a${pom.artifactId}</finalName>
 				</configuration>
 				<executions>

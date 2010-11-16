@@ -27,6 +27,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
@@ -49,10 +50,22 @@ public class RouterImpl {
     
     public RouterImpl(String path) {
         try {
-            file = new File(path);
+        	if(logger.isInfoEnabled())
+        	{
+        		logger.info("SCCP Router configuration file: "+path);
+        	}
+        	if(path == null)
+        	{
+        		throw new IOException("Path of configuration file must be supplied.");
+        	}
+            file = new File(path); 
+            if(!file.exists())
+            {	
+            	throw new IOException("Could not locate file: "+path);
+            }
             load();
         } catch (Exception e) {
-            logger.warn("Can not load rules from config: " + path, e);
+            logger.warn("Can not load rules from configuration: " + path, e);
         }
     }
     /**
