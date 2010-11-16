@@ -11,7 +11,7 @@
 
 	<artifactId>sources-checkout</artifactId>
 	<groupId>org.mobicents.protocols.ss7.release</groupId>
-	<version>1.0.0.BETA6-SNAPSHOT</version> <!-- ??? proper version? -->
+	<version>1.0.0.BETA5-SNAPSHOT</version> <!-- ??? proper version? -->
 
 	<properties>
 
@@ -213,27 +213,22 @@
 				</plugins>
 			</build>
 		</profile>
-		<profile>
-			<id>maven-release</id>
-			<modules>
-			</modules>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-release-plugin</artifactId>
-						<version>2.0</version>
-						<configuration>
-							<autoVersionSubmodules>true</autoVersionSubmodules>
-							<tagBase>https://mobicents.googlecode.com/svn/tags/protocols/ss7/release</tagBase>
-							<!-- ?? <branchBase>https://mobicents.googlecode.com/svn/branches/protocols/ss7/1.x.y/release</branchBase> -->
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+		
 	</profiles>
-
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.0</version>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<tagBase>https://mobicents.googlecode.com/svn/tags/protocols/ss7/release</tagBase>
+					<!-- ?? <branchBase>https://mobicents.googlecode.com/svn/branches/protocols/ss7/1.x.y/release</branchBase> -->
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<scm>
 		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/release/</connection>
 		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/release</developerConnection>
