@@ -26,7 +26,7 @@
 	<property name="zip.file.destination.dir" value="${basedir}/upload" />
 	<property name="zip.file.name" value="mobicents-ss7-${release.version}" />
 	<property name="failoncopy" value="true" />
-
+	<property name="test.skip" value="true" />
 	<!-- Definition -->
 
 	<property name="release.name" value="point" />
@@ -68,13 +68,13 @@
 
 	<target name="build-sources-asn">
 		<exec executable="${mvn.executable}" dir="${checkout.basedir}/asn">
-			<arg line="install -P release,set-svn-revision -Dmaven.test.skip=true -Drelease.name=${release.name}" />
+			<arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
 		</exec>
 	</target>
 
 	<target name="build-sources-stream">
 		<exec executable="${mvn.executable}" dir="${checkout.basedir}/stream">
-			<arg line="install -P release,set-svn-revision -Dmaven.test.skip=true -Drelease.name=${release.name}" />
+			<arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
 		</exec>
 	</target>
 	<target name="build-sources-ss7">
@@ -82,7 +82,7 @@
 			<sequential>
 				<echo>Build SS7 @{protocol.name}</echo>
 				<exec executable="${mvn.executable}" dir="${checkout.basedir}/@{protocol.name}">
-					<arg line="-f pom.xml install -P release,set-svn-revision -Dmaven.test.skip=true -Drelease.name=${release.name}" />
+					<arg line="-f pom.xml install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
 				</exec>
 			</sequential>
 		</for>
