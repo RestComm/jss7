@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>tcap-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7.tcap</groupId>
-		<version>1.0.0.BETA4</version>
+		<version>1.0.0.BETA5-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>tcap-impl</artifactId>
