@@ -93,7 +93,7 @@
 			<filterchain>
 				<replacetokens>
 					<token key="VERSION" value="${release.version}" />
-					<token key="ASN_VERSION" value="${asn.asn}" />
+					<token key="ASN_VERSION" value="${asn.version}" />
 					<token key="STREAM_VERSION" value="${stream.version}" />
 					<token key="PARENT_VERSION" value="${paren.version}" />
 					<token key="M3UA_VERSION" value="${m3ua.version}" />
