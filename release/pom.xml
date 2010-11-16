@@ -11,7 +11,7 @@
 
 	<artifactId>sources-checkout</artifactId>
 	<groupId>org.mobicents.protocols.ss7.release</groupId>
-	<version>1.0.0.BETA6-SNAPSHOT</version> <!-- ??? proper version? -->
+	<version>1.0.0.BETA5-SNAPSHOT</version> <!-- ??? proper version? -->
 
 	<properties>
 
