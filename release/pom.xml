@@ -16,7 +16,7 @@
 
 	<properties>
 
-		<checkout.basedir>${checkout.basedir}</checkout.basedir>
+		<checkout.basedir>${checkout.dir}</checkout.basedir>
 		<checkout.username>mobicents-read-only</checkout.username>
 		<checkout.password></checkout.password>
 

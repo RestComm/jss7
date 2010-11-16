@@ -61,7 +61,7 @@
 	<target name="checkout-sources">
 		<echo>Checking out sources</echo>
 		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../">
-			<arg line="validate -P checkout -Dcheckout.basedir=${checkout.basedir}" />
+			<arg line="validate -P checkout -Dcheckout.dir=${checkout.basedir}" />
 		</exec>
 	</target>
 
