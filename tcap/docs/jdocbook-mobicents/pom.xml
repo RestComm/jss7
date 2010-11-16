@@ -98,7 +98,6 @@
 						</includes>
 					</imageResource>
 					<formats>
-						<!-- 
 						<format>
 							<formatName>pdf</formatName>
 							<stylesheetResource>classpath:/xslt/org/jboss/pdf.xsl</stylesheetResource>
@@ -109,7 +108,6 @@
 							<stylesheetResource>classpath:/xslt/org/jboss/xhtml.xsl</stylesheetResource>
 							<finalName>index.html</finalName>
 						</format>
-						 -->
 						<format>
 							<formatName>html_single</formatName>
 							<stylesheetResource>classpath:/xslt/org/jboss/xhtml-single.xsl</stylesheetResource>

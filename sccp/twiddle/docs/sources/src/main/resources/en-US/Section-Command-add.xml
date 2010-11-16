@@ -166,14 +166,16 @@
 			<title>Add local Rule</title>
 			<!-- <screen> -->
 			<programlisting>
-twiddle.sh rule.add -p --digits=514613472 -t --digits=555555555 --numbering-plan=IDSN_MOBILE --ssn=15
+twiddle.sh rule.add -p --digits=514613472 -t --digits=555555555\ 
+--numbering-plan=IDSN_MOBILE --ssn=15
 						<!-- </screen> --></programlisting>
 		</example>
 		<example>
 			<title>Add remote Rule</title>
 			<!-- <screen> -->
 			<programlisting>
-twiddle.sh rule.add -p --digits=514613472 -t --digits=555555555 --numbering-plan=IDSN_MOBILE \
+twiddle.sh rule.add -p --digits=514613472 -t --digits=555555555\
+ --numbering-plan=IDSN_MOBILE \
 -m --name=primary --apc=124213456 --dpc=231566 --sls=1
 						<!-- </screen> --></programlisting>
 		</example>
