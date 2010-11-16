@@ -11,7 +11,7 @@
 
 	<artifactId>sources-checkout</artifactId>
 	<groupId>org.mobicents.protocols.ss7.release</groupId>
-	<version>1.0.0.BETA5</version> <!-- ??? proper version? -->
+	<version>1.0.0.BETA6-SNAPSHOT</version> <!-- ??? proper version? -->
 
 	<properties>
 
@@ -237,9 +237,9 @@
 	</profiles>
 
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/release/release-1.0.0.BETA5</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/release/release-1.0.0.BETA5</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/tags/protocols/ss7/release/release-1.0.0.BETA5</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/release/</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/release</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/tags/protocols/ss7/release</url>
 	</scm>
 
 	<repositories>
