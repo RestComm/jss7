@@ -109,7 +109,6 @@ public class SccpService extends ServiceMBeanSupport implements SccpServiceMBean
         initialContext.unbind(jndiName);
     }
 
-    @Override
     public void addRule(Rule r) throws RuleException {
         Router router = stack.getRouter(); //this is null... ech
         if (router != null && router instanceof RouterImpl) {
@@ -119,13 +118,11 @@ public class SccpService extends ServiceMBeanSupport implements SccpServiceMBean
 
     }
 
-    @Override
     public boolean removeRule(int num) {
         return false;
 
     }
 
-    @Override
     public Rule[] getRules() {
         return new Rule[]{};
     }
