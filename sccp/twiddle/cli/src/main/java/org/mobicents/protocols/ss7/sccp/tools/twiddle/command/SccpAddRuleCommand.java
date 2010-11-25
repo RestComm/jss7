@@ -112,7 +112,6 @@ public class SccpAddRuleCommand extends AbstractSccpCommand {
 	 * 
 	 * @see org.jboss.console.twiddle.command.Command#displayHelp()
 	 */
-	@Override
 	public void displayHelp() {
 		PrintWriter out = context.getWriter();
 
@@ -146,7 +145,6 @@ public class SccpAddRuleCommand extends AbstractSccpCommand {
 	 * @see
 	 * org.jboss.console.twiddle.command.Command#execute(java.lang.String[])
 	 */
-	@Override
 	public void execute(String[] args) throws Exception {
 		processArguments(args);
 		validate();

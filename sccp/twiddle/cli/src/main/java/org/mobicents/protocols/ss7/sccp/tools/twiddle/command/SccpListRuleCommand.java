@@ -43,7 +43,6 @@ public class SccpListRuleCommand extends AbstractSccpCommand {
 	 * 
 	 * @see org.jboss.console.twiddle.command.Command#displayHelp()
 	 */
-	@Override
 	public void displayHelp() {
 		PrintWriter out = context.getWriter();
 
@@ -61,7 +60,6 @@ public class SccpListRuleCommand extends AbstractSccpCommand {
 	 * @see
 	 * org.jboss.console.twiddle.command.Command#execute(java.lang.String[])
 	 */
-	@Override
 	public void execute(String[] args) throws Exception {
 		Rule[] rules = (Rule[]) super.context.getServer().invoke(super.createObjectName(), METHOD, new Object[] {}, new String[] {});
 		// default impl of display;
