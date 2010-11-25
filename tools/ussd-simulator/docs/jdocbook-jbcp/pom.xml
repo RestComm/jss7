@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>mobicents-ussd-simulator-docs</artifactId>
 		<groupId>org.mobicents.protocols.ss7.tools.ussd.docs</groupId>
-		<version>1.0.0.BETA1-SNAPSHOT</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>mobicents-ussd-simulator-docs-jdocbook-jbcp</artifactId>

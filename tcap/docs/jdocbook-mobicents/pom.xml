@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>mobicents-tcap-docs</artifactId>
 		<groupId>org.mobicents.protocols.ss7.tcap.docs</groupId>
-		<version>1.0.0.BETA5-SNAPSHOT</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-tcap-docs-jdocbook-mobicents</artifactId>

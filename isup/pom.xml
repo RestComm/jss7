@@ -5,20 +5,20 @@
 	<parent>
 		<artifactId>ss7-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7</groupId>
-		<version>1.0.0.BETA5</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 
 	<artifactId>isup-parent</artifactId>
 	<groupId>org.mobicents.protocols.ss7.isup</groupId>
-	<version>1.0.0.BETA5-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
 	<name>Mobicents SS7 :: ISUP :: Parent :: ${pom.artifactId}</name>
 	<properties>
 		<maven.test.skip>false</maven.test.skip>
-		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
+		
 
 	</properties>
 

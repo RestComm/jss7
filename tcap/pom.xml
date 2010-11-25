@@ -5,19 +5,18 @@
 	<parent>
 		<artifactId>ss7-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7</groupId>
-		<version>1.0.0.BETA5</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 
 	<artifactId>tcap-parent</artifactId>
 	<groupId>org.mobicents.protocols.ss7.tcap</groupId>
-	<version>1.0.0.BETA5-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
 	<name>Mobicents SS7 :: TCAP :: Parent :: ${pom.artifactId}</name>
 	<properties>
-		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
 	</properties>
 
 	<modules>

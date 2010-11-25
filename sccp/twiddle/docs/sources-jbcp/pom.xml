@@ -5,7 +5,7 @@
 
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.sccp.tools.twiddle.docs</groupId>
-		<version>1.0.0.BETA5-SNAPSHOT</version>
+		<version>1.0.0-SNAPSHOT</version>
 		<artifactId>cli-twiddle-docs</artifactId>
 	</parent>
 

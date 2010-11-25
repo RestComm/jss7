@@ -6,12 +6,12 @@
 	<parent>
 		<artifactId>ss7-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7</groupId>
-		<version>1.0.0.BETA3-SNAPSHOT</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.mobicents.protocols.ss7.tools.ussd</groupId>
 	<artifactId>ss7-ussd-simulator-parent</artifactId>
-	<version>1.0.0.BETA1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Mobicents USSD Simulator :: Parent</name>
