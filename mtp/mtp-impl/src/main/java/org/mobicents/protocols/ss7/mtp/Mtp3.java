@@ -87,7 +87,7 @@ public class Mtp3 implements Runnable {
     
     private MTPScheduler executor = new MTPScheduler();
 
-    private Logger logger = Logger.getLogger(Mtp3.class);
+    private static final Logger logger = Logger.getLogger(Mtp3.class);
     
     //public Mtp3Impl(String name, Mtp1 layer1) {
     public Mtp3(String name) {
@@ -232,7 +232,7 @@ public class Mtp3 implements Runnable {
             // int opc = ((sif[1] & 0xC0) >> 6) | ((sif[2] & 0xff) << 2) | ((sif[3]
             // & 0x0f) << 10);
             // int sls = (sif[3] & 0xf0) >>> 4;
-            int dpc = dpc(sif, 1);
+            int dpc = dpc(sif, 1); //1 - cause sif contains sio, even though its also passed as arg.
             int opc = opc(sif, 1);
             int sls = sls(sif, 1);
             
@@ -286,7 +286,7 @@ public class Mtp3 implements Runnable {
 
 
                         //change order of opc/dpc in SLTA !
-                        writeRoutingLabel(slta, 0, 0, sls, opc, dpc);
+                        writeRoutingLabel(slta, 0, this.ssi, sls, opc, dpc);
                         slta[0] = (byte) sio;
                         slta[5] = 0x021;
                         // +1 cause we copy LEN byte also.
@@ -478,9 +478,9 @@ public class Mtp3 implements Runnable {
         int subservice = DEFAULT_SUB_SERVICE_TRA;
         //}
         byte[] buffer = new byte[6];
-        writeRoutingLabel(buffer, 0, 0, 0, dpc, opc);
+        writeRoutingLabel(buffer, 0, this.ssi, 0, dpc, opc);
         // buffer[0] = (byte) (_SERVICE_TRA | ( subservice << 4));
-        buffer[0] = (byte) 0xC0;
+        //buffer[0] = (byte) 0x00;
         // H0 and H1, see Q.704 section 15.11.2+
         buffer[5] = 0x17;
         link.send(buffer, buffer.length);
@@ -556,8 +556,8 @@ public class Mtp3 implements Runnable {
         public void ping(long timeout) {
             //prepearing test message
             
-            writeRoutingLabel(sltm, 0, 0, link.getSls(), dpc, opc);
-            sltm[0] = (byte) 0xC1; // 1100 0001
+            writeRoutingLabel(sltm, 0x01, ssi, link.getSls(), dpc, opc);
+            //sltm[0] = (byte) 0x01; 
             sltm[5] = 0x11;
             sltm[6] = (byte) (SLTM_PATTERN.length << 4);
             System.arraycopy(SLTM_PATTERN, 0, sltm, 7, SLTM_PATTERN.length);
@@ -627,14 +627,14 @@ public class Mtp3 implements Runnable {
     
     public static void writeRoutingLabel(byte[] data, int si, int ssi, int sls, int dpc, int opc) {
         //see Q.704.14.2 
-    	//TODO: move to use util class.
         data[0] = (byte) (((ssi & 0x0F) << 4) | (si & 0x0F));
         data[1] = (byte) dpc;
         data[2] = (byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6));
         data[3] = (byte) (opc >> 2);
         data[4] = (byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4));
-        //sif[4] = (byte) (((opc>> 10) & 0x0F) | ((0 & 0x0F) << 4));
-    }    ////////////////
+        
+    }   
+    ////////////////
     // Debug Part //
     ////////////////
     private boolean l3Debug;
