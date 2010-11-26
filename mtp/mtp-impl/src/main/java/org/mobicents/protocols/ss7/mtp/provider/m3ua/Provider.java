@@ -56,9 +56,6 @@ public class Provider implements MtpProvider, Runnable {
 	public static final String PROPERTY_LADDRESS = "mtp.address.local";
 	public static final String PROPERTY_RADDRESS = "mtp.address.remote";
 	
-	public static final String PROPERTY_APC = "mtp.apc";
-	public static final String PROPERTY_OPC = "mtp.opc";
-	
     protected SocketAddress localAddress = new InetSocketAddress("127.0.0.1", 8998);;
     protected SocketAddress remoteAddress = new InetSocketAddress("127.0.0.1", 1345);
     
@@ -78,9 +75,7 @@ public class Provider implements MtpProvider, Runnable {
     
     private ReentrantLock lock = new ReentrantLock();
     private Condition sendCompleted = lock.newCondition();
-    
-    private int opc;
-    private int apc;
+
     
     /**
      * 
@@ -125,20 +120,6 @@ public class Provider implements MtpProvider, Runnable {
 				this.remoteAddress = parseStringAddress(s);
 			}
 
-			//opc/dpc
-			s = p.getProperty(PROPERTY_APC);
-			if(s == null)
-			{
-				throw new ConfigurationException("APC must be specified with: "+PROPERTY_APC+" property.");
-			}
-			this.apc = Integer.parseInt(s);
-			
-			s = p.getProperty(PROPERTY_OPC);
-			if(s == null)
-			{
-				throw new ConfigurationException("OPC must be specified with: "+PROPERTY_OPC+" property.");
-			}
-			this.opc = Integer.parseInt(s);
 		} catch (Exception e) {
 			throw new ConfigurationException(e);
 		}
@@ -196,22 +177,6 @@ public class Provider implements MtpProvider, Runnable {
         } catch (Exception e) {
             throw new StartFailedException(e);
         } 
-    }
-
-    public void setOriginalPointCode(int opc) {
-        this.opc = opc;
-    }
-
-    public void setAdjacentPointCode(int apc) {
-        this.apc = apc;
-    }
-
-    public int getAdjacentPointCode() {
-        return apc;
-    }
-
-    public int getOriginalPointCode() {
-        return opc;
     }
 
     public void setMtpListener(MtpListener listener) {

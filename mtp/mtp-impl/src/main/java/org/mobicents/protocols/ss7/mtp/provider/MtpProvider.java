@@ -20,30 +20,6 @@ public interface MtpProvider {
      * @return
      */
     public String getName();
-    
-    /**
-     * Assigns originated point code
-     * 
-     * @param opc the originated point code
-     */
-    public void setOriginalPointCode(int opc);
-
-    /**
-     * Assigns destination point code.
-     * 
-     * @param dpc destination point code in decimal format.
-     */
-    public void setAdjacentPointCode(int dpc);
-
-    /**
-     * @return the dpc
-     */
-    public int getAdjacentPointCode();
-
-    /**
-     * @return the opc
-     */
-    public int getOriginalPointCode();
 
     /**
      * Sets listener for MTP callbacks. If null is passed internal refence is

@@ -59,9 +59,13 @@ public class Mtp3 implements Runnable {
     
     //FIXME: MOVE THIS TO LINKSET?
     protected volatile boolean started = false;
+    /** defautl value of SSI */
+    public static final int DEFAULT_SSI = 2;//NATIONAL, as default.
     
     private int dpc;
     private int opc;
+    private int ssi=DEFAULT_SSI;;
+    
     
     /** List of signaling channels wrapped with MTP2*/
     private List<Mtp2> links = new ArrayList();
@@ -127,7 +131,15 @@ public class Mtp3 implements Runnable {
         return opc;
     }
 
-    /** (non-Javadoc)
+	public int getSsi() {
+		return ssi;
+	}
+
+	public void setSsi(int ssi) {
+		this.ssi = 0x0F & ssi; //0x0F, since its 4 bits, first two are used, rest is free area.
+	}
+
+	/** (non-Javadoc)
      * @see org.mobicents.protocols.ss7.mtp.Mtp3#addMtp3Listener(org.mobicents.protocols.ss7.mtp.Mtp3Listener)
      */
     public void addMtp3Listener(Mtp3Listener lst) {
@@ -223,12 +235,21 @@ public class Mtp3 implements Runnable {
             int dpc = dpc(sif, 1);
             int opc = opc(sif, 1);
             int sls = sls(sif, 1);
-
-            //FIXME: change back to trace
-            if (logger.isTraceEnabled()) {
+            
+            //check SSI, Q.704 Figure 25, seems like if its bad, we discard.
+            if(this.ssi!=subserviceIndicator)
+            {
+            	if (logger.isTraceEnabled()) {
+                    logger.trace(
+                            String.format("(%s) Received MSSU with bad SSI, [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "] data: ", mtp2.getName()) + Arrays.toString(sif));
+                }
+            	return;
+            }else if (logger.isTraceEnabled()) {
                 logger.trace(
                         String.format("(%s) Received MSSU [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "] data: ", mtp2.getName()) + Arrays.toString(sif));
             }
+            
+            
             switch (serviceIndicator) {
                 case LINK_MANAGEMENT:
                     int h0 = sif[5] & 0x0f;
@@ -254,7 +275,7 @@ public class Mtp3 implements Runnable {
                     h1 = (sif[5] & 0xf0) >>> 4;
 
                     int len = (sif[6] & 0xf0) >>> 4;
-                    System.out.println("Length=" +len);
+
                     if (h0 == 1 && h1 == 1) {
                         if (logger.isTraceEnabled()) {
                             logger.trace(String.format("(%s) Received SLTM", mtp2.getName()));
@@ -305,11 +326,7 @@ public class Mtp3 implements Runnable {
                     }
 
                     if (mtp3Listener != null) {
-                        //lets create byte[] which is actuall upper layer msg.
-                        //msbBuff.len = sif.len - 4 (routing label), after routing label there should be msg code
-                        //byte[] msgBuff = new byte[sif.length - 4];
-                        //System.arraycopy(sif, 4, msgBuff, 0, msgBuff.length);
-//                        mtpUser.receive(mtp2.getSls(), mtp2.getLinkSet().getId(), SERVICE_SCCP, subserviceIndicator, msgBuff);
+                        
                         byte[] message = new byte[sif.length + 1];
                         System.arraycopy(sif, 0, message, 1, sif.length);
                         message[0] = (byte) sio;
@@ -326,16 +343,13 @@ public class Mtp3 implements Runnable {
                         
                     }
                     if (mtp3Listener != null) {
-                        //lets create byte[] which is actuall upper layer msg.
-                        //msbBuff.len = sif.len - 4 (routing label), after routing label there should be msg code
-                        //byte[] msgBuff = new byte[sif.length - 4];
-                        //System.arraycopy(sif, 4, msgBuff, 0, msgBuff.length);
-//                        mtpUser.receive(mtp2.getSls(), mtp2.getLinkSet().getId(), SERVICE_ISUP, subserviceIndicator, msgBuff);
-//                        byte[] message = new byte[sif.length + 1];
-//                        System.arraycopy(sif, 0, message, 1, sif.length);
-//                        message[0] = (byte) sio;
+                        //baranowb: pushed this, unless someone can tell me 
+                    	//why there was diff in code for SCCP && ISUP
+                    	byte[] message = new byte[sif.length + 1];
+                        System.arraycopy(sif, 0, message, 1, sif.length);
+                        message[0] = (byte) sio;
                         try {
-                            mtp3Listener.receive(sif);
+                            mtp3Listener.receive(message);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
