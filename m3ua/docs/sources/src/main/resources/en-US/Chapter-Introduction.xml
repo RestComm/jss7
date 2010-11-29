@@ -8,24 +8,17 @@
 		to &THIS.PLATFORM;  &THIS.APPLICATION;
 	</title>
 	<para>
-		<acronym>M3UA</acronym>
-		stands for
-		<literal>MTP3 User Adaptation Layer</literal>
-		.
-		<acronym>M3UA</acronym>
-		addressses need of conecting
-		<literal>SS7</literal>
-		legacy services with IP entities like database servers.
-		In techincal terms
-		<acronym>M3UA</acronym>
-		allows to exchange signaling between
+		M3UA stands for MTP3 User Adaptation Layer. M3UA addresses the need for conecting SS7 legacy services with IP entities like database servers.
+  </para>
+  <para>
+		In technical terms, M3UA
+		allows for signaling between
 		<literal>Switched Circuit Network</literal>
-		(SCN) border device(Signaling Gateway - SG) and Media Gateway
-		Controler(MGC) or Database server.
+		(SCN) border devices (Signaling Gateway - SG) and Media Gateway
+		Controllers (MGC) or Database servers to be exchanged.
 	</para>
 	<para>
-		<acronym>M3UA</acronym>
-		transport mechanism covers following aspects:
+		The M3UA transport mechanism covers the following aspects:
 	</para>
 	<itemizedlist>
 		<listitem>
@@ -53,17 +46,17 @@
 		</listitem>
 
 	</itemizedlist>
-	<para>Diagram below depicts <literal>M3UA</literal> relation to protocols:</para>
-	<mediaobject>
-		<imageobject>
-			<imagedata
-				width="300px"
-				align="center"
-				fileref="images/m3ua_layering.png"
-				format="PNG"/>
-		</imageobject>
-		<caption>
-			<para>M3UA relations</para>
-		</caption>
-	</mediaobject>
+	<para>The diagram below depicts <literal>M3UA</literal> relationship to protocols:</para>
+  <figure>
+    <title>M3UA relations</title>
+    <mediaobject>
+      <imageobject>
+        <imagedata
+          width="300px"
+          align="center"
+          fileref="images/m3ua_layering.png"
+          format="PNG"/>
+      </imageobject>
+    </mediaobject>
+  </figure>
 </chapter>

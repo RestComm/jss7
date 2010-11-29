@@ -5,52 +5,69 @@
 
 	<title>Design Overview</title>
 	<para>&THIS.PLATFORM; &THIS.APPLICATION;
-		provides user with
-		<acronym>NIO</acronym>
+		provides the user with
+		NIO
 		like transport abstraction.
 		User works with:
 	</para>
-	<itemizedlist>
-		<listitem>
-			<para>Channel provider - factory class which creates concrete
-				implementaion of channel, which hides transport details.</para>
-		</listitem>
-		<listitem>
-			<para>Selector - object which can be queried about state of channel
-				I/O operations.</para>
-		</listitem>
-		<listitem>
-			<para>Selection key - object encapsulating information about I/O
-				ready channel.</para>
-		</listitem>
-		<listitem>
-			<para>Channel - object handling I/O operation</para>
-		</listitem>
-		<listitem>
-			<para>
-				<literal>M3UA</literal>
-				Messages and Parameters - objects representing specific metadata,
-				like SS7 protocol message,
-				<literal>M3UA</literal> management messages, etc...
-			</para>
-		</listitem>
-	</itemizedlist>
-	<para>Diagram below depicts high level design:
+  <variablelist>
+    <varlistentry>
+      <term>Channel provider</term>
+      <listitem>
+        <para>
+        Factory class that creates a concrete implementaion of the channel, that hides transport details.
+        </para>
+      </listitem>
+    </varlistentry>
+    <varlistentry>
+      <term>Selector</term>
+      <listitem>
+        <para>
+        Object that can be queried about state of channel I/O operations.
+        </para>
+      </listitem>
+    </varlistentry>
+    <varlistentry>
+      <term>Selection key</term>
+      <listitem>
+        <para>
+        Object encapsulating information about I/O ready channel.
+        </para>
+      </listitem>
+    </varlistentry>
+    <varlistentry>
+      <term>Channel</term>
+      <listitem>
+        <para>
+        Object handling I/O operation.
+        </para>
+      </listitem>
+    </varlistentry>
+    <varlistentry>
+      <term>M3UA Messages and Parameters</term>
+      <listitem>
+        <para>
+        Objects representing specific metadata (such as SS7 protocol messages and M3UA management messages)
+        </para>
+      </listitem>
+    </varlistentry>
+  </variablelist>
+	<para>The diagram below depicts the high level design:
 	</para>
-	<mediaobject>
-		<imageobject>
-			<imagedata
-				width="250px"
-				
-				align="center"
-				fileref="images/design_1.png"
-				format="PNG"/>
-		</imageobject>
-		<caption>
-			<para>&THIS.PLATFORM; &THIS.APPLICATION; top overview</para>
-		</caption>
-	</mediaobject>
-	<para>Currently &THIS.PLATFORM; &THIS.APPLICATION; supports following transports:</para>
+  <figure>
+    <title>&THIS.PLATFORM; &THIS.APPLICATION; top overview</title>
+    <mediaobject>
+      <imageobject>
+        <imagedata
+          width="250px"
+          
+          align="center"
+          fileref="images/design_1.png"
+          format="PNG"/>
+      </imageobject>
+    </mediaobject>
+  </figure>
+	<para>&THIS.PLATFORM; &THIS.APPLICATION; currently supports the following transports:</para>
 	<itemizedlist>
 		<listitem>
 			<para>TCP</para>
