@@ -27,7 +27,7 @@
 		<jboss.javaee.version>5.0.1.GA</jboss.javaee.version>
 		<jboss.security.version>2.0.3.SP1</jboss.security.version>
 		<getop.version>1.0.9</getop.version>
-		<sccp.version>1.0.0</sccp.version>
+		<sccp.version>${pom.version}</sccp.version>
 	</properties>
 
 
