@@ -241,7 +241,7 @@ public class Mtp3 implements Runnable {
             {
             	if (logger.isTraceEnabled()) {
                     logger.trace(
-                            String.format("(%s) Received MSSU with bad SSI, [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "] data: ", mtp2.getName()) + Arrays.toString(sif));
+                            String.format("(%s) Received MSSU with bad SSI, discarding! [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "] data: ", mtp2.getName()) + Arrays.toString(sif));
                 }
             	return;
             }else if (logger.isTraceEnabled()) {
@@ -249,7 +249,7 @@ public class Mtp3 implements Runnable {
                         String.format("(%s) Received MSSU [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "] data: ", mtp2.getName()) + Arrays.toString(sif));
             }
             
-            
+
             switch (serviceIndicator) {
                 case LINK_MANAGEMENT:
                     int h0 = sif[5] & 0x0f;
@@ -277,8 +277,8 @@ public class Mtp3 implements Runnable {
                     int len = (sif[6] & 0xf0) >>> 4;
 
                     if (h0 == 1 && h1 == 1) {
-                        if (logger.isTraceEnabled()) {
-                            logger.trace(String.format("(%s) Received SLTM", mtp2.getName()));
+                    	if (logger.isDebugEnabled()) {
+                            logger.debug(String.format("(%s) Received SLTM", mtp2.getName()));
                         }
                         // receive SLTM from remote end
                         // create response
@@ -292,14 +292,14 @@ public class Mtp3 implements Runnable {
                         // +1 cause we copy LEN byte also.
                         System.arraycopy(sif, 6, slta, 6, len + 1);
 
-                        if (logger.isTraceEnabled()) {
-                            logger.trace(String.format("(%s) Responding with SLTA", mtp2.getName()));
+                        if (logger.isDebugEnabled()) {
+                            logger.debug(String.format("(%s) Responding with SLTA", mtp2.getName()));
                         }
                         mtp2.send(slta, slta.length);
                     } else if (h0 == 1 && h1 == 2) {
                         // receive SLTA from remote end
-                        if (logger.isTraceEnabled()) {
-                            logger.trace(String.format("(%s) Received SLTA", mtp2.getName()));
+                    	if (logger.isDebugEnabled()) {
+                            logger.debug(String.format("(%s) Received SLTA", mtp2.getName()));
                         }
 
                         //checking pattern
@@ -316,12 +316,15 @@ public class Mtp3 implements Runnable {
                             //logger.info("SLTA pattern does not match: \n"+Arrays.toString(sif)+"\n"+Arrays.toString(SLTM_PATTERN));
                         }
                     } else {
-                        logger.warn(String.format("(%s) Unexpected message type", mtp2.getName()));
+                    	if(logger.isEnabledFor(Level.WARN))
+                    	{
+                    		logger.warn(String.format("(%s) Unexpected message type", mtp2.getName()));
+                    	}
                     }
                     break;
                 case _SI_SERVICE_SCCP:
-                    if (logger.isEnabledFor(Level.TRACE) && isL3Debug()) {
-                        mtp2.trace("XXX MSU Indicates SCCP");
+                	if (logger.isDebugEnabled()) {
+                        logger.debug("Received SCCP MSU");
                         
                     }
 
@@ -338,8 +341,8 @@ public class Mtp3 implements Runnable {
                     }
                     break;
                 case _SI_SERVICE_ISUP:
-                    if (logger.isEnabledFor(Level.TRACE) && isL3Debug()) {
-                        mtp2.trace("XXX MSU Indicates ISUP");
+                	if (logger.isDebugEnabled()) {
+                        logger.debug("Received ISUP MSU");
                         
                     }
                     if (mtp3Listener != null) {
@@ -356,8 +359,8 @@ public class Mtp3 implements Runnable {
                     }
                     break;
                 default:
-                    if (logger.isEnabledFor(Level.WARN) && isL3Debug()) {
-                        mtp2.trace("XXX MSU Indicates UNKNOWN SERVICE!!!!!!!!!!!: " + Utils.dump(sif, sif.length, false));
+                    if (logger.isEnabledFor(Level.WARN) ) {
+                        logger.warn("Received MSU for UNKNOWN SERVICE!!!!!!!!!!!: " + Utils.dump(sif, sif.length, false));
                     }
                     break;
             }
@@ -385,8 +388,8 @@ public class Mtp3 implements Runnable {
         byte sls = (byte) sls(msg, 1);
         Mtp2 link = this.selectLink(sls);
         
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("MTP3 passes MSU to layer 2, (%s) ", link != null ? link.getName() : "NO LINK"));
+        if (logger.isEnabledFor(Level.TRACE)) {
+            logger.trace(String.format("MTP3 passes MSU to layer 2, (%s) ", link != null ? link.getName() : "NO LINK"));
         }
         if (link == null) {
             return false;
@@ -436,6 +439,7 @@ public class Mtp3 implements Runnable {
     }
     
     public void linkFailed(Mtp2 link) {
+    	//FIXME: add debug or trace?
         //remove this link from list of active links
         linkset.remove(link);
 
@@ -634,16 +638,5 @@ public class Mtp3 implements Runnable {
         data[4] = (byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4));
         
     }   
-    ////////////////
-    // Debug Part //
-    ////////////////
-    private boolean l3Debug;
 
-    public boolean isL3Debug() {
-        return l3Debug;
-    }
-
-    public void setL3Debug(boolean l3Debug) {
-        this.l3Debug = l3Debug;
-    }
 }

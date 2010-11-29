@@ -139,8 +139,14 @@ public class Mtp2 {
     
 
     static {
-        FRAME_NAMES = new String[]{"SIO", "SIN", "SIE", "SIOS", "SIPO",
-                    "SIPB", "FISU"
+        FRAME_NAMES = new String[]{
+        		"SIO", 
+        		"SIN", 
+        		"SIE", 
+        		"SIOS", 
+        		"SIPO",
+                "SIPB", 
+                "FISU"
                 };
 
     }
@@ -153,8 +159,13 @@ public class Mtp2 {
     
 
     static {
-        STATE_NAMES = new String[]{"OUT_OF_SERVICE", "NOT_ALIGNED",
-                    "ALIGNED", "PROVING", "ALIGNED_READY", "IN_SERVICE"
+        STATE_NAMES = new String[]{
+        		"OUT_OF_SERVICE", 
+        		"NOT_ALIGNED",
+                "ALIGNED", 
+                "PROVING", 
+                "ALIGNED_READY", 
+                "IN_SERVICE"
                 };
 
     }    
@@ -242,11 +253,11 @@ public class Mtp2 {
     /**
      * Subservice field of mtp msg. See Q.704.14.2.2
      */
-    private int subservice = -1;
-    private static final Logger logger = Logger.getLogger(Mtp2.class);
-
+    private static final Logger ROOT_LOGGER = Logger.getLogger(Mtp2.class);
+    private final Logger logger; //actual logger.
     public Mtp2(String name, Mtp1 channel) {
         this.name = name;
+        this.logger = ROOT_LOGGER.getLogger(name);
         this.channel = channel;
         channel.setLink(this);
         this.sls = channel.getCode();
@@ -338,20 +349,12 @@ public class Mtp2 {
 
         this.reset();
 
-        if (this.enabledL2Debug) {
-            trace("Is out fo service now");
-        }
-        // perform initial read, to make buffer empty.
-        //this.layer1.read(rxBuffer);
-        // mimics power on.
+        if(logger.isInfoEnabled()){
+         logger.info("Is out of service now. Starting.");
+    	}
 
-        // queueLSSU(Mtp2.FRAME_STATUS_INDICATION_OS);
-
-        // poll = mtpThread.submit(this);
-        // t = this.threadFactory.newThread(this);
-        // t.start();
-        state = Mtp2.MTP2_OUT_OF_SERVICE;
-
+        //state = Mtp2.MTP2_OUT_OF_SERVICE;
+        setState(MTP2_OUT_OF_SERVICE);
         //send Out of service indicator when link starts.
         queueLSSU(Mtp2.FRAME_STATUS_INDICATION_OS);
         processTx(16);
@@ -359,6 +362,9 @@ public class Mtp2 {
     }
 
     public void stop() {
+    	if(logger.isInfoEnabled()){
+            logger.info("Stopping link.");
+       	}
         mtp3.unregisterLink(this);
         started = false;
         reset();
@@ -372,7 +378,10 @@ public class Mtp2 {
 
     // should not be used
     protected void startInitialAlignment(boolean resetTxOffset) {
-        logger.info(String.format("(%s) Starting initial alignment", name));
+    	if(logger.isDebugEnabled())
+        {
+        	logger.debug(String.format("(%s) Starting initial alignment", name));
+    	}
 
         // Comment from Oleg: this is done initialy to setup correct spot in tx
         // buffer: dunno, I just believe, for now.
@@ -381,16 +390,24 @@ public class Mtp2 {
         }
 
         this.reset();
-        if (this.enabledL2Debug) {
-            trace(" Starting IAM procedure");
-        }
-
+   
         // switch state
-        // state = Mtp2.MTP2_NOT_ALIGNED;
-        this.state = MTP2_NOT_ALIGNED;
+
+        //this.state = MTP2_NOT_ALIGNED;
+        this.setState(MTP2_NOT_ALIGNED);
 
         // starting T2 timer
         start_T2();
+    }
+    
+    private void setState(int newState)
+    {
+    	if(logger.isInfoEnabled())
+    	{
+    		//iirc it should be info
+    		logger.info("State changed in link. "+STATE_NAMES[this.state]+" --> "+STATE_NAMES[this.state]);
+    	}
+    	this.state = newState;
     }
 
     private void reset() {
@@ -410,28 +427,32 @@ public class Mtp2 {
 
     public void fail() {
         cleanupTimers();
-        this.state = MTP2_OUT_OF_SERVICE;
-
-        logger.info(String.format("(%s) Link Out of service", name));
+        //this.state = MTP2_OUT_OF_SERVICE;
+        
+        if(logger.isDebugEnabled())
+        {
+        	logger.debug(String.format("(%s) Link Out of service", name));
+        }
+        this.setState(MTP2_OUT_OF_SERVICE);
         start_T17();
     }
 
     public boolean send(byte[] msg, int len) {
-        if (this.state != MTP2_INSERVICE) {
-            if (enableSuTrace && enabledL2Debug) {
-
-                trace("MTP3 scheduled MSU when not in service, discarding.");
-            }
-            return false;
-        }
+		if (this.state != MTP2_INSERVICE) {
+			if (this.logger.isEnabledFor(Level.TRACE)) {
+				logger.trace("MTP3 scheduled MSU when not in service, discarding.");
+			}
+			return false;
+		}
         // Here we will queue MSU if there is place in transmission buffer
         int possibleFSN = NEXT_FSN(this.retransmissionFSN_LastSent);
         // check if transmission buffer is full
         if (possibleFSN == this.retransmissionFSN_LastAcked) {
             // This means buffer is full;
-            if (this.enableSuTrace && enabledL2Debug) {
-                trace("Failed to queue msg, transmission buffer is full.");
-            }
+        	
+        	if(this.logger.isEnabledFor(Level.TRACE)){	
+                logger.trace("Failed to queue msg, transmission buffer is full.");
+        	}
             return false;
         }
         // FSN and all that will be set before puting this into txFrame buffer.
@@ -446,9 +467,11 @@ public class Mtp2 {
         //3 == FSN(1) + BSN(1) + LI(1)
         this.transmissionBuffer[possibleFSN].len = 3 + len;
         // FIXME: add check for short frame?
-        if (this.enableSuTrace && enabledL2Debug) {
-            trace("Queue MSU");
+     
+        if(this.logger.isEnabledFor(Level.TRACE)){	
+            logger.trace("Queued MSU");
         }
+       
         this.retransmissionFSN_LastSent = possibleFSN;
         if (this.retransmissionFSN == _OFF_RTR) {
             this.retransmissionFSN = possibleFSN;
@@ -476,8 +499,8 @@ public class Mtp2 {
 
         }
 
-        if (this.enableSuTrace && enabledL2Debug) {
-            trace("Queue LSSU[" + FRAME_NAMES[indicator] + "]");
+        if(this.logger.isEnabledFor(Level.TRACE)){	
+            logger.trace("Queue LSSU[" + FRAME_NAMES[indicator] + "]");
         }
     }
 
@@ -488,8 +511,9 @@ public class Mtp2 {
         this.txFrame[2] = 0;
 
         // txQueue.offer(frame);
-        if (this.enableSuTrace && enabledL2Debug) {
-            trace("Queue FISU");
+
+        if(this.logger.isEnabledFor(Level.TRACE)){	
+            logger.trace("Queue FISU");
         }
     }
 
@@ -498,7 +522,10 @@ public class Mtp2 {
             byte[] b = txQueue.peak();
             System.arraycopy(b, 0, txFrame, 0, b.length);
             this.txLen = b.length;
-
+            if(logger.isTraceEnabled())
+            {
+            	logger.trace("Scheduling frame from queue: "+Utils.dump(txFrame, txLen, true));
+            }
         } else {
             switch (state) {
                 case MTP2_OUT_OF_SERVICE:
@@ -548,6 +575,10 @@ public class Mtp2 {
                         // trace("Scheduled next frame in tx buffer: "
                         // + dump(this.txFrame, this.txLen, false));
                         // }
+                        if(logger.isTraceEnabled())
+                        {
+                        	logger.trace("Retransmiting frame: "+Utils.dump(txFrame, txLen, true));
+                        }
                         return;
                     }
                     // else queue FISU
@@ -580,11 +611,12 @@ public class Mtp2 {
                             queueLSSU(FRAME_STATUS_INDICATION_N);
                         }
                         start_T3();
-                        this.state = MTP2_ALIGNED;
+                        //this.state = MTP2_ALIGNED;
 
                         if (logger.isDebugEnabled()) {
                             logger.debug(String.format("(%s) Aligned", name));
                         }
+                        this.setState(MTP2_ALIGNED);
                         break;
                     case FRAME_STATUS_INDICATION_E:
                         // 1. stop t2
@@ -601,11 +633,12 @@ public class Mtp2 {
                         // 4. start T3
                         start_T3();
                         // 5. set state
-                        this.state = MTP2_ALIGNED;
+                        //this.state = MTP2_ALIGNED;
 
                         if (logger.isDebugEnabled()) {
                             logger.debug(String.format("(%s) Aligned", name));
                         }
+                        this.setState(MTP2_ALIGNED);
                         break;
                     default:
                     // logger.warn("Ingoring LSSU[" + _FRAME_NAMES[type]
@@ -638,11 +671,12 @@ public class Mtp2 {
                         // 6. cancel further proving.
                         this.futureProving = false;
                         // 7. set state
-                        this.state = MTP2_PROVING;
+                        //this.state = MTP2_PROVING;
 
                         if (logger.isDebugEnabled()) {
                             logger.debug(String.format("(%s) Proving", name));
                         }
+                        this.setState(MTP2_PROVING);
                         break;
                     case FRAME_STATUS_INDICATION_OS:
                         // we should invoke ALI first, but we cancel timer
@@ -672,11 +706,12 @@ public class Mtp2 {
                         // 3. start T3
                         start_T3();
                         // 4. swithc state
-                        this.state = MTP2_ALIGNED;
+                        //this.state = MTP2_ALIGNED;
 
                         if (logger.isDebugEnabled()) {
                             logger.debug(String.format("(%s) Aligned", name));
                         }
+                        this.setState(MTP2_ALIGNED);
                         break;
                     case FRAME_STATUS_INDICATION_E:
                         // NOTE: this one is not covered in Olegs src.
@@ -790,8 +825,8 @@ public class Mtp2 {
             // FIXME: switch to this
             // System.arraycopy(rxFrame, 4, sif, 0, realLength);
 
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("(%s) Delivering MSU to layer 3 ", name));
+            if (logger.isEnabledFor(Level.TRACE)) {
+                logger.trace(String.format("(%s) Delivering MSU to layer 3 ", name));
             }
             mtp3.onMessage(sio, sif, this);
         }
@@ -815,16 +850,17 @@ public class Mtp2 {
             } else {
                 type = "MSU";
             }
-            logger.trace(String.format("(%s) Receive frame, type=%s, fsn=%d, fib=%d, bsn=%d, bib=%d", name, type, fsn, fib, bsn, bib));
-
+            if(this.logger.isEnabledFor(Level.TRACE)){	
+                logger.trace(String.format("(%s) Receive frame, type=%s, fsn=%d, fib=%d, bsn=%d, bib=%d", name, type, fsn, fib, bsn, bib));
+            }
         }
 
         //Why it was 5?
         if (li + 3 > rxLen) {
 
-            if (this.enableSuTrace && enabledL2Debug) {
-                trace("Discarding frame on wrong RX Len: " + rxLen + " > " + li);
-            }
+        	if(this.logger.isEnabledFor(Level.TRACE)){	
+                logger.trace("Discarding frame on wrong RX Len: " + rxLen + " > " + li);
+        	}
             return;
         }
 
@@ -859,10 +895,7 @@ public class Mtp2 {
                     // FIXME: return here?
                     break;
                 case MTP2_ALIGNED_READY:
-
-                    if (enabledL2Debug) {
-                        trace("Received proper SU in ALIGNED_READY state, switching to IN_SERVICE.");
-                    }
+                	
                     this.eCount = 0;
                     this.dCount = 0;
                     this.stop_T7();
@@ -872,12 +905,12 @@ public class Mtp2 {
                     this.sendBIB = fib;
                     this.retransmissionFSN_LastAcked = bsn;
 
-                    this.state = MTP2_INSERVICE;
+                    //this.state = MTP2_INSERVICE;
 
                     if (logger.isDebugEnabled()) {
                         logger.debug(String.format("(%s) MTP now IN_SERVICE, Notifing layer 3", name));
                     }
-
+                    this.setState(MTP2_INSERVICE);
                     mtp3.linkInService(this);
                     break;
             }
@@ -1006,12 +1039,7 @@ public class Mtp2 {
         // private void processRx(ByteBuffer bb, int len) {
 
         int i = 0;
-        // byte[] buff = bb.array();
-        if (this.enableDataTrace && enabledL2Debug) {
-            //dataHolder.add(new BufferHolder(System.currentTimeMillis(),	 buff,len));
-            // FIXME:
-//            Utils.getInstance().addBuffer(this.sls, this.name, this.linkSet.getName(), this.linkSet.getId(), System.currentTimeMillis(), buff, len);
-        }
+
         // start HDLC alg
         while (i < len) {
             while (rxState.bits <= 24 && i < len) {
@@ -1132,8 +1160,12 @@ public class Mtp2 {
                     processRx(rxBuffer, bytesRead);
                 }
             } catch (Exception e) {
-                state = MTP2_OUT_OF_SERVICE;
-                logger.error(String.format("(%s) Can not read data from channel", name), e);
+                //state = MTP2_OUT_OF_SERVICE;
+            	if(logger.isEnabledFor(Level.ERROR))
+            	{
+            		logger.error(String.format("(%s) Can not read data from channel", name), e);
+            	}
+                this.setState(MTP2_OUT_OF_SERVICE);
                 mtp3.linkFailed(this);
             }
         }
@@ -1150,8 +1182,12 @@ public class Mtp2 {
             	logger.trace("Sending frame");
             }
         } catch (Exception e) {
-            state = MTP2_OUT_OF_SERVICE;
-            logger.error(String.format("(%s) Can not write data to channel", name), e);
+            //state = MTP2_OUT_OF_SERVICE;
+        	if(logger.isEnabledFor(Level.ERROR))
+        	{
+        		logger.error(String.format("(%s) Can not write data to channel", name), e);
+        	}
+            this.setState(MTP2_OUT_OF_SERVICE);
             mtp3.linkFailed(this);
         }
     }
@@ -1183,8 +1219,10 @@ public class Mtp2 {
         this.state = MTP2_OUT_OF_SERVICE;
         // NOTE: buffer is flushed on start alignment.
         start_T17();
-
-        logger.info(String.format("(%s) Alignment not possible, initiating T17 for restart. Cause: %s", name, cause));
+        if(logger.isDebugEnabled())
+        {
+        	logger.debug(String.format("(%s) Alignment not possible, initiating T17 for restart. Cause: %s", name, cause));
+        }
     }
 
     private void alignmentBroken(String cause) {
@@ -1198,7 +1236,8 @@ public class Mtp2 {
             }
         }
 
-        this.state = MTP2_OUT_OF_SERVICE;
+        //this.state = MTP2_OUT_OF_SERVICE;
+        this.setState(MTP2_OUT_OF_SERVICE);
         // NOTE: buffer is flushed on start alignment.
         start_T17();
 
@@ -1221,11 +1260,12 @@ public class Mtp2 {
         stop_T2();
         stop_T3();
         stop_T4();
-        this.state = MTP2_ALIGNED_READY;
+        //this.state = MTP2_ALIGNED_READY;
 
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("(%s) Aligned ready", name));
         }
+        this.setState(MTP2_ALIGNED_READY);
     // now we wait for proper data
     }
 
@@ -1241,7 +1281,8 @@ public class Mtp2 {
                     if (this.mtp3 != null) {
                         mtp3.linkFailed(this);
                     }
-                    state = MTP2_OUT_OF_SERVICE;
+                    //state = MTP2_OUT_OF_SERVICE;
+                    this.setState(MTP2_OUT_OF_SERVICE);
                 }
                 break;
             case MTP2_PROVING:
@@ -1253,8 +1294,9 @@ public class Mtp2 {
                         if (this.provingAttempts < 5) {
                             this.futureProving = true;
 
-                            if (enabledL2Debug) {
-                                trace("Exceeded AERM threshold[ " + aermThreshold + " ] errors[ " + eCount + " ], proving attempts[ " + provingAttempts + " ]");
+                            if(this.logger.isEnabledFor(Level.WARN)){	
+                            	//FIXME: should this remain warn ?
+                                logger.warn("Exceeded AERM threshold[ " + aermThreshold + " ] errors[ " + eCount + " ], proving attempts[ " + provingAttempts + " ], continue...");
                             }
                             return;
                         }
@@ -1313,12 +1355,13 @@ public class Mtp2 {
                 alignmentNotPossible("T2 Expired.");
                 // 2. cancel E
                 emergency = false;
-                if (logger.isEnabledFor(Level.WARN) && enabledL2Debug) {
-                    trace("Timer T2 has expired, Alignment not possible. ");
+                if(logger.isEnabledFor(Level.WARN)){
+                	//FIXME: should this be debug ?
+                    logger.warn("Timer T2 has expired, Alignment not possible. ");
                 }
             } else {
-                if (logger.isEnabledFor(Level.WARN) && enabledL2Debug) {
-                    trace("T2 fired in state[ " + STATE_NAMES[tmpState] + " ]");
+            	if(logger.isEnabledFor(Level.WARN)){	
+                    logger.warn("T2 fired in state[ " + STATE_NAMES[tmpState] + " ]");
                 }
             }
         }
@@ -1337,12 +1380,12 @@ public class Mtp2 {
                 alignmentNotPossible("T3 Expired.");
                 // 2.cancel E
                 emergency = false;
-                if (logger.isEnabledFor(Level.WARN) && enabledL2Debug) {
-                    trace("Timer T3 has expired, Alignment not possible. ");
+                if(logger.isEnabledFor(Level.WARN)){	
+                    logger.warn("Timer T3 has expired, Alignment not possible. ");
                 }
             } else {
-                if (logger.isEnabledFor(Level.WARN) && enabledL2Debug) {
-                    trace("T3 fired in state[ " + STATE_NAMES[tmpState] + " ]");
+            	if(logger.isEnabledFor(Level.WARN)){	
+                    logger.warn("T3 fired in state[ " + STATE_NAMES[tmpState] + " ]");
                 }
             }
         }
@@ -1373,8 +1416,8 @@ public class Mtp2 {
                 }
             } else {
 
-                if (logger.isEnabledFor(Level.WARN) && enabledL2Debug) {
-                    trace("T4 fired in state[ " + STATE_NAMES[tmpState] + " ]");
+            	if(logger.isEnabledFor(Level.WARN)){	
+                    logger.warn("T4 fired in state[ " + STATE_NAMES[tmpState] + " ]");
                 }
             }
         }
@@ -1457,49 +1500,9 @@ public class Mtp2 {
     public boolean isT17() {
         return !t17Action.isCanceled();
     }
-    /**
-     * Determines if mtp should dump hex data received.
-     */
-    private boolean enableDataTrace = false;
-    /**
-     * Determines if mtp should put trace of sent/received SUs
-     */
-    private boolean enableSuTrace = false;
-    private boolean enabledL2Debug = false;
 
-    public boolean isL2Debug() {
-        return enabledL2Debug;
-    }
-
-    public void setL2Debug(boolean l2Debug) {
-        this.enabledL2Debug = l2Debug;
-    }
-
-    public boolean isEnableDataTrace() {
-        return enableDataTrace;
-    }
-
-    public void setEnableDataTrace(boolean enableDataTrace) {
-        this.enableDataTrace = enableDataTrace;
-    }
-
-    public boolean isEnableSuTrace() {
-        return enableSuTrace;
-    }
-
-    public void setEnableSuTrace(boolean enableSuTrace) {
-        this.enableSuTrace = enableSuTrace;
-    }
-
-    public void trace(String msg) {
-        // FIXME: add sls
-        StringBuilder sb = new StringBuilder();
-        sb.append("\n").append(System.currentTimeMillis()).append(" Link [").append(name).append("] [").append(" state = ").append(
-                STATE_NAMES[state]).append(" ]").append(" fsn = ").append(retransmissionFSN_LastSent).append(", fsn_acked = ").append(this.retransmissionFSN_LastAcked).append(", rtrFSN = ").append(this.retransmissionFSN).append(", fib = ").append(
-                this.sendFIB).append(", bsn = ").append(this.sendBSN).append(", bib = ").append(this.sendBIB).append(") ").append(
-                msg);
-        Utils.getInstance().append(sb.toString());
-    }
+   
+   
 
     // ////////////////////
     // Some mtp classes //
@@ -1514,22 +1517,17 @@ public class Mtp2 {
          * length of actual data fram to be transmited.
          */
         int len = 0;        // public boolean isFree()
-        // {
-        // return this.len ==0;
-        // }
-        // public void free()
-        // {
-        // this.len =0;
-        // }
-        // public byte[] getData()
-        // {
-        // return this.frame;
-        // }
-        // public int getLen()
-        // {
-        // return this.len;
-        // }
     }
+    
+//    private void log(String msg, Level level) {
+//        // FIXME: yeah, I know, but in case of more links, logs will be a pain
+//        StringBuilder sb = new StringBuilder();
+//        
+//        //
+//        sb.append(" Link [").append(name).append("] [").append(" state = ").append( STATE_NAMES[state]).append(" ] ").append(msg);
+//        logger.log(level, sb.toString());
+//       
+//    }
 
     private static final int NEXT_FSN(int x) {
         // kill FIB if present
