@@ -60,15 +60,13 @@ public class Mtp3 implements Runnable {
     //FIXME: MOVE THIS TO LINKSET?
     protected volatile boolean started = false;
     /** defautl value of SSI */
-    public static final int DEFAULT_NI = 2;//NATIONAL, as default.
+    public static final int DEFAULT_SSI = 2;//NATIONAL, as default.
     
     private int dpc;
     private int opc;
-    private int ni=DEFAULT_NI<<6;
-    private int priority = 0;
-    //helper, to avoid contant |
-    private int ssi = ni|priority;
+    private int ssi=DEFAULT_SSI;;
     
+     
     /** List of signaling channels wrapped with MTP2*/
     private List<Mtp2> links = new ArrayList();
     
@@ -132,34 +130,13 @@ public class Mtp3 implements Runnable {
     public int getOpc() {
         return opc;
     }
-    
-    //>> and <<, since we wont get those values from this class, however it will improve perf, since we 
-    //wont have to perform those ops for each call.
-	public int getNI() {
-		return ni >> 6;
-	}
 
-	public void setNI(int ni) {
-		//prepare to be set. value can be used directly.
-		this.ni = (0x03 & ni) << 6; 
-		//update SSI
-		this.ssi &= 0x30; //erase ni, leave priority
-		this.ssi|=this.ni;
-	}
-
-	public int getPriority() {
-		return priority >> 4;
-	}
-
-	public void setPriority(int priority) {
-		this.priority = (0x03 & priority) << 4;
-		//update SSI
-		this.ssi &= 0xC0; //erase priority, leave NI
-		this.ssi|=this.priority;
-	}
-
-	public int getSSI() {
+	public int getSsi() {
 		return ssi;
+	}
+
+	public void setSsi(int ssi) {
+		this.ssi = 0x0F & ssi; //0x0F, since its 4 bits, first two are used, rest is free area.
 	}
 
 	/** (non-Javadoc)
@@ -248,11 +225,9 @@ public class Mtp3 implements Runnable {
      *            service information field;
      */
     public void onMessage(int sio, byte[] sif, Mtp2 mtp2) {
-            int subserviceIndicator = sio & 0xF;
+            int subserviceIndicator = (sio >> 4) & 0x0F;
             int serviceIndicator = sio & 0x0F;
-            
-            int ni = sio & 0xC0;
-            //int priority = sio &  0x30;
+
             // int dpc = (sif[0] & 0xff | ((sif[1] & 0x3f) << 8));
             // int opc = ((sif[1] & 0xC0) >> 6) | ((sif[2] & 0xff) << 2) | ((sif[3]
             // & 0x0f) << 10);
@@ -262,7 +237,7 @@ public class Mtp3 implements Runnable {
             int sls = sls(sif, 1);
             
             //check SSI, Q.704 Figure 25, seems like if its bad, we discard.
-            if(this.ni!=ni)
+            if(this.ssi!=subserviceIndicator)
             {
             	if (logger.isTraceEnabled()) {
                     logger.trace(
@@ -311,7 +286,7 @@ public class Mtp3 implements Runnable {
 
 
                         //change order of opc/dpc in SLTA !
-                        writeRoutingLabel(slta, 0, this.ni, sls, opc, dpc);
+                        writeRoutingLabel(slta, 0, this.ssi, sls, opc, dpc);
                         slta[0] = (byte) sio;
                         slta[5] = 0x021;
                         // +1 cause we copy LEN byte also.

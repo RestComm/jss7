@@ -23,7 +23,6 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.StartFailedException;
-import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.Utils;
 import org.mobicents.protocols.ss7.mtp.provider.MtpListener;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
@@ -38,7 +37,7 @@ public class MtpImpl implements MtpProvider, Runnable {
     private String linksetName;
     
     //communicator with hardware
-    private InterProcessCommunicator ipc;
+    private InterProcessCommunicator ipc; 
     
     //Dialogic modules
     private int src = 61;
@@ -49,10 +48,7 @@ public class MtpImpl implements MtpProvider, Runnable {
     //originated and adjacent point codes
     private int opc;
     private int dpc;
-    private int ni=Mtp3.DEFAULT_NI;
-    private int priority;
-    //helper, to avoid contant |
-    private int ssi;
+    
     //Message listener
     private MtpListener listener;
     
@@ -145,33 +141,6 @@ public class MtpImpl implements MtpProvider, Runnable {
         return opc;
     }
 
-    public int getNI() {
-		return ni ;
-	}
-
-	public void setNI(int ni) {
-		//prepare to be set. value can be used directly.
-		this.ni = (0x03 & ni) ; 
-		//update SSI
-		this.ssi &= 0x30; //erase ni, leave priority
-		this.ssi|=this.ni<< 6;
-	}
-
-	public int getPriority() {
-		return priority;
-	}
-
-	public void setPriority(int priority) {
-		this.priority = (0x03 & priority);
-		//update SSI
-		this.ssi &= 0xC0; //erase priority, leave NI
-		this.ssi|=this.priority << 4;
-	}
-	
-	public int getSSI() {
-		return ssi;
-	}
-    
     /**
      * (Non Java-doc.)
      * 

@@ -44,23 +44,14 @@ public interface MtpProvider {
      * @return the opc
      */
     public int getOriginalPointCode();
-    
-    public int getNI();
 
-	public void setNI(int ni) ;
-	
-	public int getPriority() ;
-	
-	public void setPriority(int priority) ;
-
-	public int getSSI();
     /**
      * Sets listener for MTP callbacks. If null is passed internal refence is
      * cleared.
      * 
      * @param lst
      */
-    public void setMtpListener(MtpListener lst);
+    public void setMtpListener(MtpListener lst); 
 
     /**
      * Passes argument to MTP layers for processing. Passed buffer should not be
