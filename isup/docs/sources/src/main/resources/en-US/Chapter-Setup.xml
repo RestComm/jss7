@@ -13,7 +13,7 @@
 			<para>The Stack doesn't change the &THIS.PLATFORM; Hardware Requirements, however it requires <acronym>SS7</acronym> card.</para>
 			<note>
 				<!-- Is this proper statement ? -->
-				<para>Desired is high performance machine to process voice and data channels.</para>
+				<para>A high performance machine is desired to process voice and data channels.</para>
 			</note>
 		</section>
 		<section id="software_prerequisites">
@@ -34,7 +34,7 @@
 	</section>	
 	
 	<section id="source_code">
-		<title>&THIS.PLATFORM;  &THIS.APPLICATION; Source Code</title>
+		<title>&THIS.PLATFORM; &THIS.APPLICATION; Source Code</title>
 		<para></para>
 		
 		<section id="release_source_building">

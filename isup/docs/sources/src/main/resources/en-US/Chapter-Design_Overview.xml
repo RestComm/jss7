@@ -7,21 +7,13 @@
 
 
 	<important>
-		<para>Be
-			aware, &THIS.PLATFORM; &THIS.APPLICATION;
-			is subject to changes as it is under active development!
+		<para>
+			&THIS.PLATFORM; &THIS.APPLICATION; is subject to changes as it is under active development.
 		</para>
 	</important>
 	<note>
 		<para>
-			<acronym>SS7</acronym>
-			design allows
-			<acronym>ISUP</acronym>
-			to be used on top of
-			<acronym>SCCP</acronym>,
-			however currently &THIS.PLATFORM;
-			<acronym>ISUP</acronym>
-			does not support this use case.
+			SS7 design allows ISUP to be used on top of SCCP.	However, &THIS.PLATFORM; ISUP does not currently support this use case.
 		</para>
 	</note>
 
@@ -32,48 +24,49 @@
 				</para>
 	</note>
 	<para>
-		<acronym>ISUP</acronym>
-		specification declares only messages and parameters to pass
+		The ISUP
+		specification only declares messages and parameters to pass
 		information about trunks and circuits setup.
-			&THIS.PLATFORM;
-		<acronym>ISUP</acronym>
-		introduces notion of transactions. Transaction groups messages
+		&THIS.PLATFORM;
+		ISUP
+		introduces the notion of transaction. Transaction groups messages
 		which
-		logically belong to single interaction (like associating circuit to
+		logically belong to a single interaction (like associating circuit to
 		call or releasing circuit).
-		Server transaction is used as reference for
-		incoming request. It
-		provides means of sending answer back to
+  </para>
+  <para>
+		Server transaction is used as a reference for
+		incoming requests. It
+		provides the means for sending answers back to the
 		originating peer.
-		Client transaction is used as reference for outgoing
+  </para>
+  <para>
+		Client transaction is used as a reference for outgoing
 		requests. It
-		provides means of sending request to remote peer. Also
-		incoming answers will be delivered on client transaction which sent
+		provides the means for sending requests to a remote peer.
+    Incoming answers will be delivered on the client transaction that sent
 		it.
 	</para>
 	<para>
-		Depending on type of action and messages involved, life time of
+		Depending on the type of action and messages involved, the life time of a
 		transaction
-		varies. Diagram below depicts transaction scope:
+		varies. The diagram below depicts transaction scope:
 	</para>
-	<mediaobject id="ss7_design_isup_transactions_1">
-		<imageobject>
-			<imagedata width="300px" align="center"
-				fileref="images/ss7-isup-design-transaction-overview1.png" format="PNG" />
-		</imageobject>
-		<caption>
-			<para>
-				<acronym>ISUP</acronym>
-				transactions overview
-			</para>
-		</caption>
-	</mediaobject>
-	<note>
-		<para>Depending on transaction state machine messages #2 and #3 may
+  <figure>
+    <title>ISUP transactions overview</title>
+    <mediaobject id="ss7_design_isup_transactions_1">
+      <imageobject>
+        <imagedata width="300px" align="center"
+          fileref="images/ss7-isup-design-transaction-overview1.png" format="PNG" />
+      </imageobject>
+    </mediaobject>
+	</figure>
+  <note>
+		<para>Depending on the transaction state machine, messages #2 and #3 may
 			not be present.</para>
 	</note>
 	<para>
-		Following transactions types are defined by &THIS.PLATFORM;
+		The following transaction types are defined by &THIS.PLATFORM;
 		<acronym>ISUP</acronym>
 		:
 		<table frame="all" pgwide="1">
@@ -142,8 +135,8 @@
 
 	</para>
 	<para>
-		Transactions are either terminated on receiving or sending final response or when
-		certain time elapses without answer. In both cases stack user is notified that transaction is no longer valid.
+		Transactions are terminated after sending or receiving the final response or when
+		a certain amount of time elapses without an answer. In both cases, the stack user is notified that the transaction is no longer valid.
 	</para>
 </chapter>
 

@@ -8,15 +8,12 @@
 
 	<section>
 		<title>API</title>
-		<para> &THIS.PLATFORM; &THIS.APPLICATION;
-			<acronym>API</acronym>
-			is transaction oriented. Transaction are used to exchanged messages
-			which contain parameter with some trunk specific information.
+		<para>The &THIS.PLATFORM; &THIS.APPLICATION; API is transaction oriented. Transactions are used to exchanged messages that contain parameters with some trunk specific information.
 		</para>
-		<para>Below are listed interface with short explanation.</para>
+		<para>Some interfaces are listed below, with a short explanation.</para>
 		<section>
-			<title>Transaction </title>
-			<para>Common part of transactions is defined as follows:</para>
+			<title>Transaction</title>
+			<para>The common part of transactions is defined as follows:</para>
 			<programlisting language="Java" role="JAVA">
 package org.mobicents.protocols.ss7.isup;
 
@@ -52,12 +49,12 @@ public interface ISUPTransaction {
 }
 			</programlisting>
 			<para>
-				Above interface declares
+				The above interface declares the
 				<literal>getTransactionKey</literal>
-				method. It returns transaction key which is unique for certain
+				method. It returns a transaction key which is unique for a certain
 				transaction.
 			</para>
-			<para>Client transaction is defined as follows: </para>
+			<para>The client transaction is defined as follows:</para>
 			<programlisting language="Java" role="JAVA">
 package org.mobicents.protocols.ss7.isup;
 
@@ -77,7 +74,7 @@ public interface ISUPClientTransaction extends ISUPTransaction {
 	public ISUPClientTransactionState getState();
 }
 			</programlisting>
-			<para>Server transaction is defined accordingly to its role:</para>
+			<para>The server transaction is defined accordingly to its role:</para>
 			<programlisting language="Java" role="JAVA">
 package org.mobicents.protocols.ss7.isup;
 
@@ -106,22 +103,26 @@ public interface ISUPServerTransaction extends ISUPTransaction{
 		</section>
 		<section>
 			<title>Factories</title>
-			<para>
-				<acronym>ISUP</acronym>
-				stack declares separate factories for messages and their parameters.
-				However both interfaces are too big to have any use if mentioned in
-				documentation.
-				Please refer to source for details.
-			</para>
-
+      <note>
+        <para>
+          The ISUP
+          stack declares separate factories for messages and their parameters.
+          However, both interfaces are too big to have any use if mentioned in
+          documentation.
+          Please refer to the source for details.
+        </para>
+      </note>
 		</section>
 		<section>
 			<title>Stack</title>
 			<para>
-				<acronym>ISUP</acronym>
+				The ISUP
 				stack relies on
-				<acronym>MTP</acronym>
-				to provide transport. Stack interface is defined as follows:
+				MTP
+				to provide transport.
+      </para>
+      <para>
+      The stack interface is defined as follows:
 			</para>
 			<programlisting language="Java" role="JAVA">
 package org.mobicents.protocols.ss7.isup;
@@ -136,9 +137,9 @@ public interface ISUPStack {
 }
 			</programlisting>
 			<para>
-				Stack declares provider which allows user to access stack
+				Stack declares the provider that allows the user to access stack
 				facilities,
-				send messages statelesly and register listener. Provider
+				send messages statelesly and register a listener. The provider
 				is defined
 				as follows:
 			</para>
@@ -188,9 +189,9 @@ public interface ISUPProvider {
 }
 			</programlisting>
 			<para>
-				Provider allows to register listener. Listener contains set of call
+				The provider allows for a listener to be registered. A listener contains a set of call
 				backs useful for
-				<acronym>ISUP</acronym>
+				the ISUP
 				user. It is defined as follows:
 			</para>
 			<programlisting language="Java" role="JAVA">
@@ -250,10 +251,10 @@ public interface ISUPListener {
 		<section>
 			<title>Messages</title>
 			<para>Each
-				messsage defines different setters and getters - since each message
-				type has different set of parameters. However all messages defined
+				messsage defines different setters and getters, as each message
+				type has a different set of parameters. However, all messages defined
 				by &THIS.PLATFORM; &THIS.APPLICATION;
-				have common part:
+				have a common part:
 			</para>
 			<programlisting language="Java" role="JAVA">
 package org.mobicents.protocols.ss7.isup.message;
@@ -320,8 +321,8 @@ public interface ISUPMessage extends ISUPComponent {
 	<section>
 		<title>Configuration</title>
 		<para>
-			<acronym>ISUP</acronym>
-			stack depends on MTP to provide transport. Please refer to MTP documentation for configuration options supported. Below is list of ISUP specific configuration properties:
+			The ISUP
+			stack relies on MTP to provide transport. Please refer to the MTP documentation for the configuration options that are supported. Below is a list of ISUP specific configuration properties:
 		</para>
 		<table frame="all" pgwide="1">
 			<title>ISUP Configuration Properties</title>
@@ -342,8 +343,8 @@ public interface ISUPMessage extends ISUPComponent {
 					<row>
 						<entry>isup.client.timeout</entry>
 						<entry>
-							Value of timeout in milisecond. It controls timeout of client
-							transaction. This value must be lower than
+							Value of timeout in milliseconds. It controls the timeout of client
+							transactions. This value must be lower than
 							<literal>isup.general.timeout</literal>
 						</entry>
 						<entry>java.lang.Long</entry>
@@ -352,7 +353,7 @@ public interface ISUPMessage extends ISUPComponent {
 					<row>
 						<entry>isup.general.timeout</entry>
 						<entry>
-							Value of timeout in millisecond. It controls how long transaction object lingers in stack before its released - in case no action is performed.
+							Value of timeout in milliseconds. It controls how long a transaction object lingers in the stack before it is released if no action is performed.
 						</entry>
 						<entry>java.lang.Long</entry>
 						<entry>120.000</entry>
@@ -361,7 +362,7 @@ public interface ISUPMessage extends ISUPComponent {
 				</tbody>
 			</tgroup>
 			<note>
-				<para>Note that ISUP requires M3UA MTP provider. Configuration parameters must include configuration for it. Refer to example.</para>
+				<para>ISUP requires M3UA MTP provider. Configuration parameters must include configuration for it. Refer to example.</para>
 			</note>
 		</table>
 	</section>
