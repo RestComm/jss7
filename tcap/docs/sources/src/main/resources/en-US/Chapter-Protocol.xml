@@ -12,10 +12,10 @@
 			<para>
 				<literal>TCAPDialog</literal>
 				is a class representing two
-				<acronym>TCAP</acronym>
-				transactions(remote and local transaction form logical dialog).
-				Messages(primitives) are exchanged by means of this class. It is
-				defined by following interface:
+				TCAP
+				transactions (remote and local transaction form logical dialog).
+				Messages (primitives) are exchanged by means of this class. It is
+				defined by the following interface:
 			</para>
 			<programlisting language="Java" role="JAVA"><![CDATA[
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog;
@@ -183,46 +183,43 @@ public interface Dialog {
 		  	</programlisting>
 			<important>
 				<para>
+					<literal>Application Context</literal>, 
+					<literal>User Information</literal>
+					and negotiation process is described in Q.771.
 					<literal>Application Context</literal>
 					and
 					<literal>User Information</literal>
-					and negotiation process is described Q.771.
-					<literal>Application Context</literal>
-					and
-					<literal>User Information</literal>
-					are user specific and identify capabilities of peer establishing
+					are user specific and identify the capabilities of peer establishing
 					dialog.
 				</para>
 			</important>
 			<para>
-				Each dialog has associated state machine which it follows.
-				There are two
-				types of dialogs, hence two machines are defined:
+				Each dialog has an associated state machine that it follows.
+				As there are two
+				types of dialogs, two machines are defined:
 			</para>
-			<mediaobject id="ss7_design_tcap_fsm_1">
-				<imageobject>
-					<imagedata width="300px" align="center"
-						fileref="images/ss7-tcap-dialog-fsm1.png" format="PNG" />
-				</imageobject>
-				<caption>
-					<para>TCAP Structured Dialog FSM
-					</para>
-				</caption>
-			</mediaobject>
-			<mediaobject id="ss7_design_tcap_fsm_2">
-				<imageobject>
-					<imagedata width="300px" align="center"
-						fileref="images/ss7-tcap-dialog-fsm2.png" format="PNG" />
-				</imageobject>
-				<caption>
-					<para>TCAP Unstructured Dialog FSM
-					</para>
-				</caption>
-			</mediaobject>
+      <figure>
+        <title>TCAP Structured Dialog FSM</title>
+        <mediaobject id="ss7_design_tcap_fsm_1">
+          <imageobject>
+            <imagedata width="300px" align="center"
+              fileref="images/ss7-tcap-dialog-fsm1.png" format="PNG" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <figure>
+        <title>TCAP Unstructured Dialog FSM</title>
+        <mediaobject id="ss7_design_tcap_fsm_2">
+          <imageobject>
+            <imagedata width="300px" align="center"
+              fileref="images/ss7-tcap-dialog-fsm2.png" format="PNG" />
+          </imageobject>
+        </mediaobject>
+      </figure>
 			<para>Each
-				dialog has associated separate invoke id space. This space includes
-				all integer numbers from set of &lt;-128,127&gt;. Invoke id is
-				reference number for operation related components, please refer to
+				dialog has an associated separate invoke ID space. This space includes
+				all integer numbers from the set of &lt;-128,127&gt;. The invoke ID is a 
+				reference number for the operation related components. Please refer to
 				<xref linkend="operations" />
 				for more details.
 			</para>
@@ -233,29 +230,29 @@ public interface Dialog {
 			<note>
 				<para>
 					In
-					<acronym>TCAP</acronym>
-					operation primitives are also refered as
+					TCAP,
+					operation primitives are also referred to as
 					<literal>Components</literal>
 					.
 				</para>
 			</note>
-			<para>Operation pritmitives are sent as part of messages. Each
-				primitive is scheduled in dialog and sent once user request message
-				to be sent.
+			<para>Operation primitives are sent as a part of messages. Each
+				primitive is scheduled in dialog and sent once the user request message
+				is sent.
 		  	</para>
-			<para>There are following primitives defined: </para>
+			<para>The following primitives are defined: </para>
 			<variablelist>
 				<varlistentry>
 					<term>Invoke</term>
 					<listitem>
 						<para>
-							This element indicates that peer request some operation to be
+							This element indicates that an operation's peer request is to be
 							invoked.
-							<acronym>TCAP</acronym>
-							user populates it with specific to user
-							<literal>OperationCode</literal>
+							The TCAP
+							user populates it with user specific
+							OperationCodes
 							and
-							<literal>Parameter</literal>
+							Parameters
 							.
 						</para>
 						<programlisting language="Java" role="JAVA"><![CDATA[
@@ -325,14 +322,14 @@ public enum InvokeClass {
 					<term>ReturnResult</term>
 					<listitem>
 						<para>
-							This element indicates partial result of
+							This element indicates a partial result of
 							<literal>Invoke</literal>
 							.
-							<acronym>TCAP</acronym>
-							user populates it with specific to user
-							<literal>OperationCode</literal>
+							The TCAP
+							user populates it with user specific
+							OperationCodes
 							and
-							<literal>Parameter</literal>
+							Parameters
 							.
 						</para>
 						<programlisting language="Java" role="JAVA"><![CDATA[
@@ -356,16 +353,16 @@ public interface ReturnResult extends ... {
 					<term>ReturnResultLast</term>
 					<listitem>
 						<para>
-							This element indicates final result of
+							This element indicates the final result of
 							<literal>Invoke</literal>
-							. After this element is consumed
+							. After this element is consumed, the 
 							<literal>InvokeId</literal>
 							associated with its operation is set free.
-							<acronym>TCAP</acronym>
-							user populates it with specific to user
-							<literal>OperationCode</literal>
+							The TCAP
+							user populates it with user specific 
+							OperationCodes
 							and
-							<literal>Parameter</literal>
+							Parameters
 							.
 						</para>
 						<programlisting language="Java" role="JAVA"><![CDATA[
@@ -389,11 +386,11 @@ public interface ReturnResult extends ... {
 					<term>Reject</term>
 					<listitem>
 						<para>
-							This element indicates that peer rejected
+							This element indicates that the peer rejected
 							<literal>Invoke</literal>
-							. It contains
+							. It contains the 
 							<literal>Problem</literal>
-							which indiactes cause of rejection.
+							which indicates the cause of the rejection.
 						</para>
 						<programlisting language="Java" role="JAVA"><![CDATA[
 package org.mobicents.protocols.ss7.tcap.asn.comp;
@@ -412,9 +409,9 @@ public interface Reject extends Component {
 				</varlistentry>
 			</variablelist>
 			<para>
-				Listed primitives can be scheduled to send with dialog
+				All listed primitives can be scheduled to send with the dialog
 				<literal>sendComponent</literal>
-				method. As such each extends super interface for components:
+				method. Each extends the super interface for components:
 			</para>
 			<programlisting language="Java" role="JAVA"><![CDATA[
 package org.mobicents.protocols.ss7.tcap.asn.comp;
@@ -433,8 +430,8 @@ public interface Component extends Encodable{
 }]]>
 			</programlisting>
 			<para>
-				Additionaly &THIS.APPLICATION;
-				<acronym>TCAP</acronym>
+				&THIS.APPLICATION;
+				TCAP
 				defines elements to convey user specific information inside
 				operation primitives:
 			</para>
@@ -442,7 +439,7 @@ public interface Component extends Encodable{
 				<varlistentry>
 					<term>OperationCode</term>
 					<listitem>
-						<para>contains information on user specific operation - identifies
+						<para>Contains information on user specific operation. It identifies
 							this operation by code in user context.</para>
 						<programlisting language="Java" role="JAVA"><![CDATA[
 import org.mobicents.protocols.asn.Tag;
@@ -465,7 +462,7 @@ public interface OperationCode extends Encodable{
 					<term>Parameter</term>
 					<listitem>
 						<para>
-							container for user specific (encoded) parameter/s. Its content
+							Container for user specific (encoded) parameter/s. Its content
 							should be decoded in context to user context and
 							<literal>OperationCode</literal>
 							value.
@@ -585,7 +582,7 @@ public interface Parameter extends Encodable {
 					<term>Problem</term>
 					<listitem>
 						<para>
-							contains information on problem which occurred. It is part of
+							Contains information on the problem that occurred. It is part of the
 							<literal>Reject</literal>
 							component.
 						</para>
@@ -619,7 +616,7 @@ public interface Problem extends Encodable {
 					</listitem>
 				</varlistentry>
 			</variablelist>
-			<para> Operation primitives are created by factory defined as
+			<para>Operation primitives are created by the factory defined as
 				follows: </para>
 			<programlisting language="Java" role="JAVA"><![CDATA[
 package org.mobicents.protocols.ss7.tcap.api;
@@ -657,33 +654,30 @@ public interface ComponentPrimitiveFactory {
 		</section>
 		<section>
 			<title>Dialog primitives</title>
-			<para>Dialog primitives are in other words messages exchanged.
-				Primitives are passed to dialog object which forms proper message
-				from following:</para>
+			<para>Dialog primitives are exchanged messages.
+				Primitives are passed to the dialog object that forms the proper message
+				from:</para>
 			<itemizedlist>
 				<listitem>
-					<para>primitive and information passed in it</para>
+					<para>The primitive and information passed in it.</para>
 				</listitem>
 				<listitem>
-					<para>components scheduled in dialog</para>
+					<para>The components scheduled in the dialog.</para>
 				</listitem>
 			</itemizedlist>
-			<para>Message formed by dialog, can be logicaly depicted as follows:
+			<para>The message formed by dialog can be logicaly depicted as follows:
 			</para>
-			<mediaobject id="ss7_design_tcap_dialog_message1">
-				<imageobject>
-					<imagedata width="300px" align="center"
-						fileref="images/ss7-tcap-design-dialog-message1.png" format="PNG" />
-				</imageobject>
-				<caption>
-					<para>
-						<acronym>TCAP</acronym>
-						message structure
-					</para>
-				</caption>
-			</mediaobject>
+      <figure>
+        <title>TCAP message structure</title>
+        <mediaobject id="ss7_design_tcap_dialog_message1">
+          <imageobject>
+            <imagedata width="300px" align="center"
+              fileref="images/ss7-tcap-design-dialog-message1.png" format="PNG" />
+          </imageobject>
+        </mediaobject>
+      </figure>
 
-			<para>Each component eligible for passing to dialog is a child of
+			<para>Each component eligible for passing to the dialog is a child of the
 				following interface: </para>
 			<programlisting language="Java" role="JAVA"><![CDATA[
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
@@ -704,8 +698,8 @@ public interface DialogRequest {
 	
 }]]>
 			</programlisting>
-			<para>Each component eligible for passing as indication to listener
-				is a child of following interface: </para>
+			<para>Each component eligible for passing as an indication to the listener
+				is a child of the following interface: </para>
 			<programlisting language="Java" role="JAVA"><![CDATA[
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
 
@@ -731,15 +725,15 @@ public interface DialogIndication {
 	public Byte getQos();
 }]]>
 			</programlisting>
-			<para><acronym>TCAP</acronym>
-				defines primitives :
+			<para>TCAP
+				defines the following primitives:
 			</para>
 			<variablelist>
 				<varlistentry>
 					<term>TCBegin</term>
 					<listitem>
 						<para>
-							Exchanged as initial message in structured dialog. Starts
+							Exchanged as the initial message in a structured dialog. Starts the 
 							negotiation of
 							<literal>Application Context Name</literal>
 							and
@@ -824,8 +818,8 @@ public interface TCBeginIndication extends DialogIndication {
 				<varlistentry>
 					<term>TCContinue</term>
 					<listitem>
-						<para>Exchanged as intermediate message until dialog reaches its
-							end. Its interface defined as follows:</para>
+						<para>Exchanged as an intermediate message until the dialog reaches its
+							end. Its interface is defined as follows:</para>
 						<programlisting language="Java" role="JAVA"><![CDATA[
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
 
@@ -898,7 +892,7 @@ public interface TCContinueIndication extends DialogIndication {
 				<varlistentry>
 					<term>TCEnd</term>
 					<listitem>
-						<para>Sent to terminate dialog(and two transactions associated
+						<para>Sent to terminate the dialog (and two transactions associated
 							with it). Its interface is defined as follows:</para>
 						<programlisting language="Java" role="JAVA"><![CDATA[
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
@@ -969,7 +963,7 @@ public interface TCEndIndication extends DialogIndication {
 				<varlistentry>
 					<term>TCUserAbort</term>
 					<listitem>
-						<para>Sent to abort dialog beeing created or ongoign one. Its
+						<para>Sent to abort the dialog being created, or an ongoing one. Its
 							interface is defined as follows:</para>
 						<programlisting language="Java" role="JAVA"><![CDATA[
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
@@ -1036,8 +1030,8 @@ public interface TCUserAbortIndication extends DialogIndication {
 				<varlistentry>
 					<term>TCPAbort</term>
 					<listitem>
-						<para>Sent to abort dialog beeing created or ongoign one. It is
-							sent by provider, it indicates problem on transport or stack
+						<para>Sent to abort the dialog being created or an ongoing one. It is
+							sent by the provider, and indicates the problem on the transport or stack
 							layer. Its interface is defined as follows:</para>
 
 						<programlisting language="Java" role="JAVA"><![CDATA[
@@ -1152,8 +1146,8 @@ public interface TCUniIndication extends DialogIndication {
 					</listitem>
 				</varlistentry>
 			</variablelist>
-			<para>Dialog primitives are created(as components) by means of
-				factory. Factory is defined in following way:</para>
+			<para>Dialog primitives are created (as components) by means of a
+				factory. The factory is defined as follows:</para>
 			<programlisting language="Java" role="JAVA"><![CDATA[
 package org.mobicents.protocols.ss7.tcap.api;
 
@@ -1189,26 +1183,24 @@ public interface DialogPrimitiveFactory {
 		<section>
 			<title>Stack</title>
 			<para>
-				<acronym>TCAP</acronym>
-				is part of
-				<acronym>SS7</acronym>
-				protocol stack. AS such it relies on
-				<acronym>SCCP</acronym>
-				as means of transport. To create
-				<acronym>TCAP</acronym>
-				stack you require properly configured
-				<acronym>SCCP</acronym>
-				layer.
+				TCAP
+				is part of the 
+				SS7
+				protocol stack. It relies on
+				SCCP
+				as a means of transport. To create the 
+				TCAP
+				stack, the SCCP layer must be properly configured.
 				Please refer to
 				<xref linkend="tcap_configuration" />
 				for details.
 			</para>
 			<para>&THIS.PLATFORM;
-				<acronym>TCAP</acronym>
-				is defined by provider and
+				TCAP
+				is defined by the provider and
 				<literal>stack</literal>
 				interfaces.
-				Interfaces are defined as follows:
+				The interfaces are defined as follows:
 			</para>
 			<programlisting language="Java" role="JAVA"><![CDATA[
 package org.mobicents.protocols.ss7.tcap.api;
@@ -1274,9 +1266,9 @@ public interface TCAPProvider {
 	public void removeTCListener(TCListener lst);
 }]]>
 				</programlisting>
-			<para>Provider allows user to access stack facitlities, create
-				dialogs and register as listener for incoming messages. Listener
-				declares set of callbacks methods.
+			<para>The provider allows the user to access stack facilities, create
+				dialogs and register as the listener for incoming messages. The listener
+				declares a set of callbacks methods.
 				It is defined as follows: </para>
 			<programlisting language="Java" role="JAVA"><![CDATA[	
 package org.mobicents.protocols.ss7.tcap.api;
@@ -1354,16 +1346,14 @@ public interface TCListener {
 	<section id="tcap_configuration">
 		<title>Configuration</title>
 		<para>
-			<acronym>TCAP</acronym>
-			layer does not require any config. However it requires properly set
-			<acronym>SCCP</acronym>
-			and its sublayers. Please refer to <literal>SCCP User Guide</literal> for supported configuration options.
+			The TCAP
+			layer does not require any configuration. However, it requires SCCP and its sublayers to be properly set. Please refer to the <literal>SCCP User Guide</literal> for supported configuration options.
 		</para>
 		<section>
 			<title>Dependencies</title>
 			<para>
-				<acronym>TCAP</acronym>
-				depends on following:
+				TCAP
+				depends on the following:
 			</para>
 			<itemizedlist>
 				<listitem>

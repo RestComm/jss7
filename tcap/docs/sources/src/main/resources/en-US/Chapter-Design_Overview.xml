@@ -7,47 +7,47 @@
 
 
 	<important>
-		<para>Be
-			aware, &THIS.PLATFORM; &THIS.APPLICATION;
-			is subject to changes as it is under active development!
+		<para>
+			&THIS.PLATFORM; &THIS.APPLICATION;
+			is subject to changes as it is under active development.
 		</para>
 	</important>
 	<para>&THIS.PLATFORM; &THIS.APPLICATION;
-		<acronym>TCAP</acronym>
-		builds abstraction layer over protocol definition.
-		It introduces simplified
-		<acronym>API</acronym>
+		TCAP
+		builds an abstraction layer over the protocol definition.
+		It introduces a simplified
+		API
 		in favor of
-		<acronym>JAIN TCAP</acronym>
+		JAIN TCAP.
 		
 		<!-- is this correct use of "in favor" ? -->
 	</para>
 	<para>
 		All interactions are handled by
-		<acronym>TCAP</acronym>
-		Dialog. Dialog agregates local and remote transactions into single
+		TCAP
+		Dialog. Dialog aggregates local and remote transactions into a single
 		reference.
-		It maintains state associated with both ends and supervises proper
+		It maintains the state associated with both ends and supervises the proper
 		encoding and content of exchanged primitives.
-		Diagram below depicts logical structure of
-		<acronym>TCAP</acronym>
-		and application using it:
+  </para>
+  <para>
+		The diagram below depicts the logical structure of
+		TCAP
+		and the application using it:
 	</para>
-	<mediaobject id="ss7_design_tcap_overview_1">
-		<imageobject>
-			<imagedata width="300px" align="center"
-				fileref="images/ss7-tcap-design-overview1.png" format="PNG" />
-		</imageobject>
-		<caption>
-			<para>&THIS.PLATFORM; &THIS.APPLICATION;
-				TCAP Dialog
-			</para>
-		</caption>
-	</mediaobject>
+  <figure>
+    <title>&THIS.PLATFORM; &THIS.APPLICATION; TCAP Dialog</title>
+    <mediaobject id="ss7_design_tcap_overview_1">
+      <imageobject>
+        <imagedata width="300px" align="center"
+          fileref="images/ss7-tcap-design-overview1.png" format="PNG" />
+      </imageobject>
+    </mediaobject>
+  </figure>
 	<note>
 		<para>
-			TC and TR layers are explained in ITU-T Q.77X specifications. This
-			<acronym>API</acronym>
+			The TC and TR layers are explained in ITU-T Q.77X specifications. This
+			API
 			does not expose those layers directly.
 		</para>
 	</note>

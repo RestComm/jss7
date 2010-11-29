@@ -8,58 +8,101 @@
 		to &THIS.PLATFORM;  &THIS.APPLICATION;
 	</title>
 	<!-- POssibly this should go into abstract ? -->
-	<important><para>For better understanding of this chapter please read ITU-T Q.771 to Q.774.</para> </important>
-		<para><acronym>TCAP</acronym> supports the exchange of non-circuit related data between
-			applications across the <acronym>SS7</acronym> network using the <acronym>SCCP</acronym> connectionless
+	<important><para>For a better understanding of this chapter please read ITU-T Q.771 to Q.774.</para> </important>
+		<para>TCAP supports the exchange of non-circuit related data between
+			applications across the SS& network, using the SCCP connectionless
 			service. Queries and responses sent between SSPs and SCPs are carried
-			in TCAP messages. For example, an SSP sends a <acronym>TCAP</acronym> query to determine
+			in TCAP messages.
+    </para>
+    <para>For example, an SSP sends a TCAP query to determine
 			the routing number associated with a dialed 800/888 number and to
-			check the personal identification number (<acronym>PIN</acronym>) of a calling card
-			user. In mobile networks (IS-41 and <acronym>GSM</acronym>), <acronym>TCAP</acronym> carries Mobile
-			Application Part (<acronym>MAP</acronym>) messages sent between mobile switches and
+			check the personal identification number (PIN) of a calling card
+			user. In mobile networks (IS-41 and GSM), TCAP carries Mobile
+			Application Part (MAP) messages sent between mobile switches and
 			databases to support user authentication, equipment identification,
 			and roaming.</para>
 			<para>
-			<acronym>TCAP</acronym> messages and parameters are refered as <literal>primitives</literal>. Primitives are exchanged 
-				within logical entity called dialog. There are two types of dialogs:
-				<itemizedlist>
-					<listitem>
-						<para>Unstructured - short lived, it is created only to deliver single message (<literal>Unstructured primitive</literal>), after delivery dialog is invalidated. </para>
-					</listitem>
-					<listitem>
-						<para>Structured - long lived, it is created when exchange starts and lives until it is terminated. </para>
-					</listitem>
-				</itemizedlist>
-			</para>
+			TCAP messages and parameters are refered as <literal>primitives</literal>. Primitives are exchanged 
+				within logical entities called dialogs. There are two types of dialogs:
+      </para>
+				<variablelist>
+          <varlistentry>
+            <term>Unstructured</term>
+            <listitem>
+						<para>Short lived. It is created only to deliver a single message (<literal>Unstructured primitive</literal>), after the delivery dialog is invalidated. </para>
+            </listitem>
+          </varlistentry>
+					<varlistentry>
+            <term>Structured</term>
+            <listitem>
+              <para>Long lived. It is created when the exchange starts and lives until it is terminated. </para>
+            </listitem>
+          </varlistentry>
+				</variablelist>
 			<para>
-				<acronym>TCAP</acronym> defines following message types:
+				TCAP defines the following message types:
 			</para>			
-			<itemizedlist>
-				<listitem>
-					<para>Unstructured - creates Unstructured dialog. Unstructured dialog is invalidated once this message is either sent or consumed. It is meant for messages which dont require answer or interaction.</para>
-				</listitem>
-				<listitem>
-					<para>Begin - message sent to begin Structured dialog, it carries context information for dialog being created</para>
-				</listitem>
-				<listitem>
-					<para>Continue - continues Structured dialog</para>
-				</listitem>
-				<listitem>
-					<para>End - ends Structured dialog in graceful way</para>
-				</listitem>
-				<listitem>
-					<para>Abort - aborts Structured dialog</para>
-				</listitem>
-			</itemizedlist>
-			<para><acronym>TCAP</acronym> messages convey two types of information:</para>
-			<itemizedlist>
-				<listitem>
-					<para>components - elements which carry information on requested operation, their status and result.</para>
-				</listitem>
-				<listitem>
-					<para>dialog related - dialog context(application context name) and application specific information(user information)</para>
-				</listitem>
-			</itemizedlist>
+			<variablelist>
+        <varlistentry>
+          <term>Unstructured</term>
+          <listitem>
+            <para>
+            Creates an Unstructured dialog. An Unstructured dialog is invalidated once this message is either sent or consumed. It is meant for messages that don't require an answer or interaction.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Begin</term>
+          <listitem>
+            <para>
+            Message sent to begin Structured dialog. It carries context information for the dialog being created.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Continue</term>
+          <listitem>
+            <para>
+            Continues a Structured dialog.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>End</term>
+          <listitem>
+            <para>
+            Ends a Structured dialog in a graceful way.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Abort</term>
+          <listitem>
+            <para>
+            Aborts the Structured dialog.
+            </para>
+          </listitem>
+        </varlistentry>
+			</variablelist>
+			<para>TCAP messages convey two types of information:</para>
+			<variablelist>
+        <varlistentry>
+          <term>components</term>
+          <listitem>
+            <para>
+            Elements that carry information on the requested operation, their status and result.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>dialog related</term>
+          <listitem>
+            <para>
+            Dialog context (application context name) and application specific information (user information).
+            </para>
+          </listitem>
+        </varlistentry>
+			</variablelist>
 	
 
 </chapter>
