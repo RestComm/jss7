@@ -40,6 +40,7 @@ import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
 import org.mobicents.protocols.ss7.m3ua.message.TransferMessage;
 import org.mobicents.protocols.ss7.m3ua.message.parm.ProtocolData;
+import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.provider.MtpListener;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 
@@ -58,6 +59,8 @@ public class Provider implements MtpProvider, Runnable {
 	
 	public static final String PROPERTY_APC = "mtp.apc";
 	public static final String PROPERTY_OPC = "mtp.opc";
+	public static final String PROPERTY_NI = "mtp.ni";
+	public static final String PROPERTY_PRIORITY = "mtp.priority";
 	
     protected SocketAddress localAddress = new InetSocketAddress("127.0.0.1", 8998);;
     protected SocketAddress remoteAddress = new InetSocketAddress("127.0.0.1", 1345);
@@ -81,7 +84,9 @@ public class Provider implements MtpProvider, Runnable {
     
     private int opc;
     private int apc;
-    
+    private int ni = Mtp3.DEFAULT_NI;
+    private int priority;
+    private int ssi;
     /**
      * 
      */
@@ -139,6 +144,20 @@ public class Provider implements MtpProvider, Runnable {
 				throw new ConfigurationException("OPC must be specified with: "+PROPERTY_OPC+" property.");
 			}
 			this.opc = Integer.parseInt(s);
+			
+			s = p.getProperty(PROPERTY_NI);
+			if(s == null)
+			{
+				throw new ConfigurationException("NI must be specified with: "+PROPERTY_NI+" property.");
+			}
+			setNI(Integer.parseInt(s));
+			
+			s = p.getProperty(PROPERTY_PRIORITY);
+			if(s == null)
+			{
+				throw new ConfigurationException("PRIORITY must be specified with: "+PROPERTY_PRIORITY+" property.");
+			}
+			this.setPriority(Integer.parseInt(s));
 		} catch (Exception e) {
 			throw new ConfigurationException(e);
 		}
@@ -218,6 +237,33 @@ public class Provider implements MtpProvider, Runnable {
         this.listener = listener;
     }
 
+    public int getNI() {
+		return ni ;
+	}
+
+	public void setNI(int ni) {
+		//prepare to be set. value can be used directly.
+		this.ni = (0x03 & ni) ; 
+		//update SSI
+		this.ssi &= 0x30; //erase ni, leave priority
+		this.ssi|=this.ni<< 6;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = (0x03 & priority);
+		//update SSI
+		this.ssi &= 0xC0; //erase priority, leave NI
+		this.ssi|=this.priority << 4;
+	}
+	
+	public int getSSI() {
+		return ssi;
+	}
+	
     public void stop() {
         started = false;
         try {

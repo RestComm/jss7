@@ -144,14 +144,12 @@ class ISUPMtpProviderImpl extends AbstractISUPProvider implements ISUPProvider, 
 			int opc = mtpProvider.getOriginalPointCode();
 	        int dpc = mtpProvider.getAdjacentPointCode();
 	        int si = Mtp3._SI_SERVICE_ISUP;//ISUP
-	        int ni = 2;//assume national
 	        int sls = 0;//mtp3 will select correct
-	        int ssi = ni << 2;
+	        int ssi = mtpProvider.getSSI();
 
 	        ByteArrayOutputStream bout = new ByteArrayOutputStream();
 	        //encoding routing label
-	        bout.write((byte) ssi);
-	        bout.write((byte) (((ssi & 0x0F) << 4) | (si & 0x0F)));
+	        bout.write((byte) (ssi | (si & 0x0F)));
 	        bout.write((byte) dpc);
 	        bout.write((byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6)));
 	        bout.write((byte) (opc >> 2));
