@@ -10,10 +10,10 @@
 		<section>
 			<title>Stack</title>
 			<para>
-				<acronym>SCCP</acronym>
+				SCCP
 				stack relies on
-				<acronym>MTP</acronym>
-				to provide transport. Stack interface is defined as follows:
+				MTP
+				to provide transport. The stack interface is defined as follows:
 			</para>
 			<programlisting language="Java" role="JAVA">
 package org.mobicents.protocols.ss7.sccp;
@@ -83,11 +83,11 @@ public interface SccpStack {
 				</programlisting>
 		</section>
 		<section>
-			<title>Provider	</title>
+			<title>Provider</title>
 			<para>
-				Stack declares provider which allows user to access stack
+				Stack declares the provider that allows the user to access stack
 				facilities,
-				send messages statelesly and register listener. Provider
+				send messages statelessly and register a listener. The provider
 				is defined
 				as follows:
 			</para>
@@ -142,11 +142,11 @@ public interface SccpProvider extends Serializable {
 }
 		</programlisting>
 			<para>
-				Provider allows to register listener per address. Listener will
-				be called whenever stack receives message which called
-				party equals
+				The provider allows the user to register a listener per address. The listener will
+				be called whenever the stack receives a message that called the 
+				party equal
 				to that address.
-				Listener is defined as follows:
+				The listener is defined as follows:
 			</para>
 			<programlisting language="Java" role="JAVA">
 package org.mobicents.protocols.ss7.sccp;
@@ -171,7 +171,7 @@ public interface SccpListener  {
 	<section>
 		<title>Example</title>
 		<para>
-			Below is simple example how to use
+			Below is a simple example for how to use
 			<literal>SCCP</literal>.
 		</para>
 		<programlisting language="Java" role="JAVA">

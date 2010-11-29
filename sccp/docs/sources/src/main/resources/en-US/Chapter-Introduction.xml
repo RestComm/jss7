@@ -10,23 +10,23 @@
 	<para>
 		SCCP provides connectionless and connection-oriented network
 		services and global title translation (GTT) capabilities above
-		<acronym>MTP</acronym>
-		Level 3. SCCP provides also extended routing, flow control, segmentation and reassembly  of data service.
+		MTP
+		Level 3. SCCP also provides extended routing, flow control, segmentation and reassembly of data services.
 		</para>
-		<para> A global title is an address (e.g., a dialed 800 number,
+		<para>A global title is an address (for example, a dialed 800 number,
 		calling card number, or mobile subscriber identification number)
-		which is translated by SCCP into a destination point code and
+		that is translated by SCCP into a destination point code and
 		subsystem number. A subsystem number uniquely identifies an
 		application at the destination signaling point.
-		<acronym>SCCP</acronym>
+		SCCP
 		is used as the
 		transport layer for
-		<acronym>TCAP</acronym>
+		TCAP
 		-based services
 	</para>
 	<para>
-		<acronym>SCCP</acronym>
-		data is sent between peers by means of Data Units (UDs)
+		SCCP
+		data is sent between peers by means of Data Units (UDs).
 	</para>
 
 </chapter>
