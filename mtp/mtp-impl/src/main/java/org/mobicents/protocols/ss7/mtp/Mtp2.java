@@ -850,9 +850,9 @@ public class Mtp2 {
             } else {
                 type = "MSU";
             }
-            if(this.logger.isEnabledFor(Level.TRACE)){	
-                logger.trace(String.format("(%s) Receive frame, type=%s, fsn=%d, fib=%d, bsn=%d, bib=%d", name, type, fsn, fib, bsn, bib));
-            }
+            
+            logger.trace(String.format("(%s) Receive frame, type=%s, fsn=%d, fib=%d, bsn=%d, bib=%d", name, type, fsn, fib, bsn, bib));
+            
         }
 
         //Why it was 5?
