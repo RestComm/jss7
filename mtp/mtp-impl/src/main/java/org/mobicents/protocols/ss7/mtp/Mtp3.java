@@ -75,7 +75,7 @@ public class Mtp3 implements Runnable {
     // ss7 has subservice as 1, q704 shows the same iirc
     //private int subservice = -1;
     //private int service;
-    private static final int DEFAULT_SUB_SERVICE_TRA = 0xC;    
+  
     
     // //////////////////////////
     // SLTM pattern for inits //
@@ -482,14 +482,10 @@ public class Mtp3 implements Runnable {
     }
 
     private void restartTraffic(Mtp2 link) {
-        //int subservice = link.getSubService();
-        //if (subservice == -1) {
-        int subservice = DEFAULT_SUB_SERVICE_TRA;
-        //}
+
         byte[] buffer = new byte[6];
         writeRoutingLabel(buffer, 0, this.ni, 0, dpc, opc);
-        // buffer[0] = (byte) (_SERVICE_TRA | ( subservice << 4));
-        //buffer[0] = (byte) 0x00;
+
         // H0 and H1, see Q.704 section 15.11.2+
         buffer[5] = 0x17;
         link.send(buffer, buffer.length);
