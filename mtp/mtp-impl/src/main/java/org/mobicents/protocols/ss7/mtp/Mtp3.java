@@ -318,7 +318,10 @@ public class Mtp3 implements Runnable {
                                 linkUp(mtp2);
                             }
                         } else {
-                            //logger.info("SLTA pattern does not match: \n"+Arrays.toString(sif)+"\n"+Arrays.toString(SLTM_PATTERN));
+                        	if(logger.isEnabledFor(Level.WARN))
+                        	{
+                        		logger.warn("SLTA pattern does not match: \n"+Arrays.toString(sif)+"\n"+Arrays.toString(SLTM_PATTERN));
+                        	}
                         }
                     } else {
                     	if(logger.isEnabledFor(Level.WARN))
@@ -406,7 +409,7 @@ public class Mtp3 implements Runnable {
     public void linkInService(Mtp2 link) {
         //restart traffic 
         if (logger.isDebugEnabled()) {
-            logger.debug(String.format("(%s) Sending Traffic Restart Allowed message", link.getName()));
+            logger.debug(String.format("(%s) Sending TRA(Traffic Restart Allowed) message", link.getName()));
         }
         restartTraffic(link);
 
@@ -417,7 +420,7 @@ public class Mtp3 implements Runnable {
 
             //start tester
             if (logger.isDebugEnabled()) {
-                logger.debug(String.format("(%s) Starting link test procedure", link.getName()));
+                logger.debug(String.format("(%s) Starting link test procedure(SLTM/SLTA)", link.getName()));
             }
             tester.start();
         } else {
@@ -549,7 +552,7 @@ public class Mtp3 implements Runnable {
             //shcedule next ping
             executor.schedule(this, Mtp3.TIMEOUT_T2_SLTM * 1000);
             if (logger.isDebugEnabled()) {
-                logger.debug(String.format("(%s) Test message acknowledged, Link test passed", link.getName()));
+                logger.debug(String.format("(%s) SLTM acknowledged, Link test passed", link.getName()));
             }
         }
 
@@ -576,7 +579,7 @@ public class Mtp3 implements Runnable {
             //scheduling timeout
             executor.schedule(this, (int)(timeout * 1000));
             if (logger.isDebugEnabled()) {
-                logger.debug(String.format("(%s) Test request, try number = %d", link.getName(), tryCount));
+                logger.debug(String.format("(%s) SLTM sent, try number = %d", link.getName(), tryCount));
             }
         }
         

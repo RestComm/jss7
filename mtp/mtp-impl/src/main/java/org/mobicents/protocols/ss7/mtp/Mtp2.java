@@ -613,9 +613,6 @@ public class Mtp2 {
                         start_T3();
                         //this.state = MTP2_ALIGNED;
 
-                        if (logger.isDebugEnabled()) {
-                            logger.debug(String.format("(%s) Aligned", name));
-                        }
                         this.setState(MTP2_ALIGNED);
                         break;
                     case FRAME_STATUS_INDICATION_E:
@@ -635,9 +632,6 @@ public class Mtp2 {
                         // 5. set state
                         //this.state = MTP2_ALIGNED;
 
-                        if (logger.isDebugEnabled()) {
-                            logger.debug(String.format("(%s) Aligned", name));
-                        }
                         this.setState(MTP2_ALIGNED);
                         break;
                     default:
@@ -673,9 +667,6 @@ public class Mtp2 {
                         // 7. set state
                         //this.state = MTP2_PROVING;
 
-                        if (logger.isDebugEnabled()) {
-                            logger.debug(String.format("(%s) Proving", name));
-                        }
                         this.setState(MTP2_PROVING);
                         break;
                     case FRAME_STATUS_INDICATION_OS:
@@ -708,9 +699,6 @@ public class Mtp2 {
                         // 4. swithc state
                         //this.state = MTP2_ALIGNED;
 
-                        if (logger.isDebugEnabled()) {
-                            logger.debug(String.format("(%s) Aligned", name));
-                        }
                         this.setState(MTP2_ALIGNED);
                         break;
                     case FRAME_STATUS_INDICATION_E:
