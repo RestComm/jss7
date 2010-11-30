@@ -405,7 +405,7 @@ public class Mtp2 {
     	if(logger.isInfoEnabled())
     	{
     		//iirc it should be info
-    		logger.info("State changed in link. "+STATE_NAMES[this.state]+" --> "+STATE_NAMES[this.state]);
+    		logger.info("State changed in link. "+STATE_NAMES[this.state]+" --> "+STATE_NAMES[newState]);
     	}
     	this.state = newState;
     }
