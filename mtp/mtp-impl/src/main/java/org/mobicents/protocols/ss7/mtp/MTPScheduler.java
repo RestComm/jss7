@@ -27,11 +27,14 @@
 
 package org.mobicents.protocols.ss7.mtp;
 
+import org.apache.log4j.Logger;
+
 /**
  *
  * @author kulikov
  */
 public class MTPScheduler {
+	protected static final Logger logger = Logger.getLogger(MTPScheduler.class);
     protected MTPTask[] tasks = new MTPTask[5];
     
     MTPTask tempTask = null;
@@ -39,7 +42,7 @@ public class MTPScheduler {
     public void schedule(MTPTask task, int delay) {
         task.deadLine= System.currentTimeMillis() + delay;
         for (int i = 0; i < tasks.length; i++) {
-            if (tasks[i] == null) {
+            if (tasks[i] == null || tasks[i].canceled) {
                 task.canceled = false;
                 tasks[i] = task;
                 task.index = i;
@@ -53,12 +56,28 @@ public class MTPScheduler {
         long now = System.currentTimeMillis();
         for (int i = 0; i < tasks.length; i++) {
             if (tasks[i] != null && (tasks[i].deadLine <= now)) {
-            	tempTask = tasks[i];
-            	tempTask.run();
-            	//tempTask = null;
+            	//check if has been canceled from different thread.
             	if (tasks[i].canceled) {
             		tasks[i] = null;
+            	}else
+            	{
+            		tempTask = tasks[i];
+            		try{
+            			tempTask.run();
+            		}catch(Exception e)
+            		{
+            			if(logger.isDebugEnabled())
+            			{
+            				logger.debug("Failuer on task run.",e);
+            			}
+            		}
+            		//check if its canceled after run;
+            		if (tasks[i].canceled) {
+            			tasks[i] = null;
+            		}
             	}
+            	//tempTask = null;
+            	
             } 
         }
     }

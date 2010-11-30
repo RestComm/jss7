@@ -26,6 +26,7 @@
  */
 package org.mobicents.protocols.ss7.mtp;
 
+
 /**
  *
  * @author kulikov
@@ -36,12 +37,17 @@ public abstract class MTPTask implements Runnable {
     protected long deadLine;
     protected int index;
     protected MTPScheduler scheduler;
-    
     public void run() {
         if (!canceled) {
-            perform();
+        	try{
+        		//exception in caught in scheduler.
+        		perform();
+        	}finally
+        	{
+        		canceled = true;
+        	}
         }
-        canceled = true;
+        
     }
 
     public boolean isCanceled() {
@@ -52,9 +58,10 @@ public abstract class MTPTask implements Runnable {
     
     public void cancel() {
         this.canceled = true;
+        //dont do this, let it be lazely reclaimed if ever, this causes race!
         //remove task from list
-        if (scheduler != null && (index >=0) && (index < scheduler.tasks.length)) {
-            scheduler.tasks[index] = null;
-        }
+        //if (scheduler != null && (index >=0) && (index < scheduler.tasks.length)) {
+        //    scheduler.tasks[index] = null;  
+        //}
     }
 }
