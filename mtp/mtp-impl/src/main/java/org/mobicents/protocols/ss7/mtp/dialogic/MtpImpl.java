@@ -48,7 +48,7 @@ public class MtpImpl implements MtpProvider, Runnable {
     //originated and adjacent point codes
     private int opc;
     private int dpc;
-    
+    private int ni;
     //Message listener
     private MtpListener listener;
     
@@ -141,7 +141,17 @@ public class MtpImpl implements MtpProvider, Runnable {
         return opc;
     }
 
-    /**
+	@Override
+	public void setNetworkIndicator(int ni) {
+		this.ni = ni;
+	}
+
+	@Override
+	public int getNetworkIndicator() {
+		return this.ni;
+	}
+
+	/**
      * (Non Java-doc.)
      * 
      * @see org.mobicents.protocols.ss7.mtp.provider.MtpProvider#setMtpListener(org.mobicents.protocols.ss7.mtp.provider.MtpListener) 

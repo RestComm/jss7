@@ -58,6 +58,7 @@ public class Provider implements MtpProvider, Runnable {
 	
 	public static final String PROPERTY_APC = "mtp.apc";
 	public static final String PROPERTY_OPC = "mtp.opc"; 
+	public static final String PROPERTY_NI = "mtp.ni"; 
 	
     protected SocketAddress localAddress = new InetSocketAddress("127.0.0.1", 8998);;
     protected SocketAddress remoteAddress = new InetSocketAddress("127.0.0.1", 1345);
@@ -81,7 +82,7 @@ public class Provider implements MtpProvider, Runnable {
     
     private int opc;
     private int apc;
-    
+    private int ni;
     /**
      * 
      */
@@ -139,6 +140,16 @@ public class Provider implements MtpProvider, Runnable {
 				throw new ConfigurationException("OPC must be specified with: "+PROPERTY_OPC+" property.");
 			}
 			this.opc = Integer.parseInt(s);
+			
+			s = p.getProperty(PROPERTY_NI);
+			if(s == null)
+			{
+				throw new ConfigurationException("NI must be specified with: "+PROPERTY_NI+" property.");
+			}
+			this.ni = Integer.parseInt(s);
+			
+			
+			
 		} catch (Exception e) {
 			throw new ConfigurationException(e);
 		}
@@ -214,6 +225,13 @@ public class Provider implements MtpProvider, Runnable {
         return opc;
     }
 
+	public void setNetworkIndicator(int ni) {
+		this.ni = ni;
+	}
+
+	public int getNetworkIndicator() {
+		return this.ni;
+	}
     public void setMtpListener(MtpListener listener) {
         this.listener = listener;
     }

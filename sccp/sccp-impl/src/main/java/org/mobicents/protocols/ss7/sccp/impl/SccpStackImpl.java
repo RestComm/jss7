@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.provider.MtpListener;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 import org.mobicents.protocols.ss7.sccp.Router;
@@ -182,8 +183,8 @@ public class SccpStackImpl implements SccpStack, MtpListener {
         //prepare routing label
         int opc = mtpInfo.getOpc();
         int dpc = mtpInfo.getDpc();
-        int si = 3;//SCCP
-        int ni = 3;//assume national
+        int si = 3;//SCCP //Why not static? Mtp3._SI_SERVICE_SCCP
+        int ni = linkset.getNetworkIndicator();
         int sls = mtpInfo.getSls();
         int ssi = ni << 2;
  

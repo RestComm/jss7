@@ -44,6 +44,13 @@ public interface MtpProvider {
      * @return the opc
      */
     public int getOriginalPointCode();
+    /**
+     * Sets network indicator to be used as part of SIO( actually SSI). It Accepts 2 bit integer.
+     * @param ni
+     */
+    public void setNetworkIndicator(int ni);
+    
+    public int getNetworkIndicator();
 
     /**
      * Sets listener for MTP callbacks. If null is passed internal refence is

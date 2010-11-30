@@ -60,11 +60,11 @@ public class Mtp3 implements Runnable {
     //FIXME: MOVE THIS TO LINKSET?
     protected volatile boolean started = false;
     /** defautl value of SSI */
-    public static final int DEFAULT_SSI = 2;//NATIONAL, as default.
+    public static final int DEFAULT_NI = 2;//NATIONAL, as default.
     
     private int dpc;
     private int opc;
-    private int ssi=DEFAULT_SSI;;
+    private int ni=DEFAULT_NI << 2; // << cause its faster for checks.
     
      
     /** List of signaling channels wrapped with MTP2*/
@@ -131,12 +131,17 @@ public class Mtp3 implements Runnable {
         return opc;
     }
 
-	public int getSsi() {
-		return ssi;
+    
+    /**
+     * Sets network indicator to be used as part of SIO( actually SSI). It Accepts 2 bit integer.
+     * @param ni
+     */
+    public void setNetworkIndicator(int ni){
+		this.ni = (0x03 & ni) << 2; 
 	}
-
-	public void setSsi(int ssi) {
-		this.ssi = 0x0F & ssi; //0x0F, since its 4 bits, first two are used, rest is free area.
+    
+    public int getNetworkIndicator() {
+		return this.ni >> 2;
 	}
 
 	/** (non-Javadoc)
@@ -227,7 +232,7 @@ public class Mtp3 implements Runnable {
     public void onMessage(int sio, byte[] sif, Mtp2 mtp2) {
             int subserviceIndicator = (sio >> 4) & 0x0F;
             int serviceIndicator = sio & 0x0F;
-
+            int ni = (subserviceIndicator  & 0x0C) ; //local NI(network Indicator) form msg., 0x0C, since we store it as shifted value.
             // int dpc = (sif[0] & 0xff | ((sif[1] & 0x3f) << 8));
             // int opc = ((sif[1] & 0xC0) >> 6) | ((sif[2] & 0xff) << 2) | ((sif[3]
             // & 0x0f) << 10);
@@ -237,7 +242,7 @@ public class Mtp3 implements Runnable {
             int sls = sls(sif, 1);
             
             //check SSI, Q.704 Figure 25, seems like if its bad, we discard.
-            if(this.ssi!=subserviceIndicator)
+            if(this.ni!=ni)
             {
             	if (logger.isTraceEnabled()) {
                     logger.trace(
@@ -286,7 +291,7 @@ public class Mtp3 implements Runnable {
 
 
                         //change order of opc/dpc in SLTA !
-                        writeRoutingLabel(slta, 0, this.ssi, sls, opc, dpc);
+                        writeRoutingLabel(slta, 0, this.ni << 2, sls, opc, dpc);
                         slta[0] = (byte) sio;
                         slta[5] = 0x021;
                         // +1 cause we copy LEN byte also.
@@ -482,7 +487,7 @@ public class Mtp3 implements Runnable {
         int subservice = DEFAULT_SUB_SERVICE_TRA;
         //}
         byte[] buffer = new byte[6];
-        writeRoutingLabel(buffer, 0, this.ssi, 0, dpc, opc);
+        writeRoutingLabel(buffer, 0, this.ni, 0, dpc, opc);
         // buffer[0] = (byte) (_SERVICE_TRA | ( subservice << 4));
         //buffer[0] = (byte) 0x00;
         // H0 and H1, see Q.704 section 15.11.2+
@@ -560,7 +565,7 @@ public class Mtp3 implements Runnable {
         public void ping(long timeout) {
             //prepearing test message
             
-            writeRoutingLabel(sltm, 0x01, ssi, link.getSls(), dpc, opc);
+            writeRoutingLabel(sltm, 0x01, ni, link.getSls(), dpc, opc);
             //sltm[0] = (byte) 0x01; 
             sltm[5] = 0x11;
             sltm[6] = (byte) (SLTM_PATTERN.length << 4);
