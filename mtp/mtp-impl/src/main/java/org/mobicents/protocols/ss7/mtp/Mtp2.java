@@ -1204,7 +1204,8 @@ public class Mtp2 {
                 this.mtp3.linkFailed(this);
             }
         }
-        this.state = MTP2_OUT_OF_SERVICE;
+        //this.state = MTP2_OUT_OF_SERVICE;
+        this.setState(MTP2_OUT_OF_SERVICE);
         // NOTE: buffer is flushed on start alignment.
         start_T17();
         if(logger.isDebugEnabled())
