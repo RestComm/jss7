@@ -201,7 +201,8 @@ public class Mtp2 {
     private TxQueue txQueue = new TxQueue();
     private int doCRC = 0;
     private int rxCRC = 0xffff;
-    private int txCRC = 0xffff;    // //////////////////////
+    private int txCRC = 0xffff;    
+    // //////////////////////
     // SEQUENCING AND RTR //
     // //////////////////////
     /**
@@ -402,6 +403,11 @@ public class Mtp2 {
     
     private void setState(int newState)
     {
+    	if(this.state == newState)
+    	{
+    		return;
+    	}
+    	
     	if(logger.isInfoEnabled())
     	{
     		//iirc it should be info
@@ -545,12 +551,7 @@ public class Mtp2 {
                     } else {
                         queueLSSU(FRAME_STATUS_INDICATION_N);
                     }
-                    // if (this.T4_TIMEOUT == this.T4_TIMEOUT_EMERGENCY) {
-                    // queueLSSU(FRAME_STATUS_INDICATION_E);
-                    // } else {
-                    //
-                    // queueLSSU(FRAME_STATUS_INDICATION_N);
-                    // }
+           
                     break;
 
                 default:
