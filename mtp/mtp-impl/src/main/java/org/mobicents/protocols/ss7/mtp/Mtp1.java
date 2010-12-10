@@ -34,7 +34,7 @@ import org.mobicents.protocols.stream.api.Stream;
  * @author kulikov
  */
 public interface Mtp1 extends Stream {
-	// FIXME: Oleg whats that?
+	// FIXME: Oleg what's that?
 	/**
 	 * Gets the code of this channel.
 	 * 
@@ -50,18 +50,23 @@ public interface Mtp1 extends Stream {
 	public void setLink(Mtp2 link);
 
 	/**
-	 * Get MTP2 latyer serving this MTP1
+	 * Get MTP2 layer serving this MTP1
 	 * 
 	 * @return
 	 */
 	public Mtp2 getLink();
-
 	/**
-	 * Reads upto buffer.length bytes from layer 1.
+	 * Fetches implementation dependent IO Buffer size which should be used 
+	 * @return integer number, Mtp2 implementation should assign buffers of this size to interact with Mtp1 
+	 */
+	public int getIOBufferSize();
+	
+	/**
+	 * Reads up to buffer.length bytes from layer 1.
 	 * 
 	 * @param buffer
 	 *            reader buffer
-	 * @return the number of actualy read bytes.
+	 * @return the number of actually read bytes.
 	 */
 	public int read(byte[] buffer) throws IOException;
 
@@ -75,12 +80,12 @@ public interface Mtp1 extends Stream {
 	public void write(byte[] buffer, int bytesToWrite) throws IOException;
 
 	/**
-	 * Open message tranfer part layer 1.
+	 * Open message transfer part layer 1.
 	 */
 	public void open() throws IOException;
 
 	/**
-	 * Close message tranfer part layer 1.
+	 * Close message transfer part layer 1.
 	 */
 	public void close();
 

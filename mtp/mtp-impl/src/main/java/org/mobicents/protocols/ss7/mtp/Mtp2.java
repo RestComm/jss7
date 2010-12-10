@@ -107,34 +107,41 @@ public class Mtp2 {
         0x59dd, 0x2d62, 0x3ceb, 0x0e70, 0x1ff9, 0xf78f, 0xe606, 0xd49d,
         0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330, 0x7bc7, 0x6a4e, 0x58d5,
         0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
-    };    // this is buff size, in native, but we use actaull data
-    public final static int RX_TX_BUFF_SIZE = 16;    // status indicator of out of alignment (SIO). This condition occurs when a
-    // signal unit is received that has a
-    // ones-density violation (the data field simulated a flag) or the SIF has
-    // exceeded its maximum capacity of 272
-    // octets. The SIO is sent when a link has failed and the alignment
-    // procedure is initiated.
-    private final static int FRAME_STATUS_INDICATION_O = 0;    // Link status indicator of normal (SIN) or emergency (SIE) indicates that
-    // the transmitting signaling point has
-    // initiated the alignment procedure. The link is made unavailable for MSUs,
-    // and only FISUs are transmitted to the
-    // affected signaling point until a proving period has been passed. After
-    // successful completion of a proving period,
-    // MSUs can be transmitted over the link to the affected signaling point.
-    private final static int FRAME_STATUS_INDICATION_N = 1;
-    private final static int FRAME_STATUS_INDICATION_E = 2;    // An LSSU status indicator of out of service (SIOS) indicates that the
-    // sending signaling point cannot receive or
-    // transmit any MSUs for reasons other than a processor outage. On receipt
-    // of an SIOS, the receiving signaling point
-    // stops the transmission of MSUs and begins transmitting FISUs. The SIOS is
-    // also sent at the beginning of the
-    // alignment procedure.
-    private final static int FRAME_STATUS_INDICATION_OS = 3;    // status indicator of processor outage (SIPO) indicates that the
-    // transmitting signaling point cannot communicate
-    // with levels 3 and 4.
-    private final static int FRAME_STATUS_INDICATION_PO = 4;
-    private final static int FRAME_STATUS_INDICATION_B = 5;
-    private final static int FRAME_FISU = 6;    //matches frame code to frame name
+    };    
+	/**
+	 * status indicator of out of alignment (SIO). This condition occurs when a
+	 * signal unit is received that has a ones-density violation (the data field
+	 * simulated a flag) or the SIF has exceeded its maximum capacity of 272
+	 * octets. The SIO is sent when a link has failed and the alignment
+	 * procedure is initiated.
+	 */
+	private final static int FRAME_STATUS_INDICATION_O = 0;
+	/**
+	 * Link status indicator of normal (SIN) or emergency (SIE) indicates that
+	 * the transmitting signaling point has initiated the alignment procedure.
+	 * The link is made unavailable for MSUs, and only FISUs are transmitted to
+	 * the affected signaling point until a proving period has been passed.
+	 * After successful completion of a proving period, MSUs can be transmitted
+	 * over the link to the affected signaling point.
+	 */
+	private final static int FRAME_STATUS_INDICATION_N = 1;
+	private final static int FRAME_STATUS_INDICATION_E = 2;
+	/**
+	 * An LSSU status indicator of out of service (SIOS) indicates that the
+	 * sending signaling point cannot receive or transmit any MSUs for reasons
+	 * other than a processor outage. On receipt of an SIOS, the receiving
+	 * signaling point stops the transmission of MSUs and begins transmitting
+	 * FISUs. The SIOS is also sent at the beginning of the alignment procedure.
+	 */
+	private final static int FRAME_STATUS_INDICATION_OS = 3;
+	/**
+	 * status indicator of processor outage (SIPO) indicates that the
+	 * transmitting signaling point cannot communicate with levels 3 and 4.
+	 */
+	private final static int FRAME_STATUS_INDICATION_PO = 4;
+	private final static int FRAME_STATUS_INDICATION_B = 5;
+	private final static int FRAME_FISU = 6;
+	/** matches frame code to frame name,<b>FRAME_NAMES[0]</b> gives string name of frame with code <b>0</b> */
     private final static String[] FRAME_NAMES;
     
 
@@ -170,29 +177,30 @@ public class Mtp2 {
 
     }    
     ////////////////////
-    // MTP3 resoruces //
+    // MTP2/1 resoruces //
     ////////////////////
     protected SLTMTest sltmTest;
+  /**MTP1 layer reference.*/
+    private Mtp1 channel;
+    private int ioBufferSize;
     // ///////////////////
     // MTP2 stuff only //
     // ///////////////////
 
     // be careful using this, we do not sync for now.
-    private int state;    //MTP1 layer reference.
-    private Mtp1 channel;    //MTP3 Layer reference
+    private int state;        
+    /**MTP3 Layer reference*/
     protected Mtp3 mtp3;
-    private volatile boolean started;    //HDLC components
+    private volatile boolean started;    
+    /**HDLC components*/
     private FastHDLC hdlc = new FastHDLC();
     private HdlcState rxState = new HdlcState();
     private HdlcState txState = new HdlcState();
-    //private int rxLen = 0;
-    //private int txLen = 0;
-   
-    private byte[] txBuffer = new byte[RX_TX_BUFF_SIZE];
-    private byte[] rxBuffer = new byte[RX_TX_BUFF_SIZE];
-    //private int[] rxFrame = new int[279];
-    //private byte[] txFrame = new byte[279];
-    //private int txOffset = 0;
+
+    //Buffers used for IO
+    private byte[] txBuffer;
+    private byte[] rxBuffer;
+
     /**
      * Buffer to store incoming frame.
      */
@@ -365,7 +373,11 @@ public class Mtp2 {
         if (started) {
             throw new IllegalStateException("Link already running");
         }
-        
+        //init buffers
+        this.ioBufferSize = this.channel.getIOBufferSize();
+        this.rxBuffer = new byte[this.ioBufferSize];
+        this.txBuffer = new byte[this.ioBufferSize];
+        //open channel and notify L3
         channel.open();
         mtp3.registerLink(this);
         started = true;
@@ -380,7 +392,7 @@ public class Mtp2 {
         setState(MTP2_OUT_OF_SERVICE);
         //send Out of service indicator when link starts.
         queueLSSU(Mtp2.FRAME_STATUS_INDICATION_OS);
-        processTx(RX_TX_BUFF_SIZE);
+        processTx(this.ioBufferSize);
         startInitialAlignment();
     }
 
@@ -1099,7 +1111,7 @@ public class Mtp2 {
     private void processTx(int bytesRead) throws IOException {
 
 
-    	for (int i = 0; i < bytesRead && i < RX_TX_BUFF_SIZE; i++) {
+    	for (int i = 0; i < bytesRead && i < this.ioBufferSize; i++) {
             if (txState.bits < 8) {
                 // need more bits
                 if (doCRC == 0 && txFrame.offset < txFrame.len) {
@@ -1159,8 +1171,8 @@ public class Mtp2 {
             return;
         }
         try {
-            processTx(RX_TX_BUFF_SIZE);
-            channel.write(txBuffer, RX_TX_BUFF_SIZE);
+            processTx(this.ioBufferSize);
+            channel.write(txBuffer, this.ioBufferSize);
             if (logger.isTraceEnabled()) {
             	logger.trace("Sending frame");
             }
