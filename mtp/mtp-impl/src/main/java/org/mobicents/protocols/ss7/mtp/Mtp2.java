@@ -185,20 +185,42 @@ public class Mtp2 {
     private FastHDLC hdlc = new FastHDLC();
     private HdlcState rxState = new HdlcState();
     private HdlcState txState = new HdlcState();
-    private int rxLen = 0;
-    private int txLen = 0;
-    private int txOffset = 0;
+    //private int rxLen = 0;
+    //private int txLen = 0;
+   
     private byte[] txBuffer = new byte[RX_TX_BUFF_SIZE];
     private byte[] rxBuffer = new byte[RX_TX_BUFF_SIZE];
-    private int[] rxFrame = new int[279];
-    private byte[] txFrame = new byte[279];
+    //private int[] rxFrame = new int[279];
+    //private byte[] txFrame = new byte[279];
+    //private int txOffset = 0;
+    /**
+     * Buffer to store incoming frame.
+     */
+    private Mtp2Buffer rxFrame = new Mtp2Buffer();
+    /**
+     * Buffer to store frame to send, this ref will be set when next frame is scheduled, no copy&paste
+     */
+    private Mtp2Buffer txFrame; 
+    /**
+     * frame used to create LSSU/FISU
+     */
+    private Mtp2Buffer stateFrame = new Mtp2Buffer(); 
+    /**
+     * frame used to create NEXT LSSU, it is used in case when link transits from NOT_ALIGNED to ALIGNED state
+     */
+    private Mtp2Buffer nextStateFrame = new Mtp2Buffer();
+    /**
+     * Indicates that there is something to send in {@link #nextStateFrame}.
+     */
+    private boolean pendingLSSU = false; 
+    
     /**
      * Last write timestamp, it is required for case when we must start sending but nothing comes on wire.
      */
     // private long lastWriteStamp = 0;    
     // Used only for LSSU, in some case we need to schedule LSSU frame, before
     // last is processed,
-    private TxQueue txQueue = new TxQueue();
+   //private TxQueue txQueue = new TxQueue();
     private int doCRC = 0;
     private int rxCRC = 0xffff;
     private int txCRC = 0xffff;    
@@ -210,7 +232,7 @@ public class Mtp2 {
      * from when we send and retransmission is requested. FIXME: add this->
      * ACKED buffers will have len == 0(isFree() == true);
      */
-    private Mtp2SendBuffer[] transmissionBuffer = new Mtp2SendBuffer[128];
+    private Mtp2Buffer[] transmissionBuffer = new Mtp2Buffer[128];
     private static final int _OFF_RTR = -1;
     /**
      * Determines posistion in transmissionBuffer. If != _OFF_RTR, it points
@@ -273,7 +295,7 @@ public class Mtp2 {
 
         // init buffer
         for (int i = 0; i < this.transmissionBuffer.length; i++) {
-            this.transmissionBuffer[i] = new Mtp2SendBuffer();
+            this.transmissionBuffer[i] = new Mtp2Buffer();
         }
     }
 
@@ -343,7 +365,7 @@ public class Mtp2 {
         if (started) {
             throw new IllegalStateException("Link already running");
         }
-
+        
         channel.open();
         mtp3.registerLink(this);
         started = true;
@@ -353,12 +375,12 @@ public class Mtp2 {
         if(logger.isInfoEnabled()){
          logger.info("Is out of service now. Starting.");
     	}
-
+        this.txFrame = stateFrame;
         //state = Mtp2.MTP2_OUT_OF_SERVICE;
         setState(MTP2_OUT_OF_SERVICE);
         //send Out of service indicator when link starts.
         queueLSSU(Mtp2.FRAME_STATUS_INDICATION_OS);
-        processTx(16);
+        processTx(RX_TX_BUFF_SIZE);
         startInitialAlignment();
     }
 
@@ -387,7 +409,8 @@ public class Mtp2 {
         // Comment from Oleg: this is done initialy to setup correct spot in tx
         // buffer: dunno, I just believe, for now.
         if (resetTxOffset) {
-            txOffset = 3;
+            //txOffset = 3;
+        	this.txFrame.offset = 3; // I really dont get this shift.
         }
 
         this.reset();
@@ -429,11 +452,11 @@ public class Mtp2 {
         this.retransmissionFSN = _OFF_RTR;
         this.retransmissionFSN_LastAcked = 0x7F;
         this.retransmissionFSN_LastSent = 0x7F;
+        
     }
 
     public void fail() {
         cleanupTimers();
-        //this.state = MTP2_OUT_OF_SERVICE;
         
         if(logger.isDebugEnabled())
         {
@@ -444,6 +467,7 @@ public class Mtp2 {
     }
 
     public boolean send(byte[] msg, int len) {
+    	//FIXME: this operation actually could be split into two....
 		if (this.state != MTP2_INSERVICE) {
 			if (this.logger.isEnabledFor(Level.TRACE)) {
 				logger.trace("MTP3 scheduled MSU when not in service, discarding.");
@@ -488,20 +512,15 @@ public class Mtp2 {
     }
 
     private void queueLSSU(int indicator) {
-        if (this.txLen != txOffset) {
-            // we schedule in queue, this is for some special cases.
-            byte[] frame = new byte[4];
-            frame[0] = (byte) (this.sendBSN | (this.sendBIB << 7));
-            frame[1] = (byte) (this.retransmissionFSN_LastSent | (this.sendFIB << 7));
-            frame[2] = 1;
-            frame[3] = (byte) indicator;
-            txQueue.offer(frame);
+        //if (this.txLen != txOffset) {
+    	if (this.txFrame!=null && this.txFrame.len != this.txFrame.offset) {
+    		fillLSSUBuffer(this.nextStateFrame,indicator);
+    		this.pendingLSSU = true; //should we check on entering here?
+    		
         } else {
-            this.txLen = 4;
-            this.txFrame[0] = (byte) (this.sendBSN | (this.sendBIB << 7));
-            this.txFrame[1] = (byte) (this.retransmissionFSN_LastSent | (this.sendFIB << 7));
-            this.txFrame[2] = 1;
-            this.txFrame[3] = (byte) indicator;
+        	this.txFrame = this.stateFrame; //set proper frame 
+        	fillLSSUBuffer(this.txFrame,indicator);
+        	
 
         }
 
@@ -509,14 +528,24 @@ public class Mtp2 {
             logger.trace("Queue LSSU[" + FRAME_NAMES[indicator] + "]");
         }
     }
+    private void fillLSSUBuffer(Mtp2Buffer b, int indicator)
+    {
+    	b.len = 4;
+    	b.offset = 0;
+    	b.frame[0] = (byte) (this.sendBSN | (this.sendBIB << 7));
+        b.frame[1] = (byte) (this.retransmissionFSN_LastSent | (this.sendFIB << 7));
+        b.frame[2] = 1;
+        b.frame[3] = (byte) indicator;
+        
+    }
 
     private void queueFISU() {
-        this.txLen = 3;
-        this.txFrame[0] = (byte) (this.sendBSN | (this.sendBIB << 7));
-        this.txFrame[1] = (byte) (this.retransmissionFSN_LastSent | (this.sendFIB << 7));
-        this.txFrame[2] = 0;
-
-        // txQueue.offer(frame);
+        
+    	this.txFrame = this.stateFrame;
+        this.txFrame.frame[0] = (byte) (this.sendBSN | (this.sendBIB << 7));
+        this.txFrame.frame[1] = (byte) (this.retransmissionFSN_LastSent | (this.sendFIB << 7));
+        this.txFrame.frame[2] = 0;
+        this.txFrame.offset = 0;
 
         if(this.logger.isEnabledFor(Level.TRACE)){	
             logger.trace("Queue FISU");
@@ -524,14 +553,10 @@ public class Mtp2 {
     }
 
     private void queueNextFrame() {
-        if (this.state != MTP2_INSERVICE && !this.txQueue.isEmpty()) {
-            byte[] b = txQueue.peak();
-            System.arraycopy(b, 0, txFrame, 0, b.length);
-            this.txLen = b.length;
-            if(logger.isTraceEnabled())
-            {
-            	logger.trace("Scheduling frame from queue: "+Utils.dump(txFrame, txLen, true));
-            }
+        if (this.state != MTP2_INSERVICE && this.pendingLSSU) {
+        	this.txFrame = nextStateFrame;
+        	this.pendingLSSU = false;
+        	
         } else {
             switch (state) {
                 case MTP2_OUT_OF_SERVICE:
@@ -558,27 +583,23 @@ public class Mtp2 {
 
                     // in service, we need to check buffer, otherwise its RTR
                     if (this.retransmissionFSN != _OFF_RTR) {
-                        Mtp2SendBuffer buffer = this.transmissionBuffer[this.retransmissionFSN];
+                        Mtp2Buffer buffer = this.transmissionBuffer[this.retransmissionFSN];
                         // we shoudl use getters, but its faster with "."
-
-                        System.arraycopy(buffer.frame, 0, txFrame, 0, buffer.len);
-                        this.txLen = buffer.len;
-                        this.txFrame[0] = (byte) (this.sendBSN | (this.sendBIB << 7));
-                        this.txFrame[1] = (byte) (this.retransmissionFSN | (this.sendFIB << 7));
-
+                        this.txFrame = buffer;
+                        this.txFrame.offset = 0;
+                        this.txFrame.frame[0] = (byte) (this.sendBSN | (this.sendBIB << 7));
+                        this.txFrame.frame[1] = (byte) (this.retransmissionFSN | (this.sendFIB << 7));
+                        
                         if (this.retransmissionFSN == this.retransmissionFSN_LastSent) {
                             this.retransmissionFSN = _OFF_RTR;
                         } else {
                             // set up next :)
                             this.retransmissionFSN = NEXT_FSN(this.retransmissionFSN);
                         }
-                        // if (this.enabledL2Debug) {
-                        // trace("Scheduled next frame in tx buffer: "
-                        // + dump(this.txFrame, this.txLen, false));
-                        // }
+
                         if(logger.isTraceEnabled())
                         {
-                        	logger.trace("Retransmiting frame: "+Utils.dump(txFrame, txLen, true));
+                        	logger.trace("Retransmiting frame: "+Utils.dump(txFrame.frame, txFrame.len, true));
                         }
                         return;
                     }
@@ -593,9 +614,9 @@ public class Mtp2 {
         return ((fcs) >> 8) ^ fcstab[((fcs) ^ (c)) & 0xff];
     }
 
-    private void processLssu(int fsn, int bsn) {
-        int type = rxFrame[3] & 0x07;
-        //		
+    private void processLssu() {
+    	//Q703 Figure 4
+        int type = rxFrame.frame[3] & 0x07;
 
         switch (this.state) {
             case MTP2_NOT_ALIGNED:
@@ -612,7 +633,6 @@ public class Mtp2 {
                             queueLSSU(FRAME_STATUS_INDICATION_N);
                         }
                         start_T3();
-                        //this.state = MTP2_ALIGNED;
 
                         this.setState(MTP2_ALIGNED);
                         break;
@@ -631,13 +651,11 @@ public class Mtp2 {
                         // 4. start T3
                         start_T3();
                         // 5. set state
-                        //this.state = MTP2_ALIGNED;
 
                         this.setState(MTP2_ALIGNED);
                         break;
                     default:
-                    // logger.warn("Ingoring LSSU[" + _FRAME_NAMES[type]
-                    // + "] on state[" + _STATE_NAMES[state] + "]");
+
                 }
                 // BREAK For NOT_ALIGNED state
                 break;
@@ -666,7 +684,6 @@ public class Mtp2 {
                         // 6. cancel further proving.
                         this.futureProving = false;
                         // 7. set state
-                        //this.state = MTP2_PROVING;
 
                         this.setState(MTP2_PROVING);
                         break;
@@ -682,8 +699,7 @@ public class Mtp2 {
 
                         break;
                     default:
-                    // logger.warn("Ingoring LSSU[" + _FRAME_NAMES[type]
-                    // + "] on state[" + _STATE_NAMES[state] + "]");
+
                 }
 
                 // BREAK for ALIGNED state.
@@ -698,7 +714,6 @@ public class Mtp2 {
                         // 3. start T3
                         start_T3();
                         // 4. swithc state
-                        //this.state = MTP2_ALIGNED;
 
                         this.setState(MTP2_ALIGNED);
                         break;
@@ -794,47 +809,27 @@ public class Mtp2 {
 
     private void processMSU(int len) {
         if (this.mtp3 != null) {
-            int sio = rxFrame[3];
-            int realLength = 0;
-            if (len == 63) {
-                // -5 = (FIB+FSN(1)) - (BIB+BSN(1)) - java(zero index: 1) -2(CRC)
-                realLength = rxLen - 5;
-            //was -4
-            } else {
-                realLength = len;
-            }
-
-            byte[] sif = new byte[realLength];
-            // for (int i = 0; i < len - 1; i++) {
-            // sif[i] = (byte) rxFrame[i + 4];
-            // }
-            for (int i = 0; i < realLength; i++) {
-                sif[i] = (byte) rxFrame[i + 3];
-            }
-            // FIXME: switch to this
-            // System.arraycopy(rxFrame, 4, sif, 0, realLength);
-
-            if (logger.isEnabledFor(Level.TRACE)) {
-                logger.trace(String.format("(%s) Delivering MSU to layer 3 ", name));
-            }
-            mtp3.onMessage(sio, sif, this);
+        	mtp3.onMessage(rxFrame,this);
         }
     }
-
+   
     private void processFrame() {
-        int bsn = rxFrame[0] & 0x7F;
-        int bib = (rxFrame[0] >> 7) & 0x01;
-        int fsn = rxFrame[1] & 0x7F;
-        int fib = (rxFrame[1] >> 7) & 0x01;
 
-        int li = rxFrame[2] & 0x3f;
+    	
+        int bsn = rxFrame.frame[0] & 0x7F;
+        int bib = (rxFrame.frame[0] >> 7) & 0x01;
+        int fsn = rxFrame.frame[1] & 0x7F;
+        int fib = (rxFrame.frame[1] >> 7) & 0x01;
+
+        int li = rxFrame.frame[2] & 0x3f;
 
         if (logger.isTraceEnabled()) {
             String type = null;
             if (li == 0) {
                 type = "FISU";
             } else if (li == 1 || li == 2) {
-                int lssuType = rxFrame[3] & 0x07;
+                //int lssuType = rxFrame[3] & 0x07;
+            	int lssuType = rxFrame.frame[3] & 0x07;
                 type = "LSSU(" + FRAME_NAMES[lssuType] + ")";
             } else {
                 type = "MSU";
@@ -845,21 +840,23 @@ public class Mtp2 {
         }
 
         //Why it was 5?
-        if (li + 3 > rxLen) {
+//        if (li + 3 > rxLen) {
+        if (li + 3 > rxFrame.len) {
 
         	if(this.logger.isEnabledFor(Level.TRACE)){	
-                logger.trace("Discarding frame on wrong RX Len: " + rxLen + " > " + li);
+                logger.trace("Discarding frame on wrong RX Len: " + rxFrame.len + " > " + li);
         	}
             return;
         }
 
         if (li == 1 || li == 2) {
-
+        	
             // LSSU does not count for IAM check for SU
-            processLssu(fsn, bsn);
+            processLssu();
             // LSSU does not go into BSN/FSN check, its always static for this
             // part.
             // and if we get here from IN_SERVICE, everything is reset.
+          
             return;
         }
 
@@ -893,8 +890,6 @@ public class Mtp2 {
                     this.sendBSN = fsn;
                     this.sendBIB = fib;
                     this.retransmissionFSN_LastAcked = bsn;
-
-                    //this.state = MTP2_INSERVICE;
 
                     if (logger.isDebugEnabled()) {
                         logger.debug(String.format("(%s) MTP now IN_SERVICE, Notifing layer 3", name));
@@ -1012,6 +1007,7 @@ public class Mtp2 {
                 return;
             }
             processMSU(li);
+
         }
 
     }
@@ -1025,92 +1021,92 @@ public class Mtp2 {
      *            the number of received bytes.
      */
     private void processRx(byte[] buff, int len) {
-        // private void processRx(ByteBuffer bb, int len) {
 
-        int i = 0;
+    	 int i = 0;
 
-        // start HDLC alg
-        while (i < len) {
-            while (rxState.bits <= 24 && i < len) {
-                int b = buff[i++] & 0xff;
-                hdlc.fasthdlc_rx_load_nocheck(rxState, b);
-                if (rxState.state == 0) {
-                    // octet counting mode
-                    nCount = (nCount + 1) % 16;
-                    if (nCount == 0) {
-                        countError("on receive");
-                    }
-                }
-            }
+         // start HDLC alg
+         while (i < len) {
+             while (rxState.bits <= 24 && i < len) {
+                 int b = buff[i++] & 0xff;
+                 hdlc.fasthdlc_rx_load_nocheck(rxState, b);
+                 if (rxState.state == 0) {
+                     // octet counting mode
+                     nCount = (nCount + 1) % 16;
+                     if (nCount == 0) {
+                         countError("on receive");
+                     }
+                 }
+             }
 
-            int res = hdlc.fasthdlc_rx_run(rxState);
+             int res = hdlc.fasthdlc_rx_run(rxState);
 
-            switch (res) {
-                case FastHDLC.RETURN_COMPLETE_FLAG:
-                    // frame received and we count it
-                    countFrame();
+             switch (res) {
+                 case FastHDLC.RETURN_COMPLETE_FLAG:
+                     // frame received and we count it
+                     countFrame();
 
-                    // checking length and CRC of the received frame
-                    if (rxLen == 0) {
-                    } else if (rxLen < 5) {
-                        // frame must be at least 5 bytes in length
-                        countError("hdlc error, frame LI<5");
+                     // checking length and CRC of the received frame
+                     if (rxFrame.len == 0) {
+                     } else if (rxFrame.len < 5) {
+                         // frame must be at least 5 bytes in length
+                         countError("hdlc error, frame LI<5");
 
-                    } else if (rxCRC == 0xF0B8) {
-                        // good frame received
-                        processFrame();
-                    } else {
-                        countError("hdlc complete, wrong terms.");
+                     } else if (rxCRC == 0xF0B8) {
+                         // good frame received
+                         processFrame();
+                     } else {
+                         countError("hdlc complete, wrong terms.");
 
-                    }
-                    rxLen = 0;
-                    rxCRC = 0xffff;
-                    break;
-                case FastHDLC.RETURN_DISCARD_FLAG:
-                    // looking for next flag
-                    rxCRC = 0xffff;
-                    rxLen = 0;
-                    // eCount = 0;
-                    countFrame();
-                    // "on receive, hdlc discard"
+                     }
+                     rxFrame.len = 0;
+                     rxCRC = 0xffff;
+                     break;
+                 case FastHDLC.RETURN_DISCARD_FLAG:
+                     // looking for next flag
+                     rxCRC = 0xffff;
+                     rxFrame.len = 0;
+                     // eCount = 0;
+                     countFrame();
+                     // "on receive, hdlc discard"
 
-                    countError("hdlc discard.");
+                     countError("hdlc discard.");
 
-                    break;
-                case FastHDLC.RETURN_EMPTY_FLAG:
+                     break;
+                 case FastHDLC.RETURN_EMPTY_FLAG:
 
-                    rxLen = 0;
-                    break;
-                default:
-                    if (rxLen > 279) {
+                	 rxFrame.len = 0;
+                     break;
+                 default:
+                     if (rxFrame.len > 279) {
 
-                        rxState.state = 0;
-                        rxLen = 0;
-                        rxCRC = 0xffff;
-                        eCount = 0;
-                        countFrame();
-                        countError("Overlong MTP frame, entering octet mode on link '" + name + "'");
+                         rxState.state = 0;
+                         rxFrame.len = 0;
+                         rxCRC = 0xffff;
+                         eCount = 0;
+                         countFrame();
+                         countError("Overlong MTP frame, entering octet mode on link '" + name + "'");
 
-                    } else {
+                     } else {
 
-                        rxFrame[rxLen++] = res;
-                        rxCRC = PPP_FCS(rxCRC, res & 0xff);
-                    }
-            }
+                    	 rxFrame.frame[rxFrame.len++] = (byte)res;
+                         rxCRC = PPP_FCS(rxCRC, res & 0xff);
+                     }
+             }
 
-        }
+         }
     }
 
     private void processTx(int bytesRead) throws IOException {
 
-        for (int i = 0; i < bytesRead && i < RX_TX_BUFF_SIZE; i++) {
+
+    	for (int i = 0; i < bytesRead && i < RX_TX_BUFF_SIZE; i++) {
             if (txState.bits < 8) {
                 // need more bits
-                if (doCRC == 0 && txOffset < txLen) {
-                    int data = txFrame[txOffset++] & 0xff;
+                if (doCRC == 0 && txFrame.offset < txFrame.len) {
+                    int data = txFrame.frame[txFrame.offset++] & 0xff;
                     hdlc.fasthdlc_tx_load(txState, data);
                     txCRC = PPP_FCS(txCRC, data);
-                    if (txOffset == txLen) {
+                    if (txFrame.offset == txFrame.len) {
                         doCRC = 1;
                         txCRC ^= 0xffff;
                     }
@@ -1125,9 +1121,7 @@ public class Mtp2 {
 
                     queueNextFrame();
 
-                    // txFrame = txQueue.peak();
-                    // txLen = txFrame.length;
-                    txOffset = 0;
+                    txFrame.offset = 0;
                     txCRC = 0xffff;
                     hdlc.fasthdlc_tx_frame_nocheck(txState);
                 }
@@ -1135,7 +1129,7 @@ public class Mtp2 {
             // txBuffer.put(i, (byte) hdlc.fasthdlc_tx_run_nocheck(txState));
             txBuffer[i] = (byte) hdlc.fasthdlc_tx_run_nocheck(txState);
         }
-
+    	
     }
 
     public void doRead() {
@@ -1149,7 +1143,7 @@ public class Mtp2 {
                     processRx(rxBuffer, bytesRead);
                 }
             } catch (Exception e) {
-                //state = MTP2_OUT_OF_SERVICE;
+ 
             	if(logger.isEnabledFor(Level.ERROR))
             	{
             		logger.error(String.format("(%s) Can not read data from channel", name), e);
@@ -1171,7 +1165,6 @@ public class Mtp2 {
             	logger.trace("Sending frame");
             }
         } catch (Exception e) {
-            //state = MTP2_OUT_OF_SERVICE;
         	if(logger.isEnabledFor(Level.ERROR))
         	{
         		logger.error(String.format("(%s) Can not write data to channel", name), e);
@@ -1205,7 +1198,6 @@ public class Mtp2 {
                 this.mtp3.linkFailed(this);
             }
         }
-        //this.state = MTP2_OUT_OF_SERVICE;
         this.setState(MTP2_OUT_OF_SERVICE);
         // NOTE: buffer is flushed on start alignment.
         start_T17();
@@ -1226,7 +1218,6 @@ public class Mtp2 {
             }
         }
 
-        //this.state = MTP2_OUT_OF_SERVICE;
         this.setState(MTP2_OUT_OF_SERVICE);
         // NOTE: buffer is flushed on start alignment.
         start_T17();
@@ -1250,7 +1241,6 @@ public class Mtp2 {
         stop_T2();
         stop_T3();
         stop_T4();
-        //this.state = MTP2_ALIGNED_READY;
 
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("(%s) Aligned ready", name));
@@ -1271,7 +1261,7 @@ public class Mtp2 {
                     if (this.mtp3 != null) {
                         mtp3.linkFailed(this);
                     }
-                    //state = MTP2_OUT_OF_SERVICE;
+   
                     this.setState(MTP2_OUT_OF_SERVICE);
                 }
                 break;
@@ -1281,7 +1271,7 @@ public class Mtp2 {
                         // start T17 ? check for alignemtn count;
                         // see Q.703 p.55
                         this.provingAttempts++;
-                        if (this.provingAttempts < 5) {
+                        if (this.provingAttempts < PROVING_ATTEMPTS_THRESHOLD) {
                             this.futureProving = true;
 
                             if(this.logger.isEnabledFor(Level.WARN)){	
@@ -1491,33 +1481,6 @@ public class Mtp2 {
         return !t17Action.isCanceled();
     }
 
-   
-   
-
-    // ////////////////////
-    // Some mtp classes //
-    // ////////////////////
-    private class Mtp2SendBuffer {
-        // FIXME: is 272 max data length?
-        /**
-         * data in this frame.
-         */
-        byte[] frame = new byte[272 + 7]; // +7 - 272 is max SIF part len, 
-        /**
-         * length of actual data fram to be transmited.
-         */
-        int len = 0;        // public boolean isFree()
-    }
-    
-//    private void log(String msg, Level level) {
-//        // FIXME: yeah, I know, but in case of more links, logs will be a pain
-//        StringBuilder sb = new StringBuilder();
-//        
-//        //
-//        sb.append(" Link [").append(name).append("] [").append(" state = ").append( STATE_NAMES[state]).append(" ] ").append(msg);
-//        logger.log(level, sb.toString());
-//       
-//    }
 
     private static final int NEXT_FSN(int x) {
         // kill FIB if present
