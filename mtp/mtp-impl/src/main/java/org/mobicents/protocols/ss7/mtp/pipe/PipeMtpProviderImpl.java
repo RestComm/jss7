@@ -165,12 +165,10 @@ public class PipeMtpProviderImpl implements MtpProvider {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	@Override
 	public void setNetworkIndicator(int ni) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	@Override
 	public int getNetworkIndicator() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

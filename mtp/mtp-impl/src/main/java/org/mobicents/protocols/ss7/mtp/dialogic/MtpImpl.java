@@ -141,12 +141,10 @@ public class MtpImpl implements MtpProvider, Runnable {
         return opc;
     }
 
-	@Override
 	public void setNetworkIndicator(int ni) {
 		this.ni = ni;
 	}
 
-	@Override
 	public int getNetworkIndicator() {
 		return this.ni;
 	}

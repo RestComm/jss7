@@ -23,6 +23,7 @@
 	<modules>
 		<module>mtp-impl</module>
 		<module>docs</module>
+		<module>management</module>
 	</modules>
 	
 	

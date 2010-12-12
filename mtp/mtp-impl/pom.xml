@@ -7,7 +7,6 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 	<artifactId>mtp</artifactId>
 	<name>Mobicents SS7 :: MTP :: Impl :: ${pom.artifactId}</name>
 	
