@@ -259,14 +259,11 @@ public class Mtp3 implements Runnable {
         //check SSI, Q.704 Figure 25, seems like if its bad, we discard.
         if(this.ni!=ni)
         {
-        	if (logger.isTraceEnabled()) {
-                logger.trace(
+        	if (logger.isEnabledFor(Level.ERROR)) {
+                logger.error(
                         String.format("(%s) Received MSSU with bad SSI, discarding! [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "] data: ", mtp2.getName()) + Arrays.toString(rxFrame.frame));
             }
         	return;
-        }else if (logger.isTraceEnabled()) {
-            logger.trace(
-                    String.format("(%s) Received MSSU [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "] data: ", mtp2.getName()) + Arrays.toString(rxFrame.frame));
         }
         
 
@@ -407,9 +404,6 @@ public class Mtp3 implements Runnable {
         byte sls = (byte) sls(msg, 1);
         Mtp2 link = this.selectLink(sls);
         
-        if (logger.isEnabledFor(Level.TRACE)) {
-            logger.trace(String.format("MTP3 passes MSU to layer 2, (%s) ", link != null ? link.getName() : "NO LINK"));
-        }
         if (link == null) {
             return false;
         }

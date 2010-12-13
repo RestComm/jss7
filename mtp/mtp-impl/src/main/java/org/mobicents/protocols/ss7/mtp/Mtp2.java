@@ -481,9 +481,6 @@ public class Mtp2 {
     public boolean send(byte[] msg, int len) {
     	//FIXME: this operation actually could be split into two....
 		if (this.state != MTP2_INSERVICE) {
-			if (this.logger.isEnabledFor(Level.TRACE)) {
-				logger.trace("MTP3 scheduled MSU when not in service, discarding.");
-			}
 			return false;
 		}
         // Here we will queue MSU if there is place in transmission buffer
@@ -491,10 +488,6 @@ public class Mtp2 {
         // check if transmission buffer is full
         if (possibleFSN == this.retransmissionFSN_LastAcked) {
             // This means buffer is full;
-        	
-        	if(this.logger.isEnabledFor(Level.TRACE)){	
-                logger.trace("Failed to queue msg, transmission buffer is full.");
-        	}
             return false;
         }
         // FSN and all that will be set before puting this into txFrame buffer.
@@ -508,11 +501,6 @@ public class Mtp2 {
                 len);
         //3 == FSN(1) + BSN(1) + LI(1)
         this.transmissionBuffer[possibleFSN].len = 3 + len;
-        // FIXME: add check for short frame?
-     
-        if(this.logger.isEnabledFor(Level.TRACE)){	
-            logger.trace("Queued MSU");
-        }
        
         this.retransmissionFSN_LastSent = possibleFSN;
         if (this.retransmissionFSN == _OFF_RTR) {
@@ -536,9 +524,6 @@ public class Mtp2 {
 
         }
 
-        if(this.logger.isEnabledFor(Level.TRACE)){	
-            logger.trace("Queue LSSU[" + FRAME_NAMES[indicator] + "]");
-        }
     }
     private void fillLSSUBuffer(Mtp2Buffer b, int indicator)
     {
@@ -559,9 +544,6 @@ public class Mtp2 {
         this.txFrame.frame[2] = 0;
         this.txFrame.offset = 0;
 
-        if(this.logger.isEnabledFor(Level.TRACE)){	
-            logger.trace("Queue FISU");
-        }
     }
 
     private void queueNextFrame() {
@@ -609,10 +591,6 @@ public class Mtp2 {
                             this.retransmissionFSN = NEXT_FSN(this.retransmissionFSN);
                         }
 
-                        if(logger.isTraceEnabled())
-                        {
-                        	logger.trace("Retransmiting frame: "+Utils.dump(txFrame.frame, txFrame.len, true));
-                        }
                         return;
                     }
                     // else queue FISU
@@ -835,29 +813,11 @@ public class Mtp2 {
 
         int li = rxFrame.frame[2] & 0x3f;
 
-        if (logger.isTraceEnabled()) {
-            String type = null;
-            if (li == 0) {
-                type = "FISU";
-            } else if (li == 1 || li == 2) {
-                //int lssuType = rxFrame[3] & 0x07;
-            	int lssuType = rxFrame.frame[3] & 0x07;
-                type = "LSSU(" + FRAME_NAMES[lssuType] + ")";
-            } else {
-                type = "MSU";
-            }
-            
-            logger.trace(String.format("(%s) Receive frame, type=%s, fsn=%d, fib=%d, bsn=%d, bib=%d", name, type, fsn, fib, bsn, bib));
-            
-        }
-
+       
         //Why it was 5?
 //        if (li + 3 > rxLen) {
         if (li + 3 > rxFrame.len) {
 
-        	if(this.logger.isEnabledFor(Level.TRACE)){	
-                logger.trace("Discarding frame on wrong RX Len: " + rxFrame.len + " > " + li);
-        	}
             return;
         }
 
@@ -1148,9 +1108,7 @@ public class Mtp2 {
         if (started) {
             try {
                 int bytesRead = channel.read(rxBuffer);
-                if(logger.isTraceEnabled()){
-                	logger.trace("READ <-- "+ Arrays.toString(rxBuffer));
-                }
+                
                 if (bytesRead > 0) {
                     processRx(rxBuffer, bytesRead);
                 }
@@ -1173,9 +1131,7 @@ public class Mtp2 {
         try {
             processTx(this.ioBufferSize);
             channel.write(txBuffer, this.ioBufferSize);
-            if (logger.isTraceEnabled()) {
-            	logger.trace("Sending frame");
-            }
+           
         } catch (Exception e) {
         	if(logger.isEnabledFor(Level.ERROR))
         	{
