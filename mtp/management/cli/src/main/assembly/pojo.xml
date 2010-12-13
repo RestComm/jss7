@@ -1,0 +1,47 @@
+<assembly>
+	<id>client</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<files>
+		<file>
+			<source>src/main/config/run.sh</source>
+			<fileMode>0744</fileMode>
+			<filtered>true</filtered>
+			<destName>bin/run.sh</destName>
+		</file>
+		<file>
+			<source>src/main/config/run.bat</source>
+			<fileMode>0744</fileMode>
+			<filtered>true</filtered>
+			<destName>bin/run.bat</destName>
+		</file>
+		<file>
+			<source>target/mtp-cli.jar</source>
+			<fileMode>0744</fileMode>
+			<filtered>true</filtered>
+			<destName>bin/mtp-cli.jar</destName>
+		</file>
+
+	</files>
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>/lib</outputDirectory>
+			<unpack>false</unpack>
+			<scope>runtime</scope>
+			<excludes>
+				<exclude>
+					org.mobicents.protocols.ss7.m3ua:m3ua-api
+				</exclude>
+				<exclude>
+					org.mobicents.protocols.ss7.m3ua:m3ua-impl
+				</exclude>
+				<exclude>org.mobicents.protocols.stream:stream</exclude>
+				<exclude>org.mobicents.protocols.ss7.mtp:mtp</exclude>
+				<exclude>org.mobicents.protocols.ss7.mtp:cli</exclude>
+			</excludes>
+		</dependencySet>
+	</dependencySets>
+
+</assembly>
