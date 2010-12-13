@@ -25,6 +25,7 @@
 		<concurrent.version>1.3.4</concurrent.version>
 		<log4j.version>1.2.14</log4j.version>
 		<junit.version>4.1</junit.version>
+		<javolution.version>5.5.1</javolution.version>
 		<compiler.plugin.version>2.0.2</compiler.plugin.version>
 		<compile.source>1.5</compile.source>
 		<!-- mobicents but not strictly ss7 -->
@@ -140,6 +141,11 @@
 				<artifactId>concurrent</artifactId>
 				<scope>provided</scope>
 				<version>${concurrent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javolution</groupId>
+				<artifactId>javolution</artifactId>
+				<version>${javolution.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
