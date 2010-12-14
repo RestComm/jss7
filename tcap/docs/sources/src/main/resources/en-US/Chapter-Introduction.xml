@@ -10,7 +10,7 @@
 	<!-- POssibly this should go into abstract ? -->
 	<important><para>For a better understanding of this chapter please read ITU-T Q.771 to Q.774.</para> </important>
 		<para>TCAP supports the exchange of non-circuit related data between
-			applications across the SS& network, using the SCCP connectionless
+			applications across the SS7 network, using the SCCP connectionless
 			service. Queries and responses sent between SSPs and SCPs are carried
 			in TCAP messages.
     </para>
