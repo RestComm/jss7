@@ -17,12 +17,13 @@
  */
 package org.mobicents.protocols.ss7.mtp.dialogic;
 
-import org.mobicents.gct.InterProcessCommunicator;
 import java.io.IOException;
 import java.util.Properties;
+
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.StartFailedException;
+import org.mobicents.protocols.ss7.hardware.dialogic.InterProcessCommunicator;
 import org.mobicents.protocols.ss7.mtp.Utils;
 import org.mobicents.protocols.ss7.mtp.provider.MtpListener;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;

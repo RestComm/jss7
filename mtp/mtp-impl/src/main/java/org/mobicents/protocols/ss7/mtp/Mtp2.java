@@ -27,10 +27,10 @@
 package org.mobicents.protocols.ss7.mtp;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.hardware.Mtp1;
 import org.mobicents.protocols.ss7.mtp.Mtp3.SLTMTest;
 
 /**

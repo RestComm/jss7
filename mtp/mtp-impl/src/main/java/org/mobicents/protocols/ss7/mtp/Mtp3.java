@@ -27,12 +27,14 @@
 package org.mobicents.protocols.ss7.mtp;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.hardware.Mtp1;
 import org.mobicents.protocols.stream.api.SelectorKey;
 import org.mobicents.protocols.stream.api.SelectorProvider;
 import org.mobicents.protocols.stream.api.StreamSelector;
@@ -186,6 +188,15 @@ public class Mtp3 implements Runnable {
         }
         
     }
+    
+    public void addLink(Mtp2 mtp2){
+    	mtp2.mtp3 = this;
+    	this.links.add(mtp2);
+    }
+    
+    public void clearLinks(){
+    	this.links.clear();
+    }
 
     /**
      * Starts linkset.
@@ -211,12 +222,12 @@ public class Mtp3 implements Runnable {
         try {
             Collection<SelectorKey> selected = selector.selectNow(StreamSelector.OP_READ, 20);
             for (SelectorKey key : selected) {
-                ((Mtp1) key.getStream()).getLink().doRead();
+                ((Mtp2)((Mtp1) key.getStream()).getLink()).doRead();
             }
                 
             selected = selector.selectNow(StreamSelector.OP_WRITE, 20);
             for (SelectorKey key : selected) {
-                ((Mtp1) key.getStream()).getLink().doWrite();
+                ((Mtp2)((Mtp1) key.getStream()).getLink()).doWrite();
             }
                 
             this.executor.tick();
