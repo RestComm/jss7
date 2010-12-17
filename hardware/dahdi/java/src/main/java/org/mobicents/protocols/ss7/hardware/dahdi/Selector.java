@@ -29,7 +29,7 @@ import org.mobicents.protocols.stream.api.StreamSelector;
 
 public class Selector implements StreamSelector {
 
-    private final static String LIB_NAME = "dahdi-native-linux";
+    private final static String LIB_NAME = "mobicents-dahdi-linux";
     
     public final static int READ = 0x01;
     public final static int WRITE = 0x02;
@@ -49,7 +49,7 @@ public class Selector implements StreamSelector {
     static {
     	try {
 			 System.loadLibrary(LIB_NAME);
-			 System.out.println("Loaded library dahdi-native-linux");
+			 System.out.println("Loaded library mobicents-dahdi-linux");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
