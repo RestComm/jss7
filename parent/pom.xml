@@ -33,6 +33,7 @@
 		<stream.version>1.0.0.BETA2</stream.version>
 
 		<!--  modules version -->
+		<hardware.version>1.0.0-SNAPSHOT</hardware.version>
 		<mtp.version>1.0.0-SNAPSHOT</mtp.version>
 		<m3ua.version>1.0.0-SNAPSHOT</m3ua.version>
 		<sccp.version>1.0.0-SNAPSHOT</sccp.version>
@@ -56,6 +57,20 @@
 				<artifactId>stream</artifactId>
 				<version>${stream.version}</version>
 			</dependency>
+			<!-- Hardware Dahdi Java-->
+			<dependency>
+				<artifactId>mobicents-dahdi</artifactId>
+				<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+				<version>${hardware.version}</version>
+			</dependency>
+
+			<!-- Hardware Dialogic Java-->
+			<dependency>
+				<artifactId>mobicents-dialogic</artifactId>
+				<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+				<version>${hardware.version}</version>
+			</dependency>
+
 			<!-- MTP -->
 			<dependency>
 				<artifactId>mtp</artifactId>
