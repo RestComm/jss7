@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+		<artifactId>mobicents-dialogic-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>mobicents-dialogic-native</artifactId>
+
+	<packaging>pom</packaging>
+
+	<name>Mobicents SS7 Dialogic Provider - Native</name>
+
+	<properties>
+		<maven.test.skip>true</maven.test.skip>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<profiles>
+		<!-- We dont support other than lin, since there is no driver :) -->
+		<!-- 
+			<profile> 
+			<id>win</id> 
+			<activation> 
+			<property> 
+			<name>platform</name> 
+			<value>win32</value> 
+			</property> 
+			</activation> 
+			<modules> 
+			<module>win</module> 
+			</modules> 
+			</profile> 
+			<profile> 
+			<id>solaris</id> 
+			<activation> 
+			<property> 
+			<name>platform</name> 
+			<value>solaris</value> 
+			</property> 
+			</activation> 
+			<modules> 
+			<module>solaris</module> 
+			</modules> 
+			</profile> 
+		-->
+		<profile>
+			<id>dialogiclinux</id>
+			<activation>
+				<property>
+					<name>platform</name>
+					<value>linux</value>
+				</property>
+			</activation>
+			<modules>
+				<module>linux</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>maven-release</id>
+			<modules>
+				<module>linux</module>
+			</modules>
+		</profile>
+	</profiles>
+
+</project>
