@@ -37,24 +37,25 @@ public class ShellServer {
 
 	private boolean cliConnected = false;
 
-	private ByteBuffer header = ByteBuffer.allocateDirect(1);
+	private ByteBuffer protocolHeader = ByteBuffer.allocateDirect(1);
+	private ByteBuffer commandHeader = ByteBuffer.allocateDirect(1);
 	private ByteBuffer body = ByteBuffer.allocateDirect(1024);
 
-	private ByteBuffer[] buffers = { header, body };
+	private ByteBuffer[] buffers = { protocolHeader, commandHeader, body };
 
 	private String localAddress;
 	private int localPort;
 	private ShellCmdListener cLICmdListener = null;
-	
-//	private long executionTime;
-//	private long totalExecutionTime = 0l;
-//	private long maxExecutionTime = 01;
-//	
-//	private int tick = 0;
-//	private int maxhappenedOn = tick;
-//	private long maxBeginsAfter = 1000000;
-	
-	//private long[] executionTimes = new long[1000005];
+
+	// private long executionTime;
+	// private long totalExecutionTime = 0l;
+	// private long maxExecutionTime = 01;
+	//	
+	// private int tick = 0;
+	// private int maxhappenedOn = tick;
+	// private long maxBeginsAfter = 1000000;
+
+	// private long[] executionTimes = new long[1000005];
 
 	private AbstractCommand exitCmd = new ExitCommand();
 	private AbstractCommand noShutDwnCmd = new NoshutdownCommand();
@@ -127,12 +128,12 @@ public class ShellServer {
 
 		if (this.isActive) {
 			try {
-				
+
 				// TODO : How should server behave?
-				//int n = selector.select();
+				// int n = selector.select();
 				int n = selector.selectNow();
-				
-				//executionTime = System.nanoTime();
+
+				// executionTime = System.nanoTime();
 
 				if (n > 0) {
 					Iterator<SelectionKey> it = selector.selectedKeys()
@@ -160,14 +161,15 @@ public class ShellServer {
 						it.remove();
 					}
 				}// end of if
-				//executionTime = (System.nanoTime() - executionTime);
-				//executionTimes[tick] = executionTime;
-//				totalExecutionTime = totalExecutionTime + executionTime;
-//				if(tick> maxBeginsAfter && executionTime > maxExecutionTime ){
-//					maxExecutionTime = executionTime;
-//					maxhappenedOn = tick;
-//				}
-//				tick++;
+				// executionTime = (System.nanoTime() - executionTime);
+				// executionTimes[tick] = executionTime;
+				// totalExecutionTime = totalExecutionTime + executionTime;
+				// if(tick> maxBeginsAfter && executionTime > maxExecutionTime
+				// ){
+				// maxExecutionTime = executionTime;
+				// maxhappenedOn = tick;
+				// }
+				// tick++;
 
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -195,40 +197,48 @@ public class ShellServer {
 
 		long count;
 
-		header.clear();
+		protocolHeader.clear();
+		commandHeader.clear();
 		body.clear(); // make buffer empty
 
 		// loop while data available, channel is non-blocking
 		while (socketChannel.isOpen()
 				&& (count = socketChannel.read(buffers)) > 0) {
-			header.flip();
+			protocolHeader.flip();
+			commandHeader.flip();
 			body.flip(); // make buffer readable
 
-			int cmd = header.get();
+			int protocol = protocolHeader.get();
 
-			if (cmd == CmdEnum.SHOW.getCmdInt()) {
-				shwCmd.decode(body);
-				this.write(socketChannel);
+			if (protocol == CmdEnum.MTP.getCmdInt()) {
+				int cmd = commandHeader.get();
 
-			} else if (cmd == CmdEnum.SS7.getCmdInt()) {
-				ss7Cmd.decode(body);
-				this.write(socketChannel);
+				if (cmd == CmdEnum.SHOW.getCmdInt()) {
+					shwCmd.decode(body);
+					this.write(socketChannel);
 
-			} else if (cmd == CmdEnum.SHUTDOWN.getCmdInt()) {
-				shutDwnCmd.decode(body);
-				this.write(socketChannel);
+				} else if (cmd == CmdEnum.SS7.getCmdInt()) {
+					ss7Cmd.decode(body);
+					this.write(socketChannel);
 
-			} else if (cmd == CmdEnum.NOSHUTDOWN.getCmdInt()) {
-				noShutDwnCmd.decode(body);
-				this.write(socketChannel);
+				} else if (cmd == CmdEnum.SHUTDOWN.getCmdInt()) {
+					shutDwnCmd.decode(body);
+					this.write(socketChannel);
 
-			} else if (cmd == CmdEnum.EXIT.getCmdInt()) {
+				} else if (cmd == CmdEnum.NOSHUTDOWN.getCmdInt()) {
+					noShutDwnCmd.decode(body);
+					this.write(socketChannel);
+
+				} else {
+					logger.error(String.format("Unknown Command %s ", cmd));
+				}
+			} else if (protocol == CmdEnum.EXIT.getCmdInt()) {
 				this.stop();
 				exitCmd.decode(body);
 				this.write(socketChannel);
 				socketChannel.close();
 			} else {
-				System.err.println("What command is this? " + cmd);
+				logger.error(String.format("Unknown Protocol %d ", protocol));
 			}
 
 		}
@@ -242,25 +252,25 @@ public class ShellServer {
 	public boolean isActive() {
 		return isActive;
 	}
-	
-//	public long getTotalExecutionTime(){
-//		return this.totalExecutionTime;
-//	}
-//
-//	public long getMaxExecutionTime() {
-//		return maxExecutionTime;
-//	}
-//
-//	public long getMaxhappenedOn() {
-//		return maxhappenedOn;
-//	}
 
-//	public long[] getExecutionTimes() {
-//		return executionTimes;
-//	}
+	// public long getTotalExecutionTime(){
+	// return this.totalExecutionTime;
+	// }
+	//
+	// public long getMaxExecutionTime() {
+	// return maxExecutionTime;
+	// }
+	//
+	// public long getMaxhappenedOn() {
+	// return maxhappenedOn;
+	// }
 
-//	public int getTick() {
-//		return tick;
-//	}
-	
+	// public long[] getExecutionTimes() {
+	// return executionTimes;
+	// }
+
+	// public int getTick() {
+	// return tick;
+	// }
+
 }

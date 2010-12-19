@@ -41,6 +41,10 @@ public class ShowCommand extends AbstractCommand {
 			this.showShowCmdHelp();
 			return false;
 		}
+		
+		//MTP Header
+		byteBuffer.put((byte) CmdEnum.MTP.getCmdInt());
+		
 		// Header
 		byteBuffer.put((byte) CmdEnum.SHOW.getCmdInt());
 

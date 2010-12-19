@@ -2,7 +2,6 @@ package org.mobicents.protocols.ss7.management.shell;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.ByteBuffer;
@@ -14,9 +13,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mobicents.protocols.ss7.management.shell.ShellCmdListener;
-import org.mobicents.protocols.ss7.management.shell.CmdEnum;
-import org.mobicents.protocols.ss7.management.shell.ShowCommand;
 
 /**
  * 
@@ -60,15 +56,14 @@ public class ShowCommandTest {
 	@Test
 	public void testShowSs7LinkSetEncode() {
 
-		String[] showSs7LinkSetStr = new String[] {
-				CmdEnum.SHOW.getCmdStr(), CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr() };
+		String[] showSs7LinkSetStr = new String[] { CmdEnum.SHOW.getCmdStr(),
+				CmdEnum.SS7.getCmdStr(), CmdEnum.LINKSET.getCmdStr() };
 
 		shwCmd = new ShowCommand(showSs7LinkSetStr);
 		shwCmd.encode(buffer);
 
 		buffer.flip();
-
+		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
 		assertEquals((byte) CmdEnum.SHOW.getCmdInt(), buffer.get());
 		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
 		assertEquals(ZERO_LENGTH, buffer.get());
@@ -112,7 +107,7 @@ public class ShowCommandTest {
 		shwCmd.encode(buffer);
 
 		buffer.flip();
-
+		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
 		assertEquals((byte) CmdEnum.SHOW.getCmdInt(), buffer.get());
 		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
 		assertEquals(ZERO_LENGTH, buffer.get());
@@ -165,7 +160,7 @@ public class ShowCommandTest {
 		shwCmd.encode(buffer);
 
 		buffer.flip();
-
+		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
 		assertEquals((byte) CmdEnum.SHOW.getCmdInt(), buffer.get());
 		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
 		assertEquals(ZERO_LENGTH, buffer.get());
@@ -211,16 +206,15 @@ public class ShowCommandTest {
 	@Test
 	public void testShowSs7LinkSet_StatsEncode() {
 
-		String[] showSs7LinkSetStr = new String[] {
-				CmdEnum.SHOW.getCmdStr(), CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(),
+		String[] showSs7LinkSetStr = new String[] { CmdEnum.SHOW.getCmdStr(),
+				CmdEnum.SS7.getCmdStr(), CmdEnum.LINKSET.getCmdStr(),
 				CmdEnum.STATISTICS.getCmdStr() };
 
 		shwCmd = new ShowCommand(showSs7LinkSetStr);
 		shwCmd.encode(buffer);
 
 		buffer.flip();
-
+		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
 		assertEquals((byte) CmdEnum.SHOW.getCmdInt(), buffer.get());
 		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
 		assertEquals(ZERO_LENGTH, buffer.get());
@@ -232,7 +226,7 @@ public class ShowCommandTest {
 		assertEquals(buffer.position(), buffer.limit());
 
 	}
-	
+
 	@Test
 	public void testShowSs7LinkSet_StatsDecode() {
 		buffer.clear();
@@ -241,7 +235,7 @@ public class ShowCommandTest {
 		buffer.put(ZERO_LENGTH);
 		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
 		buffer.put(ZERO_LENGTH);
-		buffer.put((byte) CmdEnum.STATISTICS.getCmdInt());		
+		buffer.put((byte) CmdEnum.STATISTICS.getCmdInt());
 		buffer.flip();
 
 		cLICmdListener = new CLICmdListenerImpl();
@@ -251,10 +245,10 @@ public class ShowCommandTest {
 		shwCmd.decode(buffer);
 
 		assertTrue(listenerCalled);
-		assertEquals("",lksetName);
+		assertEquals("", lksetName);
 		assertTrue(stats);
 
-	}	
+	}
 
 	private class CLICmdListenerImpl implements ShellCmdListener {
 
@@ -269,99 +263,102 @@ public class ShowCommandTest {
 		public void addLink(TextBuilder linksetName, TextBuilder linkName,
 				ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void addLinkSet(TextBuilder linksetName, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void adjacentPointCode(TextBuilder linksetName,
 				TextBuilder adjacentPC, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
-		public void channel(TextBuilder linkName, int channel,
+		public void channel(TextBuilder linksetName, TextBuilder linkName,
+				int channel, ByteBuffer byteBuffer) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void code(TextBuilder linksetName, TextBuilder linkName,
+				int code, ByteBuffer byteBuffer) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void deleteLink(TextBuilder linksetName, TextBuilder linkName,
 				ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
-			
-		}
 
-		public void code(TextBuilder linkName, int code, ByteBuffer byteBuffer) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		public void deleteLink(TextBuilder linkName, ByteBuffer byteBuffer) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		public void deleteLinkSet(TextBuilder linksetName, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void inhibit(TextBuilder linksetName, TextBuilder linkName,
 				ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void localIpPort(TextBuilder linksetName, TextBuilder localIp,
 				int localPort, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void localPointCode(TextBuilder linksetName,
 				TextBuilder localPC, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void networkIndicator(TextBuilder linksetName,
 				CmdEnum networkInd, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
-		public void noshutdownLink(TextBuilder linkName, ByteBuffer byteBuffer) {
+		public void noshutdownLink(TextBuilder linksetName,
+				TextBuilder linkName, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void noshutdownLinkSet(TextBuilder linksetName,
 				ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
-		public void shutdownLink(TextBuilder linkName, ByteBuffer byteBuffer) {
+		public void shutdownLink(TextBuilder linksetName, TextBuilder linkName,
+				ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void shutdownLinkSet(TextBuilder linksetName,
 				ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
-		public void span(TextBuilder linkName, int span, ByteBuffer byteBuffer) {
+		public void span(TextBuilder linksetName, TextBuilder linkName,
+				int span, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void uninhibit(TextBuilder linksetName, TextBuilder linkName,
 				ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
-			
+
 		}
-
-
 
 	}
 

@@ -36,9 +36,9 @@ public class ShellLoadTest {
 	private ByteBuffer byteBuffer = ByteBuffer.allocateDirect(512);
 
 	private List<AbstractCommand> commands = new ArrayList<AbstractCommand>();
-	
+
 	private AbstractCommand exit = null;
-	
+
 	int executionIndex = 100000;
 
 	/**
@@ -50,10 +50,9 @@ public class ShellLoadTest {
 	}
 
 	public void execute() {
-		
-		String[] exitCmd = new String[]{CmdEnum.EXIT.getCmdStr()};
+
+		String[] exitCmd = new String[] { CmdEnum.EXIT.getCmdStr() };
 		exit = new ExitCommand(exitCmd);
-		
 
 		// Noshutdown commands
 		String[] noshutdownSs7LinkSetStr = new String[] {
@@ -63,13 +62,13 @@ public class ShellLoadTest {
 
 		String[] noshutdownSs7LinkStr = new String[] {
 				CmdEnum.NOSHUTDOWN.getCmdStr(), CmdEnum.SS7.getCmdStr(),
+				CmdEnum.LINKSET.getCmdStr(), linkSetName,
 				CmdEnum.LINK.getCmdStr(), linkName };
 		commands.add(new NoshutdownCommand(noshutdownSs7LinkStr));
 
 		// show commands
-		String[] showSs7LinkSetStr = new String[] {
-				CmdEnum.SHOW.getCmdStr(), CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr() };
+		String[] showSs7LinkSetStr = new String[] { CmdEnum.SHOW.getCmdStr(),
+				CmdEnum.SS7.getCmdStr(), CmdEnum.LINKSET.getCmdStr() };
 		commands.add(new ShowCommand(showSs7LinkSetStr));
 
 		String[] showSs7LinkSet_LnSeNameStr = new String[] {
@@ -91,6 +90,7 @@ public class ShellLoadTest {
 
 		String[] shutdownSs7LinkStr = new String[] {
 				CmdEnum.SHUTDOWN.getCmdStr(), CmdEnum.SS7.getCmdStr(),
+				CmdEnum.LINKSET.getCmdStr(), linkSetName,
 				CmdEnum.LINK.getCmdStr(), linkName };
 		commands.add(new ShutdownCommand(shutdownSs7LinkStr));
 
@@ -100,6 +100,7 @@ public class ShellLoadTest {
 		commands.add(new SS7Command(addLinkSetstr));
 
 		String[] deleteLinkstr = new String[] { CmdEnum.SS7.getCmdStr(),
+				CmdEnum.LINKSET.getCmdStr(), linkSetName,
 				CmdEnum.DELETELINK.getCmdStr(), linkName };
 		commands.add(new SS7Command(deleteLinkstr));
 
@@ -112,13 +113,15 @@ public class ShellLoadTest {
 		commands.add(new SS7Command(inhibitstr));
 
 		String[] linkChannelstr = new String[] { CmdEnum.SS7.getCmdStr(),
+				CmdEnum.LINKSET.getCmdStr(), linkSetName,
 				CmdEnum.LINK.getCmdStr(), linkName,
 				CmdEnum.CHANNEL.getCmdStr(), channel };
 		commands.add(new SS7Command(linkChannelstr));
 
 		String[] codestr = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINK.getCmdStr(), linkName,
-				CmdEnum.CODE.getCmdStr(), code };
+				CmdEnum.LINKSET.getCmdStr(), linkSetName,
+				CmdEnum.LINK.getCmdStr(), linkName, CmdEnum.CODE.getCmdStr(),
+				code };
 		commands.add(new SS7Command(codestr));
 
 		String[] strAddLink = new String[] { CmdEnum.SS7.getCmdStr(),
@@ -157,9 +160,9 @@ public class ShellLoadTest {
 				randomInt = randomGenerator.nextInt(size);
 				AbstractCommand absCommd = commands.get(randomInt);
 				this.execute(absCommd);
-				executionIndex --;
+				executionIndex--;
 			}
-			
+
 			this.execute(exit);
 
 		} catch (Exception e) {
@@ -195,7 +198,7 @@ public class ShellLoadTest {
 								int readLength = byteBuffer.limit();
 								byte[] buff = new byte[readLength];
 								byteBuffer.get(buff, 0, readLength);
-								//System.out.println(new String(buff));
+								// System.out.println(new String(buff));
 							}
 						}
 					}

@@ -6,6 +6,8 @@ package org.mobicents.protocols.ss7.management.shell;
  *
  */
 public enum CmdEnum {
+	
+	MTP(1, "mtp"),
 
 	SHOW(100, "show"), 
 	SS7(101, "ss7"), 

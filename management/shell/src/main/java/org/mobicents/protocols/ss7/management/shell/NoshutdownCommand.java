@@ -19,15 +19,15 @@ public class NoshutdownCommand extends AbstractCommand {
 
 	private void showShowCmdHelp() {
 		System.out
-				.println("noshutdown ss7 linkset linkset-name        reactivate a disabled linkset");
+				.println("               noshutdown ss7 linkset linkset-name        reactivate a disabled linkset");
 		System.out
-				.println("      noshutdown ss7 link link-name        reactivate a link");
+				.println("noshutdown ss7 linkset linkset-name link link-name        reactivate a link");
 
 	}
 
 	@Override
 	public boolean encode(ByteBuffer byteBuffer) {
-		if (ss7Commands.length != 4) {
+		if (ss7Commands.length < 4 || ss7Commands.length > 6) {
 			System.out.println("Invalid command");
 			this.showShowCmdHelp();
 			return false;
@@ -39,6 +39,9 @@ public class NoshutdownCommand extends AbstractCommand {
 			return false;
 		}
 
+		// MTP Header
+		byteBuffer.put((byte) CmdEnum.MTP.getCmdInt());
+
 		// Header
 		byteBuffer.put((byte) CmdEnum.NOSHUTDOWN.getCmdInt());
 
@@ -48,17 +51,19 @@ public class NoshutdownCommand extends AbstractCommand {
 
 		if (ss7Commands[2].compareTo("linkset") == 0) {
 			byteBuffer.put((byte) CmdEnum.LINKSET.getCmdInt());
-		} else if (ss7Commands[2].compareTo("link") == 0) {
-			byteBuffer.put((byte) CmdEnum.LINK.getCmdInt());
+			byteBuffer.put((byte) ss7Commands[3].length());
+			byteBuffer.put(ss7Commands[3].getBytes());
 		} else {
 			System.out.println("Invalid command");
 			this.showShowCmdHelp();
 			return false;
 		}
 
-		// Put the length and name for linkset/link
-		byteBuffer.put((byte) ss7Commands[3].length());
-		byteBuffer.put(ss7Commands[3].getBytes());
+		if (ss7Commands.length == 6 && ss7Commands[4].compareTo("link") == 0) {
+			byteBuffer.put((byte) CmdEnum.LINK.getCmdInt());
+			byteBuffer.put((byte) ss7Commands[5].length());
+			byteBuffer.put(ss7Commands[5].getBytes());
+		}
 
 		return true;
 	}
@@ -77,21 +82,32 @@ public class NoshutdownCommand extends AbstractCommand {
 				cmd = byteBuffer.get();
 				if (cmd == CmdEnum.LINKSET.getCmdInt()) {
 					cmdLength = byteBuffer.get();
-					//name = getString(byteBuffer, 0, cmdLength);
+					// name = getString(byteBuffer, 0, cmdLength);
 					while (linksetName.length() < cmdLength) {
-						linksetName.append((char)byteBuffer.get());
+						linksetName.append((char) byteBuffer.get());
 					}
 
-					this.cLICmdListener.noshutdownLinkSet(linksetName, byteBuffer);
+					if (byteBuffer.position() != byteBuffer.limit()) {
+						cmd = byteBuffer.get();
+						if (cmd == CmdEnum.LINK.getCmdInt()) {
+							cmdLength = byteBuffer.get();
 
-				} else if (cmd == CmdEnum.LINK.getCmdInt()) {
-					cmdLength = byteBuffer.get();
-					//name = getString(byteBuffer, 0, cmdLength);
-					while (linkName.length() < cmdLength) {
-						linkName.append((char)byteBuffer.get());
+							while (linkName.length() < cmdLength) {
+								linkName.append((char) byteBuffer.get());
+							}
+
+							this.cLICmdListener.noshutdownLink(linksetName,
+									linkName, byteBuffer);
+
+						} else {
+							sendErrorMsg(byteBuffer);
+							return;
+						}
+
+					} else {
+						this.cLICmdListener.noshutdownLinkSet(linksetName,
+								byteBuffer);
 					}
-
-					this.cLICmdListener.noshutdownLink(linkName, byteBuffer);
 
 				} else {
 					sendErrorMsg(byteBuffer);

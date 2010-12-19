@@ -25,36 +25,36 @@ public class ShellServerLoadTest {
 
 		cliServer.setCliCmdListener(new MTPManagement());
 		cliServer.start();
-		
-		while(cliServer.isActive()){
+
+		while (cliServer.isActive()) {
 			cliServer.perform();
 		}
 
-//		System.out.println("Total Execution time in nano sec = "
-//				+ (cliServer.getTotalExecutionTime() ));
-//		System.out.println("Avg Execution Time in nano sec = "
-//				+ cliServer.getTotalExecutionTime() / ( 10000000.0));
-//		System.out.println("Max Execution Time in nanosec = "
-//				+ (cliServer.getMaxExecutionTime() ));
-//		System.out
-//				.println("Max Hanppened on = " + cliServer.getMaxhappenedOn());
-//		
-//		System.out
-//		.println("Ticks = " + cliServer.getTick());
+		// System.out.println("Total Execution time in nano sec = "
+		// + (cliServer.getTotalExecutionTime() ));
+		// System.out.println("Avg Execution Time in nano sec = "
+		// + cliServer.getTotalExecutionTime() / ( 10000000.0));
+		// System.out.println("Max Execution Time in nanosec = "
+		// + (cliServer.getMaxExecutionTime() ));
+		// System.out
+		// .println("Max Hanppened on = " + cliServer.getMaxhappenedOn());
+		//		
+		// System.out
+		// .println("Ticks = " + cliServer.getTick());
 
-//		long[] executionTimes = cliServer.getExecutionTimes();
-//
-//		try {
-//			FileWriter fstream = new FileWriter("out.csv");
-//			BufferedWriter out = new BufferedWriter(fstream);
-//			for (int i = 0; i < 1000000; i++) {
-//				out.write(""+(int) executionTimes[i]);
-//				out.write(",");
-//			}
-//			out.close();
-//		} catch (Exception e) {// Catch exception if any
-//			System.err.println("Error: " + e.getMessage());
-//		}
+		// long[] executionTimes = cliServer.getExecutionTimes();
+		//
+		// try {
+		// FileWriter fstream = new FileWriter("out.csv");
+		// BufferedWriter out = new BufferedWriter(fstream);
+		// for (int i = 0; i < 1000000; i++) {
+		// out.write(""+(int) executionTimes[i]);
+		// out.write(",");
+		// }
+		// out.close();
+		// } catch (Exception e) {// Catch exception if any
+		// System.err.println("Error: " + e.getMessage());
+		// }
 	}
 
 	class MTPManagement implements ShellCmdListener {
@@ -79,7 +79,8 @@ public class ShellServerLoadTest {
 			byteBuffer.put(showLinkSet);
 		}
 
-		public void addLink(TextBuilder arg0, TextBuilder arg1, ByteBuffer byteBuffer) {
+		public void addLink(TextBuilder arg0, TextBuilder arg1,
+				ByteBuffer byteBuffer) {
 			byteBuffer.clear();
 			byteBuffer.put(addLink);
 		}
@@ -95,17 +96,20 @@ public class ShellServerLoadTest {
 			byteBuffer.put(adjacentPointCode);
 		}
 
-		public void channel(TextBuilder arg0, int arg1, ByteBuffer byteBuffer) {
+		public void channel(TextBuilder linksetName, TextBuilder arg0,
+				int arg1, ByteBuffer byteBuffer) {
 			byteBuffer.clear();
 			byteBuffer.put(channel);
 		}
 
-		public void code(TextBuilder arg0, int arg1, ByteBuffer byteBuffer) {
+		public void code(TextBuilder linksetName, TextBuilder arg0, int arg1,
+				ByteBuffer byteBuffer) {
 			byteBuffer.clear();
 			byteBuffer.put(code);
 		}
 
-		public void deleteLink(TextBuilder arg0, ByteBuffer byteBuffer) {
+		public void deleteLink(TextBuilder linksetName, TextBuilder arg0,
+				ByteBuffer byteBuffer) {
 			byteBuffer.clear();
 			byteBuffer.put(deleteLink);
 		}
@@ -115,7 +119,8 @@ public class ShellServerLoadTest {
 			byteBuffer.put(deleteLinkSet);
 		}
 
-		public void inhibit(TextBuilder arg0, TextBuilder arg1, ByteBuffer byteBuffer) {
+		public void inhibit(TextBuilder arg0, TextBuilder arg1,
+				ByteBuffer byteBuffer) {
 			byteBuffer.clear();
 			byteBuffer.put(inhibit);
 		}
@@ -138,7 +143,8 @@ public class ShellServerLoadTest {
 			byteBuffer.put(localIp);
 		}
 
-		public void noshutdownLink(TextBuilder arg0, ByteBuffer byteBuffer) {
+		public void noshutdownLink(TextBuilder linksetName, TextBuilder arg0,
+				ByteBuffer byteBuffer) {
 			byteBuffer.clear();
 			byteBuffer.put(localIp);
 		}
@@ -148,7 +154,8 @@ public class ShellServerLoadTest {
 			byteBuffer.put(localIp);
 		}
 
-		public void shutdownLink(TextBuilder arg0, ByteBuffer byteBuffer) {
+		public void shutdownLink(TextBuilder linkSetName, TextBuilder arg0,
+				ByteBuffer byteBuffer) {
 			byteBuffer.clear();
 			byteBuffer.put(localIp);
 		}
@@ -158,12 +165,14 @@ public class ShellServerLoadTest {
 			byteBuffer.put(localIp);
 		}
 
-		public void span(TextBuilder arg0, int arg1, ByteBuffer byteBuffer) {
+		public void span(TextBuilder linksetName, TextBuilder arg0, int arg1,
+				ByteBuffer byteBuffer) {
 			byteBuffer.clear();
 			byteBuffer.put(localIp);
 		}
 
-		public void uninhibit(TextBuilder arg0, TextBuilder arg1, ByteBuffer byteBuffer) {
+		public void uninhibit(TextBuilder arg0, TextBuilder arg1,
+				ByteBuffer byteBuffer) {
 			byteBuffer.clear();
 			byteBuffer.put(localIp);
 		}
