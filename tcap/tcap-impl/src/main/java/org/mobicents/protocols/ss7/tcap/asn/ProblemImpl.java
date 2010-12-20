@@ -160,7 +160,7 @@ public class ProblemImpl implements Problem {
 			case ReturnError:
 				if(this.returnErrorProblemType == null)
 				{
-					throw new ParseException("Problem Type is Error, no specific type set");
+					throw new ParseException("Problem Type is ReturnError, no specific type set");
 				}
 				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, (int) type.getTypeTag(), this.returnErrorProblemType.getType());
 				

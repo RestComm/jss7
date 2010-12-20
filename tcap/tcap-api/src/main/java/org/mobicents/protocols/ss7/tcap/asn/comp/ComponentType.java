@@ -9,5 +9,5 @@ package org.mobicents.protocols.ss7.tcap.asn.comp;
  */
 public enum ComponentType {
 
-	Invoke,ReturnResult,ReturnResultLast,Reject,Error;
+	Invoke,ReturnResult,ReturnResultLast,Reject,ReturnError;
 }

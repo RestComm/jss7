@@ -15,7 +15,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCodeType;
  * 
  */
 public class ErrorCodeImpl implements ErrorCode {
-
+	//FIXME: todo, ensure in case of global, check for OID
 	private ErrorCodeType errorType;
 	private byte[] data;
 

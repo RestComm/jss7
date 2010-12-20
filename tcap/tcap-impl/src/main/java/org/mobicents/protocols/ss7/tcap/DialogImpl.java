@@ -933,7 +933,7 @@ public class DialogImpl implements Dialog {
 			// case Reject_R:
 			// break;
 
-			case Error:
+			case ReturnError:
 				if (invoke == null) {
 					// FIXME: send something back?
 				} else {

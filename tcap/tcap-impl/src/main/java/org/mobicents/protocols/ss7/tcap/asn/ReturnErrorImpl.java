@@ -102,7 +102,7 @@ public class ReturnErrorImpl implements ReturnError {
 
 	public ComponentType getType() {
 
-		return ComponentType.Error;
+		return ComponentType.ReturnError;
 	}
 
 	/*
@@ -134,11 +134,14 @@ public class ReturnErrorImpl implements ReturnError {
 			tag = localAis.readTag();
 			if (tag == ErrorCode._TAG_GLOBAL || tag == ErrorCode._TAG_LOCAL) {
 				this.errorCode = TcapFactory.createErrorCode(tag == ErrorCode._TAG_GLOBAL ? ErrorCodeType.Global : ErrorCodeType.Local);
-				if (localAis.available() <= 0) {
-					return;
-				}
+				this.errorCode.decode(localAis);
+				
 			} else {
 				throw new ParseException("Expected Local|Globa error code, found: " + tag);
+			}
+			if(localAis.available() == 0)
+			{
+				return;//rest is optional
 			}
 			tag = localAis.readTag();
 			
