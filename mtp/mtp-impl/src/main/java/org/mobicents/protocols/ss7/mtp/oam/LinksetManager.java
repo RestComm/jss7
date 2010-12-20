@@ -2,6 +2,7 @@ package org.mobicents.protocols.ss7.mtp.oam;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 
@@ -11,7 +12,6 @@ import javolution.util.FastMap;
 import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
-import javolution.xml.XMLReferenceResolver;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
@@ -35,6 +35,8 @@ public class LinksetManager {
 
 	private static final String TAB_INDENT = "\t";
 
+	private static final XMLBinding binding = new XMLBinding();
+
 	private final TextBuilder persistDir = TextBuilder.newInstance();
 
 	// Hold LinkSet here. LinkSet's name as key and actual LinkSet as Object
@@ -48,6 +50,14 @@ public class LinksetManager {
 				System.getProperty(LINKSET_PERSIST_DIR_KEY, System
 						.getProperty(USER_DIR_KEY))).append(File.separator)
 				.append(PERSIST_FILE_NAME);
+
+		logger.info(String.format(
+				"SS7 configuration file will be persisted at %s", logger
+						.toString()));
+
+		binding.setAlias(Linkset.class, LINKSET);
+		binding.setAlias(Link.class, LINK);
+		binding.setClassAttribute(CLASS_ATTRIBUTE);
 	}
 
 	/**
@@ -59,6 +69,10 @@ public class LinksetManager {
 
 	public void setLinksetFactories(FastList<LinksetFactory> linksetFactories) {
 		this.linksetFactories = linksetFactories;
+	}
+	
+	public FastMap<TextBuilder, Linkset> getLinksets() {
+		return linksets;
 	}
 
 	/**
@@ -335,16 +349,11 @@ public class LinksetManager {
 		// TODO : Should we keep reference to Objects rather than recreating
 		// everytime?
 		try {
-			XMLBinding binding = new XMLBinding();
-			binding.setAlias(Linkset.class, LINKSET);
-			binding.setAlias(Link.class, LINK);
-			binding.setClassAttribute(CLASS_ATTRIBUTE);
-
 			XMLObjectWriter writer = XMLObjectWriter
 					.newInstance(new FileOutputStream(persistDir.toString()));
 			writer.setBinding(binding);
 			// Enables cross-references.
-			writer.setReferenceResolver(new XMLReferenceResolver());
+			// writer.setReferenceResolver(new XMLReferenceResolver());
 			writer.setIndentation(TAB_INDENT);
 
 			for (FastMap.Entry<TextBuilder, Linkset> e = this.linksets.head(), end = this.linksets
@@ -364,18 +373,16 @@ public class LinksetManager {
 	 * 
 	 * @throws Exception
 	 */
-	public void load() throws Exception {
-		XMLBinding binding = new XMLBinding();
-		binding.setAlias(Linkset.class, LINKSET);
-		binding.setAlias(Link.class, LINK);
-		binding.setClassAttribute(CLASS_ATTRIBUTE);
+	public void load() throws FileNotFoundException {
 
-		XMLObjectReader reader = XMLObjectReader
-				.newInstance(new FileInputStream(persistDir.toString()));
-		reader.setBinding(binding);
-		reader.setReferenceResolver(new XMLReferenceResolver());
-
+		XMLObjectReader reader = null;
 		try {
+			reader = XMLObjectReader.newInstance(new FileInputStream(persistDir
+					.toString()));
+
+			reader.setBinding(binding);
+			// reader.setReferenceResolver(new XMLReferenceResolver());
+
 			// FIXME : Bug in .hasNext()
 			// http://markmail.org/message/c6lsehxlxv2hua5p. It shouldn't throw
 			// Exception
@@ -384,54 +391,54 @@ public class LinksetManager {
 				this.linksets.put(linkset.getLinkSetName(), linkset);
 			}
 		} catch (XMLStreamException ex) {
-			this.logger.info(
-					"Error while re-creating Linksets from persisted file", ex);
+//			this.logger.info(
+//					"Error while re-creating Linksets from persisted file", ex);
 		}
 	}
 
 	public static void main(String args[]) throws Exception {
-//		ByteBuffer byteBuffer = ByteBuffer.allocate(128);
-//		LinksetManager linkSetManager = new LinksetManager();
-//
-//		FastList<LinksetFactory> linkSetFactories = new FastList<LinksetFactory>();
-//		linkSetFactories.add(new DahdiLinksetFactory());
-//		linkSetFactories.add(new DialogicLinksetFactory());
-//		linkSetFactories.add(new M3UALinksetFactory());
-//
-//		linkSetManager.setLinksetFactories(linkSetFactories);
-//
-//		linkSetManager.addLinkset(new TextBuilder("LinkSet1"), 105, byteBuffer);
-//		System.out.println(new String(byteBuffer.array()));
-//		byteBuffer.clear();
-//		linkSetManager.addLinkset(new TextBuilder("LinkSet2"), 106, byteBuffer);
-//		System.out.println(new String(byteBuffer.array()));
-//		byteBuffer.clear();
-//
-//		linkSetManager.addLink(new TextBuilder("LinkSet1"), new TextBuilder(
-//				"Link1"), byteBuffer);
-//		System.out.println(new String(byteBuffer.array()));
-//		byteBuffer.clear();
-//
-//		linkSetManager.addLink(new TextBuilder("LinkSet1"), new TextBuilder(
-//				"Link2"), byteBuffer);
-//		System.out.println(new String(byteBuffer.array()));
-//		byteBuffer.clear();
-//
-//		linkSetManager.addLink(new TextBuilder("LinkSet1"), new TextBuilder(
-//				"Link3"), byteBuffer);
-//		System.out.println(new String(byteBuffer.array()));
-//		byteBuffer.clear();
-//
-//		linkSetManager.addLinkset(new TextBuilder("LinkSet3"), 107, byteBuffer);
-//		System.out.println(new String(byteBuffer.array()));
-//		byteBuffer.clear();
-//
-//		linkSetManager.store();
+		ByteBuffer byteBuffer = ByteBuffer.allocate(128);
+		LinksetManager linkSetManager = new LinksetManager();
 
-		LinksetManager linkSetManager1 = new LinksetManager();		
+		FastList<LinksetFactory> linkSetFactories = new FastList<LinksetFactory>();
+		linkSetFactories.add(new DahdiLinksetFactory());
+		linkSetFactories.add(new DialogicLinksetFactory());
+		linkSetFactories.add(new M3UALinksetFactory());
+
+		linkSetManager.setLinksetFactories(linkSetFactories);
+
+		linkSetManager.addLinkset(new TextBuilder("LinkSet1"), 105, byteBuffer);
+		System.out.println(new String(byteBuffer.array()));
+		byteBuffer.clear();
+		linkSetManager.addLinkset(new TextBuilder("LinkSet2"), 106, byteBuffer);
+		System.out.println(new String(byteBuffer.array()));
+		byteBuffer.clear();
+
+		linkSetManager.addLink(new TextBuilder("LinkSet1"), new TextBuilder(
+				"Link1"), byteBuffer);
+		System.out.println(new String(byteBuffer.array()));
+		byteBuffer.clear();
+
+		linkSetManager.addLink(new TextBuilder("LinkSet1"), new TextBuilder(
+				"Link2"), byteBuffer);
+		System.out.println(new String(byteBuffer.array()));
+		byteBuffer.clear();
+
+		linkSetManager.addLink(new TextBuilder("LinkSet1"), new TextBuilder(
+				"Link3"), byteBuffer);
+		System.out.println(new String(byteBuffer.array()));
+		byteBuffer.clear();
+
+		linkSetManager.addLinkset(new TextBuilder("LinkSet3"), 107, byteBuffer);
+		System.out.println(new String(byteBuffer.array()));
+		byteBuffer.clear();
+
+		linkSetManager.store();
+
+		LinksetManager linkSetManager1 = new LinksetManager();
 		linkSetManager1.load();
-		
+
 		System.out.println(linkSetManager1.linksets.size());
-	} 
+	}
 
 }

@@ -96,6 +96,10 @@ public abstract class Linkset implements XMLSerializable, Stream {
 	public void setState(int state) {
 		this.state = state;
 	}
+	
+	public int getMode() {
+		return mode;
+	}
 
 	public FastMap<TextBuilder, Link> getLinks() {
 		return links;
