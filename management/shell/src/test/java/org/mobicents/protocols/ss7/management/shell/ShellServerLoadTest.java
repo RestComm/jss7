@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import javolution.text.TextBuilder;
 
 import org.mobicents.protocols.ss7.management.shell.ShellCmdListener;
-import org.mobicents.protocols.ss7.management.shell.CmdEnum;
+import org.mobicents.protocols.ss7.management.shell.ShellCommand;
 import org.mobicents.protocols.ss7.management.shell.server.ShellServer;
 
 public class ShellServerLoadTest {
@@ -85,12 +85,12 @@ public class ShellServerLoadTest {
 			byteBuffer.put(addLink);
 		}
 
-		public void addLinkSet(TextBuilder arg0, ByteBuffer byteBuffer) {
+		public void addLinkSet(TextBuilder arg0, int type,ByteBuffer byteBuffer) {
 			byteBuffer.clear();
 			byteBuffer.put(addLinkSet);
 		}
 
-		public void adjacentPointCode(TextBuilder arg0, TextBuilder arg1,
+		public void adjacentPointCode(TextBuilder arg0, int arg1,
 				ByteBuffer byteBuffer) {
 			byteBuffer.clear();
 			byteBuffer.put(adjacentPointCode);
@@ -131,13 +131,13 @@ public class ShellServerLoadTest {
 			byteBuffer.put(localIp);
 		}
 
-		public void localPointCode(TextBuilder arg0, TextBuilder arg1,
+		public void localPointCode(TextBuilder arg0, int arg1,
 				ByteBuffer byteBuffer) {
 			byteBuffer.clear();
 			byteBuffer.put(localIp);
 		}
 
-		public void networkIndicator(TextBuilder arg0, CmdEnum arg1,
+		public void networkIndicator(TextBuilder arg0, ShellCommand arg1,
 				ByteBuffer byteBuffer) {
 			byteBuffer.clear();
 			byteBuffer.put(localIp);

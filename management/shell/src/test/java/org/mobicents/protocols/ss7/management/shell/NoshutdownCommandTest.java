@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.management.shell.ShellCmdListener;
-import org.mobicents.protocols.ss7.management.shell.CmdEnum;
+import org.mobicents.protocols.ss7.management.shell.ShellCommand;
 import org.mobicents.protocols.ss7.management.shell.NoshutdownCommand;
 
 /**
@@ -60,19 +60,19 @@ public class NoshutdownCommandTest {
 	@Test
 	public void testNoshutdownSs7LinkSetEncode() {
 		String[] shutdownSs7LinkSetStr = new String[] {
-				CmdEnum.NOSHUTDOWN.getCmdStr(), CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName };
+				ShellCommand.NOSHUTDOWN.getCmdStr(), ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName };
 
 		noshutdownCmd = new NoshutdownCommand(shutdownSs7LinkSetStr);
 		noshutdownCmd.encode(buffer);
 
 		buffer.flip();
 
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.NOSHUTDOWN.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.NOSHUTDOWN.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
 		assertEquals(ZERO_LENGTH, buffer.get());
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
@@ -88,9 +88,9 @@ public class NoshutdownCommandTest {
 	public void testNoshutdownSs7LinkSetDecode() {
 		buffer.clear();
 		// buffer.put((byte)CliCmdEnum.SHUTDOWN.getCmdInt());
-		buffer.put((byte) CmdEnum.SS7.getCmdInt());
+		buffer.put((byte) ShellCommand.SS7.getCmdInt());
 		buffer.put(ZERO_LENGTH);
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
 
@@ -109,25 +109,25 @@ public class NoshutdownCommandTest {
 	@Test
 	public void testNoshutdownSs7LinkEncode() {
 		String[] shutdownSs7LinkSetStr = new String[] {
-				CmdEnum.NOSHUTDOWN.getCmdStr(), CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.LINK.getCmdStr(), linkName };
+				ShellCommand.NOSHUTDOWN.getCmdStr(), ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.LINK.getCmdStr(), linkName };
 
 		noshutdownCmd = new NoshutdownCommand(shutdownSs7LinkSetStr);
 		noshutdownCmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.NOSHUTDOWN.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.NOSHUTDOWN.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
 		assertEquals(ZERO_LENGTH, buffer.get());
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
 			assertEquals(linkSetNameBytes[i], buffer.get());
 		}
-		assertEquals((byte) CmdEnum.LINK.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINK.getCmdInt(), buffer.get());
 		assertEquals((byte) linkName.length(), buffer.get());
 
 		for (int i = 0; i < linkName.length(); i++) {
@@ -143,12 +143,12 @@ public class NoshutdownCommandTest {
 	public void testNoshutdownSs7LinkDecode() {
 		buffer.clear();
 		// buffer.put((byte)CliCmdEnum.SHUTDOWN.getCmdInt());
-		buffer.put((byte) CmdEnum.SS7.getCmdInt());
+		buffer.put((byte) ShellCommand.SS7.getCmdInt());
 		buffer.put(ZERO_LENGTH);
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
-		buffer.put((byte) CmdEnum.LINK.getCmdInt());
+		buffer.put((byte) ShellCommand.LINK.getCmdInt());
 		buffer.put((byte) linkName.length());
 		buffer.put(linkNameBytes);
 
@@ -186,13 +186,13 @@ public class NoshutdownCommandTest {
 
 		}
 
-		public void addLinkSet(TextBuilder linksetName, ByteBuffer byteBuffer) {
+		public void addLinkSet(TextBuilder linksetName, int type, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
 
 		}
 
 		public void adjacentPointCode(TextBuilder linksetName,
-				TextBuilder adjacentPC, ByteBuffer byteBuffer) {
+				int adjacentPC, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
 
 		}
@@ -233,13 +233,13 @@ public class NoshutdownCommandTest {
 		}
 
 		public void localPointCode(TextBuilder linksetName,
-				TextBuilder localPC, ByteBuffer byteBuffer) {
+				int localPC, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
 
 		}
 
 		public void networkIndicator(TextBuilder linksetName,
-				CmdEnum networkInd, ByteBuffer byteBuffer) {
+				ShellCommand networkInd, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
 
 		}

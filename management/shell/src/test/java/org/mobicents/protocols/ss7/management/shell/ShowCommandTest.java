@@ -56,18 +56,18 @@ public class ShowCommandTest {
 	@Test
 	public void testShowSs7LinkSetEncode() {
 
-		String[] showSs7LinkSetStr = new String[] { CmdEnum.SHOW.getCmdStr(),
-				CmdEnum.SS7.getCmdStr(), CmdEnum.LINKSET.getCmdStr() };
+		String[] showSs7LinkSetStr = new String[] { ShellCommand.SHOW.getCmdStr(),
+				ShellCommand.SS7.getCmdStr(), ShellCommand.LINKSET.getCmdStr() };
 
 		shwCmd = new ShowCommand(showSs7LinkSetStr);
 		shwCmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SHOW.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SHOW.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
 		assertEquals(ZERO_LENGTH, buffer.get());
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 
 		// here the ByteBuffer should stop
 		assertEquals(buffer.position(), buffer.limit());
@@ -78,9 +78,9 @@ public class ShowCommandTest {
 	public void testShowSs7LinkSetDecode() {
 		buffer.clear();
 		// buffer.put((byte)CliCmdEnum.SHOW.getCmdInt());
-		buffer.put((byte) CmdEnum.SS7.getCmdInt());
+		buffer.put((byte) ShellCommand.SS7.getCmdInt());
 		buffer.put(ZERO_LENGTH);
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.flip();
 
 		cLICmdListener = new CLICmdListenerImpl();
@@ -99,19 +99,19 @@ public class ShowCommandTest {
 	public void testShowSs7LinkSet_LeSetNmEncode() {
 
 		String[] showSs7LinkSet_LnSeNameStr = new String[] {
-				CmdEnum.SHOW.getCmdStr(), CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName };
+				ShellCommand.SHOW.getCmdStr(), ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName };
 
 		shwCmd = new ShowCommand(showSs7LinkSet_LnSeNameStr);
 		buffer.clear();
 		shwCmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SHOW.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SHOW.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
 		assertEquals(ZERO_LENGTH, buffer.get());
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
@@ -128,9 +128,9 @@ public class ShowCommandTest {
 
 		buffer.clear();
 		// buffer.put((byte)CliCmdEnum.SHOW.getCmdInt());
-		buffer.put((byte) CmdEnum.SS7.getCmdInt());
+		buffer.put((byte) ShellCommand.SS7.getCmdInt());
 		buffer.put(ZERO_LENGTH);
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
 		buffer.flip();
@@ -151,27 +151,27 @@ public class ShowCommandTest {
 	public void testShowSs7LinkSet_LeSetNm_StatsEncode() {
 
 		String[] showSs7LinkSet_LnSeName_statsStr = new String[] {
-				CmdEnum.SHOW.getCmdStr(), CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.STATISTICS.getCmdStr() };
+				ShellCommand.SHOW.getCmdStr(), ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.STATISTICS.getCmdStr() };
 
 		shwCmd = new ShowCommand(showSs7LinkSet_LnSeName_statsStr);
 		buffer.clear();
 		shwCmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SHOW.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SHOW.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
 		assertEquals(ZERO_LENGTH, buffer.get());
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
 			assertEquals(linkSetNameBytes[i], buffer.get());
 		}
 
-		assertEquals((byte) CmdEnum.STATISTICS.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.STATISTICS.getCmdInt(), buffer.get());
 
 		// here the ByteBuffer should stop
 		assertEquals(buffer.position(), buffer.limit());
@@ -183,12 +183,12 @@ public class ShowCommandTest {
 
 		buffer.clear();
 		// buffer.put((byte)CliCmdEnum.SHOW.getCmdInt());
-		buffer.put((byte) CmdEnum.SS7.getCmdInt());
+		buffer.put((byte) ShellCommand.SS7.getCmdInt());
 		buffer.put(ZERO_LENGTH);
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
-		buffer.put((byte) CmdEnum.STATISTICS.getCmdInt());
+		buffer.put((byte) ShellCommand.STATISTICS.getCmdInt());
 		buffer.flip();
 
 		cLICmdListener = new CLICmdListenerImpl();
@@ -206,21 +206,21 @@ public class ShowCommandTest {
 	@Test
 	public void testShowSs7LinkSet_StatsEncode() {
 
-		String[] showSs7LinkSetStr = new String[] { CmdEnum.SHOW.getCmdStr(),
-				CmdEnum.SS7.getCmdStr(), CmdEnum.LINKSET.getCmdStr(),
-				CmdEnum.STATISTICS.getCmdStr() };
+		String[] showSs7LinkSetStr = new String[] { ShellCommand.SHOW.getCmdStr(),
+				ShellCommand.SS7.getCmdStr(), ShellCommand.LINKSET.getCmdStr(),
+				ShellCommand.STATISTICS.getCmdStr() };
 
 		shwCmd = new ShowCommand(showSs7LinkSetStr);
 		shwCmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SHOW.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SHOW.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
 		assertEquals(ZERO_LENGTH, buffer.get());
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals(ZERO_LENGTH, buffer.get());
-		assertEquals((byte) CmdEnum.STATISTICS.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.STATISTICS.getCmdInt(), buffer.get());
 
 		// here the ByteBuffer should stop
 		assertEquals(buffer.position(), buffer.limit());
@@ -231,11 +231,11 @@ public class ShowCommandTest {
 	public void testShowSs7LinkSet_StatsDecode() {
 		buffer.clear();
 		// buffer.put((byte)CliCmdEnum.SHOW.getCmdInt());
-		buffer.put((byte) CmdEnum.SS7.getCmdInt());
+		buffer.put((byte) ShellCommand.SS7.getCmdInt());
 		buffer.put(ZERO_LENGTH);
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put(ZERO_LENGTH);
-		buffer.put((byte) CmdEnum.STATISTICS.getCmdInt());
+		buffer.put((byte) ShellCommand.STATISTICS.getCmdInt());
 		buffer.flip();
 
 		cLICmdListener = new CLICmdListenerImpl();
@@ -266,13 +266,13 @@ public class ShowCommandTest {
 
 		}
 
-		public void addLinkSet(TextBuilder linksetName, ByteBuffer byteBuffer) {
+		public void addLinkSet(TextBuilder linksetName, int type, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
 
 		}
 
 		public void adjacentPointCode(TextBuilder linksetName,
-				TextBuilder adjacentPC, ByteBuffer byteBuffer) {
+				int adjacentPC, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
 
 		}
@@ -313,13 +313,13 @@ public class ShowCommandTest {
 		}
 
 		public void localPointCode(TextBuilder linksetName,
-				TextBuilder localPC, ByteBuffer byteBuffer) {
+				int localPC, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
 
 		}
 
 		public void networkIndicator(TextBuilder linksetName,
-				CmdEnum networkInd, ByteBuffer byteBuffer) {
+				ShellCommand networkInd, ByteBuffer byteBuffer) {
 			// TODO Auto-generated method stub
 
 		}

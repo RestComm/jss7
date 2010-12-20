@@ -40,17 +40,17 @@ public class ShutdownCommand extends AbstractCommand {
 		}
 
 		// MTP Header
-		byteBuffer.put((byte) CmdEnum.MTP.getCmdInt());
+		byteBuffer.put((byte) ShellCommand.MTP.getCmdInt());
 
 		// Header
-		byteBuffer.put((byte) CmdEnum.SHUTDOWN.getCmdInt());
+		byteBuffer.put((byte) ShellCommand.SHUTDOWN.getCmdInt());
 
 		// Body
-		byteBuffer.put((byte) CmdEnum.SS7.getCmdInt());
+		byteBuffer.put((byte) ShellCommand.SS7.getCmdInt());
 		byteBuffer.put(ZERO_LENGTH);
 
 		if (ss7Commands[2].compareTo("linkset") == 0) {
-			byteBuffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+			byteBuffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 			byteBuffer.put((byte) ss7Commands[3].length());
 			byteBuffer.put(ss7Commands[3].getBytes());
 		} else {
@@ -60,7 +60,7 @@ public class ShutdownCommand extends AbstractCommand {
 		}
 
 		if (ss7Commands.length == 6 && ss7Commands[4].compareTo("link") == 0) {
-			byteBuffer.put((byte) CmdEnum.LINK.getCmdInt());
+			byteBuffer.put((byte) ShellCommand.LINK.getCmdInt());
 			byteBuffer.put((byte) ss7Commands[5].length());
 			byteBuffer.put(ss7Commands[5].getBytes());
 		}
@@ -74,13 +74,13 @@ public class ShutdownCommand extends AbstractCommand {
 		try {
 			int cmd = byteBuffer.get();
 
-			if (cmd == CmdEnum.SS7.getCmdInt()) {
+			if (cmd == ShellCommand.SS7.getCmdInt()) {
 				// ZERO_LENGTH
 				int cmdLength = byteBuffer.get();
 
 				// Next command
 				cmd = byteBuffer.get();
-				if (cmd == CmdEnum.LINKSET.getCmdInt()) {
+				if (cmd == ShellCommand.LINKSET.getCmdInt()) {
 					cmdLength = byteBuffer.get();
 					// name = getString(byteBuffer, 0, cmdLength);
 					while (linksetName.length() < cmdLength) {
@@ -89,13 +89,13 @@ public class ShutdownCommand extends AbstractCommand {
 
 					if (byteBuffer.position() != byteBuffer.limit()) {
 						cmd = byteBuffer.get();
-						if (cmd == CmdEnum.LINK.getCmdInt()) {
+						if (cmd == ShellCommand.LINK.getCmdInt()) {
 							cmdLength = byteBuffer.get();
 
 							while (linkName.length() < cmdLength) {
 								linkName.append((char) byteBuffer.get());
 							}
-
+							byteBuffer.clear();
 							this.cLICmdListener.shutdownLink(linksetName,
 									linkName, byteBuffer);
 
@@ -105,6 +105,7 @@ public class ShutdownCommand extends AbstractCommand {
 						}
 
 					} else {
+						byteBuffer.clear();
 						this.cLICmdListener.shutdownLinkSet(linksetName,
 								byteBuffer);
 					}

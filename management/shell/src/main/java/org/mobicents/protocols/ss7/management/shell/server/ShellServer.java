@@ -12,7 +12,7 @@ import java.util.Iterator;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.management.shell.AbstractCommand;
 import org.mobicents.protocols.ss7.management.shell.ShellCmdListener;
-import org.mobicents.protocols.ss7.management.shell.CmdEnum;
+import org.mobicents.protocols.ss7.management.shell.ShellCommand;
 import org.mobicents.protocols.ss7.management.shell.ExitCommand;
 import org.mobicents.protocols.ss7.management.shell.NoshutdownCommand;
 import org.mobicents.protocols.ss7.management.shell.SS7Command;
@@ -125,14 +125,14 @@ public class ShellServer {
 	}
 
 	public void perform() {
-
+		
 		if (this.isActive) {
 			try {
 
 				// TODO : How should server behave?
 				// int n = selector.select();
 				int n = selector.selectNow();
-
+				
 				// executionTime = System.nanoTime();
 
 				if (n > 0) {
@@ -210,30 +210,29 @@ public class ShellServer {
 
 			int protocol = protocolHeader.get();
 
-			if (protocol == CmdEnum.MTP.getCmdInt()) {
+			if (protocol == ShellCommand.MTP.getCmdInt()) {
 				int cmd = commandHeader.get();
 
-				if (cmd == CmdEnum.SHOW.getCmdInt()) {
+				if (cmd == ShellCommand.SHOW.getCmdInt()) {
 					shwCmd.decode(body);
 					this.write(socketChannel);
 
-				} else if (cmd == CmdEnum.SS7.getCmdInt()) {
+				} else if (cmd == ShellCommand.SS7.getCmdInt()) {
 					ss7Cmd.decode(body);
 					this.write(socketChannel);
 
-				} else if (cmd == CmdEnum.SHUTDOWN.getCmdInt()) {
+				} else if (cmd == ShellCommand.SHUTDOWN.getCmdInt()) {
 					shutDwnCmd.decode(body);
 					this.write(socketChannel);
 
-				} else if (cmd == CmdEnum.NOSHUTDOWN.getCmdInt()) {
+				} else if (cmd == ShellCommand.NOSHUTDOWN.getCmdInt()) {
 					noShutDwnCmd.decode(body);
 					this.write(socketChannel);
 
 				} else {
 					logger.error(String.format("Unknown Command %s ", cmd));
 				}
-			} else if (protocol == CmdEnum.EXIT.getCmdInt()) {
-				this.stop();
+			} else if (protocol == ShellCommand.EXIT.getCmdInt()) {				
 				exitCmd.decode(body);
 				this.write(socketChannel);
 				socketChannel.close();

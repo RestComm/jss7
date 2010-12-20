@@ -19,7 +19,7 @@ public class SS7Command extends AbstractCommand {
 
 	private void showShowCmdHelp() {
 		System.out
-				.println("                                                             ss7 addlinkset linkset-name        Add a new linkset");
+				.println("                                  ss7 addlinkset linkset-name {dahdi | dialogic | m3ua }        Add a new linkset");
 		System.out
 				.println("ss7 linkset linkset-name network-indicator {international | national | reserved | spare}        Configure the network indicator for a linkset");
 		System.out
@@ -55,58 +55,78 @@ public class SS7Command extends AbstractCommand {
 			return false;
 		}
 
-		//MTP Header
-		byteBuffer.put((byte) CmdEnum.MTP.getCmdInt());
-		
-		// Header
-		byteBuffer.put((byte) CmdEnum.SS7.getCmdInt());
+		// MTP Header
+		byteBuffer.put((byte) ShellCommand.MTP.getCmdInt());
 
-		if (ss7Commands[1].compareTo("addlinkset") == 0) {
-			if (ss7Commands.length != 3) {
+		// Header
+		byteBuffer.put((byte) ShellCommand.SS7.getCmdInt());
+
+		if (ss7Commands[1].compareTo(ShellCommand.ADDLINKSET.getCmdStr()) == 0) {
+			if (ss7Commands.length != 4) {
 				System.out.println("Invalid command");
 				System.out
-						.println("ss7 addlinkset linkset-name        Add a new linkset");
+						.println("ss7 addlinkset linkset-name {dahdi | dialogic | m3ua }       Add a new linkset");
 				return false;
+			} else if (!(ss7Commands[3].compareTo(ShellCommand.LINKSET_DAHDI
+					.getCmdStr()) == 0
+					|| ss7Commands[3].compareTo(ShellCommand.LINKSET_DIALOGIC
+							.getCmdStr()) == 0 || ss7Commands[3]
+					.compareTo(ShellCommand.LINKSET_M3UA.getCmdStr()) == 0)) {
+				System.out.println("Invalid command");
+				System.out
+						.println("ss7 addlinkset linkset-name {dahdi | dialogic | m3ua }       Add a new linkset");
 			}
 
 			// Body
-			byteBuffer.put((byte) CmdEnum.ADDLINKSET.getCmdInt());
+			byteBuffer.put((byte) ShellCommand.ADDLINKSET.getCmdInt());
 			byteBuffer.put((byte) ss7Commands[2].length());
 			byteBuffer.put(ss7Commands[2].getBytes());
 
+			byteBuffer.put((byte) (ShellCommand.getCommand(ss7Commands[3]))
+					.getCmdInt());
 			return true;
 
-		} else if (ss7Commands[1].compareTo("linkset") == 0) {
+		} else if (ss7Commands[1].compareTo(ShellCommand.LINKSET.getCmdStr()) == 0) {
 
 			// Body
-			byteBuffer.put((byte) CmdEnum.LINKSET.getCmdInt()); // command
+			byteBuffer.put((byte) ShellCommand.LINKSET.getCmdInt()); // command
 			byteBuffer.put((byte) ss7Commands[2].length()); // length
 			byteBuffer.put(ss7Commands[2].getBytes()); // value
 
-			if (ss7Commands[3].compareTo("network-indicator") == 0) {
+			if (ss7Commands[3].compareTo(ShellCommand.NETWORK_INDICATOR
+					.getCmdStr()) == 0) {
 				if (ss7Commands.length != 5) {
 					System.out.println("Invalid command");
 					System.out
 							.println("ss7 linkset linkset-name network-indicator {international | national | reserved | spare}        Configure the network indicator for a linkset");
 					return false;
-				} else if (!(ss7Commands[4].compareTo("international") == 0
-						|| ss7Commands[4].compareTo("national") == 0
-						|| ss7Commands[4].compareTo("reserved") == 0 || ss7Commands[4]
-						.compareTo("spare") == 0)) {
+				} else if (!(ss7Commands[4]
+						.compareTo(ShellCommand.NETWORK_INDICATOR_INT
+								.getCmdStr()) == 0
+						|| ss7Commands[4]
+								.compareTo(ShellCommand.NETWORK_INDICATOR_NAT
+										.getCmdStr()) == 0
+						|| ss7Commands[4]
+								.compareTo(ShellCommand.NETWORK_INDICATOR_RES
+										.getCmdStr()) == 0 || ss7Commands[4]
+						.compareTo(ShellCommand.NETWORK_INDICATOR_SPA
+								.getCmdStr()) == 0)) {
 					System.out.println("Invalid command");
 					System.out
 							.println("ss7 linkset linkset-name network-indicator {international | national | reserved | spare}        Configure the network indicator for a linkset");
 
 				}
 
-				byteBuffer.put((byte) CmdEnum.NETWORK_INDICATOR.getCmdInt()); // command
+				byteBuffer.put((byte) ShellCommand.NETWORK_INDICATOR
+						.getCmdInt()); // command
 				byteBuffer.put(ZERO_LENGTH); // length
 
-				byteBuffer.put((byte) CmdEnum.getCommand(ss7Commands[4])
+				byteBuffer.put((byte) ShellCommand.getCommand(ss7Commands[4])
 						.getCmdInt()); // command
 				return true;
 
-			} else if (ss7Commands[3].compareTo("local-pc") == 0) {
+			} else if (ss7Commands[3].compareTo(ShellCommand.LOCAL_PC
+					.getCmdStr()) == 0) {
 
 				if (ss7Commands.length != 5) {
 					System.out.println("Invalid command");
@@ -114,37 +134,58 @@ public class SS7Command extends AbstractCommand {
 							.println("ss7 linkset linkset-name local-pc point-code        configure the local point code for a linkset");
 					return false;
 				}
-				// TODO : Add check if point-code is Integer?
 
-				byteBuffer.put((byte) CmdEnum.LOCAL_PC.getCmdInt()); // command
-				byteBuffer.put((byte) ss7Commands[4].length()); // length
-				byteBuffer.put(ss7Commands[4].getBytes()); // value
+				int pointCode = Utils.validatePointCode(ss7Commands[4]);
+				if (pointCode == -1) {
+					System.out.println("Invalid Point Code");
+					System.out
+							.println("ss7 linkset linkset-name local-pc point-code        configure the local point code for a linkset");
+					return false;
+				}
+
+				byteBuffer.put((byte) ShellCommand.LOCAL_PC.getCmdInt()); // command
+				byteBuffer.put((byte) 0x03); // length
+				byteBuffer.put((byte) ((pointCode & 0x00ff0000) >> 16)); // value
+				byteBuffer.put((byte) ((pointCode & 0x0000ff00) >> 8)); // value
+				byteBuffer.put((byte) (pointCode & 0x000000ff)); // value
 
 				return true;
 
-			} else if (ss7Commands[3].compareTo("adjacent-pc") == 0) {
+			} else if (ss7Commands[3].compareTo(ShellCommand.ADJACENT_PC
+					.getCmdStr()) == 0) {
 				if (ss7Commands.length != 5) {
 					System.out.println("Invalid command");
 					System.out
 							.println("ss7 linkset linkset-name adjacent-pc point-code        configure the adjacent point code for a linkset");
 					return false;
 				}
-				// TODO : Add check if point-code is Integer?
 
-				byteBuffer.put((byte) CmdEnum.ADJACENT_PC.getCmdInt()); // command
-				byteBuffer.put((byte) ss7Commands[4].length()); // length
-				byteBuffer.put(ss7Commands[4].getBytes()); // value
+				int pointCode = Utils.validatePointCode(ss7Commands[4]);
+				if (pointCode == -1) {
+					System.out.println("Invalid Point Code");
+					System.out
+							.println("ss7 linkset linkset-name local-pc point-code        configure the local point code for a linkset");
+					return false;
+				}
+
+				byteBuffer.put((byte) ShellCommand.ADJACENT_PC.getCmdInt()); // command
+				byteBuffer.put((byte) 0x03); // length
+				byteBuffer.put((byte) ((pointCode & 0x00ff0000) >> 16)); // value
+				byteBuffer.put((byte) ((pointCode & 0x0000ff00) >> 8)); // value
+				byteBuffer.put((byte) (pointCode & 0x000000ff)); // value
 
 				return true;
 
-			} else if (ss7Commands[3].compareTo("local-ip") == 0) {
+			} else if (ss7Commands[3].compareTo(ShellCommand.LOCAL_IP
+					.getCmdStr()) == 0) {
 
 				if (ss7Commands.length != 7) {
 					System.out.println("Invalid command");
 					System.out
 							.println("ss7 linkset linkset-name local-ip local-ip local-port local-port        configure the localAddress for M3UA");
 					return false;
-				} else if (ss7Commands[5].compareTo("local-port") != 0) {
+				} else if (ss7Commands[5].compareTo(ShellCommand.LOCAL_PORT
+						.getCmdStr()) != 0) {
 					System.out.println("Invalid command");
 					System.out
 							.println("ss7 linkset linkset-name local-ip local-ip local-port local-port        configure the localAddress for M3UA");
@@ -163,18 +204,19 @@ public class SS7Command extends AbstractCommand {
 					return false;
 				}
 
-				byteBuffer.put((byte) CmdEnum.LOCAL_IP.getCmdInt()); // command
+				byteBuffer.put((byte) ShellCommand.LOCAL_IP.getCmdInt()); // command
 				byteBuffer.put((byte) ss7Commands[4].length()); // length
 				byteBuffer.put(ss7Commands[4].getBytes()); // value
 
-				byteBuffer.put((byte) CmdEnum.LOCAL_PORT.getCmdInt()); // command
+				byteBuffer.put((byte) ShellCommand.LOCAL_PORT.getCmdInt()); // command
 				byteBuffer.put((byte) 0x02); // length
 				byteBuffer.put((byte) ((port & 0x0000ff00) >> 8)); // value
 				byteBuffer.put((byte) (port & 0x000000ff)); // value
 
 				return true;
 
-			} else if (ss7Commands[3].compareTo("addlink") == 0) {
+			} else if (ss7Commands[3].compareTo(ShellCommand.ADDLINK
+					.getCmdStr()) == 0) {
 				if (ss7Commands.length != 5) {
 					System.out.println("Invalid command");
 					System.out
@@ -182,13 +224,13 @@ public class SS7Command extends AbstractCommand {
 					return false;
 				}
 
-				byteBuffer.put((byte) CmdEnum.ADDLINK.getCmdInt()); // command
+				byteBuffer.put((byte) ShellCommand.ADDLINK.getCmdInt()); // command
 				byteBuffer.put((byte) ss7Commands[4].length()); // length
 				byteBuffer.put(ss7Commands[4].getBytes()); // value
 
 				return true;
 
-			} else if (ss7Commands[3].compareTo("link") == 0) {
+			} else if (ss7Commands[3].compareTo(ShellCommand.LINK.getCmdStr()) == 0) {
 				if (ss7Commands.length != 7) {
 					System.out.println("Invalid command");
 					System.out
@@ -202,11 +244,11 @@ public class SS7Command extends AbstractCommand {
 				}
 
 				// Body
-				byteBuffer.put((byte) CmdEnum.LINK.getCmdInt()); // command
+				byteBuffer.put((byte) ShellCommand.LINK.getCmdInt()); // command
 				byteBuffer.put((byte) ss7Commands[4].length()); // length
 				byteBuffer.put(ss7Commands[4].getBytes()); // value
 
-				if (ss7Commands[5].compareTo("span") == 0) {
+				if (ss7Commands[5].compareTo(ShellCommand.SPAN.getCmdStr()) == 0) {
 					int span = Utils.validateSpan(ss7Commands[6]);
 					if (span == -1) {
 						System.out.println("Invalid Span");
@@ -216,12 +258,13 @@ public class SS7Command extends AbstractCommand {
 					}
 
 					// Body
-					byteBuffer.put((byte) CmdEnum.SPAN.getCmdInt()); // command
+					byteBuffer.put((byte) ShellCommand.SPAN.getCmdInt()); // command
 					byteBuffer.put((byte) 0x01); // length
 					byteBuffer.put((byte) span); // value
 					return true;
 
-				} else if (ss7Commands[5].compareTo("channel") == 0) {
+				} else if (ss7Commands[5].compareTo(ShellCommand.CHANNEL
+						.getCmdStr()) == 0) {
 					int channel = Utils.validateChannel(ss7Commands[6]);
 					if (channel == -1) {
 						System.out.println("Invalid channel");
@@ -231,12 +274,13 @@ public class SS7Command extends AbstractCommand {
 					}
 
 					// Body
-					byteBuffer.put((byte) CmdEnum.CHANNEL.getCmdInt()); // command
+					byteBuffer.put((byte) ShellCommand.CHANNEL.getCmdInt()); // command
 					byteBuffer.put((byte) 0x01); // length
 					byteBuffer.put((byte) channel); // value
 
 					return true;
-				} else if (ss7Commands[5].compareTo("code") == 0) {
+				} else if (ss7Commands[5].compareTo(ShellCommand.CODE
+						.getCmdStr()) == 0) {
 					int code = Utils.validateCode(ss7Commands[6]);
 					if (code == -1) {
 						System.out.println("Invalid code");
@@ -246,7 +290,7 @@ public class SS7Command extends AbstractCommand {
 					}
 
 					// Body
-					byteBuffer.put((byte) CmdEnum.CODE.getCmdInt()); // command
+					byteBuffer.put((byte) ShellCommand.CODE.getCmdInt()); // command
 					byteBuffer.put((byte) 0x02); // length
 					byteBuffer.put((byte) ((code & 0x0000ff00) >> 8)); // value
 					byteBuffer.put((byte) (code & 0x000000ff)); // value
@@ -263,7 +307,8 @@ public class SS7Command extends AbstractCommand {
 
 					return false;
 				}
-			} else if (ss7Commands[3].compareTo("deletelink") == 0) {
+			} else if (ss7Commands[3].compareTo(ShellCommand.DELETELINK
+					.getCmdStr()) == 0) {
 				if (ss7Commands.length != 5) {
 					System.out.println("Invalid command");
 					System.out
@@ -272,7 +317,7 @@ public class SS7Command extends AbstractCommand {
 				}
 
 				// Body
-				byteBuffer.put((byte) CmdEnum.DELETELINK.getCmdInt());
+				byteBuffer.put((byte) ShellCommand.DELETELINK.getCmdInt());
 				byteBuffer.put((byte) ss7Commands[4].length());
 				byteBuffer.put(ss7Commands[4].getBytes());
 				return true;
@@ -292,7 +337,8 @@ public class SS7Command extends AbstractCommand {
 			}
 			return false;
 
-		} else if (ss7Commands[1].compareTo("deletelinkset") == 0) {
+		} else if (ss7Commands[1].compareTo(ShellCommand.DELETELINKSET
+				.getCmdStr()) == 0) {
 			if (ss7Commands.length != 3) {
 				System.out.println("Invalid command");
 				System.out
@@ -301,12 +347,12 @@ public class SS7Command extends AbstractCommand {
 			}
 
 			// Body
-			byteBuffer.put((byte) CmdEnum.DELETELINKSET.getCmdInt());
+			byteBuffer.put((byte) ShellCommand.DELETELINKSET.getCmdInt());
 			byteBuffer.put((byte) ss7Commands[2].length());
 			byteBuffer.put(ss7Commands[2].getBytes());
 			return true;
 
-		} else if (ss7Commands[1].compareTo("inhibit") == 0) {
+		} else if (ss7Commands[1].compareTo(ShellCommand.INHIBIT.getCmdStr()) == 0) {
 			if (ss7Commands.length != 4) {
 				System.out.println("Invalid command");
 				System.out
@@ -315,20 +361,20 @@ public class SS7Command extends AbstractCommand {
 			}
 
 			// Body
-			byteBuffer.put((byte) CmdEnum.INHIBIT.getCmdInt()); // command
+			byteBuffer.put((byte) ShellCommand.INHIBIT.getCmdInt()); // command
 			byteBuffer.put(ZERO_LENGTH); // length
 
-			byteBuffer.put((byte) CmdEnum.LINKSET.getCmdInt()); // command
+			byteBuffer.put((byte) ShellCommand.LINKSET.getCmdInt()); // command
 			byteBuffer.put((byte) ss7Commands[2].length()); // length
 			byteBuffer.put(ss7Commands[2].getBytes()); // value
 
-			byteBuffer.put((byte) CmdEnum.LINK.getCmdInt()); // command
+			byteBuffer.put((byte) ShellCommand.LINK.getCmdInt()); // command
 			byteBuffer.put((byte) ss7Commands[3].length()); // length
 			byteBuffer.put(ss7Commands[3].getBytes()); // value
 
 			return true;
 
-		} else if (ss7Commands[1].compareTo("uninhibit") == 0) {
+		} else if (ss7Commands[1].compareTo(ShellCommand.UNINHIBIT.getCmdStr()) == 0) {
 			if (ss7Commands.length != 4) {
 				System.out.println("Invalid command");
 				System.out
@@ -337,14 +383,14 @@ public class SS7Command extends AbstractCommand {
 			}
 
 			// Body
-			byteBuffer.put((byte) CmdEnum.UNINHIBIT.getCmdInt()); // command
+			byteBuffer.put((byte) ShellCommand.UNINHIBIT.getCmdInt()); // command
 			byteBuffer.put(ZERO_LENGTH); // length
 
-			byteBuffer.put((byte) CmdEnum.LINKSET.getCmdInt()); // command
+			byteBuffer.put((byte) ShellCommand.LINKSET.getCmdInt()); // command
 			byteBuffer.put((byte) ss7Commands[2].length()); // length
 			byteBuffer.put(ss7Commands[2].getBytes()); // value
 
-			byteBuffer.put((byte) CmdEnum.LINK.getCmdInt()); // command
+			byteBuffer.put((byte) ShellCommand.LINK.getCmdInt()); // command
 			byteBuffer.put((byte) ss7Commands[3].length()); // length
 			byteBuffer.put(ss7Commands[3].getBytes()); // value
 
@@ -364,16 +410,17 @@ public class SS7Command extends AbstractCommand {
 
 			int cmd = byteBuffer.get();
 			int cmdLength;
-			if (cmd == CmdEnum.ADDLINKSET.getCmdInt()) {
+			if (cmd == ShellCommand.ADDLINKSET.getCmdInt()) {
 				cmdLength = byteBuffer.get();
 				while (linksetName.length() < cmdLength) {
 					linksetName.append((char) byteBuffer.get());
 				}
 
-				// String name = getString(byteBuffer, 0, cmdLength);
-				this.cLICmdListener.addLinkSet(linksetName, byteBuffer);
+				int type = byteBuffer.get();
+				byteBuffer.clear();
+				this.cLICmdListener.addLinkSet(linksetName, type, byteBuffer);
 
-			} else if (cmd == CmdEnum.LINKSET.getCmdInt()) {
+			} else if (cmd == ShellCommand.LINKSET.getCmdInt()) {
 				cmdLength = byteBuffer.get();
 				while (linksetName.length() < cmdLength) {
 					linksetName.append((char) byteBuffer.get());
@@ -382,42 +429,37 @@ public class SS7Command extends AbstractCommand {
 
 				// Net Cmd
 				cmd = byteBuffer.get();
-				if (cmd == CmdEnum.NETWORK_INDICATOR.getCmdInt()) {
+				if (cmd == ShellCommand.NETWORK_INDICATOR.getCmdInt()) {
 					cmdLength = byteBuffer.get();// zero
 
 					cmd = byteBuffer.get();// international | national |
 					// reserved | spare
-					CmdEnum networkInd = CmdEnum.getCommand(cmd);
+					ShellCommand networkInd = ShellCommand.getCommand(cmd);
 					if (networkInd == null) {
 						sendErrorMsg(byteBuffer);
 						return;
 					}
-
+					byteBuffer.clear();
 					this.cLICmdListener.networkIndicator(linksetName,
 							networkInd, byteBuffer);
-				} else if (cmd == CmdEnum.LOCAL_PC.getCmdInt()) {
+				} else if (cmd == ShellCommand.LOCAL_PC.getCmdInt()) {
 					cmdLength = byteBuffer.get();
 
-					while (pointCode.length() < cmdLength) {
-						pointCode.append((char) byteBuffer.get());
-					}
-
-					// String localPc = getString(byteBuffer, 0, cmdLength);
+					pointCode = ((byteBuffer.get() << 16)
+							| (byteBuffer.get() << 8) | byteBuffer.get());
+					byteBuffer.clear();
 					this.cLICmdListener.localPointCode(linksetName, pointCode,
 							byteBuffer);
 
-				} else if (cmd == CmdEnum.ADJACENT_PC.getCmdInt()) {
+				} else if (cmd == ShellCommand.ADJACENT_PC.getCmdInt()) {
 					cmdLength = byteBuffer.get();
-					// String adjacentPc = getString(byteBuffer, 0, cmdLength);
-
-					while (pointCode.length() < cmdLength) {
-						pointCode.append((char) byteBuffer.get());
-					}
-
+					pointCode = ((byteBuffer.get() << 16)
+							| (byteBuffer.get() << 8) | byteBuffer.get());
+					byteBuffer.clear();
 					this.cLICmdListener.adjacentPointCode(linksetName,
 							pointCode, byteBuffer);
 
-				} else if (cmd == CmdEnum.LOCAL_IP.getCmdInt()) {
+				} else if (cmd == ShellCommand.LOCAL_IP.getCmdInt()) {
 					cmdLength = byteBuffer.get();
 					while (localIp.length() < cmdLength) {
 						localIp.append((char) byteBuffer.get());
@@ -428,19 +470,19 @@ public class SS7Command extends AbstractCommand {
 					cmd = byteBuffer.get(); // LOCAL_PORT
 					cmdLength = byteBuffer.get();
 					int localPort = ((byteBuffer.get() << 8) | byteBuffer.get());
-
+					byteBuffer.clear();
 					this.cLICmdListener.localIpPort(linksetName, localIp,
 							localPort, byteBuffer);
 
-				} else if (cmd == CmdEnum.ADDLINK.getCmdInt()) {
+				} else if (cmd == ShellCommand.ADDLINK.getCmdInt()) {
 					cmdLength = byteBuffer.get();
 					while (linkName.length() < cmdLength) {
 						linkName.append((char) byteBuffer.get());
 					}
-					// String linkName = getString(byteBuffer, 0, cmdLength);
+					byteBuffer.clear();
 					this.cLICmdListener.addLink(linksetName, linkName,
 							byteBuffer);
-				} else if (cmd == CmdEnum.LINK.getCmdInt()) {
+				} else if (cmd == ShellCommand.LINK.getCmdInt()) {
 					cmdLength = byteBuffer.get();
 					while (linkName.length() < cmdLength) {
 						linkName.append((char) byteBuffer.get());
@@ -449,34 +491,34 @@ public class SS7Command extends AbstractCommand {
 
 					// Net Cmd
 					cmd = byteBuffer.get();
-					if (cmd == CmdEnum.SPAN.getCmdInt()) {
+					if (cmd == ShellCommand.SPAN.getCmdInt()) {
 						cmdLength = byteBuffer.get();
 						int span = byteBuffer.get();
-
+						byteBuffer.clear();
 						this.cLICmdListener.span(linksetName, linkName, span,
 								byteBuffer);
-					} else if (cmd == CmdEnum.CHANNEL.getCmdInt()) {
+					} else if (cmd == ShellCommand.CHANNEL.getCmdInt()) {
 						cmdLength = byteBuffer.get();
 						int channel = byteBuffer.get();
-
+						byteBuffer.clear();
 						this.cLICmdListener.channel(linksetName, linkName,
 								channel, byteBuffer);
-					} else if (cmd == CmdEnum.CODE.getCmdInt()) {
+					} else if (cmd == ShellCommand.CODE.getCmdInt()) {
 						cmdLength = byteBuffer.get();
 						int code = ((byteBuffer.get() << 8) | byteBuffer.get());
-
+						byteBuffer.clear();
 						this.cLICmdListener.code(linksetName, linkName, code,
 								byteBuffer);
 					} else {
 						sendErrorMsg(byteBuffer);
 						return;
 					}
-				} else if (cmd == CmdEnum.DELETELINK.getCmdInt()) {
+				} else if (cmd == ShellCommand.DELETELINK.getCmdInt()) {
 					cmdLength = byteBuffer.get();
 					while (linkName.length() < cmdLength) {
 						linkName.append((char) byteBuffer.get());
 					}
-					// String name = getString(byteBuffer, 0, cmdLength);
+					byteBuffer.clear();
 					this.cLICmdListener.deleteLink(linksetName, linkName,
 							byteBuffer);
 				} else {
@@ -484,14 +526,15 @@ public class SS7Command extends AbstractCommand {
 					return;
 				}
 
-			} else if (cmd == CmdEnum.DELETELINKSET.getCmdInt()) {
+			} else if (cmd == ShellCommand.DELETELINKSET.getCmdInt()) {
 				cmdLength = byteBuffer.get();
 				// String name = getString(byteBuffer, 0, cmdLength);
 				while (linksetName.length() < cmdLength) {
 					linksetName.append((char) byteBuffer.get());
 				}
+				byteBuffer.clear();				
 				this.cLICmdListener.deleteLinkSet(linksetName, byteBuffer);
-			} else if (cmd == CmdEnum.INHIBIT.getCmdInt()) {
+			} else if (cmd == ShellCommand.INHIBIT.getCmdInt()) {
 				cmdLength = byteBuffer.get();// zero
 
 				cmd = byteBuffer.get();// LINKSET
@@ -506,11 +549,10 @@ public class SS7Command extends AbstractCommand {
 				while (linkName.length() < cmdLength) {
 					linkName.append((char) byteBuffer.get());
 				}
-				// String linkName = getString(byteBuffer, 0, cmdLength);
-
+				byteBuffer.clear();
 				this.cLICmdListener.inhibit(linksetName, linkName, byteBuffer);
 
-			} else if (cmd == CmdEnum.UNINHIBIT.getCmdInt()) {
+			} else if (cmd == ShellCommand.UNINHIBIT.getCmdInt()) {
 				cmdLength = byteBuffer.get();// zero
 
 				cmd = byteBuffer.get();// LINKSET
@@ -526,7 +568,7 @@ public class SS7Command extends AbstractCommand {
 				while (linkName.length() < cmdLength) {
 					linkName.append((char) byteBuffer.get());
 				}
-
+				byteBuffer.clear();
 				this.cLICmdListener
 						.uninhibit(linksetName, linkName, byteBuffer);
 			} else {

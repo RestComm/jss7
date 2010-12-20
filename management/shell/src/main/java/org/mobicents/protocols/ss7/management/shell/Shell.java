@@ -85,7 +85,7 @@ public class Shell {
 		System.out
 				.println("                                           show ss7 linkset [linkset-name | statistics ]        Display linkset information");
 		System.out
-				.println("                                                             ss7 addlinkset linkset-name        Add a new linkset");
+				.println("                                  ss7 addlinkset linkset-name {dahdi | dialogic | m3ua }        Add a new linkset");
 		System.out
 				.println("ss7 linkset linkset-name network-indicator {international | national | reserved | spare}        Configure the network indicator for a linkset");
 		System.out
@@ -99,21 +99,21 @@ public class Shell {
 		System.out
 				.println("                                              ss7 linkset linkset-name addlink link-name        add the link to linkset");
 		System.out
-				.println("                                                            ss7 link link-name span span        configure the span for link");
+				.println("                                       ss7 linkset linkset-name link link-name span span        configure the span for link");
 		System.out
-				.println("                                                      ss7 link link-name channel channel        configure the channel for link");
+				.println("                                 ss7 linkset linkset-name link link-name channel channel        configure the channel for link");
 		System.out
-				.println("                                                            ss7 link link-name code code        configure the code for link");
+				.println("                                       ss7 linkset linkset-name link link-name code code        configure the code for link");
 		System.out
-				.println("                                                                ss7 deletelink link-name        delete link");
+				.println("                                           ss7 linkset linkset-name deletelink link-name        delete link");
 		System.out
 				.println("                                                       shutdown ss7 linkset linkset-name        disable a linkset");
 		System.out
 				.println("                                                     noshutdown ss7 linkset linkset-name        reactivate a disabled linkset");
 		System.out
-				.println("                                                             shutdown ss7 link link-name        disable a link");
+				.println("                                        shutdown ss7 linkset linkset-name link link-name        disable a link");
 		System.out
-				.println("                                                           noshutdown ss7 link link-name        reactivate a link");
+				.println("                                      noshutdown ss7 linkset linkset-name link link-name        reactivate a link");
 		System.out
 				.println("                                                      ss7 inhibit linkset-name link-name        inhibit a link");
 		System.out

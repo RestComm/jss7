@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.management.shell.ShellCmdListener;
-import org.mobicents.protocols.ss7.management.shell.CmdEnum;
+import org.mobicents.protocols.ss7.management.shell.ShellCommand;
 import org.mobicents.protocols.ss7.management.shell.SS7Command;
 
 public class SS7CommandTest {
@@ -24,18 +24,20 @@ public class SS7CommandTest {
 	SS7Command ss7Cmd = null;
 
 	ShellCmdListener cLICmdListener = null;
-	CmdEnum cliCmdEnum = null;
+	ShellCommand cliCmdEnum = null;
 
 	boolean cliListenerCalled = false;
 	String resultLinksetName = null;
-	String resultLocalPointCode = null;
-	String resultAdjaPointCode = null;
+	int resultLocalPointCode = -1;
+	int resultAdjaPointCode = -1;
 	String resultLocalIp = null;
 	int resultLocalPort = -1;
 	String resultLink = null;
 	int resultSpan = -1;
 	int resultChannel = -1;
 	int resultCode = -1;
+
+	int resultLinkSetType = -1;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -49,8 +51,8 @@ public class SS7CommandTest {
 	public void setUp() {
 		cliListenerCalled = false;
 		resultLinksetName = null;
-		resultLocalPointCode = null;
-		resultAdjaPointCode = null;
+		resultLocalPointCode = -1;
+		resultAdjaPointCode = -1;
 		resultLocalIp = null;
 		resultLocalPort = -1;
 		resultLink = null;
@@ -66,21 +68,25 @@ public class SS7CommandTest {
 		String linkSetName = "LinkSet1";
 		byte[] linkSetNameBytes = linkSetName.getBytes();
 
-		String[] str = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.ADDLINKSET.getCmdStr(), linkSetName };
+		String[] str = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.ADDLINKSET.getCmdStr(), linkSetName,
+				ShellCommand.LINKSET_DAHDI.getCmdStr() };
 
 		ss7Cmd = new SS7Command(str);
 		ss7Cmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.ADDLINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.ADDLINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
 			assertEquals(linkSetNameBytes[i], buffer.get());
 		}
+
+		assertEquals((byte) ShellCommand.LINKSET_DAHDI.getCmdInt(), buffer
+				.get());
 
 		// here the ByteBuffer should stop
 		assertEquals(buffer.position(), buffer.limit());
@@ -95,9 +101,10 @@ public class SS7CommandTest {
 
 		buffer.clear();
 		// buffer.put((byte)CliCmdEnum.SHOW.getCmdInt());
-		buffer.put((byte) CmdEnum.ADDLINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.ADDLINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
+		buffer.put((byte) ShellCommand.LINKSET_DAHDI.getCmdInt());
 		buffer.flip();
 
 		cLICmdListener = new CLICmdListenerImpl();
@@ -108,6 +115,7 @@ public class SS7CommandTest {
 
 		assertTrue(cliListenerCalled);
 		assertEquals(linkSetName, resultLinksetName);
+		assertEquals(ShellCommand.LINKSET_DAHDI.getCmdInt(), resultLinkSetType);
 
 	}
 
@@ -117,28 +125,29 @@ public class SS7CommandTest {
 		String linkSetName = "LinkSet1";
 		byte[] linkSetNameBytes = linkSetName.getBytes();
 
-		String[] str = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.NETWORK_INDICATOR.getCmdStr(),
-				CmdEnum.NETWORK_INDICATOR_INT.getCmdStr() };
+		String[] str = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.NETWORK_INDICATOR.getCmdStr(),
+				ShellCommand.NETWORK_INDICATOR_INT.getCmdStr() };
 
 		ss7Cmd = new SS7Command(str);
 		ss7Cmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
 			assertEquals(linkSetNameBytes[i], buffer.get());
 		}
 
-		assertEquals((byte) CmdEnum.NETWORK_INDICATOR.getCmdInt(), buffer.get());
-		assertEquals((byte) ZERO_LENGTH, buffer.get());
-		assertEquals((byte) CmdEnum.NETWORK_INDICATOR_INT.getCmdInt(), buffer
+		assertEquals((byte) ShellCommand.NETWORK_INDICATOR.getCmdInt(), buffer
 				.get());
+		assertEquals((byte) ZERO_LENGTH, buffer.get());
+		assertEquals((byte) ShellCommand.NETWORK_INDICATOR_INT.getCmdInt(),
+				buffer.get());
 
 		// here the ByteBuffer should stop
 		assertEquals(buffer.position(), buffer.limit());
@@ -153,13 +162,13 @@ public class SS7CommandTest {
 
 		buffer.clear();
 		// buffer.put((byte)CliCmdEnum.SHOW.getCmdInt());
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
 
-		buffer.put((byte) CmdEnum.NETWORK_INDICATOR.getCmdInt());
+		buffer.put((byte) ShellCommand.NETWORK_INDICATOR.getCmdInt());
 		buffer.put((byte) ZERO_LENGTH);
-		buffer.put((byte) CmdEnum.NETWORK_INDICATOR_INT.getCmdInt());
+		buffer.put((byte) ShellCommand.NETWORK_INDICATOR_INT.getCmdInt());
 		buffer.flip();
 
 		cLICmdListener = new CLICmdListenerImpl();
@@ -170,7 +179,7 @@ public class SS7CommandTest {
 
 		assertTrue(cliListenerCalled);
 		assertEquals(linkSetName, resultLinksetName);
-		assertEquals(CmdEnum.NETWORK_INDICATOR_INT, cliCmdEnum);
+		assertEquals(ShellCommand.NETWORK_INDICATOR_INT, cliCmdEnum);
 
 	}
 
@@ -183,29 +192,29 @@ public class SS7CommandTest {
 		String localPointCode = "123";
 		byte[] localPointCodeBytes = localPointCode.getBytes();
 
-		String[] str = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.LOCAL_PC.getCmdStr(), localPointCode };
+		String[] str = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.LOCAL_PC.getCmdStr(), localPointCode };
 
 		ss7Cmd = new SS7Command(str);
 		ss7Cmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
 			assertEquals(linkSetNameBytes[i], buffer.get());
 		}
 
-		assertEquals((byte) CmdEnum.LOCAL_PC.getCmdInt(), buffer.get());
-		assertEquals((byte) localPointCode.length(), buffer.get());
+		assertEquals((byte) ShellCommand.LOCAL_PC.getCmdInt(), buffer.get());
+		assertEquals((byte) 0x03, buffer.get());
 
-		for (int i = 0; i < localPointCode.length(); i++) {
-			assertEquals(localPointCodeBytes[i], buffer.get());
-		}
+		int pointCode = ((buffer.get() << 16) | (buffer.get() << 8) | buffer
+				.get());
+		assertEquals(123, pointCode);
 
 		// here the ByteBuffer should stop
 		assertEquals(buffer.position(), buffer.limit());
@@ -218,17 +227,19 @@ public class SS7CommandTest {
 		String linkSetName = "LinkSet1";
 		byte[] linkSetNameBytes = linkSetName.getBytes();
 
-		String localPointCode = "123";
+		int pointCode = 123;
 
 		buffer.clear();
 		// buffer.put((byte)CliCmdEnum.SHOW.getCmdInt());
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
 
-		buffer.put((byte) CmdEnum.LOCAL_PC.getCmdInt());
-		buffer.put((byte) localPointCode.length());
-		buffer.put(localPointCode.getBytes());
+		buffer.put((byte) ShellCommand.LOCAL_PC.getCmdInt());
+		buffer.put((byte) 0x03);
+		buffer.put((byte) ((pointCode & 0x00ff0000) >> 16)); // value
+		buffer.put((byte) ((pointCode & 0x0000ff00) >> 8)); // value
+		buffer.put((byte) (pointCode & 0x000000ff)); // value
 		buffer.flip();
 
 		cLICmdListener = new CLICmdListenerImpl();
@@ -239,7 +250,7 @@ public class SS7CommandTest {
 
 		assertTrue(cliListenerCalled);
 		assertEquals(linkSetName, resultLinksetName);
-		assertEquals(localPointCode, resultLocalPointCode);
+		assertEquals(pointCode, resultLocalPointCode);
 
 	}
 
@@ -250,31 +261,30 @@ public class SS7CommandTest {
 		byte[] linkSetNameBytes = linkSetName.getBytes();
 
 		String adjPointCode = "123";
-		byte[] adjPointCodeBytes = adjPointCode.getBytes();
 
-		String[] str = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.ADJACENT_PC.getCmdStr(), adjPointCode };
+		String[] str = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.ADJACENT_PC.getCmdStr(), adjPointCode };
 
 		ss7Cmd = new SS7Command(str);
 		ss7Cmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
 			assertEquals(linkSetNameBytes[i], buffer.get());
 		}
 
-		assertEquals((byte) CmdEnum.ADJACENT_PC.getCmdInt(), buffer.get());
-		assertEquals((byte) adjPointCode.length(), buffer.get());
+		assertEquals((byte) ShellCommand.ADJACENT_PC.getCmdInt(), buffer.get());
+		assertEquals((byte) 0x03, buffer.get());
 
-		for (int i = 0; i < adjPointCode.length(); i++) {
-			assertEquals(adjPointCodeBytes[i], buffer.get());
-		}
+		int pointCode = ((buffer.get() << 16) | (buffer.get() << 8) | buffer
+				.get());
+		assertEquals(123, pointCode);
 
 		// here the ByteBuffer should stop
 		assertEquals(buffer.position(), buffer.limit());
@@ -287,17 +297,19 @@ public class SS7CommandTest {
 		String linkSetName = "LinkSet1";
 		byte[] linkSetNameBytes = linkSetName.getBytes();
 
-		String adjPointCode = "123";
+		int adjPointCode = 123;
 
 		buffer.clear();
 		// buffer.put((byte)CliCmdEnum.SHOW.getCmdInt());
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
 
-		buffer.put((byte) CmdEnum.ADJACENT_PC.getCmdInt());
-		buffer.put((byte) adjPointCode.length());
-		buffer.put(adjPointCode.getBytes());
+		buffer.put((byte) ShellCommand.ADJACENT_PC.getCmdInt());
+		buffer.put((byte) 0x03);
+		buffer.put((byte) ((adjPointCode & 0x00ff0000) >> 16)); // value
+		buffer.put((byte) ((adjPointCode & 0x0000ff00) >> 8)); // value
+		buffer.put((byte) (adjPointCode & 0x000000ff)); // value
 		buffer.flip();
 
 		cLICmdListener = new CLICmdListenerImpl();
@@ -324,32 +336,32 @@ public class SS7CommandTest {
 		byte[] localIpBytes = localIp.getBytes();
 		byte[] localPortBytes = localPort.getBytes();
 
-		String[] str = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.LOCAL_IP.getCmdStr(), localIp,
-				CmdEnum.LOCAL_PORT.getCmdStr(), localPort };
+		String[] str = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.LOCAL_IP.getCmdStr(), localIp,
+				ShellCommand.LOCAL_PORT.getCmdStr(), localPort };
 
 		ss7Cmd = new SS7Command(str);
 		ss7Cmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
 			assertEquals(linkSetNameBytes[i], buffer.get());
 		}
 
-		assertEquals((byte) CmdEnum.LOCAL_IP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LOCAL_IP.getCmdInt(), buffer.get());
 		assertEquals((byte) localIp.length(), buffer.get());
 
 		for (int i = 0; i < localIp.length(); i++) {
 			assertEquals(localIpBytes[i], buffer.get());
 		}
 
-		assertEquals((byte) CmdEnum.LOCAL_PORT.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LOCAL_PORT.getCmdInt(), buffer.get());
 		assertEquals((byte) 0x02, buffer.get());
 
 		int localPortRes = ((buffer.get() << 8) | buffer.get());
@@ -372,15 +384,15 @@ public class SS7CommandTest {
 
 		buffer.clear();
 		// buffer.put((byte)CliCmdEnum.SHOW.getCmdInt());
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
 
-		buffer.put((byte) CmdEnum.LOCAL_IP.getCmdInt());
+		buffer.put((byte) ShellCommand.LOCAL_IP.getCmdInt());
 		buffer.put((byte) localIp.length());
 		buffer.put(localIp.getBytes());
 
-		buffer.put((byte) CmdEnum.LOCAL_PORT.getCmdInt());
+		buffer.put((byte) ShellCommand.LOCAL_PORT.getCmdInt());
 		buffer.put((byte) 0x02); // length
 		buffer.put((byte) ((localPort & 0x0000ff00) >> 8)); // value
 		buffer.put((byte) (localPort & 0x000000ff)); // value
@@ -405,16 +417,17 @@ public class SS7CommandTest {
 		String linkSetName = "LinkSet1";
 		byte[] linkSetNameBytes = linkSetName.getBytes();
 
-		String[] str = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.DELETELINKSET.getCmdStr(), linkSetName };
+		String[] str = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.DELETELINKSET.getCmdStr(), linkSetName };
 
 		ss7Cmd = new SS7Command(str);
 		ss7Cmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.DELETELINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.DELETELINKSET.getCmdInt(), buffer
+				.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
@@ -434,7 +447,7 @@ public class SS7CommandTest {
 
 		buffer.clear();
 		// buffer.put((byte)CliCmdEnum.SHOW.getCmdInt());
-		buffer.put((byte) CmdEnum.DELETELINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.DELETELINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
 		buffer.flip();
@@ -459,24 +472,24 @@ public class SS7CommandTest {
 		String link = "link1";
 		byte[] linkBytes = link.getBytes();
 
-		String[] str = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.ADDLINK.getCmdStr(), link };
+		String[] str = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.ADDLINK.getCmdStr(), link };
 
 		ss7Cmd = new SS7Command(str);
 		ss7Cmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
 			assertEquals(linkSetNameBytes[i], buffer.get());
 		}
 
-		assertEquals((byte) CmdEnum.ADDLINK.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.ADDLINK.getCmdInt(), buffer.get());
 		assertEquals((byte) link.length(), buffer.get());
 
 		for (int i = 0; i < link.length(); i++) {
@@ -498,11 +511,11 @@ public class SS7CommandTest {
 
 		buffer.clear();
 		// buffer.put((byte)CliCmdEnum.SHOW.getCmdInt());
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
 
-		buffer.put((byte) CmdEnum.ADDLINK.getCmdInt());
+		buffer.put((byte) ShellCommand.ADDLINK.getCmdInt());
 		buffer.put((byte) link.length());
 		buffer.put(link.getBytes());
 		buffer.flip();
@@ -530,31 +543,32 @@ public class SS7CommandTest {
 
 		String span = "4";
 
-		String[] str = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.LINK.getCmdStr(), link, CmdEnum.SPAN.getCmdStr(), span };
+		String[] str = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.LINK.getCmdStr(), link,
+				ShellCommand.SPAN.getCmdStr(), span };
 
 		ss7Cmd = new SS7Command(str);
 		ss7Cmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
 			assertEquals(linkSetNameBytes[i], buffer.get());
 		}
 
-		assertEquals((byte) CmdEnum.LINK.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINK.getCmdInt(), buffer.get());
 		assertEquals((byte) link.length(), buffer.get());
 
 		for (int i = 0; i < link.length(); i++) {
 			assertEquals(linkBytes[i], buffer.get());
 		}
 
-		assertEquals((byte) CmdEnum.SPAN.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SPAN.getCmdInt(), buffer.get());
 		assertEquals((byte) 0x01, buffer.get());// length
 		assertEquals((byte) 0x04, buffer.get());// span
 
@@ -573,15 +587,15 @@ public class SS7CommandTest {
 
 		buffer.clear();
 
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
 
-		buffer.put((byte) CmdEnum.LINK.getCmdInt());
+		buffer.put((byte) ShellCommand.LINK.getCmdInt());
 		buffer.put((byte) link.length());
 		buffer.put(linkBytes);
 
-		buffer.put((byte) CmdEnum.SPAN.getCmdInt());
+		buffer.put((byte) ShellCommand.SPAN.getCmdInt());
 		buffer.put((byte) 0x01);
 		buffer.put((byte) 0x04);
 		buffer.flip();
@@ -610,31 +624,31 @@ public class SS7CommandTest {
 
 		String channel = "16";
 
-		String[] str = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.LINK.getCmdStr(), link, CmdEnum.CHANNEL.getCmdStr(),
-				channel };
+		String[] str = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.LINK.getCmdStr(), link,
+				ShellCommand.CHANNEL.getCmdStr(), channel };
 
 		ss7Cmd = new SS7Command(str);
 		ss7Cmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
 			assertEquals(linkSetNameBytes[i], buffer.get());
 		}
-		assertEquals((byte) CmdEnum.LINK.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINK.getCmdInt(), buffer.get());
 		assertEquals((byte) link.length(), buffer.get());
 
 		for (int i = 0; i < link.length(); i++) {
 			assertEquals(linkBytes[i], buffer.get());
 		}
 
-		assertEquals((byte) CmdEnum.CHANNEL.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.CHANNEL.getCmdInt(), buffer.get());
 		assertEquals((byte) 0x01, buffer.get());// length
 		assertEquals((byte) 16, buffer.get());// span
 
@@ -653,14 +667,14 @@ public class SS7CommandTest {
 
 		buffer.clear();
 
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
-		buffer.put((byte) CmdEnum.LINK.getCmdInt());
+		buffer.put((byte) ShellCommand.LINK.getCmdInt());
 		buffer.put((byte) link.length());
 		buffer.put(linkBytes);
 
-		buffer.put((byte) CmdEnum.CHANNEL.getCmdInt());
+		buffer.put((byte) ShellCommand.CHANNEL.getCmdInt());
 		buffer.put((byte) 0x01);
 		buffer.put((byte) 16);
 		buffer.flip();
@@ -688,30 +702,31 @@ public class SS7CommandTest {
 
 		String code = "280";
 
-		String[] str = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.LINK.getCmdStr(), link, CmdEnum.CODE.getCmdStr(), code };
+		String[] str = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.LINK.getCmdStr(), link,
+				ShellCommand.CODE.getCmdStr(), code };
 
 		ss7Cmd = new SS7Command(str);
 		ss7Cmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
 			assertEquals(linkSetNameBytes[i], buffer.get());
 		}
-		assertEquals((byte) CmdEnum.LINK.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINK.getCmdInt(), buffer.get());
 		assertEquals((byte) link.length(), buffer.get());
 
 		for (int i = 0; i < link.length(); i++) {
 			assertEquals(linkBytes[i], buffer.get());
 		}
 
-		assertEquals((byte) CmdEnum.CODE.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.CODE.getCmdInt(), buffer.get());
 		assertEquals((byte) 0x02, buffer.get());// length
 		int codeInt = (buffer.get() << 8 | buffer.get());
 		assertEquals(280, codeInt);// code
@@ -730,14 +745,14 @@ public class SS7CommandTest {
 		byte[] linkBytes = link.getBytes();
 
 		buffer.clear();
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
-		buffer.put((byte) CmdEnum.LINK.getCmdInt());
+		buffer.put((byte) ShellCommand.LINK.getCmdInt());
 		buffer.put((byte) link.length());
 		buffer.put(linkBytes);
 
-		buffer.put((byte) CmdEnum.CODE.getCmdInt());
+		buffer.put((byte) ShellCommand.CODE.getCmdInt());
 		buffer.put((byte) 0x02);
 		buffer.put((byte) ((280 & 0x0000ff00) >> 8)); // value
 		buffer.put((byte) (280 & 0x000000ff)); // value
@@ -764,23 +779,23 @@ public class SS7CommandTest {
 		String link = "link1";
 		byte[] linkBytes = link.getBytes();
 
-		String[] str = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.DELETELINK.getCmdStr(), link };
+		String[] str = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.DELETELINK.getCmdStr(), link };
 
 		ss7Cmd = new SS7Command(str);
 		ss7Cmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
 			assertEquals(linkSetNameBytes[i], buffer.get());
 		}
-		assertEquals((byte) CmdEnum.DELETELINK.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.DELETELINK.getCmdInt(), buffer.get());
 		assertEquals((byte) link.length(), buffer.get());
 
 		for (int i = 0; i < link.length(); i++) {
@@ -801,10 +816,10 @@ public class SS7CommandTest {
 		byte[] linkBytes = link.getBytes();
 
 		buffer.clear();
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
-		buffer.put((byte) CmdEnum.DELETELINK.getCmdInt());
+		buffer.put((byte) ShellCommand.DELETELINK.getCmdInt());
 		buffer.put((byte) link.length());
 		buffer.put(linkBytes);
 		buffer.flip();
@@ -830,26 +845,26 @@ public class SS7CommandTest {
 		String linkSetName = "LinkSet1";
 		byte[] linkSetNameBytes = linkSetName.getBytes();
 
-		String[] str = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.INHIBIT.getCmdStr(), linkSetName, link };
+		String[] str = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.INHIBIT.getCmdStr(), linkSetName, link };
 
 		ss7Cmd = new SS7Command(str);
 		ss7Cmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.INHIBIT.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.INHIBIT.getCmdInt(), buffer.get());
 		assertEquals((byte) 0x00, buffer.get());
 
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
 			assertEquals(linkSetNameBytes[i], buffer.get());
 		}
 
-		assertEquals((byte) CmdEnum.LINK.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINK.getCmdInt(), buffer.get());
 		assertEquals((byte) link.length(), buffer.get());
 
 		for (int i = 0; i < link.length(); i++) {
@@ -872,14 +887,14 @@ public class SS7CommandTest {
 
 		buffer.clear();
 		// buffer.put((byte)CliCmdEnum.SHOW.getCmdInt());
-		buffer.put((byte) CmdEnum.INHIBIT.getCmdInt());
+		buffer.put((byte) ShellCommand.INHIBIT.getCmdInt());
 		buffer.put((byte) 0x00);
 
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
 
-		buffer.put((byte) CmdEnum.LINK.getCmdInt());
+		buffer.put((byte) ShellCommand.LINK.getCmdInt());
 		buffer.put((byte) link.length());
 		buffer.put(linkBytes);
 
@@ -906,26 +921,26 @@ public class SS7CommandTest {
 		String linkSetName = "LinkSet1";
 		byte[] linkSetNameBytes = linkSetName.getBytes();
 
-		String[] str = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.UNINHIBIT.getCmdStr(), linkSetName, link };
+		String[] str = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.UNINHIBIT.getCmdStr(), linkSetName, link };
 
 		ss7Cmd = new SS7Command(str);
 		ss7Cmd.encode(buffer);
 
 		buffer.flip();
-		assertEquals((byte) CmdEnum.MTP.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.SS7.getCmdInt(), buffer.get());
-		assertEquals((byte) CmdEnum.UNINHIBIT.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.MTP.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.SS7.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.UNINHIBIT.getCmdInt(), buffer.get());
 		assertEquals((byte) 0x00, buffer.get());
 
-		assertEquals((byte) CmdEnum.LINKSET.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINKSET.getCmdInt(), buffer.get());
 		assertEquals((byte) linkSetName.length(), buffer.get());
 
 		for (int i = 0; i < linkSetName.length(); i++) {
 			assertEquals(linkSetNameBytes[i], buffer.get());
 		}
 
-		assertEquals((byte) CmdEnum.LINK.getCmdInt(), buffer.get());
+		assertEquals((byte) ShellCommand.LINK.getCmdInt(), buffer.get());
 		assertEquals((byte) link.length(), buffer.get());
 
 		for (int i = 0; i < link.length(); i++) {
@@ -948,14 +963,14 @@ public class SS7CommandTest {
 
 		buffer.clear();
 		// buffer.put((byte)CliCmdEnum.SHOW.getCmdInt());
-		buffer.put((byte) CmdEnum.UNINHIBIT.getCmdInt());
+		buffer.put((byte) ShellCommand.UNINHIBIT.getCmdInt());
 		buffer.put((byte) 0x00);
 
-		buffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		buffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 		buffer.put((byte) linkSetName.length());
 		buffer.put(linkSetNameBytes);
 
-		buffer.put((byte) CmdEnum.LINK.getCmdInt());
+		buffer.put((byte) ShellCommand.LINK.getCmdInt());
 		buffer.put((byte) link.length());
 		buffer.put(linkBytes);
 
@@ -982,14 +997,16 @@ public class SS7CommandTest {
 			cliListenerCalled = true;
 		}
 
-		public void addLinkSet(TextBuilder linksetName, ByteBuffer byteBuffer) {
+		public void addLinkSet(TextBuilder linksetName, int type,
+				ByteBuffer byteBuffer) {
 			cliListenerCalled = true;
 			resultLinksetName = linksetName.toString();
+			resultLinkSetType = type;
 		}
 
-		public void adjacentPointCode(TextBuilder linksetName,
-				TextBuilder adjacentPC, ByteBuffer byteBuffer) {
-			resultAdjaPointCode = adjacentPC.toString();
+		public void adjacentPointCode(TextBuilder linksetName, int adjacentPC,
+				ByteBuffer byteBuffer) {
+			resultAdjaPointCode = adjacentPC;
 			cliListenerCalled = true;
 			resultLinksetName = linksetName.toString();
 		}
@@ -1037,15 +1054,15 @@ public class SS7CommandTest {
 			cliListenerCalled = true;
 		}
 
-		public void localPointCode(TextBuilder linksetName,
-				TextBuilder localPC, ByteBuffer byteBuffer) {
-			resultLocalPointCode = localPC.toString();
+		public void localPointCode(TextBuilder linksetName, int localPC,
+				ByteBuffer byteBuffer) {
+			resultLocalPointCode = localPC;
 			resultLinksetName = linksetName.toString();
 			cliListenerCalled = true;
 		}
 
 		public void networkIndicator(TextBuilder linksetName,
-				CmdEnum networkInd, ByteBuffer byteBuffer) {
+				ShellCommand networkInd, ByteBuffer byteBuffer) {
 			cliListenerCalled = true;
 			resultLinksetName = linksetName.toString();
 			cliCmdEnum = networkInd;

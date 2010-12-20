@@ -22,21 +22,21 @@ public interface ShellCmdListener {
 
 	public void noshutdownLink(TextBuilder linksetName, TextBuilder linkName, ByteBuffer byteBuffer);
 
-	public void addLinkSet(TextBuilder linksetName, ByteBuffer byteBuffer);
+	public void addLinkSet(TextBuilder linksetName, int type, ByteBuffer byteBuffer);
 
 	public void deleteLinkSet(TextBuilder linksetName, ByteBuffer byteBuffer);
 
 	public void deleteLink(TextBuilder linksetName, TextBuilder linkName,
 			ByteBuffer byteBuffer);
 
-	public void networkIndicator(TextBuilder linksetName, CmdEnum networkInd,
+	public void networkIndicator(TextBuilder linksetName, ShellCommand networkInd,
 			ByteBuffer byteBuffer);
 
-	public void localPointCode(TextBuilder linksetName, TextBuilder localPC,
+	public void localPointCode(TextBuilder linksetName, int localPC,
 			ByteBuffer byteBuffer);
 
 	public void adjacentPointCode(TextBuilder linksetName,
-			TextBuilder adjacentPC, ByteBuffer byteBuffer);
+			int adjacentPC, ByteBuffer byteBuffer);
 
 	public void localIpPort(TextBuilder linksetName, TextBuilder localIp,
 			int localPort, ByteBuffer byteBuffer);

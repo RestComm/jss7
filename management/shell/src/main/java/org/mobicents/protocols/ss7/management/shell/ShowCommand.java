@@ -43,18 +43,18 @@ public class ShowCommand extends AbstractCommand {
 		}
 		
 		//MTP Header
-		byteBuffer.put((byte) CmdEnum.MTP.getCmdInt());
+		byteBuffer.put((byte) ShellCommand.MTP.getCmdInt());
 		
 		// Header
-		byteBuffer.put((byte) CmdEnum.SHOW.getCmdInt());
+		byteBuffer.put((byte) ShellCommand.SHOW.getCmdInt());
 
 		// Body
-		byteBuffer.put((byte) CmdEnum.SS7.getCmdInt());
+		byteBuffer.put((byte) ShellCommand.SS7.getCmdInt());
 		byteBuffer.put(ZERO_LENGTH);
-		byteBuffer.put((byte) CmdEnum.LINKSET.getCmdInt());
+		byteBuffer.put((byte) ShellCommand.LINKSET.getCmdInt());
 
 		if (ss7Commands.length >= 4) {
-			if (ss7Commands[3].compareTo(CmdEnum.STATISTICS.getCmdStr()) == 0) {
+			if (ss7Commands[3].compareTo(ShellCommand.STATISTICS.getCmdStr()) == 0) {
 
 				if (ss7Commands.length == 5) {
 					System.out.println("Invalid command");
@@ -63,7 +63,7 @@ public class ShowCommand extends AbstractCommand {
 				}
 
 				byteBuffer.put(ZERO_LENGTH);
-				byteBuffer.put((byte) CmdEnum.STATISTICS.getCmdInt());
+				byteBuffer.put((byte) ShellCommand.STATISTICS.getCmdInt());
 
 				return true;
 			} else {
@@ -74,8 +74,8 @@ public class ShowCommand extends AbstractCommand {
 		}
 
 		if (ss7Commands.length == 5) {
-			if (ss7Commands[4].compareTo(CmdEnum.STATISTICS.getCmdStr()) == 0) {
-				byteBuffer.put((byte) CmdEnum.STATISTICS.getCmdInt());
+			if (ss7Commands[4].compareTo(ShellCommand.STATISTICS.getCmdStr()) == 0) {
+				byteBuffer.put((byte) ShellCommand.STATISTICS.getCmdInt());
 			} else {
 				System.out.println("Invalid command");
 				this.showShowCmdHelp();
@@ -94,13 +94,13 @@ public class ShowCommand extends AbstractCommand {
 		try {
 			int cmd = byteBuffer.get();
 
-			if (cmd == CmdEnum.SS7.getCmdInt()) {
+			if (cmd == ShellCommand.SS7.getCmdInt()) {
 				// ZERO_LENGTH
 				int cmdLength = byteBuffer.get();
 
 				// Next command
 				cmd = byteBuffer.get();
-				if (cmd == CmdEnum.LINKSET.getCmdInt()) {
+				if (cmd == ShellCommand.LINKSET.getCmdInt()) {
 
 					boolean statistics = false;
 

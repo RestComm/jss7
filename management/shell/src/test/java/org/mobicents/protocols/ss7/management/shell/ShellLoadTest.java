@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.mobicents.protocols.ss7.management.shell.AbstractCommand;
-import org.mobicents.protocols.ss7.management.shell.CmdEnum;
+import org.mobicents.protocols.ss7.management.shell.ShellCommand;
 import org.mobicents.protocols.ss7.management.shell.ExitCommand;
 import org.mobicents.protocols.ss7.management.shell.NoshutdownCommand;
 import org.mobicents.protocols.ss7.management.shell.SS7Command;
@@ -51,82 +51,82 @@ public class ShellLoadTest {
 
 	public void execute() {
 
-		String[] exitCmd = new String[] { CmdEnum.EXIT.getCmdStr() };
+		String[] exitCmd = new String[] { ShellCommand.EXIT.getCmdStr() };
 		exit = new ExitCommand(exitCmd);
 
 		// Noshutdown commands
 		String[] noshutdownSs7LinkSetStr = new String[] {
-				CmdEnum.NOSHUTDOWN.getCmdStr(), CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName };
+				ShellCommand.NOSHUTDOWN.getCmdStr(), ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName };
 		commands.add(new NoshutdownCommand(noshutdownSs7LinkSetStr));
 
 		String[] noshutdownSs7LinkStr = new String[] {
-				CmdEnum.NOSHUTDOWN.getCmdStr(), CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.LINK.getCmdStr(), linkName };
+				ShellCommand.NOSHUTDOWN.getCmdStr(), ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.LINK.getCmdStr(), linkName };
 		commands.add(new NoshutdownCommand(noshutdownSs7LinkStr));
 
 		// show commands
-		String[] showSs7LinkSetStr = new String[] { CmdEnum.SHOW.getCmdStr(),
-				CmdEnum.SS7.getCmdStr(), CmdEnum.LINKSET.getCmdStr() };
+		String[] showSs7LinkSetStr = new String[] { ShellCommand.SHOW.getCmdStr(),
+				ShellCommand.SS7.getCmdStr(), ShellCommand.LINKSET.getCmdStr() };
 		commands.add(new ShowCommand(showSs7LinkSetStr));
 
 		String[] showSs7LinkSet_LnSeNameStr = new String[] {
-				CmdEnum.SHOW.getCmdStr(), CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName };
+				ShellCommand.SHOW.getCmdStr(), ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName };
 		commands.add(new ShowCommand(showSs7LinkSet_LnSeNameStr));
 
 		String[] showSs7LinkSet_LnSeName_statsStr = new String[] {
-				CmdEnum.SHOW.getCmdStr(), CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.STATISTICS.getCmdStr() };
+				ShellCommand.SHOW.getCmdStr(), ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.STATISTICS.getCmdStr() };
 		commands.add(new ShowCommand(showSs7LinkSet_LnSeName_statsStr));
 
 		// shutdown commands
 		String[] shutdownSs7LinkSetStr = new String[] {
-				CmdEnum.SHUTDOWN.getCmdStr(), CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName };
+				ShellCommand.SHUTDOWN.getCmdStr(), ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName };
 		commands.add(new ShutdownCommand(shutdownSs7LinkSetStr));
 
 		String[] shutdownSs7LinkStr = new String[] {
-				CmdEnum.SHUTDOWN.getCmdStr(), CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.LINK.getCmdStr(), linkName };
+				ShellCommand.SHUTDOWN.getCmdStr(), ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.LINK.getCmdStr(), linkName };
 		commands.add(new ShutdownCommand(shutdownSs7LinkStr));
 
 		// SS7 Commands
-		String[] addLinkSetstr = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.ADDLINKSET.getCmdStr(), linkSetName };
+		String[] addLinkSetstr = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.ADDLINKSET.getCmdStr(), linkSetName };
 		commands.add(new SS7Command(addLinkSetstr));
 
-		String[] deleteLinkstr = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.DELETELINK.getCmdStr(), linkName };
+		String[] deleteLinkstr = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.DELETELINK.getCmdStr(), linkName };
 		commands.add(new SS7Command(deleteLinkstr));
 
-		String[] deleteLinkSetstr = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.DELETELINKSET.getCmdStr(), linkSetName };
+		String[] deleteLinkSetstr = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.DELETELINKSET.getCmdStr(), linkSetName };
 		commands.add(new SS7Command(deleteLinkSetstr));
 
-		String[] inhibitstr = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.INHIBIT.getCmdStr(), linkSetName, linkName };
+		String[] inhibitstr = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.INHIBIT.getCmdStr(), linkSetName, linkName };
 		commands.add(new SS7Command(inhibitstr));
 
-		String[] linkChannelstr = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.LINK.getCmdStr(), linkName,
-				CmdEnum.CHANNEL.getCmdStr(), channel };
+		String[] linkChannelstr = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.LINK.getCmdStr(), linkName,
+				ShellCommand.CHANNEL.getCmdStr(), channel };
 		commands.add(new SS7Command(linkChannelstr));
 
-		String[] codestr = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.LINK.getCmdStr(), linkName, CmdEnum.CODE.getCmdStr(),
+		String[] codestr = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.LINK.getCmdStr(), linkName, ShellCommand.CODE.getCmdStr(),
 				code };
 		commands.add(new SS7Command(codestr));
 
-		String[] strAddLink = new String[] { CmdEnum.SS7.getCmdStr(),
-				CmdEnum.LINKSET.getCmdStr(), linkSetName,
-				CmdEnum.ADDLINK.getCmdStr(), linkName };
+		String[] strAddLink = new String[] { ShellCommand.SS7.getCmdStr(),
+				ShellCommand.LINKSET.getCmdStr(), linkSetName,
+				ShellCommand.ADDLINK.getCmdStr(), linkName };
 		commands.add(new SS7Command(strAddLink));
 
 		try {

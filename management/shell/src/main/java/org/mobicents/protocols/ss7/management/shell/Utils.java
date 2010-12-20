@@ -90,4 +90,22 @@ public class Utils {
 
 		return -1;
 	}
+
+	public static int validatePointCode(final String strPointCode) {
+		// For ITU-T point code is 14 bits, but for ANSI its 24 bits. We will
+		// take max == 24 bits
+		int code = -1;
+		try {
+			code = Integer.parseInt(strPointCode);
+		} catch (NumberFormatException nfe) {
+			return -1;
+		}
+
+		// ANSI's max is 16777215
+		if (code > 0 && code <= 16777215) {
+			return code;
+		}
+
+		return -1;
+	}
 }

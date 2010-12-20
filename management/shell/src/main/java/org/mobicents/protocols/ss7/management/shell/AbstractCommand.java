@@ -19,7 +19,7 @@ public abstract class AbstractCommand {
 
 	protected TextBuilder linksetName = new TextBuilder();
 	protected TextBuilder linkName = new TextBuilder();
-	protected TextBuilder pointCode = new TextBuilder();
+	protected int pointCode;
 	protected TextBuilder localIp = new TextBuilder();
 
 	protected AbstractCommand() {
@@ -34,7 +34,7 @@ public abstract class AbstractCommand {
 	public void decode(ByteBuffer byteBuffer) {
 		linksetName.clear();
 		linkName.clear();
-		pointCode.clear();
+		pointCode = -1;
 	}
 
 	public ShellCmdListener getCLICmdListener() {

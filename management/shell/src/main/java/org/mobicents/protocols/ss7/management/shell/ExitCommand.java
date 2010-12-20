@@ -21,7 +21,7 @@ public class ExitCommand extends AbstractCommand {
 
 	@Override
 	public boolean encode(ByteBuffer byteBuffer) {
-		byteBuffer.put((byte) CmdEnum.EXIT.getCmdInt());
+		byteBuffer.put((byte) ShellCommand.EXIT.getCmdInt());
 		return true;
 	}
 
