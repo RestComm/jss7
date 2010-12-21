@@ -1,0 +1,28 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="design_overview">
+
+	<title>Design Overview</title>
+
+	<para>&THIS.PLATFORM; &THIS.APPLICATION;
+		has modular design. Each protocol has its own separate module. This
+		module depends only on its provider - that is for instance
+		<acronym>SCCP</acronym>
+		depends only from
+		<acronym>MTP</acronym>
+		and
+		<acronym>TCAP</acronym>
+		depends on
+		<acronym>SCPP</acronym>.
+		This makes it easy to customize whole &THIS.PLATFORM; &THIS.APPLICATION;.
+		Specific protocol module has list of all dependencies along with
+		information on general design. Please refer to module description for
+		more information.
+
+	</para>
+	<important>
+			<para>Be aware, &THIS.PLATFORM; &THIS.APPLICATION; is subject to changes as it is under active development! </para>
+	</important>
+</chapter>
+

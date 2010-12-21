@@ -1,0 +1,146 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="layer_mtp">
+
+	<title>Message Transfer Part(MTP) Layer</title>
+	
+	<para></para> 
+	<section>
+		<title>Introduction</title>
+		<para>The Message Transfer Part (MTP) is divided into three levels.
+			The lowest level, MTP Level 1, is equivalent to the OSI Physical
+			Layer. MTP Level 1 defines the physical, electrical, and functional
+			characteristics of the digital signaling link. Physical interfaces
+			defined include E-1 (2048 kb/s; 32 64 kb/s channels), DS-1 (1544
+			kb/s; 24 64kb/s channels), V.35 (64 kb/s), DS-0 (64 kb/s), and DS-0A
+			(56 kb/s).
+			MTP Level 2 ensures accurate end-to-end transmission of a message across
+			a signaling link. Level 2 implements flow control, message sequence
+			validation, and error checking. When an error occurs on a signaling
+			link, the message (or set of messages) is retransmitted. MTP Level 2
+			is equivalent to the OSI Data Link Layer.
+			MTP Level 3 provides message routing between signaling points in the SS7
+			network. MTP Level 3 re-routes traffic away from failed links and
+			signaling points and controls traffic when congestion occurs. MTP
+			Level 3 is equivalent to the OSI Network Layer.</para>
+	</section>
+	<section>
+		<title>Design and API Overview</title>
+		<para>This module builds layer on top of hardware signaling devices. It allows top level protocols to use its <acronym>API</acronym> regardless of used device.
+		Top overview of logical components is depicted on diagram below:
+		</para>
+		<mediaobject id="ss7_design_general_1">
+			<imageobject>
+				<imagedata width="300px" align="center"
+				fileref="images/ss7-design-overview1.png" format="PNG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; &THIS.APPLICATION; general design
+				</para>
+			</caption>
+		</mediaobject>
+		<section>
+			<title>Supported hardware</title>
+			<para>There is variety of <acronym>SS7</acronym> hardware. Depending on driver, it provides different level of abstraction. &THIS.PLATFORM; &THIS.APPLICATION; supports following:</para>
+			<variablelist>
+				<varlistentry>
+					<term>Intel SS7 family board</term>
+					<listitem>
+						<para>Dialogic® SS7 boards are designed to meet the needs of telecommunications equipment manufacturers, systems integrators, and service providers deploying solutions worldwide.  Two families of SS7 products are available to enable affordable, high-performance, signaling applications.</para>
+						<para>Dialogic cards include hardware <acronym>MTP</acronym> layer 1 and 2. </para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Dahdi compatible board</term>
+					<listitem>
+						<para>There are hardware <acronym>TDM</acronym> devices wich share common driver
+								suite called Zaptel/Dahdi Telephony Driver Suite (Dahdi). Most devices sold
+								by Digium are members of the Zaptel family of hardware devices. 
+						</para>
+						<para>Dahdi cards provide only streaming capabilities. Each card requires full setup of <acronym>MTP</acronym> layers.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</section>
+		<section>
+			<title>Provider abstraction</title>
+			<para>		&THIS.PLATFORM; MTP Library
+			builds abstraction on MTP source with
+			<literal>Linkset</literal>
+			.
+			Upper layer stacks depend on <literal>Linkset</literal> as means of receiving and sending
+			<literal>MSU</literal>
+			.
+			Diagram belows depicts general design:</para>
+
+
+			<mediaobject id="ss7_design_mtp_provider_1">
+				<imageobject>
+					<imagedata width="300px" align="center"
+						fileref="images/ss7-tmp-design-overview2.png" format="PNG" />
+				</imageobject>
+				<caption>
+					<para>&THIS.PLATFORM; &THIS.APPLICATION;
+						Provider abstraction
+					</para>
+				</caption>
+			</mediaobject>
+			<para>
+				&THIS.PLATFORM; &THIS.APPLICATION; provides stack user with <literal>LinksetFactory</literal> to create <literal>Linkset</literal> implementation:
+			
+			</para>
+			<itemizedlist>
+				<listitem><para>LinkSet implementation for Dahdi</para> </listitem>
+				<listitem><para>LinkSet implementation for Dialogic</para> </listitem>
+				<listitem><para>LinkSet implementation over M3UA for IP communication</para> </listitem>
+			</itemizedlist>
+		</section>
+		<section>
+		<title>API Overview</title>
+		<para>
+			<acronym>MTP</acronym>
+			layer is built with several components. Following list those that may be directly involved in creating application on top of this stack:
+		</para>
+		<variablelist>
+			<varlistentry>
+				<term>org.mobicents.protocols.ss7.mtp.oam.Link</term>
+				<listitem>
+					
+					<para>This abstract class represents the signaling link over which SS7 signaling takes place. The concrete implementation of Link depends on underlying hardware used. <literal>DahdiLink</literal> are specifically for Dahdi compatible hardware like Diguim and Sangoma. <literal>DialogicLink</literal> are specifically for Dialogic cards. <literal>Link</literal> declares utility methods to open/close underlying implementations and generic read/write methods. </para>
+										
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>org.mobicents.protocols.ss7.mtp.oam.Linkset</term>
+				<listitem>
+					<para>To provide more bandwidth and/or for redundancy, multiple links between two Signalling Points can be used. Links between two Signalling Points are logically grouped for administrative and load-sharing reasons. A logical group of links between two SP is called a linkset. </para>
+
+<para>The concrete implementation of <literal>Linkset</literal> depends on underlying hardware used. <literal>DahdiLinkset</literal> are specifically for Dahdi compatible hardware like Diguim and Sangoma. <literal>DialogicLinkset</literal> are specifically for Dialogic cards.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>org.mobicents.protocols.ss7.mtp.oam.LinksetFactory</term>
+				<listitem>
+					<para>As the name suggests, this is <acronym>API</acronym> to create different type of <literal>Linkset</literal>'s. The concrete implementation of <literal>LinksetFactory</literal> are <literal>DahdiLinksetFactory</literal>, <literal>DialogicLinksetFactory</literal> and <literal>M3UALinksetFactory</literal>
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>org.mobicents.protocols.ss7.mtp.oam.LinksetSelector</term>
+				<listitem>
+					<para>A multiplexor of <literal>Linkset</literal> objects.</para>
+					<para>A selectable linkset's registration with a selector is represented by a <literal>LinksetSelectorKey</literal> object</para>
+					<para>Selection operation returns the <literal>LinksetSelectorKey</literal>'s for each <literal>Linkset</literal> objects that are ready for operation</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+	</section>
+	<section>
+		<title>Configuration</title>
+		<para> There is no direct way to configure the <literal>Linkset</literal> or <literal>Link</literal>. You have to use the Shell command line interface to configure the <literal>Linkset</literal>. For more details look at (Shell) Management docs.</para>
+	</section>
+
+</chapter>
+
