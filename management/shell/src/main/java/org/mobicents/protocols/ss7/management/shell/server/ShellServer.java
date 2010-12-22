@@ -43,8 +43,8 @@ public class ShellServer {
 
 	private ByteBuffer[] buffers = { protocolHeader, commandHeader, body };
 
-	private String localAddress;
-	private int localPort;
+	private String localAddress = "127.0.0.1";
+	private int localPort = 3435;
 	private ShellCmdListener cLICmdListener = null;
 
 	// private long executionTime;
