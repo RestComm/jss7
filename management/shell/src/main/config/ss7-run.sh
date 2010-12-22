@@ -98,7 +98,7 @@ if [ "x$JAVA" = "x" ]; then
 fi
 
 # Setup the classpath
-runjar="$SHELL_HOME/bin/ss7-shell.jar"
+runjar="$SHELL_HOME/bin/mobicents-ss7-shell.jar"
 if [ ! -f "$runjar" ]; then
     die "Missing required file: $runjar"
 fi

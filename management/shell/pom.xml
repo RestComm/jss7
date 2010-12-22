@@ -32,7 +32,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>ss7-shell</finalName>
+		<finalName>mobicents-ss7-shell</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -59,22 +59,104 @@
 					</archive>
 				</configuration>
 			</plugin>
-			<plugin>
+			<!-- plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<descriptors>
-						<descriptor>
-							src/main/assembly/pojo.xml
-						</descriptor>
-					</descriptors>
-					<finalName>${pom.artifactId}</finalName>
+				<descriptors>
+				<descriptor>
+				src/main/assembly/pojo.xml
+				</descriptor>
+				</descriptors>
+				<finalName>${pom.artifactId}</finalName>
 				</configuration>
 				<executions>
+				<execution>
+				<phase>package</phase>
+				<goals>
+				<goal>directory-inline</goal>
+				</goals>
+				</execution>
+				</executions>
+				</plugin -->
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
 					<execution>
+						<id>deploy</id>
+						<phase>install</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<copy todir="${jboss.home}/bin">
+									<fileset
+										dir="${project.build.directory}">
+										<filename
+											name="mobicents-ss7-shell.jar" />
+									</fileset>
+									<fileset
+										dir="${project.build.directory}/../src/main/config">
+										<include name="*.*" />
+									</fileset>									
+								</copy>
+							</tasks>
+						</configuration>
+					</execution>
+					<execution>
+						<id>undeploy</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<delete failonerror="false">
+									<fileset
+										dir="${basedir}/src/main/resources">
+										<include
+											name="standard-components-du.jar" />
+									</fileset>
+								</delete>
+								<delete failonerror="false"
+									includeemptydirs="true">
+									<fileset
+										dir="${jboss.home}/server/all/deploy/${build.finalName}" />
+								</delete>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
 						<phase>package</phase>
 						<goals>
-							<goal>directory-inline</goal>
+							<goal>copy</goal>
 						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>javolution</groupId>
+									<artifactId>javolution</artifactId>
+									<version>
+										${javolution.version}
+									</version>
+									<type>jar</type>
+									<outputDirectory>
+										${jboss.home}/bin/lib
+									</outputDirectory>
+									<destFileName>
+										javolution.jar
+									</destFileName>
+								</artifactItem>
+							</artifactItems>
+							<!-- other configurations here -->
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

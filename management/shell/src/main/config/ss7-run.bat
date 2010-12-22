@@ -55,7 +55,7 @@ set ARGS=""
 
 rem Find run.jar, or we can't continue
 
-set RUNJAR=%SHELL_HOME%\bin\ss7-shell.jar
+set RUNJAR=%SHELL_HOME%\bin\mobicents-ss7-shell.jar
 if exist "%RUNJAR%" goto FOUND_RUN_JAR
 echo Could not locate %RUNJAR%. Please check that you are in the
 echo bin directory when running this script.
