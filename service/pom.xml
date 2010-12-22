@@ -1,0 +1,158 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>ss7-parent</artifactId>
+        <groupId>org.mobicents.protocols.ss7</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>mobicents-ss7</artifactId>
+    <groupId>org.mobicents.protocols.ss7</groupId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>Mobicents SS7</name>
+    <properties>
+        <maven.test.skip>false</maven.test.skip>
+    </properties>
+    <developers>
+        <developer>
+            <id>oleg.kulikoff</id>
+            <name>Oleg Kulikoff</name>
+            <email>oleg.kulikoff@gmail.com</email>
+            <organization>JBoss/Red Hat</organization>
+            <organizationUrl>http://www.redhat.com/</organizationUrl>
+            <roles>
+                <role>Active Developer</role>
+            </roles>
+            <timezone>+3</timezone>
+        </developer>
+        <developer>
+            <id>amit.bhayani</id>
+            <name>Amit Bhayani</name>
+            <email>amit.bhayani@gmail.com</email>
+            <organization>JBoss/Red Hat</organization>
+            <organizationUrl>http://www.redhat.com/</organizationUrl>
+            <roles>
+                <role>Active Developer</role>
+            </roles>
+            <timezone>+5.5</timezone>
+        </developer>
+        <developer>
+            <id>baranowb</id>
+            <name>Bartosz Baranowski</name>
+            <email>baranowb@gmail.com</email>
+            <organization>JBoss/Red Hat</organization>
+            <organizationUrl>http://www.redhat.com/</organizationUrl>
+            <roles>
+                <role>Active Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>GNU GENERAL PUBLIC LICENSE</name>
+            <url>http://www.gnu.org/licenses/gpl.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <dependencies>
+        <dependency>
+			<!-- This comes in container. -->
+            <groupId>org.jboss.jbossas</groupId>
+            <artifactId>jboss-as-system-jmx</artifactId>
+            <version>${jboss.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mobicents.protocols.ss7.sccp</groupId>
+            <artifactId>sccp-api</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mobicents.protocols.ss7.sccp</groupId>
+            <artifactId>sccp-impl</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>mtp</artifactId>
+            <groupId>org.mobicents.protocols.ss7.mtp</groupId>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>concurrent</groupId>
+            <artifactId>concurrent</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javolution</groupId>
+            <artifactId>javolution</artifactId>
+        </dependency>
+        <dependency>
+            <artifactId>shell</artifactId>
+            <groupId>org.mobicents.protocols.ss7.management</groupId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <finalName>${pom.artifactId}-${pom.version}</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>
+							src/main/assembly/pojo.xml
+                        </descriptor>
+                    </descriptors>
+					<!-- this is doubled in sccp-beans -->
+                    <finalName>mobicents-ss7</finalName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>directory-inline</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <scm>
+        <connection>
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/sccp
+        </connection>
+        <developerConnection>
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/sccp
+        </developerConnection>
+        <url>
+			http://mobicents.googlecode.com/svn/trunk/protocols/ss7/sccp
+        </url>
+    </scm>
+</project>

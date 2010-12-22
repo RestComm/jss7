@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
+	xmlns="urn:jboss:bean-deployer:2.0">
+            
+            
+    <!-- Dialogic hardware interface -->        
+    <bean name="Dialogic" class="org.mobicents.protocols.ss7.mtp.oam.DialogicLinksetFactory"/>
+
+    <bean name="LinksetManager" class="org.mobicents.protocols.ss7.mtp.oam.LinksetManager">
+        <incallback method="addFactory" />
+        <uncallback method="removeFactory" />
+    </bean>    
+    
+    <!-- Mobicents SS7 service -->
+    <bean name="SS7Service" class="org.mobicents.ss7.SS7Service">
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=SS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
+        <property name="linksetManager"><inject bean="LinksetManager"/></property>
+	<property name="jndiName">java:/mobicents/ss7/sccp</property>
+	<property name="configPath">${catalina.home}/deploy/${pom.artifactId}-service/sccp-routing.txt</property>
+    </bean>
+    
+</deployment>
