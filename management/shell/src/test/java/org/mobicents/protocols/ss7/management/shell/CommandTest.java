@@ -54,7 +54,11 @@ public class CommandTest {
         Parameter linkset = new Parameter("linkset", new Value[]{dialogic, dahdi});
         Parameter opc = new Parameter("opc");
         Parameter apc = new Parameter("apc");
-        Parameter ni = new Parameter("network indicator");
+        
+        Value national = new Value("national");
+        Value international = new Value("international");
+        
+        Parameter ni = new Parameter("network indicator", new Value[] {national, international});
         
         cmd.add(linkset);
         cmd.add(opc);
