@@ -115,7 +115,7 @@ rem JPDA options. Uncomment and modify as appropriate to enable remote debugging
 rem set JAVA_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y %JAVA_OPTS%
 
 rem Setup the java endorsed dirs
-set SHELL_ENDORSED_DIRS=%SHELL_HOME%\lib
+set SHELL_ENDORSED_DIRS=%SHELL_HOME%\bin\lib
 
 
 echo ===============================================================================

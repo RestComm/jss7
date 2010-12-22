@@ -135,7 +135,7 @@ JAVA_OPTS="-Dprogram.name=$PROGNAME $JAVA_OPTS"
 JAVA_OPTS="$JAVA_OPTS -Xms64m -Xmx64m -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000"
 #JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n"
 # Setup the java endorsed dirs
-SHELL_ENDORSED_DIRS="$SHELL_HOME/lib"
+SHELL_ENDORSED_DIRS="$SHELL_HOME/bin/lib"
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
