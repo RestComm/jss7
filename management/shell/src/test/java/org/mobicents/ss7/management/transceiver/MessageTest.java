@@ -33,9 +33,6 @@ public class MessageTest {
     public void tearDown() {
     }
 
-    /**
-     * Test of getOpc method, of class ProtocolDataImpl.
-     */
     @Test
     public void testMessage() throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(8192);
