@@ -2,11 +2,11 @@ package org.mobicents.ss7.management.transceiver;
 
 import java.nio.channels.SelectionKey;
 
-public class ShellSelectionKey {
+public class ChannelSelectionKey {
 	private ShellSelectableChannel shellSelectableChannel = null;
 	private SelectionKey key = null;
 
-	protected ShellSelectionKey(ShellSelectableChannel shellSelectableChannel,
+	protected ChannelSelectionKey(ShellSelectableChannel shellSelectableChannel,
 			SelectionKey k) {
 		this.shellSelectableChannel = shellSelectableChannel;
 		this.key = k;

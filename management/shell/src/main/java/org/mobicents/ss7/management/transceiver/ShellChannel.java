@@ -20,9 +20,9 @@ public class ShellChannel extends ShellSelectableChannel {
     private ByteBuffer txBuffer = ByteBuffer.allocateDirect(8192);
 
     // provider instance
-    private ShellProvider provider;
+    private ChannelProvider provider;
 
-    protected ShellChannel(ShellProvider provider,
+    protected ShellChannel(ChannelProvider provider,
             AbstractSelectableChannel channel) throws IOException {
         this.channel = channel;
         this.channel.configureBlocking(false);
@@ -39,7 +39,7 @@ public class ShellChannel extends ShellSelectableChannel {
         rxBuffer.flip();
     }
 
-    public static ShellChannel open(ShellProvider provider) throws IOException {
+    public static ShellChannel open(ChannelProvider provider) throws IOException {
         return new ShellChannel(provider, SocketChannel.open());
     }
 

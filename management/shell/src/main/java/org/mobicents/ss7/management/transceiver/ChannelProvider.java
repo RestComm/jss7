@@ -2,12 +2,12 @@ package org.mobicents.ss7.management.transceiver;
 
 import java.io.IOException;
 
-public class ShellProvider {
+public class ChannelProvider {
     
     private MessageFactory messageFactory =  new MessageFactory();
 
-    public static ShellProvider open() {
-        return new ShellProvider();
+    public static ChannelProvider open() {
+        return new ChannelProvider();
     }
     
     public ShellChannel openChannel() throws IOException {

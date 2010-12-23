@@ -12,7 +12,7 @@ public class ChannelSelector {
 
 	protected Selector selector;
 
-	private FastList<ShellSelectionKey> list = new FastList<ShellSelectionKey>();
+	private FastList<ChannelSelectionKey> list = new FastList<ChannelSelectionKey>();
 
 	protected ChannelSelector(Selector selector) {
 		this.selector = selector;
@@ -22,22 +22,22 @@ public class ChannelSelector {
 		return new ChannelSelector(SelectorProvider.provider().openSelector());
 	}
 
-	public FastList<ShellSelectionKey> selectNow() throws IOException {
+	public FastList<ChannelSelectionKey> selectNow() throws IOException {
 		list.clear();
 		selector.selectNow();
 		Set<SelectionKey> selection = selector.selectedKeys();
 		for (SelectionKey key : selection) {
 			if (key.isAcceptable()) {
-				ShellSelectionKey k = (ShellSelectionKey) key.attachment();
+			    ChannelSelectionKey k = (ChannelSelectionKey) key.attachment();
 				list.add(k);
 			} else if (key.isReadable()) {
-				ShellSelectionKey k = (ShellSelectionKey) key.attachment();
+			    ChannelSelectionKey k = (ChannelSelectionKey) key.attachment();
 				((ShellChannel) k.channel()).doRead();
 				if (k.isReadable()) {
 					list.add(k);
 				}
 			} else {
-				ShellSelectionKey k = (ShellSelectionKey) key.attachment();
+			    ChannelSelectionKey k = (ChannelSelectionKey) key.attachment();
 				((ShellChannel) k.channel()).doWrite();
 				if (k.isWritable()) {
 					list.add(k);

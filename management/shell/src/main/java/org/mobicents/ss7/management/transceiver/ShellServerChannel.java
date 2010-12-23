@@ -8,34 +8,34 @@ import java.nio.channels.spi.AbstractSelectableChannel;
 import org.apache.log4j.Logger;
 
 public class ShellServerChannel extends ShellSelectableChannel {
-	private static final Logger logger = Logger
-			.getLogger(ShellServerChannel.class);
+    private static final Logger logger = Logger
+            .getLogger(ShellServerChannel.class);
 
-	private ShellProvider shellProvider = null;
+    private ChannelProvider chanProvider = null;
 
-	protected ShellServerChannel(ShellProvider shellProvider,
-			AbstractSelectableChannel channel) throws IOException {
-		this.channel = channel;
-		this.channel.configureBlocking(false);
-		this.shellProvider = shellProvider;
-	}
+    protected ShellServerChannel(ChannelProvider chanProvider,
+            AbstractSelectableChannel channel) throws IOException {
+        this.channel = channel;
+        this.channel.configureBlocking(false);
+        this.chanProvider = chanProvider;
+    }
 
-	public static ShellServerChannel open(ShellProvider shellProvider)
-			throws IOException {
-		return new ShellServerChannel(shellProvider, ServerSocketChannel.open());
-	}
+    public static ShellServerChannel open(ChannelProvider chanProvider)
+            throws IOException {
+        return new ShellServerChannel(chanProvider, ServerSocketChannel.open());
+    }
 
-	public ShellChannel accept() throws IOException {
-		return new ShellChannel(shellProvider, ((ServerSocketChannel) channel)
-				.accept());
-	}
+    public ShellChannel accept() throws IOException {
+        return new ShellChannel(chanProvider, ((ServerSocketChannel) channel)
+                .accept());
+    }
 
-	public void bind(SocketAddress address) throws IOException {
-		((ServerSocketChannel) channel).socket().bind(address);
-	}
+    public void bind(SocketAddress address) throws IOException {
+        ((ServerSocketChannel) channel).socket().bind(address);
+    }
 
-	public void close() throws IOException {
-		((ServerSocketChannel) channel).close();
-		((ServerSocketChannel) channel).socket().close();
-	}
+    public void close() throws IOException {
+        ((ServerSocketChannel) channel).close();
+        ((ServerSocketChannel) channel).socket().close();
+    }
 }
