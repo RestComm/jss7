@@ -19,6 +19,7 @@ public class MessageFactory {
     }
 
     public Message createMessage(ByteBuffer buffer) {
+        
         if (!isHeaderReady) {
             int len = Math.min(header.length - pos, buffer.remaining());
             buffer.get(header, pos, len);
@@ -55,7 +56,7 @@ public class MessageFactory {
         // again, reading all parameters before parsing
 
         // compute available or required data
-        int len = Math.min(params.length, buffer.remaining());
+        int len = Math.min((params.length - pos), buffer.remaining());
         buffer.get(params, pos, len);
 
         // update cursor position
