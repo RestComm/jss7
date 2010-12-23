@@ -3,6 +3,8 @@ package org.mobicents.ss7.management.transceiver;
 import java.io.IOException;
 
 public class ShellProvider {
+    
+    private MessageFactory messageFactory =  new MessageFactory();
 
     public static ShellProvider open() {
         return new ShellProvider();
@@ -18,5 +20,9 @@ public class ShellProvider {
     
     public ShellSelector openSelector() throws IOException {
         return ShellSelector.open();
+    }
+    
+    public MessageFactory getMessageFactory(){
+        return messageFactory;
     }
 }
