@@ -9,7 +9,7 @@ public abstract class ShellSelectableChannel {
     //underlying network channel
     protected SelectableChannel channel;
 
-    public ShellSelectionKey register(ShellSelector selector, int ops) throws ClosedChannelException {
+    public ShellSelectionKey register(ChannelSelector selector, int ops) throws ClosedChannelException {
         SelectionKey k = channel.register(selector.selector, ops);
         ShellSelectionKey key = new ShellSelectionKey(this, k);
         k.attach(key);

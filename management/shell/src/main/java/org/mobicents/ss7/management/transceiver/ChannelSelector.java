@@ -8,18 +8,18 @@ import java.util.Set;
 
 import javolution.util.FastList;
 
-public class ShellSelector {
+public class ChannelSelector {
 
 	protected Selector selector;
 
 	private FastList<ShellSelectionKey> list = new FastList<ShellSelectionKey>();
 
-	protected ShellSelector(Selector selector) {
+	protected ChannelSelector(Selector selector) {
 		this.selector = selector;
 	}
 
-	public static ShellSelector open() throws IOException {
-		return new ShellSelector(SelectorProvider.provider().openSelector());
+	public static ChannelSelector open() throws IOException {
+		return new ChannelSelector(SelectorProvider.provider().openSelector());
 	}
 
 	public FastList<ShellSelectionKey> selectNow() throws IOException {

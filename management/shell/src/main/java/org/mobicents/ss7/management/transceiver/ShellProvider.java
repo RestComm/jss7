@@ -18,8 +18,8 @@ public class ShellProvider {
         return ShellServerChannel.open(this);
     }
     
-    public ShellSelector openSelector() throws IOException {
-        return ShellSelector.open();
+    public ChannelSelector openSelector() throws IOException {
+        return ChannelSelector.open();
     }
     
     public MessageFactory getMessageFactory(){
