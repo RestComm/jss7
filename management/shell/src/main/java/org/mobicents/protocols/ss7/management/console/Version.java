@@ -15,7 +15,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
-package org.mobicents.protocols.ss7.management.shell;
+package org.mobicents.protocols.ss7.management.console;
 
 import java.io.InputStream;
 import java.util.Collections;

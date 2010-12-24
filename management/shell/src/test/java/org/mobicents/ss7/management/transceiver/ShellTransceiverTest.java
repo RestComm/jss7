@@ -246,6 +246,5 @@ public class ShellTransceiverTest {
                 e.printStackTrace();
             }
         }
-
     }
 }

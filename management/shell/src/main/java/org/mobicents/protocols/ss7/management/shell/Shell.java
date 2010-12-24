@@ -25,6 +25,8 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Scanner;
 
+import org.mobicents.protocols.ss7.management.console.Version;
+
 /**
  * 
  * @author amit bhayani

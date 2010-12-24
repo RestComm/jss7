@@ -2,8 +2,28 @@ package org.mobicents.protocols.ss7.management.console;
 
 public class Shell {
 
+    Version version = Version.instance;
+
+    public final String WELCOME_MESSAGE = version.toString()
+            + "\n"
+            + "This is free software, with components licensed under the GNU General Public License\n"
+            + "version 2 and other licenses. For further details visit http://mobicents.org\n"
+            + "=========================================================================";
+
+    public static final String CONNECTED_MESSAGE = "Connected to %s currently running on %s";
+
+    public static final String cliPrefix = "Mobicents-SS7*CLI>";
+
     private final ConsoleListener listener;
     private final Console console;
+
+    private void showCliHelp() {
+        System.out.println(version.toString());
+        System.out.println("Usage: SS7 [OPTIONS]");
+        System.out.println("Valid Options");
+        System.out.println("-v           Display version number and exit");
+        System.out.println("-h           This help screen");
+    }
 
     public Shell() {
         listener = new ConsoleListenerImpl();
@@ -11,13 +31,31 @@ public class Shell {
     }
 
     public static void main(String args[]) {
-        // TODO : Oleg what about command line arguments?
         Shell shell = new Shell();
-        shell.start();
-
+        shell.start(args);
     }
 
-    private void start() {
+    private void start(String args[]) {
+
+        // Take care of Cmd Line arguments
+        if (args != null && args.length > 0) {
+
+            String cmd = args[0];
+
+            if (cmd.compareTo("-v") == 0) {
+                System.out.println(version.toString());
+                System.exit(0);
+            }
+
+            if (cmd.compareTo("-h") == 0) {
+                this.showCliHelp();
+                System.exit(0);
+            }
+
+        }
+
+        System.out.println(WELCOME_MESSAGE);
+
         console.start();
     }
 
