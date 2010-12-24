@@ -48,7 +48,10 @@ public class Console {
             if (this.consoleListener != null) {
                 this.consoleListener.commandEntered(line);
             }
-            addPrefix();
+            
+            if(!this.stopped){
+                addPrefix();
+            }
         }
     }
 
