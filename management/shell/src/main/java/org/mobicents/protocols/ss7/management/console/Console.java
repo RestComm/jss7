@@ -16,6 +16,8 @@ public class Console {
     private final PrintWriter pw;
     private final InputStream in;
     private final Scanner scanner;
+    
+    private boolean stopped = false;
 
     private ConsoleListener consoleListener = null;
 
@@ -24,7 +26,7 @@ public class Console {
 
         // Input
         this.in = in;
-        this.scanner = new Scanner(in);
+        this.scanner = new Scanner(this.in);
 
         // Output
         this.out = out;
@@ -37,13 +39,18 @@ public class Console {
 
     public void start() {
 
-        while (scanner.hasNextLine()) {
+        while (!stopped && scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if (this.consoleListener != null) {
                 this.consoleListener.commandEntered(line);
             }
 
         }
+    }
+    
+    public void stop(){
+        this.stopped = true;
+        this.scanner.close();
     }
 
     public void write(String text) {

@@ -1,10 +1,8 @@
 package org.mobicents.protocols.ss7.management.console;
 
 
-public class ConsoleListener {
+public interface ConsoleListener {
     
-    public void commandEntered(String consoleInput){
-        
-    }
+    public void commandEntered(String consoleInput);
 
 }

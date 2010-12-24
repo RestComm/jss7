@@ -60,7 +60,7 @@ public class ConsoleTest {
                 new String(out.toByteArray()));
     }
 
-    private class TestConsoleListener extends ConsoleListener {
+    private class TestConsoleListener implements ConsoleListener {
 
         ByteArrayOutputStream out;
 
@@ -68,7 +68,6 @@ public class ConsoleTest {
             this.out = out;
         }
 
-        @Override
         public void commandEntered(String consoleInput) {
 
             System.out.println(consoleInput);
