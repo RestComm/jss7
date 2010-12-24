@@ -42,7 +42,7 @@ public class CommandTest {
      */
     @Test
     public void testToString() {
-        Command cmd = new Command("add");
+        Command cmd = new Command("add", "Add new linkset of type dahdi | dialogic");
         
         Value dialogic = new Value("dialogic");
         dialogic.add(new Parameter("module_id"));

@@ -49,7 +49,7 @@ public class ShellTransceiverTest {
     public void tearDown() {
     }
 
-    private Message createMessage(ShellProvider provider, String text) {
+    private Message createMessage(ChannelProvider provider, String text) {
         Message msg = provider.getMessageFactory().createMessage(text);
         return msg;
     }
@@ -80,17 +80,17 @@ public class ShellTransceiverTest {
     }
 
     private class Client implements Runnable {
-        private ShellProvider provider;
+        private ChannelProvider provider;
         private ShellChannel channel;
-        private ShellSelector selector;
-        private ShellSelectionKey skey;
+        private ChannelSelector selector;
+        private ChannelSelectionKey skey;
         private volatile boolean started = false;
 
         private String rxMessage = "";
         private String[] txMessage = new String[] { "Hello", " ", "world" };
 
         public Client(InetAddress address, int port) throws IOException {
-            provider = ShellProvider.open();
+            provider = ChannelProvider.open();
             channel = provider.openChannel();
             channel.bind(new InetSocketAddress(address, port));
 
@@ -130,11 +130,11 @@ public class ShellTransceiverTest {
             int i = 0;
             while (started) {
                 try {
-                    FastList<ShellSelectionKey> keys = selector.selectNow();
+                    FastList<ChannelSelectionKey> keys = selector.selectNow();
 
-                    for (FastList.Node<ShellSelectionKey> n = keys.head(), end = keys
+                    for (FastList.Node<ChannelSelectionKey> n = keys.head(), end = keys
                             .tail(); (n = n.getNext()) != end;) {
-                        ShellSelectionKey key = n.getValue();
+                        ChannelSelectionKey key = n.getValue();
                         ShellChannel chan = (ShellChannel) key.channel();
                         if (key.isReadable()) {
                             Message msg = (Message) chan.receive();
@@ -164,11 +164,11 @@ public class ShellTransceiverTest {
 
     private class Server implements Runnable {
 
-        private ShellProvider provider;
+        private ChannelProvider provider;
         private ShellServerChannel serverChannel;
         private ShellChannel channel;
-        private ShellSelector selector;
-        private ShellSelectionKey skey;
+        private ChannelSelector selector;
+        private ChannelSelectionKey skey;
 
         private volatile boolean started = false;
 
@@ -176,7 +176,7 @@ public class ShellTransceiverTest {
         private String[] txMessage = new String[] { "Hello", " ", "world" };
 
         public Server(InetAddress address, int port) throws IOException {
-            provider = ShellProvider.open();
+            provider = ChannelProvider.open();
             serverChannel = provider.openServerChannel();
             serverChannel.bind(new InetSocketAddress(address, port));
 
@@ -208,12 +208,12 @@ public class ShellTransceiverTest {
             int i = 0;
             while (started) {
                 try {
-                    FastList<ShellSelectionKey> keys = selector.selectNow();
+                    FastList<ChannelSelectionKey> keys = selector.selectNow();
 
-                    for (FastList.Node<ShellSelectionKey> n = keys.head(), end = keys
+                    for (FastList.Node<ChannelSelectionKey> n = keys.head(), end = keys
                             .tail(); (n = n.getNext()) != end;) {
 
-                        ShellSelectionKey key = n.getValue();
+                        ChannelSelectionKey key = n.getValue();
 
                         if (key.isAcceptable()) {
                             ShellServerChannel chan = (ShellServerChannel) key
