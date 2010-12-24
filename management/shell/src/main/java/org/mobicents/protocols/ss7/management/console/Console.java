@@ -8,7 +8,7 @@ import java.util.Scanner;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class Console {
 
@@ -16,13 +16,17 @@ public class Console {
     private final PrintWriter pw;
     private final InputStream in;
     private final Scanner scanner;
-    
+
+    private final String prefix;
+
     private boolean stopped = false;
 
     private ConsoleListener consoleListener = null;
 
     public Console(InputStream in, OutputStream out,
-            ConsoleListener consoleListener) {
+            ConsoleListener consoleListener, String prefix) {
+        // prefix
+        this.prefix = prefix;
 
         // Input
         this.in = in;
@@ -38,17 +42,23 @@ public class Console {
     }
 
     public void start() {
-
+        addPrefix();
         while (!stopped && scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if (this.consoleListener != null) {
                 this.consoleListener.commandEntered(line);
             }
-
+            addPrefix();
         }
     }
-    
-    public void stop(){
+
+    private void addPrefix() {
+        if (this.prefix != null) {
+            this.write(prefix);
+        }
+    }
+
+    public void stop() {
         this.stopped = true;
         this.scanner.close();
     }

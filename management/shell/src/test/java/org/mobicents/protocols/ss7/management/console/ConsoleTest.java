@@ -53,7 +53,7 @@ public class ConsoleTest {
 
         listener = new TestConsoleListener(out);
 
-        console = new Console(in, out, listener);
+        console = new Console(in, out, listener, null);
         console.start();
 
         assertEquals("Sent message should be equal to received", message,

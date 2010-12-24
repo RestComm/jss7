@@ -1,5 +1,8 @@
 package org.mobicents.protocols.ss7.management.console;
 
+import java.io.InputStream;
+import java.io.PrintStream;
+
 public class Shell {
 
     Version version = Version.instance;
@@ -16,6 +19,9 @@ public class Shell {
 
     private final ConsoleListener listener;
     private final Console console;
+    
+    private static final InputStream in = System.in;
+    private static final PrintStream out = System.out;
 
     private void showCliHelp() {
         System.out.println(version.toString());
@@ -27,7 +33,7 @@ public class Shell {
 
     public Shell() {
         listener = new ConsoleListenerImpl();
-        console = new Console(System.in, System.out, listener);
+        console = new Console(in, out, listener, cliPrefix);
     }
 
     public static void main(String args[]) {
