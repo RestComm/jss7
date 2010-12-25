@@ -15,11 +15,11 @@ public class Shell {
 
     public static final String CONNECTED_MESSAGE = "Connected to %s currently running on %s";
 
-    public static final String cliPrefix = "Mobicents-SS7*CLI>";
+    public static final String cliPrefix = "mobicents>";
 
     private final ConsoleListener listener;
     private final Console console;
-    
+
     private static final InputStream in = System.in;
     private static final PrintStream out = System.out;
 
@@ -31,17 +31,17 @@ public class Shell {
         System.out.println("-h           This help screen");
     }
 
-    public Shell() {
+    public Shell() throws Exception {
         listener = new ConsoleListenerImpl();
         console = new Console(in, out, listener, cliPrefix);
     }
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws Exception {
         Shell shell = new Shell();
         shell.start(args);
     }
 
-    private void start(String args[]) {
+    private void start(String args[]) throws Exception {
 
         // Take care of Cmd Line arguments
         if (args != null && args.length > 0) {
@@ -65,15 +65,5 @@ public class Shell {
         console.start();
     }
 
-    private class ConsoleListenerImpl implements ConsoleListener {
-
-        public void commandEntered(String consoleInput) {
-            System.out.println(consoleInput);
-            if (consoleInput.compareTo("exit") == 0) {
-                console.stop();
-            }
-        }
-
-    }
 
 }

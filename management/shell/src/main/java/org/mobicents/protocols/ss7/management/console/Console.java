@@ -38,6 +38,7 @@ public class Console {
 
         // Listener
         this.consoleListener = consoleListener;
+        this.consoleListener.setConsole(this);
 
     }
 
@@ -48,8 +49,8 @@ public class Console {
             if (this.consoleListener != null) {
                 this.consoleListener.commandEntered(line);
             }
-            
-            if(!this.stopped){
+
+            if (!this.stopped) {
                 addPrefix();
             }
         }
@@ -57,6 +58,7 @@ public class Console {
 
     private void addPrefix() {
         if (this.prefix != null) {
+            this.write("\n");
             this.write(prefix);
         }
     }
