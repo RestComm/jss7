@@ -17,7 +17,7 @@ public class Console {
     private final InputStream in;
     private final Scanner scanner;
 
-    private final String prefix;
+    private String prefix;
 
     private boolean stopped = false;
 
@@ -54,6 +54,10 @@ public class Console {
                 addPrefix();
             }
         }
+    }
+    
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
     }
 
     private void addPrefix() {

@@ -15,7 +15,8 @@ public class Shell {
 
     public static final String CONNECTED_MESSAGE = "Connected to %s currently running on %s";
 
-    public static final String cliPrefix = "mobicents>";
+    public static final String CLI_PREFIX = "mobicents";
+    public static final String CLI_POSTFIX = ">";
 
     private final ConsoleListener listener;
     private final Console console;
@@ -33,7 +34,7 @@ public class Shell {
 
     public Shell() throws Exception {
         listener = new ConsoleListenerImpl();
-        console = new Console(in, out, listener, cliPrefix);
+        console = new Console(in, out, listener, CLI_PREFIX + CLI_POSTFIX);
     }
 
     public static void main(String args[]) throws Exception {
@@ -64,6 +65,5 @@ public class Shell {
 
         console.start();
     }
-
 
 }

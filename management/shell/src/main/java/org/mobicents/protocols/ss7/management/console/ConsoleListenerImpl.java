@@ -48,6 +48,8 @@ public class ConsoleListenerImpl implements ConsoleListener {
                 // use default
                 try {
                     client.connect(new InetSocketAddress(address, port));
+                    console.setPrefix(Shell.CLI_PREFIX + "(local)"
+                            + Shell.CLI_POSTFIX);
                 } catch (IOException e) {
                     console.write(e.getMessage());
                 }
@@ -57,6 +59,8 @@ public class ConsoleListenerImpl implements ConsoleListener {
 
                 try {
                     client.connect(new InetSocketAddress(address, port));
+                    this.console.setPrefix(Shell.CLI_PREFIX + "(" + address
+                            + ")" + Shell.CLI_POSTFIX);
                 } catch (IOException e) {
                     console.write(e.getMessage());
                 }
@@ -83,14 +87,15 @@ public class ConsoleListenerImpl implements ConsoleListener {
                 this.console.write(incoming.toString());
             } else {
                 this.console.write("No response from server");
-            }            
+            }
         } catch (IOException e) {
             this.console.write(e.getMessage());
             this.console.stop();
         }
-        
-        if(text.compareTo("disconnect")==0){
+
+        if (text.compareTo("disconnect") == 0) {
             this.client.stop();
+            this.console.setPrefix(Shell.CLI_PREFIX + Shell.CLI_POSTFIX);
         }
     }
 
