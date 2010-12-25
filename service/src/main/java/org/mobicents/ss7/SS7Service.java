@@ -17,48 +17,73 @@
  */
 package org.mobicents.ss7;
 
+import java.net.InetAddress;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
 import org.apache.log4j.Logger;
 import org.jboss.system.ServiceMBeanSupport;
 import org.mobicents.protocols.ss7.mtp.oam.LinksetManager;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 
 /**
- *
+ * @author amit bhayani
  * @author kulikov
  */
 public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
-    private ShellExecutor shell = new ShellExecutor();
-    
-    private LinksetManager linksetManager;    
+    private ShellExecutor shell = null;
+
+    private LinksetManager linksetManager;
     private SccpStackImpl sccpStack;
-    
+
     private String path;
     private String jndiName;
 
+    private String shellAddress = "127.0.0.1";
+    private int shellPort = 3435;
+
     private Logger logger = Logger.getLogger(SS7Service.class);
-    
+
     @Override
     public void startService() throws Exception {
-        //starting sccp router
+        // starting sccp router
         logger.info("Starting SCCP stack...");
-        
+
         sccpStack = new SccpStackImpl();
         sccpStack.setConfigPath(path);
-        
-//        sccpStack.setLinksets(linksets);
+
+        // sccpStack.setLinksets(linksets);
         sccpStack.start();
         rebind(sccpStack);
-        
-        logger.info("SCCP stack Started. SccpProvider bound to " + this.jndiName);
-        
+
+        logger.info("SCCP stack Started. SccpProvider bound to "
+                + this.jndiName);
+
         logger.info("Starting SS7 management shell environment");
+        shell = new ShellExecutor(InetAddress.getByName(this.shellAddress),
+                this.shellPort);
         shell.start();
-        
+
         logger.info("Started SS7 service");
+    }
+
+    public String getShellAddress() {
+        return shellAddress;
+    }
+
+    public void setShellAddress(String shellAddress) {
+        this.shellAddress = shellAddress;
+    }
+
+    public int getShellPort() {
+        return shellPort;
+    }
+
+    public void setShellPort(int shellPort) {
+        this.shellPort = shellPort;
     }
 
     public void setJndiName(String jndiName) {
@@ -68,17 +93,20 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
     public String getJndiName() {
         return jndiName;
     }
-    
+
     public void setConfigPath(String path) {
         this.path = path;
     }
-    
+
     @Override
     public void stopService() {
         try {
             unbind(jndiName);
         } catch (Exception e) {
         }
+
+        shell.stop();
+
         logger.info("Stopped SS7 service");
     }
 
@@ -89,7 +117,7 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
     public LinksetManager getLinksetManager() {
         return linksetManager;
     }
-    
+
     /**
      * Binds trunk object to the JNDI under the jndiName.
      */
@@ -109,7 +137,7 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
         ctx.bind(tokens[tokens.length - 1], stack.getSccpProvider());
     }
-    
+
     /**
      * Unbounds object under specified name.
      * 
@@ -120,5 +148,5 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
         InitialContext initialContext = new InitialContext();
         initialContext.unbind(jndiName);
     }
-    
+
 }
