@@ -20,6 +20,8 @@ public class Client {
     private ChannelSelectionKey skey;
 
     private boolean isConnected = false;
+    
+    private boolean wrote = false;
 
     public Client() {
         provider = ChannelProvider.open();
@@ -58,6 +60,7 @@ public class Client {
         }
 
         int count = 3;
+        wrote = false;
 
         //Wait for 3 secs to get message 
         while (count > 0) {
@@ -68,8 +71,9 @@ public class Client {
                 ChannelSelectionKey key = n.getValue();
                 ShellChannel chan = (ShellChannel) key.channel();
 
-                if (key.isWritable()) {
+                if (!wrote && key.isWritable()) {
                     chan.send(outgoing);
+                    wrote = true;
                 }
 
                 if (key.isReadable()) {

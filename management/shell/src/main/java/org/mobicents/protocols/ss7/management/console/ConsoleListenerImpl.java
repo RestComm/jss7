@@ -75,7 +75,8 @@ public class ConsoleListenerImpl implements ConsoleListener {
             sendMessage("disconnect");
 
         } else {
-            console.write("Invalid command.");
+            //Send everything to Server as per Oleg
+            sendMessage(consoleInput);
         }
     }
 
