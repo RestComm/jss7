@@ -63,6 +63,7 @@ public class ConsoleTest {
     private class TestConsoleListener implements ConsoleListener {
 
         ByteArrayOutputStream out;
+        Console console;
 
         TestConsoleListener(ByteArrayOutputStream out) {
             this.out = out;
@@ -72,8 +73,12 @@ public class ConsoleTest {
 
             System.out.println(consoleInput);
 
-            console.write(consoleInput);
+            this.console.write(consoleInput);
 
+        }
+
+        public void setConsole(Console console) {
+            this.console = console;
         }
     }
 
