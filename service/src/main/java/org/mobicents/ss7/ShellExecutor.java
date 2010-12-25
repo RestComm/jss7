@@ -103,11 +103,13 @@ public class ShellExecutor implements Runnable {
                         System.out.println("Receive " + msg);
                         rxMessage = msg.toString();
 
-                        System.out.println("Received " + rxMessage);
                         if (rxMessage.compareTo("disconnect") == 0) {
                             this.txMessage = "Bye";
                             chan.send(messageFactory.createMessage(txMessage));
 
+                        } else {
+                            //TODO : Clean this. Reflecting message now
+                            chan.send(messageFactory.createMessage("From server : "+rxMessage));
                         }
 
                         // TODO Handle message
