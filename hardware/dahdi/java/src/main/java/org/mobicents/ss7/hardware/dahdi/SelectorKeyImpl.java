@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.mobicents.protocols.ss7.hardware.dahdi;
+package org.mobicents.ss7.hardware.dahdi;
 
 import org.mobicents.protocols.stream.api.SelectorKey;
 import org.mobicents.protocols.stream.api.Stream;

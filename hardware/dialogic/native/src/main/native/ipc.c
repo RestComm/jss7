@@ -2,14 +2,14 @@
 #include "msg.h"
 #include "sysgct.h"
 
-#include "org_mobicents_protocols_ss7_hardware_dialogic_InterProcessCommunicator.h"
+#include "org_mobicents_ss7_hardware_dialogic_InterProcessCommunicator.h"
 
 /*
  * Class:     org_mobicents_gct_InterProcessCommunicator
  * Method:    receive
  * Signature: (I[B)I
  */
-JNIEXPORT jint JNICALL Java_org_mobicents_protocols_ss7_hardware_dialogic_InterProcessCommunicator_receive
+JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dialogic_InterProcessCommunicator_receive
 (JNIEnv *env, jobject obj, jint src_module_id, jbyteArray msg_buffer) {
 	jclass cls;
 	jfieldID fid;
@@ -59,7 +59,7 @@ JNIEXPORT jint JNICALL Java_org_mobicents_protocols_ss7_hardware_dialogic_InterP
  * Method:    send
  * Signature: (I[B)I
  */
-JNIEXPORT jint JNICALL Java_org_mobicents_protocols_ss7_hardware_dialogic_InterProcessCommunicator_send
+JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dialogic_InterProcessCommunicator_send
 (JNIEnv *env, jobject obj, jint src_module_id, jint dest_module_id, jbyteArray msg_buffer) {
 	jclass cls;
 	jfieldID fid;

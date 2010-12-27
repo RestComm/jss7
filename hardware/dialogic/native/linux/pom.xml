@@ -73,7 +73,7 @@
 						<configuration>
 							<classNames>
 								<className>
-									org.mobicents.protocols.ss7.hardware.dialogic.InterProcessCommunicator
+									org.mobicents.ss7.hardware.dialogic.InterProcessCommunicator
 								</className>
 							</classNames>
 						</configuration>

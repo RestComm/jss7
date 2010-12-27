@@ -15,11 +15,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
-package org.mobicents.protocols.ss7.hardware.dahdi;
+package org.mobicents.ss7.hardware.dahdi;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.hardware.Mtp1;
+import org.mobicents.protocols.ss7.mtp.Mtp1;
 import org.mobicents.protocols.stream.api.SelectorKey;
 import org.mobicents.protocols.stream.api.SelectorProvider;
 import org.mobicents.protocols.stream.api.StreamSelector;

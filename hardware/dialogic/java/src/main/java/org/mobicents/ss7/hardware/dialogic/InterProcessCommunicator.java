@@ -12,7 +12,7 @@
  * usefulness of the software.
  */
 
-package org.mobicents.protocols.ss7.hardware.dialogic;
+package org.mobicents.ss7.hardware.dialogic;
 
 import java.io.IOException;
 

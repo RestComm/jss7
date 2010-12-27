@@ -77,7 +77,7 @@
 						<configuration>
 							<classNames>
 								<className>
-									org.mobicents.protocols.ss7.hardware.dahdi.Channel
+									org.mobicents.ss7.hardware.dahdi.Channel
 								</className>
 							</classNames>
 						</configuration>
@@ -91,7 +91,7 @@
 						<configuration>
 							<classNames>
 								<className>
-									org.mobicents.protocols.ss7.hardware.dahdi.Selector
+									org.mobicents.ss7.hardware.dahdi.Selector
 								</className>
 							</classNames>
 						</configuration>
