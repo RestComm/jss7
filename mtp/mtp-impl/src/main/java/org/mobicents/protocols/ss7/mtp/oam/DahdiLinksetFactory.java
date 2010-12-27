@@ -7,8 +7,15 @@ package org.mobicents.protocols.ss7.mtp.oam;
  * 
  */
 public class DahdiLinksetFactory extends LinksetFactory {
+    
+    private static final String NAME = "dahdi";
 
     public DahdiLinksetFactory() {
+    }
+    
+    @Override
+    String getName() {
+        return NAME ;
     }
 
     @Override

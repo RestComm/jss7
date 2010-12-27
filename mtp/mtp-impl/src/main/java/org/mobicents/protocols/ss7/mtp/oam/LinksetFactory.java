@@ -12,5 +12,7 @@ public abstract class LinksetFactory {
     }
 
     abstract Linkset createLinkset(String[] options);
+    
+    abstract String getName();
 
 }

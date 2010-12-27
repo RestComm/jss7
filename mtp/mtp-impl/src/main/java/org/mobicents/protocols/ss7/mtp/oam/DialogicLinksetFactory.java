@@ -8,9 +8,16 @@ package org.mobicents.protocols.ss7.mtp.oam;
  */
 public class DialogicLinksetFactory extends LinksetFactory {
 
+    private static final String NAME = "dialogic";
+    
 	public DialogicLinksetFactory() {
 		super();
 	}
+	
+    @Override
+    String getName() {
+        return NAME ;
+    }
 
     @Override
     Linkset createLinkset(String[] options) {

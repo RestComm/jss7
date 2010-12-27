@@ -180,13 +180,11 @@ public class LinksetManager {
     public static void main(String args[]) throws Exception {
         LinksetManager linkSetManager = new LinksetManager();
 
-        FastMap<String, LinksetFactory> linkSetFactories = new FastMap<String, LinksetFactory>();
-        linkSetFactories.put("dahdi", new DahdiLinksetFactory());
-        linkSetFactories.put("dialogic", new DialogicLinksetFactory());
-        linkSetFactories.put("m3ua", new M3UALinksetFactory());
-
         LinksetFactoryFactory linksetFactoryFactory = new LinksetFactoryFactory();
-        linksetFactoryFactory.setLinksetFactories(linkSetFactories);
+        linksetFactoryFactory.addFactory(new DahdiLinksetFactory());
+        linksetFactoryFactory.addFactory(new DialogicLinksetFactory());
+        linksetFactoryFactory.addFactory(new M3UALinksetFactory());
+
         linkSetManager.setLinksetFactoryFactory(linksetFactoryFactory);
 
         linkSetManager.createLinkset("dahdi opc 1 dpc 2 ni 3 linkset1"

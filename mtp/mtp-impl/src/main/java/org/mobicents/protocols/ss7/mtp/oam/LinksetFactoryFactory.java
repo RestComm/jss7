@@ -6,13 +6,12 @@ public class LinksetFactoryFactory {
 
     private FastMap<String, LinksetFactory> linksetFactories = new FastMap<String, LinksetFactory>();
 
-    public FastMap<String, LinksetFactory> getLinksetFactories() {
-        return linksetFactories;
+    public void addFactory(LinksetFactory factory) {
+        linksetFactories.put(factory.getName(), factory);
     }
 
-    public void setLinksetFactories(
-            FastMap<String, LinksetFactory> linksetFactories) {
-        this.linksetFactories = linksetFactories;
+    public void removeFactory(LinksetFactory factory) {
+        linksetFactories.remove(factory);
     }
 
     public Linkset createLinkset(String[] options) {
@@ -36,9 +35,9 @@ public class LinksetFactoryFactory {
         if (linksetFactory == null) {
             return null;
         }
-        
+
         options[i] = null;
-        
+
         return linksetFactory.createLinkset(options);
     }
 }
