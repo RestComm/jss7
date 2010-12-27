@@ -132,7 +132,7 @@ public class ShellExecutor implements Runnable {
                                         .getSubject(options[0]);
                                 if (subject == null) {
                                     chan.send(messageFactory
-                                            .createMessage("Invalid Command"));
+                                            .createMessage("Invalid Subject"));
                                 } else {
                                     // Nullify examined options
                                     options[0] = null;

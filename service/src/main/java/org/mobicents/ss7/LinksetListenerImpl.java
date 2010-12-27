@@ -1,9 +1,14 @@
 package org.mobicents.ss7;
 
+import org.apache.log4j.Logger;
+import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
 import org.mobicents.ss7.linkset.oam.LinksetManager;
 import org.mobicents.ss7.management.console.LinksetListener;
 
 public class LinksetListenerImpl implements LinksetListener {
+
+    private static final Logger logger = Logger
+            .getLogger(LinksetListenerImpl.class);
 
     private LinksetManager linksetManager = null;
 
@@ -12,23 +17,50 @@ public class LinksetListenerImpl implements LinksetListener {
     }
 
     public String execute(String[] options) {
+        
+        try {
+            // Atleast 1 option is passed?
+            if (options == null || options.length < 2) {
+                return LinkOAMMessages.INVALID_COMMAND;
+            }
 
-        String firstOption = null;
-        int i = 0;
-        while (i < options.length && (firstOption = options[i]) == null) {
-            i++;
+            String firstOption = options[1];
+
+            if (firstOption == null) {
+                return LinkOAMMessages.INVALID_COMMAND;
+            }
+
+            if (firstOption.compareTo("create") == 0) {
+                // Create Linkset
+                return this.linksetManager.createLinkset(options);
+            } else if (firstOption.compareTo("delete") == 0) {
+                // Delete Linkset
+                return this.linksetManager.deleteLinkset(options);
+
+            } else if (firstOption.compareTo("link") == 0) {
+                // Operation for Link
+
+                // Check do we have more options
+                if (options.length < 3) {
+                    return LinkOAMMessages.INVALID_COMMAND;
+                }
+
+                // Check if its create or delete
+                firstOption = options[2];
+                if (firstOption == null) {
+                    return LinkOAMMessages.INVALID_COMMAND;
+                }
+
+                if (firstOption.compareTo("create") == 0) {
+                    return this.linksetManager.createLink(options);
+                } else if (firstOption.compareTo("delete") == 0) {
+                    return this.linksetManager.deleteLink(options);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error while executing command ", e);
+            return e.toString();
         }
-
-        if (firstOption == null) {
-            return "Invalid Command";
-        }
-
-        if (firstOption.compareTo("create") == 0) {
-            options[i] = null;
-            return this.linksetManager.createLinkset(options);
-        }
-
-        return "Invalid Command";
+        return LinkOAMMessages.INVALID_COMMAND;
     }
-
 }
