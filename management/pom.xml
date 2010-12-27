@@ -15,6 +15,7 @@
 
 
 	<modules>
+		<module>linkset</module>
 		<module>shell</module>
 	</modules>
 
@@ -33,6 +34,7 @@
 		<profile>
 			<id>maven-release</id>
 			<modules>
+				<module>linkset</module>
 				<module>shell</module>
 				<module>docs</module>
 			</modules>
