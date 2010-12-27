@@ -58,14 +58,6 @@
 
 	<dependencies>
 		<dependency>
-			<artifactId>mobicents-dahdi</artifactId>
-			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-		</dependency>
-			<dependency>
-				<artifactId>mobicents-dialogic</artifactId>
-				<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-			</dependency>		
-		<dependency>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
 			<artifactId>m3ua-api</artifactId>
 		</dependency>

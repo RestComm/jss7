@@ -30,7 +30,6 @@ import java.io.IOException;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.hardware.Mtp1;
 import org.mobicents.protocols.ss7.mtp.Mtp3.SLTMTest;
 
 /**

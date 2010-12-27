@@ -23,7 +23,7 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.StartFailedException;
-import org.mobicents.protocols.ss7.hardware.dialogic.InterProcessCommunicator;
+//import org.mobicents.protocols.ss7.hardware.dialogic.InterProcessCommunicator;
 import org.mobicents.protocols.ss7.mtp.Utils;
 import org.mobicents.protocols.ss7.mtp.provider.MtpListener;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
@@ -38,7 +38,7 @@ public class MtpImpl implements MtpProvider, Runnable {
     private String linksetName;
     
     //communicator with hardware
-    private InterProcessCommunicator ipc; 
+   // private InterProcessCommunicator ipc; 
     
     //Dialogic modules
     private int src = 61;
@@ -167,7 +167,7 @@ public class MtpImpl implements MtpProvider, Runnable {
      */
     public void send(byte[] msu) throws IOException {
         //write message to the hardware
-        ipc.send(msu);
+       // ipc.send(msu);
     }
 
     /**
@@ -178,7 +178,7 @@ public class MtpImpl implements MtpProvider, Runnable {
     public void start() throws StartFailedException {
         logger.info(String.format("Starting linkset :[opc=%d, adjacent=%d]", opc, dpc));
         
-        ipc = new InterProcessCommunicator(src, dst);
+       // ipc = new InterProcessCommunicator(src, dst);
         logger.info(String.format("Succesfully accessed hardware:[opc=%d, adjacent=%d]", opc, dpc));
         
         this.stopped = false;
@@ -227,7 +227,7 @@ public class MtpImpl implements MtpProvider, Runnable {
                 }
 
                 //receive message signal unit from harware
-                byte[] msu = ipc.receive();
+               byte[] msu = null; //ipc.receive();
                 logger.info("Packet received!!!!" + msu.length );
                 if (logger.isTraceEnabled()) {
                     logger.trace(Utils.hexDump("Packet received\n", msu));

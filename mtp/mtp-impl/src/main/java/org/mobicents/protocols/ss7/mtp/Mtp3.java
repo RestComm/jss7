@@ -34,7 +34,6 @@ import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.hardware.Mtp1;
 import org.mobicents.protocols.stream.api.SelectorKey;
 import org.mobicents.protocols.stream.api.SelectorProvider;
 import org.mobicents.protocols.stream.api.StreamSelector;
