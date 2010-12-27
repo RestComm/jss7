@@ -44,6 +44,8 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
     private String shellAddress = "127.0.0.1";
     private int shellPort = 3435;
+    
+    private LinksetManager linkSetManager = null;
 
     private Logger logger = Logger.getLogger(SS7Service.class);
 
@@ -65,7 +67,9 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
         logger.info("Starting SS7 management shell environment");
         shell = new ShellExecutor(InetAddress.getByName(this.shellAddress),
                 this.shellPort);
+        shell.setLinksetManager(this.linkSetManager);
         shell.start();
+        
 
         logger.info("Started SS7 service");
     }
@@ -96,6 +100,14 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
     public void setConfigPath(String path) {
         this.path = path;
+    }
+    
+    public LinksetManager getLinkSetManager() {
+        return linkSetManager;
+    }
+
+    public void setLinkSetManager(LinksetManager linkSetManager) {
+        this.linkSetManager = linkSetManager;
     }
 
     @Override

@@ -26,6 +26,8 @@ import java.nio.channels.SelectionKey;
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.management.console.Subject;
+import org.mobicents.protocols.ss7.mtp.oam.LinksetManager;
 import org.mobicents.ss7.management.transceiver.ChannelProvider;
 import org.mobicents.ss7.management.transceiver.ChannelSelectionKey;
 import org.mobicents.ss7.management.transceiver.ChannelSelector;
@@ -53,6 +55,10 @@ public class ShellExecutor implements Runnable {
     private String rxMessage = "";
     private String txMessage = "";
 
+    private LinksetManager linksetManager = null;
+
+    private LinksetListenerImpl linksetListenerImpl = null;
+
     private volatile boolean started = false;
 
     public ShellExecutor(InetAddress address, int port) throws IOException {
@@ -72,12 +78,22 @@ public class ShellExecutor implements Runnable {
     }
 
     public void start() {
+        linksetListenerImpl = new LinksetListenerImpl(this.linksetManager);
+
         this.started = true;
         new Thread(this).start();
     }
 
     public void stop() {
         this.started = false;
+    }
+
+    protected LinksetManager getLinksetManager() {
+        return linksetManager;
+    }
+
+    protected void setLinksetManager(LinksetManager linksetManager) {
+        this.linksetManager = linksetManager;
     }
 
     public String getReceivedMessage() {
@@ -100,17 +116,38 @@ public class ShellExecutor implements Runnable {
                     } else if (key.isReadable()) {
                         ShellChannel chan = (ShellChannel) key.channel();
                         Message msg = (Message) chan.receive();
-                        System.out.println("Receive " + msg);
-                        rxMessage = msg.toString();
 
-                        if (rxMessage.compareTo("disconnect") == 0) {
-                            this.txMessage = "Bye";
-                            chan.send(messageFactory.createMessage(txMessage));
+                        if (msg != null) {
+                            System.out.println("Receive " + msg);
+                            rxMessage = msg.toString();
 
-                        } else {
-                            //TODO : Clean this. Reflecting message now
-                            chan.send(messageFactory.createMessage("From server : "+rxMessage));
-                        }
+                            if (rxMessage.compareTo("disconnect") == 0) {
+                                this.txMessage = "Bye";
+                                chan.send(messageFactory
+                                        .createMessage(txMessage));
+
+                            } else {
+                                String[] options = rxMessage.split(" ");
+                                Subject subject = Subject
+                                        .getSubject(options[0]);
+                                if (subject == null) {
+                                    chan.send(messageFactory
+                                            .createMessage("Invalid Command"));
+                                } else {
+                                    // Nullify examined options
+                                    options[0] = null;
+
+                                    switch (subject) {
+                                    case LINKSET:
+                                        this.txMessage = this.linksetListenerImpl
+                                                .execute(options);
+                                        chan.send(messageFactory
+                                                .createMessage(this.txMessage));
+                                        break;
+                                    }
+                                }
+                            } // if (rxMessage.compareTo("disconnect")
+                        } // if (msg != null)
 
                         // TODO Handle message
 
@@ -120,12 +157,14 @@ public class ShellExecutor implements Runnable {
 
                         if (this.txMessage.compareTo("Bye") == 0) {
                             this.closeChannel();
-                        } else {
-
-                            ShellChannel chan = (ShellChannel) key.channel();
-                            System.out.println("Sending " + txMessage);
-                            chan.send(messageFactory.createMessage(txMessage));
-                        }
+                        } 
+                        
+//                        else {
+//
+//                            ShellChannel chan = (ShellChannel) key.channel();
+//                            System.out.println("Sending " + txMessage);
+//                            chan.send(messageFactory.createMessage(txMessage));
+//                        }
 
                         this.txMessage = "";
                     }
