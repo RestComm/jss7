@@ -14,7 +14,6 @@ import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
 
-
 /**
  * 
  * @author amit bhayani
@@ -104,15 +103,25 @@ public class LinksetManager {
     /**
      * Operations
      */
-    public String createLinkset(String[] options) {
 
-        Linkset linkset = this.linksetFactoryFactory.createLinkset(options);
+    /**
+     * Expected command is "linkset create <linkset-type> <options>
+     * <linkset-name>"
+     * 
+     * @param options
+     * @return
+     */
+    public String createLinkset(String[] options) throws Exception {
+
+        Linkset linkset = null;
+
+        linkset = this.linksetFactoryFactory.createLinkset(options);
 
         if (linkset == null) {
             return "Invalid Command";
         }
 
-        // huh, we parse first and then check for name :(
+        // TODO huh, we parse first and then check for name :(
         if (this.linksets.containsKey(linkset.getLinksetName())) {
             return LinkOAMMessages.LINKSET_ALREADY_EXIST;
         }
@@ -121,6 +130,103 @@ public class LinksetManager {
         this.store();
 
         return LinkOAMMessages.LINKSET_SUCCESSFULLY_ADDED;
+    }
+
+    /**
+     * Expected command is "linkset delete <linkset-name>"
+     * 
+     * @param options
+     * @return
+     * @throws Exception
+     */
+    public String deleteLinkset(String[] options) throws Exception {
+        String linksetName = options[(options.length - 1)];
+
+        if (linksetName == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+        Linkset linkset = this.linksets.get(linksetName);
+
+        if (linkset == null) {
+            throw new Exception(LinkOAMMessages.LINKSET_DOESNT_EXIST);
+        }
+
+        if (linkset.getState() == LinksetState.AVAILABLE) {
+            throw new Exception(LinkOAMMessages.CANT_DELETE_LINKSET);
+        }
+
+        this.linksets.remove(linksetName);
+        
+        this.store();
+
+        return LinkOAMMessages.LINKSET_SUCCESSFULLY_REMOVED;
+    }
+
+    /**
+     * Create new Link. The expected command is "linkset link create <options>
+     * linkset1 link1" where linkset1 is the linkset name and "link1" is link
+     * name to be created and associated with "linkset1". The <options> depends
+     * on type of link to be created
+     * 
+     * @param options
+     * @return
+     */
+    public String createLink(String[] options) throws Exception {
+
+        if (options == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+
+        // The second last option is Linkset name
+        String linksetName = options[(options.length - 2)];
+
+        if (linksetName == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+        Linkset linkset = this.linksets.get(linksetName);
+
+        if (linkset == null) {
+            throw new Exception(LinkOAMMessages.LINKSET_DOESNT_EXIST);
+        }
+
+        linkset.createLink(options);
+
+        this.store();
+
+        return LinkOAMMessages.LINK_SUCCESSFULLY_ADDED;
+    }
+
+    /**
+     * Expected command is "linkset link delete linkset1 link1"
+     * 
+     * @param options
+     * @return
+     * @throws Exception
+     */
+    public String deleteLink(String[] options) throws Exception {
+
+        if (options == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+
+        // The second last option is Linkset name
+        String linksetName = options[(options.length - 2)];
+
+        if (linksetName == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+        Linkset linkset = this.linksets.get(linksetName);
+
+        if (linkset == null) {
+            throw new Exception(LinkOAMMessages.LINKSET_DOESNT_EXIST);
+        }
+
+        // Last is Link name
+        linkset.deleteLink(options[(options.length - 1)]);
+
+        this.store();
+
+        return LinkOAMMessages.LINK_SUCCESSFULLY_REMOVED;
     }
 
     /**
@@ -182,9 +288,9 @@ public class LinksetManager {
         LinksetManager linkSetManager = new LinksetManager();
 
         LinksetFactoryFactory linksetFactoryFactory = new LinksetFactoryFactory();
-//        linksetFactoryFactory.addFactory(new DahdiLinksetFactory());
-//        linksetFactoryFactory.addFactory(new DialogicLinksetFactory());
-//        linksetFactoryFactory.addFactory(new M3UALinksetFactory());
+        // linksetFactoryFactory.addFactory(new DahdiLinksetFactory());
+        // linksetFactoryFactory.addFactory(new DialogicLinksetFactory());
+        // linksetFactoryFactory.addFactory(new M3UALinksetFactory());
 
         linkSetManager.setLinksetFactoryFactory(linksetFactoryFactory);
 

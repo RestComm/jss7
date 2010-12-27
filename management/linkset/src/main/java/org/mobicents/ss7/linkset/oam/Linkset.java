@@ -113,7 +113,9 @@ public abstract class Linkset implements XMLSerializable, Stream {
     /**
      * Operations
      */
-    public abstract boolean addLink(String linkName, ByteBuffer byteBuffer);
+    public abstract void createLink(String[] options) throws Exception;
+    
+    public abstract void deleteLink(String linkName) throws Exception;
 
     public Link getLink(String linkName) {
         return this.links.get(linkName);

@@ -14,30 +14,28 @@ public class LinksetFactoryFactory {
         linksetFactories.remove(factory);
     }
 
-    public Linkset createLinkset(String[] options) {
+    public Linkset createLinkset(String[] options) throws Exception {
         if (options == null) {
-            return null;
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
         }
 
-        String firstOption = null;
-        int i = 0;
-
-        while (i < options.length && (firstOption = options[i]) == null) {
-            i++;
+        // The expected command is "linkset create <likset-type> <options>"
+        // Expect atleast length to 3
+        if (options.length < 3) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
         }
 
-        if (firstOption == null) {
-            return null;
+        String type = options[2];
+
+        if (type == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
         }
 
-        LinksetFactory linksetFactory = linksetFactories.get(firstOption);
+        LinksetFactory linksetFactory = linksetFactories.get(type);
 
         if (linksetFactory == null) {
-            return null;
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
         }
-
-        options[i] = null;
-
         return linksetFactory.createLinkset(options);
     }
 }
