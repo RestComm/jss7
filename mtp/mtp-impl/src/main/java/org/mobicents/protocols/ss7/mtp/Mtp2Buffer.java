@@ -21,7 +21,7 @@ package org.mobicents.protocols.ss7.mtp;
  * @author baranowb
  *
  */
-class Mtp2Buffer {
+public class Mtp2Buffer {
     /**
      * data in this frame.
      */
