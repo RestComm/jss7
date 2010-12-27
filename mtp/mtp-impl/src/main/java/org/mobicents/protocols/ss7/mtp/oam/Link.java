@@ -2,7 +2,6 @@ package org.mobicents.protocols.ss7.mtp.oam;
 
 import java.nio.ByteBuffer;
 
-import javolution.text.TextBuilder;
 import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
@@ -14,7 +13,7 @@ import javolution.xml.stream.XMLStreamException;
  */
 public abstract class Link implements XMLSerializable {
 
-	protected TextBuilder linkName = TextBuilder.newInstance();
+	protected String linkName = null;
 
 	protected int state = LinkState.UNAVAILABLE;
 	protected int mode = LinkMode.UNCONFIGURED;
@@ -42,16 +41,13 @@ public abstract class Link implements XMLSerializable {
 	public Link() {
 	}
 
-	public Link(TextBuilder linkName) {
-		for (int i = 0; i < linkName.length(); i++) {
-			this.linkName.append(linkName.charAt(i));
-		}
-
+	public Link(String linkName) {
+			this.linkName = linkName;
 	}
 
 	protected abstract void init();
 
-	public TextBuilder getLinkName() {
+	public String getLinkName() {
 		return linkName;
 	}
 
@@ -90,7 +86,7 @@ public abstract class Link implements XMLSerializable {
 		@Override
 		public void read(javolution.xml.XMLFormat.InputElement xml, Link link)
 				throws XMLStreamException {
-			link.linkName.append(xml.getAttribute(LINK_NAME));
+			link.linkName = xml.getAttribute(LINK_NAME).toString();
 			link.state = xml.getAttribute(LINK_STATE, LinkState.UNAVAILABLE);
 			link.mode = xml.getAttribute(LINK_MODE, LinkMode.UNCONFIGURED);
 
@@ -100,7 +96,7 @@ public abstract class Link implements XMLSerializable {
 		@Override
 		public void write(Link link, javolution.xml.XMLFormat.OutputElement xml)
 				throws XMLStreamException {
-			xml.setAttribute(LINK_NAME, link.linkName.toString());
+			xml.setAttribute(LINK_NAME, link.linkName);
 			xml.setAttribute(LINK_STATE, link.state);
 			xml.setAttribute(LINK_MODE, link.mode);
 

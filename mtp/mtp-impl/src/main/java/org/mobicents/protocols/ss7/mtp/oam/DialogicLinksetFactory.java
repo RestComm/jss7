@@ -1,6 +1,5 @@
 package org.mobicents.protocols.ss7.mtp.oam;
 
-import javolution.text.TextBuilder;
 
 /**
  * 
@@ -10,12 +9,12 @@ import javolution.text.TextBuilder;
 public class DialogicLinksetFactory extends LinksetFactory {
 
 	public DialogicLinksetFactory() {
-		super(LinksetType.DIALOGI);
+		super();
 	}
 
-	@Override
-	Linkset createLinkSet(TextBuilder linkSetName) {
-		return new DialogicLinkset(linkSetName, this.type);
-	}
+    @Override
+    Linkset createLinkset(String[] options) {
+        return null;
+    }
 
 }

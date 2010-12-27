@@ -24,7 +24,7 @@ public class M3UALinkset extends Linkset {
 
 	}
 
-	public M3UALinkset(TextBuilder linkSetName, int type) {
+	public M3UALinkset(String linkSetName, String type) {
 		super(linkSetName, type);
 	}
 
@@ -57,7 +57,7 @@ public class M3UALinkset extends Linkset {
 	 */
 
 	@Override
-	public boolean addLink(TextBuilder linkName, ByteBuffer byteBuffer) {
+	public boolean addLink(String linkName, ByteBuffer byteBuffer) {
 		return FALSE;
 	}
 

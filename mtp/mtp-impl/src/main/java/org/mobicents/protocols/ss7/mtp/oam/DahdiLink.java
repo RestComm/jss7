@@ -34,7 +34,7 @@ public class DahdiLink extends Link {
 	public DahdiLink() {
 	}
 
-	public DahdiLink(TextBuilder linkName) {
+	public DahdiLink(String linkName) {
 		super(linkName);
 	}
 
