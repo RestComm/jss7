@@ -8,14 +8,15 @@ import javolution.util.FastMap;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
+import org.mobicents.ss7.linkset.oam.LinkState;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.Mtp3Listener;
 import org.mobicents.ss7.linkset.oam.Link;
 import org.mobicents.ss7.linkset.oam.LinkMode;
+import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
 import org.mobicents.ss7.linkset.oam.Linkset;
 import org.mobicents.ss7.linkset.oam.LinksetMode;
 import org.mobicents.ss7.linkset.oam.LinksetState;
-import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
 
 /**
  * 
@@ -70,28 +71,70 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
      * Operations
      */
     @Override
-    public boolean addLink(String linkName, ByteBuffer byteBuffer) {
+    public void createLink(String[] options) throws Exception {
 
-        if (links.containsKey(linkName)) {
-            byteBuffer.put(LinkOAMMessages.LINK_ALREADY_EXIST);
-            return FALSE;
+        // the command looks like "linkset link create span 1 code 1 channel 1
+        // linkset1 link1"
+        if (options.length != 11) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
         }
 
-        DahdiLink link = new DahdiLink(linkName);
+        String option = options[3];
+
+        if (option == null || option.compareTo("span") != 0) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+
+        int span = Integer.parseInt(options[4]);
+
+        option = options[5];
+        if (option == null || option.compareTo("code") != 0) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+
+        int code = Integer.parseInt(options[6]);
+
+        option = options[7];
+        if (option == null || option.compareTo("channel") != 0) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+
+        int channel = Integer.parseInt(options[8]);
+
+        option = options[10]; // Link name
+        if (option == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+
+        if (links.containsKey(option)) {
+            throw new Exception(LinkOAMMessages.LINK_ALREADY_EXIST);
+        }
+
+        DahdiLink link = new DahdiLink(option, span, channel, code);
         link.setLinkSet(this);
 
-        this.links.put(linkName, link);
+        this.links.put(option, link);
 
-        // Send back success message
-        byteBuffer.put(LinkOAMMessages.LINK_SUCCESSFULLY_ADDED);
-        return TRUE;
+    }
 
+    @Override
+    public void deleteLink(String linkName) throws Exception {
+        Link link = this.links.get(linkName);
+        if(link == null){
+            throw new Exception(LinkOAMMessages.LINK_DOESNT_EXIST);
+        }
+        
+        if(link.getState() == LinkState.AVAILABLE){
+            throw new Exception(LinkOAMMessages.CANT_DELETE_LINK);
+        }
+        
+        this.links.remove(linkName);
     }
 
     @Override
     public boolean noShutdown(ByteBuffer byteBuffer) {
         if (this.state == LinksetState.AVAILABLE) {
-            byteBuffer.put(LinkOAMMessages.LINKSET_ALREADY_ACTIVE);
+            //byteBuffer.put(LinkOAMMessages.LINKSET_ALREADY_ACTIVE);
             return FALSE;
         }
 
@@ -112,7 +155,7 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
             return TRUE;
         }
 
-        byteBuffer.put(LinkOAMMessages.LINKSET_NO_LINKS_CONFIGURED);
+        //byteBuffer.put(LinkOAMMessages.LINKSET_NO_LINKS_CONFIGURED);
         return FALSE;
 
     }

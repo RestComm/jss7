@@ -1,5 +1,6 @@
 package org.mobicents.ss7.m3ua.oam;
 
+import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
 import org.mobicents.ss7.linkset.oam.Linkset;
 import org.mobicents.ss7.linkset.oam.LinksetFactory;
 
@@ -22,8 +23,8 @@ public class M3UALinksetFactory extends LinksetFactory {
     }
 
     @Override
-    public Linkset createLinkset(String[] options) {
-        return null;
+    public Linkset createLinkset(String[] options)throws Exception {
+        throw new Exception(LinkOAMMessages.NOT_IMPLEMENTED);
     }
 
 }

@@ -1,5 +1,6 @@
 package org.mobicents.ss7.hardware.dahdi.oam;
 
+import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
 import org.mobicents.ss7.linkset.oam.Linkset;
 import org.mobicents.ss7.linkset.oam.LinksetFactory;
 
@@ -21,70 +22,40 @@ public class DahdiLinksetFactory extends LinksetFactory {
     }
 
     @Override
-    public Linkset createLinkset(String[] options) {
+    public Linkset createLinkset(String[] options) throws Exception {
 
-        // opc 1 dpc 2 ni 3 linkset1
-        if (options.length < 7) {
-            return null;
+        // the expected command is "linkset create dahdi opc 1 dpc 2 ni 3
+        // linkset1". We know length is 10
+        if (options.length != 10) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
         }
 
-        String option = null;
-        int i = 0;
-        while (i < 7 && ((option = options[i]) == null)) {
-            i++;
-        }
-
-        // If offset + command length is not equal to options length
-        if (i + 7 != options.length) {
-            return null;
-        }
+        String option = options[3];
 
         // If first option is not OPC
         if (option.compareTo("opc") != 0) {
             return null;
         }
 
-        i++;
-        int opc;
-        try {
-            opc = Integer.parseInt(options[i]);
-        } catch (NumberFormatException e) {
-            return null;
+        int opc = Integer.parseInt(options[4]);
+
+        if (options[5].compareTo("dpc") != 0) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
         }
 
-        i++;
+        int dpc = Integer.parseInt(options[6]);
 
-        if (options[i].compareTo("dpc") != 0) {
-            return null;
+        if (options[7].compareTo("ni") != 0) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
         }
 
-        i++;
+        int ni = Integer.parseInt(options[8]);
 
-        int dpc;
-        try {
-            dpc = Integer.parseInt(options[i]);
-        } catch (NumberFormatException e) {
-            return null;
+        String name = options[9];
+
+        if (name == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
         }
-
-        i++;
-
-        if (options[i].compareTo("ni") != 0) {
-            return null;
-        }
-
-        i++;
-
-        int ni;
-        try {
-            ni = Integer.parseInt(options[i]);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-
-        i++;
-
-        String name = options[i];
 
         return new DahdiLinkset(name, opc, dpc, ni);
     }

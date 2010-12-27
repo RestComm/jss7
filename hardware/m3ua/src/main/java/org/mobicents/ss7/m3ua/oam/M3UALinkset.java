@@ -61,14 +61,9 @@ public class M3UALinkset extends Linkset {
      */
 
     @Override
-    public boolean addLink(String linkName, ByteBuffer byteBuffer) {
-        return FALSE;
-    }
-
-    @Override
     public boolean noShutdown(ByteBuffer byteBuffer) {
         if (this.state == LinksetState.AVAILABLE) {
-            byteBuffer.put(LinkOAMMessages.LINKSET_ALREADY_ACTIVE);
+            //byteBuffer.put(LinkOAMMessages.LINKSET_ALREADY_ACTIVE);
             return FALSE;
         }
 
@@ -123,6 +118,16 @@ public class M3UALinkset extends Linkset {
     public int write(byte[] paramArrayOfByte) throws IOException {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    @Override
+    public void createLink(String[] arg0) throws Exception {
+        throw new Exception(LinkOAMMessages.NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public void deleteLink(String arg0) throws Exception {
+        throw new Exception(LinkOAMMessages.NOT_IMPLEMENTED);
     }
 
 }

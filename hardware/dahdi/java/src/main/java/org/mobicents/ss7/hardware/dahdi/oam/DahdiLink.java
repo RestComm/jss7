@@ -36,8 +36,11 @@ public class DahdiLink extends Link {
     public DahdiLink() {
     }
 
-    public DahdiLink(String linkName) {
+    public DahdiLink(String linkName, int span, int channelID, int code) {
         super(linkName);
+        this.span = span;
+        this.channelID = channelID;
+        this.code = code;
     }
 
     @Override
