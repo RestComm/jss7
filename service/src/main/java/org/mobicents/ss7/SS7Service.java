@@ -25,8 +25,8 @@ import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.jboss.system.ServiceMBeanSupport;
-import org.mobicents.protocols.ss7.mtp.oam.LinksetManager;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
+import org.mobicents.ss7.linkset.oam.LinksetManager;
 
 /**
  * @author amit bhayani

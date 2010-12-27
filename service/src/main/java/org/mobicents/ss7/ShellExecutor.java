@@ -26,8 +26,8 @@ import java.nio.channels.SelectionKey;
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.management.console.Subject;
-import org.mobicents.protocols.ss7.mtp.oam.LinksetManager;
+import org.mobicents.ss7.linkset.oam.LinksetManager;
+import org.mobicents.ss7.management.console.Subject;
 import org.mobicents.ss7.management.transceiver.ChannelProvider;
 import org.mobicents.ss7.management.transceiver.ChannelSelectionKey;
 import org.mobicents.ss7.management.transceiver.ChannelSelector;

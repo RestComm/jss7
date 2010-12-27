@@ -1,7 +1,7 @@
 package org.mobicents.ss7;
 
-import org.mobicents.protocols.ss7.management.console.LinksetListener;
-import org.mobicents.protocols.ss7.mtp.oam.LinksetManager;
+import org.mobicents.ss7.linkset.oam.LinksetManager;
+import org.mobicents.ss7.management.console.LinksetListener;
 
 public class LinksetListenerImpl implements LinksetListener {
 

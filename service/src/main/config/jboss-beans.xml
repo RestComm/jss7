@@ -2,51 +2,29 @@
 <deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="urn:jboss:bean-deployer:2.0">
 
+	<bean name="LinksetFactoryFactory"
+		class="org.mobicents.ss7.linkset.oam.LinksetFactoryFactory">
+		<incallback method="addFactory" />
+		<uncallback method="removeFactory" />
+	</bean>
+
 	<bean name="DahdiLinksetFactory"
-		class="org.mobicents.protocols.ss7.mtp.oam.DahdiLinksetFactory">
+		class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
 	</bean>
 
 	<bean name="DialogicLinksetFactory"
-		class="org.mobicents.protocols.ss7.mtp.oam.DialogicLinksetFactory">
+		class="org.mobicents.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
 	</bean>
 
 	<bean name="M3UALinksetFactory"
-		class="org.mobicents.protocols.ss7.mtp.oam.M3UALinksetFactory">
-	</bean>
-
-	<bean name="LinksetFactoryFactory"
-		class="org.mobicents.protocols.ss7.mtp.oam.LinksetFactoryFactory">
-		<property name="linksetFactories">
-
-			<map keyClass="java.lang.String"
-				valueClass="org.mobicents.protocols.ss7.mtp.oam.LinksetFactory">
-				<entry>
-					<key>dahdi</key>
-					<value>
-						<inject bean="DahdiLinksetFactory" />
-					</value>
-				</entry>
-				<entry>
-					<key>dialogic</key>
-					<value>
-						<inject bean="DialogicLinksetFactory" />
-					</value>
-				</entry>
-				<entry>
-					<key>m3ua</key>
-					<value>
-						<inject bean="M3UALinksetFactory" />
-					</value>
-				</entry>
-			</map>
-		</property>
+		class="org.mobicents.ss7.m3ua.oam.M3UALinksetFactory">
 	</bean>
 
 	<bean name="LinksetManager"
-		class="org.mobicents.protocols.ss7.mtp.oam.LinksetManager">
+		class="org.mobicents.ss7.linkset.oam.LinksetManager">
 
 		<property name="linksetFactoryFactory">
-				<inject bean="LinksetFactoryFactory" />
+			<inject bean="LinksetFactoryFactory" />
 		</property>
 		<property name="persistDir">${jboss.server.data.dir}</property>
 	</bean>
