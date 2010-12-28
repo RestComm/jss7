@@ -1,7 +1,5 @@
 package org.mobicents.ss7.m3ua.oam;
 
-import java.io.IOException;
-
 import javolution.text.TextBuilder;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
@@ -27,13 +25,14 @@ public class M3UALinkset extends Linkset {
 
     }
 
-    public M3UALinkset(String linkSetName, String type) {
-        super(linkSetName, type);
+    @Override
+    protected void initialize() {
+        // TODO Auto-generated method stub
+
     }
 
     @Override
-    protected void init() {
-        // TODO Auto-generated method stub
+    protected void configure() {
 
     }
 
@@ -82,6 +81,16 @@ public class M3UALinkset extends Linkset {
         throw new Exception(LinkOAMMessages.OPERATION_NOT_SUPPORTED);
     }
 
+    @Override
+    public void createLink(String[] arg0) throws Exception {
+        throw new Exception(LinkOAMMessages.NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public void deleteLink(String arg0) throws Exception {
+        throw new Exception(LinkOAMMessages.NOT_IMPLEMENTED);
+    }
+
     /**
      * XML Serialization/Deserialization
      */
@@ -107,37 +116,4 @@ public class M3UALinkset extends Linkset {
             LINKSET_XML.write(linkSet, xml);
         }
     };
-
-    /**
-     * Stream implementation methods
-     */
-
-    @Override
-    protected boolean poll(int operation, int timeout) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public int read(byte[] paramArrayOfByte) throws IOException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public int write(byte[] paramArrayOfByte) throws IOException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public void createLink(String[] arg0) throws Exception {
-        throw new Exception(LinkOAMMessages.NOT_IMPLEMENTED);
-    }
-
-    @Override
-    public void deleteLink(String arg0) throws Exception {
-        throw new Exception(LinkOAMMessages.NOT_IMPLEMENTED);
-    }
-
 }

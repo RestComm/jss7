@@ -170,4 +170,9 @@ public class DahdiLink extends Link {
     protected Mtp2 getMtp2() {
         return this.mtp2;
     }
+
+    @Override
+    public void print(StringBuffer sb, int leftPad, int descPad) {
+        
+    }
 }

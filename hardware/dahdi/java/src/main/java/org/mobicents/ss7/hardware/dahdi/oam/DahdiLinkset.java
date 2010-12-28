@@ -10,13 +10,18 @@ import javolution.xml.stream.XMLStreamException;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.Mtp3Listener;
+import org.mobicents.protocols.stream.api.SelectorKey;
+import org.mobicents.protocols.stream.api.SelectorProvider;
+import org.mobicents.protocols.stream.api.StreamSelector;
 import org.mobicents.ss7.linkset.oam.Link;
 import org.mobicents.ss7.linkset.oam.LinkMode;
 import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
 import org.mobicents.ss7.linkset.oam.LinkState;
 import org.mobicents.ss7.linkset.oam.Linkset;
 import org.mobicents.ss7.linkset.oam.LinksetMode;
+import org.mobicents.ss7.linkset.oam.LinksetSelector;
 import org.mobicents.ss7.linkset.oam.LinksetState;
+import org.mobicents.ss7.linkset.oam.LinksetStream;
 
 /**
  * 
@@ -36,10 +41,16 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
 
     public DahdiLinkset(String linksetName, int opc, int dpc, int ni) {
         super(linksetName, opc, dpc, ni);
+
     }
 
     @Override
-    protected void init() throws Exception {
+    protected void initialize() {
+        this.linksetStream = new LinksetStreamImpl();
+    }
+
+    @Override
+    protected void configure() throws Exception {
 
         if (this.mode == LinksetMode.CONFIGURED) {
 
@@ -141,7 +152,7 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
             Link value = e.getValue();
             if (value.getMode() == LinkMode.CONFIGURED) {
                 this.mode = LinksetMode.CONFIGURED;
-                this.init();
+                this.configure();
                 this.state = LinksetState.UNAVAILABLE;
                 return;
             }
@@ -191,7 +202,7 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
             LINKSET_XML.read(xml, linkSet);
 
             try {
-                linkSet.init();
+                linkSet.configure();
             } catch (Exception e) {
                 logger.error("Error while initializing dahdi linkset", e);
             }
@@ -204,35 +215,6 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
             LINKSET_XML.write(linkSet, xml);
         }
     };
-
-    /**
-     * Stream implementation methods
-     */
-
-    @Override
-    protected boolean poll(int operation, int timeout) {
-        if (mtp3 != null) {
-            mtp3.run();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public int read(byte[] paramArrayOfByte) throws IOException {
-        if (queue.isEmpty()) {
-            return 0;
-        }
-        paramArrayOfByte = queue.poll();
-        return paramArrayOfByte == null ? 0 : paramArrayOfByte.length;
-    }
-
-    @Override
-    public int write(byte[] paramArrayOfByte) throws IOException {
-        mtp3.send(paramArrayOfByte, paramArrayOfByte.length);
-        return paramArrayOfByte.length;
-    }
 
     // TODO : We still working with Listener model. rather change MTP3 to give
     // back byte[] and caller calls .read(byte[] data) to read data
@@ -251,5 +233,44 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
 
     public void receive(byte[] msgBuff) {
         queue.offer(msgBuff);
+    }
+
+    private class LinksetStreamImpl extends LinksetStream {
+
+        @Override
+        public boolean poll(int arg0, int arg1) {
+            if (mtp3 != null) {
+                mtp3.run();
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public void close() {
+            // TODO Auto-generated method stub
+
+        }
+
+        public SelectorProvider provider() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public int read(byte[] paramArrayOfByte) throws IOException {
+            if (queue.isEmpty()) {
+                return 0;
+            }
+            paramArrayOfByte = queue.poll();
+            return paramArrayOfByte == null ? 0 : paramArrayOfByte.length;
+        }
+
+        public SelectorKey register(StreamSelector selector) throws IOException {
+            return ((LinksetSelector) selector).register(this);
+        }
+
+        public int write(byte[] paramArrayOfByte) throws IOException {
+            mtp3.send(paramArrayOfByte, paramArrayOfByte.length);
+            return paramArrayOfByte.length;
+        }
     }
 }
