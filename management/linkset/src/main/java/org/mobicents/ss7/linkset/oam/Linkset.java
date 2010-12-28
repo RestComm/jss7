@@ -1,7 +1,6 @@
 package org.mobicents.ss7.linkset.oam;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import javolution.util.FastMap;
 import javolution.xml.XMLFormat;
@@ -60,7 +59,7 @@ public abstract class Linkset implements XMLSerializable, Stream {
     }
 
     // Initialize the Link. Depends on Type of Link
-    protected abstract void init();
+    protected abstract void init() throws Exception;
 
     public int getDpc() {
         return dpc;
@@ -121,7 +120,13 @@ public abstract class Linkset implements XMLSerializable, Stream {
         return this.links.get(linkName);
     }
 
-    public abstract boolean noShutdown(ByteBuffer byteBuffer);
+    public abstract void activate() throws Exception;
+    
+    public abstract void deactivate() throws Exception;
+    
+    public abstract void activateLink(String linkName) throws Exception;
+    
+    public abstract void deactivateLink(String linkName) throws Exception;
 
     // Poll the LinkSets for readiness
     protected abstract boolean poll(int operation, int timeout);

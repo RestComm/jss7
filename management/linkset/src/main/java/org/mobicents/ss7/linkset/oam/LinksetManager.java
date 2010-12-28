@@ -105,8 +105,15 @@ public class LinksetManager {
      */
 
     /**
+     * <p>
      * Expected command is "linkset create <linkset-type> <options>
-     * <linkset-name>"
+     * <linkset-name>". linkset is
+     * {@link org.mobicents.ss7.management.console.Subject}
+     * </p>
+     * <p>
+     * For example for creation of dahdi linkset, the command is : linkset
+     * create dahdi opc 1 apc 2 ni 3 linkset1
+     * </p>
      * 
      * @param options
      * @return
@@ -156,17 +163,83 @@ public class LinksetManager {
         }
 
         this.linksets.remove(linksetName);
-        
+
         this.store();
 
         return LinkOAMMessages.LINKSET_SUCCESSFULLY_REMOVED;
     }
 
     /**
+     * Expected command is "linkset activate linkset1"
+     * 
+     * @param options
+     * @return
+     * @throws Exception
+     */
+    public String activateLinkset(String[] options) throws Exception {
+
+        if (options == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+
+        // The last option is Linkset name
+        String linksetName = options[(options.length - 1)];
+
+        if (linksetName == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+        Linkset linkset = this.linksets.get(linksetName);
+
+        if (linkset == null) {
+            throw new Exception(LinkOAMMessages.LINKSET_DOESNT_EXIST);
+        }
+
+        linkset.activate();
+
+        return LinkOAMMessages.NOSHUTDOWN_LINK_SUCCESSFULLY;
+    }
+
+    /**
+     * Expected command is "linkset deactivate linkset1"
+     * 
+     * @param options
+     * @return
+     * @throws Exception
+     */
+    public String deactivateLinkset(String[] options) throws Exception {
+
+        if (options == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+
+        // The second last option is Linkset name
+        String linksetName = options[(options.length - 1)];
+
+        if (linksetName == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+        Linkset linkset = this.linksets.get(linksetName);
+
+        if (linkset == null) {
+            throw new Exception(LinkOAMMessages.LINKSET_DOESNT_EXIST);
+        }
+
+        linkset.deactivate();
+
+        return LinkOAMMessages.NOSHUTDOWN_LINK_SUCCESSFULLY;
+    }
+
+    /**
+     * <p>
      * Create new Link. The expected command is "linkset link create <options>
      * linkset1 link1" where linkset1 is the linkset name and "link1" is link
      * name to be created and associated with "linkset1". The <options> depends
      * on type of link to be created
+     * </p>
+     * <p>
+     * For example to create link for Dahdi linkset type is : linkset link
+     * create span 1 code 1 channel 1 linkset1 link1
+     * </p>
      * 
      * @param options
      * @return
@@ -227,6 +300,76 @@ public class LinksetManager {
         this.store();
 
         return LinkOAMMessages.LINK_SUCCESSFULLY_REMOVED;
+    }
+
+    /**
+     * Expected command is "linkset link activate linkset1 link1"
+     * 
+     * @param options
+     * @return
+     * @throws Exception
+     */
+    public String activateLink(String[] options) throws Exception {
+
+        if (options == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+
+        // The second last option is Linkset name
+        String linksetName = options[(options.length - 2)];
+
+        if (linksetName == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+        Linkset linkset = this.linksets.get(linksetName);
+
+        if (linkset == null) {
+            throw new Exception(LinkOAMMessages.LINKSET_DOESNT_EXIST);
+        }
+
+        String linkName = options[(options.length - 1)];
+        if (linkName == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+
+        linkset.activateLink(linkName);
+
+        return LinkOAMMessages.NOSHUTDOWN_LINK_SUCCESSFULLY;
+    }
+
+    /**
+     * Expected command is "linkset link deactivate linkset1 link1"
+     * 
+     * @param options
+     * @return
+     * @throws Exception
+     */
+    public String deactivateLink(String[] options) throws Exception {
+
+        if (options == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+
+        // The second last option is Linkset name
+        String linksetName = options[(options.length - 2)];
+
+        if (linksetName == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+        Linkset linkset = this.linksets.get(linksetName);
+
+        if (linkset == null) {
+            throw new Exception(LinkOAMMessages.LINKSET_DOESNT_EXIST);
+        }
+
+        String linkName = options[(options.length - 1)];
+        if (linkName == null) {
+            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+        }
+
+        linkset.deactivateLink(linkName);
+
+        return LinkOAMMessages.NOSHUTDOWN_LINK_SUCCESSFULLY;
     }
 
     /**

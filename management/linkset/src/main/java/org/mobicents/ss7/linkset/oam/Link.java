@@ -1,7 +1,5 @@
 package org.mobicents.ss7.linkset.oam;
 
-import java.nio.ByteBuffer;
-
 import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
@@ -21,22 +19,14 @@ public abstract class Link implements XMLSerializable {
 	protected Linkset linkSet;
 
 	/**
-	 * Define attributes of xml
-	 */
+     * Define attributes of xml
+     */
 	private static final String LINK_NAME = "name";
 	private static final String LINK_STATE = "state";
 	private static final String LINK_MODE = "mode";
 	
 	protected static final boolean TRUE = true;
 	protected static final boolean FALSE = false;
-
-	/**
-	 * Pre defined messages
-	 */
-	public static final byte[] LINK_ALREADY_ACTIVE = "Link already active"
-			.getBytes();
-	public static final byte[] LINK_NOT_CONFIGURED = "Not all mandatory parameters are set"
-			.getBytes();
 
 	public Link() {
 	}
@@ -45,7 +35,7 @@ public abstract class Link implements XMLSerializable {
 			this.linkName = linkName;
 	}
 
-	protected abstract void init();
+	protected abstract void init() throws Exception;
 
 	public String getLinkName() {
 		return linkName;
@@ -76,9 +66,11 @@ public abstract class Link implements XMLSerializable {
 	}
 
 	/**
-	 * Operation
-	 */
-	public abstract boolean noShutdown(ByteBuffer byteBuffer);
+     * Operation
+     */
+	public abstract void deactivate() throws Exception;
+	
+	public abstract void activate() throws Exception;
 
 	protected static final XMLFormat<Link> LINK_XML = new XMLFormat<Link>(
 			Link.class) {
@@ -89,8 +81,6 @@ public abstract class Link implements XMLSerializable {
 			link.linkName = xml.getAttribute(LINK_NAME).toString();
 			link.state = xml.getAttribute(LINK_STATE, LinkState.UNAVAILABLE);
 			link.mode = xml.getAttribute(LINK_MODE, LinkMode.UNCONFIGURED);
-
-			link.init();
 		}
 
 		@Override

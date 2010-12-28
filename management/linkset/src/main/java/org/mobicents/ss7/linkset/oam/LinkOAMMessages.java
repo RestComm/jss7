@@ -52,4 +52,8 @@ public interface LinkOAMMessages {
 
     public static final String CANT_DELETE_LINK = "Link is Active. Can't delete. Please Shutdown first";
 
+    public static final String LINK_ALREADY_ACTIVE = "Link already active";
+    public static final String LINK_NOT_CONFIGURED = "Not all mandatory parameters are set";
+
+    public static String OPERATION_NOT_SUPPORTED = "Operation not supported";
 }
