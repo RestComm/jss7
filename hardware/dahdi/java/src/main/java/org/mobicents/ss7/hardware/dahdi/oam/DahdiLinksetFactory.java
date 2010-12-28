@@ -39,7 +39,7 @@ public class DahdiLinksetFactory extends LinksetFactory {
 
         int opc = Integer.parseInt(options[4]);
 
-        if (options[5].compareTo("dpc") != 0) {
+        if (options[5].compareTo("apc") != 0) {
             throw new Exception(LinkOAMMessages.INVALID_COMMAND);
         }
 

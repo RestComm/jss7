@@ -142,6 +142,7 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
             if (value.getMode() == LinkMode.CONFIGURED) {
                 this.mode = LinksetMode.CONFIGURED;
                 this.init();
+                this.state = LinksetState.UNAVAILABLE;
                 return;
             }
 

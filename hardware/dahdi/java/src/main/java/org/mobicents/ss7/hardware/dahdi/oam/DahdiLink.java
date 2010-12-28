@@ -100,7 +100,7 @@ public class DahdiLink extends Link {
         if (this.state == LinkState.AVAILABLE) {
             throw new Exception(LinkOAMMessages.LINK_ALREADY_ACTIVE);
         }
-
+        
         // Add check that all parameters are set before initializing the
         // Link. Else send error message
         if (this.span == -1 || this.code == -1 || this.channelID == -1) {
@@ -110,13 +110,23 @@ public class DahdiLink extends Link {
         this.mode = LinkMode.CONFIGURED;
 
         this.init();
+        
+        this.state = LinkState.UNAVAILABLE;
     }
 
     /**
      * Management Operations
      */
     public void deactivate() throws Exception {
-        throw new Exception(LinkOAMMessages.NOT_IMPLEMENTED);
+        if(this.mode == LinkMode.UNCONFIGURED){
+            throw new Exception(LinkOAMMessages.LINK_ALREADY_DEACTIVE);
+        }
+        
+        this.mtp2.stop();
+        
+        
+        //TODO : SHouldn't this come from Mtp2Listener?
+        this.state = LinkState.SHUTDOWN;
     }
 
     protected static final XMLFormat<DahdiLink> DAHDI_LINK_XML = new XMLFormat<DahdiLink>(
