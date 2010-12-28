@@ -15,12 +15,12 @@ public class LinksetSelectorKey implements SelectorKey {
 	private boolean isReadable;
 	private boolean isWritable;
 
-	private Linkset linkSet = null;
+	private LinksetStream linkSet = null;
 	private LinksetSelector linkSetSelector = null;
 
 	private Object attachment;
 
-	public LinksetSelectorKey(Linkset linkSet, LinksetSelector linkSetSelector) {
+	public LinksetSelectorKey(LinksetStream linkSet, LinksetSelector linkSetSelector) {
 		this.linkSet = linkSet;
 		this.linkSetSelector = linkSetSelector;
 	}

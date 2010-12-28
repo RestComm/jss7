@@ -1,5 +1,6 @@
 package org.mobicents.ss7.linkset.oam;
 
+import javolution.text.TextBuilder;
 import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
@@ -10,6 +11,8 @@ import javolution.xml.stream.XMLStreamException;
  * 
  */
 public abstract class Link implements XMLSerializable {
+    
+    public static final String SPACE = " ";
 
 	protected String linkName = null;
 
@@ -92,4 +95,12 @@ public abstract class Link implements XMLSerializable {
 
 		}
 	};
+	
+	public abstract void print(StringBuffer sb, int leftPad, int descPad);
+	
+    protected void createPad(StringBuffer sb, int pad) {
+        for (int i = 0; i < pad; i++) {
+            sb.append(' ');
+        }
+    }
 }

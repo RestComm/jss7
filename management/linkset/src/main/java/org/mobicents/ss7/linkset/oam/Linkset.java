@@ -1,22 +1,15 @@
 package org.mobicents.ss7.linkset.oam;
 
-import java.io.IOException;
-
 import javolution.util.FastMap;
 import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
-import org.mobicents.protocols.stream.api.SelectorKey;
-import org.mobicents.protocols.stream.api.SelectorProvider;
-import org.mobicents.protocols.stream.api.Stream;
-import org.mobicents.protocols.stream.api.StreamSelector;
-
 /**
  * 
  * @author amit bhayani
  */
-public abstract class Linkset implements XMLSerializable, Stream {
+public abstract class Linkset implements XMLSerializable {
 
     private static final String LINKSET_NAME = "name";
     private static final String LINKSET_STATE = "state";
@@ -40,26 +33,31 @@ public abstract class Linkset implements XMLSerializable, Stream {
 
     protected LinksetSelectorKey selectorKey = null;
 
+    protected LinksetStream linksetStream = null;
+
     // Hold Links here. Link name as key and actual Link as Object
     protected FastMap<String, Link> links = new FastMap<String, Link>();
 
     public Linkset() {
-
-    }
-    
-    public Linkset(String linksetName, String type){
-        
+        this.initialize();
     }
 
     public Linkset(String linksetName, int opc, int dpc, int ni) {
+        this();
         this.linksetName = linksetName;
         this.opc = opc;
         this.dpc = dpc;
         this.ni = ni;
     }
 
-    // Initialize the Link. Depends on Type of Link
-    protected abstract void init() throws Exception;
+    protected abstract void initialize();
+
+    // Configure the Linkset. Depends on Type of Link
+    protected abstract void configure() throws Exception;
+
+    public LinksetStream getLinksetStream() {
+        return this.linksetStream;
+    }
 
     public int getDpc() {
         return dpc;
@@ -109,27 +107,24 @@ public abstract class Linkset implements XMLSerializable, Stream {
         this.links = links;
     }
 
-    /**
-     * Operations
-     */
-    public abstract void createLink(String[] options) throws Exception;
-    
-    public abstract void deleteLink(String linkName) throws Exception;
-
     public Link getLink(String linkName) {
         return this.links.get(linkName);
     }
 
-    public abstract void activate() throws Exception;
-    
-    public abstract void deactivate() throws Exception;
-    
-    public abstract void activateLink(String linkName) throws Exception;
-    
-    public abstract void deactivateLink(String linkName) throws Exception;
+    /**
+     * Operations
+     */
+    public abstract void createLink(String[] options) throws Exception;
 
-    // Poll the LinkSets for readiness
-    protected abstract boolean poll(int operation, int timeout);
+    public abstract void deleteLink(String linkName) throws Exception;
+
+    public abstract void activate() throws Exception;
+
+    public abstract void deactivate() throws Exception;
+
+    public abstract void activateLink(String linkName) throws Exception;
+
+    public abstract void deactivateLink(String linkName) throws Exception;
 
     /**
      * XML Serialization/Deserialization
@@ -177,32 +172,4 @@ public abstract class Linkset implements XMLSerializable, Stream {
 
         }
     };
-
-    /**
-     * Stream Impl
-     */
-    public SelectorKey register(StreamSelector selector) throws IOException {
-        return ((LinksetSelector) selector).register(this);
-    }
-
-    public abstract int read(byte[] b) throws IOException;
-
-    public abstract int write(byte[] d) throws IOException;
-
-    /**
-     * Closes this streamer implementation. After closing stream its selectors
-     * are invalidated!
-     */
-    public void close() {
-
-    }
-
-    /**
-     * Returns the provider that created this stream.
-     * 
-     * @return
-     */
-    public SelectorProvider provider() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }
