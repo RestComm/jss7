@@ -6,6 +6,11 @@ import java.net.InetSocketAddress;
 import org.mobicents.ss7.management.transceiver.Message;
 import org.mobicents.ss7.management.transceiver.MessageFactory;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class ConsoleListenerImpl implements ConsoleListener {
 
     // TODO : We still have to work on formatter and how text on CLI should be
@@ -28,7 +33,6 @@ public class ConsoleListenerImpl implements ConsoleListener {
     }
 
     public void commandEntered(String consoleInput) {
-        System.out.println(consoleInput);
         if (consoleInput.compareTo("exit") == 0) {
             if (this.client.isConnected()) {
                 this.console

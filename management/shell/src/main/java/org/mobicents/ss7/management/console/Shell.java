@@ -3,6 +3,11 @@ package org.mobicents.ss7.management.console;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class Shell {
 
     Version version = Version.instance;

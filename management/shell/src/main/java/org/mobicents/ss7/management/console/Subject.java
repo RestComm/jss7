@@ -1,5 +1,10 @@
 package org.mobicents.ss7.management.console;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public enum Subject {
 
     LINKSET("linkset");

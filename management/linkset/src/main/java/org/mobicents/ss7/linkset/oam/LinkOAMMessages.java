@@ -11,13 +11,13 @@ public interface LinkOAMMessages {
 
     public static final String LINKSET_DOESNT_EXIST = "LinkSet doesn't exist";
 
-    public static final String NOSHUTDOWN_LINKSET_SUCCESSFULLY = "noshutdown for Linkset successfull";
+    public static final String ACTIVATE_LINKSET_SUCCESSFULLY = "activated linkset successfully";
 
-    public static final String NOSHUTDOWN_LINKSET_FAILED = "noshutdown for Linkset failed";
+    public static final String ACTIVATE_LINKSET_FAILED = "activate for linkset failed";
 
-    public static final String NOSHUTDOWN_LINK_SUCCESSFULLY = "noshutdown for Link successfull";
+    public static final String ACTIVATE_LINK_SUCCESSFULLY = "activated link successfully";
 
-    public static final String NOSHUTDOWN_LINK_FAILED = "noshutdown for Link failed";
+    public static final String ACTIVATE_LINK_FAILED = "activate for link failed";
 
     public static final String LINK_DOESNT_EXIST = "Link doesn't exist";
 
@@ -35,7 +35,7 @@ public interface LinkOAMMessages {
 
     public static final String LINK_SUCCESSFULLY_REMOVED = "Link successfully removed";
 
-    public static final String CANT_DELETE_LINKSET = "Linkset is Available. Can't delete. Please Shutdown all links within Linkset and removed each of them before removing this linkset";
+    public static final String CANT_DELETE_LINKSET = "Linkset is Available. Can't delete. Please deactivate all links within Linkset and remove each of them before removing this linkset";
 
     public static final String LINK_ADD_FAILED = "Addition of Link failed";
 
@@ -53,6 +53,9 @@ public interface LinkOAMMessages {
     public static final String CANT_DELETE_LINK = "Link is Active. Can't delete. Please Shutdown first";
 
     public static final String LINK_ALREADY_ACTIVE = "Link already active";
+
+    public static final String LINK_ALREADY_DEACTIVE = "Link already deactive";
+
     public static final String LINK_NOT_CONFIGURED = "Not all mandatory parameters are set";
 
     public static String OPERATION_NOT_SUPPORTED = "Operation not supported";

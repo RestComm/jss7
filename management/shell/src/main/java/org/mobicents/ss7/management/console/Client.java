@@ -12,6 +12,11 @@ import org.mobicents.ss7.management.transceiver.ChannelSelector;
 import org.mobicents.ss7.management.transceiver.Message;
 import org.mobicents.ss7.management.transceiver.ShellChannel;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class Client {
 
     private ChannelProvider provider;

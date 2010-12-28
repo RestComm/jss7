@@ -196,7 +196,7 @@ public class LinksetManager {
 
         linkset.activate();
 
-        return LinkOAMMessages.NOSHUTDOWN_LINK_SUCCESSFULLY;
+        return LinkOAMMessages.ACTIVATE_LINKSET_SUCCESSFULLY;
     }
 
     /**
@@ -226,7 +226,7 @@ public class LinksetManager {
 
         linkset.deactivate();
 
-        return LinkOAMMessages.NOSHUTDOWN_LINK_SUCCESSFULLY;
+        return LinkOAMMessages.ACTIVATE_LINK_SUCCESSFULLY;
     }
 
     /**
@@ -334,7 +334,7 @@ public class LinksetManager {
 
         linkset.activateLink(linkName);
 
-        return LinkOAMMessages.NOSHUTDOWN_LINK_SUCCESSFULLY;
+        return LinkOAMMessages.ACTIVATE_LINK_SUCCESSFULLY;
     }
 
     /**
@@ -369,7 +369,7 @@ public class LinksetManager {
 
         linkset.deactivateLink(linkName);
 
-        return LinkOAMMessages.NOSHUTDOWN_LINK_SUCCESSFULLY;
+        return LinkOAMMessages.ACTIVATE_LINK_SUCCESSFULLY;
     }
 
     /**
