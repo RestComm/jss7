@@ -3,6 +3,7 @@ package org.mobicents.ss7.hardware.dialogic.oam;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.mobicents.ss7.linkset.oam.Link;
 import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
 import org.mobicents.ss7.linkset.oam.Linkset;
 import org.mobicents.ss7.linkset.oam.LinksetState;
@@ -29,14 +30,27 @@ public class DialogicLinkset extends Linkset {
     }
 
     @Override
-    public boolean noShutdown(ByteBuffer byteBuffer) {
+    public void activate() throws Exception {
         if (this.state == LinksetState.AVAILABLE) {
-            //byteBuffer.put(LinkOAMMessages.LINKSET_ALREADY_ACTIVE);
-            return FALSE;
+            throw new Exception(LinkOAMMessages.LINKSET_ALREADY_ACTIVE);
         }
 
         // TODO Start Dialogic Linkset
-        return FALSE;
+    }
+
+    @Override
+    public void deactivate() throws Exception {
+        throw new Exception(LinkOAMMessages.NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public void activateLink(String linkName) throws Exception {
+        throw new Exception(LinkOAMMessages.OPERATION_NOT_SUPPORTED);
+    }
+
+    @Override
+    public void deactivateLink(String linkName) throws Exception {
+        throw new Exception(LinkOAMMessages.OPERATION_NOT_SUPPORTED);
     }
 
     /**
@@ -70,5 +84,4 @@ public class DialogicLinkset extends Linkset {
     public void deleteLink(String arg0) throws Exception {
         throw new Exception(LinkOAMMessages.NOT_IMPLEMENTED);
     }
-
 }

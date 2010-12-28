@@ -1,7 +1,6 @@
 package org.mobicents.ss7.m3ua.oam;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import javolution.text.TextBuilder;
 import javolution.xml.XMLFormat;
@@ -59,17 +58,28 @@ public class M3UALinkset extends Linkset {
     /**
      * Operations
      */
-
     @Override
-    public boolean noShutdown(ByteBuffer byteBuffer) {
+    public void activate() throws Exception {
         if (this.state == LinksetState.AVAILABLE) {
-            //byteBuffer.put(LinkOAMMessages.LINKSET_ALREADY_ACTIVE);
-            return FALSE;
+            throw new Exception(LinkOAMMessages.LINKSET_ALREADY_ACTIVE);
         }
 
-        // TODO : Add check that all parameters are set before starting the
-        // Link. Else send error message
-        return FALSE;
+        // TODO Start M3ua Linkset
+    }
+
+    @Override
+    public void deactivate() throws Exception {
+        throw new Exception(LinkOAMMessages.NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public void activateLink(String linkName) throws Exception {
+        throw new Exception(LinkOAMMessages.OPERATION_NOT_SUPPORTED);
+    }
+
+    @Override
+    public void deactivateLink(String linkName) throws Exception {
+        throw new Exception(LinkOAMMessages.OPERATION_NOT_SUPPORTED);
     }
 
     /**

@@ -1,19 +1,19 @@
 package org.mobicents.ss7.hardware.dahdi.oam;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javolution.util.FastMap;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
-import org.mobicents.ss7.linkset.oam.LinkState;
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.Mtp3Listener;
 import org.mobicents.ss7.linkset.oam.Link;
 import org.mobicents.ss7.linkset.oam.LinkMode;
 import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
+import org.mobicents.ss7.linkset.oam.LinkState;
 import org.mobicents.ss7.linkset.oam.Linkset;
 import org.mobicents.ss7.linkset.oam.LinksetMode;
 import org.mobicents.ss7.linkset.oam.LinksetState;
@@ -24,6 +24,8 @@ import org.mobicents.ss7.linkset.oam.LinksetState;
  * 
  */
 public class DahdiLinkset extends Linkset implements Mtp3Listener {
+
+    private static final Logger logger = Logger.getLogger(DahdiLinkset.class);
 
     private Mtp3 mtp3 = null;
     private ConcurrentLinkedQueue<byte[]> queue = new ConcurrentLinkedQueue();
@@ -37,7 +39,7 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
     }
 
     @Override
-    protected void init() {
+    protected void init() throws Exception {
 
         if (this.mode == LinksetMode.CONFIGURED) {
 
@@ -58,11 +60,7 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
             }
 
             if (this.state != LinksetState.SHUTDOWN) {
-                try {
-                    this.mtp3.start();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                this.mtp3.start();
             }
         }
     }
@@ -120,22 +118,21 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
     @Override
     public void deleteLink(String linkName) throws Exception {
         Link link = this.links.get(linkName);
-        if(link == null){
+        if (link == null) {
             throw new Exception(LinkOAMMessages.LINK_DOESNT_EXIST);
         }
-        
-        if(link.getState() == LinkState.AVAILABLE){
+
+        if (link.getState() == LinkState.AVAILABLE) {
             throw new Exception(LinkOAMMessages.CANT_DELETE_LINK);
         }
-        
+
         this.links.remove(linkName);
     }
 
     @Override
-    public boolean noShutdown(ByteBuffer byteBuffer) {
+    public void activate() throws Exception {
         if (this.state == LinksetState.AVAILABLE) {
-            //byteBuffer.put(LinkOAMMessages.LINKSET_ALREADY_ACTIVE);
-            return FALSE;
+            throw new Exception(LinkOAMMessages.LINKSET_ALREADY_ACTIVE);
         }
 
         // Check if atleast one Link is in Configured mode
@@ -144,20 +141,41 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
             Link value = e.getValue();
             if (value.getMode() == LinkMode.CONFIGURED) {
                 this.mode = LinksetMode.CONFIGURED;
-                break;
+                this.init();
+                return;
             }
 
         }
 
-        // If at least 1 Link is configured, lets start Mtp3
-        if (this.mode == LinksetMode.CONFIGURED) {
-            this.init();
-            return TRUE;
+        // If at least 1 Link is not configured
+        throw new Exception(LinkOAMMessages.LINKSET_NO_LINKS_CONFIGURED);
+    }
+
+    @Override
+    public void deactivate() throws Exception {
+        throw new Exception(LinkOAMMessages.NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public void activateLink(String linkName) throws Exception {
+        Link link = this.links.get(linkName);
+
+        if (link == null) {
+            throw new Exception(LinkOAMMessages.LINK_DOESNT_EXIST);
         }
 
-        //byteBuffer.put(LinkOAMMessages.LINKSET_NO_LINKS_CONFIGURED);
-        return FALSE;
+        link.activate();
+    }
 
+    @Override
+    public void deactivateLink(String linkName) throws Exception {
+        Link link = this.links.get(linkName);
+
+        if (link == null) {
+            throw new Exception(LinkOAMMessages.LINK_DOESNT_EXIST);
+        }
+
+        link.deactivate();
     }
 
     /**
@@ -171,7 +189,11 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
                 DahdiLinkset linkSet) throws XMLStreamException {
             LINKSET_XML.read(xml, linkSet);
 
-            linkSet.init();
+            try {
+                linkSet.init();
+            } catch (Exception e) {
+                logger.error("Error while initializing dahdi linkset", e);
+            }
         }
 
         @Override
@@ -229,5 +251,4 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
     public void receive(byte[] msgBuff) {
         queue.offer(msgBuff);
     }
-
 }

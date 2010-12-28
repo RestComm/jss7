@@ -1,14 +1,14 @@
 package org.mobicents.ss7.hardware.dahdi.oam;
 
-import java.nio.ByteBuffer;
-
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp2;
 import org.mobicents.ss7.hardware.dahdi.Channel;
 import org.mobicents.ss7.linkset.oam.Link;
 import org.mobicents.ss7.linkset.oam.LinkMode;
+import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
 import org.mobicents.ss7.linkset.oam.LinkState;
 
 /**
@@ -17,6 +17,8 @@ import org.mobicents.ss7.linkset.oam.LinkState;
  * 
  */
 public class DahdiLink extends Link {
+    
+    private static final Logger logger = Logger.getLogger(DahdiLink.class);
 
     private int span = -1;
     private int channelID = -1;
@@ -44,7 +46,7 @@ public class DahdiLink extends Link {
     }
 
     @Override
-    protected void init() {
+    protected void init() throws Exception {
 
         if (this.mode == LinkMode.CONFIGURED) {
             if (this.channel == null) {
@@ -94,30 +96,27 @@ public class DahdiLink extends Link {
     }
 
     @Override
-    public boolean noShutdown(ByteBuffer byteBuffer) {
+    public void activate() throws Exception {
         if (this.state == LinkState.AVAILABLE) {
-            byteBuffer.put(LINK_ALREADY_ACTIVE);
-            return FALSE;
+            throw new Exception(LinkOAMMessages.LINK_ALREADY_ACTIVE);
         }
 
         // Add check that all parameters are set before initializing the
         // Link. Else send error message
         if (this.span == -1 || this.code == -1 || this.channelID == -1) {
-            byteBuffer.put(LINK_NOT_CONFIGURED);
-            return FALSE;
+            throw new Exception(LinkOAMMessages.LINK_NOT_CONFIGURED);
         }
 
         this.mode = LinkMode.CONFIGURED;
 
         this.init();
-        return TRUE;
     }
 
     /**
      * Management Operations
      */
-    public void shutdown(ByteBuffer byteBuffer) {
-
+    public void deactivate() throws Exception {
+        throw new Exception(LinkOAMMessages.NOT_IMPLEMENTED);
     }
 
     protected static final XMLFormat<DahdiLink> DAHDI_LINK_XML = new XMLFormat<DahdiLink>(
@@ -134,7 +133,11 @@ public class DahdiLink extends Link {
             link.code = xml.getAttribute(LINK_CODE, -1);
             link.ioBufferSize = xml.getAttribute(LINK_IO_BUFFER_SIZE, 32);
 
-            link.init();
+            try {
+                link.init();
+            } catch (Exception e) {
+                logger.error("Failed to initialize dahdi link", e);
+            }
         }
 
         @Override
