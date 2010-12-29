@@ -6,6 +6,18 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 
 /**
+ * <p>
+ * Represents the character-based console device associated with current Java
+ * virtual machine.
+ * </p>
+ * 
+ * <p>
+ * The console instance is created by passing {@link InputStream} and
+ * {@link OutputStream} from which this console reads and writes data to. The
+ * console blocks till next line of data is available. Once the line is read
+ * from {@link InputStream}, it calls {@link ConsoleListener}
+ * </p>
+ * 
  * 
  * @author amit bhayani
  * 
@@ -42,6 +54,9 @@ public class Console {
 
     }
 
+    /**
+     * Starts this console. Will block till next line of data is available
+     */
     public void start() {
         addPrefix();
         while (!stopped && scanner.hasNextLine()) {
@@ -55,7 +70,13 @@ public class Console {
             }
         }
     }
-    
+
+    /**
+     * Set the prefix. Adds this prefix on next line after reading current line
+     * of data
+     * 
+     * @param prefix
+     */
     public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
@@ -67,11 +88,19 @@ public class Console {
         }
     }
 
+    /**
+     * Stop the console
+     */
     public void stop() {
         this.stopped = true;
         this.scanner.close();
     }
 
+    /**
+     * Write the passed text to {@link OutputStream} referenced by this console
+     * 
+     * @param text
+     */
     public void write(String text) {
         pw.write(text);
         pw.flush();

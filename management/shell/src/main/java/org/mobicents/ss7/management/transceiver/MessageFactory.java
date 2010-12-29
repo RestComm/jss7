@@ -2,6 +2,20 @@ package org.mobicents.ss7.management.transceiver;
 
 import java.nio.ByteBuffer;
 
+/**
+ * <p>
+ * Construct the Shell Command Message
+ * </p>
+ * 
+ * <p>
+ * A given invocation of the Java virtual machine maintains a single system-wide
+ * default message factory instance, which is returned by the
+ * {@link ChannelProvider#getMessageFactory() getMessageFactory} method.
+ * </p>
+ * 
+ * @author amit bhayani
+ * 
+ */
 public class MessageFactory {
 
     private byte[] header = new byte[4];
@@ -14,12 +28,30 @@ public class MessageFactory {
 
     private Message message;
 
+    protected MessageFactory() {
+
+    }
+
+    /**
+     * Crate new instance of message object
+     * 
+     * @param message
+     * @return
+     */
     public Message createMessage(String message) {
         return new Message(message.getBytes());
     }
 
+    /**
+     * The received buffer may not have necessary bytes to decode a message.
+     * Instance of this factory keeps data locally till next set of data is
+     * received and a message can be successfully decoded
+     * 
+     * @param buffer
+     * @return
+     */
     public Message createMessage(ByteBuffer buffer) {
-        
+
         if (!isHeaderReady) {
             int len = Math.min(header.length - pos, buffer.remaining());
             buffer.get(header, pos, len);

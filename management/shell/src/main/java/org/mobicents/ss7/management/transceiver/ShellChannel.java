@@ -7,6 +7,12 @@ import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.AbstractSelectableChannel;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * A selectable channel for message connecting sockets.
+ * 
+ * @author amit bhayani
+ * 
+ */
 public class ShellChannel extends ShellSelectableChannel {
 
     // Queue for incoming messages
@@ -39,22 +45,57 @@ public class ShellChannel extends ShellSelectableChannel {
         rxBuffer.flip();
     }
 
-    public static ShellChannel open(ChannelProvider provider) throws IOException {
-        return new ShellChannel(provider, SocketChannel.open());
+    /**
+     * Opens a socket channel.
+     * 
+     * <p>
+     * The new channel is created by invoking the {@link
+     * ChannelProvider#openChannel openChannel} method of the system-wide
+     * default {@link ChannelProvider} object.
+     * </p>
+     * 
+     * @return A new channel
+     * @throws IOException
+     *             If an I/O error occurs
+     */
+    public static ShellChannel open() throws IOException {
+        return ChannelProvider.provider().openChannel();
     }
 
+    /**
+     * Read the {@link Message} if available, null otherwise
+     * 
+     * @return
+     * @throws IOException
+     */
     public Message receive() throws IOException {
         return rxQueue.poll();
     }
 
+    /**
+     * Send the {@link Message} to underlying socket
+     * 
+     * @param message
+     * @throws IOException
+     */
     public void send(Message message) throws IOException {
         txQueue.offer(message);
     }
 
+    /**
+     * Tells whether or not {@link Message} is available for read
+     * 
+     * @return
+     */
     protected boolean isReadable() {
         return !rxQueue.isEmpty();
     }
 
+    /**
+     * Tells whether or not {@link Message} is available for write
+     * 
+     * @return
+     */
     protected boolean isWritable() {
         return txQueue.isEmpty();
     }
@@ -102,26 +143,74 @@ public class ShellChannel extends ShellSelectableChannel {
         }
     }
 
+    /**
+     * Bind the channel to given address
+     * 
+     * @param address
+     * @throws IOException
+     */
     public void bind(SocketAddress address) throws IOException {
         ((SocketChannel) channel).socket().bind(address);
     }
 
+    /**
+     * Connect the channel to given address
+     * 
+     * @param remote
+     * @return
+     * @throws IOException
+     */
     public boolean connect(SocketAddress remote) throws IOException {
         return ((SocketChannel) channel).connect(remote);
     }
 
+    /**
+     * Finishes the process of connecting a channel.
+     * 
+     * A non-blocking connection operation is initiated by invoking its connect
+     * method. Once the connection is established, or the attempt has failed,
+     * the channel will become conectable and this method may be invoked to
+     * complete the connection sequence. If the connection operation failed then
+     * invoking this method will cause an appropriate IOException to be thrown.
+     * 
+     * 
+     * @return true if, and only if, this channel is now connected
+     * @throws java.io.IOException
+     */
     public boolean finishConnect() throws IOException {
         return ((SocketChannel) channel).finishConnect();
     }
 
+    /**
+     * Tells whether or not this channel is connected.
+     * 
+     * @return
+     */
     public boolean isConnected() {
         return ((SocketChannel) channel).isConnected();
     }
 
+    /**
+     * Tells whether or not a connection operation is in progress on this
+     * channel.
+     * 
+     * @return true if, and only if, a connection operation has been initiated
+     *         on this channel but not yet completed by invoking the
+     *         finishConnect method
+     */
     public boolean isConnectionPending() {
         return ((SocketChannel) channel).isConnectionPending();
     }
 
+    /**
+     * Closes this channel.
+     * 
+     * If the channel has already been closed then this method returns
+     * immediately.
+     * 
+     * @throws java.io.IOException
+     * @throws IOException
+     */
     public void close() throws IOException {
         ((SocketChannel) channel).close();
         ((SocketChannel) channel).socket().close();

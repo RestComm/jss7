@@ -4,9 +4,13 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 /**
+ * <p>
+ * This class represents the Command Line Interface for managing the Mobicents
+ * SS7 stack.
+ * </p>
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class Shell {
 

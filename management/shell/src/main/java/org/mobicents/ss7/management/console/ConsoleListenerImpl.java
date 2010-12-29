@@ -3,13 +3,14 @@ package org.mobicents.ss7.management.console;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import org.mobicents.ss7.management.transceiver.ChannelProvider;
 import org.mobicents.ss7.management.transceiver.Message;
 import org.mobicents.ss7.management.transceiver.MessageFactory;
 
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class ConsoleListenerImpl implements ConsoleListener {
 
@@ -22,7 +23,8 @@ public class ConsoleListenerImpl implements ConsoleListener {
     protected Console console;
     private Client client = null;
 
-    private MessageFactory messageFactory = new MessageFactory();
+    private MessageFactory messageFactory = ChannelProvider.provider()
+            .getMessageFactory();
 
     public ConsoleListenerImpl() {
         client = new Client();
@@ -79,7 +81,7 @@ public class ConsoleListenerImpl implements ConsoleListener {
             sendMessage("disconnect");
 
         } else {
-            //Send everything to Server as per Oleg
+            // Send everything to Server as per Oleg
             sendMessage(consoleInput);
         }
     }

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 
-import javolution.util.FastList;
+import javolution.util.FastSet;
 
 import org.mobicents.ss7.management.transceiver.ChannelProvider;
 import org.mobicents.ss7.management.transceiver.ChannelSelectionKey;
@@ -15,7 +15,7 @@ import org.mobicents.ss7.management.transceiver.ShellChannel;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class Client {
 
@@ -25,11 +25,11 @@ public class Client {
     private ChannelSelectionKey skey;
 
     private boolean isConnected = false;
-    
+
     private boolean wrote = false;
 
     public Client() {
-        provider = ChannelProvider.open();
+        provider = ChannelProvider.provider();
     }
 
     public boolean isConnected() {
@@ -67,13 +67,14 @@ public class Client {
         int count = 3;
         wrote = false;
 
-        //Wait for 3 secs to get message 
+        // Wait for 3 secs to get message
         while (count > 0) {
-            FastList<ChannelSelectionKey> keys = selector.selectNow();
+            FastSet<ChannelSelectionKey> keys = selector.selectNow();
 
-            for (FastList.Node<ChannelSelectionKey> n = keys.head(), end = keys
-                    .tail(); (n = n.getNext()) != end;) {
-                ChannelSelectionKey key = n.getValue();
+            for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record
+                    .getNext()) != end;) {
+                ChannelSelectionKey key = (ChannelSelectionKey) keys
+                        .valueOf(record);
                 ShellChannel chan = (ShellChannel) key.channel();
 
                 if (!wrote && key.isWritable()) {
@@ -92,7 +93,7 @@ public class Client {
             } catch (InterruptedException e) {
             }
             count--;
-        }//end of while
+        }// end of while
         return null;
 
     }

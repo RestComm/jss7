@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.nio.channels.SelectionKey;
 
 import javolution.util.FastList;
+import javolution.util.FastSet;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -90,7 +91,7 @@ public class ShellTransceiverTest {
         private String[] txMessage = new String[] { "Hello", " ", "world" };
 
         public Client(InetAddress address, int port) throws IOException {
-            provider = ChannelProvider.open();
+            provider = ChannelProvider.provider();
             channel = provider.openChannel();
             channel.bind(new InetSocketAddress(address, port));
 
@@ -130,11 +131,12 @@ public class ShellTransceiverTest {
             int i = 0;
             while (started) {
                 try {
-                    FastList<ChannelSelectionKey> keys = selector.selectNow();
+                    FastSet<ChannelSelectionKey> keys = selector.selectNow();
 
-                    for (FastList.Node<ChannelSelectionKey> n = keys.head(), end = keys
-                            .tail(); (n = n.getNext()) != end;) {
-                        ChannelSelectionKey key = n.getValue();
+                    for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record
+                            .getNext()) != end;) {
+                        ChannelSelectionKey key = (ChannelSelectionKey) keys
+                                .valueOf(record);
                         ShellChannel chan = (ShellChannel) key.channel();
                         if (key.isReadable()) {
                             Message msg = (Message) chan.receive();
@@ -176,7 +178,7 @@ public class ShellTransceiverTest {
         private String[] txMessage = new String[] { "Hello", " ", "world" };
 
         public Server(InetAddress address, int port) throws IOException {
-            provider = ChannelProvider.open();
+            provider = ChannelProvider.provider();
             serverChannel = provider.openServerChannel();
             serverChannel.bind(new InetSocketAddress(address, port));
 
@@ -208,12 +210,12 @@ public class ShellTransceiverTest {
             int i = 0;
             while (started) {
                 try {
-                    FastList<ChannelSelectionKey> keys = selector.selectNow();
+                    FastSet<ChannelSelectionKey> keys = selector.selectNow();
 
-                    for (FastList.Node<ChannelSelectionKey> n = keys.head(), end = keys
-                            .tail(); (n = n.getNext()) != end;) {
-
-                        ChannelSelectionKey key = n.getValue();
+                    for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record
+                            .getNext()) != end;) {
+                        ChannelSelectionKey key = (ChannelSelectionKey) keys
+                                .valueOf(record);
 
                         if (key.isAcceptable()) {
                             ShellServerChannel chan = (ShellServerChannel) key
