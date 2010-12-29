@@ -246,6 +246,11 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
                 return false;
             }
         }
+        
+        @Override
+        public String getName(){
+            return linksetName;
+        }
 
         public void close() {
             // TODO Auto-generated method stub
