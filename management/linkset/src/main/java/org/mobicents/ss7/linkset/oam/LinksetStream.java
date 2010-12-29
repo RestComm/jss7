@@ -14,5 +14,11 @@ public abstract class LinksetStream implements Stream {
      * @return
      */
     public abstract boolean poll(int operation, int timeout);
+    
+    /**
+     * Get the name of the Stream.
+     * @return
+     */
+    public abstract String getName();
 
 }

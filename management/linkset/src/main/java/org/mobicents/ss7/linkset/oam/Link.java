@@ -40,7 +40,7 @@ public abstract class Link implements XMLSerializable {
 
 	protected abstract void init() throws Exception;
 
-	public String getLinkName() {
+	public String getName() {
 		return linkName;
 	}
 

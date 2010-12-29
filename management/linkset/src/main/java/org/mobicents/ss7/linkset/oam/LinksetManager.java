@@ -43,6 +43,8 @@ public class LinksetManager {
     private FastMap<String, Linkset> linksets = new FastMap<String, Linkset>();
 
     private LinksetFactoryFactory linksetFactoryFactory = null;
+    
+    private Layer4 layer4 = null;
 
     public LinksetManager() {
         binding.setAlias(Linkset.class, LINKSET);
@@ -70,6 +72,14 @@ public class LinksetManager {
     public void setPersistDir(String persistDir) {
         this.persistDir = persistDir;
     }
+    
+    public Layer4 getLayer4() {
+        return layer4;
+    }
+
+    public void setLayer4(Layer4 layer4) {
+        this.layer4 = layer4;
+    }
 
     public void start() {
         this.persistFile.clear();
@@ -94,6 +104,8 @@ public class LinksetManager {
                     "Failed to load the SS7 configuration file. \n%s", e
                             .getMessage()));
         }
+        
+        logger.info("Started LinksetManager");
     }
 
     public void stop() {
@@ -129,13 +141,16 @@ public class LinksetManager {
         }
 
         // TODO huh, we parse first and then check for name :(
-        if (this.linksets.containsKey(linkset.getLinksetName())) {
+        if (this.linksets.containsKey(linkset.getName())) {
             return LinkOAMMessages.LINKSET_ALREADY_EXIST;
         }
 
-        this.linksets.put(linkset.getLinksetName(), linkset);
+        this.linksets.put(linkset.getName(), linkset);
         this.store();
-
+        
+        if(this.layer4 != null){
+            this.layer4.add(linkset);
+        }
         return LinkOAMMessages.LINKSET_SUCCESSFULLY_ADDED;
     }
 
@@ -166,6 +181,10 @@ public class LinksetManager {
 
         this.store();
 
+        if(this.layer4 != null){
+            this.layer4.add(linkset);
+        }
+        
         return LinkOAMMessages.LINKSET_SUCCESSFULLY_REMOVED;
     }
 
@@ -419,7 +438,7 @@ public class LinksetManager {
             // Exception
             while (reader.hasNext()) {
                 Linkset linkset = reader.read(LINKSET);
-                this.linksets.put(linkset.getLinksetName(), linkset);
+                this.linksets.put(linkset.getName(), linkset);
             }
         } catch (XMLStreamException ex) {
             // this.logger.info(

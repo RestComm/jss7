@@ -83,7 +83,7 @@ public abstract class Linkset implements XMLSerializable {
         this.ni = ni;
     }
 
-    public String getLinksetName() {
+    public String getName() {
         return linksetName;
     }
 
@@ -148,7 +148,7 @@ public abstract class Linkset implements XMLSerializable {
             for (int i = 0; i < linksCount; i++) {
                 Link link = xml.get(LINK);
                 link.setLinkSet(linkSet);
-                linkSet.links.put(link.getLinkName(), link);
+                linkSet.links.put(link.getName(), link);
             }
         }
 
