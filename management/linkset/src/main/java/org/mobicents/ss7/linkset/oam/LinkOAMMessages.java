@@ -1,5 +1,11 @@
 package org.mobicents.ss7.linkset.oam;
 
+/**
+ * Declares static messages used by links and linksets
+ * 
+ * @author amit bhayani
+ * 
+ */
 public interface LinkOAMMessages {
 
     /**

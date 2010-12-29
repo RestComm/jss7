@@ -15,6 +15,42 @@ import javolution.xml.stream.XMLStreamException;
 import org.apache.log4j.Logger;
 
 /**
+ * <p>
+ * LinksetManager is responsible for managing {@link Linkset} and {@link Link}.
+ * </p>
+ * <p>
+ * For every successful operation
+ * {@link #activateLinkset(String[] activateLinkset), {@link #deactivateLinkset(String[]) deactivateLinkset},
+ * {@link #activateLink(String[]) activateLink},
+ * {@link #deactivateLink(String[]) deactivateLink},
+ * {@link #createLinkset(String[]) createLinkset},
+ * {@link #createLink(String[]) createLink},
+ * {@link #deleteLinkset(String[]) deleteLinkset},
+ * {@link #deleteLink(String[]) deleteLink} LinksetManager will serialize the
+ * linkset's and link's managed. The path for serialized file follows the rule
+ * as below
+ * </p>
+ * <p>
+ * LinksetManager when {@link #start() started} looks for file
+ * <tt>linksetmanager.xml</tt> containing serialized information of underlying
+ * linksets and links. Set the directory path by calling
+ * {@link #setPersistDir(String)} to direct LinksetManager to look at specified
+ * directory for underlying serialized file.
+ * </p>
+ * <p>
+ * If directory path is not set, LinksetManager searches for system property
+ * <tt>linkset.persist.dir</tt> to get the path for directory
+ * </p>
+ * 
+ * <p>
+ * Even if <tt>linkset.persist.dir</tt> system property is not set,
+ * LinksetManager will look at property <tt>user.dir</tt>
+ * </p>
+ * 
+ * <p>
+ * For every new linkset created successfully, LinksetManager calls
+ * {@link Layer4#add(Linkset)}
+ * </p>
  * 
  * @author amit bhayani
  * 
@@ -43,7 +79,7 @@ public class LinksetManager {
     private FastMap<String, Linkset> linksets = new FastMap<String, Linkset>();
 
     private LinksetFactoryFactory linksetFactoryFactory = null;
-    
+
     private Layer4 layer4 = null;
 
     public LinksetManager() {
@@ -72,7 +108,7 @@ public class LinksetManager {
     public void setPersistDir(String persistDir) {
         this.persistDir = persistDir;
     }
-    
+
     public Layer4 getLayer4() {
         return layer4;
     }
@@ -104,7 +140,7 @@ public class LinksetManager {
                     "Failed to load the SS7 configuration file. \n%s", e
                             .getMessage()));
         }
-        
+
         logger.info("Started LinksetManager");
     }
 
@@ -147,8 +183,8 @@ public class LinksetManager {
 
         this.linksets.put(linkset.getName(), linkset);
         this.store();
-        
-        if(this.layer4 != null){
+
+        if (this.layer4 != null) {
             this.layer4.add(linkset);
         }
         return LinkOAMMessages.LINKSET_SUCCESSFULLY_ADDED;
@@ -181,10 +217,10 @@ public class LinksetManager {
 
         this.store();
 
-        if(this.layer4 != null){
+        if (this.layer4 != null) {
             this.layer4.add(linkset);
         }
-        
+
         return LinkOAMMessages.LINKSET_SUCCESSFULLY_REMOVED;
     }
 

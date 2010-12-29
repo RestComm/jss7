@@ -6,6 +6,7 @@ import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
 /**
+ * Instance of this class represents the logical group of links between two SP
  * 
  * @author amit bhayani
  */
@@ -24,7 +25,7 @@ public abstract class Linkset implements XMLSerializable {
     protected static final boolean FALSE = false;
 
     protected String linksetName = null;
-    protected int dpc;
+    protected int apc;
     protected int opc;
     protected int ni = 2;
 
@@ -42,71 +43,150 @@ public abstract class Linkset implements XMLSerializable {
         this.initialize();
     }
 
-    public Linkset(String linksetName, int opc, int dpc, int ni) {
+    public Linkset(String linksetName, int opc, int apc, int ni) {
         this();
         this.linksetName = linksetName;
         this.opc = opc;
-        this.dpc = dpc;
+        this.apc = apc;
         this.ni = ni;
     }
 
+    /**
+     * Initialize this linkset after creating a new instance
+     */
     protected abstract void initialize();
 
-    // Configure the Linkset. Depends on Type of Link
+    /**
+     * Configure this linkset
+     * 
+     * @throws Exception
+     */
     protected abstract void configure() throws Exception;
 
+    /**
+     * Get handle to underlying stream
+     * 
+     * @return
+     */
     public LinksetStream getLinksetStream() {
         return this.linksetStream;
     }
 
-    public int getDpc() {
-        return dpc;
+    /**
+     * Get adjacent point code
+     * 
+     * @return
+     */
+    public int getApc() {
+        return apc;
     }
 
-    public void setDpc(int dpc) {
-        this.dpc = dpc;
+    /**
+     * Set adjacent point code
+     * 
+     * @param dpc
+     */
+    public void setApc(int dpc) {
+        this.apc = dpc;
     }
 
+    /**
+     * Get originating point code
+     * 
+     * @return
+     */
     public int getOpc() {
         return opc;
     }
 
+    /**
+     * Set originating point code
+     * 
+     * @param opc
+     */
     public void setOpc(int opc) {
         this.opc = opc;
     }
 
+    /**
+     * Get network-indicator
+     * 
+     * @return
+     */
     public int getNi() {
         return ni;
     }
 
+    /**
+     * Set network-indicator
+     * 
+     * @param ni
+     */
     public void setNi(int ni) {
         this.ni = ni;
     }
 
+    /**
+     * Get linkset name
+     * 
+     * @return
+     */
     public String getName() {
         return linksetName;
     }
 
+    /**
+     * Get linkset state
+     * 
+     * @return
+     */
     public int getState() {
         return state;
     }
 
+    /**
+     * Set linkset state
+     * 
+     * @param state
+     */
     public void setState(int state) {
         this.state = state;
     }
 
+    /**
+     * Get linkset Mode
+     * 
+     * @return
+     */
     public int getMode() {
         return mode;
     }
 
+    /**
+     * Get the map of link name vs {@link Link}
+     * 
+     * @return
+     */
     public FastMap<String, Link> getLinks() {
         return links;
     }
 
+    /**
+     * Set links
+     * 
+     * @param links
+     */
     public void setLinks(FastMap<String, Link> links) {
         this.links = links;
     }
 
+    /**
+     * Get the link corresponding to passed linkName. If no link corresponding
+     * to this linkname is present null is returned
+     * 
+     * @param linkName
+     * @return
+     */
     public Link getLink(String linkName) {
         return this.links.get(linkName);
     }
@@ -114,16 +194,48 @@ public abstract class Linkset implements XMLSerializable {
     /**
      * Operations
      */
+
+    /**
+     * Create new {@link Link}
+     */
     public abstract void createLink(String[] options) throws Exception;
 
+    /**
+     * Delete existing {@link Link}
+     * 
+     * @param linkName
+     * @throws Exception
+     */
     public abstract void deleteLink(String linkName) throws Exception;
 
+    /**
+     * Activate this linkset
+     * 
+     * @throws Exception
+     */
     public abstract void activate() throws Exception;
 
+    /**
+     * Deactivate this linkset
+     * 
+     * @throws Exception
+     */
     public abstract void deactivate() throws Exception;
 
+    /**
+     * Activate link
+     * 
+     * @param linkName
+     * @throws Exception
+     */
     public abstract void activateLink(String linkName) throws Exception;
 
+    /**
+     * deactivate link
+     * 
+     * @param linkName
+     * @throws Exception
+     */
     public abstract void deactivateLink(String linkName) throws Exception;
 
     /**
@@ -141,7 +253,7 @@ public abstract class Linkset implements XMLSerializable {
             linkSet.mode = xml.getAttribute(LINKSET_MODE,
                     LinksetMode.UNCONFIGURED);
             linkSet.opc = xml.getAttribute(LINKSET_OPC, -1);
-            linkSet.dpc = xml.getAttribute(LINKSET_DPC, -1);
+            linkSet.apc = xml.getAttribute(LINKSET_DPC, -1);
             linkSet.ni = xml.getAttribute(LINKSET_NI, 2);
             int linksCount = xml.getAttribute(LINKS, 0);
 
@@ -160,7 +272,7 @@ public abstract class Linkset implements XMLSerializable {
             xml.setAttribute(LINKSET_STATE, linkSet.state);
             xml.setAttribute(LINKSET_MODE, linkSet.mode);
             xml.setAttribute(LINKSET_OPC, linkSet.opc);
-            xml.setAttribute(LINKSET_DPC, linkSet.dpc);
+            xml.setAttribute(LINKSET_DPC, linkSet.apc);
             xml.setAttribute(LINKSET_NI, linkSet.ni);
             xml.setAttribute(LINKS, linkSet.links.size());
 

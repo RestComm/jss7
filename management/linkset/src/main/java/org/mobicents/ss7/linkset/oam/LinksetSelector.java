@@ -10,6 +10,7 @@ import org.mobicents.protocols.stream.api.Stream;
 import org.mobicents.protocols.stream.api.StreamSelector;
 
 /**
+ * the stream of Linkset
  * 
  * @author amit bhayani
  * 
