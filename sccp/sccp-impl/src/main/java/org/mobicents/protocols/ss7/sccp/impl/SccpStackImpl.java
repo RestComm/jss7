@@ -21,14 +21,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.List;
-
+import java.util.Collection;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
+import javolution.util.FastMap;
+
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.mtp.Mtp3;
-import org.mobicents.protocols.ss7.mtp.provider.MtpListener;
-import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
@@ -43,38 +43,54 @@ import org.mobicents.protocols.ss7.sccp.message.UnitData;
 import org.mobicents.protocols.ss7.sccp.message.XUnitData;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.utils.Utils;
+import org.mobicents.protocols.stream.api.SelectorKey;
+import org.mobicents.ss7.linkset.oam.Layer4;
+import org.mobicents.ss7.linkset.oam.Linkset;
+import org.mobicents.ss7.linkset.oam.LinksetSelector;
+import org.mobicents.ss7.linkset.oam.LinksetStream;
 
 /**
+ * @author amit bhayani
  * @author baranowb
- *
+ * 
  */
-public class SccpStackImpl implements SccpStack, MtpListener {
+public class SccpStackImpl implements SccpStack, Layer4 {
 
-    private State state = State.IDLE;    
-    
-    //provider ref, this can be real provider or pipe, for tests.
+    private State state = State.IDLE;
+
+    private int OP_READ_WRITE = 3;
+
+    // provider ref, this can be real provider or pipe, for tests.
     private SccpProviderImpl sccpProvider;
     private String path;
-    
+
     private RouterImpl router;
-    protected List<MtpProvider> linksets;    //main executor
     private Executor executor;
-    
-    protected MessageFactoryImpl messageFactory;    
+
+    private Executor layer3exec;
+
+    // Hold LinkSet here. LinkSet's name as key and actual LinkSet as Object
+    protected FastMap<String, Linkset> linksets = new FastMap<String, Linkset>();
+
+    // Hold the byte[] that needs to be writtent to Linkset
+    private FastMap<String, ConcurrentLinkedQueue<byte[]>> linksetQueue = new FastMap<String, ConcurrentLinkedQueue<byte[]>>();
+
+    private LinksetSelector linkSetSelector = new LinksetSelector();;
+
+    protected MessageFactoryImpl messageFactory;
     private static final Logger logger = Logger.getLogger(SccpStackImpl.class);
 
     public SccpStackImpl() {
         messageFactory = new MessageFactoryImpl();
-        sccpProvider = new SccpProviderImpl(this); 
-        //why this is present? 
+        sccpProvider = new SccpProviderImpl(this);
+        // why this is present?
         this.state = State.CONFIGURED;
-        
-    }
 
+    }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.mobicents.protocols.ss7.sccp.SccpStack#getSccpProvider()
      */
     public SccpProvider getSccpProvider() {
@@ -84,112 +100,87 @@ public class SccpStackImpl implements SccpStack, MtpListener {
     public void setConfigPath(String path) {
         this.path = path;
     }
-    
+
     public String getPath() {
         return path;
     }
-    
+
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.mobicents.protocols.ss7.sccp.SccpStack#start()
      */
     public void start() throws IllegalStateException {
         logger.info("Starting ...");
         router = new RouterImpl(path);
         executor = Executors.newFixedThreadPool(1);
-        if (linksets != null) {
-            for (MtpProvider linkset : linksets) {
-                linkset.setMtpListener(this);
-                try {
-                    linkset.start();
-                } catch (Exception e) {
-                    //Bartek, failed linkset is not the reason to stop sccp
-                    logger.warn("Can't not start linkset: " + linkset.getName());
-                }
-            }
-        }
+
         this.state = State.RUNNING;
+
+        layer3exec = Executors.newFixedThreadPool(1);
+
+        layer3exec.execute(new MtpStreamHandler());
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.mobicents.protocols.ss7.sccp.SccpStack#stop()
      */
     public void stop() {
+        this.state = State.IDLE;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.mobicents.protocols.ss7.sccp.SccpStack#setRouter(org.mobicents.protocols.ss7.sccp.Router)
      */
     public void setRouter(Router router) {
     }
 
-    public Router getRouter()
-    {
-    	return null;
-    }
-    
-    private enum State {
-        IDLE, CONFIGURED, RUNNING;
+    public Router getRouter() {
+        return null;
     }
 
-    public void setLinksets(List<MtpProvider> linksets) {
-        this.linksets = linksets;
+    private enum State {
+        IDLE, CONFIGURED, RUNNING;
     }
 
     public void setTransferType(int type) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    //this method will be depricated
-    public void linkUp() {
+    // private MtpProvider findLinkset(int pc) {
+    // for (MtpProvider linkset : linksets) {
+    // if (linkset.getAdjacentPointCode() == pc) {
+    // return linkset;
+    // }
+    // }
+    // return null;
+    // }
+
+    private Linkset findLinkset(String name) {
+        return this.linksets.get(name);
     }
 
-    //this method will be depricated
-    public void linkDown() {
-    }
-
-    public void receive(byte[] msu) {
-        MessageHandler handler = new MessageHandler(msu);
-        executor.execute(handler);
-    }
-
-    private MtpProvider findLinkset(int pc) {
-        for (MtpProvider linkset : linksets) {
-            if (linkset.getAdjacentPointCode() == pc) {
-                return linkset;
-            }
-        }
-        return null;
-    }
-
-    private MtpProvider findLinkset(String name) {
-        for (MtpProvider linkset : linksets) {
-            if (linkset.getName().matches(name)) {
-                return linkset;
-            }
-        }
-        return null;
-    }
-    
     protected void send(SccpMessage message) throws IOException {
         MessageHandler handler = new MessageHandler(message);
         executor.execute(handler);
     }
 
-    private void send(MtpProvider linkset, SccpMessage message, MTPInfo mtpInfo) throws IOException {
-        //prepare routing label
+    private void send(Linkset linkset, SccpMessage message, MTPInfo mtpInfo)
+            throws IOException {
+        // prepare routing label
         int opc = mtpInfo.getOpc();
         int dpc = mtpInfo.getDpc();
-        int si = 3;//SCCP //Why not static? Mtp3._SI_SERVICE_SCCP
-        int ni = linkset.getNetworkIndicator();
+        int si = 3;// SCCP //Why not static? Mtp3._SI_SERVICE_SCCP
+        int ni = linkset.getNi();
         int sls = mtpInfo.getSls();
         int ssi = ni << 2;
- 
+
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        //encoding routing label
+        // encoding routing label
         bout.write((byte) (((ssi & 0x0F) << 4) | (si & 0x0F)));
         bout.write((byte) dpc);
         bout.write((byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6)));
@@ -198,66 +189,77 @@ public class SccpStackImpl implements SccpStack, MtpListener {
 
         ((SccpMessageImpl) message).encode(bout);
         byte[] msg = bout.toByteArray();
-        linkset.send(msg);
+        // linkset.getLinksetStream().write(msg);
+        this.linksetQueue.get(linkset.getName()).add(msg);
     }
 
     private void route(UnitData msg) throws IOException {
         Rule rule = router.find(msg.getCalledPartyAddress());
-        
-        //route not defined?  try to deliver to local listener
+
+        // route not defined? try to deliver to local listener
         if (rule == null) {
             sccpProvider.notify(msg.getCalledPartyAddress(), msg);
             return;
         }
-        
-        //translate address
+
+        // translate address
         SccpAddress address = rule.translate(msg.getCalledPartyAddress());
-        
-        //create new unit data message with translated address
-        //TODO: allow to set parameters?
-        UnitData unitData = messageFactory.createUnitData(msg.getProtocolClass(), address, msg.getCallingPartyAddress());
+
+        // create new unit data message with translated address
+        // TODO: allow to set parameters?
+        UnitData unitData = messageFactory.createUnitData(msg
+                .getProtocolClass(), address, msg.getCallingPartyAddress());
         unitData.setData(msg.getData());
 
-        //linkset not defined? send to local listener
+        // linkset not defined? send to local listener
         if (rule.getMTPInfo() == null) {
             sccpProvider.notify(unitData.getCalledPartyAddress(), msg);
             return;
         }
-        //find linkset
-        MtpProvider linkset = findLinkset(rule.getMTPInfo().getName());
+        // find linkset
+        Linkset linkset = findLinkset(rule.getMTPInfo().getName());
+        if (linkset == null) {
+            throw new IOException(String.format("No linkset matching %s", rule
+                    .getMTPInfo().getName()));
+        }
         send(linkset, unitData, rule.getMTPInfo());
     }
-    
+
     private void route(XUnitData msg) throws IOException {
         Rule rule = router.find(msg.getCalledPartyAddress());
-        
-        //route not defined?  try to deliver to local listener
+
+        // route not defined? try to deliver to local listener
         if (rule == null) {
             sccpProvider.notify(msg.getCalledPartyAddress(), msg);
             return;
         }
-        
-        //translate address
+
+        // translate address
         SccpAddress address = rule.translate(msg.getCalledPartyAddress());
-        
-        //create new unit data message with translated address
-        //TODO: allow to set parameters?
-        UnitData unitData = messageFactory.createUnitData(msg.getProtocolClass(), address, msg.getCallingPartyAddress());
+
+        // create new unit data message with translated address
+        // TODO: allow to set parameters?
+        UnitData unitData = messageFactory.createUnitData(msg
+                .getProtocolClass(), address, msg.getCallingPartyAddress());
         unitData.setData(msg.getData());
-        
-        //linkset not defined? send to local listener
+
+        // linkset not defined? send to local listener
         if (rule.getMTPInfo() == null) {
             sccpProvider.notify(unitData.getCalledPartyAddress(), msg);
             return;
         }
-        
-        //find linkset
-        MtpProvider linkset = findLinkset(rule.getMTPInfo().getName());
+
+        // find linkset
+        Linkset linkset = findLinkset(rule.getMTPInfo().getName());
+        if (linkset == null) {
+            throw new IOException(String.format("No linkset matching %s", rule
+                    .getMTPInfo().getName()));
+        }
         send(linkset, unitData, rule.getMTPInfo());
     }
-    
+
     private class MessageHandler implements Runnable {
-        //MSU as input stream
+        // MSU as input stream
         private ByteArrayInputStream data;
         private SccpMessage message;
 
@@ -274,24 +276,25 @@ public class SccpStackImpl implements SccpStack, MtpListener {
         private SccpMessage parse() throws IOException {
             // wrap stream with DataInputStream
             DataInputStream in = new DataInputStream(data);
-            
+
             int sio = 0;
             sio = in.read() & 0xff;
 
             // getting service indicator
             int si = sio & 0x0f;
 
-            //ignore msg if this is not sccp service.
+            // ignore msg if this is not sccp service.
             if (si != 3) {
                 return null;
             }
-            
-            //skip remaining 4 bytes
+
+            // skip remaining 4 bytes
             in.skip(4);
-            
+
             // determine msg type
             int mt = in.readUnsignedByte();
-            return ((MessageFactoryImpl) sccpProvider.getMessageFactory()).createMessage(mt, in);
+            return ((MessageFactoryImpl) sccpProvider.getMessageFactory())
+                    .createMessage(mt, in);
         }
 
         public void run() {
@@ -303,28 +306,89 @@ public class SccpStackImpl implements SccpStack, MtpListener {
                     return;
                 }
             }
-            //not each msg suppose routing or delivery to listner
+            // not each msg suppose routing or delivery to listner
             switch (message.getType()) {
-                case MessageType.UDT:
-                    UnitData udt = (UnitData) message;
-                    try {
-                        route(udt);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                //XUDT msg has extra fields then UDT so it also 
-                //processed in general separately separately    
-                case MessageType.XUDT:
-                    //reassembly probably required
-                    XUnitData xudt = (XUnitData) message;
-                    try {
-                        route(xudt);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
+            case MessageType.UDT:
+                UnitData udt = (UnitData) message;
+                try {
+                    route(udt);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            // XUDT msg has extra fields then UDT so it also
+            // processed in general separately separately
+            case MessageType.XUDT:
+                // reassembly probably required
+                XUnitData xudt = (XUnitData) message;
+                try {
+                    route(xudt);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
             }
         }
+    }
+
+    public void add(Linkset linkset) {
+
+        try {
+            linkset.getLinksetStream().register(this.linkSetSelector);
+            linksets.put(linkset.getName(), linkset);
+            linksetQueue.put(linkset.getName(),
+                    new ConcurrentLinkedQueue<byte[]>());
+        } catch (IOException ex) {
+            logger.error(String.format(
+                    "Registration for %s LinksetStream failed", linkset
+                            .getName()), ex);
+        }
+    }
+
+    public void remove(Linkset linkset) {
+        linksets.remove(linkset.getName());
+        linksetQueue.remove(linkset.getName());
+    }
+
+    private class MtpStreamHandler implements Runnable {
+
+        byte[] rxBuffer;
+        byte[] txBuffer;
+
+        public void run() {
+            // Execute only till state is Running
+            while (state == State.RUNNING) {
+
+                try {
+                    Collection<SelectorKey> selected = linkSetSelector
+                            .selectNow(OP_READ_WRITE, 1);
+                    for (SelectorKey key : selected) {
+                        ((LinksetStream) key.getStream()).read(rxBuffer);
+
+                        // Read data
+                        if (rxBuffer != null) {
+                            MessageHandler handler = new MessageHandler(
+                                    rxBuffer);
+                            executor.execute(handler);
+                        }
+
+                        // write data
+                        txBuffer = linksetQueue.get(
+                                ((LinksetStream) key.getStream()).getName()).poll();
+                        if (txBuffer != null) {
+                            key.getStream().write(txBuffer);
+                        }
+
+                    }
+
+                    // TODO : should add any Thread.wait() or let it iterate
+                    // continuously?
+                } catch (IOException ex) {
+                    logger.error("Error while reading data from LinksetStream",
+                            ex);
+                }
+            }
+        }
+
     }
 }

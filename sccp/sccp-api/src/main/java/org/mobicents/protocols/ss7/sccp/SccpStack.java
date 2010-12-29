@@ -17,13 +17,10 @@
  */
 package org.mobicents.protocols.ss7.sccp;
 
-import java.util.List;
-
 import org.mobicents.protocols.StartFailedException;
-import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 
 /**
- * 
+ * @author amit bhayani
  * @author baranowb
  * @author kulikov
  */
@@ -47,16 +44,6 @@ public interface SccpStack {
      */
     public void stop();
     
-    /**
-     * Assigns linksets. 
-     * 
-     * Current versions suppose static assignment. 
-     * For next versions implement link management functions.
-     * 
-     * @param linksets the list of available linksets.
-     */
-    public void setLinksets(List<MtpProvider> linksets);
-
     /**
      * Exposes SCCP provider object to SCCP user.
      * 

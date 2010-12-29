@@ -22,7 +22,7 @@ import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- *
+ * @author amit bhayani
  * @author kulikov
  */
 public class DefaultRouterImpl implements Router {
@@ -33,8 +33,8 @@ public class DefaultRouterImpl implements Router {
     }
 
     public int getRoute(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress) {
-        if (stack.linksets != null && stack.linksets.size() > 0) {
-            return stack.linksets.get(0).getAdjacentPointCode();
+        if (stack.linksets.size() > 0) {
+            return stack.linksets.head().getValue().getDpc();
         }
         return -1;
     }

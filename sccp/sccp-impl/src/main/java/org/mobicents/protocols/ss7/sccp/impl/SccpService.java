@@ -64,7 +64,7 @@ public class SccpService extends ServiceMBeanSupport implements SccpServiceMBean
         logger.info("Starting SCCP stack...");
         stack = new SccpStackImpl();
         stack.setConfigPath(path);
-        stack.setLinksets(linksets);
+        //stack.setLinksets(linksets);
         stack.start();
         rebind(stack);
     }
