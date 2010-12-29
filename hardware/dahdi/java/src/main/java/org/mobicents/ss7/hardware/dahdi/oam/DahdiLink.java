@@ -46,7 +46,7 @@ public class DahdiLink extends Link {
     }
 
     @Override
-    protected void init() throws Exception {
+    protected void configure() throws Exception {
 
         if (this.mode == LinkMode.CONFIGURED) {
             if (this.channel == null) {
@@ -109,7 +109,7 @@ public class DahdiLink extends Link {
 
         this.mode = LinkMode.CONFIGURED;
 
-        this.init();
+        this.configure();
         
         this.state = LinkState.UNAVAILABLE;
     }
@@ -144,7 +144,7 @@ public class DahdiLink extends Link {
             link.ioBufferSize = xml.getAttribute(LINK_IO_BUFFER_SIZE, 32);
 
             try {
-                link.init();
+                link.configure();
             } catch (Exception e) {
                 logger.error("Failed to initialize dahdi link", e);
             }
