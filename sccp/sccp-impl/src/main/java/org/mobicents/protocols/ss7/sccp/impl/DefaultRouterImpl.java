@@ -34,7 +34,7 @@ public class DefaultRouterImpl implements Router {
 
     public int getRoute(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress) {
         if (stack.linksets.size() > 0) {
-            return stack.linksets.head().getValue().getDpc();
+            return stack.linksets.head().getValue().getApc();
         }
         return -1;
     }

@@ -75,7 +75,7 @@ public class SccpStackImpl implements SccpStack, Layer4 {
     // Hold the byte[] that needs to be writtent to Linkset
     private FastMap<String, ConcurrentLinkedQueue<byte[]>> linksetQueue = new FastMap<String, ConcurrentLinkedQueue<byte[]>>();
 
-    private LinksetSelector linkSetSelector = new LinksetSelector();;
+    private LinksetSelector linkSetSelector = new LinksetSelector();
 
     protected MessageFactoryImpl messageFactory;
     private static final Logger logger = Logger.getLogger(SccpStackImpl.class);
