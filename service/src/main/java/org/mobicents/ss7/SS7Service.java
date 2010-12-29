@@ -23,9 +23,12 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import javolution.util.FastMap;
+
 import org.apache.log4j.Logger;
 import org.jboss.system.ServiceMBeanSupport;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
+import org.mobicents.ss7.linkset.oam.Linkset;
 import org.mobicents.ss7.linkset.oam.LinksetManager;
 
 /**
@@ -56,6 +59,12 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
         sccpStack = new SccpStackImpl();
         sccpStack.setConfigPath(path);
+        
+        FastMap<String, Linkset> map = this.linksetManager.getLinksets();
+        for (FastMap.Entry<String, Linkset> e = map.head(), end = map.tail(); (e = e.getNext()) != end;) {
+            Linkset value = e.getValue(); 
+            ((SccpStackImpl)sccpStack).add(value);
+       }        
 
         // sccpStack.setLinksets(linksets);
         sccpStack.start();
@@ -87,10 +96,12 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
     }
 
     public void setShellPort(int shellPort) {
+        System.out.println("setShellPort called = "+shellPort);
         this.shellPort = shellPort;
     }
 
     public void setJndiName(String jndiName) {
+        System.out.println("setJndiName called = "+jndiName);
         this.jndiName = jndiName;
     }
 
@@ -102,14 +113,6 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
         this.path = path;
     }
     
-    public LinksetManager getLinkSetManager() {
-        return linkSetManager;
-    }
-
-    public void setLinkSetManager(LinksetManager linkSetManager) {
-        this.linkSetManager = linkSetManager;
-    }
-
     @Override
     public void stopService() {
         try {

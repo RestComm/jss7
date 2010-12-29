@@ -38,7 +38,7 @@
 		</property>
 		<property name="shellAddress">${jboss.bind.address}</property>
 		<property name="shellPort">3435</property>
-		<property name="linkSetManager">
+		<property name="linksetManager">
 			<inject bean="LinksetManager" />
 		</property>
 	</bean>
