@@ -152,6 +152,16 @@ public class LinksetManager {
      * Operations
      */
 
+    public String showLinkset(String[] options) throws Exception {
+        StringBuffer sb = new StringBuffer();
+        for (FastMap.Entry<String, Linkset> e = this.linksets.head(), end = this.linksets
+                .tail(); (e = e.getNext()) != end;) {
+            Linkset linkset = e.getValue();
+            linkset.print(sb, 0, 4);
+        }
+        return sb.toString();
+    }
+
     /**
      * <p>
      * Expected command is "linkset create <linkset-type> <options>

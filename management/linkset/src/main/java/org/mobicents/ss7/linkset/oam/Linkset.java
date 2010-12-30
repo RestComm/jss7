@@ -12,14 +12,17 @@ import javolution.xml.stream.XMLStreamException;
  */
 public abstract class Linkset implements XMLSerializable {
 
-    private static final String LINKSET_NAME = "name";
-    private static final String LINKSET_STATE = "state";
-    private static final String LINKSET_MODE = "mode";
-    private static final String LINKSET_OPC = "opc";
-    private static final String LINKSET_APC = "apc";
-    private static final String LINKSET_NI = "ni";
-    private static final String LINKS = "links";
-    private static final String LINK = "link";
+    // Name of link can be max 10 characters
+    protected static final int NAME_SIZE = 10;
+
+    protected static final String LINKSET_NAME = "name";
+    protected static final String LINKSET_STATE = "state";
+    protected static final String LINKSET_MODE = "mode";
+    protected static final String LINKSET_OPC = "opc";
+    protected static final String LINKSET_APC = "apc";
+    protected static final String LINKSET_NI = "ni";
+    protected static final String LINKS = "links";
+    protected static final String LINK = "link";
 
     protected String linksetName = null;
     protected int apc;
@@ -281,4 +284,18 @@ public abstract class Linkset implements XMLSerializable {
 
         }
     };
+
+    /**
+     * Add the details of this linkset in passed {@link StringBuffer}. This is
+     * for printing the linkset state.
+     * 
+     * @param sb
+     *            Add the information in this buffer
+     * @param leftPad
+     *            number of spaces from left side
+     * @param descPad
+     *            number of spaces between each word
+     */
+    public abstract void print(StringBuffer sb, int leftPad, int descPad);
+
 }

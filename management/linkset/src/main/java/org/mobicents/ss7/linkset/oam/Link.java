@@ -13,8 +13,9 @@ import javolution.xml.stream.XMLStreamException;
  * 
  */
 public abstract class Link implements XMLSerializable {
-
-    public static final String SPACE = " ";
+    
+    //Name of link can be max 10 characters
+    protected static final int NAME_SIZE = 10;
 
     protected String linkName = null;
 
@@ -26,9 +27,9 @@ public abstract class Link implements XMLSerializable {
     /**
      * Define attributes of xml
      */
-    private static final String LINK_NAME = "name";
-    private static final String LINK_STATE = "state";
-    private static final String LINK_MODE = "mode";
+    protected static final String LINK_NAME = "name";
+    protected static final String LINK_STATE = "state";
+    protected static final String LINK_MODE = "mode";
 
     protected static final boolean TRUE = true;
     protected static final boolean FALSE = false;
@@ -165,9 +166,4 @@ public abstract class Link implements XMLSerializable {
      */
     public abstract void print(StringBuffer sb, int leftPad, int descPad);
 
-    protected void createPad(StringBuffer sb, int pad) {
-        for (int i = 0; i < pad; i++) {
-            sb.append(' ');
-        }
-    }
 }
