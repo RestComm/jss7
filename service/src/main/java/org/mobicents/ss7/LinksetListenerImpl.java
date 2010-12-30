@@ -35,7 +35,10 @@ public class LinksetListenerImpl implements LinksetListener {
                 return LinkOAMMessages.INVALID_COMMAND;
             }
 
-            if (firstOption.compareTo("create") == 0) {
+            if(firstOption.compareTo("show") == 0){
+                //Show
+                return this.linksetManager.showLinkset(options);
+            } else if (firstOption.compareTo("create") == 0) {
                 // Create Linkset
                 return this.linksetManager.createLinkset(options);
             } else if (firstOption.compareTo("delete") == 0) {

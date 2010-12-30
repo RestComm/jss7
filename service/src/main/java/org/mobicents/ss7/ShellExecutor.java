@@ -23,7 +23,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 
-import javolution.util.FastList;
+import javolution.util.FastSet;
 
 import org.apache.log4j.Logger;
 import org.mobicents.ss7.linkset.oam.LinksetManager;
@@ -55,14 +55,14 @@ public class ShellExecutor implements Runnable {
     private String rxMessage = "";
     private String txMessage = "";
 
-    private LinksetManager linksetManager = null;
+    private volatile LinksetManager linksetManager = null;
 
     private LinksetListenerImpl linksetListenerImpl = null;
 
     private volatile boolean started = false;
 
     public ShellExecutor(InetAddress address, int port) throws IOException {
-        provider = ChannelProvider.open();
+        provider = ChannelProvider.provider();
         serverChannel = provider.openServerChannel();
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address,
                 port);
@@ -71,15 +71,14 @@ public class ShellExecutor implements Runnable {
         selector = provider.openSelector();
         skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-        messageFactory = new MessageFactory();
+        messageFactory = ChannelProvider.provider().getMessageFactory();
 
         this.logger.info(String.format("ShellExecutor listening at %s",
                 inetSocketAddress));
     }
 
     public void start() {
-        linksetListenerImpl = new LinksetListenerImpl(this.linksetManager);
-
+        this.linksetListenerImpl = new LinksetListenerImpl(this.linksetManager);
         this.started = true;
         new Thread(this).start();
     }
@@ -92,7 +91,7 @@ public class ShellExecutor implements Runnable {
         return linksetManager;
     }
 
-    protected void setLinksetManager(LinksetManager linksetManager) {
+    protected void setLinksetManager(LinksetManager linksetManager) {        
         this.linksetManager = linksetManager;
     }
 
@@ -104,12 +103,12 @@ public class ShellExecutor implements Runnable {
 
         while (started) {
             try {
-                FastList<ChannelSelectionKey> keys = selector.selectNow();
+                FastSet<ChannelSelectionKey> keys = selector.selectNow();
 
-                for (FastList.Node<ChannelSelectionKey> n = keys.head(), end = keys
-                        .tail(); (n = n.getNext()) != end;) {
-
-                    ChannelSelectionKey key = n.getValue();
+                for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record
+                        .getNext()) != end;) {
+                    ChannelSelectionKey key = (ChannelSelectionKey) keys
+                            .valueOf(record);
 
                     if (key.isAcceptable()) {
                         accept();
@@ -118,7 +117,6 @@ public class ShellExecutor implements Runnable {
                         Message msg = (Message) chan.receive();
 
                         if (msg != null) {
-                            System.out.println("Receive " + msg);
                             rxMessage = msg.toString();
 
                             if (rxMessage.compareTo("disconnect") == 0) {
@@ -157,14 +155,14 @@ public class ShellExecutor implements Runnable {
 
                         if (this.txMessage.compareTo("Bye") == 0) {
                             this.closeChannel();
-                        } 
-                        
-//                        else {
-//
-//                            ShellChannel chan = (ShellChannel) key.channel();
-//                            System.out.println("Sending " + txMessage);
-//                            chan.send(messageFactory.createMessage(txMessage));
-//                        }
+                        }
+
+                        // else {
+                        //
+                        // ShellChannel chan = (ShellChannel) key.channel();
+                        // System.out.println("Sending " + txMessage);
+                        // chan.send(messageFactory.createMessage(txMessage));
+                        // }
 
                         this.txMessage = "";
                     }
@@ -198,7 +196,6 @@ public class ShellExecutor implements Runnable {
         skey.cancel();
         skey = channel.register(selector, SelectionKey.OP_READ
                 | SelectionKey.OP_WRITE);
-        System.out.println("Client connected");
     }
 
     private void closeChannel() throws IOException {
