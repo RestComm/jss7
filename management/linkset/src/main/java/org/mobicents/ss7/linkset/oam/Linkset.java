@@ -16,13 +16,10 @@ public abstract class Linkset implements XMLSerializable {
     private static final String LINKSET_STATE = "state";
     private static final String LINKSET_MODE = "mode";
     private static final String LINKSET_OPC = "opc";
-    private static final String LINKSET_DPC = "dpc";
+    private static final String LINKSET_APC = "apc";
     private static final String LINKSET_NI = "ni";
     private static final String LINKS = "links";
     private static final String LINK = "link";
-
-    protected static final boolean TRUE = true;
-    protected static final boolean FALSE = false;
 
     protected String linksetName = null;
     protected int apc;
@@ -253,7 +250,7 @@ public abstract class Linkset implements XMLSerializable {
             linkSet.mode = xml.getAttribute(LINKSET_MODE,
                     LinksetMode.UNCONFIGURED);
             linkSet.opc = xml.getAttribute(LINKSET_OPC, -1);
-            linkSet.apc = xml.getAttribute(LINKSET_DPC, -1);
+            linkSet.apc = xml.getAttribute(LINKSET_APC, -1);
             linkSet.ni = xml.getAttribute(LINKSET_NI, 2);
             int linksCount = xml.getAttribute(LINKS, 0);
 
@@ -272,7 +269,7 @@ public abstract class Linkset implements XMLSerializable {
             xml.setAttribute(LINKSET_STATE, linkSet.state);
             xml.setAttribute(LINKSET_MODE, linkSet.mode);
             xml.setAttribute(LINKSET_OPC, linkSet.opc);
-            xml.setAttribute(LINKSET_DPC, linkSet.apc);
+            xml.setAttribute(LINKSET_APC, linkSet.apc);
             xml.setAttribute(LINKSET_NI, linkSet.ni);
             xml.setAttribute(LINKS, linkSet.links.size());
 
