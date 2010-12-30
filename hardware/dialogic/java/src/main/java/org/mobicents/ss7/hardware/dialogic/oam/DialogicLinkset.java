@@ -10,6 +10,7 @@ import org.mobicents.protocols.stream.api.SelectorKey;
 import org.mobicents.protocols.stream.api.SelectorProvider;
 import org.mobicents.protocols.stream.api.StreamSelector;
 import org.mobicents.ss7.hardware.dialogic.InterProcessCommunicator;
+import org.mobicents.ss7.linkset.oam.FormatterHelp;
 import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
 import org.mobicents.ss7.linkset.oam.Linkset;
 import org.mobicents.ss7.linkset.oam.LinksetMode;
@@ -195,9 +196,81 @@ public class DialogicLinkset extends Linkset {
     }
 
     @Override
-    public void print(StringBuffer arg0, int arg1, int arg2) {
-        // TODO Auto-generated method stub
-        
+    public void print(StringBuffer sb, int leftPad, int descPad) {
+
+        // left pad
+        FormatterHelp.createPad(sb, leftPad);
+
+        // Add name
+        sb.append(this.linksetName);
+
+        // check if length is less than Link.NAME_SIZE, add padding
+        if (this.linksetName.length() < Linkset.NAME_SIZE) {
+            FormatterHelp.createPad(sb, Linkset.NAME_SIZE
+                    - this.linksetName.length());
+        }
+
+        // add desc padding
+        FormatterHelp.createPad(sb, descPad);
+
+        // type is dahdi
+        sb.append("dialogic");
+
+        // add desc padding
+        FormatterHelp.createPad(sb, descPad);
+
+        // add opc
+        sb.append(LINKSET_OPC).append(FormatterHelp.EQUAL_SIGN)
+                .append(this.opc);
+
+        // opc can be max 8 (ANSI is max 24bits) digits. Add padding if its not
+        int length = (Integer.toString(this.opc).length());
+        if (length < 8) {
+            FormatterHelp.createPad(sb, 8 - length);
+        }
+
+        // add desc padding
+        FormatterHelp.createPad(sb, descPad);
+
+        // add apc
+        sb.append(LINKSET_APC).append(FormatterHelp.EQUAL_SIGN)
+                .append(this.apc);
+
+        // opc can be max 8 (ANSI is max 24bits) digits. Add padding if its not
+        length = (Integer.toString(this.apc).length());
+        if (length < 8) {
+            FormatterHelp.createPad(sb, 8 - length);
+        }
+
+        // add desc padding
+        FormatterHelp.createPad(sb, descPad);
+
+        // add NI
+        sb.append(LINKSET_NI).append(FormatterHelp.EQUAL_SIGN).append(this.ni);
+
+        // add desc padding
+        FormatterHelp.createPad(sb, descPad);
+
+        // add Source Module
+        sb.append(SRC_MODULE).append(FormatterHelp.EQUAL_SIGN).append(
+                this.sourceModule);
+
+        // add desc padding
+        FormatterHelp.createPad(sb, descPad);
+
+        // add dest Module
+        sb.append(DEST_MODULE).append(FormatterHelp.EQUAL_SIGN).append(
+                this.destModule);
+
+        // add desc padding
+        FormatterHelp.createPad(sb, descPad);
+
+        // add state
+        sb.append(LINKSET_STATE).append(FormatterHelp.EQUAL_SIGN).append(
+                FormatterHelp.getLinksetState(this.state));
+
+        sb.append(FormatterHelp.NEW_LINE);
+
     }
 
 }
