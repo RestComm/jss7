@@ -5,6 +5,9 @@ import org.mobicents.ss7.linkset.oam.Linkset;
 import org.mobicents.ss7.linkset.oam.LinksetFactory;
 
 /**
+ * <p>
+ * Factory for creating <tt>dahdi</tt> based {@link Linkset}
+ * </p>
  * 
  * @author amit bhayani
  * 
@@ -24,7 +27,7 @@ public class DahdiLinksetFactory extends LinksetFactory {
     @Override
     public Linkset createLinkset(String[] options) throws Exception {
 
-        // the expected command is "linkset create dahdi opc 1 dpc 2 ni 3
+        // the expected command is "linkset create dahdi opc 1 apc 2 ni 3
         // linkset1". We know length is 10
         if (options.length != 10) {
             throw new Exception(LinkOAMMessages.INVALID_COMMAND);

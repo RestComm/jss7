@@ -12,12 +12,14 @@ import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
 import org.mobicents.ss7.linkset.oam.LinkState;
 
 /**
+ * Instance of this class represents SS7 link for <tt>dahdi</tt> based SS7
+ * Cards
  * 
  * @author amit bhayani
  * 
  */
 public class DahdiLink extends Link {
-    
+
     private static final Logger logger = Logger.getLogger(DahdiLink.class);
 
     private int span = -1;
@@ -100,7 +102,7 @@ public class DahdiLink extends Link {
         if (this.state == LinkState.AVAILABLE) {
             throw new Exception(LinkOAMMessages.LINK_ALREADY_ACTIVE);
         }
-        
+
         // Add check that all parameters are set before initializing the
         // Link. Else send error message
         if (this.span == -1 || this.code == -1 || this.channelID == -1) {
@@ -110,7 +112,7 @@ public class DahdiLink extends Link {
         this.mode = LinkMode.CONFIGURED;
 
         this.configure();
-        
+
         this.state = LinkState.UNAVAILABLE;
     }
 
@@ -118,14 +120,13 @@ public class DahdiLink extends Link {
      * Management Operations
      */
     public void deactivate() throws Exception {
-        if(this.mode == LinkMode.UNCONFIGURED){
+        if (this.mode == LinkMode.UNCONFIGURED) {
             throw new Exception(LinkOAMMessages.LINK_ALREADY_DEACTIVE);
         }
-        
+
         this.mtp2.stop();
-        
-        
-        //TODO : SHouldn't this come from Mtp2Listener?
+
+        // TODO : SHouldn't this come from Mtp2Listener?
         this.state = LinkState.SHUTDOWN;
     }
 
@@ -173,6 +174,6 @@ public class DahdiLink extends Link {
 
     @Override
     public void print(StringBuffer sb, int leftPad, int descPad) {
-        
+
     }
 }

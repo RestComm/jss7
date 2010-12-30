@@ -24,6 +24,19 @@ import org.mobicents.ss7.linkset.oam.LinksetState;
 import org.mobicents.ss7.linkset.oam.LinksetStream;
 
 /**
+ * <p>
+ * Linkset for <tt>dahdi</tt> based hardware. <tt>dahdi</tt> boards usually
+ * have no MTP support and depends on external software to provide MTP2/MTP3
+ * support.
+ * </p>
+ * <p>
+ * DahdiLinkset encapsulates the {@link Mtp3 Mtp3} and {@link Mtp2 Mtp2}
+ * protocols.
+ * </p>
+ * <p>
+ * Well known <tt>dahdi</tt> based SS7 cards are <tt>Diguim</tt> and
+ * <tt>Sangoma</tt>
+ * </p>
  * 
  * @author amit bhayani
  * 
@@ -33,7 +46,7 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
     private static final Logger logger = Logger.getLogger(DahdiLinkset.class);
 
     private Mtp3 mtp3 = null;
-    private ConcurrentLinkedQueue<byte[]> queue = new ConcurrentLinkedQueue();
+    private ConcurrentLinkedQueue<byte[]> queue = new ConcurrentLinkedQueue<byte[]>();
 
     public DahdiLinkset() {
         super();
@@ -246,9 +259,9 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
                 return false;
             }
         }
-        
+
         @Override
-        public String getName(){
+        public String getName() {
             return linksetName;
         }
 
