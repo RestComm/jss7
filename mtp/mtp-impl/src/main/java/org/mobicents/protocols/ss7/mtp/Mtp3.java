@@ -97,7 +97,7 @@ public class Mtp3 implements Runnable {
     public Mtp3(String name) {
         this.name = name;
         try {
-            selector = SelectorProvider.getSelector("org.mobicents.protocols.ss7.hardware.dahdi.Selector");
+            selector = SelectorProvider.getSelector("org.mobicents.ss7.hardware.dahdi.Selector");
         } catch (Exception e) {
             e.printStackTrace();
         }
