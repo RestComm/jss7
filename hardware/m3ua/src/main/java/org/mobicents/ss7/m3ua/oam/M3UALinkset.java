@@ -116,4 +116,10 @@ public class M3UALinkset extends Linkset {
             LINKSET_XML.write(linkSet, xml);
         }
     };
+
+    @Override
+    public void print(StringBuffer arg0, int arg1, int arg2) {
+        // TODO Auto-generated method stub
+        
+    }
 }

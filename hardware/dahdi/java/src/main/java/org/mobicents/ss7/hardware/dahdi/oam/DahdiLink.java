@@ -6,6 +6,7 @@ import javolution.xml.stream.XMLStreamException;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp2;
 import org.mobicents.ss7.hardware.dahdi.Channel;
+import org.mobicents.ss7.linkset.oam.FormatterHelp;
 import org.mobicents.ss7.linkset.oam.Link;
 import org.mobicents.ss7.linkset.oam.LinkMode;
 import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
@@ -174,6 +175,59 @@ public class DahdiLink extends Link {
 
     @Override
     public void print(StringBuffer sb, int leftPad, int descPad) {
+        FormatterHelp.createPad(sb, leftPad);
 
+        // Add name
+        sb.append(this.linkName);
+
+        // check if length is less than Link.NAME_SIZE, add padding
+        if (this.linkName.length() < Link.NAME_SIZE) {
+            FormatterHelp
+                    .createPad(sb, Link.NAME_SIZE - this.linkName.length());
+        }
+
+        // add desc padding
+        FormatterHelp.createPad(sb, descPad);
+
+        // add span
+        sb.append(LINK_SPAN).append(FormatterHelp.EQUAL_SIGN).append(this.span);
+
+        // span can be max 2 digits. check if its one digit add one extra space
+        if (this.span < 10) {
+            FormatterHelp.createPad(sb, 1);
+        }
+
+        // add desc padding
+        FormatterHelp.createPad(sb, descPad);
+
+        // add channel-id
+        sb.append(LINK_CHANNEL_ID).append(FormatterHelp.EQUAL_SIGN).append(
+                this.channelID);
+
+        // channel can be max 2 digits. check if its one digit add one extra
+        // space
+        if (this.channelID < 10) {
+            FormatterHelp.createPad(sb, 1);
+        }
+
+        // add desc padding
+        FormatterHelp.createPad(sb, descPad);
+
+        // add code
+        sb.append(LINK_CODE).append(FormatterHelp.EQUAL_SIGN).append(this.code);
+
+        // code can be max 3 digits. check if its less than 3 digit add extra
+        // space
+        if (this.code < 10) {
+            FormatterHelp.createPad(sb, 1);
+        }
+
+        if (this.code < 100) {
+            FormatterHelp.createPad(sb, 1);
+        }
+
+        // add state
+        sb.append(LINK_STATE).append(FormatterHelp.EQUAL_SIGN).append(
+                FormatterHelp.getLinkState(this.state));
     }
 }
