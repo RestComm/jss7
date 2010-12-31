@@ -19,14 +19,13 @@
 package org.mobicents.ss7;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 
 import javolution.util.FastSet;
 
 import org.apache.log4j.Logger;
-import org.mobicents.ss7.linkset.oam.LinksetManager;
+import org.mobicents.ss7.linkset.oam.LinksetExecutor;
 import org.mobicents.ss7.management.console.Subject;
 import org.mobicents.ss7.management.transceiver.ChannelProvider;
 import org.mobicents.ss7.management.transceiver.ChannelSelectionKey;
@@ -55,13 +54,41 @@ public class ShellExecutor implements Runnable {
     private String rxMessage = "";
     private String txMessage = "";
 
-    private volatile LinksetManager linksetManager = null;
-
-    private LinksetListenerImpl linksetListenerImpl = null;
-
     private volatile boolean started = false;
 
-    public ShellExecutor(InetAddress address, int port) throws IOException {
+    private String address;
+
+    private int port;
+
+    private volatile LinksetExecutor linksetExecutor = null;
+
+    public ShellExecutor() throws IOException {
+
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+    
+    public void start() {
+        
+    }
+
+    public void startService() throws IOException {
+
+        logger.info("Starting SS7 management shell environment");
         provider = ChannelProvider.provider();
         serverChannel = provider.openServerChannel();
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address,
@@ -75,28 +102,24 @@ public class ShellExecutor implements Runnable {
 
         this.logger.info(String.format("ShellExecutor listening at %s",
                 inetSocketAddress));
-    }
 
-    public void start() {
-        this.linksetListenerImpl = new LinksetListenerImpl(this.linksetManager);
         this.started = true;
         new Thread(this).start();
     }
-
+    
     public void stop() {
+    }
+
+    public void stopService() {
         this.started = false;
     }
 
-    protected LinksetManager getLinksetManager() {
-        return linksetManager;
+    public LinksetExecutor getLinksetExecutor() {
+        return linksetExecutor;
     }
 
-    protected void setLinksetManager(LinksetManager linksetManager) {        
-        this.linksetManager = linksetManager;
-    }
-
-    public String getReceivedMessage() {
-        return rxMessage;
+    public void setLinksetExecutor(LinksetExecutor linksetExecutor) {
+        this.linksetExecutor = linksetExecutor;
     }
 
     public void run() {
@@ -118,7 +141,7 @@ public class ShellExecutor implements Runnable {
 
                         if (msg != null) {
                             rxMessage = msg.toString();
-
+                            System.out.println("received "+ rxMessage);
                             if (rxMessage.compareTo("disconnect") == 0) {
                                 this.txMessage = "Bye";
                                 chan.send(messageFactory
@@ -137,7 +160,7 @@ public class ShellExecutor implements Runnable {
 
                                     switch (subject) {
                                     case LINKSET:
-                                        this.txMessage = this.linksetListenerImpl
+                                        this.txMessage = this.linksetExecutor
                                                 .execute(options);
                                         chan.send(messageFactory
                                                 .createMessage(this.txMessage));

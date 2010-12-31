@@ -17,8 +17,6 @@
  */
 package org.mobicents.ss7;
 
-import java.net.InetAddress;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -29,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.jboss.system.ServiceMBeanSupport;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.ss7.linkset.oam.Linkset;
+import org.mobicents.ss7.linkset.oam.LinksetExecutor;
 import org.mobicents.ss7.linkset.oam.LinksetManager;
 
 /**
@@ -37,7 +36,7 @@ import org.mobicents.ss7.linkset.oam.LinksetManager;
  */
 public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
-    private ShellExecutor shell = null;
+    private ShellExecutor shellExecutor = null;
 
     private LinksetManager linksetManager;
     private SccpStackImpl sccpStack;
@@ -45,9 +44,6 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
     private String path;
     private String jndiName;
 
-    private String shellAddress = "127.0.0.1";
-    private int shellPort = 3435;
-    
     private Logger logger = Logger.getLogger(SS7Service.class);
 
     @Override
@@ -57,12 +53,13 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
         sccpStack = new SccpStackImpl();
         sccpStack.setConfigPath(path);
-        
+
         FastMap<String, Linkset> map = this.linksetManager.getLinksets();
-        for (FastMap.Entry<String, Linkset> e = map.head(), end = map.tail(); (e = e.getNext()) != end;) {
-            Linkset value = e.getValue(); 
-            ((SccpStackImpl)sccpStack).add(value);
-       }        
+        for (FastMap.Entry<String, Linkset> e = map.head(), end = map.tail(); (e = e
+                .getNext()) != end;) {
+            Linkset value = e.getValue();
+            ((SccpStackImpl) sccpStack).add(value);
+        }
 
         // sccpStack.setLinksets(linksets);
         sccpStack.start();
@@ -71,30 +68,14 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
         logger.info("SCCP stack Started. SccpProvider bound to "
                 + this.jndiName);
 
-        logger.info("Starting SS7 management shell environment");
-        shell = new ShellExecutor(InetAddress.getByName(this.shellAddress),
-                this.shellPort);
-        shell.setLinksetManager(this.linksetManager);
-        shell.start();
-        
+        if (this.shellExecutor != null) {
+            LinksetExecutor linksetExec = new LinksetExecutor();
+            linksetExec.setLinksetManager(this.linksetManager);
+            this.shellExecutor.setLinksetExecutor(linksetExec);
+            this.shellExecutor.startService();
+        }
 
         logger.info("Started SS7 service");
-    }
-
-    public String getShellAddress() {
-        return shellAddress;
-    }
-
-    public void setShellAddress(String shellAddress) {
-        this.shellAddress = shellAddress;
-    }
-
-    public int getShellPort() {
-        return shellPort;
-    }
-
-    public void setShellPort(int shellPort) {
-        this.shellPort = shellPort;
     }
 
     public void setJndiName(String jndiName) {
@@ -108,15 +89,25 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
     public void setConfigPath(String path) {
         this.path = path;
     }
-    
+
+    public ShellExecutor getShellExecutor() {
+        return shellExecutor;
+    }
+
+    public void setShellExecutor(ShellExecutor shellExecutor) {
+        this.shellExecutor = shellExecutor;
+    }
+
     @Override
     public void stopService() {
         try {
             unbind(jndiName);
         } catch (Exception e) {
-        }
 
-        shell.stop();
+        }
+        if (this.shellExecutor != null) {
+            this.shellExecutor.stopService();
+        }
 
         logger.info("Stopped SS7 service");
     }

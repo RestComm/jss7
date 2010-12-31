@@ -28,18 +28,19 @@
 		</property>
 		<property name="persistDir">${jboss.server.data.dir}</property>
 	</bean>
+	
+	<bean name="ShellExecutor"
+		class="org.mobicents.ss7.ShellExecutor">
+		<property name="address">127.0.0.1</property>
+		<property name="port">3435</property>
+	</bean>		
 
 	<!-- Mobicents SS7 service -->
 	<bean name="SS7Service" class="org.mobicents.ss7.SS7Service">
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=SS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
 		<property name="jndiName">java:/mobicents/ss7/sccp</property>
-		<property name="configPath">
-			${catalina.home}/deploy/mobicents-ss7-service/sccp-routing.txt
-		</property>
-		<property name="shellAddress">${jboss.bind.address}</property>
-		<property name="shellPort">3435</property>
-		<property name="linksetManager">
-			<inject bean="LinksetManager" />
-		</property>
+		<property name="configPath">${catalina.home}/deploy/mobicents-ss7-service/sccp-routing.txt</property>
+		<property name="linksetManager"><inject bean="LinksetManager" /></property>
+		<property name="shellExecutor"><inject bean="ShellExecutor" /></property>		
 	</bean>
 </deployment>
