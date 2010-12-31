@@ -64,5 +64,7 @@ public interface LinkOAMMessages {
 
     public static final String LINK_NOT_CONFIGURED = "Not all mandatory parameters are set";
 
-    public static String OPERATION_NOT_SUPPORTED = "Operation not supported";
+    public static final String OPERATION_NOT_SUPPORTED = "Operation not supported";
+    
+    public static final String SERVER_ERROR = "Server Error";
 }

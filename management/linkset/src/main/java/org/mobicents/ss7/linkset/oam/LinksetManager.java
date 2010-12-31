@@ -158,7 +158,11 @@ public class LinksetManager {
                 .tail(); (e = e.getNext()) != end;) {
             Linkset linkset = e.getValue();
             linkset.print(sb, 0, 4);
+            sb.append(FormatterHelp.NEW_LINE);
         }
+        
+        System.out.println(sb.toString());
+        
         return sb.toString();
     }
 

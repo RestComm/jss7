@@ -68,9 +68,13 @@ public class MessageFactory {
             }
 
             // obtain remaining length of the message and prepare buffer
-            length = ((header[0] & 0xff << 24) | (header[1] & 0xff << 16)
-                    | (header[2] & 0xff << 8) | (header[3] & 0xff)) - 4;
-
+            length = ((header[0] & 0xff) << 24);
+            length += ((header[1] & 0xff) << 16);
+            length += ((header[2] & 0xff) << 8);
+            length += (header[3] & 0xff);
+            
+            length-=4;
+            
             params = new byte[length];
 
             // finally switch cursor position

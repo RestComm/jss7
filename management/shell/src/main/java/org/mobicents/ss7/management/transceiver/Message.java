@@ -9,7 +9,7 @@ import java.nio.ByteBuffer;
  * 
  */
 public class Message {
-    private byte[] data = null;
+    protected byte[] data = null;
 
     protected Message() {
 
@@ -35,6 +35,7 @@ public class Message {
      * @param txBuffer
      */
     protected void encode(ByteBuffer txBuffer) {
+
         txBuffer.position(4); // Length int
         txBuffer.put(data);
 
@@ -51,4 +52,5 @@ public class Message {
     public String toString() {
         return new String(data);
     }
+
 }
