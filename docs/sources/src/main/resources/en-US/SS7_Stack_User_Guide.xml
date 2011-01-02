@@ -3,40 +3,21 @@
 ]>
 
 <book>
-	<xi:include
-		href="Book_Info.xml"
-		xmlns:xi="http://www.w3.org/2001/XInclude" />
-	<xi:include
-		href="common/Preface.xml"
-		xmlns:xi="http://www.w3.org/2001/XInclude" />
-	<xi:include
-		xmlns:xi="http://www.w3.org/2001/XInclude"
-		href="Chapter-Introduction.xml" />
-	<xi:include
-		xmlns:xi="http://www.w3.org/2001/XInclude"
-		href="Chapter-Setup.xml" />
-		<xi:include
-		xmlns:xi="http://www.w3.org/2001/XInclude"
-		href="Chapter-Design_Overview.xml" />
-	<xi:include
-		xmlns:xi="http://www.w3.org/2001/XInclude"
-		href="Chapter-MTP.xml" />
-		<xi:include
-		xmlns:xi="http://www.w3.org/2001/XInclude"
-		href="Chapter-SCCP.xml" />
-		<xi:include
-		xmlns:xi="http://www.w3.org/2001/XInclude"
-		href="Chapter-TCAP.xml" />
-		<xi:include
-		xmlns:xi="http://www.w3.org/2001/XInclude"
-		href="Chapter-ISUP.xml" />
-		<xi:include
-		xmlns:xi="http://www.w3.org/2001/XInclude"
-		href="Chapter-MAP.xml" />
-			
-	<xi:include
-		href="Revision_History.xml"
-		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include href="Book_Info.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include href="common/Preface.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Introduction.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Design_Overview.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Setup_Binary.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Setup_Hardware.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Setup_Configure.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Management.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-MTP.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-SCCP.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-TCAP.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-ISUP.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-MAP.xml" />
+
+	<xi:include href="Revision_History.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 	<index />
 </book>
 

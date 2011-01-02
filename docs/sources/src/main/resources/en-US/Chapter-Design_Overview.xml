@@ -1,7 +1,8 @@
 <?xml version='1.0'?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
 
-<chapter id="design_overview">
+<chapter
+	id="design_overview">
 
 	<title>Design Overview</title>
 
@@ -18,11 +19,79 @@
 		This makes it easy to customize whole &THIS.PLATFORM; &THIS.APPLICATION;.
 		Specific protocol module has list of all dependencies along with
 		information on general design. Please refer to module description for
-		more information.
+		more
+		information.
 
 	</para>
 	<important>
-			<para>Be aware, &THIS.PLATFORM; &THIS.APPLICATION; is subject to changes as it is under active development! </para>
+		<para>Be
+			aware, &THIS.PLATFORM; &THIS.APPLICATION;
+			is subject to changes as it is under active development!
+		</para>
 	</important>
+	<para>&THIS.PLATFORM; &THIS.APPLICATION;
+		consists of following functional blocks:
+	</para>
+	<variablelist>
+		<varlistentry>
+			<term>Linkset</term>
+			<listitem>
+				<para>
+					<literal>Linkset</literal>
+					is logical shortcut. This term hides
+					<literal>MTP</literal>
+					layer, ie. it abstracts wheather hardware
+					<literal>MTP</literal>
+					is used or  &THIS.PLATFORM; &THIS.APPLICATION;
+					one.
+				</para>
+				<para>
+					Usually
+					<literal>Linkset</literal>
+					will be deployed as part of &THIS.PLATFORM;
+					Media Server deployment.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>Shell management client</term>
+			<listitem>
+				<para><literal>Shell</literal> is tool which allows to manage different aspects of &THIS.PLATFORM; &THIS.APPLICATION; in interactive manner. It connects
+				to different entities which manage <literal>Linksets</literal> or <literal>SCCP</literal> routing for instance. For detailed information please refer to: <xref linkend="management"/>.
+				Usually <literal>Shell</literal> will be invoked from remote machine(remote to <literal>Linksets</literal> and application protocols).</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>M3UA</term>
+			<listitem>
+				<para> <literal>M3UA</literal>  stands for <literal>MTP</literal> Level 3 (<literal>MTP3</literal>) User Adaptation. Its main purpose is to provide routing, management and streaming of <literal>MSUs</literal>(message signaling units)
+				between different peers. &THIS.PLATFORM; &THIS.APPLICATION; has dedicated <literal>M3UA</literal> implementation.
+				It connects <literal>Linkests</literal> with application level protocols(such as <literal>SCCP</literal> or <literal>ISUP</literal>).</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>Application</term>
+			<listitem>
+				<para> <literal>Application</literal> term encapsulates not only application level protocols(such as <literal>SCCP</literal> or <literal>ISUP</literal>) but also
+				entities which make use of them(like <literal>SLEE RA &amp; Service</literal>)</para>
+			</listitem>
+		</varlistentry>
+	</variablelist>
+	<para>Diagram belows depicts high level view of &THIS.PLATFORM; &THIS.APPLICATION; design:</para>
+	<mediaobject
+	id="ss7_design_general_1">
+	<imageobject>
+		<imagedata
+			width="300px"
+			align="center"
+			fileref="images/ss7-design-overview1.png"
+			format="PNG" />
+	</imageobject>
+	<caption>
+		<para>&THIS.PLATFORM; &THIS.APPLICATION;
+			general design
+		</para>
+	</caption>
+</mediaobject>
 </chapter>
 

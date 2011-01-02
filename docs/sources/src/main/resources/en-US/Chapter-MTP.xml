@@ -30,10 +30,11 @@
 		<para>This module builds layer on top of hardware signaling devices. It allows top level protocols to use its <acronym>API</acronym> regardless of used device.
 		Top overview of logical components is depicted on diagram below:
 		</para>
-		<mediaobject id="ss7_design_general_1">
+		<!-- AMIT: add image :) -->
+		<mediaobject id="mtp_design_general_1">
 			<imageobject>
 				<imagedata width="300px" align="center"
-				fileref="images/ss7-design-overview1.png" format="PNG" />
+				fileref="" format="PNG" />
 			</imageobject>
 			<caption>
 				<para>&THIS.PLATFORM; &THIS.APPLICATION; general design

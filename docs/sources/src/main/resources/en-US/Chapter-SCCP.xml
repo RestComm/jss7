@@ -7,255 +7,482 @@
 
 	<section>
 		<title>Introduction</title>
-		<para>SCCP provides connectionless and connection-oriented network
-			services and global title translation (GTT) capabilities above <acronym>MTP</acronym>
+		<para>
+			SCCP provides connectionless and connection-oriented network
+			services
+			and global title translation (GTT) capabilities above
+			<acronym>MTP</acronym>
 			Level 3. A global title is an address (e.g., a dialed 800 number,
 			calling card number, or mobile subscriber identification number)
 			which is translated by SCCP into a destination point code and
 			subsystem number. A subsystem number uniquely identifies an
-			application at the destination signaling point. <acronym>SCCP</acronym> is used as the
-			transport layer for <acronym>TCAP</acronym>-based services</para>
-			<para><acronym>SCCP</acronym> data is sent between peers by means of Data Units (UDs)</para>
+			application at the destination signaling point.
+			<acronym>SCCP</acronym>
+			is used as the
+			transport layer for
+			<acronym>TCAP</acronym>
+			-based services
+		</para>
+		<para>
+			<acronym>SCCP</acronym>
+			data is sent between peers by means of Data Units (UDs)
+		</para>
 	</section>
 	<section>
 		<title>Design and API Overview</title>
-		<para><acronym>SCCP</acronym> resides on top of <acronym>mtp</acronym> layer. Top overview is depicted on diagram below:</para>
+		<para>
+			<acronym>SCCP</acronym>
+			resides on top of
+			<acronym>mtp</acronym>
+			layer. Top overview is depicted on diagram below:
+		</para>
 		<mediaobject id="ss7_design_sccp_overview_1">
 			<imageobject>
 				<imagedata width="300px" align="center"
-				fileref="images/ss7-sccp-design-overview1.png" format="PNG" />
+					fileref="images/ss7-sccp-design-overview1.png" format="PNG" />
 			</imageobject>
 			<caption>
-				<para>&THIS.PLATFORM; &THIS.APPLICATION; SCCP
+				<para>&THIS.PLATFORM; &THIS.APPLICATION;
+					SCCP
 				</para>
 			</caption>
 		</mediaobject>
-		<para>As diagram depicts <literal>SCCP</literal> layer is provider centered. There is no stack. Provider has following definition:</para>
-		<programlisting language="Java" role="JAVA">
+		<para>
+			As diagrom depicts,
+			<literal>SCCP</literal>
+			stack depends from
+			<literal>Linkset</literal>
+			. Linkset is described in
+			<xref linkend="layer_mtp" />
+		</para>
+		<para>
+			<literal>SCCP</literal>
+			stack is divided into several functional elements. Each element has
+			distinct task:
+		</para>
+		<variablelist>
+			<varlistentry>
+				<term>SccpStack</term>
+				<listitem>
+					<para>Stack object exposes methods to manage stack and access its
+						facilities:</para>
+					<programlisting language="Java" role="JAVA">
 package org.mobicents.protocols.ss7.sccp;
 
+import org.mobicents.protocols.StartFailedException;
+
+public interface SccpStack {
+
+    public void start() throws IllegalStateException, StartFailedException;
+
+    public void stop();
+
+    public SccpProvider getSccpProvider();
+
+    public void setRouter(Router router);
+
+}
+					</programlisting>
+					<variablelist>
+						<varlistentry>
+							<term>
+								The
+								<literal>start() throws IllegalStateException,
+									StartFailedException;</literal>
+								method:
+							</term>
+							<listitem>
+								<para>
+									simply starts stack. Start method not only starts
+									<literal>SCCP</literal>
+									, it also starts Linksets.
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>
+								The
+								<literal> stop();</literal>
+								method:
+							</term>
+							<listitem>
+								<para>
+									stops stack and its facilities along with Linksets.
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>
+								The
+								<literal>getSccpProvider();</literal>
+								method:
+							</term>
+							<listitem>
+								<para>
+									returns provider which gives access to facilities. Facilities
+									allow to build proper
+									<literal>SCCP</literal>
+									messages.
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>
+								The
+								<literal>setRouter(Router router);</literal>
+								method:
+							</term>
+							<listitem>
+								<para>
+									sets router implementation which will be used by stack.
+									Passed instance will be used to make routing decisions.
+								</para>
+							</listitem>
+						</varlistentry>
+						<!-- <varlistentry> <term> The <literal>setTransferType(int type);</literal> 
+							method: </term> <listitem> <para> not used </para> </listitem> </varlistentry> -->
+					</variablelist>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Router</term>
+				<listitem>
+					<para></para>
+					<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.sccp;
+
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
+public interface Router {
+
+    public int getRoute(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress); 
+    .
+}
+					</programlisting>
+					<variablelist>
+						<varlistentry>
+							<term>
+								The
+								<literal>getRoute(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress);</literal>
+								method:
+							</term>
+							<listitem>
+								<para>
+									returns point code(from local stack is adjacent point code) of linkset which should be used to send message.
+								</para>
+							</listitem>
+						</varlistentry>
+					</variablelist>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>SccpProvider</term>
+				<listitem>
+					<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.sccp;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.mtp.ActionReference;
+import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
+import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 public interface SccpProvider {
-	
-	/**
-	 * Sets sccp listener
-	 * @param listener
-	 */
-	public void setSccpListener(SccpListener listener);
-	/**
-	 * Retrieves listener
-	 * @return
-	 */
-	public SccpListener getListener();
-	/**
-	 * Removes listener
-	 */
-	public void removeListener();
-	
-	/**
-	 * Send sccp byte[] to desired addres.
-	 * @param calledParty - destination address of this message
-	 * @param callingParty - local address
-	 * @param data - byte[] encoded of sccp parameters
-	 * @param ar - reference with mtp3 routing label
-	 * @throws IOException
-	 */
-	public void send(SccpAddress calledParty, SccpAddress callingParty,
-			byte[] data,ActionReference ar) throws IOException;
 
-	public void shutdown();
+    public MessageFactory getMessageFactory();
 
-	public SccpUnitDataFactory getUnitDataFactory();
+    public ParameterFactory getParameterFactory();
 
-	public SccpParameterFactory getSccpParameterFactory();
+    public void registerSccpListener(SccpAddress localAddress,SccpListener listener);
+
+    public void deregisterSccpListener(SccpAddress localAddress);
+
+    public void send(SccpMessage message) throws IOException;
+
 }
-		</programlisting>
-		<para>Provider allows single listener to be registered with it. Listener is callled once proper <acronym>SCCP</acronym> message is received. Listener is defined as follows:</para>
-		<programlisting language="Java" role="JAVA">
+					</programlisting>
+					<variablelist>
+						<varlistentry>
+							<term>
+								The
+								<literal>getMessageFactory();</literal>
+								method:
+							</term>
+							<listitem>
+								<para>
+									returns factory for
+									<literal>SCCP</literal>
+									messages, like
+									<literal>UDT</literal>
+									or
+									<literal>XUDT</literal>
+									.
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>
+								The
+								<literal>getParameterFactory();</literal>
+								method:
+							</term>
+							<listitem>
+								<para>
+									returns parameter factory. Parameters are sent as part of
+									<literal>SCCP</literal>
+									messages.
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>
+								The
+								<literal>registerSccpListener(SccpAddress
+									localAddress,SccpListener listener);</literal>
+								method:
+							</term>
+							<listitem>
+								<para>registers particular listener to be called to server for
+									specific address.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>
+								The
+								<literal>deregisterSccpListener(SccpAddress localAddress);
+								</literal>
+								method:
+							</term>
+							<listitem>
+								<para>removes listener mapped to passed address.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>
+								The
+								<literal>send(SccpMessage message) throws IOException;</literal>
+								method:
+							</term>
+							<listitem>
+								<para>
+									encodes passed message and schedules it to be sent through
+									<literal>MTP</literal>
+									layer.
+								</para>
+							</listitem>
+						</varlistentry>
+					</variablelist>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>SccpListener</term>
+				<listitem>
+					<programlisting language="Java" role="JAVA">
 package org.mobicents.protocols.ss7.sccp;
 
-import org.mobicents.protocols.ss7.mtp.ActionReference;
+import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
+
+public interface SccpListener extends Serializable {
+
+	public void onMessage(SccpMessage message);
+	
+}
+					</programlisting>
+					<variablelist>
+						<varlistentry>
+							<term>
+								The
+								<literal>onMessage(SccpMessage message);</literal>
+								method:
+							</term>
+							<listitem>
+								<para>
+									is called when message is received with destination address
+									matching. Address is matched by
+									<literal>SCCP</literal>
+									router.
+								</para>
+							</listitem>
+						</varlistentry>
+					</variablelist>
+				</listitem>
+			</varlistentry>
+
+			<varlistentry>
+				<term>ParameterFactory</term>
+				<listitem>
+					<para>Parameter factory allows to create parameters which may be set as part of message:</para>
+					<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.sccp.parameter;
+
+public interface ParameterFactory  {
+
+    public ProtocolClass createProtocolClass(int value, int handling);
+
+    public Importance createImportance(int value);
+
+    public Segmentation createSegmentation();
+    
+    public HopCounter createHopCounter(int hopCount);
+}
+					</programlisting>
+					<variablelist>
+						<varlistentry>
+							<term>
+								The
+								<literal>createProtocolClass(int value, int handling);</literal>
+								method:
+							</term>
+							<listitem>
+								<para>
+									creates protocol class parameter. This parameter <literal>MUST</literal> be present in <literal>SCCP</literal> message.
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>
+								The
+								<literal>createImportance(int value);</literal>
+								method:
+							</term>
+							<listitem>
+								<para>
+									creates importance parameter.  This parameter <literal>MUST</literal> be present in <literal>SCCP</literal> message.
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>
+								The
+								<literal>createSegmentation();</literal>
+								method:
+							</term>
+							<listitem>
+								<para>
+									creates segmentation parameter. This parameter is optional and used in cases content of message is to big to send in single message.
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>
+								The
+								<literal>createHopCounter(int hopCount);;</literal>
+								method:
+							</term>
+							<listitem>
+								<para>
+									creates hop counter parameter.  This parameter <literal>MUST</literal> be present in <literal>SCCP</literal> message.
+								</para>
+							</listitem>
+						</varlistentry>
+						
+					</variablelist>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>MessageFactory</term>
+				<listitem>
+					<para>Message factory allows to create various type of message. Created objects are eligible for sending via <literal>SccpProvider</literal>. </para>
+					<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.sccp.message;
+
+import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
-public interface SccpListener {
-	/**
-	 * Called when proper data is received, it is partially decoded. This method is called with message payload.
-	 * @param calledPartyAddress - destination address
-	 * @param callingPartyAddress - originating address
-	 * @param data - payload of data unit
-	 * @param backReference - reference to be passed to provider send method.
-	 */
-	public void onMessage(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress, byte[] data, ActionReference backReference);
-	/**
-	 * Called when underlying link goes down.
-	 */
-	public void linkDown();
-	/**
-	 * Called when underlying link goes up.
-	 */
-	public void linkUp();
+public interface MessageFactory {
 
-}
-		</programlisting>
-		<section>
-			<title>SCCP Factory</title>
-			<para>Concrete provider instances are created by means of <literal>SccpFactory</literal>. Factory class: 
-			<literal>org.mobicents.protocols.ss7.sccp.SccpFactory</literal> declares single method:
-			<literal>public SccpProvider getProvider( Properties properties) </literal>.</para>
-			<para>Where passed properties contain configuration properties listed in <xref linkend="sccp_configuration"/> and provider specific options.</para>
-		</section>
-		<section id="sccp_providers">
-			<title>Supported providers</title>
-			<para><acronym>SCCP</acronym> supports following providers:</para>
-			<table frame="all" pgwide="1">
-				<title>Providers</title>
-				<tgroup colsep="1" cols="3">
-				   	<colspec colnum="1" colname="c0"/>
-				    <colspec colnum="2" colname="c1"/>
-				    <colspec colnum="3" colname="c2"/>
-				    <thead>
-						<row>
-				    	    <entry>driver name</entry>
-				   	    	<entry>Description</entry>
-				   	    	<entry>Configuration</entry>
-				    	</row>
-					</thead>
-					<tbody>
-						<row>
-			   				<entry>TCP</entry>
-			   	    		<entry>TCP providers, it relies on <acronym>MTP</acronym> Provider</entry>
-			   	    		<entry>Please refer to mtp provider configuration for <acronym>TCP</acronym> </entry>
-			   			 </row>
-			   			 <row>
-			   				<entry>INTEL</entry>
-			   	    		<entry></entry>
-			   	    		<entry></entry>
-			   			 </row>
-			   			 <row>
-			   				<entry>M3</entry>
-			   	    		<entry></entry>
-			   	    		<entry></entry>
-			   			 </row>
-			    	 </tbody>
-			    </tgroup>
-	        </table>
-		</section>
-		<!--  add this once everything is defined proeprly, now UDTs factory is not usable!
-		<section>
-			<title>Factories and data structures
-			</title>
-			<para></para>
-		</section>
-		 -->
+    public UnitData createUnitData(ProtocolClass pClass, SccpAddress calledParty,
+            SccpAddress callingParty);
+
+    public XUnitData createXUnitData(HopCounter hopCounter, ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty);
+    
+}					</programlisting>
+					<variablelist>
+						<varlistentry>
+							<term>
+								The
+								<literal>createUnitData(ProtocolClass pClass, SccpAddress calledParty,
+            SccpAddress callingParty);
+								</literal>
+								method:
+							</term>
+							<listitem>
+								<para>create basic message(UDT) used in connectionles communication.
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>
+								The
+								<literal></literal>
+								method:
+							</term>
+							<listitem>
+								<para>create message used in connectionles communication. Extended UDT allows more parameters to be passed. It also allows to fragment bigger data. 
+								</para>
+							</listitem>
+						</varlistentry>
+					</variablelist>
+				</listitem>
+			</varlistentry>
+
+		</variablelist>
+
+
 	</section>
+
+
+
+
+
 	<section id="sccp_configuration">
 		<title>Configuration</title>
-		<para> Each provider supports following configuration properties:</para>
-		<table frame="all" pgwide="1">
-				<title>Common Configuration Properties</title>
-				<tgroup colsep="1" cols="4">
-				   	<colspec colnum="1" colname="c0"/>
-				    <colspec colnum="2" colname="c1"/>
-				    <colspec colnum="3" colname="c2"/>
-				    <colspec colnum="4" colname="c3"/>
-				    <thead>
-						<row>
-				    	    <entry>Property Name</entry>
-				   	    	<entry>Description</entry>
-				   	    	<entry>Property Type</entry>
-				   	    	<entry>Default Value</entry>
-				    	</row>
-					</thead>
-					<tbody>
-						<row>
-				   			<entry>driver</entry>
-					   	    <entry>Configures driver of <acronym>SCCP</acronym> layer. </entry>
-					   	    <entry>java.lang.String</entry>
-					   	    <entry></entry>
-				    	</row>
-				    	<row>
-				   			<entry>sccp.dpc</entry>
-				   	    	<entry>Default DPC used by ISUP layer for originating messages</entry>
-				   	    	<entry>java.lang.String</entry>
-				   	    	<entry></entry>
-				    	</row>
-				    	<row>
-				   			<entry>sccp.opc</entry>
-				   	    	<entry>Default OPC used by ISUP layer for originating messages</entry>
-				   	    	<entry>java.lang.String</entry>
-				   	    	<entry></entry>
-				    	</row>
-				    	<row>
-				   			<entry>sccp.sls</entry>
-				   	    	<entry>Default SLS used by ISUP layer for originating messages</entry>
-				   	    	<entry>java.lang.String</entry>
-				   	    	<entry></entry>
-				    	</row>
-				    	<row>
-				   			<entry>sccp.ssi</entry>
-				   	    	<entry>Default SSI used by ISUP layer for originating messages</entry>
-				   	    	<entry>java.lang.String</entry>
-				   	    	<entry></entry>
-				    	</row>
-				 </tbody>
-		    </tgroup>
-		</table>
+		<para> Current <literal>SCCP</literal> layer does not define configuration parameters.
+		</para>
+
 		<section>
 			<title>Dependencies</title>
-			<para><acronym>SCCP</acronym> depends on following:</para>
+			<para>
+				<acronym>SCCP</acronym>
+				depends on following:
+			</para>
 			<itemizedlist>
 				<listitem>
 					<para>MTP</para>
+				</listitem>
+				<listitem>
+					<para>M3UA</para>
 				</listitem>
 			</itemizedlist>
 		</section>
 	</section>
 	<section>
 		<title>Example</title>
-		<para></para>
+		<para>This example shows how to use SCCP stack from source. However in most cases, user will make use of SCCP service.</para>
 		<programlisting language="Java" role="JAVA">
-
-Properties properties = new Properties();
-//mtp/sccp - name is the same
-properties.put("driver","TCP");
-properties.put("sccp.opc","12345");
-properties.put("sccp.dpc","5641");
-properties.put("sccp.sls","0");
-properties.put("sccp.ssi","0");
-
-//mtp
-properties.put("server.ip","192.156.81.1");
-properties.put("server.port","1023");
-
-SccProvider sccpProvider = SccpFactory.getInstance().getProvider(properties);
-sccpProvider.setListener(...);
-
-SccpParameterFactory paramFactory = sccpProvider.getSccpParameterFactory();
-SccpUnitDataFactory udFactory = sccpProvider.getSccpUnitDataFactory();
-
-SccpAddress peer1Address =  paramFactory.getSccpAddress();
-GlobalTitle gt = paramFactory.getGlobalTitle100();
-
-gt.setDigits("5557779");
-peer1Address.setGlobalTitle(gt);
-peer1Address.setGlobalTitleIndicator(4);//for GT 100
-
-SccpAddress peer2Address = paramFactory.getSccpAddress();
-gt = paramFactory.getGlobalTitle100();
-
-gt.setDigits("5888879");
-peer2Address.setGlobalTitle(gt);
-peer2Address.setGlobalTitleIndicator(4);//for GT 100
-
-byte[] tcapData = ....;
-// ActionReference is null, its originating call, defaults from conf will be used.
-sccpProvider.send(peer1,peer2,tcapData,null); 
-		</programlisting>
 		
+import org.mobicents.ss7.linkset.oam.Linkset;
+
+		
+public class ExampleSccpPeer implements SccpListener
+{
+
+	public ExampleSccpPeer()
+	{
+		//lets create some fixed connection.
+		Linkset set
+	}
+
+
+	public void onMessage(SccpMessage message) {
+    	System.out.println("Got message: "+message);
+    	if(message.get)
+    }
+
+}
+		</programlisting>
+
 	</section>
 </chapter>
 
