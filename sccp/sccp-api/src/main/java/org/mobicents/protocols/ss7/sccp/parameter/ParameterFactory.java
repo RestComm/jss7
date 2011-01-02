@@ -47,4 +47,8 @@ public interface ParameterFactory extends Serializable  {
      * @return parameter.
      */
     public Segmentation createSegmentation();
+    /**
+     * Create hop counter parameter
+     */
+    public HopCounter createHopCounter(int hopCount);
 }

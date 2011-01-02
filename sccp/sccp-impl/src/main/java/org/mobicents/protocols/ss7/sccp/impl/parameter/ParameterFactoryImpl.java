@@ -22,6 +22,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
+import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
 
 /**
  *
@@ -41,4 +42,9 @@ public class ParameterFactoryImpl implements ParameterFactory {
         return new SegmentationImpl();
     }
 
+    public HopCounter createHopCounter(int hopCount)
+    {
+    	return new HopCounterImpl(hopCount);
+    }
+    
 }
