@@ -17,6 +17,7 @@
 		<THIS.ISSUE_TRACKER_URL>http://bugzilla.redhat.com/bugzilla/</THIS.ISSUE_TRACKER_URL>
 		<THIS.RELEASE_SOURCE_CODE_URL>?</THIS.RELEASE_SOURCE_CODE_URL>
 		<THIS.TRUNK_SOURCE_CODE_URL>NOT AVAILABLE</THIS.TRUNK_SOURCE_CODE_URL>
+		<THIS.RELEASE_BINARY_URL>NOT AVAILABLE</THIS.RELEASE_BINARY_URL>
 		<author.email.amit>abhayani (at) redhat.com</author.email.amit>
 		<author.email.bartosz>bbaranow (at) redhat.com</author.email.bartosz>
 		<author.email.oleg>okulikov (at) redhat.com</author.email.oleg>
