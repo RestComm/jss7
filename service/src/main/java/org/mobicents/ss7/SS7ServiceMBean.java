@@ -27,5 +27,8 @@ public interface SS7ServiceMBean {
 
 	public void start() throws Exception;
 	public void stop();
-        
+     /**
+      * Returns SCCP Provider jndi name.
+      */
+	 public String getJndiName();
 }
