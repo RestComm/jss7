@@ -30,7 +30,7 @@
 		<para>This module builds layer on top of hardware signaling devices. It allows top level protocols to use its <acronym>API</acronym> regardless of used device.
 		Top overview of logical components is depicted on diagram below:
 		</para>
-		<!-- AMIT: add image :) -->
+		<!-- AMIT: add image :)
 		<mediaobject id="mtp_design_general_1">
 			<imageobject>
 				<imagedata width="300px" align="center"
@@ -41,6 +41,7 @@
 				</para>
 			</caption>
 		</mediaobject>
+		 -->
 		<section>
 			<title>Supported hardware</title>
 			<para>There is variety of <acronym>SS7</acronym> hardware. Depending on driver, it provides different level of abstraction. &THIS.PLATFORM; &THIS.APPLICATION; supports following:</para>
