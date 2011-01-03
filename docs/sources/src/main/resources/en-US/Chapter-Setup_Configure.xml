@@ -502,9 +502,22 @@ sequence;pattern;translation;mtpinfo
 				<varlistentry>
 					<term>pattern</term>
 					<listitem>
-						<para>is simply <literal>SCCP</literal> like regular expresion. Destination address of message is matched against this to check which rule should be triggered.
-						 </para>
-						 <para>Fields of <literal>pattern</literal> separated by <literal>#</literal>, empty value is indicated by single <literal>space</literal>. <literal>pattern</literal> has following fields:</para>
+						<para>
+							is simply
+							<literal>SCCP</literal>
+							like regular expresion. Destination address of message is matched against this to check which rule should be triggered.
+						</para>
+						<para>
+							Fields of
+							<literal>pattern</literal>
+							separated by
+							<literal>#</literal>
+							, empty value is indicated by single
+							<literal>space</literal>
+							.
+							<literal>pattern</literal>
+							has following fields:
+						</para>
 						<table
 							frame="all"
 							pgwide="1">
@@ -537,14 +550,14 @@ sequence;pattern;translation;mtpinfo
 									<row>
 										<entry>numbering plan</entry>
 										<entry>enum</entry>
-										<entry>Determines which numbering plan is used for global title. It can have one of following values:  
-										UNKNOWN, ISDN_TELEPHONY, DATA, TELEX, MERITIME_MOBILE, LAND_MOBILE, ISDN_MOBILE</entry>
+										<entry>Determines which numbering plan is used for global title. It can have one of following values:
+											UNKNOWN, ISDN_TELEPHONY, DATA, TELEX, MERITIME_MOBILE, LAND_MOBILE, ISDN_MOBILE</entry>
 									</row>
 									<row>
 										<entry>nature of address</entry>
 										<entry>enum</entry>
-										<entry>Determines type of address. It can have one of following values: 
-										SPARE, SUBSCRIBER, UNKNOWN, NATIONAL, INTERNATIONAL</entry>
+										<entry>Determines type of address. It can have one of following values:
+											SPARE, SUBSCRIBER, UNKNOWN, NATIONAL, INTERNATIONAL</entry>
 									</row>
 									<row>
 										<entry>digits</entry>
@@ -578,7 +591,10 @@ sequence;pattern;translation;mtpinfo
 				<varlistentry>
 					<term>mtpinfo</term>
 					<listitem>
-						<para><literal>mtpinfo</literal> indicates which link should be chosen when routing to remote location. In case routing is performed localy, its not present. </para>
+						<para>
+							<literal>mtpinfo</literal>
+							indicates which link should be chosen when routing to remote location. In case routing is performed localy, its not present.
+						</para>
 						<table
 							frame="all"
 							pgwide="1">
@@ -633,11 +649,89 @@ sequence;pattern;translation;mtpinfo
 			</variablelist>
 
 		</section>
+		<section
+			id="setup_configure_application">
+			<title>Application protocols</title>
+			<para>
+				Applications which use
+				<literal>SCCP</literal>
+				do not have to configure it. Only step required to enable application to use
+				<literal>SCCP</literal>
+				is to look up
+				<literal>SCCP</literal>
+				provider and register as listener.
+				It can be done with following code:
+			</para>
+			<programlisting>
+import org.jboss.jmx.adaptor.rmi.RMIAdaptor;
+import java.util.*;
+import javax.management.MBeanServerConnection;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import org.mobicents.protocols.ss7.*;
+import org.mobicents.protocols.ss7.sccp.*;
+import org.mobicents.protocols.ss7.indicator.*;
+
+public class Test implements SccpListener
+{
+
+	private SccpProvider sccpProvider;
+ 	private MBeanServerConnection createMBeanServerConnection()
+           throws NamingException
+ 	{	
+ 		//no arg is ok, if we run in JBoss
+	 	InitialContext ctx = new InitialContext();
+	 	
+ 	   
+ 	 	String adapterName = "jmx/invoker/RMIAdaptor";
+ 	   
+ 	 	Object obj = ctx.lookup(adapterName);
+ 	 	ctx.close();
+ 	   
+ 	 	if (!(obj instanceof RMIAdaptor))
+ 	 	{
+ 	 	 	throw new ClassCastException
+ 	 	 	("Object not of type: RMIAdaptorImpl, but: " +
+ 	 	 	(obj == null ? "not found" : obj.getClass().getName()));
+ 	 	}
+
+ 	 	return (MBeanServerConnection) obj;
+  }
+
+  public void start() throws Excetpion
+  {
+    //SS7Service is JMX bean, lets use it to get 
+  	MBeanServerConnection con = createMBeanServerConnection();
+  	ObjectName on = new ObjectName("org.mobicents.ss7:service=SS7Service");
+  	
+    String providerJndiName = con.invoke(on,"getJndiName",null,null);
+    InitialContext ctx = new InitialContext();
+	 	
+    this.sccpProvider = (SccpProvider) ctx.lookup(providerJndiName);
+    ctx.close();
+    
+    SccpAddress localAddress = ....;
+    
+    sccProvider.registerSccpListener(localAddress,this);
+  }
+
+  public void stop()
+  {
+  	SccpAddress localAddress = ....;
+  	this.sccpProvider.deregisterSccpListener(localAddress);
+  
+  }
+
+  public void onMessage(SccpMessage message)
+  {
+  		//our listener.
+  }
+
+}
+			</programlisting>
+		</section>
 	</section>
-	<section
-		id="setup_configure_application">
-		<title>Application protocols</title>
-		<para></para>
-	</section>
+
 
 </chapter>
