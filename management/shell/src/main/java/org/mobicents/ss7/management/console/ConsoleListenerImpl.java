@@ -65,7 +65,7 @@ public class ConsoleListenerImpl implements ConsoleListener {
 
                 try {
                     client.connect(new InetSocketAddress(address, port));
-                    this.console.setPrefix(Shell.CLI_PREFIX + "(" + address
+                    this.console.setPrefix(Shell.CLI_PREFIX + "(" + address +":" + port 
                             + ")" + Shell.CLI_POSTFIX);
                 } catch (IOException e) {
                     console.write(e.getMessage());
