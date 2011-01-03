@@ -869,21 +869,17 @@ public interface MAPServiceListener {
 
 
 	<section>
-		<title>Configuration</title>
-		<para>MAP layer does not require any config. However it requires properly set TCAP and its sublayers.</para>
-		<section>
 			<title>Dependencies</title>
 			<para><acronym>MAP</acronym> depends on following:</para>
 			<itemizedlist>
 				<listitem>
-					<para>MTP</para>
+					<para>Transport</para>
 				</listitem>
 				<listitem>
 					<para>TCAP</para>
 				</listitem>
 			</itemizedlist>
 		</section>
-	</section>
 	<section>
 		<title>Example</title>
 		<para></para>

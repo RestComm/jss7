@@ -7,7 +7,9 @@
 	<title>Introduction
 		to &THIS.PLATFORM;  &THIS.APPLICATION;
 	</title>
-	<!-- POssibly this should go into abstract ? -->
+	<important>
+       		<para>Spaces where introduced in in some tables and code listings to ensure proper page render.</para>
+	</important>
 	<para>
 		Common Channel Signaling System No. 7 (i.e., <acronym>SS7</acronym> or <acronym>C7</acronym>) is a
 		global

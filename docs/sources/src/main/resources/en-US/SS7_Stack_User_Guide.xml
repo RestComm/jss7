@@ -11,7 +11,7 @@
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Setup_Hardware.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Setup_Configure.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Management.xml" />
-	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-MTP.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Transport.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-SCCP.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-TCAP.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-ISUP.xml" />

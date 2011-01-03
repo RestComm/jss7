@@ -40,9 +40,9 @@
 					<literal>Linkset</literal>
 					is logical shortcut. This term hides
 					<literal>MTP</literal>
-					layer, ie. it abstracts wheather hardware
+					layer, ie. it abstracts whether hardware
 					<literal>MTP</literal>
-					is used or  &THIS.PLATFORM; &THIS.APPLICATION;
+					is used , M3UA or  &THIS.PLATFORM; &THIS.APPLICATION;
 					one.
 				</para>
 				<para>

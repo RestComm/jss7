@@ -431,17 +431,7 @@ public interface MessageFactory {
 
 
 	</section>
-
-
-
-
-
-	<section id="sccp_configuration">
-		<title>Configuration</title>
-		<para> Current <literal>SCCP</literal> layer does not define configuration parameters.
-		</para>
-
-		<section>
+	<section>
 			<title>Dependencies</title>
 			<para>
 				<acronym>SCCP</acronym>
@@ -449,14 +439,10 @@ public interface MessageFactory {
 			</para>
 			<itemizedlist>
 				<listitem>
-					<para>MTP</para>
-				</listitem>
-				<listitem>
-					<para>M3UA</para>
+					<para>Transport</para>
 				</listitem>
 			</itemizedlist>
 		</section>
-	</section>
 	<section>
 		<title>Example</title>
 		<para>This example shows how to use SCCP stack from source. However in most cases, user will make use of SCCP service.</para>

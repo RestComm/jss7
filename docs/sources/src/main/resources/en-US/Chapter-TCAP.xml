@@ -1291,20 +1291,16 @@ public interface TCListener {
 		  </section>
 	</section>
 	<section>
-		<title>Configuration</title>
-		<para><acronym>TCAP</acronym> layer does not require any config. However it requires properly set <acronym>SCCP</acronym> and its sublayers.</para>
-		<section>
 			<title>Dependencies</title>
 			<para><acronym>TCAP</acronym> depends on following:</para>
 			<itemizedlist>
 				<listitem>
-					<para>MTP</para>
+					<para>Transport</para>
 				</listitem>
 				<listitem>
 					<para>SCCP</para>
 				</listitem>
 			</itemizedlist>
-		</section>
 	</section>
 	<section>
 		<title>Example</title>
