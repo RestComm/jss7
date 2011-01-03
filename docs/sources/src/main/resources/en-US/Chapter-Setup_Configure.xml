@@ -5,15 +5,40 @@
 	id="setup_configure">
 
 	<title>Configuration</title>
-	<para>This
-		chapter describes setup of linkset, SS7 service and application on top of &THIS.PLATFORM; &THIS.APPLICATION;.
+	<para>This chapter describes setup of linkset, SS7 service and application on top of &THIS.PLATFORM; &THIS.APPLICATION;.
 	</para>
 	<!-- Not sure if its even good idea to have it... -->
 	<section
 		id="setup_configure_linkset">
 		<title>Linkset</title>
 		<!-- AMIT -->
-		<para></para>
+		<para>Signaling Points (SP) are connected to each other by signaling links over which signaling takes place. 
+		Links between two SPs are logically grouped for administrative and load-sharing reasons. 
+		A logical group of links between two SP is called a linkset</para>
+		
+		<para>
+		&THIS.PLATFORM; &THIS.APPLICATION; supports three types of linkset
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para><literal>dahdi</literal> : dahdi SS7 boards usually have no MTP support and depends on external software to provide MTP2/MTP3 support.
+				</para>
+				<para>
+				<literal>DahdiLinkset</literal> encapsulates the &THIS.PLATFORM; &THIS.APPLICATION; <literal>Mtp3</literal> 
+				and &THIS.PLATFORM; &THIS.APPLICATION; <literal>Mtp2</literal> protocols. To use the <literal>DahdiLinkset</literal>, dahdi ss7 board must be installed on the server.
+				Well known <literal>dahdi</literal> based SS7 cards are <literal>Diguim</literal> and <literal>Sangoma</literal>.
+				</para>				
+			</listitem>
+			<listitem>
+				<para><literal>dialogic</literal> : To use the <literal>DialogicLinkset</literal>, dialogic ss7 board must be installed on the server. 
+				dialogic boards usually have MTP2 and MTP3 support</para>
+			</listitem>
+			<listitem>
+				<para><literal>m3ua</literal> :</para>
+			</listitem>			
+		</itemizedlist>
+				
 	</section>
 	<section
 		id="setup_configure_ss7_service">
