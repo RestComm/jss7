@@ -79,19 +79,35 @@
 	</variablelist>
 	<para>Diagram belows depicts high level view of &THIS.PLATFORM; &THIS.APPLICATION; design:</para>
 	<mediaobject
-	id="ss7_design_general_1">
-	<imageobject>
-		<imagedata
-			width="300px"
-			align="center"
-			fileref="images/ss7-design-overview1.png"
-			format="PNG" />
-	</imageobject>
-	<caption>
-		<para>&THIS.PLATFORM; &THIS.APPLICATION;
-			general design
-		</para>
-	</caption>
-</mediaobject>
+		id="ss7_design_general_1">
+		<imageobject>
+			<imagedata
+				width="300px"
+				align="center"
+				fileref="images/ss7-design-overview1.png"
+				format="PNG" />
+		</imageobject>
+		<caption>
+			<para>&THIS.PLATFORM; &THIS.APPLICATION;
+				general design
+			</para>
+		</caption>
+	</mediaobject>
+	<para>Or in case of localy installed cards: </para>
+	<mediaobject
+		id="ss7_design_general_2">
+		<imageobject>
+			<imagedata
+				width="300px"
+				align="center"
+				fileref="images/ss7-design-overview2.png"
+				format="PNG" />
+		</imageobject>
+		<caption>
+			<para>&THIS.PLATFORM; &THIS.APPLICATION;
+				general design
+			</para>
+		</caption>
+	</mediaobject>
 </chapter>
 
