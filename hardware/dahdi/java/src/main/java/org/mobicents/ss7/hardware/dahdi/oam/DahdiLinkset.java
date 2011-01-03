@@ -83,6 +83,10 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
                     this.mtp3.addLink(((DahdiLink) value).getMtp2());
                 }
             }
+            
+            this.mtp3.setDpc(this.apc);
+            this.mtp3.setOpc(this.opc);
+            this.mtp3.setNetworkIndicator(this.ni);
 
             if (this.state != LinksetState.SHUTDOWN) {
                 this.mtp3.start();
