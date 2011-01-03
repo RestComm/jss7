@@ -17,13 +17,13 @@ public interface LinkOAMMessages {
 
     public static final String LINKSET_DOESNT_EXIST = "LinkSet doesn't exist";
 
-    public static final String ACTIVATE_LINKSET_SUCCESSFULLY = "activated linkset successfully";
+    public static final String ACTIVATE_LINKSET_SUCCESSFULLY = "LinkSet activated  successfully";
 
-    public static final String ACTIVATE_LINKSET_FAILED = "activate for linkset failed";
+    public static final String ACTIVATE_LINKSET_FAILED = "LinkSet activation failed";
 
-    public static final String ACTIVATE_LINK_SUCCESSFULLY = "activated link successfully";
+    public static final String ACTIVATE_LINK_SUCCESSFULLY = "Link activated successfully";
 
-    public static final String ACTIVATE_LINK_FAILED = "activate for link failed";
+    public static final String ACTIVATE_LINK_FAILED = "Link activation failed";
 
     public static final String LINK_DOESNT_EXIST = "Link doesn't exist";
 

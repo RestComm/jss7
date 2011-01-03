@@ -232,7 +232,7 @@ public class LinksetManager {
         this.store();
 
         if (this.layer4 != null) {
-            this.layer4.add(linkset);
+            this.layer4.remove(linkset);
         }
 
         return LinkOAMMessages.LINKSET_SUCCESSFULLY_REMOVED;
