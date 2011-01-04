@@ -198,17 +198,17 @@
 									<row>
 										<entry>Dahdi/Zaptel</entry>
 										<entry>org.mobicents.ss7.hardware.dahdi. oam.DahdiLinksetFactory</entry>
-										<entry>AMIT</entry>
+										<entry>Factory for creating <literal>dahdi</literal> based <literal>Linkset</literal></entry>
 									</row>
 									<row>
-										<entry>Dahdi</entry>
+										<entry>Dialogic</entry>
 										<entry>org.mobicents.ss7.hardware.dialogic. oam.DialogicLinksetFactory</entry>
-										<entry>AMIT</entry>
+										<entry>Factory for creating <literal>dahdi</literal> based <literal>Linkset</literal></entry>
 									</row>
 									<row>
 										<entry>M3UA</entry>
 										<entry>org.mobicents.ss7.m3ua. oam.M3UALinksetFactory</entry>
-										<entry>AMIT</entry>
+										<entry>Factory for creating <literal>M3UA</literal> based <literal>Linkset</literal></entry>
 									</row>
 								</tbody>
 							</tgroup>
