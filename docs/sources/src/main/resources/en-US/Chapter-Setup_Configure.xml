@@ -295,17 +295,21 @@
 										</entry>
 									</row>
 
-
 									<row>
 										<entry>layer4</entry>
-										<entry></entry>
-										<entry>AMIT</entry>
+										<entry>org.mobicents.ss7
+										.linkset.oam.Layer4</entry>
+										<entry>For every new linkset added, <literal>LinksetManager</literal> calls back the 
+										<literal>Layer4</literal> <literal>add</literal> method passing reference to newly added linkset. 
+										Similarly for every existing linkset removed, 
+										<literal>LinksetManager</literal> calls back the 
+										<literal>Layer4</literal> <literal>remove</literal> method passing reference to removed linkset. </entry>
 									</row>
 									<row>
 										<entry>linksetFactoryFactory</entry>
 										<entry>org.mobicents.ss7.linkset
-											.oam.LinksetFactoryFactory</entry>
-										<entry>AMIT</entry>
+											.oam.LinksetFactoryFactory</entry> 
+										<entry>Factory that holds map of linkset factory name vs <literal>LinksetFactory</literal> configured for this setup</entry>
 									</row>
 
 								</tbody>
@@ -368,8 +372,10 @@
 
 									<row>
 										<entry>linksetExecutor</entry>
-										<entry></entry>
-										<entry>AMIT</entry>
+										<entry>org.mobicents.ss7
+										.linkset.oam.LinksetExecutor</entry>
+										<entry>This property sets reference to <literal>LinksetExecutor</literal> to which 
+										ShellExecutor will pass commands related to linkset management</entry>
 									</row>
 								</tbody>
 							</tgroup>
@@ -438,13 +444,15 @@
 									</row>
 									<row>
 										<entry>linksetManager</entry>
-										<entry></entry>
-										<entry>AMIT</entry>
+										<entry>org.mobicents.ss7.linkset
+										.oam.LinksetManager</entry>
+										<entry>Reference to <literal>LinksetManager</literal></entry>
 									</row>
 									<row>
 										<entry>shellExecutor</entry>
-										<entry></entry>
-										<entry>AMIT</entry>
+										<entry>org.mobicents.ss7
+										.ShellExecutor</entry>
+										<entry>Reference to <literal>ShellExecutor</literal></entry>
 									</row>
 
 								</tbody>
