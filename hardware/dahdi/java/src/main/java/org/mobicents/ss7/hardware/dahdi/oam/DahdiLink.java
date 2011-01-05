@@ -5,6 +5,7 @@ import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp2;
+import org.mobicents.protocols.ss7.mtp.Mtp2Listener;
 import org.mobicents.ss7.hardware.dahdi.Channel;
 import org.mobicents.ss7.linkset.oam.FormatterHelp;
 import org.mobicents.ss7.linkset.oam.Link;
@@ -19,7 +20,7 @@ import org.mobicents.ss7.linkset.oam.LinkState;
  * @author amit bhayani
  * 
  */
-public class DahdiLink extends Link {
+public class DahdiLink extends Link implements Mtp2Listener {
 
     private static final Logger logger = Logger.getLogger(DahdiLink.class);
 
@@ -131,6 +132,24 @@ public class DahdiLink extends Link {
         this.state = LinkState.SHUTDOWN;
     }
 
+    /**
+     * Mtp2Listener methods
+     */
+    public void linkFailed(){
+        this.state = LinkState.FAILED;
+    }
+    
+    public void linkInService(){
+        this.state = LinkState.UNAVAILABLE;
+    }
+    
+    public void linkUp(){
+        this.state = LinkState.AVAILABLE;
+    }
+    
+    /**
+     * Serialize / Deserialize
+     */
     protected static final XMLFormat<DahdiLink> DAHDI_LINK_XML = new XMLFormat<DahdiLink>(
             DahdiLink.class) {
 
