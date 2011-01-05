@@ -71,6 +71,9 @@ mobicents(10.65.208.215:3435)>
 			<listitem>
 				<para>deactivate link</para>
 			</listitem>
+			<listitem>
+				<para>list state of linksets and present links</para>
+			</listitem>
 		</itemizedlist>
 
 		<section
@@ -388,9 +391,37 @@ Link deactivated successfully
 				</screen>
 			</example>
 		</section>
-
+		<section
+			id="management_linkset_show">
+			<title>Show status</title>
+			<para>Link can be deactivated by issuing command with following structure:</para>
+			<programlisting>
+linkset link deactivate &lt;linkset-name&gt; &lt;link-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>linkset-name</term>
+					<listitem>
+						<para>is name set during link creation</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>link-name</term>
+					<listitem>
+						<para>name which identifies link in linkset</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Link Deactivateion</title>
+				<screen>
+mobicents(10.65.208.215:3435)>linkset link deactivate linkset1 link1
+Link deactivated successfully
+				</screen>
+			</example>
+		</section>
 	</section>
 
-
+linkset show
 </chapter>
 

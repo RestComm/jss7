@@ -1,474 +1,329 @@
-<?xml version='1.0'?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
 
-<chapter id="layer_sccp">
+<chapter
+	id="sccp">
 
-	<title>Signaling Connection Control Part (SCCP) Layer</title>
+	<title>SCCP</title>
+	<para></para>
+	<section
+		id="sccp_routing">
+		<title>Routing Management</title>
+		<para>
+			Currently
+			<literal>Shell</literal>
+			does not support commands to manage
+			<literal>SCCP</literal>
+			routes.
+		</para>
 
-	<section>
-		<title>Introduction</title>
-		<para>
-			SCCP provides connectionless and connection-oriented network
-			services
-			and global title translation (GTT) capabilities above
-			<acronym>MTP</acronym>
-			Level 3. A global title is an address (e.g., a dialed 800 number,
-			calling card number, or mobile subscriber identification number)
-			which is translated by SCCP into a destination point code and
-			subsystem number. A subsystem number uniquely identifies an
-			application at the destination signaling point.
-			<acronym>SCCP</acronym>
-			is used as the
-			transport layer for
-			<acronym>TCAP</acronym>
-			-based services
-		</para>
-		<para>
-			<acronym>SCCP</acronym>
-			data is sent between peers by means of Data Units (UDs)
-		</para>
+
 	</section>
-	<section>
-		<title>Design and API Overview</title>
+	<section
+		id="sccp_routing_configuration">
+		<title>Routing Configuration</title>
 		<para>
-			<acronym>SCCP</acronym>
-			resides on top of
-			<acronym>mtp</acronym>
-			layer. Top overview is depicted on diagram below:
+			Routing rules are persisted within file. By default its
+			<filename>sccp-routing.txt</filename>
+			. Example entry looks as follows:
 		</para>
-		<mediaobject id="ss7_design_sccp_overview_1">
-			<imageobject>
-				<imagedata width="300px" align="center"
-					fileref="images/ss7-sccp-design-overview1.png" format="PNG" />
-			</imageobject>
-			<caption>
-				<para>&THIS.PLATFORM; &THIS.APPLICATION;
-					SCCP
-				</para>
-			</caption>
-		</mediaobject>
+		<!-- bad xml? -->
+		<example>
+			<title>sccp-routing.txt example entry</title>
+			<programlisting
+				language="XML"
+				role="XML"><![CDATA[
+0; #ISDN_MOBILE#NATIONAL#9023629581# ; #ISDN_MOBILE#INTERNATIONAL#79023629581# ;linkset#14083#14155#0
+]]>
+				</programlisting>
+		</example>
+
 		<para>
-			As diagrom depicts,
+			Above file is managed by
 			<literal>SCCP</literal>
-			stack depends from
-			<literal>Linkset</literal>
-			. Linkset is described in
-			<xref linkend="layer_mtp" />
+			stack and
+			<literal>SS7 Service</literal>
+			, it is not encouraged practice to edit this file by hand. However for complete rerefence, you can find structure of this file below:
 		</para>
-		<para>
-			<literal>SCCP</literal>
-			stack is divided into several functional elements. Each element has
-			distinct task:
-		</para>
+
+		<programlisting
+			language="XML"
+			role="XML"><![CDATA[
+sequence;pattern;translation;mtpinfo
+]]>
+				</programlisting>
+		<note>
+			<para>
+				Fields within
+				<literal>pattern</literal>
+				,
+				<literal>translation</literal>
+				and
+				<literal>mtp</literal>
+				,
+				separated by
+				<literal>#</literal>
+				, empty value is indicated by single
+				<literal>space</literal>
+				. Each part of routing entry is separated by
+				<literal>;</literal>
+				.
+			</para>
+		</note>
 		<variablelist>
 			<varlistentry>
-				<term>SccpStack</term>
+				<term>sequence</term>
 				<listitem>
-					<para>Stack object exposes methods to manage stack and access its
-						facilities:</para>
-					<programlisting language="Java" role="JAVA">
-package org.mobicents.protocols.ss7.sccp;
-
-import org.mobicents.protocols.StartFailedException;
-
-public interface SccpStack {
-
-    public void start() throws IllegalStateException, StartFailedException;
-
-    public void stop();
-
-    public SccpProvider getSccpProvider();
-
-    public void setRouter(Router router);
-
-}
-					</programlisting>
-					<variablelist>
-						<varlistentry>
-							<term>
-								The
-								<literal>start() throws IllegalStateException,
-									StartFailedException;</literal>
-								method:
-							</term>
-							<listitem>
-								<para>
-									simply starts stack. Start method not only starts
-									<literal>SCCP</literal>
-									, it also starts Linksets.
-								</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>
-								The
-								<literal> stop();</literal>
-								method:
-							</term>
-							<listitem>
-								<para>
-									stops stack and its facilities along with Linksets.
-								</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>
-								The
-								<literal>getSccpProvider();</literal>
-								method:
-							</term>
-							<listitem>
-								<para>
-									returns provider which gives access to facilities. Facilities
-									allow to build proper
-									<literal>SCCP</literal>
-									messages.
-								</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>
-								The
-								<literal>setRouter(Router router);</literal>
-								method:
-							</term>
-							<listitem>
-								<para>
-									sets router implementation which will be used by stack.
-									Passed instance will be used to make routing decisions.
-								</para>
-							</listitem>
-						</varlistentry>
-						<!-- <varlistentry> <term> The <literal>setTransferType(int type);</literal> 
-							method: </term> <listitem> <para> not used </para> </listitem> </varlistentry> -->
-					</variablelist>
+					<para>is simple sequence number, each entry increases it by 1.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>Router</term>
+				<term>pattern</term>
 				<listitem>
-					<para></para>
-					<programlisting language="Java" role="JAVA">
-package org.mobicents.protocols.ss7.sccp;
+					<para>
+						is simply
+						<literal>SCCP</literal>
+						like regular expresion. Destination address of message is matched against this to check which rule should be triggered.
+					</para>
 
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-
-public interface Router {
-
-    public int getRoute(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress); 
-    .
-}
-					</programlisting>
-					<variablelist>
-						<varlistentry>
-							<term>
-								The
-								<literal>getRoute(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress);</literal>
-								method:
-							</term>
-							<listitem>
-								<para>
-									returns point code(from local stack is adjacent point code) of linkset which should be used to send message.
-								</para>
-							</listitem>
-						</varlistentry>
-					</variablelist>
+					<table
+						frame="all"
+						pgwide="1">
+						<title>pattern content</title>
+						<tgroup
+							colsep="1"
+							cols="3">
+							<colspec
+								colnum="1"
+								colname="c0" />
+							<colspec
+								colnum="2"
+								colname="c1" />
+							<colspec
+								colnum="3"
+								colname="c2" />
+							<thead>
+								<row>
+									<entry>Name</entry>
+									<entry>Type</entry>
+									<entry>Description</entry>
+								</row>
+							</thead>
+							<tbody>
+								<row>
+									<entry>translation type</entry>
+									<entry>java.lang.Integer</entry>
+									<entry>Network specific ID which determines how global title analysis is performed.</entry>
+								</row>
+								<row>
+									<entry>numbering plan</entry>
+									<entry>enum</entry>
+									<entry>Determines which numbering plan is used for global title. It can have one of following values:
+										UNKNOWN, ISDN_TELEPHONY, DATA,
+										TELEX, MERITIME_MOBILE, LAND_MOBILE, ISDN_MOBILE</entry>
+								</row>
+								<row>
+									<entry>nature of address</entry>
+									<entry>enum</entry>
+									<entry>Determines type of address. It can have one of following values:
+										SPARE, SUBSCRIBER, UNKNOWN, NATIONAL, INTERNATIONAL</entry>
+								</row>
+								<row>
+									<entry>digits</entry>
+									<entry>java.lang.String</entry>
+									<entry>Simply digits of number, ie: +91 417688345892</entry>
+								</row>
+								<row>
+									<entry>sub-system number</entry>
+									<entry>java.lang.Integer</entry>
+									<entry>local subsystem number, used to route between local services in SS7, ie. between HLR and VLR.</entry>
+								</row>
+							</tbody>
+						</tgroup>
+					</table>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>SccpProvider</term>
+				<term>translation</term>
 				<listitem>
-					<programlisting language="Java" role="JAVA">
-package org.mobicents.protocols.ss7.sccp;
-import java.io.IOException;
-
-import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
-import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-
-public interface SccpProvider {
-
-    public MessageFactory getMessageFactory();
-
-    public ParameterFactory getParameterFactory();
-
-    public void registerSccpListener(SccpAddress localAddress,SccpListener listener);
-
-    public void deregisterSccpListener(SccpAddress localAddress);
-
-    public void send(SccpMessage message) throws IOException;
-
-}
-					</programlisting>
-					<variablelist>
-						<varlistentry>
-							<term>
-								The
-								<literal>getMessageFactory();</literal>
-								method:
-							</term>
-							<listitem>
-								<para>
-									returns factory for
-									<literal>SCCP</literal>
-									messages, like
-									<literal>UDT</literal>
-									or
-									<literal>XUDT</literal>
-									.
-								</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>
-								The
-								<literal>getParameterFactory();</literal>
-								method:
-							</term>
-							<listitem>
-								<para>
-									returns parameter factory. Parameters are sent as part of
-									<literal>SCCP</literal>
-									messages.
-								</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>
-								The
-								<literal>registerSccpListener(SccpAddress
-									localAddress,SccpListener listener);</literal>
-								method:
-							</term>
-							<listitem>
-								<para>registers particular listener to be called to server for
-									specific address.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>
-								The
-								<literal>deregisterSccpListener(SccpAddress localAddress);
-								</literal>
-								method:
-							</term>
-							<listitem>
-								<para>removes listener mapped to passed address.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>
-								The
-								<literal>send(SccpMessage message) throws IOException;</literal>
-								method:
-							</term>
-							<listitem>
-								<para>
-									encodes passed message and schedules it to be sent through
-									<literal>MTP</literal>
-									layer.
-								</para>
-							</listitem>
-						</varlistentry>
-					</variablelist>
+					<para>
+						has the same structure as
+						<literal>pattern</literal>
+						. If
+						<literal>pattern</literal>
+						matches, destintion address is changed to
+						<literal>translation</literal>
+						.
+					</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>SccpListener</term>
+				<term>mtpinfo</term>
 				<listitem>
-					<programlisting language="Java" role="JAVA">
-package org.mobicents.protocols.ss7.sccp;
+					<para>
+						<literal>mtpinfo</literal>
+						indicates which link should be chosen when routing to remote location. In case routing is performed localy, its not present.
+					</para>
+					<table
+						frame="all"
+						pgwide="1">
+						<title>mtpinfo content</title>
+						<tgroup
+							colsep="1"
+							cols="3">
+							<colspec
+								colnum="1"
+								colname="c0" />
+							<colspec
+								colnum="2"
+								colname="c1" />
+							<colspec
+								colnum="3"
+								colname="c2" />
+							<thead>
+								<row>
+									<entry>Name</entry>
+									<entry>Type</entry>
+									<entry>Description</entry>
+								</row>
+							</thead>
+							<tbody>
+								<row>
+									<entry>name</entry>
+									<entry>java.lang.String</entry>
+									<entry></entry>
+								</row>
+								<row>
+									<entry>adjacent point code</entry>
+									<entry>java.lang.Integer</entry>
+									<entry>point code of remote, mtp link.</entry>
+								</row>
+								<row>
+									<entry>origin point code</entry>
+									<entry>java.lang.Integer</entry>
+									<entry>polint code of local, mtp link.</entry>
+								</row>
+								<row>
+									<entry>signaling link selector</entry>
+									<entry>java.lang.Integer</entry>
+									<entry>number indicating TDM multiplexed link.</entry>
+								</row>
 
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 
-public interface SccpListener extends Serializable {
-
-	public void onMessage(SccpMessage message);
-	
-}
-					</programlisting>
-					<variablelist>
-						<varlistentry>
-							<term>
-								The
-								<literal>onMessage(SccpMessage message);</literal>
-								method:
-							</term>
-							<listitem>
-								<para>
-									is called when message is received with destination address
-									matching. Address is matched by
-									<literal>SCCP</literal>
-									router.
-								</para>
-							</listitem>
-						</varlistentry>
-					</variablelist>
+							</tbody>
+						</tgroup>
+					</table>
 				</listitem>
 			</varlistentry>
-
-			<varlistentry>
-				<term>ParameterFactory</term>
-				<listitem>
-					<para>Parameter factory allows to create parameters which may be set as part of message:</para>
-					<programlisting language="Java" role="JAVA">
-package org.mobicents.protocols.ss7.sccp.parameter;
-
-public interface ParameterFactory  {
-
-    public ProtocolClass createProtocolClass(int value, int handling);
-
-    public Importance createImportance(int value);
-
-    public Segmentation createSegmentation();
-    
-    public HopCounter createHopCounter(int hopCount);
-}
-					</programlisting>
-					<variablelist>
-						<varlistentry>
-							<term>
-								The
-								<literal>createProtocolClass(int value, int handling);</literal>
-								method:
-							</term>
-							<listitem>
-								<para>
-									creates protocol class parameter. This parameter <literal>MUST</literal> be present in <literal>SCCP</literal> message.
-								</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>
-								The
-								<literal>createImportance(int value);</literal>
-								method:
-							</term>
-							<listitem>
-								<para>
-									creates importance parameter.  This parameter <literal>MUST</literal> be present in <literal>SCCP</literal> message.
-								</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>
-								The
-								<literal>createSegmentation();</literal>
-								method:
-							</term>
-							<listitem>
-								<para>
-									creates segmentation parameter. This parameter is optional and used in cases content of message is to big to send in single message.
-								</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>
-								The
-								<literal>createHopCounter(int hopCount);;</literal>
-								method:
-							</term>
-							<listitem>
-								<para>
-									creates hop counter parameter.  This parameter <literal>MUST</literal> be present in <literal>SCCP</literal> message.
-								</para>
-							</listitem>
-						</varlistentry>
-						
-					</variablelist>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term>MessageFactory</term>
-				<listitem>
-					<para>Message factory allows to create various type of message. Created objects are eligible for sending via <literal>SccpProvider</literal>. </para>
-					<programlisting language="Java" role="JAVA">
-package org.mobicents.protocols.ss7.sccp.message;
-
-import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-
-public interface MessageFactory {
-
-    public UnitData createUnitData(ProtocolClass pClass, SccpAddress calledParty,
-            SccpAddress callingParty);
-
-    public XUnitData createXUnitData(HopCounter hopCounter, ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty);
-    
-}					</programlisting>
-					<variablelist>
-						<varlistentry>
-							<term>
-								The
-								<literal>createUnitData(ProtocolClass pClass, SccpAddress calledParty,
-            SccpAddress callingParty);
-								</literal>
-								method:
-							</term>
-							<listitem>
-								<para>create basic message(UDT) used in connectionles communication.
-								</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>
-								The
-								<literal></literal>
-								method:
-							</term>
-							<listitem>
-								<para>create message used in connectionles communication. Extended UDT allows more parameters to be passed. It also allows to fragment bigger data. 
-								</para>
-							</listitem>
-						</varlistentry>
-					</variablelist>
-				</listitem>
-			</varlistentry>
-
 		</variablelist>
-
-
 	</section>
-	<section>
-			<title>Dependencies</title>
-			<para>
-				<acronym>SCCP</acronym>
-				depends on following:
-			</para>
-			<itemizedlist>
-				<listitem>
-					<para>Transport</para>
-				</listitem>
-			</itemizedlist>
-		</section>
-	<section>
-		<title>Example</title>
-		<para>This example shows how to use SCCP stack from source. However in most cases, user will make use of SCCP service.</para>
-		<programlisting language="Java" role="JAVA">
-		
-import org.mobicents.ss7.linkset.oam.Linkset;
+	<section
+		id="sccp_access_point">
+		<title>Access Point</title>
+		<para>
+			<literal>SS7 Service</literal> provides user with access point to <literal>SCCP</literal> protocol/stack. 
+			It can be used in following way:
+		</para>
+		<programlisting
+			language="java"
+			role="JAVA">
+import org.jboss.jmx.adaptor.rmi.RMIAdaptor;
+import java.util.*;
+import javax.management.MBeanServerConnection;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import org.mobicents.protocols.ss7.*;
+import org.mobicents.protocols.ss7.sccp.*;
+import org.mobicents.protocols.ss7.indicator.*;
 
-		
-public class ExampleSccpPeer implements SccpListener
+public class Test implements SccpListener
 {
 
-	public ExampleSccpPeer()
-	{
-		//lets create some fixed connection.
-		Linkset set
-	}
+	private SccpProvider sccpProvider;
+	private SccpAddress localAddress;
+	
+ 	private MBeanServerConnection createMBeanServerConnection()
+           throws NamingException
+ 	{	
+ 		//no arg is ok, if we run in JBoss
+	 	InitialContext ctx = new InitialContext();
+	 	
+ 	   
+ 	 	String adapterName = "jmx/invoker/RMIAdaptor";
+ 	   
+ 	 	Object obj = ctx.lookup(adapterName);
+ 	 	ctx.close();
+ 	   
+ 	 	if (!(obj instanceof RMIAdaptor))
+ 	 	{
+ 	 	 	throw new ClassCastException
+ 	 	 	("Object not of type: RMIAdaptorImpl, but: " +
+ 	 	 	(obj == null ? "not found" : obj.getClass().getName()));
+ 	 	}
 
+ 	 	return (MBeanServerConnection) obj;
+  }
 
-	public void onMessage(SccpMessage message) {
-    	System.out.println("Got message: "+message);
-    	if(message.get)
-    }
+  public void start() throws Excetpion
+  {
+    //SS7Service is JMX bean, lets use it to get 
+  	MBeanServerConnection con = createMBeanServerConnection();
+  	ObjectName on = new ObjectName("org.mobicents.ss7:service=SS7Service");
+  	
+    String providerJndiName = con.invoke(on,"getJndiName",null,null);
+    InitialContext ctx = new InitialContext();
+	 	
+    this.sccpProvider = (SccpProvider) ctx.lookup(providerJndiName);
+    ctx.close();
+    
+    int translationType = 0;
+    int subSystemNumber = 0; 
+    GlobalTitle gt = GlobalTitle.getInstance(translationType,NumberingPlan.ISDN_MOBILE,NatureOfAddress.NATIONAL, "1234");
+    localAddress = new SccpAddress(gt,0);
+    
+    sccProvider.registerSccpListener(localAddress,this);
+  }
+
+  public void stop()
+  {
+  	this.sccpProvider.deregisterSccpListener(localAddress);
+  }
+
+  public void onMessage(SccpMessage message)
+  {
+  		if (message.getType() == MessageType.UDT) {
+              throw new IlleagalArgumentException("Dont like UDT");
+            } else if (message.getType() == MessageType.XUDT) {
+                XUnitData xudt = (XUnitData) message;
+                localAddress = ((XUnitData)message).getCalledPartyAddress();
+                remoteAddress = ((XUnitData)message).getCallingPartyAddress();
+                
+                //now decode content
+                byte[] data = xudt.getData();
+                //some data encoded in 
+                CallRequest cr = new CallRequest(data);
+                byte[] answerData;
+                if(cr.getCallee().equals(this.localAddress))
+                {
+                	EstablihsCallAnswer eca = new EstablihsCallAnswer(cr);
+                	answerData = eca.encode();
+                }else
+                {
+                	TearDownCallAnswer tdca = new TearDownCallAnswer(cr);
+                	answerData = tdca.encode();
+                }
+                
+
+                HopCounter hc = this.provider.getParameterFactory().createHopCounter(5);
+                XUnitData sccpAnswer = this.provider.getMessageFactory().createXUnitData(hc,xudt.getProtocolClass(),message.getCallingPartyAddress(),this.localAddress);
+                this.provider.send(sccpAnswer);
+            }
+  		
+  }
 
 }
-		</programlisting>
-
+</programlisting>
 	</section>
 </chapter>
-

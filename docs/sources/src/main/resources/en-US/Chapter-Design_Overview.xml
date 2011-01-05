@@ -15,7 +15,7 @@
 		and
 		<acronym>TCAP</acronym>
 		depends on
-		<acronym>SCPP</acronym>.
+		<acronym>SCCP</acronym>.
 		This makes it easy to customize whole &THIS.PLATFORM; &THIS.APPLICATION;.
 		Specific protocol module has list of all dependencies along with
 		information on general design. Please refer to module description for
@@ -36,6 +36,7 @@
 		<varlistentry>
 			<term>Linkset</term>
 			<listitem>
+				<!-- XXX: this possibly should be rephrased. -->
 				<para>
 					<literal>Linkset</literal>
 					is logical shortcut. This term hides
@@ -45,55 +46,61 @@
 					is used , M3UA or  &THIS.PLATFORM; &THIS.APPLICATION;
 					one.
 				</para>
+
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>SS7 Service</term>
+			<listitem>
+				<para>Service is element which is used to manage <literal>LinkSets</literal> and protocols like <literal>SCCP</literal>.</para>
+				<para>For full explanation please refer to  <xref linkend="design_overview_ss7_service"/> . </para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>Shell Management client</term>
+			<listitem>
 				<para>
+					<literal>Shell</literal>
+					is tool which allows to manage different aspects of &THIS.PLATFORM; &THIS.APPLICATION;
+					in interactive manner. It connects
+					to different instances of &THIS.PLATFORM; &THIS.APPLICATION;
+					which manage
+					<literal>Linksets</literal>
+					and
+					<literal>SCCP</literal>
+					routing. For detailed information please refer to:
+					<xref
+						linkend="management" />
+					.
 					Usually
-					<literal>Linkset</literal>
-					will be deployed as part of &THIS.PLATFORM;
-					Media Server deployment.
+					<literal>Shell</literal>
+					will be invoked from remote machine(remote to
+					<literal>Linksets</literal>
+					and application protocols).
 				</para>
-			</listitem>
-		</varlistentry>
-		<varlistentry>
-			<term>Shell management client</term>
-			<listitem>
-				<para><literal>Shell</literal> is tool which allows to manage different aspects of &THIS.PLATFORM; &THIS.APPLICATION; in interactive manner. It connects
-				to different entities which manage <literal>Linksets</literal> or <literal>SCCP</literal> routing for instance. For detailed information please refer to: <xref linkend="management"/>.
-				Usually <literal>Shell</literal> will be invoked from remote machine(remote to <literal>Linksets</literal> and application protocols).</para>
-			</listitem>
-		</varlistentry>
-		<varlistentry>
-			<term>M3UA</term>
-			<listitem>
-				<para> <literal>M3UA</literal>  stands for <literal>MTP</literal> Level 3 (<literal>MTP3</literal>) User Adaptation. Its main purpose is to provide routing, management and streaming of <literal>MSUs</literal>(message signaling units)
-				between different peers. &THIS.PLATFORM; &THIS.APPLICATION; has dedicated <literal>M3UA</literal> implementation.
-				It connects <literal>Linkests</literal> with application level protocols(such as <literal>SCCP</literal> or <literal>ISUP</literal>).</para>
 			</listitem>
 		</varlistentry>
 		<varlistentry>
 			<term>Application</term>
 			<listitem>
-				<para> <literal>Application</literal> term encapsulates not only application level protocols(such as <literal>SCCP</literal> or <literal>ISUP</literal>) but also
-				entities which make use of them(like <literal>SLEE RA &amp; Service</literal>)</para>
+				<para>
+					<literal>Application</literal>
+					term encapsulates not only application level protocols(such as
+					<literal>SCCP</literal>
+					or
+					<literal>ISUP</literal>
+					) but also
+					entities which make use of them(like
+					<literal>SLEE RA &amp; Service</literal>
+					)
+				</para>
 			</listitem>
 		</varlistentry>
 	</variablelist>
-	<para>Diagram belows depicts high level view of &THIS.PLATFORM; &THIS.APPLICATION; design:</para>
-	<mediaobject
-		id="ss7_design_general_1">
-		<imageobject>
-			<imagedata
-				width="300px"
-				align="center"
-				fileref="images/ss7-design-overview1.png"
-				format="PNG" />
-		</imageobject>
-		<caption>
-			<para>&THIS.PLATFORM; &THIS.APPLICATION;
-				general design
-			</para>
-		</caption>
-	</mediaobject>
-	<para>Or in case of localy installed cards: </para>
+	<para>Diagram
+		belows depicts high level view of &THIS.PLATFORM; &THIS.APPLICATION;
+		design:
+	</para>
 	<mediaobject
 		id="ss7_design_general_2">
 		<imageobject>
@@ -109,5 +116,51 @@
 			</para>
 		</caption>
 	</mediaobject>
+	<section
+		id="design_overview_ss7_service">
+		<title>SS7 Service</title>
+		<para>
+			Diagram below depicts elements which are deployed as part of
+			<literal>SS7 Service</literal>:
+		</para>
+
+		<mediaobject
+			id="ss7_service">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/ss7-design-overview3.png"
+					format="PNG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; &THIS.APPLICATION;
+					SS7Service elements.
+				</para>
+			</caption>
+		</mediaobject>
+		<para>Service serves following purposes:</para>
+		<variablelist>
+			<varlistentry>
+				<term>Expose protocol access points</term>
+				<listitem>
+					<para>Access points allows user to access lower layer protocols, like <literal>SCCP</literal> and interact through such protocols with <literal>SS7</literal> network.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Expose management interface</term>
+				<listitem>
+					<para>Iinterface allows <literal>Shell</literal> client to connect and issue commands.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Manage Linksets and their lifecycle</term>
+				<listitem>
+					<para>Service persists linksets information and manages their lifecycle, ie. it creates, activates them(also after restart).</para>
+				</listitem>
+			</varlistentry>
+			
+		</variablelist>
+	</section>
 </chapter>
 
