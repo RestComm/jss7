@@ -1,0 +1,416 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents</groupId>
+		<artifactId>mobicents-parent</artifactId>
+		<version>2.10</version>
+	</parent>
+
+	<artifactId>ss7-parent</artifactId>
+	<groupId>org.mobicents.protocols.ss7</groupId>
+	<version>1.0.0-SNAPSHOT</version>
+
+	<packaging>pom</packaging>
+
+	<name>Mobicents SS7 :: ${pom.artifactId}</name>
+
+
+
+	<properties>
+		<!-- maven.test.skip>false</maven.test.skip -->
+		<mobicents.tools.mavenplugin.eclipse.version>
+			1.0.0.BETA2
+		</mobicents.tools.mavenplugin.eclipse.version>
+		<concurrent.version>1.3.4</concurrent.version>
+		<log4j.version>1.2.14</log4j.version>
+		<junit.version>4.1</junit.version>
+		<javolution.version>5.5.1</javolution.version>
+		<compiler.plugin.version>2.0.2</compiler.plugin.version>
+		<compile.source>1.5</compile.source>
+		<!-- mobicents but not strictly ss7 -->
+		<asn.version>1.0.0.BETA3</asn.version>
+		<stream.version>1.0.0.BETA2</stream.version>
+
+	</properties>
+
+	<modules>
+		<module>docs</module>
+		<module>m3ua</module>
+		<module>mtp</module>
+		<module>management</module>
+		<module>hardware</module>
+		<module>isup</module>
+		<module>sccp</module>
+		<module>tcap</module>
+		<module>map</module>
+	</modules>
+
+	<!-- declare our babies -->
+	<dependencyManagement>
+		<dependencies>
+			<!-- ASN -->
+			<dependency>
+				<groupId>org.mobicents.protocols.asn</groupId>
+				<artifactId>asn</artifactId>
+				<version>${asn.version}</version>
+			</dependency>
+			<!-- STREAM -->
+			<dependency>
+				<groupId>org.mobicents.protocols.stream</groupId>
+				<artifactId>stream</artifactId>
+				<version>${stream.version}</version>
+			</dependency>
+
+			<!-- Management Shell-->
+			<dependency>
+				<artifactId>shell</artifactId>
+				<groupId>org.mobicents.protocols.ss7.management</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+
+			<!-- Management linkset-->
+			<dependency>
+				<artifactId>linkset</artifactId>
+				<groupId>org.mobicents.protocols.ss7.management</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+
+			<!-- Hardware Dahdi Java-->
+			<dependency>
+				<artifactId>mobicents-dahdi</artifactId>
+				<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+
+			<!-- Hardware Dialogic Java-->
+			<dependency>
+				<artifactId>mobicents-dialogic</artifactId>
+				<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+
+			<!-- /hardware m3ua Java-->
+			<dependency>
+				<artifactId>mobicents-m3ua</artifactId>
+				<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+
+			<!-- MTP -->
+			<dependency>
+				<artifactId>mtp</artifactId>
+				<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+
+			<!-- M3UA -->
+			<dependency>
+				<artifactId>m3ua-api</artifactId>
+				<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>m3ua-impl</artifactId>
+				<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+			
+			<!-- ISUP -->
+			<dependency>
+				<artifactId>isup-api</artifactId>
+				<groupId>org.mobicents.protocols.ss7.isup</groupId>
+				<version>${isup.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>isup-impl</artifactId>
+				<groupId>org.mobicents.protocols.ss7.isup</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+			
+			<!-- SCCP -->
+			<dependency>
+				<artifactId>sccp-api</artifactId>
+				<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>sccp-impl</artifactId>
+				<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+			
+			<!-- TCAP -->
+			<dependency>
+				<artifactId>tcap-api</artifactId>
+				<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>tcap-impl</artifactId>
+				<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+			
+			<!-- MAP -->
+			<dependency>
+				<artifactId>map-api</artifactId>
+				<groupId>org.mobicents.protocols.ss7.map</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>map-impl</artifactId>
+				<groupId>org.mobicents.protocols.ss7.map</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+			
+			
+			<!-- 3rd PARTY -->
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<scope>provided</scope>
+				<version>${junit.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>concurrent</groupId>
+				<artifactId>concurrent</artifactId>
+				<scope>provided</scope>
+				<version>${concurrent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javolution</groupId>
+				<artifactId>javolution</artifactId>
+				<version>${javolution.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+
+
+	<repositories>
+		<repository>
+			<id>maven</id>
+			<name>Maven Repository</name>
+			<url>http://repo1.maven.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>jboss</id>
+			<name>JBoss Repository</name>
+			<url>http://repository.jboss.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>jboss-snapshots</id>
+			<name>JBoss Snapshot Repository</name>
+			<url>http://snapshots.jboss.org/maven2</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+
+		<repository>
+			<id>jboss-public-repository-group</id>
+			<name>JBoss Public Maven Repository Group</name>
+			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>jboss-public-repository-group</id>
+			<name>JBoss Public Maven Repository Group</name>
+			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules />
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<version>2.0-beta-9</version>
+						<configuration>
+							<autoVersionSubmodules>
+								true
+							</autoVersionSubmodules>
+							<remoteTagging>true</remoteTagging>
+							<tagBase>
+								https://mobicents.googlecode.com/svn/tags/protocols/ss7
+							</tagBase>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>release</id>
+			<modules />
+		</profile>
+	</profiles>
+	<developers>
+		<developer>
+			<id>oleg.kulikoff</id>
+			<name>Oleg Kulikoff</name>
+			<email>oleg.kulikoff@gmail.com</email>
+			<organization>JBoss/Red Hat</organization>
+			<organizationUrl>http://www.redhat.com/</organizationUrl>
+			<roles>
+				<role>Active Developer</role>
+			</roles>
+			<timezone>+3</timezone>
+		</developer>
+		<developer>
+			<id>amit.bhayani</id>
+			<name>Amit Bhayani</name>
+			<email>amit.bhayani@gmail.com</email>
+			<organization>JBoss/Red Hat</organization>
+			<organizationUrl>http://www.redhat.com/</organizationUrl>
+			<roles>
+				<role>Active Developer</role>
+			</roles>
+			<timezone>+5.5</timezone>
+		</developer>
+		<developer>
+			<id>baranowb</id>
+			<name>Bartosz Baranowski</name>
+			<email>baranowb@gmail.com</email>
+			<organization>JBoss/Red Hat</organization>
+			<organizationUrl>http://www.redhat.com/</organizationUrl>
+			<roles>
+				<role>Active Developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>GNU GENERAL PUBLIC LICENSE</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<distributionManagement>
+		<repository>
+			<id>jboss-releases-repository</id>
+			<name>JBoss Releases Repository</name>
+			<url>
+				https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
+			</url>
+		</repository>
+		<snapshotRepository>
+			<id>jboss-snapshots-repository</id>
+			<name>JBoss Snapshots Repository</name>
+			<url>
+				https://repository.jboss.org/nexus/content/repositories/snapshots/
+			</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-eclipse-plugin</artifactId>
+					<groupId>org.mobicents.tools</groupId>
+					<version>
+						${mobicents.tools.mavenplugin.eclipse.version}
+					</version>
+					<inherited>false</inherited>
+					<executions />
+					<configuration>
+						<classpathExcludes>
+							<exclude>xml-apis:xml-apis</exclude>
+							<exclude>jtidy:jtidy</exclude>
+						</classpathExcludes>
+						<resolveTransitiveDependencies>
+							true
+						</resolveTransitiveDependencies>
+						<eclipseProjectName>
+							mobicents-ss7
+						</eclipseProjectName>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${compiler.plugin.version}</version>
+					<configuration>
+						<source>${compile.source}</source>
+						<target>${compile.source}</target>
+						<debug>${compile.debug}</debug>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${compiler.plugin.version}</version>
+				<configuration>
+					<source>${compile.source}</source>
+					<target>${compile.source}</target>
+					<debug>${compile.debug}</debug>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<tagBase>
+						https://mobicents.googlecode.com/svn/tags/protocols/ss7
+					</tagBase>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<scm>
+		<connection>
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7
+		</connection>
+		<developerConnection>
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7
+		</developerConnection>
+		<url>
+			http://mobicents.googlecode.com/svn/trunk/protocols/ss7
+		</url>
+	</scm>
+
+</project>
+

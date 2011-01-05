@@ -14,7 +14,7 @@
 	<properties>
 		<include.dialogic>/usr/include/dialogic</include.dialogic>
 	</properties>
-	<name>Mobicents Ss7 Dialogic Provider - Native - Linux</name>
+	<name>Mobicents SS7 :: Hardware :: ${pom.artifactId}</name>
 	<packaging>so</packaging>
 
 	<dependencies>

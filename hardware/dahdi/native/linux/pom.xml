@@ -11,10 +11,14 @@
 
 	<artifactId>libmobicents-dahdi-linux</artifactId>
 
+	<name>
+		Mobicents SS7 :: Hardware :: ${pom.artifactId}
+	</name>
+	
 	<properties>
 		<include.zap>/usr/include/dahdi</include.zap>
 	</properties>
-	<name>Mobicents Ss7 Dahdi Provider - Native - Linux</name>
+
 	<packaging>so</packaging>
 
 	<dependencies>

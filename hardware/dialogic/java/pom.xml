@@ -12,7 +12,7 @@
 	</parent>
 
 	<artifactId>mobicents-dialogic</artifactId>
-	<name>Mobicents SS7 Dialogic Java</name>
+	<name>Mobicents SS7 :: Hardware :: ${pom.artifactId}</name>
 
 	<!-- Please don't use below property, rather use CLI System property -Dmaven.test.skip=true/false -->
 	<properties>

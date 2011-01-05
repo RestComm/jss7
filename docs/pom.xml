@@ -49,30 +49,7 @@
 				<module>jdocbook-mobicents</module>
 				<module>sources-jbcp</module>
 				<module>jdocbook-jbcp</module>
-			</modules>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-release-plugin</artifactId>
-						<version>2.0</version>
-						<configuration>
-							<remoteTagging>true</remoteTagging>
-							<autoVersionSubmodules>true</autoVersionSubmodules>
-							<resume>false</resume>
-							<tagBase>https://mobicents.googlecode.com/svn/tags/protocols/ss7/docs</tagBase>
-							<preparationGoals>clean install</preparationGoals>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
+			</modules>			
 		</profile>
 	</profiles>
-
-	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/docs</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/docs</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/trunk/protocols/ss7/docs</url>
-	</scm>
-
 </project>

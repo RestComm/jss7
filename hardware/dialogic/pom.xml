@@ -10,7 +10,10 @@
 	<artifactId>mobicents-dialogic-parent</artifactId>
 
 	<packaging>pom</packaging>
-	<name>Mobicents SS7 Dialogic Provider</name>
+	
+	<name>
+		Mobicents SS7 :: Hardware :: ${pom.artifactId}
+	</name>
 
 	<modules>
 		<module>native</module>

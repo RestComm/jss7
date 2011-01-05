@@ -11,7 +11,9 @@
 
 	<packaging>pom</packaging>
 
-	<name>Mobicents SS7 Dahdi Provider - Native</name>
+	<name>
+		Mobicents SS7 :: Hardware :: ${pom.artifactId}
+	</name>
 
 	<properties>
 		<maven.test.skip>true</maven.test.skip>

@@ -12,7 +12,10 @@
 	</parent>
 
 	<artifactId>mobicents-dahdi</artifactId>
-	<name>Mobicents SS7 Dahdi Java</name>
+	
+	<name>
+		Mobicents SS7 :: Hardware :: ${pom.artifactId}
+	</name>
 
 	<!-- Please don't use below property, rather use CLI System property -Dmaven.test.skip=true/false -->
 	<properties>

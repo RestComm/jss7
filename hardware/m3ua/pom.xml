@@ -11,7 +11,7 @@
 
 	<artifactId>mobicents-m3ua</artifactId>
 
-	<name>Mobicents SS7 M3UA Hardware</name>
+	<name>Mobicents SS7 :: Hardware :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<dependency>
@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.management</groupId>
 			<artifactId>linkset</artifactId>
-			<version>${hardware.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 	</dependencies>
 
