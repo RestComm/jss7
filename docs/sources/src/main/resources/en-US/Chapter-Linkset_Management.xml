@@ -197,7 +197,7 @@ LinkSet successfully deleted
 	<section
 		id="management_linkset_activate">
 		<title>Activate Linkset</title>
-		<para>Linkset can be deleted by issuing command with following structure:</para>
+		<para>Linkset can be activated by issuing command with following structure:</para>
 		<programlisting>
 linkset activate  &lt;linkset-name&gt; </programlisting>
 		<para>Where:</para>
@@ -393,7 +393,7 @@ Link deactivated successfully
 	<section
 		id="management_linkset_show">
 		<title>Show status</title>
-		<para>Link can be deactivated by issuing command with following structure:</para>
+		<para>Linkset and Link's status can be viewed by issuing command with following structure:</para>
 		<programlisting>
 linkset show
 			</programlisting>
