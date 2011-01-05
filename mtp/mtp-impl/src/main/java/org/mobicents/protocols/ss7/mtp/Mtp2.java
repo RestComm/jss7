@@ -283,6 +283,9 @@ public class Mtp2 {
     /**
      * Subservice field of mtp msg. See Q.704.14.2.2
      */
+    
+    protected Mtp2Listener mtp2Listener = null;
+    
     private static final Logger ROOT_LOGGER = Logger.getLogger(Mtp2.class);
     private final Logger logger; //actual logger.
     public Mtp2(String name, Mtp1 channel) {
@@ -305,6 +308,16 @@ public class Mtp2 {
             this.transmissionBuffer[i] = new Mtp2Buffer();
         }
     }
+    
+    public Mtp2Listener getMtp2Listener() {
+        return mtp2Listener;
+    }
+
+    public void setMtp2Listener(Mtp2Listener mtp2Listener) {
+        this.mtp2Listener = mtp2Listener;
+    }
+
+
 
     public boolean isEmergency() {
         return emergency;

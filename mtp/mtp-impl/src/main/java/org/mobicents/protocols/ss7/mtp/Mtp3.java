@@ -426,6 +426,11 @@ public class Mtp3 implements Runnable {
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("(%s) Sending TRA(Traffic Restart Allowed) message", link.getName()));
         }
+        
+        if(link.mtp2Listener != null){
+            link.mtp2Listener.linkInService();
+        }
+        
         restartTraffic(link);
 
         //create and assign Tester;
@@ -448,6 +453,11 @@ public class Mtp3 implements Runnable {
      * @param link
      */
     private void linkUp(Mtp2 link) {
+        
+        if(link.mtp2Listener != null){
+            link.mtp2Listener.linkUp();
+        }
+        
         linkset.add(link);
         if (linkset.isActive() && this.mtp3Listener != null) {
             try {
@@ -462,6 +472,12 @@ public class Mtp3 implements Runnable {
     }
     
     public void linkFailed(Mtp2 link) {
+        
+        //Call Listener
+        if(link.mtp2Listener != null){
+            link.mtp2Listener.linkFailed();
+        }
+        
     	//FIXME: add debug or trace?
         //remove this link from list of active links
         linkset.remove(link);
