@@ -9,6 +9,7 @@
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Design_Overview.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Source_Build_Binary.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Installation.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Setup_Hardware.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Linkset_Management.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-SCCP.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-TCAP.xml" />
