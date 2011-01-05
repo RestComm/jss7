@@ -58,7 +58,9 @@ public class DahdiLink extends Link implements Mtp2Listener {
                 mtp2 = new Mtp2(this.linkName.toString() + "-" + this.code,
                         this.channel); // TODO : Optimize the String usage
             }
-
+            
+            this.mtp2.setMtp2Listener(this);
+            
             channel.setChannelID(this.channelID);
             channel.setCode(this.code);
             channel.setIOBufferSize(this.ioBufferSize);
