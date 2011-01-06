@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 
@@ -18,14 +20,16 @@
 	<name>Mobicents SS7 :: MAP :: Parent :: ${pom.artifactId}</name>
 	<properties>
 		<maven.test.skip>false</maven.test.skip>
-		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
+		<mobicents.tools.mavenplugin.eclipse.version>
+			1.0.0.BETA2
+		</mobicents.tools.mavenplugin.eclipse.version>
 	</properties>
 
 	<modules>
 		<module>map-api</module>
 		<module>map-impl</module>
 	</modules>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -49,8 +53,15 @@
 					</eclipseProjectName>
 				</configuration>
 			</plugin>
-
-
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>release</id>
+			<modules>
+				<module>release</module>
+			</modules>
+		</profile>
+	</profiles>
 </project>
