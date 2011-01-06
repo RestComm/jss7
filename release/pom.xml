@@ -19,7 +19,7 @@
 		<checkout.username>mobicents-read-only</checkout.username>
 		<checkout.password />
 
-			<!-- TAGS -->
+			<!-- TAGS 
 		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/asn/asn-1.0.0</asn.connectionURL>
 		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/stream/stream-1.0.0</stream.connectionURL>
 
@@ -30,22 +30,12 @@
 		<sccp.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/sccp/sccp-1.0.0</sccp.connectionURL>
 		<tcap.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/tcap/tcap-1.0.0</tcap.connectionURL>
 		<map.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/map/map-1.0.0</map.connectionURL>
- 		
-		<!-- TRUNK 
+ 		-->
+		<!-- TRUNK -->
 
 		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/asn</asn.connectionURL>
 		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/stream</stream.connectionURL>
-	
-		<parent.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/protocols/ss7/parent</parent.connectionURL>
-		<m3ua.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/protocols/ss7/m3ua</m3ua.connectionURL>
-		<mtp.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/protocols/ss7/mtp</mtp.connectionURL>
-		<isup.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/protocols/ss7/isup</isup.connectionURL>
-		<sccp.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/protocols/ss7/sccp</sccp.connectionURL>
-		<tcap.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/protocols/ss7/tcap</tcap.connectionURL>
-		<map.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/protocols/ss7/map</map.connectionURL>
-		
-		-->
-
+		<ss7.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/protocols/ss7</ss7.connectionURL>
 	</properties>
 
 	<profiles>
@@ -97,7 +87,7 @@
 							</execution>
 
 							<execution>
-								<id>parent-checkout</id>
+								<id>ss7-checkout</id>
 								<goals>
 									<goal>checkout</goal>
 								</goals>
@@ -106,104 +96,8 @@
 									<scmVersion>HEAD</scmVersion>
 									<scmVersionType>revision</scmVersionType>
 									<skipCheckoutIfExists>true</skipCheckoutIfExists>
-									<checkoutDirectory>${checkout.basedir}/parent</checkoutDirectory>
-									<connectionUrl>${parent.connectionURL}</connectionUrl>
-									<username>${checkout.username}</username>
-									<password>${checkout.password}</password>
-								</configuration>
-							</execution>
-							<execution>
-								<id>m3ua-checkout</id>
-								<goals>
-									<goal>checkout</goal>
-								</goals>
-								<phase>validate</phase>
-								<configuration>
-									<scmVersion>HEAD</scmVersion>
-									<scmVersionType>revision</scmVersionType>
-									<skipCheckoutIfExists>true</skipCheckoutIfExists>
-									<checkoutDirectory>${checkout.basedir}/m3ua</checkoutDirectory>
-									<connectionUrl>${m3ua.connectionURL}</connectionUrl>
-									<username>${checkout.username}</username>
-									<password>${checkout.password}</password>
-								</configuration>
-							</execution>
-							<execution>
-								<id>mtp-checkout</id>
-								<goals>
-									<goal>checkout</goal>
-								</goals>
-								<phase>validate</phase>
-								<configuration>
-									<scmVersion>HEAD</scmVersion>
-									<scmVersionType>revision</scmVersionType>
-									<skipCheckoutIfExists>true</skipCheckoutIfExists>
-									<checkoutDirectory>${checkout.basedir}/mtp</checkoutDirectory>
-									<connectionUrl>${mtp.connectionURL}</connectionUrl>
-									<username>${checkout.username}</username>
-									<password>${checkout.password}</password>
-								</configuration>
-							</execution>
-							<execution>
-								<id>isup-checkout</id>
-								<goals>
-									<goal>checkout</goal>
-								</goals>
-								<phase>validate</phase>
-								<configuration>
-									<scmVersion>HEAD</scmVersion>
-									<scmVersionType>revision</scmVersionType>
-									<skipCheckoutIfExists>true</skipCheckoutIfExists>
-									<checkoutDirectory>${checkout.basedir}/isup</checkoutDirectory>
-									<connectionUrl>${isup.connectionURL}</connectionUrl>
-									<username>${checkout.username}</username>
-									<password>${checkout.password}</password>
-								</configuration>
-							</execution>
-							<execution>
-								<id>sccp-checkout</id>
-								<goals>
-									<goal>checkout</goal>
-								</goals>
-								<phase>validate</phase>
-								<configuration>
-									<scmVersion>HEAD</scmVersion>
-									<scmVersionType>revision</scmVersionType>
-									<skipCheckoutIfExists>true</skipCheckoutIfExists>
-									<checkoutDirectory>${checkout.basedir}/sccp</checkoutDirectory>
-									<connectionUrl>${sccp.connectionURL}</connectionUrl>
-									<username>${checkout.username}</username>
-									<password>${checkout.password}</password>
-								</configuration>
-							</execution>
-							<execution>
-								<id>tcap-checkout</id>
-								<goals>
-									<goal>checkout</goal>
-								</goals>
-								<phase>validate</phase>
-								<configuration>
-									<scmVersion>HEAD</scmVersion>
-									<scmVersionType>revision</scmVersionType>
-									<skipCheckoutIfExists>true</skipCheckoutIfExists>
-									<checkoutDirectory>${checkout.basedir}/tcap</checkoutDirectory>
-									<connectionUrl>${tcap.connectionURL}</connectionUrl>
-									<username>${checkout.username}</username>
-									<password>${checkout.password}</password>
-								</configuration>
-							</execution>
-							<execution>
-								<id>map-checkout</id>
-								<goals>
-									<goal>checkout</goal>
-								</goals>
-								<phase>validate</phase>
-								<configuration>
-									<scmVersion>HEAD</scmVersion>
-									<scmVersionType>revision</scmVersionType>
-									<skipCheckoutIfExists>true</skipCheckoutIfExists>
-									<checkoutDirectory>${checkout.basedir}/map</checkoutDirectory>
-									<connectionUrl>${map.connectionURL}</connectionUrl>
+									<checkoutDirectory>${checkout.basedir}/ss7</checkoutDirectory>
+									<connectionUrl>${ss7.connectionURL}</connectionUrl>
 									<username>${checkout.username}</username>
 									<password>${checkout.password}</password>
 								</configuration>

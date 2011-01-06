@@ -4,17 +4,12 @@
 	<!-- Components Versions -->
 	<property name="release.version" value="1.0.0.BETA5" />
 
-	<property name="paren.version" value="1.0.0.BETA4" />
+	<property name="ss7.version" value="1.0.0.BETA4" />
 
 
 	<property name="asn.version" value="1.0.0.BETA3" />
 	<property name="stream.version" value="1.0.0.BETA2" />
-	<property name="m3ua.version" value="1.0.0.BETA2" />
-	<property name="mtp.version" value="1.0.0.BETA5" />
-	<property name="isup.version" value="1.0.0.BETA4" />
-	<property name="sccp.version" value="1.0.0.BETA4" />
-	<property name="tcap.version" value="1.0.0.BETA4" />
-	<property name="map.version" value="1.0.0.BETA4" />
+	
 
 	<property name="protocols.build.list" value="parent,m3ua,mtp,isup,sccp,tcap,map" />
 	<property name="protocols.copy.list" value="m3ua,mtp,isup,sccp,tcap,map" />
@@ -77,14 +72,10 @@
 		</exec>
 	</target>
 	<target name="build-sources-ss7">
-		<for delimiter="," param="protocol.name" list="${protocols.build.list}">
-			<sequential>
-				<echo>Build SS7 @{protocol.name}</echo>
-				<exec executable="${mvn.executable}" dir="${checkout.basedir}/@{protocol.name}">
+		<echo>Build SS7</echo>
+		<exec executable="${mvn.executable}" dir="${checkout.basedir}/ss7">
 					<arg line="-f pom.xml install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
 				</exec>
-			</sequential>
-		</for>
 	</target>
 
 	<target name="notes">
@@ -94,14 +85,7 @@
 					<token key="VERSION" value="${release.version}" />
 					<token key="ASN_VERSION" value="${asn.version}" />
 					<token key="STREAM_VERSION" value="${stream.version}" />
-					<token key="PARENT_VERSION" value="${paren.version}" />
-					<token key="M3UA_VERSION" value="${m3ua.version}" />
-					<token key="MTP_VERSION" value="${mtp.version}" />
-					<token key="ISUP_VERSION" value="${isup.version}" />
-					<token key="SCCP_VERSION" value="${sccp.version}" />
-					<token key="TCAP_VERSION" value="${tcap.version}" />
-					<token key="MAP_VERSION" value="${map.version}" />
-
+					<token key="SS7_VERSION" value="${ss7.version}" />
 				</replacetokens>
 			</filterchain>
 		</copy>
@@ -124,16 +108,49 @@
 		</copy>
 	</target>
 	<target name="copy-protocols-ss7">
-		<for delimiter="," param="protocol.name" list="${protocols.copy.list}">
-			<sequential>
-				<echo>Copy SS7 @{protocol.name}</echo>
-				<copy todir="${zip.dir}/@{protocol.name}" failonerror="${failoncopy}">
-					<fileset dir="${checkout.basedir}/@{protocol.name}/release/${release.name}">
-						<include name="**" />
-					</fileset>
-				</copy>
-			</sequential>
-		</for>
+		<echo>Copy SS7 Service</echo>
+		<copy todir="${zip.dir}/ss7/mobicents-ss7-service" failonerror="${failoncopy}">
+			<fileset dir="${checkout.basedir}/ss7/service/target/mobicents-ss7-service">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<echo>Copy Shell</echo>
+		<copy todir="${zip.dir}/ss7/shell" failonerror="${failoncopy}">
+			<fileset dir="${checkout.basedir}/ss7/management/shell/target/release">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<echo>Copy Protocols</echo>
+		<copy todir="${zip.dir}/ss7/protocols" failonerror="${failoncopy}">
+			<fileset dir="${checkout.basedir}/ss7/tcap/release/point">
+				<include name="**" />
+			</fileset>
+			<fileset dir="${checkout.basedir}/ss7/map/release/point">
+				<include name="**" />
+			</fileset>
+			<fileset dir="${checkout.basedir}/ss7/isup/release/point">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<echo>Copy Native</echo>
+		<copy todir="${zip.dir}/ss7/native" failonerror="${failoncopy}">
+			<fileset dir="${checkout.basedir}/ss7/hardware/dahdi/native/linux/target">
+				<include name="*.so" />
+			</fileset>
+		</copy>
+
+		<echo>Copy Docs</echo>
+		<copy todir="${zip.dir}/ss7/docs" failonerror="${failoncopy}">
+			<fileset dir="${checkout.basedir}/ss7/docs/jdocbook-mobicents/target/docbook/publish">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<echo>Copy Build File</echo>
+		<copy file="${checkout.basedir}/ss7/release/release-build.xml" tofile="${zip.dir}/ss7/build.xml" failonerror="${failoncopy}" />
 	</target>
 
 	<target name="zip.binary">
@@ -148,6 +165,7 @@
 		</antcall>
 	</target>
 	<target name="zip.src">
+		<mkdir dir="${zip.file.destination.dir}"/>
 		<zip destfile="${zip.file.destination.dir}/${zip.file.name}-src.zip">
 			<zipfileset dir="${checkout.basedir}" excludes="zip">
 			</zipfileset>
