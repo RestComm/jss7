@@ -4,82 +4,62 @@
 <chapter
 	id="design_overview">
 
-	<title>Design Overview</title>
+	<title>The Basics</title>
 
-	<para>&THIS.PLATFORM; &THIS.APPLICATION;
-		has modular design. Each protocol has its own separate module. This
-		module depends only on its provider - that is for instance
-		<acronym>SCCP</acronym>
-		depends only from
-		<acronym>MTP</acronym>
-		and
-		<acronym>TCAP</acronym>
-		depends on
-		<acronym>SCCP</acronym>.
-		This makes it easy to customize whole &THIS.PLATFORM; &THIS.APPLICATION;.
-		Specific protocol module has list of all dependencies along with
-		information on general design. Please refer to module description for
-		more
-		information.
-
+	<para>The &THIS.PLATFORM; &THIS.APPLICATION; is logically divided into two sections. 
+	The lower section includes SS7 Level 3 and below. The lower section is influenced by type of SS7 hardware (Level 1) used.
+	The upper section includes SS7 Level 4 and above.
+	This logical division is widely based on flexibility of &THIS.PLATFORM; &THIS.APPLICATION; to allow usage of any SS7 hardware 
+	available in the market and yet &THIS.PLATFORM; &THIS.APPLICATION; Level 4 and above remains the same. 
 	</para>
 	<important>
-		<para>Be
-			aware, &THIS.PLATFORM; &THIS.APPLICATION;
-			is subject to changes as it is under active development!
+		<para>Be aware, &THIS.PLATFORM; &THIS.APPLICATION; is subject to changes as it is under active development!
 		</para>
 	</important>
 	<para>&THIS.PLATFORM; &THIS.APPLICATION;
 		consists of following functional blocks:
 	</para>
-	<variablelist>
-		<varlistentry>
-			<term>Linkset</term>
-			<listitem>
+		<section
+		id="design_overview_Linkset">
+		<title>Linkset</title>
+			
 				<!-- XXX: this possibly should be rephrased. -->
 				<para>
-					<literal>Linkset</literal>
-					is logical shortcut. This term hides
-					<literal>MTP</literal>
-					layer, ie. it abstracts whether hardware
-					<literal>MTP</literal>
-					is used , M3UA or  &THIS.PLATFORM; &THIS.APPLICATION;
-					one.
+					<literal>Linkset</literal> is logical group of links between two Signaling Points. 
+					This term hides <literal>MTP</literal> layer, ie. it abstracts whether hardware
+					<literal>MTP</literal> is used , M3UA or  &THIS.PLATFORM; &THIS.APPLICATION; one.
 				</para>
-
-			</listitem>
-		</varlistentry>
-		<varlistentry>
-			<term>SS7 Service</term>
-			<listitem>
-				<para>Service is element which is used to manage <literal>LinkSets</literal> and protocols like <literal>SCCP</literal>.</para>
-				<para>For full explanation please refer to  <xref linkend="design_overview_ss7_service"/> . </para>
-			</listitem>
-		</varlistentry>
-		<varlistentry>
-			<term>Shell Management client</term>
-			<listitem>
 				<para>
-					<literal>Shell</literal>
-					is tool which allows to manage different aspects of &THIS.PLATFORM; &THIS.APPLICATION;
-					in interactive manner. It connects
-					to different instances of &THIS.PLATFORM; &THIS.APPLICATION;
-					which manage
-					<literal>Linksets</literal>
-					and
-					<literal>SCCP</literal>
-					routing. For detailed information please refer to:
-					<xref
-						linkend="management" />
-					.
-					Usually
-					<literal>Shell</literal>
-					will be invoked from remote machine(remote to
-					<literal>Linksets</literal>
-					and application protocols).
+				Three type of <literal>Linkset</literal> are defined
 				</para>
-			</listitem>
-		</varlistentry>
+				<itemizedlist>
+					<listitem>
+						<para><literal>DahdiLinkset</literal> : As the name suggests, this linkset is for <literal>dahdi</literal> based hardware. 
+						<literal>dahdi</literal> boards only provides SS7 MTP1 layer and usually depends on external software to provide MTP2/MTP3 support.</para>
+						<para>Well known <literal>dahdi</literal> based SS7 cards are <literal>Diguim</literal> and <literal>Sangoma</literal></para>
+					</listitem>
+					<listitem>
+						<para><literal>DialogicLinkset</literal> : Linkset for <literal>dialogic</literal> based hardware. <literal>dialogic</literal> boards 
+						have MTP2 and MTP3 support on board.</para>
+					</listitem>
+					<listitem>
+						<para><literal>M3UALinkset</literal> : M3UA stands for MTP Level 3 (MTP3) User Adaptation Layer as defined by the IETF SIGTRAN working group in RFC 4666. 
+						<literal>M3UALinkset</literal> enables the &THIS.PLATFORM; &THIS.APPLICATION; Level 4 (e.g. ISUP, SCCP) to run over IP instead of instead of SS7 network</para>
+					</listitem>
+				</itemizedlist>			
+		</section>
+		<section
+		id="design_overview_shell">
+		<title>Shell Management client</title>
+				<para>
+					<literal>Shell</literal> is Command Line Interface (CLI) tool which allows to manage different aspects of &THIS.PLATFORM; &THIS.APPLICATION; in interactive manner. 
+					It connects to different instances of &THIS.PLATFORM; &THIS.APPLICATION; which manage <literal>Linksets</literal> and
+					<literal>SCCP</literal> routing. For detailed information please refer to:	<xref linkend="management" />.
+					Usually <literal>Shell</literal> will be invoked from remote machine(remote to <literal>Linksets</literal> and application protocols).
+
+				</para>
+				</section>
+		<!--  	
 		<varlistentry>
 			<term>Application</term>
 			<listitem>
@@ -96,29 +76,16 @@
 				</para>
 			</listitem>
 		</varlistentry>
-	</variablelist>
-	<para>Diagram
-		belows depicts high level view of &THIS.PLATFORM; &THIS.APPLICATION;
-		design:
-	</para>
-	<mediaobject
-		id="ss7_design_general_2">
-		<imageobject>
-			<imagedata
-				width="300px"
-				align="center"
-				fileref="images/ss7-design-overview2.png"
-				format="PNG" />
-		</imageobject>
-		<caption>
-			<para>&THIS.PLATFORM; &THIS.APPLICATION;
-				general design
-			</para>
-		</caption>
-	</mediaobject>
+		-->
+	
+
 	<section
 		id="design_overview_ss7_service">
 		<title>SS7 Service</title>
+				<para>Service is element which is used to manage <literal>LinkSets</literal> and protocols like <literal>SCCP</literal>. 
+				SS7 service creates instance of &THIS.PLATFORM; &THIS.APPLICATION; SCCP and bind's it to JNDI name java:/mobicents/ss7/sccp</para>
+				<para>SS7 Service is JMX based service deployed in JBoss Application Server</para>
+		
 		<para>
 			Diagram below depicts elements which are deployed as part of
 			<literal>SS7 Service</literal>:
@@ -130,7 +97,7 @@
 				<imagedata
 					width="300px"
 					align="center"
-					fileref="images/ss7-design-overview3.png"
+					fileref="images/ss7-design-overview3.jpg"
 					format="PNG" />
 			</imageobject>
 			<caption>
@@ -150,17 +117,37 @@
 			<varlistentry>
 				<term>Expose management interface</term>
 				<listitem>
-					<para>Iinterface allows <literal>Shell</literal> client to connect and issue commands.</para>
+					<para><literal>Shell Executor</literal> allows <literal>Shell</literal> client to connect and issue commands.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>Manage Linksets and their lifecycle</term>
 				<listitem>
-					<para>Service persists linksets information and manages their lifecycle, ie. it creates, activates them(also after restart).</para>
+					<para><literal>Linkset Manager</literal> persists linksets information and manages their lifecycle, ie. it creates, activates them(also after restart).</para>
 				</listitem>
 			</varlistentry>
 			
 		</variablelist>
 	</section>
+	<section id="mobicents_design_overview_ss7_service">
+		<title>&THIS.PLATFORM; &THIS.APPLICATION; Usage</title>
+		<para>Diagram below depicts how &THIS.PLATFORM; &THIS.APPLICATION; is used:
+		</para>
+		<mediaobject
+			id="ss7_design_general_2">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/ss7-design-overview2.jpg"
+					format="PNG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; &THIS.APPLICATION;
+					general design
+				</para>
+			</caption>
+		</mediaobject>
+	 </section>
 </chapter>
 

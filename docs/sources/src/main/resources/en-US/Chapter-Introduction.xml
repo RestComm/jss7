@@ -51,6 +51,9 @@
 			</para>
 		</caption>
 	</mediaobject>
+	<para>
+		&THIS.PLATFORM;  &THIS.APPLICATION; is software based SS7 protocol implementation providing Level 2 and above. 
+	</para>	
 	<section>
 		<title>Time Division Multiplexing</title>
 		<para>
