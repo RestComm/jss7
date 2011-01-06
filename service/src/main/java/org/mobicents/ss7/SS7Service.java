@@ -75,7 +75,7 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
             this.shellExecutor.startService();
         }
 
-        logger.info("Started SS7 service");
+        logger.info("[[[[[[[[[ Mobicents SS7 service started ]]]]]]]]]");
     }
 
     public void setJndiName(String jndiName) {
