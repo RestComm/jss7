@@ -44,6 +44,7 @@
 		<module>sccp</module>
 		<module>tcap</module>
 		<module>map</module>
+		<module>service</module>
 	</modules>
 
 	<!-- declare our babies -->
