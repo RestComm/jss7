@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 
@@ -16,8 +18,7 @@
 	<packaging>pom</packaging>
 
 	<name>Mobicents SS7 :: TCAP :: Parent :: ${pom.artifactId}</name>
-	<properties>
-	</properties>
+	<properties></properties>
 
 	<modules>
 		<module>tcap-api</module>
@@ -50,4 +51,14 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>release</id>
+			<modules>
+				<module>release</module>
+			</modules>
+		</profile>
+	</profiles>
+
 </project>
