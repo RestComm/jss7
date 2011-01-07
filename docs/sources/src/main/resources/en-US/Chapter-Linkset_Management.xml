@@ -7,12 +7,11 @@
 
 	<title>Linkset Management
 	</title>
-	<para>&THIS.PLATFORM; &THIS.APPLICATION;
-		provides Shell client to manage configuration. This chapter describes available commands.
+	<para>&THIS.PLATFORM; &THIS.APPLICATION; provides Shell client to manage configuration. This chapter describes available commands.
 	</para>
-	<para>Shell client can be started with following command:</para>
+	<para>Shell client can be started with following command from <filename>$JBOSS_HOME/bin</filename>:</para>
 	<programlisting>
-[$] ./bin/ss7-run.sh
+[$] ./ss7-run.sh
 	</programlisting>
 	<para>Once console starts, it will print following information:</para>
 	<screen>
@@ -26,6 +25,18 @@ version 2 and other licenses. For further details visit http://mobicents.org
 mobicents>
 	</screen>
 
+	<para>
+		The <literal>ss7-run</literal> script supports following options
+	</para>
+	
+<screen><![CDATA[
+Usage: SS7 [OPTIONS]
+Valid Options
+-v           Display version number and exit
+-h           This help screen
+]]>
+				</screen>		
+	
 	<para>Shell needs to connect to managed instance. Command to connect has following structure:</para>
 	<programlisting>
 ss7 connect &lt;IP&gt; &lt;PORT&gt; </programlisting>
@@ -43,6 +54,18 @@ mobicents(10.65.208.215:3435)>
 			<literal>127.0.0.1:3435</literal>
 		</para>
 	</note>
+	
+	<para>Command to disconnect has following structure:</para>
+	<programlisting>ss7 discconnect </programlisting>
+	<example>
+		<title>Disconnect</title>
+		<screen>
+mobicents(10.65.208.215:3435)>ss7 connect
+
+Bye
+mobicents>
+			</screen>
+	</example>	
 
 	<para>
 		Linksets are managed by
@@ -399,7 +422,7 @@ linkset show
 			</programlisting>
 
 		<example>
-			<title>Link Deactivateion</title>
+			<title>Linkset Status</title>
 			<screen>
 mobicents(10.65.208.215:3435)>linkset show
 linkset1      dahdi    opc=1           apc=2           ni=0    state=UNAVAILABLE
@@ -407,6 +430,38 @@ linkset1      dahdi    opc=1           apc=2           ni=0    state=UNAVAILABLE
 
 				</screen>
 		</example>
+		
+		<para>The possible state of Linkset are </para>
+		<itemizedlist> 
+			<listitem>
+				<para>UNAVAILABLE : Indicates the linkset does not have any “available” links and cannot transport traffic</para>
+			</listitem> 
+			<listitem>
+				<para>SHUTDOWN : Indicates the linkset has been shutdown in the configuration</para>
+			</listitem> 
+			<listitem>
+				<para>AVAILABLE : Indicates the linkset has at least one available link and can carry traffic</para>
+			</listitem> 			
+		 </itemizedlist>
+		 
+		<para>The possible state of Link are </para>
+		<itemizedlist> 
+			<listitem>
+				<para>UNAVAILABLE : Indicates the link is not available to carry traffic. This can occur if the link 
+				is remotely or locally inhibited by a user. It can also be unavailable if MTP2 has not been able to 
+				successfully activate the link connection.</para>
+			</listitem> 
+			<listitem>
+				<para>SHUTDOWN : Indicates the link has been shutdown in the configuration.</para>
+			</listitem> 
+			<listitem>
+				<para>AVAILABLE : Indicates the link is active and able to transport traffic</para>
+			</listitem> 
+			<listitem>
+				<para>FAILED :   A link is FAILED when the link is not shutdown but is unavailable at layer2 for some reason. 
+				For example Initial Alignment failed or the link test messages sent by MTP3 are not being acknowledged.</para>
+			</listitem>			
+		 </itemizedlist>		 
 	</section>
 
 </chapter>

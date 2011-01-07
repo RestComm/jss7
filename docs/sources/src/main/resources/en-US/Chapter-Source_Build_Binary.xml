@@ -44,7 +44,8 @@
 							<para><literal>docs</literal> : User guide for &THIS.PLATFORM; &THIS.APPLICATION; </para>
 						</listitem>
 						<listitem>
-							<para><literal>mobicents-ss7-service</literal> : SS7 service is the core engine as explained in section <xref linkend="design_overview_ss7_service" /> </para>
+							<para><literal>mobicents-ss7-service</literal> : SS7 service is the core engine as explained in section 
+							<xref linkend="design_overview_ss7_service" /> </para>
 						</listitem>			
 						<listitem>
 							<para><literal>native</literal> : native libraries component to interact with SS7 Card installed on server, runtime component. 
@@ -129,21 +130,140 @@
 23:22:26,270 INFO  [ShellExecutor] ShellExecutor listening at /127.0.0.1:3435
 23:22:26,270 INFO  [SS7Service] [[[[[[[[[ Mobicents SS7 service started ]]]]]]]]]
 ]]>
-				</screen>				
+				</screen>	
+				
+				<para>If you have started &THIS.APPLICATION.DIRNAME;-&THIS.VERSION; for the first time, there are no <literal>Linkset</literal> defined. 
+				You need to use Shell Client to connect to &THIS.APPLICATION.DIRNAME;-&THIS.VERSION; as defined in 
+				<xref linkend="linkset_management" /> and create <literal>Linkset</literal> 
+				as per your need and SS7 card installed</para>
+				
+				<para>Once the <literal>Linkset</literal> are defined, the state and configuration of <literal>Linkset</literal> and <literal>Link</literal> 
+				is persisted by <literal>LinksetManager</literal> which stands server re-start.</para> 
+							
 			</section>		
 			<section
 				id="stopping_binary">
 				<title>Stopping</title>
 					<para>You can shut down the server(s) you can run server(s) by executing the <command>shutdown.sh -s</command> (Unix) or 
 					<command>shutdown.bat -s</command> (Microsoft Windows) scripts in the <filename>&lt;install_directory&gt;/bin</filename> 
-					directory (on Unix or Windows). Note that if you properly stop the server, you will see the following three lines as the last output in the Unix terminal or Command Prompt:</para>
+					directory (on Unix or Windows). Note that if you properly stop the server, you will see the following three lines as the 
+					last output in the Unix terminal or Command Prompt:</para>
                         <screen><![CDATA[[Server] Shutdown complete
 Shutdown complete
 Halting VM]]></screen>
+
 			</section>	
 		</section>				
 	</section>
-
+	
+	<section id="configuring">
+		<title>
+			Configuring &THIS.PLATFORM; &THIS.APPLICATION;
+		</title>
+		<para>Configuration is done through an XML descriptor named <filename>jboss-beans.xml</filename> and is 
+		located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where 
+		<application>profile_name</application> is the server profile name.</para>
+			
+		<section id="configuring_LinksetFactory">
+			<title>Configuring LinksetFactory</title>
+			<para> Concrete implementation of <literal>LinksetFactory</literal> is responsible to create 
+			new instances of corresponding <literal>Linkset</literal> when instructed by <literal>LinksetManager</literal>. 
+			&THIS.PLATFORM; &THIS.APPLICATION; defined three linkset factories : </para>
+			
+			<itemizedlist>
+				<listitem>
+					<para><literal>DahdiLinksetFactory</literal> </para>
+					<programlisting language="XML" role="XML"><![CDATA[
+	<bean name="DahdiLinksetFactory"
+		class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+	</bean>]]>
+                        </programlisting>					
+				</listitem>
+				<listitem>
+					<para><literal>DialogicLinksetFactory</literal></para>
+					 <programlisting language="XML" role="XML"><![CDATA[
+	<bean name="DialogicLinksetFactory"
+		class="org.mobicents.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
+	</bean>]]>
+                        </programlisting>
+				</listitem>
+				<listitem>
+					<para><literal>M3UALinksetFactory</literal></para>
+					 					<programlisting language="XML" role="XML"><![CDATA[
+	<bean name="M3UALinksetFactory"
+		class="org.mobicents.ss7.m3ua.oam.M3UALinksetFactory">
+	</bean>]]>
+                        </programlisting>
+				</listitem>
+			</itemizedlist>					
+			<para>Its highly unlikely that you would require all three factories on same server. If you have <literal>dahdi</literal> based 
+			SS7 card installed, keep <literal>DahdiLinksetFactory</literal> and remove other two. If you have <literal>dialogic</literal> based 
+			SS7 card installed, keep <literal>DialogicLinksetFactory</literal> and remove other two. If you don't have any hardware installed and depend on 
+			M3UA, keep <literal>M3UALinksetFactory</literal> and remove other two. Nevertheless you can still use above factories in any combinations. 
+			</para>
+			<para> <literal>LinksetFactoryFactory</literal> is just a call-back class listening for new factories deployed 
+			and maintains Map of available factory name vs factory. You should never touch this bean.</para>
+		</section>	
+		<section id="configuring_LinksetManager">
+			<title>Configuring LinksetManager</title>
+			<para> 
+				<literal>LinksetManager</literal> is responsible for managing <literal>Linkset</literal> and <literal>Link</literal>.
+			</para>
+			<programlisting language="XML" role="XML"><![CDATA[	<bean name="LinksetManager" class="org.mobicents.ss7.linkset.oam.LinksetManager">
+		<property name="linksetFactoryFactory">
+			<inject bean="LinksetFactoryFactory" />
+		</property>
+		<property name="persistDir">${jboss.server.data.dir}</property>
+	</bean>]]></programlisting>		
+			<para>LinksetManager when started looks for file  <filename>linksetmanager.xml</filename> containing serialized information of 
+			underlying linksets and links. The directory path is configurable by changing value of <literal>persistDir</literal> property.</para>
+			<warning><para><filename>linksetmanager.xml</filename> should never be edited by hand. Always use Shell Client to connect to 
+			&THIS.PLATFORM; &THIS.APPLICATION; and execute commands.</para></warning>	
+		</section>	
+		
+		<section id="configuring_ShellExecutor">
+			<title>Configuring ShellExecutor</title>
+			<para> 
+				<literal>ShellExecutor</literal> is responsible for listening commands from Shell Client Management and execute corresponding action.
+			</para>
+			<programlisting language="XML" role="XML"><![CDATA[	<bean name="ShellExecutor" class="org.mobicents.ss7.ShellExecutor">
+		<property name="address">${jboss.bind.address}</property>
+		<property name="port">3435</property>
+	</bean>]]></programlisting>		
+			<para>By default ShellExecutor listens at <literal>jboss.bind.address</literal> and port <literal>3435</literal>. 
+			You may set the <literal>address</literal> property to any valid IP address that your host is assigned. 
+			The shell commands are exchanged over TCP/IP.</para>
+			<note><para>To understand JBoss bind options look at 
+			<ulink url="http://docs.jboss.org/jbossas/docs/Installation_And_Getting_Started_Guide/5/html_single/index.html"></ulink> </para> </note>
+				
+		</section>	
+		
+		<section id="configuring_SS7Service">
+			<title>Configuring SS7Service</title>
+			<para> 
+				<literal>SS7Service</literal> acts as core engine binding all the components together. 
+				To get holistic view of SS7 Service look at <xref linkend="design_overview_ss7_service" /> 
+			</para>
+			<programlisting language="XML" role="XML"><![CDATA[	<bean name="SS7Service" class="org.mobicents.ss7.SS7Service">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=SS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
+		<property name="jndiName">java:/mobicents/ss7/sccp</property>
+		<property name="configPath">${catalina.home}/deploy/mobicents-ss7-service/sccp-routing.txt</property>
+		<property name="linksetManager"><inject bean="LinksetManager" /></property>
+		<property name="shellExecutor"><inject bean="ShellExecutor" /></property>		
+	</bean>]]></programlisting>		
+			<para> SS7 service creates new instance of SCCP stack and binds it to JNDI address <literal>java:/mobicents/ss7/sccp</literal>. 
+			The JNDI name can be configured to any valid JNDI name specific to your application.</para>
+			<para><literal>configPath</literal> is configuration path for SCCP Stack. 
+			To know more about SCCP configuration refer <xref linkend="sccp" /> </para> 
+			<para><literal>linksetManager</literal> property holds the reference to <classname>LinksetManager</classname> bean</para>
+			<para>
+				<literal>shellExecutor</literal> property holds the reference to <classname>ShellExecutor</classname> bean.
+				<classname>SS7Service</classname> creates link between <classname>ShellExecutor</classname> and 
+				<classname>LinksetManager</classname> such that all commands for linkset are directed to <classname>LinksetManager</classname>.
+			</para>
+		</section>			
+	</section>
+		
 	<section
 		id="source_code">
 		<title>
@@ -202,7 +322,7 @@ Halting VM]]></screen>
 				    </programlisting>
 				    
 					<para>Use "dialogiclinux" profile if linux server on which this code is built already has dialogic module installed. 
-					Make sure you pass "include.dialogic" system property pointing to correct directory where dilogic libraries are installed</para>
+					Make sure you pass "include.dialogic" system property pointing to correct directory where dialogic libraries are installed</para>
 					<programlisting>
 [usr]$ cd &THIS.APPLICATION.DIRNAME;-&THIS.VERSION;
 [usr]$ mvn install -Pdialogclinux -Dinclude.dialogic=/usr/include/dialogic
@@ -215,7 +335,7 @@ Halting VM]]></screen>
 				    </programlisting>
 					<note>
 						<para>
-							If you are using &THIS.PLATFORM; &THIS.APPLICATION; without any native dependencies, &THIS.PLATFORM; &THIS.APPLICATION; can run in any OS.
+							If you are using &THIS.PLATFORM; &THIS.APPLICATION; without any native dependencies, &THIS.PLATFORM; &THIS.APPLICATION; can run on any OS.
 						</para>
 					</note>
 									    

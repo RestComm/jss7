@@ -46,7 +46,14 @@
 						<para><literal>M3UALinkset</literal> : M3UA stands for MTP Level 3 (MTP3) User Adaptation Layer as defined by the IETF SIGTRAN working group in RFC 4666. 
 						<literal>M3UALinkset</literal> enables the &THIS.PLATFORM; &THIS.APPLICATION; Level 4 (e.g. ISUP, SCCP) to run over IP instead of instead of SS7 network</para>
 					</listitem>
-				</itemizedlist>			
+				</itemizedlist>		
+				<para>
+					<literal>LinksetFactory</literal> creates instance of <literal>Linkset</literal> on receiving instruction from <literal>LinksetManager</literal>.
+					Factories <literal>DahdiLinksetFactory</literal>, <literal>DialogicLinksetFactory</literal> and <literal>M3UALinksetFactory</literal> are 
+					defined for each type of linksets explained above.
+				</para>	
+				
+				<para>Configuration of linkset factories is exaplained in section <xref linkend="configuring" /></para>
 		</section>
 		<section
 		id="design_overview_shell">
@@ -128,6 +135,8 @@
 			</varlistentry>
 			
 		</variablelist>
+		
+		<para>Configuration of SS7 Service is exaplained in section <xref linkend="configuring" /></para>
 	</section>
 	<section id="mobicents_design_overview_ss7_service">
 		<title>&THIS.PLATFORM; &THIS.APPLICATION; Usage</title>
