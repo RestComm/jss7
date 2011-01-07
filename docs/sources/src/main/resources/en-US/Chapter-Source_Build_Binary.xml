@@ -224,7 +224,7 @@ Halting VM]]></screen>
 		<section id="configuring_ShellExecutor">
 			<title>Configuring ShellExecutor</title>
 			<para> 
-				<literal>ShellExecutor</literal> is responsible for listening commands from Shell Client Management and execute corresponding action.
+				<literal>ShellExecutor</literal> is responsible for listening to incoming command. Received commands are executed on local resources to perform actions like creation of <literal>SCCP</literal> routing rule.
 			</para>
 			<programlisting language="XML" role="XML"><![CDATA[	<bean name="ShellExecutor" class="org.mobicents.ss7.ShellExecutor">
 		<property name="address">${jboss.bind.address}</property>
@@ -234,7 +234,7 @@ Halting VM]]></screen>
 			You may set the <literal>address</literal> property to any valid IP address that your host is assigned. 
 			The shell commands are exchanged over TCP/IP.</para>
 			<note><para>To understand JBoss bind options look at 
-			<ulink url="http://docs.jboss.org/jbossas/docs/Installation_And_Getting_Started_Guide/5/html_single/index.html"></ulink> </para> </note>
+			<ulink url="http://docs.jboss.org/jbossas/docs/Installation_And_Getting_Started_Guide/5/html_single/index.html">Installation_And_Getting_Started_Guide</ulink> </para> </note>
 				
 		</section>	
 		

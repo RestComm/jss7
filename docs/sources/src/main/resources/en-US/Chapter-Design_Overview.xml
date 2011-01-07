@@ -48,9 +48,7 @@
 					</listitem>
 				</itemizedlist>		
 				<para>
-					<literal>LinksetFactory</literal> creates instance of <literal>Linkset</literal> on receiving instruction from <literal>LinksetManager</literal>.
-					Factories <literal>DahdiLinksetFactory</literal>, <literal>DialogicLinksetFactory</literal> and <literal>M3UALinksetFactory</literal> are 
-					defined for each type of linksets explained above.
+					Each type of linkset has coresponding factory. Please refer to <xref linkend="configuring_LinksetFactory"/> for list and guidelines how to configure each factory.
 				</para>	
 				
 				<para>Configuration of linkset factories is exaplained in section <xref linkend="configuring" /></para>
