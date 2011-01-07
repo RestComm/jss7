@@ -40,7 +40,7 @@
 
 	<target name="checkout" description="Checks out src and downloads everything that is required." depends="checkout-sources" />
 	<target name="build" description="Builds components sources and everything associated." depends="build-sources-asn,build-sources-stream,build-sources-ss7" />
-	<target name="copy" depends="copy-asn,copy-stream,copy-protocols-ss7" />
+	<target name="copy" depends="copy-asn,copy-protocols-ss7" />
 	<target name="package" description="Builds builds binary package." depends="clean,checkout,zip.src,build,notes,copy,zip.binary" />
 	<target name="clean">
 		<echo>Cleaning checkout directory</echo>
