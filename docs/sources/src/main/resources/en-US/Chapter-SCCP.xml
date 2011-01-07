@@ -25,22 +25,8 @@
 		<title>Routing Configuration</title>
 		<para>
 			Routing rules are persisted within file. By default its
-			<filename>sccp-routing.txt</filename>
-			. Example entry looks as follows:
-		</para>
-		<!-- bad xml? -->
-		<example>
-			<title>sccp-routing.txt example entry</title>
-			<programlisting
-				language="XML"
-				role="XML"><![CDATA[
-0; #ISDN_MOBILE#NATIONAL#9023629581# ; #ISDN_MOBILE#INTERNATIONAL#79023629581# ;linkset#14083#14155#0
-]]>
-				</programlisting>
-		</example>
-
-		<para>
-			Above file is managed by
+			<filename>sccp-routing.txt</filename>. 
+			This file is managed by
 			<literal>SCCP</literal>
 			stack and
 			<literal>SS7 Service</literal>
@@ -214,6 +200,60 @@ sequence;pattern;translation;mtpinfo
 							</tbody>
 						</tgroup>
 					</table>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<para>Example file entry looks as follows:</para>
+		<!-- bad xml? -->
+		<example>
+			<title>sccp-routing.txt example entry</title>
+			<programlisting
+				language="XML"
+				role="XML"><![CDATA[
+0; #ISDN_MOBILE#NATIONAL#9023629581# ; #ISDN_MOBILE#INTERNATIONAL#79023629581# ;linkset#14083#14155#0
+]]>
+				</programlisting>
+		</example>
+		
+		<variablelist>
+			<varlistentry>
+				<term>sequence</term>
+				<listitem>
+					<para> is set to 0, since its only rule in a file(or first).</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>pattern</term>
+				<listitem>
+					<para>matches natioan mobile number with following digits: <literal>9023629581</literal> </para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>translation</term>
+				<listitem>
+					<para>changes destination to international mobile with following digits: <literal>79023629581</literal>. Since no sub-system number is present, this rule requires <literal>mtpinfo</literal> 
+					to indicate target.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>mtpinfo</term>
+				<listitem>
+					<para>indicates link through which message will be sent to next hop. Link:</para>
+					<itemizedlist>
+						<listitem>
+							<para>Belongs to linkset with name equal to <literal>linkset</literal>. </para>
+						</listitem>
+						<listitem>
+							<para>Adjacent point code is equal to <literal>14083</literal>. </para>
+						</listitem>
+						<listitem>
+							<para>Origin point code is equal to <literal>14155</literal>. </para>
+						</listitem>
+						<listitem>
+							<para>Signaling link selector is equal to <literal>0</literal>. Note that this value may be overriden by transport layer.  </para>
+						</listitem>
+						
+					</itemizedlist>
 				</listitem>
 			</varlistentry>
 		</variablelist>
