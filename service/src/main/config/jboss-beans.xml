@@ -31,7 +31,7 @@
 	
 	<bean name="ShellExecutor"
 		class="org.mobicents.ss7.ShellExecutor">
-		<property name="address">127.0.0.1</property>
+		<property name="address">${jboss.bind.address}</property>
 		<property name="port">3435</property>
 	</bean>		
 
