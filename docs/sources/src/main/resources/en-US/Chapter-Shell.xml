@@ -80,7 +80,7 @@ mobicents(10.65.208.215:3435)>
 		<example>
 			<title>Disconnect</title>
 			<screen>
-mobicents(10.65.208.215:3435)>ss7 connect
+mobicents(10.65.208.215:3435)>ss7 disconnect
 
 Bye
 mobicents>

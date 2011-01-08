@@ -51,7 +51,8 @@
 		<para>
 			<classname>org.mobicents.protocols.ss7.tcap.TCAPStackImpl</classname> is concrete implementation of <classname>TCAPStack</classname>. 
 			The TCAP User Part creates instance of <classname>TCAPStackImpl</classname> passing the reference of <classname>SccpProvider</classname> and 
-			new instance of <classname>SccpAddress</classname> representing address to which bind listens. TODO : Bartek 			
+			new instance of <classname>SccpAddress</classname> representing address to which bind listenr. <literal>TCAP</literal> stack creates internaly &THIS.PLATFORM; <literal>MAP</literal> Stack implementation.
+			Passed <literal>SccpAddress</literal> is used to match against incoming messages destination address.		
 		</para>		
 		
 		<programlisting
@@ -61,6 +62,24 @@
 			SccpAddress localAddress createLocalAddress();		
 	
 	        TCAPStack tcapStack = new TCAPStackImpl(sccpPprovider, localAddress);
+	
+			  
+	        ...
+	        
+	        private SccpAddress createLocalAddress()
+	        {
+		 		int translationType = 0;
+		
+		        int subSystemNumber = 0;
+		
+		
+		        GlobalTitle gt = GlobalTitle.getInstance(translationType,
+		
+		        NumberingPlan.ISDN_MOBILE, NatureOfAddress.NATIONAL, "1234");
+	
+		        SccpAddress localAddress = new SccpAddress(gt, 0);
+		        return localAddress;
+	        }
 	
 			]]>
 		</programlisting>		
@@ -117,7 +136,8 @@
 	
 	<section>
 		<title>&THIS.PLATFORM; &THIS.APPLICATION; TCAP User Part Example</title>
-		<para>Below is TCAP User Part example</para>
+		<para>Below is TCAP User Part example. This example creates dialog and exchanges messages withing structured dialog. Refer to source for function calls:
+		</para>
 	<programlisting
 		language="Java"
 		role="JAVA"><![CDATA[	
