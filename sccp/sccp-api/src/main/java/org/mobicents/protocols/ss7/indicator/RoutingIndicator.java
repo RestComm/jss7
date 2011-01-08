@@ -18,10 +18,18 @@
 package org.mobicents.protocols.ss7.indicator;
 
 /**
- *
+ * The Routing Indicator (RI) specifies whether GTT is required; it determines
+ * whether routing based on PC+SSN or GT. If routing is based on the GT, the GT
+ * in the address is used for routing. If routing is based on PC+SSN, the PC and
+ * SSN in the Called/Calling  Party Address are used.
+ * 
  * @author kulikov
  */
 public enum RoutingIndicator {
-    ROUTING_BASED_ON_GLOBAL_TITLE,
-    ROUTING_BASED_ON_DPC_AND_SSN;    
+    
+    //Route on GT
+    ROUTING_BASED_ON_GLOBAL_TITLE, 
+    
+    //Route on PC + SSN
+    ROUTING_BASED_ON_DPC_AND_SSN;
 }
