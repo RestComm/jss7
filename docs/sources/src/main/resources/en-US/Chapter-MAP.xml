@@ -60,26 +60,7 @@
 		
 	<para>The reference to <classname>SccpProvider</classname> is received from <classname>SccpStack</classname>. 
 	To get handle to <classname>SccpStack</classname> do the JNDI look-up passing the 
-	JNDI name configured in SS7 service as explained in <xref linkend="configuring_SS7Service"/> </para>	
-	
-	
-	<programlisting
-		language="Java"
-		role="JAVA"><![CDATA[	
-    private static SccpProvider getSccpProvider() throws NamingException {
-
-        // no arg is ok, if we run in JBoss
-        InitialContext ctx = new InitialContext();
-        try {
-            String providerJndiName = "/mobicents/ss7/sccp";
-            return ((SccpStack) ctx.lookup(providerJndiName)).getSccpProvider();
-
-        } finally {
-            ctx.close();
-        }
-    }
-		]]>
-	</programlisting>		
+	JNDI name configured in SS7 service as explained in <xref linkend="sccp_access_point"/> </para>	
 	
 	<para>The MAP User application should register the concrete implementation of 
 		<classname>MAPDialogListener</classname> and <classname>MAPServiceListener</classname>

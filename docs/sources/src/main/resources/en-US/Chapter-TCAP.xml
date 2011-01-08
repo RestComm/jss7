@@ -5,20 +5,119 @@
 <chapter
 	id="tcap">
 
-	<title>TCAP
-	</title>
+	<title>TCAP</title>
 	<para>
-		<literal>TCAP</literal>
-		stack runs on top of
-		<literal>SCCP</literal>
-		. It requires
-		<literal>SS7 Service</literal>
-		deployed to access
-		<literal>SCCP</literal>
-		access point. Starting
-		<literal>TCAP</literal>
-		stack can be done as follows:
+		The Transaction Capabilities Application Part (TCAP) is defined in ITU-T Recommendations Q.771-Q.775.
+		TCAP allows services at network nodes to communicate with each other using an agreed-upon set of data elements.
+		Its primary purpose is to facilitate multiple concurrent dialogs between the same sub-systems on the same machines, 
+		using Transaction IDs to differentiate these, similar to the way TCP ports facilitate multiplexing connections between 
+		the same IP addresses on the Internet.
 	</para>
+	<section>
+		<title>&THIS.PLATFORM; &THIS.APPLICATION; TCAP Usage</title>
+		<para>
+			<classname>org.mobicents.protocols.ss7.tcap.api.TCAPStack</classname> interface defines the methods required to represent TCAP
+			Protocol Stack. TCAPStack exposes <classname>org.mobicents.protocols.ss7.tcap.api.TCAPProvider</classname> that interacts directly
+			with TCAPStack. TCAPProvider defines methods that will be used by TCAP User Part to create new 
+			<classname>org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog</classname> to be sent across network.
+			TCAP User Part also registers <classname>org.mobicents.protocols.ss7.tcap.api.TCListener</classname> to listen TCAP messages.
+		</para>
+		<para>
+			TCAPProvider also exposes <classname>org.mobicents.protocols.ss7.tcap.api.DialogPrimitiveFactory</classname> to create dialog primitives 
+			and <classname>org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory</classname> to create components. 
+			Components are a means of invoking an operation at a remote node
+		</para>
+		
+		<para>
+			The UML Class Diagram looks like
+		</para>
+		
+	
+		<mediaobject
+			id="tcap_classdia">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/TCAPClassDiagram.png"
+					format="PNG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; &THIS.APPLICATION; TCAP Class Diagram
+				</para>
+			</caption>
+		</mediaobject>	
+		
+		<para>
+			<classname>org.mobicents.protocols.ss7.tcap.TCAPStackImpl</classname> is concrete implementation of <classname>TCAPStack</classname>. 
+			The TCAP User Part creates instance of <classname>TCAPStackImpl</classname> passing the reference of <classname>SccpProvider</classname> and 
+			new instance of <classname>SccpAddress</classname> representing address to which bind listens. TODO : Bartek 			
+		</para>		
+		
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[	
+			SccpProvider sccpProvider = getSccpProvider(); //JNDI lookup of SCCP Stack and get Provider
+			SccpAddress localAddress createLocalAddress();		
+	
+	        TCAPStack tcapStack = new TCAPStackImpl(sccpPprovider, localAddress);
+	
+			]]>
+		</programlisting>		
+		<para>The reference to <classname>SccpProvider</classname> is received from <classname>SccpStack</classname>. 
+		To get handle to <classname>SccpStack</classname> do the JNDI look-up passing the 
+		JNDI name configured in SS7 service as explained in <xref linkend="sccp_access_point"/> </para>	
+		
+		<para>The TCAP User Part should register the concrete implementation of 
+			<classname>TCListener</classname> with <classname>TCAPProvider</classname> to listen for incoming TCAP messages.
+		</para>
+		
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+	public class Client implements TCListener{
+			.....		
+			tcapProvider = tcapStack.getProvider();
+	        tcapProvider.addTCListener(this);
+	        ....
+	}        		
+			]]>
+		</programlisting>		
+		
+	<para>The TCAP User Part leverages TCAPProvider to create new Dialog. The component's between the nodes
+		are exchanged within this Dialog
+	</para>
+	
+	<programlisting
+		language="Java"
+		role="JAVA"><![CDATA[
+		clientDialog = this.tcapProvider.getNewDialog(thisAddress, remoteAddress);   		
+		]]>
+	</programlisting>		
+	
+	<para>
+		The TCAP User Part leverages ComponentPrimitiveFactory to create new components. These components are sent usig the dialog 
+	</para>		
+	
+	
+	<programlisting
+		language="Java"
+		role="JAVA"><![CDATA[
+		//create some INVOKE
+        Invoke invoke = cpFactory.createTCInvokeRequest();
+        invoke.setInvokeId(this.clientDialog.getNewInvokeId());
+        invoke.setOperationCode(cpFactory.createOperationCode(true,new Long(12)));
+        //no parameter
+        this.clientDialog.sendComponent(invoke); 		
+		]]>
+	</programlisting>
+		
+	</section>
+	
+	
+	<section>
+		<title>&THIS.PLATFORM; &THIS.APPLICATION; TCAP User Part Example</title>
+		<para>Below is TCAP User Part example</para>
 	<programlisting
 		language="Java"
 		role="JAVA"><![CDATA[	
@@ -44,41 +143,19 @@ public class Client implements TCListener{
 		this.tcapProvider.addTCListener(this);
 	}
 
-	private static SccpProvider getSccpProvider()
-           throws NamingException
- 	{	
- 		//no arg is ok, if we run in JBoss
-	 	InitialContext ctx = new InitialContext();
-	 	
- 	   	try{
- 	   	
-	 	 	String adapterName = "jmx/invoker/RMIAdaptor";
-	 	   
-	 	 	Object obj = ctx.lookup(adapterName);
-	 	 	
-	 	   
-	 	 	if (!(obj instanceof RMIAdaptor))
-	 	 	{
-	 	 	 	throw new ClassCastException
-	 	 	 	("Object not of type: RMIAdaptorImpl, but: " +
-	 	 	 	(obj == null ? "not found" : obj.getClass().getName()));
-	 	 	}
-			 //SS7Service is JMX bean, lets use it to get 
-	  		MBeanServerConnection con = createMBeanServerConnection();
-	  		ObjectName on = new ObjectName("org.mobicents.ss7:service=SS7Service");
-	  	
-	    	String providerJndiName = con.invoke(on,"getJndiName",null,null);
-	    	InitialContext ctx = new InitialContext();
-	 	 	return (SccpProvider) ctx.lookup(providerJndiName);
-	 	 }finally
-	 	 {
-	 	 	ctx.close();
-	 	 }
-    }
-   
+	private static SccpProvider getSccpProvider() throws NamingException {
 
-	public void start() throws TCAPException, TCAPSendException
-	{
+        // no arg is ok, if we run in JBoss
+        InitialContext ctx = new InitialContext();
+        try {
+            String providerJndiName = "/mobicents/ss7/sccp";
+            return ((SccpStack) ctx.lookup(providerJndiName)).getSccpProvider();
+        } finally {
+            ctx.close();
+        }
+    }
+
+	public void start() throws TCAPException, TCAPSendException {
 		clientDialog = this.tcapProvider.getNewDialog(thisAddress, remoteAddress);
 		ComponentPrimitiveFactory cpFactory = this.tcapProvider.getComponentPrimitiveFactory();
 		
@@ -163,4 +240,5 @@ public class Client implements TCListener{
 
 		]]>
 		</programlisting>
+	</section>
 </chapter>

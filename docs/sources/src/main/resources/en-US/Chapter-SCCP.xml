@@ -6,7 +6,11 @@
 	id="sccp">
 
 	<title>SCCP</title>
-	<para></para>
+	<para>The Signaling Connection Control Part (SCCP) is defined in ITU-T Recommendations Q.711-Q.716.
+	SCCP sits on top of Message Transfer Part 3 (MTP3) in the SS7 protocol stack. 
+	The SCCP provides additional network layer functions to provide transfer of noncircuit-related (NCR) signaling information, 
+	application management procedures and alternative and more flexible methods of routing. 
+	</para>
 	<section
 		id="sccp_routing">
 		<title>Routing Management</title>
@@ -258,112 +262,171 @@ sequence;pattern;translation;mtpinfo
 			</varlistentry>
 		</variablelist>
 	</section>
+	<section id="sccp_design">
+		<title>&THIS.PLATFORM; &THIS.APPLICATION; SCCP Usage</title>
+		<para>
+			The <classname>org.mobicents.protocols.ss7.sccp.SccpStack</classname> is responsible for taking the 
+			config file and turning it into <classname>org.mobicents.protocols.ss7.sccp.Router</classname>. 
+			All the sccp messages sent bu SCCP User Part are routed as per the rule configured in Router
+		</para>
+		<para>
+			The SCCP User Part gets handle to <classname>SccpStack</classname> by doing JNDI look-up as
+			explained in <xref linkend="sccp_access_point"/> 
+		</para>
+		
+		<para>
+			<classname>SccpStack</classname> exposes <classname>org.mobicents.protocols.ss7.sccp.SccpProvider</classname> 
+			that interacts directly with SccpStack. This interface defines the methods that will be used by SCCP User Part to send 
+			<classname>org.mobicents.protocols.ss7.sccp.message.SccpMessage</classname> and register 
+			<classname>org.mobicents.protocols.ss7.sccp.SccpListener</classname>'s to listen for incoming SCCP messages. 
+		</para>
+		
+		<para>
+			SCCP User Part registers SccpListener for specific local <classname>org.mobicents.protocols.ss7.sccp.parameter.SccpAddress</classname>.
+			For every incoming SccpMessage, if the called party address matches with this local SccpAddress, the corresponding SccpListner is called.
+		</para>
+		
+		<para>
+			SccpProvider also exposes <classname>org.mobicents.protocols.ss7.sccp.message.MessageFactory</classname> and
+			<classname>org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory</classname> to create new concrete SccpMessage viz.,
+			<classname>org.mobicents.protocols.ss7.sccp.message.UnitData</classname> or 
+			<classname>org.mobicents.protocols.ss7.sccp.message.XUnitData</classname> passing the corresponding parameters created by leveraging 
+			ParameterFactory.
+		</para>
+		
+		<para>
+			The UML class diagram looks like
+		</para>
+		
+		<mediaobject
+			id="sccp_classdia">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/SCCPClassDiagram.png"
+					format="PNG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; &THIS.APPLICATION; SCCP Class Diagram
+				</para>
+			</caption>
+		</mediaobject>			
+	</section>
 	<section
 		id="sccp_access_point">
 		<title>Access Point</title>
 		<para>
-			<literal>SS7 Service</literal> provides user with access point to <literal>SCCP</literal> protocol/stack. 
-			It can be used in following way:
+			<literal>SS7 Service</literal> provides user with access point to <literal>SCCP</literal> protocol/stack.		
 		</para>
+		<para>
+			To get handle to <classname>SccpStack</classname> do the JNDI look-up passing the 
+			JNDI name configured in SS7 service as explained in <xref linkend="configuring_SS7Service"/> 
+		</para>			
 		<programlisting
-			language="java"
-			role="JAVA">
-import org.jboss.jmx.adaptor.rmi.RMIAdaptor;
-import java.util.*;
-import javax.management.MBeanServerConnection;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import org.mobicents.protocols.ss7.*;
-import org.mobicents.protocols.ss7.sccp.*;
-import org.mobicents.protocols.ss7.indicator.*;
-
-public class Test implements SccpListener
-{
-
-	private SccpProvider sccpProvider;
-	private SccpAddress localAddress;
+			language="Java"
+			role="JAVA"><![CDATA[	
+	    private static SccpProvider getSccpProvider() throws NamingException {
 	
- 	private MBeanServerConnection createMBeanServerConnection()
-           throws NamingException
- 	{	
- 		//no arg is ok, if we run in JBoss
-	 	InitialContext ctx = new InitialContext();
-	 	
- 	   
- 	 	String adapterName = "jmx/invoker/RMIAdaptor";
- 	   
- 	 	Object obj = ctx.lookup(adapterName);
- 	 	ctx.close();
- 	   
- 	 	if (!(obj instanceof RMIAdaptor))
- 	 	{
- 	 	 	throw new ClassCastException
- 	 	 	("Object not of type: RMIAdaptorImpl, but: " +
- 	 	 	(obj == null ? "not found" : obj.getClass().getName()));
- 	 	}
+	        // no arg is ok, if we run in JBoss
+	        InitialContext ctx = new InitialContext();
+	        try {
+	            String providerJndiName = "/mobicents/ss7/sccp";
+	            return ((SccpStack) ctx.lookup(providerJndiName)).getSccpProvider();
+	
+	        } finally {
+	            ctx.close();
+	        }
+	    }
+			]]>
+		</programlisting>		
+	</section>	
+	<section
+		id="sccp_complete_example">
+		<title>SCCP User Part Example</title>
+		<para>
+			Below is SCCP User Part example listening for incoming SCCP message and sending back new message		
+		</para>		
+		<programlisting language="java" role="JAVA">
+public class Test implements SccpListener {
 
- 	 	return (MBeanServerConnection) obj;
-  }
+    private SccpProvider sccpProvider;
+    private SccpAddress localAddress;
 
-  public void start() throws Excetpion
-  {
-    //SS7Service is JMX bean, lets use it to get 
-  	MBeanServerConnection con = createMBeanServerConnection();
-  	ObjectName on = new ObjectName("org.mobicents.ss7:service=SS7Service");
-  	
-    String providerJndiName = con.invoke(on,"getJndiName",null,null);
-    InitialContext ctx = new InitialContext();
-	 	
-    this.sccpProvider = (SccpProvider) ctx.lookup(providerJndiName);
-    ctx.close();
-    
-    int translationType = 0;
-    int subSystemNumber = 0; 
-    GlobalTitle gt = GlobalTitle.getInstance(translationType,NumberingPlan.ISDN_MOBILE,NatureOfAddress.NATIONAL, "1234");
-    localAddress = new SccpAddress(gt,0);
-    
-    sccProvider.registerSccpListener(localAddress,this);
-  }
+    private static SccpProvider getSccpProvider() throws NamingException {
 
-  public void stop()
-  {
-  	this.sccpProvider.deregisterSccpListener(localAddress);
-  }
+        // no arg is ok, if we run in JBoss
+        InitialContext ctx = new InitialContext();
+        try {
+            String providerJndiName = "/mobicents/ss7/sccp";
+            return ((SccpStack) ctx.lookup(providerJndiName)).getSccpProvider();
+        } finally {
+            ctx.close();
+        }
+    }
 
-  public void onMessage(SccpMessage message)
-  {
-  		if (message.getType() == MessageType.UDT) {
-              throw new IlleagalArgumentException("Dont like UDT");
-            } else if (message.getType() == MessageType.XUDT) {
-                XUnitData xudt = (XUnitData) message;
-                localAddress = ((XUnitData)message).getCalledPartyAddress();
-                remoteAddress = ((XUnitData)message).getCallingPartyAddress();
-                
-                //now decode content
-                byte[] data = xudt.getData();
-                //some data encoded in 
-                CallRequest cr = new CallRequest(data);
-                byte[] answerData;
-                if(cr.getCallee().equals(this.localAddress))
-                {
-                	EstablihsCallAnswer eca = new EstablihsCallAnswer(cr);
-                	answerData = eca.encode();
-                }else
-                {
-                	TearDownCallAnswer tdca = new TearDownCallAnswer(cr);
-                	answerData = tdca.encode();
-                }
-                
+    public void start() throws Excetpion {
 
-                HopCounter hc = this.provider.getParameterFactory().createHopCounter(5);
-                XUnitData sccpAnswer = this.provider.getMessageFactory().createXUnitData(hc,xudt.getProtocolClass(),message.getCallingPartyAddress(),this.localAddress);
-                this.provider.send(sccpAnswer);
+        this.sccpProvider = getSccpProvider();
+
+        int translationType = 0;
+        int subSystemNumber = 0;
+
+        GlobalTitle gt = GlobalTitle.getInstance(translationType,
+                NumberingPlan.ISDN_MOBILE, NatureOfAddress.NATIONAL, "1234");
+
+        localAddress = new SccpAddress(gt, 0);
+
+        this.sccpProvider.registerSccpListener(localAddress, this);
+    }
+
+    public void stop() {
+        this.sccpProvider.deregisterSccpListener(localAddress);
+    }
+
+    public void onMessage(SccpMessage message) {
+
+        if (message.getType() == MessageType.UDT) {
+            throw new IlleagalArgumentException("Dont like UDT");
+        } else if (message.getType() == MessageType.XUDT) {
+            XUnitData xudt = (XUnitData) message;
+            localAddress = ((XUnitData) message).getCalledPartyAddress();
+            SccpAddress remoteAddress = ((XUnitData) message)
+                    .getCallingPartyAddress();
+
+            // now decode content
+
+            byte[] data = xudt.getData();
+
+            // some data encoded in
+            CallRequest cr = new CallRequest(data);
+
+            byte[] answerData;
+
+            if (cr.getCallee().equals(this.localAddress)) {
+                EstablihsCallAnswer eca = new EstablihsCallAnswer(cr);
+                answerData = eca.encode();
+
+            } else {
+                TearDownCallAnswer tdca = new TearDownCallAnswer(cr);
+                answerData = tdca.encode();
             }
-  		
-  }
+
+            HopCounter hc = this.sccpProvider.getParameterFactory()
+                    .createHopCounter(5);
+
+            XUnitData sccpAnswer = this.sccpProvider
+                    .getMessageFactory()
+                    .createXUnitData(hc, xudt.getProtocolClass(),
+                            message.getCallingPartyAddress(), this.localAddress);
+
+            this.sccpProvider.send(sccpAnswer);
+
+        }
+
+    }
 
 }
-</programlisting>
+		</programlisting>
 	</section>
 </chapter>
