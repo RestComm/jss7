@@ -1,8 +1,5 @@
 package org.mobicents.protocols.ss7.map.api;
 
-import java.util.Properties;
-
-import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.StartFailedException;
 
 /**
