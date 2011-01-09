@@ -26,8 +26,7 @@
 		<jboss.concurrent.version>1.3.4-jboss-update1</jboss.concurrent.version> <!-- are those ppl sane? -->
 		<jboss.javaee.version>5.0.1.GA</jboss.javaee.version>
 		<jboss.security.version>2.0.3.SP1</jboss.security.version>
-		<getop.version>1.0.9</getop.version>
-		<sccp.version>${pom.version}</sccp.version>
+		<getop.version>1.0.9</getop.version>		
 	</properties>
 
 
@@ -45,12 +44,12 @@
 			<dependency>
 				<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 				<artifactId>sccp-api</artifactId>
-				<version>${sccp.version}</version>
+				<version>${pom.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 				<artifactId>sccp-impl</artifactId>
-				<version>${sccp.version}</version>
+				<version>${pom.version}</version>
 			</dependency>
 			
 			<dependency>
