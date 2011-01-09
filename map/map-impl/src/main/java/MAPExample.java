@@ -1,3 +1,4 @@
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
@@ -22,6 +23,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstruct
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
@@ -59,56 +61,37 @@ public class MAPExample implements MAPDialogListener, MAPServiceListener {
         mapProvider.addMAPServiceListener(this);
     }
 
-    private static SccpProvider getSccpProvider()
+    private static SccpProvider getSccpProvider() throws NamingException {
 
-    throws NamingException
+        // no arg is ok, if we run in JBoss
+        InitialContext ctx = new InitialContext();
+        try {
+            String providerJndiName = "/mobicents/ss7/sccp";
+            return ((SccpStack) ctx.lookup(providerJndiName)).getSccpProvider();
 
-    {
+        } finally {
+            ctx.close();
+        }
+    }
 
-//        // no arg is ok, if we run in JBoss
-//
-//        InitialContext ctx = new InitialContext();
-//
-//        try {
-//
-//            String adapterName = "jmx/invoker/RMIAdaptor";
-//
-//            Object obj = ctx.lookup(adapterName);
-//
-//            if (!(obj instanceof RMIAdaptor))
-//
-//            {
-//
-//                throw new ClassCastException
-//
-//                ("Object not of type: RMIAdaptorImpl, but: " +
-//
-//                (obj == null ? "not found" : obj.getClass().getName()));
-//
-//            }
-//
-//            // SS7Service is JMX bean, lets use it to get
-//
-//            MBeanServerConnection con = createMBeanServerConnection();
-//
-//            ObjectName on = new ObjectName(
-//                    "org.mobicents.ss7:service=SS7Service");
-//
-//            String providerJndiName = con.invoke(on, "getJndiName", null, null);
-//
-//            InitialContext ctx = new InitialContext();
-//
-//            return (SccpProvider) ctx.lookup(providerJndiName);
-//
-//        } finally
-//
-//        {
-//
-//            ctx.close();
-//
-//        }
-        return null;
+    private static SccpAddress createLocalAddress() {
+        GlobalTitle gt = GlobalTitle
+                .getInstance(
+                        NatureOfAddress.NATIONAL.getValue(),
+                        org.mobicents.protocols.ss7.indicator.NumberingPlan.ISDN_MOBILE,
+                        NatureOfAddress.NATIONAL, "1234");
 
+        return new SccpAddress(gt, 0); // 0 is Sub-System number
+    }
+
+    private static SccpAddress createRemoteAddress() {
+        GlobalTitle gt = GlobalTitle
+                .getInstance(
+                        NatureOfAddress.NATIONAL.getValue(),
+                        org.mobicents.protocols.ss7.indicator.NumberingPlan.ISDN_MOBILE,
+                        NatureOfAddress.NATIONAL, "1572582");
+
+        return new SccpAddress(gt, 0); // 0 is Sub-System number
     }
 
     public void run() throws Exception {
@@ -181,23 +164,16 @@ public class MAPExample implements MAPDialogListener, MAPServiceListener {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        SccpProvider sccpProvider = getSccpProvider(); // JNDI lookup of SCCP
 
-        int translationType = 0;
+        SccpAddress localAddress = createLocalAddress();
+        SccpAddress remoteAddress = createRemoteAddress();
 
-        int subSystemNumber = 0;
+        MAPExample example = new MAPExample(sccpProvider, localAddress,
+                remoteAddress);
 
-//        GlobalTitle gt = GlobalTitle.getInstance(translationType,
-//                NumberingPlan.ISDN_MOBILE, NatureOfAddress.NATIONAL, "1234");
-//
-//        SccpAddress localAddress = new SccpAddress(gt, 0);
-//
-//        gt = GlobalTitle.getInstance(translationType,
-//                NumberingPlan.ISDN_MOBILE, NatureOfAddress.NATIONAL, "1572582");
-//
-//        SccpAddress remoteAddress = new SccpAddress(gt, 0);
-//
-//        MAPExample c = new MAPExample(getSccpProvider(), localAddress, remoteAddress);
+        example.run();
 
     }
 
