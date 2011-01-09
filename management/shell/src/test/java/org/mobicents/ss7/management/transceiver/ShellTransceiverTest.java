@@ -20,8 +20,8 @@ import org.junit.Test;
 public class ShellTransceiverTest {
     private InetAddress localhost;
 
-    private int serverPort = 9082;
-    private int clientPort = 9083;
+    private int serverPort = 9084;
+    private int clientPort = 9085;
 
     private Server server;
     private Client client;
