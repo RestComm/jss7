@@ -13,7 +13,8 @@ import javax.swing.JTextField;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.StartFailedException;
-import org.mobicents.protocols.ss7.mtp.provider.m3ua.M3UAProvider;
+
+import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
 
 
 /**

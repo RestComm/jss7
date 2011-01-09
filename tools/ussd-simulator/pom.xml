@@ -71,6 +71,18 @@
 				<artifactId>stream</artifactId>
 				<version>${stream.version}</version>
 			</dependency>
+
+			<dependency>
+				<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+				<artifactId>m3ua-api</artifactId>
+				<version>${m3ua.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+				<artifactId>m3ua-impl</artifactId>
+				<version>${m3ua.version}</version>
+			</dependency>
 			
 			<dependency>
 				<groupId>concurrent</groupId>
