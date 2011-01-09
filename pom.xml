@@ -266,15 +266,10 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-release-plugin</artifactId>
-						<version>2.0-beta-9</version>
 						<configuration>
-							<autoVersionSubmodules>
-								true
-							</autoVersionSubmodules>
-							<remoteTagging>true</remoteTagging>
-							<tagBase>
-								https://mobicents.googlecode.com/svn/tags/protocols/ss7
-							</tagBase>
+							<autoVersionSubmodules>true</autoVersionSubmodules>				
+							<tagBase>https://mobicents.googlecode.com/svn/tags/protocols/ss7</tagBase>
+							<preparationGoals>clean install</preparationGoals>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -344,42 +339,29 @@
 		</snapshotRepository>
 	</distributionManagement>
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<artifactId>maven-eclipse-plugin</artifactId>
-					<groupId>org.mobicents.tools</groupId>
-					<version>
-						${mobicents.tools.mavenplugin.eclipse.version}
-					</version>
-					<inherited>false</inherited>
-					<executions />
-					<configuration>
-						<classpathExcludes>
-							<exclude>xml-apis:xml-apis</exclude>
-							<exclude>jtidy:jtidy</exclude>
-						</classpathExcludes>
-						<resolveTransitiveDependencies>
-							true
-						</resolveTransitiveDependencies>
-						<eclipseProjectName>
-							mobicents-ss7
-						</eclipseProjectName>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>${compiler.plugin.version}</version>
-					<configuration>
-						<source>${compile.source}</source>
-						<target>${compile.source}</target>
-						<debug>${compile.debug}</debug>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 		<plugins>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<groupId>org.mobicents.tools</groupId>
+				<version>
+					${mobicents.tools.mavenplugin.eclipse.version}
+				</version>
+				<inherited>false</inherited>
+				<executions />
+				<configuration>
+					<classpathExcludes>
+						<exclude>xml-apis:xml-apis</exclude>
+						<exclude>jtidy:jtidy</exclude>
+					</classpathExcludes>
+					<resolveTransitiveDependencies>
+						true
+					</resolveTransitiveDependencies>
+					<eclipseProjectName>
+						mobicents-ss7
+					</eclipseProjectName>
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -390,14 +372,7 @@
 					<debug>${compile.debug}</debug>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<configuration>
-					<tagBase>
-						https://mobicents.googlecode.com/svn/tags/protocols/ss7
-					</tagBase>
-				</configuration>
-			</plugin>
+
 		</plugins>
 	</build>
 
