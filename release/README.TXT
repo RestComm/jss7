@@ -19,7 +19,6 @@
 ------------------
 
   * ASN v@ASN_VERSION@
-  * Stream v@STREAM_VERSION@
   * SS7 v@SS7_VERSION@
 
   
@@ -28,7 +27,6 @@ SVN Trunk Checkout
 ------------------
 
 http://mobicents.googlecode.com/svn/trunk/protocols/asn
-http://mobicents.googlecode.com/svn/trunk/protocols/stream
 http://mobicents.googlecode.com/svn/trunk/protocols/ss7
 
 
@@ -37,7 +35,6 @@ SVN Trunk Browse
 ------------------
 
 http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/asn
-http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/stream
 http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/ss7  
   
 ------------------
@@ -45,7 +42,6 @@ http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/ss7
 ------------------
 
 http://mobicents.googlecode.com/svn/tags/protocols/asn/asn-@ASN_VERSION@
-http://mobicents.googlecode.com/svn/tags/protocols/stream/stream-@STREAM_VERSION@
 http://mobicents.googlecode.com/svn/tags/protocols/ss7/ss7-@SS7_VERSION@
 
 
@@ -54,7 +50,7 @@ http://mobicents.googlecode.com/svn/tags/protocols/ss7/ss7-@SS7_VERSION@
  How to Use it?
 ----------------
 
- Please refer to documentation in each module for detailed explanation.
+ Please refer to documentation in /ss7 module for detailed explanation.
  
 
 ------------------
