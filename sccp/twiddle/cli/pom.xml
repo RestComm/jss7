@@ -147,7 +147,7 @@
 								<artifactItem>
 									<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 									<artifactId>sccp-api</artifactId>
-									<version>${sccp.version}</version>
+									<version>${pom.version}</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>
@@ -161,7 +161,7 @@
 								<artifactItem>
 									<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 									<artifactId>sccp-impl</artifactId>
-									<version>${sccp.version}</version>
+									<version>${pom.version}</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>
