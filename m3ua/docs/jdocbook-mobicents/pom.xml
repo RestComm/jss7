@@ -72,7 +72,7 @@
 						<format>
 							<formatName>pdf</formatName>
 							<stylesheetResource>classpath:/xslt/org/jboss/pdf.xsl</stylesheetResource>
-							<finalName>Mobicents_M3UA_User_Guide.pdf</finalName>
+							<finalName>Mobicents_${docs.bookid}_User_Guide.pdf</finalName>
 						</format>
 						<format>
 							<formatName>html</formatName>

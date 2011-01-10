@@ -71,7 +71,7 @@
 						<format>
 							<formatName>pdf</formatName>
 							<stylesheetResource>classpath:/xslt/org/jboss/pdf.xsl</stylesheetResource>
-							<finalName>JBCP_SLEE_Tools_Twiddle_CLI_User_Guide.pdf</finalName>
+							<finalName>JBCP_SCCP_Tools_Twiddle_CLI_User_Guide.pdf</finalName>
 						</format>
 						<format>
 							<formatName>html</formatName>
