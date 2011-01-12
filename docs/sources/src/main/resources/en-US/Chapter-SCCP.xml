@@ -267,8 +267,9 @@ sequence;pattern;translation;mtpinfo
 		<para>
 			The <classname>org.mobicents.protocols.ss7.sccp.SccpStack</classname> is responsible for taking the 
 			config file and turning it into <classname>org.mobicents.protocols.ss7.sccp.Router</classname>. 
-			All the sccp messages sent bu SCCP User Part are routed as per the rule configured in Router
+			All the sccp messages sent by SCCP User Part are routed as per the rule configured in Router
 		</para>
+		<note><para>The term SCCP User Part refers to the applications that use SCCP's services.</para></note>
 		<para>
 			The SCCP User Part gets handle to <classname>SccpStack</classname> by doing JNDI look-up as
 			explained in <xref linkend="sccp_access_point"/> 
