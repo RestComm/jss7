@@ -18,14 +18,15 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
@@ -59,7 +60,7 @@ public class SccpStackImplTest {
     }
 
     @Before
-    public void setUp() throws IllegalStateException, StartFailedException {
+    public void setUp() throws IllegalStateException {
         stack.start();
         
         GlobalTitle gt1 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "1234");

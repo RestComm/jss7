@@ -17,9 +17,6 @@
  */
 package org.mobicents.protocols.ss7.sccp.impl;
 
-import java.util.List;
-
-import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
 import org.mobicents.protocols.ss7.sccp.impl.router.RuleException;
 
@@ -35,7 +32,7 @@ public interface SccpServiceMBean {
 
 	public String getJndiName();
 
-	public void setLinksets(List<MtpProvider> linksets);
+	//public void setLinksets(List<MtpProvider> linksets);
 
 	public void start() throws Exception;
 

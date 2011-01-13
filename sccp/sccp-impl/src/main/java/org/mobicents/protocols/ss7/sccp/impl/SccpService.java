@@ -17,22 +17,19 @@
  */
 package org.mobicents.protocols.ss7.sccp.impl;
 
-import java.util.List;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.jboss.system.ServiceMBeanSupport;
-import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
 import org.mobicents.protocols.ss7.sccp.impl.router.RuleException;
 
 /**
- * 
+ * TODO This MBean is not needed now. Delete?
  * @author kulikov
  */
 public class SccpService extends ServiceMBeanSupport implements SccpServiceMBean {
@@ -41,7 +38,7 @@ public class SccpService extends ServiceMBeanSupport implements SccpServiceMBean
     private SccpStackImpl stack;
     private String jndiName;
     private String path;
-    private List<MtpProvider> linksets;
+    //private List<MtpProvider> linksets;
 
     public void setJndiName(String jndiName) {
         this.jndiName = jndiName;
@@ -51,9 +48,9 @@ public class SccpService extends ServiceMBeanSupport implements SccpServiceMBean
         return jndiName;
     }
 
-    public void setLinksets(List<MtpProvider> linksets) {
-        this.linksets = linksets;
-    }
+//    public void setLinksets(List<MtpProvider> linksets) {
+//        this.linksets = linksets;
+//    }
 
     public void setConfigPath(String path) {
         this.path = path;

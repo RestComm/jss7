@@ -17,7 +17,6 @@
  */
 package org.mobicents.protocols.ss7.sccp;
 
-import org.mobicents.protocols.StartFailedException;
 
 /**
  * @author amit bhayani
@@ -32,9 +31,8 @@ public interface SccpStack {
      * Starts SCCP stack.
      * 
      * @throws java.lang.IllegalStateException
-     * @throws org.mobicents.protocols.StartFailedException
      */
-    public void start() throws IllegalStateException, StartFailedException;
+    public void start() throws IllegalStateException;
     
     /**
      * Terminates SCCP stack.

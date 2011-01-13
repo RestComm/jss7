@@ -27,10 +27,13 @@
 			<artifactId>sccp-api</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
+		<!-- 
 		<dependency>
 			<artifactId>mtp</artifactId>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 		</dependency>
+		 -->
+		 
 		<dependency>
 			<artifactId>linkset</artifactId>
 			<groupId>org.mobicents.protocols.ss7.management</groupId>
