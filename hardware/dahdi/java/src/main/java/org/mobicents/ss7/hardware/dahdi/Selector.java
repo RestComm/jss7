@@ -18,8 +18,8 @@
 package org.mobicents.ss7.hardware.dahdi;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
+
+import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp1;
@@ -27,101 +27,114 @@ import org.mobicents.protocols.stream.api.SelectorKey;
 import org.mobicents.protocols.stream.api.Stream;
 import org.mobicents.protocols.stream.api.StreamSelector;
 
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
 public class Selector implements StreamSelector {
 
     private final static String LIB_NAME = "mobicents-dahdi-linux";
-    
+
     public final static int READ = 0x01;
     public final static int WRITE = 0x02;
-    
+
     /** array of selected file descriptors */
     private int fds[] = new int[16];
-    
+
     /** array of registered channels */
-    private ArrayList<Mtp1> registered = new ArrayList();    
-    
+    private FastList<Mtp1> registered = new FastList<Mtp1>();
+
     private int ops;
-    
+
     /** array of selected channels */
-    private ArrayList<SelectorKey> selected = new ArrayList();
+    private FastList<SelectorKey> selected = new FastList<SelectorKey>();
     private static Logger logger = Logger.getLogger(Selector.class);
-    
+
     static {
-    	try {
-			 System.loadLibrary(LIB_NAME);
-			 System.out.println("Loaded library mobicents-dahdi-linux");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        try {
+            System.loadLibrary(LIB_NAME);
+            System.out.println("Loaded library mobicents-dahdi-linux");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-    
+
     public Selector() {
-        
+
     }
-    
+
     /**
      * Register channel with this selector.
-     *
-     * @param channel the channel to register.
-     */ 
+     * 
+     * @param channel
+     *            the channel to register.
+     */
     public SelectorKey register(Channel channel) {
-	//add channel instance to the collection
-	registered.add(channel);
-	//perform actual registration
-	logger.info("Registering file descriptor:" + ((Channel) channel).fd);
- 	doRegister(((Channel)channel).fd);
-	
+        // add channel instance to the collection
+        registered.add(channel);
+        // perform actual registration
+        logger.info("Registering file descriptor:" + ((Channel) channel).fd);
+        doRegister(((Channel) channel).fd);
+
         SelectorKeyImpl key = new SelectorKeyImpl(channel, this);
         channel.selectorKey = key;
         return key;
     }
-    
+
     /**
      * Unregister channel.
-     *
-     * @param channel the channel to unregister.
+     * 
+     * @param channel
+     *            the channel to unregister.
      */
     public void unregister(Channel channel) {
-	registered.remove(channel);
+        registered.remove(channel);
         channel.selectorKey = null;
-	doUnregister(((Channel)channel).fd);
+        doUnregister(((Channel) channel).fd);
     }
-    
+
     /**
      * Registers pipe for polling.
-     *
-     *@param fd the file descriptor.
+     * 
+     * @param fd
+     *            the file descriptor.
      */
     public native void doRegister(int fd);
-    
+
     /**
      * Unregisters pipe from polling.
-     *
-     * @param fd the file descriptor.
-     */ 
+     * 
+     * @param fd
+     *            the file descriptor.
+     */
     public native void doUnregister(int fd);
-    
+
     /**
      * Delegates select call to unix poll function.
-     *
-     * @param fds the list of file descriptors.
-     * @param key selection key.
+     * 
+     * @param fds
+     *            the list of file descriptors.
+     * @param key
+     *            selection key.
      * @return the number of selected channels.
-     */ 
+     */
     public native int doPoll(int[] fds, int key, int timeout);
 
-    public Collection<SelectorKey> selectNow(int ops, int timeout) throws IOException {
-	int count = doPoll(fds, ops, 20);
-	selected.clear();
-	for (int i = 0; i < count; i++) {
-	    for (Mtp1 chan : registered) {
-		Channel channel = (Channel) chan;
-		if (channel.fd == fds[i]) {
-		    selected.add(channel.selectorKey);
-		}
-	    }
-	} 
-	return selected;
+    public FastList<SelectorKey> selectNow(int ops, int timeout)
+            throws IOException {
+        int count = doPoll(fds, ops, 20);
+        selected.clear();
+        for (int i = 0; i < count; i++) {
+            for (FastList.Node<Mtp1> n = registered.head(), end = registered
+                    .tail(); (n = n.getNext()) != end;) {
+                Channel channel = (Channel) n.getValue();
+                if (channel.fd == fds[i]) {
+                    selected.add(channel.selectorKey);
+                }
+            }
+        }
+        return selected;
     }
 
     public void setOperation(int v) {
@@ -148,7 +161,7 @@ public class Selector implements StreamSelector {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Collection<Stream> getRegisteredStreams() {
+    public FastList<Stream> getRegisteredStreams() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

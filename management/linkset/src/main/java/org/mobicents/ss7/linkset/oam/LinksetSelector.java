@@ -1,8 +1,8 @@
 package org.mobicents.ss7.linkset.oam;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
+
+import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.stream.api.SelectorKey;
@@ -20,10 +20,10 @@ public class LinksetSelector implements StreamSelector {
     private static final Logger logger = Logger
             .getLogger(LinksetSelector.class);
 
-    private ArrayList<Stream> registered = new ArrayList<Stream>();
+    private FastList<Stream> registered = new FastList<Stream>();
 
     /** array of selected channels */
-    private ArrayList<SelectorKey> selected = new ArrayList<SelectorKey>();
+    private FastList<SelectorKey> selected = new FastList<SelectorKey>();
 
     public LinksetSelector() {
         // TODO Auto-generated constructor stub
@@ -50,7 +50,7 @@ public class LinksetSelector implements StreamSelector {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Collection<Stream> getRegisteredStreams() {
+    public FastList<Stream> getRegisteredStreams() {
         return registered;
     }
 
@@ -58,7 +58,7 @@ public class LinksetSelector implements StreamSelector {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Collection<SelectorKey> selectNow(int operation, int timeout)
+    public FastList<SelectorKey> selectNow(int operation, int timeout)
             throws IOException {
 
         selected.clear();
