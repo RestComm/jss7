@@ -2,9 +2,9 @@
 <project name="ss7.release.sf" default="package" basedir=".">
 
 	<!-- Components Versions -->
-	<property name="release.version" value="1.0.0.BETA5" />
+	<property name="release.version" value="1.0.0.BETA7-SNAPSHOT" />
 
-	<property name="ss7.version" value="1.0.0.BETA4" />
+	<property name="ss7.version" value="1.0.0.BETA7-SNAPSHOT" />
 
 
 	<property name="asn.version" value="1.0.0.BETA3" />
