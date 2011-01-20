@@ -20,12 +20,12 @@
 		<!--
 			<dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId>
 			<version>${log4j.version}</version> </dependency>
-		
+		-->
 		<dependency>
 			<artifactId>mtp</artifactId>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 		</dependency>
-		-->
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
