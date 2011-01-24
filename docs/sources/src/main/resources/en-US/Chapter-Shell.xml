@@ -457,7 +457,7 @@ linkset1      dahdi    opc=1           apc=2           ni=0    state=UNAVAILABLE
 			<para>The possible state of Linkset are </para>
 			<itemizedlist>
 				<listitem>
-					<para>UNAVAILABLE : Indicates the linkset does not have any “available” links and cannot transport traffic</para>
+					<para>UNAVAILABLE : Indicates the linkset does not have any <quote>available</quote> links and cannot transport traffic</para>
 				</listitem>
 				<listitem>
 					<para>SHUTDOWN : Indicates the linkset has been shutdown in the configuration</para>
