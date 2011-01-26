@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
   <classpathentry kind="src" path="tcap-api/src/main/java"/>
-  <classpathentry kind="src" path="docs/sources-mobicents/src/main/resources"/>
-  <classpathentry kind="src" path="docs/sources-mobicents/src/main/resources"/>
   <classpathentry kind="src" path="tcap-impl/src/main/java"/>
   <classpathentry kind="src" path="tcap-impl/src/test/java"/>
   <classpathentry kind="var" path="M2_REPO/apache-xerces/xml-apis/2.9.1/xml-apis-2.9.1.jar"/>
@@ -57,13 +55,10 @@
   <classpathentry kind="var" path="M2_REPO/org/jboss/security/jbosssx-client/2.0.3.SP1/jbosssx-client-2.0.3.SP1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/test/jboss-test/1.1.4.GA/jboss-test-1.1.4.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/asn/asn/1.0.0.BETA3/asn-1.0.0.BETA3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/m3ua/m3ua-api/1.0.0-SNAPSHOT/m3ua-api-1.0.0-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/m3ua/m3ua-impl/1.0.0-SNAPSHOT/m3ua-impl-1.0.0-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/management/linkset/1.0.0-SNAPSHOT/linkset-1.0.0-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/mtp/mtp/1.0.0-SNAPSHOT/mtp-1.0.0-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/sccp/sccp-api/1.0.0-SNAPSHOT/sccp-api-1.0.0-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/sccp/sccp-impl/1.0.0-SNAPSHOT/sccp-impl-1.0.0-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/stream/stream/1.0.0.BETA2/stream-1.0.0.BETA2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/management/linkset/1.0.0.BETA7-SNAPSHOT/linkset-1.0.0.BETA7-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/sccp/sccp-api/1.0.0.BETA7-SNAPSHOT/sccp-api-1.0.0.BETA7-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/sccp/sccp-impl/1.0.0.BETA7-SNAPSHOT/sccp-impl-1.0.0.BETA7-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/stream/stream/1.0.0-SNAPSHOT/stream-1.0.0-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/oswego-concurrent/concurrent/1.3.4-jboss-update1/concurrent-1.3.4-jboss-update1.jar"/>
   <classpathentry kind="var" path="M2_REPO/qdox/qdox/1.6.1/qdox-1.6.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/stax/stax-api/1.0/stax-api-1.0.jar"/>

@@ -3,10 +3,6 @@
  */
 package org.mobicents.protocols.ss7.tcap.api;
 
-import java.util.Properties;
-
-import org.mobicents.protocols.ConfigurationException;
-import org.mobicents.protocols.StartFailedException;
 
 /**
  * @author baranowb
@@ -28,7 +24,7 @@ public interface TCAPStack {
 	 * @throws IllegalStateException - if stack is already running or not configured
 	 * @throws StartFailedException
 	 */
-	public void start() throws IllegalStateException, StartFailedException;
+	public void start() throws IllegalStateException;
 //	/**
 //	 * Configure stack and transport layer.
 //	 * @param properties
