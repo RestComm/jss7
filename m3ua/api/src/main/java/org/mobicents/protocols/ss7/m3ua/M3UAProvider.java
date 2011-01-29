@@ -19,7 +19,7 @@ package org.mobicents.protocols.ss7.m3ua;
 
 import java.io.IOException;
 import org.mobicents.protocols.ss7.m3ua.message.MessageFactory;
-import org.mobicents.protocols.ss7.m3ua.message.parm.ParameterFactory;
+import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
 
 /**
  * Service-provider class for selectors and M3UA channels.

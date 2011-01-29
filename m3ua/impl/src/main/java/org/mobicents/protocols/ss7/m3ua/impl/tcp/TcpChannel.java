@@ -19,10 +19,12 @@
 package org.mobicents.protocols.ss7.m3ua.impl.tcp;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.AbstractSelectableChannel;
+
 import org.mobicents.protocols.ss7.m3ua.impl.M3UAChannelImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
@@ -39,6 +41,10 @@ public class TcpChannel extends M3UAChannelImpl {
 
     //provider instance
     private TcpProvider provider;
+    
+    
+    //the address to which the socket is connected.
+    private InetAddress inetAddress = null;
     
     /**
      * Creates new channel.
@@ -60,6 +66,12 @@ public class TcpChannel extends M3UAChannelImpl {
         rxBuffer.clear();
         rxBuffer.rewind();
         rxBuffer.flip();
+        
+        this.inetAddress = ((SocketChannel)channel).socket().getInetAddress();
+    }
+    
+    public InetAddress getInetAddress(){
+        return this.inetAddress;
     }
     
     /**

@@ -18,11 +18,13 @@
 package org.mobicents.protocols.ss7.m3ua;
 
 import java.io.IOException;
-import java.util.Collection;
+
+import javolution.util.FastList;
 
 /**
  * A multiplexor of M3UA channels.
  * 
+ * @author abhayani
  * @author kulikov
  */
 public interface M3UASelector {
@@ -32,7 +34,7 @@ public interface M3UASelector {
      * @return the collection keys.
      * @throws java.io.IOException
      */
-    public Collection<M3UASelectionKey> selectNow() throws IOException;
+    public FastList<M3UASelectionKey> selectNow() throws IOException;
     
     /**
      * Closes this selector.

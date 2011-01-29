@@ -25,8 +25,8 @@ import org.mobicents.protocols.ss7.m3ua.M3UAServerChannel;
 import org.mobicents.protocols.ss7.m3ua.impl.M3UASelectorImpl;
 import org.mobicents.protocols.ss7.m3ua.message.MessageFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
-import org.mobicents.protocols.ss7.m3ua.message.parm.ParameterFactory;
-import org.mobicents.protocols.ss7.m3ua.impl.message.parms.ParameterFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 
 /**
  * Implements M3UAProvider for TCP/IP undelying network.

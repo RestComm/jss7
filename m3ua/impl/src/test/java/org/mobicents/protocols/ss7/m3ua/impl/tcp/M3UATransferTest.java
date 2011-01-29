@@ -24,8 +24,9 @@ import org.mobicents.protocols.ss7.m3ua.M3UAServerChannel;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
-import org.mobicents.protocols.ss7.m3ua.message.TransferMessage;
-import org.mobicents.protocols.ss7.m3ua.message.parm.ProtocolData;
+import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
+import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
+
 import static org.junit.Assert.*;
 
 /**
@@ -93,7 +94,7 @@ public class M3UATransferTest {
 
 
     private M3UAMessage createMessage(M3UAProvider provider, String text) {
-        TransferMessage msg = (TransferMessage) provider.getMessageFactory().createMessage(MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD);
+        PayloadData msg = (PayloadData) provider.getMessageFactory().createMessage(MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD);
         
         ProtocolData protocolData = provider.getParameterFactory().createProtocolData(1408, 14150, 0, 0, 0, 0, text.getBytes());
         msg.setData(protocolData);
@@ -155,7 +156,7 @@ public class M3UATransferTest {
                     for (M3UASelectionKey key : keys) {
                         M3UAChannel chan = (M3UAChannel) key.channel();
                         if (key.isReadable()) {
-                            TransferMessage msg = (TransferMessage) chan.receive();
+                            PayloadData msg = (PayloadData) chan.receive();
                             System.out.println("Receive message " + msg);
                             rxMessage += new String(msg.getData().getData());
                         }
@@ -231,7 +232,7 @@ public class M3UATransferTest {
                             accept();
                         } else if (key.isReadable()) {
                             M3UAChannel chan = (M3UAChannel) key.channel();
-                            TransferMessage msg = (TransferMessage) chan.receive();
+                            PayloadData msg = (PayloadData) chan.receive();
                             System.out.println("Receive " + msg);
                             rxMessage += new String(msg.getData().getData());
                         } else if (key.isWritable() && i < txMessage.length) {

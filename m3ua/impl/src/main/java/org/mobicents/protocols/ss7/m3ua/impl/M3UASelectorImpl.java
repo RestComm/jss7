@@ -22,22 +22,24 @@ import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.spi.SelectorProvider;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Set;
+
+import javolution.util.FastList;
+
 import org.mobicents.protocols.ss7.m3ua.M3UASelectionKey;
 import org.mobicents.protocols.ss7.m3ua.M3UASelector;
 
 /**
  * Implements channel multiplexer.
  * 
+ * @author amit bhayani
  * @author kulikov
  */
 public class M3UASelectorImpl implements M3UASelector {
     //NIO multiplexer
     protected Selector selector;
     //list used for collecting selected keys.
-    private ArrayList<M3UASelectionKey> list = new ArrayList();
+    private FastList<M3UASelectionKey> list = new FastList<M3UASelectionKey>();
     
     /**
      * Constructs new multiplexer.
@@ -64,7 +66,7 @@ public class M3UASelectorImpl implements M3UASelector {
      * @see org.mobicents.protocols.ss7.m3ua.M3UASelector#selectNow() 
      * @throws java.io.IOException
      */
-    public Collection<M3UASelectionKey> selectNow() throws IOException {
+    public FastList<M3UASelectionKey> selectNow() throws IOException {
         list.clear();
         selector.selectNow();
         Set<SelectionKey> selection = selector.selectedKeys();

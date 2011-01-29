@@ -67,6 +67,8 @@ public abstract class M3UAChannelImpl extends M3UASelectableChannelImpl implemen
     public void send(M3UAMessage message) throws IOException {
         //queue next message for sending
         txQueue.offer((M3UAMessageImpl) message);
+        System.out.println("M3UAChannelImpl has txQueue size is " + txQueue.size());
+    
     }
     
     /**
