@@ -27,7 +27,7 @@ import java.util.HashMap;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 
 /**
- * 
+ * @author amit bhayani
  * @author kulikov
  */
 public abstract class M3UAMessageImpl implements M3UAMessage {
@@ -38,6 +38,8 @@ public abstract class M3UAMessageImpl implements M3UAMessage {
     protected HashMap<Short, Parameter> parameters = new HashMap();
 
     private ParameterFactoryImpl factory = new ParameterFactoryImpl();
+    
+    int initialPosition = 0;
 
     public M3UAMessageImpl() {
 
@@ -51,20 +53,23 @@ public abstract class M3UAMessageImpl implements M3UAMessage {
     protected abstract void encodeParams(ByteBuffer buffer);
 
     public void encode(ByteBuffer buffer) {
-        buffer.position(8);
+        
+        initialPosition = buffer.position();
+        
+        buffer.position(initialPosition+8);
 
         encodeParams(buffer);
 
-        int length = buffer.position();
-        buffer.rewind();
+        int length = buffer.position() - initialPosition;
+        //buffer.rewind();
 
-        buffer.put((byte) 1);
-        buffer.put((byte) 0);
-        buffer.put((byte) messageClass);
-        buffer.put((byte) messageType);
-        buffer.putInt(length);
+        buffer.put(initialPosition++, (byte) 1);
+        buffer.put(initialPosition++, (byte) 0);
+        buffer.put(initialPosition++, (byte) messageClass);
+        buffer.put(initialPosition++, (byte) messageType);
+        buffer.putInt(initialPosition++, length);
 
-        buffer.position(length);
+        //buffer.position(length);
     }
 
     protected void decode(byte[] data) {

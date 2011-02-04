@@ -31,6 +31,7 @@ import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
 
 /**
  * Implements M3UA channel over TCP/IP
+ * @author amit bhayani
  * @author kulikov
  */
 public class TcpChannel extends M3UAChannelImpl {
@@ -124,12 +125,12 @@ public class TcpChannel extends M3UAChannelImpl {
         if (txBuffer.hasRemaining()) {
             ((SocketChannel)channel).write(txBuffer);
         } else if (!txQueue.isEmpty()) {
-            M3UAMessageImpl msg = txQueue.poll();
-            
             txBuffer.clear();
-            txBuffer.rewind();
-            
-            msg.encode(txBuffer);
+            while(!txQueue.isEmpty()){
+                //Lets read all the messages in txQueue and add to txBuffer
+                M3UAMessageImpl msg = txQueue.poll();
+                msg.encode(txBuffer);
+            }
             txBuffer.flip();
             ((SocketChannel)channel).write(txBuffer);
         }
