@@ -46,6 +46,9 @@ public class TcpChannel extends M3UAChannelImpl {
     //the address to which the socket is connected.
     private InetAddress inetAddress = null;
     
+    //Returns the remote port to which this socket is connected.
+    private int port;
+    
     /**
      * Creates new channel.
      * 
@@ -68,10 +71,15 @@ public class TcpChannel extends M3UAChannelImpl {
         rxBuffer.flip();
         
         this.inetAddress = ((SocketChannel)channel).socket().getInetAddress();
+        this.port = ((SocketChannel)channel).socket().getPort();
     }
     
     public InetAddress getInetAddress(){
         return this.inetAddress;
+    }
+    
+    public int getPort(){
+        return this.port;
     }
     
     /**
@@ -181,5 +189,4 @@ public class TcpChannel extends M3UAChannelImpl {
         ((SocketChannel)channel).close();        
         ((SocketChannel)channel).socket().close();
     }
-
 }

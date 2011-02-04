@@ -113,7 +113,7 @@ public class M3UATransferTest {
         private String[] txMessage = new String[]{"Hello", " ", "world"};
         
         public Client(InetAddress address, int port) throws IOException {
-            provider = TcpProvider.open();
+            provider = TcpProvider.provider();
             channel = provider.openChannel();
             channel.bind(new InetSocketAddress(address, port));
             
@@ -194,7 +194,7 @@ public class M3UATransferTest {
         private String[] txMessage = new String[]{"Hello", " ", "world"};
         
         public Server(InetAddress address, int port) throws IOException {
-            provider = TcpProvider.open();
+            provider = TcpProvider.provider();
             serverChannel = provider.openServerChannel();
             serverChannel.bind(new InetSocketAddress(address, port));
             

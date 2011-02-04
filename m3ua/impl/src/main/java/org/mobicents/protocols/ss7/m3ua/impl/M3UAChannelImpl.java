@@ -37,6 +37,7 @@ public abstract class M3UAChannelImpl extends M3UASelectableChannelImpl implemen
     //Queue for outgoing messages
     protected ConcurrentLinkedQueue<M3UAMessageImpl> txQueue = new ConcurrentLinkedQueue();
     
+    protected IOException ioException;
     
     /**
      * Constructs new M3UA channel.
@@ -55,6 +56,10 @@ public abstract class M3UAChannelImpl extends M3UASelectableChannelImpl implemen
      * @see org.mobicents.protocols.ss7.m3ua.M3UAChannel#receive() 
      */
     public M3UAMessage receive() throws IOException {
+        //If underlying channel raised Exception at IO, throw the same here
+        if(ioException != null){
+            throw ioException;
+        }
         //extracts next message from queue
         return rxQueue.poll();
     }
@@ -65,10 +70,13 @@ public abstract class M3UAChannelImpl extends M3UASelectableChannelImpl implemen
      * @see org.mobicents.protocols.ss7.m3ua.M3UAChannel#send(org.mobicents.protocols.ss7.m3ua.message.M3UAMessage)  
      */
     public void send(M3UAMessage message) throws IOException {
+        //If underlying channel raised Exception at IO, throw the same here
+        if(ioException != null){
+            throw ioException;
+        }
+        
         //queue next message for sending
         txQueue.offer((M3UAMessageImpl) message);
-        System.out.println("M3UAChannelImpl has txQueue size is " + txQueue.size());
-    
     }
     
     /**

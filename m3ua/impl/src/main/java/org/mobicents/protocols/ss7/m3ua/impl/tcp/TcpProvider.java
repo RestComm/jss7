@@ -31,18 +31,34 @@ import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 /**
  * Implements M3UAProvider for TCP/IP undelying network.
  * 
+ * @author amit bhayani
  * @author kulikov
  */
 public class TcpProvider implements M3UAProvider {
 
-    public static M3UAProvider open() {
-        return new TcpProvider();
+    static private TcpProvider provider = new TcpProvider();
+
+    private MessageFactoryImpl msgFactory = new MessageFactoryImpl();
+    private ParameterFactoryImpl paramFactory = new ParameterFactoryImpl();
+
+    private TcpProvider() {
+
     }
-    
+
+    /**
+     * Returns the system-wide default selector provider for this invocation of
+     * the Java virtual machine.
+     * 
+     * @return
+     */
+    public static M3UAProvider provider() {
+        return provider;
+    }
+
     /**
      * (Non Java-doc.)
      * 
-     * @see org.mobicents.protocols.ss7.m3ua.M3UAProvider#openChannel() 
+     * @see org.mobicents.protocols.ss7.m3ua.M3UAProvider#openChannel()
      */
     public M3UAChannel openChannel() throws IOException {
         return TcpChannel.open(this);
@@ -51,7 +67,7 @@ public class TcpProvider implements M3UAProvider {
     /**
      * (Non Java-doc.)
      * 
-     * @see org.mobicents.protocols.ss7.m3ua.M3UAProvider#openServerChannel() 
+     * @see org.mobicents.protocols.ss7.m3ua.M3UAProvider#openServerChannel()
      */
     public M3UAServerChannel openServerChannel() throws IOException {
         return TcpServerChannel.open(this);
@@ -60,7 +76,7 @@ public class TcpProvider implements M3UAProvider {
     /**
      * (Non Java-doc.)
      * 
-     * @see org.mobicents.protocols.ss7.m3ua.M3UAProvider#openServerChannel() 
+     * @see org.mobicents.protocols.ss7.m3ua.M3UAProvider#openServerChannel()
      */
     public M3UASelector openSelector() throws IOException {
         return M3UASelectorImpl.open();
@@ -69,19 +85,19 @@ public class TcpProvider implements M3UAProvider {
     /**
      * (Non Java-doc.)
      * 
-     * @see org.mobicents.protocols.ss7.m3ua.M3UAProvider#getMessageFactory() 
+     * @see org.mobicents.protocols.ss7.m3ua.M3UAProvider#getMessageFactory()
      */
     public MessageFactory getMessageFactory() {
-        return new MessageFactoryImpl();
+        return msgFactory;
     }
 
     /**
      * (Non Java-doc.)
      * 
-     * @see org.mobicents.protocols.ss7.m3ua.M3UAProvider#getParameterFactory() 
+     * @see org.mobicents.protocols.ss7.m3ua.M3UAProvider#getParameterFactory()
      */
     public ParameterFactory getParameterFactory() {
-        return new ParameterFactoryImpl();
+        return paramFactory;
     }
-    
+
 }

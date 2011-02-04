@@ -76,13 +76,26 @@ public class M3UASelectorImpl implements M3UASelector {
                 list.add(k);
             } else if (key.isReadable()) {
                 M3UASelectionKeyImpl k = (M3UASelectionKeyImpl) key.attachment();
-                ((M3UAChannelImpl)k.channel()).doRead();
+                
+                try{
+                    ((M3UAChannelImpl)k.channel()).doRead();
+                } catch(IOException ex){
+                    ((M3UAChannelImpl)k.channel()).ioException = ex;
+                }
+                
                 if (k.isReadable()) {
                     list.add(k);
                 }
+                
             } else { //FIXME: Oleg this assumes by default that its write....
                 M3UASelectionKeyImpl k = (M3UASelectionKeyImpl) key.attachment();
-                ((M3UAChannelImpl)k.channel()).doWrite();
+                
+                try{
+                    ((M3UAChannelImpl)k.channel()).doWrite();
+                } catch(IOException ex){
+                    ((M3UAChannelImpl)k.channel()).ioException = ex;
+                }
+                
                 if (k.isWritable()) {
                     list.add(k);
                 }

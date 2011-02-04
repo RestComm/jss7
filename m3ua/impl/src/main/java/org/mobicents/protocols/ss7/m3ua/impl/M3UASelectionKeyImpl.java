@@ -23,6 +23,7 @@ import java.nio.channels.SelectionKey;
 /**
  * Implements registration key.
  * 
+ * @author amit bhayani
  * @author kulikov
  */
 public class M3UASelectionKeyImpl implements M3UASelectionKey {
@@ -30,6 +31,8 @@ public class M3UASelectionKeyImpl implements M3UASelectionKey {
     private M3UASelectableChannelImpl channel;
     //NIO selection key which represent selection of actual network channel
     private SelectionKey key;
+    
+    private Object object;
     
     /**
      * Constructs new selection key.
@@ -85,5 +88,15 @@ public class M3UASelectionKeyImpl implements M3UASelectionKey {
      */
     public void cancel() {
         key.cancel();
+    }
+
+    public Object attach(Object ob) {
+        Object prev = this.object;
+        this.object = ob;
+        return prev;
+    }
+
+    public Object attachment() {
+        return this.object;
     }
 }
