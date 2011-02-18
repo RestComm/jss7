@@ -35,9 +35,8 @@
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sctp</groupId>
-			<artifactId>sctp</artifactId>
-			<version>1.0.0.BETA</version>
+			<groupId>org.mobicents.protocols.stream</groupId>
+			<artifactId>stream</artifactId>
 		</dependency>
 	</dependencies>
 
