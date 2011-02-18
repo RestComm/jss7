@@ -102,7 +102,7 @@
 			<!--  ~]$ echo $JBOSS_HOME
 /home/silas/&MOB_JBOSS_HOME_LIN;  -->
 			<screen>~]$ echo $JBOSS_HOME
-/home/silas/&MOB_JBOSS_HOME_LIN;</screen>
+/home/silas/&lt;path&gt;/&lt;to&gt;/&lt;install_directory&gt;</screen>
 		</step>
 	</procedure>
 

@@ -1,9 +1,8 @@
 <?xml version='1.0'?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
-<bookinfo
-	id="&BOOK_ID;">
-	<title>&THIS.PLATFORM;  &THIS.APPLICATION;  User Guide</title>
-	<subtitle></subtitle>
+<bookinfo id="doc-SS7_Stack_User_Guide">
+	<title>SS7 Stack User Guide</title>
+	<subtitle>The guide to the &THIS.PLATFORM; SS7 Stack</subtitle>
 	<productname>&THIS.PLATFORM; &THIS.APPLICATION; </productname>
 	<productnumber>&THIS.VERSION;</productnumber>
 	<edition>3.0</edition>

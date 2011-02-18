@@ -59,7 +59,7 @@
 				<para>
 					<literal>Shell</literal> is Command Line Interface (CLI) tool which allows to manage different aspects of &THIS.PLATFORM; &THIS.APPLICATION; in interactive manner. 
 					It connects to different instances of &THIS.PLATFORM; &THIS.APPLICATION; which manage <literal>Linksets</literal> and
-					<literal>SCCP</literal> routing. For detailed information please refer to:	<xref linkend="management" />.
+					<literal>SCCP</literal> routing. For detailed information please refer to:	<xref linkend="shell" />.
 					Usually <literal>Shell</literal> will be invoked from remote machine(remote to <literal>Linksets</literal> and application protocols).
 
 				</para>

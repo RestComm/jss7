@@ -59,7 +59,7 @@
 						</listitem>	
 						<listitem>
 							<para><literal>shell</literal> : the Command Line Interface (CLI) module to manage the &THIS.PLATFORM; &THIS.APPLICATION;.
-							Refer <xref linkend="linkset_management"/> to understand how to use shell</para>
+							Refer <xref linkend="shell"/> to understand how to use shell</para>
 						</listitem>	
 					</itemizedlist>
 				</listitem>				
@@ -134,7 +134,7 @@
 				
 				<para>If you have started &THIS.APPLICATION.DIRNAME;-&THIS.VERSION; for the first time, there are no <literal>Linkset</literal> defined. 
 				You need to use Shell Client to connect to &THIS.APPLICATION.DIRNAME;-&THIS.VERSION; as defined in 
-				<xref linkend="linkset_management" /> and create <literal>Linkset</literal> 
+				<xref linkend="shell" /> and create <literal>Linkset</literal> 
 				as per your need and SS7 card installed</para>
 				
 				<para>Once the <literal>Linkset</literal> are defined, the state and configuration of <literal>Linkset</literal> and <literal>Link</literal> 

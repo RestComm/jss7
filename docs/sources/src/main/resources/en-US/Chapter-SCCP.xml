@@ -348,7 +348,7 @@ sequence;pattern;translation;mtpinfo
 		<para>
 			Below is SCCP User Part example listening for incoming SCCP message and sending back new message		
 		</para>		
-		<programlisting language="java" role="JAVA">
+		<programlisting language="Java" role="JAVA">
 public class Test implements SccpListener {
 
     private SccpProvider sccpProvider;
