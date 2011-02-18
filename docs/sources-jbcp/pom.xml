@@ -59,6 +59,17 @@
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
+          <execution>
+            <phase>install</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <copy file="publican.cfg" todir="src/main/resources/" />
+              </tasks>
+            </configuration>
+          </execution>
 					<execution>
 						<id>clean-resources</id>
 						<phase>clean</phase>
