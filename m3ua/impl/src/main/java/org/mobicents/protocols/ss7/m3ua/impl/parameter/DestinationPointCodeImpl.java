@@ -59,5 +59,10 @@ public class DestinationPointCodeImpl extends ParameterImpl implements
     public short getMask() {
         return this.mask;
     }
+    
+    @Override
+    public String toString() {
+        return String.format("DestinationPointCode dpc=%d mask=%d", destPC, mask);
+    }
 
 }

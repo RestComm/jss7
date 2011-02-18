@@ -1,5 +1,7 @@
 package org.mobicents.protocols.ss7.m3ua.impl.parameter;
 
+import java.util.Arrays;
+
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 import org.mobicents.protocols.ss7.m3ua.parameter.ServiceIndicators;
 
@@ -8,8 +10,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ServiceIndicators;
  * @author amit bhayani
  * 
  */
-public class ServiceIndicatorsImpl extends ParameterImpl implements
-        ServiceIndicators {
+public class ServiceIndicatorsImpl extends ParameterImpl implements ServiceIndicators {
 
     private short[] indicators;
     private byte[] value = null;
@@ -47,6 +48,11 @@ public class ServiceIndicatorsImpl extends ParameterImpl implements
 
     public short[] getIndicators() {
         return this.indicators;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ServiceIndicators ids=%s", Arrays.toString(this.indicators));
     }
 
 }

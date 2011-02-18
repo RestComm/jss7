@@ -36,6 +36,7 @@ import org.mobicents.protocols.ss7.m3ua.impl.message.rkm.DeregistrationResponseI
 import org.mobicents.protocols.ss7.m3ua.impl.message.rkm.RegistrationRequestImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.rkm.RegistrationResponseImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.ssnm.DestinationAvailableImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.message.ssnm.DestinationRestrictedImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.ssnm.DestinationStateAuditImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.ssnm.DestinationUPUnavailableImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.ssnm.DestinationUnavailableImpl;
@@ -84,6 +85,8 @@ public class MessageFactoryImpl implements MessageFactory {
                 return new SignallingCongestionImpl();
             case MessageType.DESTINATION_USER_PART_UNAVAILABLE:
                 return new DestinationUPUnavailableImpl();
+            case MessageType.DESTINATION_RESTRICTED:
+                return new DestinationRestrictedImpl();
             }
             break;
         case MessageClass.ASP_STATE_MAINTENANCE:

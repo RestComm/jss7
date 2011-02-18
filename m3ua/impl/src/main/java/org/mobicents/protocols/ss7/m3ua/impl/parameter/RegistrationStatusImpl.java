@@ -48,7 +48,7 @@ public class RegistrationStatusImpl extends ParameterImpl implements
 
     @Override
     public String toString() {
-        return String.format("RegistrationStatus = %d", status);
+        return String.format("RegistrationStatus status=%d", status);
     }
 
 }

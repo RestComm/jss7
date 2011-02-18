@@ -79,7 +79,7 @@ public class AffectedPointCodeImpl extends ParameterImpl implements
     @Override
     public String toString() {
         return String
-                .format("AffectedPointCode data: pointCode = %s mask = %s",
+                .format("AffectedPointCode pointCode=%s mask=%s",
                         Arrays.toString(this.pointCodes), Arrays
                                 .toString(this.masks));
     }

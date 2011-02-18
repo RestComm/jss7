@@ -52,6 +52,6 @@ public class ASPIdentifierImpl extends ParameterImpl implements ASPIdentifier {
 
     @Override
     public String toString() {
-        return String.format("ASPIdentifier data: id = %d", aspID);
+        return String.format("ASPIdentifier id=%d", aspID);
     }
 }

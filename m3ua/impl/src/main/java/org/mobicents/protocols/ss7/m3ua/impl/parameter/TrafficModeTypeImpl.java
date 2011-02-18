@@ -10,7 +10,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
  */
 public class TrafficModeTypeImpl extends ParameterImpl implements
         TrafficModeType {
-    private long mode = 0;
+    private int mode = 0;
     private byte[] value;
 
     protected TrafficModeTypeImpl(byte[] data) {
@@ -26,7 +26,7 @@ public class TrafficModeTypeImpl extends ParameterImpl implements
         this.mode |= data[3] & 0xFF;
     }
 
-    protected TrafficModeTypeImpl(long traffmode) {
+    protected TrafficModeTypeImpl(int traffmode) {
         this.tag = Parameter.Traffic_Mode_Type;
         mode = traffmode;
         encode();
@@ -43,13 +43,18 @@ public class TrafficModeTypeImpl extends ParameterImpl implements
         value[3] = (byte) (mode);
     }
 
-    public long getMode() {
+    public int getMode() {
         return mode;
     }
 
     @Override
     protected byte[] getValue() {
         return value;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("TrafficModeType mode=%d", mode);
     }
 
 }

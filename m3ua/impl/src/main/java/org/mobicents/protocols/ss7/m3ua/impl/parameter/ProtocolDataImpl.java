@@ -169,7 +169,7 @@ public class ProtocolDataImpl extends ParameterImpl implements ProtocolData {
     @Override
     public String toString() {
         return String.format(
-                "Protocol data: opc=%d, dpc=%d, si=%d, ni=%d, sls=%d", opc,
+                "Protocol opc=%d dpc=%d si=%d ni=%d sls=%d", opc,
                 dpc, si, ni, sls);
     }
 

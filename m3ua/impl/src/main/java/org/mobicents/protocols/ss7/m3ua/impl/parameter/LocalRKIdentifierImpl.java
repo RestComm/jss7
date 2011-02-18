@@ -53,5 +53,9 @@ public class LocalRKIdentifierImpl extends ParameterImpl implements
     public long getId() {
         return this.id;
     }
-
+    
+    @Override
+    public String toString() {
+        return String.format("LocalRKIdentifier id=%d", id);
+    }
 }

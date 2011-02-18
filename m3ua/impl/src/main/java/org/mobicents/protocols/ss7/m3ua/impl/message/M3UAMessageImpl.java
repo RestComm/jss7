@@ -18,13 +18,14 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.message;
 
-import org.mobicents.protocols.ss7.m3ua.message.*;
-import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
-
 import java.nio.ByteBuffer;
-import java.util.HashMap;
+
+import javolution.text.TextBuilder;
+import javolution.util.FastMap;
 
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
+import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 
 /**
  * @author amit bhayani
@@ -35,10 +36,10 @@ public abstract class M3UAMessageImpl implements M3UAMessage {
     private int messageClass;
     private int messageType;
 
-    protected HashMap<Short, Parameter> parameters = new HashMap();
+    protected FastMap<Short, Parameter> parameters = new FastMap<Short, Parameter>();
 
     private ParameterFactoryImpl factory = new ParameterFactoryImpl();
-    
+
     int initialPosition = 0;
 
     public M3UAMessageImpl() {
@@ -53,15 +54,15 @@ public abstract class M3UAMessageImpl implements M3UAMessage {
     protected abstract void encodeParams(ByteBuffer buffer);
 
     public void encode(ByteBuffer buffer) {
-        
+
         initialPosition = buffer.position();
-        
-        buffer.position(initialPosition+8);
+
+        buffer.position(initialPosition + 8);
 
         encodeParams(buffer);
 
         int length = buffer.position() - initialPosition;
-        //buffer.rewind();
+        // buffer.rewind();
 
         buffer.put(initialPosition++, (byte) 1);
         buffer.put(initialPosition++, (byte) 0);
@@ -69,7 +70,7 @@ public abstract class M3UAMessageImpl implements M3UAMessage {
         buffer.put(initialPosition++, (byte) messageType);
         buffer.putInt(initialPosition++, length);
 
-        //buffer.position(length);
+        // buffer.position(length);
     }
 
     protected void decode(byte[] data) {
@@ -96,5 +97,18 @@ public abstract class M3UAMessageImpl implements M3UAMessage {
 
     public int getMessageType() {
         return messageType;
+    }
+
+    @Override
+    public String toString() {
+        TextBuilder tb = new TextBuilder();
+        tb.append("Class=").append(this.messageClass).append(" Type=").append(this.messageType).append(" Params(");
+        for (FastMap.Entry<Short, Parameter> e = parameters.head(), end = parameters.tail(); (e = e.getNext()) != end;) {
+            Parameter value = e.getValue();
+            tb.append(value.toString());
+            tb.append(", ");
+        }
+        tb.append(")");
+        return tb.toString();
     }
 }

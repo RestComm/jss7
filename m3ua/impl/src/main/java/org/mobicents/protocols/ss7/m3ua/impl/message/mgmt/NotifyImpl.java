@@ -16,7 +16,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class NotifyImpl extends M3UAMessageImpl implements Notify {
 
@@ -29,18 +29,15 @@ public class NotifyImpl extends M3UAMessageImpl implements Notify {
         ((ParameterImpl) parameters.get(Parameter.Status)).write(buffer);
 
         if (parameters.containsKey(Parameter.ASP_Identifier)) {
-            ((ParameterImpl) parameters.get(Parameter.ASP_Identifier))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.ASP_Identifier)).write(buffer);
         }
 
         if (parameters.containsKey(Parameter.Routing_Context)) {
-            ((ParameterImpl) parameters.get(Parameter.Routing_Context))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.Routing_Context)).write(buffer);
         }
 
         if (parameters.containsKey(Parameter.INFO_String)) {
-            ((ParameterImpl) parameters.get(Parameter.INFO_String))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.INFO_String)).write(buffer);
         }
     }
 
@@ -75,5 +72,4 @@ public class NotifyImpl extends M3UAMessageImpl implements Notify {
     public void setStatus(Status status) {
         parameters.put(Parameter.Status, status);
     }
-
 }

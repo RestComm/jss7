@@ -6,7 +6,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class ErrorCodeImpl extends ParameterImpl implements ErrorCode {
 
@@ -42,6 +42,11 @@ public class ErrorCodeImpl extends ParameterImpl implements ErrorCode {
 
     public int getCode() {
         return this.code;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ErrorCode code=%d", code);
     }
 
 }

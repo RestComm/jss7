@@ -2,6 +2,7 @@ package org.mobicents.protocols.ss7.m3ua.impl.parameter;
 
 import java.nio.ByteBuffer;
 
+import javolution.text.TextBuilder;
 import javolution.util.FastList;
 
 import org.mobicents.protocols.ss7.m3ua.parameter.DestinationPointCode;
@@ -42,10 +43,8 @@ public class RoutingKeyImpl extends ParameterImpl implements RoutingKey {
         this.value = value;
     }
 
-    protected RoutingKeyImpl(LocalRKIdentifier localRkId, RoutingContext rc,
-            TrafficModeType trafMdTy, NetworkAppearance netApp,
-            DestinationPointCode[] dpc, ServiceIndicators[] servInds,
-            OPCList[] opcList) {
+    protected RoutingKeyImpl(LocalRKIdentifier localRkId, RoutingContext rc, TrafficModeType trafMdTy,
+            NetworkAppearance netApp, DestinationPointCode[] dpc, ServiceIndicators[] servInds, OPCList[] opcList) {
         this.tag = Parameter.Routing_Key;
         this.localRkId = localRkId;
         this.rc = rc;
@@ -183,5 +182,40 @@ public class RoutingKeyImpl extends ParameterImpl implements RoutingKey {
 
     public TrafficModeType getTrafficModeType() {
         return this.trafMdTy;
+    }
+
+    @Override
+    public String toString() {
+        TextBuilder tb = TextBuilder.newInstance();
+        tb.append("RoutingKey(");
+        if (localRkId != null) {
+            tb.append(localRkId.toString());
+        }
+
+        if (rc != null) {
+            tb.append(rc.toString());
+        }
+
+        if (trafMdTy != null) {
+            tb.append(trafMdTy.toString());
+        }
+
+        if (netApp != null) {
+            tb.append(netApp.toString());
+        }
+
+        if (dpc != null) {
+            tb.append(dpc.toString());
+        }
+
+        if (servInds != null) {
+            tb.append(servInds.toString());
+        }
+
+        if (opcList != null) {
+            tb.append(opcList.toString());
+        }
+        tb.append(")");
+        return tb.toString();
     }
 }

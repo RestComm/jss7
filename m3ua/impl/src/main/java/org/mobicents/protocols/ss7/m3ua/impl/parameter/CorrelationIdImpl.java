@@ -47,7 +47,7 @@ public class CorrelationIdImpl extends ParameterImpl implements CorrelationId {
 
     @Override
     public String toString() {
-        return String.format("CorrelationId = %d", corrId);
+        return String.format("CorrelationId id=%d", corrId);
     }
 
 }

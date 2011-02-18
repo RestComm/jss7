@@ -76,7 +76,7 @@ public class OPCListImpl extends ParameterImpl implements OPCList {
 
     @Override
     public String toString() {
-        return String.format("OPCList data: pointCode = %s mask = %s", Arrays
+        return String.format("OPCList pointCode=%s mask=%s", Arrays
                 .toString(this.pointCodes), Arrays.toString(this.masks));
     }
 

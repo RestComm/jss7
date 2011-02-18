@@ -64,7 +64,7 @@ public class NetworkAppearanceImpl extends ParameterImpl implements
 
     @Override
     public String toString() {
-        return String.format("NetworkAppearance = %d", value);
+        return String.format("NetworkAppearance value=%d", value);
     }
 
 }

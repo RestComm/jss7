@@ -45,7 +45,7 @@ public class ConcernedDPCImpl extends ParameterImpl implements ConcernedDPC {
 
     @Override
     public String toString() {
-        return String.format("ConcernedDPC = %d", pointCode);
+        return String.format("ConcernedDPC dpc=%d", pointCode);
     }
 
     public int getPointCode() {

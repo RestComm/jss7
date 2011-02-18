@@ -116,7 +116,7 @@ public class ParameterFactoryImpl implements ParameterFactory {
         return new ServiceIndicatorsImpl(inds);
     }
 
-    public TrafficModeType createTrafficModeType(long mode) {
+    public TrafficModeType createTrafficModeType(int mode) {
         return new TrafficModeTypeImpl(mode);
     }
 

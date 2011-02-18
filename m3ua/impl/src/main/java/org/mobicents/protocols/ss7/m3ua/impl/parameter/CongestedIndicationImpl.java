@@ -41,7 +41,7 @@ public class CongestedIndicationImpl extends ParameterImpl implements
 
     @Override
     public String toString() {
-        return String.format("CongestedIndication = %s", level);
+        return String.format("CongestedIndication level=%s", level);
     }
 
 }

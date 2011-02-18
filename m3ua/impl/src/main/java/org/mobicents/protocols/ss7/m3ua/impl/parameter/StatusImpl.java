@@ -1,12 +1,14 @@
 package org.mobicents.protocols.ss7.m3ua.impl.parameter;
 
+import java.util.Arrays;
+
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class StatusImpl extends ParameterImpl implements Status {
 
@@ -39,7 +41,7 @@ public class StatusImpl extends ParameterImpl implements Status {
         byte[] data = new byte[4];
         data[0] = (byte) (type >>> 8);
         data[1] = (byte) (type);
-        
+
         data[2] = (byte) (info >>> 8);
         data[3] = (byte) (info);
 
@@ -52,6 +54,11 @@ public class StatusImpl extends ParameterImpl implements Status {
 
     public int getType() {
         return this.type;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Status type=%d info=%d", type, info);
     }
 
 }

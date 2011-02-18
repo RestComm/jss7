@@ -2,14 +2,15 @@ package org.mobicents.protocols.ss7.m3ua.impl.parameter;
 
 import java.nio.ByteBuffer;
 
+import javolution.text.TextBuilder;
+
 import org.mobicents.protocols.ss7.m3ua.parameter.LocalRKIdentifier;
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 import org.mobicents.protocols.ss7.m3ua.parameter.RegistrationResult;
 import org.mobicents.protocols.ss7.m3ua.parameter.RegistrationStatus;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 
-public class RegistrationResultImpl extends ParameterImpl implements
-        RegistrationResult {
+public class RegistrationResultImpl extends ParameterImpl implements RegistrationResult {
 
     private LocalRKIdentifier localRKId;
     private RegistrationStatus status;
@@ -52,8 +53,7 @@ public class RegistrationResultImpl extends ParameterImpl implements
         }// end of while
     }
 
-    public RegistrationResultImpl(LocalRKIdentifier localRKId,
-            RegistrationStatus status, RoutingContext rc) {
+    public RegistrationResultImpl(LocalRKIdentifier localRKId, RegistrationStatus status, RoutingContext rc) {
         this.tag = Parameter.Registration_Result;
         this.localRKId = localRKId;
         this.status = status;
@@ -89,4 +89,22 @@ public class RegistrationResultImpl extends ParameterImpl implements
         return this.rc;
     }
 
+    @Override
+    public String toString() {
+        TextBuilder tb = TextBuilder.newInstance();
+        tb.append("RegistrationResult(");
+        if (localRKId != null) {
+            tb.append(localRKId.toString());
+        }
+
+        if (status != null) {
+            tb.append(status.toString());
+        }
+
+        if (rc != null) {
+            tb.append(rc.toString());
+        }
+        tb.append(")");
+        return tb.toString();
+    }
 }
