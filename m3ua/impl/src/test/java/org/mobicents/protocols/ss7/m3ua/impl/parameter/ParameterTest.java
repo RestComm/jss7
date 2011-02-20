@@ -375,7 +375,7 @@ public class ParameterTest {
         TrafficModeTypeImpl rc2 = (TrafficModeTypeImpl) factory
                 .createParameter(getTag(data), getValue(data));
 
-        assertEquals(1l, rc2.getMode());
+        assertEquals(1, rc2.getMode());
     }
 
     @Test
