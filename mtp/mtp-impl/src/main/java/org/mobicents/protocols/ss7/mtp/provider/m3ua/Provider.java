@@ -23,10 +23,10 @@ import java.net.SocketAddress;
 import java.nio.channels.SelectionKey;
 import java.util.Collection;
 import java.util.Properties;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.StartFailedException;
@@ -38,8 +38,8 @@ import org.mobicents.protocols.ss7.m3ua.impl.tcp.TcpProvider;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
-import org.mobicents.protocols.ss7.m3ua.message.TransferMessage;
-import org.mobicents.protocols.ss7.m3ua.message.parm.ProtocolData;
+import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
+import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 import org.mobicents.protocols.ss7.mtp.provider.MtpListener;
 import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
 
@@ -73,7 +73,7 @@ public class Provider implements MtpProvider, Runnable {
     private static final Logger logger = Logger.getLogger(Provider.class);
     
     //outgoing message
-    private TransferMessage tm;
+    private PayloadData tm;
     private volatile boolean txFailed = false;
     private volatile boolean sendReady = false;
     
@@ -87,7 +87,7 @@ public class Provider implements MtpProvider, Runnable {
      * 
      */
     public Provider() {
-        provider = TcpProvider.open();
+        provider = TcpProvider.provider();
     }
 
     public String getName() {
@@ -163,7 +163,7 @@ public class Provider implements MtpProvider, Runnable {
     public void send(byte[] msu) throws IOException {
         lock.lock();
         try {
-            TransferMessage msg = (TransferMessage) provider.getMessageFactory().createMessage(
+            PayloadData msg = (PayloadData) provider.getMessageFactory().createMessage(
                     MessageClass.TRANSFER_MESSAGES, 
                     MessageType.PAYLOAD);
             ProtocolData data = provider.getParameterFactory().createProtocolData(0, msu);
@@ -260,7 +260,7 @@ public class Provider implements MtpProvider, Runnable {
         switch (msg.getMessageClass()) {
             case MessageClass.TRANSFER_MESSAGES :
                 //deliver transfer message to the upper layer
-                TransferMessage message = (TransferMessage) msg;
+                PayloadData message = (PayloadData) msg;
                 if (listener != null) {
                     listener.receive(message.getData().getMsu());
                 }
