@@ -18,79 +18,103 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
-import java.io.Serializable;
+import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
+import org.mobicents.protocols.ss7.indicator.NumberingPlan;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.XMLSerializable;
+import javolution.xml.XMLFormat.InputElement;
+import javolution.xml.XMLFormat.OutputElement;
+import javolution.xml.stream.XMLStreamException;
 
 /**
  * Carries the MTP information.
  * 
  * @author kulikov
  */
-public class MTPInfo implements Serializable{
+public class MTPInfo implements XMLSerializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 2052079859277744722L;
+     * 
+     */
+    private static final long serialVersionUID = 2052079859277744722L;
 
-	private final static String SEPARATOR = "#";
-    
+    private static final String NAME = "name";
+    private static final String DPC = "dpc";
+    private static final String OPC = "opc";
+    private static final String SLS = "sls";
+
+    private final static String SEPARATOR = "#";
+
     /** The identifier of MTP-SAP */
-    private String name;    
+    private String name;
     /** destination point code */
     private int dpc;
     /** originated point code */
     private int opc;
     /** signaling link selection */
     private int sls;
-    
+
+    public MTPInfo() {
+
+    }
+
     /**
      * Creates new MTPInfo object.
      * 
-     * @param name the name of MTP-SAP
-     * @param opc the originated point code
-     * @param dpc the destination point code
-     * @param sls the signaling link selection.
+     * @param name
+     *            the name of MTP-SAP
+     * @param opc
+     *            the originated point code
+     * @param dpc
+     *            the destination point code
+     * @param sls
+     *            the signaling link selection.
      */
     public MTPInfo(String name, int opc, int dpc, int sls) {
-        //name can not be null
+        // name can not be null
         if (name == null) {
             throw new IllegalArgumentException("MTP-SAP can not be NULL");
         }
-        
-        //remove any extra white spaces
+
+        // remove any extra white spaces
         this.name = name.trim();
-        
-        //name can not be empty string
+
+        // name can not be empty string
         if (this.name.length() == 0) {
             throw new IllegalArgumentException("MTP-SAP name not specified");
         }
 
-        //check and assign originated point code
+        // check and assign originated point code
         if (opc <= 0) {
-            throw new IllegalArgumentException("Originated point code less of equal to zero");
+            throw new IllegalArgumentException(
+                    "Originated point code less of equal to zero");
         }
         this.opc = opc;
-        
-        //check and assign destination point code
+
+        // check and assign destination point code
         if (dpc <= 0) {
-            throw new IllegalArgumentException("Destination point code less of equal to zero");
+            throw new IllegalArgumentException(
+                    "Destination point code less of equal to zero");
         }
         this.dpc = dpc;
-        
-        //check and assign signaling link selection
+
+        // check and assign signaling link selection
         if (sls < 0) {
-            throw new IllegalArgumentException("Signaling link code can not be less then zero");
+            throw new IllegalArgumentException(
+                    "Signaling link code can not be less then zero");
         }
         this.sls = sls;
     }
-    
+
     /**
      * Gets the name of the MTP-SAP
+     * 
      * @return
      */
     public String getName() {
         return name;
     }
-    
+
     /**
      * Gets the originated point code used for routing
      * 
@@ -99,7 +123,7 @@ public class MTPInfo implements Serializable{
     public int getOpc() {
         return opc;
     }
-    
+
     /**
      * Gets the destination point code which will be used for MTP_TRANSFER
      * 
@@ -108,7 +132,7 @@ public class MTPInfo implements Serializable{
     public int getDpc() {
         return dpc;
     }
-    
+
     /**
      * Gets the signaling link selection.
      * 
@@ -117,29 +141,7 @@ public class MTPInfo implements Serializable{
     public int getSls() {
         return sls;
     }
-    
-    public static MTPInfo getInstance(String s) {
-        if (s == null) {
-            return null;
-        }
-        //use white space as separator
-        String[] tokens = s.split(SEPARATOR);
-        
-        //we are expecting 4 params
-        if (tokens.length != 4) {
-            throw new IllegalArgumentException("Incorrect format: " + s);
-        }
-        
-        //parse params
-        String name = tokens[0];
-        int opc = Integer.parseInt(tokens[1]);
-        int dpc = Integer.parseInt(tokens[2]);
-        int sls = Integer.parseInt(tokens[3]);
-        
-        //generate new object
-        return new MTPInfo(name, opc, dpc, sls);
-    }
-    
+
     @Override
     public String toString() {
         StringBuffer buff = new StringBuffer();
@@ -152,4 +154,25 @@ public class MTPInfo implements Serializable{
         buff.append(sls);
         return buff.toString();
     }
+
+    // default XML representation.
+    protected static final XMLFormat<MTPInfo> XML = new XMLFormat<MTPInfo>(
+            MTPInfo.class) {
+
+        public void write(MTPInfo mtpInfo, OutputElement xml)
+                throws XMLStreamException {
+            xml.setAttribute(NAME, mtpInfo.name);
+            xml.setAttribute(OPC, mtpInfo.opc);
+            xml.setAttribute(DPC, mtpInfo.dpc);
+            xml.setAttribute(SLS, mtpInfo.sls);
+        }
+
+        public void read(InputElement xml, MTPInfo mtpInfo)
+                throws XMLStreamException {
+            mtpInfo.name = xml.getAttribute(NAME).toString();
+            mtpInfo.opc = xml.getAttribute(OPC).toInt();
+            mtpInfo.dpc = xml.getAttribute(DPC).toInt();
+            mtpInfo.sls = xml.getAttribute(SLS).toInt();
+        }
+    };
 }

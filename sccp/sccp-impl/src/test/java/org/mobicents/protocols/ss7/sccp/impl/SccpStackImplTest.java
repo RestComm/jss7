@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.MessageType;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
@@ -47,6 +48,7 @@ public class SccpStackImplTest {
 
     private SccpStackImpl stack = new SccpStackImpl();
     private SccpAddress a1, a2;
+    private RouterImpl router = new RouterImpl();
     
     public SccpStackImplTest() {
     }
@@ -61,6 +63,9 @@ public class SccpStackImplTest {
 
     @Before
     public void setUp() throws IllegalStateException {
+        router.start();
+        
+        stack.setRouter(router);
         stack.start();
         
         GlobalTitle gt1 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "1234");

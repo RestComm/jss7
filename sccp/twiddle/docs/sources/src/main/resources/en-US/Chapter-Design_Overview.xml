@@ -1,25 +1,0 @@
-<?xml version='1.0'?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SCCP_Twiddle_User_Guide.ent">%BOOK_ENTITIES;]>
-
-<chapter id="design_overview">
-
-	<title>Design Overview</title>
-
-	<para>&THIS.PLATFORM; &THIS.APPLICATION;
-		is command line tool. It is based on
-		<literal>JBoss</literal>
-		<acronym>JMX</acronym>
-		<literal>Twiddle</literal>.
-	&THIS.PLATFORM;
-		specific interaction capabilities are created over base provided by
-		<literal>JBoss</literal>
-		<literal>Twiddle</literal>
-		.
-		For detailed design pelase refer to
-		<literal>JBoss</literal>
-		<literal>Twiddle</literal>
-		documentation.
-	</para>
-
-</chapter>
-

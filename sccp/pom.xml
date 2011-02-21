@@ -23,7 +23,6 @@
         <modules>
                 <module>sccp-api</module>
                 <module>sccp-impl</module>
-                <module>twiddle</module>
         </modules>
 
 

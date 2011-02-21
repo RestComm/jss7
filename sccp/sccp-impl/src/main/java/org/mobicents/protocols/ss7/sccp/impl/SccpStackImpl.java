@@ -21,15 +21,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import javolution.util.FastList;
 import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
@@ -70,12 +69,12 @@ public class SccpStackImpl implements SccpStack, Layer4 {
     private Executor layer3exec;
 
     // Hold LinkSet here. LinkSet's name as key and actual LinkSet as Object
-    protected FastMap<String, Linkset> linksets = new FastMap<String, Linkset>();
+    protected volatile FastMap<String, Linkset> linksets = new FastMap<String, Linkset>();
 
     // Hold the byte[] that needs to be writtent to Linkset
-    private FastMap<String, ConcurrentLinkedQueue<byte[]>> linksetQueue = new FastMap<String, ConcurrentLinkedQueue<byte[]>>();
+    private volatile FastMap<String, ConcurrentLinkedQueue<byte[]>> linksetQueue = new FastMap<String, ConcurrentLinkedQueue<byte[]>>();
 
-    private LinksetSelector linkSetSelector = new LinksetSelector();
+    private volatile LinksetSelector linkSetSelector = new LinksetSelector();
 
     protected MessageFactoryImpl messageFactory;
     private static final Logger logger = Logger.getLogger(SccpStackImpl.class);
@@ -112,7 +111,7 @@ public class SccpStackImpl implements SccpStack, Layer4 {
      */
     public void start() throws IllegalStateException {
         logger.info("Starting ...");
-        router = new RouterImpl(path);
+
         executor = Executors.newFixedThreadPool(1);
 
         this.state = State.RUNNING;
@@ -136,11 +135,12 @@ public class SccpStackImpl implements SccpStack, Layer4 {
      * 
      * @see org.mobicents.protocols.ss7.sccp.SccpStack#setRouter(org.mobicents.protocols.ss7.sccp.Router)
      */
-    public void setRouter(Router router) {
+    public void setRouter(RouterImpl router) {
+        this.router = router;
     }
 
-    public Router getRouter() {
-        return null;
+    public RouterImpl getRouter() {
+        return this.router;
     }
 
     private enum State {
@@ -197,6 +197,8 @@ public class SccpStackImpl implements SccpStack, Layer4 {
         Rule rule = router.find(msg.getCalledPartyAddress());
 
         // route not defined? try to deliver to local listener
+        //TODO : If routing is based on DPC and SSN; and DPC is not this DPC, then it
+        //should be routed to actual DPC instead of giving it back to local listener
         if (rule == null) {
             sccpProvider.notify(msg.getCalledPartyAddress(), msg);
             return;
@@ -360,10 +362,12 @@ public class SccpStackImpl implements SccpStack, Layer4 {
             while (state == State.RUNNING) {
 
                 try {
-                    Collection<SelectorKey> selected = linkSetSelector
-                            .selectNow(OP_READ_WRITE, 1);
-                    for (SelectorKey key : selected) {
-                        ((LinksetStream) key.getStream()).read(rxBuffer);
+                    FastList<SelectorKey> selected = linkSetSelector.selectNow(
+                            OP_READ_WRITE, 1);
+                    for (FastList.Node<SelectorKey> n = selected.head(), end = selected
+                            .tail(); (n = n.getNext()) != end;) {
+                        ((LinksetStream) n.getValue().getStream())
+                                .read(rxBuffer);
 
                         // Read data
                         if (rxBuffer != null) {
@@ -374,9 +378,10 @@ public class SccpStackImpl implements SccpStack, Layer4 {
 
                         // write data
                         txBuffer = linksetQueue.get(
-                                ((LinksetStream) key.getStream()).getName()).poll();
+                                ((LinksetStream) n.getValue().getStream())
+                                        .getName()).poll();
                         if (txBuffer != null) {
-                            key.getStream().write(txBuffer);
+                            n.getValue().getStream().write(txBuffer);
                         }
 
                     }

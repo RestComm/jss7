@@ -54,7 +54,7 @@ public interface SccpStack {
      * 
      * @param router the router implementation.
      */
-    public void setRouter(Router router);
+    //public void setRouter(Router router);
     
     /**
      * Defines transfer type for outgoing messages.

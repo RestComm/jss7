@@ -19,6 +19,9 @@ package org.mobicents.protocols.ss7.sccp.impl.router;
 
 import java.io.Serializable;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
@@ -37,17 +40,29 @@ public class Rule implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 2147449454267320237L;
+	
+	private static final String RULE_NAME = "name";
+	private static final String PATTERN = "pattern";
+	private static final String TRANSLATION = "translation";
+	private static final String MTP_INFO = "mtpInfo";
+	
+	 private final static String SEPARATOR = ";";
 
-	private final static String SEPARATOR = ";";
+    /** the name of the rule */
+    private String name;    
     
-    /** the number of the rule */
-    protected int no;    
     /** Pattern used for selecting rule */
     private AddressInformation pattern;
+    
     /** Translation method */
     private AddressInformation translation;
+    
     /** Additional MTP info */
     private MTPInfo mtpInfo;
+    
+    public Rule(){
+        
+    }
     
     /**
      * Creeates new routing rule.
@@ -57,43 +72,20 @@ public class Rule implements Serializable{
      * @param translation translation method.
      * @param mtpInfo MTP routing info
      */
-    public Rule(AddressInformation pattern, AddressInformation translation, MTPInfo mtpInfo) {
-        this.pattern = pattern;
-        this.translation = translation;
-        this.mtpInfo = mtpInfo;
-    }
-
-    protected Rule(int no, AddressInformation pattern, AddressInformation translation, MTPInfo mtpInfo) {
-        this.no = no;
+    protected Rule(String name, AddressInformation pattern, AddressInformation translation, MTPInfo mtpInfo) {
+        this.name = name;
         this.pattern = pattern;
         this.translation = translation;
         this.mtpInfo = mtpInfo;
     }
     
-    public static Rule getInstance(String s) {
-        String[] tokens = s.trim().split(";");
-        
-        int no = Integer.parseInt(tokens[0]);
-        String addressInfo = tokens[1];
-        String translation = tokens[2];
-        
-        String mtpInfo = null;
-        try {
-            mtpInfo = tokens[3];
-        } catch (ArrayIndexOutOfBoundsException e) {
-        }
-        
-        return new Rule(no, AddressInformation.getInstance(addressInfo), 
-                AddressInformation.getInstance(translation),
-                MTPInfo.getInstance(mtpInfo));
+   
+    public String getName() {
+        return name;
     }
     
-    public int getNo() {
-        return no;
-    }
-    
-    public void setNo(int no) {
-        this.no = no;
+    public void setName(String name) {
+        this.name = name;
     }
     
     /**
@@ -130,6 +122,12 @@ public class Rule implements Serializable{
      * @return translated address
      */
     public SccpAddress translate(SccpAddress address) {
+        
+        //Translation is not mandatory
+        if(this.translation == null){
+            return address;
+        }
+        
         //step #1. translate digits
         //TODO enable expression
         String digits = this.translation.getDigits();
@@ -258,10 +256,35 @@ public class Rule implements Serializable{
         }
     }
     
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<Rule> RULE_XML = new XMLFormat<Rule>(Rule.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                Rule rule) throws XMLStreamException {
+            rule.name = xml.getAttribute(RULE_NAME).toString();
+            rule.pattern = xml.get(PATTERN);
+            rule.translation = xml.get(TRANSLATION);
+            rule.mtpInfo = xml.get(MTP_INFO);
+        }
+
+        @Override
+        public void write(Rule rule,
+                javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            xml.setAttribute(RULE_NAME, rule.name);
+            xml.add(rule.pattern, PATTERN);
+            xml.add(rule.translation, TRANSLATION);
+            xml.add(rule.mtpInfo, MTP_INFO);
+        }
+    };    
+    
     @Override
     public String toString() {
         StringBuffer buff = new StringBuffer();
-        buff.append(no);
+        buff.append(name);
         buff.append(SEPARATOR);
         buff.append(pattern.toString());
         buff.append(SEPARATOR);
