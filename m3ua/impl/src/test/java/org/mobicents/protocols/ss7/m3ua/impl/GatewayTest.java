@@ -1,7 +1,6 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 
@@ -13,7 +12,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.m3ua.impl.as.RemSigGatewayImpl;
-import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ProtocolDataImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.sg.SigGatewayImpl;
@@ -127,7 +125,7 @@ public class GatewayTest {
             rsgw.start();
 
             localAs = rsgw.createAppServer("client-testas", rc, rKey, trModType);
-            localAspFactory = rsgw.createAspFactory("client-testasp", "127.0.0.1", 2777, "127.0.0.1", 1112);
+            localAspFactory = rsgw.createAspFactory("client-testasp", "127.0.0.1", 3777, "127.0.0.1", 3112);
             localAsp = rsgw.assignAspToAs("client-testas", "client-testasp");
 
             rsgw.startAsp("client-testasp");
@@ -185,11 +183,11 @@ public class GatewayTest {
 
         public void start() throws Exception {
             // Set-up Signaling Gateway
-            sgw = new SigGatewayImpl("127.0.0.1", 1112);
+            sgw = new SigGatewayImpl("127.0.0.1", 3112);
             sgw.start();
 
             remAs = sgw.createAppServer("server-testas", rc, rKey, trModType);
-            remAspFactory = sgw.createAspFactory("server-testasp", "127.0.0.1", 2777);
+            remAspFactory = sgw.createAspFactory("server-testasp", "127.0.0.1", 3777);
             remAsp = sgw.assignAspToAs("server-testas", "server-testasp");
 
             started = true;
