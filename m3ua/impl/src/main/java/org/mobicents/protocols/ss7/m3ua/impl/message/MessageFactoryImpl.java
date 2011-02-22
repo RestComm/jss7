@@ -47,7 +47,7 @@ import org.mobicents.protocols.ss7.m3ua.message.MessageFactory;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
 
 /**
- * 
+ * @author amit bhayani
  * @author kulikov
  */
 public class MessageFactoryImpl implements MessageFactory {
@@ -143,8 +143,6 @@ public class MessageFactoryImpl implements MessageFactory {
     }
 
     public M3UAMessageImpl createMessage(ByteBuffer buffer) {
-        System.out.println("MessageFactory got buffer with size "
-                + buffer.remaining());
         // fill header buffer completely before start parsing header
         if (!isHeaderReady) {
             // the amount of data possible to read is determined as
@@ -169,15 +167,22 @@ public class MessageFactoryImpl implements MessageFactory {
 
             // construct new message instance
             message = this.createMessage(messageClass, messageType);
-
+            
             // obtain remaining length of the message and prepare buffer
             length = ((header[4] & 0xff << 24) | (header[5] & 0xff << 16)
                     | (header[6] & 0xff << 8) | (header[7] & 0xff)) - 8;
+            
+            if(length == 0){
+                //This is only headre message,no body
+                this.pos = 0;
+                this.isHeaderReady = false;
+                return message;
+            }
             params = new byte[length];
 
             // finally switch cursor position
             pos = 0;
-        }
+        } 
 
         // at this point we must recheck remainder of the input buffer
         // because possible case when input buffer fits exactly to the header
@@ -218,8 +223,6 @@ public class MessageFactoryImpl implements MessageFactory {
         int dataLen;
         // fill header buffer completely before start parsing header
         if (buffer.remaining() < 8) {
-            System.out
-                    .println("M3UAMessageFactory can't create message from data < 8 byte. Double check!");
             return null;
         }
         pos = 0;
