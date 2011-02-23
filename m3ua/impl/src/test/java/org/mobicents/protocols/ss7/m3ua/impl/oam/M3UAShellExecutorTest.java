@@ -42,7 +42,7 @@ public class M3UAShellExecutorTest {
 
     @Test
     public void testSgwCommands() {
-        m3uaExec.setSigGatewayImpl(sgw);
+        m3uaExec.setSgp(sgw);
 
         // Test creating new AS
         String result = m3uaExec.execute("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode loadshare testas"
@@ -84,7 +84,7 @@ public class M3UAShellExecutorTest {
     
     @Test
     public void testRemSgwCommands() {
-        m3uaExec.setSigGatewayImpl(rsgw);
+        m3uaExec.setSgp(rsgw);
 
         // Test creating new AS
         String result = m3uaExec.execute("m3ua ras create rc 100 testas"
