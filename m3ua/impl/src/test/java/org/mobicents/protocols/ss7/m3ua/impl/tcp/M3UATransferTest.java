@@ -37,8 +37,8 @@ public class M3UATransferTest {
 
     private InetAddress localhost;
     
-    private int serverPort = 9082;
-    private int clientPort = 9083;
+    private int serverPort = 6082;
+    private int clientPort = 6083;
     
     private Server server;
     private Client client;

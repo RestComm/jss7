@@ -1,15 +1,14 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
+import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
-import org.mobicents.protocols.ss7.m3ua.impl.as.AsImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
-import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
@@ -109,7 +108,7 @@ public abstract class As {
         for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
             Asp aspTemp = n.getValue();
             if (aspTemp.getName().compareTo(asp.getName()) == 0) {
-                throw new Exception(String.format("Asp name=%s already exist", asp.getName()));
+                throw new Exception(String.format("Asp name=%s already added", asp.getName()));
             }
         }
 
@@ -122,19 +121,25 @@ public abstract class As {
         this.fsm.signal(asTransition);
     }
 
-    public void write(PayloadData message) throws Exception {
+    public void write(PayloadData message) throws IOException {
 
         switch (this.getState()) {
         case ACTIVE:
             // TODO : Algo to select correct ASP
-            Asp asp = this.appServerProcs.get(0);
-            asp.getAspFactory().write(message);
+            for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
+                Asp aspTemp = n.getValue();
+                if(aspTemp.getState() == AspState.ACTIVE){
+                    aspTemp.getAspFactory().write(message);
+                    break;
+                }
+            }
+            
             break;
         case PENDING:
             this.penQueue.add(message);
             break;
         default:
-            throw new Exception(String.format("As name=%s is not ACTIVE", this.name));
+            throw new IOException(String.format("As name=%s is not ACTIVE", this.name));
         }
     }
 

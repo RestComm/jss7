@@ -13,17 +13,14 @@ import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 
-public class DestinationAvailableImpl extends M3UAMessageImpl implements
-        DestinationAvailable {
+public class DestinationAvailableImpl extends M3UAMessageImpl implements DestinationAvailable {
 
     public DestinationAvailableImpl() {
-        super(MessageClass.SIGNALING_NETWORK_MANAGEMENT,
-                MessageType.DESTINATION_AVAILABLE);
+        super(MessageClass.SIGNALING_NETWORK_MANAGEMENT, MessageType.DESTINATION_AVAILABLE);
     }
 
     public AffectedPointCode getAffectedPointCodes() {
-        return (AffectedPointCode) parameters
-                .get(ParameterImpl.Affected_Point_Code);
+        return (AffectedPointCode) parameters.get(ParameterImpl.Affected_Point_Code);
     }
 
     public InfoString getInfoString() {
@@ -31,8 +28,7 @@ public class DestinationAvailableImpl extends M3UAMessageImpl implements
     }
 
     public NetworkAppearance getNetworkAppearance() {
-        return (NetworkAppearance) parameters
-                .get(ParameterImpl.Network_Appearance);
+        return (NetworkAppearance) parameters.get(ParameterImpl.Network_Appearance);
     }
 
     public RoutingContext getRoutingContexts() {
@@ -44,11 +40,15 @@ public class DestinationAvailableImpl extends M3UAMessageImpl implements
     }
 
     public void setInfoString(InfoString str) {
-        parameters.put(ParameterImpl.INFO_String, str);
+        if (str != null) {
+            parameters.put(ParameterImpl.INFO_String, str);
+        }
     }
 
     public void setNetworkAppearance(NetworkAppearance p) {
-        parameters.put(ParameterImpl.Network_Appearance, p);
+        if (p != null) {
+            parameters.put(ParameterImpl.Network_Appearance, p);
+        }
     }
 
     public void setRoutingContexts(RoutingContext routingCntx) {
@@ -58,21 +58,17 @@ public class DestinationAvailableImpl extends M3UAMessageImpl implements
     @Override
     protected void encodeParams(ByteBuffer buffer) {
         if (parameters.containsKey(Parameter.Network_Appearance)) {
-            ((ParameterImpl) parameters.get(Parameter.Network_Appearance))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.Network_Appearance)).write(buffer);
         }
 
         if (parameters.containsKey(Parameter.Routing_Context)) {
-            ((ParameterImpl) parameters.get(Parameter.Routing_Context))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.Routing_Context)).write(buffer);
         }
         if (parameters.containsKey(Parameter.Affected_Point_Code)) {
-            ((ParameterImpl) parameters.get(Parameter.Affected_Point_Code))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.Affected_Point_Code)).write(buffer);
         }
         if (parameters.containsKey(Parameter.INFO_String)) {
-            ((ParameterImpl) parameters.get(Parameter.INFO_String))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.INFO_String)).write(buffer);
         }
 
     }

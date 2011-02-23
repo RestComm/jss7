@@ -13,7 +13,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class ASPDownImpl extends M3UAMessageImpl implements ASPDown {
 
@@ -26,15 +26,16 @@ public class ASPDownImpl extends M3UAMessageImpl implements ASPDown {
     }
 
     public void setInfoString(InfoString str) {
-        parameters.put(ParameterImpl.INFO_String, str);
+        if (str != null) {
+            parameters.put(ParameterImpl.INFO_String, str);
+        }
     }
 
     @Override
     protected void encodeParams(ByteBuffer buffer) {
 
         if (parameters.containsKey(Parameter.INFO_String)) {
-            ((ParameterImpl) parameters.get(Parameter.INFO_String))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.INFO_String)).write(buffer);
         }
     }
 }

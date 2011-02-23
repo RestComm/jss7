@@ -120,7 +120,9 @@ public class RoutingKeyImpl extends ParameterImpl implements RoutingKey {
     }
 
     private void encode() {
-        ((LocalRKIdentifierImpl) this.localRkId).write(buffer);
+        if (this.localRkId != null) {
+            ((LocalRKIdentifierImpl) this.localRkId).write(buffer);
+        }
 
         if (this.rc != null) {
             ((RoutingContextImpl) rc).write(buffer);

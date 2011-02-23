@@ -14,26 +14,22 @@ import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
-public class ASPInactiveAckImpl extends M3UAMessageImpl implements
-        ASPInactiveAck {
+public class ASPInactiveAckImpl extends M3UAMessageImpl implements ASPInactiveAck {
 
     public ASPInactiveAckImpl() {
-        super(MessageClass.ASP_TRAFFIC_MAINTENANCE,
-                MessageType.ASP_INACTIVE_ACK);
+        super(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE_ACK);
     }
 
     @Override
     protected void encodeParams(ByteBuffer buffer) {
 
         if (parameters.containsKey(Parameter.Routing_Context)) {
-            ((ParameterImpl) parameters.get(Parameter.Routing_Context))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.Routing_Context)).write(buffer);
         }
         if (parameters.containsKey(Parameter.INFO_String)) {
-            ((ParameterImpl) parameters.get(Parameter.INFO_String))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.INFO_String)).write(buffer);
         }
     }
 
@@ -46,13 +42,13 @@ public class ASPInactiveAckImpl extends M3UAMessageImpl implements
     }
 
     public void setInfoString(InfoString str) {
-        parameters.put(ParameterImpl.INFO_String, str);
-
+        if (str != null) {
+            parameters.put(ParameterImpl.INFO_String, str);
+        }
     }
 
     public void setRoutingContext(RoutingContext rc) {
         parameters.put(ParameterImpl.Routing_Context, rc);
-
     }
 
 }

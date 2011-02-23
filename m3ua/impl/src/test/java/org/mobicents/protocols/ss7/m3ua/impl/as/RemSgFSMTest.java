@@ -9,7 +9,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.AsState;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
@@ -18,22 +17,13 @@ import org.mobicents.protocols.ss7.m3ua.impl.AspState;
 import org.mobicents.protocols.ss7.m3ua.impl.CommunicationListener.CommunicationState;
 import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
-import org.mobicents.protocols.ss7.m3ua.impl.message.asptm.ASPActiveImpl;
-import org.mobicents.protocols.ss7.m3ua.impl.message.asptm.ASPInactiveImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.SigGatewayImpl;
-import org.mobicents.protocols.ss7.m3ua.impl.tcp.TcpProvider;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
-import org.mobicents.protocols.ss7.m3ua.message.asptm.ASPActive;
 import org.mobicents.protocols.ss7.m3ua.message.asptm.ASPActiveAck;
 import org.mobicents.protocols.ss7.m3ua.message.mgmt.Notify;
-import org.mobicents.protocols.ss7.m3ua.parameter.DestinationPointCode;
-import org.mobicents.protocols.ss7.m3ua.parameter.LocalRKIdentifier;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
-import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
-import org.mobicents.protocols.ss7.m3ua.parameter.ServiceIndicators;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 
@@ -41,7 +31,6 @@ public class RemSgFSMTest {
 
     private ParameterFactoryImpl parmFactory = new ParameterFactoryImpl();
     private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
-    private M3UAProvider provider = TcpProvider.provider();
 
     public RemSgFSMTest() {
     }
@@ -72,17 +61,13 @@ public class RemSgFSMTest {
 
         RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
-        DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory
-                .createDestinationPointCode(123, (short) 0) };
-
-        ServiceIndicators[] servInds = new ServiceIndicators[] { parmFactory.createServiceIndicators(new short[] { 3 }) };
-
-        TrafficModeType trModType = parmFactory.createTrafficModeType(TrafficModeType.Override);
-        LocalRKIdentifier lRkId = parmFactory.createLocalRKIdentifier(1);
-        RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
-
-        As as = rsgw.createAppServer("testas", rc, rKey, trModType);
-        AspFactory localAspFactory = rsgw.createAspFactory("testasp", "127.0.0.1", 2777, "127.0.0.1", 2778);
+        // As as = rsgw.createAppServer("testas", rc, rKey, trModType);
+        As as = rsgw.createAppServer("m3ua as create rc 100 testas".split(" "));
+        // AspFactory localAspFactory = rsgw.createAspFactory("testasp",
+        // "127.0.0.1", 2777, "127.0.0.1", 2778);
+        AspFactory localAspFactory = rsgw
+                .createAspFactory("m3ua asp create ip 127.0.0.1 port 2777 remip 127.0.0.1 remport 2778 testasp"
+                        .split(" "));
         localAspFactory.start();
 
         Asp asp = rsgw.assignAspToAs("testas", "testasp");
@@ -106,7 +91,8 @@ public class RemSgFSMTest {
         localAspFactory.read(notify);
 
         assertEquals(AspState.ACTIVE_SENT, asp.getState());
-        assertTrue(validateMessage(localAspFactory, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE, -1, -1));
+        assertTrue(validateMessage(localAspFactory, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE, -1,
+                -1));
         // also the AS should be INACTIVE now
         assertEquals(AsState.INACTIVE, as.getState());
 
@@ -152,34 +138,20 @@ public class RemSgFSMTest {
         // Define 1st AS
         RoutingContext rc1 = parmFactory.createRoutingContext(new long[] { 100 });
 
-        DestinationPointCode[] dpc1 = new DestinationPointCode[] { parmFactory.createDestinationPointCode(123,
-                (short) 0) };
-
-        ServiceIndicators[] servInds1 = new ServiceIndicators[] { parmFactory
-                .createServiceIndicators(new short[] { 3 }) };
-
-        TrafficModeType trModType1 = parmFactory.createTrafficModeType(TrafficModeType.Override);
-        LocalRKIdentifier lRkId1 = parmFactory.createLocalRKIdentifier(1);
-        RoutingKey rKey1 = parmFactory.createRoutingKey(lRkId1, rc1, null, null, dpc1, servInds1, null);
-
-        As remAs1 = rsgw.createAppServer("testas1", rc1, rKey1, trModType1);
+        // As remAs1 = rsgw.createAppServer("testas1", rc1, rKey1, trModType1);
+        As remAs1 = rsgw.createAppServer("m3ua as create rc 100 testas1".split(" "));
 
         // Define 2nd AS
         RoutingContext rc2 = parmFactory.createRoutingContext(new long[] { 200 });
 
-        DestinationPointCode[] dpc2 = new DestinationPointCode[] { parmFactory.createDestinationPointCode(124,
-                (short) 0) };
+        // As remAs2 = rsgw.createAppServer("testas2", rc2, rKey2, trModType2);
+        As remAs2 = rsgw.createAppServer("m3ua as create rc 200 testas2".split(" "));
 
-        ServiceIndicators[] servInds2 = new ServiceIndicators[] { parmFactory
-                .createServiceIndicators(new short[] { 3 }) };
-
-        TrafficModeType trModType2 = parmFactory.createTrafficModeType(TrafficModeType.Override);
-        LocalRKIdentifier lRkId2 = parmFactory.createLocalRKIdentifier(1);
-        RoutingKey rKey2 = parmFactory.createRoutingKey(lRkId2, rc2, null, null, dpc2, servInds2, null);
-
-        As remAs2 = rsgw.createAppServer("testas2", rc2, rKey2, trModType2);
-
-        AspFactory aspFactory = rsgw.createAspFactory("testasp", "127.0.0.1", 2777, "127.0.0.1", 2778);
+        // AspFactory aspFactory = rsgw.createAspFactory("testasp", "127.0.0.1",
+        // 2777, "127.0.0.1", 2778);
+        AspFactory aspFactory = rsgw
+                .createAspFactory("m3ua asp create ip 127.0.0.1 port 3777 remip 127.0.0.1 remport 3112 testasp"
+                        .split(" "));
         aspFactory.start();
 
         // Both ASP uses same underlying M3UAChannel
@@ -280,21 +252,23 @@ public class RemSgFSMTest {
 
         RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
-        DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory
-                .createDestinationPointCode(123, (short) 0) };
-
-        ServiceIndicators[] servInds = new ServiceIndicators[] { parmFactory.createServiceIndicators(new short[] { 3 }) };
-
         TrafficModeType trModType = parmFactory.createTrafficModeType(TrafficModeType.Override);
-        LocalRKIdentifier lRkId = parmFactory.createLocalRKIdentifier(1);
-        RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
 
-        As remAs = rsgw.createAppServer("testas", rc, rKey, trModType);
+        // As remAs = rsgw.createAppServer("testas", rc, rKey, trModType);
+        As remAs = rsgw.createAppServer("m3ua as create rc 100 testas".split(" "));
 
-        AspFactory aspFactory1 = rsgw.createAspFactory("testasp1", "127.0.0.1", 2777, "127.0.0.1", 2777);
+        // AspFactory aspFactory1 = rsgw.createAspFactory("testasp1",
+        // "127.0.0.1", 2777, "127.0.0.1", 2777);
+        AspFactory aspFactory1 = rsgw
+                .createAspFactory("m3ua asp create ip 127.0.0.1 port 3777 remip 127.0.0.1 remport 3112 testasp1"
+                        .split(" "));
         aspFactory1.start();
 
-        AspFactory aspFactory2 = rsgw.createAspFactory("testasp2", "127.0.0.1", 2777, "127.0.0.1", 2778);
+        // AspFactory aspFactory2 = rsgw.createAspFactory("testasp2",
+        // "127.0.0.1", 2777, "127.0.0.1", 2778);
+        AspFactory aspFactory2 = rsgw
+                .createAspFactory("m3ua asp create ip 127.0.0.1 port 3778 remip 127.0.0.1 remport 3112 testasp2"
+                        .split(" "));
         aspFactory2.start();
 
         Asp remAsp1 = rsgw.assignAspToAs("testas", "testasp1");
@@ -323,6 +297,25 @@ public class RemSgFSMTest {
         // the AS1 should be INACTIVE
         assertEquals(AsState.INACTIVE, remAs.getState());
 
+        // The other side will send ASP_ACTIVE_ACK and after that
+        // NTFY(AS-ACTIVE)
+        ASPActiveAck aspActiveAck = (ASPActiveAck) messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
+                MessageType.ASP_ACTIVE_ACK);
+        aspActiveAck.setRoutingContext(rc);
+        aspActiveAck.setTrafficModeType(trModType);
+        aspFactory1.read(aspActiveAck);
+
+        assertEquals(AspState.ACTIVE, remAsp1.getState());
+
+        notify = (Notify) messageFactory.createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
+        notify.setRoutingContext(rc);
+        status = parmFactory.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE);
+        notify.setStatus(status);
+        aspFactory1.read(notify);
+        aspFactory2.read(notify);
+
+        assertEquals(AsState.ACTIVE, remAs.getState());
+
         // Communication UP for ASP2
         aspFactory2.onCommStateChange(CommunicationState.UP);
         assertEquals(AspState.UP_SENT, remAsp2.getState());
@@ -333,39 +326,19 @@ public class RemSgFSMTest {
         aspFactory2.read(message);
         // ASP2 now is INACTIVE as ASP1 is still ACTIVATING
         assertEquals(AspState.INACTIVE, remAsp2.getState());
-        
-        
-        // The other side will send ASP_ACTIVE_ACK and after that
-        // NTFY(AS-ACTIVE)
-        ASPActiveAck aspActiveAck = (ASPActiveAck) messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
-                MessageType.ASP_ACTIVE_ACK);
-        aspActiveAck.setRoutingContext(rc);
-        aspFactory1.read(aspActiveAck);
-        
-        assertEquals(AspState.ACTIVE, remAsp1.getState());
-        
-        notify = (Notify) messageFactory.createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
-        notify.setRoutingContext(rc);
-        status = parmFactory.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE);
-        notify.setStatus(status);
-        aspFactory1.read(notify);
-        aspFactory2.read(notify); 
-        
-        assertEquals(AsState.ACTIVE, remAs.getState());
-        
-        
+
         // Bring down ASP1
         // 5.2.1. 1+1 Sparing, Withdrawal of ASP, Backup Override
         aspFactory1.onCommStateChange(CommunicationState.LOST);
-        //the ASP is DOWN and AS goes in PENDING STATE
+        // the ASP is DOWN and AS goes in PENDING STATE
         assertEquals(AspState.DOWN, remAsp1.getState());
         assertEquals(AsState.PENDING, remAs.getState());
-        
-        //Aslo the ASP_ACTIVE for ASP2 should have been sent
+
+        // Aslo the ASP_ACTIVE for ASP2 should have been sent
         assertEquals(AspState.ACTIVE_SENT, remAsp2.getState());
         assertTrue(validateMessage(aspFactory2, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE, -1, -1));
-        
-        //We will not get Alternate ASP Active as this ASP's channel is dead
+
+        // We will not get Alternate ASP Active as this ASP's channel is dead
         // The other side will send ASP_ACTIVE_ACK and after that
         // NTFY(AS-ACTIVE)
         aspActiveAck = (ASPActiveAck) messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
@@ -373,16 +346,16 @@ public class RemSgFSMTest {
         aspActiveAck.setRoutingContext(rc);
         aspFactory2.read(aspActiveAck);
         assertEquals(AspState.ACTIVE, remAsp2.getState());
-        
-        //We should get Notify that AS is ACTIVE
+
+        // We should get Notify that AS is ACTIVE
         notify = (Notify) messageFactory.createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
         notify.setRoutingContext(rc);
         status = parmFactory.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE);
         notify.setStatus(status);
-        aspFactory2.read(notify);   
-        
+        aspFactory2.read(notify);
+
         assertEquals(AsState.ACTIVE, remAs.getState());
-        
+
         assertNull(aspFactory1.txPoll());
         assertNull(aspFactory2.txPoll());
 

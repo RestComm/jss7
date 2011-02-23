@@ -16,6 +16,8 @@ import org.mobicents.protocols.ss7.m3ua.impl.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.SigGateway;
 import org.mobicents.protocols.ss7.m3ua.impl.CommunicationListener.CommunicationState;
+import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAOAMMessages;
+import org.mobicents.protocols.ss7.m3ua.impl.scheduler.M3UAScheduler;
 import org.mobicents.protocols.ss7.m3ua.impl.tcp.TcpProvider;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
@@ -23,8 +25,6 @@ import org.mobicents.protocols.ss7.m3ua.message.MessageType;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
-import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
-import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 
 public class RemSigGatewayImpl implements SigGateway {
 
@@ -37,6 +37,8 @@ public class RemSigGatewayImpl implements SigGateway {
     private M3UASelector selector;
 
     private boolean started = false;
+    
+    private M3UAScheduler m3uaScheduler = new M3UAScheduler();
 
     public RemSigGatewayImpl() {
     }
@@ -65,7 +67,7 @@ public class RemSigGatewayImpl implements SigGateway {
         payload.setRoutingContext(as.getRoutingContext());
         as.write(payload);
 
-    }    
+    }
 
     public void start() throws IOException {
         m3uaProvider = TcpProvider.provider();
@@ -74,15 +76,109 @@ public class RemSigGatewayImpl implements SigGateway {
         this.started = true;
     }
 
-    public As createAppServer(String name, RoutingContext rc, RoutingKey rk, TrafficModeType trMode) {
-        // TODO : Check for duplication of RoutingKey and name
-        AsImpl as = new AsImpl(name, rc, rk, trMode, this.m3uaProvider);
+    /**
+     * Expected command is m3ua as create rc <rc> <ras-name>
+     * 
+     * @param args
+     * @return
+     * @throws Exception
+     */
+    public As createAppServer(String args[]) throws Exception {
+
+        if (args.length < 6) {
+            // minimum 6 args needed
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        String rcKey = args[3];
+        if (rcKey == null || rcKey.compareTo("rc") != 0) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        String rc = args[4];
+        if (rc == null) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        RoutingContext rcObj = m3uaProvider.getParameterFactory().createRoutingContext(
+                new long[] { Long.parseLong(rc) });
+
+        String name = args[5];
+
+        for (FastList.Node<As> n = appServers.head(), end = appServers.tail(); (n = n.getNext()) != end;) {
+            As as = n.getValue();
+            if (as.getName().compareTo(name) == 0) {
+                throw new Exception(String.format(M3UAOAMMessages.CREATE_AS_FAIL_NAME_EXIST, name));
+            }
+        }
+
+        AsImpl as = new AsImpl(name, rcObj, null, null, this.m3uaProvider);
+        m3uaScheduler.execute(as.getFSM());
         appServers.add(as);
         return as;
+
     }
 
-    public AspFactory createAspFactory(String name, String ip, int port, String remIp, int remPort) {
-        // TODO : Check for duplication of ip and port and name
+    /**
+     * Command to craete ASPFactory is "m3ua asp create ip <local-ip> port
+     * <local-port> remip <remip> remport <remport> <asp-name>"
+     * 
+     * @param args
+     * @return
+     */
+    public AspFactory createAspFactory(String[] args) throws Exception {
+
+        if (args.length != 12) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        if (args[3] == null || args[3].compareTo("ip") != 0) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        if (args[4] == null) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+        String ip = args[4];
+
+        if (args[5] == null || args[5].compareTo("port") != 0) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        int port = Integer.parseInt(args[6]);
+
+        if (args[7] == null || args[7].compareTo("remip") != 0) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        if (args[8] == null) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+        String remIp = args[8];
+
+        if (args[9] == null || args[9].compareTo("remport") != 0) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        int remPort = Integer.parseInt(args[10]);
+
+        if (args[11] == null) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        String name = args[11];
+
+        for (FastList.Node<AspFactory> n = aspfactories.head(), end = aspfactories.tail(); (n = n.getNext()) != end;) {
+            AspFactory fact = n.getValue();
+            if (fact.getName().compareTo(name) == 0) {
+                throw new Exception(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_NAME_EXIST, name));
+            }
+
+            if (fact.getIp().compareTo(ip) == 0 && fact.getPort() == port) {
+                throw new Exception(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_IPPORT_EXIST, ip, port));
+            }
+        }
+
         AspFactory factory = new LocalAspFactory(name, ip, port, remIp, remPort, this.m3uaProvider);
         aspfactories.add(factory);
         return factory;
@@ -99,7 +195,7 @@ public class RemSigGatewayImpl implements SigGateway {
         }
 
         if (as == null) {
-            throw new Exception(String.format("No Application Server found for given name %s", asName));
+            throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_NO_AS, asName));
         }
 
         AspFactory aspFactroy = null;
@@ -111,10 +207,11 @@ public class RemSigGatewayImpl implements SigGateway {
         }
 
         if (aspFactroy == null) {
-            throw new Exception(String.format("No Application Server Process found for given name %s", aspName));
+            throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_NO_ASP, aspName));
         }
 
         Asp asp = aspFactroy.createAsp();
+        m3uaScheduler.execute(asp.getFSM());
         as.addAppServerProcess(asp);
 
         return asp;
@@ -143,6 +240,9 @@ public class RemSigGatewayImpl implements SigGateway {
                 channel.finishConnect();
             }
         }
+        
+        localAspFact.setChannel(channel);
+        
         localAspFact.start();
         logger.info(String.format("Started ASP name=%s local-ip=%s local-pot=%d rem-ip=%s rem-port=%d", localAspFact
                 .getName(), localAspFact.getIp(), localAspFact.getPort(), localAspFact.getRemIp(), localAspFact
@@ -170,7 +270,9 @@ public class RemSigGatewayImpl implements SigGateway {
         if (!started) {
             return;
         }
-
+        
+        m3uaScheduler.tick();
+        
         FastList<M3UASelectionKey> selections = selector.selectNow();
 
         for (FastList.Node<M3UASelectionKey> n = selections.head(), end = selections.tail(); (n = n.getNext()) != end;) {
@@ -181,7 +283,7 @@ public class RemSigGatewayImpl implements SigGateway {
                 }
                 read(key);
             }
-            
+
             if (key.isWritable()) {
                 write(key);
             }

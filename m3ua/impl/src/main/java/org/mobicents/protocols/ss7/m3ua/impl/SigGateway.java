@@ -14,4 +14,10 @@ public interface SigGateway {
 
     public PayloadData poll();
 
+    public As createAppServer(String args[]) throws Exception;
+
+    public AspFactory createAspFactory(String[] args) throws Exception;
+
+    public Asp assignAspToAs(String asName, String aspName) throws Exception;
+
 }

@@ -45,10 +45,6 @@ public class LocalAspFactory extends AspFactory {
         this.aspid = this.m3UAProvider.getParameterFactory().createASPIdentifier(this.generateId());
     }
 
-    public void setChannel(M3UAChannel channel) {
-        this.channel = channel;
-    }
-
     public String getRemIp() {
         return remIp;
     }
@@ -228,6 +224,9 @@ public class LocalAspFactory extends AspFactory {
             if (channel != null) {
                 try {
                     channel.close();
+                    if (logger.isDebugEnabled()) {
+                        logger.debug(String.format("Closed the channel for LocalAspFactory name=%s", this.getName()));
+                    }
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -242,9 +241,12 @@ public class LocalAspFactory extends AspFactory {
             return;
         }
 
+        TrafficModeType trMode = aspActiveAck.getTrafficModeType();
+
         long[] rcs = aspActiveAck.getRoutingContext().getRoutingContexts();
         for (int count = 0; count < rcs.length; count++) {
             Asp asp = this.getAsp(rcs[count]);
+            asp.getAs().setTrafficModeType(trMode);
             try {
                 asp.getFSM().signal(TransitionState.ASP_ACTIVE_ACK);
             } catch (UnknownTransitionException e) {
@@ -308,7 +310,8 @@ public class LocalAspFactory extends AspFactory {
 
         As as = asp.getAs();
 
-        if (as.getTrafficModeType().getMode() == TrafficModeType.Loadshare) {
+        // By default we assume Traffic Mode is Loadshare
+        if (as.getTrafficModeType() == null || as.getTrafficModeType().getMode() == TrafficModeType.Loadshare) {
             // Activate this ASP
             this.sendAspActive(as);
             return true;

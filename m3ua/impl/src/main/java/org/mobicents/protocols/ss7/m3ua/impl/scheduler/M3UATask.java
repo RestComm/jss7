@@ -1,30 +1,23 @@
 package org.mobicents.protocols.ss7.m3ua.impl.scheduler;
 
-
-public abstract class M3UATask implements Runnable {
+public abstract class M3UATask {
 
     protected boolean canceled = false;
-    protected long deadLine;
     protected int index;
     protected M3UAScheduler scheduler;
 
-    public void run() {
+    public void run(long now) {
         if (!canceled) {
-            try {
-                // exception in caught in scheduler.
-                perform();
-            } finally {
-                canceled = true;
-            }
+            // exception in caught in scheduler.
+            tick(now);
         }
-
     }
 
     public boolean isCanceled() {
         return this.canceled;
     }
 
-    public abstract void perform();
+    public abstract void tick(long now);
 
     public void cancel() {
         this.canceled = true;

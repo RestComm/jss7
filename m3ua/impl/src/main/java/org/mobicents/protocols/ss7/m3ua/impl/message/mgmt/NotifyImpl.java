@@ -58,11 +58,15 @@ public class NotifyImpl extends M3UAMessageImpl implements Notify {
     }
 
     public void setASPIdentifier(ASPIdentifier id) {
-        parameters.put(Parameter.ASP_Identifier, id);
+        if (id != null) {
+            parameters.put(Parameter.ASP_Identifier, id);
+        }
     }
 
     public void setInfoString(InfoString str) {
-        parameters.put(Parameter.INFO_String, str);
+        if (str != null) {
+            parameters.put(Parameter.INFO_String, str);
+        }
     }
 
     public void setRoutingContext(RoutingContext rc) {

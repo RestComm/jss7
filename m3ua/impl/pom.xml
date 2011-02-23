@@ -13,12 +13,7 @@
 
 	<name>Mobicents SS7 :: M3UA :: Impl :: ${pom.artifactId}</name>
 
-	<properties>
-		<maven.test.skip>false</maven.test.skip>
-	</properties>
-
 	<dependencies>
-
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
@@ -38,6 +33,13 @@
 			<groupId>org.mobicents.protocols.stream</groupId>
 			<artifactId>stream</artifactId>
 		</dependency>
+
+		<!-- shell -->
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+			<artifactId>shell</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

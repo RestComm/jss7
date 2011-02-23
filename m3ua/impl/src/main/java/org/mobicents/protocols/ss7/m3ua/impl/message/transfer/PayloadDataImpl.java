@@ -44,8 +44,7 @@ public class PayloadDataImpl extends M3UAMessageImpl implements PayloadData {
     }
 
     public NetworkAppearance getNetworkAppearance() {
-        return (NetworkAppearance) parameters
-                .get(ParameterImpl.Network_Appearance);
+        return (NetworkAppearance) parameters.get(ParameterImpl.Network_Appearance);
     }
 
     public void setNetworkAppearance(NetworkAppearance p) {
@@ -57,7 +56,9 @@ public class PayloadDataImpl extends M3UAMessageImpl implements PayloadData {
     }
 
     public void setRoutingContext(RoutingContext p) {
-        parameters.put(ParameterImpl.Routing_Context, p);
+        if (p != null) {
+            parameters.put(ParameterImpl.Routing_Context, p);
+        }
     }
 
     public ProtocolData getData() {
@@ -84,20 +85,16 @@ public class PayloadDataImpl extends M3UAMessageImpl implements PayloadData {
     @Override
     protected void encodeParams(ByteBuffer buffer) {
         if (parameters.containsKey(Parameter.Network_Appearance)) {
-            ((ParameterImpl) parameters.get(Parameter.Network_Appearance))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.Network_Appearance)).write(buffer);
         }
         if (parameters.containsKey(Parameter.Routing_Context)) {
-            ((ParameterImpl) parameters.get(Parameter.Routing_Context))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.Routing_Context)).write(buffer);
         }
         if (parameters.containsKey(Parameter.Protocol_Data)) {
-            ((ParameterImpl) parameters.get(Parameter.Protocol_Data))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.Protocol_Data)).write(buffer);
         }
         if (parameters.containsKey(Parameter.Correlation_ID)) {
-            ((ParameterImpl) parameters.get(Parameter.Correlation_ID))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.Correlation_ID)).write(buffer);
         }
     }
 }

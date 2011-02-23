@@ -93,8 +93,26 @@ public class GatewayTest {
         Thread.sleep(1000);
 
         client.stop();
+        //Give time to exchnge ASP_DOWN messages
         Thread.sleep(100);
+        
+        //The AS is Pending
+        assertEquals(AsState.PENDING, localAs.getState());
+        assertEquals(AsState.PENDING, remAs.getState());
+        
+        //Let the AS go in DOWN state
+        Thread.sleep(2000);
+        
+        //The AS is Pending
+        assertEquals(AsState.DOWN, localAs.getState());
+        assertEquals(AsState.DOWN, remAs.getState());
+        
+        client.stopClient();
         server.stop();
+        
+        
+        Thread.sleep(100);
+        
 
         assertEquals(1, server.getReceivedData().size());
         assertEquals(1, client.getReceivedData().size());
@@ -124,8 +142,15 @@ public class GatewayTest {
             rsgw = new RemSigGatewayImpl();
             rsgw.start();
 
-            localAs = rsgw.createAppServer("client-testas", rc, rKey, trModType);
-            localAspFactory = rsgw.createAspFactory("client-testasp", "127.0.0.1", 3777, "127.0.0.1", 3112);
+            // m3ua as create rc <rc> <ras-name>
+            localAs = rsgw.createAppServer("m3ua as create rc 100 client-testas".split(" "));
+            // m3ua asp create ip <local-ip> port <local-port> remip <remip>
+            // remport <remport> <asp-name>
+            // localAspFactory = rsgw.createAspFactory("client-testasp",
+            // "127.0.0.1", 3777, "127.0.0.1", 3112);
+            localAspFactory = rsgw
+                    .createAspFactory("m3ua asp create ip 127.0.0.1 port 3777 remip 127.0.0.1 remport 3112 client-testasp"
+                            .split(" "));
             localAsp = rsgw.assignAspToAs("client-testas", "client-testasp");
 
             rsgw.startAsp("client-testasp");
@@ -135,9 +160,12 @@ public class GatewayTest {
         }
 
         public void stop() throws Exception {
-            started = false;
             rsgw.stopAsp("client-testasp");
             rsgw.stop();
+        }
+        
+        public void stopClient(){
+            started = false;
         }
 
         public void sendPayload() throws Exception {
@@ -186,8 +214,12 @@ public class GatewayTest {
             sgw = new SigGatewayImpl("127.0.0.1", 3112);
             sgw.start();
 
-            remAs = sgw.createAppServer("server-testas", rc, rKey, trModType);
-            remAspFactory = sgw.createAspFactory("server-testasp", "127.0.0.1", 3777);
+            // m3ua ras create rc <rc> rk dpc <dpc> opc <opc-list> si <si-list>
+            // traffic-mode {broadcast|loadshare|override} <ras-name>
+            remAs = sgw.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode override server-testas"
+                    .split(" "));
+            // m3ua rasp create ip <ip> port <port> <asp-name>"
+            remAspFactory = sgw.createAspFactory("m3ua rasp create ip 127.0.0.1 port 3777 server-testasp".split(" "));
             remAsp = sgw.assignAspToAs("server-testas", "server-testasp");
 
             started = true;

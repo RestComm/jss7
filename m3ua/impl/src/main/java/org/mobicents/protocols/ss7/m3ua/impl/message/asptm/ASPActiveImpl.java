@@ -15,7 +15,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class ASPActiveImpl extends M3UAMessageImpl implements ASPActive {
 
@@ -26,16 +26,13 @@ public class ASPActiveImpl extends M3UAMessageImpl implements ASPActive {
     @Override
     protected void encodeParams(ByteBuffer buffer) {
         if (parameters.containsKey(Parameter.Traffic_Mode_Type)) {
-            ((ParameterImpl) parameters.get(Parameter.Traffic_Mode_Type))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.Traffic_Mode_Type)).write(buffer);
         }
         if (parameters.containsKey(Parameter.Routing_Context)) {
-            ((ParameterImpl) parameters.get(Parameter.Routing_Context))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.Routing_Context)).write(buffer);
         }
         if (parameters.containsKey(Parameter.INFO_String)) {
-            ((ParameterImpl) parameters.get(Parameter.INFO_String))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.INFO_String)).write(buffer);
         }
     }
 
@@ -52,7 +49,9 @@ public class ASPActiveImpl extends M3UAMessageImpl implements ASPActive {
     }
 
     public void setInfoString(InfoString str) {
-        parameters.put(ParameterImpl.INFO_String, str);
+        if (str != null) {
+            parameters.put(ParameterImpl.INFO_String, str);
+        }
 
     }
 
@@ -62,7 +61,9 @@ public class ASPActiveImpl extends M3UAMessageImpl implements ASPActive {
     }
 
     public void setTrafficModeType(TrafficModeType mode) {
-        parameters.put(ParameterImpl.Traffic_Mode_Type, mode);
+        if (mode != null) {
+            parameters.put(ParameterImpl.Traffic_Mode_Type, mode);
+        }
     }
 
 }

@@ -19,14 +19,12 @@ public class ASPInactiveImpl extends M3UAMessageImpl implements ASPInactive {
 
     @Override
     protected void encodeParams(ByteBuffer buffer) {
-    
+
         if (parameters.containsKey(Parameter.Routing_Context)) {
-            ((ParameterImpl) parameters.get(Parameter.Routing_Context))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.Routing_Context)).write(buffer);
         }
         if (parameters.containsKey(Parameter.INFO_String)) {
-            ((ParameterImpl) parameters.get(Parameter.INFO_String))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.INFO_String)).write(buffer);
         }
     }
 
@@ -39,7 +37,9 @@ public class ASPInactiveImpl extends M3UAMessageImpl implements ASPInactive {
     }
 
     public void setInfoString(InfoString str) {
-        parameters.put(ParameterImpl.INFO_String, str);
+        if (str != null) {
+            parameters.put(ParameterImpl.INFO_String, str);
+        }
 
     }
 

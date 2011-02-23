@@ -52,6 +52,10 @@ public abstract class AspFactory implements CommunicationListener {
     public int getPort() {
         return this.port;
     }
+    
+    public void setChannel(M3UAChannel channel) {
+        this.channel = channel;
+    }
 
     public abstract void read(M3UAMessage message);
 

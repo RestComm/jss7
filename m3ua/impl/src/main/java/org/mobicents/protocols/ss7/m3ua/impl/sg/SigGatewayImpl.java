@@ -14,19 +14,25 @@ import org.mobicents.protocols.ss7.m3ua.M3UASelectionKey;
 import org.mobicents.protocols.ss7.m3ua.M3UASelector;
 import org.mobicents.protocols.ss7.m3ua.M3UAServerChannel;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
+import org.mobicents.protocols.ss7.m3ua.impl.AsState;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.SigGateway;
 import org.mobicents.protocols.ss7.m3ua.impl.CommunicationListener.CommunicationState;
+import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAOAMMessages;
+import org.mobicents.protocols.ss7.m3ua.impl.scheduler.M3UAScheduler;
 import org.mobicents.protocols.ss7.m3ua.impl.tcp.TcpChannel;
 import org.mobicents.protocols.ss7.m3ua.impl.tcp.TcpProvider;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
+import org.mobicents.protocols.ss7.m3ua.parameter.DestinationPointCode;
+import org.mobicents.protocols.ss7.m3ua.parameter.OPCList;
 import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
+import org.mobicents.protocols.ss7.m3ua.parameter.ServiceIndicators;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 
 public class SigGatewayImpl implements SigGateway {
@@ -45,6 +51,8 @@ public class SigGatewayImpl implements SigGateway {
 
     private boolean started = false;
 
+    private M3UAScheduler m3uaScheduler = new M3UAScheduler();
+
     public SigGatewayImpl(String address, int port) {
         this.address = address;
         this.port = port;
@@ -61,7 +69,7 @@ public class SigGatewayImpl implements SigGateway {
         return null;
     }
 
-    public void send(byte[] msu) throws Exception {
+    public void send(byte[] msu) throws IOException {
         ProtocolData data = m3uaProvider.getParameterFactory().createProtocolData(0, msu);
 
         PayloadData payload = (PayloadData) this.m3uaProvider.getMessageFactory().createMessage(
@@ -71,20 +79,201 @@ public class SigGatewayImpl implements SigGateway {
         // TODO : Algo to select correct AS depending on above ProtocolData and
         // Routing Key. Also check if AS is ACTIVE else throw error?
         As as = this.appServers.get(0);
-        payload.setRoutingContext(as.getRoutingContext());
-        as.write(payload);
+        if (as != null && as.getState() == AsState.ACTIVE || as.getState() == AsState.PENDING) {
+            payload.setRoutingContext(as.getRoutingContext());
+            as.write(payload);
+        } else {
+            logger.error(String.format("Dropping message %s as AS=%s", payload, as));
+        }
 
     }
 
-    public As createAppServer(String name, RoutingContext rc, RoutingKey rk, TrafficModeType trMode) {
-        // TODO : Check for duplication of RoutingKey and name
-        RemAsImpl as = new RemAsImpl(name, rc, rk, trMode, this.m3uaProvider);
+    /**
+     * Expected command is m3ua ras create rc <rc> rk dpc <dpc> opc <opc-list>
+     * si <si-list> traffic-mode {broadcast|loadshare|override} <ras-name>
+     * 
+     * opc, si and traffic-mode is not compulsory
+     * 
+     * @param args
+     * @return
+     * @throws Exception
+     */
+    public As createAppServer(String args[]) throws Exception {
+
+        if (args.length < 9) {
+            // minimum 8 args needed
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        String rcKey = args[3];
+        if (rcKey == null || rcKey.compareTo("rc") != 0) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        String rc = args[4];
+        if (rc == null) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        RoutingContext rcObj = m3uaProvider.getParameterFactory().createRoutingContext(
+                new long[] { Long.parseLong(rc) });
+
+        // Routing Key
+        if (args[5] == null || args[5].compareTo("rk") != 0) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        if (args[6] == null || args[6].compareTo("dpc") != 0) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        int dpc = Integer.parseInt(args[7]);
+        DestinationPointCode dspobj = m3uaProvider.getParameterFactory().createDestinationPointCode(dpc, (short) 0);
+        OPCList opcListObj = null;
+        ServiceIndicators si = null;
+        TrafficModeType trMode = null;
+        String name = null;
+
+        if (args[8] == null) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        if (args.length >= 11) {
+            // OPC also defined
+            if (args[8].compareTo("opc") == 0) {
+                // comma separated OPC list
+                String opcListStr = args[9];
+                if (opcListStr == null) {
+                    throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+                }
+
+                String[] opcListArr = opcListStr.split(",");
+                int[] opcs = new int[opcListArr.length];
+                short[] masks = new short[opcListArr.length];
+
+                for (int count = 0; count < opcListArr.length; count++) {
+                    opcs[count] = Integer.parseInt(opcListArr[count]);
+                    masks[count] = 0; // TODO mask should be sent in command
+                }
+
+                opcListObj = m3uaProvider.getParameterFactory().createOPCList(opcs, masks);
+
+                if (args.length >= 13) {
+                    if (args[10].compareTo("si") == 0) {
+                        si = this.createSi(args, 11);
+                        if (args[12] == null) {
+                            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+                        }
+
+                        if (args.length == 15) {
+                            if (args[12].compareTo("traffic-mode") != 0) {
+                                throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+                            }
+                            trMode = createTrMode(args, 13);
+                            name = args[14];
+                        } else {
+                            name = args[12];
+                        }
+
+                    } else if (args[10].compareTo("traffic-mode") == 0) {
+                        trMode = createTrMode(args, 11);
+                        name = args[12];
+                    } else {
+                        throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+                    }
+
+                } else {
+                    name = args[10];
+                }
+
+            } else if (args[8].compareTo("si") == 0) {
+                si = this.createSi(args, 9);
+
+                if (args[10] == null) {
+                    throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+                }
+
+                if (args.length == 13) {
+                    if (args[10].compareTo("traffic-mode") != 0) {
+                        throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+                    }
+                    trMode = createTrMode(args, 11);
+                    name = args[12];
+                }
+
+            } else if (args[8].compareTo("traffic-mode") == 0) {
+                trMode = this.createTrMode(args, 9);
+                name = args[10];
+
+            } else {
+                throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+            }
+
+        } else {
+            name = args[8];
+        }
+
+        for (FastList.Node<As> n = appServers.head(), end = appServers.tail(); (n = n.getNext()) != end;) {
+            As as = n.getValue();
+            if (as.getName().compareTo(name) == 0) {
+                throw new Exception(String.format(M3UAOAMMessages.CREATE_AS_FAIL_NAME_EXIST, name));
+            }
+            // TODO : Check for duplication of RoutingKey
+        }
+        RoutingKey rk = m3uaProvider.getParameterFactory().createRoutingKey(null, rcObj, trMode, null,
+                new DestinationPointCode[] { dspobj }, si != null ? new ServiceIndicators[] { si } : null,
+                opcListObj != null ? new OPCList[] { opcListObj } : null);
+        RemAsImpl as = new RemAsImpl(name, rcObj, rk, trMode, this.m3uaProvider);
+        m3uaScheduler.execute(as.getFSM());
         appServers.add(as);
         return as;
+
     }
 
-    public AspFactory createAspFactory(String name, String ip, int port) {
-        // TODO : Check for duplication of ip and port and name
+    /**
+     * Command to create ASPFactory is "m3ua rasp create ip <ip> port <port>
+     * <asp-name>"
+     * 
+     * @param args
+     * @return
+     * @throws Exception
+     */
+    public AspFactory createAspFactory(String[] args) throws Exception {
+        if (args.length != 8) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        if (args[3] == null || args[3].compareTo("ip") != 0) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        if (args[4] == null) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+        String ip = args[4];
+
+        if (args[5] == null || args[5].compareTo("port") != 0) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        int port = Integer.parseInt(args[6]);
+
+        if (args[7] == null) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        String name = args[7];
+
+        for (FastList.Node<AspFactory> n = aspfactories.head(), end = aspfactories.tail(); (n = n.getNext()) != end;) {
+            AspFactory fact = n.getValue();
+            if (fact.getName().compareTo(name) == 0) {
+                throw new Exception(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_NAME_EXIST, name));
+            }
+
+            if (fact.getIp().compareTo(ip) == 0 && fact.getPort() == port) {
+                throw new Exception(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_IPPORT_EXIST, ip, port));
+            }
+        }
         AspFactory factory = new RemAspFactory(name, ip, port, this.m3uaProvider);
         aspfactories.add(factory);
         return factory;
@@ -101,7 +290,7 @@ public class SigGatewayImpl implements SigGateway {
         }
 
         if (as == null) {
-            throw new Exception(String.format("No Application Server found for given name %s", asName));
+            throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_NO_AS, asName));
         }
 
         AspFactory aspFactroy = null;
@@ -113,10 +302,11 @@ public class SigGatewayImpl implements SigGateway {
         }
 
         if (aspFactroy == null) {
-            throw new Exception(String.format("No Application Server Process found for given name %s", aspName));
+            throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_NO_ASP, aspName));
         }
 
         Asp asp = aspFactroy.createAsp();
+        m3uaScheduler.execute(asp.getFSM());
         as.addAppServerProcess(asp);
 
         return asp;
@@ -151,6 +341,8 @@ public class SigGatewayImpl implements SigGateway {
         if (!started) {
             return;
         }
+
+        m3uaScheduler.tick();
 
         FastList<M3UASelectionKey> selections = selector.selectNow();
 
@@ -253,4 +445,40 @@ public class SigGatewayImpl implements SigGateway {
 
         }
     }
+
+    private ServiceIndicators createSi(String args[], int index) throws Exception {
+        ServiceIndicators si = null;
+
+        String siStr = args[index++];
+        if (siStr == null) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        String[] sitArr = siStr.split(",");
+        short[] sis = new short[sitArr.length];
+
+        for (int count = 0; count < sis.length; count++) {
+            sis[count] = Short.parseShort(sitArr[count]);
+        }
+
+        si = m3uaProvider.getParameterFactory().createServiceIndicators(sis);
+        return si;
+
+    }
+
+    private TrafficModeType createTrMode(String[] args, int index) throws Exception {
+        if (args[index] == null) {
+            throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+        }
+
+        if (args[index].compareTo("broadcast") == 0) {
+            return this.m3uaProvider.getParameterFactory().createTrafficModeType(TrafficModeType.Broadcast);
+        } else if (args[index].compareTo("override") == 0) {
+            return this.m3uaProvider.getParameterFactory().createTrafficModeType(TrafficModeType.Override);
+        } else if (args[index].compareTo("loadshare") == 0) {
+            return this.m3uaProvider.getParameterFactory().createTrafficModeType(TrafficModeType.Loadshare);
+        }
+        throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
+    }
+
 }

@@ -6,6 +6,7 @@
 package org.mobicents.protocols.ss7.m3ua.impl.message;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -17,7 +18,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.message.aspsm.ASPDownAckImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.message.aspsm.ASPDownImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.aspsm.ASPUpAckImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.aspsm.ASPUpImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.asptm.ASPActiveAckImpl;
@@ -292,6 +294,40 @@ public class MessageTest {
         assertEquals(msg.getASPIdentifier().getAspId(), msg1.getASPIdentifier().getAspId());
         assertEquals(msg.getInfoString().getString(), msg1.getInfoString().getString());
     }
+    
+    @Test
+    public void testASPDown() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
+
+        ASPDownImpl msg = (ASPDownImpl) messageFactory
+                .createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
+        
+
+        msg.encode(buffer);
+
+        buffer.flip();
+
+        ASPDownImpl msg1 = (ASPDownImpl) messageFactory.createMessage(buffer);
+
+        assertNotNull(msg1);
+    }    
+    
+    @Test
+    public void testASPDownAck() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
+
+        ASPDownAckImpl msg = (ASPDownAckImpl) messageFactory
+                .createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK);
+        
+
+        msg.encode(buffer);
+
+        buffer.flip();
+
+        ASPDownAckImpl msg1 = (ASPDownAckImpl) messageFactory.createMessage(buffer);
+
+        assertNotNull(msg1);
+    }     
 
     @Test
     public void testRegistrationRequest() throws IOException {

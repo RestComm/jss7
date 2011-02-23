@@ -14,7 +14,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class ASPUpAckImpl extends M3UAMessageImpl implements ASPUpAck {
 
@@ -27,7 +27,9 @@ public class ASPUpAckImpl extends M3UAMessageImpl implements ASPUpAck {
     }
 
     public void setASPIdentifier(ASPIdentifier p) {
-        parameters.put(ParameterImpl.ASP_Identifier, p);
+        if (p != null) {
+            parameters.put(ParameterImpl.ASP_Identifier, p);
+        }
     }
 
     public InfoString getInfoString() {
@@ -35,19 +37,19 @@ public class ASPUpAckImpl extends M3UAMessageImpl implements ASPUpAck {
     }
 
     public void setInfoString(InfoString str) {
-        parameters.put(ParameterImpl.INFO_String, str);
+        if (str != null) {
+            parameters.put(ParameterImpl.INFO_String, str);
+        }
     }
 
     @Override
     protected void encodeParams(ByteBuffer buffer) {
         if (parameters.containsKey(Parameter.ASP_Identifier)) {
-            ((ParameterImpl) parameters.get(Parameter.ASP_Identifier))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.ASP_Identifier)).write(buffer);
         }
 
         if (parameters.containsKey(Parameter.INFO_String)) {
-            ((ParameterImpl) parameters.get(Parameter.INFO_String))
-                    .write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.INFO_String)).write(buffer);
         }
     }
 

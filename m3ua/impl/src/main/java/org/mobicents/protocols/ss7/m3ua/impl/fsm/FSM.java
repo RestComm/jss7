@@ -3,11 +3,12 @@ package org.mobicents.protocols.ss7.m3ua.impl.fsm;
 import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.impl.scheduler.M3UATask;
 
 /**
  * @author amit bhayani
  */
-public class FSM {
+public class FSM extends M3UATask {
 
     static final protected Logger logger = Logger.getLogger(FSM.class);
 
@@ -133,10 +134,10 @@ public class FSM {
         }
     }
 
-    public void tick() {
+    public void tick(long now) {
         // if (state != null && state != start && state != end) {
         if (currentState != null) {
-            currentState.tick(System.currentTimeMillis());
+            currentState.tick(now);
         }
     }
 
