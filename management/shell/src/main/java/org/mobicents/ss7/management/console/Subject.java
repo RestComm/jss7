@@ -46,6 +46,10 @@ public enum Subject {
     public static Subject getSubject(String subject) {
         if (subject.compareTo(LINKSET.getSubject()) == 0) {
             return LINKSET;
+        } else if (subject.compareTo(M3UA.getSubject()) == 0) {
+            return M3UA;
+        } else if (subject.compareTo(SCCP.getSubject()) == 0){
+            return SCCP;
         }
         return null;
     }
