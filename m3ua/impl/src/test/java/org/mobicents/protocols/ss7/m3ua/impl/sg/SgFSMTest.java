@@ -64,7 +64,7 @@ public class SgFSMTest {
     public void testSingleAspInAs() throws Exception {
         // 5.1.1. Single ASP in an Application Server ("1+0" sparing),
 
-        SigGatewayImpl sgw = new SigGatewayImpl("127.0.0.1", 1112);
+        SgpImpl sgw = new SgpImpl("127.0.0.1", 1112);
         sgw.start();
 
         RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
@@ -142,7 +142,7 @@ public class SgFSMTest {
         // 5.1.1.3. Single ASP in Multiple Application Servers (Each with "1+0"
         // Sparing)
 
-        SigGatewayImpl sgw = new SigGatewayImpl("127.0.0.1", 1112);
+        SgpImpl sgw = new SgpImpl("127.0.0.1", 1112);
         sgw.start();
 
         // Define 1st AS
@@ -261,7 +261,7 @@ public class SgFSMTest {
     @Test
     public void testTwoAspInAsOverride() throws Exception {
         // 5.1.2. Two ASPs in Application Server ("1+1" Sparing)
-        SigGatewayImpl sgw = new SigGatewayImpl("127.0.0.1", 1112);
+        SgpImpl sgw = new SgpImpl("127.0.0.1", 1112);
         sgw.start();
 
         RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
@@ -387,7 +387,7 @@ public class SgFSMTest {
     public void testTwoAspInAsLoadshare() throws Exception {
         // 5.1.2. Two ASPs in Application Server ("1+1" Sparing)
 
-        SigGatewayImpl sgw = new SigGatewayImpl("127.0.0.1", 1112);
+        SgpImpl sgw = new SgpImpl("127.0.0.1", 1112);
         sgw.start();
 
         RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });

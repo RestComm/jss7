@@ -11,10 +11,10 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mobicents.protocols.ss7.m3ua.impl.as.RemSigGatewayImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.as.RemSgpImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ProtocolDataImpl;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.SigGatewayImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.SgpImpl;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.ss7.m3ua.parameter.DestinationPointCode;
 import org.mobicents.protocols.ss7.m3ua.parameter.LocalRKIdentifier;
@@ -123,7 +123,7 @@ public class GatewayTest {
         RoutingContext rc;
         RoutingKey rKey;
         TrafficModeType trModType;
-        RemSigGatewayImpl rsgw;
+        RemSgpImpl rsgw;
         private FastList<PayloadData> receivedData = new FastList<PayloadData>();
         private volatile boolean started = false;
 
@@ -139,7 +139,7 @@ public class GatewayTest {
 
         public void start() throws Exception {
             // Set-up Rem Signaling Gateway
-            rsgw = new RemSigGatewayImpl();
+            rsgw = new RemSgpImpl();
             rsgw.start();
 
             // m3ua as create rc <rc> <ras-name>
@@ -193,7 +193,7 @@ public class GatewayTest {
         RoutingContext rc;
         RoutingKey rKey;
         TrafficModeType trModType;
-        SigGatewayImpl sgw;
+        SgpImpl sgw;
 
         private volatile boolean started = false;
 
@@ -211,7 +211,7 @@ public class GatewayTest {
 
         public void start() throws Exception {
             // Set-up Signaling Gateway
-            sgw = new SigGatewayImpl("127.0.0.1", 3112);
+            sgw = new SgpImpl("127.0.0.1", 3112);
             sgw.start();
 
             // m3ua ras create rc <rc> rk dpc <dpc> opc <opc-list> si <si-list>

@@ -14,7 +14,7 @@ import org.mobicents.protocols.ss7.m3ua.M3UASelector;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
-import org.mobicents.protocols.ss7.m3ua.impl.SigGateway;
+import org.mobicents.protocols.ss7.m3ua.impl.Sgp;
 import org.mobicents.protocols.ss7.m3ua.impl.CommunicationListener.CommunicationState;
 import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAOAMMessages;
 import org.mobicents.protocols.ss7.m3ua.impl.scheduler.M3UAScheduler;
@@ -26,9 +26,9 @@ import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 
-public class RemSigGatewayImpl implements SigGateway {
+public class RemSgpImpl implements Sgp {
 
-    private static Logger logger = Logger.getLogger(RemSigGatewayImpl.class);
+    private static Logger logger = Logger.getLogger(RemSgpImpl.class);
 
     private FastList<As> appServers = new FastList<As>();
     private FastList<AspFactory> aspfactories = new FastList<AspFactory>();
@@ -40,7 +40,7 @@ public class RemSigGatewayImpl implements SigGateway {
     
     private M3UAScheduler m3uaScheduler = new M3UAScheduler();
 
-    public RemSigGatewayImpl() {
+    public RemSgpImpl() {
     }
 
     public PayloadData poll() {

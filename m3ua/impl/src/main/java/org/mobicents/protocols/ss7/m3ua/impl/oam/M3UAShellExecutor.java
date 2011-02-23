@@ -5,34 +5,25 @@ import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
-import org.mobicents.protocols.ss7.m3ua.impl.SigGateway;
+import org.mobicents.protocols.ss7.m3ua.impl.Sgp;
 import org.mobicents.ss7.management.console.ShellExecutor;
 
 public class M3UAShellExecutor implements ShellExecutor {
 
     private static final Logger logger = Logger.getLogger(M3UAShellExecutor.class);
 
-    private SigGateway sigGatewayImpl;
-    private SigGateway remSigGatewayImpl;
+    private Sgp sgp;
 
     public M3UAShellExecutor() {
 
     }
 
-    public SigGateway getSigGatewayImpl() {
-        return sigGatewayImpl;
+    public Sgp getSgp() {
+        return sgp;
     }
 
-    public void setSigGatewayImpl(SigGateway sigGatewayImpl) {
-        this.sigGatewayImpl = sigGatewayImpl;
-    }
-
-    public SigGateway getRemSigGatewayImpl() {
-        return remSigGatewayImpl;
-    }
-
-    public void setRemSigGatewayImpl(SigGateway remSigGatewayImpl) {
-        this.remSigGatewayImpl = remSigGatewayImpl;
+    public void setSgp(Sgp sgp) {
+        this.sgp = sgp;
     }
 
     public String execute(String[] args) {
@@ -56,7 +47,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 
                 if (rasCmd.compareTo("create") == 0) {
                     // Create new Rem AS
-                    As as = this.sigGatewayImpl.createAppServer(args);
+                    As as = this.sgp.createAppServer(args);
                     return String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, as.getName());
                 } else if (rasCmd.compareTo("add") == 0) {
                     // Add Rem ASP to Rem AS
@@ -64,7 +55,7 @@ public class M3UAShellExecutor implements ShellExecutor {
                         return M3UAOAMMessages.INVALID_COMMAND;
                     }
 
-                    this.sigGatewayImpl.assignAspToAs(args[3], args[4]);
+                    this.sgp.assignAspToAs(args[3], args[4]);
                     return String.format(M3UAOAMMessages.ADD_ASP_TO_AS_SUCESSFULL, args[4], args[3]);
                 }
                 return M3UAOAMMessages.INVALID_COMMAND;
@@ -78,7 +69,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 
                 if (raspCmd.compareTo("create") == 0) {
                     // Create new Rem ASP
-                    AspFactory factory = this.sigGatewayImpl.createAspFactory(args);
+                    AspFactory factory = this.sgp.createAspFactory(args);
                     return String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, factory.getName());
                 }
                 return M3UAOAMMessages.INVALID_COMMAND;
@@ -91,7 +82,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 
                 if (rasCmd.compareTo("create") == 0) {
                     // Create new Rem AS
-                    As as = this.remSigGatewayImpl.createAppServer(args);
+                    As as = this.sgp.createAppServer(args);
                     return String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, as.getName());
                 } else if (rasCmd.compareTo("add") == 0) {
                     // Add Rem ASP to Rem AS
@@ -99,7 +90,7 @@ public class M3UAShellExecutor implements ShellExecutor {
                         return M3UAOAMMessages.INVALID_COMMAND;
                     }
 
-                    this.remSigGatewayImpl.assignAspToAs(args[3], args[4]);
+                    this.sgp.assignAspToAs(args[3], args[4]);
                     return String.format(M3UAOAMMessages.ADD_ASP_TO_AS_SUCESSFULL, args[4], args[3]);
                 }
                 return M3UAOAMMessages.INVALID_COMMAND;
@@ -113,7 +104,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 
                 if (raspCmd.compareTo("create") == 0) {
                     // Create new Rem ASP
-                    AspFactory factory = this.remSigGatewayImpl.createAspFactory(args);
+                    AspFactory factory = this.sgp.createAspFactory(args);
                     return String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, factory.getName());
                 }
                 return M3UAOAMMessages.INVALID_COMMAND;

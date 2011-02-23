@@ -7,14 +7,14 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mobicents.protocols.ss7.m3ua.impl.as.RemSigGatewayImpl;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.SigGatewayImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.as.RemSgpImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.SgpImpl;
 
 public class M3UAShellExecutorTest {
 
     M3UAShellExecutor m3uaExec = null;
-    RemSigGatewayImpl rsgw = null;
-    SigGatewayImpl sgw = null;
+    RemSgpImpl rsgw = null;
+    SgpImpl sgw = null;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -27,8 +27,8 @@ public class M3UAShellExecutorTest {
     @Before
     public void setUp() throws Exception {
         m3uaExec = new M3UAShellExecutor();
-        rsgw = new RemSigGatewayImpl();
-        sgw = new SigGatewayImpl("127.0.0.1", 1771);
+        rsgw = new RemSgpImpl();
+        sgw = new SgpImpl("127.0.0.1", 1771);
 
         sgw.start();
         rsgw.start();

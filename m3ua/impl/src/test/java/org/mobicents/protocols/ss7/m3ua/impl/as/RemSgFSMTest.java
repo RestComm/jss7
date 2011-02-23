@@ -56,7 +56,7 @@ public class RemSgFSMTest {
     public void testSingleAspInAs() throws Exception {
         // 5.1.1. Single ASP in an Application Server ("1+0" sparing),
 
-        RemSigGatewayImpl rsgw = new RemSigGatewayImpl();
+        RemSgpImpl rsgw = new RemSgpImpl();
         rsgw.start();
 
         RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
@@ -132,7 +132,7 @@ public class RemSgFSMTest {
         // 5.1.1.3. Single ASP in Multiple Application Servers (Each with "1+0"
         // Sparing)
 
-        RemSigGatewayImpl rsgw = new RemSigGatewayImpl();
+        RemSgpImpl rsgw = new RemSgpImpl();
         rsgw.start();
 
         // Define 1st AS
@@ -247,7 +247,7 @@ public class RemSgFSMTest {
     public void testTwoAspInAsOverride() throws Exception {
         // 5.1.2. Two ASPs in Application Server ("1+1" Sparing)
 
-        RemSigGatewayImpl rsgw = new RemSigGatewayImpl();
+        RemSgpImpl rsgw = new RemSgpImpl();
         rsgw.start();
 
         RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
