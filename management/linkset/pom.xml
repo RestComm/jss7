@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -11,7 +13,12 @@
 	<name>Mobicents SS7 :: Management :: ${pom.artifactId}</name>
 
 	<dependencies>
-
+		<!-- shell -->
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>shell</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
 		<!-- non mobicents -->
 		<dependency>
 			<groupId>log4j</groupId>
@@ -27,11 +34,11 @@
 			<groupId>javolution</groupId>
 			<artifactId>javolution</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.mobicents.protocols.stream</groupId>
 			<artifactId>stream</artifactId>
-		</dependency>		
+		</dependency>
 	</dependencies>
 
 </project>

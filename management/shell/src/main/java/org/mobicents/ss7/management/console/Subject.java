@@ -12,7 +12,14 @@ public enum Subject {
      * linkset subject. Any command to manipulate the linkset, should begin with
      * linkset subject
      */
-    LINKSET("linkset");
+    LINKSET("linkset"),
+
+    SCCP("sccp"),
+    /**
+     * M3UA Subject. Any command to manage the M3UA should begin with m3ua
+     * subject
+     */
+    M3UA("m3ua");
 
     private String subject = null;
 

@@ -1,6 +1,7 @@
 package org.mobicents.ss7.linkset.oam;
 
 import org.apache.log4j.Logger;
+import org.mobicents.ss7.management.console.ShellExecutor;
 
 /**
  * Provides executor service for {@link LinksetManager}
@@ -8,7 +9,7 @@ import org.apache.log4j.Logger;
  * @author amit bhayani
  * 
  */
-public class LinksetExecutor {
+public class LinksetExecutor implements ShellExecutor {
 
     private static final Logger logger = Logger
             .getLogger(LinksetExecutor.class);

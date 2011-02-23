@@ -13,8 +13,8 @@
 
 
 	<modules>
-		<module>linkset</module>
 		<module>shell</module>
+		<module>linkset</module>
 	</modules>
 
 	<build>

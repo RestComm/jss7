@@ -7,7 +7,7 @@
   <classpathentry kind="var" path="M2_REPO/javolution/javolution/5.5.1/javolution-5.5.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/4.1/junit-4.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/stream/stream/1.0.0.BETA2/stream-1.0.0.BETA2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/stream/stream/1.0.0-SNAPSHOT/stream-1.0.0-SNAPSHOT.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="output" path="target/classes"/>
 </classpath>
