@@ -30,11 +30,11 @@ public class HeartbeatImpl extends M3UAMessageImpl implements Heartbeat {
     }
 
     public HeartbeatData getHeartbeatData() {
-        return (HeartbeatData) parameters.get(ParameterImpl.Heartbeat_Data);
+        return (HeartbeatData) parameters.get(Parameter.Heartbeat_Data);
     }
 
     public void setHeartbeatData(HeartbeatData hrBtData) {
-        parameters.put(ParameterImpl.Heartbeat_Data, hrBtData);
+        parameters.put(Parameter.Heartbeat_Data, hrBtData);
     }
 
 }

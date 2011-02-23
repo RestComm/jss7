@@ -34,7 +34,7 @@ public class DeregistrationResponseImpl extends M3UAMessageImpl implements
     }
 
     public void setDeregistrationResult(DeregistrationResult result) {
-        parameters.put(ParameterImpl.Deregistration_Result, result);
+        parameters.put(Parameter.Deregistration_Result, result);
 
     }
 

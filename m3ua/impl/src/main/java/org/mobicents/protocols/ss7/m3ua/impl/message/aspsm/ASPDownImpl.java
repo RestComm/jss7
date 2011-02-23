@@ -22,12 +22,12 @@ public class ASPDownImpl extends M3UAMessageImpl implements ASPDown {
     }
 
     public InfoString getInfoString() {
-        return (InfoString) parameters.get(ParameterImpl.INFO_String);
+        return (InfoString) parameters.get(Parameter.INFO_String);
     }
 
     public void setInfoString(InfoString str) {
         if (str != null) {
-            parameters.put(ParameterImpl.INFO_String, str);
+            parameters.put(Parameter.INFO_String, str);
         }
     }
 

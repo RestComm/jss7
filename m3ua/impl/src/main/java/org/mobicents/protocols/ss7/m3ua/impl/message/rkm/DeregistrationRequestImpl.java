@@ -29,11 +29,11 @@ public class DeregistrationRequestImpl extends M3UAMessageImpl implements
     }
 
     public RoutingContext getRoutingContext() {
-        return (RoutingContext) parameters.get(ParameterImpl.Routing_Context);
+        return (RoutingContext) parameters.get(Parameter.Routing_Context);
     }
 
     public void setRoutingContext(RoutingContext rc) {
-        parameters.put(ParameterImpl.Routing_Context, rc);
+        parameters.put(Parameter.Routing_Context, rc);
     }
 
 }

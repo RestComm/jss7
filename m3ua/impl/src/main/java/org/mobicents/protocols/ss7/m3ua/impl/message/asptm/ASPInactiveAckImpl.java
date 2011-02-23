@@ -43,12 +43,12 @@ public class ASPInactiveAckImpl extends M3UAMessageImpl implements ASPInactiveAc
 
     public void setInfoString(InfoString str) {
         if (str != null) {
-            parameters.put(ParameterImpl.INFO_String, str);
+            parameters.put(Parameter.INFO_String, str);
         }
     }
 
     public void setRoutingContext(RoutingContext rc) {
-        parameters.put(ParameterImpl.Routing_Context, rc);
+        parameters.put(Parameter.Routing_Context, rc);
     }
 
 }

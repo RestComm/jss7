@@ -27,58 +27,58 @@ public class SignallingCongestionImpl extends M3UAMessageImpl implements Signall
     }
 
     public AffectedPointCode getAffectedPointCodes() {
-        return (AffectedPointCode) parameters.get(ParameterImpl.Affected_Point_Code);
+        return (AffectedPointCode) parameters.get(Parameter.Affected_Point_Code);
     }
 
     public InfoString getInfoString() {
-        return (InfoString) parameters.get(ParameterImpl.INFO_String);
+        return (InfoString) parameters.get(Parameter.INFO_String);
     }
 
     public NetworkAppearance getNetworkAppearance() {
-        return (NetworkAppearance) parameters.get(ParameterImpl.Network_Appearance);
+        return (NetworkAppearance) parameters.get(Parameter.Network_Appearance);
     }
 
     public RoutingContext getRoutingContexts() {
-        return (RoutingContext) parameters.get(ParameterImpl.Routing_Context);
+        return (RoutingContext) parameters.get(Parameter.Routing_Context);
     }
 
     public void setAffectedPointCodes(AffectedPointCode afpc) {
-        parameters.put(ParameterImpl.Affected_Point_Code, afpc);
+        parameters.put(Parameter.Affected_Point_Code, afpc);
     }
 
     public void setInfoString(InfoString str) {
         if (str != null) {
-            parameters.put(ParameterImpl.INFO_String, str);
+            parameters.put(Parameter.INFO_String, str);
         }
     }
 
     public void setNetworkAppearance(NetworkAppearance p) {
         if (p != null) {
-            parameters.put(ParameterImpl.Network_Appearance, p);
+            parameters.put(Parameter.Network_Appearance, p);
         }
     }
 
     public void setRoutingContexts(RoutingContext routingCntx) {
-        parameters.put(ParameterImpl.Routing_Context, routingCntx);
+        parameters.put(Parameter.Routing_Context, routingCntx);
     }
 
     public ConcernedDPC getConcernedDPC() {
-        return (ConcernedDPC) parameters.get(ParameterImpl.Concerned_Destination);
+        return (ConcernedDPC) parameters.get(Parameter.Concerned_Destination);
     }
 
     public CongestedIndication getCongestedIndication() {
-        return (CongestedIndication) parameters.get(ParameterImpl.Congestion_Indications);
+        return (CongestedIndication) parameters.get(Parameter.Congestion_Indications);
     }
 
     public void setConcernedDPC(ConcernedDPC dpc) {
         if (dpc != null) {
-            parameters.put(ParameterImpl.Concerned_Destination, dpc);
+            parameters.put(Parameter.Concerned_Destination, dpc);
         }
     }
 
     public void setCongestedIndication(CongestedIndication congInd) {
         if (congInd != null) {
-            parameters.put(ParameterImpl.Congestion_Indications, congInd);
+            parameters.put(Parameter.Congestion_Indications, congInd);
         }
     }
 

@@ -31,11 +31,11 @@ public class RegistrationRequestImpl extends M3UAMessageImpl implements
     }
 
     public RoutingKey getRoutingKey() {
-        return (RoutingKey) parameters.get(ParameterImpl.Routing_Key);
+        return (RoutingKey) parameters.get(Parameter.Routing_Key);
     }
 
     public void setRoutingKey(RoutingKey key) {
-        parameters.put(ParameterImpl.Routing_Key, key);
+        parameters.put(Parameter.Routing_Key, key);
     }
 
 }

@@ -26,47 +26,47 @@ public class DestinationUPUnavailableImpl extends M3UAMessageImpl implements Des
     }
 
     public AffectedPointCode getAffectedPointCode() {
-        return (AffectedPointCode) parameters.get(ParameterImpl.Affected_Point_Code);
+        return (AffectedPointCode) parameters.get(Parameter.Affected_Point_Code);
     }
 
     public InfoString getInfoString() {
-        return (InfoString) parameters.get(ParameterImpl.INFO_String);
+        return (InfoString) parameters.get(Parameter.INFO_String);
     }
 
     public NetworkAppearance getNetworkAppearance() {
-        return (NetworkAppearance) parameters.get(ParameterImpl.Network_Appearance);
+        return (NetworkAppearance) parameters.get(Parameter.Network_Appearance);
     }
 
     public RoutingContext getRoutingContext() {
-        return (RoutingContext) parameters.get(ParameterImpl.Routing_Context);
+        return (RoutingContext) parameters.get(Parameter.Routing_Context);
     }
 
     public UserCause getUserCause() {
-        return (UserCause) parameters.get(ParameterImpl.User_Cause);
+        return (UserCause) parameters.get(Parameter.User_Cause);
     }
 
     public void setAffectedPointCode(AffectedPointCode afpc) {
-        parameters.put(ParameterImpl.Affected_Point_Code, afpc);
+        parameters.put(Parameter.Affected_Point_Code, afpc);
     }
 
     public void setInfoString(InfoString str) {
         if (str != null) {
-            parameters.put(ParameterImpl.INFO_String, str);
+            parameters.put(Parameter.INFO_String, str);
         }
     }
 
     public void setNetworkAppearance(NetworkAppearance p) {
         if (p != null) {
-            parameters.put(ParameterImpl.Network_Appearance, p);
+            parameters.put(Parameter.Network_Appearance, p);
         }
     }
 
     public void setRoutingContext(RoutingContext routingCntx) {
-        parameters.put(ParameterImpl.Routing_Context, routingCntx);
+        parameters.put(Parameter.Routing_Context, routingCntx);
     }
 
     public void setUserCause(UserCause usrCau) {
-        parameters.put(ParameterImpl.User_Cause, usrCau);
+        parameters.put(Parameter.User_Cause, usrCau);
     }
 
     @Override

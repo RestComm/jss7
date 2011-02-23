@@ -50,19 +50,19 @@ public class ASPActiveImpl extends M3UAMessageImpl implements ASPActive {
 
     public void setInfoString(InfoString str) {
         if (str != null) {
-            parameters.put(ParameterImpl.INFO_String, str);
+            parameters.put(Parameter.INFO_String, str);
         }
 
     }
 
     public void setRoutingContext(RoutingContext rc) {
-        parameters.put(ParameterImpl.Routing_Context, rc);
+        parameters.put(Parameter.Routing_Context, rc);
 
     }
 
     public void setTrafficModeType(TrafficModeType mode) {
         if (mode != null) {
-            parameters.put(ParameterImpl.Traffic_Mode_Type, mode);
+            parameters.put(Parameter.Traffic_Mode_Type, mode);
         }
     }
 

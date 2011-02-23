@@ -23,22 +23,22 @@ public class ASPUpAckImpl extends M3UAMessageImpl implements ASPUpAck {
     }
 
     public ASPIdentifier getASPIdentifier() {
-        return (ASPIdentifier) parameters.get(ParameterImpl.ASP_Identifier);
+        return (ASPIdentifier) parameters.get(Parameter.ASP_Identifier);
     }
 
     public void setASPIdentifier(ASPIdentifier p) {
         if (p != null) {
-            parameters.put(ParameterImpl.ASP_Identifier, p);
+            parameters.put(Parameter.ASP_Identifier, p);
         }
     }
 
     public InfoString getInfoString() {
-        return (InfoString) parameters.get(ParameterImpl.INFO_String);
+        return (InfoString) parameters.get(Parameter.INFO_String);
     }
 
     public void setInfoString(InfoString str) {
         if (str != null) {
-            parameters.put(ParameterImpl.INFO_String, str);
+            parameters.put(Parameter.INFO_String, str);
         }
     }
 

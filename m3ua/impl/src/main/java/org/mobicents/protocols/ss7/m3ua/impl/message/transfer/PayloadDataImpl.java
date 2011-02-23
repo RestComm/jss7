@@ -44,37 +44,37 @@ public class PayloadDataImpl extends M3UAMessageImpl implements PayloadData {
     }
 
     public NetworkAppearance getNetworkAppearance() {
-        return (NetworkAppearance) parameters.get(ParameterImpl.Network_Appearance);
+        return (NetworkAppearance) parameters.get(Parameter.Network_Appearance);
     }
 
     public void setNetworkAppearance(NetworkAppearance p) {
-        parameters.put(ParameterImpl.Network_Appearance, p);
+        parameters.put(Parameter.Network_Appearance, p);
     }
 
     public RoutingContext getRoutingContext() {
-        return (RoutingContext) parameters.get(ParameterImpl.Routing_Context);
+        return (RoutingContext) parameters.get(Parameter.Routing_Context);
     }
 
     public void setRoutingContext(RoutingContext p) {
         if (p != null) {
-            parameters.put(ParameterImpl.Routing_Context, p);
+            parameters.put(Parameter.Routing_Context, p);
         }
     }
 
     public ProtocolData getData() {
-        return (ProtocolDataImpl) parameters.get(ParameterImpl.Protocol_Data);
+        return (ProtocolDataImpl) parameters.get(Parameter.Protocol_Data);
     }
 
     public void setData(ProtocolData p) {
-        parameters.put(ParameterImpl.Protocol_Data, p);
+        parameters.put(Parameter.Protocol_Data, p);
     }
 
     public CorrelationId getCorrelationId() {
-        return (CorrelationIdImpl) parameters.get(ParameterImpl.Correlation_ID);
+        return (CorrelationIdImpl) parameters.get(Parameter.Correlation_ID);
     }
 
     public void setCorrelationId(CorrelationId corrId) {
-        parameters.put(ParameterImpl.Correlation_ID, corrId);
+        parameters.put(Parameter.Correlation_ID, corrId);
     }
 
     @Override
