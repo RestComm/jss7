@@ -9,7 +9,10 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
+import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
+import org.mobicents.protocols.ss7.m3ua.message.MessageType;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
+import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
@@ -128,12 +131,12 @@ public abstract class As {
             // TODO : Algo to select correct ASP
             for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
                 Asp aspTemp = n.getValue();
-                if(aspTemp.getState() == AspState.ACTIVE){
+                if (aspTemp.getState() == AspState.ACTIVE) {
                     aspTemp.getAspFactory().write(message);
                     break;
                 }
             }
-            
+
             break;
         case PENDING:
             this.penQueue.add(message);
@@ -141,6 +144,16 @@ public abstract class As {
         default:
             throw new IOException(String.format("As name=%s is not ACTIVE", this.name));
         }
+    }
+
+    public void write(byte[] msu) throws IOException {
+        ProtocolData data = m3UAProvider.getParameterFactory().createProtocolData(0, msu);
+
+        PayloadData payload = (PayloadData) this.m3UAProvider.getMessageFactory().createMessage(
+                MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD);
+        payload.setRoutingContext(this.rc);
+        payload.setData(data);
+        this.write(payload);
     }
 
     public void received(PayloadData payload) {

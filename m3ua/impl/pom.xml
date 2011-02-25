@@ -39,7 +39,12 @@
 			<groupId>org.mobicents.protocols.ss7.management</groupId>
 			<artifactId>shell</artifactId>
 		</dependency>
-
+		
+		<!-- linkset -->
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+			<artifactId>linkset</artifactId>
+		</dependency>		
 	</dependencies>
 
 	<build>

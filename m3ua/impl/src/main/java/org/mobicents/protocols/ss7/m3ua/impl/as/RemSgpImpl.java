@@ -37,7 +37,7 @@ public class RemSgpImpl implements Sgp {
     private M3UASelector selector;
 
     private boolean started = false;
-    
+
     private M3UAScheduler m3uaScheduler = new M3UAScheduler();
 
     public RemSgpImpl() {
@@ -74,6 +74,10 @@ public class RemSgpImpl implements Sgp {
         selector = m3uaProvider.openSelector();
 
         this.started = true;
+    }
+
+    public void stop() {
+        // Nothing to do
     }
 
     /**
@@ -117,6 +121,16 @@ public class RemSgpImpl implements Sgp {
         appServers.add(as);
         return as;
 
+    }
+
+    public As getAs(String asName) {
+        for (FastList.Node<As> n = appServers.head(), end = appServers.tail(); (n = n.getNext()) != end;) {
+            As as = n.getValue();
+            if (as.getName().compareTo(asName) == 0) {
+                return as;
+            }
+        }
+        return null;
     }
 
     /**
@@ -240,9 +254,9 @@ public class RemSgpImpl implements Sgp {
                 channel.finishConnect();
             }
         }
-        
+
         localAspFact.setChannel(channel);
-        
+
         localAspFact.start();
         logger.info(String.format("Started ASP name=%s local-ip=%s local-pot=%d rem-ip=%s rem-port=%d", localAspFact
                 .getName(), localAspFact.getIp(), localAspFact.getPort(), localAspFact.getRemIp(), localAspFact
@@ -261,18 +275,14 @@ public class RemSgpImpl implements Sgp {
         localAspFact.stop();
     }
 
-    public void stop() {
-        // Nothing to do
-    }
-
     public void perform() throws IOException {
 
         if (!started) {
             return;
         }
-        
+
         m3uaScheduler.tick();
-        
+
         FastList<M3UASelectionKey> selections = selector.selectNow();
 
         for (FastList.Node<M3UASelectionKey> n = selections.head(), end = selections.tail(); (n = n.getNext()) != end;) {
