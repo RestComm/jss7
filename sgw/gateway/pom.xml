@@ -1,0 +1,103 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.mobicents.protocols.ss7.sgw</groupId>
+		<artifactId>mobicents-sgw</artifactId>
+		<version>1.0.0.BETA7-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>gateway</artifactId>
+
+	<name>Mobicents SS7 :: SGW :: Gateway :: ${pom.artifactId}</name>
+
+	<dependencies>
+		<!-- clock -->
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.clock</groupId>
+			<artifactId>clock</artifactId>
+		</dependency>
+
+		<dependency>
+			<artifactId>mtp</artifactId>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>linkset</artifactId>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+		</dependency>
+
+		<!-- M3UA -->
+		<dependency>
+			<artifactId>m3ua-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>m3ua-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+		</dependency>
+
+		<!-- Hardware Dahdi Java-->
+		<dependency>
+			<artifactId>mobicents-dahdi</artifactId>
+			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+		</dependency>
+
+		<!-- Hardware Dialogic Java-->
+		<dependency>
+			<artifactId>mobicents-dialogic</artifactId>
+			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+		</dependency>
+
+		<!-- /hardware m3ua Java-->
+		<dependency>
+			<artifactId>mobicents-m3ua</artifactId>
+			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+		</dependency>
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>concurrent</groupId>
+			<artifactId>concurrent</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javolution</groupId>
+			<artifactId>javolution</artifactId>
+		</dependency>
+		<dependency>
+			<artifactId>shell</artifactId>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>${pom.artifactId}-${pom.version}</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

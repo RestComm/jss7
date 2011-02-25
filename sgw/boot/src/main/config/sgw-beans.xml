@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="urn:jboss:bean-deployer:2.0">
+
+	<bean name="LinksetFactoryFactory"
+		class="org.mobicents.ss7.linkset.oam.LinksetFactoryFactory">
+		<incallback method="addFactory" />
+		<uncallback method="removeFactory" />
+	</bean>
+
+	<bean name="DahdiLinksetFactory"
+		class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+	</bean>
+
+	<bean name="DialogicLinksetFactory"
+		class="org.mobicents.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
+	</bean>
+
+	<bean name="LinksetManager"
+		class="org.mobicents.ss7.linkset.oam.LinksetManager">
+
+		<property name="linksetFactoryFactory">
+			<inject bean="LinksetFactoryFactory" />
+		</property>
+		<property name="persistDir">${linkset.persist.dir}</property>
+	</bean>
+
+	<bean name="LinksetExecutor"
+		class="org.mobicents.ss7.linkset.oam.LinksetExecutor">
+		<property name="linksetManager">
+			<inject bean="LinksetManager" />
+		</property>
+	</bean>
+
+	<bean name="SgpImpl"
+		class="org.mobicents.protocols.ss7.m3ua.impl.sg.SgpImpl">
+		<constructor>
+			<parameter>${sgw.bind.address}</parameter>
+			<parameter>3434</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="M3UAShellExecutor"
+		class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
+		<property name="sgp">
+			<inject bean="SgpImpl" />
+		</property>
+	</bean>
+
+	<bean name="ShellExecutor"
+		class="org.mobicents.ss7.sgw.ShellExecutor">
+		<property name="address">${sgw.bind.address}</property>
+		<property name="port">3436</property>
+		<property name="linksetExecutor">
+			<inject bean="LinksetExecutor" />
+		</property>
+		<property name="m3UAShellExecutor">
+			<inject bean="M3UAShellExecutor" />
+		</property>
+	</bean>
+
+	<bean name="NodalInterworkingFunction" class="org.mobicents.ss7.sgw.NodalInterworkingFunction">
+		<property name="linksetManager">
+			<inject bean="LinksetManager" />
+		</property>
+		<property name="sgpImpl">
+			<inject bean="SgpImpl" />
+		</property>
+	</bean>
+
+
+	<bean name="SignalingGateway"
+		class="org.mobicents.ss7.sgw.SignalingGateway">
+
+		<property name="shellExecutor">
+			<inject bean="ShellExecutor" />
+		</property>
+
+		<property name="nodalInterworkingFunction">
+			<inject bean="NodalInterworkingFunction" />
+		</property>
+
+	</bean>
+</deployment>
