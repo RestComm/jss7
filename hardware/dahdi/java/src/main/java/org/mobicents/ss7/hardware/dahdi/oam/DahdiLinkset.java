@@ -76,14 +76,13 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
             this.mtp3.clearLinks();
             this.mtp3.addMtp3Listener(this);
 
-            for (FastMap.Entry<String, Link> e = this.links.head(), end = this.links
-                    .tail(); (e = e.getNext()) != end;) {
+            for (FastMap.Entry<String, Link> e = this.links.head(), end = this.links.tail(); (e = e.getNext()) != end;) {
                 Link value = e.getValue();
                 if (value.getMode() == LinkMode.CONFIGURED) {
                     this.mtp3.addLink(((DahdiLink) value).getMtp2());
                 }
             }
-            
+
             this.mtp3.setDpc(this.apc);
             this.mtp3.setOpc(this.opc);
             this.mtp3.setNetworkIndicator(this.ni);
@@ -165,8 +164,7 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
         }
 
         // Check if atleast one Link is in Configured mode
-        for (FastMap.Entry<String, Link> e = this.links.head(), end = this.links
-                .tail(); (e = e.getNext()) != end;) {
+        for (FastMap.Entry<String, Link> e = this.links.head(), end = this.links.tail(); (e = e.getNext()) != end;) {
             Link value = e.getValue();
             if (value.getMode() == LinkMode.CONFIGURED) {
                 this.mode = LinksetMode.CONFIGURED;
@@ -211,12 +209,10 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
     /**
      * XML Serialization/Deserialization
      */
-    protected static final XMLFormat<DahdiLinkset> DAHDI_LINKSET_XML = new XMLFormat<DahdiLinkset>(
-            DahdiLinkset.class) {
+    protected static final XMLFormat<DahdiLinkset> DAHDI_LINKSET_XML = new XMLFormat<DahdiLinkset>(DahdiLinkset.class) {
 
         @Override
-        public void read(javolution.xml.XMLFormat.InputElement xml,
-                DahdiLinkset linkSet) throws XMLStreamException {
+        public void read(javolution.xml.XMLFormat.InputElement xml, DahdiLinkset linkSet) throws XMLStreamException {
             LINKSET_XML.read(xml, linkSet);
 
             try {
@@ -227,9 +223,7 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
         }
 
         @Override
-        public void write(DahdiLinkset linkSet,
-                javolution.xml.XMLFormat.OutputElement xml)
-                throws XMLStreamException {
+        public void write(DahdiLinkset linkSet, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
             LINKSET_XML.write(linkSet, xml);
         }
     };
@@ -283,7 +277,12 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
             if (queue.isEmpty()) {
                 return 0;
             }
-            paramArrayOfByte = queue.poll();
+
+            byte[] data = queue.poll();
+            if (data != null) {
+                System.arraycopy(data, 0, paramArrayOfByte, 0, data.length);
+            }
+            
             return paramArrayOfByte == null ? 0 : paramArrayOfByte.length;
         }
 
@@ -308,8 +307,7 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
 
         // check if length is less than Link.NAME_SIZE, add padding
         if (this.linksetName.length() < Linkset.NAME_SIZE) {
-            FormatterHelp.createPad(sb, Linkset.NAME_SIZE
-                    - this.linksetName.length());
+            FormatterHelp.createPad(sb, Linkset.NAME_SIZE - this.linksetName.length());
         }
 
         // add desc padding
@@ -322,8 +320,7 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
         FormatterHelp.createPad(sb, descPad);
 
         // add opc
-        sb.append(LINKSET_OPC).append(FormatterHelp.EQUAL_SIGN)
-                .append(this.opc);
+        sb.append(LINKSET_OPC).append(FormatterHelp.EQUAL_SIGN).append(this.opc);
 
         // opc can be max 8 (ANSI is max 24bits) digits. Add padding if its not
         int length = (Integer.toString(this.opc).length());
@@ -335,8 +332,7 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
         FormatterHelp.createPad(sb, descPad);
 
         // add apc
-        sb.append(LINKSET_APC).append(FormatterHelp.EQUAL_SIGN)
-                .append(this.apc);
+        sb.append(LINKSET_APC).append(FormatterHelp.EQUAL_SIGN).append(this.apc);
 
         // opc can be max 8 (ANSI is max 24bits) digits. Add padding if its not
         length = (Integer.toString(this.apc).length());
@@ -354,13 +350,11 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
         FormatterHelp.createPad(sb, descPad);
 
         // add state
-        sb.append(LINKSET_STATE).append(FormatterHelp.EQUAL_SIGN).append(
-                FormatterHelp.getLinksetState(this.state));
+        sb.append(LINKSET_STATE).append(FormatterHelp.EQUAL_SIGN).append(FormatterHelp.getLinksetState(this.state));
 
         sb.append(FormatterHelp.NEW_LINE);
 
-        for (FastMap.Entry<String, Link> e = this.links.head(), end = this.links
-                .tail(); (e = e.getNext()) != end;) {
+        for (FastMap.Entry<String, Link> e = this.links.head(), end = this.links.tail(); (e = e.getNext()) != end;) {
             Link link = e.getValue();
             link.print(sb, 4, 2);
             sb.append(FormatterHelp.NEW_LINE);

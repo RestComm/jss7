@@ -29,8 +29,7 @@ import org.mobicents.ss7.linkset.oam.LinksetStream;
  */
 public class DialogicLinkset extends Linkset {
 
-    private static final Logger logger = Logger
-            .getLogger(DialogicLinkset.class);
+    private static final Logger logger = Logger.getLogger(DialogicLinkset.class);
 
     private static final String SRC_MODULE = "srcMod";
     private static final String DEST_MODULE = "destMod";
@@ -44,8 +43,7 @@ public class DialogicLinkset extends Linkset {
         super();
     }
 
-    public DialogicLinkset(String linksetName, int opc, int dpc, int ni,
-            int srcMod, int dstMod) {
+    public DialogicLinkset(String linksetName, int opc, int dpc, int ni, int srcMod, int dstMod) {
         super(linksetName, opc, dpc, ni);
         this.sourceModule = srcMod;
         this.destModule = dstMod;
@@ -75,8 +73,7 @@ public class DialogicLinkset extends Linkset {
     @Override
     protected void configure() throws Exception {
         if (this.mode == LinksetMode.CONFIGURED) {
-            ipc = new InterProcessCommunicator(this.sourceModule,
-                    this.destModule);
+            ipc = new InterProcessCommunicator(this.sourceModule, this.destModule);
         }
 
     }
@@ -120,8 +117,7 @@ public class DialogicLinkset extends Linkset {
             DialogicLinkset.class) {
 
         @Override
-        public void read(javolution.xml.XMLFormat.InputElement xml,
-                DialogicLinkset linkset) throws XMLStreamException {
+        public void read(javolution.xml.XMLFormat.InputElement xml, DialogicLinkset linkset) throws XMLStreamException {
 
             LINKSET_XML.read(xml, linkset);
 
@@ -136,8 +132,7 @@ public class DialogicLinkset extends Linkset {
         }
 
         @Override
-        public void write(DialogicLinkset linkset,
-                javolution.xml.XMLFormat.OutputElement xml)
+        public void write(DialogicLinkset linkset, javolution.xml.XMLFormat.OutputElement xml)
                 throws XMLStreamException {
 
             LINKSET_XML.write(linkset, xml);
@@ -158,10 +153,7 @@ public class DialogicLinkset extends Linkset {
                     return true;
                 }
             } catch (IOException ex) {
-                logger
-                        .error(
-                                "IO error while receiving data from InterProcessCommunicator",
-                                ex);
+                logger.error("IO error while receiving data from InterProcessCommunicator", ex);
             }
             return false;
         }
@@ -181,7 +173,10 @@ public class DialogicLinkset extends Linkset {
         }
 
         public int read(byte[] paramArrayOfByte) throws IOException {
-            paramArrayOfByte = rxData;
+            if (rxData != null) {
+                System.arraycopy(rxData, 0, paramArrayOfByte, 0, rxData.length);
+            }
+
             return paramArrayOfByte == null ? 0 : paramArrayOfByte.length;
         }
 
@@ -206,8 +201,7 @@ public class DialogicLinkset extends Linkset {
 
         // check if length is less than Link.NAME_SIZE, add padding
         if (this.linksetName.length() < Linkset.NAME_SIZE) {
-            FormatterHelp.createPad(sb, Linkset.NAME_SIZE
-                    - this.linksetName.length());
+            FormatterHelp.createPad(sb, Linkset.NAME_SIZE - this.linksetName.length());
         }
 
         // add desc padding
@@ -220,8 +214,7 @@ public class DialogicLinkset extends Linkset {
         FormatterHelp.createPad(sb, descPad);
 
         // add opc
-        sb.append(LINKSET_OPC).append(FormatterHelp.EQUAL_SIGN)
-                .append(this.opc);
+        sb.append(LINKSET_OPC).append(FormatterHelp.EQUAL_SIGN).append(this.opc);
 
         // opc can be max 8 (ANSI is max 24bits) digits. Add padding if its not
         int length = (Integer.toString(this.opc).length());
@@ -233,8 +226,7 @@ public class DialogicLinkset extends Linkset {
         FormatterHelp.createPad(sb, descPad);
 
         // add apc
-        sb.append(LINKSET_APC).append(FormatterHelp.EQUAL_SIGN)
-                .append(this.apc);
+        sb.append(LINKSET_APC).append(FormatterHelp.EQUAL_SIGN).append(this.apc);
 
         // opc can be max 8 (ANSI is max 24bits) digits. Add padding if its not
         length = (Integer.toString(this.apc).length());
@@ -252,22 +244,19 @@ public class DialogicLinkset extends Linkset {
         FormatterHelp.createPad(sb, descPad);
 
         // add Source Module
-        sb.append(SRC_MODULE).append(FormatterHelp.EQUAL_SIGN).append(
-                this.sourceModule);
+        sb.append(SRC_MODULE).append(FormatterHelp.EQUAL_SIGN).append(this.sourceModule);
 
         // add desc padding
         FormatterHelp.createPad(sb, descPad);
 
         // add dest Module
-        sb.append(DEST_MODULE).append(FormatterHelp.EQUAL_SIGN).append(
-                this.destModule);
+        sb.append(DEST_MODULE).append(FormatterHelp.EQUAL_SIGN).append(this.destModule);
 
         // add desc padding
         FormatterHelp.createPad(sb, descPad);
 
         // add state
-        sb.append(LINKSET_STATE).append(FormatterHelp.EQUAL_SIGN).append(
-                FormatterHelp.getLinksetState(this.state));
+        sb.append(LINKSET_STATE).append(FormatterHelp.EQUAL_SIGN).append(FormatterHelp.getLinksetState(this.state));
 
         sb.append(FormatterHelp.NEW_LINE);
 
