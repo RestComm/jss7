@@ -47,12 +47,11 @@ public interface LinkOAMMessages {
 
     public static final String LINK_ALREADY_EXIST = "Link already exist";
 
-    public static final byte[] LINKSET_NOT_DAHDI = "Linkset is of not Dahdi type"
-            .getBytes();
-    public static final byte[] LINKSET_NOT_DIALOGI = "Linkset is of not Dialogic type"
-            .getBytes();
-    public static final byte[] LINKSET_NOT_M3UA = "Linkset is of not M3UA type"
-            .getBytes();
+    public static final String LINKSET_NOT_DAHDI = "Linkset is of not Dahdi type";
+
+    public static final String LINKSET_NOT_DIALOGI = "Linkset is of not Dialogic type";
+
+    public static final String LINKSET_NOT_M3UA = "Linkset is of not M3UA type";
 
     public static final String NOT_IMPLEMENTED = "Not implemented yet";
 
@@ -67,4 +66,5 @@ public interface LinkOAMMessages {
     public static final String OPERATION_NOT_SUPPORTED = "Operation not supported";
     
     public static final String SERVER_ERROR = "Server Error";
+    
 }
