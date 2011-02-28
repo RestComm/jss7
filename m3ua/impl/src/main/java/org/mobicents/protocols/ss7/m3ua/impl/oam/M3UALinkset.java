@@ -132,7 +132,8 @@ public class M3UALinkset extends Linkset {
         public int read(byte[] paramArrayOfByte) throws IOException {
             PayloadData payload = asImpl.poll();
             if (payload != null) {
-                paramArrayOfByte = payload.getData().getMsu();
+                byte[] data = payload.getData().getMsu();
+                System.arraycopy(data, 0, paramArrayOfByte, 0, data.length);
                 return paramArrayOfByte.length;
             }
             return 0;
