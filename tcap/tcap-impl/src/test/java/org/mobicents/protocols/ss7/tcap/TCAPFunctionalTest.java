@@ -4,10 +4,9 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
-import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
+import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
@@ -35,6 +34,8 @@ public class TCAPFunctionalTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        RouterImpl router = new RouterImpl();
+        sccpStack.setRouter(router);
         sccpStack.start();
 
         this.provider = sccpStack.getSccpProvider();
