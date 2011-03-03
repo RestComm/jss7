@@ -25,6 +25,8 @@ import java.nio.channels.SelectionKey;
 import javolution.util.FastSet;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor;
+import org.mobicents.protocols.ss7.sccp.impl.router.RuleExecutor;
 import org.mobicents.ss7.linkset.oam.LinksetExecutor;
 import org.mobicents.ss7.management.console.Subject;
 import org.mobicents.ss7.management.transceiver.ChannelProvider;
@@ -62,6 +64,10 @@ public class ShellExecutor implements Runnable {
 
     private volatile LinksetExecutor linksetExecutor = null;
 
+    private volatile M3UAShellExecutor m3UAShellExecutor = null;
+
+    private volatile RuleExecutor ruleExecutor = null;
+
     public ShellExecutor() throws IOException {
 
     }
@@ -81,9 +87,9 @@ public class ShellExecutor implements Runnable {
     public void setPort(int port) {
         this.port = port;
     }
-    
+
     public void start() {
-        
+
     }
 
     public void startService() throws IOException {
@@ -91,8 +97,7 @@ public class ShellExecutor implements Runnable {
         logger.info("Starting SS7 management shell environment");
         provider = ChannelProvider.provider();
         serverChannel = provider.openServerChannel();
-        InetSocketAddress inetSocketAddress = new InetSocketAddress(address,
-                port);
+        InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
         serverChannel.bind(inetSocketAddress);
 
         selector = provider.openSelector();
@@ -100,13 +105,12 @@ public class ShellExecutor implements Runnable {
 
         messageFactory = ChannelProvider.provider().getMessageFactory();
 
-        this.logger.info(String.format("ShellExecutor listening at %s",
-                inetSocketAddress));
+        this.logger.info(String.format("ShellExecutor listening at %s", inetSocketAddress));
 
         this.started = true;
         new Thread(this).start();
     }
-    
+
     public void stop() {
     }
 
@@ -122,16 +126,30 @@ public class ShellExecutor implements Runnable {
         this.linksetExecutor = linksetExecutor;
     }
 
+    public M3UAShellExecutor getM3UAShellExecutor() {
+        return m3UAShellExecutor;
+    }
+
+    public void setM3UAShellExecutor(M3UAShellExecutor shellExecutor) {
+        m3UAShellExecutor = shellExecutor;
+    }
+
+    public RuleExecutor getRuleExecutor() {
+        return ruleExecutor;
+    }
+
+    public void setRuleExecutor(RuleExecutor ruleExecutor) {
+        this.ruleExecutor = ruleExecutor;
+    }
+
     public void run() {
 
         while (started) {
             try {
                 FastSet<ChannelSelectionKey> keys = selector.selectNow();
 
-                for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record
-                        .getNext()) != end;) {
-                    ChannelSelectionKey key = (ChannelSelectionKey) keys
-                            .valueOf(record);
+                for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record.getNext()) != end;) {
+                    ChannelSelectionKey key = (ChannelSelectionKey) keys.valueOf(record);
 
                     if (key.isAcceptable()) {
                         accept();
@@ -141,29 +159,32 @@ public class ShellExecutor implements Runnable {
 
                         if (msg != null) {
                             rxMessage = msg.toString();
-                            System.out.println("received "+ rxMessage);
+                            System.out.println("received " + rxMessage);
                             if (rxMessage.compareTo("disconnect") == 0) {
                                 this.txMessage = "Bye";
-                                chan.send(messageFactory
-                                        .createMessage(txMessage));
+                                chan.send(messageFactory.createMessage(txMessage));
 
                             } else {
                                 String[] options = rxMessage.split(" ");
-                                Subject subject = Subject
-                                        .getSubject(options[0]);
+                                Subject subject = Subject.getSubject(options[0]);
                                 if (subject == null) {
-                                    chan.send(messageFactory
-                                            .createMessage("Invalid Subject"));
+                                    chan.send(messageFactory.createMessage("Invalid Subject"));
                                 } else {
                                     // Nullify examined options
                                     options[0] = null;
 
                                     switch (subject) {
                                     case LINKSET:
-                                        this.txMessage = this.linksetExecutor
-                                                .execute(options);
-                                        chan.send(messageFactory
-                                                .createMessage(this.txMessage));
+                                        this.txMessage = this.linksetExecutor.execute(options);
+                                        chan.send(messageFactory.createMessage(this.txMessage));
+                                        break;
+                                    case M3UA:
+                                        this.txMessage = this.m3UAShellExecutor.execute(options);
+                                        chan.send(messageFactory.createMessage(this.txMessage));
+                                        break;
+                                    case SCCPRULE:
+                                        this.txMessage = this.ruleExecutor.execute(options);
+                                        chan.send(messageFactory.createMessage(this.txMessage));
                                         break;
                                     }
                                 }
@@ -217,8 +238,7 @@ public class ShellExecutor implements Runnable {
     private void accept() throws IOException {
         channel = serverChannel.accept();
         skey.cancel();
-        skey = channel.register(selector, SelectionKey.OP_READ
-                | SelectionKey.OP_WRITE);
+        skey = channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
     }
 
     private void closeChannel() throws IOException {

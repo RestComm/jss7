@@ -47,11 +47,16 @@
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		</dependency>
 
-		<!-- /hardware m3ua Java-->
+		<!-- m3ua -->
 		<dependency>
-			<artifactId>mobicents-m3ua</artifactId>
-			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+			<artifactId>m3ua-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
 		</dependency>
+		
+		<dependency>
+			<artifactId>m3ua-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+		</dependency>		
 
 		<dependency>
 			<groupId>log4j</groupId>

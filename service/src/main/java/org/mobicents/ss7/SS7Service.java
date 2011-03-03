@@ -26,8 +26,8 @@ import javolution.util.FastMap;
 import org.apache.log4j.Logger;
 import org.jboss.system.ServiceMBeanSupport;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
+import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.mobicents.ss7.linkset.oam.Linkset;
-import org.mobicents.ss7.linkset.oam.LinksetExecutor;
 import org.mobicents.ss7.linkset.oam.LinksetManager;
 
 /**
@@ -37,9 +37,10 @@ import org.mobicents.ss7.linkset.oam.LinksetManager;
 public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
     private ShellExecutor shellExecutor = null;
-
+    private RemSignalingGateway remSignalingGateway = null;
     private LinksetManager linksetManager;
     private SccpStackImpl sccpStack;
+    private RouterImpl routerImpl;
 
     private String path;
     private String jndiName;
@@ -53,10 +54,10 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
         sccpStack = new SccpStackImpl();
         sccpStack.setConfigPath(path);
+        sccpStack.setRouter(routerImpl);
 
         FastMap<String, Linkset> map = this.linksetManager.getLinksets();
-        for (FastMap.Entry<String, Linkset> e = map.head(), end = map.tail(); (e = e
-                .getNext()) != end;) {
+        for (FastMap.Entry<String, Linkset> e = map.head(), end = map.tail(); (e = e.getNext()) != end;) {
             Linkset value = e.getValue();
             ((SccpStackImpl) sccpStack).add(value);
         }
@@ -65,14 +66,14 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
         sccpStack.start();
         rebind(sccpStack);
 
-        logger.info("SCCP stack Started. SccpProvider bound to "
-                + this.jndiName);
+        logger.info("SCCP stack Started. SccpProvider bound to " + this.jndiName);
 
         if (this.shellExecutor != null) {
-            LinksetExecutor linksetExec = new LinksetExecutor();
-            linksetExec.setLinksetManager(this.linksetManager);
-            this.shellExecutor.setLinksetExecutor(linksetExec);
             this.shellExecutor.startService();
+        }
+
+        if (this.remSignalingGateway != null) {
+            this.remSignalingGateway.startService();
         }
 
         logger.info("[[[[[[[[[ Mobicents SS7 service started ]]]]]]]]]");
@@ -98,6 +99,22 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
         this.shellExecutor = shellExecutor;
     }
 
+    public RemSignalingGateway getRemSignalingGateway() {
+        return remSignalingGateway;
+    }
+
+    public void setRemSignalingGateway(RemSignalingGateway remSignalingGateway) {
+        this.remSignalingGateway = remSignalingGateway;
+    }
+
+    public RouterImpl getRouterImpl() {
+        return routerImpl;
+    }
+
+    public void setRouterImpl(RouterImpl routerImpl) {
+        this.routerImpl = routerImpl;
+    }
+
     @Override
     public void stopService() {
         try {
@@ -108,7 +125,9 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
         if (this.shellExecutor != null) {
             this.shellExecutor.stopService();
         }
-
+        if (this.remSignalingGateway != null) {
+            this.remSignalingGateway.stopService();
+        }
         logger.info("Stopped SS7 service");
     }
 

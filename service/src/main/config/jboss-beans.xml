@@ -1,13 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="urn:jboss:bean-deployer:2.0">
+	
 
+        <!-- ==================================================================== -->
+        <!-- Remote Signalling Gateway Service                                    -->
+        <!-- ==================================================================== -->
+	<!--
+           | Beans RemSgpImpl, M3UAShellExecutor and RemSignalingGateway defined bellow are only 
+           | needed if M3UALinkset will be used to connect to external Signaling Gateway. Delete/Comment 
+           | out these beans if hardware is installed in same machine where 
+           | mobicents-ss7-service is running.
+	-->
+	<bean name="RemSgpImpl"
+		class="org.mobicents.protocols.ss7.m3ua.impl.as.RemSgpImpl">
+	</bean>
+
+	<bean name="M3UAShellExecutor"
+		class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
+		<property name="sgp">
+			<inject bean="RemSgpImpl" />
+		</property>
+	</bean>
+
+	<!-- Define Remote Signalling Gateway-->
+	<bean name="RemSignalingGateway"
+		class="org.mobicents.ss7.RemSignalingGateway">
+		<property name="remSgpImpl">
+			<inject bean="RemSgpImpl" />
+		</property>
+	</bean>
+
+        
+        <!-- ==================================================================== -->
+        <!-- LinksetFactory factory Service                                       -->
+        <!-- ==================================================================== -->
+	<!-- Define LinksetFactory factory-->
 	<bean name="LinksetFactoryFactory"
 		class="org.mobicents.ss7.linkset.oam.LinksetFactoryFactory">
 		<incallback method="addFactory" />
 		<uncallback method="removeFactory" />
 	</bean>
 
+	<!-- Define actual LinksetFactory-->
+	<!--
+           | Keep either of DahdiLinksetFactory or DialogicLinksetFactory depending on SS7 Card
+           | installed on this server. If no hardware is installed and M3UALinkset is used 
+           | keep M3UALinksetFactory and remove other two.
+           | 
+	-->	
 	<bean name="DahdiLinksetFactory"
 		class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
 	</bean>
@@ -17,9 +58,15 @@
 	</bean>
 
 	<bean name="M3UALinksetFactory"
-		class="org.mobicents.ss7.m3ua.oam.M3UALinksetFactory">
+		class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UALinksetFactory">
+		<property name="remSgp">
+			<inject bean="RemSgpImpl" />
+		</property>
 	</bean>
 
+        <!-- ==================================================================== -->
+        <!-- Linkset manager Service                                              -->
+        <!-- ==================================================================== -->
 	<bean name="LinksetManager"
 		class="org.mobicents.ss7.linkset.oam.LinksetManager">
 
@@ -29,18 +76,60 @@
 		<property name="persistDir">${jboss.server.data.dir}</property>
 	</bean>
 	
+	<bean name="LinksetExecutor"
+		class="org.mobicents.ss7.linkset.oam.LinksetExecutor">
+		<property name="linksetManager">
+			<inject bean="LinksetManager" />
+		</property>
+	</bean>
+
+        <!-- ==================================================================== -->
+        <!-- SCCP Router Service                                                  -->
+        <!-- ==================================================================== -->
+	<!--Define Router for SCCP-->
+	<bean name="RouterImpl"
+		class="org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl">
+		<property name="persistDir">${jboss.server.data.dir}</property>
+	</bean>
+
+	<bean name="RuleExecutor"
+		class="org.mobicents.protocols.ss7.sccp.impl.router.RuleExecutor">
+		<property name="router">
+			<inject bean="RouterImpl" />
+		</property>
+	</bean>
+
+        <!-- ==================================================================== -->
+        <!-- Shell Service                                                        -->
+        <!-- ==================================================================== -->
+	<!-- Define Shell Executor -->
 	<bean name="ShellExecutor"
 		class="org.mobicents.ss7.ShellExecutor">
 		<property name="address">${jboss.bind.address}</property>
 		<property name="port">3435</property>
+		<property name="linksetExecutor">
+			<inject bean="LinksetExecutor" />
+		</property>
+		<!-- M3UAShellExecutor required only if M3UALinkset will be created. -->
+		<property name="m3UAShellExecutor">
+			<inject bean="M3UAShellExecutor" />
+		</property>
+		<property name="ruleExecutor">
+			<inject bean="RuleExecutor" />
+		</property>
 	</bean>		
 
-	<!-- Mobicents SS7 service -->
+        <!-- ==================================================================== -->
+        <!-- Mobicents SS7 Service                                                -->
+        <!-- ==================================================================== -->
 	<bean name="SS7Service" class="org.mobicents.ss7.SS7Service">
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=SS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
 		<property name="jndiName">java:/mobicents/ss7/sccp</property>
 		<property name="configPath">${catalina.home}/deploy/mobicents-ss7-service/sccp-routing.txt</property>
+		<property name="routerImpl"><inject bean="RouterImpl" /></property>
 		<property name="linksetManager"><inject bean="LinksetManager" /></property>
-		<property name="shellExecutor"><inject bean="ShellExecutor" /></property>		
+		<property name="shellExecutor"><inject bean="ShellExecutor" /></property>
+		<!-- remSignalingGateway required only if M3UALinkset will be used to connect to remote Signalling Gateway -->
+		<property name="remSignalingGateway"><inject bean="RemSignalingGateway" /></property>		
 	</bean>
 </deployment>
