@@ -6,32 +6,22 @@
 	<section>
 		<title>SCCP Management</title>
 		<para>
-			SCCP provides connectionless and connection-oriented network
-			services
-			and global title translation (GTT) capabilities above
-			<acronym>MTP</acronym>
-			Level 3. SCCP provides also extended routing, flow control,
-			segmentation and reassembly of data service.
-		</para>
+			SCCP provides connectionless and connection-oriented network services. This includes address(GTT) translation and routing, flow control
+			segmentation and reassembly. 
+			</para>
 		<para>
-			A global title is an address (e.g., a dialed 800 number,
-			calling card
-			number, or mobile subscriber identification number)
-			which is translated
-			by SCCP into a destination point code and
-			subsystem number. A subsystem
-			number uniquely identifies an
-			application at the destination signaling
-			point.
+			A global title is an address (e.g., a dialed 800 number, calling card number, or mobile subscriber identification number)
+			which is
+			translated by SCCP into a destination point code and subsystem number. A subsystem number uniquely identifies an
+			application at the
+			destination signaling point.
 			<acronym>SCCP</acronym>
-			is used as the
-			transport layer for
+			is used as the transport layer for
 			<acronym>TCAP</acronym>
 			-based services
 		</para>
 		<para>
-			As its main purpose is to route data units between signaling nodes, it
-			requires means of configuring routing directives.
+			As <acronym>SCCP</acronym> acts as message router, it requires means to configure routing information.
 			<acronym>CLI</acronym> provides way to easly manage routing rules information in &THIS.PLATFORM; <acronym>SCCP</acronym>
 			implementation.
 		</para>		
@@ -40,7 +30,7 @@
 		
 			<title>Rule</title>
 			<para>
-				Implementation of <acronym>SCCP</acronym> routing mechanism makes routing decisions based on <literal>rules</literal>.
+				<acronym>SCCP</acronym> routing mechanism makes routing decisions based on <literal>rules</literal>.
 				Each rule consits of three elements:
 			</para>
 			<variablelist>
@@ -107,7 +97,7 @@
 					<listitem>
 						<para>
 							determines mtp layer information. If <literal>translation</literal>
-							does not indicate local address, this information is used to send
+							does not indicate local address(subsystem number), this information is used to send
 							message through <acronym>MTP</acronym> layer. It has following structure:
 						</para>
 						<variablelist>

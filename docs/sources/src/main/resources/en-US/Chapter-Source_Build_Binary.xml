@@ -664,8 +664,8 @@ Halting VM]]></screen>
 				<step>
 					<title>Building the source code</title>
 					<para>Now that we have the source the next step is to build and install the source. 
-					&THIS.PLATFORM; &THIS.APPLICATION; uses Maven 2 to build the system. There are two profiles 
-					available "dahdilinux" and "dialogiclinux" appart from default profile that doesn't try to compile the native modules.</para>
+					&THIS.PLATFORM; &THIS.APPLICATION; uses Maven 2 to build the system. There are three profiles. Default one builds only java source. The other two profiles 
+					available "dahdilinux" and "dialogiclinux" additionaly compile native modules.</para>
 					<note>
 						<para>
 							Native modules are supported only for linux OS for now.

@@ -5,17 +5,19 @@
 	id="design_overview">
 
 	<title>The Basics</title>
-
-	<para>The &THIS.PLATFORM; &THIS.APPLICATION; is logically divided into two sections. 
-	The lower section includes SS7 Level 3 and below. The lower section is influenced by type of SS7 hardware (Level 1) used.
-	The upper section includes SS7 Level 4 and above.
-	This logical division is widely based on flexibility of &THIS.PLATFORM; &THIS.APPLICATION; to allow usage of any SS7 hardware 
-	available in the market and yet &THIS.PLATFORM; &THIS.APPLICATION; Level 4 and above remains the same. 
-	</para>
 	<important>
 		<para>Be aware, &THIS.PLATFORM; &THIS.APPLICATION; is subject to changes as it is under active development!
 		</para>
 	</important>
+	<para>The &THIS.PLATFORM; &THIS.APPLICATION; is logically divided into two sections. 
+	The lower section includes SS7 Level 3 and below. The lower section is influenced by type of SS7 hardware (Level 1) used.
+	</para>
+	<para>
+	The upper section includes SS7 Level 4 and above.
+	This logical division is widely based on flexibility of &THIS.PLATFORM; &THIS.APPLICATION; to allow usage of any SS7 hardware 
+	available in the market and yet &THIS.PLATFORM; &THIS.APPLICATION; Level 4 and above remains the same. 
+	</para>
+	
 	<para>
 		Further &THIS.PLATFORM; &THIS.APPLICATION; provides flexibility to use the Level 2,3 and Level 4 in same JVM and 
 		in same machine where SS7 Hardware (Level 1) is installed. Or its also possible to have Level 1,2,3 to be installed 
@@ -86,10 +88,10 @@
 					</listitem>
 				</itemizedlist>		
 				<para>
-					Each type of linkset has coresponding factory. Please refer to <xref linkend="configuring_LinksetFactory"/> for list and guidelines how to configure each factory.
+					Each type of linkset has coresponding factory. Configuration of linkset factories is exaplained in subsections of <xref linkend="configuring" />.
 				</para>	
 				
-				<para>Configuration of linkset factories is exaplained in section <xref linkend="configuring" /></para>
+
 		</section>
 		<section
 		id="design_overview_shell">
@@ -126,7 +128,7 @@
 		id="design_overview_ss7_service">
 		<title>SS7 Service</title>
 				<para>Service is element which is used to manage <literal>LinkSets</literal> and protocols like <literal>SCCP</literal>. 
-				SS7 service creates instance of &THIS.PLATFORM; &THIS.APPLICATION; SCCP and bind's it to JNDI name java:/mobicents/ss7/sccp</para>
+				SS7 service creates instance of &THIS.PLATFORM; SCCP Stack and bind's it to JNDI name java:/mobicents/ss7/sccp</para>
 				<para>SS7 Service is JMX based service deployed in JBoss Application Server</para>
 				<para>SS7 Service hides the details like whether Level 4 and above connects to &THIS.PLATFORM; Signaling Gateway via M3UA or SS7 Hardware 
 				is installed in same machine as Level 4</para>
