@@ -16,6 +16,44 @@
 		<para>Be aware, &THIS.PLATFORM; &THIS.APPLICATION; is subject to changes as it is under active development!
 		</para>
 	</important>
+	<para>
+		Further &THIS.PLATFORM; &THIS.APPLICATION; provides flexibility to use the Level 2,3 and Level 4 in same JVM and 
+		in same machine where SS7 Hardware (Level 1) is installed. Or its also possible to have Level 1,2,3 to be installed 
+		on separate machine and Level 4 on separate machine. In latter case <literal>M3UA</literal> is leveraged for communication between Level 4
+		 and Level 3 and is called &THIS.PLATFORM; Signaling Gateway. 
+	</para>
+	
+	<para>
+		Bellow diagram shows complete &THIS.PLATFORM; &THIS.APPLICATION; in same machine 
+	</para>
+	<mediaobject id="ss7_stack_same_machine">
+		<imageobject>
+			<imagedata
+				width="300px"
+				align="center"
+				fileref="images/SS7StackSimple.jpg"
+				format="JPG" />
+		</imageobject>
+		<caption>
+			<para>&THIS.PLATFORM; &THIS.APPLICATION;</para>
+		</caption>
+	</mediaobject>
+	
+	<para>
+		Bellow diagram shows &THIS.PLATFORM; Signaling Gateway 
+	</para>
+	<mediaobject id="signaling_gateway">
+		<imageobject>
+			<imagedata
+				align="center"
+				fileref="images/MobicentsSgw.jpg"
+				format="JPG" />
+		</imageobject>
+		<caption>
+			<para>&THIS.PLATFORM; Signaling Gateway</para>
+		</caption>
+	</mediaobject>
+		
 	<para>&THIS.PLATFORM; &THIS.APPLICATION;
 		consists of following functional blocks:
 	</para>
@@ -58,8 +96,8 @@
 		<title>Shell Management client</title>
 				<para>
 					<literal>Shell</literal> is Command Line Interface (CLI) tool which allows to manage different aspects of &THIS.PLATFORM; &THIS.APPLICATION; in interactive manner. 
-					It connects to different instances of &THIS.PLATFORM; &THIS.APPLICATION; which manage <literal>Linksets</literal> and
-					<literal>SCCP</literal> routing. For detailed information please refer to:	<xref linkend="shell" />.
+					It connects to different instances of &THIS.PLATFORM; &THIS.APPLICATION; which manage <literal>Linksets</literal>,
+					<literal>SCCP</literal> routing and <literal>M3UA</literal>. For detailed information please refer to:	<xref linkend="shell" />.
 					Usually <literal>Shell</literal> will be invoked from remote machine(remote to <literal>Linksets</literal> and application protocols).
 
 				</para>
@@ -90,6 +128,8 @@
 				<para>Service is element which is used to manage <literal>LinkSets</literal> and protocols like <literal>SCCP</literal>. 
 				SS7 service creates instance of &THIS.PLATFORM; &THIS.APPLICATION; SCCP and bind's it to JNDI name java:/mobicents/ss7/sccp</para>
 				<para>SS7 Service is JMX based service deployed in JBoss Application Server</para>
+				<para>SS7 Service hides the details like whether Level 4 and above connects to &THIS.PLATFORM; Signaling Gateway via M3UA or SS7 Hardware 
+				is installed in same machine as Level 4</para>
 		
 		<para>
 			Diagram below depicts elements which are deployed as part of
@@ -156,5 +196,87 @@
 			</caption>
 		</mediaobject>
 	 </section>
+	 
+	 
+	<section id="mobicents_signaling_gateway">
+		<title>&THIS.PLATFORM; Signaling Gateway</title>
+
+		<para>
+			&THIS.PLATFORM; Signaling Gateway (SG) is a signaling agent that receives/sends Switched Circuit Network (SCN) 
+			native signaling at the edge of the IP network. &THIS.PLATFORM; Signaling Gateway leverages &THIS.PLATFORM; M3UA Stack 
+			explained bellow and Linkset explained in <xref linkend="design_overview_Linkset"/>    
+		</para>
+		
+		
+		
+		<section id="mobicents_signaling_gateway_m3ua">
+			<title>&THIS.PLATFORM; M3UA Stack</title>
+	
+			<para>
+				&THIS.PLATFORM; M3UA Stack can be used on Application Server side or can be used on Signaling Gateway side.
+			</para>
+		</section>
+		
+		
+		<para>
+			Diagram below demonstrates the &THIS.PLATFORM; M3UA Stack used on Application Server (AS) side. 
+			The information below explains the basic functionality of the &THIS.PLATFORM; M3UA Stack when used as an Application Server 
+			which will communicate with an External Signaling Gateway 
+		</para>
+		<mediaobject
+			id="m3ua_AS">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/M3UAAs.jpg"
+					format="JPG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; M3UA Stack configured as AS
+				</para>
+			</caption>
+		</mediaobject>
+		<para>
+			If configured as an AS, does not support configuring conventional SS7 links etc on that same stack. 
+			To use M3UA Stack as AS, the Routing Context (RC) must be known. See Section XXXX for configuring M3UA Stack 
+			as AS. The Remote Signaling Gateway Process (RemSGP) object is created under the M3UA Stack.
+		</para>
+		
+		
+		<para>
+			Diagram below demonstrates the &THIS.PLATFORM; M3UA Stack used on Signaling Gateway (SG) side. 
+			The &THIS.PLATFORM; Signaling Gateway provides the Nodal Interworking Function (NIF) that allows SS7 Signaling (SCCP/ISUP)
+			to be inter-worked into the M3UA/IP Network as shown in <xref linkend="signaling_gateway"/>
+			
+		</para>
+		<mediaobject
+			id="m3ua_SGW">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/M3UASgw.jpg"
+					format="JPG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; M3UA Stack configured as AS
+				</para>
+			</caption>
+		</mediaobject>
+		<para>
+			&THIS.PLATFORM; M3UA Stack used on SG side will share common point code with a set of M3UA Application Server. 
+			M3UA stack on SG side can be configured as Loadbalance or Override traffic mode. It doesn't support Broadcast traffic mode. 
+			See Section XXXX for configuring M3UA Stack as SG. &THIS.PLATFORM; M3UA Stack used on SG side doesn't support routing key management messages.
+			The Routing Key should be provisioned statically using the management console.
+		</para>		
+		
+		<note>
+			<title>Note</title>
+			<para>
+				&THIS.PLATFORM; M3UA Stack uses TCP layer. Leveraging SCTP is in roadmap and will be implemented soon.
+			</para>
+		</note>
+	 </section>	 
 </chapter>
 

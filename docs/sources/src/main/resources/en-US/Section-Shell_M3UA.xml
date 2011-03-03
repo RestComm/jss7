@@ -1,0 +1,408 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<section id="shell_m3ua">
+	<title>M3UA Management</title>
+	<para>
+		Commands to manage &THIS.PLATFORM; M3UA Stack used on Application Server (AS) side differs from commands to 
+		manage &THIS.PLATFORM; M3UA Stack used on Signaling Gateway side (SGW).
+	</para>
+		
+	<section id="shell_m3ua_sgw_side">
+		<title>M3UA Management - SGW side</title>
+		<para>
+			M3UA - SGW side is managed by  <literal>m3ua</literal> command. It allows to perform following:
+		</para>
+		<itemizedlist>
+			<listitem>
+				<para>m3ua ras create</para>
+			</listitem>
+			<listitem>
+				<para>m3ua rasp create</para>
+			</listitem>
+			<listitem>
+				<para>m3ua ras add</para>
+			</listitem>
+		</itemizedlist>		
+			
+			
+		<section
+			id="shell_m3ua_ras_side_create">
+			<title>Create Remote AS</title>
+			<para>Remote Application Server (AS) can be created by issuing command with following structure:</para>
+			<programlisting>m3ua ras create rc &lt;routing-context&gt; rk dpc &lt;destination point code&gt; opc &lt;originating point code&gt; 
+			                si &lt;service indicator&gt; traffic-mode &lt;traffic mode&gt; &lt;ras-name&gt;</programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>routing-context</term>
+					<listitem>
+						<para>
+							refers to Routing Context. Make sure its unique for each Remote AS created. The same Routing Context should be used while 
+							creating AS on M3UA Stack used on AS side. 
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>routing key</term>
+					<listitem>
+						<para>Routing Key describes a set of SS7 parameters and parameter values that uniquely define the range of signaling traffic
+   to be handled by a particular Application Server. Routing Key includes
+   
+   							<variablelist>
+								<varlistentry>
+									<term>destination point code</term>
+									<listitem>
+										<para> The Destination Point Code parameter is mandatory, and it
+         										identifies the Destination Point Code of incoming SS7 traffic. dpc is integer number
+   										</para>
+									</listitem>
+								</varlistentry>
+								<varlistentry>
+									<term>originating point code</term>
+									<listitem>
+										<para>The Originating Point Code parameter contains one or more (comma separated) SS7
+      										 OPC entries, and its format is the same as for the Destination
+      										Point Code parameter. OPC is optional and absence of the OPC parameter in the Routing Key 
+      										indicates the use of any OPC value.</para>
+									</listitem>
+								</varlistentry>
+								<varlistentry>
+									<term>service indicator</term>
+									<listitem>
+										<para>The optional service indicator field contains one or more (comma separated) Service
+      											Indicators from the values described bellow. The absence of the SI parameter in the
+      											Routing Key indicates the use of any SI value, excluding of course
+      											MTP management. 
+      											
+				   							<variablelist>
+												<varlistentry>
+													<term>3</term>
+													<listitem>
+														<para>SCCP</para>
+													</listitem>
+												</varlistentry>
+												<varlistentry>
+													<term>4</term>
+													<listitem>
+														<para>TUP</para>
+													</listitem>
+												</varlistentry>												
+												<varlistentry>
+													<term>5</term>
+													<listitem>
+														<para>ISUP</para>
+													</listitem>
+												</varlistentry>		
+												<varlistentry>
+													<term>9</term>
+													<listitem>
+														<para>Broadband ISUP</para>
+													</listitem>
+												</varlistentry>
+												<varlistentry>
+													<term>10</term>
+													<listitem>
+														<para>Satellite ISUP</para>
+													</listitem>
+												</varlistentry>				
+												<varlistentry>
+													<term>12</term>
+													<listitem>
+														<para>AAL type 2 Signalling</para>
+													</listitem>
+												</varlistentry>				
+												<varlistentry>
+													<term>13</term>
+													<listitem>
+														<para>Bearer Independent Call Control (BICC)</para>
+													</listitem>
+												</varlistentry>				
+												<varlistentry>
+													<term>14</term>
+													<listitem>
+														<para>Gateway Control Protocol</para>
+													</listitem>
+												</varlistentry>				
+																				
+											</variablelist>	
+      									</para>
+									</listitem>
+								</varlistentry>
+							</variablelist>	
+   						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>traffic-mode</term>
+					<listitem>
+						<para>
+							The optional Traffic Mode Type parameter identifies the traffic mode. If not specified Override is used as default. 
+							It can take either of loadshare or override. 
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>ras-name</term>
+					<listitem>
+						<para>
+							Rem AS name
+						</para>
+					</listitem>
+				</varlistentry>					
+			</variablelist>
+			<example>
+				<title>AS creation</title>
+				<screen>
+mobicents(127.0.0.1:3436)>m3ua ras create rc 100 rk dpc 123 RAS1
+Successfully created AS name=RAS1
+mobicents(127.0.0.1:3436)>m3ua ras create rc 101 rk dpc 456 opc 987 si 3 traffic-mode loadshare RAS2
+Successfully created AS name=RAS2
+				</screen>
+			</example>
+		</section>	
+		
+		<section
+			id="shell_m3ua_rasp_side_create">
+			<title>Create Remote ASP</title>
+			<para>Remote Application Server Process (ASP) can be create by issuing command with following structure:</para>
+			<programlisting>m3ua rasp create ip &lt;ip&gt; port &lt;port&gt; &lt;rasp-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>ip</term>
+					<listitem>
+						<para>
+							ip address of Application Server Process from AS side trying to connect to this Rem ASP
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>port</term>
+					<listitem>
+						<para>port of Application Server Process from AS side trying to connect to this Rem ASP</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Rem ASP creation</title>
+				<screen>
+mobicents(127.0.0.1:3436)>m3ua rasp create ip 127.0.0.1 port 2345 RASP1
+Successfully created ASP name=RASP1
+				</screen>
+			</example>
+		</section>	
+		
+		<section
+			id="shell_m3ua_rasp_side_add">
+			<title>Assign Remote ASP to Remote AS</title>
+			<para>Remote Application Server Process (ASP) can be assigned to Remote Application Server (AS) with following structure</para>
+			<programlisting>m3ua ras add &lt;ras-name&gt; &lt;rasp-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>ras name</term>
+					<listitem>
+						<para>
+							name of Remote AS created earlier
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>rasp name</term>
+					<listitem>
+						<para>name of Remote ASP created earlier</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Add Rem ASP to Rem AS</title>
+				<screen>
+mobicents(127.0.0.1:3436)>m3ua ras add RAS1 RASP1
+Successfully added ASP name=RASP1 to AS name=RAS1
+				</screen>
+			</example>
+		</section>
+	</section>
+	<section id="shell_m3ua_as_side">
+		<title>M3UA Management - AS side</title>
+		<para>
+			M3UA - AS side is managed by  <literal>m3ua</literal> command. It allows to perform following:
+		</para>
+		<itemizedlist>
+			<listitem>
+				<para>m3ua as create</para>
+			</listitem>
+			<listitem>
+				<para>m3ua asp create</para>
+			</listitem>
+			<listitem>
+				<para>m3ua as add</para>
+			</listitem>
+			<listitem>
+				<para>m3ua asp start</para>
+			</listitem>			
+			<listitem>
+				<para>m3ua asp stop</para>
+			</listitem>			
+		</itemizedlist>		
+			
+			
+		<section
+			id="shell_m3ua_as_side_create">
+			<title>Create AS</title>
+			<para>Application Server (AS) can be created by issuing command with following structure:</para>
+			<programlisting>m3ua as create rc &lt;routing-context&gt; &lt;as-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>routing-context</term>
+					<listitem>
+						<para>
+							refers to Routing Context already configured on M3UA stack on SGW side.
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>name</term>
+					<listitem>
+						<para>simple string name, which identifies AS. Make sure this is unique</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>AS creation</title>
+				<screen>
+mobicents(127.0.0.1:3435)>m3ua as create rc 100 AS1
+Successfully created AS name=AS1
+				</screen>
+			</example>
+		</section>			
+		<section
+			id="shell_m3ua_asp_side_create">
+			<title>Create ASP</title>
+			<para>Application Server Process (ASP) can be created by issuing command with following structure:</para>
+			<programlisting>m3ua asp create ip &lt;ip&gt; port &lt;port&gt; remip &lt;rem-ip&gt; remport &lt;rem-port&gt; &lt;asp-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>ip</term>
+					<listitem>
+						<para>
+							local ip address of Application Server Process. This ip address should match with ip address configured when Remote ASP was created.
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>port</term>
+					<listitem>
+						<para>local port of Application Server Process.  This port should match with port configured when Remote ASP was created.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>remip</term>
+					<listitem>
+						<para>
+							The ip address of Mobicents Signaling Gateway listening for incoming connection requests
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>remport</term>
+					<listitem>
+						<para>The port of Mobicents Signaling Gateway listening for incoming connection requests</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>asp-name</term>
+					<listitem>
+						<para>Name of this ASP. It should be unique</para>
+					</listitem>
+				</varlistentry>				
+			</variablelist>
+			<example>
+				<title>ASP creation</title>
+				<screen>
+mobicents(127.0.0.1:3435)>m3ua asp create ip 127.0.0.1 port 2345 remip 127.0.0.1 remport 3434 ASP1
+Successfully created AS name=ASP1
+				</screen>
+			</example>
+		</section>
+		<section
+			id="shell_m3ua_as_side_add">
+			<title>Assign ASP to AS</title>
+			<para>Application Server Process (ASP) can be assigned to Application Server (AS) with following structure</para>
+			<programlisting>m3ua as add &lt;as-name&gt; &lt;asp-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>as name</term>
+					<listitem>
+						<para>
+							name of AS created earlier
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>asp name</term>
+					<listitem>
+						<para>name of ASP created earlier</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Add ASP to AS</title>
+				<screen>
+mobicents(127.0.0.1:3435)>m3ua as add AS1 ASP1
+Successfully added ASP name=ASP1 to AS name=AS1
+				</screen>
+			</example>
+		</section>
+		<section
+			id="shell_m3ua_as_side_startasp">
+			<title>Start ASP</title>
+			<para>Application Server Process (ASP) can be started with following structure</para>
+			<programlisting>m3ua asp start &lt;asp-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>asp name</term>
+					<listitem>
+						<para>name of ASP created earlier. Make sure ASP you are trying to start is assigned to at least one AS</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Start ASP</title>
+				<screen>
+mobicents(127.0.0.1:3435)>m3ua asp start ASP1
+Successfully started ASP name=ASP1
+				</screen>
+			</example>
+		</section>	
+		<section
+			id="shell_m3ua_as_side_stopasp">
+			<title>Stop ASP</title>
+			<para>Application Server Process (ASP) can be stopped with following structure</para>
+			<programlisting>m3ua asp stop &lt;asp-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>asp name</term>
+					<listitem>
+						<para>name of ASP started earlier.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Stop ASP</title>
+				<screen>
+mobicents(127.0.0.1:3435)>m3ua asp stop ASP1
+Successfully stopped ASP name=ASP1
+				</screen>
+			</example>
+		</section>	
+	</section>		
+</section>

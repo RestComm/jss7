@@ -1,0 +1,388 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+	<section>
+		<title>SCCP Management</title>
+		<para>
+			SCCP provides connectionless and connection-oriented network
+			services
+			and global title translation (GTT) capabilities above
+			<acronym>MTP</acronym>
+			Level 3. SCCP provides also extended routing, flow control,
+			segmentation and reassembly of data service.
+		</para>
+		<para>
+			A global title is an address (e.g., a dialed 800 number,
+			calling card
+			number, or mobile subscriber identification number)
+			which is translated
+			by SCCP into a destination point code and
+			subsystem number. A subsystem
+			number uniquely identifies an
+			application at the destination signaling
+			point.
+			<acronym>SCCP</acronym>
+			is used as the
+			transport layer for
+			<acronym>TCAP</acronym>
+			-based services
+		</para>
+		<para>
+			As its main purpose is to route data units between signaling nodes, it
+			requires means of configuring routing directives.
+			<acronym>CLI</acronym> provides way to easly manage routing rules information in &THIS.PLATFORM; <acronym>SCCP</acronym>
+			implementation.
+		</para>		
+		
+		<section id="rule">
+		
+			<title>Rule</title>
+			<para>
+				Implementation of <acronym>SCCP</acronym> routing mechanism makes routing decisions based on <literal>rules</literal>.
+				Each rule consits of three elements:
+			</para>
+			<variablelist>
+				<varlistentry>
+					<term>pattern</term>
+					<listitem>
+						<para>determines pattern to which destiantion address is compared.
+							It has complex structure which looks as follows:</para>
+						<variablelist>
+							<varlistentry>
+								<term>translation type (tt)</term>
+								<listitem>
+									<para>integer numer which is used in a network to indicate the
+										preferred method of global title analysis </para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>numbering plan (np)</term>
+								<listitem>
+									<para>integer value which indicates which numbering
+										plan will be used for the global title. Its value aids the
+										routing system in determining the correct network system to
+										route message to.</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>nature of address (noa)</term>
+								<listitem>
+									<para>integer value which indicates address type.,
+										Specificaly it indicates the scope of the address value, such as whether it is
+										an international number (i.e. including the country code), a
+										"national" or domestic number (i.e. without country code), and
+										other formats such as "local" format.</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>digits</term>
+								<listitem>
+									<para>actual address</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>sub-system number (ssn)</term>
+								<listitem>
+									<para>identifies application in SCCP routing network.</para>
+								</listitem>
+							</varlistentry>
+						</variablelist>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>translation</term>
+					<listitem>
+						<para>
+							determines target for messages which destination address matches
+							pattern. It has exactly the same structure as
+							<literal>pattern</literal>
+							.
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>mtp info</term>
+					<listitem>
+						<para>
+							determines mtp layer information. If <literal>translation</literal>
+							does not indicate local address, this information is used to send
+							message through <acronym>MTP</acronym> layer. It has following structure:
+						</para>
+						<variablelist>
+							<varlistentry>
+								<term>name</term>
+								<listitem>
+									<para>name identifing one of Linkset used by <acronym>SCCP</acronym> </para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>originating point code (opc)</term>
+								<listitem>
+									<para>local point code used as originating <acronym>MTP</acronym> address</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>destination point code (dpc)</term>
+								<listitem>
+									<para>remote point code used as destination <acronym>MTP</acronym> address</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>signaling link selection (sls)</term>
+								<listitem>
+									<para>identifies link in linkset</para>
+								</listitem>
+							</varlistentry>
+						</variablelist>
+					</listitem>
+		
+				</varlistentry>
+			</variablelist>
+		
+		
+		</section>		
+		
+		<section id="rule_management">
+			<title>Rule Management</title>
+			<para>SCCP routing rules are managed by <literal>sccprule</literal> command. It allows to perform following:</para>
+			<itemizedlist>
+				<listitem>
+					<para>sccprule create</para>
+				</listitem>
+				<listitem>
+					<para>sccprule delete</para>
+				</listitem>
+				<listitem>
+					<para>sccprule show</para>
+				</listitem>
+			</itemizedlist>		
+			
+			
+		<section
+			id="shell_sccprule_create">
+			<title>Create Rule</title>
+			<para>Rule can be create by issuing command with following structure:</para>
+			<programlisting>
+sccprule create &lt;name&gt; pattern tt &lt;translation type&gt; np &lt;numbering plan&gt; noa &lt;nature of address&gt; digits &lt;digits&gt; ssn &lt;ssn&gt;
+                         translation tt &lt;translation type&gt; np &lt;numbering plan&gt; noa &lt;nature of address&gt; digits &lt;digits&gt; ssn &lt;ssn&gt;
+                         mtpinfo name &lt;name&gt; opc &lt;originating point code&gt; dpc &lt;destination point code&gt; sls &lt;signaling link selection&gt;
+
+</programlisting>
+
+			<itemizedlist>
+			<listitem>
+		<para>
+			<literal>pattern</literal> option is mandatory can be followed by following options:
+		</para>
+		<variablelist>
+			<varlistentry>
+				<term>tt</term>
+				<listitem>
+					<para>Value indicating type of translation. It is not mandatory, if
+						absent "-1" should be passed. It requires integer argument.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>np</term>
+				<listitem>
+					<para>Specifies numberingplan to be used by SCCP to aid it in
+						determinig correct network system. It is not mandatory, if absent -1 should be passed. It requires integer argument. 
+						It can have following values 
+						
+						<variablelist>
+							<varlistentry>
+								<term>0</term>
+								<listitem>
+									<para>UNKNOWN</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>1</term>
+								<listitem>
+									<para>ISDN_TELEPHONY</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>3</term>
+								<listitem>
+									<para>DATA</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>4</term>
+								<listitem>
+									<para>TELEX</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>5</term>
+								<listitem>
+									<para>MERITIME_MOBILE</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>6</term>
+								<listitem>
+									<para>LAND_MOBILE</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>7</term>
+								<listitem>
+									<para>ISDN_MOBILE</para>
+								</listitem>
+							</varlistentry>							
+						</variablelist>						
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>noa</term>
+				<listitem>
+					<para>Specifies nature of address to indicate scope of address. It
+						is not mandatory, if absent -1 should be passed. It requires integer argument.
+						 It can have following values 
+						<variablelist>
+							<varlistentry>
+								<term>0</term>
+								<listitem>
+									<para>SPARE</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>1</term>
+								<listitem>
+									<para>SUBSCRIBER</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>2</term>
+								<listitem>
+									<para>UNKNOWN</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>3</term>
+								<listitem>
+									<para>NATIONAL</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>4</term>
+								<listitem>
+									<para>INTERNATIONAL</para>
+								</listitem>
+							</varlistentry>
+						</variablelist>	
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>digits</term>
+				<listitem>
+					<para>Specifies string representation of number(digits). It is
+						mandatory and requires argument.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>ssn</term>
+				<listitem>
+					<para>Specifies subsystem number. It is not mandatory, if absent
+						-1 should be passed. It requires integer argument.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+				</listitem>
+				<listitem>
+					<para>
+						<literal>translation</literal> is optional. If present it supports exactly the same options as <literal>parameter</literal>
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						<literal>mtpinfo</literal> is optional. If present it must be followed by following options:
+					</para>
+					<variablelist>
+						<varlistentry>
+							<term>name</term>
+							<listitem>
+							<para>Specifies name of mtp linkset. It is mandatory, requires
+						string argument.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>opc</term>
+							<listitem>
+								<para>Specifies originating point code. It is mandatory, requires integer argument.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>apc
+							</term>
+							<listitem>
+								<para>Specifies adjacent point code. It is mandatory, requires	integer argument.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>sls
+							</term>
+							<listitem>
+								<para>Specifies signal link selector. It is mandatory, requires	integer argument.</para>
+							</listitem>
+						</varlistentry>						
+					</variablelist>					
+				</listitem>				
+				
+			</itemizedlist>	
+			<example>
+				<title>SCCP Rule creation</title>
+				<screen>
+mobicents(10.65.208.215:3435)>sccprule create Rule1 pattern tt -1 np -1 noa 3 digits 99604 ssn -1 translation tt -1 np 3 noa 4 digits 77865 ssn -1
+LinkSet successfully added
+mobicents(10.65.208.215:3435)>sccprule create Rule2 pattern tt -1 np 3 noa 4 digits 99605 ssn -1 mtpinfo name name1 opc 12 apc 56 sls 1
+LinkSet successfully added
+mobicents(10.65.208.215:3435)>sccprule create Rule3 pattern tt -1 np 3 noa 4 digits 99606 ssn -1 translation tt -1 np 3 noa 4 digits 77865 ssn -1 mtpinfo name name1 opc 12 apc 56 sls 1
+LinkSet successfully added
+				</screen>
+			</example>
+		</section>			
+
+		<section
+			id="shell_sccp_rule_delete">
+			<title>Delete SCCP Rule</title>
+			<para>SCCP Rule can be deleted by issuing command with following structure:</para>
+			<programlisting>
+sccprule delete  &lt;rule-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+
+				<varlistentry>
+					<term>rule-name</term>
+					<listitem>
+						<para>is name set during rule creation</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>SCCP Rule Removal</title>
+				<screen>
+mobicents(10.65.208.215:3435)>sccprule delete Rule1
+Rule successfully removed
+				</screen>
+			</example>
+		</section>	
+		
+		<section
+			id="shell_sccp_rule_show">
+			<title>Show SCCP Rule</title>
+			<para>Rule's can be viewed by issuing command with following structure:</para>
+			<programlisting>
+sccprule show </programlisting>
+			<para>It will show all the rules created</para>
+		</section>
+			
+		</section>
+	</section>
