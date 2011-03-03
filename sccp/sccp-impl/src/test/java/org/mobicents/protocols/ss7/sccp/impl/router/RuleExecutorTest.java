@@ -57,12 +57,12 @@ public class RuleExecutorTest {
         assertEquals(1, router.list().size());
 
         message = ruleExecutor
-                .execute("sccprule create Rule2 pattern tt -1 np 3 noa 4 digits 99604 ssn -1 mtpinfo name name1 opc 12 dpc 56 sls 1"
+                .execute("sccprule create Rule2 pattern tt -1 np 3 noa 4 digits 99604 ssn -1 mtpinfo name name1 opc 12 apc 56 sls 1"
                         .split(" "));
         assertEquals(2, router.list().size());
 
         message = ruleExecutor
-                .execute("sccprule create Rule3 pattern tt -1 np 3 noa 4 digits 99604 ssn -1 translation tt -1 np 3 noa 4 digits 77865 ssn -1 mtpinfo name name1 opc 12 dpc 56 sls 1"
+                .execute("sccprule create Rule3 pattern tt -1 np 3 noa 4 digits 99604 ssn -1 translation tt -1 np 3 noa 4 digits 77865 ssn -1 mtpinfo name name1 opc 12 apc 56 sls 1"
                         .split(" "));
         assertEquals(3, router.list().size());
         router.stop();

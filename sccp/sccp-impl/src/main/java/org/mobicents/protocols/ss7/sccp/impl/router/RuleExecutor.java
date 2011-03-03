@@ -208,7 +208,7 @@ public class RuleExecutor {
 
         int opc = Integer.parseInt(options[offSet++]);
 
-        if (options[offSet++].compareTo("dpc") != 0) {
+        if (options[offSet++].compareTo("apc") != 0) {
             throw new Exception(RuleOAMMessage.INVALID_COMMAND);
         }
 
