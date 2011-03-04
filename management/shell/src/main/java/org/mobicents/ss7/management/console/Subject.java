@@ -14,7 +14,7 @@ public enum Subject {
      */
     LINKSET("linkset"),
 
-    SCCP("sccp"),
+    SCCPRULE("sccprule"),
     /**
      * M3UA Subject. Any command to manage the M3UA should begin with m3ua
      * subject
@@ -48,8 +48,8 @@ public enum Subject {
             return LINKSET;
         } else if (subject.compareTo(M3UA.getSubject()) == 0) {
             return M3UA;
-        } else if (subject.compareTo(SCCP.getSubject()) == 0){
-            return SCCP;
+        } else if (subject.compareTo(SCCPRULE.getSubject()) == 0){
+            return SCCPRULE;
         }
         return null;
     }
