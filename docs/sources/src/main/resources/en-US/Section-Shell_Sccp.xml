@@ -3,7 +3,7 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-	<section>
+	<section id="shell_sccp_management">
 		<title>SCCP Management</title>
 		<para>
 			SCCP provides connectionless and connection-oriented network services. This includes address(GTT) translation and routing, flow control
