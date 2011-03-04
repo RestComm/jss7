@@ -13,7 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransitNetworkSelection;
 
 /**
@@ -22,7 +22,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.TransitNetworkSelectio
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class TransitNetworkSelectionImpl extends AbstractParameter implements TransitNetworkSelection {
+public class TransitNetworkSelectionImpl extends AbstractISUPParameter implements TransitNetworkSelection {
 
 	protected static final Logger logger = Logger.getLogger(TransitNetworkSelectionImpl.class);
 
@@ -49,9 +49,9 @@ public class TransitNetworkSelectionImpl extends AbstractParameter implements Tr
 		this.networkIdentificationPlan = networkIdentificationPlan;
 	}
 
-	public TransitNetworkSelectionImpl(byte[] b) throws ParameterRangeInvalidException {
+	public TransitNetworkSelectionImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public TransitNetworkSelectionImpl() {
@@ -59,7 +59,7 @@ public class TransitNetworkSelectionImpl extends AbstractParameter implements Tr
 		
 	}
 
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 		if (logger.isDebugEnabled()) {
@@ -79,11 +79,15 @@ public class TransitNetworkSelectionImpl extends AbstractParameter implements Tr
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		// out.write(tag);
 		// Util.encodeLength(count, out);
-		out.write(bos.toByteArray());
+		try {
+			out.write(bos.toByteArray());
+		} catch (IOException e) {
+			throw new ParameterException(e);
+		}
 		return out.toByteArray();
 	}
 
-	public int encodeElement(ByteArrayOutputStream out) throws IOException {
+	public int encode(ByteArrayOutputStream out) throws ParameterException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 		if (logger.isDebugEnabled()) {
@@ -103,17 +107,21 @@ public class TransitNetworkSelectionImpl extends AbstractParameter implements Tr
 		// count += tag.length;
 		// out.write(tag);
 		// count += Util.encodeLength(count, out);
-		out.write(bos.toByteArray());
+		try {
+			out.write(bos.toByteArray());
+		} catch (IOException e) {
+			throw new ParameterException(e);
+		}
 		return count;
 	}
 
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		ByteArrayInputStream bis = new ByteArrayInputStream(b);
 
-		return this.decodeElement(bis);
+		return this.decode(bis);
 	}
 
-	protected int decodeElement(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	protected int decode(ByteArrayInputStream bis) throws ParameterException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("[" + this.getClass().getSimpleName() + "]Decoding header");
 		}
@@ -132,7 +140,7 @@ public class TransitNetworkSelectionImpl extends AbstractParameter implements Tr
 	}
 
 	/**
-	 * This method is used in encodeElement. Encodes digits part. This is
+	 * This method is used in encode. Encodes digits part. This is
 	 * because
 	 * 
 	 * @param bos
@@ -179,12 +187,12 @@ public class TransitNetworkSelectionImpl extends AbstractParameter implements Tr
 	 * @param bis
 	 * @return - number of bytes reads throws IllegalArgumentException - thrown
 	 *         if read error is encountered.
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 *             - thrown if read error is encountered.
 	 */
-	public int decodeDigits(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public int decodeDigits(ByteArrayInputStream bis) throws ParameterException {
 		if (bis.available() == 0) {
-			throw new ParameterRangeInvalidException("No more data to read.");
+			throw new ParameterException("No more data to read.");
 		}
 		// FIXME: we could spare time by passing length arg - or getting it from
 		// bis??
@@ -219,12 +227,12 @@ public class TransitNetworkSelectionImpl extends AbstractParameter implements Tr
 	 * 
 	 * @param bis
 	 * @return - number of bytes reads
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 *             - thrown if read error is encountered.
 	 */
-	public int decodeHeader(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public int decodeHeader(ByteArrayInputStream bis) throws ParameterException {
 		if (bis.available() == 0) {
-			throw new ParameterRangeInvalidException("No more data to read.");
+			throw new ParameterException("No more data to read.");
 		}
 		int b = bis.read() & 0xff;
 
@@ -235,7 +243,7 @@ public class TransitNetworkSelectionImpl extends AbstractParameter implements Tr
 	}
 
 	/**
-	 * This method is used in encodeElement method. It encodes header part (1 or
+	 * This method is used in encode method. It encodes header part (1 or
 	 * 2 bytes usually.)
 	 * 
 	 * @param bis

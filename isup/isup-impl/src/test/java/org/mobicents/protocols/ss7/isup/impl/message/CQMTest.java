@@ -31,7 +31,7 @@ public class CQMTest extends MessageHarness {
 
 		//CircuitGroupQueryMessage grs=new CircuitGroupQueryMessageImpl(this,message);
 		CircuitGroupQueryMessage grs=super.messageFactory.createCQM(0);
-		grs.decodeElement(message);
+		((AbstractISUPMessage)grs).decode(message,parameterFactory);
 
 		
 		try{
@@ -52,7 +52,7 @@ public class CQMTest extends MessageHarness {
 		}
 	
 	}
-	@Override
+	
 	protected byte[] getDefaultBody() {
 		//FIXME: for now we strip MTP part
 		byte[] message={
@@ -71,7 +71,7 @@ public class CQMTest extends MessageHarness {
 
 		return message;
 	}
-	@Override
+	
 	protected ISUPMessage getDefaultMessage() {
 		return super.messageFactory.createCQM(0);
 	}

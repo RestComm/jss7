@@ -16,8 +16,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:09:16:42 2009-04-22<br>
@@ -34,9 +33,13 @@ public abstract class ParameterHarness extends TestCase {
 	// NOTE: now see how nice digits swap can come out with conversion, lol
 	private final static byte[] sixDigits = new byte[] { (byte) 0x83, 0x60, 0x38 };
 	private final static byte[] fiveDigits = new byte[] { (byte) 0x83, 0x60, 0x08 };
+	private final static byte[] sevenDigits  = new byte[] { (byte) 0x83, 0x60,0x33, 0x08 };
+	private final static byte[] eightDigits  = new byte[] { (byte) 0x83, 0x60,0x33, 0x48 };
 	private final static byte[] threeDigits = new byte[] { (byte) 0x83, 0x0 };;
 	private final static String sixDigitsString = "380683";
 	private final static String fiveDigitsString = "38068";
+	private final static String sevenDigitsString = "3806338";
+	private final static String eightDigitsString = "38063384";
 	private final static String threeDigitsString = "380";
 
 	// FIXME: add code to check values :)
@@ -106,13 +109,13 @@ public abstract class ParameterHarness extends TestCase {
 
 		return out;
 	}
-	public void testDecodeEncode() throws IOException, ParameterRangeInvalidException {
+	public void testDecodeEncode() throws IOException, ParameterException {
 
 		for (int index = 0; index < this.goodBodies.size(); index++) {
 			byte[] goodBody = this.goodBodies.get(index);
-			ISUPComponent component = this.getTestedComponent();
+			AbstractISUPParameter component = this.getTestedComponent();
 			doTestDecode(goodBody, true, component, index);
-			byte[] encodedBody = component.encodeElement();
+			byte[] encodedBody = component.encode();
 			boolean equal = Arrays.equals(goodBody, encodedBody);
 			assertTrue("Body index: " + index + "\n" + makeCompare(goodBody, encodedBody), equal);
 
@@ -120,21 +123,21 @@ public abstract class ParameterHarness extends TestCase {
 		for (int index = 0; index < this.badBodies.size(); index++) {
 
 			byte[] badBody = this.badBodies.get(index);
-			ISUPComponent component = this.getTestedComponent();
+			AbstractISUPParameter component = this.getTestedComponent();
 			doTestDecode(badBody, false, component, index);
-			byte[] encodedBody = component.encodeElement();
+			byte[] encodedBody = component.encode();
 
 		}
 
 	}
 
-	public abstract ISUPComponent getTestedComponent() throws ParameterRangeInvalidException;
+	public abstract AbstractISUPParameter getTestedComponent() throws ParameterException;
 
-	protected void doTestDecode(byte[] presumableBody, boolean shouldPass, ISUPComponent component, int index) {
+	protected void doTestDecode(byte[] presumableBody, boolean shouldPass, AbstractISUPParameter component, int index) throws ParameterException {
 		try {
-			component.decodeElement(presumableBody);
+			component.decode(presumableBody);
 			if (!shouldPass) {
-				fail("Decoded[" + index + "] parameter[" + component.getClass() + "], should not happen. Passed data: " + dumpData(presumableBody));
+				fail("Decoded[" + index + "] parameter[" + component.getClass() + "], should not pass. Passed data: " + dumpData(presumableBody));
 			}
 
 		} catch (IllegalArgumentException iae) {
@@ -142,10 +145,10 @@ public abstract class ParameterHarness extends TestCase {
 				fail("Failed to decode[" + index + "] parameter[" + component.getClass() + "], should not happen. " + iae + ".Passed data: " + dumpData(presumableBody));
 				iae.printStackTrace();
 			}
-		} catch (ParameterRangeInvalidException iae) {
+		} catch (ParameterException iae) {
 			if (shouldPass) {
 				fail("Failed to decode[" + index + "] parameter[" + component.getClass() + "], should not happen. " + iae + ".Passed data: " + dumpData(presumableBody));
-				iae.printStackTrace();
+				throw iae;
 			}
 		}
 		catch (Exception e) {
@@ -163,7 +166,7 @@ public abstract class ParameterHarness extends TestCase {
 		return s;
 	}
 
-	public void testValues(ISUPComponent component, String[] getterMethodNames, Object[] expectedValues) {
+	public void testValues(AbstractISUPParameter component, String[] getterMethodNames, Object[] expectedValues) {
 		try {
 			Class cClass = component.getClass();
 			for (int index = 0; index < getterMethodNames.length; index++) {
@@ -200,7 +203,15 @@ public abstract class ParameterHarness extends TestCase {
 	public static byte[] getThreeDigits() {
 		return threeDigits;
 	}
-
+	public static byte[] getSevenDigits()
+	{
+		return sevenDigits;
+	}
+	public static byte[] getEightDigits()
+	{
+		return eightDigits;
+	}
+	
 	public static String getSixDigitsString() {
 		return sixDigitsString;
 	}
@@ -212,7 +223,18 @@ public abstract class ParameterHarness extends TestCase {
 	public static String getThreeDigitsString() {
 		return threeDigitsString;
 	}
+	
 
+	public static String getSevenDigitsString() {
+		return sevenDigitsString;
+	}
+	
+
+	public static String getEightDigitsString() {
+		return eightDigitsString;
+	}
+
+	
 	
 
 }

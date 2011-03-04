@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotCounter;
 
 /**
@@ -19,13 +19,13 @@ import org.mobicents.protocols.ss7.isup.message.parameter.PivotCounter;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class PivotCounterImpl extends AbstractParameter implements PivotCounter {
+public class PivotCounterImpl extends AbstractISUPParameter implements PivotCounter {
 
 	private int counter = 0;
 
-	public PivotCounterImpl(byte[] b) throws ParameterRangeInvalidException {
+	public PivotCounterImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public PivotCounterImpl() {
@@ -38,26 +38,16 @@ public class PivotCounterImpl extends AbstractParameter implements PivotCounter 
 		this.setCounter(counter);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must not be null and length must be 1");
+			throw new ParameterException("byte[] must not be null and length must be 1");
 		}
 
 		this.counter = b[0] & 0x1F;
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		return new byte[] { (byte) (this.counter & 0x1F) };
 	}

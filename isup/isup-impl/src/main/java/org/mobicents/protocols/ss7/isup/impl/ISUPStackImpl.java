@@ -6,15 +6,32 @@
  */
 package org.mobicents.protocols.ss7.isup.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
+import javolution.util.FastList;
+import javolution.util.FastMap;
+
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ConfigurationException;
 import org.mobicents.protocols.StartFailedException;
+import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ISUPProvider;
 import org.mobicents.protocols.ss7.isup.ISUPStack;
-import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
+import org.mobicents.protocols.ss7.isup.impl.message.AbstractISUPMessage;
+import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+import org.mobicents.protocols.ss7.mtp.Mtp3;
+import org.mobicents.protocols.ss7.mtp.Utils;
+import org.mobicents.protocols.stream.api.SelectorKey;
+import org.mobicents.ss7.linkset.oam.Layer4;
+import org.mobicents.ss7.linkset.oam.Linkset;
+import org.mobicents.ss7.linkset.oam.LinksetSelector;
+import org.mobicents.ss7.linkset.oam.LinksetStream;
 
 /**
  * Start time:12:14:57 2009-09-04<br>
@@ -22,41 +39,51 @@ import org.mobicents.protocols.ss7.mtp.provider.MtpProvider;
  * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public class ISUPStackImpl implements ISUPStack {
+public class ISUPStackImpl implements ISUPStack, Layer4 {
 
-	public static final String PROPERTY_CLIENT_T = "isup.client.timeout";
-	public static final String PROPERTY_GENERAL_T = "isup.general.timeout";
-	
+	private Logger logger = Logger.getLogger(ISUPStackImpl.class);
+
+	private static final int OP_READ_WRITE = 3;
+	private static final int MAX_MESSAGES = 30; // max msgs in queue
+
 	private State state = State.IDLE;
-	private ISUPMtpProviderImpl isupMtpProvider;
+	//dont quite like the idea of so many threads... but.
+	private ExecutorService executor;
+	private ExecutorService layer3exec;
 
-	private ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
-	private long _GENERAL_TRANSACTION_TIMEOUT = 40 * 1000;
-	private long _CLIENT_TRANSACTION_ANSWER_TIMEOUT = 30 * 1000;
+	// Hold LinkSet here. LinkSet's name as key and actual LinkSet as Object
+	protected FastMap<String, Linkset> linksets = new FastMap<String, Linkset>();
+
+	// Hold the byte[] that needs to be writtent to Linkset
+	private FastMap<String, ConcurrentLinkedQueue<byte[]>> linksetQueue = new FastMap<String, ConcurrentLinkedQueue<byte[]>>();
+
+	private LinksetSelector linkSetSelector = new LinksetSelector();
+
+	private ISUPProviderImpl provider;
+	// local vars
+	private ISUPMessageFactory messageFactory;
+	private ISUPParameterFactory parameterFactory;
 
 	public ISUPStackImpl() {
 		super();
-
-	}
-	//for tests only!
-	public ISUPStackImpl(MtpProvider provider1, Properties props1) {
-		this.isupMtpProvider = new ISUPMtpProviderImpl(provider1,this, props1);
-		this.state = State.CONFIGURED;
 	}
 
 	public ISUPProvider getIsupProvider() {
-
-		return isupMtpProvider;
-
+		return provider;
 	}
 
 	public void start() throws IllegalStateException, StartFailedException {
 		if (state != State.CONFIGURED) {
 			throw new IllegalStateException("Stack has not been configured or is already running!");
 		}
-
-		this.isupMtpProvider.start();
-
+		if(state == State.RUNNING)
+		{
+			throw new StartFailedException("Can not start stack again!");
+		}
+		this.executor = Executors.newFixedThreadPool(1);
+		this.layer3exec = Executors.newFixedThreadPool(1);
+		this.provider.start();
+		this.layer3exec.execute(new MtpStreamHandler());
 		this.state = State.RUNNING;
 
 	}
@@ -65,9 +92,15 @@ public class ISUPStackImpl implements ISUPStack {
 		if (state != State.RUNNING) {
 			throw new IllegalStateException("Stack is not running!");
 		}
-		this.isupMtpProvider.stop();
-		terminate();
+		if(state == State.CONFIGURED)
+		{
+			throw new IllegalStateException("Can not stop stack again!");
+		}
+		this.executor.shutdown();
+		this.layer3exec.shutdown();
+		this.provider.stop();
 		this.state = State.CONFIGURED;
+
 	}
 
 	// ///////////////
@@ -76,45 +109,171 @@ public class ISUPStackImpl implements ISUPStack {
 	/**
      *
      */
-	public void configure(Properties props) throws ConfigurationException{
+	public void configure(Properties props) throws ConfigurationException {
 		if (state != State.IDLE) {
 			throw new IllegalStateException("Stack already been configured or is already running!");
 		}
-		this._CLIENT_TRANSACTION_ANSWER_TIMEOUT = Integer.parseInt(props.getProperty(PROPERTY_CLIENT_T,""+_CLIENT_TRANSACTION_ANSWER_TIMEOUT));
-		this._GENERAL_TRANSACTION_TIMEOUT = Integer.parseInt(props.getProperty(PROPERTY_GENERAL_T,""+_GENERAL_TRANSACTION_TIMEOUT));
-		this.isupMtpProvider = new ISUPMtpProviderImpl(this, props);
-		this.executor = Executors.newScheduledThreadPool(2); //MAKE THIS configurable
+
+		this.provider = new ISUPProviderImpl(this,props);
+		this.parameterFactory = this.provider.getParameterFactory();
+		this.messageFactory = this.provider.getMessageFactory();
 		this.state = State.CONFIGURED;
 	}
 
-	/**
-     *
-     */
-	private void terminate() {
-		this.executor.shutdownNow();
+	public void add(Linkset linkset) {
+
+		try {
+			linkset.getLinksetStream().register(this.linkSetSelector);
+			linksets.put(linkset.getName(), linkset);
+			linksetQueue.put(linkset.getName(), new ConcurrentLinkedQueue<byte[]>());
+		} catch (IOException ex) {
+			logger.error(String.format("Registration for %s LinksetStream failed", linkset.getName()), ex);
+		}
 	}
 
-	// possibly something similar as in MGCP
-
-	ScheduledExecutorService getExecutors() {
-		return this.executor;
+	public void remove(Linkset linkset) {
+		//should be done by name?
+		if(linksets.remove(linkset.getName()) !=null)
+		{	
+			//FIXME: add deregister
+			linksetQueue.remove(linkset.getName());
+		}
 	}
 
+	// ---------------- private methods and class defs
+
 	/**
-	 * @return
+	 * @param message
 	 */
-	public long getTransactionGeneralTimeout() {
-		return _GENERAL_TRANSACTION_TIMEOUT;
+	void send(byte[] message) {
+		// here we have encoded msg, nothing more, need to add MTP3 label.
+		if (linksets.size() == 0) {
+			return;
+		}
+		Linkset linkset = this.linksets.values().iterator().next();
+		int opc = linkset.getOpc();
+		int dpc = linkset.getApc();
+		int si = Mtp3._SI_SERVICE_ISUP;
+		int ni = linkset.getNi();
+		int sls = 0;
+		int ssi = ni << 2;
+
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		// encoding routing label
+		bout.write((byte) (((ssi & 0x0F) << 4) | (si & 0x0F)));
+		bout.write((byte) dpc);
+		bout.write((byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6)));
+		bout.write((byte) (opc >> 2));
+		bout.write((byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
+	
+		try {
+			bout.write(message);
+			byte[] msg = bout.toByteArray();
+			ConcurrentLinkedQueue<byte[]> queue = this.linksetQueue.get(linkset.getName());
+			queue.add(msg);
+			if (queue.size() > MAX_MESSAGES) {
+				queue.remove();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
-	/**
-	 * @return
-	 */
-	public long getClientTransactionAnswerTimeout() {
-		return _CLIENT_TRANSACTION_ANSWER_TIMEOUT;
+	private class MtpStreamHandler implements Runnable {
+
+		public void run() {
+			byte[] rxBuffer = new byte[1000];
+			byte[] txBuffer;
+			// Execute only till state is Running
+			while (state == State.RUNNING) {
+
+				try {
+					//FIXME
+					FastList<SelectorKey> selected = linkSetSelector.selectNow(OP_READ_WRITE, 1);
+					for (FastList.Node<SelectorKey> n =selected.head(), end = selected.tail(); (n = n
+			                .getNext()) != end;) {
+						LinksetStream stream = (LinksetStream) n.getValue().getStream();
+						int read = stream.read(rxBuffer);
+
+						
+						// Read data
+						if (read>0) {
+							byte[] inByte = new byte[read];
+							System.arraycopy(rxBuffer, 0, inByte, 0, read);
+							MessageHandler handler = new MessageHandler(inByte);
+							executor.execute(handler);
+						}
+
+						// write data
+						txBuffer = linksetQueue.get(stream.getName()).poll();
+						if (txBuffer != null) {
+							stream.write(txBuffer);
+						}
+
+					}
+
+					// TODO : should add any Thread.wait() or let it iterate
+					// continuously?
+				} catch (IOException ex) {
+					logger.error("Error while reading data from LinksetStream", ex);
+				}
+			}
+		}
+
+	}
+
+	private class MessageHandler implements Runnable {
+		// MSU as input stream
+		private byte[] msu;
+		private ISUPMessage message;
+
+		protected MessageHandler(byte[] msu) {
+
+			this.msu = msu;
+
+		}
+
+		private ISUPMessage parse() throws IOException {
+			try {
+				// FIXME: change this, dont copy over and over.
+				
+				int commandCode = msu[7];//	1(SIO) +    3(RL) + 1(SLS) + 2(CIC) + 1(CODE)
+												// http://pt.com/page/tutorials/ss7-tutorial/mtp
+				byte[] payload = new byte[msu.length - 5];
+				System.arraycopy(msu, 5, payload, 0, payload.length);
+				// for post processing
+				AbstractISUPMessage msg = (AbstractISUPMessage) messageFactory.createCommand(commandCode);
+				msg.decode(payload, parameterFactory);
+
+				return msg;
+
+			} catch (Exception e) {
+				// FIXME: what should we do here? send back?
+				e.printStackTrace();
+				logger.error("Failed on data: " + Utils.hexDump(null, msu));
+			}
+			return null;
+		}
+
+		public void run() {
+			if (message == null) {
+				try {
+					message = parse();
+				} catch (IOException e) {
+					logger.warn("Corrupted message received");
+					return;
+				}
+			}
+			// deliver to provider, so it can check up on circuit, play with
+			// timers and deliver.
+			provider.receive(message);
+		}
 	}
 
 	private enum State {
 		IDLE, CONFIGURED, RUNNING;
 	}
+
 }

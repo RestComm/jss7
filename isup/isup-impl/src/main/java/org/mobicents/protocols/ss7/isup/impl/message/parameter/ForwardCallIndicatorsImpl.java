@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.ForwardCallIndicators;
 
 /**
@@ -21,7 +21,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ForwardCallIndicators;
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class ForwardCallIndicatorsImpl extends AbstractParameter implements ForwardCallIndicators{
+public class ForwardCallIndicatorsImpl extends AbstractISUPParameter implements ForwardCallIndicators{
 
 	
 	private final static int _TURN_ON = 1;
@@ -43,9 +43,9 @@ public class ForwardCallIndicatorsImpl extends AbstractParameter implements Forw
 		
 	}
 
-	public ForwardCallIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public ForwardCallIndicatorsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public ForwardCallIndicatorsImpl(boolean nationalCallIdentificator, int endToEndMethodIndicator, boolean interworkingIndicator, boolean endToEndInformationIndicator, boolean isdnUserPartIndicator,
@@ -61,12 +61,7 @@ public class ForwardCallIndicatorsImpl extends AbstractParameter implements Forw
 		this.isdnAccessIndicator = isdnAccessIndicator;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 2) {
 			throw new IllegalArgumentException("byte[] must not be null or have different size than 2");
 		}
@@ -90,12 +85,7 @@ public class ForwardCallIndicatorsImpl extends AbstractParameter implements Forw
 		return 2;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		byte[] b = new byte[2];
 
@@ -112,10 +102,14 @@ public class ForwardCallIndicatorsImpl extends AbstractParameter implements Forw
 		return b;
 	}
 
-	@Override
-	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
-		byte[] b = this.encodeElement();
-		bos.write(b);
+	
+	public int encode(ByteArrayOutputStream bos) throws ParameterException {
+		byte[] b = this.encode();
+		try {
+			bos.write(b);
+		} catch (IOException e) {
+			throw new ParameterException(e);
+		}
 		return b.length;
 	}
 

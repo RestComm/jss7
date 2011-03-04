@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
 
 /**
@@ -20,7 +20,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class RangeAndStatusImpl extends AbstractParameter implements RangeAndStatus {
+public class RangeAndStatusImpl extends AbstractISUPParameter implements RangeAndStatus {
 
 	private byte range;
 	private byte[] status;
@@ -28,13 +28,13 @@ public class RangeAndStatusImpl extends AbstractParameter implements RangeAndSta
 	// FIXME:
 	// private Status[] status = null;
 
-	public RangeAndStatusImpl(byte[] b) throws ParameterRangeInvalidException {
+	public RangeAndStatusImpl(byte[] b) throws ParameterException {
 		super();
 		if(b.length<1)
 		{
-			throw new ParameterRangeInvalidException("RangeAndStatus requires atleast 1 byte.");
+			throw new ParameterException("RangeAndStatus requires atleast 1 byte.");
 		}
-		decodeElement(b);
+		decode(b);
 		
 	}
 
@@ -49,12 +49,7 @@ public class RangeAndStatusImpl extends AbstractParameter implements RangeAndSta
 		setStatus(status);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 
 		this.range = b[0];
 		if (b.length == 1)
@@ -65,23 +60,18 @@ public class RangeAndStatusImpl extends AbstractParameter implements RangeAndSta
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
-		try {
-			checkData(range,status);
-		} catch (ParameterRangeInvalidException e) {
-			//FIXME: akward
-			e.printStackTrace();
-			throw new IOException(e.toString());
-		}
+	public byte[] encode() throws ParameterException {
+		checkData(range,status);
+		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		bos.write(this.range);
-		if (this.status != null)
-			bos.write(this.status);
+		if (this.status != null){
+			try {
+				bos.write(this.status);
+			} catch (IOException e) {
+				throw new ParameterException(e);
+			}
+		}
 		return bos.toByteArray();
 	}
 
@@ -141,6 +131,10 @@ public class RangeAndStatusImpl extends AbstractParameter implements RangeAndSta
 	 * (byte, boolean)
 	 */
 	public void setAffected(byte subrange, boolean v) throws IllegalArgumentException {
+		if(this.status == null)
+		{
+			throw new IllegalArgumentException("Can not set affected if no status present!");
+		}
 		// ceck
 		if (this.status.length < (subrange / 8)) {
 			throw new IllegalArgumentException("Argument exceeds status!");
@@ -165,7 +159,7 @@ public class RangeAndStatusImpl extends AbstractParameter implements RangeAndSta
 
 	
 	
-	private static void checkData(byte range, byte[] status) throws ParameterRangeInvalidException
+	private static void checkData(byte range, byte[] status) throws ParameterException
 	{
 		//FIXME: add checks specific to messages~!
 		if(status!=null)
@@ -177,7 +171,7 @@ public class RangeAndStatusImpl extends AbstractParameter implements RangeAndSta
 			}
 			if(status.length!=len)
 			{
-				throw new ParameterRangeInvalidException("Wrong length of status part: "+status.length+", range: "+range);
+				throw new ParameterException("Wrong length of status part: "+status.length+", range: "+range);
 			}
 		}else
 		{

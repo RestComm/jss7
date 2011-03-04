@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInforma
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class UserTeleserviceInformationImpl extends AbstractParameter implements UserTeleserviceInformation {
+public class UserTeleserviceInformationImpl extends AbstractISUPParameter implements UserTeleserviceInformation {
 
 	private int codingStandard;
 	private int interpretation;
@@ -65,21 +65,16 @@ public class UserTeleserviceInformationImpl extends AbstractParameter implements
 		this.setEHighLayerCharIdentification(eHighLayerCharIdentification);
 	}
 
-	public UserTeleserviceInformationImpl(byte[] b) throws ParameterRangeInvalidException {
+	public UserTeleserviceInformationImpl(byte[] b) throws ParameterException {
 		super();
 		// FIXME: this is only elementID
 
-		decodeElement(b);
+		decode(b);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length < 2) {
-			throw new ParameterRangeInvalidException("byte[] must not be null and length must be greater than  1");
+			throw new ParameterException("byte[] must not be null and length must be greater than  1");
 		}
 
 		try {
@@ -88,11 +83,11 @@ public class UserTeleserviceInformationImpl extends AbstractParameter implements
 			this.setCodingStandard((b[0] >> 5));
 			this.setHighLayerCharIdentification(b[1]);
 		} catch (Exception e) {
-			throw new ParameterRangeInvalidException(e);
+			throw new ParameterException(e);
 		}
 		boolean ext = ((b[1] >> 7) & 0x01) == 0;
 		if (ext && b.length != 3) {
-			throw new ParameterRangeInvalidException("byte[] indicates extension to high layer cahracteristic indicator, however there isnt enough bytes");
+			throw new ParameterException("byte[] indicates extension to high layer cahracteristic indicator, however there isnt enough bytes");
 		}
 		if (!ext) {
 			// ??
@@ -106,17 +101,12 @@ public class UserTeleserviceInformationImpl extends AbstractParameter implements
 				|| (this.highLayerCharIdentification >= _HLCI_AUDIO_VID_LOW_RANGE2 && this.highLayerCharIdentification <= _HLCI_AUDIO_VID_HIGH_RANGE2)) {
 			this.setEVidedoTelephonyCharIdentification(b[2] & 0x7F);
 		} else {
-			logger.warning("HLCI indicates value which does not allow for extension, but its present....");
+			//logger.warning("HLCI indicates value which does not allow for extension, but its present....");
 		}
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		byte[] b = null;
 		if (this.eHighLayerCharIdentificationPresent || this.eVidedoTelephonyCharIdentificationPresent) {
 			b = new byte[3];

@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserIndicators;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserIndicators;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class UserToUserIndicatorsImpl extends AbstractParameter implements UserToUserIndicators {
+public class UserToUserIndicatorsImpl extends AbstractISUPParameter implements UserToUserIndicators {
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 
@@ -29,9 +29,9 @@ public class UserToUserIndicatorsImpl extends AbstractParameter implements UserT
 	private int serviceThree;
 	private boolean networkDiscardIndicator;
 
-	public UserToUserIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public UserToUserIndicatorsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public UserToUserIndicatorsImpl() {
@@ -48,14 +48,9 @@ public class UserToUserIndicatorsImpl extends AbstractParameter implements UserT
 		this.networkDiscardIndicator = networkDiscardIndicator;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 1");
+			throw new ParameterException("byte[] must  not be null and length must  be 1");
 		}
 		try {
 			this.setResponse((b[0] & 0x01) == _TURN_ON);
@@ -64,17 +59,12 @@ public class UserToUserIndicatorsImpl extends AbstractParameter implements UserT
 			this.setServiceThree((b[0] >> 5));
 			this.setNetworkDiscardIndicator(((b[0] >> 7) & 0x01) == _TURN_ON);
 		} catch (Exception e) {
-			throw new ParameterRangeInvalidException(e);
+			throw new ParameterException(e);
 		}
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		int v = this.response ? _TURN_ON : _TURN_OFF;
 		v |= (this.serviceOne & 0x03) << 1;
 		v |= (this.serviceTwo & 0x03) << 3;

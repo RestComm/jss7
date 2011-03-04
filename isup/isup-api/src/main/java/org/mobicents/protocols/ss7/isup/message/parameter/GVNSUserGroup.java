@@ -13,7 +13,7 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
  *         </a>
  */
-public interface GVNSUserGroup extends AbstractNumberInterface, ISUPParameter {
+public interface GVNSUserGroup extends Number, ISUPParameter {
 	//FIXME: fill this!
 	public static final int _PARAMETER_CODE = 0;
 	public int getGugLengthIndicator() ;

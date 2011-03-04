@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
 
 /**
@@ -43,17 +43,17 @@ public class RedirectingNumberImpl extends AbstractNAINumber implements Redirect
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
 	 * ByteArrayInputStream)
 	 */
-	public RedirectingNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public RedirectingNumberImpl(byte[] representation) throws ParameterException {
 		super(representation);
 		
 	}
 
-	public RedirectingNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public RedirectingNumberImpl(ByteArrayInputStream bis) throws ParameterException {
 		super(bis);
 		
 	}
 
-	@Override
+	
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
 		int b = bis.read() & 0xff;
 
@@ -69,7 +69,7 @@ public class RedirectingNumberImpl extends AbstractNAINumber implements Redirect
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
 	 * ByteArrayOutputStream)
 	 */
-	@Override
+	
 	public int encodeBody(ByteArrayOutputStream bos) {
 		int c = this.natureOfAddresIndicator << 4;
 		c |= (this.addressRepresentationRestrictedIndicator << 2);

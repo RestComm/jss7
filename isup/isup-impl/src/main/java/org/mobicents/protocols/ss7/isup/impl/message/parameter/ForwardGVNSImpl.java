@@ -12,7 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.ForwardGVNS;
 import org.mobicents.protocols.ss7.isup.message.parameter.GVNSUserGroup;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginatingParticipatingServiceProvider;
@@ -25,7 +25,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.TerminatingNetworkRout
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class ForwardGVNSImpl extends AbstractParameter implements ForwardGVNS{
+public class ForwardGVNSImpl extends AbstractISUPParameter implements ForwardGVNS{
 	
 	
 	//FIXME: we must add in numbers below max digits check - in case of max octets - only odd digits number is valid
@@ -40,23 +40,19 @@ public class ForwardGVNSImpl extends AbstractParameter implements ForwardGVNS{
 		this.tnRoutingNumber = tnRoutingNumber;
 	}
 
-	public ForwardGVNSImpl(byte[] b) throws ParameterRangeInvalidException {
+	public ForwardGVNSImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 	public ForwardGVNSImpl()  {
 		super();
 
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+
+	public int decode(byte[] b) throws ParameterException {
 		// Add kength ? || b.length != xxx
 		if (b == null) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null");
+			throw new ParameterException("byte[] must  not be null");
 		}
 		ByteArrayInputStream bis = new ByteArrayInputStream(b);
 		this.opServiceProvider = new OriginatingParticipatingServiceProviderImpl();
@@ -64,19 +60,14 @@ public class ForwardGVNSImpl extends AbstractParameter implements ForwardGVNS{
 		this.tnRoutingNumber = new TerminatingNetworkRoutingNumberImpl();
 
 		int count = 0;
-		count += this.opServiceProvider.decodeElement(bis);
-		count += this.gvnsUserGroup.decodeElement(bis);
-		count += this.tnRoutingNumber.decodeElement(bis);
+		count += this.opServiceProvider.decode(bis);
+		count += this.gvnsUserGroup.decode(bis);
+		count += this.tnRoutingNumber.decode(bis);
 
 		return count;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		if (this.opServiceProvider == null) {
 			throw new IllegalArgumentException("OriginatingParticipatingServiceProvider must not be null.");
@@ -88,9 +79,14 @@ public class ForwardGVNSImpl extends AbstractParameter implements ForwardGVNS{
 			throw new IllegalArgumentException("TerminatingNetworkRoutingNumber must not be null.");
 		}
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		bos.write(this.opServiceProvider.encodeElement());
-		bos.write(this.gvnsUserGroup.encodeElement());
-		bos.write(this.tnRoutingNumber.encodeElement());
+		try{
+			bos.write(this.opServiceProvider.encode());
+			bos.write(this.gvnsUserGroup.encode());
+			bos.write(this.tnRoutingNumber.encode());
+		}catch(IOException e)
+		{
+			throw new ParameterException(e);
+		}
 		return bos.toByteArray();
 	}
 

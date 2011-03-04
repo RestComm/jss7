@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.SubsequentNumber;
 
 /**
@@ -27,12 +27,12 @@ public class SubsequentNumberImpl extends AbstractNAINumber implements Subsequen
 		
 	}
 
-	public SubsequentNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public SubsequentNumberImpl(byte[] representation) throws ParameterException {
 		super(representation);
 		
 	}
 
-	public SubsequentNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public SubsequentNumberImpl(ByteArrayInputStream bis) throws ParameterException {
 		super(bis);
 		
 	}
@@ -48,7 +48,7 @@ public class SubsequentNumberImpl extends AbstractNAINumber implements Subsequen
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
 	 * ByteArrayInputStream)
 	 */
-	@Override
+	
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
 		// NOTE: we leave this.
 
@@ -61,7 +61,7 @@ public class SubsequentNumberImpl extends AbstractNAINumber implements Subsequen
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
 	 * ByteArrayOutputStream)
 	 */
-	@Override
+	
 	public int encodeBody(ByteArrayOutputStream bos) {
 		// NOTE: we leave this.
 		return 0;

@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.ContinuitiyIndicators;
 
 /**
@@ -20,7 +20,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ContinuitiyIndicators;
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class ContinuitiyIndicatorsImpl extends AbstractParameter implements ContinuitiyIndicators{
+public class ContinuitiyIndicatorsImpl extends AbstractISUPParameter implements ContinuitiyIndicators{
 
 	
 	private final static int _TURN_ON = 1;
@@ -30,9 +30,9 @@ public class ContinuitiyIndicatorsImpl extends AbstractParameter implements Cont
 
 	private boolean continuityCheck = false;
 
-	public ContinuitiyIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public ContinuitiyIndicatorsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public ContinuitiyIndicatorsImpl() {
@@ -45,25 +45,15 @@ public class ContinuitiyIndicatorsImpl extends AbstractParameter implements Cont
 		this.continuityCheck = continuityCheck;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must not be null or have different size than 1");
+			throw new ParameterException("byte[] must not be null or have different size than 1");
 		}
 		this.continuityCheck = (b[0] & 0x01) == _TURN_ON;
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		return new byte[] { (byte) (this.continuityCheck ? _TURN_ON : _TURN_OFF) };
 	}
 

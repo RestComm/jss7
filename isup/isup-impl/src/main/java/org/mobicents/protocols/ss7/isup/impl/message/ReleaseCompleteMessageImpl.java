@@ -10,10 +10,9 @@ package org.mobicents.protocols.ss7.isup.impl.message;
 import java.util.Map;
 import java.util.Set;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.TransactionKey;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CauseIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractISUPParameter;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.ReleaseCompleteMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
@@ -38,70 +37,13 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 	static final int _INDEX_O_CauseIndicators = 0;
 	static final int _INDEX_O_EndOfOptionalParameters = 1;
 
-	ReleaseCompleteMessageImpl(Object source, byte[] b, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
-			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) throws ParameterRangeInvalidException {
-		this(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
-		decodeElement(b);
-
-	}
-
-	ReleaseCompleteMessageImpl(Object source, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+	ReleaseCompleteMessageImpl(Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
 			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
-		super(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
+		super( mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
 
 		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
 		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
 
-	}
-
-	public TransactionKey generateTransactionKey() {
-		if(cic == null)
-		{
-			throw new NullPointerException("CIC is not set in message");
-		}
-		TransactionKey tk = new TransactionKey(ReleaseMessageImpl.IDENT,this.cic.getCIC());
-		return tk;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.isup.messages.ISUPMessage#decodeMandatoryParameters(byte[],
-	 * int)
-	 */
-	@Override
-	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
-		int localIndex = index;
-
-		if (b.length - index > 2) {
-
-			try {
-				byte[] cic = new byte[2];
-				cic[0] = b[index++];
-				cic[1] = b[index++];
-				super.cic = new CircuitIdentificationCodeImpl();
-				super.cic.decodeElement(cic);
-
-			} catch (Exception e) {
-				// AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse CircuitIdentificationCode due to: ", e);
-			}
-			try {
-				// Message Type
-				if (b[index] != this.MESSAGE_CODE) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
-				}
-			} catch (Exception e) {
-				// AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse MessageCode due to: ", e);
-			}
-			index++;
-
-			return index - localIndex;
-		} else {
-			throw new ParameterRangeInvalidException("byte[] must have atleast three octets");
-		}
 	}
 
 	/*
@@ -111,9 +53,9 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 	 * org.mobicents.isup.messages.ISUPMessage#decodeMandatoryVariableBody(byte
 	 * [], int)
 	 */
-	@Override
-	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException {
-		throw new ParameterRangeInvalidException("This message has no mandatory parameters, unknown parameter index: " + parameterIndex + ", body: " + ISUPUtility.toHex(parameterBody));
+	
+	protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory,byte[] parameterBody, int parameterIndex) throws ParameterException {
+		throw new ParameterException("This message has no mandatory parameters, unknown parameter index: " + parameterIndex + ", body: " + ISUPUtility.toHex(parameterBody));
 
 	}
 
@@ -123,22 +65,23 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 	 * @see org.mobicents.isup.messages.ISUPMessage#decodeOptionalBody(byte[],
 	 * byte)
 	 */
-	@Override
-	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {
+	
+	protected void decodeOptionalBody(ISUPParameterFactory parameterFactory,byte[] parameterBody, byte parameterCode) throws ParameterException {
 
 		switch ((int) parameterCode) {
 		case _INDEX_O_CauseIndicators:
-			CauseIndicatorsImpl cpn = new CauseIndicatorsImpl(parameterBody);
+			CauseIndicators cpn = parameterFactory.createCauseIndicators();
+			((AbstractISUPParameter)cpn).decode(parameterBody);
 			this.setCauseIndicators(cpn);
 			break;
 		default:
-			throw new ParameterRangeInvalidException("Unrecognized parameter index for optional part: " + parameterCode);
+			throw new ParameterException("Unrecognized parameter index for optional part: " + parameterCode);
 		}
 
 	}
 
 	public CauseIndicators getCauseIndicators() {
-		return (CauseIndicatorsImpl) super.v_Parameters.get(_INDEX_O_CauseIndicators);
+		return (CauseIndicators) super.v_Parameters.get(_INDEX_O_CauseIndicators);
 	}
 
 	public void setCauseIndicators(CauseIndicators v) {
@@ -150,7 +93,7 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 	 * 
 	 * @see org.mobicents.isup.messages.ISUPMessage#getMessageType()
 	 */
-	@Override
+	
 	public MessageTypeImpl getMessageType() {
 		return this._MESSAGE_TYPE;
 	}
@@ -161,7 +104,7 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 	 * @seeorg.mobicents.isup.messages.ISUPMessage#
 	 * getNumberOfMandatoryVariableLengthParameters()
 	 */
-	@Override
+	
 	protected int getNumberOfMandatoryVariableLengthParameters() {
 
 		return _MANDATORY_VAR_COUNT;
@@ -172,7 +115,7 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 	 * 
 	 * @see org.mobicents.isup.messages.ISUPMessage#hasAllMandatoryParameters()
 	 */
-	@Override
+	
 	public boolean hasAllMandatoryParameters() {
 		if (this.f_Parameters.get(_INDEX_F_MessageType) == null || this.f_Parameters.get(_INDEX_F_MessageType).getCode() != this.getMessageType().getCode()) {
 			return false;
@@ -180,7 +123,7 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 
 		return true;
 	}
-	@Override
+	
 	protected boolean optionalPartIsPossible() {
 		
 		return true;

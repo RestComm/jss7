@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.NetworkManagementControls;
 
 /**
@@ -19,16 +19,16 @@ import org.mobicents.protocols.ss7.isup.message.parameter.NetworkManagementContr
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class NetworkManagementControlsImpl extends AbstractParameter implements NetworkManagementControls {
+public class NetworkManagementControlsImpl extends AbstractISUPParameter implements NetworkManagementControls {
 
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 	// FIXME - should we switch to boolean[] - its a slight perf loss :P
 	private byte[] networkManagementControls = null;
 
-	public NetworkManagementControlsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public NetworkManagementControlsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public NetworkManagementControlsImpl() {
@@ -36,26 +36,16 @@ public class NetworkManagementControlsImpl extends AbstractParameter implements 
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		try {
 			setNetworkManagementControls(b);
 		} catch (Exception e) {
-			throw new ParameterRangeInvalidException(e);
+			throw new ParameterException(e);
 		}
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		for (int index = 0; index < this.networkManagementControls.length; index++) {
 			this.networkManagementControls[index] = (byte) (this.networkManagementControls[index] & 0x01);

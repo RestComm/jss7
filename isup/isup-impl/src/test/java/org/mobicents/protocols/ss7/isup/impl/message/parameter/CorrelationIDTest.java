@@ -12,8 +12,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-
 /**
  * Start time:14:11:03 2009-04-23<br>
  * Project: mobicents-isup-stack<br>
@@ -68,8 +66,8 @@ public class CorrelationIDTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() {
+	
+	public AbstractISUPParameter getTestedComponent() {
 		return new CorrelationIDImpl(1,1,new int[2]);
 	}
 

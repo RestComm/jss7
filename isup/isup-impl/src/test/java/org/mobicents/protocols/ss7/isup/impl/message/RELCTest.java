@@ -12,7 +12,7 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 public class RELCTest extends MessageHarness{
 
 	
-	@Override
+	
 	protected byte[] getDefaultBody() {
 		//FIXME: for now we strip MTP part
 		byte[] message={
@@ -28,7 +28,7 @@ public class RELCTest extends MessageHarness{
 
 		return message;
 	}
-	@Override
+	
 	protected ISUPMessage getDefaultMessage() {
 		return super.messageFactory.createRLC();
 	}

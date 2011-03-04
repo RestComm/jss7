@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 
 /**
@@ -43,12 +43,12 @@ public class GenericNumberImpl extends AbstractNAINumber implements GenericNumbe
 		this.screeningIndicator = screeningIndicator;
 	}
 
-	public GenericNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public GenericNumberImpl(byte[] representation) throws ParameterException {
 		super(representation);
 
 	}
 
-	public GenericNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public GenericNumberImpl(ByteArrayInputStream bis) throws ParameterException {
 		super(bis);
 		
 	}
@@ -64,7 +64,7 @@ public class GenericNumberImpl extends AbstractNAINumber implements GenericNumbe
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
 	 * ByteArrayInputStream)
 	 */
-	@Override
+	
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
 		int b = bis.read() & 0xff;
 
@@ -103,7 +103,7 @@ public class GenericNumberImpl extends AbstractNAINumber implements GenericNumbe
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
 	 * ByteArrayOutputStream)
 	 */
-	@Override
+	
 	public int encodeBody(ByteArrayOutputStream bos) {
 
 		int c = this.screeningIndicator;
@@ -116,13 +116,13 @@ public class GenericNumberImpl extends AbstractNAINumber implements GenericNumbe
 		return 1;
 	}
 
-	@Override
-	public int decodeHeader(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	
+	public int decodeHeader(ByteArrayInputStream bis) throws ParameterException {
 		this.numberQualifierIndicator = bis.read() & 0xff;
 		return super.decodeHeader(bis) + 1;
 	}
 
-	@Override
+	
 	public int encodeHeader(ByteArrayOutputStream bos) {
 		doAddressPresentationRestricted();
 		bos.write(this.numberQualifierIndicator);

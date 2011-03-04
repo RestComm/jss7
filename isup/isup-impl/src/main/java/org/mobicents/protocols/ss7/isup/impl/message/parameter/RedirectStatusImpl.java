@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectStatus;
 
 /**
@@ -20,9 +20,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RedirectStatus;
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class RedirectStatusImpl extends AbstractParameter implements RedirectStatus{
-
-
+public class RedirectStatusImpl extends AbstractISUPParameter implements RedirectStatus{
 
 	private byte[] status;
 
@@ -31,32 +29,22 @@ public class RedirectStatusImpl extends AbstractParameter implements RedirectSta
 		
 	}
 
-	public RedirectStatusImpl(byte[] b) throws ParameterRangeInvalidException {
+	public RedirectStatusImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		try{
 			setStatus(b);
 		}catch(Exception e)
 		{
-			throw new ParameterRangeInvalidException(e);
+			throw new ParameterException(e);
 		}
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		for (int index = 0; index < this.status.length; index++) {
 			this.status[index] = (byte) (this.status[index] & 0x03);

@@ -14,6 +14,9 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  */
 public interface MCIDResponseIndicators extends ISUPParameter {
 	public static final int _PARAMETER_CODE = 0x3C;
+	
+
+	//FIXME: its byte[], there may be more indicators than one byte
 	/**
 	 * Flag that indicates that information is requested
 	 */

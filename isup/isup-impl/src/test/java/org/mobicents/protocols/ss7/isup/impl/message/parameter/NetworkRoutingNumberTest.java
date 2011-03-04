@@ -12,8 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:14:11:03 2009-04-23<br>
@@ -39,7 +38,7 @@ public class NetworkRoutingNumberTest extends ParameterHarness {
 
 
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		NetworkRoutingNumberImpl bci = new NetworkRoutingNumberImpl(getBody(false,getSixDigits(), NetworkRoutingNumberImpl._NPI_ISDN_NP, NetworkRoutingNumberImpl._NAI_NRNI_NETWORK_SNF));
 
 		String[] methodNames = { "isOddFlag", "getNumberingPlanIndicator", "getNatureOfAddressIndicator",  "getAddress" };
@@ -47,7 +46,7 @@ public class NetworkRoutingNumberTest extends ParameterHarness {
 		super.testValues(bci, methodNames, expectedValues);
 	}
 	
-	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		NetworkRoutingNumberImpl bci = new NetworkRoutingNumberImpl(getBody(true,getFiveDigits(), NetworkRoutingNumberImpl._NPI_ISDN_NP, NetworkRoutingNumberImpl._NAI_NRNI_NETWORK_SNF));
 
 		String[] methodNames = { "isOddFlag", "getNumberingPlanIndicator", "getNatureOfAddressIndicator",  "getAddress" };
@@ -80,8 +79,8 @@ public class NetworkRoutingNumberTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() {
+	
+	public AbstractISUPParameter getTestedComponent() {
 		return new NetworkRoutingNumberImpl("1", 1, 1);
 	}
 

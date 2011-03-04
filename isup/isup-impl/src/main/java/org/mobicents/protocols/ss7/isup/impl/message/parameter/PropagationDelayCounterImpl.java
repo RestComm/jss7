@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.PropagationDelayCounter;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.PropagationDelayCounte
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class PropagationDelayCounterImpl extends AbstractParameter implements PropagationDelayCounter {
+public class PropagationDelayCounterImpl extends AbstractISUPParameter implements PropagationDelayCounter {
 
 	private int propagationDelay;
 
@@ -28,9 +28,9 @@ public class PropagationDelayCounterImpl extends AbstractParameter implements Pr
 		
 	}
 
-	public PropagationDelayCounterImpl(byte[] b) throws ParameterRangeInvalidException {
+	public PropagationDelayCounterImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public PropagationDelayCounterImpl(int propagationDelay) {
@@ -38,15 +38,10 @@ public class PropagationDelayCounterImpl extends AbstractParameter implements Pr
 		this.propagationDelay = propagationDelay;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		// This one is other way around, as Eduardo might say.
 		if (b == null || b.length != 2) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must be 2");
+			throw new ParameterException("byte[] must  not be null and length must be 2");
 		}
 
 		this.propagationDelay = b[0] << 8;
@@ -54,12 +49,7 @@ public class PropagationDelayCounterImpl extends AbstractParameter implements Pr
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		byte b0 = (byte) (this.propagationDelay >> 8);
 		byte b1 = (byte) this.propagationDelay;

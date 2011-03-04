@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledNumber;
 
 /**
@@ -32,7 +32,7 @@ public abstract class CalledNumberImpl extends AbstractNAINumber implements Call
 
 	
 
-	public CalledNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public CalledNumberImpl(byte[] representation) throws ParameterException {
 		super(representation);
 		
 	}
@@ -41,7 +41,7 @@ public abstract class CalledNumberImpl extends AbstractNAINumber implements Call
 		
 	}
 
-	public CalledNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public CalledNumberImpl(ByteArrayInputStream bis) throws ParameterException {
 		super(bis);
 		
 	}
@@ -58,7 +58,7 @@ public abstract class CalledNumberImpl extends AbstractNAINumber implements Call
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
 	 * ByteArrayInputStream)
 	 */
-	@Override
+	
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
 		int b = bis.read() & 0xff;
 
@@ -74,7 +74,7 @@ public abstract class CalledNumberImpl extends AbstractNAINumber implements Call
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
 	 * ByteArrayOutputStream)
 	 */
-	@Override
+	
 	public int encodeBody(ByteArrayOutputStream bos) {
 		int c = (this.numberingPlanIndicator & 0x07) << 4;
 		c |= ((this.addressRepresentationRestrictedIndicator & 0x03) << 2);

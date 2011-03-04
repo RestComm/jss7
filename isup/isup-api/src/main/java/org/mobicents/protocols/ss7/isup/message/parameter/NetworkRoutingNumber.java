@@ -12,7 +12,7 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public interface NetworkRoutingNumber extends AbstractNumberInterface, ISUPParameter {
+public interface NetworkRoutingNumber extends Number, ISUPParameter {
 	public static final int _PARAMETER_CODE = 0x84;
 
 	/**

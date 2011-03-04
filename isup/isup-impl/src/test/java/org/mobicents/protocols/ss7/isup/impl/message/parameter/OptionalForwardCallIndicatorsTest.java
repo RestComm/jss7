@@ -11,8 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:16:20:47 2009-04-26<br>
@@ -32,7 +31,7 @@ public class OptionalForwardCallIndicatorsTest extends ParameterHarness {
 		super.badBodies.add(new byte[] { 8, 8 });
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		OptionalForwardCallIndicatorsImpl bci = new OptionalForwardCallIndicatorsImpl(getBody(OptionalForwardCallIndicatorsImpl._CUGCI_CUG_CALL_OAL,
 																					  OptionalForwardCallIndicatorsImpl._SSI_ADDITIONAL_INFO,
 																					  OptionalForwardCallIndicatorsImpl._CLIRI_REQUESTED));
@@ -62,8 +61,8 @@ public class OptionalForwardCallIndicatorsTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
+	
+	public AbstractISUPParameter getTestedComponent() throws ParameterException {
 		return new OptionalForwardCallIndicatorsImpl(new byte[1]);
 	}
 

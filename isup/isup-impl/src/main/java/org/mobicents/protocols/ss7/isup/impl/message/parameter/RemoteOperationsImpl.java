@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.RemoteOperations;
 
 /**
@@ -20,14 +20,14 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RemoteOperations;
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class RemoteOperationsImpl extends AbstractParameter implements RemoteOperations{
+public class RemoteOperationsImpl extends AbstractISUPParameter implements RemoteOperations{
 	
 //FIXME: Impl
 
 
-	public RemoteOperationsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public RemoteOperationsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public RemoteOperationsImpl() {
@@ -35,15 +35,12 @@ public class RemoteOperationsImpl extends AbstractParameter implements RemoteOpe
 		
 	}
 
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		// TODO Auto-generated method stub
 		return null;
 	}

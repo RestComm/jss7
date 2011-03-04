@@ -8,8 +8,7 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:11:34:01 2009-04-24<br>
@@ -46,7 +45,7 @@ public class InformationRequestIndicatorsTest extends ParameterHarness {
 
 	}
 
-	public void testBody1EncodedValues() throws ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws ParameterException {
 		InformationRequestIndicatorsImpl eci = new InformationRequestIndicatorsImpl(getBody(InformationRequestIndicatorsImpl._INDICATOR_REQUESTED, InformationRequestIndicatorsImpl._INDICATOR_NOT_REQUESTED,
 				InformationRequestIndicatorsImpl._INDICATOR_REQUESTED, InformationRequestIndicatorsImpl._INDICATOR_NOT_REQUESTED, InformationRequestIndicatorsImpl._INDICATOR_NOT_REQUESTED, 10));
 
@@ -64,8 +63,8 @@ public class InformationRequestIndicatorsTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
+	
+	public AbstractISUPParameter getTestedComponent() throws ParameterException {
 		return new InformationRequestIndicatorsImpl(new byte[2]);
 	}
 

@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.OverloadMessage;
 public class OLMTest extends MessageHarness{
 
 	
-	@Override
+	
 	protected byte[] getDefaultBody() {
 		//FIXME: for now we strip MTP part
 		byte[] message={
@@ -33,7 +33,7 @@ public class OLMTest extends MessageHarness{
 
 		return message;
 	}
-	@Override
+	
 	protected ISUPMessage getDefaultMessage() {
 		return super.messageFactory.createOLM(0);
 	}

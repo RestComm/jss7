@@ -6,8 +6,15 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import java.util.Map;
+import java.util.Set;
+
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractISUPParameter;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.ConfusionMessage;
+import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
 
 /**
@@ -19,79 +26,97 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
  */
 public class ConfusionMessageImpl extends ISUPMessageImpl implements ConfusionMessage {
 
+	
+	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
+	private static final int _MANDATORY_VAR_COUNT = 1;
+
+	static final int _INDEX_F_MessageType = 0;
+	
+	static final int _INDEX_V_CauseIndicators = 0;
+	
+	static final int _INDEX_O_EndOfOptionalParameters = 0;
 	/**
 	 * 	
 	 * @param source
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 */
-	public ConfusionMessageImpl(Object source){
-		super(source);
+	public ConfusionMessageImpl(Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
+		super(mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
+
+		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
+		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
+	}
 		
+	
+	public void setCauseIndicators(CauseIndicators ci) {
+		super.v_Parameters.put(_INDEX_V_CauseIndicators, ci);
 	}
 
-	/**
-	 * 	
-	 */
-	public ConfusionMessageImpl() {
-		
+	
+	public CauseIndicators getCauseIndicators() {
+		return (CauseIndicators) super.v_Parameters.get(_INDEX_V_CauseIndicators);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryParameters(byte[], int)
 	 */
-	@Override
-	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
-		// TODO Auto-generated method stub
-		return 0;
+	
+	protected int decodeMandatoryParameters(ISUPParameterFactory parameterFactory,byte[] b, int index) throws ParameterException {
+		return super.decodeMandatoryParameters(parameterFactory, b, index);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryVariableBody(byte[], int)
 	 */
-	@Override
-	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException {
-		// TODO Auto-generated method stub
-
+	
+	protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory,byte[] parameterBody, int parameterIndex) throws ParameterException {
+		//check for max len == 20 ?
+		switch(parameterIndex)
+		{
+		case _INDEX_V_CauseIndicators:
+			CauseIndicators ci = parameterFactory.createCauseIndicators();
+			((AbstractISUPParameter)ci).decode(parameterBody);
+			break;
+			default:
+				throw new ParameterException("Unrecognized parameter index for mandatory variable part, index: " + parameterIndex);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeOptionalBody(byte[], byte)
 	 */
-	@Override
-	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {
-		// TODO Auto-generated method stub
-
+	
+	protected void decodeOptionalBody(ISUPParameterFactory parameterFactory,byte[] parameterBody, byte parameterCode) throws ParameterException {
+		throw new ParameterException("This message does not support optional parameters");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getMessageType()
 	 */
-	@Override
+	
 	public MessageType getMessageType() {
-		// TODO Auto-generated method stub
-		return null;
+		return _MESSAGE_TYPE;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getNumberOfMandatoryVariableLengthParameters()
 	 */
-	@Override
+	
 	protected int getNumberOfMandatoryVariableLengthParameters() {
-		// TODO Auto-generated method stub
-		return 0;
+		return _MANDATORY_VAR_COUNT;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#hasAllMandatoryParameters()
 	 */
-	@Override
+	
 	public boolean hasAllMandatoryParameters() {
-		throw new UnsupportedOperationException();
+		return super.v_Parameters.get(_INDEX_V_CauseIndicators)!=null;
 	}
-	@Override
+	
 	protected boolean optionalPartIsPossible() {
-		
-		throw new UnsupportedOperationException();
+		return false;
 	}
 
 }

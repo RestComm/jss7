@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardGVNS;
 
 /**
@@ -19,13 +19,13 @@ import org.mobicents.protocols.ss7.isup.message.parameter.BackwardGVNS;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class BackwardGVNSImpl extends AbstractParameter implements BackwardGVNS {
+public class BackwardGVNSImpl extends AbstractISUPParameter implements BackwardGVNS {
 
 	private byte[] backwardGVNS = null;
 
-	public BackwardGVNSImpl(byte[] backwardGVNS) throws ParameterRangeInvalidException {
+	public BackwardGVNSImpl(byte[] backwardGVNS) throws ParameterException {
 		super();
-		decodeElement(backwardGVNS);
+		decode(backwardGVNS);
 	}
 
 	public BackwardGVNSImpl()  {
@@ -33,25 +33,15 @@ public class BackwardGVNSImpl extends AbstractParameter implements BackwardGVNS 
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length == 0) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be greater than 0");
+			throw new ParameterException("byte[] must  not be null and length must  be greater than 0");
 		}
 		this.backwardGVNS = b;
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		for (int index = 0; index < this.backwardGVNS.length; index++) {
 			this.backwardGVNS[index] = (byte) (this.backwardGVNS[index] & 0x7F);

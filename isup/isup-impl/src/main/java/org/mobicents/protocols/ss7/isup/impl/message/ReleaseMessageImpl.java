@@ -10,26 +10,10 @@ package org.mobicents.protocols.ss7.isup.impl.message;
 import java.util.Map;
 import java.util.Set;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.TransactionKey;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.AccessDeliveryInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.AutomaticCongestionLevelImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CauseIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.DisplayInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.HTRInformationImpl;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractISUPParameter;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.NetworkSpecificFacilityImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.ParameterCompatibilityInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectBackwardInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectCounterImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectionInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectionNumberImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.RemoteOperationsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.SignalingPointCodeImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserToUserIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserToUserInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.accessTransport.AccessTransportImpl;
 import org.mobicents.protocols.ss7.isup.message.ReleaseMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.AutomaticCongestionLevel;
@@ -82,88 +66,29 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 	static final int _INDEX_O_RedirectBackwardInformation = 14;
 	static final int _INDEX_O_EndOfOptionalParameters = 15;
 
-	//default, ident part of tx.
-	static final String IDENT="REL";
-	
-	ReleaseMessageImpl(Object source, byte[] b, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
-			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) throws ParameterRangeInvalidException {
-		this(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
-		decodeElement(b);
-
-	}
-
-	ReleaseMessageImpl(Object source, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+	ReleaseMessageImpl(Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
 			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
-		super(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
+		super(mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
 
 		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
 		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
 
 	}
 	
-	public TransactionKey generateTransactionKey() {
-		if(cic == null)
-		{
-			throw new NullPointerException("CIC is not set in message");
-		}
-		TransactionKey tk = new TransactionKey(IDENT,this.cic.getCIC());
-		return tk;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.isup.messages.ISUPMessage#decodeMandatoryParameters(byte[],
-	 * int)
-	 */
-	@Override
-	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
-		int localIndex = index;
-
-		if (b.length - index > 2) {
-
-			try {
-				byte[] cic = new byte[2];
-				cic[0] = b[index++];
-				cic[1] = b[index++];
-				super.cic = new CircuitIdentificationCodeImpl();
-				super.cic.decodeElement(cic);
-
-			} catch (Exception e) {
-				// AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse CircuitIdentificationCode due to: ", e);
-			}
-			try {
-				// Message Type
-				if (b[index] != this.MESSAGE_CODE) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
-				}
-			} catch (Exception e) {
-				// AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse MessageCode due to: ", e);
-			}
-			index++;
-
-			return index - localIndex;
-		} else {
-			throw new ParameterRangeInvalidException("byte[] must have atleast three octets");
-		}
-	}
-
 	/**
 	 * @param parameterBody
 	 * @param parameterCode
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 */
-	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException {
+	protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, int parameterIndex) throws ParameterException {
 		switch (parameterIndex) {
 		case _INDEX_V_CauseIndicators:
-			CauseIndicatorsImpl cpn = new CauseIndicatorsImpl(parameterBody);
+			CauseIndicators cpn = parameterFactory.createCauseIndicators();
+			((AbstractISUPParameter) cpn).decode(parameterBody);
 			this.setCauseIndicators(cpn);
 			break;
 		default:
-			throw new ParameterRangeInvalidException("Unrecognized parameter index for mandatory variable part: " + parameterIndex);
+			throw new ParameterException("Unrecognized parameter index for mandatory variable part: " + parameterIndex);
 		}
 
 	}
@@ -174,73 +99,88 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 	 * @see org.mobicents.isup.messages.ISUPMessage#decodeOptionalBody(byte[],
 	 * byte)
 	 */
-	@Override
-	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {
+	
+	protected void decodeOptionalBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, byte parameterCode) throws ParameterException {
 
 		switch ((int) parameterCode) {
-		case RedirectionNumberImpl._PARAMETER_CODE:
-			RedirectionNumberImpl rn = new RedirectionNumberImpl(parameterBody);
+		case RedirectionNumber._PARAMETER_CODE:
+			RedirectionNumber rn = parameterFactory.createRedirectionNumber();
+			((AbstractISUPParameter) rn).decode(parameterBody);
 			this.setRedirectionNumber(rn);
 			break;
-		case RedirectionInformationImpl._PARAMETER_CODE:
-			RedirectionInformationImpl ri = new RedirectionInformationImpl(parameterBody);
+		case RedirectionInformation._PARAMETER_CODE:
+			RedirectionInformation ri = parameterFactory.createRedirectionInformation();
+			((AbstractISUPParameter) ri).decode(parameterBody);
 			this.setRedirectionInformation(ri);
 			break;
-		case AccessTransportImpl._PARAMETER_CODE:
-			AccessTransportImpl at = new AccessTransportImpl(parameterBody);
+		case AccessTransport._PARAMETER_CODE:
+			AccessTransport at = parameterFactory.createAccessTransport();
+			((AbstractISUPParameter) at).decode(parameterBody);
 			this.setAccessTransport(at);
 			break;
-		case SignalingPointCodeImpl._PARAMETER_CODE:
-			SignalingPointCodeImpl v = new SignalingPointCodeImpl(parameterBody);
+		case SignalingPointCode._PARAMETER_CODE:
+			SignalingPointCode v = parameterFactory.createSignalingPointCode();
+			((AbstractISUPParameter) v).decode(parameterBody);
 			this.setSignalingPointCode(v);
 			break;
-		case UserToUserInformationImpl._PARAMETER_CODE:
-			UserToUserInformationImpl u2ui = new UserToUserInformationImpl(parameterBody);
+		case UserToUserInformation._PARAMETER_CODE:
+			UserToUserInformation u2ui = parameterFactory.createUserToUserInformation();
+			((AbstractISUPParameter) u2ui).decode(parameterBody);
 			this.setU2UInformation(u2ui);
 			break;
-		case AutomaticCongestionLevelImpl._PARAMETER_CODE:
-			AutomaticCongestionLevelImpl acl = new AutomaticCongestionLevelImpl(parameterBody);
+		case AutomaticCongestionLevel._PARAMETER_CODE:
+			AutomaticCongestionLevel acl = parameterFactory.createAutomaticCongestionLevel();
+			((AbstractISUPParameter) acl).decode(parameterBody);
 			this.setAutomaticCongestionLevel(acl);
 			break;
-		case NetworkSpecificFacilityImpl._PARAMETER_CODE:
-			NetworkSpecificFacilityImpl nsf = new NetworkSpecificFacilityImpl(parameterBody);
+		case NetworkSpecificFacility._PARAMETER_CODE:
+			NetworkSpecificFacility nsf = parameterFactory.createNetworkSpecificFacility();
+			((AbstractISUPParameter) nsf).decode(parameterBody);
 			this.setNetworkSpecificFacility(nsf);
 			break;
-		case AccessDeliveryInformationImpl._PARAMETER_CODE:
-			AccessDeliveryInformationImpl adi = new AccessDeliveryInformationImpl(parameterBody);
+		case AccessDeliveryInformation._PARAMETER_CODE:
+			AccessDeliveryInformation adi = parameterFactory.createAccessDeliveryInformation();
+			((AbstractISUPParameter) adi).decode(parameterBody);
 			this.setAccessDeliveryInformation(adi);
 			break;
-		case ParameterCompatibilityInformationImpl._PARAMETER_CODE:
-			ParameterCompatibilityInformationImpl pci = new ParameterCompatibilityInformationImpl(parameterBody);
+		case ParameterCompatibilityInformation._PARAMETER_CODE:
+			ParameterCompatibilityInformation pci = parameterFactory.createParameterCompatibilityInformation();
+			((AbstractISUPParameter) pci).decode(parameterBody);
 			this.setParameterCompatibilityInformation(pci);
 			break;
-		case UserToUserIndicatorsImpl._PARAMETER_CODE:
-			UserToUserIndicatorsImpl utui = new UserToUserIndicatorsImpl(parameterBody);
+		case UserToUserIndicators._PARAMETER_CODE:
+			UserToUserIndicators utui = parameterFactory.createUserToUserIndicators();
+			((AbstractISUPParameter) utui).decode(parameterBody);
 			this.setU2UIndicators(utui);
 			break;
-		case DisplayInformationImpl._PARAMETER_CODE:
-			DisplayInformationImpl di = new DisplayInformationImpl(parameterBody);
+		case DisplayInformation._PARAMETER_CODE:
+			DisplayInformation di = parameterFactory.createDisplayInformation();
+			((AbstractISUPParameter) di).decode(parameterBody);
 			this.setDisplayInformation(di);
 			break;
-		case RemoteOperationsImpl._PARAMETER_CODE:
-			RemoteOperationsImpl ro = new RemoteOperationsImpl(parameterBody);
+		case RemoteOperations._PARAMETER_CODE:
+			RemoteOperations ro = parameterFactory.createRemoteOperations();
+			((AbstractISUPParameter) ro).decode(parameterBody);
 			this.setRemoteOperations(ro);
 			break;
-		case HTRInformationImpl._PARAMETER_CODE:
-			HTRInformationImpl htri = new HTRInformationImpl(parameterBody);
+		case HTRInformation._PARAMETER_CODE:
+			HTRInformation htri = parameterFactory.createHTRInformation();
+			((AbstractISUPParameter) htri).decode(parameterBody);
 			this.setHTRInformation(htri);
 			break;
-		case RedirectBackwardInformationImpl._PARAMETER_CODE:
-			RedirectBackwardInformationImpl rbi = new RedirectBackwardInformationImpl(parameterBody);
+		case RedirectBackwardInformation._PARAMETER_CODE:
+			RedirectBackwardInformation rbi = parameterFactory.createRedirectBackwardInformation();
+			((AbstractISUPParameter) rbi).decode(parameterBody);
 			this.setRedirectBackwardInformation(rbi);
 			break;
-		case RedirectCounterImpl._PARAMETER_CODE:
-			RedirectCounterImpl rc = new RedirectCounterImpl(parameterBody);
+		case RedirectCounter._PARAMETER_CODE:
+			RedirectCounter rc = parameterFactory.createRedirectCounter();
+			((AbstractISUPParameter) rc).decode(parameterBody);
 			this.setRedirectCounter(rc);
 			break;
 
 		default:
-			throw new IllegalArgumentException("Unrecognized parameter code for optional part: " + parameterCode);
+			throw new ParameterException("Unrecognized parameter code for optional part: " + parameterCode);
 		}
 
 	}
@@ -378,7 +318,7 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 	 * 
 	 * @see org.mobicents.isup.messages.ISUPMessage#getMessageType()
 	 */
-	@Override
+	
 	public MessageType getMessageType() {
 		return this._MESSAGE_TYPE;
 	}
@@ -389,7 +329,7 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 	 * @seeorg.mobicents.isup.messages.ISUPMessage#
 	 * getNumberOfMandatoryVariableLengthParameters()
 	 */
-	@Override
+	
 	protected int getNumberOfMandatoryVariableLengthParameters() {
 
 		return _MANDATORY_VAR_COUNT;
@@ -400,7 +340,7 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 	 * 
 	 * @see org.mobicents.isup.messages.ISUPMessage#hasAllMandatoryParameters()
 	 */
-	@Override
+	
 	public boolean hasAllMandatoryParameters() {
 		if (this.f_Parameters.get(_INDEX_F_MessageType) == null || this.f_Parameters.get(_INDEX_F_MessageType).getCode() != this.getMessageType().getCode()) {
 			return false;
@@ -410,12 +350,17 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 		}
 		return true;
 	}
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible
+	 * ()
 	 */
-	@Override
+	
 	protected boolean optionalPartIsPossible() {
-		
+
 		return true;
 	}
 }

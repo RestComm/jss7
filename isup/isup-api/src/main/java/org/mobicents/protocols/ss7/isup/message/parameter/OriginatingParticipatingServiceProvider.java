@@ -13,7 +13,7 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
  *         </a>
  */
-public interface OriginatingParticipatingServiceProvider extends AbstractNumberInterface, ISUPParameter {
+public interface OriginatingParticipatingServiceProvider extends Number, ISUPParameter {
 	//FIXME: fill this!
 	public static final int _PARAMETER_CODE = 0;
 	public int getOpspLengthIndicator() ;

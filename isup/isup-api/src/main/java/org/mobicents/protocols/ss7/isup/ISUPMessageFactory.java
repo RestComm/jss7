@@ -56,7 +56,6 @@ import org.mobicents.protocols.ss7.isup.message.UnequippedCICMessage;
 import org.mobicents.protocols.ss7.isup.message.User2UserInformationMessage;
 import org.mobicents.protocols.ss7.isup.message.UserPartAvailableMessage;
 import org.mobicents.protocols.ss7.isup.message.UserPartTestMessage;
-import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
 
 /**
  * Start time:12:04:59 2009-09-04<br>
@@ -118,7 +117,7 @@ public interface ISUPMessageFactory {
 	/**
 	 * @return
 	 */
-	ConnectMessage createCON(int cic);
+	ConnectMessage createCON();
 
 	/**
 	 * @return

@@ -8,7 +8,7 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CorrelationID;
 
 /**
@@ -25,7 +25,7 @@ public class CorrelationIDImpl extends GenericDigitsImpl implements CorrelationI
 		
 	}
 
-	public CorrelationIDImpl(byte[] b) throws ParameterRangeInvalidException {
+	public CorrelationIDImpl(byte[] b) throws ParameterException {
 		super(b);
 
 		

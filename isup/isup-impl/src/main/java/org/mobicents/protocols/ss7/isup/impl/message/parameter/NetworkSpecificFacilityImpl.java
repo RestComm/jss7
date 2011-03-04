@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.NetworkSpecificFacility;
 
 /**
@@ -20,7 +20,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.NetworkSpecificFacilit
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class NetworkSpecificFacilityImpl extends AbstractParameter implements NetworkSpecificFacility {
+public class NetworkSpecificFacilityImpl extends AbstractISUPParameter implements NetworkSpecificFacility {
 
 	/**
 	 * This tells us to include byte 1a - sets lengthOfNetworkIdentification to
@@ -36,9 +36,9 @@ public class NetworkSpecificFacilityImpl extends AbstractParameter implements Ne
 	private byte[] networkIdentification;
 	private byte[] networkSpecificaFacilityIndicator;
 
-	public NetworkSpecificFacilityImpl(byte[] b) throws ParameterRangeInvalidException {
+	public NetworkSpecificFacilityImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public NetworkSpecificFacilityImpl() {
@@ -55,15 +55,10 @@ public class NetworkSpecificFacilityImpl extends AbstractParameter implements Ne
 		this.networkIdentification = networkdIdentification;
 		this.networkSpecificaFacilityIndicator = networkSpecificaFacilityIndicator;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length < 1) {
-			throw new ParameterRangeInvalidException("byte[] must nto be null or have length greater than 1");
+			throw new ParameterException("byte[] must nto be null or have length greater than 1");
 		}
 		// try {
 		int shift = 0;
@@ -91,7 +86,7 @@ public class NetworkSpecificFacilityImpl extends AbstractParameter implements Ne
 		}
 
 		if (shift + 1 == b.length) {
-			throw new ParameterRangeInvalidException("There is no facility indicator. This part is mandatory!!!");
+			throw new ParameterException("There is no facility indicator. This part is mandatory!!!");
 		}
 		byte[] _facility = new byte[b.length - shift - 1];
 		// -1 cause shift counts from 0
@@ -104,12 +99,7 @@ public class NetworkSpecificFacilityImpl extends AbstractParameter implements Ne
 		// }
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 		bos.write(this.lengthOfNetworkIdentification);
@@ -140,7 +130,11 @@ public class NetworkSpecificFacilityImpl extends AbstractParameter implements Ne
 		if (this.networkSpecificaFacilityIndicator == null) {
 			throw new IllegalArgumentException("Network Specific Facility must not be null");
 		}
-		bos.write(this.networkSpecificaFacilityIndicator);
+		try {
+			bos.write(this.networkSpecificaFacilityIndicator);
+		} catch (IOException e) {
+			throw new ParameterException(e);
+		}
 
 		return bos.toByteArray();
 	}

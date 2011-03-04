@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.InstructionIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
 
@@ -25,15 +25,15 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibility
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class ParameterCompatibilityInformationImpl extends AbstractParameter implements ParameterCompatibilityInformation{
+public class ParameterCompatibilityInformationImpl extends AbstractISUPParameter implements ParameterCompatibilityInformation{
 
 	
 	private List<Byte> parameterCodes = new ArrayList<Byte>();
 	private List<InstructionIndicators> instructionIndicators = new ArrayList<InstructionIndicators>();
 
-	public ParameterCompatibilityInformationImpl(byte[] b) throws ParameterRangeInvalidException {
+	public ParameterCompatibilityInformationImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public ParameterCompatibilityInformationImpl() {
@@ -41,15 +41,10 @@ public class ParameterCompatibilityInformationImpl extends AbstractParameter imp
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 
 		if (b == null || b.length < 2) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  greater than 1");
+			throw new ParameterException("byte[] must  not be null and length must  greater than 1");
 		}
 
 		
@@ -88,16 +83,15 @@ public class ParameterCompatibilityInformationImpl extends AbstractParameter imp
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		for (int index = 0; index < this.parameterCodes.size(); index++) {
 			bos.write(this.parameterCodes.get(index).byteValue());
-			bos.write(this.instructionIndicators.get(index).encodeElement());
+			try {
+				bos.write(((AbstractISUPParameter)this.instructionIndicators.get(index)).encode());
+			} catch (IOException e) {
+				throw new ParameterException(e);
+			}
 		}
 		return bos.toByteArray();
 	}

@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class RedirectionInformationImpl extends AbstractParameter implements RedirectionInformation{
+public class RedirectionInformationImpl extends AbstractISUPParameter implements RedirectionInformation{
 
 	
 	private int redirectingIndicator;
@@ -27,9 +27,9 @@ public class RedirectionInformationImpl extends AbstractParameter implements Red
 	private int redirectionCounter;
 	private int redirectionReason;
 
-	public RedirectionInformationImpl(byte[] b) throws IllegalArgumentException, ParameterRangeInvalidException {
+	public RedirectionInformationImpl(byte[] b) throws IllegalArgumentException, ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public RedirectionInformationImpl(int redirectingIndicator, int originalRedirectionReason, int redirectionCounter, int redirectionReason) throws IllegalArgumentException {
@@ -42,14 +42,10 @@ public class RedirectionInformationImpl extends AbstractParameter implements Red
 	public RedirectionInformationImpl() {
 		super();
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 2) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 2");
+			throw new ParameterException("byte[] must  not be null and length must  be 2");
 		}
 		try {
 			this.setRedirectingIndicator((b[0] & 0x07));
@@ -57,17 +53,12 @@ public class RedirectionInformationImpl extends AbstractParameter implements Red
 			this.setRedirectionCounter((b[1] & 0x07));
 			this.setRedirectionReason(((b[1] >> 4) & 0x0F));
 		} catch (Exception e) {
-			throw new ParameterRangeInvalidException(e);
+			throw new ParameterException(e);
 		}
 		return 2;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		int b0 = redirectingIndicator & 0x07;
 		b0 |= (this.originalRedirectionReason & 0x0F) << 4;
 

@@ -12,8 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:11:36:27 2009-04-27<br>
@@ -34,7 +33,7 @@ public class UserTeleserviceInformationTest extends ParameterHarness {
 				UserTeleserviceInformationImpl._HLCI_AUDIO_VID_LOW_RANGE, UserTeleserviceInformationImpl._EACI_CSIC_AA_3_1_CALL));
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		UserTeleserviceInformationImpl bci = new UserTeleserviceInformationImpl(getBody(UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP, UserTeleserviceInformationImpl._INTERPRETATION_FHGCI,
 				UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC, UserTeleserviceInformationImpl._HLCI_IVTI));
 
@@ -44,7 +43,7 @@ public class UserTeleserviceInformationTest extends ParameterHarness {
 		super.testValues(bci, methodNames, expectedValues);
 	}
 
-	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		UserTeleserviceInformationImpl bci = new UserTeleserviceInformationImpl(getBody(UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP, UserTeleserviceInformationImpl._INTERPRETATION_FHGCI,
 				UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC, UserTeleserviceInformationImpl._HLCI_AUDIO_VID_LOW_RANGE, UserTeleserviceInformationImpl._EACI_CSIC_AA_3_1_CALL));
 
@@ -69,8 +68,8 @@ public class UserTeleserviceInformationTest extends ParameterHarness {
 		return bos.toByteArray();
 	}
 
-	@Override
-	public ISUPComponent getTestedComponent() {
+	
+	public AbstractISUPParameter getTestedComponent() {
 		return new UserTeleserviceInformationImpl(1, 1, 1, 1);
 	}
 

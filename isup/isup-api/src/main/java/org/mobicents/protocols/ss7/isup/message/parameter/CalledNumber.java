@@ -13,7 +13,7 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
  *         </a>
  */
-public interface CalledNumber extends ISUPParameter, AbstractNAINumberInterface {
+public interface CalledNumber extends ISUPParameter, NAINumber {
 	
 	
 	/**

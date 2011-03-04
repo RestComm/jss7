@@ -20,7 +20,7 @@ public class BLATest extends MessageHarness{
 
 
 	
-	@Override
+	
 	protected byte[] getDefaultBody() {
 		byte[] message={
 
@@ -33,7 +33,7 @@ public class BLATest extends MessageHarness{
 		return message;
 	}
 
-	@Override
+	
 	protected ISUPMessage getDefaultMessage() {
 		return super.messageFactory.createBLA();
 	}

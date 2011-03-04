@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.FacilityIndicator;
 
 /**
@@ -19,13 +19,13 @@ import org.mobicents.protocols.ss7.isup.message.parameter.FacilityIndicator;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class FacilityIndicatorImpl extends AbstractParameter implements FacilityIndicator {
+public class FacilityIndicatorImpl extends AbstractISUPParameter implements FacilityIndicator {
 
 	private int facilityIndicator = 0;
 
-	public FacilityIndicatorImpl(byte[] b) throws ParameterRangeInvalidException {
+	public FacilityIndicatorImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public FacilityIndicatorImpl() {
@@ -38,26 +38,16 @@ public class FacilityIndicatorImpl extends AbstractParameter implements Facility
 		this.facilityIndicator = facilityIndicator;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must not be null or have different size than 1");
+			throw new ParameterException("byte[] must not be null or have different size than 1");
 		}
 
 		this.facilityIndicator = b[0];
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		byte[] b = { (byte) this.facilityIndicator };
 		return b;
 	}

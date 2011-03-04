@@ -11,8 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:14:11:03 2009-04-23<br>
@@ -62,9 +61,9 @@ public class CallReferenceTest extends ParameterHarness {
 		
 		return body;
 	}
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
-		CallReferenceImpl cr = new CallReferenceImpl(getBody1());
-
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
+		CallReferenceImpl cr = new CallReferenceImpl();
+		cr.decode(getBody1());
 		String[] methodNames = { "getCallIdentity","getSignalingPointCode"};
 		Object[] expectedValues = { 805240,14409};
 		super.testValues(cr, methodNames, expectedValues);
@@ -79,9 +78,9 @@ public class CallReferenceTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
-		return new CallReferenceImpl(new byte[5]);
+	
+	public AbstractISUPParameter getTestedComponent() throws ParameterException {
+		return new CallReferenceImpl();
 	}
 
 	

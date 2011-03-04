@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallDiversionTreatmentIndicators;
 
 /**
@@ -20,7 +20,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CallDiversionTreatment
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class CallDiversionTreatmentIndicatorsImpl extends AbstractParameter implements CallDiversionTreatmentIndicators{
+public class CallDiversionTreatmentIndicatorsImpl extends AbstractISUPParameter implements CallDiversionTreatmentIndicators{
 	
 	
 
@@ -32,29 +32,20 @@ public class CallDiversionTreatmentIndicatorsImpl extends AbstractParameter impl
 		super();
 		
 	}
-	public CallDiversionTreatmentIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException{
+	public CallDiversionTreatmentIndicatorsImpl(byte[] b) throws ParameterException{
 		super();
-		decodeElement(b);
+		decode(b);
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length == 0) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be greater than 0");
+			throw new ParameterException("byte[] must  not be null and length must  be greater than 0");
 		}
 		this.callDivertedIndicators = b;
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		for (int index = 0; index < this.callDivertedIndicators.length; index++) {
 			this.callDivertedIndicators[index] = (byte) (this.callDivertedIndicators[index] & 0x03);
 		}

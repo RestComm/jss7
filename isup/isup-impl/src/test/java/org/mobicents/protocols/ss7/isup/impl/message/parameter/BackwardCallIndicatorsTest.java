@@ -10,8 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:12:21:06 2009-04-23<br>
@@ -55,7 +54,7 @@ public class BackwardCallIndicatorsTest extends ParameterHarness {
 		return body;
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, ParameterException {
 		BackwardCallIndicatorsImpl bci = new BackwardCallIndicatorsImpl(getBody1());
 
 		String[] methodNames = { "getChargeIndicator", "getCalledPartysStatusIndicator", "getCalledPartysCategoryIndicator", "getEndToEndMethodIndicator", "isInterworkingIndicator",
@@ -85,7 +84,7 @@ public class BackwardCallIndicatorsTest extends ParameterHarness {
 		body[1] = (byte) 0xBD;
 		return body;
 	}
-	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, ParameterRangeInvalidException {
+	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, ParameterException {
 		BackwardCallIndicatorsImpl bci = new BackwardCallIndicatorsImpl(getBody2());
 
 		String[] methodNames = { "getChargeIndicator", "getCalledPartysStatusIndicator", "getCalledPartysCategoryIndicator", "getEndToEndMethodIndicator", "isInterworkingIndicator",
@@ -101,8 +100,8 @@ public class BackwardCallIndicatorsTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
+	
+	public AbstractISUPParameter getTestedComponent() throws ParameterException {
 		return new org.mobicents.protocols.ss7.isup.impl.message.parameter.BackwardCallIndicatorsImpl(new byte[2]);
 	}
 

@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.MLPPPrecedence;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MLPPPrecedence;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class MLPPPrecedenceImpl extends AbstractParameter implements MLPPPrecedence {
+public class MLPPPrecedenceImpl extends AbstractISUPParameter implements MLPPPrecedence {
 
 	private int lfb;
 	private int precedenceLevel;
@@ -32,9 +32,9 @@ public class MLPPPrecedenceImpl extends AbstractParameter implements MLPPPrecede
 		
 	}
 
-	public MLPPPrecedenceImpl(byte[] b) throws ParameterRangeInvalidException {
+	public MLPPPrecedenceImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public MLPPPrecedenceImpl(byte lfb, byte precedenceLevel, int mllpServiceDomain, byte[] niDigits) {
@@ -45,14 +45,9 @@ public class MLPPPrecedenceImpl extends AbstractParameter implements MLPPPrecede
 		setNiDigits(niDigits);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 6) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 6");
+			throw new ParameterException("byte[] must  not be null and length must  be 6");
 		}
 
 		this.precedenceLevel = (byte) (b[0] & 0x0F);
@@ -72,12 +67,7 @@ public class MLPPPrecedenceImpl extends AbstractParameter implements MLPPPrecede
 		return 6;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		byte[] b = new byte[6];
 		b[0] = (byte) ((this.lfb & 0x03) << 5);
 		b[0] |= this.precedenceLevel & 0x0F;

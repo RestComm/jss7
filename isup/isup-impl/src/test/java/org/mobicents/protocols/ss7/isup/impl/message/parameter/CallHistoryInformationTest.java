@@ -11,8 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:14:11:03 2009-04-23<br>
@@ -43,7 +42,7 @@ public class CallHistoryInformationTest extends ParameterHarness {
 		return body;
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		CallHistoryInformationImpl bci = new CallHistoryInformationImpl(getBody1());
 	
 		String[] methodNames = { "getCallHistory"};
@@ -60,8 +59,8 @@ public class CallHistoryInformationTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
+	
+	public AbstractISUPParameter getTestedComponent() throws ParameterException {
 		return new CallHistoryInformationImpl(new byte[2]);
 	}
 

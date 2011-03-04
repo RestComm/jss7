@@ -12,8 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledINNumber;
 
 /**
@@ -59,7 +58,7 @@ public class CalledINNumberTest extends ParameterHarness {
 		return bos.toByteArray();
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		CalledINNumberImpl bci = new CalledINNumberImpl(getBody1());
 	
 		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getNatureOfAddressIndicator", "isOddFlag", "getAddress" };
@@ -67,7 +66,7 @@ public class CalledINNumberTest extends ParameterHarness {
 		super.testValues(bci, methodNames, expectedValues);
 	}
 
-	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		CalledINNumberImpl bci = new CalledINNumberImpl(getBody2());
 
 		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getNatureOfAddressIndicator", "isOddFlag", "getAddress" };
@@ -82,8 +81,8 @@ public class CalledINNumberTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() {
+	
+	public AbstractISUPParameter getTestedComponent() {
 		return new CalledINNumberImpl(0, "1", 1, 1);
 	}
 

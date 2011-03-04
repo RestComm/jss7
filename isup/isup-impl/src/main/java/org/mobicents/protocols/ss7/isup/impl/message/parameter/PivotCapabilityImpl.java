@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotCapability;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.PivotCapability;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class PivotCapabilityImpl extends AbstractParameter implements PivotCapability {
+public class PivotCapabilityImpl extends AbstractISUPParameter implements PivotCapability {
 
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
@@ -31,12 +31,7 @@ public class PivotCapabilityImpl extends AbstractParameter implements PivotCapab
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		for (int index = 0; index < this.pivotCapabilities.length; index++) {
 			this.pivotCapabilities[index] = (byte) (this.pivotCapabilities[index] & 0x7F);
 		}
@@ -45,12 +40,7 @@ public class PivotCapabilityImpl extends AbstractParameter implements PivotCapab
 		return this.pivotCapabilities;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 
 		setPivotCapabilities(b);
 		return b.length;

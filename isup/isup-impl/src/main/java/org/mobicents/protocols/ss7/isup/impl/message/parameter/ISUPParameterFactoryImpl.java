@@ -525,6 +525,10 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
 		return new UserToUserInformationImpl();
 	}
 
+	public GenericDigits createGenericDigits() {
+		return new GenericDigitsImpl();
+	}
+
 	
 	
 	

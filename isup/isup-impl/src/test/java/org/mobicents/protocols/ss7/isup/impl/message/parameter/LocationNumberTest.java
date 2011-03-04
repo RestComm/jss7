@@ -12,8 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 
 /**
@@ -55,7 +54,7 @@ public class LocationNumberTest extends ParameterHarness {
 		return bos.toByteArray();
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		LocationNumberImpl bci = new LocationNumberImpl(getBody( false, LocationNumber._NAI_NATIONAL_SN, LocationNumberImpl._INN_ROUTING_ALLOWED, LocationNumberImpl._NPI_ISDN,
 				LocationNumberImpl._APRI_NOT_AVAILABLE, LocationNumberImpl._SI_NETWORK_PROVIDED, getSixDigits()));
 
@@ -73,8 +72,8 @@ public class LocationNumberTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() {
+	
+	public AbstractISUPParameter getTestedComponent() {
 		return new LocationNumberImpl(1,"1",1,1,1,1);
 	}
 

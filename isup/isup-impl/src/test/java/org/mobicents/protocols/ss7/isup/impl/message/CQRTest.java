@@ -31,7 +31,7 @@ public class CQRTest extends MessageHarness {
 		byte[] message = getDefaultBody();
 		//CircuitGroupQueryResponseMessage grs=new CircuitGroupQueryResponseMessageImpl(this,message);
 		CircuitGroupQueryResponseMessage grs=super.messageFactory.createCQR();
-		grs.decodeElement(message);
+		((AbstractISUPMessage)grs).decode(message,parameterFactory);
 
 		
 		try{
@@ -68,7 +68,7 @@ public class CQRTest extends MessageHarness {
 		}
 
 	}
-	@Override
+	
 	protected byte[] getDefaultBody() {
 		//FIXME: for now we strip MTP part
 		byte[] message={
@@ -95,7 +95,7 @@ public class CQRTest extends MessageHarness {
 
 		return message;
 	}
-	@Override
+	
 	protected ISUPMessage getDefaultMessage() {
 		return super.messageFactory.createCQR();
 	}

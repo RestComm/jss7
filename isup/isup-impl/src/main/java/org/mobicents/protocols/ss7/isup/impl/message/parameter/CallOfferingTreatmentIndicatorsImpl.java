@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallOfferingTreatmentIndicators;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CallOfferingTreatmentI
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class CallOfferingTreatmentIndicatorsImpl extends AbstractParameter implements CallOfferingTreatmentIndicators {
+public class CallOfferingTreatmentIndicatorsImpl extends AbstractISUPParameter implements CallOfferingTreatmentIndicators {
 
 	private byte[] callOfferingTreatmentIndicators = null;
 
@@ -28,30 +28,20 @@ public class CallOfferingTreatmentIndicatorsImpl extends AbstractParameter imple
 
 	}
 
-	public CallOfferingTreatmentIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public CallOfferingTreatmentIndicatorsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length == 0) {
-			throw new ParameterRangeInvalidException("byte[] must not be null and length must be greater than 0");
+			throw new ParameterException("byte[] must not be null and length must be greater than 0");
 		}
 		setCallOfferingTreatmentIndicators(b);
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		for (int index = 0; index < this.callOfferingTreatmentIndicators.length; index++) {
 			this.callOfferingTreatmentIndicators[index] = (byte) ((this.callOfferingTreatmentIndicators[index] & 0x03) | 0x80);

@@ -15,24 +15,34 @@ package org.mobicents.protocols.ss7.isup;
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class ParameterRangeInvalidException extends Exception {
+public class ParameterException extends Exception {
+	
+	//TODO: add more info here.
+	//private int paramCode;
+	//private int msgCode;
+	
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8747311560315513861L;
 
-	public ParameterRangeInvalidException() {
+	public ParameterException() {
 		super();
 		
 	}
 
-	public ParameterRangeInvalidException(String message, Throwable cause) {
+	public ParameterException(String message, Throwable cause) {
 		super(message, cause);
 		
 	}
 
-	public ParameterRangeInvalidException(String message) {
+	public ParameterException(String message) {
 		super(message);
 		
 	}
 
-	public ParameterRangeInvalidException(Throwable cause) {
+	public ParameterException(Throwable cause) {
 		super(cause);
 		
 	}

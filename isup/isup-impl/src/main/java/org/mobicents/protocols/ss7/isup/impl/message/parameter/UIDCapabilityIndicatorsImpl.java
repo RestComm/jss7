@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.UIDCapabilityIndicators;
 
 /**
@@ -20,16 +20,16 @@ import org.mobicents.protocols.ss7.isup.message.parameter.UIDCapabilityIndicator
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  * 
  */
-public class UIDCapabilityIndicatorsImpl extends AbstractParameter implements UIDCapabilityIndicators {
+public class UIDCapabilityIndicatorsImpl extends AbstractISUPParameter implements UIDCapabilityIndicators {
 
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 
 	private byte[] uidCapabilityIndicators = null;
 
-	public UIDCapabilityIndicatorsImpl(byte[] udiActionIndicators) throws ParameterRangeInvalidException {
+	public UIDCapabilityIndicatorsImpl(byte[] udiActionIndicators) throws ParameterException {
 		super();
-		decodeElement(udiActionIndicators);
+		decode(udiActionIndicators);
 	}
 
 	public UIDCapabilityIndicatorsImpl() {
@@ -37,26 +37,16 @@ public class UIDCapabilityIndicatorsImpl extends AbstractParameter implements UI
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		try {
 			setUIDCapabilityIndicators(b);
 		} catch (Exception e) {
-			throw new ParameterRangeInvalidException(e);
+			throw new ParameterException(e);
 		}
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		for (int index = 0; index < this.uidCapabilityIndicators.length; index++) {
 			this.uidCapabilityIndicators[index] = (byte) (this.uidCapabilityIndicators[index] & 0x7F);
 		}

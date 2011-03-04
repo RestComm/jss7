@@ -15,7 +15,7 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  */
 public interface CircuitGroupSuperVisionMessageType extends ISUPParameter {
 	public static final int _PARAMETER_CODE = 0x15;
-	
+	//FIXME: V->v
 	
 	/**
 	 * See Q.763 3.13 Circuit group supervision message type indicator
@@ -30,5 +30,5 @@ public interface CircuitGroupSuperVisionMessageType extends ISUPParameter {
 	
 	public int getCircuitGroupSuperVisionMessageTypeIndicator() ;
 
-	public void setCircuitGroupSuperVisionMessageTypeIndicator(int circuitGroupSuperVisionMessageTypeIndicator) ;
+	public void setCircuitGroupSuperVisionMessageTypeIndicator(int CircuitGroupSuperVisionMessageTypeIndicator) ;
 }

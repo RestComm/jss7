@@ -13,8 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
-import org.mobicents.protocols.ss7.isup.ISUPProvider;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.OriginalCalledNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.AddressCompleteMessage;
 import org.mobicents.protocols.ss7.isup.message.AnswerMessage;
@@ -98,6 +97,8 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericNotificationInd
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericReference;
 import org.mobicents.protocols.ss7.isup.message.parameter.HTRInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.InformationIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.InformationRequestIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.MLPPPrecedence;
 import org.mobicents.protocols.ss7.isup.message.parameter.NatureOfConnectionIndicators;
@@ -120,6 +121,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionNumberRestr
 import org.mobicents.protocols.ss7.isup.message.parameter.RemoteOperations;
 import org.mobicents.protocols.ss7.isup.message.parameter.ServiceActivation;
 import org.mobicents.protocols.ss7.isup.message.parameter.SignalingPointCode;
+import org.mobicents.protocols.ss7.isup.message.parameter.SubsequentNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransimissionMediumRequierementPrime;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransitNetworkSelection;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumRequirement;
@@ -140,19 +142,9 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  */
 public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 
-	private ISUPProvider providerImpl;
-	private ISUPParameterFactoryImpl parameterFactory;
+	private ISUPParameterFactory parameterFactory;
 
-	/**
-	 * 
-	 * @param providerImpl
-	 * @param parameterFactory
-	 */
-	public ISUPMessageFactoryImpl(ISUPProvider providerImpl, ISUPParameterFactoryImpl parameterFactory) {
-		this.providerImpl = providerImpl;
-		this.parameterFactory = parameterFactory;
-	}
-	public ISUPMessageFactoryImpl(ISUPParameterFactoryImpl parameterFactory) {
+	public ISUPMessageFactoryImpl(ISUPParameterFactory parameterFactory) {
 
 		this.parameterFactory = parameterFactory;
 	}
@@ -163,7 +155,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 */
 	public AddressCompleteMessage createACM() {
 
-		AddressCompleteMessageImpl acm = new AddressCompleteMessageImpl(providerImpl, _ACM_HOLDER.mandatoryCodes,
+		AddressCompleteMessageImpl acm = new AddressCompleteMessageImpl(_ACM_HOLDER.mandatoryCodes,
 				_ACM_HOLDER.mandatoryVariableCodes, _ACM_HOLDER.optionalCodes, _ACM_HOLDER.mandatoryCodeToIndex,
 				_ACM_HOLDER.mandatoryVariableCodeToIndex, _ACM_HOLDER.optionalCodeToIndex);
 
@@ -179,7 +171,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public AnswerMessage createANM() {
 
 
-		AnswerMessageImpl acm = new AnswerMessageImpl(providerImpl, _ANM_HOLDER.mandatoryCodes, _ANM_HOLDER.mandatoryVariableCodes,
+		AnswerMessageImpl acm = new AnswerMessageImpl( _ANM_HOLDER.mandatoryCodes, _ANM_HOLDER.mandatoryVariableCodes,
 				_ANM_HOLDER.optionalCodes, _ANM_HOLDER.mandatoryCodeToIndex, _ANM_HOLDER.mandatoryVariableCodeToIndex,
 				_ANM_HOLDER.optionalCodeToIndex);
 
@@ -195,7 +187,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public ApplicationTransportMessage createAPT(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		ApplicationTransportMessageImpl apt = new ApplicationTransportMessageImpl(providerImpl);
+		ApplicationTransportMessageImpl apt = new ApplicationTransportMessageImpl();
 		apt.setCircuitIdentificationCode(c);
 		return apt;
 	}
@@ -208,7 +200,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 */
 	public BlockingAckMessage createBLA() {
 
-		BlockingAckMessageImpl bla = new BlockingAckMessageImpl(providerImpl, _BLA_HOLDER.mandatoryCodes,
+		BlockingAckMessageImpl bla = new BlockingAckMessageImpl( _BLA_HOLDER.mandatoryCodes,
 				_BLA_HOLDER.mandatoryVariableCodes, _BLA_HOLDER.optionalCodes, _BLA_HOLDER.mandatoryCodeToIndex,
 				_BLA_HOLDER.mandatoryVariableCodeToIndex, _BLA_HOLDER.optionalCodeToIndex);
 	
@@ -224,7 +216,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public BlockingMessage createBLO(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		BlockingMessageImpl blo = new BlockingMessageImpl(providerImpl, _BLO_HOLDER.mandatoryCodes, _BLO_HOLDER.mandatoryVariableCodes,
+		BlockingMessageImpl blo = new BlockingMessageImpl( _BLO_HOLDER.mandatoryCodes, _BLO_HOLDER.mandatoryVariableCodes,
 				_BLO_HOLDER.optionalCodes, _BLO_HOLDER.mandatoryCodeToIndex, _BLO_HOLDER.mandatoryVariableCodeToIndex,
 				_BLO_HOLDER.optionalCodeToIndex);
 		blo.setCircuitIdentificationCode(c);
@@ -240,7 +232,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public ContinuityCheckRequestMessage createCCR(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		ContinuityCheckRequestMessageImpl ccr = new ContinuityCheckRequestMessageImpl(providerImpl, _CCR_HOLDER.mandatoryCodes,
+		ContinuityCheckRequestMessageImpl ccr = new ContinuityCheckRequestMessageImpl( _CCR_HOLDER.mandatoryCodes,
 				_CCR_HOLDER.mandatoryVariableCodes, _CCR_HOLDER.optionalCodes, _CCR_HOLDER.mandatoryCodeToIndex,
 				_CCR_HOLDER.mandatoryVariableCodeToIndex, _CCR_HOLDER.optionalCodeToIndex);
 		ccr.setCircuitIdentificationCode(c);
@@ -256,7 +248,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public CircuitGroupBlockingMessage createCGB(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		CircuitGroupBlockingMessage cgb = new CircuitGroupBlockingMessageImpl(providerImpl, _CGB_HOLDER.mandatoryCodes,
+		CircuitGroupBlockingMessage cgb = new CircuitGroupBlockingMessageImpl( _CGB_HOLDER.mandatoryCodes,
 				_CGB_HOLDER.mandatoryVariableCodes, _CGB_HOLDER.optionalCodes, _CGB_HOLDER.mandatoryCodeToIndex,
 				_CGB_HOLDER.mandatoryVariableCodeToIndex, _CGB_HOLDER.optionalCodeToIndex);
 		cgb.setCircuitIdentificationCode(c);
@@ -271,7 +263,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 */
 	public CircuitGroupBlockingAckMessage createCGBA() {
 
-		CircuitGroupBlockingAckMessageImpl cgba = new CircuitGroupBlockingAckMessageImpl(providerImpl, _CGBA_HOLDER.mandatoryCodes,
+		CircuitGroupBlockingAckMessageImpl cgba = new CircuitGroupBlockingAckMessageImpl( _CGBA_HOLDER.mandatoryCodes,
 				_CGBA_HOLDER.mandatoryVariableCodes, _CGBA_HOLDER.optionalCodes, _CGBA_HOLDER.mandatoryCodeToIndex,
 				_CGBA_HOLDER.mandatoryVariableCodeToIndex, _CGBA_HOLDER.optionalCodeToIndex);
 
@@ -287,7 +279,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public CircuitGroupUnblockingMessage createCGU(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		CircuitGroupUnblockingMessage msg = new CircuitGroupUnblockingMessageImpl(providerImpl, _CGU_HOLDER.mandatoryCodes,
+		CircuitGroupUnblockingMessage msg = new CircuitGroupUnblockingMessageImpl( _CGU_HOLDER.mandatoryCodes,
 				_CGU_HOLDER.mandatoryVariableCodes, _CGU_HOLDER.optionalCodes, _CGU_HOLDER.mandatoryCodeToIndex,
 				_CGU_HOLDER.mandatoryVariableCodeToIndex, _CGU_HOLDER.optionalCodeToIndex);
 
@@ -303,7 +295,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 */
 	public CircuitGroupUnblockingAckMessage createCGUA() {
 
-		CircuitGroupUnblockingAckMessage msg = new CircuitGroupUnblockingAckMessageImpl(providerImpl, _CGUA_HOLDER.mandatoryCodes,
+		CircuitGroupUnblockingAckMessage msg = new CircuitGroupUnblockingAckMessageImpl(_CGUA_HOLDER.mandatoryCodes,
 				_CGUA_HOLDER.mandatoryVariableCodes, _CGUA_HOLDER.optionalCodes, _CGUA_HOLDER.mandatoryCodeToIndex,
 				_CGUA_HOLDER.mandatoryVariableCodeToIndex, _CGUA_HOLDER.optionalCodeToIndex);
 
@@ -319,7 +311,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public ChargeInformationMessage createCIM(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		ChargeInformationMessage msg = new ChargeInformationMessageImpl(providerImpl);
+		ChargeInformationMessage msg = new ChargeInformationMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -333,7 +325,9 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public ConfusionMessage createCNF(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		ConfusionMessage msg = new ConfusionMessageImpl(providerImpl);
+		ConfusionMessage msg = new ConfusionMessageImpl(_CNF_HOLDER.mandatoryCodes,
+				_CNF_HOLDER.mandatoryVariableCodes, _CNF_HOLDER.optionalCodes, _CNF_HOLDER.mandatoryCodeToIndex,
+				_CNF_HOLDER.mandatoryVariableCodeToIndex, _CNF_HOLDER.optionalCodeToIndex);
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -344,11 +338,11 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createCON(int
 	 * cic)
 	 */
-	public ConnectMessage createCON(int cic) {
-		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
-		c.setCIC(cic);
-		ConnectMessage msg = new ConnectMessageImpl(providerImpl);
-		msg.setCircuitIdentificationCode(c);
+	public ConnectMessage createCON() {
+	
+		ConnectMessage msg = new ConnectMessageImpl(_CON_HOLDER.mandatoryCodes,
+				_CON_HOLDER.mandatoryVariableCodes, _CON_HOLDER.optionalCodes, _CON_HOLDER.mandatoryCodeToIndex,
+				_CON_HOLDER.mandatoryVariableCodeToIndex, _CON_HOLDER.optionalCodeToIndex);
 		return msg;
 	}
 
@@ -360,7 +354,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 */
 	public ContinuityMessage createCOT() {
 
-		ContinuityMessage msg = new ContinuityMessageImpl(providerImpl);
+		ContinuityMessage msg = new ContinuityMessageImpl();
 
 		return msg;
 	}
@@ -374,7 +368,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public CallProgressMessage createCPG(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		CallProgressMessage msg = new CallProgressMessageImpl(providerImpl, _CPG_HOLDER.mandatoryCodes, _CPG_HOLDER.mandatoryVariableCodes,
+		CallProgressMessage msg = new CallProgressMessageImpl( _CPG_HOLDER.mandatoryCodes, _CPG_HOLDER.mandatoryVariableCodes,
 				_CPG_HOLDER.optionalCodes, _CPG_HOLDER.mandatoryCodeToIndex, _CPG_HOLDER.mandatoryVariableCodeToIndex,
 				_CPG_HOLDER.optionalCodeToIndex);
 		msg.setCircuitIdentificationCode(c);
@@ -390,7 +384,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public CircuitGroupQueryMessage createCQM(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		CircuitGroupQueryMessage msg = new CircuitGroupQueryMessageImpl(providerImpl, _CQM_HOLDER.mandatoryCodes,
+		CircuitGroupQueryMessage msg = new CircuitGroupQueryMessageImpl( _CQM_HOLDER.mandatoryCodes,
 				_CQM_HOLDER.mandatoryVariableCodes, _CQM_HOLDER.optionalCodes, _CQM_HOLDER.mandatoryCodeToIndex,
 				_CQM_HOLDER.mandatoryVariableCodeToIndex, _CQM_HOLDER.optionalCodeToIndex);
 		msg.setCircuitIdentificationCode(c);
@@ -405,7 +399,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 */
 	public CircuitGroupQueryResponseMessage createCQR() {
 
-		CircuitGroupQueryResponseMessage msg = new CircuitGroupQueryResponseMessageImpl(providerImpl, _CQR_HOLDER.mandatoryCodes,
+		CircuitGroupQueryResponseMessage msg = new CircuitGroupQueryResponseMessageImpl( _CQR_HOLDER.mandatoryCodes,
 				_CQR_HOLDER.mandatoryVariableCodes, _CQR_HOLDER.optionalCodes, _CQR_HOLDER.mandatoryCodeToIndex,
 				_CQR_HOLDER.mandatoryVariableCodeToIndex, _CQR_HOLDER.optionalCodeToIndex);
 
@@ -420,7 +414,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 */
 	public FacilityAcceptedMessage createFAA() {
 
-		FacilityAcceptedMessage msg = new FacilityAcceptedMessageImpl(providerImpl);
+		FacilityAcceptedMessage msg = new FacilityAcceptedMessageImpl();
 
 		return msg;
 	}
@@ -434,7 +428,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public FacilityMessage createFAC(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		FacilityMessage msg = new FacilityMessageImpl(providerImpl);
+		FacilityMessage msg = new FacilityMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -448,7 +442,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public FacilityRequestMessage createFAR(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		FacilityRequestMessage msg = new FacilityRequestMessageImpl(providerImpl);
+		FacilityRequestMessage msg = new FacilityRequestMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -462,7 +456,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public ForwardTransferMessage createFOT(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		ForwardTransferMessage msg = new ForwardTransferMessageImpl(providerImpl);
+		ForwardTransferMessage msg = new ForwardTransferMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -476,7 +470,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public FacilityRejectedMessage createFRJ(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		FacilityRejectedMessage msg = new FacilityRejectedMessageImpl(providerImpl);
+		FacilityRejectedMessage msg = new FacilityRejectedMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -489,7 +483,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 */
 	public CircuitGroupResetAckMessage createGRA() {
 
-		CircuitGroupResetAckMessage msg = new CircuitGroupResetAckMessageImpl(providerImpl, _GRA_HOLDER.mandatoryCodes,
+		CircuitGroupResetAckMessage msg = new CircuitGroupResetAckMessageImpl( _GRA_HOLDER.mandatoryCodes,
 				_GRA_HOLDER.mandatoryVariableCodes, _GRA_HOLDER.optionalCodes, _GRA_HOLDER.mandatoryCodeToIndex,
 				_GRA_HOLDER.mandatoryVariableCodeToIndex, _GRA_HOLDER.optionalCodeToIndex);
 
@@ -505,7 +499,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public CircuitGroupResetMessage createGRS(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		CircuitGroupResetMessage msg = new CircuitGroupResetMessageImpl(providerImpl, _GRS_HOLDER.mandatoryCodes,
+		CircuitGroupResetMessage msg = new CircuitGroupResetMessageImpl( _GRS_HOLDER.mandatoryCodes,
 				_GRS_HOLDER.mandatoryVariableCodes, _GRS_HOLDER.optionalCodes, _GRS_HOLDER.mandatoryCodeToIndex,
 				_GRS_HOLDER.mandatoryVariableCodeToIndex, _GRS_HOLDER.optionalCodeToIndex);
 		msg.setCircuitIdentificationCode(c);
@@ -521,7 +515,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public InitialAddressMessage createIAM(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		InitialAddressMessage msg = new InitialAddressMessageImpl(providerImpl, _IAM_HOLDER.mandatoryCodes,
+		InitialAddressMessage msg = new InitialAddressMessageImpl( _IAM_HOLDER.mandatoryCodes,
 				_IAM_HOLDER.mandatoryVariableCodes, _IAM_HOLDER.optionalCodes, _IAM_HOLDER.mandatoryCodeToIndex,
 				_IAM_HOLDER.mandatoryVariableCodeToIndex, _IAM_HOLDER.optionalCodeToIndex);
 		msg.setCircuitIdentificationCode(c);
@@ -537,7 +531,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public IdentificationRequestMessage createIDR(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		IdentificationRequestMessage msg = new IdentificationRequestMessageImpl(providerImpl);
+		IdentificationRequestMessage msg = new IdentificationRequestMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -549,7 +543,9 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 * cic)
 	 */
 	public InformationMessage createINF() {
-		InformationMessage msg = new InformationMessageImpl(providerImpl);
+		InformationMessage msg = new InformationMessageImpl( _INF_HOLDER.mandatoryCodes,
+				_INF_HOLDER.mandatoryVariableCodes, _INF_HOLDER.optionalCodes, _INF_HOLDER.mandatoryCodeToIndex,
+				_INF_HOLDER.mandatoryVariableCodeToIndex, _INF_HOLDER.optionalCodeToIndex);
 		return msg;
 	}
 
@@ -562,7 +558,9 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public InformationRequestMessage createINR(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		InformationRequestMessage msg = new InformationRequestMessageImpl(providerImpl);
+		InformationRequestMessage msg = new InformationRequestMessageImpl( _INR_HOLDER.mandatoryCodes,
+				_INR_HOLDER.mandatoryVariableCodes, _INR_HOLDER.optionalCodes, _INR_HOLDER.mandatoryCodeToIndex,
+				_INR_HOLDER.mandatoryVariableCodeToIndex, _INR_HOLDER.optionalCodeToIndex);
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -575,7 +573,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 */
 	public IdentificationResponseMessage createIRS() {
 
-		IdentificationResponseMessage msg = new IdentificationResponseMessageImpl(providerImpl);
+		IdentificationResponseMessage msg = new IdentificationResponseMessageImpl();
 
 		return msg;
 	}
@@ -588,7 +586,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 */
 	public LoopbackAckMessage createLPA() {
 
-		LoopbackAckMessage msg = new LoopbackAckMessageImpl(providerImpl, _LPA_HOLDER.mandatoryCodes, _LPA_HOLDER.mandatoryVariableCodes,
+		LoopbackAckMessage msg = new LoopbackAckMessageImpl( _LPA_HOLDER.mandatoryCodes, _LPA_HOLDER.mandatoryVariableCodes,
 				_LPA_HOLDER.optionalCodes, _LPA_HOLDER.mandatoryCodeToIndex, _LPA_HOLDER.mandatoryVariableCodeToIndex,
 				_LPA_HOLDER.optionalCodeToIndex);
 
@@ -604,7 +602,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public LoopPreventionMessage createLPP(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		LoopPreventionMessage msg = new LoopPreventionMessageImpl(providerImpl);
+		LoopPreventionMessage msg = new LoopPreventionMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -618,7 +616,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public NetworkResourceManagementMessage createNRM(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		NetworkResourceManagementMessage msg = new NetworkResourceManagementMessageImpl(providerImpl);
+		NetworkResourceManagementMessage msg = new NetworkResourceManagementMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -632,7 +630,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public OverloadMessage createOLM(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		OverloadMessage msg = new OverloadMessageImpl(providerImpl, _OLM_HOLDER.mandatoryCodes, _OLM_HOLDER.mandatoryVariableCodes,
+		OverloadMessage msg = new OverloadMessageImpl( _OLM_HOLDER.mandatoryCodes, _OLM_HOLDER.mandatoryVariableCodes,
 				_OLM_HOLDER.optionalCodes, _OLM_HOLDER.mandatoryCodeToIndex, _OLM_HOLDER.mandatoryVariableCodeToIndex,
 				_OLM_HOLDER.optionalCodeToIndex);
 		msg.setCircuitIdentificationCode(c);
@@ -648,7 +646,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public PassAlongMessage createPAM(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		PassAlongMessage msg = new PassAlongMessageImpl(providerImpl);
+		PassAlongMessage msg = new PassAlongMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -662,7 +660,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public PreReleaseInformationMessage createPRI(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		PreReleaseInformationMessage msg = new PreReleaseInformationMessageImpl(providerImpl);
+		PreReleaseInformationMessage msg = new PreReleaseInformationMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -676,7 +674,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public ReleaseMessage createREL(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		ReleaseMessage msg = new ReleaseMessageImpl(providerImpl, _REL_HOLDER.mandatoryCodes, _REL_HOLDER.mandatoryVariableCodes,
+		ReleaseMessage msg = new ReleaseMessageImpl( _REL_HOLDER.mandatoryCodes, _REL_HOLDER.mandatoryVariableCodes,
 				_REL_HOLDER.optionalCodes, _REL_HOLDER.mandatoryCodeToIndex, _REL_HOLDER.mandatoryVariableCodeToIndex,
 				_REL_HOLDER.optionalCodeToIndex);
 		msg.setCircuitIdentificationCode(c);
@@ -692,7 +690,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public ResumeMessage createRES(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		ResumeMessage msg = new ResumeMessageImpl(providerImpl);
+		ResumeMessage msg = new ResumeMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -705,7 +703,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 */
 	public ReleaseCompleteMessage createRLC() {
 
-		ReleaseCompleteMessage msg = new ReleaseCompleteMessageImpl(providerImpl, _RLC_HOLDER.mandatoryCodes,
+		ReleaseCompleteMessage msg = new ReleaseCompleteMessageImpl( _RLC_HOLDER.mandatoryCodes,
 				_RLC_HOLDER.mandatoryVariableCodes, _RLC_HOLDER.optionalCodes, _RLC_HOLDER.mandatoryCodeToIndex,
 				_RLC_HOLDER.mandatoryVariableCodeToIndex, _RLC_HOLDER.optionalCodeToIndex);
 
@@ -721,7 +719,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public ResetCircuitMessage createRSC(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		ResetCircuitMessage msg = new ResetCircuitMessageImpl(providerImpl, _RSC_HOLDER.mandatoryCodes, _RSC_HOLDER.mandatoryVariableCodes,
+		ResetCircuitMessage msg = new ResetCircuitMessageImpl( _RSC_HOLDER.mandatoryCodes, _RSC_HOLDER.mandatoryVariableCodes,
 				_RSC_HOLDER.optionalCodes, _RSC_HOLDER.mandatoryCodeToIndex, _RSC_HOLDER.mandatoryVariableCodeToIndex,
 				_RSC_HOLDER.optionalCodeToIndex);
 		msg.setCircuitIdentificationCode(c);
@@ -737,7 +735,9 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public SubsequentAddressMessage createSAM(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		SubsequentAddressMessage msg = new SubsequentAddressMessageImpl(providerImpl);
+		SubsequentAddressMessage msg = new SubsequentAddressMessageImpl( _SAM_HOLDER.mandatoryCodes,
+				_SAM_HOLDER.mandatoryVariableCodes, _SAM_HOLDER.optionalCodes, _SAM_HOLDER.mandatoryCodeToIndex,
+				_SAM_HOLDER.mandatoryVariableCodeToIndex, _SAM_HOLDER.optionalCodeToIndex);
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -751,7 +751,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public SubsequentDirectoryNumberMessage createSDN(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		SubsequentDirectoryNumberMessage msg = new SubsequentDirectoryNumberMessageImpl(providerImpl);
+		SubsequentDirectoryNumberMessage msg = new SubsequentDirectoryNumberMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -765,7 +765,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public SegmentationMessage createSGM(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		SegmentationMessage msg = new SegmentationMessageImpl(providerImpl);
+		SegmentationMessage msg = new SegmentationMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -779,7 +779,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public SuspendMessage createSUS(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		SuspendMessage msg = new SuspendMessageImpl(providerImpl);
+		SuspendMessage msg = new SuspendMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -792,7 +792,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 */
 	public UnblockingAckMessage createUBA() {
 	
-		UnblockingAckMessage msg = new UnblockingAckMessageImpl(providerImpl, _UBA_HOLDER.mandatoryCodes,
+		UnblockingAckMessage msg = new UnblockingAckMessageImpl( _UBA_HOLDER.mandatoryCodes,
 				_UBA_HOLDER.mandatoryVariableCodes, _UBA_HOLDER.optionalCodes, _UBA_HOLDER.mandatoryCodeToIndex,
 				_UBA_HOLDER.mandatoryVariableCodeToIndex, _UBA_HOLDER.optionalCodeToIndex);
 	
@@ -808,7 +808,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public UnblockingMessage createUBL(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		UnblockingMessage msg = new UnblockingMessageImpl(providerImpl, _UBL_HOLDER.mandatoryCodes, _UBL_HOLDER.mandatoryVariableCodes,
+		UnblockingMessage msg = new UnblockingMessageImpl( _UBL_HOLDER.mandatoryCodes, _UBL_HOLDER.mandatoryVariableCodes,
 				_UBL_HOLDER.optionalCodes, _UBL_HOLDER.mandatoryCodeToIndex, _UBL_HOLDER.mandatoryVariableCodeToIndex,
 				_UBL_HOLDER.optionalCodeToIndex);
 		msg.setCircuitIdentificationCode(c);
@@ -824,7 +824,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public UnequippedCICMessage createUCIC(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		UnequippedCICMessage msg = new UnequippedCICMessageImpl(providerImpl, _UCIC_HOLDER.mandatoryCodes,
+		UnequippedCICMessage msg = new UnequippedCICMessageImpl( _UCIC_HOLDER.mandatoryCodes,
 				_UCIC_HOLDER.mandatoryVariableCodes, _UCIC_HOLDER.optionalCodes, _UCIC_HOLDER.mandatoryCodeToIndex,
 				_UCIC_HOLDER.mandatoryVariableCodeToIndex, _UCIC_HOLDER.optionalCodeToIndex);
 		msg.setCircuitIdentificationCode(c);
@@ -840,7 +840,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public UserPartAvailableMessage createUPA(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		UserPartAvailableMessage msg = new UserPartAvailableMessageImpl(providerImpl);
+		UserPartAvailableMessage msg = new UserPartAvailableMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -854,7 +854,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public UserPartTestMessage createUPT(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		UserPartTestMessage msg = new UserPartTestMessageImpl(providerImpl);
+		UserPartTestMessage msg = new UserPartTestMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -868,7 +868,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	public User2UserInformationMessage createUSR(int cic) {
 		CircuitIdentificationCode c = this.parameterFactory.createCircuitIdentificationCode();
 		c.setCIC(cic);
-		User2UserInformationMessage msg = new User2UserInformationMessageImpl(providerImpl);
+		User2UserInformationMessage msg = new User2UserInformationMessageImpl();
 		msg.setCircuitIdentificationCode(c);
 		return msg;
 	}
@@ -915,7 +915,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 			return CFN;
 
 		case ConnectMessage.MESSAGE_CODE:
-			ConnectMessage CON = createCON(0);
+			ConnectMessage CON = createCON();
 			return CON;
 
 		case ContinuityMessage.MESSAGE_CODE:
@@ -1079,13 +1079,14 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 
 	// private final static Map<Integer,MessageIndexingPlaceHolder>
 	// _COMMAND_CODE_2_COMMAND_INDEXES;
-	// FIXME: make this go away.
+	// FIXME: this will be moved once MSG switches to []. 
 
 	// ACM
 	private static final MessageIndexingPlaceHolder _ACM_HOLDER;
 	// ANM
 	private static final MessageIndexingPlaceHolder _ANM_HOLDER;
 	// FIXME: APT
+	//private static final MessageIndexingPlaceHolder _APT_HOLDER;
 	// BLO
 	private static final MessageIndexingPlaceHolder _BLO_HOLDER;
 	// BLA
@@ -1108,8 +1109,10 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	private static final MessageIndexingPlaceHolder _CGU_HOLDER;
 	// CGUA
 	private static final MessageIndexingPlaceHolder _CGUA_HOLDER;
-	// FIXME: CNF
-	// FIXME: CON
+	// CNF
+	private static final MessageIndexingPlaceHolder _CNF_HOLDER;
+	// CON
+	private static final MessageIndexingPlaceHolder _CON_HOLDER;
 	// FIXME: COT
 	// CCR
 	private static final MessageIndexingPlaceHolder _CCR_HOLDER;
@@ -1120,7 +1123,10 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	// FIXME: FOT
 	// FIXME: IDR
 	// FIXME: IRS
+	// FIXME: INR
+	private static final MessageIndexingPlaceHolder _INR_HOLDER;
 	// FIXME: INF
+	private static final MessageIndexingPlaceHolder _INF_HOLDER;
 	// IAM
 	private static final MessageIndexingPlaceHolder _IAM_HOLDER;
 	// LPA
@@ -1140,6 +1146,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	// FIXME: RES
 	// FIXME: SGM
 	// FIXME: SAM
+	private static final MessageIndexingPlaceHolder _SAM_HOLDER;
 	// FIXME: SDN
 	// FIXME: SUS
 	// UBL
@@ -1152,6 +1159,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	// FIXME: UPT
 	// FIXME: U2UI
 
+	//TODO: remove this, change to use arrays.
 	static {
 		// Map<Integer,MessageIndexingPlaceHolder> _commandCode2CommandIndexes =
 		// new HashMap<Integer, MessageIndexingPlaceHolder>();
@@ -1193,7 +1201,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		optionalCodes.add(RedirectStatus._PARAMETER_CODE);
 
 		optionalCodeToIndex.put(OptionalBackwardCallIndicators._PARAMETER_CODE,
-				AddressCompleteMessageImpl._INDEX_O_OptionalBakwardCallIndicators);
+				AddressCompleteMessageImpl._INDEX_O_OptionalBackwardCallIndicators);
 		optionalCodeToIndex.put(CallReference._PARAMETER_CODE, AddressCompleteMessageImpl._INDEX_O_CallReference);
 		optionalCodeToIndex.put(CauseIndicators._PARAMETER_CODE, AddressCompleteMessageImpl._INDEX_O_CauseIndicators);
 		optionalCodeToIndex.put(UserToUserIndicators._PARAMETER_CODE, AddressCompleteMessageImpl._INDEX_O_UserToUserIndicators);
@@ -1232,7 +1240,8 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		ACM_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
 		ACM_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
 		ACM_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
-
+	
+		
 		mandatoryCodes = new HashSet<Integer>();
 		mandatoryVariableCodes = new HashSet<Integer>();
 		optionalCodes = new HashSet<Integer>();
@@ -1446,7 +1455,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		// CGB
 		mandatoryCodes.add(CircuitGroupSuperVisionMessageType._PARAMETER_CODE);
 		mandatoryCodeToIndex.put(CircuitGroupSuperVisionMessageType._PARAMETER_CODE,
-				CircuitGroupBlockingMessageImpl._INDEX_F_CircuitGroupSupervisionMessageType);
+				CircuitGroupBlockingMessageImpl._INDEX_F_CircuitGroupSuperVisionMessageType);
 
 		mandatoryVariableCodes.add(RangeAndStatus._PARAMETER_CODE);
 		mandatoryVariableCodeToIndex.put(RangeAndStatus._PARAMETER_CODE, CircuitGroupBlockingMessageImpl._INDEX_V_RangeAndStatus);
@@ -1472,7 +1481,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		// CGBA
 		mandatoryCodes.add(CircuitGroupSuperVisionMessageType._PARAMETER_CODE);
 		mandatoryCodeToIndex.put(CircuitGroupSuperVisionMessageType._PARAMETER_CODE,
-				CircuitGroupBlockingAckMessageImpl._INDEX_F_CircuitGroupSupervisionMessageType);
+				CircuitGroupBlockingAckMessageImpl._INDEX_F_CircuitGroupSuperVisionMessageType);
 
 		mandatoryVariableCodes.add(RangeAndStatus._PARAMETER_CODE);
 		mandatoryVariableCodeToIndex.put(RangeAndStatus._PARAMETER_CODE, CircuitGroupBlockingAckMessageImpl._INDEX_V_RangeAndStatus);
@@ -1591,7 +1600,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		// CGU
 		mandatoryCodes.add(CircuitGroupSuperVisionMessageType._PARAMETER_CODE);
 		mandatoryCodeToIndex.put(CircuitGroupSuperVisionMessageType._PARAMETER_CODE,
-				CircuitGroupUnblockingMessageImpl._INDEX_F_CircuitGroupSupervisionMessageType);
+				CircuitGroupUnblockingMessageImpl._INDEX_F_CircuitGroupSuperVisionMessageType);
 
 		mandatoryVariableCodes.add(RangeAndStatus._PARAMETER_CODE);
 		mandatoryVariableCodeToIndex.put(RangeAndStatus._PARAMETER_CODE, CircuitGroupUnblockingMessageImpl._INDEX_V_RangeAndStatus);
@@ -1617,7 +1626,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		// CGUA
 		mandatoryCodes.add(CircuitGroupSuperVisionMessageType._PARAMETER_CODE);
 		mandatoryCodeToIndex.put(CircuitGroupSuperVisionMessageType._PARAMETER_CODE,
-				CircuitGroupUnblockingAckMessageImpl._INDEX_F_CircuitGroupSupervisionMessageType);
+				CircuitGroupUnblockingAckMessageImpl._INDEX_F_CircuitGroupSuperVisionMessageType);
 
 		mandatoryVariableCodes.add(RangeAndStatus._PARAMETER_CODE);
 		mandatoryVariableCodeToIndex.put(RangeAndStatus._PARAMETER_CODE, CircuitGroupUnblockingAckMessageImpl._INDEX_V_RangeAndStatus);
@@ -1637,12 +1646,106 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		mandatoryCodeToIndex = new HashMap<Integer, Integer>();
 		mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
 		optionalCodeToIndex = new HashMap<Integer, Integer>();
-		// _commandCode2CommandIndexes.put(CGUA_HOLDER.commandCode,
-		// CGUA_HOLDER);
+
 		_CGUA_HOLDER = CGUA_HOLDER;
 
-		// FIXME: CNF
-		// FIXME: CON
+		// CNF
+		mandatoryCodes.add(CircuitGroupSuperVisionMessageType._PARAMETER_CODE);
+		mandatoryCodeToIndex.put(CircuitGroupSuperVisionMessageType._PARAMETER_CODE,
+				CircuitGroupUnblockingAckMessageImpl._INDEX_F_CircuitGroupSuperVisionMessageType);
+
+		mandatoryVariableCodes.add(CauseIndicators._PARAMETER_CODE);
+		mandatoryVariableCodeToIndex.put(CauseIndicators._PARAMETER_CODE, ConfusionMessageImpl._INDEX_V_CauseIndicators);
+
+		MessageIndexingPlaceHolder CNF_HOLDER = new MessageIndexingPlaceHolder();
+		CNF_HOLDER.commandCode = ConfusionMessage.MESSAGE_CODE;
+		CNF_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+		CNF_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+		CNF_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+		CNF_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+		CNF_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+		CNF_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+		mandatoryCodes = new HashSet<Integer>();
+		mandatoryVariableCodes = new HashSet<Integer>();
+		optionalCodes = new HashSet<Integer>();
+		mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+		mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+		optionalCodeToIndex = new HashMap<Integer, Integer>();
+
+		_CNF_HOLDER = CNF_HOLDER;
+		
+		// CON
+		MessageIndexingPlaceHolder CON_HOLDER = new MessageIndexingPlaceHolder();
+		mandatoryCodes.add(BackwardCallIndicators._PARAMETER_CODE);
+
+		optionalCodes.add(OptionalBackwardCallIndicators._PARAMETER_CODE);
+		optionalCodes.add(BackwardGVNS._PARAMETER_CODE);
+		optionalCodes.add(ConnectedNumber._PARAMETER_CODE);
+		optionalCodes.add(CallReference._PARAMETER_CODE);
+		optionalCodes.add(UserToUserIndicators._PARAMETER_CODE);
+		optionalCodes.add(UserToUserInformation._PARAMETER_CODE);
+		optionalCodes.add(AccessTransport._PARAMETER_CODE);
+		optionalCodes.add(NetworkSpecificFacility._PARAMETER_CODE);
+		optionalCodes.add(GenericNotificationIndicator._PARAMETER_CODE);
+		optionalCodes.add(RemoteOperations._PARAMETER_CODE);
+		optionalCodes.add(TransmissionMediumUsed._PARAMETER_CODE);
+		optionalCodes.add(EchoControlInformation._PARAMETER_CODE);
+		optionalCodes.add(AccessDeliveryInformation._PARAMETER_CODE);
+		optionalCodes.add(CallHistoryInformation._PARAMETER_CODE);
+		optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
+		optionalCodes.add(ServiceActivation._PARAMETER_CODE);
+		optionalCodes.add(GenericNumber._PARAMETER_CODE);
+		optionalCodes.add(RedirectionNumberRestriction._PARAMETER_CODE);
+		optionalCodes.add(ConferenceTreatmentIndicators._PARAMETER_CODE);
+		optionalCodes.add(ApplicationTransportParameter._PARAMETER_CODE);
+		optionalCodes.add(HTRInformation._PARAMETER_CODE);
+		optionalCodes.add(PivotRoutingBackwardInformation._PARAMETER_CODE);
+		optionalCodes.add(RedirectStatus._PARAMETER_CODE);
+		
+		mandatoryCodeToIndex.put(BackwardCallIndicators._PARAMETER_CODE,ConnectMessageImpl._INDEX_F_BackwardCallIndicators);
+
+	
+		optionalCodeToIndex.put(OptionalBackwardCallIndicators._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_OptionalBackwardCallIndicators);
+		optionalCodeToIndex.put(BackwardGVNS._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_BackwardGVNS);
+		optionalCodeToIndex.put(ConnectedNumber._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_ConnectedNumber);
+		optionalCodeToIndex.put(CallReference._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_CallReference);
+		optionalCodeToIndex.put(UserToUserIndicators._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_UserToUserIndicators);
+		optionalCodeToIndex.put(UserToUserInformation._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_UserToUserInformation);
+		optionalCodeToIndex.put(AccessTransport._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_AccessTransport);
+		optionalCodeToIndex.put(NetworkSpecificFacility._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_NetworkSpecificFacility);
+		optionalCodeToIndex.put(GenericNotificationIndicator._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_GenericNotificationIndicator);
+		optionalCodeToIndex.put(RemoteOperations._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_RemoteOperations);
+		optionalCodeToIndex.put(TransmissionMediumUsed._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_TransmissionMediumUsed);
+		optionalCodeToIndex.put(EchoControlInformation._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_EchoControlInformation);
+		optionalCodeToIndex.put(AccessDeliveryInformation._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_AccessDeliveryInformation);
+		optionalCodeToIndex.put(CallHistoryInformation._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_CallHistoryInformation);
+		optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_ParameterCompatibilityInformation);
+		optionalCodeToIndex.put(ServiceActivation._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_ServiceActivation);
+		optionalCodeToIndex.put(GenericNumber._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_GenericNumber);
+		optionalCodeToIndex.put(RedirectionNumberRestriction._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_RedirectionNumberRestriction);
+		optionalCodeToIndex.put(ConferenceTreatmentIndicators._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_ConferenceTreatmentIndicators);
+		optionalCodeToIndex.put(ApplicationTransportParameter._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_ConferenceTreatmentIndicators);
+		optionalCodeToIndex.put(HTRInformation._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_HTRInformation);
+		optionalCodeToIndex.put(PivotRoutingBackwardInformation._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_PivotRoutingBackwardInformation);
+		optionalCodeToIndex.put(RedirectStatus._PARAMETER_CODE,ConnectMessageImpl._INDEX_O_RedirectStatus);
+		
+		CON_HOLDER.commandCode = ConnectMessage.MESSAGE_CODE;
+		CON_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+		CON_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+		CON_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+		CON_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+		CON_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+		CON_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+		mandatoryCodes = new HashSet<Integer>();
+		mandatoryVariableCodes = new HashSet<Integer>();
+		optionalCodes = new HashSet<Integer>();
+		mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+		mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+		optionalCodeToIndex = new HashMap<Integer, Integer>();
+		_CON_HOLDER = CON_HOLDER;
+		
 		// FIXME: COT
 		// CCR
 		MessageIndexingPlaceHolder CCR_HOLDER = new MessageIndexingPlaceHolder();
@@ -1669,8 +1772,76 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		// FIXME: FOT
 		// FIXME: IDR
 		// FIXME: IRS
-		// FIXME: INF
+		// FIXME: INR
+		MessageIndexingPlaceHolder INR_HOLDER = new MessageIndexingPlaceHolder();
+		
+		mandatoryCodes.add(InformationRequestIndicators._PARAMETER_CODE);
+		
+		optionalCodes.add(CallReference._PARAMETER_CODE);
+		optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
+		optionalCodes.add(NetworkSpecificFacility._PARAMETER_CODE);
+		 
+		mandatoryCodeToIndex.put(InformationRequestIndicators._PARAMETER_CODE,InformationRequestMessageImpl._INDEX_F_InformationRequestIndicators);
 
+		optionalCodeToIndex.put(CallReference._PARAMETER_CODE,InformationRequestMessageImpl._INDEX_O_CallReference);
+		optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE,InformationRequestMessageImpl._INDEX_O_ParameterCompatibilityInformation);
+		optionalCodeToIndex.put(NetworkSpecificFacility._PARAMETER_CODE,InformationRequestMessageImpl._INDEX_O_NetworkSpecificFacility);
+		
+		INR_HOLDER.commandCode = InformationRequestMessage.MESSAGE_CODE;
+		INR_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+		INR_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+		INR_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+		INR_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+		INR_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+		INR_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+		
+		mandatoryCodes = new HashSet<Integer>();
+		mandatoryVariableCodes = new HashSet<Integer>();
+		optionalCodes = new HashSet<Integer>();
+		mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+		mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+		optionalCodeToIndex = new HashMap<Integer, Integer>();
+		// _commandCode2CommandIndexes.put(CCR_HOLDER.commandCode, CCR_HOLDER);
+		_INR_HOLDER = INR_HOLDER;
+		// FIXME: INF
+		MessageIndexingPlaceHolder INF_HOLDER = new MessageIndexingPlaceHolder();
+		
+		mandatoryCodes.add(InformationIndicators._PARAMETER_CODE);
+		
+		optionalCodes.add(CallingPartyCategory._PARAMETER_CODE);
+		optionalCodes.add(CallingPartyNumber._PARAMETER_CODE);
+		optionalCodes.add(CallReference._PARAMETER_CODE);
+		optionalCodes.add(ConnectionRequest._PARAMETER_CODE);
+		optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
+		optionalCodes.add(NetworkSpecificFacility._PARAMETER_CODE);
+		
+		 
+		mandatoryCodeToIndex.put(InformationIndicators._PARAMETER_CODE,InformationMessageImpl._INDEX_F_InformationIndicators);
+
+		optionalCodeToIndex.put(CallingPartyCategory._PARAMETER_CODE,InformationMessageImpl._INDEX_O_CallingPartyCategory);
+		optionalCodeToIndex.put(CallingPartyNumber._PARAMETER_CODE,InformationMessageImpl._INDEX_O_CallingPartyNumber);
+		optionalCodeToIndex.put(CallReference._PARAMETER_CODE,InformationMessageImpl._INDEX_O_CallReference);
+		optionalCodeToIndex.put(ConnectionRequest._PARAMETER_CODE,InformationMessageImpl._INDEX_O_ConnectionRequest);
+		optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE,InformationMessageImpl._INDEX_O_ParameterCompatibilityInformation);
+		optionalCodeToIndex.put(NetworkSpecificFacility._PARAMETER_CODE,InformationMessageImpl._INDEX_O_NetworkSpecificFacility);
+		
+		
+		INF_HOLDER.commandCode = InformationMessage.MESSAGE_CODE;
+		INF_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+		INF_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+		INF_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+		INF_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+		INF_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+		INF_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+		
+		mandatoryCodes = new HashSet<Integer>();
+		mandatoryVariableCodes = new HashSet<Integer>();
+		optionalCodes = new HashSet<Integer>();
+		mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+		mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+		optionalCodeToIndex = new HashMap<Integer, Integer>();
+		// _commandCode2CommandIndexes.put(CCR_HOLDER.commandCode, CCR_HOLDER);
+		_INF_HOLDER = INF_HOLDER;
 		// IAM
 		mandatoryCodes.add(NatureOfConnectionIndicators._PARAMETER_CODE);
 		mandatoryCodes.add(ForwardCallIndicators._PARAMETER_CODE);
@@ -1913,7 +2084,28 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		_RSC_HOLDER = RSC_HOLDER;
 		// FIXME: RES
 		// FIXME: SGM
-		// FIXME: SAM
+		// SAM
+		MessageIndexingPlaceHolder SAM_HOLDER = new MessageIndexingPlaceHolder();
+		
+		mandatoryVariableCodes.add(SubsequentNumber._PARAMETER_CODE);
+		mandatoryVariableCodeToIndex.put(SubsequentNumber._PARAMETER_CODE,SubsequentAddressMessageImpl._INDEX_V_SubsequentNumber);
+				
+		SAM_HOLDER.commandCode = SubsequentAddressMessage.MESSAGE_CODE;
+		SAM_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+		SAM_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+		SAM_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+		SAM_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+		SAM_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+		SAM_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+		
+		
+		mandatoryCodes = new HashSet<Integer>();
+		mandatoryVariableCodes = new HashSet<Integer>();
+		optionalCodes = new HashSet<Integer>();
+		mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+		mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+		optionalCodeToIndex = new HashMap<Integer, Integer>();
+		_SAM_HOLDER = SAM_HOLDER;
 		// FIXME: SDN
 		// FIXME: SUS
 		// UBL

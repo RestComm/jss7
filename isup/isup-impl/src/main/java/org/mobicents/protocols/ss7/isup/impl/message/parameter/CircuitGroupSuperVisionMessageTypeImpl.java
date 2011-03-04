@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitGroupSuperVisionMessageType;
 
 /**
@@ -21,21 +21,21 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CircuitGroupSuperVisio
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class CircuitGroupSuperVisionMessageTypeImpl extends AbstractParameter implements CircuitGroupSuperVisionMessageType{
+public class CircuitGroupSuperVisionMessageTypeImpl extends AbstractISUPParameter implements CircuitGroupSuperVisionMessageType{
 
 	
 	
 
-	private int circuitGroupSuperVisionMessageTypeIndicator = 0;
+	private int CircuitGroupSuperVisionMessageTypeIndicator = 0;
 
-	public CircuitGroupSuperVisionMessageTypeImpl(byte[] b) throws ParameterRangeInvalidException {
+	public CircuitGroupSuperVisionMessageTypeImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
-	public CircuitGroupSuperVisionMessageTypeImpl(int circuitGroupSuperVisionMessageTypeIndicator) {
+	public CircuitGroupSuperVisionMessageTypeImpl(int CircuitGroupSuperVisionMessageTypeIndicator) {
 		super();
-		this.circuitGroupSuperVisionMessageTypeIndicator = circuitGroupSuperVisionMessageTypeIndicator;
+		this.CircuitGroupSuperVisionMessageTypeIndicator = CircuitGroupSuperVisionMessageTypeIndicator;
 	}
 
 	public CircuitGroupSuperVisionMessageTypeImpl() {
@@ -43,43 +43,37 @@ public class CircuitGroupSuperVisionMessageTypeImpl extends AbstractParameter im
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must not be null or has size different than 1.");
+			throw new ParameterException("byte[] must not be null or has size different than 1.");
 		}
-		this.circuitGroupSuperVisionMessageTypeIndicator = b[0] & 0x03;
+		this.CircuitGroupSuperVisionMessageTypeIndicator = b[0] & 0x03;
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
-		byte[] b = new byte[] { (byte) (this.circuitGroupSuperVisionMessageTypeIndicator & 0x03) };
+	public byte[] encode() throws ParameterException {
+		byte[] b = new byte[] { (byte) (this.CircuitGroupSuperVisionMessageTypeIndicator & 0x03) };
 
 		return b;
 	}
 
-	@Override
-	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
-		byte[] b = this.encodeElement();
-		bos.write(b);
+	
+	public int encode(ByteArrayOutputStream bos) throws ParameterException {
+		byte[] b = this.encode();
+		try {
+			bos.write(b);
+		} catch (IOException e) {
+			throw new ParameterException(e);
+		}
 		return b.length;
 	}
 
 	public int getCircuitGroupSuperVisionMessageTypeIndicator() {
-		return circuitGroupSuperVisionMessageTypeIndicator;
+		return CircuitGroupSuperVisionMessageTypeIndicator;
 	}
 
-	public void setCircuitGroupSuperVisionMessageTypeIndicator(int circuitGroupSuperVisionMessageTypeIndicator) {
-		this.circuitGroupSuperVisionMessageTypeIndicator = circuitGroupSuperVisionMessageTypeIndicator;
+	public void setCircuitGroupSuperVisionMessageTypeIndicator(int CircuitGroupSuperVisionMessageTypeIndicator) {
+		this.CircuitGroupSuperVisionMessageTypeIndicator = CircuitGroupSuperVisionMessageTypeIndicator;
 	}
 
 	public int getCode() {

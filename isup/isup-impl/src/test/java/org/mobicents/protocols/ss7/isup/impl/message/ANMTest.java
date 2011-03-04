@@ -23,7 +23,7 @@ public class ANMTest extends MessageHarness {
 
 		//AnswerMessageImpl ANM=new AnswerMessageImpl(this,message);
 		AnswerMessage ANM=super.messageFactory.createANM();
-		ANM.decodeElement(message);
+		((AbstractISUPMessage)ANM).decode(message,parameterFactory);
 		try{
 			CallReference cr = (CallReference) ANM.getParameter(CallReference._PARAMETER_CODE);
 			assertNotNull("Call Reference return is null, it should not be",cr);
@@ -67,7 +67,7 @@ public class ANMTest extends MessageHarness {
 		}
 
 	}
-	@Override
+	
 	protected byte[] getDefaultBody() {
 		byte[] message={
 
@@ -109,7 +109,7 @@ public class ANMTest extends MessageHarness {
 		return message;
 	}
 
-	@Override
+	
 	protected ISUPMessage getDefaultMessage() {
 		return super.messageFactory.createANM();
 	}

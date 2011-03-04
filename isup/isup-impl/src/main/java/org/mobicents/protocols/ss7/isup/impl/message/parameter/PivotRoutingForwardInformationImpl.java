@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingForwardInformation;
 
 /**
@@ -19,16 +19,11 @@ import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingForwardInf
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class PivotRoutingForwardInformationImpl extends AbstractParameter implements PivotRoutingForwardInformation {
+public class PivotRoutingForwardInformationImpl extends AbstractISUPParameter implements PivotRoutingForwardInformation {
 
 	// FIXME: Addd this after those polygon shapes. 3.94
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -38,12 +33,7 @@ public class PivotRoutingForwardInformationImpl extends AbstractParameter implem
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		// TODO Auto-generated method stub
 		return null;
 	}

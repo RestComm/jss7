@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.EventInformation;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.EventInformation;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class EventInformationImpl extends AbstractParameter implements EventInformation {
+public class EventInformationImpl extends AbstractISUPParameter implements EventInformation {
 
 	private final static int _TURN_ON = 1;
 	private final static int _TURN_OFF = 0;
@@ -27,9 +27,9 @@ public class EventInformationImpl extends AbstractParameter implements EventInfo
 	private int eventIndicator;
 	private boolean eventPresentationRestrictedIndicator;
 
-	public EventInformationImpl(byte[] b) throws ParameterRangeInvalidException {
+	public EventInformationImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public EventInformationImpl() {
@@ -42,14 +42,9 @@ public class EventInformationImpl extends AbstractParameter implements EventInfo
 		this.eventIndicator = eventIndicator;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must not be null or have different size than 1");
+			throw new ParameterException("byte[] must not be null or have different size than 1");
 		}
 
 		this.eventIndicator = b[0] & 0x7F;
@@ -58,12 +53,7 @@ public class EventInformationImpl extends AbstractParameter implements EventInfo
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		byte[] b = new byte[] { (byte) (this.eventIndicator & 0x7F) };
 
 		b[0] |= (byte) ((this.eventPresentationRestrictedIndicator ? _TURN_ON : _TURN_OFF) << 7);

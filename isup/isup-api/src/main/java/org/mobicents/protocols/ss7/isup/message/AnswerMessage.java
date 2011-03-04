@@ -226,9 +226,9 @@ public interface AnswerMessage extends ISUPMessage {
 
 	public BackwardCallIndicators getBackwardCallIndicators();
 
-	public void setOptionalBakwardCallIndicators(OptionalBackwardCallIndicators value);
+	public void setOptionalBackwardCallIndicators(OptionalBackwardCallIndicators value);
 
-	public OptionalBackwardCallIndicators getOptionalBakwardCallIndicators();
+	public OptionalBackwardCallIndicators getOptionalBackwardCallIndicators();
 
 	public void setCallReference(CallReference value);
 
@@ -292,12 +292,12 @@ public interface AnswerMessage extends ISUPMessage {
 	public RemoteOperations getRemoteOperations();
 
 	public void setServiceActivation(ServiceActivation value);
-
+	
+	public ServiceActivation getServiceActivation();
+	
 	public RedirectionNumberRestriction getRedirectionNumberRestriction();
 
 	public void setRedirectionNumberRestriction(RedirectionNumberRestriction value);
-
-	public ServiceActivation getServiceActivation();
 
 	public void setBackwardGVNS(BackwardGVNS value);
 

@@ -194,9 +194,9 @@ public interface AddressCompleteMessage extends ISUPMessage {
 
 	public BackwardCallIndicators getBackwardCallIndicators();
 
-	public void setOptionalBakwardCallIndicators(OptionalBackwardCallIndicators value);
+	public void setOptionalBackwardCallIndicators(OptionalBackwardCallIndicators value);
 
-	public OptionalBackwardCallIndicators getOptionalBakwardCallIndicators();
+	public OptionalBackwardCallIndicators getOptionalBackwardCallIndicators();
 
 	public void setCallReference(CallReference value);
 

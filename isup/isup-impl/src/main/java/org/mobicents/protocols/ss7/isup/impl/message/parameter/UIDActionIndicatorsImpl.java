@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.UIDActionIndicators;
 
 /**
@@ -20,16 +20,16 @@ import org.mobicents.protocols.ss7.isup.message.parameter.UIDActionIndicators;
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  * 
  */
-public class UIDActionIndicatorsImpl extends AbstractParameter implements UIDActionIndicators {
+public class UIDActionIndicatorsImpl extends AbstractISUPParameter implements UIDActionIndicators {
 
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 
 	private byte[] udiActionIndicators = null;
 
-	public UIDActionIndicatorsImpl(byte[] udiActionIndicators) throws ParameterRangeInvalidException {
+	public UIDActionIndicatorsImpl(byte[] udiActionIndicators) throws ParameterException {
 		super();
-		decodeElement(udiActionIndicators);
+		decode(udiActionIndicators);
 	}
 
 	public UIDActionIndicatorsImpl() {
@@ -37,26 +37,16 @@ public class UIDActionIndicatorsImpl extends AbstractParameter implements UIDAct
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		try {
 			setUdiActionIndicators(b);
 		} catch (Exception e) {
-			throw new ParameterRangeInvalidException(e);
+			throw new ParameterException(e);
 		}
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		for (int index = 0; index < this.udiActionIndicators.length; index++) {
 			this.udiActionIndicators[index] = (byte) (this.udiActionIndicators[index] & 0x7F);
 		}

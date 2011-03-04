@@ -30,7 +30,7 @@ public class CGBATest extends MessageHarness {
 		byte[] message = getDefaultBody();
 
 		CircuitGroupBlockingAckMessage cgb=super.messageFactory.createCGBA();
-		cgb.decodeElement(message);
+		((AbstractISUPMessage)cgb).decode(message,parameterFactory);
 
 		
 		try{
@@ -63,7 +63,7 @@ public class CGBATest extends MessageHarness {
 		}
 	
 	}
-	@Override
+	
 	protected byte[] getDefaultBody() {
 		byte[] message={
 
@@ -84,7 +84,7 @@ public class CGBATest extends MessageHarness {
 		return message;
 	}
 
-	@Override
+	
 	protected ISUPMessage getDefaultMessage() {
 		return super.messageFactory.createCGBA();
 	}

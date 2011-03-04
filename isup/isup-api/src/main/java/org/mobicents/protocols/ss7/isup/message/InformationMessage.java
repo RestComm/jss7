@@ -1,5 +1,13 @@
 package org.mobicents.protocols.ss7.isup.message;
 
+import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.ConnectionRequest;
+import org.mobicents.protocols.ss7.isup.message.parameter.InformationIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.NetworkSpecificFacility;
+import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
+
 /**
  * Start time:09:54:07 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
@@ -92,4 +100,33 @@ public interface InformationMessage extends ISUPMessage {
 	 * Information Message, Q.763 reference table 30 <br> {@link InformationMessage}
 	 */
 	public static final int MESSAGE_CODE = 0x04;
+
+	public InformationIndicators getInformationIndicators();
+
+	public void setInformationIndicators(InformationIndicators v);
+
+	public CallingPartyCategory getCallingPartyCategory();
+
+	public void setCallingPartyCategory(CallingPartyCategory v);
+
+	public CallingPartyNumber getCallingPartyNumber();
+
+	public void setCallingPartyNumber(CallingPartyNumber v);
+
+	public CallReference getCallReference();
+
+	public void setCallReference(CallReference v);
+
+	public ParameterCompatibilityInformation getParameterCompatibilityInformation();
+
+	public void setParameterCompatibilityInformation(ParameterCompatibilityInformation v);
+
+	public ConnectionRequest getConnectionRequest();
+
+	public void setConnectionRequest(ConnectionRequest v);
+
+	public NetworkSpecificFacility getNetworkSpecificFacility();
+
+	public void setNetworkSpecificFacility(NetworkSpecificFacility v);
+
 }

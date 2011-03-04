@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.LoopPreventionIndicators;
 
 /**
@@ -20,7 +20,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.LoopPreventionIndicato
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class LoopPreventionIndicatorsImpl extends AbstractParameter implements LoopPreventionIndicators{
+public class LoopPreventionIndicatorsImpl extends AbstractISUPParameter implements LoopPreventionIndicators{
 
 
 	private static final int _TURN_ON = 1;
@@ -41,19 +41,14 @@ public class LoopPreventionIndicatorsImpl extends AbstractParameter implements L
 		this.responseIndicator = responseIndicator;
 	}
 
-	public LoopPreventionIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public LoopPreventionIndicatorsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 1");
+			throw new ParameterException("byte[] must  not be null and length must  be 1");
 		}
 
 		this.response = (b[0] & 0x01) == _TURN_ON;
@@ -64,12 +59,7 @@ public class LoopPreventionIndicatorsImpl extends AbstractParameter implements L
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		int v = this.response ? _TURN_ON : _TURN_OFF;
 		if (this.response) {
 			v |= (this.responseIndicator & 0x03) << 1;

@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.DisplayInformation;
 
 /**
@@ -19,17 +19,17 @@ import org.mobicents.protocols.ss7.isup.message.parameter.DisplayInformation;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class DisplayInformationImpl extends AbstractParameter implements DisplayInformation {
+public class DisplayInformationImpl extends AbstractISUPParameter implements DisplayInformation {
 
 	// FIXME: Q.931 4.5.16 Display - Oleg is this correct?
 
 	private byte[] info;
 
-	public DisplayInformationImpl(byte[] info) throws ParameterRangeInvalidException {
+	public DisplayInformationImpl(byte[] info) throws ParameterException {
 		super();
 		// FIXME: this is only elementID
 		//super.tag = new byte[] { 0x28 };
-		decodeElement(info);
+		decode(info);
 	}
 
 	public DisplayInformationImpl() {
@@ -37,26 +37,16 @@ public class DisplayInformationImpl extends AbstractParameter implements Display
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		try {
 			setInfo(b);
 		} catch (Exception e) {
-			throw new ParameterRangeInvalidException(e);
+			throw new ParameterException(e);
 		}
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		for (int index = 0; index < this.info.length; index++) {
 			this.info[index] = (byte) (this.info[index] & 0x7F);
 		}

@@ -9,9 +9,8 @@
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.EndOfOptionalParameters;
 
 /**
@@ -22,7 +21,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.EndOfOptionalParameter
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class EndOfOptionalParametersImpl extends AbstractParameter implements EndOfOptionalParameters{
+public class EndOfOptionalParametersImpl extends AbstractISUPParameter implements EndOfOptionalParameters{
 
 	public EndOfOptionalParametersImpl() {
 		super();
@@ -34,33 +33,23 @@ public class EndOfOptionalParametersImpl extends AbstractParameter implements En
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
 	/**
 	 * heeh, value is zero actually :D
 	 */
 	public static final int _PARAMETER_CODE = 0;
 
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		// TODO Auto-generated method stub
 		return new byte[] { 0 };
 	}
 
-	@Override
-	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
+	
+	public int encode(ByteArrayOutputStream bos) throws ParameterException {
 		bos.write(0);
 		return 1;
 	}

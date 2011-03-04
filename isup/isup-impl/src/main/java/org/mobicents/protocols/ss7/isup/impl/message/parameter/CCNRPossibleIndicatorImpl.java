@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CCNRPossibleIndicator;
 
 /**
@@ -20,7 +20,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CCNRPossibleIndicator;
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class CCNRPossibleIndicatorImpl extends AbstractParameter implements CCNRPossibleIndicator{
+public class CCNRPossibleIndicatorImpl extends AbstractISUPParameter implements CCNRPossibleIndicator{
 
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
@@ -40,19 +40,14 @@ public class CCNRPossibleIndicatorImpl extends AbstractParameter implements CCNR
 		this.ccnrPossible = ccnrPossible;
 	}
 
-	public CCNRPossibleIndicatorImpl(byte[] b) throws ParameterRangeInvalidException {
+	public CCNRPossibleIndicatorImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length == 0) {
-			throw new ParameterRangeInvalidException("byte[] must not be null and length must be 1");
+			throw new ParameterException("byte[] must not be null and length must be 1");
 		}
 
 		this.ccnrPossible = (b[0] & 0x01) == _TURN_ON;
@@ -60,12 +55,7 @@ public class CCNRPossibleIndicatorImpl extends AbstractParameter implements CCNR
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		return new byte[] { (byte) (this.ccnrPossible ? _TURN_ON : _TURN_OFF) };
 	}
 

@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.ByteArrayInputStream;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledINNumber;
 
 /**
@@ -25,7 +25,7 @@ public class CalledINNumberImpl extends CalledNumberImpl implements CalledINNumb
 	/**
 	 * @param representation
 	 */
-	public CalledINNumberImpl(byte[] representation) throws ParameterRangeInvalidException{
+	public CalledINNumberImpl(byte[] representation) throws ParameterException{
 		super(representation);
 		
 	}
@@ -33,7 +33,7 @@ public class CalledINNumberImpl extends CalledNumberImpl implements CalledINNumb
 	/**
 	 * @param bis
 	 */
-	public CalledINNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public CalledINNumberImpl(ByteArrayInputStream bis) throws ParameterException {
 		super(bis);
 		
 	}

@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.InformationIndicators;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.InformationIndicators;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class InformationIndicatorsImpl extends AbstractParameter implements InformationIndicators {
+public class InformationIndicatorsImpl extends AbstractISUPParameter implements InformationIndicators {
 
 	private final static int _TURN_ON = 1;
 	private final static int _TURN_OFF = 0;
@@ -32,9 +32,9 @@ public class InformationIndicatorsImpl extends AbstractParameter implements Info
 	// FIXME: should we care about it.
 	private int reserved;
 
-	public InformationIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public InformationIndicatorsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public InformationIndicatorsImpl() {
@@ -53,14 +53,9 @@ public class InformationIndicatorsImpl extends AbstractParameter implements Info
 		this.reserved = reserved;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 2) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 2");
+			throw new ParameterException("byte[] must  not be null and length must  be 2");
 		}
 
 		this.reserved = (b[1] >> 4) & 0x0F;
@@ -72,12 +67,7 @@ public class InformationIndicatorsImpl extends AbstractParameter implements Info
 		return 2;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		int b1 = this.callingPartyAddressResponseIndicator & 0x03;
 		b1 |= (this.holdProvidedIndicator ? _TURN_ON : _TURN_OFF) << 2;

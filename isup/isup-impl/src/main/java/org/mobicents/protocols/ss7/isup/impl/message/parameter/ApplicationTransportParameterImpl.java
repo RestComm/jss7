@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransportParameter;
 
 /**
@@ -20,35 +20,25 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransportPa
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class ApplicationTransportParameterImpl extends AbstractParameter implements ApplicationTransportParameter{
+public class ApplicationTransportParameterImpl extends AbstractISUPParameter implements ApplicationTransportParameter{
 
 	//FIXME: Oleg ? how can we do that ? Q.763 3.82
-	
-	/* (non-Javadoc)
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	
-
-	
 	public ApplicationTransportParameterImpl(){
 		super();
 
 	}
 	
-	public ApplicationTransportParameterImpl(byte[] b) throws ParameterRangeInvalidException{
+	public ApplicationTransportParameterImpl(byte[] b) throws ParameterException{
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		// TODO Auto-generated method stub
 		return null;
 	}

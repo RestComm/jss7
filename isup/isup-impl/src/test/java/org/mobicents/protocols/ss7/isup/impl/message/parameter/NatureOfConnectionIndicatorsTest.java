@@ -10,8 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:13:20:04 2009-04-26<br>
@@ -29,7 +28,7 @@ public class NatureOfConnectionIndicatorsTest extends ParameterHarness {
 		super.goodBodies.add(new byte[] { 0x0E });
 	}
 
-	public void testBody1EncodedValues() throws IOException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws IOException, ParameterException {
 
 		NatureOfConnectionIndicatorsImpl eci = new NatureOfConnectionIndicatorsImpl(getBody(NatureOfConnectionIndicatorsImpl._SI_ONE_SATELLITE, NatureOfConnectionIndicatorsImpl._CCI_REQUIRED_ON_THIS_CIRCUIT,
 				NatureOfConnectionIndicatorsImpl._ECDI_INCLUDED));
@@ -55,8 +54,8 @@ public class NatureOfConnectionIndicatorsTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
+	
+	public AbstractISUPParameter getTestedComponent() throws ParameterException {
 		return new NatureOfConnectionIndicatorsImpl(new byte[1]);
 	}
 

@@ -12,8 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:14:40:20 2009-04-26<br>
@@ -29,7 +28,7 @@ public class NetworkSpecificFacilityTest extends ParameterHarness {
 		// super.goodBodies.add(new byte[] { 1, (byte) 0x80, 11, 1, 2, 3, 4 });
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		NetworkSpecificFacilityImpl bci = new NetworkSpecificFacilityImpl(getBody(NetworkSpecificFacilityImpl._TNI_NNI, 1, new byte[] { 1, 2, 3, 4, 5, (byte) 0xAA }, new byte[10]));
 
 		String[] methodNames = { "isIncludeNetworkIdentification", "getLengthOfNetworkIdentification", "getTypeOfNetworkIdentification", "getNetworkIdentificationPlan" };
@@ -37,7 +36,7 @@ public class NetworkSpecificFacilityTest extends ParameterHarness {
 		super.testValues(bci, methodNames, expectedValues);
 
 		// now some custom part?
-		byte[] body = bci.encodeElement();
+		byte[] body = bci.encode();
 		
 		for (int index = 2; index < 8; index++) {
 			if (index == 7) {
@@ -84,8 +83,8 @@ public class NetworkSpecificFacilityTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
+	
+	public AbstractISUPParameter getTestedComponent() throws ParameterException {
 		return new NetworkSpecificFacilityImpl(new byte[] { 1, (byte) 0xFF, 1, 2, 2 });
 	}
 

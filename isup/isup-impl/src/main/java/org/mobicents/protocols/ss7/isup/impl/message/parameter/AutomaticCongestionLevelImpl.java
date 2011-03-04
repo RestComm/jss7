@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.AutomaticCongestionLevel;
 
 /**
@@ -21,7 +21,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.AutomaticCongestionLev
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class AutomaticCongestionLevelImpl extends AbstractParameter implements AutomaticCongestionLevel{
+public class AutomaticCongestionLevelImpl extends AbstractISUPParameter implements AutomaticCongestionLevel{
 	
 	private int automaticCongestionLevel = 0;
 
@@ -32,41 +32,25 @@ public class AutomaticCongestionLevelImpl extends AbstractParameter implements A
 		super();
 		
 	}
-	public AutomaticCongestionLevelImpl(byte[] b) throws ParameterRangeInvalidException {
+	public AutomaticCongestionLevelImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must not be null or have different size than 1");
+			throw new ParameterException("byte[] must not be null or have different size than 1");
 		}
 		this.automaticCongestionLevel = b[0] & 0x01;
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		return new byte[] { (byte) this.automaticCongestionLevel };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.isup.ISUPComponent#encodeElement(java.io.ByteArrayOutputStream
-	 * )
-	 */
-	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
+	public int encode(ByteArrayOutputStream bos) throws ParameterException {
 		bos.write(this.automaticCongestionLevel);
 		return 1;
 	}

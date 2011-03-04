@@ -9,7 +9,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectBackwardInformation;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RedirectBackwardInform
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  * 
  */
-public class RedirectBackwardInformationImpl extends AbstractParameter implements RedirectBackwardInformation {
+public class RedirectBackwardInformationImpl extends AbstractISUPParameter implements RedirectBackwardInformation {
 
 	// FIXME: add impl
 
@@ -28,27 +28,17 @@ public class RedirectBackwardInformationImpl extends AbstractParameter implement
 
 	}
 
-	public RedirectBackwardInformationImpl(byte[] b) throws ParameterRangeInvalidException {
+	public RedirectBackwardInformationImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		return null;
 	}
 

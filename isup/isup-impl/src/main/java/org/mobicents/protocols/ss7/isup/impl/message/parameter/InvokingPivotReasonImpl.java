@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.InvokingPivotReason;
 
 /**
@@ -19,13 +19,13 @@ import org.mobicents.protocols.ss7.isup.message.parameter.InvokingPivotReason;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class InvokingPivotReasonImpl extends AbstractParameter implements InvokingPivotReason {
+public class InvokingPivotReasonImpl extends AbstractISUPParameter implements InvokingPivotReason {
 
 	private byte[] reasons = null;
 
-	public InvokingPivotReasonImpl(byte[] reasons) throws ParameterRangeInvalidException {
+	public InvokingPivotReasonImpl(byte[] reasons) throws ParameterException {
 		super();
-		decodeElement(reasons);
+		decode(reasons);
 	}
 
 	public InvokingPivotReasonImpl() {
@@ -33,26 +33,16 @@ public class InvokingPivotReasonImpl extends AbstractParameter implements Invoki
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		try {
 			this.setReasons(b);
 		} catch (Exception e) {
-			throw new ParameterRangeInvalidException(e);
+			throw new ParameterException(e);
 		}
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		for (int index = 0; index < this.reasons.length; index++) {
 			this.reasons[index] = (byte) (this.reasons[index] & 0x7F);
 		}

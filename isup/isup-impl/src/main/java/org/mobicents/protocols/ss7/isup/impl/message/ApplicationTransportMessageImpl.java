@@ -6,9 +6,11 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.ApplicationTransportMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
+
 
 /**
  * Start time:23:54:13 2009-09-06<br>
@@ -22,25 +24,18 @@ public class ApplicationTransportMessageImpl extends ISUPMessageImpl implements 
 	/**
 	 * 	
 	 * @param source
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 */
-	public ApplicationTransportMessageImpl(Object source){
-		super(source);
+	public ApplicationTransportMessageImpl(){
 		
-	}
-
-	/**
-	 * 	
-	 */
-	public ApplicationTransportMessageImpl() {
 		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryParameters(byte[], int)
 	 */
-	@Override
-	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
+	
+	protected int decodeMandatoryParameters(ISUPParameterFactory parameterFactory,byte[] b, int index) throws ParameterException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -48,8 +43,8 @@ public class ApplicationTransportMessageImpl extends ISUPMessageImpl implements 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryVariableBody(byte[], int)
 	 */
-	@Override
-	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException {
+	
+	protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory,byte[] parameterBody, int parameterIndex) throws ParameterException {
 		// TODO Auto-generated method stub
 
 	}
@@ -57,8 +52,8 @@ public class ApplicationTransportMessageImpl extends ISUPMessageImpl implements 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeOptionalBody(byte[], byte)
 	 */
-	@Override
-	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {
+	
+	protected void decodeOptionalBody(ISUPParameterFactory parameterFactory,byte[] parameterBody, byte parameterCode) throws ParameterException {
 		// TODO Auto-generated method stub
 
 	}
@@ -66,7 +61,7 @@ public class ApplicationTransportMessageImpl extends ISUPMessageImpl implements 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getMessageType()
 	 */
-	@Override
+	
 	public MessageType getMessageType() {
 		// TODO Auto-generated method stub
 		return null;
@@ -75,7 +70,7 @@ public class ApplicationTransportMessageImpl extends ISUPMessageImpl implements 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getNumberOfMandatoryVariableLengthParameters()
 	 */
-	@Override
+	
 	protected int getNumberOfMandatoryVariableLengthParameters() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -84,11 +79,11 @@ public class ApplicationTransportMessageImpl extends ISUPMessageImpl implements 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#hasAllMandatoryParameters()
 	 */
-	@Override
+	
 	public boolean hasAllMandatoryParameters() {
 		throw new UnsupportedOperationException();
 	}
-	@Override
+	
 	protected boolean optionalPartIsPossible() {
 		
 		throw new UnsupportedOperationException();

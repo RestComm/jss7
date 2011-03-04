@@ -13,7 +13,7 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
  *         </a>
  */
-public interface RedirectionNumber extends AbstractNAINumberInterface, AbstractNumberInterface, ISUPParameter {
+public interface RedirectionNumber extends NAINumber, Number, ISUPParameter {
 	/**
 	 * numbering plan indicator indicator value. See Q.763 - 3.9d
 	 */

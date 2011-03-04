@@ -9,7 +9,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CCSS;
 
 /**
@@ -18,7 +18,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CCSS;
  * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public class CCSSImpl extends AbstractParameter implements CCSS{
+public class CCSSImpl extends AbstractISUPParameter implements CCSS{
 
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
@@ -33,9 +33,9 @@ public class CCSSImpl extends AbstractParameter implements CCSS{
 		this.ccssCall = ccssCall;
 	}
 
-	public CCSSImpl(byte[] b) throws ParameterRangeInvalidException {
+	public CCSSImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public CCSSImpl() {
@@ -43,14 +43,9 @@ public class CCSSImpl extends AbstractParameter implements CCSS{
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length == 0) {
-			throw new ParameterRangeInvalidException("byte[] must not be null and length must be 1");
+			throw new ParameterException("byte[] must not be null and length must be 1");
 		}
 
 		this.ccssCall = (b[0] & 0x01) == _TURN_ON;
@@ -58,12 +53,7 @@ public class CCSSImpl extends AbstractParameter implements CCSS{
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		return new byte[] { (byte) (this.ccssCall ? _TURN_ON : _TURN_OFF) };
 	}
 

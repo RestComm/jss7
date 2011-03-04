@@ -13,7 +13,7 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
  *         </a>
  */
-public interface AbstractNumberInterface extends ISUPParameter {
+public interface Number extends ISUPParameter {
 	public boolean isOddFlag() ;
 
 	public String getAddress() ;

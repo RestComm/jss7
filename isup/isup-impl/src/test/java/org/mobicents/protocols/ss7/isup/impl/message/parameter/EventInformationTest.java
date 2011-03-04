@@ -8,8 +8,7 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:11:34:01 2009-04-24<br>
@@ -37,7 +36,7 @@ public class EventInformationTest extends ParameterHarness {
 		return b;
 	}
 
-	public void testBody1EncodedValues() throws ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws ParameterException {
 		EventInformationImpl eci = new EventInformationImpl(getBody(EventInformationImpl._EVENT_INDICATOR_CFONNR, EventInformationImpl._EVENT_PRESENTATION_IPR));
 
 		String[] methodNames = { "getEventIndicator", "isEventPresentationRestrictedIndicator" };
@@ -52,8 +51,8 @@ public class EventInformationTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
+	
+	public AbstractISUPParameter getTestedComponent() throws ParameterException {
 		return new EventInformationImpl(new byte[1]);
 	}
 

@@ -9,7 +9,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericReference;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericReference;
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class GenericReferenceImpl extends AbstractParameter implements GenericReference{
+public class GenericReferenceImpl extends AbstractISUPParameter implements GenericReference{
 
 	
 	
@@ -30,12 +30,12 @@ public class GenericReferenceImpl extends AbstractParameter implements GenericRe
 		
 	}
 	/**
-	 * @throws ParameterRangeInvalidException 
-	 * @throws ParameterRangeInvalidException 
+	 * @throws ParameterException 
+	 * @throws ParameterException 
 	 * 	
 	 */
-	public GenericReferenceImpl(byte[] b) throws ParameterRangeInvalidException {
-		decodeElement(b);
+	public GenericReferenceImpl(byte[] b) throws ParameterException {
+		decode(b);
 	}
 	
 	/* (non-Javadoc)
@@ -46,18 +46,12 @@ public class GenericReferenceImpl extends AbstractParameter implements GenericRe
 		return _PARAMETER_CODE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		// TODO Auto-generated method stub
 		return null;
 	}

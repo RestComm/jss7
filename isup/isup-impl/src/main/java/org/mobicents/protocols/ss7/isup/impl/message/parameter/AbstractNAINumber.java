@@ -11,8 +11,8 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.message.parameter.AbstractNAINumberInterface;
+import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 
 /**
  * Start time:14:02:37 2009-04-04<br>
@@ -22,7 +22,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.AbstractNAINumberInter
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public abstract class AbstractNAINumber extends AbstractNumber implements AbstractNAINumberInterface{
+public abstract class AbstractNAINumber extends AbstractNumber implements NAINumber{
 	
 
 	/**
@@ -31,12 +31,12 @@ public abstract class AbstractNAINumber extends AbstractNumber implements Abstra
 	 */
 	protected int natureOfAddresIndicator;
 
-	public AbstractNAINumber(byte[] representation) throws ParameterRangeInvalidException{
+	public AbstractNAINumber(byte[] representation) throws ParameterException{
 		super(representation);
 
 	}
 
-	public AbstractNAINumber(ByteArrayInputStream bis) throws ParameterRangeInvalidException{
+	public AbstractNAINumber(ByteArrayInputStream bis) throws ParameterException{
 		super(bis);
 
 	}
@@ -49,10 +49,10 @@ public abstract class AbstractNAINumber extends AbstractNumber implements Abstra
 
 	}
 
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		ByteArrayInputStream bis = new ByteArrayInputStream(b);
 
-		return this.decodeElement(bis);
+		return this.decode(bis);
 	}
 
 	
@@ -65,7 +65,7 @@ public abstract class AbstractNAINumber extends AbstractNumber implements Abstra
 	}
 
 	/**
-	 * This method is used in encodeElement method. It encodes header part (1 or
+	 * This method is used in encode method. It encodes header part (1 or
 	 * 2 bytes usually.)
 	 * 
 	 * @param bis
@@ -96,10 +96,10 @@ public abstract class AbstractNAINumber extends AbstractNumber implements Abstra
 	 * @throws IllegalArgumentException
 	 *             - thrown if read error is encountered.
 	 */
-	public int decodeHeader(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public int decodeHeader(ByteArrayInputStream bis) throws ParameterException {
 		if(bis.available()==0)
 		{
-			throw new ParameterRangeInvalidException("No more data to read.");
+			throw new ParameterException("No more data to read.");
 		}
 		int b = bis.read() & 0xff;
 		

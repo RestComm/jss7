@@ -30,7 +30,7 @@ public class CGUATest extends MessageHarness {
 
 		//CircuitGroupUnblockingAckMessage cgb=new CircuitGroupUnblockingAckMessageImpl(this,message);
 		CircuitGroupUnblockingAckMessage cgb=super.messageFactory.createCGUA();
-		cgb.decodeElement(message);
+		((AbstractISUPMessage)cgb).decode(message,parameterFactory);
 
 		
 		try{
@@ -61,7 +61,7 @@ public class CGUATest extends MessageHarness {
 		}
 		
 	}
-	@Override
+	
 	protected byte[] getDefaultBody() {
 		//FIXME: for now we strip MTP part
 		byte[] message={
@@ -83,7 +83,7 @@ public class CGUATest extends MessageHarness {
 		return message;
 	}
 
-	@Override
+	
 	protected ISUPMessage getDefaultMessage() {
 		return super.messageFactory.createCGUA();
 	}

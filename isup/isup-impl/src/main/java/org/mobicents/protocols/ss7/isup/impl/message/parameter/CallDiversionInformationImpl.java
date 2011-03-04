@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallDiversionInformation;
 
 /**
@@ -21,7 +21,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CallDiversionInformati
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  * 
  */
-public class CallDiversionInformationImpl extends AbstractParameter implements CallDiversionInformation {
+public class CallDiversionInformationImpl extends AbstractISUPParameter implements CallDiversionInformation {
 
 	private int redirectingReason = 0;
 
@@ -37,19 +37,14 @@ public class CallDiversionInformationImpl extends AbstractParameter implements C
 		super();
 	}
 
-	public CallDiversionInformationImpl(byte[] b) throws ParameterRangeInvalidException {
+	public CallDiversionInformationImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must not be null or have different size than 1");
+			throw new ParameterException("byte[] must not be null or have different size than 1");
 		}
 
 		int v = b[0];
@@ -59,12 +54,7 @@ public class CallDiversionInformationImpl extends AbstractParameter implements C
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		byte[] b = new byte[1];
 
 		int v = 0;
@@ -74,16 +64,13 @@ public class CallDiversionInformationImpl extends AbstractParameter implements C
 		return b;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.isup.ISUPComponent#encodeElement(java.io.ByteArrayOutputStream
-	 * )
-	 */
-	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
-		byte[] b = this.encodeElement();
-		bos.write(b);
+	public int encode(ByteArrayOutputStream bos) throws ParameterException {
+		byte[] b = this.encode();
+		try {
+			bos.write(b);
+		} catch (IOException e) {
+			throw new ParameterException(e);
+		}
 		return b.length;
 	}
 

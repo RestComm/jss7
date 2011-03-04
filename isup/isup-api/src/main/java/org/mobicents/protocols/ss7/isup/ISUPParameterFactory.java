@@ -216,6 +216,8 @@ public interface ISUPParameterFactory {
 	UserToUserInformation createUserToUserInformation();
 	
 	AccessTransport createAccessTransport();
+
+	GenericDigits createGenericDigits();
 	
 
 }

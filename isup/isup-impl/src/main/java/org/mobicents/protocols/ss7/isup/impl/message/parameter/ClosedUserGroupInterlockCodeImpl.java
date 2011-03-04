@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.ClosedUserGroupInterlockCode;
 
 /**
@@ -19,16 +19,16 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ClosedUserGroupInterlo
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class ClosedUserGroupInterlockCodeImpl extends AbstractParameter implements ClosedUserGroupInterlockCode {
+public class ClosedUserGroupInterlockCodeImpl extends AbstractISUPParameter implements ClosedUserGroupInterlockCode {
 
 	// XXX: this parameter is weird, it does not follow general convention of
 	// parameters :/
 	private byte[] niDigits = null;
 	private int binaryCode = 0;
 
-	public ClosedUserGroupInterlockCodeImpl(byte[] b) throws ParameterRangeInvalidException {
+	public ClosedUserGroupInterlockCodeImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public ClosedUserGroupInterlockCodeImpl() {
@@ -52,14 +52,9 @@ public class ClosedUserGroupInterlockCodeImpl extends AbstractParameter implemen
 		this.binaryCode = binaryCode;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 4) {
-			throw new ParameterRangeInvalidException("byte[] must not be null and must have length of 4");
+			throw new ParameterException("byte[] must not be null and must have length of 4");
 		}
 		int v = 0;
 		this.niDigits = new byte[4];
@@ -77,12 +72,7 @@ public class ClosedUserGroupInterlockCodeImpl extends AbstractParameter implemen
 		return 4;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		byte[] b = new byte[4];
 		int v = 0;
 		for (int i = 0; i < 2; i++) {

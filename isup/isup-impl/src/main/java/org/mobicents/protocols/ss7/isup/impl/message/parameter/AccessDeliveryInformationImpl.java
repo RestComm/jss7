@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
 
 /**
@@ -21,7 +21,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformat
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  * 
  */
-public class AccessDeliveryInformationImpl extends AbstractParameter implements AccessDeliveryInformation{
+public class AccessDeliveryInformationImpl extends AbstractISUPParameter implements AccessDeliveryInformation{
 
 	
 
@@ -37,17 +37,12 @@ public class AccessDeliveryInformationImpl extends AbstractParameter implements 
 
 	}
 
-	public AccessDeliveryInformationImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public AccessDeliveryInformationImpl(byte[] representation) throws ParameterException {
 		super();
-		this.decodeElement(representation);
+		this.decode(representation);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
 			throw new IllegalArgumentException("byte[] must not be null or have different size than 1");
 		}
@@ -56,24 +51,12 @@ public class AccessDeliveryInformationImpl extends AbstractParameter implements 
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		return new byte[] { (byte) this.accessDeliveryIndicator };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.isup.ISUPComponent#encodeElement(java.io.ByteArrayOutputStream
-	 * )
-	 */
-	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
+	public int encode(ByteArrayOutputStream bos) throws ParameterException {
 		bos.write(this.accessDeliveryIndicator);
 		return 1;
 	}

@@ -9,9 +9,8 @@ package org.mobicents.protocols.ss7.isup.impl.message;
 import java.util.Map;
 import java.util.Set;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.TransactionKey;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.BlockingAckMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
@@ -31,69 +30,13 @@ public class BlockingAckMessageImpl extends ISUPMessageImpl implements BlockingA
 
 	static final int _INDEX_F_MessageType = 0;
 
-	BlockingAckMessageImpl(Object source, byte[] b, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
-			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) throws ParameterRangeInvalidException {
-		this(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
-		decodeElement(b);
 
-	}
-
-	BlockingAckMessageImpl(Object source, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+	BlockingAckMessageImpl( Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
 			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
-		super(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
+		super( mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
 
 		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
 		
-	}
-
-	public TransactionKey generateTransactionKey() {
-		if(cic == null)
-		{
-			throw new NullPointerException("CIC is not set in message");
-		}
-		TransactionKey tk = new TransactionKey(BlockingMessageImpl.IDENT,this.cic.getCIC());
-		return tk;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryParameters(byte[],
-	 * int)
-	 */
-	@Override
-	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
-		int localIndex = index;
-		if (b.length - index == 3) {
-
-			try {
-				byte[] cic = new byte[2];
-				cic[0] = b[index++];
-				cic[1] = b[index++];
-				super.cic = new CircuitIdentificationCodeImpl();
-				super.cic.decodeElement(cic);
-
-			} catch (Exception e) {
-				// AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse CircuitIdentificationCode due to: ", e);
-			}
-			try {
-				// Message Type
-				if (b[index] != this.MESSAGE_CODE) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
-				}
-			} catch (Exception e) {
-				// AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse MessageCode due to: ", e);
-			}
-			index++;
-			
-
-			return index - localIndex;
-		} else {
-			throw new IllegalArgumentException("byte[] must have three octets");
-		}
 	}
 
 	/*
@@ -103,8 +46,8 @@ public class BlockingAckMessageImpl extends ISUPMessageImpl implements BlockingA
 	 * org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryVariableBody(byte
 	 * [], int)
 	 */
-	@Override
-	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException {
+	
+	protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory,byte[] parameterBody, int parameterIndex) throws ParameterException {
 		throw new UnsupportedOperationException("This message does not support mandatory variable parameters.");
 
 	}
@@ -115,14 +58,14 @@ public class BlockingAckMessageImpl extends ISUPMessageImpl implements BlockingA
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeOptionalBody(byte[],
 	 * byte)
 	 */
-	@Override
-	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {
+	
+	protected void decodeOptionalBody(ISUPParameterFactory parameterFactory,byte[] parameterBody, byte parameterCode) throws ParameterException {
 		throw new UnsupportedOperationException("This message does not support optional parameters.");
 
 	}
 
-	@Override
-	protected int decodeMandatoryVariableParameters(byte[] b, int index) throws ParameterRangeInvalidException {
+	
+	protected int decodeMandatoryVariableParameters(ISUPParameterFactory parameterFactory,byte[] b, int index) throws ParameterException {
 		throw new UnsupportedOperationException("This message does not support mandatory variable parameters.");
 	}
 
@@ -131,7 +74,7 @@ public class BlockingAckMessageImpl extends ISUPMessageImpl implements BlockingA
 	 * 
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getMessageType()
 	 */
-	@Override
+	
 	public MessageType getMessageType() {
 		return this._MESSAGE_TYPE;
 	}
@@ -142,7 +85,7 @@ public class BlockingAckMessageImpl extends ISUPMessageImpl implements BlockingA
 	 * @seeorg.mobicents.protocols.ss7.isup.ISUPMessageImpl#
 	 * getNumberOfMandatoryVariableLengthParameters()
 	 */
-	@Override
+	
 	protected int getNumberOfMandatoryVariableLengthParameters() {
 		return _MANDATORY_VAR_COUNT;
 	}
@@ -152,12 +95,12 @@ public class BlockingAckMessageImpl extends ISUPMessageImpl implements BlockingA
 	 * 
 	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#hasAllMandatoryParameters()
 	 */
-	@Override
+	
 	public boolean hasAllMandatoryParameters() {
 		return true;
 	}
 
-	@Override
+	
 	protected boolean optionalPartIsPossible() {
 
 		return false;

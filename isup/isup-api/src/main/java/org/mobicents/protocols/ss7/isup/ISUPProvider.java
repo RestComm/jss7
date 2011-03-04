@@ -36,24 +36,55 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
  */
 public interface ISUPProvider {
 	/**
-	 * Stateles message send over MTP. No state is maintained.
+	 * Sends message statelesly.
 	 * 
 	 * @param msg
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 * @throws IOException
 	 */
-	public void sendMessage(ISUPMessage msg) throws ParameterRangeInvalidException, IOException;
+	public void sendMessage(ISUPMessage msg) throws ParameterException, IOException;
 
+	/**
+	 * Adds default listener.
+	 * 
+	 * @param listener
+	 */
 	public void addListener(ISUPListener listener);
 
+	/**
+	 * Removes listener.
+	 * 
+	 * @param listener
+	 */
 	public void removeListener(ISUPListener listener);
 
+	/**
+	 * Get factory for ISUP parameters.
+	 * 
+	 * @return
+	 */
 	public ISUPParameterFactory getParameterFactory();
 
+	/**
+	 * Get factory for ISUP messages.
+	 * 
+	 * @return
+	 */
 	public ISUPMessageFactory getMessageFactory();
 
-	public ISUPClientTransaction createClientTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException;
-
-	public ISUPServerTransaction createServerTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException;
+	/**
+	 * cancel timer. It is required for instance in case of T17 to allow it be
+	 * explicitly canceled
+	 * 
+	 * @param cic
+	 *            - circuit identification code
+	 * @param timerId
+	 *            - integer id of timer. See {@link ISUPTimeoutEvent} static values.
+	 * @return <ul>
+	 * 				<li><b>true</b> - if timer was removed</li>
+	 * 				<li><b>false</b> - otherwise</li>
+	 *         </ul>
+	 */
+	public boolean cancelTimer(int cic, int timerId);
 
 }

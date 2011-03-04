@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.NatureOfConnectionIndicators;
 
 /**
@@ -20,7 +20,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.NatureOfConnectionIndi
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class NatureOfConnectionIndicatorsImpl extends AbstractParameter implements NatureOfConnectionIndicators {
+public class NatureOfConnectionIndicatorsImpl extends AbstractISUPParameter implements NatureOfConnectionIndicators {
 
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
@@ -29,9 +29,9 @@ public class NatureOfConnectionIndicatorsImpl extends AbstractParameter implemen
 	private int continuityCheckIndicator = 0;
 	private boolean echoControlDeviceIndicator = false;
 
-	public NatureOfConnectionIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public NatureOfConnectionIndicatorsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public NatureOfConnectionIndicatorsImpl() {
@@ -46,9 +46,9 @@ public class NatureOfConnectionIndicatorsImpl extends AbstractParameter implemen
 		this.echoControlDeviceIndicator = echoControlDeviceIndicator;
 	}
 
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must not be null and must have length of 1");
+			throw new ParameterException("byte[] must not be null and must have length of 1");
 		}
 		this.satelliteIndicator = (byte) (b[0] & 0x03);
 		this.continuityCheckIndicator = (byte) ((b[0] >> 2) & 0x03);
@@ -57,7 +57,7 @@ public class NatureOfConnectionIndicatorsImpl extends AbstractParameter implemen
 		return 1;
 	}
 
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		int b0 = 0;
 		b0 = this.satelliteIndicator & 0x03;
@@ -66,10 +66,14 @@ public class NatureOfConnectionIndicatorsImpl extends AbstractParameter implemen
 		return new byte[] { (byte) b0 };
 	}
 
-	@Override
-	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
-		byte[] b = this.encodeElement();
-		bos.write(b);
+	
+	public int encode(ByteArrayOutputStream bos) throws ParameterException {
+		byte[] b = this.encode();
+		try {
+			bos.write(b);
+		} catch (IOException e) {
+			throw new ParameterException(e);
+		}
 		return b.length;
 
 	}

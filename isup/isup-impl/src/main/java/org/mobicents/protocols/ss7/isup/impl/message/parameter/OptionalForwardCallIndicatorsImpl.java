@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.OptionalForwardCallIndicators;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.OptionalForwardCallInd
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class OptionalForwardCallIndicatorsImpl extends AbstractParameter implements OptionalForwardCallIndicators {
+public class OptionalForwardCallIndicatorsImpl extends AbstractISUPParameter implements OptionalForwardCallIndicators {
 
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
@@ -28,9 +28,9 @@ public class OptionalForwardCallIndicatorsImpl extends AbstractParameter impleme
 	private boolean simpleSegmentationIndicator;
 	private boolean connectedLineIdentityRequestIndicator;
 
-	public OptionalForwardCallIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public OptionalForwardCallIndicatorsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public OptionalForwardCallIndicatorsImpl(int closedUserGroupCallIndicator, boolean simpleSegmentationIndicator, boolean connectedLineIdentityRequestIndicator) {
@@ -45,14 +45,9 @@ public class OptionalForwardCallIndicatorsImpl extends AbstractParameter impleme
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 1");
+			throw new ParameterException("byte[] must  not be null and length must  be 1");
 		}
 		this.closedUserGroupCallIndicator = (byte) (b[0] & 0x03);
 		this.simpleSegmentationIndicator = ((b[0] >> 2) & 0x01) == _TURN_ON;
@@ -60,12 +55,7 @@ public class OptionalForwardCallIndicatorsImpl extends AbstractParameter impleme
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		int b0 = 0;
 

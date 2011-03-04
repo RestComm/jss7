@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.NetworkRoutingNumber;
 
 /**
@@ -41,12 +41,12 @@ public class NetworkRoutingNumberImpl extends AbstractNumber implements NetworkR
 		
 	}
 
-	public NetworkRoutingNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public NetworkRoutingNumberImpl(byte[] representation) throws ParameterException {
 		super(representation);
 		
 	}
 
-	public NetworkRoutingNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public NetworkRoutingNumberImpl(ByteArrayInputStream bis) throws ParameterException {
 		super(bis);
 		
 	}
@@ -57,7 +57,7 @@ public class NetworkRoutingNumberImpl extends AbstractNumber implements NetworkR
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
 	 * ByteArrayInputStream)
 	 */
-	@Override
+	
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
 
 		return 0;
@@ -69,13 +69,13 @@ public class NetworkRoutingNumberImpl extends AbstractNumber implements NetworkR
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
 	 * ByteArrayOutputStream)
 	 */
-	@Override
+	
 	public int encodeBody(ByteArrayOutputStream bos) {
 
 		return 0;
 	}
 
-	@Override
+	
 	public int decodeHeader(ByteArrayInputStream bis) throws IllegalArgumentException {
 
 		int b = bis.read() & 0xff;
@@ -86,7 +86,7 @@ public class NetworkRoutingNumberImpl extends AbstractNumber implements NetworkR
 		return 1;
 	}
 
-	@Override
+	
 	public int encodeHeader(ByteArrayOutputStream bos) {
 		int b = 0;
 		// Even is 000000000 == 0

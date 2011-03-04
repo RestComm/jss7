@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.EchoControlInformation;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.EchoControlInformation
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class EchoControlInformationImpl extends AbstractParameter implements EchoControlInformation {
+public class EchoControlInformationImpl extends AbstractISUPParameter implements EchoControlInformation {
 
 	private int outgoingEchoControlDeviceInformationIndicator;
 	private int incomingEchoControlDeviceInformationIndicator;
@@ -40,19 +40,14 @@ public class EchoControlInformationImpl extends AbstractParameter implements Ech
 		this.incomingEchoControlDeviceInformationRequestIndicator = incomingEchoControlDeviceInformationRequestIndicator;
 	}
 
-	public EchoControlInformationImpl(byte[] b) throws ParameterRangeInvalidException {
+	public EchoControlInformationImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must not be null or have different size than 1");
+			throw new ParameterException("byte[] must not be null or have different size than 1");
 		}
 		byte v = b[0];
 
@@ -63,12 +58,7 @@ public class EchoControlInformationImpl extends AbstractParameter implements Ech
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		byte v = 0;
 
 		v |= this.outgoingEchoControlDeviceInformationIndicator & 0x03;

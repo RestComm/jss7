@@ -1,6 +1,5 @@
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
 /**
  * 
  * Start time:13:47:44 2009-04-23<br>
@@ -25,8 +24,8 @@ public class CallDiversionTreatmentIndicatorsTest extends ParameterHarness {
 		b[9] = (byte) (b[9] | (0x01 << 7));
 		return b;
 	}
-	@Override
-	public ISUPComponent getTestedComponent() {
+	
+	public AbstractISUPParameter getTestedComponent() {
 		return new CallDiversionTreatmentIndicatorsImpl();
 	}
 

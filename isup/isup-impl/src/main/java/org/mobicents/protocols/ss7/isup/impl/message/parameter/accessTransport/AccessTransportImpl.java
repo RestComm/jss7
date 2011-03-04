@@ -11,8 +11,8 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter.accessTransport;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractParameter;
+import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractISUPParameter;
 import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.AccessTransport;
 
 /**
@@ -21,57 +21,35 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class AccessTransportImpl extends AbstractParameter implements AccessTransport {
+public class AccessTransportImpl extends AbstractISUPParameter implements AccessTransport {
 
 	// FIXME: Q763 3.3
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
 
 	public AccessTransportImpl() {
 		super();
 
 	}
 
-	public AccessTransportImpl(byte[] b) throws ParameterRangeInvalidException {
+	public AccessTransportImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.isup.ISUPComponent#encodeElement(java.io.ByteArrayOutputStream
-	 * )
-	 */
-	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
+	public int encode(ByteArrayOutputStream bos) throws ParameterException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.parameters.ISUPParameter#getCode()
-	 */
 	public int getCode() {
 		return _PARAMETER_CODE;
 	}

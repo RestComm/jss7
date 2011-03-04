@@ -19,7 +19,7 @@ public class RELTest extends MessageHarness{
 
 
 	
-	@Override
+	
 	protected byte[] getDefaultBody() {
 		//FIXME: for now we strip MTP part
 		byte[] message={
@@ -38,7 +38,7 @@ public class RELTest extends MessageHarness{
 
 		return message;
 	}
-	@Override
+	
 	protected ISUPMessage getDefaultMessage() {
 		return super.messageFactory.createREL(0);
 	}

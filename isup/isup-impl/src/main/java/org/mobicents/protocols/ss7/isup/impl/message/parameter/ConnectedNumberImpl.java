@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.ConnectedNumber;
 
 /**
@@ -31,9 +31,9 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
 	/**
 	 * 
 	 * @param representation
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 */
-	public ConnectedNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public ConnectedNumberImpl(byte[] representation) throws ParameterException {
 		super(representation);
 		
 	}
@@ -47,9 +47,9 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
 	 * tttttt
 	 * 
 	 * @param bis
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 */
-	public ConnectedNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public ConnectedNumberImpl(ByteArrayInputStream bis) throws ParameterException {
 		super(bis);
 		
 	}
@@ -61,7 +61,7 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
 		this.screeningIndicator = screeningIndicator;
 	}
 
-	@Override
+	
 	public int encodeHeader(ByteArrayOutputStream bos) {
 		doAddressPresentationRestricted();
 		return super.encodeHeader(bos);
@@ -73,7 +73,7 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
 	 * ByteArrayInputStream)
 	 */
-	@Override
+	
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
 		int b = bis.read() & 0xff;
 
@@ -111,7 +111,7 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
 	 * ByteArrayOutputStream)
 	 */
-	@Override
+	
 	public int encodeBody(ByteArrayOutputStream bos) {
 		int c = this.numberingPlanIndicator << 4;
 

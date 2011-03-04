@@ -9,7 +9,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallTransferNumber;
 
 /**
@@ -28,9 +28,9 @@ public class CallTransferNumberImpl extends AbstractNAINumber implements CallTra
 	protected int screeningIndicator;
 	/** 
 	 * @param representation
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 */
-	public CallTransferNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public CallTransferNumberImpl(byte[] representation) throws ParameterException {
 		super(representation);
 		
 	}
@@ -44,9 +44,9 @@ public class CallTransferNumberImpl extends AbstractNAINumber implements CallTra
 	 * tttttt
 	 * 
 	 * @param bis
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 */
-	public CallTransferNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public CallTransferNumberImpl(ByteArrayInputStream bis) throws ParameterException {
 		super(bis);
 		
 	}
@@ -58,7 +58,7 @@ public class CallTransferNumberImpl extends AbstractNAINumber implements CallTra
 		this.screeningIndicator = screeningIndicator;
 	}
 
-	@Override
+	
 	public int encodeHeader(ByteArrayOutputStream bos) {
 		doAddressPresentationRestricted();
 		return super.encodeHeader(bos);
@@ -90,7 +90,7 @@ public class CallTransferNumberImpl extends AbstractNAINumber implements CallTra
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.message.parameter.AbstractNumber#decodeBody(java.io.ByteArrayInputStream)
 	 */
-	@Override
+	
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
 		int b = bis.read() & 0xff;
 
@@ -109,7 +109,7 @@ public class CallTransferNumberImpl extends AbstractNAINumber implements CallTra
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
 	 * ByteArrayOutputStream)
 	 */
-	@Override
+	
 	public int encodeBody(ByteArrayOutputStream bos) {
 		int c = this.numberingPlanIndicator << 4;
 

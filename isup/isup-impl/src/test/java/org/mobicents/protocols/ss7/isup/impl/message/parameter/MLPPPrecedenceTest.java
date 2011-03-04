@@ -11,8 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:17:14:12 2009-04-24<br>
@@ -37,7 +36,7 @@ public class MLPPPrecedenceTest extends ParameterHarness {
 
 	
 	
-	public void testBody1EncodedValues() throws IOException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws IOException, ParameterException {
 		//FIXME: This one fails....
 		int serDomain = 15;
 		MLPPPrecedenceImpl eci = new MLPPPrecedenceImpl(getBody(MLPPPrecedenceImpl._LFB_INDICATOR_ALLOWED,MLPPPrecedenceImpl._PLI_PRIORITY,new byte[]{3,4}, serDomain));
@@ -72,8 +71,8 @@ public class MLPPPrecedenceTest extends ParameterHarness {
 	/* (non-Javadoc)
 	 * @see org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
+	
+	public AbstractISUPParameter getTestedComponent() throws ParameterException {
 		MLPPPrecedenceImpl component = new MLPPPrecedenceImpl(new byte[6]);
 		return component;
 	}

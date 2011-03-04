@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingIndicators;
 
 /**
@@ -20,7 +20,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingIndicators
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class PivotRoutingIndicatorsImpl extends AbstractParameter implements PivotRoutingIndicators{
+public class PivotRoutingIndicatorsImpl extends AbstractISUPParameter implements PivotRoutingIndicators{
 	
 	
 
@@ -31,17 +31,12 @@ public class PivotRoutingIndicatorsImpl extends AbstractParameter implements Piv
 		
 	}
 
-	public PivotRoutingIndicatorsImpl(byte[] pivotRoutingIndicators) throws ParameterRangeInvalidException {
+	public PivotRoutingIndicatorsImpl(byte[] pivotRoutingIndicators) throws ParameterException {
 		super();
-		decodeElement(pivotRoutingIndicators);
+		decode(pivotRoutingIndicators);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		for (int index = 0; index < this.pivotRoutingIndicators.length; index++) {
 			this.pivotRoutingIndicators[index] = (byte) (this.pivotRoutingIndicators[index] & 0x7F);
 		}
@@ -50,12 +45,7 @@ public class PivotRoutingIndicatorsImpl extends AbstractParameter implements Piv
 		return this.pivotRoutingIndicators;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 
 		setPivotRoutingIndicators(b);
 		return b.length;

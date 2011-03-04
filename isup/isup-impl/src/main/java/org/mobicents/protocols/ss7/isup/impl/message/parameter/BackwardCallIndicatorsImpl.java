@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators;
 
 /**
@@ -20,7 +20,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class BackwardCallIndicatorsImpl extends AbstractParameter implements BackwardCallIndicators {
+public class BackwardCallIndicatorsImpl extends AbstractISUPParameter implements BackwardCallIndicators {
 
 	private final static int _TURN_ON = 1;
 	private final static int _TURN_OFF = 0;
@@ -72,18 +72,13 @@ public class BackwardCallIndicatorsImpl extends AbstractParameter implements Bac
 	 * 
 	 * @param b
 	 */
-	public BackwardCallIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
-		this.decodeElement(b);
+	public BackwardCallIndicatorsImpl(byte[] b) throws ParameterException {
+		this.decode(b);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 2) {
-			throw new ParameterRangeInvalidException("byte[] must not be null or have different size than 2");
+			throw new ParameterException("byte[] must not be null or have different size than 2");
 		}
 
 		int v = b[0];
@@ -103,12 +98,7 @@ public class BackwardCallIndicatorsImpl extends AbstractParameter implements Bac
 		return 2;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		byte[] b = new byte[2];
 		int v = 0;
@@ -131,16 +121,13 @@ public class BackwardCallIndicatorsImpl extends AbstractParameter implements Bac
 		return b;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.isup.ISUPComponent#encodeElement(java.io.ByteArrayOutputStream
-	 * )
-	 */
-	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
-		byte[] b = encodeElement();
-		bos.write(b);
+	public int encode(ByteArrayOutputStream bos) throws ParameterException {
+		byte[] b = encode();
+		try {
+			bos.write(b);
+		} catch (IOException e) {
+			throw new ParameterException(e);
+		}
 		return b.length;
 	}
 

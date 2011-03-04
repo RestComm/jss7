@@ -8,7 +8,7 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginatingISCPointCode;
 
 /**
@@ -30,7 +30,7 @@ public class OriginatingISCPointCodeImpl extends AbstractPointCode implements Or
 		super();
 		
 	}
-	public OriginatingISCPointCodeImpl(byte[] b) throws ParameterRangeInvalidException {
+	public OriginatingISCPointCodeImpl(byte[] b) throws ParameterException {
 		super(b);
 		
 	}

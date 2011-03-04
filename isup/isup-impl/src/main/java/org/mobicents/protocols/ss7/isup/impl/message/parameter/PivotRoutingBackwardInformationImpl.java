@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingBackwardInformation;
 
 /**
@@ -19,12 +19,12 @@ import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingBackwardIn
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class PivotRoutingBackwardInformationImpl extends AbstractParameter implements PivotRoutingBackwardInformation {
+public class PivotRoutingBackwardInformationImpl extends AbstractISUPParameter implements PivotRoutingBackwardInformation {
 	// FIXME: impl
 
-	public PivotRoutingBackwardInformationImpl(byte[] pivotRoutingIndicators) throws ParameterRangeInvalidException {
+	public PivotRoutingBackwardInformationImpl(byte[] pivotRoutingIndicators) throws ParameterException {
 		super();
-		decodeElement(pivotRoutingIndicators);
+		decode(pivotRoutingIndicators);
 	}
 
 	public PivotRoutingBackwardInformationImpl() {
@@ -32,22 +32,12 @@ public class PivotRoutingBackwardInformationImpl extends AbstractParameter imple
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 
 		return 0;
 	}

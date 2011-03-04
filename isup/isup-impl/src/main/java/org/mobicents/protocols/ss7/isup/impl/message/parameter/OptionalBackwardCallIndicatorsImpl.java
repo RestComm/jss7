@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.OptionalBackwardCallIndicators;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.OptionalBackwardCallIn
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class OptionalBackwardCallIndicatorsImpl extends AbstractParameter implements OptionalBackwardCallIndicators {
+public class OptionalBackwardCallIndicatorsImpl extends AbstractISUPParameter implements OptionalBackwardCallIndicators {
 
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
@@ -29,10 +29,6 @@ public class OptionalBackwardCallIndicatorsImpl extends AbstractParameter implem
 	private boolean simpleSegmentationIndicator;
 	private boolean mllpUserIndicator;
 
-	public OptionalBackwardCallIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
-		super();
-		decodeElement(b);
-	}
 
 	public OptionalBackwardCallIndicatorsImpl() {
 		super();
@@ -47,14 +43,9 @@ public class OptionalBackwardCallIndicatorsImpl extends AbstractParameter implem
 		this.mllpUserIndicator = mllpUserIndicator;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 1");
+			throw new ParameterException("byte[] must  not be null and length must  be 1");
 		}
 		this.inbandInformationIndicator = (b[0] & 0x01) == _TURN_ON;
 		this.callDiversionMayOccurIndicator = ((b[0] >> 1) & 0x01) == _TURN_ON;
@@ -63,12 +54,7 @@ public class OptionalBackwardCallIndicatorsImpl extends AbstractParameter implem
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		int b0 = 0;
 

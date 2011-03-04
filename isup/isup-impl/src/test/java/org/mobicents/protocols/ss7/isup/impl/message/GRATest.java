@@ -31,7 +31,7 @@ public class GRATest extends MessageHarness {
 
 		//CircuitGroupResetAckMessage grs=new CircuitGroupResetAckMessageImpl(this,message);
 		CircuitGroupResetAckMessage grs=super.messageFactory.createGRA();
-		grs.decodeElement(message);
+		((AbstractISUPMessage)grs).decode(message,parameterFactory);
 		
 		try{
 			RangeAndStatus RS = (RangeAndStatus) grs.getParameter(RangeAndStatus._PARAMETER_CODE);
@@ -61,7 +61,7 @@ public class GRATest extends MessageHarness {
 		}
 		
 	}
-	@Override
+	
 	protected byte[] getDefaultBody() {
 		//FIXME: for now we strip MTP part
 		byte[] message={
@@ -82,7 +82,7 @@ public class GRATest extends MessageHarness {
 
 		return message;
 	}
-	@Override
+	
 	protected ISUPMessage getDefaultMessage() {
 		return super.messageFactory.createGRA();
 	}

@@ -25,17 +25,16 @@ public class ACMTest extends MessageHarness {
 
 	@Test
 	public void testTwo_Params() throws Exception {
-		//FIXME: for now we strip MTP part
-		//FIXME: This one fail!
+
 		byte[] message = getDefaultBody();
 
 		// AddressCompleteMessageImpl acm=new
 		// AddressCompleteMessageImpl(this,message);
 		AddressCompleteMessage acm = super.messageFactory.createACM();
-		acm.decodeElement(message);
+		((AbstractISUPMessage)acm).decode(message,parameterFactory);
 
 		assertNotNull("BackwardCallIndicator is null", acm.getBackwardCallIndicators());
-		assertNotNull("OptionalBackwardCallIndicator is null", acm.getOptionalBakwardCallIndicators());
+		assertNotNull("OptionalBackwardCallIndicator is null", acm.getOptionalBackwardCallIndicators());
 		assertNotNull("Cause Indicator is null", acm.getCauseIndicators());
 
 		BackwardCallIndicators bci = acm.getBackwardCallIndicators();
@@ -55,7 +54,7 @@ public class ACMTest extends MessageHarness {
 
 	}
 
-	@Override
+	
 	protected byte[] getDefaultBody() {
 		byte[] message = {
 
@@ -65,9 +64,8 @@ public class ACMTest extends MessageHarness {
 		return message;
 	}
 
-	@Override
+	
 	protected ISUPMessage getDefaultMessage() {
 		return super.messageFactory.createACM();
 	}
-
 }

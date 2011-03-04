@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 
 /**
@@ -39,7 +39,7 @@ public class LocationNumberImpl extends AbstractNAINumber implements LocationNum
 		this.screeningIndicator = screeningIndicator;
 	}
 
-	public LocationNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public LocationNumberImpl(byte[] representation) throws ParameterException {
 		super(representation);
 		
 	}
@@ -49,7 +49,7 @@ public class LocationNumberImpl extends AbstractNAINumber implements LocationNum
 		
 	}
 
-	public LocationNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public LocationNumberImpl(ByteArrayInputStream bis) throws ParameterException {
 		super(bis);
 		
 	}
@@ -60,7 +60,7 @@ public class LocationNumberImpl extends AbstractNAINumber implements LocationNum
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
 	 * ByteArrayInputStream)
 	 */
-	@Override
+	
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
 		int b = bis.read() & 0xff;
 
@@ -71,7 +71,7 @@ public class LocationNumberImpl extends AbstractNAINumber implements LocationNum
 		return 1;
 	}
 
-	@Override
+	
 	public int encodeHeader(ByteArrayOutputStream bos) {
 		doAddressPresentationRestricted();
 
@@ -107,7 +107,7 @@ public class LocationNumberImpl extends AbstractNAINumber implements LocationNum
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
 	 * ByteArrayOutputStream)
 	 */
-	@Override
+	
 	public int encodeBody(ByteArrayOutputStream bos) {
 		int c = this.numberingPlanIndicator << 4;
 		c |= (this.internalNetworkNumberIndicator << 7);

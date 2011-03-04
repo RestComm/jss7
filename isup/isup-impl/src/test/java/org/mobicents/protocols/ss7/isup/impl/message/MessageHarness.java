@@ -8,19 +8,12 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import org.mobicents.protocols.ss7.isup.ISUPClientTransaction;
-import org.mobicents.protocols.ss7.isup.ISUPListener;
 import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
-import org.mobicents.protocols.ss7.isup.ISUPProvider;
-import org.mobicents.protocols.ss7.isup.ISUPServerTransaction;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.TransactionAlredyExistsException;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
@@ -31,9 +24,9 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationC
  * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public abstract class MessageHarness extends TestCase implements ISUPProvider {
-
-	protected ISUPMessageFactory messageFactory = new ISUPMessageFactoryImpl(this, new ISUPParameterFactoryImpl());
+public abstract class MessageHarness extends TestCase {
+	protected ISUPParameterFactory parameterFactory = new ISUPParameterFactoryImpl();
+	protected ISUPMessageFactory messageFactory = new ISUPMessageFactoryImpl(parameterFactory);
 
 	// FIXME: add code to check values :)
 	protected boolean makeCompare(byte[] b1, byte[] b2) {
@@ -86,9 +79,9 @@ public abstract class MessageHarness extends TestCase implements ISUPProvider {
 		byte[] defaultBody = getDefaultBody();
 		// AddressCompleteMessageImpl acm=new
 		// AddressCompleteMessageImpl(this,message);
-		ISUPMessage msg = getDefaultMessage();
-		msg.decodeElement(defaultBody);
-		byte[] encodedBody = msg.encodeElement();
+		AbstractISUPMessage msg = (AbstractISUPMessage) getDefaultMessage();
+		msg.decode(defaultBody,parameterFactory);
+		byte[] encodedBody = msg.encode();
 		boolean equal = Arrays.equals(defaultBody, encodedBody);
 		assertTrue(makeStringCompare(defaultBody, encodedBody), equal);
 		CircuitIdentificationCode cic = msg.getCircuitIdentificationCode();
@@ -101,40 +94,6 @@ public abstract class MessageHarness extends TestCase implements ISUPProvider {
 		return 0xB0C;
 	}
 
-	// not used :)
-	public void addListener(ISUPListener listener) {
-		// TODO Auto-generated method stub
 
-	}
-
-	public ISUPClientTransaction createClientTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public ISUPServerTransaction createServerTransaction(ISUPMessage msg) throws TransactionAlredyExistsException, IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public ISUPMessageFactory getMessageFactory() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	public ISUPParameterFactory getParameterFactory() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	public void removeListener(ISUPListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void sendMessage(ISUPMessage msg) throws ParameterRangeInvalidException, IOException {
-		// TODO Auto-generated method stub
-
-	}
 
 }

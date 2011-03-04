@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.ConferenceTreatmentIndicators;
 
 /**
@@ -20,7 +20,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ConferenceTreatmentInd
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class ConferenceTreatmentIndicatorsImpl extends AbstractParameter implements ConferenceTreatmentIndicators{
+public class ConferenceTreatmentIndicatorsImpl extends AbstractISUPParameter implements ConferenceTreatmentIndicators{
 
 	
 
@@ -28,9 +28,9 @@ public class ConferenceTreatmentIndicatorsImpl extends AbstractParameter impleme
 
 	private byte[] conferenceAcceptance = null;
 
-	public ConferenceTreatmentIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public ConferenceTreatmentIndicatorsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public ConferenceTreatmentIndicatorsImpl() {
@@ -38,25 +38,15 @@ public class ConferenceTreatmentIndicatorsImpl extends AbstractParameter impleme
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length == 0) {
-			throw new ParameterRangeInvalidException("byte[] must not be null and length must be greater than 0");
+			throw new ParameterException("byte[] must not be null and length must be greater than 0");
 		}
 		setConferenceAcceptance(b);
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		for (int index = 0; index < this.conferenceAcceptance.length; index++) {
 			this.conferenceAcceptance[index] = (byte) (this.conferenceAcceptance[index] & 0x03);

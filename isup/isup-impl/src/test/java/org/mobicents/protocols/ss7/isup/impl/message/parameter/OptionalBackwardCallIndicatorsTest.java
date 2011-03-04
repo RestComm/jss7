@@ -11,8 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:16:20:47 2009-04-26<br>
@@ -32,10 +31,11 @@ public class OptionalBackwardCallIndicatorsTest extends ParameterHarness {
 		super.badBodies.add(new byte[] { 8, 8 });
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
-		OptionalBackwardCallIndicatorsImpl bci = new OptionalBackwardCallIndicatorsImpl(getBody(OptionalBackwardCallIndicatorsImpl._IBII_AVAILABLE, OptionalBackwardCallIndicatorsImpl._CDI_NO_INDICATION,
-				OptionalBackwardCallIndicatorsImpl._SSIR_NO_ADDITIONAL_INFO, OptionalBackwardCallIndicatorsImpl._MLLPUI_USER));
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
+		OptionalBackwardCallIndicatorsImpl bci = new OptionalBackwardCallIndicatorsImpl();
 
+		bci.decode(getBody(OptionalBackwardCallIndicatorsImpl._IBII_AVAILABLE, OptionalBackwardCallIndicatorsImpl._CDI_NO_INDICATION,
+				OptionalBackwardCallIndicatorsImpl._SSIR_NO_ADDITIONAL_INFO, OptionalBackwardCallIndicatorsImpl._MLLPUI_USER));
 		String[] methodNames = {    "isInbandInformationIndicator", 
 				                    "isCallDiversionMayOccurIndicator", 
 				                    "isSimpleSegmentationIndicator", 
@@ -62,9 +62,9 @@ public class OptionalBackwardCallIndicatorsTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
-		return new OptionalBackwardCallIndicatorsImpl(new byte[1]);
+	
+	public AbstractISUPParameter getTestedComponent() throws ParameterException {
+		return new OptionalBackwardCallIndicatorsImpl();
 	}
 
 }

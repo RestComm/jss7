@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.SuspendResumeIndicators;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.SuspendResumeIndicator
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class SuspendResumeIndicatorsImpl extends AbstractParameter implements SuspendResumeIndicators {
+public class SuspendResumeIndicatorsImpl extends AbstractISUPParameter implements SuspendResumeIndicators {
 
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
@@ -31,9 +31,9 @@ public class SuspendResumeIndicatorsImpl extends AbstractParameter implements Su
 		
 	}
 
-	public SuspendResumeIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public SuspendResumeIndicatorsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public SuspendResumeIndicatorsImpl(boolean suspendResumeIndicator) {
@@ -41,14 +41,9 @@ public class SuspendResumeIndicatorsImpl extends AbstractParameter implements Su
 		this.suspendResumeIndicator = suspendResumeIndicator;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 1");
+			throw new ParameterException("byte[] must  not be null and length must  be 1");
 		}
 
 		this.suspendResumeIndicator = (b[0] & 0x01) == _TURN_ON;
@@ -56,12 +51,7 @@ public class SuspendResumeIndicatorsImpl extends AbstractParameter implements Su
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		return new byte[] { (byte) (this.suspendResumeIndicator ? _TURN_ON : _TURN_OFF) };
 	}
 

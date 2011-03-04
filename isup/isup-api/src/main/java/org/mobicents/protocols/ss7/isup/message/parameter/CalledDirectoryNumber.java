@@ -12,7 +12,7 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public interface CalledDirectoryNumber extends ISUPParameter, AbstractNAINumberInterface {
+public interface CalledDirectoryNumber extends ISUPParameter, NAINumber {
 	// FIXME: whats the code ?
 	public static final int _PARAMETER_CODE = 0x7D;
 

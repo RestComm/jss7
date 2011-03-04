@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.ByteArrayInputStream;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 
 /**
@@ -23,12 +23,12 @@ import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 public class OriginalCalledNumberImpl extends CalledNumberImpl implements OriginalCalledNumber{
 
 	
-	public OriginalCalledNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public OriginalCalledNumberImpl(byte[] representation) throws ParameterException {
 		super(representation);
 		
 	}
 
-	public OriginalCalledNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public OriginalCalledNumberImpl(ByteArrayInputStream bis) throws ParameterException {
 		super(bis);
 		
 	}

@@ -10,8 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:13:20:04 2009-04-26<br>
@@ -30,11 +29,11 @@ public class NetworkManagementControlsTest extends ParameterHarness {
 		super.goodBodies.add(new byte[] { 0x0E, 32, 45, 0x0A });
 	}
 
-	public void testBody1EncodedValues() throws IOException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws IOException, ParameterException {
 
 		boolean[] bools = new boolean[] { true, true, false, true, false, true, true };
 		NetworkManagementControlsImpl eci = new NetworkManagementControlsImpl(getBody1(bools));
-		byte[] encoded = eci.encodeElement();
+		byte[] encoded = eci.encode();
 		for (int index = 0; index < encoded.length; index++) {
 			if (bools[index] != eci.isTARControlEnabled(encoded[index])) {
 				fail("Failed to get TAR bits, at index: " + index);
@@ -66,8 +65,8 @@ public class NetworkManagementControlsTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
+	
+	public AbstractISUPParameter getTestedComponent() throws ParameterException {
 		return new NetworkManagementControlsImpl(new byte[1]);
 	}
 

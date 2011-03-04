@@ -11,8 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:20:07:45 2009-04-26<br>
@@ -39,7 +38,7 @@ public class RedirectionInformationTest extends ParameterHarness {
 	}
 
 	
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		RedirectionInformationImpl bci = new RedirectionInformationImpl(getBody(RedirectionInformationImpl._RI_CALL_D_RNPR,RedirectionInformationImpl._ORR_UNA,1,RedirectionInformationImpl._RR_DEFLECTION_IE));
 	
 		String[] methodNames = { "getRedirectingIndicator", 
@@ -71,8 +70,8 @@ public class RedirectionInformationTest extends ParameterHarness {
 	/* (non-Javadoc)
 	 * @see org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() throws IllegalArgumentException, ParameterRangeInvalidException {
+	
+	public AbstractISUPParameter getTestedComponent() throws IllegalArgumentException, ParameterException {
 		return new RedirectionInformationImpl(new byte[]{0,1});
 	}
 

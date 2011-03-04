@@ -8,7 +8,7 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.SignalingPointCode;
 
 /**
@@ -29,7 +29,7 @@ public class SignalingPointCodeImpl extends AbstractPointCode implements Signali
 		
 	}
 
-	public SignalingPointCodeImpl(byte[] b) throws ParameterRangeInvalidException {
+	public SignalingPointCodeImpl(byte[] b) throws ParameterException {
 		super(b);
 		
 	}

@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
 
 /**
@@ -20,7 +20,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class CallingPartyCategoryImpl extends AbstractParameter implements CallingPartyCategory {
+public class CallingPartyCategoryImpl extends AbstractISUPParameter implements CallingPartyCategory {
 
 	private byte callingPartyCategory = 0;
 
@@ -34,43 +34,26 @@ public class CallingPartyCategoryImpl extends AbstractParameter implements Calli
 
 	}
 
-	public CallingPartyCategoryImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public CallingPartyCategoryImpl(byte[] representation) throws ParameterException {
 		super();
-		this.decodeElement(representation);
+		this.decode(representation);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must not be null or have different size than 1");
+			throw new ParameterException("byte[] must not be null or have different size than 1");
 		}
 		this.callingPartyCategory = b[0];
 
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		return new byte[] { this.callingPartyCategory };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.isup.ISUPComponent#encodeElement(java.io.ByteArrayOutputStream
-	 * )
-	 */
-	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
+	public int encode(ByteArrayOutputStream bos) throws ParameterException {
 		bos.write(this.callingPartyCategory);
 		return 1;
 	}

@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 
 /**
@@ -32,9 +32,9 @@ public class CalledPartyNumberImpl extends AbstractNAINumber implements CalledPa
 	 * 
 	 * 
 	 * @param representation
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 */
-	public CalledPartyNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public CalledPartyNumberImpl(byte[] representation) throws ParameterException {
 		super(representation);
 		
 	}
@@ -43,9 +43,9 @@ public class CalledPartyNumberImpl extends AbstractNAINumber implements CalledPa
 	 * 
 	 * 
 	 * @param bis
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 */
-	public CalledPartyNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public CalledPartyNumberImpl(ByteArrayInputStream bis) throws ParameterException {
 		super(bis);
 		
 	}
@@ -72,7 +72,7 @@ public class CalledPartyNumberImpl extends AbstractNAINumber implements CalledPa
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
 	 * ByteArrayInputStream)
 	 */
-	@Override
+	
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
 		int b = bis.read() & 0xff;
 
@@ -87,7 +87,7 @@ public class CalledPartyNumberImpl extends AbstractNAINumber implements CalledPa
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
 	 * ByteArrayOutputStream)
 	 */
-	@Override
+	
 	public int encodeBody(ByteArrayOutputStream bos) {
 		int c = (this.numberingPlanIndicator & 0x07) << 4;
 		c |= ((this.internalNetworkNumberIndicator & 0x01) << 7);
@@ -115,4 +115,11 @@ public class CalledPartyNumberImpl extends AbstractNAINumber implements CalledPa
 
 		return _PARAMETER_CODE;
 	}
+
+	
+	public String toString() {
+		return "CalledPartyNumber [numberingPlanIndicator=" + numberingPlanIndicator + ", internalNetworkNumberIndicator=" + internalNetworkNumberIndicator
+				+ ", natureOfAddresIndicator=" + natureOfAddresIndicator + ", oddFlag=" + oddFlag + ", address=" + address + "]";
+	}
+	
 }

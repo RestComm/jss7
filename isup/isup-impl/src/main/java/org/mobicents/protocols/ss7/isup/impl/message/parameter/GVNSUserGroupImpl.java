@@ -12,7 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.GVNSUserGroup;
 
 /**
@@ -32,12 +32,12 @@ public class GVNSUserGroupImpl extends AbstractNumber implements GVNSUserGroup{
 
 	}
 
-	public GVNSUserGroupImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public GVNSUserGroupImpl(byte[] representation) throws ParameterException {
 		super(representation);
 		
 	}
 
-	public GVNSUserGroupImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public GVNSUserGroupImpl(ByteArrayInputStream bis) throws ParameterException {
 		super(bis);
 		
 	}
@@ -47,25 +47,15 @@ public class GVNSUserGroupImpl extends AbstractNumber implements GVNSUserGroup{
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
-		return super.decodeElement(b);
+	public int decode(byte[] b) throws ParameterException {
+		return super.decode(b);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
-		return super.encodeElement();
+	public byte[] encode() throws ParameterException {
+		return super.encode();
 	}
 
-	@Override
+	
 	public int decodeHeader(ByteArrayInputStream bis) throws IllegalArgumentException {
 		int b = bis.read() & 0xff;
 
@@ -74,7 +64,7 @@ public class GVNSUserGroupImpl extends AbstractNumber implements GVNSUserGroup{
 		return 1;
 	}
 
-	@Override
+	
 	public int encodeHeader(ByteArrayOutputStream bos) {
 		int b = 0;
 		// Even is 000000000 == 0
@@ -86,13 +76,13 @@ public class GVNSUserGroupImpl extends AbstractNumber implements GVNSUserGroup{
 		return 1;
 	}
 
-	@Override
+	
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
 
 		return 0;
 	}
 
-	@Override
+	
 	public int encodeBody(ByteArrayOutputStream bos) {
 
 		return 0;
@@ -102,12 +92,12 @@ public class GVNSUserGroupImpl extends AbstractNumber implements GVNSUserGroup{
 		return gugLengthIndicator;
 	}
 
-	@Override
-	public int decodeDigits(ByteArrayInputStream bis) throws IllegalArgumentException, ParameterRangeInvalidException {
+	
+	public int decodeDigits(ByteArrayInputStream bis) throws IllegalArgumentException, ParameterException {
 		return super.decodeDigits(bis, this.gugLengthIndicator);
 	}
 
-	@Override
+	
 	public void setAddress(String address) {
 		// TODO Auto-generated method stub
 		super.setAddress(address);

@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
 
 /**
@@ -34,9 +34,9 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 	/**
 	 * 
 	 * @param representation
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 */
-	public CallingPartyNumberImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public CallingPartyNumberImpl(byte[] representation) throws ParameterException {
 		super(representation);
 		
 	}
@@ -49,9 +49,9 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 	/**
 	 * 
 	 * @param bis
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 */
-	public CallingPartyNumberImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public CallingPartyNumberImpl(ByteArrayInputStream bis) throws ParameterException {
 		super(bis);
 		
 	}
@@ -71,7 +71,7 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
 	 * ByteArrayInputStream)
 	 */
-	@Override
+	
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
 		int b = bis.read() & 0xff;
 
@@ -83,7 +83,7 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 		return 1;
 	}
 
-	@Override
+	
 	public int encodeHeader(ByteArrayOutputStream bos) {
 		doAddressPresentationRestricted();
 		return super.encodeHeader(bos);
@@ -95,7 +95,7 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
 	 * ByteArrayOutputStream)
 	 */
-	@Override
+	
 	public int encodeBody(ByteArrayOutputStream bos) {
 
 		int c = this.numberingPlanIndicator << 4;
@@ -131,7 +131,7 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 		}
 	}
 
-	@Override
+	
 	public int encodeDigits(ByteArrayOutputStream bos) {
 
 		if (this.addressRepresentationREstrictedIndicator == _APRI_NOT_AVAILABLE) {

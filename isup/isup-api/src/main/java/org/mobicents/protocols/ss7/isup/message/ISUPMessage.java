@@ -1,8 +1,6 @@
 package org.mobicents.protocols.ss7.isup.message;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ISUPTransaction;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
@@ -13,7 +11,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
  * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public interface ISUPMessage extends ISUPComponent {
+public interface ISUPMessage {
 
 	/**
 	 * Get mandatory field, CIC.
@@ -37,28 +35,22 @@ public interface ISUPMessage extends ISUPComponent {
 	/**
 	 * Adds parameter to this message.
 	 * @param param
-	 * @throws ParameterRangeInvalidException - thrown if parameter is not part of message.
+	 * @throws ParameterException - thrown if parameter is not part of message.
 	 */
-	public void addParameter(ISUPParameter param) throws ParameterRangeInvalidException;
+	public void addParameter(ISUPParameter param) throws ParameterException;
 	/**
 	 * Returns parameter with passed code.
 	 * @param parameterCode
 	 * @return
-	 * @throws ParameterRangeInvalidException - thrown if code does not match any parameter.
+	 * @throws ParameterException - thrown if code does not match any parameter.
 	 */
-	public ISUPParameter getParameter(int parameterCode) throws ParameterRangeInvalidException;
+	public ISUPParameter getParameter(int parameterCode) throws ParameterException;
 	/**
 	 * Removes parameter from this message.
 	 * @param parameterCode
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 */
-	public void removeParameter(int parameterCode) throws ParameterRangeInvalidException;
-	
-	/**
-	 * Return reference to transaction if it exists.
-	 * @return
-	 */
-	public ISUPTransaction getTransaction();
+	public void removeParameter(int parameterCode) throws ParameterException;
 
 	/**
 	 * @return <ul>
@@ -67,5 +59,7 @@ public interface ISUPMessage extends ISUPComponent {
 	 *         </ul>
 	 */
 	public boolean hasAllMandatoryParameters();
-
+	
+	
+	
 }

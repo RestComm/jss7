@@ -11,8 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
 
 /**
@@ -23,14 +22,14 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
  *         </a>
  * 
  */
-public class MessageTypeImpl implements ISUPParameter , MessageType{
+public class MessageTypeImpl extends AbstractISUPParameter implements MessageType{
 
 	//we even cant use -1, since it may be avlid value, ech, those binary protocols.
 	private int code;
 
-	public MessageTypeImpl(byte[] code) throws ParameterRangeInvalidException {
+	public MessageTypeImpl(byte[] code) throws ParameterException {
 		super();
-		this.decodeElement(code);
+		this.decode(code);
 	}
 	
 	
@@ -39,44 +38,19 @@ public class MessageTypeImpl implements ISUPParameter , MessageType{
 		this.code = code;
 	}
 
-//	/*
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see org.mobicents.isup.parameters.ISUPParameter#getTag()
-//	 */
-//	public byte[] getTag() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1)
-			throw new ParameterRangeInvalidException();
+			throw new ParameterException();
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		return new byte[] { (byte) this.code };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.isup.ISUPComponent#encodeElement(java.io.ByteArrayOutputStream
-	 * )
-	 */
-	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
+	public int encode(ByteArrayOutputStream bos) throws ParameterException {
 		bos.write(this.code);
 		return 1;
 	}
@@ -90,7 +64,7 @@ public class MessageTypeImpl implements ISUPParameter , MessageType{
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
-	@Override
+	
 	public String toString() {
 		
 		return super.toString()+"-"+this.code;

@@ -31,7 +31,7 @@ public class GRSTest extends MessageHarness {
 
 		//CircuitGroupResetMessage grs=new CircuitGroupResetMessageImpl(this,message);
 		CircuitGroupResetMessage grs=super.messageFactory.createGRS(0);
-		grs.decodeElement(message);
+		((AbstractISUPMessage)grs).decode(message,parameterFactory);
 		
 		try{
 			RangeAndStatus RS = (RangeAndStatus) grs.getParameter(RangeAndStatus._PARAMETER_CODE);
@@ -51,7 +51,7 @@ public class GRSTest extends MessageHarness {
 		}
 		
 	}
-	@Override
+	
 	protected byte[] getDefaultBody() {
 		//FIXME: for now we strip MTP part
 		byte[] message={
@@ -70,7 +70,7 @@ public class GRSTest extends MessageHarness {
 
 		return message;
 	}
-	@Override
+	
 	protected ISUPMessage getDefaultMessage() {
 		return super.messageFactory.createGRS(0);
 	}

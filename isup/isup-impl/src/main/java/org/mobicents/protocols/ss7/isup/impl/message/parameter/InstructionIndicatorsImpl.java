@@ -9,9 +9,8 @@
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
-import java.util.logging.Level;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.InstructionIndicators;
 
 /**
@@ -20,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.InstructionIndicators;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class InstructionIndicatorsImpl extends AbstractParameter implements InstructionIndicators {
+public class InstructionIndicatorsImpl extends AbstractISUPParameter implements InstructionIndicators {
 
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
@@ -39,9 +38,9 @@ public class InstructionIndicatorsImpl extends AbstractParameter implements Inst
 	private byte[] raw;
 	private boolean useAsRaw;
 
-	public InstructionIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public InstructionIndicatorsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public InstructionIndicatorsImpl() {
@@ -55,14 +54,14 @@ public class InstructionIndicatorsImpl extends AbstractParameter implements Inst
 	 * 
 	 * @param b
 	 * @param userAsRaw
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 */
-	public InstructionIndicatorsImpl(byte[] b, boolean userAsRaw) throws ParameterRangeInvalidException {
+	public InstructionIndicatorsImpl(byte[] b, boolean userAsRaw) throws ParameterException {
 		super();
 		this.raw = b;
 		this.useAsRaw = userAsRaw;
 		if (!userAsRaw)
-			decodeElement(b);
+			decode(b);
 	}
 
 	public InstructionIndicatorsImpl(boolean transitAtIntermediateExchangeIndicator, boolean releaseCallindicator, boolean sendNotificationIndicator, boolean discardMessageIndicator,
@@ -90,14 +89,9 @@ public class InstructionIndicatorsImpl extends AbstractParameter implements Inst
 		this.setBandInterworkingIndicator(bandInterworkingIndicator);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length < 1) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be greater than  0");
+			throw new ParameterException("byte[] must  not be null and length must  be greater than  0");
 		}
 
 		// XXX: Cheat, we read only defined in Q763 2 octets, rest we ignore...
@@ -118,9 +112,9 @@ public class InstructionIndicatorsImpl extends AbstractParameter implements Inst
 				} else if (index == 1) {
 					this.setBandInterworkingIndicator((v & 0x03));
 				} else {
-					if (logger.isLoggable(Level.FINEST)) {
-						logger.finest("Skipping octets with index[" + index + "] in " + this.getClass().getName() + ". This should not be called for us .... Instead one should use raw");
-					}
+					//if (logger.isLoggable(Level.FINEST)) {
+					//	logger.finest("Skipping octets with index[" + index + "] in " + this.getClass().getName() + ". This should not be called for us .... Instead one should use raw");
+					//}
 					break;
 				}
 				index++;
@@ -128,17 +122,12 @@ public class InstructionIndicatorsImpl extends AbstractParameter implements Inst
 			} while ((((v >> 7) & 0x01) != 0));
 		} catch (ArrayIndexOutOfBoundsException aioobe) {
 			aioobe.printStackTrace();
-			throw new ParameterRangeInvalidException("Failed to parse passed value due to wrong encoding.", aioobe);
+			throw new ParameterException("Failed to parse passed value due to wrong encoding.", aioobe);
 		}
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		if (this.useAsRaw) {
 			// FIXME: make sure we properly encode ext bit?
 			return this.raw;

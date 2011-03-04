@@ -29,7 +29,7 @@ public class CPGTest extends MessageHarness{
 
 		//CallProgressMessage cpg=new CallProgressMessageImpl(this,message);
 		CallProgressMessage cpg=super.messageFactory.createCPG(0);
-		cpg.decodeElement(message);
+		((AbstractISUPMessage)cpg).decode(message,parameterFactory);
 		assertNotNull(cpg.getParameter(EventInformation._PARAMETER_CODE));
 		assertNotNull(cpg.getParameter(BackwardCallIndicators._PARAMETER_CODE));
 		assertNotNull(cpg.getParameter(TransmissionMediumUsed._PARAMETER_CODE));
@@ -71,7 +71,7 @@ public class CPGTest extends MessageHarness{
 		
 	}
 	
-	@Override
+	
 	protected byte[] getDefaultBody() {
 		//FIXME: for now we strip MTP part
 		byte[] message={
@@ -112,7 +112,7 @@ public class CPGTest extends MessageHarness{
 		return message;
 	}
 
-	@Override
+	
 	protected ISUPMessage getDefaultMessage() {
 		return super.messageFactory.createCPG(0);
 	}

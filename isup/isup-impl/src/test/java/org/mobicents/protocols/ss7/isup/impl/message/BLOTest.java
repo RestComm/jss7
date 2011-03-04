@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 public class BLOTest extends MessageHarness{
 
 	
-	@Override
+	
 	protected byte[] getDefaultBody() {
 		byte[] message={
 				
@@ -31,7 +31,7 @@ public class BLOTest extends MessageHarness{
 		return message;
 	}
 
-	@Override
+	
 	protected ISUPMessage getDefaultMessage() {
 		return super.messageFactory.createBLO(0);
 	}

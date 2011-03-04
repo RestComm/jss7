@@ -13,8 +13,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.message.parameter.AbstractNumberInterface;
+import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.message.parameter.Number;
 
 /**
  * Start time:18:44:10 2009-03-27<br>
@@ -43,7 +43,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.AbstractNumberInterfac
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public abstract class AbstractNumber extends AbstractParameter implements AbstractNumberInterface{
+public abstract class AbstractNumber extends AbstractISUPParameter implements Number{
 
 	protected Logger logger = Logger.getLogger(this.getClass());
 	/**
@@ -72,17 +72,17 @@ public abstract class AbstractNumber extends AbstractParameter implements Abstra
 
 	}
 
-	public AbstractNumber(byte[] representation) throws ParameterRangeInvalidException {
+	public AbstractNumber(byte[] representation) throws ParameterException {
 		super();
 
-		decodeElement(representation);
+		decode(representation);
 
 	}
 
-	public AbstractNumber(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public AbstractNumber(ByteArrayInputStream bis) throws ParameterException {
 		super();
 
-		this.decodeElement(bis);
+		this.decode(bis);
 	}
 
 	public AbstractNumber(String address) {
@@ -94,13 +94,13 @@ public abstract class AbstractNumber extends AbstractParameter implements Abstra
 		this.setAddress(address);
 	}
 
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		ByteArrayInputStream bis = new ByteArrayInputStream(b);
 
-		return this.decodeElement(bis);
+		return this.decode(bis);
 	}
 
-	protected int decodeElement(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	protected int decode(ByteArrayInputStream bis) throws ParameterException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("[" + this.getClass().getSimpleName() + "]Decoding header");
 		}
@@ -122,7 +122,7 @@ public abstract class AbstractNumber extends AbstractParameter implements Abstra
 		return count;
 	}
 
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 		if (logger.isDebugEnabled()) {
@@ -146,11 +146,16 @@ public abstract class AbstractNumber extends AbstractParameter implements Abstra
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		// out.write(tag);
 		// Util.encodeLength(count, out);
-		out.write(bos.toByteArray());
+		try{
+			out.write(bos.toByteArray());
+		}catch(IOException e)
+		{
+			throw new ParameterException(e);
+		}
 		return out.toByteArray();
 	}
 
-	public int encodeElement(ByteArrayOutputStream out) throws IOException {
+	public int encode(ByteArrayOutputStream out) throws ParameterException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 		if (logger.isDebugEnabled()) {
@@ -174,7 +179,12 @@ public abstract class AbstractNumber extends AbstractParameter implements Abstra
 		// count += tag.length;
 		// out.write(tag);
 		// count += Util.encodeLength(count, out);
-		out.write(bos.toByteArray());
+		try{
+			out.write(bos.toByteArray());
+		}catch(IOException e)
+		{
+			throw new ParameterException(e);
+		}
 		return count;
 	}
 
@@ -190,9 +200,9 @@ public abstract class AbstractNumber extends AbstractParameter implements Abstra
 	 * @throws IllegalArgumentException
 	 *             - thrown if read error is encountered.
 	 */
-	public int decodeHeader(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public int decodeHeader(ByteArrayInputStream bis) throws ParameterException {
 		if (bis.available() == 0) {
-			throw new ParameterRangeInvalidException("No more data to read.");
+			throw new ParameterException("No more data to read.");
 		}
 		int b = bis.read() & 0xff;
 
@@ -213,7 +223,7 @@ public abstract class AbstractNumber extends AbstractParameter implements Abstra
 	 * @throws IllegalArgumentException
 	 *             - thrown if read error is encountered.
 	 */
-	public abstract int decodeBody(ByteArrayInputStream bis) throws ParameterRangeInvalidException;
+	public abstract int decodeBody(ByteArrayInputStream bis) throws ParameterException;
 
 	/**
 	 * This method is used in constructor that takes byte[] or
@@ -225,10 +235,10 @@ public abstract class AbstractNumber extends AbstractParameter implements Abstra
 	 * @throws IllegalArgumentException
 	 *             - thrown if read error is encountered.
 	 */
-	public int decodeDigits(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public int decodeDigits(ByteArrayInputStream bis) throws ParameterException {
 
 		if (bis.available() == 0) {
-			throw new ParameterRangeInvalidException("No more data to read.");
+			throw new ParameterException("No more data to read.");
 		}
 		// FIXME: we could spare time by passing length arg - or getting it from
 		// bis??
@@ -254,14 +264,13 @@ public abstract class AbstractNumber extends AbstractParameter implements Abstra
 			}
 			this.setAddress(address);
 		} catch (Exception e) {
-			throw new ParameterRangeInvalidException(e);
+			throw new ParameterException(e);
 		}
 		return count;
 	}
 
 	/**
-	 * This method is used in constructor that takes byte[] or
-	 * ByteArrayInputStream as parameter. Decodes digits part. It reads exactly
+	 *  Decodes digits part. It reads exactly
 	 * octetsCount number of octets.
 	 * 
 	 * @param bis
@@ -270,15 +279,16 @@ public abstract class AbstractNumber extends AbstractParameter implements Abstra
 	 * @return
 	 * @throws IllegalArgumentException
 	 */
-	public int decodeDigits(ByteArrayInputStream bis, int octetsCount) throws ParameterRangeInvalidException {
+	public int decodeDigits(ByteArrayInputStream bis, int octetsCount) throws ParameterException {
 		if (bis.available() == 0) {
-			throw new ParameterRangeInvalidException("No more data to read.");
+			throw new ParameterException("No more data to read.");
 		}
 		int count = 0;
 		try {
 			address = "";
 			int b = 0;
-			while (octetsCount != count - 1 && bis.available() - 1 > 0) {
+			//while (octetsCount != count - 1 && bis.available() - 1 > 0) {
+			while (octetsCount  - 1 != count && bis.available() - 1 > 0) {
 				b = (byte) bis.read();
 				count++;
 
@@ -298,16 +308,16 @@ public abstract class AbstractNumber extends AbstractParameter implements Abstra
 			}
 			this.setAddress(address);
 		} catch (Exception e) {
-			throw new ParameterRangeInvalidException(e);
+			throw new ParameterException(e);
 		}
 		if (octetsCount != count) {
-			throw new ParameterRangeInvalidException("Failed to read [" + octetsCount + "], encountered only [" + count + "]");
+			throw new ParameterException("Failed to read [" + octetsCount + "], encountered only [" + count + "]");
 		}
 		return count;
 	}
 
 	/**
-	 * This method is used in encodeElement method. It encodes header part (1 or
+	 * This method is used in encode method. It encodes header part (1 or
 	 * 2 bytes usually.)
 	 * 
 	 * @param bis
@@ -325,7 +335,7 @@ public abstract class AbstractNumber extends AbstractParameter implements Abstra
 	}
 
 	/**
-	 * This methods is used in encodeElement method. It encodes body. Each
+	 * This methods is used in encode method. It encodes body. Each
 	 * subclass shoudl provide implementetaion.
 	 * 
 	 * @param bis
@@ -335,7 +345,7 @@ public abstract class AbstractNumber extends AbstractParameter implements Abstra
 	public abstract int encodeBody(ByteArrayOutputStream bos);
 
 	/**
-	 * This method is used in encodeElement. Encodes digits part. This is
+	 * This method is used in encode. Encodes digits part. This is
 	 * because
 	 * 
 	 * @param bos
@@ -385,7 +395,6 @@ public abstract class AbstractNumber extends AbstractParameter implements Abstra
 		this.address = address;
 
 		// lets compute odd flag
-		// FIXME: Oleg is this correct?
 		oddFlag = this.address.length() % 2;
 	}
 

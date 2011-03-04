@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.ByteArrayInputStream;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.SCFID;
 
 /**
@@ -30,12 +30,12 @@ public class SCFIDImpl extends NetworkRoutingNumberImpl implements SCFID{
 		
 	}
 
-	public SCFIDImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public SCFIDImpl(byte[] representation) throws ParameterException {
 		super(representation);
 		
 	}
 
-	public SCFIDImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public SCFIDImpl(ByteArrayInputStream bis) throws ParameterException {
 		super(bis);
 		
 	}

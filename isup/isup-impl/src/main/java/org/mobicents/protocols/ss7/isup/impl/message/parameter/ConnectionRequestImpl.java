@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.ConnectionRequest;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ConnectionRequest;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class ConnectionRequestImpl extends AbstractParameter implements ConnectionRequest {
+public class ConnectionRequestImpl extends AbstractISUPParameter implements ConnectionRequest {
 
 	private int localReference;
 	// should we use here SignalingPointCode class? XXx
@@ -29,8 +29,8 @@ public class ConnectionRequestImpl extends AbstractParameter implements Connecti
 	private boolean creditSet = false;
 	private int credit;
 
-	public ConnectionRequestImpl(byte[] b) throws ParameterRangeInvalidException {
-		decodeElement(b);
+	public ConnectionRequestImpl(byte[] b) throws ParameterException {
+		decode(b);
 	}
 
 	public ConnectionRequestImpl() {
@@ -46,22 +46,17 @@ public class ConnectionRequestImpl extends AbstractParameter implements Connecti
 		this.credit = credit;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null) {
-			throw new ParameterRangeInvalidException("byte[] must not be null");
+			throw new ParameterException("byte[] must not be null");
 		}
 
-		if (_PROTOCOL_VERSION == 1 && b.length != 7) {
-			throw new ParameterRangeInvalidException("For protocol version 1 length of this parameter must be 7 octets");
-		}
+//		if (_PROTOCOL_VERSION == 1 && b.length != 7) {
+//			throw new ParameterException("For protocol version 1 length of this parameter must be 7 octets");
+//		}
 
-		if (b.length < 5 || b.length > 7) {
-			throw new ParameterRangeInvalidException("byte[] length must be <5,7>");
+		if (b.length != 5 && b.length != 7) {
+			throw new ParameterException("byte[] length must be 5 or 7");
 		}
 
 		// FIXME: This is not mentioned, is it inverted as usually or not ?
@@ -81,12 +76,7 @@ public class ConnectionRequestImpl extends AbstractParameter implements Connecti
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		byte[] b = null;
 		if (this.creditSet || this.protocolClassSet) {
 			b = new byte[7];

@@ -47,7 +47,7 @@ public class CGBTest extends MessageHarness {
 
 		//CircuitGroupBlockingMessage cgb=new CircuitGroupBlockingMessageImpl(this,message);
 		CircuitGroupBlockingMessage cgb=super.messageFactory.createCGB(0);
-		cgb.decodeElement(message);
+		((AbstractISUPMessage)cgb).decode(message,parameterFactory);
 
 		
 		try{
@@ -79,7 +79,7 @@ public class CGBTest extends MessageHarness {
 		}
 		
 	}
-	@Override
+	
 	protected byte[] getDefaultBody() {
 		//FIXME: for now we strip MTP part
 		byte[] message={
@@ -100,7 +100,7 @@ public class CGBTest extends MessageHarness {
 		return message;
 	}
 
-	@Override
+	
 	protected ISUPMessage getDefaultMessage() {
 		return super.messageFactory.createCGB(0);
 	}

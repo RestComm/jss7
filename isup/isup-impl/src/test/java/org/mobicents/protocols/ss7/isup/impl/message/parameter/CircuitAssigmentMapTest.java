@@ -11,8 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:14:11:03 2009-04-23<br>
@@ -44,7 +43,7 @@ public class CircuitAssigmentMapTest extends ParameterHarness {
 		return body;
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		CircuitAssigmentMapImpl bci = new CircuitAssigmentMapImpl(getBody1());
 	
 		int format = 120;
@@ -58,7 +57,7 @@ public class CircuitAssigmentMapTest extends ParameterHarness {
 	}
 
 	
-	public void testBoundries() throws IOException, ParameterRangeInvalidException
+	public void testBoundries() throws IOException, ParameterException
 	{
 		CircuitAssigmentMapImpl bci = new CircuitAssigmentMapImpl(getBody1());
 		
@@ -92,7 +91,7 @@ public class CircuitAssigmentMapTest extends ParameterHarness {
 			
 		}
 	}
-	public void testEnableDissable() throws IOException, ParameterRangeInvalidException
+	public void testEnableDissable() throws IOException, ParameterException
 	{
 		CircuitAssigmentMapImpl bci = new CircuitAssigmentMapImpl(getBody1());
 		
@@ -101,7 +100,7 @@ public class CircuitAssigmentMapTest extends ParameterHarness {
 		assertTrue("Circuit was not enabled, it should not.", bci.isCircuitEnabled(30));
 		bci.disableCircuit(30);
 		assertFalse("Circuit was not disabled, it should not.", bci.isCircuitEnabled(30));
-		super.makeCompare(getBody1(), bci.encodeElement());
+		super.makeCompare(getBody1(), bci.encode());
 		
 	}
 	
@@ -112,8 +111,8 @@ public class CircuitAssigmentMapTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
+	
+	public AbstractISUPParameter getTestedComponent() throws ParameterException {
 		return new CircuitAssigmentMapImpl(new byte[5]);
 	}
 

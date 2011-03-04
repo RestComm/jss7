@@ -12,7 +12,7 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public interface LocationNumber extends AbstractNAINumberInterface, AbstractNumberInterface, ISUPParameter {
+public interface LocationNumber extends NAINumber, Number, ISUPParameter {
 	public static final int _PARAMETER_CODE = 0x3F;
 	/**
 	 * numbering plan indicator indicator value. See Q.763 - 3.9d

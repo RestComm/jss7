@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.MCIDRequestIndicators;
 
 /**
@@ -20,7 +20,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MCIDRequestIndicators;
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  * 
  */
-public class MCIDRequestIndicatorsImpl extends AbstractParameter implements MCIDRequestIndicators {
+public class MCIDRequestIndicatorsImpl extends AbstractISUPParameter implements MCIDRequestIndicators {
 
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
@@ -28,9 +28,9 @@ public class MCIDRequestIndicatorsImpl extends AbstractParameter implements MCID
 	private boolean mcidRequestIndicator;
 	private boolean holdingIndicator;
 
-	public MCIDRequestIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public MCIDRequestIndicatorsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public MCIDRequestIndicatorsImpl() {
@@ -44,14 +44,9 @@ public class MCIDRequestIndicatorsImpl extends AbstractParameter implements MCID
 		this.holdingIndicator = holdingRequested;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 1");
+			throw new ParameterException("byte[] must  not be null and length must  be 1");
 		}
 
 		this.mcidRequestIndicator = (b[0] & 0x01) == _TURN_ON;
@@ -59,12 +54,7 @@ public class MCIDRequestIndicatorsImpl extends AbstractParameter implements MCID
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		int b0 = 0;
 
 		b0 |= (this.mcidRequestIndicator ? _TURN_ON : _TURN_OFF);

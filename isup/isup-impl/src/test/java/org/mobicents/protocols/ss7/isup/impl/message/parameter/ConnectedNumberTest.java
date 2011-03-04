@@ -12,8 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.ConnectedNumber;
 
 /**
@@ -67,7 +66,7 @@ public class ConnectedNumberTest extends ParameterHarness {
 		return bos.toByteArray();
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		ConnectedNumberImpl bci = new ConnectedNumberImpl(getBody1());
 
 		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getNatureOfAddressIndicator", "getScreeningIndicator", "isOddFlag", "getAddress" };
@@ -76,7 +75,7 @@ public class ConnectedNumberTest extends ParameterHarness {
 		super.testValues(bci, methodNames, expectedValues);
 	}
 
-	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		ConnectedNumberImpl bci = new ConnectedNumberImpl(getBody2());
 		
 		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getNatureOfAddressIndicator", "getScreeningIndicator", "isOddFlag", "getAddress" };
@@ -91,8 +90,8 @@ public class ConnectedNumberTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() {
+	
+	public AbstractISUPParameter getTestedComponent() {
 		return new ConnectedNumberImpl(1, "1", 1, 1, 1);
 	}
 

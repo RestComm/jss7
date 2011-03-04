@@ -6,92 +6,122 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import java.util.Map;
+import java.util.Set;
+
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractISUPParameter;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.SubsequentAddressMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
+import org.mobicents.protocols.ss7.isup.message.parameter.SubsequentNumber;
 
 /**
  * Start time:00:00:57 2009-09-07<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
- *         </a>
+ * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public class SubsequentAddressMessageImpl extends ISUPMessageImpl implements SubsequentAddressMessage {
 
-	/**
-	 * 	
-	 * @param source
-	 * @throws ParameterRangeInvalidException
-	 */
-	public SubsequentAddressMessageImpl(Object source){
-		super(source);
-		
+	public static final MessageType _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
+	private static final int _MANDATORY_VAR_COUNT = 1;
+
+	static final int _INDEX_F_MessageType = 0;
+
+	static final int _INDEX_V_SubsequentNumber = 0;
+
+	static final int _INDEX_O_EndOfOptionalParameters = 0;
+
+	SubsequentAddressMessageImpl(Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes,
+			Map<Integer, Integer> mandatoryCode2Index, Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
+		super(mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
+
+		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
+		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
 	}
 
-	/**
-	 * 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryVariableBody
+	 * (byte[], int)
 	 */
-	public SubsequentAddressMessageImpl() {
-		
+	
+	protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory,byte[] parameterBody, int parameterIndex) throws ParameterException {
+		switch (parameterIndex) {
+		case _INDEX_V_SubsequentNumber:
+			SubsequentNumber subsequentNumber = parameterFactory.createSubsequentNumber();
+			((AbstractISUPParameter)subsequentNumber).decode(parameterBody);
+			this.setSubsequentNumber(subsequentNumber);
+			break;
+		default:
+			throw new ParameterException("Unrecognized parameter index for mandatory variable part: " + parameterIndex);
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryParameters(byte[], int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeOptionalBody(byte
+	 * [], byte)
 	 */
-	@Override
-	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
-		// TODO Auto-generated method stub
-		return 0;
+	
+	protected void decodeOptionalBody(ISUPParameterFactory parameterFactory,byte[] parameterBody, byte parameterCode) throws ParameterException {
+		throw new UnsupportedOperationException("This message does not support optional parameters.");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryVariableBody(byte[], int)
-	 */
-	@Override
-	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeOptionalBody(byte[], byte)
-	 */
-	@Override
-	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getMessageType()
-	 */
-	@Override
-	public MessageType getMessageType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getNumberOfMandatoryVariableLengthParameters()
-	 */
-	@Override
+	
 	protected int getNumberOfMandatoryVariableLengthParameters() {
-		// TODO Auto-generated method stub
-		return 0;
+		return _MANDATORY_VAR_COUNT;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#hasAllMandatoryParameters()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.isup.ISUPMessageImpl#hasAllMandatoryParameters
+	 * ()
 	 */
-	@Override
+	
 	public boolean hasAllMandatoryParameters() {
-		throw new UnsupportedOperationException();
-	}
-	@Override
-	protected boolean optionalPartIsPossible() {
-		
-		throw new UnsupportedOperationException();
+		if (super.f_Parameters.get(_INDEX_V_SubsequentNumber) != null) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible
+	 * ()
+	 */
+	
+	protected boolean optionalPartIsPossible() {
+		return false;
+	}
+
+	
+	public void setSubsequentNumber(SubsequentNumber value) {
+		super.v_Parameters.put(_INDEX_V_SubsequentNumber,value);
+		
+	}
+
+	
+	public SubsequentNumber getSubsequentNumber() {
+		return (SubsequentNumber)super.v_Parameters.get(_INDEX_V_SubsequentNumber);
+	}
+
+	
+	public MessageType getMessageType() {
+		return this._MESSAGE_TYPE;
+	}
+
+	
 }

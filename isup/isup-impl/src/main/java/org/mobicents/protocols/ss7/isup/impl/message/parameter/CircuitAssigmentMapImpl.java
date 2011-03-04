@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitAssigmentMap;
 
 /**
@@ -20,21 +20,17 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CircuitAssigmentMap;
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class CircuitAssigmentMapImpl extends AbstractParameter implements CircuitAssigmentMap{
+public class CircuitAssigmentMapImpl extends AbstractISUPParameter implements CircuitAssigmentMap{
 
-	
-	
-	
-
-	private static final int _CIRCUIT_ENABLED = 1;
+	private static final int _CIRCUIT_ENABLED = 0x01;
 	
 	private int mapType = 0;
 
 	private int mapFormat = 0;
 
-	public CircuitAssigmentMapImpl(byte[] b) throws ParameterRangeInvalidException {
+	public CircuitAssigmentMapImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public CircuitAssigmentMapImpl(int mapType, int mapFormat) {
@@ -48,14 +44,9 @@ public class CircuitAssigmentMapImpl extends AbstractParameter implements Circui
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 5) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 5");
+			throw new ParameterException("byte[] must  not be null and length must  be 5");
 		}
 
 		this.mapType = b[0] & 0x3F;
@@ -67,12 +58,7 @@ public class CircuitAssigmentMapImpl extends AbstractParameter implements Circui
 		return 5;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		byte[] b = new byte[5];
 		b[0] = (byte) (this.mapType & 0x3F);
@@ -112,7 +98,7 @@ public class CircuitAssigmentMapImpl extends AbstractParameter implements Circui
 			throw new IllegalArgumentException("Cicruit number is out of range[" + circuitNumber + "] <1,31>");
 		}
 
-		this.mapFormat |= 0x01 << (circuitNumber-1);
+		this.mapFormat |= _CIRCUIT_ENABLED << (circuitNumber-1);
 	}
 
 	/**

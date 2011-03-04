@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumUsed;
 
 /**
@@ -19,13 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumUsed
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class TransmissionMediumUsedImpl extends AbstractParameter implements TransmissionMediumUsed {
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
+public class TransmissionMediumUsedImpl extends AbstractISUPParameter implements TransmissionMediumUsed {
 
 	public TransmissionMediumUsedImpl(int transimissionMediumUsed) {
 		super();
@@ -37,23 +31,19 @@ public class TransmissionMediumUsedImpl extends AbstractParameter implements Tra
 		
 	}
 
-	public TransmissionMediumUsedImpl(byte[] b) throws ParameterRangeInvalidException {
+	public TransmissionMediumUsedImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	// Defualt indicate speech
 	private int transimissionMediumUsed;
 
 	// FIXME: again wrapper class but hell there is a lot of statics....
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 1) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 1");
+			throw new ParameterException("byte[] must  not be null and length must  be 1");
 		}
 
 		this.transimissionMediumUsed = b[0];
@@ -61,12 +51,7 @@ public class TransmissionMediumUsedImpl extends AbstractParameter implements Tra
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		return new byte[] { (byte) this.transimissionMediumUsed };
 	}
 

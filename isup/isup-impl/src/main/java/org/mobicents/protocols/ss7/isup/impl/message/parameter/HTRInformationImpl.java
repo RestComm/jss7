@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.HTRInformation;
 
 /**
@@ -28,12 +28,12 @@ public class HTRInformationImpl extends AbstractNAINumber implements HTRInformat
 
 	private int numberingPlanIndicator;
 
-	public HTRInformationImpl(byte[] representation) throws ParameterRangeInvalidException {
+	public HTRInformationImpl(byte[] representation) throws ParameterException {
 		super(representation);
 		
 	}
 
-	public HTRInformationImpl(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+	public HTRInformationImpl(ByteArrayInputStream bis) throws ParameterException {
 		super(bis);
 		
 	}
@@ -54,7 +54,7 @@ public class HTRInformationImpl extends AbstractNAINumber implements HTRInformat
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
 	 * ByteArrayInputStream)
 	 */
-	@Override
+	
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
 		int b = bis.read() & 0xff;
 
@@ -68,7 +68,7 @@ public class HTRInformationImpl extends AbstractNAINumber implements HTRInformat
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
 	 * ByteArrayOutputStream)
 	 */
-	@Override
+	
 	public int encodeBody(ByteArrayOutputStream bos) {
 		int c = (this.numberingPlanIndicator & 0x07) << 4;
 		bos.write(c);

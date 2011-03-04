@@ -1,5 +1,7 @@
 package org.mobicents.protocols.ss7.isup.message;
 
+import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+
 /**
  * Start time:09:54:07 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
@@ -58,4 +60,8 @@ public interface ConfusionMessage extends ISUPMessage {
 	 * Confussion Message, Q.763 reference table 26 <br> {@link ConfusionMessage}
 	 */
 	public static final int MESSAGE_CODE = 0x2F;
+	
+	public void setCauseIndicators(CauseIndicators ci);
+	
+	public CauseIndicators getCauseIndicators();
 }

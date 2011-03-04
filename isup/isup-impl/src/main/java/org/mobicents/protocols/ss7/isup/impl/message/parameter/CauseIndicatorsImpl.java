@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 
 /**
@@ -20,7 +20,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class CauseIndicatorsImpl extends AbstractParameter implements CauseIndicators {
+public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseIndicators {
 
 	// FIXME: we ignore EXT fields , is this ok ?
 	
@@ -34,11 +34,6 @@ public class CauseIndicatorsImpl extends AbstractParameter implements CauseIndic
 		
 	}
 
-	public CauseIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
-		super();
-		decodeElement(b);
-	}
-
 	public CauseIndicatorsImpl(int codingStandard, int location, int causeValue, byte[] diagnostics) {
 		super();
 		this.setCodingStandard(codingStandard);
@@ -47,19 +42,14 @@ public class CauseIndicatorsImpl extends AbstractParameter implements CauseIndic
 		this.diagnostics = diagnostics;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 
 		// FIXME: there are ext bits, does this mean this param can be from 1 to
 		// 3+ bytes?
 		// but trace shows that extension bit is always on... does this mean
 		// that we can have mutliptle indicators?
 		if (b == null || b.length < 2) {
-			throw new ParameterRangeInvalidException("byte[] must not be null or has size less than 2");
+			throw new ParameterException("byte[] must not be null or has size less than 2");
 		}
 		// Used because of Q.850 - we must ignore recomendation
 		int index = 0;
@@ -81,7 +71,7 @@ public class CauseIndicatorsImpl extends AbstractParameter implements CauseIndic
 			return 2;
 		} else {
 			if ((b.length - 2) % 3 != 0) {
-				throw new ParameterRangeInvalidException("Diagnostics part  must have 3xN bytes, it has: " + (b.length - 2));
+				throw new ParameterException("Diagnostics part  must have 3xN bytes, it has: " + (b.length - 2));
 			}
 
 			int byteCounter = 2;
@@ -98,35 +88,32 @@ public class CauseIndicatorsImpl extends AbstractParameter implements CauseIndic
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 		int v = this.location & 0x0F;
 		v |= (byte) ((this.codingStandard & 0x03) << 5) | (0x01 << 7);
 		bos.write(v);
 		bos.write(this.causeValue | (0x01 << 7));
-		if (this.diagnostics != null)
-			bos.write(this.diagnostics);
+		if (this.diagnostics != null){
+			try {
+				bos.write(this.diagnostics);
+			} catch (IOException e) {
+				throw new ParameterException(e);
+			}
+		}
 		byte[] b = bos.toByteArray();
 
 		return b;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.isup.ISUPComponent#encodeElement(java.io.ByteArrayOutputStream
-	 * )
-	 */
-	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
-		byte[] b = this.encodeElement();
-		bos.write(b);
+	public int encode(ByteArrayOutputStream bos) throws ParameterException {
+		byte[] b = this.encode();
+		try {
+			bos.write(b);
+		} catch (IOException e) {
+			throw new ParameterException(e);
+		}
 		return b.length;
 	}
 

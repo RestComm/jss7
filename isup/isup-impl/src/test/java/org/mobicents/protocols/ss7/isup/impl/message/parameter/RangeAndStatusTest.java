@@ -13,10 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
-import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionNumber;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * Start time:14:11:03 2009-04-23<br>
@@ -36,7 +33,7 @@ public class RangeAndStatusTest extends ParameterHarness {
 	}
 
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		RangeAndStatusImpl bci = new RangeAndStatusImpl(getBody((byte)12,new byte[]{0x0F,0x04}));
 		//not a best here. ech.
 		String[] methodNames = { "getRange", 
@@ -47,7 +44,7 @@ public class RangeAndStatusTest extends ParameterHarness {
 		super.testValues(bci, methodNames, expectedValues);
 	}
 
-	public void testAffectedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testAffectedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		RangeAndStatusImpl bci = new RangeAndStatusImpl(getBody((byte)12,new byte[]{0x0F,0x04}));
 		assertEquals((byte)12, bci.getRange());
 		
@@ -91,8 +88,8 @@ public class RangeAndStatusTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() {
+	
+	public AbstractISUPParameter getTestedComponent() {
 		return new RangeAndStatusImpl();
 	}
 

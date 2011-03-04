@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.InformationRequestIndicators;
 
 /**
@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.InformationRequestIndi
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class InformationRequestIndicatorsImpl extends AbstractParameter implements InformationRequestIndicators {
+public class InformationRequestIndicatorsImpl extends AbstractISUPParameter implements InformationRequestIndicators {
 
 	private final static int _TURN_ON = 1;
 	private final static int _TURN_OFF = 0;
@@ -33,9 +33,9 @@ public class InformationRequestIndicatorsImpl extends AbstractParameter implemen
 	// FIXME: should we carre about this?
 	private int reserved;
 
-	public InformationRequestIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public InformationRequestIndicatorsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public InformationRequestIndicatorsImpl() {
@@ -54,12 +54,7 @@ public class InformationRequestIndicatorsImpl extends AbstractParameter implemen
 		this.reserved = reserved;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 2) {
 			throw new IllegalArgumentException("byte[] must  not be null and length must  be 2");
 		}
@@ -73,12 +68,7 @@ public class InformationRequestIndicatorsImpl extends AbstractParameter implemen
 		return 2;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		int b0 = 0;
 		int b1 = 0;
 		b0 |= this.callingPartAddressRequestIndicator ? _TURN_ON : _TURN_OFF;

@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
 
 /**
@@ -19,15 +19,15 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class GenericDigitsImpl extends AbstractParameter implements GenericDigits {
+public class GenericDigitsImpl extends AbstractISUPParameter implements GenericDigits {
 
 	private int encodingScheme;
 	private int typeOfDigits;
 	private int[] digits;
 
-	public GenericDigitsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public GenericDigitsImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public GenericDigitsImpl(int encodingScheme, int typeOfDigits, int[] digits) {
@@ -42,14 +42,9 @@ public class GenericDigitsImpl extends AbstractParameter implements GenericDigit
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length < 2) {
-			throw new ParameterRangeInvalidException("byte[] must not be null or has size less than 2");
+			throw new ParameterException("byte[] must not be null or has size less than 2");
 		}
 		this.typeOfDigits = b[0] & 0x1F;
 		this.encodingScheme = (b[0] >> 5) & 0x07;
@@ -61,12 +56,7 @@ public class GenericDigitsImpl extends AbstractParameter implements GenericDigit
 		return 1 + this.digits.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		byte[] b = new byte[this.digits.length + 1];
 

@@ -13,45 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.TransactionKey;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CCSSImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallReferenceImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallingPartyCategoryImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallingPartyNumberImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.ClosedUserGroupInterlockCodeImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.ConnectionRequestImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.ForwardCallIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.ForwardGVNSImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericDigitsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNotificationIndicatorImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNumberImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericReferenceImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.LocationNumberImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.MLPPPrecedenceImpl;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractISUPParameter;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.NatureOfConnectionIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.NetworkManagementControlsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.NetworkSpecificFacilityImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.OptionalForwardCallIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.OriginalCalledNumberImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.OriginatingISCPointCodeImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.ParameterCompatibilityInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.PropagationDelayCounterImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectingNumberImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectionInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.RemoteOperationsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.ServiceActivationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.TransitNetworkSelectionImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.TransmissionMediumRequirementImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserServiceInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserServiceInformationPrimeImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserTeleserviceInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserToUserIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserToUserInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.accessTransport.AccessTransportImpl;
 import org.mobicents.protocols.ss7.isup.message.InitialAddressMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CCSS;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
@@ -102,46 +67,46 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 	private static final int _MANDATORY_VAR_COUNT = 1;
 	// mandatory fixed L
-	 static final int _INDEX_F_MessageType = 0;
-	 static final int _INDEX_F_NatureOfConnectionIndicators = 1;
-	 static final int _INDEX_F_ForwardCallIndicators = 2;
-	 static final int _INDEX_F_CallingPartyCategory = 3;
-	 static final int _INDEX_F_TransmissionMediumRequirement = 4;
+	static final int _INDEX_F_MessageType = 0;
+	static final int _INDEX_F_NatureOfConnectionIndicators = 1;
+	static final int _INDEX_F_ForwardCallIndicators = 2;
+	static final int _INDEX_F_CallingPartyCategory = 3;
+	static final int _INDEX_F_TransmissionMediumRequirement = 4;
 	// mandatory variable L
-	 static final int _INDEX_V_CalledPartyNumber = 0;
+	static final int _INDEX_V_CalledPartyNumber = 0;
 	// optional
-	 static final int _INDEX_O_TransitNetworkSelection = 0;
-	 static final int _INDEX_O_CallReference = 1;
-	 static final int _INDEX_O_CallingPartyNumber = 2;
-	 static final int _INDEX_O_OptionalForwardCallIndicators = 3;
-	 static final int _INDEX_O_RedirectingNumber = 4;
-	 static final int _INDEX_O_RedirectionInformation = 5;
-	 static final int _INDEX_O_ClosedUserGroupInterlockCode = 6;
-	 static final int _INDEX_O_ConnectionRequest = 7;
-	 static final int _INDEX_O_OriginalCalledNumber = 8;
-	 static final int _INDEX_O_UserToUserInformation = 9;
-	 static final int _INDEX_O_AccessTransport = 10;
-	 static final int _INDEX_O_UserServiceInformation = 11;
-	 static final int _INDEX_O_User2UIndicators = 12;
-	 static final int _INDEX_O_GenericNumber = 13;
-	 static final int _INDEX_O_PropagationDelayCounter = 14;
-	 static final int _INDEX_O_UserServiceInformationPrime = 15;
-	 static final int _INDEX_O_NetworkSPecificFacility = 16;
-	 static final int _INDEX_O_GenericDigits = 17;
-	 static final int _INDEX_O_OriginatingISCPointCode = 18;
-	 static final int _INDEX_O_UserTeleserviceInformation = 19;
-	 static final int _INDEX_O_RemoteOperations = 20;
-	 static final int _INDEX_O_ParameterCompatibilityInformation = 21;
-	 static final int _INDEX_O_GenericNotificationIndicator = 22;
-	 static final int _INDEX_O_ServiceActivation = 23;
-	 static final int _INDEX_O_GenericReference = 24;
-	 static final int _INDEX_O_MLPPPrecedence = 25;
-	 static final int _INDEX_O_TransimissionMediumRequierementPrime = 26;
-	 static final int _INDEX_O_LocationNumber = 27;
-	 static final int _INDEX_O_ForwardGVNS = 28;
-	 static final int _INDEX_O_CCSS = 29;
-	 static final int _INDEX_O_NetworkManagementControls = 30;
-	 static final int _INDEX_O_EndOfOptionalParameters = 31;
+	static final int _INDEX_O_TransitNetworkSelection = 0;
+	static final int _INDEX_O_CallReference = 1;
+	static final int _INDEX_O_CallingPartyNumber = 2;
+	static final int _INDEX_O_OptionalForwardCallIndicators = 3;
+	static final int _INDEX_O_RedirectingNumber = 4;
+	static final int _INDEX_O_RedirectionInformation = 5;
+	static final int _INDEX_O_ClosedUserGroupInterlockCode = 6;
+	static final int _INDEX_O_ConnectionRequest = 7;
+	static final int _INDEX_O_OriginalCalledNumber = 8;
+	static final int _INDEX_O_UserToUserInformation = 9;
+	static final int _INDEX_O_AccessTransport = 10;
+	static final int _INDEX_O_UserServiceInformation = 11;
+	static final int _INDEX_O_User2UIndicators = 12;
+	static final int _INDEX_O_GenericNumber = 13;
+	static final int _INDEX_O_PropagationDelayCounter = 14;
+	static final int _INDEX_O_UserServiceInformationPrime = 15;
+	static final int _INDEX_O_NetworkSPecificFacility = 16;
+	static final int _INDEX_O_GenericDigits = 17;
+	static final int _INDEX_O_OriginatingISCPointCode = 18;
+	static final int _INDEX_O_UserTeleserviceInformation = 19;
+	static final int _INDEX_O_RemoteOperations = 20;
+	static final int _INDEX_O_ParameterCompatibilityInformation = 21;
+	static final int _INDEX_O_GenericNotificationIndicator = 22;
+	static final int _INDEX_O_ServiceActivation = 23;
+	static final int _INDEX_O_GenericReference = 24;
+	static final int _INDEX_O_MLPPPrecedence = 25;
+	static final int _INDEX_O_TransimissionMediumRequierementPrime = 26;
+	static final int _INDEX_O_LocationNumber = 27;
+	static final int _INDEX_O_ForwardGVNS = 28;
+	static final int _INDEX_O_CCSS = 29;
+	static final int _INDEX_O_NetworkManagementControls = 30;
+	static final int _INDEX_O_EndOfOptionalParameters = 31;
 
 	protected static final List<Integer> mandatoryParam;
 	static {
@@ -156,35 +121,15 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 
 	}
 
-	//default, ident part of tx.
-	static final String IDENT="IAM";
-	
-
-	InitialAddressMessageImpl(Object source, byte[] b, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
-			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) throws ParameterRangeInvalidException {
-		this(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
-		decodeElement(b);
-
-	}
-
-	InitialAddressMessageImpl(Object source, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
-			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
-		super(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
+	InitialAddressMessageImpl(Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes,
+			Map<Integer, Integer> mandatoryCode2Index, Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
+		super(mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
 
 		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
 		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
 
 	}
-	
-	public TransactionKey generateTransactionKey() {
-		if(cic == null)
-		{
-			throw new NullPointerException("CIC is not set in message");
-		}
-		TransactionKey tk = new TransactionKey(IDENT,this.cic.getCIC());
-		return tk;
-	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -192,43 +137,22 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 	 * org.mobicents.isup.messages.ISUPMessage#decodeMandatoryParameters(byte[],
 	 * int)
 	 */
-	@Override
-	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
+	
+	protected int decodeMandatoryParameters(ISUPParameterFactory parameterFactory, byte[] b, int index) throws ParameterException {
 		int localIndex = index;
-
-		if (b.length - index > 7) {
-
-			try {
-				byte[] cic = new byte[2];
-				cic[0] = b[index++];
-				cic[1] = b[index++];
-				super.cic = new CircuitIdentificationCodeImpl();
-				super.cic.decodeElement(cic);
-
-			} catch (Exception e) {
-				// AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse CircuitIdentificationCode due to: ", e);
-			}
-			try {
-				// Message Type
-				if (b[index] != this.MESSAGE_CODE) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
-				}
-			} catch (Exception e) {
-				// AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse MessageCode due to: ", e);
-			}
-			index++;
+		index += super.decodeMandatoryParameters(parameterFactory, b, index);
+		if (b.length - index > 5) {
 
 			try {
 				byte[] natureOfConnectionIndicators = new byte[1];
 				natureOfConnectionIndicators[0] = b[index++];
 
-				NatureOfConnectionIndicatorsImpl _nai = new NatureOfConnectionIndicatorsImpl(natureOfConnectionIndicators);
+				NatureOfConnectionIndicators _nai = parameterFactory.createNatureOfConnectionIndicators();
+				((AbstractISUPParameter)_nai).decode(natureOfConnectionIndicators);
 				this.setNatureOfConnectionIndicators(_nai);
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse NatureOfConnectionIndicators due to: ", e);
+				throw new ParameterException("Failed to parse NatureOfConnectionIndicators due to: ", e);
 			}
 
 			try {
@@ -236,53 +160,57 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 				body[0] = b[index++];
 				body[1] = b[index++];
 
-				ForwardCallIndicatorsImpl v = new ForwardCallIndicatorsImpl(body);
+				ForwardCallIndicators v = parameterFactory.createForwardCallIndicators();
+				((AbstractISUPParameter)v).decode(body);
 				this.setForwardCallIndicators(v);
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse ForwardCallIndicators due to: ", e);
+				throw new ParameterException("Failed to parse ForwardCallIndicators due to: ", e);
 			}
 
 			try {
 				byte[] body = new byte[1];
 				body[0] = b[index++];
 
-				CallingPartyCategoryImpl v = new CallingPartyCategoryImpl(body);
+				CallingPartyCategory v = parameterFactory.createCallingPartyCategory();
+				((AbstractISUPParameter)v).decode(body);
 				this.setCallingPartCategory(v);
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse CallingPartyCategory due to: ", e);
+				throw new ParameterException("Failed to parse CallingPartyCategory due to: ", e);
 			}
 			try {
 				byte[] body = new byte[1];
 				body[0] = b[index++];
 
-				TransmissionMediumRequirementImpl v = new TransmissionMediumRequirementImpl(body);
+				TransmissionMediumRequirement v = parameterFactory.createTransmissionMediumRequirement();
+				((AbstractISUPParameter)v).decode(body);
 				this.setTransmissionMediumRequirement(v);
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse TransmissionMediumRequirement due to: ", e);
+				throw new ParameterException("Failed to parse TransmissionMediumRequirement due to: ", e);
 			}
 
 			return index - localIndex;
 		} else {
-			throw new ParameterRangeInvalidException("byte[] must have atleast eight octets");
+			throw new ParameterException("byte[] must have atleast eight octets");
 		}
 	}
 
 	/**
 	 * @param parameterBody
 	 * @param parameterCode
-	 * @throws ParameterRangeInvalidException
+	 * @throws ParameterException
 	 */
-	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException {
+	protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, int parameterIndex) throws ParameterException {
 		switch (parameterIndex) {
 		case _INDEX_V_CalledPartyNumber:
-			CalledPartyNumberImpl cpn = new CalledPartyNumberImpl(parameterBody);
+			CalledPartyNumber cpn = parameterFactory.createCalledPartyNumber();
+			((AbstractISUPParameter) cpn).decode(parameterBody);
 			this.setCalledPartyNumber(cpn);
 			break;
 		default:
-			throw new ParameterRangeInvalidException("Unrecognized parameter index for mandatory variable part: " + parameterIndex);
+			throw new ParameterException("Unrecognized parameter index for mandatory variable part: " + parameterIndex);
 		}
 
 	}
@@ -293,133 +221,168 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 	 * @see org.mobicents.isup.messages.ISUPMessage#decodeOptionalBody(byte[],
 	 * byte)
 	 */
-	@Override
-	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {
+	
+	protected void decodeOptionalBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, byte parameterCode) throws ParameterException {
 
 		// TODO Auto-generated method stub
 		switch ((int) parameterCode) {
-		case TransitNetworkSelectionImpl._PARAMETER_CODE:
-			TransitNetworkSelectionImpl v = new TransitNetworkSelectionImpl(parameterBody);
+		case TransitNetworkSelection._PARAMETER_CODE:
+			TransitNetworkSelection v = parameterFactory.createTransitNetworkSelection();
+			((AbstractISUPParameter) v).decode(parameterBody);
 			setTransitNetworkSelection(v);
 			break;
-		case CallReferenceImpl._PARAMETER_CODE:
-			CallReferenceImpl cr = new CallReferenceImpl(parameterBody);
+		case CallReference._PARAMETER_CODE:
+			CallReference cr = parameterFactory.createCallReference();
+			((AbstractISUPParameter) cr).decode(parameterBody);
 			this.setCallReference(cr);
 			break;
-		case CallingPartyNumberImpl._PARAMETER_CODE:
-			CallingPartyNumberImpl cpn = new CallingPartyNumberImpl(parameterBody);
+		case CallingPartyNumber._PARAMETER_CODE:
+			CallingPartyNumber cpn = parameterFactory.createCallingPartyNumber();
+			((AbstractISUPParameter) cpn).decode(parameterBody);
 			this.setCallingPartyNumber(cpn);
 			break;
-		case OptionalForwardCallIndicatorsImpl._PARAMETER_CODE:
-			OptionalForwardCallIndicatorsImpl ofci = new OptionalForwardCallIndicatorsImpl(parameterBody);
+		case OptionalForwardCallIndicators._PARAMETER_CODE:
+			OptionalForwardCallIndicators ofci = parameterFactory.createOptionalForwardCallIndicators();
+			((AbstractISUPParameter) ofci).decode(parameterBody);
 			this.setOptForwardCallIndicators(ofci);
 			break;
-		case RedirectingNumberImpl._PARAMETER_CODE:
-			RedirectingNumberImpl rn = new RedirectingNumberImpl(parameterBody);
+		case RedirectingNumber._PARAMETER_CODE:
+			RedirectingNumber rn = parameterFactory.createRedirectingNumber();
+			((AbstractISUPParameter) rn).decode(parameterBody);
 			this.setRedirectingNumber(rn);
 			break;
-		case RedirectionInformationImpl._PARAMETER_CODE:
-			RedirectionInformationImpl ri = new RedirectionInformationImpl(parameterBody);
+		case RedirectionInformation._PARAMETER_CODE:
+			RedirectionInformation ri = parameterFactory.createRedirectionInformation();
+			((AbstractISUPParameter) ri).decode(parameterBody);
 			this.setRedirectionInformation(ri);
 			break;
-		case ClosedUserGroupInterlockCodeImpl._PARAMETER_CODE:
-			ClosedUserGroupInterlockCodeImpl cugic = new ClosedUserGroupInterlockCodeImpl(parameterBody);
+		case ClosedUserGroupInterlockCode._PARAMETER_CODE:
+			ClosedUserGroupInterlockCode cugic = parameterFactory.createClosedUserGroupInterlockCode();
+			((AbstractISUPParameter) cugic).decode(parameterBody);
 			this.setCUserGroupInterlockCode(cugic);
 			break;
-		case ConnectionRequestImpl._PARAMETER_CODE:
-			ConnectionRequestImpl cr2 = new ConnectionRequestImpl(parameterBody);
+		case ConnectionRequest._PARAMETER_CODE:
+			ConnectionRequest cr2 = parameterFactory.createConnectionRequest();
+			((AbstractISUPParameter) cr2).decode(parameterBody);
 			this.setConnectionRequest(cr2);
 			break;
-		case OriginalCalledNumberImpl._PARAMETER_CODE:
-			OriginalCalledNumberImpl orn = new OriginalCalledNumberImpl(parameterBody);
+		case OriginalCalledNumber._PARAMETER_CODE:
+			OriginalCalledNumber orn = parameterFactory.createOriginalCalledNumber();
+			((AbstractISUPParameter) orn).decode(parameterBody);
 			this.setOriginalCalledNumber(orn);
 			break;
-		case UserToUserInformationImpl._PARAMETER_CODE:
-			UserToUserInformationImpl u2ui = new UserToUserInformationImpl(parameterBody);
+		case UserToUserInformation._PARAMETER_CODE:
+			UserToUserInformation u2ui = parameterFactory.createUserToUserInformation();
+			((AbstractISUPParameter) u2ui).decode(parameterBody);
 			this.setU2UInformation(u2ui);
 			break;
-		case AccessTransportImpl._PARAMETER_CODE:
-			AccessTransportImpl at = new AccessTransportImpl(parameterBody);
+		case AccessTransport._PARAMETER_CODE:
+			AccessTransport at = parameterFactory.createAccessTransport();
+			((AbstractISUPParameter) at).decode(parameterBody);
 			this.setAccessTransport(at);
 			break;
-		case UserServiceInformationImpl._PARAMETER_CODE:
-			UserServiceInformationImpl usi = new UserServiceInformationImpl(parameterBody);
+		case UserServiceInformation._PARAMETER_CODE:
+			UserServiceInformation usi = parameterFactory.createUserServiceInformation();
+			((AbstractISUPParameter) usi).decode(parameterBody);
 			this.setUserServiceInformation(usi);
 			break;
-		case UserToUserIndicatorsImpl._PARAMETER_CODE:
-			UserToUserIndicatorsImpl utui = new UserToUserIndicatorsImpl(parameterBody);
+		case UserToUserIndicators._PARAMETER_CODE:
+			UserToUserIndicators utui = parameterFactory.createUserToUserIndicators();
+			((AbstractISUPParameter) utui).decode(parameterBody);
 			this.setU2UIndicators(utui);
 			break;
-		case GenericNumberImpl._PARAMETER_CODE:
-			GenericNumberImpl gn = new GenericNumberImpl(parameterBody);
+		case GenericNumber._PARAMETER_CODE:
+			GenericNumber gn = parameterFactory.createGenericNumber();
+			((AbstractISUPParameter) gn).decode(parameterBody);
 			this.setGenericNumber(gn);
 			break;
-		case PropagationDelayCounterImpl._PARAMETER_CODE:
-			PropagationDelayCounterImpl pdc = new PropagationDelayCounterImpl(parameterBody);
+		case PropagationDelayCounter._PARAMETER_CODE:
+			PropagationDelayCounter pdc = parameterFactory.createPropagationDelayCounter();
+			((AbstractISUPParameter) pdc).decode(parameterBody);
 			this.setPropagationDelayCounter(pdc);
 			break;
-		case UserServiceInformationPrimeImpl._PARAMETER_CODE:
-			UserServiceInformationPrimeImpl usip = new UserServiceInformationPrimeImpl(parameterBody);
+		case UserServiceInformationPrime._PARAMETER_CODE:
+			UserServiceInformationPrime usip = parameterFactory.createUserServiceInformationPrime();
+			((AbstractISUPParameter) usip).decode(parameterBody);
 			this.setUserServiceInformationPrime(usip);
 			break;
-		case NetworkSpecificFacilityImpl._PARAMETER_CODE:
-			NetworkSpecificFacilityImpl nsf = new NetworkSpecificFacilityImpl(parameterBody);
+		case NetworkSpecificFacility._PARAMETER_CODE:
+			NetworkSpecificFacility nsf = parameterFactory.createNetworkSpecificFacility();
+			((AbstractISUPParameter) nsf).decode(parameterBody);
 			this.setNetworkSpecificFacility(nsf);
 			break;
-		case GenericDigitsImpl._PARAMETER_CODE:
-			GenericDigitsImpl gd = new GenericDigitsImpl(parameterBody);
+		case GenericDigits._PARAMETER_CODE:
+			GenericDigits gd = parameterFactory.createGenericDigits();
+			((AbstractISUPParameter) gd).decode(parameterBody);
 			this.setGenericDigits(gd);
 			break;
-		case OriginatingISCPointCodeImpl._PARAMETER_CODE:
-			OriginatingISCPointCodeImpl vv = new OriginatingISCPointCodeImpl(parameterBody);
+		case OriginatingISCPointCode._PARAMETER_CODE:
+			OriginatingISCPointCode vv = parameterFactory.createOriginatingISCPointCode();
+			((AbstractISUPParameter) vv).decode(parameterBody);
 			this.setOriginatingISCPointCode(vv);
 			break;
-		case UserTeleserviceInformationImpl._PARAMETER_CODE:
-			UserTeleserviceInformationImpl uti = new UserTeleserviceInformationImpl(parameterBody);
+		case UserTeleserviceInformation._PARAMETER_CODE:
+			UserTeleserviceInformation uti = parameterFactory.createUserTeleserviceInformation();
+			((AbstractISUPParameter) uti).decode(parameterBody);
 			this.setUserTeleserviceInformation(uti);
 			break;
-		case RemoteOperationsImpl._PARAMETER_CODE:
-			RemoteOperationsImpl ro = new RemoteOperationsImpl(parameterBody);
+		case RemoteOperations._PARAMETER_CODE:
+			RemoteOperations ro = parameterFactory.createRemoteOperations();
+			((AbstractISUPParameter) ro).decode(parameterBody);
 			this.setRemoteOperations(ro);
 			break;
-		case ParameterCompatibilityInformationImpl._PARAMETER_CODE:
-			ParameterCompatibilityInformationImpl pci = new ParameterCompatibilityInformationImpl(parameterBody);
+		case ParameterCompatibilityInformation._PARAMETER_CODE:
+			ParameterCompatibilityInformation pci = parameterFactory.createParameterCompatibilityInformation();
+			((AbstractISUPParameter) pci).decode(parameterBody);
 			this.setParameterCompatibilityInformation(pci);
 			break;
-		case GenericNotificationIndicatorImpl._PARAMETER_CODE:
-			GenericNotificationIndicatorImpl gni = new GenericNotificationIndicatorImpl(parameterBody);
+		case GenericNotificationIndicator._PARAMETER_CODE:
+			GenericNotificationIndicator gni = parameterFactory.createGenericNotificationIndicator();
+			((AbstractISUPParameter) gni).decode(parameterBody);
 			this.setGenericNotificationIndicator(gni);
 			break;
-		case ServiceActivationImpl._PARAMETER_CODE:
-			ServiceActivationImpl sa = new ServiceActivationImpl(parameterBody);
+		case ServiceActivation._PARAMETER_CODE:
+			ServiceActivation sa = parameterFactory.createServiceActivation();
+			((AbstractISUPParameter) sa).decode(parameterBody);
 			this.setServiceActivation(sa);
 			break;
-		case GenericReferenceImpl._PARAMETER_CODE:
-			GenericReferenceImpl gr = new GenericReferenceImpl(parameterBody);
+		case GenericReference._PARAMETER_CODE:
+			GenericReference gr = parameterFactory.createGenericReference();
+			((AbstractISUPParameter) gr).decode(parameterBody);
 			this.setGenericReference(gr);
 			break;
-		case MLPPPrecedenceImpl._PARAMETER_CODE:
-			MLPPPrecedenceImpl mlpp = new MLPPPrecedenceImpl(parameterBody);
+		case MLPPPrecedence._PARAMETER_CODE:
+			MLPPPrecedence mlpp = parameterFactory.createMLPPPrecedence();
+			((AbstractISUPParameter) mlpp).decode(parameterBody);
 			this.setMLPPPrecedence(mlpp);
-
-		case TransmissionMediumRequirementImpl._PARAMETER_CODE:
-			TransmissionMediumRequirementImpl tmr = new TransmissionMediumRequirementImpl(parameterBody);
+			break;
+		case TransmissionMediumRequirement._PARAMETER_CODE:
+			TransmissionMediumRequirement tmr = parameterFactory.createTransmissionMediumRequirement();
+			((AbstractISUPParameter) tmr).decode(parameterBody);
 			this.setTransmissionMediumRequirement(tmr);
-		case LocationNumberImpl._PARAMETER_CODE:
-			LocationNumberImpl ln = new LocationNumberImpl(parameterBody);
+			break;
+		case LocationNumber._PARAMETER_CODE:
+			LocationNumber ln = parameterFactory.createLocationNumber();
+			((AbstractISUPParameter) ln).decode(parameterBody);
 			this.setLocationNumber(ln);
-		case ForwardGVNSImpl._PARAMETER_CODE:
-			ForwardGVNSImpl fgvns = new ForwardGVNSImpl(parameterBody);
+			break;
+		case ForwardGVNS._PARAMETER_CODE:
+			ForwardGVNS fgvns = parameterFactory.createForwardGVNS();
+			((AbstractISUPParameter) fgvns).decode(parameterBody);
 			this.setForwardGVNS(fgvns);
-		case CCSSImpl._PARAMETER_CODE:
-			CCSSImpl ccss = new CCSSImpl(parameterBody);
+			break;
+		case CCSS._PARAMETER_CODE:
+			CCSS ccss = parameterFactory.createCCSS();
+			((AbstractISUPParameter) ccss).decode(parameterBody);
 			this.setCCSS(ccss);
-		case NetworkManagementControlsImpl._PARAMETER_CODE:
-			NetworkManagementControlsImpl nmc = new NetworkManagementControlsImpl(parameterBody);
+			break;
+		case NetworkManagementControls._PARAMETER_CODE:
+			NetworkManagementControls nmc = parameterFactory.createNetworkManagementControls();
+			((AbstractISUPParameter) nmc).decode(parameterBody);
 			this.setNetworkManagementControls(nmc);
 			break;
 		default:
-			throw new IllegalArgumentException("Unrecognized parameter code for optional part: " + parameterCode);
+			throw new ParameterException("Unrecognized parameter code for optional part: " + parameterCode);
 		}
 	}
 
@@ -429,7 +392,7 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 	 * @seeorg.mobicents.isup.messages.ISUPMessage#
 	 * getNumberOfMandatoryVariableLengthParameters()
 	 */
-	@Override
+	
 	protected int getNumberOfMandatoryVariableLengthParameters() {
 
 		return _MANDATORY_VAR_COUNT;
@@ -440,7 +403,7 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 	 * 
 	 * @see org.mobicents.isup.messages.ISUPMessage#getMessageType()
 	 */
-	@Override
+	
 	public MessageType getMessageType() {
 		return this._MESSAGE_TYPE;
 	}
@@ -450,7 +413,7 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 	 * 
 	 * @see org.mobicents.isup.messages.ISUPMessage#hasAllMandatoryParameters()
 	 */
-	@Override
+	
 	public boolean hasAllMandatoryParameters() {
 		if (!super.f_Parameters.keySet().containsAll(mandatoryParam) || super.f_Parameters.values().contains(null)) {
 			return false;
@@ -566,7 +529,7 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 	}
 
 	public OriginalCalledNumber getOriginalCalledNumber() {
-		return (OriginalCalledNumberImpl) super.o_Parameters.get(_INDEX_O_OriginalCalledNumber);
+		return (OriginalCalledNumber) super.o_Parameters.get(_INDEX_O_OriginalCalledNumber);
 	}
 
 	public void setOriginalCalledNumber(OriginalCalledNumber v) {
@@ -768,22 +731,28 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 		return (AccessTransport) super.o_Parameters.get(_INDEX_O_AccessTransport);
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.impl.ISUPMessageImpl#mandatoryVariablePartPossible()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.isup.impl.ISUPMessageImpl#
+	 * mandatoryVariablePartPossible()
 	 */
-	@Override
+	
 	protected boolean mandatoryVariablePartPossible() {
-		
+
 		return this.getNumberOfMandatoryVariableLengthParameters() != 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible
+	 * ()
 	 */
-	@Override
+	
 	protected boolean optionalPartIsPossible() {
-		
+
 		return true;
 	}
 }

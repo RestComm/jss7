@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitStateIndicator;
 
 /**
@@ -19,13 +19,13 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CircuitStateIndicator;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class CircuitStateIndicatorImpl extends AbstractParameter implements CircuitStateIndicator {
+public class CircuitStateIndicatorImpl extends AbstractISUPParameter implements CircuitStateIndicator {
 
 	private byte[] circuitState = null;
 
-	public CircuitStateIndicatorImpl(byte[] circuitState) throws ParameterRangeInvalidException {
+	public CircuitStateIndicatorImpl(byte[] circuitState) throws ParameterException {
 		super();
-		this.decodeElement(circuitState);
+		this.decode(circuitState);
 	}
 
 	public CircuitStateIndicatorImpl() {
@@ -33,26 +33,16 @@ public class CircuitStateIndicatorImpl extends AbstractParameter implements Circ
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		try {
 			setCircuitState(b);
 		} catch (Exception e) {
-			throw new ParameterRangeInvalidException(e);
+			throw new ParameterException(e);
 		}
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		return this.circuitState;
 	}
 
@@ -70,7 +60,7 @@ public class CircuitStateIndicatorImpl extends AbstractParameter implements Circ
 	public byte createCircuitState(int MBS, int CPS, int HBS) {
 		int v = 0;
 		// FIXME: Shoudl we here enforce proper coding? according to note or
-		// move it to encodeElement??
+		// move it to encode??
 		if (HBS != _HBS_NO_BLOCKING) {
 			// NOTE – If bits F E are not coded 0 0, bits D C must be coded 1 1.
 			// - this means CPS == 3

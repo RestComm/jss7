@@ -8,9 +8,7 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
-import java.io.IOException;
-
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.AbstractPointCodeInterface;
 
 /**
@@ -20,20 +18,15 @@ import org.mobicents.protocols.ss7.isup.message.parameter.AbstractPointCodeInter
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public abstract class AbstractPointCode extends AbstractParameter implements AbstractPointCodeInterface{
+public abstract class AbstractPointCode extends AbstractISUPParameter implements AbstractPointCodeInterface{
 
 	
 	
 	protected int signalingPointCode;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 2) {
-			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 1");
+			throw new ParameterException("byte[] must  not be null and length must  be 1");
 		}
 
 		this.signalingPointCode = b[0];
@@ -42,12 +35,7 @@ public abstract class AbstractPointCode extends AbstractParameter implements Abs
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		byte[] b = new byte[2];
 		b[0] = (byte) this.signalingPointCode;
@@ -60,9 +48,9 @@ public abstract class AbstractPointCode extends AbstractParameter implements Abs
 		super();
 		
 	}
-	public AbstractPointCode(byte[] b) throws ParameterRangeInvalidException{
+	public AbstractPointCode(byte[] b) throws ParameterException{
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public int getSignalingPointCode() {

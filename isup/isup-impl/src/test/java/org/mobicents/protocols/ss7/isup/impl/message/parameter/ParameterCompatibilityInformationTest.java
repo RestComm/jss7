@@ -12,8 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.InstructionIndicators;
 
 /**
@@ -92,7 +91,7 @@ public class ParameterCompatibilityInformationTest extends ParameterHarness{
 	}
 
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		ParameterCompatibilityInformationImpl bci = new ParameterCompatibilityInformationImpl(getBody1());
 	
 		assertEquals("Wrong number of instructions. ",4, bci.size());
@@ -129,7 +128,7 @@ public class ParameterCompatibilityInformationTest extends ParameterHarness{
 			flags[index][_RLEASE_CALL_INDEX],
 			//1
 			flags[index][_TRANSIT_EXCHANGE_INDEX]};
-			super.testValues(ii, methodNames, expectedValues);
+			super.testValues((AbstractISUPParameter)ii, methodNames, expectedValues);
 			
 		}
 		
@@ -166,8 +165,8 @@ public class ParameterCompatibilityInformationTest extends ParameterHarness{
 	}
 
 
-	@Override
-	public ISUPComponent getTestedComponent() {
+	
+	public AbstractISUPParameter getTestedComponent() {
 		return new ParameterCompatibilityInformationImpl();
 	}
 

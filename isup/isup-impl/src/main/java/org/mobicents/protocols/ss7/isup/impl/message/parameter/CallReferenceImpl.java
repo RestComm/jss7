@@ -11,7 +11,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
 
 /**
@@ -21,17 +21,12 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class CallReferenceImpl extends AbstractParameter implements CallReference{
+public class CallReferenceImpl extends AbstractISUPParameter implements CallReference{
 
 	
 	private int callIdentity = 0;
 	//Should we use here SignalingPointCode class?
 	private int signalingPointCode = 0;
-
-	public CallReferenceImpl(byte[] b) throws ParameterRangeInvalidException {
-		super();
-		decodeElement(b);
-	}
 
 	public CallReferenceImpl() {
 		super();
@@ -44,14 +39,9 @@ public class CallReferenceImpl extends AbstractParameter implements CallReferenc
 		this.signalingPointCode = signalingPointCode;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		if (b == null || b.length != 5) {
-			throw new ParameterRangeInvalidException("byte[] must not be null or have length of 5");
+			throw new ParameterException("byte[] must not be null or have length of 5");
 		}
 //		for (int i = 0; i < 3; i++) {
 //			this.callIdentity |= (b[i] << (i * 8));
@@ -65,12 +55,7 @@ public class CallReferenceImpl extends AbstractParameter implements CallReferenc
 		return 5;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 		byte[] b = new byte[5];
 
 //		for (int i = 0; i < 3; i++) {
@@ -89,16 +74,13 @@ public class CallReferenceImpl extends AbstractParameter implements CallReferenc
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.isup.ISUPComponent#encodeElement(java.io.ByteArrayOutputStream
-	 * )
-	 */
-	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
-		byte[] b = this.encodeElement();
-		bos.write(b);
+	public int encode(ByteArrayOutputStream bos) throws ParameterException {
+		byte[] b = this.encode();
+		try {
+			bos.write(b);
+		} catch (IOException e) {
+			throw new ParameterException(e);
+		}
 		return b.length;
 	}
 

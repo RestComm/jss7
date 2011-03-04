@@ -8,8 +8,7 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
-import org.mobicents.protocols.ss7.isup.ISUPComponent;
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 
 
 /**
@@ -38,7 +37,7 @@ public class MCIDResponseIndicatorsTest extends ParameterHarness {
 		return new byte[] { (byte) b0 };
 	}
 
-	public void testBody1EncodedValues() throws ParameterRangeInvalidException {
+	public void testBody1EncodedValues() throws ParameterException {
 		MCIDResponseIndicatorsImpl eci = new MCIDResponseIndicatorsImpl(getBody(MCIDResponseIndicatorsImpl._INDICATOR_PROVIDED, MCIDResponseIndicatorsImpl._INDICATOR_NOT_PROVIDED));
 
 		String[] methodNames = { "isMcidIncludedIndicator", "isHoldingProvidedIndicator" };
@@ -53,8 +52,8 @@ public class MCIDResponseIndicatorsTest extends ParameterHarness {
 	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
 	 * ()
 	 */
-	@Override
-	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
+	
+	public AbstractISUPParameter getTestedComponent() throws ParameterException {
 		return new MCIDResponseIndicatorsImpl(new byte[1]);
 	}
 

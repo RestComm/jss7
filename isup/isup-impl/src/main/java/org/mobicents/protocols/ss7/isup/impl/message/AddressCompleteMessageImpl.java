@@ -11,36 +11,11 @@ package org.mobicents.protocols.ss7.isup.impl.message;
 import java.util.Map;
 import java.util.Set;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
-import org.mobicents.protocols.ss7.isup.TransactionKey;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.AccessDeliveryInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.ApplicationTransportParameterImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.BackwardCallIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CCNRPossibleIndicatorImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallDiversionInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallReferenceImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CauseIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.ConferenceTreatmentIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.EchoControlInformationImpl;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractISUPParameter;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.EndOfOptionalParametersImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNotificationIndicatorImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.HTRInformationImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.NetworkSpecificFacilityImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.OptionalBackwardCallIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.ParameterCompatibilityInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.PivotRoutingBackwardInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectStatusImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectionNumberImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectionNumberRestrictionImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.RemoteOperationsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.ServiceActivationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.TransmissionMediumUsedImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.UIDActionIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserToUserIndicatorsImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserToUserInformationImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.accessTransport.AccessTransportImpl;
 import org.mobicents.protocols.ss7.isup.message.AddressCompleteMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransportParameter;
@@ -86,7 +61,7 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 	static final int _INDEX_F_BackwardCallIndicators = 1;
 	// FIXME: those can be sent in any order, but we prefer this way, its faster
 	// to access by index than by hash ?
-	static final int _INDEX_O_OptionalBakwardCallIndicators = 0;
+	static final int _INDEX_O_OptionalBackwardCallIndicators = 0;
 	static final int _INDEX_O_CallReference = 1;
 	static final int _INDEX_O_CauseIndicators = 2;
 	static final int _INDEX_O_UserToUserIndicators = 3;
@@ -113,31 +88,15 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 	static final int _INDEX_O_RedirectStatus = 23;
 	static final int _INDEX_O_EndOfOptionalParameters = 24;
 
-	AddressCompleteMessageImpl(Object source, byte[] b, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
-			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) throws ParameterRangeInvalidException {
-		this(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
-		decodeElement(b);
-
-	}
-
-	AddressCompleteMessageImpl(Object source, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+	AddressCompleteMessageImpl( Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
 			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
-		super(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
+		super(mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
 
 		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
 		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
 	}
-
-	public TransactionKey generateTransactionKey() {
-		if(cic == null)
-		{
-			throw new NullPointerException("CIC is not set in message");
-		}
-		TransactionKey tk = new TransactionKey(InitialAddressMessageImpl.IDENT,this.cic.getCIC());
-		return tk;
-	}
 	
-	@Override
+	
 	public boolean hasAllMandatoryParameters() {
 		
 		if(super.f_Parameters.get(_INDEX_F_MessageType) == null)
@@ -146,14 +105,14 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 		}
 		
 	
-		if (super.f_Parameters.get(_INDEX_F_BackwardCallIndicators) == null || super.f_Parameters.get(_INDEX_F_BackwardCallIndicators).getCode() != BackwardCallIndicatorsImpl._PARAMETER_CODE) {
+		if (super.f_Parameters.get(_INDEX_F_BackwardCallIndicators) == null || super.f_Parameters.get(_INDEX_F_BackwardCallIndicators).getCode() != BackwardCallIndicators._PARAMETER_CODE) {
 			return false;
 		}
 
 		return true;
 	}
 
-	@Override
+	
 	public MessageType getMessageType() {
 		return _MESSAGE_TYPE;
 	}
@@ -166,13 +125,13 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 		return (BackwardCallIndicators) super.f_Parameters.get(_INDEX_F_BackwardCallIndicators);
 	}
 
-	public void setOptionalBakwardCallIndicators(OptionalBackwardCallIndicators value) {
-		super.o_Parameters.put(_INDEX_O_OptionalBakwardCallIndicators, value);
+	public void setOptionalBackwardCallIndicators(OptionalBackwardCallIndicators value) {
+		super.o_Parameters.put(_INDEX_O_OptionalBackwardCallIndicators, value);
 
 	}
 
-	public OptionalBackwardCallIndicators getOptionalBakwardCallIndicators() {
-		return (OptionalBackwardCallIndicators) super.o_Parameters.get(_INDEX_O_OptionalBakwardCallIndicators);
+	public OptionalBackwardCallIndicators getOptionalBackwardCallIndicators() {
+		return (OptionalBackwardCallIndicators) super.o_Parameters.get(_INDEX_O_OptionalBackwardCallIndicators);
 	}
 
 	public void setCallReference(CallReference value) {
@@ -360,41 +319,23 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 		return (RedirectStatus) super.o_Parameters.get(_INDEX_O_RedirectStatus);
 	}
 
-	@Override
-	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
+	
+	protected int decodeMandatoryParameters(ISUPParameterFactory parameterFactory,byte[] b, int index) throws ParameterException {
 		int localIndex = index;
+		index+=super.decodeMandatoryParameters(parameterFactory,b, index);
 		if (b.length - index > 1) {
-			try {
-				byte[] cic = new byte[2];
-				cic[0] = b[index++];
-				cic[1] = b[index++];
-				super.cic = new CircuitIdentificationCodeImpl();
-				super.cic.decodeElement(cic);
-
-			} catch (Exception e) {
-				// AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse CircuitIdentificationCode due to: ", e);
-			}
-			try {
-				// Message Type
-				if (b[index] != this.MESSAGE_CODE) {
-					throw new ParameterRangeInvalidException("Message code is not: " + this.MESSAGE_CODE);
-				}
-			} catch (Exception e) {
-				// AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse MessageCode due to: ", e);
-			}
-			index++;
+			
 			// this.circuitIdentificationCode = b[index++];
 			try {
 				byte[] backwardCallIndicator = new byte[2];
 				backwardCallIndicator[0] = b[index++];
 				backwardCallIndicator[1] = b[index++];
-				BackwardCallIndicatorsImpl bci = new BackwardCallIndicatorsImpl(backwardCallIndicator);
+				BackwardCallIndicators bci = parameterFactory.createBackwardCallIndicators();
+				((AbstractISUPParameter)bci).decode(backwardCallIndicator);
 				this.setBackwardCallIndicators(bci);
 			} catch (Exception e) {
 				// AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse BackwardCallIndicators due to: ", e);
+				throw new ParameterException("Failed to parse BackwardCallIndicators due to: ", e);
 			}
 
 			// return 3;
@@ -405,119 +346,143 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 
 	}
 
-	@Override
+	
 	protected int getNumberOfMandatoryVariableLengthParameters() {
 
 		return _MANDATORY_VAR_COUNT;
 	}
 
-	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException {
+	protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory,byte[] parameterBody, int parameterIndex) throws ParameterException {
 		throw new UnsupportedOperationException("This message does not support mandatory variable parameters.");
 	}
 
-	@Override
-	protected int decodeMandatoryVariableParameters(byte[] b, int index) throws ParameterRangeInvalidException {
+	
+	protected int decodeMandatoryVariableParameters(ISUPParameterFactory parameterFactory,byte[] b, int index) throws ParameterException {
 		throw new UnsupportedOperationException("This message does not support mandatory variable parameters.");
 	}
 
-	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {
+	protected void decodeOptionalBody(ISUPParameterFactory parameterFactory,byte[] parameterBody, byte parameterCode) throws ParameterException {
 
 		switch ((int) parameterCode) {
-		case OptionalBackwardCallIndicatorsImpl._PARAMETER_CODE:
-			OptionalBackwardCallIndicatorsImpl obi = new OptionalBackwardCallIndicatorsImpl(parameterBody);
-			this.setOptionalBakwardCallIndicators(obi);
+		case OptionalBackwardCallIndicators._PARAMETER_CODE:
+			OptionalBackwardCallIndicators obi = parameterFactory.createOptionalBackwardCallIndicators();
+			((AbstractISUPParameter)obi).decode(parameterBody);
+			this.setOptionalBackwardCallIndicators(obi);
 			break;
-		case CallReferenceImpl._PARAMETER_CODE:
-			CallReferenceImpl cr = new CallReferenceImpl(parameterBody);
+		case CallReference._PARAMETER_CODE:
+			CallReference cr = parameterFactory.createCallReference();
+			((AbstractISUPParameter)cr).decode(parameterBody);
 			this.setCallReference(cr);
 			break;
-		case CauseIndicatorsImpl._PARAMETER_CODE:
-			CauseIndicatorsImpl ci = new CauseIndicatorsImpl(parameterBody);
+		case CauseIndicators._PARAMETER_CODE:
+			CauseIndicators ci = parameterFactory.createCauseIndicators();
+			((AbstractISUPParameter)ci).decode(parameterBody);
 			this.setCauseIndicators(ci);
 			break;
-		case UserToUserIndicatorsImpl._PARAMETER_CODE:
-			UserToUserIndicatorsImpl utsi = new UserToUserIndicatorsImpl(parameterBody);
+		case UserToUserIndicators._PARAMETER_CODE:
+			UserToUserIndicators utsi = parameterFactory.createUserToUserIndicators();
+			((AbstractISUPParameter)utsi).decode(parameterBody);
 			this.setUserToUserIndicators(utsi);
 			break;
-		case UserToUserInformationImpl._PARAMETER_CODE:
-			UserToUserInformationImpl utsi2 = new UserToUserInformationImpl(parameterBody);
+		case UserToUserInformation._PARAMETER_CODE:
+			UserToUserInformation utsi2 = parameterFactory.createUserToUserInformation();
+			((AbstractISUPParameter)utsi2).decode(parameterBody);
 			this.setUserToUserInformation(utsi2);
 			break;
-		case AccessTransportImpl._PARAMETER_CODE:
-			AccessTransportImpl at = new AccessTransportImpl(parameterBody);
+		case AccessTransport._PARAMETER_CODE:
+			AccessTransport at = parameterFactory.createAccessTransport();
+			((AbstractISUPParameter)at).decode(parameterBody);
 			this.setAccessTransport(at);
 			break;
 		// FIXME: There can be more of those.
-		case GenericNotificationIndicatorImpl._PARAMETER_CODE:
-			GenericNotificationIndicatorImpl gni = new GenericNotificationIndicatorImpl(parameterBody);
+		case GenericNotificationIndicator._PARAMETER_CODE:
+			GenericNotificationIndicator gni = parameterFactory.createGenericNotificationIndicator();
+			((AbstractISUPParameter)gni).decode(parameterBody);
 			this.setGenericNotificationIndicator(gni);
 			break;
-		case TransmissionMediumUsedImpl._PARAMETER_CODE:
-			TransmissionMediumUsedImpl tmu = new TransmissionMediumUsedImpl(parameterBody);
+		case TransmissionMediumUsed._PARAMETER_CODE:
+			TransmissionMediumUsed tmu = parameterFactory.createTransmissionMediumUsed();
+			((AbstractISUPParameter)tmu).decode(parameterBody);
 			this.setTransmissionMediumUsed(tmu);
 			break;
-		case EchoControlInformationImpl._PARAMETER_CODE:
-			EchoControlInformationImpl eci = new EchoControlInformationImpl(parameterBody);
+		case EchoControlInformation._PARAMETER_CODE:
+			EchoControlInformation eci = parameterFactory.createEchoControlInformation();
+			((AbstractISUPParameter)eci).decode(parameterBody);
 			this.setEchoControlInformation(eci);
 			break;
-		case AccessDeliveryInformationImpl._PARAMETER_CODE:
-			AccessDeliveryInformationImpl adi = new AccessDeliveryInformationImpl(parameterBody);
+		case AccessDeliveryInformation._PARAMETER_CODE:
+			AccessDeliveryInformation adi = parameterFactory.createAccessDeliveryInformation();
+			((AbstractISUPParameter)adi).decode(parameterBody);
 			this.setAccessDeliveryInformation(adi);
 			break;
-		case RedirectionNumberImpl._PARAMETER_CODE:
-			RedirectionNumberImpl rn = new RedirectionNumberImpl(parameterBody);
+		case RedirectionNumber._PARAMETER_CODE:
+			RedirectionNumber rn = parameterFactory.createRedirectionNumber();
+			((AbstractISUPParameter)rn).decode(parameterBody);
 			this.setRedirectionNumber(rn);
 			break;
-		case ParameterCompatibilityInformationImpl._PARAMETER_CODE:
-			ParameterCompatibilityInformationImpl pci = new ParameterCompatibilityInformationImpl(parameterBody);
+		case ParameterCompatibilityInformation._PARAMETER_CODE:
+			ParameterCompatibilityInformation pci = parameterFactory.createParameterCompatibilityInformation();
+			((AbstractISUPParameter)pci).decode(parameterBody);
 			this.setParameterCompatibilityInformation(pci);
 			break;
-		case CallDiversionInformationImpl._PARAMETER_CODE:
-			CallDiversionInformationImpl cdi = new CallDiversionInformationImpl(parameterBody);
+		case CallDiversionInformation._PARAMETER_CODE:
+			CallDiversionInformation cdi = parameterFactory.createCallDiversionInformation();
+			((AbstractISUPParameter)cdi).decode(parameterBody);
 			this.setCallDiversionInformation(cdi);
 			break;
-		case NetworkSpecificFacilityImpl._PARAMETER_CODE:
-			NetworkSpecificFacilityImpl nsf = new NetworkSpecificFacilityImpl(parameterBody);
+		case NetworkSpecificFacility._PARAMETER_CODE:
+			NetworkSpecificFacility nsf = parameterFactory.createNetworkSpecificFacility();
+			((AbstractISUPParameter)nsf).decode(parameterBody);
 			this.setNetworkSpecificFacility(nsf);
 			break;
-		case RemoteOperationsImpl._PARAMETER_CODE:
-			RemoteOperationsImpl ro = new RemoteOperationsImpl(parameterBody);
+		case RemoteOperations._PARAMETER_CODE:
+			RemoteOperations ro = parameterFactory.createRemoteOperations();
+			((AbstractISUPParameter)ro).decode(parameterBody);
 			this.setRemoteOperations(ro);
 			break;
-		case ServiceActivationImpl._PARAMETER_CODE:
-			ServiceActivationImpl sa = new ServiceActivationImpl(parameterBody);
+		case ServiceActivation._PARAMETER_CODE:
+			ServiceActivation sa = parameterFactory.createServiceActivation();
+			((AbstractISUPParameter)sa).decode(parameterBody);
 			this.setServiceActivation(sa);
 			break;
-		case RedirectionNumberRestrictionImpl._PARAMETER_CODE:
-			RedirectionNumberRestrictionImpl rnr = new RedirectionNumberRestrictionImpl(parameterBody);
+		case RedirectionNumberRestriction._PARAMETER_CODE:
+			RedirectionNumberRestriction rnr = parameterFactory.createRedirectionNumberRestriction();
+			((AbstractISUPParameter)rnr).decode(parameterBody);
 			this.setRedirectionNumberRestriction(rnr);
 			break;
-		case ConferenceTreatmentIndicatorsImpl._PARAMETER_CODE:
-			ConferenceTreatmentIndicatorsImpl cti = new ConferenceTreatmentIndicatorsImpl(parameterBody);
+		case ConferenceTreatmentIndicators._PARAMETER_CODE:
+			ConferenceTreatmentIndicators cti = parameterFactory.createConferenceTreatmentIndicators();
+			((AbstractISUPParameter)cti).decode(parameterBody);
 			this.setConferenceTreatmentIndicators(cti);
 			break;
-		case UIDActionIndicatorsImpl._PARAMETER_CODE:
-			UIDActionIndicatorsImpl uidAI = new UIDActionIndicatorsImpl(parameterBody);
+		case UIDActionIndicators._PARAMETER_CODE:
+			UIDActionIndicators uidAI = parameterFactory.createUIDActionIndicators();
+			((AbstractISUPParameter)uidAI).decode(parameterBody);
 			this.setUIDActionIndicators(uidAI);
 			break;
-		case ApplicationTransportParameterImpl._PARAMETER_CODE:
-			ApplicationTransportParameterImpl atp = new ApplicationTransportParameterImpl(parameterBody);
+		case ApplicationTransportParameter._PARAMETER_CODE:
+			ApplicationTransportParameter atp = parameterFactory.createApplicationTransportParameter();
+			((AbstractISUPParameter)atp).decode(parameterBody);
 			this.setApplicationTransportParameter(atp);
 			break;
 		case CCNRPossibleIndicator._PARAMETER_CODE:
-			CCNRPossibleIndicatorImpl ccnrPI = new CCNRPossibleIndicatorImpl(parameterBody);
+			CCNRPossibleIndicator ccnrPI = parameterFactory.createCCNRPossibleIndicator();
+			((AbstractISUPParameter)ccnrPI).decode(parameterBody);
 			this.setCCNRPossibleIndicator(ccnrPI);
 			break;
-		case HTRInformationImpl._PARAMETER_CODE:
-			HTRInformationImpl htr = new HTRInformationImpl(parameterBody);
+		case HTRInformation._PARAMETER_CODE:
+			HTRInformation htr = parameterFactory.createHTRInformation();
+			((AbstractISUPParameter)htr).decode(parameterBody);
 			this.setHTRInformation(htr);
 			break;
-		case PivotRoutingBackwardInformationImpl._PARAMETER_CODE:
-			PivotRoutingBackwardInformationImpl pivot = new PivotRoutingBackwardInformationImpl(parameterBody);
+		case PivotRoutingBackwardInformation._PARAMETER_CODE:
+			PivotRoutingBackwardInformation pivot = parameterFactory.createPivotRoutingBackwardInformation();
+			((AbstractISUPParameter)pivot).decode(parameterBody);
 			this.setPivotRoutingBackwardInformation(pivot);
 			break;
-		case RedirectStatusImpl._PARAMETER_CODE:
-			RedirectStatusImpl rs = new RedirectStatusImpl(parameterBody);
+		case RedirectStatus._PARAMETER_CODE:
+			RedirectStatus rs = parameterFactory.createRedirectStatus();
+			((AbstractISUPParameter)rs).decode(parameterBody);
 			this.setRedirectStatus(rs);
 			break;
 		case EndOfOptionalParametersImpl._PARAMETER_CODE:
@@ -525,7 +490,7 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 			break;
 
 		default:
-			throw new IllegalArgumentException("Unrecognized parameter code for optional part: " + parameterCode);
+			throw new ParameterException("Unrecognized parameter code for optional part: " + parameterCode);
 		}
 
 	}
@@ -537,7 +502,7 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 	 * org.mobicents.protocols.ss7.isup.impl.ISUPMessageImpl#mandatoryVariablePartPossible
 	 * ()
 	 */
-	// @Override
+	// 
 	// protected boolean mandatoryVariablePartPossible() {
 	//		
 	// return false;
@@ -547,7 +512,7 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 	 * 
 	 * @see org.mobicents.protocols.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible()
 	 */
-	@Override
+	
 	protected boolean optionalPartIsPossible() {
 
 		return true;

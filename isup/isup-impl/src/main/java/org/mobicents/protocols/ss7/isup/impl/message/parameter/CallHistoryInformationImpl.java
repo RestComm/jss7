@@ -10,7 +10,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallHistoryInformation;
 
 /**
@@ -19,14 +19,14 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CallHistoryInformation
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class CallHistoryInformationImpl extends AbstractParameter implements CallHistoryInformation {
+public class CallHistoryInformationImpl extends AbstractISUPParameter implements CallHistoryInformation {
 
 	// XXX: again this goes aganist usuall way.
 	private int callHistory;
 
-	public CallHistoryInformationImpl(byte[] b) throws ParameterRangeInvalidException {
+	public CallHistoryInformationImpl(byte[] b) throws ParameterException {
 		super();
-		decodeElement(b);
+		decode(b);
 	}
 
 	public CallHistoryInformationImpl(int callHistory) {
@@ -39,12 +39,7 @@ public class CallHistoryInformationImpl extends AbstractParameter implements Cal
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
+	public int decode(byte[] b) throws ParameterException {
 		// This one is other way around, as Eduardo might say.
 		if (b == null || b.length != 2) {
 			throw new IllegalArgumentException("byte[] must  not be null and length must be 2");
@@ -59,12 +54,7 @@ public class CallHistoryInformationImpl extends AbstractParameter implements Cal
 		return b.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
+	public byte[] encode() throws ParameterException {
 
 		byte b0 = (byte) (this.callHistory >> 8);
 		byte b1 = (byte) this.callHistory;
