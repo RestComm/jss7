@@ -36,7 +36,7 @@ public class RemAsTransPendToAct implements TransitionHandler {
         try {
             // Iterate through ASP's and send AS_ACTIVE to ASP's who
             // are INACTIVE or ACTIVE
-            for (FastList.Node<Asp> n = this.as.getAppServerProcess().head(), end = this.as.getAppServerProcess()
+            for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList()
                     .tail(); (n = n.getNext()) != end;) {
                 RemAspImpl remAspImpl = (RemAspImpl) n.getValue();
 

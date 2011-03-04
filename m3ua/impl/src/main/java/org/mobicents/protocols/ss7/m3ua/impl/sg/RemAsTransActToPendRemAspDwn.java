@@ -41,7 +41,7 @@ public class RemAsTransActToPendRemAspDwn implements TransitionHandler {
             if (this.as.getTrafficModeType().getMode() == TrafficModeType.Loadshare) {
                 this.lbCount = 0;
 
-                for (FastList.Node<Asp> n = this.as.getAppServerProcess().head(), end = this.as.getAppServerProcess()
+                for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList()
                         .tail(); (n = n.getNext()) != end;) {
                     RemAspImpl remAspImpl = (RemAspImpl) n.getValue();
                     if (remAspImpl.getState() == AspState.ACTIVE) {
@@ -69,8 +69,8 @@ public class RemAsTransActToPendRemAspDwn implements TransitionHandler {
                     // But we are below threshold. Send "Ins. ASPs" to INACTIVE
                     // ASP's but not to ASP that caused this transition as it is
                     // already DOWN
-                    for (FastList.Node<Asp> n = this.as.getAppServerProcess().head(), end = this.as
-                            .getAppServerProcess().tail(); (n = n.getNext()) != end;) {
+                    for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as
+                            .getAspList().tail(); (n = n.getNext()) != end;) {
                         RemAspImpl remAspTemp = (RemAspImpl) n.getValue();
 
                         // TODO : needed? The state should be changed before
@@ -94,7 +94,7 @@ public class RemAsTransActToPendRemAspDwn implements TransitionHandler {
             // We have reached here means AS is transitioning to be PENDING.
             // Send new AS STATUS to all INACTIVE APS's
 
-            for (FastList.Node<Asp> n = this.as.getAppServerProcess().head(), end = this.as.getAppServerProcess()
+            for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList()
                     .tail(); (n = n.getNext()) != end;) {
                 remAsp = (RemAspImpl) n.getValue();
                 if (remAsp.getState() == AspState.INACTIVE) {

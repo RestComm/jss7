@@ -13,7 +13,7 @@
 	 -->
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Setup_Hardware.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Shell.xml" />
-	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-ISUP.xml" />
+	
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-SCCP.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-TCAP.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-MAP.xml" />

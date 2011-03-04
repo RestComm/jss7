@@ -206,10 +206,27 @@
 		<para>
 			&THIS.PLATFORM; Signaling Gateway (SG) is a signaling agent that receives/sends Switched Circuit Network (SCN) 
 			native signaling at the edge of the IP network. &THIS.PLATFORM; Signaling Gateway leverages &THIS.PLATFORM; M3UA Stack 
-			explained bellow and Linkset explained in <xref linkend="design_overview_Linkset"/>    
+			explained in <xref linkend="mobicents_signaling_gateway_m3ua"/> and Linkset explained in <xref linkend="design_overview_Linkset"/>    
 		</para>
 		
-		
+		<para>
+			Diagram below shows the components which are included in &THIS.PLATFORM; SG. 
+			Configuration of SG is explained in <xref linkend="configuring_sgw"/>
+		</para>
+		<mediaobject
+			id="sgw_elements">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/MobicentsSS7Gateway.jpg"
+					format="JPG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; Signaling Gateway components
+				</para>
+			</caption>
+		</mediaobject>		
 		
 		<section id="mobicents_signaling_gateway_m3ua">
 			<title>&THIS.PLATFORM; M3UA Stack</title>
@@ -217,68 +234,72 @@
 			<para>
 				&THIS.PLATFORM; M3UA Stack can be used on Application Server side or can be used on Signaling Gateway side.
 			</para>
-		</section>
 		
-		
-		<para>
-			Diagram below demonstrates the &THIS.PLATFORM; M3UA Stack used on Application Server (AS) side. 
-			The information below explains the basic functionality of the &THIS.PLATFORM; M3UA Stack when used as an Application Server 
-			which will communicate with an External Signaling Gateway 
-		</para>
-		<mediaobject
-			id="m3ua_AS">
-			<imageobject>
-				<imagedata
-					width="300px"
-					align="center"
-					fileref="images/M3UAAs.jpg"
-					format="JPG" />
-			</imageobject>
-			<caption>
-				<para>&THIS.PLATFORM; M3UA Stack configured as AS
+			<note>
+				<title>Note</title>
+				<para>
+					&THIS.PLATFORM; M3UA Stack uses TCP layer. Leveraging SCTP is in roadmap and will be implemented soon.
 				</para>
-			</caption>
-		</mediaobject>
-		<para>
-			If configured as an AS, does not support configuring conventional SS7 links etc on that same stack. 
-			To use M3UA Stack as AS, the Routing Context (RC) must be known. See Section XXXX for configuring M3UA Stack 
-			as AS. The Remote Signaling Gateway Process (RemSGP) object is created under the M3UA Stack.
-		</para>
-		
-		
-		<para>
-			Diagram below demonstrates the &THIS.PLATFORM; M3UA Stack used on Signaling Gateway (SG) side. 
-			The &THIS.PLATFORM; Signaling Gateway provides the Nodal Interworking Function (NIF) that allows SS7 Signaling (SCCP/ISUP)
-			to be inter-worked into the M3UA/IP Network as shown in <xref linkend="signaling_gateway"/>
+			</note>
+					
+			<section id="mobicents_signaling_gateway_m3ua_as">
+				<title>&THIS.PLATFORM; M3UA Stack on AS side</title>		
+				<para>
+					Diagram below demonstrates the &THIS.PLATFORM; M3UA Stack used on Application Server (AS) side. 
+					The information below explains the basic functionality of the &THIS.PLATFORM; M3UA Stack when used as an Application Server 
+					which will communicate with an External Signaling Gateway 
+				</para>
+				<mediaobject
+					id="m3ua_AS">
+					<imageobject>
+						<imagedata
+							width="300px"
+							align="center"
+							fileref="images/M3UAAs.jpg"
+							format="JPG" />
+					</imageobject>
+					<caption>
+						<para>&THIS.PLATFORM; M3UA Stack configured on AS side
+						</para>
+					</caption>
+				</mediaobject>
+				<para>
+					If configured as an AS, does not support configuring conventional SS7 links etc on that same stack. 
+					To use M3UA Stack as AS, the Routing Context (RC) must be known. See Section XXXX for configuring M3UA Stack 
+					as AS. The Remote Signaling Gateway Process (RemSGP) object is created under the M3UA Stack.
+				</para>
+			</section>
 			
-		</para>
-		<mediaobject
-			id="m3ua_SGW">
-			<imageobject>
-				<imagedata
-					width="300px"
-					align="center"
-					fileref="images/M3UASgw.jpg"
-					format="JPG" />
-			</imageobject>
-			<caption>
-				<para>&THIS.PLATFORM; M3UA Stack configured as AS
+			<section id="mobicents_signaling_gateway_m3ua_SG">
+				<title>&THIS.PLATFORM; M3UA Stack on SG side</title>			
+				<para>
+					Diagram below demonstrates the &THIS.PLATFORM; M3UA Stack used on Signaling Gateway (SG) side. 
+					The &THIS.PLATFORM; Signaling Gateway provides the Nodal Interworking Function (NIF) that allows SS7 Signaling (SCCP/ISUP)
+					to be inter-worked into the M3UA/IP Network as shown in <xref linkend="signaling_gateway"/>
+					
 				</para>
-			</caption>
-		</mediaobject>
-		<para>
-			&THIS.PLATFORM; M3UA Stack used on SG side will share common point code with a set of M3UA Application Server. 
-			M3UA stack on SG side can be configured as Loadbalance or Override traffic mode. It doesn't support Broadcast traffic mode. 
-			See Section XXXX for configuring M3UA Stack as SG. &THIS.PLATFORM; M3UA Stack used on SG side doesn't support routing key management messages.
-			The Routing Key should be provisioned statically using the management console.
-		</para>		
-		
-		<note>
-			<title>Note</title>
-			<para>
-				&THIS.PLATFORM; M3UA Stack uses TCP layer. Leveraging SCTP is in roadmap and will be implemented soon.
-			</para>
-		</note>
+				<mediaobject
+					id="m3ua_SGW">
+					<imageobject>
+						<imagedata
+							width="300px"
+							align="center"
+							fileref="images/M3UASgw.jpg"
+							format="JPG" />
+					</imageobject>
+					<caption>
+						<para>&THIS.PLATFORM; M3UA Stack configured on SG side
+						</para>
+					</caption>
+				</mediaobject>
+				<para>
+					&THIS.PLATFORM; M3UA Stack used on SG side will share common point code with a set of M3UA Application Server. 
+					M3UA stack on SG side can be configured as Loadbalance or Override traffic mode. It doesn't support Broadcast traffic mode. 
+					See Section XXXX for configuring M3UA Stack as SG. &THIS.PLATFORM; M3UA Stack used on SG side doesn't support routing key management messages.
+					The Routing Key should be provisioned statically using the management console.
+				</para>	
+			</section>	
+		</section>
 	 </section>	 
 </chapter>
 

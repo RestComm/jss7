@@ -26,6 +26,11 @@ import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class RemSgpImpl implements Sgp {
 
     private static Logger logger = Logger.getLogger(RemSgpImpl.class);
@@ -236,7 +241,12 @@ public class RemSgpImpl implements Sgp {
         LocalAspFactory localAspFact = (LocalAspFactory) this.getAspFactory(aspName);
 
         if (localAspFact == null) {
-            throw new Exception(String.format("No ASP found by name %s", aspName));
+            throw new Exception(String.format("No ASP found by name=%s", aspName));
+        }
+        
+        //If the AspList for this AsFactory is zero means yet no ASP is created
+        if(localAspFact.getAspList().size() == 0){
+            throw new Exception(String.format("ASP name=%s not assigned to any AS", aspName));
         }
 
         M3UAChannel channel = this.m3uaProvider.openChannel();

@@ -40,7 +40,7 @@ public class RemAsTransActToActRemAspAct implements TransitionHandler {
             if (this.as.getTrafficModeType().getMode() == TrafficModeType.Loadshare) {
                 // Iterate through ASP's and send AS_ACTIVE to ASP's who
                 // are INACTIVE
-                for (FastList.Node<Asp> n = this.as.getAppServerProcess().head(), end = this.as.getAppServerProcess()
+                for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList()
                         .tail(); (n = n.getNext()) != end;) {
                     RemAspImpl remAspImpl = (RemAspImpl) n.getValue();
 
@@ -52,7 +52,7 @@ public class RemAsTransActToActRemAspAct implements TransitionHandler {
             } else if (this.as.getTrafficModeType().getMode() == TrafficModeType.Override) {
                 // Look at 5.2.2. 1+1 Sparing, Backup Override
 
-                for (FastList.Node<Asp> n = this.as.getAppServerProcess().head(), end = this.as.getAppServerProcess()
+                for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList()
                         .tail(); (n = n.getNext()) != end;) {
                     RemAspImpl remAspImpl = (RemAspImpl) n.getValue();
 

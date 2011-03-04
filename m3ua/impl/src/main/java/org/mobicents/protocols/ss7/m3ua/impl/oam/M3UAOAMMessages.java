@@ -13,6 +13,10 @@ public interface M3UAOAMMessages {
     
     public static final String ADD_ASP_TO_AS_FAIL_NO_ASP = "No Application Server Process found for given name %s";
     
+    public static final String ASP_START_SUCESSFULL = "Successfully started ASP name=%s";
+    
+    public static final String ASP_STOP_SUCESSFULL = "Successfully stopped ASP name=%s";
+    
     public static final String CREATE_AS_SUCESSFULL = "Successfully created AS name=%s";
 
     public static final String CREATE_AS_FAIL_NAME_EXIST = "Creation of AS failed. Other AS with name=%s already exist";

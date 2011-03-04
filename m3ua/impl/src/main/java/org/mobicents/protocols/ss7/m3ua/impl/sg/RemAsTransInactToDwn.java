@@ -27,7 +27,7 @@ public class RemAsTransInactToDwn implements TransitionHandler {
         inactCount = 0;
 
         try {
-            for (FastList.Node<Asp> n = this.as.getAppServerProcess().head(), end = this.as.getAppServerProcess()
+            for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList()
                     .tail(); (n = n.getNext()) != end;) {
                 RemAspImpl remAspImpl = (RemAspImpl) n.getValue();
 

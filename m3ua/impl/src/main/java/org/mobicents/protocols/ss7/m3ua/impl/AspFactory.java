@@ -65,6 +65,10 @@ public abstract class AspFactory implements CommunicationListener {
     }
 
     public abstract Asp createAsp();
+    
+    public FastList<Asp> getAspList(){
+        return this.aspList;
+    }
 
     public M3UAMessage txPoll() {
         return txQueue.poll();

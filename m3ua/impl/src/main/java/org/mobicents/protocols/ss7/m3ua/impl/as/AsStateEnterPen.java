@@ -25,7 +25,7 @@ public class AsStateEnterPen implements StateEventHandler {
 
     public void onEvent(State state) {
         // If there is even one ASP in INACTIVE state for this AS, ACTIVATE it
-        for (FastList.Node<Asp> n = as.getAppServerProcess().head(), end = as.getAppServerProcess().tail(); (n = n
+        for (FastList.Node<Asp> n = as.getAspList().head(), end = as.getAspList().tail(); (n = n
                 .getNext()) != end;) {
             AspImpl asp = (AspImpl) n.getValue();
             

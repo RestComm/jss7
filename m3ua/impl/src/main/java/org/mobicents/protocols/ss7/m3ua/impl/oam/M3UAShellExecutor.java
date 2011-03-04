@@ -28,8 +28,8 @@ public class M3UAShellExecutor implements ShellExecutor {
 
     public String execute(String[] args) {
         try {
-            if (args.length < 5) {
-                // any command will have atleast 5 args
+            if (args.length < 4) {
+                // any command will have atleast 4 args
                 return M3UAOAMMessages.INVALID_COMMAND;
             }
 
@@ -103,10 +103,23 @@ public class M3UAShellExecutor implements ShellExecutor {
                 }
 
                 if (raspCmd.compareTo("create") == 0) {
-                    // Create new Rem ASP
+                    // Create new ASP
                     AspFactory factory = this.sgp.createAspFactory(args);
                     return String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, factory.getName());
                 }
+                
+                if (raspCmd.compareTo("start") == 0) {
+                    String aspName = args[3];
+                    this.sgp.startAsp(aspName);
+                    return String.format(M3UAOAMMessages.ASP_START_SUCESSFULL, aspName);
+                }
+                
+                if (raspCmd.compareTo("stop") == 0) {
+                    String aspName = args[3];
+                    this.sgp.startAsp(aspName);
+                    return String.format(M3UAOAMMessages.ASP_STOP_SUCESSFULL, aspName);
+                }                
+                
                 return M3UAOAMMessages.INVALID_COMMAND;
             }
             return M3UAOAMMessages.INVALID_COMMAND;

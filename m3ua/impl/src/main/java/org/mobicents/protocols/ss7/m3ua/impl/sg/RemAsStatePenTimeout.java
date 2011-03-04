@@ -32,7 +32,7 @@ public class RemAsStatePenTimeout implements StateEventHandler {
         this.inactive = false;
         // check if there are any ASP's who are INACTIVE, transition to
         // INACTIVE else DOWN
-        for (FastList.Node<Asp> n = this.as.getAppServerProcess().head(), end = this.as.getAppServerProcess().tail(); (n = n
+        for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
                 .getNext()) != end;) {
             RemAspImpl remAspImpl = (RemAspImpl) n.getValue();
             if (remAspImpl.getState() == AspState.INACTIVE) {

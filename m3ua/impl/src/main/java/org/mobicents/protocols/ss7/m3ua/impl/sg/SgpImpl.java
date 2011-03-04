@@ -481,4 +481,12 @@ public class SgpImpl implements Sgp {
         throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
     }
 
+    public void startAsp(String aspName) throws Exception {
+        throw new UnsupportedOperationException("Start ASP not supported in SGW");
+    }
+
+    public void stopAsp(String aspName) throws Exception {
+        throw new UnsupportedOperationException("Stop ASP not supported in SGW");        
+    }
+
 }

@@ -60,7 +60,7 @@ public abstract class As {
         return this.name;
     }
 
-    public FastList<Asp> getAppServerProcess() {
+    public FastList<Asp> getAspList() {
         return this.appServerProcs;
     }
 

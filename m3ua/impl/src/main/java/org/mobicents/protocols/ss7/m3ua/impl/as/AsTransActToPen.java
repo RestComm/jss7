@@ -26,7 +26,7 @@ public class AsTransActToPen implements TransitionHandler {
 
         // check if there is atleast one other ASP in ACTIVE state. If
         // yes this AS remains in ACTIVE state else goes in PENDING state.
-        for (FastList.Node<Asp> n = this.as.getAppServerProcess().head(), end = this.as.getAppServerProcess().tail(); (n = n
+        for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
                 .getNext()) != end;) {
             AspImpl asp = (AspImpl) n.getValue();
             if (asp != causeAsp && asp.getState() == AspState.ACTIVE) {

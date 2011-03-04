@@ -43,7 +43,7 @@ public class RemAsTransInactToAct implements TransitionHandler {
                 lbCount = this.as.getMinAspActiveForLb();
 
                 // Find out how many ASP's are ACTIVE now
-                for (FastList.Node<Asp> n = this.as.getAppServerProcess().head(), end = this.as.getAppServerProcess()
+                for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList()
                         .tail(); (n = n.getNext()) != end;) {
                     RemAspImpl remAspImpl = (RemAspImpl) n.getValue();
                     if (remAspImpl.getState() == AspState.ACTIVE) {
@@ -59,7 +59,7 @@ public class RemAsTransInactToAct implements TransitionHandler {
 
             // Iterate through ASP's and send AS_ACTIVE to ASP's who
             // are INACTIVE or ACTIVE
-            for (FastList.Node<Asp> n = this.as.getAppServerProcess().head(), end = this.as.getAppServerProcess()
+            for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList()
                     .tail(); (n = n.getNext()) != end;) {
                 RemAspImpl remAspImpl = (RemAspImpl) n.getValue();
 

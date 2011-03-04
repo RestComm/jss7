@@ -5,7 +5,6 @@ import java.io.IOException;
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.M3UAChannel;
 import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
@@ -317,7 +316,7 @@ public class LocalAspFactory extends AspFactory {
             return true;
         } else if (as.getTrafficModeType().getMode() == TrafficModeType.Override) {
 
-            for (FastList.Node<Asp> n = as.getAppServerProcess().head(), end = as.getAppServerProcess().tail(); (n = n
+            for (FastList.Node<Asp> n = as.getAspList().head(), end = as.getAspList().tail(); (n = n
                     .getNext()) != end;) {
                 Asp asptemp = n.getValue();
                 if (asptemp.getName().compareTo(asp.getName()) != 0

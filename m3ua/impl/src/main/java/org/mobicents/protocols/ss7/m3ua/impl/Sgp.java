@@ -69,5 +69,9 @@ public interface Sgp {
      * @throws Exception
      */
     public Asp assignAspToAs(String asName, String aspName) throws Exception;
+    
+    public void startAsp(String aspName) throws Exception;
+    
+    public void stopAsp(String aspName) throws Exception;
 
 }
