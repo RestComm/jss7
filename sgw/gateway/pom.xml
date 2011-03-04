@@ -50,12 +50,6 @@
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		</dependency>
 
-		<!-- /hardware m3ua Java-->
-		<dependency>
-			<artifactId>mobicents-m3ua</artifactId>
-			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-		</dependency>
-
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
