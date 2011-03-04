@@ -27,7 +27,7 @@
 						<title>ISUP Configuration options</title>
 						<tgroup
 							colsep="1"
-							cols="3">
+							cols="4">
 							<colspec
 								colnum="1"
 								colname="c0" />
@@ -37,6 +37,9 @@
 							<colspec
 								colnum="3"
 								colname="c2" />
+							<colspec
+								colnum="4"
+								colname="c3" />
 							<thead>
 								<row>
 									<entry>Name</entry>
