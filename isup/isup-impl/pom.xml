@@ -13,6 +13,10 @@
 	<artifactId>isup-impl</artifactId>
 
 	<name>Mobicents SS7 :: ISUP :: Impl :: ${pom.artifactId}</name>
+	
+	<properties>
+   		<skipTests>true</skipTests>
+	</properties>
 
 	<dependencies>
 		<!-- TESTs, req to enable concurrent! not used now
