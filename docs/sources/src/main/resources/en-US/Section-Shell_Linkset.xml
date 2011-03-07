@@ -49,6 +49,9 @@ linkset create &lt;linkset-type&gt; opc &lt;point-code&gt; apc &lt;point-code&gt
 			<para>or in case of dialogic:</para>
 			<programlisting>
 linkset create dialogic opc &lt;point-code&gt; apc &lt;point-code&gt; ni &lt;network-id&gt; srcmod &lt;src-mode&gt; destmod &lt;dest-mode&gt; &lt;linkset-name&gt; </programlisting>
+			<para>or in case of M3UA:</para>
+			<programlisting>
+linkset create m3ua opc &lt;point-code&gt; apc &lt;point-code&gt; ni &lt;network-id&gt; as &lt;as-name&gt; &lt;linkset-name&gt; </programlisting>
 			<para>Where:</para>
 			<variablelist>
 				<varlistentry>
@@ -117,6 +120,12 @@ linkset create dialogic opc &lt;point-code&gt; apc &lt;point-code&gt; ni &lt;net
 						<para>simple string name, which identifies linkset</para>
 					</listitem>
 				</varlistentry>
+				<varlistentry>
+					<term>as-name</term>
+					<listitem>
+						<para>Name of AS that M3UALinkset wrapps. Make sure that AS is already created as explained in <xref linkend="shell_m3ua_as_side_create"/> </para>
+					</listitem>
+				</varlistentry>				
 			</variablelist>
 			<example>
 				<title>Linkset creation</title>

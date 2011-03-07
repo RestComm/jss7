@@ -115,6 +115,13 @@
 			</fileset>
 		</copy>
 
+		<echo>Copy sgw</echo>
+		<copy todir="${zip.dir}/ss7/mobicents-sgw" failonerror="${failoncopy}">
+			<fileset dir="${checkout.basedir}/ss7/sgw/boot/target/mobicents-sgw">
+				<include name="**" />
+			</fileset>
+		</copy>
+
 		<echo>Copy Shell</echo>
 		<copy todir="${zip.dir}/ss7/shell" failonerror="${failoncopy}">
 			<fileset dir="${checkout.basedir}/ss7/management/shell/target/release">
@@ -130,9 +137,11 @@
 			<fileset dir="${checkout.basedir}/ss7/map/release/point">
 				<include name="**" />
 			</fileset>
+			<!--
 			<fileset dir="${checkout.basedir}/ss7/isup/release/point">
 				<include name="**" />
 			</fileset>
+			-->
 		</copy>
 
 		<echo>Copy Native</echo>

@@ -154,7 +154,7 @@
 				</varlistentry>					
 			</variablelist>
 			<example>
-				<title>AS creation</title>
+				<title>Rem AS creation</title>
 				<screen>
 mobicents(127.0.0.1:3436)>m3ua ras create rc 100 rk dpc 123 RAS1
 Successfully created AS name=RAS1

@@ -11,9 +11,8 @@
 			provides Shell client to manage configuration of &THIS.APPLICATION; Services. This chapter describes how to install and start client. Also it describes available
 			commands and provides examples.
 			To see examples of specific flow, to perform certain tasks, please refer to sections in chapter devoted to
-			<literal>SCCP</literal>
-			or
-			<literal>Linksets</literal>
+			<literal>Linksets</literal>, <literal>SCCP</literal> or <literal>M3UA</literal>
+			
 			. <!-- TODO add XREF -->
 		</para>
 	</section>

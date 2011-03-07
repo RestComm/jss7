@@ -331,11 +331,11 @@ sccprule create &lt;name&gt; pattern tt &lt;translation type&gt; np &lt;numberin
 				<title>SCCP Rule creation</title>
 				<screen>
 mobicents(10.65.208.215:3435)>sccprule create Rule1 pattern tt -1 np -1 noa 3 digits 99604 ssn -1 translation tt -1 np 3 noa 4 digits 77865 ssn -1
-LinkSet successfully added
+Rule successfully added
 mobicents(10.65.208.215:3435)>sccprule create Rule2 pattern tt -1 np 3 noa 4 digits 99605 ssn -1 mtpinfo name name1 opc 12 apc 56 sls 1
-LinkSet successfully added
+Rule successfully added
 mobicents(10.65.208.215:3435)>sccprule create Rule3 pattern tt -1 np 3 noa 4 digits 99606 ssn -1 translation tt -1 np 3 noa 4 digits 77865 ssn -1 mtpinfo name name1 opc 12 apc 56 sls 1
-LinkSet successfully added
+Rule successfully added
 				</screen>
 			</example>
 		</section>			

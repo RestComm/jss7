@@ -55,6 +55,10 @@
 			<para>&THIS.PLATFORM; Signaling Gateway</para>
 		</caption>
 	</mediaobject>
+	
+	<para>
+	 Apart from advantages mentioned in 
+	</para>
 		
 	<para>&THIS.PLATFORM; &THIS.APPLICATION;
 		consists of following functional blocks:
@@ -67,7 +71,7 @@
 				<para>
 					<literal>Linkset</literal> is logical group of links between two Signaling Points. 
 					This term hides <literal>MTP</literal> layer, ie. it abstracts whether hardware
-					<literal>MTP</literal> is used , M3UA or  &THIS.PLATFORM; &THIS.APPLICATION; one.
+					<literal>MTP</literal> is used or M3UA.
 				</para>
 				<para>
 				Three type of <literal>Linkset</literal> are defined
@@ -232,7 +236,9 @@
 			<title>&THIS.PLATFORM; M3UA Stack</title>
 	
 			<para>
-				&THIS.PLATFORM; M3UA Stack can be used on Application Server side or can be used on Signaling Gateway side.
+				M3UA is client-server protocol supporting the transport of any SS7 MTP3-User signalling (e.g., ISUP and SCCP messages) over IP. M3UA is defined
+				by the IETF SIGTRAN working group in RFC 4666. 
+				&THIS.PLATFORM; M3UA Stack can be used on Application Server side or can be used on Signaling Gateway side. 
 			</para>
 		
 			<note>
@@ -265,7 +271,7 @@
 				</mediaobject>
 				<para>
 					If configured as an AS, does not support configuring conventional SS7 links etc on that same stack. 
-					To use M3UA Stack as AS, the Routing Context (RC) must be known. See Section XXXX for configuring M3UA Stack 
+					To use M3UA Stack as AS, the Routing Context (RC) must be known. See Section <xref linkend="configuring_Rem_SGW"/> for configuring M3UA Stack 
 					as AS. The Remote Signaling Gateway Process (RemSGP) object is created under the M3UA Stack.
 				</para>
 			</section>
@@ -295,8 +301,8 @@
 				<para>
 					&THIS.PLATFORM; M3UA Stack used on SG side will share common point code with a set of M3UA Application Server. 
 					M3UA stack on SG side can be configured as Loadbalance or Override traffic mode. It doesn't support Broadcast traffic mode. 
-					See Section XXXX for configuring M3UA Stack as SG. &THIS.PLATFORM; M3UA Stack used on SG side doesn't support routing key management messages.
-					The Routing Key should be provisioned statically using the management console.
+					See Section <xref linkend="configuring_sgw"/> for configuring M3UA Stack as SG. &THIS.PLATFORM; M3UA Stack used on SG side 
+					doesn't support routing key management messages. The Routing Key should be provisioned statically using the management console.
 				</para>	
 			</section>	
 		</section>

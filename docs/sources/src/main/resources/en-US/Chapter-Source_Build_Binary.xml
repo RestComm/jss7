@@ -567,7 +567,7 @@ Halting VM]]></screen>
 			underlying linksets and links. The directory path is configurable by changing value of <literal>persistDir</literal> property.</para>
 			<warning><para><filename>linksetmanager.xml</filename> should never be edited by hand. Always use Shell Client to connect to 
 			&THIS.PLATFORM; Signaling Gateway and execute commands.</para></warning>	
-			<para><literal>LinksetExecutor</literal> accepts the <literal>M3UA</literal> commands and executes necessary operations.</para>
+			<para><literal>LinksetExecutor</literal> accepts the <literal>linkset</literal> commands and executes necessary operations.</para>
 		</section>	
 		
 		<section id="sgw_configuring_ShellExecutor">
