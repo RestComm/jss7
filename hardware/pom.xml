@@ -31,7 +31,6 @@
 			<modules>
 				<module>dahdi</module>
 				<module>dialogic</module>
-				<module>m3ua</module>
 			</modules>
 		</profile>
 	</profiles>
