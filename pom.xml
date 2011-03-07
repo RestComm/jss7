@@ -43,7 +43,7 @@
 		<module>mtp</module>
 		<module>management</module>
 		<module>hardware</module>
-		<!-- module>isup</module -->
+		<module>isup</module>
 		<module>sccp</module>
 		<module>tcap</module>
 		<module>map</module>
