@@ -46,8 +46,7 @@ public class AsTransActToActNtfyAltAspAct implements TransitionHandler {
         try {
             causeAsp.getFSM().signal(TransitionState.OTHER_ALTERNATE_ASP_ACTIVE);
         } catch (UnknownTransitionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	logger.error(e.getMessage(), e);
         }
         return true;
     }

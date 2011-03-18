@@ -58,8 +58,7 @@ public class AsStatePenTimeout implements StateEventHandler {
                     inactive = true;
                     break;
                 } catch (UnknownTransitionException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                	logger.error(e.getMessage(), e);
                 }
 
             }// if
@@ -71,8 +70,7 @@ public class AsStatePenTimeout implements StateEventHandler {
                 this.fsm.signal(TransitionState.AS_DOWN);
                 inactive = true;
             } catch (UnknownTransitionException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            	logger.error(e.getMessage(), e);
             }
         }
     }

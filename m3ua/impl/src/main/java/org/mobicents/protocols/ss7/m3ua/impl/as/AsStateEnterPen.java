@@ -58,8 +58,7 @@ public class AsStateEnterPen implements StateEventHandler {
                 try {
                     asp.getFSM().signal(TransitionState.ASP_ACTIVE_SENT);
                 } catch (UnknownTransitionException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                	logger.error(e.getMessage(), e);
                 }
             }
         }

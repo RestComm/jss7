@@ -152,6 +152,8 @@ public class MessageFactoryImpl implements MessageFactory {
             // the amount of data possible to read is determined as
             // minimal remainder either of header buffer or of the input buffer
             int len = Math.min(header.length - pos, buffer.remaining());
+            
+            System.out.println(String.format("len=%d, pos=%d, buffer.remaining=%d", len, pos, buffer.remaining()));
             buffer.get(header, pos, len);
 
             // update cursor postion in the header's buffer
@@ -177,7 +179,7 @@ public class MessageFactoryImpl implements MessageFactory {
                     | (header[6] & 0xff << 8) | (header[7] & 0xff)) - 8;
             
             if(length == 0){
-                //This is only headre message,no body
+                //This is only header message,no body
                 this.pos = 0;
                 this.isHeaderReady = false;
                 return message;

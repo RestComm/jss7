@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright ${year}, Red Hat, Inc. and individual contributors
+ * Copyright 2011, Red Hat, Inc. and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,7 +19,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */ 
-package org.mobicents.protocols.ss7.m3ua.impl.tcp;
+package org.mobicents.protocols.ss7.m3ua.impl.sctp;
+
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -27,6 +29,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.SelectionKey;
 import java.util.Collection;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -43,18 +46,15 @@ import org.mobicents.protocols.ss7.m3ua.message.MessageType;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 
-import static org.junit.Assert.*;
-
 /**
+ * @author amit bhayani
  *
- * @author kulikov
  */
 public class M3UATransferTest {
-
     private InetAddress localhost;
     
-    private int serverPort = 6082;
-    private int clientPort = 6083;
+    private int serverPort = 6092;
+    private int clientPort = 6093;
     
     private Server server;
     private Client client;
@@ -129,7 +129,7 @@ public class M3UATransferTest {
         private String[] txMessage = new String[]{"Hello", " ", "world"};
         
         public Client(InetAddress address, int port) throws IOException {
-            provider = TcpProvider.provider();
+            provider = SctpProvider.provider();
             channel = provider.openChannel();
             channel.bind(new InetSocketAddress(address, port));
             
@@ -210,7 +210,7 @@ public class M3UATransferTest {
         private String[] txMessage = new String[]{"Hello", " ", "world"};
         
         public Server(InetAddress address, int port) throws IOException {
-            provider = TcpProvider.provider();
+            provider = SctpProvider.provider();
             serverChannel = provider.openServerChannel();
             serverChannel.bind(new InetSocketAddress(address, port));
             

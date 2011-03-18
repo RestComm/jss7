@@ -35,6 +35,11 @@ import org.mobicents.protocols.ss7.m3ua.message.mgmt.Notify;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class RemAsTransActToPendRemAspDwn implements TransitionHandler {
 
     private static final Logger logger = Logger.getLogger(RemAsTransActToPendRemAspDwn.class);
@@ -95,8 +100,7 @@ public class RemAsTransActToPendRemAspDwn implements TransitionHandler {
                         RemAspImpl remAspTemp = (RemAspImpl) n.getValue();
 
                         // TODO : needed? The state should be changed before
-                        // signalling
-                        // AS transition
+                        // signalling AS transition
                         if (remAspTemp.getName().compareTo(remAsp.getName()) == 0) {
                             continue;
                         }
@@ -110,7 +114,7 @@ public class RemAsTransActToPendRemAspDwn implements TransitionHandler {
                     return false;
                 }
 
-            }
+            }//If Loadshare
 
             // We have reached here means AS is transitioning to be PENDING.
             // Send new AS STATUS to all INACTIVE APS's

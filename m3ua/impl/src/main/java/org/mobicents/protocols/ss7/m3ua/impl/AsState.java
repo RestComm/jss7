@@ -21,6 +21,11 @@
  */ 
 package org.mobicents.protocols.ss7.m3ua.impl;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public enum AsState {
     DOWN("DOWN"), INACTIVE("INACTIVE"), ACTIVE("ACTIVE"), PENDING("PENDING");
 

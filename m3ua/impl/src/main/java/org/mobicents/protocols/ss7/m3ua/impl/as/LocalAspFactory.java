@@ -48,6 +48,11 @@ import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.ss7.m3ua.parameter.ASPIdentifier;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class LocalAspFactory extends AspFactory {
     private static final Logger logger = Logger.getLogger(LocalAspFactory.class);
 
@@ -100,7 +105,7 @@ public class LocalAspFactory extends AspFactory {
                 As as = asp.getAs();
                 as.aspStateChange(asp, TransitionState.ASP_DOWN);
             } catch (UnknownTransitionException e) {
-                e.printStackTrace();
+            	logger.error(e.getMessage(), e);
             }
         }
     }
@@ -204,8 +209,7 @@ public class LocalAspFactory extends AspFactory {
             try {
                 asp.getAs().aspStateChange(asp, TransitionState.getTransition(notify));
             } catch (UnknownTransitionException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            	logger.error(e.getMessage(), e);
             }
         }
     }
@@ -225,14 +229,14 @@ public class LocalAspFactory extends AspFactory {
                 try {
                     asp.getFSM().signal(TransitionState.ASP_INACTIVE);
                 } catch (UnknownTransitionException e) {
-                    e.printStackTrace();
+                	logger.error(e.getMessage(), e);
                 }
             } else {
                 // Transition to ACTIVE_SENT
                 try {
                     asp.getFSM().signal(TransitionState.ASP_ACTIVE_SENT);
                 } catch (UnknownTransitionException e) {
-                    e.printStackTrace();
+                	logger.error(e.getMessage(), e);
                 }
             }// if..else
         }// for
@@ -270,7 +274,7 @@ public class LocalAspFactory extends AspFactory {
             try {
                 asp.getFSM().signal(TransitionState.ASP_ACTIVE_ACK);
             } catch (UnknownTransitionException e) {
-                e.printStackTrace();
+            	logger.error(e.getMessage(), e);
             }
         }
     }
@@ -287,7 +291,7 @@ public class LocalAspFactory extends AspFactory {
             try {
                 asp.getFSM().signal(TransitionState.ASP_INACTIVE_ACK);
             } catch (UnknownTransitionException e) {
-                e.printStackTrace();
+            	logger.error(e.getMessage(), e);
             }
         }
 
@@ -304,8 +308,7 @@ public class LocalAspFactory extends AspFactory {
             try {
                 asp.getFSM().signal(TransitionState.COMM_UP);
             } catch (UnknownTransitionException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            	logger.error(e.getMessage(), e);
             }
         }
     }
@@ -317,8 +320,7 @@ public class LocalAspFactory extends AspFactory {
                 asp.getFSM().signal(TransitionState.COMM_DOWN);
                 asp.getAs().aspStateChange(asp, TransitionState.ASP_DOWN);
             } catch (UnknownTransitionException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            	logger.error(e.getMessage(), e);
             }
         }
     }

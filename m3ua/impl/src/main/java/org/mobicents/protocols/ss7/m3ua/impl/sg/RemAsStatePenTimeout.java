@@ -36,6 +36,11 @@ import org.mobicents.protocols.ss7.m3ua.message.MessageType;
 import org.mobicents.protocols.ss7.m3ua.message.mgmt.Notify;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class RemAsStatePenTimeout implements StateEventHandler {
 
     private RemAsImpl as;

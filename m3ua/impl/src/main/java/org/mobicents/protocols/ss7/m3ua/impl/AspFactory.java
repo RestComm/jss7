@@ -18,80 +18,128 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javolution.util.FastList;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.M3UAChannel;
 import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
 import org.mobicents.protocols.ss7.m3ua.M3UASelectionKey;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 
+import com.sun.nio.sctp.AbstractNotificationHandler;
+import com.sun.nio.sctp.AssociationChangeNotification;
+import com.sun.nio.sctp.HandlerResult;
+import com.sun.nio.sctp.ShutdownNotification;
+
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
 public abstract class AspFactory implements CommunicationListener {
 
-    private M3UASelectionKey key;
-    protected M3UAChannel channel;
-    protected String name;
-    protected String ip;
-    protected int port;
-    protected M3UAProvider m3UAProvider;
+	private static final Logger logger = Logger.getLogger(AspFactory.class);
 
-    protected boolean started = false;
+	private M3UASelectionKey key;
+	protected M3UAChannel channel;
+	protected String name;
+	protected String ip;
+	protected int port;
+	protected M3UAProvider m3UAProvider;
 
-    // Queue for outgoing messages. Message sent to peer
-    protected ConcurrentLinkedQueue<M3UAMessage> txQueue = new ConcurrentLinkedQueue<M3UAMessage>();
+	protected boolean started = false;
 
-    protected FastList<Asp> aspList = new FastList<Asp>();
+	// Queue for outgoing messages. Message sent to peer
+	protected ConcurrentLinkedQueue<M3UAMessage> txQueue = new ConcurrentLinkedQueue<M3UAMessage>();
 
-    public AspFactory(String name, String ip, int port, M3UAProvider m3UAProvider) {
-        this.name = name;
-        this.ip = ip;
-        this.port = port;
+	protected FastList<Asp> aspList = new FastList<Asp>();
+	
+	protected AssociationHandler associationHandler = new AssociationHandler();
 
-        this.m3UAProvider = m3UAProvider;
-    }
+	public AspFactory(String name, String ip, int port, M3UAProvider m3UAProvider) {
+		this.name = name;
+		this.ip = ip;
+		this.port = port;
 
-    public abstract void start();
+		this.m3UAProvider = m3UAProvider;
+	}
 
-    public abstract void stop();
+	public abstract void start();
 
-    public boolean getStatus() {
-        return this.started;
-    }
+	public abstract void stop();
 
-    public String getName() {
-        return this.name;
-    }
+	public boolean getStatus() {
+		return this.started;
+	}
 
-    public String getIp() {
-        return this.ip;
-    }
+	public String getName() {
+		return this.name;
+	}
 
-    public int getPort() {
-        return this.port;
-    }
-    
-    public void setChannel(M3UAChannel channel) {
-        this.channel = channel;
-    }
+	public String getIp() {
+		return this.ip;
+	}
 
-    public abstract void read(M3UAMessage message);
+	public int getPort() {
+		return this.port;
+	}
 
-    public void write(M3UAMessage message) {
-        // TODO : Instead of one more queue write directly to channel
-        this.txQueue.add(message);
-    }
+	public void setChannel(M3UAChannel channel) {
+		this.channel = channel;
+	}
 
-    public abstract Asp createAsp();
-    
-    public FastList<Asp> getAspList(){
-        return this.aspList;
-    }
+	public abstract void read(M3UAMessage message);
 
-    public M3UAMessage txPoll() {
-        return txQueue.poll();
-    }
+	public void write(M3UAMessage message) {
+		// TODO : Instead of one more queue write directly to channel
+		this.txQueue.add(message);
+	}
+
+	public abstract Asp createAsp();
+
+	public FastList<Asp> getAspList() {
+		return this.aspList;
+	}
+
+	public M3UAMessage txPoll() {
+		return txQueue.poll();
+	}
+
+	public AssociationHandler getAssociationHandler() {
+		return associationHandler;
+	}
+
+	class AssociationHandler extends AbstractNotificationHandler<Object> {
+		@Override
+		public HandlerResult handleNotification(AssociationChangeNotification not, Object obj) {
+			switch (not.event()) {
+			case COMM_UP:
+				if (logger.isInfoEnabled()) {
+					int outbound = not.association().maxOutboundStreams();
+					int inbound = not.association().maxInboundStreams();
+					logger.info(String.format(
+							"AspFactory=%s New association setup with %d outbound streams, and %d inbound streams.\n",
+							name, outbound, inbound));
+				}
+				break;
+			}
+			return HandlerResult.CONTINUE;
+		}
+
+		@Override
+		public HandlerResult handleNotification(ShutdownNotification not, Object obj) {
+			if (logger.isInfoEnabled()) {
+				logger.info(String.format("AspFactory=%s Association SHUTDOWN", name));
+			}
+			
+			onCommStateChange(CommunicationState.SHUTDOWN);
+			
+			return HandlerResult.RETURN;
+		}
+	}
 }

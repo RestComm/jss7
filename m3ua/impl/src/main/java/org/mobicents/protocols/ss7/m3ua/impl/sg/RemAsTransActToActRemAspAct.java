@@ -36,6 +36,11 @@ import org.mobicents.protocols.ss7.m3ua.message.mgmt.Notify;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class RemAsTransActToActRemAspAct implements TransitionHandler {
 
     private static final Logger logger = Logger.getLogger(RemAsTransActToActRemAspAct.class);

@@ -27,6 +27,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 /**
  * Implements Protocol Data parameter.
  * 
+ * @author amit bhayani
  * @author kulikov
  */
 public class ProtocolDataImpl extends ParameterImpl implements ProtocolData {
@@ -59,15 +60,38 @@ public class ProtocolDataImpl extends ParameterImpl implements ProtocolData {
         this.data = data;
         encode();
     }
+    
+    /**
+     * Creates new parameter with specified value.
+     * 
+     * @param value
+     *            the value of this parameter
+     */
+    protected ProtocolDataImpl(byte[] value) {
+        this.tag = ParameterImpl.Protocol_Data;
+        opc = ((value[0] & 0xff) << 24) | ((value[1] & 0xff) << 16)
+                | ((value[2] & 0xff) << 8) | (value[3] & 0xff);
+        dpc = ((value[4] & 0xff) << 24) | ((value[5] & 0xff) << 16)
+                | ((value[6] & 0xff) << 8) | (value[7] & 0xff);
+
+        si = value[8] & 0xff;
+        ni = value[9] & 0xff;
+        mp = value[10] & 0xff;
+        sls = value[11] & 0xff;
+
+        data = new byte[value.length - 12];
+        System.arraycopy(value, 12, data, 0, value.length - 12);
+    }    
 
     protected void load(byte[] msu) {
         this.data = new byte[msu.length - 5];
         this.ni = (msu[0] & 0xc0) >> 6;
         this.mp = (msu[0] & 0x30) >> 4;
         this.si = msu[0] & 0x0f;
+        this.dpc = (msu[1] & 0xff | ((msu[2] & 0x3f) << 8));
         this.opc = ((msu[2] & 0xC0) >> 6) | ((msu[3] & 0xff) << 2)
                 | ((msu[4] & 0x0f) << 10);
-        this.dpc = (msu[1] & 0xff | ((msu[2] & 0x3f) << 8));
+        this.sls = (msu[4] & 0xf0) >> 4;
         System.arraycopy(msu, 5, data, 0, data.length);
         encode();
     }
@@ -96,28 +120,6 @@ public class ProtocolDataImpl extends ParameterImpl implements ProtocolData {
         value[9] = (byte) (ni);
         value[10] = (byte) (mp);
         value[11] = (byte) (sls);
-    }
-
-    /**
-     * Creates new parameter with specified value.
-     * 
-     * @param value
-     *            the value of this parameter
-     */
-    protected ProtocolDataImpl(byte[] value) {
-        this.tag = ParameterImpl.Protocol_Data;
-        opc = ((value[0] & 0xff) << 24) | ((value[1] & 0xff) << 16)
-                | ((value[2] & 0xff) << 8) | (value[3] & 0xff);
-        dpc = ((value[4] & 0xff) << 24) | ((value[5] & 0xff) << 16)
-                | ((value[6] & 0xff) << 8) | (value[7] & 0xff);
-
-        si = value[8] & 0xff;
-        ni = value[9] & 0xff;
-        mp = value[10] & 0xff;
-        sls = value[11] & 0xff;
-
-        data = new byte[value.length - 12];
-        System.arraycopy(value, 12, data, 0, value.length - 12);
     }
 
     public int getOpc() {

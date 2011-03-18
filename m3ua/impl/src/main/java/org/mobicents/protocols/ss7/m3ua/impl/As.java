@@ -38,6 +38,11 @@ import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public abstract class As {
 
     private static final Logger logger = Logger.getLogger(As.class);

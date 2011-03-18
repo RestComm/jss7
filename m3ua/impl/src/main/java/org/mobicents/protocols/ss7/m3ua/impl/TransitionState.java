@@ -30,6 +30,11 @@ import org.mobicents.protocols.ss7.m3ua.message.mgmt.Notify;
 import org.mobicents.protocols.ss7.m3ua.parameter.ErrorCode;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class TransitionState {
     public static final String COMM_UP = "commup";
     public static final String COMM_DOWN = "commdown";

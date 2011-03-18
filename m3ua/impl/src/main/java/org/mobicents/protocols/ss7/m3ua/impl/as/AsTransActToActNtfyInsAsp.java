@@ -57,8 +57,7 @@ public class AsTransActToActNtfyInsAsp implements TransitionHandler {
                 try {
                     aspTemp.getFSM().signal(TransitionState.ASP_ACTIVE_SENT);
                 } catch (UnknownTransitionException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                	logger.error(e.getMessage(), e);
                 }
             }
         }
