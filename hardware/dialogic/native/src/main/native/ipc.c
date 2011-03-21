@@ -68,9 +68,10 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dialogic_InterProcessComm
 	jbyte *body;
 	int status;
 
-	HDR*  h;
-    u8    *pptr;
+	/* HDR*  h; */
+    	u8  *pptr;
 	int i;
+	MSG   *m;
 	
 	
 	printf("*********Preparing for sending data*******");
@@ -78,25 +79,28 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dialogic_InterProcessComm
 	len = (*env)->GetArrayLength(env, msg_buffer);
     body = (*env)->GetByteArrayElements(env, msg_buffer, 0);
 	
-	((MSG*) h) = getm(0xcf00, 3, 0,len);
+	m = getm(0xcf00, 3, 0,len);
 
-	if (h == 0) {
+	if (m == 0) {
 		return -1;
 	}
 
-
+	m->hdr.src = src_module_id;
+      	m->hdr.dst = dest_module_id;
+/*
 	h->src = src_module_id;
 	h->dst = dest_module_id;
 
 	((MSG*) h)->len = len;
-
-	pptr = get_param((MSG *) h);
+*/
+	m->len = len;
+	pptr = get_param(m);
 
 	for(i = 0; i < len; i++) {
 		*pptr++ = body[i];
 	}
 
-	status = GCT_send(dest_module_id,h);
+	status = GCT_send(dest_module_id,(HDR *)m);
 
 	printf("Sent %d bytes, status %d", len, status);
 
