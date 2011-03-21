@@ -245,7 +245,7 @@ public class SctpChannel extends M3UAChannelImpl {
 				case MessageClass.ASP_STATE_MAINTENANCE:
 				case MessageClass.MANAGEMENT:
 				case MessageClass.ROUTING_KEY_MANAGEMENT:
-					msgInfo = MessageInfo.createOutGoing(null, 0);
+					msgInfo = MessageInfo.createOutgoing(null, 0);
 					msgInfo.payloadProtocolID(3);
 					break;
 				case MessageClass.TRANSFER_MESSAGES:
@@ -256,7 +256,7 @@ public class SctpChannel extends M3UAChannelImpl {
 					PayloadData payload = (PayloadData) msg;
 					// TODO : What about sls greater than streamNumber?
 					System.out.println(payload.getData().getSLS());
-					msgInfo = MessageInfo.createOutGoing(null, payload.getData().getSLS());
+					msgInfo = MessageInfo.createOutgoing(null, payload.getData().getSLS());
 
 					// 7.1. SCTP Payload Protocol Identifier : IANA has assigned
 					// an M3UA value (3) for the Payload Protocol Identifier in
@@ -266,7 +266,7 @@ public class SctpChannel extends M3UAChannelImpl {
 
 				// Let default messages also go through stream 0
 				default:
-					msgInfo = MessageInfo.createOutGoing(null, 0);
+					msgInfo = MessageInfo.createOutgoing(null, 0);
 					msgInfo.payloadProtocolID(3);
 					break;
 
