@@ -14,15 +14,15 @@ set PROGNAME=run.bat
 if "%OS%" == "Windows_NT" set PROGNAME=%~nx0%
 
 pushd %DIRNAME%..
-set MMS_HOME=%CD%
+set SGW_HOME=%CD%
 echo ========
-echo %MMS_HOME%
+echo %SGW_HOME%
 
 popd
 
 REM Add bin/native to the PATH if present
-if exist "%MMS_HOME%\native" set PATH=%MMS_HOME%\native;%PATH%
-if exist "%MMS_HOME%\native" set JAVA_OPTS=%JAVA_OPTS% -Djava.library.path="%PATH%"
+if exist "%SGW_HOME%\native" set PATH=%SGW_HOME%\native;%PATH%
+if exist "%SGW_HOME%\native" set JAVA_OPTS=%JAVA_OPTS% -Djava.library.path="%PATH%"
 
 REM Run section  - here we define node and default ip
 set IP=127.0.0.1
@@ -55,7 +55,7 @@ set ARGS=""
 
 rem Find run.jar, or we can't continue
 
-set RUNJAR=%MMS_HOME%\bin\run.jar
+set RUNJAR=%SGW_HOME%\bin\run.jar
 if exist "%RUNJAR%" goto FOUND_RUN_JAR
 echo Could not locate %RUNJAR%. Please check that you are in the
 echo bin directory when running this script.
@@ -89,10 +89,10 @@ rem If JBOSS_CLASSPATH or JAVAC_JAR is empty, don't include it, as this will
 rem result in including the local directory in the classpath, which makes
 rem error tracking harder.
 if not "%JAVAC_JAR%" == "" set RUNJAR=%JAVAC_JAR%;%RUNJAR%
-if "%MMS_CLASSPATH%" == "" set RUN_CLASSPATH=%RUNJAR%
-if "%RUN_CLASSPATH%" == "" set RUN_CLASSPATH=%MMS_CLASSPATH%;%RUNJAR%
+if "%SGW_CLASSPATH%" == "" set RUN_CLASSPATH=%RUNJAR%
+if "%RUN_CLASSPATH%" == "" set RUN_CLASSPATH=%SGW_CLASSPATH%;%RUNJAR%
 
-set MMS_CLASSPATH=%RUN_CLASSPATH%
+set SGW_CLASSPATH=%RUN_CLASSPATH%
 
 rem Setup JBoss specific properties
 set JAVA_OPTS=%JAVA_OPTS% -Dprogram.name=%PROGNAME% 
@@ -115,28 +115,28 @@ rem JPDA options. Uncomment and modify as appropriate to enable remote debugging
 rem set JAVA_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y %JAVA_OPTS%
 
 rem Setup the java endorsed dirs
-set MMS_ENDORSED_DIRS=%MMS_HOME%\lib
+set SGW_ENDORSED_DIRS=%SGW_HOME%\lib
 
 
 echo ===============================================================================
 echo.
-echo   MMS Bootstrap Environment
+echo   SGW Bootstrap Environment
 echo.
-echo   MMS_HOME: %MMS_HOME%
+echo   SGW_HOME: %SGW_HOME%
 echo.
 echo   JAVA: %JAVA%
 echo.
 echo   JAVA_OPTS: %JAVA_OPTS%
 echo.
-echo   CLASSPATH: %MMS_CLASSPATH%
+echo   CLASSPATH: %SGW_CLASSPATH%
 echo   
-echo   MMS_ENDORSED_DIRS: %MMS_ENDORSED_DIRS%
+echo   SGW_ENDORSED_DIRS: %SGW_ENDORSED_DIRS%
 echo.
 echo ===============================================================================
 echo.
 
 :RESTART
-"%JAVA%" %JAVA_OPTS% -Djava.ext.dirs="%MMS_ENDORSED_DIRS%" -Dmbrola.base="%MMS_HOME%/mbrola" -classpath "%MMS_CLASSPATH%" org.mobicents.media.server.bootstrap.Main %*
+"%JAVA%" %JAVA_OPTS% -Djava.ext.dirs="%SGW_ENDORSED_DIRS%" -classpath "%SGW_CLASSPATH%" org.mobicents.ss7.sgw.boot.Main %*
 rem if ERRORLEVEL 10 goto RESTART
 
 :END
