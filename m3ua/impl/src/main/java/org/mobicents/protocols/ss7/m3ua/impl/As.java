@@ -18,7 +18,7 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import java.io.IOException;
@@ -41,155 +41,263 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public abstract class As {
 
-    private static final Logger logger = Logger.getLogger(As.class);
+	private static final Logger logger = Logger.getLogger(As.class);
 
-    public static final String ATTRIBUTE_ASP = "asp";
+	public static final String ATTRIBUTE_ASP = "asp";
 
-    protected int minAspActiveForLb = 1;
+	protected int minAspActiveForLb = 1;
 
-    // List of all the ASP's for this AS
-    protected FastList<Asp> appServerProcs = new FastList<Asp>();
+	// List of all the ASP's for this AS
+	protected FastList<Asp> appServerProcs = new FastList<Asp>();
 
-    protected String name;
-    protected RoutingContext rc;
-    private RoutingKey rk;
-    protected TrafficModeType trMode;
-    protected M3UAProvider m3UAProvider = null;
+	protected String name;
+	protected RoutingContext rc;
+	private RoutingKey rk;
+	protected TrafficModeType trMode;
+	protected M3UAProvider m3UAProvider = null;
 
-    protected final TrafficModeType defaultTrafModType;
+	protected final TrafficModeType defaultTrafModType;
 
-    protected ConcurrentLinkedQueue<PayloadData> penQueue = new ConcurrentLinkedQueue<PayloadData>();
+	protected ConcurrentLinkedQueue<PayloadData> penQueue = new ConcurrentLinkedQueue<PayloadData>();
 
-    // Queue for incoming Payload messages. Message received from peer
-    protected ConcurrentLinkedQueue<PayloadData> rxQueue = new ConcurrentLinkedQueue<PayloadData>();
+	// Queue for incoming Payload messages. Message received from peer
+	protected ConcurrentLinkedQueue<PayloadData> rxQueue = new ConcurrentLinkedQueue<PayloadData>();
 
-    protected FSM fsm;
+	protected FSM fsm;
 
-    public As(String name, RoutingContext rc, RoutingKey rk, TrafficModeType trMode, M3UAProvider provider) {
-        this.name = name;
-        this.rc = rc;
-        this.rk = rk;
-        this.trMode = trMode;
-        this.m3UAProvider = provider;
+	public As(String name, RoutingContext rc, RoutingKey rk, TrafficModeType trMode, M3UAProvider provider) {
+		this.name = name;
+		this.rc = rc;
+		this.rk = rk;
+		this.trMode = trMode;
+		this.m3UAProvider = provider;
 
-        this.defaultTrafModType = this.m3UAProvider.getParameterFactory().createTrafficModeType(
-                TrafficModeType.Loadshare);
+		this.defaultTrafModType = this.m3UAProvider.getParameterFactory().createTrafficModeType(
+				TrafficModeType.Loadshare);
 
-        fsm = new FSM(this.name);
-    }
+		fsm = new FSM(this.name);
+	}
 
-    public String getName() {
-        return this.name;
-    }
+	/**
+	 * Every As has unique name
+	 * 
+	 * @return String name of this As
+	 */
+	public String getName() {
+		return this.name;
+	}
 
-    public FastList<Asp> getAspList() {
-        return this.appServerProcs;
-    }
+	/**
+	 * Get the list of {@link Asp} for this As
+	 * 
+	 * @return
+	 */
+	public FastList<Asp> getAspList() {
+		return this.appServerProcs;
+	}
 
-    public AsState getState() {
-        return AsState.getState(this.fsm.getState().getName());
-    }
+	/**
+	 * Get the {@link AsState} of this As
+	 * 
+	 * @return
+	 */
+	public AsState getState() {
+		return AsState.getState(this.fsm.getState().getName());
+	}
 
-    public RoutingContext getRoutingContext() {
-        return this.rc;
-    }
+	/**
+	 * Get the {@link RoutingContext} for this As
+	 * 
+	 * @return
+	 */
+	public RoutingContext getRoutingContext() {
+		return this.rc;
+	}
 
-    public RoutingKey getRoutingKey() {
-        return this.rk;
-    }
+	/**
+	 * Get the {@link RoutingKey} configured for this As
+	 * 
+	 * @return
+	 */
+	public RoutingKey getRoutingKey() {
+		return this.rk;
+	}
 
-    public void setTrafficModeType(TrafficModeType trMode) {
-        // TODO : Check if TrafficModeType is not null throw error?
-        this.trMode = trMode;
-    }
+	/**
+	 * Set the {@link TrafficModeType}
+	 * 
+	 * @param trMode
+	 */
+	public void setTrafficModeType(TrafficModeType trMode) {
+		// TODO : Check if TrafficModeType is not null throw error?
+		this.trMode = trMode;
+	}
 
-    public TrafficModeType getTrafficModeType() {
-        return this.trMode;
-    }
+	/**
+	 * Get the {@link TrafficModeType}
+	 * 
+	 * @return
+	 */
+	public TrafficModeType getTrafficModeType() {
+		return this.trMode;
+	}
 
-    public void setDefaultTrafficModeType() {
-        // TODO : Check if TrafficModeType is not null throw error?
-        this.trMode = this.defaultTrafModType;
-    }
+	/**
+	 * Set default {@link TrafficModeType} which is loadshare
+	 */
+	public void setDefaultTrafficModeType() {
+		// TODO : Check if TrafficModeType is not null throw error?
+		this.trMode = this.defaultTrafModType;
+	}
 
-    public M3UAProvider getM3UAProvider() {
-        return m3UAProvider;
-    }
+	/**
+	 * Get {@link M3UAProvider}
+	 * 
+	 * @return
+	 */
+	public M3UAProvider getM3UAProvider() {
+		return m3UAProvider;
+	}
 
-    public void setMinAspActiveForLb(int lb) {
-        this.minAspActiveForLb = lb;
-    }
+	/**
+	 * If the {@link TrafficModeType} is loadshare, set the minimum number of
+	 * {@link Asp} that should be
+	 * {@link org.mobicents.protocols.ss7.m3ua.impl.AspState#ACTIVE} before
+	 * state of this As becomes {@link AsState#ACTIVE}
+	 * 
+	 * @param lb
+	 */
+	public void setMinAspActiveForLb(int lb) {
+		this.minAspActiveForLb = lb;
+	}
 
-    public int getMinAspActiveForLb() {
-        return this.minAspActiveForLb;
-    }
+	/**
+	 * Get the minimum number of {@link Asp} that should be
+	 * {@link org.mobicents.protocols.ss7.m3ua.impl.AspState#ACTIVE} before
+	 * state of this As becomes {@link AsState#ACTIVE}. Used only if
+	 * {@link TrafficModeType} is loadshare
+	 * 
+	 * @return
+	 */
+	public int getMinAspActiveForLb() {
+		return this.minAspActiveForLb;
+	}
 
-    public FSM getFSM() {
-        return this.fsm;
-    }
+	/**
+	 * Get the {@link FSM} for this As
+	 * 
+	 * @return
+	 */
+	public FSM getFSM() {
+		return this.fsm;
+	}
 
-    public void addAppServerProcess(Asp asp) throws Exception {
-        // Check if already added?
-        for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
-            Asp aspTemp = n.getValue();
-            if (aspTemp.getName().compareTo(asp.getName()) == 0) {
-                throw new Exception(String.format("Asp name=%s already added", asp.getName()));
-            }
-        }
+	/**
+	 * Add new {@link Asp} for this As.
+	 * 
+	 * @param asp
+	 * @throws Exception
+	 *             throws exception if the Asp with same name already exist
+	 */
+	public void addAppServerProcess(Asp asp) throws Exception {
+		// Check if already added?
+		for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
+			Asp aspTemp = n.getValue();
+			if (aspTemp.getName().compareTo(asp.getName()) == 0) {
+				throw new Exception(String.format("Asp name=%s already added", asp.getName()));
+			}
+		}
 
-        asp.setAs(this);
-        appServerProcs.add(asp);
-    }
+		asp.setAs(this);
+		appServerProcs.add(asp);
+	}
 
-    public void aspStateChange(Asp asp, String asTransition) throws UnknownTransitionException {
-        this.fsm.setAttribute(ATTRIBUTE_ASP, asp);
-        this.fsm.signal(asTransition);
-    }
+	/**
+	 * The {@link Asp} state has changed causing the state change for this As
+	 * too.
+	 * 
+	 * @param asp
+	 * @param asTransition
+	 * @throws UnknownTransitionException
+	 */
+	public void aspStateChange(Asp asp, String asTransition) throws UnknownTransitionException {
+		this.fsm.setAttribute(ATTRIBUTE_ASP, asp);
+		this.fsm.signal(asTransition);
+	}
 
-    public void write(PayloadData message) throws IOException {
+	/**
+	 * write the {@link PayloadData} to underlying {@link Asp}. If the state of
+	 * As is PENDING, the PayloadData is stored in pending queue.
+	 * 
+	 * @param message
+	 * @throws IOException
+	 */
+	public void write(PayloadData message) throws IOException {
 
-        switch (this.getState()) {
-        case ACTIVE:
-            // TODO : Algo to select correct ASP
-            for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
-                Asp aspTemp = n.getValue();
-                if (aspTemp.getState() == AspState.ACTIVE) {
-                    aspTemp.getAspFactory().write(message);
-                    break;
-                }
-            }
+		switch (this.getState()) {
+		case ACTIVE:
+			// TODO : Algo to select correct ASP
+			for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
+				Asp aspTemp = n.getValue();
+				if (aspTemp.getState() == AspState.ACTIVE) {
+					aspTemp.getAspFactory().write(message);
+					break;
+				}
+			}
 
-            break;
-        case PENDING:
-            this.penQueue.add(message);
-            break;
-        default:
-            throw new IOException(String.format("As name=%s is not ACTIVE", this.name));
-        }
-    }
+			break;
+		case PENDING:
+			this.penQueue.add(message);
+			break;
+		default:
+			throw new IOException(String.format("As name=%s is not ACTIVE", this.name));
+		}
+	}
 
-    public void write(byte[] msu) throws IOException {
-        ProtocolData data = m3UAProvider.getParameterFactory().createProtocolData(0, msu);
+	/**
+	 * 
+	 * @param msu
+	 * @throws IOException
+	 */
+	public void write(byte[] msu) throws IOException {
+		ProtocolData data = m3UAProvider.getParameterFactory().createProtocolData(0, msu);
 
-        PayloadData payload = (PayloadData) this.m3UAProvider.getMessageFactory().createMessage(
-                MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD);
-        payload.setRoutingContext(this.rc);
-        payload.setData(data);
-        this.write(payload);
-    }
+		PayloadData payload = (PayloadData) this.m3UAProvider.getMessageFactory().createMessage(
+				MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD);
+		payload.setRoutingContext(this.rc);
+		payload.setData(data);
+		this.write(payload);
+	}
 
-    public void received(PayloadData payload) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Received PayloadData=%s for As=%s", payload.toString(), this.name));
-        }
-        this.rxQueue.add(payload);
-    }
+	public void received(PayloadData payload) {
+		if (logger.isDebugEnabled()) {
+			logger.debug(String.format("Received PayloadData=%s for As=%s", payload.toString(), this.name));
+		}
+		this.rxQueue.add(payload);
+	}
 
-    public PayloadData poll() {
-        return this.rxQueue.poll();
-    }
+	public PayloadData poll() {
+		return this.rxQueue.poll();
+	}
+
+	public void clearPendingQueue() {
+		if (logger.isDebugEnabled()) {
+			if (this.penQueue.size() > 0) {
+				logger.debug(String.format("Cleaning %d PayloadData message from pending queue of As name=%s",
+						this.penQueue.size(), this.name));
+			}
+		}
+		this.penQueue.clear();
+	}
+
+	public void sendPendingPayloadData(Asp asp) {
+		PayloadData payload = null;
+		while ((payload = this.penQueue.poll()) != null) {
+			asp.getAspFactory().write(payload);
+		}
+	}
 }

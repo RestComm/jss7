@@ -29,9 +29,11 @@ import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 
+/**
+ * 
+ * @author amit bhayani
+ */
 public class RemAsImpl extends As {
-
-	// List of all ACTIVE ASP's for this AS
 
 	public RemAsImpl(String name, RoutingContext rc, RoutingKey rk, TrafficModeType trMode, M3UAProvider provider) {
 		super(name, rc, rk, trMode, provider);

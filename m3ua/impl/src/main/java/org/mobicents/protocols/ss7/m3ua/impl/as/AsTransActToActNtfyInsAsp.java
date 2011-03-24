@@ -32,6 +32,11 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class AsTransActToActNtfyInsAsp implements TransitionHandler {
 
     private static final Logger logger = Logger.getLogger(AsTransActToActNtfyInsAsp.class);

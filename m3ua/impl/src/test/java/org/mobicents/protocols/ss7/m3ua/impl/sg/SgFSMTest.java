@@ -22,6 +22,7 @@
 package org.mobicents.protocols.ss7.m3ua.impl.sg;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -41,7 +42,9 @@ import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.asptm.ASPActiveImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.asptm.ASPInactiveImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.message.transfer.PayloadDataImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.parameter.ProtocolDataImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.tcp.TcpProvider;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
@@ -537,7 +540,7 @@ public class SgFSMTest {
 
 		assertNull(aspFactory1.txPoll());
 		assertNull(aspFactory2.txPoll());
-		
+
 		sgw.stop();
 
 	}
@@ -617,6 +620,103 @@ public class SgFSMTest {
 		// Make sure we don't have any more
 		assertNull(aspFactory.txPoll());
 
+		sgw.stop();
+	}
+
+	@Test
+	public void testPendingQueue() throws Exception {
+
+		SgpImpl sgw = new SgpImpl("127.0.0.1", 1112);
+		sgw.start();
+
+		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
+
+		DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory
+				.createDestinationPointCode(123, (short) 0) };
+
+		ServiceIndicators[] servInds = new ServiceIndicators[] { parmFactory.createServiceIndicators(new short[] { 3 }) };
+
+		TrafficModeType trModType = parmFactory.createTrafficModeType(TrafficModeType.Override);
+		LocalRKIdentifier lRkId = parmFactory.createLocalRKIdentifier(1);
+		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
+
+		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
+		As remAs = sgw
+				.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode override testas".split(" "));
+		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
+		// 2777);
+		AspFactory aspFactory = sgw.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp".split(" "));
+
+		Asp remAsp = sgw.assignAspToAs("testas", "testasp");
+
+		// Check for Communication UP
+		aspFactory.onCommStateChange(CommunicationState.UP);
+
+		assertEquals(AspState.DOWN, remAsp.getState());
+
+		// Check for ASP_UP
+		M3UAMessageImpl message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
+		aspFactory.read(message);
+
+		assertEquals(AspState.INACTIVE, remAsp.getState());
+		assertTrue(validateMessage(aspFactory, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
+		// also the AS should be INACTIVE now
+		assertEquals(AsState.INACTIVE, remAs.getState());
+		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+				Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE));
+
+		// Check for ASP_ACTIVE
+		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE);
+		((ASPActiveImpl) message).setRoutingContext(rc);
+		aspFactory.read(message);
+		assertEquals(AspState.ACTIVE, remAsp.getState());
+		assertTrue(validateMessage(aspFactory, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK, -1, -1));
+		// also the AS should be ACTIVE now
+		assertEquals(AsState.ACTIVE, remAs.getState());
+		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
+
+		// Check for ASP_INACTIVE
+		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE);
+		aspFactory.read(message);
+		assertEquals(AspState.INACTIVE, remAsp.getState());
+		assertTrue(validateMessage(aspFactory, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE_ACK, -1,
+				-1));
+		// also the AS should be PENDING now
+		assertEquals(AsState.PENDING, remAs.getState());
+		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+				Status.STATUS_AS_State_Change, Status.INFO_AS_PENDING));
+
+		// Add PayloadData
+		PayloadDataImpl payload = (PayloadDataImpl) messageFactory.createMessage(MessageClass.TRANSFER_MESSAGES,
+				MessageType.PAYLOAD);
+		ProtocolDataImpl p1 = (ProtocolDataImpl) parmFactory.createProtocolData(1408, 123, 3, 1, 0, 1, new byte[] { 1,
+				2, 3, 4 });
+		payload.setRoutingContext(rc);
+		payload.setData(p1);
+
+		remAs.write(payload);
+
+		// Now bring UP the ASP
+		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE);
+		((ASPActiveImpl) message).setRoutingContext(rc);
+		aspFactory.read(message);
+
+		assertTrue(validateMessage(aspFactory, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK, -1, -1));
+		// also the AS should be ACTIVE now
+		assertEquals(AsState.ACTIVE, remAs.getState());
+		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
+
+		// Also we should have PayloadData
+		M3UAMessage payLoadTemp = aspFactory.txPoll();
+		assertNotNull(payLoadTemp);
+		assertEquals(MessageClass.TRANSFER_MESSAGES, payLoadTemp.getMessageClass());
+		assertEquals(MessageType.PAYLOAD, payLoadTemp.getMessageType());
+
+		// Make sure we don't have any more
+		assertNull(aspFactory.txPoll());
+		
 		sgw.stop();
 	}
 

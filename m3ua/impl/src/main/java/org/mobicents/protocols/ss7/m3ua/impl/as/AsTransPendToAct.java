@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright ${year}, Red Hat, Inc. and individual contributors
+ * Copyright 2011, Red Hat, Inc. and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -18,42 +18,49 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.mobicents.protocols.ss7.m3ua.impl.as;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.impl.TransitionState;
+import org.mobicents.protocols.ss7.m3ua.impl.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 
 /**
- * 
  * @author amit bhayani
- *
+ * 
  */
-public class AsTransActToActNtfyAltAspAct implements TransitionHandler {
+public class AsTransPendToAct implements TransitionHandler {
 
-    private static final Logger logger = Logger.getLogger(AsTransActToActNtfyAltAspAct.class);
+	private static final Logger logger = Logger.getLogger(AsTransPendToAct.class);
 
-    private AsImpl as = null;
-    private FSM fsm;
+	private AsImpl as = null;
+	private FSM fsm;
 
-    public AsTransActToActNtfyAltAspAct(AsImpl as, FSM fsm) {
-        this.as = as;
-        this.fsm = fsm;
-    }
+	/**
+	 * 
+	 */
+	public AsTransPendToAct(AsImpl as, FSM fsm) {
+		this.as = as;
+		this.fsm = fsm;
+	}
 
-    public boolean process(State state) {
-        AspImpl causeAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
-
-        try {
-            causeAsp.getFSM().signal(TransitionState.OTHER_ALTERNATE_ASP_ACTIVE);
-        } catch (UnknownTransitionException e) {
-        	logger.error(e.getMessage(), e);
-        }
-        return true;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler#process(org
+	 * .mobicents.protocols.ss7.m3ua.impl.fsm.State)
+	 */
+	@Override
+	public boolean process(State state) {
+		
+		// Send the PayloadData (if any) from pending queue to other side
+		Asp causeAsp = (Asp) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
+		this.as.sendPendingPayloadData(causeAsp);
+		
+		return true;
+	}
 
 }

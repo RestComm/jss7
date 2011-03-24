@@ -30,6 +30,11 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class AsTransActToPen implements TransitionHandler {
 
     private static final Logger logger = Logger.getLogger(AsTransActToPen.class);

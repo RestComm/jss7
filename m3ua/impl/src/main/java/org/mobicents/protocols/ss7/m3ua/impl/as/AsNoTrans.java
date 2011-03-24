@@ -18,42 +18,25 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.mobicents.protocols.ss7.m3ua.impl.as;
 
-import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.impl.TransitionState;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 
-/**
+/*
+ * Transition handler that doesn't cause State change
  * 
  * @author amit bhayani
- *
  */
-public class AsTransActToActNtfyAltAspAct implements TransitionHandler {
+public class AsNoTrans implements TransitionHandler {
 
-    private static final Logger logger = Logger.getLogger(AsTransActToActNtfyAltAspAct.class);
+	public AsNoTrans() {
+	}
 
-    private AsImpl as = null;
-    private FSM fsm;
-
-    public AsTransActToActNtfyAltAspAct(AsImpl as, FSM fsm) {
-        this.as = as;
-        this.fsm = fsm;
-    }
-
-    public boolean process(State state) {
-        AspImpl causeAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
-
-        try {
-            causeAsp.getFSM().signal(TransitionState.OTHER_ALTERNATE_ASP_ACTIVE);
-        } catch (UnknownTransitionException e) {
-        	logger.error(e.getMessage(), e);
-        }
-        return true;
-    }
+	@Override
+	public boolean process(State state) {
+		return false;
+	}
 
 }

@@ -49,6 +49,11 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ErrorCode;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class RemAspFactory extends AspFactory {
 
 	private static Logger logger = Logger.getLogger(RemAspFactory.class);

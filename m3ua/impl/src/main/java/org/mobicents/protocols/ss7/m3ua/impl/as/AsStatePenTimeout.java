@@ -32,6 +32,13 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.StateEventHandler;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 
+/**
+ * {@link AsStatePenTimeout#onEvent(State)} is called when the pending timer
+ * T(r) expires.
+ * 
+ * @author amit bhayani
+ *
+ */
 public class AsStatePenTimeout implements StateEventHandler {
 
     private AsImpl as;
@@ -45,7 +52,26 @@ public class AsStatePenTimeout implements StateEventHandler {
         this.fsm = fsm;
     }
 
+	/**
+	 * <p>
+	 * An active ASP has transitioned to ASP-INACTIVE or ASP DOWN and it was the
+	 * last remaining active ASP in the AS. A recovery timer T(r) SHOULD be
+	 * started, and all incoming signalling messages SHOULD be queued by the
+	 * SGP. If an ASP becomes ASP-ACTIVE before T(r) expires, the AS is moved to
+	 * the AS-ACTIVE state, and all the queued messages will be sent to the ASP.
+	 * </p>
+	 * <p>
+	 * If T(r) expires before an ASP becomes ASP-ACTIVE, and the SGP has no
+	 * alternative, the SGP may stop queuing messages and discard all previously
+	 * queued messages. The AS will move to the AS-INACTIVE state if at least
+	 * one ASP is in ASP-INACTIVE; otherwise, it will move to AS-DOWN state.
+	 * </p>
+	 */
     public void onEvent(State state) {
+    	
+		//Clear the Pending Queue for this As
+		this.as.clearPendingQueue();
+		
         this.inactive = false;
         // check if there are any ASP's who are INACTIVE, transition to
         // INACTIVE else DOWN
