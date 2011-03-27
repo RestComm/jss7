@@ -29,6 +29,11 @@ import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.Sgp;
 import org.mobicents.ss7.management.console.ShellExecutor;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class M3UAShellExecutor implements ShellExecutor {
 
     private static final Logger logger = Logger.getLogger(M3UAShellExecutor.class);
@@ -137,7 +142,7 @@ public class M3UAShellExecutor implements ShellExecutor {
                 
                 if (raspCmd.compareTo("stop") == 0) {
                     String aspName = args[3];
-                    this.sgp.startAsp(aspName);
+                    this.sgp.stopAsp(aspName);
                     return String.format(M3UAOAMMessages.ASP_STOP_SUCESSFULL, aspName);
                 }                
                 
