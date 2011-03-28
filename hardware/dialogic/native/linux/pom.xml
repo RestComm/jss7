@@ -12,7 +12,8 @@
 	<artifactId>libmobicents-dialogic-linux</artifactId>
 
 	<properties>
-		<include.dialogic>/opt/dpklnx</include.dialogic>
+		<include.dialogic>/opt/dpklnx/INC</include.dialogic>
+		<include.dialogic.gctlib>/opt/dpklnx</include.dialogic.gctlib>
 	</properties>
 	<name>Mobicents SS7 :: Hardware :: ${pom.artifactId}</name>
 	<packaging>so</packaging>
@@ -60,7 +61,7 @@
 
 					<linkerStartOptions>
 						<linkerStartOption>
-							-shared -lc -ldl
+							-shared -lc -ldl -L${include.dialogic.gctlib} -lgctlib 
 						</linkerStartOption>
 					</linkerStartOptions>
 
