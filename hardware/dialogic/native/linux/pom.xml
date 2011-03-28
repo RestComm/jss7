@@ -12,7 +12,7 @@
 	<artifactId>libmobicents-dialogic-linux</artifactId>
 
 	<properties>
-		<include.dialogic>/usr/include/dialogic</include.dialogic>
+		<include.dialogic>/opt/dpklnx</include.dialogic>
 	</properties>
 	<name>Mobicents SS7 :: Hardware :: ${pom.artifactId}</name>
 	<packaging>so</packaging>
