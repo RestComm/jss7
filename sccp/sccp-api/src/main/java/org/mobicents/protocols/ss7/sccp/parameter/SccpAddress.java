@@ -18,6 +18,7 @@
 package org.mobicents.protocols.ss7.sccp.parameter;
 
 import org.mobicents.protocols.ss7.indicator.AddressIndicator;
+import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 
 /**
@@ -45,7 +46,7 @@ public class SccpAddress {
         this.pc = pc;
         this.ssn = ssn;
         this.ai = new AddressIndicator(pc != 0, ssn != 0, 
-                RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, gt.getIndicator());
+                RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED);
     }
 
     public AddressIndicator getAddressIndicator() {

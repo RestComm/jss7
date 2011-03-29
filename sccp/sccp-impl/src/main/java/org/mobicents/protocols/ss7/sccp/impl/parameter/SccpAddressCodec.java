@@ -59,12 +59,11 @@ public class SccpAddressCodec {
             ssn = bin.read() & 0xff;
         }
         
-        GlobalTitle globalTitle = gtCodec.decode(addressIndicator.getGlobalTitleIndicator(), bin);
-        
-        if (addressIndicator.pcPresent() && addressIndicator.ssnPresent()) {
+        if (addressIndicator.getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
             return new SccpAddress(pc, ssn);
         }
         
+        GlobalTitle globalTitle = gtCodec.decode(addressIndicator.getGlobalTitleIndicator(), bin);
         return new SccpAddress(globalTitle, ssn) ;
     }
 

@@ -358,13 +358,16 @@ public class SccpStackImpl implements SccpStack, Layer4 {
                             OP_READ_WRITE, 1);
                     for (FastList.Node<SelectorKey> n = selected.head(), end = selected
                             .tail(); (n = n.getNext()) != end;) {
-                        ((LinksetStream) n.getValue().getStream())
+                        int length = ((LinksetStream) n.getValue().getStream())
                                 .read(rxBuffer);
-
+                        
                         // Read data
-                        if (rxBuffer != null) {
+                        if (length != 0) {
+                            byte[] data = new byte[length];
+                            System.arraycopy(rxBuffer, 0, data, 0, length);
+                            
                             MessageHandler handler = new MessageHandler(
-                                    rxBuffer);
+                            		data);
                             executor.execute(handler);
                         }
 

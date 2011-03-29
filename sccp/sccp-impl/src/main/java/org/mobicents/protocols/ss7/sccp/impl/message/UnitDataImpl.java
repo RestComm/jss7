@@ -21,14 +21,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressCodec;
 import org.mobicents.protocols.ss7.sccp.message.MessageType;
 import org.mobicents.protocols.ss7.sccp.message.UnitData;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.utils.Utils;
 
 /**
  *
@@ -55,13 +53,13 @@ public class UnitDataImpl extends SccpMessageImpl implements UnitData {
         this.callingParty = (SccpAddress) callingParty;
     }
 
-    public SccpAddress getCalledParty() {
-        return calledParty;
-    }
-
-    public SccpAddress getCallingParty() {
-        return callingParty;
-    }
+//    public SccpAddress getCalledParty() {
+//        return calledParty;
+//    }
+//
+//    public SccpAddress getCallingParty() {
+//        return callingParty;
+//    }
 
     public ProtocolClass getProtocolClass() {
         return pClass;

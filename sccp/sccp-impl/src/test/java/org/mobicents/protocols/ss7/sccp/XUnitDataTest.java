@@ -3,33 +3,29 @@
  */
 package org.mobicents.protocols.ss7.sccp;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
-
 import java.io.ByteArrayOutputStream;
-
 import java.util.Arrays;
 
-import org.mobicents.protocols.ss7.sccp.impl.parameter.GT0100Codec;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressCodec;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentationImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.XUnitDataImpl;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-
-
-import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.XUnitDataImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.HopCounterImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentationImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageType;
+import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
-import static org.junit.Assert.*;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * @author baranowb

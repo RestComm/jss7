@@ -18,13 +18,8 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
-import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
-import org.mobicents.protocols.ss7.indicator.NumberingPlan;
-
 import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
-import javolution.xml.XMLFormat.InputElement;
-import javolution.xml.XMLFormat.OutputElement;
 import javolution.xml.stream.XMLStreamException;
 
 /**
