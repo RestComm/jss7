@@ -168,6 +168,7 @@ public class DialogicLinkset extends Linkset {
 
         @Override
         public boolean poll(int arg0, int arg1) {
+        	rxData = null;
             try {
                 if (ipc != null) {
                     rxData = ipc.receive();
@@ -196,9 +197,10 @@ public class DialogicLinkset extends Linkset {
         public int read(byte[] paramArrayOfByte) throws IOException {
             if (rxData != null) {
                 System.arraycopy(rxData, 0, paramArrayOfByte, 0, rxData.length);
+                return rxData.length;
             }
 
-            return paramArrayOfByte == null ? 0 : paramArrayOfByte.length;
+            return 0;
         }
 
         public SelectorKey register(StreamSelector selector) throws IOException {
