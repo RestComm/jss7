@@ -61,7 +61,6 @@ public class SccpStackImpl implements SccpStack, Layer4 {
 
     // provider ref, this can be real provider or pipe, for tests.
     private SccpProviderImpl sccpProvider;
-    private String path;
 
     private RouterImpl router;
     private Executor executor;
@@ -94,14 +93,6 @@ public class SccpStackImpl implements SccpStack, Layer4 {
      */
     public SccpProvider getSccpProvider() {
         return sccpProvider;
-    }
-
-    public void setConfigPath(String path) {
-        this.path = path;
-    }
-
-    public String getPath() {
-        return path;
     }
 
     /*
@@ -354,7 +345,8 @@ public class SccpStackImpl implements SccpStack, Layer4 {
 
     private class MtpStreamHandler implements Runnable {
 
-        byte[] rxBuffer;
+    	//TODO: Stream API should use ByteBuffer
+    	byte[] rxBuffer = new byte[1000];
         byte[] txBuffer;
 
         public void run() {
