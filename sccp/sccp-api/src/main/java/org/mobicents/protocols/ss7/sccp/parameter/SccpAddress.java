@@ -77,10 +77,7 @@ public class SccpAddress {
         
         if (address.gt != null) {
             res = gt != null && address.gt.equals(gt);
-        }
-        
-        if (!res) {
-            return false;
+            return res;
         }
         
         return address.ssn == ssn && address.pc == pc;
