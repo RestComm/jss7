@@ -297,6 +297,26 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 			UserInformation userInfo = tcBeginIndication.getUserInformation();
 
+			MAPDialogImpl mapDialogImpl = new MAPDialogImpl(mapAppCtx,
+					tcBeginIndication.getDialog(), this);
+			
+			this.loger.info("TCBegin dialog = "+ mapDialogImpl);
+			
+			mapDialogImpl.setMapAcceptInfoFired(true);
+
+			this.dialogs.put(mapDialogImpl.getDialogId(), mapDialogImpl);
+
+			MAPOpenInfoImpl mapOpenInfoImpl = new MAPOpenInfoImpl();
+			mapOpenInfoImpl.setMAPDialog(mapDialogImpl);
+			
+			//Page 146 - if no User-information is present it is checked whether presence of User Information in the 
+			//TC-BEGIN indication primitive is required for the received application-context-name. If User
+			//Information is required but not present, a TC-U-ABORT request primitive with abort-reason
+			//"User-specific" and user-information "MAP-ProviderAbortInfo" indicating "abnormalDialogue"
+			//shall be issued. The local MAP-user shall not be informed.
+
+			
+			//TODO : From where do we know id userInfo is required for a give application-context-name?
 			if (userInfo != null) {
 
 				if (!userInfo.isOid()) {
@@ -339,31 +359,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 						return;
 					}
 
-					MAPDialogImpl mapDialogImpl = new MAPDialogImpl(mapAppCtx,
-							tcBeginIndication.getDialog(), this);
-					
-					this.loger.info("TCBegin dialog = "+ mapDialogImpl);
-					
-					mapDialogImpl.setMapAcceptInfoFired(true);
-
-					this.dialogs.put(mapDialogImpl.getDialogId(), mapDialogImpl);
-
-					MAPOpenInfoImpl mapOpenInfoImpl = new MAPOpenInfoImpl();
-					mapOpenInfoImpl.setMAPDialog(mapDialogImpl);
 					mapOpenInfoImpl.decode(ais);
-
-					for (MAPDialogListener listener : this.dialogListeners) {
-						listener.onMAPOpenInfo(mapOpenInfoImpl);
-					}
-
-					// Now let us decode the Components
-					if(comps!=null)
-					{
-						processComponents(mapDialogImpl,comps);
-					}
-						// end of for (Component c : comps)
-					
-					this.loger.info("TCBegin dialog..isMapAcceptInfoFired() = "+ mapDialogImpl.isMapAcceptInfoFired());
 
 				} catch (AsnException e) {
 					e.printStackTrace();
@@ -373,12 +369,20 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					e.printStackTrace();
 				}
 
-			} else {
-				// TODO : This is Error Send back TC-U-ABORT without
-				// intimating User
-				loger.error("UserInfo is null");
-				return;
+			} 
+			
+			for (MAPDialogListener listener : this.dialogListeners) {
+				listener.onMAPOpenInfo(mapOpenInfoImpl);
 			}
+
+			// Now let us decode the Components
+			if(comps!=null)
+			{
+				processComponents(mapDialogImpl,comps);
+			}
+				// end of for (Component c : comps)
+			
+			this.loger.info("TCBegin dialog..isMapAcceptInfoFired() = "+ mapDialogImpl.isMapAcceptInfoFired());			
 
 		}
 
