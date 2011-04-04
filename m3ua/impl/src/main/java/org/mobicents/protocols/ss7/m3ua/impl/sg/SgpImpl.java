@@ -43,6 +43,7 @@ import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.CommunicationListener.CommunicationState;
 import org.mobicents.protocols.ss7.m3ua.impl.Sgp;
 import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAOAMMessages;
+import org.mobicents.protocols.ss7.m3ua.impl.router.M3UARouter;
 import org.mobicents.protocols.ss7.m3ua.impl.scheduler.M3UAScheduler;
 import org.mobicents.protocols.ss7.m3ua.impl.sctp.SctpChannel;
 import org.mobicents.protocols.ss7.m3ua.impl.sctp.SctpProvider;
@@ -80,6 +81,8 @@ public class SgpImpl implements Sgp {
 	private boolean started = false;
 
 	private M3UAScheduler m3uaScheduler = new M3UAScheduler();
+	
+	private M3UARouter m3uaRouter = new M3UARouter();
 
 	public SgpImpl(String address, int port) {
 		this.address = address;
@@ -104,9 +107,7 @@ public class SgpImpl implements Sgp {
 				MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD);
 		payload.setData(data);
 
-		// TODO : Algo to select correct AS depending on above ProtocolData and
-		// Routing Key. Also check if AS is ACTIVE else throw error?
-		As as = this.appServers.get(0);
+		As as = m3uaRouter.getAs(data.getDpc(), data.getOpc(), (short)data.getSI());
 		if (as != null && as.getState() == AsState.ACTIVE || as.getState() == AsState.PENDING) {
 			payload.setRoutingContext(as.getRoutingContext());
 			as.write(payload);
@@ -252,6 +253,9 @@ public class SgpImpl implements Sgp {
 				new DestinationPointCode[] { dspobj }, si != null ? new ServiceIndicators[] { si } : null,
 				opcListObj != null ? new OPCList[] { opcListObj } : null);
 		RemAsImpl as = new RemAsImpl(name, rcObj, rk, trMode, this.m3uaProvider);
+		
+		m3uaRouter.addRk(rk, as);
+		
 		m3uaScheduler.execute(as.getFSM());
 		appServers.add(as);
 		return as;
