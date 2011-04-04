@@ -23,7 +23,7 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dialogic_InterProcessComm
 	HDR*  h;
 	int i;
 
-	h = GCT_receive(src_module_id);
+	h = GCT_grab(src_module_id);
 
 	if (h == 0) {
 		return -1;
