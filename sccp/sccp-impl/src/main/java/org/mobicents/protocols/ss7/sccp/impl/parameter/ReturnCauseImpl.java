@@ -43,23 +43,30 @@ public class ReturnCauseImpl extends AbstractParameter implements ReturnCause {
 	}
 
 	public void decode(InputStream in) throws IOException {
-		// TODO Auto-generated method stub
-		
+		if(in.read()!=1)
+		{
+			throw new IOException();
+		}
+	
+		int b = in.read() & 0xFf;
+
+		this.value = b;
 	}
 
-	public void encode(OutputStream os) throws IOException {
-		// TODO Auto-generated method stub
-		
+	public void encode(OutputStream out) throws IOException {
+		byte b = (byte) (this.value);
+		out.write(1);
+		out.write(b);
 	}
 
-	public void decode(byte[] b) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
+	public void decode(byte[] bb) throws IOException {
+		int b = bb[0] & 0xff;
 
+		this.value = b;
+	}
+	
 	public byte[] encode() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return new byte[]{(byte) this.value};
 	}
 
 }
