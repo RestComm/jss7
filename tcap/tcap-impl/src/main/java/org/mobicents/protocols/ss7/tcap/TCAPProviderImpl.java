@@ -17,10 +17,11 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
-import org.mobicents.protocols.ss7.sccp.message.MessageType;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.message.UnitData;
+import org.mobicents.protocols.ss7.sccp.message.UnitDataService;
 import org.mobicents.protocols.ss7.sccp.message.XUnitData;
+import org.mobicents.protocols.ss7.sccp.message.XUnitDataService;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -199,14 +200,30 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             SccpAddress localAddress = null;
             SccpAddress remoteAddress = null;
             
-            if (message.getType() == MessageType.UDT) {
+            switch (message.getType())
+            {
+            
+            case UnitData.MESSAGE_TYPE: 
                 data = ((UnitData)message).getData();
                 localAddress = ((UnitData)message).getCalledPartyAddress();
                 remoteAddress = ((UnitData)message).getCallingPartyAddress();
-            } else if (message.getType() == MessageType.XUDT) {
+                break;
+            case  XUnitData.MESSAGE_TYPE:
                 data = ((XUnitData)message).getData();
                 localAddress = ((XUnitData)message).getCalledPartyAddress();
                 remoteAddress = ((XUnitData)message).getCallingPartyAddress();
+                break;
+                //TODO: determine action based on cause?
+            case  UnitDataService.MESSAGE_TYPE: 
+                data = ((XUnitData)message).getData();
+                localAddress = ((XUnitData)message).getCalledPartyAddress();
+                remoteAddress = ((XUnitData)message).getCallingPartyAddress();
+                break;
+            case  XUnitDataService.MESSAGE_TYPE:
+                data = ((XUnitData)message).getData();
+                localAddress = ((XUnitData)message).getCalledPartyAddress();
+                remoteAddress = ((XUnitData)message).getCallingPartyAddress();
+                break;
             }
             // FIXME: Qs state that OtxID and DtxID consittute to dialog id.....
 
