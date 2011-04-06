@@ -4,6 +4,9 @@
 package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 
 
@@ -11,7 +14,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.Importance;
  * @author baranowb
  * 
  */
-public class ImportanceImpl extends OptionalParameter implements Importance {
+public class ImportanceImpl extends AbstractParameter implements Importance {
 
 	
 	// default is lowest priority :)
@@ -38,7 +41,7 @@ public class ImportanceImpl extends OptionalParameter implements Importance {
 	 * 
 	 * @see org.mobicents.protocols.ss7.sccp.OptionalParameter#decode(byte[])
 	 */
-	@Override
+	
 	public void decode(byte[] buffer) throws IOException {
 		this.importance = (byte) (buffer[0] & 0x07);
 
@@ -49,13 +52,36 @@ public class ImportanceImpl extends OptionalParameter implements Importance {
 	 * 
 	 * @see org.mobicents.protocols.ss7.sccp.OptionalParameter#encode()
 	 */
-	@Override
+	
 	public byte[] encode() throws IOException {
 		// TODO Auto-generated method stub
 		return new byte[] { (byte) (importance & 0x07) };
 	}
 
-	@Override
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.sccp.impl.parameter.AbstractParameter#decode(java.io.InputStream)
+	 */
+	
+	public void decode(InputStream in) throws IOException {
+		if(in.read()!= 1)
+		{
+			throw new IOException();
+		}
+		
+		this.importance = (byte) (in.read()& 0x07);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.sccp.impl.parameter.AbstractParameter#encode(java.io.OutputStream)
+	 */
+	
+	public void encode(OutputStream os) throws IOException {
+		os.write(1);
+		os.write(this.importance & 0x07);
+	}
+	
+	
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -63,7 +89,7 @@ public class ImportanceImpl extends OptionalParameter implements Importance {
 		return result;
 	}
 
-	@Override
+	
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -76,6 +102,7 @@ public class ImportanceImpl extends OptionalParameter implements Importance {
 			return false;
 		return true;
 	}
+
 
 	
 }

@@ -23,5 +23,8 @@ package org.mobicents.protocols.ss7.sccp.parameter;
  * @author baranowb
  * @author kulikov
  */
-public interface Segmentation {
+public interface Segmentation extends Parameter{
+	
+	public final static int PARAMETER_CODE = 0x10;
+	
 }

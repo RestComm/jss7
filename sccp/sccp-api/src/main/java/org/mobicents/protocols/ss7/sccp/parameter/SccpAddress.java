@@ -27,7 +27,7 @@ import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
  * @author baranowb
  * @author kulikov
  */
-public class SccpAddress {
+public class SccpAddress implements Parameter{  //impl? pfff
 
     private GlobalTitle gt;
     private int pc;
@@ -65,7 +65,7 @@ public class SccpAddress {
         return gt;
     }
     
-    @Override
+    
     public boolean equals(Object other) {
         if (!(other instanceof SccpAddress)) {
             return false;
@@ -83,7 +83,7 @@ public class SccpAddress {
         return address.ssn == ssn && address.pc == pc;
     }
 
-    @Override
+    
     public int hashCode() {
         int hash = 7;
         hash = 37 * hash + (this.gt != null ? this.gt.hashCode() : 0);
@@ -92,7 +92,7 @@ public class SccpAddress {
         return hash;
     }
     
-    @Override
+    
     public String toString() {
         return "pc=" + pc + ",ssn=" + ssn + ",gt=" + gt;
     }

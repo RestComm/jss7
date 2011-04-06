@@ -21,7 +21,9 @@
  */
 package org.mobicents.protocols.ss7.sccp;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayInputStream;
 
@@ -30,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.UnitDataImpl;
-import org.mobicents.protocols.ss7.sccp.message.MessageType;
+import org.mobicents.protocols.ss7.sccp.message.UnitData;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -62,7 +64,7 @@ public class UnitDataTest {
 				(byte) 0xF9, 0x04, 0x00, 0x11, 0x30, (byte) 0x92, 0x60, 0x60, 0x62, 0x00, 0x0B, (byte) 0xC8, 0x32,
 				(byte) 0x9B, (byte) 0xFD, 0x06, 0x5D, (byte) 0xDF, 0x72, 0x36, 0x19 };
 		
-		UnitDataImpl testObjectDecoded = (UnitDataImpl) messageFactory.createMessage(MessageType.UDT, new ByteArrayInputStream(b));
+		UnitDataImpl testObjectDecoded = (UnitDataImpl) messageFactory.createMessage(UnitData.MESSAGE_TYPE, new ByteArrayInputStream(b));
 		System.out.println(testObjectDecoded);
 		assertNotNull(testObjectDecoded);
 		

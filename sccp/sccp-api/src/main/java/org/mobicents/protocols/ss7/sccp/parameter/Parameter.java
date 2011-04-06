@@ -22,7 +22,7 @@ package org.mobicents.protocols.ss7.sccp.parameter;
  *
  * @author kulikov
  */
-public interface Parameter {
-    public final static int IMPORTANCE = 0x12;
-    public final static int SEGMENTATION = 0x10;
+public interface Parameter { //marker interface?.... ech
+  
+    
 }

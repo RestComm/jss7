@@ -32,7 +32,6 @@ import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
-import org.mobicents.protocols.ss7.sccp.message.MessageType;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.message.UnitData;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
@@ -116,7 +115,7 @@ public class SccpStackImplTest {
                 return false;
             }
             
-            if (msg.getType() != MessageType.UDT) {
+            if (msg.getType() != UnitData.MESSAGE_TYPE) {
                 return false;
             }
             

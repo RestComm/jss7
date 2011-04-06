@@ -18,6 +18,8 @@
 
 package org.mobicents.protocols.ss7.sccp.message;
 
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+
 
 /**
  * Unitdata (UDT)
@@ -26,7 +28,12 @@ package org.mobicents.protocols.ss7.sccp.message;
  * @author kulikov
  */
 public interface UnitData extends SccpMessage {
-        
+	
+	public final static int MESSAGE_TYPE = 0x09;
+	
     public byte[] getData();
+    
     public void setData(byte[] data);
+    
+    public ProtocolClass getProtocolClass();
 }

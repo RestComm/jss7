@@ -23,7 +23,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
  * 
  * @author Oleg Kulikov
  */
-public class ProtocolClassImpl extends MandatoryFixedParameter implements ProtocolClass {
+public class ProtocolClassImpl extends AbstractParameter implements ProtocolClass {
 
 	private int pClass;
 	private int msgHandling;
@@ -47,6 +47,11 @@ public class ProtocolClassImpl extends MandatoryFixedParameter implements Protoc
 	}
 
 	public void decode(InputStream in) throws IOException {
+		if(in.read()!=1)
+		{
+			throw new IOException();
+		}
+	
 		int b = in.read() & 0xff;
 
 		pClass = b & 0x0f;
@@ -55,10 +60,21 @@ public class ProtocolClassImpl extends MandatoryFixedParameter implements Protoc
 
 	public void encode(OutputStream out) throws IOException {
 		byte b = (byte) (pClass | (msgHandling << 4));
+		out.write(1);
 		out.write(b);
 	}
 
-	@Override
+	public void decode(byte[] bb) throws IOException {
+		int b = bb[0] & 0xff;
+
+		pClass = b & 0x0f;
+		msgHandling = (b & 0xf0) >> 4;
+	}
+	
+	public byte[] encode() throws IOException {
+		return new byte[]{(byte) (pClass | (msgHandling << 4))};
+	}
+	
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
@@ -67,7 +83,7 @@ public class ProtocolClassImpl extends MandatoryFixedParameter implements Protoc
 		return result;
 	}
 
-	@Override
+	
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -82,9 +98,13 @@ public class ProtocolClassImpl extends MandatoryFixedParameter implements Protoc
 		return true;
 	}
 
-	@Override
+	
 	public String toString() {
 		return "ProtocolClass [msgHandling=" + msgHandling + ", pClass=" + pClass + "]";
 	}
+
+	
+
+
 
 }

@@ -20,6 +20,7 @@ package org.mobicents.protocols.ss7.sccp.message;
 import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
 import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
 
 /**
@@ -28,16 +29,25 @@ import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
  * @author baranowb
  * @author kulikov
  */
-public interface XUnitData extends SccpMessage {
+public interface XUnitDataService extends SccpMessage {
 	
-	public final static int MESSAGE_TYPE = 0x11;
+	public final static int MESSAGE_TYPE = 0x12;
 	
 	/**
-	 * Gets the hop countor parameter.
+	 * Gets the hop counter parameter.
 	 * 
 	 * @return parameter.
 	 */
 	public HopCounter getHopCounter();
+
+	/**
+	 * Return cause of this data unit.
+	 * 
+	 * @return
+	 */
+	public ReturnCause getReturnCause();
+
+	public void setReturnCause(ReturnCause rc);
 
 	/**
 	 * Modifies importance parameter.

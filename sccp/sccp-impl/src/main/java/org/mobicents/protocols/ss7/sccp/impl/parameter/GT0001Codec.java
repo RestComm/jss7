@@ -39,7 +39,7 @@ public class GT0001Codec extends GTCodec {
         this.gt = gt;
     }
     
-    @Override
+    
     public GlobalTitle decode(InputStream in) throws IOException {
         int b = in.read() & 0xff;
         
@@ -59,7 +59,7 @@ public class GT0001Codec extends GTCodec {
         return new GT0001(nai, digits);
     }
 
-    @Override
+    
     public void encode(OutputStream out) throws IOException {        
         //determine if number of digits is even or odd
         String digits = gt.getDigits();

@@ -23,44 +23,62 @@ import java.io.InputStream;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
-import org.mobicents.protocols.ss7.sccp.message.MessageType;
 import org.mobicents.protocols.ss7.sccp.message.UnitData;
+import org.mobicents.protocols.ss7.sccp.message.UnitDataService;
 import org.mobicents.protocols.ss7.sccp.message.XUnitData;
+import org.mobicents.protocols.ss7.sccp.message.XUnitDataService;
 import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- *
+ * 
  * @author kulikov
  */
 public class MessageFactoryImpl implements MessageFactory {
 	private static final Logger logger = Logger.getLogger(MessageFactoryImpl.class);
-    public UnitData createUnitData(ProtocolClass pClass, SccpAddress calledParty,
-            SccpAddress callingParty) {
-        return new UnitDataImpl(pClass, calledParty, callingParty);
-    }
 
-    public XUnitData createXUnitData(HopCounter hopCounter, ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty) {
-        return new XUnitDataImpl(hopCounter, pClass, calledParty, callingParty);
-    }
+	
+	//TODO: add checks, PC vs Q.713 Table 1
+	public UnitData createUnitData(ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty) {
+		return new UnitDataImpl(pClass, calledParty, callingParty);
+	}
 
-    public SccpMessageImpl createMessage(int type, InputStream in) throws IOException {
-        SccpMessageImpl msg = null;
-        switch (type) {
-            case MessageType.UDT :
-                msg = new UnitDataImpl();
-                break;
-            case MessageType.XUDT :
-                msg = new XUnitDataImpl();
-        }
-        if (msg != null) {
-            msg.decode(in);
-        }else if(logger.isEnabledFor(Level.WARN))
-        {
-        	logger.warn("No message implementation for MT: "+type);
-        }
-        return msg;
-    }
-    
+	public UnitDataService createUnitDataService(ReturnCause returnCause, SccpAddress calledParty, SccpAddress callingParty) {
+		return new UnitDataServiceImpl(returnCause, calledParty, callingParty);
+	}
+	
+	public XUnitData createXUnitData(HopCounter hopCounter, ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty) {
+		return new XUnitDataImpl(hopCounter, pClass, calledParty, callingParty);
+	}
+
+	public XUnitDataService createXUnitDataService(HopCounter hopCounter, ReturnCause rc, SccpAddress calledParty, SccpAddress callingParty) {
+		return new XUnitDataServiceImpl(hopCounter, rc, calledParty, callingParty);
+	}
+
+	public SccpMessageImpl createMessage(int type, InputStream in) throws IOException {
+		SccpMessageImpl msg = null;
+		switch (type) {
+		case UnitData.MESSAGE_TYPE:
+			msg = new UnitDataImpl();
+			break;
+		case UnitDataService.MESSAGE_TYPE:
+			msg = new UnitDataServiceImpl();
+			break;
+		case XUnitData.MESSAGE_TYPE:
+			msg = new XUnitDataImpl();
+			break;
+		case XUnitDataService.MESSAGE_TYPE:
+			msg = new XUnitDataServiceImpl();
+			break;
+		}
+		if (msg != null) {
+			msg.decode(in);
+		} else if (logger.isEnabledFor(Level.WARN)) {
+			logger.warn("No message implementation for MT: " + type);
+		}
+		return msg;
+	}
+
 }

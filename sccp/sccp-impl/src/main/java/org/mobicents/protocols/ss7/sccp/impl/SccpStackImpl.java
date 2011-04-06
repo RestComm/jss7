@@ -28,7 +28,9 @@ import java.util.concurrent.Executors;
 import javolution.util.FastList;
 import javolution.util.FastMap;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
@@ -36,10 +38,14 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.MTPInfo;
 import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
-import org.mobicents.protocols.ss7.sccp.message.MessageType;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.message.UnitData;
+import org.mobicents.protocols.ss7.sccp.message.UnitDataService;
 import org.mobicents.protocols.ss7.sccp.message.XUnitData;
+import org.mobicents.protocols.ss7.sccp.message.XUnitDataService;
+import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.utils.Utils;
 import org.mobicents.protocols.stream.api.SelectorKey;
@@ -54,341 +60,351 @@ import org.mobicents.ss7.linkset.oam.LinksetStream;
  * 
  */
 public class SccpStackImpl implements SccpStack, Layer4 {
+	private static final Logger logger = Logger.getLogger(SccpStackImpl.class);
+	
+	protected final static int OP_READ_WRITE = 3;
+	
+	protected State state = State.IDLE;
 
-    private State state = State.IDLE;
+	// provider ref, this can be real provider or pipe, for tests.
+	protected SccpProviderImpl sccpProvider;
 
-    private int OP_READ_WRITE = 3;
+	protected RouterImpl router;
+	protected Executor executor;
 
-    // provider ref, this can be real provider or pipe, for tests.
-    private SccpProviderImpl sccpProvider;
+	protected Executor layer3exec;
 
-    private RouterImpl router;
-    private Executor executor;
+	// Hold LinkSet here. LinkSet's name as key and actual LinkSet as Object
+	protected volatile FastMap<String, Linkset> linksets = new FastMap<String, Linkset>();
 
-    private Executor layer3exec;
+	// Hold the byte[] that needs to be writtent to Linkset
+	private volatile FastMap<String, ConcurrentLinkedQueue<byte[]>> linksetQueue = new FastMap<String, ConcurrentLinkedQueue<byte[]>>();
 
-    // Hold LinkSet here. LinkSet's name as key and actual LinkSet as Object
-    protected volatile FastMap<String, Linkset> linksets = new FastMap<String, Linkset>();
+	private volatile LinksetSelector linkSetSelector = new LinksetSelector();
 
-    // Hold the byte[] that needs to be writtent to Linkset
-    private volatile FastMap<String, ConcurrentLinkedQueue<byte[]>> linksetQueue = new FastMap<String, ConcurrentLinkedQueue<byte[]>>();
+	protected MessageFactoryImpl messageFactory;
+	
 
-    private volatile LinksetSelector linkSetSelector = new LinksetSelector();
+	public SccpStackImpl() {
+		messageFactory = new MessageFactoryImpl();
+		sccpProvider = new SccpProviderImpl(this);
+		// why this is present?
+		this.state = State.CONFIGURED;
 
-    protected MessageFactoryImpl messageFactory;
-    private static final Logger logger = Logger.getLogger(SccpStackImpl.class);
+	}
 
-    public SccpStackImpl() {
-        messageFactory = new MessageFactoryImpl();
-        sccpProvider = new SccpProviderImpl(this);
-        // why this is present?
-        this.state = State.CONFIGURED;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.sccp.SccpStack#getSccpProvider()
+	 */
+	public SccpProvider getSccpProvider() {
+		return sccpProvider;
+	}
 
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.sccp.SccpStack#start()
+	 */
+	public void start() throws IllegalStateException {
+		logger.info("Starting ...");
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.mobicents.protocols.ss7.sccp.SccpStack#getSccpProvider()
-     */
-    public SccpProvider getSccpProvider() {
-        return sccpProvider;
-    }
+		executor = Executors.newFixedThreadPool(1);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.mobicents.protocols.ss7.sccp.SccpStack#start()
-     */
-    public void start() throws IllegalStateException {
-        logger.info("Starting ...");
+		this.state = State.RUNNING;
 
-        executor = Executors.newFixedThreadPool(1);
+		layer3exec = Executors.newFixedThreadPool(1);
 
-        this.state = State.RUNNING;
+		layer3exec.execute(new MtpStreamHandler());
+	}
 
-        layer3exec = Executors.newFixedThreadPool(1);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.sccp.SccpStack#stop()
+	 */
+	public void stop() {
+		this.state = State.IDLE;
+	}
 
-        layer3exec.execute(new MtpStreamHandler());
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.sccp.SccpStack#setRouter(org.mobicents.protocols
+	 * .ss7.sccp.Router)
+	 */
+	public void setRouter(RouterImpl router) {
+		this.router = router;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.mobicents.protocols.ss7.sccp.SccpStack#stop()
-     */
-    public void stop() {
-        this.state = State.IDLE;
-    }
+	public RouterImpl getRouter() {
+		return this.router;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.mobicents.protocols.ss7.sccp.SccpStack#setRouter(org.mobicents.protocols.ss7.sccp.Router)
-     */
-    public void setRouter(RouterImpl router) {
-        this.router = router;
-    }
+	private enum State {
+		IDLE, CONFIGURED, RUNNING;
+	}
 
-    public RouterImpl getRouter() {
-        return this.router;
-    }
+	public void setTransferType(int type) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    private enum State {
-        IDLE, CONFIGURED, RUNNING;
-    }
+	private Linkset findLinkset(int pc) {
+		for (FastMap.Entry<String, Linkset> e = linksets.head(), end = linksets.tail(); (e = e.getNext()) != end;) {
+			Linkset linkset = e.getValue();
+			if (linkset.getApc() == pc) {
+				return linkset;
+			}
+		}
+		return null;
+	}
 
-    public void setTransferType(int type) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	private Linkset findLinkset(String name) {
+		return this.linksets.get(name);
+	}
 
-    // private MtpProvider findLinkset(int pc) {
-    // for (MtpProvider linkset : linksets) {
-    // if (linkset.getAdjacentPointCode() == pc) {
-    // return linkset;
-    // }
-    // }
-    // return null;
-    // }
+	protected void send(SccpMessage message) throws IOException {
+		MessageHandler handler = new MessageHandler(message);
+		executor.execute(handler);
+	}
 
-    private Linkset findLinkset(String name) {
-        return this.linksets.get(name);
-    }
+	private void send(Linkset linkset, SccpMessage message, MTPInfo mtpInfo) throws IOException {
+		// prepare routing label
+		int opc = mtpInfo.getOpc();
+		int dpc = mtpInfo.getDpc();
+		int si = 3;// SCCP //Why not static? Mtp3._SI_SERVICE_SCCP
+		int ni = linkset.getNi();
+		int sls = mtpInfo.getSls();
+		int ssi = ni << 2;
 
-    protected void send(SccpMessage message) throws IOException {
-        MessageHandler handler = new MessageHandler(message);
-        executor.execute(handler);
-    }
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		// encoding routing label
+		bout.write((byte) (((ssi & 0x0F) << 4) | (si & 0x0F)));
+		bout.write((byte) dpc);
+		bout.write((byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6)));
+		bout.write((byte) (opc >> 2));
+		bout.write((byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
 
-    private void send(Linkset linkset, SccpMessage message, MTPInfo mtpInfo)
-            throws IOException {
-        // prepare routing label
-        int opc = mtpInfo.getOpc();
-        int dpc = mtpInfo.getDpc();
-        int si = 3;// SCCP //Why not static? Mtp3._SI_SERVICE_SCCP
-        int ni = linkset.getNi();
-        int sls = mtpInfo.getSls();
-        int ssi = ni << 2;
+		((SccpMessageImpl) message).encode(bout);
+		byte[] msg = bout.toByteArray();
+		// linkset.getLinksetStream().write(msg);
+		System.out.println("Sending SCCP to "+ linkset);
+		this.linksetQueue.get(linkset.getName()).add(msg);
+	}
 
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        // encoding routing label
-        bout.write((byte) (((ssi & 0x0F) << 4) | (si & 0x0F)));
-        bout.write((byte) dpc);
-        bout.write((byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6)));
-        bout.write((byte) (opc >> 2));
-        bout.write((byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
+	private void route(SccpMessageImpl msg,boolean mtpOriginated) throws IOException {
+		//TODO: check Q.714 how this should be done
+		
+		SccpAddress calledPartyAddress = msg.getCalledPartyAddress();
+		System.out.println(String.format("Route %s", msg.toString()));
+		if (calledPartyAddress.getAddressIndicator().getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
+			
+			if(mtpOriginated)
+			{
+				//if we get here, it means WE should try to consume, since DPC MUST in this case point to us
+				//Q.714 section 2.3
+				if(!this.sccpProvider.notify(calledPartyAddress.getSubsystemNumber(), msg) && msg.getProtocolClass().getHandling() == ProtocolClass.HANDLING_RET_ERR);
+				{
+					//in case we did not consume.... we have to reply in some way. Q.714 4.2 for now
+					SccpMessage ans = null;
+					ReturnCause returnCause = this.sccpProvider.getParameterFactory().createReturnCause(ReturnCause.SUBSYSTEM_FAILURE); //nto sure if its proper
 
-        ((SccpMessageImpl) message).encode(bout);
-        byte[] msg = bout.toByteArray();
-        // linkset.getLinksetStream().write(msg);
-        this.linksetQueue.get(linkset.getName()).add(msg);
-    }
+					switch(msg.getType())
+					{
+					case UnitDataService.MESSAGE_TYPE:
+						ans = messageFactory.createUnitDataService(returnCause, msg.getCallingPartyAddress(), msg.getCalledPartyAddress()); //switch addresses
+						((UnitDataService)ans).setData( ((UnitData)msg).getData());
+						break;
+					case XUnitDataService.MESSAGE_TYPE:
+						HopCounter hc = this.sccpProvider.getParameterFactory().createHopCounter(HopCounter.COUNT_HIGH);
+						ans = messageFactory.createXUnitDataService(hc,returnCause, msg.getCallingPartyAddress(), msg.getCalledPartyAddress()); //switch addresses
+						((XUnitDataService)ans).setData( ((XUnitData)msg).getData());
+						break;
+						default:
+							if(logger.isEnabledFor(Level.WARN))
+								logger.warn("Not supported error condition! Message: "+msg);
+							return;
+					}
+					
+					if(ans!=null)
+					{
+						this.sccpProvider.send(ans);
+					}
+				}
+				
+			}else
+			{
+				//we have to find link based on DPC
+				int pc = calledPartyAddress.getSignalingPointCode();
+				
+				Linkset linkset = findLinkset(pc);
+				if (linkset == null) {
+					// throw new
+					// IOException(String.format("No linkset matching APC %d",
+					// msg.getCalledPartyAddress()
+					// .getSignalingPointCode()));
+					
+					//TODO : Is this for local routing?
+					System.out.println("Linkset is null routing locally");
+					sccpProvider.notify(calledPartyAddress, msg);
+					return;
+				}
+				
+				MTPInfo info = new MTPInfo("dialogic", 2, 1, 16);
+				System.out.println("Routing to Dialogic");
+				send(linkset, msg, info);
+				
+			}
+			
+		} else {
+			Rule rule = router.find(calledPartyAddress);
 
-    private void route(UnitData msg) throws IOException {
-        Rule rule = router.find(msg.getCalledPartyAddress());
+			// route not defined? try to deliver to local listener
+			// TODO : If routing is based on DPC and SSN; and DPC is not this
+			// DPC,
+			// then it
+			// should be routed to actual DPC instead of giving it back to local
+			// listener
+			if (rule == null) {
+				sccpProvider.notify(calledPartyAddress, msg);
+				return;
+			}
 
-        // route not defined? try to deliver to local listener
-        //TODO : If routing is based on DPC and SSN; and DPC is not this DPC, then it
-        //should be routed to actual DPC instead of giving it back to local listener
-        if (rule == null) {
-            sccpProvider.notify(msg.getCalledPartyAddress(), msg);
-            return;
-        }
+			// translate address
+			SccpAddress address = rule.translate(calledPartyAddress);
+			
+			// TODO: allow to set parameters?
+			msg.setCalledPartyAddress(address);
+			// linkset not defined? send to local listener
+			if (rule.getMTPInfo() == null) {
+				sccpProvider.notify(address, msg);
+				return;
+			}
+			// find linkset
+			Linkset linkset = findLinkset(rule.getMTPInfo().getName());
+			if (linkset == null) {
+				throw new IOException(String.format("No linkset matching %s", rule.getMTPInfo().getName()));
+			}
+			send(linkset, msg, rule.getMTPInfo());
+		}
+	}
 
-        // translate address
-        SccpAddress address = rule.translate(msg.getCalledPartyAddress());
+	private class MessageHandler implements Runnable {
+		// MSU as input stream
+		private ByteArrayInputStream data;
+		private SccpMessageImpl message;
+		private boolean mtpOriginated = false; //tell if we send it, or receive :)
+		protected MessageHandler(byte[] msu) {
+			System.out.println(Utils.hexDump(msu));
+			this.data = new ByteArrayInputStream(msu);
+			this.message = null;
+			this.mtpOriginated = false;
+		}
 
-        // create new unit data message with translated address
-        // TODO: allow to set parameters?
-        UnitData unitData = messageFactory.createUnitData(msg
-                .getProtocolClass(), address, msg.getCallingPartyAddress());
-        unitData.setData(msg.getData());
+		protected MessageHandler(SccpMessage message) {
+			this.message = (SccpMessageImpl) message;
+			this.mtpOriginated = true;
+		}
 
-        // linkset not defined? send to local listener
-        if (rule.getMTPInfo() == null) {
-            sccpProvider.notify(unitData.getCalledPartyAddress(), msg);
-            return;
-        }
-        // find linkset
-        Linkset linkset = findLinkset(rule.getMTPInfo().getName());
-        if (linkset == null) {
-            throw new IOException(String.format("No linkset matching %s", rule
-                    .getMTPInfo().getName()));
-        }
-        send(linkset, unitData, rule.getMTPInfo());
-    }
+		private SccpMessageImpl parse() throws IOException {
+			// wrap stream with DataInputStream
+			DataInputStream in = new DataInputStream(data);
 
-    private void route(XUnitData msg) throws IOException {
-        Rule rule = router.find(msg.getCalledPartyAddress());
+			int sio = 0;
+			sio = in.read() & 0xff;
 
-        // route not defined? try to deliver to local listener
-        if (rule == null) {
-            sccpProvider.notify(msg.getCalledPartyAddress(), msg);
-            return;
-        }
+			// getting service indicator
+			int si = sio & 0x0f;
 
-        // translate address
-        SccpAddress address = rule.translate(msg.getCalledPartyAddress());
+			// ignore msg if this is not sccp service.
+			if (si != 3) {
+				return null;
+			}
 
-        // create new unit data message with translated address
-        // TODO: allow to set parameters?
-        UnitData unitData = messageFactory.createUnitData(msg
-                .getProtocolClass(), address, msg.getCallingPartyAddress());
-        unitData.setData(msg.getData());
+			// skip remaining 4 bytes
+			in.skip(4);
 
-        // linkset not defined? send to local listener
-        if (rule.getMTPInfo() == null) {
-            sccpProvider.notify(unitData.getCalledPartyAddress(), msg);
-            return;
-        }
+			// determine msg type
+			int mt = in.readUnsignedByte();
+			return ((MessageFactoryImpl) sccpProvider.getMessageFactory()).createMessage(mt, in);
+		}
 
-        // find linkset
-        Linkset linkset = findLinkset(rule.getMTPInfo().getName());
-        if (linkset == null) {
-            throw new IOException(String.format("No linkset matching %s", rule
-                    .getMTPInfo().getName()));
-        }
-        send(linkset, unitData, rule.getMTPInfo());
-    }
+		public void run() {
+			
+			if (message == null) {
+				try {
+					message = parse();
+				} catch (IOException e) {
+					logger.warn("Corrupted message received");
+					return;
+				}
+			}
+			// not each msg suppose routing or delivery to listner
+			try {
+				route(message,mtpOriginated);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
-    private class MessageHandler implements Runnable {
-        // MSU as input stream
-        private ByteArrayInputStream data;
-        private SccpMessage message;
+	public void add(Linkset linkset) {
 
-        protected MessageHandler(byte[] msu) {
-            System.out.println(Utils.hexDump(msu));
-            data = new ByteArrayInputStream(msu);
-            message = null;
-        }
+		try {
+			linkset.getLinksetStream().register(this.linkSetSelector);
+			linksets.put(linkset.getName(), linkset);
+			linksetQueue.put(linkset.getName(), new ConcurrentLinkedQueue<byte[]>());
+		} catch (IOException ex) {
+			logger.error(String.format("Registration for %s LinksetStream failed", linkset.getName()), ex);
+		}
+	}
 
-        protected MessageHandler(SccpMessage message) {
-            this.message = message;
-        }
+	public void remove(Linkset linkset) {
+		linksets.remove(linkset.getName());
+		linksetQueue.remove(linkset.getName());
+	}
 
-        private SccpMessage parse() throws IOException {
-            // wrap stream with DataInputStream
-            DataInputStream in = new DataInputStream(data);
+	private class MtpStreamHandler implements Runnable {
 
-            int sio = 0;
-            sio = in.read() & 0xff;
+		// TODO: Stream API should use ByteBuffer
+		byte[] rxBuffer = new byte[1000];
+		byte[] txBuffer;
 
-            // getting service indicator
-            int si = sio & 0x0f;
+		public void run() {
+			// Execute only till state is Running
+			while (state == State.RUNNING) {
 
-            // ignore msg if this is not sccp service.
-            if (si != 3) {
-                return null;
-            }
+				try {
+					FastList<SelectorKey> selected = linkSetSelector.selectNow(OP_READ_WRITE, 1);
+					for (FastList.Node<SelectorKey> n = selected.head(), end = selected.tail(); (n = n.getNext()) != end;) {
+						int length = ((LinksetStream) n.getValue().getStream()).read(rxBuffer);
 
-            // skip remaining 4 bytes
-            in.skip(4);
+						// Read data
+						if (length != 0) {
+							byte[] data = new byte[length];
+							System.arraycopy(rxBuffer, 0, data, 0, length);
 
-            // determine msg type
-            int mt = in.readUnsignedByte();
-            return ((MessageFactoryImpl) sccpProvider.getMessageFactory())
-                    .createMessage(mt, in);
-        }
+							MessageHandler handler = new MessageHandler(data);
+							executor.execute(handler);
+						}
 
-        public void run() {
-            if (message == null) {
-                try {
-                    message = parse();
-                } catch (IOException e) {
-                    logger.warn("Corrupted message received");
-                    return;
-                }
-            }
-            // not each msg suppose routing or delivery to listner
-            switch (message.getType()) {
-            case MessageType.UDT:
-                UnitData udt = (UnitData) message;
-                try {
-                    route(udt);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            // XUDT msg has extra fields then UDT so it also
-            // processed in general separately separately
-            case MessageType.XUDT:
-                // reassembly probably required
-                XUnitData xudt = (XUnitData) message;
-                try {
-                    route(xudt);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            }
-        }
-    }
+						// write data
+						txBuffer = linksetQueue.get(((LinksetStream) n.getValue().getStream()).getName()).poll();
+						if (txBuffer != null) {
+							n.getValue().getStream().write(txBuffer);
+						}
 
-    public void add(Linkset linkset) {
+					}
 
-        try {
-            linkset.getLinksetStream().register(this.linkSetSelector);
-            linksets.put(linkset.getName(), linkset);
-            linksetQueue.put(linkset.getName(),
-                    new ConcurrentLinkedQueue<byte[]>());
-        } catch (IOException ex) {
-            logger.error(String.format(
-                    "Registration for %s LinksetStream failed", linkset
-                            .getName()), ex);
-        }
-    }
+					// TODO : should add any Thread.wait() or let it iterate
+					// continuously?
+				} catch (IOException ex) {
+					logger.error("Error while reading data from LinksetStream", ex);
+				}
+			}
+		}
 
-    public void remove(Linkset linkset) {
-        linksets.remove(linkset.getName());
-        linksetQueue.remove(linkset.getName());
-    }
-
-    private class MtpStreamHandler implements Runnable {
-
-    	//TODO: Stream API should use ByteBuffer
-    	byte[] rxBuffer = new byte[1000];
-        byte[] txBuffer;
-
-        public void run() {
-            // Execute only till state is Running
-            while (state == State.RUNNING) {
-
-                try {
-                    FastList<SelectorKey> selected = linkSetSelector.selectNow(
-                            OP_READ_WRITE, 1);
-                    for (FastList.Node<SelectorKey> n = selected.head(), end = selected
-                            .tail(); (n = n.getNext()) != end;) {
-                        int length = ((LinksetStream) n.getValue().getStream())
-                                .read(rxBuffer);
-                        
-                        // Read data
-                        if (length != 0) {
-                            byte[] data = new byte[length];
-                            System.arraycopy(rxBuffer, 0, data, 0, length);
-                            
-                            MessageHandler handler = new MessageHandler(
-                            		data);
-                            executor.execute(handler);
-                        }
-
-                        // write data
-                        txBuffer = linksetQueue.get(
-                                ((LinksetStream) n.getValue().getStream())
-                                        .getName()).poll();
-                        if (txBuffer != null) {
-                            n.getValue().getStream().write(txBuffer);
-                        }
-
-                    }
-
-                    // TODO : should add any Thread.wait() or let it iterate
-                    // continuously?
-                } catch (IOException ex) {
-                    logger.error("Error while reading data from LinksetStream",
-                            ex);
-                }
-            }
-        }
-
-    }
+	}
 }

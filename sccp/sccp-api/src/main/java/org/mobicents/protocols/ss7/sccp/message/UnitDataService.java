@@ -15,16 +15,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
-package org.mobicents.protocols.ss7.sccp.impl.parameter;
+package org.mobicents.protocols.ss7.sccp.message;
 
-import java.io.IOException;
+import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
 
 /**
- *
+ * Extended Unitdata (XUDT)
+ * 
+ * @author baranowb
  * @author kulikov
  */
-public abstract class OptionalParameter {
-    public abstract void decode(byte[] buffer) throws IOException;
+public interface UnitDataService extends SccpMessage {
+	
+	public final static int MESSAGE_TYPE = 0xA;
+	
+	/**
+	 * Return cause of this data unit.
+	 * 
+	 * @return
+	 */
+	public ReturnCause getReturnCause();
 
-    public abstract byte[] encode() throws IOException;
+	public void setReturnCause(ReturnCause rc);
+
+	public byte[] getData();
+
+	public void setData(byte[] data);
+
+
 }

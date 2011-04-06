@@ -21,14 +21,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  *
  * @author kulikov
+ * @author baranowb
  */
 public abstract class SccpMessageImpl implements SccpMessage {
-
-    private int type;
+	
+	
+    
+    private int type;  //private :)
+    protected SccpAddress calledParty;
+    protected SccpAddress callingParty;
+    protected ProtocolClass protocolClass;
     
     protected SccpMessageImpl(int type) {
         this.type = type;
@@ -38,6 +46,30 @@ public abstract class SccpMessageImpl implements SccpMessage {
         return type;
     }
 
-    public abstract void decode(InputStream in) throws IOException;
+    public SccpAddress getCalledPartyAddress() {
+		return calledParty;
+	}
+
+	public void setCalledPartyAddress(SccpAddress calledParty) {
+		this.calledParty = calledParty;
+	}
+
+	public SccpAddress getCallingPartyAddress() {
+		return callingParty;
+	}
+
+	public void setCallingPartyAddress(SccpAddress callingParty) {
+		this.callingParty = callingParty;
+	}
+
+	public ProtocolClass getProtocolClass() {
+		return protocolClass;
+	}
+
+	public void setProtocolClass(ProtocolClass protocolClass) {
+		this.protocolClass = protocolClass;
+	}
+
+	public abstract void decode(InputStream in) throws IOException;
     public abstract void encode(OutputStream out) throws IOException;
 }

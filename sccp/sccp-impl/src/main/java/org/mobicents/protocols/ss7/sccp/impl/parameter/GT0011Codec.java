@@ -39,7 +39,7 @@ public class GT0011Codec extends GTCodec {
         this.gt = gt;
     }
     
-    @Override
+    
     public GlobalTitle decode(InputStream in) throws IOException {
         int b = in.read() & 0xff;        
         int tt = b;
@@ -53,7 +53,7 @@ public class GT0011Codec extends GTCodec {
         return new GT0011(tt, np, digits);
     }
 
-    @Override
+    
     public void encode(OutputStream out) throws IOException {
         String digits = gt.getDigits();
         EncodingScheme es = digits.length() % 2 == 0 ? EncodingScheme.BCD_EVEN : EncodingScheme.BCD_ODD;

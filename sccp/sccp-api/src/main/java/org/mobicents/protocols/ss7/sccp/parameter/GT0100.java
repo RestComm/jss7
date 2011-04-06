@@ -99,7 +99,7 @@ public class GT0100  extends GlobalTitle {
         return gti;
     }
     
-    @Override
+    
     public boolean equals(Object other) {
         if (!(other instanceof GlobalTitle)) {
             return false;
@@ -115,7 +115,7 @@ public class GT0100  extends GlobalTitle {
                 gt1.na == na && gt1.digits.equals(digits);
     }
 
-    @Override
+    
     public int hashCode() {
         int hash = 3;
         hash = hash + this.tt;
@@ -125,7 +125,7 @@ public class GT0100  extends GlobalTitle {
         return hash;
     }
     
-    @Override
+    
     public String toString() {
         return "{tt=" + tt + ", np=" + np + ", na=" + na + ", digist=" + digits + "}";
     }

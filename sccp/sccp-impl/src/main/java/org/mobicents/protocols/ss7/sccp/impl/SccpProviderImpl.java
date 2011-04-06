@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
@@ -41,7 +42,8 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
 	//TODO: Oleg, this is not serializable resource!
 	private static final Logger logger = Logger.getLogger(SccpProviderImpl.class);
     private transient SccpStackImpl stack;
-    private HashMap<SccpAddress, SccpListener> listeners = new HashMap();
+    private HashMap<SccpAddress, SccpListener> addressToListener = new HashMap<SccpAddress, SccpListener>();
+    private HashMap<Integer, SccpListener> ssnToListener = new HashMap<Integer, SccpListener>();
     
     private MessageFactoryImpl messageFactory;
     private ParameterFactoryImpl parameterFactory;
@@ -61,11 +63,32 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
     }
 
     public void registerSccpListener(SccpAddress localAddress, SccpListener listener) {
-        listeners.put(localAddress, listener);
+        addressToListener.put(localAddress, listener);
+        //if SSN is present add it, to make it easier
+        int ssn = localAddress.getSubsystemNumber(); 
+        if( ssn!=0)
+        {
+        	if(this.ssnToListener.containsKey(ssn))
+        	{
+        		if(logger.isEnabledFor(Level.WARN))
+        		{
+        			logger.warn("Overwriting SSN mapping: "+ssn+" -> "+this.ssnToListener.get(ssn)+" to value: "+listener);
+        		}
+        	}
+        	this.ssnToListener.put(ssn, listener);
+        	
+        }
     }
 
     public void deregisterSccpListener(SccpAddress localAddress) {
-        listeners.remove(localAddress);
+        SccpListener lst = addressToListener.remove(localAddress);
+        if(lst!=null)
+        {
+        	if(this.ssnToListener.containsValue(lst))
+        	{
+        		this.ssnToListener.remove(localAddress.getSubsystemNumber());
+        	}
+        }
     }
 
     /**
@@ -74,23 +97,47 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
      * @param address the address associated with listener.
      * @param message the message to deliver to listener
      */
-    protected void notify(SccpAddress address, SccpMessage message) {
-        SccpListener listener = listeners.get(address);
-        if(listener == null)
-        {
-            logger.info("Registere listeners for: " + listeners.keySet());
-        	if(logger.isEnabledFor(Level.WARN))
-        	{
-        		logger.warn("No listener could be found for address: "+address);
-        	}
-        	
-        }else
-        {
-        	listener.onMessage(message);
-        }
-    }
+	protected boolean notify(SccpAddress address, SccpMessage message) {
+		SccpListener listener = addressToListener.get(address);
+		if (listener == null) {
+			logger.info("Registere listeners for: " + addressToListener.keySet());
+			if (logger.isEnabledFor(Level.WARN)) {
+				logger.warn("No listener could be found for address: " + address);
+			}
+			return false;
+		} else {
+			try {
+				listener.onMessage(message);
+			} catch (Exception e) {
+				logger.error("Caught exception from listener - bad practice!", e);
+			}
+			return true;
+		}
+	}
+
+	/**
+	 * @param subsystemNumber
+	 * @param msg
+	 * @return
+	 */
+	public boolean notify(int subsystemNumber, SccpMessage message) {
+		if (this.ssnToListener.containsKey(subsystemNumber)) {
+			SccpListener listener = ssnToListener.get(subsystemNumber);
+			try {
+				listener.onMessage(message);
+			} catch (Exception e) {
+				logger.error("Caught exception from listener - bad practice!", e);
+			}
+			return true;
+		} else {
+			return false;
+		}
+
+	}
 
     public void send(SccpMessage message) throws IOException {
         stack.send(message);
     }
+
+	
 }

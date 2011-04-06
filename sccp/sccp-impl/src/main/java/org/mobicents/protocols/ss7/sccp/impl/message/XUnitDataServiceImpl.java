@@ -24,13 +24,13 @@ import java.io.OutputStream;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.AbstractParameter;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.HopCounterImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ReturnCauseImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressCodec;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentationImpl;
-import org.mobicents.protocols.ss7.sccp.message.XUnitData;
+import org.mobicents.protocols.ss7.sccp.message.XUnitDataService;
 import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
 
@@ -40,34 +40,36 @@ import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
  * @author Oleg Kulikov
  * @author baranowb
  */
-public class XUnitDataImpl extends SccpMessageImpl implements XUnitData {
+public class XUnitDataServiceImpl extends SccpMessageImpl implements XUnitDataService {
 
-	// //////////////////
+
+      
+    // //////////////////
     // Fixed parts //
     // //////////////////
     /**
      * See Q.713 3.18
      */
-	
+    //    private byte hopCounter = HOP_COUNT_NOT_SET;
 
     private HopCounter hopCounter;
     private byte[] data;
-    private SegmentationImpl segmentation;
-    private ImportanceImpl importance;
-
+    private Segmentation segmentation;
+    private Importance importance;
+    private ReturnCause returnCause;
     private SccpAddressCodec addressCodec = new SccpAddressCodec();
     
 
-    protected XUnitDataImpl() {
+    protected XUnitDataServiceImpl() {
         super(MESSAGE_TYPE);
     }
     
-    protected XUnitDataImpl(HopCounter hopCounter, ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty) {
+    protected XUnitDataServiceImpl(HopCounter hopCounter, ReturnCause returnCause, SccpAddress calledParty, SccpAddress callingParty) {
         super(MESSAGE_TYPE);
         this.hopCounter = hopCounter;
-        this.protocolClass = (ProtocolClassImpl) pClass;
+        this.returnCause =  returnCause;
         this.calledParty = calledParty;
-        this.callingParty = (SccpAddress) callingParty;
+        this.callingParty =  callingParty;
     }
 
     public HopCounter getHopCounter() {
@@ -82,9 +84,6 @@ public class XUnitDataImpl extends SccpMessageImpl implements XUnitData {
         return segmentation;
     }
 
-    public void setSegmentation(SegmentationImpl segmentation) {
-        this.segmentation = segmentation;
-    }
 
     public Importance getImportance() {
         return (Importance) importance;
@@ -93,12 +92,36 @@ public class XUnitDataImpl extends SccpMessageImpl implements XUnitData {
     public void setImportance(ImportanceImpl importance) {
         this.importance = importance;
     }
-
     
-    public void encode(OutputStream out) throws IOException {
+
+	public ReturnCause getReturnCause() {
+		return this.returnCause;
+	}
+
+	public void setReturnCause(ReturnCause rc) {
+		this.returnCause  = (ReturnCauseImpl) rc;
+	}
+
+	public void setImportance(Importance p) {
+		this.importance = (ImportanceImpl) p;
+	}
+
+	public void setSegmentation(Segmentation p) {
+		this.segmentation = (SegmentationImpl) p;
+	}
+
+	public byte[] getData() {
+		return data;
+	}
+
+	public void setData(byte[] data) {
+		this.data = data;
+	}
+
+	public void encode(OutputStream out) throws IOException {
         out.write(this.getType());
 
-        out.write(((AbstractParameter)protocolClass).encode());
+        out.write(((AbstractParameter)this.returnCause).encode());
         if (this.hopCounter == null) {
             throw new IOException("Failed parsing, hop counter is not set.");
         }
@@ -139,7 +162,7 @@ public class XUnitDataImpl extends SccpMessageImpl implements XUnitData {
         if (segmentation != null) {
             optionalPresent = true;
             out.write(Segmentation.PARAMETER_CODE);
-            byte[] b = segmentation.encode();
+            byte[] b = ((AbstractParameter)segmentation).encode();
             out.write(b.length);
             out.write(b);
         }
@@ -147,7 +170,7 @@ public class XUnitDataImpl extends SccpMessageImpl implements XUnitData {
         if (importance != null) {
             optionalPresent = true;
             out.write(Importance.PARAMETER_CODE);
-            byte[] b = importance.encode();
+            byte[] b = ((AbstractParameter)importance).encode();
             out.write(b.length);
             out.write(b);
         }
@@ -161,8 +184,8 @@ public class XUnitDataImpl extends SccpMessageImpl implements XUnitData {
     
     public void decode(InputStream in) throws IOException {
 
-    	protocolClass = new ProtocolClassImpl();
-    	((AbstractParameter)protocolClass).decode(new byte[]{(byte)in.read()});
+    	this.returnCause = new ReturnCauseImpl();
+    	((AbstractParameter)this.returnCause).decode(new byte[]{(byte) in.read()});
 
         this.hopCounter = new HopCounterImpl((byte) in.read());
         if (this.hopCounter.getValue() > HopCounter.COUNT_HIGH || this.hopCounter.getValue() <= HopCounter.COUNT_LOW) {
@@ -239,11 +262,11 @@ public class XUnitDataImpl extends SccpMessageImpl implements XUnitData {
         switch (code) {
             case Segmentation.PARAMETER_CODE :
                 this.segmentation = new SegmentationImpl();
-                this.segmentation.decode(buffer);
+                ((AbstractParameter)this.segmentation).decode(buffer);
                 break;
             case Importance.PARAMETER_CODE : 
                 this.importance = new ImportanceImpl();
-                this.importance.decode(buffer);
+                ((AbstractParameter)this.importance).decode(buffer);
                 break;
 
             default:
@@ -251,25 +274,11 @@ public class XUnitDataImpl extends SccpMessageImpl implements XUnitData {
         }
     }
 
-    public void setImportance(Importance p) {
-        this.importance = (ImportanceImpl) p;
-    }
-
-    public void setSegmentation(Segmentation p) {
-        this.segmentation = (SegmentationImpl) p;
-    }
-
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
-    }
+   
 
     
     public String toString() {
-        return "XUDT[calledPartyAddress=" + calledParty + ", callingPartyAddress=" + callingParty + "]";
+        return "XUDTS[calledPartyAddress=" + calledParty + ", callingPartyAddress=" + callingParty + ", returnCause="+ returnCause +" ]";
     }
 }
 

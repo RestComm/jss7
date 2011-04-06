@@ -137,7 +137,7 @@ public class MTPInfo implements XMLSerializable {
         return sls;
     }
 
-    @Override
+    
     public String toString() {
         StringBuffer buff = new StringBuffer();
         buff.append(name);

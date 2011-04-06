@@ -51,4 +51,6 @@ public interface ParameterFactory extends Serializable  {
      * Create hop counter parameter
      */
     public HopCounter createHopCounter(int hopCount);
+    
+    public ReturnCause createReturnCause(int cause);
 }

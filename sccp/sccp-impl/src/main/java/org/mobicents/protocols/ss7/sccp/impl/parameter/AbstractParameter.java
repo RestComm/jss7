@@ -15,13 +15,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
-package org.mobicents.protocols.ss7.sccp.message;
+package org.mobicents.protocols.ss7.sccp.impl.parameter;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.mobicents.protocols.ss7.sccp.parameter.Parameter;
 
 /**
- *
- * @author kulikov
+ * 
+ * @author baranowb
  */
-public class MessageType {
-    public final static int UDT = 0x09;
-    public final static int XUDT = 17;
+public abstract class AbstractParameter implements Parameter { // implement
+																// marker
+																// interface.
+
+	public abstract void decode(InputStream in) throws IOException;
+
+	public abstract void encode(OutputStream os) throws IOException;
+
+	/**
+	 * Accepts only body for decoding operation, that is leng and tag must be
+	 * processed.
+	 * 
+	 * @param b
+	 * @throws IOException
+	 */
+	public abstract void decode(byte[] b) throws IOException;
+
+	/**
+	 * Encodes only body of parameter, tag and len must be encoded.
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	public abstract byte[] encode() throws IOException;
 }

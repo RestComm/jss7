@@ -38,14 +38,14 @@ public class GT0010Codec extends GTCodec {
         this.gt = gt;
     }
     
-    @Override
+    
     public GlobalTitle decode(InputStream in) throws IOException {
         int b = in.read() & 0xff;        
         int tt = b;        
         return new GT0010(tt, "");
     }
 
-    @Override
+    
     public void encode(OutputStream in) throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }

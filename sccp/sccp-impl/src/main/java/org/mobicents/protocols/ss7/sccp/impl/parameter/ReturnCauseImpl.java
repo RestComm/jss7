@@ -21,11 +21,45 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
+
 /**
- *
- * @author kulikov
+ * 
+ * @author baranowb
  */
-public abstract class MandatoryFixedParameter {
-	public abstract void decode(InputStream in) throws IOException;
-	public abstract void encode(OutputStream out) throws IOException;
+public class ReturnCauseImpl extends AbstractParameter implements ReturnCause {
+
+	private int value;
+
+	public ReturnCauseImpl() {
+	}
+
+	public ReturnCauseImpl(int value) {
+		this.value = value;
+	}
+
+	public int getValue() {
+		return value;
+	}
+
+	public void decode(InputStream in) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void encode(OutputStream os) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void decode(byte[] b) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public byte[] encode() throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

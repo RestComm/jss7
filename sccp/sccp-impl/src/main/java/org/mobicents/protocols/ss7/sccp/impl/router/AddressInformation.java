@@ -128,7 +128,7 @@ public class AddressInformation implements XMLSerializable {
         return ssn;
     }
 
-    @Override
+    
     public String toString() {
         StringBuffer buff = new StringBuffer();
         if (tt != -1) {

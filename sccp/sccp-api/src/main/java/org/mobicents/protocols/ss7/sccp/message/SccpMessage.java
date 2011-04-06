@@ -18,7 +18,6 @@
 
 package org.mobicents.protocols.ss7.sccp.message;
 
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -48,9 +47,15 @@ public interface SccpMessage {
 	 */
 	public int getType();
 
-	public ProtocolClass getProtocolClass(); //FIXME check if this is present in others, think it is.
+	//public ProtocolClass getProtocolClass(); //FIXME check if this is present in others, think it is.
 
 	public SccpAddress getCalledPartyAddress();
 
 	public SccpAddress getCallingPartyAddress();
+	
+//	public void setProtocolClass(ProtocolClass v); //FIXME check if this is present in others, think it is.
+//
+	public void setCalledPartyAddress(SccpAddress v);
+
+	public void setCallingPartyAddress(SccpAddress v);
 }

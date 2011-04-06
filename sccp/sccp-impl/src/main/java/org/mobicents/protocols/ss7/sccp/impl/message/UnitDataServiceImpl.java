@@ -22,42 +22,77 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.mobicents.protocols.ss7.sccp.impl.parameter.AbstractParameter;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.HopCounterImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ReturnCauseImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressCodec;
-import org.mobicents.protocols.ss7.sccp.message.UnitData;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentationImpl;
+import org.mobicents.protocols.ss7.sccp.message.UnitDataService;
+import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
+import org.mobicents.protocols.ss7.sccp.parameter.Importance;
+import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
 
 /**
- *
+ * See Q.713 4.18
+ * 
  * @author Oleg Kulikov
+ * @author baranowb
  */
-public class UnitDataImpl extends SccpMessageImpl implements UnitData {
+public class UnitDataServiceImpl extends SccpMessageImpl implements UnitDataService {
 
-    protected byte[] data;
 
+      
+    // //////////////////
+    // Fixed parts //
+    // //////////////////
+    /**
+     * See Q.713 3.18
+     */
+    //    private byte hopCounter = HOP_COUNT_NOT_SET;
+
+    private byte[] data;
+    private ReturnCause returnCause;
     private SccpAddressCodec addressCodec = new SccpAddressCodec();
     
-    protected UnitDataImpl() {
+
+    protected UnitDataServiceImpl() {
         super(MESSAGE_TYPE);
     }
     
-    protected UnitDataImpl(ProtocolClass pClass, SccpAddress calledParty,
-            SccpAddress callingParty) {
+    protected UnitDataServiceImpl(ReturnCause returnCause, SccpAddress calledParty, SccpAddress callingParty) {
         super(MESSAGE_TYPE);
-        this.protocolClass = (ProtocolClassImpl) pClass;
-        this.calledParty = (SccpAddress) calledParty;
-        this.callingParty = (SccpAddress) callingParty;
+      
+        this.returnCause =  returnCause;
+        this.calledParty = calledParty;
+        this.callingParty =  callingParty;
     }
 
-    public byte[] getData() {
-        return data;
-    }
 
-    public void encode(OutputStream out) throws IOException {
-        out.write(0x09);
+    
 
-        out.write(((AbstractParameter)protocolClass).encode());
+	public ReturnCause getReturnCause() {
+		return this.returnCause;
+	}
+
+	public void setReturnCause(ReturnCause rc) {
+		this.returnCause  = (ReturnCauseImpl) rc;
+	}
+
+	public byte[] getData() {
+		return data;
+	}
+
+	public void setData(byte[] data) {
+		this.data = data;
+	}
+
+	public void encode(OutputStream out) throws IOException {
+        out.write(this.getType());
+
+        out.write(((AbstractParameter)this.returnCause).encode());
+        
 
         byte[] cdp = addressCodec.encode(calledParty);
         byte[] cnp = addressCodec.encode(callingParty);
@@ -79,13 +114,15 @@ public class UnitDataImpl extends SccpMessageImpl implements UnitData {
 
         out.write((byte) data.length);
         out.write(data);
+
     }
 
+    
     public void decode(InputStream in) throws IOException {
-    	protocolClass = new ProtocolClassImpl();
-    	((AbstractParameter)protocolClass).decode(new byte[]{(byte) in.read()});
 
-        int cpaPointer = in.read() & 0xff;
+    	this.returnCause = new ReturnCauseImpl();
+    	((AbstractParameter)this.returnCause).decode(new byte[]{(byte) in.read()});
+    	int cpaPointer = in.read() & 0xff;
         in.mark(in.available());
 
         in.skip(cpaPointer - 1);
@@ -116,15 +153,17 @@ public class UnitDataImpl extends SccpMessageImpl implements UnitData {
 
         data = new byte[len];
         in.read(data);
+
     }
 
-    public void setData(byte[] data) {
-        this.data = data;
-    }
+  
 
     
     public String toString() {
-        return "UDT[calledPartyAddress=" + calledParty + ", callingPartyAddress=" + callingParty + "data length=" + data.length + "]";
+        return "UDTS[calledPartyAddress=" + calledParty + ", callingPartyAddress=" + callingParty + ", returnCause="+ returnCause +" ]";
     }
-    
 }
+
+
+
+

@@ -57,7 +57,7 @@ public class RuleException extends RuntimeException {
 		this.rule = rule;
 	}
 
-	@Override
+	
 	public String toString() {
 		return "RuleException [rule=" + rule + ", toString()=" + super.toString() + "]";
 	}

@@ -24,7 +24,14 @@ package org.mobicents.protocols.ss7.sccp.parameter;
  * @author baranowb
  * @author kulikov
  */
-public interface HopCounter {
+public interface HopCounter extends Parameter{
+	
+	public static final int PARAMETER_CODE = 0x11;
+	
+	public static final int COUNT_NOT_SET = -1;
+    public static final int COUNT_LOW = 0;
+    public static final int COUNT_HIGH = 15;
+	
     /**
      * Gets the value of this parameter.
      * 

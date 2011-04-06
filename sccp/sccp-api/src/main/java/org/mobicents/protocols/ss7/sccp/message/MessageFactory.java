@@ -20,6 +20,7 @@ package org.mobicents.protocols.ss7.sccp.message;
 import java.io.Serializable;
 import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -29,19 +30,21 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author kulikov
  */
 public interface MessageFactory extends Serializable {
-    /**
-     * Creates unit data message.
-     * 
-     * @return sccp message.
-     */
-    public UnitData createUnitData(ProtocolClass pClass, SccpAddress calledParty,
-            SccpAddress callingParty);
-    
-    /**
-     * Creates extended unit data message.
-     * 
-     * @return sccp message.
-     */
-    public XUnitData createXUnitData(HopCounter hopCounter, ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty);
-    
+	/**
+	 * Creates unit data message.
+	 * 
+	 * @return sccp message.
+	 */
+	public UnitData createUnitData(ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty);
+
+	public UnitDataService createUnitDataService(ReturnCause returnCause, SccpAddress calledParty, SccpAddress callingParty);
+
+	/**
+	 * Creates extended unit data message.
+	 * 
+	 * @return sccp message.
+	 */
+	public XUnitData createXUnitData(HopCounter hopCounter, ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty);
+
+	public XUnitDataService createXUnitDataService(HopCounter hopCounter, ReturnCause rc, SccpAddress calledParty, SccpAddress callingParty);
 }

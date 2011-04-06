@@ -4,6 +4,8 @@
 package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
 
@@ -13,7 +15,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
  * @author baranowb
  * 
  */
-public class SegmentationImpl extends OptionalParameter  implements Segmentation {
+public class SegmentationImpl extends AbstractParameter  implements Segmentation {
 
 	
 	private static final int _TRUE = 1;
@@ -135,13 +137,26 @@ public class SegmentationImpl extends OptionalParameter  implements Segmentation
 		this.segmentationLocalRef = segmentationLocalRef;
 
 	}
+	public void decode(InputStream in) throws IOException {
+		byte[] buffer = new byte[in.read()];
+		if(in.read(buffer)!=buffer.length)
+		{
+			throw new IOException();
+		}
+		this.decode(buffer);
+	}
 
+	public void encode(OutputStream os) throws IOException {
+		byte buffer[] = this.encode();
+		os.write(buffer.length);
+		os.write(buffer);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.mobicents.protocols.ss7.sccp.OptionalParameter#decode(byte[])
 	 */
-	@Override
+	
 	public void decode(byte[] buffer) throws IOException {
 		int v = buffer[0];
 		this.firstSegIndication = ((v >> 7) & 0x01) == _TRUE;
@@ -159,7 +174,7 @@ public class SegmentationImpl extends OptionalParameter  implements Segmentation
 	 * 
 	 * @see org.mobicents.protocols.ss7.sccp.OptionalParameter#encode()
 	 */
-	@Override
+	
 	public byte[] encode() throws IOException {
 		if(this.segmentationLocalRef == null)
 		{
@@ -174,7 +189,7 @@ public class SegmentationImpl extends OptionalParameter  implements Segmentation
 		return buffer;
 	}
 
-	@Override
+	
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -185,7 +200,7 @@ public class SegmentationImpl extends OptionalParameter  implements Segmentation
 		return result;
 	}
 
-	@Override
+	
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -204,6 +219,8 @@ public class SegmentationImpl extends OptionalParameter  implements Segmentation
 			return false;
 		return true;
 	}
+
+	
 
 	
 }

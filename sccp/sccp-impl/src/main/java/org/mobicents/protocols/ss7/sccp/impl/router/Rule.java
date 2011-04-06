@@ -261,7 +261,7 @@ public class Rule implements Serializable{
      */
     protected static final XMLFormat<Rule> RULE_XML = new XMLFormat<Rule>(Rule.class) {
 
-        @Override
+        
         public void read(javolution.xml.XMLFormat.InputElement xml,
                 Rule rule) throws XMLStreamException {
             rule.name = xml.getAttribute(RULE_NAME).toString();
@@ -270,7 +270,7 @@ public class Rule implements Serializable{
             rule.mtpInfo = xml.get(MTP_INFO);
         }
 
-        @Override
+        
         public void write(Rule rule,
                 javolution.xml.XMLFormat.OutputElement xml)
                 throws XMLStreamException {
@@ -281,7 +281,7 @@ public class Rule implements Serializable{
         }
     };    
     
-    @Override
+    
     public String toString() {
         StringBuffer buff = new StringBuffer();
         buff.append(name);

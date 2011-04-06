@@ -18,35 +18,35 @@
 package org.mobicents.protocols.ss7.sccp.parameter;
 
 /**
- * Protocol class
- * 
- * The "protocol class" parameter field is a one-octet parameter and is structured as follows:
- * Bits 1-4 indicating protocol class are coded as follows:
- * 4321
- * 0000 class 0
- * 0001 class 1
- * 0010 class 2
- * 0011 class 3
+ * Return cause values for XUDTS for instance.
  * 
  * @author baranowb
- * @author kulikov
  */
-public interface ProtocolClass extends Parameter{
+public interface ReturnCause extends Parameter{
 	
-	public static final int PARAMETER_CODE = 0x05;
+	public final static int PARAMETER_CODE = 0xB;
 	
-	public static final int HANDLING_RET_ERR = 0x08;
+	
+	public final static int NO_TRANSLATION_FOR_NATURE = 0x0;
+	public final static int NO_TRANSLATION_FOR_ADDRESS = 0x1;
+	public final static int SUBSYSTEM_CONGESTION = 0x2;
+	public final static int SUBSYSTEM_FAILURE = 0x3;
+	public final static int UNEQUIPED_USER = 0x4;
+	public final static int MTP_FAILURE = 0x5;
+	public final static int NETWORK_CONGESTION = 0x6;
+	public final static int UNQALIFIED = 0x7;
+	public final static int ERR_IN_MSG_TRANSPORT = 0x8;
+	public final static int ERR_IN_LOCAL_PROCESSING = 0x9;
+	public final static int CANNOT_REASEMBLE = 0xA;
+	public final static int SCCP_FAILURE = 0xB;
+	public final static int HOP_COUNTER_VIOLATION = 0xC;
+	public final static int SEG_NOT_SUPPORTED = 0xD;
+	public final static int SEG_FAILURE = 0xE;
+	
     /**
-     * The value of protocol class.
+     * Gets the value of this parameter.
      * 
-     * @return protocol class code
+     * @return the value of this parameter.
      */
     public int getValue();
-    
-    /**
-     * Gets the message handling value
-     * 
-     * @return message handling value.
-     */
-    public int getHandling();
 }

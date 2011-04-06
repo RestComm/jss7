@@ -22,7 +22,7 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.HopCounterImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentationImpl;
-import org.mobicents.protocols.ss7.sccp.message.MessageType;
+import org.mobicents.protocols.ss7.sccp.message.XUnitData;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -65,12 +65,12 @@ public class XUnitDataTest {
         ByteArrayOutputStream bas = new ByteArrayOutputStream(1);
         testObject.encode(bas);
         byte[] encoded = bas.toByteArray();
-        assertEquals("MT indicator must has wrong value.", MessageType.XUDT, (int)encoded[0]);
+        assertEquals("MT indicator must has wrong value.", XUnitData.MESSAGE_TYPE, (int)encoded[0]);
 
         //we loose MT. 
         byte[] toDecode = new byte[encoded.length - 1];
         System.arraycopy(encoded, 1, toDecode, 0, toDecode.length);
-        XUnitDataImpl testObjectDecoded = (XUnitDataImpl) messageFactory.createMessage(MessageType.XUDT, new ByteArrayInputStream(toDecode));
+        XUnitDataImpl testObjectDecoded = (XUnitDataImpl) messageFactory.createMessage(XUnitData.MESSAGE_TYPE, new ByteArrayInputStream(toDecode));
 
         assertEquals("Protocol Class does not equal.", _PROTOCOL_CLASS, testObjectDecoded.getProtocolClass());
         assertEquals("Called Party does not equal.", _CALLED_PARTY.getGlobalTitle().getDigits(), testObjectDecoded.getCalledPartyAddress().getGlobalTitle().getDigits());
@@ -90,12 +90,12 @@ public class XUnitDataTest {
         ByteArrayOutputStream bas = new ByteArrayOutputStream(1);
         testObject.encode(bas);
         byte[] encoded = bas.toByteArray();
-        assertEquals("MT indicator must has wrong value.", MessageType.XUDT, encoded[0]);
+        assertEquals("MT indicator must has wrong value.", XUnitData.MESSAGE_TYPE, encoded[0]);
 
         //we loose MT. 
         byte[] toDecode = new byte[encoded.length - 1];
         System.arraycopy(encoded, 1, toDecode, 0, toDecode.length);
-        XUnitDataImpl testObjectDecoded = (XUnitDataImpl) messageFactory.createMessage(MessageType.XUDT, new ByteArrayInputStream(toDecode));
+        XUnitDataImpl testObjectDecoded = (XUnitDataImpl) messageFactory.createMessage(XUnitData.MESSAGE_TYPE, new ByteArrayInputStream(toDecode));
 
         testObjectDecoded.decode(new ByteArrayInputStream(toDecode));
 
@@ -115,12 +115,12 @@ public class XUnitDataTest {
         ByteArrayOutputStream bas = new ByteArrayOutputStream(1);
         testObject.encode(bas);
         byte[] encoded = bas.toByteArray();
-        assertEquals("MT indicator must has wrong value.", MessageType.XUDT, encoded[0]);
+        assertEquals("MT indicator must has wrong value.", XUnitData.MESSAGE_TYPE, encoded[0]);
 
         //we loose MT. 
         byte[] toDecode = new byte[encoded.length - 1];
         System.arraycopy(encoded, 1, toDecode, 0, toDecode.length);
-        XUnitDataImpl testObjectDecoded = (XUnitDataImpl) messageFactory.createMessage(MessageType.XUDT, new ByteArrayInputStream(toDecode));
+        XUnitDataImpl testObjectDecoded = (XUnitDataImpl) messageFactory.createMessage(XUnitData.MESSAGE_TYPE, new ByteArrayInputStream(toDecode));
 
         assertEquals("Protocol Class does not equal.", _PROTOCOL_CLASS, testObjectDecoded.getProtocolClass());
         assertEquals("Called Party does not equal.", _CALLED_PARTY, testObjectDecoded.getCalledPartyAddress());
@@ -139,6 +139,6 @@ public class XUnitDataTest {
         //This is real msg dump :)
         byte[] b = new byte[]{(byte) 0x01, (byte) 0x0f, (byte) 0x04, (byte) 0x0f, (byte) 0x1a, (byte) 0xac, (byte) 0x0b, (byte) 0x12, (byte) 0x92, (byte) 0x00, (byte) 0x11, (byte) 0x04, (byte) 0x97, (byte) 0x20, (byte) 0x73, (byte) 0x00, (byte) 0x72, (byte) 0x01, (byte) 0x0b, (byte) 0x12, (byte) 0x92, (byte) 0x00, (byte) 0x11, (byte) 0x04, (byte) 0x97, (byte) 0x20, (byte) 0x73, (byte) 0x00, (byte) 0x02, (byte) 0x01, (byte) 0x92, (byte) 0x62, (byte) 0x81, (byte) 0x8f, (byte) 0x48, (byte) 0x04, (byte) 0x22, (byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x6b, (byte) 0x1e, (byte) 0x28, (byte) 0x1c, (byte) 0x06, (byte) 0x07, (byte) 0x00, (byte) 0x11, (byte) 0x86, (byte) 0x05, (byte) 0x01, (byte) 0x01, (byte) 0x01, (byte) 0xa0, (byte) 0x11, (byte) 0x60, (byte) 0x0f, (byte) 0x80, (byte) 0x02, (byte) 0x07, (byte) 0x80, (byte) 0xa1, (byte) 0x09, (byte) 0x06, (byte) 0x07, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x32, (byte) 0x01, (byte) 0x6c, (byte) 0x80, (byte) 0xa1, (byte) 0x63, (byte) 0x02, (byte) 0x01, (byte) 0x00, (byte) 0x02, (byte) 0x01, (byte) 0x00, (byte) 0x30, (byte) 0x5b, (byte) 0x80, (byte) 0x01, (byte) 0x08, (byte) 0x82, (byte) 0x08, (byte) 0x84, (byte) 0x90, (byte) 0x97, (byte) 0x20, (byte) 0x83, (byte) 0x20, (byte) 0x68, (byte) 0x06, (byte) 0x83, (byte) 0x07, (byte) 0x03, (byte) 0x13, (byte) 0x09, (byte) 0x32, (byte) 0x26, (byte) 0x59, (byte) 0x18, (byte) 0x85, (byte) 0x01, (byte) 0x0a, (byte) 0x8a, (byte) 0x08, (byte) 0x84, (byte) 0x93, (byte) 0x97, (byte) 0x20, (byte) 0x73, (byte) 0x00, (byte) 0x02, (byte) 0x01, (byte) 0xbb, (byte) 0x05, (byte) 0x80, (byte) 0x03, (byte) 0x80, (byte) 0x90, (byte) 0xa3, (byte) 0x9c, (byte) 0x01, (byte) 0x0c, (byte) 0x9f, (byte) 0x32, (byte) 0x08, (byte) 0x52, (byte) 0x00, (byte) 0x07, (byte) 0x32, (byte) 0x01, (byte) 0x56, (byte) 0x04, (byte) 0xf2, (byte) 0xbf, (byte) 0x35, (byte) 0x03, (byte) 0x83, (byte) 0x01, (byte) 0x11, (byte) 0x9f, (byte) 0x36, (byte) 0x05, (byte) 0x99, (byte) 0x88, (byte) 0x1d, (byte) 0x00, (byte) 0x01, (byte) 0x9f, (byte) 0x37, (byte) 0x07, (byte) 0x91, (byte) 0x97, (byte) 0x20, (byte) 0x73, (byte) 0x00, (byte) 0x02, (byte) 0xf1, (byte) 0x9f, (byte) 0x39, (byte) 0x08, (byte) 0x02, (byte) 0x90, (byte) 0x11, (byte) 0x82, (byte) 0x02, (byte) 0x15, (byte) 0x23, (byte) 0x61, (byte) 0x00, (byte) 0x00, (byte) 0x12, (byte) 0x01, (byte) 0x06, (byte) 0x00, (byte) 0x21, (byte) 0x7c};
 
-        XUnitDataImpl testObjectDecoded = (XUnitDataImpl) messageFactory.createMessage(MessageType.XUDT, new ByteArrayInputStream(b));
+        XUnitDataImpl testObjectDecoded = (XUnitDataImpl) messageFactory.createMessage(XUnitData.MESSAGE_TYPE, new ByteArrayInputStream(b));
     }
 }
