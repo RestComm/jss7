@@ -62,6 +62,18 @@ public class SccpStackImplTest {
 
     @Before
     public void setUp() throws IllegalStateException {
+    	
+		try {
+			router.start();
+			router.deleteRule("Rule1");
+			router.deleteRule("Rule2");
+			router.deleteRule("Rule3");
+			router.deleteRule("Rule4");
+			router.stop();
+		} catch (Exception e) {
+			// ignore
+		}
+		
         router.start();
         
         stack.setRouter(router);

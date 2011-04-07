@@ -61,9 +61,9 @@ import org.mobicents.ss7.linkset.oam.LinksetStream;
  */
 public class SccpStackImpl implements SccpStack, Layer4 {
 	private static final Logger logger = Logger.getLogger(SccpStackImpl.class);
-	
+
 	protected final static int OP_READ_WRITE = 3;
-	
+
 	protected State state = State.IDLE;
 
 	// provider ref, this can be real provider or pipe, for tests.
@@ -83,7 +83,6 @@ public class SccpStackImpl implements SccpStack, Layer4 {
 	private volatile LinksetSelector linkSetSelector = new LinksetSelector();
 
 	protected MessageFactoryImpl messageFactory;
-	
 
 	public SccpStackImpl() {
 		messageFactory = new MessageFactoryImpl();
@@ -190,122 +189,97 @@ public class SccpStackImpl implements SccpStack, Layer4 {
 		((SccpMessageImpl) message).encode(bout);
 		byte[] msg = bout.toByteArray();
 		// linkset.getLinksetStream().write(msg);
-		System.out.println("Sending SCCP to "+ linkset);
+		System.out.println("Sending SCCP to " + linkset);
 		this.linksetQueue.get(linkset.getName()).add(msg);
 	}
 
-	private void route(SccpMessageImpl msg,boolean mtpOriginated) throws IOException {
-		//TODO: check Q.714 how this should be done
-		
+	private void route(SccpMessageImpl msg, boolean mtpOriginated) throws IOException {
+		// TODO: check Q.714 how this should be done
+
 		SccpAddress calledPartyAddress = msg.getCalledPartyAddress();
 		System.out.println(String.format("Route %s", msg.toString()));
-		if (calledPartyAddress.getAddressIndicator().getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
-			
-			if(mtpOriginated)
-			{
-				//if we get here, it means WE should try to consume, since DPC MUST in this case point to us
-				//Q.714 section 2.3
-				if(!this.sccpProvider.notify(calledPartyAddress.getSubsystemNumber(), msg) && msg.getProtocolClass().getHandling() == ProtocolClass.HANDLING_RET_ERR);
-				{
-					//in case we did not consume.... we have to reply in some way. Q.714 4.2 for now
-					SccpMessage ans = null;
-					ReturnCause returnCause = this.sccpProvider.getParameterFactory().createReturnCause(ReturnCause.SUBSYSTEM_FAILURE); //nto sure if its proper
 
-					switch(msg.getType())
-					{
-					case UnitDataService.MESSAGE_TYPE:
-						ans = messageFactory.createUnitDataService(returnCause, msg.getCallingPartyAddress(), msg.getCalledPartyAddress()); //switch addresses
-						((UnitDataService)ans).setData( ((UnitData)msg).getData());
-						break;
-					case XUnitDataService.MESSAGE_TYPE:
-						HopCounter hc = this.sccpProvider.getParameterFactory().createHopCounter(HopCounter.COUNT_HIGH);
-						ans = messageFactory.createXUnitDataService(hc,returnCause, msg.getCallingPartyAddress(), msg.getCalledPartyAddress()); //switch addresses
-						((XUnitDataService)ans).setData( ((XUnitData)msg).getData());
-						break;
-						default:
-							if(logger.isEnabledFor(Level.WARN))
-								logger.warn("Not supported error condition! Message: "+msg);
-							return;
-					}
-					
-					if(ans!=null)
-					{
-						this.sccpProvider.send(ans);
-					}
-				}
-				
-			}else
-			{
-				//we have to find link based on DPC
-				int pc = calledPartyAddress.getSignalingPointCode();
-				
-				Linkset linkset = findLinkset(pc);
-				if (linkset == null) {
-					// throw new
-					// IOException(String.format("No linkset matching APC %d",
-					// msg.getCalledPartyAddress()
-					// .getSignalingPointCode()));
-					
-					//TODO : Is this for local routing?
-					System.out.println("Linkset is null routing locally");
-					sccpProvider.notify(calledPartyAddress, msg);
-					return;
-				}
-				
-				MTPInfo info = new MTPInfo("dialogic", 2, 1, 16);
-				System.out.println("Routing to Dialogic");
-				send(linkset, msg, info);
-				
-			}
-			
-		} else {
-			Rule rule = router.find(calledPartyAddress);
+		Rule rule = router.find(calledPartyAddress);
 
+		if (rule == null) {
 			// route not defined? try to deliver to local listener
-			// TODO : If routing is based on DPC and SSN; and DPC is not this
-			// DPC,
-			// then it
-			// should be routed to actual DPC instead of giving it back to local
-			// listener
-			if (rule == null) {
-				sccpProvider.notify(calledPartyAddress, msg);
-				return;
-			}
 
-			// translate address
-			SccpAddress address = rule.translate(calledPartyAddress);
-			
-			// TODO: allow to set parameters?
-			msg.setCalledPartyAddress(address);
-			// linkset not defined? send to local listener
-			if (rule.getMTPInfo() == null) {
-				sccpProvider.notify(address, msg);
-				return;
+			boolean delivered = sccpProvider.notify(calledPartyAddress, msg);
+			if (mtpOriginated && !delivered && msg.getProtocolClass().getHandling() == ProtocolClass.HANDLING_RET_ERR) {
+				this.sendSccpError(msg);
 			}
-			// find linkset
-			Linkset linkset = findLinkset(rule.getMTPInfo().getName());
-			if (linkset == null) {
-				throw new IOException(String.format("No linkset matching %s", rule.getMTPInfo().getName()));
-			}
-			send(linkset, msg, rule.getMTPInfo());
+			return;
 		}
+
+		// translate address
+		SccpAddress address = rule.translate(calledPartyAddress);
+
+		// TODO: allow to set parameters?
+		msg.setCalledPartyAddress(address);
+		// linkset not defined? send to local listener
+		if (rule.getMTPInfo() == null) {
+			boolean delivered = sccpProvider.notify(address, msg);
+			if (mtpOriginated && !delivered && msg.getProtocolClass().getHandling() == ProtocolClass.HANDLING_RET_ERR) {
+				this.sendSccpError(msg);
+			}
+			return;
+		}
+		// find linkset
+		Linkset linkset = findLinkset(rule.getMTPInfo().getName());
+		if (linkset == null) {
+			throw new IOException(String.format("No linkset matching %s", rule.getMTPInfo().getName()));
+		}
+		send(linkset, msg, rule.getMTPInfo());
+	}
+
+	private void sendSccpError(SccpMessageImpl msg) throws IOException {
+		// in case we did not consume and this message has arrived from
+		// other end.... we have to reply in some way Q.714 4.2 for now
+		SccpMessage ans = null;
+		ReturnCause returnCause = this.sccpProvider.getParameterFactory().createReturnCause(
+				ReturnCause.SUBSYSTEM_FAILURE); // not sure if its
+												// proper
+		switch (msg.getType()) {
+		case UnitDataService.MESSAGE_TYPE:
+			ans = messageFactory.createUnitDataService(returnCause, msg.getCallingPartyAddress(),
+					msg.getCalledPartyAddress()); // switch addresses
+			((UnitDataService) ans).setData(((UnitData) msg).getData());
+			break;
+		case XUnitDataService.MESSAGE_TYPE:
+			HopCounter hc = this.sccpProvider.getParameterFactory().createHopCounter(HopCounter.COUNT_HIGH);
+			ans = messageFactory.createXUnitDataService(hc, returnCause, msg.getCallingPartyAddress(),
+					msg.getCalledPartyAddress()); // switch addresses
+			((XUnitDataService) ans).setData(((XUnitData) msg).getData());
+			break;
+		default:
+			if (logger.isEnabledFor(Level.WARN))
+				logger.warn("Not supported error condition! Message: " + msg);
+			return;
+		}
+
+		if (ans != null) {
+			this.sccpProvider.send(ans);
+		}
+
 	}
 
 	private class MessageHandler implements Runnable {
 		// MSU as input stream
 		private ByteArrayInputStream data;
 		private SccpMessageImpl message;
-		private boolean mtpOriginated = false; //tell if we send it, or receive :)
+		private boolean mtpOriginated = false; // tell if we send it, or receive
+												// :)
+
 		protected MessageHandler(byte[] msu) {
 			System.out.println(Utils.hexDump(msu));
 			this.data = new ByteArrayInputStream(msu);
 			this.message = null;
-			this.mtpOriginated = false;
+			this.mtpOriginated = true;
 		}
 
 		protected MessageHandler(SccpMessage message) {
 			this.message = (SccpMessageImpl) message;
-			this.mtpOriginated = true;
+			this.mtpOriginated = false;
 		}
 
 		private SccpMessageImpl parse() throws IOException {
@@ -332,7 +306,7 @@ public class SccpStackImpl implements SccpStack, Layer4 {
 		}
 
 		public void run() {
-			
+
 			if (message == null) {
 				try {
 					message = parse();
@@ -343,7 +317,7 @@ public class SccpStackImpl implements SccpStack, Layer4 {
 			}
 			// not each msg suppose routing or delivery to listner
 			try {
-				route(message,mtpOriginated);
+				route(message, mtpOriginated);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

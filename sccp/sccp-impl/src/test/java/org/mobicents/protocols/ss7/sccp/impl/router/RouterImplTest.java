@@ -21,8 +21,6 @@ import static org.junit.Assert.*;
  * @author kulikov
  */
 public class RouterImplTest {
-    private final static String RULE1 = "1; #ISDN_MOBILE#NATIONAL#9023629581# ; #ISDN_MOBILE#INTERNATIONAL#79023629581# ;linkset#14083#14155#0\n";
-    private final static String RULE2 = "2; #ISDN_MOBILE#INTERNATIONAL#9023629581# ; #ISDN_MOBILE#NATIONAL#9023629581# ;linkset#14083#14155#0\n";
 
     private Rule rule1, rule2;
 
@@ -57,6 +55,7 @@ public class RouterImplTest {
             router.deleteRule("Rule1");
             router.deleteRule("Rule2");
             router.deleteRule("Rule3");
+            router.deleteRule("Rule4");
             router.stop();
         } catch (Exception e) {
             e.printStackTrace();

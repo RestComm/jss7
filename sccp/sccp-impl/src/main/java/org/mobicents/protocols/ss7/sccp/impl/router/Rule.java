@@ -32,266 +32,337 @@ import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- *
+ * 
  * @author kulikov
  */
-public class Rule implements Serializable{
-    /**
+public class Rule implements Serializable {
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2147449454267320237L;
-	
+
 	private static final String RULE_NAME = "name";
 	private static final String PATTERN = "pattern";
 	private static final String TRANSLATION = "translation";
 	private static final String MTP_INFO = "mtpInfo";
-	
-	 private final static String SEPARATOR = ";";
+	private static final String ROUTING_INDICATOR = "routingIndicator";
+	private static final String DPC = "dpc";
+	private static final String SSN = "ssn";
 
-    /** the name of the rule */
-    private String name;    
-    
-    /** Pattern used for selecting rule */
-    private AddressInformation pattern;
-    
-    /** Translation method */
-    private AddressInformation translation;
-    
-    /** Additional MTP info */
-    private MTPInfo mtpInfo;
-    
-    public Rule(){
-        
-    }
-    
-    /**
-     * Creeates new routing rule.
-     * 
-     * @param the order number of the rule.
-     * @param pattern pattern for rule selection.
-     * @param translation translation method.
-     * @param mtpInfo MTP routing info
-     */
-    protected Rule(String name, AddressInformation pattern, AddressInformation translation, MTPInfo mtpInfo) {
-        this.name = name;
-        this.pattern = pattern;
-        this.translation = translation;
-        this.mtpInfo = mtpInfo;
-    }
-    
-   
-    public String getName() {
-        return name;
-    }
-    
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    /**
-     * Gets the pattern for rule selection.
-     * 
-     * @return address information object.
-     */
-    public AddressInformation getPattern() {
-        return pattern;
-    }
-    
-    /**
-     * Get the translation rules.
-     * 
-     * @return the address information object
-     */
-    public AddressInformation getTranslation() {
-        return translation;
-    }
-    
-    /**
-     * Gets the MTP routing info.
-     * 
-     * @return MTP info object.
-     */
-    public MTPInfo getMTPInfo() {
-        return mtpInfo;
-    }
-    
-    /**
-     * Translate specified address according to the rule.
-     * 
-     * @param address the origin address
-     * @return translated address
-     */
-    public SccpAddress translate(SccpAddress address) {
-        
-        //Translation is not mandatory
-        if(this.translation == null){
-            return address;
-        }
-        
-        //step #1. translate digits
-        //TODO enable expression
-        String digits = this.translation.getDigits();
-        
-        //step #2. translate global title
-        GlobalTitle gt = null;
-        if (translation.getNatureOfAddress() != null && translation.getTranslationType() == -1 && translation.getNumberingPlan() == null) {
-            gt = GlobalTitle.getInstance(translation.getNatureOfAddress(), digits);
-        } else if (translation.getNatureOfAddress() == null && translation.getTranslationType() != -1 && translation.getNumberingPlan() != null) {
-            gt = GlobalTitle.getInstance(translation.getTranslationType(), translation.getNumberingPlan(), digits);
-        } else if (translation.getNatureOfAddress() == null && translation.getTranslationType() != -1 && translation.getNumberingPlan() == null) {
-            gt = GlobalTitle.getInstance(translation.getTranslationType(), digits);
-        } else if (translation.getNatureOfAddress() != null && translation.getTranslationType() != -1 && translation.getNumberingPlan() != null) {
-            gt = GlobalTitle.getInstance(translation.getTranslationType(), translation.getNumberingPlan(), translation.getNatureOfAddress(), digits);
-        }
-        
-        //step #3. create new address object
-        return new SccpAddress(gt, translation.getSubsystem());
-    }
-    
-    public boolean matches(SccpAddress address) {
-        //consider routing based on global title only
-        if (address.getAddressIndicator().getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
-            return false;
-        }
-        
-        GlobalTitleIndicator gti = address.getAddressIndicator().getGlobalTitleIndicator();
-        switch (gti) {
-            case GLOBAL_TITLE_INCLUDES_NATURE_OF_ADDRESS_INDICATOR_ONLY :
-                GT0001 gt = (GT0001) address.getGlobalTitle();
-                //translation type should not be specified
-                if (pattern.getTranslationType() != -1) {
-                    return false;
-                }
-                //numbering plan should not be specified
-                if (pattern.getNumberingPlan() != null) {
-                    return false;
-                }
-                
-                //nature of address must match
-                if (pattern.getNatureOfAddress() != gt.getNoA()) {
-                    return false;
-                }
-                
-                //digits must match
-                if (!gt.getDigits().matches(pattern.getDigits())) {
-                    return false;
-                }
-                
-                //all conditions passed
-                return true;
-            case GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_AND_ENCODING_SCHEME :
-                GT0011 gt1 = (GT0011) address.getGlobalTitle();
-                //translation type should match
-                if (pattern.getTranslationType() != gt1.getTranslationType()) {
-                    return false;
-                }
-                
-                //numbering plan should match
-                if (pattern.getNumberingPlan() != gt1.getNp()) {
-                    return false;
-                }
-                
-                //nature must not be specified
-                if (pattern.getNatureOfAddress() != null) {
-                    return false;
-                }
-                
-                //digits must match
-                if (!gt1.getDigits().matches(pattern.getDigits())) {
-                    return false;
-                }
-                
-                //all conditions passed
-                return true;
-            case GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS :
-                GT0100 gt2 = (GT0100) address.getGlobalTitle();
-                //translation type should match
-                if (pattern.getTranslationType() != gt2.getTranslationType()) {
-                    return false;
-                }
-                
-                //numbering plan should match
-                if (pattern.getNumberingPlan() != gt2.getNumberingPlan()) {
-                    return false;
-                }
-                
-                //nature of address must match
-                if (pattern.getNatureOfAddress() != gt2.getNatureOfAddress()) {
-                    return false;
-                }
-                
-                //digits must match
-                if (!gt2.getDigits().matches(pattern.getDigits())) {
-                    return false;
-                }
-                
-                //all conditions passed
-                return true;
-            case GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_ONLY :
-                GT0010 gt3 = (GT0010) address.getGlobalTitle();
-                //translation type should match
-                if (pattern.getTranslationType() != gt3.getTranslationType()) {
-                    return false;
-                }
-                
-                //numbering plan not specified
-                if (pattern.getNumberingPlan() != null) {
-                    return false;
-                }
-                
-                //nature of address not specified
-                if (pattern.getNatureOfAddress() != null) {
-                    return false;
-                }
-                
-                //digits must match
-                if (!gt3.getDigits().matches(pattern.getDigits())) {
-                    return false;
-                }
-                
-                //all conditions passed
-                return true;
-            default : 
-                return false;
-        }
-    }
-    
-    /**
-     * XML Serialization/Deserialization
-     */
-    protected static final XMLFormat<Rule> RULE_XML = new XMLFormat<Rule>(Rule.class) {
+	private final static String SEPARATOR = ";";
 
-        
-        public void read(javolution.xml.XMLFormat.InputElement xml,
-                Rule rule) throws XMLStreamException {
-            rule.name = xml.getAttribute(RULE_NAME).toString();
-            rule.pattern = xml.get(PATTERN);
-            rule.translation = xml.get(TRANSLATION);
-            rule.mtpInfo = xml.get(MTP_INFO);
-        }
+	/** the name of the rule */
+	private String name;
 
-        
-        public void write(Rule rule,
-                javolution.xml.XMLFormat.OutputElement xml)
-                throws XMLStreamException {
-            xml.setAttribute(RULE_NAME, rule.name);
-            xml.add(rule.pattern, PATTERN);
-            xml.add(rule.translation, TRANSLATION);
-            xml.add(rule.mtpInfo, MTP_INFO);
-        }
-    };    
-    
-    
-    public String toString() {
-        StringBuffer buff = new StringBuffer();
-        buff.append(name);
-        buff.append(SEPARATOR);
-        buff.append(pattern.toString());
-        buff.append(SEPARATOR);
-        buff.append(translation.toString());
-        buff.append(SEPARATOR);
-        buff.append(mtpInfo.toString());
-        buff.append("\n");
-        return buff.toString();
-    }
+	private RoutingIndicator routingIndicator = null;
+
+	/** Pattern used for selecting rule */
+	private AddressInformation pattern;
+
+	/** Translation method */
+	private AddressInformation translation;
+
+	/** Additional MTP info */
+	private MTPInfo mtpInfo;
+
+	private int dpc = -1;
+
+	private int ssn = -1;
+
+	public Rule() {
+
+	}
+
+	/**
+	 * Creeates new routing rule.
+	 * 
+	 * @param the
+	 *            order number of the rule.
+	 * @param pattern
+	 *            pattern for rule selection.
+	 * @param translation
+	 *            translation method.
+	 * @param mtpInfo
+	 *            MTP routing info
+	 */
+	protected Rule(String name, AddressInformation pattern, AddressInformation translation, MTPInfo mtpInfo) {
+		this.name = name;
+		this.pattern = pattern;
+		this.translation = translation;
+		this.mtpInfo = mtpInfo;
+
+		this.routingIndicator = RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE;
+	}
+
+	protected Rule(String name, int dpc, int ssn, MTPInfo mtpInfo) {
+		this.name = name;
+		this.dpc = dpc;
+		this.ssn = ssn;
+		this.mtpInfo = mtpInfo;
+
+		this.routingIndicator = RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getDpc() {
+		return dpc;
+	}
+
+	public void setDpc(int dpc) {
+		this.dpc = dpc;
+	}
+
+	public int getSsn() {
+		return ssn;
+	}
+
+	public void setSsn(int ssn) {
+		this.ssn = ssn;
+	}
+
+	public RoutingIndicator getRoutingIndicator() {
+		return routingIndicator;
+	}
+
+	/**
+	 * Gets the pattern for rule selection.
+	 * 
+	 * @return address information object.
+	 */
+	public AddressInformation getPattern() {
+		return pattern;
+	}
+
+	/**
+	 * Get the translation rules.
+	 * 
+	 * @return the address information object
+	 */
+	public AddressInformation getTranslation() {
+		return translation;
+	}
+
+	/**
+	 * Gets the MTP routing info.
+	 * 
+	 * @return MTP info object.
+	 */
+	public MTPInfo getMTPInfo() {
+		return mtpInfo;
+	}
+
+	/**
+	 * Translate specified address according to the rule.
+	 * 
+	 * @param address
+	 *            the origin address
+	 * @return translated address
+	 */
+	public SccpAddress translate(SccpAddress address) {
+
+		// Translation is not mandatory
+		if (this.translation == null) {
+			return address;
+		}
+
+		// step #1. translate digits
+		// TODO enable expression
+		String digits = this.translation.getDigits();
+
+		// step #2. translate global title
+		GlobalTitle gt = null;
+		if (translation.getNatureOfAddress() != null && translation.getTranslationType() == -1
+				&& translation.getNumberingPlan() == null) {
+			gt = GlobalTitle.getInstance(translation.getNatureOfAddress(), digits);
+		} else if (translation.getNatureOfAddress() == null && translation.getTranslationType() != -1
+				&& translation.getNumberingPlan() != null) {
+			gt = GlobalTitle.getInstance(translation.getTranslationType(), translation.getNumberingPlan(), digits);
+		} else if (translation.getNatureOfAddress() == null && translation.getTranslationType() != -1
+				&& translation.getNumberingPlan() == null) {
+			gt = GlobalTitle.getInstance(translation.getTranslationType(), digits);
+		} else if (translation.getNatureOfAddress() != null && translation.getTranslationType() != -1
+				&& translation.getNumberingPlan() != null) {
+			gt = GlobalTitle.getInstance(translation.getTranslationType(), translation.getNumberingPlan(),
+					translation.getNatureOfAddress(), digits);
+		}
+
+		// step #3. create new address object
+		return new SccpAddress(gt, translation.getSubsystem());
+	}
+
+	public boolean matches(SccpAddress address) {
+		// consider routing based on global title only
+		if (address.getAddressIndicator().getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
+			// Routing on DPC and SSN
+			if (this.dpc == address.getSignalingPointCode() && this.ssn == address.getSubsystemNumber()) {
+				return true;
+			}
+
+			return false;
+		} else {
+			// Routing on GTT
+			GlobalTitleIndicator gti = address.getAddressIndicator().getGlobalTitleIndicator();
+			switch (gti) {
+			case GLOBAL_TITLE_INCLUDES_NATURE_OF_ADDRESS_INDICATOR_ONLY:
+				GT0001 gt = (GT0001) address.getGlobalTitle();
+				// translation type should not be specified
+				if (pattern.getTranslationType() != -1) {
+					return false;
+				}
+				// numbering plan should not be specified
+				if (pattern.getNumberingPlan() != null) {
+					return false;
+				}
+
+				// nature of address must match
+				if (pattern.getNatureOfAddress() != gt.getNoA()) {
+					return false;
+				}
+
+				// digits must match
+				if (!gt.getDigits().matches(pattern.getDigits())) {
+					return false;
+				}
+
+				// all conditions passed
+				return true;
+			case GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_AND_ENCODING_SCHEME:
+				GT0011 gt1 = (GT0011) address.getGlobalTitle();
+				// translation type should match
+				if (pattern.getTranslationType() != gt1.getTranslationType()) {
+					return false;
+				}
+
+				// numbering plan should match
+				if (pattern.getNumberingPlan() != gt1.getNp()) {
+					return false;
+				}
+
+				// nature must not be specified
+				if (pattern.getNatureOfAddress() != null) {
+					return false;
+				}
+
+				// digits must match
+				if (!gt1.getDigits().matches(pattern.getDigits())) {
+					return false;
+				}
+
+				// all conditions passed
+				return true;
+			case GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS:
+				GT0100 gt2 = (GT0100) address.getGlobalTitle();
+				// translation type should match
+				if (pattern.getTranslationType() != gt2.getTranslationType()) {
+					return false;
+				}
+
+				// numbering plan should match
+				if (pattern.getNumberingPlan() != gt2.getNumberingPlan()) {
+					return false;
+				}
+
+				// nature of address must match
+				if (pattern.getNatureOfAddress() != gt2.getNatureOfAddress()) {
+					return false;
+				}
+
+				// digits must match
+				if (!gt2.getDigits().matches(pattern.getDigits())) {
+					return false;
+				}
+
+				// all conditions passed
+				return true;
+			case GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_ONLY:
+				GT0010 gt3 = (GT0010) address.getGlobalTitle();
+				// translation type should match
+				if (pattern.getTranslationType() != gt3.getTranslationType()) {
+					return false;
+				}
+
+				// numbering plan not specified
+				if (pattern.getNumberingPlan() != null) {
+					return false;
+				}
+
+				// nature of address not specified
+				if (pattern.getNatureOfAddress() != null) {
+					return false;
+				}
+
+				// digits must match
+				if (!gt3.getDigits().matches(pattern.getDigits())) {
+					return false;
+				}
+
+				// all conditions passed
+				return true;
+			default:
+				return false;
+			}
+		}
+	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<Rule> RULE_XML = new XMLFormat<Rule>(Rule.class) {
+
+		public void read(javolution.xml.XMLFormat.InputElement xml, Rule rule) throws XMLStreamException {
+			rule.name = xml.getAttribute(RULE_NAME).toString();
+			rule.routingIndicator = RoutingIndicator.valueOf(xml.getAttribute(ROUTING_INDICATOR).toInt());
+			if (rule.routingIndicator == RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE) {
+				rule.pattern = xml.get(PATTERN);
+				rule.translation = xml.get(TRANSLATION);
+			} else {
+				rule.dpc = xml.getAttribute(DPC).toInt();
+				rule.ssn = xml.getAttribute(SSN).toInt();
+			}
+			rule.mtpInfo = xml.get(MTP_INFO);
+		}
+
+		public void write(Rule rule, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(RULE_NAME, rule.name);
+			xml.setAttribute(ROUTING_INDICATOR, rule.routingIndicator.getIndicator());
+
+			if (rule.routingIndicator == RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE) {
+				xml.add(rule.pattern, PATTERN);
+				xml.add(rule.translation, TRANSLATION);
+			} else {
+				xml.setAttribute(DPC, rule.dpc);
+				xml.setAttribute(SSN, rule.ssn);
+			}
+			xml.add(rule.mtpInfo, MTP_INFO);
+		}
+	};
+
+	public String toString() {
+		StringBuffer buff = new StringBuffer();
+		buff.append(name);
+		buff.append(SEPARATOR);
+		buff.append(routingIndicator);
+		buff.append(SEPARATOR);
+		if (routingIndicator == RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE) {
+			buff.append(pattern.toString());
+			buff.append(SEPARATOR);
+			buff.append(translation.toString());
+			buff.append(SEPARATOR);
+		} else {
+			buff.append(dpc);
+			buff.append(SEPARATOR);
+			buff.append(ssn);
+			buff.append(SEPARATOR);
+		}
+		buff.append(mtpInfo.toString());
+		buff.append("\n");
+		return buff.toString();
+	}
 }

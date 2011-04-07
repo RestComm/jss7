@@ -12,237 +12,248 @@ import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
  */
 public class RuleExecutor {
 
-    private static final Logger logger = Logger.getLogger(RuleExecutor.class);
+	private static final Logger logger = Logger.getLogger(RuleExecutor.class);
 
-    private RouterImpl router = null;
+	private RouterImpl router = null;
 
-    public RuleExecutor() {
+	public RuleExecutor() {
 
-    }
+	}
 
-    public RouterImpl getRouter() {
-        return router;
-    }
+	public RouterImpl getRouter() {
+		return router;
+	}
 
-    public void setRouter(RouterImpl router) {
-        this.router = router;
-    }
+	public void setRouter(RouterImpl router) {
+		this.router = router;
+	}
 
-    public String execute(String[] options) {
-        if (this.router == null) {
-            logger.warn("Router not set. Command will not be executed ");
-            return RuleOAMMessage.SERVER_ERROR;
-        }
+	public String execute(String[] options) {
+		if (this.router == null) {
+			logger.warn("Router not set. Command will not be executed ");
+			return RuleOAMMessage.SERVER_ERROR;
+		}
 
-        // Atleast 1 option is passed?
-        if (options == null || options.length < 2) {
-            return RuleOAMMessage.INVALID_COMMAND;
-        }
+		// Atleast 1 option is passed?
+		if (options == null || options.length < 2) {
+			return RuleOAMMessage.INVALID_COMMAND;
+		}
 
-        String firstOption = options[1];
+		String firstOption = options[1];
 
-        if (firstOption == null) {
-            return LinkOAMMessages.INVALID_COMMAND;
-        }
+		if (firstOption == null) {
+			return LinkOAMMessages.INVALID_COMMAND;
+		}
 
-        try {
-            if (firstOption.compareTo("show") == 0) {
-                // Show
-                return this.router.showRules();
-            } else if (firstOption.compareTo("create") == 0) {
-                // Create Rule
-                return this.createRule(options);
-            } else if (firstOption.compareTo("delete") == 0) {
-                // Delete Rule
-                return this.deleteRule(options);
-            }
-        } catch (Exception e) {
-            logger.error("Error while executing command ", e);
-            return e.toString();
-        } catch (Throwable t) {
-            return t.toString();
-        }
+		try {
+			if (firstOption.equals("show")) {
+				// Show
+				return this.router.showRules();
+			} else if (firstOption.equals("create")) {
+				// Create Rule
+				return this.createRule(options);
+			} else if (firstOption.equals("delete")) {
+				// Delete Rule
+				return this.deleteRule(options);
+			}
+		} catch (Exception e) {
+			logger.error("Error while executing command ", e);
+			return e.toString();
+		} catch (Throwable t) {
+			return t.toString();
+		}
 
-        return RuleOAMMessage.INVALID_COMMAND;
-    }
+		return RuleOAMMessage.INVALID_COMMAND;
+	}
 
-    /**
-     * <p>
-     * Command to create new rule.
-     * </p>
-     * <p>
-     * The valid combination for a command are
-     * <ul>
-     * <li>
-     * <p>
-     * <i>pattern</i> and <i>translation</i>
-     * </p>
-     * </li>
-     * <li>
-     * <p>
-     * <i>pattern</i>, <i>translation</i> and <i>mtpinfo</i>
-     * </p>
-     * </li>
-     * <li>
-     * <p>
-     * <i>pattern</i> and <i>mtpinfo</i>
-     * </p>
-     * </li>
-     * </ul>
-     * </p>
-     * <p>
-     * To know more about these options look at
-     * {@link org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl}
-     * </p>
-     * 
-     * @param options
-     * @return
-     * @throws Exception
-     */
-    private String createRule(String[] options) throws Exception {
-        // Minimum is 23
-        if (options.length < 23) {
-            throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-        }
+	/**
+	 * <p>
+	 * Command to create new rule.
+	 * </p>
+	 * <p>
+	 * The valid combination for a command are
+	 * <ul>
+	 * <li>
+	 * <p>
+	 * <i>pattern</i> and <i>translation</i>
+	 * </p>
+	 * </li>
+	 * <li>
+	 * <p>
+	 * <i>pattern</i>, <i>translation</i> and <i>mtpinfo</i>
+	 * </p>
+	 * </li>
+	 * <li>
+	 * <p>
+	 * <i>pattern</i> and <i>mtpinfo</i>
+	 * </p>
+	 * </li>
+	 * </ul>
+	 * </p>
+	 * <p>
+	 * To know more about these options look at
+	 * {@link org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl}
+	 * </p>
+	 * 
+	 * @param options
+	 * @return
+	 * @throws Exception
+	 */
+	private String createRule(String[] options) throws Exception {
+		// Minimum is 23
+		if (options.length < 16) {
+			throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+		}
 
-        if (options[1].compareTo("create") != 0) {
-            throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-        }
+		if (!options[1].equals("create")) {
+			throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+		}
 
-        String name = options[2];
-        AddressInformation translation = null;
-        AddressInformation pattern = null;
-        MTPInfo mtpInfo = null;
+		String name = options[2];
+		AddressInformation translation = null;
+		AddressInformation pattern = null;
+		MTPInfo mtpInfo = null;
 
-        // Pattern parsing
-        if (options[3].compareTo("pattern") != 0) {
-            throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-        }
+		if (options[3].equals("dpc")) {
+			int dpc = Integer.parseInt(options[4]);
+			if (!options[5].equals("ssn")) {
+				throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+			}
+			int ssn = Integer.parseInt(options[6]);
+			if (!options[7].equals("mtpinfo")) {
+				throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+			}
+			mtpInfo = this.getMTPInfo(options, 8);
 
-        pattern = getAddressInformation(options, 4);
+			Rule rule = new Rule(name, dpc, ssn, mtpInfo);
+			return this.router.addRule(rule);
 
-        // Translation parsing
-        if (options[14].compareTo("translation") == 0) {
+		} else if (options[3].equals("pattern")) {
+			// Pattern parsing
+			pattern = getAddressInformation(options, 4);
 
-            // For translation minimum length is 25
-            if (options.length < 25) {
-                throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-            }
+			// Translation parsing
+			if (options[14].equals("translation")) {
 
-            translation = getAddressInformation(options, 15);
+				// For translation minimum length is 25
+				if (options.length < 25) {
+					throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+				}
 
-            if (options.length > 25) {
-                // We have MtpInfo also
-                if (options.length < 34) {
-                    // Hmmm, we don't have everything to parse mtpInfo
-                    throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-                }
+				translation = getAddressInformation(options, 15);
 
-                if (options[25].compareTo("mtpinfo") != 0) {
-                    throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-                }
-                // Lets parse mtpInfo
-                mtpInfo = this.getMTPInfo(options, 26);
-            }
+				if (options.length > 25) {
+					// We have MtpInfo also
+					if (options.length < 34) {
+						// Hmmm, we don't have everything to parse mtpInfo
+						throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+					}
 
-        } else if (options[14].compareTo("mtpinfo") == 0) {
-            // Mtp Info Parsing
-            mtpInfo = this.getMTPInfo(options, 15);
-        } else {
-            throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-        }
+					if (!options[25].equals("mtpinfo")) {
+						throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+					}
+					// Lets parse mtpInfo
+					mtpInfo = this.getMTPInfo(options, 26);
+				}
 
-        Rule rule = new Rule(name, pattern, translation, mtpInfo);
+			} else if (options[14].equals("mtpinfo")) {
+				// Mtp Info Parsing
+				mtpInfo = this.getMTPInfo(options, 15);
+			} else {
+				throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+			}
 
-        return this.router.addRule(rule);
+			Rule rule = new Rule(name, pattern, translation, mtpInfo);
 
-    }
+			return this.router.addRule(rule);
+		} else {
+			throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+		}
 
-    private AddressInformation getAddressInformation(String[] options,
-            int offset) throws Exception {
-        if (options[offset++].compareTo("tt") != 0) {
-            throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-        }
+	}
 
-        int tt = Integer.parseInt(options[offset++]);
+	private AddressInformation getAddressInformation(String[] options, int offset) throws Exception {
+		if (!options[offset++].equals("tt")) {
+			throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+		}
 
-        if (options[offset++].compareTo("np") != 0) {
-            throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-        }
+		int tt = Integer.parseInt(options[offset++]);
 
-        NumberingPlan np = NumberingPlan.valueOf(Integer
-                .parseInt(options[offset++]));
+		if (!options[offset++].equals("np")) {
+			throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+		}
 
-        if (options[offset++].compareTo("noa") != 0) {
-            throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-        }
+		NumberingPlan np = NumberingPlan.valueOf(Integer.parseInt(options[offset++]));
 
-        NatureOfAddress noa = NatureOfAddress.valueOf(Integer
-                .parseInt(options[offset++]));
+		if (!options[offset++].equals("noa")) {
+			throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+		}
 
-        if (options[offset++].compareTo("digits") != 0) {
-            throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-        }
+		NatureOfAddress noa = NatureOfAddress.valueOf(Integer.parseInt(options[offset++]));
 
-        String digits = options[offset++];
+		if (!options[offset++].equals("digits")) {
+			throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+		}
 
-        if (options[offset++].compareTo("ssn") != 0) {
-            throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-        }
+		String digits = options[offset++];
 
-        int ssn = Integer.parseInt(options[offset++]);
+		if (!options[offset++].equals("ssn")) {
+			throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+		}
 
-        return new AddressInformation(tt, np, noa, digits, ssn);
-    }
+		int ssn = Integer.parseInt(options[offset++]);
 
-    private MTPInfo getMTPInfo(String[] options, int offSet) throws Exception {
-        if (options[offSet++].compareTo("name") != 0) {
-            throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-        }
+		return new AddressInformation(tt, np, noa, digits, ssn);
+	}
 
-        String mtpName = options[offSet++];
+	private MTPInfo getMTPInfo(String[] options, int offSet) throws Exception {
+		if (!options[offSet++].equals("name")) {
+			throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+		}
 
-        if (options[offSet++].compareTo("opc") != 0) {
-            throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-        }
+		String mtpName = options[offSet++];
 
-        int opc = Integer.parseInt(options[offSet++]);
+		if (!options[offSet++].equals("opc")) {
+			throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+		}
 
-        if (options[offSet++].compareTo("apc") != 0) {
-            throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-        }
+		int opc = Integer.parseInt(options[offSet++]);
 
-        int dpc = Integer.parseInt(options[offSet++]);
+		if (!options[offSet++].equals("apc")) {
+			throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+		}
 
-        if (options[offSet++].compareTo("sls") != 0) {
-            throw new Exception(RuleOAMMessage.INVALID_COMMAND);
-        }
+		int dpc = Integer.parseInt(options[offSet++]);
 
-        int sls = Integer.parseInt(options[offSet++]);
+		if (!options[offSet++].equals("sls")) {
+			throw new Exception(RuleOAMMessage.INVALID_COMMAND);
+		}
 
-        return new MTPInfo(mtpName, opc, dpc, sls);
-    }
+		int sls = Integer.parseInt(options[offSet++]);
 
-    /**
-     * Delete the existing Rule. Command is sccprule delete <rule-name>. For
-     * example sccprule delete Rule1
-     * 
-     * @param options
-     * @return
-     * @throws Exception
-     */
-    private String deleteRule(String[] options) throws Exception {
+		return new MTPInfo(mtpName, opc, dpc, sls);
+	}
 
-        if (options.length < 3) {
-            return RuleOAMMessage.INVALID_COMMAND;
-        }
+	/**
+	 * Delete the existing Rule. Command is sccprule delete <rule-name>. For
+	 * example sccprule delete Rule1
+	 * 
+	 * @param options
+	 * @return
+	 * @throws Exception
+	 */
+	private String deleteRule(String[] options) throws Exception {
 
-        String name = options[2];
+		if (options.length < 3) {
+			return RuleOAMMessage.INVALID_COMMAND;
+		}
 
-        if (name == null) {
-            throw new Exception(LinkOAMMessages.INVALID_COMMAND);
-        }
+		String name = options[2];
 
-        return this.router.deleteRule(name);
-    }
+		if (name == null) {
+			throw new Exception(LinkOAMMessages.INVALID_COMMAND);
+		}
+
+		return this.router.deleteRule(name);
+	}
 }
