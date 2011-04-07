@@ -7,7 +7,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -52,16 +51,18 @@ final class Utils {
 		//FIXME: check if TxId = 0, is coded as zero len octet string...
 		//now leacing atleast ONE B, it can be 0x00
 		//for(int index = 0;index<4;index++)
-		for(int index = 0;index<3;index++)
-		{
-			if(data[index] == 0)
-			{
-				bais.read();
-			}else
-			{
-				break;
-			}
-		}
+		
+//Amit : Let Tx Id be always 4 octets		
+//		for(int index = 0;index<3;index++)
+//		{
+//			if(data[index] == 0)
+//			{
+//				bais.read();
+//			}else
+//			{
+//				break;
+//			}
+//		}
 		aos.writeStringOctet(tagClass, tag, bais);
 		
 		
