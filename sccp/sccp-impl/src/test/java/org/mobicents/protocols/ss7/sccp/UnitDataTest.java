@@ -40,7 +40,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * 
  */
 public class UnitDataTest {
-	
+
 	private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
 
 	@Before
@@ -54,7 +54,7 @@ public class UnitDataTest {
 
 	@Test
 	public void testDecode() throws Exception {
-		//This is data comes from Dialogic MTU test sending the SMS message
+		// This is data comes from Dialogic MTU test sending the SMS message
 		byte[] b = new byte[] { 0x01, 0x03, 0x05, 0x09, 0x02, 0x42, 0x08, 0x04, 0x43, 0x01, 0x00, 0x08, 0x5D, 0x62,
 				0x5B, 0x48, 0x04, 0x00, 0x02, 0x00, 0x30, 0x6B, 0x1A, 0x28, 0x18, 0x06, 0x07, 0x00, 0x11, (byte) 0x86,
 				0x05, 0x01, 0x01, 0x01, (byte) 0xA0, 0x0D, 0x60, 0x0B, (byte) 0xA1, 0x09, 0x06, 0x07, 0x04, 0x00, 0x00,
@@ -63,22 +63,46 @@ public class UnitDataTest {
 				0x43, 0x65, (byte) 0x87, (byte) 0xF9, 0x04, 0x1C, 0x2C, 0x09, 0x04, 0x21, 0x43, 0x65, (byte) 0x87,
 				(byte) 0xF9, 0x04, 0x00, 0x11, 0x30, (byte) 0x92, 0x60, 0x60, 0x62, 0x00, 0x0B, (byte) 0xC8, 0x32,
 				(byte) 0x9B, (byte) 0xFD, 0x06, 0x5D, (byte) 0xDF, 0x72, 0x36, 0x19 };
-		
-		UnitDataImpl testObjectDecoded = (UnitDataImpl) messageFactory.createMessage(UnitData.MESSAGE_TYPE, new ByteArrayInputStream(b));
+
+		UnitDataImpl testObjectDecoded = (UnitDataImpl) messageFactory.createMessage(UnitData.MESSAGE_TYPE,
+				new ByteArrayInputStream(b));
 		System.out.println(testObjectDecoded);
 		assertNotNull(testObjectDecoded);
-		
+
 		SccpAddress calledAdd = testObjectDecoded.getCalledPartyAddress();
 		assertNotNull(calledAdd);
 		assertEquals(8, calledAdd.getSubsystemNumber());
 		assertNull(calledAdd.getGlobalTitle());
-		
+
 		SccpAddress callingAdd = testObjectDecoded.getCallingPartyAddress();
 		assertNotNull(callingAdd);
 		assertEquals(1, callingAdd.getSignalingPointCode());
 		assertEquals(8, callingAdd.getSubsystemNumber());
-		assertNull(callingAdd.getGlobalTitle());		
-		
-		
+		assertNull(callingAdd.getGlobalTitle());
+
+	}
+
+	@Test
+	public void testDecode1() throws Exception {
+		// This is data comes from Dialogic MTU test
+		byte[] b = new byte[] { 0x00, 0x03, 0x05, 0x09, 0x02, 0x42, 0x01, 0x04, 0x43, 0x01, 0x00, 0x01, 0x05, 0x03,
+				0x08, 0x02, 0x00, 0x00 };
+
+		UnitDataImpl testObjectDecoded = (UnitDataImpl) messageFactory.createMessage(UnitData.MESSAGE_TYPE,
+				new ByteArrayInputStream(b));
+		System.out.println(testObjectDecoded);
+		assertNotNull(testObjectDecoded);
+
+		SccpAddress calledAdd = testObjectDecoded.getCalledPartyAddress();
+		assertNotNull(calledAdd);
+		assertEquals(1, calledAdd.getSubsystemNumber());
+		assertNull(calledAdd.getGlobalTitle());
+
+		SccpAddress callingAdd = testObjectDecoded.getCallingPartyAddress();
+		assertNotNull(callingAdd);
+		assertEquals(1, callingAdd.getSignalingPointCode());
+		assertEquals(1, callingAdd.getSubsystemNumber());
+		assertNull(callingAdd.getGlobalTitle());
+
 	}
 }
