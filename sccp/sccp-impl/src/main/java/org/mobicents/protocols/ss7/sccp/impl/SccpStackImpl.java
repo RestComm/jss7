@@ -30,7 +30,6 @@ import javolution.util.FastMap;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
@@ -150,15 +149,15 @@ public class SccpStackImpl implements SccpStack, Layer4 {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	private Linkset findLinkset(int pc) {
-		for (FastMap.Entry<String, Linkset> e = linksets.head(), end = linksets.tail(); (e = e.getNext()) != end;) {
-			Linkset linkset = e.getValue();
-			if (linkset.getApc() == pc) {
-				return linkset;
-			}
-		}
-		return null;
-	}
+//	private Linkset findLinkset(int pc) {
+//		for (FastMap.Entry<String, Linkset> e = linksets.head(), end = linksets.tail(); (e = e.getNext()) != end;) {
+//			Linkset linkset = e.getValue();
+//			if (linkset.getApc() == pc) {
+//				return linkset;
+//			}
+//		}
+//		return null;
+//	}
 
 	private Linkset findLinkset(String name) {
 		return this.linksets.get(name);
@@ -294,6 +293,9 @@ public class SccpStackImpl implements SccpStack, Layer4 {
 
 			// ignore msg if this is not sccp service.
 			if (si != 3) {
+				if (logger.isEnabledFor(Level.WARN)) {
+					logger.warn(String.format("SI is not SCCP. SI=%d ", si));
+				}
 				return null;
 			}
 
@@ -316,10 +318,12 @@ public class SccpStackImpl implements SccpStack, Layer4 {
 				}
 			}
 			// not each msg suppose routing or delivery to listner
-			try {
-				route(message, mtpOriginated);
-			} catch (IOException e) {
-				e.printStackTrace();
+			if (message != null) {
+				try {
+					route(message, mtpOriginated);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
