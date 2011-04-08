@@ -1,5 +1,8 @@
 <?xml version='1.0'?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
 
 <chapter
 	id="design_overview">
@@ -21,8 +24,8 @@
 	<para>
 		Further &THIS.PLATFORM; &THIS.APPLICATION; provides flexibility to use the Level 2,3 and Level 4 in same JVM and 
 		in same machine where SS7 Hardware (Level 1) is installed. Or its also possible to have Level 1,2,3 to be installed 
-		on separate machine and Level 4 on separate machine. In latter case <literal>M3UA</literal> is leveraged for communication between Level 4
-		 and Level 3 and is called &THIS.PLATFORM; Signaling Gateway. 
+		on separate machine and Level 4 on separate machine. In latter case <literal>M3UA</literal> over SCTP 
+		is leveraged for communication between Level 4 and Level 3 and is called &THIS.PLATFORM; Signaling Gateway. 
 	</para>
 	
 	<para>
@@ -56,6 +59,10 @@
 		</caption>
 	</mediaobject>
 	
+	<important>
+		<para>If you use &THIS.PLATFORM; M3UA stack, you have to use JDK 7 to run the stack as well as to compile source code. M3UA leverages Java SCTP which is available only from JDK 7.</para>
+	</important>
+
 	<para>
 	 Apart from advantages mentioned in 
 	</para>
@@ -244,7 +251,7 @@
 			<note>
 				<title>Note</title>
 				<para>
-					&THIS.PLATFORM; M3UA Stack uses TCP layer. Leveraging SCTP is in roadmap and will be implemented soon.
+					&THIS.PLATFORM; M3UA Stack uses Java SCTP layer which is available from JDK 7 onwards
 				</para>
 			</note>
 					

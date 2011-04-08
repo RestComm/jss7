@@ -30,9 +30,14 @@
 		
 			<title>Rule</title>
 			<para>
-				<acronym>SCCP</acronym> routing mechanism makes routing decisions based on <literal>rules</literal>.
-				Each rule consits of three elements:
+				<acronym>SCCP</acronym> routing mechanism makes routing decisions based on <literal>rules</literal>. Routing can be based on Global Title (GTT) or Destination Point Code and Sub-System Number (DPC + SSN)
+
 			</para>
+			<variablelist>
+			<varlistentry>
+			<term>Rule for routing on GTT</term>
+			<listitem>
+			<para>Each rule consits of three elements:</para>
 			<variablelist>
 				<varlistentry>
 					<term>pattern</term>
@@ -130,7 +135,40 @@
 		
 				</varlistentry>
 			</variablelist>
-		
+			</listitem>
+			</varlistentry>
+
+
+			<varlistentry>
+			<term>Rule for routing on DPC + SSN</term>
+			<listitem>
+			<para>Each rule consits of three elements:</para>
+			<variablelist>
+				<varlistentry>
+					<term>DPC</term>
+					<listitem>
+						<para>Destination point Code</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>SSN</term>
+					<listitem>
+						<para>Sub System Number</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>mtp info</term>
+					<listitem>
+						<para>
+							same as mtp info used in GTT
+						</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			</listitem>
+			</varlistentry>
+
+			</variablelist>		
 		
 		</section>		
 		
@@ -160,6 +198,10 @@ sccprule create &lt;name&gt; pattern tt &lt;translation type&gt; np &lt;numberin
                          mtpinfo name &lt;name&gt; opc &lt;originating point code&gt; dpc &lt;destination point code&gt; sls &lt;signaling link selection&gt;
 
 </programlisting>
+
+			<programlisting>
+sccprule create &lt;name&gt; dpc &lt;destination point code&gt; ssn &lt;sub-system number&gt; mtpinfo name &lt;name&gt; opc &lt;originating point code&gt; dpc &lt;destination point code&gt; sls &lt;signaling link selection&gt;
+			</programlisting>
 
 			<itemizedlist>
 			<listitem>
@@ -335,6 +377,8 @@ Rule successfully added
 mobicents(10.65.208.215:3435)>sccprule create Rule2 pattern tt -1 np 3 noa 4 digits 99605 ssn -1 mtpinfo name name1 opc 12 apc 56 sls 1
 Rule successfully added
 mobicents(10.65.208.215:3435)>sccprule create Rule3 pattern tt -1 np 3 noa 4 digits 99606 ssn -1 translation tt -1 np 3 noa 4 digits 77865 ssn -1 mtpinfo name name1 opc 12 apc 56 sls 1
+Rule successfully added
+mobicents(10.65.208.215:3435)>sccprule create Rule4 dpc 1 ssn 8 mtpinfo name name1 opc 2 apc 1 sls 16
 Rule successfully added
 				</screen>
 			</example>

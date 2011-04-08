@@ -1,5 +1,8 @@
 <?xml version='1.0'?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
 
 <chapter
 	id="setup">
@@ -7,7 +10,7 @@
 	<section
 		id="installing_and_using">
 		<title>Installing</title>
-		<para>Mobicents SS7 stack at its core requires only Java 1.5(Java SE) if you are using only <literal>M3UALinkset</literal>. 
+		<para>&THIS.PLATFORM; SS7 stack at its core requires only Java if you are using only <literal>M3UALinkset</literal>. 
 		However if you plan to use <literal>DahdiLinkset</literal> or <literal>DialogicLinkset</literal>, respective SS7 cards 
 		needs to be installed on the server along with native libraries.</para>
 		
@@ -630,7 +633,7 @@ Halting VM]]></screen>
 		Building from source means you can stay on top with the latest features. Whilst aspects of &THIS.PLATFORM; &THIS.APPLICATION; are quite 
 		complicated, you may find ways to become contributors.</para>
 		
-		<para>&THIS.PLATFORM; &THIS.APPLICATION; works with JDK1.5 and above. you will need also need to have the following tools installed. 
+		<para>&THIS.PLATFORM; &THIS.APPLICATION; works with JDK1.5 and above (If using M3UA, JDK1.7 and above ). you will need also need to have the following tools installed. 
 		Minimum requirement version numbers provided.</para>
 		
 		<itemizedlist>
