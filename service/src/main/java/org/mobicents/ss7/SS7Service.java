@@ -42,7 +42,6 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
     private SccpStackImpl sccpStack;
     private RouterImpl routerImpl;
 
-    private String path;
     private String jndiName;
 
     private Logger logger = Logger.getLogger(SS7Service.class);
@@ -53,7 +52,6 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
         logger.info("Starting SCCP stack...");
 
         sccpStack = new SccpStackImpl();
-        sccpStack.setConfigPath(path);
         sccpStack.setRouter(routerImpl);
 
         FastMap<String, Linkset> map = this.linksetManager.getLinksets();
@@ -85,10 +83,6 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
     public String getJndiName() {
         return jndiName;
-    }
-
-    public void setConfigPath(String path) {
-        this.path = path;
     }
 
     public ShellExecutor getShellExecutor() {

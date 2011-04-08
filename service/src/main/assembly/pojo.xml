@@ -14,10 +14,6 @@
 			<source>src/main/config/jboss-structure.xml</source>
 			<destName>META-INF/jboss-structure.xml</destName>
 		</file>
-		<file>
-			<source>src/main/config/sccp-routing.txt</source>
-			<destName>sccp-routing.txt</destName>
-		</file>
 	</files>
 	<dependencySets>
 		<dependencySet>
