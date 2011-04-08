@@ -5,13 +5,13 @@
 	<parent>
 		<artifactId>ss7-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0.BETA8</version>
 	</parent>
 
 
 	<artifactId>map-parent</artifactId>
 	<groupId>org.mobicents.protocols.ss7.map</groupId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0.BETA8</version>
 
 	<packaging>pom</packaging>
 
