@@ -23,6 +23,7 @@
 package org.mobicents.ss7.hardware.dahdi.oam;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javolution.util.FastMap;
@@ -316,6 +317,18 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
             mtp3.send(paramArrayOfByte, paramArrayOfByte.length);
             return paramArrayOfByte.length;
         }
+
+		@Override
+		public int read(ByteBuffer arg0) throws IOException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int write(ByteBuffer arg0) throws IOException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
     }
 
     @Override

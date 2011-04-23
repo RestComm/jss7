@@ -35,6 +35,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<artifactId>mtp-api</artifactId>
+		</dependency>		
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 			<artifactId>mtp</artifactId>
 		</dependency>
 

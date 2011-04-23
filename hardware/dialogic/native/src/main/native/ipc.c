@@ -1,6 +1,7 @@
 #include "system.h"
 #include "msg.h"
 #include "sysgct.h"
+#include "ss7_inc.h"    /* ss7 message & parameter definitions */
 
 #include "org_mobicents_ss7_hardware_dialogic_InterProcessCommunicator.h"
 
@@ -17,10 +18,11 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dialogic_InterProcessComm
 	jsize len;
 	jbyte *body;
 
-    u16   mlen;           /* message length */
-    u8    *pptr;          /* pointer into parameter area */
+    	u16   mlen;           /* message length */
+    	u8    *pptr;          /* pointer into parameter area */
 
 	HDR*  h;
+	MSG *m;
 	int i;
 
 	h = GCT_grab(src_module_id);
@@ -29,12 +31,46 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dialogic_InterProcessComm
 		return -1;
 	}
 
-	len = (*env)->GetArrayLength(env, msg_buffer);
-    body = (*env)->GetByteArrayElements(env, msg_buffer, 0);
+	m = (MSG *)h;
 
-    if ((mlen = ((MSG*) h)->len) > 0) {
+	len = (*env)->GetArrayLength(env, msg_buffer);
+    	body = (*env)->GetByteArrayElements(env, msg_buffer, 0);
+
+    	if ((mlen = ((MSG*) h)->len) > 0) {
+		
 		pptr = get_param((MSG *) h);
-		i = 0;		
+		i = 0;	
+
+		switch (m->hdr.type)
+		{
+		case MTP_MSG_PAUSE :
+		  body[i++] = 0; /* SI = 0 */
+		  body[i++] = 3; /* PAUSE */
+		  break;
+
+		case MTP_MSG_RESUME :
+		  body[i++] = 0; /* SI = 0 */
+		  body[i++] = 4; /* RESUME */
+		  break;
+
+		case MTP_MSG_STATUS :
+		  body[i++] = 0; /* SI = 0 */
+		  body[i++] = 5; /* STATUS */
+		  body[i++] = m->hdr.status; /* actual status. 1 = Remote User Unavailable 2 = Signaling Network Congestion */
+		  break;
+		
+		/* Do we care for API_MSG_RX_IND and default or directly pass to upper layer?
+		case API_MSG_RX_IND :
+		  UPE_mtp_transfer_ind(m);
+		  break;
+
+		default :
+		  printf("Rx MSG: type=0x%04x src=0x%02x status=0x%02x len=0x%04x\n", m->hdr.type, m->hdr.src, m->hdr.status, m->len);
+		  break;
+		*/
+		}
+
+	
 		while (mlen--) {
 			body[i++] = *pptr++;
 		}

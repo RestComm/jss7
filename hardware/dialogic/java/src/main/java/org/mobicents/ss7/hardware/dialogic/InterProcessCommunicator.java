@@ -23,6 +23,7 @@
 package org.mobicents.ss7.hardware.dialogic;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * @author amit bhayani
@@ -55,7 +56,9 @@ public class InterProcessCommunicator {
 	 * 
 	 * @return received datagram.
 	 */
-	public byte[] receive() throws IOException {
+	public int read(ByteBuffer b) throws IOException {
+		//TODO Make JNI use native ByteBuffer
+		
 		byte[] buffer = new byte[1000];
 		int len = receive(source, buffer);
 
@@ -63,13 +66,13 @@ public class InterProcessCommunicator {
 			// throw new IOException("Unable to read message from IPC");
 			// GCT_grab is used and its async now. Will return -1 if there are
 			// no messages in queue
-			return null;
+			return 0;
 		}
 
-		byte[] message = new byte[len];
-		System.arraycopy(buffer, 0, message, 0, len);
+		// Fill the ByteBuffer
+		b.put(buffer, 0, len);
 
-		return message;
+		return len;
 	}
 
 	/**
@@ -78,11 +81,21 @@ public class InterProcessCommunicator {
 	 * @param packet
 	 *            the datagram to be sent.
 	 */
-	public void send(byte[] packet) throws IOException {
-		int status = send(source, destination, packet);
+	public int write(ByteBuffer b) throws IOException {
+		//TODO Make JNI use native ByteBuffer
+		
+		int status = -1;
+
+		if (b.hasRemaining()) {
+			byte[] packet = new byte[b.limit()-b.position()];
+			b.get(packet);
+			status = send(source, destination, packet);
+		}
+
 		if (status != 0) {
 			throw new IOException("Can not send packet");
 		}
+		return status;
 	}
 
 	/**

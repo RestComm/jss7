@@ -23,6 +23,7 @@
 package org.mobicents.ss7.hardware.dialogic.oam;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
@@ -89,7 +90,7 @@ public class DialogicLinkset extends Linkset {
 
     @Override
     protected void initialize() {
-        this.linksetStream = new LinksetStreamImpl();
+       // this.linksetStream = new LinksetStreamImpl();
     }
 
     @Override
@@ -164,55 +165,67 @@ public class DialogicLinkset extends Linkset {
         }
     };
 
-    private class LinksetStreamImpl extends LinksetStream {
-        byte[] rxData = null;
-
-        @Override
-        public boolean poll(int arg0, int arg1) {
-        	rxData = null;
-            try {
-                if (ipc != null) {
-                    rxData = ipc.receive();
-                    return true;
-                }
-            } catch (IOException ex) {
-                logger.error("IO error while receiving data from InterProcessCommunicator", ex);
-            }
-            return false;
-        }
-
-        @Override
-        public String getName() {
-            return linksetName;
-        }
-
-        public void close() {
-            // TODO Auto-generated method stub
-
-        }
-
-        public SelectorProvider provider() {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        public int read(byte[] paramArrayOfByte) throws IOException {
-            if (rxData != null) {
-                System.arraycopy(rxData, 0, paramArrayOfByte, 0, rxData.length);
-                return rxData.length;
-            }
-
-            return 0;
-        }
-
-        public SelectorKey register(StreamSelector selector) throws IOException {
-            return ((LinksetSelector) selector).register(this);
-        }
-
-        public int write(byte[] paramArrayOfByte) throws IOException {
-            ipc.send(paramArrayOfByte);
-            return paramArrayOfByte.length;
-        }
-    }
+//    private class LinksetStreamImpl extends LinksetStream {
+//       ByteBuffer rxData = null;
+//
+//        @Override
+//        public boolean poll(int arg0, int arg1) {
+//        	rxData = null;
+//            try {
+//                if (ipc != null) {
+//                    rxData = ipc.read(null);
+//                    return true;
+//                }
+//            } catch (IOException ex) {
+//                logger.error("IO error while receiving data from InterProcessCommunicator", ex);
+//            }
+//            return false;
+//        }
+//
+//        @Override
+//        public String getName() {
+//            return linksetName;
+//        }
+//
+//        public void close() {
+//            // TODO Auto-generated method stub
+//
+//        }
+//
+//        public SelectorProvider provider() {
+//            throw new UnsupportedOperationException("Not supported yet.");
+//        }
+//
+//        public int read(byte[] paramArrayOfByte) throws IOException {
+//            if (rxData != null) {
+//                System.arraycopy(rxData, 0, paramArrayOfByte, 0, rxData.length);
+//                return rxData.length;
+//            }
+//
+//            return 0;
+//        }
+//
+//        public SelectorKey register(StreamSelector selector) throws IOException {
+//            return ((LinksetSelector) selector).register(this);
+//        }
+//
+//        public int write(byte[] paramArrayOfByte) throws IOException {
+//            ipc.send(paramArrayOfByte);
+//            return paramArrayOfByte.length;
+//        }
+//
+//		@Override
+//		public int read(ByteBuffer arg0) throws IOException {
+//			// TODO Auto-generated method stub
+//			return 0;
+//		}
+//
+//		@Override
+//		public int write(ByteBuffer arg0) throws IOException {
+//			// TODO Auto-generated method stub
+//			return 0;
+//		}
+//    }
 
     @Override
     public void print(StringBuffer sb, int leftPad, int descPad) {

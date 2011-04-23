@@ -23,6 +23,7 @@
 package org.mobicents.ss7.hardware.dahdi;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import org.mobicents.protocols.ss7.mtp.Mtp1;
 import org.mobicents.protocols.stream.api.SelectorKey;
@@ -213,5 +214,17 @@ public class Channel implements Mtp1 {
     public void write(byte[] data, int len) throws IOException {
         this.writeData(fd, data, len);
     }
+
+	@Override
+	public int read(ByteBuffer arg0) throws IOException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int write(ByteBuffer arg0) throws IOException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }
