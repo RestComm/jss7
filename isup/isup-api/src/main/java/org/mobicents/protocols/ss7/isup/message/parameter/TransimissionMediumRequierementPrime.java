@@ -67,7 +67,7 @@ public interface TransimissionMediumRequierementPrime extends ISUPParameter {
 	 */
 	public static int _MEDIUM_64_KBIT_PREFERED = 6;
 	/**
-	 * 0 0 0 0 0 1 1 1 - 2 � 64 kbit/s unrestricted
+	 * 0 0 0 0 0 1 1 1 - 2  64 kbit/s unrestricted
 	 */
 	public static int _MEDIUM_2x64_KBIT_UNRESTRICTED = 7;
 	/**
