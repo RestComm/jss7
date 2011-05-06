@@ -318,13 +318,11 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
             return paramArrayOfByte.length;
         }
 
-		@Override
 		public int read(ByteBuffer arg0) throws IOException {
 			// TODO Auto-generated method stub
 			return 0;
 		}
 
-		@Override
 		public int write(ByteBuffer arg0) throws IOException {
 			// TODO Auto-generated method stub
 			return 0;

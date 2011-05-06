@@ -215,13 +215,11 @@ public class Channel implements Mtp1 {
         this.writeData(fd, data, len);
     }
 
-	@Override
 	public int read(ByteBuffer arg0) throws IOException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
 	public int write(ByteBuffer arg0) throws IOException {
 		// TODO Auto-generated method stub
 		return 0;
