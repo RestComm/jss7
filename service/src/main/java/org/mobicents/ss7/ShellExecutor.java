@@ -30,7 +30,7 @@ import javolution.util.FastSet;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor;
-import org.mobicents.protocols.ss7.sccp.impl.router.RuleExecutor;
+import org.mobicents.protocols.ss7.sccp.impl.oam.SccpExecutor;
 import org.mobicents.ss7.linkset.oam.LinksetExecutor;
 import org.mobicents.ss7.management.console.Subject;
 import org.mobicents.ss7.management.transceiver.ChannelProvider;
@@ -47,214 +47,206 @@ import org.mobicents.ss7.management.transceiver.ShellServerChannel;
  */
 public class ShellExecutor implements Runnable {
 
-    Logger logger = Logger.getLogger(ShellExecutor.class);
+	Logger logger = Logger.getLogger(ShellExecutor.class);
 
-    private ChannelProvider provider;
-    private ShellServerChannel serverChannel;
-    private ShellChannel channel;
-    private ChannelSelector selector;
-    private ChannelSelectionKey skey;
+	private ChannelProvider provider;
+	private ShellServerChannel serverChannel;
+	private ShellChannel channel;
+	private ChannelSelector selector;
+	private ChannelSelectionKey skey;
 
-    private MessageFactory messageFactory = null;
+	private MessageFactory messageFactory = null;
 
-    private String rxMessage = "";
-    private String txMessage = "";
+	private String rxMessage = "";
+	private String txMessage = "";
 
-    private volatile boolean started = false;
+	private volatile boolean started = false;
 
-    private String address;
+	private String address;
 
-    private int port;
+	private int port;
 
-    private volatile LinksetExecutor linksetExecutor = null;
+	private volatile LinksetExecutor linksetExecutor = null;
 
-    private volatile M3UAShellExecutor m3UAShellExecutor = null;
+	private volatile M3UAShellExecutor m3UAShellExecutor = null;
 
-    private volatile RuleExecutor ruleExecutor = null;
+	private volatile SccpExecutor sccpExecutor = null;
 
-    public ShellExecutor() throws IOException {
+	public ShellExecutor() throws IOException {
 
-    }
+	}
 
-    public String getAddress() {
-        return address;
-    }
+	public SccpExecutor getSccpExecutor() {
+		return sccpExecutor;
+	}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+	public void setSccpExecutor(SccpExecutor sccpExecutor) {
+		this.sccpExecutor = sccpExecutor;
+	}
 
-    public int getPort() {
-        return port;
-    }
+	public String getAddress() {
+		return address;
+	}
 
-    public void setPort(int port) {
-        this.port = port;
-    }
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
-    public void start() {
+	public int getPort() {
+		return port;
+	}
 
-    }
+	public void setPort(int port) {
+		this.port = port;
+	}
 
-    public void startService() throws IOException {
+	public void start() throws IOException {
+		logger.info("Starting SS7 management shell environment");
+		provider = ChannelProvider.provider();
+		serverChannel = provider.openServerChannel();
+		InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
+		serverChannel.bind(inetSocketAddress);
 
-        logger.info("Starting SS7 management shell environment");
-        provider = ChannelProvider.provider();
-        serverChannel = provider.openServerChannel();
-        InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
-        serverChannel.bind(inetSocketAddress);
+		selector = provider.openSelector();
+		skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-        selector = provider.openSelector();
-        skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+		messageFactory = ChannelProvider.provider().getMessageFactory();
 
-        messageFactory = ChannelProvider.provider().getMessageFactory();
+		this.logger.info(String.format("ShellExecutor listening at %s", inetSocketAddress));
 
-        this.logger.info(String.format("ShellExecutor listening at %s", inetSocketAddress));
+		this.started = true;
+		new Thread(this).start();
+	}
 
-        this.started = true;
-        new Thread(this).start();
-    }
+	public void stop() {
+		this.started = false;
+	}
 
-    public void stop() {
-    }
+	public LinksetExecutor getLinksetExecutor() {
+		return linksetExecutor;
+	}
 
-    public void stopService() {
-        this.started = false;
-    }
+	public void setLinksetExecutor(LinksetExecutor linksetExecutor) {
+		this.linksetExecutor = linksetExecutor;
+	}
 
-    public LinksetExecutor getLinksetExecutor() {
-        return linksetExecutor;
-    }
+	public M3UAShellExecutor getM3UAShellExecutor() {
+		return m3UAShellExecutor;
+	}
 
-    public void setLinksetExecutor(LinksetExecutor linksetExecutor) {
-        this.linksetExecutor = linksetExecutor;
-    }
+	public void setM3UAShellExecutor(M3UAShellExecutor shellExecutor) {
+		m3UAShellExecutor = shellExecutor;
+	}
 
-    public M3UAShellExecutor getM3UAShellExecutor() {
-        return m3UAShellExecutor;
-    }
+	public void run() {
 
-    public void setM3UAShellExecutor(M3UAShellExecutor shellExecutor) {
-        m3UAShellExecutor = shellExecutor;
-    }
+		while (started) {
+			try {
+				FastSet<ChannelSelectionKey> keys = selector.selectNow();
 
-    public RuleExecutor getRuleExecutor() {
-        return ruleExecutor;
-    }
+				for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record.getNext()) != end;) {
+					ChannelSelectionKey key = (ChannelSelectionKey) keys.valueOf(record);
 
-    public void setRuleExecutor(RuleExecutor ruleExecutor) {
-        this.ruleExecutor = ruleExecutor;
-    }
+					if (key.isAcceptable()) {
+						accept();
+					} else if (key.isReadable()) {
+						ShellChannel chan = (ShellChannel) key.channel();
+						Message msg = (Message) chan.receive();
 
-    public void run() {
+						if (msg != null) {
+							rxMessage = msg.toString();
+							System.out.println("received " + rxMessage);
+							if (rxMessage.compareTo("disconnect") == 0) {
+								this.txMessage = "Bye";
+								chan.send(messageFactory.createMessage(txMessage));
 
-        while (started) {
-            try {
-                FastSet<ChannelSelectionKey> keys = selector.selectNow();
+							} else {
+								String[] options = rxMessage.split(" ");
+								Subject subject = Subject.getSubject(options[0]);
+								if (subject == null) {
+									chan.send(messageFactory.createMessage("Invalid Subject"));
+								} else {
+									// Nullify examined options
+									options[0] = null;
 
-                for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record.getNext()) != end;) {
-                    ChannelSelectionKey key = (ChannelSelectionKey) keys.valueOf(record);
+									switch (subject) {
+									case LINKSET:
+										this.txMessage = this.linksetExecutor.execute(options);
+										chan.send(messageFactory.createMessage(this.txMessage));
+										break;
+									case M3UA:
+										this.txMessage = this.m3UAShellExecutor.execute(options);
+										chan.send(messageFactory.createMessage(this.txMessage));
+										break;
+									case SCCP:
+										this.txMessage = this.sccpExecutor.execute(options);
+										chan.send(messageFactory.createMessage(this.txMessage));
+										break;
+									}
+								}
+							} // if (rxMessage.compareTo("disconnect")
+						} // if (msg != null)
 
-                    if (key.isAcceptable()) {
-                        accept();
-                    } else if (key.isReadable()) {
-                        ShellChannel chan = (ShellChannel) key.channel();
-                        Message msg = (Message) chan.receive();
+						// TODO Handle message
 
-                        if (msg != null) {
-                            rxMessage = msg.toString();
-                            System.out.println("received " + rxMessage);
-                            if (rxMessage.compareTo("disconnect") == 0) {
-                                this.txMessage = "Bye";
-                                chan.send(messageFactory.createMessage(txMessage));
+						rxMessage = "";
 
-                            } else {
-                                String[] options = rxMessage.split(" ");
-                                Subject subject = Subject.getSubject(options[0]);
-                                if (subject == null) {
-                                    chan.send(messageFactory.createMessage("Invalid Subject"));
-                                } else {
-                                    // Nullify examined options
-                                    options[0] = null;
+					} else if (key.isWritable() && txMessage.length() > 0) {
 
-                                    switch (subject) {
-                                    case LINKSET:
-                                        this.txMessage = this.linksetExecutor.execute(options);
-                                        chan.send(messageFactory.createMessage(this.txMessage));
-                                        break;
-                                    case M3UA:
-                                        this.txMessage = this.m3UAShellExecutor.execute(options);
-                                        chan.send(messageFactory.createMessage(this.txMessage));
-                                        break;
-                                    case SCCPRULE:
-                                        this.txMessage = this.ruleExecutor.execute(options);
-                                        chan.send(messageFactory.createMessage(this.txMessage));
-                                        break;
-                                    }
-                                }
-                            } // if (rxMessage.compareTo("disconnect")
-                        } // if (msg != null)
+						if (this.txMessage.compareTo("Bye") == 0) {
+							this.closeChannel();
+						}
 
-                        // TODO Handle message
+						// else {
+						//
+						// ShellChannel chan = (ShellChannel) key.channel();
+						// System.out.println("Sending " + txMessage);
+						// chan.send(messageFactory.createMessage(txMessage));
+						// }
 
-                        rxMessage = "";
+						this.txMessage = "";
+					}
+				}
+			} catch (IOException e) {
+				logger.error("Error while operating on ChannelSelectionKey", e);
+			}
 
-                    } else if (key.isWritable() && txMessage.length() > 0) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
 
-                        if (this.txMessage.compareTo("Bye") == 0) {
-                            this.closeChannel();
-                        }
+		try {
+			skey.cancel();
+			if (channel != null) {
+				channel.close();
+			}
+			serverChannel.close();
+			selector.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-                        // else {
-                        //
-                        // ShellChannel chan = (ShellChannel) key.channel();
-                        // System.out.println("Sending " + txMessage);
-                        // chan.send(messageFactory.createMessage(txMessage));
-                        // }
+		this.logger.info("Stopped ShellExecutor service");
+	}
 
-                        this.txMessage = "";
-                    }
-                }
-            } catch (IOException e) {
-                logger.error("Error while operating on ChannelSelectionKey", e);
-            }
+	private void accept() throws IOException {
+		channel = serverChannel.accept();
+		skey.cancel();
+		skey = channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+	}
 
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-            }
-        }
-
-        try {
-            skey.cancel();
-            if (channel != null) {
-                channel.close();
-            }
-            serverChannel.close();
-            selector.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        this.logger.info("Stopped ShellExecutor service");
-    }
-
-    private void accept() throws IOException {
-        channel = serverChannel.accept();
-        skey.cancel();
-        skey = channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-    }
-
-    private void closeChannel() throws IOException {
-        if (channel != null) {
-            try {
-                this.channel.close();
-            } catch (IOException e) {
-                logger.error("Error closing channel", e);
-            }
-        }
-        skey.cancel();
-        skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
-    }
+	private void closeChannel() throws IOException {
+		if (channel != null) {
+			try {
+				this.channel.close();
+			} catch (IOException e) {
+				logger.error("Error closing channel", e);
+			}
+		}
+		skey.cancel();
+		skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+	}
 
 }

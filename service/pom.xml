@@ -27,6 +27,10 @@
 			<artifactId>sccp-impl</artifactId>
 		</dependency>
 		<dependency>
+			<artifactId>mtp-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+		</dependency>		
+		<dependency>
 			<artifactId>mtp</artifactId>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 		</dependency>

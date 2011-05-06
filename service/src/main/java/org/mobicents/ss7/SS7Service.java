@@ -26,14 +26,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import javolution.util.FastMap;
-
 import org.apache.log4j.Logger;
 import org.jboss.system.ServiceMBeanSupport;
-import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
-import org.mobicents.ss7.linkset.oam.Linkset;
-import org.mobicents.ss7.linkset.oam.LinksetManager;
 
 /**
  * @author amit bhayani
@@ -41,132 +35,75 @@ import org.mobicents.ss7.linkset.oam.LinksetManager;
  */
 public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
-    private ShellExecutor shellExecutor = null;
-    private RemSignalingGateway remSignalingGateway = null;
-    private LinksetManager linksetManager;
-    private SccpStackImpl sccpStack;
-    private RouterImpl routerImpl;
+	private Object stack;
 
-    private String jndiName;
+	private String jndiName;
 
-    private Logger logger = Logger.getLogger(SS7Service.class);
+	private Logger logger = Logger.getLogger(SS7Service.class);
 
-    @Override
-    public void startService() throws Exception {
-        // starting sccp router
-        logger.info("Starting SCCP stack...");
+	@Override
+	public void startService() throws Exception {
+		// starting sccp router
+		rebind(stack);
+		logger.info("[[[[[[[[[ Mobicents SS7 service started ]]]]]]]]]");
+	}
 
-        sccpStack = new SccpStackImpl();
-        sccpStack.setRouter(routerImpl);
+	public void setJndiName(String jndiName) {
+		this.jndiName = jndiName;
+	}
 
-        FastMap<String, Linkset> map = this.linksetManager.getLinksets();
-        for (FastMap.Entry<String, Linkset> e = map.head(), end = map.tail(); (e = e.getNext()) != end;) {
-            Linkset value = e.getValue();
-            ((SccpStackImpl) sccpStack).add(value);
-        }
+	public String getJndiName() {
+		return jndiName;
+	}
 
-        // sccpStack.setLinksets(linksets);
-        sccpStack.start();
-        rebind(sccpStack);
+	public Object getStack() {
+		return stack;
+	}
 
-        logger.info("SCCP stack Started. SccpProvider bound to " + this.jndiName);
+	public void setStack(Object stack) {
+		this.stack = stack;
+	}
 
-        if (this.shellExecutor != null) {
-            this.shellExecutor.startService();
-        }
+	@Override
+	public void stopService() {
+		try {
+			unbind(jndiName);
+		} catch (Exception e) {
 
-        if (this.remSignalingGateway != null) {
-            this.remSignalingGateway.startService();
-        }
+		}
 
-        logger.info("[[[[[[[[[ Mobicents SS7 service started ]]]]]]]]]");
-    }
+		logger.info("Stopped SS7 service");
+	}
 
-    public void setJndiName(String jndiName) {
-        this.jndiName = jndiName;
-    }
+	/**
+	 * Binds trunk object to the JNDI under the jndiName.
+	 */
+	private void rebind(Object stack) throws NamingException {
+		Context ctx = new InitialContext();
+		String tokens[] = jndiName.split("/");
 
-    public String getJndiName() {
-        return jndiName;
-    }
+		for (int i = 0; i < tokens.length - 1; i++) {
+			if (tokens[i].trim().length() > 0) {
+				try {
+					ctx = (Context) ctx.lookup(tokens[i]);
+				} catch (NamingException e) {
+					ctx = ctx.createSubcontext(tokens[i]);
+				}
+			}
+		}
 
-    public ShellExecutor getShellExecutor() {
-        return shellExecutor;
-    }
+		ctx.bind(tokens[tokens.length - 1], stack);
+	}
 
-    public void setShellExecutor(ShellExecutor shellExecutor) {
-        this.shellExecutor = shellExecutor;
-    }
-
-    public RemSignalingGateway getRemSignalingGateway() {
-        return remSignalingGateway;
-    }
-
-    public void setRemSignalingGateway(RemSignalingGateway remSignalingGateway) {
-        this.remSignalingGateway = remSignalingGateway;
-    }
-
-    public RouterImpl getRouterImpl() {
-        return routerImpl;
-    }
-
-    public void setRouterImpl(RouterImpl routerImpl) {
-        this.routerImpl = routerImpl;
-    }
-
-    @Override
-    public void stopService() {
-        try {
-            unbind(jndiName);
-        } catch (Exception e) {
-
-        }
-        if (this.shellExecutor != null) {
-            this.shellExecutor.stopService();
-        }
-        if (this.remSignalingGateway != null) {
-            this.remSignalingGateway.stopService();
-        }
-        logger.info("Stopped SS7 service");
-    }
-
-    public void setLinksetManager(LinksetManager manager) {
-        this.linksetManager = manager;
-    }
-
-    public LinksetManager getLinksetManager() {
-        return linksetManager;
-    }
-
-    /**
-     * Binds trunk object to the JNDI under the jndiName.
-     */
-    private void rebind(SccpStackImpl stack) throws NamingException {
-        Context ctx = new InitialContext();
-        String tokens[] = jndiName.split("/");
-
-        for (int i = 0; i < tokens.length - 1; i++) {
-            if (tokens[i].trim().length() > 0) {
-                try {
-                    ctx = (Context) ctx.lookup(tokens[i]);
-                } catch (NamingException e) {
-                    ctx = ctx.createSubcontext(tokens[i]);
-                }
-            }
-        }
-
-        ctx.bind(tokens[tokens.length - 1], stack.getSccpProvider());
-    }
-
-    /**
-     * Unbounds object under specified name.
-     * 
-     * @param jndiName
-     *            the JNDI name of the object to be unbound.
-     */
-    private void unbind(String jndiName) throws NamingException {
-        InitialContext initialContext = new InitialContext();
-        initialContext.unbind(jndiName);
-    }
+	/**
+	 * Unbounds object under specified name.
+	 * 
+	 * @param jndiName
+	 *            the JNDI name of the object to be unbound.
+	 */
+	private void unbind(String jndiName) throws NamingException {
+		InitialContext initialContext = new InitialContext();
+		initialContext.unbind(jndiName);
+	}
 
 }
