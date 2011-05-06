@@ -21,24 +21,48 @@
  */
 
 package org.mobicents.protocols.ss7.tcap.asn;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.tcap.asn.DialogPortionImpl;
-import org.mobicents.protocols.ss7.tcap.asn.ParseException;
-
-import junit.framework.TestCase;
 
 /**
  * @author baranowb
  * @author amit bhayani
  */
-public class DialogPortionTest extends TestCase {
+public class DialogPortionTest {
+	
+	
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+	}
+
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+	}
+	
+	@Before
+	public void setUp(){
+		
+	}
+	
+	@After
+	public void tearDown() {
+		
+	}
 
 	public void testDialogPortion_UserInformation() throws Exception {
 

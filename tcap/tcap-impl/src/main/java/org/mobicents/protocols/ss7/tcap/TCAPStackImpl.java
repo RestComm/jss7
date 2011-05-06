@@ -51,9 +51,9 @@ public class TCAPStackImpl implements TCAPStack {
 
     }
     //for tests only
-    public TCAPStackImpl(SccpProvider sccpProvider, SccpAddress address) {
+    public TCAPStackImpl(SccpProvider sccpProvider, int ssn) {
         this.sccpProvider = sccpProvider;
-        this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, address);
+        this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn);
         this.state = State.CONFIGURED;
     }
 

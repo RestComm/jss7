@@ -92,12 +92,12 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     private TCAPStackImpl stack;    // originating TX id ~=Dialog, its direct mapping, but not described
     // explicitly...
     private Map<Long, DialogImpl> dialogs = new HashMap<Long, DialogImpl>();
-    private SccpAddress address;
+    private int ssn;
     
-    TCAPProviderImpl(SccpProvider sccpProvider, TCAPStackImpl stack, SccpAddress address) {
+    TCAPProviderImpl(SccpProvider sccpProvider, TCAPStackImpl stack, int ssn) {
         super();
         this.sccpProvider = sccpProvider;
-        this.address = address;
+        this.ssn = ssn;
         messageFactory = sccpProvider.getMessageFactory();
         parameterFactory = sccpProvider.getParameterFactory();
         this.stack = stack;
@@ -460,13 +460,13 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     void start() {
         logger.info("Starting TCAP Provider");
         this._EXECUTOR = Executors.newSingleThreadScheduledExecutor();
-        this.sccpProvider.registerSccpListener(address, this);
-        logger.info("Registered SCCP listener with address " + address);
+        this.sccpProvider.registerSccpListener(ssn, this);
+        logger.info("Registered SCCP listener with address " + ssn);
     }
 
     void stop() {
         this._EXECUTOR.shutdown();
-        this.sccpProvider.deregisterSccpListener(address);
+        this.sccpProvider.deregisterSccpListener(ssn);
 
     }
 }

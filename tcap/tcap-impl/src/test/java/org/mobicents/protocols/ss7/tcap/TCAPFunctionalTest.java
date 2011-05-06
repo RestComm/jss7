@@ -22,13 +22,16 @@
 
 package org.mobicents.protocols.ss7.tcap;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
@@ -37,60 +40,67 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author baranowb
  *
  */
-public class TCAPFunctionalTest extends TestCase {
+public class TCAPFunctionalTest extends SccpHarness {
 
     private static final int _WAIT_TIMEOUT = 90000;
     public static final long[] _ACN_ = new long[]{0, 4, 0, 0, 1, 0, 19, 2};
-    private SccpStackImpl sccpStack = new SccpStackImpl();
-    private SccpProvider provider;
-    private TCAPStackImpl stack1;
-    private TCAPStackImpl stack2;
+    private TCAPStackImpl tcapStack1;
+    private TCAPStackImpl tcapStack2;
     private SccpAddress peer1Address;
     private SccpAddress peer2Address;
     private Client client;
     private Server server;
+    
+    public TCAPFunctionalTest(){
+    	
+    }
+    
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		System.out.println("setUpClass");
+	}
+
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+		System.out.println("tearDownClass");
+	}
 
     /* (non-Javadoc)
      * @see junit.framework.TestCase#setUp()
      */
-    @Override
-    protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws IllegalStateException {
+		System.out.println("setUp");
         super.setUp();
-        RouterImpl router = new RouterImpl();
-        sccpStack.setRouter(router);
-        sccpStack.start();
-
-        this.provider = sccpStack.getSccpProvider();
+       
         
         GlobalTitle gt1 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "123");
         GlobalTitle gt2 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "321");
         
-        peer1Address = new SccpAddress(gt1, 0);
-        peer2Address = new SccpAddress(gt2, 0);
+        peer1Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
+        peer2Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2,  null, 8);
         
-        this.stack1 = new TCAPStackImpl(provider, peer1Address);
-        this.stack2 = new TCAPStackImpl(provider, peer2Address);
+        this.tcapStack1 = new TCAPStackImpl(this.sccpProvider1, 8);
+        this.tcapStack2 = new TCAPStackImpl(this.sccpProvider2, 8);
         
-        this.stack1.start();
-        this.stack2.start();
+        this.tcapStack1.start();
+        this.tcapStack2.start();
         //create test classes
-        this.client = new Client(this.stack1, this, peer1Address, peer2Address);
-        this.server = new Server(this.stack2, this, peer2Address, peer1Address);
+        this.client = new Client(this.tcapStack1, this, peer1Address, peer2Address);
+        this.server = new Server(this.tcapStack2, this, peer2Address, peer1Address);
 
     }
     /* (non-Javadoc)
      * @see junit.framework.TestCase#tearDown()
      */
-
-    @Override
-    protected void tearDown() throws Exception {
-        sccpStack.stop();
-        this.stack1.stop();
-        this.stack2.stop();
+	@After
+	public void tearDown() {
+        this.tcapStack1.stop();
+        this.tcapStack2.stop();
         super.tearDown();
 
     }
-
+	
     @Test
     public void testSimpleTCWithDialog() throws Exception {
         client.start();

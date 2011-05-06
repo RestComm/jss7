@@ -22,11 +22,7 @@
 
 package org.mobicents.protocols.ss7.tcap;
 
-import junit.framework.TestCase;
-
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
@@ -47,7 +43,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 public class Server implements TCListener{
 
 	private TCAPStack stack;
-	private TestCase runningTestCase;
+	private TCAPFunctionalTest runningTestCase;
 	private SccpAddress thisAddress;
 	private SccpAddress remoteAddress;
 	private TCAPProvider tcapProvider;
@@ -57,7 +53,7 @@ public class Server implements TCListener{
 	private boolean _S_recievedBegin,_S_sentContinue,_S_receivedEnd,_S_dialogReleased;
 	private String unexpected = "";
 	
-	Server(TCAPStack stack, TestCase runningTestCase, SccpAddress thisAddress,SccpAddress remoteAddress) {
+	Server(TCAPStack stack, TCAPFunctionalTest runningTestCase, SccpAddress thisAddress,SccpAddress remoteAddress) {
 		super();
 		this.stack = stack;
 		this.runningTestCase = runningTestCase;
