@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+  <classpathentry kind="src" path="linkset/src/main/java"/>
   <classpathentry kind="src" path="shell/src/test/java"/>
   <classpathentry kind="src" path="shell/src/main/java"/>
   <classpathentry kind="src" path="shell/src/main/resources"/>
-  <classpathentry kind="src" path="linkset/src/main/java"/>
   <classpathentry kind="var" path="M2_REPO/javolution/javolution/5.5.1/javolution-5.5.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/4.1/junit-4.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar"/>
