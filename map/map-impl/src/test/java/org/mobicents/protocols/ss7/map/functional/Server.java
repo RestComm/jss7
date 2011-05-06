@@ -55,7 +55,7 @@ public class Server implements MAPDialogListener, MAPServiceListener {
 
 	private static Logger logger = Logger.getLogger(Server.class);
 
-	private TestCase runningTestCase;
+	private MAPFunctionalTest runningTestCase;
 	private SccpAddress thisAddress;
 	private SccpAddress remoteAddress;
 
@@ -68,7 +68,7 @@ public class Server implements MAPDialogListener, MAPServiceListener {
 	private boolean _S_recievedMAPOpenInfo, _S_recievedMAPCloseInfo;
 	private String unexpected = "";
 
-	Server(MAPStack mapStack, TestCase runningTestCase,
+	Server(MAPStack mapStack, MAPFunctionalTest runningTestCase,
 			SccpAddress thisAddress, SccpAddress remoteAddress) {
 		super();
 		this.mapStack = mapStack;
