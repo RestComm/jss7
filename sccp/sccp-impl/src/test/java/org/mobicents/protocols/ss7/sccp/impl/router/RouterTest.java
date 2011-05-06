@@ -83,7 +83,7 @@ public class RouterTest {
 			router.start();
 			router.getRules().clear();
 			router.getPrimaryAddresses().clear();
-			router.getSecondaryAddresses().clear();
+			router.getBackupAddresses().clear();
 			router.stop();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -119,7 +119,7 @@ public class RouterTest {
 		router.getPrimaryAddresses().remove(1);
 		assertEquals(1, router.getPrimaryAddresses().size());
 
-		assertEquals(0, router.getSecondaryAddresses().size());
+		assertEquals(0, router.getBackupAddresses().size());
 		router.stop();
 	}
 

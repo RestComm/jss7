@@ -174,7 +174,7 @@ public class SccpRoutingControl {
 
 			if (remoteSpc.isRemoteSpcProhibited()) {
 				// try secondary address
-				translationAddress = this.sccpStackImpl.router.getSecondaryAddresses()
+				translationAddress = this.sccpStackImpl.router.getBackupAddresses()
 						.get(rule.getSecondaryAddressId());
 
 				if (translationAddress == null) {

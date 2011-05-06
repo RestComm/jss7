@@ -62,7 +62,7 @@ public class SccpExecutorTest {
 		this.router.start();
 		this.router.getRules().clear();
 		this.router.getPrimaryAddresses().clear();
-		this.router.getSecondaryAddresses().clear();
+		this.router.getBackupAddresses().clear();
 
 		this.sccpResource = new SccpResource();
 		this.sccpResource.start();
@@ -92,7 +92,7 @@ public class SccpExecutorTest {
 
 		String sec_addressCmd = "sccp backup_add create 1 71 3 8 0 0 3 123456789";
 		this.sccpExecutor.execute(sec_addressCmd.split(" "));
-		assertEquals(1, this.router.getSecondaryAddresses().size());
+		assertEquals(1, this.router.getBackupAddresses().size());
 
 		String createRuleCmd2 = "sccp rule create 2 R 71 2 8 0 0 3 123456789 1 1";
 		this.sccpExecutor.execute(createRuleCmd2.split(" "));

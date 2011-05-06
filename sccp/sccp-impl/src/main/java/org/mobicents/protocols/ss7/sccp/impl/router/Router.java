@@ -183,7 +183,7 @@ public class Router {
 
 	private static final String RULE = "rule";
 	private static final String PRIMARY_ADDRESS = "primaryAddress";
-	private static final String SECONDARY_ADDRESS = "secondaryAddress";
+	private static final String BACKUP_ADDRESS = "backupAddress";
 
 	private final TextBuilder persistFile = TextBuilder.newInstance();
 
@@ -198,7 +198,7 @@ public class Router {
 
 	private FastMap<Integer, SccpAddress> primaryAddresses = new FastMap<Integer, SccpAddress>();
 
-	private FastMap<Integer, SccpAddress> secondaryAddresses = new FastMap<Integer, SccpAddress>();
+	private FastMap<Integer, SccpAddress> backupAddresses = new FastMap<Integer, SccpAddress>();
 
 	public Router() {
 
@@ -265,8 +265,8 @@ public class Router {
 		return primaryAddresses;
 	}
 
-	public FastMap<Integer, SccpAddress> getSecondaryAddresses() {
-		return secondaryAddresses;
+	public FastMap<Integer, SccpAddress> getBackupAddresses() {
+		return backupAddresses;
 	}
 
 	/**
@@ -284,7 +284,7 @@ public class Router {
 			writer.setIndentation(TAB_INDENT);
 			writer.write(rules, RULE, FastMap.class);
 			writer.write(primaryAddresses, PRIMARY_ADDRESS, FastMap.class);
-			writer.write(secondaryAddresses, SECONDARY_ADDRESS, FastMap.class);
+			writer.write(backupAddresses, BACKUP_ADDRESS, FastMap.class);
 
 			writer.close();
 		} catch (Exception e) {
@@ -306,7 +306,7 @@ public class Router {
 			reader.setBinding(binding);
 			rules = reader.read(RULE, FastMap.class);
 			primaryAddresses = reader.read(PRIMARY_ADDRESS, FastMap.class);
-			secondaryAddresses = reader.read(SECONDARY_ADDRESS, FastMap.class);
+			backupAddresses = reader.read(BACKUP_ADDRESS, FastMap.class);
 		} catch (XMLStreamException ex) {
 			// this.logger.info(
 			// "Error while re-creating Linksets from persisted file", ex);

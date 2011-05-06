@@ -40,6 +40,8 @@ public interface SccpOAMMessage {
 
 	public static final String RULE_SUCCESSFULLY_ADDED = "Rule successfully added";
 
+	public static final String RULE_SUCCESSFULLY_MODIFIED = "Rule successfully modified";
+
 	public static final String RULE_SUCCESSFULLY_REMOVED = "Rule successfully removed";
 
 	public static final String ADDRESS_ALREADY_EXIST = "Address already exist";
@@ -48,7 +50,9 @@ public interface SccpOAMMessage {
 
 	public static final String ADDRESS_SUCCESSFULLY_ADDED = "Address successfully added";
 
-	public static final String ADDRESS_SUCCESSFULLY_REMOVED = "Address successfully removed";
+	public static final String ADDRESS_SUCCESSFULLY_MODIFIED = "Address successfully modified";
+
+	public static final String ADDRESS_SUCCESSFULLY_DELETED = "Address successfully deleted";
 
 	public static final String SERVER_ERROR = "Server Error";
 
@@ -58,9 +62,21 @@ public interface SccpOAMMessage {
 
 	public static final String RSPC_ALREADY_EXIST = "Remote Signaling Pointcode already exist";
 
+	public static final String RSPC_DOESNT_EXIST = "Remote Signaling Pointcode doesn't exist";
+
 	public static final String RSPC_SUCCESSFULLY_ADDED = "Remote Signaling Pointcode successfully added";
+
+	public static final String RSPC_SUCCESSFULLY_MODIFIED = "Remote Signaling Pointcode successfully modified";
+
+	public static final String RSPC_SUCCESSFULLY_DELETED = "Remote Signaling Pointcode successfully deleted";
 
 	public static final String RSS_ALREADY_EXIST = "Remote Subsystem already exist";
 
+	public static final String RSS_DOESNT_EXIST = "Remote Subsystem doesn't exist";
+
 	public static final String RSS_SUCCESSFULLY_ADDED = "Remote Subsystem successfully added";
+
+	public static final String RSS_SUCCESSFULLY_MODIFIED = "Remote Subsystem successfully modified";
+
+	public static final String RSS_SUCCESSFULLY_DELETED = "Remote Subsystem successfully deleted";
 }

@@ -82,7 +82,7 @@ public class SccpStackImplTest extends SccpHarness {
 	 * Test of configure method, of class SccpStackImpl.
 	 */
 	@Test
-	public void testLocalRouting() throws Exception {
+	public void testRemoteRoutingBasedOnSsn() throws Exception {
 		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2);
 		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1);
 
