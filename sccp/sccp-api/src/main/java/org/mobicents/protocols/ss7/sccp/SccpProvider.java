@@ -28,7 +28,6 @@ import java.io.Serializable;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * 
@@ -37,39 +36,41 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  */
 public interface SccpProvider extends Serializable {
 
-    /**
-     * Gets the access to message factory.
-     * 
-     * @return message factory.
-     */
-    public MessageFactory getMessageFactory();
+	/**
+	 * Gets the access to message factory.
+	 * 
+	 * @return message factory.
+	 */
+	public MessageFactory getMessageFactory();
 
-    /**
-     * Gets the access to parameter factory.
-     * 
-     * @return parameter factory
-     */
-    public ParameterFactory getParameterFactory();
-   
-    /**
-     * Register listener for some adddress.
-     * @param listener
-     */
-    public void registerSccpListener(SccpAddress localAddress,SccpListener listener);
+	/**
+	 * Gets the access to parameter factory.
+	 * 
+	 * @return parameter factory
+	 */
+	public ParameterFactory getParameterFactory();
 
-    /**
-     * Removes listener
-     */
-    public void deregisterSccpListener(SccpAddress localAddress);
-    
-    
-    /**
-     * Sends message.
-     * 
-     * @param message the message to be sent.
-     * @param destination the address of the recipient.
-     * @throws IOException
-     */
-    public void send(SccpMessage message) throws IOException;
+	/**
+	 * Register listener for some adddress.
+	 * 
+	 * @param listener
+	 */
+	public void registerSccpListener(int ssn, SccpListener listener);
+
+	/**
+	 * Removes listener
+	 */
+	public void deregisterSccpListener(int ssn);
+
+	/**
+	 * Sends message.
+	 * 
+	 * @param message
+	 *            the message to be sent.
+	 * @param destination
+	 *            the address of the recipient.
+	 * @throws IOException
+	 */
+	public void send(SccpMessage message) throws IOException;
 
 }

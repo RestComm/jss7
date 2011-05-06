@@ -19,24 +19,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
+
+import javolution.util.FastMap;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * 
@@ -44,105 +42,52 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author baranowb
  */
 public class SccpProviderImpl implements SccpProvider, Serializable {
-	//TODO: Oleg, this is not serializable resource!
 	private static final Logger logger = Logger.getLogger(SccpProviderImpl.class);
-    private transient SccpStackImpl stack;
-    private HashMap<SccpAddress, SccpListener> addressToListener = new HashMap<SccpAddress, SccpListener>();
-    private HashMap<Integer, SccpListener> ssnToListener = new HashMap<Integer, SccpListener>();
-    
-    private MessageFactoryImpl messageFactory;
-    private ParameterFactoryImpl parameterFactory;
-    
-    SccpProviderImpl(SccpStackImpl stack) {
-        this.stack = stack;
-        this.messageFactory = stack.messageFactory;
-        this.parameterFactory = new ParameterFactoryImpl();
-    }
 
-    public MessageFactory getMessageFactory() {
-        return messageFactory;
-    }
+	private transient SccpStackImpl stack;
+	protected FastMap<Integer, SccpListener> ssnToListener = new FastMap<Integer, SccpListener>();
 
-    public ParameterFactory getParameterFactory() {
-        return parameterFactory;
-    }
+	private MessageFactoryImpl messageFactory;
+	private ParameterFactoryImpl parameterFactory;
 
-    public void registerSccpListener(SccpAddress localAddress, SccpListener listener) {
-        addressToListener.put(localAddress, listener);
-        //if SSN is present add it, to make it easier
-        int ssn = localAddress.getSubsystemNumber(); 
-        if( ssn!=0)
-        {
-        	if(this.ssnToListener.containsKey(ssn))
-        	{
-        		if(logger.isEnabledFor(Level.WARN))
-        		{
-        			logger.warn("Overwriting SSN mapping: "+ssn+" -> "+this.ssnToListener.get(ssn)+" to value: "+listener);
-        		}
-        	}
-        	this.ssnToListener.put(ssn, listener);
-        	
-        }
-    }
+	SccpProviderImpl(SccpStackImpl stack) {
+		this.stack = stack;
+		this.messageFactory = stack.messageFactory;
+		this.parameterFactory = new ParameterFactoryImpl();
+	}
 
-    public void deregisterSccpListener(SccpAddress localAddress) {
-        SccpListener lst = addressToListener.remove(localAddress);
-        if(lst!=null)
-        {
-        	if(this.ssnToListener.containsValue(lst))
-        	{
-        		this.ssnToListener.remove(localAddress.getSubsystemNumber());
-        	}
-        }
-    }
+	public MessageFactory getMessageFactory() {
+		return messageFactory;
+	}
 
-    /**
-     * Sends notification to listeners.
-     * 
-     * @param address the address associated with listener.
-     * @param message the message to deliver to listener
-     */
-	protected boolean notify(SccpAddress address, SccpMessage message) {
-		SccpListener listener = addressToListener.get(address);
-		if (listener == null) {
-			logger.info("Registere listeners for: " + addressToListener.keySet());
+	public ParameterFactory getParameterFactory() {
+		return parameterFactory;
+	}
+
+	public void registerSccpListener(int ssn, SccpListener listener) {
+		SccpListener existingListener = ssnToListener.get(ssn);
+		if (existingListener != null) {
 			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("No listener could be found for address: " + address);
+				logger.warn(String.format("Registering SccpListener=%s for already existing SccpListnere=% for SSN=%d",
+						listener, existingListener, ssn));
 			}
-			return false;
-		} else {
-			try {
-				listener.onMessage(message);
-			} catch (Exception e) {
-				logger.error("Caught exception from listener - bad practice!", e);
-			}
-			return true;
 		}
-	}
 
-	/**
-	 * @param subsystemNumber
-	 * @param msg
-	 * @return
-	 */
-	public boolean notify(int subsystemNumber, SccpMessage message) {
-		if (this.ssnToListener.containsKey(subsystemNumber)) {
-			SccpListener listener = ssnToListener.get(subsystemNumber);
-			try {
-				listener.onMessage(message);
-			} catch (Exception e) {
-				logger.error("Caught exception from listener - bad practice!", e);
-			}
-			return true;
-		} else {
-			return false;
-		}
+		ssnToListener.put(ssn, listener);
 
 	}
 
-    public void send(SccpMessage message) throws IOException {
-        stack.send(message);
-    }
+	public void deregisterSccpListener(int ssn) {
+		SccpListener existingListener = ssnToListener.remove(ssn);
+		if (existingListener == null) {
+			if (logger.isEnabledFor(Level.WARN)) {
+				logger.warn(String.format("No existing SccpListnere=% for SSN=%d", existingListener, ssn));
+			}
+		}
+	}
 
-	
+	public void send(SccpMessage message) throws IOException {
+		stack.send(message);
+	}
+
 }

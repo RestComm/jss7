@@ -27,7 +27,12 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -35,62 +40,77 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
-import static org.junit.Assert.*;
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- *
+ * 
  * @author kulikov
  */
 public class SccpAddressTest {
 
-    private SccpAddressCodec codec = new SccpAddressCodec();
-    private byte[] data = new byte[] {0x12, (byte)0x92, 0x00, 0x11, 0x04, (byte)0x97, 0x20, (byte)0x73, 0x00, (byte)0x92, 0x09};
-    
-    public SccpAddressTest() {
-    }
+	private SccpAddressCodec codec = new SccpAddressCodec();
+	private byte[] data = new byte[] { 0x12, (byte) 0x92, 0x00, 0x11, 0x04, (byte) 0x97, 0x20, (byte) 0x73, 0x00,
+			(byte) 0x92, 0x09 };
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
+	public SccpAddressTest() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+	}
 
-    @Before
-    public void setUp() {
-    }
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@Before
+	public void setUp() {
+	}
 
-    /**
-     * Test of decode method, of class SccpAddressCodec.
-     */
-    @Test
-    public void testDecode() throws Exception {
-        SccpAddress address = codec.decode(data);
+	@After
+	public void tearDown() {
+	}
 
-        assertEquals(0, address.getSignalingPointCode());
-        assertEquals(146, address.getSubsystemNumber());
-        assertEquals("79023700299", address.getGlobalTitle().getDigits());
-    }
+	/**
+	 * Test of decode method, of class SccpAddressCodec.
+	 */
+	@Test
+	public void testDecode1() throws Exception {
+		SccpAddress address = codec.decode(data);
 
-    /**
-     * Test of encode method, of class SccpAddressCodec.
-     */
-    @Test
-    public void testEncode() throws Exception {
-        GlobalTitle gt = GlobalTitle.getInstance(0, 
-                NumberingPlan.ISDN_TELEPHONY, 
-                NatureOfAddress.INTERNATIONAL, 
-                "79023700299");
-        SccpAddress address = new SccpAddress(gt, 146);
-        byte[] bin = codec.encode(address);
-        assertTrue("Wrong encoding", Arrays.equals(data, bin));
-    }
+		assertEquals(0, address.getSignalingPointCode());
+		assertEquals(146, address.getSubsystemNumber());
+		assertEquals("79023700299", address.getGlobalTitle().getDigits());
+	}
+
+	@Test
+	public void testDecode2() throws Exception {
+		SccpAddress address = codec.decode(new byte[] { 0x42, 0x08 });
+
+		assertEquals(0, address.getSignalingPointCode());
+		assertEquals(8, address.getSubsystemNumber());
+		assertNull(address.getGlobalTitle());
+	}
+
+	/**
+	 * Test of encode method, of class SccpAddressCodec.
+	 */
+	@Test
+	public void testEncode() throws Exception {
+		GlobalTitle gt = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL,
+				"79023700299");
+		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt, 146);
+		byte[] bin = codec.encode(address);
+		assertTrue("Wrong encoding", Arrays.equals(data, bin));
+	}
+
+	@Test
+	public void testEncode2() throws Exception {
+		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 0, null, 8);
+		byte[] bin = codec.encode(address);
+		assertTrue("Wrong encoding", Arrays.equals(new byte[] { 0x42, 0x08 }, bin));
+	}
 
 }

@@ -22,11 +22,6 @@
 			<version>${log4j.version}</version> </dependency>
 		-->
 		<dependency>
-			<artifactId>mtp</artifactId>
-			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
-		</dependency>
-		
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>provided</scope>
@@ -36,6 +31,11 @@
 			<artifactId>log4j</artifactId>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>javolution</groupId>
+			<artifactId>javolution</artifactId>
+		</dependency>		
 	</dependencies>
 
 	<build>

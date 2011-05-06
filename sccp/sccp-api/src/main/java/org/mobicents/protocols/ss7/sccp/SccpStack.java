@@ -60,12 +60,5 @@ public interface SccpStack {
      * @param router the router implementation.
      */
     //public void setRouter(Router router);
-    
-    /**
-     * Defines transfer type for outgoing messages.
-     * 
-     * @param type the type of transfer. valid values are UDT_ONLY and XUDT_ONLY.
-     */
-    public void setTransferType(int type);
 
 }

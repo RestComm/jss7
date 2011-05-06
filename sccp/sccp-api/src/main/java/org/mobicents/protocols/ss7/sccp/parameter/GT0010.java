@@ -25,6 +25,10 @@ package org.mobicents.protocols.ss7.sccp.parameter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 
 /**
@@ -89,5 +93,19 @@ public class GT0010  extends GlobalTitle {
         hash = 31 * hash + (this.digits != null ? this.digits.hashCode() : 0);
         return hash;
     }
+    
+	// default XML representation.
+	protected static final XMLFormat<GT0010> XML = new XMLFormat<GT0010>(GT0010.class) {
+
+		public void write(GT0010 ai, OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(TRANSLATION_TYPE, ai.tt);
+			xml.setAttribute(DIGITS, ai.digits);
+		}
+
+		public void read(InputElement xml, GT0010 ai) throws XMLStreamException {
+			ai.tt = xml.getAttribute(TRANSLATION_TYPE).toInt();			
+			ai.digits = xml.getAttribute(DIGITS).toString();
+		}
+	};
     
 }

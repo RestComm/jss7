@@ -22,9 +22,12 @@
 
 package org.mobicents.protocols.ss7.sccp.parameter;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.IOException;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.ss7.indicator.EncodingScheme;
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
@@ -32,106 +35,120 @@ import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
-public class GT0100  extends GlobalTitle {
+public class GT0100 extends GlobalTitle {
 
-    private final static GlobalTitleIndicator gti = 
-            GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS;
-    private int tt;
-    private NumberingPlan np;
-    private EncodingScheme encodingScheme;
-    private NatureOfAddress na;
-    private String digits = "";
+	private final static GlobalTitleIndicator gti = GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS;
+	private int tt;
+	private NumberingPlan np;
+	private EncodingScheme encodingScheme;
+	private NatureOfAddress nai;
+	private String digits = "";
 
-    /** Creates a new instance of GT0100 */
-    public GT0100() {
-    }
+	/** Creates a new instance of GT0100 */
+	public GT0100() {
+	}
 
-    public GT0100(int translationType, NumberingPlan numberingPlan,
-            NatureOfAddress natureOfAddress, String digits) {
-        this.tt = translationType;
-        this.np = numberingPlan;
-        this.na = natureOfAddress;
-        this.digits = digits;
-        this.encodingScheme = digits.length() % 2 == 0 ? EncodingScheme.BCD_EVEN : EncodingScheme.BCD_ODD;
-    }
+	public GT0100(int translationType, NumberingPlan numberingPlan, NatureOfAddress natureOfAddress, String digits) {
+		this.tt = translationType;
+		this.np = numberingPlan;
+		this.nai = natureOfAddress;
+		this.digits = digits;
+		this.encodingScheme = digits.length() % 2 == 0 ? EncodingScheme.BCD_EVEN : EncodingScheme.BCD_ODD;
+	}
 
-    public void decode(InputStream in) throws IOException {
-        int b1 = in.read() & 0xff;
-        int b2 = in.read() & 0xff;
-        int b3 = in.read() & 0xff;
+	public void decode(InputStream in) throws IOException {
+		int b1 = in.read() & 0xff;
+		int b2 = in.read() & 0xff;
+		int b3 = in.read() & 0xff;
 
-        tt = b1;
+		tt = b1;
 
-        encodingScheme = EncodingScheme.valueOf(b2 & 0x0f);
-        np = NumberingPlan.valueOf((b2 & 0xf0) >> 4);
-        na = NatureOfAddress.valueOf(b3 & 0x7f);
+		encodingScheme = EncodingScheme.valueOf(b2 & 0x0f);
+		np = NumberingPlan.valueOf((b2 & 0xf0) >> 4);
+		nai = NatureOfAddress.valueOf(b3 & 0x7f);
 
-        digits = encodingScheme.decodeDigits(in);
-    }
+		digits = encodingScheme.decodeDigits(in);
+	}
 
-    public void encode(OutputStream out) throws IOException {
-        out.write((byte) tt);
+	public void encode(OutputStream out) throws IOException {
+		out.write((byte) tt);
 
-        byte b = (byte) ((np.getValue() << 4) | (encodingScheme.getValue()));
-        out.write(b);
+		byte b = (byte) ((np.getValue() << 4) | (encodingScheme.getValue()));
+		out.write(b);
 
-        b = (byte) (na.getValue() & 0x7f);
-        out.write(b);
+		b = (byte) (nai.getValue() & 0x7f);
+		out.write(b);
 
-        encodingScheme.encodeDigits(digits, out);
-    }
+		encodingScheme.encodeDigits(digits, out);
+	}
 
-    public int getTranslationType() {
-        return tt;
-    }
+	public int getTranslationType() {
+		return tt;
+	}
 
-    public NumberingPlan getNumberingPlan() {
-        return np;
-    }
+	public NumberingPlan getNumberingPlan() {
+		return np;
+	}
 
-    public NatureOfAddress getNatureOfAddress() {
-        return na;
-    }
+	public NatureOfAddress getNatureOfAddress() {
+		return nai;
+	}
 
-    public String getDigits() {
-        return digits;
-    }
+	public String getDigits() {
+		return digits;
+	}
 
-    public GlobalTitleIndicator getIndicator() {
-        return gti;
-    }
-    
-    
-    public boolean equals(Object other) {
-        if (!(other instanceof GlobalTitle)) {
-            return false;
-        }
-        
-        GlobalTitle gt = (GlobalTitle) other;
-        if (gt.getIndicator() != gti) {
-            return false;
-        }
-        
-        GT0100 gt1 = (GT0100)gt;
-        return gt1.tt == tt && gt1.np == np &&
-                gt1.na == na && gt1.digits.equals(digits);
-    }
+	public GlobalTitleIndicator getIndicator() {
+		return gti;
+	}
 
-    
-    public int hashCode() {
-        int hash = 3;
-        hash = hash + this.tt;
-        hash = hash + (this.np != null ? 1 : 0);
-        hash = hash + (this.na != null ? 1 : 0);
-        hash = hash + (this.digits != null ? this.digits.hashCode() : 0);
-        return hash;
-    }
-    
-    
-    public String toString() {
-        return "{tt=" + tt + ", np=" + np + ", na=" + na + ", digist=" + digits + "}";
-    }
+	public boolean equals(Object other) {
+		if (!(other instanceof GlobalTitle)) {
+			return false;
+		}
+
+		GlobalTitle gt = (GlobalTitle) other;
+		if (gt.getIndicator() != gti) {
+			return false;
+		}
+
+		GT0100 gt1 = (GT0100) gt;
+		return gt1.tt == tt && gt1.np == np && gt1.nai == nai && gt1.digits.equals(digits);
+	}
+
+	public int hashCode() {
+		int hash = 3;
+		hash = hash + this.tt;
+		hash = hash + (this.np != null ? 1 : 0);
+		hash = hash + (this.nai != null ? 1 : 0);
+		hash = hash + (this.digits != null ? this.digits.hashCode() : 0);
+		return hash;
+	}
+
+	public String toString() {
+		return "{tt=" + tt + ", np=" + np + ", na=" + nai + ", digist=" + digits + "}";
+	}
+
+	// default XML representation.
+	protected static final XMLFormat<GT0100> XML = new XMLFormat<GT0100>(GT0100.class) {
+
+		public void write(GT0100 ai, OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(TRANSLATION_TYPE, ai.tt);
+			xml.setAttribute(ENCODING_SCHEME, ai.encodingScheme.getValue());
+			xml.setAttribute(NUMBERING_PLAN, ai.np.getValue());
+			xml.setAttribute(NATURE_OF_ADDRESS_INDICATOR, ai.nai.getValue());
+			xml.setAttribute(DIGITS, ai.digits);
+		}
+
+		public void read(InputElement xml, GT0100 ai) throws XMLStreamException {
+			ai.tt = xml.getAttribute(TRANSLATION_TYPE).toInt();
+			ai.encodingScheme = EncodingScheme.valueOf(xml.getAttribute(ENCODING_SCHEME).toInt());
+			ai.np = NumberingPlan.valueOf(xml.getAttribute(NUMBERING_PLAN).toInt());
+			ai.nai = NatureOfAddress.valueOf(xml.getAttribute(NATURE_OF_ADDRESS_INDICATOR).toInt());
+			ai.digits = xml.getAttribute(DIGITS).toString();
+		}
+	};
 }

@@ -38,6 +38,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.XUnitDataImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.HopCounterImpl;
@@ -69,8 +70,8 @@ public class XUnitDataTest {
 
     @Before
     public void setUp() {
-        _CALLING_PARTY = new SccpAddress(_CALLING_PARTY_GLOBAL_TITLE, 0);
-        _CALLED_PARTY = new SccpAddress(_CALLED_PARTY_GLOBAL_TITLE, 0);
+        _CALLING_PARTY = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, _CALLING_PARTY_GLOBAL_TITLE, 0);
+        _CALLED_PARTY = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,_CALLED_PARTY_GLOBAL_TITLE, 0);
     }
 
     @After

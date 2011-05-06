@@ -25,8 +25,15 @@ package org.mobicents.protocols.ss7.sccp.parameter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.XMLFormat.InputElement;
+import javolution.xml.XMLFormat.OutputElement;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.indicator.EncodingScheme;
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
+import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 
 /**
@@ -109,5 +116,24 @@ public class GT0011  extends GlobalTitle {
         hash = 41 * hash + (this.digits != null ? this.digits.hashCode() : 0);
         return hash;
     }
+    
+    
+	// default XML representation.
+	protected static final XMLFormat<GT0011> XML = new XMLFormat<GT0011>(GT0011.class) {
+
+		public void write(GT0011 ai, OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(TRANSLATION_TYPE, ai.tt);
+			xml.setAttribute(ENCODING_SCHEME, ai.es.getValue());
+			xml.setAttribute(NUMBERING_PLAN, ai.np.getValue());
+			xml.setAttribute(DIGITS, ai.digits);
+		}
+
+		public void read(InputElement xml, GT0011 ai) throws XMLStreamException {
+			ai.tt = xml.getAttribute(TRANSLATION_TYPE).toInt();
+			ai.es = EncodingScheme.valueOf(xml.getAttribute(ENCODING_SCHEME).toInt());
+			ai.np = NumberingPlan.valueOf(xml.getAttribute(NUMBERING_PLAN).toInt());
+			ai.digits = xml.getAttribute(DIGITS).toString();
+		}
+	};    
     
 }

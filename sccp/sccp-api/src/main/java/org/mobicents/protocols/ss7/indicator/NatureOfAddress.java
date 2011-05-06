@@ -28,30 +28,32 @@ package org.mobicents.protocols.ss7.indicator;
  * @author kulikov
  */
 public enum NatureOfAddress {
-    SPARE(0), 
-    SUBSCRIBER(1), 
-    UNKNOWN(2), 
-    NATIONAL(3), 
-    INTERNATIONAL(4);
-    
-    private int value;
-    
-    private NatureOfAddress(int value) {
-        this.value = value;
-    }
-    
-    public int getValue() {
-        return value;
-    }
-    
-    public static NatureOfAddress valueOf(int v) {
-        switch (v) {
-            case 0 : return SPARE;
-            case 1 : return SUBSCRIBER;
-            case 2 : return UNKNOWN;
-            case 3 : return NATIONAL;
-            case 4 : return INTERNATIONAL;
-            default : return UNKNOWN;
-        }
-    }
+	SPARE(0), SUBSCRIBER(1), UNKNOWN(2), NATIONAL(3), INTERNATIONAL(4);
+
+	private int value;
+
+	private NatureOfAddress(int value) {
+		this.value = value;
+	}
+
+	public int getValue() {
+		return value;
+	}
+
+	public static NatureOfAddress valueOf(int v) {
+		switch (v) {
+		case 0:
+			return SPARE;
+		case 1:
+			return SUBSCRIBER;
+		case 2:
+			return UNKNOWN;
+		case 3:
+			return NATIONAL;
+		case 4:
+			return INTERNATIONAL;
+		default:
+			return null;
+		}
+	}
 }

@@ -30,28 +30,56 @@ import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- *
+ * 
  * @author kulikov
  * @author baranowb
  */
 public abstract class SccpMessageImpl implements SccpMessage {
-	
-	
-    
-    private int type;  //private :)
-    protected SccpAddress calledParty;
-    protected SccpAddress callingParty;
-    protected ProtocolClass protocolClass;
-    
-    protected SccpMessageImpl(int type) {
-        this.type = type;
-    }
-    
-    public int getType() {
-        return type;
-    }
 
-    public SccpAddress getCalledPartyAddress() {
+	private int type; // private :)
+	protected SccpAddress calledParty;
+	protected SccpAddress callingParty;
+	protected ProtocolClass protocolClass;
+
+	// These are MTP3 signaling information set when message is received from
+	// MTP3
+	private int sls = -1;
+	private int opc = -1;
+	private int dpc = -1;
+
+	protected SccpMessageImpl(int type) {
+		this.type = type;
+	}
+
+	public int getSls() {
+		return sls;
+	}
+
+	public void setSls(int sls) {
+		this.sls = sls;
+	}
+
+	public int getOpc() {
+		return opc;
+	}
+
+	public void setOpc(int opc) {
+		this.opc = opc;
+	}
+
+	public int getDpc() {
+		return dpc;
+	}
+
+	public void setDpc(int dpc) {
+		this.dpc = dpc;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public SccpAddress getCalledPartyAddress() {
 		return calledParty;
 	}
 
@@ -76,5 +104,6 @@ public abstract class SccpMessageImpl implements SccpMessage {
 	}
 
 	public abstract void decode(InputStream in) throws IOException;
-    public abstract void encode(OutputStream out) throws IOException;
+
+	public abstract void encode(OutputStream out) throws IOException;
 }

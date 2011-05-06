@@ -22,6 +22,10 @@
 
 package org.mobicents.protocols.ss7.indicator;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.XMLSerializable;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  * The AI is the first field within Calling Party Address (CgPA) and Called
  * Party Address (CdPA) and is one octet in length. Its function is to indicate
@@ -30,68 +34,91 @@ package org.mobicents.protocols.ss7.indicator;
  * found in the address field so the receiving node knows how to interpret that
  * data.
  * 
+ * @author amit bhayani
  * @author kulikov
  */
-public class AddressIndicator {
-    // Global title indicator
-    private GlobalTitleIndicator globalTitleIndicator;
-    // point code indicator
-    private boolean pcPresent;
-    // ssn indicator
-    private boolean ssnPresent;
-    // routing indicator
-    private RoutingIndicator routingIndicator;
+public class AddressIndicator implements XMLSerializable {
 
-    public AddressIndicator(boolean pcPresent, boolean ssnPresent,
-            RoutingIndicator rti, GlobalTitleIndicator gti) {
-        this.pcPresent = pcPresent;
-        this.ssnPresent = ssnPresent;
-        this.routingIndicator = rti;
-        this.globalTitleIndicator = gti;
-    }
+	public static final String AI = "ai";
 
-    public AddressIndicator(byte v) {
-        pcPresent = (v & 0x01) == 0x01;
-        ssnPresent = (v & 0x02) == 0x02;
-        globalTitleIndicator = GlobalTitleIndicator.valueOf((v >> 2) & 0x0f);
+	// Global title indicator
+	private GlobalTitleIndicator globalTitleIndicator;
+	// point code indicator
+	private boolean pcPresent;
+	// ssn indicator
+	private boolean ssnPresent;
+	// routing indicator
+	private RoutingIndicator routingIndicator;
 
-        routingIndicator = ((v >> 6) & 0x01) == 0x01 ? RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN
-                : RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE;
-    }
+	public AddressIndicator() {
+	}
 
-    public GlobalTitleIndicator getGlobalTitleIndicator() {
-        return globalTitleIndicator;
-    }
+	public AddressIndicator(boolean pcPresent, boolean ssnPresent, RoutingIndicator rti, GlobalTitleIndicator gti) {
+		this.pcPresent = pcPresent;
+		this.ssnPresent = ssnPresent;
+		this.routingIndicator = rti;
+		this.globalTitleIndicator = gti;
+	}
 
-    public boolean pcPresent() {
-        return pcPresent;
-    }
+	public AddressIndicator(byte v) {
+		init(v);
+	}
 
-    public boolean ssnPresent() {
-        return ssnPresent;
-    }
+	private void init(byte v) {
+		pcPresent = (v & 0x01) == 0x01;
+		ssnPresent = (v & 0x02) == 0x02;
+		globalTitleIndicator = GlobalTitleIndicator.valueOf((v >> 2) & 0x0f);
 
-    public RoutingIndicator getRoutingIndicator() {
-        return routingIndicator;
-    }
+		routingIndicator = ((v >> 6) & 0x01) == 0x01 ? RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN
+				: RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE;
+	}
 
-    public byte getValue() {
-        int b = 0;
+	public GlobalTitleIndicator getGlobalTitleIndicator() {
+		return globalTitleIndicator;
+	}
 
-        if (pcPresent) {
-            b |= 0x01;
-        }
+	public boolean pcPresent() {
+		return pcPresent;
+	}
 
-        if (ssnPresent) {
-            b |= 0x02;
-        }
+	public boolean ssnPresent() {
+		return ssnPresent;
+	}
 
-        b |= (globalTitleIndicator.getValue() << 2);
+	public RoutingIndicator getRoutingIndicator() {
+		return routingIndicator;
+	}
 
-        if (routingIndicator == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
-            b |= 0x40;
-        }
+	public byte getValue() {
+		int b = 0;
 
-        return (byte) b;
-    }
+		if (pcPresent) {
+			b |= 0x01;
+		}
+
+		if (ssnPresent) {
+			b |= 0x02;
+		}
+
+		b |= (globalTitleIndicator.getValue() << 2);
+
+		if (routingIndicator == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
+			b |= 0x40;
+		}
+
+		return (byte) b;
+	}
+
+	// default XML representation.
+	protected static final XMLFormat<AddressIndicator> XML = new XMLFormat<AddressIndicator>(AddressIndicator.class) {
+
+		public void write(AddressIndicator ai, OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(AI, ai.getValue());
+		}
+
+		public void read(InputElement xml, AddressIndicator ai) throws XMLStreamException {
+			byte b = (byte) xml.getAttribute(AI).toInt();
+			ai.init(b);
+		}
+	};
 }

@@ -27,11 +27,16 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -39,11 +44,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
-import static org.junit.Assert.*;
 
 /**
- *
+ * @author amit bhayani
  * @author kulikov
  */
 public class GT0001Test {
@@ -101,6 +104,28 @@ public class GT0001Test {
         boolean correct = Arrays.equals(data, res);        
         assertTrue("Incorrect encoding", correct);
     }
+    
+    @Test
+    public void testSerialization() throws Exception {
+    	GT0001 gt = new GT0001(NatureOfAddress.NATIONAL, "9023629581");
+    	
+    	// Writes
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(output);
+		writer.setIndentation("\t"); // Optional (use tabulation for
+		// indentation).
+		writer.write(gt, "GT0001", GT0001.class);
+		writer.close();
+		
+		System.out.println(output.toString());
+		
 
-
+		ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
+		XMLObjectReader reader = XMLObjectReader.newInstance(input);
+		GT0001 aiOut = reader.read("GT0001", GT0001.class);
+		
+        //check results
+        assertEquals(NatureOfAddress.NATIONAL, aiOut.getNoA());
+        assertEquals("9023629581", aiOut.getDigits());
+    }
 }

@@ -31,135 +31,120 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.message.UnitData;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- *
+ * @author amit bhayani
  * @author kulikov
  */
-public class SccpStackImplTest {
+public class SccpStackImplTest extends SccpHarness {
 
-    private SccpStackImpl stack = new SccpStackImpl();
-    private SccpAddress a1, a2;
-    private RouterImpl router = new RouterImpl();
-    
-    public SccpStackImplTest() {
-    }
+	private SccpAddress a1, a2;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
+	public SccpStackImplTest() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+	}
 
-    @Before
-    public void setUp() throws IllegalStateException {
-    	
-		try {
-			router.start();
-			router.deleteRule("Rule1");
-			router.deleteRule("Rule2");
-			router.deleteRule("Rule3");
-			router.deleteRule("Rule4");
-			router.stop();
-		} catch (Exception e) {
-			// ignore
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+	}
+
+	@Before
+	public void setUp() throws IllegalStateException {
+		super.setUp();
+		// GlobalTitle gt1 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL,
+		// "1234");
+		// GlobalTitle gt2 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL,
+		// "5678");
+
+		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
+		a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
+
+	}
+
+	@After
+	public void tearDown() {
+		super.tearDown();
+	}
+
+	/**
+	 * Test of configure method, of class SccpStackImpl.
+	 */
+	@Test
+	public void testLocalRouting() throws Exception {
+		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2);
+		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1);
+
+		u1.send();
+		u2.send();
+
+		Thread.currentThread().sleep(1000);
+
+		assertTrue("Message not received", u1.check());
+		assertTrue("Message not received", u2.check());
+	}
+
+	private class User implements SccpListener {
+		private SccpProvider provider;
+		private SccpAddress address;
+		private SccpAddress dest;
+
+		private SccpMessage msg;
+
+		public User(SccpProvider provider, SccpAddress address, SccpAddress dest) {
+			this.provider = provider;
+			this.address = address;
+			this.dest = dest;
+			provider.registerSccpListener(8, this);
 		}
-		
-        router.start();
-        
-        stack.setRouter(router);
-        stack.start();
-        
-        GlobalTitle gt1 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "1234");
-        GlobalTitle gt2 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "5678");
-        
-        a1 = new SccpAddress(gt1, 0);
-        a2 = new SccpAddress(gt2, 0);
-    }
 
-    @After
-    public void tearDown() {
-        stack.stop();
-    }
+		public boolean check() {
+			if (msg == null) {
+				return false;
+			}
 
-    /**
-     * Test of configure method, of class SccpStackImpl.
-     */
-    @Test
-    public void testLocalRouting() throws Exception {
-        User u1 = new User(stack.getSccpProvider(), a1, a2);
-        User u2 = new User(stack.getSccpProvider(), a2, a1);
-        
-        u1.send();
-        u2.send();
-        
-        Thread.currentThread().sleep(1000);
-        
-        assertTrue("Message not received", u1.check());
-        assertTrue("Message not received", u2.check());
-    }
+			if (msg.getType() != UnitData.MESSAGE_TYPE) {
+				return false;
+			}
 
-    private class User implements SccpListener {
-        private SccpProvider provider;
-        private SccpAddress address;
-        private SccpAddress dest;
-        
-        private SccpMessage msg;
-        
-        public User(SccpProvider provider, SccpAddress address, SccpAddress dest) {
-            this.provider = provider;
-            this.address = address;
-            this.dest = dest;
-            provider.registerSccpListener(address, this);
-        }
-        
-        public boolean check() {
-            if (msg == null) {
-                return false;
-            }
-            
-            if (msg.getType() != UnitData.MESSAGE_TYPE) {
-                return false;
-            }
-            
-            UnitData udt = (UnitData) msg;
-            if (!address.equals(udt.getCalledPartyAddress())) {
-                return false;
-            }
-            
-            if (!dest.equals(udt.getCallingPartyAddress())) {
-                return false;
-            }
-            
-            return true;
-        }
-        
-        private void send() throws IOException {
-            MessageFactory messageFactory = provider.getMessageFactory();
-            ParameterFactory paramFactory = provider.getParameterFactory();
-            
-            ProtocolClass pClass = paramFactory.createProtocolClass(0, 0);
-            UnitData udt = messageFactory.createUnitData(pClass, address, dest);
-            udt.setData(new byte[10]);
-            provider.send(udt);
-        }
-        
-        public void onMessage(SccpMessage message) {
-            this.msg = message;
-        }
-        
-    }
+			UnitData udt = (UnitData) msg;
+			if (!address.equals(udt.getCalledPartyAddress())) {
+				return false;
+			}
+
+			if (!dest.equals(udt.getCallingPartyAddress())) {
+				return false;
+			}
+
+			return true;
+		}
+
+		private void send() throws IOException {
+			MessageFactory messageFactory = provider.getMessageFactory();
+			ParameterFactory paramFactory = provider.getParameterFactory();
+
+			ProtocolClass pClass = paramFactory.createProtocolClass(0, 0);
+			UnitData udt = messageFactory.createUnitData(pClass, dest, address);
+			udt.setData(new byte[10]);
+			provider.send(udt);
+		}
+
+		public void onMessage(SccpMessage message) {
+			this.msg = message;
+			System.out.println(message);
+		}
+
+	}
+
 }

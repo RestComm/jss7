@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -27,16 +28,9 @@
 			<artifactId>sccp-api</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
-		<!-- 
 		<dependency>
-			<artifactId>mtp</artifactId>
+			<artifactId>mtp-api</artifactId>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
-		</dependency>
-		 -->
-		 
-		<dependency>
-			<artifactId>linkset</artifactId>
-			<groupId>org.mobicents.protocols.ss7.management</groupId>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -80,27 +74,20 @@
 						<addMavenDescriptor>false</addMavenDescriptor>
 					</archive>
 				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptors>
-						<descriptor>
-							src/main/assembly/pojo.xml
-						</descriptor>
-					</descriptors>
-					<!-- this is doubled in sccp-beans -->
-					<finalName>a${pom.artifactId}</finalName>
-				</configuration>
 				<executions>
 					<execution>
 						<phase>package</phase>
 						<goals>
-							<goal>directory-inline</goal>
+							<goal>test-jar</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
+			<!-- plugin> <artifactId>maven-assembly-plugin</artifactId> <configuration> 
+				<descriptors> <descriptor> src/main/assembly/pojo.xml </descriptor> </descriptors> 
+				<finalName>a${pom.artifactId}</finalName> </configuration> <executions> <execution> 
+				<phase>package</phase> <goals> <goal>directory-inline</goal> </goals> </execution> 
+				</executions> </plugin -->
 		</plugins>
 	</build>
 </project>

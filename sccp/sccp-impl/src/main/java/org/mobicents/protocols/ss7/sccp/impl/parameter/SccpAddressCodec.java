@@ -41,77 +41,67 @@ import java.io.IOException;
 
 import org.mobicents.protocols.ss7.indicator.AddressIndicator;
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
-import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- *
+ * @author amit bhayani
  * @author Oleg Kulikov
  */
 public class SccpAddressCodec {
 
-    private SccpAddress address;
-    private GTCodec gtCodec = new GTCodec();
-    
-    /** Creates a new instance of UnitDataMandatoryVariablePart */
-    public SccpAddressCodec() {
-    }
+	private GTCodec gtCodec = new GTCodec();
 
-    public SccpAddressCodec(SccpAddress address) {
-        this.address = address;
-    }
-    
-    public SccpAddress decode(byte[] buffer) throws IOException {
-        ByteArrayInputStream bin = new ByteArrayInputStream(buffer);
-        
-        int b = bin.read() & 0xff;
-        AddressIndicator addressIndicator = new AddressIndicator((byte)b);
-        
-        int pc = 0;
-        if (addressIndicator.pcPresent()) {
-            int b1 = bin.read() & 0xff;
-            int b2 = bin.read() & 0xff;
-            
-            pc = ((b2 & 0x3f) << 8) | b1;
-        }
-        
-        int ssn = 0;
-        if (addressIndicator.ssnPresent()) {
-            ssn = bin.read() & 0xff;
-        }
-        
-        if (addressIndicator.getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
-            return new SccpAddress(pc, ssn);
-        }
-        
-        GlobalTitle globalTitle = gtCodec.decode(addressIndicator.getGlobalTitleIndicator(), bin);
-        return new SccpAddress(globalTitle, ssn) ;
-    }
+	/** Creates a new instance of UnitDataMandatoryVariablePart */
+	public SccpAddressCodec() {
+	}
 
-    public byte[] encode(SccpAddress address) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        
-        AddressIndicator ai = address.getAddressIndicator();
-        out.write(ai.getValue());
-        
-        if (ai.pcPresent()) {
-            byte b1 = (byte) address.getSignalingPointCode();
-            byte b2 = (byte) ((address.getSignalingPointCode() >> 8) & 0x3f);
+	public SccpAddress decode(byte[] buffer) throws IOException {
+		ByteArrayInputStream bin = new ByteArrayInputStream(buffer);
 
-            out.write(b1);
-            out.write(b2);
-        }
-        
-        if (ai.ssnPresent()) {
-            out.write((byte) address.getSubsystemNumber());
-        }
-        
-        if (ai.getGlobalTitleIndicator() != GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED) {
-            gtCodec.encode(address.getGlobalTitle(), out);
-        }
-        return out.toByteArray();
-        
-    }
+		int b = bin.read() & 0xff;
+		AddressIndicator addressIndicator = new AddressIndicator((byte) b);
+
+		int pc = 0;
+		if (addressIndicator.pcPresent()) {
+			int b1 = bin.read() & 0xff;
+			int b2 = bin.read() & 0xff;
+
+			pc = ((b2 & 0x3f) << 8) | b1;
+		}
+
+		int ssn = 0;
+		if (addressIndicator.ssnPresent()) {
+			ssn = bin.read() & 0xff;
+		}
+
+		GlobalTitle globalTitle = gtCodec.decode(addressIndicator.getGlobalTitleIndicator(), bin);
+		return new SccpAddress(addressIndicator.getRoutingIndicator(), pc, globalTitle, ssn);
+	}
+
+	public byte[] encode(SccpAddress address) throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+		AddressIndicator ai = address.getAddressIndicator();
+		out.write(ai.getValue());
+
+		if (ai.pcPresent()) {
+			byte b1 = (byte) address.getSignalingPointCode();
+			byte b2 = (byte) ((address.getSignalingPointCode() >> 8) & 0x3f);
+
+			out.write(b1);
+			out.write(b2);
+		}
+
+		if (ai.ssnPresent()) {
+			out.write((byte) address.getSubsystemNumber());
+		}
+
+		if (ai.getGlobalTitleIndicator() != GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED) {
+			gtCodec.encode(address.getGlobalTitle(), out);
+		}
+		return out.toByteArray();
+
+	}
 
 }

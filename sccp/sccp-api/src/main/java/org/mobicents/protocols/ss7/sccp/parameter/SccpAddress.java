@@ -19,8 +19,11 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.sccp.parameter;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.XMLSerializable;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.ss7.indicator.AddressIndicator;
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
@@ -28,77 +31,113 @@ import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 
 /**
  * 
- * 
+ * @author amit bhayani
  * @author baranowb
  * @author kulikov
  */
-public class SccpAddress implements Parameter{  //impl? pfff
+public class SccpAddress implements Parameter, XMLSerializable { // impl? pfff
 
-    private GlobalTitle gt;
-    private int pc;
-    private int ssn;
+	public static final String GLOBAL_TITLE = "gt";
+	public static final String POINT_CODE = "pc";
+	public static final String SUBSYSTEM_NUMBER = "ssn";
 
-    private AddressIndicator ai;
-    
-    public SccpAddress(GlobalTitle gt, int ssn) {
-        this.gt = gt;
-        this.ssn = ssn;
-        this.ai = new AddressIndicator(false, ssn != 0, 
-                RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt.getIndicator());
-    }
+	private GlobalTitle gt;
+	private int pc = 0;
+	private int ssn = -1;
 
-    public SccpAddress(int pc, int ssn) {
-        this.pc = pc;
-        this.ssn = ssn;
-        this.ai = new AddressIndicator(pc != 0, ssn != 0, 
-                RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED);
-    }
+	private AddressIndicator ai;
 
-    public AddressIndicator getAddressIndicator() {
-        return this.ai;
-    }
-    
-    public int getSignalingPointCode() {
-        return pc;
-    }
+	// If this SccpAddress is translated address
+	private boolean translated;
 
-    public int getSubsystemNumber() {
-        return ssn;
-    }
+	public SccpAddress() {
 
-    public GlobalTitle getGlobalTitle() {
-        return gt;
-    }
-    
-    
-    public boolean equals(Object other) {
-        if (!(other instanceof SccpAddress)) {
-            return false;
-        }
-        
-        SccpAddress address = (SccpAddress) other;
-        
-        boolean res = false;
-        
-        if (address.gt != null) {
-            res = gt != null && address.gt.equals(gt);
-            return res;
-        }
-        
-        return address.ssn == ssn && address.pc == pc;
-    }
+	}
 
-    
-    public int hashCode() {
-        int hash = 7;
-        hash = 37 * hash + (this.gt != null ? this.gt.hashCode() : 0);
-        hash = 37 * hash + this.pc;
-        hash = 37 * hash + this.ssn;
-        return hash;
-    }
-    
-    
-    public String toString() {
-        return "pc=" + pc + ",ssn=" + ssn + ",gt=" + gt;
-    }
+	/**
+	 * 
+	 * @param ri
+	 * @param dpc
+	 * @param gt
+	 * @param ssn
+	 */
+	public SccpAddress(RoutingIndicator ri, int dpc, GlobalTitle gt, int ssn) {
+		this.gt = gt;
+		this.pc = dpc;
+		this.ssn = ssn;
+		this.ai = new AddressIndicator(dpc > 0, ssn > 0, ri, gt == null ? GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED
+				: gt.getIndicator());
+
+	}
+
+	public boolean isTranslated() {
+		return translated;
+	}
+
+	public void setTranslated(boolean translated) {
+		this.translated = translated;
+	}
+
+	public AddressIndicator getAddressIndicator() {
+		return this.ai;
+	}
+
+	public int getSignalingPointCode() {
+		return pc;
+	}
+
+	public int getSubsystemNumber() {
+		return ssn;
+	}
+
+	public GlobalTitle getGlobalTitle() {
+		return gt;
+	}
+
+	public boolean equals(Object other) {
+		if (!(other instanceof SccpAddress)) {
+			return false;
+		}
+
+		SccpAddress address = (SccpAddress) other;
+
+		boolean res = false;
+
+		if (address.gt != null) {
+			res = gt != null && address.gt.equals(gt);
+			return res;
+		}
+
+		return address.ssn == ssn && address.pc == pc;
+	}
+
+	public int hashCode() {
+		int hash = 7;
+		hash = 37 * hash + (this.gt != null ? this.gt.hashCode() : 0);
+		hash = 37 * hash + this.pc;
+		hash = 37 * hash + this.ssn;
+		return hash;
+	}
+
+	public String toString() {
+		return "pc=" + pc + ",ssn=" + ssn + ",gt=" + gt;
+	}
+
+	protected static final XMLFormat<SccpAddress> XML = new XMLFormat<SccpAddress>(SccpAddress.class) {
+
+		public void write(SccpAddress ai, OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(POINT_CODE, ai.pc);
+			xml.setAttribute(SUBSYSTEM_NUMBER, ai.ssn);
+			xml.add(ai.ai, AddressIndicator.AI);
+			xml.add(ai.gt, GLOBAL_TITLE);
+
+		}
+
+		public void read(InputElement xml, SccpAddress ai) throws XMLStreamException {
+			ai.pc = xml.getAttribute(POINT_CODE).toInt();
+			ai.ssn = xml.getAttribute(SUBSYSTEM_NUMBER).toInt();
+			ai.ai = xml.get(AddressIndicator.AI);
+			ai.gt = xml.get(GLOBAL_TITLE);
+		}
+	};
 }

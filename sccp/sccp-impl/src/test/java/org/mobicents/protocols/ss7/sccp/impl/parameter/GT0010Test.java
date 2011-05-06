@@ -19,25 +19,33 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.mobicents.protocols.ss7.sccp.impl.router;
+package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
 import static org.junit.Assert.assertEquals;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0010;
 
 /**
- * 
  * @author amit bhayani
  * 
  */
-public class RuleExecutorTest {
+public class GT0010Test {
+	private byte[] data = new byte[] { 3, 0x09, 0x32, 0x26, 0x59, 0x18 };
+	private GT0010Codec codec = new GT0010Codec();
 
-	RuleExecutor ruleExecutor = null;
+	public GT0010Test() {
+	}
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -49,51 +57,35 @@ public class RuleExecutorTest {
 
 	@Before
 	public void setUp() {
-
-		RouterImpl router = new RouterImpl();
-		try {
-			router.start();
-			router.deleteRule("Rule1");
-			router.deleteRule("Rule2");
-			router.deleteRule("Rule3");
-			router.deleteRule("Rule4");
-			router.stop();
-		} catch (Exception e) {
-			// ignore
-		}
 	}
 
 	@After
 	public void tearDown() {
 	}
 
+
+
 	@Test
-	public void testCreateRule() throws Exception {
-		ruleExecutor = new RuleExecutor();
-		RouterImpl router = new RouterImpl();
-		router.start();
-		ruleExecutor.setRouter(router);
+	public void testSerialization() throws Exception {
+		GT0010 gt = new GT0010(0, "9023629581");
 
-		String message = ruleExecutor
-				.execute("sccprule create Rule1 pattern tt -1 np -1 noa 3 digits 99604 ssn -1 translation tt -1 np 3 noa 4 digits 77865 ssn -1"
-						.split(" "));
-		assertEquals(1, router.list().size());
+		// Writes
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(output);
+		writer.setIndentation("\t"); // Optional (use tabulation for
+		// indentation).
+		writer.write(gt, "GT0010", GT0010.class);
+		writer.close();
 
-		message = ruleExecutor
-				.execute("sccprule create Rule2 pattern tt -1 np 3 noa 4 digits 99604 ssn -1 mtpinfo name name1 opc 12 apc 56 sls 1"
-						.split(" "));
-		assertEquals(2, router.list().size());
+		System.out.println(output.toString());
 
-		message = ruleExecutor
-				.execute("sccprule create Rule3 pattern tt -1 np 3 noa 4 digits 99604 ssn -1 translation tt -1 np 3 noa 4 digits 77865 ssn -1 mtpinfo name name1 opc 12 apc 56 sls 1"
-						.split(" "));
-		assertEquals(3, router.list().size());
+		ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
+		XMLObjectReader reader = XMLObjectReader.newInstance(input);
+		GT0010 aiOut = reader.read("GT0010", GT0010.class);
 
-		message = ruleExecutor.execute("sccprule create Rule4 dpc 2 ssn 8 mtpinfo name name1 opc 12 apc 56 sls 1"
-				.split(" "));
-		assertEquals(4, router.list().size());
-
-		router.stop();
+		// check results
+		assertEquals(0, aiOut.getTranslationType());
+		assertEquals("9023629581", aiOut.getDigits());
 	}
 
 }
