@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.m3ua.impl.oam;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
@@ -169,6 +170,18 @@ public class M3UALinkset extends Linkset {
             asImpl.write(msu);
             return msu.length;
         }
+
+		@Override
+		public int read(ByteBuffer arg0) throws IOException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int write(ByteBuffer arg0) throws IOException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
 
     }
 }
