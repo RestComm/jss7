@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+  <classpathentry kind="src" path="boot/src/main/java"/>
   <classpathentry kind="src" path="gateway/src/main/resources"/>
   <classpathentry kind="src" path="gateway/src/main/java"/>
-  <classpathentry kind="src" path="boot/src/main/java"/>
   <classpathentry kind="var" path="M2_REPO/apache-xerces/xercesImpl/2.9.1/xercesImpl-2.9.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/apache-xerces/xml-apis/2.9.1/xml-apis-2.9.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/concurrent/concurrent/1.3.4/concurrent-1.3.4.jar"/>
@@ -17,16 +17,15 @@
   <classpathentry kind="var" path="M2_REPO/org/jboss/logging/jboss-logging-spi/2.0.5.GA/jboss-logging-spi-2.0.5.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/microcontainer/jboss-dependency/2.0.6.GA/jboss-dependency-2.0.6.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/microcontainer/jboss-kernel/2.0.6.GA/jboss-kernel-2.0.6.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/clock/clock/1.0.0.BETA7-SNAPSHOT/clock-1.0.0.BETA7-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/hardware/mobicents-dahdi/1.0.0.BETA7-SNAPSHOT/mobicents-dahdi-1.0.0.BETA7-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/hardware/mobicents-dialogic/1.0.0.BETA7-SNAPSHOT/mobicents-dialogic-1.0.0.BETA7-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/hardware/mobicents-m3ua/1.0.0.BETA7-SNAPSHOT/mobicents-m3ua-1.0.0.BETA7-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/m3ua/m3ua-api/1.0.0.BETA7-SNAPSHOT/m3ua-api-1.0.0.BETA7-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/m3ua/m3ua-impl/1.0.0.BETA7-SNAPSHOT/m3ua-impl-1.0.0.BETA7-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/management/linkset/1.0.0.BETA7-SNAPSHOT/linkset-1.0.0.BETA7-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/management/shell/1.0.0.BETA7-SNAPSHOT/shell-1.0.0.BETA7-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/mtp/mtp/1.0.0.BETA7-SNAPSHOT/mtp-1.0.0.BETA7-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/stream/stream/1.0.0-SNAPSHOT/stream-1.0.0-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/clock/clock/1.0.0-SNAPSHOT/clock-1.0.0-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/hardware/mobicents-dahdi/1.0.0-SNAPSHOT/mobicents-dahdi-1.0.0-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/hardware/mobicents-dialogic/1.0.0-SNAPSHOT/mobicents-dialogic-1.0.0-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/m3ua/m3ua-api/1.0.0-SNAPSHOT/m3ua-api-1.0.0-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/m3ua/m3ua-impl/1.0.0-SNAPSHOT/m3ua-impl-1.0.0-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/management/linkset/1.0.0-SNAPSHOT/linkset-1.0.0-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/management/shell/1.0.0-SNAPSHOT/shell-1.0.0-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/mtp/mtp/1.0.0-SNAPSHOT/mtp-1.0.0-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/stream/stream/1.0.0.BETA3/stream-1.0.0.BETA3.jar"/>
   <classpathentry kind="var" path="M2_REPO/sun-jaxb/jaxb-api/2.1.9/jaxb-api-2.1.9.jar"/>
   <classpathentry kind="var" path="M2_REPO/urbanophile/java-getopt/1.0.9/java-getopt-1.0.9.jar"/>
   <classpathentry kind="var" path="M2_REPO/wutka-dtdparser/dtdparser121/1.2.1/dtdparser121-1.2.1.jar"/>

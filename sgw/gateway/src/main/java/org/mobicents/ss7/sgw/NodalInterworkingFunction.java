@@ -123,7 +123,7 @@ public class NodalInterworkingFunction implements Layer4 {
 
         for (FastList.Node<SelectorKey> n = selected.head(), end = selected.tail(); (n = n.getNext()) != end;) {
             SelectorKey key = n.getValue();
-            ((LinksetStream) key.getStream()).read(rxBuffer);
+            //((LinksetStream) key.getStream()).read(rxBuffer);
 
             // Read data
             if (rxBuffer != null) {
@@ -135,7 +135,7 @@ public class NodalInterworkingFunction implements Layer4 {
                 PayloadData txBuffer = m3uaqueue.poll();
                 // TODO : Select appropriate LinkSet to send this data
                 if (txBuffer != null) {
-                    linksetStream.write(txBuffer.getData().getMsu());
+                    //linksetStream.write(txBuffer.getData().getMsu());
                 }
             }
         }// for
