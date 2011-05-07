@@ -39,8 +39,6 @@ import javolution.util.FastList;
 import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ConfigurationException;
-import org.mobicents.protocols.StartFailedException;
 import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ISUPProvider;
@@ -94,13 +92,14 @@ public class ISUPStackImpl implements ISUPStack, Layer4 {
 		return provider;
 	}
 
-	public void start() throws IllegalStateException, StartFailedException {
+	public void start() throws IllegalStateException {
 		if (state != State.CONFIGURED) {
 			throw new IllegalStateException("Stack has not been configured or is already running!");
 		}
 		if(state == State.RUNNING)
 		{
-			throw new StartFailedException("Can not start stack again!");
+			//throw new StartFailedException("Can not start stack again!");
+			throw new IllegalStateException("Can not start stack again!");
 		}
 		this.executor = Executors.newFixedThreadPool(1);
 		this.layer3exec = Executors.newFixedThreadPool(1);
@@ -131,7 +130,7 @@ public class ISUPStackImpl implements ISUPStack, Layer4 {
 	/**
      *
      */
-	public void configure(Properties props) throws ConfigurationException {
+	public void configure(Properties props)  {
 		if (state != State.IDLE) {
 			throw new IllegalStateException("Stack already been configured or is already running!");
 		}
@@ -217,8 +216,8 @@ public class ISUPStackImpl implements ISUPStack, Layer4 {
 					for (FastList.Node<SelectorKey> n =selected.head(), end = selected.tail(); (n = n
 			                .getNext()) != end;) {
 						LinksetStream stream = (LinksetStream) n.getValue().getStream();
-						int read = stream.read(rxBuffer);
-
+						//int read = stream.read(rxBuffer);
+						int read = 0;
 						
 						// Read data
 						if (read>0) {
@@ -231,7 +230,7 @@ public class ISUPStackImpl implements ISUPStack, Layer4 {
 						// write data
 						txBuffer = linksetQueue.get(stream.getName()).poll();
 						if (txBuffer != null) {
-							stream.write(txBuffer);
+							//stream.write(txBuffer);
 						}
 
 					}

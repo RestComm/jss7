@@ -30,8 +30,7 @@ package org.mobicents.protocols.ss7.isup;
 
 import java.util.Properties;
 
-import org.mobicents.protocols.ConfigurationException;
-import org.mobicents.protocols.StartFailedException;
+import javax.naming.ConfigurationException;
 
 /**
  * Start time:09:07:18 2009-08-30<br>
@@ -55,11 +54,11 @@ public interface ISUPStack {
 	 * @throws IllegalStateException - if stack is already running or is not configured yet.
 	 * @throws StartFailedException - if start failed for some other reason.
 	 */
-	public void start() throws IllegalStateException, StartFailedException;
+	public void start() throws IllegalStateException;
 	/**
 	 * Configure this stack and its resources, like MTP.
 	 * @param props
 	 * @throws ConfigurationException
 	 */
-	public void configure(Properties props) throws ConfigurationException;
+	public void configure(Properties props);
 }
