@@ -23,6 +23,10 @@ package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javolution.util.FastList;
 import javolution.util.FastMap;
@@ -62,9 +66,11 @@ public class SccpManagement implements SccpListener {
 	private SccpProviderImpl sccpProviderImpl;
 	private SccpStackImpl sccpStackImpl;
 	private SccpRoutingControl sccpRoutingControl;
-
+	
+	private ScheduledExecutorService managementExecutors;
+	
 	// Keeps track of how many SST are running for given DPC
-	private FastMap<Integer, FastList<SubSystemTest>> dpcVsSst = new FastMap<Integer, FastList<SubSystemTest>>();
+	private final FastMap<Integer, FastList<SubSystemTest>> dpcVsSst = new FastMap<Integer, FastList<SubSystemTest>>();
 
 	protected SccpManagement(SccpProviderImpl sccpProviderImpl, SccpStackImpl sccpStackImpl) {
 		this.sccpProviderImpl = sccpProviderImpl;
@@ -175,7 +181,7 @@ public class SccpManagement implements SccpListener {
 
 				if (sst1 != null) {
 					sst1.stopTest();
-					ssts1.remove(sst1);
+					//ssts1.remove(sst1);
 				}
 			}
 			break;
@@ -198,10 +204,10 @@ public class SccpManagement implements SccpListener {
 			}
 
 			if (sst == null) {
-				sst = new SubSystemTest(affectedSsn, affectedPc);
+				sst = new SubSystemTest(affectedSsn, affectedPc,ssts);
 			}
-			ssts.add(sst);
-			sst.start();
+			//ssts.add(sst);
+			sst.startTest();
 
 			break;
 		case SST:
@@ -343,14 +349,15 @@ public class SccpManagement implements SccpListener {
 					// for the SCCP at a remote signalling point
 
 					// Start sending the SST for SSN1
-					SubSystemTest sst = new SubSystemTest(1, affectedPc);
 					FastList<SubSystemTest> ssts = dpcVsSst.get(affectedPc);
 					if (ssts == null) {
 						ssts = new FastList<SubSystemTest>();
 						dpcVsSst.put(affectedPc, ssts);
 					}
-					ssts.add(sst);
-					sst.start();
+					SubSystemTest sst = new SubSystemTest(1, affectedPc,ssts);
+					
+					//ssts.add(sst);
+					sst.startTest();
 				}
 
 				break;
@@ -458,20 +465,24 @@ public class SccpManagement implements SccpListener {
 					continue;
 				}
 				sst.stopTest();
-				ssts.remove(sst);
+				//ssts.remove(sst);
 			}
 		}
 
 		return sstForSsn1;
 	}
 
-	private class SubSystemTest extends Thread { //FIXME: remove "Thread", so we eat less resources.
+	private class SubSystemTest implements Runnable { //FIXME: remove "Thread", so we eat less resources.
 
-		private volatile boolean started = true;
-
+		private volatile boolean started = false;
+		
 		// Flag to check if received an MTP-STATUS indication primitive stating
 		// User Part Unavailable.
 		private volatile boolean recdMtpStatusResp = true;
+		
+		private Future testFuture;
+		private FastList<SubSystemTest> testsList;
+		
 		private int ssn = 0;
 		private int affectedPc = 0;
 
@@ -480,9 +491,10 @@ public class SccpManagement implements SccpListener {
 
 		private UnitData udt = null;
 
-		SubSystemTest(int ssn, int affectedPc) {
+		SubSystemTest(int ssn, int affectedPc,FastList<SubSystemTest> testsList) {
 			this.ssn = ssn;
 			this.affectedPc = affectedPc;
+			this.testsList = testsList;
 
 			// SSN=1 for SCMG
 			calledAdd = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, affectedPc, null, 1);
@@ -509,20 +521,37 @@ public class SccpManagement implements SccpListener {
 
 		synchronized void stopTest() {
 			started = false;
+			Future f = this.testFuture;
+			if(f!=null)
+			{
+				this.testsList.remove(this);
+				this.testFuture = null;
+				f.cancel(false);
+			}
+				
 			notify();
 		}
 
-		@Override
+		synchronized void startTest() {
+			if(!started)
+			{
+				this.testFuture = managementExecutors.schedule(this, 10000, TimeUnit.MILLISECONDS);
+				started = true;
+				this.testsList.add(this);
+			}
+			
+		}
+
 		public synchronized void run() {
-			while (started) {
+			if (started) {
 
 				if (ssn == 1 && !recdMtpStatusResp) {
 					// If no MTP STATUS received, means we consider previously
 					// unavailable (SCCP) has recovered
 
 					// TODO Take care of updating translation table;
-					started = false;
-					break;
+					stopTest();
+					return;
 
 				}
 				// Set it false again so we wait for response again after
@@ -538,15 +567,33 @@ public class SccpManagement implements SccpListener {
 				}
 
 				// TODO : How much to sleep?
-				try {
-					wait(1000 * 10);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			
+				this.startTest();
+				
 			}// while
 
 		}// run
 
+		
+
 	}// SubSystemTest
+
+	/**
+	 * 
+	 */
+	public void start() {
+		
+		this.dpcVsSst.clear();
+		managementExecutors = Executors.newScheduledThreadPool(1);
+		
+	}
+
+	/**
+	 * 
+	 */
+	public void stop() {
+		//no need to stop, it will clean on start, and scheduler is dead.
+		managementExecutors.shutdownNow();
+		
+	}
 }

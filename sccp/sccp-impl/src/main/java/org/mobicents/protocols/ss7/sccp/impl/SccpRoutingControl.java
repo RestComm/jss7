@@ -67,6 +67,16 @@ public class SccpRoutingControl {
 		this.sccpManagement = sccpManagement;
 	}
 
+	public void start() {
+		// NOP for now
+		
+	}
+
+	public void stop() {
+		// NOP for now
+		
+	}
+	
 	protected void routeMssgFromMtp(SccpMessageImpl msg) throws IOException {
 		// TODO if the local SCCP or node is in an overload condition, SCRC
 		// shall inform SCMG
@@ -487,4 +497,6 @@ public class SccpRoutingControl {
 		byte[] msg = bout.toByteArray();
 		this.sccpStackImpl.txDataQueue.add(msg);
 	}
+
+
 }

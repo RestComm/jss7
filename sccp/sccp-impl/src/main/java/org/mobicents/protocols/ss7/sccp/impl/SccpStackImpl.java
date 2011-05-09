@@ -62,6 +62,7 @@ public class SccpStackImpl implements SccpStack {
 
 	protected Router router;
 	protected SccpResource sccpResource;
+	
 	protected Executor executor;
 
 	protected Executor layer3exec;
@@ -135,11 +136,16 @@ public class SccpStackImpl implements SccpStack {
 
 		executor = Executors.newFixedThreadPool(1);
 
-		this.state = State.RUNNING;
-
 		layer3exec = Executors.newFixedThreadPool(1);
 
+		logger.info("Starting routing engine...");
+		this.sccpRoutingControl.start();
+		logger.info("Starting management ...");
+		this.sccpManagement.start();
+		logger.info("Starting MSU handler...");
 		layer3exec.execute(new MtpStreamHandler());
+
+		this.state = State.RUNNING;
 	}
 
 	/*
@@ -148,6 +154,17 @@ public class SccpStackImpl implements SccpStack {
 	 * @see org.mobicents.protocols.ss7.sccp.SccpStack#stop()
 	 */
 	public void stop() {
+		logger.info("Stopping ...");
+
+		executor = null;
+
+		layer3exec = null;
+
+		logger.info("Stopping management...");
+		this.sccpManagement.stop();
+		logger.info("Stopping routing engine...");
+		this.sccpRoutingControl.stop();
+		logger.info("Stopping MSU handler...");
 		this.state = State.IDLE;
 	}
 
@@ -275,6 +292,7 @@ public class SccpStackImpl implements SccpStack {
 		ByteBuffer rxBuffer = ByteBuffer.allocateDirect(1000);
 		ByteBuffer txBuffer = ByteBuffer.allocateDirect(1000);
 		int rxBytes = 0;
+		@SuppressWarnings("unused")
 		int txBytes = 0;
 
 		public void run() {
