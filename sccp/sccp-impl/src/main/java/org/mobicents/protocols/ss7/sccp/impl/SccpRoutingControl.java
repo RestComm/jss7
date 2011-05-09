@@ -98,10 +98,19 @@ public class SccpRoutingControl {
 			}
 
 			// Notify Listener
-			listener.onMessage(msg);
+			try{
+				//JIC: user may behave bad and throw something here.
+				listener.onMessage(msg);
+			}catch(Exception e)
+			{
+				if (logger.isEnabledFor(Level.WARN)) {
+					logger.warn(String.format(
+							"Received SccpMessage=%s from MTP and user threw exception from listener!", msg));
+				}
+			}
 			break;
 		case ROUTING_BASED_ON_GLOBAL_TITLE:
-			this.translationFunction(msg, true);
+			this.translationFunction(msg,returnError, true);
 			break;
 		default:
 			// This can never happen
@@ -114,11 +123,11 @@ public class SccpRoutingControl {
 		this.route(msg, false);
 	}
 
-	private void translationFunction(SccpMessage msg, boolean fromMtp) throws IOException {
+	private void translationFunction(SccpMessage msg, final boolean returnError,final boolean fromMtp) throws IOException {
 
 		SccpAddress calledPartyAddress = msg.getCalledPartyAddress();
 
-		boolean returnError = ((SccpMessageImpl) msg).getProtocolClass().getHandling() == ProtocolClass.HANDLING_RET_ERR;
+		//boolean returnError = ((SccpMessageImpl) msg).getProtocolClass().getHandling() == ProtocolClass.HANDLING_RET_ERR;
 
 		Rule rule = this.sccpStackImpl.router.find(calledPartyAddress);
 
@@ -270,7 +279,16 @@ public class SccpRoutingControl {
 						return;
 					}
 					// Notify Listener
-					listener.onMessage(msg);
+					try{
+						//JIC: user may behave bad and throw something here.
+						listener.onMessage(msg);
+					}catch(Exception e)
+					{
+						if (logger.isEnabledFor(Level.WARN)) {
+							logger.warn(String.format(
+									"Received SccpMessage=%s from MTP and user threw exception from listener!", msg));
+						}
+					}
 				} else if (gt != null) {
 					// if the GT is present but no SSN or a zero SSN is present
 					// (case 2 b) of 2.2.2), then the message is passed to the
@@ -285,7 +303,7 @@ public class SccpRoutingControl {
 						return;
 					}
 
-					this.translationFunction(msg, fromMtp);
+					this.translationFunction(msg,returnError, fromMtp);
 
 				} else {
 					// if an SSN equal to zero is present but not a GT (case 2
@@ -412,7 +430,7 @@ public class SccpRoutingControl {
 				return;
 			}
 
-			this.translationFunction(msg, fromMtp);
+			this.translationFunction(msg,returnError, fromMtp);
 
 		}
 

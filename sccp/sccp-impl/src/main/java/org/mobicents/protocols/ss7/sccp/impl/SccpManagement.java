@@ -465,7 +465,7 @@ public class SccpManagement implements SccpListener {
 		return sstForSsn1;
 	}
 
-	private class SubSystemTest extends Thread {
+	private class SubSystemTest extends Thread { //FIXME: remove "Thread", so we eat less resources.
 
 		private volatile boolean started = true;
 

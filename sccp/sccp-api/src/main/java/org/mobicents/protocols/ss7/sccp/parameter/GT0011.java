@@ -27,13 +27,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javolution.xml.XMLFormat;
-import javolution.xml.XMLFormat.InputElement;
-import javolution.xml.XMLFormat.OutputElement;
 import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.ss7.indicator.EncodingScheme;
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
-import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 
 /**

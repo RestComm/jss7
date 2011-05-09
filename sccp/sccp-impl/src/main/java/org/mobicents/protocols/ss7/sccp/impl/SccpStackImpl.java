@@ -81,7 +81,8 @@ public class SccpStackImpl implements SccpStack {
 	public SccpStackImpl() {
 		messageFactory = new MessageFactoryImpl();
 		sccpProvider = new SccpProviderImpl(this);
-		sccpManagement = new SccpManagement(sccpProvider, this);
+		//FIXME: make this configurable
+		sccpManagement = new SccpManagement(sccpProvider, this); 
 		sccpRoutingControl = new SccpRoutingControl(sccpProvider, this);
 
 		sccpManagement.setSccpRoutingControl(sccpRoutingControl);
