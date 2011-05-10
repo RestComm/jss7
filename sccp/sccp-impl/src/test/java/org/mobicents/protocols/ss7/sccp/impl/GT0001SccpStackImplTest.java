@@ -24,8 +24,6 @@ package org.mobicents.protocols.ss7.sccp.impl;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -33,16 +31,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
-import org.mobicents.protocols.ss7.sccp.SccpListener;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
-import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.message.UnitData;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
-import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -50,11 +42,11 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author kulikov
  * @author baranowb
  */
-public class SccpStackImplTest extends SccpHarness {
+public class GT0001SccpStackImplTest extends SccpHarness {
 
 	private SccpAddress a1, a2;
 
-	public SccpStackImplTest() {
+	public GT0001SccpStackImplTest() {
 	}
 
 	@BeforeClass
@@ -68,12 +60,6 @@ public class SccpStackImplTest extends SccpHarness {
 	@Before
 	public void setUp() throws IllegalStateException {
 		super.setUp();
-		// GlobalTitle gt1 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL,
-		// "1234");
-		// GlobalTitle gt2 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL,
-		// "5678");
-
-		
 
 	}
 
@@ -82,26 +68,6 @@ public class SccpStackImplTest extends SccpHarness {
 		super.tearDown();
 	}
 
-	/**
-	 * Test of configure method, of class SccpStackImpl.
-	 */
-	@Test
-	public void testRemoteRoutingBasedOnSsn() throws Exception {
-		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
-		a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
-		
-		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2);
-		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1);
-
-		u1.send();
-		u2.send();
-
-		Thread.currentThread().sleep(1000);
-
-		assertTrue("Message not received", u1.check());
-		assertTrue("Message not received", u2.check());
-	}
-	
 	
 	protected static final String GT1_digits = "1234567890";
 	protected static final String GT2_digits = "0987654321";
@@ -137,7 +103,7 @@ public class SccpStackImplTest extends SccpHarness {
 		
 		
 		//now create users, we need to override matchX methods, since our rules do kinky stuff with digits, plus 
-		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2){
+		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2,getSSN()){
 
 	
 			protected boolean matchCalledPartyAddress() {
@@ -150,7 +116,7 @@ public class SccpStackImplTest extends SccpHarness {
 			}
 			
 		};
-		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1){
+		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1,getSSN()){
 
 	
 			protected boolean matchCalledPartyAddress() {
@@ -220,7 +186,7 @@ public class SccpStackImplTest extends SccpHarness {
 		
 		
 		//now create users, we need to override matchX methods, since our rules do kinky stuff with digits, plus 
-		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2){
+		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2,getSSN()){
 
 	
 			protected boolean matchCalledPartyAddress() {
@@ -236,7 +202,7 @@ public class SccpStackImplTest extends SccpHarness {
 		};
 		
 		
-		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1){
+		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1,getSSN()){
 
 	
 			protected boolean matchCalledPartyAddress() {
@@ -260,74 +226,5 @@ public class SccpStackImplTest extends SccpHarness {
 	}
 	
 	
-	private class User implements SccpListener {
-		protected SccpProvider provider;
-		protected SccpAddress address;
-		protected SccpAddress dest;
-
-		protected SccpMessage msg;
-
-		public User(SccpProvider provider, SccpAddress address, SccpAddress dest) {
-			this.provider = provider;
-			this.address = address;
-			this.dest = dest;
-			provider.registerSccpListener(getSSN(), this);
-		}
-
-		public boolean check() {
-			if (msg == null) {
-				return false;
-			}
-
-			if (msg.getType() != UnitData.MESSAGE_TYPE) {
-				return false;
-			}
-
-			UnitData udt = (UnitData) msg;
-			if (!matchCalledPartyAddress()) {
-				return false;
-			}
-
-			if (!matchCallingPartyAddress()) {
-				return false;
-			}
-
-			return true;
-		}
-		
-		protected boolean matchCalledPartyAddress()
-		{
-			UnitData udt = (UnitData) msg;
-			if (!address.equals(udt.getCalledPartyAddress())) {
-				return false;
-			}
-			return true;
-		}
-		
-		protected boolean matchCallingPartyAddress()
-		{
-			UnitData udt = (UnitData) msg;
-			if (!dest.equals(udt.getCallingPartyAddress())) {
-				return false;
-			}
-			return true;
-		}
-
-		protected void send() throws IOException {
-			MessageFactory messageFactory = provider.getMessageFactory();
-			ParameterFactory paramFactory = provider.getParameterFactory();
-
-			ProtocolClass pClass = paramFactory.createProtocolClass(0, 0);
-			UnitData udt = messageFactory.createUnitData(pClass, dest, address);
-			udt.setData(new byte[10]);
-			provider.send(udt, 1);
-		}
-
-		public void onMessage(SccpMessage message, int seqControl) {
-			this.msg = message;
-			System.out.println(String.format("SccpMessage=%s seqControl=%d", message, seqControl));
-		}
-
-	}
 
 }

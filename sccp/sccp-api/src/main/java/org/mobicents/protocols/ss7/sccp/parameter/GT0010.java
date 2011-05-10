@@ -51,15 +51,6 @@ public class GT0010  extends GlobalTitle {
         this.digits = digits;
     }
 
-    public void decode(InputStream in) throws IOException {
-        int b = in.read() & 0xff;        
-        tt = b;
-    }
-
-    public void encode(OutputStream in) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public int getTranslationType() {
         return tt;
     }

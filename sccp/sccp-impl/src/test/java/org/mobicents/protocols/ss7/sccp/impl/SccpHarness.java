@@ -158,7 +158,7 @@ public abstract class SccpHarness {
 		this.tearDownStack2();
 	}
 
-	private class Mtp3UserPartImpl implements Mtp3UserPart {
+	protected class Mtp3UserPartImpl implements Mtp3UserPart {
 
 		private ConcurrentLinkedQueue<byte[]> readFrom;
 		private ConcurrentLinkedQueue<byte[]> writeTo;
