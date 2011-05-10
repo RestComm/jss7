@@ -118,6 +118,8 @@ public class DialogImpl implements Dialog {
 	// scheduled components list
 	private List<Component> scheduledComponentList = new ArrayList<Component>();
 	private TCAPProviderImpl provider;
+	
+	private int seqControl;
 
 	private static final int getIndexFromInvokeId(Long l) {
 		int tmp = l.intValue();
@@ -134,7 +136,7 @@ public class DialogImpl implements Dialog {
 	// TCAProviderImpl provider, ApplicationContextName acn, UserInformation[]
 	// ui) {
 	DialogImpl(SccpAddress localAddress, SccpAddress remoteAddress, Long origTransactionId, boolean structured,
-			ScheduledExecutorService executor, TCAPProviderImpl provider) {
+			ScheduledExecutorService executor, TCAPProviderImpl provider, int seqControl) {
 		super();
 		this.localAddress = localAddress;
 		this.remoteAddress = remoteAddress;
@@ -149,6 +151,8 @@ public class DialogImpl implements Dialog {
 			this.structured = false;
 		}
 		this.structured = structured;
+		
+		this.seqControl = seqControl;
 	}
 
 	public void release() {
@@ -328,7 +332,7 @@ public class DialogImpl implements Dialog {
 		try {
 			tcbm.encode(aos);
 			this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-					this.localAddress);
+					this.localAddress, this.seqControl);
 			this.setState(TRPseudoState.InitialSent);
 			this.scheduledComponentList.clear();
 		} catch (Exception e) {
@@ -394,7 +398,7 @@ public class DialogImpl implements Dialog {
 			try {
 				tcbm.encode(aos);
 				this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-						this.localAddress);
+						this.localAddress, this.seqControl);
 				this.setState(TRPseudoState.Active);
 				this.scheduledComponentList.clear();
 			} catch (Exception e) {
@@ -425,7 +429,7 @@ public class DialogImpl implements Dialog {
 			try {
 				tcbm.encode(aos);
 				this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-						this.localAddress);
+						this.localAddress, this.seqControl);
 				this.scheduledComponentList.clear();
 			} catch (Exception e) {
 				// FIXME: add proper handling here. TC-NOTICE ?
@@ -502,7 +506,7 @@ public class DialogImpl implements Dialog {
 		try {
 			tcbm.encode(aos);
 			this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-					this.localAddress);
+					this.localAddress, this.seqControl);
 			this.setState(TRPseudoState.Expunged);
 			this.scheduledComponentList.clear();
 		} catch (Exception e) {
@@ -552,7 +556,7 @@ public class DialogImpl implements Dialog {
 		try {
 			msg.encode(aos);
 			this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-					this.localAddress);
+					this.localAddress, this.seqControl);
 			this.setState(TRPseudoState.Expunged);
 			this.scheduledComponentList.clear();
 		} catch (Exception e) {
@@ -598,7 +602,7 @@ public class DialogImpl implements Dialog {
 			try {
 				msg.encode(aos);
 				this.provider.send(aos.toByteArray(), event.getQOS() == null ? 0 : event.getQOS().byteValue(), this.remoteAddress,
-						this.localAddress);
+						this.localAddress, this.seqControl);
 				this.setState(TRPseudoState.Expunged);
 				this.scheduledComponentList.clear();
 			} catch (Exception e) {

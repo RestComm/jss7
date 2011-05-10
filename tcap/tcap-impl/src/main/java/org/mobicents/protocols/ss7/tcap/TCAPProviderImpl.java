@@ -88,7 +88,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     private MessageFactory messageFactory;
     private ParameterFactory parameterFactory;
     
-    
+    private static int seqControl = 0;
     private TCAPStackImpl stack;    // originating TX id ~=Dialog, its direct mapping, but not described
     // explicitly...
     private Map<Long, DialogImpl> dialogs = new HashMap<Long, DialogImpl>();
@@ -140,6 +140,16 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         }
         throw new TCAPException("Not enough resources!");
     }
+    
+    //get next Seq Control value available
+    private int getNextSeqControl() {
+    	seqControl++;
+    	if(seqControl > 31){
+    		seqControl = 0;
+    		
+    	}
+    	return seqControl; 
+    }
 
     private Long getAvailableUniTxId() throws TCAPException {
         for (long l = -1; l >= Long.MIN_VALUE; l--) {
@@ -184,12 +194,16 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
      * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress)
      */
     public Dialog getNewDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
-
+    	return getNewDialog(localAddress, remoteAddress, getNextSeqControl());
+    }
+    
+    private Dialog getNewDialog(SccpAddress localAddress, SccpAddress remoteAddress, int seqControl) throws TCAPException {
         Long id = this.getAvailableTxId();
-        return _getDialog(localAddress, remoteAddress, id, true);
+        Dialog dialog = _getDialog(localAddress, remoteAddress, id, true, seqControl);
+        return dialog;
     }
 
-    private Dialog _getDialog(SccpAddress localAddress, SccpAddress remoteAddress, Long id, boolean structured) {
+    private Dialog _getDialog(SccpAddress localAddress, SccpAddress remoteAddress, Long id, boolean structured, int seqControl) {
         if (localAddress == null) {
             throw new NullPointerException("LocalAddress must not be null");
         }
@@ -197,7 +211,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         if (remoteAddress == null) {
             throw new NullPointerException("RemoteAddress must not be null");
         }
-        DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, structured, this._EXECUTOR, this);
+        DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, structured, this._EXECUTOR, this, seqControl);
 
         this.dialogs.put(di.getDialogId(), di);
         return di;
@@ -213,10 +227,11 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
      */
     public Dialog getNewUnstructuredDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
         Long id = this.getAvailableUniTxId();
-        return _getDialog(localAddress, remoteAddress, id, false);
+        //TODO : Do we can for Seq Control here?
+        return _getDialog(localAddress, remoteAddress, id, false, getNextSeqControl());
     }
 
-    public void onMessage(SccpMessage message) {
+    public void onMessage(SccpMessage message, int seqControl) {
         try {
             byte[] data = null;
             SccpAddress localAddress = null;
@@ -276,7 +291,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                     // received continue, destID == localDialogId(originatingTxId of
                     // begin);
 
-                    di = (DialogImpl) this.getNewDialog(localAddress, remoteAddress);
+                    di = (DialogImpl) this.getNewDialog(localAddress, remoteAddress, seqControl);
                     di.processBegin(tcb, localAddress, remoteAddress);
 
                     break;
@@ -322,12 +337,12 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         }
     }
 
-    public void send(byte[] data, Byte desiredQos, SccpAddress destinationAddress, SccpAddress originatingAddress) throws IOException {
+    public void send(byte[] data, Byte desiredQos, SccpAddress destinationAddress, SccpAddress originatingAddress, int seqControl) throws IOException {
         //FIXME: add QOS
         ProtocolClass pClass = parameterFactory.createProtocolClass(0, 0);
         UnitData msg = messageFactory.createUnitData(pClass, destinationAddress, originatingAddress);
         msg.setData(data);
-        sccpProvider.send(msg);
+        sccpProvider.send(msg, seqControl);
     }
 
     public void deliver(DialogImpl dialogImpl, TCBeginIndicationImpl msg) {
