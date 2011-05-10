@@ -75,12 +75,12 @@ public abstract class SccpHarness {
 		resource1.getRemoteSpcs().clear();
 		resource1.getRemoteSsns().clear();
 
-		resource1.getRemoteSpcs().put(1, new RemoteSignalingPointCode(2, 0, 0));
-		resource1.getRemoteSsns().put(1, new RemoteSubSystem(2, 8, 0));
+		resource1.getRemoteSpcs().put(getStack2PC(), new RemoteSignalingPointCode(getStack2PC(), 0, 0));
+		resource1.getRemoteSsns().put(getSSN(), new RemoteSubSystem(getStack2PC(), getSSN(), 0));
 
 		sccpStack1.setRouter(router1);
 		sccpStack1.setSccpResource(resource1);
-		sccpStack1.setLocalSpc(1);
+		sccpStack1.setLocalSpc(getStack1PC());
 		sccpStack1.setNi(2);
 		sccpStack1.setMtp3UserPart(mtp3UserPart1);
 		sccpStack1.start();
@@ -100,12 +100,12 @@ public abstract class SccpHarness {
 		resource2.getRemoteSpcs().clear();
 		resource2.getRemoteSsns().clear();
 
-		resource2.getRemoteSpcs().put(1, new RemoteSignalingPointCode(1, 0, 0));
-		resource2.getRemoteSsns().put(1, new RemoteSubSystem(1, 8, 0));
+		resource2.getRemoteSpcs().put(getStack1PC(), new RemoteSignalingPointCode(getStack1PC(), 0, 0));
+		resource2.getRemoteSsns().put(getSSN(), new RemoteSubSystem(getStack1PC(), getSSN(), 0));
 
 		sccpStack2.setRouter(router2);
 		sccpStack2.setSccpResource(resource2);
-		sccpStack2.setLocalSpc(2);
+		sccpStack2.setLocalSpc(getStack2PC());
 		sccpStack2.setNi(2);
 		sccpStack2.setMtp3UserPart(mtp3UserPart2);
 		sccpStack2.start();
@@ -138,7 +138,16 @@ public abstract class SccpHarness {
 		sccpStack1.stop();
 
 	}
-
+	
+	protected int getStack1PC()
+	{return 1;}
+	
+	protected int getStack2PC()
+	{return 2;}
+	
+	protected int getSSN()
+	{return 8;}
+	
 	public void setUp() throws IllegalStateException {
 		this.setUpStack1();
 		this.setUpStack2();

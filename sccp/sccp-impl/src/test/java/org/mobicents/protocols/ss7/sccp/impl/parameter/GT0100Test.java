@@ -49,10 +49,12 @@ import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
 /**
  * 
  * @author kulikov
+ * @author baranowb
  */
 public class GT0100Test {
 
-	private byte[] data = new byte[] { 0, 0x12, 0x03, 0x09, 0x32, 0x26, 0x59, 0x18 };
+	private byte[] dataEven = new byte[] {0, 0x12, 0x03, 0x09, 0x32, 0x26, 0x59, 0x18 }; //Es.Even -> 0x12 & 0x0F
+	private byte[] dataOdd = new byte[] { 0, 0x11, 0x03, 0x09, 0x32, 0x26, 0x59, 0x08 }; //Es.Odd -> 0x11 & 0x0F - thus leading zero in last hex
 	private GT0100Codec codec = new GT0100Codec();
 
 	public GT0100Test() {
@@ -78,9 +80,9 @@ public class GT0100Test {
 	 * Test of decode method, of class GT0011.
 	 */
 	@Test
-	public void testDecode() throws Exception {
+	public void testDecodeEven() throws Exception {
 		// wrap data with input stream
-		ByteArrayInputStream in = new ByteArrayInputStream(data);
+		ByteArrayInputStream in = new ByteArrayInputStream(dataEven);
 
 		// create GT object and read data from stream
 		GT0100 gt1 = (GT0100) codec.decode(in);
@@ -95,7 +97,7 @@ public class GT0100Test {
 	 * Test of encode method, of class GT0011.
 	 */
 	@Test
-	public void testEncode() throws Exception {
+	public void testEncodeEven() throws Exception {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		GT0100 gt = new GT0100(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.NATIONAL, "9023629581");
 
@@ -103,7 +105,40 @@ public class GT0100Test {
 
 		byte[] res = bout.toByteArray();
 
-		boolean correct = Arrays.equals(data, res);
+		boolean correct = Arrays.equals(dataEven, res);
+		assertTrue("Incorrect encoding", correct);
+	}
+	
+	/**
+	 * Test of decode method, of class GT0011.
+	 */
+	@Test
+	public void testDecodeOdd() throws Exception {
+		// wrap data with input stream
+		ByteArrayInputStream in = new ByteArrayInputStream(dataOdd);
+
+		// create GT object and read data from stream
+		GT0100 gt1 = (GT0100) codec.decode(in);
+
+		// check results
+		assertEquals(0, gt1.getTranslationType());
+		assertEquals(NumberingPlan.ISDN_TELEPHONY, gt1.getNumberingPlan());
+		assertEquals("902362958", gt1.getDigits());
+	}
+
+	/**
+	 * Test of encode method, of class GT0011.
+	 */
+	@Test
+	public void testEncodeOdd() throws Exception {
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		GT0100 gt = new GT0100(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.NATIONAL, "902362958");
+
+		codec.encode(gt, bout);
+
+		byte[] res = bout.toByteArray();
+
+		boolean correct = Arrays.equals(dataOdd, res);
 		assertTrue("Incorrect encoding", correct);
 	}
 

@@ -133,6 +133,25 @@ public class SccpRoutingControl {
 		this.route(msg, false);
 	}
 
+	protected void send(SccpMessage message) throws IOException {
+
+		int dpc = message.getCalledPartyAddress().getSignalingPointCode();
+		int sls = 1; // TODO : How to calculate this?
+		int ssi = this.sccpStackImpl.ni << 2;
+
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		// encoding routing label
+		bout.write((byte) (((ssi & 0x0F) << 4) | (SccpStackImpl.SI_SCCP & 0x0F)));
+		bout.write((byte) dpc);
+		bout.write((byte) (((dpc >> 8) & 0x3F) | ((this.sccpStackImpl.localSpc & 0x03) << 6)));
+		bout.write((byte) (this.sccpStackImpl.localSpc >> 2));
+		bout.write((byte) (((this.sccpStackImpl.localSpc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
+
+		((SccpMessageImpl) message).encode(bout);
+		byte[] msg = bout.toByteArray();
+		this.sccpStackImpl.txDataQueue.add(msg);
+	}
+	
 	private void translationFunction(SccpMessage msg, final boolean returnError,final boolean fromMtp) throws IOException {
 
 		SccpAddress calledPartyAddress = msg.getCalledPartyAddress();
@@ -175,7 +194,7 @@ public class SccpRoutingControl {
 		// code availability is needed
 		if (translationAddress.getSignalingPointCode() != this.sccpStackImpl.localSpc) {
 			// Check if the Primary DPC is prohibited
-			RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpc(
+			RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(
 					translationAddress.getSignalingPointCode());
 
 			if (remoteSpc == null) {
@@ -212,7 +231,7 @@ public class SccpRoutingControl {
 				}
 
 				// Check if the Secondary DPC is prohibited
-				remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpc(
+				remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(
 						translationAddress.getSignalingPointCode());
 
 				if (remoteSpc == null) {
@@ -372,7 +391,7 @@ public class SccpRoutingControl {
 					// ITU-T Q.714
 
 					// Check if the Primary DPC is prohibited
-					RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpc(dpc);
+					RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(dpc);
 
 					if (remoteSpc == null) {
 						if (logger.isEnabledFor(Level.WARN)) {
@@ -478,25 +497,5 @@ public class SccpRoutingControl {
 			}
 		}
 	}
-
-	protected void send(SccpMessage message) throws IOException {
-
-		int dpc = message.getCalledPartyAddress().getSignalingPointCode();
-		int sls = 1; // TODO : How to calculate this?
-		int ssi = this.sccpStackImpl.ni << 2;
-
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		// encoding routing label
-		bout.write((byte) (((ssi & 0x0F) << 4) | (SccpStackImpl.SI_SCCP & 0x0F)));
-		bout.write((byte) dpc);
-		bout.write((byte) (((dpc >> 8) & 0x3F) | ((this.sccpStackImpl.localSpc & 0x03) << 6)));
-		bout.write((byte) (this.sccpStackImpl.localSpc >> 2));
-		bout.write((byte) (((this.sccpStackImpl.localSpc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
-
-		((SccpMessageImpl) message).encode(bout);
-		byte[] msg = bout.toByteArray();
-		this.sccpStackImpl.txDataQueue.add(msg);
-	}
-
 
 }

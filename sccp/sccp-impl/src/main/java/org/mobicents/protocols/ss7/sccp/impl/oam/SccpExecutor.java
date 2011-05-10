@@ -217,7 +217,7 @@ public class SccpExecutor {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
 
-			int remoteSpcId = Integer.parseInt(options[3]);
+			int remoteSpcId = Integer.parseInt(options[3]); //FIXME: Amit is this ok? - to use ID?
 			if (this.sccpResource.getRemoteSpc(remoteSpcId) != null) {
 				return SccpOAMMessage.RSPC_ALREADY_EXIST;
 			}

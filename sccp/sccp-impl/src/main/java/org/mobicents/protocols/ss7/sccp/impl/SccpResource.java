@@ -128,6 +128,18 @@ public class SccpResource {
 		return this.remoteSpcs.get(remoteSpcId);
 	}
 
+	public RemoteSignalingPointCode getRemoteSpcByPC(int remotePC) {
+		for (FastMap.Entry<Integer, RemoteSignalingPointCode> e = this.remoteSpcs.head(), end = this.remoteSpcs.tail(); (e = e
+				.getNext()) != end;) {
+			RemoteSignalingPointCode remoteSubSystem = e.getValue();
+			if (remoteSubSystem.getRemoteSpc() == remotePC ) {
+				return remoteSubSystem;
+			}
+
+		}
+		return null;
+	}
+	
 	public FastMap<Integer, RemoteSignalingPointCode> getRemoteSpcs() {
 		return remoteSpcs;
 	}

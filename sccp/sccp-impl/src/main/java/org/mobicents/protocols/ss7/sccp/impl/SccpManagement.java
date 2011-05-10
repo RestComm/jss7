@@ -412,7 +412,7 @@ public class SccpManagement implements SccpListener {
 	}
 
 	private void prohibitRsp(int affectedPc) {
-		RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpc(affectedPc);
+		RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(affectedPc);
 		if (remoteSpc != null) {
 			remoteSpc.setRemoteSpcProhibited(true);
 		}
@@ -421,7 +421,7 @@ public class SccpManagement implements SccpListener {
 	}
 
 	private void allowRsp(int affectedPc) {
-		RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpc(affectedPc);
+		RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(affectedPc);
 		if (remoteSpc != null) {
 			remoteSpc.setRemoteSpcProhibited(false);
 		}

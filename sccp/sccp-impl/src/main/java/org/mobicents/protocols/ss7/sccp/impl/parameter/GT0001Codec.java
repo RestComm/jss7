@@ -59,7 +59,7 @@ public class GT0001Codec extends GTCodec {
         }
         
         if (odd) {
-            digits = digits.substring(1, digits.length() - 1);
+            digits = digits.substring(0, digits.length() - 1);
         }
         return new GT0001(nai, digits);
     }

@@ -59,32 +59,6 @@ public class GT0100 extends GlobalTitle {
 		this.encodingScheme = digits.length() % 2 == 0 ? EncodingScheme.BCD_EVEN : EncodingScheme.BCD_ODD;
 	}
 
-	public void decode(InputStream in) throws IOException {
-		int b1 = in.read() & 0xff;
-		int b2 = in.read() & 0xff;
-		int b3 = in.read() & 0xff;
-
-		tt = b1;
-
-		encodingScheme = EncodingScheme.valueOf(b2 & 0x0f);
-		np = NumberingPlan.valueOf((b2 & 0xf0) >> 4);
-		nai = NatureOfAddress.valueOf(b3 & 0x7f);
-
-		digits = encodingScheme.decodeDigits(in);
-	}
-
-	public void encode(OutputStream out) throws IOException {
-		out.write((byte) tt);
-
-		byte b = (byte) ((np.getValue() << 4) | (encodingScheme.getValue()));
-		out.write(b);
-
-		b = (byte) (nai.getValue() & 0x7f);
-		out.write(b);
-
-		encodingScheme.encodeDigits(digits, out);
-	}
-
 	public int getTranslationType() {
 		return tt;
 	}

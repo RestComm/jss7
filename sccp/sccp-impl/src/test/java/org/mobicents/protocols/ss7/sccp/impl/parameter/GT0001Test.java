@@ -48,10 +48,12 @@ import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
 /**
  * @author amit bhayani
  * @author kulikov
+ * @author baranowb
  */
 public class GT0001Test {
 
-    private byte[] data = new byte[] {3,0x09,0x32,0x26,0x59,0x18};
+	private byte[] dataEven = new byte[] {              3,0x09,0x32,0x26,0x59,0x18};
+	private byte[] dataOdd = new byte[] {(byte)(3 | 0x80),0x09,0x32,0x26,0x59,0x08};
     private GT0001Codec codec = new GT0001Codec();
     
     public GT0001Test() {
@@ -77,9 +79,9 @@ public class GT0001Test {
      * Test of decode method, of class GT0001Codec.
      */
     @Test
-    public void testDecode() throws Exception {
+    public void testDecodeEven() throws Exception {
         //wrap data with input stream
-        ByteArrayInputStream in = new ByteArrayInputStream(data);
+        ByteArrayInputStream in = new ByteArrayInputStream(dataEven);
         
         //create GT object and read data from stream
         GT0001 gt1 = (GT0001) codec.decode(in);
@@ -93,7 +95,7 @@ public class GT0001Test {
      * Test of encode method, of class GT0001Codec.
      */
     @Test
-    public void testEncode() throws Exception {
+    public void testEncodeEven() throws Exception {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         GT0001 gt = new GT0001(NatureOfAddress.NATIONAL, "9023629581");
         
@@ -101,9 +103,43 @@ public class GT0001Test {
         
         byte[] res = bout.toByteArray();
         
-        boolean correct = Arrays.equals(data, res);        
+        boolean correct = Arrays.equals(dataEven, res);        
         assertTrue("Incorrect encoding", correct);
     }
+    
+
+    /**
+     * Test of decode method, of class GT0001Codec.
+     */
+    @Test
+    public void testDecodeOdd() throws Exception {
+        //wrap data with input stream
+        ByteArrayInputStream in = new ByteArrayInputStream(dataOdd);
+        
+        //create GT object and read data from stream
+        GT0001 gt1 = (GT0001) codec.decode(in);
+        
+        //check results
+        assertEquals(NatureOfAddress.NATIONAL, gt1.getNoA());
+        assertEquals("902362958", gt1.getDigits());
+    }
+
+    /**
+     * Test of encode method, of class GT0001Codec.
+     */
+    @Test
+    public void testEncodeOdd() throws Exception {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        GT0001 gt = new GT0001(NatureOfAddress.NATIONAL, "902362958");
+        
+        codec.encode(gt, bout);
+        
+        byte[] res = bout.toByteArray();
+        
+        boolean correct = Arrays.equals(dataOdd, res);        
+        assertTrue("Incorrect encoding", correct);
+    }
+    
     
     @Test
     public void testSerialization() throws Exception {
