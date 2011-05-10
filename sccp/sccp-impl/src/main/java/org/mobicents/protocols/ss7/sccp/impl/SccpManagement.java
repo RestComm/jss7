@@ -151,7 +151,7 @@ public class SccpManagement implements SccpListener {
 	}
 
 	@Override
-	public void onMessage(SccpMessage message) {
+	public void onMessage(SccpMessage message, int seqControl) {
 		byte[] data = ((UnitData) message).getData();
 		int messgType = data[0];
 		int affectedSsn = data[1];
@@ -160,8 +160,8 @@ public class SccpManagement implements SccpListener {
 
 		if (logger.isInfoEnabled()) {
 			logger.info(String
-					.format("Received SCMG message. Message Type=%d, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d",
-							messgType, affectedSsn, affectedPc, subsystemMultiplicity));
+					.format("Received SCMG message. Message Type=%d, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
+							messgType, affectedSsn, affectedPc, subsystemMultiplicity, seqControl));
 		}
 		switch (messgType) {
 		case SSA:

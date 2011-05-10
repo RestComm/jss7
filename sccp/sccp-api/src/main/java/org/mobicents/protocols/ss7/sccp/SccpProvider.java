@@ -66,11 +66,11 @@ public interface SccpProvider extends Serializable {
 	 * Sends message.
 	 * 
 	 * @param message
-	 *            the message to be sent.
-	 * @param destination
-	 *            the address of the recipient.
+	 *            Message to be sent
+	 * @param seqControl
+	 *            Determines the SLS used to send the message
 	 * @throws IOException
 	 */
-	public void send(SccpMessage message) throws IOException;
+	public void send(SccpMessage message, int seqControl) throws IOException;
 
 }

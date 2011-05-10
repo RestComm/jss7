@@ -195,7 +195,7 @@ public class SccpStackImpl implements SccpStack {
 		IDLE, CONFIGURED, RUNNING;
 	}
 
-	protected void send(SccpMessage message) throws IOException {
+	protected void send(SccpMessageImpl message) throws IOException {
 		MessageHandler handler = new MessageHandler(message);
 		executor.execute(handler);
 	}
@@ -214,8 +214,8 @@ public class SccpStackImpl implements SccpStack {
 			this.mtpOriginated = true;
 		}
 
-		protected MessageHandler(SccpMessage message) {
-			this.message = (SccpMessageImpl) message;
+		protected MessageHandler(SccpMessageImpl message) {
+			this.message = message;
 			this.mtpOriginated = false;
 		}
 

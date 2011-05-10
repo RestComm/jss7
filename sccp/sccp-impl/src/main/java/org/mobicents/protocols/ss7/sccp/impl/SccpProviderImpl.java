@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
@@ -86,8 +87,10 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
 		}
 	}
 
-	public void send(SccpMessage message) throws IOException {
-		stack.send(message);
+	public void send(SccpMessage message, int seqControl) throws IOException {
+		SccpMessageImpl msg = ((SccpMessageImpl) message);
+		msg.setSls(seqControl);
+		stack.send(msg);
 	}
 
 }

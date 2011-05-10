@@ -80,7 +80,7 @@ public class SccpRoutingControl {
 	protected void routeMssgFromMtp(SccpMessageImpl msg) throws IOException {
 		// TODO if the local SCCP or node is in an overload condition, SCRC
 		// shall inform SCMG
-		boolean returnError = ((SccpMessageImpl) msg).getProtocolClass().getHandling() == ProtocolClass.HANDLING_RET_ERR;
+		boolean returnError = msg.getProtocolClass().getHandling() == ProtocolClass.HANDLING_RET_ERR;
 		SccpAddress calledPartyAddress = msg.getCalledPartyAddress();
 		RoutingIndicator ri = calledPartyAddress.getAddressIndicator().getRoutingIndicator();
 		switch (ri) {
@@ -88,7 +88,7 @@ public class SccpRoutingControl {
 			int ssn = msg.getCalledPartyAddress().getSubsystemNumber();
 			if (ssn == 1) {
 				// This is for management
-				this.sccpManagement.onMessage(msg);
+				this.sccpManagement.onMessage(msg, msg.getSls());
 				return;
 			}
 			SccpListener listener = this.sccpProviderImpl.ssnToListener.get(ssn);
@@ -110,7 +110,7 @@ public class SccpRoutingControl {
 			// Notify Listener
 			try{
 				//JIC: user may behave bad and throw something here.
-				listener.onMessage(msg);
+				listener.onMessage(msg, msg.getSls());
 			}catch(Exception e)
 			{
 				if (logger.isEnabledFor(Level.WARN)) {
@@ -136,7 +136,7 @@ public class SccpRoutingControl {
 	protected void send(SccpMessage message) throws IOException {
 
 		int dpc = message.getCalledPartyAddress().getSignalingPointCode();
-		int sls = 1; // TODO : How to calculate this?
+		int sls = ((SccpMessageImpl)message).getSls();
 		int ssi = this.sccpStackImpl.ni << 2;
 
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -310,7 +310,7 @@ public class SccpRoutingControl {
 					// Notify Listener
 					try{
 						//JIC: user may behave bad and throw something here.
-						listener.onMessage(msg);
+						listener.onMessage(msg, ((SccpMessageImpl)msg).getSls());
 					}catch(Exception e)
 					{
 						if (logger.isEnabledFor(Level.WARN)) {
@@ -489,6 +489,7 @@ public class SccpRoutingControl {
 			}
 		}
 
+		//TODO : SeqControl should be set from original message?
 		if (ans != null) {
 			if (fromMtp) {
 				this.send(ans);

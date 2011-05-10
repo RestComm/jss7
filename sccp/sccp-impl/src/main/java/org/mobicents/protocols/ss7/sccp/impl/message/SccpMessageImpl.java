@@ -43,7 +43,7 @@ public abstract class SccpMessageImpl implements SccpMessage {
 
 	// These are MTP3 signaling information set when message is received from
 	// MTP3
-	private int sls = -1;
+	private int sls = 0;
 	private int opc = -1;
 	private int dpc = -1;
 

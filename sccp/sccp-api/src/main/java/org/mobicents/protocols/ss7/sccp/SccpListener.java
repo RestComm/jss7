@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.sccp;
 
-
 import java.io.Serializable;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 
@@ -32,11 +31,16 @@ import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
  * @author baranowb
  */
 public interface SccpListener extends Serializable {
+
 	/**
-	 * Called when proper data is received, it is partially decoded. This method is called with message payload.
-	 * @param calledPartyAddress - destination address
-	 * @param callingPartyAddress - originating address
-	 * @param data - payload of data unit
+	 * Called when proper data is received, it is partially decoded. This method
+	 * is called with message payload.
+	 * 
+	 * @param message
+	 *            Message received
+	 * @param seqControl
+	 *            The SeqControl value between 0 to 31 indicating the SLS over
+	 *            which message is received
 	 */
-	public void onMessage(SccpMessage message);
+	public void onMessage(SccpMessage message, int seqControl);
 }

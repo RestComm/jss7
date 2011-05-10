@@ -320,12 +320,12 @@ public class SccpStackImplTest extends SccpHarness {
 			ProtocolClass pClass = paramFactory.createProtocolClass(0, 0);
 			UnitData udt = messageFactory.createUnitData(pClass, dest, address);
 			udt.setData(new byte[10]);
-			provider.send(udt);
+			provider.send(udt, 1);
 		}
 
-		public void onMessage(SccpMessage message) {
+		public void onMessage(SccpMessage message, int seqControl) {
 			this.msg = message;
-			System.out.println(message);
+			System.out.println(String.format("SccpMessage=%s seqControl=%d", message, seqControl));
 		}
 
 	}
