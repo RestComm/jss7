@@ -21,9 +21,6 @@
  */
 package org.mobicents.protocols.ss7.sccp.impl;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
@@ -158,41 +155,5 @@ public abstract class SccpHarness {
 		this.tearDownStack2();
 	}
 
-	protected class Mtp3UserPartImpl implements Mtp3UserPart {
-
-		private ConcurrentLinkedQueue<byte[]> readFrom;
-		private ConcurrentLinkedQueue<byte[]> writeTo;
-
-		Mtp3UserPartImpl(ConcurrentLinkedQueue<byte[]> readFrom, ConcurrentLinkedQueue<byte[]> writeTo) {
-			this.readFrom = readFrom;
-			this.writeTo = writeTo;
-		}
-
-		@Override
-		public int read(ByteBuffer b) throws IOException {
-			int dataRead = 0;
-			while (!this.readFrom.isEmpty()) {
-				byte[] rxData = this.readFrom.poll();
-				System.out.println("Read " + Arrays.toString(rxData));
-				dataRead = dataRead + rxData.length;
-				b.put(rxData);
-			}
-			return dataRead;
-		}
-
-		@Override
-		public int write(ByteBuffer b) throws IOException {
-			int dataAdded = 0;
-			if (b.hasRemaining()) {
-				byte[] txData = new byte[b.limit() - b.position()];
-				b.get(txData);
-				dataAdded = dataAdded + txData.length;
-				System.out.println("Write " + Arrays.toString(txData));
-				this.writeTo.add(txData);
-			}
-			return dataAdded;
-		}
-
-	}
 
 }

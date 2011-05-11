@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.sccp.impl;
+package org.mobicents.protocols.ss7.sccp.impl.translation;
 
 import static org.junit.Assert.assertTrue;
 
@@ -30,23 +30,25 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
-import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
+import org.mobicents.protocols.ss7.sccp.impl.User;
 import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
 import org.mobicents.protocols.ss7.sccp.message.UnitData;
-import org.mobicents.protocols.ss7.sccp.parameter.GT0011;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * @author amit bhayani
+ * @author kulikov
  * @author baranowb
  */
-public class GT0011SccpStackImplTest extends SccpHarness {
+public class GT0001SccpStackImplTest extends SccpHarness {
 
 	private SccpAddress a1, a2;
 
-	public GT0011SccpStackImplTest() {
+	public GT0001SccpStackImplTest() {
 	}
 
 	@BeforeClass
@@ -68,23 +70,24 @@ public class GT0011SccpStackImplTest extends SccpHarness {
 		super.tearDown();
 	}
 
+	
 	protected static final String GT1_digits = "1234567890";
-	protected static final String GT2_digits = "098764321";
+	protected static final String GT2_digits = "0987654321";
 	
 	protected static final String GT1_pattern_digits = "1/???????/90";
-	protected static final String GT2_pattern_digits = "0/??????/21";
+	protected static final String GT2_pattern_digits = "0/???????/21";
 	
 	@Test
 	public void testRemoteRoutingBasedOnGT001_DPC_SSN() throws Exception {
 		
-		GT0011 gt1 = new GT0011(0,NumberingPlan.ISDN_MOBILE,GT1_digits);
-		GT0011 gt2 = new GT0011(0,NumberingPlan.ISDN_TELEPHONY,GT2_digits);
+		GT0001 gt1 = new GT0001(NatureOfAddress.NATIONAL,GT1_digits);
+		GT0001 gt2 = new GT0001(NatureOfAddress.NATIONAL,GT2_digits);
 		
 		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt1, getSSN());
 		a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt2, getSSN());
 		
-		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0011(0,NumberingPlan.ISDN_TELEPHONY,GT2_pattern_digits), getSSN());
-		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0011(0,NumberingPlan.ISDN_MOBILE,GT1_pattern_digits), getSSN());
+		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,GT2_pattern_digits), getSSN());
+		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,GT1_pattern_digits), getSSN());
 		Rule rule1 = new Rule(rule1SccpAddress, "K/R/K");
 		rule1.setPrimaryAddressId(22);
 		Rule rule2 = new Rule(rule2SccpAddress, "R/R/R");
@@ -120,7 +123,7 @@ public class GT0011SccpStackImplTest extends SccpHarness {
 	
 			protected boolean matchCalledPartyAddress() {
 				UnitData udt = (UnitData) msg;
-				SccpAddress addressToMatch = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, getStack2PC(), new GT0011(0,NumberingPlan.ISDN_TELEPHONY,"021"), getSSN());
+				SccpAddress addressToMatch = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), new GT0001(NatureOfAddress.NATIONAL,"021"), getSSN());
 				if (!addressToMatch.equals(udt.getCalledPartyAddress())) {
 					return false;
 				}
@@ -143,14 +146,14 @@ public class GT0011SccpStackImplTest extends SccpHarness {
 	public void testRemoteRoutingBasedOnGT001() throws Exception {
 		
 		//here we do as above, however receiving stack needs also rule, to match it localy.
-		GT0011 gt1 = new GT0011(0,NumberingPlan.ISDN_MOBILE,GT1_digits);
-		GT0011 gt2 = new GT0011(0,NumberingPlan.ISDN_TELEPHONY,GT2_digits);
+		GT0001 gt1 = new GT0001(NatureOfAddress.NATIONAL,GT1_digits);
+		GT0001 gt2 = new GT0001(NatureOfAddress.NATIONAL,GT2_digits);
 		
 		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt1, getSSN());
 		a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt2, getSSN());
 		
-		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0011(0,NumberingPlan.ISDN_TELEPHONY,GT2_pattern_digits), getSSN());
-		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0011(0,NumberingPlan.ISDN_MOBILE,GT1_pattern_digits), getSSN());
+		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,GT2_pattern_digits), getSSN());
+		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,GT1_pattern_digits), getSSN());
 		Rule rule1 = new Rule(rule1SccpAddress, "K/R/K");
 		rule1.setPrimaryAddressId(22);
 		Rule rule2 = new Rule(rule2SccpAddress, "R/K/R");
@@ -174,8 +177,8 @@ public class GT0011SccpStackImplTest extends SccpHarness {
 		super.router1.getPrimaryAddresses().put(44, primary1SccpAddress);
 		super.router2.getPrimaryAddresses().put(66, primary2SccpAddress);
 		//2. add rules to make translation to above
-		rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0011(0,NumberingPlan.ISDN_MOBILE,"23456/?/8"), getSSN());
-		rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0011(0,NumberingPlan.ISDN_TELEPHONY,"02/?"), getSSN());
+		rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,"23456/?/8"), getSSN());
+		rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,"02/?"), getSSN());
 		rule1 = new Rule(rule1SccpAddress, "K/K/K");
 		rule1.setPrimaryAddressId(44);
 		rule2 = new Rule(rule2SccpAddress, "K/K");
@@ -191,7 +194,7 @@ public class GT0011SccpStackImplTest extends SccpHarness {
 			protected boolean matchCalledPartyAddress() {
 				UnitData udt = (UnitData) msg;
 				//pc=1,ssn=8,gt=GLOBAL_TITLE_INCLUDES_NATURE_OF_ADDRESS_INDICATOR_ONLY 2345678
-				SccpAddress addressToMatch = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(),new GT0011(0,NumberingPlan.ISDN_MOBILE,"2345678"), getSSN());
+				SccpAddress addressToMatch = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), new GT0001(NatureOfAddress.NATIONAL,"2345678"), getSSN());
 				if (!addressToMatch.equals(udt.getCalledPartyAddress())) {
 					return false;
 				}
@@ -206,7 +209,7 @@ public class GT0011SccpStackImplTest extends SccpHarness {
 	
 			protected boolean matchCalledPartyAddress() {
 				UnitData udt = (UnitData) msg;
-				SccpAddress addressToMatch = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), new GT0011(0,NumberingPlan.ISDN_TELEPHONY,"021"), getSSN());
+				SccpAddress addressToMatch = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), new GT0001(NatureOfAddress.NATIONAL,"021"), getSSN());
 				if (!addressToMatch.equals(udt.getCalledPartyAddress())) {
 					return false;
 				}
@@ -223,4 +226,7 @@ public class GT0011SccpStackImplTest extends SccpHarness {
 		assertTrue("Message not received", u1.check());
 		assertTrue("Message not received", u2.check());
 	}
+	
+	
+
 }
