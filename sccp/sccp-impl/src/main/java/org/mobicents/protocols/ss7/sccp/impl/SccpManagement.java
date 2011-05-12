@@ -48,20 +48,20 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 public class SccpManagement implements SccpListener {
 	private static final Logger logger = Logger.getLogger(SccpManagement.class);
 
-	private static final int MTP3_PAUSE = 3;
-	private static final int MTP3_RESUME = 4;
-	private static final int MTP3_STATUS = 5;
+	protected static final int MTP3_PAUSE = 3;
+	protected static final int MTP3_RESUME = 4;
+	protected static final int MTP3_STATUS = 5;
 
-	private static final int SSA = 1;
-	private static final int SSP = 2;
-	private static final int SST = 3;
-	private static final int SOR = 4;
-	private static final int SOG = 5;
-	private static final int SSC = 6;
+	protected static final int SSA = 1;
+	protected static final int SSP = 2;
+	protected static final int SST = 3;
+	protected static final int SOR = 4;
+	protected static final int SOG = 5;
+	protected static final int SSC = 6;
 
-	private static final int UNAVAILABILITY_CAUSE_UNKNOWN = 0;
-	private static final int UNAVAILABILITY_CAUSE_UNEQUIPED = 1;
-	private static final int UNAVAILABILITY_CAUSE_INACCESSIBLE = 2;
+	protected static final int UNAVAILABILITY_CAUSE_UNKNOWN = 0;
+	protected static final int UNAVAILABILITY_CAUSE_UNEQUIPED = 1;
+	protected static final int UNAVAILABILITY_CAUSE_INACCESSIBLE = 2;
 
 	private SccpProviderImpl sccpProviderImpl;
 	private SccpStackImpl sccpStackImpl;
@@ -72,7 +72,7 @@ public class SccpManagement implements SccpListener {
 	// Keeps track of how many SST are running for given DPC
 	private final FastMap<Integer, FastList<SubSystemTest>> dpcVsSst = new FastMap<Integer, FastList<SubSystemTest>>();
 
-	protected SccpManagement(SccpProviderImpl sccpProviderImpl, SccpStackImpl sccpStackImpl) {
+	public SccpManagement(SccpProviderImpl sccpProviderImpl, SccpStackImpl sccpStackImpl) {
 		this.sccpProviderImpl = sccpProviderImpl;
 		this.sccpStackImpl = sccpStackImpl;
 	}
@@ -155,7 +155,7 @@ public class SccpManagement implements SccpListener {
 		byte[] data = ((UnitData) message).getData();
 		int messgType = data[0];
 		int affectedSsn = data[1];
-		int affectedPc = (data[2] << 8) | (data[3]);
+		int affectedPc = (data[2] & 0x00FF) | (data[3] & 0x00FF << 8);
 		int subsystemMultiplicity = data[3];
 
 		if (logger.isInfoEnabled()) {
@@ -481,7 +481,7 @@ public class SccpManagement implements SccpListener {
 		private volatile boolean recdMtpStatusResp = true;
 		
 		private Future testFuture;
-		private FastList<SubSystemTest> testsList;
+		private FastList<SubSystemTest> testsList; //just a ref to list of testse for DPC, instances of this classes should be there.
 		
 		private int ssn = 0;
 		private int affectedPc = 0;
@@ -543,20 +543,21 @@ public class SccpManagement implements SccpListener {
 		}
 
 		public synchronized void run() {
+			
 			if (started) {
 
-				if (ssn == 1 && !recdMtpStatusResp) {
+				if (this.ssn == 1 && !this.recdMtpStatusResp) {
 					// If no MTP STATUS received, means we consider previously
 					// unavailable (SCCP) has recovered
 
 					// TODO Take care of updating translation table;
-					stopTest();
+					this.stopTest();
 					return;
 
 				}
 				// Set it false again so we wait for response again after
 				// sending SST for SSN = 1 bellow
-				recdMtpStatusResp = false;
+				this.recdMtpStatusResp = false;
 
 				try {
 					sccpRoutingControl.send(udt);
@@ -567,7 +568,7 @@ public class SccpManagement implements SccpListener {
 				}
 
 				// TODO : How much to sleep?
-			
+				this.stopTest();
 				this.startTest();
 				
 			}// while

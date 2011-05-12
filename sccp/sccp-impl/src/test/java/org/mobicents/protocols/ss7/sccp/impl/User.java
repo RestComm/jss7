@@ -22,6 +22,8 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
@@ -40,26 +42,35 @@ public class User implements SccpListener {
 	protected SccpProvider provider;
 	protected SccpAddress address;
 	protected SccpAddress dest;
-
-	protected SccpMessage msg;
+	protected int ssn;
+	//protected SccpMessage msg;
+	protected List<SccpMessage> messages = new ArrayList<SccpMessage>();
 
 	public User(SccpProvider provider, SccpAddress address, SccpAddress dest, int ssn) {
 		this.provider = provider;
 		this.address = address;
 		this.dest = dest;
+		this.ssn = ssn;
+	}
+	
+	public void register()
+	{
 		provider.registerSccpListener(ssn, this);
 	}
+	public void deregister()
+	{
+		provider.deregisterSccpListener(ssn);
+	}
 
-	public boolean check() {
-		if (msg == null) {
+	public boolean check() { //override if required.
+		if (messages.size() == 0) {
 			return false;
 		}
-
+		SccpMessage msg = messages.get(0);
 		if (msg.getType() != UnitData.MESSAGE_TYPE) {
 			return false;
 		}
 
-		UnitData udt = (UnitData) msg;
 		if (!matchCalledPartyAddress()) {
 			return false;
 		}
@@ -73,6 +84,7 @@ public class User implements SccpListener {
 	
 	protected boolean matchCalledPartyAddress()
 	{
+		SccpMessage msg = messages.get(0);
 		UnitData udt = (UnitData) msg;
 		if (!address.equals(udt.getCalledPartyAddress())) {
 			return false;
@@ -82,6 +94,7 @@ public class User implements SccpListener {
 	
 	protected boolean matchCallingPartyAddress()
 	{
+		SccpMessage msg = messages.get(0);
 		UnitData udt = (UnitData) msg;
 		if (!dest.equals(udt.getCallingPartyAddress())) {
 			return false;
@@ -89,7 +102,7 @@ public class User implements SccpListener {
 		return true;
 	}
 
-	protected void send() throws IOException {
+	public void send() throws IOException {
 		MessageFactory messageFactory = provider.getMessageFactory();
 		ParameterFactory paramFactory = provider.getParameterFactory();
 
@@ -100,8 +113,12 @@ public class User implements SccpListener {
 	}
 
 	public void onMessage(SccpMessage message, int seqControl) {
-		this.msg = message;
+		this.messages.add(message);
 		System.out.println(String.format("SccpMessage=%s seqControl=%d", message, seqControl));
+	}
+
+	public List<SccpMessage> getMessages() {
+		return messages;
 	}
 
 }

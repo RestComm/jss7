@@ -34,6 +34,7 @@ import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.User;
 import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
+import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.message.UnitData;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
@@ -78,7 +79,7 @@ public class GT0001SccpStackImplTest extends SccpHarness {
 	protected static final String GT2_pattern_digits = "0/???????/21";
 	
 	@Test
-	public void testRemoteRoutingBasedOnGT001_DPC_SSN() throws Exception {
+	public void testRemoteRoutingBasedOnGT_DPC_SSN() throws Exception {
 		
 		GT0001 gt1 = new GT0001(NatureOfAddress.NATIONAL,GT1_digits);
 		GT0001 gt2 = new GT0001(NatureOfAddress.NATIONAL,GT2_digits);
@@ -109,6 +110,7 @@ public class GT0001SccpStackImplTest extends SccpHarness {
 
 	
 			protected boolean matchCalledPartyAddress() {
+				SccpMessage msg = messages.get(0);
 				UnitData udt = (UnitData) msg;
 				SccpAddress addressToMatch = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, getSSN());
 				if (!addressToMatch.equals(udt.getCalledPartyAddress())) {
@@ -122,6 +124,7 @@ public class GT0001SccpStackImplTest extends SccpHarness {
 
 	
 			protected boolean matchCalledPartyAddress() {
+				SccpMessage msg = messages.get(0);
 				UnitData udt = (UnitData) msg;
 				SccpAddress addressToMatch = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), new GT0001(NatureOfAddress.NATIONAL,"021"), getSSN());
 				if (!addressToMatch.equals(udt.getCalledPartyAddress())) {
@@ -131,7 +134,10 @@ public class GT0001SccpStackImplTest extends SccpHarness {
 			}
 			
 		};
-
+		
+		u1.register();
+		u2.register();
+		
 		u1.send();
 		u2.send();
 
@@ -143,7 +149,7 @@ public class GT0001SccpStackImplTest extends SccpHarness {
 	
 	
 	@Test
-	public void testRemoteRoutingBasedOnGT001() throws Exception {
+	public void testRemoteRoutingBasedOnGT() throws Exception {
 		
 		//here we do as above, however receiving stack needs also rule, to match it localy.
 		GT0001 gt1 = new GT0001(NatureOfAddress.NATIONAL,GT1_digits);
@@ -192,6 +198,7 @@ public class GT0001SccpStackImplTest extends SccpHarness {
 
 	
 			protected boolean matchCalledPartyAddress() {
+				SccpMessage msg = messages.get(0);
 				UnitData udt = (UnitData) msg;
 				//pc=1,ssn=8,gt=GLOBAL_TITLE_INCLUDES_NATURE_OF_ADDRESS_INDICATOR_ONLY 2345678
 				SccpAddress addressToMatch = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), new GT0001(NatureOfAddress.NATIONAL,"2345678"), getSSN());
@@ -208,6 +215,7 @@ public class GT0001SccpStackImplTest extends SccpHarness {
 
 	
 			protected boolean matchCalledPartyAddress() {
+				SccpMessage msg = messages.get(0);
 				UnitData udt = (UnitData) msg;
 				SccpAddress addressToMatch = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), new GT0001(NatureOfAddress.NATIONAL,"021"), getSSN());
 				if (!addressToMatch.equals(udt.getCalledPartyAddress())) {
@@ -218,6 +226,9 @@ public class GT0001SccpStackImplTest extends SccpHarness {
 			
 		};
 
+		u1.register();
+		u2.register();
+		
 		u1.send();
 		u2.send();
 

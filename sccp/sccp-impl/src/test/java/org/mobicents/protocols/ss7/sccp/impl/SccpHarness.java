@@ -33,17 +33,17 @@ import org.mobicents.protocols.ss7.sccp.impl.router.Router;
  */
 public abstract class SccpHarness {
 
-	protected SccpStackImpl sccpStack1 = new SccpStackImpl();
-	protected SccpProvider sccpProvider1 = sccpStack1.getSccpProvider();
+	protected SccpStackImpl sccpStack1;
+	protected SccpProvider sccpProvider1;
 
-	protected SccpStackImpl sccpStack2 = new SccpStackImpl();
-	protected SccpProvider sccpProvider2 = sccpStack2.getSccpProvider();
+	protected SccpStackImpl sccpStack2;
+	protected SccpProvider sccpProvider2;
 
-	private ConcurrentLinkedQueue<byte[]> data1 = new ConcurrentLinkedQueue<byte[]>();
-	private ConcurrentLinkedQueue<byte[]> data2 = new ConcurrentLinkedQueue<byte[]>();
+	protected ConcurrentLinkedQueue<byte[]> data1 = new ConcurrentLinkedQueue<byte[]>();
+	protected ConcurrentLinkedQueue<byte[]> data2 = new ConcurrentLinkedQueue<byte[]>();
 
-	private Mtp3UserPart mtp3UserPart1 = new Mtp3UserPartImpl(data1, data2);
-	private Mtp3UserPart mtp3UserPart2 = new Mtp3UserPartImpl(data2, data1);
+	protected Mtp3UserPart mtp3UserPart1 = new Mtp3UserPartImpl(data1, data2);
+	protected Mtp3UserPart mtp3UserPart2 = new Mtp3UserPartImpl(data2, data1);
 
 	protected Router router1 = new Router();
 	protected Router router2 = new Router();
@@ -58,7 +58,13 @@ public abstract class SccpHarness {
 		// TODO Auto-generated constructor stub
 	}
 
-	private void setUpStack1() {
+	protected void createStack1()
+	{
+		sccpStack1 = new SccpStackImpl();
+		sccpProvider1 = sccpStack1.getSccpProvider();
+	}
+	protected void setUpStack1() {
+		createStack1();
 		try {
 			router1.start();
 			router1.getRules().clear();
@@ -72,7 +78,7 @@ public abstract class SccpHarness {
 		resource1.getRemoteSpcs().clear();
 		resource1.getRemoteSsns().clear();
 
-		resource1.getRemoteSpcs().put(getStack2PC(), new RemoteSignalingPointCode(getStack2PC(), 0, 0));
+		resource1.getRemoteSpcs().put(1111333, new RemoteSignalingPointCode(getStack2PC(), 0, 0));
 		resource1.getRemoteSsns().put(getSSN(), new RemoteSubSystem(getStack2PC(), getSSN(), 0));
 
 		sccpStack1.setRouter(router1);
@@ -82,8 +88,13 @@ public abstract class SccpHarness {
 		sccpStack1.setMtp3UserPart(mtp3UserPart1);
 		sccpStack1.start();
 	}
-
-	private void setUpStack2() {
+	protected void createStack2()
+	{
+		sccpStack2 = new SccpStackImpl();
+		sccpProvider2 = sccpStack2.getSccpProvider();
+	}
+	protected void setUpStack2() {
+		createStack2();
 		try {
 			router2.start();
 			router2.getRules().clear();
@@ -97,7 +108,7 @@ public abstract class SccpHarness {
 		resource2.getRemoteSpcs().clear();
 		resource2.getRemoteSsns().clear();
 
-		resource2.getRemoteSpcs().put(getStack1PC(), new RemoteSignalingPointCode(getStack1PC(), 0, 0));
+		resource2.getRemoteSpcs().put(02, new RemoteSignalingPointCode(getStack1PC(), 0, 0));
 		resource2.getRemoteSsns().put(getSSN(), new RemoteSubSystem(getStack1PC(), getSSN(), 0));
 
 		sccpStack2.setRouter(router2);

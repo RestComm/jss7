@@ -42,7 +42,7 @@ public class Mtp3UserPartImpl implements Mtp3UserPart {
 		this.writeTo = writeTo;
 	}
 
-	@Override
+	
 	public int read(ByteBuffer b) throws IOException {
 		int dataRead = 0;
 		while (!this.readFrom.isEmpty()) {
@@ -54,7 +54,7 @@ public class Mtp3UserPartImpl implements Mtp3UserPart {
 		return dataRead;
 	}
 
-	@Override
+	
 	public int write(ByteBuffer b) throws IOException {
 		int dataAdded = 0;
 		if (b.hasRemaining()) {

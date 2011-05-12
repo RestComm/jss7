@@ -69,10 +69,10 @@ public class SccpStackImpl implements SccpStack {
 
 	protected MessageFactoryImpl messageFactory;
 
-	private SccpManagement sccpManagement;
-	private SccpRoutingControl sccpRoutingControl;
+	protected SccpManagement sccpManagement;
+	protected SccpRoutingControl sccpRoutingControl;
 
-	private Mtp3UserPart mtp3UserPart = null;
+	protected Mtp3UserPart mtp3UserPart = null;
 
 	protected int localSpc;
 	protected int ni = 2;

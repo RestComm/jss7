@@ -53,7 +53,7 @@ public class SccpRoutingControl {
 
 	private MessageFactoryImpl messageFactory;
 
-	protected SccpRoutingControl(SccpProviderImpl sccpProviderImpl, SccpStackImpl sccpStackImpl) {
+	public SccpRoutingControl(SccpProviderImpl sccpProviderImpl, SccpStackImpl sccpStackImpl) {
 		this.messageFactory = new MessageFactoryImpl();
 		this.sccpProviderImpl = sccpProviderImpl;
 		this.sccpStackImpl = sccpStackImpl;

@@ -89,6 +89,9 @@ public class PCSSNSccpStackImplTest extends SccpHarness {
 		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2,getSSN());
 		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1,getSSN());
 
+		u1.register();
+		u2.register();
+		
 		u1.send();
 		u2.send();
 
