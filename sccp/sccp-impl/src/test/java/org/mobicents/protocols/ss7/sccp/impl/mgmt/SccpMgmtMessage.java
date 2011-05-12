@@ -35,17 +35,19 @@ public class SccpMgmtMessage implements Serializable {
 	private int affectedPc;
 	private int subsystemMultiplicity;
 	private long tstamp = System.currentTimeMillis();
+	private int seq;
 	/**
 	 * @param messgType
 	 * @param affectedSsn
 	 * @param affectedPc
 	 * @param subsystemMultiplicity
 	 */
-	public SccpMgmtMessage(int messgType, int affectedSsn, int affectedPc, int subsystemMultiplicity) {
+	public SccpMgmtMessage(int seq,int messgType, int affectedSsn, int affectedPc, int subsystemMultiplicity) {
 		this.type = SccpMgmtMessageType.fromInt(messgType);
 		this.affectedPc = affectedPc;
 		this.affectedSsn = affectedSsn;
 		this.subsystemMultiplicity = subsystemMultiplicity;
+		this.seq = seq;
 	}
 
 	public SccpMgmtMessageType getType() {
@@ -73,6 +75,7 @@ public class SccpMgmtMessage implements Serializable {
 		int result = 1;
 		result = prime * result + affectedPc;
 		result = prime * result + affectedSsn;
+		result = prime * result + seq;
 		result = prime * result + subsystemMultiplicity;
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
@@ -90,6 +93,8 @@ public class SccpMgmtMessage implements Serializable {
 			return false;
 		if (affectedSsn != other.affectedSsn)
 			return false;
+		if (seq != other.seq)
+			return false;
 		if (subsystemMultiplicity != other.subsystemMultiplicity)
 			return false;
 		if (type != other.type)
@@ -97,10 +102,9 @@ public class SccpMgmtMessage implements Serializable {
 		return true;
 	}
 
-	
 	public String toString() {
 		return "SccpMgmtMessage [type=" + type + ", affectedSsn=" + affectedSsn + ", affectedPc=" + affectedPc + ", subsystemMultiplicity="
-				+ subsystemMultiplicity + ", tstamp=" + tstamp + "]";
+				+ subsystemMultiplicity + ", tstamp=" + tstamp + ", seq=" + seq + "]";
 	}
 
 }

@@ -63,6 +63,25 @@ public class Mtp3PrimitiveMessage {
 		this.congestion = Mtp3CongestionType.fromInt(congStatus);
 	}
 
+	
+	
+	/**
+	 * @param seq
+	 * @param type
+	 * @param affectedPc
+	 */
+	public Mtp3PrimitiveMessage(int seq, Mtp3PrimitiveMessageType type, int affectedPc) {
+		super();
+		this.seq = seq;
+		this.type = type;
+		this.affectedPc = affectedPc;
+	}
+	public Mtp3PrimitiveMessage(int seq, Mtp3PrimitiveMessageType type, int affectedPc, Mtp3StatusType status, Mtp3CongestionType congStatus, Mtp3UnavailabiltyCauseType unavailabiltyCause) {
+		this(seq, type, affectedPc);
+		this.status = status;
+		this.unavailabiltyCause = unavailabiltyCause;
+		this.congestion = congStatus;
+	}
 	public int getSeq() {
 		return seq;
 	}

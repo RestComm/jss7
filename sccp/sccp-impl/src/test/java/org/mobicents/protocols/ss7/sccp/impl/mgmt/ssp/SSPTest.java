@@ -38,16 +38,14 @@ import org.mobicents.protocols.ss7.sccp.impl.mgmt.SccpStackImplProxy;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- * Test condtion when SSN is not available in one stack aka prohibited
+ * Test condition when SSN is not available in one stack aka prohibited
  * 
  * @author baranowb
  */
 public class SSPTest extends SccpHarness {
 
 	private SccpAddress a1, a2;
-	
-	//flag to indicate error in async
-	private boolean encountereError = false;
+
 	public SSPTest() {
 	}
 
@@ -90,8 +88,8 @@ public class SSPTest extends SccpHarness {
 	 */
 	@Test
 	public void testRemoteRoutingBasedOnSsn() throws Exception {
-		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
-		a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
+		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, 8);
+		a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), null, 8);
 
 		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
 		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
@@ -105,7 +103,7 @@ public class SSPTest extends SccpHarness {
 
 		Thread.currentThread().sleep(1000);
 
-		assertTrue("U1 did not receiv message, it should!", u1.getMessages().size() > 0);
+		assertTrue("U1 did not receiv message, it should!", u1.getMessages().size() == 1);
 		assertTrue("Inproper message not received!", u1.check());
 		assertTrue("U2 Received message, it should not!", u2.getMessages().size() ==0);
 		
@@ -116,7 +114,7 @@ public class SSPTest extends SccpHarness {
 		assertTrue("U1 received Mtp3 Primitve, it should not!",stack.getManagementProxy().getMtp3Messages().size() == 0);
 		assertTrue("U1 did not receive Management message, it should !",stack.getManagementProxy().getMgmtMessages().size() == 1);
 		SccpMgmtMessage rmsg1_ssp = stack.getManagementProxy().getMgmtMessages().get(0);
-		SccpMgmtMessage emsg1_ssp = new SccpMgmtMessage(SccpMgmtMessageType.SSP.getType(), getSSN(), 2, 0);
+		SccpMgmtMessage emsg1_ssp = new SccpMgmtMessage(0,SccpMgmtMessageType.SSP.getType(), getSSN(), 2, 0);
 		assertEquals("Failed to match management message in U1",emsg1_ssp, rmsg1_ssp);
 		
 		//check if there is no SST
@@ -130,7 +128,7 @@ public class SSPTest extends SccpHarness {
 		assertTrue("U2 received Mtp3 Primitve, it should not!",stack.getManagementProxy().getMtp3Messages().size() == 0);
 		assertTrue("U2 did not receive Management message, it should !",stack.getManagementProxy().getMgmtMessages().size() == 1);
 		SccpMgmtMessage rmsg2_sst = stack.getManagementProxy().getMgmtMessages().get(0);
-		SccpMgmtMessage emsg2_sst = new SccpMgmtMessage(SccpMgmtMessageType.SST.getType(), getSSN(), 2, 0);
+		SccpMgmtMessage emsg2_sst = new SccpMgmtMessage(0,SccpMgmtMessageType.SST.getType(), getSSN(), 2, 0);
 		assertEquals("Failed to match management message in U2",emsg2_sst, rmsg2_sst);
 		
 		assertTrue("Out of sync messages, SST received before SSP.",rmsg2_sst.getTstamp()>=rmsg1_ssp.getTstamp());
@@ -143,12 +141,12 @@ public class SSPTest extends SccpHarness {
 		assertTrue("U1 received Mtp3 Primitve, it should not!",stack.getManagementProxy().getMtp3Messages().size() == 0);
 		assertTrue("U1 did not receive Management message, it should !",stack.getManagementProxy().getMgmtMessages().size() == 2);
 		rmsg1_ssp = stack.getManagementProxy().getMgmtMessages().get(0);
-		emsg1_ssp = new SccpMgmtMessage(SccpMgmtMessageType.SSP.getType(), getSSN(), 2, 0);
+		emsg1_ssp = new SccpMgmtMessage(0,SccpMgmtMessageType.SSP.getType(), getSSN(), 2, 0);
 		assertEquals("Failed to match management message in U1",emsg1_ssp, rmsg1_ssp);
 		
 		//now second message MUST be SSA here 
 		SccpMgmtMessage rmsg1_ssa = stack.getManagementProxy().getMgmtMessages().get(1);
-		SccpMgmtMessage emsg1_ssa = new SccpMgmtMessage(SccpMgmtMessageType.SSA.getType(), getSSN(), 2, 0);
+		SccpMgmtMessage emsg1_ssa = new SccpMgmtMessage(1,SccpMgmtMessageType.SSA.getType(), getSSN(), 2, 0);
 		
 		assertEquals("Failed to match management message in U1",emsg1_ssa, rmsg1_ssa);
 
@@ -159,11 +157,11 @@ public class SSPTest extends SccpHarness {
 		assertTrue("U2 received Mtp3 Primitve, it should not!",stack.getManagementProxy().getMtp3Messages().size() == 0);
 		assertTrue("U2 did not receive Management message, it should !",stack.getManagementProxy().getMgmtMessages().size() == 2);
 		rmsg2_sst = stack.getManagementProxy().getMgmtMessages().get(0);
-		emsg2_sst = new SccpMgmtMessage(SccpMgmtMessageType.SST.getType(), getSSN(), 2, 0);
+		emsg2_sst = new SccpMgmtMessage(0,SccpMgmtMessageType.SST.getType(), getSSN(), 2, 0);
 		assertEquals("Failed to match management message in U2",emsg2_sst, rmsg2_sst);
 		
 		rmsg2_sst = stack.getManagementProxy().getMgmtMessages().get(1);
-		emsg2_sst = new SccpMgmtMessage(SccpMgmtMessageType.SST.getType(), getSSN(), 2, 0);
+		emsg2_sst = new SccpMgmtMessage(1,SccpMgmtMessageType.SST.getType(), getSSN(), 2, 0);
 		assertEquals("Failed to match management message in U2",emsg2_sst, rmsg2_sst);
 		assertTrue("Out of sync messages, SST received before SSP.",rmsg2_sst.getTstamp()>=rmsg1_ssp.getTstamp());
 		
@@ -178,6 +176,18 @@ public class SSPTest extends SccpHarness {
 			
 		assertTrue("U2 received Mtp3 Primitve, it should not!",stack.getManagementProxy().getMtp3Messages().size() == 0);
 		assertTrue("U2 received more mgmt messages than it should!",stack.getManagementProxy().getMgmtMessages().size() == 2);
+		
+		//try to send;
+		
+		u1.send();
+
+		Thread.currentThread().sleep(1000);
+
+		assertTrue("U1 did not receiv message, it should!", u1.getMessages().size() == 1);
+		assertTrue("Inproper message not received!", u1.check());
+		assertTrue("U2 did not receiv message, it should!", u2.getMessages().size() == 1);
+		
+		//TODO: should we check flags in MgmtProxies.
 	}
 
 }

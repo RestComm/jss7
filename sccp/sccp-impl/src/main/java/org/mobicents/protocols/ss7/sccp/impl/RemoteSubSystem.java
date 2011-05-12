@@ -63,6 +63,37 @@ public class RemoteSubSystem implements XMLSerializable {
 		return remoteSsnFlag;
 	}
 
+	
+	public String toString() {
+		return "RemoteSubSystem [remoteSpc=" + remoteSpc + ", remoteSsn=" + remoteSsn + ", remoteSsnFlag=" + remoteSsnFlag + ", remoteSsnProhibited="
+				+ remoteSsnProhibited + "]";
+	}
+
+	
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + remoteSpc;
+		result = prime * result + remoteSsn;
+		return result;
+	}
+
+	
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RemoteSubSystem other = (RemoteSubSystem) obj;
+		if (remoteSpc != other.remoteSpc)
+			return false;
+		if (remoteSsn != other.remoteSsn)
+			return false;
+		return true;
+	}
+
 	protected static final XMLFormat<RemoteSubSystem> XML = new XMLFormat<RemoteSubSystem>(RemoteSubSystem.class) {
 
 		public void write(RemoteSubSystem ai, OutputElement xml) throws XMLStreamException {

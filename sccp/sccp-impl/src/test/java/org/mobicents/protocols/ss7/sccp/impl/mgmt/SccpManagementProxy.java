@@ -21,7 +21,10 @@
  */
 package org.mobicents.protocols.ss7.sccp.impl.mgmt;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +92,7 @@ public class SccpManagementProxy extends SccpManagement {
 		int affectedSsn = data[1];
 		int affectedPc = (data[2] & 0x00FF) | (data[3] & 0x00FF << 8);
 		int subsystemMultiplicity = data[3];
-		SccpMgmtMessage mgmtMessage = new SccpMgmtMessage(messgType,affectedSsn,affectedPc,subsystemMultiplicity);
+		SccpMgmtMessage mgmtMessage = new SccpMgmtMessage(seq++,messgType,affectedSsn,affectedPc,subsystemMultiplicity);
 		mgmtMessages.add(mgmtMessage);
 		super.onMessage(message, seqControl);
 	}
@@ -110,22 +113,31 @@ public class SccpManagementProxy extends SccpManagement {
 	}
 
 	protected void handleMtp3Primitive(DataInputStream in) {
+		ByteArrayOutputStream boas = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(boas);
 		try {
+			
 			int mtpParam = in.readUnsignedByte();
+			dos.writeByte(mtpParam & 0xFF);
 			
 			switch (mtpParam) {
 			case MTP3_PAUSE:
 			case MTP3_RESUME:
 				int affectedPc = in.readInt();
+				dos.writeInt(affectedPc);
 				Mtp3PrimitiveMessage prim = new Mtp3PrimitiveMessage(seq++,mtpParam,affectedPc);
 				mtp3Messages.add(prim);
 				break;
 			case MTP3_STATUS:
 				//here we have more :)
 				int status = in.readUnsignedByte();
+				dos.writeByte(status & 0xFF);
 				affectedPc = in.readInt();
+				dos.writeInt(affectedPc);
 				int congStatus = in.readShort();
+				dos.writeShort(congStatus);
 				int unavailabiltyCause = in.readShort();
+				dos.writeShort(unavailabiltyCause);
 				prim = new Mtp3PrimitiveMessage(seq++,mtpParam,affectedPc,status,congStatus,unavailabiltyCause);
 				mtp3Messages.add(prim);
 				break;
@@ -137,7 +149,7 @@ public class SccpManagementProxy extends SccpManagement {
 			encounteredError = true;
 			e.printStackTrace();
 		}
-		super.handleMtp3Primitive(in);
+		super.handleMtp3Primitive(new DataInputStream(new ByteArrayInputStream(boas.toByteArray())));
 	}
 
 }

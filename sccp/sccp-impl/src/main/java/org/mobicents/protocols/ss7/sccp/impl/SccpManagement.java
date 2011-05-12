@@ -372,8 +372,7 @@ public class SccpManagement implements SccpListener {
 				// subsystem status test with SSN = 1. If the cause in the
 				// MTP-STATUS indication primitive indicates "unequipped user",
 				// then no subsystem status test is initiated.
-
-				this.allowAllSsn(affectedPc);
+				this.prohibitAllSsn(affectedPc);
 
 				// Discontinues all subsystem status tests (including SSN = 1)
 				// if an MTP-PAUSE or MTP-STATUS indication primitive is
@@ -444,7 +443,7 @@ public class SccpManagement implements SccpListener {
 		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
 		for (FastMap.Entry<Integer, RemoteSubSystem> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
 			RemoteSubSystem remoteSsn = e.getValue();
-			if (remoteSsn.getRemoteSpc() == affectedPc && remoteSsn.getRemoteSsn() == ssn) {
+			if (remoteSsn.getRemoteSpc() == affectedPc && ( ssn == 1 || remoteSsn.getRemoteSsn() == ssn) ) {
 				remoteSsn.setRemoteSsnProhibited(false);
 				break;
 			}
