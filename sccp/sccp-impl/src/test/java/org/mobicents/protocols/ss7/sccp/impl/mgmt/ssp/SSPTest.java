@@ -166,6 +166,18 @@ public class SSPTest extends SccpHarness {
 		emsg2_sst = new SccpMgmtMessage(SccpMgmtMessageType.SST.getType(), getSSN(), 2, 0);
 		assertEquals("Failed to match management message in U2",emsg2_sst, rmsg2_sst);
 		assertTrue("Out of sync messages, SST received before SSP.",rmsg2_sst.getTstamp()>=rmsg1_ssp.getTstamp());
+		
+		//now lets wait and check if there is nothing more
+		Thread.currentThread().sleep(12000);
+		stack = (SccpStackImplProxy) sccpStack1;
+		//double check first message.
+		assertTrue("U1 received Mtp3 Primitve, it should not!",stack.getManagementProxy().getMtp3Messages().size() == 0);
+		assertTrue("U1 received more mgmt messages than it should !",stack.getManagementProxy().getMgmtMessages().size() == 2);
+		
+		 stack = (SccpStackImplProxy) sccpStack2;
+			
+		assertTrue("U2 received Mtp3 Primitve, it should not!",stack.getManagementProxy().getMtp3Messages().size() == 0);
+		assertTrue("U2 received more mgmt messages than it should!",stack.getManagementProxy().getMgmtMessages().size() == 2);
 	}
 
 }
