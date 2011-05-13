@@ -28,6 +28,7 @@ package org.mobicents.protocols.ss7.tcap.asn;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.mobicents.protocols.asn.AsnException;
@@ -125,6 +126,11 @@ public class ReturnErrorImpl implements ReturnError {
 	public ComponentType getType() {
 
 		return ComponentType.ReturnError;
+	}
+
+	
+	public String toString() {
+		return "ReturnError[invokeId=" + invokeId + ", errorCode=" + errorCode + ", parameters=" + Arrays.toString(parameters) + "]";
 	}
 
 	/*

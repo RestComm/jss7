@@ -27,13 +27,10 @@ package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
 
 /**
  * @author baranowb
@@ -87,6 +84,11 @@ public class DialogAbortAPDUImpl implements DialogAbortAPDU {
 	public boolean isUniDirectional() {
 		
 		return false;
+	}
+
+	
+	public String toString() {
+		return "DialogAbortAPDU[abortSource=" + abortSource + ", userInformation=" + userInformation + "]";
 	}
 
 	/* (non-Javadoc)

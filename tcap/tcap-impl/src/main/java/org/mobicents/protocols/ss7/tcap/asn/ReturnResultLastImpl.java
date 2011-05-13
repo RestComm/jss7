@@ -127,6 +127,11 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 		return ComponentType.ReturnResultLast;
 	}
 
+	
+	public String toString() {
+		return "ReturnResultLast[invokeId=" + invokeId + ", operationCode=" + operationCode + ", parameter=" + parameter + "]";
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

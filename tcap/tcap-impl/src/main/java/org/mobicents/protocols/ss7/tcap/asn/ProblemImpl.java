@@ -130,6 +130,12 @@ public class ProblemImpl implements Problem {
 		this.setType(ProblemType.ReturnResult);
 	}
 
+	
+	public String toString() {
+		return "Problem[type=" + type + ", generalProblemType=" + generalProblemType + ", invokeProblemType=" + invokeProblemType
+				+ ", returnErrorProblemType=" + returnErrorProblemType + ", returnResultProblemType=" + returnResultProblemType + "]";
+	}
+
 	public void decode(AsnInputStream ais) throws ParseException {
 
 		try {

@@ -30,7 +30,6 @@ import java.io.IOException;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
 
 /**
  * @author baranowb
@@ -53,6 +52,11 @@ public class AbortSourceImpl implements AbortSource {
 	public void setAbortSourceType(AbortSourceType t) {
 		this.type = t;
 
+	}
+
+	
+	public String toString() {
+		return "AbortSource[type=" + type + "]";
 	}
 
 	/* (non-Javadoc)

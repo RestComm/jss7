@@ -86,6 +86,10 @@ public class OperationCodeImpl implements OperationCode {
 		this.type = t;
 
 	}
+	
+	public String toString() {
+		return "OperationCode[operationCode=" + operationCode + ", type=" + type + "]";
+	}
 
 	/*
 	 * (non-Javadoc)

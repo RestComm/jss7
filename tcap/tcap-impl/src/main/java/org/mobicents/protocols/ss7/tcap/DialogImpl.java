@@ -1053,7 +1053,7 @@ public class DialogImpl implements Dialog {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
-	@Override
+	
 	public String toString() {
 		
 		return super.toString()+": Local["+this.localTransactionId+"] Remote["+this.remoteTransactionId+"], LocalAddress["+localAddress+"] RemoteAddress["+this.remoteAddress+"]";

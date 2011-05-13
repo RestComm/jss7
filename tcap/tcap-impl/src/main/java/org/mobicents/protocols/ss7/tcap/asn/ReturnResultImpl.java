@@ -128,6 +128,11 @@ public class ReturnResultImpl implements ReturnResult {
 		return ComponentType.ReturnResult;
 	}
 
+	
+	public String toString() {
+		return "ReturnResult[invokeId=" + invokeId + ", operationCode=" + operationCode + ", parameter=" + parameter + "]";
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

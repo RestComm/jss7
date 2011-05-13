@@ -26,6 +26,7 @@
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -81,6 +82,11 @@ public class ErrorCodeImpl implements ErrorCode {
 	public void setErrorType(ErrorCodeType t) {
 
 		this.errorType = t;
+	}
+
+	
+	public String toString() {
+		return "ErrorCode[errorType=" + errorType + ", data=" + Arrays.toString(data) + "]";
 	}
 
 	/*

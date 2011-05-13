@@ -62,6 +62,11 @@ public class ResultImpl implements Result {
 
 	}
 
+	
+	public String toString() {
+		return "Result[resultType=" + resultType + "]";
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -58,7 +58,7 @@ public class UserInformationImpl extends External implements UserInformation {
 	 * 
 	 * @see org.mobicents.protocols.asn.External#decode(org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
+	
 	public void decode(AsnInputStream ais) throws ParseException {
 
 		try {
@@ -85,7 +85,7 @@ public class UserInformationImpl extends External implements UserInformation {
 	 * 
 	 * @see org.mobicents.protocols.asn.External#encode(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
+	
 	public void encode(AsnOutputStream aos) throws ParseException {
 		// this will have EXTERNAL
 		AsnOutputStream localAsn = new AsnOutputStream();

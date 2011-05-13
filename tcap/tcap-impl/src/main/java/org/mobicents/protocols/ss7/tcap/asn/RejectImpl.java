@@ -102,6 +102,11 @@ public class RejectImpl implements Reject {
 		return ComponentType.Reject;
 	}
 
+	
+	public String toString() {
+		return "Reject[invokeId=" + invokeId + ", problem=" + problem + "]";
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

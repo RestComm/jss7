@@ -89,6 +89,11 @@ public class ResultSourceDiagnosticImpl implements ResultSourceDiagnostic {
 
 	}
 
+	
+	public String toString() {
+		return "ResultSourceDiagnostic[providerType=" + providerType + ", userType=" + userType + "]";
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

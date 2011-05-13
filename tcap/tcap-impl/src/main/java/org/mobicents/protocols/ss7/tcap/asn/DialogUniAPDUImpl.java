@@ -125,6 +125,11 @@ public class DialogUniAPDUImpl implements DialogUniAPDU {
 		return false;
 	}
 
+	
+	public String toString() {
+		return "DialogUniAPDU[acn=" + acn + ", ui=" + ui + "]";
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

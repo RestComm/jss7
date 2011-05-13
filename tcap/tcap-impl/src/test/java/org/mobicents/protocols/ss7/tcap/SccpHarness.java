@@ -163,7 +163,7 @@ public abstract class SccpHarness {
 			this.writeTo = writeTo;
 		}
 
-		@Override
+		
 		public int read(ByteBuffer b) throws IOException {
 			int dataRead = 0;
 			while (!this.readFrom.isEmpty()) {
@@ -175,7 +175,7 @@ public abstract class SccpHarness {
 			return dataRead;
 		}
 
-		@Override
+		
 		public int write(ByteBuffer b) throws IOException {
 			int dataAdded = 0;
 			if (b.hasRemaining()) {
@@ -191,7 +191,7 @@ public abstract class SccpHarness {
 		/* (non-Javadoc)
 		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#execute()
 		 */
-		@Override
+		
 		public void execute() throws IOException {
 			// We dont use this
 			

@@ -149,7 +149,7 @@ public class DialogPortionImpl extends External implements DialogPortion {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.asn.External#getEncodeBitStringType()
 	 */
-	@Override
+	
 	public BitSet getEncodeBitStringType() {
 		throw new UnsupportedOperationException();
 	}
@@ -157,7 +157,7 @@ public class DialogPortionImpl extends External implements DialogPortion {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.asn.External#getEncodeType()
 	 */
-	@Override
+	
 	public byte[] getEncodeType() throws AsnException {
 		if (this.dialogAPDU == null) {
 			throw new AsnException("No APDU!");
@@ -170,7 +170,7 @@ public class DialogPortionImpl extends External implements DialogPortion {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.asn.External#setEncodeBitStringType(java.util.BitSet)
 	 */
-	@Override
+	
 	public void setEncodeBitStringType(BitSet data) {
 		throw new UnsupportedOperationException();
 	}
@@ -178,9 +178,14 @@ public class DialogPortionImpl extends External implements DialogPortion {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.asn.External#setEncodeType(byte[])
 	 */
-	@Override
+	
 	public void setEncodeType(byte[] data) {
 		throw new UnsupportedOperationException();
+	}
+
+	
+	public String toString() {
+		return "DialogPortion[dialogAPDU=" + dialogAPDU + ", uniDirectional=" + uniDirectional + "]";
 	}
 
 	public void encode(AsnOutputStream aos) throws ParseException {
@@ -212,7 +217,7 @@ public class DialogPortionImpl extends External implements DialogPortion {
 	 * org.mobicents.protocols.asn.External#decode(org.mobicents.protocols.asn
 	 * .AsnInputStream)
 	 */
-	@Override
+	
 	public void decode(AsnInputStream ais) throws ParseException {
 
 		// TAG has been decoded already, now, lets get LEN

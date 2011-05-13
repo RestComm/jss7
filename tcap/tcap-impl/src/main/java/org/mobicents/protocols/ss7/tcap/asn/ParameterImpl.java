@@ -28,6 +28,7 @@ package org.mobicents.protocols.ss7.tcap.asn;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -120,6 +121,12 @@ public class ParameterImpl implements Parameter {
 	 */
 	public void setTagClass(int tagClass) {
 		this.tagClass = tagClass;
+	}
+
+	
+	public String toString() {
+		return "Parameter[data=" + Arrays.toString(data) + ", parameters=" + Arrays.toString(parameters) + ", primitive=" + primitive + ", tag=" + tag
+				+ ", tagClass=" + tagClass + "]";
 	}
 
 	public Parameter[] getParameters() {

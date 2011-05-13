@@ -27,8 +27,6 @@ package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -112,6 +110,11 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 	public boolean isUniDirectional() {
 
 		return false;
+	}
+
+	
+	public String toString() {
+		return "DialogRequestAPDU[acn=" + acn + ", ui=" + ui + "]";
 	}
 
 	/*
