@@ -188,6 +188,15 @@ public abstract class SccpHarness {
 			return dataAdded;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#execute()
+		 */
+		@Override
+		public void execute() throws IOException {
+			// We dont use this
+			
+		}
+
 	}
 
 }
