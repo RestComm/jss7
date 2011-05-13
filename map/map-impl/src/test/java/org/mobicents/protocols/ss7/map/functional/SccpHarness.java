@@ -70,7 +70,7 @@ public abstract class SccpHarness {
 			router1.start();
 			router1.getRules().clear();
 			router1.getPrimaryAddresses().clear();
-			router1.getSecondaryAddresses().clear();
+			router1.getBackupAddresses().clear();
 		} catch (Exception e) {
 			// ignore
 		}
@@ -95,7 +95,7 @@ public abstract class SccpHarness {
 			router2.start();
 			router2.getRules().clear();
 			router2.getPrimaryAddresses().clear();
-			router2.getSecondaryAddresses().clear();
+			router2.getBackupAddresses().clear();
 		} catch (Exception e) {
 			// ignore
 		}
@@ -118,7 +118,7 @@ public abstract class SccpHarness {
 	private void tearDownStack1() {
 		router1.getRules().clear();
 		router1.getPrimaryAddresses().clear();
-		router1.getSecondaryAddresses().clear();
+		router1.getBackupAddresses().clear();
 		router1.stop();
 
 		resource1.getRemoteSpcs().clear();
@@ -132,7 +132,7 @@ public abstract class SccpHarness {
 	private void tearDownStack2() {
 		router1.getRules().clear();
 		router1.getPrimaryAddresses().clear();
-		router1.getSecondaryAddresses().clear();
+		router1.getBackupAddresses().clear();
 		router1.stop();
 
 		resource1.getRemoteSpcs().clear();
@@ -186,6 +186,12 @@ public abstract class SccpHarness {
 				this.writeTo.add(txData);
 			}
 			return dataAdded;
+		}
+
+		@Override
+		public void execute() throws IOException {
+			//We dont use this
+			
 		}
 
 	}
