@@ -34,4 +34,6 @@ public interface Mtp3UserPart {
 
 	public int write(ByteBuffer b) throws IOException;
 
+	public void execute() throws IOException;
+
 }
