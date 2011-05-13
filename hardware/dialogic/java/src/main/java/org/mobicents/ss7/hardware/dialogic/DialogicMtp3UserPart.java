@@ -38,9 +38,9 @@ public class DialogicMtp3UserPart implements Mtp3UserPart {
 	private int destinationModuleId;
 
 	private InterProcessCommunicator ipc = null;
-	
-	public DialogicMtp3UserPart(){
-		
+
+	public DialogicMtp3UserPart() {
+
 	}
 
 	public int getSourceModuleId() {
@@ -79,6 +79,13 @@ public class DialogicMtp3UserPart implements Mtp3UserPart {
 	@Override
 	public int write(ByteBuffer b) throws IOException {
 		return ipc.write(b);
+	}
+
+	@Override
+	public void execute() throws IOException {
+		// Dialogic doesn't care for this and read can be directly from native
+		// code and write can be directly to native code
+
 	}
 
 }

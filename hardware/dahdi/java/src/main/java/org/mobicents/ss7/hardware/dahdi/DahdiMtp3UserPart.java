@@ -50,4 +50,10 @@ public class DahdiMtp3UserPart implements Mtp3UserPart {
 		return 0;
 	}
 
+	@Override
+	public void execute() throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
