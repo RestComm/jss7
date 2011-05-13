@@ -62,7 +62,7 @@ public class SccpStackImpl implements SccpStack {
 
 	protected Router router;
 	protected SccpResource sccpResource;
-	
+
 	protected Executor executor;
 
 	protected Executor layer3exec;
@@ -82,8 +82,8 @@ public class SccpStackImpl implements SccpStack {
 	public SccpStackImpl() {
 		messageFactory = new MessageFactoryImpl();
 		sccpProvider = new SccpProviderImpl(this);
-		//FIXME: make this configurable
-		sccpManagement = new SccpManagement(sccpProvider, this); 
+		// FIXME: make this configurable
+		sccpManagement = new SccpManagement(sccpProvider, this);
 		sccpRoutingControl = new SccpRoutingControl(sccpProvider, this);
 
 		sccpManagement.setSccpRoutingControl(sccpRoutingControl);
@@ -298,33 +298,42 @@ public class SccpStackImpl implements SccpStack {
 		public void run() {
 			// Execute only till state is Running
 			while (state == State.RUNNING) {
-				rxBytes = 0;
-				rxBuffer.clear();
-				try {
-					rxBytes = mtp3UserPart.read(rxBuffer);
-					if (rxBytes != 0) {
-						System.out.println("rxBytes = "+ rxBytes);
-						byte[] data = new byte[rxBytes];
-						rxBuffer.flip();
-						rxBuffer.get(data);
-						MessageHandler handler = new MessageHandler(data);
-						executor.execute(handler);
-					}
-				} catch (IOException e) {
-					logger.error("Error while readig data from Mtp3UserPart", e);
-				}
 
-				// Iterate till we send all data
-				while (!txDataQueue.isEmpty()) {
-					txBuffer.clear();
-					txBuffer.put(txDataQueue.poll());
-					txBuffer.flip();
+				try {
+					//Execute the MTP3UserPart
+					mtp3UserPart.execute();
+
+					rxBytes = 0;
+					rxBuffer.clear();
 					try {
-						txBytes = mtp3UserPart.write(txBuffer);
+						rxBytes = mtp3UserPart.read(rxBuffer);
+						if (rxBytes != 0) {
+							System.out.println("rxBytes = " + rxBytes);
+							byte[] data = new byte[rxBytes];
+							rxBuffer.flip();
+							rxBuffer.get(data);
+							MessageHandler handler = new MessageHandler(data);
+							executor.execute(handler);
+						}
 					} catch (IOException e) {
-						logger.error("Error while writting data to Mtp3UserPart", e);
+						logger.error("Error while readig data from Mtp3UserPart", e);
 					}
-				}// while txDataQueue
+
+					// Iterate till we send all data
+					while (!txDataQueue.isEmpty()) {
+						txBuffer.clear();
+						txBuffer.put(txDataQueue.poll());
+						txBuffer.flip();
+						try {
+							txBytes = mtp3UserPart.write(txBuffer);
+						} catch (IOException e) {
+							logger.error("Error while writting data to Mtp3UserPart", e);
+						}
+					}// while txDataQueue
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}// end of while
 		}
 	}

@@ -67,4 +67,11 @@ public class Mtp3UserPartImpl implements Mtp3UserPart {
 		return dataAdded;
 	}
 
+
+	@Override
+	public void execute() throws IOException {
+		//We don't use this
+		
+	}
+
 }
