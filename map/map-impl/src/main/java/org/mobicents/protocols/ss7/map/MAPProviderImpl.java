@@ -78,6 +78,8 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
@@ -88,7 +90,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
  */
 public class MAPProviderImpl implements MAPProvider, TCListener {
 
-	Logger loger = Logger.getLogger(MAPProviderImpl.class);
+	protected Logger logger = Logger.getLogger(MAPProviderImpl.class);
 
 	private Set<MAPDialogListener> dialogListeners = new HashSet<MAPDialogListener>();
 	private Set<MAPServiceListener> serviceListeners = new HashSet<MAPServiceListener>();
@@ -183,7 +185,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			}
 		} else {
 			// TODO This is Error, what do we do next? Or should it even happen?
-			loger.error("Expected Parameter tag as SEQUENCE but received "
+			logger.error("Expected Parameter tag as SEQUENCE but received "
 					+ parameter.getTag());
 			throw new MAPException(
 					"Expected Parameter tag as SEQUENCE but received "
@@ -227,7 +229,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 						msisdnAddStr.decode(ansIS);
 						procUnSSInd.setMSISDNAddressString(msisdnAddStr);
 					} catch (IOException e) {
-						loger.error("Error while decoding the MSISDN AddressString ", e);
+						logger.error("Error while decoding the MSISDN AddressString ", e);
 					}
 				}
 			}
@@ -239,7 +241,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			}
 		} else {
 			// TODO This is Error, what do we do next? Or should it even happen?
-			loger.error("Expected Parameter tag as SEQUENCE but received "
+			logger.error("Expected Parameter tag as SEQUENCE but received "
 					+ parameter.getTag());
 			throw new MAPException(
 					"Expected Parameter tag as SEQUENCE but received "
@@ -261,7 +263,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		// informed;
 
 		if (acn == null && comps == null) {
-			loger
+			logger
 					.error("Both ApplicationContextName and Component[] are null. Send TC-U-ABORT to peer and not notifying the User");
 			// TODO send back TC-U-ABORT
 			return;
@@ -290,7 +292,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			// MAP-User is not informed.
 
 			// TODO send TC-U-ABORT without intimating the MAP-User
-			loger
+			logger
 					.error("ApplicationContextName is null, we dont support deriving the version 1 application-context-name as we only support networkUnstructuredSsContextV2. Send TC-U-ABORT to peer and not notifying the User");
 
 			return;
@@ -322,7 +324,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			MAPDialogImpl mapDialogImpl = new MAPDialogImpl(mapAppCtx,
 					tcBeginIndication.getDialog(), this);
 			
-			this.loger.info("TCBegin dialog = "+ mapDialogImpl);
+			this.logger.info("TCBegin dialog = "+ mapDialogImpl);
 			
 			mapDialogImpl.setMapAcceptInfoFired(true);
 
@@ -344,7 +346,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				if (!userInfo.isOid()) {
 					// TODO : This is Error Send back TC-U-ABORT without
 					// intimating User
-					loger.error("userInfo.isOid() check failed");
+					logger.error("userInfo.isOid() check failed");
 					return;
 				}
 
@@ -355,14 +357,14 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				if (mapDialAs == null) {
 					// TODO : This is Error Send back TC-U-ABORT without
 					// intimating User
-					loger.error("Expected MAPDialogueAS.MAP_DialogueAS but is null");
+					logger.error("Expected MAPDialogueAS.MAP_DialogueAS but is null");
 					return;
 				}
 
 				if (!userInfo.isAsn()) {
 					// TODO : This is Error Send back TC-U-ABORT without
 					// intimating User
-					loger.error("userInfo.isAsn() check failed");
+					logger.error("userInfo.isAsn() check failed");
 					return;
 				}
 
@@ -404,7 +406,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			}
 				// end of for (Component c : comps)
 			
-			this.loger.info("TCBegin dialog..isMapAcceptInfoFired() = "+ mapDialogImpl.isMapAcceptInfoFired());			
+			this.logger.info("TCBegin dialog..isMapAcceptInfoFired() = "+ mapDialogImpl.isMapAcceptInfoFired());			
 
 		}
 
@@ -463,12 +465,12 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				.get(tcapDialog.getDialogId());
 
 		if (mapDialogImpl == null) {
-			loger.error("MAP Dialog not found for Dialog Id "
+			logger.error("MAP Dialog not found for Dialog Id "
 					+ tcapDialog.getDialogId());
 			return;
 		}
 		
-		loger.info("onTCContinue MAPDialog = "+ mapDialogImpl + " mapDialogImpl.isMapAcceptInfoFired() = "+mapDialogImpl.isMapAcceptInfoFired());
+		logger.info("onTCContinue MAPDialog = "+ mapDialogImpl + " mapDialogImpl.isMapAcceptInfoFired() = "+mapDialogImpl.isMapAcceptInfoFired());
 
 		// On receipt of the first TC-CONTINUE indication primitive for
 		// a dialogue, the MAP PM shall check the value of the
@@ -488,7 +490,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				try {
 					fireTCUAbort(tcapDialog, mapDialogImpl);
 				} catch (MAPException e) {
-					this.loger.error(e);
+					this.logger.error(e);
 				}
 			} else {
 				MAPApplicationContext mapAcn = MAPApplicationContext.getInstance(acn.getOid());
@@ -496,7 +498,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					try {
 						fireTCUAbort(tcapDialog, mapDialogImpl);
 					} catch (MAPException e) {
-						this.loger.error(e);
+						this.logger.error(e);
 					}
 				} else {
 
@@ -535,7 +537,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				.getDialogId());
 
 		if (mapDialogImpl == null) {
-			loger.error("MAP Dialog not found for Dialog Id "
+			logger.error("MAP Dialog not found for Dialog Id "
 					+ tcapDialog.getDialogId());
 			return;
 		}
@@ -607,7 +609,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				.getDialogId());
 
 		if (mapDialogImpl == null) {
-			loger.error("MAP Dialog not found for Dialog Id "
+			logger.error("MAP Dialog not found for Dialog Id "
 					+ tcapDialog.getDialogId());
 			return;
 		}
@@ -654,7 +656,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				.getDialogId());
 
 		if (mapDialogImpl == null) {
-			loger.error("MAP Dialog not found for Dialog Id "
+			logger.error("MAP Dialog not found for Dialog Id "
 					+ tcapDialog.getDialogId());
 			return;
 		}
@@ -675,8 +677,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	}
 
 	private void processComponents(MAPDialogImpl mapDialogImpl, Component[] components) {
-		//FIXME: Amit DOUBLE CHECK!
-		// Now let us decode the Components
+		//NOTE: Table 5.5/3 respon
 		for (Component c : components) {
 
 			try {
@@ -685,24 +686,44 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 				long invokeId = c.getInvokeId();
 
-				// TODO Does it make any difference if its Invoke, ReturnResult
-				// or ReturnResultLast?
-				Parameter parameter;
-				OperationCode oc;
-				if (compType == ComponentType.Invoke) {
-					Invoke comp = (Invoke) c;
-					oc = comp.getOperationCode();
-					parameter = comp.getParameter();
-				} else if (compType == ComponentType.ReturnResult) {
-					ReturnResult comp = (ReturnResult) c;
-					oc = comp.getOperationCode();
-					parameter = comp.getParameter();
-				} else if (compType == ComponentType.ReturnResultLast) {
-					ReturnResultLast comp = (ReturnResultLast) c;
-					oc = comp.getOperationCode();
-					parameter = comp.getParameter();
-				} else {
-					// FIXME: add rest
+				Parameter parameter = null;
+				OperationCode oc = null;
+				switch (compType) {
+				case Invoke:
+					Invoke invokeComp = (Invoke) c;
+					oc = invokeComp.getOperationCode();
+					parameter = invokeComp.getParameter();
+					break;
+				case ReturnResult:
+					ReturnResult rrComp = (ReturnResult) c;
+					oc = rrComp.getOperationCode();
+					parameter = rrComp.getParameter();
+					break;
+				case ReturnResultLast:
+					ReturnResultLast rrlComp = (ReturnResultLast) c;
+					oc = rrlComp.getOperationCode();
+					parameter = rrlComp.getParameter();
+					break;
+					
+					//NOTE: just log for now and spin once again
+					//FIXME: add proper handling, ie. listener.onXXX - now its not possible. 
+				case ReturnError:
+					// other end failed to process
+					ReturnError re = (ReturnError) c;
+					
+					if(logger.isEnabledFor(org.apache.log4j.Level.WARN))
+					{
+						logger.warn("Received error indication: "+re);
+					}
+					continue;
+					
+				case Reject:
+					// other end rejected
+					Reject r = (Reject)c;
+					if(logger.isEnabledFor(org.apache.log4j.Level.WARN))
+					{
+						logger.warn("Received rejection indication: "+r);
+					}
 					continue;
 				}
 
@@ -715,9 +736,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					this.unstructuredSSRequest(parameter, mapDialogImpl, invokeId);
 
 				} else {
-					loger
-							.error("Expected OC is MAPOperationCode.processUnstructuredSS_Request or MAPOperationCode.unstructuredSS_Request but received "
-									+ oc.getCode());
+					logger.error("Expected OC is MAPOperationCode.processUnstructuredSS_Request or MAPOperationCode.unstructuredSS_Request but received "
+							+ oc.getCode());
 					return;
 				}// end of if
 
@@ -725,7 +745,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				e.printStackTrace();
 			}
 		} // end of for (Component c : comps)
-		
+
 	}
 	
 	
