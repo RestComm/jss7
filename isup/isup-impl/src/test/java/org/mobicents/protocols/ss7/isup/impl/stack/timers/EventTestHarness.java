@@ -27,9 +27,12 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import javolution.util.FastMap;
 
 import org.junit.After;
 import org.junit.Before;
@@ -46,7 +49,9 @@ import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.stream.api.SelectorKey;
 import org.mobicents.protocols.stream.api.SelectorProvider;
 import org.mobicents.protocols.stream.api.StreamSelector;
+import org.mobicents.ss7.linkset.oam.FormatterHelp;
 import org.mobicents.ss7.linkset.oam.Layer4;
+import org.mobicents.ss7.linkset.oam.Link;
 import org.mobicents.ss7.linkset.oam.Linkset;
 import org.mobicents.ss7.linkset.oam.LinksetSelector;
 import org.mobicents.ss7.linkset.oam.LinksetStream;
@@ -420,6 +425,26 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 				return 0;
 			}
 
+
+			/* (non-Javadoc)
+			 * @see org.mobicents.protocols.stream.api.Stream#read(java.nio.ByteBuffer)
+			 */
+			@Override
+			public int read(ByteBuffer arg0) throws IOException {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+
+			/* (non-Javadoc)
+			 * @see org.mobicents.protocols.stream.api.Stream#write(java.nio.ByteBuffer)
+			 */
+			@Override
+			public int write(ByteBuffer arg0) throws IOException {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
 		}
 
 		/*
@@ -431,9 +456,71 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 		 */
 		
 		public void print(StringBuffer sb, int leftPad, int descPad) {
-			// TODO Auto-generated method stub
+			 // left pad
+	        FormatterHelp.createPad(sb, leftPad);
+
+	        // Add name
+	        sb.append(this.linksetName);
+
+	        // check if length is less than Link.NAME_SIZE, add padding
+	        if (this.linksetName.length() < Linkset.NAME_SIZE) {
+	            FormatterHelp.createPad(sb, Linkset.NAME_SIZE - this.linksetName.length());
+	        }
+
+	        // add desc padding
+	        FormatterHelp.createPad(sb, descPad);
+
+	        // type is dahdi
+	        sb.append("dahdi");
+
+	        // add desc padding
+	        FormatterHelp.createPad(sb, descPad);
+
+	        // add opc
+	        sb.append(LINKSET_OPC).append(FormatterHelp.EQUAL_SIGN).append(this.opc);
+
+	        // opc can be max 8 (ANSI is max 24bits) digits. Add padding if its not
+	        int length = (Integer.toString(this.opc).length());
+	        if (length < 8) {
+	            FormatterHelp.createPad(sb, 8 - length);
+	        }
+
+	        // add desc padding
+	        FormatterHelp.createPad(sb, descPad);
+
+	        // add apc
+	        sb.append(LINKSET_APC).append(FormatterHelp.EQUAL_SIGN).append(this.apc);
+
+	        // opc can be max 8 (ANSI is max 24bits) digits. Add padding if its not
+	        length = (Integer.toString(this.apc).length());
+	        if (length < 8) {
+	            FormatterHelp.createPad(sb, 8 - length);
+	        }
+
+	        // add desc padding
+	        FormatterHelp.createPad(sb, descPad);
+
+	        // add NI
+	        sb.append(LINKSET_NI).append(FormatterHelp.EQUAL_SIGN).append(this.ni);
+
+	        // add desc padding
+	        FormatterHelp.createPad(sb, descPad);
+
+	        // add state
+	        sb.append(LINKSET_STATE).append(FormatterHelp.EQUAL_SIGN).append(FormatterHelp.getLinksetState(this.state));
+
+	        sb.append(FormatterHelp.NEW_LINE);
+
+	        for (FastMap.Entry<String, Link> e = this.links.head(), end = this.links.tail(); (e = e.getNext()) != end;) {
+	            Link link = e.getValue();
+	            link.print(sb, 4, 2);
+	            sb.append(FormatterHelp.NEW_LINE);
+	        }
 
 		}
+		
+
+
 	}
 
 
