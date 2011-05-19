@@ -154,7 +154,7 @@ public class ServerM3UAProcess implements M3UAProcess {
 
 	}
 
-	public void perform() throws IOException {
+	public void execute() throws IOException {
 		if (!started) {
 			return;
 		}
