@@ -314,7 +314,7 @@ public class GatewayTest {
 		public void run() {
 			while (started) {
 				try {
-					sgw.perform();
+					sgw.execute();
 					rxBuffer.clear();
 					int rxBytes = sgw.read(rxBuffer);
 
