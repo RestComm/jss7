@@ -22,65 +22,95 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.XMLSerializable;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.parameter.ASPIdentifier;
 
-public abstract class Asp {
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
+public abstract class Asp implements XMLSerializable {
 
-    protected String name;
-    protected M3UAProvider m3UAProvider;
+	protected static final String NAME = "name";
 
-    protected FSM fsm;
+	protected String name;
+	protected M3UAProvider m3UAProvider;
 
-    protected AspFactory aspFactory;
+	protected FSM fsm;
 
-    protected As as;
-    
-    protected ASPIdentifier aSPIdentifier;
+	protected AspFactory aspFactory;
 
-    public Asp(String name, M3UAProvider m3UAProvider, AspFactory aspFactroy) {
-        this.name = name;
-        this.m3UAProvider = m3UAProvider;
-        this.aspFactory = aspFactroy;
+	protected As as;
 
-        fsm = new FSM(this.name);
-    }
+	protected ASPIdentifier aSPIdentifier;
 
-    public String getName() {
-        return this.name;
-    }
+	public Asp() {
 
-    public AspState getState() {
-        return AspState.getState(this.fsm.getState().getName());
-    }
+	}
 
-    public FSM getFSM() {
-        return this.fsm;
-    }
+	public Asp(String name, M3UAProvider m3UAProvider, AspFactory aspFactroy) {
+		this.name = name;
+		this.m3UAProvider = m3UAProvider;
+		this.aspFactory = aspFactroy;
 
-    public As getAs() {
-        return as;
-    }
+		fsm = new FSM(this.name);
+	}
 
-    public void setAs(As as) {
-        this.as = as;
-    }
-    
-    public AspFactory getAspFactory(){
-        return this.aspFactory;
-    }
+	public String getName() {
+		return this.name;
+	}
 
-    public M3UAProvider getM3UAProvider() {
-        return this.m3UAProvider;
-    }
-    
-    public ASPIdentifier getASPIdentifier() {
-        return aSPIdentifier;
-    }
+	public AspState getState() {
+		return AspState.getState(this.fsm.getState().getName());
+	}
 
-    public void setASPIdentifier(ASPIdentifier identifier) {
-        aSPIdentifier = identifier;
-    }
+	public FSM getFSM() {
+		return this.fsm;
+	}
 
+	public As getAs() {
+		return as;
+	}
+
+	public void setAs(As as) {
+		this.as = as;
+	}
+
+	public AspFactory getAspFactory() {
+		return this.aspFactory;
+	}
+
+	public M3UAProvider getM3UAProvider() {
+		return this.m3UAProvider;
+	}
+
+	public ASPIdentifier getASPIdentifier() {
+		return aSPIdentifier;
+	}
+
+	public void setASPIdentifier(ASPIdentifier identifier) {
+		aSPIdentifier = identifier;
+	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<Asp> ASP_XML = new XMLFormat<Asp>(Asp.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, Asp asp) throws XMLStreamException {
+			asp.name = xml.getAttribute(NAME, "");
+		}
+
+		@Override
+		public void write(Asp asp, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(NAME, asp.name);
+		}
+	};
 }

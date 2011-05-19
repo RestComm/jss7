@@ -64,23 +64,25 @@ public class ProtocolDataImpl extends ParameterImpl implements ProtocolData {
     /**
      * Creates new parameter with specified value.
      * 
-     * @param value
+     * @param valueData
      *            the value of this parameter
      */
-    protected ProtocolDataImpl(byte[] value) {
+    protected ProtocolDataImpl(byte[] valueData) {
         this.tag = ParameterImpl.Protocol_Data;
-        opc = ((value[0] & 0xff) << 24) | ((value[1] & 0xff) << 16)
-                | ((value[2] & 0xff) << 8) | (value[3] & 0xff);
-        dpc = ((value[4] & 0xff) << 24) | ((value[5] & 0xff) << 16)
-                | ((value[6] & 0xff) << 8) | (value[7] & 0xff);
+        opc = ((valueData[0] & 0xff) << 24) | ((valueData[1] & 0xff) << 16)
+                | ((valueData[2] & 0xff) << 8) | (valueData[3] & 0xff);
+        dpc = ((valueData[4] & 0xff) << 24) | ((valueData[5] & 0xff) << 16)
+                | ((valueData[6] & 0xff) << 8) | (valueData[7] & 0xff);
 
-        si = value[8] & 0xff;
-        ni = value[9] & 0xff;
-        mp = value[10] & 0xff;
-        sls = value[11] & 0xff;
+        si = valueData[8] & 0xff;
+        ni = valueData[9] & 0xff;
+        mp = valueData[10] & 0xff;
+        sls = valueData[11] & 0xff;
 
-        data = new byte[value.length - 12];
-        System.arraycopy(value, 12, data, 0, value.length - 12);
+        data = new byte[valueData.length - 12];
+        System.arraycopy(valueData, 12, data, 0, valueData.length - 12);
+        
+        this.value = valueData;
     }    
 
     protected void load(byte[] msu) {

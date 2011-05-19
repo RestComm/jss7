@@ -47,7 +47,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
  */
 public class M3UARouterTest {
     private ParameterFactoryImpl factory = new ParameterFactoryImpl();
-    private M3UARouter m3uaRouter = null;
+    private ServerM3UARouter m3uaRouter = null;
     private M3UAProvider m3uaProvider = TcpProvider.provider();
 
     @BeforeClass
@@ -60,7 +60,7 @@ public class M3UARouterTest {
 
     @Before
     public void setUp() {
-        m3uaRouter = new M3UARouter();
+        m3uaRouter = new ServerM3UARouter();
     }
 
     @After
@@ -124,5 +124,14 @@ public class M3UARouterTest {
         public AsImpl(String name, RoutingContext rc, RoutingKey rk, TrafficModeType trMode, M3UAProvider provider) {
             super(name, rc, rk, trMode, provider);
         }
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.m3ua.impl.As#init()
+		 */
+		@Override
+		public void init() {
+			// TODO Auto-generated method stub
+			
+		}
     }
 }

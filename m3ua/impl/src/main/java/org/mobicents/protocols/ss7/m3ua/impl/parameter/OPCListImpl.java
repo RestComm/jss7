@@ -24,6 +24,10 @@ package org.mobicents.protocols.ss7.m3ua.impl.parameter;
 
 import java.util.Arrays;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.XMLSerializable;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.m3ua.parameter.OPCList;
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 
@@ -32,74 +36,116 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
  * @author amit bhayani
  * 
  */
-public class OPCListImpl extends ParameterImpl implements OPCList {
-    private byte[] value;
-    private int[] pointCodes;
-    private short[] masks;
+public class OPCListImpl extends ParameterImpl implements OPCList, XMLSerializable {
 
-    protected OPCListImpl(byte[] value) {
-        this.tag = Parameter.Originating_Point_Code_List;
+	private static final String OPC = "opc";
+	private static final String MASK = "mask";
+	private static final String ARRAY_SIZE = "size";
 
-        int count = 0;
-        int arrSize = 0;
-        pointCodes = new int[(value.length / 4)];
-        masks = new short[(value.length / 4)];
+	private byte[] value;
+	private int[] pointCodes;
+	private short[] masks;
+	
+	public OPCListImpl(){
+		
+	}
 
-        while (count < value.length) {
-            masks[arrSize] = value[count++];
+	protected OPCListImpl(byte[] value) {
+		this.tag = Parameter.Originating_Point_Code_List;
 
-            pointCodes[arrSize] = 0;
-            pointCodes[arrSize] |= value[count++] & 0xFF;
-            pointCodes[arrSize] <<= 8;
-            pointCodes[arrSize] |= value[count++] & 0xFF;
-            pointCodes[arrSize] <<= 8;
-            pointCodes[arrSize++] |= value[count++] & 0xFF;
-        }
-        this.value = value;
-    }
+		int count = 0;
+		int arrSize = 0;
+		pointCodes = new int[(value.length / 4)];
+		masks = new short[(value.length / 4)];
 
-    protected OPCListImpl(int[] pointCodes, short[] masks) {
-        this.tag = Parameter.Originating_Point_Code_List;
-        this.pointCodes = pointCodes;
-        this.masks = masks;
-        encode();
-    }
+		while (count < value.length) {
+			masks[arrSize] = value[count++];
 
-    private void encode() {
-        // create byte array taking into account data, point codes and
-        // indicators;
+			pointCodes[arrSize] = 0;
+			pointCodes[arrSize] |= value[count++] & 0xFF;
+			pointCodes[arrSize] <<= 8;
+			pointCodes[arrSize] |= value[count++] & 0xFF;
+			pointCodes[arrSize] <<= 8;
+			pointCodes[arrSize++] |= value[count++] & 0xFF;
+		}
+		this.value = value;
+	}
 
-        this.value = new byte[(pointCodes.length * 4)];
+	protected OPCListImpl(int[] pointCodes, short[] masks) {
+		this.tag = Parameter.Originating_Point_Code_List;
+		this.pointCodes = pointCodes;
+		this.masks = masks;
+		encode();
+	}
 
-        int count = 0;
-        int arrSize = 0;
-        // encode routing context
-        while (count < value.length) {
-            value[count++] = (byte) (masks[arrSize]);
+	private void encode() {
+		// create byte array taking into account data, point codes and
+		// indicators;
 
-            value[count++] = (byte) (pointCodes[arrSize] >>> 16);
-            value[count++] = (byte) (pointCodes[arrSize] >>> 8);
-            value[count++] = (byte) (pointCodes[arrSize++]);
-        }
-    }
+		this.value = new byte[(pointCodes.length * 4)];
 
-    @Override
-    protected byte[] getValue() {
-        return this.value;
-    }
+		int count = 0;
+		int arrSize = 0;
+		// encode routing context
+		while (count < value.length) {
+			value[count++] = (byte) (masks[arrSize]);
 
-    public short[] getMasks() {
-        return this.masks;
-    }
+			value[count++] = (byte) (pointCodes[arrSize] >>> 16);
+			value[count++] = (byte) (pointCodes[arrSize] >>> 8);
+			value[count++] = (byte) (pointCodes[arrSize++]);
+		}
+	}
 
-    public int[] getPointCodes() {
-        return this.pointCodes;
-    }
+	@Override
+	protected byte[] getValue() {
+		return this.value;
+	}
 
-    @Override
-    public String toString() {
-        return String.format("OPCList pointCode=%s mask=%s", Arrays
-                .toString(this.pointCodes), Arrays.toString(this.masks));
-    }
+	public short[] getMasks() {
+		return this.masks;
+	}
 
+	public int[] getPointCodes() {
+		return this.pointCodes;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("OPCList pointCode=%s mask=%s", Arrays.toString(this.pointCodes),
+				Arrays.toString(this.masks));
+	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<OPCListImpl> RC_XML = new XMLFormat<OPCListImpl>(OPCListImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, OPCListImpl opc) throws XMLStreamException {
+			int size = xml.getAttribute(ARRAY_SIZE).toInt();
+			opc.pointCodes = new int[size];
+			opc.masks = new short[size];
+
+			for (int i = 0; i < opc.pointCodes.length; i++) {
+				opc.pointCodes[i] = xml.get(OPC);
+			}
+
+			for (int i = 0; i < opc.masks.length; i++) {
+				opc.masks[i] = xml.get(MASK);
+			}
+
+		}
+
+		@Override
+		public void write(OPCListImpl opc, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(ARRAY_SIZE, opc.pointCodes.length);
+			for (int i : opc.pointCodes) {
+				xml.add(i, OPC);
+			}
+
+			for (short s : opc.masks) {
+				xml.add(s, MASK);
+			}
+		}
+	};
 }

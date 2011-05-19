@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.m3ua.impl.as;
 import java.io.IOException;
 
 import javolution.util.FastList;
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
@@ -57,13 +59,20 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 public class LocalAspFactory extends AspFactory {
 	private static final Logger logger = Logger.getLogger(LocalAspFactory.class);
 
+	private static final String REM_IP = "remIp";
+	private static final String REM_PORT = "remPort";
+
 	private static long ASP_ID = 1l;
 
 	private String remIp;
 	private int remPort;
 
-	private final ASPIdentifier aspid;
+	private ASPIdentifier aspid;
 
+	public LocalAspFactory(){
+		super();
+	}
+	
 	public LocalAspFactory(String name, String localIp, int localPort, String remIp, int remPort, M3UAProvider provider) {
 		super(name, localIp, localPort, provider);
 		this.remIp = remIp;
@@ -246,7 +255,7 @@ public class LocalAspFactory extends AspFactory {
 	private void handleAspDownAck(ASPDownAck aspUpAck) {
 
 		if (!this.started) {
-			
+
 			for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
 				Asp asp = n.getValue();
 				try {
@@ -255,7 +264,7 @@ public class LocalAspFactory extends AspFactory {
 					logger.error(e.getMessage(), e);
 				}
 			}
-			
+
 			// Close Channel if management stopped this
 			if (channel != null) {
 				try {
@@ -406,4 +415,27 @@ public class LocalAspFactory extends AspFactory {
 		}
 		return ASP_ID;
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<LocalAspFactory> LOCAL_ASP_FACTORY_XML = new XMLFormat<LocalAspFactory>(
+			LocalAspFactory.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, LocalAspFactory localAspFactory)
+				throws XMLStreamException {
+			ASP_FACTORY_XML.read(xml, localAspFactory);
+			localAspFactory.remIp = xml.getAttribute(REM_IP).toString();
+			localAspFactory.remPort = xml.getAttribute(REM_PORT).toInt();
+		}
+
+		@Override
+		public void write(LocalAspFactory localAspFactory, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+			ASP_FACTORY_XML.write(localAspFactory, xml);
+			xml.setAttribute(REM_IP, localAspFactory.remIp);
+			xml.setAttribute(REM_PORT, localAspFactory.remPort);
+		}
+	};
 }

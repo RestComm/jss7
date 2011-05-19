@@ -26,6 +26,9 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javolution.util.FastList;
+import javolution.xml.XMLFormat;
+import javolution.xml.XMLSerializable;
+import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
@@ -44,9 +47,17 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
  * @author amit bhayani
  * 
  */
-public abstract class As {
+public abstract class As implements XMLSerializable {
 
 	private static final Logger logger = Logger.getLogger(As.class);
+
+	private static final String NAME = "name";
+	private static final String ROUTING_CONTEXT = "routingContext";
+	private static final String ROUTINIG_KEY = "routingKey";
+	private static final String TRAFFIC_MODE = "trafficMode";
+	private static final String DEFAULT_TRAFFIC_MODE = "defTrafficMode";
+	private static final String ASP_LIST = "asps";
+	private static final String MIN_ASP_ACT_LB = "minAspActiveForLb";
 
 	public static final String ATTRIBUTE_ASP = "asp";
 
@@ -61,7 +72,7 @@ public abstract class As {
 	protected TrafficModeType trMode;
 	protected M3UAProvider m3UAProvider = null;
 
-	protected final TrafficModeType defaultTrafModType;
+	protected TrafficModeType defaultTrafModType;
 
 	protected ConcurrentLinkedQueue<PayloadData> penQueue = new ConcurrentLinkedQueue<PayloadData>();
 
@@ -69,6 +80,10 @@ public abstract class As {
 	protected ConcurrentLinkedQueue<PayloadData> rxQueue = new ConcurrentLinkedQueue<PayloadData>();
 
 	protected FSM fsm;
+
+	public As() {
+
+	}
 
 	public As(String name, RoutingContext rc, RoutingKey rk, TrafficModeType trMode, M3UAProvider provider) {
 		this.name = name;
@@ -79,9 +94,10 @@ public abstract class As {
 
 		this.defaultTrafModType = this.m3UAProvider.getParameterFactory().createTrafficModeType(
 				TrafficModeType.Loadshare);
-
-		fsm = new FSM(this.name);
+		init();
 	}
+
+	public abstract void init();
 
 	/**
 	 * Every As has unique name
@@ -165,6 +181,14 @@ public abstract class As {
 	}
 
 	/**
+	 * 
+	 * @param m3uaProvider
+	 */
+	public void setM3UAProvider(M3UAProvider m3uaProvider) {
+		m3UAProvider = m3uaProvider;
+	}
+
+	/**
 	 * If the {@link TrafficModeType} is loadshare, set the minimum number of
 	 * {@link Asp} that should be
 	 * {@link org.mobicents.protocols.ss7.m3ua.impl.AspState#ACTIVE} before
@@ -208,7 +232,7 @@ public abstract class As {
 		// Check if already added?
 		for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
 			Asp aspTemp = n.getValue();
-			if (aspTemp.getName().compareTo(asp.getName()) == 0) {
+			if (aspTemp.getName().equals(asp.getName())) {
 				throw new Exception(String.format("Asp name=%s already added", asp.getName()));
 			}
 		}
@@ -301,4 +325,33 @@ public abstract class As {
 			asp.getAspFactory().write(payload);
 		}
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<As> AS_XML = new XMLFormat<As>(As.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, As as) throws XMLStreamException {
+			as.name = xml.getAttribute(NAME, "");
+			as.minAspActiveForLb = xml.getAttribute(MIN_ASP_ACT_LB).toInt();
+			as.rc = xml.get(ROUTING_CONTEXT);
+			as.rk = xml.get(ROUTINIG_KEY);
+			as.trMode = xml.get(TRAFFIC_MODE);
+			as.defaultTrafModType = xml.get(DEFAULT_TRAFFIC_MODE);
+			as.appServerProcs = xml.get(ASP_LIST);
+			as.init();
+		}
+
+		@Override
+		public void write(As as, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(NAME, as.name);
+			xml.setAttribute(MIN_ASP_ACT_LB, as.minAspActiveForLb);
+			xml.add(as.rc, ROUTING_CONTEXT);
+			xml.add(as.rk, ROUTINIG_KEY);
+			xml.add(as.trMode, TRAFFIC_MODE);
+			xml.add(as.defaultTrafModType, DEFAULT_TRAFFIC_MODE);
+			xml.add(as.appServerProcs, ASP_LIST);
+		}
+	};
 }

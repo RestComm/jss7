@@ -36,7 +36,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ServiceIndicators;
  * MTP3 Signaling Information field (SIF) and Service Information Octet (SIO)
  * </p>
  * <p>
- * The {@link M3UARouter} act as tree where each {@link DPCNode} act as parent
+ * The {@link ServerM3UARouter} act as tree where each {@link DPCNode} act as parent
  * node containing {@link OPCNode} as leafs. Each {@link OPCNode} further
  * contains {@link SINode} as leafs. The {@link SINode} contains the reference
  * to corresponding {@link As}.
@@ -45,11 +45,11 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ServiceIndicators;
  * @author amit bhayani
  * 
  */
-public class M3UARouter {
+public class ServerM3UARouter {
 
 	private FastList<DPCNode> dpcList = new FastList<DPCNode>();
 
-	public M3UARouter() {
+	public ServerM3UARouter() {
 	}
 
 	/**

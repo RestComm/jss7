@@ -25,6 +25,9 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javolution.util.FastList;
+import javolution.xml.XMLFormat;
+import javolution.xml.XMLSerializable;
+import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.M3UAChannel;
@@ -42,9 +45,14 @@ import com.sun.nio.sctp.ShutdownNotification;
  * @author amit bhayani
  * 
  */
-public abstract class AspFactory implements CommunicationListener {
+public abstract class AspFactory implements CommunicationListener, XMLSerializable {
 
 	private static final Logger logger = Logger.getLogger(AspFactory.class);
+
+	private static final String NAME = "name";
+	private static final String IP = "ip";
+	private static final String PORT = "port";
+	private static final String STARTED = "started";
 
 	private M3UASelectionKey key;
 	protected M3UAChannel channel;
@@ -59,8 +67,12 @@ public abstract class AspFactory implements CommunicationListener {
 	protected ConcurrentLinkedQueue<M3UAMessage> txQueue = new ConcurrentLinkedQueue<M3UAMessage>();
 
 	protected FastList<Asp> aspList = new FastList<Asp>();
-	
+
 	protected AssociationHandler associationHandler = new AssociationHandler();
+
+	public AspFactory() {
+
+	}
 
 	public AspFactory(String name, String ip, int port, M3UAProvider m3UAProvider) {
 		this.name = name;
@@ -76,6 +88,10 @@ public abstract class AspFactory implements CommunicationListener {
 
 	public boolean getStatus() {
 		return this.started;
+	}
+
+	public void setM3UAProvider(M3UAProvider m3uaProvider) {
+		m3UAProvider = m3uaProvider;
 	}
 
 	public String getName() {
@@ -137,10 +153,32 @@ public abstract class AspFactory implements CommunicationListener {
 			if (logger.isInfoEnabled()) {
 				logger.info(String.format("AspFactory=%s Association SHUTDOWN", name));
 			}
-			
+
 			onCommStateChange(CommunicationState.SHUTDOWN);
-			
+
 			return HandlerResult.RETURN;
 		}
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<AspFactory> ASP_FACTORY_XML = new XMLFormat<AspFactory>(AspFactory.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, AspFactory aspFactory) throws XMLStreamException {
+			aspFactory.name = xml.getAttribute(NAME, "");
+			aspFactory.ip = xml.getAttribute(IP).toString();
+			aspFactory.port = xml.getAttribute(PORT).toInt();
+			aspFactory.started = xml.getAttribute(STARTED).toBoolean();
+		}
+
+		@Override
+		public void write(AspFactory aspFactory, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(NAME, aspFactory.name);
+			xml.setAttribute(IP, aspFactory.ip);
+			xml.setAttribute(PORT, aspFactory.port);
+			xml.setAttribute(STARTED, aspFactory.started);
+		}
+	};
 }

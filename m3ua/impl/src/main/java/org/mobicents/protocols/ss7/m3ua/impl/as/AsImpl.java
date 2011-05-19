@@ -22,10 +22,14 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.as;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.AsState;
 import org.mobicents.protocols.ss7.m3ua.impl.TransitionState;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
@@ -35,9 +39,24 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
  */
 public class AsImpl extends As {
 
+	public AsImpl() {
+		super();
+	}
+
 	public AsImpl(String name, RoutingContext rc, RoutingKey rk, TrafficModeType trMode, M3UAProvider provider) {
 		super(name, rc, rk, trMode, provider);
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.m3ua.impl.As#init()
+	 */
+	@Override
+	public void init() {
+		fsm = new FSM(this.name);
+		
 		// Define states
 		fsm.createState(AsState.DOWN.toString());
 		fsm.createState(AsState.ACTIVE.toString());
@@ -100,6 +119,21 @@ public class AsImpl extends As {
 		// before T(r) expires
 		fsm.createTransition(TransitionState.AS_STATE_CHANGE_INACTIVE, AsState.PENDING.toString(),
 				AsState.INACTIVE.toString()).setHandler(new AsNoTrans());
-
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<AsImpl> AS_IMPL_XML = new XMLFormat<AsImpl>(AsImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, AsImpl asImpl) throws XMLStreamException {
+			AS_XML.read(xml, asImpl);
+		}
+
+		@Override
+		public void write(AsImpl asImpl, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			AS_XML.write(asImpl, xml);
+		}
+	};
 }

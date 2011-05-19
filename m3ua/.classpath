@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-  <classpathentry kind="src" path="impl/src/main/java"/>
-  <classpathentry kind="src" path="impl/src/test/java"/>
-  <classpathentry kind="src" path="api/src/main/java"/>
-  <classpathentry kind="src" path="api/src/test/java"/>
-  <classpathentry kind="var" path="M2_REPO/javolution/javolution/5.5.1/javolution-5.5.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/junit/junit/4.1/junit-4.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/management/linkset/1.0.0-SNAPSHOT/linkset-1.0.0-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/management/shell/1.0.0-SNAPSHOT/shell-1.0.0-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/stream/stream/1.0.0-SNAPSHOT/stream-1.0.0-SNAPSHOT.jar"/>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-  <classpathentry kind="output" path="target/classes"/>
+	<classpathentry kind="src" path="impl/src/main/java"/>
+	<classpathentry kind="src" path="impl/src/test/java"/>
+	<classpathentry kind="src" path="api/src/main/java"/>
+	<classpathentry kind="src" path="api/src/test/java"/>
+	<classpathentry kind="var" path="M2_REPO/javolution/javolution/5.5.1/javolution-5.5.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/junit/junit/4.1/junit-4.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/management/shell/1.0.0-SNAPSHOT/shell-1.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/mtp/mtp-api/1.0.0-SNAPSHOT/mtp-api-1.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/stream/stream/1.0.0-SNAPSHOT/stream-1.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.7.0"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

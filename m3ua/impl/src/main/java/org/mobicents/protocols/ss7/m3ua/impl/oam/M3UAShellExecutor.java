@@ -27,133 +27,165 @@ import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
-import org.mobicents.protocols.ss7.m3ua.impl.Sgp;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAManagement;
 import org.mobicents.ss7.management.console.ShellExecutor;
 
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class M3UAShellExecutor implements ShellExecutor {
 
-    private static final Logger logger = Logger.getLogger(M3UAShellExecutor.class);
+	private static final Logger logger = Logger.getLogger(M3UAShellExecutor.class);
 
-    private Sgp sgp;
+	private M3UAManagement m3uaManagement;
 
-    public M3UAShellExecutor() {
+	public M3UAShellExecutor() {
 
-    }
+	}
 
-    public Sgp getSgp() {
-        return sgp;
-    }
+	public M3UAManagement getM3uaManagement() {
+		return m3uaManagement;
+	}
 
-    public void setSgp(Sgp sgp) {
-        this.sgp = sgp;
-    }
+	public void setM3uaManagement(M3UAManagement m3uaManagement) {
+		this.m3uaManagement = m3uaManagement;
+	}
 
-    public String execute(String[] args) {
-        try {
-            if (args.length < 4) {
-                // any command will have atleast 4 args
-                return M3UAOAMMessages.INVALID_COMMAND;
-            }
+	public String execute(String[] args) {
+		try {
+			if (args.length < 3) {
+				// any command will have atleast 3 args
+				return M3UAOAMMessages.INVALID_COMMAND;
+			}
 
-            if (args[1] == null) {
-                return M3UAOAMMessages.INVALID_COMMAND;
-            }
+			if (args[1] == null) {
+				return M3UAOAMMessages.INVALID_COMMAND;
+			}
 
-            // args[0] is m3ua
-            if (args[1].compareTo("ras") == 0) {
-                // related to rem AS for SigGatewayImpl
-                String rasCmd = args[2];
-                if (rasCmd == null) {
-                    return M3UAOAMMessages.INVALID_COMMAND;
-                }
+			// args[0] is m3ua
+			if (args[1].equals("ras")) {
+				// related to rem AS for SigGatewayImpl
+				String rasCmd = args[2];
+				if (rasCmd == null) {
+					return M3UAOAMMessages.INVALID_COMMAND;
+				}
 
-                if (rasCmd.compareTo("create") == 0) {
-                    // Create new Rem AS
-                    As as = this.sgp.createAppServer(args);
-                    return String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, as.getName());
-                } else if (rasCmd.compareTo("add") == 0) {
-                    // Add Rem ASP to Rem AS
-                    if (args[3] == null || args[4] == null) {
-                        return M3UAOAMMessages.INVALID_COMMAND;
-                    }
+				if (rasCmd.equals("create")) {
+					// Create new Rem AS
+					As as = this.m3uaManagement.createAppServer(args);
+					return String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, as.getName());
+				} else if (rasCmd.equals("add")) {
+					// Add Rem ASP to Rem AS
+					if (args[3] == null || args[4] == null) {
+						return M3UAOAMMessages.INVALID_COMMAND;
+					}
 
-                    this.sgp.assignAspToAs(args[3], args[4]);
-                    return String.format(M3UAOAMMessages.ADD_ASP_TO_AS_SUCESSFULL, args[4], args[3]);
-                }
-                return M3UAOAMMessages.INVALID_COMMAND;
-            } else if (args[1].compareTo("rasp") == 0) {
-                // related to rem AS for SigGatewayImpl
-                String raspCmd = args[2];
+					this.m3uaManagement.assignAspToAs(args[3], args[4]);
+					return String.format(M3UAOAMMessages.ADD_ASP_TO_AS_SUCESSFULL, args[4], args[3]);
+				}
+				return M3UAOAMMessages.INVALID_COMMAND;
+			} else if (args[1].equals("rasp")) {
+				// related to rem AS for SigGatewayImpl
+				String raspCmd = args[2];
 
-                if (raspCmd == null) {
-                    return M3UAOAMMessages.INVALID_COMMAND;
-                }
+				if (raspCmd == null) {
+					return M3UAOAMMessages.INVALID_COMMAND;
+				}
 
-                if (raspCmd.compareTo("create") == 0) {
-                    // Create new Rem ASP
-                    AspFactory factory = this.sgp.createAspFactory(args);
-                    return String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, factory.getName());
-                }
-                return M3UAOAMMessages.INVALID_COMMAND;
-            } else if (args[1].compareTo("as") == 0) {
-                // related to rem AS for SigGatewayImpl
-                String rasCmd = args[2];
-                if (rasCmd == null) {
-                    return M3UAOAMMessages.INVALID_COMMAND;
-                }
+				if (raspCmd.equals("create")) {
+					// Create new Rem ASP
+					AspFactory factory = this.m3uaManagement.createAspFactory(args);
+					return String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, factory.getName());
+				}
+				return M3UAOAMMessages.INVALID_COMMAND;
+			} else if (args[1].equals("as")) {
+				// related to rem AS for SigGatewayImpl
+				String rasCmd = args[2];
+				if (rasCmd == null) {
+					return M3UAOAMMessages.INVALID_COMMAND;
+				}
 
-                if (rasCmd.compareTo("create") == 0) {
-                    // Create new Rem AS
-                    As as = this.sgp.createAppServer(args);
-                    return String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, as.getName());
-                } else if (rasCmd.compareTo("add") == 0) {
-                    // Add Rem ASP to Rem AS
-                    if (args[3] == null || args[4] == null) {
-                        return M3UAOAMMessages.INVALID_COMMAND;
-                    }
+				if (rasCmd.equals("create")) {
+					// Create new Rem AS
+					As as = this.m3uaManagement.createAppServer(args);
+					return String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, as.getName());
+				} else if (rasCmd.equals("add")) {
+					// Add Rem ASP to Rem AS
+					if (args[3] == null || args[4] == null) {
+						return M3UAOAMMessages.INVALID_COMMAND;
+					}
 
-                    this.sgp.assignAspToAs(args[3], args[4]);
-                    return String.format(M3UAOAMMessages.ADD_ASP_TO_AS_SUCESSFULL, args[4], args[3]);
-                }
-                return M3UAOAMMessages.INVALID_COMMAND;
-            } else if (args[1].compareTo("asp") == 0) {
-                // related to rem AS for SigGatewayImpl
-                String raspCmd = args[2];
+					this.m3uaManagement.assignAspToAs(args[3], args[4]);
+					return String.format(M3UAOAMMessages.ADD_ASP_TO_AS_SUCESSFULL, args[4], args[3]);
+				}
+				return M3UAOAMMessages.INVALID_COMMAND;
+			} else if (args[1].equals("asp")) {
+				// related to rem AS for SigGatewayImpl
+				String raspCmd = args[2];
 
-                if (raspCmd == null) {
-                    return M3UAOAMMessages.INVALID_COMMAND;
-                }
+				if (raspCmd == null) {
+					return M3UAOAMMessages.INVALID_COMMAND;
+				}
 
-                if (raspCmd.compareTo("create") == 0) {
-                    // Create new ASP
-                    AspFactory factory = this.sgp.createAspFactory(args);
-                    return String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, factory.getName());
-                }
-                
-                if (raspCmd.compareTo("start") == 0) {
-                    String aspName = args[3];
-                    this.sgp.startAsp(aspName);
-                    return String.format(M3UAOAMMessages.ASP_START_SUCESSFULL, aspName);
-                }
-                
-                if (raspCmd.compareTo("stop") == 0) {
-                    String aspName = args[3];
-                    this.sgp.stopAsp(aspName);
-                    return String.format(M3UAOAMMessages.ASP_STOP_SUCESSFULL, aspName);
-                }                
-                
-                return M3UAOAMMessages.INVALID_COMMAND;
-            }
-            return M3UAOAMMessages.INVALID_COMMAND;
-        } catch (Exception e) {
-            logger.error(String.format("Error while executing comand %s", Arrays.toString(args)), e);
-            return e.getMessage();
-        }
-    }
+				if (raspCmd.equals("create")) {
+					// Create new ASP
+					AspFactory factory = this.m3uaManagement.createAspFactory(args);
+					return String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, factory.getName());
+				}
+
+				if (raspCmd.equals("start")) {
+					String aspName = args[3];
+					this.m3uaManagement.startAsp(aspName);
+					return String.format(M3UAOAMMessages.ASP_START_SUCESSFULL, aspName);
+				}
+
+				if (raspCmd.equals("stop")) {
+					String aspName = args[3];
+					this.m3uaManagement.stopAsp(aspName);
+					return String.format(M3UAOAMMessages.ASP_STOP_SUCESSFULL, aspName);
+				}
+
+				return M3UAOAMMessages.INVALID_COMMAND;
+			} else if (args[1].equals("route")) {
+
+				if (!(this.m3uaManagement instanceof ClientM3UAManagement)) {
+					return String.format(M3UAOAMMessages.CMD_NOTSUPPORTED_M3UAMANAGEMENT_IS_SERVER, "m3ua route ...");
+				}
+
+				String routeCmd = args[2];
+
+				if (routeCmd == null) {
+					return M3UAOAMMessages.INVALID_COMMAND;
+				}
+
+				if (routeCmd.equals("add")) {
+					int dpc = Integer.parseInt(args[3]);
+
+					((ClientM3UAManagement) m3uaManagement).addRouteAsForDpc(dpc, args[4]);
+					return String.format(M3UAOAMMessages.ADD_ROUTE_AS_FOR_DPC_SUCCESSFULL, args[4], dpc);
+				}
+
+				if (routeCmd.equals("remove")) {
+					int dpc = Integer.parseInt(args[3]);
+
+					((ClientM3UAManagement) m3uaManagement).removeRouteAsForDpc(dpc, args[4]);
+					return String.format(M3UAOAMMessages.REMOVE_AS_ROUTE_FOR_DPC_SUCCESSFULL, args[4], dpc);
+				}
+
+				if (routeCmd.equals("show")) {
+					return M3UAOAMMessages.NOT_SUPPORTED_YET;
+
+				}
+			}
+			return M3UAOAMMessages.INVALID_COMMAND;
+		} catch (Exception e) {
+			logger.error(String.format("Error while executing comand %s", Arrays.toString(args)), e);
+			return e.getMessage();
+		}
+	}
 
 }

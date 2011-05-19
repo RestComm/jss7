@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import javolution.util.FastList;
 
@@ -33,11 +34,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mobicents.protocols.ss7.m3ua.impl.as.RemSgpImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAProcess;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ProtocolDataImpl;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.SgpImpl;
-import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAProcess;
 import org.mobicents.protocols.ss7.m3ua.parameter.DestinationPointCode;
 import org.mobicents.protocols.ss7.m3ua.parameter.LocalRKIdentifier;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
@@ -74,7 +76,21 @@ public class GatewayTest {
 	}
 
 	@Before
-	public void setUp() {
+	public void setUp() throws IOException {
+		// Clean up
+		ClientM3UAManagement clientM3UAMgmt = new ClientM3UAManagement();
+		clientM3UAMgmt.start();
+		clientM3UAMgmt.getAppServers().clear();
+		clientM3UAMgmt.getAspfactories().clear();
+		clientM3UAMgmt.getDpcVsAsName().clear();
+		clientM3UAMgmt.stop();
+
+		ServerM3UAManagement serverM3UAMgmt = new ServerM3UAManagement();
+		serverM3UAMgmt.start();
+		serverM3UAMgmt.getAppServers().clear();
+		serverM3UAMgmt.getAspfactories().clear();
+		serverM3UAMgmt.stop();
+		
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory
@@ -108,11 +124,11 @@ public class GatewayTest {
 		Thread.sleep(1000);
 
 		// Both AS and ASP should be ACTIVE now
-		assertEquals(remAsp.getState(), AspState.ACTIVE);
-		assertEquals(remAs.getState(), AsState.ACTIVE);
+		assertEquals(AspState.ACTIVE, remAsp.getState());
+		assertEquals(AsState.ACTIVE, remAs.getState());
 
-		assertEquals(localAsp.getState(), AspState.ACTIVE);
-		assertEquals(localAs.getState(), AsState.ACTIVE);
+		assertEquals(AspState.ACTIVE, localAsp.getState());
+		assertEquals(AsState.ACTIVE, localAs.getState());
 
 		client.sendPayload();
 		server.sendPayload();
@@ -145,11 +161,15 @@ public class GatewayTest {
 	}
 
 	private class Client implements Runnable {
+		ByteBuffer rxBuffer = ByteBuffer.allocateDirect(1000);
+		ByteBuffer txBuffer = ByteBuffer.allocateDirect(1000);
+
 		RoutingContext rc;
 		RoutingKey rKey;
 		TrafficModeType trModType;
-		RemSgpImpl rsgw;
-		private FastList<PayloadData> receivedData = new FastList<PayloadData>();
+		ClientM3UAProcess rsgw;
+		ClientM3UAManagement clientM3UAMgmt;
+		private FastList<byte[]> receivedData = new FastList<byte[]>();
 		private volatile boolean started = false;
 
 		public Client(RoutingContext rc, RoutingKey rKey, TrafficModeType trModType) {
@@ -158,35 +178,42 @@ public class GatewayTest {
 			this.trModType = trModType;
 		}
 
-		public FastList<PayloadData> getReceivedData() {
+		public FastList<byte[]> getReceivedData() {
 			return receivedData;
 		}
 
 		public void start() throws Exception {
 			// Set-up Rem Signaling Gateway
-			rsgw = new RemSgpImpl();
+			clientM3UAMgmt = new ClientM3UAManagement();
+			clientM3UAMgmt.start();
+
+			rsgw = new ClientM3UAProcess();
+			rsgw.setClientM3UAManagement(clientM3UAMgmt);
 			rsgw.start();
 
 			// m3ua as create rc <rc> <ras-name>
-			localAs = rsgw.createAppServer("m3ua as create rc 100 client-testas".split(" "));
+			localAs = clientM3UAMgmt.createAppServer("m3ua as create rc 100 client-testas".split(" "));
 			// m3ua asp create ip <local-ip> port <local-port> remip <remip>
 			// remport <remport> <asp-name>
 			// localAspFactory = rsgw.createAspFactory("client-testasp",
 			// "127.0.0.1", 3777, "127.0.0.1", 3112);
-			localAspFactory = rsgw
+			localAspFactory = clientM3UAMgmt
 					.createAspFactory("m3ua asp create ip 127.0.0.1 port 3777 remip 127.0.0.1 remport 3112 client-testasp"
 							.split(" "));
-			localAsp = rsgw.assignAspToAs("client-testas", "client-testasp");
+			localAsp = clientM3UAMgmt.assignAspToAs("client-testas", "client-testasp");
 
-			rsgw.startAsp("client-testasp");
+			// Define Route
+			clientM3UAMgmt.addRouteAsForDpc(123, "client-testas");
+
+			clientM3UAMgmt.startAsp("client-testasp");
 
 			started = true;
 			new Thread(this).start();
 		}
 
 		public void stop() throws Exception {
-			rsgw.stopAsp("client-testasp");
-			rsgw.stop();
+			clientM3UAMgmt.stopAsp("client-testasp");
+			clientM3UAMgmt.stop();
 		}
 
 		public void stopClient() {
@@ -196,16 +223,24 @@ public class GatewayTest {
 		public void sendPayload() throws Exception {
 			ProtocolDataImpl p1 = (ProtocolDataImpl) parmFactory.createProtocolData(1408, 123, 3, 1, 0, 1, new byte[] {
 					1, 2, 3, 4 });
-			rsgw.send(p1.getMsu());
+			txBuffer.clear();
+			txBuffer.put(p1.getMsu());
+			txBuffer.flip();
+			rsgw.write(txBuffer);
 		}
 
 		public void run() {
 			while (started) {
 				try {
-					rsgw.perform();
-					PayloadData payload = rsgw.poll();
-					if (payload != null) {
-						receivedData.add(payload);
+					rsgw.execute();
+					rxBuffer.clear();
+					int rxBytes = rsgw.read(rxBuffer);
+
+					if (rxBytes > 0) {
+						byte[] data = new byte[rxBytes];
+						rxBuffer.flip();
+						rxBuffer.get(data);
+						receivedData.add(data);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -216,14 +251,18 @@ public class GatewayTest {
 	}
 
 	private class Server implements Runnable {
+		ByteBuffer rxBuffer = ByteBuffer.allocateDirect(1000);
+		ByteBuffer txBuffer = ByteBuffer.allocateDirect(1000);
+
 		RoutingContext rc;
 		RoutingKey rKey;
 		TrafficModeType trModType;
-		SgpImpl sgw;
+		ServerM3UAProcess sgw;
+		ServerM3UAManagement serverM3UAMgmt;
 
 		private volatile boolean started = false;
 
-		private FastList<PayloadData> receivedData = new FastList<PayloadData>();
+		private FastList<byte[]> receivedData = new FastList<byte[]>();
 
 		public Server(RoutingContext rc, RoutingKey rKey, TrafficModeType trModType) {
 			this.rc = rc;
@@ -231,22 +270,28 @@ public class GatewayTest {
 			this.trModType = trModType;
 		}
 
-		public FastList<PayloadData> getReceivedData() {
+		public FastList<byte[]> getReceivedData() {
 			return receivedData;
 		}
 
 		public void start() throws Exception {
+			serverM3UAMgmt = new ServerM3UAManagement();
+			serverM3UAMgmt.start();
+
 			// Set-up Signaling Gateway
-			sgw = new SgpImpl("127.0.0.1", 3112);
+			sgw = new ServerM3UAProcess("127.0.0.1", 3112);
+			sgw.setServerM3UAManagement(serverM3UAMgmt);
 			sgw.start();
 
 			// m3ua ras create rc <rc> rk dpc <dpc> opc <opc-list> si <si-list>
 			// traffic-mode {broadcast|loadshare|override} <ras-name>
-			remAs = sgw.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode override server-testas"
-					.split(" "));
+			remAs = serverM3UAMgmt
+					.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode override server-testas"
+							.split(" "));
 			// m3ua rasp create ip <ip> port <port> <asp-name>"
-			remAspFactory = sgw.createAspFactory("m3ua rasp create ip 127.0.0.1 port 3777 server-testasp".split(" "));
-			remAsp = sgw.assignAspToAs("server-testas", "server-testasp");
+			remAspFactory = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 3777 server-testasp"
+					.split(" "));
+			remAsp = serverM3UAMgmt.assignAspToAs("server-testas", "server-testasp");
 
 			started = true;
 			new Thread(this).start();
@@ -260,16 +305,24 @@ public class GatewayTest {
 		public void sendPayload() throws Exception {
 			ProtocolDataImpl p1 = (ProtocolDataImpl) parmFactory.createProtocolData(1408, 123, 3, 1, 0, 1, new byte[] {
 					1, 2, 3, 4 });
-			sgw.send(p1.getMsu());
+			txBuffer.clear();
+			txBuffer.put(p1.getMsu());
+			txBuffer.flip();
+			sgw.write(txBuffer);
 		}
 
 		public void run() {
 			while (started) {
 				try {
 					sgw.perform();
-					PayloadData payload = sgw.poll();
-					if (payload != null) {
-						receivedData.add(payload);
+					rxBuffer.clear();
+					int rxBytes = sgw.read(rxBuffer);
+
+					if (rxBytes > 0) {
+						byte[] data = new byte[rxBytes];
+						rxBuffer.flip();
+						rxBuffer.get(data);
+						receivedData.add(data);
 					}
 
 				} catch (IOException e) {

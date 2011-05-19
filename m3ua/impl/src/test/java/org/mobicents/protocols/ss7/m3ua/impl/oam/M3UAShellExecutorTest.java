@@ -24,122 +24,166 @@ package org.mobicents.protocols.ss7.m3ua.impl.oam;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mobicents.protocols.ss7.m3ua.impl.as.RemSgpImpl;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.SgpImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAProcess;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAProcess;
 
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class M3UAShellExecutorTest {
 
-    M3UAShellExecutor m3uaExec = null;
-    RemSgpImpl rsgw = null;
-    SgpImpl sgw = null;
+	M3UAShellExecutor m3uaExec = null;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+	}
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+	}
 
-    @Before
-    public void setUp() throws Exception {
-        m3uaExec = new M3UAShellExecutor();
-        rsgw = new RemSgpImpl();
-        sgw = new SgpImpl("127.0.0.1", 1771);
+	@Before
+	public void setUp() throws Exception {
+		m3uaExec = new M3UAShellExecutor();
 
-        sgw.start();
-        rsgw.start();
-    }
+		// Clean up
+		ClientM3UAManagement clientM3UAMgmt = new ClientM3UAManagement();
+		clientM3UAMgmt.start();
+		clientM3UAMgmt.getAppServers().clear();
+		clientM3UAMgmt.getAspfactories().clear();
+		clientM3UAMgmt.getDpcVsAsName().clear();
+		clientM3UAMgmt.stop();
 
-    @After
-    public void tearDown() {
-        sgw.stop();
-        rsgw.stop();
-    }
+		ServerM3UAManagement serverM3UAMgmt = new ServerM3UAManagement();
+		serverM3UAMgmt.start();
+		serverM3UAMgmt.getAppServers().clear();
+		serverM3UAMgmt.getAspfactories().clear();
+		serverM3UAMgmt.stop();
+	}
 
-    @Test
-    public void testSgwCommands() {
-        m3uaExec.setSgp(sgw);
+	@After
+	public void tearDown() throws IOException {
+		// Clean up
+		ClientM3UAManagement clientM3UAMgmt = new ClientM3UAManagement();
+		clientM3UAMgmt.start();
+		clientM3UAMgmt.getAppServers().clear();
+		clientM3UAMgmt.getAspfactories().clear();
+		clientM3UAMgmt.getDpcVsAsName().clear();
+		clientM3UAMgmt.stop();
 
-        // Test creating new AS
-        String result = m3uaExec.execute("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode loadshare testas"
-                .split(" "));
-        assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas"), result);
+		ServerM3UAManagement serverM3UAMgmt = new ServerM3UAManagement();
+		serverM3UAMgmt.start();
+		serverM3UAMgmt.getAppServers().clear();
+		serverM3UAMgmt.getAspfactories().clear();
+		serverM3UAMgmt.stop();
+	}
 
-        // Try adding same again
-        result = m3uaExec.execute("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode loadshare testas".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.CREATE_AS_FAIL_NAME_EXIST, "testas"), result);
+	@Test
+	public void testServerCommands() throws IOException {
+		ServerM3UAManagement serverM3UAMgmt = new ServerM3UAManagement();
+		serverM3UAMgmt.start();
+		m3uaExec.setM3uaManagement(serverM3UAMgmt);
 
-        // Create AS with only DPC
-        result = m3uaExec.execute("m3ua ras create rc 100 rk dpc 124 testas1".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas1"), result);
+		// Test creating new AS
+		String result = m3uaExec.execute("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode loadshare testas"
+				.split(" "));
+		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas"), result);
 
-        // Create AS with DPC and OPC list
-        result = m3uaExec.execute("m3ua ras create rc 100 rk dpc 125 opc 1774,1778 testas2".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas2"), result);
+		// Try adding same again
+		result = m3uaExec.execute("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode loadshare testas".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_FAIL_NAME_EXIST, "testas"), result);
 
-        // create ASP
-        result = m3uaExec.execute("m3ua rasp create ip 127.0.0.1 port 2777 testasp1".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, "testasp1"), result);
+		// Create AS with only DPC
+		result = m3uaExec.execute("m3ua ras create rc 100 rk dpc 124 testas1".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas1"), result);
 
-        // Error for same name
-        result = m3uaExec.execute("m3ua rasp create ip 127.0.0.1 port 2778 testasp1".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_NAME_EXIST, "testasp1"), result);
+		// Create AS with DPC and OPC list
+		result = m3uaExec.execute("m3ua ras create rc 100 rk dpc 125 opc 1774,1778 testas2".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas2"), result);
 
-        // Error for same IP:Port
-        result = m3uaExec.execute("m3ua rasp create ip 127.0.0.1 port 2777 testasp2".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_IPPORT_EXIST, "127.0.0.1", 2777), result);
+		// create ASP
+		result = m3uaExec.execute("m3ua rasp create ip 127.0.0.1 port 2777 testasp1".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, "testasp1"), result);
 
-        // assign ASP to AS
-        result = m3uaExec.execute("m3ua ras add testas testasp1".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_SUCESSFULL, "testasp1", "testas"), result);
+		// Error for same name
+		result = m3uaExec.execute("m3ua rasp create ip 127.0.0.1 port 2778 testasp1".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_NAME_EXIST, "testasp1"), result);
 
-        // add again
-        result = m3uaExec.execute("m3ua ras add testas testasp1".split(" "));
-        assertEquals(String.format("Asp name=%s already added", "testasp1"), result);
-    }
-    
-    @Test
-    public void testRemSgwCommands() {
-        m3uaExec.setSgp(rsgw);
+		// Error for same IP:Port
+		result = m3uaExec.execute("m3ua rasp create ip 127.0.0.1 port 2777 testasp2".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_IPPORT_EXIST, "127.0.0.1", 2777), result);
 
-        // Test creating new AS
-        String result = m3uaExec.execute("m3ua ras create rc 100 testas"
-                .split(" "));
-        assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas"), result);
+		// assign ASP to AS
+		result = m3uaExec.execute("m3ua ras add testas testasp1".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_SUCESSFULL, "testasp1", "testas"), result);
 
-        // Try adding same again
-        result = m3uaExec.execute("m3ua ras create rc 100 testas".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.CREATE_AS_FAIL_NAME_EXIST, "testas"), result);
+		// add again
+		result = m3uaExec.execute("m3ua ras add testas testasp1".split(" "));
+		assertEquals(String.format("Asp name=%s already added", "testasp1"), result);
 
-        // create ASP
-        result = m3uaExec.execute("m3ua rasp create ip 127.0.0.1 port 2777 remip 127.0.0.1 remport 2777 testasp1".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, "testasp1"), result);
+		serverM3UAMgmt.stop();
+	}
 
-        // Error for same name
-        result = m3uaExec.execute("m3ua rasp create ip 127.0.0.1 port 2778 remip 127.0.0.1 remport 2777 testasp1".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_NAME_EXIST, "testasp1"), result);
+	@Test
+	public void testClientCommands() throws IOException {
+		ClientM3UAManagement clientM3UAMgmt = new ClientM3UAManagement();
+		clientM3UAMgmt.start();
+		m3uaExec.setM3uaManagement(clientM3UAMgmt);
 
-        // Error for same IP:Port
-        result = m3uaExec.execute("m3ua rasp create ip 127.0.0.1 port 2777 remip 127.0.0.1 remport 2777 testasp2".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_IPPORT_EXIST, "127.0.0.1", 2777), result);
+		// Test creating new AS
+		String result = m3uaExec.execute("m3ua as create rc 100 testas".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas"), result);
 
-        // assign ASP to AS
-        result = m3uaExec.execute("m3ua ras add testas testasp1".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_SUCESSFULL, "testasp1", "testas"), result);
+		// Try adding same again
+		result = m3uaExec.execute("m3ua as create rc 100 testas".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_FAIL_NAME_EXIST, "testas"), result);
 
-        // add again
-        result = m3uaExec.execute("m3ua ras add testas testasp1".split(" "));
-        assertEquals(String.format("Asp name=%s already added", "testasp1"), result);
-    }    
+		// create ASP
+		result = m3uaExec.execute("m3ua asp create ip 127.0.0.1 port 2777 remip 127.0.0.1 remport 2777 testasp1"
+				.split(" "));
+		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, "testasp1"), result);
+
+		// Error for same name
+		result = m3uaExec.execute("m3ua asp create ip 127.0.0.1 port 2778 remip 127.0.0.1 remport 2777 testasp1"
+				.split(" "));
+		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_NAME_EXIST, "testasp1"), result);
+
+		// Error for same IP:Port
+		result = m3uaExec.execute("m3ua asp create ip 127.0.0.1 port 2777 remip 127.0.0.1 remport 2777 testasp2"
+				.split(" "));
+		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_IPPORT_EXIST, "127.0.0.1", 2777), result);
+
+		// assign ASP to AS
+		result = m3uaExec.execute("m3ua as add testas testasp1".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_SUCESSFULL, "testasp1", "testas"), result);
+
+		// add again
+		result = m3uaExec.execute("m3ua ras add testas testasp1".split(" "));
+		assertEquals(String.format("Asp name=%s already added", "testasp1"), result);
+
+		// add route
+		result = m3uaExec.execute("mu3ua route add 1177 testas".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.ADD_ROUTE_AS_FOR_DPC_SUCCESSFULL, "testas", 1177), result);
+
+		// add route again
+		result = m3uaExec.execute("mu3ua route add 1177 testas".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.ROUTE_AS_FOR_DPC_EXIST, "testas", 1177), result);
+
+		// remove route
+		result = m3uaExec.execute("mu3ua route remove 1177 testas".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.REMOVE_AS_ROUTE_FOR_DPC_SUCCESSFULL, "testas", 1177), result);
+
+		clientM3UAMgmt.stop();
+	}
 }

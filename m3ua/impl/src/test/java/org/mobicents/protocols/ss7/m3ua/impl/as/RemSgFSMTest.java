@@ -27,6 +27,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -53,6 +55,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 
 /**
+ * Tests the FSM of client side AS and ASP's
  * 
  * @author amit bhayani
  * 
@@ -61,6 +64,7 @@ public class RemSgFSMTest {
 
 	private ParameterFactoryImpl parmFactory = new ParameterFactoryImpl();
 	private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
+	private ClientM3UAManagement clientM3UAMgmt = new ClientM3UAManagement();
 
 	public RemSgFSMTest() {
 	}
@@ -74,33 +78,34 @@ public class RemSgFSMTest {
 	}
 
 	@Before
-	public void setUp() {
-
+	public void setUp() throws IOException {
+		clientM3UAMgmt.start();
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws IOException {
+		clientM3UAMgmt.getAppServers().clear();
+		clientM3UAMgmt.getAspfactories().clear();
+		clientM3UAMgmt.getDpcVsAsName().clear();
+		clientM3UAMgmt.stop();
 	}
 
 	@Test
 	public void testSingleAspInAs() throws Exception {
 		// 5.1.1. Single ASP in an Application Server ("1+0" sparing),
 
-		RemSgpImpl rsgw = new RemSgpImpl();
-		rsgw.start();
-
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
-		As as = rsgw.createAppServer("m3ua as create rc 100 testas".split(" "));
+		As as = clientM3UAMgmt.createAppServer("m3ua as create rc 100 testas".split(" "));
 		// AspFactory localAspFactory = rsgw.createAspFactory("testasp",
 		// "127.0.0.1", 2777, "127.0.0.1", 2778);
-		AspFactory localAspFactory = rsgw
+		AspFactory localAspFactory = clientM3UAMgmt
 				.createAspFactory("m3ua asp create ip 127.0.0.1 port 2777 remip 127.0.0.1 remport 2778 testasp"
 						.split(" "));
 		localAspFactory.start();
 
-		Asp asp = rsgw.assignAspToAs("testas", "testasp");
+		Asp asp = clientM3UAMgmt.assignAspToAs("testas", "testasp");
 
 		// Check for Communication UP
 		localAspFactory.onCommStateChange(CommunicationState.UP);
@@ -154,7 +159,6 @@ public class RemSgFSMTest {
 		// Make sure we don't have any more
 		assertNull(localAspFactory.txPoll());
 
-		rsgw.stop();
 	}
 
 	@Test
@@ -162,31 +166,28 @@ public class RemSgFSMTest {
 		// 5.1.1.3. Single ASP in Multiple Application Servers (Each with "1+0"
 		// Sparing)
 
-		RemSgpImpl rsgw = new RemSgpImpl();
-		rsgw.start();
-
 		// Define 1st AS
 		RoutingContext rc1 = parmFactory.createRoutingContext(new long[] { 100 });
 
 		// As remAs1 = rsgw.createAppServer("testas1", rc1, rKey1, trModType1);
-		As remAs1 = rsgw.createAppServer("m3ua as create rc 100 testas1".split(" "));
+		As remAs1 = clientM3UAMgmt.createAppServer("m3ua as create rc 100 testas1".split(" "));
 
 		// Define 2nd AS
 		RoutingContext rc2 = parmFactory.createRoutingContext(new long[] { 200 });
 
 		// As remAs2 = rsgw.createAppServer("testas2", rc2, rKey2, trModType2);
-		As remAs2 = rsgw.createAppServer("m3ua as create rc 200 testas2".split(" "));
+		As remAs2 = clientM3UAMgmt.createAppServer("m3ua as create rc 200 testas2".split(" "));
 
 		// AspFactory aspFactory = rsgw.createAspFactory("testasp", "127.0.0.1",
 		// 2777, "127.0.0.1", 2778);
-		AspFactory aspFactory = rsgw
+		AspFactory aspFactory = clientM3UAMgmt
 				.createAspFactory("m3ua asp create ip 127.0.0.1 port 3777 remip 127.0.0.1 remport 3112 testasp"
 						.split(" "));
 		aspFactory.start();
 
 		// Both ASP uses same underlying M3UAChannel
-		Asp remAsp1 = rsgw.assignAspToAs("testas1", "testasp");
-		Asp remAsp2 = rsgw.assignAspToAs("testas2", "testasp");
+		Asp remAsp1 = clientM3UAMgmt.assignAspToAs("testas1", "testasp");
+		Asp remAsp2 = clientM3UAMgmt.assignAspToAs("testas2", "testasp");
 
 		// Check for Communication UP
 		aspFactory.onCommStateChange(CommunicationState.UP);
@@ -270,39 +271,35 @@ public class RemSgFSMTest {
 		// Make sure we don't have any more
 		assertNull(aspFactory.txPoll());
 
-		rsgw.stop();
 	}
 
 	@Test
 	public void testTwoAspInAsOverride() throws Exception {
 		// 5.1.2. Two ASPs in Application Server ("1+1" Sparing)
 
-		RemSgpImpl rsgw = new RemSgpImpl();
-		rsgw.start();
-
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		TrafficModeType trModType = parmFactory.createTrafficModeType(TrafficModeType.Override);
 
 		// As remAs = rsgw.createAppServer("testas", rc, rKey, trModType);
-		As remAs = rsgw.createAppServer("m3ua as create rc 100 testas".split(" "));
+		As remAs = clientM3UAMgmt.createAppServer("m3ua as create rc 100 testas".split(" "));
 
 		// AspFactory aspFactory1 = rsgw.createAspFactory("testasp1",
 		// "127.0.0.1", 2777, "127.0.0.1", 2777);
-		AspFactory aspFactory1 = rsgw
+		AspFactory aspFactory1 = clientM3UAMgmt
 				.createAspFactory("m3ua asp create ip 127.0.0.1 port 3777 remip 127.0.0.1 remport 3112 testasp1"
 						.split(" "));
 		aspFactory1.start();
 
 		// AspFactory aspFactory2 = rsgw.createAspFactory("testasp2",
 		// "127.0.0.1", 2777, "127.0.0.1", 2778);
-		AspFactory aspFactory2 = rsgw
+		AspFactory aspFactory2 = clientM3UAMgmt
 				.createAspFactory("m3ua asp create ip 127.0.0.1 port 3778 remip 127.0.0.1 remport 3112 testasp2"
 						.split(" "));
 		aspFactory2.start();
 
-		Asp remAsp1 = rsgw.assignAspToAs("testas", "testasp1");
-		Asp remAsp2 = rsgw.assignAspToAs("testas", "testasp2");
+		Asp remAsp1 = clientM3UAMgmt.assignAspToAs("testas", "testasp1");
+		Asp remAsp2 = clientM3UAMgmt.assignAspToAs("testas", "testasp2");
 
 		// Check for Communication UP for ASP1
 		aspFactory1.onCommStateChange(CommunicationState.UP);
@@ -389,26 +386,22 @@ public class RemSgFSMTest {
 		assertNull(aspFactory1.txPoll());
 		assertNull(aspFactory2.txPoll());
 
-		rsgw.stop();
 	}
 
 	@Test
 	public void testPendingQueue() throws Exception {
-		RemSgpImpl rsgw = new RemSgpImpl();
-		rsgw.start();
-
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
-		As as = rsgw.createAppServer("m3ua as create rc 100 testas".split(" "));
+		As as = clientM3UAMgmt.createAppServer("m3ua as create rc 100 testas".split(" "));
 		// AspFactory localAspFactory = rsgw.createAspFactory("testasp",
 		// "127.0.0.1", 2777, "127.0.0.1", 2778);
-		AspFactory localAspFactory = rsgw
+		AspFactory localAspFactory = clientM3UAMgmt
 				.createAspFactory("m3ua asp create ip 127.0.0.1 port 2777 remip 127.0.0.1 remport 2778 testasp"
 						.split(" "));
 		localAspFactory.start();
 
-		Asp asp = rsgw.assignAspToAs("testas", "testasp");
+		Asp asp = clientM3UAMgmt.assignAspToAs("testas", "testasp");
 
 		// Check for Communication UP
 		localAspFactory.onCommStateChange(CommunicationState.UP);
@@ -463,10 +456,9 @@ public class RemSgFSMTest {
 		message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK);
 		localAspFactory.read(message);
 
-		
-		//start the ASP Factory again
+		// start the ASP Factory again
 		localAspFactory.start();
-		
+
 		// Now lets add some PayloadData
 		PayloadDataImpl payload = (PayloadDataImpl) messageFactory.createMessage(MessageClass.TRANSFER_MESSAGES,
 				MessageType.PAYLOAD);
@@ -516,7 +508,7 @@ public class RemSgFSMTest {
 		assertEquals(AspState.ACTIVE, asp.getState());
 		// also the AS should be ACTIVE now
 		assertEquals(AsState.ACTIVE, as.getState());
-		
+
 		// Also we should have PayloadData
 		M3UAMessage payLoadTemp = localAspFactory.txPoll();
 		assertNotNull(payLoadTemp);
@@ -526,7 +518,6 @@ public class RemSgFSMTest {
 		// Make sure we don't have any more
 		assertNull(localAspFactory.txPoll());
 
-		rsgw.stop();
 	}
 
 	private boolean validateMessage(AspFactory factory, int msgClass, int msgType, int type, int info) {

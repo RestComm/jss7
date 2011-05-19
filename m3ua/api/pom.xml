@@ -19,6 +19,11 @@
 			<dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId>
 			<version>${log4j.version}</version> </dependency>
 		-->
+		<!-- MTP3 -->
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<artifactId>mtp-api</artifactId>
+		</dependency>		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

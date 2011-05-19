@@ -23,6 +23,8 @@
 package org.mobicents.protocols.ss7.m3ua.impl.sg;
 
 import javolution.util.FastList;
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
@@ -53,11 +55,15 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class RemAspFactory extends AspFactory {
 
 	private static Logger logger = Logger.getLogger(RemAspFactory.class);
+	
+	public RemAspFactory(){
+		super();
+	}
 
 	public RemAspFactory(String name, String ip, int port, M3UAProvider provider) {
 		super(name, ip, port, provider);
@@ -215,7 +221,7 @@ public class RemAspFactory extends AspFactory {
 			if (asp.getState() == AspState.ACTIVE) {
 				// Check if ASP is in ACTIVE, its error state
 				this.sendError(ErrorCode.Unexpected_Message, asp.getAs().getRoutingContext());
-				//break;
+				// break;
 			}
 
 			try {
@@ -442,5 +448,24 @@ public class RemAspFactory extends AspFactory {
 			}
 		}
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<RemAspFactory> REM_ASP_FACTORY_XML = new XMLFormat<RemAspFactory>(
+			RemAspFactory.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, RemAspFactory remAspFactory)
+				throws XMLStreamException {
+			ASP_FACTORY_XML.read(xml, remAspFactory);
+		}
+
+		@Override
+		public void write(RemAspFactory remAspFactory, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+			ASP_FACTORY_XML.write(remAspFactory, xml);
+		}
+	};
 
 }

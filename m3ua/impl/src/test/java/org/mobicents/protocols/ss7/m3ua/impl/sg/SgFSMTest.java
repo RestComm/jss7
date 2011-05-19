@@ -27,12 +27,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.AsState;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
@@ -46,7 +47,6 @@ import org.mobicents.protocols.ss7.m3ua.impl.message.asptm.ASPInactiveImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.transfer.PayloadDataImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ProtocolDataImpl;
-import org.mobicents.protocols.ss7.m3ua.impl.tcp.TcpProvider;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
@@ -69,7 +69,7 @@ public class SgFSMTest {
 
 	private ParameterFactoryImpl parmFactory = new ParameterFactoryImpl();
 	private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
-	private M3UAProvider provider = TcpProvider.provider();
+	private ServerM3UAManagement serverM3UAMgmt = new ServerM3UAManagement();
 
 	public SgFSMTest() {
 	}
@@ -83,20 +83,21 @@ public class SgFSMTest {
 	}
 
 	@Before
-	public void setUp() {
+	public void setUp() throws IOException {
+		serverM3UAMgmt.start();
 
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws IOException {
+		serverM3UAMgmt.getAppServers().clear();
+		serverM3UAMgmt.getAspfactories().clear();
+		serverM3UAMgmt.stop();
 	}
 
 	@Test
 	public void testSingleAspInAs() throws Exception {
 		// 5.1.1. Single ASP in an Application Server ("1+0" sparing),
-
-		SgpImpl sgw = new SgpImpl("127.0.0.1", 1112);
-		sgw.start();
 
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
@@ -110,13 +111,14 @@ public class SgFSMTest {
 		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
-		As remAs = sgw
-				.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode override testas".split(" "));
+		As remAs = serverM3UAMgmt.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode override testas"
+				.split(" "));
 		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
 		// 2777);
-		AspFactory aspFactory = sgw.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp".split(" "));
+		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp"
+				.split(" "));
 
-		Asp remAsp = sgw.assignAspToAs("testas", "testasp");
+		Asp remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
 
 		// Check for Communication UP
 		aspFactory.onCommStateChange(CommunicationState.UP);
@@ -164,17 +166,12 @@ public class SgFSMTest {
 
 		// Make sure we don't have any more
 		assertNull(aspFactory.txPoll());
-
-		sgw.stop();
 	}
 
 	@Test
 	public void testSingleAspInMultipleAs() throws Exception {
 		// 5.1.1.3. Single ASP in Multiple Application Servers (Each with "1+0"
 		// Sparing)
-
-		SgpImpl sgw = new SgpImpl("127.0.0.1", 1112);
-		sgw.start();
 
 		// Define 1st AS
 		RoutingContext rc1 = parmFactory.createRoutingContext(new long[] { 100 });
@@ -190,8 +187,8 @@ public class SgFSMTest {
 		RoutingKey rKey1 = parmFactory.createRoutingKey(lRkId1, rc1, null, null, dpc1, servInds1, null);
 
 		// As remAs1 = sgw.createAppServer("testas1", rc1, rKey1, trModType1);
-		As remAs1 = sgw.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode override testas1"
-				.split(" "));
+		As remAs1 = serverM3UAMgmt
+				.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode override testas1".split(" "));
 
 		// Define 2nd AS
 		RoutingContext rc2 = parmFactory.createRoutingContext(new long[] { 200 });
@@ -207,16 +204,17 @@ public class SgFSMTest {
 		RoutingKey rKey2 = parmFactory.createRoutingKey(lRkId2, rc2, null, null, dpc2, servInds2, null);
 
 		// As remAs2 = sgw.createAppServer("testas2", rc2, rKey2, trModType2);
-		As remAs2 = sgw.createAppServer("m3ua ras create rc 200 rk dpc 124 si 3 traffic-mode override testas2"
-				.split(" "));
+		As remAs2 = serverM3UAMgmt
+				.createAppServer("m3ua ras create rc 200 rk dpc 124 si 3 traffic-mode override testas2".split(" "));
 
 		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
 		// 2777);
-		AspFactory aspFactory = sgw.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp".split(" "));
+		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp"
+				.split(" "));
 
 		// Both ASP uses same underlying M3UAChannel
-		Asp remAsp1 = sgw.assignAspToAs("testas1", "testasp");
-		Asp remAsp2 = sgw.assignAspToAs("testas2", "testasp");
+		Asp remAsp1 = serverM3UAMgmt.assignAspToAs("testas1", "testasp");
+		Asp remAsp2 = serverM3UAMgmt.assignAspToAs("testas2", "testasp");
 
 		// Check for Communication UP
 		aspFactory.onCommStateChange(CommunicationState.UP);
@@ -287,14 +285,11 @@ public class SgFSMTest {
 		// Make sure we don't have any more messages to be sent
 		assertNull(aspFactory.txPoll());
 
-		sgw.stop();
 	}
 
 	@Test
 	public void testTwoAspInAsOverride() throws Exception {
 		// 5.1.2. Two ASPs in Application Server ("1+1" Sparing)
-		SgpImpl sgw = new SgpImpl("127.0.0.1", 1112);
-		sgw.start();
 
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
@@ -308,19 +303,21 @@ public class SgFSMTest {
 		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
-		As remAs = sgw
-				.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode override testas".split(" "));
+		As remAs = serverM3UAMgmt.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode override testas"
+				.split(" "));
 
 		// AspFactory aspFactory1 = sgw.createAspFactory("testasp1",
 		// "127.0.0.1", 2777);
-		AspFactory aspFactory1 = sgw.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp1".split(" "));
+		AspFactory aspFactory1 = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp1"
+				.split(" "));
 
 		// AspFactory aspFactory2 = sgw.createAspFactory("testasp2",
 		// "127.0.0.1", 2778);
-		AspFactory aspFactory2 = sgw.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2778 testasp2".split(" "));
+		AspFactory aspFactory2 = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2778 testasp2"
+				.split(" "));
 
-		Asp remAsp1 = sgw.assignAspToAs("testas", "testasp1");
-		Asp remAsp2 = sgw.assignAspToAs("testas", "testasp2");
+		Asp remAsp1 = serverM3UAMgmt.assignAspToAs("testas", "testasp1");
+		Asp remAsp2 = serverM3UAMgmt.assignAspToAs("testas", "testasp2");
 
 		// Check for Communication UP for ASP1
 		aspFactory1.onCommStateChange(CommunicationState.UP);
@@ -414,16 +411,11 @@ public class SgFSMTest {
 		assertNull(aspFactory1.txPoll());
 		assertNull(aspFactory2.txPoll());
 
-		sgw.stop();
 	}
 
 	@Test
 	public void testTwoAspInAsLoadshare() throws Exception {
 		// 5.1.2. Two ASPs in Application Server ("1+1" Sparing)
-
-		SgpImpl sgw = new SgpImpl("127.0.0.1", 1112);
-		sgw.start();
-
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory
@@ -436,21 +428,23 @@ public class SgFSMTest {
 		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
-		As remAs = sgw.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode loadshare testas"
-				.split(" "));
+		As remAs = serverM3UAMgmt
+				.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode loadshare testas".split(" "));
 		// 2+0 sparing loadsharing
 		remAs.setMinAspActiveForLb(2);
 
 		// AspFactory aspFactory1 = sgw.createAspFactory("testasp1",
 		// "127.0.0.1", 2777);
-		AspFactory aspFactory1 = sgw.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp1".split(" "));
+		AspFactory aspFactory1 = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp1"
+				.split(" "));
 
 		// AspFactory aspFactory2 = sgw.createAspFactory("testasp2",
 		// "127.0.0.1", 2778);
-		AspFactory aspFactory2 = sgw.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2778 testasp2".split(" "));
+		AspFactory aspFactory2 = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2778 testasp2"
+				.split(" "));
 
-		Asp remAsp1 = sgw.assignAspToAs("testas", "testasp1");
-		Asp remAsp2 = sgw.assignAspToAs("testas", "testasp2");
+		Asp remAsp1 = serverM3UAMgmt.assignAspToAs("testas", "testasp1");
+		Asp remAsp2 = serverM3UAMgmt.assignAspToAs("testas", "testasp2");
 
 		// Check for Communication UP for ASP1
 		aspFactory1.onCommStateChange(CommunicationState.UP);
@@ -541,9 +535,6 @@ public class SgFSMTest {
 
 		assertNull(aspFactory1.txPoll());
 		assertNull(aspFactory2.txPoll());
-
-		sgw.stop();
-
 	}
 
 	@Test
@@ -551,10 +542,6 @@ public class SgFSMTest {
 		// Test bug http://code.google.com/p/mobicents/issues/detail?id=2436
 
 		// 4.3.4.1. ASP Up Procedures from http://tools.ietf.org/html/rfc4666
-
-		SgpImpl sgw = new SgpImpl("127.0.0.1", 1112);
-		sgw.start();
-
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory
@@ -567,13 +554,14 @@ public class SgFSMTest {
 		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
-		As remAs = sgw
-				.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode override testas".split(" "));
+		As remAs = serverM3UAMgmt.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode override testas"
+				.split(" "));
 		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
 		// 2777);
-		AspFactory aspFactory = sgw.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp".split(" "));
+		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp"
+				.split(" "));
 
-		Asp remAsp = sgw.assignAspToAs("testas", "testasp");
+		Asp remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
 
 		// Check for Communication UP
 		aspFactory.onCommStateChange(CommunicationState.UP);
@@ -621,15 +609,10 @@ public class SgFSMTest {
 		// Make sure we don't have any more
 		assertNull(aspFactory.txPoll());
 
-		sgw.stop();
 	}
 
 	@Test
 	public void testPendingQueue() throws Exception {
-
-		SgpImpl sgw = new SgpImpl("127.0.0.1", 1112);
-		sgw.start();
-
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory
@@ -642,13 +625,14 @@ public class SgFSMTest {
 		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
-		As remAs = sgw
-				.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode override testas".split(" "));
+		As remAs = serverM3UAMgmt.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode override testas"
+				.split(" "));
 		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
 		// 2777);
-		AspFactory aspFactory = sgw.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp".split(" "));
+		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp"
+				.split(" "));
 
-		Asp remAsp = sgw.assignAspToAs("testas", "testasp");
+		Asp remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
 
 		// Check for Communication UP
 		aspFactory.onCommStateChange(CommunicationState.UP);
@@ -717,8 +701,6 @@ public class SgFSMTest {
 
 		// Make sure we don't have any more
 		assertNull(aspFactory.txPoll());
-		
-		sgw.stop();
 	}
 
 	/**
