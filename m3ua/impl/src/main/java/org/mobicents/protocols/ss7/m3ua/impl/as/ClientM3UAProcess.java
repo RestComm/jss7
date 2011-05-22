@@ -74,11 +74,13 @@ public class ClientM3UAProcess implements M3UAProcess {
 		FastList<As> appServers = clientM3UAManagement.getAppServers();
 		for (FastList.Node<As> n = appServers.head(), end = appServers.tail(); (n = n.getNext()) != end;) {
 			As as = n.getValue();
-			PayloadData payload = as.poll();
-			if (payload != null) {
-				((M3UAMessageImpl) payload).encode(b);
+			byte[] msu = as.poll();
+			if (msu != null) {
+				b.put(msu);
+				// Remember read is only one message at a time
+				break;
 			}
-		}
+		}// for
 		return (b.position() - initialPosition);
 	}
 

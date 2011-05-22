@@ -28,6 +28,7 @@ import javolution.util.FastList;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
@@ -47,9 +48,21 @@ import org.mobicents.protocols.ss7.m3ua.message.asptm.ASPActive;
 import org.mobicents.protocols.ss7.m3ua.message.asptm.ASPActiveAck;
 import org.mobicents.protocols.ss7.m3ua.message.asptm.ASPInactiveAck;
 import org.mobicents.protocols.ss7.m3ua.message.mgmt.Notify;
+import org.mobicents.protocols.ss7.m3ua.message.ssnm.DestinationAvailable;
+import org.mobicents.protocols.ss7.m3ua.message.ssnm.DestinationUPUnavailable;
+import org.mobicents.protocols.ss7.m3ua.message.ssnm.DestinationUnavailable;
+import org.mobicents.protocols.ss7.m3ua.message.ssnm.SignallingCongestion;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.ss7.m3ua.parameter.ASPIdentifier;
+import org.mobicents.protocols.ss7.m3ua.parameter.AffectedPointCode;
+import org.mobicents.protocols.ss7.m3ua.parameter.CongestedIndication;
+import org.mobicents.protocols.ss7.m3ua.parameter.CongestedIndication.CongestionLevel;
+import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
+import org.mobicents.protocols.ss7.m3ua.parameter.UserCause;
+import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
 
 /**
  * 
@@ -69,10 +82,10 @@ public class LocalAspFactory extends AspFactory {
 
 	private ASPIdentifier aspid;
 
-	public LocalAspFactory(){
+	public LocalAspFactory() {
 		super();
 	}
-	
+
 	public LocalAspFactory(String name, String localIp, int localPort, String remIp, int remPort, M3UAProvider provider) {
 		super(name, localIp, localPort, provider);
 		this.remIp = remIp;
@@ -146,7 +159,34 @@ public class LocalAspFactory extends AspFactory {
 			break;
 
 		case MessageClass.SIGNALING_NETWORK_MANAGEMENT:
-			logger.warn(String.format("Received %s. Handling of SSNM message is not yet implemented", message));
+			switch (message.getMessageType()) {
+			case MessageType.DESTINATION_UNAVAILABLE:
+				DestinationUnavailable duna = (DestinationUnavailable) message;
+				this.handleDestinationUnavailable(duna);
+				break;
+			case MessageType.DESTINATION_AVAILABLE:
+				DestinationAvailable dava = (DestinationAvailable) message;
+				this.handleDestinationAvailable(dava);
+				break;
+			case MessageType.DESTINATION_STATE_AUDIT:
+				if (logger.isEnabledFor(Level.WARN)) {
+					logger.warn(String.format("Received DAUD message for AS side. This is error. Message=%s", message));
+				}
+				break;
+			case MessageType.SIGNALING_CONGESTION:
+				SignallingCongestion scon = (SignallingCongestion) message;
+				this.handleSignallingCongestion(scon);
+				break;
+			case MessageType.DESTINATION_USER_PART_UNAVAILABLE:
+				DestinationUPUnavailable dupu = (DestinationUPUnavailable) message;
+				this.handleDestinationUPUnavailable(dupu);
+				break;
+			case MessageType.DESTINATION_RESTRICTED:
+				if (logger.isEnabledFor(Level.WARN)) {
+					logger.warn(String.format("Received DUPU message for AS side. Not implemented yet", message));
+				}
+				break;
+			}
 			break;
 
 		case MessageClass.ASP_STATE_MAINTENANCE:
@@ -185,6 +225,148 @@ public class LocalAspFactory extends AspFactory {
 			break;
 		}
 
+	}
+
+	private void handleDestinationUPUnavailable(DestinationUPUnavailable dupu) {
+		RoutingContext rcObj = dupu.getRoutingContext();
+		if (rcObj == null) {
+			logger.error(String.format("received DUPU but no RoutingContext carried in message. Message=%s", dupu));
+			// TODO : If no RC defined, should send to all AS?
+			return;
+		}
+
+		long rc = rcObj.getRoutingContexts()[0];
+
+		Asp asp = this.getAsp(rc);
+
+		if (asp == null) {
+			logger.error(String.format("received DUPU for RoutingContext=%d. But no ASP found. Message=%s", rc, dupu));
+			// TODO : If no RC defined, should send to all AS?
+			return;
+		}
+
+		if (asp.getState() == AspState.ACTIVE) {
+			AffectedPointCode affectedPcObjs = dupu.getAffectedPointCode();
+			int[] affectedPcs = affectedPcObjs.getPointCodes();
+
+			int cause = 0;
+			for (int i = 0; i < affectedPcs.length; i++) {
+
+				UserCause userCause = dupu.getUserCause();
+				cause = userCause.getCause();
+				Mtp3StatusPrimitive mtpPausePrimi = new Mtp3StatusPrimitive(affectedPcs[i], 1, 0, cause);
+				asp.getAs().received(mtpPausePrimi);
+			}
+		} else {
+			logger.error(String.format("Received DUPU for RoutingContext=%d. But ASP State=%s. Message=%s", rc,
+					asp.getState(), dupu));
+		}
+
+	}
+
+	private void handleSignallingCongestion(SignallingCongestion scon) {
+		RoutingContext rcObj = scon.getRoutingContexts();
+		if (rcObj == null) {
+			logger.error(String.format("received SCON but no RoutingContext carried in message. Message=%s", scon));
+			// TODO : If no RC defined, should send to all AS?
+			return;
+		}
+
+		long rc = rcObj.getRoutingContexts()[0];
+
+		Asp asp = this.getAsp(rc);
+
+		if (asp == null) {
+			logger.error(String.format("received SCON for RoutingContext=%d. But no ASP found. Message=%s", rc, scon));
+			// TODO : If no RC defined, should send to all AS?
+			return;
+		}
+
+		if (asp.getState() == AspState.ACTIVE) {
+			AffectedPointCode affectedPcObjs = scon.getAffectedPointCodes();
+			int[] affectedPcs = affectedPcObjs.getPointCodes();
+
+			int cong = 0;
+			for (int i = 0; i < affectedPcs.length; i++) {
+				CongestedIndication congeInd = scon.getCongestedIndication();
+				if (congeInd != null) {
+					CongestionLevel congLevel = congeInd.getCongestionLevel();
+					if (congLevel != null) {
+						cong = congLevel.getLevel();
+					}
+				}
+				Mtp3StatusPrimitive mtpPausePrimi = new Mtp3StatusPrimitive(affectedPcs[i], 2, cong, 0);
+				asp.getAs().received(mtpPausePrimi);
+			}
+		} else {
+			logger.error(String.format("Received SCON for RoutingContext=%d. But ASP State=%s. Message=%s", rc,
+					asp.getState(), scon));
+		}
+
+	}
+
+	private void handleDestinationUnavailable(DestinationUnavailable duna) {
+		RoutingContext rcObj = duna.getRoutingContexts();
+		if (rcObj == null) {
+			logger.error(String.format("received DUNA but no RoutingContext carried in message. Message=%s", duna));
+			// TODO : If no RC defined, should send to all AS?
+			return;
+		}
+
+		long rc = rcObj.getRoutingContexts()[0];
+
+		Asp asp = this.getAsp(rc);
+
+		if (asp == null) {
+			logger.error(String.format("received DUNA for RoutingContext=%d. But no ASP found. Message=%s", rc, duna));
+			// TODO : If no RC defined, should send to all AS?
+			return;
+		}
+
+		if (asp.getState() == AspState.ACTIVE) {
+			AffectedPointCode affectedPcObjs = duna.getAffectedPointCodes();
+			int[] affectedPcs = affectedPcObjs.getPointCodes();
+
+			for (int i = 0; i < affectedPcs.length; i++) {
+				Mtp3PausePrimitive mtpPausePrimi = new Mtp3PausePrimitive(affectedPcs[i]);
+				asp.getAs().received(mtpPausePrimi);
+			}
+		} else {
+			logger.error(String.format("Received DUNA for RoutingContext=%d. But ASP State=%s. Message=%s", rc,
+					asp.getState(), duna));
+		}
+	}
+
+	private void handleDestinationAvailable(DestinationAvailable dava) {
+		RoutingContext rcObj = dava.getRoutingContexts();
+		if (rcObj == null) {
+			logger.error(String.format("received DAVA but no RoutingContext carried in message. Message=%s", dava));
+			// TODO : If no RC defined, should send to all AS?
+			return;
+		}
+
+		long rc = rcObj.getRoutingContexts()[0];
+
+		Asp asp = this.getAsp(rc);
+
+		if (asp == null) {
+			logger.error(String.format("received DAVA for RoutingContext=%d. But no ASP found. Message=%s", rc, dava));
+			// TODO : If no RC defined, should send to all AS?
+			return;
+		}
+
+		if (asp.getState() == AspState.ACTIVE) {
+			AffectedPointCode affectedPcObjs = dava.getAffectedPointCodes();
+			int[] affectedPcs = affectedPcObjs.getPointCodes();
+
+			for (int i = 0; i < affectedPcs.length; i++) {
+				Mtp3ResumePrimitive mtpResumePrimi = new Mtp3ResumePrimitive(affectedPcs[i]);
+				asp.getAs().received(mtpResumePrimi);
+			}
+		} else {
+			logger.error(String.format("Received DAVA for RoutingContext=%d. But ASP State=%s. Message=%s", rc,
+					asp.getState(), dava));
+		}
 	}
 
 	private void handlePayload(PayloadData payload) {

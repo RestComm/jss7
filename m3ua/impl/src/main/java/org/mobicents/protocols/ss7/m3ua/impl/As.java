@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
+import org.mobicents.protocols.ss7.mtp.Mtp3Primitive;
 
 /**
  * 
@@ -77,7 +78,7 @@ public abstract class As implements XMLSerializable {
 	protected ConcurrentLinkedQueue<PayloadData> penQueue = new ConcurrentLinkedQueue<PayloadData>();
 
 	// Queue for incoming Payload messages. Message received from peer
-	protected ConcurrentLinkedQueue<PayloadData> rxQueue = new ConcurrentLinkedQueue<PayloadData>();
+	protected ConcurrentLinkedQueue<byte[]> rxQueue = new ConcurrentLinkedQueue<byte[]>();
 
 	protected FSM fsm;
 
@@ -302,10 +303,14 @@ public abstract class As implements XMLSerializable {
 		if (logger.isDebugEnabled()) {
 			logger.debug(String.format("Received PayloadData=%s for As=%s", payload.toString(), this.name));
 		}
-		this.rxQueue.add(payload);
+		this.rxQueue.add(payload.getData().getMsu());
+	}
+	
+	public void received (Mtp3Primitive primitive){
+		this.rxQueue.add(primitive.getValue());
 	}
 
-	public PayloadData poll() {
+	public byte[] poll() {
 		return this.rxQueue.poll();
 	}
 

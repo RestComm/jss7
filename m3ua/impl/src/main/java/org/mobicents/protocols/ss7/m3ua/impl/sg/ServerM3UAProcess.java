@@ -43,7 +43,6 @@ import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.AsState;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.CommunicationListener.CommunicationState;
-import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.sctp.SctpChannel;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
@@ -91,9 +90,10 @@ public class ServerM3UAProcess implements M3UAProcess {
 		FastList<As> appServers = serverM3UAManagement.getAppServers();
 		for (FastList.Node<As> n = appServers.head(), end = appServers.tail(); (n = n.getNext()) != end;) {
 			As as = n.getValue();
-			PayloadData payload = as.poll();
-			if (payload != null) {
-				((M3UAMessageImpl) payload).encode(b);
+			byte[] msu = as.poll();
+			if (msu != null) {
+				b.put(msu);
+				break; // Remember read is only for one message
 			}
 		}
 		return (b.position() - initialPosition);
