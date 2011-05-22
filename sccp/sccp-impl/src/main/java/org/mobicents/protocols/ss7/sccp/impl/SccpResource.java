@@ -102,6 +102,7 @@ public class SccpResource {
 
 	public void addRemoteSsn(int remoteSsnid, RemoteSubSystem remoteSsn) {
 		this.remoteSsns.put(remoteSsnid, remoteSsn);
+		this.store();
 	}
 
 	public RemoteSubSystem getRemoteSsn(int remoteSsnid) {
@@ -127,6 +128,7 @@ public class SccpResource {
 
 	public void addRemoteSpc(int remoteSpcId, RemoteSignalingPointCode remoteSpc) {
 		this.remoteSpcs.put(remoteSpcId, remoteSpc);
+		this.store();
 	}
 
 	public RemoteSignalingPointCode getRemoteSpc(int remoteSpcId) {
