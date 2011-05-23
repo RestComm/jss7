@@ -98,6 +98,7 @@ public class TrafficModeTypeImpl extends ParameterImpl implements TrafficModeTyp
 		public void read(javolution.xml.XMLFormat.InputElement xml, TrafficModeTypeImpl trafficMode)
 				throws XMLStreamException {
 			trafficMode.mode = xml.getAttribute(MODE).toInt();
+			trafficMode.encode();
 		}
 
 		@Override

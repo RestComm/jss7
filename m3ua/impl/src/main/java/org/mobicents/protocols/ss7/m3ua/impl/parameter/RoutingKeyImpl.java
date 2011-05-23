@@ -297,6 +297,8 @@ public class RoutingKeyImpl extends ParameterImpl implements RoutingKey, XMLSeri
 					routingKey.servInds[i] = xml.get(SIS);
 				}
 			}
+			
+			routingKey.encode();
 		}
 
 		@Override

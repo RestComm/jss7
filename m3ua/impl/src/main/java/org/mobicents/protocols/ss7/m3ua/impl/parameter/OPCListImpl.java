@@ -133,6 +133,8 @@ public class OPCListImpl extends ParameterImpl implements OPCList, XMLSerializab
 			for (int i = 0; i < opc.masks.length; i++) {
 				opc.masks[i] = xml.get(MASK);
 			}
+			
+			opc.encode();
 
 		}
 

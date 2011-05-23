@@ -107,6 +107,7 @@ public class DestinationPointCodeImpl extends ParameterImpl implements Destinati
 				throws XMLStreamException {
 			dpc.destPC = xml.getAttribute(DPC).toInt();
 			dpc.mask = (short) xml.getAttribute(MASK).toInt();
+			dpc.encode();
 		}
 
 		@Override

@@ -99,6 +99,7 @@ public class LocalRKIdentifierImpl extends ParameterImpl implements LocalRKIdent
 		public void read(javolution.xml.XMLFormat.InputElement xml, LocalRKIdentifierImpl localRkId)
 				throws XMLStreamException {
 			localRkId.id = xml.getAttribute(ID).toLong();
+			localRkId.encode();
 		}
 
 		@Override

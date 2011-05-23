@@ -80,9 +80,9 @@ public class ClientM3UAManagement extends M3UAManagement {
 
 	@Override
 	public void start() throws IOException {
-		super.start();
-
 		selector = m3uaProvider.openSelector();
+		
+		super.start();
 
 		this.clientRoutePersistFile.clear();
 

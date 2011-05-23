@@ -102,6 +102,8 @@ public class ServiceIndicatorsImpl extends ParameterImpl implements ServiceIndic
 			while (xml.hasNext()) {
 				si.indicators[size++] = xml.get(INDICATOR);
 			}
+			
+			si.encode();
 		}
 
 		@Override

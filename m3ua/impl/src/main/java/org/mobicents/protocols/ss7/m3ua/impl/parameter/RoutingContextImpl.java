@@ -118,6 +118,7 @@ public class RoutingContextImpl extends ParameterImpl implements RoutingContext,
 			while (xml.hasNext()) {
 				rc.rcs[size++] = xml.get(ROUTING_CONTEXT);
 			}
+			rc.encode();
 		}
 
 		@Override
