@@ -2,12 +2,31 @@
 <deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="urn:jboss:bean-deployer:2.0">
 
+	<bean name="ClientM3UAManagement"
+		class="org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAManagement">
+		<property name="persistDir">${jboss.server.data.dir}</property>
+	</bean>
+
+	<bean name="M3UAShellExecutor"
+		class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
+		<property name="m3uaManagement">
+			<inject bean="ClientM3UAManagement" />
+		</property>
+	</bean>
 
 	<bean name="Mtp3UserPart"
-		class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart">
-		<property name="sourceModuleId">61</property>
-		<property name="destinationModuleId">34</property>
+		class="org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAProcess">
+		<property name="clientM3UAManagement">
+			<inject bean="ClientM3UAManagement" />
+		</property>
 	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- Dialogic Mtp3UserPart -->
+	<!-- ==================================================================== -->
+	<!-- <bean name="Mtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart"> 
+		<property name="sourceModuleId">61</property> <property name="destinationModuleId">34</property> 
+		</bean> -->
 
 	<!-- ==================================================================== -->
 	<!-- SCCP Router Service -->
@@ -45,7 +64,8 @@
 		</property>
 	</bean>
 
-	<bean name="SccpProvider" class="org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl">
+	<bean name="SccpProvider"
+		class="org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl">
 		<constructor factoryMethod="getSccpProvider">
 			<factory bean="SccpStack" />
 		</constructor>
@@ -62,13 +82,17 @@
 		<property name="sccpExecutor">
 			<inject bean="SccpExecutor" />
 		</property>
+		<property name="m3UAShellExecutor">
+			<inject bean="M3UAShellExecutor" />
+		</property>
 	</bean>
 
 	<!-- ==================================================================== -->
 	<!-- Mobicents SS7 Service -->
 	<!-- ==================================================================== -->
 	<bean name="SS7Service" class="org.mobicents.ss7.SS7Service">
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=SS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=SS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+		</annotation>
 		<property name="jndiName">java:/mobicents/ss7/sccp</property>
 		<property name="stack">
 			<inject bean="SccpProvider" />
