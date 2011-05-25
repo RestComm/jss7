@@ -94,7 +94,7 @@ public interface M3UAChannel extends M3UASelectableChannel {
      * 
      * @return true if, and only if, this channel is connected
      */
-    public boolean isConnected();
+    public boolean isConnected() throws IOException;
 
     /**
      * Tells whether or not a connection operation is in progress on this channel.

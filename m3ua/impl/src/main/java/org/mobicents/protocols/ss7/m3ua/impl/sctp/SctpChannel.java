@@ -159,14 +159,8 @@ public class SctpChannel extends M3UAChannelImpl {
 	 * @see org.mobicents.protocols.ss7.m3ua.M3UAChannel#isConnected()
 	 */
 	@Override
-	public boolean isConnected() {
-		try {
-			return ((com.sun.nio.sctp.SctpChannel) channel).association() != null;
-		} catch (IOException e) {
-			// Do we care?
-		}
-
-		return false;
+	public boolean isConnected() throws IOException {
+		return ((com.sun.nio.sctp.SctpChannel) channel).association() != null;
 	}
 
 	/*
