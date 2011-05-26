@@ -36,83 +36,86 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
  * @author kulikov
  */
 public abstract class M3UAMessageImpl implements M3UAMessage {
-    // header part
-    private int messageClass;
-    private int messageType;
+	// header part
+	private int messageClass;
+	private int messageType;
 
-    protected FastMap<Short, Parameter> parameters = new FastMap<Short, Parameter>();
+	protected FastMap<Short, Parameter> parameters = new FastMap<Short, Parameter>();
 
-    private ParameterFactoryImpl factory = new ParameterFactoryImpl();
+	private ParameterFactoryImpl factory = new ParameterFactoryImpl();
 
-    int initialPosition = 0;
+	int initialPosition = 0;
 
-    public M3UAMessageImpl() {
+	public M3UAMessageImpl() {
 
-    }
+	}
 
-    protected M3UAMessageImpl(int messageClass, int messageType) {
-        this.messageClass = messageClass;
-        this.messageType = messageType;
-    }
+	protected M3UAMessageImpl(int messageClass, int messageType) {
+		this.messageClass = messageClass;
+		this.messageType = messageType;
+	}
 
-    protected abstract void encodeParams(ByteBuffer buffer);
+	protected abstract void encodeParams(ByteBuffer buffer);
 
-    public void encode(ByteBuffer buffer) {
+	public void encode(ByteBuffer buffer) {
 
-        initialPosition = buffer.position();
+		initialPosition = buffer.position();
 
-        buffer.position(initialPosition + 8);
+		buffer.position(initialPosition + 8);
 
-        encodeParams(buffer);
+		encodeParams(buffer);
 
-        int length = buffer.position() - initialPosition;
-        // buffer.rewind();
+		int length = buffer.position() - initialPosition;
+		// buffer.rewind();
 
-        buffer.put(initialPosition++, (byte) 1);
-        buffer.put(initialPosition++, (byte) 0);
-        buffer.put(initialPosition++, (byte) messageClass);
-        buffer.put(initialPosition++, (byte) messageType);
-        buffer.putInt(initialPosition++, length);
+		buffer.put(initialPosition++, (byte) 1);
+		buffer.put(initialPosition++, (byte) 0);
+		buffer.put(initialPosition++, (byte) messageClass);
+		buffer.put(initialPosition++, (byte) messageType);
+		buffer.putInt(initialPosition++, length);
 
-        // buffer.position(length);
-    }
+		// buffer.position(length);
+	}
 
-    protected void decode(byte[] data) {
-        int pos = 0;
-        while (pos < data.length) {
-            short tag = (short) ((data[pos] & 0xff) << 8 | (data[pos + 1] & 0xff));
-            short len = (short) ((data[pos + 2] & 0xff) << 8 | (data[pos + 3] & 0xff));
+	protected void decode(byte[] data) {
+		int pos = 0;
+		while (pos < data.length) {
+			short tag = (short) ((data[pos] & 0xff) << 8 | (data[pos + 1] & 0xff));
+			short len = (short) ((data[pos + 2] & 0xff) << 8 | (data[pos + 3] & 0xff));
 
-            byte[] value = new byte[len - 4];
+			byte[] value = new byte[len - 4];
 
-            System.arraycopy(data, pos + 4, value, 0, value.length);
-            pos += len;
-            parameters.put(tag, factory.createParameter(tag, value));
+			System.arraycopy(data, pos + 4, value, 0, value.length);
+			pos += len;
+			parameters.put(tag, factory.createParameter(tag, value));
 
-            // The Parameter Length does not include any padding octets. We have
-            // to consider padding here
-            pos += (pos % 4);
-        }
-    }
+			// The Parameter Length does not include any padding octets. We have
+			// to consider padding here
+			int padding = 4 - (pos % 4);
+			if (padding < 4) {
+				pos += padding;
+			}
+		}
+	}
 
-    public int getMessageClass() {
-        return messageClass;
-    }
+	public int getMessageClass() {
+		return messageClass;
+	}
 
-    public int getMessageType() {
-        return messageType;
-    }
+	public int getMessageType() {
+		return messageType;
+	}
 
-    @Override
-    public String toString() {
-        TextBuilder tb = new TextBuilder();
-        tb.append("Class=").append(this.messageClass).append(" Type=").append(this.messageType).append(" Params(");
-        for (FastMap.Entry<Short, Parameter> e = parameters.head(), end = parameters.tail(); (e = e.getNext()) != end;) {
-            Parameter value = e.getValue();
-            tb.append(value.toString());
-            tb.append(", ");
-        }
-        tb.append(")");
-        return tb.toString();
-    }
+	@Override
+	public String toString() {
+		TextBuilder tb = new TextBuilder();
+		tb.append("Class=").append(this.messageClass).append(" Type=").append(this.messageType).append(" Params(");
+		for (FastMap.Entry<Short, Parameter> e = parameters.head(), end = parameters.tail(); (e = e.getNext()) != end;) {
+			Parameter value = e.getValue();
+			tb.append(value.toString());
+			tb.append(", ");
+		}
+		tb.append(")");
+		return tb.toString();
+	}
 }
