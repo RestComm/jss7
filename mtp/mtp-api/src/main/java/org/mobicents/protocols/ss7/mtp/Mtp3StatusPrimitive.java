@@ -57,13 +57,13 @@ public class Mtp3StatusPrimitive extends Mtp3Primitive {
 	public Mtp3StatusPrimitive(byte[] rawData) {
 		this.type = STATUS;
 		
-		this.status = rawData[2];
+		this.status = rawData[2] & 0xff;
 
-		this.affectedDpc = ((rawData[3] << 24) + ((rawData[4] & 0xFF) << 16) + ((rawData[5] & 0xFF) << 8) + (rawData[6] & 0xFF));
+		this.affectedDpc = (((rawData[3] & 0xff) << 24) + ((rawData[4] & 0xff) << 16) + ((rawData[5] & 0xff) << 8) + (rawData[6] & 0xff));
 
-		this.congestionStatus = (((rawData[7] & 0xFF) << 8) + (rawData[8] & 0xFF));
+		this.congestionStatus = (((rawData[7] & 0xff) << 8) + (rawData[8] & 0xff));
 
-		this.unavailabiltyCause = (((rawData[9] & 0xFF) << 8) + (rawData[10] & 0xFF));
+		this.unavailabiltyCause = (((rawData[9] & 0xff) << 8) + (rawData[10] & 0xff));
 	}
 
 	/**

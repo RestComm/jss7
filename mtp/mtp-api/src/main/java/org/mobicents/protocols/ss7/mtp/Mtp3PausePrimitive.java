@@ -33,7 +33,7 @@ public class Mtp3PausePrimitive extends Mtp3Primitive {
 	public Mtp3PausePrimitive(byte[] rawData) {
 		this.type = PAUSE;
 
-		this.affectedDpc = ((rawData[2] << 24) + ((rawData[3] & 0xFF) << 16) + ((rawData[4] & 0xFF) << 8) + (rawData[5] & 0xFF));
+		this.affectedDpc = (((rawData[2] & 0xff) << 24) + ((rawData[3] & 0xFF) << 16) + ((rawData[4] & 0xFF) << 8) + (rawData[5] & 0xFF));
 	}
 
 	/**
