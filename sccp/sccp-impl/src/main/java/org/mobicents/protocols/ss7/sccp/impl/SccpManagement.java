@@ -154,10 +154,10 @@ public class SccpManagement implements SccpListener {
 	@Override
 	public void onMessage(SccpMessage message, int seqControl) {
 		byte[] data = ((UnitData) message).getData();
-		int messgType = data[0];
-		int affectedSsn = data[1];
-		int affectedPc = (data[2] & 0x00FF) | (data[3] & 0x00FF << 8);
-		int subsystemMultiplicity = data[3];
+		int messgType = data[0] & 0xff;
+		int affectedSsn = data[1] & 0xff;
+		int affectedPc = (data[2] & 0xff) | ((data[3] & 0xff) << 8);
+		int subsystemMultiplicity = data[3] & 0xff;
 
 		if (logger.isInfoEnabled()) {
 			logger.info(String

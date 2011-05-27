@@ -239,7 +239,7 @@ public class SccpStackImpl implements SccpStack {
 				byte b4 = in.readByte();
 
 				int dpc = ((b2 & 0x3f) << 8) | (b1 & 0xff);
-				int opc = ((b4 & 0x0f) << 10) | (b3 & 0xff) | ((b2 & 0xc0) >> 6);
+				int opc = ((b4 & 0x0f) << 10) | ((b3 & 0xff) << 2) | ((b2 & 0xc0) >> 6);
 				int sls = ((b4 & 0xf0) >> 4);
 
 				// determine msg type
