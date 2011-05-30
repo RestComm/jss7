@@ -70,47 +70,14 @@
 	<para>&THIS.PLATFORM; &THIS.APPLICATION;
 		consists of following functional blocks:
 	</para>
-		<section
-		id="design_overview_Linkset">
-		<title>Linkset</title>
-			
-				<!-- XXX: this possibly should be rephrased. -->
-				<para>
-					<literal>Linkset</literal> is logical group of links between two Signaling Points. 
-					This term hides <literal>MTP</literal> layer, ie. it abstracts whether hardware
-					<literal>MTP</literal> is used or M3UA.
-				</para>
-				<para>
-				Three type of <literal>Linkset</literal> are defined
-				</para>
-				<itemizedlist>
-					<listitem>
-						<para><literal>DahdiLinkset</literal> : As the name suggests, this linkset is for <literal>dahdi</literal> based hardware. 
-						<literal>dahdi</literal> boards only provides SS7 MTP1 layer and usually depends on external software to provide MTP2/MTP3 support.</para>
-						<para>Well known <literal>dahdi</literal> based SS7 cards are <literal>Diguim</literal> and <literal>Sangoma</literal></para>
-					</listitem>
-					<listitem>
-						<para><literal>DialogicLinkset</literal> : Linkset for <literal>dialogic</literal> based hardware. <literal>dialogic</literal> boards 
-						have MTP2 and MTP3 support on board.</para>
-					</listitem>
-					<listitem>
-						<para><literal>M3UALinkset</literal> : M3UA stands for MTP Level 3 (MTP3) User Adaptation Layer as defined by the IETF SIGTRAN working group in RFC 4666. 
-						<literal>M3UALinkset</literal> enables the &THIS.PLATFORM; &THIS.APPLICATION; Level 4 (e.g. ISUP, SCCP) to run over IP instead of instead of SS7 network</para>
-					</listitem>
-				</itemizedlist>		
-				<para>
-					Each type of linkset has coresponding factory. Configuration of linkset factories is exaplained in subsections of <xref linkend="configuring" />.
-				</para>	
-				
-
-		</section>
+		
 		<section
 		id="design_overview_shell">
 		<title>Shell Management client</title>
 				<para>
 					<literal>Shell</literal> is Command Line Interface (CLI) tool which allows to manage different aspects of &THIS.PLATFORM; &THIS.APPLICATION; in interactive manner. 
 					It connects to different instances of &THIS.PLATFORM; &THIS.APPLICATION; which manage <literal>Linksets</literal>,
-					<literal>SCCP</literal> routing and <literal>M3UA</literal>. For detailed information please refer to:	<xref linkend="shell" />.
+					<literal>SCCP</literal> resource, routing and <literal>M3UA</literal>. For detailed information please refer to:	<xref linkend="shell" />.
 					Usually <literal>Shell</literal> will be invoked from remote machine(remote to <literal>Linksets</literal> and application protocols).
 
 				</para>
@@ -138,8 +105,7 @@
 	<section
 		id="design_overview_ss7_service">
 		<title>SS7 Service</title>
-				<para>Service is element which is used to manage <literal>LinkSets</literal> and protocols like <literal>SCCP</literal>. 
-				SS7 service creates instance of &THIS.PLATFORM; SCCP Stack and bind's it to JNDI name java:/mobicents/ss7/sccp</para>
+				<para>SS7 service creates instance of &THIS.PLATFORM; SCCP Stack and bind's it to JNDI name java:/mobicents/ss7/sccp</para>
 				<para>SS7 Service is JMX based service deployed in JBoss Application Server</para>
 				<para>SS7 Service hides the details like whether Level 4 and above connects to &THIS.PLATFORM; Signaling Gateway via M3UA or SS7 Hardware 
 				is installed in same machine as Level 4</para>
@@ -178,13 +144,6 @@
 					<para><literal>Shell Executor</literal> allows <literal>Shell</literal> client to connect and issue commands.</para>
 				</listitem>
 			</varlistentry>
-			<varlistentry>
-				<term>Manage Linksets and their lifecycle</term>
-				<listitem>
-					<para><literal>Linkset Manager</literal> persists linksets information and manages their lifecycle, ie. it creates, activates them(also after restart).</para>
-				</listitem>
-			</varlistentry>
-			
 		</variablelist>
 		
 		<para>Configuration of SS7 Service is exaplained in section <xref linkend="configuring" /></para>

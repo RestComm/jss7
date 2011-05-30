@@ -10,8 +10,8 @@
 	<section
 		id="installing_and_using">
 		<title>Installing</title>
-		<para>&THIS.PLATFORM; SS7 stack at its core requires only Java if you are using only <literal>M3UALinkset</literal>. 
-		However if you plan to use <literal>DahdiLinkset</literal> or <literal>DialogicLinkset</literal>, respective SS7 cards 
+		<para>&THIS.PLATFORM; SS7 stack at its core requires only Java if you are using only <literal>M3UA</literal>. 
+		However if you plan to use <literal>dahdi</literal> or <literal>dialogic</literal> SS7 hardware, respective SS7 cards 
 		needs to be installed on the server along with native libraries.</para>
 		
 		<para>A simple way to get started is to download and install binary. This will provide you with all the dependencies you need to get going. 
@@ -71,7 +71,7 @@
 						</listitem>			
 						<listitem>
 							<para><literal>native</literal> : native libraries component to interact with SS7 Card installed on server, runtime component. 
-							As of now native libraries are compiled only for linux OS. However if you plan to use <literal>M3UALinkset</literal> there is 
+							As of now native libraries are compiled only for linux OS. However if you plan to use <literal>M3UA</literal> there is 
 							no dependency on OS as everything is 100% java.</para>
 						</listitem>	
 						<listitem>
@@ -159,24 +159,21 @@
 ]]>
 				</screen>	
 				
-				<para>If you have started &THIS.APPLICATION.DIRNAME;-&THIS.VERSION; for the first time, there are no <literal>Linkset</literal> defined. 
+				<para>If you have started &THIS.APPLICATION.DIRNAME;-&THIS.VERSION; for the first time, <literal>SS7</literal> is not configured. 
 				You need to use Shell Client to connect to &THIS.APPLICATION.DIRNAME;-&THIS.VERSION; as defined in 
-				<xref linkend="shell" /> and create <literal>Linkset</literal> 
-				as per your need and SS7 card installed</para>
+				<xref linkend="shell" /> and configure as per your need and SS7 card installed</para>
 				
-				<para>Once the <literal>Linkset</literal> are defined, the state and configuration of <literal>Linkset</literal> and <literal>Link</literal> 
-				is persisted by <literal>LinksetManager</literal> which stands server re-start.</para> 
+				<para>Once the configured, the state and configuration of <literal>SS7</literal> is persisted which stands server re-start.</para> 
 							
 			</section>		
 			<section
 				id="stopping_binary">
 				<title>Stopping</title>
-					<para>You can shut down the server(s) you can run server(s) by executing the <command>shutdown.sh -s</command> (Unix) or 
+					<para>You can shut down the server(s) by executing the <command>shutdown.sh -s</command> (Unix) or 
 					<command>shutdown.bat -s</command> (Microsoft Windows) scripts in the <filename>&lt;install_directory&gt;/bin</filename> 
 					directory (on Unix or Windows). Note that if you properly stop the server, you will see the following three lines as the 
 					last output in the Unix terminal or Command Prompt:</para>
                         <screen><![CDATA[[Server] Shutdown complete
-Shutdown complete
 Halting VM]]></screen>
 
 			</section>	
@@ -191,53 +188,77 @@ Halting VM]]></screen>
 		located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where 
 		<application>profile_name</application> is the server profile name.</para>
 		
+		<para>The &THIS.PLATFORM; SS7 Layer 4 (<literal>SCCP, ISUP</literal>) leverages either of following <literal>MTP</literal> 
+		layers to exchange signalling messages with remote signalling points</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para><literal>M3UA</literal></para>
+			</listitem>
+			<listitem>
+				<para><literal>dahdi</literal></para>
+			</listitem>			
+			<listitem>
+				<para><literal>dialogic</literal></para>
+			</listitem>			
+		</itemizedlist>
+		
+		<para>The ss7 service will be configured with either of these services.</para>
+		
 		<section id="configuring_Rem_SGW">
-			<title>Configuring Remote Signaling Gateway</title>
+			<title>Configuring M3UA</title>
 			<para> 
-				Remote Signaling Gateway is only needed if the underlying SS7 service will leverage <literal>M3UALinkset</literal>.
-				<literal>RemSgpImpl</literal> acts as remote Signaling Gateway Process that contains the list of Application Server (AS) (and list 
-				of Application Server Process (ASP) within each AS) connecting to external Signaling Gateway (SG).  <literal>M3UAShellExecutor</literal>
-				accepts the <literal>M3UA</literal> commands and executes necessary operations. <literal>RemSignalingGateway</literal> manages 
-				the remote SGP.
+				<literal>ClientM3UAProcess</literal> is only needed if the underlying SS7 service will leverage <literal>M3UA</literal>.
+				<literal>ClientM3UAProcess</literal> acts as remote Signaling Gateway Process. <literal>M3UAShellExecutor</literal>
+				accepts the <literal>M3UA</literal> commands and executes necessary operations. <literal>ClientM3UAManagement</literal> 
+				contains the list of Application Server (AS) (and list  of Application Server Process (ASP) within each AS) connecting 
+				to external Signaling Gateway (SG) and also manages them. 
 			</para>
 			
 					<programlisting language="XML" role="XML"><![CDATA[
-    <!-- ================================================ -->
-    <!-- Remote Signalling Gateway Service                -->
-    <!-- ================================================ -->
-    <!--
-          | Beans RemSgpImpl, M3UAShellExecutor and RemSignalingGateway defined bellow are only 
-          | needed if M3UALinkset will be used to connect to external Signaling Gateway. Delete/Comment 
-          | out these beans if hardware is installed in same machine where 
-          | mobicents-ss7-service is running.
-    -->
-	<bean name="RemSgpImpl"
-		class="org.mobicents.protocols.ss7.m3ua.impl.as.RemSgpImpl">
+	<!-- ==================================================================== -->
+	<!-- M3UA                                                                 -->
+	<!-- ClientM3UAManagement is managing the ASP side commands               -->
+	<!-- ==================================================================== -->
+	<bean name="ClientM3UAManagement"
+		class="org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAManagement">
+		<property name="persistDir">${jboss.server.data.dir}</property>
 	</bean>
 
 	<bean name="M3UAShellExecutor"
 		class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
-		<property name="sgp">
-			<inject bean="RemSgpImpl" />
+		<property name="m3uaManagement">
+			<inject bean="ClientM3UAManagement" />
 		</property>
 	</bean>
 
-	<!-- Define Remote Signalling Gateway-->
-	<bean name="RemSignalingGateway"
-		class="org.mobicents.ss7.RemSignalingGateway">
-		<property name="remSgpImpl">
-			<inject bean="RemSgpImpl" />
+	<bean name="Mtp3UserPart"
+		class="org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAProcess">
+		<property name="clientM3UAManagement">
+			<inject bean="ClientM3UAManagement" />
 		</property>
 	</bean>]]>
-                        </programlisting>					
+                        </programlisting>		
+			<para><literal>ClientM3UAManagement</literal> when started looks for file's <filename>m3ua-client.xml</filename> and 
+			<filename>m3ua-clientroute.xml</filename>. <filename>m3ua-client.xml</filename> contains serialized information of 
+			AS and ASP configured for this <literal>ClientM3UAProcess</literal>. <filename>m3ua-clientroute.xml</filename> contains 
+			serialized information of route. 
+			</para>			
+			<para>
+				Route maintains the availability status of a remote Point Code in the SS7 network via one or more Signaling Gateways.
+				Application Hosts connecting to Signaling Gateways will require the configuration of Routes for each Remote Signaling 
+				Point Code they wish to communicate with.
+			</para>
 
 		</section>
 					
 		<section id="configuring_LinksetFactory">
-			<title>Configuring LinksetFactory</title>
-			<para> Concrete implementation of <literal>LinksetFactory</literal> is responsible to create 
-			new instances of corresponding <literal>Linkset</literal> when instructed by <literal>LinksetManager</literal>. 
-			&THIS.PLATFORM; &THIS.APPLICATION; defined three linkset factories : </para>
+			<title>Configuring dahdi</title>
+			<para><literal>Dahdi</literal> based MTP layer will only be used when you have installed dahdi based SS7 hardware (Sangoma or Diguim cards). 
+			
+			<literal>DahdiLinksetFactory</literal> is responsible to create 
+			new instances of corresponding <literal>DahdiLinkset</literal> when instructed by <literal>LinksetManager</literal>. 
+			</para>
 			
 			<itemizedlist>
 				<listitem>
@@ -248,34 +269,11 @@ Halting VM]]></screen>
 	</bean>]]>
                         </programlisting>					
 				</listitem>
-				<listitem>
-					<para><literal>DialogicLinksetFactory</literal></para>
-					 <programlisting language="XML" role="XML"><![CDATA[
-	<bean name="DialogicLinksetFactory"
-		class="org.mobicents.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
-	</bean>]]>
-                        </programlisting>
-				</listitem>
-				<listitem>
-					<para><literal>M3UALinksetFactory</literal></para>
-					 					<programlisting language="XML" role="XML"><![CDATA[
-	<bean name="M3UALinksetFactory"
-		class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UALinksetFactory">
-		<property name="remSgp">
-			<inject bean="RemSgpImpl" />
-		</property>
-	</bean>]]>
-                        </programlisting>
-				</listitem>
 			</itemizedlist>					
-			<para>Its highly unlikely that you would require all three factories on same server. If you have <literal>dahdi</literal> based 
-			SS7 card installed, keep <literal>DahdiLinksetFactory</literal> and remove other two. If you have <literal>dialogic</literal> based 
-			SS7 card installed, keep <literal>DialogicLinksetFactory</literal> and remove other two. If you don't have any hardware installed and depend on 
-			M3UA, keep <literal>M3UALinksetFactory</literal> and remove other two. Nevertheless you can still use above factories in any combinations. 
-			</para>
+			
 			<para> <literal>LinksetFactoryFactory</literal> is just a call-back class listening for new factories deployed 
 			and maintains Map of available factory name vs factory. You should never touch this bean.</para>
-		</section>	
+			
 		<section id="configuring_LinksetManager">
 			<title>Configuring LinksetManager</title>
 			<para> 
@@ -303,8 +301,33 @@ Halting VM]]></screen>
 			underlying linksets and links. The directory path is configurable by changing value of <literal>persistDir</literal> property.</para>
 			<warning><para><filename>linksetmanager.xml</filename> should never be edited by hand. Always use Shell Client to connect to 
 			&THIS.PLATFORM; &THIS.APPLICATION; and execute commands.</para></warning>	
-			<para><literal>LinksetExecutor</literal> accepts the <literal>M3UA</literal> commands and executes necessary operations.</para>
+			<para><literal>LinksetExecutor</literal> accepts the <literal>linkset</literal> commands and executes necessary operations.</para>
 		</section>	
+		</section>
+		
+		<section id="configuring_dialogic">
+			<title>Configuring dialogic</title>
+			<para><literal>Dialogic</literal> based MTP layer will only be used when you have installed Dialogic cards. 
+			
+			<literal>DialogicMtp3UserPart</literal> communicates with Dialogic hardware. Its asumed here that MTP3 and MTP2 is leveraged from
+			Dialogic stack either on-board or on-host. 
+			</para>
+			
+
+					<programlisting language="XML" role="XML"><![CDATA[
+	<!-- ==================================================================== -->
+	<!-- Dialogic Mtp3UserPart -->
+	<!-- ==================================================================== -->
+		<bean name="Mtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart"> 
+			<property name="sourceModuleId">61</property> <property name="destinationModuleId">34</property> 
+		</bean>]]>
+                        </programlisting>					
+			
+			<para> <literal>sourceModuleId</literal> is source module id and should match with configured in 
+			system.txt used by dialogic drivers. Here 61 is assigned for Mobicents process. <literal>destinationModuleId</literal> 
+			is destination module id. 34 is Dialogic MTP3 module id.</para>
+			</section>
+		
 		
 		<section id="configuring_ShellExecutor">
 			<title>Configuring ShellExecutor</title>
@@ -321,15 +344,17 @@ Halting VM]]></screen>
 		class="org.mobicents.ss7.ShellExecutor">
 		<property name="address">${jboss.bind.address}</property>
 		<property name="port">3435</property>
+		<!-- LinksetExecutor required only if dahdi based hardware is installed. -->
 		<property name="linksetExecutor">
 			<inject bean="LinksetExecutor" />
 		</property>
-		<!-- M3UAShellExecutor required only if M3UALinkset will be created. -->
+		<!-- M3UAShellExecutor required only if M3UA will be leveraged. -->
 		<property name="m3UAShellExecutor">
 			<inject bean="M3UAShellExecutor" />
 		</property>
-		<property name="ruleExecutor">
-			<inject bean="RuleExecutor" />
+		<!-- To manage SCCP resource and rules -->
+		<property name="sccpExecutor">
+			<inject bean="SccpExecutor" />
 		</property>
 	</bean>]]></programlisting>		
 			<para>By default ShellExecutor listens at <literal>jboss.bind.address</literal> and port <literal>3435</literal>. 
@@ -340,25 +365,89 @@ Halting VM]]></screen>
 				
 		</section>	
 		
+		<section id="configuring_SCCP">
+			<title>Configuring SCCP</title>
+			<para> 
+				As name suggests <literal>SccpStack</literal> initiates the SCCP stack. <literal>localSpc</literal> property 
+				specifies the local signaling point code. <literal>ni</literal> specifies the network indicator that forms 
+				the part of service information octet (SIO)
+			</para>
+			<para> <literal>Router</literal> manages the route for SCCP. When Router is started it looks for file <filename>sccprouter.xml</filename> 
+			containing the serialized information of routes configured. The directory path is configurable by changing value of
+			<literal>persistDir</literal> property</para>
+			
+			<para> <literal>SccpResource</literal> manages the remote resource for SCCP, for example Remote Subsystem Number and
+			Remote Signalling Pointcode. When SccpResource is started it looks for file <filename>sccpresource.xml</filename> 
+			containing the serialized information of resources configured. The directory path is configurable by changing value of
+			<literal>persistDir</literal> property</para>		
+			
+			<para> <literal>SccpExecutor</literal> accepts <literal>sccp</literal> commands and executes necessary operations</para>
+			
+			<para> <literal>SccpProvider</literal> is bound to JNDI by SS7 Service and is used by upper layers</para>	
+			
+			
+			<programlisting language="XML" role="XML"><![CDATA[	<!-- ==================================================================== -->
+	<!-- SCCP Router Service -->
+	<!-- ==================================================================== -->
+	<!--Define Router for SCCP -->
+	<bean name="Router" class="org.mobicents.protocols.ss7.sccp.impl.router.Router">
+		<property name="persistDir">${jboss.server.data.dir}</property>
+	</bean>
+
+	<bean name="SccpResource" class="org.mobicents.protocols.ss7.sccp.impl.SccpResource">
+		<property name="persistDir">${jboss.server.data.dir}</property>
+	</bean>
+
+	<bean name="SccpExecutor"
+		class="org.mobicents.protocols.ss7.sccp.impl.oam.SccpExecutor">
+		<property name="router">
+			<inject bean="Router" />
+		</property>
+		<property name="sccpResource">
+			<inject bean="SccpResource" />
+		</property>
+	</bean>
+
+	<bean name="SccpStack" class="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl">
+		<property name="localSpc">2</property>
+		<property name="ni">2</property>
+		<property name="router">
+			<inject bean="Router" />
+		</property>
+		<property name="sccpResource">
+			<inject bean="SccpResource" />
+		</property>
+		<property name="mtp3UserPart">
+			<inject bean="Mtp3UserPart" />
+		</property>
+	</bean>
+
+	<bean name="SccpProvider"
+		class="org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl">
+		<constructor factoryMethod="getSccpProvider">
+			<factory bean="SccpStack" />
+		</constructor>
+	</bean>]]></programlisting>		
+			
+		</section>			
+		
 		<section id="configuring_SS7Service">
 			<title>Configuring SS7Service</title>
 			<para> 
 				<literal>SS7Service</literal> acts as core engine binding all the components together. 
 				To get holistic view of SS7 Service look at <xref linkend="design_overview_ss7_service" /> 
 			</para>
-			<programlisting language="XML" role="XML"><![CDATA[        <!-- ================================================ -->
-    <!-- Mobicents SS7 Service                                                -->
-    <!-- ================================================ -->
+			<programlisting language="XML" role="XML"><![CDATA[	<!-- ==================================================================== -->
+	<!-- Mobicents SS7 Service -->
+	<!-- ==================================================================== -->
 	<bean name="SS7Service" class="org.mobicents.ss7.SS7Service">
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=SS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
-		<property name="jndiName">java:/mobicents/ss7/sccp</property>		
-		<property name="routerImpl"><inject bean="RouterImpl" /></property>
-		<property name="linksetManager"><inject bean="LinksetManager" /></property>
-		<property name="shellExecutor"><inject bean="ShellExecutor" /></property>
-		<!-- remSignalingGateway required only if M3UALinkset will be used to connect to remote Signalling Gateway -->
-		<property name="remSignalingGateway"><inject bean="RemSignalingGateway" /></property>		
+		<property name="jndiName">java:/mobicents/ss7/sccp</property>
+		<property name="stack">
+			<inject bean="SccpProvider" />
+		</property>
 	</bean>]]></programlisting>		
-			<para> SS7 service creates new instance of SCCP stack and binds it to JNDI address <literal>java:/mobicents/ss7/sccp</literal>. 
+			<para> SS7 service binds SccpProvider to JNDI <literal>java:/mobicents/ss7/sccp</literal>. 
 			The JNDI name can be configured to any valid JNDI name specific to your application.</para>
 		</section>			
 	</section>
@@ -682,10 +771,12 @@ Halting VM]]></screen>
 				    </programlisting>
 				    
 					<para>Use "dialogiclinux" profile if linux server on which this code is built already has dialogic module installed. 
-					Make sure you pass "include.dialogic" system property pointing to correct directory where dialogic libraries are installed</para>
+					Make sure you pass "include.dialogic" and "include.dialogic.gctlib" system property pointing to correct directory where 
+					dialogic libraries are installed. include.dialogic.gctlib points to directory where <literal>gctload</literal> is present (generally
+					/opt/dpklnx for linux OS)</para>
 					<programlisting>
 [usr]$ cd &THIS.APPLICATION.DIRNAME;-&THIS.VERSION;
-[usr]$ mvn install -Pdialogclinux -Dinclude.dialogic=/usr/include/dialogic
+[usr]$ mvn install -Pdialogclinux -Dinclude.dialogic=/opt/dpklnx/INC -Dinclude.dialogic.gctlib=/opt/dpklnx
 				    </programlisting>	
 				    
 				   	<para>To build &THIS.PLATFORM; &THIS.APPLICATION; without building any native libraries use</para>

@@ -11,179 +11,36 @@
 			</para>
 		<para>
 			A global title is an address (e.g., a dialed 800 number, calling card number, or mobile subscriber identification number)
-			which is
-			translated by SCCP into a destination point code and subsystem number. A subsystem number uniquely identifies an
-			application at the
-			destination signaling point.
-			<acronym>SCCP</acronym>
-			is used as the transport layer for
-			<acronym>TCAP</acronym>
+			which is translated by SCCP into a destination point code and subsystem number. A subsystem number uniquely identifies an
+			application at the destination signaling point. <acronym>SCCP</acronym> is used as the transport layer for <acronym>TCAP</acronym>
 			-based services
 		</para>
 		<para>
 			As <acronym>SCCP</acronym> acts as message router, it requires means to configure routing information.
-			<acronym>CLI</acronym> provides way to easly manage routing rules information in &THIS.PLATFORM; <acronym>SCCP</acronym>
-			implementation.
-		</para>		
+			<acronym>CLI</acronym> provides way to easily manage routing rules information in &THIS.PLATFORM; <acronym>SCCP</acronym>
+			implementation. 
+		</para>	
 		
-		<section id="rule">
-		
-			<title>Rule</title>
-			<para>
-				<acronym>SCCP</acronym> routing mechanism makes routing decisions based on <literal>rules</literal>. Routing can be based on Global Title (GTT) or Destination Point Code and Sub-System Number (DPC + SSN)
-
-			</para>
-			<variablelist>
-			<varlistentry>
-			<term>Rule for routing on GTT</term>
-			<listitem>
-			<para>Each rule consits of three elements:</para>
-			<variablelist>
-				<varlistentry>
-					<term>pattern</term>
-					<listitem>
-						<para>determines pattern to which destiantion address is compared.
-							It has complex structure which looks as follows:</para>
-						<variablelist>
-							<varlistentry>
-								<term>translation type (tt)</term>
-								<listitem>
-									<para>integer numer which is used in a network to indicate the
-										preferred method of global title analysis </para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>numbering plan (np)</term>
-								<listitem>
-									<para>integer value which indicates which numbering
-										plan will be used for the global title. Its value aids the
-										routing system in determining the correct network system to
-										route message to.</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>nature of address (noa)</term>
-								<listitem>
-									<para>integer value which indicates address type.,
-										Specificaly it indicates the scope of the address value, such as whether it is
-										an international number (i.e. including the country code), a
-										"national" or domestic number (i.e. without country code), and
-										other formats such as "local" format.</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>digits</term>
-								<listitem>
-									<para>actual address</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>sub-system number (ssn)</term>
-								<listitem>
-									<para>identifies application in SCCP routing network.</para>
-								</listitem>
-							</varlistentry>
-						</variablelist>
-					</listitem>
-				</varlistentry>
-				<varlistentry>
-					<term>translation</term>
-					<listitem>
-						<para>
-							determines target for messages which destination address matches
-							pattern. It has exactly the same structure as
-							<literal>pattern</literal>
-							.
-						</para>
-					</listitem>
-				</varlistentry>
-				<varlistentry>
-					<term>mtp info</term>
-					<listitem>
-						<para>
-							determines mtp layer information. If <literal>translation</literal>
-							does not indicate local address(subsystem number), this information is used to send
-							message through <acronym>MTP</acronym> layer. It has following structure:
-						</para>
-						<variablelist>
-							<varlistentry>
-								<term>name</term>
-								<listitem>
-									<para>name identifing one of Linkset used by <acronym>SCCP</acronym> </para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>originating point code (opc)</term>
-								<listitem>
-									<para>local point code used as originating <acronym>MTP</acronym> address</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>destination point code (dpc)</term>
-								<listitem>
-									<para>remote point code used as destination <acronym>MTP</acronym> address</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>signaling link selection (sls)</term>
-								<listitem>
-									<para>identifies link in linkset</para>
-								</listitem>
-							</varlistentry>
-						</variablelist>
-					</listitem>
-		
-				</varlistentry>
-			</variablelist>
-			</listitem>
-			</varlistentry>
-
-
-			<varlistentry>
-			<term>Rule for routing on DPC + SSN</term>
-			<listitem>
-			<para>Each rule consits of three elements:</para>
-			<variablelist>
-				<varlistentry>
-					<term>DPC</term>
-					<listitem>
-						<para>Destination point Code</para>
-					</listitem>
-				</varlistentry>
-				<varlistentry>
-					<term>SSN</term>
-					<listitem>
-						<para>Sub System Number</para>
-					</listitem>
-				</varlistentry>
-				<varlistentry>
-					<term>mtp info</term>
-					<listitem>
-						<para>
-							same as mtp info used in GTT
-						</para>
-					</listitem>
-				</varlistentry>
-			</variablelist>
-			</listitem>
-			</varlistentry>
-
-			</variablelist>		
-		
-		</section>		
+		<para>
+			User should also configure the remote subsystem number and remote signaling pointcode. In some cases where global title is used,
+			<acronym>SCCP</acronym> will only require configuring of remote signaling pointcode and configuring of remote subsystem is not required.
+		</para>	
 		
 		<section id="rule_management">
 			<title>Rule Management</title>
-			<para>SCCP routing rules are managed by <literal>sccprule</literal> command. It allows to perform following:</para>
+			<para>SCCP routing rules are managed by <command>sccp rule</command> command. It allows to perform following:</para>
 			<itemizedlist>
 				<listitem>
-					<para>sccprule create</para>
+					<para><command>sccp rule create</command></para>
 				</listitem>
 				<listitem>
-					<para>sccprule delete</para>
+					<para><command>sccp rule modify</command></para>
+				</listitem>				
+				<listitem>
+					<para><command>sccp rule delete</command></para>
 				</listitem>
 				<listitem>
-					<para>sccprule show</para>
+					<para><command>sccp rule show</command></para>
 				</listitem>
 			</itemizedlist>		
 			
@@ -193,193 +50,257 @@
 			<title>Create Rule</title>
 			<para>Rule can be create by issuing command with following structure:</para>
 			<programlisting>
-sccprule create &lt;name&gt; pattern tt &lt;translation type&gt; np &lt;numbering plan&gt; noa &lt;nature of address&gt; digits &lt;digits&gt; ssn &lt;ssn&gt;
-                         translation tt &lt;translation type&gt; np &lt;numbering plan&gt; noa &lt;nature of address&gt; digits &lt;digits&gt; ssn &lt;ssn&gt;
-                         mtpinfo name &lt;name&gt; opc &lt;originating point code&gt; dpc &lt;destination point code&gt; sls &lt;signaling link selection&gt;
-
+sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; &lt;numbering-plan&gt;  
+&lt;nature-of-address-indicator&gt; &lt;digits&gt; &lt;primary-address-id&gt; &lt;backup-address-id&gt;
 </programlisting>
-
-			<programlisting>
-sccprule create &lt;name&gt; dpc &lt;destination point code&gt; ssn &lt;sub-system number&gt; mtpinfo name &lt;name&gt; opc &lt;originating point code&gt; dpc &lt;destination point code&gt; sls &lt;signaling link selection&gt;
-			</programlisting>
-
-			<itemizedlist>
-			<listitem>
-		<para>
-			<literal>pattern</literal> option is mandatory can be followed by following options:
-		</para>
-		<variablelist>
-			<varlistentry>
-				<term>tt</term>
-				<listitem>
-					<para>Value indicating type of translation. It is not mandatory, if
-						absent "-1" should be passed. It requires integer argument.</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term>np</term>
-				<listitem>
-					<para>Specifies numberingplan to be used by SCCP to aid it in
-						determinig correct network system. It is not mandatory, if absent -1 should be passed. It requires integer argument. 
-						It can have following values 
-						
-						<variablelist>
-							<varlistentry>
-								<term>0</term>
-								<listitem>
-									<para>UNKNOWN</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>1</term>
-								<listitem>
-									<para>ISDN_TELEPHONY</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>3</term>
-								<listitem>
-									<para>DATA</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>4</term>
-								<listitem>
-									<para>TELEX</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>5</term>
-								<listitem>
-									<para>MERITIME_MOBILE</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>6</term>
-								<listitem>
-									<para>LAND_MOBILE</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>7</term>
-								<listitem>
-									<para>ISDN_MOBILE</para>
-								</listitem>
-							</varlistentry>							
-						</variablelist>						
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term>noa</term>
-				<listitem>
-					<para>Specifies nature of address to indicate scope of address. It
-						is not mandatory, if absent -1 should be passed. It requires integer argument.
-						 It can have following values 
-						<variablelist>
-							<varlistentry>
-								<term>0</term>
-								<listitem>
-									<para>SPARE</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>1</term>
-								<listitem>
-									<para>SUBSCRIBER</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>2</term>
-								<listitem>
-									<para>UNKNOWN</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>3</term>
-								<listitem>
-									<para>NATIONAL</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>4</term>
-								<listitem>
-									<para>INTERNATIONAL</para>
-								</listitem>
-							</varlistentry>
-						</variablelist>	
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term>digits</term>
-				<listitem>
-					<para>Specifies string representation of number(digits). It is
-						mandatory and requires argument.</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term>ssn</term>
-				<listitem>
-					<para>Specifies subsystem number. It is not mandatory, if absent
-						-1 should be passed. It requires integer argument.</para>
-				</listitem>
-			</varlistentry>
-		</variablelist>
-				</listitem>
-				<listitem>
-					<para>
-						<literal>translation</literal> is optional. If present it supports exactly the same options as <literal>parameter</literal>
-					</para>
-				</listitem>
-				
-				<listitem>
-					<para>
-						<literal>mtpinfo</literal> is optional. If present it must be followed by following options:
-					</para>
-					<variablelist>
-						<varlistentry>
-							<term>name</term>
-							<listitem>
-							<para>Specifies name of mtp linkset. It is mandatory, requires
-						string argument.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>opc</term>
-							<listitem>
-								<para>Specifies originating point code. It is mandatory, requires integer argument.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>apc
-							</term>
-							<listitem>
-								<para>Specifies adjacent point code. It is mandatory, requires	integer argument.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>sls
-							</term>
-							<listitem>
-								<para>Specifies signal link selector. It is mandatory, requires	integer argument.</para>
-							</listitem>
-						</varlistentry>						
-					</variablelist>					
-				</listitem>				
-				
-			</itemizedlist>	
+			<para>This command should be specified after <command>primary_add</command> and <command>backup_add</command> are configured. 
+			Please refer  <xref linkend="address_management"/> on how to configure <command>primary_add</command> and <command>backup_add</command></para>
+			<variablelist>
+				<varlistentry>
+					<term>&lt;id&gt;</term>
+					<listitem>
+						<para>A unique number to identify this rule</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>&lt;mask&gt;</term>
+					<listitem>
+						<para>mask defines which part of the originally dialed digits remains in the translated digits and which part 
+						is replaced by the digits from primary or backup address. mask is divided into sections by separator /.
+						The number of sections in mask should be equal to sections in digits passed in this command and sections in primary
+						or backup address						
+						</para>
+						<table frame="all" pgwide="1">
+							<title>mask definitions</title>
+							<tgroup colsep="1" cols="2">
+								<colspec colnum="1" colname="c0" colwidth="3*"/>
+								<colspec colnum="1" colname="c0" colwidth="3*"/>
+								<thead>
+									<row>
+										<entry>Mnemonic</entry>
+										<entry>Function</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry>
+											-
+										</entry>														
+										<entry>
+											Ignore
+										</entry>
+									</row>
+									<row>
+										<entry>
+											/
+										</entry>														
+										<entry>
+											Separator used to split the mask into sections.
+										</entry>
+									</row>
+									<row>
+										<entry>
+											K
+										</entry>														
+										<entry>
+											Keep the original dialed digits of this section into translated digits
+										</entry>
+									</row>
+									<row>
+										<entry>
+											R
+										</entry>														
+										<entry>
+											Replace the original dialed digits of this section with same section from primary or backup address 
+											into translated digits
+										</entry>
+									</row>									
+								</tbody>
+							</tgroup>							
+						</table>
+					</listitem>
+				</varlistentry>	
+				<varlistentry>
+					<term>&lt;address-indicator&gt;</term>
+					<listitem>
+						<para>The address indicator is the first field in SCCP Party Address(called/calling) and is one octet in length.
+						Its function is to indicate which information elements are present so that the address can be interpreted,
+						in other words, it indicates the type of addressing information that is to be found in the address field. 
+						The addressing information from original global title is then compared with passed address information to match the rule.						 
+						</para>
+						<mediaobject id="sccp_address">
+							<imageobject>
+								<imagedata align="center" fileref="images/SCCPAddress.jpg" format="JPEG" />
+							</imageobject>
+							<caption>
+								<para>SCCP Address Indicator</para>
+							</caption>
+						</mediaobject>	
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>&lt;point-code&gt;</term>
+					<listitem>
+						<para>Point code. This is ignored if bit 0 of address-indicator is not set.					 
+						</para>
+					</listitem>
+				</varlistentry>		
+				<varlistentry>
+					<term>&lt;subsystem-number&gt;</term>
+					<listitem>
+						<para>Subsystem Number. This is ignored if bit 1 of address-indicator is not set.					 
+						</para>
+					</listitem>
+				</varlistentry>	
+				<varlistentry>
+					<term>&lt;translation-type&gt;</term>
+					<listitem>
+						<para>Translation type. This is ignored if GT Indicator is 0000 or 0001</para>
+						<table frame="all" pgwide="1">
+							<title>Translation Type Values</title>
+							<tgroup colsep="1" cols="2">
+								<colspec colnum="1" colname="c0" colwidth="3*"/>
+								<colspec colnum="1" colname="c0" colwidth="3*"/>
+								<thead>
+									<row>
+										<entry>Value</entry>
+										<entry>Description</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry>
+											0
+										</entry>														
+										<entry>
+											Unknown
+										</entry>
+									</row>
+									<row>
+										<entry>
+											1 to 63
+										</entry>														
+										<entry>
+											International Service
+										</entry>
+									</row>
+									<row>
+										<entry>
+											64 to 127
+										</entry>														
+										<entry>
+											Spare
+										</entry>
+									</row>
+									<row>
+										<entry>
+											128 to 254
+										</entry>														
+										<entry>
+											National Network Specific
+										</entry>
+									</row>	
+									<row>
+										<entry>
+											255
+										</entry>														
+										<entry>
+											Reserved for Expansion
+										</entry>
+									</row>									
+								</tbody>
+							</tgroup>							
+						</table> 						
+					</listitem>
+				</varlistentry>	
+				<varlistentry>
+					<term>&lt;numbering-plan&gt;</term>
+					<listitem>
+						<para>The Number Plan (NP) field specifies the numbering plan that the address information follows. 
+						This is ignored if GT Indicator is 0000, 0001 or 0010</para>
+					</listitem>
+				</varlistentry>		
+				<varlistentry>
+					<term>&lt;nature-of-address-indicator&gt;</term>
+					<listitem>
+						<para>The Nature of Address Indicator (NAI) field defines the address range for a specific numbering plan. 
+						This is only used if GT Indicator is 0100</para>
+					</listitem>
+				</varlistentry>	
+				<varlistentry>
+					<term>&lt;digits&gt;</term>
+					<listitem>
+						<para>Specifies the string of digits divided into subsections using separator '/' depending on if mask contains separator. The
+						dialed digits should match with theses digits as per rule specified bellow</para>
+						<table frame="all" pgwide="1">
+							<title>digit pattern</title>
+							<tgroup colsep="1" cols="2">
+								<colspec colnum="1" colname="c0" colwidth="3*"/>
+								<colspec colnum="1" colname="c0" colwidth="3*"/>
+								<thead>
+									<row>
+										<entry>Value</entry>
+										<entry>Description</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry>
+											-
+										</entry>														
+										<entry>
+											padding - ignored
+										</entry>
+									</row>
+									<row>
+										<entry>
+											*
+										</entry>														
+										<entry>
+											wildcard - matches any number of digits
+										</entry>
+									</row>
+									<row>
+										<entry>
+											?
+										</entry>														
+										<entry>
+											wildcard - matches exactly one digit
+										</entry>
+									</row>
+									<row>
+										<entry>
+											/
+										</entry>														
+										<entry>
+											sparator used to split the digit pattern into sections. Each section can be processed differently as 
+											specified by mask parameter.
+										</entry>
+									</row>	
+								</tbody>
+							</tgroup>							
+						</table> 						
+					</listitem>
+				</varlistentry>		
+				<varlistentry>
+					<term>&lt;primary-address-id&gt;</term>
+					<listitem>
+						<para>Identifies the SCCP Address used as the primary translation</para>
+					</listitem>
+				</varlistentry>	
+				<varlistentry>
+					<term>&lt;backup-address-id&gt;</term>
+					<listitem>
+						<para>Identifies the SCCP Address used as the backup translation incase if pointcode specified by primary address is not available</para>
+					</listitem>
+				</varlistentry>					
+			</variablelist>	
+	
 			<example>
 				<title>SCCP Rule creation</title>
 				<screen>
-mobicents(10.65.208.215:3435)>sccprule create Rule1 pattern tt -1 np -1 noa 3 digits 99604 ssn -1 translation tt -1 np 3 noa 4 digits 77865 ssn -1
-Rule successfully added
-mobicents(10.65.208.215:3435)>sccprule create Rule2 pattern tt -1 np 3 noa 4 digits 99605 ssn -1 mtpinfo name name1 opc 12 apc 56 sls 1
-Rule successfully added
-mobicents(10.65.208.215:3435)>sccprule create Rule3 pattern tt -1 np 3 noa 4 digits 99606 ssn -1 translation tt -1 np 3 noa 4 digits 77865 ssn -1 mtpinfo name name1 opc 12 apc 56 sls 1
-Rule successfully added
-mobicents(10.65.208.215:3435)>sccprule create Rule4 dpc 1 ssn 8 mtpinfo name name1 opc 2 apc 1 sls 16
-Rule successfully added
+mobicents(10.65.208.215:3435)>sccp rule create 1 R 71 2 8 0 0 3 123456789 1 
+mobicents(10.65.208.215:3435)>sccp rule create 2 R 71 2 8 0 0 3 123456789 1 1
 				</screen>
 			</example>
 		</section>			
@@ -389,21 +310,21 @@ Rule successfully added
 			<title>Delete SCCP Rule</title>
 			<para>SCCP Rule can be deleted by issuing command with following structure:</para>
 			<programlisting>
-sccprule delete  &lt;rule-name&gt; </programlisting>
+sccp rule delete  &lt;id&gt; </programlisting>
 			<para>Where:</para>
 			<variablelist>
 
 				<varlistentry>
-					<term>rule-name</term>
+					<term>&lt;id&gt;</term>
 					<listitem>
-						<para>is name set during rule creation</para>
+						<para>is id set during rule creation</para>
 					</listitem>
 				</varlistentry>
 			</variablelist>
 			<example>
 				<title>SCCP Rule Removal</title>
 				<screen>
-mobicents(10.65.208.215:3435)>sccprule delete Rule1
+mobicents(10.65.208.215:3435)>sccp rule delete 1
 Rule successfully removed
 				</screen>
 			</example>
@@ -414,9 +335,550 @@ Rule successfully removed
 			<title>Show SCCP Rule</title>
 			<para>Rule's can be viewed by issuing command with following structure:</para>
 			<programlisting>
-sccprule show </programlisting>
-			<para>It will show all the rules created</para>
+sccp rule show &lt;id&gt;</programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>&lt;id&gt;</term>
+					<listitem>
+						<para>id is optional. If passed only rule matching the id will be shown, else all the rules will be shown</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
 		</section>
 			
 		</section>
+		
+		<section id="address_management">
+			<title>Address Management</title>
+			<para>The command is used to define primary or backup address of translation. The global title
+			address information of this command is combined with the global title being translated by examining the
+			mask provided in the <command>sccp rule create</command> command.The syntanx remains same except for primary address
+			<command>sccp primary_add</command> is used and for backup address <command>sccp backup_add</command> is used </para>
+			<itemizedlist>
+				<listitem>
+					<para><command>sccp primary_add create</command></para>
+					<para><command>sccp backup_add create</command></para>
+				</listitem>
+				<listitem>
+					<para><command>sccp primary_add modify</command></para>
+					<para><command>sccp backup_add modify</command></para>
+				</listitem>				
+				<listitem>
+					<para><command>sccp primary_add delete</command></para>
+					<para><command>sccp backup_add delete</command></para>					
+				</listitem>
+				<listitem>
+					<para><command>sccp primary_add show</command></para>
+					<para><command>sccp backup_add show</command></para>	
+				</listitem>
+			</itemizedlist>		
+			
+			
+		<section
+			id="shell_sccpaddress_create">
+			<title>Create Address</title>
+			<para>Address can be create by issuing command with following structure:</para>
+			<itemizedlist>
+				<listitem>
+					<para>For primary address</para>
+			<programlisting>
+sccp primary_add create &lt;id&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; &lt;numbering-plan&gt;  
+&lt;nature-of-address-indicator&gt; &lt;digits&gt;
+</programlisting>
+				</listitem>
+				<listitem>
+					<para>For backup address</para>
+			<programlisting>
+sccp backup_add create &lt;id&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; &lt;numbering-plan&gt;  
+&lt;nature-of-address-indicator&gt; &lt;digits&gt;
+</programlisting>
+				</listitem>				
+			</itemizedlist>
+			
+			<variablelist>
+				<varlistentry>
+					<term>&lt;id&gt;</term>
+					<listitem>
+						<para>A unique number to identify this address</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>&lt;address-indicator&gt;</term>
+					<listitem>
+						<para>The address indicator is the first field in SCCP Party Address(called/calling) and is one octet in length.
+						Its function is to indicate which information elements are present so that the address can be interpreted,
+						in other words, it indicates the type of addressing information that is to be found in the address field. 
+						The addressing information from original global title is then compared with passed address information to match the rule.						 
+						</para>
+						<mediaobject id="sccp_address1">
+							<imageobject>
+								<imagedata align="center" fileref="images/SCCPAddress.jpg" format="JPEG" />
+							</imageobject>
+							<caption>
+								<para>SCCP Address Indicator</para>
+							</caption>
+						</mediaobject>	
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>&lt;point-code&gt;</term>
+					<listitem>
+						<para>Point code. This is ignored if bit 0 of address-indicator is not set.					 
+						</para>
+					</listitem>
+				</varlistentry>		
+				<varlistentry>
+					<term>&lt;subsystem-number&gt;</term>
+					<listitem>
+						<para>Subsystem Number. This is ignored if bit 1 of address-indicator is not set.					 
+						</para>
+					</listitem>
+				</varlistentry>	
+				<varlistentry>
+					<term>&lt;translation-type&gt;</term>
+					<listitem>
+						<para>Translation type. This is ignored if GT Indicator is 0000 or 0001</para>
+						<table frame="all" pgwide="1">
+							<title>Translation Type Values</title>
+							<tgroup colsep="1" cols="2">
+								<colspec colnum="1" colname="c0" colwidth="3*"/>
+								<colspec colnum="1" colname="c0" colwidth="3*"/>
+								<thead>
+									<row>
+										<entry>Value</entry>
+										<entry>Description</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry>
+											0
+										</entry>														
+										<entry>
+											Unknown
+										</entry>
+									</row>
+									<row>
+										<entry>
+											1 to 63
+										</entry>														
+										<entry>
+											International Service
+										</entry>
+									</row>
+									<row>
+										<entry>
+											64 to 127
+										</entry>														
+										<entry>
+											Spare
+										</entry>
+									</row>
+									<row>
+										<entry>
+											128 to 254
+										</entry>														
+										<entry>
+											National Network Specific
+										</entry>
+									</row>	
+									<row>
+										<entry>
+											255
+										</entry>														
+										<entry>
+											Reserved for Expansion
+										</entry>
+									</row>									
+								</tbody>
+							</tgroup>							
+						</table> 						
+					</listitem>
+				</varlistentry>	
+				<varlistentry>
+					<term>&lt;numbering-plan&gt;</term>
+					<listitem>
+						<para>The Number Plan (NP) field specifies the numbering plan that the address information follows. 
+						This is ignored if GT Indicator is 0000, 0001 or 0010</para>
+					</listitem>
+				</varlistentry>		
+				<varlistentry>
+					<term>&lt;nature-of-address-indicator&gt;</term>
+					<listitem>
+						<para>The Nature of Address Indicator (NAI) field defines the address range for a specific numbering plan. 
+						This is only used if GT Indicator is 0100</para>
+					</listitem>
+				</varlistentry>	
+				<varlistentry>
+					<term>&lt;digits&gt;</term>
+					<listitem>
+						<para>
+							The global title address information to translate to, specified as string of digits divided into subsections using
+							separator '/' depending on if mask contains separator.
+						</para>
+						<para>
+							In addition the digits string can contain
+						</para>
+						<table frame="all" pgwide="1">
+							<title>Address digit</title>
+							<tgroup colsep="1" cols="2">
+								<colspec colnum="1" colname="c0" colwidth="3*"/>
+								<colspec colnum="1" colname="c0" colwidth="3*"/>
+								<thead>
+									<row>
+										<entry>Value</entry>
+										<entry>Description</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry>
+											-
+										</entry>														
+										<entry>
+											padding - ignore
+										</entry>
+									</row>
+									<row>
+										<entry>
+											/
+										</entry>														
+										<entry>
+											Separtor to split the digits into sections. Each section is processed differently as specified 
+											by the mask in <command>sccp rule create</command> command.
+										</entry>
+									</row>
+								</tbody>
+							</tgroup>							
+						</table> 							
+					</listitem>
+				</varlistentry>		
+			</variablelist>	
+	
+			<example>
+				<title>SCCP Primary Address creation</title>
+				<screen>
+mobicents(10.65.208.215:3435)>sccp primary_add create 1 71 2 8 0 0 3 123456789
+				</screen>
+			</example>
+			<example>
+				<title>SCCP Backup Address creation</title>
+				<screen>
+mobicents(10.65.208.215:3435)>sccp backup_add create 1 71 3 8 0 0 3 123456789
+				</screen>
+			</example>
+		</section>			
+
+		<section
+			id="shell_sccp_address_delete">
+			<title>Delete Address</title>
+			<itemizedlist>
+				<listitem>
+					<para>For primary address</para>
+			<programlisting>
+sccp primary_add delete &lt;id&gt;
+</programlisting>
+				</listitem>
+				<listitem>
+					<para>For backup address</para>
+			<programlisting>
+sccp backup_add delete &lt;id&gt;
+</programlisting>
+				</listitem>				
+			</itemizedlist>
+			<para>Where:</para>
+			<variablelist>
+
+				<varlistentry>
+					<term>&lt;id&gt;</term>
+					<listitem>
+						<para>is id set during address creation</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Primary Address Removal</title>
+				<screen>
+mobicents(10.65.208.215:3435)>sccp primary_add delete 1
+Rule successfully removed
+				</screen>
+			</example>
+			<example>
+				<title>Backup Address Removal</title>
+				<screen>
+mobicents(10.65.208.215:3435)>sccp backup_add delete 1
+Rule successfully removed
+				</screen>
+			</example>			
+		</section>	
+		
+		<section
+			id="shell_sccp_address_show">
+			<title>Show Address</title>
+			<para>Address's can be viewed by issuing command with following structure:</para>
+			<itemizedlist>
+				<listitem>
+					<para>For primary address</para>
+			<programlisting>
+sccp primary_add show &lt;id&gt; 
+</programlisting>
+				</listitem>
+				<listitem>
+					<para>For backup address</para>
+			<programlisting>
+sccp backup_add show &lt;id&gt;
+</programlisting>
+				</listitem>				
+			</itemizedlist>			
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>&lt;id&gt;</term>
+					<listitem>
+						<para>id is optional. If passed only address matching the id will be shown, else all the addresses will be shown</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</section>
+		</section>
+		
+		
+		
+		
+		
+		
+		
+		
+		<section id="resource_rsp_management">
+			<title>Remote Signaling Point Management</title>
+			<para>SCCP resources includes remote signaling point and remote subsytem. 
+			Each remote signaling point that SCCP can communicate with must be configured using <command>sccp rsp</command> command
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para><command>sccp rsp create</command></para>
+				</listitem>
+				<listitem>
+					<para><command>sccp rsp modify</command></para>
+				</listitem>				
+				<listitem>
+					<para><command>sccp rsp delete</command></para>
+				</listitem>
+				<listitem>
+					<para><command>sccp rsp show</command></para>
+				</listitem>
+			</itemizedlist>		
+		<section
+			id="shell_sccprsp_create">
+			<title>Create Remote Signaling Point</title>
+			<para>Remote signaling point can be create by issuing command with following structure:</para>
+			
+			<programlisting>
+sccp rsp create &lt;id&gt; &lt;remote-spc&gt; &lt;rspc-flag&gt; &lt;mask&gt; 
+</programlisting>
+			
+			
+			<variablelist>
+				<varlistentry>
+					<term>&lt;id&gt;</term>
+					<listitem>
+						<para>A unique number to identify this remote signaling point</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>&lt;remote-spc&gt;</term>
+					<listitem>
+						<para>The remote signaling point						 
+						</para>
+			
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>&lt;rspc-flag&gt;</term>
+					<listitem>
+						<para>32 bit value. Not used for now. Reserved for future</para>
+					</listitem>
+				</varlistentry>		
+				<varlistentry>
+					<term>&lt;mask&gt;</term>
+					<listitem>
+						<para>32 bit value. Not used for now. Reserved for future</para>
+					</listitem>
+				</varlistentry>	
+			</variablelist>	
+	
+			<example>
+				<title>Remote Signalin Point creation</title>
+				<screen>
+mobicents(10.65.208.215:3435)>sccp rsp create 1 6477 0 0
+				</screen>
+			</example>
+		</section>			
+
+		<section
+			id="shell_sccp_rsp_delete">
+			<title>Delete Remote Signaling Point</title>
+		
+			<programlisting>
+sccp rsp delete &lt;id&gt;
+</programlisting>
+			<para>Where:</para>
+			<variablelist>
+
+				<varlistentry>
+					<term>&lt;id&gt;</term>
+					<listitem>
+						<para>is id set during remote signaling point creation</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Remote Signaling Point removal</title>
+				<screen>
+mobicents(10.65.208.215:3435)>sccp rsp delete 1
+				</screen>
+			</example>
+		</section>	
+		
+		<section
+			id="shell_sccp_rsp_show">
+			<title>Show Remote Signaling Point/s</title>
+			<para>Remote signaling point can be viewed by issuing command with following structure:</para>
+			
+			<programlisting>
+sccp rsp show &lt;id&gt; 
+</programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>&lt;id&gt;</term>
+					<listitem>
+						<para>id is optional. If passed only remote signaling point matching the id will be shown, 
+						else all the addresses will be shown</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</section>
+		</section>			
+		
+		
+		<section id="resource_rss_management">
+			<title>Remote Sub-System Management</title>
+			<para>SCCP resources includes remote signaling point and remote subsytem. 
+			Each remote subsystem that SCCP can communicate with must be configured using <command>sccp rss</command> command
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para><command>sccp rss create</command></para>
+				</listitem>
+				<listitem>
+					<para><command>sccp rss modify</command></para>
+				</listitem>				
+				<listitem>
+					<para><command>sccp rss delete</command></para>
+				</listitem>
+				<listitem>
+					<para><command>sccp rss show</command></para>
+				</listitem>
+			</itemizedlist>		
+			
+			<para>This command should be specified after remote signaling point is configured. 
+			Please refer <xref linkend="resource_rsp_management"/> on how to configure remote signaling point</para>
+			
+		<section
+			id="shell_sccprss_create">
+			<title>Create Remote Sub-System</title>
+			<para>Remote subsystem can be created by issuing command with following structure:</para>
+			
+			<programlisting>
+sccp rss create &lt;id&gt; &lt;remote-spc&gt; &lt;remote-ssn&gt; &lt;rss-flag&gt;  
+</programlisting>
+			
+			
+			<variablelist>
+				<varlistentry>
+					<term>&lt;id&gt;</term>
+					<listitem>
+						<para>A unique number to identify this remote subsystem</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>&lt;remote-spc&gt;</term>
+					<listitem>
+						<para>The remote signaling point where this remote susbsytem is deployed						 
+						</para>
+			
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>&lt;remote-ssn&gt;</term>
+					<listitem>
+						<para>The remote subsystem number</para>
+					</listitem>
+				</varlistentry>	
+				<varlistentry>
+					<term>&lt;rss-flag&gt;</term>
+					<listitem>
+						<para>32 bit value. Not used for now. Reserved for future</para>
+					</listitem>
+				</varlistentry>		
+			</variablelist>	
+	
+			<example>
+				<title>Remote Sub-System creation</title>
+				<screen>
+mobicents(10.65.208.215:3435)>sccp rss create 1 6477 8 0
+				</screen>
+			</example>
+		</section>			
+
+		<section
+			id="shell_sccp_rss_delete">
+			<title>Delete Remote Sub-System</title>
+		
+			<programlisting>
+sccp rss delete &lt;id&gt;
+</programlisting>
+			<para>Where:</para>
+			<variablelist>
+
+				<varlistentry>
+					<term>&lt;id&gt;</term>
+					<listitem>
+						<para>is id set during remote subsystem creation</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Remote Sub-System removal</title>
+				<screen>
+mobicents(10.65.208.215:3435)>sccp rss delete 1
+				</screen>
+			</example>
+		</section>	
+		
+		<section
+			id="shell_sccp_rss_show">
+			<title>Show Remote Sub-System/s</title>
+			<para>Remote subsystem can be viewed by issuing command with following structure:</para>
+			
+			<programlisting>
+sccp rss show &lt;id&gt; 
+</programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>&lt;id&gt;</term>
+					<listitem>
+						<para>id is optional. If passed only remote subsystem matching the id will be shown, 
+						else all will be shown</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</section>
+		</section>			
+				
+		
+				
 	</section>

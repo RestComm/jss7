@@ -17,13 +17,13 @@
 		</para>
 		<itemizedlist>
 			<listitem>
-				<para>m3ua ras create</para>
+				<para><command>m3ua ras create</command></para>
 			</listitem>
 			<listitem>
-				<para>m3ua rasp create</para>
+				<para><command>m3ua rasp create</command></para>
 			</listitem>
 			<listitem>
-				<para>m3ua ras add</para>
+				<para><command>m3ua ras add</command></para>
 			</listitem>
 		</itemizedlist>		
 			
@@ -233,19 +233,28 @@ Successfully added ASP name=RASP1 to AS name=RAS1
 		</para>
 		<itemizedlist>
 			<listitem>
-				<para>m3ua as create</para>
+				<para><command>m3ua as create</command></para>
 			</listitem>
 			<listitem>
-				<para>m3ua asp create</para>
+				<para><command>m3ua asp create</command></para>
 			</listitem>
 			<listitem>
-				<para>m3ua as add</para>
+				<para><command>m3ua as add</command></para>
 			</listitem>
 			<listitem>
-				<para>m3ua asp start</para>
+				<para><command>m3ua route add</command></para>
+			</listitem>
+			<listitem>
+				<para><command>m3ua route remove</command></para>
+			</listitem>
+			<listitem>
+				<para><command>m3ua route show</command></para>
 			</listitem>			
 			<listitem>
-				<para>m3ua asp stop</para>
+				<para><command>m3ua asp start</command></para>
+			</listitem>			
+			<listitem>
+				<para><command>m3ua asp stop</command></para>
 			</listitem>			
 		</itemizedlist>		
 			
@@ -360,6 +369,75 @@ Successfully added ASP name=ASP1 to AS name=AS1
 				</screen>
 			</example>
 		</section>
+		
+		<section
+			id="shell_m3ua_as_side_route_add">
+			<title>Add Route</title>
+			<para>Configure the destination point code that message will be routed to</para>
+			<programlisting>m3ua route add &lt;dpc&gt; &lt;as-name&gt;</programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>dpc</term>
+					<listitem>
+						<para>Destination point code</para>
+					</listitem>
+				</varlistentry>			
+				<varlistentry>
+					<term>as name</term>
+					<listitem>
+						<para>name of AS created earlier</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Add Route</title>
+				<screen>
+mobicents(127.0.0.1:3435)>m3ua route add 6447 AS1
+				</screen>
+			</example>
+		</section>		
+		<section
+			id="shell_m3ua_as_side_route_remove">
+			<title>Remove Route</title>
+			<para>Remove the As configured for the destination point code</para>
+			<programlisting>m3ua route remove &lt;dpc&gt; &lt;as-name&gt;</programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>dpc</term>
+					<listitem>
+						<para>Destination point code</para>
+					</listitem>
+				</varlistentry>			
+				<varlistentry>
+					<term>as name</term>
+					<listitem>
+						<para>name of AS assigned to route message for this dpc</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Remove Route</title>
+				<screen>
+mobicents(127.0.0.1:3435)>m3ua route remove 6447 AS1
+				</screen>
+			</example>
+		</section>		
+		<section
+			id="shell_m3ua_as_side_route_show">
+			<title>Show Route</title>
+			<para>Show all the routes configured</para>
+			<programlisting>m3ua route show</programlisting>
+
+			<example>
+				<title>Show Route</title>
+				<screen>
+mobicents(127.0.0.1:3435)>m3ua route show
+				</screen>
+			</example>
+		</section>
+				
 		<section
 			id="shell_m3ua_as_side_startasp">
 			<title>Start ASP</title>
