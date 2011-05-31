@@ -139,7 +139,7 @@ public class LocalAspFactory extends AspFactory {
 		case MessageClass.MANAGEMENT:
 			switch (message.getMessageType()) {
 			case MessageType.ERROR:
-				org.mobicents.protocols.ss7.m3ua.message.mgmt.Error error = (org.mobicents.protocols.ss7.m3ua.message.mgmt.Error) message;
+				logger.error(message);
 				break;
 			case MessageType.NOTIFY:
 				Notify notify = (Notify) message;
