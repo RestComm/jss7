@@ -29,7 +29,7 @@ import javolution.util.FastList;
 import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.SgpImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAProcess;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.stream.api.SelectorKey;
 import org.mobicents.ss7.linkset.oam.Layer4;
@@ -40,117 +40,119 @@ import org.mobicents.ss7.linkset.oam.LinksetStream;
 
 public class NodalInterworkingFunction implements Layer4 {
 
-    private static Logger logger = Logger.getLogger(NodalInterworkingFunction.class);
+	private static Logger logger = Logger.getLogger(NodalInterworkingFunction.class);
 
-    private LinksetSelector linkSetSelector = new LinksetSelector();
-    private LinksetStream linksetStream = null;
+	private LinksetSelector linkSetSelector = new LinksetSelector();
+	private LinksetStream linksetStream = null;
 
-    private LinksetManager linksetManager = null;
+	private LinksetManager linksetManager = null;
 
-    private SgpImpl sgpImpl = null;
+	private ServerM3UAProcess serverM3UAProcess = null;
 
-    private boolean started = false;
+	private boolean started = false;
 
-    private int OP_READ_WRITE = 3;
+	private int OP_READ_WRITE = 3;
 
-    private byte[] rxBuffer;
+	private byte[] rxBuffer;
 
-    private ConcurrentLinkedQueue<byte[]> mtpqueue = new ConcurrentLinkedQueue<byte[]>();
-    private ConcurrentLinkedQueue<PayloadData> m3uaqueue = new ConcurrentLinkedQueue<PayloadData>();
+	private ConcurrentLinkedQueue<byte[]> mtpqueue = new ConcurrentLinkedQueue<byte[]>();
+	private ConcurrentLinkedQueue<PayloadData> m3uaqueue = new ConcurrentLinkedQueue<PayloadData>();
 
-    public NodalInterworkingFunction() {
+	public NodalInterworkingFunction() {
 
-    }
+	}
 
-    public LinksetManager getLinksetManager() {
-        return linksetManager;
-    }
+	public LinksetManager getLinksetManager() {
+		return linksetManager;
+	}
 
-    public void setLinksetManager(LinksetManager linksetManager) {
-        this.linksetManager = linksetManager;
-    }
+	public void setLinksetManager(LinksetManager linksetManager) {
+		this.linksetManager = linksetManager;
+	}
 
-    public SgpImpl getSgpImpl() {
-        return sgpImpl;
-    }
 
-    public void setSgpImpl(SgpImpl sgpImpl) {
-        this.sgpImpl = sgpImpl;
-    }
+	public ServerM3UAProcess getServerM3UAProcess() {
+		return serverM3UAProcess;
+	}
 
-    // Layer4 methods
-    public void add(Linkset linkset) {
-        try {
-            linksetStream = linkset.getLinksetStream();
-            linksetStream.register(this.linkSetSelector);
-        } catch (IOException ex) {
-            logger.error(String.format("Registration for %s LinksetStream failed", linkset.getName()), ex);
-        }
-    }
+	public void setServerM3UAProcess(ServerM3UAProcess serverM3UAProcess) {
+		this.serverM3UAProcess = serverM3UAProcess;
+	}
 
-    public void remove(Linkset arg0) {
-        // TODO Auto-generated method stub
+	// Layer4 methods
+	public void add(Linkset linkset) {
+		try {
+			linksetStream = linkset.getLinksetStream();
+			linksetStream.register(this.linkSetSelector);
+		} catch (IOException ex) {
+			logger.error(String.format("Registration for %s LinksetStream failed", linkset.getName()), ex);
+		}
+	}
 
-    }
+	public void remove(Linkset arg0) {
+		// TODO Auto-generated method stub
 
-    // Life cycle methods
-    public void start() throws Exception {
+	}
 
-        // Linkset
-        this.linksetManager.setLayer4(this);
+	// Life cycle methods
+	public void start() throws Exception {
 
-        // Add all linkset stream
-        FastMap<String, Linkset> map = this.linksetManager.getLinksets();
-        for (FastMap.Entry<String, Linkset> e = map.head(), end = map.tail(); (e = e.getNext()) != end;) {
-            Linkset value = e.getValue();
-            this.add(value);
-        }
+		// Linkset
+		this.linksetManager.setLayer4(this);
 
-        this.started = true;
+		// Add all linkset stream
+		FastMap<String, Linkset> map = this.linksetManager.getLinksets();
+		for (FastMap.Entry<String, Linkset> e = map.head(), end = map.tail(); (e = e.getNext()) != end;) {
+			Linkset value = e.getValue();
+			this.add(value);
+		}
 
-    }
+		this.started = true;
 
-    public void stop() throws Exception {
-        this.started = false;
-    }
+	}
 
-    protected void perform() throws IOException {
+	public void stop() throws Exception {
+		this.started = false;
+	}
 
-        if (!started) {
-            return;
-        }
-        FastList<SelectorKey> selected = linkSetSelector.selectNow(OP_READ_WRITE, 1);
+	protected void perform() throws IOException {
 
-        for (FastList.Node<SelectorKey> n = selected.head(), end = selected.tail(); (n = n.getNext()) != end;) {
-            SelectorKey key = n.getValue();
-            //((LinksetStream) key.getStream()).read(rxBuffer);
+		if (!started) {
+			return;
+		}
+		FastList<SelectorKey> selected = linkSetSelector.selectNow(OP_READ_WRITE, 1);
 
-            // Read data
-            if (rxBuffer != null) {
-                mtpqueue.offer(rxBuffer);
-            }
+		for (FastList.Node<SelectorKey> n = selected.head(), end = selected.tail(); (n = n.getNext()) != end;) {
+			SelectorKey key = n.getValue();
+			// ((LinksetStream) key.getStream()).read(rxBuffer);
 
-            // write to stream
-            if (!m3uaqueue.isEmpty()) {
-                PayloadData txBuffer = m3uaqueue.poll();
-                // TODO : Select appropriate LinkSet to send this data
-                if (txBuffer != null) {
-                    //linksetStream.write(txBuffer.getData().getMsu());
-                }
-            }
-        }// for
+			// Read data
+			if (rxBuffer != null) {
+				mtpqueue.offer(rxBuffer);
+			}
 
-        // Sig Gateway will poll all its AspFactory for data
-        this.sgpImpl.perform();
+			// write to stream
+			if (!m3uaqueue.isEmpty()) {
+				PayloadData txBuffer = m3uaqueue.poll();
+				// TODO : Select appropriate LinkSet to send this data
+				if (txBuffer != null) {
+					// linksetStream.write(txBuffer.getData().getMsu());
+				}
+			}
+		}// for
 
-        PayloadData payload = null;
-        while ((payload = this.sgpImpl.poll()) != null) {
-            m3uaqueue.add(payload);
-        }
+		// Sig Gateway will poll all its AspFactory for data
+		this.serverM3UAProcess.execute();
 
-        byte[] msu = null;
-        while ((msu = mtpqueue.poll()) != null) {
-            this.sgpImpl.send(msu);
-        }
-    }
+		// TODO
+		// PayloadData payload = null;
+		// while ((payload = this.sgpImpl.poll()) != null) {
+		// m3uaqueue.add(payload);
+		// }
+		//
+		// byte[] msu = null;
+		// while ((msu = mtpqueue.poll()) != null) {
+		// this.sgpImpl.send(msu);
+		// }
+	}
 }
