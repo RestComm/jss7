@@ -40,39 +40,39 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
  */
 public class ASPUpAckImpl extends M3UAMessageImpl implements ASPUpAck {
 
-    public ASPUpAckImpl() {
-        super(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK);
-    }
+	public ASPUpAckImpl() {
+		super(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, MessageType.S_ASP_UP_ACK);
+	}
 
-    public ASPIdentifier getASPIdentifier() {
-        return (ASPIdentifier) parameters.get(Parameter.ASP_Identifier);
-    }
+	public ASPIdentifier getASPIdentifier() {
+		return (ASPIdentifier) parameters.get(Parameter.ASP_Identifier);
+	}
 
-    public void setASPIdentifier(ASPIdentifier p) {
-        if (p != null) {
-            parameters.put(Parameter.ASP_Identifier, p);
-        }
-    }
+	public void setASPIdentifier(ASPIdentifier p) {
+		if (p != null) {
+			parameters.put(Parameter.ASP_Identifier, p);
+		}
+	}
 
-    public InfoString getInfoString() {
-        return (InfoString) parameters.get(Parameter.INFO_String);
-    }
+	public InfoString getInfoString() {
+		return (InfoString) parameters.get(Parameter.INFO_String);
+	}
 
-    public void setInfoString(InfoString str) {
-        if (str != null) {
-            parameters.put(Parameter.INFO_String, str);
-        }
-    }
+	public void setInfoString(InfoString str) {
+		if (str != null) {
+			parameters.put(Parameter.INFO_String, str);
+		}
+	}
 
-    @Override
-    protected void encodeParams(ByteBuffer buffer) {
-        if (parameters.containsKey(Parameter.ASP_Identifier)) {
-            ((ParameterImpl) parameters.get(Parameter.ASP_Identifier)).write(buffer);
-        }
+	@Override
+	protected void encodeParams(ByteBuffer buffer) {
+		if (parameters.containsKey(Parameter.ASP_Identifier)) {
+			((ParameterImpl) parameters.get(Parameter.ASP_Identifier)).write(buffer);
+		}
 
-        if (parameters.containsKey(Parameter.INFO_String)) {
-            ((ParameterImpl) parameters.get(Parameter.INFO_String)).write(buffer);
-        }
-    }
+		if (parameters.containsKey(Parameter.INFO_String)) {
+			((ParameterImpl) parameters.get(Parameter.INFO_String)).write(buffer);
+		}
+	}
 
 }

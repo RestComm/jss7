@@ -277,6 +277,10 @@ public abstract class As implements XMLSerializable {
 
 			break;
 		case PENDING:
+			if (logger.isInfoEnabled()) {
+				logger.info(String.format("Adding the PayloadData=%s to PendingQueue for AS=%s", message.toString(),
+						this.name));
+			}
 			this.penQueue.add(message);
 			break;
 		default:
@@ -305,8 +309,8 @@ public abstract class As implements XMLSerializable {
 		}
 		this.rxQueue.add(payload.getData().getMsu());
 	}
-	
-	public void received (Mtp3Primitive primitive){
+
+	public void received(Mtp3Primitive primitive) {
 		this.rxQueue.add(primitive.getValue());
 	}
 

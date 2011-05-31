@@ -101,7 +101,9 @@ public class ClientM3UAProcess implements M3UAProcess {
 			PayloadData payload = (PayloadData) m3uaProvider.getMessageFactory().createMessage(
 					MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD);
 			payload.setData(data);
-
+			
+			//System.out.println(String.format("Sending payload data = %s", payload));
+			
 			As as = this.clientM3UAManagement.getAsForDpc(data.getDpc(), data.getSLS());
 			if (as == null) {
 				logger.error(String.format("No AS found for routing message %s", payload));

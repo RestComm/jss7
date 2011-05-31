@@ -154,7 +154,7 @@ public class MessageFactoryImpl implements MessageFactory {
             // minimal remainder either of header buffer or of the input buffer
             int len = Math.min(header.length - pos, buffer.remaining());
             
-            //System.out.println(String.format("len=%d, pos=%d, buffer.remaining=%d", len, pos, buffer.remaining()));
+            System.out.println(String.format("len=%d, pos=%d, buffer.remaining=%d", len, pos, buffer.remaining()));
             buffer.get(header, pos, len);
 
             // update cursor postion in the header's buffer

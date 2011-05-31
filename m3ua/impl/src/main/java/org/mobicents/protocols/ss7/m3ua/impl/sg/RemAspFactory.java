@@ -172,7 +172,6 @@ public class RemAspFactory extends AspFactory {
 	}
 
 	private void handleAspDown(ASPDown aspDown) {
-		System.out.println("RemAspfactory received ASP_DOWN");
 		ASPDownAck aspDwnAck = (ASPDownAck) this.m3UAProvider.getMessageFactory().createMessage(
 				MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK);
 		this.write(aspDwnAck);

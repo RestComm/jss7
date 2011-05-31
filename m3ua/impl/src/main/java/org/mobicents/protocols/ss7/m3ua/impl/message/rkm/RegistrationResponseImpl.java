@@ -35,28 +35,25 @@ import org.mobicents.protocols.ss7.m3ua.parameter.RegistrationResult;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
-public class RegistrationResponseImpl extends M3UAMessageImpl implements
-        RegistrationResponse {
+public class RegistrationResponseImpl extends M3UAMessageImpl implements RegistrationResponse {
 
-    public RegistrationResponseImpl() {
-        super(MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.REG_RESPONSE);
-    }
+	public RegistrationResponseImpl() {
+		super(MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.REG_RESPONSE, MessageType.S_REG_RESPONSE);
+	}
 
-    @Override
-    protected void encodeParams(ByteBuffer buffer) {
-        ((ParameterImpl) parameters.get(Parameter.Registration_Result))
-                .write(buffer);
-    }
+	@Override
+	protected void encodeParams(ByteBuffer buffer) {
+		((ParameterImpl) parameters.get(Parameter.Registration_Result)).write(buffer);
+	}
 
-    public RegistrationResult getRegistrationResult() {
-        return (RegistrationResult) parameters
-                .get(ParameterImpl.Registration_Result);
-    }
+	public RegistrationResult getRegistrationResult() {
+		return (RegistrationResult) parameters.get(ParameterImpl.Registration_Result);
+	}
 
-    public void setRegistrationResult(RegistrationResult rslt) {
-        parameters.put(ParameterImpl.Registration_Result, rslt);
-    }
+	public void setRegistrationResult(RegistrationResult rslt) {
+		parameters.put(ParameterImpl.Registration_Result, rslt);
+	}
 
 }

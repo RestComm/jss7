@@ -75,7 +75,7 @@ public class SctpChannel extends M3UAChannelImpl {
 
 		// set SCTP_FRAGMENT_INTERLEAVE to zero. The MessageFactory will fail if
 		// set to 1 or 2
-		((com.sun.nio.sctp.SctpChannel) channel).setOption(SctpStandardSocketOption.SCTP_FRAGMENT_INTERLEAVE, 0);
+		//((com.sun.nio.sctp.SctpChannel) channel).setOption(SctpStandardSocketOption.SCTP_FRAGMENT_INTERLEAVE, 0);
 
 		// clean transmission buffer
 		txBuffer.clear();
@@ -250,7 +250,6 @@ public class SctpChannel extends M3UAChannelImpl {
 					// supported by the underlying SCTP association.
 					PayloadData payload = (PayloadData) msg;
 					// TODO : What about sls greater than streamNumber?
-					System.out.println(payload.getData().getSLS());
 					msgInfo = MessageInfo.createOutgoing(null, payload.getData().getSLS());
 
 					// 7.1. SCTP Payload Protocol Identifier : IANA has assigned

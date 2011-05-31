@@ -40,17 +40,19 @@ public abstract class M3UAMessageImpl implements M3UAMessage {
 	private int messageClass;
 	private int messageType;
 
+	private String message;
 	protected FastMap<Short, Parameter> parameters = new FastMap<Short, Parameter>();
 
 	private ParameterFactoryImpl factory = new ParameterFactoryImpl();
 
 	int initialPosition = 0;
 
-	public M3UAMessageImpl() {
-
+	public M3UAMessageImpl(String message) {
+		this.message = message;
 	}
 
-	protected M3UAMessageImpl(int messageClass, int messageType) {
+	protected M3UAMessageImpl(int messageClass, int messageType, String message) {
+		this(message);
 		this.messageClass = messageClass;
 		this.messageType = messageType;
 	}
@@ -109,7 +111,7 @@ public abstract class M3UAMessageImpl implements M3UAMessage {
 	@Override
 	public String toString() {
 		TextBuilder tb = new TextBuilder();
-		tb.append("Class=").append(this.messageClass).append(" Type=").append(this.messageType).append(" Params(");
+		tb.append(this.message).append(" Params(");
 		for (FastMap.Entry<Short, Parameter> e = parameters.head(), end = parameters.tail(); (e = e.getNext()) != end;) {
 			Parameter value = e.getValue();
 			tb.append(value.toString());

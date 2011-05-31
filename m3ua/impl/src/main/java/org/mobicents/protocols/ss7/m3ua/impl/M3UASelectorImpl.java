@@ -40,82 +40,89 @@ import org.mobicents.protocols.ss7.m3ua.M3UASelector;
  * @author kulikov
  */
 public class M3UASelectorImpl implements M3UASelector {
-    //NIO multiplexer
-    protected Selector selector;
-    //list used for collecting selected keys.
-    private FastList<M3UASelectionKey> list = new FastList<M3UASelectionKey>();
-    
-    /**
-     * Constructs new multiplexer.
-     * 
-     * @param selector the NIO multiplexer.
-     */
-    protected M3UASelectorImpl(Selector selector) {
-        this.selector = selector;
-    }
-    
-    /**
-     * Static method used for constructing the multiplexer.
-     * 
-     * @return new multiplexer.
-     * @throws java.io.IOException
-     */
-    public static M3UASelectorImpl open() throws IOException {
-        return new M3UASelectorImpl(SelectorProvider.provider().openSelector());
-    }
-    
-    /**
-     * (Non Java-doc.)
-     * 
-     * @see org.mobicents.protocols.ss7.m3ua.M3UASelector#selectNow() 
-     * @throws java.io.IOException
-     */
-    public FastList<M3UASelectionKey> selectNow() throws IOException {
-        list.clear();
-        selector.selectNow();
-        Set<SelectionKey> selection = selector.selectedKeys();
-        for (SelectionKey key : selection) {
-            if (key.isAcceptable()) {
-                M3UASelectionKeyImpl k = (M3UASelectionKeyImpl) key.attachment();
-                list.add(k);
-            } else if (key.isReadable()) {
-                M3UASelectionKeyImpl k = (M3UASelectionKeyImpl) key.attachment();
-                
-                try{
-                    ((M3UAChannelImpl)k.channel()).doRead();
-                } catch(IOException ex){
-                    ((M3UAChannelImpl)k.channel()).ioException = ex;
-                }
-                
-                if (k.isReadable()) {
-                    list.add(k);
-                }
-                
-            } else { //FIXME: Oleg this assumes by default that its write....
-                M3UASelectionKeyImpl k = (M3UASelectionKeyImpl) key.attachment();
-                
-                try{
-                    ((M3UAChannelImpl)k.channel()).doWrite();
-                } catch(IOException ex){
-                    ((M3UAChannelImpl)k.channel()).ioException = ex;
-                }
-                
-                if (k.isWritable()) {
-                    list.add(k);
-                }
-            }
-        }
-        selection.clear();
-        return list;
-    }
-    
-    /**
-     * (Non Java-doc.)
-     * 
-     * @see org.mobicents.protocols.ss7.m3ua.M3UASelector#close() 
-     * @throws java.io.IOException
-     */
-    public void close() throws IOException {
-        selector.close();
-    }
+	// NIO multiplexer
+	protected Selector selector;
+	// list used for collecting selected keys.
+	private FastList<M3UASelectionKey> list = new FastList<M3UASelectionKey>();
+
+	/**
+	 * Constructs new multiplexer.
+	 * 
+	 * @param selector
+	 *            the NIO multiplexer.
+	 */
+	protected M3UASelectorImpl(Selector selector) {
+		this.selector = selector;
+	}
+
+	/**
+	 * Static method used for constructing the multiplexer.
+	 * 
+	 * @return new multiplexer.
+	 * @throws java.io.IOException
+	 */
+	public static M3UASelectorImpl open() throws IOException {
+		return new M3UASelectorImpl(SelectorProvider.provider().openSelector());
+	}
+
+	/**
+	 * (Non Java-doc.)
+	 * 
+	 * @see org.mobicents.protocols.ss7.m3ua.M3UASelector#selectNow()
+	 * @throws java.io.IOException
+	 */
+	public FastList<M3UASelectionKey> selectNow() throws IOException {
+		list.clear();
+		selector.selectNow();
+		Set<SelectionKey> selection = selector.selectedKeys();
+		for (SelectionKey key : selection) {
+			if (key.isAcceptable()) {
+				M3UASelectionKeyImpl k = (M3UASelectionKeyImpl) key.attachment();
+				list.add(k);
+			} else {
+
+				if (key.isReadable()) {
+					M3UASelectionKeyImpl k = (M3UASelectionKeyImpl) key.attachment();
+
+					try {
+						((M3UAChannelImpl) k.channel()).doRead();
+					} catch (IOException ex) {
+						((M3UAChannelImpl) k.channel()).ioException = ex;
+					}
+
+					if (k.isReadable()) {
+						list.add(k);
+					}
+
+				}
+				
+				if (key.isWritable()) {
+					// write....
+					M3UASelectionKeyImpl k = (M3UASelectionKeyImpl) key.attachment();
+
+					try {
+						((M3UAChannelImpl) k.channel()).doWrite();
+					} catch (IOException ex) {
+						((M3UAChannelImpl) k.channel()).ioException = ex;
+					}
+
+					if (k.isWritable()) {
+						list.add(k);
+					}
+				}
+			}
+		}
+		selection.clear();
+		return list;
+	}
+
+	/**
+	 * (Non Java-doc.)
+	 * 
+	 * @see org.mobicents.protocols.ss7.m3ua.M3UASelector#close()
+	 * @throws java.io.IOException
+	 */
+	public void close() throws IOException {
+		selector.close();
+	}
 }

@@ -35,28 +35,27 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class HeartbeatImpl extends M3UAMessageImpl implements Heartbeat {
 
-    public HeartbeatImpl() {
-        super(MessageClass.ASP_STATE_MAINTENANCE, MessageType.HEARTBEAT);
-    }
+	public HeartbeatImpl() {
+		super(MessageClass.ASP_STATE_MAINTENANCE, MessageType.HEARTBEAT, MessageType.S_HEARTBEAT);
+	}
 
-    @Override
-    protected void encodeParams(ByteBuffer buffer) {
-        if (parameters.containsKey(Parameter.Heartbeat_Data)) {
-            ((ParameterImpl) parameters.get(Parameter.Heartbeat_Data))
-                    .write(buffer);
-        }
-    }
+	@Override
+	protected void encodeParams(ByteBuffer buffer) {
+		if (parameters.containsKey(Parameter.Heartbeat_Data)) {
+			((ParameterImpl) parameters.get(Parameter.Heartbeat_Data)).write(buffer);
+		}
+	}
 
-    public HeartbeatData getHeartbeatData() {
-        return (HeartbeatData) parameters.get(Parameter.Heartbeat_Data);
-    }
+	public HeartbeatData getHeartbeatData() {
+		return (HeartbeatData) parameters.get(Parameter.Heartbeat_Data);
+	}
 
-    public void setHeartbeatData(HeartbeatData hrBtData) {
-        parameters.put(Parameter.Heartbeat_Data, hrBtData);
-    }
+	public void setHeartbeatData(HeartbeatData hrBtData) {
+		parameters.put(Parameter.Heartbeat_Data, hrBtData);
+	}
 
 }

@@ -35,29 +35,26 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
-public class DeregistrationResponseImpl extends M3UAMessageImpl implements
-        DeregistrationResponse {
+public class DeregistrationResponseImpl extends M3UAMessageImpl implements DeregistrationResponse {
 
-    public DeregistrationResponseImpl() {
-        super(MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.DEREG_RESPONSE);
-    }
+	public DeregistrationResponseImpl() {
+		super(MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.DEREG_RESPONSE, MessageType.S_DEREG_RESPONSE);
+	}
 
-    @Override
-    protected void encodeParams(ByteBuffer buffer) {
-        ((ParameterImpl) parameters.get(Parameter.Deregistration_Result))
-                .write(buffer);
-    }
+	@Override
+	protected void encodeParams(ByteBuffer buffer) {
+		((ParameterImpl) parameters.get(Parameter.Deregistration_Result)).write(buffer);
+	}
 
-    public DeregistrationResult getDeregistrationResult() {
-        return (DeregistrationResult) parameters
-                .get(Parameter.Deregistration_Result);
-    }
+	public DeregistrationResult getDeregistrationResult() {
+		return (DeregistrationResult) parameters.get(Parameter.Deregistration_Result);
+	}
 
-    public void setDeregistrationResult(DeregistrationResult result) {
-        parameters.put(Parameter.Deregistration_Result, result);
+	public void setDeregistrationResult(DeregistrationResult result) {
+		parameters.put(Parameter.Deregistration_Result, result);
 
-    }
+	}
 
 }

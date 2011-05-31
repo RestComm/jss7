@@ -139,6 +139,7 @@ public class LocalAspFactory extends AspFactory {
 		case MessageClass.MANAGEMENT:
 			switch (message.getMessageType()) {
 			case MessageType.ERROR:
+				org.mobicents.protocols.ss7.m3ua.message.mgmt.Error error = (org.mobicents.protocols.ss7.m3ua.message.mgmt.Error) message;
 				break;
 			case MessageType.NOTIFY:
 				Notify notify = (Notify) message;
@@ -358,7 +359,6 @@ public class LocalAspFactory extends AspFactory {
 		if (asp.getState() == AspState.ACTIVE) {
 			AffectedPointCode affectedPcObjs = dava.getAffectedPointCodes();
 			int[] affectedPcs = affectedPcObjs.getPointCodes();
-
 			for (int i = 0; i < affectedPcs.length; i++) {
 				Mtp3ResumePrimitive mtpResumePrimi = new Mtp3ResumePrimitive(affectedPcs[i]);
 				asp.getAs().received(mtpResumePrimi);

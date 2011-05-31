@@ -35,27 +35,25 @@ import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
-public class DeregistrationRequestImpl extends M3UAMessageImpl implements
-        DeregistrationRequest {
+public class DeregistrationRequestImpl extends M3UAMessageImpl implements DeregistrationRequest {
 
-    public DeregistrationRequestImpl() {
-        super(MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.DEREG_REQUEST);
-    }
+	public DeregistrationRequestImpl() {
+		super(MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.DEREG_REQUEST, MessageType.S_DEREG_REQUEST);
+	}
 
-    @Override
-    protected void encodeParams(ByteBuffer buffer) {
-        ((ParameterImpl) parameters.get(Parameter.Routing_Context))
-                .write(buffer);
-    }
+	@Override
+	protected void encodeParams(ByteBuffer buffer) {
+		((ParameterImpl) parameters.get(Parameter.Routing_Context)).write(buffer);
+	}
 
-    public RoutingContext getRoutingContext() {
-        return (RoutingContext) parameters.get(Parameter.Routing_Context);
-    }
+	public RoutingContext getRoutingContext() {
+		return (RoutingContext) parameters.get(Parameter.Routing_Context);
+	}
 
-    public void setRoutingContext(RoutingContext rc) {
-        parameters.put(Parameter.Routing_Context, rc);
-    }
+	public void setRoutingContext(RoutingContext rc) {
+		parameters.put(Parameter.Routing_Context, rc);
+	}
 
 }
