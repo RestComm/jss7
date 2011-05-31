@@ -146,7 +146,7 @@
 			</varlistentry>
 		</variablelist>
 		
-		<para>Configuration of SS7 Service is exaplained in section <xref linkend="configuring" /></para>
+		<para>Configuration of SS7 Service is explained in section <xref linkend="configuring" /></para>
 	</section>
 	<section id="mobicents_design_overview_ss7_service">
 		<title>&THIS.PLATFORM; &THIS.APPLICATION; Usage</title>
@@ -176,7 +176,7 @@
 		<para>
 			&THIS.PLATFORM; Signaling Gateway (SG) is a signaling agent that receives/sends Switched Circuit Network (SCN) 
 			native signaling at the edge of the IP network. &THIS.PLATFORM; Signaling Gateway leverages &THIS.PLATFORM; M3UA Stack 
-			explained in <xref linkend="mobicents_signaling_gateway_m3ua"/> and Linkset explained in <xref linkend="design_overview_Linkset"/>    
+			explained in <xref linkend="mobicents_signaling_gateway_m3ua"/> and MTP
 		</para>
 		
 		<para>
@@ -236,9 +236,8 @@
 					</caption>
 				</mediaobject>
 				<para>
-					If configured as an AS, does not support configuring conventional SS7 links etc on that same stack. 
 					To use M3UA Stack as AS, the Routing Context (RC) must be known. See Section <xref linkend="configuring_Rem_SGW"/> for configuring M3UA Stack 
-					as AS. The Remote Signaling Gateway Process (RemSGP) object is created under the M3UA Stack.
+					as AS.
 				</para>
 			</section>
 			
@@ -247,7 +246,7 @@
 				<para>
 					Diagram below demonstrates the &THIS.PLATFORM; M3UA Stack used on Signaling Gateway (SG) side. 
 					The &THIS.PLATFORM; Signaling Gateway provides the Nodal Interworking Function (NIF) that allows SS7 Signaling (SCCP/ISUP)
-					to be inter-worked into the M3UA/IP Network as shown in <xref linkend="signaling_gateway"/>
+					to be inter-worked into the M3UA/IP Network as shown in <xref linkend="mobicents_signaling_gateway"/>
 					
 				</para>
 				<mediaobject
