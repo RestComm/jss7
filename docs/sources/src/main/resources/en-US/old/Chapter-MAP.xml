@@ -638,7 +638,7 @@ import org.mobicents.protocols.ss7.map.api.MAPMessage;
 public interface USSDService extends MAPMessage {
 
 	/**
-	 * This parameter contains the information of the alphabet and the language
+	 * This parameter contains the information about the alphabet and the language
 	 * used for the unstructured information in an Unstructured Supplementary
 	 * Service Data operation. The coding of this parameter is according to the
 	 * Cell Broadcast Data Coding Scheme as specified in GSM 03.38.

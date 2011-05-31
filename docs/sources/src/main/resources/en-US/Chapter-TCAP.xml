@@ -16,11 +16,11 @@
 	<section>
 		<title>&THIS.PLATFORM; &THIS.APPLICATION; TCAP Usage</title>
 		<para>
-			<classname>org.mobicents.protocols.ss7.tcap.api.TCAPStack</classname> interface defines the methods required to represent TCAP
+			The <classname>org.mobicents.protocols.ss7.tcap.api.TCAPStack</classname> interface defines the methods required to represent TCAP
 			Protocol Stack. TCAPStack exposes <classname>org.mobicents.protocols.ss7.tcap.api.TCAPProvider</classname> that interacts directly
 			with TCAPStack. TCAPProvider defines methods that will be used by TCAP User Part to create new 
 			<classname>org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog</classname> to be sent across network.
-			TCAP User Part also registers <classname>org.mobicents.protocols.ss7.tcap.api.TCListener</classname> to listen TCAP messages.
+			TCAP User Part also allows to register<classname>org.mobicents.protocols.ss7.tcap.api.TCListener</classname> to listen TCAP messages.
 		</para>
 		<para>
 			TCAPProvider also exposes <classname>org.mobicents.protocols.ss7.tcap.api.DialogPrimitiveFactory</classname> to create dialog primitives 
@@ -49,9 +49,9 @@
 		</mediaobject>	
 		
 		<para>
-			<classname>org.mobicents.protocols.ss7.tcap.TCAPStackImpl</classname> is concrete implementation of <classname>TCAPStack</classname>. 
+			The <classname>org.mobicents.protocols.ss7.tcap.TCAPStackImpl</classname> is concrete implementation of <classname>TCAPStack</classname>. 
 			The TCAP User Part creates instance of <classname>TCAPStackImpl</classname> passing the reference of <classname>SccpProvider</classname> and 
-			new instance of <classname>SccpAddress</classname> representing address to which bind listenr. <literal>TCAP</literal> stack creates internaly &THIS.PLATFORM; <literal>MAP</literal> Stack implementation.
+			new instance of <classname>SccpAddress</classname> representing address to which bind listener. The <literal>TCAP</literal> stack creates internaly &THIS.PLATFORM; <literal>MAP</literal> Stack implementation.
 			Passed <literal>SccpAddress</literal> is used to match against incoming messages destination address.		
 		</para>		
 		
@@ -248,10 +248,12 @@ public class Client implements TCListener{
 	
 		int translationType = 0;
 	    int subSystemNumber = 0; 
-	    GlobalTitle gt = GlobalTitle.getInstance(translationType,NumberingPlan.ISDN_MOBILE,NatureOfAddress.NATIONAL, "1234");
+	    GlobalTitle gt = GlobalTitle.getInstance(translationType,
+	    	NumberingPlan.ISDN_MOBILE,NatureOfAddress.NATIONAL, "1234");
 	    SccpAddress localAddress = new SccpAddress(gt,0);
 	    
-	    gt = GlobalTitle.getInstance(translationType,NumberingPlan.ISDN_MOBILE,NatureOfAddress.NATIONAL, "1572582");
+	    gt = GlobalTitle.getInstance(translationType,
+	    	NumberingPlan.ISDN_MOBILE,NatureOfAddress.NATIONAL, "1572582");
 	    SccpAddress remoteAddress = new SccpAddress(gt,0);
 		Client c = new Client(getSccpProvider(),localAddress,remoteAddress);
 	}

@@ -9,7 +9,7 @@
 	<para>The Signaling Connection Control Part (SCCP) is defined in ITU-T Recommendations Q.711-Q.716.
 	SCCP sits on top of Message Transfer Part 3 (MTP3) in the SS7 protocol stack. 
 	The SCCP provides additional network layer functions to provide transfer of noncircuit-related (NCR) signaling information, 
-	application management procedures and alternative and more flexible methods of routing. 
+	application management procedures and alternative, more flexible methods of routing. 
 	</para>
 	<section
 		id="sccp_routing">
@@ -142,7 +142,7 @@
 	<section id="sccp_design">
 		<title>SCCP Usage</title>
 		<para>
-			The new instance of <classname>org.mobicents.protocols.ss7.sccp.SccpStack</classname> acts as starting point. 
+			The instance of <classname>org.mobicents.protocols.ss7.sccp.SccpStack</classname> acts as starting point. 
 			All the sccp messages sent by SCCP User Part are routed as per the rule configured in Router
 		</para>
 		<note><para>The term SCCP User Part refers to the applications that use SCCP's services.</para></note>

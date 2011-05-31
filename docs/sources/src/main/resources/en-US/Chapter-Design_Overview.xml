@@ -108,7 +108,7 @@
 				<para>SS7 service creates instance of &THIS.PLATFORM; SCCP Stack and bind's it to JNDI name java:/mobicents/ss7/sccp</para>
 				<para>SS7 Service is JMX based service deployed in JBoss Application Server</para>
 				<para>SS7 Service hides the details like whether Level 4 and above connects to &THIS.PLATFORM; Signaling Gateway via M3UA or SS7 Hardware 
-				is installed in same machine as Level 4</para>
+				installed in same machine as Level 4</para>
 		
 		<para>
 			Diagram below depicts elements which are deployed as part of

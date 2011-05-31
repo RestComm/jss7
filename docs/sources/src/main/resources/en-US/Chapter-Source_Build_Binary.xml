@@ -161,7 +161,8 @@
 				
 				<para>If you have started &THIS.APPLICATION.DIRNAME;-&THIS.VERSION; for the first time, <literal>SS7</literal> is not configured. 
 				You need to use Shell Client to connect to &THIS.APPLICATION.DIRNAME;-&THIS.VERSION; as defined in 
-				<xref linkend="shell" /> and configure as per your need and SS7 card installed</para>
+				<xref linkend="shell" /> . With <literal>CLI</literal> you can configure how service interacts with SS7 network, that is you configure either installed SS7 card and its native library\
+				, or <literal>M3UA</literal> layer.</para>
 				
 				<para>Once the configured, the state and configuration of <literal>SS7</literal> is persisted which stands server re-start.</para> 
 							
@@ -240,9 +241,9 @@ Halting VM]]></screen>
 	</bean>]]>
                         </programlisting>		
 			<para><literal>ClientM3UAManagement</literal> when started looks for file's <filename>m3ua-client.xml</filename> and 
-			<filename>m3ua-clientroute.xml</filename>. <filename>m3ua-client.xml</filename> contains serialized information of 
-			AS and ASP configured for this <literal>ClientM3UAProcess</literal>. <filename>m3ua-clientroute.xml</filename> contains 
-			serialized information of route. 
+			<filename>m3ua-clientroute.xml</filename>. The <filename>m3ua-client.xml</filename> contains serialized information about 
+			AS and ASP configured for this <literal>ClientM3UAProcess</literal>. The <filename>m3ua-clientroute.xml</filename> contains 
+			serialized information about defined routes. 
 			</para>			
 			<para>
 				Route maintains the availability status of a remote Point Code in the SS7 network via one or more Signaling Gateways.
@@ -297,7 +298,7 @@ Halting VM]]></screen>
 			<inject bean="LinksetManager" />
 		</property>
 	</bean>]]></programlisting>		
-			<para>LinksetManager when started looks for file  <filename>linksetmanager.xml</filename> containing serialized information of 
+			<para>LinksetManager when started looks for file  <filename>linksetmanager.xml</filename> containing serialized information about 
 			underlying linksets and links. The directory path is configurable by changing value of <literal>persistDir</literal> property.</para>
 			<warning><para><filename>linksetmanager.xml</filename> should never be edited by hand. Always use Shell Client to connect to 
 			&THIS.PLATFORM; &THIS.APPLICATION; and execute commands.</para></warning>	
@@ -368,19 +369,54 @@ Halting VM]]></screen>
 		<section id="configuring_SCCP">
 			<title>Configuring SCCP</title>
 			<para> 
-				As name suggests <literal>SccpStack</literal> initiates the SCCP stack. <literal>localSpc</literal> property 
-				specifies the local signaling point code. <literal>ni</literal> specifies the network indicator that forms 
-				the part of service information octet (SIO)
-			</para>
-			<para> <literal>Router</literal> manages the route for SCCP. When Router is started it looks for file <filename>sccprouter.xml</filename> 
-			containing the serialized information of routes configured. The directory path is configurable by changing value of
+				As name suggests <literal>SccpStack</literal> initiates the SCCP stack routines. 
+				Stack has following properties: 
+				
+				
+				<variablelist>
+					<varlistentry>
+						<term>localSpc</term>
+						<listitem>
+							<para>property 
+				specifies the local signaling point code.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>ni</term>
+						<listitem>
+							<para>specifies the network indicator that forms 
+				the part of service information octet (SIO)</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>Router</term>
+						<listitem>
+							<para>manages the route for SCCP. When Router is started it looks for file <filename>sccprouter.xml</filename> 
+			containing the serialized information about routes configured. The directory path is configurable by changing value of
 			<literal>persistDir</literal> property</para>
-			
-			<para> <literal>SccpResource</literal> manages the remote resource for SCCP, for example Remote Subsystem Number and
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>SccpResource</term>
+						<listitem>
+							<para>manages the remote resource for SCCP, for example Remote Subsystem Number and
 			Remote Signalling Pointcode. When SccpResource is started it looks for file <filename>sccpresource.xml</filename> 
-			containing the serialized information of resources configured. The directory path is configurable by changing value of
-			<literal>persistDir</literal> property</para>		
+			containing the serialized information about resources configured. The directory path is configurable by changing value of
+			<literal>persistDir</literal> property</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>mtp3UserPart</term>
+						<listitem>
+							<para>specifies SS7 Level 3 to be used as transport medium(  be it SS7 card or M3UA)</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+				
+				
 			
+			</para>
+
 			<para> <literal>SccpExecutor</literal> accepts <literal>sccp</literal> commands and executes necessary operations</para>
 			
 			<para> <literal>SccpProvider</literal> is bound to JNDI by SS7 Service and is used by upper layers</para>	
@@ -441,7 +477,10 @@ Halting VM]]></screen>
 	<!-- Mobicents SS7 Service -->
 	<!-- ==================================================================== -->
 	<bean name="SS7Service" class="org.mobicents.ss7.SS7Service">
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=SS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=
+		      "org.mobicents.ss7:service=SS7Service",
+		      exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,
+		      registerDirectly=true)</annotation>
 		<property name="jndiName">java:/mobicents/ss7/sccp</property>
 		<property name="stack">
 			<inject bean="SccpProvider" />
@@ -546,7 +585,7 @@ Halting VM]]></screen>
 			<section id="sgw-Running-alter">
 				<title>Start the Gateway With Alternate Configuration</title>
 				<para>
-					Using <literal>run.sh</literal> without any arguments binds the gateway at <literal>127.0.0.1</literal>. 
+					Using <literal>run.sh</literal> without any arguments binds the gateway to <literal>127.0.0.1</literal>. 
 					To bind gateway to different ip, pass the ip address as value to <literal>-b</literal> command line option. 
 					For example to bind the server to <literal>115.252.103.220</literal>
 				</para>
@@ -655,7 +694,7 @@ Halting VM]]></screen>
 			<inject bean="LinksetManager" />
 		</property>
 	</bean>]]></programlisting>		
-			<para>LinksetManager when started looks for file  <filename>linksetmanager.xml</filename> containing serialized information of 
+			<para>LinksetManager when started looks for file  <filename>linksetmanager.xml</filename> containing serialized information about 
 			underlying linksets and links. The directory path is configurable by changing value of <literal>persistDir</literal> property.</para>
 			<warning><para><filename>linksetmanager.xml</filename> should never be edited by hand. Always use Shell Client to connect to 
 			&THIS.PLATFORM; Signaling Gateway and execute commands.</para></warning>	
@@ -722,7 +761,7 @@ Halting VM]]></screen>
 		Building from source means you can stay on top with the latest features. Whilst aspects of &THIS.PLATFORM; &THIS.APPLICATION; are quite 
 		complicated, you may find ways to become contributors.</para>
 		
-		<para>&THIS.PLATFORM; &THIS.APPLICATION; works with JDK1.5 and above (If using M3UA, JDK1.7 and above ). you will need also need to have the following tools installed. 
+		<para>&THIS.PLATFORM; &THIS.APPLICATION; works with JDK1.5 and above (If using M3UA, JDK1.7 and above ). you will also need to have the following tools installed. 
 		Minimum requirement version numbers provided.</para>
 		
 		<itemizedlist>
