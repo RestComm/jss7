@@ -275,6 +275,9 @@ public class SccpManagement implements SccpListener {
 		data[4] = 0;
 		udt.setData(data);
 
+		//set the SLS
+		((SccpMessageImpl)udt).setSls(((SccpMessageImpl)msg).getSls());
+		
 		try {
 			this.sccpRoutingControl.send(udt);
 		} catch (IOException e) {
@@ -303,6 +306,9 @@ public class SccpManagement implements SccpListener {
 			data[4] = 0;
 			udt.setData(data);
 
+			//set the SLS
+			((SccpMessageImpl)udt).setSls(((SccpMessageImpl)msg).getSls());
+			
 			try {
 				this.sccpRoutingControl.send(udt);
 			} catch (IOException e) {
