@@ -456,13 +456,13 @@ public class SccpExecutor {
 		}
 
 		if (command.equals("create")) {
-			this.createRule(options);
+			return this.createRule(options);
 		} else if (command.equals("modify")) {
-			this.modifyRule(options);
+			return this.modifyRule(options);
 		} else if (command.equals("delete")) {
-			this.deleteRule(options);
+			return this.deleteRule(options);
 		} else if (command.equals("show")) {
-			this.showRule(options);
+			return this.showRule(options);
 		}
 
 		return SccpOAMMessage.INVALID_COMMAND;

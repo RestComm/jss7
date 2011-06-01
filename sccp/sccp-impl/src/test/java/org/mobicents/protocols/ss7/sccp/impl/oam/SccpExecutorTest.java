@@ -84,20 +84,29 @@ public class SccpExecutorTest {
 	@Test
 	public void testManageRule() {
 		String prim_addressCmd = "sccp primary_add create 1 71 2 8 0 0 3 123456789";
-		this.sccpExecutor.execute(prim_addressCmd.split(" "));
+		String result = this.sccpExecutor.execute(prim_addressCmd.split(" "));
+		assertEquals(SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED, result);
 		assertEquals(1, this.router.getPrimaryAddresses().size());
 
 		String createRuleCmd = "sccp rule create 1 R 71 2 8 0 0 3 123456789 1";
-		this.sccpExecutor.execute(createRuleCmd.split(" "));
+		result = this.sccpExecutor.execute(createRuleCmd.split(" "));
+		assertEquals(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, result);
 		assertEquals(1, this.router.getRules().size());
 
 		String sec_addressCmd = "sccp backup_add create 1 71 3 8 0 0 3 123456789";
 		this.sccpExecutor.execute(sec_addressCmd.split(" "));
+		assertEquals(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, result);
 		assertEquals(1, this.router.getBackupAddresses().size());
 
 		String createRuleCmd2 = "sccp rule create 2 R 71 2 8 0 0 3 123456789 1 1";
 		this.sccpExecutor.execute(createRuleCmd2.split(" "));
+		assertEquals(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, result);
 		assertEquals(2, this.router.getRules().size());
+		
+		String createRuleCmd3 = "sccp rule create 3 K 18 0 180 0 1 4 * 1";
+		this.sccpExecutor.execute(createRuleCmd3.split(" "));
+		assertEquals(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, result);
+		assertEquals(3, this.router.getRules().size());		
 
 	}
 
