@@ -117,12 +117,12 @@ public class Rule implements Serializable {
 	 *            the origin address
 	 * @return translated address
 	 */
-	public SccpAddress translate(SccpAddress address, SccpAddress translationAddress) {
+	public SccpAddress translate(SccpAddress address, SccpAddress primaryAddress) {
 
 		String digits = address.getGlobalTitle().getDigits();
 		String patternDigits = pattern.getGlobalTitle().getDigits();
 
-		String primaryDigits = translationAddress.getGlobalTitle().getDigits();
+		String primaryDigits = primaryAddress.getGlobalTitle().getDigits();
 
 		// step #1. translate digits
 		String translatedDigits = translateDigits(digits, maskPattern, patternDigits.split("/"),
@@ -131,8 +131,8 @@ public class Rule implements Serializable {
 		GlobalTitle gt = null;
 
 		if (translatedDigits != null && !translatedDigits.equals("")) {
-			GlobalTitleIndicator gti = translationAddress.getAddressIndicator().getGlobalTitleIndicator();
-			GlobalTitle primaryGt = translationAddress.getGlobalTitle();
+			GlobalTitleIndicator gti = primaryAddress.getAddressIndicator().getGlobalTitleIndicator();
+			GlobalTitle primaryGt = primaryAddress.getGlobalTitle();
 			gt = createNewGT(gti, primaryGt, translatedDigits);
 
 			if (gt == null) {
@@ -142,8 +142,8 @@ public class Rule implements Serializable {
 			}
 		}
 
-		SccpAddress sccpAddress = new SccpAddress(translationAddress.getAddressIndicator().getRoutingIndicator(),
-				translationAddress.getSignalingPointCode(), gt, translationAddress.getSubsystemNumber());
+		SccpAddress sccpAddress = new SccpAddress(primaryAddress.getAddressIndicator().getRoutingIndicator(),
+				primaryAddress.getSignalingPointCode(), gt, primaryAddress.getSubsystemNumber());
 
 		// This is translated message
 		sccpAddress.setTranslated(true);

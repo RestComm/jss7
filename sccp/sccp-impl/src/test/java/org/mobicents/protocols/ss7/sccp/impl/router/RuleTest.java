@@ -45,7 +45,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
+import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
+import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
@@ -193,6 +196,40 @@ public class RuleTest {
 		assertEquals(123, translatedAddress.getSignalingPointCode());
 		assertEquals(8, translatedAddress.getSubsystemNumber());
 		assertEquals("4414257897897", translatedAddress.getGlobalTitle().getDigits());
+	}
+
+	public void testTranslate5() throws Exception {
+		// Match any digits keep the digits in the and add a PC(123) & SSN (8).
+
+		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,
+				GlobalTitle.getInstance(0, NumberingPlan.valueOf(1), NatureOfAddress.valueOf(4), "*"), 180);
+
+		SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 6045,
+				GlobalTitle.getInstance("-"), 180);
+
+		Rule rule = new Rule(pattern, "K");
+		rule.setPrimaryAddressId(1);
+
+		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,
+				GlobalTitle.getInstance(0, NumberingPlan.valueOf(1), NatureOfAddress.valueOf(4), "4414257897897"), 180);
+
+		assertTrue(rule.matches(address));
+
+		SccpAddress translatedAddress = rule.translate(address, primaryAddress);
+
+		assertEquals(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, translatedAddress.getAddressIndicator()
+				.getRoutingIndicator());
+		assertEquals(
+				GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS,
+				translatedAddress.getAddressIndicator().getGlobalTitleIndicator());
+		assertEquals(6045, translatedAddress.getSignalingPointCode());
+		assertEquals(180, translatedAddress.getSubsystemNumber());
+		assertEquals("4414257897897", translatedAddress.getGlobalTitle().getDigits());
+		
+		GT0100 gt = (GT0100)translatedAddress.getGlobalTitle();
+		assertEquals(0, gt.getTranslationType());
+		assertEquals(NumberingPlan.ISDN_TELEPHONY, gt.getNumberingPlan());
+		assertEquals(NatureOfAddress.INTERNATIONAL, gt.getNatureOfAddress());
 	}
 
 	@Test
