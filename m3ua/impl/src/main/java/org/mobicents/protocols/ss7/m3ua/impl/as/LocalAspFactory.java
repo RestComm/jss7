@@ -145,6 +145,10 @@ public class LocalAspFactory extends AspFactory {
 				Notify notify = (Notify) message;
 				this.handleNotify(notify);
 				break;
+			default:
+				logger.error(String.format("Received MGMT with invalid MessageType=%d message=%s",
+						message.getMessageType(), message));
+				break;
 			}
 			break;
 
@@ -155,6 +159,8 @@ public class LocalAspFactory extends AspFactory {
 				this.handlePayload(payload);
 				break;
 			default:
+				logger.error(String.format("Received Transfer message with invalid MessageType=%d message=%s",
+						message.getMessageType(), message));
 				break;
 			}
 			break;
@@ -187,6 +193,10 @@ public class LocalAspFactory extends AspFactory {
 					logger.warn(String.format("Received DUPU message for AS side. Not implemented yet", message));
 				}
 				break;
+			default:
+				logger.error(String.format("Received SSNM with invalid MessageType=%d message=%s",
+						message.getMessageType(), message));
+				break;
 			}
 			break;
 
@@ -203,6 +213,8 @@ public class LocalAspFactory extends AspFactory {
 			case MessageType.HEARTBEAT:
 				break;
 			default:
+				logger.error(String.format("Received ASPSM with invalid MessageType=%d message=%s",
+						message.getMessageType(), message));
 				break;
 			}
 
@@ -218,14 +230,21 @@ public class LocalAspFactory extends AspFactory {
 				ASPInactiveAck aspInaciveAck = (ASPInactiveAck) message;
 				this.handleAspInactiveAck(aspInaciveAck);
 				break;
+			default:
+				logger.error(String.format("Received ASPTM with invalid MessageType=%d message=%s",
+						message.getMessageType(), message));
+				break;
 			}
 			break;
 
 		case MessageClass.ROUTING_KEY_MANAGEMENT:
 			logger.error(String.format("Received %s. Handling of RKM message is not supported", message));
 			break;
+		default:
+			logger.error(String.format("Received message with invalid MessageClass=%d message=%s",
+					message.getMessageClass(), message));
+			break;
 		}
-
 	}
 
 	private void handleDestinationUPUnavailable(DestinationUPUnavailable dupu) {
