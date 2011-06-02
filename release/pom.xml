@@ -21,9 +21,9 @@
 
 			<!-- TAGS 
 		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/asn/asn-1.0.0.BETA3</asn.connectionURL>
-		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/stream/stream-1.0.0.BETA2</stream.connectionURL>
+		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/stream/stream-1.0.0.BETA3</stream.connectionURL>
 
-		<ss7.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/mobicents-ss7-1.0.0.BETA6</ss7.connectionURL>
+		<ss7.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/mobicents-ss7-1.0.0.BETA8</ss7.connectionURL>
  		-->
 		<!-- TRUNK -->
 

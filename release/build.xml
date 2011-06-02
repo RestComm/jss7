@@ -2,13 +2,13 @@
 <project name="ss7.release.sf" default="package" basedir=".">
 
 	<!-- Components Versions -->
-	<property name="release.version" value="1.0.0.BETA7-SNAPSHOT" />
+	<property name="release.version" value="1.0.0-SNAPSHOT" />
 
-	<property name="ss7.version" value="1.0.0.BETA7-SNAPSHOT" />
+	<property name="ss7.version" value="1.0.0-SNAPSHOT" />
 
 
-	<property name="asn.version" value="1.0.0.BETA3" />
-	<property name="stream.version" value="1.0.0.BETA2" />
+	<property name="asn.version" value="1.0.0-SNAPSHOT" />
+	<property name="stream.version" value="1.0.0-SNAPSHOT" />
 	
 
 	<property name="protocols.build.list" value="parent,m3ua,mtp,isup,sccp,tcap,map" />
@@ -147,6 +147,9 @@
 		<echo>Copy Native</echo>
 		<copy todir="${zip.dir}/ss7/native" failonerror="${failoncopy}">
 			<fileset dir="${checkout.basedir}/ss7/hardware/dahdi/native/linux/target">
+				<include name="*.so" />
+			</fileset>
+			<fileset dir="${checkout.basedir}/ss7/hardware/dialogic/native/linux/target">
 				<include name="*.so" />
 			</fileset>
 		</copy>
