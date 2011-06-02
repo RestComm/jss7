@@ -5,13 +5,13 @@
 	<parent>
 		<artifactId>ss7-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0.BETA9</version>
 	</parent>
 
 
 	<artifactId>m3ua</artifactId>
 	<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0.BETA9</version>
 
 	<packaging>pom</packaging>
 
@@ -141,13 +141,13 @@
 	</profiles>
 	<scm>
 		<connection>
-			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/m3ua
+			scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/mobicents-ss7-1.0.0.BETA9/m3ua
 		</connection>
 		<developerConnection>
-			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/m3ua
+			scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/mobicents-ss7-1.0.0.BETA9/m3ua
 		</developerConnection>
 		<url>
-			http://mobicents.googlecode.com/svn/trunk/protocols/ss7/m3ua
+			http://mobicents.googlecode.com/svn/tags/protocols/ss7/mobicents-ss7-1.0.0.BETA9/m3ua
 		</url>
 	</scm>
 
