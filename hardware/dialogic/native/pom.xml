@@ -68,9 +68,9 @@
 		<profile>
 			<id>maven-release</id>
 			<modules>
-				<!--  this depends on dialogic files and we dont have it 
+				<!--  this depends on dialogic files and we dont have it -->
 				<module>linux</module>
-				 -->
+				 
 			</modules>
 		</profile>
 		<profile>
