@@ -111,6 +111,8 @@ public class GRSTest extends DoubleTimers {
 		Properties p = new Properties();
 		p.put("t22", getSmallerT()+"");
 		p.put("t23" ,  getBiggerT()+"");
+		p.put("ni", "2");
+		p.put("localspc", "2");
 		return p;
 	}
 

@@ -32,8 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import javolution.util.FastMap;
-
 import org.junit.After;
 import org.junit.Before;
 import org.mobicents.protocols.ss7.isup.ISUPEvent;
@@ -42,19 +40,12 @@ import org.mobicents.protocols.ss7.isup.ISUPProvider;
 import org.mobicents.protocols.ss7.isup.ISUPStack;
 import org.mobicents.protocols.ss7.isup.ISUPTimeoutEvent;
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.CircuitManagerImpl;
 import org.mobicents.protocols.ss7.isup.impl.ISUPStackImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.AbstractISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
-import org.mobicents.protocols.stream.api.SelectorKey;
-import org.mobicents.protocols.stream.api.SelectorProvider;
-import org.mobicents.protocols.stream.api.StreamSelector;
-import org.mobicents.ss7.linkset.oam.FormatterHelp;
-import org.mobicents.ss7.linkset.oam.Layer4;
-import org.mobicents.ss7.linkset.oam.Link;
-import org.mobicents.ss7.linkset.oam.Linkset;
-import org.mobicents.ss7.linkset.oam.LinksetSelector;
-import org.mobicents.ss7.linkset.oam.LinksetStream;
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 
 /**
  * @author baranowb
@@ -65,7 +56,7 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 	protected ISUPStack stack;
 	protected ISUPProvider provider;
 
-	protected TimerTestLinkset isupLinkSet;
+	protected TimerTestMtp3UserPart userPart;
 
 	// events received by by this listener
 	protected List<EventReceived> localEventsReceived;
@@ -74,12 +65,15 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 	@Before
 	public void setUp() throws Exception {
 		
-		this.isupLinkSet = new TimerTestLinkset("", 1, 2, 3);
+		this.userPart = new TimerTestMtp3UserPart();
 		this.stack = new ISUPStackImpl();
 		this.stack.configure(getSpecificConfig());
 		this.provider = this.stack.getIsupProvider();
 		this.provider.addListener(this);
-		((Layer4) this.stack).add(this.isupLinkSet);
+		this.stack.setMtp3UserPart(this.userPart);
+		CircuitManagerImpl cm = new CircuitManagerImpl();
+		cm.addCircuit(1, 1);
+		this.stack.setCircuitManager(cm);
 		this.stack.start();
 		localEventsReceived = new ArrayList<EventTestHarness.EventReceived>();
 		remoteEventsReceived = new ArrayList<EventTestHarness.EventReceived>();
@@ -146,11 +140,11 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 	// method implemented by test, to answer stack.
 	protected void doAnswer() {
 		ISUPMessage answer = getAnswer();
-		int opc = isupLinkSet.getOpc();
-		int dpc = isupLinkSet.getApc();
+		int opc = 1;
+		int dpc = 2;
 		int si = Mtp3._SI_SERVICE_ISUP;
-		int ni = isupLinkSet.getNi();
-		int sls = 0;
+		int ni = 2;
+		int sls = 3;
 		int ssi = ni << 2;
 
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -165,7 +159,7 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 			byte[] message = ((AbstractISUPMessage) answer).encode();
 			bout.write(message);
 			byte[] msg = bout.toByteArray();
-			this.isupLinkSet.rxBuffer = msg;
+			this.userPart.toRead.add(msg);
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -300,228 +294,127 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 
 	}
 
-	public class TimerTestLinkset extends Linkset {
+	
+	private class TimerTestMtp3UserPart implements Mtp3UserPart
+	{
 
-		byte[] rxBuffer;
-		byte[] txBuffer;
-
-		private static final String AS_NAME = "asname";
-
-		private String asName;
-
-		public TimerTestLinkset(String linksetName, int opc, int dpc, int ni) {
-			super(linksetName, opc, dpc, ni);
-
-		}
-
-		
-		protected void initialize() {
-			this.linksetStream = new LinksetStreamImpl();
-		}
-
-		
-		protected void configure() {
-
-		}
-
-		public String getAspName() {
-			return asName;
-		}
-
-		/**
-		 * Operations
+		private ArrayList<byte[]> toRead = new ArrayList();
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#execute()
 		 */
-		
-		public void activate() throws Exception {
-			throw new Exception();
-		}
-
-		
-		public void deactivate() throws Exception {
-			throw new Exception();
-		}
-
-		
-		public void activateLink(String linkName) throws Exception {
-			throw new Exception();
-		}
-
-		
-		public void deactivateLink(String linkName) throws Exception {
-			throw new Exception();
-		}
-
-		
-		public void createLink(String[] arg0) throws Exception {
-			throw new Exception();
-		}
-
-		
-		public void deleteLink(String arg0) throws Exception {
-			throw new Exception();
-		}
-
-		protected class LinksetStreamImpl extends LinksetStream {
-
+		@Override
+		public void execute() throws IOException {
 			
-			public String getName() {
-				return linksetName;
-			}
-
 			
-			public boolean poll(int op, int timeout) {
-				try {
-					Thread.currentThread().sleep(timeout);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				return true;
-			}
-
-			public void close() {
-				// TODO Auto-generated method stub
-
-			}
-
-			public SelectorProvider provider() {
-				return null;
-
-			}
-
-			public int read(byte[] paramArrayOfByte) throws IOException {
-				if (rxBuffer != null) {
-					System.arraycopy(rxBuffer, 0, paramArrayOfByte, 0, rxBuffer.length);
-					int k = rxBuffer.length; 
-					rxBuffer = null;
-					return k;
-				}
-				return 0;
-			}
-
-			public SelectorKey register(StreamSelector selector) throws IOException {
-				return ((LinksetSelector) selector).register(this);
-			}
-
-			public int write(byte[] msu) throws IOException {
-				// here we have to parse ISUPMsg and store in receivedRemote
-				long tstamp = System.currentTimeMillis();
-				// FIXME: change this, dont copy over and over.
-				int commandCode = msu[7];// 3(RL) + 1(SI)+2(CIC) -
-				// http://pt.com/page/tutorials/ss7-tutorial/mtp
-				byte[] payload = new byte[msu.length - 5];
-				System.arraycopy(msu, 5, payload, 0, payload.length);
-				// for post processing
-				AbstractISUPMessage msg = (AbstractISUPMessage) provider.getMessageFactory().createCommand(commandCode);
-				try {
-					msg.decode(payload, provider.getParameterFactory());
-					MessageEventReceived event = new MessageEventReceived(tstamp, new ISUPEvent(provider, msg));
-					remoteEventsReceived.add(event);
-					return msu.length;
-				} catch (ParameterException e) {
-					e.printStackTrace();
-					fail("Failed on message write: " + e);
-				}
-				return 0;
-			}
-
-
-			/* (non-Javadoc)
-			 * @see org.mobicents.protocols.stream.api.Stream#read(java.nio.ByteBuffer)
-			 */
-			@Override
-			public int read(ByteBuffer arg0) throws IOException {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
-
-			/* (non-Javadoc)
-			 * @see org.mobicents.protocols.stream.api.Stream#write(java.nio.ByteBuffer)
-			 */
-			@Override
-			public int write(ByteBuffer arg0) throws IOException {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.mobicents.ss7.linkset.oam.Linkset#print(java.lang.StringBuffer,
-		 * int, int)
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#read(java.nio.ByteBuffer)
 		 */
-		
-		public void print(StringBuffer sb, int leftPad, int descPad) {
-			 // left pad
-	        FormatterHelp.createPad(sb, leftPad);
-
-	        // Add name
-	        sb.append(this.linksetName);
-
-	        // check if length is less than Link.NAME_SIZE, add padding
-	        if (this.linksetName.length() < Linkset.NAME_SIZE) {
-	            FormatterHelp.createPad(sb, Linkset.NAME_SIZE - this.linksetName.length());
-	        }
-
-	        // add desc padding
-	        FormatterHelp.createPad(sb, descPad);
-
-	        // type is dahdi
-	        sb.append("dahdi");
-
-	        // add desc padding
-	        FormatterHelp.createPad(sb, descPad);
-
-	        // add opc
-	        sb.append(LINKSET_OPC).append(FormatterHelp.EQUAL_SIGN).append(this.opc);
-
-	        // opc can be max 8 (ANSI is max 24bits) digits. Add padding if its not
-	        int length = (Integer.toString(this.opc).length());
-	        if (length < 8) {
-	            FormatterHelp.createPad(sb, 8 - length);
-	        }
-
-	        // add desc padding
-	        FormatterHelp.createPad(sb, descPad);
-
-	        // add apc
-	        sb.append(LINKSET_APC).append(FormatterHelp.EQUAL_SIGN).append(this.apc);
-
-	        // opc can be max 8 (ANSI is max 24bits) digits. Add padding if its not
-	        length = (Integer.toString(this.apc).length());
-	        if (length < 8) {
-	            FormatterHelp.createPad(sb, 8 - length);
-	        }
-
-	        // add desc padding
-	        FormatterHelp.createPad(sb, descPad);
-
-	        // add NI
-	        sb.append(LINKSET_NI).append(FormatterHelp.EQUAL_SIGN).append(this.ni);
-
-	        // add desc padding
-	        FormatterHelp.createPad(sb, descPad);
-
-	        // add state
-	        sb.append(LINKSET_STATE).append(FormatterHelp.EQUAL_SIGN).append(FormatterHelp.getLinksetState(this.state));
-
-	        sb.append(FormatterHelp.NEW_LINE);
-
-	        for (FastMap.Entry<String, Link> e = this.links.head(), end = this.links.tail(); (e = e.getNext()) != end;) {
-	            Link link = e.getValue();
-	            link.print(sb, 4, 2);
-	            sb.append(FormatterHelp.NEW_LINE);
-	        }
-
+		@Override
+		public int read(ByteBuffer arg0) throws IOException {
+			if(toRead.size()>0)
+			{
+				byte[] data = toRead.remove(0);
+				arg0.put(data);
+				return data.length;
+			}
+			return 0;
 		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#write(java.nio.ByteBuffer)
+		 */
+		@Override
+		public int write(ByteBuffer arg0) throws IOException {
+			// here we have to parse ISUPMsg and store in receivedRemote
+			long tstamp = System.currentTimeMillis();
+			byte[] msu = new byte[arg0.limit()];
+			arg0.get(msu);
+			//arg0.s
+			// FIXME: change this, dont copy over and over.
+			int commandCode = msu[7];// 3(RL) + 1(SI)+2(CIC) -
+			// http://pt.com/page/tutorials/ss7-tutorial/mtp
+			byte[] payload = new byte[msu.length - 5];
+			System.arraycopy(msu, 5, payload, 0, payload.length);
+			// for post processing
+			AbstractISUPMessage msg = (AbstractISUPMessage) provider.getMessageFactory().createCommand(commandCode);
+			try {
+				msg.decode(payload, provider.getParameterFactory());
+				MessageEventReceived event = new MessageEventReceived(tstamp, new ISUPEvent(provider, msg));
+				remoteEventsReceived.add(event);
+				return msu.length;
+			} catch (ParameterException e) {
+				e.printStackTrace();
+				fail("Failed on message write: " + e);
+			}
+			return 0;
+		}
+//	
+//		public void print(StringBuffer sb, int leftPad, int descPad) {
+//			 // left pad
+//	        FormatterHelp.createPad(sb, leftPad);
+//
+//	        // Add name
+//	        sb.append(this.linksetName);
+//
+//	        // check if length is less than Link.NAME_SIZE, add padding
+//	        if (this.linksetName.length() < Linkset.NAME_SIZE) {
+//	            FormatterHelp.createPad(sb, Linkset.NAME_SIZE - this.linksetName.length());
+//	        }
+//
+//	        // add desc padding
+//	        FormatterHelp.createPad(sb, descPad);
+//
+//	        // type is dahdi
+//	        sb.append("dahdi");
+//
+//	        // add desc padding
+//	        FormatterHelp.createPad(sb, descPad);
+//
+//	        // add opc
+//	        sb.append(LINKSET_OPC).append(FormatterHelp.EQUAL_SIGN).append(this.opc);
+//
+//	        // opc can be max 8 (ANSI is max 24bits) digits. Add padding if its not
+//	        int length = (Integer.toString(this.opc).length());
+//	        if (length < 8) {
+//	            FormatterHelp.createPad(sb, 8 - length);
+//	        }
+//
+//	        // add desc padding
+//	        FormatterHelp.createPad(sb, descPad);
+//
+//	        // add apc
+//	        sb.append(LINKSET_APC).append(FormatterHelp.EQUAL_SIGN).append(this.apc);
+//
+//	        // opc can be max 8 (ANSI is max 24bits) digits. Add padding if its not
+//	        length = (Integer.toString(this.apc).length());
+//	        if (length < 8) {
+//	            FormatterHelp.createPad(sb, 8 - length);
+//	        }
+//
+//	        // add desc padding
+//	        FormatterHelp.createPad(sb, descPad);
+//
+//	        // add NI
+//	        sb.append(LINKSET_NI).append(FormatterHelp.EQUAL_SIGN).append(this.ni);
+//
+//	        // add desc padding
+//	        FormatterHelp.createPad(sb, descPad);
+//
+//	        // add state
+//	        sb.append(LINKSET_STATE).append(FormatterHelp.EQUAL_SIGN).append(FormatterHelp.getLinksetState(this.state));
+//
+//	        sb.append(FormatterHelp.NEW_LINE);
+//
+//	        for (FastMap.Entry<String, Link> e = this.links.head(), end = this.links.tail(); (e = e.getNext()) != end;) {
+//	            Link link = e.getValue();
+//	            link.print(sb, 4, 2);
+//	            sb.append(FormatterHelp.NEW_LINE);
+//	        }
+//
+//		}
 		
-
-
 	}
-
 
 }

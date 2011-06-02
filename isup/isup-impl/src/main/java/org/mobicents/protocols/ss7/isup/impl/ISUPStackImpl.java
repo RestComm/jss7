@@ -30,15 +30,14 @@ package org.mobicents.protocols.ss7.isup.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javolution.util.FastList;
-import javolution.util.FastMap;
-
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.isup.CircuitManager;
 import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ISUPProvider;
@@ -46,12 +45,8 @@ import org.mobicents.protocols.ss7.isup.ISUPStack;
 import org.mobicents.protocols.ss7.isup.impl.message.AbstractISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.mtp.Utils;
-import org.mobicents.protocols.stream.api.SelectorKey;
-import org.mobicents.ss7.linkset.oam.Layer4;
-import org.mobicents.ss7.linkset.oam.Linkset;
-import org.mobicents.ss7.linkset.oam.LinksetSelector;
-import org.mobicents.ss7.linkset.oam.LinksetStream;
 
 /**
  * Start time:12:14:57 2009-09-04<br>
@@ -59,26 +54,21 @@ import org.mobicents.ss7.linkset.oam.LinksetStream;
  * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public class ISUPStackImpl implements ISUPStack, Layer4 {
+public class ISUPStackImpl implements ISUPStack {
 
 	private Logger logger = Logger.getLogger(ISUPStackImpl.class);
 
-	private static final int OP_READ_WRITE = 3;
-	private static final int MAX_MESSAGES = 30; // max msgs in queue
+
 
 	private State state = State.IDLE;
 	//dont quite like the idea of so many threads... but.
 	private ExecutorService executor;
 	private ExecutorService layer3exec;
 
-	// Hold LinkSet here. LinkSet's name as key and actual LinkSet as Object
-	protected FastMap<String, Linkset> linksets = new FastMap<String, Linkset>();
-
-	// Hold the byte[] that needs to be writtent to Linkset
-	private FastMap<String, ConcurrentLinkedQueue<byte[]>> linksetQueue = new FastMap<String, ConcurrentLinkedQueue<byte[]>>();
-
-	private LinksetSelector linkSetSelector = new LinksetSelector();
-
+	protected ConcurrentLinkedQueue<byte[]> txDataQueue = new ConcurrentLinkedQueue<byte[]>();
+	
+	private Mtp3UserPart mtp3UserPart = null;
+	private CircuitManager circuitManager = null;
 	private ISUPProviderImpl provider;
 	// local vars
 	private ISUPMessageFactory messageFactory;
@@ -100,6 +90,15 @@ public class ISUPStackImpl implements ISUPStack, Layer4 {
 		{
 			//throw new StartFailedException("Can not start stack again!");
 			throw new IllegalStateException("Can not start stack again!");
+		}
+		if(this.mtp3UserPart == null)
+		{
+			throw new IllegalStateException("No Mtp3UserPart present!");
+		}
+		
+		if(this.circuitManager == null)
+		{
+			throw new IllegalStateException("No CircuitManager present!");
 		}
 		this.executor = Executors.newFixedThreadPool(1);
 		this.layer3exec = Executors.newFixedThreadPool(1);
@@ -140,134 +139,105 @@ public class ISUPStackImpl implements ISUPStack, Layer4 {
 		this.messageFactory = this.provider.getMessageFactory();
 		this.state = State.CONFIGURED;
 	}
-
-	public void add(Linkset linkset) {
-
-		try {
-			linkset.getLinksetStream().register(this.linkSetSelector);
-			linksets.put(linkset.getName(), linkset);
-			linksetQueue.put(linkset.getName(), new ConcurrentLinkedQueue<byte[]>());
-		} catch (IOException ex) {
-			logger.error(String.format("Registration for %s LinksetStream failed", linkset.getName()), ex);
-		}
+	
+	public Mtp3UserPart getMtp3UserPart() {
+		return mtp3UserPart;
 	}
 
-	public void remove(Linkset linkset) {
-		//should be done by name?
-		if(linksets.remove(linkset.getName()) !=null)
-		{	
-			//FIXME: add deregister
-			linksetQueue.remove(linkset.getName());
-		}
+	public void setMtp3UserPart(Mtp3UserPart mtp3UserPart) {
+		this.mtp3UserPart = mtp3UserPart;
 	}
 
+	public void setCircuitManager(CircuitManager mgr) {
+		this.circuitManager = mgr;
+		
+	}
+
+	public CircuitManager getCircuitManager() {
+		return this.circuitManager;
+	}
 	// ---------------- private methods and class defs
+
 
 	/**
 	 * @param message
 	 */
 	void send(byte[] message) {
 		// here we have encoded msg, nothing more, need to add MTP3 label.
-		if (linksets.size() == 0) {
-			return;
-		}
-		Linkset linkset = this.linksets.values().iterator().next();
-		int opc = linkset.getOpc();
-		int dpc = linkset.getApc();
-		int si = Mtp3._SI_SERVICE_ISUP;
-		int ni = linkset.getNi();
-		int sls = 0;
-		int ssi = ni << 2;
-
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		// encoding routing label
-		bout.write((byte) (((ssi & 0x0F) << 4) | (si & 0x0F)));
-		bout.write((byte) dpc);
-		bout.write((byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6)));
-		bout.write((byte) (opc >> 2));
-		bout.write((byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
-	
-		try {
-			bout.write(message);
-			byte[] msg = bout.toByteArray();
-			ConcurrentLinkedQueue<byte[]> queue = this.linksetQueue.get(linkset.getName());
-			queue.add(msg);
-			if (queue.size() > MAX_MESSAGES) {
-				queue.remove();
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		txDataQueue.add(message);
 	}
 
 	private class MtpStreamHandler implements Runnable {
+		ByteBuffer rxBuffer = ByteBuffer.allocateDirect(1000);
+		ByteBuffer txBuffer = ByteBuffer.allocateDirect(1000);
+		int rxBytes = 0;
+		@SuppressWarnings("unused")
+		int txBytes = 0;
 
 		public void run() {
-			byte[] rxBuffer = new byte[1000];
-			byte[] txBuffer;
 			// Execute only till state is Running
 			while (state == State.RUNNING) {
 
 				try {
-					//FIXME
-					FastList<SelectorKey> selected = linkSetSelector.selectNow(OP_READ_WRITE, 1);
-					for (FastList.Node<SelectorKey> n =selected.head(), end = selected.tail(); (n = n
-			                .getNext()) != end;) {
-						LinksetStream stream = (LinksetStream) n.getValue().getStream();
-						//int read = stream.read(rxBuffer);
-						int read = 0;
-						
-						// Read data
-						if (read>0) {
-							byte[] inByte = new byte[read];
-							System.arraycopy(rxBuffer, 0, inByte, 0, read);
-							MessageHandler handler = new MessageHandler(inByte);
+					//Execute the MTP3UserPart
+					mtp3UserPart.execute();
+
+					rxBytes = 0;
+					rxBuffer.clear();
+					try {
+						rxBytes = mtp3UserPart.read(rxBuffer);
+						if (rxBytes != 0) {
+							byte[] data = new byte[rxBytes];
+							rxBuffer.flip();
+							rxBuffer.get(data);
+							MessageHandler handler = new MessageHandler(data);
 							executor.execute(handler);
 						}
-
-						// write data
-						txBuffer = linksetQueue.get(stream.getName()).poll();
-						if (txBuffer != null) {
-							//stream.write(txBuffer);
-						}
-
+					} catch (IOException e) {
+						logger.error("Error while readig data from Mtp3UserPart", e);
 					}
 
-					// TODO : should add any Thread.wait() or let it iterate
-					// continuously?
-				} catch (IOException ex) {
-					logger.error("Error while reading data from LinksetStream", ex);
+					// Iterate till we send all data
+					while (!txDataQueue.isEmpty()) {
+						txBuffer.clear();
+						txBuffer.put(txDataQueue.poll());
+						txBuffer.flip();
+						try {
+							txBytes = mtp3UserPart.write(txBuffer);
+						} catch (IOException e) {
+							logger.error("Error while writting data to Mtp3UserPart", e);
+						}
+					}// while txDataQueue
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
-			}
+			}// end of while
 		}
-
 	}
-
 	private class MessageHandler implements Runnable {
 		// MSU as input stream
 		private byte[] msu;
 		private ISUPMessage message;
 
 		protected MessageHandler(byte[] msu) {
-
 			this.msu = msu;
 
 		}
 
 		private ISUPMessage parse() throws IOException {
 			try {
-				// FIXME: change this, dont copy over and over.
+				// FIXME: change this, dont copy over and over?
 				
 				int commandCode = msu[7];//	1(SIO) +    3(RL) + 1(SLS) + 2(CIC) + 1(CODE)
 												// http://pt.com/page/tutorials/ss7-tutorial/mtp
 				byte[] payload = new byte[msu.length - 5];
 				System.arraycopy(msu, 5, payload, 0, payload.length);
+				byte sls = msu[5];
 				// for post processing
 				AbstractISUPMessage msg = (AbstractISUPMessage) messageFactory.createCommand(commandCode);
 				msg.decode(payload, parameterFactory);
-
+				msg.setSls(sls); //store SLS...
 				return msg;
 
 			} catch (Exception e) {
@@ -289,7 +259,15 @@ public class ISUPStackImpl implements ISUPStack, Layer4 {
 			}
 			// deliver to provider, so it can check up on circuit, play with
 			// timers and deliver.
-			provider.receive(message);
+			if(message!=null)
+			{
+				try{
+					provider.receive(message);
+				}catch(Exception e)
+				{
+					//TODO: add proper answer?
+				}
+			}
 		}
 	}
 

@@ -200,11 +200,6 @@ public class RangeAndStatusImpl extends AbstractISUPParameter implements RangeAn
 			//there are cases when this can be null;
 		}
 	}
-	
-	public static void main(String[] args) {
-		System.err.println(0xFF ^ 0x80);
 
-	}
-	
 	
 }

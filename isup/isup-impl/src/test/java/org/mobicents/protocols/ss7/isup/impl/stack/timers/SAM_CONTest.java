@@ -102,7 +102,8 @@ public class SAM_CONTest extends SingleTimers {
 	protected Properties getSpecificConfig() {
 		Properties p = new Properties();
 		p.put("t7", getT() + "");
-
+		p.put("ni", "2");
+		p.put("localspc", "2");
 		return p;
 	}
 

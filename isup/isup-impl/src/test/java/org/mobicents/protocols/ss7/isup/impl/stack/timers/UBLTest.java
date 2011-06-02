@@ -97,6 +97,8 @@ public class UBLTest extends DoubleTimers {
 		Properties p = new Properties();
 		p.put("t14", getSmallerT()+"");
 		p.put("t15" , getBiggerT()+"");
+		p.put("ni", "2");
+		p.put("localspc", "2");
 		return p;
 	}
 

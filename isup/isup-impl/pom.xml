@@ -12,7 +12,7 @@
 	<name>Mobicents SS7 :: ISUP :: Impl :: ${pom.artifactId}</name>
 	
 	<properties>
-   		<skipTests>true</skipTests>
+   		<skipTests>false</skipTests>
 	</properties>
 
 	<dependencies>
@@ -42,6 +42,10 @@
 			<groupId>concurrent</groupId>
 			<artifactId>concurrent</artifactId>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<artifactId>mtp-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>

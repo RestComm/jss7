@@ -115,6 +115,8 @@ public class RSCTest extends DoubleTimers {
 		Properties p = new Properties();
 		p.put("t16", getSmallerT() + "");
 		p.put("t17", getBiggerT() + "");
+		p.put("ni", "2");
+		p.put("localspc", "2");
 		return p;
 	}
 

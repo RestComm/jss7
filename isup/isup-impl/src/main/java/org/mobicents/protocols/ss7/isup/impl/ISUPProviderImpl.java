@@ -36,6 +36,7 @@ import javolution.util.FastMap;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.isup.CircuitManager;
 import org.mobicents.protocols.ss7.isup.ISUPEvent;
 import org.mobicents.protocols.ss7.isup.ISUPListener;
 import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
@@ -62,7 +63,7 @@ public class ISUPProviderImpl implements ISUPProvider {
 	protected ISUPMessageFactory messageFactory;
 	protected ISUPParameterFactory parameterFactory;
 	protected final FastMap<Integer, Circuit> cic2Circuit = new FastMap<Integer, Circuit>();
-
+	protected int ni, localSpc;
 	public ISUPProviderImpl(ISUPStackImpl isupStackImpl, Properties props) {
 		this.stack = isupStackImpl;
 		this.T1Timeout = Long.parseLong(props.getProperty(T1, this.T1Timeout + ""));
@@ -83,7 +84,23 @@ public class ISUPProviderImpl implements ISUPProvider {
 		// this.T28Timeout = Long.parseLong(props.getProperty(T28,
 		// this.T28Timeout + ""));
 		this.T33Timeout = Long.parseLong(props.getProperty(T33, this.T33Timeout + ""));
-
+		
+		if(!props.containsKey(NI))
+		{
+			throw new IllegalArgumentException("No definition of local NI!("+NI+")");
+		}else
+		{
+			this.ni = Integer.parseInt(props.getProperty(NI));
+		}
+		
+		if(!props.containsKey(LOCAL_SPC))
+		{
+			throw new IllegalArgumentException("No definition of localSPC!("+LOCAL_SPC+")");
+		}else
+		{
+			this.localSpc = Integer.parseInt(props.getProperty(LOCAL_SPC));
+		}
+		
 		// check bounds for timers.... trick might be that... for
 		// national/internationl those are different... ech
 		if (this.T1Timeout < 5000 || this.T1Timeout > 60000) {
@@ -191,8 +208,20 @@ public class ISUPProviderImpl implements ISUPProvider {
 			}
 			this.T33Timeout = ISUPTimeoutEvent.T33_DEFAULT;
 		}
+		
+	
 		this.parameterFactory = new ISUPParameterFactoryImpl();
 		this.messageFactory = new ISUPMessageFactoryImpl(this.parameterFactory);
+	}
+
+	@Override
+	public int getNi() {
+		return this.ni;
+	}
+
+	@Override
+	public int getLocalSpc() {
+		return this.localSpc;
 	}
 
 	/*
@@ -275,10 +304,19 @@ public class ISUPProviderImpl implements ISUPProvider {
 	// ---------------------- non interface methods ----------------
 
 	public void start() {
+		CircuitManager cm = this.stack.getCircuitManager(); 
+		int[] cics = cm.getCircuits();
+		this.cic2Circuit.clear();
 		this.executors = new ScheduledExecutorService[5];
 		for (int index = 0; index < this.executors.length; index++) {
 			this.executors[index] = Executors.newScheduledThreadPool(1);
 		}
+		for(int cic:cics)
+		{
+			Circuit c = new Circuit(cic, cm.getDpc(cic),this);
+			this.cic2Circuit.put(cic, c);
+		}
+		
 	}
 
 	public void stop() {
@@ -315,10 +353,12 @@ public class ISUPProviderImpl implements ISUPProvider {
 	private Circuit getCircuit(ISUPMessage message) {
 		Circuit c = null;
 		int cic = message.getCircuitIdentificationCode().getCIC();
-		if (!this.cic2Circuit.containsKey(cic)) {
+		if (!this.stack.getCircuitManager().isCircuitPresent(cic)) {
+			if (this.cic2Circuit.containsKey(cic)) {
+				this.cic2Circuit.remove(cic).onStop();
+			}
+			throw new IllegalArgumentException("Curcuit not defined, no route definition present!");
 
-			c = new Circuit(cic, this);
-			this.cic2Circuit.put(cic, c);
 		} else {
 			c = this.cic2Circuit.get(message.getCircuitIdentificationCode().getCIC());
 		}
@@ -364,6 +404,9 @@ public class ISUPProviderImpl implements ISUPProvider {
 			}
 		}
 	}
+	
+	protected static final String NI = "ni";
+	protected static final String LOCAL_SPC = "localspc";
 
 	protected final static String T1 = "t1";
 	protected final static String T5 = "t5";

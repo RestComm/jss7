@@ -31,8 +31,20 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
  * @author kulikov
  */
 public interface ISUPProvider {
+	
 	/**
-	 * Sends message statelesly.
+	 * Returns localy configured network indicator.
+	 * @return
+	 */
+	public int getNi();
+	/**
+	 * Returns local PC (OPC for outgoing messages)
+	 * @return
+	 */
+	public int getLocalSpc();
+	
+	/**
+	 * Sends message.
 	 * 
 	 * @param msg
 	 * @throws ParameterException

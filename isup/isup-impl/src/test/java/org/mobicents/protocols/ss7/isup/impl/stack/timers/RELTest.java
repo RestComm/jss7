@@ -110,6 +110,8 @@ public class RELTest extends DoubleTimers {
 		Properties p = new Properties();
 		p.put("t1", getSmallerT()+"");
 		p.put("t5" ,  getBiggerT()+"");
+		p.put("ni", "2");
+		p.put("localspc", "2");
 		return p;
 	}	
 

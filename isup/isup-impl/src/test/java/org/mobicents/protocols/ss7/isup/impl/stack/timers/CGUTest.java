@@ -143,6 +143,8 @@ public class CGUTest extends DoubleTimers {
 		Properties p = new Properties();
 		p.put("t20", getSmallerT()+"");
 		p.put("t21" ,  getBiggerT()+"");
+		p.put("ni", "2");
+		p.put("localspc", "2");
 		return p;
 	}
 

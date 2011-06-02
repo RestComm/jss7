@@ -97,6 +97,8 @@ public class BLOTest extends DoubleTimers {
 		Properties p = new Properties();
 		p.put("t12", getSmallerT()+"");
 		p.put("t13" ,  getBiggerT()+"");
+		p.put("ni", "2");
+		p.put("localspc", "2");
 		return p;
 	}
 	

@@ -32,6 +32,8 @@ import java.util.Properties;
 
 import javax.naming.ConfigurationException;
 
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+
 /**
  * Start time:09:07:18 2009-08-30<br>
  * Project: mobicents-isup-stack<br>
@@ -61,4 +63,12 @@ public interface ISUPStack {
 	 * @throws ConfigurationException
 	 */
 	public void configure(Properties props);
+	
+	public Mtp3UserPart getMtp3UserPart();
+
+	public void setMtp3UserPart(Mtp3UserPart mtp3UserPart);
+	
+	public void setCircuitManager(CircuitManager mgr);
+	
+	public CircuitManager getCircuitManager();
 }

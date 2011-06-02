@@ -103,7 +103,8 @@ public class IAM_ACMTest extends SingleTimers {
 	protected Properties getSpecificConfig() {
 		Properties p = new Properties();
 		p.put("t7", getT()+"");
-		
+		p.put("ni", "2");
+		p.put("localspc", "2");
 		return p;
 	}
 

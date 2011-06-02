@@ -120,6 +120,8 @@ public class CGBTest extends DoubleTimers {
 		Properties p = new Properties();
 		p.put("t18", getSmallerT()+"");
 		p.put("t19" ,  getBiggerT()+"");
+		p.put("ni", "2");
+		p.put("localspc", "2");
 		return p;
 	}
 

@@ -58,6 +58,7 @@ import org.mobicents.protocols.ss7.isup.message.SubsequentAddressMessage;
 import org.mobicents.protocols.ss7.isup.message.UnblockingAckMessage;
 import org.mobicents.protocols.ss7.isup.message.UnblockingMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.protocols.ss7.mtp.Mtp3;
 
 /**
  * @author baranowb
@@ -66,6 +67,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 @SuppressWarnings("rawtypes")
 class Circuit implements Runnable {
 	private final int cic;
+	private final int dpc;
 	private final ISUPProviderImpl provider;
 
 	private ReentrantLock lock = new ReentrantLock();
@@ -79,8 +81,9 @@ class Circuit implements Runnable {
 	/**
 	 * @param cic
 	 */
-	public Circuit(int cic, ISUPProviderImpl provider) {
+	public Circuit(int cic, int dpc,ISUPProviderImpl provider) {
 		this.cic = cic;
+		this.dpc = dpc;
 		this.provider = provider;
 		this.executor = provider.getExecutor(cic);
 	}
@@ -147,43 +150,43 @@ class Circuit implements Runnable {
 	/**
 	 * @param message
 	 * @throws ParameterException
+	 * @throws IOException 
 	 */
-	public void send(ISUPMessage message) throws ParameterException {
+	public void send(ISUPMessage message) throws ParameterException, IOException {
 		try {
 			lock.lock();
 			bos.reset();
 			// FIXME: add SEG creation?
-			((AbstractISUPMessage) message).encode(bos);
-			byte[] encoded = bos.toByteArray();
+			byte[] msg = decorate(message);
 			// process timers
 			switch (message.getMessageType().getCode()) {
 			case ReleaseMessage.MESSAGE_CODE:
-				startRELTimers(encoded, (ReleaseMessage) message);
+				startRELTimers(msg, (ReleaseMessage) message);
 				break;
 			case SubsequentAddressMessage.MESSAGE_CODE:
 			case InitialAddressMessage.MESSAGE_CODE:
 				startXAMTimers(message);
 				break;
 			case BlockingMessage.MESSAGE_CODE:
-				startBLOTimers(encoded, (BlockingMessage) message);
+				startBLOTimers(msg, (BlockingMessage) message);
 				break;
 			case UnblockingMessage.MESSAGE_CODE:
-				startUBLTimers(encoded, (UnblockingMessage) message);
+				startUBLTimers(msg, (UnblockingMessage) message);
 				break;
 
 			case ResetCircuitMessage.MESSAGE_CODE:
-				startRSCTimers(encoded, (ResetCircuitMessage) message);
+				startRSCTimers(msg, (ResetCircuitMessage) message);
 				break;
 
 			case CircuitGroupBlockingMessage.MESSAGE_CODE:
-				startCGBTimers(encoded, (CircuitGroupBlockingMessage) message);
+				startCGBTimers(msg, (CircuitGroupBlockingMessage) message);
 				break;
 
 			case CircuitGroupUnblockingMessage.MESSAGE_CODE:
-				startCGUTimers(encoded, (CircuitGroupUnblockingMessage) message);
+				startCGUTimers(msg, (CircuitGroupUnblockingMessage) message);
 				break;
 			case CircuitGroupResetMessage.MESSAGE_CODE:
-				startGRSTimers(encoded, (CircuitGroupResetMessage) message);
+				startGRSTimers(msg, (CircuitGroupResetMessage) message);
 				break;
 			case CircuitGroupQueryMessage.MESSAGE_CODE:
 				startCQMTimers((CircuitGroupQueryMessage) message);
@@ -193,11 +196,39 @@ class Circuit implements Runnable {
 				break;
 			}
 			// send
-			provider.send(encoded);
+			provider.send(msg);
 		} finally {
 			lock.unlock();
 		}
 
+	}
+	
+	/**
+	 * @param message
+	 * @return
+	 * @throws ParameterException 
+	 * @throws IOException 
+	 */
+	private byte[] decorate(ISUPMessage message) throws ParameterException, IOException {
+		((AbstractISUPMessage) message).encode(bos);
+		byte[] encoded = bos.toByteArray();
+		int opc = this.provider.getLocalSpc();
+		int dpc = this.dpc;
+		int si = Mtp3._SI_SERVICE_ISUP;
+		int ni = this.provider.getNi();
+		int sls = message.getSls() & 0x0F; //promote
+		int ssi = ni << 2;
+
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		// encoding routing label
+		bout.write((byte) (((ssi & 0x0F) << 4) | (si & 0x0F)));
+		bout.write((byte) dpc);
+		bout.write((byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6)));
+		bout.write((byte) (opc >> 2));
+		bout.write((byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
+		bout.write(encoded);
+		byte[] msg = bout.toByteArray();
+		return msg;
 	}
 
 	public void run() {
@@ -853,15 +884,7 @@ class Circuit implements Runnable {
 				ResetCircuitMessage rcm = provider.getMessageFactory().createRSC(cic);
 				// avoid provider method, since we dont want other timer to be
 				// setup.
-				ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				try {
-					// FIXME: should this ivnoke startT17 ?
-					((AbstractISUPMessage) rcm).encode(bos);
-					provider.send(bos.toByteArray());
-				} catch (ParameterException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				provider.sendMessage(rcm);
 
 				// notify user
 				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t1t5REL, ISUPTimeoutEvent.T5);
