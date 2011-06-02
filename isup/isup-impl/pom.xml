@@ -12,7 +12,7 @@
 	<name>Mobicents SS7 :: ISUP :: Impl :: ${pom.artifactId}</name>
 	
 	<properties>
-   		<skipTests>false</skipTests>
+   		<skipTests>true</skipTests>
 	</properties>
 
 	<dependencies>
