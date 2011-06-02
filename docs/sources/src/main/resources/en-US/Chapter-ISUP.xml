@@ -50,6 +50,18 @@
 							</thead>
 							<tbody>
 								<row>
+									<entry>ni</entry>
+									<entry>None, must be provided</entry>
+									<entry>0-3</entry>
+									<entry>Sets value of network indicator that should be used by stack.</entry>
+								</row>
+								<row>
+									<entry>localspc</entry>
+									<entry>None, must be provided</entry>
+									<entry>0 - (2^14)-1</entry>
+									<entry>Sets local signaling point code. It will be used as OPC for outgoing signaling units.</entry>
+								</row>
+								<row>
 									<entry>t1</entry>
 									<entry>4s</entry>
 									<entry>4s - 15s</entry>
@@ -162,13 +174,27 @@
 							</tbody>
 						</tgroup>
 					</table>
+					<para>Note that before start user must provide two interfaces to stack:</para>
+					<variablelist>	
+						<varlistentry>
+							<term>Mtp3UserPart</term>
+							<listitem>
+								<para>implementation of transport layer which should be used by stack</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>CircuitManager</term>
+							<listitem>
+								<para>circuit manager implementation. This interface stores information on mapping between <literal>CIC</literal>(Circuit Identification Code) and <literal>DPC</literal>(Destination Point Code) used as destination for outgoing messages.</para>
+							</listitem>
+						</varlistentry>
+					</variablelist>
 	</section>
 	<section id="isup_usage">
 		<title>ISUP Usage</title>
-		<para>org.mobicents.protocols.ss7.isup.ISUPStack interface defines the methods required to represent ISUP Protocol Stack. ISUPStack
-		exposes org.mobicents.protocols.ss7.isup.ISUPProvider. This interface defines the methods that will
-		be used by any registered ISUP User application implementing the org.mobicents.protocols.ss7.isup.ISUPListener to listen ISUP events(messages and timeouts). The class diagram
-		looks like follows:
+		<para> The <literal>org.mobicents.protocols.ss7.isup.ISUPStack</literal> interface defines the methods required to represent ISUP Protocol Stack. ISUPStack
+		exposes <literal>org.mobicents.protocols.ss7.isup.ISUPProvider</literal>. This interface defines the methods that will
+		be used by any registered ISUP User application implementing the <literal>org.mobicents.protocols.ss7.isup.ISUPListener</literal> to listen ISUP events(messages and timeouts). 
 		</para>
 	</section>
 	<section id="isup_example">
@@ -212,7 +238,13 @@ public class ISUPTest implements ISUPListener
 		this.stack.configure(getSpecificConfig());
 		this.provider = this.stack.getIsupProvider();
 		this.provider.addListener(this);
-		((Layer4) this.stack).add(this.isupLinkSet);
+		Mtp3UserPart userPart = // create with proper factory, dahdii, dialogi, m3ua
+		this.stack.setMtp3UserPart(userPart);
+		CircuitManagerImpl circuitManager = new CircuitManagerImpl();
+		circuitManager.addCircuit(1, 431613); // CIC - 1, DPC for it - 431613
+		
+		
+		this.stack.setCircuitManager(circuitManager);
 		this.stack.start();
 
 	}
