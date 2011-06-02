@@ -55,8 +55,8 @@
 	</bean>
 
 	<bean name="SccpStack" class="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl">
-		<property name="localSpc">2</property>
-		<property name="ni">2</property>
+		<property name="localSpc">6172</property>
+		<property name="ni">3</property>
 		<property name="router">
 			<inject bean="Router" />
 		</property>
