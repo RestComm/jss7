@@ -36,10 +36,9 @@ import javolution.util.FastSet;
  * 
  * <p>
  * A selector may be created by invoking the {@link #open open} method of this
- * class, which will use the system's default
- * {@link ChannelProvider </code>selector provider<code>} to create a new
- * selector. A selector remains open until it is closed via its
- * {@link #close close} method.
+ * class, which will use the system's default {@link ChannelProvider
+ * </code>selector provider<code>} to create a new selector. A selector remains
+ * open until it is closed via its {@link #close close} method.
  * </p>
  * 
  * <p>
@@ -71,79 +70,84 @@ import javolution.util.FastSet;
  */
 public class ChannelSelector {
 
-    protected Selector selector;
+	protected Selector selector;
 
-    private FastSet<ChannelSelectionKey> selectedKey = new FastSet<ChannelSelectionKey>();
+	private FastSet<ChannelSelectionKey> selectedKey = new FastSet<ChannelSelectionKey>();
 
-    protected ChannelSelector(Selector selector) {
-        this.selector = selector;
-    }
+	protected ChannelSelector(Selector selector) {
+		this.selector = selector;
+	}
 
-    /**
-     * <p>
-     * Opens a ChannelSelector
-     * </p>
-     * <p>
-     * The new selector is created by invoking the {@link
-     * ChannelProvider#openSelector openSelector} method of the system-wide
-     * default {@link ChannelProvider} object.
-     * </p>
-     * 
-     * @return A new selector
-     * @throws IOException
-     *             If an I/O error occurs
-     */
-    public static ChannelSelector open() throws IOException {
-        return ChannelProvider.provider().openSelector();
-    }
+	/**
+	 * <p>
+	 * Opens a ChannelSelector
+	 * </p>
+	 * <p>
+	 * The new selector is created by invoking the
+	 * {@link ChannelProvider#openSelector openSelector} method of the
+	 * system-wide default {@link ChannelProvider} object.
+	 * </p>
+	 * 
+	 * @return A new selector
+	 * @throws IOException
+	 *             If an I/O error occurs
+	 */
+	public static ChannelSelector open() throws IOException {
+		return ChannelProvider.provider().openSelector();
+	}
 
-    /**
-     * * Selects a set of keys whose corresponding channels are ready for I/O
-     * operations.
-     * 
-     * <p>
-     * This method performs a non-blocking selection operation. If no channels
-     * have become selectable since the previous selection operation then this
-     * method immediately returns empty selected-key set.
-     * </p>
-     * 
-     * @return
-     * @throws IOException
-     *             If an I/O error occurs
-     */
-    public FastSet<ChannelSelectionKey> selectNow() throws IOException {
-        selectedKey.clear();
-        selector.selectNow();
-        Set<SelectionKey> selection = selector.selectedKeys();
-        for (SelectionKey key : selection) {
-            if (key.isAcceptable()) {
-                ChannelSelectionKey k = (ChannelSelectionKey) key.attachment();
-                selectedKey.add(k);
-            } else if (key.isReadable()) {
-                ChannelSelectionKey k = (ChannelSelectionKey) key.attachment();
-                ((ShellChannel) k.channel()).doRead();
-                if (k.isReadable()) {
-                    selectedKey.add(k);
-                }
-            } else {
-                ChannelSelectionKey k = (ChannelSelectionKey) key.attachment();
-                ((ShellChannel) k.channel()).doWrite();
-                if (k.isWritable()) {
-                    selectedKey.add(k);
-                }
-            }
-        }
-        selection.clear();
-        return selectedKey;
-    }
+	/**
+	 * * Selects a set of keys whose corresponding channels are ready for I/O
+	 * operations.
+	 * 
+	 * <p>
+	 * This method performs a non-blocking selection operation. If no channels
+	 * have become selectable since the previous selection operation then this
+	 * method immediately returns empty selected-key set.
+	 * </p>
+	 * 
+	 * @return
+	 * @throws IOException
+	 *             If an I/O error occurs
+	 */
+	public FastSet<ChannelSelectionKey> selectNow() throws IOException {
+		selectedKey.clear();
+		selector.selectNow();
+		Set<SelectionKey> selection = selector.selectedKeys();
+		for (SelectionKey key : selection) {
+			if (key.isAcceptable()) {
+				ChannelSelectionKey k = (ChannelSelectionKey) key.attachment();
+				selectedKey.add(k);
+			} else {
 
-    /**
-     * Closes this selector.
-     * 
-     * @throws IOException
-     *             If an I/O error occurs
-     */
-    public void close() throws IOException {
-        selector.close();
-    }
+				if (key.isReadable()) {
+					ChannelSelectionKey k = (ChannelSelectionKey) key.attachment();
+					((ShellChannel) k.channel()).doRead();
+					if (k.isReadable()) {
+						selectedKey.add(k);
+					}
+				}
+
+				if (key.isWritable()) {
+					ChannelSelectionKey k = (ChannelSelectionKey) key.attachment();
+					((ShellChannel) k.channel()).doWrite();
+					if (k.isWritable()) {
+						selectedKey.add(k);
+					}
+				}
+			}
+		}//for
+		selection.clear();
+		return selectedKey;
+	}
+
+	/**
+	 * Closes this selector.
+	 * 
+	 * @throws IOException
+	 *             If an I/O error occurs
+	 */
+	public void close() throws IOException {
+		selector.close();
+	}
 }
