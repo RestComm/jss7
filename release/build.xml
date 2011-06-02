@@ -36,12 +36,24 @@
 		</classpath>
 	</taskdef>
 
-	<target name="init" />
+	<target name="init" >
+	    <echo message="Java Version: ${java.version}"/> 
+	    <echo message="Java home: ${java.home}"/> 
+	    <fail message="Unsupported Java version: ${java.version}. Make sure that the version of the Java compiler is 1.7 (7.0) or greater."> 
+		<condition> 
+		    <not> 
+			<or> 
+			    <contains string="${java.version}" substring="1.7" casesensitive="false" /> 
+			</or> 
+		    </not> 
+		</condition> 
+	    </fail>
+	</target>
 
 	<target name="checkout" description="Checks out src and downloads everything that is required." depends="checkout-sources" />
 	<target name="build" description="Builds components sources and everything associated." depends="build-sources-asn,build-sources-stream,build-sources-ss7" />
 	<target name="copy" depends="copy-asn,copy-protocols-ss7" />
-	<target name="package" description="Builds builds binary package." depends="clean,checkout,zip.src,build,notes,copy,zip.binary" />
+	<target name="package" description="Builds builds binary package." depends="init,clean,checkout,zip.src,build,notes,copy,zip.binary" />
 	<target name="clean">
 		<echo>Cleaning checkout directory</echo>
 		<delete dir="${ant.file.ss7.release.sf}/../${checkout.basedir}" verbose="false" />
