@@ -60,6 +60,14 @@ public class SccpManagement implements SccpListener {
 	protected static final int SOG = 5;
 	protected static final int SSC = 6;
 
+	private static final String S_SSA = "SSA";
+	private static final String S_SSP = "SSP";
+	private static final String S_SST = "SST";
+	private static final String S_SOR = "SOR";
+	private static final String S_SOG = "SOG";
+	private static final String S_SSC = "SSC";
+	private static final String S_DEFAULT = "UNIDENTIFIED";
+
 	protected static final int UNAVAILABILITY_CAUSE_UNKNOWN = 0;
 	protected static final int UNAVAILABILITY_CAUSE_UNEQUIPED = 1;
 	protected static final int UNAVAILABILITY_CAUSE_INACCESSIBLE = 2;
@@ -67,9 +75,9 @@ public class SccpManagement implements SccpListener {
 	private SccpProviderImpl sccpProviderImpl;
 	private SccpStackImpl sccpStackImpl;
 	private SccpRoutingControl sccpRoutingControl;
-	
+
 	private ScheduledExecutorService managementExecutors;
-	
+
 	// Keeps track of how many SST are running for given DPC
 	private final FastMap<Integer, FastList<SubSystemTest>> dpcVsSst = new FastMap<Integer, FastList<SubSystemTest>>();
 
@@ -161,8 +169,8 @@ public class SccpManagement implements SccpListener {
 
 		if (logger.isInfoEnabled()) {
 			logger.info(String
-					.format("Received SCMG message. Message Type=%d, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
-							messgType, affectedSsn, affectedPc, subsystemMultiplicity, seqControl));
+					.format("Received SCMG message. Message Type=%s, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
+							this.getMessageType(messgType), affectedSsn, affectedPc, subsystemMultiplicity, seqControl));
 		}
 		switch (messgType) {
 		case SSA:
@@ -182,7 +190,7 @@ public class SccpManagement implements SccpListener {
 
 				if (sst1 != null) {
 					sst1.stopTest();
-					//ssts1.remove(sst1);
+					// ssts1.remove(sst1);
 				}
 			}
 			break;
@@ -205,9 +213,9 @@ public class SccpManagement implements SccpListener {
 			}
 
 			if (sst == null) {
-				sst = new SubSystemTest(affectedSsn, affectedPc,ssts);
+				sst = new SubSystemTest(affectedSsn, affectedPc, ssts);
 			}
-			//ssts.add(sst);
+			// ssts.add(sst);
 			sst.startTest();
 
 			break;
@@ -275,9 +283,9 @@ public class SccpManagement implements SccpListener {
 		data[4] = 0;
 		udt.setData(data);
 
-		//set the SLS
-		((SccpMessageImpl)udt).setSls(((SccpMessageImpl)msg).getSls());
-		
+		// set the SLS
+		((SccpMessageImpl) udt).setSls(((SccpMessageImpl) msg).getSls());
+
 		try {
 			this.sccpRoutingControl.send(udt);
 		} catch (IOException e) {
@@ -306,9 +314,9 @@ public class SccpManagement implements SccpListener {
 			data[4] = 0;
 			udt.setData(data);
 
-			//set the SLS
-			((SccpMessageImpl)udt).setSls(((SccpMessageImpl)msg).getSls());
-			
+			// set the SLS
+			((SccpMessageImpl) udt).setSls(((SccpMessageImpl) msg).getSls());
+
 			try {
 				this.sccpRoutingControl.send(udt);
 			} catch (IOException e) {
@@ -361,9 +369,9 @@ public class SccpManagement implements SccpListener {
 						ssts = new FastList<SubSystemTest>();
 						dpcVsSst.put(affectedPc, ssts);
 					}
-					SubSystemTest sst = new SubSystemTest(1, affectedPc,ssts);
-					
-					//ssts.add(sst);
+					SubSystemTest sst = new SubSystemTest(1, affectedPc, ssts);
+
+					// ssts.add(sst);
 					sst.startTest();
 				}
 
@@ -450,7 +458,7 @@ public class SccpManagement implements SccpListener {
 		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
 		for (FastMap.Entry<Integer, RemoteSubSystem> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
 			RemoteSubSystem remoteSsn = e.getValue();
-			if (remoteSsn.getRemoteSpc() == affectedPc && ( ssn == 1 || remoteSsn.getRemoteSsn() == ssn) ) {
+			if (remoteSsn.getRemoteSpc() == affectedPc && (ssn == 1 || remoteSsn.getRemoteSsn() == ssn)) {
 				remoteSsn.setRemoteSsnProhibited(false);
 				break;
 			}
@@ -471,24 +479,29 @@ public class SccpManagement implements SccpListener {
 					continue;
 				}
 				sst.stopTest();
-				//ssts.remove(sst);
+				// ssts.remove(sst);
 			}
 		}
 
 		return sstForSsn1;
 	}
 
-	private class SubSystemTest implements Runnable { //FIXME: remove "Thread", so we eat less resources.
+	private class SubSystemTest implements Runnable { // FIXME: remove "Thread",
+														// so we eat less
+														// resources.
 
 		private volatile boolean started = false;
-		
+
 		// Flag to check if received an MTP-STATUS indication primitive stating
 		// User Part Unavailable.
 		private volatile boolean recdMtpStatusResp = true;
-		
+
 		private Future testFuture;
-		private FastList<SubSystemTest> testsList; //just a ref to list of testse for DPC, instances of this classes should be there.
-		
+		private FastList<SubSystemTest> testsList; // just a ref to list of
+													// testse for DPC, instances
+													// of this classes should be
+													// there.
+
 		private int ssn = 0;
 		private int affectedPc = 0;
 
@@ -497,7 +510,7 @@ public class SccpManagement implements SccpListener {
 
 		private UnitData udt = null;
 
-		SubSystemTest(int ssn, int affectedPc,FastList<SubSystemTest> testsList) {
+		SubSystemTest(int ssn, int affectedPc, FastList<SubSystemTest> testsList) {
 			this.ssn = ssn;
 			this.affectedPc = affectedPc;
 			this.testsList = testsList;
@@ -528,28 +541,26 @@ public class SccpManagement implements SccpListener {
 		synchronized void stopTest() {
 			started = false;
 			Future f = this.testFuture;
-			if(f!=null)
-			{
+			if (f != null) {
 				this.testsList.remove(this);
 				this.testFuture = null;
 				f.cancel(false);
 			}
-				
+
 			notify();
 		}
 
 		synchronized void startTest() {
-			if(!started)
-			{
+			if (!started) {
 				this.testFuture = managementExecutors.schedule(this, 10000, TimeUnit.MILLISECONDS);
 				started = true;
 				this.testsList.add(this);
 			}
-			
+
 		}
 
 		public synchronized void run() {
-			
+
 			if (started) {
 
 				if (this.ssn == 1 && !this.recdMtpStatusResp) {
@@ -576,12 +587,10 @@ public class SccpManagement implements SccpListener {
 				// TODO : How much to sleep?
 				this.stopTest();
 				this.startTest();
-				
+
 			}// while
 
 		}// run
-
-		
 
 	}// SubSystemTest
 
@@ -589,18 +598,37 @@ public class SccpManagement implements SccpListener {
 	 * 
 	 */
 	public void start() {
-		
+
 		this.dpcVsSst.clear();
 		managementExecutors = Executors.newScheduledThreadPool(1);
-		
+
 	}
 
 	/**
 	 * 
 	 */
 	public void stop() {
-		//no need to stop, it will clean on start, and scheduler is dead.
+		// no need to stop, it will clean on start, and scheduler is dead.
 		managementExecutors.shutdownNow();
-		
+
+	}
+
+	private String getMessageType(int msgType) {
+		switch (msgType) {
+		case SSA:
+			return S_SSA;
+		case SSP:
+			return S_SSP;
+		case SST:
+			return S_SST;
+		case SOR:
+			return S_SOR;
+		case SOG:
+			return S_SOG;
+		case SSC:
+			return S_SSC;
+		default:
+			return S_DEFAULT;
+		}
 	}
 }

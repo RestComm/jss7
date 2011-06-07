@@ -202,22 +202,22 @@ public class RuleTest {
 		// Match any digits keep the digits in the and add a PC(123) & SSN (8).
 
 		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,
-				GlobalTitle.getInstance(0, NumberingPlan.valueOf(1), NatureOfAddress.valueOf(4), "*"), 180);
+				GlobalTitle.getInstance(0, NumberingPlan.valueOf(1), NatureOfAddress.valueOf(4), "*"), 6);
 
-		SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 6045,
-				GlobalTitle.getInstance("-"), 180);
+		SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 6045,
+				GlobalTitle.getInstance("-"), 6);
 
 		Rule rule = new Rule(pattern, "K");
 		rule.setPrimaryAddressId(1);
 
 		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,
-				GlobalTitle.getInstance(0, NumberingPlan.valueOf(1), NatureOfAddress.valueOf(4), "4414257897897"), 180);
+				GlobalTitle.getInstance(0, NumberingPlan.valueOf(1), NatureOfAddress.valueOf(4), "4414257897897"), 6);
 
 		assertTrue(rule.matches(address));
 
 		SccpAddress translatedAddress = rule.translate(address, primaryAddress);
 
-		assertEquals(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, translatedAddress.getAddressIndicator()
+		assertEquals(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, translatedAddress.getAddressIndicator()
 				.getRoutingIndicator());
 		assertEquals(
 				GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS,

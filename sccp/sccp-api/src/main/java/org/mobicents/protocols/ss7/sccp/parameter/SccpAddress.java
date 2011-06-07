@@ -121,7 +121,8 @@ public class SccpAddress implements Parameter, XMLSerializable { // impl? pfff
 	}
 
 	public String toString() {
-		return "pc=" + pc + ",ssn=" + ssn + ",gt=" + gt;
+		return ((new StringBuffer()).append("pc=").append(pc).append(",ssn=").append(ssn).append(",AI=")
+				.append(ai.getValue()).append(",gt=").append(gt)).toString();
 	}
 
 	protected static final XMLFormat<SccpAddress> XML = new XMLFormat<SccpAddress>(SccpAddress.class) {

@@ -25,12 +25,7 @@ package org.mobicents.protocols.ss7.sccp.impl.router;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import javolution.xml.XMLObjectReader;
-import javolution.xml.XMLObjectWriter;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -121,6 +116,27 @@ public class RouterTest {
 
 		assertEquals(0, router.getBackupAddresses().size());
 		router.stop();
+	}
+	
+	@Test
+	public void testSerialization() throws Exception {
+		Router router = new Router();
+		router.start();
+		router.getRules().put(1, rule1);	
+		router.getPrimaryAddresses().put(1, primaryAddr1);
+		router.getPrimaryAddresses().put(2, primaryAddr2);
+		router.stop();
+		
+		router = null;//just
+		
+		Router router1 = new Router();
+		router1.start();
+		assertEquals(1, router1.getRules().size());
+		Rule rule = router1.getRules().values().iterator().next();
+		assertNotNull(rule);
+		
+		assertEquals(2, router1.getPrimaryAddresses().size());
+		router1.stop();
 	}
 
 }

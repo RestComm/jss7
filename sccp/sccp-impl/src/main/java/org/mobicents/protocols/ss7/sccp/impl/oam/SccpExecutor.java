@@ -180,7 +180,11 @@ public class SccpExecutor {
 				if (rss == null) {
 					return SccpOAMMessage.RSS_DOESNT_EXIST;
 				}
-				rss.toString();
+				return rss.toString();
+			}
+			
+			if(this.sccpResource.getRemoteSsns().size() == 0){
+				return SccpOAMMessage.RSS_DOESNT_EXIST;
 			}
 
 			StringBuffer sb = new StringBuffer();
@@ -190,7 +194,7 @@ public class SccpExecutor {
 				RemoteSubSystem rss = e.getValue();
 				sb.append("key=");
 				sb.append(key);
-				sb.append("  rss=");
+				sb.append("  ");
 				sb.append(rss);
 				sb.append("\n");
 			}
@@ -271,6 +275,10 @@ public class SccpExecutor {
 				return rspc.toString();
 			}
 
+			if(this.sccpResource.getRemoteSpcs().size() == 0){
+				return SccpOAMMessage.RSPC_DOESNT_EXIST;
+			}
+			
 			StringBuffer sb = new StringBuffer();
 			for (FastMap.Entry<Integer, RemoteSignalingPointCode> e = this.sccpResource.getRemoteSpcs().head(), end = this.sccpResource
 					.getRemoteSpcs().tail(); (e = e.getNext()) != end;) {
@@ -278,7 +286,7 @@ public class SccpExecutor {
 				RemoteSignalingPointCode rsp = e.getValue();
 				sb.append("key=");
 				sb.append(key);
-				sb.append("  rsp=");
+				sb.append("  ");
 				sb.append(rsp);
 				sb.append("\n");
 			}
@@ -348,6 +356,10 @@ public class SccpExecutor {
 				}
 				return pa.toString();
 			}
+			
+			if(this.router.getPrimaryAddresses().size() == 0){
+				return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
+			}
 
 			StringBuffer sb = new StringBuffer();
 			for (FastMap.Entry<Integer, SccpAddress> e = this.router.getPrimaryAddresses().head(), end = this.router
@@ -356,7 +368,7 @@ public class SccpExecutor {
 				SccpAddress address = e.getValue();
 				sb.append("key=");
 				sb.append(key);
-				sb.append("  primary_add=");
+				sb.append("  ");
 				sb.append(address);
 				sb.append("\n");
 			}
@@ -423,6 +435,10 @@ public class SccpExecutor {
 					return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
 				}
 				return pa.toString();
+			}
+			
+			if(this.router.getBackupAddresses().size() == 0){
+				return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
 			}
 
 			StringBuffer sb = new StringBuffer();
@@ -529,8 +545,9 @@ public class SccpExecutor {
 			return String.format(SccpOAMMessage.NO_PRIMARY_ADDRESS, pAddressId);
 		}
 
+		int sAddressId = -1;
 		if (options.length > 13) {
-			int sAddressId = Integer.parseInt(options[13]);
+			sAddressId = Integer.parseInt(options[13]);
 			SccpAddress sAddress = this.router.getBackupAddresses().get(sAddressId);
 			if (sAddress == null) {
 				return String.format(SccpOAMMessage.NO_BACKUP_ADDRESS, sAddressId);
@@ -540,6 +557,8 @@ public class SccpExecutor {
 		SccpAddress pattern = this.createAddress(options, 5);
 
 		rule = new Rule(pattern, mask);
+		rule.setPrimaryAddressId(pAddressId);
+		rule.setSecondaryAddressId(sAddressId);
 		this.router.getRules().put(ruleId, rule);
 		this.router.store();
 		return SccpOAMMessage.RULE_SUCCESSFULLY_ADDED;
@@ -636,6 +655,10 @@ public class SccpExecutor {
 				return SccpOAMMessage.RULE_DOESNT_EXIST;
 			}
 			return rule.toString();
+		}
+		
+		if(this.router.getRules().size() == 0){
+			return SccpOAMMessage.RULE_DOESNT_EXIST;
 		}
 
 		StringBuffer sb = new StringBuffer();

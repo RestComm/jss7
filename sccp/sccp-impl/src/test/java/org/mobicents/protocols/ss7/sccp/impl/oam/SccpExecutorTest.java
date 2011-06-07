@@ -92,6 +92,7 @@ public class SccpExecutorTest {
 		result = this.sccpExecutor.execute(createRuleCmd.split(" "));
 		assertEquals(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, result);
 		assertEquals(1, this.router.getRules().size());
+		assertEquals(1, this.router.getRules().get(1).getPrimaryAddressId());
 
 		String sec_addressCmd = "sccp backup_add create 1 71 3 8 0 0 3 123456789";
 		this.sccpExecutor.execute(sec_addressCmd.split(" "));
@@ -119,6 +120,9 @@ public class SccpExecutorTest {
 		String rssCmd = "sccp rss create 1 1 8 0";
 		this.sccpExecutor.execute(rssCmd.split(" "));
 		assertEquals(1, this.sccpResource.getRemoteSsns().size());
+		
+		rssCmd = "sccp rss show 1";
+		this.sccpExecutor.execute(rssCmd.split(" "));
 
 	}
 

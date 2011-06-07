@@ -41,6 +41,10 @@ public class RemoteSubSystem implements XMLSerializable {
 	private int remoteSsnFlag;
 
 	private boolean remoteSsnProhibited;
+	
+	public RemoteSubSystem(){
+		
+	}
 
 	public RemoteSubSystem(int remoteSpc, int remoteSsn, int remoteSsnFlag) {
 		this.remoteSpc = remoteSpc;
@@ -68,13 +72,14 @@ public class RemoteSubSystem implements XMLSerializable {
 		return remoteSsnFlag;
 	}
 
-	
 	public String toString() {
-		return "RemoteSubSystem [remoteSpc=" + remoteSpc + ", remoteSsn=" + remoteSsn + ", remoteSsnFlag=" + remoteSsnFlag + ", remoteSsnProhibited="
-				+ remoteSsnProhibited + "]";
+		StringBuffer sb = new StringBuffer();
+		sb.append("rsp=").append(this.remoteSpc).append(" rss=").append(this.remoteSsn).append(" rss-flag=")
+				.append(this.remoteSsnFlag).append(" rss-prohibited=").append(this.remoteSsnProhibited);
+		return sb.toString();
 	}
 
-	
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -83,7 +88,7 @@ public class RemoteSubSystem implements XMLSerializable {
 		return result;
 	}
 
-	
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
