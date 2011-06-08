@@ -48,236 +48,231 @@ import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
 public class XUnitDataImpl extends SccpMessageImpl implements XUnitData {
 
 	// //////////////////
-    // Fixed parts //
-    // //////////////////
-    /**
-     * See Q.713 3.18
-     */
-	
+	// Fixed parts //
+	// //////////////////
+	/**
+	 * See Q.713 3.18
+	 */
 
-    private HopCounter hopCounter;
-    private byte[] data;
-    private SegmentationImpl segmentation;
-    private ImportanceImpl importance;
+	private HopCounter hopCounter;
+	private byte[] data;
+	private SegmentationImpl segmentation;
+	private ImportanceImpl importance;
 
-    private SccpAddressCodec addressCodec = new SccpAddressCodec();
-    
+	private SccpAddressCodec addressCodec = new SccpAddressCodec();
 
-    protected XUnitDataImpl() {
-        super(MESSAGE_TYPE);
-    }
-    
-    protected XUnitDataImpl(HopCounter hopCounter, ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty) {
-        super(MESSAGE_TYPE);
-        this.hopCounter = hopCounter;
-        this.protocolClass = (ProtocolClassImpl) pClass;
-        this.calledParty = calledParty;
-        this.callingParty = (SccpAddress) callingParty;
-    }
+	protected XUnitDataImpl() {
+		super(MESSAGE_TYPE);
+	}
 
-    public HopCounter getHopCounter() {
-        return hopCounter;
-    }
+	protected XUnitDataImpl(HopCounter hopCounter, ProtocolClass pClass, SccpAddress calledParty,
+			SccpAddress callingParty) {
+		super(MESSAGE_TYPE);
+		this.hopCounter = hopCounter;
+		this.protocolClass = (ProtocolClassImpl) pClass;
+		this.calledParty = calledParty;
+		this.callingParty = (SccpAddress) callingParty;
+	}
 
-    public void setHopCounter(HopCounter hopCounter) {
-        this.hopCounter = hopCounter;
-    }
+	public HopCounter getHopCounter() {
+		return hopCounter;
+	}
 
-    public Segmentation getSegmentation() {
-        return segmentation;
-    }
+	public void setHopCounter(HopCounter hopCounter) {
+		this.hopCounter = hopCounter;
+	}
 
-    public void setSegmentation(SegmentationImpl segmentation) {
-        this.segmentation = segmentation;
-    }
+	public Segmentation getSegmentation() {
+		return segmentation;
+	}
 
-    public Importance getImportance() {
-        return (Importance) importance;
-    }
+	public void setSegmentation(SegmentationImpl segmentation) {
+		this.segmentation = segmentation;
+	}
 
-    public void setImportance(ImportanceImpl importance) {
-        this.importance = importance;
-    }
+	public Importance getImportance() {
+		return (Importance) importance;
+	}
 
-    
-    public void encode(OutputStream out) throws IOException {
-        out.write(this.getType());
+	public void setImportance(ImportanceImpl importance) {
+		this.importance = importance;
+	}
 
-        out.write(((AbstractParameter)protocolClass).encode());
-        if (this.hopCounter == null) {
-            throw new IOException("Failed parsing, hop counter is not set.");
-        }
-        out.write(this.hopCounter.getValue());
+	public void encode(OutputStream out) throws IOException {
+		out.write(this.getType());
 
-        byte[] cdp = addressCodec.encode(calledParty);
-        byte[] cnp = addressCodec.encode(callingParty);
+		out.write(((AbstractParameter) protocolClass).encode());
+		if (this.hopCounter == null) {
+			throw new IOException("Failed parsing, hop counter is not set.");
+		}
+		out.write(this.hopCounter.getValue());
 
-        // we have 4 pointers, cdp,cnp,data and optionalm, cdp starts after 4
-        // octests than
-        int len = 4;
-        out.write(len);
+		byte[] cdp = addressCodec.encode(calledParty);
+		byte[] cnp = addressCodec.encode(callingParty);
 
-        len = (cdp.length + len);
-        out.write(len);
+		// we have 4 pointers, cdp,cnp,data and optionalm, cdp starts after 4
+		// octests than
+		int len = 4;
+		out.write(len);
 
-        len += (cnp.length);
-        out.write(len);
-        boolean optionalPresent = false;
-        if (segmentation != null || importance != null) {
-            len += (data.length);
-            out.write(len);
-            optionalPresent = true;
-        } else {
-            // in case there is no optional
-            out.write(0);
-        }
+		len = (cdp.length + len);
+		out.write(len);
 
-        out.write((byte) cdp.length);
-        out.write(cdp);
+		len += (cnp.length);
+		out.write(len);
+		boolean optionalPresent = false;
+		if (segmentation != null || importance != null) {
+			len += (data.length);
+			out.write(len);
+			optionalPresent = true;
+		} else {
+			// in case there is no optional
+			out.write(0);
+		}
 
-        out.write((byte) cnp.length);
-        out.write(cnp);
+		out.write((byte) cdp.length);
+		out.write(cdp);
 
-        out.write((byte) data.length);
-        out.write(data);
+		out.write((byte) cnp.length);
+		out.write(cnp);
 
-        if (segmentation != null) {
-            optionalPresent = true;
-            out.write(Segmentation.PARAMETER_CODE);
-            byte[] b = segmentation.encode();
-            out.write(b.length);
-            out.write(b);
-        }
+		out.write((byte) data.length);
+		out.write(data);
 
-        if (importance != null) {
-            optionalPresent = true;
-            out.write(Importance.PARAMETER_CODE);
-            byte[] b = importance.encode();
-            out.write(b.length);
-            out.write(b);
-        }
+		if (segmentation != null) {
+			optionalPresent = true;
+			out.write(Segmentation.PARAMETER_CODE);
+			byte[] b = segmentation.encode();
+			out.write(b.length);
+			out.write(b);
+		}
 
-        if (optionalPresent) {
-            out.write(0x00);
-        }
+		if (importance != null) {
+			optionalPresent = true;
+			out.write(Importance.PARAMETER_CODE);
+			byte[] b = importance.encode();
+			out.write(b.length);
+			out.write(b);
+		}
 
-    }
+		if (optionalPresent) {
+			out.write(0x00);
+		}
 
-    
-    public void decode(InputStream in) throws IOException {
+	}
 
-    	protocolClass = new ProtocolClassImpl();
-    	((AbstractParameter)protocolClass).decode(new byte[]{(byte)in.read()});
+	public void decode(InputStream in) throws IOException {
 
-        this.hopCounter = new HopCounterImpl((byte) in.read());
-        if (this.hopCounter.getValue() > HopCounter.COUNT_HIGH || this.hopCounter.getValue() <= HopCounter.COUNT_LOW) {
-            throw new IOException("Hop Counter must be between 1 and 15, it is: " + this.hopCounter);
-        }
+		protocolClass = new ProtocolClassImpl();
+		((AbstractParameter) protocolClass).decode(new byte[] { (byte) in.read() });
 
-        int pointer = in.read() & 0xff;
-        in.mark(in.available());
-        if (pointer - 1 != in.skip(pointer - 1)) {
-            throw new IOException("Not enough data in buffer");
-        }
-        int len = in.read() & 0xff;
+		this.hopCounter = new HopCounterImpl((byte) in.read());
+		if (this.hopCounter.getValue() > HopCounter.COUNT_HIGH || this.hopCounter.getValue() <= HopCounter.COUNT_LOW) {
+			throw new IOException("Hop Counter must be between 1 and 15, it is: " + this.hopCounter);
+		}
 
-        byte[] buffer = new byte[len];
-        in.read(buffer);
+		int pointer = in.read() & 0xff;
+		in.mark(in.available());
+		if (pointer - 1 != in.skip(pointer - 1)) {
+			throw new IOException("Not enough data in buffer");
+		}
+		int len = in.read() & 0xff;
 
-        calledParty = addressCodec.decode(buffer);
+		byte[] buffer = new byte[len];
+		in.read(buffer);
 
-        in.reset();
+		calledParty = addressCodec.decode(buffer);
 
-        pointer = in.read() & 0xff;
+		in.reset();
 
-        in.mark(in.available());
+		pointer = in.read() & 0xff;
 
-        if (pointer - 1 != in.skip(pointer - 1)) {
-            throw new IOException("Not enough data in buffer");
-        }
-        len = in.read() & 0xff;
+		in.mark(in.available());
 
-        buffer = new byte[len];
-        in.read(buffer);
+		if (pointer - 1 != in.skip(pointer - 1)) {
+			throw new IOException("Not enough data in buffer");
+		}
+		len = in.read() & 0xff;
 
-        callingParty = addressCodec.decode(buffer);
+		buffer = new byte[len];
+		in.read(buffer);
 
-        in.reset();
-        pointer = in.read() & 0xff;
-        in.mark(in.available());
-        if (pointer - 1 != in.skip(pointer - 1)) {
-            throw new IOException("Not enough data in buffer");
-        }
-        len = in.read() & 0xff;
+		callingParty = addressCodec.decode(buffer);
 
-        data = new byte[len];
-        in.read(data);
+		in.reset();
+		pointer = in.read() & 0xff;
+		in.mark(in.available());
+		if (pointer - 1 != in.skip(pointer - 1)) {
+			throw new IOException("Not enough data in buffer");
+		}
+		len = in.read() & 0xff;
 
-        in.reset();
-        pointer = in.read() & 0xff;
-        in.mark(in.available());
+		data = new byte[len];
+		in.read(data);
 
-        if (pointer == 0) {
-            // we are done
-            return;
-        }
-        if (pointer - 1 != in.skip(pointer - 1)) {
-            throw new IOException("Not enough data in buffer");
-        }
+		in.reset();
+		pointer = in.read() & 0xff;
+		in.mark(in.available());
 
-        //FIXME: detect if there is only EOP present?
-        int paramCode = 0;
-        //                                      EOP
-        while ((paramCode = in.read() & 0xFF) != 0) {
-            len = in.read() & 0xff;
-            buffer = new byte[len];
-            in.read(buffer);
-            this.decodeOptional(paramCode, buffer);
+		if (pointer == 0) {
+			// we are done
+			return;
+		}
+		if (pointer - 1 != in.skip(pointer - 1)) {
+			throw new IOException("Not enough data in buffer");
+		}
 
-        // we should have one octet more here
-        }
+		// FIXME: detect if there is only EOP present?
+		int paramCode = 0;
+		// EOP
+		while ((paramCode = in.read() & 0xFF) != 0) {
+			len = in.read() & 0xff;
+			buffer = new byte[len];
+			in.read(buffer);
+			this.decodeOptional(paramCode, buffer);
 
-    }
+			// we should have one octet more here
+		}
 
-    private void decodeOptional(int code, byte[] buffer) throws IOException {
+	}
 
-        switch (code) {
-            case Segmentation.PARAMETER_CODE :
-                this.segmentation = new SegmentationImpl();
-                this.segmentation.decode(buffer);
-                break;
-            case Importance.PARAMETER_CODE : 
-                this.importance = new ImportanceImpl();
-                this.importance.decode(buffer);
-                break;
+	private void decodeOptional(int code, byte[] buffer) throws IOException {
 
-            default:
-                throw new IOException("Uknown optional parameter code: " + code);
-        }
-    }
+		switch (code) {
+		case Segmentation.PARAMETER_CODE:
+			this.segmentation = new SegmentationImpl();
+			this.segmentation.decode(buffer);
+			break;
+		case Importance.PARAMETER_CODE:
+			this.importance = new ImportanceImpl();
+			this.importance.decode(buffer);
+			break;
 
-    public void setImportance(Importance p) {
-        this.importance = (ImportanceImpl) p;
-    }
+		default:
+			throw new IOException("Uknown optional parameter code: " + code);
+		}
+	}
 
-    public void setSegmentation(Segmentation p) {
-        this.segmentation = (SegmentationImpl) p;
-    }
+	public void setImportance(Importance p) {
+		this.importance = (ImportanceImpl) p;
+	}
 
-    public byte[] getData() {
-        return data;
-    }
+	public void setSegmentation(Segmentation p) {
+		this.segmentation = (SegmentationImpl) p;
+	}
 
-    public void setData(byte[] data) {
-        this.data = data;
-    }
+	public byte[] getData() {
+		return data;
+	}
 
-    
-    public String toString() {
-        return "XUDT[calledPartyAddress=" + calledParty + ", callingPartyAddress=" + callingParty + "]";
-    }
+	public void setData(byte[] data) {
+		this.data = data;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("XUDT[").append(super.toString()).append(" DataSize=").append(data.length).append("]");
+		return sb.toString();
+	}
 }
-
-
-
-

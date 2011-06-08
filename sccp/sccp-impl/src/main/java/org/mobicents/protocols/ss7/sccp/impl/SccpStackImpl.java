@@ -38,7 +38,6 @@ import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.Router;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.utils.Utils;
 
 /**
@@ -209,7 +208,7 @@ public class SccpStackImpl implements SccpStack {
 												// :)
 
 		protected MessageHandler(byte[] msu) {
-			System.out.println(Utils.hexDump(msu));
+			//System.out.println(Utils.hexDump(msu));
 			this.data = new ByteArrayInputStream(msu);
 			this.message = null;
 			this.mtpOriginated = true;
@@ -274,8 +273,11 @@ public class SccpStackImpl implements SccpStack {
 					return;
 				}
 			}
-			// not each msg suppose routing or delivery to listner
+			// not each msg suppose routing or delivery to listener
 			if (message != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug(String.format("Rx : SCCP Message=%s", message.toString()));
+				}
 				try {
 					if (mtpOriginated) {
 						sccpRoutingControl.routeMssgFromMtp(message);
@@ -301,7 +303,7 @@ public class SccpStackImpl implements SccpStack {
 			while (state == State.RUNNING) {
 
 				try {
-					//Execute the MTP3UserPart
+					// Execute the MTP3UserPart
 					mtp3UserPart.execute();
 
 					rxBytes = 0;
@@ -309,7 +311,6 @@ public class SccpStackImpl implements SccpStack {
 					try {
 						rxBytes = mtp3UserPart.read(rxBuffer);
 						if (rxBytes != 0) {
-							System.out.println("rxBytes = " + rxBytes);
 							byte[] data = new byte[rxBytes];
 							rxBuffer.flip();
 							rxBuffer.get(data);
@@ -332,8 +333,7 @@ public class SccpStackImpl implements SccpStack {
 						}
 					}// while txDataQueue
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					logger.error("Error in MtpStreamHandler", e1);
 				}
 			}// end of while
 		}

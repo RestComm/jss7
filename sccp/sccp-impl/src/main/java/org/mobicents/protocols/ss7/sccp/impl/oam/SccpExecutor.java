@@ -687,7 +687,7 @@ public class SccpExecutor {
 		pc = Integer.parseInt(options[index++]);
 		ssn = Integer.parseInt(options[index++]);
 		int tt = Integer.parseInt(options[index++]);
-		NumberingPlan np = NumberingPlan.valueOf(tt = Integer.parseInt(options[index++]));
+		NumberingPlan np = NumberingPlan.valueOf(Integer.parseInt(options[index++]));
 		NatureOfAddress nai = NatureOfAddress.valueOf(Integer.parseInt(options[index++]));
 
 		String digits = options[index++];

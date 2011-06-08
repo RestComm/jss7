@@ -34,102 +34,103 @@ import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class UnitDataImpl extends SccpMessageImpl implements UnitData {
 
-    protected byte[] data;
+	protected byte[] data;
 
-    private SccpAddressCodec addressCodec = new SccpAddressCodec();
-    
-    protected UnitDataImpl() {
-        super(MESSAGE_TYPE);
-    }
-    
-    protected UnitDataImpl(ProtocolClass pClass, SccpAddress calledParty,
-            SccpAddress callingParty) {
-        super(MESSAGE_TYPE);
-        this.protocolClass = (ProtocolClassImpl) pClass;
-        this.calledParty = (SccpAddress) calledParty;
-        this.callingParty = (SccpAddress) callingParty;
-    }
+	private SccpAddressCodec addressCodec = new SccpAddressCodec();
 
-    public byte[] getData() {
-        return data;
-    }
+	protected UnitDataImpl() {
+		super(MESSAGE_TYPE);
+	}
 
-    public void encode(OutputStream out) throws IOException {
-        out.write(0x09);
+	protected UnitDataImpl(ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty) {
+		super(MESSAGE_TYPE);
+		this.protocolClass = (ProtocolClassImpl) pClass;
+		this.calledParty = (SccpAddress) calledParty;
+		this.callingParty = (SccpAddress) callingParty;
+	}
 
-        out.write(((AbstractParameter)protocolClass).encode());
+	public byte[] getData() {
+		return data;
+	}
 
-        byte[] cdp = addressCodec.encode(calledParty);
-        byte[] cnp = addressCodec.encode(callingParty);
+	public void encode(OutputStream out) throws IOException {
+		out.write(0x09);
 
-        int len = 3;
-        out.write(len);
+		out.write(((AbstractParameter) protocolClass).encode());
 
-        len = (cdp.length + 3);
-        out.write(len);
+		byte[] cdp = addressCodec.encode(calledParty);
+		byte[] cnp = addressCodec.encode(callingParty);
 
-        len += (cnp.length);
-        out.write(len);
+		int len = 3;
+		out.write(len);
 
-        out.write((byte) cdp.length);
-        out.write(cdp);
+		len = (cdp.length + 3);
+		out.write(len);
 
-        out.write((byte) cnp.length);
-        out.write(cnp);
+		len += (cnp.length);
+		out.write(len);
 
-        out.write((byte) data.length);
-        out.write(data);
-    }
+		out.write((byte) cdp.length);
+		out.write(cdp);
 
-    public void decode(InputStream in) throws IOException {
-    	protocolClass = new ProtocolClassImpl();
-    	((AbstractParameter)protocolClass).decode(new byte[]{(byte) in.read()});
+		out.write((byte) cnp.length);
+		out.write(cnp);
 
-        int cpaPointer = in.read() & 0xff;
-        in.mark(in.available());
+		out.write((byte) data.length);
+		out.write(data);
+	}
 
-        in.skip(cpaPointer - 1);
-        int len = in.read() & 0xff;
+	public void decode(InputStream in) throws IOException {
+		protocolClass = new ProtocolClassImpl();
+		((AbstractParameter) protocolClass).decode(new byte[] { (byte) in.read() });
 
-        byte[] buffer = new byte[len];
-        in.read(buffer);
+		int cpaPointer = in.read() & 0xff;
+		in.mark(in.available());
 
-        calledParty = addressCodec.decode(buffer);
+		in.skip(cpaPointer - 1);
+		int len = in.read() & 0xff;
 
-        in.reset();
-        cpaPointer = in.read() & 0xff;
-        in.mark(in.available());
+		byte[] buffer = new byte[len];
+		in.read(buffer);
 
-        in.skip(cpaPointer - 1);
-        len = in.read() & 0xff;
+		calledParty = addressCodec.decode(buffer);
 
-        buffer = new byte[len];
-        in.read(buffer);
+		in.reset();
+		cpaPointer = in.read() & 0xff;
+		in.mark(in.available());
 
-        callingParty = addressCodec.decode(buffer);
+		in.skip(cpaPointer - 1);
+		len = in.read() & 0xff;
 
-        in.reset();
-        cpaPointer = in.read() & 0xff;
+		buffer = new byte[len];
+		in.read(buffer);
 
-        in.skip(cpaPointer - 1);
-        len = in.read() & 0xff;
+		callingParty = addressCodec.decode(buffer);
 
-        data = new byte[len];
-        in.read(data);
-    }
+		in.reset();
+		cpaPointer = in.read() & 0xff;
 
-    public void setData(byte[] data) {
-        this.data = data;
-    }
+		in.skip(cpaPointer - 1);
+		len = in.read() & 0xff;
 
-    
-    public String toString() {
-        return "UDT[calledPartyAddress=" + calledParty + ", callingPartyAddress=" + callingParty + "data length=" + data.length + "]";
-    }
-    
+		data = new byte[len];
+		in.read(data);
+	}
+
+	public void setData(byte[] data) {
+		this.data = data;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("UDT[").append(super.toString()).append(" DataSize=").append(data.length).append("]");
+		return sb.toString();
+	}
+
 }

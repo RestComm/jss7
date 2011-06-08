@@ -103,6 +103,15 @@ public abstract class SccpMessageImpl implements SccpMessage {
 		this.protocolClass = protocolClass;
 	}
 
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("sls=").append(this.sls).append(" opc=").append(this.opc).append(" dpc=").append(this.dpc)
+				.append(" CallingAddress(").append(this.calledParty).append(") CalledParty(").append(this.calledParty)
+				.append(")");
+		return sb.toString();
+	}
+
 	public abstract void decode(InputStream in) throws IOException;
 
 	public abstract void encode(OutputStream out) throws IOException;

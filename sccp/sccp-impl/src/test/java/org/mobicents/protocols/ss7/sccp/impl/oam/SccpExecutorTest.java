@@ -23,14 +23,22 @@
 package org.mobicents.protocols.ss7.sccp.impl.oam;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
+import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
+import org.mobicents.protocols.ss7.indicator.NumberingPlan;
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.router.Router;
+import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * @author amit bhayani
@@ -94,6 +102,25 @@ public class SccpExecutorTest {
 		assertEquals(1, this.router.getRules().size());
 		assertEquals(1, this.router.getRules().get(1).getPrimaryAddressId());
 
+		createRuleCmd = "sccp rule create 2 K 18 0 180 0 1 4 * 1";
+		result = this.sccpExecutor.execute(createRuleCmd.split(" "));
+		assertEquals(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, result);
+		assertEquals(2, this.router.getRules().size());
+		Rule rule = this.router.getRules().get(2);
+		assertNotNull(rule);
+		SccpAddress pattern = rule.getPattern();
+		assertNotNull(pattern);
+		assertEquals(18, (int) pattern.getAddressIndicator().getValue());
+		assertEquals(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, pattern.getAddressIndicator()
+				.getRoutingIndicator());
+		assertEquals(
+				GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS,
+				pattern.getGlobalTitle().getIndicator());
+		GT0100 gt = (GT0100) pattern.getGlobalTitle();
+		assertEquals(0, gt.getTranslationType());
+		assertEquals(NumberingPlan.ISDN_TELEPHONY, gt.getNumberingPlan());
+		assertEquals(NatureOfAddress.INTERNATIONAL, gt.getNatureOfAddress());
+
 		String sec_addressCmd = "sccp backup_add create 1 71 3 8 0 0 3 123456789";
 		this.sccpExecutor.execute(sec_addressCmd.split(" "));
 		assertEquals(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, result);
@@ -103,11 +130,11 @@ public class SccpExecutorTest {
 		this.sccpExecutor.execute(createRuleCmd2.split(" "));
 		assertEquals(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, result);
 		assertEquals(2, this.router.getRules().size());
-		
+
 		String createRuleCmd3 = "sccp rule create 3 K 18 0 180 0 1 4 * 1";
 		this.sccpExecutor.execute(createRuleCmd3.split(" "));
 		assertEquals(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, result);
-		assertEquals(3, this.router.getRules().size());		
+		assertEquals(3, this.router.getRules().size());
 
 	}
 
@@ -120,7 +147,7 @@ public class SccpExecutorTest {
 		String rssCmd = "sccp rss create 1 1 8 0";
 		this.sccpExecutor.execute(rssCmd.split(" "));
 		assertEquals(1, this.sccpResource.getRemoteSsns().size());
-		
+
 		rssCmd = "sccp rss show 1";
 		this.sccpExecutor.execute(rssCmd.split(" "));
 

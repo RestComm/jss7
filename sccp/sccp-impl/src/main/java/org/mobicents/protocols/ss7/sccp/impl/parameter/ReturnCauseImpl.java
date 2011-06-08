@@ -48,11 +48,10 @@ public class ReturnCauseImpl extends AbstractParameter implements ReturnCause {
 	}
 
 	public void decode(InputStream in) throws IOException {
-		if(in.read()!=1)
-		{
+		if (in.read() != 1) {
 			throw new IOException();
 		}
-	
+
 		int b = in.read() & 0xFf;
 
 		this.value = b;
@@ -69,9 +68,47 @@ public class ReturnCauseImpl extends AbstractParameter implements ReturnCause {
 
 		this.value = b;
 	}
-	
+
 	public byte[] encode() throws IOException {
-		return new byte[]{(byte) this.value};
+		return new byte[] { (byte) this.value };
+	}
+
+	public String toString() {
+		switch (this.value) {
+		case NO_TRANSLATION_FOR_NATURE:
+			return "NO_TRANSLATION_FOR_NATURE";
+		case NO_TRANSLATION_FOR_ADDRESS:
+			return "NO_TRANSLATION_FOR_ADDRESS";
+		case SUBSYSTEM_CONGESTION:
+			return "SUBSYSTEM_CONGESTION";
+		case SUBSYSTEM_FAILURE:
+			return "SUBSYSTEM_FAILURE";
+		case UNEQUIPED_USER:
+			return "UNEQUIPED_USER";
+		case MTP_FAILURE:
+			return "MTP_FAILURE";
+		case NETWORK_CONGESTION:
+			return "NETWORK_CONGESTION";
+		case UNQALIFIED:
+			return "UNQALIFIED";
+		case ERR_IN_MSG_TRANSPORT:
+			return "ERR_IN_MSG_TRANSPORT";
+		case ERR_IN_LOCAL_PROCESSING:
+			return "ERR_IN_LOCAL_PROCESSING";
+		case CANNOT_REASEMBLE:
+			return "CANNOT_REASEMBLE";
+		case SCCP_FAILURE:
+			return "SCCP_FAILURE";
+		case HOP_COUNTER_VIOLATION:
+			return "HOP_COUNTER_VIOLATION";
+		case SEG_NOT_SUPPORTED:
+			return "SEG_NOT_SUPPORTED";
+		case SEG_FAILURE:
+			return "SEG_FAILURE";
+		default:
+			return ("Unidentified ReturnCause" + this.value);
+
+		}
 	}
 
 }

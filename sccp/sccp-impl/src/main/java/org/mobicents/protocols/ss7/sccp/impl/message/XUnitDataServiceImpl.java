@@ -279,12 +279,13 @@ public class XUnitDataServiceImpl extends SccpMessageImpl implements XUnitDataSe
         }
     }
 
-   
-
-    
-    public String toString() {
-        return "XUDTS[calledPartyAddress=" + calledParty + ", callingPartyAddress=" + callingParty + ", returnCause="+ returnCause +" ]";
-    }
+    @Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("XUDTS[").append(super.toString()).append(" DataSize=").append(data.length).append(" ReturnCause=")
+				.append(this.returnCause).append("]");
+		return sb.toString();
+	}
 }
 
 

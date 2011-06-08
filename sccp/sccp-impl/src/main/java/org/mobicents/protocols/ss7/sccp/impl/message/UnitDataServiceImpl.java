@@ -27,17 +27,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.mobicents.protocols.ss7.sccp.impl.parameter.AbstractParameter;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.HopCounterImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ReturnCauseImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressCodec;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentationImpl;
 import org.mobicents.protocols.ss7.sccp.message.UnitDataService;
-import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
-import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
 
 /**
  * See Q.713 4.18
@@ -47,42 +41,36 @@ import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
  */
 public class UnitDataServiceImpl extends SccpMessageImpl implements UnitDataService {
 
+	// //////////////////
+	// Fixed parts //
+	// //////////////////
+	/**
+	 * See Q.713 3.18
+	 */
+	// private byte hopCounter = HOP_COUNT_NOT_SET;
 
-      
-    // //////////////////
-    // Fixed parts //
-    // //////////////////
-    /**
-     * See Q.713 3.18
-     */
-    //    private byte hopCounter = HOP_COUNT_NOT_SET;
+	private byte[] data;
+	private ReturnCause returnCause;
+	private SccpAddressCodec addressCodec = new SccpAddressCodec();
 
-    private byte[] data;
-    private ReturnCause returnCause;
-    private SccpAddressCodec addressCodec = new SccpAddressCodec();
-    
+	protected UnitDataServiceImpl() {
+		super(MESSAGE_TYPE);
+	}
 
-    protected UnitDataServiceImpl() {
-        super(MESSAGE_TYPE);
-    }
-    
-    protected UnitDataServiceImpl(ReturnCause returnCause, SccpAddress calledParty, SccpAddress callingParty) {
-        super(MESSAGE_TYPE);
-      
-        this.returnCause =  returnCause;
-        this.calledParty = calledParty;
-        this.callingParty =  callingParty;
-    }
+	protected UnitDataServiceImpl(ReturnCause returnCause, SccpAddress calledParty, SccpAddress callingParty) {
+		super(MESSAGE_TYPE);
 
-
-    
+		this.returnCause = returnCause;
+		this.calledParty = calledParty;
+		this.callingParty = callingParty;
+	}
 
 	public ReturnCause getReturnCause() {
 		return this.returnCause;
 	}
 
 	public void setReturnCause(ReturnCause rc) {
-		this.returnCause  = (ReturnCauseImpl) rc;
+		this.returnCause = (ReturnCauseImpl) rc;
 	}
 
 	public byte[] getData() {
@@ -94,81 +82,76 @@ public class UnitDataServiceImpl extends SccpMessageImpl implements UnitDataServ
 	}
 
 	public void encode(OutputStream out) throws IOException {
-        out.write(this.getType());
+		out.write(this.getType());
 
-        out.write(((AbstractParameter)this.returnCause).encode());
-        
+		out.write(((AbstractParameter) this.returnCause).encode());
 
-        byte[] cdp = addressCodec.encode(calledParty);
-        byte[] cnp = addressCodec.encode(callingParty);
+		byte[] cdp = addressCodec.encode(calledParty);
+		byte[] cnp = addressCodec.encode(callingParty);
 
-        int len = 3;
-        out.write(len);
+		int len = 3;
+		out.write(len);
 
-        len = (cdp.length + 3);
-        out.write(len);
+		len = (cdp.length + 3);
+		out.write(len);
 
-        len += (cnp.length);
-        out.write(len);
+		len += (cnp.length);
+		out.write(len);
 
-        out.write((byte) cdp.length);
-        out.write(cdp);
+		out.write((byte) cdp.length);
+		out.write(cdp);
 
-        out.write((byte) cnp.length);
-        out.write(cnp);
+		out.write((byte) cnp.length);
+		out.write(cnp);
 
-        out.write((byte) data.length);
-        out.write(data);
+		out.write((byte) data.length);
+		out.write(data);
 
-    }
+	}
 
-    
-    public void decode(InputStream in) throws IOException {
+	public void decode(InputStream in) throws IOException {
 
-    	this.returnCause = new ReturnCauseImpl();
-    	((AbstractParameter)this.returnCause).decode(new byte[]{(byte) in.read()});
-    	int cpaPointer = in.read() & 0xff;
-        in.mark(in.available());
+		this.returnCause = new ReturnCauseImpl();
+		((AbstractParameter) this.returnCause).decode(new byte[] { (byte) in.read() });
+		int cpaPointer = in.read() & 0xff;
+		in.mark(in.available());
 
-        in.skip(cpaPointer - 1);
-        int len = in.read() & 0xff;
+		in.skip(cpaPointer - 1);
+		int len = in.read() & 0xff;
 
-        byte[] buffer = new byte[len];
-        in.read(buffer);
+		byte[] buffer = new byte[len];
+		in.read(buffer);
 
-        calledParty = addressCodec.decode(buffer);
+		calledParty = addressCodec.decode(buffer);
 
-        in.reset();
-        cpaPointer = in.read() & 0xff;
-        in.mark(in.available());
+		in.reset();
+		cpaPointer = in.read() & 0xff;
+		in.mark(in.available());
 
-        in.skip(cpaPointer - 1);
-        len = in.read() & 0xff;
+		in.skip(cpaPointer - 1);
+		len = in.read() & 0xff;
 
-        buffer = new byte[len];
-        in.read(buffer);
+		buffer = new byte[len];
+		in.read(buffer);
 
-        callingParty = addressCodec.decode(buffer);
+		callingParty = addressCodec.decode(buffer);
 
-        in.reset();
-        cpaPointer = in.read() & 0xff;
+		in.reset();
+		cpaPointer = in.read() & 0xff;
 
-        in.skip(cpaPointer - 1);
-        len = in.read() & 0xff;
+		in.skip(cpaPointer - 1);
+		len = in.read() & 0xff;
 
-        data = new byte[len];
-        in.read(data);
+		data = new byte[len];
+		in.read(data);
 
-    }
+	}
 
-  
-
-    
-    public String toString() {
-        return "UDTS[calledPartyAddress=" + calledParty + ", callingPartyAddress=" + callingParty + ", returnCause="+ returnCause +" ]";
-    }
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("UDTS[").append(super.toString()).append(" DataSize=").append(data.length).append(" ReturnCause=")
+				.append(this.returnCause).append("]");
+		return sb.toString();
+	}
 }
-
-
-
-

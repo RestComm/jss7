@@ -167,8 +167,8 @@ public class SccpManagement implements SccpListener {
 		int affectedPc = (data[2] & 0xff) | ((data[3] & 0xff) << 8);
 		int subsystemMultiplicity = data[3] & 0xff;
 
-		if (logger.isInfoEnabled()) {
-			logger.info(String
+		if (logger.isDebugEnabled()) {
+			logger.debug(String
 					.format("Received SCMG message. Message Type=%s, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
 							this.getMessageType(messgType), affectedSsn, affectedPc, subsystemMultiplicity, seqControl));
 		}
@@ -286,6 +286,10 @@ public class SccpManagement implements SccpListener {
 		// set the SLS
 		((SccpMessageImpl) udt).setSls(((SccpMessageImpl) msg).getSls());
 
+		if (logger.isDebugEnabled()) {
+			logger.debug(String.format("Tx :SSA SCCP Message=%s Affected SSN=%d", msg.toString(), affectedSsn));
+		}
+
 		try {
 			this.sccpRoutingControl.send(udt);
 		} catch (IOException e) {
@@ -316,6 +320,10 @@ public class SccpManagement implements SccpListener {
 
 			// set the SLS
 			((SccpMessageImpl) udt).setSls(((SccpMessageImpl) msg).getSls());
+
+			if (logger.isDebugEnabled()) {
+				logger.debug(String.format("Tx :SSP SCCP Message=%s Affected SSN=%d", msg.toString(), ssn));
+			}
 
 			try {
 				this.sccpRoutingControl.send(udt);
@@ -486,9 +494,8 @@ public class SccpManagement implements SccpListener {
 		return sstForSsn1;
 	}
 
-	private class SubSystemTest implements Runnable { // FIXME: remove "Thread",
-														// so we eat less
-														// resources.
+	private class SubSystemTest implements Runnable {
+		// FIXME: remove "Thread", so we eat less resources.
 
 		private volatile boolean started = false;
 
@@ -575,6 +582,10 @@ public class SccpManagement implements SccpListener {
 				// Set it false again so we wait for response again after
 				// sending SST for SSN = 1 bellow
 				this.recdMtpStatusResp = false;
+
+				if (logger.isDebugEnabled()) {
+					logger.debug(String.format("Tx :SST SCCP Message=%s Affected SSN=%d", udt.toString(), ssn));
+				}
 
 				try {
 					sccpRoutingControl.send(udt);

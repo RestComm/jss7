@@ -74,14 +74,14 @@ public class SccpRoutingControl {
 
 	public void start() {
 		// NOP for now
-		
+
 	}
 
 	public void stop() {
 		// NOP for now
-		
+
 	}
-	
+
 	protected void routeMssgFromMtp(SccpMessageImpl msg) throws IOException {
 		// TODO if the local SCCP or node is in an overload condition, SCRC
 		// shall inform SCMG
@@ -113,11 +113,10 @@ public class SccpRoutingControl {
 			}
 
 			// Notify Listener
-			try{
-				//JIC: user may behave bad and throw something here.
+			try {
+				// JIC: user may behave bad and throw something here.
 				listener.onMessage(msg, msg.getSls());
-			}catch(Exception e)
-			{
+			} catch (Exception e) {
 				if (logger.isEnabledFor(Level.WARN)) {
 					logger.warn(String.format(
 							"Received SccpMessage=%s from MTP and user threw exception from listener!", msg));
@@ -125,7 +124,7 @@ public class SccpRoutingControl {
 			}
 			break;
 		case ROUTING_BASED_ON_GLOBAL_TITLE:
-			this.translationFunction(msg,returnError, true);
+			this.translationFunction(msg, returnError, true);
 			break;
 		default:
 			// This can never happen
@@ -141,7 +140,7 @@ public class SccpRoutingControl {
 	protected void send(SccpMessage message) throws IOException {
 
 		int dpc = message.getCalledPartyAddress().getSignalingPointCode();
-		int sls = ((SccpMessageImpl)message).getSls();
+		int sls = ((SccpMessageImpl) message).getSls();
 		int ssi = this.sccpStackImpl.ni << 2;
 
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -153,15 +152,19 @@ public class SccpRoutingControl {
 		bout.write((byte) (((this.sccpStackImpl.localSpc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
 
 		((SccpMessageImpl) message).encode(bout);
+
 		byte[] msg = bout.toByteArray();
 		this.sccpStackImpl.txDataQueue.add(msg);
 	}
-	
-	private void translationFunction(SccpMessage msg, final boolean returnError,final boolean fromMtp) throws IOException {
+
+	private void translationFunction(SccpMessage msg, final boolean returnError, final boolean fromMtp)
+			throws IOException {
 
 		SccpAddress calledPartyAddress = msg.getCalledPartyAddress();
 
-		//boolean returnError = ((SccpMessageImpl) msg).getProtocolClass().getHandling() == ProtocolClass.HANDLING_RET_ERR;
+		// boolean returnError = ((SccpMessageImpl)
+		// msg).getProtocolClass().getHandling() ==
+		// ProtocolClass.HANDLING_RET_ERR;
 
 		Rule rule = this.sccpStackImpl.router.find(calledPartyAddress);
 
@@ -217,8 +220,7 @@ public class SccpRoutingControl {
 
 			if (remoteSpc.isRemoteSpcProhibited()) {
 				// try secondary address
-				translationAddress = this.sccpStackImpl.router.getBackupAddresses()
-						.get(rule.getSecondaryAddressId());
+				translationAddress = this.sccpStackImpl.router.getBackupAddresses().get(rule.getSecondaryAddressId());
 
 				if (translationAddress == null) {
 					// failed. Secondary Translation Address not available.
@@ -313,11 +315,10 @@ public class SccpRoutingControl {
 						return;
 					}
 					// Notify Listener
-					try{
-						//JIC: user may behave bad and throw something here.
-						listener.onMessage(msg, ((SccpMessageImpl)msg).getSls());
-					}catch(Exception e)
-					{
+					try {
+						// JIC: user may behave bad and throw something here.
+						listener.onMessage(msg, ((SccpMessageImpl) msg).getSls());
+					} catch (Exception e) {
 						if (logger.isEnabledFor(Level.WARN)) {
 							logger.warn(String.format(
 									"Received SccpMessage=%s from MTP and user threw exception from listener!", msg));
@@ -337,7 +338,7 @@ public class SccpRoutingControl {
 						return;
 					}
 
-					this.translationFunction(msg,returnError, fromMtp);
+					this.translationFunction(msg, returnError, fromMtp);
 
 				} else {
 					// if an SSN equal to zero is present but not a GT (case 2
@@ -386,6 +387,10 @@ public class SccpRoutingControl {
 						return;
 					}
 
+					if (logger.isDebugEnabled()) {
+						logger.debug(String.format("Tx : SCCP Message=%s", msg.toString()));
+					}
+
 					this.send(msg);
 				} else if (gt != null) {
 					// if the GT is present but no SSN or a zero SSN is present
@@ -423,6 +428,11 @@ public class SccpRoutingControl {
 						}
 						return;
 					}
+
+					if (logger.isDebugEnabled()) {
+						logger.debug(String.format("Tx : SCCP Message=%s", msg.toString()));
+					}
+
 					// send to MTP
 					this.send(msg);
 				} else {
@@ -464,7 +474,7 @@ public class SccpRoutingControl {
 				return;
 			}
 
-			this.translationFunction(msg,returnError, fromMtp);
+			this.translationFunction(msg, returnError, fromMtp);
 
 		}
 
@@ -494,9 +504,12 @@ public class SccpRoutingControl {
 			}
 		}
 
-		//TODO : SeqControl should be set from original message?
+		// TODO : SeqControl should be set from original message?
 		if (ans != null) {
 			if (fromMtp) {
+				if (logger.isDebugEnabled()) {
+					logger.debug(String.format("Tx : SCCP Message=%s", msg.toString()));
+				}
 				this.send(ans);
 			} else {
 				this.route(ans, fromMtp);
