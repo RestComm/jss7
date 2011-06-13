@@ -78,16 +78,14 @@ public class MAPDialogImpl implements MAPDialog {
 
 	private boolean mapAcceptInfoFired = false;
 
-	protected MAPDialogImpl(MAPApplicationContext appCntx, Dialog tcapDialog,
-			MAPProviderImpl mapProviderImpl) {
+	protected MAPDialogImpl(MAPApplicationContext appCntx, Dialog tcapDialog, MAPProviderImpl mapProviderImpl) {
 		this.appCntx = appCntx;
 		this.tcapDialog = tcapDialog;
 		this.mapProviderImpl = mapProviderImpl;
 	}
 
-	protected MAPDialogImpl(MAPApplicationContext appCntx, Dialog tcapDialog,
-			MAPProviderImpl mapProviderImpl, AddressString origReference,
-			AddressString destReference) {
+	protected MAPDialogImpl(MAPApplicationContext appCntx, Dialog tcapDialog, MAPProviderImpl mapProviderImpl,
+			AddressString origReference, AddressString destReference) {
 		this(appCntx, tcapDialog, mapProviderImpl);
 
 		this.destReference = destReference;
@@ -98,10 +96,9 @@ public class MAPDialogImpl implements MAPDialog {
 		return tcapDialog.getDialogId();
 	}
 
-	public void abort(MAPUserAbortChoice mapUserAbortChoice)
-			throws MAPException {
-		TCUserAbortRequest tcUserAbort = this.mapProviderImpl.getTCAPProvider()
-				.getDialogPrimitiveFactory().createUAbort(this.tcapDialog);
+	public void abort(MAPUserAbortChoice mapUserAbortChoice) throws MAPException {
+		TCUserAbortRequest tcUserAbort = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+				.createUAbort(this.tcapDialog);
 
 		MAPUserAbortInfoImpl mapUserAbortInfoImpl = new MAPUserAbortInfoImpl();
 		mapUserAbortInfoImpl.setMAPUserAbortChoice(mapUserAbortChoice);
@@ -134,17 +131,16 @@ public class MAPDialogImpl implements MAPDialog {
 
 		switch (this.tcapDialog.getState()) {
 		case InitialReceived:
-			// send continue
-			this.send(); // dont break....
-		case Active:
-			TCEndRequest endRequest = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory().createEnd(this.tcapDialog);
+			TCEndRequest endRequest = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+					.createEnd(this.tcapDialog);
 			if (!prearrangedEnd) {
 				endRequest.setTermination(TerminationType.Basic);
 			} else {
 				endRequest.setTermination(TerminationType.PreArranged);
 			}
 
-			ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory().createApplicationContextName(this.appCntx.getOID());
+			ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+					.createApplicationContextName(this.appCntx.getOID());
 
 			endRequest.setApplicationContextName(acn);
 
@@ -153,28 +149,41 @@ public class MAPDialogImpl implements MAPDialog {
 			} catch (TCAPSendException e) {
 				throw new MAPException(e.getMessage(), e);
 			}
-			break; //do break
-			
-			
+			break;
+
+		case Active:
+			TCEndRequest endRequest1 = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+					.createEnd(this.tcapDialog);
+			if (!prearrangedEnd) {
+				endRequest1.setTermination(TerminationType.Basic);
+			} else {
+				endRequest1.setTermination(TerminationType.PreArranged);
+			}
+
+			try {
+				this.tcapDialog.send(endRequest1);
+			} catch (TCAPSendException e) {
+				throw new MAPException(e.getMessage(), e);
+			}
+			break;
 		case Idle:
 			throw new MAPException("Awaiting TC-BEGIN to be sent, can not send another dialog initiating primitive!");
-		case InitialSent: //we have sent TC-BEGIN already, need to wait
+		case InitialSent: // we have sent TC-BEGIN already, need to wait
 			throw new MAPException("Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
-		case Expunged: //dialog has been terminated on TC level, cant send
+		case Expunged: // dialog has been terminated on TC level, cant send
 			throw new MAPException("Dialog has been terminated, can not send primitives!");
 		}
-
 	}
 
 	public void send() throws MAPException {
-		// Its Idle, send TC-BEGIN
+
 		switch (this.tcapDialog.getState()) {
 		case Idle:
-			// new, send TC-BEGIN
-			TCBeginRequest tcBeginReq = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory().createBegin(this.tcapDialog);
+			TCBeginRequest tcBeginReq = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+					.createBegin(this.tcapDialog);
 
 			ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-					.createApplicationContextName(MAPApplicationContext.networkUnstructuredSsContextV2.getOID());
+					.createApplicationContextName(this.appCntx.getOID());
 
 			tcBeginReq.setApplicationContextName(acn);
 
@@ -205,9 +214,12 @@ public class MAPDialogImpl implements MAPDialog {
 				throw new MAPException(e.getMessage(), e);
 			}
 			break;
+
 		case Active:
-			// TC-CONTINUE, since its active
-			TCContinueRequest tcContinueReq = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory().createContinue(this.tcapDialog);
+			// Its Active send TC-CONTINUE
+
+			TCContinueRequest tcContinueReq = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+					.createContinue(this.tcapDialog);
 
 			try {
 				this.tcapDialog.send(tcContinueReq);
@@ -217,35 +229,35 @@ public class MAPDialogImpl implements MAPDialog {
 			break;
 
 		case InitialReceived:
-			// first answer, after receiving TC-BEGIN, send TC-CONTINUE
-			tcContinueReq = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory().createContinue(this.tcapDialog);
+			// Its first Reply to TC-Begin
 
-			acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-					.createApplicationContextName(MAPApplicationContext.networkUnstructuredSsContextV2.getOID());
+			TCContinueRequest tcContinueReq1 = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+					.createContinue(this.tcapDialog);
 
-			tcContinueReq.setApplicationContextName(acn);
+			ApplicationContextName acn1 = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+					.createApplicationContextName(this.appCntx.getOID());
+
+			tcContinueReq1.setApplicationContextName(acn1);
 
 			try {
-				this.tcapDialog.send(tcContinueReq);
+				this.tcapDialog.send(tcContinueReq1);
 			} catch (TCAPSendException e) {
 				throw new MAPException(e.getMessage(), e);
 			}
-
 			break;
 
-		case InitialSent: //we have sent TC-BEGIN already, need to wait
+		case InitialSent: // we have sent TC-BEGIN already, need to wait
 			throw new MAPException("Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
-		case Expunged: //dialog has been terminated on TC level, cant send
+		case Expunged: // dialog has been terminated on TC level, cant send
 			throw new MAPException("Dialog has been terminated, can not send primitives!");
 		}
 
 	}
 
-	public void addProcessUnstructuredSSRequest(byte ussdDataCodingScheme,
-			USSDString ussdString, AddressString msisdn) throws MAPException {
+	public void addProcessUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AddressString msisdn)
+			throws MAPException {
 
-		Invoke invoke = this.mapProviderImpl.getTCAPProvider()
-				.getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
 
 		try {
 			invoke.setInvokeId(this.tcapDialog.getNewInvokeId());
@@ -266,24 +278,24 @@ public class MAPDialogImpl implements MAPDialog {
 			p2.setTagClass(Tag.CLASS_UNIVERSAL);
 			p2.setTag(Tag.STRING_OCTET);
 			p2.setData(ussdString.getEncodedString());
-			
+
 			Parameter p3 = null;
-			if(msisdn != null){
+			if (msisdn != null) {
 				AsnOutputStream asnOs = new AsnOutputStream();
-				((AddressStringImpl)msisdn).encode(asnOs);
+				((AddressStringImpl) msisdn).encode(asnOs);
 				byte[] msisdndata = asnOs.toByteArray();
-				
-				 p3 = TcapFactory.createParameter();
-				 p3.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-				 p3.setTag(0x00);
-				 p3.setData(msisdndata);
+
+				p3 = TcapFactory.createParameter();
+				p3.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
+				p3.setTag(0x00);
+				p3.setData(msisdndata);
 			}
 
 			Parameter p = TcapFactory.createParameter();
 			p.setTagClass(Tag.CLASS_UNIVERSAL);
 			p.setTag(Tag.SEQUENCE);
-			
-			if(p3!=null){
+
+			if (p3 != null) {
 				p.setParameters(new Parameter[] { p1, p2, p3 });
 			} else {
 				p.setParameters(new Parameter[] { p1, p2 });
@@ -301,19 +313,17 @@ public class MAPDialogImpl implements MAPDialog {
 
 	}
 
-	public void addProcessUnstructuredSSResponse(long invokeId,
-			boolean lastResult, byte ussdDataCodingScheme, USSDString ussdString)
-			throws MAPException {
+	public void addProcessUnstructuredSSResponse(long invokeId, boolean lastResult, byte ussdDataCodingScheme,
+			USSDString ussdString) throws MAPException {
 		try {
 			Return returnResult = null;
 
 			if (lastResult) {
-				returnResult = this.mapProviderImpl.getTCAPProvider()
-						.getComponentPrimitiveFactory()
+				returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
 						.createTCResultLastRequest();
 			} else {
-				returnResult = this.mapProviderImpl.getTCAPProvider()
-						.getComponentPrimitiveFactory().createTCResultRequest();
+				returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
+						.createTCResultRequest();
 			}
 
 			returnResult.setInvokeId(invokeId);
@@ -349,17 +359,14 @@ public class MAPDialogImpl implements MAPDialog {
 
 	}
 
-	public void addUnstructuredSSRequest(byte ussdDataCodingScheme,
-			USSDString ussdString) throws MAPException {
-		Invoke invoke = this.mapProviderImpl.getTCAPProvider()
-				.getComponentPrimitiveFactory().createTCInvokeRequest();
+	public void addUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString) throws MAPException {
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
 
 		try {
 			invoke.setInvokeId(this.tcapDialog.getNewInvokeId());
 
 			// Operation Code
-			OperationCode oc = TcapFactory.createOperationCode(false,
-					(long) MAPOperationCode.unstructuredSS_Request);
+			OperationCode oc = TcapFactory.createOperationCode(false, (long) MAPOperationCode.unstructuredSS_Request);
 			invoke.setOperationCode(oc);
 
 			// Sequence of Parameter
@@ -390,27 +397,24 @@ public class MAPDialogImpl implements MAPDialog {
 		}
 	}
 
-	public void addUnstructuredSSResponse(long invokeId, boolean lastResult,
-			byte ussdDataCodingScheme, USSDString ussdString)
-			throws MAPException {
+	public void addUnstructuredSSResponse(long invokeId, boolean lastResult, byte ussdDataCodingScheme,
+			USSDString ussdString) throws MAPException {
 
 		try {
 			Return returnResult = null;
 
 			if (lastResult) {
-				returnResult = this.mapProviderImpl.getTCAPProvider()
-						.getComponentPrimitiveFactory()
+				returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
 						.createTCResultLastRequest();
 			} else {
-				returnResult = this.mapProviderImpl.getTCAPProvider()
-						.getComponentPrimitiveFactory().createTCResultRequest();
+				returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
+						.createTCResultRequest();
 			}
 
 			returnResult.setInvokeId(invokeId);
 
 			// Operation Code
-			OperationCode oc = TcapFactory.createOperationCode(false,
-					(long) MAPOperationCode.unstructuredSS_Request);
+			OperationCode oc = TcapFactory.createOperationCode(false, (long) MAPOperationCode.unstructuredSS_Request);
 			returnResult.setOperationCode(oc);
 
 			// Sequence of Parameter
