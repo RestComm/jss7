@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
 
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.DialogServiceUserType;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
 /**
@@ -51,5 +52,15 @@ public interface TCUserAbortRequest extends DialogRequest {
 	public UserInformation getUserInformation();
 
 	public void setUserInformation(UserInformation acn);
+
+	/**
+	 * Setting of {@link DialogServiceUserType} will create the AARE else ABRT
+	 * is formed
+	 * 
+	 * @param dialogServiceUserType
+	 */
+	public void setDialogServiceUserType(DialogServiceUserType dialogServiceUserType);
+
+	public DialogServiceUserType getDialogServiceUserType();
 
 }

@@ -36,6 +36,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
 
 /**
+ * @author amit bhayani
  * @author baranowb
  * 
  */
@@ -134,8 +135,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 				throw new ParseException("Undefined len not supported");
 			}
 			byte[] data = new byte[len];
-			if(len!=ais.read(data))
-			{
+			if (len != ais.read(data)) {
 				throw new ParseException("Not enough data read.");
 			}
 			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(data));
@@ -144,7 +144,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 			if (tag != _TAG_DTX) {
 				throw new ParseException("Expected Destination Tx ID tag, found: " + tag);
 			}
-		
+
 			this.destTxId = Utils.readTransactionId(localAis);
 
 			if (localAis.available() <= 0) {
@@ -156,7 +156,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 			tag = localAis.readTag();
 			if (tag == _TAG_P) {
 				// primitive?
-				this.type = PAbortCauseType.getFromInt(localAis.readInteger());
+				this.type = PAbortCauseType.getFromInt((int) localAis.readInteger());
 
 				if (localAis.available() <= 0) {
 					// no dialog portion
@@ -195,8 +195,9 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 		try {
 			AsnOutputStream localAos = new AsnOutputStream();
 			Utils.writeTransactionId(localAos, this.destTxId, _TAG_CLASS_DTX, _TAG_DTX);
-			
-			// FIXME: check if both are not null, should not be at the sime time != null
+
+			// FIXME: check if both are not null, should not be at the sime time
+			// != null
 			if (this.type != null) {
 				localAos.writeTag(_TAG_CLASS_P, _TAG_P_PC_PRIMITIVE, _TAG_P);
 				localAos.writeInteger(_TAG_CLASS_P, _TAG_P, this.type.getType());

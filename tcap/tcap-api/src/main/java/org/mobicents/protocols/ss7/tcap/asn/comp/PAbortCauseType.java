@@ -27,47 +27,54 @@ package org.mobicents.protocols.ss7.tcap.asn.comp;
 
 import org.mobicents.protocols.ss7.tcap.asn.ParseException;
 
-
 /**
+ * @author amit bhayani
  * @author baranowb
- *
+ * 
  */
 public enum PAbortCauseType {
 	// its encoded as INT
 
-	UnrecogniedMessageType(0), UnrecognizedTxID(1),
-	BadlyFormattedTxPortion(2), IncorrectTxPortion(3), 
-	ResourceLimitation(4);
+	UnrecogniedMessageType(0), UnrecognizedTxID(1), BadlyFormattedTxPortion(2), IncorrectTxPortion(3), ResourceLimitation(
+			4),
 
-	private long type = -1;
+	// This is not there in specs, but used locally
+	DialogueIdleTimeout(125), AbnormalDialogue(126), NoCommonDialoguePortion(127);
 
-	PAbortCauseType(long t) {
+	private int type = -1;
+
+	PAbortCauseType(int t) {
 		this.type = t;
 	}
 
 	/**
 	 * @return the type
 	 */
-	public long getType() {
+	public int getType() {
 		return type;
 	}
 
-	public static PAbortCauseType getFromInt(long t) throws ParseException {
-		if (t == 0) {
-			return UnrecogniedMessageType;
-		} else if (t == 1) {
-			return UnrecognizedTxID;
-		} else if( t == 2)
-		{
-			return BadlyFormattedTxPortion;
-		} else if ( t == 3)
-		{
-			return IncorrectTxPortion;
-		}else if( t == 4 )
-		{
-			return ResourceLimitation;
-		}
+	public static PAbortCauseType getFromInt(int t) throws ParseException {
 
-		throw new ParseException("Wrong value of response: " + t);
+		switch (t) {
+		case 0:
+			return UnrecogniedMessageType;
+		case 1:
+			return UnrecognizedTxID;
+		case 2:
+			return BadlyFormattedTxPortion;
+		case 3:
+			return IncorrectTxPortion;
+		case 4:
+			return ResourceLimitation;
+		case 125:
+			return DialogueIdleTimeout;
+		case 126:
+			return AbnormalDialogue;
+		case 127:
+			return NoCommonDialoguePortion;
+		default:
+			throw new ParseException("Wrong value of response: " + t);
+		}
 	}
 }
