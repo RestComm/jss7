@@ -41,7 +41,6 @@ import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortInfoImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
@@ -76,7 +75,7 @@ public class MAPDialogImpl implements MAPDialog {
 	private AddressString destReference;
 	private AddressString origReference;
 
-	private boolean mapAcceptInfoFired = false;
+	private MAPDialogState state = MAPDialogState.Idle;
 
 	protected MAPDialogImpl(MAPApplicationContext appCntx, Dialog tcapDialog, MAPProviderImpl mapProviderImpl) {
 		this.appCntx = appCntx;
@@ -122,6 +121,7 @@ public class MAPDialogImpl implements MAPDialog {
 
 		try {
 			this.tcapDialog.send(tcUserAbort);
+			this.setState(MAPDialogState.Expunged);
 		} catch (TCAPSendException e) {
 			throw new MAPException(e.getMessage(), e);
 		}
@@ -146,6 +146,7 @@ public class MAPDialogImpl implements MAPDialog {
 
 			try {
 				this.tcapDialog.send(endRequest);
+				this.setState(MAPDialogState.Expunged);
 			} catch (TCAPSendException e) {
 				throw new MAPException(e.getMessage(), e);
 			}
@@ -162,6 +163,7 @@ public class MAPDialogImpl implements MAPDialog {
 
 			try {
 				this.tcapDialog.send(endRequest1);
+				this.setState(MAPDialogState.Expunged);
 			} catch (TCAPSendException e) {
 				throw new MAPException(e.getMessage(), e);
 			}
@@ -210,6 +212,7 @@ public class MAPDialogImpl implements MAPDialog {
 
 			try {
 				this.tcapDialog.send(tcBeginReq);
+				this.setState(MAPDialogState.InitialSent);
 			} catch (TCAPSendException e) {
 				throw new MAPException(e.getMessage(), e);
 			}
@@ -241,6 +244,7 @@ public class MAPDialogImpl implements MAPDialog {
 
 			try {
 				this.tcapDialog.send(tcContinueReq1);
+				this.setState(MAPDialogState.Active);
 			} catch (TCAPSendException e) {
 				throw new MAPException(e.getMessage(), e);
 			}
@@ -447,12 +451,25 @@ public class MAPDialogImpl implements MAPDialog {
 		return appCntx;
 	}
 
-	public boolean isMapAcceptInfoFired() {
-		return mapAcceptInfoFired;
+	public MAPDialogState getState() {
+		return state;
 	}
 
-	public void setMapAcceptInfoFired(boolean mapAcceptInfoFired) {
-		this.mapAcceptInfoFired = mapAcceptInfoFired;
+	protected synchronized void setState(MAPDialogState newState) {
+		// add checks?
+		if (this.state == MAPDialogState.Expunged) {
+			return;
+		}
+		this.state = newState;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("DialogId=").append(this.getDialogId()).append("MAPDialogState=").append(this.getState())
+				.append("MAPApplicationContext=").append(this.appCntx).append("TCAPDialogState=")
+				.append(this.tcapDialog.getState());
+		return sb.toString();
 	}
 
 }
