@@ -319,8 +319,10 @@ public class DialogImpl implements Dialog {
 			DialogRequestAPDU apdu = TcapFactory.createDialogAPDURequest();
 			dp.setDialogAPDU(apdu);
 			apdu.setApplicationContextName(event.getApplicationContextName());
+			this.lastACN = event.getApplicationContextName();
 			if (event.getUserInformation() != null) {
 				apdu.setUserInformation(event.getUserInformation());
+				this.lastUI = event.getUserInformation();
 			}
 			tcbm.setDialogPortion(dp);
 		}
