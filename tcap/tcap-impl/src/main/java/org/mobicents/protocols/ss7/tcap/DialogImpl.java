@@ -222,6 +222,8 @@ public class DialogImpl implements Dialog {
 				// TCInvokeRequestImpl invoke = (TCInvokeRequestImpl) cr;
 				// there is no notification on cancel?
 				scheduledComponentList.remove(index);
+				((InvokeImpl)cr).stopTimer();
+				((InvokeImpl)cr).setState(OperationState.Idle);
 				return true;
 			}
 		}
@@ -1083,6 +1085,7 @@ public class DialogImpl implements Dialog {
 
 				if (invoke == null) {
 					// FIXME: send something back?
+					logger.error(String.format("Rx : %s but there is no corresponding Invoke", ci));
 				} else {
 					invoke.onReturnResultLast();
 					if (invoke.isSuccessReported()) {
@@ -1100,6 +1103,7 @@ public class DialogImpl implements Dialog {
 			case ReturnError:
 				if (invoke == null) {
 					// FIXME: send something back?
+					logger.error(String.format("Rx : %s but there is no corresponding Invoke", ci));
 				} else {
 					invoke.onError();
 					if (invoke.isErrorReported()) {

@@ -27,14 +27,11 @@ package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Future;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
@@ -50,6 +47,31 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
  * 
  */
 public class InvokeImpl implements Invoke {
+	
+	// TCAP state data, it is used ONLY on client side
+	private final static long _DEFAULT_TIMEOUT = 10000;
+
+	// local to stack
+	private InvokeClass invokeClass = InvokeClass.Class1;
+	private long invokeTimeout = _DEFAULT_TIMEOUT;
+	private OperationState state = OperationState.Idle;
+	private Future timerFuture;
+	private OperationTimerTask operationTimerTask = new OperationTimerTask();
+	private TCAPProviderImpl provider;
+	private DialogImpl dialog;
+
+	public InvokeImpl() {
+		//Set Default Class
+		this.invokeClass = InvokeClass.Class1;
+	}
+	
+	public InvokeImpl(InvokeClass invokeClass) {
+		if (invokeClass == null) {
+			this.invokeClass = InvokeClass.Class1;
+		} else {
+			this.invokeClass = invokeClass;
+		}
+	}
 
 	// mandatory
 	private Long invokeId;
@@ -163,8 +185,8 @@ public class InvokeImpl implements Invoke {
 
 	@Override
 	public String toString() {
-		return "Invoke[invokeId=" + invokeId + ", linkedId=" + linkedId + ", operationCode=" + operationCode + ", parameter=" + parameter
-				+ ", invokeClass=" + invokeClass + ", state=" + state + "]";
+		return "Invoke[invokeId=" + invokeId + ", linkedId=" + linkedId + ", operationCode=" + operationCode
+				+ ", parameter=" + parameter + ", invokeClass=" + invokeClass + ", state=" + state + "]";
 	}
 
 	/*
@@ -213,9 +235,6 @@ public class InvokeImpl implements Invoke {
 			// It could be PARAMETER
 			tag = localAis.readTag();
 			this.parameter = TcapFactory.createParameter(tag, localAis);
-		
-
-			
 
 		} catch (IOException e) {
 			throw new ParseException(e);
@@ -249,7 +268,7 @@ public class InvokeImpl implements Invoke {
 
 			this.operationCode.encode(localAos);
 
-			if (this.parameter != null) {		
+			if (this.parameter != null) {
 				this.parameter.encode(localAos);
 			}
 			byte[] data = localAos.toByteArray();
@@ -262,18 +281,6 @@ public class InvokeImpl implements Invoke {
 
 	}
 
-	// TCAP state data, it is used ONLY on client side
-	private final static long _DEFAULT_TIMEOUT = 10000;
-
-	// local to stack
-	private InvokeClass invokeClass = InvokeClass.Class1;
-	private long invokeTimeout = _DEFAULT_TIMEOUT;
-	private OperationState state = OperationState.Idle;
-	private Future timerFuture;
-	private OperationTimerTask operationTimerTask = new OperationTimerTask();
-	private TCAPProviderImpl provider;
-	private DialogImpl dialog;
-
 	/**
 	 * @return the invokeClass
 	 */
@@ -281,19 +288,6 @@ public class InvokeImpl implements Invoke {
 		return this.invokeClass;
 	}
 
-	/**
-	 * @param invokeClass
-	 *            the invokeClass to set
-	 */
-	public void setInvokeClass(InvokeClass invokeClass) {
-		if(invokeClass!=null)
-		{
-			this.invokeClass = invokeClass;
-		}else
-		{
-			//
-		}
-	}
 
 	/**
 	 * @return the invokeTimeout
@@ -310,10 +304,10 @@ public class InvokeImpl implements Invoke {
 		this.invokeTimeout = invokeTimeout;
 	}
 
-	//////////////////////
+	// ////////////////////
 	// set methods for //
-	// relevant data   //
-	/////////////////////
+	// relevant data //
+	// ///////////////////
 	/**
 	 * @return the provider
 	 */
@@ -322,7 +316,8 @@ public class InvokeImpl implements Invoke {
 	}
 
 	/**
-	 * @param provider the provider to set
+	 * @param provider
+	 *            the provider to set
 	 */
 	public void setProvider(TCAPProviderImpl provider) {
 		this.provider = provider;
@@ -336,7 +331,8 @@ public class InvokeImpl implements Invoke {
 	}
 
 	/**
-	 * @param dialog the dialog to set
+	 * @param dialog
+	 *            the dialog to set
 	 */
 	public void setDialog(DialogImpl dialog) {
 		this.dialog = dialog;

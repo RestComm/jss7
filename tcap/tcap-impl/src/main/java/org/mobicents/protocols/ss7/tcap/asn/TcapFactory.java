@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.tcap.asn;
 import java.io.IOException;
 
 import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCodeType;
@@ -272,6 +273,7 @@ public final class TcapFactory {
 
 			Component c = null;
 			if (tag == Invoke._TAG) {
+				//InvokeClass Doesn't matter here. Look Table 10/Q.771
 				c = createComponentInvoke();
 				c.decode(localAis);
 
@@ -320,10 +322,15 @@ public final class TcapFactory {
 		
 		return new ReturnResultImpl();
 	}
-
+	
 	public static Invoke createComponentInvoke() {
 		return new InvokeImpl();
 	}
+
+	public static Invoke createComponentInvoke(InvokeClass invokeClass) {
+		return new InvokeImpl(invokeClass);
+	}
+	
 	public static ReturnError createComponentReturnError() {
 		return new ReturnErrorImpl();
 	}

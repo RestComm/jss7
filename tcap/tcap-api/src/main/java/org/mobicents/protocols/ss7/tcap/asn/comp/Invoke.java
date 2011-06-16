@@ -52,12 +52,6 @@ public interface Invoke extends Component {
 	public InvokeClass getInvokeClass();
 
 	/**
-	 * 
-	 * @param invokeClass
-	 */
-	public void setInvokeClass(InvokeClass invokeClass);
-
-	/**
 	 * @return the invokeTimeout
 	 */
 	public long getInvokeTimeout();

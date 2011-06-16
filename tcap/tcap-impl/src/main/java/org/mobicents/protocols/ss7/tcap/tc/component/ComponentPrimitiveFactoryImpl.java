@@ -27,6 +27,7 @@ package org.mobicents.protocols.ss7.tcap.tc.component;
 
 import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
 import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
+import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
@@ -53,12 +54,24 @@ public class ComponentPrimitiveFactoryImpl implements ComponentPrimitiveFactory 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory#
-	 * createTCInvokeRequest()
+	 * @seeorg.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory#createTCInvokeRequest()
 	 */
 	public Invoke createTCInvokeRequest() {
 
 		InvokeImpl t = (InvokeImpl) TcapFactory.createComponentInvoke();
+		t.setProvider(provider);
+		return t;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory#
+	 * createTCInvokeRequest()
+	 */
+	public Invoke createTCInvokeRequest(InvokeClass invokeClass) {
+
+		InvokeImpl t = (InvokeImpl) TcapFactory.createComponentInvoke(invokeClass);
 		t.setProvider(provider);
 		return t;
 	}

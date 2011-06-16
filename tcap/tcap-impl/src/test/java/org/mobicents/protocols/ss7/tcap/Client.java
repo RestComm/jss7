@@ -22,18 +22,14 @@
 
 package org.mobicents.protocols.ss7.tcap;
 
-import junit.framework.TestCase;
-
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
-import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
 import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
+import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
@@ -45,7 +41,6 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 
 public class Client implements TCListener{
@@ -79,7 +74,7 @@ public class Client implements TCListener{
 		ComponentPrimitiveFactory cpFactory = this.tcapProvider.getComponentPrimitiveFactory();
 		
 		//create some INVOKE
-		Invoke invoke = cpFactory.createTCInvokeRequest();
+		Invoke invoke = cpFactory.createTCInvokeRequest(InvokeClass.Class1);
 		invoke.setInvokeId(this.clientDialog.getNewInvokeId());
 		
 		invoke.setOperationCode(cpFactory.createOperationCode(true,new Long(12)));
