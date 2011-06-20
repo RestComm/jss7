@@ -337,14 +337,9 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				}
 				break;
 			case TCUniMessage._TAG:
-				TCAbortMessage tcuabort = TcapFactory.createTCAbortMessage(ais);
-				dialogId = tcuabort.getDestinationTransactionId();
-				di = this.dialogs.get(dialogId);
-				if (di == null) {
-					logger.error("No dialog/transaction for id: " + dialogId);
-				} else {
-					di.processAbort(tcuabort, localAddress, remoteAddress);
-				}
+				TCUniMessage tcuni = TcapFactory.createTCUniMessage(ais);
+				DialogImpl uniDialog = (DialogImpl) this.getNewUnstructuredDialog(localAddress, remoteAddress);
+				uniDialog.processUni(tcuni, localAddress, remoteAddress);
 				break;
 			default:
 				logger.error(String.format("Rx unidentified messageType=%s. SccpMessage=%s", tag, message));
