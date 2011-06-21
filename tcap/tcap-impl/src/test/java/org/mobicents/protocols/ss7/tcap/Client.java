@@ -46,7 +46,6 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 public class Client implements TCListener{
 
 	private TCAPStack stack;
-	private TCAPFunctionalTest runningTestCase;
 	private SccpAddress thisAddress;
 	private SccpAddress remoteAddress;
 	
@@ -58,10 +57,10 @@ public class Client implements TCListener{
 	
 	private Dialog clientDialog;
 	
-	Client(TCAPStack stack, TCAPFunctionalTest runningTestCase, SccpAddress thisAddress,SccpAddress remoteAddress) {
+	Client(TCAPStack stack, SccpAddress thisAddress,SccpAddress remoteAddress) {
 		super();
 		this.stack = stack;
-		this.runningTestCase = runningTestCase;
+		
 		this.thisAddress = thisAddress;
 		this.remoteAddress = remoteAddress;
 		this.tcapProvider = this.stack.getProvider();
@@ -100,7 +99,7 @@ public class Client implements TCListener{
 	}
 
 	public void onTCBegin(TCBeginIndication ind) {
-		unexpected+="Receveid TC Begin, this should not happen\n";
+		unexpected+="Received TC Begin, this should not happen\n";
 		finished = false;
 		
 	}
@@ -120,13 +119,13 @@ public class Client implements TCListener{
 
 	public void onTCEnd(TCEndIndication ind) {
 		
-		unexpected+="Receveid TC End, this should not happen\n";
+		unexpected+="Received TC End, this should not happen\n";
 		finished = false;
 	}
 
 	public void onTCUni(TCUniIndication ind) {
 	
-		unexpected+="Receveid TC Uni, this should not happen\n";
+		unexpected+="Received TC Uni, this should not happen\n";
 		finished = false;
 	}
 
@@ -148,12 +147,19 @@ public class Client implements TCListener{
 	}
 
 	public void onTCPAbort(TCPAbortIndication ind) {
-		// TODO Auto-generated method stub
+		unexpected+="Received TC PAbort, this should not happen\n";
+		finished = false;
 		
 	}
 
 	public void onTCUserAbort(TCUserAbortIndication ind) {
-		// TODO Auto-generated method stub
+		unexpected+="Received TC UAbort, this should not happen\n";
+		finished = false;
+	}
+
+	public void dialogTimedout(Dialog d) {
+		unexpected+="Received Dilaog timeout, this should not happen\n";
+		finished = false;
 		
 	}
 	

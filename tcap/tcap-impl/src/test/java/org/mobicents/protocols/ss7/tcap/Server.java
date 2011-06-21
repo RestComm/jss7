@@ -42,8 +42,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
 public class Server implements TCListener{
 
-	private TCAPStack stack;
-	private TCAPFunctionalTest runningTestCase;
+	private TCAPStack stack;	
 	private SccpAddress thisAddress;
 	private SccpAddress remoteAddress;
 	private TCAPProvider tcapProvider;
@@ -53,10 +52,9 @@ public class Server implements TCListener{
 	private boolean _S_recievedBegin,_S_sentContinue,_S_receivedEnd,_S_dialogReleased;
 	private String unexpected = "";
 	
-	Server(TCAPStack stack, TCAPFunctionalTest runningTestCase, SccpAddress thisAddress,SccpAddress remoteAddress) {
+	Server(TCAPStack stack, SccpAddress thisAddress,SccpAddress remoteAddress) {
 		super();
 		this.stack = stack;
-		this.runningTestCase = runningTestCase;
 		this.thisAddress = thisAddress;
 		this.remoteAddress = remoteAddress;
 		this.tcapProvider = this.stack.getProvider();
@@ -73,7 +71,7 @@ public class Server implements TCListener{
 		
 		//to indiacte failures.. since it does not fail
 		//runningTestCase.fail("Invocation timed out: "+tcInvokeRequest.getInvokeId());
-		unexpected+="Receveid Invoke timeout, this should not happen\n";
+		unexpected+="Received Invoke timeout, this should not happen\n";
 		finished = false;
 		throw new RuntimeException();
 		
@@ -118,7 +116,7 @@ public class Server implements TCListener{
 	}
 
 	public void onTCContinue(TCContinueIndication ind) {
-		unexpected+="Receveid TC Continue, this should not happen\n";
+		unexpected+="Received TC Continue, this should not happen\n";
 		finished = false;
 		
 	}
@@ -129,7 +127,7 @@ public class Server implements TCListener{
 	}
 
 	public void onTCUni(TCUniIndication ind) {
-		unexpected+="Receveid TC Uni, this should not happen\n";
+		unexpected+="Received TC Uni, this should not happen\n";
 		finished = false;
 	}
 
@@ -152,12 +150,19 @@ public class Server implements TCListener{
 	}
 
 	public void onTCPAbort(TCPAbortIndication ind) {
-		// TODO Auto-generated method stub
+		unexpected+="Received TC PAbort, this should not happen\n";
+		finished = false;
 		
 	}
 
 	public void onTCUserAbort(TCUserAbortIndication ind) {
-		// TODO Auto-generated method stub
+		unexpected+="Received TC UAbort, this should not happen\n";
+		finished = false;
+	}
+
+	public void dialogTimedout(Dialog d) {
+		unexpected+="Received Dilaog timeout, this should not happen\n";
+		finished = false;
 		
 	}
 	

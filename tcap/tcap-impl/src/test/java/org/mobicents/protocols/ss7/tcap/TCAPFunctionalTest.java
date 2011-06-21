@@ -73,10 +73,6 @@ public class TCAPFunctionalTest extends SccpHarness {
 		System.out.println("setUp");
         super.setUp();
        
-        
-        GlobalTitle gt1 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "123");
-        GlobalTitle gt2 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "321");
-        
         peer1Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
         peer2Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2,  null, 8);
         
@@ -86,8 +82,8 @@ public class TCAPFunctionalTest extends SccpHarness {
         this.tcapStack1.start();
         this.tcapStack2.start();
         //create test classes
-        this.client = new Client(this.tcapStack1, this, peer1Address, peer2Address);
-        this.server = new Server(this.tcapStack2, this, peer2Address, peer1Address);
+        this.client = new Client(this.tcapStack1, peer1Address, peer2Address);
+        this.server = new Server(this.tcapStack2, peer2Address, peer1Address);
 
     }
     /* (non-Javadoc)
