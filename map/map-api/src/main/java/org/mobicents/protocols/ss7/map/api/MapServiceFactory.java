@@ -23,11 +23,14 @@
 package org.mobicents.protocols.ss7.map.api;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
@@ -41,17 +44,16 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSR
  */
 public interface MapServiceFactory {
 
-	public ProcessUnstructuredSSRequest createProcessUnstructuredSSRequest(
+	public ProcessUnstructuredSSRequest createProcessUnstructuredSSRequest(byte ussdDataCodingScheme,
+			USSDString ussdString);
+
+	public ProcessUnstructuredSSResponse createProcessUnstructuredSsRequestResponse(int invokeID,
 			byte ussdDataCodingScheme, USSDString ussdString);
 
-	public ProcessUnstructuredSSResponse createProcessUnstructuredSsRequestResponse(
-			int invokeID, byte ussdDataCodingScheme, USSDString ussdString);
+	public UnstructuredSSRequest createUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString);
 
-	public UnstructuredSSRequest createUnstructuredSSRequest(
-			byte ussdDataCodingScheme, USSDString ussdString);
-
-	public UnstructuredSSResponse createUnstructuredSsRequestResponse(
-			int invokeID, byte ussdDataCodingScheme, USSDString ussdString);
+	public UnstructuredSSResponse createUnstructuredSsRequestResponse(int invokeID, byte ussdDataCodingScheme,
+			USSDString ussdString);
 
 	/**
 	 * Creates a new instance of {@link USSDString}. The passed USSD String is
@@ -110,8 +112,7 @@ public interface MapServiceFactory {
 	 *            The actual address (number)
 	 * @return new instance of {@link AddressString}
 	 */
-	public AddressString createAddressString(AddressNature addNature,
-			NumberingPlan numPlan, String address);
+	public AddressString createAddressString(AddressNature addNature, NumberingPlan numPlan, String address);
 
 	/**
 	 * Creates a new instance of {@link MAPUserAbortChoice}
@@ -120,4 +121,27 @@ public interface MapServiceFactory {
 	 */
 	public MAPUserAbortChoice createMAPUserAbortChoice();
 
+	/**
+	 * Creates a new instance of {@link MAPPrivateExtension} for
+	 * {@link MAPExtensionContainer}
+	 * 
+	 * @param oId
+	 *            PrivateExtension ObjectIdentifier
+	 * @param data
+	 *            PrivateExtension data (ASN.1 encoded byte array with tag
+	 *            bytes)
+	 * @return
+	 */
+	public MAPPrivateExtension createMAPPrivateExtension(long[] oId, byte[] data);
+
+	/**
+	 * @param privateExtensionList
+	 *            List of PrivateExtensions
+	 * @param pcsExtensions
+	 *            pcsExtensions value (ASN.1 encoded byte array without tag
+	 *            byte)
+	 * @return
+	 */
+	public MAPExtensionContainer createMAPExtensionContainer(ArrayList<MAPPrivateExtension> privateExtensionList,
+			byte[] pcsExtensions);
 }

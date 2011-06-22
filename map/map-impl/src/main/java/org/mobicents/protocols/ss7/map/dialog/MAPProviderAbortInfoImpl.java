@@ -31,6 +31,7 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortInfo;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortReason;
 
@@ -41,13 +42,14 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortReason;
  */
 public class MAPProviderAbortInfoImpl implements MAPProviderAbortInfo {
 
-	protected static final int MAP_PROVIDER_ABORT_INFO_TAG = 0x05;
+	public static final int MAP_PROVIDER_ABORT_INFO_TAG = 0x05;
 
 	protected static final int PROVIDER_ABORT_TAG_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
 	protected static final boolean PROVIDER_ABORT_TAG_PC_CONSTRUCTED = false;
 
 	private MAPDialog mapDialog = null;
 	private MAPProviderAbortReason mapProviderAbortReason = null;
+	private MAPExtensionContainer extensionContainer;
 
 	public MAPProviderAbortInfoImpl() {
 	}
@@ -60,6 +62,10 @@ public class MAPProviderAbortInfoImpl implements MAPProviderAbortInfo {
 		return this.mapProviderAbortReason;
 	}
 
+	public MAPExtensionContainer getExtensionContainer() {
+		return extensionContainer;
+	}
+
 	public void setMAPDialog(MAPDialog mapDialog) {
 		this.mapDialog = mapDialog;
 	}
@@ -68,43 +74,100 @@ public class MAPProviderAbortInfoImpl implements MAPProviderAbortInfo {
 		this.mapProviderAbortReason = mapProvAbrtReas;
 	}
 
-	public void decode(AsnInputStream ais) throws AsnException, IOException,
-			MAPException {
+	public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
+		this.extensionContainer = extensionContainer;
+	}
+
+	public void decode(AsnInputStream ais) throws AsnException, IOException, MAPException {
+		// MAP-ProviderAbortInfo ::= SEQUENCE {
+		// map-ProviderAbortReason ENUMERATED {
+		// abnormalDialogue ( 0 ),
+		// invalidPDU ( 1 ) },
+		// ... ,
+		// extensionContainer SEQUENCE {
+		// privateExtensionList [0] IMPLICIT SEQUENCE ( SIZE( 1 .. 10 ) ) OF
+		// SEQUENCE {
+		// extId MAP-EXTENSION .&extensionId ( {
+		// ,
+		// ...} ) ,
+		// extType MAP-EXTENSION .&ExtensionType ( {
+		// ,
+		// ...} { @extId } ) OPTIONAL} OPTIONAL,
+		// pcs-Extensions [1] IMPLICIT SEQUENCE {
+		// ... } OPTIONAL,
+		// ... } OPTIONAL}
+
 		byte[] seqData = ais.readSequence();
 
-		AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(
-				seqData));
+		AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(seqData));
 
 		int tag;
 
+		Boolean providerAbortReasonHasRead = false;
+		int seqz = 0;
 		while (localAis.available() > 0) {
 			tag = localAis.readTag();
-			if (tag == Tag.ENUMERATED) {
+			if (seqz == 0) {
+				// first element must be map-ProviderAbortReason
+				if (tag != Tag.ENUMERATED)
+					throw new MAPException(
+							"The first element of MAP-ProviderAbortInfo must be map-ProviderAbortReason when decoding MAP-ProviderAbortInfo");
 				int length = localAis.readLength();
 				if (length != 1) {
 					throw new MAPException(
 							"Expected length of MAPProviderAbortInfoImpl.MAPProviderAbortReason to be 1 but found "
-									+ length);
+									+ length + "  when decoding MAP-ProviderAbortInfo");
 				}
 
 				int code = localAis.read();
-				this.mapProviderAbortReason = MAPProviderAbortReason
-						.getInstance(code);
+				this.mapProviderAbortReason = MAPProviderAbortReason.getInstance(code);
+				if (this.mapProviderAbortReason == null)
+					throw new MAPException(
+							"Bad map-ProviderAbortReason code received when decoding MAP-ProviderAbortInfo" + code);
+				providerAbortReasonHasRead = true;
+			} else {
+				if (tag == Tag.SEQUENCE) {
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) this.extensionContainer).decode(localAis);
+				}
 			}
+
+			seqz++;
 		}
+		if (!providerAbortReasonHasRead)
+			throw new MAPException(
+					"The first element of MAP-ProviderAbortInfo must be map-ProviderAbortReason when decoding MAP-ProviderAbortInfo");
 	}
 
 	public void encode(AsnOutputStream asnOS) throws IOException, MAPException {
+		if (this.mapProviderAbortReason == null)
+			throw new MAPException("MapProviderAbortReason parameter has not set - when encoding MAP-ProviderAbortInfo");
+
+		AsnOutputStream localAos = new AsnOutputStream();
+
 		byte[] data = new byte[3];
 		data[0] = Tag.ENUMERATED;
 		data[1] = 0x01;
 		data[2] = (byte) this.mapProviderAbortReason.getCode();
+		int wholeLen = 3;
+
+		byte[] extContData = null;
+		if (this.extensionContainer != null) {
+			localAos.reset();
+			((MAPExtensionContainerImpl) this.extensionContainer).encode(localAos);
+			extContData = localAos.toByteArray();
+			wholeLen += extContData.length;
+		}
 
 		// Now let us write the MAP OPEN-INFO Tags
-		asnOS.writeTag(PROVIDER_ABORT_TAG_CLASS,
-				PROVIDER_ABORT_TAG_PC_CONSTRUCTED, MAP_PROVIDER_ABORT_INFO_TAG);
-		asnOS.writeLength(data.length);
+		asnOS.writeTag(PROVIDER_ABORT_TAG_CLASS, PROVIDER_ABORT_TAG_PC_CONSTRUCTED, MAP_PROVIDER_ABORT_INFO_TAG);
+		asnOS.writeLength(wholeLen);
 		asnOS.write(data);
+		if (extContData != null) {
+			localAos.writeTag(Tag.CLASS_UNIVERSAL, PROVIDER_ABORT_TAG_PC_CONSTRUCTED, Tag.SEQUENCE);
+			localAos.writeLength(extContData.length);
+			localAos.write(extContData);
+		}
 	}
 
 }

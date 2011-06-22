@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.service.supplementary;
 
 import org.mobicents.protocols.ss7.map.MAPMessageImpl;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDService;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 
@@ -30,8 +31,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
  * @author amit bhayani
  * 
  */
-public abstract class USSDServiceImpl extends MAPMessageImpl implements
-		USSDService {
+public abstract class USSDServiceImpl extends MAPMessageImpl implements USSDService {
 	private byte ussdDataCodingSch;
 
 	private USSDString ussdString;
@@ -39,6 +39,10 @@ public abstract class USSDServiceImpl extends MAPMessageImpl implements
 	public USSDServiceImpl(byte ussdDataCodingSch, USSDString ussdString) {
 		this.ussdDataCodingSch = ussdDataCodingSch;
 		this.ussdString = ussdString;
+	}
+
+	public MAPDialogSupplementary getMAPDialog() {
+		return (MAPDialogSupplementary) super.getMAPDialog();
 	}
 
 	public byte getUSSDDataCodingScheme() {
@@ -56,6 +60,5 @@ public abstract class USSDServiceImpl extends MAPMessageImpl implements
 	public void setUSSDString(USSDString ussdString) {
 		this.ussdString = ussdString;
 	}
-	
 
 }

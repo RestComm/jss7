@@ -65,4 +65,18 @@ public interface MAPProviderAbortInfo {
 	 */
 	public MAPProviderAbortReason getMAPProviderAbortReason();
 
+	/**
+	 * Get the {@link MAPExtensionContainer}
+	 * 
+	 * @return
+	 */
+	public MAPExtensionContainer getExtensionContainer();
+
+	/**
+	 * Set the {@link MAPExtensionContainer}
+	 * 
+	 * @param extensionContainer
+	 */
+	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+
 }

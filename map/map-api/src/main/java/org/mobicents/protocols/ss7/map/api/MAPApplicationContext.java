@@ -30,8 +30,6 @@ import java.util.Arrays;
  * 
  */
 public enum MAPApplicationContext {
-	
-
 
 	/**
 	 * Look at http://www.oid-info.com/get/0.4.0.0.1.0.19.2
@@ -71,11 +69,24 @@ public enum MAPApplicationContext {
 
 		return null;
 	}
-	
+
+	/**
+	 * Get ApplicationContext version. If oid is bad 0 will be received
+	 * 
+	 * @param oid
+	 * @return
+	 */
+	public static int getProtocolVersion(long[] oid) {
+		if (oid == null || oid.length != 8)
+			return 0;
+		else
+			return (int) oid[7];
+	}
+
 	@Override
-	public String toString(){
+	public String toString() {
 		StringBuffer s = new StringBuffer();
-		for(long l :  this.oid){
+		for (long l : this.oid) {
 			s.append(l).append(", ");
 		}
 		return s.toString();

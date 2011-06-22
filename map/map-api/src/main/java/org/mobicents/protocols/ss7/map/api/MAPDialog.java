@@ -22,10 +22,9 @@
 
 package org.mobicents.protocols.ss7.map.api;
 
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 
 /**
  * 
@@ -41,6 +40,20 @@ public interface MAPDialog {
 	 * @return
 	 */
 	public Long getDialogId();
+
+	/**
+	 * Returns the MAP service that serve this dialog
+	 * 
+	 * @return
+	 */
+	public MAPServiceBase getService();
+
+	/**
+	 * Set ExtentionContainer that will be send in 1) T-BEGIN 2) T-CONTINUE or
+	 * T-END if it is response to the T-BEGIN 3) T-ABORT If no Dialogue control
+	 * APDU is sending - ExtentionContainer will also not be sent
+	 */
+	public void setExtentionContainer(MAPExtensionContainer extContainer);
 
 	/**
 	 * This is equivalent of MAP User issuing the MAP_DELIMITER Service Request.
@@ -74,75 +87,26 @@ public interface MAPDialog {
 	 * 
 	 * @param userReason
 	 */
-	public void abort(MAPUserAbortChoice mapUserAbortChoice)
-			throws MAPException;
+	public void abort(MAPUserAbortChoice mapUserAbortChoice) throws MAPException;
 
 	/**
-	 * Add's a new Process Unstructured SS Request as Component.
-	 * 
-	 * @param ussdDataCodingScheme
-	 *            The Data Coding Scheme for this USSD String as defined in GSM
-	 *            03.38
-	 * @param ussdString
-	 *            Ussd String
-	 * @param msisdn
-	 *            The MSISDN in {@link AddressString} format. This is optional
-	 * @throws MAPException
+	 * Send T_U_ABORT with MAP-RefuseInfo
 	 */
-	public void addProcessUnstructuredSSRequest(byte ussdDataCodingScheme,
-			USSDString ussdString, AddressString msisdn) throws MAPException;
+	public void refuse(Reason reason) throws MAPException;
 
 	/**
-	 * Add's a new ProcessUnstructured SS Response as Component.
+	 * Getting from the MAPDialog a user-defined object to save relating to the
+	 * Dialog information
 	 * 
-	 * @param invokeId
-	 *            The original invoke ID retrieved from
-	 *            {@link ProcessUnstructuredSSIndication}
-	 * @param lastResult
-	 *            Specify if this Result is last - true, or there would be
-	 *            follow-up results - false
-	 * @param ussdDataCodingScheme
-	 *            The Data Coding Scheme for this USSD String as defined in GSM
-	 *            03.38
-	 * @param ussdString
-	 *            Ussd String {@link USSDString}
-	 * @throws MAPException
+	 * @return
 	 */
-	public void addProcessUnstructuredSSResponse(long invokeId,
-			boolean lastResult, byte ussdDataCodingScheme, USSDString ussdString)
-			throws MAPException;
+	public Object getUserObject();
 
 	/**
-	 * Add's a new Unstructured SS Request
+	 * Store in the MAPDialog a user-defined object to save relating to the
+	 * Dialog information
 	 * 
-	 * @param ussdDataCodingScheme
-	 *            The Data Coding Scheme for this USSD String as defined in GSM
-	 *            03.38
-	 * @param ussdString
-	 *            Ussd String {@link USSDString}
-	 * @throws MAPException
+	 * @param userObject
 	 */
-	public void addUnstructuredSSRequest(byte ussdDataCodingScheme,
-			USSDString ussdString) throws MAPException;
-
-	/**
-	 * Add's a new Unstructured SS Response
-	 * 
-	 * @param invokeId
-	 *            The original invoke ID retrieved from
-	 *            {@link UnstructuredSSIndication}
-	 * @param lastResult
-	 *            Specify if this Result is last - true, or there would be
-	 *            follow-up results - false
-	 * @param ussdDataCodingScheme
-	 *            The Data Coding Scheme for this USSD String as defined in GSM
-	 *            03.38
-	 * @param ussdString
-	 *            Ussd String {@link USSDString}
-	 * @throws MAPException
-	 */
-	public void addUnstructuredSSResponse(long invokeId, boolean lastResult,
-			byte ussdDataCodingScheme, USSDString ussdString)
-			throws MAPException;
-
+	public void setUserObject(Object userObject);
 }

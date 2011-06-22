@@ -25,7 +25,6 @@ package org.mobicents.protocols.ss7.map.functional;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -79,9 +78,11 @@ public class MAPFunctionalTest extends SccpHarness {
 	 */
 	@Before
 	public void setUp() {
+		// this.setupLog4j();
+
 		super.setUp();
 
-		this.setupLog4j();
+		// this.setupLog4j();
 
 		// create some fake addresses.
 		GlobalTitle gt1 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "123");
@@ -103,11 +104,13 @@ public class MAPFunctionalTest extends SccpHarness {
 	private void setupLog4j() {
 
 		InputStream inStreamLog4j = getClass().getResourceAsStream("/log4j.properties");
+
 		Properties propertiesLog4j = new Properties();
+
 		try {
 			propertiesLog4j.load(inStreamLog4j);
 			PropertyConfigurator.configure(propertiesLog4j);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			BasicConfigurator.configure();
 		}
@@ -137,6 +140,57 @@ public class MAPFunctionalTest extends SccpHarness {
 		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
 		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
 	}
+
+	/*
+	 * @Test public void testA1() throws Exception { MAPOpenInfoImpl oi1 = new
+	 * MAPOpenInfoImpl(); // oi1.setDestReference(new
+	 * org.mobicents.protocols.ss7
+	 * .map.dialog.AddressStringImpl(AddressNature.international_number, //
+	 * NumberingPlan.ISDN, "31628968300")); oi1.setOrigReference(new
+	 * org.mobicents.protocols.ss7.map.dialog.AddressStringImpl(AddressNature.
+	 * national_significant_number, NumberingPlan.land_mobile, "78441223344"));
+	 * 
+	 * ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
+	 * al.add( new
+	 * org.mobicents.protocols.ss7.map.dialog.MAPPrivateExtensionImpl( new
+	 * long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 } )); al.add( new
+	 * org.mobicents.protocols.ss7.map.dialog.MAPPrivateExtensionImpl( new
+	 * long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25, 26 } )); al.add(
+	 * new org.mobicents.protocols.ss7.map.dialog.MAPPrivateExtensionImpl( new
+	 * long[] { 1, 2, 3, 6 }, null ) );
+	 * 
+	 * // org.mobicents.protocols.ss7.map.dialog.MAPExtensionContainerImpl cnt =
+	 * // new org.mobicents.protocols.ss7.map.dialog.MAPExtensionContainerImpl(
+	 * al, new byte[] { 31, 32, 33 } );
+	 * org.mobicents.protocols.ss7.map.dialog.MAPExtensionContainerImpl cnt =
+	 * new org.mobicents.protocols.ss7.map.dialog.MAPExtensionContainerImpl(
+	 * null, new byte[] { 31, 32, 33 } );
+	 * 
+	 * oi1.setExtensionContainer( cnt );
+	 * 
+	 * AsnOutputStream localAos = new AsnOutputStream(); oi1.encode( localAos );
+	 * byte[] buf = localAos.toByteArray();
+	 * 
+	 * ByteArrayInputStream localIsb = new ByteArrayInputStream(buf);
+	 * AsnInputStream localIs = new AsnInputStream(localIsb);
+	 * 
+	 * MAPOpenInfoImpl oi2 = new MAPOpenInfoImpl(); int tag = localIs.readTag();
+	 * oi2.decode(localIs);
+	 * 
+	 * 
+	 * 
+	 * // HashMap<long[],Long> ax=new HashMap<long[],Long>(); // long[] a1 = new
+	 * long[3]; // a1[0]=1; // a1[1]=2; // a1[2]=3; // long[] a2 = new long[3];
+	 * // a2[0]=1; // a2[1]=2; // a2[2]=3; // // ax.put(a1,new Long(1)); //
+	 * ax.put(a2,new Long(2)); // // int i1 = a1.hashCode(); // int i2 =
+	 * a2.hashCode();
+	 * 
+	 * 
+	 * client.start(); waitForEnd(); assertTrue("Client side did not finish: " +
+	 * client.getStatus(), client.isFinished());
+	 * assertTrue("Server side did not finish: " + server.getStatus(),
+	 * server.isFinished()); }
+	 */
 
 	private void waitForEnd() {
 		try {

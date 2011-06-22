@@ -23,34 +23,35 @@
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
-import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPAcceptInfo;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPCloseInfo;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPOpenInfo;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortInfo;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseInfo;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortInfo;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 
-public class MAPExample implements MAPDialogListener, MAPServiceListener {
+public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryListener {
 
 	private MAPStack mapStack;
 	private MAPProvider mapProvider;
@@ -78,7 +79,7 @@ public class MAPExample implements MAPDialogListener, MAPServiceListener {
 		servFact = mapProvider.getMapServiceFactory();
 
 		mapProvider.addMAPDialogListener(this);
-		mapProvider.addMAPServiceListener(this);
+		mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
 	}
 
 	private static SccpProvider getSccpProvider() throws NamingException {
@@ -104,9 +105,13 @@ public class MAPExample implements MAPDialogListener, MAPServiceListener {
 
 	public void run() throws Exception {
 
+		// Make the supplimentary service activated
+		mapProvider.getMAPServiceSupplementary().acivate();
+
 		// First create Dialog
-		MAPDialog mapDialog = mapProvider.createNewDialog(MAPApplicationContext.networkUnstructuredSsContextV2,
-				destAddress, destReference, origAddress, origReference);
+		MAPDialogSupplementary mapDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(
+				MAPApplicationContext.networkUnstructuredSsContextV2, destAddress, destReference, origAddress,
+				origReference);
 
 		// The dataCodingScheme is still byte, as I am not exactly getting how
 		// to encode/decode this.
@@ -125,36 +130,6 @@ public class MAPExample implements MAPDialogListener, MAPServiceListener {
 
 		// This will initiate the TC-BEGIN with INVOKE component
 		mapDialog.send();
-	}
-
-	public void onMAPAcceptInfo(MAPAcceptInfo mapAccptInfo) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void onMAPCloseInfo(MAPCloseInfo mapCloseInfo) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void onMAPOpenInfo(MAPOpenInfo mapOpenInfo) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void onMAPProviderAbortInfo(MAPProviderAbortInfo mapProviderAbortInfo) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void onMAPRefuseInfo(MAPRefuseInfo mapRefuseInfo) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void onMAPUserAbortInfo(MAPUserAbortInfo mapUserAbortInfo) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void onProcessUnstructuredSSIndication(ProcessUnstructuredSSIndication procUnstrInd) {
@@ -176,6 +151,58 @@ public class MAPExample implements MAPDialogListener, MAPServiceListener {
 		MAPExample example = new MAPExample(sccpProvider, localAddress, remoteAddress);
 
 		example.run();
+
+	}
+
+	@Override
+	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
+			MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason,
+			MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason,
+			MAPAbortSource abortSource, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onDialogClose(MAPDialog mapDialog) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onDialogDelimiter(MAPDialog mapDialog) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
+		// TODO Auto-generated method stub
 
 	}
 

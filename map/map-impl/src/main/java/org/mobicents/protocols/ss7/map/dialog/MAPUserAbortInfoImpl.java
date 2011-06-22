@@ -50,7 +50,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.ResourceUnavailableReason;
  */
 public class MAPUserAbortInfoImpl implements MAPUserAbortInfo {
 
-	protected static final int MAP_USER_ABORT_INFO_TAG = 0x04;
+	public static final int MAP_USER_ABORT_INFO_TAG = 0x04;
 
 	protected static final int USER_ABORT_TAG_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
 	protected static final boolean USER_ABORT_TAG_PC_CONSTRUCTED = false;
@@ -74,13 +74,11 @@ public class MAPUserAbortInfoImpl implements MAPUserAbortInfo {
 		this.mapUserAbortChoice = mapUsrAbrtChoice;
 	}
 
-	public void decode(AsnInputStream ais) throws AsnException, IOException,
-			MAPException {
+	public void decode(AsnInputStream ais) throws AsnException, IOException, MAPException {
 
 		byte[] seqData = ais.readSequence();
 
-		AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(
-				seqData));
+		AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(seqData));
 
 		int tag;
 		int length;
@@ -91,28 +89,24 @@ public class MAPUserAbortInfoImpl implements MAPUserAbortInfo {
 			case MAPUserAbortChoiceImpl.USER_SPECIFIC_REASON_TAG:
 				length = localAis.readLength();
 				if (length != 0) {
-					throw new AsnException("Null length should be 0 but is "
-							+ length);
+					throw new AsnException("Null length should be 0 but is " + length);
 				}
 				usAbrtChoice.setUserSpecificReason();
 				break;
 			case MAPUserAbortChoiceImpl.USER_RESOURCE_LIMITATION_TAG:
 				length = localAis.readLength();
 				if (length != 0) {
-					throw new AsnException("Null length should be 0 but is "
-							+ length);
+					throw new AsnException("Null length should be 0 but is " + length);
 				}
 				usAbrtChoice.setUserResourceLimitation();
 				break;
 			case MAPUserAbortChoiceImpl.RESOURCE_UNAVAILABLE:
-				
+
 				length = localAis.readLength();
-				
+
 				tag = localAis.readTag();
 				if (tag != Tag.ENUMERATED) {
-					throw new AsnException(
-							"Expected ENUMERATED TAG for ResourceUnavailableReason but received "
-									+ tag);
+					throw new AsnException("Expected ENUMERATED TAG for ResourceUnavailableReason but received " + tag);
 				}
 
 				length = localAis.readLength();
@@ -123,19 +117,16 @@ public class MAPUserAbortInfoImpl implements MAPUserAbortInfo {
 				}
 
 				int code = localAis.read();
-				ResourceUnavailableReason resUnaReas = ResourceUnavailableReason
-						.getInstance(code);
+				ResourceUnavailableReason resUnaReas = ResourceUnavailableReason.getInstance(code);
 				usAbrtChoice.setResourceUnavailableReason(resUnaReas);
 				break;
 			case MAPUserAbortChoiceImpl.APPLICATION_PROCEDURE_CANCELLATION:
-				
+
 				length = localAis.readLength();
-				
+
 				tag = localAis.readTag();
 				if (tag != Tag.ENUMERATED) {
-					throw new AsnException(
-							"Expected ENUMERATED TAG for ResourceUnavailableReason but received "
-									+ tag);
+					throw new AsnException("Expected ENUMERATED TAG for ResourceUnavailableReason but received " + tag);
 				}
 
 				length = localAis.readLength();
@@ -146,13 +137,12 @@ public class MAPUserAbortInfoImpl implements MAPUserAbortInfo {
 				}
 
 				int code1 = localAis.read();
-				ProcedureCancellationReason procCanReasn = ProcedureCancellationReason
-						.getInstance(code1);
+				ProcedureCancellationReason procCanReasn = ProcedureCancellationReason.getInstance(code1);
 				usAbrtChoice.setProcedureCancellationReason(procCanReasn);
 
 				break;
 			}
-			
+
 			this.setMAPUserAbortChoice(usAbrtChoice);
 		}
 
@@ -178,8 +168,7 @@ public class MAPUserAbortInfoImpl implements MAPUserAbortInfo {
 			// Enumerated
 			data[2] = 0x0A;
 			data[3] = 0x01;
-			data[4] = (byte) this.mapUserAbortChoice
-					.getResourceUnavailableReason().getCode();
+			data[4] = (byte) this.mapUserAbortChoice.getResourceUnavailableReason().getCode();
 
 		} else if (this.mapUserAbortChoice.isProcedureCancellationReason()) {
 			data = new byte[5];
@@ -189,14 +178,12 @@ public class MAPUserAbortInfoImpl implements MAPUserAbortInfo {
 			// Enumerated
 			data[2] = 0x0A;
 			data[3] = 0x01;
-			data[4] = (byte) this.mapUserAbortChoice
-					.getProcedureCancellationReason().getCode();
+			data[4] = (byte) this.mapUserAbortChoice.getProcedureCancellationReason().getCode();
 
 		}
 
 		// Now let us write the MAP OPEN-INFO Tags
-		asnOS.writeTag(USER_ABORT_TAG_CLASS, USER_ABORT_TAG_PC_CONSTRUCTED,
-				MAP_USER_ABORT_INFO_TAG);
+		asnOS.writeTag(USER_ABORT_TAG_CLASS, USER_ABORT_TAG_PC_CONSTRUCTED, MAP_USER_ABORT_INFO_TAG);
 		asnOS.writeLength(data.length);
 		asnOS.write(data);
 	}

@@ -66,6 +66,20 @@ public interface MAPOpenInfo {
 	public void setOrigReference(AddressString origReference);
 
 	/**
+	 * Get the {@link MAPExtensionContainer}
+	 * 
+	 * @return
+	 */
+	public MAPExtensionContainer getExtensionContainer();
+
+	/**
+	 * Set the {@link MAPExtensionContainer}
+	 * 
+	 * @param extensionContainer
+	 */
+	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+
+	/**
 	 * Get the {@link MAPDialog} for which this event is fired
 	 * 
 	 * @return

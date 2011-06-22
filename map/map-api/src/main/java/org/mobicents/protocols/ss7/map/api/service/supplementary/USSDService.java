@@ -27,9 +27,11 @@ import org.mobicents.protocols.ss7.map.api.MAPMessage;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public interface USSDService extends MAPMessage {
+
+	public MAPDialogSupplementary getMAPDialog();
 
 	/**
 	 * This parameter contains the information of the alphabet and the language

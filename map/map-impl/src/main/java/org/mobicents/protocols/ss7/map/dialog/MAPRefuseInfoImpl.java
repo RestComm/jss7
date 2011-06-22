@@ -46,7 +46,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.Reason;
  */
 public class MAPRefuseInfoImpl implements MAPRefuseInfo {
 
-	protected static final int MAP_REFUSE_INFO_TAG = 0x03;
+	public static final int MAP_REFUSE_INFO_TAG = 0x03;
 
 	protected static final int REFUSE_TAG_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
 	protected static final boolean REFUSE_TAG_PC_CONSTRUCTED = false;

@@ -22,36 +22,35 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
-import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
-import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPAcceptInfo;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPCloseInfo;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPOpenInfo;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortInfo;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseInfo;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortInfo;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 
 /**
  * 
  * @author amit bhayani
  * 
  */
-public class Server implements MAPDialogListener, MAPServiceListener {
+public class Server implements MAPDialogListener, MAPServiceSupplementaryListener {
 
 	private static Logger logger = Logger.getLogger(Server.class);
 
@@ -68,8 +67,7 @@ public class Server implements MAPDialogListener, MAPServiceListener {
 	private boolean _S_recievedMAPOpenInfo, _S_recievedMAPCloseInfo;
 	private String unexpected = "";
 
-	Server(MAPStack mapStack, MAPFunctionalTest runningTestCase,
-			SccpAddress thisAddress, SccpAddress remoteAddress) {
+	Server(MAPStack mapStack, MAPFunctionalTest runningTestCase, SccpAddress thisAddress, SccpAddress remoteAddress) {
 		super();
 		this.mapStack = mapStack;
 		this.runningTestCase = runningTestCase;
@@ -80,79 +78,96 @@ public class Server implements MAPDialogListener, MAPServiceListener {
 		this.mapServiceFactory = this.mapProvider.getMapServiceFactory();
 
 		this.mapProvider.addMAPDialogListener(this);
-		this.mapProvider.addMAPServiceListener(this);
+		this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
+
+		this.mapProvider.getMAPServiceSupplementary().acivate();
 	}
 
 	public boolean isFinished() {
 
-		return this.finished && _S_recievedMAPOpenInfo
-				&& _S_recievedMAPCloseInfo;
+		return this.finished && _S_recievedMAPOpenInfo && _S_recievedMAPCloseInfo;
 	}
 
 	public String getStatus() {
 		String status = "";
 
-		status += "_S_recievedMAPCloseInfo[" + _S_recievedMAPCloseInfo + "]"
-				+ "\n";
-		status += "_S_recievedMAPOpenInfo[" + _S_recievedMAPOpenInfo + "]"
-				+ "\n";
+		status += "_S_recievedMAPCloseInfo[" + _S_recievedMAPCloseInfo + "]" + "\n";
+		status += "_S_recievedMAPOpenInfo[" + _S_recievedMAPOpenInfo + "]" + "\n";
 		return status + unexpected;
 	}
 
 	/**
 	 * MAPDialog Listener's
 	 */
-	public void onMAPAcceptInfo(MAPAcceptInfo mapAccptInfo) {
+	@Override
+	public void onDialogDelimiter(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public void onMAPCloseInfo(MAPCloseInfo mapCloseInfo) {
-		logger.debug("Received MAPCloseInfo");
-		this._S_recievedMAPCloseInfo = true;
+	@Override
+	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
+			MAPExtensionContainer extensionContainer) {
 
-	}
-
-	public void onMAPOpenInfo(MAPOpenInfo mapOpenInfo) {
 		logger.debug("Received MAPOpenInfo ");
 		this._S_recievedMAPOpenInfo = true;
+	}
+
+	@Override
+	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
 
 	}
 
-	public void onMAPProviderAbortInfo(MAPProviderAbortInfo mapProviderAbortInfo) {
-		logger.debug("Received MAPProviderAbortInfo");
+	@Override
+	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
 
 	}
 
-	public void onMAPRefuseInfo(MAPRefuseInfo mapRefuseInfo) {
-		logger.debug("Received MAPRefuseInfo");
-	}
-
-	public void onMAPUserAbortInfo(MAPUserAbortInfo mapUserAbortInfo) {
+	@Override
+	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason,
+			MAPExtensionContainer extensionContainer) {
 		logger.debug("Received MAPUserAbortInfo");
+	}
+
+	@Override
+	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason,
+			MAPAbortSource abortSource, MAPExtensionContainer extensionContainer) {
+		logger.debug("Received MAPProviderAbortInfo");
+	}
+
+	@Override
+	public void onDialogClose(MAPDialog mapDialog) {
+
+		logger.debug("Received MAPCloseInfo");
+		this._S_recievedMAPCloseInfo = true;
+	}
+
+	@Override
+	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
+		// TODO Auto-generated method stub
+
 	}
 
 	/**
 	 * MAP Service Listeners
 	 */
-	public void onProcessUnstructuredSSIndication(
-			ProcessUnstructuredSSIndication procUnstrInd) {
+	public void onProcessUnstructuredSSIndication(ProcessUnstructuredSSIndication procUnstrInd) {
 		String ussdString = procUnstrInd.getUSSDString().getString();
 		AddressString msisdn = procUnstrInd.getMSISDNAddressString();
-		logger.debug("Received ProcessUnstructuredSSIndication " + ussdString
-				+ " from MSISDN " + msisdn.getAddress());
+		logger.debug("Received ProcessUnstructuredSSIndication " + ussdString + " from MSISDN " + msisdn.getAddress());
 
 		if (!ussdString.equals(MAPFunctionalTest.USSD_STRING)) {
 			this.finished = false;
-			unexpected += " Received USSDString " + ussdString
-					+ ". But was expected " + MAPFunctionalTest.USSD_STRING;
+			unexpected += " Received USSDString " + ussdString + ". But was expected " + MAPFunctionalTest.USSD_STRING;
 		} else {
 
-			MAPDialog mapDialog = procUnstrInd.getMAPDialog();
+			MAPDialogSupplementary mapDialog = procUnstrInd.getMAPDialog();
 			Long invokeId = procUnstrInd.getInvokeId();
 
-			USSDString ussdStringObj = this.mapServiceFactory
-					.createUSSDString(MAPFunctionalTest.USSD_MENU);
+			USSDString ussdStringObj = this.mapServiceFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
 
 			try {
 				mapDialog.addUnstructuredSSRequest((byte) 0x0F, ussdStringObj);
