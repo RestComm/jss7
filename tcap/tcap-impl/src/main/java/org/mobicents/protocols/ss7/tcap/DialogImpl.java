@@ -1035,15 +1035,29 @@ public class DialogImpl implements Dialog {
 
 		// now set cause - it can have APDU or external ;[
 		// FIXME: handle external
+		Boolean IsAareApdu = false;
+		Boolean IsAbrtApdu = false;
 		AbortSource abrtSrc = null;
+		ApplicationContextName acn = null;
+		Result result = null;
+		ResultSourceDiagnostic resultSourceDiagnostic = null;
 		UserInformation userInfo = null;
 		DialogPortion dp = msg.getDialogPortion();
 		if (dp != null) {
 			DialogAPDU apdu = dp.getDialogAPDU();
 			if (apdu != null && apdu.getType() == DialogAPDUType.Abort) {
+				IsAbrtApdu = true;
 				DialogAbortAPDU abortApdu = (DialogAbortAPDU) apdu;
 				abrtSrc = abortApdu.getAbortSource();
 				userInfo = abortApdu.getUserInformation();
+			}
+			if (apdu != null && apdu.getType() == DialogAPDUType.Response) {
+				IsAareApdu = true;
+				DialogResponseAPDU resptApdu = (DialogResponseAPDU) apdu;
+				acn = resptApdu.getApplicationContextName();
+				result = resptApdu.getResult();
+				resultSourceDiagnostic = resptApdu.getResultSourceDiagnostic();
+				userInfo = resptApdu.getUserInformation();
 			}
 		}
 
@@ -1061,8 +1075,15 @@ public class DialogImpl implements Dialog {
 			TCUserAbortIndicationImpl tcAbortIndication = (TCUserAbortIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider
 					.getDialogPrimitiveFactory()).createUAbortIndication(this);
 			// FIXME: it can have External in apdu, add handling
+			
+			if (IsAareApdu)
+				tcAbortIndication.SetAareApdu();
+			if (IsAbrtApdu)
+				tcAbortIndication.SetAbrtApdu();
 			tcAbortIndication.setUserInformation(userInfo);
 			tcAbortIndication.setAbortSource(abrtSrc);
+			tcAbortIndication.setApplicationContextName(acn);
+			tcAbortIndication.setResultSourceDiagnostic(resultSourceDiagnostic);
 			this.setState(TRPseudoState.Expunged);
 			this.provider.deliver(this, tcAbortIndication);
 		}

@@ -259,14 +259,18 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 			localAos.reset();
 			byte[] byteData = null;
 			if (ui != null) {
-				
+
 				ui.encode(localAos);
 				byteData = localAos.toByteArray();
 				localAos.reset();
 
-				localAos.writeSequence(byteData);
-
-				byteData = localAos.toByteArray();
+//				ui.encode(localAos);
+//				byteData = localAos.toByteArray();
+//				localAos.reset();
+//
+//				localAos.writeSequence(byteData);
+//
+//				byteData = localAos.toByteArray();
 
 			}
 			ProtocolVersion pv = TcapFactory.createProtocolVersion();

@@ -28,6 +28,7 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.EventType;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
 import org.mobicents.protocols.ss7.tcap.asn.AbortSource;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.ResultSourceDiagnostic;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
 public class TCUserAbortIndicationImpl extends DialogIndicationImpl implements
@@ -38,6 +39,10 @@ public class TCUserAbortIndicationImpl extends DialogIndicationImpl implements
 	//private ApplicationContextName applicationContextName;
 	private UserInformation userInformation;
 	private AbortSource abortSource;
+	private ApplicationContextName acn;
+	private ResultSourceDiagnostic resultSourceDiagnostic;
+	private Boolean aareApdu = false;
+	private Boolean abrtApdu = false;
 	
 	//XXX: fields_1 and fields_2 are mutually exclusive!
 	TCUserAbortIndicationImpl() {
@@ -49,8 +54,23 @@ public class TCUserAbortIndicationImpl extends DialogIndicationImpl implements
 	//	
 	//	return abortReason;
 	//}
-
 	
+	public Boolean IsAareApdu() {
+		return this.aareApdu; 
+	}
+	
+	public void SetAareApdu() {
+		this.aareApdu = true; 
+	}
+	
+	public Boolean IsAbrtApdu() {
+		return this.abrtApdu; 
+		
+	}
+	
+	public void SetAbrtApdu() {
+		this.abrtApdu = true; 
+	}
 
 
 	public UserInformation getUserInformation() {
@@ -64,10 +84,12 @@ public class TCUserAbortIndicationImpl extends DialogIndicationImpl implements
 	public void setUserInformation(UserInformation userInformation) {
 		this.userInformation = userInformation;
 	}
-
-	public ApplicationContextName getApplicationContextName() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	/**
+	 * @return the abortSource
+	 */
+	public AbortSource getAbortSource() {
+		return abortSource;
 	}
 
 	public void setAbortSource(AbortSource abortSource) {
@@ -75,13 +97,20 @@ public class TCUserAbortIndicationImpl extends DialogIndicationImpl implements
 		
 	}
 
-	/**
-	 * @return the abortSource
-	 */
-	public AbortSource getAbortSource() {
-		return abortSource;
+	public ApplicationContextName getApplicationContextName() {
+		return this.acn;
+	}
+
+	public void setApplicationContextName( ApplicationContextName acn ) {
+		this.acn = acn;
+	}
+
+	public ResultSourceDiagnostic getResultSourceDiagnostic() {
+		return this.resultSourceDiagnostic;
 	}
 	
-	
+	public void setResultSourceDiagnostic( ResultSourceDiagnostic resultSourceDiagnostic ) {
+		this.resultSourceDiagnostic = resultSourceDiagnostic;
+	}
 
 }
