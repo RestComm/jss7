@@ -167,13 +167,15 @@ public class SccpManagement implements SccpListener {
 		int affectedPc = (data[2] & 0xff) | ((data[3] & 0xff) << 8);
 		int subsystemMultiplicity = data[3] & 0xff;
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(String
-					.format("Received SCMG message. Message Type=%s, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
-							this.getMessageType(messgType), affectedSsn, affectedPc, subsystemMultiplicity, seqControl));
-		}
 		switch (messgType) {
 		case SSA:
+
+			if (logger.isInfoEnabled()) {
+				logger.info(String
+						.format("Received SCMG message. Message Type=SSA, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
+								affectedSsn, affectedPc, subsystemMultiplicity, seqControl));
+			}
+
 			// Mark remote SSN Allowed
 			this.allowSsn(affectedPc, affectedSsn);
 
@@ -195,6 +197,12 @@ public class SccpManagement implements SccpListener {
 			}
 			break;
 		case SSP:
+			if (logger.isEnabledFor(Level.WARN)) {
+				logger.warn(String
+						.format("Received SCMG message. Message Type=SSP, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
+								affectedSsn, affectedPc, subsystemMultiplicity, seqControl));
+			}
+
 			this.prohibitSsn(affectedPc, affectedSsn);
 			// Initiate SubSystem Status Test Procedure
 
@@ -478,8 +486,13 @@ public class SccpManagement implements SccpListener {
 		// cancel all SST if any
 		FastList<SubSystemTest> ssts = dpcVsSst.get(affectedPc);
 		if (ssts != null) {
-			for (FastList.Node<SubSystemTest> n = ssts.head(), endSst = ssts.tail(); (n = n.getNext()) != endSst;) {
+			// TODO : Amit: Added n.getValue() != null check. Evaluate
+			// javolution.FastList as why for loop continues even after removing
+			// last element?
+			for (FastList.Node<SubSystemTest> n = ssts.head(), endSst = ssts.tail(); ((n = n.getNext()) != endSst)
+					&& n.getValue() != null;) {
 				SubSystemTest sst = n.getValue();
+
 				// If SSN = 1 but flag ssn1 is false, means we don't stop this
 				// SST and return back the reference to it
 				if (sst.getSsn() == 1 && !cancelSstForSsn1) {
