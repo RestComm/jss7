@@ -23,7 +23,9 @@
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
 
 import org.mobicents.protocols.ss7.tcap.asn.AbortSource;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+import org.mobicents.protocols.ss7.tcap.asn.ResultSourceDiagnostic;
 
 /**
  * <pre>
@@ -43,9 +45,24 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
  */
 public interface TCUserAbortIndication extends DialogIndication {
 
+	/**
+	 * Returns true if AARE Apdu is included
+	 * @return
+	 */
+	public Boolean IsAareApdu();
+	
+	/**
+	 * Returns true if ABRT Apdu is included
+	 * @return
+	 */
+	public Boolean IsAbrtApdu();
 
 	public UserInformation getUserInformation();
 
 	public AbortSource getAbortSource();
+
+	public ApplicationContextName getApplicationContextName();
+	
+	public ResultSourceDiagnostic getResultSourceDiagnostic();
 
 }
