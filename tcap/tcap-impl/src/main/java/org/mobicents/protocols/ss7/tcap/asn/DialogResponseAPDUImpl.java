@@ -27,6 +27,7 @@ package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -165,10 +166,12 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 			// going the easy way; not going to work with undefined!
 			// this way we dont have to go through remaining len countdown
 			byte[] dataChunk = new byte[len];
+			
 			if(len!=ais.read(dataChunk))
 			{
 				throw new ParseException("Not enough data read.");
 			}
+			
 			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(dataChunk));
 			int tag = localAis.readTag();
 			// optional protocol version
@@ -259,19 +262,18 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 			localAos.reset();
 			byte[] byteData = null;
 			if (ui != null) {
-
+				
 				ui.encode(localAos);
 				byteData = localAos.toByteArray();
 				localAos.reset();
 
-//				ui.encode(localAos);
-//				byteData = localAos.toByteArray();
-//				localAos.reset();
-//
-//				localAos.writeSequence(byteData);
-//
-//				byteData = localAos.toByteArray();
+				// as above:
+				// TODO: The Q.773 defines SEQUENCE of USER INFORMATION, however all
+				// the traces shows no SEQUNECE and just one USER INFORMATION
 
+				// localAos.writeSequence(byteData);
+				// byteData = localAos.toByteArray();
+				// localAos.reset();
 			}
 			ProtocolVersion pv = TcapFactory.createProtocolVersion();
 			pv.encode(localAos);
@@ -285,6 +287,7 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 			aos.writeTag(_TAG_CLASS, _TAG_PRIMITIVE, _TAG_RESPONSE);
 			aos.writeLength(byteData.length);
 			aos.write(byteData);
+			
 
 		} catch (IOException e) {
 			throw new ParseException(e);

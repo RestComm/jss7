@@ -25,7 +25,9 @@
  */
 package org.mobicents.protocols.ss7.tcap.asn;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -63,7 +65,6 @@ public class UserInformationImpl extends External implements UserInformation {
 
 		try {
 			int length = ais.readLength();
-
 			int tag = ais.readTag();
 
 			if (tag != Tag.EXTERNAL) {
@@ -98,7 +99,6 @@ public class UserInformationImpl extends External implements UserInformation {
 		// now lets write ourselves
 		aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
 		byte[] externalData = localAsn.toByteArray();
-		
 		try {
 			aos.writeLength(externalData.length);
 			aos.write(externalData);

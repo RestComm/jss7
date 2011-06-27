@@ -23,7 +23,12 @@
 package org.mobicents.protocols.ss7.tcap.api;
 
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.*;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCPAbortIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 
 public interface TCListener {
@@ -77,12 +82,18 @@ public interface TCListener {
 	 * 
 	 * @param d
 	 */
-	public void dialogReleased(Dialog d);
+	public void onDialogReleased(Dialog d);
 
 	/**
 	 * 
 	 * @param tcInvokeRequest
 	 */
 	public void onInvokeTimeout(Invoke tcInvokeRequest);
+
+	/**
+	 * Called once dialog times out. Once this method is called, dialog cant be used anymore.
+	 * @param d
+	 */
+	public void onDialogTimeout(Dialog d);
 
 }

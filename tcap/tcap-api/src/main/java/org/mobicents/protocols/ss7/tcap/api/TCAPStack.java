@@ -47,6 +47,19 @@ public interface TCAPStack {
 	 * @throws StartFailedException
 	 */
 	public void start() throws IllegalStateException;
+
+	/**
+	 * Sets millisecond value for dialog timeout. It specifies how long dialog
+	 * can be idle - not receive/send any messages. If '0' is passed, dialog
+	 * wont timeout at all.
+	 * 
+	 * @param l
+	 */
+	public void setDialogIdleTimeout(long l);
+
+	public long getDialogIdleTimeout();
+
+	
 //	/**
 //	 * Configure stack and transport layer.
 //	 * @param properties

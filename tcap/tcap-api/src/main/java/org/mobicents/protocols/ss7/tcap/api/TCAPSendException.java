@@ -30,7 +30,7 @@ package org.mobicents.protocols.ss7.tcap.api;
  *
  */
 public class TCAPSendException extends Exception {
-
+	//FIXME: should this be runtime exception?
 	public TCAPSendException() {
 		super();
 		// TODO Auto-generated constructor stub

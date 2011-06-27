@@ -377,6 +377,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				break;
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(String.format("Error while decoding Rx SccpMessage=%s", message), e);
 		}
 	}
@@ -478,7 +479,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		try {
 			for (int index = 0; index < this.tcListeners.size(); index++) {
 				TCListener lst = this.tcListeners.get(index);
-				lst.dialogReleased(d);
+				lst.onDialogReleased(d);
 			}
 		} catch (Exception e) {
 			if (logger.isEnabledFor(Level.ERROR)) {
@@ -487,7 +488,29 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		}
 
 	}
-
+	
+	/**
+	 * @param d
+	 */
+	public void timeout(DialogImpl d) {
+		try {
+			for (int index = 0; index < this.tcListeners.size(); index++) {
+				TCListener lst = this.tcListeners.get(index);
+				lst.onDialogTimeout(d);
+			}
+		} catch (Exception e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Received exception while delivering dialog release.", e);
+			}
+		}
+		
+	}
+	
+	public TCAPStackImpl getStack()
+	{
+		return this.stack;
+	}
+	
 	// ///////////////////////////////////////////
 	// Some methods invoked by operation FSM //
 	// //////////////////////////////////////////
@@ -509,14 +532,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		}
 	}
 
-	// FIXME: check how tcap handles that.
-	public void linkDown() {
-		// TODO Auto-generated method stub
-	}
-
-	public void linkUp() {
-		// TODO Auto-generated method stub
-	}
 
 	void start() {
 		logger.info("Starting TCAP Provider");
@@ -530,4 +545,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		this.sccpProvider.deregisterSccpListener(ssn);
 
 	}
+
+	
 }

@@ -39,11 +39,17 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
  */
 public class TCAPStackImpl implements TCAPStack {
 
+	// default value of idle timeout and after TC_END remove of task.
+	public static final long _DIALOG_REMOVE_TIMEOUT = 30000;
+	// TCAP state data, it is used ONLY on client side
     private TCAPProviderImpl tcapProvider;
     private SccpProvider sccpProvider;
     private SccpAddress address;
     
     private State state = State.IDLE;
+    
+	private long dialogTimeout = _DIALOG_REMOVE_TIMEOUT;
+
     private static final Logger logger = Logger.getLogger(TCAPStackImpl.class);
 
     public TCAPStackImpl() {
@@ -92,8 +98,27 @@ public class TCAPStackImpl implements TCAPStack {
         return tcapProvider;
     }
 
-    private enum State {
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#setDialogIdleTimeout(long)
+	 */
+	public void setDialogIdleTimeout(long v) {
+		if(v<0)
+		{
+			throw new IllegalArgumentException("Timeotu value must be greater or equal to zero.");
+		}
+		this.dialogTimeout = v;
+		
+	}
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#getDialogIdleTimeout()
+	 */
+	public long getDialogIdleTimeout() {
+		return this.dialogTimeout;
+	}
+	
+	private enum State {
 
         IDLE, CONFIGURED, RUNNING;
     }
+
 }

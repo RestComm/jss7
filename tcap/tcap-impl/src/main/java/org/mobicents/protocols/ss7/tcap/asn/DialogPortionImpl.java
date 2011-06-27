@@ -241,7 +241,6 @@ public class DialogPortionImpl extends External implements DialogPortion {
 			this.uniDirectional = Arrays.equals(_DIALG_UNI, this.getOidValue());
 			
 			byte[] dialogPdu = super.getEncodeType();
-			
 			AsnInputStream loaclAsnIS = new AsnInputStream(new ByteArrayInputStream(dialogPdu));
 
 			// now lets get APDU

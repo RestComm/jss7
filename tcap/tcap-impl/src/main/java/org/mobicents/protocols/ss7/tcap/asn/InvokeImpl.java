@@ -422,13 +422,13 @@ public class InvokeImpl implements Invoke {
 		InvokeImpl invoke;
 
 		public void run() {
-			synchronized (invoke) {
+	
 				// op failed, we must delete it from dialog and notify!
 				timerFuture = null;
 				setState(OperationState.Idle);
 				// TC-L-CANCEL
 				((DialogImpl) invoke.dialog).operationTimedOut(invoke);
-			}
+	
 
 		}
 
