@@ -193,6 +193,10 @@ public abstract class SccpHarness {
 		public void execute() throws IOException {
 			//We dont use this
 			
+			try {
+				Thread.sleep(100);
+			} catch( Exception e ) {
+			}
 		}
 
 	}

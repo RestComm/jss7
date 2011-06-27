@@ -107,213 +107,117 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 	public void abort(MAPUserAbortChoice mapUserAbortChoice) throws MAPException {
 
-		// Dialog is not started or has expunged - we need not send TC-U-ABORT,
-		// onli Dialog removing
-		if (this.getState() == MAPDialogState.Expunged || this.getState() == MAPDialogState.Idle) {
+		synchronized (this) {
+			// Dialog is not started or has expunged - we need not send TC-U-ABORT,
+			// only Dialog removing
+			if (this.getState() == MAPDialogState.Expunged || this.getState() == MAPDialogState.Idle) {
+				this.setState(MAPDialogState.Expunged);
+				return;
+			}
+
+			this.mapProviderImpl.fireTCAbortUser(this.getTcapDialog(), mapUserAbortChoice, this.extContainer);
+			this.extContainer = null;
+
 			this.setState(MAPDialogState.Expunged);
-			return;
 		}
-
-		this.mapProviderImpl.fireTCAbortUser(this.getTcapDialog(), mapUserAbortChoice, this.extContainer);
-		this.extContainer = null;
-
-		this.setState(MAPDialogState.Expunged);
-
 	}
 
 	public void refuse(Reason reason) throws MAPException {
 
-		// Dialog must be in the InitialReceived state
-		if (this.getState() == MAPDialogState.InitialReceived) {
-			throw new MAPException("Refuse can be called in the Dialog InitialReceived state");
+		synchronized (this) {
+			// Dialog must be in the InitialReceived state
+			if (this.getState() != MAPDialogState.InitialReceived) {
+				throw new MAPException("Refuse can be called in the Dialog InitialReceived state");
+			}
+
+			this.mapProviderImpl.fireTCAbortRefused(this.getTcapDialog(), reason, this.extContainer);
+			this.extContainer = null;
+
+			this.setState(MAPDialogState.Expunged);
 		}
-
-		this.mapProviderImpl.fireTCAbortRefused(this.getTcapDialog(), reason, this.extContainer);
-		this.extContainer = null;
-
-		this.setState(MAPDialogState.Expunged);
 	}
 
 	public void close(boolean prearrangedEnd) throws MAPException {
 
-		switch (this.tcapDialog.getState()) {
-		case InitialReceived:
-			ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-					.createApplicationContextName(this.appCntx.getOID());
+		synchronized (this) {
+			switch (this.tcapDialog.getState()) {
+			case InitialReceived:
+				ApplicationContextName acn = this.mapProviderImpl
+						.getTCAPProvider().getDialogPrimitiveFactory()
+						.createApplicationContextName(this.appCntx.getOID());
 
-			this.mapProviderImpl.fireTCEnd(this.getTcapDialog(), true, prearrangedEnd, acn, this.extContainer);
-			this.extContainer = null;
+				this.mapProviderImpl.fireTCEnd(this.getTcapDialog(), true,
+						prearrangedEnd, acn, this.extContainer);
+				this.extContainer = null;
 
-			this.setState(MAPDialogState.Expunged);
+				this.setState(MAPDialogState.Expunged);
+				break;
 
-			// .........................
+			case Active:
+				this.mapProviderImpl.fireTCEnd(this.getTcapDialog(), false,
+						prearrangedEnd, null, null);
 
-			// TCEndRequest endRequest =
-			// this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-			// .createEnd(this.tcapDialog);
-			// if (!prearrangedEnd) {
-			// endRequest.setTermination(TerminationType.Basic);
-			// } else {
-			// endRequest.setTermination(TerminationType.PreArranged);
-			// }
-			//
-			// ApplicationContextName acn =
-			// this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-			// .createApplicationContextName(this.appCntx.getOID());
-			//
-			// endRequest.setApplicationContextName(acn);
-			//
-			// try {
-			// this.tcapDialog.send(endRequest);
-			// this.setState(MAPDialogState.Expunged);
-			// } catch (TCAPSendException e) {
-			// throw new MAPException(e.getMessage(), e);
-			// }
-
-			break;
-
-		case Active:
-			this.mapProviderImpl.fireTCEnd(this.getTcapDialog(), false, prearrangedEnd, null, null);
-
-			this.setState(MAPDialogState.Expunged);
-
-			// .........................
-			// TCEndRequest endRequest1 =
-			// this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-			// .createEnd(this.tcapDialog);
-			// if (!prearrangedEnd) {
-			// endRequest1.setTermination(TerminationType.Basic);
-			// } else {
-			// endRequest1.setTermination(TerminationType.PreArranged);
-			// }
-			//
-			// try {
-			// this.tcapDialog.send(endRequest1);
-			// this.setState(MAPDialogState.Expunged);
-			// } catch (TCAPSendException e) {
-			// throw new MAPException(e.getMessage(), e);
-			// }
-
-			break;
-		case Idle:
-			throw new MAPException("Awaiting TC-BEGIN to be sent, can not send another dialog initiating primitive!");
-		case InitialSent: // we have sent TC-BEGIN already, need to wait
-			throw new MAPException("Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
-		case Expunged: // dialog has been terminated on TC level, cant send
-			throw new MAPException("Dialog has been terminated, can not send primitives!");
+				this.setState(MAPDialogState.Expunged);
+				break;
+			case Idle:
+				throw new MAPException(
+						"Awaiting TC-BEGIN to be sent, can not send another dialog initiating primitive!");
+			case InitialSent: // we have sent TC-BEGIN already, need to wait
+				throw new MAPException(
+						"Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
+			case Expunged: // dialog has been terminated on TC level, cant send
+				throw new MAPException(
+						"Dialog has been terminated, can not send primitives!");
+			}
 		}
 	}
 
 	public void send() throws MAPException {
 
-		switch (this.tcapDialog.getState()) {
-		case Idle:
+		synchronized (this) {
+			switch (this.tcapDialog.getState()) {
 
-			ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-					.createApplicationContextName(this.appCntx.getOID());
+			case Idle:
+				ApplicationContextName acn = this.mapProviderImpl
+						.getTCAPProvider().getDialogPrimitiveFactory()
+						.createApplicationContextName(this.appCntx.getOID());
 
-			this.mapProviderImpl
-					.fireTCBegin(this.getTcapDialog(), acn, destReference, origReference, this.extContainer);
-			this.extContainer = null;
+				this.mapProviderImpl.fireTCBegin(this.getTcapDialog(), acn,
+						destReference, origReference, this.extContainer);
+				this.extContainer = null;
 
-			this.setState(MAPDialogState.InitialSent);
+				this.setState(MAPDialogState.InitialSent);
+				break;
 
-			// TCBeginRequest tcBeginReq =
-			// this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-			// .createBegin(this.tcapDialog);
-			//
-			// ApplicationContextName acn =
-			// this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-			// .createApplicationContextName(this.appCntx.getOID());
-			//
-			// tcBeginReq.setApplicationContextName(acn);
-			//
-			// MAPOpenInfoImpl mapOpn = new MAPOpenInfoImpl();
-			// mapOpn.setDestReference(this.destReference);
-			// mapOpn.setOrigReference(this.origReference);
-			// mapOpn.setExtensionContainer(this.extContainer);
-			// this.extContainer = null;
-			//
-			// AsnOutputStream localasnOs = new AsnOutputStream();
-			// try {
-			// mapOpn.encode(localasnOs);
-			// } catch (IOException e) {
-			// throw new MAPException(e.getMessage(), e);
-			// }
-			//
-			// UserInformation userInformation =
-			// TcapFactory.createUserInformation();
-			//
-			// userInformation.setOid(true);
-			// userInformation.setOidValue(MAPDialogueAS.MAP_DialogueAS.getOID());
-			//
-			// userInformation.setAsn(true);
-			// userInformation.setEncodeType(localasnOs.toByteArray());
-			//
-			// tcBeginReq.setUserInformation(userInformation);
-			//
-			// try {
-			// this.tcapDialog.send(tcBeginReq);
-			// this.setState(MAPDialogState.InitialSent);
-			// } catch (TCAPSendException e) {
-			// throw new MAPException(e.getMessage(), e);
-			// }
+			case Active:
+				// Its Active send TC-CONTINUE
 
-			break;
+				this.mapProviderImpl.fireTCContinue(this.getTcapDialog(),
+						false, null, null);
+				break;
 
-		case Active:
-			// Its Active send TC-CONTINUE
+			case InitialReceived:
+				// Its first Reply to TC-Begin
 
-			this.mapProviderImpl.fireTCContinue(this.getTcapDialog(), false, null, null);
+				ApplicationContextName acn1 = this.mapProviderImpl
+						.getTCAPProvider().getDialogPrimitiveFactory()
+						.createApplicationContextName(this.appCntx.getOID());
 
-			// TCContinueRequest tcContinueReq =
-			// this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-			// .createContinue(this.tcapDialog);
-			//
-			// try {
-			// this.tcapDialog.send(tcContinueReq);
-			// } catch (TCAPSendException e) {
-			// throw new MAPException(e.getMessage(), e);
-			// }
+				this.mapProviderImpl.fireTCContinue(this.getTcapDialog(), true,
+						acn1, this.extContainer);
+				this.extContainer = null;
 
-			break;
+				this.setState(MAPDialogState.Active);
+				break;
 
-		case InitialReceived:
-			// Its first Reply to TC-Begin
-
-			ApplicationContextName acn1 = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-					.createApplicationContextName(this.appCntx.getOID());
-
-			this.mapProviderImpl.fireTCContinue(this.getTcapDialog(), true, acn1, this.extContainer);
-			this.extContainer = null;
-
-			this.setState(MAPDialogState.Active);
-
-			// TCContinueRequest tcContinueReq1 =
-			// this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-			// .createContinue(this.tcapDialog);
-			//
-			// ApplicationContextName acn1 =
-			// this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-			// .createApplicationContextName(this.appCntx.getOID());
-			//
-			// tcContinueReq1.setApplicationContextName(acn1);
-			//
-			// try {
-			// this.tcapDialog.send(tcContinueReq1);
-			// this.setState(MAPDialogState.Active);
-			// } catch (TCAPSendException e) {
-			// throw new MAPException(e.getMessage(), e);
-			// }
-
-			break;
-
-		case InitialSent: // we have sent TC-BEGIN already, need to wait
-			throw new MAPException("Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
-		case Expunged: // dialog has been terminated on TC level, cant send
-			throw new MAPException("Dialog has been terminated, can not send primitives!");
+			case InitialSent: // we have sent TC-BEGIN already, need to wait
+				throw new MAPException(
+						"Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
+			case Expunged: // dialog has been terminated on TC level, cant send
+				throw new MAPException(
+						"Dialog has been terminated, can not send primitives!");
+			}
 		}
-
 	}
 
 	public MAPApplicationContext getAppCntx() {
@@ -329,10 +233,12 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		if (this.state == MAPDialogState.Expunged) {
 			return;
 		}
+		
+		this.state = newState;
 		if (newState == MAPDialogState.Expunged) {
 			this.mapProviderImpl.removeDialog(tcapDialog.getDialogId());
+			this.mapProviderImpl.deliverDialogResease(this);
 		}
-		this.state = newState;
 	}
 
 	public Object getUserObject() {

@@ -25,8 +25,14 @@ package org.mobicents.protocols.ss7.map.functional;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Properties;
+import java.util.Date;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -36,11 +42,24 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
+import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
+import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
+import org.mobicents.protocols.ss7.map.dialog.MAPOpenInfoImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
+import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplementaryImpl;
+import org.mobicents.protocols.ss7.map.MAPProviderImpl;
+
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 /**
  * 
@@ -78,11 +97,11 @@ public class MAPFunctionalTest extends SccpHarness {
 	 */
 	@Before
 	public void setUp() {
-		// this.setupLog4j();
+//		this.setupLog4j();
 
 		super.setUp();
 
-		// this.setupLog4j();
+		//this.setupLog4j();
 
 		// create some fake addresses.
 		GlobalTitle gt1 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "123");
@@ -104,9 +123,9 @@ public class MAPFunctionalTest extends SccpHarness {
 	private void setupLog4j() {
 
 		InputStream inStreamLog4j = getClass().getResourceAsStream("/log4j.properties");
-
+		
 		Properties propertiesLog4j = new Properties();
-
+		
 		try {
 			propertiesLog4j.load(inStreamLog4j);
 			PropertyConfigurator.configure(propertiesLog4j);
@@ -135,68 +154,158 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	@Test
 	public void testSimpleTCWithDialog() throws Exception {
+		server.setStep(FunctionalTestScenario.actionA);
+		client.setStep(FunctionalTestScenario.actionA);
+		client.actionA();
 		client.start();
 		waitForEnd();
 		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
 		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		
 	}
 
-	/*
-	 * @Test public void testA1() throws Exception { MAPOpenInfoImpl oi1 = new
-	 * MAPOpenInfoImpl(); // oi1.setDestReference(new
-	 * org.mobicents.protocols.ss7
-	 * .map.dialog.AddressStringImpl(AddressNature.international_number, //
-	 * NumberingPlan.ISDN, "31628968300")); oi1.setOrigReference(new
-	 * org.mobicents.protocols.ss7.map.dialog.AddressStringImpl(AddressNature.
-	 * national_significant_number, NumberingPlan.land_mobile, "78441223344"));
-	 * 
-	 * ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
-	 * al.add( new
-	 * org.mobicents.protocols.ss7.map.dialog.MAPPrivateExtensionImpl( new
-	 * long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 } )); al.add( new
-	 * org.mobicents.protocols.ss7.map.dialog.MAPPrivateExtensionImpl( new
-	 * long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25, 26 } )); al.add(
-	 * new org.mobicents.protocols.ss7.map.dialog.MAPPrivateExtensionImpl( new
-	 * long[] { 1, 2, 3, 6 }, null ) );
-	 * 
-	 * // org.mobicents.protocols.ss7.map.dialog.MAPExtensionContainerImpl cnt =
-	 * // new org.mobicents.protocols.ss7.map.dialog.MAPExtensionContainerImpl(
-	 * al, new byte[] { 31, 32, 33 } );
-	 * org.mobicents.protocols.ss7.map.dialog.MAPExtensionContainerImpl cnt =
-	 * new org.mobicents.protocols.ss7.map.dialog.MAPExtensionContainerImpl(
-	 * null, new byte[] { 31, 32, 33 } );
-	 * 
-	 * oi1.setExtensionContainer( cnt );
-	 * 
-	 * AsnOutputStream localAos = new AsnOutputStream(); oi1.encode( localAos );
-	 * byte[] buf = localAos.toByteArray();
-	 * 
-	 * ByteArrayInputStream localIsb = new ByteArrayInputStream(buf);
-	 * AsnInputStream localIs = new AsnInputStream(localIsb);
-	 * 
-	 * MAPOpenInfoImpl oi2 = new MAPOpenInfoImpl(); int tag = localIs.readTag();
-	 * oi2.decode(localIs);
-	 * 
-	 * 
-	 * 
-	 * // HashMap<long[],Long> ax=new HashMap<long[],Long>(); // long[] a1 = new
-	 * long[3]; // a1[0]=1; // a1[1]=2; // a1[2]=3; // long[] a2 = new long[3];
-	 * // a2[0]=1; // a2[1]=2; // a2[2]=3; // // ax.put(a1,new Long(1)); //
-	 * ax.put(a2,new Long(2)); // // int i1 = a1.hashCode(); // int i2 =
-	 * a2.hashCode();
-	 * 
-	 * 
-	 * client.start(); waitForEnd(); assertTrue("Client side did not finish: " +
-	 * client.getStatus(), client.isFinished());
-	 * assertTrue("Server side did not finish: " + server.getStatus(),
-	 * server.isFinished()); }
-	 */
+	@Test
+	public void testComplexTCWithDialog() throws Exception {
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.actionA);
+		client.setStep(FunctionalTestScenario.actionA);
+		client.actionA();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+
+		
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.actionB);
+		client.setStep(FunctionalTestScenario.actionB);
+		client.actionB();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		
+		((MAPServiceSupplementaryImpl) this.stack2.getMAPProvider()
+				.getMAPServiceSupplementary()).setTestMode(1);
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.actionC);
+		client.setStep(FunctionalTestScenario.actionC);
+		client.actionB();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		((MAPServiceSupplementaryImpl) this.stack2.getMAPProvider()
+				.getMAPServiceSupplementary()).setTestMode(0);
+		
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.actionD);
+		client.setStep(FunctionalTestScenario.actionD);
+		client.actionB();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.actionE);
+		client.setStep(FunctionalTestScenario.actionE);
+		client.actionB();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		
+//		((MAPProviderImpl) this.stack2.getMAPProvider()).setTestMode(1);
+//		server.reset();
+//		client.reset();
+//		server.setStep(FunctionalTestScenario.actionF);
+//		client.setStep(FunctionalTestScenario.actionF);
+//		client.actionB();
+//		waitForEnd();
+//		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+//		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+//		((MAPProviderImpl) this.stack2.getMAPProvider()).setTestMode(0);
+	}
 
 	private void waitForEnd() {
 		try {
-			Thread.currentThread().sleep(_WAIT_TIMEOUT);
+			Date startTime = new Date(); 
+			while (true) {
+				if( client.isFinished() && server.isFinished() )
+					break;
+				
+				Thread.currentThread().sleep(100);
+
+				if( new Date().getTime() - startTime.getTime() > _WAIT_TIMEOUT )
+					break;
+					
+				
+				//Thread.currentThread().sleep(_WAIT_TIMEOUT);
+			}
 		} catch (InterruptedException e) {
 			fail("Interrupted on wait!");
 		}
+	}
+	
+	public static MAPExtensionContainer GetTestExtensionContainer( MapServiceFactory mapServiceFactory )
+	{
+		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
+		al.add( mapServiceFactory.createMAPPrivateExtension ( 
+				new long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }
+				));
+		al.add( mapServiceFactory.createMAPPrivateExtension( 
+				new long[] { 1, 2, 3, 6 }, null )
+				);
+		al.add( mapServiceFactory.createMAPPrivateExtension( 
+				new long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25, 26 }
+				));
+		
+		MAPExtensionContainer cnt = mapServiceFactory.createMAPExtensionContainer( al, new byte[] { 31, 32, 33 } ); 
+
+		return cnt;
+	}
+	
+	protected static Boolean CheckTestExtensionContainer( MAPExtensionContainer extContainer )
+	{
+		if( extContainer == null || extContainer.getPrivateExtensionList().size() != 3 )
+			return false;
+		
+		for( int i = 0; i<3; i++ ) {
+			MAPPrivateExtension pe = extContainer.getPrivateExtensionList().get(i);
+			long[] lx = null;
+			byte[] bx = null;
+			
+			switch( i ) {
+			case 0:
+				lx = new long[] { 1, 2, 3, 4 };
+				bx = new byte[] { 11, 12, 13, 14, 15 };
+				break;
+			case 1:
+				lx = new long[] { 1, 2, 3, 6 };
+				bx = null;
+				break;
+			case 2:
+				lx = new long[] { 1, 2, 3, 5 };
+				bx = new byte[] { 21, 22, 23, 24, 25, 26 };
+				break;
+			}
+			
+			if( pe.getOId()== null || !Arrays.equals(pe.getOId(), lx))
+				return false;
+			if( bx == null ) {
+				if( pe.getData() != null )
+					return false;
+			} else {
+				if( pe.getData() == null || !Arrays.equals(pe.getData(), bx))
+					return false;
+			}
+		}
+		
+		byte[] by = new byte[] { 31, 32, 33 };
+		if( extContainer.getPcsExtensions() == null || !Arrays.equals(extContainer.getPcsExtensions(), by ) )
+			return false;
+		
+		return true;
 	}
 }

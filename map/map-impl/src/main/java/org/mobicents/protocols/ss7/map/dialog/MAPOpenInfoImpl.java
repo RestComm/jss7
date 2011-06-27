@@ -30,18 +30,17 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPOpenInfo;
 
 /**
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
-public class MAPOpenInfoImpl implements MAPOpenInfo {
+public class MAPOpenInfoImpl {
 
 	public static final int MAP_OPEN_INFO_TAG = 0x00;
 
@@ -52,18 +51,12 @@ public class MAPOpenInfoImpl implements MAPOpenInfo {
 	protected static final boolean OPEN_INFO_TAG_PC_PRIMITIVE = true;
 	protected static final boolean OPEN_INFO_TAG_PC_CONSTRUCTED = false;
 
-	private MAPDialog mapDialog = null;
-
 	private AddressString destReference;
 	private AddressString origReference;
 	private MAPExtensionContainer extensionContainer;
 
 	public AddressString getDestReference() {
 		return this.destReference;
-	}
-
-	public MAPDialog getMAPDialog() {
-		return this.mapDialog;
 	}
 
 	public AddressString getOrigReference() {
@@ -76,10 +69,6 @@ public class MAPOpenInfoImpl implements MAPOpenInfo {
 
 	public void setDestReference(AddressString destReference) {
 		this.destReference = destReference;
-	}
-
-	public void setMAPDialog(MAPDialog mapDialog) {
-		this.mapDialog = mapDialog;
 	}
 
 	public void setOrigReference(AddressString origReference) {
@@ -113,34 +102,56 @@ public class MAPOpenInfoImpl implements MAPOpenInfo {
 		// ... } OPTIONAL,
 		// ... } OPTIONAL},
 
+		this.setDestReference(null);
+		this.setOrigReference(null);
+		this.setExtensionContainer(null);
+
 		byte[] seqData = ais.readSequence();
 
 		AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(seqData));
 
 		int tag;
+		Boolean badTag = false;
 
 		while (localAis.available() > 0) {
 			tag = localAis.readTag();
-			if (tag == DESTINATION_REF_TAG) {
+
+			switch (tag) {
+			case DESTINATION_REF_TAG: {
 				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 				localAis.readOctetString(outputStream);
 
 				this.destReference = new AddressStringImpl();
-				((AddressStringImpl) this.destReference).decode(new AsnInputStream(new ByteArrayInputStream(
-						outputStream.toByteArray())));
+				((AddressStringImpl) this.destReference)
+						.decode(new AsnInputStream(new ByteArrayInputStream(
+								outputStream.toByteArray())));
+			}
+				break;
 
-			} else if (tag == ORIGINATION_REF_TAG) {
+			case ORIGINATION_REF_TAG: {
 				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 				localAis.readOctetString(outputStream);
 
 				this.origReference = new AddressStringImpl();
-				((AddressStringImpl) this.origReference).decode(new AsnInputStream(new ByteArrayInputStream(
-						outputStream.toByteArray())));
-
-			} else if (tag == Tag.SEQUENCE) {
-				this.extensionContainer = new MAPExtensionContainerImpl();
-				((MAPExtensionContainerImpl) this.extensionContainer).decode(localAis);
+				((AddressStringImpl) this.origReference)
+						.decode(new AsnInputStream(new ByteArrayInputStream(
+								outputStream.toByteArray())));
 			}
+				break;
+
+			case Tag.SEQUENCE:
+				this.extensionContainer = new MAPExtensionContainerImpl();
+				((MAPExtensionContainerImpl) this.extensionContainer)
+						.decode(localAis);
+				break;
+
+			default:
+				badTag = true;
+				break;
+			}
+			
+			if (badTag)
+				break;
 		}
 
 	}

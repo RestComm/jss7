@@ -22,14 +22,15 @@
 
 package org.mobicents.protocols.ss7.map.dialog;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.api.MAPDialog;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPAcceptInfo;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 
 /**
  * map-accept [1] IMPLICIT SEQUENCE {
@@ -49,28 +50,90 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPAcceptInfo;
  *
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  *
  */
-public class MAPAcceptInfoImpl implements MAPAcceptInfo {
+public class MAPAcceptInfoImpl {
 	
-	protected static final int MAP_ACCEPT_INFO_TAG = 0x01;
-	
-	private MAPDialog mapDialog = null;
+	public static final int MAP_ACCEPT_INFO_TAG = 0x01;
 
-	public MAPDialog getMAPDialog() {
-		return this.mapDialog;
+	protected static final int ACCEPT_INFO_TAG_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
+	protected static final boolean ACCEPT_INFO_TAG_PC_PRIMITIVE = true;
+	protected static final boolean ACCEPT_INFO_TAG_PC_CONSTRUCTED = false;
+
+	private MAPExtensionContainer extensionContainer;
+
+
+	public MAPExtensionContainer getExtensionContainer() {
+		return extensionContainer;
 	}
 
-	public void setMAPDialog(MAPDialog mapDialog) {
-		this.mapDialog = mapDialog;
+	public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
+		this.extensionContainer = extensionContainer;
 	}
+
 	
 	public void decode(AsnInputStream ais) throws AsnException, IOException, MAPException{
-		//TODO I donno what is here?
+		// MAP-AcceptInfo ::= SEQUENCE {
+		// ... ,  
+		// extensionContainer SEQUENCE { 
+		//    privateExtensionList [0] IMPLICIT SEQUENCE SIZE (1 .. 10 ) OF 
+		//       SEQUENCE { 
+		//          extId      MAP-EXTENSION .&extensionId  ( { 
+		//             ,  
+		//             ...} ) ,  
+		//          extType    MAP-EXTENSION .&ExtensionType  ( { 
+		// ,  
+        //  ...} { @extId   }  )  OPTIONAL} OPTIONAL,  
+        //  pcs-Extensions [1] IMPLICIT SEQUENCE { 
+        //     ... } OPTIONAL,  
+        //  ... } OPTIONAL}
+		
+		this.setExtensionContainer(null);
+
+		byte[] seqData = ais.readSequence();
+
+		AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(seqData));
+
+		int tag;
+
+		while (localAis.available() > 0) {
+			tag = localAis.readTag();
+			if (tag == Tag.SEQUENCE) {
+				this.extensionContainer = new MAPExtensionContainerImpl();
+				((MAPExtensionContainerImpl) this.extensionContainer).decode(localAis);
+			}
+			else
+				break;
+		}
 	}
 	
 	public void encode(AsnOutputStream asnOS) throws IOException, MAPException{
-		//TODO I donno what is here?
+		
+		AsnOutputStream localAos = new AsnOutputStream();
+
+		byte[] extContData = null;
+
+		if (this.extensionContainer != null) {
+			localAos.reset();
+			((MAPExtensionContainerImpl) this.extensionContainer).encode(localAos);
+			extContData = localAos.toByteArray();
+		}
+
+		localAos.reset();
+
+		if (extContData != null) {
+			localAos.writeTag(Tag.CLASS_UNIVERSAL, ACCEPT_INFO_TAG_PC_CONSTRUCTED, Tag.SEQUENCE);
+			localAos.writeLength(extContData.length);
+			localAos.write(extContData);
+		}
+
+		byte[] data = localAos.toByteArray();
+
+		// Now let us write the MAP OPEN-INFO Tags
+		asnOS.writeTag(ACCEPT_INFO_TAG_CLASS, ACCEPT_INFO_TAG_PC_CONSTRUCTED, MAP_ACCEPT_INFO_TAG);
+		asnOS.writeLength(data.length);
+		asnOS.write(data);
 	}
 
 }

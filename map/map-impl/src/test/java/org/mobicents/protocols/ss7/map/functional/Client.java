@@ -22,12 +22,16 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
+import java.util.Arrays;
+
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
+import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
@@ -40,17 +44,21 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.dialog.ProcedureCancellationReason;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
+import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 
 /**
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class Client implements MAPDialogListener, MAPServiceSupplementaryListener {
@@ -66,13 +74,19 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	private MapServiceFactory mapServiceFactory;
 
-	private boolean finished = true;
+//	private boolean finished = true;
 	private String unexpected = "";
 	private boolean _S_receivedUnstructuredSSIndication, _S_sentEnd;
+	private boolean _S_receivedMAPOpenInfoExtentionContainer;
+	private boolean _S_receivedAbortInfo;
+	private boolean _S_receivedEndInfo;
 
 	private MAPDialogSupplementary clientDialog;
+	
+	private FunctionalTestScenario step;
 
-	Client(MAPStack mapStack, MAPFunctionalTest runningTestCase, SccpAddress thisAddress, SccpAddress remoteAddress) {
+	Client(MAPStack mapStack, MAPFunctionalTest runningTestCase,
+			SccpAddress thisAddress, SccpAddress remoteAddress) {
 		super();
 		this.mapStack = mapStack;
 		this.runningTestCase = runningTestCase;
@@ -88,116 +102,334 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	public void start() throws MAPException {
 		this.mapProvider.getMAPServiceSupplementary().acivate();
-
+		
 		MAPApplicationContext appCnt = MAPApplicationContext.networkUnstructuredSsContextV2;
-		AddressString orgiReference = this.mapServiceFactory.createAddressString(AddressNature.international_number,
-				NumberingPlan.ISDN, "31628968300");
-		AddressString destReference = this.mapServiceFactory.createAddressString(AddressNature.international_number,
-				NumberingPlan.land_mobile, "204208300008002");
+		AddressString orgiReference = this.mapServiceFactory
+				.createAddressString(AddressNature.international_number,
+						NumberingPlan.ISDN, "31628968300");
+		AddressString destReference = this.mapServiceFactory
+				.createAddressString(AddressNature.international_number,
+						NumberingPlan.land_mobile, "204208300008002");
+		
+		AddressString msisdn = this.mapServiceFactory.createAddressString(
+				AddressNature.international_number, NumberingPlan.ISDN, "31628838002");		
 
-		AddressString msisdn = this.mapServiceFactory.createAddressString(AddressNature.international_number,
-				NumberingPlan.ISDN, "31628838002");
+		clientDialog = this.mapProvider.getMAPServiceSupplementary().createNewDialog(appCnt,
+				this.thisAddress, orgiReference, this.remoteAddress,
+				destReference);
 
-		clientDialog = this.mapProvider.getMAPServiceSupplementary().createNewDialog(appCnt, this.thisAddress,
-				orgiReference, this.remoteAddress, destReference);
+		
+		USSDString ussdString = this.mapServiceFactory
+				.createUSSDString(MAPFunctionalTest.USSD_STRING);
 
-		USSDString ussdString = this.mapServiceFactory.createUSSDString(MAPFunctionalTest.USSD_STRING);
-
-		clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString, msisdn);
+		clientDialog.addProcessUnstructuredSSRequest( (byte) 0x0F, ussdString, msisdn);
 
 		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
 
 		clientDialog.send();
 	}
 
+	
+
+	public void actionA() throws MAPException {
+		this.mapProvider.getMAPServiceSupplementary().acivate();
+		
+		MAPApplicationContext appCnt = MAPApplicationContext.networkUnstructuredSsContextV2;
+		AddressString orgiReference = this.mapServiceFactory
+				.createAddressString(AddressNature.international_number,
+						NumberingPlan.ISDN, "31628968300");
+		AddressString destReference = this.mapServiceFactory
+				.createAddressString(AddressNature.international_number,
+						NumberingPlan.land_mobile, "204208300008002");
+		
+		AddressString msisdn = this.mapServiceFactory.createAddressString(
+				AddressNature.international_number, NumberingPlan.ISDN, "31628838002");		
+
+//		clientDialog = this.mapProvider.getMAPServiceSupplementary().createNewDialog(appCnt,
+//				this.thisAddress, null, this.remoteAddress,
+//				null);
+		clientDialog = this.mapProvider.getMAPServiceSupplementary().createNewDialog(appCnt,
+				this.thisAddress, orgiReference, this.remoteAddress,
+				destReference);
+		clientDialog.setExtentionContainer(MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
+
+		
+		USSDString ussdString = this.mapServiceFactory
+				.createUSSDString(MAPFunctionalTest.USSD_STRING);
+
+		clientDialog.addProcessUnstructuredSSRequest( (byte) 0x0F, ussdString, msisdn);
+
+		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
+
+		clientDialog.send();
+	}
+
+	public void actionB() throws MAPException {
+		this.mapProvider.getMAPServiceSupplementary().acivate();
+		
+		MAPApplicationContext appCnt = MAPApplicationContext.networkUnstructuredSsContextV2;
+		AddressString orgiReference = this.mapServiceFactory
+				.createAddressString(AddressNature.international_number,
+						NumberingPlan.ISDN, "31628968300");
+		AddressString destReference = this.mapServiceFactory
+				.createAddressString(AddressNature.international_number,
+						NumberingPlan.land_mobile, "204208300008002");
+		
+		AddressString msisdn = this.mapServiceFactory.createAddressString(
+				AddressNature.international_number, NumberingPlan.ISDN, "31628838002");		
+
+		clientDialog = this.mapProvider.getMAPServiceSupplementary().createNewDialog(appCnt,
+				this.thisAddress, orgiReference, this.remoteAddress,
+				destReference);
+
+		
+		USSDString ussdString = this.mapServiceFactory
+				.createUSSDString(MAPFunctionalTest.USSD_STRING);
+
+		clientDialog.addProcessUnstructuredSSRequest( (byte) 0x0F, ussdString, msisdn);
+
+		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
+
+		clientDialog.send();
+	}
+
+	
 	public boolean isFinished() {
 
-		return this.finished && _S_receivedUnstructuredSSIndication && _S_sentEnd;
+//		return this.finished && _S_receivedUnstructuredSSIndication
+//		&& _S_sentEnd && _S_recievedMAPOpenInfoExtentionContainer;
+		switch( this.step ) {
+		case actionA:
+			return _S_receivedUnstructuredSSIndication && _S_sentEnd && _S_receivedMAPOpenInfoExtentionContainer;
+		case actionB:
+			return _S_receivedAbortInfo && _S_receivedMAPOpenInfoExtentionContainer;
+		case actionC:
+			return _S_receivedAbortInfo;
+		case actionD:
+			return _S_receivedUnstructuredSSIndication && _S_receivedEndInfo && _S_receivedMAPOpenInfoExtentionContainer;
+		case actionE:
+			return _S_receivedUnstructuredSSIndication && _S_sentEnd;
+		case actionF:
+			return _S_receivedAbortInfo;
+		}
+		
+		
+		return false;
 	}
 
 	public String getStatus() {
 		String status = "";
 
-		status += "_S_receivedUnstructuredSSIndication[" + _S_receivedUnstructuredSSIndication + "]" + "\n";
-		status += "_S_sentEnd[" + _S_sentEnd + "]" + "\n";
+		switch( this.step ) {
+		case actionA:
+			status += "_S_receivedUnstructuredSSIndication["
+				+ _S_receivedUnstructuredSSIndication + "]" + "\n";
+			status += "_S_recievedMAPOpenInfoExtentionContainer["
+					+ _S_receivedMAPOpenInfoExtentionContainer + "]" + "\n";
+			status += "_S_sentEnd[" + _S_sentEnd + "]" + "\n";
+			break;
+			
+		case actionB:
+			status += "_S_receivedAbortInfo["
+				+ _S_receivedAbortInfo + "]" + "\n";
+			status += "_S_recievedMAPOpenInfoExtentionContainer["
+				+ _S_receivedMAPOpenInfoExtentionContainer + "]" + "\n";
+			break;
+			
+		case actionC:
+			status += "_S_receivedAbortInfo["
+				+ _S_receivedAbortInfo + "]" + "\n";
+			break;
+			
+		case actionD:
+			status += "_S_receivedUnstructuredSSIndication["
+				+ _S_receivedUnstructuredSSIndication + "]" + "\n";
+			status += "_S_recievedMAPOpenInfoExtentionContainer["
+					+ _S_receivedMAPOpenInfoExtentionContainer + "]" + "\n";
+			status += "_S_receivedEndInfo[" + _S_receivedEndInfo + "]" + "\n";
+			break;
+			
+		case actionE:
+			status += "_S_receivedUnstructuredSSIndication["
+				+ _S_receivedUnstructuredSSIndication + "]" + "\n";
+			status += "_S_sentEnd[" + _S_sentEnd + "]" + "\n";
+			break;
+			
+		case actionF:
+			status += "_S_receivedAbortInfo["
+				+ _S_receivedAbortInfo + "]" + "\n";
+			break;
+		}
 
 		return status + unexpected;
 	}
+	
+	public void reset() {
+//		this.finished = true;
+		this._S_receivedUnstructuredSSIndication = false;
+		this._S_sentEnd = false;
+		this._S_receivedMAPOpenInfoExtentionContainer = false;
+		this._S_receivedAbortInfo = false;
+		this._S_receivedEndInfo = false;
+	}
+	
+	public void setStep (FunctionalTestScenario step) {
+		this.step = step;
+	}
 
+	
+	
 	/**
 	 * MAPDialog Listener's
 	 */
 	@Override
 	public void onDialogDelimiter(MAPDialog mapDialog) {
-		// TODO Auto-generated method stub
 
+		switch( this.step ) {
+		case actionA:
+			logger.debug("Calling Client.end()");
+			try {
+				mapDialog.close(true);
+				_S_sentEnd = true;
+			} catch (MAPException e) {
+				logger.error(e);
+				throw new RuntimeException(e);
+			}
+			break;
+			
+		case actionE:
+			logger.debug("Sending MAPUserAbortInfo ");
+			try {
+				_S_sentEnd = true;
+				mapDialog.setExtentionContainer(MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
+				MAPUserAbortChoice choice = this.mapServiceFactory.createMAPUserAbortChoice();
+				choice.setProcedureCancellationReason(ProcedureCancellationReason.handoverCancellation);
+				mapDialog.abort(choice);
+			} catch (MAPException e) {
+				logger.error(e);
+				throw new RuntimeException(e);
+			}
+			break;
+
+		}
 	}
-
+	
 	@Override
-	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
+	public void onDialogRequest(MAPDialog mapDialog,
+			AddressString destReference, AddressString origReference,
 			MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
-
-		logger.debug("Received onMAPAcceptInfo ");
-	}
-
-	@Override
-	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
-			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason,
+	public void onDialogAccept(MAPDialog mapDialog,
 			MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
+		
+		switch( this.step ) {
+		case actionA:
+			if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
+				_S_receivedMAPOpenInfoExtentionContainer = true;
 
+			logger.debug("Received onMAPAcceptInfo ");
+			break;
+			
+		case actionD:
+			if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
+				_S_receivedMAPOpenInfoExtentionContainer = true;
+			
+			this._S_receivedEndInfo = true;
+
+			logger.debug("Received onMAPAcceptInfo ");
+			break;
+
+		case actionE:
+			logger.debug("Received onMAPAcceptInfo ");
+			break;
+		}
 	}
 
 	@Override
-	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason,
+	public void onDialogReject(MAPDialog mapDialog,
+			MAPRefuseReason refuseReason, MAPProviderError providerError,
+			ApplicationContextName alternativeApplicationContext,
+			MAPExtensionContainer extensionContainer) {
+		switch( this.step ) {
+		case actionB:
+			if (refuseReason == MAPRefuseReason.InvalidDestinationReference) {
+				logger.debug("Received InvalidDestinationReference");
+				_S_receivedAbortInfo = true;
+				
+				if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
+					_S_receivedMAPOpenInfoExtentionContainer = true;
+			}
+			break;
+			
+		case actionC:
+			if (refuseReason == MAPRefuseReason.ApplicationContextNotSupported) {
+				logger.debug("Received ApplicationContextNotSupported");
+				
+				if (alternativeApplicationContext != null
+						&& Arrays.equals(
+								alternativeApplicationContext.getOid(),
+								new long[] { 1, 2, 3 })) {
+					_S_receivedAbortInfo = true;
+				}
+			}
+			break;
+		}
+	}
+
+	@Override
+	public void onDialogUserAbort(MAPDialog mapDialog,
+			MAPUserAbortChoice userReason,
+			MAPExtensionContainer extensionContainer) {
+	}
+
+	@Override
+	public void onDialogProviderAbort(MAPDialog mapDialog,
+			MAPAbortProviderReason abortProviderReason,
 			MAPAbortSource abortSource, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-
+		switch( this.step ) {
+		case actionF:
+			logger.debug("Received DialogProviderAbort " 
+					+ abortProviderReason.toString());
+			if (abortProviderReason == MAPAbortProviderReason.InvalidPDU)
+				_S_receivedAbortInfo = true;
+			if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
+				_S_receivedMAPOpenInfoExtentionContainer = true;
+			break;
+		}
 	}
 
 	@Override
 	public void onDialogClose(MAPDialog mapDialog) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
-		// TODO Auto-generated method stub
-
+	public void onDialogNotice(MAPDialog mapDialog,
+			MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
 	}
 
+	public void onDialogResease(MAPDialog mapDialog) {
+		int i1=0;
+		i1 = 1;
+	}
+	
+	
 	/**
 	 * MAP Service Listeners
 	 */
-	public void onProcessUnstructuredSSIndication(ProcessUnstructuredSSIndication procUnstrInd) {
-		// TODO Auto-generated method stub
-
+	public void onProcessUnstructuredSSIndication(
+			ProcessUnstructuredSSIndication procUnstrInd) {
 	}
 
 	public void onUnstructuredSSIndication(UnstructuredSSIndication unstrInd) {
-		logger.debug("Received UnstructuredSSIndication " + unstrInd.getUSSDString().getString());
-		_S_receivedUnstructuredSSIndication = true;
-
-		MAPDialog mapDialog = unstrInd.getMAPDialog();
-		try {
-			mapDialog.close(true);
-			_S_sentEnd = true;
-		} catch (MAPException e) {
-			logger.error(e);
-			throw new RuntimeException(e);
+		switch( this.step ) {
+		case actionA:
+		case actionD:
+		case actionE:
+			logger.debug("Received UnstructuredSSIndication "
+					+ unstrInd.getUSSDString().getString());
+			_S_receivedUnstructuredSSIndication = true;
 		}
 	}
 

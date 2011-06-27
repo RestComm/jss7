@@ -102,4 +102,11 @@ public interface MAPDialogListener {
 	// public void onMAPProviderAbortInfo(MAPProviderAbortInfo
 	// mapProviderAbortInfo);
 
+	/**
+	 * Called when the MADDialog has been released
+	 * 
+	 * @param mapDialog
+	 */
+	public void onDialogResease(MAPDialog mapDialog);
+
 }

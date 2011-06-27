@@ -206,4 +206,8 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 
 	}
 
+	public void onDialogResease(MAPDialog mapDialog) {
+		
+	}
+
 }
