@@ -25,14 +25,11 @@ package org.mobicents.protocols.ss7.map.functional;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Properties;
 import java.util.Date;
+import java.util.Properties;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -42,24 +39,15 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
-import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
-import org.mobicents.protocols.ss7.map.dialog.MAPOpenInfoImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplementaryImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
-import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplementaryImpl;
-import org.mobicents.protocols.ss7.map.MAPProviderImpl;
-
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 /**
  * 
@@ -97,11 +85,11 @@ public class MAPFunctionalTest extends SccpHarness {
 	 */
 	@Before
 	public void setUp() {
-//		this.setupLog4j();
+		// this.setupLog4j();
 
 		super.setUp();
 
-		//this.setupLog4j();
+		// this.setupLog4j();
 
 		// create some fake addresses.
 		GlobalTitle gt1 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "123");
@@ -123,9 +111,9 @@ public class MAPFunctionalTest extends SccpHarness {
 	private void setupLog4j() {
 
 		InputStream inStreamLog4j = getClass().getResourceAsStream("/log4j.properties");
-		
+
 		Properties propertiesLog4j = new Properties();
-		
+
 		try {
 			propertiesLog4j.load(inStreamLog4j);
 			PropertyConfigurator.configure(propertiesLog4j);
@@ -161,7 +149,7 @@ public class MAPFunctionalTest extends SccpHarness {
 		waitForEnd();
 		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
 		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
-		
+
 	}
 
 	@Test
@@ -175,7 +163,6 @@ public class MAPFunctionalTest extends SccpHarness {
 		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
 		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
 
-		
 		server.reset();
 		client.reset();
 		server.setStep(FunctionalTestScenario.actionB);
@@ -184,9 +171,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		waitForEnd();
 		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
 		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
-		
-		((MAPServiceSupplementaryImpl) this.stack2.getMAPProvider()
-				.getMAPServiceSupplementary()).setTestMode(1);
+
+		((MAPServiceSupplementaryImpl) this.stack2.getMAPProvider().getMAPServiceSupplementary()).setTestMode(1);
 		server.reset();
 		client.reset();
 		server.setStep(FunctionalTestScenario.actionC);
@@ -195,9 +181,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		waitForEnd();
 		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
 		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
-		((MAPServiceSupplementaryImpl) this.stack2.getMAPProvider()
-				.getMAPServiceSupplementary()).setTestMode(0);
-		
+		((MAPServiceSupplementaryImpl) this.stack2.getMAPProvider().getMAPServiceSupplementary()).setTestMode(0);
+
 		server.reset();
 		client.reset();
 		server.setStep(FunctionalTestScenario.actionD);
@@ -206,7 +191,7 @@ public class MAPFunctionalTest extends SccpHarness {
 		waitForEnd();
 		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
 		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
-		
+
 		server.reset();
 		client.reset();
 		server.setStep(FunctionalTestScenario.actionE);
@@ -215,68 +200,63 @@ public class MAPFunctionalTest extends SccpHarness {
 		waitForEnd();
 		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
 		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
-		
-//		((MAPProviderImpl) this.stack2.getMAPProvider()).setTestMode(1);
-//		server.reset();
-//		client.reset();
-//		server.setStep(FunctionalTestScenario.actionF);
-//		client.setStep(FunctionalTestScenario.actionF);
-//		client.actionB();
-//		waitForEnd();
-//		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-//		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
-//		((MAPProviderImpl) this.stack2.getMAPProvider()).setTestMode(0);
+
+		// ((MAPProviderImpl) this.stack2.getMAPProvider()).setTestMode(1);
+		// server.reset();
+		// client.reset();
+		// server.setStep(FunctionalTestScenario.actionF);
+		// client.setStep(FunctionalTestScenario.actionF);
+		// client.actionB();
+		// waitForEnd();
+		// assertTrue("Client side did not finish: " + client.getStatus(),
+		// client.isFinished());
+		// assertTrue("Server side did not finish: " + server.getStatus(),
+		// server.isFinished());
+		// ((MAPProviderImpl) this.stack2.getMAPProvider()).setTestMode(0);
 	}
 
 	private void waitForEnd() {
 		try {
-			Date startTime = new Date(); 
+			Date startTime = new Date();
 			while (true) {
-				if( client.isFinished() && server.isFinished() )
+				if (client.isFinished() && server.isFinished())
 					break;
-				
+
 				Thread.currentThread().sleep(100);
 
-				if( new Date().getTime() - startTime.getTime() > _WAIT_TIMEOUT )
+				if (new Date().getTime() - startTime.getTime() > _WAIT_TIMEOUT)
 					break;
-					
-				
-				//Thread.currentThread().sleep(_WAIT_TIMEOUT);
+
+				// Thread.currentThread().sleep(_WAIT_TIMEOUT);
 			}
 		} catch (InterruptedException e) {
 			fail("Interrupted on wait!");
 		}
 	}
-	
-	public static MAPExtensionContainer GetTestExtensionContainer( MapServiceFactory mapServiceFactory )
-	{
+
+	public static MAPExtensionContainer GetTestExtensionContainer(MapServiceFactory mapServiceFactory) {
 		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
-		al.add( mapServiceFactory.createMAPPrivateExtension ( 
-				new long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }
-				));
-		al.add( mapServiceFactory.createMAPPrivateExtension( 
-				new long[] { 1, 2, 3, 6 }, null )
-				);
-		al.add( mapServiceFactory.createMAPPrivateExtension( 
-				new long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25, 26 }
-				));
-		
-		MAPExtensionContainer cnt = mapServiceFactory.createMAPExtensionContainer( al, new byte[] { 31, 32, 33 } ); 
+		al.add(mapServiceFactory
+				.createMAPPrivateExtension(new long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
+		al.add(mapServiceFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 6 }, null));
+		al.add(mapServiceFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25,
+				26 }));
+
+		MAPExtensionContainer cnt = mapServiceFactory.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
 
 		return cnt;
 	}
-	
-	protected static Boolean CheckTestExtensionContainer( MAPExtensionContainer extContainer )
-	{
-		if( extContainer == null || extContainer.getPrivateExtensionList().size() != 3 )
+
+	protected static Boolean CheckTestExtensionContainer(MAPExtensionContainer extContainer) {
+		if (extContainer == null || extContainer.getPrivateExtensionList().size() != 3)
 			return false;
-		
-		for( int i = 0; i<3; i++ ) {
+
+		for (int i = 0; i < 3; i++) {
 			MAPPrivateExtension pe = extContainer.getPrivateExtensionList().get(i);
 			long[] lx = null;
 			byte[] bx = null;
-			
-			switch( i ) {
+
+			switch (i) {
 			case 0:
 				lx = new long[] { 1, 2, 3, 4 };
 				bx = new byte[] { 11, 12, 13, 14, 15 };
@@ -290,22 +270,22 @@ public class MAPFunctionalTest extends SccpHarness {
 				bx = new byte[] { 21, 22, 23, 24, 25, 26 };
 				break;
 			}
-			
-			if( pe.getOId()== null || !Arrays.equals(pe.getOId(), lx))
+
+			if (pe.getOId() == null || !Arrays.equals(pe.getOId(), lx))
 				return false;
-			if( bx == null ) {
-				if( pe.getData() != null )
+			if (bx == null) {
+				if (pe.getData() != null)
 					return false;
 			} else {
-				if( pe.getData() == null || !Arrays.equals(pe.getData(), bx))
+				if (pe.getData() == null || !Arrays.equals(pe.getData(), bx))
 					return false;
 			}
 		}
-		
+
 		byte[] by = new byte[] { 31, 32, 33 };
-		if( extContainer.getPcsExtensions() == null || !Arrays.equals(extContainer.getPcsExtensions(), by ) )
+		if (extContainer.getPcsExtensions() == null || !Arrays.equals(extContainer.getPcsExtensions(), by))
 			return false;
-		
+
 		return true;
 	}
 }
