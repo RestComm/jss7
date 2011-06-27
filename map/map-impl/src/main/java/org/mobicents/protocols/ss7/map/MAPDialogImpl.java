@@ -220,7 +220,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		}
 	}
 
-	public MAPApplicationContext getAppCntx() {
+	public MAPApplicationContext getApplicationContext() {
 		return appCntx;
 	}
 

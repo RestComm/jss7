@@ -109,4 +109,6 @@ public interface MAPDialog {
 	 * @param userObject
 	 */
 	public void setUserObject(Object userObject);
+	
+	public MAPApplicationContext getApplicationContext();
 }
