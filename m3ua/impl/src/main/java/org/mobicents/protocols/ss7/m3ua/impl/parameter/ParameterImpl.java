@@ -32,8 +32,8 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
  */
 public abstract class ParameterImpl implements Parameter {
 
-	protected short tag;
-	protected short length;
+	protected volatile short tag;
+	protected volatile short length;
 
 	public short getTag() {
 		return tag;

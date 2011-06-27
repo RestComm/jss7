@@ -266,13 +266,20 @@ public abstract class As implements XMLSerializable {
 
 		switch (this.getState()) {
 		case ACTIVE:
+			boolean aspFound = false;
 			// TODO : Algo to select correct ASP
 			for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
 				Asp aspTemp = n.getValue();
 				if (aspTemp.getState() == AspState.ACTIVE) {
 					aspTemp.getAspFactory().write(message);
+					aspFound = true;
 					break;
 				}
+			}
+			
+			if(!aspFound){
+				//This should never happen.
+				logger.error(String.format("Tx : no ACTIVE Asp for message=%s", message));
 			}
 
 			break;
@@ -305,7 +312,7 @@ public abstract class As implements XMLSerializable {
 
 	public void received(PayloadData payload) {
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("Received PayloadData=%s for As=%s", payload.toString(), this.name));
+			logger.debug(String.format("Rx : PayloadData=%s for As=%s", payload.toString(), this.name));
 		}
 		this.rxQueue.add(payload.getData().getMsu());
 	}

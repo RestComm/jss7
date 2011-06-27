@@ -394,7 +394,7 @@ public class LocalAspFactory extends AspFactory {
 		Asp asp = this.getAsp(rc);
 
 		if (asp == null) {
-			logger.error(String.format("received PayloadData for RoutingContext=%d. But no ASP found. Message=%s", rc,
+			logger.error(String.format("Rx : PayloadData for RoutingContext=%d. But no ASP found. Message=%s", rc,
 					payload));
 			return;
 		}
@@ -402,7 +402,7 @@ public class LocalAspFactory extends AspFactory {
 		if (asp.getState() == AspState.ACTIVE) {
 			asp.getAs().received(payload);
 		} else {
-			logger.error(String.format("Received PayloadData for RoutingContext=%d. But ASP State=%s. Message=%s", rc,
+			logger.error(String.format("Rx : PayloadData for RoutingContext=%d. But ASP State=%s. Message=%s", rc,
 					asp.getState(), payload));
 		}
 

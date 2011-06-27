@@ -66,9 +66,10 @@ public class ClientM3UAManagement extends M3UAManagement {
 
 	protected M3UASelector selector;
 
+	// Stores DPC vs List of AS such that this DPC can by served by List of AS's
 	private FastMap<Integer, FastList<As>> dpcRoute = new FastMap<Integer, FastList<As>>();
 
-	// This is explicitly for persisting to xml
+	// Stores DPC vs List of AS names. This is explicitly for persisting to xml
 	private FastMap<Integer, FastList<String>> dpcVsAsName = new FastMap<Integer, FastList<String>>();
 
 	/**
@@ -81,7 +82,7 @@ public class ClientM3UAManagement extends M3UAManagement {
 	@Override
 	public void start() throws IOException {
 		selector = m3uaProvider.openSelector();
-		
+
 		super.start();
 
 		this.clientRoutePersistFile.clear();
@@ -107,7 +108,7 @@ public class ClientM3UAManagement extends M3UAManagement {
 	public void stop() throws IOException {
 		super.stop();
 
-		//selector.close();
+		// selector.close();
 
 		this.storeRoute();
 	}
@@ -151,7 +152,7 @@ public class ClientM3UAManagement extends M3UAManagement {
 
 		asList.remove(asTemp);
 		asNames.remove(asName);
-		
+
 		this.storeRoute();
 
 	}
@@ -234,7 +235,7 @@ public class ClientM3UAManagement extends M3UAManagement {
 		}
 
 		String rcKey = args[3];
-		if (rcKey == null || rcKey.compareTo("rc") != 0) {
+		if (rcKey == null || !rcKey.equals("rc") ) {
 			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
 		}
 

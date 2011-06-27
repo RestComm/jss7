@@ -106,7 +106,7 @@ public class ClientM3UAProcess implements M3UAProcess {
 			
 			As as = this.clientM3UAManagement.getAsForDpc(data.getDpc(), data.getSLS());
 			if (as == null) {
-				logger.error(String.format("No AS found for routing message %s", payload));
+				logger.error(String.format("Tx : No AS found for routing message %s", payload));
 				return write;
 			}
 
