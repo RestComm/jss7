@@ -169,7 +169,7 @@ public abstract class SccpHarness {
 			int dataRead = 0;
 			while (!this.readFrom.isEmpty()) {
 				byte[] rxData = this.readFrom.poll();
-				System.out.println("Read " + Arrays.toString(rxData));
+				System.out.println("Read["+System.currentTimeMillis()+"] " + Arrays.toString(rxData));
 				dataRead = dataRead + rxData.length;
 				b.put(rxData);
 			}
@@ -183,7 +183,7 @@ public abstract class SccpHarness {
 				byte[] txData = new byte[b.limit() - b.position()];
 				b.get(txData);
 				dataAdded = dataAdded + txData.length;
-				System.out.println("Write " + Arrays.toString(txData));
+				System.out.println("Write["+System.currentTimeMillis()+"] " + Arrays.toString(txData));
 				this.writeTo.add(txData);
 			}
 			return dataAdded;

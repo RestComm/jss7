@@ -25,6 +25,9 @@ package org.mobicents.protocols.ss7.tcap;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -34,6 +37,7 @@ import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
 
 /**
  * Test for call flow.
@@ -41,7 +45,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  *
  */
 public class TCAPFunctionalTest extends SccpHarness {
-
+	public static final long WAIT_TIME = 500;
     private static final int _WAIT_TIMEOUT = 90000;
     public static final long[] _ACN_ = new long[]{0, 4, 0, 0, 1, 0, 19, 2};
     private TCAPStackImpl tcapStack1;
@@ -98,11 +102,41 @@ public class TCAPFunctionalTest extends SccpHarness {
     }
 	
     @Test
-    public void testSimpleTCWithDialog() throws Exception {
-        client.start();
+    public void testSimpleTCWithDialog() throws Exception{
+    	
+        long stamp = System.currentTimeMillis();
+        List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+        TestEvent te = TestEvent.createSentEvent(EventType.Begin, null, 0,stamp);
+        clientExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.Continue, null, 1,stamp+WAIT_TIME);
+        clientExpectedEvents.add(te);
+        te = TestEvent.createSentEvent(EventType.End, null, 2,stamp+WAIT_TIME*2);
+        clientExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2+tcapStack1.getDialogIdleTimeout());
+        clientExpectedEvents.add(te);
+        
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+        te = TestEvent.createReceivedEvent(EventType.Begin, null, 0,stamp);
+        serverExpectedEvents.add(te);
+        te = TestEvent.createSentEvent(EventType.Continue, null, 1,stamp+WAIT_TIME);
+        serverExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.End, null, 2,stamp+WAIT_TIME*2);
+        serverExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2+tcapStack1.getDialogIdleTimeout());
+        serverExpectedEvents.add(te);
+        
+        
+    	client.startClientDialog();
+        client.sendBegin();
+        client.waitFor(WAIT_TIME);
+        server.sendContinue();
+        client.waitFor(WAIT_TIME);
+        client.sendEnd(TerminationType.Basic);
         waitForEnd();
-        assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-        assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+        
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
+
     }
 
     private void waitForEnd() {

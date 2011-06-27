@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.tcap.asn;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.BitSet;
 
 import junit.framework.TestCase;
 
@@ -105,6 +106,28 @@ public class UserInformationTest extends TestCase {
 		assertTrue(Arrays.equals(encodedData, userInfData));
 		
 		
+		
+	}
+	public static final long[] _ACN_ = new long[] { 0, 4, 0, 0, 1, 0, 19, 2 };
+	@org.junit.Test
+	public void testFailuuure() throws Exception
+	{
+		UserInformation _ui = new UserInformationImpl();
+		_ui.setArbitrary(true);
+		BitSet bs = new BitSet();
+		bs.set(0);
+		bs.set(3);
+		_ui.setEncodeBitStringType(bs);
+		_ui.setAsn(false);
+		_ui.setOid(true);
+		_ui.setOidValue(_ACN_);
+		AsnOutputStream asnOutput = new AsnOutputStream();
+		_ui.encode(asnOutput);
+		AsnInputStream asnInput = new AsnInputStream(new ByteArrayInputStream(asnOutput.toByteArray()));
+		asnInput.readTag();
+		_ui = new UserInformationImpl();
+		
+		_ui.decode(asnInput);
 		
 	}
 
