@@ -582,7 +582,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				} else {
 					MAPApplicationContext mapAcn = MAPApplicationContext
 							.getInstance(acn.getOid());
-					if (mapAcn == null || mapAcn != mapDialogImpl.getAppCntx()) {
+					if (mapAcn == null || mapAcn != mapDialogImpl.getApplicationContext()) {
 						loger.error(String
 								.format("Received first TC-CONTINUE. MAPDialog=%s. But MAPApplicationContext=%s",
 										mapDialogImpl, mapAcn));
@@ -726,7 +726,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				MAPApplicationContext mapAcn = MAPApplicationContext
 						.getInstance(acn.getOid());
 
-				if (mapAcn == null || mapAcn != mapDialogImpl.getAppCntx()) {
+				if (mapAcn == null || mapAcn != mapDialogImpl.getApplicationContext()) {
 					loger.error(String
 							.format("Received first TC-END. MAPDialog=%s. But MAPApplicationContext=%s",
 									mapDialogImpl, mapAcn));
