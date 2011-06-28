@@ -38,7 +38,6 @@ import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.Router;
-import org.mobicents.protocols.ss7.utils.Utils;
 
 /**
  * @author amit bhayani
@@ -55,7 +54,7 @@ public class SccpStackImpl implements SccpStack {
 											// Network
 	// Management Messages
 
-	protected State state = State.IDLE;
+	protected volatile State state = State.IDLE;
 
 	// provider ref, this can be real provider or pipe, for tests.
 	protected SccpProviderImpl sccpProvider;
