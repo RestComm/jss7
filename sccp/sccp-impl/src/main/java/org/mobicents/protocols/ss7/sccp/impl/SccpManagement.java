@@ -126,8 +126,8 @@ public class SccpManagement implements SccpListener {
 			switch (mtpParam) {
 			case MTP3_PAUSE:
 				affectedPc = in.readInt();
-				if (logger.isInfoEnabled()) {
-					logger.info(String.format("MTP3 PAUSE received for dpc=%d", affectedPc));
+				if (logger.isEnabledFor(Level.WARN)) {
+					logger.warn(String.format("MTP3 PAUSE received for dpc=%d", affectedPc));
 				}
 				this.handleMtp3Pause(affectedPc);
 				break;
@@ -143,8 +143,8 @@ public class SccpManagement implements SccpListener {
 				affectedPc = in.readInt();
 				int congStatus = in.readShort();
 				int unavailabiltyCause = in.readShort();
-				if (logger.isInfoEnabled()) {
-					logger.info(String
+				if (logger.isEnabledFor(Level.WARN)) {
+					logger.warn(String
 							.format("MTP3 STATUS received for dpc=%d, status=%d, Congestion Status=%d, Unavailability Cause=%d",
 									affectedPc, status, congStatus, unavailabiltyCause));
 				}
