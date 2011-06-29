@@ -115,6 +115,7 @@ public class DialogImpl implements Dialog {
 	private SccpAddress remoteAddress;
 
 	private Future idleTimerFuture;
+	private boolean idleTimerActionTaken = false;
 	
 	private TRPseudoState state = TRPseudoState.Idle;
 	private boolean structured = true;
@@ -339,6 +340,7 @@ public class DialogImpl implements Dialog {
 		}
 		try {
 			this.dialogLock.lock();
+			this.idleTimerActionTaken = true;
 			restartIdleTimer();
 			TCBeginMessageImpl tcbm = (TCBeginMessageImpl) TcapFactory.createTCBeginMessage();
 
@@ -403,6 +405,7 @@ public class DialogImpl implements Dialog {
 		try {
 			this.dialogLock.lock();
 			if (this.state == TRPseudoState.InitialReceived) {
+				this.idleTimerActionTaken = true;
 				restartIdleTimer();
 				TCContinueMessageImpl tcbm = (TCContinueMessageImpl) TcapFactory.createTCContinueMessage();
 
@@ -458,6 +461,7 @@ public class DialogImpl implements Dialog {
 				}
 
 			} else if (state == TRPseudoState.Active) {
+				this.idleTimerActionTaken = true;
 				restartIdleTimer();
 				// in this we ignore acn and passed args(except qos)
 				TCContinueMessageImpl tcbm = (TCContinueMessageImpl) TcapFactory.createTCContinueMessage();
@@ -514,7 +518,8 @@ public class DialogImpl implements Dialog {
 			if (state == TRPseudoState.InitialReceived) {
 				// TC-END request primitive issued in response to a TC-BEGIN
 				// indication primitive
-				restartIdleTimer();
+				this.idleTimerActionTaken = true;
+				stopIdleTimer();
 				tcbm = (TCEndMessageImpl) TcapFactory.createTCEndMessage();
 				tcbm.setDestinationTransactionId(this.remoteTransactionId);
 
@@ -1292,6 +1297,7 @@ public class DialogImpl implements Dialog {
 			{
 				throw new IllegalStateException();
 			}
+	
 			IdleTimerTask t = new IdleTimerTask();
 			t.d = this;
 			this.idleTimerFuture = this.executor.schedule(t, this.idleTaskTimeout, TimeUnit.MILLISECONDS);
@@ -1338,7 +1344,7 @@ public class DialogImpl implements Dialog {
 	
 	private class IdleTimerTask implements Runnable {
 		DialogImpl d;
-
+		
 		public void run() {
 			try {
 				dialogLock.lock();
@@ -1347,15 +1353,19 @@ public class DialogImpl implements Dialog {
 			} finally {
 				dialogLock.unlock();
 			}
-			
+			d.idleTimerActionTaken = false;
 			provider.timeout(d);
 			//send abort
 			try{
 				dialogLock.lock();
-				if(state != TRPseudoState.Expunged)
+				if(d.idleTimerActionTaken)
+				{
+					startIdleTimer();
+				}else
 				{
 					d.release();
 				}
+				
 			}finally
 			{
 				dialogLock.unlock();
