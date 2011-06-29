@@ -41,7 +41,7 @@ public class NetworkAppearanceImpl extends ParameterImpl implements NetworkAppea
 	private long value;
 	
 	public NetworkAppearanceImpl(){
-		
+		this.tag = Parameter.Network_Appearance;
 	}
 
 	protected NetworkAppearanceImpl(long value) {

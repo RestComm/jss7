@@ -70,7 +70,7 @@ public class RoutingKeyImpl extends ParameterImpl implements RoutingKey, XMLSeri
 	private byte[] value;
 
 	public RoutingKeyImpl() {
-
+		this.tag = Parameter.Routing_Key;
 	}
 
 	protected RoutingKeyImpl(byte[] value) {

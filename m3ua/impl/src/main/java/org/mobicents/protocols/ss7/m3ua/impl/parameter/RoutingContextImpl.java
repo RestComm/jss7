@@ -45,7 +45,7 @@ public class RoutingContextImpl extends ParameterImpl implements RoutingContext,
 	private byte[] value;
 	
 	public RoutingContextImpl(){
-		
+		this.tag = Parameter.Routing_Context;
 	}
 
 	protected RoutingContextImpl(byte[] value) {

@@ -47,7 +47,7 @@ public class OPCListImpl extends ParameterImpl implements OPCList, XMLSerializab
 	private short[] masks;
 	
 	public OPCListImpl(){
-		
+		this.tag = Parameter.Originating_Point_Code_List;
 	}
 
 	protected OPCListImpl(byte[] value) {

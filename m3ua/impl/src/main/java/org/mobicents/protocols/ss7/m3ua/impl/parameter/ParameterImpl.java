@@ -62,7 +62,7 @@ public abstract class ParameterImpl implements Parameter {
 	public void write(ByteBuffer buffer) {
 		// obtain encoded value
 		byte[] value = getValue();
-
+		
 		// encode tag
 		buffer.put((byte) (tag >> 8));
 		buffer.put((byte) (tag));

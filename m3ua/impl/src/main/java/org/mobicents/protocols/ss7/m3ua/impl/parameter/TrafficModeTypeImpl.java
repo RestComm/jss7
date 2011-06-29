@@ -41,7 +41,7 @@ public class TrafficModeTypeImpl extends ParameterImpl implements TrafficModeTyp
 	private byte[] value;
 	
 	public TrafficModeTypeImpl(){
-		
+		this.tag = Parameter.Traffic_Mode_Type;
 	}
 
 	protected TrafficModeTypeImpl(byte[] data) {

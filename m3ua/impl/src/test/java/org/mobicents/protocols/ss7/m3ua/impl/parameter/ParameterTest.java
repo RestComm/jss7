@@ -47,6 +47,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.DestinationPointCode;
 import org.mobicents.protocols.ss7.m3ua.parameter.LocalRKIdentifier;
 import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.OPCList;
+import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 import org.mobicents.protocols.ss7.m3ua.parameter.RegistrationStatus;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
@@ -201,6 +202,7 @@ public class ParameterTest {
 		NetworkAppearanceImpl np3 = reader.read("NetworkAppearanceImpl", NetworkAppearanceImpl.class);
 
 		assertEquals(123, (int) np3.getNetApp());
+		assertEquals(Parameter.Network_Appearance, np3.getTag());
 	}
 
 	@Test
@@ -228,6 +230,7 @@ public class ParameterTest {
 		RoutingContextImpl rc3 = reader.read("RoutingContextImpl", RoutingContextImpl.class);
 
 		assertTrue(Arrays.equals(new long[] { 4294967295l }, rc3.getRoutingContexts()));
+		assertEquals(Parameter.Routing_Context, rc3.getTag());
 	}
 
 	@Test
@@ -255,6 +258,7 @@ public class ParameterTest {
 		RoutingContextImpl rc3 = reader.read("RoutingContextImpl", RoutingContextImpl.class);
 
 		assertTrue(Arrays.equals(new long[] { 123l, 4294967295l }, rc3.getRoutingContexts()));
+		assertEquals(Parameter.Routing_Context, rc3.getTag());
 	}
 
 	@Test
@@ -398,6 +402,7 @@ public class ParameterTest {
 
 		assertEquals(123, affectedPc3.getPointCode());
 		assertEquals((short) 0, affectedPc3.getMask());
+		assertEquals(Parameter.Destination_Point_Code, affectedPc3.getTag());
 	}
 
 	@Test
@@ -425,6 +430,7 @@ public class ParameterTest {
 		LocalRKIdentifierImpl crrId3 = reader.read("LocalRKIdentifierImpl", LocalRKIdentifierImpl.class);
 
 		assertEquals(4294967295l, crrId3.getId());
+		assertEquals(Parameter.Local_Routing_Key_Identifier, crrId3.getTag());
 	}
 
 	@Test
@@ -454,6 +460,7 @@ public class ParameterTest {
 
 		assertTrue(Arrays.equals(new int[] { 123, 456 }, opcList3.getPointCodes()));
 		assertTrue(Arrays.equals(new short[] { 0, 1 }, opcList3.getMasks()));
+		assertEquals(Parameter.Originating_Point_Code_List, opcList3.getTag());
 	}
 
 	@Test
@@ -482,6 +489,7 @@ public class ParameterTest {
 		ServiceIndicatorsImpl siList3 = reader.read("ServiceIndicatorsImpl", ServiceIndicatorsImpl.class);
 
 		assertTrue(Arrays.equals(new short[] { 1, 2, 3, 4 }, siList3.getIndicators()));
+		assertEquals(Parameter.Service_Indicators, siList3.getTag());
 	}
 
 	@Test
@@ -509,6 +517,7 @@ public class ParameterTest {
 		TrafficModeTypeImpl crrId3 = reader.read("TrafficModeTypeImpl", TrafficModeTypeImpl.class);
 
 		assertEquals(1, crrId3.getMode());
+		assertEquals(Parameter.Traffic_Mode_Type, crrId3.getTag());
 	}
 
 	@Test
@@ -552,6 +561,7 @@ public class ParameterTest {
 		assertEquals(localRkId.getId(), routeKey3.getLocalRKIdentifier().getId());
 		assertTrue(Arrays.equals(routKey.getRoutingContext().getRoutingContexts(), routeKey3.getRoutingContext()
 				.getRoutingContexts()));
+		assertEquals(Parameter.Routing_Key, routeKey3.getTag());
 	}
 
 	@Test
@@ -594,6 +604,7 @@ public class ParameterTest {
 		assertNull(routeKey3.getLocalRKIdentifier());
 		assertTrue(Arrays.equals(routKey.getRoutingContext().getRoutingContexts(), routeKey3.getRoutingContext()
 				.getRoutingContexts()));
+		assertEquals(Parameter.Routing_Key, routeKey3.getTag());
 	}
 
 	@Test

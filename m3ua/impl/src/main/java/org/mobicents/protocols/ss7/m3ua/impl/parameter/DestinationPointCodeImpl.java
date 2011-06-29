@@ -44,7 +44,7 @@ public class DestinationPointCodeImpl extends ParameterImpl implements Destinati
 	private byte[] value;
 
 	public DestinationPointCodeImpl(){
-		
+		this.tag = Parameter.Destination_Point_Code;
 	}
 	protected DestinationPointCodeImpl(byte[] value) {
 		this.tag = Parameter.Destination_Point_Code;
