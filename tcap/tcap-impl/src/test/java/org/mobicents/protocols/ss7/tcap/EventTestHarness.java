@@ -250,7 +250,6 @@ public abstract class EventTestHarness implements TCListener {
 		for (int index = 0; index < expectedEvents.size(); index++) {
 			assertEquals("Received event does not match, index[" + index + "]", expectedEvents.get(index), observerdEvents.get(index));
 		}
-
 	}
 
 	protected String doStringCompare(List lst1, List lst2) {

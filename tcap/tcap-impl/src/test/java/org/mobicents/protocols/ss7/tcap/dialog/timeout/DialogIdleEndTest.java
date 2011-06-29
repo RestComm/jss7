@@ -111,6 +111,7 @@ public class DialogIdleEndTest extends SccpHarness {
 	 */
 	@After
 	public void tearDown() {
+		System.out.println("tearDown");
 		this.tcapStack1.stop();
 		this.tcapStack2.stop();
 		super.tearDown();

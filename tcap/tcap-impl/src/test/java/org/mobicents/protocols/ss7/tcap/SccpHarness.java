@@ -27,6 +27,8 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.junit.After;
+import org.junit.Before;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
@@ -131,25 +133,26 @@ public abstract class SccpHarness {
 	}
 
 	private void tearDownStack2() {
-		router1.getRules().clear();
-		router1.getPrimaryAddresses().clear();
-		router1.getBackupAddresses().clear();
-		router1.stop();
+		router2.getRules().clear();
+		router2.getPrimaryAddresses().clear();
+		router2.getBackupAddresses().clear();
+		router2.stop();
 
-		resource1.getRemoteSpcs().clear();
-		resource1.getRemoteSsns().clear();
-		resource1.stop();
+		resource2.getRemoteSpcs().clear();
+		resource2.getRemoteSsns().clear();
+		resource2.stop();
 
-		sccpStack1.stop();
+		sccpStack2.stop();
 
 	}
-
+	@Before
 	public void setUp() throws IllegalStateException {
 		this.setUpStack1();
 		this.setUpStack2();
+	
 	}
-
-	public void tearDown() {
+	@After
+	public void tearDown() throws IllegalStateException  {
 		this.tearDownStack1();
 		this.tearDownStack2();
 	}

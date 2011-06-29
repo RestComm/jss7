@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.tcap.dialog.timeout;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -109,10 +108,10 @@ public class DialogIdleTest extends SccpHarness {
 	 */
 	@After
 	public void tearDown() {
+		System.out.println("tearDown");
 		this.tcapStack1.stop();
 		this.tcapStack2.stop();
 		super.tearDown();
-
 	}
 
 	@Test
