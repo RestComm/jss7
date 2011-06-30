@@ -230,6 +230,9 @@ public class ParameterFactoryImpl implements ParameterFactory {
 		case ParameterImpl.Status:
 			p = new StatusImpl(value);
 			break;
+		case ParameterImpl.Heartbeat_Data:
+			p = new HeartbeatDataImpl(value);
+			break;			
 		default:
 			p = new UnknownParameterImpl(tag, value.length, value);
 			break;

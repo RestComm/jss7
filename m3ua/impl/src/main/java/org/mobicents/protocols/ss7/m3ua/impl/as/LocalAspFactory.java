@@ -44,6 +44,8 @@ import org.mobicents.protocols.ss7.m3ua.message.aspsm.ASPDown;
 import org.mobicents.protocols.ss7.m3ua.message.aspsm.ASPDownAck;
 import org.mobicents.protocols.ss7.m3ua.message.aspsm.ASPUp;
 import org.mobicents.protocols.ss7.m3ua.message.aspsm.ASPUpAck;
+import org.mobicents.protocols.ss7.m3ua.message.aspsm.Heartbeat;
+import org.mobicents.protocols.ss7.m3ua.message.aspsm.HeartbeatAck;
 import org.mobicents.protocols.ss7.m3ua.message.asptm.ASPActive;
 import org.mobicents.protocols.ss7.m3ua.message.asptm.ASPActiveAck;
 import org.mobicents.protocols.ss7.m3ua.message.asptm.ASPInactiveAck;
@@ -211,6 +213,8 @@ public class LocalAspFactory extends AspFactory {
 				this.handleAspDownAck(aspDownAck);
 				break;
 			case MessageType.HEARTBEAT:
+				Heartbeat hrtBeat = (Heartbeat) message;
+				this.handleHeartbeat(hrtBeat);
 				break;
 			default:
 				logger.error(String.format("Received ASPSM with invalid MessageType=%d message=%s",
@@ -479,6 +483,14 @@ public class LocalAspFactory extends AspFactory {
 				}
 			}
 		}
+	}
+
+	private void handleHeartbeat(Heartbeat hrtBeat) {
+		HeartbeatAck hrtBeatAck = (HeartbeatAck) this.m3UAProvider.getMessageFactory().createMessage(
+				MessageClass.ASP_STATE_MAINTENANCE, MessageType.HEARTBEAT_ACK);
+		hrtBeatAck.setHeartbeatData(hrtBeat.getHeartbeatData());
+		this.write(hrtBeatAck);
+
 	}
 
 	private void handleAspActiveAck(ASPActiveAck aspActiveAck) {
