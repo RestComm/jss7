@@ -63,22 +63,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 	protected MAPDialogState state = MAPDialogState.Idle;
 
-	// protected MAPDialogImpl(MAPApplicationContext appCntx, Dialog tcapDialog,
-	// MAPProviderImpl mapProviderImpl) {
-	// this.appCntx = appCntx;
-	// this.tcapDialog = tcapDialog;
-	// this.mapProviderImpl = mapProviderImpl;
-	// }
-	//
-	// protected MAPDialogImpl(MAPApplicationContext appCntx, Dialog tcapDialog,
-	// MAPProviderImpl mapProviderImpl, AddressString origReference,
-	// AddressString destReference) {
-	// this(appCntx, tcapDialog, mapProviderImpl);
-	//
-	// this.destReference = destReference;
-	// this.origReference = origReference;
-	// }
-
 	protected MAPDialogImpl(MAPApplicationContext appCntx, Dialog tcapDialog, MAPProviderImpl mapProviderImpl,
 			MAPServiceBase mapService, AddressString origReference, AddressString destReference) {
 		this.appCntx = appCntx;

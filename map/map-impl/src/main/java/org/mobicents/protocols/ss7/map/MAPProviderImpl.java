@@ -179,9 +179,12 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	 * Listener methods of TCListener
 	 */
 
-	public void dialogReleased(Dialog dialog) {
-		// TODO Auto-generated method stub
-
+	public void onDialogReleased(Dialog dialog) {
+		//TODO: ??
+	}
+	
+	public void onDialogTimeout(Dialog arg0) {
+		//TODO: add empty continue? 
 	}
 
 	public void onTCBegin(TCBeginIndication tcBeginIndication) {

@@ -45,11 +45,6 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Return;
 
 public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDialogSupplementary {
 
-	// protected MAPDialogSupplementaryImpl(MAPApplicationContext appCntx,
-	// Dialog tcapDialog, MAPProviderImpl mapProviderImpl) {
-	// super(appCntx, tcapDialog, mapProviderImpl);
-	// }
-
 	protected MAPDialogSupplementaryImpl(MAPApplicationContext appCntx, Dialog tcapDialog,
 			MAPProviderImpl mapProviderImpl, MAPServiceSupplementary mapService, AddressString origReference,
 			AddressString destReference) {
@@ -65,8 +60,9 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 			invoke.setInvokeId(this.tcapDialog.getNewInvokeId());
 
 			// Operation Code
-			OperationCode oc = TcapFactory.createOperationCode(false,
-					(long) MAPOperationCode.processUnstructuredSS_Request);
+			OperationCode oc = super.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode(); 
+			oc.setLocalOperationCode((long) MAPOperationCode.processUnstructuredSS_Request);
+				
 			invoke.setOperationCode(oc);
 
 			// Sequence of Parameter
@@ -131,8 +127,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 			returnResult.setInvokeId(invokeId);
 
 			// Operation Code
-			OperationCode oc = TcapFactory.createOperationCode(false,
-					(long) MAPOperationCode.processUnstructuredSS_Request);
+			OperationCode oc = super.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode(); 
+			oc.setLocalOperationCode((long) MAPOperationCode.processUnstructuredSS_Request);
 			returnResult.setOperationCode(oc);
 
 			// Sequence of Parameter
@@ -168,7 +164,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 			invoke.setInvokeId(this.tcapDialog.getNewInvokeId());
 
 			// Operation Code
-			OperationCode oc = TcapFactory.createOperationCode(false, (long) MAPOperationCode.unstructuredSS_Request);
+			OperationCode oc = super.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode(); 
+			oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Request); 
 			invoke.setOperationCode(oc);
 
 			// Sequence of Parameter
@@ -215,7 +212,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 			returnResult.setInvokeId(invokeId);
 
 			// Operation Code
-			OperationCode oc = TcapFactory.createOperationCode(false, (long) MAPOperationCode.unstructuredSS_Request);
+			OperationCode oc = super.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode(); 
+			oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Request);
 			returnResult.setOperationCode(oc);
 
 			// Sequence of Parameter

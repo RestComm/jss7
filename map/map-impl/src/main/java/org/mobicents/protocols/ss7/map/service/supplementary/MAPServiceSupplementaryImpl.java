@@ -124,9 +124,10 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 
 		MAPDialogSupplementaryImpl mapDialogSupplementaryImpl = (MAPDialogSupplementaryImpl) mapDialog;
 
-		if (oc.getCode() == MAPOperationCode.processUnstructuredSS_Request) {
+		//FIXME: add check for global code?
+		if (oc.getLocalOperationCode() == MAPOperationCode.processUnstructuredSS_Request) {
 			this.processUnstructuredSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
-		} else if (oc.getCode() == MAPOperationCode.unstructuredSS_Request) {
+		} else if (oc.getLocalOperationCode() == MAPOperationCode.unstructuredSS_Request) {
 			this.unstructuredSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
 		} else {
 			return false;
