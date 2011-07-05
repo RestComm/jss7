@@ -237,10 +237,8 @@ public final class TcapFactory {
 		return tc;
 	}
 
-	public static OperationCode createOperationCode(boolean global, Long code) {
+	public static OperationCode createOperationCode() {
 		OperationCodeImpl oc = new OperationCodeImpl();
-		oc.setOperationType(global ? OperationCodeType.Global : OperationCodeType.Local);
-		oc.setCode(code);
 		return oc;
 	}
 
@@ -346,14 +344,15 @@ public final class TcapFactory {
 		return p;
 	}
 	
-	public static ErrorCode createErrorCode(ErrorCodeType pt, AsnInputStream ais) throws ParseException {
-		ErrorCode p = createErrorCode(pt);
+	public static ErrorCode createErrorCode(int tag, AsnInputStream ais) throws ParseException {
+		ErrorCode p = createErrorCode();
+		((ErrorCodeImpl)p).setErrorCodeType(ErrorCode._TAG_GLOBAL == tag ? ErrorCodeType.Global : ErrorCodeType.Local);
 		p.decode(ais);
 		return p;
 	}
-	public static ErrorCode createErrorCode(ErrorCodeType pt) {
+
+	public static ErrorCode createErrorCode() {
 		ErrorCode p = new ErrorCodeImpl();
-		p.setErrorType(pt);
 		return p;
 	}
 }

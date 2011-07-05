@@ -95,8 +95,8 @@ public class TcEndTest extends TestCase {
 						//sequence start
 						0x30,
 						42,
-	//					 	global operation
-							0x06,
+	//					 	local operation
+							0x02,
 							0x02,
 							0x00,
 						(byte) 0xFF,
@@ -172,8 +172,8 @@ public class TcEndTest extends TestCase {
 		OperationCode ocs = rrl.getOperationCode();
 		
 
-		assertEquals("Wrong Operation Code type",OperationCodeType.Global, ocs.getOperationType());
-		assertEquals("Wrong Operation Code",new Long(0x00FF), ocs.getCode());
+		assertEquals("Wrong Operation Code type",OperationCodeType.Local, ocs.getOperationType());
+		assertEquals("Wrong Operation Code",new Long(0x00FF), ocs.getLocalOperationCode());
 		
 		assertNotNull("Parameter should not be null",rrl.getParameter());
 		
@@ -542,7 +542,7 @@ public class TcEndTest extends TestCase {
 		OperationCode ocs = rrl.getOperationCode();
 		
 		assertEquals("Wrong Operation Code type",OperationCodeType.Local, ocs.getOperationType());
-		assertEquals("Wrong Operation Code",new Long(511), ocs.getCode());
+		assertEquals("Wrong Operation Code",new Long(511), ocs.getLocalOperationCode());
 
 		
 		assertNotNull("Parameter should not be null",rrl.getParameter());

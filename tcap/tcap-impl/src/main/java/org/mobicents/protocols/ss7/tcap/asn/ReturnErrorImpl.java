@@ -160,13 +160,19 @@ public class ReturnErrorImpl implements ReturnError {
 			this.invokeId = localAis.readInteger();
 
 			tag = localAis.readTag();
-			if (tag == ErrorCode._TAG_GLOBAL || tag == ErrorCode._TAG_LOCAL) {
-				this.errorCode = TcapFactory.createErrorCode(tag == ErrorCode._TAG_GLOBAL ? ErrorCodeType.Global : ErrorCodeType.Local);
-				this.errorCode.decode(localAis);
-				
-			} else {
+			this.errorCode = TcapFactory.createErrorCode();
+			switch (tag) {
+			case ErrorCode._TAG_GLOBAL:
+				((ErrorCodeImpl) this.errorCode).setErrorCodeType(ErrorCodeType.Global);
+				break;
+			case ErrorCode._TAG_LOCAL:
+				((ErrorCodeImpl) this.errorCode).setErrorCodeType(ErrorCodeType.Local);
+				break;
+			default:
 				throw new ParseException("Expected Local|Globa error code, found: " + tag);
 			}
+			this.errorCode.decode(localAis);
+			
 			if(localAis.available() == 0)
 			{
 				return;//rest is optional
@@ -216,7 +222,7 @@ public class ReturnErrorImpl implements ReturnError {
 			throw new ParseException("Invoke ID not set!");
 		}
 		if (this.errorCode == null) {
-			throw new ParseException("Operation Code not set!");
+			throw new ParseException("Error Code not set!");
 		}
 		try {
 			AsnOutputStream localAos = new AsnOutputStream();
@@ -260,3 +266,6 @@ public class ReturnErrorImpl implements ReturnError {
 	}
 
 }
+
+
+

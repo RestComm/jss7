@@ -387,6 +387,10 @@ public class InvokeImpl implements Invoke {
 
 	}
 
+	public void onReject() {
+		this.setState(OperationState.Idle);
+	}
+
 	public synchronized void startTimer() {
 		this.stopTimer();
 		this.timerFuture = this.provider.createOperationTimer(this.operationTimerTask, this.invokeTimeout);

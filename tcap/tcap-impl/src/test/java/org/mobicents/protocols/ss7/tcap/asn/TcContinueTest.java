@@ -111,7 +111,7 @@ public class TcContinueTest extends TestCase {
 		assertNull("Parameter not null",i.getParameter());
 		OperationCode oc = i.getOperationCode();
 		assertEquals("Wrong operation type",OperationCodeType.Local, oc.getOperationType());
-		assertEquals("Wrong operation code", new Long(0x37),oc.getCode());
+		assertEquals("Wrong operation code", new Long(0x37),oc.getLocalOperationCode());
 		AsnOutputStream aos = new AsnOutputStream();
 		tcm.encode(aos);
 		byte[] encoded = aos.toByteArray();
@@ -240,7 +240,7 @@ public class TcContinueTest extends TestCase {
 		assertNotNull("Parameter null",i.getParameter());
 		OperationCode oc = i.getOperationCode();
 		assertEquals("Wrong operation type",OperationCodeType.Local, oc.getOperationType());
-		assertEquals("Wrong operation code", new Long(42),oc.getCode());
+		assertEquals("Wrong operation code", new Long(42),oc.getLocalOperationCode());
 		
 		AsnOutputStream aos = new AsnOutputStream();
 		tcm.encode(aos);
@@ -309,8 +309,8 @@ public class TcContinueTest extends TestCase {
 					//sequence start
 					0x30,
 					42,
-					// 	global operation 
-						0x06,
+					// 	local operation 
+						0x02,
 						0x02,
 						0x00,
 						(byte) 0xFF,
@@ -385,8 +385,8 @@ public class TcContinueTest extends TestCase {
 		OperationCode ocs = rrl.getOperationCode();
 		
 
-		assertEquals("Wrong Operation Code type",OperationCodeType.Global, ocs.getOperationType());
-		assertEquals("Wrong Operation Code",new Long(0x00FF), ocs.getCode());
+		assertEquals("Wrong Operation Code type",OperationCodeType.Local, ocs.getOperationType());
+		assertEquals("Wrong Operation Code",new Long(0x00FF), ocs.getLocalOperationCode());
 		
 		assertNotNull("Parameter should not be null",rrl.getParameter());
 		
@@ -779,7 +779,7 @@ public class TcContinueTest extends TestCase {
 		OperationCode ocs = rrl.getOperationCode();
 		
 		assertEquals("Wrong Operation Code type",OperationCodeType.Local, ocs.getOperationType());
-		assertEquals("Wrong Operation Code",new Long(1), ocs.getCode());
+		assertEquals("Wrong Operation Code",new Long(1), ocs.getLocalOperationCode());
 
 		
 		assertNotNull("Parameter should not be null",rrl.getParameter());

@@ -138,6 +138,10 @@ public class ProblemImpl implements Problem {
 
 	public void decode(AsnInputStream ais) throws ParseException {
 
+		if(type != ProblemType.General)
+		{
+			return;
+		}
 		try {
 			long t = ais.readInteger();
 			switch (type) {

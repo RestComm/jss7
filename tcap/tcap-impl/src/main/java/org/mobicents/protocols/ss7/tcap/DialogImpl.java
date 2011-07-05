@@ -75,6 +75,8 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCUniMessage;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.DialogPrimitiveFactoryImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCBeginIndicationImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCContinueIndicationImpl;
@@ -87,6 +89,7 @@ import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCUserAbortIndicationIm
 /**
  * @author baranowb
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class DialogImpl implements Dialog {
@@ -1256,6 +1259,17 @@ public class DialogImpl implements Dialog {
 					}
 				}
 				break;
+
+			case Reject:
+				if (invoke != null) {
+					// If the Reject Problem is the InvokeProblemType we should move the invoke to the idle state 
+					Problem problem = ((Reject)ci).getProblem();
+					if (problem.getInvokeProblemType() != null)
+						invoke.onReject();
+				}
+				resultingIndications.add(ci);
+				break;
+				
 			default:
 				resultingIndications.add(ci);
 				break;

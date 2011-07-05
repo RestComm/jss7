@@ -46,11 +46,6 @@ public class ReturnErrorTest extends TestCase {
 	@org.junit.Test
 	public void testDecodeWithParaSequ() throws IOException, ParseException {
 		
-		if(true)
-		{
-			//FIXME:
-			return;
-		}
 		/**
 		 * TODO :
 		 * This test is half, as the ReturnResultLastImpl and ReturnResultImpl still has ambiguity in decode(). Read comments in  respective 
@@ -87,11 +82,9 @@ public class ReturnErrorTest extends TestCase {
 		assertEquals("Wrong invoke ID",new Long(5), re.getInvokeId());
 		assertNotNull("No error code.",re.getErrorCode());
 		ErrorCode ec = re.getErrorCode();
-		assertEquals("Wrong error code type.",ErrorCodeType.Local, ec.getErrorType());
-		byte[] d = ec.getData();
-		assertNotNull("No data.",d);
-		assertEquals("Wrong data len.",1, d.length);
-		assertEquals("wrong data conent.",new Byte((byte)15), new Byte(d[0]));
+		assertEquals("Wrong error code type.", ErrorCodeType.Local,ec.getErrorType());
+		long lec = ec.getLocalErrorCode();
+		assertEquals("wrong data content.",lec, 15);
 		AsnOutputStream aos = new AsnOutputStream();
 		comp.encode(aos);
 		byte[] encoded  = aos.toByteArray();

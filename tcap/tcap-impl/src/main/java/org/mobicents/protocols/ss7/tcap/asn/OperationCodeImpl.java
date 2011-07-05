@@ -26,6 +26,7 @@
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -39,18 +40,9 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCodeType;
  */
 public class OperationCodeImpl implements OperationCode {
 
-	private Long operationCode;
+	private Long localOperationCode;
+	private long[] globalOperationCode;
 	private OperationCodeType type;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.tcap.asn.OperationCode#getCode()
-	 */
-	public Long getCode() {
-
-		return operationCode;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -63,32 +55,47 @@ public class OperationCodeImpl implements OperationCode {
 		return type;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.OperationCode#setCode(java.lang.
-	 * Integer)
-	 */
-	public void setCode(Long i) {
-		operationCode = i;
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.OperationCode#setOperationType(org
-	 * .mobicents.protocols.ss7.tcap.asn.OperationCodeType)
-	 */
 	public void setOperationType(OperationCodeType t) {
 		this.type = t;
 
 	}
 	
+	public void setOperationCodeType(OperationCodeType type) {
+		this.type = type;
+	}
+	
+	public void setLocalOperationCode(Long localOperationCode) {
+		this.localOperationCode = localOperationCode;
+		this.globalOperationCode = null;
+		this.type = OperationCodeType.Local;
+	}
+
+	public void setGlobalOperationCode(long[] globalOperationCode) {
+		this.localOperationCode = null;
+		this.globalOperationCode = globalOperationCode;
+		this.type = OperationCodeType.Global;
+	}
+
+
+
+	public Long getLocalOperationCode() {
+		return this.localOperationCode;
+	}
+	
+	public long[] getGlobalOperationCode() {
+		return this.globalOperationCode;
+	}
+	
+
+	
 	public String toString() {
-		return "OperationCode[operationCode=" + operationCode + ", type=" + type + "]";
+		if (this.localOperationCode != null)
+			return "OperationCode[OperationType=Local, data=" + this.localOperationCode.toString() + "]";
+		else if (this.globalOperationCode != null)
+			return "OperationCode[OperationType=Global, data=" + Arrays.toString(this.globalOperationCode) + "]";
+		else
+			return "OperationCode[empty]";
 	}
 
 	/*
@@ -99,14 +106,23 @@ public class OperationCodeImpl implements OperationCode {
 	 * .asn.AsnInputStream)
 	 */
 	public void decode(AsnInputStream ais) throws ParseException {
-		try {
-			this.operationCode = ais.readInteger();
-		} catch (AsnException e) {
-			throw new ParseException(e);
-		} catch (IOException e) {
-			throw new ParseException(e);
-		}
 
+		try {
+			if( this.type == OperationCodeType.Global ) {
+				this.globalOperationCode = ais.readObjectIdentifier();
+			} else if( this.type == OperationCodeType.Local ) {
+				this.localOperationCode = ais.readInteger();
+			} else
+			{
+				throw new ParseException();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new ParseException("IOException while parsing OperationCode: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			e.printStackTrace();
+			throw new ParseException("AsnException while parsing OperationCode: " + e.getMessage(), e);
+		}
 	}
 
 	/*
@@ -117,24 +133,23 @@ public class OperationCodeImpl implements OperationCode {
 	 * .asn.AsnOutputStream)
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
-		if (this.type == null) {
-			throw new ParseException("No indication Global|Local.");
-		}
-		if (this.operationCode == null) {
-			throw new ParseException("Operation code not set.");
-		}
+		
+		if (this.localOperationCode == null && this.globalOperationCode == null)
+			throw new ParseException("Operation code: No Operation code set!");
+		
 		try {
-			if (type == OperationCodeType.Global) {
-
-				aos.writeInteger(_TAG_CLASS, _TAG_GLOBAL, this.operationCode);
-
-			} else {
-				aos.writeInteger(_TAG_CLASS, _TAG_LOCAL, this.operationCode);
+			if( this.type == OperationCodeType.Local ) {
+				aos.writeInteger(this.localOperationCode);
+			} else if( this.type == OperationCodeType.Global ) {
+				aos.writeObjectIdentifier(this.globalOperationCode);
+			} else
+			{
+				throw new ParseException();
 			}
+
 		} catch (IOException e) {
 			throw new ParseException(e);
 		}
-
 	}
 
 }

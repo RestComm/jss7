@@ -68,8 +68,9 @@ public class InvokeTest extends TestCase {
 		Invoke invoke = TcapFactory.createComponentInvoke();
 		invoke.setInvokeId(12l);
 		
-		OperationCode oc = TcapFactory.createOperationCode(false, 59l);
+		OperationCode oc = TcapFactory.createOperationCode();
 		
+		oc.setLocalOperationCode(591L);
 		invoke.setOperationCode(oc);
 		
 		Parameter p1 = TcapFactory.createParameter();
@@ -139,7 +140,7 @@ public class InvokeTest extends TestCase {
 
 		assertNotNull(oc);
 
-		assertTrue(59 == oc.getCode());
+		assertTrue(59 == oc.getLocalOperationCode());
 		assertEquals(OperationCodeType.Local, oc.getOperationType());
 
 		//FIXME:

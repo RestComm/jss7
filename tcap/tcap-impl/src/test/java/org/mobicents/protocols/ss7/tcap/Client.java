@@ -29,6 +29,7 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 
 /**
  * @author baranowb
@@ -55,8 +56,9 @@ public class Client extends EventTestHarness{
 		//create some INVOKE
 		Invoke invoke = cpFactory.createTCInvokeRequest(InvokeClass.Class1);
 		invoke.setInvokeId(this.dialog.getNewInvokeId());
-		
-		invoke.setOperationCode(cpFactory.createOperationCode(true,new Long(12)));
+		OperationCode oc = cpFactory.createOperationCode();
+		oc.setLocalOperationCode(new Long(12));
+		invoke.setOperationCode(oc);
 		//no parameter
 		this.dialog.sendComponent(invoke);
 		super.sendBegin();
