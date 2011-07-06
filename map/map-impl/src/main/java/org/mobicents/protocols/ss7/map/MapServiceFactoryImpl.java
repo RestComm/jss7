@@ -28,10 +28,14 @@ import java.util.ArrayList;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
+import org.mobicents.protocols.ss7.map.api.dialog.IMSI;
+import org.mobicents.protocols.ss7.map.api.dialog.LMSI;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
@@ -112,6 +116,60 @@ public class MapServiceFactoryImpl implements MapServiceFactory {
 	public MAPExtensionContainer createMAPExtensionContainer(ArrayList<MAPPrivateExtension> privateExtensionList,
 			byte[] pcsExtensions) {
 		return new MAPExtensionContainerImpl(privateExtensionList, pcsExtensions);
+	}
+
+	@Override
+	public IMSI createIMSI(Long MCC, Long MNC, String MSIN) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public LMSI createLMSI(byte[] data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SM_RP_DA createSM_RP_DA(IMSI imsi) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SM_RP_DA createSM_RP_DA(LMSI lmsi) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SM_RP_DA createSM_RP_DA(AddressString serviceCentreAddressDA) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SM_RP_DA createSM_RP_DA() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SM_RP_OA createSM_RP_OA_Msisdn(AddressString msisdn) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SM_RP_OA createSM_RP_OA_ServiceCentreAddressOA(AddressString serviceCentreAddressOA) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SM_RP_OA createSM_RP_OA() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -33,6 +33,8 @@ import org.mobicents.protocols.ss7.map.MAPServiceBaseImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
@@ -47,12 +49,12 @@ import org.mobicents.protocols.ss7.map.dialog.ServingCheckDataImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextNameImpl;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements MAPServiceSupplementary {
-	
-	private int testMode = 0;
 
 	public MAPServiceSupplementaryImpl(MAPProviderImpl mapProviderImpl) {
 		super(mapProviderImpl);
@@ -102,16 +104,6 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 	}
 
 	public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext) {
-		// Do not remove this !!!!
-		if(this.testMode == 1) {
-			// For reproducing FunctionalTestScenario.actionC MAPFunctionalTest
-			//   - remove temporally this comment comment 
-			ApplicationContextNameImpl ac = new ApplicationContextNameImpl();
-			ac.setOid(new long[] { 1, 2, 3 });
-			ServingCheckDataImpl i1 = new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, ac);
-			return i1;
-		}
-		
 		if (dialogApplicationContext.getApplicationContext() == MAPApplicationContext.networkUnstructuredSsContextV2
 				.getApplicationContext())
 			return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
@@ -119,109 +111,116 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 			return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
 	}
 
-	public Boolean processComponent(OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId)
-			throws MAPException {
+	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)
+			throws MAPParsingComponentException {
 
 		MAPDialogSupplementaryImpl mapDialogSupplementaryImpl = (MAPDialogSupplementaryImpl) mapDialog;
 
-		//FIXME: add check for global code?
-		if (oc.getLocalOperationCode() == MAPOperationCode.processUnstructuredSS_Request) {
+		Long ocValue = oc.getLocalOperationCode();
+		if (ocValue == null)
+			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
+		
+		long ocValueInt = ocValue;
+		int ocValueInt2 = (int) ocValueInt;
+		switch (ocValueInt2) {
+		case MAPOperationCode.processUnstructuredSS_Request:
 			this.processUnstructuredSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
-		} else if (oc.getLocalOperationCode() == MAPOperationCode.unstructuredSS_Request) {
+			break;
+		case MAPOperationCode.unstructuredSS_Request:
 			this.unstructuredSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
-		} else {
-			return false;
+			break;
+		default:
+			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
-
-		return true;
+	}
+	
+	public Boolean checkInvokeTimeOut(MAPDialog dialog, Invoke invoke) {
+		return false;
 	}
 
 	private void unstructuredSSRequest(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId)
-			throws MAPException {
-		if (parameter.getTag() == Tag.SEQUENCE) {
-			Parameter[] parameters = parameter.getParameters();
+			throws MAPParsingComponentException {
+		try {
+			if (parameter.getTag() == Tag.SEQUENCE) {
+				Parameter[] parameters = parameter.getParameters();
 
-			byte[] data = parameters[0].getData();
+				byte[] data = parameters[0].getData();
 
-			// First Parameter is ussd-DataCodingScheme
-			byte ussd_DataCodingScheme = data[0];
+				// First Parameter is ussd-DataCodingScheme
+				byte ussd_DataCodingScheme = data[0];
 
-			// Second Parameter is ussd-String
-			data = parameters[1].getData();
-			USSDString ussdString = this.mapProviderImpl.getMapServiceFactory().createUSSDString(data, null);
-			ussdString.decode();
+				// Second Parameter is ussd-String
+				data = parameters[1].getData();
+				USSDString ussdString = this.mapProviderImpl.getMapServiceFactory().createUSSDString(data, null);
+				ussdString.decode();
 
-			UnstructuredSSIndicationImpl unSSInd = new UnstructuredSSIndicationImpl(ussd_DataCodingScheme, ussdString);
+				UnstructuredSSIndicationImpl unSSInd = new UnstructuredSSIndicationImpl(ussd_DataCodingScheme, ussdString);
 
-			unSSInd.setInvokeId(invokeId);
-			unSSInd.setMAPDialog(mapDialogImpl);
+				unSSInd.setInvokeId(invokeId);
+				unSSInd.setMAPDialog(mapDialogImpl);
 
-			for (MAPServiceListener serLis : this.serviceListeners) {
-				((MAPServiceSupplementaryListener) serLis).onUnstructuredSSIndication(unSSInd);
+				for (MAPServiceListener serLis : this.serviceListeners) {
+					((MAPServiceSupplementaryListener) serLis).onUnstructuredSSIndication(unSSInd);
+				}
+			} else {
+				throw new MAPException("Expected Parameter tag as SEQUENCE but received " + parameter.getTag());
 			}
-		} else {
-			// TODO This is Error, what do we do next? Or should it even happen?
-			// loger.error("Expected Parameter tag as SEQUENCE but received "
-			// + parameter.getTag());
-			throw new MAPException("Expected Parameter tag as SEQUENCE but received " + parameter.getTag());
+		} catch (MAPException e) {
+			throw new MAPParsingComponentException("MAPException when parsing unstructuredSSRequest: " + e.getMessage(),
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	private void processUnstructuredSSRequest(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl,
-			Long invokeId) throws MAPException {
-		if (parameter.getTag() == Tag.SEQUENCE) {
-			Parameter[] parameters = parameter.getParameters();
+			Long invokeId) throws MAPParsingComponentException {
+		
+		try {
+			if (parameter.getTag() == Tag.SEQUENCE) {
+				Parameter[] parameters = parameter.getParameters();
 
-			byte[] data = parameters[0].getData();
+				byte[] data = parameters[0].getData();
 
-			// First Parameter is ussd-DataCodingScheme
-			byte ussd_DataCodingScheme = data[0];
+				// First Parameter is ussd-DataCodingScheme
+				byte ussd_DataCodingScheme = data[0];
 
-			// Second Parameter is ussd-String
-			data = parameters[1].getData();
+				// Second Parameter is ussd-String
+				data = parameters[1].getData();
 
-			USSDString ussdString = this.mapProviderImpl.getMapServiceFactory().createUSSDString(data, null);
-			ussdString.decode();
+				USSDString ussdString = this.mapProviderImpl.getMapServiceFactory().createUSSDString(data, null);
+				ussdString.decode();
 
-			ProcessUnstructuredSSIndicationImpl procUnSSInd = new ProcessUnstructuredSSIndicationImpl(
-					ussd_DataCodingScheme, ussdString);
+				ProcessUnstructuredSSIndicationImpl procUnSSInd = new ProcessUnstructuredSSIndicationImpl(ussd_DataCodingScheme, ussdString);
 
-			procUnSSInd.setInvokeId(invokeId);
-			procUnSSInd.setMAPDialog(mapDialogImpl);
+				procUnSSInd.setInvokeId(invokeId);
+				procUnSSInd.setMAPDialog(mapDialogImpl);
 
-			// MSISDN
-			if (parameters.length > 2) {
-				Parameter msisdnParam = parameters[2];
-				if (msisdnParam.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC && msisdnParam.getTag() == 0x00) {
-					byte[] msisdnData = msisdnParam.getData();
+				// MSISDN
+				if (parameters.length > 2) {
+					Parameter msisdnParam = parameters[2];
+					if (msisdnParam.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC && msisdnParam.getTag() == 0x00) {
+						byte[] msisdnData = msisdnParam.getData();
 
-					AsnInputStream ansIS = new AsnInputStream(new ByteArrayInputStream(msisdnData));
+						AsnInputStream ansIS = new AsnInputStream(new ByteArrayInputStream(msisdnData));
 
-					AddressStringImpl msisdnAddStr = new AddressStringImpl();
-					try {
-						msisdnAddStr.decode(ansIS);
-						procUnSSInd.setMSISDNAddressString(msisdnAddStr);
-					} catch (IOException e) {
-						// loger.error(
-						// "Error while decoding the MSISDN AddressString ",
-						// e);
-						throw new MAPException("IOException when decoding AddressString", e);
+						AddressStringImpl msisdnAddStr = new AddressStringImpl();
+						try {
+							msisdnAddStr.decode(ansIS);
+							procUnSSInd.setMSISDNAddressString(msisdnAddStr);
+						} catch (IOException e) {
+							throw new MAPException("IOException when decoding AddressString", e);
+						}
 					}
 				}
-			}
 
-			for (MAPServiceListener serLis : this.serviceListeners) {
-				((MAPServiceSupplementaryListener) serLis).onProcessUnstructuredSSIndication(procUnSSInd);
+				for (MAPServiceListener serLis : this.serviceListeners) {
+					((MAPServiceSupplementaryListener) serLis).onProcessUnstructuredSSIndication(procUnSSInd);
+				}
+			} else {
+				throw new MAPException("Expected Parameter tag as SEQUENCE but received " + parameter.getTag());
 			}
-		} else {
-			// TODO This is Error, what do we do next? Or should it even happen?
-			// loger.error("Expected Parameter tag as SEQUENCE but received "
-			// + parameter.getTag());
-			throw new MAPException("Expected Parameter tag as SEQUENCE but received " + parameter.getTag());
+		} catch (MAPException e) {
+			throw new MAPParsingComponentException("MAPException when parsing processUnstructuredSSRequest: " + e.getMessage(),
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
-	}
-
-	public void setTestMode( int testMode ) {
-		this.testMode = testMode;
 	}
 }

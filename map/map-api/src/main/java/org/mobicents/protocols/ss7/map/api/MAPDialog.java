@@ -25,6 +25,13 @@ package org.mobicents.protocols.ss7.map.api;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
 /**
  * 
@@ -94,6 +101,66 @@ public interface MAPDialog {
 	 */
 	public void refuse(Reason reason) throws MAPException;
 
+	/**
+	 * Sends the TC-INVOKE component
+	 * 
+	 * @param invoke
+	 * @throws MAPException
+	 */
+	public void sendInvokeComponent(Invoke invoke) throws MAPException;
+
+	/**
+	 * Sends the TC-RESULT-NL component
+	 * 
+	 * @param returnResult
+	 * @throws MAPException
+	 */
+	public void sendReturnResultComponent(ReturnResult returnResult) throws MAPException;
+
+	/**
+	 * Sends the TC-RESULT-L component
+	 * 
+	 * @param returnResultLast
+	 * @throws MAPException
+	 */
+	public void sendReturnResultLastComponent(ReturnResultLast returnResultLast) throws MAPException;
+
+	/**
+	 * Sends the TC-U-ERROR component
+	 * 
+	 * @param invokeId
+	 * @param mapErrorMessage
+	 * @throws MAPException
+	 */
+	public void sendErrorComponent(Long invokeId, MAPErrorMessage mapErrorMessage) throws MAPException;
+	
+	/**
+	 * Sends the TC-U-REJECT component
+	 * 
+	 * @param invokeId
+	 *            This parameter is optional and may be the null
+	 * @param problem
+	 * @throws MAPException
+	 */
+	public void sendRejectComponent(Long invokeId, Problem problem) throws MAPException;
+
+	/**
+	 * Reset the Invoke Timeout timer for the Invoke. (TC-TIMER-RESET)  
+	 * 
+	 * @param invokeId
+	 * @throws MAPException
+	 */
+	public void resetInvokeTimer(Long invokeId) throws MAPException;
+
+	/**
+	 * Causes local termination of an operation invocation (TC-U-CANCEL)
+	 * 
+	 * @param invokeId
+	 * @return true:OK, false: Invoke not found 
+	 * @throws MAPException
+	 */
+	public boolean cancelInvocation(Long invokeId) throws MAPException;
+	
 	/**
 	 * Getting from the MAPDialog a user-defined object to save relating to the
 	 * Dialog information

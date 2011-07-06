@@ -34,35 +34,46 @@ public enum FunctionalTestScenario {
 	 * TC-CONTINUE + ExtensionContainer + addUnstructuredSSRequest 
 	 * TC-END
 	 */
-	actionA(0),
+	Action_Dialog_A(0),
 	/**
 	 * TC-BEGIN + addProcessUnstructuredSSRequest
 	 * refuse() -> TC-ABORT + MapRefuseInfo + ExtensionContainer
 	 */
-	actionB(1),
+	Action_Dialog_B(1),
 	/**
 	 * TC-BEGIN + addProcessUnstructuredSSRequest
 	 * TC-ABORT(Reason=ACN_Not_Supprted) + alternativeApplicationContextName 
 	 * !!!: For reproducing FunctionalTestScenario.actionB you must temporally remove comments
 	 *      from commented code block in MAPServiceSupplementaryImpl.isServingService() 
 	 */
-	actionC(2),
+	Action_Dialog_C(2),
 	/**
 	 * TC-BEGIN + addProcessUnstructuredSSRequest
 	 * TC-END + ExtensionContainer + addUnstructuredSSRequest 
 	 */
-	actionD(3),
+	Action_Dialog_D(3),
 	/**
 	 * TC-BEGIN + addProcessUnstructuredSSRequest
 	 * TC-CONTINUE + addUnstructuredSSRequest 
 	 * TC-ABORT(MAP-UserAbortInfo) + ExtensionContainer 
 	 */
-	actionE(4),
+	Action_Dialog_E(4),
 	/**
 	 * TC-BEGIN + addProcessUnstructuredSSRequest
 	 * TC-ABORT(MAP-ProviderAbortInfo) 
 	 */
-	actionF(5);
+	Action_Dialog_F(5),
+
+	/**
+	 * TC-BEGIN + addProcessUnstructuredSSRequest
+	 * TC-END + ReturnError(systemFailure)  
+	 */
+	Action_Component_A(11),
+	/**
+	 * TC-BEGIN + addProcessUnstructuredSSRequest
+	 * TC-END + ReturnError(SM-DeliveryFailure + SM-DeliveryFailureCause)  
+	 */
+	Action_Component_B(12);
 
 	private int code;
 

@@ -35,15 +35,21 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSuppl
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.dialog.AddressStringImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
-import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Return;
 
 public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDialogSupplementary {
+
+	// protected MAPDialogSupplementaryImpl(MAPApplicationContext appCntx,
+	// Dialog tcapDialog, MAPProviderImpl mapProviderImpl) {
+	// super(appCntx, tcapDialog, mapProviderImpl);
+	// }
 
 	protected MAPDialogSupplementaryImpl(MAPApplicationContext appCntx, Dialog tcapDialog,
 			MAPProviderImpl mapProviderImpl, MAPServiceSupplementary mapService, AddressString origReference,
@@ -51,18 +57,18 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		super(appCntx, tcapDialog, mapProviderImpl, mapService, origReference, destReference);
 	}
 
-	public void addProcessUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AddressString msisdn)
+	public Long addProcessUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AddressString msisdn)
 			throws MAPException {
 
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
 
 		try {
-			invoke.setInvokeId(this.tcapDialog.getNewInvokeId());
+			Long invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
 
 			// Operation Code
-			OperationCode oc = super.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode(); 
-			oc.setLocalOperationCode((long) MAPOperationCode.processUnstructuredSS_Request);
-				
+			OperationCode oc = TcapFactory.createOperationCode();
+			oc.setLocalOperationCode((long)MAPOperationCode.processUnstructuredSS_Request);
 			invoke.setOperationCode(oc);
 
 			// Sequence of Parameter
@@ -101,11 +107,12 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
 			invoke.setParameter(p);
 
-			this.tcapDialog.sendComponent(invoke);
+			//this.tcapDialog.sendComponent(invoke);
+			this.sendInvokeComponent(invoke);
+			
+			return invokeId;
 
 		} catch (TCAPException e) {
-			throw new MAPException(e.getMessage(), e);
-		} catch (TCAPSendException e) {
 			throw new MAPException(e.getMessage(), e);
 		}
 
@@ -113,59 +120,58 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
 	public void addProcessUnstructuredSSResponse(long invokeId, boolean lastResult, byte ussdDataCodingScheme,
 			USSDString ussdString) throws MAPException {
-		try {
 			Return returnResult = null;
 
-			if (lastResult) {
-				returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
-						.createTCResultLastRequest();
-			} else {
-				returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
-						.createTCResultRequest();
-			}
-
-			returnResult.setInvokeId(invokeId);
-
-			// Operation Code
-			OperationCode oc = super.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode(); 
-			oc.setLocalOperationCode((long) MAPOperationCode.processUnstructuredSS_Request);
-			returnResult.setOperationCode(oc);
-
-			// Sequence of Parameter
-			Parameter p1 = TcapFactory.createParameter();
-			p1.setTagClass(Tag.CLASS_UNIVERSAL);
-			p1.setTag(Tag.STRING_OCTET);
-			p1.setData(new byte[] { ussdDataCodingScheme });
-
-			ussdString.encode();
-			Parameter p2 = TcapFactory.createParameter();
-			p2.setTagClass(Tag.CLASS_UNIVERSAL);
-			p2.setTag(Tag.STRING_OCTET);
-			p2.setData(ussdString.getEncodedString());
-
-			Parameter p = TcapFactory.createParameter();
-			p.setTagClass(Tag.CLASS_UNIVERSAL);
-			p.setTag(Tag.SEQUENCE);
-			p.setParameters(new Parameter[] { p1, p2 });
-
-			returnResult.setParameter(p);
-
-			this.tcapDialog.sendComponent(returnResult);
-		} catch (TCAPSendException e) {
-			throw new MAPException(e.getMessage(), e);
+		if (lastResult) {
+			returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+		} else {
+			returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultRequest();
 		}
+
+		returnResult.setInvokeId(invokeId);
+
+		// Operation Code
+		OperationCode oc = TcapFactory.createOperationCode();
+		oc.setLocalOperationCode((long)MAPOperationCode.processUnstructuredSS_Request);
+		returnResult.setOperationCode(oc);
+
+		// Sequence of Parameter
+		Parameter p1 = TcapFactory.createParameter();
+		p1.setTagClass(Tag.CLASS_UNIVERSAL);
+		p1.setTag(Tag.STRING_OCTET);
+		p1.setData(new byte[] { ussdDataCodingScheme });
+
+		ussdString.encode();
+		Parameter p2 = TcapFactory.createParameter();
+		p2.setTagClass(Tag.CLASS_UNIVERSAL);
+		p2.setTag(Tag.STRING_OCTET);
+		p2.setData(ussdString.getEncodedString());
+
+		Parameter p = TcapFactory.createParameter();
+		p.setTagClass(Tag.CLASS_UNIVERSAL);
+		p.setTag(Tag.SEQUENCE);
+		p.setParameters(new Parameter[] { p1, p2 });
+
+		returnResult.setParameter(p);
+
+		// this.tcapDialog.sendComponent(returnResult);
+		if (lastResult)
+			this.sendReturnResultLastComponent((ReturnResultLast) returnResult);
+		else
+			this.sendReturnResultComponent((ReturnResult) returnResult);
 	}
 
-	public void addUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString) throws MAPException {
+	public Long addUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString) throws MAPException {
 
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
 
 		try {
-			invoke.setInvokeId(this.tcapDialog.getNewInvokeId());
+			Long invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
 
 			// Operation Code
-			OperationCode oc = super.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode(); 
-			oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Request); 
+			OperationCode oc = TcapFactory.createOperationCode();
+			oc.setLocalOperationCode((long)MAPOperationCode.unstructuredSS_Request);
 			invoke.setOperationCode(oc);
 
 			// Sequence of Parameter
@@ -187,58 +193,56 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
 			invoke.setParameter(p);
 
-			this.tcapDialog.sendComponent(invoke);
+//			this.tcapDialog.sendComponent(invoke);
+			this.sendInvokeComponent(invoke);
+			
+			return invokeId;
 
 		} catch (TCAPException e) {
-			throw new MAPException(e.getMessage(), e);
-		} catch (TCAPSendException e) {
 			throw new MAPException(e.getMessage(), e);
 		}
 	}
 
-	public void addUnstructuredSSResponse(long invokeId, boolean lastResult, byte ussdDataCodingScheme,
-			USSDString ussdString) throws MAPException {
-		try {
-			Return returnResult = null;
+	public void addUnstructuredSSResponse(long invokeId, boolean lastResult, byte ussdDataCodingScheme, USSDString ussdString) throws MAPException {
 
-			if (lastResult) {
-				returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
-						.createTCResultLastRequest();
-			} else {
-				returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
-						.createTCResultRequest();
-			}
+		Return returnResult = null;
 
-			returnResult.setInvokeId(invokeId);
-
-			// Operation Code
-			OperationCode oc = super.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode(); 
-			oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Request);
-			returnResult.setOperationCode(oc);
-
-			// Sequence of Parameter
-			Parameter p1 = TcapFactory.createParameter();
-			p1.setTagClass(Tag.CLASS_UNIVERSAL);
-			p1.setTag(Tag.STRING_OCTET);
-			p1.setData(new byte[] { ussdDataCodingScheme });
-
-			ussdString.encode();
-			Parameter p2 = TcapFactory.createParameter();
-			p2.setTagClass(Tag.CLASS_UNIVERSAL);
-			p2.setTag(Tag.STRING_OCTET);
-			p2.setData(ussdString.getEncodedString());
-
-			Parameter p = TcapFactory.createParameter();
-			p.setTagClass(Tag.CLASS_UNIVERSAL);
-			p.setTag(Tag.SEQUENCE);
-			p.setParameters(new Parameter[] { p1, p2 });
-
-			returnResult.setParameter(p);
-
-			this.tcapDialog.sendComponent(returnResult);
-
-		} catch (TCAPSendException e) {
-			throw new MAPException(e.getMessage(), e);
+		if (lastResult) {
+			returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+		} else {
+			returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultRequest();
 		}
+
+		returnResult.setInvokeId(invokeId);
+
+		// Operation Code
+		OperationCode oc = TcapFactory.createOperationCode();
+		oc.setLocalOperationCode((long)MAPOperationCode.unstructuredSS_Request);
+		returnResult.setOperationCode(oc);
+
+		// Sequence of Parameter
+		Parameter p1 = TcapFactory.createParameter();
+		p1.setTagClass(Tag.CLASS_UNIVERSAL);
+		p1.setTag(Tag.STRING_OCTET);
+		p1.setData(new byte[] { ussdDataCodingScheme });
+
+		ussdString.encode();
+		Parameter p2 = TcapFactory.createParameter();
+		p2.setTagClass(Tag.CLASS_UNIVERSAL);
+		p2.setTag(Tag.STRING_OCTET);
+		p2.setData(ussdString.getEncodedString());
+
+		Parameter p = TcapFactory.createParameter();
+		p.setTagClass(Tag.CLASS_UNIVERSAL);
+		p.setTag(Tag.SEQUENCE);
+		p.setParameters(new Parameter[] { p1, p2 });
+
+		returnResult.setParameter(p);
+
+		// this.tcapDialog.sendComponent(returnResult);
+		if (lastResult)
+			this.sendReturnResultLastComponent((ReturnResultLast) returnResult);
+		else
+			this.sendReturnResultComponent((ReturnResult) returnResult);
 	}
 }

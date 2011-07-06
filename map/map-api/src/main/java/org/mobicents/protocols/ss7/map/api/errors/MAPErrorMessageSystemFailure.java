@@ -20,41 +20,21 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.dialog;
+package org.mobicents.protocols.ss7.map.api.errors;
 
-import java.util.ArrayList;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 
 /**
+ * The MAP ReturnError message: SystemFailure
+ * 
  * @author sergey vetyutnev
+ * 
  */
-public interface MAPExtensionContainer {
-	/**
-	 * Get the PrivateExtension list
-	 * 
-	 * @return
-	 */
-	public ArrayList<MAPPrivateExtension> getPrivateExtensionList();
+public interface MAPErrorMessageSystemFailure extends MAPErrorMessage {
 
-	/**
-	 * Set the PrivateExtension list
-	 * 
-	 * @param privateExtensionList
-	 */
-	public void setPrivateExtensionList(ArrayList<MAPPrivateExtension> privateExtensionList);
-
-	/**
-	 * Get the Pcs-Extensions - ASN.1 encoded byte array
-	 * 
-	 * @return
-	 */
-	public byte[] getPcsExtensions();
-
-	/**
-	 * Set the Pcs-Extensions - ASN.1 encoded byte array
-	 * 
-	 * @param pcsExtensions
-	 */
-	public void setPcsExtensions(byte[] pcsExtensions);
-
+	public NetworkResource getNetworkResource();
+	public AdditionalNetworkResource getAdditionalNetworkResource();
+	public MAPExtensionContainer getExtensionContainer();
 }
+
+

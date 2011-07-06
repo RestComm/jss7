@@ -31,6 +31,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 
 /**
  * 
@@ -94,19 +95,18 @@ public interface MAPDialogListener {
 	 */
 	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic);
 
-	// public void onMAPOpenInfo(MAPOpenInfo mapOpenInfo);
-	// public void onMAPAcceptInfo(MAPAcceptInfo mapAccptInfo);
-	// public void onMAPCloseInfo(MAPCloseInfo mapCloseInfo);
-	// public void onMAPRefuseInfo(MAPRefuseInfo mapRefuseInfo);
-	// public void onMAPUserAbortInfo(MAPUserAbortInfo mapUserAbortInfo);
-	// public void onMAPProviderAbortInfo(MAPProviderAbortInfo
-	// mapProviderAbortInfo);
-
 	/**
 	 * Called when the MADDialog has been released
 	 * 
 	 * @param mapDialog
 	 */
 	public void onDialogResease(MAPDialog mapDialog);
+
+	/**
+	 * Called when the MADDialog is about to aborted because of TimeOut
+	 * 
+	 * @param mapDialog
+	 */
+	public void onDialogTimeout(MAPDialog mapDialog);
 
 }

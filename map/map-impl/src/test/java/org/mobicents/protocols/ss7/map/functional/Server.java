@@ -43,6 +43,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.api.dialog.ProcedureCancellationReason;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
@@ -51,6 +52,8 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupple
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
 /**
  * 
@@ -62,7 +65,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	private static Logger logger = Logger.getLogger(Server.class);
 
-	private MAPFunctionalTest runningTestCase;
+	private MAPFunctionalWrapper runningTestCase;
 	private SccpAddress thisAddress;
 	private SccpAddress remoteAddress;
 
@@ -78,7 +81,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	private FunctionalTestScenario step;
 
-	Server(MAPStack mapStack, MAPFunctionalTest runningTestCase,
+	Server(MAPStack mapStack, MAPFunctionalWrapper runningTestCase,
 			SccpAddress thisAddress, SccpAddress remoteAddress) {
 		super();
 		this.mapStack = mapStack;
@@ -98,25 +101,25 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	public boolean isFinished() {
 
 		switch( this.step ) {
-		case actionA:
+		case Action_Dialog_A:
 			return _S_recievedProcessUnstructuredSSIndication
 			&& _S_recievedMAPOpenInfo && _S_recievedMAPCloseInfo && _S_recievedMAPOpenInfoExtentionContainer;
 
-		case actionB:
+		case Action_Dialog_B:
 			return _S_recievedMAPOpenInfo;
 
-		case actionC:
+		case Action_Dialog_C:
 			return true;
 
-		case actionD:
+		case Action_Dialog_D:
 			return _S_recievedProcessUnstructuredSSIndication
 			&& _S_recievedMAPOpenInfo;
 
-		case actionE:
+		case Action_Dialog_E:
 			return _S_recievedProcessUnstructuredSSIndication
 			&& _S_recievedMAPOpenInfo && _S_recievedMAPCloseInfo && _S_recievedMAPOpenInfoExtentionContainer;
 
-		case actionF:
+		case Action_Dialog_F:
 			return true;
 		}
 		
@@ -127,7 +130,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		String status = "";
 
 		switch( this.step ) {
-		case actionA:
+		case Action_Dialog_A:
 			status += "_S_recievedMAPCloseInfo[" + _S_recievedMAPCloseInfo + "]"
 			+ "\n";
 			status += "_S_recievedMAPOpenInfo[" + _S_recievedMAPOpenInfo + "]"
@@ -138,22 +141,22 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 				+ _S_recievedMAPOpenInfoExtentionContainer + "]" + "\n";
 			break;
 			
-		case actionB:
+		case Action_Dialog_B:
 			status += "_S_recievedMAPOpenInfo[" + _S_recievedMAPOpenInfo + "]"
 			+ "\n";
 			break;
 			
-		case actionC:
+		case Action_Dialog_C:
 			break;
 			
-		case actionD:
+		case Action_Dialog_D:
 			status += "_S_recievedMAPOpenInfo[" + _S_recievedMAPOpenInfo + "]"
 			+ "\n";
 			status += "_S_recievedProcessUnstructuredSSIndication["
 				+ _S_recievedProcessUnstructuredSSIndication + "]" + "\n";
 			break;
 			
-		case actionE:
+		case Action_Dialog_E:
 			status += "_S_recievedMAPCloseInfo[" + _S_recievedMAPCloseInfo + "]"
 			+ "\n";
 			status += "_S_recievedMAPOpenInfo[" + _S_recievedMAPOpenInfo + "]"
@@ -164,7 +167,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 				+ _S_recievedMAPOpenInfoExtentionContainer + "]" + "\n";
 			break;
 			
-		case actionF:
+		case Action_Dialog_F:
 			break;
 		}
 		return status + unexpected;
@@ -188,10 +191,10 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	public void onDialogDelimiter(MAPDialog mapDialog) {
 		
 		switch( this.step ) {
-		case actionA:
+		case Action_Dialog_A:
 			logger.debug("Sending MAPAcceptInfo ");
 			try {
-				mapDialog.setExtentionContainer(MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
+				mapDialog.setExtentionContainer(MAPFunctionalWrapper.GetTestExtensionContainer(this.mapServiceFactory));
 				mapDialog.send();
 			} catch (MAPException e) {
 				logger.error(e);
@@ -199,10 +202,10 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 			}
 			break;
 
-		case actionD:
+		case Action_Dialog_D:
 			logger.debug("Sending MAPCloseInfo ");
 			try {
-				mapDialog.setExtentionContainer(MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
+				mapDialog.setExtentionContainer(MAPFunctionalWrapper.GetTestExtensionContainer(this.mapServiceFactory));
 				mapDialog.close(false);
 			} catch (MAPException e) {
 				logger.error(e);
@@ -210,7 +213,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 			}
 			break;
 
-		case actionE:
+		case Action_Dialog_E:
 			logger.debug("Sending MAPAcceptInfo ");
 			try {
 				mapDialog.send();
@@ -228,22 +231,22 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 			MAPExtensionContainer extensionContainer) {
 		
 		switch( this.step ) { 
-		case actionA:
-		case actionD:
-		case actionE:
-			if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
+		case Action_Dialog_A:
+		case Action_Dialog_D:
+		case Action_Dialog_E:
+			if( MAPFunctionalWrapper.CheckTestExtensionContainer(extensionContainer) )
 				_S_recievedMAPOpenInfoExtentionContainer = true;
 			
 			this._S_recievedMAPOpenInfo = true;
 			break;
 
-		case actionB:
+		case Action_Dialog_B:
 			logger.debug("Received MAPOpenInfo ");
 			this._S_recievedMAPOpenInfo = true;
 
 			logger.debug("Sending MAPRefuseInfo ");
 			try {
-				mapDialog.setExtentionContainer(MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
+				mapDialog.setExtentionContainer(MAPFunctionalWrapper.GetTestExtensionContainer(this.mapServiceFactory));
 				mapDialog.refuse(Reason.invalidDestinationReference);
 			} catch (MAPException e) {
 				logger.error(e);
@@ -268,6 +271,12 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void onDialogTimeout(MAPDialog mapDialog) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	public void onDialogUserAbort(MAPDialog mapDialog,
@@ -276,8 +285,8 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		logger.debug("Received MAPUserAbortInfo");
 		
 		switch( this.step ) { 
-		case actionE:
-			if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
+		case Action_Dialog_E:
+			if( MAPFunctionalWrapper.CheckTestExtensionContainer(extensionContainer) )
 				_S_recievedMAPOpenInfoExtentionContainer = true;
 			
 			if (userReason.isProcedureCancellationReason()
@@ -312,7 +321,31 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		int i1=0;
 		i1 = 1;		
 	}
-	
+
+	@Override
+	public void onProviderErrorComponent(Long invokeId, MAPProviderError providerError) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onErrorComponent(Long invokeId, MAPErrorMessage mapErrorMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRejectComponent(Long invokeId, Problem problem) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInvokeTimeout(MAPDialog mapDialog, Long invoke) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 	/**
 	 * MAP Service Listeners
@@ -321,17 +354,17 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 			ProcessUnstructuredSSIndication procUnstrInd) {
 		
 		switch( this.step ) {
-		case actionA:
-		case actionD:
-		case actionE:
+		case Action_Dialog_A:
+		case Action_Dialog_D:
+		case Action_Dialog_E:
 			String ussdString = procUnstrInd.getUSSDString().getString();
 			AddressString msisdn = procUnstrInd.getMSISDNAddressString();
 			logger.debug("Received ProcessUnstructuredSSIndication " + ussdString
 					+ " from MSISDN " + msisdn.getAddress());
 
-			if (!ussdString.equals(MAPFunctionalTest.USSD_STRING)) {
+			if (!ussdString.equals(MAPFunctionalWrapper.USSD_STRING)) {
 				unexpected += " Received USSDString " + ussdString
-				+ ". But was expected " + MAPFunctionalTest.USSD_STRING;
+				+ ". But was expected " + MAPFunctionalWrapper.USSD_STRING;
 			} else {
 				this._S_recievedProcessUnstructuredSSIndication = true;
 
@@ -339,7 +372,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 				Long invokeId = procUnstrInd.getInvokeId();
 
 				USSDString ussdStringObj = this.mapServiceFactory
-				.createUSSDString(MAPFunctionalTest.USSD_MENU);
+				.createUSSDString(MAPFunctionalWrapper.USSD_MENU);
 
 				try {
 					mapDialog.addUnstructuredSSRequest((byte) 0x0F, ussdStringObj);
@@ -359,5 +392,6 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		// TODO Auto-generated method stub
 
 	}
+
 
 }

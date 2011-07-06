@@ -131,8 +131,8 @@ public class MAPExtensionContainerImpl implements MAPExtensionContainer {
 				privateExtensionListHasDecoded = true;
 			} else if (tag == MAPExtensionContainerImpl.PSCEXTENSIONS_REF_TAG
 					&& localAis.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				this.pcsExtensions = new byte[localIS.available()];
-				localAis.read(this.pcsExtensions);
+//				this.pcsExtensions = new byte[localIS.available()];
+				this.pcsExtensions = localAis.readSequence();
 
 				// pcs-Extensions block has found - finish decoding
 				break;
@@ -185,6 +185,7 @@ public class MAPExtensionContainerImpl implements MAPExtensionContainer {
 		}
 		if (this.pcsExtensions != null) {
 			asnOS.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, MAPExtensionContainerImpl.PSCEXTENSIONS_REF_TAG);
+			asnOS.writeLength(this.pcsExtensions.length);
 			asnOS.write(this.pcsExtensions);
 		}
 	}

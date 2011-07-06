@@ -22,6 +22,10 @@
 
 package org.mobicents.protocols.ss7.map.api;
 
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+
 
 /**
  * 
@@ -29,4 +33,35 @@ package org.mobicents.protocols.ss7.map.api;
  * 
  */
 public interface MAPServiceListener {
+	/**
+	 * Invoked when TC-U-REJECT primitive is received from the other peer
+	 * 
+	 * @param invokeId
+	 * @param mapErrorMessage
+	 */
+	public void onErrorComponent(Long invokeId, MAPErrorMessage mapErrorMessage);
+
+	/**
+	 * Invoked when the provider error when parsing the response
+	 * 
+	 * @param invokeId
+	 * @param providerError
+	 */
+	public void onProviderErrorComponent(Long invokeId, MAPProviderError providerError);
+
+	/**
+	 * @param invokeId
+	 *            This parameter is optional and may be the null
+	 * @param problem
+	 */
+	public void onRejectComponent(Long invokeId, Problem problem);
+
+	/**
+	 * Invoked when no answer from the other peer for a long time - for sending
+	 * the a reject for the Invoke
+	 * 
+	 * @param mapDialog
+	 * @param invokeId
+	 */
+	public void onInvokeTimeout(MAPDialog mapDialog, Long invoke);
 }

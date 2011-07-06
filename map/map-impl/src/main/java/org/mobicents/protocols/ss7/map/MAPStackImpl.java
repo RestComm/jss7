@@ -36,9 +36,9 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
  */
 public class MAPStackImpl implements MAPStack {
 
-	private TCAPStack tcapStack = null;
+	protected TCAPStack tcapStack = null;
 
-	private MAPProviderImpl mapProvider = null;
+	protected MAPProviderImpl mapProvider = null;
 
 	private State state = State.IDLE;
 

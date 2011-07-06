@@ -28,11 +28,19 @@ import java.util.Set;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
+import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
 /**
  * This class must be the super class of all MAP services
@@ -110,4 +118,29 @@ public abstract class MAPServiceBaseImpl implements MAPServiceBase {
 
 		// TODO: abort all active dialog ?
 	}
+
+	protected void deliverErrorComponent(Long invokeId, MAPErrorMessage mapErrorMessage) {
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			((MAPServiceSupplementaryListener) serLis).onErrorComponent(invokeId, mapErrorMessage);
+		}
+	}
+
+	protected void deliverRejectComponent(Long invokeId, Problem problem) {
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			((MAPServiceSupplementaryListener) serLis).onRejectComponent(invokeId, problem);
+		}
+	}
+
+	protected void deliverProviderErrorComponent(Long invokeId, MAPProviderError providerError) {
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			((MAPServiceSupplementaryListener) serLis).onProviderErrorComponent(invokeId, providerError);
+		}
+	}
+
+	protected void deliverInvokeTimeout(MAPDialog mapDialog, Invoke invoke) {
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			((MAPServiceSupplementaryListener) serLis).onInvokeTimeout(mapDialog, invoke.getInvokeId());
+		}
+	}
+
 }

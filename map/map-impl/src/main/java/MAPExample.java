@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
@@ -50,6 +51,8 @@ import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
 public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryListener {
 
@@ -207,6 +210,36 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	}
 
 	public void onDialogResease(MAPDialog mapDialog) {
+		
+	}
+
+	@Override
+	public void onDialogTimeout(MAPDialog mapDialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onErrorComponent(Long invokeId, MAPErrorMessage mapErrorMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderErrorComponent(Long invokeId, MAPProviderError providerError) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRejectComponent(Long invokeId, Problem problem) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInvokeTimeout(MAPDialog mapDialog, Long invoke) {
+		// TODO Auto-generated method stub
 		
 	}
 

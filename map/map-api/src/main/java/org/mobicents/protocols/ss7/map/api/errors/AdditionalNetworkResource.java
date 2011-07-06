@@ -20,41 +20,19 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.dialog;
-
-import java.util.ArrayList;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
+package org.mobicents.protocols.ss7.map.api.errors;
 
 /**
+ * 
  * @author sergey vetyutnev
+ * 
  */
-public interface MAPExtensionContainer {
-	/**
-	 * Get the PrivateExtension list
-	 * 
-	 * @return
-	 */
-	public ArrayList<MAPPrivateExtension> getPrivateExtensionList();
+public enum AdditionalNetworkResource {
+	sgsn(0), ggsn(1), gmlc(2), gsmSCF(3), nplr(4), auc(5);
 
-	/**
-	 * Set the PrivateExtension list
-	 * 
-	 * @param privateExtensionList
-	 */
-	public void setPrivateExtensionList(ArrayList<MAPPrivateExtension> privateExtensionList);
+	private int code;
 
-	/**
-	 * Get the Pcs-Extensions - ASN.1 encoded byte array
-	 * 
-	 * @return
-	 */
-	public byte[] getPcsExtensions();
-
-	/**
-	 * Set the Pcs-Extensions - ASN.1 encoded byte array
-	 * 
-	 * @param pcsExtensions
-	 */
-	public void setPcsExtensions(byte[] pcsExtensions);
-
+	private AdditionalNetworkResource(int code) {
+		this.code = code;
+	}
 }

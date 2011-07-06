@@ -31,11 +31,15 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.dialog.IMSI;
+import org.mobicents.protocols.ss7.map.api.dialog.LMSI;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 
 /**
  * 
@@ -113,6 +117,79 @@ public interface MapServiceFactory {
 	 * @return new instance of {@link AddressString}
 	 */
 	public AddressString createAddressString(AddressNature addNature, NumberingPlan numPlan, String address);
+
+	/**
+	 * Creates a new instance of {@link IMSI}
+	 * 
+	 * @param MCC
+	 *            Mobile Country Code
+	 * @param MNC
+	 *            Mobile Network Code
+	 * @param MSIN
+	 *            Mobile Subscriber Identification Number
+	 * @return new instance of {@link IMSI}
+	 */
+	public IMSI createIMSI(Long MCC, Long MNC, String MSIN);
+
+	/**
+	 * Creates a new instance of {@link LMSI}
+	 * 
+	 * @param data
+	 *            
+	 * @return new instance of {@link LMSI}
+	 */
+	public LMSI createLMSI(byte[] data);
+
+	/**
+	 * Creates a new instance of {@link SM_RP_DA} with imsi parameter
+	 * 
+	 * @param imsi
+	 * @return 
+	 */
+	public SM_RP_DA createSM_RP_DA(IMSI imsi);
+
+	/**
+	 * Creates a new instance of {@link SM_RP_DA} with lmsi parameter
+	 * 
+	 * @param lmsi
+	 * @return 
+	 */
+	public SM_RP_DA createSM_RP_DA(LMSI lmsi);
+
+	/**
+	 * Creates a new instance of {@link SM_RP_DA} with serviceCentreAddressDA parameter
+	 * 
+	 * @param serviceCentreAddressDA
+	 * @return 
+	 */
+	public SM_RP_DA createSM_RP_DA(AddressString serviceCentreAddressDA);
+
+	/**
+	 * Creates a new instance of {@link SM_RP_DA} with noSM_RP_DA parameter
+	 * 
+	 * @return 
+	 */
+	public SM_RP_DA createSM_RP_DA();
+
+	/**
+	 * Creates a new instance of {@link SM_RP_OA} with msisdn parameter
+	 * @param msisdn
+	 * @return
+	 */
+	public SM_RP_OA createSM_RP_OA_Msisdn(AddressString msisdn);
+
+	/**
+	 * Creates a new instance of {@link SM_RP_OA} with serviceCentreAddressOA parameter
+	 * @param serviceCentreAddressOA
+	 * @return
+	 */
+	public SM_RP_OA createSM_RP_OA_ServiceCentreAddressOA(AddressString serviceCentreAddressOA);
+
+	/**
+	 * Creates a new instance of {@link SM_RP_OA} with noSM_RP_OA parameter
+	 * @return
+	 */
+	public SM_RP_OA createSM_RP_OA();
 
 	/**
 	 * Creates a new instance of {@link MAPUserAbortChoice}

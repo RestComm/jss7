@@ -44,9 +44,10 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 *            Ussd String
 	 * @param msisdn
 	 *            The MSISDN in {@link AddressString} format. This is optional
+	 * @return invokeId
 	 * @throws MAPException
 	 */
-	public void addProcessUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AddressString msisdn)
+	public Long addProcessUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AddressString msisdn)
 			throws MAPException;
 
 	/**
@@ -76,9 +77,10 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 *            03.38
 	 * @param ussdString
 	 *            Ussd String {@link USSDString}
+	 * @return invokeId
 	 * @throws MAPException
 	 */
-	public void addUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString) throws MAPException;
+	public Long addUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString) throws MAPException;
 
 	/**
 	 * Add's a new Unstructured SS Response

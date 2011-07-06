@@ -20,41 +20,27 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.dialog;
+package org.mobicents.protocols.ss7.map.api.service.sms;
 
-import java.util.ArrayList;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
+import org.mobicents.protocols.ss7.map.api.dialog.IMSI;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 
 /**
+ * 
  * @author sergey vetyutnev
+ * 
  */
-public interface MAPExtensionContainer {
-	/**
-	 * Get the PrivateExtension list
-	 * 
-	 * @return
-	 */
-	public ArrayList<MAPPrivateExtension> getPrivateExtensionList();
+public interface MoForwardShortMessageRequestIndication extends SmsServive {
 
-	/**
-	 * Set the PrivateExtension list
-	 * 
-	 * @param privateExtensionList
-	 */
-	public void setPrivateExtensionList(ArrayList<MAPPrivateExtension> privateExtensionList);
+	public SM_RP_DA getSM_RP_DA();
 
-	/**
-	 * Get the Pcs-Extensions - ASN.1 encoded byte array
-	 * 
-	 * @return
-	 */
-	public byte[] getPcsExtensions();
+	public SM_RP_OA getSM_RP_OA();
 
-	/**
-	 * Set the Pcs-Extensions - ASN.1 encoded byte array
-	 * 
-	 * @param pcsExtensions
-	 */
-	public void setPcsExtensions(byte[] pcsExtensions);
+	public byte[] getSM_RP_UI();
+
+	public MAPExtensionContainer getExtensionContainer();
+
+	public IMSI getIMSI();
 
 }
+

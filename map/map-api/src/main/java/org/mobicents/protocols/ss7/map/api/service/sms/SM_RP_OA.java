@@ -20,41 +20,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.dialog;
+package org.mobicents.protocols.ss7.map.api.service.sms;
 
-import java.util.ArrayList;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
+import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
+
 
 /**
+ * SM-RP-OA ::= CHOICE {
+ * msisdn		[2] ISDN-AddressString,
+ * serviceCentreAddressOA	[4] AddressString,
+ * noSM-RP-OA	[5] NULL}
+ * 
+ * Only one method getMsisdn() or getServiceCentreAddressOA() 
+ * will return the non null value
+ * If all these methods return null - this means noSM-RP-OA value 
+ * 
  * @author sergey vetyutnev
+ * 
  */
-public interface MAPExtensionContainer {
-	/**
-	 * Get the PrivateExtension list
-	 * 
-	 * @return
-	 */
-	public ArrayList<MAPPrivateExtension> getPrivateExtensionList();
+public interface SM_RP_OA {
 
-	/**
-	 * Set the PrivateExtension list
-	 * 
-	 * @param privateExtensionList
-	 */
-	public void setPrivateExtensionList(ArrayList<MAPPrivateExtension> privateExtensionList);
-
-	/**
-	 * Get the Pcs-Extensions - ASN.1 encoded byte array
-	 * 
-	 * @return
-	 */
-	public byte[] getPcsExtensions();
-
-	/**
-	 * Set the Pcs-Extensions - ASN.1 encoded byte array
-	 * 
-	 * @param pcsExtensions
-	 */
-	public void setPcsExtensions(byte[] pcsExtensions);
+	public AddressString getMsisdn();
+	public AddressString getServiceCentreAddressOA();
 
 }
+

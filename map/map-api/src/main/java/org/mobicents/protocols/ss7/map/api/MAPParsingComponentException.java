@@ -20,41 +20,39 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.dialog;
-
-import java.util.ArrayList;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
+package org.mobicents.protocols.ss7.map.api;
 
 /**
+ * 
  * @author sergey vetyutnev
+ *
  */
-public interface MAPExtensionContainer {
-	/**
-	 * Get the PrivateExtension list
-	 * 
-	 * @return
-	 */
-	public ArrayList<MAPPrivateExtension> getPrivateExtensionList();
+public class MAPParsingComponentException extends Exception {
+	private MAPParsingComponentExceptionReason reason;
 
-	/**
-	 * Set the PrivateExtension list
-	 * 
-	 * @param privateExtensionList
-	 */
-	public void setPrivateExtensionList(ArrayList<MAPPrivateExtension> privateExtensionList);
+	public MAPParsingComponentException() {
+		// TODO Auto-generated constructor stub
+	}
 
-	/**
-	 * Get the Pcs-Extensions - ASN.1 encoded byte array
-	 * 
-	 * @return
-	 */
-	public byte[] getPcsExtensions();
+	public MAPParsingComponentException(String message, MAPParsingComponentExceptionReason reason) {
+		super(message);
+		
+		this.reason = reason;
+	}
 
-	/**
-	 * Set the Pcs-Extensions - ASN.1 encoded byte array
-	 * 
-	 * @param pcsExtensions
-	 */
-	public void setPcsExtensions(byte[] pcsExtensions);
+	public MAPParsingComponentException(Throwable cause, MAPParsingComponentExceptionReason reason) {
+		super(cause);
+		
+		this.reason = reason;
+	}
 
+	public MAPParsingComponentException(String message, Throwable cause, MAPParsingComponentExceptionReason reason) {
+		super(message, cause);
+		
+		this.reason = reason;
+	}
+
+	public MAPParsingComponentExceptionReason getReason() {
+		return this.reason;
+	}
 }
