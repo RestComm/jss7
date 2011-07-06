@@ -65,7 +65,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	private static Logger logger = Logger.getLogger(Server.class);
 
-	private MAPFunctionalWrapper runningTestCase;
+	private MAPFunctionalTest runningTestCase;
 	private SccpAddress thisAddress;
 	private SccpAddress remoteAddress;
 
@@ -81,7 +81,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	private FunctionalTestScenario step;
 
-	Server(MAPStack mapStack, MAPFunctionalWrapper runningTestCase,
+	Server(MAPStack mapStack, MAPFunctionalTest runningTestCase,
 			SccpAddress thisAddress, SccpAddress remoteAddress) {
 		super();
 		this.mapStack = mapStack;
@@ -194,7 +194,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		case Action_Dialog_A:
 			logger.debug("Sending MAPAcceptInfo ");
 			try {
-				mapDialog.setExtentionContainer(MAPFunctionalWrapper.GetTestExtensionContainer(this.mapServiceFactory));
+				mapDialog.setExtentionContainer(MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
 				mapDialog.send();
 			} catch (MAPException e) {
 				logger.error(e);
@@ -205,7 +205,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		case Action_Dialog_D:
 			logger.debug("Sending MAPCloseInfo ");
 			try {
-				mapDialog.setExtentionContainer(MAPFunctionalWrapper.GetTestExtensionContainer(this.mapServiceFactory));
+				mapDialog.setExtentionContainer(MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
 				mapDialog.close(false);
 			} catch (MAPException e) {
 				logger.error(e);
@@ -234,7 +234,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		case Action_Dialog_A:
 		case Action_Dialog_D:
 		case Action_Dialog_E:
-			if( MAPFunctionalWrapper.CheckTestExtensionContainer(extensionContainer) )
+			if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
 				_S_recievedMAPOpenInfoExtentionContainer = true;
 			
 			this._S_recievedMAPOpenInfo = true;
@@ -246,7 +246,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 			logger.debug("Sending MAPRefuseInfo ");
 			try {
-				mapDialog.setExtentionContainer(MAPFunctionalWrapper.GetTestExtensionContainer(this.mapServiceFactory));
+				mapDialog.setExtentionContainer(MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
 				mapDialog.refuse(Reason.invalidDestinationReference);
 			} catch (MAPException e) {
 				logger.error(e);
@@ -286,7 +286,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		
 		switch( this.step ) { 
 		case Action_Dialog_E:
-			if( MAPFunctionalWrapper.CheckTestExtensionContainer(extensionContainer) )
+			if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
 				_S_recievedMAPOpenInfoExtentionContainer = true;
 			
 			if (userReason.isProcedureCancellationReason()
@@ -362,9 +362,9 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 			logger.debug("Received ProcessUnstructuredSSIndication " + ussdString
 					+ " from MSISDN " + msisdn.getAddress());
 
-			if (!ussdString.equals(MAPFunctionalWrapper.USSD_STRING)) {
+			if (!ussdString.equals(MAPFunctionalTest.USSD_STRING)) {
 				unexpected += " Received USSDString " + ussdString
-				+ ". But was expected " + MAPFunctionalWrapper.USSD_STRING;
+				+ ". But was expected " + MAPFunctionalTest.USSD_STRING;
 			} else {
 				this._S_recievedProcessUnstructuredSSIndication = true;
 
@@ -372,7 +372,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 				Long invokeId = procUnstrInd.getInvokeId();
 
 				USSDString ussdStringObj = this.mapServiceFactory
-				.createUSSDString(MAPFunctionalWrapper.USSD_MENU);
+				.createUSSDString(MAPFunctionalTest.USSD_MENU);
 
 				try {
 					mapDialog.addUnstructuredSSRequest((byte) 0x0F, ussdStringObj);

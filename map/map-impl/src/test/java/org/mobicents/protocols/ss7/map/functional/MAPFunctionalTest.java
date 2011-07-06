@@ -69,9 +69,9 @@ import org.mobicents.protocols.asn.AsnOutputStream;
  * @author sergey vetyutnev
  * 
  */
-public class MAPFunctionalWrapper extends SccpHarness {
+public class MAPFunctionalTest extends SccpHarness {
 
-	private static Logger logger = Logger.getLogger(MAPFunctionalWrapper.class);
+	private static Logger logger = Logger.getLogger(MAPFunctionalTest.class);
 	protected static final String USSD_STRING = "*133#";
 	protected static final String USSD_MENU = "Select 1)Wallpaper 2)Ringtone 3)Games";
 	private static final int _WAIT_TIMEOUT = 5000;

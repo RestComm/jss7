@@ -68,7 +68,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	private static Logger logger = Logger.getLogger(Client.class);
 
-	private MAPFunctionalWrapper runningTestCase;
+	private MAPFunctionalTest runningTestCase;
 	private SccpAddress thisAddress;
 	private SccpAddress remoteAddress;
 
@@ -88,7 +88,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	
 	private FunctionalTestScenario step;
 
-	Client(MAPStack mapStack, MAPFunctionalWrapper runningTestCase,
+	Client(MAPStack mapStack, MAPFunctionalTest runningTestCase,
 			SccpAddress thisAddress, SccpAddress remoteAddress) {
 		super();
 		this.mapStack = mapStack;
@@ -123,11 +123,11 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
 		
 		USSDString ussdString = this.mapServiceFactory
-				.createUSSDString(MAPFunctionalWrapper.USSD_STRING);
+				.createUSSDString(MAPFunctionalTest.USSD_STRING);
 
 		clientDialog.addProcessUnstructuredSSRequest( (byte) 0x0F, ussdString, msisdn);
 
-		logger.debug("Sending USSDString" + MAPFunctionalWrapper.USSD_STRING);
+		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
 
 		clientDialog.send();
 	}
@@ -154,15 +154,15 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		clientDialog = this.mapProvider.getMAPServiceSupplementary().createNewDialog(appCnt,
 				this.thisAddress, orgiReference, this.remoteAddress,
 				destReference);
-		clientDialog.setExtentionContainer(MAPFunctionalWrapper.GetTestExtensionContainer(this.mapServiceFactory));
+		clientDialog.setExtentionContainer(MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
 
 		
 		USSDString ussdString = this.mapServiceFactory
-				.createUSSDString(MAPFunctionalWrapper.USSD_STRING);
+				.createUSSDString(MAPFunctionalTest.USSD_STRING);
 
 		clientDialog.addProcessUnstructuredSSRequest( (byte) 0x0F, ussdString, msisdn);
 
-		logger.debug("Sending USSDString" + MAPFunctionalWrapper.USSD_STRING);
+		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
 
 		clientDialog.send();
 	}
@@ -187,11 +187,11 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
 		
 		USSDString ussdString = this.mapServiceFactory
-				.createUSSDString(MAPFunctionalWrapper.USSD_STRING);
+				.createUSSDString(MAPFunctionalTest.USSD_STRING);
 
 		clientDialog.addProcessUnstructuredSSRequest( (byte) 0x0F, ussdString, msisdn);
 
-		logger.debug("Sending USSDString" + MAPFunctionalWrapper.USSD_STRING);
+		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
 
 		clientDialog.send();
 	}
@@ -307,7 +307,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 			logger.debug("Sending MAPUserAbortInfo ");
 			try {
 				_S_sentEnd = true;
-				mapDialog.setExtentionContainer(MAPFunctionalWrapper.GetTestExtensionContainer(this.mapServiceFactory));
+				mapDialog.setExtentionContainer(MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
 				MAPUserAbortChoice choice = this.mapServiceFactory.createMAPUserAbortChoice();
 				choice.setProcedureCancellationReason(ProcedureCancellationReason.handoverCancellation);
 				mapDialog.abort(choice);
@@ -332,14 +332,14 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		
 		switch( this.step ) {
 		case Action_Dialog_A:
-			if( MAPFunctionalWrapper.CheckTestExtensionContainer(extensionContainer) )
+			if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
 				_S_receivedMAPOpenInfoExtentionContainer = true;
 
 			logger.debug("Received onMAPAcceptInfo ");
 			break;
 			
 		case Action_Dialog_D:
-			if( MAPFunctionalWrapper.CheckTestExtensionContainer(extensionContainer) )
+			if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
 				_S_receivedMAPOpenInfoExtentionContainer = true;
 			
 			this._S_receivedEndInfo = true;
@@ -364,7 +364,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 				logger.debug("Received InvalidDestinationReference");
 				_S_receivedAbortInfo = true;
 				
-				if( MAPFunctionalWrapper.CheckTestExtensionContainer(extensionContainer) )
+				if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
 					_S_receivedMAPOpenInfoExtentionContainer = true;
 			}
 			break;
@@ -400,7 +400,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 					+ abortProviderReason.toString());
 			if (abortProviderReason == MAPAbortProviderReason.InvalidPDU)
 				_S_receivedAbortInfo = true;
-			if( MAPFunctionalWrapper.CheckTestExtensionContainer(extensionContainer) )
+			if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
 				_S_receivedMAPOpenInfoExtentionContainer = true;
 			break;
 		}
