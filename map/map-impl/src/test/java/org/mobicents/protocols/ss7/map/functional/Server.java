@@ -323,19 +323,19 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onProviderErrorComponent(Long invokeId, MAPProviderError providerError) {
+	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onErrorComponent(Long invokeId, MAPErrorMessage mapErrorMessage) {
+	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onRejectComponent(Long invokeId, Problem problem) {
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
 		// TODO Auto-generated method stub
 		
 	}

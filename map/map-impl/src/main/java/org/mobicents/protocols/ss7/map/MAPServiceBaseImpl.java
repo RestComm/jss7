@@ -119,21 +119,21 @@ public abstract class MAPServiceBaseImpl implements MAPServiceBase {
 		// TODO: abort all active dialog ?
 	}
 
-	protected void deliverErrorComponent(Long invokeId, MAPErrorMessage mapErrorMessage) {
+	protected void deliverErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
 		for (MAPServiceListener serLis : this.serviceListeners) {
-			((MAPServiceSupplementaryListener) serLis).onErrorComponent(invokeId, mapErrorMessage);
+			((MAPServiceSupplementaryListener) serLis).onErrorComponent(mapDialog, invokeId, mapErrorMessage);
 		}
 	}
 
-	protected void deliverRejectComponent(Long invokeId, Problem problem) {
+	protected void deliverRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
 		for (MAPServiceListener serLis : this.serviceListeners) {
-			((MAPServiceSupplementaryListener) serLis).onRejectComponent(invokeId, problem);
+			((MAPServiceSupplementaryListener) serLis).onRejectComponent(mapDialog, invokeId, problem);
 		}
 	}
 
-	protected void deliverProviderErrorComponent(Long invokeId, MAPProviderError providerError) {
+	protected void deliverProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
 		for (MAPServiceListener serLis : this.serviceListeners) {
-			((MAPServiceSupplementaryListener) serLis).onProviderErrorComponent(invokeId, providerError);
+			((MAPServiceSupplementaryListener) serLis).onProviderErrorComponent(mapDialog, invokeId, providerError);
 		}
 	}
 

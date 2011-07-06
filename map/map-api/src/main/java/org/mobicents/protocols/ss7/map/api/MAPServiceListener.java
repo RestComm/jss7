@@ -36,25 +36,28 @@ public interface MAPServiceListener {
 	/**
 	 * Invoked when TC-U-REJECT primitive is received from the other peer
 	 * 
+	 * @param mapDialog
 	 * @param invokeId
 	 * @param mapErrorMessage
 	 */
-	public void onErrorComponent(Long invokeId, MAPErrorMessage mapErrorMessage);
+	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage);
 
 	/**
 	 * Invoked when the provider error when parsing the response
 	 * 
+	 * @param mapDialog
 	 * @param invokeId
 	 * @param providerError
 	 */
-	public void onProviderErrorComponent(Long invokeId, MAPProviderError providerError);
+	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError);
 
 	/**
+	 * @param mapDialog
 	 * @param invokeId
 	 *            This parameter is optional and may be the null
 	 * @param problem
 	 */
-	public void onRejectComponent(Long invokeId, Problem problem);
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem);
 
 	/**
 	 * Invoked when no answer from the other peer for a long time - for sending
@@ -63,5 +66,5 @@ public interface MAPServiceListener {
 	 * @param mapDialog
 	 * @param invokeId
 	 */
-	public void onInvokeTimeout(MAPDialog mapDialog, Long invoke);
+	public void onInvokeTimeout(MAPDialog mapDialog, Long invokeId);
 }

@@ -1186,7 +1186,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 						errorCode = comp.getErrorCode().getLocalErrorCode();
 					if (errorCode < MAPErrorCode.minimalCodeValue || errorCode < MAPErrorCode.maximumCodeValue) {
 						// Not Local error code and not MAP error code received
-						perfSer.deliverProviderErrorComponent(invokeId, MAPProviderError.InvalidResponseReceived);
+						perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
 
 						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnError);
 						problem.setReturnErrorProblemType(ReturnErrorProblemType.UnrecognizedError);
@@ -1206,7 +1206,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 				case Reject: {
 					Reject comp = (Reject) c;
-					perfSer.deliverRejectComponent(comp.getInvokeId(), comp.getProblem());
+					perfSer.deliverRejectComponent(mapDialogImpl, comp.getInvokeId(), comp.getProblem());
 					
 					return;
 				}
@@ -1233,7 +1233,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 							problem.setInvokeProblemType(InvokeProblemType.UnrecognizedOperation);
 							mapDialogImpl.sendRejectComponent(invokeId, problem);
 						} else {
-							perfSer.deliverProviderErrorComponent(invokeId, MAPProviderError.InvalidResponseReceived);
+							perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
 							
 							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnResult);
 							problem.setReturnResultProblemType(ReturnResultProblemType.MistypedParameter);
@@ -1250,7 +1250,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 							problem.setInvokeProblemType(InvokeProblemType.MistypedParameter);
 							mapDialogImpl.sendRejectComponent(invokeId, problem);
 						} else {
-							perfSer.deliverProviderErrorComponent(invokeId, MAPProviderError.InvalidResponseReceived);
+							perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
 							
 							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnResult);
 							problem.setReturnResultProblemType(ReturnResultProblemType.MistypedParameter);
