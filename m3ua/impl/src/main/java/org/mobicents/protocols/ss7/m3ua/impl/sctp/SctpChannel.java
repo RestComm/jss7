@@ -36,7 +36,7 @@ import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.NotificationHandler;
-import com.sun.nio.sctp.SctpStandardSocketOption;
+import com.sun.nio.sctp.SctpStandardSocketOptions;
 
 /**
  * @author amit bhayani
@@ -70,8 +70,8 @@ public class SctpChannel extends M3UAChannelImpl {
 		this.provider = provider;
 
 		// Set max stream in/out here
-		((com.sun.nio.sctp.SctpChannel) channel).setOption(SctpStandardSocketOption.SCTP_INIT_MAXSTREAMS,
-				SctpStandardSocketOption.InitMaxStreams.create(32, 32));
+		((com.sun.nio.sctp.SctpChannel) channel).setOption(SctpStandardSocketOptions.SCTP_INIT_MAXSTREAMS,
+				SctpStandardSocketOptions.InitMaxStreams.create(32, 32));
 
 		// set SCTP_FRAGMENT_INTERLEAVE to zero. The MessageFactory will fail if
 		// set to 1 or 2
