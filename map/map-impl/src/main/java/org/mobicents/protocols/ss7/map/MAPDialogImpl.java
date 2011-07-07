@@ -93,6 +93,11 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		this.origReference = origReference;
 	}
 
+	@Override
+	public void keepAlive() {
+		this.tcapDialog.keepAlive();
+	}
+
 	public Long getDialogId() {
 		return tcapDialog.getDialogId();
 	}

@@ -27,6 +27,8 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
+import org.mobicents.protocols.ss7.tcap.api.TCListener;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
@@ -40,6 +42,13 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
  */
 public interface MAPDialog {
 
+	/**
+	 * This method can be called on timeout of dialog, inside
+	 * {@link MAPDialogListener#onDialogTimeout(Dialog)} callback. If its called,
+	 * dialog wont be removed in case application does not perform 'send'.
+	 */
+	public void keepAlive();
+	
 	/**
 	 * Returns this Dialog's ID. This ID is actually TCAP's Dialog ID.
 	 * {@link org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog}
