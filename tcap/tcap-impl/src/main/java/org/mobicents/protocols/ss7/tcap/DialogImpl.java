@@ -36,6 +36,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
+import org.mobicents.protocols.ss7.tcap.api.TCListener;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.OperationState;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
@@ -119,7 +120,7 @@ public class DialogImpl implements Dialog {
 
 	private Future idleTimerFuture;
 	private boolean idleTimerActionTaken = false;
-	
+	private boolean idleTimerInvoked = false;
 	private TRPseudoState state = TRPseudoState.Idle;
 	private boolean structured = true;
 	// invokde ID space :)
@@ -310,6 +311,23 @@ public class DialogImpl implements Dialog {
 	public boolean isStructured() {
 
 		return this.structured;
+	}
+
+	public void keepAlive() {
+		try
+		{
+			this.dialogLock.lock();
+			if(this.idleTimerInvoked)
+			{
+				this.idleTimerActionTaken = true;
+			}
+			
+			
+		}finally
+		{
+			this.dialogLock.unlock();
+		}
+		
 	}
 
 	/**
@@ -1364,14 +1382,11 @@ public class DialogImpl implements Dialog {
 				dialogLock.lock();
 				d.idleTimerFuture = null;
 				
-			} finally {
-				dialogLock.unlock();
-			}
+			
 			d.idleTimerActionTaken = false;
+			d.idleTimerInvoked = true;
 			provider.timeout(d);
 			//send abort
-			try{
-				dialogLock.lock();
 				if(d.idleTimerActionTaken)
 				{
 					startIdleTimer();
@@ -1382,6 +1397,7 @@ public class DialogImpl implements Dialog {
 				
 			}finally
 			{
+				d.idleTimerInvoked = false;
 				dialogLock.unlock();
 			}
 		}

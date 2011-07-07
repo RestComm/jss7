@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.tcap.api.tc.dialog;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
+import org.mobicents.protocols.ss7.tcap.api.TCListener;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
@@ -172,6 +173,13 @@ public interface Dialog {
 	 * @throws TCAPException
 	 */
 	public void resetTimer(Long invokeId) throws TCAPException;
+
+	/**
+	 * This method can be called on timeout of dialog, inside
+	 * {@link TCListener#onDialogTimeout(Dialog)} callback. If its called,
+	 * dialog wont be removed in case application does not perform 'send'.
+	 */
+	public void keepAlive();
 
 	/**
 	 * Returns the state of this Dialog

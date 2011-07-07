@@ -471,6 +471,52 @@ public class DialogIdleEndTest extends SccpHarness {
 
 	}
 	
+	
+	@Test
+	public void testKeepAlive() throws TCAPException, TCAPSendException {
+		
+		this.client = new Client(tcapStack1, peer1Address, peer2Address);
+		
+		this.server = new Server(tcapStack2, peer2Address, peer1Address){
+
+			@Override
+			public void onDialogTimeout(Dialog d) {
+				
+				super.onDialogTimeout(d);
+				
+				d.keepAlive();
+			}
+			
+		};
+
+		long stamp = System.currentTimeMillis();
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.Begin, null, 0, stamp + _WAIT);
+		clientExpectedEvents.add(te);
+		te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, 1, stamp +_WAIT + _DIALOG_TIMEOUT*2); //*2 cause its 
+		clientExpectedEvents.add(te);
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 2, stamp + _WAIT+_DIALOG_TIMEOUT*2+ 30000);
+		clientExpectedEvents.add(te);
+
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.Begin, null, 0,  stamp + _WAIT);
+		serverExpectedEvents.add(te);
+		for(int index = 1; index<18;index++)
+		{
+			te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, index, stamp +_WAIT + _DIALOG_TIMEOUT*index);
+			serverExpectedEvents.add(te);
+		}
+
+		client.startClientDialog();
+		client.waitFor(_WAIT);
+		client.sendBegin();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+	
+	}
+	
+	
 	private void waitForEnd() {
 		try {
 			Thread.currentThread().sleep(_WAIT_TIMEOUT);
