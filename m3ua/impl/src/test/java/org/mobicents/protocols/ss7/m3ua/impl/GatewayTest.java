@@ -91,19 +91,10 @@ public class GatewayTest {
 		serverM3UAMgmt.getAspfactories().clear();
 		serverM3UAMgmt.stop();
 		
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
-		DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory
-				.createDestinationPointCode(123, (short) 0) };
 
-		ServiceIndicators[] servInds = new ServiceIndicators[] { parmFactory.createServiceIndicators(new short[] { 3 }) };
-
-		TrafficModeType trModType = parmFactory.createTrafficModeType(TrafficModeType.Override);
-		LocalRKIdentifier lRkId = parmFactory.createLocalRKIdentifier(1);
-		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
-
-		client = new Client(rc, rKey, trModType);
-		server = new Server(rc, rKey, trModType);
+		client = new Client();
+		server = new Server();
 	}
 
 	@After
@@ -164,18 +155,13 @@ public class GatewayTest {
 		ByteBuffer rxBuffer = ByteBuffer.allocateDirect(1000);
 		ByteBuffer txBuffer = ByteBuffer.allocateDirect(1000);
 
-		RoutingContext rc;
-		RoutingKey rKey;
-		TrafficModeType trModType;
+		
 		ClientM3UAProcess rsgw;
 		ClientM3UAManagement clientM3UAMgmt;
 		private FastList<byte[]> receivedData = new FastList<byte[]>();
 		private volatile boolean started = false;
 
-		public Client(RoutingContext rc, RoutingKey rKey, TrafficModeType trModType) {
-			this.rc = rc;
-			this.rKey = rKey;
-			this.trModType = trModType;
+		public Client() {
 		}
 
 		public FastList<byte[]> getReceivedData() {
@@ -254,9 +240,7 @@ public class GatewayTest {
 		ByteBuffer rxBuffer = ByteBuffer.allocateDirect(1000);
 		ByteBuffer txBuffer = ByteBuffer.allocateDirect(1000);
 
-		RoutingContext rc;
-		RoutingKey rKey;
-		TrafficModeType trModType;
+		
 		ServerM3UAProcess sgw;
 		ServerM3UAManagement serverM3UAMgmt;
 
@@ -264,10 +248,8 @@ public class GatewayTest {
 
 		private FastList<byte[]> receivedData = new FastList<byte[]>();
 
-		public Server(RoutingContext rc, RoutingKey rKey, TrafficModeType trModType) {
-			this.rc = rc;
-			this.rKey = rKey;
-			this.trModType = trModType;
+		public Server() {
+
 		}
 
 		public FastList<byte[]> getReceivedData() {
