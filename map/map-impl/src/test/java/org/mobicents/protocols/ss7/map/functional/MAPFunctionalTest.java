@@ -46,6 +46,7 @@ import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
+import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
@@ -53,15 +54,22 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
 import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
 import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplementaryImpl;
+import org.mobicents.protocols.ss7.map.api.dialog.IMSI;
+import org.mobicents.protocols.ss7.map.dialog.IMSIImpl;
+import org.mobicents.protocols.ss7.map.dialog.LMSIImpl;
+
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
+import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+
+import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * 
@@ -233,46 +241,15 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	@Test
 	public void testA() throws Exception {
-//		String s1 = FunctionalTestScenario.actionD.toString();
-//		
-//		client.actionB();
-//		MAPDialogImpl d = (MAPDialogImpl)client.getMapDialog();
-//		
-//		d.removeIncomingInvokeId(1L);
-//		Boolean b1 = d.addIncomingInvokeId(1L);
-//		b1 = d.addIncomingInvokeId(1L);
-//		b1 = d.addIncomingInvokeId(2L);
-//		b1 = d.checkIncomingInvokeIdExists(1L);
-//		d.removeIncomingInvokeId(1L);
-//		b1 = d.checkIncomingInvokeIdExists(1L);
 		
-		ReturnError errorA = ((MAPProviderImpl)this.stack1.getMAPProvider()).getTCAPProvider().getComponentPrimitiveFactory().createTCReturnErrorRequest();
-		ReturnError errorB = ((MAPProviderImpl)this.stack1.getMAPProvider()).getTCAPProvider().getComponentPrimitiveFactory().createTCReturnErrorRequest();
-
-		ErrorCode errorCodeA = TcapFactory.createErrorCode();
-		ErrorCode errorCodeB = TcapFactory.createErrorCode();
-
-		errorA.setInvokeId(11L);
-		long[] gec = new long[] { 5, 6, 7, 8 };
-		errorCodeA.setGlobalErrorCode(gec);
-		errorA.setErrorCode(errorCodeA);
-		
-		AsnOutputStream os = new AsnOutputStream();
-		errorA.encode(os);
-
-		AsnInputStream is = new AsnInputStream(new ByteArrayInputStream(os.toByteArray()));
-		int tag = is.readTag();
-		errorB.decode(is);
-
-		
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Dialog_A);
-		client.setStep(FunctionalTestScenario.Action_Dialog_A);
-		client.actionA();
-		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+//		server.reset();
+//		client.reset();
+//		server.setStep(FunctionalTestScenario.Action_Component_A);
+//		client.setStep(FunctionalTestScenario.Action_Component_A);
+//		client.actionA();
+//		waitForEnd();
+//		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+//		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
 	}
 	
 	private void waitForEnd() {

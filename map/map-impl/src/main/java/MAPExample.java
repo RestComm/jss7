@@ -26,6 +26,8 @@ import javax.naming.NamingException;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
@@ -113,8 +115,8 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 
 		// First create Dialog
 		MAPDialogSupplementary mapDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(
-				MAPApplicationContext.networkUnstructuredSsContextV2, destAddress, destReference, origAddress,
-				origReference);
+				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, MAPApplicationContextVersion.version2), destAddress,
+				destReference, origAddress, origReference);
 
 		// The dataCodingScheme is still byte, as I am not exactly getting how
 		// to encode/decode this.

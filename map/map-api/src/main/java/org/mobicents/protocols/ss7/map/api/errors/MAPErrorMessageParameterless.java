@@ -29,6 +29,6 @@ package org.mobicents.protocols.ss7.map.api.errors;
  * @author sergey vetyutnev
  * 
  */
-public interface MAPErrorMessageParameterless {
+public interface MAPErrorMessageParameterless extends MAPErrorMessage {
 
 }

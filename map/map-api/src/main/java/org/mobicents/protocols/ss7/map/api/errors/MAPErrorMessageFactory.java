@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.api.errors;
 
 import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 
 /**
  * The factory of MAP ReturnError messages
@@ -30,36 +31,29 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
  * @author sergey vetyutnev
  * 
  */
-public class MAPErrorFactory {
+public interface MAPErrorMessageFactory {
 
-	public MAPErrorMessageParameterless createMessageParameterless(Long errorCode) {
-		// TODO: implement this
-		return null;
-	}
+	/**
+	 * Generate the empty message depends of the error code (for incoming
+	 * messages)
+	 * 
+	 * @param errorCode
+	 * @return
+	 */
+	public MAPErrorMessage createMessageFromErrorCode(Long errorCode);
 
-	public MAPErrorMessageExtensionContainer createMessageExtensionContainer(Long errorCode) {
-		// TODO: implement this
-		return null;
-	}
-	
+	public MAPErrorMessageParameterless createMessageParameterless(Long errorCode);
+
+	public MAPErrorMessageExtensionContainer createMessageExtensionContainer(Long errorCode);
 
 	public MAPErrorMessageSMDeliveryFailure createMessageSMDeliveryFailure(Long mapVersion, SMEnumeratedDeliveryFailureCause smEnumeratedDeliveryFailureCause,
-			MAPExtensionContainer extensionContainer) {
-		// TODO: implement this
-		return null;
-	}
+			MAPExtensionContainer extensionContainer);
 
 	public MAPErrorMessageFacilityNotSup createErrorMessageFacilityNotSup(Long mapVersion, Boolean shapeOfLocationEstimateNotSupported,
-			Boolean neededLcsCapabilityNotSupportedInServingNode) {
-		// TODO: implement this
-		return null;
-	}
+			Boolean neededLcsCapabilityNotSupportedInServingNode);
 
 	public MAPErrorMessageSystemFailure createErrorMessageSystemFailure(Long mapVersion, NetworkResource networkResource,
-			AdditionalNetworkResource additionalNetworkResource, MAPExtensionContainer extensionContainer) {
-		// TODO: implement this
-		return null;
-	}
+			AdditionalNetworkResource additionalNetworkResource, MAPExtensionContainer extensionContainer);
 }
 
 

@@ -27,6 +27,8 @@ import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -106,7 +108,9 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	public void start() throws MAPException {
 		this.mapProvider.getMAPServiceSupplementary().acivate();
 		
-		MAPApplicationContext appCnt = MAPApplicationContext.networkUnstructuredSsContextV2;
+		MAPApplicationContext appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
+				MAPApplicationContextVersion.version2);
+
 		AddressString orgiReference = this.mapServiceFactory
 				.createAddressString(AddressNature.international_number,
 						NumberingPlan.ISDN, "31628968300");
@@ -137,7 +141,9 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	public void actionA() throws MAPException {
 		this.mapProvider.getMAPServiceSupplementary().acivate();
 		
-		MAPApplicationContext appCnt = MAPApplicationContext.networkUnstructuredSsContextV2;
+		MAPApplicationContext appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
+				MAPApplicationContextVersion.version2);
+		
 		AddressString orgiReference = this.mapServiceFactory
 				.createAddressString(AddressNature.international_number,
 						NumberingPlan.ISDN, "31628968300");
@@ -170,7 +176,9 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	public void actionB() throws MAPException {
 		this.mapProvider.getMAPServiceSupplementary().acivate();
 		
-		MAPApplicationContext appCnt = MAPApplicationContext.networkUnstructuredSsContextV2;
+		MAPApplicationContext appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
+				MAPApplicationContextVersion.version2);
+		
 		AddressString orgiReference = this.mapServiceFactory
 				.createAddressString(AddressNature.international_number,
 						NumberingPlan.ISDN, "31628968300");
@@ -221,7 +229,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	public String getStatus() {
-		String status = "";
+		String status = "Scenario: " + this.step + "\n";
 
 		switch( this.step ) {
 		case Action_Dialog_A:

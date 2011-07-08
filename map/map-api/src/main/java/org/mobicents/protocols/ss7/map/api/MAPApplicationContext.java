@@ -27,47 +27,90 @@ import java.util.Arrays;
 /**
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
-public enum MAPApplicationContext {
+public class MAPApplicationContext {
+	
+	private static long[] oidTemplate = new long[] { 0, 4, 0, 0, 1, 0, 0, 0 };
 
-	/**
-	 * Look at http://www.oid-info.com/get/0.4.0.0.1.0.19.2
-	 */
-	networkUnstructuredSsContextV2(new long[] { 0, 4, 0, 0, 1, 0, 19, 2 }, 1);
+	private MAPApplicationContextName contextName;
+	private MAPApplicationContextVersion contextVersion;
 
-	private long[] oid;
-	private int applicationContext;
-
-	private MAPApplicationContext(long[] oid, int applicationContext) {
-		this.oid = oid;
-		this.applicationContext = applicationContext;
+	private MAPApplicationContext(MAPApplicationContextName contextName, MAPApplicationContextVersion contextVersion) {
+		this.contextName = contextName;
+		this.contextVersion = contextVersion;
 	}
 
 	public long[] getOID() {
-		return this.oid;
+		long[] res = Arrays.copyOf(oidTemplate, oidTemplate.length);
+		res[6] = this.contextName.getApplicationContextCode();
+		res[7] = this.contextVersion.getVersion();
+		
+		return res;
 	}
 
-	public int getApplicationContext() {
-		return this.applicationContext;
+	public MAPApplicationContextName getApplicationContextName() {
+		return this.contextName;
 	}
 
-	public static MAPApplicationContext getInstance(int applicationContext) {
-		switch (applicationContext) {
-		case 1:
-			return networkUnstructuredSsContextV2;
-		default:
+	public MAPApplicationContextVersion getApplicationContextVersion() {
+		return this.contextVersion;
+	}
+
+	public static MAPApplicationContext getInstance(MAPApplicationContextName contextName, MAPApplicationContextVersion contextVersion) {
+		if (MAPApplicationContext.availableApplicationContextVersion(contextName, contextVersion.getVersion()))
+			return new MAPApplicationContext(contextName, contextVersion);
+		else
 			return null;
-		}
 	}
 
 	public static MAPApplicationContext getInstance(long[] oid) {
-		long[] temp = networkUnstructuredSsContextV2.getOID();
-		if (Arrays.equals(temp, oid)) {
-			return networkUnstructuredSsContextV2;
+		
+		if (oid == null || oid.length != oidTemplate.length)
+			return null;
+		for (int i1 = 0; i1 < oidTemplate.length - 2; i1++) {
+			if (oid[i1] != oidTemplate[i1])
+				return null;
 		}
+		
+		MAPApplicationContextName contextName = MAPApplicationContextName.getInstance(oid[6]);
+		MAPApplicationContextVersion contextVersion = MAPApplicationContextVersion.getInstance(oid[7]);
 
-		return null;
+		if (contextName == null || contextVersion == null)
+			return null;
+		if (!MAPApplicationContext.availableApplicationContextVersion(contextName, (int) oid[7]))
+			return null;
+		
+		return new MAPApplicationContext(contextName, contextVersion);
+	}
+	
+	/**
+	 * Return if the contextVersion is available for the contextName
+	 * 
+	 * @param contextName
+	 * @param version
+	 * @return
+	 */
+	public static boolean availableApplicationContextVersion(MAPApplicationContextName contextName, int contextVersion) {
+		switch (contextName) {
+		case networkUnstructuredSsContext:
+		case shortMsgAlertContext:
+			if (contextVersion >= 1 && contextVersion <= 2)
+				return true;
+			else
+				return false;
+
+		case shortMsgMORelayContext:
+		case shortMsgMTRelayContext:
+		case shortMsgGatewayContext:
+			if (contextVersion >= 1 && contextVersion <= 3)
+				return true;
+			else
+				return false;
+		}
+		
+		return false;
 	}
 
 	/**
@@ -84,11 +127,32 @@ public enum MAPApplicationContext {
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof MAPApplicationContext))
+			return false;
+		
+		MAPApplicationContext x = (MAPApplicationContext)obj;
+		if (this.contextName == x.contextName && this.contextVersion == x.contextVersion)
+			return true;
+		else
+			return false;
+	}
+
+	
+	@Override
 	public String toString() {
 		StringBuffer s = new StringBuffer();
-		for (long l : this.oid) {
+
+		s.append("MAPApplicationContext [Name=");
+		s.append(this.contextName.toString());
+		s.append(", Version=");
+		s.append(this.contextVersion.toString());
+		s.append(", Oid=");
+		for (long l : this.getOID()) {
 			s.append(l).append(", ");
 		}
+		s.append("]");
+
 		return s.toString();
 	}
 

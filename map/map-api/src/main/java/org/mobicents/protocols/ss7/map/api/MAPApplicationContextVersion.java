@@ -20,45 +20,43 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.errors;
+package org.mobicents.protocols.ss7.map.api;
 
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import java.util.EnumSet;
+
 
 /**
- * Base class of MAP ReturnError messages
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface MAPErrorMessage {
+public enum MAPApplicationContextVersion {
+	version1(1), version2(2), version3(3), version4(4);
 
-	public Long getErrorCode();
+	private int version;
 
-	public Parameter[] encodeParameters() throws MAPException;
+	private MAPApplicationContextVersion(int version) {
+		this.version = version;
+	}
 
-	public void decodeParameters( Parameter[] p ) throws MAPException;
+	public int getVersion() {
+		return this.version;
+	}
 
-	
-	public Boolean isEmParameterless();
-
-	public Boolean isEmExtensionContainer();
-
-	public Boolean isEmFacilityNotSup();
-
-	public Boolean isEmSMDeliveryFailure();
-
-	public Boolean isEmSystemFailure();
-
-	
-	public MAPErrorMessageParameterless getEmParameterless();
-
-	public MAPErrorMessageExtensionContainer getEmExtensionContainer();
-
-	public MAPErrorMessageFacilityNotSup getEmFacilityNotSup();
-
-	public MAPErrorMessageSMDeliveryFailure getEmSMDeliveryFailure();
-
-	public MAPErrorMessageSystemFailure getEmSystemFailure();
+	public static MAPApplicationContextVersion getInstance(Long version) {
+		long vers = (long) version;
+		switch( (int)vers ) {
+		case 1:
+			return MAPApplicationContextVersion.version1;
+		case 2:
+			return MAPApplicationContextVersion.version2;
+		case 3:
+			return MAPApplicationContextVersion.version3;
+		case 4:
+			return MAPApplicationContextVersion.version4;
+		}
+		
+		return null;
+	}
 
 }

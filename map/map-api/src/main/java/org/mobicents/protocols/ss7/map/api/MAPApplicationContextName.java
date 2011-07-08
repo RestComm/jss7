@@ -20,45 +20,47 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.errors;
+package org.mobicents.protocols.ss7.map.api;
 
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import java.util.Arrays;
+import java.util.EnumSet;
+
 
 /**
- * Base class of MAP ReturnError messages
  * 
+ * @author amit bhayani
  * @author sergey vetyutnev
  * 
  */
-public interface MAPErrorMessage {
-
-	public Long getErrorCode();
-
-	public Parameter[] encodeParameters() throws MAPException;
-
-	public void decodeParameters( Parameter[] p ) throws MAPException;
-
+public enum MAPApplicationContextName {
+	/**
+	 * Look at http://www.oid-info.com/get/0.4.0.0.1.0.19.2
+	 */
+	// -- USSD
+	networkUnstructuredSsContext(19),
 	
-	public Boolean isEmParameterless();
-
-	public Boolean isEmExtensionContainer();
-
-	public Boolean isEmFacilityNotSup();
-
-	public Boolean isEmSMDeliveryFailure();
-
-	public Boolean isEmSystemFailure();
-
+	// -- SMS
+	shortMsgAlertContext(23), shortMsgMORelayContext(21), shortMsgMTRelayContext(25), shortMsgGatewayContext(20);
 	
-	public MAPErrorMessageParameterless getEmParameterless();
+	private int code;
 
-	public MAPErrorMessageExtensionContainer getEmExtensionContainer();
+	private MAPApplicationContextName(int code) {
+		this.code = code;
+	}
 
-	public MAPErrorMessageFacilityNotSup getEmFacilityNotSup();
+	public int getApplicationContextCode() {
+		return this.code;
+	}
 
-	public MAPErrorMessageSMDeliveryFailure getEmSMDeliveryFailure();
-
-	public MAPErrorMessageSystemFailure getEmSystemFailure();
+	public static MAPApplicationContextName getInstance(Long code) {
+		
+		EnumSet<MAPApplicationContextName> lst = EnumSet.allOf(MAPApplicationContextName.class);
+		for(MAPApplicationContextName el : lst) {
+			if(el.code==code)
+				return el;
+		}
+		
+		return null;
+	}
 
 }

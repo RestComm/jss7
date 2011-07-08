@@ -338,9 +338,10 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			ErrorCode ec = TcapFactory.createErrorCode();
 			ec.setLocalErrorCode(mapErrorMessage.getErrorCode());
 			returnError.setErrorCode(ec);
-			// ..................................
-//			if (p != null)
-//				returnError.setParameters(p);
+			
+			Parameter[] p = mapErrorMessage.encodeParameters();
+			if (p != null)
+				returnError.setParameters(p);
 
 			this.tcapDialog.sendComponent(returnError);
 

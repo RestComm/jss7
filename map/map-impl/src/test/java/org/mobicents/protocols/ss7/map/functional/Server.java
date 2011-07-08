@@ -44,6 +44,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.api.dialog.ProcedureCancellationReason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
@@ -127,7 +128,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	public String getStatus() {
-		String status = "";
+		String status = "Scenario: " + this.step + "\n";
 
 		switch( this.step ) {
 		case Action_Dialog_A:
@@ -214,6 +215,16 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 			break;
 
 		case Action_Dialog_E:
+			logger.debug("Sending MAPAcceptInfo ");
+			try {
+				mapDialog.send();
+			} catch (MAPException e) {
+				logger.error(e);
+				throw new RuntimeException(e);
+			}
+			break;
+
+		case Action_Component_A:
 			logger.debug("Sending MAPAcceptInfo ");
 			try {
 				mapDialog.send();
@@ -384,6 +395,23 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 				logger.debug("InvokeId =  " + invokeId);
 			}
+			break;
+			
+		case Action_Component_A: {
+			MAPDialogSupplementary mapDialog = procUnstrInd.getMAPDialog();
+			Long invokeId = procUnstrInd.getInvokeId();
+
+			MAPErrorMessage msg = this.mapProvider.getMAPErrorMessageFactory().createMessageParameterless(55L);
+			try {
+				mapDialog.sendErrorComponent(invokeId, msg);
+			} catch (MAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+			
+			break;
+
 		}
 
 	}

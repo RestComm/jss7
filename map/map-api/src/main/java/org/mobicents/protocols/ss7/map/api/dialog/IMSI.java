@@ -41,8 +41,9 @@ package org.mobicents.protocols.ss7.map.api.dialog;
 public interface IMSI {
 
 	public Long getMCC();
-	public Long getMNC();
-	public String getMSIN();
-	
-}
 
+	public Long getMNC();
+
+	public String getMSIN();
+
+}

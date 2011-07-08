@@ -25,11 +25,16 @@ package org.mobicents.protocols.ss7.map;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
 import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.map.api.dialog.IMSI;
+import org.mobicents.protocols.ss7.map.dialog.IMSIImpl;
 import org.mobicents.protocols.ss7.map.api.dialog.LMSI;
+import org.mobicents.protocols.ss7.map.dialog.LMSIImpl;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
@@ -120,14 +125,20 @@ public class MapServiceFactoryImpl implements MapServiceFactory {
 
 	@Override
 	public IMSI createIMSI(Long MCC, Long MNC, String MSIN) {
-		// TODO Auto-generated method stub
-		return null;
+		IMSIImpl res = new IMSIImpl();
+		res.setMCC(MCC);
+		res.setMNC(MNC);
+		res.setMSIN(MSIN);
+		
+		return res;
 	}
 
 	@Override
 	public LMSI createLMSI(byte[] data) {
-		// TODO Auto-generated method stub
-		return null;
+		LMSIImpl res = new LMSIImpl();
+		res.setData(data);
+		
+		return res;
 	}
 
 	@Override

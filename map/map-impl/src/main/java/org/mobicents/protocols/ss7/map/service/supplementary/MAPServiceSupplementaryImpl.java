@@ -31,6 +31,7 @@ import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.MAPServiceBaseImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
@@ -104,8 +105,8 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 	}
 
 	public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext) {
-		if (dialogApplicationContext.getApplicationContext() == MAPApplicationContext.networkUnstructuredSsContextV2
-				.getApplicationContext())
+		if (dialogApplicationContext.getApplicationContextName() == MAPApplicationContextName.networkUnstructuredSsContext
+				&& dialogApplicationContext.getApplicationContextVersion().getVersion() <= 2)
 			return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
 		else
 			return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);

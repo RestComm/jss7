@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,6 +35,8 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPDialogueAS;
@@ -57,12 +60,15 @@ import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckData;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorCode;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.map.dialog.MAPCloseInfoImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPOpenInfoImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPAcceptInfoImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPProviderAbortInfoImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPRefuseInfoImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortInfoImpl;
+import org.mobicents.protocols.ss7.map.errors.MAPErrorMessageFactoryImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplementaryImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
@@ -121,6 +127,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	private TCAPProvider tcapProvider = null;
 
 	private final MapServiceFactory mapServiceFactory = new MapServiceFactoryImpl();
+	private final MAPErrorMessageFactory mapErrorMessageFactory = new MAPErrorMessageFactoryImpl();
 
 	protected Set<MAPServiceBase> mapServices = new HashSet<MAPServiceBase>();
 	private final MAPServiceSupplementary mapServiceSupplementary = new MAPServiceSupplementaryImpl(this);
@@ -151,6 +158,11 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	public MapServiceFactory getMapServiceFactory() {
 		return mapServiceFactory;
 	}
+	
+	public MAPErrorMessageFactory getMAPErrorMessageFactory() {
+		return this.mapErrorMessageFactory;
+	}
+
 
 	public void removeMAPDialogListener(MAPDialogListener mapDialogListener) {
 		this.dialogListeners.remove(mapDialogListener);
@@ -566,7 +578,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					return;
 				} else {
 					MAPApplicationContext mapAcn = MAPApplicationContext.getInstance(acn.getOid());
-					if (mapAcn == null || mapAcn != mapDialogImpl.getApplicationContext()) {
+					if (mapAcn == null || !mapAcn.equals(mapDialogImpl.getApplicationContext())) {
 						loger.error(String.format("Received first TC-CONTINUE. MAPDialog=%s. But MAPApplicationContext=%s", mapDialogImpl, mapAcn));
 
 						// this.dialogs.remove(mapDialogImpl.getDialogId());
@@ -690,7 +702,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 				MAPApplicationContext mapAcn = MAPApplicationContext.getInstance(acn.getOid());
 
-				if (mapAcn == null || mapAcn != mapDialogImpl.getApplicationContext()) {
+				if (mapAcn == null || !mapAcn.equals(mapDialogImpl.getApplicationContext())) {
 					loger.error(String.format("Received first TC-END. MAPDialog=%s. But MAPApplicationContext=%s", mapDialogImpl, mapAcn));
 
 					mapDialogImpl.setNormalDialogShutDown();
@@ -1184,7 +1196,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					long errorCode = 0;
 					if (comp.getErrorCode().getErrorType() == ErrorCodeType.Local)
 						errorCode = comp.getErrorCode().getLocalErrorCode();
-					if (errorCode < MAPErrorCode.minimalCodeValue || errorCode < MAPErrorCode.maximumCodeValue) {
+					if (errorCode < MAPErrorCode.minimalCodeValue || errorCode > MAPErrorCode.maximumCodeValue) {
 						// Not Local error code and not MAP error code received
 						perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
 
@@ -1195,11 +1207,20 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 						return;
 					}
 
-					// TODO: parsing MAPErrorMessage and deliver it 
-					// ..............................
-					//MAPErrorMessage mapErrorMessage;
-					//perfSer.deliverErrorComponent(comp.getInvokeId(), mapErrorMessage);
-					// ..............................
+					MAPErrorMessage msgErr = this.mapErrorMessageFactory.createMessageFromErrorCode(errorCode);
+					try {
+						msgErr.decodeParameters(comp.getParameters());
+					} catch (MAPException e) {
+						// Failed when parsing the component - send TC-U-REJECT
+						perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
+
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnError);
+						problem.setReturnErrorProblemType(ReturnErrorProblemType.MistypedParameter);
+						mapDialogImpl.sendRejectComponent(invokeId, problem);
+
+						return;
+					}
+					perfSer.deliverErrorComponent(mapDialogImpl, comp.getInvokeId(), msgErr);
 					
 					return;
 				}

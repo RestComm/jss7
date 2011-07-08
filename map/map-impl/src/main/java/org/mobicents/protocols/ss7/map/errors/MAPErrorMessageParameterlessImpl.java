@@ -20,45 +20,37 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.errors;
+package org.mobicents.protocols.ss7.map.errors;
 
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageParameterless;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
- * Base class of MAP ReturnError messages
+ * The MAP ReturnError message without any parameters
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface MAPErrorMessage {
+public class MAPErrorMessageParameterlessImpl extends MAPErrorMessageImpl implements MAPErrorMessageParameterless {
 
-	public Long getErrorCode();
-
-	public Parameter[] encodeParameters() throws MAPException;
-
-	public void decodeParameters( Parameter[] p ) throws MAPException;
+	public MAPErrorMessageParameterlessImpl(Long errorCode) {
+		super(errorCode);
+	}
 
 	
-	public Boolean isEmParameterless();
+	@Override
+	public Parameter[] encodeParameters() throws MAPException {
+		// no parameters
+		return null;
+	}
 
-	public Boolean isEmExtensionContainer();
+	@Override
+	public void decodeParameters(Parameter[] p) throws MAPException {
+	}
 
-	public Boolean isEmFacilityNotSup();
-
-	public Boolean isEmSMDeliveryFailure();
-
-	public Boolean isEmSystemFailure();
-
-	
-	public MAPErrorMessageParameterless getEmParameterless();
-
-	public MAPErrorMessageExtensionContainer getEmExtensionContainer();
-
-	public MAPErrorMessageFacilityNotSup getEmFacilityNotSup();
-
-	public MAPErrorMessageSMDeliveryFailure getEmSMDeliveryFailure();
-
-	public MAPErrorMessageSystemFailure getEmSystemFailure();
-
+	@Override
+	public String toString() {
+		return "MAPErrorMessageParameterless [errorCode=" + this.errorCode + "]"; 
+	}
 }

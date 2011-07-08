@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.api;
 
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
 
 /**
  * 
@@ -69,6 +70,13 @@ public interface MAPProvider {
 	 */
 	public MapServiceFactory getMapServiceFactory();
 
+	/**
+	 * Get the {@link MAPErrorMessageFactory}
+	 * 
+	 * @return
+	 */
+	public MAPErrorMessageFactory getMAPErrorMessageFactory();
+	
 	/**
 	 * Get {@link MAPDialog} corresponding to passed dialogId
 	 * 
