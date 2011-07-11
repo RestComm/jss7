@@ -186,7 +186,7 @@ public class ParameterImpl implements Parameter {
 			data = new byte[len];
 			int tlen = ais.read(data);
 			if (tlen != len) {
-				throw new ParseException("Not enough data read, expected: " + len + ", actaul: " + tlen);
+				throw new ParseException("Not enough data read, expected: " + len + ", actual: " + tlen);
 			}
 
 		} catch (IOException e) {

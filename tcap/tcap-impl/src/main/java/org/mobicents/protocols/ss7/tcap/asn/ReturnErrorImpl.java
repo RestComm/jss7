@@ -38,7 +38,6 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCodeType;
-import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
 
@@ -56,7 +55,7 @@ public class ReturnErrorImpl implements ReturnError {
 
 	//FIXME: check this aganist ASN and traces!
 	// optional
-	private Parameter[] parameters;
+	private Parameter parameter;
 
 	/*
 	 * (non-Javadoc)
@@ -83,8 +82,8 @@ public class ReturnErrorImpl implements ReturnError {
 	 * 
 	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError#getParameter()
 	 */
-	public Parameter[] getParameters() {
-		return this.parameters;
+	public Parameter getParameter() {
+		return this.parameter;
 	}
 
 	/*
@@ -118,8 +117,8 @@ public class ReturnErrorImpl implements ReturnError {
 	 * org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError#setParameter(org
 	 * .mobicents.protocols.ss7.tcap.asn.comp.Parameter)
 	 */
-	public void setParameters(Parameter[] p) {
-		this.parameters = p;
+	public void setParameter(Parameter p) {
+		this.parameter = p;
 
 	}
 
@@ -130,7 +129,7 @@ public class ReturnErrorImpl implements ReturnError {
 
 	
 	public String toString() {
-		return "ReturnError[invokeId=" + invokeId + ", errorCode=" + errorCode + ", parameters=" + Arrays.toString(parameters) + "]";
+		return "ReturnError[invokeId=" + invokeId + ", errorCode=" + errorCode + ", parameters=" + parameter + "]";
 	}
 
 	/*
@@ -177,30 +176,10 @@ public class ReturnErrorImpl implements ReturnError {
 			{
 				return;//rest is optional
 			}
-			tag = localAis.readTag();
 			
-			if (tag == Tag.SEQUENCE) {
-				
-				int length = localAis.readLength();
-				
-				List<Parameter> paramsList = new ArrayList<Parameter>();
-
-				while (localAis.available() > 0) {
-					// This is Parameter Tag
-					tag = localAis.readTag();
-					Parameter p = TcapFactory.createParameter(tag, localAis);
-					paramsList.add(p);
-				}
-				
-				this.parameters = new Parameter[paramsList.size()];
-				this.parameters = paramsList.toArray(this.parameters);
-				
-				paramsList.clear();				
-				
-			} else {
-				this.parameters = new Parameter[] { TcapFactory
-						.createParameter(tag, localAis) };
-			}	
+			tag = localAis.readTag();
+			this.parameter = TcapFactory.createParameter(tag, localAis);
+		
 		
 		} catch (IOException e) {
 			throw new ParseException(e);
@@ -231,28 +210,8 @@ public class ReturnErrorImpl implements ReturnError {
 
 			this.errorCode.encode(localAos);
 
-			if (this.parameters != null) {
-				if(this.parameters.length > 1 ){
-					
-					AsnOutputStream aosTemp = new AsnOutputStream();
-					for(Parameter p : this.parameters){
-						p.encode(aosTemp);
-					}
-					
-					byte[] paramData = aosTemp.toByteArray();
-					
-					//Sequence TAG
-					localAos.write(0x30);
-					
-					//Sequence Length
-					localAos.write(paramData.length);
-					
-					//Now write the Parameter's 
-					localAos.write(paramData);
-					
-				} else{
-					this.parameters[0].encode(localAos);
-				}
+			if (this.parameter != null) {
+				this.parameter.encode(localAos);
 			}
 			
 			byte[] data = localAos.toByteArray();

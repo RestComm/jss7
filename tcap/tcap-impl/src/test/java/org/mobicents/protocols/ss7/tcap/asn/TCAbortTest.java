@@ -30,6 +30,7 @@ import junit.framework.TestCase;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.tcap.TCAPTestUtils;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
 
 /**
@@ -89,7 +90,7 @@ public class TCAbortTest extends TestCase {
 
 		System.out.println(dump(data, data.length, false));
 		
-		compareArrays(expected, data);
+		TCAPTestUtils.compareArrays(expected, data);
 
 	}
 

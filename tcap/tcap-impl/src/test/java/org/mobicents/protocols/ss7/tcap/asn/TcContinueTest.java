@@ -30,6 +30,7 @@ import junit.framework.TestCase;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.tcap.TCAPTestUtils;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
@@ -116,7 +117,7 @@ public class TcContinueTest extends TestCase {
 		tcm.encode(aos);
 		byte[] encoded = aos.toByteArray();
 		
-		compareArrays(b,encoded);
+		TCAPTestUtils.compareArrays(b,encoded);
 
 	}
 	
@@ -246,7 +247,7 @@ public class TcContinueTest extends TestCase {
 		tcm.encode(aos);
 		byte[] encoded = aos.toByteArray();
 		
-		compareArrays(b,encoded);
+		TCAPTestUtils.compareArrays(b,encoded);
 
 	}
 	
@@ -394,7 +395,7 @@ public class TcContinueTest extends TestCase {
 		tcm.encode(aos);
 		byte[] encoded = aos.toByteArray();
 		
-		compareArrays(b,encoded);
+		TCAPTestUtils.compareArrays(b,encoded);
 
 	}
 
@@ -514,7 +515,7 @@ public class TcContinueTest extends TestCase {
 		tcm.encode(aos);
 		byte[] encoded = aos.toByteArray();
 		
-		compareArrays(b,encoded);
+		TCAPTestUtils.compareArrays(b,encoded);
 
 	}
 	@org.junit.Test
@@ -565,7 +566,7 @@ public class TcContinueTest extends TestCase {
 		tcm.encode(aos);
 		byte[] encoded = aos.toByteArray();
 		
-		compareArrays(b,encoded);
+		TCAPTestUtils.compareArrays(b,encoded);
 
 	}
 	
@@ -789,7 +790,7 @@ public class TcContinueTest extends TestCase {
 		tcm.encode(aos);
 		byte[] encoded = aos.toByteArray();
 		
-		compareArrays(b,encoded);
+		TCAPTestUtils.compareArrays(b,encoded);
 
 	}
 	
