@@ -34,6 +34,8 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
+import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
+import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.OperationState;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
@@ -47,13 +49,10 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
  * 
  */
 public class InvokeImpl implements Invoke {
-	
-	// TCAP state data, it is used ONLY on client side
-	private final static long _DEFAULT_TIMEOUT = 10000;
 
 	// local to stack
 	private InvokeClass invokeClass = InvokeClass.Class1;
-	private long invokeTimeout = _DEFAULT_TIMEOUT;
+	private long invokeTimeout = TCAPStackImpl._INVOKE_TIMEOUT;
 	private OperationState state = OperationState.Idle;
 	private Future timerFuture;
 	private OperationTimerTask operationTimerTask = new OperationTimerTask();
@@ -292,7 +291,7 @@ public class InvokeImpl implements Invoke {
 	/**
 	 * @return the invokeTimeout
 	 */
-	public long getInvokeTimeout() {
+	public long getTimeout() {
 		return invokeTimeout;
 	}
 
@@ -300,7 +299,7 @@ public class InvokeImpl implements Invoke {
 	 * @param invokeTimeout
 	 *            the invokeTimeout to set
 	 */
-	public void setInvokeTimeout(long invokeTimeout) {
+	public void setTimeout(long invokeTimeout) {
 		this.invokeTimeout = invokeTimeout;
 	}
 
@@ -393,7 +392,8 @@ public class InvokeImpl implements Invoke {
 
 	public synchronized void startTimer() {
 		this.stopTimer();
-		this.timerFuture = this.provider.createOperationTimer(this.operationTimerTask, this.invokeTimeout);
+		if(this.invokeTimeout>0)
+			this.timerFuture = this.provider.createOperationTimer(this.operationTimerTask, this.invokeTimeout);
 
 	}
 

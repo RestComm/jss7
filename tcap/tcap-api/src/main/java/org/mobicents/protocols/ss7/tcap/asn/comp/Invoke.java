@@ -51,20 +51,20 @@ public interface Invoke extends Component {
 	// local, relevant only for send
 	public InvokeClass getInvokeClass();
 
-	/**
-	 * @return the invokeTimeout
-	 */
-	public long getInvokeTimeout();
-
-	/**
-	 * Sets timeout for this invoke operation in miliseconds. If no indication
-	 * on operation status is received, before this value passes, operation
-	 * timesout.
-	 * 
-	 * @param invokeTimeout
-	 *            the invokeTimeout to set
-	 */
-	public void setInvokeTimeout(long invokeTimeout);
+//	/**
+//	 * @return the invokeTimeout
+//	 */
+//	public long getInvokeTimeout();
+//
+//	/**
+//	 * Sets timeout for this invoke operation in miliseconds. If no indication
+//	 * on operation status is received, before this value passes, operation
+//	 * timesout.
+//	 * 
+//	 * @param invokeTimeout
+//	 *            the invokeTimeout to set
+//	 */
+//	public void setInvokeTimeout(long invokeTimeout);
 
 	// optional
 	public void setLinkedId(Long i);

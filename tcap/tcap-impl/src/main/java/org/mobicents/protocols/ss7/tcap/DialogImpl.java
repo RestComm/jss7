@@ -812,6 +812,8 @@ public class DialogImpl implements Dialog {
 
 			invoke.setState(OperationState.Pending);
 			invoke.setDialog(this);
+			invoke.setTimeout(this.provider.getStack().getInvokeTimeout());
+			
 		}
 		this.scheduledComponentList.add(componentRequest);
 

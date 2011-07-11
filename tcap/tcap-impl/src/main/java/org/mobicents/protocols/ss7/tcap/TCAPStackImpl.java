@@ -40,7 +40,8 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 public class TCAPStackImpl implements TCAPStack {
 
 	// default value of idle timeout and after TC_END remove of task.
-	public static final long _DIALOG_REMOVE_TIMEOUT = 30000;
+	public static final long _DIALOG_TIMEOUT = 60000;
+	public static final long _INVOKE_TIMEOUT = 30000;
 	// TCAP state data, it is used ONLY on client side
     private TCAPProviderImpl tcapProvider;
     private SccpProvider sccpProvider;
@@ -48,8 +49,8 @@ public class TCAPStackImpl implements TCAPStack {
     
     private State state = State.IDLE;
     
-	private long dialogTimeout = _DIALOG_REMOVE_TIMEOUT;
-
+	private long dialogTimeout = _DIALOG_TIMEOUT;
+	private long invokeTimeout = _INVOKE_TIMEOUT;
     private static final Logger logger = Logger.getLogger(TCAPStackImpl.class);
 
     public TCAPStackImpl() {
@@ -104,8 +105,13 @@ public class TCAPStackImpl implements TCAPStack {
 	public void setDialogIdleTimeout(long v) {
 		if(v<0)
 		{
-			throw new IllegalArgumentException("Timeotu value must be greater or equal to zero.");
+			throw new IllegalArgumentException("Timeout value must be greater or equal to zero.");
 		}
+		if(v<this.invokeTimeout)
+		{
+			throw new IllegalArgumentException("Timeout value must be greater or equal to invoke timeout.");
+		}
+		
 		this.dialogTimeout = v;
 		
 	}
@@ -115,6 +121,30 @@ public class TCAPStackImpl implements TCAPStack {
 	public long getDialogIdleTimeout() {
 		return this.dialogTimeout;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#setInvokeTimeout(long)
+	 */
+	public void setInvokeTimeout(long v) {
+		if(v<0)
+		{
+			throw new IllegalArgumentException("Timeout value must be greater or equal to zero.");
+		}
+		if(v>this.dialogTimeout)
+		{
+			throw new IllegalArgumentException("Timeout value must be smaller or equal to dialog timeout.");
+		}
+		this.invokeTimeout = v;
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#getInvokeTimeout()
+	 */
+	public long getInvokeTimeout() {
+		return this.invokeTimeout;
+	}
+	
 	
 	private enum State {
 
