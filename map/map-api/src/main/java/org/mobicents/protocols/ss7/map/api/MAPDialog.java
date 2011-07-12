@@ -23,9 +23,9 @@
 package org.mobicents.protocols.ss7.map.api;
 
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;

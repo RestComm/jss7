@@ -31,11 +31,11 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
@@ -339,9 +339,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			ec.setLocalErrorCode(mapErrorMessage.getErrorCode());
 			returnError.setErrorCode(ec);
 			
-			Parameter[] p = mapErrorMessage.encodeParameters();
+			Parameter p = mapErrorMessage.encodeParameter();
 			if (p != null)
-				returnError.setParameters(p);
+				returnError.setParameter(p);
 
 			this.tcapDialog.sendComponent(returnError);
 

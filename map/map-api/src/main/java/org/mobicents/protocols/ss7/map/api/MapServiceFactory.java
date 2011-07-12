@@ -25,25 +25,31 @@ package org.mobicents.protocols.ss7.map.api;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
-import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.dialog.IMSI;
-import org.mobicents.protocols.ss7.map.api.dialog.LMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.FTNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
+import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 
 /**
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public interface MapServiceFactory {
@@ -118,6 +124,10 @@ public interface MapServiceFactory {
 	 */
 	public AddressString createAddressString(AddressNature addNature, NumberingPlan numPlan, String address);
 
+	public ISDNAddressString createISDNAddressString(AddressNature addNature, NumberingPlan numPlan, String address);
+
+	public FTNAddressString createFTNAddressString(AddressNature addNature, NumberingPlan numPlan, String address);
+
 	/**
 	 * Creates a new instance of {@link IMSI}
 	 * 
@@ -139,7 +149,7 @@ public interface MapServiceFactory {
 	 * @return new instance of {@link LMSI}
 	 */
 	public LMSI createLMSI(byte[] data);
-
+	
 	/**
 	 * Creates a new instance of {@link SM_RP_DA} with imsi parameter
 	 * 
@@ -176,7 +186,7 @@ public interface MapServiceFactory {
 	 * @param msisdn
 	 * @return
 	 */
-	public SM_RP_OA createSM_RP_OA_Msisdn(AddressString msisdn);
+	public SM_RP_OA createSM_RP_OA_Msisdn(ISDNAddressString msisdn);
 
 	/**
 	 * Creates a new instance of {@link SM_RP_OA} with serviceCentreAddressOA parameter
@@ -197,6 +207,11 @@ public interface MapServiceFactory {
 	 * @return
 	 */
 	public MAPUserAbortChoice createMAPUserAbortChoice();
+
+	public MWStatus createMWStatus(Boolean scAddressNotIncluded, Boolean mnrfSet, Boolean mcefSet, Boolean mnrgSet);
+
+	public LocationInfoWithLMSI createLocationInfoWithLMSI(ISDNAddressString networkNodeNumber, LMSI lmsi, MAPExtensionContainer extensionContainer,
+			AdditionalNumberType additionalNumberType, ISDNAddressString additionalNumber);
 
 	/**
 	 * Creates a new instance of {@link MAPPrivateExtension} for

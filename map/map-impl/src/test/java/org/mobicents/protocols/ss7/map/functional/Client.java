@@ -36,24 +36,28 @@ import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
-import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.dialog.ProcedureCancellationReason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
+import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
@@ -87,6 +91,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	private boolean _S_receivedEndInfo;
 
 	private MAPDialogSupplementary clientDialog;
+	private MAPDialogSms clientDialogSms;
 	
 	private FunctionalTestScenario step;
 
@@ -202,6 +207,38 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
 
 		clientDialog.send();
+	}
+
+	public void actionC() throws MAPException {
+		this.mapProvider.getMAPServiceSms().acivate();
+		
+		MAPApplicationContext appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.shortMsgMORelayContext,
+				MAPApplicationContextVersion.version3);
+		
+		AddressString orgiReference = this.mapServiceFactory
+				.createAddressString(AddressNature.international_number,
+						NumberingPlan.ISDN, "31628968300");
+		AddressString destReference = this.mapServiceFactory
+				.createAddressString(AddressNature.international_number,
+						NumberingPlan.land_mobile, "204208300008002");
+		
+		clientDialogSms = this.mapProvider.getMAPServiceSms().createNewDialog(appCnt,
+				this.thisAddress, orgiReference, this.remoteAddress,
+				destReference);
+		clientDialogSms.setExtentionContainer(MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
+
+
+		IMSI imsi1 = this.mapServiceFactory.createIMSI(250L, 99L, "1357999");
+		SM_RP_DA sm_RP_DA = this.mapServiceFactory.createSM_RP_DA(imsi1);
+		ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+		SM_RP_OA sm_RP_OA = this.mapServiceFactory.createSM_RP_OA_Msisdn(msisdn1);
+		byte[] sm_RP_UI = new byte[] { 21, 22, 23, 24, 25 };
+		IMSI imsi2 = this.mapServiceFactory.createIMSI(250L, 07L, "123456789");
+		clientDialogSms.addMoForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory), imsi2);
+
+		logger.debug("MoForwardShortMessageRequest");
+
+		clientDialogSms.send();
 	}
 
 	

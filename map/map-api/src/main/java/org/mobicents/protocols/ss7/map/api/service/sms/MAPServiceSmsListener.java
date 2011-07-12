@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
 
 /**
  * 
@@ -35,5 +34,23 @@ public interface MAPServiceSmsListener extends MAPServiceListener {
 	public void onMoForwardShortMessageIndication(MoForwardShortMessageRequestIndication moForwSmInd);
 
 	public void onMoForwardShortMessageRespIndication(MoForwardShortMessageResponseIndication moForwSmRespInd);
+
+	public void onMtForwardShortMessageIndication(MtForwardShortMessageRequestIndication mtForwSmInd);
+
+	public void onMtForwardShortMessageRespIndication(MtForwardShortMessageResponseIndication mtForwSmRespInd);
+
+	public void onSendRoutingInfoForSMIndication(SendRoutingInfoForSMRequestIndication sendRoutingInfoForSMInd);
+
+	public void onSendRoutingInfoForSMRespIndication(SendRoutingInfoForSMResponseIndication sendRoutingInfoForSMRespInd);
+	
+	public void onReportSMDeliveryStatusIndication(ReportSMDeliveryStatusRequestIndication reportSMDeliveryStatusInd);
+
+	public void onReportSMDeliveryStatusRespIndication(ReportSMDeliveryStatusResponseIndication reportSMDeliveryStatusRespInd);
+
+	public void onInformServiceCentreIndication(InformServiceCentreRequestIndication informServiceCentreInd);
+	
+	public void onAlertServiceCentreIndication(AlertServiceCentreRequestIndication alertServiceCentreInd);
+
+	public void onAlertServiceCentreRespIndication(AlertServiceCentreResponseIndication alertServiceCentreInd);
 
 }

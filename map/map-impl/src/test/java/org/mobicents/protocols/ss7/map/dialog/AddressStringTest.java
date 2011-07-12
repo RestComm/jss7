@@ -29,9 +29,10 @@ import junit.framework.TestCase;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
-import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
-import org.mobicents.protocols.ss7.map.dialog.AddressStringImpl;
+import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 
 /**
  * 
@@ -50,7 +51,7 @@ public class AddressStringTest extends TestCase {
 		
 
 		AddressStringImpl addStr = new AddressStringImpl();
-		addStr.decode(asn);
+		addStr.decode(asn, Tag.CLASS_UNIVERSAL, true, Tag.STRING_OCTET, rawData.length);
 
 		assertFalse(addStr.isExtension());
 

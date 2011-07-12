@@ -23,11 +23,15 @@
 package org.mobicents.protocols.ss7.map.errors;
 
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageAbsentSubscriberSM;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageCallBarred;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFacilityNotSup;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageParameterless;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSMDeliveryFailure;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSubscriberBusyForMtSms;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSystemFailure;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageUnknownSubscriber;
 
 /**
  * Base class of MAP ReturnError messages
@@ -82,7 +86,34 @@ public abstract class MAPErrorMessageImpl implements MAPErrorMessage {
 		return null;
 	}
 
-	
+	@Override
+	public Boolean isEmUnknownSubscriber() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Boolean isEmAbsentSubscriberSM() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Boolean isEmSubscriberBusyForMtSms() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Boolean isEmCallBarred() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 	@Override
 	public MAPErrorMessageParameterless getEmParameterless() {
 		if (this instanceof MAPErrorMessageParameterless)
@@ -111,6 +142,33 @@ public abstract class MAPErrorMessageImpl implements MAPErrorMessage {
 
 	@Override
 	public MAPErrorMessageSystemFailure getEmSystemFailure() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MAPErrorMessageUnknownSubscriber getEmUnknownSubscriber() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public MAPErrorMessageAbsentSubscriberSM getEmAbsentSubscriberSM() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public MAPErrorMessageSubscriberBusyForMtSms getEmSubscriberBusyForMtSms() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public MAPErrorMessageCallBarred getEmCallBarred() {
 		// TODO Auto-generated method stub
 		return null;
 	}

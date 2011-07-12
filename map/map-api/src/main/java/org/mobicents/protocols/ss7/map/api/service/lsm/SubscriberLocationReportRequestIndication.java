@@ -21,8 +21,8 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
-import org.mobicents.protocols.ss7.map.api.dialog.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 
 /**
  * 

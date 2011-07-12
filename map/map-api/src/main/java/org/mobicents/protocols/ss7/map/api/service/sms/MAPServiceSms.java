@@ -25,9 +25,7 @@ package org.mobicents.protocols.ss7.map.api.service.sms;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 
@@ -41,8 +39,8 @@ public interface MAPServiceSms extends MAPServiceBase {
 	public MAPDialogSms createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress,
 			AddressString origReference, SccpAddress destAddress, AddressString destReference) throws MAPException;
 
-	public void addMAPServiceListener(MAPServiceSupplementaryListener mapServiceListener);
+	public void addMAPServiceListener(MAPServiceSmsListener mapServiceListener);
 
-	public void removeMAPServiceListener(MAPServiceSupplementaryListener mapServiceListener);
+	public void removeMAPServiceListener(MAPServiceSmsListener mapServiceListener);
 
 }

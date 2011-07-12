@@ -22,8 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.errors;
 
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * The factory of MAP ReturnError messages
@@ -54,6 +54,27 @@ public interface MAPErrorMessageFactory {
 
 	public MAPErrorMessageSystemFailure createErrorMessageSystemFailure(Long mapVersion, NetworkResource networkResource,
 			AdditionalNetworkResource additionalNetworkResource, MAPExtensionContainer extensionContainer);
+
+	public MAPErrorMessageUnknownSubscriber createMAPErrorMessageUnknownSubscriber(Long mapVersion, MAPExtensionContainer extensionContainer,
+			UnknownSubscriberDiagnostic unknownSubscriberDiagnostic);
+
+	public MAPErrorMessageAbsentSubscriberSM createMAPErrorMessageAbsentSubscriberSM(Long mapVersion, MAPExtensionContainer extensionContainer,
+			Integer absentSubscriberDiagnosticSM, Integer additionalAbsentSubscriberDiagnosticSM);
+
+	public MAPErrorMessageSubscriberBusyForMtSms createMAPErrorMessageSubscriberBusyForMtSms(Long mapVersion, MAPExtensionContainer extensionContainer,
+			Boolean gprsConnectionSuspended);
+
+	public MAPErrorMessageCallBarred createMAPErrorMessageCallBarred(Long mapVersion, CallBarringCause callBarringCause,
+			MAPExtensionContainer extensionContainer, Boolean unauthorisedMessageOriginator);
+
+	public MAPErrorMessageAbsentSubscriber createMAPErrorMessageAbsentSubscriber(Long mapVersion, MAPExtensionContainer extensionContainer,
+			AbsentSubscriberReason absentSubscriberReason);
+
+	public MAPErrorMessageUnauthorizedLCSClient createMAPErrorMessageUnauthorizedLCSClient(Long mapVersion,
+			UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic, MAPExtensionContainer extensionContainer);
+
+	public MAPErrorMessagePositionMethodFailure createMAPErrorMessagePositionMethodFailure(Long mapVersion,
+			PositionMethodFailureDiagnostic positionMethodFailureDiagnostic, MAPExtensionContainer extensionContainer);
 }
 
 

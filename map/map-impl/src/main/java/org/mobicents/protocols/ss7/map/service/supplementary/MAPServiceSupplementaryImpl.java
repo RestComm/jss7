@@ -38,23 +38,32 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckData;
 import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckResult;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
-import org.mobicents.protocols.ss7.map.dialog.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.dialog.ServingCheckDataImpl;
+import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextNameImpl;
+import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
+/**
+ * 
+ * @author amit bhayani
+ * @author baranowb
+ * @author sergey vetyutnev
+ * 
+ */
 public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements MAPServiceSupplementary {
 
 	public MAPServiceSupplementaryImpl(MAPProviderImpl mapProviderImpl) {
@@ -66,20 +75,17 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 	 * MAPProvider.dialog collection
 	 * 
 	 */
-	public MAPDialogSupplementary createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress,
-			AddressString origReference, SccpAddress destAddress, AddressString destReference) throws MAPException {
+	public MAPDialogSupplementary createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference, SccpAddress destAddress,
+			AddressString destReference) throws MAPException {
 
 		// We cannot create a dialog if the service is not activated
 		if (!this.isActivated())
-			throw new MAPException(
-					"Cannot create MAPDialogSupplementary because MAPServiceSupplementary is not activated");
+			throw new MAPException("Cannot create MAPDialogSupplementary because MAPServiceSupplementary is not activated");
 
 		Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
-		MAPDialogSupplementaryImpl dialog = new MAPDialogSupplementaryImpl(appCntx, tcapDialog, this.mapProviderImpl,
-				this, origReference, destReference);
+		MAPDialogSupplementaryImpl dialog = new MAPDialogSupplementaryImpl(appCntx, tcapDialog, this.mapProviderImpl, this, origReference, destReference);
 
 		this.PutMADDialogIntoCollection(dialog);
-		// this.mapProviderImpl.dialogs.put(dialog.getDialogId(), dialog);
 
 		return dialog;
 	}
@@ -105,11 +111,22 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 	}
 
 	public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext) {
-		if (dialogApplicationContext.getApplicationContextName() == MAPApplicationContextName.networkUnstructuredSsContext
-				&& dialogApplicationContext.getApplicationContextVersion().getVersion() <= 2)
-			return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
-		else
-			return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
+		MAPApplicationContextName ctx = dialogApplicationContext.getApplicationContextName();
+		int vers = dialogApplicationContext.getApplicationContextVersion().getVersion();
+
+		switch (ctx) {
+		case networkUnstructuredSsContext:
+			if (vers <= 2)
+				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
+			else {
+				long[] altOid = dialogApplicationContext.getOID();
+				altOid[7] = 2;
+				ApplicationContextName alt = TcapFactory.createApplicationContextName(altOid);
+				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, alt);
+			}
+		}
+
+		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
 	}
 
 	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)
@@ -120,7 +137,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		Long ocValue = oc.getLocalOperationCode();
 		if (ocValue == null)
 			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
-		
+
 		long ocValueInt = ocValue;
 		int ocValueInt2 = (int) ocValueInt;
 		switch (ocValueInt2) {
@@ -134,13 +151,12 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
 	}
-	
+
 	public Boolean checkInvokeTimeOut(MAPDialog dialog, Invoke invoke) {
 		return false;
 	}
 
-	private void unstructuredSSRequest(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId)
-			throws MAPParsingComponentException {
+	private void unstructuredSSRequest(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		try {
 			if (parameter.getTag() == Tag.SEQUENCE) {
 				Parameter[] parameters = parameter.getParameters();
@@ -172,9 +188,8 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		}
 	}
 
-	private void processUnstructuredSSRequest(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl,
-			Long invokeId) throws MAPParsingComponentException {
-		
+	private void processUnstructuredSSRequest(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+
 		try {
 			if (parameter.getTag() == Tag.SEQUENCE) {
 				Parameter[] parameters = parameter.getParameters();
@@ -204,12 +219,8 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 						AsnInputStream ansIS = new AsnInputStream(new ByteArrayInputStream(msisdnData));
 
 						AddressStringImpl msisdnAddStr = new AddressStringImpl();
-						try {
-							msisdnAddStr.decode(ansIS);
-							procUnSSInd.setMSISDNAddressString(msisdnAddStr);
-						} catch (IOException e) {
-							throw new MAPException("IOException when decoding AddressString", e);
-						}
+						msisdnAddStr.decode(ansIS, msisdnParam.getTagClass(), msisdnParam.isPrimitive(), msisdnParam.getTag(), msisdnData.length);
+						procUnSSInd.setMSISDNAddressString(msisdnAddStr);
 					}
 				}
 

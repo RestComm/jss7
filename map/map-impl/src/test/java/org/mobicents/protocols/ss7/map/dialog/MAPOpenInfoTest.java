@@ -31,9 +31,9 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
-import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 
 /**
  * 

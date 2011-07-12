@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.api.errors;
 
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
@@ -35,9 +36,9 @@ public interface MAPErrorMessage {
 
 	public Long getErrorCode();
 
-	public Parameter[] encodeParameters() throws MAPException;
+	public Parameter encodeParameter() throws MAPException;
 
-	public void decodeParameters( Parameter[] p ) throws MAPException;
+	public void decodeParameter( Parameter p ) throws MAPException;
 
 	
 	public Boolean isEmParameterless();
@@ -50,6 +51,15 @@ public interface MAPErrorMessage {
 
 	public Boolean isEmSystemFailure();
 
+	public Boolean isEmUnknownSubscriber();
+
+	public Boolean isEmAbsentSubscriberSM();
+
+	public Boolean isEmSubscriberBusyForMtSms();
+
+	public Boolean isEmCallBarred();
+
+
 	
 	public MAPErrorMessageParameterless getEmParameterless();
 
@@ -60,5 +70,13 @@ public interface MAPErrorMessage {
 	public MAPErrorMessageSMDeliveryFailure getEmSMDeliveryFailure();
 
 	public MAPErrorMessageSystemFailure getEmSystemFailure();
+
+	public MAPErrorMessageUnknownSubscriber getEmUnknownSubscriber();
+
+	public MAPErrorMessageAbsentSubscriberSM getEmAbsentSubscriberSM();
+	
+	public MAPErrorMessageSubscriberBusyForMtSms getEmSubscriberBusyForMtSms();
+	
+	public MAPErrorMessageCallBarred getEmCallBarred();
 
 }

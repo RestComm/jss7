@@ -22,14 +22,14 @@
 
 package org.mobicents.protocols.ss7.map.api;
 
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 
 /**

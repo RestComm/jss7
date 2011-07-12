@@ -22,15 +22,39 @@
 
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
-import org.mobicents.protocols.ss7.map.api.dialog.IMSI;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
+ * 
+ * mo-ForwardSM  OPERATION ::= {				--Timer ml
+ * ARGUMENT
+ * 		MO-ForwardSM-Arg
+ * RESULT
+ * 		MO-ForwardSM-Res
+ * 		-- optional
+ * 	ERRORS {
+ * 		systemFailure |
+ * 		unexpectedDataValue |
+ * 		facilityNotSupported |
+ * 		sm-DeliveryFailure}
+ * 	CODE	local:46 }
+ * 
+ * MO-ForwardSM-Arg ::= SEQUENCE {
+ *	sm-RP-DA		SM-RP-DA,
+ *	sm-RP-OA		SM-RP-OA,
+ *	sm-RP-UI		SignalInfo,
+ *	extensionContainer	ExtensionContainer	OPTIONAL,
+ *	... ,
+ *	imsi			IMSI 		OPTIONAL }
+ *
+ * 
+ * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface MoForwardShortMessageRequestIndication extends SmsServive {
+public interface MoForwardShortMessageRequestIndication extends SmsService {
 
 	public SM_RP_DA getSM_RP_DA();
 

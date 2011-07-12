@@ -22,10 +22,26 @@
 
 package org.mobicents.protocols.ss7.map.api.errors;
 
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * The MAP ReturnError message: MessageFacilityNotSup with parameters
+ * 
+ * facilityNotSupported  ERROR ::= {
+ *	PARAMETER
+ *		FacilityNotSupParam
+ *		-- optional
+ *		-- FacilityNotSupParam must not be used in version <3
+ *	CODE	local:21 }
+ *
+ * 
+ * FacilityNotSupParam ::= SEQUENCE {
+ *	extensionContainer	ExtensionContainer	OPTIONAL,
+ *	...,
+ *	shapeOfLocationEstimateNotSupported [0]	NULL		OPTIONAL,
+ *	neededLcsCapabilityNotSupportedInServingNode [1] NULL	OPTIONAL }
+ *
+ * 
  * 
  * @author sergey vetyutnev
  * 
@@ -33,8 +49,9 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 public interface MAPErrorMessageFacilityNotSup extends MAPErrorMessage {
 	
 	public MAPExtensionContainer getExtensionContainer();
-	
+
 	public Boolean getShapeOfLocationEstimateNotSupporte();
+
 	public Boolean getNeededLcsCapabilityNotSupportedInServingNode();
 
 }

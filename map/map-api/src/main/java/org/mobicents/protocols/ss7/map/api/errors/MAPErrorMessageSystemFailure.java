@@ -22,10 +22,26 @@
 
 package org.mobicents.protocols.ss7.map.api.errors;
 
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * The MAP ReturnError message: SystemFailure
+ * 
+ * systemFailure  ERROR ::= {
+ *	PARAMETER
+ *		SystemFailureParam
+ *		-- optional
+ *	CODE	local:34 }
+ *
+ *
+ * SystemFailureParam ::= CHOICE {
+ *	networkResource	NetworkResource,
+ *	-- networkResource must not be used in version 3
+ *	extensibleSystemFailureParam	ExtensibleSystemFailureParam
+ *	-- extensibleSystemFailureParam must not be used in version <3
+ *	}
+ *
+ * 
  * 
  * @author sergey vetyutnev
  * 
@@ -33,8 +49,8 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 public interface MAPErrorMessageSystemFailure extends MAPErrorMessage {
 
 	public NetworkResource getNetworkResource();
+
 	public AdditionalNetworkResource getAdditionalNetworkResource();
+
 	public MAPExtensionContainer getExtensionContainer();
 }
-
-

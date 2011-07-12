@@ -20,17 +20,21 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.dialog;
+package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
 
+import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
-import org.mobicents.protocols.ss7.map.api.dialog.IMSI;
-import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 
 /**
  * 
@@ -43,13 +47,19 @@ public class IMSIImpl extends TbcdString implements IMSI {
 	private Long MNC;
 	private String MSIN;
 
+	
+	public IMSIImpl() {
+	}
+	
+	public IMSIImpl(Long MCC, Long MNC, String MSIN) {
+		this.MCC = MCC;
+		this.MNC = MNC;
+		this.MSIN = MSIN;
+	}
+
 	@Override
 	public Long getMCC() {
 		return this.MCC;
-	}
-
-	public void setMCC(Long MCC) {
-		this.MCC = MCC;
 	}
 
 	@Override
@@ -57,34 +67,35 @@ public class IMSIImpl extends TbcdString implements IMSI {
 		return this.MNC;
 	}
 
-	public void setMNC(Long MNC) {
-		this.MNC = MNC;
-	}
-
 	@Override
 	public String getMSIN() {
 		return this.MSIN;
 	}
+
 	
-	public void setMSIN(String MSIN) {
-		this.MSIN = MSIN;
+	public int getTag() throws MAPException {
+		return Tag.STRING_OCTET;
 	}
-
 	
-	public void decode(AsnInputStream ansIS) throws MAPException, IOException {
+	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
 
-		int digCnt = ansIS.available();
-		if (digCnt < 3 || digCnt > 8)
-			throw new MAPException("Error decoding IMSI: the IMSI field must contain from 3 to 8 octets. Contains: " + digCnt);
+		if (length < 3 || length > 8)
+			throw new MAPParsingComponentException("Error decoding IMSI: the IMSI field must contain from 3 to 8 octets. Contains: " + length,
+					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		String res = this.decodeString(ansIS);
-		
-		String sMcc = res.substring(0, 3); 
-		String sMnc = res.substring(3, 5); 
-		this.MSIN = res.substring(5); 
+		try {
+			String res = this.decodeString(ansIS, length);
 
-		this.MCC = (long)Integer.parseInt(sMcc);
-		this.MNC = (long)Integer.parseInt(sMnc);
+			String sMcc = res.substring(0, 3);
+			String sMnc = res.substring(3, 5);
+			this.MSIN = res.substring(5);
+
+			this.MCC = (long) Integer.parseInt(sMcc);
+			this.MNC = (long) Integer.parseInt(sMnc);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding IMSI: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
 	}
 
 	public void encode(AsnOutputStream asnOs) throws MAPException {
@@ -113,6 +124,7 @@ public class IMSIImpl extends TbcdString implements IMSI {
 		this.encodeString(asnOs, sb.toString());
 	}
 
+	
 	@Override
 	public String toString() {
 		return "IMSI [MCC=" + this.MCC + ", MNC=" + this.MNC + ", MSIN=" + this.MSIN + "]";

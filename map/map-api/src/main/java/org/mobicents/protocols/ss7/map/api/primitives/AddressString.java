@@ -20,7 +20,8 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.dialog;
+package org.mobicents.protocols.ss7.map.api.primitives;
+
 
 /**
  * 
@@ -77,7 +78,7 @@ package org.mobicents.protocols.ss7.map.api.dialog;
  * @author amit bhayani
  *
  */
-public interface AddressString {
+public interface AddressString extends MAPPrimitive {
 	
 	public AddressNature getAddressNature();
 	

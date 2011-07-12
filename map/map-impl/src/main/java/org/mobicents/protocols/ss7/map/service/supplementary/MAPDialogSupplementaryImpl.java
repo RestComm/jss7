@@ -29,11 +29,11 @@ import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
-import org.mobicents.protocols.ss7.map.dialog.AddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
@@ -44,12 +44,14 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Return;
 
+/**
+ * 
+ * @author amit bhayani
+ * @author baranowb
+ * @author sergey vetyutnev
+ * 
+ */
 public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDialogSupplementary {
-
-	// protected MAPDialogSupplementaryImpl(MAPApplicationContext appCntx,
-	// Dialog tcapDialog, MAPProviderImpl mapProviderImpl) {
-	// super(appCntx, tcapDialog, mapProviderImpl);
-	// }
 
 	protected MAPDialogSupplementaryImpl(MAPApplicationContext appCntx, Dialog tcapDialog,
 			MAPProviderImpl mapProviderImpl, MAPServiceSupplementary mapService, AddressString origReference,

@@ -20,39 +20,47 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.dialog;
+package org.mobicents.protocols.ss7.map.api.service.sms;
+
+import org.mobicents.protocols.ss7.map.api.errors.UnknownSubscriberDiagnostic;
 
 /**
- * @author sergey vetyutnev
- */
-public interface MAPPrivateExtension {
+*
+* SM-DeliveryOutcome ::= ENUMERATED {
+* 	memoryCapacityExceeded  (0),
+* 	absentSubscriber  (1),
+* 	successfulTransfer  (2)}
+* 
+*
+*
+* @author sergey vetyutnev
+*
+*/
+public enum SMDeliveryOutcome {
 
-	/**
-	 * Get the PrivateExtension element Object identifier
-	 * 
-	 * @return
-	 */
-	public long[] getOId();
+	memoryCapacityExceeded(0), absentSubscriber(1), successfulTransfer(2);
 
-	/**
-	 * Get the PrivateExtension element Object identifier
-	 * 
-	 * @param oId
-	 */
-	public void setOId(long[] oId);
+	private int code;
 
-	/**
-	 * Get the PrivateExtension element user data - ASN.1 encoded byte array
-	 * 
-	 * @return
-	 */
-	public byte[] getData();
+	private SMDeliveryOutcome(int code) {
+		this.code = code;
+	}
 
-	/**
-	 * Set the PrivateExtension element user data - ASN.1 encoded byte array
-	 * 
-	 * @param data
-	 */
-	public void setData(byte[] data);
+	public int getCode() {
+		return code;
+	}
+
+	public static SMDeliveryOutcome getInstance(int code) {
+		switch (code) {
+		case 0:
+			return memoryCapacityExceeded;
+		case 1:
+			return absentSubscriber;
+		case 2:
+			return successfulTransfer;
+		default:
+			return null;
+		}
+	}
 
 }

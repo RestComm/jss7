@@ -1,5 +1,4 @@
 /*
- * JBoss, Home of Professional Open Source
  * Copyright 2011, Red Hat, Inc. and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -40,6 +39,8 @@ public interface MAPErrorCode {
 	public static final int dataMissing = 35;
 	public static final int unexpectedDataValue = 36;
 	public static final int facilityNotSupported = 21;
+	public static final int incompatibleTerminal = 28;
+	public static final int resourceLimitation = 51;
 	
 	// -- call handling error codes
 	public static final int noRoamingNumberAvailable = 39;
@@ -51,6 +52,13 @@ public interface MAPErrorCode {
 	public static final int orNotAllowed = 48;
 	public static final int forwardingViolation = 14;
 	public static final int cugReject = 15;
+	
+	// -- identification and numbering errors
+	public static final int unknownSubscriber = 1;
+	public static final int numberChanged = 44;
+	public static final int unknownMSC = 3;
+	public static final int unidentifiedSubscriber = 5;
+	public static final int unknownEquipment = 7;
 	
 	// -- subscription error codes
 	public static final int roamingNotAllowed = 8;
@@ -64,5 +72,39 @@ public interface MAPErrorCode {
 	public static final int smDeliveryFailure = 32;
 	public static final int messageWaitingListFull = 33;
 	public static final int absentSubscriberSM = 6;
+	
+	// -- location service errors
+	public static final int unauthorizedRequestingNetwork = 52;
+	public static final int unauthorizedLCSClient = 53;
+	public static final int positionMethodFailure = 54;
+	public static final int unknownOrUnreachableLCSClient = 58;
+	public static final int mmEventNotSupported = 59;
+
+	
+	
+	/**
+	 * 		systemFailure |
+	 * 		unexpectedDataValue |
+	 * 		facilityNotSupported |
+	 * 		sm-DeliveryFailure}
+	 *		dataMissing |
+	 *		unidentifiedSubscriber |
+	 *		illegalSubscriber |
+	 *		illegalEquipment |
+	 *		subscriberBusyForMT-SMS |
+	 *		absentSubscriberSM
+	 *		unknownSubscriber |
+	 *		teleserviceNotProvisioned |
+	 *		callBarred |
+	 *		messageWaitingListFull
+	 *		absentSubscriber
+	 *		unauthorizedRequestingNetwork
+	 *		unauthorizedLCSClient
+	 *		positionMethodFailure
+	 *		resourceLimitation
+	 *		unknownOrUnreachableLCSClient
+	 *
+ 	 */
+
 }
 

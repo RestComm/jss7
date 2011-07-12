@@ -20,18 +20,41 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.sms;
-
-import org.mobicents.protocols.ss7.map.api.MAPMessage;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
+package org.mobicents.protocols.ss7.map.api.errors;
 
 /**
- * 
- * @author sergey vetyutnev
- * 
- */
-public interface SmsServive extends MAPMessage {
+*
+* CallBarringCause ::= ENUMERATED {
+* 	barringServiceActive  (0),
+* 	operatorBarring  (1)}
+*
+*
+* @author sergey vetyutnev
+*
+*/
+public enum CallBarringCause {
+	barringServiceActive(0), operatorBarring(1);
 
-	public MAPDialogSms getMAPDialog();
+	private int code;
+
+	private CallBarringCause(int code) {
+		this.code = code;
+	}
+	
+
+	public int getCode() {
+		return code;
+	}
+
+	public static CallBarringCause getInstance(int code) {
+		switch (code) {
+		case 0:
+			return barringServiceActive;
+		case 1:
+			return operatorBarring;
+		default:
+			return null;
+		}
+	}	
 
 }

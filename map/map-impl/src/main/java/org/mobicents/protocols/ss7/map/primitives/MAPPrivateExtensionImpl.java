@@ -42,7 +42,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.dialog;
+package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -52,7 +52,7 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
 
 /**
  * @author sergey vetyutnev
@@ -180,4 +180,51 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension {
 		asnOS.writeLength(data.length);
 		asnOS.write(data);
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("PrivateExtension [");
+		
+		if (this.oId != null || this.oId.length > 0) {
+			sb.append("Oid=");
+			sb.append(this.ArrayToString(this.oId));
+		}
+
+		if (this.data != null ) {
+			sb.append(", data=");
+			sb.append(this.ArrayToString(this.data));
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
+	
+	private String ArrayToString(byte[] array) {
+		StringBuilder sb = new StringBuilder();
+		int i1 = 0;
+		for (byte b : array) {
+			if (i1 == 0)
+				i1 = 1;
+			else
+				sb.append(", ");
+			sb.append(b);
+		}
+		return sb.toString();
+	}
+	
+	private String ArrayToString(long[] array) {
+		StringBuilder sb = new StringBuilder();
+		int i1 = 0;
+		for (long b : array) {
+			if (i1 == 0)
+				i1 = 1;
+			else
+				sb.append(", ");
+			sb.append(b);
+		}
+		return sb.toString();
+	}
+
 }

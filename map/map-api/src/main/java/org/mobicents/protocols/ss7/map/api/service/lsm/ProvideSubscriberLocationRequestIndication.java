@@ -23,10 +23,10 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 import java.util.BitSet;
 
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
-import org.mobicents.protocols.ss7.map.api.dialog.IMSI;
-import org.mobicents.protocols.ss7.map.api.dialog.LMSI;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * ProvideSubscriberLocation-Arg ::= SEQUENCE {

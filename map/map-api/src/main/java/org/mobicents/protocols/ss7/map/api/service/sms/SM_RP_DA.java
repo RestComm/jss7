@@ -22,9 +22,10 @@
 
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
-import org.mobicents.protocols.ss7.map.api.dialog.IMSI;
-import org.mobicents.protocols.ss7.map.api.dialog.LMSI;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
 
 /**
  * SM-RP-DA ::= CHOICE {
@@ -40,10 +41,12 @@ import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
  * @author sergey vetyutnev
  * 
  */
-public interface SM_RP_DA {
+public interface SM_RP_DA extends MAPPrimitive {
 
 	public IMSI getIMSI();
+
 	public LMSI getLMSI();
+
 	public AddressString getServiceCentreAddressDA();
-	
+
 }

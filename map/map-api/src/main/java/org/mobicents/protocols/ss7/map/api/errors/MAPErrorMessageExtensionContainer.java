@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.errors;
 
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * The MAP ReturnError message: with a single parameter - ExtensionContainer 

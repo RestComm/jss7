@@ -46,10 +46,8 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
@@ -58,6 +56,8 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckData;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorCode;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
@@ -70,6 +70,7 @@ import org.mobicents.protocols.ss7.map.dialog.MAPRefuseInfoImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortInfoImpl;
 import org.mobicents.protocols.ss7.map.errors.MAPErrorMessageFactoryImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplementaryImpl;
+import org.mobicents.protocols.ss7.map.service.sms.MAPServiceSmsImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
@@ -131,7 +132,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	protected Set<MAPServiceBase> mapServices = new HashSet<MAPServiceBase>();
 	private final MAPServiceSupplementary mapServiceSupplementary = new MAPServiceSupplementaryImpl(this);
-//	private final MAPServiceSms mapServiceSms = new MAPServiceSmsImpl(this);
+	private final MAPServiceSms mapServiceSms = new MAPServiceSmsImpl(this);
 
 	/**
 	 * public common methods
@@ -141,6 +142,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		this.tcapProvider = tcapProvider;
 
 		this.mapServices.add(this.mapServiceSupplementary);
+		this.mapServices.add(this.mapServiceSms);
 	}
 
 	public TCAPProvider getTCAPProvider() {
@@ -149,6 +151,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	public MAPServiceSupplementary getMAPServiceSupplementary() {
 		return this.mapServiceSupplementary;
+	}
+
+	public MAPServiceSms getMAPServiceSms() {
+		return this.mapServiceSms;
 	}
 
 	public void addMAPDialogListener(MAPDialogListener mapDialogListener) {
@@ -422,7 +428,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 						loger.error("Error while firing TC-U-ABORT. ", e1);
 					}
 					return;
-				} catch (MAPException e) {
+				} catch (MAPParsingComponentException e) {
 					e.printStackTrace();
 					loger.error("MAPException when parsing MAP-OPEN Pdu: " + e.getMessage());
 					try {
@@ -628,7 +634,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 							} catch (IOException e) {
 								e.printStackTrace();
 								loger.error("IOException when parsing MAP-ACCEPT Pdu: " + e.getMessage());
-							} catch (MAPException e) {
+							} catch (MAPParsingComponentException e) {
 								e.printStackTrace();
 								loger.error("MAPException when parsing MAP-ACCEPT Pdu: " + e.getMessage());
 							}
@@ -760,7 +766,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 							} catch (IOException e) {
 								e.printStackTrace();
 								loger.error("IOException when parsing MAP-ACCEPT/MAP-CLOSE Pdu: " + e.getMessage());
-							} catch (MAPException e) {
+							} catch (MAPParsingComponentException e) {
 								e.printStackTrace();
 								loger.error("MAPException when parsing MAP-ACCEPT/MAP-CLOSE Pdu: " + e.getMessage());
 							}
@@ -1029,8 +1035,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 							loger.error("When parsing TCUserAbortIndication indication: IOException" + e.getMessage());
 							e.printStackTrace();
 							parsePduResult = ParsePduResult.BadUserInfo;
-						} catch (MAPException e) {
-							loger.error("When parsing TCUserAbortIndication indication: MAPException" + e.getMessage());
+						} catch (MAPParsingComponentException e) {
+							loger.error("When parsing TCUserAbortIndication indication: MAPParsingComponentException" + e.getMessage());
 							e.printStackTrace();
 							parsePduResult = ParsePduResult.BadUserInfo;
 						}
@@ -1209,7 +1215,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 					MAPErrorMessage msgErr = this.mapErrorMessageFactory.createMessageFromErrorCode(errorCode);
 					try {
-						msgErr.decodeParameters(comp.getParameters());
+						msgErr.decodeParameter(comp.getParameter());
 					} catch (MAPException e) {
 						// Failed when parsing the component - send TC-U-REJECT
 						perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
@@ -1389,11 +1395,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			mapOpn.setExtensionContainer(mapExtensionContainer);
 
 			AsnOutputStream localasnOs = new AsnOutputStream();
-			try {
-				mapOpn.encode(localasnOs);
-			} catch (IOException e) {
-				throw new MAPException(e.getMessage(), e);
-			}
+			mapOpn.encode(localasnOs);
 
 			UserInformation userInformation = TcapFactory.createUserInformation();
 
@@ -1429,11 +1431,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			mapAccept.setExtensionContainer(mapExtensionContainer);
 
 			AsnOutputStream localasnOs = new AsnOutputStream();
-			try {
-				mapAccept.encode(localasnOs);
-			} catch (IOException e) {
-				throw new MAPException(e.getMessage(), e);
-			}
+			mapAccept.encode(localasnOs);
 
 			UserInformation userInformation = TcapFactory.createUserInformation();
 
@@ -1473,11 +1471,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			mapAccept.setExtensionContainer(mapExtensionContainer);
 
 			AsnOutputStream localasnOs = new AsnOutputStream();
-			try {
-				mapAccept.encode(localasnOs);
-			} catch (IOException e) {
-				throw new MAPException(e.getMessage(), e);
-			}
+			mapAccept.encode(localasnOs);
 
 			UserInformation userInformation = TcapFactory.createUserInformation();
 
@@ -1515,11 +1509,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		mapRefuseInfoImpl.setReason(Reason.noReasonGiven);
 
 		AsnOutputStream localasnOs = new AsnOutputStream();
-		try {
-			mapRefuseInfoImpl.encode(localasnOs);
-		} catch (IOException e) {
-			throw new MAPException(e.getMessage(), e);
-		}
+		mapRefuseInfoImpl.encode(localasnOs);
 
 		UserInformation userInformation = TcapFactory.createUserInformation();
 
@@ -1564,11 +1554,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		// mapRefuseInfoImpl.setAlternativeAcn(aacn);
 
 		AsnOutputStream localasnOs = new AsnOutputStream();
-		try {
-			mapRefuseInfoImpl.encode(localasnOs);
-		} catch (IOException e) {
-			throw new MAPException(e.getMessage(), e);
-		}
+		mapRefuseInfoImpl.encode(localasnOs);
 
 		UserInformation userInformation = TcapFactory.createUserInformation();
 
@@ -1606,11 +1592,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		mapUserAbortInfoImpl.setExtensionContainer(mapExtensionContainer);
 
 		AsnOutputStream localasnOs = new AsnOutputStream();
-		try {
-			mapUserAbortInfoImpl.encode(localasnOs);
-		} catch (IOException e) {
-			throw new MAPException(e.getMessage(), e);
-		}
+		mapUserAbortInfoImpl.encode(localasnOs);
 
 		UserInformation userInformation = TcapFactory.createUserInformation();
 
@@ -1649,11 +1631,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		mapProviderAbortInfo.setExtensionContainer(mapExtensionContainer);
 
 		AsnOutputStream localasnOs = new AsnOutputStream();
-		try {
-			mapProviderAbortInfo.encode(localasnOs);
-		} catch (IOException e) {
-			throw new MAPException(e.getMessage(), e);
-		}
+		mapProviderAbortInfo.encode(localasnOs);
 
 		UserInformation userInformation = TcapFactory.createUserInformation();
 

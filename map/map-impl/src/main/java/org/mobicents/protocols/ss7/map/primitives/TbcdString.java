@@ -20,13 +20,15 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.dialog;
+package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 
 /**
  * 
@@ -34,14 +36,14 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
  * @author sergey vetyutnev
  * 
  */
-public class TbcdString {
+public abstract class TbcdString extends MAPPrimitiveBase {
 
 	protected int DIGIT_1_MASK = 0x0F;
 	protected int DIGIT_2_MASK = 0xF0;
 
-	protected String decodeString(AsnInputStream ansIS) throws IOException, MAPException {
+	protected String decodeString(AsnInputStream ansIS, int length) throws IOException, MAPParsingComponentException {
 		StringBuilder s = new StringBuilder();
-		while (ansIS.available() > 0) {
+		for (int i1 = 0; i1 < length; i1++) {
 			int b = ansIS.read();
 
 			int digit1 = (b & DIGIT_1_MASK);
@@ -55,7 +57,7 @@ public class TbcdString {
 				s.append(this.decodeNumber(digit2));
 			}
 		}
-		
+
 		return s.toString();
 	}
 	
@@ -121,7 +123,7 @@ public class TbcdString {
 		}
 	}
 
-	protected char decodeNumber(int i) throws MAPException {
+	protected char decodeNumber(int i) throws MAPParsingComponentException {
 		switch (i) {
 		case 0:
 			return '0';
@@ -156,9 +158,9 @@ public class TbcdString {
 			// case 15:
 			// return 'd';
 		default:
-			throw new MAPException(
+			throw new MAPParsingComponentException(
 					"Integer should be between 0 - 15 for Telephony Binary Coded Decimal String. Received "
-							+ i);
+							+ i, MAPParsingComponentExceptionReason.MistypedParameter);
 
 		}
 	}

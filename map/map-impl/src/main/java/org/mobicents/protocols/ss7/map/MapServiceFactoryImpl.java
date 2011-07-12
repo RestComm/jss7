@@ -29,16 +29,19 @@ import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
-import org.mobicents.protocols.ss7.map.api.dialog.IMSI;
-import org.mobicents.protocols.ss7.map.dialog.IMSIImpl;
-import org.mobicents.protocols.ss7.map.api.dialog.LMSI;
-import org.mobicents.protocols.ss7.map.dialog.LMSIImpl;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
-import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.FTNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
+import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
@@ -46,9 +49,16 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstruct
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
-import org.mobicents.protocols.ss7.map.dialog.AddressStringImpl;
-import org.mobicents.protocols.ss7.map.dialog.MAPExtensionContainerImpl;
-import org.mobicents.protocols.ss7.map.dialog.MAPPrivateExtensionImpl;
+import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.FTNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPPrivateExtensionImpl;
+import org.mobicents.protocols.ss7.map.service.sms.LocationInfoWithLMSIImpl;
+import org.mobicents.protocols.ss7.map.service.sms.SM_RP_DAImpl;
+import org.mobicents.protocols.ss7.map.service.sms.SM_RP_OAImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortChoiceImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSRequestImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseImpl;
@@ -107,6 +117,14 @@ public class MapServiceFactoryImpl implements MapServiceFactory {
 		return new AddressStringImpl(addNature, numPlan, address);
 	}
 
+	public ISDNAddressString createISDNAddressString(AddressNature addNature, NumberingPlan numPlan, String address) {
+		return new ISDNAddressStringImpl(addNature, numPlan, address);
+	} 
+
+	public FTNAddressString createFTNAddressString(AddressNature addNature, NumberingPlan numPlan, String address) {
+		return new FTNAddressStringImpl(addNature, numPlan, address);
+	}
+
 	public MAPUserAbortChoice createMAPUserAbortChoice() {
 		MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
 		return mapUserAbortChoice;
@@ -125,62 +143,63 @@ public class MapServiceFactoryImpl implements MapServiceFactory {
 
 	@Override
 	public IMSI createIMSI(Long MCC, Long MNC, String MSIN) {
-		IMSIImpl res = new IMSIImpl();
-		res.setMCC(MCC);
-		res.setMNC(MNC);
-		res.setMSIN(MSIN);
-		
-		return res;
+		return new IMSIImpl(MCC, MNC, MSIN);
 	}
 
 	@Override
 	public LMSI createLMSI(byte[] data) {
-		LMSIImpl res = new LMSIImpl();
-		res.setData(data);
-		
-		return res;
+		return new LMSIImpl(data);
 	}
 
 	@Override
 	public SM_RP_DA createSM_RP_DA(IMSI imsi) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SM_RP_DAImpl(imsi);
 	}
 
 	@Override
 	public SM_RP_DA createSM_RP_DA(LMSI lmsi) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SM_RP_DAImpl(lmsi);
 	}
 
 	@Override
 	public SM_RP_DA createSM_RP_DA(AddressString serviceCentreAddressDA) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SM_RP_DAImpl(serviceCentreAddressDA);
 	}
 
 	@Override
 	public SM_RP_DA createSM_RP_DA() {
-		// TODO Auto-generated method stub
-		return null;
+		return new SM_RP_DAImpl();
 	}
 
 	@Override
-	public SM_RP_OA createSM_RP_OA_Msisdn(AddressString msisdn) {
-		// TODO Auto-generated method stub
-		return null;
+	public SM_RP_OA createSM_RP_OA_Msisdn(ISDNAddressString msisdn) {
+		SM_RP_OAImpl res = new SM_RP_OAImpl();
+		res.setMsisdn(msisdn);
+		return res;
 	}
 
 	@Override
 	public SM_RP_OA createSM_RP_OA_ServiceCentreAddressOA(AddressString serviceCentreAddressOA) {
+		SM_RP_OAImpl res = new SM_RP_OAImpl();
+		res.setServiceCentreAddressOA(serviceCentreAddressOA);
+		return res;
+	}
+
+	@Override
+	public SM_RP_OA createSM_RP_OA() {
+		return new SM_RP_OAImpl();
+	}
+
+	@Override
+	public MWStatus createMWStatus(Boolean scAddressNotIncluded, Boolean mnrfSet, Boolean mcefSet, Boolean mnrgSet) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public SM_RP_OA createSM_RP_OA() {
-		// TODO Auto-generated method stub
-		return null;
+	public LocationInfoWithLMSI createLocationInfoWithLMSI(ISDNAddressString networkNodeNumber, LMSI lmsi, MAPExtensionContainer extensionContainer,
+			AdditionalNumberType additionalNumberType, ISDNAddressString additionalNumber) {
+		return new LocationInfoWithLMSIImpl(networkNodeNumber, lmsi, extensionContainer, additionalNumberType, additionalNumber);
 	}
 
 }

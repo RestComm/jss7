@@ -48,15 +48,29 @@ import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressNature;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension;
-import org.mobicents.protocols.ss7.map.api.dialog.NumberingPlan;
+import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplementaryImpl;
-import org.mobicents.protocols.ss7.map.api.dialog.IMSI;
-import org.mobicents.protocols.ss7.map.dialog.IMSIImpl;
-import org.mobicents.protocols.ss7.map.dialog.LMSIImpl;
+
+import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
+import org.mobicents.protocols.ss7.map.dialog.MAPOpenInfoImpl;
+import org.mobicents.protocols.ss7.map.service.sms.LocationInfoWithLMSIImpl;
+import org.mobicents.protocols.ss7.map.service.sms.SM_RP_DAImpl;
+import org.mobicents.protocols.ss7.map.service.sms.SM_RP_OAImpl;
 
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -68,6 +82,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
@@ -241,12 +256,129 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	@Test
 	public void testA() throws Exception {
+
+//		MapServiceFactory msf = this.stack1.getMAPProvider().getMapServiceFactory();
+//
+//		ISDNAddressString n1 = msf.createISDNAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "98765");
+//		LMSI n2 = msf.createLMSI(new byte[] { 21, 22, 23, 24 });
+//		ISDNAddressString n3 = msf.createISDNAddressString(AddressNature.network_specific_number, NumberingPlan.land_mobile, "7654321");
+//		
+//		LocationInfoWithLMSI a1 = msf.createLocationInfoWithLMSI(n1, n2, MAPFunctionalTest.GetTestExtensionContainer(msf), AdditionalNumberType.msc, n3);		
+//
+//		AsnOutputStream aos = new AsnOutputStream();
+//		a1.encode(aos);
+//		byte[] buf = aos.toByteArray();
+//
+//		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(buf));
+//		LocationInfoWithLMSIImpl a11 = new LocationInfoWithLMSIImpl();
+//		a11.decode(ais, 0, false, 0, buf.length);
+//		
+//		boolean b1 = MAPFunctionalTest.CheckTestExtensionContainer(a11.getExtensionContainer());
+//		int fff=0;
+//		fff++;
+		
+		
+//		MapServiceFactory msf = this.stack1.getMAPProvider().getMapServiceFactory();
+//		MAPOpenInfoImpl a1 = new MAPOpenInfoImpl();
+//		a1.setExtensionContainer(MAPFunctionalTest.GetTestExtensionContainer(msf));
+//		AddressString n1 = msf.createAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "1234567"); 		
+//		AddressString n2 = msf.createAddressString(AddressNature.network_specific_number, NumberingPlan.land_mobile, "7654321");
+//		a1.setOrigReference(n1); 		
+//		a1.setDestReference(n2); 		
+//
+//		AsnOutputStream aos = new AsnOutputStream();
+//		a1.encode(aos);
+//		byte[] buf = aos.toByteArray();
+//
+//		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(buf));
+//		MAPOpenInfoImpl a11 = new MAPOpenInfoImpl();
+//		int tag = ais.readTag();
+//		a11.decode(ais);
+//		
+//		boolean b1 = MAPFunctionalTest.CheckTestExtensionContainer(a11.getExtensionContainer());
+//		
+//		int fff=0;
+//		fff++;
+
+		
+//		MapServiceFactory msf = this.stack1.getMAPProvider().getMapServiceFactory();
+//		ISDNAddressString a1 = msf.createISDNAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "98765");
+//
+//		AsnOutputStream aos = new AsnOutputStream();
+//		a1.encode(aos);
+//		byte[] buf = aos.toByteArray();
+//
+//		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(buf));
+//		ISDNAddressString a2 = new ISDNAddressStringImpl();
+//		a2.decode(ais, 0, true, 0, buf.length);
+//		
+//		int fff=0;
+//		fff++;
+
+		
+//		MapServiceFactory msf = this.stack1.getMAPProvider().getMapServiceFactory();
+//		
+////		AddressString asx = msf.createAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "98765");
+////		SM_RP_DAImpl sm = (SM_RP_DAImpl)msf.createSM_RP_DA(asx);
+//		
+////		IMSIImpl imsi = (IMSIImpl)msf.createIMSI(250L, 7L, "12345");
+////		SM_RP_DAImpl sm = (SM_RP_DAImpl)msf.createSM_RP_DA(imsi);
+//
+////		byte[] data = new byte[] { 31, 32, 33, 34 };
+////		LMSIImpl lmsi = (LMSIImpl)msf.createLMSI(data);
+////		SM_RP_DAImpl sm = (SM_RP_DAImpl)msf.createSM_RP_DA(lmsi);
+//		
+////		SM_RP_DAImpl sm = (SM_RP_DAImpl)msf.createSM_RP_DA();
+//		
+////		LMSIImpl lmsi = new LMSIImpl();
+////		byte[] data = new byte[] { 31, 32, 33, 34 };
+////		lmsi.setData(data);
+////		sm.setLMSI(lmsi);
+//		
+//		SM_RP_OAImpl sm = (SM_RP_OAImpl)msf.createSM_RP_OA();
+//
+////		ISDNAddressString msisdn = msf.createISDNAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "98765");
+////		sm.setMsisdn(msisdn);
+////		AddressString serviceCentreAddressOA = msf.createAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "98765");
+////		sm.setServiceCentreAddressOA(serviceCentreAddressOA);
+//
+//		
+//		AsnOutputStream aos = new AsnOutputStream();
+//		sm.encode(aos);
+//		byte[] buf = aos.toByteArray();
+//		
+//		aos.reset();
+//		aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, true, sm.getEnccodingTag());
+//		aos.writeLength(buf.length);
+//		aos.write(buf);
+//		buf = aos.toByteArray();
+//		
+//
+//		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(buf));
+//		int tag = ais.readTag();
+//		int length = ais.readLength();
+//		if (length != ais.available()) {
+//			int fff = 0;
+//		}
+//		byte[] buf2 = new byte[length];
+//		ais.read(buf2);
+//		AsnInputStream ais2 = new AsnInputStream(new ByteArrayInputStream(buf2));
+//		
+////		SM_RP_DAImpl sm2 = new SM_RP_DAImpl();
+//		SM_RP_OAImpl sm2 = new SM_RP_OAImpl();
+//		sm2.setDecodedTag(tag);
+//		sm2.decode(ais2);
+//		
+//		int iii=0;
+//		iii++;
+
+		
 		
 //		server.reset();
 //		client.reset();
 //		server.setStep(FunctionalTestScenario.Action_Component_A);
 //		client.setStep(FunctionalTestScenario.Action_Component_A);
-//		client.actionA();
+//		client.actionC();
 //		waitForEnd();
 //		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
 //		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());

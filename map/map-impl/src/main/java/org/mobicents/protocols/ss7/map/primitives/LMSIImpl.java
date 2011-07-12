@@ -20,44 +20,64 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.dialog;
+package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
 
+import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.dialog.LMSI;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class LMSIImpl implements LMSI {
+public class LMSIImpl extends MAPPrimitiveBase implements LMSI {
 	
 	private byte[] data;
+
+	
+	public LMSIImpl() {
+	}
+	
+	public LMSIImpl(byte[] data) {
+		this.data = data;
+	}
+
+
+
+	public int getTag() {
+		return Tag.STRING_OCTET;
+	}
 
 	@Override
 	public byte[] getData() {
 		return this.data;
 	}
-	
-	public void setData(byte[] data) {
-		this.data = data;
+
+	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
+
+		if (length != 4)
+			throw new MAPParsingComponentException("Error decoding LMSI: the LMSI field must contain 4 octets. Contains: " + length,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+
+		try {
+			this.data = new byte[4];
+			ansIS.read(this.data);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding LMSI: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
 	}
 
-	public void decode(AsnInputStream ansIS) throws MAPException, IOException {
-
-		int digCnt = ansIS.available();
-		if (digCnt != 4)
-			throw new MAPException("Error decoding LMSI: the LMSI field must contain 4 octets. Contains: " + digCnt);
-
-		this.data = new byte[4];
-		ansIS.read(this.data);
-	}
-
-	public void encode(AsnOutputStream asnOs) throws MAPException, IOException {
+	public void encode(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.data == null)
 			throw new MAPException("Error while encoding the LMSI: data is not defined");
@@ -65,12 +85,16 @@ public class LMSIImpl implements LMSI {
 		if (this.data.length != 4)
 			throw new MAPException("Error while encoding the LMSI: data field length must equale 4");
 
-		asnOs.write(this.data);
+		try {
+			asnOs.write(this.data);
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding LMSI: " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public String toString() {
-		return "LMCI {Data=" + this.printDataArr() + "]";
+		return "LMCI [Data= " + this.printDataArr() + "]";
 	}
 	
 	private String printDataArr() {

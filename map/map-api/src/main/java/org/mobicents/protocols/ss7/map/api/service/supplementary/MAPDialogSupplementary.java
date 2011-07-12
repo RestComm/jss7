@@ -23,7 +23,7 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 
 /**

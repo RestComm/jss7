@@ -22,8 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api;
 
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
 import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckData;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;

@@ -22,7 +22,9 @@
 
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
-import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
 
 
 /**
@@ -38,10 +40,10 @@ import org.mobicents.protocols.ss7.map.api.dialog.AddressString;
  * @author sergey vetyutnev
  * 
  */
-public interface SM_RP_OA {
+public interface SM_RP_OA extends MAPPrimitive {
 
-	public AddressString getMsisdn();
+	public ISDNAddressString getMsisdn();
+
 	public AddressString getServiceCentreAddressOA();
 
 }
-

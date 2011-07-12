@@ -30,8 +30,11 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextNameImpl;
 import org.mobicents.protocols.ss7.tcap.asn.ParseException;
@@ -83,8 +86,7 @@ public class MAPRefuseInfoImpl {
 		this.alternativeAcn = alternativeAcn;
 	}
 
-	public void decode(AsnInputStream ais) throws AsnException, IOException,
-			MAPException {
+	public void decode(AsnInputStream ais) throws MAPParsingComponentException {
 		// MAP-RefuseInfo ::= SEQUENCE {
 		//   reason                          ENUMERATED {
 		//	      noReasonGiven                  ( 0 ), 
@@ -109,116 +111,127 @@ public class MAPRefuseInfoImpl {
 		this.setExtensionContainer(null);
 		this.setAlternativeAcn(null);
 
-		byte[] seqData = ais.readSequence();
+		try {
+			byte[] seqData = ais.readSequence();
 
-		AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(
-				seqData));
+			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(seqData));
 
-		int tag;
+			int tag;
 
-		int seqz = 0;
-		while (localAis.available() > 0) {
-			tag = localAis.readTag();
+			int seqz = 0;
+			while (localAis.available() > 0) {
+				tag = localAis.readTag();
 
-			if (seqz == 0) {
-				if(tag==Tag.ENUMERATED) {
-					int length = localAis.readLength();
-					if (length != 1) {
-						throw new MAPException(
-								"Expected length of MAP-RefuseInfo.Reason to be 1 but found "
-										+ length);
+				if (seqz == 0) {
+					if (tag == Tag.ENUMERATED) {
+						int length = localAis.readLength();
+						if (length != 1) {
+							throw new MAPParsingComponentException("Expected length of MAP-RefuseInfo.Reason to be 1 but found " + length,
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						}
+
+						int reasonCode = localAis.read();
+
+						this.reason = Reason.getReason(reasonCode);
+					} else {
+						throw new MAPParsingComponentException("The first element of MAP-RefuseInfo must be the Reason when decoding MAP-RefuseInfo",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+				} else {
+
+					Boolean badTag = false;
+					switch (tag) {
+					case Tag.SEQUENCE:
+						this.extensionContainer = new MAPExtensionContainerImpl();
+						byte[] buf = localAis.readSequence();
+						AsnInputStream lis = new AsnInputStream(new ByteArrayInputStream(buf));
+						((MAPExtensionContainerImpl) this.extensionContainer).decode(lis, localAis.getTagClass(), localAis.isTagPrimitive(), tag, buf.length);
+						break;
+
+					case Tag.OBJECT_IDENTIFIER:
+						this.alternativeAcn = new ApplicationContextNameImpl();
+						this.alternativeAcn.setOid(localAis.readObjectIdentifier());
+						break;
+
+					default:
+						badTag = true;
+						break;
 					}
 
-					int reasonCode = localAis.read();
-
-					this.reason = Reason.getReason(reasonCode);
-				} else {
-					throw new MAPException(
-							"The first element of MAP-RefuseInfo must be the Reason when decoding MAP-RefuseInfo");
+					if (badTag)
+						break;
 				}
-			} else {
 
-				Boolean badTag = false;
-				switch (tag) {
-				case Tag.SEQUENCE:
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl) this.extensionContainer)
-							.decode(localAis);
-					break;
-
-				case Tag.OBJECT_IDENTIFIER:
-					this.alternativeAcn = new ApplicationContextNameImpl();
-					this.alternativeAcn.setOid(localAis.readObjectIdentifier());
-					break;
-					
-				default:
-					badTag = true;
-					break;
-				}
-				
-				if (badTag)
-					break;
+				seqz++;
 			}
 
-			seqz++;
+			if (this.getReason() == null)
+				throw new MAPParsingComponentException("The first element of MAP-RefuseInfo must be the Reason when decoding MAP-RefuseInfo",
+						MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding MAPRefuseInfo: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding MAPRefuseInfo: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
-		
-		if (this.getReason() == null)
-			throw new MAPException(
-					"The first element of MAP-RefuseInfo must be the Reason when decoding MAP-RefuseInfo");
 	}
 
-	public void encode(AsnOutputStream asnOS) throws IOException, MAPException {
+	public void encode(AsnOutputStream asnOS) throws MAPException {
 
-		if (this.reason == null) 
-			throw new MAPException( "Reason field must not be empty" );
-		
-		AsnOutputStream localAos = new AsnOutputStream();
+		if (this.reason == null)
+			throw new MAPException("Reason field must not be empty");
 
-		byte[] reason = null;
-		byte[] extContData = null;
-		byte[] altAcnData = null;
+		try {
+			AsnOutputStream localAos = new AsnOutputStream();
 
-		reason = new byte[1];
-		reason[0] = (byte) this.reason.getCode();
+			byte[] reason = null;
+			byte[] extContData = null;
+			byte[] altAcnData = null;
 
-		if (this.extensionContainer != null) {
+			reason = new byte[1];
+			reason[0] = (byte) this.reason.getCode();
+
+			if (this.extensionContainer != null) {
+				localAos.reset();
+				((MAPExtensionContainerImpl) this.extensionContainer).encode(localAos);
+				extContData = localAos.toByteArray();
+			}
+
+			if (this.alternativeAcn != null) {
+				localAos.reset();
+				localAos.writeObjectIdentifier(this.alternativeAcn.getOid());
+				altAcnData = localAos.toByteArray();
+			}
+
 			localAos.reset();
-			((MAPExtensionContainerImpl) this.extensionContainer).encode(localAos);
-			extContData = localAos.toByteArray();
+
+			localAos.writeTag(Tag.CLASS_UNIVERSAL, REFUSE_TAG_PC_PRIMITIVE, Tag.ENUMERATED);
+			localAos.writeLength(reason.length);
+			localAos.write(reason);
+
+			if (extContData != null) {
+				localAos.writeTag(Tag.CLASS_UNIVERSAL, REFUSE_TAG_PC_CONSTRUCTED, Tag.SEQUENCE);
+				localAos.writeLength(extContData.length);
+				localAos.write(extContData);
+			}
+
+			if (altAcnData != null) {
+				// localAos.writeTag(Tag.CLASS_UNIVERSAL,
+				// REFUSE_TAG_PC_CONSTRUCTED, Tag.OBJECT_IDENTIFIER);
+				// localAos.writeLength(altAcnData.length);
+				localAos.write(altAcnData);
+			}
+
+			byte[] data = localAos.toByteArray();
+
+			asnOS.writeTag(REFUSE_TAG_CLASS, REFUSE_TAG_PC_CONSTRUCTED, MAP_REFUSE_INFO_TAG);
+			asnOS.writeLength(data.length);
+			asnOS.write(data);
+
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding MAPRefuseInfo: " + e.getMessage(), e);
 		}
-
-		if (this.alternativeAcn != null) {
-			localAos.reset();
-			localAos.writeObjectIdentifier(this.alternativeAcn.getOid());
-			altAcnData = localAos.toByteArray();
-		}
-
-		localAos.reset();
-
-		localAos.writeTag(Tag.CLASS_UNIVERSAL, REFUSE_TAG_PC_PRIMITIVE, Tag.ENUMERATED);
-		localAos.writeLength(reason.length);
-		localAos.write(reason);
-
-		if (extContData != null) {
-			localAos.writeTag(Tag.CLASS_UNIVERSAL, REFUSE_TAG_PC_CONSTRUCTED, Tag.SEQUENCE);
-			localAos.writeLength(extContData.length);
-			localAos.write(extContData);
-		}
-
-		if (altAcnData != null) {
-//			localAos.writeTag(Tag.CLASS_UNIVERSAL, REFUSE_TAG_PC_CONSTRUCTED, Tag.OBJECT_IDENTIFIER);
-//			localAos.writeLength(altAcnData.length);
-			localAos.write(altAcnData);
-		}
-
-		byte[] data = localAos.toByteArray();
-		
-		asnOS.writeTag(REFUSE_TAG_CLASS, REFUSE_TAG_PC_CONSTRUCTED,
-				MAP_REFUSE_INFO_TAG);
-		asnOS.writeLength(data.length);
-		asnOS.write(data);
-
 	}
 
 }

@@ -23,7 +23,11 @@
 package org.mobicents.protocols.ss7.map.errors;
 
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageAbsentSubscriberSM;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageCallBarred;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageParameterless;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSubscriberBusyForMtSms;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageUnknownSubscriber;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
@@ -40,17 +44,18 @@ public class MAPErrorMessageParameterlessImpl extends MAPErrorMessageImpl implem
 
 	
 	@Override
-	public Parameter[] encodeParameters() throws MAPException {
+	public Parameter encodeParameter() throws MAPException {
 		// no parameters
 		return null;
 	}
 
 	@Override
-	public void decodeParameters(Parameter[] p) throws MAPException {
+	public void decodeParameter(Parameter p) throws MAPException {
 	}
 
 	@Override
 	public String toString() {
 		return "MAPErrorMessageParameterless [errorCode=" + this.errorCode + "]"; 
 	}
+
 }

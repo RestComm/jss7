@@ -31,10 +31,13 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.ProcedureCancellationReason;
 import org.mobicents.protocols.ss7.map.api.dialog.ResourceUnavailableReason;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
  * MAP-UserAbortInfo ::= SEQUENCE { map-UserAbortChoice MAP-UserAbortChoice, ...
@@ -75,7 +78,7 @@ public class MAPUserAbortInfoImpl {
 		this.extensionContainer = extensionContainer;
 	}
 
-	public void decode(AsnInputStream ais) throws AsnException, IOException, MAPException {
+	public void decode(AsnInputStream ais) throws MAPParsingComponentException {
 
 		// MAP-UserAbortInfo ::= SEQUENCE {
 		//   map-UserAbortChoice   CHOICE {
@@ -109,167 +112,184 @@ public class MAPUserAbortInfoImpl {
 		this.setMAPUserAbortChoice(null);
 		this.setExtensionContainer(null);
 
-		byte[] seqData = ais.readSequence();
+		try {
+			byte[] seqData = ais.readSequence();
 
-		AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(seqData));
+			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(seqData));
 
-		int tag;
-		int length;
-		int seqz = 0;
-		while (localAis.available() > 0) {
-			
-			tag = localAis.readTag();
-			if (seqz == 0) {
-				// first element must be map-ProviderAbortReason
-				MAPUserAbortChoiceImpl usAbrtChoice = new MAPUserAbortChoiceImpl();
-				switch (tag) {
-				case MAPUserAbortChoiceImpl.USER_SPECIFIC_REASON_TAG:
-					length = localAis.readLength();
-					if (length != 0) {
-						throw new AsnException("Null length should be 0 but is " + length);
+			int tag;
+			int length;
+			int seqz = 0;
+			while (localAis.available() > 0) {
+
+				tag = localAis.readTag();
+				if (seqz == 0) {
+					// first element must be map-ProviderAbortReason
+					MAPUserAbortChoiceImpl usAbrtChoice = new MAPUserAbortChoiceImpl();
+					switch (tag) {
+					case MAPUserAbortChoiceImpl.USER_SPECIFIC_REASON_TAG:
+						length = localAis.readLength();
+						if (length != 0) {
+							throw new MAPParsingComponentException("Null length should be 0 but is " + length,
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						}
+						usAbrtChoice.setUserSpecificReason();
+						this.setMAPUserAbortChoice(usAbrtChoice);
+						break;
+
+					case MAPUserAbortChoiceImpl.USER_RESOURCE_LIMITATION_TAG:
+						length = localAis.readLength();
+						if (length != 0) {
+							throw new MAPParsingComponentException("Null length should be 0 but is " + length,
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						}
+						usAbrtChoice.setUserResourceLimitation();
+						this.setMAPUserAbortChoice(usAbrtChoice);
+						break;
+
+					case MAPUserAbortChoiceImpl.RESOURCE_UNAVAILABLE:
+
+						length = localAis.readLength();
+
+						tag = localAis.readTag();
+						if (tag != Tag.ENUMERATED) {
+							throw new MAPParsingComponentException("Expected ENUMERATED TAG for ResourceUnavailableReason but received " + tag,
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						}
+
+						length = localAis.readLength();
+						if (length != 1) {
+							throw new MAPParsingComponentException(
+									"Expected length of MAPUserAbortChoiceImpl.RESOURCE_UNAVAILABLE to be 1 but found " + length,
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						}
+
+						int code = localAis.read();
+						ResourceUnavailableReason resUnaReas = ResourceUnavailableReason.getInstance(code);
+						usAbrtChoice.setResourceUnavailableReason(resUnaReas);
+						this.setMAPUserAbortChoice(usAbrtChoice);
+						break;
+
+					case MAPUserAbortChoiceImpl.APPLICATION_PROCEDURE_CANCELLATION:
+
+						length = localAis.readLength();
+
+						tag = localAis.readTag();
+						if (tag != Tag.ENUMERATED) {
+							throw new MAPParsingComponentException("Expected ENUMERATED TAG for ResourceUnavailableReason but received " + tag,
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						}
+
+						length = localAis.readLength();
+						if (length != 1) {
+							throw new MAPParsingComponentException(
+									"Expected length of MAPUserAbortChoiceImpl.APPLICATION_PROCEDURE_CANCELLATION to be 1 but found " + length,
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						}
+
+						int code1 = localAis.read();
+						ProcedureCancellationReason procCanReasn = ProcedureCancellationReason.getInstance(code1);
+						usAbrtChoice.setProcedureCancellationReason(procCanReasn);
+						this.setMAPUserAbortChoice(usAbrtChoice);
+						break;
+
+					default:
+						throw new MAPParsingComponentException(
+								"The first element of MAP-UserAbortInfo must be the MAP-UserAbortChoice when decoding MAP-UserAbortInfo",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
-					usAbrtChoice.setUserSpecificReason();
-					this.setMAPUserAbortChoice(usAbrtChoice);
-					break;
+				} else {
 
-				case MAPUserAbortChoiceImpl.USER_RESOURCE_LIMITATION_TAG:
-					length = localAis.readLength();
-					if (length != 0) {
-						throw new AsnException("Null length should be 0 but is " + length);
-					}
-					usAbrtChoice.setUserResourceLimitation();
-					this.setMAPUserAbortChoice(usAbrtChoice);
-					break;
-
-				case MAPUserAbortChoiceImpl.RESOURCE_UNAVAILABLE:
-
-					length = localAis.readLength();
-
-					tag = localAis.readTag();
-					if (tag != Tag.ENUMERATED) {
-						throw new AsnException("Expected ENUMERATED TAG for ResourceUnavailableReason but received " + tag);
-					}
-
-					length = localAis.readLength();
-					if (length != 1) {
-						throw new MAPException(
-								"Expected length of MAPUserAbortChoiceImpl.RESOURCE_UNAVAILABLE to be 1 but found "
-								+ length);
-					}
-
-					int code = localAis.read();
-					ResourceUnavailableReason resUnaReas = ResourceUnavailableReason.getInstance(code);
-					usAbrtChoice.setResourceUnavailableReason(resUnaReas);
-					this.setMAPUserAbortChoice(usAbrtChoice);
-					break;
-
-				case MAPUserAbortChoiceImpl.APPLICATION_PROCEDURE_CANCELLATION:
-
-					length = localAis.readLength();
-
-					tag = localAis.readTag();
-					if (tag != Tag.ENUMERATED) {
-						throw new AsnException("Expected ENUMERATED TAG for ResourceUnavailableReason but received " + tag);
-					}
-
-					length = localAis.readLength();
-					if (length != 1) {
-						throw new MAPException(
-								"Expected length of MAPUserAbortChoiceImpl.APPLICATION_PROCEDURE_CANCELLATION to be 1 but found "
-								+ length);
-					}
-
-					int code1 = localAis.read();
-					ProcedureCancellationReason procCanReasn = ProcedureCancellationReason.getInstance(code1);
-					usAbrtChoice.setProcedureCancellationReason(procCanReasn);
-					this.setMAPUserAbortChoice(usAbrtChoice);
-					break;
-					
-				default:
-					throw new MAPException(
-							"The first element of MAP-UserAbortInfo must be the MAP-UserAbortChoice when decoding MAP-UserAbortInfo");
+					if (tag == Tag.SEQUENCE) {
+						this.extensionContainer = new MAPExtensionContainerImpl();
+						byte[] buf = localAis.readSequence();
+						AsnInputStream lis = new AsnInputStream(new ByteArrayInputStream(buf));
+						((MAPExtensionContainerImpl) this.extensionContainer).decode(lis, localAis.getTagClass(), localAis.isTagPrimitive(), tag, buf.length);
+					} else
+						break;
 				}
-			} else {
-				
-				if (tag == Tag.SEQUENCE) {
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl) this.extensionContainer)
-							.decode(localAis);
-				}
-				else
-					break;
+
+				seqz++;
 			}
 
-			seqz++;
+			if (this.getMAPUserAbortChoice() == null)
+				throw new MAPParsingComponentException("The first element of MAP-UserAbortInfo must be MAP-UserAbortChoice when decoding MAP-UserAbortInfo",
+						MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding MAPUserAbortInfo: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding MAPUserAbortInfo: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
-
-		if (this.getMAPUserAbortChoice() == null)
-			throw new MAPException(
-					"The first element of MAP-UserAbortInfo must be MAP-UserAbortChoice when decoding MAP-UserAbortInfo");
 	}
 
-	public void encode(AsnOutputStream asnOS) throws IOException, MAPException {
+	public void encode(AsnOutputStream asnOS) throws MAPException {
 		
-		if( this.mapUserAbortChoice == null )
+		if (this.mapUserAbortChoice == null)
 			throw new MAPException("MAPUserAbortInfo must contains the field UserSpecificReason - when encoding MAP-ProviderAbortInfo");
-		
-		byte[] choice = null;
-		byte[] extContData = null;
-		
-		if (this.mapUserAbortChoice.isUserSpecificReason()) {
-			choice = new byte[2];
-			choice[0] = MAPUserAbortChoiceImpl.USER_SPECIFIC_REASON_TAG;
-			choice[1] = 0x00;
 
-		} else if (this.mapUserAbortChoice.isUserResourceLimitation()) {
-			choice = new byte[2];
-			choice[0] = MAPUserAbortChoiceImpl.USER_RESOURCE_LIMITATION_TAG;
-			choice[1] = 0x00;
+		try {
+			byte[] choice = null;
+			byte[] extContData = null;
 
-		} else if (this.mapUserAbortChoice.isResourceUnavailableReason()) {
-			choice = new byte[5];
-			choice[0] = MAPUserAbortChoiceImpl.RESOURCE_UNAVAILABLE;
-			choice[1] = 0x03;
+			if (this.mapUserAbortChoice.isUserSpecificReason()) {
+				choice = new byte[2];
+				choice[0] = MAPUserAbortChoiceImpl.USER_SPECIFIC_REASON_TAG;
+				choice[1] = 0x00;
 
-			// Enumerated
-			choice[2] = 0x0A;
-			choice[3] = 0x01;
-			choice[4] = (byte) this.mapUserAbortChoice.getResourceUnavailableReason().getCode();
+			} else if (this.mapUserAbortChoice.isUserResourceLimitation()) {
+				choice = new byte[2];
+				choice[0] = MAPUserAbortChoiceImpl.USER_RESOURCE_LIMITATION_TAG;
+				choice[1] = 0x00;
 
-		} else if (this.mapUserAbortChoice.isProcedureCancellationReason()) {
-			choice = new byte[5];
-			choice[0] = MAPUserAbortChoiceImpl.APPLICATION_PROCEDURE_CANCELLATION;
-			choice[1] = 0x03;
+			} else if (this.mapUserAbortChoice.isResourceUnavailableReason()) {
+				choice = new byte[5];
+				choice[0] = MAPUserAbortChoiceImpl.RESOURCE_UNAVAILABLE;
+				choice[1] = 0x03;
 
-			// Enumerated
-			choice[2] = 0x0A;
-			choice[3] = 0x01;
-			choice[4] = (byte) this.mapUserAbortChoice.getProcedureCancellationReason().getCode();
+				// Enumerated
+				choice[2] = 0x0A;
+				choice[3] = 0x01;
+				choice[4] = (byte) this.mapUserAbortChoice.getResourceUnavailableReason().getCode();
 
-		} else {
-			throw new MAPException("UserSpecificReason in the MAPUserAbortInfo is not filled");
+			} else if (this.mapUserAbortChoice.isProcedureCancellationReason()) {
+				choice = new byte[5];
+				choice[0] = MAPUserAbortChoiceImpl.APPLICATION_PROCEDURE_CANCELLATION;
+				choice[1] = 0x03;
+
+				// Enumerated
+				choice[2] = 0x0A;
+				choice[3] = 0x01;
+				choice[4] = (byte) this.mapUserAbortChoice.getProcedureCancellationReason().getCode();
+
+			} else {
+				throw new MAPException("UserSpecificReason in the MAPUserAbortInfo is not filled");
+			}
+
+			AsnOutputStream localAos = new AsnOutputStream();
+			if (this.extensionContainer != null) {
+				((MAPExtensionContainerImpl) this.extensionContainer).encode(localAos);
+				extContData = localAos.toByteArray();
+			}
+
+			localAos.reset();
+			localAos.write(choice);
+
+			if (extContData != null) {
+				localAos.writeTag(Tag.CLASS_UNIVERSAL, USER_ABORT_TAG_PC_CONSTRUCTED, Tag.SEQUENCE);
+				localAos.writeLength(extContData.length);
+				localAos.write(extContData);
+			}
+			byte[] data = localAos.toByteArray();
+
+			// Now let us write the MAP OPEN-INFO Tags
+			asnOS.writeTag(USER_ABORT_TAG_CLASS, USER_ABORT_TAG_PC_CONSTRUCTED, MAP_USER_ABORT_INFO_TAG);
+			asnOS.writeLength(data.length);
+			asnOS.write(data);
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding MAPUserAbortInfo: " + e.getMessage(), e);
 		}
-		
-		AsnOutputStream localAos = new AsnOutputStream();
-		if (this.extensionContainer != null) {
-			((MAPExtensionContainerImpl) this.extensionContainer).encode(localAos);
-			extContData = localAos.toByteArray();
-		}
-
-		localAos.reset();
-		localAos.write(choice);
-
-		if (extContData != null) {
-			localAos.writeTag(Tag.CLASS_UNIVERSAL, USER_ABORT_TAG_PC_CONSTRUCTED, Tag.SEQUENCE);
-			localAos.writeLength(extContData.length);
-			localAos.write(extContData);
-		}
-		byte[] data = localAos.toByteArray();
-
-		// Now let us write the MAP OPEN-INFO Tags
-		asnOS.writeTag(USER_ABORT_TAG_CLASS, USER_ABORT_TAG_PC_CONSTRUCTED, MAP_USER_ABORT_INFO_TAG);
-		asnOS.writeLength(data.length);
-		asnOS.write(data);
 	}
 
 }

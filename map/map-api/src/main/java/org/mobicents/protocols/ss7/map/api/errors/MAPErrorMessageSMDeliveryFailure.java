@@ -22,10 +22,25 @@
 
 package org.mobicents.protocols.ss7.map.api.errors;
 
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * The MAP ReturnError message: MessageSMDeliveryFailure with parameters
+ * 
+ * sm-DeliveryFailure  ERROR ::= {
+ *	PARAMETER
+ *		SM-DeliveryFailureCause
+ *	CODE	local:32 }
+ *
+ *
+ * 
+ * SM-DeliveryFailureCause ::= SEQUENCE {
+ *	sm-EnumeratedDeliveryFailureCause	SM-EnumeratedDeliveryFailureCause,
+ *	diagnosticInfo	SignalInfo	OPTIONAL,
+ *	extensionContainer	ExtensionContainer	OPTIONAL,
+ *	...}
+ *
+ * 
  * 
  * @author sergey vetyutnev
  * 
@@ -33,7 +48,8 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
 public interface MAPErrorMessageSMDeliveryFailure extends MAPErrorMessage {
 
 	public SMEnumeratedDeliveryFailureCause getSMEnumeratedDeliveryFailureCause();
+
 	public byte[] getSignalInfo();
+
 	public MAPExtensionContainer getExtensionContainer();
 }
-

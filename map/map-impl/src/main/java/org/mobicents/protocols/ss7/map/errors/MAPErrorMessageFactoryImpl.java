@@ -24,15 +24,29 @@ package org.mobicents.protocols.ss7.map.errors;
 
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.errors.AbsentSubscriberReason;
 import org.mobicents.protocols.ss7.map.api.errors.AdditionalNetworkResource;
+import org.mobicents.protocols.ss7.map.api.errors.CallBarringCause;
+import org.mobicents.protocols.ss7.map.api.errors.ExtensibleCallBarredParam;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorCode;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageAbsentSubscriber;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageAbsentSubscriberSM;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageCallBarred;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFacilityNotSup;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageParameterless;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessagePositionMethodFailure;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSMDeliveryFailure;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSubscriberBusyForMtSms;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSystemFailure;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageUnauthorizedLCSClient;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageUnknownSubscriber;
 import org.mobicents.protocols.ss7.map.api.errors.NetworkResource;
+import org.mobicents.protocols.ss7.map.api.errors.PositionMethodFailureDiagnostic;
 import org.mobicents.protocols.ss7.map.api.errors.SMEnumeratedDeliveryFailureCause;
+import org.mobicents.protocols.ss7.map.api.errors.UnauthorizedLCSClientDiagnostic;
+import org.mobicents.protocols.ss7.map.api.errors.UnknownSubscriberDiagnostic;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * The factory of MAP ReturnError messages
@@ -51,9 +65,21 @@ public class MAPErrorMessageFactoryImpl implements MAPErrorMessageFactory {
 	public MAPErrorMessage createMessageFromErrorCode(Long errorCode) {
 		long ec = (long) errorCode;
 		switch ((int) ec) {
-		// ...............................
-		// TODO: implement creating other message types
-		
+		case MAPErrorCode.unexpectedDataValue:
+		case MAPErrorCode.dataMissing:
+		case MAPErrorCode.unidentifiedSubscriber:
+		case MAPErrorCode.illegalSubscriber:
+		case MAPErrorCode.illegalEquipment:
+		case MAPErrorCode.teleserviceNotProvisioned:
+		case MAPErrorCode.messageWaitingListFull:
+		case MAPErrorCode.unauthorizedRequestingNetwork:
+		case MAPErrorCode.resourceLimitation:
+		case MAPErrorCode.unknownOrUnreachableLCSClient:
+			return new MAPErrorMessageExtensionContainerImpl(errorCode);
+
+			// ...............................
+			// TODO: implement creating other message types
+			
 		default:
 			return new MAPErrorMessageParameterlessImpl(errorCode);
 		}
@@ -88,4 +114,61 @@ public class MAPErrorMessageFactoryImpl implements MAPErrorMessageFactory {
 		// TODO: implement this
 		return null;
 	}
+
+
+	@Override
+	public MAPErrorMessageUnknownSubscriber createMAPErrorMessageUnknownSubscriber(Long mapVersion, MAPExtensionContainer extensionContainer,
+			UnknownSubscriberDiagnostic unknownSubscriberDiagnostic) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public MAPErrorMessageAbsentSubscriberSM createMAPErrorMessageAbsentSubscriberSM(Long mapVersion, MAPExtensionContainer extensionContainer,
+			Integer absentSubscriberDiagnosticSM, Integer additionalAbsentSubscriberDiagnosticSM) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public MAPErrorMessageSubscriberBusyForMtSms createMAPErrorMessageSubscriberBusyForMtSms(Long mapVersion, MAPExtensionContainer extensionContainer,
+			Boolean gprsConnectionSuspended) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public MAPErrorMessageCallBarred createMAPErrorMessageCallBarred(Long mapVersion, CallBarringCause callBarringCause,
+			MAPExtensionContainer extensionContainer, Boolean unauthorisedMessageOriginator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public MAPErrorMessageAbsentSubscriber createMAPErrorMessageAbsentSubscriber(Long mapVersion, MAPExtensionContainer extensionContainer,
+			AbsentSubscriberReason absentSubscriberReason) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public MAPErrorMessageUnauthorizedLCSClient createMAPErrorMessageUnauthorizedLCSClient(Long mapVersion,
+			UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public MAPErrorMessagePositionMethodFailure createMAPErrorMessagePositionMethodFailure(Long mapVersion,
+			PositionMethodFailureDiagnostic positionMethodFailureDiagnostic, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
