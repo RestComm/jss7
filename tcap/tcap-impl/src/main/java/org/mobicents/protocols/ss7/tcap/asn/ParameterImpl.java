@@ -184,9 +184,11 @@ public class ParameterImpl implements Parameter {
 				throw new ParseException("Undefined length is not supported.");
 			}
 			data = new byte[len];
-			int tlen = ais.read(data);
-			if (tlen != len) {
-				throw new ParseException("Not enough data read, expected: " + len + ", actual: " + tlen);
+			if (len != 0) {
+				int tlen = ais.read(data);
+				if (tlen != len) {
+					throw new ParseException("Not enough data read, expected: " + len + ", actual: " + tlen);
+				}
 			}
 
 		} catch (IOException e) {
