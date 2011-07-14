@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -50,12 +52,22 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
-			<artifactId>mtp</artifactId>
+			<artifactId>mtp-api</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mobicents.protocols.stream</groupId>
 			<artifactId>stream</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+			<artifactId>m3ua-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+			<artifactId>m3ua-impl</artifactId>
 		</dependency>
 
 		<dependency>
@@ -94,6 +106,10 @@
 			<artifactId>opencsv</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>javolution</groupId>
+			<artifactId>javolution</artifactId>
+		</dependency>
 	</dependencies>
 
 
@@ -189,6 +205,30 @@
 									</destFileName>
 								</artifactItem>
 								<artifactItem>
+									<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+									<artifactId>m3ua-api</artifactId>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										m3ua-api.jar
+									</destFileName>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+									<artifactId>m3ua-impl</artifactId>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										m3ua-impl.jar
+									</destFileName>
+								</artifactItem>
+								<artifactItem>
 									<groupId>org.mobicents.protocols.asn</groupId>
 									<artifactId>asn</artifactId>
 									<type>jar</type>
@@ -226,14 +266,14 @@
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.mobicents.protocols.ss7.mtp</groupId>
-									<artifactId>mtp</artifactId>
+									<artifactId>mtp-api</artifactId>
 									<type>jar</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>
 										${project.build.directory}
 									</outputDirectory>
 									<destFileName>
-										mtp.jar
+										mtp-api.jar
 									</destFileName>
 								</artifactItem>
 								<artifactItem>
@@ -246,6 +286,18 @@
 									</outputDirectory>
 									<destFileName>
 										stream.jar
+									</destFileName>
+								</artifactItem>
+								<artifactItem>
+									<groupId>javolution</groupId>
+									<artifactId>javolution</artifactId>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										javolution.jar
 									</destFileName>
 								</artifactItem>
 								<artifactItem>

@@ -62,17 +62,20 @@ RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/log4j.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/opencsv.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/swing-layout.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/swing-worker.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/javolution.jar"
 
 #now SS7
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/stream.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/asn.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/mtp.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/mtp-api.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/sccp-api.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/sccp-impl.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/tcap-api.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/tcap-impl.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/map-api.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/map-impl.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/m3ua-api.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/m3ua-impl.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/ss7-ussd-simulator.jar"
 
 # For Cygwin, switch paths to Windows format before running java

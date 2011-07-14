@@ -5,8 +5,8 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>ussd-simulator</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
+            <explicit-platform explicit-source-supported="true"/>
             <source-roots>
-                <root id="src.java2.dir"/>
                 <root id="src.java.dir"/>
                 <root id="src.resources.dir"/>
             </source-roots>

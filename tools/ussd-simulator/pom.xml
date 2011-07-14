@@ -18,91 +18,23 @@
 	<modules>
 		<module>simulator</module>
 	</modules>
+	<properties>
+		<map.version>1.0.0-SNAPSHOT</map.version>
+		<m3ua.version>1.0.0-SNAPSHOT</m3ua.version>
+		<mtp.version>1.0.0-SNAPSHOT</mtp.version>
+		<javolution.version>5.5.1</javolution.version>
+	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<!-- Managed deps -->
 			<!-- SS7 -->
 			<dependency>
-				<groupId>org.mobicents.protocols.ss7.map</groupId>
-				<artifactId>map-api</artifactId>
-				<version>${map.version}</version>
+				<artifactId>ss7-parent</artifactId>
+				<groupId>org.mobicents.protocols.ss7</groupId>
+				<version>1.0.0-SNAPSHOT</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
-			<dependency>
-				<groupId>org.mobicents.protocols.ss7.map</groupId>
-				<artifactId>map-impl</artifactId>
-				<version>${map.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mobicents.protocols.ss7.sccp</groupId>
-				<artifactId>sccp-api</artifactId>
-				<version>${sccp.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mobicents.protocols.ss7.sccp</groupId>
-				<artifactId>sccp-impl</artifactId>
-				<version>${sccp.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.mobicents.protocols.asn</groupId>
-				<artifactId>asn</artifactId>
-				<version>${asn.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.mobicents.protocols.ss7.tcap</groupId>
-				<artifactId>tcap-impl</artifactId>
-				<version>${tcap.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.mobicents.protocols.ss7.tcap</groupId>
-				<artifactId>tcap-api</artifactId>
-				<version>${tcap.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mobicents.protocols.ss7.mtp</groupId>
-				<artifactId>mtp</artifactId>
-				<version>${mtp.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.mobicents.protocols.stream</groupId>
-				<artifactId>stream</artifactId>
-				<version>${stream.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
-				<artifactId>m3ua-api</artifactId>
-				<version>${m3ua.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
-				<artifactId>m3ua-impl</artifactId>
-				<version>${m3ua.version}</version>
-			</dependency>
-			
-			<dependency>
-				<groupId>concurrent</groupId>
-				<artifactId>concurrent</artifactId>
-				<version>${concurrent.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			
-			<!-- 
-			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<scope>provided</scope>
-			</dependency>
- 			-->
 			<!-- Not managed deps -->
 
 			<dependency>
@@ -126,6 +58,7 @@
 				<artifactId>opencsv</artifactId>
 				<version>1.8</version>
 			</dependency>
+	
 			<!--
 				<dependency> <groupId>urbanophile</groupId>
 				<artifactId>java-getopt</artifactId> </dependency>
