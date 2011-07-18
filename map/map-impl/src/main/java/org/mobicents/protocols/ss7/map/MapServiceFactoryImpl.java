@@ -34,6 +34,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.FTNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
@@ -51,12 +52,14 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSR
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.FTNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPPrivateExtensionImpl;
 import org.mobicents.protocols.ss7.map.service.sms.LocationInfoWithLMSIImpl;
+import org.mobicents.protocols.ss7.map.service.sms.MWStatusImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SM_RP_DAImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SM_RP_OAImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortChoiceImpl;
@@ -147,6 +150,11 @@ public class MapServiceFactoryImpl implements MapServiceFactory {
 	}
 
 	@Override
+	public IMEI createIMEI(String imei) {
+		return new IMEIImpl(imei);
+	}
+
+	@Override
 	public LMSI createLMSI(byte[] data) {
 		return new LMSIImpl(data);
 	}
@@ -192,8 +200,7 @@ public class MapServiceFactoryImpl implements MapServiceFactory {
 
 	@Override
 	public MWStatus createMWStatus(Boolean scAddressNotIncluded, Boolean mnrfSet, Boolean mcefSet, Boolean mnrgSet) {
-		// TODO Auto-generated method stub
-		return null;
+		return new MWStatusImpl(scAddressNotIncluded, mnrfSet, mcefSet, mnrgSet);
 	}
 
 	@Override
@@ -201,5 +208,6 @@ public class MapServiceFactoryImpl implements MapServiceFactory {
 			AdditionalNumberType additionalNumberType, ISDNAddressString additionalNumber) {
 		return new LocationInfoWithLMSIImpl(networkNodeNumber, lmsi, extensionContainer, additionalNumberType, additionalNumber);
 	}
+
 
 }

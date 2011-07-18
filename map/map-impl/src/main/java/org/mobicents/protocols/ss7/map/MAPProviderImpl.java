@@ -24,7 +24,6 @@ package org.mobicents.protocols.ss7.map;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -35,14 +34,11 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
-import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
-import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPDialogueAS;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
@@ -108,7 +104,6 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnErrorProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
-import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextNameImpl;
 import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
 
 /**
@@ -123,7 +118,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	private Set<MAPDialogListener> dialogListeners = new HashSet<MAPDialogListener>();
 
-	private Map<Long, MAPDialogImpl> dialogs = new HashMap<Long, MAPDialogImpl>();
+	protected Map<Long, MAPDialogImpl> dialogs = new HashMap<Long, MAPDialogImpl>();
 
 	private TCAPProvider tcapProvider = null;
 
@@ -268,9 +263,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			// TODO What should be the MAPProviderAbortReason for TC-U-ABORT
 			// here? (ACNNotSupported or abnormalDialogue)
 			try {
-				// this.fireTCUAbort(tcBeginIndication.getDialog(), null,
-				// MAPProviderAbortReason.abnormalDialogue);
-				this.fireTCAbortACNNotSupported(tcBeginIndication.getDialog(), null, null);
+				this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null);
+				// this.fireTCAbortACNNotSupported(tcBeginIndication.getDialog(),
+				// null, null);
 			} catch (MAPException e) {
 				loger.error("Error while firing TC-U-ABORT. ", e);
 			}
