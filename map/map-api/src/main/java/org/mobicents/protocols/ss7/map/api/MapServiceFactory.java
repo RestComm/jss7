@@ -30,6 +30,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.FTNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
@@ -140,6 +141,8 @@ public interface MapServiceFactory {
 	 * @return new instance of {@link IMSI}
 	 */
 	public IMSI createIMSI(Long MCC, Long MNC, String MSIN);
+
+	public IMEI createIMEI(String imei);
 
 	/**
 	 * Creates a new instance of {@link LMSI}
