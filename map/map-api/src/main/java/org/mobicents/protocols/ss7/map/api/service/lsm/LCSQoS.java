@@ -22,6 +22,7 @@
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
 
 /**
  * 
@@ -32,11 +33,11 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  *   responseTime [3] ResponseTime OPTIONAL,
  *   extensionContainer [4] ExtensionContainer OPTIONAL,
  *   ...}
-
+ *
  * @author amit bhayani
  *
  */
-public interface LCSQoS {
+public interface LCSQoS extends MAPPrimitive {
 	
 	/**
 	 * Horizontal-Accuracy ::= OCTET STRING (SIZE (1))
@@ -46,13 +47,13 @@ public interface LCSQoS {
      *          -- confidence.
 	 * @return
 	 */
-	public String getHorizontalAccuracy();
+	public Integer getHorizontalAccuracy();
 	
 	/**
 	 * NULL
 	 * @return
 	 */
-	public boolean getVerticalCoordinateRequest();
+	public Boolean getVerticalCoordinateRequest();
 	
 	/**
 	 * Vertical-Accuracy ::= OCTET STRING (SIZE (1))
@@ -63,7 +64,7 @@ public interface LCSQoS {
      *
 	 * @return
 	 */
-	public String getVerticalAccuracy();
+	public Integer getVerticalAccuracy();
 	
 	public ResponseTime getResponseTime();
 	

@@ -21,6 +21,9 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+
 /**
  * LCSRequestorID ::= SEQUENCE {
  *    dataCodingScheme [0] USSD-DataCodingScheme,
@@ -31,14 +34,14 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface LCSRequestorID {
+public interface LCSRequestorID extends MAPPrimitive {
 	byte getDataCodingScheme();
 	
 	/**
 	 * RequestorIDString ::= USSD-String (SIZE (1..maxRequestorIDStringLength))
 	 * @return
 	 */
-	String getRequestorIDString();
+	USSDString getRequestorIDString();
 	
 	LCSFormatIndicator getLCSFormatIndicator();
 }

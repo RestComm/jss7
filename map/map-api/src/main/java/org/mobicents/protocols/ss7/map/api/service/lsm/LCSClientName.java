@@ -21,6 +21,9 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+
 /**
  * LCSClientName ::= SEQUENCE {
  *    dataCodingScheme [0] USSD-DataCodingScheme,
@@ -35,14 +38,17 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface LCSClientName {
+public interface LCSClientName extends MAPPrimitive {
 	byte getDataCodingScheme();
 	
 	/**
 	 * NameString ::= USSD-String (SIZE (1..maxNameStringLength))
+	 * 
+	 * maxNameStringLength INTEGER ::= 63
+     *
 	 * @return
 	 */
-	String getNameString();
+	USSDString getNameString();
 	
 	LCSFormatIndicator getLCSFormatIndicator();
 }

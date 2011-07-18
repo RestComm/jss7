@@ -21,8 +21,9 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
 
 /**
  * LCSClientExternalID ::= SEQUENCE {
@@ -33,9 +34,9 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * @author amit bhayani
  *
  */
-public interface LCSClientExternalID {
+public interface LCSClientExternalID extends MAPPrimitive {
 	
-	public AddressString getExternalAddress();
+	public ISDNAddressString getExternalAddress();
 	
 	public MAPExtensionContainer getExtensionContainer();
 }

@@ -21,6 +21,8 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+
 /**
  * Area ::= SEQUENCE {
  *   areaType [0] AreaType,
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface Area {
+public interface Area extends MAPPrimitive {
 	
 	public AreaType getAreaType();
 	
@@ -52,6 +54,6 @@ public interface Area {
      *      
 	 * @return
 	 */
-	public String getAreaIdentification();
-	
+	public byte[] getAreaIdentification();
+	//TODO should this be decoded further into MCC, NC, LAC etc?
 }

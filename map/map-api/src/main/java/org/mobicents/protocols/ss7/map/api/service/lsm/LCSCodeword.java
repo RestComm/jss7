@@ -21,6 +21,9 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+
 /**
  * LCSCodeword ::= SEQUENCE {
  *   dataCodingScheme [0] USSD-DataCodingScheme,
@@ -30,13 +33,24 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface LCSCodeword {
+public interface LCSCodeword extends MAPPrimitive {
+	
+	/**
+	 * USSD-DataCodingScheme ::= OCTET STRING (SIZE (1))
+	 *		-- The structure of the USSD-DataCodingScheme is defined by
+	 *		-- the Cell Broadcast Data Coding Scheme as described in
+	 *		-- TS 3GPP TS 23.038 [25]
+	 *
+	 * @return
+	 */
 	public byte getDataCodingScheme();
 	
 	/**
 	 * LCSCodewordString ::= USSD-String (SIZE (1..maxLCSCodewordStringLength))
 	 * 
+	 * maxLCSCodewordStringLength INTEGER ::= 20
+	 * 
 	 * @return
 	 */
-	public String getLCSCodewordString();
+	public USSDString getLCSCodewordString();
 }

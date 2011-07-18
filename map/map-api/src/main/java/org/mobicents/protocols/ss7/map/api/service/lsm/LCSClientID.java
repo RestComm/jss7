@@ -22,6 +22,7 @@
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
 
 /**
  * LCS-ClientID ::= SEQUENCE {
@@ -37,7 +38,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
  * @author amit bhayani
  *
  */
-public interface LCSClientID {
+public interface LCSClientID extends MAPPrimitive {
 	LCSClientType getLCSClientType();
 	
 	LCSClientExternalID getLCSClientExternalID();
@@ -53,7 +54,7 @@ public interface LCSClientID {
      *      -- Octets are coded according to TS 3GPP TS 23.003 [17]
 	 * @return
 	 */
-	String getLCSAPN();
+	byte[] getLCSAPN();
 	
 	LCSRequestorID getLCSRequestorID();
 }

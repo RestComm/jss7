@@ -21,6 +21,8 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+
 /**
  * AreaEventInfo ::= SEQUENCE {
  *     areaDefinition [0] AreaDefinition,
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface AreaEventInfo {
+public interface AreaEventInfo extends MAPPrimitive {
 	
 	public AreaDefinition getAreaDefinition();
 	
@@ -43,5 +45,5 @@ public interface AreaEventInfo {
      *       
 	 * @return
 	 */
-	public int getIntervalTime();
+	public Integer getIntervalTime();
 }

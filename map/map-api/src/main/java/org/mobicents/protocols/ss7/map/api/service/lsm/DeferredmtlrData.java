@@ -23,6 +23,8 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 import java.util.BitSet;
 
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+
 /**
  * 
  * Deferredmt-lrData ::= SEQUENCE {
@@ -36,7 +38,7 @@ import java.util.BitSet;
  * @author amit bhayani
  *
  */
-public interface DeferredmtlrData {
+public interface DeferredmtlrData extends MAPPrimitive {
 	
 	/**
 	 * DeferredLocationEventType ::= BIT STRING {

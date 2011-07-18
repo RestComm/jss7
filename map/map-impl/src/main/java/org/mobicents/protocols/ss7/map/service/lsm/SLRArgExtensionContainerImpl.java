@@ -19,12 +19,15 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
-package org.mobicents.protocols.ss7.map.api.service.lsm;
+package org.mobicents.protocols.ss7.map.service.lsm;
+
+import org.mobicents.protocols.ss7.map.api.service.lsm.SLRArgExtensionContainer;
+import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
-public enum CellGlobalIdOrServiceAreaIdOrLAIType {
-	CellGlobalIdOrServiceAreaIdFixedLength, LAIFixedLength;
+public class SLRArgExtensionContainerImpl extends MAPPrimitiveBase implements SLRArgExtensionContainer {
+
 }

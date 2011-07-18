@@ -127,9 +127,9 @@ public class GSMCharsetEncoder extends CharsetEncoder {
 		}// end of For loop
 
 		// The final one if total bits are not LCM of 8
-		if (bitpos % 8 != 0) {
+		//if (bitpos % 8 != 0) {
 			out.put((byte) (b & 0xFF));
-		}
+		//}
 
 		return CoderResult.UNDERFLOW;
 	}

@@ -21,8 +21,9 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
 /**
  * 
@@ -77,15 +78,15 @@ public interface SubscriberLocationReportRequestIndication extends LsmMessage {
 	
 	public LCSLocationInfo getLCSLocationInfo();
 	
-	public AddressString getMSISDN();
+	public ISDNAddressString getMSISDN();
 	
 	public IMSI getIMSI();
 	
-	public String getIMEI();
+	public IMEI getIMEI();
 	
-	public AddressString getNaESRD();
+	public ISDNAddressString getNaESRD();
 	
-	public AddressString getNaESRK();
+	public ISDNAddressString getNaESRK();
 	
 	/**
 	 * Ext-GeographicalInformation ::= OCTET STRING (SIZE (1..maxExt-GeographicalInformation))
@@ -142,10 +143,14 @@ public interface SubscriberLocationReportRequestIndication extends LsmMessage {
      *   -- An Ext-GeographicalInformation parameter comprising one octet shall be treated as
      *   -- invalid data by the receiver if an Add-GeographicalInformation parameter is not
      *   -- received in the same message.
+     *   
+     *   maxExt-GeographicalInformation INTEGER ::= 20
+     *		-- the maximum length allows for further shapes in 3GPP TS 23.032 to be included in later
+     *		-- versions of 3GPP TS 29.002
 	 * 
 	 * @return
 	 */
-	public String getLocationEstimate();
+	public byte[] getLocationEstimate();
 	
 	/**
 	 * AgeOfLocationInformation ::= INTEGER (0..32767)
@@ -159,7 +164,7 @@ public interface SubscriberLocationReportRequestIndication extends LsmMessage {
 	 * 
 	 * @return
 	 */
-	public int getAgeOfLocationEstimate();
+	public Integer getAgeOfLocationEstimate();
 	
 	public SLRArgExtensionContainer getSLRArgExtensionContainer();
 	
@@ -189,7 +194,7 @@ public interface SubscriberLocationReportRequestIndication extends LsmMessage {
 	 * 
 	 * @return
 	 */
-	public String getAdditionalLocationEstimate();
+	public byte[] getAdditionalLocationEstimate();
 	
 	public DeferredmtlrData getDeferredmtlrData();
 	
@@ -199,7 +204,7 @@ public interface SubscriberLocationReportRequestIndication extends LsmMessage {
 	 * 
 	 * @return
 	 */
-	public String getLCSReferenceNumber();
+	public Byte getLCSReferenceNumber();
 	
 	/**
 	 * PositioningDataInformation ::= OCTET STRING (SIZE (2..maxPositioningDataInformation))
@@ -211,7 +216,7 @@ public interface SubscriberLocationReportRequestIndication extends LsmMessage {
 	 * 
 	 * @return
 	 */
-	public String getGeranPositioningData();
+	public byte[] getGeranPositioningData();
 	
 	/**
 	 * UtranPositioningDataInfo ::= OCTET STRING (SIZE (3..maxUtranPositioningDataInfo))
@@ -223,11 +228,11 @@ public interface SubscriberLocationReportRequestIndication extends LsmMessage {
 	 * 
 	 * @return
 	 */
-	public String getUtranPositioningData();
+	public byte[] getUtranPositioningData();
 	
 	public CellGlobalIdOrServiceAreaIdOrLAI getCellGlobalIdOrServiceAreaIdOrLAI();
 	
-	public boolean getSaiPresent();
+	public Boolean getSaiPresent();
 	
 	/**
 	 * GSN-Address ::= OCTET STRING (SIZE (5..17))
@@ -235,7 +240,7 @@ public interface SubscriberLocationReportRequestIndication extends LsmMessage {
      *     
 	 * @return
 	 */
-	public String getHGMLCAddress();
+	public byte[] getHGMLCAddress();
 	
 	/**
 	 * LCSServiceTypeID ::= INTEGER (0..127)
@@ -244,9 +249,9 @@ public interface SubscriberLocationReportRequestIndication extends LsmMessage {
      *
 	 * @return
 	 */
-	public int getLCSServiceTypeID();
+	public Integer getLCSServiceTypeID();
 	
-	public boolean getPseudonymIndicator();
+	public Boolean getPseudonymIndicator();
 	
 	public AccuracyFulfilmentIndicator getAccuracyFulfilmentIndicator();
 }

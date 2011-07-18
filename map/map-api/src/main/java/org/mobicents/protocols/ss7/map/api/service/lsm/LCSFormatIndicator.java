@@ -47,8 +47,8 @@ public enum LCSFormatIndicator {
 		return this.indicator;
 	}
 	
-	public static LCSFormatIndicator getLocationEstimateType(int type){
-		switch(type){
+	public static LCSFormatIndicator getLCSFormatIndicator(int indicator){
+		switch(indicator){
 		case 0:
 			return logicalName;
 		case 1:

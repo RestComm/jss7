@@ -21,6 +21,8 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+
 /**
  * LCS-PrivacyCheck ::= SEQUENCE {
  *      callSessionUnrelated [0] PrivacyCheckRelatedAction,
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface LCSPrivacyCheck {
+public interface LCSPrivacyCheck extends MAPPrimitive {
 	
 	public PrivacyCheckRelatedAction getCallSessionUnrelated();
 	

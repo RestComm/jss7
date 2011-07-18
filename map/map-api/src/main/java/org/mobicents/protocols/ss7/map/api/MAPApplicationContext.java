@@ -108,6 +108,12 @@ public class MAPApplicationContext {
 				return true;
 			else
 				return false;
+		case locationSvcEnquiryContext:
+			//for locationSvcEnquiryContext only version 3 is supported
+			if (contextVersion == 3) 
+				return true;
+			else
+				return false;			
 		}
 		
 		return false;

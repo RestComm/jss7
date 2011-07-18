@@ -21,10 +21,26 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+
 /**
+ * 
+ * RoutingInfoForLCS-Arg ::= SEQUENCE {
+ *		mlcNumber [0] ISDN-AddressString,
+ *		targetMS [1] SubscriberIdentity,
+ *		extensionContainer [2] ExtensionContainer OPTIONAL,
+...}
+
+
  * @author amit bhayani
  *
  */
-public enum AdditionalNumberType {
-	msc, sgsn;
+public interface SendRoutingInfoForLCSRequestIndication extends LsmMessage {
+	public ISDNAddressString getMLCNumber();
+	
+	public SubscriberIdentity getTargetMS();
+	
+	public MAPExtensionContainer getExtensionContainer();
+	
 }

@@ -107,10 +107,15 @@ public interface ProvideSubscriberLocationResponseIndication extends LsmMessage 
      *   -- An Ext-GeographicalInformation parameter comprising one octet shall be treated as
      *   -- invalid data by the receiver if an Add-GeographicalInformation parameter is not
      *   -- received in the same message.
+     *   
+     *   
+     *   maxExt-GeographicalInformation INTEGER ::= 20
+     *		-- the maximum length allows for further shapes in 3GPP TS 23.032 to be included in later
+     *		-- versions of 3GPP TS 29.002
 	 * 
 	 * @return
 	 */
-	public String getLocationEstimate();
+	public byte[] getLocationEstimate();
 	
 	/**
 	 * PositioningDataInformation ::= OCTET STRING (SIZE (2..maxPositioningDataInformation))
@@ -122,7 +127,7 @@ public interface ProvideSubscriberLocationResponseIndication extends LsmMessage 
 	 * 
 	 * @return
 	 */
-	public String getGeranPositioningData();
+	public byte[] getGeranPositioningData();
 	
 	
 	/**
@@ -135,7 +140,7 @@ public interface ProvideSubscriberLocationResponseIndication extends LsmMessage 
 	 * 
 	 * @return
 	 */
-	public String getUtranPositioningData();
+	public byte[] getUtranPositioningData();
 	
 	
 	/**
@@ -150,7 +155,7 @@ public interface ProvideSubscriberLocationResponseIndication extends LsmMessage 
 	 * 
 	 * @return
 	 */
-	public int getAgeOfLocationEstimate();
+	public Integer getAgeOfLocationEstimate();
 	
 	
 	/**
@@ -179,16 +184,16 @@ public interface ProvideSubscriberLocationResponseIndication extends LsmMessage 
 	 * 
 	 * @return
 	 */
-	public String getAdditionalLocationEstimate();
+	public byte[] getAdditionalLocationEstimate();
 	
 	public MAPExtensionContainer getExtensionContainer();
 	
-	public boolean getDeferredMTLRResponseIndicator();
+	public Boolean getDeferredMTLRResponseIndicator();
 	
 	
 	public CellGlobalIdOrServiceAreaIdOrLAI getCellGlobalIdOrServiceAreaIdOrLAI();
 	
-	public boolean getSaiPresent();
+	public Boolean getSaiPresent();
 	
 	public AccuracyFulfilmentIndicator getAccuracyFulfilmentIndicator();
 	

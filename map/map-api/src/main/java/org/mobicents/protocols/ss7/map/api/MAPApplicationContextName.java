@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.api;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 
 
@@ -40,7 +39,12 @@ public enum MAPApplicationContextName {
 	networkUnstructuredSsContext(19),
 	
 	// -- SMS
-	shortMsgAlertContext(23), shortMsgMORelayContext(21), shortMsgMTRelayContext(25), shortMsgGatewayContext(20);
+	shortMsgAlertContext(23), shortMsgMORelayContext(21), shortMsgMTRelayContext(25), shortMsgGatewayContext(20),
+	
+	// -- Location Service Management (lsm)
+	locationSvcEnquiryContext(38),
+	
+	locationSvcGatewayContext(37);
 	
 	private int code;
 

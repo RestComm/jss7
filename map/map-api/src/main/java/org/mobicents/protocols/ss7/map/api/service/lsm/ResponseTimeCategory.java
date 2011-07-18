@@ -46,8 +46,8 @@ public enum ResponseTimeCategory {
 		return this.category;
 	}
 	
-	public static ResponseTimeCategory getLocationEstimateType(int type){
-		switch(type){
+	public static ResponseTimeCategory getResponseTimeCategory(int category){
+		switch(category){
 		case 0:
 			return lowdelay;
 		case 1:

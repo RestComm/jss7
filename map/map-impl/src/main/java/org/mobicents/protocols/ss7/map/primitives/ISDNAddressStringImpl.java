@@ -22,9 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
-import java.io.IOException;
-
-import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.MAPException;

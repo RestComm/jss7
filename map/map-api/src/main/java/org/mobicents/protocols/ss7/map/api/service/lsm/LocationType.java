@@ -23,6 +23,8 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 import java.util.BitSet;
 
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+
 /**
  * LocationType ::= SEQUENCE {
  *    locationEstimateType [0] LocationEstimateType,
@@ -32,7 +34,7 @@ import java.util.BitSet;
  * @author amit bhayani
  *
  */
-public interface LocationType {
+public interface LocationType extends MAPPrimitive {
 	LocationEstimateType getLocationEstimateType();
 	
 	/**

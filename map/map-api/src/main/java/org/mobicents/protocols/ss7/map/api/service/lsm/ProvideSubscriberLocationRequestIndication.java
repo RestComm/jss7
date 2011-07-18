@@ -23,10 +23,12 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 import java.util.BitSet;
 
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
 
 /**
  * ProvideSubscriberLocation-Arg ::= SEQUENCE {
@@ -64,23 +66,30 @@ public interface ProvideSubscriberLocationRequestIndication extends LsmMessage {
 	 */
 	public LocationType getLocationType();
 	
-	public AddressString getMlcNumber();
+	public ISDNAddressString getMlcNumber();
 	
 	public LCSClientID getLCSClientID();
 	
-	public boolean getPrivacyOverride();
+	public Boolean getPrivacyOverride();
 	
 	public IMSI getIMSI();
 	
-	public AddressString getMSISDN();
+	public ISDNAddressString getMSISDN();
 	
 	public LMSI getLMSI();
 	
-	public int getLCSPriority();
+	/**
+	 * LCS-Priority ::= OCTET STRING (SIZE (1))
+     *		-- 0 = highest priority
+     *		-- 1 = normal priority
+     *		-- all other values treated as 1
+	 * @return
+	 */
+	public Integer getLCSPriority();
 	
 	public LCSQoS getLCSQoS();	
 	
-	public String getIMEI();
+	public IMEI getIMEI();
 	
 	public MAPExtensionContainer getExtensionContainer();
 	
@@ -105,7 +114,7 @@ public interface ProvideSubscriberLocationRequestIndication extends LsmMessage {
 	 * 
 	 * @return
 	 */
-	public String getLCSReferenceNumber();
+	public Byte getLCSReferenceNumber();
 	
 	public LCSCodeword getLCSCodeword();
 
@@ -116,7 +125,7 @@ public interface ProvideSubscriberLocationRequestIndication extends LsmMessage {
      *
 	 * @return
 	 */
-	public int getLCSServiceTypeID();
+	public Integer getLCSServiceTypeID();
 	
 
 	
@@ -130,5 +139,5 @@ public interface ProvideSubscriberLocationRequestIndication extends LsmMessage {
      *     
 	 * @return
 	 */
-	public String getHGMLCAddress();
+	public byte[] getHGMLCAddress();
 }

@@ -21,6 +21,8 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+
 /**
  * CellGlobalIdOrServiceAreaIdOrLAI ::= CHOICE {
  *    cellGlobalIdOrServiceAreaIdFixedLength [0] CellGlobalIdOrServiceAreaIdFixedLength,
@@ -29,9 +31,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface CellGlobalIdOrServiceAreaIdOrLAI {
-	
-	public CellGlobalIdOrServiceAreaIdOrLAIType getCellGlobalIdOrServiceAreaIdOrLAIType();
+public interface CellGlobalIdOrServiceAreaIdOrLAI extends MAPPrimitive {
 	
 	/**
 	 * CellGlobalIdOrServiceAreaIdFixedLength ::= OCTET STRING (SIZE (7))
@@ -52,7 +52,7 @@ public interface CellGlobalIdOrServiceAreaIdOrLAI {
 	 * 
 	 * @return
 	 */
-	public String getCellGlobalIdOrServiceAreaIdFixedLength();
+	public byte[] getCellGlobalIdOrServiceAreaIdFixedLength();
 	
 	/**
 	 * LAIFixedLength ::= OCTET STRING (SIZE (5))
@@ -69,6 +69,6 @@ public interface CellGlobalIdOrServiceAreaIdOrLAI {
 	 * 
 	 * @return
 	 */
-	public String getLAIFixedLength();
+	public byte[] getLAIFixedLength();
 
 }

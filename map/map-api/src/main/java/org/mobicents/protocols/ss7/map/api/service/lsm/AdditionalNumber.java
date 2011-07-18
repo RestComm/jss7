@@ -21,7 +21,9 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+
 
 /**
  * Additional-Number ::= CHOICE {
@@ -36,9 +38,9 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
  * @author amit bhayani
  *
  */
-public interface AdditionalNumber {
-	public AdditionalNumberType get();
+public interface AdditionalNumber extends MAPPrimitive {
 	
+	public ISDNAddressString getMSCNumber();
+	public ISDNAddressString getSGSNNumber();
 	
-	public AddressString getAdditionalNumber();
 }

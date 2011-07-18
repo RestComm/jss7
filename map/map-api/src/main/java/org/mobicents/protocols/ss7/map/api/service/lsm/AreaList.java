@@ -21,15 +21,19 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+
 /**
  * AreaList ::= SEQUENCE SIZE (1..maxNumOfAreas) OF Area
+ * 
+ * maxNumOfAreas INTEGER ::= 10
  * 
  * TODO : Should rather just merge with AreaDefinition and avoid unnecessary creation of Objects?
  * 
  * @author amit bhayani
  *
  */
-public interface AreaList {
+public interface AreaList extends MAPPrimitive {
 
 	public Area[] getAreas();
 }
