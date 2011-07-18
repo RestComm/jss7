@@ -142,7 +142,7 @@ public interface MAPDialogSms extends MAPDialog {
 	 * 
 	 * @param msisdn
 	 *            mandatory
-	 * @param derviceCentreAddress
+	 * @param serviceCentreAddress
 	 *            mandatory
 	 * @param sMDeliveryOutcome
 	 *            mandatory
@@ -161,7 +161,7 @@ public interface MAPDialogSms extends MAPDialog {
 	 * @return
 	 * @throws MAPException
 	 */
-	public Long addReportSMDeliveryStatusRequest(ISDNAddressString msisdn, AddressString derviceCentreAddress, SMDeliveryOutcome sMDeliveryOutcome,
+	public Long addReportSMDeliveryStatusRequest(ISDNAddressString msisdn, AddressString serviceCentreAddress, SMDeliveryOutcome sMDeliveryOutcome,
 			Integer sbsentSubscriberDiagnosticSM, MAPExtensionContainer extensionContainer, Boolean gprsSupportIndicator, Boolean deliveryOutcomeIndicator,
 			SMDeliveryOutcome additionalSMDeliveryOutcome, Integer additionalAbsentSubscriberDiagnosticSM) throws MAPException;
 	
@@ -200,14 +200,14 @@ public interface MAPDialogSms extends MAPDialog {
 	/**
 	 * Sending MAP-SEND-ROUTING-INFO-FOR-SM request
 	 * 
-	 * @param getMsisdn
+	 * @param msisdn
 	 *            mandatory
 	 * @param serviceCentreAddress
 	 *            mandatory
 	 * @return
 	 * @throws MAPException
 	 */
-	public Long addAlertServiceCentreRequest(ISDNAddressString getMsisdn, AddressString serviceCentreAddress) throws MAPException;
+	public Long addAlertServiceCentreRequest(ISDNAddressString msisdn, AddressString serviceCentreAddress) throws MAPException;
 
 	/**
 	 * Sending MAP-SEND-ROUTING-INFO-FOR-SM response
