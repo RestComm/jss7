@@ -64,7 +64,7 @@ public class ISDNAddressStringImpl extends AddressStringImpl implements ISDNAddr
 
 	@Override
 	public String toString() {
-		return "ISDNAddressString[AddressNature=" + this.addressNature.toString() + ", NumberingPlan=" + this.numberingPlan.toString() + ", Address="
+		return "ISDNAddressString[AddressNature=" + this.addressNature + ", NumberingPlan=" + this.numberingPlan + ", Address="
 				+ this.address + "]";
 	}
 
