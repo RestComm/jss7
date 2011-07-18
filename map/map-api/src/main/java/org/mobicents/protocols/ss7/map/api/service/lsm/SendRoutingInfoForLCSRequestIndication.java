@@ -30,9 +30,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  *		mlcNumber [0] ISDN-AddressString,
  *		targetMS [1] SubscriberIdentity,
  *		extensionContainer [2] ExtensionContainer OPTIONAL,
-...}
-
-
+ *		...}
+ *
  * @author amit bhayani
  *
  */
