@@ -43,10 +43,12 @@ import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.api.dialog.ProcedureCancellationReason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
+import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
@@ -57,6 +59,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupple
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.InformServiceCentreRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
 import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageRequestIndication;
@@ -480,8 +483,29 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	@Override
 	public void onMtForwardShortMessageIndication(MtForwardShortMessageRequestIndication mtForwSmInd) {
-		// TODO Auto-generated method stub
+
+		MAPDialogSms d = mtForwSmInd.getMAPDialog();
 		
+		SM_RP_DA sm_RP_DA = mtForwSmInd.getSM_RP_DA();
+		SM_RP_OA sm_RP_OA = mtForwSmInd.getSM_RP_OA();
+		byte[] sm_RP_UI = mtForwSmInd.getSM_RP_UI();
+		MAPExtensionContainer extensionContainer = mtForwSmInd.getExtensionContainer();
+		Boolean moreMessagesToSend = mtForwSmInd.getMoreMessagesToSend();
+		
+		boolean b1 = false;
+		if (extensionContainer != null) {
+			b1 = MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer);
+		}
+		
+		byte[] sm_RP_UI2 = new byte[] { 21, 22, 23, 24, 25 };
+		try {
+			d.addMtForwardShortMessageResponse(mtForwSmInd.getInvokeId(), sm_RP_UI2,  MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
+//			d.addMtForwardShortMessageResponse(mtForwSmInd.getInvokeId(), null,  null);
+		} catch (MAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override
@@ -492,8 +516,32 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	@Override
 	public void onSendRoutingInfoForSMIndication(SendRoutingInfoForSMRequestIndication sendRoutingInfoForSMInd) {
-		// TODO Auto-generated method stub
 		
+		MAPDialogSms d = sendRoutingInfoForSMInd.getMAPDialog();
+		
+		MAPExtensionContainer extensionContainer = sendRoutingInfoForSMInd.getExtensionContainer();
+		
+		boolean b1 = false;
+		if (extensionContainer != null) {
+			b1 = MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer);
+		}
+		
+		IMSI imsi = this.mapServiceFactory.createIMSI(250L, 99L, "777000");
+		ISDNAddressString networkNodeNumber = this.mapServiceFactory.createISDNAddressString(AddressNature.network_specific_number, NumberingPlan.national,
+				"111000111");
+		LMSI lmsi = this.mapServiceFactory.createLMSI(new byte[] { 75, 74, 73, 72 });
+		AdditionalNumberType additionalNumberType = AdditionalNumberType.sgsn;
+		ISDNAddressString additionalNumber = this.mapServiceFactory.createISDNAddressString(AddressNature.subscriber_number, NumberingPlan.private_plan,
+				"000111000");
+		LocationInfoWithLMSI locationInfoWithLMSI = this.mapServiceFactory.createLocationInfoWithLMSI(networkNodeNumber, lmsi,
+				MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory), additionalNumberType, additionalNumber);
+		try {
+			d.addSendRoutingInfoForSMResponse(sendRoutingInfoForSMInd.getInvokeId(), imsi, locationInfoWithLMSI,
+					MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
+		} catch (MAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -504,8 +552,27 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	@Override
 	public void onReportSMDeliveryStatusIndication(ReportSMDeliveryStatusRequestIndication reportSMDeliveryStatusInd) {
-		// TODO Auto-generated method stub
 		
+		MAPDialogSms d = reportSMDeliveryStatusInd.getMAPDialog();
+		
+		MAPExtensionContainer extensionContainer = reportSMDeliveryStatusInd.getExtensionContainer();
+		
+		boolean b1 = false;
+		if (extensionContainer != null) {
+			b1 = MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer);
+		}
+
+		ISDNAddressString storedMSISDN = this.mapServiceFactory.createISDNAddressString(AddressNature.network_specific_number, NumberingPlan.national,
+				"111000111");
+
+		try {
+			d.addReportSMDeliveryStatusResponse(reportSMDeliveryStatusInd.getInvokeId(), storedMSISDN,
+					MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
+		} catch (MAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override
@@ -516,14 +583,37 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	@Override
 	public void onInformServiceCentreIndication(InformServiceCentreRequestIndication informServiceCentreInd) {
-		// TODO Auto-generated method stub
+		
+		MAPDialogSms d = informServiceCentreInd.getMAPDialog();
+		
+		MAPExtensionContainer extensionContainer = informServiceCentreInd.getExtensionContainer();
+		
+		boolean b1 = false;
+		if (extensionContainer != null) {
+			b1 = MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer);
+		}
 		
 	}
 
 	@Override
 	public void onAlertServiceCentreIndication(AlertServiceCentreRequestIndication alertServiceCentreInd) {
-		// TODO Auto-generated method stub
 		
+		MAPDialogSms d = alertServiceCentreInd.getMAPDialog();
+		
+//		MAPExtensionContainer extensionContainer = alertServiceCentreInd.getExtensionContainer();
+		
+//		boolean b1 = false;
+//		if (extensionContainer != null) {
+//			b1 = MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer);
+//		}
+
+		try {
+			d.addAlertServiceCentreResponse(alertServiceCentreInd.getInvokeId());
+		} catch (MAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override

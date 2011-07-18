@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
+	
 package org.mobicents.protocols.ss7.map.functional;
 
 import static org.junit.Assert.assertTrue;
@@ -49,6 +49,7 @@ import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
@@ -58,6 +59,7 @@ import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplemen
 import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
@@ -257,6 +259,20 @@ public class MAPFunctionalTest extends SccpHarness {
 	@Test
 	public void testA() throws Exception {
 
+//		MapServiceFactory msf = this.stack1.getMAPProvider().getMapServiceFactory();
+//		IMEI a1 = msf.createIMEI("12345678901234");
+//
+//		AsnOutputStream aos = new AsnOutputStream();
+//		a1.encode(aos);
+//		byte[] buf = aos.toByteArray();
+//
+//		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(buf));
+//		IMEIImpl a11 = new IMEIImpl();
+//		a11.decode(ais, 0, false, 0, buf.length);
+//
+//		 int fff=0;
+//		 fff++;
+		
 //		MapServiceFactory msf = this.stack1.getMAPProvider().getMapServiceFactory();
 //
 //		ISDNAddressString n1 = msf.createISDNAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "98765");

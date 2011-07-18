@@ -22,9 +22,14 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
+import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
@@ -48,6 +53,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
@@ -56,11 +62,16 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSI
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
+import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
+import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
+import org.mobicents.protocols.ss7.map.service.sms.MoForwardShortMessageRequestIndicationImpl;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
@@ -209,7 +220,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		clientDialog.send();
 	}
 
-	public void actionC() throws MAPException {
+	public void actionC() throws Exception {
 		this.mapProvider.getMAPServiceSms().acivate();
 		
 		MAPApplicationContext appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.shortMsgMORelayContext,
@@ -227,16 +238,70 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 				destReference);
 		clientDialogSms.setExtentionContainer(MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
 
+		// -- MoForwardShortMessage
 
-		IMSI imsi1 = this.mapServiceFactory.createIMSI(250L, 99L, "1357999");
-		SM_RP_DA sm_RP_DA = this.mapServiceFactory.createSM_RP_DA(imsi1);
+//		IMSI imsi1 = this.mapServiceFactory.createIMSI(250L, 99L, "1357999");
+//		SM_RP_DA sm_RP_DA = this.mapServiceFactory.createSM_RP_DA(imsi1);
+//		ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+//		SM_RP_OA sm_RP_OA = this.mapServiceFactory.createSM_RP_OA_Msisdn(msisdn1);
+//		byte[] sm_RP_UI = new byte[] { 21, 22, 23, 24, 25 };
+//		IMSI imsi2 = this.mapServiceFactory.createIMSI(250L, 07L, "123456789");
+//		
+////		MoForwardShortMessageRequestIndicationImpl ind = new MoForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI,
+////				MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory), imsi2);
+////		Parameter p = ind.encode(((MAPProviderImpl) this.mapProvider).getTCAPProvider().getComponentPrimitiveFactory());
+////		AsnOutputStream aos = new AsnOutputStream();
+////		p.setTagClass(Tag.CLASS_UNIVERSAL);
+////		p.setPrimitive(false);
+////		p.setTag(Tag.SEQUENCE);
+////		p.encode(aos);
+////		
+////		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(aos.toByteArray()));
+////		int tag = ais.readTag();
+////		Parameter p2 = TcapFactory.createParameter(tag, ais);
+////		p2.setPrimitive(false);
+////		MoForwardShortMessageRequestIndicationImpl ind2 = new MoForwardShortMessageRequestIndicationImpl();
+////		ind2.decode(p2);
+//
+//		clientDialogSms.addMoForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory),
+//				imsi2);
+		
+		
+//		LMSI lmsi1 = this.mapServiceFactory.createLMSI(new byte[] { 49, 48, 47, 46 });
+//		SM_RP_DA sm_RP_DA = this.mapServiceFactory.createSM_RP_DA(lmsi1);
+//		AddressString msisdn1 = this.mapServiceFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+//		SM_RP_OA sm_RP_OA = this.mapServiceFactory.createSM_RP_OA_ServiceCentreAddressOA(msisdn1);
+//		byte[] sm_RP_UI = new byte[] { 21, 22, 23, 24, 25 };
+////		clientDialogSms.addMtForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, true, null);
+//		clientDialogSms.addMtForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, true, MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
+
 		ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
-		SM_RP_OA sm_RP_OA = this.mapServiceFactory.createSM_RP_OA_Msisdn(msisdn1);
-		byte[] sm_RP_UI = new byte[] { 21, 22, 23, 24, 25 };
-		IMSI imsi2 = this.mapServiceFactory.createIMSI(250L, 07L, "123456789");
-		clientDialogSms.addMoForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory), imsi2);
+		AddressString servCenAddr1 = this.mapServiceFactory.createAddressString(AddressNature.network_specific_number, NumberingPlan.national, "999000");
+		clientDialogSms.addSendRoutingInfoForSMRequest(msisdn1, false, servCenAddr1, MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory), true,
+				SM_RP_MTI.SMS_Status_Report, new byte[] { 90, 91 });
 
-		logger.debug("MoForwardShortMessageRequest");
+//		ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+//		AddressString serviceCentreAddress = this.mapServiceFactory.createAddressString(AddressNature.network_specific_number, NumberingPlan.national, "999000");
+//		SMDeliveryOutcome sMDeliveryOutcome = SMDeliveryOutcome.absentSubscriber;
+//		Integer sbsentSubscriberDiagnosticSM = 555;
+//		Boolean gprsSupportIndicator = true;
+//		Boolean deliveryOutcomeIndicator = true;
+//		SMDeliveryOutcome additionalSMDeliveryOutcome = SMDeliveryOutcome.successfulTransfer;
+//		Integer additionalAbsentSubscriberDiagnosticSM = 444;		
+//		clientDialogSms.addReportSMDeliveryStatusRequest(msisdn1, serviceCentreAddress, sMDeliveryOutcome, sbsentSubscriberDiagnosticSM,
+//				MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory), gprsSupportIndicator, deliveryOutcomeIndicator,
+//				additionalSMDeliveryOutcome, additionalAbsentSubscriberDiagnosticSM);
+
+//		ISDNAddressString storedMSISDN = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+//		MWStatus mwStatus = this.mapServiceFactory.createMWStatus(false, true, false, true);
+//		Integer absentSubscriberDiagnosticSM = 555;
+//		Integer additionalAbsentSubscriberDiagnosticSM = 444;		
+//		clientDialogSms.addInformServiceCentreRequest(storedMSISDN, mwStatus, MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory),
+//				absentSubscriberDiagnosticSM, additionalAbsentSubscriberDiagnosticSM);
+
+//		ISDNAddressString msisdn = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+//		AddressString serviceCentreAddress = this.mapServiceFactory.createAddressString(AddressNature.subscriber_number, NumberingPlan.national, "0011");
+//		clientDialogSms.addAlertServiceCentreRequest(msisdn, serviceCentreAddress);
 
 		clientDialogSms.send();
 	}
