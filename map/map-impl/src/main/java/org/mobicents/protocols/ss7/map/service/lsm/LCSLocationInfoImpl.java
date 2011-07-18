@@ -259,8 +259,8 @@ public class LCSLocationInfoImpl extends MAPPrimitiveBase implements LCSLocation
 				}
 				break;
 			default:
-				throw new MAPParsingComponentException("Error while decoding LCSLocationInfo: Expected tags 0 - 5 but found" + p.getTag(),
-						MAPParsingComponentExceptionReason.MistypedParameter);
+//				throw new MAPParsingComponentException("Error while decoding LCSLocationInfo: Expected tags 0 - 5 but found" + p.getTag(),
+//						MAPParsingComponentExceptionReason.MistypedParameter);
 			}
 		}// end of for loop
 	}

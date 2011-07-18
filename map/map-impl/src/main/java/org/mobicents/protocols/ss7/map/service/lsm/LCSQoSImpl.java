@@ -190,9 +190,9 @@ public class LCSQoSImpl extends MAPPrimitiveBase implements LCSQoS {
 				this.extensionContainer.decode(p);
 				break;
 			default:
-				throw new MAPParsingComponentException(
-						"Decoding LCSQoS failed. Expected horizontal-accuracy [0], verticalCoordinateRequest [1], vertical-accuracy [2], responseTime [3], extensionContainer [4] but found "
-								+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+//				throw new MAPParsingComponentException(
+//						"Decoding LCSQoS failed. Expected horizontal-accuracy [0], verticalCoordinateRequest [1], vertical-accuracy [2], responseTime [3], extensionContainer [4] but found "
+//								+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 			}
 		}
 

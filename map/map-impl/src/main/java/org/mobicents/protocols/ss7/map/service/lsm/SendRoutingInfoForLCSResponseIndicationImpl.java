@@ -232,8 +232,8 @@ public class SendRoutingInfoForLCSResponseIndicationImpl extends LsmMessageImpl 
 				this.additionalVGmlcAddress = p.getData();
 				break;
 			default:
-				throw new MAPParsingComponentException("Error while decoding SendRoutingInforForLCSResponseIndication: Expected parameter tag 0 - 6 but found"
-						+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+//				throw new MAPParsingComponentException("Error while decoding SendRoutingInforForLCSResponseIndication: Expected parameter tag 0 - 6 but found"
+//						+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 			}
 		}
 

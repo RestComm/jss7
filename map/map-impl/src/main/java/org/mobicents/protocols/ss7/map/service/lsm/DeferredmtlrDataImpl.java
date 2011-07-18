@@ -135,9 +135,10 @@ public class DeferredmtlrDataImpl extends MAPPrimitiveBase implements Deferredmt
 				this.lcsLocationInfo.decode(p); 
 				break;
 			default:
-				throw new MAPParsingComponentException(
-						"Error while decoding DeferredmtlrData: Expected terminationCause [0] TerminationCause or lcsLocationInfo [1] LCSLocationInfo but received "
-								+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+//				throw new MAPParsingComponentException(
+//						"Error while decoding DeferredmtlrData: Expected terminationCause [0] TerminationCause or lcsLocationInfo [1] LCSLocationInfo but received "
+//								+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+				break;
 			}
 		}
 	}

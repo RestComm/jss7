@@ -69,7 +69,7 @@ public class ResponseTimeImpl extends MAPPrimitiveBase implements ResponseTime {
 	public void decode(Parameter param) throws MAPParsingComponentException {
 		Parameter[] parameters = param.getParameters();
 
-		if (parameters == null || parameters.length != 1) {
+		if (parameters == null || parameters.length < 1) {
 			throw new MAPParsingComponentException("Error while decoding ResponseTime: Needs at least 1 mandatory parameters, found"
 					+ (parameters == null ? null : parameters.length), MAPParsingComponentExceptionReason.MistypedParameter);
 		}

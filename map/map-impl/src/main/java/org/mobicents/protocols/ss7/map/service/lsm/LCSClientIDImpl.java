@@ -234,9 +234,9 @@ public class LCSClientIDImpl extends MAPPrimitiveBase implements LCSClientID {
 				this.lcsRequestorID.decode(p);
 				break;
 			default:
-				throw new MAPParsingComponentException(
-						"Decoding LCSClientID failed. Expected lcsClientExternalID [1], lcsClientDialedByMS [2], lcsClientInternalID [3], lcsClientName [4], lcsAPN [5], lcsRequestorID [6]  but found "
-								+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+//				throw new MAPParsingComponentException(
+//						"Decoding LCSClientID failed. Expected lcsClientExternalID [1], lcsClientDialedByMS [2], lcsClientInternalID [3], lcsClientName [4], lcsAPN [5], lcsRequestorID [6]  but found "
+//								+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 			}
 		}
 	}

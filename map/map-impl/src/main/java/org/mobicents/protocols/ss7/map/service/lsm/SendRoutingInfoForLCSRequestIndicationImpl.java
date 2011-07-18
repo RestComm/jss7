@@ -134,7 +134,7 @@ public class SendRoutingInfoForLCSRequestIndicationImpl extends LsmMessageImpl i
 		this.targetMS = new SubscriberIdentityImpl();
 		this.targetMS.decode(p);
 
-		if (parameters.length == 3) {
+		if (parameters.length > 2) {
 			p = parameters[2];
 			if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive()) {
 				throw new MAPParsingComponentException(

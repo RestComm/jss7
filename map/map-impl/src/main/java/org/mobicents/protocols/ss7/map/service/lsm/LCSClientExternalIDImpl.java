@@ -105,8 +105,8 @@ public class LCSClientExternalIDImpl extends MAPPrimitiveBase implements LCSClie
 				break;
 
 			default:
-				throw new MAPParsingComponentException("Decoding LCSClientExternalID failed. Expected externalAddress [0] or extensionContainer [1] but found "
-						+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+//				throw new MAPParsingComponentException("Decoding LCSClientExternalID failed. Expected externalAddress [0] or extensionContainer [1] but found "
+//						+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 			}
 		}
 	}

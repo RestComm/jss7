@@ -621,8 +621,8 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 				this.accuracyFulfilmentIndicator = AccuracyFulfilmentIndicator.getAccuracyFulfilmentIndicator(p.getData()[0]);
 				break;
 			default:
-				throw new MAPParsingComponentException("Error while decoding SubscriberLocationReportRequestIndication: Expected tags 0 - 15 but found"
-						+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+//				throw new MAPParsingComponentException("Error while decoding SubscriberLocationReportRequestIndication: Expected tags 0 - 15 but found"
+//						+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 			}
 		}
 	}

@@ -284,12 +284,12 @@ public class ProvideSubscriberLocationResponseIndicationImpl extends LsmMessageI
 				this.accuracyFulfilmentIndicator = AccuracyFulfilmentIndicator.getAccuracyFulfilmentIndicator(p.getData()[0]);
 				break;
 			default:
-				throw new MAPParsingComponentException(
-						"Error while decoding ProvideSubscriberLocationResponseIndication: Expected ageOfLocationEstimate [0] AgeOfLocationInformation or extensionContainer "
-								+ "[1] ExtensionContainer or add-LocationEstimate [2] Add-GeographicalInformation or deferredmt-lrResponseIndicator [3] NULL or geranPositioningData [4] "
-								+ "PositioningDataInformation or utranPositioningData [5] UtranPositioningDataInfo or cellIdOrSai [6] CellGlobalIdOrServiceAreaIdOrLAI or sai-Present [7] "
-								+ "NULL or accuracyFulfilmentIndicator [8] AccuracyFulfilmentIndicator but received " + p.getTag(),
-						MAPParsingComponentExceptionReason.MistypedParameter);
+//				throw new MAPParsingComponentException(
+//						"Error while decoding ProvideSubscriberLocationResponseIndication: Expected ageOfLocationEstimate [0] AgeOfLocationInformation or extensionContainer "
+//								+ "[1] ExtensionContainer or add-LocationEstimate [2] Add-GeographicalInformation or deferredmt-lrResponseIndicator [3] NULL or geranPositioningData [4] "
+//								+ "PositioningDataInformation or utranPositioningData [5] UtranPositioningDataInfo or cellIdOrSai [6] CellGlobalIdOrServiceAreaIdOrLAI or sai-Present [7] "
+//								+ "NULL or accuracyFulfilmentIndicator [8] AccuracyFulfilmentIndicator but received " + p.getTag(),
+//						MAPParsingComponentExceptionReason.MistypedParameter);
 			}
 		}
 

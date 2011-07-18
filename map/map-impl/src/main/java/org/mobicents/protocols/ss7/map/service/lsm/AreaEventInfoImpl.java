@@ -150,9 +150,10 @@ public class AreaEventInfoImpl extends MAPPrimitiveBase implements AreaEventInfo
 				}
 				break;
 			default:
-				throw new MAPParsingComponentException(
-						"Error while decoding AreaEventInfo: Expected occurrenceInfo [1] OccurrenceInfo or intervalTime [2] IntervalTime, but found"
-								+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+//				throw new MAPParsingComponentException(
+//						"Error while decoding AreaEventInfo: Expected occurrenceInfo [1] OccurrenceInfo or intervalTime [2] IntervalTime, but found"
+//								+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+				break;
 			}
 		}
 	}

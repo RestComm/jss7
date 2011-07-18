@@ -131,9 +131,9 @@ public class SubscriberLocationReportResponseIndicationImpl extends LsmMessageIm
 						this.extensionContainer = new MAPExtensionContainerImpl();
 						this.extensionContainer.decode(p);
 					} else {
-						throw new MAPParsingComponentException(
-								"Error while decoding SubscriberLocationReportResponseIndication: Expected tags 0 or 1 but found" + p.getTag(),
-								MAPParsingComponentExceptionReason.MistypedParameter);
+//						throw new MAPParsingComponentException(
+//								"Error while decoding SubscriberLocationReportResponseIndication: Expected tags 0 or 1 but found" + p.getTag(),
+//								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 				}
 

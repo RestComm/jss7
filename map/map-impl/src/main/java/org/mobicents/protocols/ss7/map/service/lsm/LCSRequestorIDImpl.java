@@ -128,7 +128,7 @@ public class LCSRequestorIDImpl extends MAPPrimitiveBase implements LCSRequestor
 
 		this.requestorIDString = new USSDStringImpl(p.getData(), null);
 
-		if (parameters.length == 3) {
+		if (parameters.length > 2) {
 			// Decode lcs-FormatIndicator [3] LCS-FormatIndicator OPTIONAL
 			p = parameters[2];
 			if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive() || p.getTag() != 3) {
