@@ -27,43 +27,37 @@ import java.util.ArrayList;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener;
-import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageResponseIndication;
-import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
+import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageResponseIndication;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class MoForwardShortMessageResponseIndicationImpl extends SmsServiceImpl implements MoForwardShortMessageResponseIndication {
+public class MtForwardShortMessageResponseIndicationImpl extends SmsServiceImpl implements MtForwardShortMessageResponseIndication {
 
-	private byte[] sm_RP_UI;
+	private byte[] sM_RP_UI;
 	private MAPExtensionContainer extensionContainer;
-
-
-	public MoForwardShortMessageResponseIndicationImpl() {
+	
+	
+	public MtForwardShortMessageResponseIndicationImpl() {
 	}
-
-	public MoForwardShortMessageResponseIndicationImpl(byte[] sm_RP_UI, MAPExtensionContainer extensionContainer) {
-		this.sm_RP_UI = sm_RP_UI;
+	
+	public MtForwardShortMessageResponseIndicationImpl(byte[] sM_RP_UI, MAPExtensionContainer extensionContainer) {
+		this.sM_RP_UI = sM_RP_UI;
 		this.extensionContainer = extensionContainer;
 	}
-
 	
+
 	@Override
 	public byte[] getSM_RP_UI() {
-		return this.sm_RP_UI;
+		return this.sM_RP_UI;
 	}
 
 	@Override
@@ -73,7 +67,7 @@ public class MoForwardShortMessageResponseIndicationImpl extends SmsServiceImpl 
 	
 	
 	public void decode(Parameter parameter) throws MAPParsingComponentException {
-		
+
 		Parameter[] parameters = parameter.getParameters();
 
 		for (Parameter p : parameters) {
@@ -83,14 +77,14 @@ public class MoForwardShortMessageResponseIndicationImpl extends SmsServiceImpl 
 				if (!p.isPrimitive())
 					throw new MAPParsingComponentException("Error while decoding moForwardShortMessageResponse: Parameter sm_RP_UI is not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.sm_RP_UI = p.getData();
+				this.sM_RP_UI = p.getData();
 			} else if (p.getTag() == Tag.SEQUENCE && p.getTagClass() == Tag.CLASS_UNIVERSAL) {
 				// ExtensionContainer
 				if (p.isPrimitive())
 					throw new MAPParsingComponentException("Error while decoding moForwardShortMessageResponse: Parameter extensionContainer not is primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.extensionContainer = new MAPExtensionContainerImpl();
-				((MAPExtensionContainerImpl)this.extensionContainer).decode(p);
+				((MAPExtensionContainerImpl) this.extensionContainer).decode(p);
 			}
 		}
 	}
@@ -105,17 +99,17 @@ public class MoForwardShortMessageResponseIndicationImpl extends SmsServiceImpl 
 		ArrayList<Parameter> lstPar = new ArrayList<Parameter>();
 
 		Parameter p1 = null;
-		if (sm_RP_UI != null) {
+		if (this.sM_RP_UI != null) {
 			aos.reset();
 			p1 = factory.createParameter();
 			p1.setTagClass(Tag.CLASS_UNIVERSAL);
 			p1.setTag(Tag.STRING_OCTET);
-			p1.setData(sm_RP_UI);
+			p1.setData(this.sM_RP_UI);
 			lstPar.add(p1);
 		}
 
 		Parameter p2 = null;
-		if (extensionContainer != null) {
+		if (this.extensionContainer != null) {
 			p2 = ((MAPExtensionContainerImpl) extensionContainer).encode();
 			lstPar.add(p2);
 		}
@@ -128,4 +122,5 @@ public class MoForwardShortMessageResponseIndicationImpl extends SmsServiceImpl 
 
 		return p;
 	}
+
 }

@@ -121,7 +121,7 @@ public class LocationInfoWithLMSIImpl extends MAPPrimitiveBase implements Locati
 							"Error when decoding LocationInfoWithLMSI: networkNode-Number: tagClass or tag is bad or element is not primitive: tagClass="
 									+ p.getTagClass() + ", Tag=" + p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 				this.networkNodeNumber = new ISDNAddressStringImpl();
-				((ISDNAddressString)this.networkNodeNumber).decode(p);
+				((ISDNAddressStringImpl)this.networkNodeNumber).decode(p);
 			} else {
 				
 				// optional parameters

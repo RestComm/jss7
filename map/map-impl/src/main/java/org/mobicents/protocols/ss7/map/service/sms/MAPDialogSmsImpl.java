@@ -25,7 +25,6 @@ package org.mobicents.protocols.ss7.map.service.sms;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
@@ -45,11 +44,13 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
+import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
+import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
@@ -71,60 +72,80 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 	public Long addMoForwardShortMessageRequest(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, byte[] sm_RP_UI, MAPExtensionContainer extensionContainer, IMSI imsi)
 			throws MAPException {
 		
-		if (sm_RP_DA == null || sm_RP_OA == null || sm_RP_UI == null)
-			throw new MAPException("sm_RP_DA,sm_RP_OA and sm_RP_UI must not be null");
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long)MAPOperationCode.mo_forwardSM);
+		invoke.setOperationCode(oc);
+
+		MoForwardShortMessageRequestIndicationImpl ind = new MoForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, extensionContainer, imsi);
+		Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());		
+		p.setTagClass(Tag.CLASS_UNIVERSAL);
+		p.setPrimitive(false);
+		p.setTag(Tag.SEQUENCE);
+		invoke.setParameter(p);
+
+		Long invokeId;
+		try {
+			invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+		} catch (TCAPException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+
+		this.sendInvokeComponent(invoke);
+		
+		return invokeId;
+	}
+
+	@Override
+	public void addMoForwardShortMessageResponse(long invokeId, byte[] sm_RP_UI, MAPExtensionContainer extensionContainer) throws MAPException {
+		
+		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+
+		resultLast.setInvokeId(invokeId);
+
+		// Operation Code
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.mo_forwardSM);
+		resultLast.setOperationCode(oc);
+
+		// if (sm_RP_UI != null || extensionContainer != null) {
+
+		MoForwardShortMessageResponseIndicationImpl ind = new MoForwardShortMessageResponseIndicationImpl(sm_RP_UI, extensionContainer);
+		Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());		
+		p.setTagClass(Tag.CLASS_UNIVERSAL);
+		p.setPrimitive(false);
+		p.setTag(Tag.SEQUENCE);
+		resultLast.setParameter(p);
+		
+		// }
+
+		this.sendReturnResultLastComponent(resultLast);
+	}
+
+	@Override
+	public Long addMtForwardShortMessageRequest(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, byte[] sm_RP_UI, Boolean moreMessagesToSend,
+			MAPExtensionContainer extensionContainer) throws MAPException {
 		
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
 
 		try {
-			Long invokeId = this.tcapDialog.getNewInvokeId();
-			invoke.setInvokeId(invokeId);
-
 			// Operation Code
-			OperationCode oc = TcapFactory.createOperationCode();
-			oc.setLocalOperationCode((long)MAPOperationCode.mo_forwardSM);
+			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+			oc.setLocalOperationCode((long)MAPOperationCode.mt_forwardSM);
 			invoke.setOperationCode(oc);
-			
-			// Sequence of Parameter
-			
-			ArrayList<Parameter> lstPar = new ArrayList<Parameter>();
 
-			Parameter p1 = ((SM_RP_DAImpl) sm_RP_DA).encode();
-			lstPar.add(p1);
-
-			Parameter p2 = ((SM_RP_OAImpl) sm_RP_OA).encode();
-			lstPar.add(p2);
-
-			Parameter p3 = TcapFactory.createParameter();
-			p3.setTagClass(Tag.CLASS_UNIVERSAL);
-			p3.setTag(Tag.STRING_OCTET);
-			p3.setData(sm_RP_UI);
-			lstPar.add(p3);
-
-			Parameter p4 = null;
-			if (extensionContainer != null) {
-				p4 = ((MAPExtensionContainerImpl) extensionContainer).encode();
-				lstPar.add(p4);
-			}
-
-			Parameter p5 = null;
-			if (imsi != null) {
-				p5 = ((IMSIImpl) imsi).encode();
-				p5.setTagClass(Tag.CLASS_UNIVERSAL);
-				p5.setTag(Tag.STRING_OCTET);
-				lstPar.add(p5);
-			}
-
-			Parameter p = TcapFactory.createParameter();
+			MtForwardShortMessageRequestIndicationImpl ind = new MtForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, moreMessagesToSend,
+					extensionContainer);
+			Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());		
 			p.setTagClass(Tag.CLASS_UNIVERSAL);
 			p.setPrimitive(false);
 			p.setTag(Tag.SEQUENCE);
-
-			Parameter[] pp = new Parameter[lstPar.size()];
-			lstPar.toArray(pp);
-			p.setParameters(pp);
-
 			invoke.setParameter(p);
+
+			Long invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
 
 			this.sendInvokeComponent(invoke);
 			
@@ -136,41 +157,226 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 	}
 
 	@Override
-	public void addMoForwardShortMessageResponse(long invokeId, byte[] sm_RP_UI, MAPExtensionContainer extensionContainer) throws MAPException {
+	public void addMtForwardShortMessageResponse(long invokeId, byte[] sm_RP_UI, MAPExtensionContainer extensionContainer) throws MAPException {
 		
 		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
 
 		resultLast.setInvokeId(invokeId);
 
 		// Operation Code
-		OperationCode oc = TcapFactory.createOperationCode();
-		oc.setLocalOperationCode((long) MAPOperationCode.mo_forwardSM);
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.mt_forwardSM);
+		resultLast.setOperationCode(oc);
+
+		// if (sm_RP_UI != null || extensionContainer != null) {
+
+		MtForwardShortMessageResponseIndicationImpl ind = new MtForwardShortMessageResponseIndicationImpl(sm_RP_UI, extensionContainer);
+		Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());		
+		p.setTagClass(Tag.CLASS_UNIVERSAL);
+		p.setPrimitive(false);
+		p.setTag(Tag.SEQUENCE);
+		resultLast.setParameter(p);
+		
+		// }
+
+		this.sendReturnResultLastComponent(resultLast);
+	}
+
+	@Override
+	public Long addSendRoutingInfoForSMRequest(ISDNAddressString msisdn, Boolean sm_RP_PRI, AddressString serviceCentreAddress,
+			MAPExtensionContainer extensionContainer, Boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, byte[] sM_RP_SMEA) throws MAPException {
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		
+		// Operation Code
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long)MAPOperationCode.sendRoutingInfoForSM);
+		invoke.setOperationCode(oc);
+
+		try {
+			SendRoutingInfoForSMRequestIndicationImpl ind = new SendRoutingInfoForSMRequestIndicationImpl(msisdn, sm_RP_PRI, serviceCentreAddress,
+					extensionContainer, gprsSupportIndicator, sM_RP_MTI, sM_RP_SMEA);
+			Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());		
+			p.setTagClass(Tag.CLASS_UNIVERSAL);
+			p.setPrimitive(false);
+			p.setTag(Tag.SEQUENCE);
+			invoke.setParameter(p);
+
+			Long invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+
+			this.sendInvokeComponent(invoke);
+			
+			return invokeId;
+
+		} catch (TCAPException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void addSendRoutingInfoForSMResponse(long invokeId, IMSI imsi, LocationInfoWithLMSI locationInfoWithLMSI, MAPExtensionContainer extensionContainer)
+			throws MAPException {
+		
+		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+
+		resultLast.setInvokeId(invokeId);
+
+		// Operation Code
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.sendRoutingInfoForSM);
+		resultLast.setOperationCode(oc);
+
+		SendRoutingInfoForSMResponseIndicationImpl ind = new SendRoutingInfoForSMResponseIndicationImpl(imsi, locationInfoWithLMSI, extensionContainer);
+		Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());		
+		p.setTagClass(Tag.CLASS_UNIVERSAL);
+		p.setPrimitive(false);
+		p.setTag(Tag.SEQUENCE);
+		resultLast.setParameter(p);
+
+		this.sendReturnResultLastComponent(resultLast);
+	}
+
+	@Override
+	public Long addReportSMDeliveryStatusRequest(ISDNAddressString msisdn, AddressString serviceCentreAddress, SMDeliveryOutcome sMDeliveryOutcome,
+			Integer sbsentSubscriberDiagnosticSM, MAPExtensionContainer extensionContainer, Boolean gprsSupportIndicator, Boolean deliveryOutcomeIndicator,
+			SMDeliveryOutcome additionalSMDeliveryOutcome, Integer additionalAbsentSubscriberDiagnosticSM) throws MAPException {
+		
+		if (msisdn == null || serviceCentreAddress == null || sMDeliveryOutcome == null)
+			throw new MAPException("msisdn, serviceCentreAddress and sMDeliveryOutcome must not be null");
+		
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+
+		try {
+			// Operation Code
+			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+			oc.setLocalOperationCode((long)MAPOperationCode.reportSM_DeliveryStatus);
+			invoke.setOperationCode(oc);
+			
+			// Sequence of Parameter
+			AsnOutputStream aos = new AsnOutputStream();
+			ArrayList<Parameter> lstPar = new ArrayList<Parameter>();
+
+			// msisdn
+			Parameter p = ((ISDNAddressStringImpl) msisdn).encode();
+			lstPar.add(p);
+
+			// serviceCentreAddress
+			p = ((AddressStringImpl) serviceCentreAddress).encode();
+			lstPar.add(p);
+			
+			// sm-DeliveryOutcome
+			p = ((AddressStringImpl) serviceCentreAddress).encode();
+			p.setTagClass(Tag.CLASS_UNIVERSAL);
+			p.setTag(Tag.ENUMERATED);
+			p.setData(new byte[]{ (byte)sMDeliveryOutcome.getCode() });
+			lstPar.add(p);
+			
+			// absentSubscriberDiagnosticSM
+			if (sbsentSubscriberDiagnosticSM != null) {
+				p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
+				p.setTag(ReportSMDeliveryStatusRequestIndicationImpl._TAG_AbsentSubscriberDiagnosticSM);
+				aos.reset();
+				aos.writeIntegerData(sbsentSubscriberDiagnosticSM);
+				p.setData(aos.toByteArray());
+				lstPar.add(p);
+			}
+
+			if (extensionContainer != null) {
+				p = ((MAPExtensionContainerImpl) extensionContainer).encode();
+				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
+				p.setTag(ReportSMDeliveryStatusRequestIndicationImpl._TAG_ExtensionContainer);
+				lstPar.add(p);
+			}
+
+			if (gprsSupportIndicator != null && gprsSupportIndicator == true) {
+				p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
+				p.setTag(ReportSMDeliveryStatusRequestIndicationImpl._TAG_GprsSupportIndicator);
+				p.setData(new byte[0]);
+				lstPar.add(p);
+			}
+
+			if (deliveryOutcomeIndicator != null && deliveryOutcomeIndicator == true) {
+				p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
+				p.setTag(ReportSMDeliveryStatusRequestIndicationImpl._TAG_DeliveryOutcomeIndicator);
+				p.setData(new byte[0]);
+				lstPar.add(p);
+			}
+
+			if (additionalSMDeliveryOutcome != null) {
+				p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
+				p.setTag(ReportSMDeliveryStatusRequestIndicationImpl._TAG_AdditionalSMDeliveryOutcome);
+				p.setData(new byte[] { (byte) additionalSMDeliveryOutcome.getCode() });
+				lstPar.add(p);
+			}
+			
+			if (additionalAbsentSubscriberDiagnosticSM != null) {
+				p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
+				p.setTag(ReportSMDeliveryStatusRequestIndicationImpl._TAG_AdditionalAbsentSubscriberDiagnosticSM);
+				aos.reset();
+				aos.writeIntegerData(additionalAbsentSubscriberDiagnosticSM);
+				p.setData(aos.toByteArray());
+				lstPar.add(p);
+			}
+
+			p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+			p.setTagClass(Tag.CLASS_UNIVERSAL);
+			p.setPrimitive(false);
+			p.setTag(Tag.SEQUENCE);
+			
+			Parameter[] pp = new Parameter[lstPar.size()];
+			lstPar.toArray(pp);
+			p.setParameters(pp);
+
+			invoke.setParameter(p);
+
+			Long invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+
+			this.sendInvokeComponent(invoke);
+			
+			return invokeId;
+
+		} catch (TCAPException e) {
+			throw new MAPException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void addReportSMDeliveryStatusResponse(long invokeId, ISDNAddressString storedMSISDN, MAPExtensionContainer extensionContainer) throws MAPException {
+		
+		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+
+		resultLast.setInvokeId(invokeId);
+
+		// Operation Code
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.reportSM_DeliveryStatus);
 		resultLast.setOperationCode(oc);
 
 		// if (sm_RP_UI != null || extensionContainer != null) {
 
 		// Sequence of Parameter
-		AsnOutputStream aos = new AsnOutputStream();
-
 		ArrayList<Parameter> lstPar = new ArrayList<Parameter>();
 
-		Parameter p1 = null;
-		if (sm_RP_UI != null) {
-			aos.reset();
-			p1 = TcapFactory.createParameter();
-			p1.setTagClass(Tag.CLASS_UNIVERSAL);
-			p1.setTag(Tag.STRING_OCTET);
-			p1.setData(sm_RP_UI);
-			lstPar.add(p1);
+		Parameter p;
+		if (storedMSISDN != null) {
+			p = ((ISDNAddressStringImpl) storedMSISDN).encode();
+			lstPar.add(p);
 		}
 
-		Parameter p2 = null;
 		if (extensionContainer != null) {
-			p2 = ((MAPExtensionContainerImpl) extensionContainer).encode();
-			lstPar.add(p2);
+			p = ((MAPExtensionContainerImpl) extensionContainer).encode();
+			lstPar.add(p);
 		}
 
-		Parameter p = TcapFactory.createParameter();
+		p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
 		p.setTagClass(Tag.CLASS_UNIVERSAL);
 		p.setPrimitive(false);
 		p.setTag(Tag.SEQUENCE);
@@ -187,63 +393,169 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 	}
 
 	@Override
-	public Long addMtForwardShortMessageRequest(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, byte[] sm_RP_UI, Boolean moreMessagesToSend,
-			MAPExtensionContainer extensionContainer) throws MAPException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void addMtForwardShortMessageResponse(long invokeId, byte[] sm_RP_UI, MAPExtensionContainer extensionContainer) throws MAPException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Long addSendRoutingInfoForSMRequest(ISDNAddressString msisdn, Boolean sm_RP_PRI, AddressString serviceCentreAddress,
-			MAPExtensionContainer extensionContainer, Boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, byte[] sM_RP_SMEA) throws MAPException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void addSendRoutingInfoForSMResponse(long invokeId, IMSI imsi, LocationInfoWithLMSI locationInfoWithLMSI, MAPExtensionContainer extensionContainer)
-			throws MAPException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Long addReportSMDeliveryStatusRequest(ISDNAddressString msisdn, AddressString derviceCentreAddress, SMDeliveryOutcome sMDeliveryOutcome,
-			Integer sbsentSubscriberDiagnosticSM, MAPExtensionContainer extensionContainer, Boolean gprsSupportIndicator, Boolean deliveryOutcomeIndicator,
-			SMDeliveryOutcome additionalSMDeliveryOutcome, Integer additionalAbsentSubscriberDiagnosticSM) throws MAPException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void addReportSMDeliveryStatusResponse(long invokeId, ISDNAddressString storedMSISDN, MAPExtensionContainer extensionContainer) throws MAPException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public Long addInformServiceCentreRequest(ISDNAddressString storedMSISDN, MWStatus mwStatus, MAPExtensionContainer extensionContainer,
 			Integer absentSubscriberDiagnosticSM, Integer additionalAbsentSubscriberDiagnosticSM) throws MAPException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class4);
+
+		try {
+			// Operation Code
+			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+			oc.setLocalOperationCode((long)MAPOperationCode.informServiceCentre);
+			invoke.setOperationCode(oc);
+			
+			// Sequence of Parameter
+			AsnOutputStream aos = new AsnOutputStream();
+			ArrayList<Parameter> lstPar = new ArrayList<Parameter>();
+
+			// storedMSISDN
+			Parameter p;
+			if (storedMSISDN != null) {
+				p = ((ISDNAddressStringImpl) storedMSISDN).encode();
+				lstPar.add(p);
+			}
+			
+			// mw-Status
+			if (mwStatus != null) {
+				p = ((MWStatusImpl) mwStatus).encode();
+				lstPar.add(p);
+			}
+
+			// extensionContainer
+			if (extensionContainer != null) {
+				p = ((MAPExtensionContainerImpl) extensionContainer).encode();
+				lstPar.add(p);
+			}
+			
+			// absentSubscriberDiagnosticSM
+			if (absentSubscriberDiagnosticSM != null) {
+				p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+				p.setTagClass(Tag.CLASS_UNIVERSAL);
+				p.setTag(Tag.INTEGER);
+				aos.reset();
+				aos.writeIntegerData(absentSubscriberDiagnosticSM);
+				p.setData(aos.toByteArray());
+				lstPar.add(p);
+			}
+			
+			// additionalAbsentSubscriberDiagnosticSM
+			if (additionalAbsentSubscriberDiagnosticSM != null) {
+				p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
+				p.setTag(InformServiceCentreRequestIndicationImpl._TAG_AdditionalAbsentSubscriberDiagnosticSM);
+				aos.reset();
+				aos.writeIntegerData(additionalAbsentSubscriberDiagnosticSM);
+				p.setData(aos.toByteArray());
+				lstPar.add(p);
+			}
+
+			p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+			p.setTagClass(Tag.CLASS_UNIVERSAL);
+			p.setPrimitive(false);
+			p.setTag(Tag.SEQUENCE);
+			
+			Parameter[] pp = new Parameter[lstPar.size()];
+			lstPar.toArray(pp);
+			p.setParameters(pp);
+
+			invoke.setParameter(p);
+
+			Long invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+
+			this.sendInvokeComponent(invoke);
+			
+			return invokeId;
+
+		} catch (TCAPException e) {
+			throw new MAPException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
 	}
 
 	@Override
-	public Long addAlertServiceCentreRequest(ISDNAddressString getMsisdn, AddressString serviceCentreAddress) throws MAPException {
-		// TODO Auto-generated method stub
-		return null;
+	public Long addAlertServiceCentreRequest(ISDNAddressString msisdn, AddressString serviceCentreAddress) throws MAPException {
+		
+		if (msisdn == null || serviceCentreAddress == null)
+			throw new MAPException("msisdn and serviceCentreAddress must not be null");
+		
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+
+		try {
+			// Operation Code
+			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+			oc.setLocalOperationCode((long)MAPOperationCode.alertServiceCentre);
+			invoke.setOperationCode(oc);
+			
+			// Sequence of Parameter
+			ArrayList<Parameter> lstPar = new ArrayList<Parameter>();
+
+			// msisdn
+			Parameter p;
+			p = ((ISDNAddressStringImpl) msisdn).encode();
+			lstPar.add(p);
+
+			// serviceCentreAddress
+			p = ((AddressStringImpl) serviceCentreAddress).encode();
+			lstPar.add(p);
+
+			p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+			p.setTagClass(Tag.CLASS_UNIVERSAL);
+			p.setPrimitive(false);
+			p.setTag(Tag.SEQUENCE);
+			
+			Parameter[] pp = new Parameter[lstPar.size()];
+			lstPar.toArray(pp);
+			p.setParameters(pp);
+
+			invoke.setParameter(p);
+
+			Long invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+
+			this.sendInvokeComponent(invoke);
+			
+			return invokeId;
+
+		} catch (TCAPException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void addAlertServiceCentreResponse(long invokeId) throws MAPException {
-		// TODO Auto-generated method stub
 		
+		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+
+		resultLast.setInvokeId(invokeId);
+
+		// Operation Code
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.alertServiceCentre);
+		resultLast.setOperationCode(oc);
+
+		// if (sm_RP_UI != null || extensionContainer != null) {
+
+		// Sequence of Parameter
+		ArrayList<Parameter> lstPar = new ArrayList<Parameter>();
+
+		Parameter p;
+
+		p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(Tag.CLASS_UNIVERSAL);
+		p.setPrimitive(false);
+		p.setTag(Tag.SEQUENCE);
+
+		Parameter[] pp = new Parameter[lstPar.size()];
+		lstPar.toArray(pp);
+		p.setParameters(pp);
+
+		resultLast.setParameter(p);
+
+		// }
+
+		this.sendReturnResultLastComponent(resultLast);
 	}
 
 }
