@@ -43,7 +43,7 @@ public class TCAPStackImpl implements TCAPStack {
 	public static final long _DIALOG_TIMEOUT = 60000;
 	public static final long _INVOKE_TIMEOUT = 30000;
 	// TCAP state data, it is used ONLY on client side
-    private TCAPProviderImpl tcapProvider;
+    protected TCAPProviderImpl tcapProvider;
     private SccpProvider sccpProvider;
     private SccpAddress address;
     

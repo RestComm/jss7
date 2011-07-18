@@ -159,7 +159,7 @@ public class DialogImpl implements Dialog {
 	// origTransactionId, ScheduledExecutorService executor,
 	// TCAProviderImpl provider, ApplicationContextName acn, UserInformation[]
 	// ui) {
-	DialogImpl(SccpAddress localAddress, SccpAddress remoteAddress, Long origTransactionId, boolean structured,
+	protected DialogImpl(SccpAddress localAddress, SccpAddress remoteAddress, Long origTransactionId, boolean structured,
 			ScheduledExecutorService executor, TCAPProviderImpl provider, int seqControl) {
 		super();
 		this.localAddress = localAddress;
@@ -937,7 +937,7 @@ public class DialogImpl implements Dialog {
 		this.release();
 	}
 
-	void processBegin(TCBeginMessage msg, SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
+	protected void processBegin(TCBeginMessage msg, SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
 		TCBeginIndicationImpl tcBeginIndication = null;
 		try {
 			this.dialogLock.lock();
@@ -988,7 +988,7 @@ public class DialogImpl implements Dialog {
 		this.provider.deliver(this, tcBeginIndication);
 	}
 
-	void processContinue(TCContinueMessage msg, SccpAddress localAddress, SccpAddress remoteAddress)
+	protected void processContinue(TCContinueMessage msg, SccpAddress localAddress, SccpAddress remoteAddress)
 			throws TCAPException {
 		
 		TCContinueIndicationImpl tcContinueIndication = null;
@@ -1090,7 +1090,7 @@ public class DialogImpl implements Dialog {
 
 	
 
-	void processEnd(TCEndMessage msg, SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
+	protected void processEnd(TCEndMessage msg, SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
 		TCEndIndicationImpl tcEndIndication = null;
 		try {
 			this.dialogLock.lock();
@@ -1128,7 +1128,7 @@ public class DialogImpl implements Dialog {
 		this.provider.deliver(this, tcEndIndication);
 	}
 
-	void processAbort(TCAbortMessage msg, SccpAddress localAddress2, SccpAddress remoteAddress2) {
+	protected void processAbort(TCAbortMessage msg, SccpAddress localAddress2, SccpAddress remoteAddress2) {
 		
 		TCPAbortIndicationImpl tcAbortIndication = null;
 		TCUserAbortIndicationImpl tcUAbortIndication = null;
@@ -1238,7 +1238,7 @@ public class DialogImpl implements Dialog {
 		}
 	}
 
-	private Component[] processOperationsState(Component[] components) {
+	protected Component[] processOperationsState(Component[] components) {
 		if (components == null) {
 			return null;
 		}

@@ -82,7 +82,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 	private static final Logger logger = Logger.getLogger(TCAPProviderImpl.class); // listenres
 	private List<TCListener> tcListeners = new ArrayList<TCListener>();
-	private ScheduledExecutorService _EXECUTOR;
+	protected ScheduledExecutorService _EXECUTOR;
 	// boundry for Uni directional dialogs :), tx id is always encoded
 	// on 4 octets, so this is its max value
 	private static final long _4_OCTETS_LONG_FILL = 4294967295l;
@@ -100,7 +100,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	private Map<Long, DialogImpl> dialogs = new HashMap<Long, DialogImpl>();
 	private int ssn;
 
-	TCAPProviderImpl(SccpProvider sccpProvider, TCAPStackImpl stack, int ssn) {
+	protected TCAPProviderImpl(SccpProvider sccpProvider, TCAPStackImpl stack, int ssn) {
 		super();
 		this.sccpProvider = sccpProvider;
 		this.ssn = ssn;
