@@ -142,6 +142,9 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		ProvideSubscriberLocationRequestIndicationImpl provideSubsLoctReqInd = new ProvideSubscriberLocationRequestIndicationImpl();
 		provideSubsLoctReqInd.decode(param);
+		
+		provideSubsLoctReqInd.setInvokeId(invokeId);
+		provideSubsLoctReqInd.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			((MAPServiceLsmListener) serLis).onProvideSubscriberLocationRequestIndication(provideSubsLoctReqInd);
@@ -157,6 +160,9 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		ProvideSubscriberLocationResponseIndicationImpl provideSubsLoctResInd = new ProvideSubscriberLocationResponseIndicationImpl();
 		provideSubsLoctResInd.decode(param);
+		
+		provideSubsLoctResInd.setInvokeId(invokeId);
+		provideSubsLoctResInd.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			((MAPServiceLsmListener) serLis).onProvideSubscriberLocationResponseIndication(provideSubsLoctResInd);
@@ -172,6 +178,9 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		SubscriberLocationReportRequestIndicationImpl reqInd = new SubscriberLocationReportRequestIndicationImpl();
 		reqInd.decode(parameter);
+		
+		reqInd.setInvokeId(invokeId);
+		reqInd.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			((MAPServiceLsmListener) serLis).onSubscriberLocationReportRequestIndication(reqInd);
@@ -186,6 +195,9 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		SubscriberLocationReportResponseIndicationImpl resInd = new SubscriberLocationReportResponseIndicationImpl();
 		resInd.decode(parameter);
+		
+		resInd.setInvokeId(invokeId);
+		resInd.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			((MAPServiceLsmListener) serLis).onSubscriberLocationReportResponseIndication(resInd);
@@ -200,6 +212,9 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		SendRoutingInfoForLCSRequestIndicationImpl reqInd = new SendRoutingInfoForLCSRequestIndicationImpl();
 		reqInd.decode(parameter);
+		
+		reqInd.setInvokeId(invokeId);
+		reqInd.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			((MAPServiceLsmListener) serLis).onSendRoutingInforForLCSRequestIndication(reqInd);
@@ -214,6 +229,9 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		SendRoutingInfoForLCSResponseIndicationImpl resInd = new SendRoutingInfoForLCSResponseIndicationImpl();
 		resInd.decode(parameter);
+		
+		resInd.setInvokeId(invokeId);
+		resInd.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			((MAPServiceLsmListener) serLis).onSendRoutingInforForLCSResponseIndication(resInd);
