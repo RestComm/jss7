@@ -55,7 +55,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 	/**
 	 * @param mapProviderImpl
 	 */
-	protected MAPServiceLsmImpl(MAPProviderImpl mapProviderImpl) {
+	public MAPServiceLsmImpl(MAPProviderImpl mapProviderImpl) {
 		super(mapProviderImpl);
 	}
 
