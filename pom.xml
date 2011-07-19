@@ -29,9 +29,8 @@
 		<compiler.plugin.version>2.0.2</compiler.plugin.version>
 		<compile.source>1.5</compile.source>
 		<!-- mobicents but not strictly ss7 -->
-		<asn.version>1.0.0-SNAPSHOT</asn.version>
-		<stream.version>1.0.0-SNAPSHOT</stream.version>
-
+		<asn.version>1.0.0.BETA4</asn.version>
+		<stream.version>1.0.0.CR1</stream.version>
 	</properties>
 
 	<modules>
