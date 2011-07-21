@@ -22,6 +22,9 @@
 
 package org.mobicents.ss7.linkset.oam;
 
+/**
+ *
+ */
 public class FormatterHelp {
     
     public static final String SPACE = " ";
