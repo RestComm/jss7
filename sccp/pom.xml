@@ -17,7 +17,7 @@
 
         <name>Mobicents SS7 :: SCCP :: Parent :: ${pom.artifactId}</name>
         <properties>
-                <maven.test.skip>false</maven.test.skip>
+                <maven.test.skip>true</maven.test.skip>
         </properties>
 
         <modules>
