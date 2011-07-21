@@ -68,17 +68,8 @@
 	        
 	        private SccpAddress createLocalAddress()
 	        {
-		 		int translationType = 0;
-		
-		        int subSystemNumber = 0;
-		
-		
-		        GlobalTitle gt = GlobalTitle.getInstance(translationType,
-		
-		        NumberingPlan.ISDN_MOBILE, NatureOfAddress.NATIONAL, "1234");
-	
-		        SccpAddress localAddress = new SccpAddress(gt, 0);
-		        return localAddress;
+		 		
+		        return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
 	        }
 	
 			]]>
@@ -125,7 +116,9 @@
 		//create some INVOKE
         Invoke invoke = cpFactory.createTCInvokeRequest();
         invoke.setInvokeId(this.clientDialog.getNewInvokeId());
-        invoke.setOperationCode(cpFactory.createOperationCode(true,new Long(12)));
+        OperationCode oc = cpFactory.createOperationCode();
+        oc.setLocalOperationCode(12L);
+        invoke.setOperationCode(oc);
         //no parameter
         this.clientDialog.sendComponent(invoke); 		
 		]]>
@@ -183,7 +176,9 @@ public class Client implements TCListener{
 		Invoke invoke = cpFactory.createTCInvokeRequest();
 		invoke.setInvokeId(this.clientDialog.getNewInvokeId());
 		
-		invoke.setOperationCode(cpFactory.createOperationCode(true,new Long(12)));
+		OperationCode oc = cpFactory.createOperationCode();
+        oc.setLocalOperationCode(12L);
+        invoke.setOperationCode(oc);
 		//no parameter
 		this.clientDialog.sendComponent(invoke);
 		
@@ -194,14 +189,20 @@ public class Client implements TCListener{
 		tcbr.setApplicationContextName(acn);
 		this.clientDialog.send(tcbr);
 	}
-	
-	public void dialogReleased(Dialog d) {
-	
-		
+
+	public void onDialogReleased(Dialog d)
+	{
+		d.keepAlive();
 	}
 
-	public void onInvokeTimeout(Invoke tcInvokeRequest) {
+
+	public void onInvokeTimeout(Invoke tcInvokeRequest)
+	{
+	}
+
 	
+	public void onDialogTimeout(Dialog d)
+	{
 	}
 
 	public void onTCBegin(TCBeginIndication ind) {
@@ -245,16 +246,11 @@ public class Client implements TCListener{
 	
 	public static void main(String[] args)
 	{
-	
-		int translationType = 0;
-	    int subSystemNumber = 0; 
-	    GlobalTitle gt = GlobalTitle.getInstance(translationType,
-	    	NumberingPlan.ISDN_MOBILE,NatureOfAddress.NATIONAL, "1234");
-	    SccpAddress localAddress = new SccpAddress(gt,0);
+
+	    SccpAddress localAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
 	    
-	    gt = GlobalTitle.getInstance(translationType,
-	    	NumberingPlan.ISDN_MOBILE,NatureOfAddress.NATIONAL, "1572582");
-	    SccpAddress remoteAddress = new SccpAddress(gt,0);
+	   
+	    SccpAddress remoteAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
 		Client c = new Client(getSccpProvider(),localAddress,remoteAddress);
 	}
 	
