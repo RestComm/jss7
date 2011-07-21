@@ -25,7 +25,7 @@ package org.mobicents.ss7.impl.clock;
 import org.mobicents.ss7.spi.clock.Timer;
 
 /**
- *
+ * @author
  * @author kulikov
  */
 public class HighResTimerImpl implements Timer {
