@@ -11,6 +11,10 @@
 
 	<name>Mobicents SS7 :: TCAP :: Impl :: ${pom.artifactId}</name>
 
+	<properties>
+   		<skipTests>true</skipTests>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>concurrent</groupId>
