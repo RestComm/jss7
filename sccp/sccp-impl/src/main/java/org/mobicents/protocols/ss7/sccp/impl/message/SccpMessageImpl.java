@@ -107,7 +107,7 @@ public abstract class SccpMessageImpl implements SccpMessage {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("sls=").append(this.sls).append(" opc=").append(this.opc).append(" dpc=").append(this.dpc)
-				.append(" CallingAddress(").append(this.calledParty).append(") CalledParty(").append(this.calledParty)
+				.append(" CallingAddress(").append(this.callingParty).append(") CalledParty(").append(this.calledParty)
 				.append(")");
 		return sb.toString();
 	}

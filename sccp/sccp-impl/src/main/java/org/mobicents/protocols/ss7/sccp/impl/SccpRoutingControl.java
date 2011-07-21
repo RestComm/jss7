@@ -103,8 +103,7 @@ public class SccpRoutingControl {
 				this.sccpManagement.recdMsgForProhibitedSsn(msg, ssn);
 
 				if (logger.isEnabledFor(Level.WARN)) {
-					logger.warn(String.format(
-							"Received SccpMessage=%s from MTP but the SSN is not available for local routing", msg));
+					logger.warn(String.format("Received SccpMessage=%s from MTP but the SSN is not available for local routing", msg));
 				}
 				if (returnError) {
 					this.sendSccpError(msg, ReturnCause.SUBSYSTEM_FAILURE, true);
@@ -118,8 +117,7 @@ public class SccpRoutingControl {
 				listener.onMessage(msg, msg.getSls());
 			} catch (Exception e) {
 				if (logger.isEnabledFor(Level.WARN)) {
-					logger.warn(String.format(
-							"Received SccpMessage=%s from MTP and user threw exception from listener!", msg));
+					logger.warn(String.format("Received SccpMessage=%s from MTP and user threw exception from listener!", msg));
 				}
 			}
 			break;
@@ -157,8 +155,7 @@ public class SccpRoutingControl {
 		this.sccpStackImpl.txDataQueue.add(msg);
 	}
 
-	private void translationFunction(SccpMessage msg, final boolean returnError, final boolean fromMtp)
-			throws IOException {
+	private void translationFunction(SccpMessage msg, final boolean returnError, final boolean fromMtp) throws IOException {
 
 		SccpAddress calledPartyAddress = msg.getCalledPartyAddress();
 
@@ -170,8 +167,7 @@ public class SccpRoutingControl {
 
 		if (rule == null) {
 			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn(String.format(
-						"Received SccpMessage=%s for Translation but no matching Rule found for local routing", msg));
+				logger.warn(String.format("Received SccpMessage=%s for Translation but no matching Rule found for local routing", msg));
 			}
 
 			// Translation failed return error
@@ -182,14 +178,11 @@ public class SccpRoutingControl {
 		}
 
 		// Check whether to use primary or backup address
-		SccpAddress translationAddress = this.sccpStackImpl.router.getPrimaryAddresses()
-				.get(rule.getPrimaryAddressId());
+		SccpAddress translationAddress = this.sccpStackImpl.router.getPrimaryAddresses().get(rule.getPrimaryAddressId());
 
 		if (translationAddress == null) {
 			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn(String
-						.format("Received SccpMessage=%s for Translation but no matching Primary Address defined for Rule=%s for routing",
-								msg, rule));
+				logger.warn(String.format("Received SccpMessage=%s for Translation but no matching Primary Address defined for Rule=%s for routing", msg, rule));
 			}
 			// Translation failed return error
 			if (returnError) {
@@ -202,14 +195,12 @@ public class SccpRoutingControl {
 		// code availability is needed
 		if (translationAddress.getSignalingPointCode() != this.sccpStackImpl.localSpc) {
 			// Check if the Primary DPC is prohibited
-			RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(
-					translationAddress.getSignalingPointCode());
+			RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(translationAddress.getSignalingPointCode());
 
 			if (remoteSpc == null) {
 				if (logger.isEnabledFor(Level.WARN)) {
-					logger.warn(String
-							.format("Received SccpMessage=%s for Translation but no Remote Signaling Pointcode = %d resource defined ",
-									msg, translationAddress.getSignalingPointCode()));
+					logger.warn(String.format("Received SccpMessage=%s for Translation but no Remote Signaling Pointcode = %d resource defined ", msg,
+							translationAddress.getSignalingPointCode()));
 				}
 
 				if (returnError) {
@@ -238,8 +229,7 @@ public class SccpRoutingControl {
 				}
 
 				// Check if the Secondary DPC is prohibited
-				remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(
-						translationAddress.getSignalingPointCode());
+				remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(translationAddress.getSignalingPointCode());
 
 				if (remoteSpc == null) {
 					if (logger.isEnabledFor(Level.WARN)) {
@@ -274,6 +264,10 @@ public class SccpRoutingControl {
 		SccpAddress address = rule.translate(calledPartyAddress, translationAddress);
 		msg.setCalledPartyAddress(address);
 
+		if (logger.isDebugEnabled()) {
+			logger.debug(String.format("CalledPartyAddress after translation = %s", address));
+		}
+
 		// routing procedures then continue's
 		this.route(msg, fromMtp);
 	}
@@ -305,9 +299,7 @@ public class SccpRoutingControl {
 						// taken care yet
 
 						if (logger.isEnabledFor(Level.WARN)) {
-							logger.warn(String
-									.format("Received SccpMessage=%s for routing but the SSN is not available for local routing",
-											msg));
+							logger.warn(String.format("Received SccpMessage=%s for routing but the SSN is not available for local routing", msg));
 						}
 						if (returnError) {
 							this.sendSccpError(msg, ReturnCause.SUBSYSTEM_FAILURE, fromMtp);
@@ -320,8 +312,7 @@ public class SccpRoutingControl {
 						listener.onMessage(msg, ((SccpMessageImpl) msg).getSls());
 					} catch (Exception e) {
 						if (logger.isEnabledFor(Level.WARN)) {
-							logger.warn(String.format(
-									"Received SccpMessage=%s from MTP and user threw exception from listener!", msg));
+							logger.warn(String.format("Received SccpMessage=%s from MTP and user threw exception from listener!", msg));
 						}
 					}
 				} else if (gt != null) {
@@ -332,9 +323,8 @@ public class SccpRoutingControl {
 					if (calledPartyAddress.isTranslated()) {
 						// Called address already translated once. This is loop
 						// condition and error
-						logger.error(String
-								.format("Droping message. Received SCCPMessage=%s for routing but CalledPartyAddress is already translated once",
-										msg));
+						logger.error(String.format("Droping message. Received SCCPMessage=%s for routing but CalledPartyAddress is already translated once",
+								msg));
 						return;
 					}
 
@@ -346,8 +336,7 @@ public class SccpRoutingControl {
 					// and the message shall be discarded. This abnormality is
 					// similar to the one described in 3.8.3.3, item 1) b6.
 
-					logger.error(String.format("Received SCCPMessage=%s for routing, but neither SSN nor GT present",
-							msg));
+					logger.error(String.format("Received SCCPMessage=%s for routing, but neither SSN nor GT present", msg));
 				}
 
 			} else {
@@ -359,13 +348,11 @@ public class SccpRoutingControl {
 					// contain this SSN and the routing indicator shall be set
 					// to "Route on SSN"; See 2.2.2.1 point 2 of ITU-T Q.714
 					// If routing based on SSN, check remote SSN is available
-					RemoteSubSystem remoteSsn = this.sccpStackImpl.getSccpResource().getRemoteSsn(dpc,
-							calledPartyAddress.getSubsystemNumber());
+					RemoteSubSystem remoteSsn = this.sccpStackImpl.getSccpResource().getRemoteSsn(dpc, calledPartyAddress.getSubsystemNumber());
 					if (remoteSsn == null) {
 						if (logger.isEnabledFor(Level.WARN)) {
-							logger.warn(String
-									.format("Received SCCPMessage=%s for routing, but no Remote SubSystem = %d resource defined ",
-											msg, calledPartyAddress.getSubsystemNumber()));
+							logger.warn(String.format("Received SCCPMessage=%s for routing, but no Remote SubSystem = %d resource defined ", msg,
+									calledPartyAddress.getSubsystemNumber()));
 						}
 
 						// Routing failed return error
@@ -377,8 +364,7 @@ public class SccpRoutingControl {
 
 					if (remoteSsn.isRemoteSsnProhibited()) {
 						if (logger.isEnabledFor(Level.WARN)) {
-							logger.warn(String.format(
-									"Routing of Sccp Message=%s failed as Remote SubSystem = %d is prohibited ", msg,
+							logger.warn(String.format("Routing of Sccp Message=%s failed as Remote SubSystem = %d is prohibited ", msg,
 									calledPartyAddress.getSubsystemNumber()));
 						}
 						if (returnError) {
@@ -405,9 +391,7 @@ public class SccpRoutingControl {
 
 					if (remoteSpc == null) {
 						if (logger.isEnabledFor(Level.WARN)) {
-							logger.warn(String
-									.format("Received SccpMessage=%s for routing but no Remote Signaling Pointcode = %d resource defined ",
-											msg, dpc));
+							logger.warn(String.format("Received SccpMessage=%s for routing but no Remote Signaling Pointcode = %d resource defined ", msg, dpc));
 						}
 
 						if (returnError) {
@@ -418,9 +402,7 @@ public class SccpRoutingControl {
 
 					if (remoteSpc.isRemoteSpcProhibited()) {
 						if (logger.isEnabledFor(Level.WARN)) {
-							logger.warn(String
-									.format("Received SccpMessage=%s for routing but Remote Signaling Pointcode = %d is prohibited",
-											msg, dpc));
+							logger.warn(String.format("Received SccpMessage=%s for routing but Remote Signaling Pointcode = %d is prohibited", msg, dpc));
 						}
 
 						if (returnError) {
@@ -436,8 +418,7 @@ public class SccpRoutingControl {
 					// send to MTP
 					this.send(msg);
 				} else {
-					logger.error(String.format("Received SCCPMessage=%s for routing, but neither SSN nor GT present",
-							msg));
+					logger.error(String.format("Received SCCPMessage=%s for routing, but neither SSN nor GT present", msg));
 				}
 
 			}
@@ -454,9 +435,8 @@ public class SccpRoutingControl {
 				// No DPC, and no GT. This is insufficient information
 
 				if (logger.isEnabledFor(Level.WARN)) {
-					logger.warn(String
-							.format("Received SccpMessage=%s for routing from local SCCP user part but no pointcode and no GT or SSN included",
-									msg, dpc));
+					logger.warn(String.format("Received SccpMessage=%s for routing from local SCCP user part but no pointcode and no GT or SSN included", msg,
+							dpc));
 				}
 
 				if (returnError) {
@@ -468,9 +448,7 @@ public class SccpRoutingControl {
 			if (calledPartyAddress.isTranslated()) {
 				// Called address already translated once. This is loop
 				// condition and error
-				logger.error(String
-						.format("Droping message. Received SCCPMessage=%s for Routing , but CalledPartyAddress is already translated once",
-								msg));
+				logger.error(String.format("Droping message. Received SCCPMessage=%s for Routing , but CalledPartyAddress is already translated once", msg));
 				return;
 			}
 
@@ -488,14 +466,14 @@ public class SccpRoutingControl {
 		ReturnCause returnCause = this.sccpProviderImpl.getParameterFactory().createReturnCause(returnCauseInt);
 		switch (msg.getType()) {
 		case UnitData.MESSAGE_TYPE:
-			ans = messageFactory.createUnitDataService(returnCause, msg.getCallingPartyAddress(),
-					msg.getCalledPartyAddress()); // switch addresses
+			ans = messageFactory.createUnitDataService(returnCause, msg.getCallingPartyAddress(), msg.getCalledPartyAddress()); // switch
+																																// addresses
 			((UnitDataService) ans).setData(((UnitData) msg).getData());
 			break;
 		case XUnitData.MESSAGE_TYPE:
 			HopCounter hc = this.sccpProviderImpl.getParameterFactory().createHopCounter(HopCounter.COUNT_HIGH);
-			ans = messageFactory.createXUnitDataService(hc, returnCause, msg.getCallingPartyAddress(),
-					msg.getCalledPartyAddress()); // switch addresses
+			ans = messageFactory.createXUnitDataService(hc, returnCause, msg.getCallingPartyAddress(), msg.getCalledPartyAddress()); // switch
+																																		// addresses
 			((XUnitDataService) ans).setData(((XUnitData) msg).getData());
 			break;
 		default:
