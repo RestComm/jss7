@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		<artifactId>mobicents-dialogic-native</artifactId>
-		<version>1.0.0.BETA10</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>libmobicents-dialogic-linux</artifactId>
