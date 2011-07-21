@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
+ *
  * @author amit bhayani
  * @author Oleg Kulikov
  */
@@ -125,7 +126,7 @@ public class InterProcessCommunicator {
 	static {
 		try {
 			System.loadLibrary(LIB_NAME);
-			System.out.println("Loaded library mobicents-dialogic-linux");
+			System.out.println("Loaded library mobicents-dialogic-linux"); 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

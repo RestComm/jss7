@@ -97,6 +97,8 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_openChannel
     
     sprintf(devname,"/dev/dahdi/%d",zapid );
 
+
+
     fd = open(devname, O_RDWR);
     if (fd < 0) {
         return -1;

@@ -77,7 +77,9 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dialogic_InterProcessComm
 
 		(*env)->ReleaseByteArrayElements(env, msg_buffer, body, 0);
 
+		/*
 		printf("MTP Message id: %d", h->id);
+		*/
 
 		relm(h);
 		return i;
@@ -138,7 +140,9 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dialogic_InterProcessComm
 
 	status = GCT_send(dest_module_id,(HDR *)m);
 
+	/*
 	printf("Sent %d bytes, status %d", len, status);
+	*/
 
 	(*env)->ReleaseByteArrayElements(env, msg_buffer, body, 0);	
 
