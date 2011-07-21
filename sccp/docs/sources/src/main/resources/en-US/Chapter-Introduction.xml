@@ -1,32 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
-
-<chapter id="introduction">
-
-	<title>Introduction
-		to &THIS.PLATFORM;  &THIS.APPLICATION;
-	</title>
-	<para>
-		SCCP provides connectionless and connection-oriented network
-		services and global title translation (GTT) capabilities above
-		MTP
-		Level 3. SCCP also provides extended routing, flow control, segmentation and reassembly of data services.
-		</para>
-		<para>A global title is an address (for example, a dialed 800 number,
-		calling card number, or mobile subscriber identification number)
-		that is translated by SCCP into a destination point code and
-		subsystem number. A subsystem number uniquely identifies an
-		application at the destination signaling point.
-		SCCP
-		is used as the
-		transport layer for
-		TCAP
-		-based services
-	</para>
-	<para>
-		SCCP
-		data is sent between peers by means of Data Units (UDs).
-	</para>
-
-</chapter>
