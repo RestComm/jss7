@@ -58,12 +58,9 @@ public interface TCAPStack {
 	public void setDialogIdleTimeout(long l);
 
 	public long getDialogIdleTimeout();
-
 	
-//	/**
-//	 * Configure stack and transport layer.
-//	 * @param properties
-//	 * @throws ConfigurationException
-//	 */
-//	public void configure(Properties properties) throws ConfigurationException;
+	public void setInvokeTimeout(long v); 
+
+	public long getInvokeTimeout();
+
 }
