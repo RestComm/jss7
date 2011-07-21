@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.isup;
 
 /**
+ *
  * Simple class to hide details how circuits are managed
  * @author baranowb
  *
