@@ -38,6 +38,7 @@ import org.mobicents.ss7.linkset.oam.LinksetManager;
 import org.mobicents.ss7.linkset.oam.LinksetSelector;
 import org.mobicents.ss7.linkset.oam.LinksetStream;
 
+/** */
 public class NodalInterworkingFunction implements Layer4 {
 
 	private static Logger logger = Logger.getLogger(NodalInterworkingFunction.class);

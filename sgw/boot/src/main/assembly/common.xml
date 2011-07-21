@@ -1,6 +1,5 @@
 <component>
 	<fileSets>
-
 		<!-- fileSet>
 			<directory>src/main/mbrola</directory>
 			<outputDirectory>mbrola</outputDirectory>
