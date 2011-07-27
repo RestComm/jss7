@@ -61,6 +61,8 @@ import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
 import org.mobicents.protocols.ss7.tcap.asn.Result;
 import org.mobicents.protocols.ss7.tcap.asn.ResultSourceDiagnostic;
 import org.mobicents.protocols.ss7.tcap.asn.ResultType;
+import org.mobicents.protocols.ss7.tcap.asn.ReturnResultImpl;
+import org.mobicents.protocols.ss7.tcap.asn.ReturnResultLastImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TCAbortMessageImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TCBeginMessageImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TCContinueMessageImpl;
@@ -977,7 +979,7 @@ public class DialogImpl implements Dialog {
 				tcBeginIndication.setApplicationContextName(this.lastACN);
 				tcBeginIndication.setUserInformation(this.lastUI);
 			}
-			tcBeginIndication.setComponents(msg.getComponent());
+			tcBeginIndication.setComponents(processOperationsState(msg.getComponent()));
 			// change state - before we deliver
 			this.setState(TRPseudoState.InitialReceived);
 			
@@ -1249,6 +1251,19 @@ public class DialogImpl implements Dialog {
 			InvokeImpl invoke = this.operationsSent[index];
 			switch (ci.getType()) {
 
+			case ReturnResult:
+
+				if (invoke == null) {
+					// FIXME: send something back?
+					logger.error(String.format("Rx : %s but there is no corresponding Invoke", ci));
+				} else {
+					resultingIndications.add(ci);
+					ReturnResultImpl rri = (ReturnResultImpl) ci;
+					if (rri.getOperationCode() == null)
+						rri.setOperationCode(invoke.getOperationCode());
+				}
+				break;
+
 			case ReturnResultLast:
 
 				if (invoke == null) {
@@ -1259,7 +1274,9 @@ public class DialogImpl implements Dialog {
 					if (invoke.isSuccessReported()) {
 						resultingIndications.add(ci);
 					}
-
+					ReturnResultLastImpl rri = (ReturnResultLastImpl)ci;
+					if (rri.getOperationCode() == null)
+						rri.setOperationCode(invoke.getOperationCode());
 				}
 				break;
 
@@ -1302,7 +1319,7 @@ public class DialogImpl implements Dialog {
 
 	}
 
-	private synchronized void setState(TRPseudoState newState) {
+	protected synchronized void setState(TRPseudoState newState) {
 		try {
 			this.dialogLock.lock();
 			// add checks?
