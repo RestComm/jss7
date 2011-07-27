@@ -110,16 +110,14 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		oc.setLocalOperationCode((long) MAPOperationCode.mo_forwardSM);
 		resultLast.setOperationCode(oc);
 
-		// if (sm_RP_UI != null || extensionContainer != null) {
-
-		MoForwardShortMessageResponseIndicationImpl ind = new MoForwardShortMessageResponseIndicationImpl(sm_RP_UI, extensionContainer);
-		Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());		
-		p.setTagClass(Tag.CLASS_UNIVERSAL);
-		p.setPrimitive(false);
-		p.setTag(Tag.SEQUENCE);
-		resultLast.setParameter(p);
-		
-		// }
+		if (sm_RP_UI != null || extensionContainer != null) {
+			MoForwardShortMessageResponseIndicationImpl ind = new MoForwardShortMessageResponseIndicationImpl(sm_RP_UI, extensionContainer);
+			Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());
+			p.setTagClass(Tag.CLASS_UNIVERSAL);
+			p.setPrimitive(false);
+			p.setTag(Tag.SEQUENCE);
+			resultLast.setParameter(p);
+		}
 
 		this.sendReturnResultLastComponent(resultLast);
 	}
@@ -168,16 +166,14 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		oc.setLocalOperationCode((long) MAPOperationCode.mt_forwardSM);
 		resultLast.setOperationCode(oc);
 
-		// if (sm_RP_UI != null || extensionContainer != null) {
-
-		MtForwardShortMessageResponseIndicationImpl ind = new MtForwardShortMessageResponseIndicationImpl(sm_RP_UI, extensionContainer);
-		Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());		
-		p.setTagClass(Tag.CLASS_UNIVERSAL);
-		p.setPrimitive(false);
-		p.setTag(Tag.SEQUENCE);
-		resultLast.setParameter(p);
-		
-		// }
+		if (sm_RP_UI != null || extensionContainer != null) {
+			MtForwardShortMessageResponseIndicationImpl ind = new MtForwardShortMessageResponseIndicationImpl(sm_RP_UI, extensionContainer);
+			Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());
+			p.setTagClass(Tag.CLASS_UNIVERSAL);
+			p.setPrimitive(false);
+			p.setTag(Tag.SEQUENCE);
+			resultLast.setParameter(p);
+		}
 
 		this.sendReturnResultLastComponent(resultLast);
 	}
