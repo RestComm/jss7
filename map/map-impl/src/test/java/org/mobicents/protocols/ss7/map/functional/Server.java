@@ -466,8 +466,8 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		
 		byte[] sm_RP_UI2 = new byte[] { 21, 22, 23, 24, 25 };
 		try {
-			d.addMoForwardShortMessageResponse(moForwSmInd.getInvokeId(), sm_RP_UI2,  MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
-//			d.addMoForwardShortMessageResponse(moForwSmInd.getInvokeId(), null,  null);
+//			d.addMoForwardShortMessageResponse(moForwSmInd.getInvokeId(), sm_RP_UI2,  MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
+			d.addMoForwardShortMessageResponse(moForwSmInd.getInvokeId(), null,  null);
 		} catch (MAPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

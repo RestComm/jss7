@@ -240,31 +240,31 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
 		// -- MoForwardShortMessage
 
-//		IMSI imsi1 = this.mapServiceFactory.createIMSI(250L, 99L, "1357999");
-//		SM_RP_DA sm_RP_DA = this.mapServiceFactory.createSM_RP_DA(imsi1);
-//		ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
-//		SM_RP_OA sm_RP_OA = this.mapServiceFactory.createSM_RP_OA_Msisdn(msisdn1);
-//		byte[] sm_RP_UI = new byte[] { 21, 22, 23, 24, 25 };
-//		IMSI imsi2 = this.mapServiceFactory.createIMSI(250L, 07L, "123456789");
+		IMSI imsi1 = this.mapServiceFactory.createIMSI(250L, 99L, "1357999");
+		SM_RP_DA sm_RP_DA = this.mapServiceFactory.createSM_RP_DA(imsi1);
+		ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+		SM_RP_OA sm_RP_OA = this.mapServiceFactory.createSM_RP_OA_Msisdn(msisdn1);
+		byte[] sm_RP_UI = new byte[] { 21, 22, 23, 24, 25 };
+		IMSI imsi2 = this.mapServiceFactory.createIMSI(250L, 07L, "123456789");
+		
+//		MoForwardShortMessageRequestIndicationImpl ind = new MoForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI,
+//				MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory), imsi2);
+//		Parameter p = ind.encode(((MAPProviderImpl) this.mapProvider).getTCAPProvider().getComponentPrimitiveFactory());
+//		AsnOutputStream aos = new AsnOutputStream();
+//		p.setTagClass(Tag.CLASS_UNIVERSAL);
+//		p.setPrimitive(false);
+//		p.setTag(Tag.SEQUENCE);
+//		p.encode(aos);
 //		
-////		MoForwardShortMessageRequestIndicationImpl ind = new MoForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI,
-////				MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory), imsi2);
-////		Parameter p = ind.encode(((MAPProviderImpl) this.mapProvider).getTCAPProvider().getComponentPrimitiveFactory());
-////		AsnOutputStream aos = new AsnOutputStream();
-////		p.setTagClass(Tag.CLASS_UNIVERSAL);
-////		p.setPrimitive(false);
-////		p.setTag(Tag.SEQUENCE);
-////		p.encode(aos);
-////		
-////		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(aos.toByteArray()));
-////		int tag = ais.readTag();
-////		Parameter p2 = TcapFactory.createParameter(tag, ais);
-////		p2.setPrimitive(false);
-////		MoForwardShortMessageRequestIndicationImpl ind2 = new MoForwardShortMessageRequestIndicationImpl();
-////		ind2.decode(p2);
-//
-//		clientDialogSms.addMoForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory),
-//				imsi2);
+//		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(aos.toByteArray()));
+//		int tag = ais.readTag();
+//		Parameter p2 = TcapFactory.createParameter(tag, ais);
+//		p2.setPrimitive(false);
+//		MoForwardShortMessageRequestIndicationImpl ind2 = new MoForwardShortMessageRequestIndicationImpl();
+//		ind2.decode(p2);
+
+		clientDialogSms.addMoForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory),
+				imsi2);
 		
 		
 //		LMSI lmsi1 = this.mapServiceFactory.createLMSI(new byte[] { 49, 48, 47, 46 });
@@ -275,10 +275,10 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 ////		clientDialogSms.addMtForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, true, null);
 //		clientDialogSms.addMtForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, true, MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
 
-		ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
-		AddressString servCenAddr1 = this.mapServiceFactory.createAddressString(AddressNature.network_specific_number, NumberingPlan.national, "999000");
-		clientDialogSms.addSendRoutingInfoForSMRequest(msisdn1, false, servCenAddr1, MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory), true,
-				SM_RP_MTI.SMS_Status_Report, new byte[] { 90, 91 });
+//		ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+//		AddressString servCenAddr1 = this.mapServiceFactory.createAddressString(AddressNature.network_specific_number, NumberingPlan.national, "999000");
+//		clientDialogSms.addSendRoutingInfoForSMRequest(msisdn1, false, servCenAddr1, MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory), true,
+//				SM_RP_MTI.SMS_Status_Report, new byte[] { 90, 91 });
 
 //		ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
 //		AddressString serviceCentreAddress = this.mapServiceFactory.createAddressString(AddressNature.network_specific_number, NumberingPlan.national, "999000");
