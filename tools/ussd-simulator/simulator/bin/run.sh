@@ -78,6 +78,9 @@ RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/m3ua-api.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/m3ua-impl.jar"
 RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/ss7-ussd-simulator.jar"
 
+#log4j
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/classes/log4j.xml"
+
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
     TEST_CORE=`cygpath --path --windows "$TEST_CORE"`
