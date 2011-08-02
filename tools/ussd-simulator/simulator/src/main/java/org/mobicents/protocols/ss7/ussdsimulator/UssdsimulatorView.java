@@ -4,25 +4,36 @@
 
 package org.mobicents.protocols.ss7.ussdsimulator;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.jdesktop.application.Action;
-import org.jdesktop.application.ResourceMap;
-import org.jdesktop.application.SingleFrameApplication;
-import org.jdesktop.application.FrameView;
-import org.jdesktop.application.TaskMonitor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import javax.swing.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.Timer;
+
+import org.jdesktop.application.Action;
+import org.jdesktop.application.FrameView;
+import org.jdesktop.application.ResourceMap;
+import org.jdesktop.application.SingleFrameApplication;
+import org.jdesktop.application.TaskMonitor;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.m3ua.impl.As;
+import org.mobicents.protocols.ss7.m3ua.impl.Asp;
+import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
+import org.mobicents.protocols.ss7.m3ua.impl.AspState;
+import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAProcess;
+import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
+import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
+import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
@@ -31,42 +42,26 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
-import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
-import org.mobicents.protocols.ss7.map.api.MAPStack;
-
-import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
-import org.mobicents.protocols.ss7.sccp.SccpStack;
-import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.m3ua.impl.*;
-import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
-import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
-import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
-import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
-
-import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAManagement;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAProcess;
-import org.mobicents.protocols.ss7.m3ua.parameter.DestinationPointCode;
-import org.mobicents.protocols.ss7.m3ua.parameter.LocalRKIdentifier;
-import org.mobicents.protocols.ss7.m3ua.parameter.ServiceIndicators;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
+import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
+import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
@@ -862,11 +857,11 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,
             sccpStack = new SccpStackImpl();
             
 		  // Clean up: like test case does...
-            ServerM3UAManagement serverM3UAMgmt = new ServerM3UAManagement();
-            serverM3UAMgmt.start();
-            serverM3UAMgmt.getAppServers().clear();
-            serverM3UAMgmt.getAspfactories().clear();
-            serverM3UAMgmt.stop();
+            this.serverM3UAMgmt = new ServerM3UAManagement();
+            this.serverM3UAMgmt.start();
+            this.serverM3UAMgmt.getAppServers().clear();
+            this.serverM3UAMgmt.getAspfactories().clear();
+            this.serverM3UAMgmt.stop();
 
 //            rc = parmFactory.createRoutingContext(new long[] { 100 });
 //            DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory.createDestinationPointCode(_CONF_REMOTE_PC, (short) 0) };
@@ -881,38 +876,53 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,
 
 			// Set-up Signaling Gateway
             this.sgw = new ServerM3UAProcess(_field_peer_ip.getText(), Integer.parseInt(_field_peer_port.getText()));
-            this.sgw.setServerM3UAManagement(serverM3UAMgmt);
+            this.sgw.setServerM3UAManagement(this.serverM3UAMgmt);
             this.sgw.start();
-
+            
             // m3ua ras create rc <rc> rk dpc <dpc> opc <opc-list> si <si-list>
             // traffic-mode {broadcast|loadshare|override} <ras-name>
-            this.remAs = serverM3UAMgmt.createAppServer( ("m3ua ras create rc 100 rk dpc "+_CONF_REMOTE_PC+" si 3 traffic-mode override server-testas")
+            this.remAs = this.serverM3UAMgmt.createAppServer( ("m3ua ras create rc 100 rk dpc "+_CONF_REMOTE_PC+" opc 1 si 3 traffic-mode override server-testas")
 							.split(" "));
             // m3ua rasp create ip <ip> port <port> <asp-name>"
-            this.remAspFactory = serverM3UAMgmt.createAspFactory( ("m3ua rasp create ip "+_field_client_ip.getText() +" port "+_field_client_port.getText()+" server-testasp")
+            this.remAspFactory = this.serverM3UAMgmt.createAspFactory( ("m3ua rasp create ip "+_field_client_ip.getText() +" port "+_field_client_port.getText()+" server-testasp")
 				.split(" "));
-            this.remAsp = serverM3UAMgmt.assignAspToAs("server-testas", "server-testasp");
+            this.remAsp = this.serverM3UAMgmt.assignAspToAs("server-testas", "server-testasp");
 
             this.sccpStack = new SccpStackImpl();
             this.sccpStack.setMtp3UserPart(sgw);
             this.sccpStack.setLocalSpc(1);
             this.sccpStack.setNi(2);
+            
+            SccpResource sccpResource = new SccpResource();
+            sccpResource.start();
+            sccpResource.getRemoteSpcs().clear();
+            sccpResource.getRemoteSsns().clear();
+            sccpResource.stop();
+            
+            sccpResource.start();
+            
+            this.sccpStack.setSccpResource(sccpResource);
+            
             RemoteSignalingPointCode rspc = new RemoteSignalingPointCode(_CONF_REMOTE_PC,0,0);
             RemoteSubSystem rss = new RemoteSubSystem(_CONF_REMOTE_PC, _CONF_SSN, 0);
             this.sccpStack.getSccpResource().addRemoteSpc(0, rspc);
             this.sccpStack.getSccpResource().addRemoteSsn(0, rss);
+            
+            this.sccpStack.start();
 
 
 
 		this.mapStack = new MAPStackImpl(this.sccpStack.getSccpProvider(),_CONF_SSN);
 		this.mapStack.getMAPProvider().addMAPDialogListener(this);
 		this.mapStack.getMAPProvider().getMAPServiceSupplementary().addMAPServiceListener(this);
+		
+		this.mapStack.getMAPProvider().getMAPServiceSupplementary().acivate();
 
 		this.mapStack.start();
 		long startTime = System.currentTimeMillis();
 		while (AspState.ACTIVE != remAsp.getState()) {
 			Thread.currentThread().sleep(5000);
-			if (startTime + 20000 < System.currentTimeMillis()) {
+			if (startTime + 300000 < System.currentTimeMillis()) {
 				break;
 			}
 		}
