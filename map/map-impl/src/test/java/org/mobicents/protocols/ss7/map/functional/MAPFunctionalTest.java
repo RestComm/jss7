@@ -389,7 +389,6 @@ public class MAPFunctionalTest extends SccpHarness {
 //		iii++;
 
 		
-		
 //		server.reset();
 //		client.reset();
 //		server.setStep(FunctionalTestScenario.Action_Component_A);

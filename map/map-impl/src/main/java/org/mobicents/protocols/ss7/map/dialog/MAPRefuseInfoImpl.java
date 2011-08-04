@@ -231,6 +231,8 @@ public class MAPRefuseInfoImpl {
 
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding MAPRefuseInfo: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding MAPRefuseInfo: " + e.getMessage(), e);
 		}
 	}
 

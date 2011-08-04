@@ -149,27 +149,23 @@ public class LCSRequestorIDImpl extends MAPPrimitiveBase implements LCSRequestor
 			throw new MAPException("Error while encoding LCSRequestorID the mandatory parameter RequestorIDString is not defined");
 		}
 
-		try {
-			// Encode mandatory param dataCodingScheme
-			asnOs.write(0x80);
+		// Encode mandatory param dataCodingScheme
+		asnOs.write(0x80);
+		asnOs.write(0x01);
+		asnOs.write(this.dataCodingScheme);
+
+		// Encode mandatory param NameString
+		asnOs.write(0x81);
+		requestorIDString.encode();
+		byte[] data = requestorIDString.getEncodedString();
+		asnOs.write(data.length);
+		asnOs.write(data);
+
+		if (this.lcsFormatIndicator != null) {
+			// Encode optional lcs-FormatIndicator [3] LCS-FormatIndicator
+			asnOs.write(0x82);
 			asnOs.write(0x01);
-			asnOs.write(this.dataCodingScheme);
-
-			// Encode mandatory param NameString
-			asnOs.write(0x81);
-			requestorIDString.encode();
-			byte[] data = requestorIDString.getEncodedString();
-			asnOs.write(data.length);
-			asnOs.write(data);
-
-			if (this.lcsFormatIndicator != null) {
-				// Encode optional lcs-FormatIndicator [3] LCS-FormatIndicator
-				asnOs.write(0x82);
-				asnOs.write(0x01);
-				asnOs.write(this.lcsFormatIndicator.getIndicator());
-			}
-		} catch (IOException e) {
-			new MAPException("Encoding LCSClientName failed ", e);
+			asnOs.write(this.lcsFormatIndicator.getIndicator());
 		}
 	}
 }

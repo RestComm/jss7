@@ -181,6 +181,8 @@ public class MAPProviderAbortInfoImpl {
 			asnOS.write(data);
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding MAPProviderAbortInfo: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding MAPProviderAbortInfo: " + e.getMessage(), e);
 		}
 	}
 

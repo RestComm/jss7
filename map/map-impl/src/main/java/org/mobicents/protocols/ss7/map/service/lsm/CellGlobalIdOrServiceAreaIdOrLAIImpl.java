@@ -130,25 +130,14 @@ public class CellGlobalIdOrServiceAreaIdOrLAIImpl extends MAPPrimitiveBase imple
 
 			asnOs.write(0x80);
 			asnOs.write(this.cellGlobalIdOrServiceAreaIdFixedLength.length);
-			try {
-				asnOs.write(this.cellGlobalIdOrServiceAreaIdFixedLength);
-			} catch (IOException e) {
-				throw new MAPException(
-						"Encoding of CellGlobalIdOrServiceAreaIdOrLAI failed. Failed to encode parameter[cellGlobalIdOrServiceAreaIdFixedLength [0] CellGlobalIdOrServiceAreaIdFixedLength]",
-						e);
-			}
+			asnOs.write(this.cellGlobalIdOrServiceAreaIdFixedLength);
 		} else if (this.laiFixedLength != null) {
 			if (this.cellGlobalIdOrServiceAreaIdFixedLength != null) {
 				// laiFixedLength [1] LAIFixedLength
 
 				asnOs.write(0x81);
 				asnOs.write(this.laiFixedLength.length);
-				try {
-					asnOs.write(this.laiFixedLength);
-				} catch (IOException e) {
-					throw new MAPException(
-							"Encoding of CellGlobalIdOrServiceAreaIdOrLAI failed. Failed to encode parameter[laiFixedLength [1] LAIFixedLength]", e);
-				}
+				asnOs.write(this.laiFixedLength);
 			}
 
 		}

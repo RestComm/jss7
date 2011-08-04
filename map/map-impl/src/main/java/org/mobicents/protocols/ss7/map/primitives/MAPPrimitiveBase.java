@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.map.primitives;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -43,13 +44,11 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
  */
 public abstract class MAPPrimitiveBase implements MAPPrimitive {
 
-	@Override
 	public void decode(Parameter p) throws MAPParsingComponentException {
 		AsnInputStream ansIS = new AsnInputStream(new ByteArrayInputStream(p.getData()));
 		this.decode(ansIS, p.getTagClass(), p.isPrimitive(), p.getTag(), p.getData().length);
 	}
 
-	@Override
 	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int masterTag, int length) throws MAPParsingComponentException {
 		
 		if (length == 0)
@@ -73,7 +72,6 @@ public abstract class MAPPrimitiveBase implements MAPPrimitive {
 		}
 	}
 
-	@Override
 	public Parameter encode() throws MAPException {
 		AsnOutputStream asnOs = new AsnOutputStream(); 
 		
@@ -89,7 +87,6 @@ public abstract class MAPPrimitiveBase implements MAPPrimitive {
 		return p;
 	}
 
-	@Override
 	public void encode(AsnOutputStream asnOs) throws MAPException {
 
 		try {
@@ -99,11 +96,13 @@ public abstract class MAPPrimitiveBase implements MAPPrimitive {
 			byte[] buf = this.encodeParameterToStream(p);
 			asnOs.write(buf);
 		} catch (IOException e) {
-			throw new MAPException("ParseException when decoding the primitive: " + e.getMessage(), e);
+			throw new MAPException("IOException when decoding the primitive: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when decoding the primitive: " + e.getMessage(), e);
 		}
 	}
 	
-	private byte[] encodeParameterToStream(Parameter p) throws IOException {
+	private byte[] encodeParameterToStream(Parameter p) throws IOException, AsnException {
 		if (p.getData() == null && p.getParameters() != null) {
 			AsnOutputStream asnOs = new AsnOutputStream();
 			for (Parameter px : p.getParameters()) {
@@ -117,17 +116,14 @@ public abstract class MAPPrimitiveBase implements MAPPrimitive {
 			return p.getData();
 	}
 
-	@Override
 	public int getTag() throws MAPException {
 		return 0;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}

@@ -149,6 +149,8 @@ public class MAPAcceptInfoImpl {
 			asnOS.write(data);
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding MAPAcceptInfo: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding MAPAcceptInfo: " + e.getMessage(), e);
 		}
 	}
 }

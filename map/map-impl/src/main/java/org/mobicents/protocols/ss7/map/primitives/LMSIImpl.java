@@ -85,11 +85,7 @@ public class LMSIImpl extends MAPPrimitiveBase implements LMSI {
 		if (this.data.length != 4)
 			throw new MAPException("Error while encoding the LMSI: data field length must equale 4");
 
-		try {
-			asnOs.write(this.data);
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding LMSI: " + e.getMessage(), e);
-		}
+		asnOs.write(this.data);
 	}
 
 	@Override

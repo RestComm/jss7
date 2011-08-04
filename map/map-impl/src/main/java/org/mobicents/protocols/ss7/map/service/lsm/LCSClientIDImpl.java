@@ -304,11 +304,7 @@ public class LCSClientIDImpl extends MAPPrimitiveBase implements LCSClientID {
 			asnOs.write(0x85);
 			//TODO : Is this correct?
 			asnOs.write(this.lcsAPN.length);
-			try {
-				asnOs.write(this.lcsAPN);
-			} catch (IOException e) {
-				throw new MAPException("Encoding of LCSClientID failed. Failed to Encode lcsAPN [5] APN", e);
-			}
+			asnOs.write(this.lcsAPN);
 		}
 		
 		if (this.lcsRequestorID != null) {

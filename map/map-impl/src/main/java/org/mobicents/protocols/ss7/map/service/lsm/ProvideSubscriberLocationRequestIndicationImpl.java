@@ -756,11 +756,7 @@ public class ProvideSubscriberLocationRequestIndicationImpl extends LsmMessageIm
 			// h-gmlc-Address [15] GSN-Address OPTIONAL
 			asnOs.write(0x8f);
 			asnOs.write(this.hgmlcAddress.length);
-			try {
-				asnOs.write(this.hgmlcAddress);
-			} catch (IOException e) {
-				throw new MAPException("Encoding of ProvideSubscriberLocation failed. Failed to parse h-gmlc-Address [15] GSN-Address LCS-QoS", e);
-			}
+			asnOs.write(this.hgmlcAddress);
 		}
 
 	}

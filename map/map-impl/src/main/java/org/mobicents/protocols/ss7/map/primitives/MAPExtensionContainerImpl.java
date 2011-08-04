@@ -222,6 +222,8 @@ public class MAPExtensionContainerImpl extends MAPPrimitiveBase implements MAPEx
 			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding ExtensionContainer: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding ExtensionContainer: " + e.getMessage(), e);
 		}
 	}
 	

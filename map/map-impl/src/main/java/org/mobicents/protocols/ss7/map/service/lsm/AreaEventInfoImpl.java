@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
 
+import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -187,6 +188,8 @@ public class AreaEventInfoImpl extends MAPPrimitiveBase implements AreaEventInfo
 			try {
 				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, 2, this.intervalTime);
 			} catch (IOException e) {
+				throw new MAPException("Error while encoding AreaEventInfo. Encdoing of the parameter[intervalTime [2] IntervalTime] failed", e);
+			} catch (AsnException e) {
 				throw new MAPException("Error while encoding AreaEventInfo. Encdoing of the parameter[intervalTime [2] IntervalTime] failed", e);
 			}
 		}

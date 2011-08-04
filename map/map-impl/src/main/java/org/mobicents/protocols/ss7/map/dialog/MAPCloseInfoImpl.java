@@ -136,6 +136,8 @@ public class MAPCloseInfoImpl {
 			asnOS.write(data);
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding MAPCloseInfo: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding MAPCloseInfo: " + e.getMessage(), e);
 		}
 	}
 }

@@ -128,11 +128,7 @@ public class AreaImpl extends MAPPrimitiveBase implements Area {
 
 		asnOs.write(0x81);
 		asnOs.write(this.areaIdentification.length);
-		try {
-			asnOs.write(this.areaIdentification);
-		} catch (IOException e) {
-			throw new MAPException("Error while encoding Area. Encoding the mandatory parameter[areaIdentification [1] AreaIdentification] failed", e);
-		}
+		asnOs.write(this.areaIdentification);
 
 	}
 }

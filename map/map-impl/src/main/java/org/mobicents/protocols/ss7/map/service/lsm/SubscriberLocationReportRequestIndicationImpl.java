@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
 
+import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -748,12 +749,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 			// locationEstimate [5] Ext-GeographicalInformation OPTIONAL,
 			asnOs.write(0x85);
 			asnOs.write(this.locationEstimate.length);
-			try {
-				asnOs.write(this.locationEstimate);
-			} catch (IOException e) {
-				throw new MAPException(
-						"Encoding of SubscriberLocationReportRequestIndication failed. Failed to parse locationEstimate [5] Ext-GeographicalInformation", e);
-			}
+			asnOs.write(this.locationEstimate);
 		}
 
 		// ageOfLocationEstimate [6] AgeOfLocationInformation OPTIONAL,
@@ -762,7 +758,11 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, 6, this.ageOfLocationEstimate);
 			} catch (IOException e) {
 				throw new MAPException(
-						"Error while encoding SubscriberLocationReportRequestIndication. Encdoing of the parameter[ageOfLocationEstimate [6] AgeOfLocationInformation] failed",
+						"Error while encoding SubscriberLocationReportRequestIndication. Encoding of the parameter[ageOfLocationEstimate [6] AgeOfLocationInformation] failed",
+						e);
+			} catch (AsnException e) {
+				throw new MAPException(
+						"Error while encoding SubscriberLocationReportRequestIndication. Encoding of the parameter[ageOfLocationEstimate [6] AgeOfLocationInformation] failed",
 						e);
 			}
 		}
@@ -786,12 +786,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 			// add-LocationEstimate [8] Add-GeographicalInformation OPTIONAL,
 			asnOs.write(0x85);
 			asnOs.write(this.addLocationEstimate.length);
-			try {
-				asnOs.write(this.addLocationEstimate);
-			} catch (IOException e) {
-				throw new MAPException(
-						"Encoding of SubscriberLocationReportRequestIndication failed. Failed to parse add-LocationEstimate [8] Add-GeographicalInformation", e);
-			}
+			asnOs.write(this.addLocationEstimate);
 		}
 
 		if (this.deferredmtlrData != null) {
@@ -819,24 +814,14 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 			// geranPositioningData [11] PositioningDataInformation OPTIONAL,
 			asnOs.write(0x8b);
 			asnOs.write(this.geranPositioningData.length);
-			try {
-				asnOs.write(this.geranPositioningData);
-			} catch (IOException e) {
-				throw new MAPException(
-						"Encoding of SubscriberLocationReportRequestIndication failed. Failed to parse geranPositioningData [11] PositioningDataInformation", e);
-			}
+			asnOs.write(this.geranPositioningData);
 		}
 
 		if (this.utranPositioningData != null) {
 			// utranPositioningData [12] UtranPositioningDataInfo OPTIONAL,
 			asnOs.write(0x8c);
 			asnOs.write(this.utranPositioningData.length);
-			try {
-				asnOs.write(this.utranPositioningData);
-			} catch (IOException e) {
-				throw new MAPException(
-						"Encoding of SubscriberLocationReportRequestIndication failed. Failed to parse utranPositioningData [12] UtranPositioningDataInfo", e);
-			}
+			asnOs.write(this.utranPositioningData);
 		}
 
 		if (this.cellIdOrSai != null) {
@@ -857,11 +842,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 			// h-gmlc-Address [14] GSN-Address OPTIONAL,
 			asnOs.write(0x8e);
 			asnOs.write(this.hgmlcAddress.length);
-			try {
-				asnOs.write(this.hgmlcAddress);
-			} catch (IOException e) {
-				throw new MAPException("Encoding of SubscriberLocationReportRequestIndication failed. Failed to parse h-gmlc-Address [14] GSN-Address", e);
-			}
+			asnOs.write(this.hgmlcAddress);
 		}
 
 		if (this.lcsServiceTypeID != null) {

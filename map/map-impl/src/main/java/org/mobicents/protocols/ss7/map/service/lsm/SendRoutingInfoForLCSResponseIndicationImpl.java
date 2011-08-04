@@ -293,47 +293,28 @@ public class SendRoutingInfoForLCSResponseIndicationImpl extends LsmMessageImpl 
 			// v-gmlc-Address [3] GSN-Address OPTIONAL,
 			asnOs.write(0x83);
 			asnOs.write(this.vgmlcAddress.length);
-			try {
-				asnOs.write(this.vgmlcAddress);
-			} catch (IOException e) {
-				throw new MAPException(
-						"Encoding of SubscriberLocationReportResponseIndication failed. Failed to parse v-gmlc-Address [3] GSN-Address OPTIONAL", e);
-			}
+			asnOs.write(this.vgmlcAddress);
 		}
 
 		if (this.hGmlcAddress != null) {
 			// h-gmlc-Address [4] GSN-Address OPTIONAL,
 			asnOs.write(0x83);
 			asnOs.write(this.hGmlcAddress.length);
-			try {
-				asnOs.write(this.hGmlcAddress);
-			} catch (IOException e) {
-				throw new MAPException(
-						"Encoding of SubscriberLocationReportResponseIndication failed. Failed to parse h-gmlc-Address [4] GSN-Address OPTIONAL", e);
-			}
+			asnOs.write(this.hGmlcAddress);
 		}
 
 		if (this.pprAddress != null) {
 			// ppr-Address [5] GSN-Address OPTIONAL,
 			asnOs.write(0x83);
 			asnOs.write(this.pprAddress.length);
-			try {
-				asnOs.write(this.pprAddress);
-			} catch (IOException e) {
-				throw new MAPException("Encoding of SubscriberLocationReportResponseIndication failed. Failed to ppr-Address [5] GSN-Address OPTIONAL", e);
-			}
+			asnOs.write(this.pprAddress);
 		}
 
 		if (this.additionalVGmlcAddress != null) {
 			// additional-v-gmlc-Address [6] GSN-Address OPTIONAL,
 			asnOs.write(0x83);
 			asnOs.write(this.additionalVGmlcAddress.length);
-			try {
-				asnOs.write(this.additionalVGmlcAddress);
-			} catch (IOException e) {
-				throw new MAPException(
-						"Encoding of SubscriberLocationReportResponseIndication failed. Failed to parse additional-v-gmlc-Address [6] GSN-Address OPTIONAL", e);
-			}
+			asnOs.write(this.additionalVGmlcAddress);
 		}
 	}
 

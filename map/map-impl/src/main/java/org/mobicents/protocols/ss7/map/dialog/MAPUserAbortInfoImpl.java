@@ -289,6 +289,8 @@ public class MAPUserAbortInfoImpl {
 			asnOS.write(data);
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding MAPUserAbortInfo: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding MAPUserAbortInfo: " + e.getMessage(), e);
 		}
 	}
 

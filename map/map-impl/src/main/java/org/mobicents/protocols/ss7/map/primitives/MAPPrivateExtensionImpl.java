@@ -153,7 +153,7 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension {
 				break;
 
 			default:
-				this.data = new byte[localIS.available()];
+				this.data = new byte[localAis.available()];
 				localAis.read(this.data);
 				break;
 			}
@@ -163,7 +163,7 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension {
 
 	}
 
-	public void encode(AsnOutputStream asnOS) throws IOException, MAPException {
+	public void encode(AsnOutputStream asnOS) throws IOException, AsnException, MAPException {
 		if (this.oId == null || this.oId.length < 2)
 			throw new MAPException("OId value must not be empty when coding PrivateExtension");
 

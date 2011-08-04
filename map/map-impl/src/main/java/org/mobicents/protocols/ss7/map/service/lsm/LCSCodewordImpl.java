@@ -121,22 +121,18 @@ public class LCSCodewordImpl extends MAPPrimitiveBase implements LCSCodeword {
 			throw new MAPException("Error while encoding LCSCodeword the mandatory parameter lcsCodewordString is not defined");
 		}
 
-		try {
-			// Encode mandatory param dataCodingScheme
-			asnOs.write(0x80);
-			asnOs.write(0x01);
-			asnOs.write(this.dataCodingScheme);
+		// Encode mandatory param dataCodingScheme
+		asnOs.write(0x80);
+		asnOs.write(0x01);
+		asnOs.write(this.dataCodingScheme);
 
-			// Encode mandatory param lcsCodewordString
-			asnOs.write(0x81);
-			lcsCodewordString.encode();
-			byte[] data = lcsCodewordString.getEncodedString();
-			asnOs.write(data.length);
-			asnOs.write(data);
+		// Encode mandatory param lcsCodewordString
+		asnOs.write(0x81);
+		lcsCodewordString.encode();
+		byte[] data = lcsCodewordString.getEncodedString();
+		asnOs.write(data.length);
+		asnOs.write(data);
 
-		} catch (IOException e) {
-			new MAPException("Encoding LCSClientName failed ", e);
-		}
 	}
 
 }

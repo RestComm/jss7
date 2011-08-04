@@ -215,6 +215,8 @@ public class MAPOpenInfoImpl {
 			asnOS.write(data);
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding MAPOpenInfo: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding MAPOpenInfo: " + e.getMessage(), e);
 		}
 
 	}

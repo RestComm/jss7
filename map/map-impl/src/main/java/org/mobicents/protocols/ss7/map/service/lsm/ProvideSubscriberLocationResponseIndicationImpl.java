@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
 
+import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -300,18 +301,17 @@ public class ProvideSubscriberLocationResponseIndicationImpl extends LsmMessageI
 		// locationEstimate Ext-GeographicalInformation
 		asnOs.write(0x10);
 		asnOs.write(this.locationEstimate.length);
-		try {
-			asnOs.write(this.locationEstimate);
-		} catch (IOException e) {
-			throw new MAPException(
-					"Encoding of ProvideSubscriberLocationResponseIndication failed. Failed to encode locationEstimate Ext-GeographicalInformation", e);
-		}
+		asnOs.write(this.locationEstimate);
 
 		// ageOfLocationEstimate [0] AgeOfLocationInformation
 		if (this.ageOfLocationEstimate != null) {
 			try {
 				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, 0, this.ageOfLocationEstimate);
 			} catch (IOException e) {
+				throw new MAPException(
+						"Error while encoding ProvideSubscriberLocationResponseIndication. Encdoing of the parameter[ageOfLocationEstimate [0] AgeOfLocationInformation] failed",
+						e);
+			} catch (AsnException e) {
 				throw new MAPException(
 						"Error while encoding ProvideSubscriberLocationResponseIndication. Encdoing of the parameter[ageOfLocationEstimate [0] AgeOfLocationInformation] failed",
 						e);
@@ -337,12 +337,7 @@ public class ProvideSubscriberLocationResponseIndicationImpl extends LsmMessageI
 		if (additionalLocationEstimate != null) {
 			asnOs.write(0x10);
 			asnOs.write(this.locationEstimate.length);
-			try {
-				asnOs.write(this.locationEstimate);
-			} catch (IOException e) {
-				throw new MAPException(
-						"Encoding of ProvideSubscriberLocationResponseIndication failed. Failed to encode locationEstimate Ext-GeographicalInformation", e);
-			}
+			asnOs.write(this.locationEstimate);
 
 		}
 
@@ -356,25 +351,14 @@ public class ProvideSubscriberLocationResponseIndicationImpl extends LsmMessageI
 			// geranPositioningData [4] PositioningDataInformation
 			asnOs.write(0x84);
 			asnOs.write(this.geranPositioningData.length);
-			try {
-				asnOs.write(this.geranPositioningData);
-			} catch (IOException e) {
-				throw new MAPException(
-						"Encoding of ProvideSubscriberLocationResponseIndication failed. Failed to encode geranPositioningData [4] PositioningDataInformation",
-						e);
-			}
+			asnOs.write(this.geranPositioningData);
 		}
 
 		if (this.utranPositioningData != null) {
 			// utranPositioningData [5] UtranPositioningDataInfo
 			asnOs.write(0x85);
 			asnOs.write(this.utranPositioningData.length);
-			try {
-				asnOs.write(this.utranPositioningData);
-			} catch (IOException e) {
-				throw new MAPException(
-						"Encoding of ProvideSubscriberLocationResponseIndication failed. Failed to encode utranPositioningData [5] UtranPositioningDataInfo", e);
-			}
+			asnOs.write(this.utranPositioningData);
 		}
 
 		if (this.cellGlobalIdOrServiceAreaIdOrLAI != null) {
