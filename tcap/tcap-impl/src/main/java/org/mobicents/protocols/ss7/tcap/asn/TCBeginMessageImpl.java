@@ -34,6 +34,7 @@ import java.util.List;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 
@@ -133,7 +134,7 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 			if (len > ais.available()) {
 				throw new ParseException("Not enough data: " + ais.available());
 			}
-			if (len == 0x80) {
+			if (len == Tag.Indefinite_Length) {
 				//
 				throw new ParseException("Undefined len not supported");
 			}

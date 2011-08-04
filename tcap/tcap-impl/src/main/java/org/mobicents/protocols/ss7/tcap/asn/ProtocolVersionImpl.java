@@ -107,11 +107,7 @@ public class ProtocolVersionImpl implements ProtocolVersion {
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
 		
-		try {
-			aos.write(_ENCODED_VALUE);
-		} catch (IOException e) {
-			throw new ParseException(e);
-		}
+		aos.write(_ENCODED_VALUE);
 
 	}
 

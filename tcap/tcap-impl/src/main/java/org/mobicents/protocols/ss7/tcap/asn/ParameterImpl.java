@@ -31,8 +31,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
@@ -180,7 +182,7 @@ public class ParameterImpl implements Parameter {
 
 			len = ais.readLength();
 
-			if (len == 0x80) {
+			if (len == Tag.Indefinite_Length) {
 				throw new ParseException("Undefined length is not supported.");
 			}
 			data = new byte[len];
@@ -208,20 +210,22 @@ public class ParameterImpl implements Parameter {
 			throw new ParseException("Parameter data not set.");
 		}
 
-		aos.writeTag(tagClass, primitive, tag);
-		if (data == null) {
-
-			AsnOutputStream localAos = new AsnOutputStream();
-			for (Parameter p : this.parameters) {
-				p.encode(localAos);
-			}
-			data = localAos.toByteArray();
-		}
-		
 		try {
+			aos.writeTag(tagClass, primitive, tag);
+			if (data == null) {
+
+				AsnOutputStream localAos = new AsnOutputStream();
+				for (Parameter p : this.parameters) {
+					p.encode(localAos);
+				}
+				data = localAos.toByteArray();
+			}
+
 			aos.writeLength(data.length);
 			aos.write(data);
 		} catch (IOException e) {
+			throw new ParseException(e);
+		} catch (AsnException e) {
 			throw new ParseException(e);
 		}
 	}

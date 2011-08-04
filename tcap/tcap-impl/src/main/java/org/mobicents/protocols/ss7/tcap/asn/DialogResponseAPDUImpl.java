@@ -32,6 +32,7 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 
 /**
  * @author baranowb
@@ -160,7 +161,7 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 
 			len = ais.readLength();
 
-			if (len == 0x80) {
+			if (len == Tag.Indefinite_Length) {
 				throw new ParseException("Undefined len not supported!");
 			}
 			// going the easy way; not going to work with undefined!
@@ -290,6 +291,8 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 			
 
 		} catch (IOException e) {
+			throw new ParseException(e);
+		} catch (AsnException e) {
 			throw new ParseException(e);
 		}
 

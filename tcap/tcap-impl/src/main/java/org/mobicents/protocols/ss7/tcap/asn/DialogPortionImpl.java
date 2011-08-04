@@ -198,14 +198,16 @@ public class DialogPortionImpl extends External implements DialogPortion {
 			throw new ParseException(e);
 		}
 		
-		//now lets write ourselves
-		aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
-		byte[] externalData = localAsn.toByteArray();
-		
 		try {
+			//now lets write ourselves
+			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
+			byte[] externalData = localAsn.toByteArray();
+
 			aos.writeLength(externalData.length);
 			aos.write(externalData);
 		} catch (IOException e) {
+			throw new ParseException(e);
+		} catch (AsnException e) {
 			throw new ParseException(e);
 		}
 	}

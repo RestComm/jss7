@@ -192,6 +192,8 @@ public class ResultSourceDiagnosticImpl implements ResultSourceDiagnostic {
 			aos.write(data);
 		} catch (IOException e) {
 			throw new ParseException(e);
+		} catch (AsnException e) {
+			throw new ParseException(e);
 		}
 
 	}

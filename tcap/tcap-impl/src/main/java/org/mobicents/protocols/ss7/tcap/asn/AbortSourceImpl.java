@@ -121,6 +121,8 @@ public class AbortSourceImpl implements AbortSource {
 		aos.writeInteger(_TAG_CLASS,_TAG,type.getType());
 	} catch (IOException e) {
 		throw new ParseException(e);
+	} catch (AsnException e) {
+		throw new ParseException(e);
 	}
 
 	}

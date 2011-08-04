@@ -144,7 +144,7 @@ public class DialogUniAPDUImpl implements DialogUniAPDU {
 
 			len = ais.readLength();
 
-			if (len == 0x80) {
+			if (len == Tag.Indefinite_Length) {
 				throw new ParseException("Undefined len not supported!");
 			}
 			// going the easy way; not going to work with undefined!
@@ -243,6 +243,8 @@ public class DialogUniAPDUImpl implements DialogUniAPDU {
 			aos.write(byteData);
 
 		} catch (IOException e) {
+			throw new ParseException(e);
+		} catch (AsnException e) {
 			throw new ParseException(e);
 		}
 

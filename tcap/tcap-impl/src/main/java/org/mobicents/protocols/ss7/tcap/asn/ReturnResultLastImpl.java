@@ -143,7 +143,7 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 
 		try {
 			int len = ais.readLength();
-			if (len == 0x80) {
+			if (len == Tag.Indefinite_Length) {
 				throw new ParseException("Unspiecified length is not supported.");
 			}
 
@@ -171,7 +171,7 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 				// sequence of OperationCode
 
 				len = localAis.readLength();
-				if (len == 0x80) {
+				if (len == Tag.Indefinite_Length) {
 					throw new ParseException("Unspiecified length is not supported.");
 				}
 
@@ -246,6 +246,8 @@ public class ReturnResultLastImpl implements ReturnResultLast {
 			aos.writeLength(data.length);
 			aos.write(data);
 		} catch (IOException e) {
+			throw new ParseException(e);
+		} catch (AsnException e) {
 			throw new ParseException(e);
 		}
 	}

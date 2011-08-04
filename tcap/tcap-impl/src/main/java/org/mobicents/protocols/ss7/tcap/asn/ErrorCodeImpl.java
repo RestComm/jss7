@@ -134,6 +134,8 @@ public class ErrorCodeImpl implements ErrorCode {
 
 		} catch (IOException e) {
 			throw new ParseException(e);
+		} catch (AsnException e) {
+			throw new ParseException(e);
 		}
 	}
 

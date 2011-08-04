@@ -118,7 +118,7 @@ public class RejectImpl implements Reject {
 
 		try {
 			int len = ais.readLength();
-			if (len == 0x80) {
+			if (len == Tag.Indefinite_Length) {
 				throw new ParseException("Undefined length is not supported.");
 			}
 			if (len > ais.available()) {
@@ -173,6 +173,8 @@ public class RejectImpl implements Reject {
 			aos.writeLength(data.length);
 			aos.write(data);
 		} catch (IOException e) {
+			throw new ParseException(e);
+		} catch (AsnException e) {
 			throw new ParseException(e);
 		}
 

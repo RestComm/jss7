@@ -276,6 +276,8 @@ public class InvokeImpl implements Invoke {
 			aos.write(data);
 		} catch (IOException e) {
 			throw new ParseException(e);
+		} catch (AsnException e) {
+			throw new ParseException(e);
 		}
 
 	}

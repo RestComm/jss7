@@ -119,6 +119,8 @@ public class ResultImpl implements Result {
 			aos.write(b);
 		} catch (IOException e) {
 			throw new ParseException(e);
+		} catch (AsnException e) {
+			throw new ParseException(e);
 		}
 	}
 

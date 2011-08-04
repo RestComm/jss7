@@ -149,6 +149,8 @@ public class OperationCodeImpl implements OperationCode {
 
 		} catch (IOException e) {
 			throw new ParseException(e);
+		} catch (AsnException e) {
+			throw new ParseException(e);
 		}
 	}
 

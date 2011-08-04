@@ -89,6 +89,8 @@ public class ApplicationContextNameImpl implements ApplicationContextName {
 			aos.write(oidEncoded);
 		} catch (IOException e) {
 			throw new ParseException(e);
+		} catch (AsnException e) {
+			throw new ParseException(e);
 		}
 
 	}
