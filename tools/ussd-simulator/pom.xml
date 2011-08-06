@@ -19,9 +19,9 @@
 		<module>simulator</module>
 	</modules>
 	<properties>
-		<map.version>1.0.0-SNAPSHOT</map.version>
-		<m3ua.version>1.0.0-SNAPSHOT</m3ua.version>
-		<mtp.version>1.0.0-SNAPSHOT</mtp.version>
+		<map.version>1.0.0.BETA10</map.version>
+		<m3ua.version>1.0.0.BETA10</m3ua.version>
+		<mtp.version>1.0.0.BETA10</mtp.version>
 		<javolution.version>5.5.1</javolution.version>
 	</properties>
 	<dependencyManagement>
