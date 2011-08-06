@@ -46,13 +46,13 @@
                               <Component id="_field_client_port" max="32767" attributes="1"/>
                               <Component id="_field_client_ip" alignment="0" pref="106" max="32767" attributes="1"/>
                           </Group>
-                          <EmptySpace pref="157" max="32767" attributes="0"/>
+                          <EmptySpace pref="87" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="_button_close_server" max="32767" attributes="1"/>
                               <Component id="_button_open_server" alignment="0" min="-2" pref="103" max="-2" attributes="1"/>
                           </Group>
                       </Group>
-                      <Component id="jSeparator2" alignment="0" pref="626" max="32767" attributes="0"/>
+                      <Component id="jSeparator2" alignment="0" pref="664" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="103" max="-2" attributes="0"/>
               </Group>
@@ -103,7 +103,7 @@
                           <Component id="_button_close_server" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="14" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -381,6 +381,7 @@
         <Component class="javax.swing.JLabel" name="_label_peer_IP">
           <Properties>
             <Property name="text" type="java.lang.String" resourceKey="_label_peer_IP.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="_label_peer_IP.toolTipText"/>
             <Property name="name" type="java.lang.String" value="_label_peer_IP" noResource="true"/>
           </Properties>
         </Component>
@@ -424,6 +425,7 @@
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
             <Property name="text" type="java.lang.String" resourceKey="_label_client_IP.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="_label_client_IP.toolTipText"/>
             <Property name="name" type="java.lang.String" value="_label_client_IP" noResource="true"/>
           </Properties>
         </Component>
@@ -525,6 +527,6 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,-14,0,0,2,-57"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,13,0,0,2,-57"/>
   </AuxValues>
 </Form>

@@ -416,6 +416,7 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,
         jSeparator2.setName("jSeparator2"); // NOI18N
 
         _label_peer_IP.setText(resourceMap.getString("_label_peer_IP.text")); // NOI18N
+        _label_peer_IP.setToolTipText(resourceMap.getString("_label_peer_IP.toolTipText")); // NOI18N
         _label_peer_IP.setName("_label_peer_IP"); // NOI18N
 
         _label_peer_port.setText(resourceMap.getString("_label_peer_port.text")); // NOI18N
@@ -445,6 +446,7 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,
         _field_peer_ip.setName("_field_peer_ip"); // NOI18N
 
         jLabel1.setText(resourceMap.getString("_label_client_IP.text")); // NOI18N
+        jLabel1.setToolTipText(resourceMap.getString("_label_client_IP.toolTipText")); // NOI18N
         jLabel1.setName("_label_client_IP"); // NOI18N
 
         jLabel2.setText(resourceMap.getString("_label_client_PORT.text")); // NOI18N
@@ -489,11 +491,11 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,
                         .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                             .add(_field_client_port)
                             .add(_field_client_ip, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 157, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 87, Short.MAX_VALUE)
                         .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                             .add(_button_close_server, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(_button_open_server, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 103, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                    .add(jSeparator2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 626, Short.MAX_VALUE))
+                    .add(jSeparator2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE))
                 .add(103, 103, 103))
         );
         mainPanelLayout.setVerticalGroup(
@@ -531,7 +533,7 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,
                         .add(_button_open_server)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(_button_close_server)))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         menuBar.setName("menuBar"); // NOI18N
@@ -647,27 +649,54 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,
 				this.onlyKeyPadContent = false;
 				return;
 			}
-		}
-		try {
-			AddressString msisdn = this.mapStack.getMAPProvider()
-			.getMapServiceFactory().createAddressString(AddressNature.international_number,
-					NumberingPlan.ISDN, "31628838002");
 			
-			clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString, msisdn);
+			try {
+				AddressString msisdn = this.mapStack.getMAPProvider()
+				.getMapServiceFactory().createAddressString(AddressNature.international_number,
+						NumberingPlan.ISDN, "31628838002");
+				
+				clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString, msisdn);
+				
+				clientDialog.send();
+				this._field_punch_display.setText("");
+				this._keypad_button_break.setEnabled(true);
+				this._field_result_display.append("\n");
+				this._field_result_display.append(punchedText);
+			} catch (MAPException ex) {
+				Logger.getLogger(UssdsimulatorView.class.getName()).log(
+						Level.SEVERE, null, ex);
+				this._field_punch_display.setText("Failed to pass USSD request: "
+						+ ex);
+				this.onlyKeyPadContent = false;
+				return;
+			}
+		} else {
+			//This is response to Unstructured Request from GW
 			
-			clientDialog.send();
-			this._field_punch_display.setText("");
-			this._keypad_button_break.setEnabled(true);
-			this._field_result_display.append("\n");
-			this._field_result_display.append(punchedText);
-		} catch (MAPException ex) {
-			Logger.getLogger(UssdsimulatorView.class.getName()).log(
-					Level.SEVERE, null, ex);
-			this._field_punch_display.setText("Failed to pass USSD request: "
-					+ ex);
-			this.onlyKeyPadContent = false;
-			return;
+			
+			try {
+				AddressString msisdn = this.mapStack.getMAPProvider()
+				.getMapServiceFactory().createAddressString(AddressNature.international_number,
+						NumberingPlan.ISDN, "31628838002");
+				
+				//clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString, msisdn);
+				clientDialog.addUnstructuredSSResponse(this.ussdInditaion.getInvokeId(), true, (byte) 0x0F, ussdString);
+				
+				clientDialog.send();
+				this._field_punch_display.setText("");
+				this._keypad_button_break.setEnabled(true);
+				this._field_result_display.append("\n");
+				this._field_result_display.append(punchedText);
+			} catch (MAPException ex) {
+				Logger.getLogger(UssdsimulatorView.class.getName()).log(
+						Level.SEVERE, null, ex);
+				this._field_punch_display.setText("Failed to pass USSD request: "
+						+ ex);
+				this.onlyKeyPadContent = false;
+				return;
+			}
 		}
+
 	}// GEN-LAST:event__keypad_button_callActionPerformed
 
 	private void _keypad_button_breakActionPerformed(
@@ -780,6 +809,8 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,
 	private int busyIconIndex = 0;
 
 	private JDialog aboutBox;
+	
+	private UnstructuredSSIndication ussdInditaion;
 
 	private void enableKeyPad(boolean b) {
 
@@ -1064,9 +1095,11 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,
 
 
 	public void onProcessUnstructuredSSIndication(
-			ProcessUnstructuredSSIndication arg0) {
-		// we dont server requests.
-		throw new UnsupportedOperationException("Not supported yet.");
+			ProcessUnstructuredSSIndication procUssdInditaion) {
+		
+		USSDString string = procUssdInditaion.getUSSDString();
+		this._field_result_display.setText(string.getString());
+		
 	}
 
 	public void onUnstructuredSSIndication(
@@ -1074,6 +1107,8 @@ public class UssdsimulatorView extends FrameView implements MAPDialogListener,
 		// here RA responds.
 		USSDString string = ussdInditaion.getUSSDString();
 		this._field_result_display.setText(string.getString());
+		
+		this.ussdInditaion = ussdInditaion;
 	}
 
     public void onErrorComponent(MAPDialog mapd,Long l, MAPErrorMessage mapem) {
