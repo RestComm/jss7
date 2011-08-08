@@ -2,13 +2,16 @@ package org.mobicents.protocols.ss7.tools.traceparser;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
@@ -32,6 +35,7 @@ import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.DialogAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.DialogPortion;
 import org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU;
+import org.mobicents.protocols.ss7.tcap.asn.ParameterImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
@@ -69,6 +73,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 
 	private Map<Integer, Map<Long, DialogImplWrapper>> dialogs = new HashMap<Integer, Map<Long, DialogImplWrapper>>();
 	private long dialogEnumerator = 0;
+	private long tcapLogMsg = 0;
 	
 
 	public MAPTraceParser(Ss7ParseParameters par) {
@@ -224,11 +229,6 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 			byte[] data = null;
 			SccpAddress localAddress = null;
 			SccpAddress remoteAddress = null;
-			
-			if(this.msgCount==8) {
-				int dsa=0;
-				dsa++;
-			}
 
 			switch (message.getType()) {
 
@@ -242,7 +242,6 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 				localAddress = ((XUnitData) message).getCalledPartyAddress();
 				remoteAddress = ((XUnitData) message).getCallingPartyAddress();
 				break;
-			// TODO: determine action based on cause?
 			case UnitDataService.MESSAGE_TYPE:
 				data = ((XUnitData) message).getData();
 				localAddress = ((XUnitData) message).getCalledPartyAddress();
@@ -254,10 +253,10 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 				remoteAddress = ((XUnitData) message).getCallingPartyAddress();
 				break;
 			}
-			// FIXME: Qs state that OtxID and DtxID consittute to dialog id.....
 
 			// asnData - it should pass
-			AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(data));
+			AsnInputStream ais = new AsnInputStream(data);
+			AsnInputStream aisMsg = new AsnInputStream(data);
 
 			// this should have TC message tag :)
 			int tag = ais.readTag();
@@ -285,27 +284,34 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 							this.dialogs.put(opc, opcData);
 						}
 						opcData.put(originatingTransactionId, di);
-						
+
 						acnValue = di.getAcnValue();
 						acnVersion = di.getAcnVersion();
-						
+
 						di.SetStateActive();
-						
-						Integer applicationContextFilter = par.getApplicationContextFilter(); 
+
+						Integer applicationContextFilter = par.getApplicationContextFilter();
 						if (applicationContextFilter != null && applicationContextFilter != acnValue)
 							return;
-						
-						Long dialogIdFilter = par.getDialogIdFilter(); 
-						if (dialogIdFilter != null && dialogIdFilter != originatingTransactionId && dialogIdFilter != destinationTransactionId)
+
+						if (!CheckDialogIdFilter(originatingTransactionId, destinationTransactionId))
 							return;
-						
+
 						di.processContinue(tcm, localAddress, remoteAddress);
-						
-						this.LogMsg("TC-CONTINUE", message.getOpc(), message.getDpc(), acnValue, acnVersion, originatingTransactionId, destinationTransactionId);
-						this.LogComponents(tcm.getComponent());
+
+						if (this.pw != null) {
+							this.pw.print("TC-CONTINUE: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", originatingTransactionId="
+									+ originatingTransactionId + ", destinationTransactionId=" + destinationTransactionId);
+							byte[] comp = null;
+							if (this.par.getTcapMsgData()) {
+								comp = LogDataTag(aisMsg, "Continue");
+							}
+							
+							this.LogComponents(tcm.getComponent(), acnValue, acnVersion, comp);
+						}
 					}
 				}
-				
+
 				break;
 			}
 
@@ -321,12 +327,12 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 					this.dialogs.put(opc, opcData);
 				}
 				opcData.put(originatingTransactionId, di);
-				
+
 				DialogPortion dp = tcb.getDialogPortion();
 				if (dp != null) {
 					DialogAPDU apduN = dp.getDialogAPDU();
-					if( apduN instanceof DialogRequestAPDU ) {
-						DialogRequestAPDU apdu = (DialogRequestAPDU)apduN;
+					if (apduN instanceof DialogRequestAPDU) {
+						DialogRequestAPDU apdu = (DialogRequestAPDU) apduN;
 						ApplicationContextName acnV = apdu.getApplicationContextName();
 						if (acnV != null) {
 							di.setAcnValue(((int) acnV.getOid()[6]));
@@ -334,26 +340,31 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 						}
 					}
 				}
-				
-				Integer applicationContextFilter = par.getApplicationContextFilter(); 
+
+				Integer applicationContextFilter = par.getApplicationContextFilter();
 				if (applicationContextFilter != null && applicationContextFilter != di.getAcnValue())
 					return;
 
-				Long dialogIdFilter = par.getDialogIdFilter(); 
-				if (dialogIdFilter != null && dialogIdFilter != originatingTransactionId)
+				if (!CheckDialogIdFilter(originatingTransactionId, Integer.MIN_VALUE))
 					return;
 
 				di.processBegin(tcb, localAddress, remoteAddress);
-				
-				this.LogMsg("TC-BEGIN", message.getOpc(), message.getDpc(), di.getAcnValue(), di.getAcnVersion(), originatingTransactionId, null);
-				this.LogComponents(tcb.getComponent());
+
+				if (this.pw != null) {
+					this.pw.print("TC-BEGIN: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", originatingTransactionId=" + originatingTransactionId);
+					byte[] comp = null;
+					if (this.par.getTcapMsgData()) {
+						comp = LogDataTag(aisMsg, "Begin");
+					}
+					this.LogComponents(tcb.getComponent(), di.getAcnValue(), di.getAcnVersion(), comp);
+				}
 				break;
 			}
 
 			case TCEndMessage._TAG: {
 				TCEndMessage teb = TcapFactory.createTCEndMessage(ais);
 				long destinationTransactionId = teb.getDestinationTransactionId();
-				
+
 				int dpc = message.getDpc();
 				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
 				int acnValue = 0;
@@ -362,32 +373,39 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 					DialogImplWrapper di = dpcData.get(destinationTransactionId);
 					if (di != null) {
 						dpcData.remove(destinationTransactionId);
-						
+
 						acnValue = di.getAcnValue();
 						acnVersion = di.getAcnVersion();
 
-						Integer applicationContextFilter = par.getApplicationContextFilter(); 
+						Integer applicationContextFilter = par.getApplicationContextFilter();
 						if (applicationContextFilter != null && applicationContextFilter != acnValue)
 							return;
 
-						Long dialogIdFilter = par.getDialogIdFilter(); 
-						if (dialogIdFilter != null && dialogIdFilter != destinationTransactionId)
+						if (!CheckDialogIdFilter(destinationTransactionId, Integer.MIN_VALUE))
 							return;
 
 						di.processEnd(teb, localAddress, remoteAddress);
-						
-						this.LogMsg("TC-END", message.getOpc(), message.getDpc(), acnValue, acnVersion, null, destinationTransactionId);
-						this.LogComponents(teb.getComponent());
+
+						if (this.pw != null) {
+							this.pw.print("TC-END: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", destinationTransactionId="
+									+ destinationTransactionId);
+							byte[] comp = null;
+							if (this.par.getTcapMsgData()) {
+								comp = LogDataTag(aisMsg, "End");
+							}
+							
+							this.LogComponents(teb.getComponent(), acnValue, acnVersion, comp);
+						}
 					}
 				}
-				
+
 				break;
 			}
-			
+
 			case TCAbortMessage._TAG: {
 				TCAbortMessage tub = TcapFactory.createTCAbortMessage(ais);
 				long destinationTransactionId = tub.getDestinationTransactionId();
-				
+
 				int dpc = message.getDpc();
 				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
 				int acnValue = 0;
@@ -397,26 +415,33 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 					if (di != null) {
 						acnValue = di.getAcnValue();
 						acnVersion = di.getAcnVersion();
-						
+
 						dpcData.remove(destinationTransactionId);
 
-						Integer applicationContextFilter = par.getApplicationContextFilter(); 
+						Integer applicationContextFilter = par.getApplicationContextFilter();
 						if (applicationContextFilter != null && applicationContextFilter != acnValue)
 							return;
 
-						Long dialogIdFilter = par.getDialogIdFilter(); 
-						if (dialogIdFilter != null && dialogIdFilter != destinationTransactionId)
+						if (!CheckDialogIdFilter(destinationTransactionId, Integer.MIN_VALUE))
 							return;
 
 						di.processAbort(tub, localAddress, remoteAddress);
-						
-						this.LogMsg("TC-ABORT", message.getOpc(), message.getDpc(), acnValue, acnVersion, null, destinationTransactionId);
-						this.LogComponents(null);
-//						this.pw.println();
-//						this.pw.flush();
+
+						if (this.pw != null) {
+							this.pw.print("TC-ABORT: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", destinationTransactionId="
+									+ destinationTransactionId);
+							byte[] comp = null;
+							if (this.par.getTcapMsgData()) {
+								comp = LogDataTag(aisMsg, "Continue");
+							}
+							
+							this.LogComponents(null, acnValue, acnVersion, comp);
+							this.pw.println();
+							this.pw.flush();
+						}
 					}
 				}
-				
+
 				break;
 			}
 			}
@@ -425,91 +450,271 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 		}
 	}
 
-	
-	private void LogMsg(String msgType, int opc, int dpc, int acnValue, int acnVersion, Long origTransId, Long destTransId) {
-		if (this.pw == null)
-			return;
+	private boolean CheckDialogIdFilter(long originatingTransactionId, long destinationTransactionId) {
+		Long dialogIdFilter = par.getDialogIdFilter();
+		Long dialogIdFilter2 = par.getDialogIdFilter2();
+		if (dialogIdFilter == null && dialogIdFilter2 == null)
+			return true;
 		
-		this.pw.print(msgType);
-		this.pw.print(":\tMsgNum=");
-		this.pw.print(this.msgCount);
-		this.pw.print(",\tAcn=");
+		if (dialogIdFilter != null && (dialogIdFilter == originatingTransactionId || dialogIdFilter == destinationTransactionId))
+			return true;
+		
+		if (dialogIdFilter2 != null && (dialogIdFilter2 == originatingTransactionId || dialogIdFilter2 == destinationTransactionId))
+			return true;
+
+		return false;
+	}
+
+	private byte[] LogDataTag(AsnInputStream aisMsg, String name) {
+		byte[] res = null;
+		
+		try {
+			aisMsg.readTag();
+			aisMsg.readLength();
+
+			int pos = aisMsg.position();
+			aisMsg.position(0);
+			byte[] buf = new byte[pos];
+			aisMsg.read(buf);
+
+			this.writeDataArray(name + " tag+length: ", buf);
+
+			while( aisMsg.available() > 0 ) {
+				pos = aisMsg.position();
+				int tag = aisMsg.readTag();
+				String ttl = "???";
+				switch( tag ) {
+				case 8:
+					ttl = "OrigTransactionId";
+					break;
+				case 9:
+					ttl = "DestTransactionId";
+					break;
+				case 10:
+					ttl = "P-AbortCause";
+					break;
+				case 11:
+					ttl = "DialogPortion";
+					break;
+				case 12:
+					ttl = "ComponentPortion";
+					break;
+				}
+				int length = aisMsg.readLength();
+				int newPos;
+				if (length == Tag.Indefinite_Length) {
+					aisMsg.readIndefinite();
+					newPos = aisMsg.position();
+				} else {
+					newPos = aisMsg.position() + length; 
+				}				
+				aisMsg.position(pos);
+				buf = new byte[newPos - pos];
+				aisMsg.read(buf);
+				if (tag == 12)
+					res = buf;
+				
+				this.writeDataArray(ttl + ": ", buf);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.pw.println();
+			this.pw.print("Exception parsing TCAP msg");
+			this.pw.print(e.getMessage());
+		}
+		
+		return res;
+	}
+	
+	private void writeDataArray( String title, byte[] data ) {
+		this.pw.println();
+		this.pw.print(title);
+		int i1 = 0;
+		for( byte b : data ) {
+			if (i1 == 0)
+				i1 = 1;
+			else
+				this.pw.print(",");
+			this.pw.print(" ");
+			
+			if (b < 0)
+				this.pw.print("(byte)");
+			this.pw.print((int) (b & 0xFF));
+		}
+	}
+	
+	private void LogComponents(Component[] comp, int acnValue, int acnVersion, byte[] compData) {
+		this.pw.println();
+		this.pw.print("\tAnc: ");
 		if (acnValue > 0)
 			this.pw.print(acnValue + "-" + acnVersion);
 		else
 			this.pw.print("???");
-
-		this.pw.print(",\tOPC=");
-		this.pw.print(opc);
-		this.pw.print(", DPC=");
-		this.pw.print(dpc);
-
-		if (origTransId != null) {
-			this.pw.print(", origTransId=");
-			this.pw.print(origTransId);
-		}
-		if (destTransId != null) {
-			this.pw.print(", destTransId=");
-			this.pw.print(destTransId);
-		}
-	}
-	
-	private void LogComponents(Component[] comp) {
-		if (this.pw == null)
-			return;
-		
+		this.pw.print("\tComponents: ");
 		if (comp != null) {
+			int i1 = 0;
 			for (Component c : comp) {
-				this.pw.println();
-				this.pw.print("\t");
+				if (i1 == 0)
+					i1 = 1;
+				else
+					this.pw.print(", ");
 				this.pw.print(c.getType());
 				this.pw.print(":");
 				switch (c.getType()) {
 				case Invoke:
 					Invoke inv = (Invoke)c;
-					this.LogInvokeId(inv.getInvokeId());
 					this.LogOperationCode(inv.getOperationCode());
 					break;
 				case ReturnResult:
 					ReturnResult rr = (ReturnResult)c;
-					this.LogInvokeId(rr.getInvokeId());
 					this.LogOperationCode(rr.getOperationCode());
 					break;
 				case ReturnResultLast:
 					ReturnResultLast rrl = (ReturnResultLast)c;
-					this.LogInvokeId(rrl.getInvokeId());
 					this.LogOperationCode(rrl.getOperationCode());
 					break;
 				case ReturnError:
 					ReturnError re = (ReturnError)c;
-					this.LogInvokeId(re.getInvokeId());
-					this.pw.print(", ErrCode=");
 					this.pw.print(re.getErrorCode());
 					break;
 				case Reject:
 					Reject rej = (Reject)c;
-					this.LogInvokeId(rej.getInvokeId());
-					this.pw.print(", Problem=");
-					this.pw.print(rej.getProblem());
+					this.pw.print(rej.getClass());
 					break;
 				}
 			}
 		}
+		
+		if (compData != null) {
+			try {
+				AsnInputStream ais = new AsnInputStream(compData);
+				this.LogSequence(ais, 1, "Components");
+			} catch (Exception e) {
+				e.printStackTrace();
+				this.pw.println();
+				this.pw.print("Exception parsing TCAP components");
+				this.pw.print(e.getMessage());
+			}
+		}
+		
+		this.pw.println();
 		this.pw.println();
 		this.pw.flush();
 		
 	}
 	
-	private void LogInvokeId(Long invId) {
-		this.pw.print("InvId=");
-		if (invId != null)
-			this.pw.print(invId);
-		else
-			this.pw.print("???");
+	private String LodSequenceName(int dep, int tag, int tagClass, int ind, String parent) {
+
+		if (dep == 1) {
+			switch (tag) {
+			case 1:
+				return "Invoke";
+			case 2:
+				return "ReturnResultLast";
+			case 3:
+				return "ReturnError";
+			case 4:
+				return "Reject";
+			case 7:
+				return "ReturnResult";
+			}
+		}
+
+		if (dep == 2) {
+			if (ind == 0)
+				return "invokeId";
+			
+			if (tag == Tag.INTEGER && tagClass == Tag.CLASS_UNIVERSAL)
+				return "operationCode";
+			
+			if (tag == 0 && tagClass == Tag.CLASS_CONTEXT_SPECIFIC) {
+				if (parent.equals("Invoke"))
+					return "linkedId";
+				else
+					return "GeneralProblem";
+			}
+			if (tag == 1 && tagClass == Tag.CLASS_CONTEXT_SPECIFIC)
+				return "InvokeProblem";
+			if (tag == 2 && tagClass == Tag.CLASS_CONTEXT_SPECIFIC)
+				return "ReturnResultProblem";
+			if (tag == 3 && tagClass == Tag.CLASS_CONTEXT_SPECIFIC)
+				return "ReturnErrorProblem";
+			
+			if (parent.equals("ReturnResultLast") || parent.equals("ReturnResult")) {
+				if (tag == Tag.SEQUENCE)
+					return "ReturnResultData";
+			}
+			
+			if (parent.equals("ReturnError")) {
+				if (ind == 0)
+					return "ErrorCode";
+			}
+			
+			return "Parameter";
+		}
+
+		if (dep == 3) {
+			if (parent.equals("ReturnResultData")) {
+				if (tag == Tag.INTEGER && tagClass == Tag.CLASS_UNIVERSAL)
+					return "operationCode";
+				else
+					return "Parameter";
+			}
+		}
+		
+		return "";
+	}
+
+	private void LogSequence(AsnInputStream ais, int dep, String name) throws IOException, AsnException {
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < dep; i++) {
+			sb.append("\t");
+		}
+		String pref = sb.toString();
+
+		int pos = ais.position();
+		int tag = ais.readTag();
+		int length = ais.readLength();
+		int newPos = ais.position();
+		byte[] buf = new byte[newPos - pos];
+		ais.position(pos);
+		ais.read(buf);
+		this.writeDataArray(pref + name + ": tag+length: ", buf);
+
+		int ind = 0;
+		while (ais.available() > 0) {
+			pos = ais.position();
+			tag = ais.readTag();
+
+			length = ais.readLength();
+
+			boolean isConstr = !ais.isTagPrimitive();
+			if (isConstr && length == Tag.Indefinite_Length) {
+				ais.readSequenceData(length);
+				newPos = ais.position();
+			} else
+				newPos = ais.position() + length;
+			
+			buf = new byte[newPos - pos];
+			ais.position(pos);
+			ais.read(buf);
+			String name2 = this.LodSequenceName(dep, tag, ais.getTagClass(), ind, name);
+			this.writeDataArray(pref + name2 + ": ", buf);
+
+			if (isConstr) {
+
+				AsnInputStream ais2 = new AsnInputStream(buf);
+				this.LogSequence(ais2, dep + 1, name2);
+			}
+			
+			ind++;
+		}
 	}
 	
 	private void LogOperationCode(OperationCode op) {
-		this.pw.print(", OpCode=");
+		this.pw.print("OpCode=");
 		if (op != null)
 			this.pw.print(op.getLocalOperationCode());
 		else

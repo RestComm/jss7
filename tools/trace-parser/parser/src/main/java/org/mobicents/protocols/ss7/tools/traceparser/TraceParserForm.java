@@ -3,10 +3,8 @@ package org.mobicents.protocols.ss7.tools.traceparser;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-import java.awt.Window.Type;
 import javax.swing.JButton;
 import java.awt.BorderLayout;
-import java.awt.Button;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.LineBorder;
@@ -15,14 +13,11 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.Color;
 
 import javax.swing.JFileChooser;
-import javax.swing.JInternalFrame;
-import javax.swing.JLayeredPane;
 import javax.swing.JLabel;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import java.awt.event.ActionEvent;
-import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
@@ -35,8 +30,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 import javax.swing.JCheckBox;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 
@@ -67,8 +60,10 @@ public class TraceParserForm {
 
 	private static Ss7ParseParameters par = null;
 	private JTextField tfMsgLog;
-	private JLabel lblMessagesProcessed;
+	private JLabel lblMessagesPerformed;
 	private JTextField tfMsgCnt;
+	private JCheckBox cbTcapData;
+	private JTextField tfDialogIdFilter2;
 
 	public static void main(String[] args) {
 
@@ -116,7 +111,7 @@ public class TraceParserForm {
 		frmSsTraceParser = new JFrame();
 		frmSsTraceParser.setTitle("SS7 Trace Parser");
 		frmSsTraceParser.setResizable(false);
-		frmSsTraceParser.setBounds(100, 100, 535, 452);
+		frmSsTraceParser.setBounds(100, 100, 569, 473);
 		frmSsTraceParser.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JPanel panel = new JPanel();
@@ -149,14 +144,25 @@ public class TraceParserForm {
 				}
 				if (cbDialogIdFilter.isSelected()) {
 					try {
-						newPar.setDialogIdFilter(Long.parseLong(tfDialogIdFilter.getText()));
+						if (!tfDialogIdFilter.getText().equals(""))
+							newPar.setDialogIdFilter(Long.parseLong(tfDialogIdFilter.getText()));
 					} catch (NumberFormatException ee) {
 						JOptionPane.showMessageDialog(null,
 								"Can not parse ApplicationContextFilter the value. \nIt should be an Integer.\nParsing without ApplicationContextFilter");
 					}
+					try {
+						if (!tfDialogIdFilter2.getText().equals(""))
+							newPar.setDialogIdFilter2(Long.parseLong(tfDialogIdFilter2.getText()));
+					} catch (NumberFormatException ee) {
+						JOptionPane.showMessageDialog(null,
+								"Can not parse ApplicationContextFilter2 the value. \nIt should be an Integer.\nParsing without ApplicationContextFilter2");
+					}
 				}
 				if (cbMsgLog.isSelected()) {
 					newPar.setMsgLogFilePath(tfMsgLog.getText());
+				}
+				if (cbTcapData.isSelected()) {
+					newPar.setTcapMsgData(true);
 				}
 
 				try {
@@ -195,7 +201,7 @@ public class TraceParserForm {
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panel_2.setBounds(10, 11, 509, 58);
+		panel_2.setBounds(10, 11, 543, 58);
 		panel_1.add(panel_2);
 		panel_2.setLayout(null);
 		
@@ -210,7 +216,7 @@ public class TraceParserForm {
 		panel_2.add(lblSelectAFile);
 		
 		tfFilePath = new JTextField();
-		tfFilePath.setBounds(10, 97, 447, 20);
+		tfFilePath.setBounds(10, 97, 481, 20);
 		panel_1.add(tfFilePath);
 		tfFilePath.setColumns(10);
 		
@@ -234,7 +240,7 @@ public class TraceParserForm {
 				}
 			}
 		});
-		btnFilePath.setBounds(467, 96, 52, 23);
+		btnFilePath.setBounds(501, 96, 52, 23);
 		panel_1.add(btnFilePath);
 		
 		JLabel lblPathToThe = new JLabel("Trace file path");
@@ -255,6 +261,7 @@ public class TraceParserForm {
 			public void itemStateChanged(ItemEvent e) {
 				btnMsgLog.setEnabled(cbMsgLog.isSelected());
 				tfMsgLog.setEnabled(cbMsgLog.isSelected());
+				cbTcapData.setEnabled(cbMsgLog.isSelected());
 			}
 		});
 		cbMsgLog.setBounds(10, 188, 210, 23);
@@ -270,6 +277,7 @@ public class TraceParserForm {
 		cbDialogIdFilter.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				tfDialogIdFilter.setEnabled(cbDialogIdFilter.isSelected());
+				tfDialogIdFilter2.setEnabled(cbDialogIdFilter.isSelected());
 			}
 		});
 		cbDialogIdFilter.setBounds(10, 157, 210, 23);
@@ -283,7 +291,7 @@ public class TraceParserForm {
 		
 		pnMsgLog = new JPanel();
 		pnMsgLog.setBorder(new LineBorder(new Color(0, 0, 0)));
-		pnMsgLog.setBounds(10, 219, 509, 58);
+		pnMsgLog.setBounds(10, 218, 543, 85);
 		panel_1.add(pnMsgLog);
 		pnMsgLog.setLayout(null);
 		
@@ -341,15 +349,25 @@ public class TraceParserForm {
 		btnMsgLog.setBounds(453, 26, 52, 23);
 		pnMsgLog.add(btnMsgLog);
 		
-		lblMessagesProcessed = new JLabel("Messages processed");
-		lblMessagesProcessed.setBounds(10, 300, 140, 14);
-		panel_1.add(lblMessagesProcessed);
+		cbTcapData = new JCheckBox("Store in the log TCAP message source data");
+		cbTcapData.setBounds(10, 50, 296, 23);
+		pnMsgLog.add(cbTcapData);
+		
+		lblMessagesPerformed = new JLabel("Messages performed");
+		lblMessagesPerformed.setBounds(10, 352, 140, 14);
+		panel_1.add(lblMessagesPerformed);
 		
 		tfMsgCnt = new JTextField();
 		tfMsgCnt.setEditable(false);
-		tfMsgCnt.setBounds(160, 297, 86, 20);
+		tfMsgCnt.setBounds(160, 349, 86, 20);
 		panel_1.add(tfMsgCnt);
 		tfMsgCnt.setColumns(10);
+		
+		tfDialogIdFilter2 = new JTextField();
+		tfDialogIdFilter2.setEnabled(false);
+		tfDialogIdFilter2.setColumns(10);
+		tfDialogIdFilter2.setBounds(389, 158, 153, 20);
+		panel_1.add(tfDialogIdFilter2);
 	}
 	
 	private void setParameters(Ss7ParseParameters par) {
@@ -368,13 +386,19 @@ public class TraceParserForm {
 				cbApplicationContextFilter.setSelected(true);
 				tfApplicationContextFilter.setText(par.getApplicationContextFilter().toString());
 			}
-			if (par.getDialogIdFilter() != null) {
+			if (par.getDialogIdFilter() != null || par.getDialogIdFilter2() != null) {
 				cbDialogIdFilter.setSelected(true);
-				tfDialogIdFilter.setText(par.getDialogIdFilter().toString());
+				if (par.getDialogIdFilter() != null)
+					tfDialogIdFilter.setText(par.getDialogIdFilter().toString());
+				if (par.getDialogIdFilter2() != null)
+					tfDialogIdFilter2.setText(par.getDialogIdFilter2().toString());
 			}
 			if (par.getMsgLogFilePath() != null) {
 				cbMsgLog.setSelected(true);
 				tfMsgLog.setText(par.getMsgLogFilePath());
+			}
+			if (par.getTcapMsgData()) {
+				cbTcapData.setSelected(true);
 			}
 		}
 	}

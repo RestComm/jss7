@@ -12,6 +12,8 @@ public class Ss7ParseParameters {
 	private String msgLogFilePath = "";	
 	private Integer applicationContextFilter = null;	
 	private Long dialogIdFilter = null;
+	private Long dialogIdFilter2 = null;
+	private boolean tcapMsgData = false;
 	
 	public int getFileType() {
 		return fileType;
@@ -31,6 +33,14 @@ public class Ss7ParseParameters {
 	
 	public Long getDialogIdFilter() {
 		return dialogIdFilter;
+	}
+	
+	public Long getDialogIdFilter2() {
+		return dialogIdFilter2;
+	}
+
+	public boolean getTcapMsgData() {
+		return tcapMsgData;
 	}
 
 	
@@ -52,6 +62,14 @@ public class Ss7ParseParameters {
 	
 	public void setDialogIdFilter(Long dialogIdFilter) {
 		this.dialogIdFilter = dialogIdFilter;
+	}
+	
+	public void setDialogIdFilter2(Long dialogIdFilter2) {
+		this.dialogIdFilter2 = dialogIdFilter2;
+	}
+
+	public void setTcapMsgData(boolean tcapMsgData) {
+		this.tcapMsgData = tcapMsgData;
 	}
 }
 
