@@ -78,7 +78,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author amit bhayani
  *
  */
-public interface AddressString extends MAPPrimitive {
+public interface AddressString extends MAPPrimitive, MAPAsnPrimitive {
 	
 	public AddressNature getAddressNature();
 	

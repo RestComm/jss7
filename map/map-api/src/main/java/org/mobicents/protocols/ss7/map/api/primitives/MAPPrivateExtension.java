@@ -25,7 +25,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
 /**
  * @author sergey vetyutnev
  */
-public interface MAPPrivateExtension {
+public interface MAPPrivateExtension extends MAPAsnPrimitive {
 
 	/**
 	 * Get the PrivateExtension element Object identifier

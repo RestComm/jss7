@@ -85,10 +85,9 @@ public interface MAPAsnPrimitive {
 	 * Encoding the content.
 	 * 
 	 * @param asnOs
-	 * @return
 	 * @throws MAPException
 	 */
-	public int encodeData(AsnOutputStream asnOs) throws MAPException;
+	public void encodeData(AsnOutputStream asnOs) throws MAPException;
 
 }
 

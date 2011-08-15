@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
-import org.mobicents.protocols.ss7.map.api.errors.UnknownSubscriberDiagnostic;
-
 /**
 *
 * SM-DeliveryOutcome ::= ENUMERATED {

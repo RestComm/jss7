@@ -27,7 +27,7 @@ import java.util.ArrayList;
 /**
  * @author sergey vetyutnev
  */
-public interface MAPExtensionContainer extends MAPPrimitive {
+public interface MAPExtensionContainer extends MAPPrimitive, MAPAsnPrimitive {
 	/**
 	 * Get the PrivateExtension list
 	 * 

@@ -38,7 +38,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  * 
  */
-public interface IMSI extends MAPPrimitive {
+public interface IMSI extends MAPPrimitive, MAPAsnPrimitive {
 
 	public Long getMCC();
 
