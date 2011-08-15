@@ -32,7 +32,6 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
 
 /**
  * 
@@ -52,18 +51,51 @@ public class LMSIImpl extends MAPPrimitiveBase implements LMSI {
 	}
 
 
-
 	public int getTag() {
 		return Tag.STRING_OCTET;
+	}
+
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	@Override
+	public boolean getIsPrimitive() {
+		return true;
 	}
 
 	@Override
 	public byte[] getData() {
 		return this.data;
 	}
+	
 
-	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding LMSI: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding LMSI: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException {
+		
 		if (length != 4)
 			throw new MAPParsingComponentException("Error decoding LMSI: the LMSI field must contain 4 octets. Contains: " + length,
 					MAPParsingComponentExceptionReason.MistypedParameter);
@@ -76,8 +108,28 @@ public class LMSIImpl extends MAPPrimitiveBase implements LMSI {
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
+	
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
+	}
 
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding LMSI: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.data == null)
 			throw new MAPException("Error while encoding the LMSI: data is not defined");
@@ -86,6 +138,25 @@ public class LMSIImpl extends MAPPrimitiveBase implements LMSI {
 			throw new MAPException("Error while encoding the LMSI: data field length must equale 4");
 
 		asnOs.write(this.data);
+	}
+	
+	
+	// .............................
+	@Deprecated
+	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
+
+		try {
+			_decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding LMSI: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	@Deprecated
+	public void encode(AsnOutputStream asnOs) throws MAPException {
+
+		this.encodeData(asnOs);
 	}
 
 	@Override

@@ -22,33 +22,22 @@
 
 package org.mobicents.protocols.ss7.map.service.sms;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRequestIndication;
-import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
-import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
-import org.mobicents.protocols.ss7.tcap.api.TCAPException;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
-import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * 
@@ -124,153 +113,246 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsServiceImpl im
 	}
 
 	
-	public void decode(Parameter parameter) throws MAPParsingComponentException {
-		
-		Parameter[] parameters = parameter.getParameters();
+	@Override
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
 
-		if (parameters.length < 3)
-			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest: Needs at least 3 mandatory parameters, found"
-					+ parameters.length, MAPParsingComponentExceptionReason.MistypedParameter);
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
+
+	
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
-			AsnInputStream ais;
-
-			// msisdn
-			Parameter p = parameters[0];
-			if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive() || p.getTag() != SendRoutingInfoForSMRequestIndicationImpl._TAG_msisdn)
-				throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest: Parameter 0 bad tag class or tag or not primitive",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			this.msisdn = new ISDNAddressStringImpl();
-			((ISDNAddressStringImpl) msisdn).decode(p);
-
-			// sm-RP-PRI
-			p = parameters[1];
-			if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive() || p.getTag() != SendRoutingInfoForSMRequestIndicationImpl._TAG_sm_RP_PRI)
-				throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest: Parameter 1 bad tag class or tag or not primitive",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			ais = new AsnInputStream(new ByteArrayInputStream(p.getData()));
-			this.sm_RP_PRI = ais.readBooleanData(p.getData().length);
-
-			// serviceCentreAddress
-			p = parameters[2];
-			if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive()
-					|| p.getTag() != SendRoutingInfoForSMRequestIndicationImpl._TAG_serviceCentreAddress)
-				throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest: Parameter 2 bad tag class or tag or not primitive",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			this.serviceCentreAddress = new ISDNAddressStringImpl();
-			((ISDNAddressStringImpl)serviceCentreAddress).decode(p);
-
-			for (int i1 = 3; i1 < parameters.length; i1++) {
-				p = parameters[i1];
-
-				if (p.getTag() == SendRoutingInfoForSMRequestIndicationImpl._TAG_extensionContainer && p.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-					if (p.isPrimitive())
-						throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest: Parameter extensionContainer is primitive",
-								MAPParsingComponentExceptionReason.MistypedParameter);
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl)this.extensionContainer).decode(p);
-				} else if (p.getTag() == SendRoutingInfoForSMRequestIndicationImpl._TAG_gprsSupportIndicator && p.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-					if (!p.isPrimitive())
-						throw new MAPParsingComponentException(
-								"Error while decoding sendRoutingInfoForSMRequest: Parameter gprsSupportIndicator is not primitive",
-								MAPParsingComponentExceptionReason.MistypedParameter);
-					this.gprsSupportIndicator = true;
-				} else if (p.getTag() == SendRoutingInfoForSMRequestIndicationImpl._TAG_sm_RP_MTI && p.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-					if (!p.isPrimitive())
-						throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest: Parameter sm-RP-MTI is not primitive",
-								MAPParsingComponentExceptionReason.MistypedParameter);
-					byte[] buf = p.getData();
-					if (buf.length != 1)
-						throw new MAPParsingComponentException(
-								"Error while decoding sendRoutingInfoForSMRequest: Parameter sm-RP-MTI expected length 1, found: " + buf.length,
-								MAPParsingComponentExceptionReason.MistypedParameter);
-					this.sM_RP_MTI = SM_RP_MTI.getInstance(buf[0]);
-				} else if (p.getTag() == SendRoutingInfoForSMRequestIndicationImpl._TAG_sm_RP_SMEA && p.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-					if (!p.isPrimitive())
-						throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest: Parameter sm-RP-SMEA is not primitive",
-								MAPParsingComponentExceptionReason.MistypedParameter);
-					this.sM_RP_SMEA = p.getData();
-				}
-			}
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException while decoding sendRoutingInfoForSMRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding sendRoutingInfoForSMRequest: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException while decoding sendRoutingInfoForSMRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding sendRoutingInfoForSMRequest: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	public Parameter encode(ComponentPrimitiveFactory factory) throws MAPException {
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding sendRoutingInfoForSMRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding sendRoutingInfoForSMRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		this.msisdn = null;
+		this.sm_RP_PRI = null;
+		this.serviceCentreAddress = null;
+		this.extensionContainer = null;
+		this.gprsSupportIndicator = null;
+		this.sM_RP_MTI = null;
+		this.sM_RP_SMEA = null;
+		
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		int num = 0;
+		while (true) {
+			if (ais.available() == 0)
+				break;
+
+			int tag = ais.readTag();
+
+			switch (num) {
+			case 0:
+				// msisdn
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_msisdn)
+					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest.msisdn: Parameter bad tag or tag class or not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.msisdn = new ISDNAddressStringImpl();
+				this.msisdn.decodeAll(ais);
+				break;
+				
+			case 1:
+				// sm-RP-PRI
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_sm_RP_PRI)
+					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest.sm-RP-PRI: Parameter 1 bad tag class or tag or not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.sm_RP_PRI = ais.readBoolean();
+				break;
+				
+			case 2:
+				// serviceCentreAddress
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_serviceCentreAddress)
+					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest.serviceCentreAddress: Parameter 2 bad tag class or tag or not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.serviceCentreAddress = new ISDNAddressStringImpl();
+				this.serviceCentreAddress.decodeAll(ais);
+				break;
+				
+			default:
+				if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+
+					switch (tag) {
+					case _TAG_extensionContainer:
+						if (ais.isTagPrimitive())
+								throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest.extensionContainer: Parameter extensionContainer is primitive",
+										MAPParsingComponentExceptionReason.MistypedParameter);
+						this.extensionContainer = new MAPExtensionContainerImpl();
+						this.extensionContainer.decodeAll(ais);
+					break;
+
+					case _TAG_gprsSupportIndicator:
+						if (!ais.isTagPrimitive())
+							throw new MAPParsingComponentException(
+									"Error while decoding sendRoutingInfoForSMRequest.gprsSupportIndicator: Parameter gprsSupportIndicator is not primitive",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						ais.readNull();
+						this.gprsSupportIndicator = true;
+						break;
+
+					case _TAG_sm_RP_MTI:
+						if (!ais.isTagPrimitive())
+							throw new MAPParsingComponentException(
+									"Error while decoding sendRoutingInfoForSMRequest.sM_RP_MTI: Parameter sM_RP_MTI is not primitive",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						int i1 = (int)ais.readInteger();
+						this.sM_RP_MTI = SM_RP_MTI.getInstance(i1);
+						break;
+
+					case _TAG_sm_RP_SMEA:
+						if (!ais.isTagPrimitive())
+							throw new MAPParsingComponentException(
+									"Error while decoding sendRoutingInfoForSMRequest.sM_RP_SMEA: Parameter sM_RP_SMEA is not primitive",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						this.sM_RP_SMEA = ais.readOctetString();
+						break;
+
+					default:
+						ais.advanceElement();
+						break;
+					}
+
+				} else {
+
+					ais.advanceElement();
+				}
+				break;
+			}
+			
+			num++;
+		}
+
+		if (num < 3)
+			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest: Needs at least 3 mandatory parameters, found " + num,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding sendRoutingInfoForSMRequest: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (msisdn == null || sm_RP_PRI == null || serviceCentreAddress == null)
 			throw new MAPException("msisdn, sm_RP_PRI and serviceCentreAddress must not be null");
 
 		try {
-			// Sequence of Parameter
+			this.msisdn.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_msisdn);
+			asnOs.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_sm_RP_PRI, this.sm_RP_PRI);
+			this.serviceCentreAddress.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_serviceCentreAddress);
 			
-			AsnOutputStream aos = new AsnOutputStream();
-			ArrayList<Parameter> lstPar = new ArrayList<Parameter>();
-
-			Parameter p = ((ISDNAddressStringImpl) this.msisdn).encode();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setTag(SendRoutingInfoForSMRequestIndicationImpl._TAG_msisdn);
-			lstPar.add(p);
+			if (this.extensionContainer != null)
+				this.extensionContainer.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_extensionContainer);
+			if (this.gprsSupportIndicator != null && this.gprsSupportIndicator == true)
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_gprsSupportIndicator);
+			if (this.sM_RP_MTI != null)
+				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_sm_RP_MTI, this.sM_RP_MTI.getCode());
+			if (this.sM_RP_SMEA != null)
+				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_sm_RP_SMEA, this.sM_RP_SMEA);
 			
-			p = factory.createParameter();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setTag(SendRoutingInfoForSMRequestIndicationImpl._TAG_sm_RP_PRI);
-			aos.reset();
-			aos.writeBooleanData(this.sm_RP_PRI);
-			p.setData(aos.toByteArray());
-			lstPar.add(p);
-
-			p = ((AddressStringImpl) this.serviceCentreAddress).encode();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setTag(SendRoutingInfoForSMRequestIndicationImpl._TAG_serviceCentreAddress);
-			lstPar.add(p);
-			
-			if (this.extensionContainer != null) {
-				p = ((MAPExtensionContainerImpl) this.extensionContainer).encode();
-				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-				p.setTag(SendRoutingInfoForSMRequestIndicationImpl._TAG_extensionContainer);
-				lstPar.add(p);
-			}
-
-			if (this.gprsSupportIndicator != null && this.gprsSupportIndicator == true) {
-				p = factory.createParameter();
-				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-				p.setTag(SendRoutingInfoForSMRequestIndicationImpl._TAG_gprsSupportIndicator);
-				p.setData(new byte[0]);
-				lstPar.add(p);
-			}
-
-			if (this.sM_RP_MTI != null) {
-				p = factory.createParameter();
-				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-				p.setTag(SendRoutingInfoForSMRequestIndicationImpl._TAG_sm_RP_MTI);
-				p.setData(new byte[] { (byte) this.sM_RP_MTI.getCode() });
-				lstPar.add(p);
-			}
-
-			if (this.sM_RP_SMEA != null) {
-				p = factory.createParameter();
-				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-				p.setTag(SendRoutingInfoForSMRequestIndicationImpl._TAG_sm_RP_SMEA);
-				p.setData(this.sM_RP_SMEA);
-				lstPar.add(p);
-			}
-
-			p = factory.createParameter();
-
-			Parameter[] pp = new Parameter[lstPar.size()];
-			lstPar.toArray(pp);
-			p.setParameters(pp);
-
-			return p;
-
 		} catch (IOException e) {
-			throw new MAPException(e.getMessage(), e);
+			throw new MAPException("IOException when encoding sendRoutingInfoForSMRequest: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding sendRoutingInfoForSMRequest: " + e.getMessage(), e);
 		}
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SendRoutingInfoForSMRequest [");
+		
+		if (this.msisdn != null) {
+			sb.append("msisdn=");
+			sb.append(this.msisdn.toString());
+		}
+		if (this.sm_RP_PRI != null) {
+			sb.append(", sm_RP_PRI=");
+			sb.append(this.sm_RP_PRI.toString());
+		}
+		if (this.serviceCentreAddress != null) {
+			sb.append(", serviceCentreAddress=");
+			sb.append(this.serviceCentreAddress.toString());
+		}
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer.toString());
+		}
+		if (this.gprsSupportIndicator != null) {
+			sb.append(", gprsSupportIndicator=");
+			sb.append(this.gprsSupportIndicator.toString());
+		}
+		if (this.sM_RP_MTI != null) {
+			sb.append(", sM_RP_MTI=");
+			sb.append(this.sM_RP_MTI.toString());
+		}
+		if (this.sM_RP_SMEA != null) {
+			sb.append(", sM_RP_SMEA=");
+			sb.append(this.printDataArr(this.sM_RP_SMEA));
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
+
+	private String printDataArr(byte[] arr) {
+		StringBuilder sb = new StringBuilder();
+		for (int b : arr) {
+			sb.append(b);
+			sb.append(", ");
+		}
+
+		return sb.toString();
 	}
 }

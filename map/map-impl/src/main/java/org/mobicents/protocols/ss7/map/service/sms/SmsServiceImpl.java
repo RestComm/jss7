@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.service.sms;
 
 import org.mobicents.protocols.ss7.map.MAPMessageImpl;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
 import org.mobicents.protocols.ss7.map.api.service.sms.SmsService;
 
@@ -31,7 +32,7 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SmsService;
  * @author sergey vetyutnev
  * 
  */
-public class SmsServiceImpl extends MAPMessageImpl implements SmsService {
+public abstract class SmsServiceImpl extends MAPMessageImpl implements SmsService, MAPAsnPrimitive {
 
 	public MAPDialogSms getMAPDialog() {
 		return (MAPDialogSms)super.getMAPDialog();

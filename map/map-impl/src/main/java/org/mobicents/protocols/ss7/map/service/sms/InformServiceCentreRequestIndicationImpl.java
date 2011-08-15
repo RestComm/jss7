@@ -22,10 +22,21 @@
 
 package org.mobicents.protocols.ss7.map.service.sms;
 
+import java.io.IOException;
+
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.sms.InformServiceCentreRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
  * 
@@ -41,6 +52,9 @@ public class InformServiceCentreRequestIndicationImpl extends SmsServiceImpl imp
 	private MAPExtensionContainer extensionContainer;
 	private Integer absentSubscriberDiagnosticSM;
 	private Integer additionalAbsentSubscriberDiagnosticSM;
+	
+	public InformServiceCentreRequestIndicationImpl() {
+	}
 	
 	public InformServiceCentreRequestIndicationImpl(ISDNAddressString storedMSISDN, MWStatus mwStatus, MAPExtensionContainer extensionContainer,
 			Integer absentSubscriberDiagnosticSM, Integer additionalAbsentSubscriberDiagnosticSM) {
@@ -76,4 +90,202 @@ public class InformServiceCentreRequestIndicationImpl extends SmsServiceImpl imp
 		return this.additionalAbsentSubscriberDiagnosticSM;
 	}
 
+	
+	@Override
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
+
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
+
+	
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding InformServiceCentreRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding InformServiceCentreRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding InformServiceCentreRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding InformServiceCentreRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		this.storedMSISDN = null;
+		this.mwStatus = null;
+		this.extensionContainer = null;
+		this.absentSubscriberDiagnosticSM = null;
+		this.additionalAbsentSubscriberDiagnosticSM = null;
+
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		while (true) {
+			if (ais.available() == 0)
+				break;
+
+			int tag = ais.readTag();
+
+			if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+
+				switch (tag) {
+				case Tag.STRING_OCTET:
+					// storedMSISDN
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding informServiceCentreRequest: Parameter storedMSISDN is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					storedMSISDN = new ISDNAddressStringImpl();
+					storedMSISDN.decodeAll(ais);
+					break;
+
+				case Tag.STRING_BIT:
+					// mw-Status
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding informServiceCentreRequest: Parameter mw-Status is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					mwStatus = new MWStatusImpl();
+					mwStatus.decodeAll(ais);
+					break;
+
+				case Tag.SEQUENCE:
+					// extensionContainer
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding reportSMDeliveryStatusRequest: Parameter extensionContainer is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					extensionContainer = new MAPExtensionContainerImpl();
+					extensionContainer.decodeAll(ais);
+					break;
+
+				case Tag.INTEGER:
+					// absentSubscriberDiagnosticSM
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException(
+								"Error while decoding informServiceCentreRequest: Parameter absentSubscriberDiagnosticSM is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					absentSubscriberDiagnosticSM = (int) ais.readInteger();
+					break;
+
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+
+				switch (tag) {
+				case InformServiceCentreRequestIndicationImpl._TAG_AdditionalAbsentSubscriberDiagnosticSM:
+					// additionalAbsentSubscriberDiagnosticSM
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException(
+								"Error while decoding informServiceCentreRequest: Parameter deliveryOutcomeIndicator is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					additionalAbsentSubscriberDiagnosticSM = (int) ais.readInteger();
+					break;
+
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else {
+				ais.advanceElement();
+			}
+		}
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding InformServiceCentreRequest: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+
+		if (this.storedMSISDN != null)
+			this.storedMSISDN.encodeAll(asnOs);
+		if (this.mwStatus != null)
+			this.mwStatus.encodeAll(asnOs);
+		if (this.extensionContainer != null)
+			this.extensionContainer.encodeAll(asnOs);
+		try {
+			if (this.absentSubscriberDiagnosticSM != null)
+				asnOs.writeInteger(this.absentSubscriberDiagnosticSM);
+			if (this.additionalAbsentSubscriberDiagnosticSM != null)
+				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, InformServiceCentreRequestIndicationImpl._TAG_AdditionalAbsentSubscriberDiagnosticSM,
+						this.additionalAbsentSubscriberDiagnosticSM);
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding InformServiceCentreRequest: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding InformServiceCentreRequest: " + e.getMessage(), e);
+		}
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("InformServiceCentreRequest [");
+
+		if (this.storedMSISDN != null) {
+			sb.append("storedMSISDN=");
+			sb.append(this.storedMSISDN.toString());
+		}
+		if (this.mwStatus != null) {
+			sb.append(", mwStatus=");
+			sb.append(this.mwStatus.toString());
+		}
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer.toString());
+		}
+		if (this.absentSubscriberDiagnosticSM != null) {
+			sb.append(", absentSubscriberDiagnosticSM=");
+			sb.append(this.absentSubscriberDiagnosticSM.toString());
+		}
+		if (this.additionalAbsentSubscriberDiagnosticSM != null) {
+			sb.append(", additionalAbsentSubscriberDiagnosticSM=");
+			sb.append(this.additionalAbsentSubscriberDiagnosticSM.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
+	
 }

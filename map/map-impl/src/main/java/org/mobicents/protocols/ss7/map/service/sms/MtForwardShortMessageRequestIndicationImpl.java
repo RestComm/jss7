@@ -22,24 +22,21 @@
 
 package org.mobicents.protocols.ss7.map.service.sms;
 
-import java.util.ArrayList;
+import java.io.IOException;
 
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
-import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
-import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
-import org.mobicents.protocols.ss7.tcap.api.TCAPException;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
-import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * 
@@ -93,100 +90,208 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsServiceImpl i
 	}
 
 	
-	public void decode(Parameter parameter) throws MAPParsingComponentException {
+	@Override
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
 
-		Parameter[] parameters = parameter.getParameters();
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
 
-		if (parameters.length < 3)
-			throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Needs at least 3 mandatory parameters, found"
-					+ parameters.length, MAPParsingComponentExceptionReason.MistypedParameter);
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
 
-		// SM_RP_DA
-		Parameter p = parameters[0];
-		if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive())
-			throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter 0 bad tag class or not primitive",
+	
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding mtForwardShortMessageRequest: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
-		this.sM_RP_DA = new SM_RP_DAImpl();
-		((SM_RP_DAImpl)this.sM_RP_DA).decode(p);
-
-		// SM_RP_OA
-		p = parameters[1];
-		if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive())
-			throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter 1 bad tag class or not primitive",
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding mtForwardShortMessageRequest: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
-		this.sM_RP_OA = new SM_RP_OAImpl();
-		((SM_RP_OAImpl)this.sM_RP_OA).decode(p);
-
-		// sm-RP-UI
-		p = parameters[2];
-		if (p.getTagClass() != Tag.CLASS_UNIVERSAL || !p.isPrimitive())
-			throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter 2 bad tag class or not primitive",
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		if (p.getTag() != Tag.STRING_OCTET)
-			throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter 2 tag must be STRING_OCTET, found: "
-					+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
-		this.sM_RP_UI = p.getData();
-		
-		for (int i1 = 3; i1 < parameters.length; i1++) {
-			p = parameters[i1];
-			
-			if (p.getTag() == Tag.NULL && p.getTagClass() == Tag.CLASS_UNIVERSAL) {
-				if (!p.isPrimitive())
-					throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter moreMessagesToSend is not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.moreMessagesToSend = true;
-			} else if (p.getTag() == Tag.SEQUENCE && p.getTagClass() == Tag.CLASS_UNIVERSAL) {
-				if (p.getTagClass() != Tag.CLASS_UNIVERSAL || p.isPrimitive())
-					throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter extensionContainer is primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.extensionContainer = new MAPExtensionContainerImpl();
-				((MAPExtensionContainerImpl) this.extensionContainer).decode(p);
-			}
 		}
 	}
 
-	public Parameter encode(ComponentPrimitiveFactory factory) throws MAPException {
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding mtForwardShortMessageRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding mtForwardShortMessageRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		this.sM_RP_DA = null;
+		this.sM_RP_OA = null;
+		this.sM_RP_UI = null;
+		this.moreMessagesToSend = null;
+		this.extensionContainer = null;
+
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		int num = 0;
+		while (true) {
+			if (ais.available() == 0)
+				break;
+
+			int tag = ais.readTag();
+
+			switch (num) {
+			case 0:
+				// SM_RP_DA
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter 0 bad tag class or not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.sM_RP_DA = new SM_RP_DAImpl();
+				this.sM_RP_DA.decodeAll(ais);
+				break;
+
+			case 1:
+				// SM_RP_OA
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter 1 bad tag class or not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.sM_RP_OA = new SM_RP_OAImpl();
+				this.sM_RP_OA.decodeAll(ais);
+				break;
+
+			case 2:
+				// sm-RP-UI
+				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter 2 bad tag class or not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				if (tag != Tag.STRING_OCTET)
+					throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter 2 tag must be STRING_OCTET, found: "
+							+ tag, MAPParsingComponentExceptionReason.MistypedParameter);
+				this.sM_RP_UI = ais.readOctetString();
+				break;
+
+			default:
+				if (tag == Tag.SEQUENCE && ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+					
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter extensionContainer is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					this.extensionContainer.decodeAll(ais);
+				} else if (tag == Tag.NULL && ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+					
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter moreMessagesToSend is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					ais.readNull();
+					this.moreMessagesToSend = true;
+				} else {
+					
+					ais.advanceElement();
+				}
+				break;
+			}
+
+			num++;
+		}
+
+		if (num < 3)
+			throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Needs at least 3 mandatory parameters, found " + num,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding mtForwardShortMessageRequest: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.sM_RP_DA == null || this.sM_RP_OA == null || this.sM_RP_UI == null)
 			throw new MAPException("sm_RP_DA,sm_RP_OA and sm_RP_UI must not be null");
 
-		// Sequence of Parameter
-		ArrayList<Parameter> lstPar = new ArrayList<Parameter>();
+		try {
+			this.sM_RP_DA.encodeAll(asnOs);
+			this.sM_RP_OA.encodeAll(asnOs);
+			asnOs.writeOctetString(this.sM_RP_UI);
 
-		Parameter p1 = ((SM_RP_DAImpl) this.sM_RP_DA).encode();
-		lstPar.add(p1);
-
-		Parameter p2 = ((SM_RP_OAImpl) this.sM_RP_OA).encode();
-		lstPar.add(p2);
-
-		Parameter p3 = factory.createParameter();
-		p3.setTagClass(Tag.CLASS_UNIVERSAL);
-		p3.setTag(Tag.STRING_OCTET);
-		p3.setData(this.sM_RP_UI);
-		lstPar.add(p3);
-
-		Parameter p4 = null;
-		if (this.moreMessagesToSend != null && this.moreMessagesToSend == true) {
-			p4 = factory.createParameter();
-			p4.setTagClass(Tag.CLASS_UNIVERSAL);
-			p4.setTag(Tag.NULL);
-			p4.setData(new byte[0]);
-			lstPar.add(p4);
+			if (this.moreMessagesToSend != null)
+				asnOs.writeNull();
+			if (this.extensionContainer != null)
+				this.extensionContainer.encodeAll(asnOs);
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding mtForwardShortMessageRequest: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding mtForwardShortMessageRequest: " + e.getMessage(), e);
 		}
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("MoForwardShortMessageRequest [");
 
-		Parameter p5 = null;
+		if (this.sM_RP_DA != null) {
+			sb.append("sm_RP_DA=");
+			sb.append(this.sM_RP_DA.toString());
+		}
+		if (this.sM_RP_OA != null) {
+			sb.append(", sm_RP_OA=");
+			sb.append(this.sM_RP_OA.toString());
+		}
+		if (this.sM_RP_UI != null) {
+			sb.append(", sm_RP_UI=[");
+			sb.append(this.printDataArr(this.sM_RP_UI));
+			sb.append("]");
+		}
 		if (this.extensionContainer != null) {
-			p5 = ((MAPExtensionContainerImpl) this.extensionContainer).encode();
-			lstPar.add(p5);
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer.toString());
+		}
+		if (this.moreMessagesToSend != null) {
+			sb.append(", moreMessagesToSend=");
+			sb.append(this.moreMessagesToSend);
 		}
 
-		Parameter p = factory.createParameter();
+		sb.append("]");
 
-		Parameter[] pp = new Parameter[lstPar.size()];
-		lstPar.toArray(pp);
-		p.setParameters(pp);
+		return sb.toString();
+	}
 
-		return p;
+	private String printDataArr(byte[] arr) {
+		StringBuilder sb = new StringBuilder();
+		for (int b : arr) {
+			sb.append(b);
+			sb.append(", ");
+		}
+
+		return sb.toString();
 	}
 }
 

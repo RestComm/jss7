@@ -22,9 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.service.sms;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
@@ -44,10 +41,6 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
-import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
-import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
-import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
@@ -78,11 +71,15 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		oc.setLocalOperationCode((long)MAPOperationCode.mo_forwardSM);
 		invoke.setOperationCode(oc);
 
-		MoForwardShortMessageRequestIndicationImpl ind = new MoForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, extensionContainer, imsi);
-		Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());		
-		p.setTagClass(Tag.CLASS_UNIVERSAL);
-		p.setPrimitive(false);
-		p.setTag(Tag.SEQUENCE);
+		MoForwardShortMessageRequestIndicationImpl req = new MoForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, extensionContainer, imsi);
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
 		invoke.setParameter(p);
 
 		Long invokeId;
@@ -111,11 +108,16 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		resultLast.setOperationCode(oc);
 
 		if (sm_RP_UI != null || extensionContainer != null) {
-			MoForwardShortMessageResponseIndicationImpl ind = new MoForwardShortMessageResponseIndicationImpl(sm_RP_UI, extensionContainer);
-			Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());
-			p.setTagClass(Tag.CLASS_UNIVERSAL);
-			p.setPrimitive(false);
-			p.setTag(Tag.SEQUENCE);
+
+			MoForwardShortMessageResponseIndicationImpl req = new MoForwardShortMessageResponseIndicationImpl(sm_RP_UI, extensionContainer);
+			AsnOutputStream aos = new AsnOutputStream();
+			req.encodeData(aos);
+
+			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+			p.setTagClass(req.getTagClass());
+			p.setPrimitive(req.getIsPrimitive());
+			p.setTag(req.getTag());
+			p.setData(aos.toByteArray());
 			resultLast.setParameter(p);
 		}
 
@@ -133,15 +135,19 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
 			oc.setLocalOperationCode((long)MAPOperationCode.mt_forwardSM);
 			invoke.setOperationCode(oc);
-
-			MtForwardShortMessageRequestIndicationImpl ind = new MtForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, moreMessagesToSend,
+			
+			MtForwardShortMessageRequestIndicationImpl req = new MtForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, moreMessagesToSend,
 					extensionContainer);
-			Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());		
-			p.setTagClass(Tag.CLASS_UNIVERSAL);
-			p.setPrimitive(false);
-			p.setTag(Tag.SEQUENCE);
-			invoke.setParameter(p);
+			AsnOutputStream aos = new AsnOutputStream();
+			req.encodeData(aos);
 
+			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+			p.setTagClass(req.getTagClass());
+			p.setPrimitive(req.getIsPrimitive());
+			p.setTag(req.getTag());
+			p.setData(aos.toByteArray());
+			invoke.setParameter(p);
+			
 			Long invokeId = this.tcapDialog.getNewInvokeId();
 			invoke.setInvokeId(invokeId);
 
@@ -167,11 +173,16 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		resultLast.setOperationCode(oc);
 
 		if (sm_RP_UI != null || extensionContainer != null) {
-			MtForwardShortMessageResponseIndicationImpl ind = new MtForwardShortMessageResponseIndicationImpl(sm_RP_UI, extensionContainer);
-			Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());
-			p.setTagClass(Tag.CLASS_UNIVERSAL);
-			p.setPrimitive(false);
-			p.setTag(Tag.SEQUENCE);
+
+			MtForwardShortMessageResponseIndicationImpl resp = new MtForwardShortMessageResponseIndicationImpl(sm_RP_UI, extensionContainer);
+			AsnOutputStream aos = new AsnOutputStream();
+			resp.encodeData(aos);
+
+			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+			p.setTagClass(resp.getTagClass());
+			p.setPrimitive(resp.getIsPrimitive());
+			p.setTag(resp.getTag());
+			p.setData(aos.toByteArray());
 			resultLast.setParameter(p);
 		}
 
@@ -189,12 +200,16 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		invoke.setOperationCode(oc);
 
 		try {
-			SendRoutingInfoForSMRequestIndicationImpl ind = new SendRoutingInfoForSMRequestIndicationImpl(msisdn, sm_RP_PRI, serviceCentreAddress,
+			SendRoutingInfoForSMRequestIndicationImpl req = new SendRoutingInfoForSMRequestIndicationImpl(msisdn, sm_RP_PRI, serviceCentreAddress,
 					extensionContainer, gprsSupportIndicator, sM_RP_MTI, sM_RP_SMEA);
-			Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());		
-			p.setTagClass(Tag.CLASS_UNIVERSAL);
-			p.setPrimitive(false);
-			p.setTag(Tag.SEQUENCE);
+			AsnOutputStream aos = new AsnOutputStream();
+			req.encodeData(aos);
+
+			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+			p.setTagClass(req.getTagClass());
+			p.setPrimitive(req.getIsPrimitive());
+			p.setTag(req.getTag());
+			p.setData(aos.toByteArray());
 			invoke.setParameter(p);
 
 			Long invokeId = this.tcapDialog.getNewInvokeId();
@@ -222,112 +237,47 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		oc.setLocalOperationCode((long) MAPOperationCode.sendRoutingInfoForSM);
 		resultLast.setOperationCode(oc);
 
-		SendRoutingInfoForSMResponseIndicationImpl ind = new SendRoutingInfoForSMResponseIndicationImpl(imsi, locationInfoWithLMSI, extensionContainer);
-		Parameter p = ind.encode(this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory());		
-		p.setTagClass(Tag.CLASS_UNIVERSAL);
-		p.setPrimitive(false);
-		p.setTag(Tag.SEQUENCE);
-		resultLast.setParameter(p);
+		SendRoutingInfoForSMResponseIndicationImpl resp = new SendRoutingInfoForSMResponseIndicationImpl(imsi, locationInfoWithLMSI, extensionContainer);
+		AsnOutputStream aos = new AsnOutputStream();
+		resp.encodeData(aos);
 
+		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(resp.getTagClass());
+		p.setPrimitive(resp.getIsPrimitive());
+		p.setTag(resp.getTag());
+		p.setData(aos.toByteArray());
+		resultLast.setParameter(p);		
+		
 		this.sendReturnResultLastComponent(resultLast);
 	}
 
 	@Override
 	public Long addReportSMDeliveryStatusRequest(ISDNAddressString msisdn, AddressString serviceCentreAddress, SMDeliveryOutcome sMDeliveryOutcome,
-			Integer sbsentSubscriberDiagnosticSM, MAPExtensionContainer extensionContainer, Boolean gprsSupportIndicator, Boolean deliveryOutcomeIndicator,
+			Integer absentSubscriberDiagnosticSM, MAPExtensionContainer extensionContainer, Boolean gprsSupportIndicator, Boolean deliveryOutcomeIndicator,
 			SMDeliveryOutcome additionalSMDeliveryOutcome, Integer additionalAbsentSubscriberDiagnosticSM) throws MAPException {
 		
 		if (msisdn == null || serviceCentreAddress == null || sMDeliveryOutcome == null)
 			throw new MAPException("msisdn, serviceCentreAddress and sMDeliveryOutcome must not be null");
 		
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
-
+		
 		try {
 			// Operation Code
 			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
 			oc.setLocalOperationCode((long)MAPOperationCode.reportSM_DeliveryStatus);
 			invoke.setOperationCode(oc);
 			
-			// Sequence of Parameter
+			ReportSMDeliveryStatusRequestIndicationImpl req = new ReportSMDeliveryStatusRequestIndicationImpl(msisdn, serviceCentreAddress, sMDeliveryOutcome,
+					absentSubscriberDiagnosticSM, extensionContainer, gprsSupportIndicator, deliveryOutcomeIndicator, additionalSMDeliveryOutcome,
+					additionalAbsentSubscriberDiagnosticSM);
 			AsnOutputStream aos = new AsnOutputStream();
-			ArrayList<Parameter> lstPar = new ArrayList<Parameter>();
+			req.encodeData(aos);
 
-			// msisdn
-			Parameter p = ((ISDNAddressStringImpl) msisdn).encode();
-			lstPar.add(p);
-
-			// serviceCentreAddress
-			p = ((AddressStringImpl) serviceCentreAddress).encode();
-			lstPar.add(p);
-			
-			// sm-DeliveryOutcome
-			p = ((AddressStringImpl) serviceCentreAddress).encode();
-			p.setTagClass(Tag.CLASS_UNIVERSAL);
-			p.setTag(Tag.ENUMERATED);
-			p.setData(new byte[]{ (byte)sMDeliveryOutcome.getCode() });
-			lstPar.add(p);
-			
-			// absentSubscriberDiagnosticSM
-			if (sbsentSubscriberDiagnosticSM != null) {
-				p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-				p.setTag(ReportSMDeliveryStatusRequestIndicationImpl._TAG_AbsentSubscriberDiagnosticSM);
-				aos.reset();
-				aos.writeIntegerData(sbsentSubscriberDiagnosticSM);
-				p.setData(aos.toByteArray());
-				lstPar.add(p);
-			}
-
-			if (extensionContainer != null) {
-				p = ((MAPExtensionContainerImpl) extensionContainer).encode();
-				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-				p.setTag(ReportSMDeliveryStatusRequestIndicationImpl._TAG_ExtensionContainer);
-				lstPar.add(p);
-			}
-
-			if (gprsSupportIndicator != null && gprsSupportIndicator == true) {
-				p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-				p.setTag(ReportSMDeliveryStatusRequestIndicationImpl._TAG_GprsSupportIndicator);
-				p.setData(new byte[0]);
-				lstPar.add(p);
-			}
-
-			if (deliveryOutcomeIndicator != null && deliveryOutcomeIndicator == true) {
-				p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-				p.setTag(ReportSMDeliveryStatusRequestIndicationImpl._TAG_DeliveryOutcomeIndicator);
-				p.setData(new byte[0]);
-				lstPar.add(p);
-			}
-
-			if (additionalSMDeliveryOutcome != null) {
-				p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-				p.setTag(ReportSMDeliveryStatusRequestIndicationImpl._TAG_AdditionalSMDeliveryOutcome);
-				p.setData(new byte[] { (byte) additionalSMDeliveryOutcome.getCode() });
-				lstPar.add(p);
-			}
-			
-			if (additionalAbsentSubscriberDiagnosticSM != null) {
-				p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-				p.setTag(ReportSMDeliveryStatusRequestIndicationImpl._TAG_AdditionalAbsentSubscriberDiagnosticSM);
-				aos.reset();
-				aos.writeIntegerData(additionalAbsentSubscriberDiagnosticSM);
-				p.setData(aos.toByteArray());
-				lstPar.add(p);
-			}
-
-			p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-			p.setTagClass(Tag.CLASS_UNIVERSAL);
-			p.setPrimitive(false);
-			p.setTag(Tag.SEQUENCE);
-			
-			Parameter[] pp = new Parameter[lstPar.size()];
-			lstPar.toArray(pp);
-			p.setParameters(pp);
-
+			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+			p.setTagClass(req.getTagClass());
+			p.setPrimitive(req.getIsPrimitive());
+			p.setTag(req.getTag());
+			p.setData(aos.toByteArray());
 			invoke.setParameter(p);
 
 			Long invokeId = this.tcapDialog.getNewInvokeId();
@@ -338,8 +288,6 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 			return invokeId;
 
 		} catch (TCAPException e) {
-			throw new MAPException(e.getMessage(), e);
-		} catch (IOException e) {
 			throw new MAPException(e.getMessage(), e);
 		}
 	}
@@ -356,34 +304,19 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		oc.setLocalOperationCode((long) MAPOperationCode.reportSM_DeliveryStatus);
 		resultLast.setOperationCode(oc);
 
-		// if (sm_RP_UI != null || extensionContainer != null) {
+		if (storedMSISDN != null || extensionContainer != null) {
 
-		// Sequence of Parameter
-		ArrayList<Parameter> lstPar = new ArrayList<Parameter>();
+			ReportSMDeliveryStatusResponseIndicationImpl resp = new ReportSMDeliveryStatusResponseIndicationImpl(storedMSISDN, extensionContainer);
+			AsnOutputStream aos = new AsnOutputStream();
+			resp.encodeData(aos);
 
-		Parameter p;
-		if (storedMSISDN != null) {
-			p = ((ISDNAddressStringImpl) storedMSISDN).encode();
-			lstPar.add(p);
+			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+			p.setTagClass(resp.getTagClass());
+			p.setPrimitive(resp.getIsPrimitive());
+			p.setTag(resp.getTag());
+			p.setData(aos.toByteArray());
+			resultLast.setParameter(p);
 		}
-
-		if (extensionContainer != null) {
-			p = ((MAPExtensionContainerImpl) extensionContainer).encode();
-			lstPar.add(p);
-		}
-
-		p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-		p.setTagClass(Tag.CLASS_UNIVERSAL);
-		p.setPrimitive(false);
-		p.setTag(Tag.SEQUENCE);
-
-		Parameter[] pp = new Parameter[lstPar.size()];
-		lstPar.toArray(pp);
-		p.setParameters(pp);
-
-		resultLast.setParameter(p);
-
-		// }
 
 		this.sendReturnResultLastComponent(resultLast);
 	}
@@ -399,61 +332,17 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
 			oc.setLocalOperationCode((long)MAPOperationCode.informServiceCentre);
 			invoke.setOperationCode(oc);
-			
-			// Sequence of Parameter
+
+			InformServiceCentreRequestIndicationImpl req = new InformServiceCentreRequestIndicationImpl(storedMSISDN, mwStatus, extensionContainer,
+					absentSubscriberDiagnosticSM, additionalAbsentSubscriberDiagnosticSM);
 			AsnOutputStream aos = new AsnOutputStream();
-			ArrayList<Parameter> lstPar = new ArrayList<Parameter>();
-
-			// storedMSISDN
-			Parameter p;
-			if (storedMSISDN != null) {
-				p = ((ISDNAddressStringImpl) storedMSISDN).encode();
-				lstPar.add(p);
-			}
+			req.encodeData(aos);
 			
-			// mw-Status
-			if (mwStatus != null) {
-				p = ((MWStatusImpl) mwStatus).encode();
-				lstPar.add(p);
-			}
-
-			// extensionContainer
-			if (extensionContainer != null) {
-				p = ((MAPExtensionContainerImpl) extensionContainer).encode();
-				lstPar.add(p);
-			}
-			
-			// absentSubscriberDiagnosticSM
-			if (absentSubscriberDiagnosticSM != null) {
-				p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-				p.setTagClass(Tag.CLASS_UNIVERSAL);
-				p.setTag(Tag.INTEGER);
-				aos.reset();
-				aos.writeIntegerData(absentSubscriberDiagnosticSM);
-				p.setData(aos.toByteArray());
-				lstPar.add(p);
-			}
-			
-			// additionalAbsentSubscriberDiagnosticSM
-			if (additionalAbsentSubscriberDiagnosticSM != null) {
-				p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-				p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-				p.setTag(InformServiceCentreRequestIndicationImpl._TAG_AdditionalAbsentSubscriberDiagnosticSM);
-				aos.reset();
-				aos.writeIntegerData(additionalAbsentSubscriberDiagnosticSM);
-				p.setData(aos.toByteArray());
-				lstPar.add(p);
-			}
-
-			p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-			p.setTagClass(Tag.CLASS_UNIVERSAL);
-			p.setPrimitive(false);
-			p.setTag(Tag.SEQUENCE);
-			
-			Parameter[] pp = new Parameter[lstPar.size()];
-			lstPar.toArray(pp);
-			p.setParameters(pp);
-
+			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+			p.setTagClass(req.getTagClass());
+			p.setPrimitive(req.getIsPrimitive());
+			p.setTag(req.getTag());
+			p.setData(aos.toByteArray());
 			invoke.setParameter(p);
 
 			Long invokeId = this.tcapDialog.getNewInvokeId();
@@ -465,16 +354,11 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 
 		} catch (TCAPException e) {
 			throw new MAPException(e.getMessage(), e);
-		} catch (IOException e) {
-			throw new MAPException(e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public Long addAlertServiceCentreRequest(ISDNAddressString msisdn, AddressString serviceCentreAddress) throws MAPException {
-		
-		if (msisdn == null || serviceCentreAddress == null)
-			throw new MAPException("msisdn and serviceCentreAddress must not be null");
 		
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
 
@@ -483,28 +367,16 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
 			oc.setLocalOperationCode((long)MAPOperationCode.alertServiceCentre);
 			invoke.setOperationCode(oc);
+
+			AlertServiceCentreRequestIndicationImpl req = new AlertServiceCentreRequestIndicationImpl(msisdn, serviceCentreAddress);
+			AsnOutputStream aos = new AsnOutputStream();
+			req.encodeData(aos);
 			
-			// Sequence of Parameter
-			ArrayList<Parameter> lstPar = new ArrayList<Parameter>();
-
-			// msisdn
-			Parameter p;
-			p = ((ISDNAddressStringImpl) msisdn).encode();
-			lstPar.add(p);
-
-			// serviceCentreAddress
-			p = ((AddressStringImpl) serviceCentreAddress).encode();
-			lstPar.add(p);
-
-			p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-			p.setTagClass(Tag.CLASS_UNIVERSAL);
-			p.setPrimitive(false);
-			p.setTag(Tag.SEQUENCE);
-			
-			Parameter[] pp = new Parameter[lstPar.size()];
-			lstPar.toArray(pp);
-			p.setParameters(pp);
-
+			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+			p.setTagClass(req.getTagClass());
+			p.setPrimitive(req.getIsPrimitive());
+			p.setTag(req.getTag());
+			p.setData(aos.toByteArray());
 			invoke.setParameter(p);
 
 			Long invokeId = this.tcapDialog.getNewInvokeId();
@@ -530,26 +402,6 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
 		oc.setLocalOperationCode((long) MAPOperationCode.alertServiceCentre);
 		resultLast.setOperationCode(oc);
-
-		// if (sm_RP_UI != null || extensionContainer != null) {
-
-		// Sequence of Parameter
-		ArrayList<Parameter> lstPar = new ArrayList<Parameter>();
-
-		Parameter p;
-
-		p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-		p.setTagClass(Tag.CLASS_UNIVERSAL);
-		p.setPrimitive(false);
-		p.setTag(Tag.SEQUENCE);
-
-		Parameter[] pp = new Parameter[lstPar.size()];
-		lstPar.toArray(pp);
-		p.setParameters(pp);
-
-		resultLast.setParameter(p);
-
-		// }
 
 		this.sendReturnResultLastComponent(resultLast);
 	}

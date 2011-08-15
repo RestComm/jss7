@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -32,9 +31,7 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
-import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 
 /**
  * 
@@ -73,11 +70,46 @@ public class IMSIImpl extends TbcdString implements IMSI {
 	}
 
 	
+	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_OCTET;
 	}
+
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	@Override
+	public boolean getIsPrimitive() {
+		return true;
+	}
 	
-	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
+
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding IMSI: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding IMSI: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException {
 
 		if (length < 3 || length > 8)
 			throw new MAPParsingComponentException("Error decoding IMSI: the IMSI field must contain from 3 to 8 octets. Contains: " + length,
@@ -96,9 +128,29 @@ public class IMSIImpl extends TbcdString implements IMSI {
 			throw new MAPParsingComponentException("IOException when decoding IMSI: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
+	}	
+	
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
 	}
 
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding IMSI: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.MCC == null || this.MNC == null || this.MSIN == null)
 			throw new MAPException("Error while encoding the IMSI: MMC, MNC or MSIN is not defined");
@@ -122,6 +174,24 @@ public class IMSIImpl extends TbcdString implements IMSI {
 		sb.append(this.MSIN);
 
 		this.encodeString(asnOs, sb.toString());
+	}
+
+	@Deprecated
+	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
+
+		try {
+			this._decode(ansIS, length);
+
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding IMSI: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	@Deprecated
+	public void encode(AsnOutputStream asnOs) throws MAPException {
+		
+		this.encodeData(asnOs);
 	}
 
 	

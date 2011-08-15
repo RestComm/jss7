@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -34,9 +33,12 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
 
+/**
+ * @author sergey vetyutnev
+ * 
+ */
 public class MAPExtensionContainerImpl extends MAPPrimitiveBase implements MAPExtensionContainer {
 
 	protected static final int PRIVATEEXTENSIONLIST_REF_TAG = 0x00;
@@ -80,13 +82,19 @@ public class MAPExtensionContainerImpl extends MAPPrimitiveBase implements MAPEx
 	}
 
 	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	public void decode(AsnInputStream lis, int tagClass, boolean isPrimitive, int masterTag, int length) throws MAPParsingComponentException {
 
-		// Definitioon from GSM 09.02 version 5.15.1 Page 690
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		// Definition from GSM 09.02 version 5.15.1 Page 690
 		// extensionContainer SEQUENCE {
 		// privateExtensionList [0] IMPLICIT SEQUENCE ( SIZE( 1 .. 10 ) ) OF
 		// SEQUENCE {
@@ -100,71 +108,10 @@ public class MAPExtensionContainerImpl extends MAPPrimitiveBase implements MAPEx
 		// ... } OPTIONAL,
 		// ... } OPTIONAL,
 		// ... }
-
-
-		int tag;
-		Boolean privateExtensionListHasDecoded = false;
-
-		if (length == 0)
-			return;
 		
 		try {
-//			byte[] buf = new byte[length];
-//			if (localAis.read(buf) != length)
-//				throw new MAPParsingComponentException("Not enouph data for reading the ExtensionContainer",
-//						MAPParsingComponentExceptionReason.MistypedParameter);
-//			AsnInputStream lis = new AsnInputStream(new ByteArrayInputStream(buf));
-			
-			while (lis.available() > 0) {
-				tag = lis.readTag();
-				if (tag == MAPExtensionContainerImpl.PRIVATEEXTENSIONLIST_REF_TAG && lis.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-					if (privateExtensionListHasDecoded)
-						throw new MAPParsingComponentException("More than one PrivateExtensionList has found when ExtensionContainer decoding",
-								MAPParsingComponentExceptionReason.MistypedParameter);
-
-					byte[] seqData2 = lis.readSequence();
-					ByteArrayInputStream localIS2 = new ByteArrayInputStream(seqData2);
-					AsnInputStream localAis2 = new AsnInputStream(localIS2);
-					this.privateExtensionList = new ArrayList<MAPPrivateExtension>();
-
-					tag = localAis2.readTag();
-					if (tag != Tag.SEQUENCE || localAis2.getTagClass() != Tag.CLASS_UNIVERSAL)
-						throw new MAPParsingComponentException("Bad TAG when PrivateExtensionList decoding - 1",
-								MAPParsingComponentExceptionReason.MistypedParameter);
-
-					byte[] seqData3 = localAis2.readSequence();
-					ByteArrayInputStream localIS3 = new ByteArrayInputStream(seqData3);
-					AsnInputStream localAis3 = new AsnInputStream(localIS3);
-
-					while (localAis3.available() > 0) {
-						tag = localAis3.readTag();
-						if (tag != Tag.SEQUENCE || localAis2.getTagClass() != Tag.CLASS_UNIVERSAL)
-							throw new MAPParsingComponentException("Bad TAG when PrivateExtensionList decoding - 2",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						if (this.privateExtensionList.size() >= 10)
-							throw new MAPParsingComponentException("More then 10 PrivateExtension found when PrivateExtensionList decoding",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-
-						MAPPrivateExtensionImpl privateExtension = new MAPPrivateExtensionImpl();
-						privateExtension.decode(localAis3);
-						this.privateExtensionList.add(privateExtension);
-					}
-
-					privateExtensionListHasDecoded = true;
-				} else if (tag == MAPExtensionContainerImpl.PSCEXTENSIONS_REF_TAG && lis.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-					// this.pcsExtensions = new byte[localIS.available()];
-					this.pcsExtensions = lis.readSequence();
-
-					// pcs-Extensions block has found - finish decoding
-					break;
-				} else {
-					// other block has found - finish decoding
-					break;
-				}
-			}
-		} catch (MAPException e) {
-			throw new MAPParsingComponentException("MAPException when decoding ExtensionContainer: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+			AsnInputStream ais = ansIS.readSequenceStream();
+			this._decode(ais);
 		} catch (IOException e) {
 			throw new MAPParsingComponentException("IOException when decoding ExtensionContainer: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
@@ -172,59 +119,145 @@ public class MAPExtensionContainerImpl extends MAPPrimitiveBase implements MAPEx
 			throw new MAPParsingComponentException("AsnException when decoding ExtensionContainer: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
-
 	}
-	
-	public void encode(AsnOutputStream asnOS) throws MAPException {
-		if (this.privateExtensionList == null && this.pcsExtensions == null)
-			throw new MAPException(
-					"Both PrivateExtensionList and PcsExtensions are empty when ExtensionContainer encoding");
-		if (this.privateExtensionList != null
-				&& (this.privateExtensionList.size() == 0 || this.privateExtensionList.size() > 10))
-			throw new MAPException(
-					"PrivateExtensionList must contains from 1 to 10 elements when ExtensionContainer encoding");
 
-		AsnOutputStream localAos = new AsnOutputStream();
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
-			byte[] data1 = null;
-			if (this.privateExtensionList != null) {
-				ArrayList<byte[]> lstPrivateExtention = new ArrayList<byte[]>();
-
-				int wholeLen = 0;
-				for (MAPPrivateExtension pe : this.privateExtensionList) {
-					localAos.reset();
-					((MAPPrivateExtensionImpl) pe).encode(localAos);
-					byte[] byteBuf = localAos.toByteArray();
-					wholeLen += byteBuf.length;
-					lstPrivateExtention.add(byteBuf);
-				}
-
-				localAos.reset();
-				localAos.writeTag(Tag.CLASS_UNIVERSAL, false, Tag.SEQUENCE);
-				localAos.writeLength(wholeLen);
-				for (byte[] byteBuf : lstPrivateExtention) {
-					localAos.write(byteBuf);
-				}
-
-				data1 = localAos.toByteArray();
-			}
-
-			if (data1 != null) {
-				asnOS.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, MAPExtensionContainerImpl.PRIVATEEXTENSIONLIST_REF_TAG);
-				asnOS.writeLength(data1.length);
-				asnOS.write(data1);
-			}
-			if (this.pcsExtensions != null) {
-				asnOS.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, MAPExtensionContainerImpl.PSCEXTENSIONS_REF_TAG);
-				asnOS.writeLength(this.pcsExtensions.length);
-				asnOS.write(this.pcsExtensions);
-			}
+			AsnInputStream ais = ansIS.readSequenceStreamData(length);
+			this._decode(ais);
 		} catch (IOException e) {
-			throw new MAPException("IOException when encoding ExtensionContainer: " + e.getMessage(), e);
+			throw new MAPParsingComponentException("IOException when decoding ExtensionContainer: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding ExtensionContainer: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+	
+	private void _decode(AsnInputStream ansIS) throws MAPParsingComponentException, IOException, AsnException {
+
+		this.privateExtensionList = null;
+		this.pcsExtensions = null;
+
+		while (true) {
+			if (ansIS.available() == 0)
+				break;
+
+			int tag = ansIS.readTag();
+			if (tag == MAPExtensionContainerImpl.PRIVATEEXTENSIONLIST_REF_TAG && ansIS.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				
+				if(ansIS.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while ExtensionContainer decoding: privateExtensionList is primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				if (this.privateExtensionList != null)
+					throw new MAPParsingComponentException("Error while ExtensionContainer decoding: More than one PrivateExtensionList has found",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+
+				AsnInputStream localAis2 = ansIS.readSequenceStream();
+				this.privateExtensionList = new ArrayList<MAPPrivateExtension>();
+				while (localAis2.available() > 0) {
+					tag = localAis2.readTag();
+					if (tag != Tag.SEQUENCE || localAis2.getTagClass() != Tag.CLASS_UNIVERSAL || localAis2.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while ExtensionContainer decoding: Bad tag, tagClass or primitiveFactor of PrivateExtension",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					if (this.privateExtensionList.size() >= 10)
+						throw new MAPParsingComponentException("More then 10 PrivateExtension found when PrivateExtensionList decoding",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+
+					MAPPrivateExtensionImpl privateExtension = new MAPPrivateExtensionImpl();
+					privateExtension.decodeAll(localAis2);
+					this.privateExtensionList.add(privateExtension);
+				}
+			} else if (tag == MAPExtensionContainerImpl.PSCEXTENSIONS_REF_TAG && ansIS.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				
+				if(ansIS.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while PCS-Extensions decoding: PCS-Extensions is primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				if (this.pcsExtensions != null)
+					throw new MAPParsingComponentException("Error while PCS-Extensions decoding: More than one PCS-Extensions has found",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+
+				this.pcsExtensions = ansIS.readSequence();
+			}
+		}
+	}
+	
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+	}
+	
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
 			throw new MAPException("AsnException when encoding ExtensionContainer: " + e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+		
+		if (this.privateExtensionList == null && this.pcsExtensions == null)
+			throw new MAPException(
+					"Error when encoding ExtensionContainer: Both PrivateExtensionList and PcsExtensions are empty when ExtensionContainer encoding");
+		if (this.privateExtensionList != null && (this.privateExtensionList.size() == 0 || this.privateExtensionList.size() > 10))
+			throw new MAPException(
+					"Error when encoding ExtensionContainer: PrivateExtensionList must contains from 1 to 10 elements when ExtensionContainer encoding");
+
+		try {
+			
+			if (this.privateExtensionList != null) {
+				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, PRIVATEEXTENSIONLIST_REF_TAG);
+				int pos2 = asnOs.StartContentDefiniteLength();
+				
+				for (MAPPrivateExtension pe : this.privateExtensionList) {
+					pe.encodeAll(asnOs);
+				}				
+
+				asnOs.FinalizeContent(pos2);
+			}
+			
+			if (this.pcsExtensions != null) {
+				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, PSCEXTENSIONS_REF_TAG);
+				int pos2 = asnOs.StartContentDefiniteLength();
+
+				asnOs.write(this.pcsExtensions);
+
+				asnOs.FinalizeContent(pos2);
+			}			
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding ExtensionContainer: " + e.getMessage(), e);
+		}
+	}
+
+	@Deprecated
+	public void decode(AsnInputStream lis, int tagClass, boolean isPrimitive, int masterTag, int length) throws MAPParsingComponentException {
+		
+		try {
+			this._decode(lis);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding ExtensionContainer: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding ExtensionContainer: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}		
+	}
+	
+	@Deprecated
+	public void encode(AsnOutputStream asnOS) throws MAPException {
+		
+		this.encodeData(asnOS);
+		
 	}
 	
 	

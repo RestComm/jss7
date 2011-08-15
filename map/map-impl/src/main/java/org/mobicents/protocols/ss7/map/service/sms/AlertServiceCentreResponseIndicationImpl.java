@@ -22,8 +22,62 @@
 
 package org.mobicents.protocols.ss7.map.service.sms;
 
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponseIndication;
 
 public class AlertServiceCentreResponseIndicationImpl extends SmsServiceImpl implements AlertServiceCentreResponseIndication {
 
+	@Override
+	public int getTag() throws MAPException {
+		
+		throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
+	}
+
+	@Override
+	public int getTagClass() {
+
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	@Override
+	public boolean getIsPrimitive() {
+		
+		return false;
+	}
+
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+
+		throw new MAPParsingComponentException("AlertServiceCentreResponse has no MAP message primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+	}
+
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+
+		throw new MAPParsingComponentException("AlertServiceCentreResponse has no MAP message primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+
+		throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+
+		throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+
+		throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
+	}
 }
+

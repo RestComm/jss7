@@ -36,14 +36,13 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class SM_RP_OAImpl extends MAPPrimitiveBase implements SM_RP_OA {
+public class SM_RP_OAImpl implements SM_RP_OA {
 
 	private static final int _TAG_Msisdn = 2;
 	private static final int _TAG_ServiceCentreAddressOA = 4;
@@ -89,32 +88,64 @@ public class SM_RP_OAImpl extends MAPPrimitiveBase implements SM_RP_OA {
 			return _TAG_noSM_RP_OA;
 	}
 
+	@Override
+	public boolean getIsPrimitive() {
+		return true;
+	}
 
-	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
+	
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding SM_RP_OA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding SM_RP_OA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding SM_RP_OA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding SM_RP_OA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
 		this.msisdn = null;
 		this.serviceCentreAddressOA = null;
 
-		if (tagClass != Tag.CLASS_CONTEXT_SPECIFIC || !isPrimitive)
-			throw new MAPParsingComponentException("Error while decoding SM_RP_OA: bad tag class or is not primitive: TagClass=" + tagClass,
+		if (ansIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ansIS.isTagPrimitive())
+			throw new MAPParsingComponentException("Error while decoding SM_RP_OA: bad tag class or is not primitive: TagClass=" + ansIS.getTagClass(),
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		switch(tag) {
+		switch(ansIS.getTag()) {
 		case _TAG_Msisdn:
-			ISDNAddressStringImpl as = new ISDNAddressStringImpl();
-			as.decode(ansIS, tagClass, isPrimitive, tag, length);
-			this.msisdn = as;
+			this.msisdn = new ISDNAddressStringImpl();
+			this.msisdn.decodeData(ansIS, length);
 			break;
 			
 		case _TAG_ServiceCentreAddressOA:
-			AddressStringImpl as2 = new AddressStringImpl();
-			as2.decode(ansIS, tagClass, isPrimitive, tag, length);
-			this.serviceCentreAddressOA = as2;
+			this.serviceCentreAddressOA = new AddressStringImpl();
+			this.serviceCentreAddressOA.decodeData(ansIS, length);
 			break;
 			
 		case _TAG_noSM_RP_OA:
 			try {
-				ansIS.readNullData(ansIS.available());
+				ansIS.readNullData(length);
 			} catch (AsnException e) {
 				throw new MAPParsingComponentException("AsnException when decoding SM_RP_OA: " + e.getMessage(), e,
 						MAPParsingComponentExceptionReason.MistypedParameter);
@@ -125,22 +156,39 @@ public class SM_RP_OAImpl extends MAPPrimitiveBase implements SM_RP_OA {
 			break;
 			
 		default:
-			throw new MAPParsingComponentException("Error while SM_RP_OA: bad tag: " + tag, MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new MAPParsingComponentException("Error while SM_RP_OA: bad tag: " + ansIS.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+	
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+
+		this.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, this.getTag());
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding SM_RP_OA: " + e.getMessage(), e);
 		}
 	}
 
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		
-		if( this.msisdn != null )
-			((ISDNAddressStringImpl)this.msisdn).encode(asnOs);
-		else if(this.serviceCentreAddressOA != null )
-			((AddressStringImpl)this.serviceCentreAddressOA).encode(asnOs);
+		if (this.msisdn != null)
+			this.msisdn.encodeData(asnOs);
+		else if (this.serviceCentreAddressOA != null)
+			this.serviceCentreAddressOA.encodeData(asnOs);
 		else
-			try {
-				asnOs.writeNULLData();
-			} catch (IOException e) {
-				throw new MAPException("IOException when encoding SM_RP_OA: " + e.getMessage(), e);
-			}
+			asnOs.writeNullData();
 	}
 
 	
@@ -162,5 +210,4 @@ public class SM_RP_OAImpl extends MAPPrimitiveBase implements SM_RP_OA {
 
 		return sb.toString();
 	}
-	
 }

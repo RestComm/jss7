@@ -22,11 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
-import java.io.IOException;
-
-import org.mobicents.protocols.asn.AsnException;
-import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
@@ -49,21 +44,18 @@ public class FTNAddressStringImpl extends AddressStringImpl implements FTNAddres
 	}
 	
 
-	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
-		
+	@Override
+	protected void _testLengthDecode(int length) throws MAPParsingComponentException {
 		if (length > 15)
 			throw new MAPParsingComponentException("Error when decoding FTNAddressString: mesage length must not exceed 15",
 					MAPParsingComponentExceptionReason.MistypedParameter);
-		
-		super.decode(ansIS, tagClass, isPrimitive, tag, length);
 	}
 
-	public void encode(AsnOutputStream asnOs) throws MAPException {
-		
+	@Override
+	protected void _testLengthEncode() throws MAPException {
+
 		if (this.address == null && this.address.length() > 28)
 			throw new MAPException("Error when encoding FTNAddressString: address length must not exceed 28 digits");
-
-		super.encode(asnOs);
 	}
 
 	@Override

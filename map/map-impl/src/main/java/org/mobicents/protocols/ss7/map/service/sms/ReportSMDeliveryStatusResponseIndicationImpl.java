@@ -22,9 +22,20 @@
 
 package org.mobicents.protocols.ss7.map.service.sms;
 
+import java.io.IOException;
+
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusResponseIndication;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
  * 
@@ -35,6 +46,9 @@ public class ReportSMDeliveryStatusResponseIndicationImpl extends SmsServiceImpl
 
 	private ISDNAddressString storedMSISDN;
 	private MAPExtensionContainer extensionContainer;
+	
+	public ReportSMDeliveryStatusResponseIndicationImpl() {
+	}
 	
 	public ReportSMDeliveryStatusResponseIndicationImpl(ISDNAddressString storedMSISDN, MAPExtensionContainer extensionContainer) {
 		this.storedMSISDN = storedMSISDN;
@@ -49,6 +63,142 @@ public class ReportSMDeliveryStatusResponseIndicationImpl extends SmsServiceImpl
 	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
+	}
+
+	
+	@Override
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
+
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
+
+	
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusResponse: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusResponse: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusResponse: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusResponse: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		
+		this.storedMSISDN = null;
+		this.extensionContainer = null;
+		
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		while (true) {
+			if (ais.available() == 0)
+				break;
+
+			int tag = ais.readTag();
+
+			if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+				switch (tag) {
+				case Tag.STRING_OCTET:
+					// storedMSISDN
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding ReportSMDeliveryStatusResponse: Parameter storedMSISDN is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.storedMSISDN = new ISDNAddressStringImpl();
+					this.storedMSISDN.decodeAll(ais);
+					break;
+
+				case Tag.SEQUENCE:
+					// ExtensionContainer
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding ReportSMDeliveryStatusResponse: Parameter extensionContainer is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					this.extensionContainer.decodeAll(ais);
+					break;
+
+				default:
+					ais.advanceElement();
+					break;
+				}
+
+			} else {
+				ais.advanceElement();
+			}
+		}
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding ReportSMDeliveryStatusResponse: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+
+		if (this.storedMSISDN != null)
+			this.storedMSISDN.encodeAll(asnOs);
+		if (this.extensionContainer != null)
+			this.extensionContainer.encodeAll(asnOs);
+	}	
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("ReportSMDeliveryStatusResponse [");
+
+		if (this.storedMSISDN != null) {
+			sb.append(", storedMSISDN=");
+			sb.append(this.storedMSISDN.toString());
+		}
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 
 }

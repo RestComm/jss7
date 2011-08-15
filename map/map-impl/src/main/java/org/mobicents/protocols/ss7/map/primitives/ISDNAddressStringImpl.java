@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
-import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
@@ -44,22 +42,19 @@ public class ISDNAddressStringImpl extends AddressStringImpl implements ISDNAddr
 	public ISDNAddressStringImpl(AddressNature addressNature, NumberingPlan numberingPlan, String address) {
 		super(addressNature, numberingPlan, address);
 	}
-	
-	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
 
+	@Override
+	protected void _testLengthDecode(int length) throws MAPParsingComponentException {
 		if (length > 9)
 			throw new MAPParsingComponentException("Error when decoding FTNAddressString: mesage length must not exceed 9",
 					MAPParsingComponentExceptionReason.MistypedParameter);
-
-		super.decode(ansIS, tagClass, isPrimitive, tag, length);
 	}
 
-	public void encode(AsnOutputStream asnOs) throws MAPException {
-		
+	@Override
+	protected void _testLengthEncode() throws MAPException {
+
 		if (this.address == null && this.address.length() > 16)
 			throw new MAPException("Error when encoding ISDNAddressString: address length must not exceed 16 digits");
-
-		super.encode(asnOs);
 	}
 
 	@Override
@@ -67,5 +62,4 @@ public class ISDNAddressStringImpl extends AddressStringImpl implements ISDNAddr
 		return "ISDNAddressString[AddressNature=" + this.addressNature + ", NumberingPlan=" + this.numberingPlan + ", Address="
 				+ this.address + "]";
 	}
-
 }

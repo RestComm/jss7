@@ -22,9 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.service.sms;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
@@ -44,13 +41,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener;
-import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
-import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
 import org.mobicents.protocols.ss7.map.dialog.ServingCheckDataImpl;
-import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
-import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
-import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
@@ -60,7 +51,6 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnException;
 
 /**
  * 
@@ -219,8 +209,10 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 					"Error while decoding moForwardShortMessageRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
 		MoForwardShortMessageRequestIndicationImpl ind = new MoForwardShortMessageRequestIndicationImpl();
-		ind.decode(parameter);
+		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
@@ -244,7 +236,9 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 						"Error while decoding moForwardShortMessageResponse: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
 						MAPParsingComponentExceptionReason.MistypedParameter);
 
-			ind.decode(parameter);
+			byte[] buf = parameter.getData();
+			AsnInputStream ais = new AsnInputStream(buf);
+			ind.decodeData(ais, buf.length);
 		}
 
 		ind.setInvokeId(invokeId);
@@ -270,9 +264,11 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 					"Error while decoding mtForwardShortMessageRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
 		MtForwardShortMessageRequestIndicationImpl ind = new MtForwardShortMessageRequestIndicationImpl();
-		ind.decode(parameter);
-
+		ind.decodeData(ais, buf.length);
+		
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
 
@@ -288,14 +284,16 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 	private void mtForwardShortMessageResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		
 		MtForwardShortMessageResponseIndicationImpl ind = new MtForwardShortMessageResponseIndicationImpl();
-		
+
 		if (parameter != null) {
 			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
 				throw new MAPParsingComponentException(
 						"Error while decoding mtForwardShortMessageResponse: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
 						MAPParsingComponentExceptionReason.MistypedParameter);
 
-			ind.decode(parameter);
+			byte[] buf = parameter.getData();
+			AsnInputStream ais = new AsnInputStream(buf);
+			ind.decodeData(ais, buf.length);
 		}
 
 		ind.setInvokeId(invokeId);
@@ -321,8 +319,10 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 					"Error while decoding sendRoutingInfoForSMRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
 		SendRoutingInfoForSMRequestIndicationImpl ind = new SendRoutingInfoForSMRequestIndicationImpl();
-		ind.decode(parameter);
+		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
@@ -338,6 +338,8 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 	
 	private void sendRoutingInfoForSMResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		
+		SendRoutingInfoForSMResponseIndicationImpl ind = new SendRoutingInfoForSMResponseIndicationImpl();
+		
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
@@ -347,8 +349,10 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 					"Error while decoding sendRoutingInfoForSMResponse: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		SendRoutingInfoForSMResponseIndicationImpl ind = new SendRoutingInfoForSMResponseIndicationImpl();
-		ind.decode(parameter);
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
@@ -368,319 +372,108 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		try {
-			if (parameter.getTag() == Tag.SEQUENCE) {
-				Parameter[] parameters = parameter.getParameters();
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new MAPParsingComponentException(
+					"Error while decoding sendRoutingInfoForSMRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+					MAPParsingComponentExceptionReason.MistypedParameter);
 
-				if (parameters.length < 3)
-					throw new MAPParsingComponentException("Error while decoding reportSMDeliveryStatusRequest: Needs at least 3 mandatory parameters, found"
-							+ parameters.length, MAPParsingComponentExceptionReason.MistypedParameter);
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		ReportSMDeliveryStatusRequestIndicationImpl ind = new ReportSMDeliveryStatusRequestIndicationImpl();
+		ind.decodeData(ais, buf.length);
+		
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
 
-				AsnInputStream ais;
-
-				// msisdn
-				Parameter p = parameters[0];
-				if (p.getTagClass() != Tag.CLASS_UNIVERSAL || !p.isPrimitive() || p.getTag() != Tag.STRING_OCTET)
-					throw new MAPParsingComponentException(
-							"Error while decoding reportSMDeliveryStatusRequest: Parameter 0 bad tag class or tag or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				ISDNAddressStringImpl msisdn = new ISDNAddressStringImpl();
-				msisdn.decode(p);
-				
-				// serviceCentreAddress
-				p = parameters[1];
-				if (p.getTagClass() != Tag.CLASS_UNIVERSAL || !p.isPrimitive() || p.getTag() != Tag.STRING_OCTET)
-					throw new MAPParsingComponentException(
-							"Error while decoding reportSMDeliveryStatusRequest: Parameter 1 bad tag class or tag or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				AddressStringImpl serviceCentreAddress = new AddressStringImpl();
-				serviceCentreAddress.decode(p);
-
-				// sMDeliveryOutcome
-				p = parameters[2];
-				if (p.getTagClass() != Tag.CLASS_UNIVERSAL || !p.isPrimitive() || p.getTag() != Tag.ENUMERATED)
-					throw new MAPParsingComponentException(
-							"Error while decoding reportSMDeliveryStatusRequest: Parameter 2 bad tag class or tag or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				byte[] buf = p.getData();
-				if (buf.length != 1)
-					throw new MAPParsingComponentException(
-							"Error while decoding reportSMDeliveryStatusRequest: Parameter 3 expected length 1, found: " + buf.length,
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				SMDeliveryOutcome sMDeliveryOutcome = SMDeliveryOutcome.getInstance(buf[0]);
-
-				Integer absentSubscriberDiagnosticSM = null;
-				MAPExtensionContainerImpl extensionContainer = null;
-				Boolean gprsSupportIndicator = false;
-				Boolean deliveryOutcomeIndicator = false;
-				SMDeliveryOutcome additionalSMDeliveryOutcome = null;
-				Integer additionalAbsentSubscriberDiagnosticSM = null;
-				for (int i1 = 3; i1 < parameters.length; i1++) {
-					p = parameters[i1];
-
-					if (p.getTag() == ReportSMDeliveryStatusRequestIndicationImpl._TAG_AbsentSubscriberDiagnosticSM && p.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-						// absentSubscriberDiagnosticSM
-						if (!p.isPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding reportSMDeliveryStatusRequest: Parameter absentSubscriberDiagnosticSM is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						buf = p.getData();
-						ais = new AsnInputStream(new ByteArrayInputStream(buf));
-						absentSubscriberDiagnosticSM = (int)ais.readIntegerData(buf.length);
-					} else if (p.getTag() == ReportSMDeliveryStatusRequestIndicationImpl._TAG_ExtensionContainer && p.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-						// extensionContainer
-						if (p.isPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding reportSMDeliveryStatusRequest: Parameter extensionContainer is primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						extensionContainer = new MAPExtensionContainerImpl();
-						extensionContainer.decode(p);
-					} else if (p.getTag() == ReportSMDeliveryStatusRequestIndicationImpl._TAG_GprsSupportIndicator && p.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-						// gprsSupportIndicator
-						if (!p.isPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding reportSMDeliveryStatusRequest: Parameter gprsSupportIndicator is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						gprsSupportIndicator = true;
-					} else if (p.getTag() == ReportSMDeliveryStatusRequestIndicationImpl._TAG_DeliveryOutcomeIndicator && p.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-						// deliveryOutcomeIndicator
-						if (!p.isPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding reportSMDeliveryStatusRequest: Parameter deliveryOutcomeIndicator is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						deliveryOutcomeIndicator = true;
-					} else if (p.getTag() == ReportSMDeliveryStatusRequestIndicationImpl._TAG_AdditionalSMDeliveryOutcome && p.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-						// additionalSMDeliveryOutcome
-						if (!p.isPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding reportSMDeliveryStatusRequest: Parameter additionalSMDeliveryOutcome is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						buf = p.getData();
-						if (buf.length != 1)
-							throw new MAPParsingComponentException("Error while decoding reportSMDeliveryStatusRequest: Parameter additionalSMDeliveryOutcome expected length 1, found: "
-									+ buf.length, MAPParsingComponentExceptionReason.MistypedParameter);
-						additionalSMDeliveryOutcome = SMDeliveryOutcome.getInstance(buf[0]);
-					} else if (p.getTag() == ReportSMDeliveryStatusRequestIndicationImpl._TAG_AdditionalAbsentSubscriberDiagnosticSM && p.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-						// additionalAbsentSubscriberDiagnosticSM
-						if (!p.isPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding reportSMDeliveryStatusRequest: Parameter additionalAbsentSubscriberDiagnosticSM is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						buf = p.getData();
-						ais = new AsnInputStream(new ByteArrayInputStream(buf));
-						additionalAbsentSubscriberDiagnosticSM = (int)ais.readIntegerData(buf.length);
-					}
-				}
-				
-				ReportSMDeliveryStatusRequestIndicationImpl ind = new ReportSMDeliveryStatusRequestIndicationImpl(msisdn, serviceCentreAddress,
-						sMDeliveryOutcome, absentSubscriberDiagnosticSM, extensionContainer, gprsSupportIndicator, deliveryOutcomeIndicator,
-						additionalSMDeliveryOutcome, additionalAbsentSubscriberDiagnosticSM);
-
-				ind.setInvokeId(invokeId);
-				ind.setMAPDialog(mapDialogImpl);
-
-				for (MAPServiceListener serLis : this.serviceListeners) {
-					try {
-						((MAPServiceSmsListener) serLis).onReportSMDeliveryStatusIndication(ind);
-					} catch (Exception e) {
-						loger.error("Error processing onReportSMDeliveryStatusIndication: " + e.getMessage(), e);
-					}
-				}
-			} else {
-				throw new MAPParsingComponentException("Error while decoding reportSMDeliveryStatusRequest: Expected Parameter tag as SEQUENCE but received "
-						+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((MAPServiceSmsListener) serLis).onReportSMDeliveryStatusIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing onReportSMDeliveryStatusIndication: " + e.getMessage(), e);
 			}
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException while decoding reportSMDeliveryStatusRequest: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException while decoding reportSMDeliveryStatusRequest: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 	
 	private void reportSMDeliveryStatusResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		
+		ReportSMDeliveryStatusResponseIndicationImpl ind = new ReportSMDeliveryStatusResponseIndicationImpl();
+
 		if (parameter != null) {
-			if (parameter.getTag() == Tag.SEQUENCE) {
-				Parameter[] parameters = parameter.getParameters();
+			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding reportSMDeliveryStatusResponse: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+						MAPParsingComponentExceptionReason.MistypedParameter);
 
-				ISDNAddressStringImpl storedMSISDN = null;
-				MAPExtensionContainerImpl extensionContainer = null;
+			byte[] buf = parameter.getData();
+			AsnInputStream ais = new AsnInputStream(buf);
+			ind.decodeData(ais, buf.length);
+		}
 
-				for (Parameter p : parameters) {
-					
-					if (p.getTag() == Tag.STRING_OCTET && p.getTagClass() == Tag.CLASS_UNIVERSAL) {
-						if (!p.isPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding reportSMDeliveryStatusResponse: Parameter storedMSISDN is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						storedMSISDN = new ISDNAddressStringImpl();
-						storedMSISDN.decode(p);
-					} else if (p.getTag() == Tag.SEQUENCE && p.getTagClass() == Tag.CLASS_UNIVERSAL) {
-						if (p.isPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding reportSMDeliveryStatusResponse: Parameter extensionContainer not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						extensionContainer = new MAPExtensionContainerImpl();
-						extensionContainer.decode(p);
-					}
-				}
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
 
-				ReportSMDeliveryStatusResponseIndicationImpl ind = new ReportSMDeliveryStatusResponseIndicationImpl(storedMSISDN, extensionContainer);
-
-				ind.setInvokeId(invokeId);
-				ind.setMAPDialog(mapDialogImpl);
-
-				for (MAPServiceListener serLis : this.serviceListeners) {
-					try {
-						((MAPServiceSmsListener) serLis).onReportSMDeliveryStatusRespIndication(ind);
-					} catch (Exception e) {
-						loger.error("Error processing onReportSMDeliveryStatusRespIndication: " + e.getMessage(), e);
-					}
-				}
-			} else {
-				throw new MAPParsingComponentException("Error while decoding moForwardShortMessageRequest: Expected Parameter tag as SEQUENCE but received "
-						+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((MAPServiceSmsListener) serLis).onReportSMDeliveryStatusRespIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing onReportSMDeliveryStatusRespIndication: " + e.getMessage(), e);
 			}
 		}
 	}
 	
 	private void informServiceCentreRequest(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
-		
+
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding informServiceCentreRequest: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		try {
-			if (parameter.getTag() == Tag.SEQUENCE) {
-				Parameter[] parameters = parameter.getParameters();
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new MAPParsingComponentException(
+					"Error while decoding informServiceCentreRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+					MAPParsingComponentExceptionReason.MistypedParameter);
 
-				AsnInputStream ais;
+		InformServiceCentreRequestIndicationImpl ind = new InformServiceCentreRequestIndicationImpl();
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		ind.decodeData(ais, buf.length);
 
-				ISDNAddressStringImpl storedMSISDN = null;
-				MWStatusImpl mwStatus = null;
-				MAPExtensionContainerImpl extensionContainer = null;
-				Integer absentSubscriberDiagnosticSM = null;
-				Integer additionalAbsentSubscriberDiagnosticSM = null;
-				
-				for (Parameter p : parameters) {
-
-					if (p.getTag() == Tag.STRING_OCTET && p.getTagClass() == Tag.CLASS_UNIVERSAL) {
-						// storedMSISDN
-						if (!p.isPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding informServiceCentreRequest: Parameter storedMSISDN is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						storedMSISDN = new ISDNAddressStringImpl();
-						storedMSISDN.decode(p);
-					} else if (p.getTag() == Tag.STRING_BIT && p.getTagClass() == Tag.CLASS_UNIVERSAL) {
-						// mw-Status
-						if (!p.isPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding informServiceCentreRequest: Parameter mw-Status is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						mwStatus = new MWStatusImpl();
-						mwStatus.decode(p);
-					} else if (p.getTag() == Tag.SEQUENCE && p.getTagClass() == Tag.CLASS_UNIVERSAL) {
-						// extensionContainer
-						if (p.isPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding reportSMDeliveryStatusRequest: Parameter extensionContainer is primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						extensionContainer = new MAPExtensionContainerImpl();
-						extensionContainer.decode(p);
-					} else if (p.getTag() == Tag.INTEGER && p.getTagClass() == Tag.CLASS_UNIVERSAL) {
-						// absentSubscriberDiagnosticSM
-						if (!p.isPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding informServiceCentreRequest: Parameter absentSubscriberDiagnosticSM is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						byte[] buf = p.getData();
-						ais = new AsnInputStream(new ByteArrayInputStream(buf));
-						absentSubscriberDiagnosticSM = (int)ais.readIntegerData(buf.length);
-					}  else if (p.getTag() == InformServiceCentreRequestIndicationImpl._TAG_AdditionalAbsentSubscriberDiagnosticSM && p.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-						// additionalAbsentSubscriberDiagnosticSM
-						if (!p.isPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding informServiceCentreRequest: Parameter deliveryOutcomeIndicator is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						byte[] buf = p.getData();
-						ais = new AsnInputStream(new ByteArrayInputStream(buf));
-						additionalAbsentSubscriberDiagnosticSM = (int) ais.readIntegerData(buf.length);
-					}
-				}
-				
-				InformServiceCentreRequestIndicationImpl ind = new InformServiceCentreRequestIndicationImpl(storedMSISDN, mwStatus, extensionContainer,
-						absentSubscriberDiagnosticSM, additionalAbsentSubscriberDiagnosticSM);
-
-				ind.setInvokeId(invokeId);
-				ind.setMAPDialog(mapDialogImpl);
-
-				for (MAPServiceListener serLis : this.serviceListeners) {
-					try {
-						((MAPServiceSmsListener) serLis).onInformServiceCentreIndication(ind);
-					} catch (Exception e) {
-						loger.error("Error processing onInformServiceCentreIndication: " + e.getMessage(), e);
-					}
-				}
-			} else {
-				throw new MAPParsingComponentException("Error while decoding informServiceCentreRequest: Expected Parameter tag as SEQUENCE but received "
-						+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
+		
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((MAPServiceSmsListener) serLis).onInformServiceCentreIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing onInformServiceCentreIndication: " + e.getMessage(), e);
 			}
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException while decoding informServiceCentreRequest: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException while decoding informServiceCentreRequest: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 	
 	private void alertServiceCentreRequest(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
-		
+
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding alertServiceCentreRequest: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (parameter.getTag() == Tag.SEQUENCE) {
-			Parameter[] parameters = parameter.getParameters();
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new MAPParsingComponentException(
+					"Error while decoding alertServiceCentreRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+					MAPParsingComponentExceptionReason.MistypedParameter);
 
-			if (parameters.length < 2)
-				throw new MAPParsingComponentException("Error while decoding alertServiceCentreRequest: Needs at least 2 mandatory parameters, found"
-						+ parameters.length, MAPParsingComponentExceptionReason.MistypedParameter);
+		AlertServiceCentreRequestIndicationImpl ind = new AlertServiceCentreRequestIndicationImpl();
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		ind.decodeData(ais, buf.length);
 
-			// msisdn
-			Parameter p = parameters[0];
-			if (p.getTagClass() != Tag.CLASS_UNIVERSAL || !p.isPrimitive() || p.getTag() != Tag.STRING_OCTET)
-				throw new MAPParsingComponentException("Error while decoding alertServiceCentreRequest: Parameter 0 bad tag class or tag or not primitive",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			ISDNAddressStringImpl msisdn = new ISDNAddressStringImpl();
-			msisdn.decode(p);
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
 
-			// serviceCentreAddress
-			p = parameters[1];
-			if (p.getTagClass() != Tag.CLASS_UNIVERSAL || !p.isPrimitive() || p.getTag() != Tag.STRING_OCTET)
-				throw new MAPParsingComponentException("Error while decoding alertServiceCentreRequest: Parameter 1 bad tag class or tag or not primitive",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			AddressStringImpl serviceCentreAddress = new AddressStringImpl();
-			serviceCentreAddress.decode(p);
-
-			AlertServiceCentreRequestIndicationImpl ind = new AlertServiceCentreRequestIndicationImpl(msisdn, serviceCentreAddress);
-
-			ind.setInvokeId(invokeId);
-			ind.setMAPDialog(mapDialogImpl);
-
-			for (MAPServiceListener serLis : this.serviceListeners) {
-				try {
-					((MAPServiceSmsListener) serLis).onAlertServiceCentreIndication(ind);
-				} catch (Exception e) {
-					loger.error("Error processing onAlertServiceCentreIndication: " + e.getMessage(), e);
-				}
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((MAPServiceSmsListener) serLis).onAlertServiceCentreIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing onAlertServiceCentreIndication: " + e.getMessage(), e);
 			}
-		} else {
-			throw new MAPParsingComponentException("Error while decoding alertServiceCentreRequest: Expected Parameter tag as SEQUENCE but received "
-					+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 	

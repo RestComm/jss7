@@ -22,26 +22,21 @@
 
 package org.mobicents.protocols.ss7.map.service.sms;
 
-import java.util.ArrayList;
+import java.io.IOException;
 
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
-import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener;
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMResponseIndication;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
-import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
 public class SendRoutingInfoForSMResponseIndicationImpl extends SmsServiceImpl implements SendRoutingInfoForSMResponseIndication {
 	
@@ -77,75 +72,167 @@ public class SendRoutingInfoForSMResponseIndicationImpl extends SmsServiceImpl i
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
+
 	
+	@Override
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
+
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
+
 	
-	public void decode(Parameter parameter) throws MAPParsingComponentException {
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-		Parameter[] parameters = parameter.getParameters();
-
-		if (parameters.length < 2)
-			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse: Needs at least 2 mandatory parameters, found"
-					+ parameters.length, MAPParsingComponentExceptionReason.MistypedParameter);
-
-		// imsi
-		Parameter p = parameters[0];
-		if (p.getTagClass() != Tag.CLASS_UNIVERSAL || !p.isPrimitive() || p.getTag() != Tag.STRING_OCTET)
-			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse: Parameter 0 bad tag class or tag or not primitive",
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding sendRoutingInfoForSMResponse: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
-		this.imsi = new IMSIImpl();
-		((IMSIImpl)this.imsi).decode(p);
-
-		// locationInfoWithLMSI
-		p = parameters[1];
-		if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || p.isPrimitive()
-				|| p.getTag() != SendRoutingInfoForSMResponseIndicationImpl._TAG_LocationInfoWithLMSI)
-			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse: Parameter 1 bad tag class or tag or primitive",
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding sendRoutingInfoForSMResponse: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
-		this.locationInfoWithLMSI = new LocationInfoWithLMSIImpl();
-		((LocationInfoWithLMSIImpl)this.locationInfoWithLMSI).decode(p);
-
-		for (int i1 = 2; i1 < parameters.length; i1++) {
-			p = parameters[i1];
-
-			if (p.getTag() == SendRoutingInfoForSMResponseIndicationImpl._TAG_ExtensionContainer && p.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				if (p.isPrimitive())
-					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse: Parameter extensionContainer is primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.extensionContainer = new MAPExtensionContainerImpl();
-				((MAPExtensionContainerImpl)this.extensionContainer).decode(p);
-			}
 		}
 	}
 
-	public Parameter encode(ComponentPrimitiveFactory factory) throws MAPException {
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-		// Sequence of Parameter
-		ArrayList<Parameter> lstPar = new ArrayList<Parameter>();
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding sendRoutingInfoForSMResponse: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding sendRoutingInfoForSMResponse: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
 
-		// imsi
-		Parameter p = ((IMSIImpl) this.imsi).encode();
-		lstPar.add(p);
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		// locationInfoWithLMSI
-		p = ((LocationInfoWithLMSIImpl) this.locationInfoWithLMSI).encode();
-		p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-		p.setTag(SendRoutingInfoForSMResponseIndicationImpl._TAG_LocationInfoWithLMSI);
-		lstPar.add(p);
+		this.imsi = null;
+		this.locationInfoWithLMSI = null;
+		this.extensionContainer = null;
+		
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		int num = 0;
+		while (true) {
+			if (ais.available() == 0)
+				break;
 
-		// extensionContainer
-		if (this.extensionContainer != null) {
-			p = ((MAPExtensionContainerImpl) this.extensionContainer).encode();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setTag(SendRoutingInfoForSMResponseIndicationImpl._TAG_ExtensionContainer);
-			lstPar.add(p);
+			int tag = ais.readTag();
+			switch (num) {
+			case 0:
+				// imsi
+				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.STRING_OCTET)
+					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse.imsi: Parameter 0 bad tag or tag class or not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.imsi = new IMSIImpl();
+				this.imsi.decodeAll(ais);
+				break;
+				
+			case 1:
+				// locationInfoWithLMSI
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive() || tag != _TAG_LocationInfoWithLMSI)
+					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse.locationInfoWithLMSI: Parameter 1 bad tag class or tag or primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.locationInfoWithLMSI = new LocationInfoWithLMSIImpl();
+				this.locationInfoWithLMSI.decodeAll(ais);
+				break;
+
+			default:
+				if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+					switch (tag) {
+					case _TAG_ExtensionContainer:
+						if (ais.isTagPrimitive())
+								throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse.extensionContainer: Parameter extensionContainer is primitive",
+										MAPParsingComponentExceptionReason.MistypedParameter);
+						this.extensionContainer = new MAPExtensionContainerImpl();
+						this.extensionContainer.decodeAll(ais);
+					break;
+
+					default:
+						ais.advanceElement();
+						break;
+					}
+
+				} else {
+
+					ais.advanceElement();
+				}
+				break;
+			}
+			
+			num++;
 		}
 
-		p = factory.createParameter();
+		if (num < 2)
+			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse: Needs at least 2 mandatory parameters, found " + num,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+	}
 
-		Parameter[] pp = new Parameter[lstPar.size()];
-		lstPar.toArray(pp);
-		p.setParameters(pp);
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
-		return p;
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding sendRoutingInfoForSMResponse: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+		
+		if (this.imsi == null || this.locationInfoWithLMSI == null)
+			throw new MAPException("imsi and locationInfoWithLMSI must not be null");
+
+		this.imsi.encodeAll(asnOs);
+		this.locationInfoWithLMSI.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LocationInfoWithLMSI);
+		if (this.extensionContainer != null)
+			this.extensionContainer.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ExtensionContainer);
+	}	
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SendRoutingInfoForSMResponse [");
+
+		if (this.imsi != null) {
+			sb.append(", imsi=");
+			sb.append(this.imsi.toString());
+		}
+		if (this.locationInfoWithLMSI != null) {
+			sb.append(", locationInfoWithLMSI=");
+			sb.append(this.locationInfoWithLMSI.toString());
+		}
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }

@@ -44,7 +44,6 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.mobicents.protocols.asn.AsnException;
@@ -52,6 +51,8 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
 
 /**
@@ -117,9 +118,25 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension {
 		this.data = data;
 	}
 
-	public void decode(AsnInputStream ais) throws AsnException, IOException, MAPException {
 
-		// Definitioon from GSM 09.02 version 5.15.1 Page 690
+	@Override
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
+
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
+
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		// Definition from GSM 09.02 version 5.15.1 Page 690
 		// extensionContainer SEQUENCE {
 		// privateExtensionList [0] IMPLICIT SEQUENCE ( SIZE( 1 .. 10 ) ) OF
 		// SEQUENCE {
@@ -134,51 +151,84 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension {
 		// ... } OPTIONAL,
 		// ... }
 
-		byte[] seqData = ais.readSequence();
-
-		ByteArrayInputStream localIS = new ByteArrayInputStream(seqData);
-		AsnInputStream localAis = new AsnInputStream(localIS);
-
-		int tag;
-		int seqx = 0;
-
-		while (localAis.available() > 0) {
-			switch (seqx) {
-			case 0:
-				tag = localAis.readTag();
-				if (tag == Tag.OBJECT_IDENTIFIER)
-					this.oId = localAis.readObjectIdentifier();
-				else
-					throw new MAPException("OBJECT_IDENTIFIER tag is expected when parsing PrivateExtension OId");
-				break;
-
-			default:
-				this.data = new byte[localAis.available()];
-				localAis.read(this.data);
-				break;
-			}
-
-			seqx++;
+		try {
+			AsnInputStream ais = ansIS.readSequenceStream();
+			this._decode(ais);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding PrivateExtension: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding PrivateExtension: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
-
 	}
 
-	public void encode(AsnOutputStream asnOS) throws IOException, AsnException, MAPException {
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		
+		try {
+			AsnInputStream ais = ansIS.readSequenceStreamData(length);
+			this._decode(ais);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding PrivateExtension: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding PrivateExtension: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+	
+	private void _decode(AsnInputStream ansIS) throws MAPParsingComponentException, IOException, AsnException {
+
+		// extId
+		int tag = ansIS.readTag();
+		if (tag != Tag.OBJECT_IDENTIFIER || ansIS.getTagClass() != Tag.CLASS_UNIVERSAL || !ansIS.isTagPrimitive())
+			throw new MAPParsingComponentException("Error decoding PrivateExtension: bad tag, tagClass or primitiveFactor of ExtentionId",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		this.oId = ansIS.readObjectIdentifier();
+
+		// extType
+		if (ansIS.available() > 0) {
+			this.data = new byte[ansIS.available()];
+			ansIS.read(this.data);
+		}
+		else
+			this.data = null;
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding PrivateExtension: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+		
 		if (this.oId == null || this.oId.length < 2)
-			throw new MAPException("OId value must not be empty when coding PrivateExtension");
-
-		AsnOutputStream localAos = new AsnOutputStream();
-
-		localAos.writeObjectIdentifier(this.oId);
-
-		if (this.data != null)
-			localAos.write(this.data);
-
-		byte[] data = localAos.toByteArray();
-
-		asnOS.writeTag(Tag.CLASS_UNIVERSAL, false, Tag.SEQUENCE);
-		asnOS.writeLength(data.length);
-		asnOS.write(data);
+			throw new MAPException("Error when encoding PrivateExtension: OId value must not be empty when coding PrivateExtension");
+		
+		try {
+			asnOs.writeObjectIdentifier(this.oId);
+			if (this.data != null)
+				asnOs.write(this.data);
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding PrivateExtension: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding PrivateExtension: " + e.getMessage(), e);
+		}
 	}
 	
 	@Override
@@ -226,5 +276,10 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension {
 		}
 		return sb.toString();
 	}
+
+	
+	// ...............................
+	
+
 
 }

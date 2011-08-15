@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
 
+import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -66,8 +67,31 @@ public class IMEIImpl extends TbcdString implements IMEI {
 	}
 
 	
-	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding IMEI: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
 
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding IMEI: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException {
+		
 		if (length != 8)
 			throw new MAPParsingComponentException("Error decoding IMEI: the IMEI field must contain from 8 octets. Contains: " + length,
 					MAPParsingComponentExceptionReason.MistypedParameter);
@@ -80,8 +104,28 @@ public class IMEIImpl extends TbcdString implements IMEI {
 		}
 	}
 
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
+	}
 
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding IMEI: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+		
 		if (this.imei == null)
 			throw new MAPException("Error while encoding the IMEI: IMEI must not be null");
 
@@ -90,11 +134,25 @@ public class IMEIImpl extends TbcdString implements IMEI {
 
 		this.encodeString(asnOs, this.imei);
 	}
+	
+	@Deprecated
+	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding IMEI: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	@Deprecated
+	public void encode(AsnOutputStream asnOs) throws MAPException {
+
+		this.encodeData(asnOs);
+	}
 
 	@Override
 	public String toString() {
 		return "IMEI [IMEI=" + this.imei + "]";
 	}
-
-
 }

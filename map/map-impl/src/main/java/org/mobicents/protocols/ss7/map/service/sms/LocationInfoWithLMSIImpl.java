@@ -22,8 +22,11 @@
 
 package org.mobicents.protocols.ss7.map.service.sms;
 
-import java.util.ArrayList;
+import java.io.IOException;
 
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
@@ -36,16 +39,13 @@ import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
 *
 * @author sergey vetyutnev
 * 
 */
-public class LocationInfoWithLMSIImpl extends MAPPrimitiveBase implements LocationInfoWithLMSI {
+public class LocationInfoWithLMSIImpl implements LocationInfoWithLMSI {
 
 	private static final int _TAG_NetworkNodeNumber = 1;
 	private static final int _TAG_GprsNodeIndicator = 5;
@@ -100,9 +100,47 @@ public class LocationInfoWithLMSIImpl extends MAPPrimitiveBase implements Locati
 	public int getTag() {
 		return Tag.SEQUENCE;
 	}
-	
-	public void decode(Parameter par) throws MAPParsingComponentException {
-		Parameter[] pp = par.getParameters();
+
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
+
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding LocationInfoWithLMSI: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding LocationInfoWithLMSI: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding LocationInfoWithLMSI: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding LocationInfoWithLMSI: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 		
 		this.networkNodeNumber = null;
 		this.lmsi = null;
@@ -110,122 +148,136 @@ public class LocationInfoWithLMSIImpl extends MAPPrimitiveBase implements Locati
 		this.additionalNumberType = null;
 		this.additionalNumber = null;
 		
-		for (int i1 = 0; i1 < pp.length; i1++) {
-			Parameter p = pp[i1];
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		
+		int num = 0;
+		while( true ) {
+			if( ais.available()==0 )
+				break;
 			
-			if (i1 == 0) {
-				
+			int tag = ais.readTag();
+			
+			if (num == 0) {
 				// first parameter is mandatory - networkNode-Number
-				if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive() || p.getTag() != _TAG_NetworkNodeNumber)
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_NetworkNodeNumber)
 					throw new MAPParsingComponentException(
 							"Error when decoding LocationInfoWithLMSI: networkNode-Number: tagClass or tag is bad or element is not primitive: tagClass="
-									+ p.getTagClass() + ", Tag=" + p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+									+ ais.getTagClass() + ", Tag=" + tag, MAPParsingComponentExceptionReason.MistypedParameter);
 				this.networkNodeNumber = new ISDNAddressStringImpl();
-				((ISDNAddressStringImpl)this.networkNodeNumber).decode(p);
+				((ISDNAddressStringImpl) this.networkNodeNumber).decodeAll(ais);
 			} else {
-				
 				// optional parameters
-				if(p.getTagClass() == Tag.CLASS_UNIVERSAL) {
+				if(ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
 					
-					switch (p.getTag()) {
+					switch (tag) {
 					case Tag.STRING_OCTET:
-						if (!p.isPrimitive() || this.lmsi != null)
+						if (!ais.isTagPrimitive() || this.lmsi != null)
 							throw new MAPParsingComponentException(
 									"Error when decoding LocationInfoWithLMSI: lmsi: double element or element is not primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						this.lmsi = new LMSIImpl();
-						((LMSIImpl)this.lmsi).decode(p);
+						this.lmsi.decodeAll(ais);
 						break;
 						
 					case Tag.SEQUENCE:
-						if (p.isPrimitive() || this.extensionContainer != null)
+						if (ais.isTagPrimitive() || this.extensionContainer != null)
 							throw new MAPParsingComponentException(
 									"Error when decoding LocationInfoWithLMSI: extensionContainer: double element or element is primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						this.extensionContainer = new MAPExtensionContainerImpl();
-						((MAPExtensionContainerImpl)this.extensionContainer).decode(p);
+						this.extensionContainer.decodeAll(ais);
+						break;
+						
+					default:
+						ais.advanceElement();
 						break;
 					}
-				}
-				if(p.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				} else if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 					
-					switch (p.getTag()) {
+					switch (tag) {
 					case _TAG_GprsNodeIndicator:
-						if (!p.isPrimitive() || this.additionalNumberType != null)
+						if (!ais.isTagPrimitive() || this.additionalNumberType != null)
 							throw new MAPParsingComponentException(
 									"Error when decoding LocationInfoWithLMSI: gprsNodeIndicator: double element or element is not primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
+						ais.readNull();
 						this.additionalNumberType = AdditionalNumberType.sgsn;
 						break;
 						
 					case _TAG_AdditionalNumber:
-						if (!p.isPrimitive() || this.additionalNumber != null)
+						if (!ais.isTagPrimitive() || this.additionalNumber != null)
 							throw new MAPParsingComponentException(
 									"Error when decoding LocationInfoWithLMSI: additionalNumber: double element or element is not primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						this.additionalNumber = new ISDNAddressStringImpl();
-						((ISDNAddressStringImpl)this.additionalNumber).decode(p);
+						this.additionalNumber.decodeAll(ais);
+						break;
+						
+					default:
+						ais.advanceElement();
 						break;
 					}
+				} else {
+					ais.advanceElement();
 				}
-
 			}
+			
+			num++;
 		}
+		
+		if (this.networkNodeNumber == null)
+			throw new MAPParsingComponentException("Error while decoding LocationInfoWithLMSI: 1 parameter is mandatory, found " + num,
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		
 		if (this.additionalNumberType == null && this.additionalNumber != null)
 			this.additionalNumberType = AdditionalNumberType.msc;
 	}
 
-	
-	public Parameter encode() throws MAPException {
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+	}
 
-		if (this.networkNodeNumber == null)
-			throw new MAPException("Error while decoding LocationInfoWithLMSI: networkNodeNumber must not be null");
-
-		ArrayList<Parameter> lstPp = new ArrayList<Parameter>();
-
-		Parameter p1 = ((ISDNAddressStringImpl) this.networkNodeNumber).encode();
-		p1.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-		p1.setTag(_TAG_NetworkNodeNumber);
-		lstPp.add(p1);
-
-		if (this.lmsi != null) {
-			Parameter p2 = ((LMSIImpl) this.lmsi).encode();
-			lstPp.add(p2);
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding LocationInfoWithLMSI: " + e.getMessage(), e);
 		}
+	}
 
-		if (this.extensionContainer != null) {
-			Parameter p3 = ((MAPExtensionContainerImpl) this.extensionContainer).encode();
-			lstPp.add(p3);
-		}
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.additionalNumber != null ) {
-			if (this.additionalNumberType == AdditionalNumberType.sgsn) {
-				Parameter p4 = TcapFactory.createParameter();
-				p4.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-				p4.setPrimitive(true);
-				p4.setTag(_TAG_GprsNodeIndicator);
-				p4.setData(new byte[0]);
-				lstPp.add(p4);
+		try {
+			if (this.networkNodeNumber == null)
+				throw new MAPException("Error while decoding LocationInfoWithLMSI: networkNodeNumber must not be null");
+
+			this.networkNodeNumber.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NetworkNodeNumber);
+
+			if (this.lmsi != null)
+				this.lmsi.encodeAll(asnOs);
+
+			if (this.extensionContainer != null)
+				this.extensionContainer.encodeAll(asnOs);
+
+			if (this.additionalNumber != null) {
+				if (this.additionalNumberType == AdditionalNumberType.sgsn)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_GprsNodeIndicator);
+
+				this.additionalNumber.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_AdditionalNumber);
 			}
-			
-			Parameter p5 = ((ISDNAddressStringImpl) this.additionalNumber).encode();
-			p5.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p5.setTag(_TAG_AdditionalNumber);
-			lstPp.add(p5);
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding LocationInfoWithLMSI: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding LocationInfoWithLMSI: " + e.getMessage(), e);
 		}
-		
-		Parameter p = TcapFactory.createParameter();
-		
-		Parameter[] pp = new Parameter[lstPp.size()];
-		lstPp.toArray(pp);
-		p.setParameters(pp);
-		
-		p.setPrimitive(false);
-		p.setTagClass(Tag.CLASS_UNIVERSAL);
-		p.setTag(Tag.SEQUENCE);
-		
-		return p;
 	}
 
 	
@@ -259,6 +311,5 @@ public class LocationInfoWithLMSIImpl extends MAPPrimitiveBase implements Locati
 
 		return sb.toString();
 	}
-
 }
 

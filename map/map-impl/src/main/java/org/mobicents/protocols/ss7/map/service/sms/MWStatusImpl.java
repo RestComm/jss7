@@ -23,31 +23,30 @@
 package org.mobicents.protocols.ss7.map.service.sms;
 
 import java.io.IOException;
-import java.util.BitSet;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
-import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class MWStatusImpl extends MAPPrimitiveBase implements MWStatus {
+public class MWStatusImpl implements MWStatus {
 	
 	private static final int _INDEX_ScAddressNotIncluded = 0;
 	private static final int _INDEX_MnrfSet = 1;
 	private static final int _INDEX_McefSet = 2;
 	private static final int _INDEX_MnrgSet = 3;
 	
-	private BitSet bitString = new BitSet(4);
+	private BitSetStrictLength bitString = new BitSetStrictLength(6);
 	
 	
 	public MWStatusImpl() {
@@ -84,38 +83,7 @@ public class MWStatusImpl extends MAPPrimitiveBase implements MWStatus {
 	public Boolean getMnrgSet() {
 		return this.bitString.get(_INDEX_MnrgSet);
 	}
-
 	
-	@Override
-	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
-		try {
-			if (length == 0 || length > 2)
-				throw new MAPParsingComponentException("Error decoding MWStatus: the MWStatus field must contain from 1 or 2 octets. Contains: " + length,
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			
-			ansIS.readBitStringData(this.bitString, length, isPrimitive);
-			
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MWStatus: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MWStatus: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	@Override
-	public void encode(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
-		try {
-			asnOs.writeStringBinaryData(this.bitString);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MWStatus: " + e.getMessage(), e);
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding MWStatus: " + e.getMessage(), e);
-		}
-	}
 
 	@Override
 	public int getTag() throws MAPException {
@@ -130,6 +98,74 @@ public class MWStatusImpl extends MAPPrimitiveBase implements MWStatus {
 	@Override
 	public boolean getIsPrimitive() {
 		return true;
+	}
+	
+
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding MWStatus: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding MWStatus: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding MWStatus: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding MWStatus: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		if (length == 0 || length > 2)
+			throw new MAPParsingComponentException("Error decoding MWStatus: the MWStatus field must contain from 1 or 2 octets. Contains: " + length,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		
+		this.bitString = ansIS.readBitStringData(length);
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding MWStatus: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+		try {
+			asnOs.writeBitStringData(this.bitString);
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding MWStatus: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding MWStatus: " + e.getMessage(), e);
+		}
 	}
 
 	@Override
