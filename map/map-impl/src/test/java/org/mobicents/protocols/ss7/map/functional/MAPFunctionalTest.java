@@ -32,6 +32,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
 
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -257,6 +260,63 @@ public class MAPFunctionalTest extends SccpHarness {
 
 
 	@Test
+	public void testSmsService() throws Exception {
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_Sms_AlertServiceCentre);
+		client.setStep(FunctionalTestScenario.Action_Sms_AlertServiceCentre);
+		client.actionC();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_Sms_InformServiceCentre);
+		client.setStep(FunctionalTestScenario.Action_Sms_InformServiceCentre);
+		client.actionC();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_Sms_MoForwardSM);
+		client.setStep(FunctionalTestScenario.Action_Sms_MoForwardSM);
+		client.actionC();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_Sms_MtForwardSM);
+		client.setStep(FunctionalTestScenario.Action_Sms_MtForwardSM);
+		client.actionC();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_Sms_ReportSMDeliveryStatus);
+		client.setStep(FunctionalTestScenario.Action_Sms_ReportSMDeliveryStatus);
+		client.actionC();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_Sms_SendRoutingInfoForSM);
+		client.setStep(FunctionalTestScenario.Action_Sms_SendRoutingInfoForSM);
+		client.actionC();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+	}
+
+	@Test
 	public void testA() throws Exception {
 
 //		MapServiceFactory msf = this.stack1.getMAPProvider().getMapServiceFactory();
@@ -416,60 +476,5 @@ public class MAPFunctionalTest extends SccpHarness {
 		} catch (InterruptedException e) {
 			fail("Interrupted on wait!");
 		}
-	}
-
-	public static MAPExtensionContainer GetTestExtensionContainer(MapServiceFactory mapServiceFactory) {
-		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
-		al.add(mapServiceFactory
-				.createMAPPrivateExtension(new long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
-		al.add(mapServiceFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 6 }, null));
-		al.add(mapServiceFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25,
-				26 }));
-
-		MAPExtensionContainer cnt = mapServiceFactory.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
-
-		return cnt;
-	}
-
-	protected static Boolean CheckTestExtensionContainer(MAPExtensionContainer extContainer) {
-		if (extContainer == null || extContainer.getPrivateExtensionList().size() != 3)
-			return false;
-
-		for (int i = 0; i < 3; i++) {
-			MAPPrivateExtension pe = extContainer.getPrivateExtensionList().get(i);
-			long[] lx = null;
-			byte[] bx = null;
-
-			switch (i) {
-			case 0:
-				lx = new long[] { 1, 2, 3, 4 };
-				bx = new byte[] { 11, 12, 13, 14, 15 };
-				break;
-			case 1:
-				lx = new long[] { 1, 2, 3, 6 };
-				bx = null;
-				break;
-			case 2:
-				lx = new long[] { 1, 2, 3, 5 };
-				bx = new byte[] { 21, 22, 23, 24, 25, 26 };
-				break;
-			}
-
-			if (pe.getOId() == null || !Arrays.equals(pe.getOId(), lx))
-				return false;
-			if (bx == null) {
-				if (pe.getData() != null)
-					return false;
-			} else {
-				if (pe.getData() == null || !Arrays.equals(pe.getData(), bx))
-					return false;
-			}
-		}
-
-		byte[] by = new byte[] { 31, 32, 33 };
-		if (extContainer.getPcsExtensions() == null || !Arrays.equals(extContainer.getPcsExtensions(), by))
-			return false;
-
-		return true;
 	}
 }

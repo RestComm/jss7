@@ -27,6 +27,7 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortReason;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
@@ -73,7 +74,7 @@ public class MAPProviderImplWrapper extends MAPProviderImpl {
 		if (this.testMode == 1) {
 			try {
 				this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.invalidPDU,
-						MAPFunctionalTest.GetTestExtensionContainer(this.getMapServiceFactory()));
+						MAPExtensionContainerTest.GetTestExtensionContainer());
 			} catch (MAPException e) {
 				loger.error("Error while firing TC-U-ABORT. ", e);
 			}

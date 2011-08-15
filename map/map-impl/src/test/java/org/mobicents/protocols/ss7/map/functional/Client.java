@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.map.functional;
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 
+import junit.framework.Assert;
+
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -49,6 +51,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.ProcedureCancellationReason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
@@ -61,12 +64,26 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
+import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.InformServiceCentreRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
+import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener;
 import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
+import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMResponseIndication;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.sms.MoForwardShortMessageRequestIndicationImpl;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -81,7 +98,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
  * @author sergey vetyutnev
  * 
  */
-public class Client implements MAPDialogListener, MAPServiceSupplementaryListener {
+public class Client implements MAPDialogListener, MAPServiceSupplementaryListener, MAPServiceSmsListener {
 
 	private static Logger logger = Logger.getLogger(Client.class);
 
@@ -100,6 +117,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	private boolean _S_receivedMAPOpenInfoExtentionContainer;
 	private boolean _S_receivedAbortInfo;
 	private boolean _S_receivedEndInfo;
+	private boolean _S_recievedSmsRespIndication;
 
 	private MAPDialogSupplementary clientDialog;
 	private MAPDialogSms clientDialogSms;
@@ -119,6 +137,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
 		this.mapProvider.addMAPDialogListener(this);
 		this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
+		this.mapProvider.getMAPServiceSms().addMAPServiceListener(this);
 	}
 
 	public void start() throws MAPException {
@@ -176,7 +195,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		clientDialog = this.mapProvider.getMAPServiceSupplementary().createNewDialog(appCnt,
 				this.thisAddress, orgiReference, this.remoteAddress,
 				destReference);
-		clientDialog.setExtentionContainer(MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
+		clientDialog.setExtentionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
 
 		
 		USSDString ussdString = this.mapServiceFactory
@@ -236,72 +255,73 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		clientDialogSms = this.mapProvider.getMAPServiceSms().createNewDialog(appCnt,
 				this.thisAddress, orgiReference, this.remoteAddress,
 				destReference);
-		clientDialogSms.setExtentionContainer(MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
-
-		// -- MoForwardShortMessage
-
-		IMSI imsi1 = this.mapServiceFactory.createIMSI(250L, 99L, "1357999");
-		SM_RP_DA sm_RP_DA = this.mapServiceFactory.createSM_RP_DA(imsi1);
-		ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
-		SM_RP_OA sm_RP_OA = this.mapServiceFactory.createSM_RP_OA_Msisdn(msisdn1);
-		byte[] sm_RP_UI = new byte[] { 21, 22, 23, 24, 25 };
-		IMSI imsi2 = this.mapServiceFactory.createIMSI(250L, 07L, "123456789");
+		clientDialogSms.setExtentionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
 		
-//		MoForwardShortMessageRequestIndicationImpl ind = new MoForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI,
-//				MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory), imsi2);
-//		Parameter p = ind.encode(((MAPProviderImpl) this.mapProvider).getTCAPProvider().getComponentPrimitiveFactory());
-//		AsnOutputStream aos = new AsnOutputStream();
-//		p.setTagClass(Tag.CLASS_UNIVERSAL);
-//		p.setPrimitive(false);
-//		p.setTag(Tag.SEQUENCE);
-//		p.encode(aos);
-//		
-//		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(aos.toByteArray()));
-//		int tag = ais.readTag();
-//		Parameter p2 = TcapFactory.createParameter(tag, ais);
-//		p2.setPrimitive(false);
-//		MoForwardShortMessageRequestIndicationImpl ind2 = new MoForwardShortMessageRequestIndicationImpl();
-//		ind2.decode(p2);
+		switch (this.step) {
+		case Action_Sms_AlertServiceCentre: {
+			ISDNAddressString msisdn = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+			AddressString serviceCentreAddress = this.mapServiceFactory.createAddressString(AddressNature.subscriber_number, NumberingPlan.national, "0011");
+			clientDialogSms.addAlertServiceCentreRequest(msisdn, serviceCentreAddress);
+		}
+			break;
 
-		clientDialogSms.addMoForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory),
-				imsi2);
-		
-		
-//		LMSI lmsi1 = this.mapServiceFactory.createLMSI(new byte[] { 49, 48, 47, 46 });
-//		SM_RP_DA sm_RP_DA = this.mapServiceFactory.createSM_RP_DA(lmsi1);
-//		AddressString msisdn1 = this.mapServiceFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
-//		SM_RP_OA sm_RP_OA = this.mapServiceFactory.createSM_RP_OA_ServiceCentreAddressOA(msisdn1);
-//		byte[] sm_RP_UI = new byte[] { 21, 22, 23, 24, 25 };
-////		clientDialogSms.addMtForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, true, null);
-//		clientDialogSms.addMtForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, true, MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
+		case Action_Sms_MoForwardSM: {
+			IMSI imsi1 = this.mapServiceFactory.createIMSI(250L, 99L, "1357999");
+			SM_RP_DA sm_RP_DA = this.mapServiceFactory.createSM_RP_DA(imsi1);
+			ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+			SM_RP_OA sm_RP_OA = this.mapServiceFactory.createSM_RP_OA_Msisdn(msisdn1);
+			byte[] sm_RP_UI = new byte[] { 21, 22, 23, 24, 25 };
+			IMSI imsi2 = this.mapServiceFactory.createIMSI(250L, 07L, "123456789");
 
-//		ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
-//		AddressString servCenAddr1 = this.mapServiceFactory.createAddressString(AddressNature.network_specific_number, NumberingPlan.national, "999000");
-//		clientDialogSms.addSendRoutingInfoForSMRequest(msisdn1, false, servCenAddr1, MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory), true,
-//				SM_RP_MTI.SMS_Status_Report, new byte[] { 90, 91 });
+			clientDialogSms.addMoForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, MAPExtensionContainerTest.GetTestExtensionContainer(), imsi2);
+		}
+		break;
 
-//		ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
-//		AddressString serviceCentreAddress = this.mapServiceFactory.createAddressString(AddressNature.network_specific_number, NumberingPlan.national, "999000");
-//		SMDeliveryOutcome sMDeliveryOutcome = SMDeliveryOutcome.absentSubscriber;
-//		Integer sbsentSubscriberDiagnosticSM = 555;
-//		Boolean gprsSupportIndicator = true;
-//		Boolean deliveryOutcomeIndicator = true;
-//		SMDeliveryOutcome additionalSMDeliveryOutcome = SMDeliveryOutcome.successfulTransfer;
-//		Integer additionalAbsentSubscriberDiagnosticSM = 444;		
-//		clientDialogSms.addReportSMDeliveryStatusRequest(msisdn1, serviceCentreAddress, sMDeliveryOutcome, sbsentSubscriberDiagnosticSM,
-//				MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory), gprsSupportIndicator, deliveryOutcomeIndicator,
-//				additionalSMDeliveryOutcome, additionalAbsentSubscriberDiagnosticSM);
+		case Action_Sms_MtForwardSM: {
+			LMSI lmsi1 = this.mapServiceFactory.createLMSI(new byte[] { 49, 48, 47, 46 });
+			SM_RP_DA sm_RP_DA = this.mapServiceFactory.createSM_RP_DA(lmsi1);
+			AddressString msisdn1 = this.mapServiceFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+			SM_RP_OA sm_RP_OA = this.mapServiceFactory.createSM_RP_OA_ServiceCentreAddressOA(msisdn1);
+			byte[] sm_RP_UI = new byte[] { 21, 22, 23, 24, 25 };
+			clientDialogSms.addMtForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, true, MAPExtensionContainerTest.GetTestExtensionContainer());
+		}
+			break;
 
-//		ISDNAddressString storedMSISDN = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
-//		MWStatus mwStatus = this.mapServiceFactory.createMWStatus(false, true, false, true);
-//		Integer absentSubscriberDiagnosticSM = 555;
-//		Integer additionalAbsentSubscriberDiagnosticSM = 444;		
-//		clientDialogSms.addInformServiceCentreRequest(storedMSISDN, mwStatus, MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory),
-//				absentSubscriberDiagnosticSM, additionalAbsentSubscriberDiagnosticSM);
+		case Action_Sms_SendRoutingInfoForSM: {
+			ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+			AddressString servCenAddr1 = this.mapServiceFactory.createAddressString(AddressNature.network_specific_number, NumberingPlan.national, "999000");
+			clientDialogSms.addSendRoutingInfoForSMRequest(msisdn1, false, servCenAddr1, MAPExtensionContainerTest.GetTestExtensionContainer(), true,
+					SM_RP_MTI.SMS_Status_Report, new byte[] { 90, 91 });
+		}
+			break;
 
-//		ISDNAddressString msisdn = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
-//		AddressString serviceCentreAddress = this.mapServiceFactory.createAddressString(AddressNature.subscriber_number, NumberingPlan.national, "0011");
-//		clientDialogSms.addAlertServiceCentreRequest(msisdn, serviceCentreAddress);
+		case Action_Sms_ReportSMDeliveryStatus: {
+			ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+			AddressString serviceCentreAddress = this.mapServiceFactory.createAddressString(AddressNature.network_specific_number, NumberingPlan.national,
+					"999000");
+			SMDeliveryOutcome sMDeliveryOutcome = SMDeliveryOutcome.absentSubscriber;
+			Integer sbsentSubscriberDiagnosticSM = 555;
+			Boolean gprsSupportIndicator = true;
+			Boolean deliveryOutcomeIndicator = true;
+			SMDeliveryOutcome additionalSMDeliveryOutcome = SMDeliveryOutcome.successfulTransfer;
+			Integer additionalAbsentSubscriberDiagnosticSM = 444;
+			clientDialogSms.addReportSMDeliveryStatusRequest(msisdn1, serviceCentreAddress, sMDeliveryOutcome, sbsentSubscriberDiagnosticSM,
+					MAPExtensionContainerTest.GetTestExtensionContainer(), gprsSupportIndicator, deliveryOutcomeIndicator, additionalSMDeliveryOutcome,
+					additionalAbsentSubscriberDiagnosticSM);
+		}
+			break;
+
+		case Action_Sms_InformServiceCentre: {
+			ISDNAddressString storedMSISDN = this.mapServiceFactory
+					.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+			MWStatus mwStatus = this.mapServiceFactory.createMWStatus(false, true, false, true);
+			Integer absentSubscriberDiagnosticSM = 555;
+			Integer additionalAbsentSubscriberDiagnosticSM = 444;
+			clientDialogSms.addInformServiceCentreRequest(storedMSISDN, mwStatus, MAPExtensionContainerTest.GetTestExtensionContainer(),
+					absentSubscriberDiagnosticSM, additionalAbsentSubscriberDiagnosticSM);
+		}
+			break;
+		}		
 
 		clientDialogSms.send();
 	}
@@ -324,6 +344,15 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 			return _S_receivedUnstructuredSSIndication && _S_sentEnd;
 		case Action_Dialog_F:
 			return _S_receivedAbortInfo;
+
+		case Action_Sms_AlertServiceCentre:
+		case Action_Sms_MoForwardSM:
+		case Action_Sms_MtForwardSM:
+		case Action_Sms_SendRoutingInfoForSM:
+		case Action_Sms_ReportSMDeliveryStatus:
+			return _S_recievedSmsRespIndication;
+		case Action_Sms_InformServiceCentre:
+			return true;
 		}
 		
 		
@@ -335,43 +364,41 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
 		switch( this.step ) {
 		case Action_Dialog_A:
-			status += "_S_receivedUnstructuredSSIndication["
-				+ _S_receivedUnstructuredSSIndication + "]" + "\n";
-			status += "_S_recievedMAPOpenInfoExtentionContainer["
-					+ _S_receivedMAPOpenInfoExtentionContainer + "]" + "\n";
+			status += "_S_receivedUnstructuredSSIndication[" + _S_receivedUnstructuredSSIndication + "]" + "\n";
+			status += "_S_recievedMAPOpenInfoExtentionContainer[" + _S_receivedMAPOpenInfoExtentionContainer + "]" + "\n";
 			status += "_S_sentEnd[" + _S_sentEnd + "]" + "\n";
 			break;
-			
+
 		case Action_Dialog_B:
-			status += "_S_receivedAbortInfo["
-				+ _S_receivedAbortInfo + "]" + "\n";
-			status += "_S_recievedMAPOpenInfoExtentionContainer["
-				+ _S_receivedMAPOpenInfoExtentionContainer + "]" + "\n";
+			status += "_S_receivedAbortInfo[" + _S_receivedAbortInfo + "]" + "\n";
+			status += "_S_recievedMAPOpenInfoExtentionContainer[" + _S_receivedMAPOpenInfoExtentionContainer + "]" + "\n";
 			break;
-			
+
 		case Action_Dialog_C:
-			status += "_S_receivedAbortInfo["
-				+ _S_receivedAbortInfo + "]" + "\n";
+			status += "_S_receivedAbortInfo[" + _S_receivedAbortInfo + "]" + "\n";
 			break;
-			
+
 		case Action_Dialog_D:
-			status += "_S_receivedUnstructuredSSIndication["
-				+ _S_receivedUnstructuredSSIndication + "]" + "\n";
-			status += "_S_recievedMAPOpenInfoExtentionContainer["
-					+ _S_receivedMAPOpenInfoExtentionContainer + "]" + "\n";
+			status += "_S_receivedUnstructuredSSIndication[" + _S_receivedUnstructuredSSIndication + "]" + "\n";
+			status += "_S_recievedMAPOpenInfoExtentionContainer[" + _S_receivedMAPOpenInfoExtentionContainer + "]" + "\n";
 			status += "_S_receivedEndInfo[" + _S_receivedEndInfo + "]" + "\n";
 			break;
-			
+
 		case Action_Dialog_E:
-			status += "_S_receivedUnstructuredSSIndication["
-				+ _S_receivedUnstructuredSSIndication + "]" + "\n";
+			status += "_S_receivedUnstructuredSSIndication[" + _S_receivedUnstructuredSSIndication + "]" + "\n";
 			status += "_S_sentEnd[" + _S_sentEnd + "]" + "\n";
 			break;
 			
 		case Action_Dialog_F:
-			status += "_S_receivedAbortInfo["
-				+ _S_receivedAbortInfo + "]" + "\n";
+			status += "_S_receivedAbortInfo[" + _S_receivedAbortInfo + "]" + "\n";
 			break;
+			
+		case Action_Sms_AlertServiceCentre:
+		case Action_Sms_MoForwardSM:
+		case Action_Sms_MtForwardSM:
+		case Action_Sms_SendRoutingInfoForSM:
+		case Action_Sms_ReportSMDeliveryStatus:
+			status += "_S_recievedSmsRespIndication[" + _S_recievedSmsRespIndication + "]" + "\n";
 		}
 
 		return status + unexpected;
@@ -384,6 +411,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		this._S_receivedMAPOpenInfoExtentionContainer = false;
 		this._S_receivedAbortInfo = false;
 		this._S_receivedEndInfo = false;
+		this._S_recievedSmsRespIndication = false;
 	}
 	
 	public void setStep (FunctionalTestScenario step) {
@@ -417,7 +445,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 			logger.debug("Sending MAPUserAbortInfo ");
 			try {
 				_S_sentEnd = true;
-				mapDialog.setExtentionContainer(MAPFunctionalTest.GetTestExtensionContainer(this.mapServiceFactory));
+				mapDialog.setExtentionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
 				MAPUserAbortChoice choice = this.mapServiceFactory.createMAPUserAbortChoice();
 				choice.setProcedureCancellationReason(ProcedureCancellationReason.handoverCancellation);
 				mapDialog.abort(choice);
@@ -442,14 +470,14 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		
 		switch( this.step ) {
 		case Action_Dialog_A:
-			if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
+			if( MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer) )
 				_S_receivedMAPOpenInfoExtentionContainer = true;
 
 			logger.debug("Received onMAPAcceptInfo ");
 			break;
 			
 		case Action_Dialog_D:
-			if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
+			if( MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer) )
 				_S_receivedMAPOpenInfoExtentionContainer = true;
 			
 			this._S_receivedEndInfo = true;
@@ -474,7 +502,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 				logger.debug("Received InvalidDestinationReference");
 				_S_receivedAbortInfo = true;
 				
-				if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
+				if( MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer) )
 					_S_receivedMAPOpenInfoExtentionContainer = true;
 			}
 			break;
@@ -510,7 +538,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 					+ abortProviderReason.toString());
 			if (abortProviderReason == MAPAbortProviderReason.InvalidPDU)
 				_S_receivedAbortInfo = true;
-			if( MAPFunctionalTest.CheckTestExtensionContainer(extensionContainer) )
+			if( MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer) )
 				_S_receivedMAPOpenInfoExtentionContainer = true;
 			break;
 		}
@@ -562,7 +590,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	
 	/**
-	 * MAP Service Listeners
+	 * Supplementary Service Listeners
 	 */
 	public void onProcessUnstructuredSSIndication(
 			ProcessUnstructuredSSIndication procUnstrInd) {
@@ -577,6 +605,125 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 					+ unstrInd.getUSSDString().getString());
 			_S_receivedUnstructuredSSIndication = true;
 		}
+	}
+
+	/**
+	 * Supplementary Service Listeners
+	 */
+	@Override
+	public void onMoForwardShortMessageIndication(MoForwardShortMessageRequestIndication moForwSmInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onMoForwardShortMessageRespIndication(MoForwardShortMessageResponseIndication moForwSmRespInd) {
+		
+		byte[] sm_RP_UI = moForwSmRespInd.getSM_RP_UI();
+		MAPExtensionContainer extensionContainer = moForwSmRespInd.getExtensionContainer();
+
+		Assert.assertNotNull(sm_RP_UI);
+		Assert.assertTrue(Arrays.equals(sm_RP_UI, new byte[] { 21, 22, 23, 24, 25 }));
+		Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+		
+		this._S_recievedSmsRespIndication = true;
+	}
+
+	@Override
+	public void onMtForwardShortMessageIndication(MtForwardShortMessageRequestIndication mtForwSmInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onMtForwardShortMessageRespIndication(MtForwardShortMessageResponseIndication mtForwSmRespInd) {
+		
+		byte[] sm_RP_UI = mtForwSmRespInd.getSM_RP_UI();
+		MAPExtensionContainer extensionContainer = mtForwSmRespInd.getExtensionContainer();
+
+		Assert.assertNotNull(sm_RP_UI);
+		Assert.assertTrue(Arrays.equals(sm_RP_UI, new byte[] { 21, 22, 23, 24, 25 }));
+		Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+		
+		this._S_recievedSmsRespIndication = true;
+	}
+
+	@Override
+	public void onSendRoutingInfoForSMIndication(SendRoutingInfoForSMRequestIndication sendRoutingInfoForSMInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendRoutingInfoForSMRespIndication(SendRoutingInfoForSMResponseIndication sendRoutingInfoForSMRespInd) {
+		
+		IMSI imsi = sendRoutingInfoForSMRespInd.getIMSI();
+		MAPExtensionContainer extensionContainer = sendRoutingInfoForSMRespInd.getExtensionContainer();
+		LocationInfoWithLMSI locationInfoWithLMSI = sendRoutingInfoForSMRespInd.getLocationInfoWithLMSI();
+		ISDNAddressString networkNodeNumber = locationInfoWithLMSI.getNetworkNodeNumber();
+		LMSI lmsi = locationInfoWithLMSI.getLMSI();
+		MAPExtensionContainer extensionContainer2 = locationInfoWithLMSI.getExtensionContainer();
+		AdditionalNumberType additionalNumberType = locationInfoWithLMSI.getAdditionalNumberType();
+		ISDNAddressString additionalNumber = locationInfoWithLMSI.getAdditionalNumber();
+
+		Assert.assertNotNull(imsi);
+		Assert.assertEquals((long) (imsi.getMCC()), 250);
+		Assert.assertEquals((long) (imsi.getMNC()), 99);
+		Assert.assertEquals(imsi.getMSIN(), "777000");
+		Assert.assertNotNull(networkNodeNumber);
+		Assert.assertEquals(networkNodeNumber.getAddressNature(), AddressNature.network_specific_number);
+		Assert.assertEquals(networkNodeNumber.getNumberingPlan(), NumberingPlan.national);
+		Assert.assertEquals(networkNodeNumber.getAddress(), "111000111");
+		Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer2));
+		Assert.assertNotNull(lmsi);
+		Assert.assertTrue(Arrays.equals(lmsi.getData(), new byte[] { 75, 74, 73, 72 }));
+		Assert.assertEquals(additionalNumberType, AdditionalNumberType.sgsn);
+		Assert.assertNotNull(additionalNumber);
+		Assert.assertEquals(additionalNumber.getAddressNature(), AddressNature.subscriber_number);
+		Assert.assertEquals(additionalNumber.getNumberingPlan(), NumberingPlan.private_plan);
+		Assert.assertEquals(additionalNumber.getAddress(), "000111000");
+		Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+
+		this._S_recievedSmsRespIndication = true;
+	}
+
+	@Override
+	public void onReportSMDeliveryStatusIndication(ReportSMDeliveryStatusRequestIndication reportSMDeliveryStatusInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onReportSMDeliveryStatusRespIndication(ReportSMDeliveryStatusResponseIndication reportSMDeliveryStatusRespInd) {
+		
+		ISDNAddressString storedMSISDN = reportSMDeliveryStatusRespInd.getStoredMSISDN();
+		MAPExtensionContainer extensionContainer = reportSMDeliveryStatusRespInd.getExtensionContainer();
+
+		Assert.assertNotNull(storedMSISDN);
+		Assert.assertEquals(storedMSISDN.getAddressNature(), AddressNature.network_specific_number);
+		Assert.assertEquals(storedMSISDN.getNumberingPlan(), NumberingPlan.national);
+		Assert.assertEquals(storedMSISDN.getAddress(), "111000111");
+		Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+
+		this._S_recievedSmsRespIndication = true;
+	}
+
+	@Override
+	public void onInformServiceCentreIndication(InformServiceCentreRequestIndication informServiceCentreInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAlertServiceCentreIndication(AlertServiceCentreRequestIndication alertServiceCentreInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAlertServiceCentreRespIndication(AlertServiceCentreResponseIndication alertServiceCentreInd) {
+
+		this._S_recievedSmsRespIndication = true;
 	}
 
 }

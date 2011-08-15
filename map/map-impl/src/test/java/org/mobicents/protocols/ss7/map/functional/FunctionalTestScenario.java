@@ -73,12 +73,47 @@ public enum FunctionalTestScenario {
 	 * TC-BEGIN + addProcessUnstructuredSSRequest
 	 * TC-END + ReturnError(SM-DeliveryFailure + SM-DeliveryFailureCause)  
 	 */
-	Action_Component_B(12);
+	Action_Component_B(12),
 
+	/**
+	 * TC-BEGIN + AlertServiceCentreRequest
+	 * TC-END  
+	 */
+	Action_Sms_AlertServiceCentre(31),
+	/**
+	 * TC-BEGIN + MoForwardSMRequest
+	 * TC-END + MoForwardSMResponse  
+	 */
+	Action_Sms_MoForwardSM(32),
+	/**
+	 * TC-BEGIN + MtForwardSMRequest
+	 * TC-END + MtForwardSMResponse  
+	 */
+	Action_Sms_MtForwardSM(33),
+	/**
+	 * TC-BEGIN + SendRoutingInfoForSMRequest
+	 * TC-END + SendRoutingInfoForSMResponse  
+	 */
+	Action_Sms_SendRoutingInfoForSM(34),
+	/**
+	 * TC-BEGIN + ReportSMDeliveryStatusRequest
+	 * TC-END + ReportSMDeliveryStatusResponse  
+	 */
+	Action_Sms_ReportSMDeliveryStatus(35),
+	/**
+	 * TC-BEGIN + InformServiceCentreRequest
+	 */
+	Action_Sms_InformServiceCentre(36);
+
+	
 	private int code;
 
 	private FunctionalTestScenario(int code) {
 		this.code = code;
+	}
+	
+	public int getCode() {
+		return this.code;
 	}
 
 }
