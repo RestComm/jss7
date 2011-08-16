@@ -230,29 +230,12 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 			SccpAddress localAddress = null;
 			SccpAddress remoteAddress = null;
 
-			switch (message.getType()) {
-
-			case UnitData.MESSAGE_TYPE:
+			if (message.getType() == UnitData.MESSAGE_TYPE) {
 				data = ((UnitData) message).getData();
 				localAddress = ((UnitData) message).getCalledPartyAddress();
 				remoteAddress = ((UnitData) message).getCallingPartyAddress();
-				break;
-			case XUnitData.MESSAGE_TYPE:
-				data = ((XUnitData) message).getData();
-				localAddress = ((XUnitData) message).getCalledPartyAddress();
-				remoteAddress = ((XUnitData) message).getCallingPartyAddress();
-				break;
-			case UnitDataService.MESSAGE_TYPE:
-				data = ((XUnitData) message).getData();
-				localAddress = ((XUnitData) message).getCalledPartyAddress();
-				remoteAddress = ((XUnitData) message).getCallingPartyAddress();
-				break;
-			case XUnitDataService.MESSAGE_TYPE:
-				data = ((XUnitData) message).getData();
-				localAddress = ((XUnitData) message).getCalledPartyAddress();
-				remoteAddress = ((XUnitData) message).getCallingPartyAddress();
-				break;
-			}
+			} else
+				return;
 
 			// asnData - it should pass
 			AsnInputStream ais = new AsnInputStream(data);
