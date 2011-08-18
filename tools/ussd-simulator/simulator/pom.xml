@@ -22,37 +22,45 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.map</groupId>
 			<artifactId>map-api</artifactId>
+			<version>1.0.0.BETA10</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.map</groupId>
 			<artifactId>map-impl</artifactId>
+			<version>1.0.0.BETA10</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 			<artifactId>sccp-api</artifactId>
+			<version>1.0.0.BETA10</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 			<artifactId>sccp-impl</artifactId>
+			<version>1.0.0.BETA10</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mobicents.protocols.asn</groupId>
 			<artifactId>asn</artifactId>
+			<version>1.0.0.BETA4</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
 			<artifactId>tcap-impl</artifactId>
+			<version>1.0.0.BETA10</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
 			<artifactId>tcap-api</artifactId>
+			<version>1.0.0.BETA10</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 			<artifactId>mtp-api</artifactId>
+			<version>1.0.0.BETA10</version>
 		</dependency>
 
 		<dependency>
@@ -63,11 +71,13 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
 			<artifactId>m3ua-api</artifactId>
+			<version>1.0.0.BETA10</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
 			<artifactId>m3ua-impl</artifactId>
+			<version>1.0.0.BETA10</version>
 		</dependency>
 
 		<dependency>
