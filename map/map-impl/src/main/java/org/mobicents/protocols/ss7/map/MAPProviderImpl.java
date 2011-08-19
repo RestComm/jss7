@@ -1203,7 +1203,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					ReturnError comp = (ReturnError) c;
 					
 					long errorCode = 0;
-					if (comp.getErrorCode().getErrorType() == ErrorCodeType.Local)
+					if (comp.getErrorCode() != null && comp.getErrorCode().getErrorType() == ErrorCodeType.Local)
 						errorCode = comp.getErrorCode().getLocalErrorCode();
 					if (errorCode < MAPErrorCode.minimalCodeValue || errorCode > MAPErrorCode.maximumCodeValue) {
 						// Not Local error code and not MAP error code received
