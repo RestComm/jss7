@@ -2,7 +2,6 @@ package org.mobicents.protocols.ss7.tools.traceparser;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -285,12 +284,11 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 						if (this.pw != null) {
 							this.pw.print("TC-CONTINUE: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", originatingTransactionId="
 									+ originatingTransactionId + ", destinationTransactionId=" + destinationTransactionId);
-							byte[] comp = null;
 							if (this.par.getTcapMsgData()) {
-								comp = LogDataTag(aisMsg, "Continue");
+								LogDataTag(aisMsg, "Continue", tcm.getComponent(), acnValue, acnVersion, tcm.getDialogPortion());
 							}
 							
-							this.LogComponents(tcm.getComponent(), acnValue, acnVersion, comp);
+//							this.LogComponents(tcm.getComponent(), acnValue, acnVersion, comp);
 						}
 					}
 				}
@@ -335,11 +333,10 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 
 				if (this.pw != null) {
 					this.pw.print("TC-BEGIN: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", originatingTransactionId=" + originatingTransactionId);
-					byte[] comp = null;
 					if (this.par.getTcapMsgData()) {
-						comp = LogDataTag(aisMsg, "Begin");
+						LogDataTag(aisMsg, "Begin", tcb.getComponent(), di.getAcnValue(), di.getAcnVersion(), tcb.getDialogPortion());
 					}
-					this.LogComponents(tcb.getComponent(), di.getAcnValue(), di.getAcnVersion(), comp);
+//					this.LogComponents(tcb.getComponent(), di.getAcnValue(), di.getAcnVersion(), comp);
 				}
 				break;
 			}
@@ -372,12 +369,11 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 						if (this.pw != null) {
 							this.pw.print("TC-END: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", destinationTransactionId="
 									+ destinationTransactionId);
-							byte[] comp = null;
 							if (this.par.getTcapMsgData()) {
-								comp = LogDataTag(aisMsg, "End");
+								LogDataTag(aisMsg, "End", teb.getComponent(), acnValue, acnVersion, teb.getDialogPortion());
 							}
 							
-							this.LogComponents(teb.getComponent(), acnValue, acnVersion, comp);
+//							this.LogComponents(teb.getComponent(), acnValue, acnVersion, comp);
 						}
 					}
 				}
@@ -413,12 +409,11 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 						if (this.pw != null) {
 							this.pw.print("TC-ABORT: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", destinationTransactionId="
 									+ destinationTransactionId);
-							byte[] comp = null;
 							if (this.par.getTcapMsgData()) {
-								comp = LogDataTag(aisMsg, "Continue");
+								LogDataTag(aisMsg, "Continue", null, acnValue, acnVersion, tub.getDialogPortion());
 							}
 							
-							this.LogComponents(null, acnValue, acnVersion, comp);
+//							this.LogComponents(null, acnValue, acnVersion, comp);
 							this.pw.println();
 							this.pw.flush();
 						}
@@ -448,8 +443,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 		return false;
 	}
 
-	private byte[] LogDataTag(AsnInputStream aisMsg, String name) {
-		byte[] res = null;
+	private void LogDataTag(AsnInputStream aisMsg, String name, Component[] comp, int acnValue, int acnVersion, DialogPortion dp) {
 		
 		try {
 			aisMsg.readTag();
@@ -494,20 +488,25 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 				aisMsg.position(pos);
 				buf = new byte[newPos - pos];
 				aisMsg.read(buf);
-				if (tag == 12)
-					res = buf;
 				
 				this.writeDataArray(ttl + ": ", buf);
+				
+				if (tag == 11 && this.par.getDetailedDialog())
+					this.LogDialog(dp, buf);
+				if (tag == 12 && this.par.getDetailedComponents())
+					this.LogComponents(comp, acnValue, acnVersion, buf);
 			}
 			
+			this.pw.println();
+			this.pw.println();
+			this.pw.flush();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			this.pw.println();
 			this.pw.print("Exception parsing TCAP msg");
 			this.pw.print(e.getMessage());
 		}
-		
-		return res;
 	}
 	
 	private void writeDataArray( String title, byte[] data ) {
@@ -527,7 +526,47 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 		}
 	}
 	
-	private void LogComponents(Component[] comp, int acnValue, int acnVersion, byte[] compData) {
+	private void LogDialog(DialogPortion dp, byte[] logData) {
+		
+		AsnInputStream ais = new AsnInputStream(logData);
+		try {
+			int tag = ais.readTag();
+			int length = ais.readLength();
+			tag = ais.readTag();
+			length = ais.readLength();
+			int pos = ais.position();
+			ais.position(0);
+			byte[] buf = new byte[pos];
+			ais.read(buf);
+			this.writeDataArray("\tDialogPort+External tags: ", buf);
+			
+			tag = ais.readTag();
+			long[] oid = ais.readObjectIdentifier();
+			int pos2 = ais.position();
+			ais.position(pos);
+			buf = new byte[pos2 - pos];
+			ais.read(buf);
+			this.writeDataArray("\tExternal OId: ", buf);
+			
+			tag = ais.readTag();
+			length = ais.readLength();
+			int pos3 = ais.position();
+			ais.position(pos2);
+			buf = new byte[pos3 - pos2];
+			ais.read(buf);
+			this.writeDataArray("\tExternal Asn tag: ", buf);
+			
+			buf = new byte[ais.available()];
+			ais.read(buf);
+			this.writeDataArray("\t\tDialogAPDU_" + dp.getDialogAPDU().getType().toString(), buf);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void LogComponents(Component[] comp, int acnValue, int acnVersion, byte[] logData) {
 		this.pw.println();
 		this.pw.print("\tAnc: ");
 		if (acnValue > 0)
@@ -569,9 +608,9 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 			}
 		}
 		
-		if (compData != null) {
+		if (logData != null) {
 			try {
-				AsnInputStream ais = new AsnInputStream(compData);
+				AsnInputStream ais = new AsnInputStream(logData);
 				this.LogSequence(ais, 1, "Components");
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -580,11 +619,6 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 				this.pw.print(e.getMessage());
 			}
 		}
-		
-		this.pw.println();
-		this.pw.println();
-		this.pw.flush();
-		
 	}
 	
 	private String LodSequenceName(int dep, int tag, int tagClass, int ind, String parent) {
@@ -801,5 +835,10 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 	@Override
 	public int getMsgCount() {
 		return this.msgCount;
+	}
+	
+	private class LogData {
+		public byte[] dialogPortion;
+		public byte[] componentPortion;
 	}
 }

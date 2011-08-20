@@ -14,6 +14,8 @@ public class Ss7ParseParameters {
 	private Long dialogIdFilter = null;
 	private Long dialogIdFilter2 = null;
 	private boolean tcapMsgData = false;
+	private boolean detailedDialog = false;
+	private boolean detailedComponents = false;
 	
 	public int getFileType() {
 		return fileType;
@@ -43,6 +45,14 @@ public class Ss7ParseParameters {
 		return tcapMsgData;
 	}
 
+	public boolean getDetailedDialog() {
+		return detailedDialog;
+	}
+
+	public boolean getDetailedComponents() {
+		return detailedComponents;
+	}
+
 	
 	public void setFileType( int fileType ) {
 		this.fileType = fileType;
@@ -70,6 +80,14 @@ public class Ss7ParseParameters {
 
 	public void setTcapMsgData(boolean tcapMsgData) {
 		this.tcapMsgData = tcapMsgData;
+	}
+	
+	public void setDetailedDialog(boolean detailedDialog) {
+		this.detailedDialog = detailedDialog;
+	}
+
+	public void setDetailedComponents(boolean detailedComponents) {
+		this.detailedComponents = detailedComponents;
 	}
 }
 

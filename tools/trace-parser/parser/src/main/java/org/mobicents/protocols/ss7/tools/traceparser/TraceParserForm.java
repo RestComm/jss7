@@ -63,6 +63,8 @@ public class TraceParserForm {
 	private JLabel lblMessagesPerformed;
 	private JTextField tfMsgCnt;
 	private JCheckBox cbTcapData;
+	private JCheckBox cbDialogDet;
+	private JCheckBox cbCompDet;
 	private JTextField tfDialogIdFilter2;
 
 	public static void main(String[] args) {
@@ -163,6 +165,12 @@ public class TraceParserForm {
 				}
 				if (cbTcapData.isSelected()) {
 					newPar.setTcapMsgData(true);
+				}
+				if (cbDialogDet.isSelected()) {
+					newPar.setDetailedDialog(true);
+				}
+				if (cbCompDet.isSelected()) {
+					newPar.setDetailedComponents(true);
 				}
 
 				try {
@@ -291,7 +299,7 @@ public class TraceParserForm {
 		
 		pnMsgLog = new JPanel();
 		pnMsgLog.setBorder(new LineBorder(new Color(0, 0, 0)));
-		pnMsgLog.setBounds(10, 218, 543, 85);
+		pnMsgLog.setBounds(10, 218, 543, 143);
 		panel_1.add(pnMsgLog);
 		pnMsgLog.setLayout(null);
 		
@@ -350,16 +358,30 @@ public class TraceParserForm {
 		pnMsgLog.add(btnMsgLog);
 		
 		cbTcapData = new JCheckBox("Store in the log TCAP message source data");
+		cbTcapData.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				cbDialogDet.setEnabled(cbTcapData.isSelected());
+				cbCompDet.setEnabled(cbTcapData.isSelected());
+			}
+		});
 		cbTcapData.setBounds(10, 50, 296, 23);
 		pnMsgLog.add(cbTcapData);
 		
+		cbDialogDet = new JCheckBox("Write dialog portion details");
+		cbDialogDet.setBounds(10, 76, 296, 23);
+		pnMsgLog.add(cbDialogDet);
+		
+		cbCompDet = new JCheckBox("Write components portion details");
+		cbCompDet.setBounds(10, 102, 296, 23);
+		pnMsgLog.add(cbCompDet);
+		
 		lblMessagesPerformed = new JLabel("Messages performed");
-		lblMessagesPerformed.setBounds(10, 352, 140, 14);
+		lblMessagesPerformed.setBounds(10, 372, 140, 14);
 		panel_1.add(lblMessagesPerformed);
 		
 		tfMsgCnt = new JTextField();
 		tfMsgCnt.setEditable(false);
-		tfMsgCnt.setBounds(160, 349, 86, 20);
+		tfMsgCnt.setBounds(160, 369, 86, 20);
 		panel_1.add(tfMsgCnt);
 		tfMsgCnt.setColumns(10);
 		
@@ -399,6 +421,12 @@ public class TraceParserForm {
 			}
 			if (par.getTcapMsgData()) {
 				cbTcapData.setSelected(true);
+			}
+			if (par.getDetailedDialog()) {
+				cbDialogDet.setSelected(true);
+			}
+			if (par.getDetailedComponents()) {
+				cbCompDet.setSelected(true);
 			}
 		}
 	}
