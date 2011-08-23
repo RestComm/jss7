@@ -51,18 +51,17 @@ public class ApplicationContextNameImpl implements ApplicationContextName {
 	 */
 	public void decode(AsnInputStream ais) throws ParseException {
 		try {
-			int len = ais.readLength();
-			// check len?
-
-			int tag = ais.readTag();
-			if (tag != Tag.OBJECT_IDENTIFIER) {
-				throw new ParseException("Expected OID tag, found: " + tag);
-			}
-			this.oid = ais.readObjectIdentifier();
+			AsnInputStream localAis = ais.readSequenceStream();
+			int tag = localAis.readTag();
+			if (tag != Tag.OBJECT_IDENTIFIER || localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
+				throw new ParseException("Error decoding ApplicationContextName: bad tag or tagClass, found tag=" + tag + ", tagClass="
+						+ localAis.getTagClass());
+			this.oid = localAis.readObjectIdentifier();
+			
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while decoding ApplicationContextName: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while decoding ApplicationContextName: " + e.getMessage(), e);
 		}
 
 	}
@@ -75,22 +74,22 @@ public class ApplicationContextNameImpl implements ApplicationContextName {
 	 * .asn.AsnOutputStream)
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
-		// TODO Auto-generated method stub
-		if (this.oid == null) {
-			throw new ParseException("No OID value set!");
-		}
+		
+		if (this.oid == null)
+			throw new ParseException("Error while decoding ApplicationContextName: No OID value set");
+		
 		try {
-			AsnOutputStream localAOS = new AsnOutputStream();
-			localAOS.writeObjectIdentifier(this.oid);
-			byte[] oidEncoded = localAOS.toByteArray();
-			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
-			aos.writeLength(oidEncoded.length);
-
-			aos.write(oidEncoded);
+			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG);
+			int pos = aos.StartContentDefiniteLength();
+			
+			aos.writeObjectIdentifier(this.oid);
+			
+			aos.FinalizeContent(pos);
+			
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while encoding ApplicationContextName: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while encoding ApplicationContextName: " + e.getMessage(), e);
 		}
 
 	}

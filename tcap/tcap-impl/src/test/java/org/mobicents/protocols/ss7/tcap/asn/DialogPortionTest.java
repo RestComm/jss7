@@ -21,15 +21,11 @@
  */
 
 package org.mobicents.protocols.ss7.tcap.asn;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+
+import junit.framework.TestCase;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -42,8 +38,9 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 /**
  * @author baranowb
  * @author amit bhayani
+ * @author sergey vetyutnev
  */
-public class DialogPortionTest {
+public class DialogPortionTest extends TestCase {
 	
 	
 	@BeforeClass
@@ -64,6 +61,7 @@ public class DialogPortionTest {
 		
 	}
 
+	@org.junit.Test
 	public void testDialogPortion_UserInformation() throws Exception {
 
 		// Hex dump is from wireshark trace for TCAP - MAP/USSD
@@ -77,7 +75,7 @@ public class DialogPortionTest {
 				(byte) 0x81, 0x07, (byte) 0x91, 0x13, 0x26, (byte) 0x98,
 				(byte) 0x86, 0x03, (byte) 0xf0, 0x00, 0x00 };
 
-		AsnInputStream asin = new AsnInputStream(new ByteArrayInputStream(b));
+		AsnInputStream asin = new AsnInputStream(b);
 		asin.readTag();
 		DialogPortionImpl dpi = new DialogPortionImpl();
 		dpi.decode(asin);
@@ -121,6 +119,16 @@ public class DialogPortionTest {
 				(byte) 0x91, 0x13, 0x26, (byte) 0x98, (byte) 0x86, 0x03,
 				(byte) 0xf0, 0x00, 0x00 }, userInformation.getEncodeType()));
 
+		// encoded version with definite length style
+		byte[] b2 = new byte[] { 107, 69, 40, 67, 6, 7, 0, 17, -122, 5, 1, 1, 1, -96, 56, 96, 54, -128, 2, 7, -128, -95, 9, 6, 7, 4, 0, 0, 1, 0, 19, 2, -66,
+				37, 40, 35, 6, 7, 4, 0, 0, 1, 1, 1, 1, -96, 24, -96, -128, -128, 9, -106, 2, 36, -128, 3, 0, -128, 0, -14, -127, 7, -111, 19, 38, -104, -122,
+				3, -16, 0, 0 };
+		
+		AsnOutputStream aso = new AsnOutputStream();
+		dpi.encode(aso);
+		byte[] encoded = aso.toByteArray();
+		assertTrue(Arrays.equals(b2, encoded));
+		
 	}
 
 	@org.junit.Test
@@ -134,10 +142,18 @@ public class DialogPortionTest {
 		// 6B 1E 28 1C 06 07 00 11 86 05 01 01 01 A0 11 60 0F 80 02 07 80 A1 09
 		// 06 07 04 00 01 01 01 03 00
 
-		AsnInputStream asin = new AsnInputStream(new ByteArrayInputStream(b));
+		AsnInputStream asin = new AsnInputStream(b);
 		asin.readTag();
 		DialogPortionImpl dpi = new DialogPortionImpl();
 		dpi.decode(asin);
+		
+		DialogAPDU d = dpi.getDialogAPDU();
+		assertNotNull(d);
+		assertEquals(DialogAPDUType.Request, d.getType());
+		DialogRequestAPDU dr = (DialogRequestAPDU) d;
+		assertTrue(Arrays.equals(new long[] { 0, 4, 0, 1, 1, 1, 3, 0 }, dr.getApplicationContextName().getOid()));
+		assertNull(dr.getUserInformation());
+		
 
 		AsnOutputStream aso = new AsnOutputStream();
 		dpi.encode(aso);
@@ -188,7 +204,7 @@ public class DialogPortionTest {
 		byte[] b = new byte[] { 0x6B, 0x12, 0x28, 0x10, 0x06, 0x07, 0x00, 0x11,
 				(byte) 0x86, 0x05, 0x01, 0x01, 0x01, (byte) 0xA0, 0x05, 0x64,
 				0x03, (byte) 0x80, 0x01, 0x01 };
-		AsnInputStream asin = new AsnInputStream(new ByteArrayInputStream(b));
+		AsnInputStream asin = new AsnInputStream(b);
 		asin.readTag();
 		DialogPortionImpl dpi = new DialogPortionImpl();
 		dpi.decode(asin);

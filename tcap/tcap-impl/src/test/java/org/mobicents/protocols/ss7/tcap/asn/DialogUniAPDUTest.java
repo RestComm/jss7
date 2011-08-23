@@ -20,51 +20,45 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 
-/**
- * Class with some utility methods.
- * @author baranowb
- *
- */
-final class Utils {
+import junit.framework.TestCase;
 
-	
-	public static Long readTransactionId(AsnInputStream ais) throws AsnException, IOException
-	{
-		//here  we have AIS, with txid - this is integer, but its coded as 
-		//octet string so no extra byte is added....
-		byte[] data = ais.readOctetString();
-		byte[] longRep = new byte[8];
-		//copy data so longRep = {0,0,0,...,data};
-		System.arraycopy(data, 0, longRep, longRep.length-data.length, data.length);
-		ByteBuffer bb = ByteBuffer.wrap(longRep);
-		return bb.getLong();
-		
+/**
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
+public class DialogUniAPDUTest extends TestCase {
+
+	private byte[] getData() {
+		return new byte[] { 96, 27, (byte) 128, 2, 7, (byte) 128, (byte) 161, 6, 6, 4, 4, 2, 2, 2, (byte) 190, 13, 40, 11, 6, 4, 1, 1, 2, 3, (byte) 160, 3, 11,
+				22, 33 };
 	}
 	
-	public static void writeTransactionId(AsnOutputStream aos,Long txId, int tagClass, int tag) throws AsnException, IOException
-	{
-		//txId may only be up to 4 bytes, that is 0xFF FF FF FF
-		byte[] data = new byte[4];
-		long ll = txId.longValue();
-		data[3] = (byte) ll;
-		data[2] = (byte) (ll>> 8);
-		data[1] = (byte) (ll>>16);
-		data[0] = (byte) (ll >> 24);
-		
-		aos.writeOctetString(tagClass, tag, data);
-		
+	@org.junit.Test
+	public void testDecode() throws IOException, ParseException, AsnException {
+
+		byte[] b = getData();
+		AsnInputStream asnIs = new AsnInputStream(b);
+		int tag = asnIs.readTag();
+		assertEquals(0, tag);
+		DialogUniAPDU d = TcapFactory.createDialogAPDUUni();
+		d.decode(asnIs);
+		assertTrue(Arrays.equals(new long[] { 0, 4, 2, 2, 2 }, d.getApplicationContextName().getOid()));
+		UserInformation ui = d.getUserInformation();
+		assertNotNull(ui);
+		assertTrue(Arrays.equals(new byte[] { 11, 22, 33 }, ui.getEncodeType()));
+
+		AsnOutputStream aos = new AsnOutputStream();
+		d.encode(aos);
+		assertTrue(Arrays.equals(b, aos.toByteArray()));
 	}
 }

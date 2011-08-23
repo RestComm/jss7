@@ -22,9 +22,7 @@
 
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import junit.framework.TestCase;
 
@@ -49,13 +47,6 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
  * 
  */
 public class TcBeginTest extends TestCase {
-
-	private void compareArrays(byte[] expected, byte[] encoded) {
-		boolean same = Arrays.equals(expected, encoded);
-		assertTrue(
-				"byte[] dont match, expected|encoded \n" + Arrays.toString(expected) + "\n" + Arrays.toString(encoded),
-				same);
-	}
 
 	/**
 	 * The data for this comes from nad1053.pcap USSD Wireshark Trace 2nd Packet
@@ -131,7 +122,6 @@ public class TcBeginTest extends TestCase {
 		p.setTagClass(Tag.CLASS_UNIVERSAL);
 		p.setTag(0x04);
 		p.setParameters(new Parameter[] { p1, p2, p3 });
-		// Parameter[] params = new Parameter[]{p1,p2,p3};
 
 		invComp.setParameter(p);
 
@@ -173,7 +163,7 @@ public class TcBeginTest extends TestCase {
 
 		};
 
-		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(b));
+		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
 		assertEquals("Expected TCInvoke", TCBeginMessage._TAG, tag);
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
@@ -217,8 +207,14 @@ public class TcBeginTest extends TestCase {
 				(byte) 0x91, (byte) 0x81, 0x67, (byte) 0x83, (byte) 0x80, 0x48, (byte) 0xf7, 0x6c, (byte) 0x80,
 				(byte) 0xa1, 0x12, 0x02, 0x01, 0x00, 0x02, 0x01, 0x3b, 0x30, 0x0a, 0x04, 0x01, 0x0f, 0x04, 0x05, 0x2a,
 				0x59, 0x6c, 0x36, 0x02, 0x00, 0x00 };
+		
+		// encoded data - we use only definite length now
+		byte[] b2 = new byte[] { 98, 114, 72, 4, 26, 0, 2, -31, 107, 84, 40, 82, 6, 7, 0, 17, -122, 5, 1, 1, 1, -96, 71, 96, 69, -128, 2, 7, -128, -95, 9, 6,
+				7, 4, 0, 0, 1, 0, 19, 2, -66, 52, 40, 50, 6, 7, 4, 0, 0, 1, 1, 1, 1, -96, 39, -96, 37, -128, 8, 51, 8, 5, 9, 19, 23, 101, -16, -127, 7, -111,
+				-127, 103, -125, -128, 56, -12, -126, 7, -111, 5, 57, 7, 112, 99, -10, -125, 7, -111, -127, 103, -125, -128, 72, -9, 108, 20, -95, 18, 2, 1, 0,
+				2, 1, 59, 48, 10, 4, 1, 15, 4, 5, 42, 89, 108, 54, 2 };
 
-		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(b));
+		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
 		assertEquals("Expected TCInvoke", TCBeginMessage._TAG, tag);
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
@@ -242,8 +238,7 @@ public class TcBeginTest extends TestCase {
 		tcm.encode(aos);
 		byte[] encoded = aos.toByteArray();
 
-		// TODO Fix this
-		// compareArrays(b,encoded);
+		TCAPTestUtils.compareArrays(b2, encoded);
 
 	}
 
@@ -291,7 +286,7 @@ public class TcBeginTest extends TestCase {
 		// use value.................. ???
 		};
 
-		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(b));
+		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
 		assertEquals("Expected TCBegin", TCBeginMessage._TAG, tag);
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
@@ -366,7 +361,7 @@ public class TcBeginTest extends TestCase {
 		// no user info?
 		};
 
-		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(b));
+		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
 		assertEquals("Expected TCBegin", TCBeginMessage._TAG, tag);
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
@@ -420,7 +415,7 @@ public class TcBeginTest extends TestCase {
 
 		};
 
-		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(b));
+		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
 		assertEquals("Expected TCBegin", TCBeginMessage._TAG, tag);
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
@@ -503,7 +498,7 @@ public class TcBeginTest extends TestCase {
 
 		};
 
-		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(b));
+		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
 		assertEquals("Expected TCBegin", TCBeginMessage._TAG, tag);
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
@@ -612,7 +607,7 @@ public class TcBeginTest extends TestCase {
 				97,
 				// end tag!
 				0, 0 };
-		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(TCAP));
+		AsnInputStream ais = new AsnInputStream(TCAP);
 		int tag = ais.readTag();
 		assertEquals("Expected TCBegin", TCBeginMessage._TAG, tag);
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);

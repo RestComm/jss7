@@ -25,7 +25,6 @@
  */
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.mobicents.protocols.asn.AsnException;
@@ -35,6 +34,7 @@ import org.mobicents.protocols.asn.Tag;
 
 /**
  * @author baranowb
+ * @author sergey vetyutnev
  *
  */
 public class DialogAbortAPDUImpl implements DialogAbortAPDU {
@@ -97,58 +97,28 @@ public class DialogAbortAPDUImpl implements DialogAbortAPDU {
 	 */
 	public void decode(AsnInputStream ais) throws ParseException {
 		try {
-			// len here is quite important!
-			int len;
+			AsnInputStream localAis = ais.readSequenceStream();
 
-			len = ais.readLength();
-
-			if (len == Tag.Indefinite_Length) {
-				throw new ParseException("Undefined len not supported!");
-			}
-			// going the easy way; not going to work with undefined!
-			// this way we dont have to go through remaining len countdown
-			byte[] dataChunk = new byte[len];
-			if(len!=ais.read(dataChunk))
-			{
-				throw new ParseException("Not enough data read.");
-			}
-			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(dataChunk));
 			int tag = localAis.readTag();
-			// optional protocol version
-			if (tag != AbortSource._TAG) {
-				throw new ParseException("Expected Abort Source tag, found: " + tag);
-			}
+			if (tag != AbortSource._TAG || localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+				throw new ParseException("Error decoding DialogAbortAPDU.abort-source: bad tag or tagClass, found tag=" + tag + ", tagClass="
+						+ localAis.getTagClass());
 			this.abortSource = TcapFactory.createAbortSource(localAis);
-			// now there is mandatory part
-			
 
 			// optional sequence.
-			if (localAis.available() > 0) {
-				// we have optional seq;
+			if (localAis.available() == 0)
+				return;
 
-				// TODO: The Q.773 defines SEQUENCE of USER INFORMATION, however all
-				// the traces shows no SEQUNECE and just one USER INFORMATION
-
-				// tag = localAis.readTag();
-				// if (tag != Tag.SEQUENCE) {
-				// throw new ParseException("Expected SEQUENCE tag, found: " +
-				// tag);
-				// }
-				// byte[] data = localAis.readSequence();
-				// localAis = new AsnInputStream(new
-				// ByteArrayInputStream(data));
-
-				tag = localAis.readTag();
-				if(tag != UserInformation._TAG)
-				{
-					throw new ParseException("Expected UserInformation tag, found: "+tag);
-				}
-				this.userInformation = TcapFactory.createUserInformation(localAis);
-			}
+			tag = localAis.readTag();
+			if (tag != UserInformation._TAG || localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+				throw new ParseException("Error decoding DialogAbortAPDU.user-information: bad tag or tagClass, found tag=" + tag + ", tagClass="
+						+ localAis.getTagClass());
+			this.userInformation = TcapFactory.createUserInformation(localAis);
+			
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while decoding DialogAbortAPDU: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while decoding DialogAbortAPDU: " + e.getMessage(), e);
 		}
 
 	}
@@ -157,46 +127,25 @@ public class DialogAbortAPDUImpl implements DialogAbortAPDU {
 	 * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
-		if (abortSource == null) {
-			throw new ParseException("No Abort Source Name!");
-		}
+		
+		if (abortSource == null)
+			throw new ParseException("Error encoding DialogAbortAPDU: Abort Source Name must not be null");
+		
 		try {
-			// lets not ommit protocol version, we check byte[] in tests, it screws them :)
-
-			AsnOutputStream localAos = new AsnOutputStream();
-	
-			localAos.reset();
-			byte[] byteData = null;
-			if (userInformation != null) {
-				
-				userInformation.encode(localAos);
-				byteData = localAos.toByteArray();
-				localAos.reset();
-
-				//TODO : Commented out the Sequence. The trace is not showing this
-				//localAos.writeSequence(byteData);
-
-				//byteData = localAos.toByteArray();
-
-			}
 			
-			this.abortSource.encode(localAos);
+			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG_ABORT);
+			int pos = aos.StartContentDefiniteLength();
 			
-			if (byteData != null) {
-				localAos.write(byteData);
-			}
-			byteData = localAos.toByteArray();
-			aos.writeTag(_TAG_CLASS, _TAG_PRIMITIVE, _TAG_ABORT);
-			aos.writeLength(byteData.length);
-			aos.write(byteData);
+			this.abortSource.encode(aos);
+			
+			if (this.userInformation != null)
+				this.userInformation.encode(aos);
+			
+			aos.FinalizeContent(pos);
 
-		} catch (IOException e) {
-			throw new ParseException(e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while encoding DialogAbortAPDU: " + e.getMessage(), e);
 		}
-
-
 	}
 
 }

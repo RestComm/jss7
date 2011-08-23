@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -30,6 +29,7 @@ import java.util.BitSet;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.asn.External;
 import org.mobicents.protocols.asn.Tag;
 
@@ -78,6 +78,7 @@ import org.mobicents.protocols.asn.Tag;
  * 
  * @author baranowb
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class DialogPortionImpl extends External implements DialogPortion {
@@ -150,7 +151,7 @@ public class DialogPortionImpl extends External implements DialogPortion {
 	 * @see org.mobicents.protocols.asn.External#getEncodeBitStringType()
 	 */
 	
-	public BitSet getEncodeBitStringType() {
+	public BitSetStrictLength getEncodeBitStringType() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -189,26 +190,17 @@ public class DialogPortionImpl extends External implements DialogPortion {
 	}
 
 	public void encode(AsnOutputStream aos) throws ParseException {
-
-		//this will have EXTERNAL
-		AsnOutputStream localAsn = new AsnOutputStream();
-		try {
-			super.encode(localAsn);
-		} catch (AsnException e) {
-			throw new ParseException(e);
-		}
 		
 		try {
-			//now lets write ourselves
-			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
-			byte[] externalData = localAsn.toByteArray();
+			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);
+			int pos = aos.StartContentDefiniteLength();
 
-			aos.writeLength(externalData.length);
-			aos.write(externalData);
-		} catch (IOException e) {
-			throw new ParseException(e);
+			super.encode(aos);
+			
+			aos.FinalizeContent(pos);
+			
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException when encoding DialogPortion: " + e.getMessage(), e);
 		}
 	}
 
@@ -220,139 +212,40 @@ public class DialogPortionImpl extends External implements DialogPortion {
 	 * .AsnInputStream)
 	 */
 	
-	public void decode(AsnInputStream ais) throws ParseException {
+	public void decode(AsnInputStream aisA) throws ParseException {
 
 		// TAG has been decoded already, now, lets get LEN
 		try {
-			int len = ais.readLength();
-			// add checks?
-			
+			AsnInputStream ais = aisA.readSequenceStream();
+
 			int tag = ais.readTag();
-			if(tag != Tag.EXTERNAL)
-			{
-				throw new AsnException(
-						"Wrong value of tag, expected EXTERNAL, found: " + tag);
-			}
+			if (tag != Tag.EXTERNAL)
+				throw new ParseException("Error decoding DialogPortion: wrong value of tag, expected EXTERNAL, found: " + tag);
+			
 			super.decode(ais);
 
 			if (!isAsn() || !isOid()) {
-				throw new ParseException("Wrong encode(" + isOid() + ")/encoding(" + isAsn() + ") types");
+				throw new ParseException("Error decoding DialogPortion: Oid and Asd parts not found");
 			}
+
+			// Check Oid
+			if (Arrays.equals(_DIALG_UNI, this.getOidValue()))
+				this.uniDirectional = true;
+			else if (Arrays.equals(_DIALG_STRUCTURED, this.getOidValue()))
+				this.uniDirectional = false;
+			else
+				throw new ParseException("Error decoding DialogPortion: bad Oid value");				
 			
-			//Set whether Unidirectional
-			this.uniDirectional = Arrays.equals(_DIALG_UNI, this.getOidValue());
-			
-			byte[] dialogPdu = super.getEncodeType();
-			AsnInputStream loaclAsnIS = new AsnInputStream(new ByteArrayInputStream(dialogPdu));
+			AsnInputStream loaclAsnIS = new AsnInputStream(super.getEncodeType());
 
 			// now lets get APDU
-			tag = loaclAsnIS.readTag();// this sucks, depending on OID, it can have
-									// diff values.....
-		
+			tag = loaclAsnIS.readTag();
 			this.dialogAPDU = TcapFactory.createDialogAPDU(loaclAsnIS, tag, isUnidirectional());
 			
-		} catch (ParseException e) {
-
-			throw e;
-		} catch (Exception e) {
-			throw new ParseException(e);
+		} catch (IOException e) {
+			throw new ParseException("IOException when decoding DialogPortion: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new ParseException("AsnException when decoding DialogPortion: " + e.getMessage(), e);
 		}
 	}
-
-//	public void decode(AsnInputStream ais) throws ParseException {
-//		// FIXME: LONG form of LEN ??
-//		try {
-//			int length = ais.readLength();
-//			if (length != 0x80 && ais.available() < length) {
-//				throw new ParseException("Not enough eoctets: " + ais.available() + ", required: " + length);
-//			}
-//			// we are SEQUENCE as external, however TCAP uses hardcoded part :)!
-//			//External.TAG
-//			//External.LEN
-//			//OID_TAG
-//			//OID_LEN
-//			//OID_VAL
-//			//Single-ASN.1.TAG
-//			//Single-ASN.1.LEN
-//			//DialogAPDU
-//			int tag = ais.readTag();
-//			if(tag!=(_TAG_EXTERNAL))
-//			{
-//				throw new ParseException("Expected external TAG, found: "+tag);
-//			}
-//			
-//			int childLen = ais.readLength();
-//			if(childLen +2 !=length)
-//			{
-//				throw new ParseException("Wrong length of EXTERNAL content, found: "+childLen);
-//			}
-//			oid=ais.readObjectIdentifier();
-//			
-//			tag = ais.readTag();
-//
-//			if(tag!=_TAG_EXTERNAL_SINGLE)
-//			{
-//				throw new ParseException("Expected Single-ASN.1 TAG, found: "+tag);
-//			}
-//			childLen = ais.readLength();
-//			if(childLen > ais.available())
-//			{
-//				throw new ParseException("Wrong length of EXTERNAL.Singla-ASN.1-Type content, found: "+childLen);
-//			}
-//			//in single ASN.1-Type we have dialogPDU
-//			this.dialogAPDU = TcapFactory.createDialogAPDU(ais);
-//		} catch (ParseException e) {
-//			throw e;
-//		} catch (Exception e) {
-//			throw new ParseException(e);
-//		}
-//
-//	}
-//
-//	public void encode(AsnOutputStream aos) throws ParseException {
-//		
-//		if(this.dialogAPDU==null)
-//		{
-//			throw new ParseException("No PADU!!!");
-//		}
-//
-//		AsnOutputStream childAsn = new AsnOutputStream();
-//		this.dialogAPDU.encode(childAsn);
-//		byte[] singleAsnData = childAsn.toByteArray();
-//		aos.write(DialogPortion._TAG_E);
-//		aos.writeLength(singleAsnData.length+2+_OID_LEN+2);
-//		//+2 for single asn tag+len, +_OID_LEN(TLV), +2 EXTERNAL TL
-//		
-//		//EXTERNAL
-//		aos.write(DialogPortion._TAG_EXTERNAL_E);
-//		aos.writeLength(singleAsnData.length+2+_OID_LEN);
-//		
-//		//OID
-//		//aos.write(DialogPortion._TAG_EXTERNAL_OBJ_E);
-//		//aos.writeLength(_OID_LEN-2);
-//		if(isUnidirectional())
-//		{
-//			try {
-//				aos.write(_DIALG_UNI_B);
-//			} catch (IOException e) {
-//				throw new ParseException(e);
-//			}
-//		}else
-//		{
-//			try{
-//				aos.write(_DIALG_STRUCTURED_B);
-//			} catch (IOException e) {
-//				throw new ParseException(e);
-//			}
-//		}
-//		aos.write(_TAG_EXTERNAL_SINGLE_E);
-//		aos.writeLength(singleAsnData.length);
-//		try {
-//			aos.write(singleAsnData);
-//		} catch (IOException e) {
-//			throw new ParseException(e);
-//		}
-//		
-//	}
-
 }

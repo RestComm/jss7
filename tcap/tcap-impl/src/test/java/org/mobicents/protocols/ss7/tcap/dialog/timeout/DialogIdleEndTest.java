@@ -25,7 +25,6 @@ package org.mobicents.protocols.ss7.tcap.dialog.timeout;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
 
 import org.junit.After;
@@ -33,6 +32,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.EventType;
@@ -136,7 +136,7 @@ public class DialogIdleEndTest extends SccpHarness {
 					//UI is required...
 					UserInformation _ui = this.tcapProvider.getDialogPrimitiveFactory().createUserInformation();
 					_ui.setArbitrary(true);
-					BitSet bs = new BitSet();
+					BitSetStrictLength bs = new BitSetStrictLength(4);
 					bs.set(0);
 					bs.set(3);
 					_ui.setEncodeBitStringType(bs);
@@ -199,7 +199,7 @@ public class DialogIdleEndTest extends SccpHarness {
 					//UI is required...
 					UserInformation _ui = this.tcapProvider.getDialogPrimitiveFactory().createUserInformation();
 					_ui.setArbitrary(true);
-					BitSet bs = new BitSet();
+					BitSetStrictLength bs = new BitSetStrictLength(4);
 					bs.set(0);
 					bs.set(3);
 					_ui.setEncodeBitStringType(bs);
@@ -267,7 +267,7 @@ public class DialogIdleEndTest extends SccpHarness {
 					//UI is required...
 					UserInformation _ui = this.tcapProvider.getDialogPrimitiveFactory().createUserInformation();
 					_ui.setArbitrary(true);
-					BitSet bs = new BitSet();
+					BitSetStrictLength bs = new BitSetStrictLength(4);
 					bs.set(0);
 					bs.set(3);
 					_ui.setEncodeBitStringType(bs);
@@ -342,7 +342,7 @@ public class DialogIdleEndTest extends SccpHarness {
 					//UI is required...
 					UserInformation _ui = this.tcapProvider.getDialogPrimitiveFactory().createUserInformation();
 					_ui.setArbitrary(true);
-					BitSet bs = new BitSet();
+					BitSetStrictLength bs = new BitSetStrictLength(4);
 					bs.set(0);
 					bs.set(3);
 					_ui.setEncodeBitStringType(bs);

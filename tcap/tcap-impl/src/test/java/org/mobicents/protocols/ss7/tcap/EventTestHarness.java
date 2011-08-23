@@ -50,7 +50,6 @@ import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.DialogServiceUserType;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
-import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
 
 /**
  * Super class for event based tests. Has capabilities for testing if events are

@@ -25,8 +25,6 @@
  */
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +34,11 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
-import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
 
 /**
  * @author baranowb
+ * @author sergey vetyutnev
  * 
  */
 public class TCEndMessageImpl implements TCEndMessage {
@@ -131,64 +129,53 @@ public class TCEndMessageImpl implements TCEndMessage {
 	 */
 	public void decode(AsnInputStream ais) throws ParseException {
 		try {
-			int len = ais.readLength();
-			if (len > ais.available()) {
-				throw new ParseException("Not enough data: " + ais.available()+", expected: "+len);
-			}
-			if (len == Tag.Indefinite_Length) {
-				//
-				throw new ParseException("Undefined len not supported");
-			}
-			byte[] data = new byte[len];
-			if(len!=ais.read(data))
-			{
-				throw new ParseException("Not enough data read.");
-			}
-			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(data));
+			AsnInputStream localAis = ais.readSequenceStream();
 
 			int tag = localAis.readTag();
-			if (tag != _TAG_DTX) {
-				throw new ParseException("Expected OriginatingTransactionId, found: " + tag);
-			}
-
-			
-			//this.destinationTransactionId = localAis.readInteger();
+			if (tag != _TAG_DTX || localAis.getTagClass() != Tag.CLASS_APPLICATION)
+				throw new ParseException("Error decoding TC-End: Expected DestinationTransactionId, found tag: " + tag);
 			this.destinationTransactionId = Utils.readTransactionId(localAis);
-			if (localAis.available() <= 0) {
-				return;
-			}
 
-			// we hav optional;
-			tag = localAis.readTag();
-			if (tag == DialogPortion._TAG) {
-				this.dp = TcapFactory.createDialogPortion(localAis);
-				if (localAis.available() <= 0) {
+			while (true) {
+				if (localAis.available() == 0)
 					return;
-				}
+				
 				tag = localAis.readTag();
-			}
-
-			len = localAis.readLength();
-			if (len < localAis.available() || len == 0) {
-				throw new ParseException("Not enough data");
-			}
-			List<Component> cps = new ArrayList<Component>();
-			// its iterator :)
-			while (localAis.available() > 0) {
-				Component c = TcapFactory.createComponent(localAis);
-				if(c == null)
-				{
+				if (localAis.isTagPrimitive() || localAis.getTagClass() != Tag.CLASS_APPLICATION)
+					throw new ParseException(
+							"Error decoding TC-End: DialogPortion and Component portion must be constructive and has tag class CLASS_APPLICATION");
+				
+				switch(tag) {
+				case DialogPortion._TAG:
+					this.dp = TcapFactory.createDialogPortion(localAis);
 					break;
+					
+				case Component._COMPONENT_TAG:
+					AsnInputStream compAis = localAis.readSequenceStream();
+					List<Component> cps = new ArrayList<Component>();
+					// its iterator :)
+					while (compAis.available() > 0) {
+						Component c = TcapFactory.createComponent(compAis);
+						if(c == null)
+						{
+							break;
+						}
+						cps.add(c);
+					}
+
+					this.component = new Component[cps.size()];
+					this.component = cps.toArray(this.component);
+					break;
+					
+				default:
+					throw new ParseException("Error decoding TC-End: DialogPortion and Componebt parsing: bad tag - " + tag);
 				}
-				cps.add(c);
 			}
 
-			this.component = new Component[cps.size()];
-			this.component = cps.toArray(this.component);
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while decoding TC-End: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while decoding TC-End: " + e.getMessage(), e);
 		}
 
 	}
@@ -201,63 +188,36 @@ public class TCEndMessageImpl implements TCEndMessage {
 	 * .asn.AsnOutputStream)
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
-		if (this.destinationTransactionId == null) {
-			throw new ParseException("Transaction ID.");
-		}
+		
+		if (this.destinationTransactionId == null)
+			throw new ParseException("Error while encoding TC-End: destinationTransactionId must not be null");
+		
 		try {
-			AsnOutputStream localAos = new AsnOutputStream();
-			byte[] data = null;
+			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);
+			int pos = aos.StartContentDefiniteLength();
+
+			Utils.writeTransactionId(aos, this.destinationTransactionId, Tag.CLASS_APPLICATION, _TAG_DTX);
+
+			if (this.dp != null)
+				this.dp.encode(aos);
 
 			if (component != null) {
+				aos.writeTag(Tag.CLASS_APPLICATION, false, Component._COMPONENT_TAG);
+				int pos2 = aos.StartContentDefiniteLength();
 				for (Component c : this.component) {
-					c.encode(localAos);
+					c.encode(aos);
 				}
-				data = localAos.toByteArray();
-				localAos.reset();
-				localAos.writeTag(Component._COMPONENT_TAG_CLASS, Component._COMPONENT_TAG_PC_PRIMITIVE, Component._COMPONENT_TAG);
-				localAos.writeLength(data.length);
-				localAos.write(data);
-				data = localAos.toByteArray();
-				localAos.reset();
+				aos.FinalizeContent(pos2);
 			}
 
+			aos.FinalizeContent(pos);
 			
-
-			
-
-			// write TX
-			//localAos.writeInteger(_TAG_CLASS_DTX, _TAG_DTX, (this.destinationTransactionId));
-			Utils.writeTransactionId(localAos,this.destinationTransactionId, _TAG_CLASS_DTX, _TAG_DTX);
-			
-
-			if (this.dp != null) {
-				this.dp.encode(localAos);
-				if(data!=null)
-				{
-					localAos.write(data);
-				}
-				data = localAos.toByteArray();
-			}else
-			{
-				if(data!=null)
-				{
-					localAos.write(data);
-				}
-				data = localAos.toByteArray();
-			}
-
-			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
-			aos.writeLength(data.length);
-			aos.write(data);
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while encoding TC-End: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while encoding TC-End: " + e.getMessage(), e);
 		}
 
 	}
-
-
-
-
 }
+

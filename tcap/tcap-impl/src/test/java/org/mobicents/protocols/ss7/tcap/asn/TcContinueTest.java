@@ -22,9 +22,7 @@
 
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import junit.framework.TestCase;
 
@@ -40,13 +38,6 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 
 public class TcContinueTest extends TestCase {
-
-	private void compareArrays(byte[] expected, byte[] encoded) {
-		boolean same = Arrays.equals(expected, encoded);
-		assertTrue("byte[] dont match, expected|encoded \n"
-				+ Arrays.toString(expected) + "\n" + Arrays.toString(encoded),
-				same);
-	}
 	
 	@org.junit.Test
 	public void testBasicTCContinue() throws IOException, ParseException {
@@ -91,7 +82,7 @@ public class TcContinueTest extends TestCase {
 		0x01,
 		0x37 };
 		
-		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(b));
+		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
 		assertEquals("Expected TCInvoke",TCContinueMessage._TAG,tag);
 		TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
@@ -220,7 +211,7 @@ public class TcContinueTest extends TestCase {
 
 		};
 		
-		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(b));
+		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
 		assertEquals("Expected TCInvoke",TCContinueMessage._TAG,tag);
 		TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
@@ -360,7 +351,7 @@ public class TcContinueTest extends TestCase {
 						(byte) 0xEF
 				};
 		
-		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(b));
+		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
 		assertEquals("Expected TCContinue",TCContinueMessage._TAG,tag);
 		TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
@@ -481,7 +472,7 @@ public class TcContinueTest extends TestCase {
 									//no user info?
 		};
 		
-		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(b));
+		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
 		assertEquals("Expected TCContinue",TCContinueMessage._TAG,tag);
 		TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
@@ -552,7 +543,7 @@ public class TcContinueTest extends TestCase {
 		
 		};
 		
-		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(b));
+		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
 		assertEquals("Expected TCContinue",TCContinueMessage._TAG,tag);
 		TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
@@ -727,7 +718,7 @@ public class TcContinueTest extends TestCase {
 							(byte) 0xEF
 					};
 		
-		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(b));
+		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
 		assertEquals("Expected TCContinue",TCContinueMessage._TAG,tag);
 		TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);

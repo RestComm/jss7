@@ -25,7 +25,6 @@
  */
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,11 +33,11 @@ import java.util.List;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author baranowb
+ * @author sergey vetyutnev
  * 
  */
 public class ParameterImpl implements Parameter {
@@ -141,7 +140,7 @@ public class ParameterImpl implements Parameter {
 			List<Parameter> paramsList = new ArrayList<Parameter>();
 			// else we try to decode :)
 			try {
-				AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(this.data));
+				AsnInputStream ais = new AsnInputStream(this.data);
 				while (ais.available() > 0) {
 					int tag = ais.readTag();
 					Parameter _p = TcapFactory.createParameter(tag, ais);
@@ -152,7 +151,7 @@ public class ParameterImpl implements Parameter {
 				this.parameters = new Parameter[paramsList.size()];
 				this.parameters = paramsList.toArray(this.parameters);
 			} catch (Exception e) {
-				throw new IllegalArgumentException("Failed to parse raw data into constrcuted parameter", e);
+				throw new IllegalArgumentException("Failed to parse raw data into constructed parameter", e);
 			}
 		}
 		return this.parameters;
@@ -178,23 +177,12 @@ public class ParameterImpl implements Parameter {
 		try {
 			primitive = ais.isTagPrimitive();
 			tagClass = ais.getTagClass();
-			int len;
-
-			len = ais.readLength();
-
-			if (len == Tag.Indefinite_Length) {
-				throw new ParseException("Undefined length is not supported.");
-			}
-			data = new byte[len];
-			if (len != 0) {
-				int tlen = ais.read(data);
-				if (tlen != len) {
-					throw new ParseException("Not enough data read, expected: " + len + ", actual: " + tlen);
-				}
-			}
-
+			data = ais.readSequence();
+			
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while decoding the parameter: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new ParseException("AsnException while decoding the parameter: " + e.getMessage(), e);
 		}
 	}
 

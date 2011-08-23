@@ -34,6 +34,7 @@ import org.mobicents.protocols.asn.Tag;
 
 /**
  * @author baranowb
+ * @author sergey vetyutnev
  * 
  */
 public class ResultSourceDiagnosticImpl implements ResultSourceDiagnostic {
@@ -102,50 +103,42 @@ public class ResultSourceDiagnosticImpl implements ResultSourceDiagnostic {
 	 * .asn.AsnInputStream)
 	 */
 	public void decode(AsnInputStream ais) throws ParseException {
-		int len;
 		try {
-			len = ais.readLength();
-
-			if (len > ais.available()) {
-				throw new ParseException("Not enough data.");
-			}
+			AsnInputStream localAis = ais.readSequenceStream();
 
 			// int make read whole thing?
-			int tag = ais.readTag();
-			if (tag == _TAG_U) {
-				len = ais.readLength();
-				if (len > ais.available()) {
-					throw new ParseException("Not enough data.");
-				}
-				tag = ais.readTag();
-				if(tag != Tag.INTEGER)
-				{
-					throw new ParseException("Expected Integer tag, found: "+tag);
-				}
-				long t = ais.readInteger();
-				this.userType = DialogServiceUserType.getFromInt(t);
-				return;
-			}
+			int tag = localAis.readTag();
+			if (localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+				throw new ParseException("Error while decoding AARE-apdu.result-dource-diagnostic sequence part: bad tag class: tagClass=" + localAis.getTagClass());
 
-			if (tag == _TAG_P) {
-				len = ais.readLength();
-				if (len > ais.available()) {
-					throw new ParseException("Not enough data.");
-				}
-				tag = ais.readTag();
-				if(tag != Tag.INTEGER)
-				{
-					throw new ParseException("Expected Integer tag, found: "+tag);
-				}
-				long t = ais.readInteger();
+			switch (tag) {
+			case _TAG_U:
+				AsnInputStream localAis2 = localAis.readSequenceStream();
+				tag = localAis2.readTag();
+				if (tag != Tag.INTEGER || localAis2.getTagClass() != Tag.CLASS_UNIVERSAL)
+					throw new ParseException("Error while decoding AARE-apdu.result-dource-diagnostic integer part: bad tag or tag class class: tagClass="
+							+ localAis.getTagClass() + ", tag=" + tag);
+				long t = localAis2.readInteger();
+				this.userType = DialogServiceUserType.getFromInt(t);
+				break;
+
+			case _TAG_P:
+				localAis2 = localAis.readSequenceStream();
+				tag = localAis2.readTag();
+				if (tag != Tag.INTEGER || localAis2.getTagClass() != Tag.CLASS_UNIVERSAL)
+					throw new ParseException("Error while decoding AARE-apdu.result-dource-diagnostic integer part: bad tag or tag class class: tagClass="
+							+ localAis.getTagClass() + ", tag=" + tag);
+				t = localAis2.readInteger();
 				this.providerType = DialogServiceProviderType.getFromInt(t);
-				return;
+				break;
+
+			default:
+				throw new ParseException("Error while decoding AARE-apdu.result-dource-diagnostic sequence part: bad tag: tag=" + tag);
 			}
-			throw new ParseException("Expected on of Diagnostic tags, found: " + tag);
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while decoding ResultSourceDiagnostic: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while decoding ResultSourceDiagnostic: " + e.getMessage(), e);
 		}
 
 		// tag can have on of two values =
@@ -159,41 +152,31 @@ public class ResultSourceDiagnosticImpl implements ResultSourceDiagnostic {
 	 * .asn.AsnOutputStream)
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
-		if (this.userType == null && this.providerType == null) {
-			throw new ParseException("Value not set");
-		}
+		if (this.userType == null && this.providerType == null)
+			throw new ParseException("Error encoding ResultSourceDiagnostic: Value not set");
+		
 		try {
-			AsnOutputStream localAos = new AsnOutputStream();
-			byte[] data = null;
-			if (this.userType != null) {
-				localAos.writeInteger(this.userType.getType());
-				data = localAos.toByteArray();
-				localAos.reset();
-				localAos.writeTag(_TAG_U_CLASS, _TAG_U_PC_PRIMITIVE, _TAG_U);
-				localAos.writeLength(data.length);
-				localAos.write(data);
-				data = localAos.toByteArray();
-				localAos.reset();
+			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG);
+			int pos = aos.StartContentDefiniteLength();
 
+			if (this.userType != null) {
+				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_U);
+				int pos2 = aos.StartContentDefiniteLength();
+				aos.writeInteger(this.userType.getType());
+				aos.FinalizeContent(pos2);			
 			} else {
-				localAos.writeInteger(this.providerType.getType());
-				data = localAos.toByteArray();
-				localAos.reset();
-				localAos.writeTag(_TAG_P_CLASS, _TAG_P_PC_PRIMITIVE, _TAG_P);
-				localAos.writeLength(data.length);
-				localAos.write(data);
-				data = localAos.toByteArray();
-				localAos.reset();
+				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_P);
+				int pos2 = aos.StartContentDefiniteLength();
+				aos.writeInteger(this.providerType.getType());
+				aos.FinalizeContent(pos2);			
 			}
 
-			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
-			aos.writeLength(data.length);
-
-			aos.write(data);
+			aos.FinalizeContent(pos);
+			
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while encoding ResultSourceDiagnostic: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while encoding ResultSourceDiagnostic: " + e.getMessage(), e);
 		}
 
 	}

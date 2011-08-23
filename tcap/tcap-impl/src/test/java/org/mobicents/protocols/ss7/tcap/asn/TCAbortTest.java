@@ -22,41 +22,39 @@
 
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import junit.framework.TestCase;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.tcap.TCAPTestUtils;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
 
 /**
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class TCAbortTest extends TestCase {
 
-	private void compareArrays(byte[] expected, byte[] encoded) {
-		boolean same = Arrays.equals(expected, encoded);
-		assertTrue("byte[] dont match, expected|encoded \n"
-				+ Arrays.toString(expected) + "\n" + Arrays.toString(encoded),
-				same);
+	private byte[] getDataDialogPort() {
+		return new byte[] { 0x67, 0x2E, 0x49, 0x04, 0x7B, (byte) 0xA5, 0x34, 0x13, 0x6B, 0x26, 0x28, 0x24, 0x06, 0x07, 0x00, 0x11, (byte) 0x86, 0x05, 0x01,
+				0x01, 0x01, (byte) 0xA0, 0x19, 0x64, 0x17, (byte) 0x80, 0x01, 0x00, (byte) 0xBE, 0x12, 0x28, 0x10, 0x06, 0x07, 0x04, 0x00, 0x00, 0x01, 0x01,
+				0x01, 0x01, (byte) 0xA0, 0x05, (byte) 0xA3, 0x03, 0x0A, 0x01, 0x00 };
 	}
 
+	private byte[] getDataAbortCause() {
+		return new byte[] { 103, 9, 73, 4, 123, -91, 52, 19, 74, 1, 125 };
+	}
+	
 	@org.junit.Test
 	public void testBasicTCAbortTestEncode() throws IOException, ParseException {
 
 		//This Raw data is taken from ussd-abort- from msc2.txt
-		byte[] expected = new byte[] { 0x67, 0x2E, 0x49, 0x04, 0x7B,
-				(byte) 0xA5, 0x34, 0x13, 0x6B, 0x26, 0x28, 0x24, 0x06, 0x07,
-				0x00, 0x11, (byte) 0x86, 0x05, 0x01, 0x01, 0x01, (byte) 0xA0,
-				0x19, 0x64, 0x17, (byte) 0x80, 0x01, 0x00, (byte) 0xBE, 0x12,
-				0x28, 0x10, 0x06, 0x07, 0x04, 0x00, 0x00, 0x01, 0x01, 0x01,
-				0x01, (byte) 0xA0, 0x05, (byte) 0xA3, 0x03, 0x0A, 0x01, 0x00 };
+		byte[] expected = getDataDialogPort();
 
 		TCAbortMessageImpl tcAbortMessage = new TCAbortMessageImpl();
 		tcAbortMessage.setDestinationTransactionId(2074424339l);
@@ -92,20 +90,28 @@ public class TCAbortTest extends TestCase {
 		
 		TCAPTestUtils.compareArrays(expected, data);
 
+		
+		expected = getDataAbortCause();
+
+		tcAbortMessage = new TCAbortMessageImpl();
+		tcAbortMessage.setDestinationTransactionId(2074424339l);
+		tcAbortMessage.setPAbortCause(PAbortCauseType.DialogueIdleTimeout);
+
+		aos = new AsnOutputStream();
+		tcAbortMessage.encode(aos);
+		data = aos.toByteArray();
+		
+		TCAPTestUtils.compareArrays(expected, data);
+		
 	}
 
 	@org.junit.Test
 	public void testBasicTCAbortTestDecode() throws IOException, ParseException {
 
 		//This Raw data is taken from ussd-abort- from msc2.txt
-		byte[] data = new byte[] { 0x67, 0x2E, 0x49, 0x04, 0x7B,
-				(byte) 0xA5, 0x34, 0x13, 0x6B, 0x26, 0x28, 0x24, 0x06, 0x07,
-				0x00, 0x11, (byte) 0x86, 0x05, 0x01, 0x01, 0x01, (byte) 0xA0,
-				0x19, 0x64, 0x17, (byte) 0x80, 0x01, 0x00, (byte) 0xBE, 0x12,
-				0x28, 0x10, 0x06, 0x07, 0x04, 0x00, 0x00, 0x01, 0x01, 0x01,
-				0x01, (byte) 0xA0, 0x05, (byte) 0xA3, 0x03, 0x0A, 0x01, 0x00 };
+		byte[] data = getDataDialogPort();
 
-		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(data));
+		AsnInputStream ais = new AsnInputStream(data);
 		int tag = ais.readTag();
 		assertEquals("Expected TCAbort", TCAbortMessage._TAG, tag);
 
@@ -122,6 +128,21 @@ public class TCAbortTest extends TestCase {
 		DialogAPDU dialogApdu = dp.getDialogAPDU();
 		
 		assertNotNull(dialogApdu);
+
+
+		data = getDataAbortCause();
+		ais = new AsnInputStream(data);
+		tag = ais.readTag();
+		assertEquals("Expected TCAbort", TCAbortMessage._TAG, tag);
+
+		impl = new TCAbortMessageImpl();
+		impl.decode(ais);
+		
+		assertTrue(2074424339 == impl.getDestinationTransactionId());
+		
+		dp = impl.getDialogPortion();
+		assertNull(dp);
+		assertEquals(PAbortCauseType.DialogueIdleTimeout, impl.getPAbortCause());
 	}
 
 	public final static String dump(byte[] buff, int size, boolean asBits) {

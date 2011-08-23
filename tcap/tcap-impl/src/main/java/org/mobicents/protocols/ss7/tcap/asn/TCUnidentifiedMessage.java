@@ -22,14 +22,12 @@
 
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
 
 /**
  * @author amit bhayani
@@ -67,25 +65,7 @@ public class TCUnidentifiedMessage implements Encodable {
 
 	public void decode(AsnInputStream ais) throws ParseException {
 		try {
-			int len = ais.readLength();
-
-			// Lets not make this check
-			// if (len > ais.available()) {
-			// throw new ParseException("Not enough data: " + ais.available());
-			// }
-
-			if (len == Tag.Indefinite_Length) {
-				throw new ParseException("Undefined len not supported");
-			}
-
-			byte[] data = new byte[len];
-
-			// Lets not throw exception here as it could be partial data
-			// if (len != ais.read(data)) {
-			// throw new ParseException("Not enough data read.");
-			// }
-
-			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(data));
+			AsnInputStream localAis = ais.readSequenceStream();
 
 			int tag = localAis.readTag();
 			if (tag != _TAG_OTX) {

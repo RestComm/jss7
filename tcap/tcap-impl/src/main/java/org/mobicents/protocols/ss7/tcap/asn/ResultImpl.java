@@ -34,6 +34,7 @@ import org.mobicents.protocols.asn.Tag;
 
 /**
  * @author baranowb
+ * @author sergey vetyutnev
  * 
  */
 public class ResultImpl implements Result {
@@ -76,26 +77,20 @@ public class ResultImpl implements Result {
 	 */
 	public void decode(AsnInputStream ais) throws ParseException {
 
-		int len;
 		try {
-			len = ais.readLength();
+			AsnInputStream localAis = ais.readSequenceStream();
 
-			if (len > ais.available()) {
-				throw new ParseException("Not enough data: " + ais.available());
-			}
-
-			int tag = ais.readTag();
-			if (tag != Tag.INTEGER) {
-				throw new ParseException("Expected INTEGER tag, found: " + tag);
-
-			}
+			int tag = localAis.readTag();
+			if (tag != Tag.INTEGER && localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
+				throw new ParseException("Error while decoding AARE-apdu.result: bad tag or tag class: tag=" + tag + ", tagClass=" + localAis.getTagClass());
+			
 			// y, its a bit of enum, should be ok to cast :)
-			long t = ais.readInteger();
+			long t = localAis.readInteger();
 			this.resultType = ResultType.getFromInt(t);
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while decoding Result: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while decoding Result: " + e.getMessage(), e);
 		}
 	}
 
@@ -107,20 +102,20 @@ public class ResultImpl implements Result {
 	 * .asn.AsnOutputStream)
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
-		if (resultType == null) {
-			throw new ParseException("No type set!");
-		}
+		
+		if (resultType == null)
+			throw new ParseException("Error encoding Result: ResultType must not be null");
+		
 		try {
-			AsnOutputStream localAos = new AsnOutputStream();
-			localAos.writeInteger(this.resultType.getType());
-			byte[] b = localAos.toByteArray();
-			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
-			aos.writeLength(b.length);
-			aos.write(b);
+			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG);
+			int pos = aos.StartContentDefiniteLength();
+			aos.writeInteger(this.resultType.getType());
+			aos.FinalizeContent(pos);
+
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while encoding Result: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while encoding Result: " + e.getMessage(), e);
 		}
 	}
 

@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.tcap.asn;
 import java.util.BitSet;
 
 import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.asn.Tag;
 
 public interface UserInformation extends Encodable {
@@ -37,9 +38,9 @@ public interface UserInformation extends Encodable {
 
 	public void setEncodeType(byte[] data);
 
-	public BitSet getEncodeBitStringType() throws AsnException;
+	public BitSetStrictLength getEncodeBitStringType() throws AsnException;
 
-	public void setEncodeBitStringType(BitSet data);
+	public void setEncodeBitStringType(BitSetStrictLength data);
 
 
 	/**
@@ -100,13 +101,13 @@ public interface UserInformation extends Encodable {
 	/**
 	 * @return the objDescriptorValue
 	 */
-	public Object getObjDescriptorValue();
+	public String getObjDescriptorValue();
 
 	/**
 	 * @param objDescriptorValue
 	 *            the objDescriptorValue to set
 	 */
-	public void setObjDescriptorValue(Object objDescriptorValue);
+	public void setObjDescriptorValue(String objDescriptorValue);
 
 	/**
 	 * @return the asn

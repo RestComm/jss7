@@ -25,9 +25,7 @@
  */
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -64,20 +62,17 @@ public class UserInformationImpl extends External implements UserInformation {
 	public void decode(AsnInputStream ais) throws ParseException {
 
 		try {
-			int length = ais.readLength();
-			int tag = ais.readTag();
+			AsnInputStream localAis = ais.readSequenceStream();
 
-			if (tag != Tag.EXTERNAL) {
-				throw new AsnException(
-						"Wrong value of tag, expected EXTERNAL, found: " + tag);
-			}
+			int tag = localAis.readTag();
+			if (tag != Tag.EXTERNAL || localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
+				throw new AsnException("Error decoding UserInformation.sequence: wrong tag or tag class: tag=" + tag + ", tagClass=" + localAis.getTagClass());
 
-			super.decode(ais);
-		} catch (AsnException e) {
-			e.printStackTrace();
+			super.decode(localAis);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ParseException("IOException when decoding UserInformation: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new ParseException("AsnException when decoding UserInformation: " + e.getMessage(), e);
 		}
 	}
 
@@ -88,24 +83,17 @@ public class UserInformationImpl extends External implements UserInformation {
 	 */
 	
 	public void encode(AsnOutputStream aos) throws ParseException {
-		// this will have EXTERNAL
-		AsnOutputStream localAsn = new AsnOutputStream();
-		try {
-			super.encode(localAsn);
-		} catch (AsnException e) {
-			throw new ParseException(e);
-		}
 
-		// now lets write ourselves
 		try {
-			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
-			byte[] externalData = localAsn.toByteArray();
-			aos.writeLength(externalData.length);
-			aos.write(externalData);
-		} catch (IOException e) {
-			throw new ParseException(e);
+			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG);
+			int pos = aos.StartContentDefiniteLength();
+
+			super.encode(aos);
+			
+			aos.FinalizeContent(pos);
+			
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException when encoding UserInformation: " + e.getMessage(), e);
 		}
 	}
 }

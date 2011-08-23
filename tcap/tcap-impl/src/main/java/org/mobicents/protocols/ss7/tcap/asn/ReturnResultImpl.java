@@ -25,10 +25,7 @@
  */
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -42,7 +39,8 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
 /**
  * @author baranowb
  * @author amit bhayani
- * 
+ * @author sergey vetyutnev
+ *
  */
 public class ReturnResultImpl implements ReturnResult {
 
@@ -143,69 +141,39 @@ public class ReturnResultImpl implements ReturnResult {
 	public void decode(AsnInputStream ais) throws ParseException {
 
 		try {
-			int len = ais.readLength();
-			if (len == Tag.Indefinite_Length) {
-				throw new ParseException("Unspiecified length is not supported.");
-			}
-
-			byte[] data = new byte[len];
-			if (len != ais.read(data)) {
-				throw new ParseException("Not enough data read.");
-			}
-
-			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(data));
+			AsnInputStream localAis = ais.readSequenceStream();
 
 			int tag = localAis.readTag();
-			if (tag != _TAG_IID) {
-				throw new ParseException("Expected InvokeID tag, found: " + tag);
-			}
+			if (tag != _TAG_IID || localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
+				throw new ParseException("Error while decoding ReturnLast: bad tag or tag class for InvokeID: tag=" + tag + ", tagClass = "
+						+ localAis.getTagClass());
 
 			this.invokeId = localAis.readInteger();
 
-			if (localAis.available() <= 0) {
+			if (localAis.available() <= 0)
 				return;
-			}
 
 			tag = localAis.readTag();
+			if (tag != Tag.SEQUENCE || localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
+				throw new ParseException("Error while decoding ReturnLast: bad tag or tag class for sequence: tag=" + tag + ", tagClass = "
+						+ localAis.getTagClass());
 
-			if (tag == Tag.SEQUENCE) {
-				// sequence of OperationCode
+			// sequence of OperationCode
+			AsnInputStream sequenceStream = localAis.readSequenceStream();
 
-				len = localAis.readLength();
-				if (len == Tag.Indefinite_Length) {
-					throw new ParseException("Unspiecified length is not supported.");
-				}
+			tag = sequenceStream.readTag();
+			if (tag != OperationCode._TAG_GLOBAL && tag != OperationCode._TAG_LOCAL || localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
+				throw new ParseException("Error while decoding ReturnLast: bad tag or tag class for operationCode: tag=" + tag + ", tagClass = "
+						+ localAis.getTagClass());
+			this.operationCode = TcapFactory.createOperationCode(tag, sequenceStream);
 
-				data = new byte[len];
-				int tlen = localAis.read(data);
-				if (len != tlen) {
-					throw new ParseException("Not enough data read. Expected: " + len + ", actaul: " + tlen);
-				}
-				AsnInputStream sequenceStream = new AsnInputStream(new ByteArrayInputStream(data));
-
-				tag = sequenceStream.readTag();
-				if (tag == OperationCode._TAG_GLOBAL || tag == OperationCode._TAG_LOCAL) {
-					this.operationCode = TcapFactory.createOperationCode(tag, sequenceStream);
-				} else {
-					throw new ParseException("Expected Global|Local operation code.");
-				}
-
-				if (sequenceStream.available() > 0) {
-					tag = sequenceStream.readTag();
-				
-					this.parameter = TcapFactory.createParameter(tag, sequenceStream);
-					
-				} else {
-					throw new ParseException("Not enought data to decode Parameter part of result!");
-				}
-			} else {
-				throw new ParseException("Expected SEQUENCE tag for OperationCode and Parameter part, found: " + tag);
-			}
+			tag = sequenceStream.readTag();
+			this.parameter = TcapFactory.createParameter(tag, sequenceStream);
 
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while decoding ReturnResult: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while decoding ReturnResult: " + e.getMessage(), e);
 		}
 
 	}
@@ -219,37 +187,29 @@ public class ReturnResultImpl implements ReturnResult {
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
 
-		if (invokeId == null) {
+		if (invokeId == null)
 			throw new ParseException("No Invoke ID set.");
-		}
+		
 		try {
-			AsnOutputStream localAos = new AsnOutputStream();
-			byte[] data = null;
+			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG);
+			int pos = aos.StartContentDefiniteLength();
+			
+			aos.writeInteger(this.invokeId);			
+			
 			if (this.operationCode != null && this.parameter != null) {
-				this.operationCode.encode(localAos);
-				this.parameter.encode(localAos);
-				data = localAos.toByteArray();
-				localAos.reset();
-			} else {
-				// FIXME: add checks for both present?
-			}
+				aos.writeTag(Tag.CLASS_UNIVERSAL, false, Tag.SEQUENCE);
+				int pos2 = aos.StartContentDefiniteLength();
+				this.operationCode.encode(aos);
+				this.parameter.encode(aos);
+				aos.FinalizeContent(pos2);
+			}			
+			
+			aos.FinalizeContent(pos);
 
-			// form msg from top.
-			localAos.writeInteger(_TAG_IID_CLASS, _TAG_IID, this.invokeId);
-			if (data != null) {
-				localAos.writeTag(Tag.CLASS_UNIVERSAL, false, Tag.SEQUENCE);
-				localAos.writeLength(data.length);
-				localAos.write(data);
-			}
-			data = localAos.toByteArray();
-
-			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
-			aos.writeLength(data.length);
-			aos.write(data);
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while encoding ReturnResult: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while encoding ReturnResult: " + e.getMessage(), e);
 		}
 	}
 

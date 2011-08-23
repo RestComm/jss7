@@ -38,6 +38,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
 
 /**
  * @author baranowb
+ * @author sergey vetyutnev
  * 
  */
 public class RejectImpl implements Reject {
@@ -117,29 +118,32 @@ public class RejectImpl implements Reject {
 	public void decode(AsnInputStream ais) throws ParseException {
 
 		try {
-			int len = ais.readLength();
-			if (len == Tag.Indefinite_Length) {
-				throw new ParseException("Undefined length is not supported.");
-			}
-			if (len > ais.available()) {
-				throw new ParseException("Not enough data.");
-			}
-			int tag = ais.readTag();
-			if (tag == _TAG_IID) {
-				this.invokeId = ais.readInteger();
-				tag = ais.readTag();
-			} else if (tag == Tag.NULL) {
-				// its ok, read len
-				ais.readLength();
-				tag = ais.readTag();
+			AsnInputStream localAis = ais.readSequenceStream();
+
+			int tag = localAis.readTag();
+			if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
+				throw new ParseException("Error while decoding Reject: bad tag class for InvokeID or NULL: tagClass = " + localAis.getTagClass());
+			switch(tag) {
+			case _TAG_IID:
+				this.invokeId = localAis.readInteger();
+				break;
+			case Tag.NULL:
+				localAis.readNull();
+				break;
 			}
 
+			tag = localAis.readTag();
+			if (localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+				throw new ParseException("Error while decoding Reject: bad tag class for a problem: tagClass = " + localAis.getTagClass());
 			ProblemType pt = ProblemType.getFromInt(tag);
-			this.problem = TcapFactory.createProblem(pt, ais);
+			if (pt == null)
+				throw new ParseException("Error while decoding Reject: ProblemType not found");
+			this.problem = TcapFactory.createProblem(pt, localAis);
+			
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while decoding Reject: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while decoding Reject: " + e.getMessage(), e);
 		}
 
 	}
@@ -157,25 +161,21 @@ public class RejectImpl implements Reject {
 			throw new ParseException("Problem not set!");
 		}
 		try {
-			AsnOutputStream localAos = new AsnOutputStream();
+			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG);
+			int pos = aos.StartContentDefiniteLength();
 
-			if (this.invokeId == null) {
-				localAos.writeTag(Tag.CLASS_UNIVERSAL, true, Tag.NULL);
-				localAos.writeLength(0x00);
-			} else {
-
-				localAos.writeInteger(_TAG_IID_CLASS, _TAG_IID, this.invokeId);
-
-			}
-			this.problem.encode(localAos);
-			byte[] data = localAos.toByteArray();
-			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
-			aos.writeLength(data.length);
-			aos.write(data);
+			if (this.invokeId == null)
+				aos.writeNull();
+			else
+				aos.writeInteger(this.invokeId);			
+			this.problem.encode(aos);
+			
+			aos.FinalizeContent(pos);
+			
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while encoding Reject: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while encoding Reject: " + e.getMessage(), e);
 		}
 
 	}

@@ -40,6 +40,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 
 /**
  * @author baranowb
+ * @author sergey vetyutnev
  * 
  */
 public class ProblemImpl implements Problem {
@@ -132,18 +133,38 @@ public class ProblemImpl implements Problem {
 
 	
 	public String toString() {
-		return "Problem[type=" + type + ", generalProblemType=" + generalProblemType + ", invokeProblemType=" + invokeProblemType
-				+ ", returnErrorProblemType=" + returnErrorProblemType + ", returnResultProblemType=" + returnResultProblemType + "]";
+		StringBuilder sb = new StringBuilder(); 
+		sb.append("Problem[type=");
+		sb.append(type);
+		sb.append(" ");
+		switch(type) {
+		case General:
+			sb.append("generalProblemType=");
+			sb.append(this.generalProblemType);
+			break;
+		case Invoke:
+			sb.append("invokeProblemType=");
+			sb.append(this.invokeProblemType);
+			break;
+		case ReturnResult:
+			sb.append("returnResultProblemType=");
+			sb.append(this.returnResultProblemType);
+			break;
+		case ReturnError:
+			sb.append("returnErrorProblemType=");
+			sb.append(this.returnErrorProblemType);
+			break;
+		}
+		sb.append("]");
+		
+		return sb.toString();
 	}
 
 	public void decode(AsnInputStream ais) throws ParseException {
 
-		if(type != ProblemType.General)
-		{
-			return;
-		}
 		try {
 			long t = ais.readInteger();
+			
 			switch (type) {
 			case General:
 				this.generalProblemType = GeneralProblemType.getFromInt(t);
@@ -161,10 +182,11 @@ public class ProblemImpl implements Problem {
 				// should not happen
 				throw new ParseException();
 			}
-		} catch (AsnException e) {
-			throw new ParseException(e);
+			
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while decoding Problem: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new ParseException("AsnException while decoding Problem: " + e.getMessage(), e);
 		}
 
 	}
@@ -176,42 +198,38 @@ public class ProblemImpl implements Problem {
 			switch (type) {
 			case General:
 				if(this.generalProblemType == null)
-				{
 					throw new ParseException("Problem Type is General, no specific type set");
-				}
 				
 				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, (int) type.getTypeTag(), this.generalProblemType.getType());
 				break;
+				
 			case Invoke:
 				if(this.invokeProblemType == null)
-				{
 					throw new ParseException("Problem Type is Invoke, no specific type set");
-				}
 				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, (int) type.getTypeTag(), this.invokeProblemType.getType());
 				break;
+				
 			case ReturnError:
 				if(this.returnErrorProblemType == null)
-				{
 					throw new ParseException("Problem Type is ReturnError, no specific type set");
-				}
 				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, (int) type.getTypeTag(), this.returnErrorProblemType.getType());
-				
 				break;
+				
 			case ReturnResult:
 				if(this.returnResultProblemType == null)
-				{
 					throw new ParseException("Problem Type is Result, no specific type set");
-				}
 				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, (int) type.getTypeTag(), this.returnResultProblemType.getType());
 				break;
+				
 			default:
 				// should not happen
 				throw new ParseException();
 			}
-		} catch (AsnException e) {
-			throw new ParseException(e);
+			
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while encoding Problem: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new ParseException("AsnException while encoding Problem: " + e.getMessage(), e);
 		}
 
 	}

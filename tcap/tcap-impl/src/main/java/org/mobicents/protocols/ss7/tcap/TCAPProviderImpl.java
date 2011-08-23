@@ -76,6 +76,7 @@ import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCUserAbortIndicationIm
 /**
  * @author amit bhayani
  * @author baranowb
+ * @author sergey vetyutnev
  * 
  */
 public class TCAPProviderImpl implements TCAPProvider, SccpListener {
@@ -278,7 +279,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 			// FIXME: Qs state that OtxID and DtxID consittute to dialog id.....
 
 			// asnData - it should pass
-			AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(data));
+			AsnInputStream ais = new AsnInputStream(data);
 
 			// this should have TC message tag :)
 			int tag = ais.readTag();

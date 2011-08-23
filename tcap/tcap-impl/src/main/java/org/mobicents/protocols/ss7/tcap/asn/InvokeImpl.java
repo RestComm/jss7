@@ -25,17 +25,16 @@
  */
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.concurrent.Future;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
 import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
-import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.OperationState;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
@@ -46,6 +45,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 /**
  * @author baranowb
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class InvokeImpl implements Invoke {
@@ -198,49 +198,39 @@ public class InvokeImpl implements Invoke {
 	public void decode(AsnInputStream ais) throws ParseException {
 
 		try {
-			int len = ais.readLength();
-			if (ais.available() < len) {
-				throw new ParseException("Not enough data!");
-			}
-			byte[] data = new byte[len];
-			if (data.length != ais.read(data)) {
-				throw new ParseException("Not enought data read.");
-			}
-			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(data));
+			AsnInputStream localAis = ais.readSequenceStream();
+			
+			// invokeId
 			int tag = localAis.readTag();
-			if (tag != _TAG_IID) {
-				throw new ParseException("Expected InvokeID tag, found: " + tag);
-			}
-
+			if (tag != _TAG_IID || localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
+				throw new ParseException("Error while decoding Invoke: bad tag or tag class for InvokeID: tag=" + tag + ", tagClass = "
+						+ localAis.getTagClass());
 			this.invokeId = localAis.readInteger();
 
 			tag = localAis.readTag();
-			if (tag == _TAG_LID) {
-				// optional
+			if (tag == _TAG_LID && localAis.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				// linkedId - optional
 				this.linkedId = localAis.readInteger();
 				tag = localAis.readTag();
 			}
 
-			if (tag == OperationCode._TAG_GLOBAL || tag == OperationCode._TAG_LOCAL) {
-				this.operationCode = TcapFactory.createOperationCode(tag, localAis);
-				if (localAis.available() <= 0) {
-					return;
-				}
-
-			} else {
-				throw new ParseException("Expected Local|Global Operation Code tag, found: " + tag);
-			}
+			// operationCode
+			if (tag != OperationCode._TAG_GLOBAL && tag != OperationCode._TAG_LOCAL || localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
+				throw new ParseException("Error while decoding Invoke: bad tag or tag class for operationCode: tag=" + tag + ", tagClass = "
+						+ localAis.getTagClass());
+			this.operationCode = TcapFactory.createOperationCode(tag, localAis);
 
 			// It could be PARAMETER
+			if (localAis.available() == 0)
+				return;
 			tag = localAis.readTag();
 			this.parameter = TcapFactory.createParameter(tag, localAis);
 
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while decoding Invoke: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while decoding Invoke: " + e.getMessage(), e);
 		}
-
 	}
 
 	/*
@@ -251,35 +241,30 @@ public class InvokeImpl implements Invoke {
 	 * .asn.AsnOutputStream)
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
-		if (this.invokeId == null) {
+		if (this.invokeId == null)
 			throw new ParseException("Invoke ID not set!");
-		}
-		if (this.operationCode == null) {
+		if (this.operationCode == null)
 			throw new ParseException("Operation Code not set!");
-		}
+
 		try {
-			AsnOutputStream localAos = new AsnOutputStream();
+			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG);
+			int pos = aos.StartContentDefiniteLength();
 
-			localAos.writeInteger(_TAG_IID_CLASS, _TAG_IID, this.invokeId);
-			if (this.linkedId != null) {
-				localAos.writeInteger(_TAG_LID_CLASS, _TAG_LID, this.linkedId);
-			}
+			aos.writeInteger(this.invokeId);
+			if (this.linkedId != null)
+				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LID, this.linkedId);
+			this.operationCode.encode(aos);
 
-			this.operationCode.encode(localAos);
-
-			if (this.parameter != null) {
-				this.parameter.encode(localAos);
-			}
-			byte[] data = localAos.toByteArray();
-			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
-			aos.writeLength(data.length);
-			aos.write(data);
+			if (this.parameter != null)
+				this.parameter.encode(aos);
+			
+			aos.FinalizeContent(pos);
+			
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while encoding Invoke: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while encoding Invoke: " + e.getMessage(), e);
 		}
-
 	}
 
 	/**

@@ -25,7 +25,6 @@
  */
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +38,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCUniMessage;
 
 /**
  * @author baranowb
+ * @author sergey vetyutnev
  * 
  */
 public class TCUniMessageImpl implements TCUniMessage {
@@ -101,51 +101,47 @@ public class TCUniMessageImpl implements TCUniMessage {
 	 */
 	public void decode(AsnInputStream ais) throws ParseException {
 		try {
-			int len = ais.readLength();
-			if (len > ais.available()) {
-				throw new ParseException("Not enough data: " + ais.available());
-			}
-			if (len == Tag.Indefinite_Length) {
-				//
-				throw new ParseException("Undefined len not supported");
-			}
-			byte[] data = new byte[len];
-			if(len!=ais.read(data))
-			{
-				throw new ParseException("Not enough data read.");
-			}
-			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(data));
+			AsnInputStream localAis = ais.readSequenceStream();
 
-			int tag = localAis.readTag();
-			if (tag != DialogPortion._TAG) {
-				// we have DP, optional part
-				this.dp = TcapFactory.createDialogPortion(localAis);
-				tag = localAis.readTag();
-			}
-			if (tag != Component._COMPONENT_TAG) {
-				throw new ParseException("Expected ComponentPortion tag, found: " + tag);
-			}
-			len = localAis.readLength();
-			if (len < localAis.available() || len == 0) {
-				throw new ParseException("Not enough data");
-			}
-			List<Component> cps = new ArrayList<Component>();
-			// its iterator :)
-			while (localAis.available() > 0) {
-				Component c = TcapFactory.createComponent(localAis);
-				if(c == null)
-				{
+			while (true) {
+				if (localAis.available() == 0)
+					return;
+				
+				int tag = localAis.readTag();
+				if (localAis.isTagPrimitive() || localAis.getTagClass() != Tag.CLASS_APPLICATION)
+					throw new ParseException(
+							"Error decoding TC-Uni: DialogPortion and Component portion must be constructive and has tag class CLASS_APPLICATION");
+				
+				switch(tag) {
+				case DialogPortion._TAG:
+					this.dp = TcapFactory.createDialogPortion(localAis);
 					break;
-				}
-				cps.add(c);
-			}
+					
+				case Component._COMPONENT_TAG:
+					AsnInputStream compAis = localAis.readSequenceStream();
+					List<Component> cps = new ArrayList<Component>();
+					// its iterator :)
+					while (compAis.available() > 0) {
+						Component c = TcapFactory.createComponent(compAis);
+						if(c == null)
+						{
+							break;
+						}
+						cps.add(c);
+					}
 
-			this.component = new Component[cps.size()];
-			this.component = cps.toArray(this.component);
+					this.component = new Component[cps.size()];
+					this.component = cps.toArray(this.component);
+					break;
+					
+				default:
+					throw new ParseException("Error decoding TC-Uni: DialogPortion and Componebt parsing: bad tag - " + tag);
+				}
+			}
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while decoding TC-Uni: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while decoding TC-Uni: " + e.getMessage(), e);
 		}
 
 	}
@@ -158,49 +154,29 @@ public class TCUniMessageImpl implements TCUniMessage {
 	 * .asn.AsnOutputStream)
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
-		if (this.component == null || this.component.length == 0) {
-			throw new ParseException("Component portion is mandatory.");
-		}
+		
+		if (this.component == null || this.component.length == 0)
+			throw new ParseException("Error encoding TC-Uni: Component portion is mandatory but not defined");
+		
 		try {
-			AsnOutputStream localAos = new AsnOutputStream();
-			byte[] data = null;
-			if (this.component != null) {
-				for (Component c : this.component) {
-					c.encode(localAos);
-				}
-				data = localAos.toByteArray();
-				localAos.reset();
-				localAos.writeTag(Component._COMPONENT_TAG_CLASS, Component._COMPONENT_TAG_PC_PRIMITIVE, Component._COMPONENT_TAG);
-				localAos.writeLength(data.length);
+			
+			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);
+			int pos = aos.StartContentDefiniteLength();
 
-				localAos.write(data);
+			if (this.dp != null)
+				this.dp.encode(aos);
 
-				data = localAos.toByteArray();
-				localAos.reset();
+			aos.writeTag(Tag.CLASS_APPLICATION, false, Component._COMPONENT_TAG);
+			int pos2 = aos.StartContentDefiniteLength();
+			for (Component c : this.component) {
+				c.encode(aos);
 			}
-			if (this.dp != null) {
-				this.dp.encode(localAos);
-				if(data!=null)
-				{
-					localAos.write(data);
-				}
-				data = localAos.toByteArray();
-			}else
-			{
-				if(data!=null)
-				{
-					localAos.write(data);
-				}
-				data = localAos.toByteArray();
-			}
+			aos.FinalizeContent(pos2);
 
-			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
-			aos.writeLength(data.length);
-			aos.write(data);
-		} catch (IOException e) {
-			throw new ParseException(e);
+			aos.FinalizeContent(pos);
+			
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while encoding TC-Uni: " + e.getMessage(), e);
 		}
 
 	}

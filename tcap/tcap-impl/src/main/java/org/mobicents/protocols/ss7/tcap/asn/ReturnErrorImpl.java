@@ -25,11 +25,7 @@
  */
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -43,6 +39,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
 
 /**
  * @author baranowb
+ * @author sergey vetyutnev
  * 
  */
 public class ReturnErrorImpl implements ReturnError {
@@ -53,7 +50,6 @@ public class ReturnErrorImpl implements ReturnError {
 	// mandatory
 	private ErrorCode errorCode;
 
-	//FIXME: check this aganist ASN and traces!
 	// optional
 	private Parameter parameter;
 
@@ -142,23 +138,23 @@ public class ReturnErrorImpl implements ReturnError {
 	public void decode(AsnInputStream ais) throws ParseException {
 
 		try {
-			int len = ais.readLength();
-			if (ais.available() < len) {
-				throw new ParseException("Not enough data!");
-			}
-			byte[] data = new byte[len];
-			if (data.length != ais.read(data)) {
-				throw new ParseException("Not enought data read.");
-			}
-			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(data));
-			int tag = localAis.readTag();
-			if (tag != _TAG_IID) {
-				throw new ParseException("Expected InvokeID tag, found: " + tag);
-			}
+			AsnInputStream localAis = ais.readSequenceStream();
 
+			// invokeId
+			int tag = localAis.readTag();
+			if (tag != _TAG_IID || localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
+				throw new ParseException("Error while decoding ReturnError: bad tag or tag class for InvokeID: tag=" + tag + ", tagClass = "
+						+ localAis.getTagClass());
 			this.invokeId = localAis.readInteger();
 
+			if (localAis.available() == 0) {
+				// next parameter (errorCode) is mandatory but it sometimes absent in live trace
+				return;
+			}
+			
 			tag = localAis.readTag();
+			if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
+				throw new ParseException("Error while decoding ReturnError: bad tag class for ErrorCode: tagClass = " + localAis.getTagClass());
 			this.errorCode = TcapFactory.createErrorCode();
 			switch (tag) {
 			case ErrorCode._TAG_GLOBAL:
@@ -168,23 +164,19 @@ public class ReturnErrorImpl implements ReturnError {
 				((ErrorCodeImpl) this.errorCode).setErrorCodeType(ErrorCodeType.Local);
 				break;
 			default:
-				throw new ParseException("Expected Local|Globa error code, found: " + tag);
+				throw new ParseException("Error while decoding ReturnError: bad tag for ErrorCode: tag= " + tag);
 			}
 			this.errorCode.decode(localAis);
 			
-			if(localAis.available() == 0)
-			{
-				return;//rest is optional
-			}
-			
+			if (localAis.available() == 0)
+				return;// rest is optional
 			tag = localAis.readTag();
 			this.parameter = TcapFactory.createParameter(tag, localAis);
 		
-		
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while decoding ReturnError: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while decoding ReturnError: " + e.getMessage(), e);
 		}
 	}
 
@@ -197,31 +189,27 @@ public class ReturnErrorImpl implements ReturnError {
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
 
-		if (this.invokeId == null) {
+		if (this.invokeId == null)
 			throw new ParseException("Invoke ID not set!");
-		}
-		if (this.errorCode == null) {
+		if (this.errorCode == null)
 			throw new ParseException("Error Code not set!");
-		}
+		
 		try {
-			AsnOutputStream localAos = new AsnOutputStream();
-
-			localAos.writeInteger(_TAG_IID_CLASS, _TAG_IID, this.invokeId);
-
-			this.errorCode.encode(localAos);
-
-			if (this.parameter != null) {
-				this.parameter.encode(localAos);
-			}
+			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG);
+			int pos = aos.StartContentDefiniteLength();
 			
-			byte[] data = localAos.toByteArray();
-			aos.writeTag(_TAG_CLASS, _TAG_PC_PRIMITIVE, _TAG);
-			aos.writeLength(data.length);
-			aos.write(data);
+			aos.writeInteger(this.invokeId);
+			this.errorCode.encode(aos);
+
+			if (this.parameter != null)
+				this.parameter.encode(aos);
+			
+			aos.FinalizeContent(pos);
+			
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while encoding ReturnError: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new ParseException("AsnException while encoding ReturnError: " + e.getMessage(), e);
 		}
 
 	}

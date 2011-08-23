@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.tcap.asn;
 import java.io.IOException;
 
 import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
@@ -48,6 +49,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCUniMessage;
 /**
  * @author baranowb
  * @author amit bhayani
+ * @author sergey vetyutnev
  *
  */
 public final class TcapFactory {
@@ -64,12 +66,15 @@ public final class TcapFactory {
 
 	public static DialogAPDU createDialogAPDU(AsnInputStream ais, int tag, boolean unidirectional) throws ParseException {
 
+		if (ais.getTagClass() != Tag.CLASS_APPLICATION)
+			throw new ParseException("Error decoding dialog APDU: wrong tag class for APDU, found: " + ais.getTagClass());
+		
 		if (unidirectional) {
 			// only one
 			if (tag != DialogAPDU._TAG_UNIDIRECTIONAL) {
-				throw new ParseException("Wrong tag for APDU, found: " + tag);
+				throw new ParseException("Error decoding dialog APDU: wrong tag for APDU, found: " + tag);
 			} else {
-				// craete UNIPDU
+				// create UNIPDU
 
 				DialogUniAPDUImpl d = new DialogUniAPDUImpl();
 				d.decode(ais);
@@ -89,7 +94,6 @@ public final class TcapFactory {
 				return d;
 
 			}
-
 			if (tag == DialogAPDU._TAG_ABORT) {
 				DialogAbortAPDUImpl da = new DialogAbortAPDUImpl();
 				da.decode(ais);
@@ -98,7 +102,6 @@ public final class TcapFactory {
 
 			throw new ParseException("Wrong tag for APDU, found: " + tag);
 		}
-
 	}
 	
 	public static DialogRequestAPDU createDialogAPDURequest()
@@ -270,39 +273,37 @@ public final class TcapFactory {
 			int tag = localAis.readTag();
 
 			Component c = null;
-			if (tag == Invoke._TAG) {
-				//InvokeClass Doesn't matter here. Look Table 10/Q.771
+			if (localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+				throw new ParseException("Error decoding a component: bad tag class: " + localAis.getTagClass());
+
+			switch (tag) {
+			case Invoke._TAG:
 				c = createComponentInvoke();
 				c.decode(localAis);
-
-			}else if(tag == ReturnResult._TAG)
-			{
-				c =  createComponentReturnResult();
+				break;
+			case ReturnResult._TAG:
+				c = createComponentReturnResult();
 				c.decode(localAis);
-			}else if(tag == ReturnResultLast._TAG)
-			{
-				c =  createComponentReturnResultLast();
+				break;
+			case ReturnResultLast._TAG:
+				c = createComponentReturnResultLast();
 				c.decode(localAis);
-			} else if(tag == Reject._TAG)
-			{
-				c =  createComponentReject();
+				break;
+			case ReturnError._TAG:
+				c = createComponentReturnError();
 				c.decode(localAis);
-			}else if(tag == ReturnError._TAG)
-			{
-				c =  createComponentReturnError();
+				break;
+			case Reject._TAG:
+				c = createComponentReject();
 				c.decode(localAis);
-				//FIXME: tmp support for undefined LEN
-			} else if(tag == 0 && localAis.readLength() == 0)
-			{
-				return null;
+				break;
+			default:
+				throw new ParseException("Error decoding a component: bad tag: " + tag);
 			}
-
-			if (c == null) {
-				throw new ParseException("Unknown component, tag: " + tag);
-			}
+			
 			return c;
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new ParseException("IOException while decoding a component: " + e.getMessage(), e);
 		}
 	}
 
