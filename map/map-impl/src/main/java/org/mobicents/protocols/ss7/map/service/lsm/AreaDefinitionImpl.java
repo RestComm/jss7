@@ -22,6 +22,10 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
+import java.io.IOException;
+
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -29,15 +33,12 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaDefinition;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaList;
-import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
-import org.mobicents.protocols.ss7.tcap.asn.ParseException;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author amit bhayani
  * 
  */
-public class AreaDefinitionImpl extends MAPPrimitiveBase implements AreaDefinition {
+public class AreaDefinitionImpl implements AreaDefinition {
 
 	private AreaList areaList = null;
 
@@ -68,43 +69,113 @@ public class AreaDefinitionImpl extends MAPPrimitiveBase implements AreaDefiniti
 		return this.areaList;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+	 */
 	@Override
-	public void decode(Parameter param) throws MAPParsingComponentException {
-		Parameter[] parameters = param.getParameters();
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
 
-		if (parameters == null || parameters.length != 1) {
-			throw new MAPParsingComponentException("Error while decoding AreaDefinition: Needs at least 1 mandatory parameters, found"
-					+ (parameters == null ? null : parameters.length), MAPParsingComponentExceptionReason.MistypedParameter);
-		}
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass()
+	 */
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
 
-		Parameter p = parameters[0];
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive()
+	 */
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
 
-		if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || p.isPrimitive() || p.getTag() != 0) {
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
+	 */
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
+	 */
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}		
+	}
+	
+	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+		
+		int tag = ais.readTag();
+
+		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive() || tag != 0) {
 			throw new MAPParsingComponentException(
 					"Error while decoding AreaDefinition: Parameter 0 [areaList [0] AreaList] bad tag class, tag or not primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
-
+		
 		this.areaList = new AreaListImpl();
-		this.areaList.decode(p);
+		this.areaList.decodeAll(ais);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
+	 */
 	@Override
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);		
+	}
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding reportSMDeliveryStatusRequest: " + e.getMessage(), e);
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.areaList == null) {
 			throw new MAPException("Error while encoding AreaDefinition the mandatory parameter[areaList [0] AreaList] is not defined");
 		}
-
-		Parameter p = this.areaList.encode();
-		p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-		p.setTag(0);
-		p.setPrimitive(false);
-		try {
-			p.encode(asnOs);
-		} catch (ParseException e) {
-			throw new MAPException("Error while encoding AreaDefinition. Encdoing fialed for mandatory parameter[areaList [0] AreaList] is not defined", e);
-		}
+		
+		this.areaList.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 0);
 	}
+
+
 
 }

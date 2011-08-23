@@ -33,14 +33,15 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.Area;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaDefinition;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaList;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaType;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author amit bhayani
@@ -68,15 +69,14 @@ public class AreaDefinitionTest {
 	@Test
 	public void testDecode() throws Exception {
 		// TODO this is self generated trace. We need trace from operator
-		byte[] data = new byte[] { (byte) 0xa0, 0x14, 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08, (byte) 0x80, 0x01,
+		byte[] data = new byte[] { 0x30, 0x16, (byte) 0xa0, 0x14, 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08, (byte) 0x80, 0x01,
 				0x03, (byte) 0x81, 0x03, 0x04, 0x30, 0x31 };
-
-		Parameter p = TcapFactory.createParameter();
-		p.setPrimitive(false);
-		p.setData(data);
+		
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
 
 		AreaDefinition areaDef = new AreaDefinitionImpl();
-		areaDef.decode(p);
+		areaDef.decodeAll(asn);
 
 		AreaList areaList = areaDef.getAreaList();
 
@@ -91,7 +91,7 @@ public class AreaDefinitionTest {
 	@Test
 	public void testEncode() throws Exception {
 		// TODO this is self generated trace. We need trace from operator
-		byte[] data = new byte[] { (byte) 0xa0, 0x14, 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08, (byte) 0x80, 0x01,
+		byte[] data = new byte[] { 0x30, 0x16, (byte) 0xa0, 0x14, 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08, (byte) 0x80, 0x01,
 				0x03, (byte) 0x81, 0x03, 0x04, 0x30, 0x31 };
 
 		Area area1 = new AreaImpl(AreaType.utranCellId, new byte[] { 0x09, 0x70, 0x71 });
@@ -101,11 +101,14 @@ public class AreaDefinitionTest {
 
 		AreaDefinition areaDef = new AreaDefinitionImpl(areaList);
 
-		Parameter param = areaDef.encode();
-		assertNotNull(param);
-		assertTrue(param.isPrimitive());
+		
+		AsnOutputStream asnOS = new AsnOutputStream();
+		areaDef.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		
+		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, param.getData()));
+
+		assertTrue(Arrays.equals(data, encodedData));
 
 	}
 }

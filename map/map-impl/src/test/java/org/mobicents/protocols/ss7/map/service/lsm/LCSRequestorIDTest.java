@@ -34,15 +34,16 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSRequestorID;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
- * TODO Add test for LCS-FormatIndicator 
+ * TODO Add test for LCS-FormatIndicator
  * 
  * @author amit bhayani
  * 
@@ -69,19 +70,17 @@ public class LCSRequestorIDTest {
 
 	@Test
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { (byte) 0x80, 0x01, 0x0f, (byte) 0x81, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72,
-				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
+		byte[] data = new byte[] { (byte) 0xb0, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x81, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3,
+				0x65, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
 
-		Parameter p = TcapFactory.createParameter();
-		p.setPrimitive(false);
-		p.setData(data);
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
 
 		LCSRequestorID lcsRequestorID = new LCSRequestorIDImpl();
-		lcsRequestorID.decode(p);
+		lcsRequestorID.decodeAll(asn);
 
 		assertEquals((byte) 0x0f, lcsRequestorID.getDataCodingScheme());
 		assertNotNull(lcsRequestorID.getRequestorIDString());
-		lcsRequestorID.getRequestorIDString().decode();
 		assertEquals("ndmgapp2ndmgapp2", lcsRequestorID.getRequestorIDString().getString());
 
 		assertNull(lcsRequestorID.getLCSFormatIndicator());
@@ -89,13 +88,16 @@ public class LCSRequestorIDTest {
 
 	@Test
 	public void testEncode() throws Exception {
-		byte[] data = new byte[] { (byte) 0x80, 0x01, 0x0f, (byte) 0x81, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72,
-				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
+		byte[] data = new byte[] { (byte) 0xb0, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x81, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3,
+				0x65, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
 
 		USSDString nameString = mapServiceFactory.createUSSDString("ndmgapp2ndmgapp2");
 		LCSRequestorID lcsRequestorID = new LCSRequestorIDImpl((byte) 0x0f, nameString, null);
-		Parameter p = lcsRequestorID.encode();
+		AsnOutputStream asnOS = new AsnOutputStream();
+		lcsRequestorID.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, Tag.SEQUENCE);
 
-		assertTrue(Arrays.equals(data, p.getData()));
+		byte[] encodedData = asnOS.toByteArray();
+
+		assertTrue(Arrays.equals(data, encodedData));
 	}
 }

@@ -88,7 +88,6 @@ public class IMSIImpl extends TbcdString implements IMSI {
 
 	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-
 		try {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
@@ -100,7 +99,6 @@ public class IMSIImpl extends TbcdString implements IMSI {
 
 	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {

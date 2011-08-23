@@ -23,7 +23,7 @@
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 
 /**
  * LCS-ClientID ::= SEQUENCE {
@@ -39,7 +39,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
  * @author amit bhayani
  *
  */
-public interface LCSClientID extends MAPPrimitive {
+public interface LCSClientID extends MAPAsnPrimitive {
 	LCSClientType getLCSClientType();
 	
 	LCSClientExternalID getLCSClientExternalID();

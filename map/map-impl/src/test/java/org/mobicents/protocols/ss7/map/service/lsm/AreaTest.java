@@ -33,12 +33,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.Area;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaType;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author amit bhayani
@@ -66,14 +67,14 @@ public class AreaTest {
 
 	@Test
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { (byte) 0x80, 0x01, 0x05, (byte)0x81, 0x03, 0x09, 0x70, 0x71 };
+		byte[] data = new byte[] { (byte)0xb0, 0x08, (byte) 0x80, 0x01, 0x05, (byte)0x81, 0x03, 0x09, 0x70, 0x71 };
 		
-		Parameter p = TcapFactory.createParameter();
-		p.setPrimitive(false);
-		p.setData(data);
+		
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
 		
 		Area area = new AreaImpl();
-		area.decode(p);
+		area.decodeAll(asn);
 		
 		assertNotNull(area.getAreaType());
 		assertEquals(AreaType.utranCellId, area.getAreaType());
@@ -86,15 +87,16 @@ public class AreaTest {
 	@Test
 	public void testEncode() throws Exception {
 		
-		byte[] data = new byte[] { (byte) 0x80, 0x01, 0x05, (byte)0x81, 0x03, 0x09, 0x70, 0x71 };
+		byte[] data = new byte[] { (byte)0xb0, 0x08, (byte) 0x80, 0x01, 0x05, (byte)0x81, 0x03, 0x09, 0x70, 0x71 };
 
 		Area area = new AreaImpl(AreaType.utranCellId, new byte[]{0x09, 0x70, 0x71});
-		Parameter param = area.encode();
-		assertNotNull(param);
-		assertTrue(param.isPrimitive());
-
 		
-		assertTrue(Arrays.equals(data, param.getData()));
+		AsnOutputStream asnOS = new AsnOutputStream();
+		area.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, Tag.SEQUENCE);
+		
+		byte[] encodedData = asnOS.toByteArray();
+		
+		assertTrue(Arrays.equals(data, encodedData));
 
 	}
 

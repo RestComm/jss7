@@ -22,6 +22,10 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
+import java.io.IOException;
+
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -30,18 +34,19 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AdditionalNumber;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
-import org.mobicents.protocols.ss7.tcap.asn.ParseException;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * 
- * TODO Self generated trace. Please test from real trace
+ * 
  * 
  * @author amit bhayani
  * 
  */
-public class AdditionalNumberImpl extends MAPPrimitiveBase implements AdditionalNumber {
+public class AdditionalNumberImpl implements AdditionalNumber {
+
+	private static final int _TAG_MSC_NUMBER = 0;
+	private static final int _TAG_SGSN_NUMBER = 1;
+
 	private ISDNAddressString mSCNumber = null;
 	private ISDNAddressString sGSNNumber = null;
 
@@ -85,62 +90,172 @@ public class AdditionalNumberImpl extends MAPPrimitiveBase implements Additional
 		return this.sGSNNumber;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+	 */
 	@Override
-	public void decode(Parameter param) throws MAPParsingComponentException {
-		Parameter[] parameters = param.getParameters();
-
-		if (parameters == null || parameters.length != 1) {
-			throw new MAPParsingComponentException("Error while decoding AdditionalNumber: Needs 1 mandatory parameters, found"
-					+ (parameters == null ? null : parameters.length), MAPParsingComponentExceptionReason.MistypedParameter);
+	public int getTag() throws MAPException {
+		if (this.mSCNumber != null) {
+			return _TAG_MSC_NUMBER;
 		}
+		return _TAG_SGSN_NUMBER;
+	}
 
-		Parameter p = parameters[0];
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
+	 * ()
+	 */
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_CONTEXT_SPECIFIC;
+	}
 
-		if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || p.isPrimitive()) {
-			throw new MAPParsingComponentException("Error while decoding AdditionalNumber: Parameter bad tag class, tag or not primitive",
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
+	 * ()
+	 */
+	@Override
+	public boolean getIsPrimitive() {
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
+	 * (org.mobicents.protocols.asn.AsnInputStream)
+	 */
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding AdditionalNumber: ", e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding AdditionalNumber: ", e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
+	 * (org.mobicents.protocols.asn.AsnInputStream, int)
+	 */
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
-		if (p.getTag() == 0) {
+	}
+
+	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		if (asnIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !asnIS.isTagPrimitive())
+			throw new MAPParsingComponentException("Error while decoding AdditionalNumber: bad tag class or is not primitive: TagClass=" + asnIS.getTagClass(),
+					MAPParsingComponentExceptionReason.MistypedParameter);
+
+		switch (asnIS.getTag()) {
+		case _TAG_MSC_NUMBER:
 			this.mSCNumber = new ISDNAddressStringImpl();
-			this.mSCNumber.decode(p);
-		} else if (p.getTag() == 1) {
+			this.mSCNumber.decodeData(asnIS, length);
+			break;
+		case _TAG_SGSN_NUMBER:
 			this.sGSNNumber = new ISDNAddressStringImpl();
-			this.sGSNNumber.decode(p);
-		} else {
+			this.sGSNNumber.decodeData(asnIS, length);
+			break;
+		default:
 			throw new MAPParsingComponentException(
 					"Error while decoding AdditionalNumber: Expexted msc-Number [0] ISDN-AddressString or sgsn-Number [1] ISDN-AddressString, but found "
-							+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+							+ asnIS.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, this.getTag());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding AdditionalNumber: " + e.getMessage(), e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+		if (this.mSCNumber != null) {
+			this.mSCNumber.encodeData(asnOs);
+		} else {
+			this.sGSNNumber.encodeData(asnOs);
 		}
 	}
 
 	@Override
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("AdditionalNumber [");
 
 		if (this.mSCNumber != null) {
-			Parameter p = this.mSCNumber.encode();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setPrimitive(true);
-			p.setTag(0);
-			try {
-				p.encode(asnOs);
-			} catch (ParseException e) {
-				throw new MAPException("Error while encoding AdditionalNumber. Encoding of Parameter 0 [msc-Number [0] ISDN-AddressString] failed", e);
-			}
-
-		} else if (this.sGSNNumber != null) {
-			Parameter p = this.sGSNNumber.encode();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setPrimitive(true);
-			p.setTag(1);
-			try {
-				p.encode(asnOs);
-			} catch (ParseException e) {
-				throw new MAPException("Error while encoding AdditionalNumber. Encoding of Parameter 1 [sgsn-Number [1] ISDN-AddressString] failed", e);
-			}
-		} else {
-			throw new MAPException("Error while encoding AdditionalNumber either msc-Number or sgsn-Number should be set");
+			sb.append("msc-Number=");
+			sb.append(this.mSCNumber.toString());
 		}
+		if (this.sGSNNumber != null) {
+			sb.append("sgsn-Number=");
+			sb.append(this.sGSNNumber.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 
 }

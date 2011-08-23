@@ -33,6 +33,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
@@ -40,8 +43,6 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientInternalID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author amit bhayani
@@ -68,15 +69,14 @@ public class LCSClientIDTest {
 
 	@Test
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { (byte) 0x80, 0x01, 0x02, (byte) 0x83, 0x01, 0x00, (byte) 0xa4, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e, 0x6e, 0x72,
+		byte[] data = new byte[] { (byte)0xa0, 0x1b, (byte) 0x80, 0x01, 0x02, (byte) 0x83, 0x01, 0x00, (byte) 0xa4, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e, 0x6e, 0x72,
 				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
 
-		Parameter p = TcapFactory.createParameter();
-		p.setPrimitive(false);
-		p.setData(data);
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
 
 		LCSClientID lcsClientID = new LCSClientIDImpl();
-		lcsClientID.decode(p);
+		lcsClientID.decodeAll(asn);
 
 		assertNotNull(lcsClientID.getLCSClientType());
 		assertEquals(LCSClientType.plmnOperatorServices, lcsClientID.getLCSClientType());
@@ -88,7 +88,6 @@ public class LCSClientIDTest {
 		assertNotNull(lcsClientName);
 		assertEquals((byte) 0x0f, lcsClientName.getDataCodingScheme());
 		USSDString nameString = lcsClientName.getNameString();
-		nameString.decode();
 		assertEquals("ndmgapp2ndmgapp2", nameString.getString());
 
 	}
@@ -96,7 +95,7 @@ public class LCSClientIDTest {
 	@Test
 	public void testEncode() throws Exception {
 
-		byte[] data = new byte[] { (byte) 0x80, 0x01, 0x02, (byte) 0x83, 0x01, 0x00, (byte) 0xa4, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e, 0x6e, 0x72,
+		byte[] data = new byte[] { (byte)0xa0, 0x1b, (byte) 0x80, 0x01, 0x02, (byte) 0x83, 0x01, 0x00, (byte) 0xa4, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e, 0x6e, 0x72,
 				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
 
 		USSDString nameString = mapServiceFactory.createUSSDString("ndmgapp2ndmgapp2");
@@ -105,11 +104,12 @@ public class LCSClientIDTest {
 		LCSClientID lcsClientID = new LCSClientIDImpl(LCSClientType.plmnOperatorServices, null, LCSClientInternalID.broadcastService, lcsClientName, null,
 				null, null);
 
-		Parameter param = lcsClientID.encode();
-		assertNotNull(param);
-		assertTrue(param.isPrimitive());
+		AsnOutputStream asnOS = new AsnOutputStream();
+		lcsClientID.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+		
+		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, param.getData()));
+		assertTrue(Arrays.equals(data, encodedData));
 
 	}
 }

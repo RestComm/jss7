@@ -22,12 +22,19 @@
 
 package org.mobicents.protocols.ss7.map.service.supplementary;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.GSMCharset;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 
 /**
@@ -41,6 +48,13 @@ public class USSDStringImpl implements USSDString {
 	private byte[] encodedString;
 
 	private Charset charset;
+
+	/**
+	 * 
+	 */
+	public USSDStringImpl() {
+		super();
+	}
 
 	public USSDStringImpl(String ussdString, Charset charset) {
 		this.ussdString = ussdString;
@@ -74,31 +88,109 @@ public class USSDStringImpl implements USSDString {
 		return this.charset;
 	}
 
-
-	public void decode() throws MAPException {
-
-		if (this.encodedString == null) {
-			throw new MAPException("encodedString byte[] is null");
-		}
-
-		ByteBuffer bb = ByteBuffer.wrap(this.encodedString);
-
-		CharBuffer bf = this.charset.decode(bb);
-
-		this.ussdString = bf.toString();
-
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+	 */
+	@Override
+	public int getTag() throws MAPException {
+		return Tag.STRING_OCTET;
 	}
 
-	public void encode() throws MAPException {
-		if (this.ussdString == null) {
-			throw new MAPException("USSD String is null");
-		}
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass()
+	 */
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive()
+	 */
+	@Override
+	public boolean getIsPrimitive() {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
+	 */
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
+	 */
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}		
+	}
+	
+	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		this.encodedString = asnIS.readOctetStringData(length);
+		
+		ByteBuffer bb = ByteBuffer.wrap(this.encodedString);
 
 		// set to default if not set by user
 		if (charset == null) {
 			charset = new GSMCharset("GSM", new String[] {});
 		}
+		
+		CharBuffer bf = this.charset.decode(bb);
 
+		this.ussdString = bf.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding reportSMDeliveryStatusRequest: " + e.getMessage(), e);
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+		if (this.ussdString == null) {
+			throw new MAPException("Error while encoding USSDString the mandatory USSDString is not defined");
+		}
 		ByteBuffer bb = this.charset.encode(ussdString);
 
 		// Not using bb.array() as it also includes the bytes beyond limit till
@@ -108,6 +200,8 @@ public class USSDStringImpl implements USSDString {
 		while (bb.hasRemaining()) {
 			encodedString[count++] = bb.get();
 		}
+		
+		asnOs.writeOctetStringData(this.encodedString);
 	}
 
 }

@@ -22,6 +22,10 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
+import java.io.IOException;
+
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -29,14 +33,12 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTime;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTimeCategory;
-import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author amit bhayani
  * 
  */
-public class ResponseTimeImpl extends MAPPrimitiveBase implements ResponseTime {
+public class ResponseTimeImpl implements ResponseTime {
 
 	private ResponseTimeCategory responseTimeCategory = null;
 
@@ -66,37 +68,149 @@ public class ResponseTimeImpl extends MAPPrimitiveBase implements ResponseTime {
 		return this.responseTimeCategory;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+	 */
 	@Override
-	public void decode(Parameter param) throws MAPParsingComponentException {
-		Parameter[] parameters = param.getParameters();
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
 
-		if (parameters == null || parameters.length < 1) {
-			throw new MAPParsingComponentException("Error while decoding ResponseTime: Needs at least 1 mandatory parameters, found"
-					+ (parameters == null ? null : parameters.length), MAPParsingComponentExceptionReason.MistypedParameter);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
+	 * ()
+	 */
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
+	 * ()
+	 */
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
+	 * (org.mobicents.protocols.asn.AsnInputStream)
+	 */
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
+	}
 
-		// Decode mandatory dataCodingScheme [0] USSD-DataCodingScheme,
-		Parameter p = parameters[0];
-		if (p.getTagClass() != Tag.CLASS_UNIVERSAL || !p.isPrimitive() || p.getTag() != Tag.ENUMERATED) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
+	 * (org.mobicents.protocols.asn.AsnInputStream, int)
+	 */
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+
+		int tag = ais.readTag();
+		if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.ENUMERATED) {
 			throw new MAPParsingComponentException(
 					"Error while decoding ResponseTime: Parameter 0[ResponseTimeCategory ::= ENUMERATED] bad tag class, tag or not primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
-		this.responseTimeCategory = ResponseTimeCategory.getResponseTimeCategory(p.getData()[0]);
+		int length1 = ais.readLength();
+		int category = (int) ais.readIntegerData(length1);
+		this.responseTimeCategory = ResponseTimeCategory.getResponseTimeCategory(category);
+
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
 	@Override
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding InformServiceCentreRequest: " + e.getMessage(), e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.responseTimeCategory == null) {
 			throw new MAPException("Error while encoding ResponseTime the mandatory parameter responseTimeCategory is not defined");
 		}
-
-		// Encode mandatory param dataCodingScheme
-		asnOs.write(0x0a);
-		asnOs.write(0x01);
-		asnOs.write(this.responseTimeCategory.getCategory());
+		try {
+			asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.responseTimeCategory.getCategory());
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding responseTimeCategory: ", e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding responseTimeCategory: ", e);
+		}
 	}
 
 }

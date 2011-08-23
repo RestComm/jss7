@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
-import java.util.BitSet;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -32,18 +31,20 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.service.lsm.DeferredLocationEventType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LocationEstimateType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LocationType;
-import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
 
 /**
  * @author amit bhayani
  * 
  */
-public class LocationTypeImpl extends MAPPrimitiveBase implements LocationType {
+public class LocationTypeImpl implements LocationType {
+	private static final int _TAG_LOCATION_ESTIMATE_TYPE = 0;
+	private static final int _TAG_DEFERRED_LOCATION_EVET_TYPE = 1;
 
 	private LocationEstimateType locationEstimateType;
-	private BitSet deferredLocationEventType;
+	private DeferredLocationEventType deferredLocationEventType;
 
 	public LocationTypeImpl() {
 
@@ -52,7 +53,7 @@ public class LocationTypeImpl extends MAPPrimitiveBase implements LocationType {
 	/**
 	 * 
 	 */
-	public LocationTypeImpl(final LocationEstimateType locationEstimateType, final BitSet deferredLocationEventType) {
+	public LocationTypeImpl(final LocationEstimateType locationEstimateType, final DeferredLocationEventType deferredLocationEventType) {
 		this.locationEstimateType = locationEstimateType;
 		this.deferredLocationEventType = deferredLocationEventType;
 	}
@@ -75,65 +76,179 @@ public class LocationTypeImpl extends MAPPrimitiveBase implements LocationType {
 	 * getDeferredLocationEventType()
 	 */
 	@Override
-	public BitSet getDeferredLocationEventType() {
+	public DeferredLocationEventType getDeferredLocationEventType() {
 		return this.deferredLocationEventType;
 	}
 
-	public void decode(AsnInputStream ais, int tagClass, boolean isPrimitive, int masterTag, int length) throws MAPParsingComponentException {
-		int tagTemp;
-		try {
-
-			// locationEstimateType [0] LocationEstimateType,
-			tagTemp = ais.readTag();
-			int len = ais.readLength();
-
-			if (tagTemp != 0) {
-				throw new MAPParsingComponentException("Decoding LocationType failed. Expected Parameter tag as LocationEstimateType[0] but received "
-						+ tagTemp, MAPParsingComponentExceptionReason.MistypedParameter);
-			}
-
-			this.locationEstimateType = LocationEstimateType.getLocationEstimateType(ais.read());
-
-			// If length greater than 3 decode
-			// deferredLocationEventType [1] DeferredLocationEventType OPTIONAL
-			if (length > 3) {
-				tagTemp = ais.readTag();
-				len = ais.readLength();
-				this.deferredLocationEventType = new BitSet();
-				ais.readBitStringData(this.deferredLocationEventType, len, true);
-			}
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("Decoding LocationType failed.", e, MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("Decoding LocationType failed.", e, MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+	 */
+	@Override
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
 	}
 
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
+	 * ()
+	 */
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
+	 * ()
+	 */
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
+	 * (org.mobicents.protocols.asn.AsnInputStream)
+	 */
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
+	 * (org.mobicents.protocols.asn.AsnInputStream, int)
+	 */
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+
+		int tag = ais.readTag();
+
+		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_LOCATION_ESTIMATE_TYPE) {
+			throw new MAPParsingComponentException(
+					"Error while decoding LocationType: Parameter 0[locationEstimateType [0] LocationEstimateType] bad tag class, tag or not primitive",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+
+		int length1 = ais.readLength();
+		int type = (int) ais.readIntegerData(length1);
+		this.locationEstimateType = LocationEstimateType.getLocationEstimateType(type);
+
+		while (true) {
+			if (ais.available() == 0)
+				break;
+
+			switch (ais.readTag()) {
+			case _TAG_DEFERRED_LOCATION_EVET_TYPE:
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
+					throw new MAPParsingComponentException(
+							"Error while decoding LocationType: Parameter 1 [deferredLocationEventType [1] DeferredLocationEventType] bad tag class, tag or not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				}
+
+				this.deferredLocationEventType = new DeferredLocationEventTypeImpl();
+				this.deferredLocationEventType.decodeAll(ais);
+				break;
+			default:
+				// Do we care?
+				break;
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding reportSMDeliveryStatusRequest: " + e.getMessage(), e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.locationEstimateType == null) {
 			throw new MAPException("Error while encoding LocationType the mandatory parameter LocationEstimateType is not defined");
 		}
 
-		// Encode locationEstimateType [0] LocationEstimateType
-		asnOs.write(0x80);// TAG
-		asnOs.write(0x01);
-		asnOs.write(this.locationEstimateType.getType());
-
-		if (this.deferredLocationEventType != null) {
-			// Encode deferredLocationEventType [1] DeferredLocationEventType
-			// OPTIONAL
-			// asnOs.write(0x81);// TAG
-			// asnOs.write(this.deferredLocationEventType.length());
-			try {
-
-				asnOs.writeStringBinary(Tag.CLASS_CONTEXT_SPECIFIC, 1, this.deferredLocationEventType);
-			} catch (AsnException e) {
-				throw new MAPException("Error while encoding LocationType parameter1[deferredLocationEventType [1] DeferredLocationEventType]", e);
-			} catch (IOException e) {
-				throw new MAPException("Error while encoding LocationType parameter1[deferredLocationEventType [1] DeferredLocationEventType]", e);
-			}
+		try {
+			asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LOCATION_ESTIMATE_TYPE, this.locationEstimateType.getType());
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding parameter locationEstimateType: ", e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding parameter locationEstimateType: ", e);
 		}
 
+		if (this.deferredLocationEventType != null) {
+			this.deferredLocationEventType.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DEFERRED_LOCATION_EVET_TYPE);
+		}
 	}
+
 }

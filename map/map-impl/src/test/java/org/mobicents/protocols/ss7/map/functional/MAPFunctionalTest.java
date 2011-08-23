@@ -25,15 +25,9 @@ package org.mobicents.protocols.ss7.map.functional;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -46,50 +40,8 @@ import org.junit.Test;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
-import org.mobicents.protocols.ss7.map.MAPDialogImpl;
-import org.mobicents.protocols.ss7.map.MAPProviderImpl;
-import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
-import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
-import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
-import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
-import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
-import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
-import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplementaryImpl;
-
-import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
-import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
-import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
-import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
-import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
-import org.mobicents.protocols.ss7.map.dialog.MAPOpenInfoImpl;
-import org.mobicents.protocols.ss7.map.service.sms.LocationInfoWithLMSIImpl;
-import org.mobicents.protocols.ss7.map.service.sms.SM_RP_DAImpl;
-import org.mobicents.protocols.ss7.map.service.sms.SM_RP_OAImpl;
-
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-
-import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
-
-import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
-
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * 

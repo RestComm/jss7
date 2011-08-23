@@ -20,32 +20,15 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-import org.mobicents.protocols.ss7.map.MAPDialogImpl;
-import org.mobicents.protocols.ss7.map.MAPService;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 
 /**
+ * 
  * @author amit bhayani
- *
+ * 
  */
-public class SupplementaryService extends MAPService {
+public interface ProcessUnstructuredSSResponseIndication extends USSDMessage {
 
-	/**
-	 * 
-	 */
-	public SupplementaryService() {
-		// TODO Auto-generated constructor stub
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.MAPService#processComponents(org.mobicents.protocols.ss7.map.MAPDialogImpl, org.mobicents.protocols.ss7.tcap.asn.comp.Component[])
-	 */
-	@Override
-	protected void processComponents(MAPDialogImpl mapDialogImpl, Component[] components) {
-		// TODO Auto-generated method stub
-
-	}
 
 }

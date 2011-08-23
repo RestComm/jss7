@@ -25,13 +25,20 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 import java.nio.charset.Charset;
 
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 
 /**
+ * USSD-String ::= OCTET STRING (SIZE (1..maxUSSD-StringLength))
+ *     -- The structure of the contents of the USSD-String is dependent
+ *     -- on the USSD-DataCodingScheme as described in TS 3GPP TS 23.038 [25].
+ * 
+ * maxUSSD-StringLength INTEGER ::= 160
+ *
  * 
  * @author amit bhayani
  * 
  */
-public interface USSDString {
+public interface USSDString extends MAPAsnPrimitive {
 
 	/**
 	 * Get the decoded USSD String
@@ -54,20 +61,5 @@ public interface USSDString {
 	 */
 	public Charset getCharset();
 
-	/**
-	 * Encode the set USSD String. After calling this operation, call
-	 * getEncodedString() to get the encoded byte[]
-	 * 
-	 * @throws MAPException
-	 */
-	public void encode() throws MAPException;
-
-	/**
-	 * Decode the byte[] that represents the USSD String. After calling this
-	 * operation call getString() to get the USSD String
-	 * 
-	 * @throws MAPException
-	 */
-	public void decode() throws MAPException;
 
 }

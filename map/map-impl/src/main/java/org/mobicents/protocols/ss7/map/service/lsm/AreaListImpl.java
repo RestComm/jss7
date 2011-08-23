@@ -22,6 +22,12 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -29,15 +35,12 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.Area;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaList;
-import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
-import org.mobicents.protocols.ss7.tcap.asn.ParseException;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author amit bhayani
  * 
  */
-public class AreaListImpl extends MAPPrimitiveBase implements AreaList {
+public class AreaListImpl implements AreaList {
 
 	private Area[] areas = null;
 
@@ -66,49 +69,156 @@ public class AreaListImpl extends MAPPrimitiveBase implements AreaList {
 		return this.areas;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+	 */
 	@Override
-	public void decode(Parameter param) throws MAPParsingComponentException {
-		Parameter[] parameters = param.getParameters();
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
 
-		if (parameters == null || parameters.length < 1) {
-			throw new MAPParsingComponentException("Error while decoding AreaList: Needs at least 1 mandatory parameters, found"
-					+ (parameters == null ? null : parameters.length), MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-		areas = new Area[parameters.length];
-		for (int count = 0; count < parameters.length; count++) {
-			Parameter p = parameters[count];
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
+	 * ()
+	 */
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
 
-			if (p.getTagClass() != Tag.CLASS_UNIVERSAL || p.isPrimitive() || p.getTag() != Tag.SEQUENCE) {
-				throw new MAPParsingComponentException(
-						"Error while decoding LCSPrivacyCheck: Parameter 0 [callSessionUnrelated [0] PrivacyCheckRelatedAction] bad tag class, tag or not primitive",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
+	 * ()
+	 */
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
 
-			areas[count] = new AreaImpl();
-			areas[count].decode(p);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
+	 * (org.mobicents.protocols.asn.AsnInputStream)
+	 */
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
+	 * (org.mobicents.protocols.asn.AsnInputStream, int)
+	 */
 	@Override
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
 
+	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+		
+		List<Area> arealList = new ArrayList<Area>();
+		
+		while (true) {
+			if (ais.available() == 0)
+				break;
+
+			int tag = ais.readTag();
+
+			if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || ais.isTagPrimitive() || tag != Tag.SEQUENCE) {
+				throw new MAPParsingComponentException("Error while decoding AreaList: bad tag class, tag or not primitive",
+						MAPParsingComponentExceptionReason.MistypedParameter);
+			}
+			
+			Area a = new AreaImpl();
+			a.decodeAll(ais);
+			
+			arealList.add(a);
+
+		}//end of while
+		
+		this.areas = new Area[arealList.size()];
+		this.areas = arealList.toArray(this.areas);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding reportSMDeliveryStatusRequest: " + e.getMessage(), e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.areas == null || this.areas.length == 0) {
 			throw new MAPException("Error while encoding AreaList the mandatory parameter[Area[]] is not defined");
 		}
-
+		
 		for (int count = 0; count < areas.length; count++) {
-			Parameter p = areas[count].encode();
-			p.setPrimitive(false);
-			p.setTagClass(Tag.CLASS_UNIVERSAL);
-			p.setTag(Tag.SEQUENCE);
-
-			try {
-				p.encode(asnOs);
-			} catch (ParseException e) {
-				throw new MAPException("Error while encoding AreaList. Encdoing of Area failed", e);
-			}
+			areas[count].encodeAll(asnOs);
 		}
-
 	}
 
 }

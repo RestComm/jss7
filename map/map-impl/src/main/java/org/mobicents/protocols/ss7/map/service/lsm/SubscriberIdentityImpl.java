@@ -22,6 +22,10 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
+import java.io.IOException;
+
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -32,24 +36,23 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
-import org.mobicents.protocols.ss7.tcap.asn.ParseException;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author amit bhayani
  * 
  */
-public class SubscriberIdentityImpl extends MAPPrimitiveBase implements SubscriberIdentity {
+public class SubscriberIdentityImpl implements SubscriberIdentity {
+	private static final int _TAG_IMSI = 0;
+	private static final int _TAG_MSISDN = 1;
+
 	private IMSI imsi = null;
 	private ISDNAddressString msisdn = null;
-	
+
 	/**
 	 * 
 	 */
 	public SubscriberIdentityImpl() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -94,60 +97,150 @@ public class SubscriberIdentityImpl extends MAPPrimitiveBase implements Subscrib
 		return this.msisdn;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+	 */
 	@Override
-	public void decode(Parameter param) throws MAPParsingComponentException {
-		Parameter[] parameters = param.getParameters();
-		if (parameters == null || parameters.length != 1) {
-			throw new MAPParsingComponentException("Error while decoding SubscriberIdentity: At least 1 mandatory parameters should be present but have"
-					+ (parameters == null ? null : parameters.length), MAPParsingComponentExceptionReason.MistypedParameter);
+	public int getTag() throws MAPException {
+		if (this.imsi != null) {
+			return _TAG_IMSI;
+		} else {
+			return _TAG_MSISDN;
 		}
+	}
 
-		Parameter p = parameters[0];
-		if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive()) {
-			throw new MAPParsingComponentException("Error while decoding SubscriberIdentity: Parameter bad tag class or not primitive or not Sequence",
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
+	 * ()
+	 */
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_CONTEXT_SPECIFIC;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
+	 * ()
+	 */
+	@Override
+	public boolean getIsPrimitive() {
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
+	 * (org.mobicents.protocols.asn.AsnInputStream)
+	 */
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding SubscriberIdentity: ", e, MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding SubscriberIdentity: ", e, MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
+	 * (org.mobicents.protocols.asn.AsnInputStream, int)
+	 */
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-
-		switch (p.getTag()) {
-		case 0:
-			// imsi [0] IMSI
-			this.imsi = new IMSIImpl();
-			this.imsi.decode(p);
-			break;
-		case 1:
-			this.msisdn = new ISDNAddressStringImpl();
-			this.msisdn.decode(p);
-			break;
-		default:
-			throw new MAPParsingComponentException("Error while decoding SubscriberIdentity: Expected tags 0 or 1 but found" + p.getTag(),
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
+	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		if (asnIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !asnIS.isTagPrimitive())
+			throw new MAPParsingComponentException("Error while decoding SubscriberIdentity: bad tag class or is not primitive: TagClass="
+					+ asnIS.getTagClass(), MAPParsingComponentExceptionReason.MistypedParameter);
+
+		switch (asnIS.getTag()) {
+		case _TAG_IMSI:
+			this.imsi = new IMSIImpl();
+			this.imsi.decodeData(asnIS, length);
+			break;
+		case _TAG_MSISDN:
+			this.msisdn = new ISDNAddressStringImpl();
+			this.msisdn.decodeData(asnIS, length);
+			break;
+		default:
+			throw new MAPParsingComponentException(
+					"Error while decoding SubscriberIdentity: Expexted imsi [0] IMSI or msisdn [1] ISDN-AddressString, but found " + asnIS.getTag(),
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
 	@Override
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, this.getTag());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding AdditionalNumber: " + e.getMessage(), e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.imsi != null) {
-			Parameter p = this.imsi.encode();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setTag(0);
-			p.setPrimitive(true);
-			try {
-				p.encode(asnOs);
-			} catch (ParseException e) {
-				throw new MAPException("Error while encoding SubscriberIdentity: Encoding of imsi [0] IMSI failed", e);
-			}
-		} else if (this.msisdn != null) {
-			Parameter p = this.msisdn.encode();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setTag(1);
-			p.setPrimitive(true);
-			try {
-				p.encode(asnOs);
-			} catch (ParseException e) {
-				throw new MAPException("Error while encoding SubscriberIdentity: Encoding of msisdn [1] ISDN-AddressString failed", e);
-			}
+			this.imsi.encodeData(asnOs);
 		} else {
-			throw new MAPException("Error while encoding SubscriberIdentity: One of the IMSI or MSISDN should be prsent");
+			this.msisdn.encodeData(asnOs);
 		}
 	}
 

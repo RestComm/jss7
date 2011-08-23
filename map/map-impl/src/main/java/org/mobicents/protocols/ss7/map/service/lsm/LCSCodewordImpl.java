@@ -24,6 +24,8 @@ package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
 
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -31,15 +33,16 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSCodeword;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
-import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
 import org.mobicents.protocols.ss7.map.service.supplementary.USSDStringImpl;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author amit bhayani
  * 
  */
-public class LCSCodewordImpl extends MAPPrimitiveBase implements LCSCodeword {
+public class LCSCodewordImpl implements LCSCodeword {
+
+	private static final int _TAG_DATA_CODING_SCHEME = 0;
+	private static final int _TAG_LCS_CODE_WORD_STRING = 1;
 
 	private byte dataCodingScheme;
 	private USSDString lcsCodewordString = null;
@@ -84,55 +87,164 @@ public class LCSCodewordImpl extends MAPPrimitiveBase implements LCSCodeword {
 		return this.lcsCodewordString;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+	 */
 	@Override
-	public void decode(Parameter param) throws MAPParsingComponentException {
-		Parameter[] parameters = param.getParameters();
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
 
-		if (parameters == null || parameters.length < 2) {
-			throw new MAPParsingComponentException("Error while decoding LCSCodeword: Needs at least 2 mandatory parameters, found"
-					+ (parameters == null ? null : parameters.length), MAPParsingComponentExceptionReason.MistypedParameter);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
+	 * ()
+	 */
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
+	 * ()
+	 */
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
+	 * (org.mobicents.protocols.asn.AsnInputStream)
+	 */
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding LCSClientName: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding LCSClientName: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
+	 * (org.mobicents.protocols.asn.AsnInputStream, int)
+	 */
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding LCSCodeword: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding LCSCodeword: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+
+		int tag = ais.readTag();
 
 		// Decode mandatory dataCodingScheme [0] USSD-DataCodingScheme,
-		Parameter p = parameters[0];
-		if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive() || p.getTag() != 0) {
+		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_DATA_CODING_SCHEME) {
 			throw new MAPParsingComponentException(
 					"Error while decoding LCSCodeword: Parameter 0[dataCodingScheme [0] USSD-DataCodingScheme] bad tag class, tag or not primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
-		this.dataCodingScheme = p.getData()[0];
+		int length1 = ais.readLength();
+		this.dataCodingScheme = ais.readOctetStringData(length1)[0];
 
-		// Decode mandatory lcsCodewordString [1] LCSCodewordString
-		p = parameters[1];
-		if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive() || p.getTag() != 1) {
+		tag = ais.readTag();
+
+		// Decode mandatory lcsCodewordString [1] LCSCodewordString,
+		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_LCS_CODE_WORD_STRING) {
 			throw new MAPParsingComponentException(
-					"Error while decoding LCSCodeword: Parameter 1[lcsCodewordString [1] LCSCodewordString,] bad tag class, tag or not primitive",
+					"Error while decoding LCSCodeword: Parameter 1[lcsCodewordString [1] LCSCodewordString] bad tag class, tag or not primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
-		this.lcsCodewordString = new USSDStringImpl(p.getData(), null);
+		this.lcsCodewordString = new USSDStringImpl();
+		this.lcsCodewordString.decodeAll(ais);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
 	@Override
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+	}
 
-		if (this.lcsCodewordString == null) {
-			throw new MAPException("Error while encoding LCSCodeword the mandatory parameter lcsCodewordString is not defined");
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding LCSClientName", e);
 		}
+	}
 
-		// Encode mandatory param dataCodingScheme
-		asnOs.write(0x80);
-		asnOs.write(0x01);
-		asnOs.write(this.dataCodingScheme);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		// Encode mandatory param lcsCodewordString
-		asnOs.write(0x81);
-		lcsCodewordString.encode();
-		byte[] data = lcsCodewordString.getEncodedString();
-		asnOs.write(data.length);
-		asnOs.write(data);
+		if (this.lcsCodewordString == null)
+			throw new MAPException("lcsCodewordString must not be null");
 
+		try {
+			asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DATA_CODING_SCHEME, new byte[] { this.dataCodingScheme });
+
+			this.lcsCodewordString.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_CODE_WORD_STRING);
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding LCSClientName", e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding LCSClientName", e);
+		}
 	}
 
 }

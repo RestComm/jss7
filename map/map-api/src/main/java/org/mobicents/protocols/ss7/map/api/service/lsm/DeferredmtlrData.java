@@ -22,9 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import java.util.BitSet;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 
 /**
  * 
@@ -39,23 +37,13 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
  * @author amit bhayani
  *
  */
-public interface DeferredmtlrData extends MAPPrimitive {
+public interface DeferredmtlrData extends MAPAsnPrimitive {
 	
 	/**
-	 * DeferredLocationEventType ::= BIT STRING {
-     *		msAvailable (0) ,
-     *		enteringIntoArea (1),
-     *		leavingFromArea (2),
-     *		beingInsideArea (3) } (SIZE (1..16))
-     *		-- beingInsideArea is always treated as oneTimeEvent regardless of the possible value
-     *		-- of occurrenceInfo inside areaEventInfo.
-     *		-- exception handling:
-     *		-- a ProvideSubscriberLocation-Arg containing other values than listed above in
-     *		-- DeferredLocationEventType shall be rejected by the receiver with a return error cause of
-     *		-- unexpected data value.
+     *
 	 * @return
 	 */
-	public BitSet getDeferredLocationEventType();
+	public DeferredLocationEventType getDeferredLocationEventType();
 	
 	public TerminationCause getTerminationCause();
 	

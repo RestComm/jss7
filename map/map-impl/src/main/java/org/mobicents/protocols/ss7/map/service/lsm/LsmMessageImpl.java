@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.service.lsm;
 
 import org.mobicents.protocols.ss7.map.MAPMessageImpl;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LsmMessage;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm;
 
@@ -30,7 +31,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm;
  * @author amit bhayani
  *
  */
-public abstract class LsmMessageImpl extends MAPMessageImpl implements LsmMessage {
+public abstract class LsmMessageImpl extends MAPMessageImpl implements LsmMessage, MAPAsnPrimitive {
 
 
 	/* (non-Javadoc)

@@ -32,12 +32,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTime;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTimeCategory;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author amit bhayani
@@ -64,14 +64,13 @@ public class ResponseTimeTest {
 
 	@Test
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { 0x0a, 0x01, 0x00 };
+		byte[] data = new byte[] { 0x30, 0x03, 0x0a, 0x01, 0x00 };
 
-		Parameter p = TcapFactory.createParameter();
-		p.setPrimitive(false);
-		p.setData(data);
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
 
 		ResponseTime responseTime = new ResponseTimeImpl();
-		responseTime.decode(p);
+		responseTime.decodeAll(asn);
 
 		assertEquals(ResponseTimeCategory.lowdelay, responseTime.getResponseTimeCategory());
 
@@ -79,11 +78,15 @@ public class ResponseTimeTest {
 
 	@Test
 	public void testEncode() throws Exception {
-		byte[] data = new byte[] { 0x0a, 0x01, 0x00 };
+		byte[] data = new byte[] { 0x30, 0x03, 0x0a, 0x01, 0x00 };
 
 		ResponseTime responseTime = new ResponseTimeImpl(ResponseTimeCategory.lowdelay);
-		Parameter p = responseTime.encode();
 
-		assertTrue(Arrays.equals(data, p.getData()));
+		AsnOutputStream asnOS = new AsnOutputStream();
+		responseTime.encodeAll(asnOS);
+
+		byte[] encodedData = asnOS.toByteArray();
+
+		assertTrue(Arrays.equals(data, encodedData));
 	}
 }

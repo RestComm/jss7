@@ -24,7 +24,8 @@ package org.mobicents.protocols.ss7.map.service.lsm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -33,12 +34,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author amit bhayani
@@ -66,19 +68,17 @@ public class LCSClientNameTest {
 
 	@Test
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72,
+		byte[] data = new byte[] { 0x30, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72,
 				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
 
-		Parameter p = TcapFactory.createParameter();
-		p.setPrimitive(false);
-		p.setData(data);
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
 
 		LCSClientName lcsClientName = new LCSClientNameImpl();
-		lcsClientName.decode(p);
+		lcsClientName.decodeAll(asn);
 
 		assertEquals((byte) 0x0f, lcsClientName.getDataCodingScheme());
 		assertNotNull(lcsClientName.getNameString());
-		lcsClientName.getNameString().decode();
 		assertEquals("ndmgapp2ndmgapp2", lcsClientName.getNameString().getString());
 
 		assertNull(lcsClientName.getLCSFormatIndicator());
@@ -86,13 +86,16 @@ public class LCSClientNameTest {
 
 	@Test
 	public void testEncode() throws Exception {
-		byte[] data = new byte[] { (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72,
+		byte[] data = new byte[] { 0x30, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72,
 				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
 
 		USSDString nameString = mapServiceFactory.createUSSDString("ndmgapp2ndmgapp2");
 		LCSClientName lcsClientName = new LCSClientNameImpl((byte) 0x0f, nameString, null);
-		Parameter p = lcsClientName.encode();
+		AsnOutputStream asnOS = new AsnOutputStream();
+		lcsClientName.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		
+		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, p.getData()));
+		assertTrue(Arrays.equals(data, encodedData));
 	}
 }

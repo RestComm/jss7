@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 
 /**
  * AreaList ::= SEQUENCE SIZE (1..maxNumOfAreas) OF Area
@@ -34,7 +34,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
  * @author amit bhayani
  *
  */
-public interface AreaList extends MAPPrimitive {
+public interface AreaList extends MAPAsnPrimitive {
 
 	public Area[] getAreas();
 }

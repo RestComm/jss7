@@ -20,16 +20,39 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 
-public class UnstructuredSSResponseImpl extends USSDServiceImpl implements
-		UnstructuredSSResponse {
 
-	public UnstructuredSSResponseImpl(byte ussdDataCodingSch, USSDString ussdString) {
-		super(ussdDataCodingSch, ussdString);
-	}
-
+/**
+ * unstructuredSS-Request OPERATION ::= { --Timer ml
+ *	ARGUMENT
+ *		USSD-Arg
+ *	RESULT
+ *		USSD-Res
+ *		-- optional
+ *	ERRORS {
+ *		systemFailure |
+ *		dataMissing |
+ *		unexpectedDataValue |
+ *		absentSubscriber |
+ *		illegalSubscriber |
+ *		illegalEquipment |
+ *		unknownAlphabet |
+ *		ussd-Busy}
+ *		CODE local:60 }
+ * 
+ * This service is used between the HLR and the VLR and between the VLR and the
+ * MSC when the invoking entity requires information from the mobile user, in
+ * connection with unstructured supplementary service handling.
+ * 
+ * @author amit bhayani
+ * 
+ */
+public interface UnstructuredSSRequestIndication extends USSDMessage {
+	public AddressString getMSISDNAddressString();
+	
+	public AlertingPattern getAlertingPattern();
 }

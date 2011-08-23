@@ -33,13 +33,14 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.Area;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaList;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaType;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author amit bhayani
@@ -66,19 +67,18 @@ public class AreaListTest {
 
 	@Test
 	public void testDecode() throws Exception {
-		//TODO this is self generated trace. We need trace from operator
-		byte[] data = new byte[] { 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08, (byte) 0x80, 0x01, 0x03, (byte) 0x81,
-				0x03, 0x04, 0x30, 0x31 };
+		// TODO this is self generated trace. We need trace from operator
+		byte[] data = new byte[] { 0x30, 0x14, 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08, (byte) 0x80, 0x01, 0x03,
+				(byte) 0x81, 0x03, 0x04, 0x30, 0x31 };
 
-		Parameter p = TcapFactory.createParameter();
-		p.setPrimitive(false);
-		p.setData(data);
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
 
 		AreaList areaList = new AreaListImpl();
-		areaList.decode(p);
+		areaList.decodeAll(asn);
 
 		Area areas[] = areaList.getAreas();
-		
+
 		assertNotNull(areas);
 		assertEquals(2, areas.length);
 
@@ -89,20 +89,21 @@ public class AreaListTest {
 
 	@Test
 	public void testEncode() throws Exception {
-		//TODO this is self generated trace. We need trace from operator
-		byte[] data = new byte[] { 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08, (byte) 0x80, 0x01, 0x03, (byte) 0x81,
-				0x03, 0x04, 0x30, 0x31 };
+		// TODO this is self generated trace. We need trace from operator
+		byte[] data = new byte[] { 0x30, 0x14, 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08, (byte) 0x80, 0x01, 0x03,
+				(byte) 0x81, 0x03, 0x04, 0x30, 0x31 };
 
 		Area area1 = new AreaImpl(AreaType.utranCellId, new byte[] { 0x09, 0x70, 0x71 });
 		Area area2 = new AreaImpl(AreaType.routingAreaId, new byte[] { 0x04, 0x30, 0x31 });
 
 		AreaList areaList = new AreaListImpl(new Area[] { area1, area2 });
+		
+		AsnOutputStream asnOS = new AsnOutputStream();
+		areaList.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		
+		byte[] encodedData = asnOS.toByteArray();
 
-		Parameter param = areaList.encode();
-		assertNotNull(param);
-		assertTrue(param.isPrimitive());
-
-		assertTrue(Arrays.equals(data, param.getData()));
+		assertTrue(Arrays.equals(data, encodedData));
 
 	}
 }

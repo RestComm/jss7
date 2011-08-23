@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
+import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.MAPServiceBaseImpl;
@@ -141,9 +142,12 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
+		byte[] buf = param.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+
 		ProvideSubscriberLocationRequestIndicationImpl provideSubsLoctReqInd = new ProvideSubscriberLocationRequestIndicationImpl();
-		provideSubsLoctReqInd.decode(param);
-		
+		provideSubsLoctReqInd.decodeAll(ais);
+
 		provideSubsLoctReqInd.setInvokeId(invokeId);
 		provideSubsLoctReqInd.setMAPDialog(mapDialogImpl);
 
@@ -159,9 +163,12 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
+		byte[] buf = param.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+
 		ProvideSubscriberLocationResponseIndicationImpl provideSubsLoctResInd = new ProvideSubscriberLocationResponseIndicationImpl();
-		provideSubsLoctResInd.decode(param);
-		
+		provideSubsLoctResInd.decodeAll(ais);
+
 		provideSubsLoctResInd.setInvokeId(invokeId);
 		provideSubsLoctResInd.setMAPDialog(mapDialogImpl);
 
@@ -177,9 +184,12 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+
 		SubscriberLocationReportRequestIndicationImpl reqInd = new SubscriberLocationReportRequestIndicationImpl();
-		reqInd.decode(parameter);
-		
+		reqInd.decodeAll(ais);
+
 		reqInd.setInvokeId(invokeId);
 		reqInd.setMAPDialog(mapDialogImpl);
 
@@ -194,9 +204,12 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+
 		SubscriberLocationReportResponseIndicationImpl resInd = new SubscriberLocationReportResponseIndicationImpl();
-		resInd.decode(parameter);
-		
+		resInd.decodeAll(ais);
+
 		resInd.setInvokeId(invokeId);
 		resInd.setMAPDialog(mapDialogImpl);
 
@@ -211,9 +224,12 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+
 		SendRoutingInfoForLCSRequestIndicationImpl reqInd = new SendRoutingInfoForLCSRequestIndicationImpl();
-		reqInd.decode(parameter);
-		
+		reqInd.decodeAll(ais);
+
 		reqInd.setInvokeId(invokeId);
 		reqInd.setMAPDialog(mapDialogImpl);
 
@@ -228,9 +244,12 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+
 		SendRoutingInfoForLCSResponseIndicationImpl resInd = new SendRoutingInfoForLCSResponseIndicationImpl();
-		resInd.decode(parameter);
-		
+		resInd.decodeAll(ais);
+
 		resInd.setInvokeId(invokeId);
 		resInd.setMAPDialog(mapDialogImpl);
 

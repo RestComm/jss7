@@ -24,20 +24,23 @@ package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
 
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.CellGlobalIdOrServiceAreaIdOrLAI;
-import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author amit bhayani
  * 
  */
-public class CellGlobalIdOrServiceAreaIdOrLAIImpl extends MAPPrimitiveBase implements CellGlobalIdOrServiceAreaIdOrLAI {
+public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServiceAreaIdOrLAI {
+	
+	private static final int _TAG_CELL_GLOBAL_ID_OR_SERVICE_AREAR_ID= 0;
+	private static final int _TAG_LAI = 1;
 
 	private byte[] cellGlobalIdOrServiceAreaIdFixedLength = null;
 	private byte[] laiFixedLength = null;
@@ -86,60 +89,120 @@ public class CellGlobalIdOrServiceAreaIdOrLAIImpl extends MAPPrimitiveBase imple
 		return this.laiFixedLength;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+	 */
 	@Override
-	public void decode(Parameter param) throws MAPParsingComponentException {
-
-		Parameter[] parameters = param.getParameters();
-
-		if (parameters == null || parameters.length != 1) {
-			throw new MAPParsingComponentException(
-					"Decoding of CellGlobalIdOrServiceAreaIdOrLAI failed. Manadatory parameter cellGlobalIdOrServiceAreaIdFixedLength or laiFixedLength should be present",
-					MAPParsingComponentExceptionReason.MistypedParameter);
+	public int getTag() throws MAPException {
+		if(this.cellGlobalIdOrServiceAreaIdFixedLength != null ){
+			return 0;
 		}
-
-		Parameter p = parameters[0];
-		if (p.getTag() == 0) {
-			if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive()) {
-				throw new MAPParsingComponentException("Decoding of CellGlobalIdOrServiceAreaIdOrLAI failed. Invalid Tag Class or not primitive",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			}
-
-			this.cellGlobalIdOrServiceAreaIdFixedLength = p.getData();
-
-		} else if (p.getTag() == 1) {
-			if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive()) {
-				throw new MAPParsingComponentException("Decoding of CellGlobalIdOrServiceAreaIdOrLAI failed. Invalid Tag Class or not primitive",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			}
-			this.laiFixedLength = p.getData();
-
-		} else {
-			throw new MAPParsingComponentException(
-					"Decoding of CellGlobalIdOrServiceAreaIdOrLAI failed. Expected manadatory parameter cellGlobalIdOrServiceAreaIdFixedLength[0] or laiFixedLength[1] should be present but found=",
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-
+		return 1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass()
+	 */
 	@Override
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
 
-		if (this.cellGlobalIdOrServiceAreaIdFixedLength != null) {
-			// cellGlobalIdOrServiceAreaIdFixedLength [0]
-			// CellGlobalIdOrServiceAreaIdFixedLength
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive()
+	 */
+	@Override
+	public boolean getIsPrimitive() {
+		return true;
+	}
 
-			asnOs.write(0x80);
-			asnOs.write(this.cellGlobalIdOrServiceAreaIdFixedLength.length);
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
+	 */
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
+	 */
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}		
+	}
+	
+	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		if (asnIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !asnIS.isTagPrimitive())
+			throw new MAPParsingComponentException("Error while decoding CellGlobalIdOrServiceAreaIdOrLAI: bad tag class or is not primitive: TagClass=" + asnIS.getTagClass(),
+					MAPParsingComponentExceptionReason.MistypedParameter);
+
+		switch (asnIS.getTag()) {
+		case _TAG_CELL_GLOBAL_ID_OR_SERVICE_AREAR_ID:
+			this.cellGlobalIdOrServiceAreaIdFixedLength = asnIS.readOctetStringData(length);
+			break;
+		case _TAG_LAI:
+			this.laiFixedLength = asnIS.readOctetStringData(length);
+			break;
+		default:
+			throw new MAPParsingComponentException(
+					"Error while decoding AdditionalNumber: Expexted msc-Number [0] ISDN-AddressString or sgsn-Number [1] ISDN-AddressString, but found "
+							+ asnIS.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, this.getTag());		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding AdditionalNumber: " + e.getMessage(), e);
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+		if(this.cellGlobalIdOrServiceAreaIdFixedLength != null){
 			asnOs.write(this.cellGlobalIdOrServiceAreaIdFixedLength);
-		} else if (this.laiFixedLength != null) {
-			if (this.cellGlobalIdOrServiceAreaIdFixedLength != null) {
-				// laiFixedLength [1] LAIFixedLength
-
-				asnOs.write(0x81);
-				asnOs.write(this.laiFixedLength.length);
-				asnOs.write(this.laiFixedLength);
-			}
-
+		} else {
+			asnOs.write(this.laiFixedLength);
 		}
 	}
+
+
 }

@@ -33,21 +33,23 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AdditionalNumber;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
+ * TODO Self generated trace. Please test from real trace
+ * 
  * @author amit bhayani
  * 
  */
 public class AdditionalNumberTest {
-	MapServiceFactory mapServiceFactory = new MapServiceFactoryImpl();
+	MapServiceFactory mapServiceFactory = null;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -59,22 +61,22 @@ public class AdditionalNumberTest {
 
 	@Before
 	public void setUp() {
+		mapServiceFactory = new MapServiceFactoryImpl();
 	}
 
 	@After
 	public void tearDown() {
 	}
 
-	//@Test
+	@Test
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { (byte) 0x80, 0x05, (byte)0x91, (byte) 0x55, 0x16, 0x09, 0x70, };
-
-		Parameter p = TcapFactory.createParameter();
-		p.setPrimitive(false);
-		p.setData(data);
+		byte[] data = new byte[] { (byte) 0x80, 0x05, (byte)0x91, (byte) 0x55, 0x16, 0x09, 0x70 };
+		
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
 
 		AdditionalNumber addNum = new AdditionalNumberImpl();
-		addNum.decode(p);
+		addNum.decodeAll(asn);
 		ISDNAddressString isdnAdd = addNum.getMSCNumber(); 
 		assertNotNull(isdnAdd);
 		
@@ -85,12 +87,16 @@ public class AdditionalNumberTest {
 
 	@Test
 	public void testEncode() throws Exception {
-		byte[] data = new byte[] { (byte) 0x80, 0x05, (byte)0x91, (byte) 0x55, 0x16, 0x09, 0x70, };
+		byte[] data = new byte[] { (byte) 0x80, 0x05, (byte)0x91, (byte) 0x55, 0x16, 0x09, 0x70 };
 		
 		ISDNAddressString isdnAdd = mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "55619007");
 		AdditionalNumber addNum = new AdditionalNumberImpl(isdnAdd, null);
-		Parameter p = addNum.encode();
+		
+		AsnOutputStream asnOS = new AsnOutputStream();
+		addNum.encodeAll(asnOS);
+		
+		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, p.getData()));
+		assertTrue(Arrays.equals(data, encodedData));
 	}
 }

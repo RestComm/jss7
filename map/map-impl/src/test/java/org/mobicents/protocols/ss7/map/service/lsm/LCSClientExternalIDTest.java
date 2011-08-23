@@ -33,6 +33,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
@@ -70,14 +73,13 @@ public class LCSClientExternalIDTest {
 
 	@Test
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70 };
+		byte[] data = new byte[] { (byte)0xb0, 0x07, (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70 };
 		
-		Parameter p = TcapFactory.createParameter();
-		p.setPrimitive(false);
-		p.setData(data);
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
 		
 		LCSClientExternalID lcsClientExterId = new LCSClientExternalIDImpl();
-		lcsClientExterId.decode(p);
+		lcsClientExterId.decodeAll(asn);
 		
 		assertNotNull(lcsClientExterId.getExternalAddress());
 		assertEquals("55619007", lcsClientExterId.getExternalAddress().getAddress());
@@ -87,16 +89,16 @@ public class LCSClientExternalIDTest {
 	@Test
 	public void testEncode() throws Exception {
 		
-		byte[] data = new byte[] { (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70 };
+		byte[] data = new byte[] { (byte)0xb0, 0x07, (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70 };
 
 		ISDNAddressString externalAddress = mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "55619007");
 		LCSClientExternalID lcsClientExterId = new LCSClientExternalIDImpl(externalAddress, null);
-		Parameter param = lcsClientExterId.encode();
-		assertNotNull(param);
-		assertTrue(param.isPrimitive());
-
+		AsnOutputStream asnOS = new AsnOutputStream();
+		lcsClientExterId.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, Tag.SEQUENCE);
 		
-		assertTrue(Arrays.equals(data, param.getData()));
+		byte[] encodedData = asnOS.toByteArray();
+
+		assertTrue(Arrays.equals(data, encodedData));
 
 	}
 }

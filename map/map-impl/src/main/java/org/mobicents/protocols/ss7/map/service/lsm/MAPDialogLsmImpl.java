@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import java.util.BitSet;
-
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
@@ -52,6 +50,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.LocationType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SLRArgExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberIdentity;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
@@ -99,12 +98,12 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 	 * .protocols.ss7.map.api.service.lsm.AccuracyFulfilmentIndicator)
 	 */
 	@Override
-	public Long addSubscriberLocationReportRequestIndication(LCSEvent lcsEvent, LCSClientID lcsClientID, LCSLocationInfo lcsLocationInfo,
-			ISDNAddressString msisdn, IMSI imsi, IMEI imei, ISDNAddressString naEsrd, ISDNAddressString naEsrk, byte[] locationEstimate,
-			Integer ageOfLocationEstimate, SLRArgExtensionContainer slrArgExtensionContainer, byte[] addLocationEstimate, DeferredmtlrData deferredmtlrData,
-			Byte lcsReferenceNumber, byte[] geranPositioningData, byte[] utranPositioningData, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai,
-			byte[] hgmlcAddress, Integer lcsServiceTypeID, Boolean saiPresent, Boolean pseudonymIndicator,
-			AccuracyFulfilmentIndicator accuracyFulfilmentIndicator) throws MAPException {
+	public Long addSubscriberLocationReportRequest(LCSEvent lcsEvent, LCSClientID lcsClientID, LCSLocationInfo lcsLocationInfo, ISDNAddressString msisdn,
+			IMSI imsi, IMEI imei, ISDNAddressString naEsrd, ISDNAddressString naEsrk, byte[] locationEstimate, Integer ageOfLocationEstimate,
+			SLRArgExtensionContainer slrArgExtensionContainer, byte[] addLocationEstimate, DeferredmtlrData deferredmtlrData, Byte lcsReferenceNumber,
+			byte[] geranPositioningData, byte[] utranPositioningData, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai, byte[] hgmlcAddress,
+			Integer lcsServiceTypeID, Boolean saiPresent, Boolean pseudonymIndicator, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator)
+			throws MAPException {
 
 		if (lcsEvent == null || lcsClientID == null || lcsLocationInfo == null) {
 			throw new MAPException("Mandatroy parameters lCSEvent, lCSClientID or lCSLocationInfo cannot be null");
@@ -123,7 +122,7 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 					pseudonymIndicator, accuracyFulfilmentIndicator);
 
 			AsnOutputStream asnOs = new AsnOutputStream();
-			req.encode(asnOs);
+			req.encodeAll(asnOs);
 
 			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
 			p.setTagClass(Tag.CLASS_UNIVERSAL);
@@ -154,8 +153,8 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 	 * org.mobicents.protocols.ss7.map.api.dialog.AddressString)
 	 */
 	@Override
-	public void addSubscriberLocationReportResponseIndication(long invokeId, ISDNAddressString naEsrd, ISDNAddressString naEsrk,
-			MAPExtensionContainer extensionContainer) throws MAPException {
+	public void addSubscriberLocationReportResponse(long invokeId, ISDNAddressString naEsrd, ISDNAddressString naEsrk, MAPExtensionContainer extensionContainer)
+			throws MAPException {
 
 		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
 		resultLast.setInvokeId(invokeId);
@@ -168,7 +167,7 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 		SubscriberLocationReportResponseIndicationImpl resInd = new SubscriberLocationReportResponseIndicationImpl(naEsrd, naEsrk, extensionContainer);
 
 		AsnOutputStream asnOs = new AsnOutputStream();
-		resInd.encode(asnOs);
+		resInd.encodeAll(asnOs);
 
 		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
 		p.setTagClass(Tag.CLASS_UNIVERSAL);
@@ -191,7 +190,7 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer)
 	 */
 	@Override
-	public Long addSendRoutingInforForLCSRequestIndication(ISDNAddressString mlcNumber, SubscriberIdentity targetMS, MAPExtensionContainer extensionContainer)
+	public Long addSendRoutingInfoForLCSRequest(ISDNAddressString mlcNumber, SubscriberIdentity targetMS, MAPExtensionContainer extensionContainer)
 			throws MAPException {
 
 		if (mlcNumber == null || targetMS == null) {
@@ -205,10 +204,10 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
 			oc.setLocalOperationCode((long) MAPOperationCode.sendRoutingInfoForLCS);
 
-			SendRoutingInfoForLCSRequestIndicationImpl req = new SendRoutingInfoForLCSRequestIndicationImpl(extensionContainer, targetMS, mlcNumber);
+			SendRoutingInfoForLCSRequestIndicationImpl req = new SendRoutingInfoForLCSRequestIndicationImpl(mlcNumber, targetMS, extensionContainer);
 
 			AsnOutputStream asnOs = new AsnOutputStream();
-			req.encode(asnOs);
+			req.encodeAll(asnOs);
 
 			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
 			p.setTagClass(Tag.CLASS_UNIVERSAL);
@@ -240,7 +239,7 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 	 * byte[], byte[], byte[], byte[])
 	 */
 	@Override
-	public void addSendRoutingInforForLCSResponseIndication(long invokeId, SubscriberIdentity targetMS, LCSLocationInfo lcsLocationInfo,
+	public void addSendRoutingInfoForLCSResponse(long invokeId, SubscriberIdentity targetMS, LCSLocationInfo lcsLocationInfo,
 			MAPExtensionContainer extensionContainer, byte[] vgmlcAddress, byte[] hGmlcAddress, byte[] pprAddress, byte[] additionalVGmlcAddress)
 			throws MAPException {
 
@@ -260,7 +259,7 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 				vgmlcAddress, hGmlcAddress, pprAddress, additionalVGmlcAddress);
 
 		AsnOutputStream asnOs = new AsnOutputStream();
-		resInd.encode(asnOs);
+		resInd.encodeAll(asnOs);
 
 		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
 		p.setTagClass(Tag.CLASS_UNIVERSAL);
@@ -296,7 +295,7 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 	@Override
 	public Long addProvideSubscriberLocationRequest(LocationType locationType, ISDNAddressString mlcNumber, LCSClientID lcsClientID, Boolean privacyOverride,
 			IMSI imsi, ISDNAddressString msisdn, LMSI lmsi, IMEI imei, Integer lcsPriority, LCSQoS lcsQoS, MAPExtensionContainer extensionContainer,
-			BitSet supportedGADShapes, Byte lcsReferenceNumber, Integer lcsServiceTypeID, LCSCodeword lcsCodeword, LCSPrivacyCheck lcsPrivacyCheck,
+			SupportedGADShapes supportedGADShapes, Byte lcsReferenceNumber, Integer lcsServiceTypeID, LCSCodeword lcsCodeword, LCSPrivacyCheck lcsPrivacyCheck,
 			AreaEventInfo areaEventInfo, byte[] hgmlcAddress) throws MAPException {
 
 		if (locationType == null || mlcNumber == null) {
@@ -315,7 +314,7 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 					lcsServiceTypeID, lcsCodeword, lcsPrivacyCheck, areaEventInfo, hgmlcAddress);
 
 			AsnOutputStream asnOs = new AsnOutputStream();
-			req.encode(asnOs);
+			req.encodeAll(asnOs);
 
 			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
 			p.setTagClass(Tag.CLASS_UNIVERSAL);
@@ -371,7 +370,7 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 				cellGlobalIdOrServiceAreaIdOrLAI, saiPresent, accuracyFulfilmentIndicator);
 
 		AsnOutputStream asnOs = new AsnOutputStream();
-		resInd.encode(asnOs);
+		resInd.encodeAll(asnOs);
 
 		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
 		p.setTagClass(Tag.CLASS_UNIVERSAL);

@@ -184,5 +184,49 @@ public class GSMCharsetTest extends TestCase {
 
 		assertTrue(Arrays.equals(rawData, data));
 
-	}	
+	}
+	
+	@org.junit.Test
+	public void testDecode4() throws Exception {
+
+		byte[] data = new byte[] { 0x2a, 0x1c, 0x6e, (byte)0xd4 };
+
+		// The USSD String represented by above raw data
+		String ussdString = "*88#";
+
+		GSMCharset cs = new GSMCharset("GSM", new String[] {});
+
+		ByteBuffer bb = ByteBuffer.wrap(data);
+
+		CharBuffer bf = cs.decode(bb);
+
+		String s1 = bf.toString();
+
+		assertEquals(ussdString, s1);
+
+	}
+	
+	//@org.junit.Test 
+	//TODO : This fails
+//	public void testEncode4() throws Exception {
+//
+//		// This raw data is from nad1053.pcap, last packet.
+//		byte[] rawData = new byte[] { 0x2a, 0x1c, 0x6e, (byte)0xd4 };
+//
+//		String ussdString = "*88#";
+//
+//		GSMCharset cs = new GSMCharset("GSM", new String[] {});
+//		ByteBuffer bb = cs.encode(ussdString);
+//
+//		// Not using bb.array() as it also includes the bytes beyond limit till
+//		// capacity
+//		byte[] data = new byte[bb.limit()];
+//		int count = 0;
+//		while (bb.hasRemaining()) {
+//			data[count++] = bb.get();
+//		}
+//
+//		assertTrue(Arrays.equals(rawData, data));
+//
+//	}
 }

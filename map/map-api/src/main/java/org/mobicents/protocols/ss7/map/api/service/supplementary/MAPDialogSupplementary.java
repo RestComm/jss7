@@ -23,8 +23,9 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 
 /**
  * 
@@ -42,12 +43,14 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 *            03.38
 	 * @param ussdString
 	 *            Ussd String
+	 * @param alertingPatter
+	 *            The optional alerting pattern. See {@link AlertingPattern}
 	 * @param msisdn
-	 *            The MSISDN in {@link AddressString} format. This is optional
+	 *            The optional MSISDN in {@link AddressString} format.
 	 * @return invokeId
 	 * @throws MAPException
 	 */
-	public Long addProcessUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AddressString msisdn)
+	public Long addProcessUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, AddressString msisdn)
 			throws MAPException;
 
 	/**
@@ -55,10 +58,7 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 * 
 	 * @param invokeId
 	 *            The original invoke ID retrieved from
-	 *            {@link ProcessUnstructuredSSIndication}
-	 * @param lastResult
-	 *            Specify if this Result is last - true, or there would be
-	 *            follow-up results - false
+	 *            {@link ProcessUnstructuredSSResponseIndication}
 	 * @param ussdDataCodingScheme
 	 *            The Data Coding Scheme for this USSD String as defined in GSM
 	 *            03.38
@@ -66,8 +66,7 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 *            Ussd String {@link USSDString}
 	 * @throws MAPException
 	 */
-	public void addProcessUnstructuredSSResponse(long invokeId, boolean lastResult, byte ussdDataCodingScheme,
-			USSDString ussdString) throws MAPException;
+	public void addProcessUnstructuredSSResponse(long invokeId, byte ussdDataCodingScheme, USSDString ussdString) throws MAPException;
 
 	/**
 	 * Add's a new Unstructured SS Request
@@ -77,20 +76,22 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 *            03.38
 	 * @param ussdString
 	 *            Ussd String {@link USSDString}
+	 * @param alertingPatter
+	 *            The optional alerting pattern. See {@link AlertingPattern}
+	 * @param msisdn
+	 *            The optional MSISDN in {@link AddressString} format.
 	 * @return invokeId
 	 * @throws MAPException
 	 */
-	public Long addUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString) throws MAPException;
+	public Long addUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, AddressString msisdn)
+			throws MAPException;
 
 	/**
 	 * Add's a new Unstructured SS Response
 	 * 
 	 * @param invokeId
 	 *            The original invoke ID retrieved from
-	 *            {@link UnstructuredSSIndication}
-	 * @param lastResult
-	 *            Specify if this Result is last - true, or there would be
-	 *            follow-up results - false
+	 *            {@link UnstructuredSSResponseIndication}
 	 * @param ussdDataCodingScheme
 	 *            The Data Coding Scheme for this USSD String as defined in GSM
 	 *            03.38
@@ -98,7 +99,6 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 *            Ussd String {@link USSDString}
 	 * @throws MAPException
 	 */
-	public void addUnstructuredSSResponse(long invokeId, boolean lastResult, byte ussdDataCodingScheme,
-			USSDString ussdString) throws MAPException;
+	public void addUnstructuredSSResponse(long invokeId, byte ussdDataCodingScheme, USSDString ussdString) throws MAPException;
 
 }

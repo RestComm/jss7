@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 
 /**
@@ -34,7 +34,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
  * @author amit bhayani
  *
  */
-public interface LCSCodeword extends MAPPrimitive {
+public interface LCSCodeword extends MAPAsnPrimitive {
 	
 	/**
 	 * USSD-DataCodingScheme ::= OCTET STRING (SIZE (1))

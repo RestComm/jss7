@@ -22,14 +22,48 @@
 
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
+
 
 /**
- * This service is used between the HLR and the VLR and between the VLR and the
- * MSC when the invoking entity requires information from the mobile user, in
- * connection with unstructured supplementary service handling.
+ * processUnstructuredSS-Request OPERATION ::= { --Timer 10 minutes
+ * 	ARGUMENT
+ *		USSD-Arg
+ *	RESULT
+ *		USSD-Res
+ *	ERRORS {
+ *		systemFailure |
+ *		dataMissing |
+ *		unexpectedDataValue |
+ *		unknownAlphabet |
+ *		callBarred}
+ *		CODE local:59 }
+ *
+ *
+ *USSD-Arg ::= SEQUENCE {
+ *		ussd-DataCodingScheme USSD-DataCodingScheme,
+ *		ussd-String USSD-String,
+ *		... ,
+ *		alertingPattern AlertingPattern OPTIONAL,
+ *		msisdn [0] ISDN-AddressString OPTIONAL }
+ *
+ *USSD-Res ::= SEQUENCE {
+ *		ussd-DataCodingScheme USSD-DataCodingScheme,
+ *		ussd-String USSD-String,
+ *		...}
+ *
+ * This service is used between the MSC and the VLR and between the VLR and the
+ * HLR to relay information in order to allow unstructured supplementary service
+ * operation.
  * 
  * @author amit bhayani
  * 
  */
-public interface UnstructuredSSRequest extends  USSDService {
+public interface ProcessUnstructuredSSRequestIndication extends  USSDMessage {
+	
+	public AddressString getMSISDNAddressString();
+	
+	public AlertingPattern getAlertingPattern();
+	
 }

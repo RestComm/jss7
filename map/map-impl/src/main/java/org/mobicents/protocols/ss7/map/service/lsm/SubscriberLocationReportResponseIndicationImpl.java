@@ -22,6 +22,10 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
+import java.io.IOException;
+
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -33,14 +37,17 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportResponseIndication;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
-import org.mobicents.protocols.ss7.tcap.asn.ParseException;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
+ * TODO : Add unit test
+ * 
  * @author amit bhayani
  * 
  */
 public class SubscriberLocationReportResponseIndicationImpl extends LsmMessageImpl implements SubscriberLocationReportResponseIndication {
+
+	private static final int _TAG_NA_ESRK = 0;
+	private static final int _TAG_NA_ESRD = 1;
 
 	private ISDNAddressString naEsrd = null;
 	private ISDNAddressString naEsrk = null;
@@ -98,95 +105,192 @@ public class SubscriberLocationReportResponseIndicationImpl extends LsmMessageIm
 		return this.naEsrd;
 	}
 
-	public void decode(Parameter param) throws MAPParsingComponentException {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+	 */
+	@Override
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
 
-		Parameter[] parameters = param.getParameters();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
+	 * ()
+	 */
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
 
-		if (parameters != null) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
+	 * ()
+	 */
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
 
-			for (int count = 0; count < parameters.length; count++) {
-				Parameter p = parameters[count];
-				switch (p.getTag()) {
-				case 0:
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
+	 * (org.mobicents.protocols.asn.AsnInputStream)
+	 */
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
+	 * (org.mobicents.protocols.asn.AsnInputStream, int)
+	 */
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+
+		while (true) {
+			if (ais.available() == 0)
+				break;
+
+			int tag = ais.readTag();
+
+			if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+				switch (tag) {
+				case Tag.SEQUENCE:
+					// ExtensionContainer
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException(
+								"Error while decoding ReportSMDeliveryStatusResponse: Parameter extensionContainer is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					this.extensionContainer.decodeAll(ais);
+					break;
+
+				default:
+					ais.advanceElement();
+					break;
+				}// switch
+			} else {
+				switch (tag) {
+				case _TAG_NA_ESRK:
 					// na-ESRK [0] ISDN-AddressString OPTIONAL
-					if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive()) {
+					if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
 						throw new MAPParsingComponentException(
 								"Error while decoding SubscriberLocationReportResponseIndication: Parameter [na-ESRK [0] ISDN-AddressString] bad tag class or not primitive or not Sequence",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 					this.naEsrk = new ISDNAddressStringImpl();
-					this.naEsrk.decode(p);
+					this.naEsrk.decodeAll(ais);
 					break;
-				case 1:
+				case _TAG_NA_ESRD:
 					// na-ESRD [1] ISDN-AddressString OPTIONAL,
-					if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive()) {
+					if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
 						throw new MAPParsingComponentException(
 								"Error while decoding SubscriberLocationReportResponseIndication: Parameter [na-ESRD [1] ISDN-AddressString] bad tag class or not primitive or not Sequence",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 					this.naEsrd = new ISDNAddressStringImpl();
-					this.naEsrd.decode(p);
+					this.naEsrd.decodeAll(ais);
 					break;
 				default:
-					if (p.getTagClass() == Tag.CLASS_UNIVERSAL && p.getTag() == Tag.EXTERNAL) {
-						this.extensionContainer = new MAPExtensionContainerImpl();
-						this.extensionContainer.decode(p);
-					} else {
-//						throw new MAPParsingComponentException(
-//								"Error while decoding SubscriberLocationReportResponseIndication: Expected tags 0 or 1 but found" + p.getTag(),
-//								MAPParsingComponentExceptionReason.MistypedParameter);
-					}
+					ais.advanceElement();
+					break;
 				}
-
-			}// For loop
-		}// if (parameters != null)
+			}
+		}// while
 	}
 
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding ReportSMDeliveryStatusResponse: " + e.getMessage(), e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.extensionContainer != null) {
 			// extensionContainer ExtensionContainer OPTIONAL
-			Parameter p = this.extensionContainer.encode();
-			p.setTagClass(Tag.CLASS_UNIVERSAL);
-			p.setPrimitive(true);
-			p.setTag(Tag.EXTERNAL);
-
-			try {
-				p.encode(asnOs);
-			} catch (ParseException e) {
-				throw new MAPException(
-						"Encoding of SubscriberLocationReportResponseIndication failed. Failed to parse extensionContainer ExtensionContainer OPTIONAL", e);
-			}
+			this.extensionContainer.encodeAll(asnOs);
 		}
 
 		if (this.naEsrk != null) {
 			// na-ESRK [0] ISDN-AddressString OPTIONAL
-			Parameter p = this.naEsrd.encode();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setPrimitive(true);
-			p.setTag(0x00);
-
-			try {
-				p.encode(asnOs);
-			} catch (ParseException e) {
-				throw new MAPException("Encoding of SubscriberLocationReportResponseIndication failed. Failed to parse na-ESRK [0] ISDN-AddressString", e);
-			}
+			this.naEsrk.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NA_ESRK);
 		}
 
 		if (this.naEsrd != null) {
 			// na-ESRD [1] ISDN-AddressString OPTIONAL ,
-			Parameter p = this.naEsrd.encode();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setPrimitive(true);
-			p.setTag(0x01);
-
-			try {
-				p.encode(asnOs);
-			} catch (ParseException e) {
-				throw new MAPException("Encoding of SubscriberLocationReportResponseIndication failed. Failed to parse na-ESRD [1] ISDN-AddressString", e);
-			}
+			this.naEsrd.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NA_ESRD);
 		}
-
 	}
 
 }

@@ -32,14 +32,14 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.CellGlobalIdOrServiceAreaIdOrLAI;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
- * @author abhayani
+ * @author amit bhayani
  * 
  */
 public class CellGlobalIdOrServiceAreaIdOrLAITest {
@@ -65,12 +65,12 @@ public class CellGlobalIdOrServiceAreaIdOrLAITest {
 	public void testDecode() throws Exception {
 		byte[] data = new byte[] { (byte) 0x80, 0x07, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b };
 
-		Parameter p = TcapFactory.createParameter();
-		p.setPrimitive(false);
-		p.setData(data);
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
+
 
 		CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
-		cellGlobalIdOrServiceAreaIdOrLAI.decode(p);
+		cellGlobalIdOrServiceAreaIdOrLAI.decodeAll(asn);
 
 		assertNotNull(cellGlobalIdOrServiceAreaIdOrLAI.getCellGlobalIdOrServiceAreaIdFixedLength());
 		assertTrue(Arrays.equals(new byte[] { 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b },
@@ -85,10 +85,12 @@ public class CellGlobalIdOrServiceAreaIdOrLAITest {
 
 		CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl(new byte[] { 0x05, 0x06, 0x07, 0x08, 0x09,
 				0x0a, 0x0b }, null);
-		Parameter param = cellGlobalIdOrServiceAreaIdOrLAI.encode();
-		assertNotNull(param);
+		AsnOutputStream asnOS = new AsnOutputStream();
+		cellGlobalIdOrServiceAreaIdOrLAI.encodeAll(asnOS);
+		
+		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, param.getData()));
+		assertTrue(Arrays.equals(data, encodedData));
 
 	}
 }

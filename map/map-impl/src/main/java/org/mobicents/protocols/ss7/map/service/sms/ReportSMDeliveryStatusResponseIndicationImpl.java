@@ -156,13 +156,11 @@ public class ReportSMDeliveryStatusResponseIndicationImpl extends SmsServiceImpl
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
 		try {
 			asnOs.writeTag(tagClass, false, tag);
 			int pos = asnOs.StartContentDefiniteLength();

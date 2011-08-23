@@ -22,9 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import java.util.BitSet;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 
 /**
  * LocationType ::= SEQUENCE {
@@ -35,7 +33,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
  * @author amit bhayani
  *
  */
-public interface LocationType extends MAPPrimitive {
+public interface LocationType extends MAPAsnPrimitive {
 	LocationEstimateType getLocationEstimateType();
 	
 	/**
@@ -51,5 +49,5 @@ public interface LocationType extends MAPPrimitive {
      *  -- DeferredLocationEventType shall be rejected by the receiver with a return error cause of
      *  -- unexpected data value.
 	 */
-	BitSet getDeferredLocationEventType();
+	DeferredLocationEventType getDeferredLocationEventType();
 }

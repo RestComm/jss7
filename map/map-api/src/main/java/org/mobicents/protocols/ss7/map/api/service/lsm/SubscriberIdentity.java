@@ -24,18 +24,18 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 
 /**
- * SubscriberIdentity ::= CHOICE { [0] IMSI,
- *		imsi [1] ISDN-AddressString
- *		msisdn 
- *		} 
+ * SubscriberIdentity ::= CHOICE { 
+ * 		imsi [0] IMSI,
+ * 		msisdn [1] ISDN-AddressString
+ *	} 
  * 
  * @author amit bhayani
  *
  */
-public interface SubscriberIdentity extends MAPPrimitive {
+public interface SubscriberIdentity extends MAPAsnPrimitive {
 	
 	public IMSI getIMSI();
 	

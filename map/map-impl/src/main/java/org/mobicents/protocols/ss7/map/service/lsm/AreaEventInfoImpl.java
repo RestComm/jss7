@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.map.service.lsm;
 import java.io.IOException;
 
 import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -33,15 +34,15 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaDefinition;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaEventInfo;
 import org.mobicents.protocols.ss7.map.api.service.lsm.OccurrenceInfo;
-import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
-import org.mobicents.protocols.ss7.tcap.asn.ParseException;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author amit bhayani
  * 
  */
-public class AreaEventInfoImpl extends MAPPrimitiveBase implements AreaEventInfo {
+public class AreaEventInfoImpl implements AreaEventInfo {
+	
+	private static final int _TAG_OCCURRENCE_INFO = 1;
+	private static final int _TAG_INTERVAL_TIME = 2;
 
 	private AreaDefinition areaDefinition = null;
 	private OccurrenceInfo occurrenceInfo = null;
@@ -101,55 +102,101 @@ public class AreaEventInfoImpl extends MAPPrimitiveBase implements AreaEventInfo
 		return this.intervalTime;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+	 */
 	@Override
-	public void decode(Parameter param) throws MAPParsingComponentException {
-		Parameter[] parameters = param.getParameters();
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
 
-		if (parameters == null || parameters.length < 1) {
-			throw new MAPParsingComponentException("Error while decoding AreaEventInfo: Needs at least 1 mandatory parameters, found"
-					+ (parameters == null ? null : parameters.length), MAPParsingComponentExceptionReason.MistypedParameter);
-		}
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass()
+	 */
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
 
-		Parameter p = parameters[0];
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive()
+	 */
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
 
-		if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || p.isPrimitive() || p.getTag() != 0) {
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
+	 */
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
+	 */
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}		
+	}
+	
+	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+		
+		int tag = ais.readTag();
+		
+		if (asnIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || asnIS.isTagPrimitive() || tag != 0) {
 			throw new MAPParsingComponentException(
 					"Error while decoding AreaEventInfo: Parameter 0 [areaDefinition [0] AreaDefinition] bad tag class, tag or not primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
-
+		
 		this.areaDefinition = new AreaDefinitionImpl();
-		this.areaDefinition.decode(p);
+		this.areaDefinition.decodeAll(ais);
+		
+		while(true){
+			if (ais.available() == 0)
+				break;
 
-		for (int count = 1; count < parameters.length; count++) {
-			p = parameters[count];
-			switch (p.getTag()) {
-			case 1:
-				// occurrenceInfo [1] OccurrenceInfo OPTIONAL,
-				if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive()) {
+			switch(ais.readTag()){
+			case _TAG_OCCURRENCE_INFO:
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
 					throw new MAPParsingComponentException(
 							"Error while decoding AreaEventInfo: Parameter 1 [occurrenceInfo [1] OccurrenceInfo] bad tag class, tag or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
-				this.occurrenceInfo = OccurrenceInfo.getOccurrenceInfo(p.getData()[0]);
+				
+				int i1 = (int) ais.readInteger();
+				
+				this.occurrenceInfo = OccurrenceInfo.getOccurrenceInfo(i1);
 				break;
-			case 2:
-				// intervalTime [2] IntervalTime OPTIONAL,
-				if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive()) {
+			case _TAG_INTERVAL_TIME :
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
 					throw new MAPParsingComponentException(
 							"Error while decoding AreaEventInfo: Parameter 2 [intervalTime [2] IntervalTime] bad tag class, tag or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
-
-				byte[] data = p.getData();
-
-				byte temp;
-				this.intervalTime = 0;
-
-				for (int i = 0; i < data.length; i++) {
-					temp = data[i];
-					this.intervalTime = (this.intervalTime << 8) | (0x00FF & temp);
-				}
+				
+				this.intervalTime = (int) ais.readInteger();
 				break;
 			default:
 //				throw new MAPParsingComponentException(
@@ -158,42 +205,56 @@ public class AreaEventInfoImpl extends MAPPrimitiveBase implements AreaEventInfo
 				break;
 			}
 		}
+
 	}
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
+	 */
 	@Override
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);				
+	}
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding reportSMDeliveryStatusRequest: " + e.getMessage(), e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.areaDefinition == null) {
 			throw new MAPException("Error while encoding AreaEventInfo the mandatory parameter[areaDefinition [0] AreaDefinition] is not defined");
 		}
-
-		Parameter p = this.areaDefinition.encode();
-		p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-		p.setPrimitive(false);
-		p.setTag(0);
-
-		try {
-			p.encode(asnOs);
-		} catch (ParseException e) {
-			throw new MAPException("Error while encoding AreaEventInfo the mandatory parameter[areaDefinition [0] AreaDefinition] is not defined", e);
-		}
-
-		if (this.occurrenceInfo != null) {
-			asnOs.write(0x81);
-			asnOs.write(0x01);
-			asnOs.write(this.occurrenceInfo.getInfo());
-		}
-
-		if (this.intervalTime != null) {
-			try {
-				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, 2, this.intervalTime);
-			} catch (IOException e) {
-				throw new MAPException("Error while encoding AreaEventInfo. Encdoing of the parameter[intervalTime [2] IntervalTime] failed", e);
-			} catch (AsnException e) {
-				throw new MAPException("Error while encoding AreaEventInfo. Encdoing of the parameter[intervalTime [2] IntervalTime] failed", e);
+		
+		this.areaDefinition.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+		
+		try{
+			if(this.occurrenceInfo != null){
+				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, 1, this.occurrenceInfo.getInfo());
 			}
+			
+			if(this.intervalTime != null){
+				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, 2, this.intervalTime);
+			}
+		
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding Area: " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding Area: " + e.getMessage(), e);
 		}
-
 	}
-
 }

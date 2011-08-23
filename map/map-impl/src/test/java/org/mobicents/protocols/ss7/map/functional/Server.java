@@ -25,15 +25,12 @@ package org.mobicents.protocols.ss7.map.functional;
 import java.util.Arrays;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
-import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
@@ -42,10 +39,9 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
-import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.api.dialog.ProcedureCancellationReason;
+import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
-import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
@@ -54,17 +50,12 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.InformServiceCentreRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
-import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
+import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener;
 import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
 import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageResponseIndication;
@@ -78,11 +69,16 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
 /**
@@ -436,8 +432,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	/**
 	 * MAP Service Supplementary Listeners
 	 */
-	public void onProcessUnstructuredSSIndication(
-			ProcessUnstructuredSSIndication procUnstrInd) {
+	public void onProcessUnstructuredSSRequestIndication(ProcessUnstructuredSSRequestIndication procUnstrInd) {
 		
 		switch( this.step ) {
 		case Action_Dialog_A:
@@ -461,7 +456,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 				.createUSSDString(MAPFunctionalTest.USSD_MENU);
 
 				try {
-					mapDialog.addUnstructuredSSRequest((byte) 0x0F, ussdStringObj);
+					mapDialog.addUnstructuredSSRequest((byte) 0x0F, ussdStringObj, null, null);
 
 				} catch (MAPException e) {
 					logger.error(e);
@@ -491,9 +486,19 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	}
 
-	public void onUnstructuredSSIndication(UnstructuredSSIndication unstrInd) {
-		// TODO Auto-generated method stub
+	@Override
+	public void onProcessUnstructuredSSResponseIndication(ProcessUnstructuredSSResponseIndication procUnstrResInd){
+		
+	}
 
+	@Override
+	public void onUnstructuredSSRequestIndication(UnstructuredSSRequestIndication unstrReqInd){
+		
+	}
+
+	@Override
+	public void onUnstructuredSSResponseIndication(UnstructuredSSResponseIndication unstrResInd){
+		
 	}
 
 	/**

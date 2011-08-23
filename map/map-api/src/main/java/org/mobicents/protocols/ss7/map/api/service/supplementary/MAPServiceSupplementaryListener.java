@@ -24,8 +24,6 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 
-;
-
 /**
  * 
  * @author amit bhayani
@@ -34,13 +32,11 @@ import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
  */
 public interface MAPServiceSupplementaryListener extends MAPServiceListener {
 
-	public void onProcessUnstructuredSSIndication(ProcessUnstructuredSSIndication procUnstrInd);
+	public void onProcessUnstructuredSSRequestIndication(ProcessUnstructuredSSRequestIndication procUnstrReqInd);
 
-	// public void onProcessUnstructuredSSConfirm(ProcessUnstructuredSSConfirm
-	// procUnstrCnfrm);
+	public void onProcessUnstructuredSSResponseIndication(ProcessUnstructuredSSResponseIndication procUnstrResInd);
 
-	public void onUnstructuredSSIndication(UnstructuredSSIndication unstrInd);
+	public void onUnstructuredSSRequestIndication(UnstructuredSSRequestIndication unstrReqInd);
 
-	// public void onUnstructuredSSConfirm(UnstructuredSSConfirm unstrCnfrm);
-
+	public void onUnstructuredSSResponseIndication(UnstructuredSSResponseIndication unstrResInd);
 }

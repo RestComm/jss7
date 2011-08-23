@@ -22,6 +22,10 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
+import java.io.IOException;
+
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -32,15 +36,15 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientExternalID;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
-import org.mobicents.protocols.ss7.tcap.asn.ParseException;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author amit bhayani
  * 
  */
-public class LCSClientExternalIDImpl extends MAPPrimitiveBase implements LCSClientExternalID {
+public class LCSClientExternalIDImpl implements LCSClientExternalID {
+	
+	private static final int _TAG_EXTERNAL_ADDRESS = 0;
+	private static final int _TAG_EXTENSION_CONTAINER = 1;
 
 	private ISDNAddressString externalAddress;
 	private MAPExtensionContainer extensionContainer;
@@ -79,68 +83,124 @@ public class LCSClientExternalIDImpl extends MAPPrimitiveBase implements LCSClie
 		return this.extensionContainer;
 	}
 
-	public void decode(Parameter p) throws MAPParsingComponentException {
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+	 */
+	@Override
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
 
-		Parameter[] parameters = p.getParameters();
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass()
+	 */
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
 
-		if (parameters == null || parameters.length == 0) {
-			// TODO Both parameters are optional here, so its possible that we
-			// received LCSClientExternalID without any parameter?
-			return;
-		}
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive()
+	 */
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
 
-		for (int count = 0; count < parameters.length; count++) {
-			p = parameters[count];
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
+	 */
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}				
+	}
 
-			switch (p.getTag()) {
-
-			case 0:
-				// externalAddress [0] ISDN-AddressString OPTIONAL,
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
+	 */
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}			
+	}
+	
+	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		
+		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+		
+		while (true) {
+			if (ais.available() == 0)
+				break;
+			
+			int tag = ais.readTag();
+			switch (tag) {
+			case _TAG_EXTERNAL_ADDRESS :
 				this.externalAddress = new ISDNAddressStringImpl();
-				this.externalAddress.decode(p);
+				this.externalAddress.decodeAll(ais);
 				break;
-			case 1:
-				// extensionContainer [1] ExtensionContainer OPTIONAL,
+			case _TAG_EXTENSION_CONTAINER:
 				this.extensionContainer = new MAPExtensionContainerImpl();
-				this.extensionContainer.decode(p);
+				this.extensionContainer.decodeAll(ais);
 				break;
-
 			default:
 //				throw new MAPParsingComponentException("Decoding LCSClientExternalID failed. Expected externalAddress [0] or extensionContainer [1] but found "
-//						+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+//						+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);				
 			}
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
+	 */
 	@Override
-	public void encode(AsnOutputStream asnOs) throws MAPException {
-
-		
-		if (this.externalAddress != null) {
-			// externalAddress [0] ISDN-AddressString OPTIONAL
-
-			Parameter p = externalAddress.encode();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setTag(0);
-			p.setPrimitive(true);
-			try {
-				p.encode(asnOs);
-			} catch (ParseException e) {
-				throw new MAPException("Encoding of LCSClientExternalID failed. Failed to parse externalAddress [0] ISDN-AddressString", e);
-			}
-		}
-
-		if (this.extensionContainer != null) {
-			Parameter p = this.extensionContainer.encode();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setTag(1);
-			p.setPrimitive(false); // FIXME Is it primitive?
-			try {
-				p.encode(asnOs);
-			} catch (ParseException e) {
-				throw new MAPException("Encoding of LCSClientExternalID failed. Failed to parse extensionContainer [1] ExtensionContainer", e);
-			}
-		}
-
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);			
 	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding InformServiceCentreRequest: " + e.getMessage(), e);
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+		if(this.externalAddress != null){
+			this.externalAddress.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+		}
+		
+		if(this.extensionContainer != null){
+			this.extensionContainer.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 1);
+		}
+	}
+
+
 }

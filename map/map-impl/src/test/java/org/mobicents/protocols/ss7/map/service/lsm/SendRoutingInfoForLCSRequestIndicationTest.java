@@ -34,6 +34,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
@@ -71,15 +72,14 @@ public class SendRoutingInfoForLCSRequestIndicationTest {
 	@Test
 	public void testDecodeProvideSubscriberLocationRequestIndication() throws Exception {
 		// The trace is from Brazilian operator
-		byte[] data = new byte[] { (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70, (byte) 0xa1, 0x0a, (byte) 0x80, 0x08, 0x27, (byte) 0x94,
+		byte[] data = new byte[] { 0x30, 0x13, (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70, (byte) 0xa1, 0x0a, (byte) 0x80, 0x08, 0x27, (byte) 0x94,
 				(byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
 
-		Parameter p = TcapFactory.createParameter();
-		p.setPrimitive(false);
-		p.setData(data);
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
 
 		SendRoutingInfoForLCSRequestIndicationImpl rtgInfnoForLCSreqInd = new SendRoutingInfoForLCSRequestIndicationImpl();
-		rtgInfnoForLCSreqInd.decode(p);
+		rtgInfnoForLCSreqInd.decodeAll(asn);
 		
 		ISDNAddressString mlcNum = rtgInfnoForLCSreqInd.getMLCNumber();
 		assertNotNull(mlcNum);
@@ -105,7 +105,7 @@ public class SendRoutingInfoForLCSRequestIndicationTest {
 	@Test
 	public void testEncode() throws Exception {
 		// The trace is from Brazilian operator
-		byte[] data = new byte[] { (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70, (byte) 0xa1, 0x0a, (byte) 0x80, 0x08, 0x27, (byte) 0x94,
+		byte[] data = new byte[] { 0x30, 0x13, (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70, (byte) 0xa1, 0x0a, (byte) 0x80, 0x08, 0x27, (byte) 0x94,
 				(byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
 
 		IMSI imsi = this.mapServiceFactory.createIMSI(724l, 99l, "9900000007");
@@ -115,9 +115,11 @@ public class SendRoutingInfoForLCSRequestIndicationTest {
 
 		SendRoutingInfoForLCSRequestIndicationImpl rtgInfnoForLCSreqInd = new SendRoutingInfoForLCSRequestIndicationImpl(mlcNumber, subsIdent);
 
-		AsnOutputStream asnOs = new AsnOutputStream();
-		rtgInfnoForLCSreqInd.encode(asnOs);
+		AsnOutputStream asnOS = new AsnOutputStream();
+		rtgInfnoForLCSreqInd.encodeAll(asnOS);
 
-		assertTrue(Arrays.equals(data, asnOs.toByteArray()));
+		byte[] encodedData = asnOS.toByteArray();
+
+		assertTrue(Arrays.equals(data, encodedData));
 	}
 }

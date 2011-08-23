@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 
 /**
  * CellGlobalIdOrServiceAreaIdOrLAI ::= CHOICE {
@@ -32,7 +32,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
  * @author amit bhayani
  *
  */
-public interface CellGlobalIdOrServiceAreaIdOrLAI extends MAPPrimitive {
+public interface CellGlobalIdOrServiceAreaIdOrLAI extends MAPAsnPrimitive {
 	
 	/**
 	 * CellGlobalIdOrServiceAreaIdFixedLength ::= OCTET STRING (SIZE (7))

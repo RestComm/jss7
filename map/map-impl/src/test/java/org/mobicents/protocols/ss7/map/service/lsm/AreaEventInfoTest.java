@@ -33,6 +33,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.Area;
@@ -70,15 +73,15 @@ public class AreaEventInfoTest {
 	@Test
 	public void testDecode() throws Exception {
 		// TODO this is self generated trace. We need trace from operator
-		byte[] data = new byte[] { (byte) 0xa0, 0x16, (byte) 0xa0, 0x14, 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08,
+		byte[] data = new byte[] { (byte)0xb0, 0x1f, (byte) 0xa0, 0x16, (byte) 0xa0, 0x14, 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08,
 				(byte) 0x80, 0x01, 0x03, (byte) 0x81, 0x03, 0x04, 0x30, 0x31, (byte) 0x81, 0x01, 0x01, (byte) 0x82, 0x02, 0x7f, (byte) 0xfe };
 
-		Parameter p = TcapFactory.createParameter();
-		p.setPrimitive(false);
-		p.setData(data);
+		
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
 
 		AreaEventInfo areaEvtInf = new AreaEventInfoImpl();
-		areaEvtInf.decode(p);
+		areaEvtInf.decodeAll(asn);
 
 		AreaDefinition areaDef = areaEvtInf.getAreaDefinition();
 		assertNotNull(areaDef);
@@ -103,7 +106,7 @@ public class AreaEventInfoTest {
 	@Test
 	public void testEncode() throws Exception {
 		// TODO this is self generated trace. We need trace from operator
-		byte[] data = new byte[] { (byte) 0xa0, 0x16, (byte) 0xa0, 0x14, 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08,
+		byte[] data = new byte[] { (byte)0xb0, 0x1f, (byte) 0xa0, 0x16, (byte) 0xa0, 0x14, 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08,
 				(byte) 0x80, 0x01, 0x03, (byte) 0x81, 0x03, 0x04, 0x30, 0x31, (byte) 0x81, 0x01, 0x01, (byte) 0x82, 0x02, 0x7f, (byte) 0xfe };
 
 		Area area1 = new AreaImpl(AreaType.utranCellId, new byte[] { 0x09, 0x70, 0x71 });
@@ -115,11 +118,12 @@ public class AreaEventInfoTest {
 
 		AreaEventInfo areaEvtInf = new AreaEventInfoImpl(areaDef, OccurrenceInfo.multipleTimeEvent, 32766);
 
-		Parameter param = areaEvtInf.encode();
-		assertNotNull(param);
-		assertTrue(param.isPrimitive());
+		AsnOutputStream asnOS = new AsnOutputStream();
+		areaEvtInf.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, Tag.SEQUENCE);
+		
+		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, param.getData()));
+		assertTrue(Arrays.equals(data, encodedData));
 
 	}
 }

@@ -46,14 +46,15 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
 public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryListener {
@@ -131,21 +132,13 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 		AddressString msisdn = this.servFact.createAddressString(AddressNature.international_number,
 				NumberingPlan.ISDN, "31628838002");
 
-		mapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, msisdn);
+		mapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString,null, msisdn);
 
 		// This will initiate the TC-BEGIN with INVOKE component
 		mapDialog.send();
 	}
 
-	public void onProcessUnstructuredSSIndication(ProcessUnstructuredSSIndication procUnstrInd) {
-		// TODO Auto-generated method stub
 
-	}
-
-	public void onUnstructuredSSIndication(UnstructuredSSIndication unstrInd) {
-		// TODO Auto-generated method stub
-
-	}
 
 	public static void main(String[] args) throws Exception {
 		SccpProvider sccpProvider = getSccpProvider(); // JNDI lookup of SCCP
@@ -241,6 +234,43 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 
 	@Override
 	public void onInvokeTimeout(MAPDialog mapDialog, Long invoke) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	//USSD Listener callback
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onProcessUnstructuredSSRequestIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication)
+	 */
+	@Override
+	public void onProcessUnstructuredSSRequestIndication(ProcessUnstructuredSSRequestIndication procUnstrReqInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onProcessUnstructuredSSResponseIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication)
+	 */
+	@Override
+	public void onProcessUnstructuredSSResponseIndication(ProcessUnstructuredSSResponseIndication procUnstrResInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSRequestIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication)
+	 */
+	@Override
+	public void onUnstructuredSSRequestIndication(UnstructuredSSRequestIndication unstrReqInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSResponseIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication)
+	 */
+	@Override
+	public void onUnstructuredSSResponseIndication(UnstructuredSSResponseIndication unstrResInd) {
 		// TODO Auto-generated method stub
 		
 	}

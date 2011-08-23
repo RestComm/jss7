@@ -34,13 +34,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberIdentity;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * Trace are from Brazil Operator
@@ -71,12 +71,12 @@ public class SubscriberIdentityTest {
 	public void testDecode() throws Exception {
 		byte[] data = new byte[] { (byte) 0x80, 0x08, 0x27, (byte) 0x94, (byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
 
-		Parameter p = TcapFactory.createParameter();
-		p.setPrimitive(false);
-		p.setData(data);
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
+
 
 		SubscriberIdentity subsIdent = new SubscriberIdentityImpl();
-		subsIdent.decode(p);
+		subsIdent.decodeAll(asn);
 		IMSI imsi = subsIdent.getIMSI();
 		ISDNAddressString msisdn  = subsIdent.getMSISDN();
 		
@@ -95,8 +95,11 @@ public class SubscriberIdentityTest {
 
 		IMSI imsi = this.mapServiceFactory.createIMSI(724l, 99l, "9900000007");
 		SubscriberIdentity subsIdent = new SubscriberIdentityImpl(imsi);
-		Parameter p = subsIdent.encode();
+		AsnOutputStream asnOS = new AsnOutputStream();
+		subsIdent.encodeAll(asnOS);
+		
+		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, p.getData()));
+		assertTrue(Arrays.equals(data, encodedData));
 	}
 }

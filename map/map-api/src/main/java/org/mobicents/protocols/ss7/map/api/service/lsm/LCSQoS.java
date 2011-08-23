@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
 
@@ -38,7 +39,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
  * @author amit bhayani
  *
  */
-public interface LCSQoS extends MAPPrimitive {
+public interface LCSQoS extends MAPAsnPrimitive {
 	
 	/**
 	 * Horizontal-Accuracy ::= OCTET STRING (SIZE (1))

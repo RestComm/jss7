@@ -22,9 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.BitSet;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -38,26 +36,32 @@ import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AdditionalNumber;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SupportedLCSCapabilitySets;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
-import org.mobicents.protocols.ss7.tcap.asn.ParseException;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
+ * TODO : Add unit test for this
  * @author amit bhayani
  * 
  */
-public class LCSLocationInfoImpl extends MAPPrimitiveBase implements LCSLocationInfo {
+public class LCSLocationInfoImpl implements LCSLocationInfo {
+	
+	private static final int _TAG_LMSI = 0;
+	private static final int _TAG_EXTENSION_CONTAINER = 1;
+	private static final int _TAG_GPRS_NODE_IND = 2;
+	private static final int _TAG_ADDITIONAL_NUMBER = 3;
+	private static final int _TAG_SUPPORTED_LCS_CAPBILITY_SET = 4;
+	private static final int _TAG_ADDITIONAL_LCS_CAPBILITY_SET = 5;
 
 	private ISDNAddressString networkNodeNumber = null;
 	private LMSI lmsi = null;
 	private MAPExtensionContainer extensionContainer = null;
 	private Boolean gprsNodeIndicator = null;
 	private AdditionalNumber additionalNumber = null;
-	private BitSet supportedLCSCapabilitySets = null;
-	private BitSet additionalLCSCapabilitySets = null;
+	private SupportedLCSCapabilitySets supportedLCSCapabilitySets = null;
+	private SupportedLCSCapabilitySets additionalLCSCapabilitySets = null;
 
 	/**
 	 * 
@@ -76,7 +80,7 @@ public class LCSLocationInfoImpl extends MAPPrimitiveBase implements LCSLocation
 	 * @param additionalLCSCapabilitySets
 	 */
 	public LCSLocationInfoImpl(ISDNAddressString networkNodeNumber, LMSI lmsi, MAPExtensionContainer extensionContainer, Boolean gprsNodeIndicator,
-			AdditionalNumber additionalNumber, BitSet supportedLCSCapabilitySets, BitSet additionalLCSCapabilitySets) {
+			AdditionalNumber additionalNumber, SupportedLCSCapabilitySets supportedLCSCapabilitySets, SupportedLCSCapabilitySets additionalLCSCapabilitySets) {
 		super();
 		this.networkNodeNumber = networkNodeNumber;
 		this.lmsi = lmsi;
@@ -150,7 +154,7 @@ public class LCSLocationInfoImpl extends MAPPrimitiveBase implements LCSLocation
 	 * getSupportedLCSCapabilitySets()
 	 */
 	@Override
-	public BitSet getSupportedLCSCapabilitySets() {
+	public SupportedLCSCapabilitySets getSupportedLCSCapabilitySets() {
 		return this.supportedLCSCapabilitySets;
 	}
 
@@ -161,209 +165,242 @@ public class LCSLocationInfoImpl extends MAPPrimitiveBase implements LCSLocation
 	 * getadditionalLCSCapabilitySets()
 	 */
 	@Override
-	public BitSet getAdditionalLCSCapabilitySets() {
+	public SupportedLCSCapabilitySets getAdditionalLCSCapabilitySets() {
 		return this.additionalLCSCapabilitySets;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+	 */
 	@Override
-	public void decode(Parameter param) throws MAPParsingComponentException {
-		Parameter[] parameters = param.getParameters();
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
 
-		if (parameters == null || parameters.length < 1) {
-			throw new MAPParsingComponentException("Error while decoding LCSLocationInfo: Needs at least 1 mandatory parameters, found"
-					+ (parameters == null ? null : parameters.length), MAPParsingComponentExceptionReason.MistypedParameter);
-		}
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass()
+	 */
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
 
-		// Decode mandatory dataCodingScheme [0] USSD-DataCodingScheme,
-		Parameter p = parameters[0];
-		if (p.getTagClass() != Tag.CLASS_UNIVERSAL || !p.isPrimitive() || p.getTag() != Tag.STRING_OCTET) {
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive()
+	 */
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
+	 */
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
+	 */
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}		
+	}
+	
+	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		
+		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+		
+		int tag = ais.readTag();
+		
+		if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.STRING_OCTET) {
 			throw new MAPParsingComponentException(
 					"Error while decoding LCSLocationInfo: Parameter [networkNode-Number ISDN-AddressString] bad tag class, tag or not primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
-
+		
 		this.networkNodeNumber = new ISDNAddressStringImpl();
-		this.networkNodeNumber.decode(p);
-
-		for (int count = 1; count < parameters.length; count++) {
-			p = parameters[0];
-			switch (p.getTag()) {
-			case 0:
+		this.networkNodeNumber.decodeAll(ais);
+		
+		while(true){
+			if (ais.available() == 0)
+				break;
+			
+			tag = ais.readTag();
+			switch(tag){
+			case _TAG_LMSI:
 				// lmsi [0] LMSI OPTIONAL,
-				if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive()) {
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
 					throw new MAPParsingComponentException(
 							"Error while decoding LCSLocationInfo: Parameter [lmsi [0] LMSI ] bad tag class, tag or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.lmsi = new LMSIImpl();
-				this.lmsi.decode(p);
-
+				this.lmsi.decodeAll(ais);
+				
 				break;
-			case 1:
+			case _TAG_EXTENSION_CONTAINER:
 				// extensionContainer [1] ExtensionContainer
-				if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive()) {
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
 					throw new MAPParsingComponentException(
-							"Error while decoding LCSLocationInfo: Parameter [lmsi [0] LMSI ] bad tag class, tag or not primitive",
+							"Error while decoding LCSLocationInfo: Parameter [extensionContainer [1] ExtensionContainer ] bad tag class, tag or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.extensionContainer = new MAPExtensionContainerImpl();
-				this.extensionContainer.decode(p);
-
+				this.extensionContainer.decodeAll(ais);
 				break;
-			case 2:
+			case _TAG_GPRS_NODE_IND:
 				// gprsNodeIndicator [2] NULL
-				if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive()) {
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
 					throw new MAPParsingComponentException(
-							"Error while decoding LCSLocationInfo: Parameter [lmsi [0] LMSI ] bad tag class, tag or not primitive",
+							"Error while decoding LCSLocationInfo: Parameter [gprsNodeIndicator [2] NULL ] bad tag class, tag or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
-
 				this.gprsNodeIndicator = true;
 				break;
-			case 3:
+			case _TAG_ADDITIONAL_NUMBER:
 				// additional-Number [3] Additional-Number OPTIONAL
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive()) {
+					throw new MAPParsingComponentException(
+							"Error while decoding LCSLocationInfo: Parameter [additional-Number [3] Additional-Number] bad tag class, tag or not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				}
+				int lenhth1 = ais.readLength();
+				
+				tag = ais.readTag();
+				
 				this.additionalNumber = new AdditionalNumberImpl();
-				this.additionalNumber.decode(p);
+				this.additionalNumber.decodeAll(ais);
 				break;
-			case 4:
+			case _TAG_SUPPORTED_LCS_CAPBILITY_SET:
 				// supportedLCS-CapabilitySets [4] SupportedLCS-CapabilitySets
-				AsnInputStream asnInputStream = new AsnInputStream(new ByteArrayInputStream(p.getData()));
-				// TODO what should be length of BitSet?
-				this.supportedLCSCapabilitySets = new BitSet();
-				try {
-					asnInputStream.readBitStringData(this.supportedLCSCapabilitySets, p.getData().length, true);
-				} catch (AsnException e) {
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
 					throw new MAPParsingComponentException(
-							"Decode LCSLocationInfo failed. Failed to decode supportedLCS-CapabilitySets [4] SupportedLCS-CapabilitySets", e,
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				} catch (IOException e) {
-					throw new MAPParsingComponentException(
-							"Decode LCSLocationInfo failed. Failed to decode supportedLCS-CapabilitySets [4] SupportedLCS-CapabilitySets", e,
+							"Error while decoding LCSLocationInfo: Parameter [supportedLCS-CapabilitySets [4] SupportedLCS-CapabilitySets] bad tag class, tag or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
+				this.supportedLCSCapabilitySets = new SupportedLCSCapabilitySetsImpl();
+				this.supportedLCSCapabilitySets.decodeAll(ais);
 				break;
-			case 5:
-				// additional-LCS-CapabilitySets [5] SupportedLCS-CapabilitySets
-				AsnInputStream asnInputStream1 = new AsnInputStream(new ByteArrayInputStream(p.getData()));
-				// TODO what should be length of BitSet?
-				this.additionalLCSCapabilitySets = new BitSet();
-				try {
-					asnInputStream1.readBitStringData(this.additionalLCSCapabilitySets, p.getData().length, true);
-				} catch (AsnException e) {
+			case _TAG_ADDITIONAL_LCS_CAPBILITY_SET:
+				//additional-LCS-CapabilitySets [5] SupportedLCS-CapabilitySets OPTIONAL
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
 					throw new MAPParsingComponentException(
-							"Decode LCSLocationInfo failed. Failed to decode additional-LCS-CapabilitySets [5] SupportedLCS-CapabilitySets", e,
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				} catch (IOException e) {
-					throw new MAPParsingComponentException(
-							"Decode LCSLocationInfo failed. Failed to decode additional-LCS-CapabilitySets [5] SupportedLCS-CapabilitySets", e,
+							"Error while decoding LCSLocationInfo: Parameter [additional-LCS-CapabilitySets [5] SupportedLCS-CapabilitySets] bad tag class, tag or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
+				this.additionalLCSCapabilitySets = new SupportedLCSCapabilitySetsImpl();
+				this.additionalLCSCapabilitySets.decodeAll(ais);
 				break;
 			default:
 //				throw new MAPParsingComponentException("Error while decoding LCSLocationInfo: Expected tags 0 - 5 but found" + p.getTag(),
 //						MAPParsingComponentExceptionReason.MistypedParameter);
 			}
-		}// end of for loop
+		}
+
 	}
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
+	 */
 	@Override
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding InformServiceCentreRequest: " + e.getMessage(), e);
+		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.networkNodeNumber == null) {
 			throw new MAPException("Error while encoding LCSLocationInfo the mandatory parameter networkNode-Number ISDN-AddressString is not defined");
 		}
-
-		Parameter p = this.networkNodeNumber.encode();
-		p.setTagClass(Tag.CLASS_UNIVERSAL);
-		p.setTag(Tag.STRING_OCTET);
-		p.setPrimitive(true);
-		try {
-			p.encode(asnOs);
-		} catch (ParseException e) {
-			throw new MAPException("Error while encoding LCSLocationInfo. Encdoing mandatory parameter networkNode-Number ISDN-AddressString failed", e);
-		}
-
-		// lmsi [0] LMSI OPTIONAL,
-
+		
+		this.networkNodeNumber.encodeAll(asnOs);
+		
 		if (this.lmsi != null) {
 			// lmsi [0] LMSI OPTIONAL,
-			p = this.lmsi.encode();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setTag(0);
-			p.setPrimitive(true);
-			try {
-				p.encode(asnOs);
-			} catch (ParseException e) {
-				throw new MAPException("Error while encoding LCSLocationInfo. Encdoing parameter 0 [lmsi [0] LMSI OPTIONAL] failed", e);
-			}
+			this.lmsi.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LMSI);
 		}
-
+		
 		if (this.extensionContainer != null) {
 			// extensionContainer [1] ExtensionContainer OPTIONAL,
-			p = this.extensionContainer.encode();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setTag(1);
-			p.setPrimitive(true);
+			this.extensionContainer.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTENSION_CONTAINER);
+		}
+		
+		if (this.gprsNodeIndicator != null && this.gprsNodeIndicator) {
+			// gprsNodeIndicator [2] NULL OPTIONAL,
 			try {
-				p.encode(asnOs);
-			} catch (ParseException e) {
-				throw new MAPException(
-						"Error while encoding LCSLocationInfo. Encdoing parameter 1 [extensionContainer [1] ExtensionContainer OPTIONAL] failed", e);
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_GPRS_NODE_IND);
+			} catch (IOException e) {
+				throw new MAPException("Error while encoding LCSLocationInfo the optional parameter gprsNodeIndicator encoding failed ", e);
+			} catch (AsnException e) {
+				throw new MAPException("Error while encoding LCSLocationInfo the optional parameter gprsNodeIndicator encoding failed ", e);
 			}
 		}
-
-		if (this.gprsNodeIndicator != null) {
-			// gprsNodeIndicator [2] NULL OPTIONAL,
-			asnOs.write(0x82);
-			asnOs.write(0x00);
-		}
-
+		
 		if (this.additionalNumber != null) {
 			// additional-Number [3] Additional-Number OPTIONAL,
-			p = this.additionalNumber.encode();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setTag(3);
-			p.setPrimitive(false);
 			try {
-				p.encode(asnOs);
-			} catch (ParseException e) {
-				throw new MAPException("Error while encoding LCSLocationInfo. Encdoing parameter 3 [additional-Number [3] Additional-Number OPTIONAL] failed",
-						e);
+				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_ADDITIONAL_NUMBER);
+			} catch (AsnException e) {
+				throw new MAPException("AsnException while encoding parameter additional-Number");
 			}
-		}
 
+			int pos = asnOs.StartContentDefiniteLength();
+			this.additionalNumber.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, this.additionalNumber.getTag());
+			asnOs.FinalizeContent(pos);
+		}
+		
 		if (this.supportedLCSCapabilitySets != null) {
 			// supportedLCS-CapabilitySets [4] SupportedLCS-CapabilitySets
 			// OPTIONAL,
-			try {
-				asnOs.writeStringBinary(Tag.CLASS_CONTEXT_SPECIFIC, 4, this.supportedLCSCapabilitySets);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"Error while encoding LCSLocationInfo. Encdoing parameter 4 [supportedLCS-CapabilitySets [4] SupportedLCS-CapabilitySets OPTIONAL] failed",
-						e);
-			} catch (IOException e) {
-				throw new MAPException(
-						"Error while encoding LCSLocationInfo. Encdoing parameter 4 [supportedLCS-CapabilitySets [4] SupportedLCS-CapabilitySets OPTIONAL] failed",
-						e);
-			}
+			this.supportedLCSCapabilitySets.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_SUPPORTED_LCS_CAPBILITY_SET);
 		}
-
+		
 		if (this.additionalLCSCapabilitySets != null) {
 			// additional-LCS-CapabilitySets [5] SupportedLCS-CapabilitySets
 			// OPTIONAL
-			try {
-				asnOs.writeStringBinary(Tag.CLASS_CONTEXT_SPECIFIC, 5, this.additionalLCSCapabilitySets);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"Error while encoding LCSLocationInfo. Encdoing parameter 5 [additional-LCS-CapabilitySets [5] SupportedLCS-CapabilitySets OPTIONAL] failed",
-						e);
-			} catch (IOException e) {
-				throw new MAPException(
-						"Error while encoding LCSLocationInfo. Encdoing parameter 5 [additional-LCS-CapabilitySets [5] SupportedLCS-CapabilitySets OPTIONAL] failed",
-						e);
-			}
+			this.additionalLCSCapabilitySets.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ADDITIONAL_LCS_CAPBILITY_SET);
 		}
-
+		
 	}
+
 
 }

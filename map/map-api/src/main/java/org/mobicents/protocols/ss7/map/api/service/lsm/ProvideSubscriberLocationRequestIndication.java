@@ -22,14 +22,11 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import java.util.BitSet;
-
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
 
 /**
  * ProvideSubscriberLocation-Arg ::= SEQUENCE {
@@ -108,7 +105,7 @@ public interface ProvideSubscriberLocationRequestIndication extends LsmMessage {
 	 * 
 	 * @return
 	 */
-	public BitSet getSupportedGADShapes();
+	public SupportedGADShapes getSupportedGADShapes();
 	
 	/**
 	 * LCS-ReferenceNumber::= OCTET STRING (SIZE(1))

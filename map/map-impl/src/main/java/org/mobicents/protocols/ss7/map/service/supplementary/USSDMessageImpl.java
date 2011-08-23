@@ -22,26 +22,43 @@
 
 package org.mobicents.protocols.ss7.map.service.supplementary;
 
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSIndication;
+import org.mobicents.protocols.ss7.map.MAPMessageImpl;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDMessage;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 
-public class ProcessUnstructuredSSIndicationImpl extends USSDServiceImpl
-		implements ProcessUnstructuredSSIndication {
-	
-	private AddressString msisdnAddressString = null;
+/**
+ * @author amit bhayani
+ * 
+ */
+public abstract class USSDMessageImpl extends MAPMessageImpl implements USSDMessage, MAPAsnPrimitive {
+	protected byte ussdDataCodingSch;
 
-	public ProcessUnstructuredSSIndicationImpl(byte ussdDataCodingSch,
-			USSDString ussdString) {
-		super(ussdDataCodingSch, ussdString);
+	protected USSDString ussdString;
+
+	/**
+	 * 
+	 */
+	public USSDMessageImpl() {
+		super();
 	}
 
-	public AddressString getMSISDNAddressString() {
-		return this.msisdnAddressString;
+	public USSDMessageImpl(byte ussdDataCodingSch, USSDString ussdString) {
+		this.ussdDataCodingSch = ussdDataCodingSch;
+		this.ussdString = ussdString;
 	}
 
-	public void setMSISDNAddressString(AddressString msisdnAddr) {
-		this.msisdnAddressString = msisdnAddr;
+	public MAPDialogSupplementary getMAPDialog() {
+		return (MAPDialogSupplementary) super.getMAPDialog();
+	}
+
+	public byte getUSSDDataCodingScheme() {
+		return ussdDataCodingSch;
+	}
+
+	public USSDString getUSSDString() {
+		return this.ussdString;
 	}
 
 }

@@ -32,12 +32,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSPrivacyCheck;
 import org.mobicents.protocols.ss7.map.api.service.lsm.PrivacyCheckRelatedAction;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author amit bhayani
@@ -64,14 +65,13 @@ public class LCSPrivacyCheckTest {
 
 	@Test
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { (byte) 0x80, 0x01, 0x00, (byte) 0x81, 0x01, 0x02 };
+		byte[] data = new byte[] { 0x30, 0x06, (byte) 0x80, 0x01, 0x00, (byte) 0x81, 0x01, 0x02 };
 
-		Parameter p = TcapFactory.createParameter();
-		p.setPrimitive(false);
-		p.setData(data);
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
 
 		LCSPrivacyCheck lcsPrivacyCheck = new LCSPrivacyCheckImpl();
-		lcsPrivacyCheck.decode(p);
+		lcsPrivacyCheck.decodeAll(asn);
 
 		assertEquals(PrivacyCheckRelatedAction.allowedWithoutNotification, lcsPrivacyCheck.getCallSessionUnrelated());
 		assertEquals(PrivacyCheckRelatedAction.allowedIfNoResponse, lcsPrivacyCheck.getCallSessionRelated());
@@ -80,14 +80,17 @@ public class LCSPrivacyCheckTest {
 
 	@Test
 	public void testEncode() throws Exception {
-		byte[] data = new byte[] { (byte) 0x80, 0x01, 0x00, (byte) 0x81, 0x01, 0x02 };
+		byte[] data = new byte[] { 0x30, 0x06, (byte) 0x80, 0x01, 0x00, (byte) 0x81, 0x01, 0x02 };
 
 		PrivacyCheckRelatedAction callSessionUnrelated = PrivacyCheckRelatedAction.allowedWithoutNotification;
 		PrivacyCheckRelatedAction callSessionRelated = PrivacyCheckRelatedAction.allowedIfNoResponse;
 
 		LCSPrivacyCheck lcsPrivacyCheck = new LCSPrivacyCheckImpl(callSessionUnrelated, callSessionRelated);
-		Parameter p = lcsPrivacyCheck.encode();
+		AsnOutputStream asnOS = new AsnOutputStream();
+		lcsPrivacyCheck.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 
-		assertTrue(Arrays.equals(data, p.getData()));
+		byte[] encodedData = asnOS.toByteArray();
+
+		assertTrue(Arrays.equals(data, encodedData));
 	}
 }

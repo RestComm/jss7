@@ -30,6 +30,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.primitives.FTNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
@@ -42,11 +43,12 @@ import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
+import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortChoiceImpl;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.FTNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
@@ -59,12 +61,11 @@ import org.mobicents.protocols.ss7.map.service.sms.LocationInfoWithLMSIImpl;
 import org.mobicents.protocols.ss7.map.service.sms.MWStatusImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SM_RP_DAImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SM_RP_OAImpl;
-import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortChoiceImpl;
-import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSRequestImpl;
-import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSRequestIndicationImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseIndicationImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.USSDStringImpl;
-import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSRequestImpl;
-import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSResponseImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSRequestIndicationImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSResponseIndicationImpl;
 
 /**
  * 
@@ -73,27 +74,27 @@ import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSRespo
  */
 public class MapServiceFactoryImpl implements MapServiceFactory {
 
-	public ProcessUnstructuredSSRequest createProcessUnstructuredSSRequest(byte ussdDataCodingScheme,
-			USSDString ussdString) {
+	public ProcessUnstructuredSSRequestIndication createProcessUnstructuredSSRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
+			AlertingPattern alertingPattern, AddressString msisdnAddressString) {
 
-		ProcessUnstructuredSSRequest request = new ProcessUnstructuredSSRequestImpl(ussdDataCodingScheme, ussdString);
+		ProcessUnstructuredSSRequestIndication request = new ProcessUnstructuredSSRequestIndicationImpl(ussdDataCodingSch, ussdString, alertingPattern,
+				msisdnAddressString);
 		return request;
 	}
 
-	public ProcessUnstructuredSSResponse createProcessUnstructuredSsRequestResponse(int invokeID,
-			byte ussdDataCodingScheme, USSDString ussdString) {
-		ProcessUnstructuredSSResponse response = new ProcessUnstructuredSSResponseImpl(ussdDataCodingScheme, ussdString);
+	public ProcessUnstructuredSSResponseIndication createProcessUnstructuredSSResponseIndication(byte ussdDataCodingScheme, USSDString ussdString) {
+		ProcessUnstructuredSSResponseIndication response = new ProcessUnstructuredSSResponseIndicationImpl(ussdDataCodingScheme, ussdString);
 		return response;
 	}
 
-	public UnstructuredSSRequest createUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString) {
-		UnstructuredSSRequest request = new UnstructuredSSRequestImpl(ussdDataCodingScheme, ussdString);
+	public UnstructuredSSRequestIndication createUnstructuredSSRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
+			AlertingPattern alertingPattern, AddressString msisdnAddressString) {
+		UnstructuredSSRequestIndication request = new UnstructuredSSRequestIndicationImpl(ussdDataCodingSch, ussdString, alertingPattern, msisdnAddressString);
 		return request;
 	}
 
-	public UnstructuredSSResponse createUnstructuredSsRequestResponse(int invokeID, byte ussdDataCodingScheme,
-			USSDString ussdString) {
-		UnstructuredSSResponse response = new UnstructuredSSResponseImpl(ussdDataCodingScheme, ussdString);
+	public UnstructuredSSResponseIndication createUnstructuredSSRequestIndication(byte ussdDataCodingScheme, USSDString ussdString) {
+		UnstructuredSSResponseIndication response = new UnstructuredSSResponseIndicationImpl(ussdDataCodingScheme, ussdString);
 		return response;
 	}
 

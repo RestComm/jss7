@@ -29,6 +29,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.primitives.FTNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
@@ -37,15 +38,15 @@ import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
 
 /**
  * 
@@ -55,16 +56,15 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
  */
 public interface MapServiceFactory {
 
-	public ProcessUnstructuredSSRequest createProcessUnstructuredSSRequest(byte ussdDataCodingScheme,
-			USSDString ussdString);
+	public ProcessUnstructuredSSRequestIndication createProcessUnstructuredSSRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
+			AlertingPattern alertingPattern, AddressString msisdnAddressString);
 
-	public ProcessUnstructuredSSResponse createProcessUnstructuredSsRequestResponse(int invokeID,
-			byte ussdDataCodingScheme, USSDString ussdString);
+	public ProcessUnstructuredSSResponseIndication createProcessUnstructuredSSResponseIndication(byte ussdDataCodingScheme, USSDString ussdString);
 
-	public UnstructuredSSRequest createUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString);
+	public UnstructuredSSRequestIndication createUnstructuredSSRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
+			AlertingPattern alertingPattern, AddressString msisdnAddressString);
 
-	public UnstructuredSSResponse createUnstructuredSsRequestResponse(int invokeID, byte ussdDataCodingScheme,
-			USSDString ussdString);
+	public UnstructuredSSResponseIndication createUnstructuredSSRequestIndication(byte ussdDataCodingScheme, USSDString ussdString);
 
 	/**
 	 * Creates a new instance of {@link USSDString}. The passed USSD String is
@@ -148,16 +148,16 @@ public interface MapServiceFactory {
 	 * Creates a new instance of {@link LMSI}
 	 * 
 	 * @param data
-	 *            
+	 * 
 	 * @return new instance of {@link LMSI}
 	 */
 	public LMSI createLMSI(byte[] data);
-	
+
 	/**
 	 * Creates a new instance of {@link SM_RP_DA} with imsi parameter
 	 * 
 	 * @param imsi
-	 * @return 
+	 * @return
 	 */
 	public SM_RP_DA createSM_RP_DA(IMSI imsi);
 
@@ -165,34 +165,38 @@ public interface MapServiceFactory {
 	 * Creates a new instance of {@link SM_RP_DA} with lmsi parameter
 	 * 
 	 * @param lmsi
-	 * @return 
+	 * @return
 	 */
 	public SM_RP_DA createSM_RP_DA(LMSI lmsi);
 
 	/**
-	 * Creates a new instance of {@link SM_RP_DA} with serviceCentreAddressDA parameter
+	 * Creates a new instance of {@link SM_RP_DA} with serviceCentreAddressDA
+	 * parameter
 	 * 
 	 * @param serviceCentreAddressDA
-	 * @return 
+	 * @return
 	 */
 	public SM_RP_DA createSM_RP_DA(AddressString serviceCentreAddressDA);
 
 	/**
 	 * Creates a new instance of {@link SM_RP_DA} with noSM_RP_DA parameter
 	 * 
-	 * @return 
+	 * @return
 	 */
 	public SM_RP_DA createSM_RP_DA();
 
 	/**
 	 * Creates a new instance of {@link SM_RP_OA} with msisdn parameter
+	 * 
 	 * @param msisdn
 	 * @return
 	 */
 	public SM_RP_OA createSM_RP_OA_Msisdn(ISDNAddressString msisdn);
 
 	/**
-	 * Creates a new instance of {@link SM_RP_OA} with serviceCentreAddressOA parameter
+	 * Creates a new instance of {@link SM_RP_OA} with serviceCentreAddressOA
+	 * parameter
+	 * 
 	 * @param serviceCentreAddressOA
 	 * @return
 	 */
@@ -200,6 +204,7 @@ public interface MapServiceFactory {
 
 	/**
 	 * Creates a new instance of {@link SM_RP_OA} with noSM_RP_OA parameter
+	 * 
 	 * @return
 	 */
 	public SM_RP_OA createSM_RP_OA();
@@ -237,6 +242,5 @@ public interface MapServiceFactory {
 	 *            byte)
 	 * @return
 	 */
-	public MAPExtensionContainer createMAPExtensionContainer(ArrayList<MAPPrivateExtension> privateExtensionList,
-			byte[] pcsExtensions);
+	public MAPExtensionContainer createMAPExtensionContainer(ArrayList<MAPPrivateExtension> privateExtensionList, byte[] pcsExtensions);
 }

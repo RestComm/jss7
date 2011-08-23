@@ -22,6 +22,10 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
+import java.io.IOException;
+
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -31,9 +35,6 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSQoS;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTime;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPPrimitiveBase;
-import org.mobicents.protocols.ss7.tcap.asn.ParseException;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * TODO introduce all params used by LCSQoS and test
@@ -41,7 +42,13 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
  * @author amit bhayani
  * 
  */
-public class LCSQoSImpl extends MAPPrimitiveBase implements LCSQoS {
+public class LCSQoSImpl implements LCSQoS {
+
+	private static final int _TAG_HORIZONTAL_ACCURACY = 0;
+	private static final int _TAG_VERTICAL_COORDINATE_REQUEST = 1;
+	private static final int _TAG_VERTICAL_ACCURACY = 2;
+	private static final int _TAG_RESPONSE_TIME = 3;
+	private static final int _TAG_EXTENSION_CONTAINER = 4;
 
 	private Integer horizontalAccuracy = null;
 	private Integer verticalAccuracy = null;
@@ -54,7 +61,6 @@ public class LCSQoSImpl extends MAPPrimitiveBase implements LCSQoS {
 	 */
 	public LCSQoSImpl() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -132,122 +138,214 @@ public class LCSQoSImpl extends MAPPrimitiveBase implements LCSQoS {
 		return this.extensionContainer;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+	 */
 	@Override
-	public void decode(Parameter param) throws MAPParsingComponentException {
-		Parameter[] parameters = param.getParameters();
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
 
-		if (parameters == null || parameters.length == 0) {
-			// TODO is this error since all the parameters are optional
-			return;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
+	 * ()
+	 */
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_CONTEXT_SPECIFIC;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
+	 * ()
+	 */
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
+	 * (org.mobicents.protocols.asn.AsnInputStream)
+	 */
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding MWStatus: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding MWStatus: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
+	}
 
-		for (int count = 0; count < parameters.length; count++) {
-			Parameter p = parameters[count];
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
+	 * (org.mobicents.protocols.asn.AsnInputStream, int)
+	 */
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding MWStatus: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding MWStatus: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
 
-			switch (p.getTag()) {
+	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
-			case 0:
+		while (true) {
+			if (ais.available() == 0)
+				break;
+
+			switch (ais.readTag()) {
+			case _TAG_HORIZONTAL_ACCURACY:
 				// horizontal-accuracy [0] Horizontal-Accuracy OPTIONAL,
-				if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive()) {
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
 					throw new MAPParsingComponentException(
 							"Decoding LCSQoS failed. Error while decoding horizontal-accuracy [0] Horizontal-Accuracy: bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
-				this.horizontalAccuracy = new Integer(p.getData()[0]);
+				int length1 = ais.readLength();
+				this.horizontalAccuracy = new Integer(ais.readOctetStringData(length1)[0]);
 				break;
-			case 1:
+			case _TAG_VERTICAL_COORDINATE_REQUEST:
 				// verticalCoordinateRequest [1] NULL OPTIONAL,
-				if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Decoding LCSQoS failed. Error while decoding verticalCoordinateRequest [1] NULL: bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
+				length1 = ais.readLength();
 				this.verticalCoordinateRequest = true;
 				break;
-			case 2:
+			case _TAG_VERTICAL_ACCURACY:
 				// vertical-accuracy [2] Vertical-Accuracy OPTIONAL,
-				if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !p.isPrimitive()) {
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
 					throw new MAPParsingComponentException(
 							"Decoding LCSQoS failed. Error while decoding vertical-accuracy [2] Vertical-Accuracy: bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
-				this.verticalAccuracy = new Integer(p.getData()[0]);
+				length1 = ais.readLength();
+				this.verticalAccuracy = new Integer(ais.readOctetStringData(length1)[0]);
 				break;
-			case 3:
+			case _TAG_RESPONSE_TIME:
 				// responseTime [3] ResponseTime OPTIONAL,
-
-				if (p.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || p.isPrimitive()) {
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive()) {
 					throw new MAPParsingComponentException(
 							"Decoding LCSQoS failed. Error while decoding responseTime [3] ResponseTime: bad tag class, tag or not constructed",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
-
 				this.responseTime = new ResponseTimeImpl();
-				this.responseTime.decode(p);
-
+				this.responseTime.decodeAll(ais);
 				break;
-			case 4:
+			case _TAG_EXTENSION_CONTAINER:
+				// extensionContainer [4] ExtensionContainer OPTIONAL
+
 				this.extensionContainer = new MAPExtensionContainerImpl();
-				this.extensionContainer.decode(p);
+				this.extensionContainer.decodeAll(ais);
 				break;
 			default:
-//				throw new MAPParsingComponentException(
-//						"Decoding LCSQoS failed. Expected horizontal-accuracy [0], verticalCoordinateRequest [1], vertical-accuracy [2], responseTime [3], extensionContainer [4] but found "
-//								+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+				// Do we care?
+				break;
 			}
-		}
-
+		}// while
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
 	@Override
-	public void encode(AsnOutputStream asnOs) throws MAPException {
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
+	 */
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding InformServiceCentreRequest: " + e.getMessage(), e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
+	 */
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.horizontalAccuracy != null) {
-			// horizontal-accuracy [0] Horizontal-Accuracy OPTIONAL,
-			asnOs.write(0x80);
-			asnOs.write(0x01);
-			asnOs.write(this.horizontalAccuracy);
+			try {
+				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_HORIZONTAL_ACCURACY, new byte[] { this.horizontalAccuracy.byteValue() });
+			} catch (IOException e) {
+				throw new MAPException("IOException when encoding parameter horizontalAccuracy: ", e);
+			} catch (AsnException e) {
+				throw new MAPException("AsnException when encoding parameter horizontalAccuracy: ", e);
+			}
 		}
 
 		if (this.verticalCoordinateRequest != null) {
-			// verticalCoordinateRequest [1] NULL OPTIONAL,
-			asnOs.write(0x81);
-			asnOs.write(0x00);
+			try {
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_VERTICAL_COORDINATE_REQUEST);
+			} catch (IOException e) {
+				throw new MAPException("IOException when encoding parameter verticalCoordinateRequest: ", e);
+			} catch (AsnException e) {
+				throw new MAPException("IOException when encoding parameter verticalCoordinateRequest: ", e);
+			}
 		}
 
 		if (this.verticalAccuracy != null) {
-			// vertical-accuracy [2] Vertical-Accuracy OPTIONAL,
-			asnOs.write(0x82);
-			asnOs.write(0x01);
-			asnOs.write(this.verticalAccuracy);
+			try {
+				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_VERTICAL_ACCURACY, new byte[] { this.verticalAccuracy.byteValue() });
+			} catch (IOException e) {
+				throw new MAPException("IOException when encoding parameter verticalAccuracy: ", e);
+			} catch (AsnException e) {
+				throw new MAPException("AsnException when encoding parameter verticalAccuracy: ", e);
+			}
 		}
 
 		if (this.responseTime != null) {
-			// responseTime [3] ResponseTime OPTIONAL,
-			Parameter p = this.responseTime.encode();
-			p.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setPrimitive(false);
-			p.setTag(3);
-
-			try {
-				p.encode(asnOs);
-			} catch (ParseException e) {
-				throw new MAPException("Encoding of LCSQoS failed. Failed to Encode responseTime [3] ResponseTime", e);
-			}
+			this.responseTime.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_RESPONSE_TIME);
 		}
 
 		if (this.extensionContainer != null) {
-			// extensionContainer [4] ExtensionContainer OPTIONAL,
-			Parameter p = this.extensionContainer.encode();
-			p.setTag(Tag.CLASS_CONTEXT_SPECIFIC);
-			p.setPrimitive(true);
-			p.setTag(4);
-
-			try {
-				p.encode(asnOs);
-			} catch (ParseException e) {
-				throw new MAPException("Encoding of LCSQoS failed. Failed to Encode extensionContainer [4] ExtensionContainer", e);
-			}
+			this.extensionContainer.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTENSION_CONTAINER);
 		}
 	}
 
