@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.map;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -393,7 +392,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				try {
 					byte[] asnData = userInfo.getEncodeType();
 
-					AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(asnData));
+					AsnInputStream ais = new AsnInputStream(asnData);
 
 					int tag = ais.readTag();
 
@@ -620,7 +619,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 							try {
 								byte[] asnData = userInfo.getEncodeType();
 
-								AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(asnData));
+								AsnInputStream ais = new AsnInputStream(asnData);
 
 								int tag = ais.readTag();
 
@@ -745,7 +744,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 							try {
 								byte[] asnData = userInfo.getEncodeType();
 
-								AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(asnData));
+								AsnInputStream ais = new AsnInputStream(asnData);
 
 								int tag = ais.readTag();
 
@@ -964,7 +963,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 						try {
 							byte[] asnData = userInfo.getEncodeType();
 
-							AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(asnData));
+							AsnInputStream ais = new AsnInputStream(asnData);
 
 							int tag = ais.readTag();
 
@@ -1215,7 +1214,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 						
 						return;
 					}
-
+					
 					MAPErrorMessage msgErr = this.mapErrorMessageFactory.createMessageFromErrorCode(errorCode);
 					try {
 						msgErr.decodeParameter(comp.getParameter());

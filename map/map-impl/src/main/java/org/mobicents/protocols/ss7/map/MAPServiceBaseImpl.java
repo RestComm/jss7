@@ -37,9 +37,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSuppl
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
 /**

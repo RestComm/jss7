@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.dialog;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.mobicents.protocols.asn.AsnException;
@@ -91,26 +90,35 @@ public class MAPAcceptInfoImpl {
         //  pcs-Extensions [1] IMPLICIT SEQUENCE { 
         //     ... } OPTIONAL,  
         //  ... } OPTIONAL}
+
+		this.setExtensionContainer(null);
 		
 		try {
-			this.setExtensionContainer(null);
-
-			byte[] seqData = ais.readSequence();
-
-			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(seqData));
-
-			int tag;
+			AsnInputStream localAis = ais.readSequenceStream();
 
 			while (localAis.available() > 0) {
-				tag = localAis.readTag();
-				if (tag == Tag.SEQUENCE) {
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					byte[] buf = localAis.readSequence();
-					AsnInputStream lis = new AsnInputStream(new ByteArrayInputStream(buf));
-					((MAPExtensionContainerImpl) this.extensionContainer).decode(lis, localAis.getTagClass(), localAis.isTagPrimitive(), tag, buf.length);
-				} else
+				int tag = localAis.readTag();
+
+				switch (localAis.getTagClass()) {
+				case Tag.CLASS_UNIVERSAL:
+					switch (tag) {
+					case Tag.SEQUENCE:
+						this.extensionContainer = new MAPExtensionContainerImpl();
+						this.extensionContainer.decodeAll(localAis);
+						break;
+
+					default:
+						localAis.advanceElement();
+						break;
+					}
 					break;
+
+				default:
+					localAis.advanceElement();
+					break;
+				}
 			}
+			
 		} catch (IOException e) {
 			throw new MAPParsingComponentException("IOException when decoding MAPAcceptInfo: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
@@ -123,32 +131,14 @@ public class MAPAcceptInfoImpl {
 	public void encode(AsnOutputStream asnOS) throws MAPException {
 
 		try {
-			AsnOutputStream localAos = new AsnOutputStream();
+			asnOS.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, MAP_ACCEPT_INFO_TAG);
+			int pos = asnOS.StartContentDefiniteLength();
 
-			byte[] extContData = null;
-
-			if (this.extensionContainer != null) {
-				localAos.reset();
-				((MAPExtensionContainerImpl) this.extensionContainer).encode(localAos);
-				extContData = localAos.toByteArray();
-			}
-
-			localAos.reset();
-
-			if (extContData != null) {
-				localAos.writeTag(Tag.CLASS_UNIVERSAL, ACCEPT_INFO_TAG_PC_CONSTRUCTED, Tag.SEQUENCE);
-				localAos.writeLength(extContData.length);
-				localAos.write(extContData);
-			}
-
-			byte[] data = localAos.toByteArray();
-
-			// Now let us write the MAP OPEN-INFO Tags
-			asnOS.writeTag(ACCEPT_INFO_TAG_CLASS, ACCEPT_INFO_TAG_PC_CONSTRUCTED, MAP_ACCEPT_INFO_TAG);
-			asnOS.writeLength(data.length);
-			asnOS.write(data);
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding MAPAcceptInfo: " + e.getMessage(), e);
+			if (this.extensionContainer != null)
+				this.extensionContainer.encodeAll(asnOS);
+			
+			asnOS.FinalizeContent(pos);
+			
 		} catch (AsnException e) {
 			throw new MAPException("AsnException when encoding MAPAcceptInfo: " + e.getMessage(), e);
 		}

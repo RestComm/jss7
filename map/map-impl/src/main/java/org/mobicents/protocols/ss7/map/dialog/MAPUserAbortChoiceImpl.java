@@ -22,12 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.dialog;
 
-import java.io.IOException;
-
-import org.mobicents.protocols.asn.AsnException;
-import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.ProcedureCancellationReason;
 import org.mobicents.protocols.ss7.map.api.dialog.ResourceUnavailableReason;
@@ -102,13 +96,38 @@ public class MAPUserAbortChoiceImpl implements MAPUserAbortChoice {
 		this.isUserSpecificReason = true;
 	}
 
-	public void decode(AsnInputStream ais) throws AsnException, IOException,
-			MAPException {
+//	public void decode(AsnInputStream ais) throws AsnException, IOException,
+//			MAPException {
+//
+//	}
+//
+//	public void encode(AsnOutputStream asnOS) throws IOException, MAPException {
+//		
+//	}
 
-	}
-
-	public void encode(AsnOutputStream asnOS) throws IOException, MAPException {
+	@Override
+	public String toString() {
 		
-	}
+		StringBuilder sb = new StringBuilder(); 
 
+		sb.append("MAPUserAbortChoice [");
+		if (this.isUserSpecificReason)
+			sb.append(" UserSpecificReason");
+		if (this.isUserResourceLimitation)
+			sb.append(" UserResourceLimitation");
+		if (this.isResourceUnavailableReason) {
+			sb.append(" ResourceUnavailableReason=");
+			if (this.resourceUnavailableReason != null)
+				sb.append(this.resourceUnavailableReason.toString());
+		}
+		if (this.isProcedureCancellationReason) {
+			sb.append(" ProcedureCancellationReason=");
+			if (this.procedureCancellationReason != null)
+				sb.append(this.procedureCancellationReason.toString());
+		}
+		sb.append("]");
+		
+		return sb.toString();
+	}
+	
 }

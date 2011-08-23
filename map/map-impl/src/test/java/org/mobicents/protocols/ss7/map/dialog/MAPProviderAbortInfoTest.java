@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.dialog;
 
-import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
@@ -30,7 +29,7 @@ import junit.framework.TestCase;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortReason;
-import org.mobicents.protocols.ss7.map.api.dialog.Reason;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 
 /**
  * 
@@ -38,16 +37,20 @@ import org.mobicents.protocols.ss7.map.api.dialog.Reason;
  *
  */
 public class MAPProviderAbortInfoTest extends TestCase {
+	
+	private byte[] getDataFull() {
+		return new byte[] { -91, 44, 10, 1, 1, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21,
+				22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+	}
 
 	@org.junit.Test
 	public void testDecode() throws Exception {
 		// The raw data is from last packet of long ussd-abort from msc2.txt
 		byte[] data = new byte[] { (byte) 0xA5, 0x03, (byte) 0x0A, 0x01, 0x00 };
 
-		ByteArrayInputStream baIs = new ByteArrayInputStream(data);
-		AsnInputStream asnIs = new AsnInputStream(baIs);
-
+		AsnInputStream asnIs = new AsnInputStream(data);
 		int tag = asnIs.readTag();
+		assertEquals(5, tag);
 
 		MAPProviderAbortInfoImpl mapProviderAbortInfo = new MAPProviderAbortInfoImpl();
 		mapProviderAbortInfo.decode(asnIs);
@@ -58,14 +61,28 @@ public class MAPProviderAbortInfoTest extends TestCase {
 		assertNotNull(reason);
 
 		assertEquals(MAPProviderAbortReason.abnormalDialogue, reason);
+
+		
+		data = this.getDataFull();
+		asnIs = new AsnInputStream(data);
+		tag = asnIs.readTag();
+		assertEquals(5, tag);
+
+		mapProviderAbortInfo = new MAPProviderAbortInfoImpl();
+		mapProviderAbortInfo.decode(asnIs);
+		reason = mapProviderAbortInfo.getMAPProviderAbortReason();
+
+		assertNotNull(reason);
+		assertEquals(MAPProviderAbortReason.invalidPDU, reason);
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(mapProviderAbortInfo.getExtensionContainer()));
+	
 	}
 
 	@org.junit.Test
 	public void testEncode() throws Exception {
 
 		MAPProviderAbortInfoImpl mapProviderAbortInfo = new MAPProviderAbortInfoImpl();
-		mapProviderAbortInfo
-				.setMAPProviderAbortReason(MAPProviderAbortReason.invalidPDU);
+		mapProviderAbortInfo.setMAPProviderAbortReason(MAPProviderAbortReason.invalidPDU);
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 
@@ -77,7 +94,18 @@ public class MAPProviderAbortInfoTest extends TestCase {
 
 		assertTrue(Arrays.equals(new byte[] { (byte) 0xA5, 0x03, (byte) 0x0A,
 				0x01, 0x01 }, data));
+		
 
+		mapProviderAbortInfo = new MAPProviderAbortInfoImpl();
+		mapProviderAbortInfo.setMAPProviderAbortReason(MAPProviderAbortReason.invalidPDU);
+		mapProviderAbortInfo.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+
+		asnOS = new AsnOutputStream();
+		mapProviderAbortInfo.encode(asnOS);
+
+		data = asnOS.toByteArray();
+		assertTrue(Arrays.equals(this.getDataFull(), data));
+		
 	}
 
 }

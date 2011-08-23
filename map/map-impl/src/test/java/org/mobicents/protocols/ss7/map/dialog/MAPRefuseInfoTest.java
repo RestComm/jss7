@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.dialog;
 
-import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
@@ -30,23 +29,36 @@ import junit.framework.TestCase;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextNameImpl;
 
 /**
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  *
  */
 public class MAPRefuseInfoTest extends TestCase {
 
+	private byte[] getData() {
+		return new byte[] { (byte) 0xA3, 0x03, (byte) 0x0A, 0x01, 0x00 };
+	}
+
+	private byte[] getDataFull() {
+		return new byte[] { -93, 51, 10, 1, 2, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21,
+				22, 23, 24, 25, 26, -95, 3, 31, 32, 33, 6, 5, 42, 3, 4, 5, 6 };
+	}
+	
 	@org.junit.Test
 	public void testDecode() throws Exception {
 		// The raw data is from last packet of long ussd-abort from msc2.txt
-		byte[] data = new byte[] { (byte) 0xA3, 0x03, (byte) 0x0A, 0x01, 0x00 };
+		byte[] data = this.getData();
 
-		ByteArrayInputStream baIs = new ByteArrayInputStream(data);
-		AsnInputStream asnIs = new AsnInputStream(baIs);
+		AsnInputStream asnIs = new AsnInputStream(data);
 
 		int tag = asnIs.readTag();
+		assertEquals(3, tag);
 
 		MAPRefuseInfoImpl mapRefuseInfoImpl = new MAPRefuseInfoImpl();
 		mapRefuseInfoImpl.decode(asnIs);
@@ -56,6 +68,23 @@ public class MAPRefuseInfoTest extends TestCase {
 		assertNotNull(reason);
 
 		assertEquals(Reason.noReasonGiven, reason);
+
+		
+		data = this.getDataFull();
+		asnIs = new AsnInputStream(data);
+
+		tag = asnIs.readTag();
+		assertEquals(3, tag);
+
+		mapRefuseInfoImpl = new MAPRefuseInfoImpl();
+		mapRefuseInfoImpl.decode(asnIs);
+
+		reason = mapRefuseInfoImpl.getReason();
+		assertNotNull(reason);
+		assertEquals(Reason.invalidOriginatingReference, reason);
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(mapRefuseInfoImpl.getExtensionContainer()));
+		assertNotNull(mapRefuseInfoImpl.getAlternativeAcn());
+		assertTrue(Arrays.equals(new long[] { 1, 2, 3, 4, 5, 6 }, mapRefuseInfoImpl.getAlternativeAcn().getOid()));
 	}
 
 	@org.junit.Test
@@ -63,17 +92,22 @@ public class MAPRefuseInfoTest extends TestCase {
 
 		MAPRefuseInfoImpl mapRefuseInfoImpl = new MAPRefuseInfoImpl();
 		mapRefuseInfoImpl.setReason(Reason.noReasonGiven);
-
 		AsnOutputStream asnOS = new AsnOutputStream();
-
 		mapRefuseInfoImpl.encode(asnOS);
-
 		byte[] data = asnOS.toByteArray();
+		assertTrue(Arrays.equals(this.getData(), data));
 
-		// System.out.println(dump(data, data.length, false));
-
-		assertTrue(Arrays.equals(new byte[] { (byte) 0xA3, 0x03, (byte) 0x0A,
-				0x01, 0x00 }, data));
+		
+		mapRefuseInfoImpl = new MAPRefuseInfoImpl();
+		mapRefuseInfoImpl.setReason(Reason.invalidOriginatingReference);
+		ApplicationContextName acn = new ApplicationContextNameImpl();
+		acn.setOid(new long[] { 1, 2, 3, 4, 5, 6 });
+		mapRefuseInfoImpl.setAlternativeAcn(acn);
+		mapRefuseInfoImpl.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+		asnOS = new AsnOutputStream();
+		mapRefuseInfoImpl.encode(asnOS);
+		data = asnOS.toByteArray();
+		assertTrue(Arrays.equals(this.getDataFull(), data));
 
 	}
 

@@ -476,7 +476,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 			MAPDialogSupplementary mapDialog = procUnstrInd.getMAPDialog();
 			Long invokeId = procUnstrInd.getInvokeId();
 
-			MAPErrorMessage msg = this.mapProvider.getMAPErrorMessageFactory().createMessageParameterless(55L);
+			MAPErrorMessage msg = this.mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageParameterless(55L);
 			try {
 				mapDialog.sendErrorComponent(invokeId, msg);
 			} catch (MAPException e) {

@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.dialog;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.mobicents.protocols.asn.AsnException;
@@ -111,45 +109,48 @@ public class MAPOpenInfoImpl {
 		this.setExtensionContainer(null);
 
 		try {
-			byte[] seqData = ais.readSequence();
-
-			AsnInputStream localAis = new AsnInputStream(new ByteArrayInputStream(seqData));
-
-			int tag, length;
-			Boolean badTag = false;
+			AsnInputStream localAis = ais.readSequenceStream();
 
 			while (localAis.available() > 0) {
-				tag = localAis.readTag();
+				int tag = localAis.readTag();
 
-				switch (tag) {
-				case DESTINATION_REF_TAG: {
-					this.destReference = new AddressStringImpl();
-					length = localAis.readLength();
-					((AddressStringImpl) this.destReference).decode(localAis, localAis.getTagClass(), localAis.isTagPrimitive(), tag, length);
-				}
+				switch (localAis.getTagClass()) {
+				case Tag.CLASS_CONTEXT_SPECIFIC:
+					switch (tag) {
+					case DESTINATION_REF_TAG:
+						this.destReference = new AddressStringImpl();
+						this.destReference.decodeAll(localAis);
+						break;
+
+					case ORIGINATION_REF_TAG:
+						this.origReference = new AddressStringImpl();
+						this.origReference.decodeAll(localAis);
+						break;
+
+					default:
+						localAis.advanceElement();
+						break;
+					}
 					break;
+					
+				case Tag.CLASS_UNIVERSAL:
+					switch (tag) {
+					case Tag.SEQUENCE:
+						this.extensionContainer = new MAPExtensionContainerImpl(); 
+						this.extensionContainer.decodeAll(localAis);
+						break;
 
-				case ORIGINATION_REF_TAG: {
-					this.origReference = new AddressStringImpl();
-					length = localAis.readLength();
-					((AddressStringImpl) this.origReference).decode(localAis, localAis.getTagClass(), localAis.isTagPrimitive(), tag, length);
-				}
+					default:
+						localAis.advanceElement();
+						break;
+					}
 					break;
-
-				case Tag.SEQUENCE:
-					this.extensionContainer = new MAPExtensionContainerImpl(); 
-					byte[] buf = localAis.readSequence();
-					AsnInputStream lis = new AsnInputStream(new ByteArrayInputStream(buf));
-					((MAPExtensionContainerImpl) this.extensionContainer).decode(lis, localAis.getTagClass(), localAis.isTagPrimitive(), tag, buf.length);
-					break;
-
+					
 				default:
-					badTag = true;
+					localAis.advanceElement();
 					break;
 				}
-
-				if (badTag)
-					break;
+				
 			}
 		} catch (IOException e) {
 			throw new MAPParsingComponentException("IOException when decoding MAPOpenInfo: " + e.getMessage(), e,
@@ -158,63 +159,25 @@ public class MAPOpenInfoImpl {
 			throw new MAPParsingComponentException("AsnException when decoding MAPOpenInfo: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
-
 	}
 
 	public void encode(AsnOutputStream asnOS) throws MAPException {
 
 		try {
-			AsnOutputStream localAos = new AsnOutputStream();
+			asnOS.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, MAP_OPEN_INFO_TAG);
+			int pos = asnOS.StartContentDefiniteLength();
+			
+			if (this.destReference != null)
+				this.destReference.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, DESTINATION_REF_TAG);
 
-			byte[] destAddData = null;
-			byte[] origAddData = null;
-			byte[] extContData = null;
+			if (this.origReference != null)
+				this.origReference.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, ORIGINATION_REF_TAG);
 
-			if (this.destReference != null) {
-				((AddressStringImpl) this.destReference).encode(localAos);
-				destAddData = localAos.toByteArray();
-			}
-
-			if (this.origReference != null) {
-				localAos.reset();
-				((AddressStringImpl) this.origReference).encode(localAos);
-				origAddData = localAos.toByteArray();
-			}
-
-			if (this.extensionContainer != null) {
-				localAos.reset();
-				((MAPExtensionContainerImpl) this.extensionContainer).encode(localAos);
-				extContData = localAos.toByteArray();
-			}
-
-			localAos.reset();
-
-			if (destAddData != null) {
-				localAos.writeTag(OPEN_INFO_TAG_CLASS, OPEN_INFO_TAG_PC_PRIMITIVE, DESTINATION_REF_TAG);
-				localAos.writeLength(destAddData.length);
-				localAos.write(destAddData);
-			}
-
-			if (origAddData != null) {
-				localAos.writeTag(OPEN_INFO_TAG_CLASS, OPEN_INFO_TAG_PC_PRIMITIVE, ORIGINATION_REF_TAG);
-				localAos.writeLength(origAddData.length);
-				localAos.write(origAddData);
-			}
-
-			if (extContData != null) {
-				localAos.writeTag(Tag.CLASS_UNIVERSAL, OPEN_INFO_TAG_PC_CONSTRUCTED, Tag.SEQUENCE);
-				localAos.writeLength(extContData.length);
-				localAos.write(extContData);
-			}
-
-			byte[] data = localAos.toByteArray();
-
-			// Now let us write the MAP OPEN-INFO Tags
-			asnOS.writeTag(OPEN_INFO_TAG_CLASS, OPEN_INFO_TAG_PC_CONSTRUCTED, MAP_OPEN_INFO_TAG);
-			asnOS.writeLength(data.length);
-			asnOS.write(data);
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding MAPOpenInfo: " + e.getMessage(), e);
+			if (this.extensionContainer != null)
+				this.extensionContainer.encodeAll(asnOS);
+			
+			asnOS.FinalizeContent(pos);
+			
 		} catch (AsnException e) {
 			throw new MAPException("AsnException when encoding MAPOpenInfo: " + e.getMessage(), e);
 		}

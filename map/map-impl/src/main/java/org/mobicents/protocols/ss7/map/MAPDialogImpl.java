@@ -28,7 +28,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
-import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;

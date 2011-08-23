@@ -25,9 +25,6 @@ package org.mobicents.protocols.ss7.map;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
-import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
-import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
