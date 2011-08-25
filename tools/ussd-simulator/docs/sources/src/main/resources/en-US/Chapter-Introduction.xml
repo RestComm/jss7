@@ -1,16 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "USSD_Simulator_User_Guide.ent">%BOOK_ENTITIES;]>
-
-<chapter id="introduction">
-
-	<title>Introduction to &THIS.PLATFORM; &THIS.APPLICATION; </title>
-	<note>
-		<para>Please refer to &THIS.PLATFORM; <acronym>USSD</acronym> gateway for more details about protocol.</para>
-	</note>
-	<para>
-		&THIS.PLATFORM; &THIS.APPLICATION; is a simple application built on top of <acronym>SS7</acronym> stack. Its sole purpose is to provide user with 
-		means of establishing <acronym>USSD</acronym> dialog without telco environment.
-	</para>
-	
-</chapter>
