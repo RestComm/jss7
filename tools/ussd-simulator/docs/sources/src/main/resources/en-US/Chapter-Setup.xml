@@ -42,10 +42,11 @@
 				    <important>
 				    	<para>Maven 2.0.9 (or higher) is used to build the release. Instructions for using Maven2, including install, can be found at <ulink url="http://maven.apache.org" /></para>
 				    </important>
-				    <para>Use Ant to build the binary.</para>
+				    <para>Use mvn to build the binary.</para>
 				    <programlisting>
 				    [usr]$ cd &THIS.APPLICATION.DIRNAME;-&THIS.VERSION;
 				    [usr]$ mvn install
+				    [usr]$ mvn install -Passemble
 				    </programlisting>
 				    <para>Once the process finishes you should have the simulator binary jar ready. Build process prepares also simulator to run(this includes all dependencies).</para>
   				</step>

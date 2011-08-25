@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<project name="ss7.tools.ussd.release.sf" default="package" basedir=".">
+
+	<!-- Components Versions -->
+	<property name="release.version" value="1.0.0-SNAPSHOT" />
+	<property name="ss7.version" value="1.0.0.BETA10" />
+
+	<!-- Directories Configuration -->
+	<property name="checkout.basedir" value="checkout" />
+	<property name="release.name" value="point" />
+	<property name="release.dir" value="${basedir}/${release.name}" />
+	<property name="zip.dir" value="${release.dir}" />
+	<property name="zip.file.destination.dir" value="${basedir}/upload" />
+	<property name="zip.file.name" value="mobicents-ss7-ussd-simulator-${release.version}" />
+	<property name="failoncopy" value="true" />
+	<property name="test.skip" value="true" />
+	<!-- Docs -->
+
+	<property name="docs.source.dir" value="${ant.file.mobicents.release}/../checkout/docs" />
+	<property name="docs.dest.dir" value="${release.dir}/user-guide" />
+	<property name="docs.profile" value="mobicents" />
+
+	<property name="assemble.dir" value="${release.dir}/simulator" />
+
+
+	<property environment="sys" />
+	<condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="mvn">
+		<os family="windows" />
+	</condition>
+
+	<taskdef onerror="fail" resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${ss7.tools.ussd.release.sf}/../ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<target name="init">
+		<echo message="Java Version: ${java.version}" />
+		<echo message="Java home: ${java.home}" />
+		<fail message="Unsupported Java version: ${java.version}. Make sure that the version of the Java compiler is 1.7 (7.0) or greater.">
+			<condition>
+				<not>
+					<or>
+						<contains string="${java.version}" substring="1.7" casesensitive="false" />
+					</or>
+				</not>
+			</condition>
+		</fail>
+	</target>
+
+	<target name="checkout" description="Checks out src and downloads everything that is required." depends="checkout-sources" />
+	<target name="build" description="Builds components sources and everything associated." depends="build-sources, build-docs" />
+	<!-- -->
+	<target name="package" description="Builds builds binary package." depends="init,clean,checkout,zip.src,build,notes,zip.binary" />
+	<target name="clean">
+		<echo>Cleaning checkout directory</echo>
+		<delete dir="${ant.file.ss7.tools.ussd.release.sf}/../${checkout.basedir}" verbose="false" />
+		<echo>Cleaning work directory</echo>
+		<delete dir="${zip.dir}" verbose="false" />
+		<echo>Cleaning upload directory</echo>
+		<delete dir="${zip.file.destination.dir}" verbose="false" />
+	</target>
+
+
+
+	<target name="checkout-sources">
+		<echo>Checking out sources</echo>
+		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../">
+			<arg line="validate -P checkout -Dcheckout.dir=${checkout.basedir}" />
+		</exec>
+	</target>
+
+	<target name="build-sources">
+		<!-- pass release name, so source may use it -->
+		<exec executable="${mvn.executable}" dir="${checkout.basedir}">
+			<arg line="install -Pset-svn-revision,default -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
+		</exec>
+		<exec executable="${mvn.executable}" dir="${checkout.basedir}">
+			<arg line="install -Passemble -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name} -Dassemble.dir=${assemble.dir}" />
+		</exec>
+	</target>
+
+	<target name="build-docs" description="">
+		<exec failonerror="true" executable="${mvn.executable}" dir="${docs.source.dir}">
+			<arg line="clean install -P ${docs.profile}" />
+		</exec>
+		<copy failonerror="true" toDir="${docs.dest.dir}" overwrite="true">
+			<fileset dir="${docs.source.dir}/jdocbook-${docs.profile}/target/docbook/publish" />
+		</copy>
+	</target>
+
+	<target name="notes">
+
+		<copy todir="${zip.dir}" file="${basedir}/README.TXT" failonerror="${failoncopy}">
+			<filterchain>
+				<replacetokens>
+					<token key="VERSION" value="${release.version}" />
+					<token key="SS7_VERSION" value="${ss7.version}" />
+				</replacetokens>
+			</filterchain>
+		</copy>
+
+	</target>
+
+
+	<target name="zip.binary">
+		<zip destfile="${zip.file.destination.dir}/${zip.file.name}.zip">
+			<zipfileset dir="${zip.dir}" excludes="zip">
+			</zipfileset>
+		</zip>
+
+		<antcall target="checksum">
+			<param name="source.file" value="${zip.file.destination.dir}/${zip.file.name}.zip" />
+			<param name="algorithm" value="sha1" />
+		</antcall>
+	</target>
+	<target name="zip.src">
+		<mkdir dir="${zip.file.destination.dir}" />
+		<zip destfile="${zip.file.destination.dir}/${zip.file.name}-src.zip">
+			<zipfileset dir="${checkout.basedir}" excludes="zip">
+			</zipfileset>
+		</zip>
+
+		<antcall target="checksum">
+			<param name="source.file" value="${zip.file.destination.dir}/${zip.file.name}-src.zip" />
+			<param name="algorithm" value="sha1" />
+		</antcall>
+
+	</target>
+	<target name="checksum">
+		<checksum file="${source.file}" algorithm="${algorithm}" fileext=".${algorithm}.asc" forceOverwrite="yes" />
+	</target>
+</project>

@@ -20,8 +20,8 @@
 			<title>Start &THIS.APPLICATION;</title>
 			<programlisting>
 			    [usr]$ cd &THIS.APPLICATION.DIRNAME;-&THIS.VERSION;
-			    [usr]$ cd simulator
-			    [usr]$ bin/run.sh
+			    [usr]$ cd simulator/target/binary
+			    [usr]$ run.sh
 			</programlisting>
 		</step>
 		<step>

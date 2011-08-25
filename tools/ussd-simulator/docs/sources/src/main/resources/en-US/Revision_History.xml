@@ -6,15 +6,15 @@
 	<simpara>
 		<revhistory>		
 			<revision>
-				<revnumber>1.0</revnumber>
-				<date>Tue Dec 30 2009</date>
+				<revnumber>1.1</revnumber>
+				<date>Thu Aug 25 2011</date>
 				<author>
-					<firstname>Eduardo</firstname>
-					<surname>Martins</surname>
+					<firstname>Bartosz</firstname>
+					<surname>Baranowski</surname>
 				</author>
 				<revdescription>
 					<simplelist>
-						<member>Creation of the &THIS.PLATFORM; JAIN SLEE &THIS.EXAMPLE; Example User Guide.</member>
+						<member>Creation of the &THIS.PLATFORM; &THIS.APPLICATION; User Guide.</member>
 					</simplelist>
 				</revdescription>
 			</revision>

@@ -4,19 +4,19 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<artifactId>mobicents-ussd-simulator-docs</artifactId>
-		<groupId>org.mobicents.protocols.ss7.tools.ussd.docs</groupId>
+		<artifactId>docs</artifactId>
+		<groupId>org.mobicents.protocols.ss7.tools.simulator.docs</groupId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>mobicents-ussd-simulator-docs-sources-mobicents</artifactId>	
+	<artifactId>docs-sources-mobicents</artifactId>	
 			
 	<properties>
 		<THIS.PLATFORM>Mobicents</THIS.PLATFORM>
 		<JEE.PLATFORM>JBoss Application Server</JEE.PLATFORM>
 		<THIS.ISSUE_TRACKER_URL>http://code.google.com/p/mobicents/issues/list</THIS.ISSUE_TRACKER_URL>
-		<THIS.RELEASE_SOURCE_CODE_URL>http://mobicents.googlecode.com/svn/tags/protocols/ss7/tools/${docs.application.dirname}</THIS.RELEASE_SOURCE_CODE_URL>
-		<THIS.TRUNK_SOURCE_CODE_URL>http://mobicents.googlecode.com/svn/trunk/protocols/ss7/tools/${docs.application.dirname}</THIS.TRUNK_SOURCE_CODE_URL>
+		<THIS.RELEASE_SOURCE_CODE_URL>http://mobicents.googlecode.com/svn/tags/applications/${docs.application.dirname}</THIS.RELEASE_SOURCE_CODE_URL>
+		<THIS.TRUNK_SOURCE_CODE_URL>http://mobicents.googlecode.com/svn/trunk/applications/${docs.application.dirname}</THIS.TRUNK_SOURCE_CODE_URL>
 		<author.email.amit>abhayani (at) gmail.com</author.email.amit>
 		<author.email.bartosz>baranowb (at) gmail.com</author.email.bartosz>
 		<author.email.oleg>oleg.kulikoff (at) gmail.com</author.email.oleg>		
@@ -44,7 +44,7 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>${pom.groupId}</groupId>
-									<artifactId>mobicents-ussd-simulator-docs-sources</artifactId>
+									<artifactId>docs-sources</artifactId>
 									<version>${pom.version}</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>

@@ -37,7 +37,7 @@ fi
 # Setup TEST_CORE
 if [ "x$TEST_CORE" = "x" ]; then
     # get the full path (without any relative bits)
-    TEST_CORE=`cd $DIRNAME/..; pwd`
+    TEST_CORE=`cd $DIRNAME; pwd`
 fi
 export TEST_CORE
 
@@ -55,31 +55,32 @@ fi
 
 
 
-RUN_CLASSPATH="$TEST_CORE/target/classes:$TEST_CORE/target/appframework.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/concurrent.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/java-getopt.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/log4j.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/opencsv.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/swing-layout.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/swing-worker.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/javolution.jar"
+RUN_CLASSPATH="$TEST_CORE/target/classes:$TEST_CORE/lib/appframework.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/concurrent.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/java-getopt.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/log4j.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/opencsv.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/swing-layout.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/swing-worker.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/javolution.jar"
 
 #now SS7
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/stream.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/asn.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/mtp-api.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/sccp-api.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/sccp-impl.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/tcap-api.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/tcap-impl.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/map-api.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/map-impl.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/m3ua-api.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/m3ua-impl.jar"
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/ss7-ussd-simulator.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/stream.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/asn.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/mtp-api.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/sccp-api.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/sccp-impl.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/tcap-api.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/tcap-impl.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/map-api.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/map-impl.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/m3ua-api.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/m3ua-impl.jar"
+RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/ussd-simulator.jar"
+
 
 #log4j
-RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/target/classes/log4j.xml"
+#RUN_CLASSPATH="$RUN_CLASSPATH:$TEST_CORE/lib/log4j.xml"
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
@@ -135,9 +136,9 @@ executeTest(){
       echo ""
 
 
-      echo "Preparing test tool jar..."
+      #echo "Preparing test tool jar..."
       #mvn -f $TEST_CORE/pom.xml clean install
-      mvn -f $TEST_CORE/pom.xml install
+      #mvn -f $TEST_CORE/pom.xml install
 
       echo ""
       echo "========================================================================="
@@ -146,16 +147,9 @@ executeTest(){
       echo ""
       echo "========================================================================="
 
-
-
-
-
       "$JAVA" $JAVA_OPTS \
 	-classpath "$RUN_CLASSPATH" \
 	org.mobicents.protocols.ss7.ussdsimulator.UssdsimulatorApp $*
-
-
-
 
 
 }

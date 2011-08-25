@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -9,8 +8,8 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.mobicents.protocols.ss7.tools.ussd</groupId>
-	<artifactId>ss7-ussd-simulator-parent</artifactId>
+	<groupId>org.mobicents.protocols.ss7.tools.simulator</groupId>
+	<artifactId>parent</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
@@ -58,7 +57,7 @@
 				<artifactId>opencsv</artifactId>
 				<version>1.8</version>
 			</dependency>
-	
+
 			<!--
 				<dependency> <groupId>urbanophile</groupId>
 				<artifactId>java-getopt</artifactId> </dependency>
@@ -67,4 +66,29 @@
 
 	</dependencyManagement>
 
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules>
+			</modules>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<configuration>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+							<tagBase>https://mobicents.googlecode.com/svn/tags/applications/ss7-simulator</tagBase>
+							<!--<branchBase>https://mobicents.googlecode.com/svn/branches....</branchBase>-->
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+	<scm>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/applications/ss7-simulator</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/applications/ss7-simulator</developerConnection>
+		<url></url>
+	</scm>
 </project>

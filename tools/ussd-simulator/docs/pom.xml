@@ -5,20 +5,20 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.mobicents.protocols.ss7.tools.ussd</groupId>
-		<artifactId>ss7-ussd-simulator-parent</artifactId>
+		<groupId>org.mobicents.protocols.ss7.tools.simulator</groupId>
+		<artifactId>parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mobicents-ussd-simulator-docs</artifactId>
-	<groupId>org.mobicents.protocols.ss7.tools.ussd.docs</groupId>
+	<artifactId>docs</artifactId>
+	<groupId>org.mobicents.protocols.ss7.tools.simulator.docs</groupId>
 
 	<packaging>pom</packaging>
 
 	<properties>
-		<docs.application.name>USSD Simulator</docs.application.name>
-		<docs.application.dirname>ussd-simulator</docs.application.dirname>
-		<docs.bookid>USSDSimulator</docs.bookid>
+		<docs.application.name>SS7 Simulator</docs.application.name>
+		<docs.application.dirname>ss7-simulator</docs.application.dirname>
+		<docs.bookid>SS7Simulator</docs.bookid>
 	</properties>
 
 	<modules>
