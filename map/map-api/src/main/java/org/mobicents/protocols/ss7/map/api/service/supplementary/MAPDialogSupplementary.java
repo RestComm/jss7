@@ -102,4 +102,22 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 */
 	public void addUnstructuredSSResponse(long invokeId, byte ussdDataCodingScheme, USSDString ussdString) throws MAPException;
 
+	/**
+	 * Add's a new Unstructured SS Notify
+	 * 
+	 * @param ussdDataCodingScheme
+	 *            The Data Coding Scheme for this USSD String as defined in GSM
+	 *            03.38
+	 * @param ussdString
+	 *            Ussd String {@link USSDString}
+	 * @param alertingPatter
+	 *            The optional alerting pattern. See {@link AlertingPattern}
+	 * @param msisdn
+	 *            The optional MSISDN in {@link AddressString} format.
+	 * @return invokeId
+	 * @throws MAPException
+	 */
+	public Long addUnstructuredSSNotify(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, AddressString msisdn)
+			throws MAPException;
+
 }

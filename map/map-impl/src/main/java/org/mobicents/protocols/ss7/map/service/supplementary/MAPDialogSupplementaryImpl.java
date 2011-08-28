@@ -150,6 +150,40 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		return invokeId;
 	}
 
+	public Long addUnstructuredSSNotify(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, AddressString msisdn)
+			throws MAPException {
+
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+
+		// Operation Code
+		OperationCode oc = TcapFactory.createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Notify);
+		invoke.setOperationCode(oc);
+
+		UnstructuredSSRequestIndicationImpl req = new UnstructuredSSRequestIndicationImpl(ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		invoke.setParameter(p);
+
+		Long invokeId;
+		try {
+			invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+		} catch (TCAPException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+
+		this.sendInvokeComponent(invoke);
+
+		return invokeId;
+	}
+
 	public void addUnstructuredSSResponse(long invokeId, byte ussdDataCodingScheme, USSDString ussdString) throws MAPException {
 
 		Return returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();

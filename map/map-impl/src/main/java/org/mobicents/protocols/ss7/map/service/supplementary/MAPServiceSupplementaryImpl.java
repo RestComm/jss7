@@ -151,6 +151,12 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 			else
 				this.unstructuredSSResponse(parameter, mapDialogSupplementaryImpl, invokeId);
 			break;
+		case MAPOperationCode.unstructuredSS_Notify:
+			if (compType == ComponentType.Invoke)
+				this.unstructuredSSNotify(parameter, mapDialogSupplementaryImpl, invokeId);
+			else
+				// error?
+				break;
 		default:
 			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
@@ -158,6 +164,33 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 
 	public Boolean checkInvokeTimeOut(MAPDialog dialog, Invoke invoke) {
 		return false;
+	}
+
+	private void unstructuredSSNotify(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+		if (parameter == null)
+			throw new MAPParsingComponentException("Error while decoding unstructuredSSNotifyIndication: Parameter is mandatory but not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new MAPParsingComponentException(
+					"Error while decoding unstructuredSSNotifyIndication: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+					MAPParsingComponentExceptionReason.MistypedParameter);
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+
+		UnstructuredSSNotifyIndicationImpl ind = new UnstructuredSSNotifyIndicationImpl();
+		ind.decodeData(ais, buf.length);
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
+
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((MAPServiceSupplementaryListener) serLis).onUnstructuredSSNotifyIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing unstructuredSSNotifyIndication: " + e.getMessage(), e);
+			}
+		}
 	}
 
 	private void unstructuredSSRequest(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
