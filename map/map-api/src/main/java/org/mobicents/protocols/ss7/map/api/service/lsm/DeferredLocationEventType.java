@@ -21,8 +21,6 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
-
 /**
  * DeferredLocationEventType ::= BIT STRING {
  *		msAvailable (0) ,
@@ -39,7 +37,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
  * @author amit bhayani
  *
  */
-public interface DeferredLocationEventType extends MAPAsnPrimitive {
+public interface DeferredLocationEventType {
 	
 	public boolean getMsAvailable();
 	

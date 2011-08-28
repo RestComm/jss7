@@ -96,15 +96,6 @@ public class MAPUserAbortChoiceImpl implements MAPUserAbortChoice {
 		this.isUserSpecificReason = true;
 	}
 
-//	public void decode(AsnInputStream ais) throws AsnException, IOException,
-//			MAPException {
-//
-//	}
-//
-//	public void encode(AsnOutputStream asnOS) throws IOException, MAPException {
-//		
-//	}
-
 	@Override
 	public String toString() {
 		

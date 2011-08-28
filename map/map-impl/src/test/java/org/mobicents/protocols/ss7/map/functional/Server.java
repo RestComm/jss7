@@ -50,6 +50,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.InformServiceCentreRequestIndication;
@@ -73,7 +74,6 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupple
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
@@ -158,6 +158,14 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		case Action_Sms_ReportSMDeliveryStatus:
 		case Action_Sms_InformServiceCentre:
 			return _S_recievedSmsRequestIndication && _S_recievedMAPOpenInfo;
+
+		case Action_Component_A:
+		case Action_Component_B:
+		case Action_Component_E:
+			return _S_recievedProcessUnstructuredSSIndication && _S_recievedMAPOpenInfo;
+		case Action_Component_D:
+			// ........................................
+			return _S_recievedProcessUnstructuredSSIndication && _S_recievedMAPOpenInfo;
 		}
 		
 		return false;
@@ -470,8 +478,9 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		case Action_Component_A: {
 			MAPDialogSupplementary mapDialog = procUnstrInd.getMAPDialog();
 			Long invokeId = procUnstrInd.getInvokeId();
+			this._S_recievedProcessUnstructuredSSIndication = true;
 
-			MAPErrorMessage msg = this.mapProvider.getMAPErrorMessageFactory().createMessageParameterless(55L);
+			MAPErrorMessage msg = this.mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageSystemFailure(2, null, null, null);
 			try {
 				mapDialog.sendErrorComponent(invokeId, msg);
 			} catch (MAPException e) {

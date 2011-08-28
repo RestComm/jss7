@@ -56,7 +56,7 @@ public class MAPSimpleDialogTest extends TestCase  {
 		assertEquals(1, tag);
 
 		MAPAcceptInfoImpl accInfo = new MAPAcceptInfoImpl();
-		accInfo.decode(asnIs);
+		accInfo.decodeAll(asnIs);
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(accInfo.getExtensionContainer()));
 
 		
@@ -66,7 +66,7 @@ public class MAPSimpleDialogTest extends TestCase  {
 		assertEquals(2, tag);
 
 		MAPCloseInfoImpl closeInfo = new MAPCloseInfoImpl();
-		closeInfo.decode(asnIs);
+		closeInfo.decodeAll(asnIs);
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(closeInfo.getExtensionContainer()));
 		
 	}
@@ -79,7 +79,7 @@ public class MAPSimpleDialogTest extends TestCase  {
 		accInfo.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
 
 		AsnOutputStream asnOS = new AsnOutputStream();
-		accInfo.encode(asnOS);
+		accInfo.encodeAll(asnOS);
 		byte[] data = asnOS.toByteArray();
 		assertTrue(Arrays.equals(b, data));
 
@@ -89,7 +89,7 @@ public class MAPSimpleDialogTest extends TestCase  {
 		closeInfo.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
 
 		asnOS = new AsnOutputStream();
-		closeInfo.encode(asnOS);
+		closeInfo.encodeAll(asnOS);
 		data = asnOS.toByteArray();
 		assertTrue(Arrays.equals(b, data));
 	}

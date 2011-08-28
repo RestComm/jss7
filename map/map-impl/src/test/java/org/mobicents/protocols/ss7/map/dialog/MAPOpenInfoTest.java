@@ -62,7 +62,7 @@ public class MAPOpenInfoTest extends TestCase {
 		assertEquals(0, tag);
 
 		MAPOpenInfoImpl mapOpenInfoImpl = new MAPOpenInfoImpl();
-		mapOpenInfoImpl.decode(asnIs);
+		mapOpenInfoImpl.decodeAll(asnIs);
 
 		AddressString destRef = mapOpenInfoImpl.getDestReference();
 		AddressString origRef = mapOpenInfoImpl.getOrigReference();
@@ -86,7 +86,7 @@ public class MAPOpenInfoTest extends TestCase {
 		assertEquals(0, tag);
 
 		mapOpenInfoImpl = new MAPOpenInfoImpl();
-		mapOpenInfoImpl.decode(asnIs);
+		mapOpenInfoImpl.decodeAll(asnIs);
 
 		destRef = mapOpenInfoImpl.getDestReference();
 		origRef = mapOpenInfoImpl.getOrigReference();
@@ -155,7 +155,7 @@ public class MAPOpenInfoTest extends TestCase {
 		mapOpenInfoImpl.setOrigReference(origReference);
 		AsnOutputStream asnOS = new AsnOutputStream();
 
-		mapOpenInfoImpl.encode(asnOS);
+		mapOpenInfoImpl.encodeAll(asnOS);
 		byte[] data = asnOS.toByteArray();
 		// System.out.println(dump(data, data.length, false));
 		assertTrue(Arrays.equals(new byte[] { (byte) 0xa0, (byte) 0x14, (byte) 0x80, 0x09, (byte) 0x96, 0x02, 0x24,
@@ -171,7 +171,7 @@ public class MAPOpenInfoTest extends TestCase {
 		mapOpenInfoImpl.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
 
 		asnOS = new AsnOutputStream();
-		mapOpenInfoImpl.encode(asnOS);
+		mapOpenInfoImpl.encodeAll(asnOS);
 		data = asnOS.toByteArray();
 		assertTrue(Arrays.equals(this.getDataFull(), data));
 	}

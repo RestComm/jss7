@@ -30,6 +30,6 @@ package org.mobicents.protocols.ss7.map.api.service.sms;
 * @author sergey vetyutnev
 * 
 */
-public interface AlertServiceCentreResponseIndication extends SmsService {
+public interface AlertServiceCentreResponseIndication extends SmsMessage {
 
 }

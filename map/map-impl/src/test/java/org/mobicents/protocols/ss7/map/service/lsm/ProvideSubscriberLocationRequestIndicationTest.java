@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientInternalID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName;
@@ -51,7 +52,6 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.LocationType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTime;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTimeCategory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 
 /**

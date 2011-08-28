@@ -201,7 +201,7 @@ public class SendRoutingInfoForLCSRequestIndicationImpl extends LsmMessageImpl i
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 		this.mlcNumber = new ISDNAddressStringImpl();
-		this.mlcNumber.decodeAll(ais);
+		((ISDNAddressStringImpl)this.mlcNumber).decodeAll(ais);
 
 		// targetMS [1] SubscriberIdentity
 		tag = ais.readTag();
@@ -215,7 +215,7 @@ public class SendRoutingInfoForLCSRequestIndicationImpl extends LsmMessageImpl i
 		tag = ais.readTag();
 
 		this.targetMS = new SubscriberIdentityImpl();
-		this.targetMS.decodeAll(ais);
+		((SubscriberIdentityImpl)this.targetMS).decodeAll(ais);
 
 		while (true) {
 			if (ais.available() == 0)
@@ -231,7 +231,7 @@ public class SendRoutingInfoForLCSRequestIndicationImpl extends LsmMessageImpl i
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.extensionContainer = new MAPExtensionContainerImpl();
-				this.extensionContainer.decodeAll(ais);
+				((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 				break;
 			default:
 				// DO we care?
@@ -290,7 +290,7 @@ public class SendRoutingInfoForLCSRequestIndicationImpl extends LsmMessageImpl i
 					"Encoding of SendRoutingInforForLCSRequestIndication failed. Manadatory parameter targetMS [1] SubscriberIdentity is not set");
 		}
 
-		this.mlcNumber.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_MLC_NUMBER);
+		((ISDNAddressStringImpl)this.mlcNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_MLC_NUMBER);
 
 		try {
 			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_TARGET_MS);
@@ -299,11 +299,11 @@ public class SendRoutingInfoForLCSRequestIndicationImpl extends LsmMessageImpl i
 		}
 
 		int pos = asnOs.StartContentDefiniteLength();
-		this.targetMS.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, this.targetMS.getTag());
+		((SubscriberIdentityImpl)this.targetMS).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, ((SubscriberIdentityImpl)this.targetMS).getTag());
 		asnOs.FinalizeContent(pos);
 
 		if (this.extensionContainer != null) {
-			this.extensionContainer.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTENSION_CONTAINER);
+			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTENSION_CONTAINER);
 		}
 	}
 

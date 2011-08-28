@@ -36,7 +36,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
  * @author sergey vetyutnev
  * 
  */
-public abstract class TbcdString extends MAPPrimitiveBase {
+public abstract class TbcdString implements MAPAsnPrimitive {
 
 	protected int DIGIT_1_MASK = 0x0F;
 	protected int DIGIT_2_MASK = 0xF0;

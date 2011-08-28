@@ -36,6 +36,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRequestIndication;
+import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
@@ -183,7 +184,7 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsServiceImpl im
 					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest.msisdn: Parameter bad tag or tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.msisdn = new ISDNAddressStringImpl();
-				this.msisdn.decodeAll(ais);
+				((ISDNAddressStringImpl)this.msisdn).decodeAll(ais);
 				break;
 				
 			case 1:
@@ -200,7 +201,7 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsServiceImpl im
 					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest.serviceCentreAddress: Parameter 2 bad tag class or tag or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.serviceCentreAddress = new ISDNAddressStringImpl();
-				this.serviceCentreAddress.decodeAll(ais);
+				((AddressStringImpl)this.serviceCentreAddress).decodeAll(ais);
 				break;
 				
 			default:
@@ -212,7 +213,7 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsServiceImpl im
 								throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest.extensionContainer: Parameter extensionContainer is primitive",
 										MAPParsingComponentExceptionReason.MistypedParameter);
 						this.extensionContainer = new MAPExtensionContainerImpl();
-						this.extensionContainer.decodeAll(ais);
+						((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 					break;
 
 					case _TAG_gprsSupportIndicator:
@@ -287,12 +288,12 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsServiceImpl im
 			throw new MAPException("msisdn, sm_RP_PRI and serviceCentreAddress must not be null");
 
 		try {
-			this.msisdn.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_msisdn);
+			((ISDNAddressStringImpl)this.msisdn).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_msisdn);
 			asnOs.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_sm_RP_PRI, this.sm_RP_PRI);
-			this.serviceCentreAddress.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_serviceCentreAddress);
+			((AddressStringImpl)this.serviceCentreAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_serviceCentreAddress);
 			
 			if (this.extensionContainer != null)
-				this.extensionContainer.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_extensionContainer);
+				((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_extensionContainer);
 			if (this.gprsSupportIndicator != null && this.gprsSupportIndicator == true)
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_gprsSupportIndicator);
 			if (this.sM_RP_MTI != null)

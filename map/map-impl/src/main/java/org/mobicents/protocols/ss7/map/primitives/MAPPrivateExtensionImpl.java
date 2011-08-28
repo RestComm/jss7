@@ -59,7 +59,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
  * @author sergey vetyutnev
  * 
  */
-public class MAPPrivateExtensionImpl implements MAPPrivateExtension {
+public class MAPPrivateExtensionImpl implements MAPPrivateExtension, MAPAsnPrimitive {
 
 	private long[] oId;
 	private byte[] data;

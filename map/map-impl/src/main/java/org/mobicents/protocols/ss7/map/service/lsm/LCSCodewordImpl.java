@@ -31,15 +31,16 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSCodeword;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
-import org.mobicents.protocols.ss7.map.service.supplementary.USSDStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
 /**
  * @author amit bhayani
  * 
  */
-public class LCSCodewordImpl implements LCSCodeword {
+public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 
 	private static final int _TAG_DATA_CODING_SCHEME = 0;
 	private static final int _TAG_LCS_CODE_WORD_STRING = 1;
@@ -189,7 +190,7 @@ public class LCSCodewordImpl implements LCSCodeword {
 		}
 
 		this.lcsCodewordString = new USSDStringImpl();
-		this.lcsCodewordString.decodeAll(ais);
+		((USSDStringImpl)this.lcsCodewordString).decodeAll(ais);
 	}
 
 	/*
@@ -239,7 +240,7 @@ public class LCSCodewordImpl implements LCSCodeword {
 		try {
 			asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DATA_CODING_SCHEME, new byte[] { this.dataCodingScheme });
 
-			this.lcsCodewordString.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_CODE_WORD_STRING);
+			((USSDStringImpl)this.lcsCodewordString).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_CODE_WORD_STRING);
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding LCSClientName", e);
 		} catch (AsnException e) {

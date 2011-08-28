@@ -22,8 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 
 /**
  * LCSClientName ::= SEQUENCE {
@@ -39,7 +38,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
  * @author amit bhayani
  *
  */
-public interface LCSClientName extends MAPAsnPrimitive {
+public interface LCSClientName {
 	byte getDataCodingScheme();
 	
 	/**

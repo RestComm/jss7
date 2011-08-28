@@ -39,6 +39,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SupportedLCSCapabilitySets;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
@@ -46,7 +47,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
  * @author amit bhayani
  * 
  */
-public class LCSLocationInfoImpl implements LCSLocationInfo {
+public class LCSLocationInfoImpl implements LCSLocationInfo, MAPAsnPrimitive {
 	
 	private static final int _TAG_LMSI = 0;
 	private static final int _TAG_EXTENSION_CONTAINER = 1;
@@ -239,7 +240,7 @@ public class LCSLocationInfoImpl implements LCSLocationInfo {
 		}
 		
 		this.networkNodeNumber = new ISDNAddressStringImpl();
-		this.networkNodeNumber.decodeAll(ais);
+		((ISDNAddressStringImpl)this.networkNodeNumber).decodeAll(ais);
 		
 		while(true){
 			if (ais.available() == 0)
@@ -255,7 +256,7 @@ public class LCSLocationInfoImpl implements LCSLocationInfo {
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.lmsi = new LMSIImpl();
-				this.lmsi.decodeAll(ais);
+				((LMSIImpl)this.lmsi).decodeAll(ais);
 				
 				break;
 			case _TAG_EXTENSION_CONTAINER:
@@ -266,7 +267,7 @@ public class LCSLocationInfoImpl implements LCSLocationInfo {
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.extensionContainer = new MAPExtensionContainerImpl();
-				this.extensionContainer.decodeAll(ais);
+				((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 				break;
 			case _TAG_GPRS_NODE_IND:
 				// gprsNodeIndicator [2] NULL
@@ -289,7 +290,7 @@ public class LCSLocationInfoImpl implements LCSLocationInfo {
 				tag = ais.readTag();
 				
 				this.additionalNumber = new AdditionalNumberImpl();
-				this.additionalNumber.decodeAll(ais);
+				((AdditionalNumberImpl)this.additionalNumber).decodeAll(ais);
 				break;
 			case _TAG_SUPPORTED_LCS_CAPBILITY_SET:
 				// supportedLCS-CapabilitySets [4] SupportedLCS-CapabilitySets
@@ -299,7 +300,7 @@ public class LCSLocationInfoImpl implements LCSLocationInfo {
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.supportedLCSCapabilitySets = new SupportedLCSCapabilitySetsImpl();
-				this.supportedLCSCapabilitySets.decodeAll(ais);
+				((SupportedLCSCapabilitySetsImpl)this.supportedLCSCapabilitySets).decodeAll(ais);
 				break;
 			case _TAG_ADDITIONAL_LCS_CAPBILITY_SET:
 				//additional-LCS-CapabilitySets [5] SupportedLCS-CapabilitySets OPTIONAL
@@ -309,7 +310,7 @@ public class LCSLocationInfoImpl implements LCSLocationInfo {
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.additionalLCSCapabilitySets = new SupportedLCSCapabilitySetsImpl();
-				this.additionalLCSCapabilitySets.decodeAll(ais);
+				((SupportedLCSCapabilitySetsImpl)this.additionalLCSCapabilitySets).decodeAll(ais);
 				break;
 			default:
 //				throw new MAPParsingComponentException("Error while decoding LCSLocationInfo: Expected tags 0 - 5 but found" + p.getTag(),
@@ -352,16 +353,16 @@ public class LCSLocationInfoImpl implements LCSLocationInfo {
 			throw new MAPException("Error while encoding LCSLocationInfo the mandatory parameter networkNode-Number ISDN-AddressString is not defined");
 		}
 		
-		this.networkNodeNumber.encodeAll(asnOs);
+		((ISDNAddressStringImpl)this.networkNodeNumber).encodeAll(asnOs);
 		
 		if (this.lmsi != null) {
 			// lmsi [0] LMSI OPTIONAL,
-			this.lmsi.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LMSI);
+			((LMSIImpl)this.lmsi).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LMSI);
 		}
 		
 		if (this.extensionContainer != null) {
 			// extensionContainer [1] ExtensionContainer OPTIONAL,
-			this.extensionContainer.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTENSION_CONTAINER);
+			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTENSION_CONTAINER);
 		}
 		
 		if (this.gprsNodeIndicator != null && this.gprsNodeIndicator) {
@@ -384,20 +385,20 @@ public class LCSLocationInfoImpl implements LCSLocationInfo {
 			}
 
 			int pos = asnOs.StartContentDefiniteLength();
-			this.additionalNumber.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, this.additionalNumber.getTag());
+			((AdditionalNumberImpl)this.additionalNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, ((AdditionalNumberImpl)this.additionalNumber).getTag());
 			asnOs.FinalizeContent(pos);
 		}
 		
 		if (this.supportedLCSCapabilitySets != null) {
 			// supportedLCS-CapabilitySets [4] SupportedLCS-CapabilitySets
 			// OPTIONAL,
-			this.supportedLCSCapabilitySets.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_SUPPORTED_LCS_CAPBILITY_SET);
+			((SupportedLCSCapabilitySetsImpl)this.supportedLCSCapabilitySets).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_SUPPORTED_LCS_CAPBILITY_SET);
 		}
 		
 		if (this.additionalLCSCapabilitySets != null) {
 			// additional-LCS-CapabilitySets [5] SupportedLCS-CapabilitySets
 			// OPTIONAL
-			this.additionalLCSCapabilitySets.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ADDITIONAL_LCS_CAPBILITY_SET);
+			((SupportedLCSCapabilitySetsImpl)this.additionalLCSCapabilitySets).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ADDITIONAL_LCS_CAPBILITY_SET);
 		}
 		
 	}

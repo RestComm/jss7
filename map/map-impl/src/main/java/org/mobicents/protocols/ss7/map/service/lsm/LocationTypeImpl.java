@@ -34,12 +34,13 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.DeferredLocationEventType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LocationEstimateType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LocationType;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author amit bhayani
  * 
  */
-public class LocationTypeImpl implements LocationType {
+public class LocationTypeImpl implements LocationType, MAPAsnPrimitive {
 	private static final int _TAG_LOCATION_ESTIMATE_TYPE = 0;
 	private static final int _TAG_DEFERRED_LOCATION_EVET_TYPE = 1;
 
@@ -185,7 +186,7 @@ public class LocationTypeImpl implements LocationType {
 				}
 
 				this.deferredLocationEventType = new DeferredLocationEventTypeImpl();
-				this.deferredLocationEventType.decodeAll(ais);
+				((DeferredLocationEventTypeImpl)this.deferredLocationEventType).decodeAll(ais);
 				break;
 			default:
 				// Do we care?
@@ -247,7 +248,7 @@ public class LocationTypeImpl implements LocationType {
 		}
 
 		if (this.deferredLocationEventType != null) {
-			this.deferredLocationEventType.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DEFERRED_LOCATION_EVET_TYPE);
+			((DeferredLocationEventTypeImpl)this.deferredLocationEventType).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DEFERRED_LOCATION_EVET_TYPE);
 		}
 	}
 

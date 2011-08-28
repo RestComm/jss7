@@ -24,7 +24,6 @@ package org.mobicents.protocols.ss7.map.api.service.sms;
 
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 
 
 /**
@@ -40,7 +39,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
  * @author sergey vetyutnev
  * 
  */
-public interface SM_RP_OA extends MAPAsnPrimitive {
+public interface SM_RP_OA {
 
 	public ISDNAddressString getMsisdn();
 

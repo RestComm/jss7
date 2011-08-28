@@ -81,7 +81,7 @@ public class AreaEventInfoTest {
 		int tag = asn.readTag();
 
 		AreaEventInfo areaEvtInf = new AreaEventInfoImpl();
-		areaEvtInf.decodeAll(asn);
+		((AreaEventInfoImpl)areaEvtInf).decodeAll(asn);
 
 		AreaDefinition areaDef = areaEvtInf.getAreaDefinition();
 		assertNotNull(areaDef);
@@ -119,7 +119,7 @@ public class AreaEventInfoTest {
 		AreaEventInfo areaEvtInf = new AreaEventInfoImpl(areaDef, OccurrenceInfo.multipleTimeEvent, 32766);
 
 		AsnOutputStream asnOS = new AsnOutputStream();
-		areaEvtInf.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, Tag.SEQUENCE);
+		((AreaEventInfoImpl)areaEvtInf).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, Tag.SEQUENCE);
 		
 		byte[] encodedData = asnOS.toByteArray();
 

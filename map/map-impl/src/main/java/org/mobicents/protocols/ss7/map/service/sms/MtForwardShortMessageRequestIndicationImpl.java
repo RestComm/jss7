@@ -31,7 +31,6 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
@@ -158,7 +157,7 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsServiceImpl i
 					throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter 0 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.sM_RP_DA = new SM_RP_DAImpl();
-				this.sM_RP_DA.decodeAll(ais);
+				((SM_RP_DAImpl)this.sM_RP_DA).decodeAll(ais);
 				break;
 
 			case 1:
@@ -167,7 +166,7 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsServiceImpl i
 					throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter 1 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.sM_RP_OA = new SM_RP_OAImpl();
-				this.sM_RP_OA.decodeAll(ais);
+				((SM_RP_OAImpl)this.sM_RP_OA).decodeAll(ais);
 				break;
 
 			case 2:
@@ -188,7 +187,7 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsServiceImpl i
 						throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter extensionContainer is primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.extensionContainer = new MAPExtensionContainerImpl();
-					this.extensionContainer.decodeAll(ais);
+					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 				} else if (tag == Tag.NULL && ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
 					
 					if (!ais.isTagPrimitive())
@@ -237,14 +236,14 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsServiceImpl i
 			throw new MAPException("sm_RP_DA,sm_RP_OA and sm_RP_UI must not be null");
 
 		try {
-			this.sM_RP_DA.encodeAll(asnOs);
-			this.sM_RP_OA.encodeAll(asnOs);
+			((SM_RP_DAImpl)this.sM_RP_DA).encodeAll(asnOs);
+			((SM_RP_OAImpl)this.sM_RP_OA).encodeAll(asnOs);
 			asnOs.writeOctetString(this.sM_RP_UI);
 
 			if (this.moreMessagesToSend != null)
 				asnOs.writeNull();
 			if (this.extensionContainer != null)
-				this.extensionContainer.encodeAll(asnOs);
+				((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs);
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding mtForwardShortMessageRequest: " + e.getMessage(), e);
 		} catch (AsnException e) {

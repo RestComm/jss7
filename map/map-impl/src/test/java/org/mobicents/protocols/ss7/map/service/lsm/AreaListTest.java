@@ -75,7 +75,7 @@ public class AreaListTest {
 		int tag = asn.readTag();
 
 		AreaList areaList = new AreaListImpl();
-		areaList.decodeAll(asn);
+		((AreaListImpl)areaList).decodeAll(asn);
 
 		Area areas[] = areaList.getAreas();
 
@@ -99,7 +99,7 @@ public class AreaListTest {
 		AreaList areaList = new AreaListImpl(new Area[] { area1, area2 });
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
-		areaList.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		((AreaListImpl)areaList).encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 		
 		byte[] encodedData = asnOS.toByteArray();
 

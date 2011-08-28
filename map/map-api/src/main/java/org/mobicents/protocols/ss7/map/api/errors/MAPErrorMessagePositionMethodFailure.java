@@ -46,7 +46,11 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 public interface MAPErrorMessagePositionMethodFailure extends MAPErrorMessage {
 	
 	public PositionMethodFailureDiagnostic getPositionMethodFailureDiagnostic();
-	
+
 	public MAPExtensionContainer getExtensionContainer();
+
+	public void setPositionMethodFailureDiagnostic(PositionMethodFailureDiagnostic positionMethodFailureDiagnostic);
+
+	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
 
 }

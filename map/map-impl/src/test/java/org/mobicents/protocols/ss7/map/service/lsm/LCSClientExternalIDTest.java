@@ -78,7 +78,7 @@ public class LCSClientExternalIDTest {
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
 		
-		LCSClientExternalID lcsClientExterId = new LCSClientExternalIDImpl();
+		LCSClientExternalIDImpl lcsClientExterId = new LCSClientExternalIDImpl();
 		lcsClientExterId.decodeAll(asn);
 		
 		assertNotNull(lcsClientExterId.getExternalAddress());
@@ -92,7 +92,7 @@ public class LCSClientExternalIDTest {
 		byte[] data = new byte[] { (byte)0xb0, 0x07, (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70 };
 
 		ISDNAddressString externalAddress = mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "55619007");
-		LCSClientExternalID lcsClientExterId = new LCSClientExternalIDImpl(externalAddress, null);
+		LCSClientExternalIDImpl lcsClientExterId = new LCSClientExternalIDImpl(externalAddress, null);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		lcsClientExterId.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, Tag.SEQUENCE);
 		

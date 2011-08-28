@@ -36,7 +36,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  * 
  */
-public interface IMEI extends MAPPrimitive, MAPAsnPrimitive {
+public interface IMEI {
 
 	public String getIMEI();
 	

@@ -62,7 +62,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * @author sergey vetyutnev
  * 
  */
-public interface SendRoutingInfoForSMRequestIndication extends SmsService {
+public interface SendRoutingInfoForSMRequestIndication extends SmsMessage {
 
 	public ISDNAddressString getMsisdn();
 	

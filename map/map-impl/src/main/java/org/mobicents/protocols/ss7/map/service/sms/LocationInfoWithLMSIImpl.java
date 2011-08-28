@@ -38,6 +38,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
@@ -45,7 +46,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 * @author sergey vetyutnev
 * 
 */
-public class LocationInfoWithLMSIImpl implements LocationInfoWithLMSI {
+public class LocationInfoWithLMSIImpl implements LocationInfoWithLMSI, MAPAsnPrimitive {
 
 	private static final int _TAG_NetworkNodeNumber = 1;
 	private static final int _TAG_GprsNodeIndicator = 5;
@@ -176,7 +177,7 @@ public class LocationInfoWithLMSIImpl implements LocationInfoWithLMSI {
 									"Error when decoding LocationInfoWithLMSI: lmsi: double element or element is not primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						this.lmsi = new LMSIImpl();
-						this.lmsi.decodeAll(ais);
+						((LMSIImpl)this.lmsi).decodeAll(ais);
 						break;
 						
 					case Tag.SEQUENCE:
@@ -185,7 +186,7 @@ public class LocationInfoWithLMSIImpl implements LocationInfoWithLMSI {
 									"Error when decoding LocationInfoWithLMSI: extensionContainer: double element or element is primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						this.extensionContainer = new MAPExtensionContainerImpl();
-						this.extensionContainer.decodeAll(ais);
+						((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 						break;
 						
 					default:
@@ -210,7 +211,7 @@ public class LocationInfoWithLMSIImpl implements LocationInfoWithLMSI {
 									"Error when decoding LocationInfoWithLMSI: additionalNumber: double element or element is not primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						this.additionalNumber = new ISDNAddressStringImpl();
-						this.additionalNumber.decodeAll(ais);
+						((ISDNAddressStringImpl)this.additionalNumber).decodeAll(ais);
 						break;
 						
 					default:
@@ -259,19 +260,19 @@ public class LocationInfoWithLMSIImpl implements LocationInfoWithLMSI {
 			if (this.networkNodeNumber == null)
 				throw new MAPException("Error while decoding LocationInfoWithLMSI: networkNodeNumber must not be null");
 
-			this.networkNodeNumber.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NetworkNodeNumber);
+			((ISDNAddressStringImpl)this.networkNodeNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NetworkNodeNumber);
 
 			if (this.lmsi != null)
-				this.lmsi.encodeAll(asnOs);
+				((LMSIImpl)this.lmsi).encodeAll(asnOs);
 
 			if (this.extensionContainer != null)
-				this.extensionContainer.encodeAll(asnOs);
+				((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs);
 
 			if (this.additionalNumber != null) {
 				if (this.additionalNumberType == AdditionalNumberType.sgsn)
 					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_GprsNodeIndicator);
 
-				this.additionalNumber.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_AdditionalNumber);
+				((ISDNAddressStringImpl)this.additionalNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_AdditionalNumber);
 			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding LocationInfoWithLMSI: " + e.getMessage(), e);

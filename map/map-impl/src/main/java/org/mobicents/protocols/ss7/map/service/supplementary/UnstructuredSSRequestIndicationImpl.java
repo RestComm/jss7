@@ -33,10 +33,11 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
+import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
 /**
  * 
@@ -154,7 +155,7 @@ public class UnstructuredSSRequestIndicationImpl extends USSDMessageImpl impleme
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
 		this.ussdString = new USSDStringImpl();
-		this.ussdString.decodeAll(ais);
+		((USSDStringImpl)this.ussdString).decodeAll(ais);
 
 		while (true) {
 			if (ais.available() == 0)
@@ -171,13 +172,13 @@ public class UnstructuredSSRequestIndicationImpl extends USSDMessageImpl impleme
 							MAPParsingComponentExceptionReason.MistypedParameter);
 
 				this.msisdnAddressString = new AddressStringImpl();
-				this.msisdnAddressString.decodeAll(ais);
+				((AlertingPatternImpl)this.msisdnAddressString).decodeAll(ais);
 				break;
 			default:
 				// alertingPattern AlertingPattern OPTIONAL
 				if (tag == Tag.STRING_OCTET && ais.getTagClass() == Tag.CLASS_UNIVERSAL && ais.isTagPrimitive()) {
 					this.alertingPattern = new AlertingPatternImpl();
-					this.alertingPattern.decodeAll(ais);
+					((AlertingPatternImpl)this.alertingPattern).decodeAll(ais);
 				} else {
 					ais.advanceElement();
 				}
@@ -215,14 +216,14 @@ public class UnstructuredSSRequestIndicationImpl extends USSDMessageImpl impleme
 		try {
 			asnOs.writeOctetString(new byte[] { this.ussdDataCodingSch });
 
-			this.ussdString.encodeAll(asnOs);
+			((USSDStringImpl)this.ussdString).encodeAll(asnOs);
 
 			if (this.alertingPattern != null) {
-				this.alertingPattern.encodeAll(asnOs);
+				((AlertingPatternImpl)this.alertingPattern).encodeAll(asnOs);
 			}
 
 			if (this.msisdnAddressString != null) {
-				this.msisdnAddressString.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_MSISDN);
+				((AlertingPatternImpl)this.msisdnAddressString).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_MSISDN);
 			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding ProcessUnstructuredSSRequestIndication", e);

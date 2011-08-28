@@ -201,7 +201,7 @@ public class ReportSMDeliveryStatusRequestIndicationImpl extends SmsServiceImpl 
 					throw new MAPParsingComponentException("Error while decoding ReportSMDeliveryStatusRequest.msisdn: Parameter bad tag or tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.msisdn = new ISDNAddressStringImpl();
-				this.msisdn.decodeAll(ais);
+				((ISDNAddressStringImpl)this.msisdn).decodeAll(ais);
 				break;
 				
 			case 1:
@@ -210,7 +210,7 @@ public class ReportSMDeliveryStatusRequestIndicationImpl extends SmsServiceImpl 
 					throw new MAPParsingComponentException("Error while decoding ReportSMDeliveryStatusRequest.serviceCentreAddress: Parameter bad tag or tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.serviceCentreAddress = new AddressStringImpl();
-				this.serviceCentreAddress.decodeAll(ais);
+				((AddressStringImpl)this.serviceCentreAddress).decodeAll(ais);
 				break;
 				
 			case 2:
@@ -242,7 +242,7 @@ public class ReportSMDeliveryStatusRequestIndicationImpl extends SmsServiceImpl 
 									"Error while decoding reportSMDeliveryStatusRequest: Parameter extensionContainer is primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						this.extensionContainer = new MAPExtensionContainerImpl();
-						this.extensionContainer.decodeAll(ais);
+						((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 						break;
 
 					case _TAG_GprsSupportIndicator:
@@ -335,14 +335,14 @@ public class ReportSMDeliveryStatusRequestIndicationImpl extends SmsServiceImpl 
 			throw new MAPException("msisdn, serviceCentreAddress and sMDeliveryOutcome must not be null");
 
 		try {
-			this.msisdn.encodeAll(asnOs);
-			this.serviceCentreAddress.encodeAll(asnOs);
+			((ISDNAddressStringImpl)this.msisdn).encodeAll(asnOs);
+			((AddressStringImpl)this.serviceCentreAddress).encodeAll(asnOs);
 			asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.sMDeliveryOutcome.getCode());
 
 			if (this.absentSubscriberDiagnosticSM != null)
 				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_AbsentSubscriberDiagnosticSM, this.absentSubscriberDiagnosticSM);
 			if (this.extensionContainer != null)
-				this.extensionContainer.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ExtensionContainer);
+				((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ExtensionContainer);
 			if (this.gprsSupportIndicator != null && this.gprsSupportIndicator == true)
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_GprsSupportIndicator);
 			if (this.deliveryOutcomeIndicator != null && this.deliveryOutcomeIndicator == true)

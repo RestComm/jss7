@@ -21,8 +21,6 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
-
 /**
  * SupportedGADShapes ::= BIT STRING {
  *      ellipsoidPoint (0),
@@ -37,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
  * @author amit bhayani
  *
  */
-public interface SupportedGADShapes extends MAPAsnPrimitive {
+public interface SupportedGADShapes {
 	public boolean getEllipsoidPoint();
 	
 	public boolean getEllipsoidPointWithUncertaintyCircle();

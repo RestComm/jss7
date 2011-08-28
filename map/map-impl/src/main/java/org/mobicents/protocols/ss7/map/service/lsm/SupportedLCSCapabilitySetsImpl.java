@@ -32,12 +32,13 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SupportedLCSCapabilitySets;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author amit bhayani
  *
  */
-public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySets {
+public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySets, MAPAsnPrimitive {
 	
 	private static final int _INDEX_LCS_CAPABILITY_SET1 = 0;
 	private static final int _INDEX_LCS_CAPABILITY_SET2 = 1;

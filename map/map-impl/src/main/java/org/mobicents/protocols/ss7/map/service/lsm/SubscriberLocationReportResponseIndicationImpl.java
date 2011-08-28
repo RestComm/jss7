@@ -200,7 +200,7 @@ public class SubscriberLocationReportResponseIndicationImpl extends LsmMessageIm
 								"Error while decoding ReportSMDeliveryStatusResponse: Parameter extensionContainer is primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.extensionContainer = new MAPExtensionContainerImpl();
-					this.extensionContainer.decodeAll(ais);
+					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 					break;
 
 				default:
@@ -217,7 +217,7 @@ public class SubscriberLocationReportResponseIndicationImpl extends LsmMessageIm
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 					this.naEsrk = new ISDNAddressStringImpl();
-					this.naEsrk.decodeAll(ais);
+					((ISDNAddressStringImpl)this.naEsrk).decodeAll(ais);
 					break;
 				case _TAG_NA_ESRD:
 					// na-ESRD [1] ISDN-AddressString OPTIONAL,
@@ -227,7 +227,7 @@ public class SubscriberLocationReportResponseIndicationImpl extends LsmMessageIm
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 					this.naEsrd = new ISDNAddressStringImpl();
-					this.naEsrd.decodeAll(ais);
+					((ISDNAddressStringImpl)this.naEsrd).decodeAll(ais);
 					break;
 				default:
 					ais.advanceElement();
@@ -279,17 +279,17 @@ public class SubscriberLocationReportResponseIndicationImpl extends LsmMessageIm
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.extensionContainer != null) {
 			// extensionContainer ExtensionContainer OPTIONAL
-			this.extensionContainer.encodeAll(asnOs);
+			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs);
 		}
 
 		if (this.naEsrk != null) {
 			// na-ESRK [0] ISDN-AddressString OPTIONAL
-			this.naEsrk.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NA_ESRK);
+			((ISDNAddressStringImpl)this.naEsrk).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NA_ESRK);
 		}
 
 		if (this.naEsrd != null) {
 			// na-ESRD [1] ISDN-AddressString OPTIONAL ,
-			this.naEsrd.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NA_ESRD);
+			((ISDNAddressStringImpl)this.naEsrd).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NA_ESRD);
 		}
 	}
 

@@ -35,13 +35,14 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientExternalID;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
  * @author amit bhayani
  * 
  */
-public class LCSClientExternalIDImpl implements LCSClientExternalID {
+public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimitive {
 	
 	private static final int _TAG_EXTERNAL_ADDRESS = 0;
 	private static final int _TAG_EXTENSION_CONTAINER = 1;
@@ -152,11 +153,11 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID {
 			switch (tag) {
 			case _TAG_EXTERNAL_ADDRESS :
 				this.externalAddress = new ISDNAddressStringImpl();
-				this.externalAddress.decodeAll(ais);
+				((ISDNAddressStringImpl)this.externalAddress).decodeAll(ais);
 				break;
 			case _TAG_EXTENSION_CONTAINER:
 				this.extensionContainer = new MAPExtensionContainerImpl();
-				this.extensionContainer.decodeAll(ais);
+				((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 				break;
 			default:
 //				throw new MAPParsingComponentException("Decoding LCSClientExternalID failed. Expected externalAddress [0] or extensionContainer [1] but found "
@@ -194,11 +195,11 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID {
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if(this.externalAddress != null){
-			this.externalAddress.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+			((ISDNAddressStringImpl)this.externalAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 0);
 		}
 		
 		if(this.extensionContainer != null){
-			this.extensionContainer.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 1);
+			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 1);
 		}
 	}
 

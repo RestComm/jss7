@@ -128,7 +128,7 @@ public class MAPExtensionContainerTest {
 		byte[] data = this.getEncodedData();
 		AsnInputStream ais = new AsnInputStream(data);
 		int tag = ais.readTag();
-		MAPExtensionContainer extCont = new MAPExtensionContainerImpl();
+		MAPExtensionContainerImpl extCont = new MAPExtensionContainerImpl();
 		extCont.decodeAll(ais);
 
 		assertEquals(Tag.SEQUENCE, tag);
@@ -139,7 +139,7 @@ public class MAPExtensionContainerTest {
 	public void testEncode() throws Exception {
 		byte[] data = this.getEncodedData();
 		
-		MAPExtensionContainer extCont = GetTestExtensionContainer();
+		MAPExtensionContainerImpl extCont = (MAPExtensionContainerImpl)GetTestExtensionContainer();
 		AsnOutputStream asnOS = new AsnOutputStream();
 		extCont.encodeAll(asnOS);
 		byte[] res = asnOS.toByteArray();

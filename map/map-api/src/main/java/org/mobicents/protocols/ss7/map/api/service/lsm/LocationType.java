@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
-
 /**
  * LocationType ::= SEQUENCE {
  *    locationEstimateType [0] LocationEstimateType,
@@ -33,7 +31,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
  * @author amit bhayani
  *
  */
-public interface LocationType extends MAPAsnPrimitive {
+public interface LocationType {
 	LocationEstimateType getLocationEstimateType();
 	
 	/**

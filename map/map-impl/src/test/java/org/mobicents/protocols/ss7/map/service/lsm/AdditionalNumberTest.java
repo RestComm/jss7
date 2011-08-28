@@ -76,7 +76,7 @@ public class AdditionalNumberTest {
 		int tag = asn.readTag();
 
 		AdditionalNumber addNum = new AdditionalNumberImpl();
-		addNum.decodeAll(asn);
+		((AdditionalNumberImpl)addNum).decodeAll(asn);
 		ISDNAddressString isdnAdd = addNum.getMSCNumber(); 
 		assertNotNull(isdnAdd);
 		
@@ -93,7 +93,7 @@ public class AdditionalNumberTest {
 		AdditionalNumber addNum = new AdditionalNumberImpl(isdnAdd, null);
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
-		addNum.encodeAll(asnOS);
+		((AdditionalNumberImpl)addNum).encodeAll(asnOS);
 		
 		byte[] encodedData = asnOS.toByteArray();
 

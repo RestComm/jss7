@@ -29,7 +29,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  * 
  */
-public interface LMSI extends MAPPrimitive, MAPAsnPrimitive {
+public interface LMSI {
 
 	public byte[] getData();
 

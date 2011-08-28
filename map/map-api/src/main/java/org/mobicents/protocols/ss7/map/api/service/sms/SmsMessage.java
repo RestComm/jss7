@@ -29,7 +29,7 @@ import org.mobicents.protocols.ss7.map.api.MAPMessage;
  * @author sergey vetyutnev
  * 
  */
-public interface SmsService extends MAPMessage {
+public interface SmsMessage extends MAPMessage {
 
 	public MAPDialogSms getMAPDialog();
 

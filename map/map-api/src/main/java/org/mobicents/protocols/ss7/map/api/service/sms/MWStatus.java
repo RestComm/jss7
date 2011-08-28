@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
-
 /**
 *
 * MW-Status ::= BIT STRING {
@@ -39,7 +37,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 * @author sergey vetyutnev
 * 
 */
-public interface MWStatus extends MAPAsnPrimitive {
+public interface MWStatus {
 
 	public Boolean getScAddressNotIncluded();
 

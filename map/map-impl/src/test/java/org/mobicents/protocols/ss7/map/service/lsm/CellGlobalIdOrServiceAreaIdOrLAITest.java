@@ -69,7 +69,7 @@ public class CellGlobalIdOrServiceAreaIdOrLAITest {
 		int tag = asn.readTag();
 
 
-		CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
+		CellGlobalIdOrServiceAreaIdOrLAIImpl cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
 		cellGlobalIdOrServiceAreaIdOrLAI.decodeAll(asn);
 
 		assertNotNull(cellGlobalIdOrServiceAreaIdOrLAI.getCellGlobalIdOrServiceAreaIdFixedLength());
@@ -83,7 +83,7 @@ public class CellGlobalIdOrServiceAreaIdOrLAITest {
 
 		byte[] data = new byte[] { (byte) 0x80, 0x07, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b };
 
-		CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl(new byte[] { 0x05, 0x06, 0x07, 0x08, 0x09,
+		CellGlobalIdOrServiceAreaIdOrLAIImpl cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl(new byte[] { 0x05, 0x06, 0x07, 0x08, 0x09,
 				0x0a, 0x0b }, null);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		cellGlobalIdOrServiceAreaIdOrLAI.encodeAll(asnOS);

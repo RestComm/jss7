@@ -44,7 +44,11 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 public interface MAPErrorMessageUnauthorizedLCSClient extends MAPErrorMessage {
 	
 	public UnauthorizedLCSClientDiagnostic getUnauthorizedLCSClientDiagnostic();
-	
+
 	public MAPExtensionContainer getExtensionContainer();
+
+	public void setUnauthorizedLCSClientDiagnostic(UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic);
+
+	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
 
 }

@@ -68,7 +68,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 * @author sergey vetyutnev
 * 
 */
-public interface ReportSMDeliveryStatusRequestIndication extends SmsService {
+public interface ReportSMDeliveryStatusRequestIndication extends SmsMessage {
 
 	public ISDNAddressString getMsisdn();
 	

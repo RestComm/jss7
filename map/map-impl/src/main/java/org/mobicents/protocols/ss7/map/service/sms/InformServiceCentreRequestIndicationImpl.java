@@ -160,7 +160,7 @@ public class InformServiceCentreRequestIndicationImpl extends SmsServiceImpl imp
 						throw new MAPParsingComponentException("Error while decoding informServiceCentreRequest: Parameter storedMSISDN is not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					storedMSISDN = new ISDNAddressStringImpl();
-					storedMSISDN.decodeAll(ais);
+					((ISDNAddressStringImpl)storedMSISDN).decodeAll(ais);
 					break;
 
 				case Tag.STRING_BIT:
@@ -169,7 +169,7 @@ public class InformServiceCentreRequestIndicationImpl extends SmsServiceImpl imp
 						throw new MAPParsingComponentException("Error while decoding informServiceCentreRequest: Parameter mw-Status is not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					mwStatus = new MWStatusImpl();
-					mwStatus.decodeAll(ais);
+					((MWStatusImpl)mwStatus).decodeAll(ais);
 					break;
 
 				case Tag.SEQUENCE:
@@ -178,7 +178,7 @@ public class InformServiceCentreRequestIndicationImpl extends SmsServiceImpl imp
 						throw new MAPParsingComponentException("Error while decoding reportSMDeliveryStatusRequest: Parameter extensionContainer is primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					extensionContainer = new MAPExtensionContainerImpl();
-					extensionContainer.decodeAll(ais);
+					((MAPExtensionContainerImpl)extensionContainer).decodeAll(ais);
 					break;
 
 				case Tag.INTEGER:
@@ -239,11 +239,11 @@ public class InformServiceCentreRequestIndicationImpl extends SmsServiceImpl imp
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.storedMSISDN != null)
-			this.storedMSISDN.encodeAll(asnOs);
+			((ISDNAddressStringImpl)this.storedMSISDN).encodeAll(asnOs);
 		if (this.mwStatus != null)
-			this.mwStatus.encodeAll(asnOs);
+			((MWStatusImpl)this.mwStatus).encodeAll(asnOs);
 		if (this.extensionContainer != null)
-			this.extensionContainer.encodeAll(asnOs);
+			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs);
 		try {
 			if (this.absentSubscriberDiagnosticSM != null)
 				asnOs.writeInteger(this.absentSubscriberDiagnosticSM);

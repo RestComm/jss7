@@ -210,6 +210,22 @@ public class MAPFunctionalTest extends SccpHarness {
 		 ((MAPProviderImplWrapper) this.stack2.getMAPProvider()).setTestMode(0);
 	}
 
+	@Test
+	public void testComponents() throws Exception {
+		
+//		 server.reset();
+//		 client.reset();
+//		 server.setStep(FunctionalTestScenario.Action_Component_A);
+//		 client.setStep(FunctionalTestScenario.Action_Component_A);
+//		 client.actionB();
+//		 waitForEnd();
+//		 assertTrue("Client side did not finish: " + client.getStatus(),
+//		 client.isFinished());
+//		 assertTrue("Server side did not finish: " + server.getStatus(),
+//		 server.isFinished());
+
+		 // ..........................
+	}
 
 	@Test
 	public void testSmsService() throws Exception {

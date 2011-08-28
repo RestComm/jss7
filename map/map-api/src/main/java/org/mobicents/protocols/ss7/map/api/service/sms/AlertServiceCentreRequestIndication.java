@@ -48,7 +48,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 * @author sergey vetyutnev
 * 
 */
-public interface AlertServiceCentreRequestIndication extends SmsService {
+public interface AlertServiceCentreRequestIndication extends SmsMessage {
 
 	public ISDNAddressString getMsisdn();
 

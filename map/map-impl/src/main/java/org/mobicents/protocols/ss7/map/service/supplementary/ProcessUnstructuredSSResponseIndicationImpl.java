@@ -31,8 +31,9 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
 /**
  * 
@@ -120,7 +121,7 @@ public class ProcessUnstructuredSSResponseIndicationImpl extends USSDMessageImpl
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
 		this.ussdString = new USSDStringImpl();
-		this.ussdString.decodeAll(ais);
+		((USSDStringImpl)this.ussdString).decodeAll(ais);
 
 	}
 
@@ -152,7 +153,7 @@ public class ProcessUnstructuredSSResponseIndicationImpl extends USSDMessageImpl
 		try {
 			asnOs.writeOctetString(new byte[] { this.ussdDataCodingSch });
 
-			this.ussdString.encodeAll(asnOs);
+			((USSDStringImpl)this.ussdString).encodeAll(asnOs);
 
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding ProcessUnstructuredSSResponseIndication", e);

@@ -42,39 +42,39 @@ public interface MAPErrorMessageFactory {
 	 */
 	public MAPErrorMessage createMessageFromErrorCode(Long errorCode);
 
-	public MAPErrorMessageParameterless createMessageParameterless(Long errorCode);
+	public MAPErrorMessageParameterless createMAPErrorMessageParameterless(Long errorCode);
 
-	public MAPErrorMessageExtensionContainer createMessageExtensionContainer(Long errorCode);
+	public MAPErrorMessageExtensionContainer createMAPErrorMessageExtensionContainer(Long errorCode, MAPExtensionContainer extensionContainer);
 
-	public MAPErrorMessageSMDeliveryFailure createMessageSMDeliveryFailure(Long mapVersion, SMEnumeratedDeliveryFailureCause smEnumeratedDeliveryFailureCause,
-			MAPExtensionContainer extensionContainer);
+	public MAPErrorMessageSMDeliveryFailure createMAPErrorMessageSMDeliveryFailure(SMEnumeratedDeliveryFailureCause smEnumeratedDeliveryFailureCause,
+			byte[] signalInfo, MAPExtensionContainer extensionContainer);
 
-	public MAPErrorMessageFacilityNotSup createErrorMessageFacilityNotSup(Long mapVersion, Boolean shapeOfLocationEstimateNotSupported,
+	public MAPErrorMessageFacilityNotSup createMAPErrorMessageFacilityNotSup(MAPExtensionContainer extensionContainer, Boolean shapeOfLocationEstimateNotSupported,
 			Boolean neededLcsCapabilityNotSupportedInServingNode);
 
-	public MAPErrorMessageSystemFailure createErrorMessageSystemFailure(Long mapVersion, NetworkResource networkResource,
+	public MAPErrorMessageSystemFailure createMAPErrorMessageSystemFailure(long mapVersion, NetworkResource networkResource,
 			AdditionalNetworkResource additionalNetworkResource, MAPExtensionContainer extensionContainer);
 
-	public MAPErrorMessageUnknownSubscriber createMAPErrorMessageUnknownSubscriber(Long mapVersion, MAPExtensionContainer extensionContainer,
+	public MAPErrorMessageUnknownSubscriber createMAPErrorMessageUnknownSubscriber(MAPExtensionContainer extensionContainer,
 			UnknownSubscriberDiagnostic unknownSubscriberDiagnostic);
 
-	public MAPErrorMessageAbsentSubscriberSM createMAPErrorMessageAbsentSubscriberSM(Long mapVersion, MAPExtensionContainer extensionContainer,
-			Integer absentSubscriberDiagnosticSM, Integer additionalAbsentSubscriberDiagnosticSM);
+	public MAPErrorMessageAbsentSubscriberSM createMAPErrorMessageAbsentSubscriberSM(Integer absentSubscriberDiagnosticSM,
+			MAPExtensionContainer extensionContainer, Integer additionalAbsentSubscriberDiagnosticSM);
 
-	public MAPErrorMessageSubscriberBusyForMtSms createMAPErrorMessageSubscriberBusyForMtSms(Long mapVersion, MAPExtensionContainer extensionContainer,
+	public MAPErrorMessageSubscriberBusyForMtSms createMAPErrorMessageSubscriberBusyForMtSms(MAPExtensionContainer extensionContainer,
 			Boolean gprsConnectionSuspended);
 
 	public MAPErrorMessageCallBarred createMAPErrorMessageCallBarred(Long mapVersion, CallBarringCause callBarringCause,
 			MAPExtensionContainer extensionContainer, Boolean unauthorisedMessageOriginator);
 
-	public MAPErrorMessageAbsentSubscriber createMAPErrorMessageAbsentSubscriber(Long mapVersion, MAPExtensionContainer extensionContainer,
+	public MAPErrorMessageAbsentSubscriber createMAPErrorMessageAbsentSubscriber(MAPExtensionContainer extensionContainer,
 			AbsentSubscriberReason absentSubscriberReason);
 
-	public MAPErrorMessageUnauthorizedLCSClient createMAPErrorMessageUnauthorizedLCSClient(Long mapVersion,
-			UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic, MAPExtensionContainer extensionContainer);
+	public MAPErrorMessageUnauthorizedLCSClient createMAPErrorMessageUnauthorizedLCSClient(UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic,
+			MAPExtensionContainer extensionContainer);
 
-	public MAPErrorMessagePositionMethodFailure createMAPErrorMessagePositionMethodFailure(Long mapVersion,
-			PositionMethodFailureDiagnostic positionMethodFailureDiagnostic, MAPExtensionContainer extensionContainer);
+	public MAPErrorMessagePositionMethodFailure createMAPErrorMessagePositionMethodFailure(PositionMethodFailureDiagnostic positionMethodFailureDiagnostic,
+			MAPExtensionContainer extensionContainer);
 }
 
 

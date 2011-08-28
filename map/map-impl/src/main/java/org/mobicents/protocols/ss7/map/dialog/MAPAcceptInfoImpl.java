@@ -32,6 +32,7 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
@@ -55,7 +56,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
  * @author sergey vetyutnev
  *
  */
-public class MAPAcceptInfoImpl {
+public class MAPAcceptInfoImpl implements MAPAsnPrimitive {
 	
 	public static final int MAP_ACCEPT_INFO_TAG = 0x01;
 
@@ -74,8 +75,52 @@ public class MAPAcceptInfoImpl {
 		this.extensionContainer = extensionContainer;
 	}
 
+
+	@Override
+	public int getTag() throws MAPException {
+		return MAP_ACCEPT_INFO_TAG;
+	}
+
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_CONTEXT_SPECIFIC;
+	}
+
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
+
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding MAPAcceptInfo: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding MAPAcceptInfo: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding MAPAcceptInfo: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding MAPAcceptInfo: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
 	
-	public void decode(AsnInputStream ais) throws MAPParsingComponentException {
+	private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
 		// MAP-AcceptInfo ::= SEQUENCE {
 		// ... ,  
 		// extensionContainer SEQUENCE { 
@@ -93,55 +138,56 @@ public class MAPAcceptInfoImpl {
 
 		this.setExtensionContainer(null);
 		
-		try {
-			AsnInputStream localAis = ais.readSequenceStream();
+		AsnInputStream localAis = ais.readSequenceStreamData(length);
 
-			while (localAis.available() > 0) {
-				int tag = localAis.readTag();
+		while (localAis.available() > 0) {
+			int tag = localAis.readTag();
 
-				switch (localAis.getTagClass()) {
-				case Tag.CLASS_UNIVERSAL:
-					switch (tag) {
-					case Tag.SEQUENCE:
-						this.extensionContainer = new MAPExtensionContainerImpl();
-						this.extensionContainer.decodeAll(localAis);
-						break;
-
-					default:
-						localAis.advanceElement();
-						break;
-					}
+			switch (localAis.getTagClass()) {
+			case Tag.CLASS_UNIVERSAL:
+				switch (tag) {
+				case Tag.SEQUENCE:
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(localAis);
 					break;
 
 				default:
 					localAis.advanceElement();
 					break;
 				}
+				break;
+
+			default:
+				localAis.advanceElement();
+				break;
 			}
-			
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPAcceptInfo: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPAcceptInfo: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
-	
-	public void encode(AsnOutputStream asnOS) throws MAPException {
 
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+
+		this.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, MAP_ACCEPT_INFO_TAG);
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		
 		try {
-			asnOS.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, MAP_ACCEPT_INFO_TAG);
-			int pos = asnOS.StartContentDefiniteLength();
-
-			if (this.extensionContainer != null)
-				this.extensionContainer.encodeAll(asnOS);
-			
-			asnOS.FinalizeContent(pos);
-			
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
 			throw new MAPException("AsnException when encoding MAPAcceptInfo: " + e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOS) throws MAPException {
+
+		if (this.extensionContainer != null)
+			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOS);
 	}
 }
 

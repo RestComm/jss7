@@ -67,7 +67,7 @@ public class LCSQoSTest {
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
 
-		LCSQoS lcsQos = new LCSQoSImpl();
+		LCSQoSImpl lcsQos = new LCSQoSImpl();
 		lcsQos.decodeAll(asn);
 
 		assertNotNull(lcsQos.getResponseTime());
@@ -83,7 +83,7 @@ public class LCSQoSTest {
 	public void testEncode() throws Exception {
 		byte[] data = new byte[] { 0x30, 0x05, (byte) 0xa3, 0x03, 0x0a, 0x01, 0x00 };
 
-		LCSQoS lcsQos = new LCSQoSImpl(null, null, null, new ResponseTimeImpl(ResponseTimeCategory.lowdelay), null);
+		LCSQoSImpl lcsQos = new LCSQoSImpl(null, null, null, new ResponseTimeImpl(ResponseTimeCategory.lowdelay), null);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		lcsQos.encodeAll(asnOS);
 		

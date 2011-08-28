@@ -139,7 +139,7 @@ public class SendRoutingInfoForSMResponseIndicationImpl extends SmsServiceImpl i
 					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse.imsi: Parameter 0 bad tag or tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.imsi = new IMSIImpl();
-				this.imsi.decodeAll(ais);
+				((IMSIImpl)this.imsi).decodeAll(ais);
 				break;
 				
 			case 1:
@@ -148,7 +148,7 @@ public class SendRoutingInfoForSMResponseIndicationImpl extends SmsServiceImpl i
 					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse.locationInfoWithLMSI: Parameter 1 bad tag class or tag or primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.locationInfoWithLMSI = new LocationInfoWithLMSIImpl();
-				this.locationInfoWithLMSI.decodeAll(ais);
+				((LocationInfoWithLMSIImpl)this.locationInfoWithLMSI).decodeAll(ais);
 				break;
 
 			default:
@@ -159,7 +159,7 @@ public class SendRoutingInfoForSMResponseIndicationImpl extends SmsServiceImpl i
 								throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse.extensionContainer: Parameter extensionContainer is primitive",
 										MAPParsingComponentExceptionReason.MistypedParameter);
 						this.extensionContainer = new MAPExtensionContainerImpl();
-						this.extensionContainer.decodeAll(ais);
+						((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 					break;
 
 					default:
@@ -207,10 +207,10 @@ public class SendRoutingInfoForSMResponseIndicationImpl extends SmsServiceImpl i
 		if (this.imsi == null || this.locationInfoWithLMSI == null)
 			throw new MAPException("imsi and locationInfoWithLMSI must not be null");
 
-		this.imsi.encodeAll(asnOs);
-		this.locationInfoWithLMSI.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LocationInfoWithLMSI);
+		((IMSIImpl)this.imsi).encodeAll(asnOs);
+		((LocationInfoWithLMSIImpl)this.locationInfoWithLMSI).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LocationInfoWithLMSI);
 		if (this.extensionContainer != null)
-			this.extensionContainer.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ExtensionContainer);
+			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ExtensionContainer);
 	}	
 	
 	@Override

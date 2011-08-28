@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
-
 /**
  * 
  * ResponseTime ::= SEQUENCE {
@@ -34,7 +32,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
  * @author amit bhayani
  *
  */
-public interface ResponseTime extends MAPAsnPrimitive {
+public interface ResponseTime {
 
 	public ResponseTimeCategory getResponseTimeCategory();
 }

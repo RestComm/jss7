@@ -131,7 +131,7 @@ public class ReportSMDeliveryStatusResponseIndicationImpl extends SmsServiceImpl
 						throw new MAPParsingComponentException("Error while decoding ReportSMDeliveryStatusResponse: Parameter storedMSISDN is not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.storedMSISDN = new ISDNAddressStringImpl();
-					this.storedMSISDN.decodeAll(ais);
+					((ISDNAddressStringImpl)this.storedMSISDN).decodeAll(ais);
 					break;
 
 				case Tag.SEQUENCE:
@@ -140,7 +140,7 @@ public class ReportSMDeliveryStatusResponseIndicationImpl extends SmsServiceImpl
 						throw new MAPParsingComponentException("Error while decoding ReportSMDeliveryStatusResponse: Parameter extensionContainer is primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.extensionContainer = new MAPExtensionContainerImpl();
-					this.extensionContainer.decodeAll(ais);
+					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 					break;
 
 				default:
@@ -175,9 +175,9 @@ public class ReportSMDeliveryStatusResponseIndicationImpl extends SmsServiceImpl
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.storedMSISDN != null)
-			this.storedMSISDN.encodeAll(asnOs);
+			((ISDNAddressStringImpl)this.storedMSISDN).encodeAll(asnOs);
 		if (this.extensionContainer != null)
-			this.extensionContainer.encodeAll(asnOs);
+			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs);
 	}	
 	
 	@Override

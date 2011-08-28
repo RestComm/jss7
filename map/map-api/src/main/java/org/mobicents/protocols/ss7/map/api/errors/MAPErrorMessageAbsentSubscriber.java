@@ -46,8 +46,12 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 public interface MAPErrorMessageAbsentSubscriber extends MAPErrorMessage {
 	
 	public MAPExtensionContainer getExtensionContainer();
-	
+
 	public AbsentSubscriberReason getAbsentSubscriberReason();
+
+	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+
+	public void setAbsentSubscriberReason(AbsentSubscriberReason absentSubscriberReason);
 
 }
 

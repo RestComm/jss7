@@ -47,7 +47,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author amit bhayani
  *
  */
-public interface AlertingPattern extends MAPAsnPrimitive {
+public interface AlertingPattern {
 	public AlertingLevel getAlertingLevel();
 	
 	public AlertingCategory getAlertingCategory();

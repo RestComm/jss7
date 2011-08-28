@@ -43,8 +43,6 @@ public enum FunctionalTestScenario {
 	/**
 	 * TC-BEGIN + addProcessUnstructuredSSRequest
 	 * TC-ABORT(Reason=ACN_Not_Supprted) + alternativeApplicationContextName 
-	 * !!!: For reproducing FunctionalTestScenario.actionB you must temporally remove comments
-	 *      from commented code block in MAPServiceSupplementaryImpl.isServingService() 
 	 */
 	Action_Dialog_C(2),
 	/**
@@ -74,6 +72,18 @@ public enum FunctionalTestScenario {
 	 * TC-END + ReturnError(SM-DeliveryFailure + SM-DeliveryFailureCause)  
 	 */
 	Action_Component_B(12),
+	/**
+	 * TC-BEGIN + addProcessUnstructuredSSRequest
+	 * TC-CONTINUE + ReturnResult (addProcessUnstructuredSSResponse)
+	 * TC-CONTINUE  
+	 * TC-END + ReturnResultLast (addProcessUnstructuredSSResponse) 
+	 */
+	Action_Component_D(13),
+	/**
+	 * TC-BEGIN + addProcessUnstructuredSSRequest
+	 * TC-END + Reject (invokeProblem)  
+	 */
+	Action_Component_E(14),
 
 	/**
 	 * TC-BEGIN + AlertServiceCentreRequest

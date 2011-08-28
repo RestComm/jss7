@@ -33,7 +33,11 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 public interface MAPErrorMessageExtensionContainer extends MAPErrorMessage {
 
 	public Long getErrorCode();
+
 	public MAPExtensionContainer getExtensionContainer();
+	
+	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+	
 }
 
 

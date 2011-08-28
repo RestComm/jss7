@@ -38,7 +38,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
  * @author sergey vetyutnev
  * 
  */
-public class LMSIImpl extends MAPPrimitiveBase implements LMSI {
+public class LMSIImpl implements LMSI, MAPAsnPrimitive {
 	
 	private byte[] data;
 
@@ -138,25 +138,6 @@ public class LMSIImpl extends MAPPrimitiveBase implements LMSI {
 			throw new MAPException("Error while encoding the LMSI: data field length must equale 4");
 
 		asnOs.write(this.data);
-	}
-	
-	
-	// .............................
-	@Deprecated
-	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
-
-		try {
-			_decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LMSI: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	@Deprecated
-	public void encode(AsnOutputStream asnOs) throws MAPException {
-
-		this.encodeData(asnOs);
 	}
 
 	@Override

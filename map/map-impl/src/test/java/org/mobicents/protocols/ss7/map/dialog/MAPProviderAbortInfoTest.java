@@ -53,7 +53,7 @@ public class MAPProviderAbortInfoTest extends TestCase {
 		assertEquals(5, tag);
 
 		MAPProviderAbortInfoImpl mapProviderAbortInfo = new MAPProviderAbortInfoImpl();
-		mapProviderAbortInfo.decode(asnIs);
+		mapProviderAbortInfo.decodeAll(asnIs);
 
 		MAPProviderAbortReason reason = mapProviderAbortInfo
 				.getMAPProviderAbortReason();
@@ -69,7 +69,7 @@ public class MAPProviderAbortInfoTest extends TestCase {
 		assertEquals(5, tag);
 
 		mapProviderAbortInfo = new MAPProviderAbortInfoImpl();
-		mapProviderAbortInfo.decode(asnIs);
+		mapProviderAbortInfo.decodeAll(asnIs);
 		reason = mapProviderAbortInfo.getMAPProviderAbortReason();
 
 		assertNotNull(reason);
@@ -86,7 +86,7 @@ public class MAPProviderAbortInfoTest extends TestCase {
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 
-		mapProviderAbortInfo.encode(asnOS);
+		mapProviderAbortInfo.encodeAll(asnOS);
 
 		byte[] data = asnOS.toByteArray();
 
@@ -101,7 +101,7 @@ public class MAPProviderAbortInfoTest extends TestCase {
 		mapProviderAbortInfo.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
 
 		asnOS = new AsnOutputStream();
-		mapProviderAbortInfo.encode(asnOS);
+		mapProviderAbortInfo.encodeAll(asnOS);
 
 		data = asnOS.toByteArray();
 		assertTrue(Arrays.equals(this.getDataFull(), data));

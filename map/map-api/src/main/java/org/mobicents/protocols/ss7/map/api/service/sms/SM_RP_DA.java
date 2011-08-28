@@ -25,7 +25,6 @@ package org.mobicents.protocols.ss7.map.api.service.sms;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 
 /**
  * SM-RP-DA ::= CHOICE {
@@ -41,7 +40,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
  * @author sergey vetyutnev
  * 
  */
-public interface SM_RP_DA extends MAPAsnPrimitive {
+public interface SM_RP_DA {
 
 	public IMSI getIMSI();
 

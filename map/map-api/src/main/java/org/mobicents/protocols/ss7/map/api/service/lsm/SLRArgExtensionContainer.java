@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
-
 /**
  * SLR-ArgExtensionContainer ::= SEQUENCE {
  *		privateExtensionList [0]PrivateExtensionList OPTIONAL,
@@ -33,6 +31,6 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
  * @author amit bhayani
  *
  */
-public interface SLRArgExtensionContainer extends MAPAsnPrimitive {
+public interface SLRArgExtensionContainer {
 	//TODO
 }

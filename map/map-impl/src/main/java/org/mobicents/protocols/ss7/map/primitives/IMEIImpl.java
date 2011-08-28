@@ -134,22 +134,6 @@ public class IMEIImpl extends TbcdString implements IMEI {
 
 		this.encodeString(asnOs, this.imei);
 	}
-	
-	@Deprecated
-	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding IMEI: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	@Deprecated
-	public void encode(AsnOutputStream asnOs) throws MAPException {
-
-		this.encodeData(asnOs);
-	}
 
 	@Override
 	public String toString() {

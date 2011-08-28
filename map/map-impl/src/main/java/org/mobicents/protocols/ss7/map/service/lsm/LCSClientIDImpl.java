@@ -39,12 +39,13 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSRequestorID;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author amit bhayani
  * 
  */
-public class LCSClientIDImpl implements LCSClientID {
+public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 	private static final int _TAG_LCS_CLIENT_TYPE = 0;
 	private static final int _TAG_LCS_CLIENT_EXTERNAL_ID = 1;
 	private static final int _TAG_LCS_CLIENT_DIALED_BY_MS = 2;
@@ -274,7 +275,7 @@ public class LCSClientIDImpl implements LCSClientID {
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.lcsClientExternalID = new LCSClientExternalIDImpl();
-				this.lcsClientExternalID.decodeAll(ais);
+				((LCSClientExternalIDImpl)this.lcsClientExternalID).decodeAll(ais);
 				break;
 			case _TAG_LCS_CLIENT_DIALED_BY_MS:
 				// lcsClientDialedByMS [2] AddressString OPTIONAL,
@@ -283,7 +284,7 @@ public class LCSClientIDImpl implements LCSClientID {
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.lcsClientDialedByMS = new AddressStringImpl();
-				this.lcsClientDialedByMS.decodeAll(ais);
+				((AddressStringImpl)this.lcsClientDialedByMS).decodeAll(ais);
 
 				break;
 			case _TAG_LCS_CLIENT_INTERNAL_ID:
@@ -303,7 +304,7 @@ public class LCSClientIDImpl implements LCSClientID {
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.lcsClientName = new LCSClientNameImpl();
-				this.lcsClientName.decodeAll(ais);
+				((LCSClientNameImpl)this.lcsClientName).decodeAll(ais);
 				break;
 			case _TAG_LCS_APN:
 				// lcsAPN [5] APN OPTIONAL,
@@ -321,7 +322,7 @@ public class LCSClientIDImpl implements LCSClientID {
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.lcsRequestorID = new LCSRequestorIDImpl();
-				this.lcsRequestorID.decodeAll(ais);
+				((LCSRequestorIDImpl)this.lcsRequestorID).decodeAll(ais);
 				break;
 			default:
 				// Do we care?
@@ -382,12 +383,12 @@ public class LCSClientIDImpl implements LCSClientID {
 
 		if (this.lcsClientExternalID != null) {
 			// Encode lcsClientExternalID [1] LCSClientExternalID OPTIONAL,
-			this.lcsClientExternalID.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_CLIENT_EXTERNAL_ID);
+			((LCSClientExternalIDImpl)this.lcsClientExternalID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_CLIENT_EXTERNAL_ID);
 		}
 
 		if (this.lcsClientDialedByMS != null) {
 			// lcsClientDialedByMS [2] AddressString OPTIONAL,
-			this.lcsClientDialedByMS.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_CLIENT_DIALED_BY_MS);
+			((AddressStringImpl)this.lcsClientDialedByMS).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_CLIENT_DIALED_BY_MS);
 		}
 
 		if (this.lcsClientInternalID != null) {
@@ -403,7 +404,7 @@ public class LCSClientIDImpl implements LCSClientID {
 
 		if (this.lcsClientName != null) {
 			// lcsClientName [4] LCSClientName
-			this.lcsClientName.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_CLIENT_NAME);
+			((LCSClientNameImpl)this.lcsClientName).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_CLIENT_NAME);
 		}
 
 		if (this.lcsAPN != null) {
@@ -419,7 +420,7 @@ public class LCSClientIDImpl implements LCSClientID {
 
 		if (this.lcsRequestorID != null) {
 			// lcsRequestorID [6] LCSRequestorID
-			this.lcsRequestorID.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_REQUESTOR_ID);
+			((LCSRequestorIDImpl)this.lcsRequestorID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_REQUESTOR_ID);
 		}
 	}
 

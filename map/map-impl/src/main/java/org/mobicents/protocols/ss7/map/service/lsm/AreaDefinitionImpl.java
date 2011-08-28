@@ -33,12 +33,13 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaDefinition;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaList;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author amit bhayani
  * 
  */
-public class AreaDefinitionImpl implements AreaDefinition {
+public class AreaDefinitionImpl implements AreaDefinition, MAPAsnPrimitive {
 
 	private AreaList areaList = null;
 
@@ -138,7 +139,7 @@ public class AreaDefinitionImpl implements AreaDefinition {
 		}
 		
 		this.areaList = new AreaListImpl();
-		this.areaList.decodeAll(ais);
+		((AreaListImpl)this.areaList).decodeAll(ais);
 	}
 
 	/* (non-Javadoc)
@@ -173,7 +174,7 @@ public class AreaDefinitionImpl implements AreaDefinition {
 			throw new MAPException("Error while encoding AreaDefinition the mandatory parameter[areaList [0] AreaList] is not defined");
 		}
 		
-		this.areaList.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+		((AreaListImpl)this.areaList).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 0);
 	}
 
 

@@ -36,12 +36,13 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author amit bhayani
  * 
  */
-public class SubscriberIdentityImpl implements SubscriberIdentity {
+public class SubscriberIdentityImpl implements SubscriberIdentity, MAPAsnPrimitive {
 	private static final int _TAG_IMSI = 0;
 	private static final int _TAG_MSISDN = 1;
 
@@ -184,11 +185,11 @@ public class SubscriberIdentityImpl implements SubscriberIdentity {
 		switch (asnIS.getTag()) {
 		case _TAG_IMSI:
 			this.imsi = new IMSIImpl();
-			this.imsi.decodeData(asnIS, length);
+			((IMSIImpl)this.imsi).decodeData(asnIS, length);
 			break;
 		case _TAG_MSISDN:
 			this.msisdn = new ISDNAddressStringImpl();
-			this.msisdn.decodeData(asnIS, length);
+			((ISDNAddressStringImpl)this.msisdn).decodeData(asnIS, length);
 			break;
 		default:
 			throw new MAPParsingComponentException(
@@ -238,9 +239,9 @@ public class SubscriberIdentityImpl implements SubscriberIdentity {
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.imsi != null) {
-			this.imsi.encodeData(asnOs);
+			((IMSIImpl)this.imsi).encodeData(asnOs);
 		} else {
-			this.msisdn.encodeData(asnOs);
+			((ISDNAddressStringImpl)this.msisdn).encodeData(asnOs);
 		}
 	}
 

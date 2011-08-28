@@ -27,7 +27,6 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.map.api.errors.AbsentSubscriberReason;
 import org.mobicents.protocols.ss7.map.api.errors.AdditionalNetworkResource;
 import org.mobicents.protocols.ss7.map.api.errors.CallBarringCause;
-import org.mobicents.protocols.ss7.map.api.errors.ExtensibleCallBarredParam;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorCode;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageAbsentSubscriber;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageAbsentSubscriberSM;
@@ -77,8 +76,35 @@ public class MAPErrorMessageFactoryImpl implements MAPErrorMessageFactory {
 		case MAPErrorCode.unknownOrUnreachableLCSClient:
 			return new MAPErrorMessageExtensionContainerImpl(errorCode);
 
-			// ...............................
-			// TODO: implement creating other message types
+		case MAPErrorCode.smDeliveryFailure:
+			return new MAPErrorMessageSMDeliveryFailureImpl();
+			
+		case MAPErrorCode.absentSubscriberSM:
+			return new MAPErrorMessageAbsentSubscriberSMImpl();
+			
+		case MAPErrorCode.systemFailure:
+			return new MAPErrorMessageSystemFailureImpl();
+			
+		case MAPErrorCode.callBarred:
+			return new MAPErrorMessageCallBarredImpl();
+
+		case MAPErrorCode.facilityNotSupported:
+			return new MAPErrorMessageFacilityNotSupImpl();
+
+		case MAPErrorCode.unknownSubscriber:
+			return new MAPErrorMessageUnknownSubscriberImpl();
+
+		case MAPErrorCode.subscriberBusyForMTSMS:
+			return new MAPErrorMessageSubscriberBusyForMtSmsImpl();
+
+		case MAPErrorCode.absentSubscriber:
+			return new MAPErrorMessageAbsentSubscriberImpl();
+
+		case MAPErrorCode.unauthorizedLCSClient:
+			return new MAPErrorMessageUnauthorizedLCSClientImpl();
+
+		case MAPErrorCode.positionMethodFailure:
+			return new MAPErrorMessagePositionMethodFailureImpl();
 			
 		default:
 			return new MAPErrorMessageParameterlessImpl(errorCode);
@@ -87,88 +113,74 @@ public class MAPErrorMessageFactoryImpl implements MAPErrorMessageFactory {
 	}
 
 	
-	public MAPErrorMessageParameterless createMessageParameterless(Long errorCode) {
+	@Override
+	public MAPErrorMessageParameterless createMAPErrorMessageParameterless(Long errorCode) {
 		return new MAPErrorMessageParameterlessImpl(errorCode);
 	}
 
-	public MAPErrorMessageExtensionContainer createMessageExtensionContainer(Long errorCode) {
-		// TODO: implement this
-		return null;
-	}
-	
-
-	public MAPErrorMessageSMDeliveryFailure createMessageSMDeliveryFailure(Long mapVersion, SMEnumeratedDeliveryFailureCause smEnumeratedDeliveryFailureCause,
-			MAPExtensionContainer extensionContainer) {
-		// TODO: implement this
-		return null;
+	@Override
+	public MAPErrorMessageExtensionContainer createMAPErrorMessageExtensionContainer(Long errorCode, MAPExtensionContainer extensionContainer) {
+		return new MAPErrorMessageExtensionContainerImpl(errorCode, extensionContainer);
 	}
 
-	public MAPErrorMessageFacilityNotSup createErrorMessageFacilityNotSup(Long mapVersion, Boolean shapeOfLocationEstimateNotSupported,
+	@Override
+	public MAPErrorMessageSMDeliveryFailure createMAPErrorMessageSMDeliveryFailure(SMEnumeratedDeliveryFailureCause smEnumeratedDeliveryFailureCause,
+			byte[] signalInfo, MAPExtensionContainer extensionContainer) {
+		return new MAPErrorMessageSMDeliveryFailureImpl(smEnumeratedDeliveryFailureCause, signalInfo, extensionContainer);
+	}
+
+	@Override
+	public MAPErrorMessageFacilityNotSup createMAPErrorMessageFacilityNotSup(MAPExtensionContainer extensionContainer, Boolean shapeOfLocationEstimateNotSupported,
 			Boolean neededLcsCapabilityNotSupportedInServingNode) {
-		// TODO: implement this
-		return null;
+		return new MAPErrorMessageFacilityNotSupImpl(extensionContainer, shapeOfLocationEstimateNotSupported, neededLcsCapabilityNotSupportedInServingNode);
 	}
 
-	public MAPErrorMessageSystemFailure createErrorMessageSystemFailure(Long mapVersion, NetworkResource networkResource,
+	@Override
+	public MAPErrorMessageSystemFailure createMAPErrorMessageSystemFailure(long mapVersion, NetworkResource networkResource,
 			AdditionalNetworkResource additionalNetworkResource, MAPExtensionContainer extensionContainer) {
-		// TODO: implement this
-		return null;
+		return new MAPErrorMessageSystemFailureImpl(mapVersion, networkResource, additionalNetworkResource, extensionContainer);
 	}
 
-
 	@Override
-	public MAPErrorMessageUnknownSubscriber createMAPErrorMessageUnknownSubscriber(Long mapVersion, MAPExtensionContainer extensionContainer,
+	public MAPErrorMessageUnknownSubscriber createMAPErrorMessageUnknownSubscriber(MAPExtensionContainer extensionContainer,
 			UnknownSubscriberDiagnostic unknownSubscriberDiagnostic) {
-		// TODO Auto-generated method stub
-		return null;
+		return new MAPErrorMessageUnknownSubscriberImpl(extensionContainer, unknownSubscriberDiagnostic);
 	}
 
-
 	@Override
-	public MAPErrorMessageAbsentSubscriberSM createMAPErrorMessageAbsentSubscriberSM(Long mapVersion, MAPExtensionContainer extensionContainer,
-			Integer absentSubscriberDiagnosticSM, Integer additionalAbsentSubscriberDiagnosticSM) {
-		// TODO Auto-generated method stub
-		return null;
+	public MAPErrorMessageAbsentSubscriberSM createMAPErrorMessageAbsentSubscriberSM(Integer absentSubscriberDiagnosticSM,
+			MAPExtensionContainer extensionContainer, Integer additionalAbsentSubscriberDiagnosticSM) {
+		return new MAPErrorMessageAbsentSubscriberSMImpl(absentSubscriberDiagnosticSM, extensionContainer, additionalAbsentSubscriberDiagnosticSM);
 	}
 
-
 	@Override
-	public MAPErrorMessageSubscriberBusyForMtSms createMAPErrorMessageSubscriberBusyForMtSms(Long mapVersion, MAPExtensionContainer extensionContainer,
+	public MAPErrorMessageSubscriberBusyForMtSms createMAPErrorMessageSubscriberBusyForMtSms(MAPExtensionContainer extensionContainer,
 			Boolean gprsConnectionSuspended) {
-		// TODO Auto-generated method stub
-		return null;
+		return new MAPErrorMessageSubscriberBusyForMtSmsImpl(extensionContainer, gprsConnectionSuspended);
 	}
 
 
 	@Override
 	public MAPErrorMessageCallBarred createMAPErrorMessageCallBarred(Long mapVersion, CallBarringCause callBarringCause,
 			MAPExtensionContainer extensionContainer, Boolean unauthorisedMessageOriginator) {
-		// TODO Auto-generated method stub
-		return null;
+		return new MAPErrorMessageCallBarredImpl(mapVersion, callBarringCause, extensionContainer, unauthorisedMessageOriginator);
 	}
 
-
 	@Override
-	public MAPErrorMessageAbsentSubscriber createMAPErrorMessageAbsentSubscriber(Long mapVersion, MAPExtensionContainer extensionContainer,
+	public MAPErrorMessageAbsentSubscriber createMAPErrorMessageAbsentSubscriber(MAPExtensionContainer extensionContainer,
 			AbsentSubscriberReason absentSubscriberReason) {
-		// TODO Auto-generated method stub
-		return null;
+		return new MAPErrorMessageAbsentSubscriberImpl(extensionContainer, absentSubscriberReason);
 	}
-
 
 	@Override
-	public MAPErrorMessageUnauthorizedLCSClient createMAPErrorMessageUnauthorizedLCSClient(Long mapVersion,
-			UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		return null;
+	public MAPErrorMessageUnauthorizedLCSClient createMAPErrorMessageUnauthorizedLCSClient(UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic,
+			MAPExtensionContainer extensionContainer) {
+		return new MAPErrorMessageUnauthorizedLCSClientImpl(unauthorizedLCSClientDiagnostic, extensionContainer);
 	}
-
 
 	@Override
-	public MAPErrorMessagePositionMethodFailure createMAPErrorMessagePositionMethodFailure(Long mapVersion,
-			PositionMethodFailureDiagnostic positionMethodFailureDiagnostic, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		return null;
+	public MAPErrorMessagePositionMethodFailure createMAPErrorMessagePositionMethodFailure(PositionMethodFailureDiagnostic positionMethodFailureDiagnostic,
+			MAPExtensionContainer extensionContainer) {
+		return new MAPErrorMessagePositionMethodFailureImpl(positionMethodFailureDiagnostic, extensionContainer);
 	}
-
 }

@@ -34,7 +34,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
 /**
  * @author abhayani

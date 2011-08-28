@@ -31,7 +31,6 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageResponseIndication;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
@@ -140,7 +139,7 @@ public class MtForwardShortMessageResponseIndicationImpl extends SmsServiceImpl 
 						throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageResponse: Parameter extensionContainer is primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.extensionContainer = new MAPExtensionContainerImpl();
-					this.extensionContainer.decodeAll(ais);
+					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 					break;
 
 				default:
@@ -180,7 +179,7 @@ public class MtForwardShortMessageResponseIndicationImpl extends SmsServiceImpl 
 			if (this.sM_RP_UI != null)
 				asnOs.writeOctetString(this.sM_RP_UI);
 			if (this.extensionContainer != null)
-				this.extensionContainer.encodeAll(asnOs);
+				((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs);
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding mtForwardShortMessageResponse: " + e.getMessage(), e);
 		} catch (AsnException e) {

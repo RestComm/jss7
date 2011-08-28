@@ -33,12 +33,13 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSPrivacyCheck;
 import org.mobicents.protocols.ss7.map.api.service.lsm.PrivacyCheckRelatedAction;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author amit bhayani
  * 
  */
-public class LCSPrivacyCheckImpl implements LCSPrivacyCheck {
+public class LCSPrivacyCheckImpl implements LCSPrivacyCheck, MAPAsnPrimitive {
 
 	private static final int _TAG_CALL_SESSION_UNRELATED = 0;
 	private static final int _TAG_CALL_SESSION_RELATED = 1;

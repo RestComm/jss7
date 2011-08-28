@@ -22,17 +22,17 @@
 
 package org.mobicents.protocols.ss7.map.service.supplementary;
 
-import org.mobicents.protocols.ss7.map.MAPMessageImpl;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.SmsMessageImpl;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDMessage;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author amit bhayani
  * 
  */
-public abstract class USSDMessageImpl extends MAPMessageImpl implements USSDMessage, MAPAsnPrimitive {
+public abstract class USSDMessageImpl extends SmsMessageImpl implements USSDMessage, MAPAsnPrimitive {
 	protected byte ussdDataCodingSch;
 
 	protected USSDString ussdString;

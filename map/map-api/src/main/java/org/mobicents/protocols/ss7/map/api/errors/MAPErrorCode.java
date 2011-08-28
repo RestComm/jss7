@@ -80,7 +80,20 @@ public interface MAPErrorCode {
 	public static final int positionMethodFailure = 54;
 	public static final int unknownOrUnreachableLCSClient = 58;
 	public static final int mmEventNotSupported = 59;
-
+	
+	// -- supplementary service errors
+	public static final int illegalSSOperation = 16;
+	public static final int ssErrorStatus = 17;
+	public static final int ssNotAvailable = 18;
+	public static final int ssSubscriptionViolation = 19;
+	public static final int ssIncompatibility = 20;
+	public static final int unknownAlphabet = 71;
+	public static final int ussdBusy = 72;
+	public static final int pwRegistrationFailure = 37;
+	public static final int negativePWCheck = 38;
+	public static final int numberOfPWAttemptsViolation = 43;
+	public static final int shortTermDenial = 29;
+	public static final int longTermDenial = 30;	
 	
 	
 	/**

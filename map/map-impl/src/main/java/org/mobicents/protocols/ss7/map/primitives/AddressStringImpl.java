@@ -199,24 +199,6 @@ public class AddressStringImpl extends TbcdString implements AddressString {
 
 		this.encodeString(asnOs, this.address);
 	}
-	
-	@Deprecated
-	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
-
-		try {
-			this._decode(ansIS, length);
-
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding AddressString: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	@Deprecated
-	public void encode(AsnOutputStream asnOs) throws MAPException {
-		
-		this.encodeData(asnOs);
-	}
 
 	@Override
 	public String toString() {

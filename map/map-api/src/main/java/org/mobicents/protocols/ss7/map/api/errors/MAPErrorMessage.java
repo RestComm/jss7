@@ -22,10 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.api.errors;
 
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
-
 /**
  * Base class of MAP ReturnError messages
  * 
@@ -35,10 +31,6 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 public interface MAPErrorMessage {
 
 	public Long getErrorCode();
-
-	public Parameter encodeParameter() throws MAPException;
-
-	public void decodeParameter( Parameter p ) throws MAPException;
 
 	
 	public Boolean isEmParameterless();
@@ -55,9 +47,15 @@ public interface MAPErrorMessage {
 
 	public Boolean isEmAbsentSubscriberSM();
 
+	public Boolean isEmAbsentSubscriber();
+
 	public Boolean isEmSubscriberBusyForMtSms();
 
 	public Boolean isEmCallBarred();
+
+	public Boolean isEmUnauthorizedLCSClient();
+
+	public Boolean isEmPositionMethodFailure();
 
 
 	
@@ -74,9 +72,15 @@ public interface MAPErrorMessage {
 	public MAPErrorMessageUnknownSubscriber getEmUnknownSubscriber();
 
 	public MAPErrorMessageAbsentSubscriberSM getEmAbsentSubscriberSM();
+
+	public MAPErrorMessageAbsentSubscriber getEmAbsentSubscriber();
 	
 	public MAPErrorMessageSubscriberBusyForMtSms getEmSubscriberBusyForMtSms();
 	
 	public MAPErrorMessageCallBarred getEmCallBarred();
+
+	public MAPErrorMessageUnauthorizedLCSClient getEmUnauthorizedLCSClient();
+
+	public MAPErrorMessagePositionMethodFailure getEmPositionMethodFailure();
 
 }

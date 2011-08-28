@@ -39,7 +39,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * @author sergey vetyutnev
  * 
  */
-public interface SendRoutingInfoForSMResponseIndication extends SmsService {
+public interface SendRoutingInfoForSMResponseIndication extends SmsMessage {
 
 	public IMSI getIMSI();
 	

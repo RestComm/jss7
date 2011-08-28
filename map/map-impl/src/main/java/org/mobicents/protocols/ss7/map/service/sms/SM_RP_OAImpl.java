@@ -36,13 +36,14 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class SM_RP_OAImpl implements SM_RP_OA {
+public class SM_RP_OAImpl implements SM_RP_OA, MAPAsnPrimitive {
 
 	private static final int _TAG_Msisdn = 2;
 	private static final int _TAG_ServiceCentreAddressOA = 4;
@@ -135,12 +136,12 @@ public class SM_RP_OAImpl implements SM_RP_OA {
 		switch(ansIS.getTag()) {
 		case _TAG_Msisdn:
 			this.msisdn = new ISDNAddressStringImpl();
-			this.msisdn.decodeData(ansIS, length);
+			((ISDNAddressStringImpl)this.msisdn).decodeData(ansIS, length);
 			break;
 			
 		case _TAG_ServiceCentreAddressOA:
 			this.serviceCentreAddressOA = new AddressStringImpl();
-			this.serviceCentreAddressOA.decodeData(ansIS, length);
+			((AddressStringImpl)this.serviceCentreAddressOA).decodeData(ansIS, length);
 			break;
 			
 		case _TAG_noSM_RP_OA:
@@ -184,9 +185,9 @@ public class SM_RP_OAImpl implements SM_RP_OA {
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		
 		if (this.msisdn != null)
-			this.msisdn.encodeData(asnOs);
+			((ISDNAddressStringImpl)this.msisdn).encodeData(asnOs);
 		else if (this.serviceCentreAddressOA != null)
-			this.serviceCentreAddressOA.encodeData(asnOs);
+			((AddressStringImpl)this.serviceCentreAddressOA).encodeData(asnOs);
 		else
 			asnOs.writeNullData();
 	}

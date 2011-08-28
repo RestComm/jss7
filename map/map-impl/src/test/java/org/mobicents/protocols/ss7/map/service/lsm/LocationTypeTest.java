@@ -68,7 +68,7 @@ public class LocationTypeTest {
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
 
-		LocationType locType = new LocationTypeImpl();
+		LocationTypeImpl locType = new LocationTypeImpl();
 		locType.decodeAll(asn);
 
 		assertNotNull(locType.getLocationEstimateType());
@@ -81,7 +81,7 @@ public class LocationTypeTest {
 	public void testEncode() throws Exception {
 		byte[] data = new byte[] { 0x30, 0x03, (byte) 0x80, 0x01, 0x00 };
 
-		LocationType locType = new LocationTypeImpl(LocationEstimateType.currentLocation, null);
+		LocationTypeImpl locType = new LocationTypeImpl(LocationEstimateType.currentLocation, null);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		locType.encodeAll(asnOS);
 
@@ -97,7 +97,7 @@ public class LocationTypeTest {
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
 
-		LocationType locType = new LocationTypeImpl();
+		LocationTypeImpl locType = new LocationTypeImpl();
 		locType.decodeAll(asn);
 
 		assertNotNull(locType.getLocationEstimateType());
@@ -118,7 +118,7 @@ public class LocationTypeTest {
 
 		DeferredLocationEventType deferredLocationEventType = new DeferredLocationEventTypeImpl(true, true, true, true);
 
-		LocationType locType = new LocationTypeImpl(LocationEstimateType.currentLocation, deferredLocationEventType);
+		LocationTypeImpl locType = new LocationTypeImpl(LocationEstimateType.currentLocation, deferredLocationEventType);
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 		locType.encodeAll(asnOS);

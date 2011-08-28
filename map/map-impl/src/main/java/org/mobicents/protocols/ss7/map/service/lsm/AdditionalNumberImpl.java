@@ -34,6 +34,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AdditionalNumber;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * 
@@ -42,7 +43,7 @@ import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
  * @author amit bhayani
  * 
  */
-public class AdditionalNumberImpl implements AdditionalNumber {
+public class AdditionalNumberImpl implements AdditionalNumber, MAPAsnPrimitive {
 
 	private static final int _TAG_MSC_NUMBER = 0;
 	private static final int _TAG_SGSN_NUMBER = 1;
@@ -179,11 +180,11 @@ public class AdditionalNumberImpl implements AdditionalNumber {
 		switch (asnIS.getTag()) {
 		case _TAG_MSC_NUMBER:
 			this.mSCNumber = new ISDNAddressStringImpl();
-			this.mSCNumber.decodeData(asnIS, length);
+			((ISDNAddressStringImpl)this.mSCNumber).decodeData(asnIS, length);
 			break;
 		case _TAG_SGSN_NUMBER:
 			this.sGSNNumber = new ISDNAddressStringImpl();
-			this.sGSNNumber.decodeData(asnIS, length);
+			((ISDNAddressStringImpl)this.sGSNNumber).decodeData(asnIS, length);
 			break;
 		default:
 			throw new MAPParsingComponentException(
@@ -233,9 +234,9 @@ public class AdditionalNumberImpl implements AdditionalNumber {
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.mSCNumber != null) {
-			this.mSCNumber.encodeData(asnOs);
+			((ISDNAddressStringImpl)this.mSCNumber).encodeData(asnOs);
 		} else {
-			this.sGSNNumber.encodeData(asnOs);
+			((ISDNAddressStringImpl)this.sGSNNumber).encodeData(asnOs);
 		}
 	}
 

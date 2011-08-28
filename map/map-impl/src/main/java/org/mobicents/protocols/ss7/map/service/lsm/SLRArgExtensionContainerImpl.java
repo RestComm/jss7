@@ -27,12 +27,13 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SLRArgExtensionContainer;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author amit bhayani
  *
  */
-public class SLRArgExtensionContainerImpl implements SLRArgExtensionContainer {
+public class SLRArgExtensionContainerImpl implements SLRArgExtensionContainer, MAPAsnPrimitive {
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()

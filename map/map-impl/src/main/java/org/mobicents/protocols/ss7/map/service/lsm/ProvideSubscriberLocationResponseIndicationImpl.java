@@ -339,7 +339,7 @@ public class ProvideSubscriberLocationResponseIndicationImpl extends LsmMessageI
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.extensionContainer = new MAPExtensionContainerImpl();
-				this.extensionContainer.decodeAll(ais);
+				((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 				break;
 			case _TAG_ADD_LOCATION_ESTIMATE:
 				// add-LocationEstimate [2] Add-GeographicalInformation
@@ -389,7 +389,7 @@ public class ProvideSubscriberLocationResponseIndicationImpl extends LsmMessageI
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
-				this.cellGlobalIdOrServiceAreaIdOrLAI.decodeAll(ais);
+				((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellGlobalIdOrServiceAreaIdOrLAI).decodeAll(ais);
 				break;
 			case _TAG_SAI_PRESENT:
 				// sai-Present [7] NULL OPTIONAL,
@@ -483,7 +483,7 @@ public class ProvideSubscriberLocationResponseIndicationImpl extends LsmMessageI
 		}
 
 		if (this.extensionContainer != null) {
-			this.extensionContainer.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTENSIONCONTAINER);
+			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTENSIONCONTAINER);
 		}
 
 		if (this.additionalLocationEstimate != null) {
@@ -527,7 +527,7 @@ public class ProvideSubscriberLocationResponseIndicationImpl extends LsmMessageI
 		}
 
 		if (this.cellGlobalIdOrServiceAreaIdOrLAI != null) {
-			this.cellGlobalIdOrServiceAreaIdOrLAI.encodeAll(asnOs);
+			((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellGlobalIdOrServiceAreaIdOrLAI).encodeAll(asnOs);
 		}
 
 		if (this.saiPresent != null) {

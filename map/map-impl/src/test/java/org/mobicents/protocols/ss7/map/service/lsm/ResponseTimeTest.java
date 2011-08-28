@@ -69,7 +69,7 @@ public class ResponseTimeTest {
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
 
-		ResponseTime responseTime = new ResponseTimeImpl();
+		ResponseTimeImpl responseTime = new ResponseTimeImpl();
 		responseTime.decodeAll(asn);
 
 		assertEquals(ResponseTimeCategory.lowdelay, responseTime.getResponseTimeCategory());
@@ -80,7 +80,7 @@ public class ResponseTimeTest {
 	public void testEncode() throws Exception {
 		byte[] data = new byte[] { 0x30, 0x03, 0x0a, 0x01, 0x00 };
 
-		ResponseTime responseTime = new ResponseTimeImpl(ResponseTimeCategory.lowdelay);
+		ResponseTimeImpl responseTime = new ResponseTimeImpl(ResponseTimeCategory.lowdelay);
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 		responseTime.encodeAll(asnOS);

@@ -34,12 +34,13 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaDefinition;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaEventInfo;
 import org.mobicents.protocols.ss7.map.api.service.lsm.OccurrenceInfo;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author amit bhayani
  * 
  */
-public class AreaEventInfoImpl implements AreaEventInfo {
+public class AreaEventInfoImpl implements AreaEventInfo, MAPAsnPrimitive {
 	
 	private static final int _TAG_OCCURRENCE_INFO = 1;
 	private static final int _TAG_INTERVAL_TIME = 2;
@@ -171,7 +172,7 @@ public class AreaEventInfoImpl implements AreaEventInfo {
 		}
 		
 		this.areaDefinition = new AreaDefinitionImpl();
-		this.areaDefinition.decodeAll(ais);
+		((AreaDefinitionImpl)this.areaDefinition).decodeAll(ais);
 		
 		while(true){
 			if (ais.available() == 0)
@@ -240,7 +241,7 @@ public class AreaEventInfoImpl implements AreaEventInfo {
 			throw new MAPException("Error while encoding AreaEventInfo the mandatory parameter[areaDefinition [0] AreaDefinition] is not defined");
 		}
 		
-		this.areaDefinition.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+		((AreaDefinitionImpl)this.areaDefinition).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 0);
 		
 		try{
 			if(this.occurrenceInfo != null){

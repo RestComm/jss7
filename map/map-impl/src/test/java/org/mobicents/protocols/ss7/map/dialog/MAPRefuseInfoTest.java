@@ -61,7 +61,7 @@ public class MAPRefuseInfoTest extends TestCase {
 		assertEquals(3, tag);
 
 		MAPRefuseInfoImpl mapRefuseInfoImpl = new MAPRefuseInfoImpl();
-		mapRefuseInfoImpl.decode(asnIs);
+		mapRefuseInfoImpl.decodeAll(asnIs);
 
 		Reason reason = mapRefuseInfoImpl.getReason();
 
@@ -77,7 +77,7 @@ public class MAPRefuseInfoTest extends TestCase {
 		assertEquals(3, tag);
 
 		mapRefuseInfoImpl = new MAPRefuseInfoImpl();
-		mapRefuseInfoImpl.decode(asnIs);
+		mapRefuseInfoImpl.decodeAll(asnIs);
 
 		reason = mapRefuseInfoImpl.getReason();
 		assertNotNull(reason);
@@ -93,7 +93,7 @@ public class MAPRefuseInfoTest extends TestCase {
 		MAPRefuseInfoImpl mapRefuseInfoImpl = new MAPRefuseInfoImpl();
 		mapRefuseInfoImpl.setReason(Reason.noReasonGiven);
 		AsnOutputStream asnOS = new AsnOutputStream();
-		mapRefuseInfoImpl.encode(asnOS);
+		mapRefuseInfoImpl.encodeAll(asnOS);
 		byte[] data = asnOS.toByteArray();
 		assertTrue(Arrays.equals(this.getData(), data));
 
@@ -105,7 +105,7 @@ public class MAPRefuseInfoTest extends TestCase {
 		mapRefuseInfoImpl.setAlternativeAcn(acn);
 		mapRefuseInfoImpl.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
 		asnOS = new AsnOutputStream();
-		mapRefuseInfoImpl.encode(asnOS);
+		mapRefuseInfoImpl.encodeAll(asnOS);
 		data = asnOS.toByteArray();
 		assertTrue(Arrays.equals(this.getDataFull(), data));
 

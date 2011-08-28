@@ -52,6 +52,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.InformServiceCentreRequestIndication;
@@ -75,7 +76,6 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupple
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;

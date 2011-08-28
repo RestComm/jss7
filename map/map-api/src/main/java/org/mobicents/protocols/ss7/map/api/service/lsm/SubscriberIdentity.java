@@ -24,7 +24,6 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 
 /**
  * SubscriberIdentity ::= CHOICE { 
@@ -35,7 +34,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
  * @author amit bhayani
  *
  */
-public interface SubscriberIdentity extends MAPAsnPrimitive {
+public interface SubscriberIdentity {
 	
 	public IMSI getIMSI();
 	

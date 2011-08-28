@@ -256,7 +256,7 @@ public class SendRoutingInfoForLCSResponseIndicationImpl extends LsmMessageImpl 
 		tag = ais.readTag();
 
 		this.targetMS = new SubscriberIdentityImpl();
-		this.targetMS.decodeAll(ais);
+		((SubscriberIdentityImpl)this.targetMS).decodeAll(ais);
 
 		// lcsLocationInfo [1] LCSLocationInfo,
 		tag = ais.readTag();
@@ -266,7 +266,7 @@ public class SendRoutingInfoForLCSResponseIndicationImpl extends LsmMessageImpl 
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 		this.lcsLocationInfo = new LCSLocationInfoImpl();
-		this.lcsLocationInfo.decodeAll(ais);
+		((LCSLocationInfoImpl)this.lcsLocationInfo).decodeAll(ais);
 
 		while (true) {
 			if (ais.available() == 0)
@@ -282,7 +282,7 @@ public class SendRoutingInfoForLCSResponseIndicationImpl extends LsmMessageImpl 
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.extensionContainer = new MAPExtensionContainerImpl();
-				this.extensionContainer.decodeAll(ais);
+				((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 				break;
 			case _TAG_V_GMLC_ADDRESS:
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
@@ -386,14 +386,14 @@ public class SendRoutingInfoForLCSResponseIndicationImpl extends LsmMessageImpl 
 		}
 
 		int pos = asnOs.StartContentDefiniteLength();
-		this.targetMS.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, this.targetMS.getTag());
+		((SubscriberIdentityImpl)this.targetMS).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, ((SubscriberIdentityImpl)this.targetMS).getTag());
 		asnOs.FinalizeContent(pos);
 
-		this.lcsLocationInfo.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_LOCATION_INFO);
+		((LCSLocationInfoImpl)this.lcsLocationInfo).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_LOCATION_INFO);
 
 		if (this.extensionContainer != null) {
 			// extensionContainer [2] ExtensionContainer OPTIONAL,
-			this.extensionContainer.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTENSION_CONTAINER);
+			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTENSION_CONTAINER);
 		}
 
 		if (this.vgmlcAddress != null) {

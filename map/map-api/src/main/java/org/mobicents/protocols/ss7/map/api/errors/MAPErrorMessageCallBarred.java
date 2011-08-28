@@ -45,6 +45,16 @@ public interface MAPErrorMessageCallBarred extends MAPErrorMessage {
 	public MAPExtensionContainer getExtensionContainer();
 
 	public Boolean getUnauthorisedMessageOriginator();
+	
+	public long getMapProtocolVersion();
+
+	public void setCallBarringCause(CallBarringCause callBarringCause);
+
+	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+
+	public void setUnauthorisedMessageOriginator(Boolean unauthorisedMessageOriginator);
+
+	public void setMapProtocolVersion(long mapProtocolVersion);
 
 }
 

@@ -33,12 +33,13 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.Area;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaType;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author amit bhayani
  * 
  */
-public class AreaImpl implements Area {
+public class AreaImpl implements Area, MAPAsnPrimitive {
 
 	private AreaType areaType = null;
 	private byte[] areaIdentification = null;

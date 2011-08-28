@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
-package org.mobicents.protocols.ss7.map.service.supplementary;
+package org.mobicents.protocols.ss7.map.primitives;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -33,7 +33,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
 /**
  * @author amit bhayani
@@ -63,7 +64,7 @@ public class USSDStringTest {
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
 
-		USSDString ussdStr = new USSDStringImpl();
+		USSDStringImpl ussdStr = new USSDStringImpl();
 		ussdStr.decodeAll(asn);
 		
 		assertEquals("*88#", ussdStr.getString());
@@ -75,7 +76,7 @@ public class USSDStringTest {
 	public void testEncode() throws Exception {
 		byte[] data = new byte[] { 0x04, 0x04, 0x2a, 0x1c, 0x6e, (byte)0xd4 };
 		
-		USSDString ussdStr = new USSDStringImpl("*88#", null);
+		USSDStringImpl ussdStr = new USSDStringImpl("*88#", null);
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
 		ussdStr.encodeAll(asnOS);

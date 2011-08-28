@@ -54,7 +54,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * @author sergey vetyutnev
  * 
  */
-public interface MoForwardShortMessageRequestIndication extends SmsService {
+public interface MoForwardShortMessageRequestIndication extends SmsMessage {
 
 	public SM_RP_DA getSM_RP_DA();
 

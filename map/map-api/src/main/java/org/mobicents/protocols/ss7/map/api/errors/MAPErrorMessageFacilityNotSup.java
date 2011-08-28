@@ -50,9 +50,15 @@ public interface MAPErrorMessageFacilityNotSup extends MAPErrorMessage {
 	
 	public MAPExtensionContainer getExtensionContainer();
 
-	public Boolean getShapeOfLocationEstimateNotSupporte();
+	public Boolean getShapeOfLocationEstimateNotSupported();
 
 	public Boolean getNeededLcsCapabilityNotSupportedInServingNode();
+
+	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+
+	public void setShapeOfLocationEstimateNotSupported(Boolean shapeOfLocationEstimateNotSupported);
+
+	public void getNeededLcsCapabilityNotSupportedInServingNode(Boolean neededLcsCapabilityNotSupportedInServingNode);
 
 }
 

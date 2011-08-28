@@ -32,12 +32,13 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.DeferredLocationEventType;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author amit bhayani
  *
  */
-public class DeferredLocationEventTypeImpl implements DeferredLocationEventType {
+public class DeferredLocationEventTypeImpl implements DeferredLocationEventType, MAPAsnPrimitive {
 	
 	private static final int _INDEX_MS_AVAILABLE = 0;
 	private static final int _INDEX__ENTERING_INTO_AREA = 1;

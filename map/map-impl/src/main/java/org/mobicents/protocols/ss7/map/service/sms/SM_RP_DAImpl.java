@@ -38,13 +38,14 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class SM_RP_DAImpl implements SM_RP_DA {
+public class SM_RP_DAImpl implements SM_RP_DA, MAPAsnPrimitive {
 	
 	private static final int _TAG_IMSI = 0;
 	private static final int _TAG_LMSI = 1;
@@ -150,17 +151,17 @@ public class SM_RP_DAImpl implements SM_RP_DA {
 		switch(ansIS.getTag()) {
 		case _TAG_IMSI:
 			this.imsi = new IMSIImpl();
-			this.imsi.decodeData(ansIS, length);
+			((IMSIImpl)this.imsi).decodeData(ansIS, length);
 			break;
 			
 		case _TAG_LMSI:
 			this.lmsi = new LMSIImpl();
-			this.lmsi.decodeData(ansIS, length);
+			((LMSIImpl)this.lmsi).decodeData(ansIS, length);
 			break;
 			
 		case _TAG_ServiceCentreAddressDA:
 			this.serviceCentreAddressDA = new AddressStringImpl();
-			this.serviceCentreAddressDA.decodeData(ansIS, length);
+			((AddressStringImpl)this.serviceCentreAddressDA).decodeData(ansIS, length);
 			break;
 			
 		case _TAG_NoSM_RP_DA:
@@ -203,11 +204,11 @@ public class SM_RP_DAImpl implements SM_RP_DA {
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		
 		if (this.imsi != null)
-			this.imsi.encodeData(asnOs);
+			((IMSIImpl)this.imsi).encodeData(asnOs);
 		else if (this.lmsi != null)
-			this.lmsi.encodeData(asnOs);
+			((LMSIImpl)this.lmsi).encodeData(asnOs);
 		else if (this.serviceCentreAddressDA != null)
-			this.serviceCentreAddressDA.encodeData(asnOs);
+			((AddressStringImpl)this.serviceCentreAddressDA).encodeData(asnOs);
 		else {
 			asnOs.writeNullData();
 		}

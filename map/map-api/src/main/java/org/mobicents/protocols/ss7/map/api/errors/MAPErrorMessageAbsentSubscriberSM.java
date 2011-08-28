@@ -57,5 +57,11 @@ public interface MAPErrorMessageAbsentSubscriberSM extends MAPErrorMessage {
 
 	public Integer getAdditionalAbsentSubscriberDiagnosticSM();
 
+	public void setAbsentSubscriberDiagnosticSM(Integer absentSubscriberDiagnosticSM);
+
+	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+
+	public void setAdditionalAbsentSubscriberDiagnosticSM(Integer additionalAbsentSubscriberDiagnosticSM);
+	
 }
 

@@ -34,6 +34,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSQoS;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTime;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
@@ -42,7 +43,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
  * @author amit bhayani
  * 
  */
-public class LCSQoSImpl implements LCSQoS {
+public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 
 	private static final int _TAG_HORIZONTAL_ACCURACY = 0;
 	private static final int _TAG_VERTICAL_COORDINATE_REQUEST = 1;
@@ -255,13 +256,13 @@ public class LCSQoSImpl implements LCSQoS {
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.responseTime = new ResponseTimeImpl();
-				this.responseTime.decodeAll(ais);
+				((ResponseTimeImpl)this.responseTime).decodeAll(ais);
 				break;
 			case _TAG_EXTENSION_CONTAINER:
 				// extensionContainer [4] ExtensionContainer OPTIONAL
 
 				this.extensionContainer = new MAPExtensionContainerImpl();
-				this.extensionContainer.decodeAll(ais);
+				((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 				break;
 			default:
 				// Do we care?
@@ -341,11 +342,11 @@ public class LCSQoSImpl implements LCSQoS {
 		}
 
 		if (this.responseTime != null) {
-			this.responseTime.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_RESPONSE_TIME);
+			((ResponseTimeImpl)this.responseTime).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_RESPONSE_TIME);
 		}
 
 		if (this.extensionContainer != null) {
-			this.extensionContainer.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTENSION_CONTAINER);
+			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTENSION_CONTAINER);
 		}
 	}
 

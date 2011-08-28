@@ -500,7 +500,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 		this.lcsClientID = new LCSClientIDImpl();
-		this.lcsClientID.decodeAll(ais);
+		((LCSClientIDImpl)this.lcsClientID).decodeAll(ais);
 
 		tag = ais.readTag();
 		// Decode mandatory lcsLocationInfo LCSLocationInfo
@@ -510,7 +510,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 		this.lcsLocationInfo = new LCSLocationInfoImpl();
-		this.lcsLocationInfo.decodeAll(ais);
+		((LCSLocationInfoImpl)this.lcsLocationInfo).decodeAll(ais);
 
 		while (true) {
 			if (ais.available() == 0)
@@ -526,7 +526,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.msisdn = new ISDNAddressStringImpl();
-				this.msisdn.decodeAll(ais);
+				((ISDNAddressStringImpl)this.msisdn).decodeAll(ais);
 				break;
 			case _TAG_IMSI:
 				// imsi [1] IMSI OPTIONAL,
@@ -536,7 +536,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.imsi = new IMSIImpl();
-				this.imsi.decodeAll(ais);
+				((IMSIImpl)this.imsi).decodeAll(ais);
 				break;
 			case _TAG_IMEI:
 				// imei [2] IMEI OPTIONAL,
@@ -546,7 +546,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.imei = new IMEIImpl();
-				this.imei.decodeAll(ais);
+				((IMEIImpl)this.imei).decodeAll(ais);
 				break;
 			case _TAG_NA_ESRD:
 				// na-ESRD [3] ISDN-AddressString OPTIONAL,
@@ -556,7 +556,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.naEsrd = new ISDNAddressStringImpl();
-				this.naEsrd.decodeAll(ais);
+				((ISDNAddressStringImpl)this.naEsrd).decodeAll(ais);
 				break;
 			case _TAG_NA_ESRK:
 				// na-ESRK [4] ISDN-AddressString OPTIONAL,
@@ -566,7 +566,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.naEsrk = new ISDNAddressStringImpl();
-				this.naEsrk.decodeAll(ais);
+				((ISDNAddressStringImpl)this.naEsrk).decodeAll(ais);
 				break;
 			case _TAG_LOCATION_ESTIMATE:
 				// locationEstimate [5] Ext-GeographicalInformation OPTIONAL
@@ -597,7 +597,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.slrArgExtensionContainer = new SLRArgExtensionContainerImpl();
-				this.slrArgExtensionContainer.decodeAll(ais);
+				((SLRArgExtensionContainerImpl)this.slrArgExtensionContainer).decodeAll(ais);
 				break;
 			case _TAG_ADD_LOCATION_ESTIMATE:
 				// add-LocationEstimate [8] Add-GeographicalInformation
@@ -617,7 +617,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.deferredmtlrData = new DeferredmtlrDataImpl();
-				this.deferredmtlrData.decodeAll(ais);
+				((DeferredmtlrDataImpl)this.deferredmtlrData).decodeAll(ais);
 				break;
 			case _TAG_LCS_REFERENCE_NUMBER:
 				// lcs-ReferenceNumber [10] LCS-ReferenceNumber OPTIONAL,
@@ -658,7 +658,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.cellIdOrSai = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
-				this.cellIdOrSai.decodeAll(ais);
+				((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellIdOrSai).decodeAll(ais);
 				break;
 			case _TAG_H_GMLC_ADDRESS:
 				// h-gmlc-Address [14] GSN-Address
@@ -780,33 +780,33 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 			throw new MAPException("AsnException while encoding parameter lcsEvent", e);
 		}
 
-		this.lcsClientID.encodeAll(asnOs);
+		((LCSClientIDImpl)this.lcsClientID).encodeAll(asnOs);
 
-		this.lcsLocationInfo.encodeAll(asnOs);
+		((LCSLocationInfoImpl)this.lcsLocationInfo).encodeAll(asnOs);
 
 		if (this.msisdn != null) {
 			// msisdn [0] ISDN-AddressString OPTIONAL,
-			this.msisdn.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_MSISDN);
+			((ISDNAddressStringImpl)this.msisdn).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_MSISDN);
 		}
 
 		if (this.imsi != null) {
 			// imsi [1] IMSI OPTIONAL,
-			this.imsi.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_IMSI);
+			((IMSIImpl)this.imsi).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_IMSI);
 		}
 
 		if (this.imei != null) {
 			// imei [2] IMEI OPTIONAL,
-			this.imei.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_IMEI);
+			((IMEIImpl)this.imei).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_IMEI);
 		}
 
 		if (this.naEsrd != null) {
 			// na-ESRD [3] ISDN-AddressString OPTIONAL,
-			this.naEsrd.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NA_ESRD);
+			((ISDNAddressStringImpl)this.naEsrd).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NA_ESRD);
 		}
 
 		if (this.naEsrk != null) {
 			// na-ESRK [4] ISDN-AddressString OPTIONAL
-			this.naEsrk.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NA_ESRK);
+			((ISDNAddressStringImpl)this.naEsrk).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NA_ESRK);
 		}
 
 		if (this.locationEstimate != null) {
@@ -833,7 +833,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 
 		if (this.slrArgExtensionContainer != null) {
 			// slr-ArgExtensionContainer [7] SLR-ArgExtensionContainer
-			this.slrArgExtensionContainer.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_SLR_ARG_EXTENSION_CONTAINER);
+			((SLRArgExtensionContainerImpl)this.slrArgExtensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_SLR_ARG_EXTENSION_CONTAINER);
 		}
 
 		if (this.addLocationEstimate != null) {
@@ -849,7 +849,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 
 		if (this.deferredmtlrData != null) {
 			// deferredmt-lrData [9] Deferredmt-lrData
-			this.deferredmtlrData.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DEFERRED_MT_LR_DATA);
+			((DeferredmtlrDataImpl)this.deferredmtlrData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DEFERRED_MT_LR_DATA);
 		}
 
 		if (this.lcsReferenceNumber != null) {
@@ -887,7 +887,7 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 
 		if (this.cellIdOrSai != null) {
 			// cellIdOrSai [13] CellGlobalIdOrServiceAreaIdOrLAI OPTIONAL,
-			this.cellIdOrSai.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_CELL_ID_OR_SAI);
+			((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellIdOrSai).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_CELL_ID_OR_SAI);
 		}
 
 		if (this.hgmlcAddress != null) {

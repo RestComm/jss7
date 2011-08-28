@@ -39,7 +39,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
  * @author sergey vetyutnev
  * 
  */
-public class MAPExtensionContainerImpl extends MAPPrimitiveBase implements MAPExtensionContainer {
+public class MAPExtensionContainerImpl implements MAPExtensionContainer, MAPAsnPrimitive {
 
 	protected static final int PRIVATEEXTENSIONLIST_REF_TAG = 0x00;
 	protected static final int PSCEXTENSIONS_REF_TAG = 0x01;
@@ -220,7 +220,7 @@ public class MAPExtensionContainerImpl extends MAPPrimitiveBase implements MAPEx
 				int pos2 = asnOs.StartContentDefiniteLength();
 				
 				for (MAPPrivateExtension pe : this.privateExtensionList) {
-					pe.encodeAll(asnOs);
+					((MAPPrivateExtensionImpl)pe).encodeAll(asnOs);
 				}				
 
 				asnOs.FinalizeContent(pos2);
@@ -237,27 +237,6 @@ public class MAPExtensionContainerImpl extends MAPPrimitiveBase implements MAPEx
 		} catch (AsnException e) {
 			throw new MAPException("AsnException when encoding ExtensionContainer: " + e.getMessage(), e);
 		}
-	}
-
-	@Deprecated
-	public void decode(AsnInputStream lis, int tagClass, boolean isPrimitive, int masterTag, int length) throws MAPParsingComponentException {
-		
-		try {
-			this._decode(lis);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ExtensionContainer: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ExtensionContainer: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}		
-	}
-	
-	@Deprecated
-	public void encode(AsnOutputStream asnOS) throws MAPException {
-		
-		this.encodeData(asnOS);
-		
 	}
 	
 	

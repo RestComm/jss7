@@ -76,7 +76,7 @@ public class AreaDefinitionTest {
 		int tag = asn.readTag();
 
 		AreaDefinition areaDef = new AreaDefinitionImpl();
-		areaDef.decodeAll(asn);
+		((AreaDefinitionImpl)areaDef).decodeAll(asn);
 
 		AreaList areaList = areaDef.getAreaList();
 
@@ -103,7 +103,7 @@ public class AreaDefinitionTest {
 
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
-		areaDef.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		((AreaDefinitionImpl)areaDef).encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 		
 		byte[] encodedData = asnOS.toByteArray();
 

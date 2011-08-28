@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.ProcedureCancellationReason;
 import org.mobicents.protocols.ss7.map.api.dialog.ResourceUnavailableReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
@@ -50,7 +51,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
  * @author sergey vetyutnev
  * 
  */
-public class MAPUserAbortInfoImpl {
+public class MAPUserAbortInfoImpl implements MAPAsnPrimitive {
 
 	public static final int MAP_USER_ABORT_INFO_TAG = 0x04;
 
@@ -76,7 +77,52 @@ public class MAPUserAbortInfoImpl {
 		this.extensionContainer = extensionContainer;
 	}
 
-	public void decode(AsnInputStream ais) throws MAPParsingComponentException {
+
+	@Override
+	public int getTag() throws MAPException {
+		return MAP_USER_ABORT_INFO_TAG;
+	}
+
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_CONTEXT_SPECIFIC;
+	}
+
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
+
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding MAPUserAbortInfo: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding MAPUserAbortInfo: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding MAPUserAbortInfo: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding MAPUserAbortInfo: " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+	
+	private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
 
 		// MAP-UserAbortInfo ::= SEQUENCE {
 		//   map-UserAbortChoice   CHOICE {
@@ -110,89 +156,97 @@ public class MAPUserAbortInfoImpl {
 		this.mapUserAbortChoice = null;
 		this.extensionContainer = null;
 
-		try {
-			AsnInputStream localAis = ais.readSequenceStream();
+		AsnInputStream localAis = ais.readSequenceStreamData(length);
 
-			int tag = localAis.readTag();
-			
-			if (localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !localAis.isTagPrimitive())
-				throw new MAPParsingComponentException("Error while decoding MAPUserAbortInfo.map-UserAbortChoice: bad tag class or not primitive element",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			
-			MAPUserAbortChoiceImpl usAbrtChoice = new MAPUserAbortChoiceImpl();
-			switch( tag ) {
-			case MAPUserAbortChoiceImpl.USER_SPECIFIC_REASON_TAG:
-				localAis.readNull();
-				usAbrtChoice.setUserSpecificReason();
-				this.setMAPUserAbortChoice(usAbrtChoice);
-				break;
+		int tag = localAis.readTag();
 
-			case MAPUserAbortChoiceImpl.USER_RESOURCE_LIMITATION_TAG:
-				localAis.readNull();
-				usAbrtChoice.setUserResourceLimitation();
-				this.setMAPUserAbortChoice(usAbrtChoice);
-				break;
+		if (localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !localAis.isTagPrimitive())
+			throw new MAPParsingComponentException("Error while decoding MAPUserAbortInfo.map-UserAbortChoice: bad tag class or not primitive element",
+					MAPParsingComponentExceptionReason.MistypedParameter);
 
-			case MAPUserAbortChoiceImpl.RESOURCE_UNAVAILABLE:
-				int code = (int)localAis.readInteger();
-				ResourceUnavailableReason resUnaReas = ResourceUnavailableReason.getInstance(code);
-				usAbrtChoice.setResourceUnavailableReason(resUnaReas);
-				this.setMAPUserAbortChoice(usAbrtChoice);
-				break;
+		MAPUserAbortChoiceImpl usAbrtChoice = new MAPUserAbortChoiceImpl();
+		switch (tag) {
+		case MAPUserAbortChoiceImpl.USER_SPECIFIC_REASON_TAG:
+			localAis.readNull();
+			usAbrtChoice.setUserSpecificReason();
+			this.setMAPUserAbortChoice(usAbrtChoice);
+			break;
 
-			case MAPUserAbortChoiceImpl.APPLICATION_PROCEDURE_CANCELLATION:
-				code = (int) localAis.readInteger();
-				ProcedureCancellationReason procCanReasn = ProcedureCancellationReason.getInstance(code);
-				usAbrtChoice.setProcedureCancellationReason(procCanReasn);
-				this.setMAPUserAbortChoice(usAbrtChoice);
-				break;
+		case MAPUserAbortChoiceImpl.USER_RESOURCE_LIMITATION_TAG:
+			localAis.readNull();
+			usAbrtChoice.setUserResourceLimitation();
+			this.setMAPUserAbortChoice(usAbrtChoice);
+			break;
 
-			default:
-				throw new MAPParsingComponentException("Error while decoding MAPUserAbortInfo.map-UserAbortChoice: bad tag",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			}
+		case MAPUserAbortChoiceImpl.RESOURCE_UNAVAILABLE:
+			int code = (int) localAis.readInteger();
+			ResourceUnavailableReason resUnaReas = ResourceUnavailableReason.getInstance(code);
+			usAbrtChoice.setResourceUnavailableReason(resUnaReas);
+			this.setMAPUserAbortChoice(usAbrtChoice);
+			break;
 
-			while (localAis.available() > 0) {
-				tag = localAis.readTag();
+		case MAPUserAbortChoiceImpl.APPLICATION_PROCEDURE_CANCELLATION:
+			code = (int) localAis.readInteger();
+			ProcedureCancellationReason procCanReasn = ProcedureCancellationReason.getInstance(code);
+			usAbrtChoice.setProcedureCancellationReason(procCanReasn);
+			this.setMAPUserAbortChoice(usAbrtChoice);
+			break;
 
-				switch (localAis.getTagClass()) {
-				case Tag.CLASS_UNIVERSAL:
-					switch (tag) {
-					case Tag.SEQUENCE:
-						this.extensionContainer = new MAPExtensionContainerImpl();
-						this.extensionContainer.decodeAll(localAis);
-						break;
+		default:
+			throw new MAPParsingComponentException("Error while decoding MAPUserAbortInfo.map-UserAbortChoice: bad tag",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
 
-					default:
-						localAis.advanceElement();
-						break;
-					}
+		while (localAis.available() > 0) {
+			tag = localAis.readTag();
+
+			switch (localAis.getTagClass()) {
+			case Tag.CLASS_UNIVERSAL:
+				switch (tag) {
+				case Tag.SEQUENCE:
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(localAis);
 					break;
-					
+
 				default:
 					localAis.advanceElement();
 					break;
 				}
+				break;
+
+			default:
+				localAis.advanceElement();
+				break;
 			}
-			
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPUserAbortInfo: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPUserAbortInfo: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	public void encode(AsnOutputStream asnOS) throws MAPException {
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+
+		this.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, MAP_USER_ABORT_INFO_TAG);
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding MAPUserAbortInfo: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOS) throws MAPException {
 		
 		if (this.mapUserAbortChoice == null)
 			throw new MAPException("Error encoding MAPUserAbortInfo: UserSpecificReason must not be null");
 
 		try {
-			asnOS.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, MAP_USER_ABORT_INFO_TAG);
-			int pos = asnOS.StartContentDefiniteLength();
-			
 			if(this.mapUserAbortChoice.isUserSpecificReason()) {
 				asnOS.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, MAPUserAbortChoiceImpl.USER_SPECIFIC_REASON_TAG);
 			} else if(this.mapUserAbortChoice.isUserResourceLimitation()) {
@@ -210,9 +264,7 @@ public class MAPUserAbortInfoImpl {
 			}
 
 			if (this.extensionContainer != null)
-				this.extensionContainer.encodeAll(asnOS);
-			
-			asnOS.FinalizeContent(pos);
+				((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOS);
 			
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding MAPUserAbortInfo: " + e.getMessage(), e);
@@ -220,5 +272,5 @@ public class MAPUserAbortInfoImpl {
 			throw new MAPException("AsnException when encoding MAPUserAbortInfo: " + e.getMessage(), e);
 		}
 	}
-
 }
+

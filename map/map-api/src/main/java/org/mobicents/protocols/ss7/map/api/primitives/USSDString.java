@@ -20,12 +20,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.primitives;
 
 import java.nio.charset.Charset;
-
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 
 /**
  * USSD-String ::= OCTET STRING (SIZE (1..maxUSSD-StringLength))
@@ -38,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
  * @author amit bhayani
  * 
  */
-public interface USSDString extends MAPAsnPrimitive {
+public interface USSDString {
 
 	/**
 	 * Get the decoded USSD String

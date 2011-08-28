@@ -157,7 +157,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 		assertEquals(4, tag);
 
 		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-		mapUserAbortInfo.decode(asnIs);
+		mapUserAbortInfo.decodeAll(asnIs);
 
 		MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo
 				.getMAPUserAbortChoice();
@@ -181,7 +181,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 
-		mapUserAbortInfo.encode(asnOS);
+		mapUserAbortInfo.encodeAll(asnOS);
 
 		byte[] data = asnOS.toByteArray();
 
@@ -201,7 +201,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 		assertEquals(4, tag);
 
 		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-		mapUserAbortInfo.decode(asnIs);
+		mapUserAbortInfo.decodeAll(asnIs);
 
 		MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo
 				.getMAPUserAbortChoice();
@@ -225,7 +225,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 
-		mapUserAbortInfo.encode(asnOS);
+		mapUserAbortInfo.encodeAll(asnOS);
 
 		byte[] data = asnOS.toByteArray();
 
@@ -245,7 +245,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 		assertEquals(4, tag);
 
 		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-		mapUserAbortInfo.decode(asnIs);
+		mapUserAbortInfo.decodeAll(asnIs);
 
 		MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo
 				.getMAPUserAbortChoice();
@@ -272,7 +272,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 
-		mapUserAbortInfo.encode(asnOS);
+		mapUserAbortInfo.encodeAll(asnOS);
 
 		byte[] data = asnOS.toByteArray();
 
@@ -293,7 +293,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 		assertEquals(4, tag);
 
 		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-		mapUserAbortInfo.decode(asnIs);
+		mapUserAbortInfo.decodeAll(asnIs);
 
 		MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo
 				.getMAPUserAbortChoice();
@@ -326,7 +326,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 
-		mapUserAbortInfo.encode(asnOS);
+		mapUserAbortInfo.encodeAll(asnOS);
 
 		byte[] data = asnOS.toByteArray();
 
@@ -347,7 +347,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 		assertEquals(4, tag);
 
 		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-		mapUserAbortInfo.decode(asnIs);
+		mapUserAbortInfo.decodeAll(asnIs);
 
 		MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo
 				.getMAPUserAbortChoice();
@@ -381,7 +381,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 
-		mapUserAbortInfo.encode(asnOS);
+		mapUserAbortInfo.encodeAll(asnOS);
 
 		byte[] data = asnOS.toByteArray();
 

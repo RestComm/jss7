@@ -33,12 +33,13 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTime;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTimeCategory;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author amit bhayani
  * 
  */
-public class ResponseTimeImpl implements ResponseTime {
+public class ResponseTimeImpl implements ResponseTime, MAPAsnPrimitive {
 
 	private ResponseTimeCategory responseTimeCategory = null;
 

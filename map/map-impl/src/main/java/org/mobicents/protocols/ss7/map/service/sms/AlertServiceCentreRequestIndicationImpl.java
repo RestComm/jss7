@@ -34,6 +34,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequestIndication;
+import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 
 /**
@@ -128,7 +129,7 @@ public class AlertServiceCentreRequestIndicationImpl extends SmsServiceImpl impl
 							"Error while decoding AlertServiceCentreRequest.msisdn: bad tag or tag class or is not primitive: TagClass=" + ais.getTagClass()
 									+ ", tag=" + tag, MAPParsingComponentExceptionReason.MistypedParameter);
 				this.msisdn = new ISDNAddressStringImpl();
-				this.msisdn.decodeAll(ais);
+				((ISDNAddressStringImpl)this.msisdn).decodeAll(ais);
 				break;
 			case 1:
 				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.STRING_OCTET)
@@ -136,7 +137,7 @@ public class AlertServiceCentreRequestIndicationImpl extends SmsServiceImpl impl
 							"Error while decoding AlertServiceCentreRequest.serviceCentreAddress: bad tag or tag class or is not primitive: TagClass=" + ais.getTagClass()
 									+ ", tag=" + tag, MAPParsingComponentExceptionReason.MistypedParameter);
 				this.serviceCentreAddress = new ISDNAddressStringImpl();
-				this.serviceCentreAddress.decodeAll(ais);
+				((AddressStringImpl)this.serviceCentreAddress).decodeAll(ais);
 				break;
 			default:
 				ais.advanceElement();
@@ -176,8 +177,8 @@ public class AlertServiceCentreRequestIndicationImpl extends SmsServiceImpl impl
 		if (this.msisdn == null || this.serviceCentreAddress == null)
 			throw new MAPException("Error when encoding AlertServiceCentreRequest: msisdn or serviceCentreAddress must not be empty");
 		
-		this.msisdn.encodeAll(asnOs);
-		this.serviceCentreAddress.encodeAll(asnOs);
+		((ISDNAddressStringImpl)this.msisdn).encodeAll(asnOs);
+		((AddressStringImpl)this.serviceCentreAddress).encodeAll(asnOs);
 	}
 	
 	@Override

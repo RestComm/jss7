@@ -51,6 +51,10 @@ public interface MAPErrorMessageSubscriberBusyForMtSms extends MAPErrorMessage {
 
 	public Boolean getGprsConnectionSuspended();
 
+	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+
+	public void setGprsConnectionSuspended(Boolean gprsConnectionSuspended);
+
 }
 
 

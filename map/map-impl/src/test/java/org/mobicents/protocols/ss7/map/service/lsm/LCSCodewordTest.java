@@ -38,8 +38,8 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSCodeword;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 
 /**
  * @author amit bhayani
@@ -72,7 +72,7 @@ public class LCSCodewordTest {
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
 
-		LCSCodeword lcsCodeword = new LCSCodewordImpl();
+		LCSCodewordImpl lcsCodeword = new LCSCodewordImpl();
 		lcsCodeword.decodeAll(asn);
 
 		assertEquals((byte) 0x0f, lcsCodeword.getDataCodingScheme());
@@ -87,7 +87,7 @@ public class LCSCodewordTest {
 				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
 
 		USSDString nameString = mapServiceFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSCodeword lcsCodeword = new LCSCodewordImpl((byte) 0x0f, nameString);
+		LCSCodewordImpl lcsCodeword = new LCSCodewordImpl((byte) 0x0f, nameString);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		lcsCodeword.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 		

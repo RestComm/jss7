@@ -33,13 +33,14 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class MWStatusImpl implements MWStatus {
+public class MWStatusImpl implements MWStatus, MAPAsnPrimitive {
 	
 	private static final int _INDEX_ScAddressNotIncluded = 0;
 	private static final int _INDEX_MnrfSet = 1;

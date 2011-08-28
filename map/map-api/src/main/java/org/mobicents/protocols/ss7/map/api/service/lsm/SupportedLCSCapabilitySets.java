@@ -21,8 +21,6 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
-
 /**
  * 
  * SupportedLCS-CapabilitySets ::= BIT STRING {
@@ -43,7 +41,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
  * @author amit bhayani
  *
  */
-public interface SupportedLCSCapabilitySets extends MAPAsnPrimitive {
+public interface SupportedLCSCapabilitySets {
 	
 	public boolean getLcsCapabilitySet1();
 	

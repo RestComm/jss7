@@ -54,9 +54,5 @@ public interface MAPUserAbortChoice {
 	public boolean isResourceUnavailableReason();
 	
 	public boolean isProcedureCancellationReason();
-	
-//	public MAPDialog getMAPDialog();
-//	
-//	public void setMAPDialog(MAPDialog mapDialog);
 
 }

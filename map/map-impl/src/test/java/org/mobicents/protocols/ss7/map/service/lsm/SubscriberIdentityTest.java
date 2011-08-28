@@ -75,7 +75,7 @@ public class SubscriberIdentityTest {
 		int tag = asn.readTag();
 
 
-		SubscriberIdentity subsIdent = new SubscriberIdentityImpl();
+		SubscriberIdentityImpl subsIdent = new SubscriberIdentityImpl();
 		subsIdent.decodeAll(asn);
 		IMSI imsi = subsIdent.getIMSI();
 		ISDNAddressString msisdn  = subsIdent.getMSISDN();
@@ -94,7 +94,7 @@ public class SubscriberIdentityTest {
 		byte[] data = new byte[] { (byte) 0x80, 0x08, 0x27, (byte) 0x94, (byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
 
 		IMSI imsi = this.mapServiceFactory.createIMSI(724l, 99l, "9900000007");
-		SubscriberIdentity subsIdent = new SubscriberIdentityImpl(imsi);
+		SubscriberIdentityImpl subsIdent = new SubscriberIdentityImpl(imsi);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		subsIdent.encodeAll(asnOS);
 		

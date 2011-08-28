@@ -25,9 +25,7 @@ package org.mobicents.protocols.ss7.map.api.service.sms;
 import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
 
 /**
  * 
@@ -48,7 +46,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPPrimitive;
  * @author sergey vetyutnev
  * 
  */
-public interface LocationInfoWithLMSI extends MAPAsnPrimitive {
+public interface LocationInfoWithLMSI {
 	
 	public ISDNAddressString getNetworkNodeNumber();
 

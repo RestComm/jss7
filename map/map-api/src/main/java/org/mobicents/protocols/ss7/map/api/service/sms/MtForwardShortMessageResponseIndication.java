@@ -35,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * @author sergey vetyutnev
  * 
  */
-public interface MtForwardShortMessageResponseIndication extends SmsService {
+public interface MtForwardShortMessageResponseIndication extends SmsMessage {
 
 	public byte[] getSM_RP_UI();
 

@@ -52,4 +52,10 @@ public interface MAPErrorMessageSMDeliveryFailure extends MAPErrorMessage {
 	public byte[] getSignalInfo();
 
 	public MAPExtensionContainer getExtensionContainer();
+	
+	public void setSMEnumeratedDeliveryFailureCause(SMEnumeratedDeliveryFailureCause sMEnumeratedDeliveryFailureCause);
+
+	public void setSignalInfo(byte[] signalInfo);
+
+	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
 }

@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -35,6 +36,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.errors.MAPErrorMessageImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
@@ -324,8 +326,10 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		}
 	}
 
-	public void sendErrorComponent(Long invokeId, MAPErrorMessage mapErrorMessage) throws MAPException {
+	public void sendErrorComponent(Long invokeId, MAPErrorMessage mem) throws MAPException {
 
+		MAPErrorMessageImpl mapErrorMessage = (MAPErrorMessageImpl)mem;
+		
 		this.removeIncomingInvokeId(invokeId);
 		
 		ReturnError returnError = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCReturnErrorRequest();
@@ -338,9 +342,17 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			ec.setLocalErrorCode(mapErrorMessage.getErrorCode());
 			returnError.setErrorCode(ec);
 			
-			Parameter p = mapErrorMessage.encodeParameter();
-			if (p != null)
+			AsnOutputStream aos = new AsnOutputStream();
+			mapErrorMessage.encodeData(aos);
+			byte[] buf = aos.toByteArray();
+			if (buf.length != 0) {
+				Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+				p.setTagClass(mapErrorMessage.getTagClass());
+				p.setPrimitive(mapErrorMessage.getIsPrimitive());
+				p.setTag(mapErrorMessage.getTag());
+				p.setData(buf);
 				returnError.setParameter(p);
+			}
 
 			this.tcapDialog.sendComponent(returnError);
 

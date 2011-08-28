@@ -70,7 +70,7 @@ public class LCSPrivacyCheckTest {
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
 
-		LCSPrivacyCheck lcsPrivacyCheck = new LCSPrivacyCheckImpl();
+		LCSPrivacyCheckImpl lcsPrivacyCheck = new LCSPrivacyCheckImpl();
 		lcsPrivacyCheck.decodeAll(asn);
 
 		assertEquals(PrivacyCheckRelatedAction.allowedWithoutNotification, lcsPrivacyCheck.getCallSessionUnrelated());
@@ -85,7 +85,7 @@ public class LCSPrivacyCheckTest {
 		PrivacyCheckRelatedAction callSessionUnrelated = PrivacyCheckRelatedAction.allowedWithoutNotification;
 		PrivacyCheckRelatedAction callSessionRelated = PrivacyCheckRelatedAction.allowedIfNoResponse;
 
-		LCSPrivacyCheck lcsPrivacyCheck = new LCSPrivacyCheckImpl(callSessionUnrelated, callSessionRelated);
+		LCSPrivacyCheckImpl lcsPrivacyCheck = new LCSPrivacyCheckImpl(callSessionUnrelated, callSessionRelated);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		lcsPrivacyCheck.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 

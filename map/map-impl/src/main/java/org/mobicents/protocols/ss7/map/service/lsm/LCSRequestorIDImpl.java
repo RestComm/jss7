@@ -31,16 +31,17 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSFormatIndicator;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSRequestorID;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
-import org.mobicents.protocols.ss7.map.service.supplementary.USSDStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
 /**
  * @author amit bhayani
  * 
  */
-public class LCSRequestorIDImpl implements LCSRequestorID {
+public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 	
 	private static final int _TAG_DATA_CODING_SCHEME = 0;
 	private static final int _TAG_NAME_STRING = 1;
@@ -205,7 +206,7 @@ public class LCSRequestorIDImpl implements LCSRequestorID {
 		}
 
 		this.requestorIDString = new USSDStringImpl();
-		this.requestorIDString.decodeAll(ais);
+		((USSDStringImpl)this.requestorIDString).decodeAll(ais);
 
 		while (true) {
 			if (ais.available() == 0)
@@ -280,7 +281,7 @@ public class LCSRequestorIDImpl implements LCSRequestorID {
 		try {
 			asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DATA_CODING_SCHEME, new byte[] { this.dataCodingScheme });
 
-			this.requestorIDString.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NAME_STRING);
+			((USSDStringImpl)this.requestorIDString).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NAME_STRING);
 
 			if (this.lcsFormatIndicator != null) {
 				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_FORMAT_INDICATOR, this.lcsFormatIndicator.getIndicator());

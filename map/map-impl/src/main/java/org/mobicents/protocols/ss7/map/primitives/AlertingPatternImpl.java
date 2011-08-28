@@ -38,7 +38,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
  * @author amit bhayani
  * 
  */
-public class AlertingPatternImpl implements AlertingPattern {
+public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 
 	private AlertingLevel alertingLevel;
 	private AlertingCategory alertingCategory;

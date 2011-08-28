@@ -39,8 +39,8 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 
 /**
  * @author amit bhayani
@@ -74,7 +74,7 @@ public class LCSClientNameTest {
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
 
-		LCSClientName lcsClientName = new LCSClientNameImpl();
+		LCSClientNameImpl lcsClientName = new LCSClientNameImpl();
 		lcsClientName.decodeAll(asn);
 
 		assertEquals((byte) 0x0f, lcsClientName.getDataCodingScheme());
@@ -90,7 +90,7 @@ public class LCSClientNameTest {
 				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
 
 		USSDString nameString = mapServiceFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSClientName lcsClientName = new LCSClientNameImpl((byte) 0x0f, nameString, null);
+		LCSClientNameImpl lcsClientName = new LCSClientNameImpl((byte) 0x0f, nameString, null);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		lcsClientName.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 		

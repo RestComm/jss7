@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.map.service.sms;
 
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;

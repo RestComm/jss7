@@ -35,12 +35,13 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.Area;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaList;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author amit bhayani
  * 
  */
-public class AreaListImpl implements AreaList {
+public class AreaListImpl implements AreaList, MAPAsnPrimitive {
 
 	private Area[] areas = null;
 
@@ -162,7 +163,7 @@ public class AreaListImpl implements AreaList {
 			}
 			
 			Area a = new AreaImpl();
-			a.decodeAll(ais);
+			((AreaImpl)a).decodeAll(ais);
 			
 			arealList.add(a);
 
@@ -217,7 +218,7 @@ public class AreaListImpl implements AreaList {
 		}
 		
 		for (int count = 0; count < areas.length; count++) {
-			areas[count].encodeAll(asnOs);
+			((AreaImpl)areas[count]).encodeAll(asnOs);
 		}
 	}
 

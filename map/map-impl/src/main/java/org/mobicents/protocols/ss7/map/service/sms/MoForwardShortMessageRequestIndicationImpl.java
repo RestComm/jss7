@@ -32,7 +32,6 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
@@ -160,7 +159,7 @@ public class MoForwardShortMessageRequestIndicationImpl extends SmsServiceImpl i
 					throw new MAPParsingComponentException("Error while decoding moForwardShortMessageRequest: Parameter 0 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.sm_RP_DA = new SM_RP_DAImpl();
-				this.sm_RP_DA.decodeAll(ais);
+				((SM_RP_DAImpl)this.sm_RP_DA).decodeAll(ais);
 				break;
 
 			case 1:
@@ -169,7 +168,7 @@ public class MoForwardShortMessageRequestIndicationImpl extends SmsServiceImpl i
 					throw new MAPParsingComponentException("Error while decoding moForwardShortMessageRequest: Parameter 1 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.sm_RP_OA = new SM_RP_OAImpl();
-				this.sm_RP_OA.decodeAll(ais);
+				((SM_RP_OAImpl)this.sm_RP_OA).decodeAll(ais);
 				break;
 
 			case 2:
@@ -189,13 +188,13 @@ public class MoForwardShortMessageRequestIndicationImpl extends SmsServiceImpl i
 						throw new MAPParsingComponentException("Error while decoding moForwardShortMessageRequest: Parameter extensionContainer is primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.extensionContainer = new MAPExtensionContainerImpl();
-					this.extensionContainer.decodeAll(ais);
+					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 				} else if (tag == Tag.STRING_OCTET && ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
 					if (!ais.isTagPrimitive())
 						throw new MAPParsingComponentException("Error while decoding moForwardShortMessageRequest: Parameter imsi is not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.imsi = new IMSIImpl();
-					this.imsi.decodeAll(ais);
+					((IMSIImpl)this.imsi).decodeAll(ais);
 				} else {
 					ais.advanceElement();
 				}
@@ -237,14 +236,14 @@ public class MoForwardShortMessageRequestIndicationImpl extends SmsServiceImpl i
 			throw new MAPException("sm_RP_DA,sm_RP_OA and sm_RP_UI must not be null");
 
 		try {
-			this.sm_RP_DA.encodeAll(asnOs);
-			this.sm_RP_OA.encodeAll(asnOs);
+			((SM_RP_DAImpl)this.sm_RP_DA).encodeAll(asnOs);
+			((SM_RP_OAImpl)this.sm_RP_OA).encodeAll(asnOs);
 			asnOs.writeOctetString(this.sm_RP_UI);
 
 			if (this.extensionContainer != null)
-				this.extensionContainer.encodeAll(asnOs);
+				((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs);
 			if (this.imsi != null)
-				this.imsi.encodeAll(asnOs);
+				((IMSIImpl)this.imsi).encodeAll(asnOs);
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding moForwardShortMessageRequest: " + e.getMessage(), e);
 		} catch (AsnException e) {

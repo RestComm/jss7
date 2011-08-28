@@ -38,11 +38,11 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientInternalID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
 
 /**
  * @author amit bhayani
@@ -75,7 +75,7 @@ public class LCSClientIDTest {
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
 
-		LCSClientID lcsClientID = new LCSClientIDImpl();
+		LCSClientIDImpl lcsClientID = new LCSClientIDImpl();
 		lcsClientID.decodeAll(asn);
 
 		assertNotNull(lcsClientID.getLCSClientType());
@@ -101,7 +101,7 @@ public class LCSClientIDTest {
 		USSDString nameString = mapServiceFactory.createUSSDString("ndmgapp2ndmgapp2");
 		LCSClientName lcsClientName = new LCSClientNameImpl((byte) 0x0f, nameString, null);
 
-		LCSClientID lcsClientID = new LCSClientIDImpl(LCSClientType.plmnOperatorServices, null, LCSClientInternalID.broadcastService, lcsClientName, null,
+		LCSClientIDImpl lcsClientID = new LCSClientIDImpl(LCSClientType.plmnOperatorServices, null, LCSClientInternalID.broadcastService, lcsClientName, null,
 				null, null);
 
 		AsnOutputStream asnOS = new AsnOutputStream();

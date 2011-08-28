@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.supplementary;
+package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -35,14 +35,14 @@ import org.mobicents.protocols.ss7.map.GSMCharset;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.USSDString;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 
 /**
  * 
  * @author amit bhayani
  * 
  */
-public class USSDStringImpl implements USSDString {
+public class USSDStringImpl implements USSDString, MAPAsnPrimitive {
 
 	private String ussdString;
 	private byte[] encodedString;

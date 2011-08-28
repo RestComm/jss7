@@ -42,4 +42,8 @@ public interface MAPErrorMessageUnknownSubscriber extends MAPErrorMessage {
 
 	public UnknownSubscriberDiagnostic getUnknownSubscriberDiagnostic();
 
+	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+
+	public void setUnknownSubscriberDiagnostic(UnknownSubscriberDiagnostic unknownSubscriberDiagnostic);
+
 }

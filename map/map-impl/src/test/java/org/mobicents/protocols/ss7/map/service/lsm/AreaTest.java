@@ -74,7 +74,7 @@ public class AreaTest {
 		int tag = asn.readTag();
 		
 		Area area = new AreaImpl();
-		area.decodeAll(asn);
+		((AreaImpl)area).decodeAll(asn);
 		
 		assertNotNull(area.getAreaType());
 		assertEquals(AreaType.utranCellId, area.getAreaType());
@@ -92,7 +92,7 @@ public class AreaTest {
 		Area area = new AreaImpl(AreaType.utranCellId, new byte[]{0x09, 0x70, 0x71});
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
-		area.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, Tag.SEQUENCE);
+		((AreaImpl)area).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, Tag.SEQUENCE);
 		
 		byte[] encodedData = asnOS.toByteArray();
 		

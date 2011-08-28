@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.DeferredLocationEventType
 import org.mobicents.protocols.ss7.map.api.service.lsm.DeferredmtlrData;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
 import org.mobicents.protocols.ss7.map.api.service.lsm.TerminationCause;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * TODO : Add unit test
@@ -42,7 +43,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.TerminationCause;
  * @author amit bhayani
  * 
  */
-public class DeferredmtlrDataImpl implements DeferredmtlrData {
+public class DeferredmtlrDataImpl implements DeferredmtlrData, MAPAsnPrimitive {
 	
 	private static final int _TAG_TERMINATION_CAUSE = 0;
 	private static final int _TAG_LCS_LOCATION_INFO = 1;
@@ -173,7 +174,7 @@ public class DeferredmtlrDataImpl implements DeferredmtlrData {
 		}
 		
 		this.deferredLocationEventType = new DeferredLocationEventTypeImpl();
-		this.deferredLocationEventType.decodeAll(ais);
+		((DeferredLocationEventTypeImpl)this.deferredLocationEventType).decodeAll(ais);
 		
 		
 		while(true){
@@ -201,7 +202,7 @@ public class DeferredmtlrDataImpl implements DeferredmtlrData {
                                         MAPParsingComponentExceptionReason.MistypedParameter);
                 }
                 this.lcsLocationInfo = new LCSLocationInfoImpl(); 
-                this.lcsLocationInfo.decodeAll(ais);
+                ((LCSLocationInfoImpl)this.lcsLocationInfo).decodeAll(ais);
 			break;
 //              throw new MAPParsingComponentException(
 //              "Error while decoding DeferredmtlrData: Expected terminationCause [0] TerminationCause or lcsLocationInfo [1] LCSLocationInfo but received "
@@ -244,7 +245,7 @@ public class DeferredmtlrDataImpl implements DeferredmtlrData {
             throw new MAPException("Encdoing of DeferredmtlrData failed. Missing mandatory parameter deferredLocationEventType DeferredLocationEventType");
 		}
 		
-		this.deferredLocationEventType.encodeAll(asnOs);
+		((DeferredLocationEventTypeImpl)this.deferredLocationEventType).encodeAll(asnOs);
 		
 		try{
 			if(this.terminationCause != null){
@@ -257,7 +258,7 @@ public class DeferredmtlrDataImpl implements DeferredmtlrData {
 			throw new MAPException("AsnException when encoding Area: " + e.getMessage(), e);
 		}
 		if(this.lcsLocationInfo != null){
-			this.lcsLocationInfo.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_LOCATION_INFO);
+			((LCSLocationInfoImpl)this.lcsLocationInfo).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_LOCATION_INFO);
 		}		
 	}
 

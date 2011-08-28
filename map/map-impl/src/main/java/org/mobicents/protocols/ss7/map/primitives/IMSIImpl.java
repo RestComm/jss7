@@ -174,24 +174,6 @@ public class IMSIImpl extends TbcdString implements IMSI {
 		this.encodeString(asnOs, sb.toString());
 	}
 
-	@Deprecated
-	public void decode(AsnInputStream ansIS, int tagClass, boolean isPrimitive, int tag, int length) throws MAPParsingComponentException {
-
-		try {
-			this._decode(ansIS, length);
-
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding IMSI: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	@Deprecated
-	public void encode(AsnOutputStream asnOs) throws MAPException {
-		
-		this.encodeData(asnOs);
-	}
-
 	
 	@Override
 	public String toString() {
