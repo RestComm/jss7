@@ -80,6 +80,13 @@ public class GatewayTest {
 		// Clean up
 		ClientM3UAManagement clientM3UAMgmt = new ClientM3UAManagement();
 		clientM3UAMgmt.start();
+		
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		clientM3UAMgmt.getAppServers().clear();
 		clientM3UAMgmt.getAspfactories().clear();
 		clientM3UAMgmt.getDpcVsAsName().clear();
@@ -112,7 +119,7 @@ public class GatewayTest {
 		System.out.println("Starting Client");
 		client.start();
 
-		Thread.sleep(1000);
+		Thread.sleep(20000);
 
 		// Both AS and ASP should be ACTIVE now
 		assertEquals(AspState.ACTIVE, remAsp.getState());
@@ -191,14 +198,14 @@ public class GatewayTest {
 			// Define Route
 			clientM3UAMgmt.addRouteAsForDpc(123, "client-testas");
 
-			clientM3UAMgmt.startAsp("client-testasp");
+			clientM3UAMgmt.managementStartAsp("client-testasp");
 
 			started = true;
 			new Thread(this).start();
 		}
 
 		public void stop() throws Exception {
-			clientM3UAMgmt.stopAsp("client-testasp");
+			clientM3UAMgmt.managementStopAsp("client-testasp");
 			clientM3UAMgmt.stop();
 		}
 

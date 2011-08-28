@@ -35,7 +35,6 @@ import org.mobicents.protocols.ss7.m3ua.M3UASelectionKey;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.CommunicationListener.CommunicationState;
-import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
@@ -138,6 +137,12 @@ public class ClientM3UAProcess implements M3UAProcess {
 
 		for (FastList.Node<M3UASelectionKey> n = selections.head(), end = selections.tail(); (n = n.getNext()) != end;) {
 			M3UASelectionKey key = n.getValue();
+			
+//			if(!key.isValid()){
+//				//If Key is not valid, lets go to next one
+//				continue;
+//			}
+			
 			if (key.isReadable()) {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Transmitting data from M3UA channel to hardware");

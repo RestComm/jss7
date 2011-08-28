@@ -248,7 +248,7 @@ public class ServerM3UAManagement extends M3UAManagement {
 				throw new Exception(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_IPPORT_EXIST, ip, port));
 			}
 		}
-		AspFactory factory = new RemAspFactory(name, ip, port, this.m3uaProvider);
+		AspFactory factory = new RemAspFactory(name, ip, port, this.m3uaProvider, this);
 		aspfactories.add(factory);
 		
 		this.store();
@@ -263,7 +263,7 @@ public class ServerM3UAManagement extends M3UAManagement {
 	 * .String)
 	 */
 	@Override
-	public void startAsp(String aspName) throws Exception {
+	public void managementStartAsp(String aspName) throws Exception {
 		throw new UnsupportedOperationException("Start ASP not supported in SGW");
 	}
 
@@ -275,7 +275,7 @@ public class ServerM3UAManagement extends M3UAManagement {
 	 * .String)
 	 */
 	@Override
-	public void stopAsp(String aspName) throws Exception {
+	public void managementStopAsp(String aspName) throws Exception {
 		throw new UnsupportedOperationException("Stop ASP not supported in SGW");
 	}
 
@@ -325,5 +325,13 @@ public class ServerM3UAManagement extends M3UAManagement {
 				logger.error("Error while pupoulating Server Router loading from xml file", e);
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement#startAsp(org.mobicents.protocols.ss7.m3ua.impl.AspFactory)
+	 */
+	@Override
+	public void startAsp(AspFactory aspFactory) {
+		//We do nothing here
 	}
 }

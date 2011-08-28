@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.AspState;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
 import org.mobicents.protocols.ss7.m3ua.impl.TransitionState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
@@ -76,20 +77,22 @@ public class LocalAspFactory extends AspFactory {
 
 	private static final String REM_IP = "remIp";
 	private static final String REM_PORT = "remPort";
+	//private static final String CHANNEL_CONNECTED = "chanConn";
 
 	private static long ASP_ID = 1l;
 
 	private String remIp;
 	private int remPort;
+	boolean channelConnected = false;
 
 	private ASPIdentifier aspid;
-
+	
 	public LocalAspFactory() {
 		super();
 	}
 
-	public LocalAspFactory(String name, String localIp, int localPort, String remIp, int remPort, M3UAProvider provider) {
-		super(name, localIp, localPort, provider);
+	public LocalAspFactory(String name, String localIp, int localPort, String remIp, int remPort, M3UAProvider provider, M3UAManagement m3uaManagement) {
+		super(name, localIp, localPort, provider, m3uaManagement);
 		this.remIp = remIp;
 		this.remPort = remPort;
 		this.aspid = this.m3UAProvider.getParameterFactory().createASPIdentifier(this.generateId());
@@ -119,18 +122,42 @@ public class LocalAspFactory extends AspFactory {
 	@Override
 	public void stop() {
 		this.started = false;
-		ASPDown aspDown = (ASPDown) this.m3UAProvider.getMessageFactory().createMessage(
-				MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
-		this.write(aspDown);
-		for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
-			Asp asp = n.getValue();
 
+		if (this.channel != null) {
 			try {
-				asp.getFSM().signal(TransitionState.ASP_DOWN_SENT);
-				As as = asp.getAs();
-				as.aspStateChange(asp, TransitionState.ASP_DOWN);
-			} catch (UnknownTransitionException e) {
-				logger.error(e.getMessage(), e);
+				this.channelConnected = this.channel.isConnected();
+			} catch (IOException e1) {
+				logger.error(String.format("Error while checking if channel is connected for LocalAspfactory=%s",
+						this.name));
+			}
+		}
+
+		if (this.channelConnected) {
+			ASPDown aspDown = (ASPDown) this.m3UAProvider.getMessageFactory().createMessage(
+					MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
+			this.write(aspDown);
+			for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
+				Asp asp = n.getValue();
+
+				try {
+					asp.getFSM().signal(TransitionState.ASP_DOWN_SENT);
+					As as = asp.getAs();
+					as.aspStateChange(asp, TransitionState.ASP_DOWN);
+				} catch (UnknownTransitionException e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		} else {
+			for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
+				Asp asp = n.getValue();
+
+				try {
+					asp.getFSM().signal(TransitionState.COMM_DOWN);
+					As as = asp.getAs();
+					as.aspStateChange(asp, TransitionState.ASP_DOWN);
+				} catch (UnknownTransitionException e) {
+					logger.error(e.getMessage(), e);
+				}
 			}
 		}
 	}
@@ -471,15 +498,15 @@ public class LocalAspFactory extends AspFactory {
 			}
 
 			// Close Channel if management stopped this
-			if (channel != null) {
+			if (channel != null && this.channelConnected) {
 				try {
 					channel.close();
 					if (logger.isDebugEnabled()) {
 						logger.debug(String.format("Closed the channel for LocalAspFactory name=%s", this.getName()));
 					}
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error(String.format("IOException when trying to close channel for LocalAspFactory=%s",
+							this.name));
 				}
 			}
 		}
@@ -532,6 +559,7 @@ public class LocalAspFactory extends AspFactory {
 	}
 
 	private void handleCommUp() {
+		this.channelConnected = true;
 		ASPUp aspUp = (ASPUp) this.m3UAProvider.getMessageFactory().createMessage(MessageClass.ASP_STATE_MAINTENANCE,
 				MessageType.ASP_UP);
 		aspUp.setASPIdentifier(this.aspid);
@@ -548,6 +576,10 @@ public class LocalAspFactory extends AspFactory {
 	}
 
 	private void handleCommDown() {
+		
+		logger.warn(String.format("Communication channel down for LocalAspFactroy=%s", this.name));
+		
+		this.channelConnected = false;
 		for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
 			Asp asp = n.getValue();
 			try {
@@ -556,6 +588,19 @@ public class LocalAspFactory extends AspFactory {
 			} catch (UnknownTransitionException e) {
 				logger.error(e.getMessage(), e);
 			}
+		}
+
+		if (this.channel != null) {
+			try {
+				this.channel.close();
+			} catch (IOException e) {
+				logger.error(String.format("Error while closing channel for LocalAspFactory=%s", this.name));
+			}
+		}
+		
+		//If communication is down not because of management reason, try to bring it up again
+		if(this.started){
+			this.m3uaManagement.startAsp(this);
 		}
 	}
 
@@ -641,6 +686,8 @@ public class LocalAspFactory extends AspFactory {
 			ASP_FACTORY_XML.read(xml, localAspFactory);
 			localAspFactory.remIp = xml.getAttribute(REM_IP).toString();
 			localAspFactory.remPort = xml.getAttribute(REM_PORT).toInt();
+			// localAspFactory.channelConnected =
+			// xml.getAttribute(CHANNEL_CONNECTED).toBoolean();
 		}
 
 		@Override
@@ -649,6 +696,8 @@ public class LocalAspFactory extends AspFactory {
 			ASP_FACTORY_XML.write(localAspFactory, xml);
 			xml.setAttribute(REM_IP, localAspFactory.remIp);
 			xml.setAttribute(REM_PORT, localAspFactory.remPort);
+			// xml.setAttribute(CHANNEL_CONNECTED,
+			// localAspFactory.channelConnected);
 		}
 	};
 }

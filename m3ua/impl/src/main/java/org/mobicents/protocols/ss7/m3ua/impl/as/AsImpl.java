@@ -73,6 +73,7 @@ public class AsImpl extends As {
 		// ******************************************************************/
 		fsm.createTransition(TransitionState.AS_STATE_CHANGE_INACTIVE, AsState.DOWN.toString(),
 				AsState.INACTIVE.toString());
+		fsm.createTransition(TransitionState.ASP_DOWN, AsState.DOWN.toString(), AsState.DOWN.toString());
 
 		// ******************************************************************/
 		// STATE INACTIVE /

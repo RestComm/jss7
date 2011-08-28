@@ -29,6 +29,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import javolution.text.TextBuilder;
 import javolution.util.FastList;
@@ -72,6 +76,11 @@ public class ClientM3UAManagement extends M3UAManagement {
 	// Stores DPC vs List of AS names. This is explicitly for persisting to xml
 	private FastMap<Integer, FastList<String>> dpcVsAsName = new FastMap<Integer, FastList<String>>();
 
+	// Stores the Future for every ASP that needs to be started
+	private volatile FastMap<String, ScheduledFuture> aspVsscheduledFuture = new FastMap<String, ScheduledFuture>();
+
+	private final ScheduledExecutorService schedExecService = Executors.newSingleThreadScheduledExecutor();
+
 	/**
 	 * 
 	 */
@@ -109,6 +118,9 @@ public class ClientM3UAManagement extends M3UAManagement {
 		super.stop();
 
 		// selector.close();
+
+		// Stop the Exexcutor service
+		this.schedExecService.shutdownNow();
 
 		this.storeRoute();
 	}
@@ -235,7 +247,7 @@ public class ClientM3UAManagement extends M3UAManagement {
 		}
 
 		String rcKey = args[3];
-		if (rcKey == null || !rcKey.equals("rc") ) {
+		if (rcKey == null || !rcKey.equals("rc")) {
 			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
 		}
 
@@ -326,7 +338,7 @@ public class ClientM3UAManagement extends M3UAManagement {
 			}
 		}
 
-		AspFactory factory = new LocalAspFactory(name, ip, port, remIp, remPort, this.m3uaProvider);
+		AspFactory factory = new LocalAspFactory(name, ip, port, remIp, remPort, this.m3uaProvider, this);
 		aspfactories.add(factory);
 
 		this.store();
@@ -334,7 +346,7 @@ public class ClientM3UAManagement extends M3UAManagement {
 		return factory;
 	}
 
-	public void startAsp(String aspName) throws Exception {
+	public void managementStartAsp(String aspName) throws Exception {
 
 		LocalAspFactory localAspFact = (LocalAspFactory) this.getAspFactory(aspName);
 
@@ -346,6 +358,29 @@ public class ClientM3UAManagement extends M3UAManagement {
 		if (localAspFact.getAspList().size() == 0) {
 			throw new Exception(String.format("ASP name=%s not assigned to any AS", aspName));
 		}
+
+		if (localAspFact.getStatus()) {
+			throw new Exception(String.format("ASP name=%s already started", aspName));
+		}
+
+		localAspFact.start();
+		this.store();
+
+		this.startAsp(localAspFact);
+	}
+
+	public void startAsp(AspFactory aspFactory) {
+		if (!(aspFactory instanceof LocalAspFactory)) {
+			logger.error("Trying to start the AspFactory that is not instance of LocalAspFactory. Will not be started");
+			return;
+		}
+		String aspName = aspFactory.getName();
+		ScheduledFuture future = this.schedExecService.scheduleWithFixedDelay(new LocalAspFactoryStarter(
+				(LocalAspFactory) aspFactory), 2, 30, TimeUnit.SECONDS);
+		this.aspVsscheduledFuture.put(aspName, future);
+	}
+
+	private LocalAspFactory _start(LocalAspFactory localAspFact) throws Exception {
 
 		M3UAChannel channel = this.m3uaProvider.openChannel();
 		channel.bind(new InetSocketAddress(localAspFact.getIp(), localAspFact.getPort()));
@@ -366,16 +401,16 @@ public class ClientM3UAManagement extends M3UAManagement {
 		localAspFact.setChannel(channel);
 		((SctpChannel) channel).setNotificationHandler(localAspFact.getAssociationHandler());
 
-		localAspFact.start();
 		logger.info(String.format("Started ASP name=%s local-ip=%s local-pot=%d rem-ip=%s rem-port=%d",
 				localAspFact.getName(), localAspFact.getIp(), localAspFact.getPort(), localAspFact.getRemIp(),
 				localAspFact.getRemPort()));
-		this.store();
 
 		localAspFact.onCommStateChange(CommunicationState.UP);
+
+		return localAspFact;
 	}
 
-	public void stopAsp(String aspName) throws Exception {
+	public void managementStopAsp(String aspName) throws Exception {
 		LocalAspFactory localAspFact = (LocalAspFactory) this.getAspFactory(aspName);
 
 		if (localAspFact == null) {
@@ -383,7 +418,17 @@ public class ClientM3UAManagement extends M3UAManagement {
 		}
 
 		localAspFact.stop();
+
+		ScheduledFuture future = this.aspVsscheduledFuture.get(aspName);
+		if (future != null) {
+			future.cancel(true);
+		}
+
 		this.store();
+		
+		logger.info(String.format("Stopped ASP name=%s local-ip=%s local-pot=%d rem-ip=%s rem-port=%d",
+				localAspFact.getName(), localAspFact.getIp(), localAspFact.getPort(), localAspFact.getRemIp(),
+				localAspFact.getRemPort()));
 	}
 
 	private AspFactory getAspFactory(String aspName) {
@@ -451,6 +496,32 @@ public class ClientM3UAManagement extends M3UAManagement {
 		} catch (XMLStreamException ex) {
 			// this.logger.info(
 			// "Error while re-creating Linksets from persisted file", ex);
+		}
+	}
+
+	/**
+	 * Tries to start the AspFactory. If successful cancels the schedule.
+	 * 
+	 * @author amit bhayani
+	 * 
+	 */
+	class LocalAspFactoryStarter implements Runnable {
+		LocalAspFactory localAspFact = null;
+
+		LocalAspFactoryStarter(LocalAspFactory localAspFact) {
+			this.localAspFact = localAspFact;
+		}
+
+		public void run() {
+			try {
+				LocalAspFactory factory = _start(localAspFact);
+				// If not exception means it started correctly, lets stop the
+				// schedule
+				ScheduledFuture future = aspVsscheduledFuture.get(this.localAspFact.getName());
+				future.cancel(true);
+			} catch (Exception e) {
+				logger.error(String.format("Error while starting ASPFactory=%s", this.localAspFact.getName()), e);
+			}
 		}
 	}
 }

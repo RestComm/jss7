@@ -166,7 +166,11 @@ public class ServerM3UAProcess implements M3UAProcess {
 		for (FastList.Node<M3UASelectionKey> n = selections.head(), end = selections.tail(); (n = n.getNext()) != end;) {
 
 			M3UASelectionKey key = n.getValue();
-
+			
+//			if(!key.isValid()){
+//				//If Key is not valid, lets go to next one
+//				continue;
+//			}
 			if (key.isAcceptable()) {
 				accept((M3UAServerChannel) key.channel());
 			} else {

@@ -62,6 +62,8 @@ public class AspImpl extends Asp {
 		// ******************************************************************/
 		fsm.createTransition(TransitionState.COMM_UP, AspState.DOWN.toString(), AspState.UP_SENT.toString());
 		// .setHandler(new AspTransDwnToAspUpSnt(this, this.fsm));
+		
+		fsm.createTransition(TransitionState.COMM_DOWN, AspState.DOWN.toString(), AspState.DOWN.toString());
 
 		// ******************************************************************/
 		// UP_SENT/

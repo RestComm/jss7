@@ -139,13 +139,13 @@ public class M3UAShellExecutor implements ShellExecutor {
 
 				if (raspCmd.equals("start")) {
 					String aspName = args[3];
-					this.m3uaManagement.startAsp(aspName);
+					this.m3uaManagement.managementStartAsp(aspName);
 					return String.format(M3UAOAMMessages.ASP_START_SUCESSFULL, aspName);
 				}
 
 				if (raspCmd.equals("stop")) {
 					String aspName = args[3];
-					this.m3uaManagement.stopAsp(aspName);
+					this.m3uaManagement.managementStopAsp(aspName);
 					return String.format(M3UAOAMMessages.ASP_STOP_SUCESSFULL, aspName);
 				}
 

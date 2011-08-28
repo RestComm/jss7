@@ -60,6 +60,7 @@ public abstract class AspFactory implements CommunicationListener, XMLSerializab
 	protected String ip;
 	protected int port;
 	protected M3UAProvider m3UAProvider;
+	protected M3UAManagement m3uaManagement;
 
 	protected boolean started = false;
 
@@ -74,12 +75,13 @@ public abstract class AspFactory implements CommunicationListener, XMLSerializab
 
 	}
 
-	public AspFactory(String name, String ip, int port, M3UAProvider m3UAProvider) {
+	public AspFactory(String name, String ip, int port, M3UAProvider m3UAProvider, M3UAManagement m3uaManagement) {
 		this.name = name;
 		this.ip = ip;
 		this.port = port;
 
 		this.m3UAProvider = m3UAProvider;
+		this.m3uaManagement = m3uaManagement;
 	}
 
 	public abstract void start();
@@ -92,6 +94,13 @@ public abstract class AspFactory implements CommunicationListener, XMLSerializab
 
 	public void setM3UAProvider(M3UAProvider m3uaProvider) {
 		m3UAProvider = m3uaProvider;
+	}
+
+	/**
+	 * @param m3uaManagement the m3uaManagement to set
+	 */
+	public void setM3uaManagement(M3UAManagement m3uaManagement) {
+		this.m3uaManagement = m3uaManagement;
 	}
 
 	public String getName() {

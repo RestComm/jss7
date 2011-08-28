@@ -182,9 +182,32 @@ public abstract class M3UAManagement {
 		return asp;
 	}
 
-	public abstract void startAsp(String aspName) throws Exception;
+	/**
+	 * This method should be called by management to start the ASP
+	 * 
+	 * @param aspName
+	 *            The name of the ASP to be started
+	 * @throws Exception
+	 */
+	public abstract void managementStartAsp(String aspName) throws Exception;
 
-	public abstract void stopAsp(String aspName) throws Exception;
+	/**
+	 * This method should be called by management to stop the ASP
+	 * 
+	 * @param aspName
+	 *            The name of the ASP to be stopped
+	 * @throws Exception
+	 */
+	public abstract void managementStopAsp(String aspName) throws Exception;
+
+	/**
+	 * This method starts the ASP. Not for management but for taking care of
+	 * internal processes
+	 * 
+	 * @param aspFactory
+	 *            The AspFactory to be started
+	 */
+	public abstract void startAsp(AspFactory aspFactory);
 
 	/**
 	 * Persist
@@ -226,6 +249,7 @@ public abstract class M3UAManagement {
 			for (FastList.Node<AspFactory> n = aspfactories.head(), end = aspfactories.tail(); (n = n.getNext()) != end;) {
 				AspFactory factory = n.getValue();
 				factory.setM3UAProvider(m3uaProvider);
+				factory.setM3uaManagement(this);
 			}
 
 			// Create Asp's and assign to each of the AS
@@ -259,7 +283,7 @@ public abstract class M3UAManagement {
 				AspFactory factory = n.getValue();
 				if (factory.getStatus()) {
 					try {
-						startAsp(factory.getName());
+						startAsp(factory);
 					} catch (Exception e) {
 						logger.error(
 								String.format("Error starting the AspFactory=%s while loading from XML",

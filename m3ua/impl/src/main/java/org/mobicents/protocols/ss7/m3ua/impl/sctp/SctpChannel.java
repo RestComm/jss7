@@ -150,7 +150,7 @@ public class SctpChannel extends M3UAChannelImpl {
 	 */
 	@Override
 	public void close() throws IOException {
-		((com.sun.nio.sctp.SctpChannel) channel).shutdown();
+		((com.sun.nio.sctp.SctpChannel) channel).close();
 	}
 
 	/*

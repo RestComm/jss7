@@ -76,40 +76,48 @@ public class M3UASelectorImpl implements M3UASelector {
 		selector.selectNow();
 		Set<SelectionKey> selection = selector.selectedKeys();
 		for (SelectionKey key : selection) {
-			if (key.isAcceptable()) {
-				M3UASelectionKeyImpl k = (M3UASelectionKeyImpl) key.attachment();
-				list.add(k);
-			} else {
-
-				if (key.isReadable()) {
+//			if(!key.isValid()){
+//				//Move to next key if this one is not valid
+//				continue;
+//			}
+			try{
+				if (key.isAcceptable()) {
 					M3UASelectionKeyImpl k = (M3UASelectionKeyImpl) key.attachment();
-
-					try {
-						((M3UAChannelImpl) k.channel()).doRead();
-					} catch (IOException ex) {
-						((M3UAChannelImpl) k.channel()).ioException = ex;
+					list.add(k);
+				} else {
+	
+					if (key.isReadable()) {
+						M3UASelectionKeyImpl k = (M3UASelectionKeyImpl) key.attachment();
+	
+						try {
+							((M3UAChannelImpl) k.channel()).doRead();
+						} catch (IOException ex) {
+							((M3UAChannelImpl) k.channel()).ioException = ex;
+						}
+	
+						if (k.isReadable()) {
+							list.add(k);
+						}
+	
 					}
-
-					if (k.isReadable()) {
-						list.add(k);
+					
+					if (key.isWritable()) {
+						// write....
+						M3UASelectionKeyImpl k = (M3UASelectionKeyImpl) key.attachment();
+	
+						try {
+							((M3UAChannelImpl) k.channel()).doWrite();
+						} catch (IOException ex) {
+							((M3UAChannelImpl) k.channel()).ioException = ex;
+						}
+	
+						if (k.isWritable()) {
+							list.add(k);
+						}
 					}
-
 				}
-				
-				if (key.isWritable()) {
-					// write....
-					M3UASelectionKeyImpl k = (M3UASelectionKeyImpl) key.attachment();
-
-					try {
-						((M3UAChannelImpl) k.channel()).doWrite();
-					} catch (IOException ex) {
-						((M3UAChannelImpl) k.channel()).ioException = ex;
-					}
-
-					if (k.isWritable()) {
-						list.add(k);
-					}
-				}
+			} catch(java.nio.channels.CancelledKeyException e){
+				//Lets ignore? may be the far end closed the connection. In next iteration it will be removed anyway
 			}
 		}
 		selection.clear();

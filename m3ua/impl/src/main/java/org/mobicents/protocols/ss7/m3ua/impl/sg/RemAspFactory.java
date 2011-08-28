@@ -32,6 +32,7 @@ import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.AspState;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
 import org.mobicents.protocols.ss7.m3ua.impl.TransitionState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
@@ -65,8 +66,8 @@ public class RemAspFactory extends AspFactory {
 		super();
 	}
 
-	public RemAspFactory(String name, String ip, int port, M3UAProvider provider) {
-		super(name, ip, port, provider);
+	public RemAspFactory(String name, String ip, int port, M3UAProvider provider, M3UAManagement m3uaManagement) {
+		super(name, ip, port, provider, m3uaManagement);
 	}
 
 	@Override

@@ -106,5 +106,15 @@ public interface M3UASelectionKey {
      *         there is no attachment
      */
     public Object attachment();
+    
+    /**
+     * Tells whether or not this key is valid.
+     *
+     * <p> A key is valid upon creation and remains so until it is cancelled,
+     * its channel is closed, or its selector is closed.  </p>
+     *
+     * @return  <tt>true</tt> if, and only if, this key is valid
+     */
+    public abstract boolean isValid();
 
 }

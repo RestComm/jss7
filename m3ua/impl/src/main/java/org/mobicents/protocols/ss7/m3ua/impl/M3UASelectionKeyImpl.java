@@ -104,4 +104,12 @@ public class M3UASelectionKeyImpl implements M3UASelectionKey {
     public Object attachment() {
         return this.object;
     }
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.m3ua.M3UASelectionKey#isValid()
+	 */
+	@Override
+	public boolean isValid() {
+		return this.key.isValid();
+	}
 }
