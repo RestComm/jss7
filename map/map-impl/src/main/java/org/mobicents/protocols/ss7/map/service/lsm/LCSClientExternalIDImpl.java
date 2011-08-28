@@ -161,7 +161,8 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 				break;
 			default:
 //				throw new MAPParsingComponentException("Decoding LCSClientExternalID failed. Expected externalAddress [0] or extensionContainer [1] but found "
-//						+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);				
+//						+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);			
+				ais.advanceElement();
 			}
 		}
 	}

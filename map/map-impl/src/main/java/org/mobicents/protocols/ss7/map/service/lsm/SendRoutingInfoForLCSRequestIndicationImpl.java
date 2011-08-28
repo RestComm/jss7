@@ -235,6 +235,7 @@ public class SendRoutingInfoForLCSRequestIndicationImpl extends LsmMessageImpl i
 				break;
 			default:
 				// DO we care?
+				ais.advanceElement();
 				break;
 			}
 		}

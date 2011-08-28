@@ -45,7 +45,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
  * @author sergey vetyutnev
  * 
  */
-public class SendRoutingInfoForSMRequestIndicationImpl extends SmsServiceImpl implements SendRoutingInfoForSMRequestIndication {
+public class SendRoutingInfoForSMRequestIndicationImpl extends SmsMessageImpl implements SendRoutingInfoForSMRequestIndication {
 	
 	protected static final int _TAG_msisdn = 0; 
 	protected static final int _TAG_sm_RP_PRI = 1; 

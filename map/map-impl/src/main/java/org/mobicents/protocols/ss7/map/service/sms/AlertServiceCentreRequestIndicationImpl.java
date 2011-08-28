@@ -42,7 +42,7 @@ import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
  * @author sergey vetyutnev
  * 
  */
-public class AlertServiceCentreRequestIndicationImpl extends SmsServiceImpl implements AlertServiceCentreRequestIndication {
+public class AlertServiceCentreRequestIndicationImpl extends SmsMessageImpl implements AlertServiceCentreRequestIndication {
 
 	private ISDNAddressString msisdn;
 	private AddressString serviceCentreAddress;

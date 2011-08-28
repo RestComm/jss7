@@ -323,6 +323,7 @@ public class SendRoutingInfoForLCSResponseIndicationImpl extends LsmMessageImpl 
 				this.additionalVGmlcAddress = ais.readOctetStringData(length1);
 				break;
 			default:
+				ais.advanceElement();
 				break;
 			}
 		}// while

@@ -30,7 +30,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponseIndication;
 
-public class AlertServiceCentreResponseIndicationImpl extends SmsServiceImpl implements AlertServiceCentreResponseIndication {
+public class AlertServiceCentreResponseIndicationImpl extends SmsMessageImpl implements AlertServiceCentreResponseIndication {
 
 	@Override
 	public int getTag() throws MAPException {

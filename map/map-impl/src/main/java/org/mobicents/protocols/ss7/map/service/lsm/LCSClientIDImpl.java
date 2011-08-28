@@ -326,6 +326,7 @@ public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 				break;
 			default:
 				// Do we care?
+				ais.advanceElement();
 			}
 		}// while
 	}

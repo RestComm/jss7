@@ -609,6 +609,7 @@ public class ProvideSubscriberLocationRequestIndicationImpl extends LsmMessageIm
 				break;
 			default:
 				// Do we care?
+				ais.advanceElement();
 				break;
 			}
 		}// end of while

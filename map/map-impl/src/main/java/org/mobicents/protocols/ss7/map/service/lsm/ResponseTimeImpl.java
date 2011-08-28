@@ -159,6 +159,16 @@ public class ResponseTimeImpl implements ResponseTime, MAPAsnPrimitive {
 		int length1 = ais.readLength();
 		int category = (int) ais.readIntegerData(length1);
 		this.responseTimeCategory = ResponseTimeCategory.getResponseTimeCategory(category);
+		
+		while (true) {
+			if (ais.available() == 0)
+				break;
+			switch (ais.readTag()) {
+			default:
+				ais.advanceElement();
+				break;
+			}
+		}
 
 	}
 

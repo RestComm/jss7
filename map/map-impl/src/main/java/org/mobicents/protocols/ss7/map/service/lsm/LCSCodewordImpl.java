@@ -191,6 +191,17 @@ public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 
 		this.lcsCodewordString = new USSDStringImpl();
 		((USSDStringImpl)this.lcsCodewordString).decodeAll(ais);
+		
+
+		while (true) {
+			if (ais.available() == 0)
+				break;
+			switch (ais.readTag()) {
+			default:
+				ais.advanceElement();
+				break;
+			}
+		}
 	}
 
 	/*

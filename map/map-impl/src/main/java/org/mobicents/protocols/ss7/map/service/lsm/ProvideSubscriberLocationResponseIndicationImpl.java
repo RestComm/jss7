@@ -414,6 +414,7 @@ public class ProvideSubscriberLocationResponseIndicationImpl extends LsmMessageI
 				break;
 			default:
 				// Do we care?
+				ais.advanceElement();
 				break;
 			}
 		}

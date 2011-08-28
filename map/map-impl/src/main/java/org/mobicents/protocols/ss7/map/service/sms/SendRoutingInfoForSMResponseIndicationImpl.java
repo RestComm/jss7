@@ -38,7 +38,7 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRespo
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
-public class SendRoutingInfoForSMResponseIndicationImpl extends SmsServiceImpl implements SendRoutingInfoForSMResponseIndication {
+public class SendRoutingInfoForSMResponseIndicationImpl extends SmsMessageImpl implements SendRoutingInfoForSMResponseIndication {
 	
 	protected static final int _TAG_LocationInfoWithLMSI = 0; 
 	protected static final int _TAG_ExtensionContainer = 4; 

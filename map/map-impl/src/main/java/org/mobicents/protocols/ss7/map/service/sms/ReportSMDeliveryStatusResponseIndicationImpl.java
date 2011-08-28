@@ -42,7 +42,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
  * @author sergey vetyutnev
  * 
  */
-public class ReportSMDeliveryStatusResponseIndicationImpl extends SmsServiceImpl implements ReportSMDeliveryStatusResponseIndication {
+public class ReportSMDeliveryStatusResponseIndicationImpl extends SmsMessageImpl implements ReportSMDeliveryStatusResponseIndication {
 
 	private ISDNAddressString storedMSISDN;
 	private MAPExtensionContainer extensionContainer;

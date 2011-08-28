@@ -179,6 +179,17 @@ public class AreaImpl implements Area, MAPAsnPrimitive {
 		}
 
 		this.areaIdentification = ais.readOctetString();
+		
+
+		while (true) {
+			if (ais.available() == 0)
+				break;
+			switch (ais.readTag()) {
+			default:
+				ais.advanceElement();
+				break;
+			}
+		}
 	}
 
 	/*

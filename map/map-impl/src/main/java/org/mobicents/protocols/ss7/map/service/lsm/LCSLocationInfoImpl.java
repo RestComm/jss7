@@ -315,6 +315,7 @@ public class LCSLocationInfoImpl implements LCSLocationInfo, MAPAsnPrimitive {
 			default:
 //				throw new MAPParsingComponentException("Error while decoding LCSLocationInfo: Expected tags 0 - 5 but found" + p.getTag(),
 //						MAPParsingComponentExceptionReason.MistypedParameter);
+				ais.advanceElement();
 			}
 		}
 

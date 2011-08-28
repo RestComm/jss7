@@ -45,7 +45,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
  * @author sergey vetyutnev
  * 
  */
-public class ReportSMDeliveryStatusRequestIndicationImpl extends SmsServiceImpl implements ReportSMDeliveryStatusRequestIndication {
+public class ReportSMDeliveryStatusRequestIndicationImpl extends SmsMessageImpl implements ReportSMDeliveryStatusRequestIndication {
 	
 	protected static final int _TAG_AbsentSubscriberDiagnosticSM = 0; 
 	protected static final int _TAG_ExtensionContainer = 1; 

@@ -43,7 +43,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
  * @author sergey vetyutnev
  * 
  */
-public class InformServiceCentreRequestIndicationImpl extends SmsServiceImpl implements InformServiceCentreRequestIndication {
+public class InformServiceCentreRequestIndicationImpl extends SmsMessageImpl implements InformServiceCentreRequestIndication {
 	
 	protected static final int _TAG_AdditionalAbsentSubscriberDiagnosticSM = 0;
 

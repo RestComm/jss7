@@ -230,6 +230,7 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 				// MAPParsingComponentException("Decoding LCSClientExternalID failed. Expected externalAddress [0] or extensionContainer [1] but found "
 				// + p.getTag(),
 				// MAPParsingComponentExceptionReason.MistypedParameter);
+				ais.advanceElement();
 			}
 		}
 	}

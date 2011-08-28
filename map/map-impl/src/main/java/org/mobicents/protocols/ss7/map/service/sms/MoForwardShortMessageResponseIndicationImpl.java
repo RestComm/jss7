@@ -40,7 +40,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
  * @author sergey vetyutnev
  * 
  */
-public class MoForwardShortMessageResponseIndicationImpl extends SmsServiceImpl implements MoForwardShortMessageResponseIndication {
+public class MoForwardShortMessageResponseIndicationImpl extends SmsMessageImpl implements MoForwardShortMessageResponseIndication {
 
 	private byte[] sm_RP_UI;
 	private MAPExtensionContainer extensionContainer;

@@ -266,6 +266,7 @@ public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 				break;
 			default:
 				// Do we care?
+				ais.advanceElement();
 				break;
 			}
 		}// while

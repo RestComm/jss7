@@ -44,7 +44,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
  * 
  */
 public class DeferredmtlrDataImpl implements DeferredmtlrData, MAPAsnPrimitive {
-	
+
 	private static final int _TAG_TERMINATION_CAUSE = 0;
 	private static final int _TAG_LCS_LOCATION_INFO = 1;
 
@@ -104,32 +104,47 @@ public class DeferredmtlrDataImpl implements DeferredmtlrData, MAPAsnPrimitive {
 		return this.lcsLocationInfo;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
 	 */
 	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
+	 * ()
 	 */
 	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
+	 * ()
 	 */
 	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
+	 * (org.mobicents.protocols.asn.AsnInputStream)
 	 */
 	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
@@ -142,11 +157,15 @@ public class DeferredmtlrDataImpl implements DeferredmtlrData, MAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
-		}		
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
+	 * (org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
 	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
@@ -158,71 +177,80 @@ public class DeferredmtlrDataImpl implements DeferredmtlrData, MAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
-		}				
+		}
 	}
-	
+
 	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		
+
 		AsnInputStream ais = asnIS.readSequenceStreamData(length);
-		
+
 		int tag = ais.readTag();
-		
+
 		if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.STRING_BIT) {
 			throw new MAPParsingComponentException(
 					"Error while decoding DeferredmtlrData: Parameter [deferredLocationEventType DeferredLocationEventType] bad tag class, tag or not primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
-		
+
 		this.deferredLocationEventType = new DeferredLocationEventTypeImpl();
-		((DeferredLocationEventTypeImpl)this.deferredLocationEventType).decodeAll(ais);
-		
-		
-		while(true){
+		((DeferredLocationEventTypeImpl) this.deferredLocationEventType).decodeAll(ais);
+
+		while (true) {
 			if (ais.available() == 0)
 				break;
-			
+
 			tag = ais.readTag();
-			switch(tag){
+			switch (tag) {
 			case _TAG_TERMINATION_CAUSE:
-				 // terminationCause [0] TerminationCause OPTIONAL,
-                if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-                        throw new MAPParsingComponentException(
-                                        "Decoding of DeferredmtlrData failed. Decoding of parameter[terminationCause [0] TerminationCause] has Invalid Tag Class or not primitive",
-                                        MAPParsingComponentExceptionReason.MistypedParameter);
-                }
-                int i1 = (int) ais.readInteger();
-                
-                this.terminationCause = TerminationCause.getTerminationCause(i1);
+				// terminationCause [0] TerminationCause OPTIONAL,
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
+					throw new MAPParsingComponentException(
+							"Decoding of DeferredmtlrData failed. Decoding of parameter[terminationCause [0] TerminationCause] has Invalid Tag Class or not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				}
+				int i1 = (int) ais.readInteger();
+
+				this.terminationCause = TerminationCause.getTerminationCause(i1);
 				break;
 			case _TAG_LCS_LOCATION_INFO:
-				 // lcsLocationInfo [1] LCSLocationInfo
-                if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive()) {
-                        throw new MAPParsingComponentException(
-                                        "Decoding of DeferredmtlrData failed. Decoding of parameter[lcsLocationInfo [1] LCSLocationInfo] has Invalid Tag Class or not primitive",
-                                        MAPParsingComponentExceptionReason.MistypedParameter);
-                }
-                this.lcsLocationInfo = new LCSLocationInfoImpl(); 
-                ((LCSLocationInfoImpl)this.lcsLocationInfo).decodeAll(ais);
-			break;
+				// lcsLocationInfo [1] LCSLocationInfo
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive()) {
+					throw new MAPParsingComponentException(
+							"Decoding of DeferredmtlrData failed. Decoding of parameter[lcsLocationInfo [1] LCSLocationInfo] has Invalid Tag Class or not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				}
+				this.lcsLocationInfo = new LCSLocationInfoImpl();
+				((LCSLocationInfoImpl) this.lcsLocationInfo).decodeAll(ais);
+				break;
+			default:
 //              throw new MAPParsingComponentException(
 //              "Error while decoding DeferredmtlrData: Expected terminationCause [0] TerminationCause or lcsLocationInfo [1] LCSLocationInfo but received "
 //                              + p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
-				default:
+
+				ais.advanceElement();
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-		
+
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
@@ -236,32 +264,34 @@ public class DeferredmtlrDataImpl implements DeferredmtlrData, MAPAsnPrimitive {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
+	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.deferredLocationEventType == null) {
-            throw new MAPException("Encdoing of DeferredmtlrData failed. Missing mandatory parameter deferredLocationEventType DeferredLocationEventType");
+			throw new MAPException("Encdoing of DeferredmtlrData failed. Missing mandatory parameter deferredLocationEventType DeferredLocationEventType");
 		}
-		
-		((DeferredLocationEventTypeImpl)this.deferredLocationEventType).encodeAll(asnOs);
-		
-		try{
-			if(this.terminationCause != null){
+
+		((DeferredLocationEventTypeImpl) this.deferredLocationEventType).encodeAll(asnOs);
+
+		try {
+			if (this.terminationCause != null) {
 				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_TERMINATION_CAUSE, this.terminationCause.getCause());
 			}
-			
+
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding Area: " + e.getMessage(), e);
 		} catch (AsnException e) {
 			throw new MAPException("AsnException when encoding Area: " + e.getMessage(), e);
 		}
-		if(this.lcsLocationInfo != null){
-			((LCSLocationInfoImpl)this.lcsLocationInfo).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_LOCATION_INFO);
-		}		
+		if (this.lcsLocationInfo != null) {
+			((LCSLocationInfoImpl) this.lcsLocationInfo).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_LOCATION_INFO);
+		}
 	}
-
-
 
 }

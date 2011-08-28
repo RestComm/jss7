@@ -30,7 +30,7 @@ import org.mobicents.protocols.ss7.map.api.MAPMessage;
  * @author amit bhayani
  * 
  */
-public abstract class SmsMessageImpl implements MAPMessage {
+public abstract class MessageImpl implements MAPMessage {
 	private long invokeId;
 	private MAPDialog mapDialog;
 

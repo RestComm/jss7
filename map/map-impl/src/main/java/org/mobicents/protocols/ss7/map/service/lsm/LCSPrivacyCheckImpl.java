@@ -197,6 +197,7 @@ public class LCSPrivacyCheckImpl implements LCSPrivacyCheck, MAPAsnPrimitive {
 				break;
 			default:
 				// Do we care?
+				ais.advanceElement();
 				break;
 			}
 		}

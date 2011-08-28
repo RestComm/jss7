@@ -203,6 +203,7 @@ public class AreaEventInfoImpl implements AreaEventInfo, MAPAsnPrimitive {
 //				throw new MAPParsingComponentException(
 //						"Error while decoding AreaEventInfo: Expected occurrenceInfo [1] OccurrenceInfo or intervalTime [2] IntervalTime, but found"
 //								+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+				ais.advanceElement();
 				break;
 			}
 		}

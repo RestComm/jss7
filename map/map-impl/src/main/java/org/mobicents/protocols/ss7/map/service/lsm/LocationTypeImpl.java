@@ -190,6 +190,7 @@ public class LocationTypeImpl implements LocationType, MAPAsnPrimitive {
 				break;
 			default:
 				// Do we care?
+				ais.advanceElement();
 				break;
 			}
 		}
