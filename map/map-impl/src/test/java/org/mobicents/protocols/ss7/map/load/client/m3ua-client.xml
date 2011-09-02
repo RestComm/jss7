@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<aspFactoryList>
+	<org.mobicents.protocols.ss7.m3ua.impl.as.LocalAspFactory name="ASP1" ip="127.0.0.1" port="2345" started="true" remIp="127.0.0.1" remPort="3434"/>
+</aspFactoryList>
+<asList>
+	<org.mobicents.protocols.ss7.m3ua.impl.as.AsImpl name="AS1" minAspActiveForLb="1">
+		<routingContext type="org.mobicents.protocols.ss7.m3ua.impl.parameter.RoutingContextImpl" size="1">
+			<rc type="java.lang.Long" value="100"/>
+		</routingContext>
+		<defTrafficMode type="org.mobicents.protocols.ss7.m3ua.impl.parameter.TrafficModeTypeImpl" mode="2"/>
+		<asps type="javolution.util.FastList">
+			<org.mobicents.protocols.ss7.m3ua.impl.as.AspImpl name="ASP1"/>
+		</asps>
+	</org.mobicents.protocols.ss7.m3ua.impl.as.AsImpl>
+</asList>

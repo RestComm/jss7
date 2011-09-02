@@ -45,6 +45,8 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
 
@@ -57,14 +59,19 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSR
 public interface MapServiceFactory {
 
 	public ProcessUnstructuredSSRequestIndication createProcessUnstructuredSSRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
-			AlertingPattern alertingPattern, AddressString msisdnAddressString);
+			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString);
 
 	public ProcessUnstructuredSSResponseIndication createProcessUnstructuredSSResponseIndication(byte ussdDataCodingScheme, USSDString ussdString);
 
 	public UnstructuredSSRequestIndication createUnstructuredSSRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
-			AlertingPattern alertingPattern, AddressString msisdnAddressString);
+			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString);
 
 	public UnstructuredSSResponseIndication createUnstructuredSSRequestIndication(byte ussdDataCodingScheme, USSDString ussdString);
+	
+	public UnstructuredSSNotifyRequestIndication createUnstructuredSSNotifyRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
+			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString);
+
+	public UnstructuredSSNotifyResponseIndication createUnstructuredSSNotifyResponseIndication();
 
 	/**
 	 * Creates a new instance of {@link USSDString}. The passed USSD String is

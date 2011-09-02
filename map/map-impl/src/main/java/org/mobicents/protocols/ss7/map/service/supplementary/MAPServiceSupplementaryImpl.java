@@ -153,7 +153,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 			break;
 		case MAPOperationCode.unstructuredSS_Notify:
 			if (compType == ComponentType.Invoke)
-				this.unstructuredSSNotify(parameter, mapDialogSupplementaryImpl, invokeId);
+				this.unstructuredSSNotifyRequest(parameter, mapDialogSupplementaryImpl, invokeId);
 			else
 				// error?
 				break;
@@ -166,7 +166,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		return false;
 	}
 
-	private void unstructuredSSNotify(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+	private void unstructuredSSNotifyRequest(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding unstructuredSSNotifyIndication: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
@@ -179,14 +179,41 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 
-		UnstructuredSSNotifyIndicationImpl ind = new UnstructuredSSNotifyIndicationImpl();
+		UnstructuredSSNotifyRequestIndicationImpl ind = new UnstructuredSSNotifyRequestIndicationImpl();
 		ind.decodeData(ais, buf.length);
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
-				((MAPServiceSupplementaryListener) serLis).onUnstructuredSSNotifyIndication(ind);
+				((MAPServiceSupplementaryListener) serLis).onUnstructuredSSNotifyRequestIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing unstructuredSSNotifyIndication: " + e.getMessage(), e);
+			}
+		}
+	}
+	
+	private void unstructuredSSNotifyResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+		if (parameter == null)
+			throw new MAPParsingComponentException("Error while decoding unstructuredSSNotifyIndication: Parameter is mandatory but not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new MAPParsingComponentException(
+					"Error while decoding unstructuredSSNotifyIndication: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+					MAPParsingComponentExceptionReason.MistypedParameter);
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+
+		UnstructuredSSNotifyRequestIndicationImpl ind = new UnstructuredSSNotifyRequestIndicationImpl();
+		ind.decodeData(ais, buf.length);
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
+
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((MAPServiceSupplementaryListener) serLis).onUnstructuredSSNotifyRequestIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing unstructuredSSNotifyIndication: " + e.getMessage(), e);
 			}

@@ -76,7 +76,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupple
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
@@ -141,7 +141,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		AddressString destReference = this.mapServiceFactory.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile,
 				"204208300008002");
 
-		AddressString msisdn = this.mapServiceFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
+		ISDNAddressString msisdn = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
 
 		clientDialog = this.mapProvider.getMAPServiceSupplementary()
 				.createNewDialog(appCnt, this.thisAddress, orgiReference, this.remoteAddress, destReference);
@@ -165,7 +165,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		AddressString destReference = this.mapServiceFactory.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile,
 				"204208300008002");
 
-		AddressString msisdn = this.mapServiceFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
+		ISDNAddressString msisdn = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
 
 		// clientDialog =
 		// this.mapProvider.getMAPServiceSupplementary().createNewDialog(appCnt,
@@ -194,7 +194,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		AddressString destReference = this.mapServiceFactory.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile,
 				"204208300008002");
 
-		AddressString msisdn = this.mapServiceFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
+		ISDNAddressString msisdn = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
 
 		clientDialog = this.mapProvider.getMAPServiceSupplementary()
 				.createNewDialog(appCnt, this.thisAddress, orgiReference, this.remoteAddress, destReference);
@@ -691,7 +691,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSNotifyIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyIndication)
 	 */
 	@Override
-	public void onUnstructuredSSNotifyIndication(UnstructuredSSNotifyIndication unstrNotifyInd) {
+	public void onUnstructuredSSNotifyRequestIndication(UnstructuredSSNotifyRequestIndication unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -22,8 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
 
 /**
@@ -52,7 +52,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
  * 
  */
 public interface UnstructuredSSRequestIndication extends USSDMessage {
-	public AddressString getMSISDNAddressString();
+	public ISDNAddressString getMSISDNAddressString();
 	
 	public AlertingPattern getAlertingPattern();
 }

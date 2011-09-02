@@ -30,6 +30,7 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
@@ -56,7 +57,7 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		super(appCntx, tcapDialog, mapProviderImpl, mapService, origReference, destReference);
 	}
 
-	public Long addProcessUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, AddressString msisdn)
+	public Long addProcessUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
 			throws MAPException {
 
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -116,7 +117,7 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		this.sendReturnResultLastComponent((ReturnResultLast) returnResult);
 	}
 
-	public Long addUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, AddressString msisdn)
+	public Long addUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
 			throws MAPException {
 
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -150,7 +151,7 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		return invokeId;
 	}
 
-	public Long addUnstructuredSSNotify(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, AddressString msisdn)
+	public Long addUnstructuredSSNotifyRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
 			throws MAPException {
 
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();

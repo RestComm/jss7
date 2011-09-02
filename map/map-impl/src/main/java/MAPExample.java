@@ -42,6 +42,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
@@ -49,7 +50,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupple
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
@@ -130,7 +131,7 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 		// impl of Charset
 		USSDString ussdString = servFact.createUSSDString("*125*+31628839999#", null);
 
-		AddressString msisdn = this.servFact.createAddressString(AddressNature.international_number,
+		ISDNAddressString msisdn = this.servFact.createISDNAddressString(AddressNature.international_number,
 				NumberingPlan.ISDN, "31628838002");
 
 		mapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString,null, msisdn);
@@ -280,7 +281,7 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSNotifyIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyIndication)
 	 */
 	@Override
-	public void onUnstructuredSSNotifyIndication(UnstructuredSSNotifyIndication unstrNotifyInd) {
+	public void onUnstructuredSSNotifyRequestIndication(UnstructuredSSNotifyRequestIndication unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}

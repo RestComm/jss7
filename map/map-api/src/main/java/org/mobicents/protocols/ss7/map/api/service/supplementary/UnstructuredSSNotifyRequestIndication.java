@@ -21,15 +21,30 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
 /**
+ * unstructuredSS-Notify OPERATION ::= { --Timer ml
+ *	ARGUMENT
+ *		USSD-Arg
+ *	RETURN RESULT TRUE
+ *	ERRORS {
+ *		systemFailure |
+ *		dataMissing |
+ *		unexpectedDataValue |
+ *		absentSubscriber |
+ *		illegalSubscriber |
+ *		illegalEquipment |
+ *		unknownAlphabet |
+ *		ussd-Busy}
+ *	CODE local:61 }
+ *
  * @author amit bhayani
  * 
  */
-public interface UnstructuredSSNotifyIndication extends USSDMessage {
-	public AddressString getMSISDNAddressString();
+public interface UnstructuredSSNotifyRequestIndication extends USSDMessage {
+	public ISDNAddressString getMSISDNAddressString();
 	
 	public AlertingPattern getAlertingPattern();
 }

@@ -74,7 +74,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupple
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
@@ -774,7 +774,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSNotifyIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyIndication)
 	 */
 	@Override
-	public void onUnstructuredSSNotifyIndication(UnstructuredSSNotifyIndication unstrNotifyInd) {
+	public void onUnstructuredSSNotifyRequestIndication(UnstructuredSSNotifyRequestIndication unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}

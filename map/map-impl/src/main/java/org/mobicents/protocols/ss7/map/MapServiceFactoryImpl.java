@@ -46,6 +46,8 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortChoiceImpl;
@@ -64,6 +66,8 @@ import org.mobicents.protocols.ss7.map.service.sms.SM_RP_DAImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SM_RP_OAImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSRequestIndicationImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseIndicationImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSNotifyRequestIndicationImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSNotifyResponseIndicationImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSRequestIndicationImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSResponseIndicationImpl;
 
@@ -75,7 +79,7 @@ import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSRespo
 public class MapServiceFactoryImpl implements MapServiceFactory {
 
 	public ProcessUnstructuredSSRequestIndication createProcessUnstructuredSSRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
-			AlertingPattern alertingPattern, AddressString msisdnAddressString) {
+			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString) {
 
 		ProcessUnstructuredSSRequestIndication request = new ProcessUnstructuredSSRequestIndicationImpl(ussdDataCodingSch, ussdString, alertingPattern,
 				msisdnAddressString);
@@ -88,13 +92,32 @@ public class MapServiceFactoryImpl implements MapServiceFactory {
 	}
 
 	public UnstructuredSSRequestIndication createUnstructuredSSRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
-			AlertingPattern alertingPattern, AddressString msisdnAddressString) {
+			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString) {
 		UnstructuredSSRequestIndication request = new UnstructuredSSRequestIndicationImpl(ussdDataCodingSch, ussdString, alertingPattern, msisdnAddressString);
 		return request;
 	}
 
 	public UnstructuredSSResponseIndication createUnstructuredSSRequestIndication(byte ussdDataCodingScheme, USSDString ussdString) {
 		UnstructuredSSResponseIndication response = new UnstructuredSSResponseIndicationImpl(ussdDataCodingScheme, ussdString);
+		return response;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.MapServiceFactory#createUnstructuredSSNotifyRequestIndication(byte, org.mobicents.protocols.ss7.map.api.primitives.USSDString, org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern, org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString)
+	 */
+	@Override
+	public UnstructuredSSNotifyRequestIndication createUnstructuredSSNotifyRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
+			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString) {
+		UnstructuredSSNotifyRequestIndication request = new UnstructuredSSNotifyRequestIndicationImpl(ussdDataCodingSch, ussdString, alertingPattern, msisdnAddressString);
+		return request;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.MapServiceFactory#createUnstructuredSSNotifyResponseIndication()
+	 */
+	@Override
+	public UnstructuredSSNotifyResponseIndication createUnstructuredSSNotifyResponseIndication() {
+		UnstructuredSSNotifyResponseIndication response = new UnstructuredSSNotifyResponseIndicationImpl();
 		return response;
 	}
 
@@ -206,6 +229,5 @@ public class MapServiceFactoryImpl implements MapServiceFactory {
 			AdditionalNumberType additionalNumberType, ISDNAddressString additionalNumber) {
 		return new LocationInfoWithLMSIImpl(networkNodeNumber, lmsi, extensionContainer, additionalNumberType, additionalNumber);
 	}
-
 
 }

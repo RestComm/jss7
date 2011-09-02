@@ -24,8 +24,8 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 
 /**
@@ -47,11 +47,11 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 * @param alertingPatter
 	 *            The optional alerting pattern. See {@link AlertingPattern}
 	 * @param msisdn
-	 *            The optional MSISDN in {@link AddressString} format.
+	 *            The optional MSISDN in {@link ISDNAddressString} format.
 	 * @return invokeId
 	 * @throws MAPException
 	 */
-	public Long addProcessUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, AddressString msisdn)
+	public Long addProcessUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
 			throws MAPException;
 
 	/**
@@ -80,11 +80,11 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 * @param alertingPatter
 	 *            The optional alerting pattern. See {@link AlertingPattern}
 	 * @param msisdn
-	 *            The optional MSISDN in {@link AddressString} format.
+	 *            The optional MSISDN in {@link ISDNAddressString} format.
 	 * @return invokeId
 	 * @throws MAPException
 	 */
-	public Long addUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, AddressString msisdn)
+	public Long addUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
 			throws MAPException;
 
 	/**
@@ -113,11 +113,11 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 * @param alertingPatter
 	 *            The optional alerting pattern. See {@link AlertingPattern}
 	 * @param msisdn
-	 *            The optional MSISDN in {@link AddressString} format.
+	 *            The optional MSISDN in {@link ISDNAddressString} format.
 	 * @return invokeId
 	 * @throws MAPException
 	 */
-	public Long addUnstructuredSSNotify(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, AddressString msisdn)
+	public Long addUnstructuredSSNotifyRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
 			throws MAPException;
 
 }

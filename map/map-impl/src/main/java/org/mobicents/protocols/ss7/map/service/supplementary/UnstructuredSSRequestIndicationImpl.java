@@ -31,12 +31,12 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
-import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
 /**
@@ -48,7 +48,7 @@ public class UnstructuredSSRequestIndicationImpl extends USSDMessageImpl impleme
 	
 	private static final int _TAG_MSISDN = 0;
 
-	private AddressString msisdnAddressString = null;
+	private ISDNAddressString msisdnAddressString = null;
 	private AlertingPattern alertingPattern = null;
 
 	/**
@@ -59,7 +59,7 @@ public class UnstructuredSSRequestIndicationImpl extends USSDMessageImpl impleme
 		super();
 	}
 
-	public UnstructuredSSRequestIndicationImpl(byte ussdDataCodingSch, USSDString ussdString, AlertingPattern alertingPattern, AddressString msisdnAddressString) {
+	public UnstructuredSSRequestIndicationImpl(byte ussdDataCodingSch, USSDString ussdString, AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString) {
 		super(ussdDataCodingSch, ussdString);
 		this.alertingPattern = alertingPattern;
 		this.msisdnAddressString = msisdnAddressString;
@@ -72,7 +72,7 @@ public class UnstructuredSSRequestIndicationImpl extends USSDMessageImpl impleme
 	 * ProcessUnstructuredSSRequestIndication#getMSISDNAddressString()
 	 */
 	@Override
-	public AddressString getMSISDNAddressString() {
+	public ISDNAddressString getMSISDNAddressString() {
 		return this.msisdnAddressString;
 	}
 
@@ -171,8 +171,8 @@ public class UnstructuredSSRequestIndicationImpl extends USSDMessageImpl impleme
 							"Error while decoding UnstructuredSSRequestIndication: Parameter msisdn bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 
-				this.msisdnAddressString = new AddressStringImpl();
-				((AlertingPatternImpl)this.msisdnAddressString).decodeAll(ais);
+				this.msisdnAddressString = new ISDNAddressStringImpl();
+				((ISDNAddressStringImpl)this.msisdnAddressString).decodeAll(ais);
 				break;
 			default:
 				// alertingPattern AlertingPattern OPTIONAL
@@ -223,7 +223,7 @@ public class UnstructuredSSRequestIndicationImpl extends USSDMessageImpl impleme
 			}
 
 			if (this.msisdnAddressString != null) {
-				((AlertingPatternImpl)this.msisdnAddressString).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_MSISDN);
+				((ISDNAddressStringImpl)this.msisdnAddressString).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_MSISDN);
 			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding ProcessUnstructuredSSRequestIndication", e);
