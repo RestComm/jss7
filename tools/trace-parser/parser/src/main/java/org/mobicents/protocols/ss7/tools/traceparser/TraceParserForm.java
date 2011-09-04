@@ -1,3 +1,25 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011, Red Hat, Inc. and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.tools.traceparser;
 
 import java.awt.EventQueue;
@@ -50,6 +72,7 @@ public class TraceParserForm {
 	private JCheckBox cbApplicationContextFilter;
 	private JCheckBox cbDialogIdFilter;
 	private JRadioButton rdbtnTpActerna;
+	private JRadioButton rdbtnTpSimpleSeq;
 	private JButton btnStart;
 	private JButton btnStop;
 	private JPanel pnMsgLog;
@@ -132,7 +155,9 @@ public class TraceParserForm {
 				Ss7ParseParameters newPar = new Ss7ParseParameters();
 
 				if (rdbtnTpActerna.isSelected())
-					newPar.setFileType(1);
+					newPar.setFileTypeN(ParseDriverType.Acterna);
+				if (rdbtnTpSimpleSeq.isSelected())
+					newPar.setFileTypeN(ParseDriverType.SimpleSeq);
 
 				newPar.setSourceFilePath(tfFilePath.getText());
 
@@ -222,6 +247,11 @@ public class TraceParserForm {
 		JLabel lblSelectAFile = new JLabel("Trace file type");
 		lblSelectAFile.setBounds(15, 11, 154, 14);
 		panel_2.add(lblSelectAFile);
+		
+		rdbtnTpSimpleSeq = new JRadioButton("Simple sequence");
+		buttonGroup.add(rdbtnTpSimpleSeq);
+		rdbtnTpSimpleSeq.setBounds(137, 28, 146, 23);
+		panel_2.add(rdbtnTpSimpleSeq);
 		
 		tfFilePath = new JTextField();
 		tfFilePath.setBounds(10, 97, 481, 20);
@@ -395,9 +425,12 @@ public class TraceParserForm {
 	private void setParameters(Ss7ParseParameters par) {
 		if (par != null) {
 			
-			switch (par.getFileType()) {
-			case 1:
+			switch (par.getFileTypeN()) {
+			case Acterna:
 				rdbtnTpActerna.setSelected(true);
+				break;
+			case SimpleSeq:
+				rdbtnTpSimpleSeq.setSelected(true);
 				break;
 			}
 			

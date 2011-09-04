@@ -1,3 +1,25 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011, Red Hat, Inc. and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.tools.traceparser;
 
 import java.io.ByteArrayInputStream;
@@ -26,15 +48,11 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.message.UnitData;
-import org.mobicents.protocols.ss7.sccp.message.UnitDataService;
-import org.mobicents.protocols.ss7.sccp.message.XUnitData;
-import org.mobicents.protocols.ss7.sccp.message.XUnitDataService;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.DialogAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.DialogPortion;
 import org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU;
-import org.mobicents.protocols.ss7.tcap.asn.ParameterImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
@@ -89,12 +107,15 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 		
 		String filePath = this.par.getSourceFilePath();
 		
-		switch (this.par.getFileType()) {
-		case 1:
+		switch (this.par.getFileTypeN()) {
+		case Acterna:
 			this.driver = new TraceReaderDriverActerna(this, filePath);
 			break;
+		case SimpleSeq:
+			this.driver = new TraceReaderDriverSimpleSeq(this, filePath);
+			break;
 		default:
-			this.setFinishedState("Unknown TraceReaderDriver: " + this.par.getFileType());
+			this.setFinishedState("Unknown TraceReaderDriver: " + this.par.getFileTypeN());
 			return;
 		}
 		
@@ -568,7 +589,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 	
 	private void LogComponents(Component[] comp, int acnValue, int acnVersion, byte[] logData) {
 		this.pw.println();
-		this.pw.print("\tAnc: ");
+		this.pw.print("\tAcn: ");
 		if (acnValue > 0)
 			this.pw.print(acnValue + "-" + acnVersion);
 		else

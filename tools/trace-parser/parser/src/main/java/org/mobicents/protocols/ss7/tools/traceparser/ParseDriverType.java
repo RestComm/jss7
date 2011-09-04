@@ -22,44 +22,18 @@
 
 package org.mobicents.protocols.ss7.tools.traceparser;
 
-import java.util.ArrayList;
-import org.apache.log4j.Logger;
-
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public abstract class TraceReaderDriverBase implements TraceReaderDriver {
-	
-	protected Logger loger = Logger.getLogger(TraceReaderDriverBase.class);
-	
-	protected ArrayList<TraceReaderListener> listeners = new ArrayList<TraceReaderListener>();
-	protected boolean isStarted = false;
-	
-	protected ProcessControl processControl;
-	protected String fileName;
+public enum ParseDriverType {
+	Acterna(1), SimpleSeq(2);
 
-	
-	public TraceReaderDriverBase(ProcessControl processControl, String fileName) {
-		this.processControl = processControl;
-		this.fileName = fileName;
+	int code;
+
+	ParseDriverType(int code) {
+		this.code = code;
 	}
-	
-
-	@Override
-	public void addTraceListener(TraceReaderListener listener) {
-		this.listeners.add(listener);
-	}
-
-	@Override
-	public void removeTraceListener(TraceReaderListener listener) {
-		this.listeners.remove(listener);
-	}
-
-	@Override
-	public void stop() {
-		this.isStarted = false;
-	}
-
 }
+

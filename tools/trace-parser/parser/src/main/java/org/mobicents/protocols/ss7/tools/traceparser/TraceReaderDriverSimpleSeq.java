@@ -30,12 +30,12 @@ import java.io.IOException;
  * @author sergey vetyutnev
  * 
  */
-public class TraceReaderDriverActerna extends TraceReaderDriverBase implements TraceReaderDriver {
+public class TraceReaderDriverSimpleSeq extends TraceReaderDriverBase implements TraceReaderDriver {
 
-	public TraceReaderDriverActerna(ProcessControl processControl, String fileName) {
+	public TraceReaderDriverSimpleSeq(ProcessControl processControl, String fileName) {
 		super(processControl, fileName);
 	}
-	
+
 	@Override
 	public void startTraceFile() throws TraceReaderException {
 		
@@ -52,91 +52,28 @@ public class TraceReaderDriverActerna extends TraceReaderDriverBase implements T
 			
 			fis = new FileInputStream(fileName);
 			
-			int ind = 0;
-			int b = 0;
-			int recCnt = 0;
-			int step = 4;
-			int stepPos = 0;
-			int blockLen = 0;
-			int sufLen = 0;
-			int[] buf = new int[5];
-//			byte[] bufTag;
 			while( fis.available() > 0 ) {
 				if( this.processControl.checkNeedInterrupt() )
 					return;
 				
-				b = fis.read();
+				int b1 = fis.read();
+				int b2 = fis.read();
+				int length = b1 + (b2 << 8);
 				
-				switch(step) {
-				case 1:
-					buf[stepPos] = b;
-					if (stepPos == 16) {
-						blockLen = b;
-					}
-					if (stepPos == 15 && b != 0 || stepPos == 17 && b != 0 && b != 1) {
-						this.loger.error("Error #1, recCnt=" + recCnt);
-					}
-					
-					if (stepPos == 17) {
-						blockLen += b * 256;
-						
-						step = 2;
-						stepPos = 0;
-						buf = new int[blockLen];
-					} else
-						stepPos++;
-					break;
-					
-				case 2:
-					buf[stepPos] = b;
-					
-					if (stepPos == blockLen - 1) {
-						
-						byte[] bufMsg = new byte[blockLen];
-						for (int i = 0; i < blockLen; i++) {
-							bufMsg[i] = (byte) buf[i];
-						}
-						for( TraceReaderListener ls : this.listeners ) {
-							ls.ss7Message(bufMsg);
-						}
-						
-						step = 3;
-						stepPos = 0;
-						buf = new int[2];
-					} else
-						stepPos++;
-					break;
-					
-				case 3:
-					buf[stepPos] = b;
-					
-					if (stepPos == 1) {
+				byte[] bb = new byte[length];
+				int rb = fis.read(bb);
+				if (rb < length)
+					throw new TraceReaderException("Not enouph data in the file for reading a message");
 
-						step = 4;
-						stepPos = 0;
-						buf = new int[5];
-					} else
-						stepPos++;
-					break;
-					
-				case 4:
-					buf[stepPos] = b;
-					
-					if (b == 2) {
-						int[] buf2 = new int[stepPos + 1];
-						for (int i1 = 0; i1 <= stepPos; i1++)
-							buf2[i1] = buf[i1];
-
-						recCnt++;
-						step = 1;
-						stepPos = 0;
-						buf = new int[18];
-					} else
-						stepPos++;
-					break;
+				byte[] bufMsg = new byte[length + 3];
+				System.arraycopy(bb, 0, bufMsg, 3, length);
+				bufMsg[0] = 0;
+				bufMsg[1] = 0;
+				bufMsg[2] = 63;
+				
+				for( TraceReaderListener ls : this.listeners ) {
+					ls.ss7Message(bufMsg);
 				}
-					
-				ind++;
 			}
 			
 		} catch (Throwable e) {
@@ -151,5 +88,5 @@ public class TraceReaderDriverActerna extends TraceReaderDriverBase implements T
 			}
 		}
 	}
-
 }
+
