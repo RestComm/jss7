@@ -33,6 +33,7 @@ import java.util.Map;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
@@ -49,6 +50,8 @@ import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.message.UnitData;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.DialogImpl;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.DialogAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.DialogPortion;
@@ -431,7 +434,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 							this.pw.print("TC-ABORT: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", destinationTransactionId="
 									+ destinationTransactionId);
 							if (this.par.getTcapMsgData()) {
-								LogDataTag(aisMsg, "Continue", null, acnValue, acnVersion, tub.getDialogPortion());
+								LogDataTag(aisMsg, "Abort", null, acnValue, acnVersion, tub.getDialogPortion());
 							}
 							
 //							this.LogComponents(null, acnValue, acnVersion, comp);
@@ -775,6 +778,11 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
+		DialogImplWrapper di = (DialogImplWrapper)((MAPDialogImpl)mapDialog).getTcapDialog();
+		if (mapDialog.getApplicationContext() != null) {
+			di.setAcnValue(mapDialog.getApplicationContext().getApplicationContextName().getApplicationContextCode());
+			di.setAcnVersion(mapDialog.getApplicationContext().getApplicationContextVersion().getVersion());
+		}
 	}
 
 	@Override
