@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.tools.traceparser;
 
+import java.util.HashMap;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -32,6 +33,9 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortRequest;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Return;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
@@ -72,8 +76,31 @@ public class DialogImplWrapper extends DialogImpl {
 		this.setState(TRPseudoState.Active);
 	}
 	
+	private HashMap<Long, Invoke> invLst = new HashMap<Long, Invoke>();
+	
 	@Override
 	protected Component[] processOperationsState(Component[] components) {
+		
+		if (components == null)
+			return null;
+		
+		for (Component c : components) {
+			switch(c.getType()){
+			case Invoke:
+				invLst.put(c.getInvokeId(), (Invoke) c);
+				break;
+				
+			case ReturnResult:
+			case ReturnResultLast:
+				Return rr = (Return) c;
+				Invoke inv = invLst.get(c.getInvokeId());
+				if (inv != null && rr.getOperationCode() == null) {
+					rr.setOperationCode(inv.getOperationCode());
+				}
+				break;
+			}
+		}
+		
 		return components;
 	}
 	

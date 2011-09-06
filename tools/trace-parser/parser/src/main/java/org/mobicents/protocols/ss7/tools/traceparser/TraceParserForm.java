@@ -50,8 +50,14 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.Properties;
 
 import javax.swing.JCheckBox;
+
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.PropertyConfigurator;
+
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 
@@ -91,7 +97,9 @@ public class TraceParserForm {
 	private JTextField tfDialogIdFilter2;
 
 	public static void main(String[] args) {
-
+		
+		setupLog4j();
+		
 		// trying to read the ini-file
 		try {
 			BufferedInputStream bis = new BufferedInputStream(new FileInputStream("Ss7ParseParameters.xml"));
@@ -119,6 +127,10 @@ public class TraceParserForm {
 //		task.parse(new TraceReaderDriverActerna(), "e:\\Java_workspace\\Trace\\Test\\222.p01");
 //		return;
 
+	}
+
+	private static void setupLog4j() {
+		BasicConfigurator.configure();
 	}
 
 	/**
