@@ -94,7 +94,9 @@ public class DialogIdleEndTest extends SccpHarness {
 
 		this.tcapStack1 = new TCAPStackImpl(this.sccpProvider1, 8);
 		this.tcapStack2 = new TCAPStackImpl(this.sccpProvider2, 8);
-
+		
+		this.tcapStack1.setInvokeTimeout(0);
+		this.tcapStack2.setInvokeTimeout(0);
 		this.tcapStack1.setDialogIdleTimeout(_DIALOG_TIMEOUT*2);
 		this.tcapStack2.setDialogIdleTimeout(_DIALOG_TIMEOUT); //so other side dont timeout :)
 
