@@ -31,6 +31,10 @@ import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
  */
 public interface MAPServiceSmsListener extends MAPServiceListener {
 
+	public void onForwardShortMessageIndication(ForwardShortMessageRequestIndication forwSmInd);
+
+	public void onForwardShortMessageRespIndication(ForwardShortMessageResponseIndication forwSmRespInd);
+
 	public void onMoForwardShortMessageIndication(MoForwardShortMessageRequestIndication moForwSmInd);
 
 	public void onMoForwardShortMessageRespIndication(MoForwardShortMessageResponseIndication moForwSmRespInd);

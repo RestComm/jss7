@@ -67,7 +67,7 @@ public class MAPErrorMessageCallBarredImpl extends MAPErrorMessageImpl implement
 	}
 	
 	@Override
-	public Boolean isEmCallBarred() {
+	public boolean isEmCallBarred() {
 		return true;
 	}
 

@@ -63,7 +63,7 @@ public class MAPErrorMessageAbsentSubscriberImpl extends MAPErrorMessageImpl imp
 
 	
 	@Override
-	public Boolean isEmAbsentSubscriber() {
+	public boolean isEmAbsentSubscriber() {
 		return true;
 	}
 

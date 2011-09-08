@@ -111,6 +111,14 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		return tcapDialog;
 	}
 
+	public void release() {
+		this.setNormalDialogShutDown();
+		this.setState(MAPDialogState.Expunged);
+		
+		if (this.tcapDialog != null)
+			this.tcapDialog.release();
+	}
+
 	public void setExtentionContainer(MAPExtensionContainer extContainer) {
 		this.extContainer = extContainer;
 	}

@@ -33,29 +33,29 @@ public interface MAPErrorMessage {
 	public Long getErrorCode();
 
 	
-	public Boolean isEmParameterless();
+	public boolean isEmParameterless();
 
-	public Boolean isEmExtensionContainer();
+	public boolean isEmExtensionContainer();
 
-	public Boolean isEmFacilityNotSup();
+	public boolean isEmFacilityNotSup();
 
-	public Boolean isEmSMDeliveryFailure();
+	public boolean isEmSMDeliveryFailure();
 
-	public Boolean isEmSystemFailure();
+	public boolean isEmSystemFailure();
 
-	public Boolean isEmUnknownSubscriber();
+	public boolean isEmUnknownSubscriber();
 
-	public Boolean isEmAbsentSubscriberSM();
+	public boolean isEmAbsentSubscriberSM();
 
-	public Boolean isEmAbsentSubscriber();
+	public boolean isEmAbsentSubscriber();
 
-	public Boolean isEmSubscriberBusyForMtSms();
+	public boolean isEmSubscriberBusyForMtSms();
 
-	public Boolean isEmCallBarred();
+	public boolean isEmCallBarred();
 
-	public Boolean isEmUnauthorizedLCSClient();
+	public boolean isEmUnauthorizedLCSClient();
 
-	public Boolean isEmPositionMethodFailure();
+	public boolean isEmPositionMethodFailure();
 
 
 	

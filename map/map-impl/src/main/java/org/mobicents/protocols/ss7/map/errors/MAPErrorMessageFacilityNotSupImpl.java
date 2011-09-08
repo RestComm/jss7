@@ -66,7 +66,7 @@ public class MAPErrorMessageFacilityNotSupImpl extends MAPErrorMessageImpl imple
 	
 
 	@Override
-	public Boolean isEmFacilityNotSup() {
+	public boolean isEmFacilityNotSup() {
 		return true;
 	}
 	

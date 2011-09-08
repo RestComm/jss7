@@ -69,7 +69,7 @@ public class MAPErrorMessageSystemFailureImpl extends MAPErrorMessageImpl implem
 
 
 	@Override
-	public Boolean isEmSystemFailure() {
+	public boolean isEmSystemFailure() {
 		return true;
 	}
 

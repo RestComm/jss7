@@ -49,6 +49,11 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
+import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnErrorProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 
 /**
  * 
@@ -223,7 +228,7 @@ public interface MapServiceFactory {
 	 */
 	public MAPUserAbortChoice createMAPUserAbortChoice();
 
-	public MWStatus createMWStatus(Boolean scAddressNotIncluded, Boolean mnrfSet, Boolean mcefSet, Boolean mnrgSet);
+	public MWStatus createMWStatus(boolean scAddressNotIncluded, boolean mnrfSet, boolean mcefSet, boolean mnrgSet);
 
 	public LocationInfoWithLMSI createLocationInfoWithLMSI(ISDNAddressString networkNodeNumber, LMSI lmsi, MAPExtensionContainer extensionContainer,
 			AdditionalNumberType additionalNumberType, ISDNAddressString additionalNumber);
@@ -250,4 +255,9 @@ public interface MapServiceFactory {
 	 * @return
 	 */
 	public MAPExtensionContainer createMAPExtensionContainer(ArrayList<MAPPrivateExtension> privateExtensionList, byte[] pcsExtensions);
+	
+	public Problem createProblemGeneral(GeneralProblemType prob);
+	public Problem createProblemInvoke(InvokeProblemType prob);
+	public Problem createProblemResult(ReturnResultProblemType prob);
+	public Problem createProblemError(ReturnErrorProblemType prob);
 }

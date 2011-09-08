@@ -66,13 +66,13 @@ public interface SendRoutingInfoForSMRequestIndication extends SmsMessage {
 
 	public ISDNAddressString getMsisdn();
 	
-	public Boolean getSm_RP_PRI();
+	public boolean getSm_RP_PRI();
 	
 	public AddressString getServiceCentreAddress();
 
 	public MAPExtensionContainer getExtensionContainer();
 	
-	public Boolean getGprsSupportIndicator();
+	public boolean getGprsSupportIndicator();
 	
 	public SM_RP_MTI getSM_RP_MTI();
 

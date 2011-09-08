@@ -53,7 +53,7 @@ public class MWStatusImpl implements MWStatus, MAPAsnPrimitive {
 	public MWStatusImpl() {
 	}
 	
-	public MWStatusImpl(Boolean scAddressNotIncluded, Boolean mnrfSet, Boolean mcefSet, Boolean mnrgSet) {
+	public MWStatusImpl(boolean scAddressNotIncluded, boolean mnrfSet, boolean mcefSet, boolean mnrgSet) {
 		if (scAddressNotIncluded)
 			this.bitString.set(_INDEX_ScAddressNotIncluded);
 		if (mnrfSet)
@@ -66,22 +66,22 @@ public class MWStatusImpl implements MWStatus, MAPAsnPrimitive {
 	
 
 	@Override
-	public Boolean getScAddressNotIncluded() {
+	public boolean getScAddressNotIncluded() {
 		return this.bitString.get(_INDEX_ScAddressNotIncluded);
 	}
 
 	@Override
-	public Boolean getMnrfSet() {
+	public boolean getMnrfSet() {
 		return this.bitString.get(_INDEX_MnrfSet);
 	}
 
 	@Override
-	public Boolean getMcefSet() {
+	public boolean getMcefSet() {
 		return this.bitString.get(_INDEX_McefSet);
 	}
 
 	@Override
-	public Boolean getMnrgSet() {
+	public boolean getMnrgSet() {
 		return this.bitString.get(_INDEX_MnrgSet);
 	}
 	

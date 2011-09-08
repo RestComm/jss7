@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.api;
 
-import java.util.EnumSet;
-
 
 /**
  * 

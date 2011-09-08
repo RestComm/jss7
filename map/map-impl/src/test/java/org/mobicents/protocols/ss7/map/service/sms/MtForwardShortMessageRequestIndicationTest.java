@@ -82,6 +82,7 @@ public class MtForwardShortMessageRequestIndicationTest extends TestCase {
 		assertEquals("18129600096", oa.getServiceCentreAddressOA().getAddress());
 		assertTrue(Arrays.equals(ui, new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
 				4, 4, 4, 4, 4, 4, 99, 88, 77, 66, 55, 44, 44, 33, 22, 11, 11, 0 }));
+		assertFalse(ind.getMoreMessagesToSend());
 		
 		rawData = getEncodedDataFull();
 		asn = new AsnInputStream(rawData);
@@ -118,7 +119,7 @@ public class MtForwardShortMessageRequestIndicationTest extends TestCase {
 		sm_RP_OA.setServiceCentreAddressOA(sca);
 		byte[] sm_RP_UI = new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4,
 				4, 4, 99, 88, 77, 66, 55, 44, 44, 33, 22, 11, 11, 0 };
-		MtForwardShortMessageRequestIndicationImpl ind = new MtForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, null, null);
+		MtForwardShortMessageRequestIndicationImpl ind = new MtForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, false, null);
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
 		ind.encodeAll(asnOS);

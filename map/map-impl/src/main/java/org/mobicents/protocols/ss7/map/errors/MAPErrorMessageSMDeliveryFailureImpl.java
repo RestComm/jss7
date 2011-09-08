@@ -94,7 +94,7 @@ public class MAPErrorMessageSMDeliveryFailureImpl extends MAPErrorMessageImpl im
 	}
 	
 	@Override
-	public Boolean isEmSMDeliveryFailure() {
+	public boolean isEmSMDeliveryFailure() {
 		return true;
 	}
 

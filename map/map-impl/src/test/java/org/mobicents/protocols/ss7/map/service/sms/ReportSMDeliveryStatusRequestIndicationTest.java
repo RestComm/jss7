@@ -62,7 +62,7 @@ public class ReportSMDeliveryStatusRequestIndicationTest extends TestCase {
 		AsnInputStream asn = new AsnInputStream(rawData);
 
 		int tag = asn.readTag();
-		ReportSMDeliveryStatusRequestIndicationImpl ind = new ReportSMDeliveryStatusRequestIndicationImpl();
+		ReportSMDeliveryStatusRequestIndicationImpl ind = new ReportSMDeliveryStatusRequestIndicationImpl(3);
 		ind.decodeAll(asn);
 
 		assertEquals(Tag.SEQUENCE, tag);
@@ -77,13 +77,15 @@ public class ReportSMDeliveryStatusRequestIndicationTest extends TestCase {
 		assertEquals(NumberingPlan.ISDN, sca.getNumberingPlan());
 		assertEquals("100937453", sca.getAddress());
 		assertEquals(SMDeliveryOutcome.absentSubscriber, ind.getSMDeliveryOutcome());
+		assertEquals(false, (boolean)ind.getGprsSupportIndicator());		
+		assertEquals(false, (boolean)ind.getDeliveryOutcomeIndicator());		
 
 		
 		rawData = getEncodedDataFull();
 		asn = new AsnInputStream(rawData);
 
 		tag = asn.readTag();
-		ind = new ReportSMDeliveryStatusRequestIndicationImpl();
+		ind = new ReportSMDeliveryStatusRequestIndicationImpl(3);
 		ind.decodeAll(asn);
 
 		assertEquals(Tag.SEQUENCE, tag);
@@ -111,8 +113,8 @@ public class ReportSMDeliveryStatusRequestIndicationTest extends TestCase {
 
 		ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "7222333111");
 		AddressString sca = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "100937453");
-		ReportSMDeliveryStatusRequestIndicationImpl ind = new ReportSMDeliveryStatusRequestIndicationImpl(msisdn, sca, SMDeliveryOutcome.absentSubscriber,
-				null, null, null, null, null, null);
+		ReportSMDeliveryStatusRequestIndicationImpl ind = new ReportSMDeliveryStatusRequestIndicationImpl(3, msisdn, sca, SMDeliveryOutcome.absentSubscriber,
+				null, null, false, false, null, null);
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
 		ind.encodeAll(asnOS);
@@ -124,7 +126,7 @@ public class ReportSMDeliveryStatusRequestIndicationTest extends TestCase {
 		
 		msisdn = new ISDNAddressStringImpl(AddressNature.network_specific_number, NumberingPlan.national, "111222333");
 		sca = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "333222111");
-		ind = new ReportSMDeliveryStatusRequestIndicationImpl(msisdn, sca, SMDeliveryOutcome.successfulTransfer, 444,
+		ind = new ReportSMDeliveryStatusRequestIndicationImpl(3, msisdn, sca, SMDeliveryOutcome.successfulTransfer, 444,
 				MAPExtensionContainerTest.GetTestExtensionContainer(), true, false, SMDeliveryOutcome.memoryCapacityExceeded, 555);
 		
 		asnOS = new AsnOutputStream();

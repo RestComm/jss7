@@ -56,10 +56,10 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsMessageImpl im
 	protected static final int _TAG_sm_RP_SMEA = 9; 
 
 	private ISDNAddressString msisdn;
-	private Boolean sm_RP_PRI;
+	private boolean sm_RP_PRI;
 	private AddressString serviceCentreAddress;
 	private MAPExtensionContainer extensionContainer;
-	private Boolean gprsSupportIndicator;
+	private boolean gprsSupportIndicator;
 	private SM_RP_MTI sM_RP_MTI;
 	private byte[] sM_RP_SMEA;
 
@@ -67,8 +67,8 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsMessageImpl im
 	public SendRoutingInfoForSMRequestIndicationImpl() {
 	}
 
-	public SendRoutingInfoForSMRequestIndicationImpl(ISDNAddressString msisdn, Boolean sm_RP_PRI, AddressString serviceCentreAddress,
-			MAPExtensionContainer extensionContainer, Boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, byte[] sM_RP_SMEA) {
+	public SendRoutingInfoForSMRequestIndicationImpl(ISDNAddressString msisdn, boolean sm_RP_PRI, AddressString serviceCentreAddress,
+			MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, byte[] sM_RP_SMEA) {
 		this.msisdn = msisdn;
 		this.sm_RP_PRI = sm_RP_PRI;
 		this.serviceCentreAddress = serviceCentreAddress;
@@ -84,7 +84,7 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsMessageImpl im
 	}
 
 	@Override
-	public Boolean getSm_RP_PRI() {
+	public boolean getSm_RP_PRI() {
 		return this.sm_RP_PRI;
 	}
 
@@ -99,7 +99,7 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsMessageImpl im
 	}
 
 	@Override
-	public Boolean getGprsSupportIndicator() {
+	public boolean getGprsSupportIndicator() {
 		return this.gprsSupportIndicator;
 	}
 
@@ -162,10 +162,10 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsMessageImpl im
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
 		this.msisdn = null;
-		this.sm_RP_PRI = null;
+		this.sm_RP_PRI = false;
 		this.serviceCentreAddress = null;
 		this.extensionContainer = null;
-		this.gprsSupportIndicator = null;
+		this.gprsSupportIndicator = false;
 		this.sM_RP_MTI = null;
 		this.sM_RP_SMEA = null;
 		
@@ -284,7 +284,7 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsMessageImpl im
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (msisdn == null || sm_RP_PRI == null || serviceCentreAddress == null)
+		if (msisdn == null || serviceCentreAddress == null)
 			throw new MAPException("msisdn, sm_RP_PRI and serviceCentreAddress must not be null");
 
 		try {
@@ -294,7 +294,7 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsMessageImpl im
 			
 			if (this.extensionContainer != null)
 				((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_extensionContainer);
-			if (this.gprsSupportIndicator != null && this.gprsSupportIndicator == true)
+			if (this.gprsSupportIndicator == true)
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_gprsSupportIndicator);
 			if (this.sM_RP_MTI != null)
 				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_sm_RP_MTI, this.sM_RP_MTI.getCode());
@@ -317,10 +317,8 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsMessageImpl im
 			sb.append("msisdn=");
 			sb.append(this.msisdn.toString());
 		}
-		if (this.sm_RP_PRI != null) {
-			sb.append(", sm_RP_PRI=");
-			sb.append(this.sm_RP_PRI.toString());
-		}
+		sb.append(", sm_RP_PRI=");
+		sb.append(((Boolean)this.sm_RP_PRI).toString());
 		if (this.serviceCentreAddress != null) {
 			sb.append(", serviceCentreAddress=");
 			sb.append(this.serviceCentreAddress.toString());
@@ -329,9 +327,8 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsMessageImpl im
 			sb.append(", extensionContainer=");
 			sb.append(this.extensionContainer.toString());
 		}
-		if (this.gprsSupportIndicator != null) {
-			sb.append(", gprsSupportIndicator=");
-			sb.append(this.gprsSupportIndicator.toString());
+		if (this.gprsSupportIndicator) {
+			sb.append(", gprsSupportIndicator");
 		}
 		if (this.sM_RP_MTI != null) {
 			sb.append(", sM_RP_MTI=");

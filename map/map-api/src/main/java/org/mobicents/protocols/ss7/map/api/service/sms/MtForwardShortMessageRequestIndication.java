@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 
@@ -69,7 +68,7 @@ public interface MtForwardShortMessageRequestIndication extends SmsMessage {
 
 	public byte[] getSM_RP_UI();
 
-	public Boolean getMoreMessagesToSend();
+	public boolean getMoreMessagesToSend();
 
 	public MAPExtensionContainer getExtensionContainer();
 

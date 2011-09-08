@@ -114,14 +114,17 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 
 		switch (ctx) {
 		case networkUnstructuredSsContext:
-			if (vers <= 2)
+			if (vers == 2) {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
-			else {
+			} else if (vers > 2) {
 				long[] altOid = dialogApplicationContext.getOID();
 				altOid[7] = 2;
 				ApplicationContextName alt = TcapFactory.createApplicationContextName(altOid);
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, alt);
+			} else {
+				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
 			}
+			
 		}
 
 		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);

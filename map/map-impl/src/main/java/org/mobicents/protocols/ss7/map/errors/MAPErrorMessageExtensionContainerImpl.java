@@ -69,7 +69,7 @@ public class MAPErrorMessageExtensionContainerImpl extends MAPErrorMessageImpl i
 	}
 	
 	@Override
-	public Boolean isEmExtensionContainer() {
+	public boolean isEmExtensionContainer() {
 		return true;
 	}
 

@@ -64,7 +64,7 @@ public class MAPErrorMessagePositionMethodFailureImpl extends MAPErrorMessageImp
 	
 
 	@Override
-	public Boolean isEmPositionMethodFailure() {
+	public boolean isEmPositionMethodFailure() {
 		return true;
 	}
 

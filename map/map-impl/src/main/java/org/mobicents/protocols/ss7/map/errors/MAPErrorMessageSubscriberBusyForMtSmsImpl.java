@@ -60,7 +60,7 @@ public class MAPErrorMessageSubscriberBusyForMtSmsImpl extends MAPErrorMessageIm
 
 
 	@Override
-	public Boolean isEmSubscriberBusyForMtSms() {
+	public boolean isEmSubscriberBusyForMtSms() {
 		return true;
 	}
 

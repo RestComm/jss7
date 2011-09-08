@@ -29,6 +29,7 @@ import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.MAPServiceBaseImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
@@ -110,82 +111,143 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		MAPApplicationContextName ctx = dialogApplicationContext.getApplicationContextName();
 		int vers = dialogApplicationContext.getApplicationContextVersion().getVersion();
 		
-		switch(ctx) {
+		switch (ctx) {
 		case shortMsgAlertContext:
-			if (vers <= 2)
+			if (vers >= 1 && vers <= 2) {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
-			else {
+			} else if (vers > 2) {
 				long[] altOid = dialogApplicationContext.getOID();
 				altOid[7] = 2;
 				ApplicationContextName alt = TcapFactory.createApplicationContextName(altOid);
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, alt);
+			} else {
+				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
 			}
-			
+
 		case shortMsgMORelayContext:
-		case shortMsgMTRelayContext:
 		case shortMsgGatewayContext:
-			if (vers <= 3)
+			if (vers >= 1 && vers <= 3) {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
-			else {
+			} else if (vers > 3) {
 				long[] altOid = dialogApplicationContext.getOID();
-				altOid[7] = 3;
+				altOid[7] = 2;
 				ApplicationContextName alt = TcapFactory.createApplicationContextName(altOid);
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, alt);
+			} else {
+				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
+			}
+
+		case shortMsgMTRelayContext:
+			if (vers >= 2 && vers <= 3) {
+				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
+			} else if (vers > 3) {
+				long[] altOid = dialogApplicationContext.getOID();
+				altOid[7] = 2;
+				ApplicationContextName alt = TcapFactory.createApplicationContextName(altOid);
+				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, alt);
+			} else {
+				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
 			}
 		}
 		
 		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
 	}
+
+	@Override
+	public MAPApplicationContext getMAPv1ApplicationContext(int operationCode, Invoke invoke) {
+		
+		switch (operationCode) {
+		case MAPOperationCode.mo_forwardSM:
+			return MAPApplicationContext.getInstance(MAPApplicationContextName.shortMsgMORelayContext, MAPApplicationContextVersion.version1);
+		case MAPOperationCode.alertServiceCentreWithoutResult:
+			return MAPApplicationContext.getInstance(MAPApplicationContextName.shortMsgAlertContext, MAPApplicationContextVersion.version1);
+		case MAPOperationCode.sendRoutingInfoForSM:
+			return MAPApplicationContext.getInstance(MAPApplicationContextName.shortMsgGatewayContext, MAPApplicationContextVersion.version1);
+		case MAPOperationCode.reportSM_DeliveryStatus:
+			return MAPApplicationContext.getInstance(MAPApplicationContextName.shortMsgGatewayContext, MAPApplicationContextVersion.version1);
+		}
+		
+		return null;
+	}
 	
 	@Override
 	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)
 			throws MAPParsingComponentException {
+		
 		MAPDialogSmsImpl mapDialogSmsImpl = (MAPDialogSmsImpl) mapDialog;
 
 		Long ocValue = oc.getLocalOperationCode();
 		if (ocValue == null)
 			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
-		
+		MAPApplicationContextName acn = mapDialog.getApplicationContext().getApplicationContextName();
+		int vers = mapDialog.getApplicationContext().getApplicationContextVersion().getVersion();
 		int ocValueInt = (int) (long)ocValue;
+
 		switch (ocValueInt) {
 		case MAPOperationCode.mo_forwardSM:
-			if (compType == ComponentType.Invoke)
-				this.moForwardShortMessageRequest(parameter, mapDialogSmsImpl, invokeId);
-			else
-				this.moForwardShortMessageResponse(parameter, mapDialogSmsImpl, invokeId);
+			if (acn == MAPApplicationContextName.shortMsgMORelayContext || acn == MAPApplicationContextName.shortMsgMTRelayContext && vers == 2) {
+				if (vers >= 3) {
+					if (compType == ComponentType.Invoke)
+						this.moForwardShortMessageRequest(parameter, mapDialogSmsImpl, invokeId);
+					else
+						this.moForwardShortMessageResponse(parameter, mapDialogSmsImpl, invokeId);
+				} else {
+					if (compType == ComponentType.Invoke)
+						this.forwardShortMessageRequest(parameter, mapDialogSmsImpl, invokeId);
+					else
+						this.forwardShortMessageResponse(parameter, mapDialogSmsImpl, invokeId);
+				}
+			}
 			break;
 
 		case MAPOperationCode.mt_forwardSM:
-			if (compType == ComponentType.Invoke)
-				this.mtForwardShortMessageRequest(parameter, mapDialogSmsImpl, invokeId);
-			else
-				this.mtForwardShortMessageResponse(parameter, mapDialogSmsImpl, invokeId);
+			if (acn == MAPApplicationContextName.shortMsgMTRelayContext && vers >= 3) {
+				if (compType == ComponentType.Invoke)
+					this.mtForwardShortMessageRequest(parameter, mapDialogSmsImpl, invokeId);
+				else
+					this.mtForwardShortMessageResponse(parameter, mapDialogSmsImpl, invokeId);
+			}
 			break;
 
 		case MAPOperationCode.sendRoutingInfoForSM:
-			if (compType == ComponentType.Invoke)
-				this.sendRoutingInfoForSMRequest(parameter, mapDialogSmsImpl, invokeId);
-			else
-				this.sendRoutingInfoForSMResponse(parameter, mapDialogSmsImpl, invokeId);
+			if (acn == MAPApplicationContextName.shortMsgGatewayContext ) {
+				if (compType == ComponentType.Invoke)
+					this.sendRoutingInfoForSMRequest(parameter, mapDialogSmsImpl, invokeId);
+				else
+					this.sendRoutingInfoForSMResponse(parameter, mapDialogSmsImpl, invokeId);
+			}
 			break;
 
 		case MAPOperationCode.reportSM_DeliveryStatus:
-			if (compType == ComponentType.Invoke)
-				this.reportSMDeliveryStatusRequest(parameter, mapDialogSmsImpl, invokeId);
-			else
-				this.reportSMDeliveryStatusResponse(parameter, mapDialogSmsImpl, invokeId);
+			if (acn == MAPApplicationContextName.shortMsgGatewayContext) {
+				if (compType == ComponentType.Invoke)
+					this.reportSMDeliveryStatusRequest(parameter, mapDialogSmsImpl, invokeId);
+				else
+					this.reportSMDeliveryStatusResponse(parameter, mapDialogSmsImpl, invokeId);
+			}
 			break;
 
 		case MAPOperationCode.informServiceCentre:
-			if (compType == ComponentType.Invoke)
-				this.informServiceCentreRequest(parameter, mapDialogSmsImpl, invokeId);
+			if (acn == MAPApplicationContextName.shortMsgGatewayContext && vers >= 2) {
+				if (compType == ComponentType.Invoke)
+					this.informServiceCentreRequest(parameter, mapDialogSmsImpl, invokeId);
+			}
 			break;
 
 		case MAPOperationCode.alertServiceCentre:
-			if (compType == ComponentType.Invoke)
-				this.alertServiceCentreRequest(parameter, mapDialogSmsImpl, invokeId);
-			else
-				this.alertServiceCentreResponse(parameter, mapDialogSmsImpl, invokeId);
+			if (acn == MAPApplicationContextName.shortMsgAlertContext && vers >= 2) {
+				if (compType == ComponentType.Invoke)
+					this.alertServiceCentreRequest(parameter, mapDialogSmsImpl, invokeId);
+				else
+					this.alertServiceCentreResponse(parameter, mapDialogSmsImpl, invokeId);
+			}
+			break;
+
+		case MAPOperationCode.alertServiceCentreWithoutResult:
+			if (acn == MAPApplicationContextName.shortMsgAlertContext && vers == 1) {
+				if (compType == ComponentType.Invoke)
+					this.alertServiceCentreRequest(parameter, mapDialogSmsImpl, invokeId);
+			}
 			break;
 			
 		default:
@@ -198,6 +260,51 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		return false;
 	}
 
+	private void forwardShortMessageRequest(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+		
+		if (parameter == null)
+			throw new MAPParsingComponentException("Error while decoding forwardShortMessageRequest: Parameter is mandatory but not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new MAPParsingComponentException(
+					"Error while decoding moForwardShortMessageRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+					MAPParsingComponentExceptionReason.MistypedParameter);
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		ForwardShortMessageRequestIndicationImpl ind = new ForwardShortMessageRequestIndicationImpl();
+		ind.decodeData(ais, buf.length);
+
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
+
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((MAPServiceSmsListener) serLis).onForwardShortMessageIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing forwardShortMessageRequest: " + e.getMessage(), e);
+			}
+		}
+	}
+	
+	private void forwardShortMessageResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+
+		ForwardShortMessageResponseIndicationImpl ind = new ForwardShortMessageResponseIndicationImpl();
+
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
+
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			
+			try {
+				((MAPServiceSmsListener) serLis).onForwardShortMessageRespIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing forwardShortMessageResponse: " + e.getMessage(), e);
+			}			
+		}
+	}
+	
 	private void moForwardShortMessageRequest(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		
 		if (parameter == null)
@@ -379,7 +486,8 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		ReportSMDeliveryStatusRequestIndicationImpl ind = new ReportSMDeliveryStatusRequestIndicationImpl();
+		ReportSMDeliveryStatusRequestIndicationImpl ind = new ReportSMDeliveryStatusRequestIndicationImpl(mapDialogImpl.getApplicationContext()
+				.getApplicationContextVersion().getVersion());
 		ind.decodeData(ais, buf.length);
 		
 		ind.setInvokeId(invokeId);

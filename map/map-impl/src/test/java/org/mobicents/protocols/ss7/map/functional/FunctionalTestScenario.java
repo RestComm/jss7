@@ -84,6 +84,16 @@ public enum FunctionalTestScenario {
 	 * TC-END + Reject (invokeProblem)  
 	 */
 	Action_Component_E(14),
+	/**
+	 * TC-BEGIN + addProcessUnstructuredSSRequest
+	 * TC-END + ReturnError(systemFailure) - using "close(true)" - so no ReturnError must be sent !   
+	 */
+	Action_Component_F(15),
+	/**
+	 * TC-BEGIN + addProcessUnstructuredSSRequest
+	 * TC-END + Reject (generalProblem) without invokeId!  
+	 */
+	Action_Component_G(16),
 
 	/**
 	 * TC-BEGIN + AlertServiceCentreRequest
@@ -102,7 +112,7 @@ public enum FunctionalTestScenario {
 	Action_Sms_MtForwardSM(33),
 	/**
 	 * TC-BEGIN + SendRoutingInfoForSMRequest
-	 * TC-END + SendRoutingInfoForSMResponse  
+	 * TC-END + SendRoutingInfoForSMResponse + InformServiceCentreRequest
 	 */
 	Action_Sms_SendRoutingInfoForSM(34),
 	/**
@@ -111,9 +121,31 @@ public enum FunctionalTestScenario {
 	 */
 	Action_Sms_ReportSMDeliveryStatus(35),
 	/**
-	 * TC-BEGIN + InformServiceCentreRequest
+	 * TC-BEGIN + ForwardSMRequest_V2
+	 * TC-END + ForwardSMResponse_V2  
 	 */
-	Action_Sms_InformServiceCentre(36);
+	Action_Sms_ForwardSM(37),
+
+	/**
+	 * TC-BEGIN+INVOKE(opCode=47) -> TC-END+RRL(opCode=47) (47=reportSM-DeliveryStatus)
+	 */
+	Action_V1_A(41),
+	/**
+	 * TC-BEGIN+INVOKE(opCode=49) -> release()
+	 */
+	Action_V1_B(42),
+	/**
+	 * TC-BEGIN(empty - no components) -> TC-ABORT V1
+	 */
+	Action_V1_C(43),
+	/**
+	 * TC-BEGIN(unsupported opCode) -> TC-ABORT V1
+	 */
+	Action_V1_D(44),
+	/**
+	 * TC-BEGIN+INVOKE(opCode=46) -> TC-CONTINUE(empty) -> TC-ABORT(UserReason) (->Abort V1)
+	 */
+	Action_V1_E(45);
 
 	
 	private int code;

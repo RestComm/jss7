@@ -23,29 +23,13 @@
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
 /**
-*
-* MW-Status ::= BIT STRING {
-* 	sc-AddressNotIncluded  (0),
-* 	mnrf-Set  (1),
-* 	mcef-Set  (2) ,
-* 	mnrg-Set	  (3)} (SIZE (6..16))
-* 	-- exception handling:
-* 	-- bits 4 to 15 shall be ignored if received and not understood
-* 
-*
-* 
-* @author sergey vetyutnev
-* 
-*/
-public interface MWStatus {
-
-	public boolean getScAddressNotIncluded();
-
-	public boolean getMnrfSet();
-
-	public boolean getMcefSet();
-
-	public boolean getMnrgSet();
+ * 
+ * Empty response
+ * 
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
+public interface ForwardShortMessageResponseIndication extends SmsMessage {
 
 }
-

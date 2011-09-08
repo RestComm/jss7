@@ -103,6 +103,11 @@ public abstract class MAPServiceBaseImpl implements MAPServiceBase {
 		this.serviceListeners.remove(mapServiceListener);
 	}
 
+	@Override
+	public MAPApplicationContext getMAPv1ApplicationContext(int operationCode, Invoke invoke) {
+		return null;
+	}
+
 	public Boolean isActivated() {
 		return this._isActivated;
 	}
@@ -114,7 +119,7 @@ public abstract class MAPServiceBaseImpl implements MAPServiceBase {
 	public void deactivate() {
 		this._isActivated = false;
 
-		// TODO: abort all active dialog ?
+		// TODO: abort all active dialogs ?
 	}
 
 	protected void deliverErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {

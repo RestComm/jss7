@@ -52,6 +52,7 @@ public interface MAPOperationCode {
 	public static final int  reportSM_DeliveryStatus = 47;
 	public static final int  informServiceCentre = 63;
 	public static final int  alertServiceCentre = 64;
+	public static final int  alertServiceCentreWithoutResult = 49;
 	public static final int  readyForSM = 66;
 	
 	//Location Service Management

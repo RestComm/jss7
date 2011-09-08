@@ -59,18 +59,21 @@ public class ReportSMDeliveryStatusRequestIndicationImpl extends SmsMessageImpl 
 	private SMDeliveryOutcome sMDeliveryOutcome;
 	private Integer absentSubscriberDiagnosticSM;
 	private MAPExtensionContainer extensionContainer;
-	private Boolean gprsSupportIndicator;
-	private Boolean deliveryOutcomeIndicator;
+	private boolean gprsSupportIndicator;
+	private boolean deliveryOutcomeIndicator;
 	private SMDeliveryOutcome additionalSMDeliveryOutcome;
 	private Integer additionalAbsentSubscriberDiagnosticSM;
+	private long mapProtocolVersion;
 
 	
-	public ReportSMDeliveryStatusRequestIndicationImpl() {
+	public ReportSMDeliveryStatusRequestIndicationImpl(long mapProtocolVersion) {
+		this.mapProtocolVersion = mapProtocolVersion;
 	}
 
-	public ReportSMDeliveryStatusRequestIndicationImpl(ISDNAddressString msisdn, AddressString serviceCentreAddress, SMDeliveryOutcome sMDeliveryOutcome,
-			Integer absentSubscriberDiagnosticSM, MAPExtensionContainer extensionContainer, Boolean gprsSupportIndicator, Boolean deliveryOutcomeIndicator,
+	public ReportSMDeliveryStatusRequestIndicationImpl(long mapProtocolVersion, ISDNAddressString msisdn, AddressString serviceCentreAddress, SMDeliveryOutcome sMDeliveryOutcome,
+			Integer absentSubscriberDiagnosticSM, MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator, boolean deliveryOutcomeIndicator,
 			SMDeliveryOutcome additionalSMDeliveryOutcome, Integer additionalAbsentSubscriberDiagnosticSM) {
+		this.mapProtocolVersion = mapProtocolVersion;
 		this.msisdn = msisdn;
 		this.serviceCentreAddress = serviceCentreAddress;
 		this.sMDeliveryOutcome = sMDeliveryOutcome;
@@ -109,12 +112,12 @@ public class ReportSMDeliveryStatusRequestIndicationImpl extends SmsMessageImpl 
 	}
 
 	@Override
-	public Boolean getGprsSupportIndicator() {
+	public boolean getGprsSupportIndicator() {
 		return this.gprsSupportIndicator;
 	}
 
 	@Override
-	public Boolean getDeliveryOutcomeIndicator() {
+	public boolean getDeliveryOutcomeIndicator() {
 		return this.deliveryOutcomeIndicator;
 	}
 
@@ -181,8 +184,8 @@ public class ReportSMDeliveryStatusRequestIndicationImpl extends SmsMessageImpl 
 		this.sMDeliveryOutcome = null;
 		this.absentSubscriberDiagnosticSM = null;
 		this.extensionContainer = null;
-		this.gprsSupportIndicator = null;
-		this.deliveryOutcomeIndicator = null;
+		this.gprsSupportIndicator = false;
+		this.deliveryOutcomeIndicator = false;
 		this.additionalSMDeliveryOutcome = null;
 		this.additionalAbsentSubscriberDiagnosticSM = null;
 
@@ -299,14 +302,9 @@ public class ReportSMDeliveryStatusRequestIndicationImpl extends SmsMessageImpl 
 			num++;
 		}
 
-		if (num < 3)
+		if (num < 3 && this.mapProtocolVersion >= 2 || num < 2 && this.mapProtocolVersion == 1)
 			throw new MAPParsingComponentException("Error while decoding reportSMDeliveryStatusRequest: Needs at least 3 mandatory parameters, found " + num,
 					MAPParsingComponentExceptionReason.MistypedParameter);
-		
-		if (this.gprsSupportIndicator == null)
-			this.gprsSupportIndicator = false;
-		if (this.deliveryOutcomeIndicator == null)
-			this.deliveryOutcomeIndicator = false;
 	}
 
 	@Override
@@ -331,21 +329,27 @@ public class ReportSMDeliveryStatusRequestIndicationImpl extends SmsMessageImpl 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.msisdn == null || this.serviceCentreAddress == null || this.sMDeliveryOutcome == null)
-			throw new MAPException("msisdn, serviceCentreAddress and sMDeliveryOutcome must not be null");
+		if (this.mapProtocolVersion == 1) {
+			if (this.msisdn == null || this.serviceCentreAddress == null)
+				throw new MAPException("msisdn and serviceCentreAddress must not be null");
+		} else {
+			if (this.msisdn == null || this.serviceCentreAddress == null || this.sMDeliveryOutcome == null)
+				throw new MAPException("msisdn, serviceCentreAddress and sMDeliveryOutcome must not be null");
+		}
 
 		try {
 			((ISDNAddressStringImpl)this.msisdn).encodeAll(asnOs);
 			((AddressStringImpl)this.serviceCentreAddress).encodeAll(asnOs);
-			asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.sMDeliveryOutcome.getCode());
+			if (this.mapProtocolVersion >= 1)
+				asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.sMDeliveryOutcome.getCode());
 
 			if (this.absentSubscriberDiagnosticSM != null)
 				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_AbsentSubscriberDiagnosticSM, this.absentSubscriberDiagnosticSM);
 			if (this.extensionContainer != null)
 				((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ExtensionContainer);
-			if (this.gprsSupportIndicator != null && this.gprsSupportIndicator == true)
+			if (this.gprsSupportIndicator == true)
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_GprsSupportIndicator);
-			if (this.deliveryOutcomeIndicator != null && this.deliveryOutcomeIndicator == true)
+			if (this.deliveryOutcomeIndicator == true)
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DeliveryOutcomeIndicator);
 			if (this.additionalSMDeliveryOutcome != null)
 				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_AdditionalSMDeliveryOutcome, this.additionalSMDeliveryOutcome.getCode());
@@ -383,13 +387,11 @@ public class ReportSMDeliveryStatusRequestIndicationImpl extends SmsMessageImpl 
 			sb.append(", extensionContainer=");
 			sb.append(this.extensionContainer.toString());
 		}
-		if (this.gprsSupportIndicator != null) {
-			sb.append(", gprsSupportIndicator=");
-			sb.append(this.gprsSupportIndicator.toString());
+		if (this.gprsSupportIndicator) {
+			sb.append(", gprsSupportIndicator");
 		}
-		if (this.deliveryOutcomeIndicator != null) {
-			sb.append(", deliveryOutcomeIndicator=");
-			sb.append(this.deliveryOutcomeIndicator.toString());
+		if (this.deliveryOutcomeIndicator) {
+			sb.append(", deliveryOutcomeIndicator");
 		}
 		if (this.additionalSMDeliveryOutcome != null) {
 			sb.append(", additionalSMDeliveryOutcome=");

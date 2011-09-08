@@ -80,7 +80,7 @@ public class MAPFunctionalTest extends SccpHarness {
 	 */
 	@Before
 	public void setUp() {
-		// this.setupLog4j();
+//		this.setupLog4j();
 
 		super.setUp();
 
@@ -213,18 +213,109 @@ public class MAPFunctionalTest extends SccpHarness {
 	@Test
 	public void testComponents() throws Exception {
 		
-//		 server.reset();
-//		 client.reset();
-//		 server.setStep(FunctionalTestScenario.Action_Component_A);
-//		 client.setStep(FunctionalTestScenario.Action_Component_A);
-//		 client.actionB();
-//		 waitForEnd();
-//		 assertTrue("Client side did not finish: " + client.getStatus(),
-//		 client.isFinished());
-//		 assertTrue("Server side did not finish: " + server.getStatus(),
-//		 server.isFinished());
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_Component_A);
+		client.setStep(FunctionalTestScenario.Action_Component_A);
+		client.actionB();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
 
-		 // ..........................
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_Component_B);
+		client.setStep(FunctionalTestScenario.Action_Component_B);
+		client.actionB();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_Component_D);
+		client.setStep(FunctionalTestScenario.Action_Component_D);
+		client.actionB();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_Component_E);
+		client.setStep(FunctionalTestScenario.Action_Component_E);
+		client.actionB();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_Component_F);
+		client.setStep(FunctionalTestScenario.Action_Component_F);
+		client.actionB();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_Component_G);
+		client.setStep(FunctionalTestScenario.Action_Component_G);
+		client.actionB();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+
+	}
+
+	@Test
+	public void testV1() throws Exception {
+
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_V1_A);
+		client.setStep(FunctionalTestScenario.Action_V1_A);
+		client.actionD();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_V1_B);
+		client.setStep(FunctionalTestScenario.Action_V1_B);
+		client.actionD();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_V1_C);
+		client.setStep(FunctionalTestScenario.Action_V1_C);
+		client.actionD();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_V1_D);
+		client.setStep(FunctionalTestScenario.Action_V1_D);
+		client.actionD();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_V1_E);
+		client.setStep(FunctionalTestScenario.Action_V1_E);
+		client.actionD();
+		waitForEnd();
+		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
+		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
 	}
 
 	@Test
@@ -240,8 +331,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		
 		server.reset();
 		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Sms_InformServiceCentre);
-		client.setStep(FunctionalTestScenario.Action_Sms_InformServiceCentre);
+		server.setStep(FunctionalTestScenario.Action_Sms_ForwardSM);
+		client.setStep(FunctionalTestScenario.Action_Sms_ForwardSM);
 		client.actionC();
 		waitForEnd();
 		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
@@ -287,6 +378,13 @@ public class MAPFunctionalTest extends SccpHarness {
 	@Test
 	public void testA() throws Exception {
 
+		// ....................................
+//		this.saveTrafficInFile();
+		
+
+		
+		
+		
 //		MapServiceFactory msf = this.stack1.getMAPProvider().getMapServiceFactory();
 //		IMEI a1 = msf.createIMEI("12345678901234");
 //
@@ -439,7 +537,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				if (new Date().getTime() - startTime.getTime() > _WAIT_TIMEOUT)
 					break;
 
-//				 Thread.currentThread().sleep(1000000);
+//				Thread.currentThread().sleep(1000000);
 			}
 		} catch (InterruptedException e) {
 			fail("Interrupted on wait!");

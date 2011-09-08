@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -59,6 +61,7 @@ public abstract class SccpHarness {
 	protected SccpResource resource1 = new SccpResource();
 	protected SccpResource resource2 = new SccpResource();
 
+	
 	/**
 	 * 
 	 */
@@ -153,11 +156,32 @@ public abstract class SccpHarness {
 		this.tearDownStack1();
 		this.tearDownStack2();
 	}
+	
+	/**
+	 * After this method invoking all MTP traffic will be save into the file "MsgLog.txt"
+	 * file format:
+	 * [message][message]...[message]
+	 * [message] ::= { byte-length low byte, byte-length high byte, byte[] message }
+	 */
+	public void saveTrafficInFile() {
+		((Mtp3UserPartImpl) this.mtp3UserPart1).saveTrafficInFile = true;
+		((Mtp3UserPartImpl) this.mtp3UserPart2).saveTrafficInFile = true;
+		
+		try {
+			FileOutputStream fs = new FileOutputStream("MsgLog.txt", false);
+			fs.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	private class Mtp3UserPartImpl implements Mtp3UserPart {
 
 		private ConcurrentLinkedQueue<byte[]> readFrom;
 		private ConcurrentLinkedQueue<byte[]> writeTo;
+		
+		private boolean saveTrafficInFile = false;
 
 		Mtp3UserPartImpl(ConcurrentLinkedQueue<byte[]> readFrom, ConcurrentLinkedQueue<byte[]> writeTo) {
 			this.readFrom = readFrom;
@@ -185,6 +209,20 @@ public abstract class SccpHarness {
 				dataAdded = dataAdded + txData.length;
 				System.out.println("Write " + Arrays.toString(txData));
 				this.writeTo.add(txData);
+				
+				if (saveTrafficInFile) {
+					try {
+						FileOutputStream fs = new FileOutputStream("MsgLog.txt", true);
+						int ln = txData.length;
+						fs.write(ln & 0xFF);
+						fs.write(ln >> 8);
+						fs.write(txData);
+						fs.close();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 			return dataAdded;
 		}

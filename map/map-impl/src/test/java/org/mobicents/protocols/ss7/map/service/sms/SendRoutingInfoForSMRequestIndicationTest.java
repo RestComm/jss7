@@ -137,7 +137,7 @@ public class SendRoutingInfoForSMRequestIndicationTest extends TestCase {
 
 		ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "13457745551");
 		AddressString sca = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "9821113333");
-		SendRoutingInfoForSMRequestIndicationImpl ind = new SendRoutingInfoForSMRequestIndicationImpl(msisdn, false, sca, null, null, null, null);
+		SendRoutingInfoForSMRequestIndicationImpl ind = new SendRoutingInfoForSMRequestIndicationImpl(msisdn, false, sca, null, false, null, null);
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
 		ind.encodeAll(asnOS);

@@ -80,9 +80,9 @@ public interface ReportSMDeliveryStatusRequestIndication extends SmsMessage {
 
 	public MAPExtensionContainer getExtensionContainer();
 	
-	public Boolean getGprsSupportIndicator();
+	public boolean getGprsSupportIndicator();
 	
-	public Boolean getDeliveryOutcomeIndicator();
+	public boolean getDeliveryOutcomeIndicator();
 	
 	public SMDeliveryOutcome getAdditionalSMDeliveryOutcome();
 	

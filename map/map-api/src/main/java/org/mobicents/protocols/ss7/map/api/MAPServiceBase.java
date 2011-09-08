@@ -90,6 +90,15 @@ public interface MAPServiceBase {
 	public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext);
 
 	/**
+	 * Generate ApplicationContext depending on operationCode for MAP v1
+	 * 
+	 * @param operationCode
+	 * @param invoke
+	 * @return ApplicationContext or null if operationCode is not supported by a service
+	 */
+	public MAPApplicationContext getMAPv1ApplicationContext(int operationCode, Invoke invoke); 
+
+	/**
 	 * Process a component
 	 */
 	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)

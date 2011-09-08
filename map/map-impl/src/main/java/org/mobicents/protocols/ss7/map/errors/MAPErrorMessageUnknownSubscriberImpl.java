@@ -61,7 +61,7 @@ public class MAPErrorMessageUnknownSubscriberImpl extends MAPErrorMessageImpl im
 	
 
 	@Override
-	public Boolean isEmUnknownSubscriber() {
+	public boolean isEmUnknownSubscriber() {
 		return true;
 	}
 

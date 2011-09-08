@@ -63,7 +63,7 @@ public class MAPErrorMessageUnauthorizedLCSClientImpl extends MAPErrorMessageImp
 	}
 
 	@Override
-	public Boolean isEmUnauthorizedLCSClient() {
+	public boolean isEmUnauthorizedLCSClient() {
 		return true;
 	}
 

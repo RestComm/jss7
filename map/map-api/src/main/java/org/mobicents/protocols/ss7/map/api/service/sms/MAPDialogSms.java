@@ -38,6 +38,30 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 public interface MAPDialogSms extends MAPDialog {
 
 	/**
+	 * Sending MAP-FORWARD-SHORT-MESSAGE request
+	 * 
+	 * @param sm_RP_DA
+	 *            mandatory
+	 * @param sm_RP_OA
+	 *            mandatory
+	 * @param sm_RP_UI
+	 *            mandatory
+	 * @param moreMessagesToSend
+	 *            optional, default: false
+	 * @return invokeId
+	 * @throws MAPException
+	 */
+	public Long addForwardShortMessageRequest(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, byte[] sm_RP_UI, boolean moreMessagesToSend) throws MAPException;
+
+	/**
+	 * Sending MAP-FORWARD-SHORT-MESSAGE response
+	 * 
+	 * @param invokeId
+	 * @throws MAPException
+	 */
+	public void addForwardShortMessageResponse(long invokeId) throws MAPException;
+
+	/**
 	 * Sending MAP-MO-FORWARD-SHORT-MESSAGE request
 	 * 
 	 * @param sm_RP_DA
@@ -84,7 +108,7 @@ public interface MAPDialogSms extends MAPDialog {
 	 * @return
 	 * @throws MAPException
 	 */
-	public Long addMtForwardShortMessageRequest(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, byte[] sm_RP_UI, Boolean moreMessagesToSend,
+	public Long addMtForwardShortMessageRequest(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, byte[] sm_RP_UI, boolean moreMessagesToSend,
 			MAPExtensionContainer extensionContainer) throws MAPException;
 
 	/**
@@ -119,8 +143,8 @@ public interface MAPDialogSms extends MAPDialog {
 	 * @return
 	 * @throws MAPException
 	 */
-	public Long addSendRoutingInfoForSMRequest(ISDNAddressString msisdn, Boolean sm_RP_PRI, AddressString serviceCentreAddress,
-			MAPExtensionContainer extensionContainer, Boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, byte[] sM_RP_SMEA) throws MAPException;
+	public Long addSendRoutingInfoForSMRequest(ISDNAddressString msisdn, boolean sm_RP_PRI, AddressString serviceCentreAddress,
+			MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, byte[] sM_RP_SMEA) throws MAPException;
 	
 	/**
 	 * Sending MAP-SEND-ROUTING-INFO-FOR-SM response
@@ -162,7 +186,7 @@ public interface MAPDialogSms extends MAPDialog {
 	 * @throws MAPException
 	 */
 	public Long addReportSMDeliveryStatusRequest(ISDNAddressString msisdn, AddressString serviceCentreAddress, SMDeliveryOutcome sMDeliveryOutcome,
-			Integer sbsentSubscriberDiagnosticSM, MAPExtensionContainer extensionContainer, Boolean gprsSupportIndicator, Boolean deliveryOutcomeIndicator,
+			Integer absentSubscriberDiagnosticSM, MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator, boolean deliveryOutcomeIndicator,
 			SMDeliveryOutcome additionalSMDeliveryOutcome, Integer additionalAbsentSubscriberDiagnosticSM) throws MAPException;
 	
 	/**

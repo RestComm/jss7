@@ -59,62 +59,62 @@ public abstract class MAPErrorMessageImpl implements MAPErrorMessage, MAPAsnPrim
 
 	
 	@Override
-	public Boolean isEmParameterless() {
+	public boolean isEmParameterless() {
 		return false;
 	}
 
 	@Override
-	public Boolean isEmExtensionContainer() {
+	public boolean isEmExtensionContainer() {
 		return false;
 	}
 
 	@Override
-	public Boolean isEmFacilityNotSup() {
+	public boolean isEmFacilityNotSup() {
 		return false;
 	}
 
 	@Override
-	public Boolean isEmSMDeliveryFailure() {
+	public boolean isEmSMDeliveryFailure() {
 		return false;
 	}
 
 	@Override
-	public Boolean isEmSystemFailure() {
+	public boolean isEmSystemFailure() {
 		return false;
 	}
 
 	@Override
-	public Boolean isEmUnknownSubscriber() {
+	public boolean isEmUnknownSubscriber() {
 		return false;
 	}
 
 	@Override
-	public Boolean isEmAbsentSubscriberSM() {
+	public boolean isEmAbsentSubscriberSM() {
 		return false;
 	}
 
 	@Override
-	public Boolean isEmAbsentSubscriber() {
+	public boolean isEmAbsentSubscriber() {
 		return false;
 	}
 
 	@Override
-	public Boolean isEmSubscriberBusyForMtSms() {
+	public boolean isEmSubscriberBusyForMtSms() {
 		return false;
 	}
 
 	@Override
-	public Boolean isEmCallBarred() {
+	public boolean isEmCallBarred() {
 		return false;
 	}
 
 	@Override
-	public Boolean isEmUnauthorizedLCSClient() {
+	public boolean isEmUnauthorizedLCSClient() {
 		return false;
 	}
 
 	@Override
-	public Boolean isEmPositionMethodFailure() {
+	public boolean isEmPositionMethodFailure() {
 		return false;
 	}
 

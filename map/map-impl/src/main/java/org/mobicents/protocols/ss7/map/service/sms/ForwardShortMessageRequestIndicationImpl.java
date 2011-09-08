@@ -31,38 +31,34 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
-import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl implements MtForwardShortMessageRequestIndication {
+public class ForwardShortMessageRequestIndicationImpl extends SmsMessageImpl implements ForwardShortMessageRequestIndication {
 
 	private SM_RP_DA sM_RP_DA;
 	private SM_RP_OA sM_RP_OA;
 	private byte[] sM_RP_UI;
 	private boolean moreMessagesToSend;
-	private MAPExtensionContainer extensionContainer;
+
 	
-	public MtForwardShortMessageRequestIndicationImpl() {
+	public ForwardShortMessageRequestIndicationImpl() {
 	}	
 	
-	public MtForwardShortMessageRequestIndicationImpl(SM_RP_DA sM_RP_DA, SM_RP_OA sM_RP_OA, byte[] sM_RP_UI, boolean moreMessagesToSend,
-			MAPExtensionContainer extensionContainer) {
+	public ForwardShortMessageRequestIndicationImpl(SM_RP_DA sM_RP_DA, SM_RP_OA sM_RP_OA, byte[] sM_RP_UI, Boolean moreMessagesToSend) {
 		this.sM_RP_DA = sM_RP_DA;
 		this.sM_RP_OA = sM_RP_OA;
 		this.sM_RP_UI = sM_RP_UI;
 		this.moreMessagesToSend = moreMessagesToSend;
-		this.extensionContainer = extensionContainer;
 	}	
-	
 
+	
 	@Override
 	public SM_RP_DA getSM_RP_DA() {
 		return this.sM_RP_DA;
@@ -82,12 +78,7 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 	public boolean getMoreMessagesToSend() {
 		return this.moreMessagesToSend;
 	}
-
-	@Override
-	public MAPExtensionContainer getExtensionContainer() {
-		return this.extensionContainer;
-	}
-
+	
 	
 	@Override
 	public int getTag() throws MAPException {
@@ -104,6 +95,7 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 		return false;
 	}
 
+
 	
 	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
@@ -112,10 +104,10 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding mtForwardShortMessageRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding forwardShortMessageRequest: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding mtForwardShortMessageRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding forwardShortMessageRequest: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -126,10 +118,10 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding mtForwardShortMessageRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding forwardShortMessageRequest: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding mtForwardShortMessageRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding forwardShortMessageRequest: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -140,7 +132,6 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 		this.sM_RP_OA = null;
 		this.sM_RP_UI = null;
 		this.moreMessagesToSend = false;
-		this.extensionContainer = null;
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		int num = 0;
@@ -154,7 +145,7 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 			case 0:
 				// SM_RP_DA
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter 0 bad tag class or not primitive",
+					throw new MAPParsingComponentException("Error while decoding forwardShortMessageRequest: Parameter 0 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.sM_RP_DA = new SM_RP_DAImpl();
 				((SM_RP_DAImpl)this.sM_RP_DA).decodeAll(ais);
@@ -163,7 +154,7 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 			case 1:
 				// SM_RP_OA
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter 1 bad tag class or not primitive",
+					throw new MAPParsingComponentException("Error while decoding forwardShortMessageRequest: Parameter 1 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.sM_RP_OA = new SM_RP_OAImpl();
 				((SM_RP_OAImpl)this.sM_RP_OA).decodeAll(ais);
@@ -172,31 +163,23 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 			case 2:
 				// sm-RP-UI
 				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter 2 bad tag class or not primitive",
+					throw new MAPParsingComponentException("Error while decoding forwardShortMessageRequest: Parameter 2 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				if (tag != Tag.STRING_OCTET)
-					throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter 2 tag must be STRING_OCTET, found: "
+					throw new MAPParsingComponentException("Error while decoding forwardShortMessageRequest: Parameter 2 tag must be STRING_OCTET, found: "
 							+ tag, MAPParsingComponentExceptionReason.MistypedParameter);
 				this.sM_RP_UI = ais.readOctetString();
 				break;
 
 			default:
-				if (tag == Tag.SEQUENCE && ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
-					
-					if (ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter extensionContainer is primitive",
-								MAPParsingComponentExceptionReason.MistypedParameter);
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
-				} else if (tag == Tag.NULL && ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
-					
+				if (tag == Tag.NULL && ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
 					if (!ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter moreMessagesToSend is not primitive",
+						throw new MAPParsingComponentException(
+								"Error while decoding forwardShortMessageRequest: Parameter moreMessagesToSend is not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					ais.readNull();
 					this.moreMessagesToSend = true;
 				} else {
-					
 					ais.advanceElement();
 				}
 				break;
@@ -206,7 +189,7 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 		}
 
 		if (num < 3)
-			throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Needs at least 3 mandatory parameters, found " + num,
+			throw new MAPParsingComponentException("Error while decoding forwardShortMessageRequest: Needs at least 3 mandatory parameters, found " + num,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -225,7 +208,7 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding mtForwardShortMessageRequest: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding forwardShortMessageRequest: " + e.getMessage(), e);
 		}
 	}
 
@@ -242,19 +225,17 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 
 			if (this.moreMessagesToSend)
 				asnOs.writeNull();
-			if (this.extensionContainer != null)
-				((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs);
 		} catch (IOException e) {
-			throw new MAPException("IOException when encoding mtForwardShortMessageRequest: " + e.getMessage(), e);
+			throw new MAPException("IOException when encoding forwardShortMessageRequest: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding mtForwardShortMessageRequest: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding forwardShortMessageRequest: " + e.getMessage(), e);
 		}
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("MoForwardShortMessageRequest [");
+		sb.append("ForwardShortMessageRequest [");
 
 		if (this.sM_RP_DA != null) {
 			sb.append("sm_RP_DA=");
@@ -268,10 +249,6 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 			sb.append(", sm_RP_UI=[");
 			sb.append(this.printDataArr(this.sM_RP_UI));
 			sb.append("]");
-		}
-		if (this.extensionContainer != null) {
-			sb.append(", extensionContainer=");
-			sb.append(this.extensionContainer.toString());
 		}
 		if (this.moreMessagesToSend) {
 			sb.append(", moreMessagesToSend");
@@ -291,5 +268,5 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 
 		return sb.toString();
 	}
-}
 
+}

@@ -27,7 +27,6 @@ import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.MAPServiceBaseImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
-import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
@@ -43,6 +42,8 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener;
 import org.mobicents.protocols.ss7.map.dialog.ServingCheckDataImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
@@ -70,15 +71,19 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 	 */
 	@Override
 	public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext) {
-		if (dialogApplicationContext.getApplicationContextName() == MAPApplicationContextName.locationSvcEnquiryContext) {
-			if (dialogApplicationContext.getApplicationContextVersion().getVersion() == 3) {
+		
+		int vers = dialogApplicationContext.getApplicationContextVersion().getVersion();
+
+		switch (dialogApplicationContext.getApplicationContextName()) {
+		case locationSvcEnquiryContext:
+		case locationSvcGatewayContext:
+			if (vers == 3) {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
-			} else {
-				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
-			}
-		} else if (dialogApplicationContext.getApplicationContextName() == MAPApplicationContextName.locationSvcGatewayContext) {
-			if (dialogApplicationContext.getApplicationContextVersion().getVersion() == 3) {
-				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
+			} else if (vers > 3) {
+				long[] altOid = dialogApplicationContext.getOID();
+				altOid[7] = 3;
+				ApplicationContextName alt = TcapFactory.createApplicationContextName(altOid);
+				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, alt);
 			} else {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
 			}
