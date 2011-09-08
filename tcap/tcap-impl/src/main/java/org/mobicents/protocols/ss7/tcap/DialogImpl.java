@@ -563,30 +563,29 @@ public class DialogImpl implements Dialog {
 				}
 
 				ApplicationContextName acn = event.getApplicationContextName();
-				if (acn == null) {
-					throw new TCAPSendException("Application Context Name must be present");
+				if (acn != null) { // acn & DialogPortion is absent in TCAP V1
+
+					// set dialog portion
+					DialogPortion dp = TcapFactory.createDialogPortion();
+					dp.setUnidirectional(false);
+					DialogResponseAPDU apdu = TcapFactory.createDialogAPDUResponse();
+					dp.setDialogAPDU(apdu);
+
+					apdu.setApplicationContextName(event.getApplicationContextName());
+					if (event.getUserInformation() != null) {
+						apdu.setUserInformation(event.getUserInformation());
+					}
+
+					// WHERE THE HELL THIS COMES FROM!!!!
+					// WHEN REJECTED IS USED !!!!!
+					Result res = TcapFactory.createResult();
+					res.setResultType(ResultType.Accepted);
+					ResultSourceDiagnostic rsd = TcapFactory.createResultSourceDiagnostic();
+					rsd.setDialogServiceUserType(DialogServiceUserType.Null);
+					apdu.setResultSourceDiagnostic(rsd);
+					apdu.setResult(res);
+					tcbm.setDialogPortion(dp);
 				}
-
-				// set dialog portion
-				DialogPortion dp = TcapFactory.createDialogPortion();
-				dp.setUnidirectional(false);
-				DialogResponseAPDU apdu = TcapFactory.createDialogAPDUResponse();
-				dp.setDialogAPDU(apdu);
-
-				apdu.setApplicationContextName(event.getApplicationContextName());
-				if (event.getUserInformation() != null) {
-					apdu.setUserInformation(event.getUserInformation());
-				}
-
-				// WHERE THE HELL THIS COMES FROM!!!!
-				// WHEN REJECTED IS USED !!!!!
-				Result res = TcapFactory.createResult();
-				res.setResultType(ResultType.Accepted);
-				ResultSourceDiagnostic rsd = TcapFactory.createResultSourceDiagnostic();
-				rsd.setDialogServiceUserType(DialogServiceUserType.Null);
-				apdu.setResultSourceDiagnostic(rsd);
-				apdu.setResult(res);
-				tcbm.setDialogPortion(dp);
 
 			} else if (state == TRPseudoState.Active) {
 				restartIdleTimer();
@@ -711,51 +710,58 @@ public class DialogImpl implements Dialog {
 
 			if (this.state == TRPseudoState.InitialReceived || this.state == TRPseudoState.InitialSent || this.state == TRPseudoState.Active) {
 				// allowed
-				if (event.getUserInformation() == null) {
-					throw new IllegalArgumentException("User information MUST be present.");
-				}
-				DialogPortion dp = TcapFactory.createDialogPortion();
-				dp.setUnidirectional(false);
+				DialogPortion dp = null;
+				if (event.getUserInformation() != null) { // User information can be absent in TCAP V1
 
-				if (event.getDialogServiceUserType() != null) {
-					// ITU T Q.774 Read Dialogue end on page 12 and 3.2.2
-					// Abnormal
-					// procedures on page 13 and 14
-					DialogResponseAPDU apdu = TcapFactory.createDialogAPDUResponse();
-					apdu.setApplicationContextName(event.getApplicationContextName());
-					apdu.setUserInformation(event.getUserInformation());
+					dp = TcapFactory.createDialogPortion();
+					dp.setUnidirectional(false);
 
-					Result res = TcapFactory.createResult();
-					res.setResultType(ResultType.RejectedPermanent);
-					ResultSourceDiagnostic rsd = TcapFactory.createResultSourceDiagnostic();
-					rsd.setDialogServiceUserType(event.getDialogServiceUserType());
-					apdu.setResultSourceDiagnostic(rsd);
-					apdu.setResult(res);
-					dp.setDialogAPDU(apdu);
-				} else {
-					// When a BEGIN message has been received (i.e. the dialogue
-					// is
-					// in the "Initiation Received" state) containing a Dialogue
-					// Request (AARQ) APDU, the TC-User can abort for any user
-					// defined reason. In such a situation, the TC-User issues a
-					// TC-U-ABORT request primitive with the Abort Reason
-					// parameter
-					// absent or with set to any value other than either
-					// "application-context-name-not-supported" or
-					// dialogue-refused". In such a case, a Dialogue Abort (ABRT) APDU is generated with abort-source coded as "dialogue-service-user",
-					// and supplied as the User Data parameter of the TR-U-ABORT
-					// request primitive. User information (if any) provided in
-					// the
-					// TC-U-ABORT request primitive is coded in the
-					// user-information
-					// field of the ABRT APDU.
-					DialogAbortAPDU dapdu = TcapFactory.createDialogAPDUAbort();
+					if (event.getDialogServiceUserType() != null) {
+						// ITU T Q.774 Read Dialogue end on page 12 and 3.2.2
+						// Abnormal
+						// procedures on page 13 and 14
+						DialogResponseAPDU apdu = TcapFactory.createDialogAPDUResponse();
+						apdu.setApplicationContextName(event.getApplicationContextName());
+						apdu.setUserInformation(event.getUserInformation());
 
-					AbortSource as = TcapFactory.createAbortSource();
-					as.setAbortSourceType(AbortSourceType.User);
-					dapdu.setAbortSource(as);
-					dapdu.setUserInformation(event.getUserInformation());
-					dp.setDialogAPDU(dapdu);
+						Result res = TcapFactory.createResult();
+						res.setResultType(ResultType.RejectedPermanent);
+						ResultSourceDiagnostic rsd = TcapFactory.createResultSourceDiagnostic();
+						rsd.setDialogServiceUserType(event.getDialogServiceUserType());
+						apdu.setResultSourceDiagnostic(rsd);
+						apdu.setResult(res);
+						dp.setDialogAPDU(apdu);
+					} else {
+						// When a BEGIN message has been received (i.e. the
+						// dialogue
+						// is
+						// in the "Initiation Received" state) containing a
+						// Dialogue
+						// Request (AARQ) APDU, the TC-User can abort for any
+						// user
+						// defined reason. In such a situation, the TC-User
+						// issues a
+						// TC-U-ABORT request primitive with the Abort Reason
+						// parameter
+						// absent or with set to any value other than either
+						// "application-context-name-not-supported" or
+						// dialogue-refused". In such a case, a Dialogue Abort (ABRT) APDU is generated with abort-source coded as "dialogue-service-user",
+						// and supplied as the User Data parameter of the
+						// TR-U-ABORT
+						// request primitive. User information (if any) provided
+						// in
+						// the
+						// TC-U-ABORT request primitive is coded in the
+						// user-information
+						// field of the ABRT APDU.
+						DialogAbortAPDU dapdu = TcapFactory.createDialogAPDUAbort();
+
+						AbortSource as = TcapFactory.createAbortSource();
+						as.setAbortSourceType(AbortSourceType.User);
+						dapdu.setAbortSource(as);
+						dapdu.setUserInformation(event.getUserInformation());
+						dp.setDialogAPDU(dapdu);
+					}
 				}
 
 				TCAbortMessageImpl msg = (TCAbortMessageImpl) TcapFactory.createTCAbortMessage();
@@ -1247,8 +1253,13 @@ public class DialogImpl implements Dialog {
 		
 		List<Component> resultingIndications = new ArrayList<Component>();
 		for (Component ci : components) {
-			int index = getIndexFromInvokeId(ci.getInvokeId());
-			InvokeImpl invoke = this.operationsSent[index];
+			Long invokeId = ci.getInvokeId();
+			InvokeImpl invoke = null;
+			if (invokeId != null) {
+				int index = getIndexFromInvokeId(invokeId);
+				invoke = this.operationsSent[index];
+			}
+			
 			switch (ci.getType()) {
 
 			case ReturnResult:

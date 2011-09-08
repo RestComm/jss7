@@ -179,8 +179,6 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 
 		if (this.destTxId == null)
 			throw new ParseException("Error encoding TC-Abort: destTxId must not be null");
-		if (this.dp == null && this.type == null)
-			throw new ParseException("Error encoding TC-Abort: either DialogPortion or P-AbortCause must not be null");
 
 		try {
 			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);
@@ -190,7 +188,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 
 			if (this.type != null)
 				aos.writeInteger(Tag.CLASS_APPLICATION, _TAG_P, this.type.getType());
-			else
+			else if (this.dp != null)
 				this.dp.encode(aos);
 
 			aos.FinalizeContent(pos);
