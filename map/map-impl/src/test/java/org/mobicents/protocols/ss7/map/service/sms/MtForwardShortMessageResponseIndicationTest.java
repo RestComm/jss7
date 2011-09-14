@@ -30,21 +30,22 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+import org.testng.*;import org.testng.annotations.*;
 
 /**
  * 
  * @author sergey vetyutnev
  *
  */
-public class MtForwardShortMessageResponseIndicationTest extends TestCase {
+public class MtForwardShortMessageResponseIndicationTest  {
 	
 	private byte[] getEncodedData() {
 		return new byte[] { 48, 48, 4, 5, 11, 22, 33, 44, 55, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3,
 				42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","service.sms"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedData();
@@ -54,14 +55,14 @@ public class MtForwardShortMessageResponseIndicationTest extends TestCase {
 		MtForwardShortMessageResponseIndicationImpl ind = new MtForwardShortMessageResponseIndicationImpl();
 		ind.decodeAll(asn);
 
-		assertEquals(Tag.SEQUENCE, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 
 		assertTrue(Arrays.equals(new byte[] { 11, 22, 33, 44, 55 }, ind.getSM_RP_UI()));
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(ind.getExtensionContainer()));
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","service.sms"})
 	public void testEncode() throws Exception {
 
 		byte[] ui = new byte[] { 11, 22, 33, 44, 55 };
@@ -73,6 +74,6 @@ public class MtForwardShortMessageResponseIndicationTest extends TestCase {
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 	}
 }

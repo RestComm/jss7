@@ -24,7 +24,9 @@ package org.mobicents.protocols.ss7.map.errors;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+
+import org.testng.*;import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -57,7 +59,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
  * @author sergey vetyutnev
  * 
  */
-public class MAPErrorMessageTest extends TestCase  {
+public class MAPErrorMessageTest   {
 
 	private Parameter getDataExtContainerFull() {
 		Parameter par = new ParameterImpl();
@@ -208,7 +210,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		return par;
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","dialog.message"})
 	public void testDecode() throws Exception {
 
 		MAPErrorMessageFactoryImpl fact = new MAPErrorMessageFactoryImpl();
@@ -219,7 +221,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		em.decodeData(ais, p.getData().length);
 		assertTrue(em.isEmSMDeliveryFailure());
 		MAPErrorMessageSMDeliveryFailure emSMDeliveryFailure = em.getEmSMDeliveryFailure();
-		assertEquals(SMEnumeratedDeliveryFailureCause.invalidSMEAddress, emSMDeliveryFailure.getSMEnumeratedDeliveryFailureCause());
+		assertEquals( emSMDeliveryFailure.getSMEnumeratedDeliveryFailureCause(),SMEnumeratedDeliveryFailureCause.invalidSMEAddress);
 		assertNull(emSMDeliveryFailure.getSignalInfo());
 		assertNull(emSMDeliveryFailure.getExtensionContainer());
 
@@ -229,7 +231,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		em.decodeData(ais, p.getData().length);
 		assertTrue(em.isEmSMDeliveryFailure());
 		emSMDeliveryFailure = em.getEmSMDeliveryFailure();
-		assertEquals(SMEnumeratedDeliveryFailureCause.scCongestion, emSMDeliveryFailure.getSMEnumeratedDeliveryFailureCause());
+		assertEquals( emSMDeliveryFailure.getSMEnumeratedDeliveryFailureCause(),SMEnumeratedDeliveryFailureCause.scCongestion);
 		assertNotNull(emSMDeliveryFailure.getSignalInfo());
 		assertNotNull(emSMDeliveryFailure.getExtensionContainer());
 		assertTrue(Arrays.equals(emSMDeliveryFailure.getSignalInfo(), new byte[] { 1, 3, 5, 7, 9 }));
@@ -241,7 +243,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		em.decodeData(ais, p.getData().length);
 		assertTrue(em.isEmAbsentSubscriberSM());
 		MAPErrorMessageAbsentSubscriberSM emAbsentSubscriberSMImpl = em.getEmAbsentSubscriberSM();
-		assertEquals(1, (int) emAbsentSubscriberSMImpl.getAbsentSubscriberDiagnosticSM());
+		assertEquals( (int) emAbsentSubscriberSMImpl.getAbsentSubscriberDiagnosticSM(),1);
 		assertNull(emAbsentSubscriberSMImpl.getAdditionalAbsentSubscriberDiagnosticSM());
 		assertNull(emAbsentSubscriberSMImpl.getExtensionContainer());
 
@@ -251,8 +253,8 @@ public class MAPErrorMessageTest extends TestCase  {
 		em.decodeData(ais, p.getData().length);
 		assertTrue(em.isEmAbsentSubscriberSM());
 		emAbsentSubscriberSMImpl = em.getEmAbsentSubscriberSM();
-		assertEquals(11, (int) emAbsentSubscriberSMImpl.getAbsentSubscriberDiagnosticSM());
-		assertEquals(22, (int) emAbsentSubscriberSMImpl.getAdditionalAbsentSubscriberDiagnosticSM());
+		assertEquals( (int) emAbsentSubscriberSMImpl.getAbsentSubscriberDiagnosticSM(),11);
+		assertEquals( (int) emAbsentSubscriberSMImpl.getAdditionalAbsentSubscriberDiagnosticSM(),22);
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emAbsentSubscriberSMImpl.getExtensionContainer()));
 
 		p = getDataSystemFailure();
@@ -261,8 +263,8 @@ public class MAPErrorMessageTest extends TestCase  {
 		em.decodeData(ais, p.getData().length);
 		assertTrue(em.isEmSystemFailure());
 		MAPErrorMessageSystemFailure emSystemFailure = em.getEmSystemFailure();
-		assertEquals(2, emSystemFailure.getMapProtocolVersion());
-		assertEquals(NetworkResource.plmn, emSystemFailure.getNetworkResource());
+		assertEquals( emSystemFailure.getMapProtocolVersion(),2);
+		assertEquals( emSystemFailure.getNetworkResource(),NetworkResource.plmn);
 		assertNull(emSystemFailure.getAdditionalNetworkResource());
 		assertNull(emSystemFailure.getExtensionContainer());
 
@@ -272,9 +274,9 @@ public class MAPErrorMessageTest extends TestCase  {
 		em.decodeData(ais, p.getData().length);
 		assertTrue(em.isEmSystemFailure());
 		emSystemFailure = em.getEmSystemFailure();
-		assertEquals(3, emSystemFailure.getMapProtocolVersion());
-		assertEquals(NetworkResource.vlr, emSystemFailure.getNetworkResource());
-		assertEquals(AdditionalNetworkResource.gsmSCF, emSystemFailure.getAdditionalNetworkResource());
+		assertEquals( emSystemFailure.getMapProtocolVersion(),3);
+		assertEquals( emSystemFailure.getNetworkResource(),NetworkResource.vlr);
+		assertEquals( emSystemFailure.getAdditionalNetworkResource(),AdditionalNetworkResource.gsmSCF);
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emAbsentSubscriberSMImpl.getExtensionContainer()));
 
 		p = getDataCallBarred();
@@ -283,9 +285,9 @@ public class MAPErrorMessageTest extends TestCase  {
 		em.decodeData(ais, p.getData().length);
 		assertTrue(em.isEmCallBarred());
 		MAPErrorMessageCallBarred emCallBarred = em.getEmCallBarred();
-		assertEquals(3, emCallBarred.getMapProtocolVersion());
-		assertEquals(CallBarringCause.operatorBarring, emCallBarred.getCallBarringCause());
-		assertEquals(false, (boolean)emCallBarred.getUnauthorisedMessageOriginator());
+		assertEquals( emCallBarred.getMapProtocolVersion(),3);
+		assertEquals( emCallBarred.getCallBarringCause(),CallBarringCause.operatorBarring);
+		assertEquals( (boolean)emCallBarred.getUnauthorisedMessageOriginator(),false);
 		assertNull(emCallBarred.getExtensionContainer());
 
 		p = getDataCallBarredFull();
@@ -294,9 +296,9 @@ public class MAPErrorMessageTest extends TestCase  {
 		em.decodeData(ais, p.getData().length);
 		assertTrue(em.isEmCallBarred());
 		emCallBarred = em.getEmCallBarred();
-		assertEquals(3, emCallBarred.getMapProtocolVersion());
-		assertEquals(CallBarringCause.operatorBarring, emCallBarred.getCallBarringCause());
-		assertEquals(true, (boolean)emCallBarred.getUnauthorisedMessageOriginator());
+		assertEquals( emCallBarred.getMapProtocolVersion(),3);
+		assertEquals( emCallBarred.getCallBarringCause(),CallBarringCause.operatorBarring);
+		assertEquals( (boolean)emCallBarred.getUnauthorisedMessageOriginator(),true);
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emCallBarred.getExtensionContainer()));
 
 		p = getDataFacilityNotSupFull();
@@ -306,8 +308,8 @@ public class MAPErrorMessageTest extends TestCase  {
 		assertTrue(em.isEmFacilityNotSup());
 		MAPErrorMessageFacilityNotSup emFacilityNotSup = em.getEmFacilityNotSup();
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emFacilityNotSup.getExtensionContainer()));
-		assertEquals(true, (boolean)emFacilityNotSup.getShapeOfLocationEstimateNotSupported());
-		assertEquals(true, (boolean)emFacilityNotSup.getNeededLcsCapabilityNotSupportedInServingNode());
+		assertEquals( (boolean)emFacilityNotSup.getShapeOfLocationEstimateNotSupported(),true);
+		assertEquals( (boolean)emFacilityNotSup.getNeededLcsCapabilityNotSupportedInServingNode(),true);
 
 		p = getDataUnknownSubscriberFull();
 		em = (MAPErrorMessageImpl)fact.createMessageFromErrorCode((long) MAPErrorCode.unknownSubscriber);
@@ -316,7 +318,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		assertTrue(em.isEmUnknownSubscriber());
 		MAPErrorMessageUnknownSubscriber emUnknownSubscriber = em.getEmUnknownSubscriber();
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emUnknownSubscriber.getExtensionContainer()));
-		assertEquals(UnknownSubscriberDiagnostic.gprsSubscriptionUnknown, emUnknownSubscriber.getUnknownSubscriberDiagnostic());
+		assertEquals( emUnknownSubscriber.getUnknownSubscriberDiagnostic(),UnknownSubscriberDiagnostic.gprsSubscriptionUnknown);
 
 		p = getDataSubscriberBusyForMTSMSFull();
 		em = (MAPErrorMessageImpl)fact.createMessageFromErrorCode((long) MAPErrorCode.subscriberBusyForMTSMS);
@@ -325,7 +327,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		assertTrue(em.isEmSubscriberBusyForMtSms());
 		MAPErrorMessageSubscriberBusyForMtSms emSubscriberBusyForMtSms = em.getEmSubscriberBusyForMtSms();
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emSubscriberBusyForMtSms.getExtensionContainer()));
-		assertEquals(true, (boolean)emSubscriberBusyForMtSms.getGprsConnectionSuspended());
+		assertEquals( (boolean)emSubscriberBusyForMtSms.getGprsConnectionSuspended(),true);
 
 		p = getDataAbsentSubscriberFull();
 		em = (MAPErrorMessageImpl)fact.createMessageFromErrorCode((long) MAPErrorCode.absentSubscriber);
@@ -334,7 +336,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		assertTrue(em.isEmAbsentSubscriber());
 		MAPErrorMessageAbsentSubscriber emAbsentSubscriber = em.getEmAbsentSubscriber();
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emAbsentSubscriber.getExtensionContainer()));
-		assertEquals(AbsentSubscriberReason.purgedMS, emAbsentSubscriber.getAbsentSubscriberReason());
+		assertEquals( emAbsentSubscriber.getAbsentSubscriberReason(),AbsentSubscriberReason.purgedMS);
 
 		p = getDataUnauthorizedLCSClientFull();
 		em = (MAPErrorMessageImpl) fact.createMessageFromErrorCode((long) MAPErrorCode.unauthorizedLCSClient);
@@ -343,7 +345,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		assertTrue(em.isEmUnauthorizedLCSClient());
 		MAPErrorMessageUnauthorizedLCSClient emUnauthorizedLCSClient = em.getEmUnauthorizedLCSClient();
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emUnauthorizedLCSClient.getExtensionContainer()));
-		assertEquals(UnauthorizedLCSClientDiagnostic.callToClientNotSetup, emUnauthorizedLCSClient.getUnauthorizedLCSClientDiagnostic());
+		assertEquals( emUnauthorizedLCSClient.getUnauthorizedLCSClientDiagnostic(),UnauthorizedLCSClientDiagnostic.callToClientNotSetup);
 
 		p = getDataPositionMethodFailureFull();
 		em = (MAPErrorMessageImpl) fact.createMessageFromErrorCode((long) MAPErrorCode.positionMethodFailure);
@@ -352,10 +354,10 @@ public class MAPErrorMessageTest extends TestCase  {
 		assertTrue(em.isEmPositionMethodFailure());
 		MAPErrorMessagePositionMethodFailure emPositionMethodFailure = em.getEmPositionMethodFailure();
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emPositionMethodFailure.getExtensionContainer()));
-		assertEquals(PositionMethodFailureDiagnostic.locationProcedureNotCompleted, emPositionMethodFailure.getPositionMethodFailureDiagnostic());
+		assertEquals( emPositionMethodFailure.getPositionMethodFailureDiagnostic(),PositionMethodFailureDiagnostic.locationProcedureNotCompleted);
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","dialog.message"})
 	public void testEncode() throws Exception {
 
 		MAPErrorMessageFactoryImpl fact = new MAPErrorMessageFactoryImpl();
@@ -368,7 +370,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		p.setTag(em.getTag());
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
-		assertParameter(p, getDataExtContainerFull());
+		assertParameter( getDataExtContainerFull(),p);
 
 		em = (MAPErrorMessageImpl)fact.createMAPErrorMessageSMDeliveryFailure(SMEnumeratedDeliveryFailureCause.invalidSMEAddress, null, null);
 		aos = new AsnOutputStream();
@@ -378,7 +380,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		p.setTag(em.getTag());
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
-		assertParameter(p, getDataSmDeliveryFailure());
+		assertParameter( getDataSmDeliveryFailure(),p);
 
 		em = (MAPErrorMessageImpl)fact.createMAPErrorMessageSMDeliveryFailure(SMEnumeratedDeliveryFailureCause.scCongestion, new byte[] { 1, 3, 5, 7, 9 },
 				MAPExtensionContainerTest.GetTestExtensionContainer());
@@ -389,7 +391,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		p.setTag(em.getTag());
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
-		assertParameter(p, getDataSmDeliveryFailureFull());
+		assertParameter( getDataSmDeliveryFailureFull(),p);
 
 		em = (MAPErrorMessageImpl)fact.createMAPErrorMessageAbsentSubscriberSM(1, null, null);
 		aos = new AsnOutputStream();
@@ -399,7 +401,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		p.setTag(em.getTag());
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
-		assertParameter(p, getDataAbsentSubscriberSM());
+		assertParameter( getDataAbsentSubscriberSM(),p);
 
 		em = (MAPErrorMessageImpl)fact.createMAPErrorMessageAbsentSubscriberSM(11, MAPExtensionContainerTest.GetTestExtensionContainer(), 22);
 		aos = new AsnOutputStream();
@@ -409,7 +411,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		p.setTag(em.getTag());
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
-		assertParameter(p, getDataAbsentSubscriberSMFull());
+		assertParameter( getDataAbsentSubscriberSMFull(),p);
 
 		em = (MAPErrorMessageImpl)fact.createMAPErrorMessageSystemFailure(2, NetworkResource.plmn, null, null);
 		aos = new AsnOutputStream();
@@ -419,7 +421,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		p.setTag(em.getTag());
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
-		assertParameter(p, getDataSystemFailure());
+		assertParameter( getDataSystemFailure(),p);
 
 		em = (MAPErrorMessageImpl)fact.createMAPErrorMessageSystemFailure(3, NetworkResource.vlr, AdditionalNetworkResource.gsmSCF,
 				MAPExtensionContainerTest.GetTestExtensionContainer());
@@ -430,7 +432,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		p.setTag(em.getTag());
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
-		assertParameter(p, getDataSystemFailureFull());
+		assertParameter( getDataSystemFailureFull(),p);
 
 		em = (MAPErrorMessageImpl)fact.createMAPErrorMessageCallBarred(3L, CallBarringCause.operatorBarring, null, null);
 		aos = new AsnOutputStream();
@@ -440,7 +442,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		p.setTag(em.getTag());
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
-		assertParameter(p, getDataCallBarred());
+		assertParameter( getDataCallBarred(),p);
 
 		em = (MAPErrorMessageImpl) fact.createMAPErrorMessageCallBarred(3L, CallBarringCause.operatorBarring,
 				MAPExtensionContainerTest.GetTestExtensionContainer(), true);
@@ -451,7 +453,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		p.setTag(em.getTag());
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
-		assertParameter(p, getDataCallBarredFull());
+		assertParameter( getDataCallBarredFull(),p);
 
 		em = (MAPErrorMessageImpl) fact.createMAPErrorMessageFacilityNotSup(MAPExtensionContainerTest.GetTestExtensionContainer(), true, true);
 		aos = new AsnOutputStream();
@@ -461,7 +463,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		p.setTag(em.getTag());
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
-		assertParameter(p, getDataFacilityNotSupFull());
+		assertParameter( getDataFacilityNotSupFull(),p);
 
 		em = (MAPErrorMessageImpl) fact.createMAPErrorMessageUnknownSubscriber(MAPExtensionContainerTest.GetTestExtensionContainer(),
 				UnknownSubscriberDiagnostic.gprsSubscriptionUnknown);
@@ -472,7 +474,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		p.setTag(em.getTag());
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
-		assertParameter(p, getDataUnknownSubscriberFull());
+		assertParameter( getDataUnknownSubscriberFull(),p);
 
 		em = (MAPErrorMessageImpl) fact.createMAPErrorMessageSubscriberBusyForMtSms(MAPExtensionContainerTest.GetTestExtensionContainer(), true);
 		aos = new AsnOutputStream();
@@ -482,7 +484,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		p.setTag(em.getTag());
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
-		assertParameter(p, getDataSubscriberBusyForMTSMSFull());
+		assertParameter( getDataSubscriberBusyForMTSMSFull(),p);
 
 		em = (MAPErrorMessageImpl) fact.createMAPErrorMessageAbsentSubscriber(MAPExtensionContainerTest.GetTestExtensionContainer(),
 				AbsentSubscriberReason.purgedMS);
@@ -493,7 +495,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		p.setTag(em.getTag());
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
-		assertParameter(p, getDataAbsentSubscriberFull());
+		assertParameter( getDataAbsentSubscriberFull(),p);
 
 		em = (MAPErrorMessageImpl) fact.createMAPErrorMessageUnauthorizedLCSClient(UnauthorizedLCSClientDiagnostic.callToClientNotSetup,
 				MAPExtensionContainerTest.GetTestExtensionContainer());
@@ -504,7 +506,7 @@ public class MAPErrorMessageTest extends TestCase  {
 		p.setTag(em.getTag());
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
-		assertParameter(p, getDataUnauthorizedLCSClientFull());
+		assertParameter( getDataUnauthorizedLCSClientFull(),p);
 
 		em = (MAPErrorMessageImpl) fact.createMAPErrorMessagePositionMethodFailure(PositionMethodFailureDiagnostic.locationProcedureNotCompleted,
 				MAPExtensionContainerTest.GetTestExtensionContainer());
@@ -515,15 +517,15 @@ public class MAPErrorMessageTest extends TestCase  {
 		p.setTag(em.getTag());
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
-		assertParameter(p, getDataPositionMethodFailureFull());
+		assertParameter( getDataPositionMethodFailureFull(),p);
 	}
 	
-	private void assertParameter(Parameter p1, Parameter p2) {
+	private void assertParameter( Parameter p2,Parameter p1) {
 		assertNotNull(p1);
 		assertNotNull(p2);
-		assertEquals(p1.getTagClass(), p2.getTagClass());
-		assertEquals(p1.getTag(), p2.getTag());
-		assertEquals(p1.isPrimitive(), p2.isPrimitive());
+		assertEquals( p2.getTagClass(),p1.getTagClass());
+		assertEquals( p2.getTag(),p1.getTag());
+		assertEquals( p2.isPrimitive(),p1.isPrimitive());
 		assertTrue(Arrays.equals(p1.getData(), p2.getData()));
 	}
 }

@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-  <classpathentry kind="src" path="sccp-impl/src/test/java"/>
-  <classpathentry kind="src" path="sccp-impl/src/main/java"/>
-  <classpathentry kind="src" path="sccp-impl/src/main/resources"/>
   <classpathentry kind="src" path="sccp-api/src/main/java"/>
   <classpathentry kind="src" path="sccp-api/src/test/java"/>
+  <classpathentry kind="src" path="sccp-impl/src/test/java"/>
+  <classpathentry kind="src" path="sccp-impl/src/main/java"/>
   <classpathentry kind="var" path="M2_REPO/apache-xerces/xml-apis/2.9.1/xml-apis-2.9.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/bcel/bcel/5.1/bcel-5.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/beust/jcommander/1.12/jcommander-1.12.jar"/>
   <classpathentry kind="var" path="M2_REPO/concurrent/concurrent/1.3.4/concurrent-1.3.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/javassist/javassist/3.10.0.GA/javassist-3.10.0.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1.1/activation-1.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/javolution/javolution/5.5.1/javolution-5.5.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/jboss/profiler/jvmti/jboss-profiler-jvmti/1.0.0.CR5/jboss-profiler-jvmti-1.0.0.CR5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/junit/junit/4.1/junit-4.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/ant/ant-junit/1.7.0/ant-junit-1.7.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/ant/ant-launcher/1.7.0/ant-launcher-1.7.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/ant/ant/1.7.0/ant-1.7.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/beanshell/bsh/2.0b4/bsh-2.0b4.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/aop/jboss-aop/2.1.1.GA/jboss-aop-2.1.1.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/bootstrap/jboss-bootstrap/1.0.0-Beta-3/jboss-bootstrap-1.0.0-Beta-3.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/cl/jboss-classloader/2.0.6.GA/jboss-classloader-2.0.6.GA.jar"/>
@@ -58,6 +59,8 @@
   <classpathentry kind="var" path="M2_REPO/org/jboss/test/jboss-test/1.1.4.GA/jboss-test-1.1.4.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/mtp/mtp-api/1.0.0-SNAPSHOT/mtp-api-1.0.0-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/stream/stream/1.0.0.CR1/stream-1.0.0.CR1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/testng/testng/6.2/testng-6.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/yaml/snakeyaml/1.6/snakeyaml-1.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/oswego-concurrent/concurrent/1.3.4-jboss-update1/concurrent-1.3.4-jboss-update1.jar"/>
   <classpathentry kind="var" path="M2_REPO/qdox/qdox/1.6.1/qdox-1.6.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/regexp/regexp/1.2/regexp-1.2.jar"/>

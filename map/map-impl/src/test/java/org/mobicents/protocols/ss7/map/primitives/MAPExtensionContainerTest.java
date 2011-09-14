@@ -22,17 +22,12 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -114,15 +109,15 @@ public class MAPExtensionContainerTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeTest
 	public void setUp() {
 	}
 
-	@After
+	@AfterTest
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","primitives"})
 	public void testDecode() throws Exception {
 
 		byte[] data = this.getEncodedData();
@@ -131,11 +126,11 @@ public class MAPExtensionContainerTest {
 		MAPExtensionContainerImpl extCont = new MAPExtensionContainerImpl();
 		extCont.decodeAll(ais);
 
-		assertEquals(Tag.SEQUENCE, tag);
-		assertEquals(true, CheckTestExtensionContainer(extCont));
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( CheckTestExtensionContainer(extCont),Boolean.TRUE);
 	}
 
-	@Test
+	@Test(groups = { "functional.encode","primitives"})
 	public void testEncode() throws Exception {
 		byte[] data = this.getEncodedData();
 		
@@ -144,7 +139,7 @@ public class MAPExtensionContainerTest {
 		extCont.encodeAll(asnOS);
 		byte[] res = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, res));
+		assertTrue( Arrays.equals(data,res));
 	}
 	
 	private byte[] getEncodedData() {

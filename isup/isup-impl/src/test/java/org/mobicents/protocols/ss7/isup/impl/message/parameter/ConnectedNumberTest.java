@@ -36,6 +36,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.ConnectedNumber;
+import org.testng.annotations.Test;
 
 /**
  * Start time:14:11:03 2009-04-23<br>
@@ -87,7 +88,7 @@ public class ConnectedNumberTest extends ParameterHarness {
 		bos.write(super.getFiveDigits());
 		return bos.toByteArray();
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		ConnectedNumberImpl bci = new ConnectedNumberImpl(getBody1());
 
@@ -96,7 +97,7 @@ public class ConnectedNumberTest extends ParameterHarness {
 				super.getSixDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		ConnectedNumberImpl bci = new ConnectedNumberImpl(getBody2());
 		

@@ -24,7 +24,7 @@ package org.mobicents.protocols.ss7.map.primitives;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -37,9 +37,9 @@ import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
  * @author amit bhayani
  *
  */
-public class AddressStringTest extends TestCase {
+public class AddressStringTest  {
 
-	@org.junit.Test
+	@Test(groups = { "functional.decode","primitives"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = new byte[] { 4, 9, (byte) 0x96, 0x02, 0x24, (byte) 0x80, 0x03, 0x00, (byte) 0x80, 0x00, (byte) 0xf2 };
@@ -50,15 +50,14 @@ public class AddressStringTest extends TestCase {
 		AddressStringImpl addStr = new AddressStringImpl();
 		addStr.decodeAll(asn);
 
-		assertEquals(4, tag);
+		assertEquals( tag,4);
 		assertFalse(addStr.isExtension());
-		assertEquals(AddressNature.international_number, addStr
-				.getAddressNature());
-		assertEquals(NumberingPlan.land_mobile, addStr.getNumberingPlan());
-		assertEquals("204208300008002", addStr.getAddress());
+		assertEquals( addStr.getAddressNature(),AddressNature.international_number);
+		assertEquals( addStr.getNumberingPlan(),NumberingPlan.land_mobile);
+		assertEquals( addStr.getAddress(),"204208300008002");
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.encode","primitives"})
 	public void testEncode() throws Exception {
 		
 		AddressStringImpl addStr = new AddressStringImpl(AddressNature.international_number, NumberingPlan.land_mobile, "204208300008002");

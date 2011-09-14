@@ -25,12 +25,14 @@ package org.mobicents.protocols.ss7.isup.impl.stack.timers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.mobicents.protocols.ss7.isup.ISUPEvent;
 import org.mobicents.protocols.ss7.isup.ISUPTimeoutEvent;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 /**
  * @author baranowb
  * 
@@ -43,7 +45,7 @@ public abstract class SingleTimers extends EventTestHarness {
 	protected ISUPMessage request; // message exchanged within
 	protected ISUPMessage answer;
 
-	@Before
+	@BeforeClass
 	public void setUp() throws Exception {
 
 		super.setUp();
@@ -53,7 +55,7 @@ public abstract class SingleTimers extends EventTestHarness {
 		this.answer = getAnswer();
 	}
 
-	@After
+	@AfterClass
 	public void tearDown() throws Exception {
 		super.provider.removeListener(this);
 		super.tearDown();
@@ -68,7 +70,7 @@ public abstract class SingleTimers extends EventTestHarness {
 	{
 		return this.provider.getMessageFactory().createREL(getRequest().getCircuitIdentificationCode().getCIC());
 	}
-	@Test
+	//@Test(groups = { "functional.timer","timer.timeout.timeout"})
 	public void testWithTimeout() throws Exception
 	{
 		// add expected events on remote and local end
@@ -96,7 +98,7 @@ public abstract class SingleTimers extends EventTestHarness {
 		// now make compare
 		super.compareEvents(expectedLocalEvents, expectedRemoteEventsReceived);
 	}
-	@Test
+	//@Test(groups = { "functional.timer","timer.timeout.wotimeout"})
 	public void testWithoutTimeout() throws Exception
 	{
 		// add expected events on remote and local end

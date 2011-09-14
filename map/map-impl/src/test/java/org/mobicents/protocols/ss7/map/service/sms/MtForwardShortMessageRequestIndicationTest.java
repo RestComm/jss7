@@ -24,7 +24,9 @@ package org.mobicents.protocols.ss7.map.service.sms;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+
+import org.testng.*;import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -44,7 +46,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
  * @author sergey vetyutnev
  *
  */
-public class MtForwardShortMessageRequestIndicationTest extends TestCase {
+public class MtForwardShortMessageRequestIndicationTest  {
 	
 	private byte[] getEncodedData() {
 		return new byte[] { 48, 73, -128, 8, 16, 33, 34, 34, 17, -126, 21, -12, -124, 7, -111, -127, 33, 105, 0, -112, -10, 4, 52, 11, 22, 33, 44, 55, 66, 77,
@@ -58,7 +60,7 @@ public class MtForwardShortMessageRequestIndicationTest extends TestCase {
 				33 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","service.sms"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedData();
@@ -68,21 +70,19 @@ public class MtForwardShortMessageRequestIndicationTest extends TestCase {
 		MtForwardShortMessageRequestIndicationImpl ind = new MtForwardShortMessageRequestIndicationImpl();
 		ind.decodeAll(asn);
 
-		assertEquals(Tag.SEQUENCE, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 		
 		SM_RP_DA da = ind.getSM_RP_DA();
 		SM_RP_OA oa = ind.getSM_RP_OA();
 		byte[] ui = ind.getSM_RP_UI();
-		assertEquals(11, (long) da.getIMSI().getMCC());
-		assertEquals(22, (long) da.getIMSI().getMNC());
-		assertEquals("2221128514", da.getIMSI().getMSIN());
-		assertEquals(AddressNature.international_number, oa.getServiceCentreAddressOA().getAddressNature());
-		assertEquals(NumberingPlan.ISDN, oa.getServiceCentreAddressOA().getNumberingPlan());
-		assertEquals("18129600096", oa.getServiceCentreAddressOA().getAddress());
-		assertTrue(Arrays.equals(ui, new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-				4, 4, 4, 4, 4, 4, 99, 88, 77, 66, 55, 44, 44, 33, 22, 11, 11, 0 }));
-		assertFalse(ind.getMoreMessagesToSend());
+		assertEquals( (long) da.getIMSI().getMCC(),11);
+		assertEquals( (long) da.getIMSI().getMNC(),22);
+		assertEquals( da.getIMSI().getMSIN(),"2221128514");
+		assertEquals( oa.getServiceCentreAddressOA().getAddressNature(),AddressNature.international_number);
+		assertEquals( oa.getServiceCentreAddressOA().getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( oa.getServiceCentreAddressOA().getAddress(),"18129600096");
+		assertTrue(Arrays.equals(ui, new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 99, 88, 77, 66, 55, 44, 44, 33, 22, 11, 11, 0 }));
 		
 		rawData = getEncodedDataFull();
 		asn = new AsnInputStream(rawData);
@@ -91,25 +91,25 @@ public class MtForwardShortMessageRequestIndicationTest extends TestCase {
 		ind = new MtForwardShortMessageRequestIndicationImpl();
 		ind.decodeAll(asn);
 
-		assertEquals(Tag.SEQUENCE, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 		
 		da = ind.getSM_RP_DA();
 		oa = ind.getSM_RP_OA();
 		ui = ind.getSM_RP_UI();
 		Boolean moreMesToSend = ind.getMoreMessagesToSend();
-		assertEquals(100, (long) da.getIMSI().getMCC());
-		assertEquals(88, (long) da.getIMSI().getMNC());
-		assertEquals("3344556677", da.getIMSI().getMSIN());
-		assertEquals(AddressNature.international_number, oa.getServiceCentreAddressOA().getAddressNature());
-		assertEquals(NumberingPlan.ISDN, oa.getServiceCentreAddressOA().getNumberingPlan());
-		assertEquals("1111122222", oa.getServiceCentreAddressOA().getAddress());
+		assertEquals( (long) da.getIMSI().getMCC(),100);
+		assertEquals( (long) da.getIMSI().getMNC(),88);
+		assertEquals( da.getIMSI().getMSIN(),"3344556677");
+		assertEquals( oa.getServiceCentreAddressOA().getAddressNature(),AddressNature.international_number);
+		assertEquals( oa.getServiceCentreAddressOA().getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( oa.getServiceCentreAddressOA().getAddress(),"1111122222");
 		assertTrue(Arrays.equals(ui, new byte[] { 11, 22, 33, 44, 55, 66, 77 }));
 		assertTrue(moreMesToSend);
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(ind.getExtensionContainer()));
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","service.sms"})
 	public void testEncode() throws Exception {
 
 		IMSI imsi = new IMSIImpl(11L, 22L, "2221128514");
@@ -126,7 +126,7 @@ public class MtForwardShortMessageRequestIndicationTest extends TestCase {
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 
 		
 		imsi = new IMSIImpl(100L, 88L, "3344556677");
@@ -142,7 +142,7 @@ public class MtForwardShortMessageRequestIndicationTest extends TestCase {
 
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedDataFull();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 	}
 
 }

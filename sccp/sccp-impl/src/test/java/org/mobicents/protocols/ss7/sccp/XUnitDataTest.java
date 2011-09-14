@@ -25,17 +25,13 @@
  */
 package org.mobicents.protocols.ss7.sccp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -68,17 +64,17 @@ public class XUnitDataTest {
     
     private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
 
-    @Before
+    @BeforeMethod
     public void setUp() {
         _CALLING_PARTY = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, _CALLING_PARTY_GLOBAL_TITLE, 0);
         _CALLED_PARTY = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,_CALLED_PARTY_GLOBAL_TITLE, 0);
     }
 
-    @After
+    @AfterMethod
     public void tearDown() {
     }
 
-    @Test
+    @Test(groups = { "udt","functional.decode",})
     public void testEncodeDecode() throws Exception {
 
 
@@ -88,22 +84,23 @@ public class XUnitDataTest {
         ByteArrayOutputStream bas = new ByteArrayOutputStream(1);
         testObject.encode(bas);
         byte[] encoded = bas.toByteArray();
-        assertEquals("MT indicator must has wrong value.", XUnitData.MESSAGE_TYPE, (int)encoded[0]);
+        assertEquals( (int)encoded[0], XUnitData.MESSAGE_TYPE,"MT indicator must has wrong value.");
 
         //we loose MT. 
         byte[] toDecode = new byte[encoded.length - 1];
         System.arraycopy(encoded, 1, toDecode, 0, toDecode.length);
         XUnitDataImpl testObjectDecoded = (XUnitDataImpl) messageFactory.createMessage(XUnitData.MESSAGE_TYPE, new ByteArrayInputStream(toDecode));
 
-        assertEquals("Protocol Class does not equal.", _PROTOCOL_CLASS, testObjectDecoded.getProtocolClass());
-        assertEquals("Called Party does not equal.", _CALLED_PARTY.getGlobalTitle().getDigits(), testObjectDecoded.getCalledPartyAddress().getGlobalTitle().getDigits());
-        assertEquals("Calling Party does not equal.", _CALLING_PARTY.getGlobalTitle().getDigits(), testObjectDecoded.getCallingPartyAddress().getGlobalTitle().getDigits());
-        //assertEquals("Data does not equal.",_DATA, testObjectDecoded.getData());
-        assertTrue(Arrays.equals(_DATA, testObjectDecoded.getData()));
+        assertEquals( testObjectDecoded.getProtocolClass(), _PROTOCOL_CLASS,"Protocol Class does not equal.");
+        assertEquals( testObjectDecoded.getCalledPartyAddress().getGlobalTitle().getDigits(), _CALLED_PARTY.getGlobalTitle().getDigits(),"Called Party does not equal.");
+        assertEquals( testObjectDecoded.getCallingPartyAddress().getGlobalTitle().getDigits(), _CALLING_PARTY.getGlobalTitle().getDigits(),"Calling Party does not equal.");
+        //assertEquals( testObjectDecoded.getData(),_DATA,"Data does not equal.");
+        assertTrue( Arrays.equals(_DATA, testObjectDecoded.getData()));
     //There is no optional param here.
 
     }
 
+    @Test(groups = { "udt", "functional.decode","functional.encode"})
     public void testEncodeDecodeWithOneOptional() throws Exception {
 
 
@@ -113,7 +110,7 @@ public class XUnitDataTest {
         ByteArrayOutputStream bas = new ByteArrayOutputStream(1);
         testObject.encode(bas);
         byte[] encoded = bas.toByteArray();
-        assertEquals("MT indicator must has wrong value.", XUnitData.MESSAGE_TYPE, encoded[0]);
+        assertEquals( encoded[0], XUnitData.MESSAGE_TYPE,"MT indicator must has wrong value.");
 
         //we loose MT. 
         byte[] toDecode = new byte[encoded.length - 1];
@@ -122,14 +119,15 @@ public class XUnitDataTest {
 
         testObjectDecoded.decode(new ByteArrayInputStream(toDecode));
 
-        assertEquals("Protocol Class does not equal.", _PROTOCOL_CLASS, testObjectDecoded.getProtocolClass());
-        assertEquals("Called Party does not equal.", _CALLED_PARTY, testObjectDecoded.getCalledPartyAddress());
-        assertEquals("Calling Party does not equal.", _CALLING_PARTY, testObjectDecoded.getCallingPartyAddress());
-        assertTrue(Arrays.equals(_DATA, testObjectDecoded.getData()));
-        assertNotNull("Importance must not be null", testObjectDecoded.getImportance());
-        assertEquals("Importance does not match. ", _IMPORTANCE, testObjectDecoded.getImportance());
+        assertEquals( testObjectDecoded.getProtocolClass(), _PROTOCOL_CLASS,"Protocol Class does not equal.");
+        assertEquals( testObjectDecoded.getCalledPartyAddress(), _CALLED_PARTY,"Called Party does not equal.");
+        assertEquals( testObjectDecoded.getCallingPartyAddress(), _CALLING_PARTY,"Calling Party does not equal.");
+        assertTrue( Arrays.equals(_DATA, testObjectDecoded.getData()));
+        assertNotNull( testObjectDecoded.getImportance(),"Importance must not be null");
+        assertEquals( testObjectDecoded.getImportance(), _IMPORTANCE,"Importance does not match. ");
     }
 //	
+    @Test(groups = { "udt", "functional.decode","functional.encode"})
     public void testEncodeDecodeWithBothOptional() throws Exception {
         XUnitDataImpl testObject = (XUnitDataImpl) messageFactory.createXUnitData(_HOPE_COUTNER, _PROTOCOL_CLASS, _CALLED_PARTY, _CALLING_PARTY);
         testObject.setData(_DATA);
@@ -138,24 +136,25 @@ public class XUnitDataTest {
         ByteArrayOutputStream bas = new ByteArrayOutputStream(1);
         testObject.encode(bas);
         byte[] encoded = bas.toByteArray();
-        assertEquals("MT indicator must has wrong value.", XUnitData.MESSAGE_TYPE, encoded[0]);
+        assertEquals( encoded[0], XUnitData.MESSAGE_TYPE,"MT indicator must has wrong value.");
 
         //we loose MT. 
         byte[] toDecode = new byte[encoded.length - 1];
         System.arraycopy(encoded, 1, toDecode, 0, toDecode.length);
         XUnitDataImpl testObjectDecoded = (XUnitDataImpl) messageFactory.createMessage(XUnitData.MESSAGE_TYPE, new ByteArrayInputStream(toDecode));
 
-        assertEquals("Protocol Class does not equal.", _PROTOCOL_CLASS, testObjectDecoded.getProtocolClass());
-        assertEquals("Called Party does not equal.", _CALLED_PARTY, testObjectDecoded.getCalledPartyAddress());
-        assertEquals("Calling Party does not equal.", _CALLING_PARTY, testObjectDecoded.getCallingPartyAddress());
-        assertTrue(Arrays.equals(_DATA, testObjectDecoded.getData()));
-        assertNotNull("Importance must not be null", testObjectDecoded.getImportance());
-        assertEquals("Importance does not match. ", _IMPORTANCE, testObjectDecoded.getImportance());
-        assertNotNull("Segmentation must not be null", testObjectDecoded.getSegmentation());
-        assertEquals("Segmentation does not match. ", _SEGMENTATION, testObjectDecoded.getSegmentation());
+        assertEquals( testObjectDecoded.getProtocolClass(), _PROTOCOL_CLASS,"Protocol Class does not equal.");
+        assertEquals( testObjectDecoded.getCalledPartyAddress(), _CALLED_PARTY,"Called Party does not equal.");
+        assertEquals( testObjectDecoded.getCallingPartyAddress(), _CALLING_PARTY,"Calling Party does not equal.");
+        assertTrue( Arrays.equals(_DATA, testObjectDecoded.getData()));
+        assertNotNull( testObjectDecoded.getImportance(),"Importance must not be null");
+        assertEquals( testObjectDecoded.getImportance(), _IMPORTANCE,"Importance does not match. ");
+        assertNotNull( testObjectDecoded.getSegmentation(),"Segmentation must not be null");
+        assertEquals( testObjectDecoded.getSegmentation(), _SEGMENTATION,"Segmentation does not match. ");
 
     }
 
+    @Test(groups = { "udt", "functional.decode"})
     public void testRealDecode() throws Exception {
 
 

@@ -33,6 +33,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.IOException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.testng.annotations.Test;
 
 /**
  * Start time:13:20:04 2009-04-26<br>
@@ -49,7 +50,7 @@ public class NatureOfConnectionIndicatorsTest extends ParameterHarness {
 		super.goodBodies.add(new byte[1]);
 		super.goodBodies.add(new byte[] { 0x0E });
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws IOException, ParameterException {
 
 		NatureOfConnectionIndicatorsImpl eci = new NatureOfConnectionIndicatorsImpl(getBody(NatureOfConnectionIndicatorsImpl._SI_ONE_SATELLITE, NatureOfConnectionIndicatorsImpl._CCI_REQUIRED_ON_THIS_CIRCUIT,

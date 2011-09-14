@@ -35,7 +35,10 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
-
+import org.testng.annotations.Test;
+import static org.testng.Assert.*;
+import org.testng.*;
+import org.testng.annotations.*;
 /**
  * Start time:14:40:20 2009-04-26<br>
  * Project: mobicents-isup-stack<br>
@@ -49,7 +52,7 @@ public class NetworkSpecificFacilityTest extends ParameterHarness {
 		super(); // L1, ext bit,|| this byte
 		// super.goodBodies.add(new byte[] { 1, (byte) 0x80, 11, 1, 2, 3, 4 });
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		NetworkSpecificFacilityImpl bci = new NetworkSpecificFacilityImpl(getBody(NetworkSpecificFacilityImpl._TNI_NNI, 1, new byte[] { 1, 2, 3, 4, 5, (byte) 0xAA }, new byte[10]));
 

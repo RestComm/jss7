@@ -22,16 +22,11 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -57,7 +52,7 @@ public class RouterTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeMethod
 	public void setUp() throws IOException {
 
 		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,
@@ -86,39 +81,39 @@ public class RouterTest {
 
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() {
 	}
 
 	/**
 	 * Test of add method, of class RouterImpl.
 	 */
-	@Test
+	@Test(groups = { "router","functional"})
 	public void testRouter() throws Exception {
 		Router router = new Router();
 		router.start();
 		router.getRules().put(1, rule1);
-		assertEquals(1, router.getRules().size());
+		assertEquals( router.getRules().size(),1);
 		router.getRules().put(2, rule2);
-		assertEquals(2, router.getRules().size());
+		assertEquals( router.getRules().size(),2);
 
 		router.getRules().remove(2);
 		Rule rule = router.getRules().values().iterator().next();
 		assertNotNull(rule);
-		assertEquals(1, router.getRules().size());
+		assertEquals( router.getRules().size(),1);
 
 		router.getPrimaryAddresses().put(1, primaryAddr1);
 		router.getPrimaryAddresses().put(2, primaryAddr2);
 
-		assertEquals(2, router.getPrimaryAddresses().size());
+		assertEquals( router.getPrimaryAddresses().size(),2);
 		router.getPrimaryAddresses().remove(1);
-		assertEquals(1, router.getPrimaryAddresses().size());
+		assertEquals( router.getPrimaryAddresses().size(),1);
 
-		assertEquals(0, router.getBackupAddresses().size());
+		assertEquals( router.getBackupAddresses().size(),0);
 		router.stop();
 	}
 	
-	@Test
+	@Test(groups = { "router","functional.encode"})
 	public void testSerialization() throws Exception {
 		Router router = new Router();
 		router.start();
@@ -131,11 +126,11 @@ public class RouterTest {
 		
 		Router router1 = new Router();
 		router1.start();
-		assertEquals(1, router1.getRules().size());
+		assertEquals( router1.getRules().size(),1);
 		Rule rule = router1.getRules().values().iterator().next();
 		assertNotNull(rule);
 		
-		assertEquals(2, router1.getPrimaryAddresses().size());
+		assertEquals( router1.getPrimaryAddresses().size(),2);
 		router1.stop();
 	}
 

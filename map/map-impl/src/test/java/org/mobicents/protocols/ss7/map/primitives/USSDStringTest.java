@@ -21,16 +21,11 @@
  */
 package org.mobicents.protocols.ss7.map.primitives;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
@@ -49,15 +44,15 @@ public class USSDStringTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeTest
 	public void setUp() {
 	}
 
-	@After
+	@AfterTest
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","primitives"})
 	public void testDecode() throws Exception {
 		byte[] data = new byte[] { 0x04, 0x04, 0x2a, 0x1c, 0x6e, (byte)0xd4 };
 		
@@ -67,12 +62,12 @@ public class USSDStringTest {
 		USSDStringImpl ussdStr = new USSDStringImpl();
 		ussdStr.decodeAll(asn);
 		
-		assertEquals("*88#", ussdStr.getString());
+		assertEquals( ussdStr.getString(),"*88#");
 
 	}
 	
 	//TODO Fix the GSMEncoder. This is failing 
-	//@Test
+	@Test(groups = { "functional.encode","primitives"})
 	public void testEncode() throws Exception {
 		byte[] data = new byte[] { 0x04, 0x04, 0x2a, 0x1c, 0x6e, (byte)0xd4 };
 		
@@ -83,6 +78,6 @@ public class USSDStringTest {
 		
 		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, encodedData));
+		assertTrue( Arrays.equals(data,encodedData));
 	}
 }

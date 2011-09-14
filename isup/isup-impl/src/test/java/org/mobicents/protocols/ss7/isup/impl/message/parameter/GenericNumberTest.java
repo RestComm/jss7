@@ -36,6 +36,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
+import org.testng.annotations.Test;
 
 /**
  * Start time:14:11:03 2009-04-23<br>
@@ -76,7 +77,7 @@ public class GenericNumberTest extends ParameterHarness {
 		bos.write(digits);
 		return bos.toByteArray();
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		GenericNumberImpl bci = new GenericNumberImpl(getBody(GenericNumberImpl._NQIA_CONNECTED_NUMBER, false, GenericNumber._NAI_NATIONAL_SN, GenericNumberImpl._NI_COMPLETE, GenericNumberImpl._NPI_ISDN,
 				GenericNumberImpl._APRI_NOT_AVAILABLE, GenericNumberImpl._SI_USER_PROVIDED_VERIFIED_FAILED, getSixDigits()));

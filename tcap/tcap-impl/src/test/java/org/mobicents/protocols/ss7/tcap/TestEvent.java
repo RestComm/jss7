@@ -132,7 +132,8 @@ public class TestEvent implements Serializable {
 		{
 			long v = timestamp - other.timestamp;
 			v = Math.abs(v);
-			if(v>200)
+			// 600ms, this can happen if we run tests concurrently and its not a big deal :)
+			if(v>600)
 			{
 				return false;
 			}

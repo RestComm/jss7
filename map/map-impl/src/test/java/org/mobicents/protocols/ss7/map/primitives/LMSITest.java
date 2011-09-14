@@ -28,20 +28,21 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+import org.testng.*;import org.testng.annotations.*;
 
 /**
  * 
  * @author sergey vetyutnev
  *
  */
-public class LMSITest extends TestCase {
+public class LMSITest  {
 	
 	private byte[] getEncodedData() {
 		return new byte[] { 4, 4, 0, 3, 98, 49 };
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.decode","primitives"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedData();
@@ -52,13 +53,13 @@ public class LMSITest extends TestCase {
 		LMSIImpl lmsi = new LMSIImpl();
 		lmsi.decodeAll(asn);
 
-		assertEquals(Tag.STRING_OCTET, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.STRING_OCTET);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 		
 		assertTrue(Arrays.equals(new byte[] { 0, 3, 98, 49 }, lmsi.getData()));
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.encode","primitives"})
 	public void testEncode() throws Exception {
 		
 		LMSIImpl lmsi = new LMSIImpl(new byte[] { 0, 3, 98, 49 });
@@ -70,7 +71,7 @@ public class LMSITest extends TestCase {
 		
 		byte[] rawData = getEncodedData();		
 		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 		
 	}
 }

@@ -22,18 +22,11 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
@@ -64,15 +57,15 @@ public class SendRoutingInfoForLCSResponseIndicationTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeTest
 	public void setUp() {
 	}
 
-	@After
+	@AfterTest
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecodeProvideSubscriberLocationRequestIndication() throws Exception {
 		// The trace is from Brazilian operator
 		byte[] data = new byte[] { 0x30, 0x14, (byte) 0xa0, 0x09, (byte) 0x81, 0x07, (byte) 0x91, 0x55, 0x16, 0x28, (byte) 0x81, 0x00, 0x70, (byte) 0xa1, 0x07, 0x04, 0x05,
@@ -94,21 +87,21 @@ public class SendRoutingInfoForLCSResponseIndicationTest {
 		assertNotNull(msisdn);
 		assertNull(imsi);
 
-		assertEquals(AddressNature.international_number, msisdn.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, msisdn.getNumberingPlan());
-		assertEquals("556182180007", msisdn.getAddress());
+		assertEquals( msisdn.getAddressNature(),AddressNature.international_number);
+		assertEquals( msisdn.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( msisdn.getAddress(),"556182180007");
 		
 		LCSLocationInfo lcsLocInfo = rtgInfnoForLCSresInd.getLCSLocationInfo();
 		assertNotNull(lcsLocInfo);
 
 		ISDNAddressString networkNodeNumber = lcsLocInfo.getNetworkNodeNumber();
 		assertNotNull(networkNodeNumber);
-		assertEquals(AddressNature.international_number, networkNodeNumber.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, networkNodeNumber.getNumberingPlan());
-		assertEquals("55619000", networkNodeNumber.getAddress());
+		assertEquals( networkNodeNumber.getAddressNature(),AddressNature.international_number);
+		assertEquals( networkNodeNumber.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( networkNodeNumber.getAddress(),"55619000");
 	}
 
-	@Test
+	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 		// The trace is from Brazilian operator
 		byte[] data = new byte[] { 0x30, 0x14, (byte) 0xa0, 0x09, (byte) 0x81, 0x07, (byte) 0x91, 0x55, 0x16, 0x28, (byte) 0x81, 0x00, 0x70, (byte) 0xa1, 0x07, 0x04, 0x05,
@@ -129,6 +122,6 @@ public class SendRoutingInfoForLCSResponseIndicationTest {
 		rtgInfnoForLCSresInd.encodeAll(asnOS);
 
 		byte[] encodedData = asnOS.toByteArray();
-		assertTrue(Arrays.equals(data, encodedData));
+		assertTrue( Arrays.equals(data,encodedData));
 	}
 }

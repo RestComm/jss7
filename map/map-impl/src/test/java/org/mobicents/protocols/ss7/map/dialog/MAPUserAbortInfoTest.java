@@ -24,7 +24,7 @@ package org.mobicents.protocols.ss7.map.dialog;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -40,12 +40,12 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
  * @author sergey vetyutnev
  * 
  */
-public class MAPUserAbortInfoTest extends TestCase {
+public class MAPUserAbortInfoTest  {
 
 	
 // TODO: to Amit: please check this commented tests. They contradict the specification and my live traces 
 //
-//	@org.junit.Test
+//	@Test(groups = { "functional.decode","dialog"})
 //	public void testProcedureCancellationReasonDecode() throws Exception {
 //
 //		// The raw data is hand made
@@ -75,11 +75,11 @@ public class MAPUserAbortInfoTest extends TestCase {
 //		
 //		assertNotNull(procdCancellReasn);
 //		
-//		assertEquals(procdCancellReasn, ProcedureCancellationReason.associatedProcedureFailure);
+//		assertEquals( ProcedureCancellationReason.associatedProcedureFailure,procdCancellReasn);
 //
 //	}
 //
-//	@org.junit.Test
+//	@Test(groups = { "functional.encode","dialog"})
 //	public void testResourceUnavailableEncode() throws Exception {
 //		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
 //
@@ -97,11 +97,11 @@ public class MAPUserAbortInfoTest extends TestCase {
 //
 //		System.out.println(Utils.dump(data, data.length, false));
 //
-//		assertTrue(Arrays.equals(new byte[] { (byte) 0xA4, 0x05, (byte) 0x02,
+//		assertTrue( (byte, 0x05,Arrays.equals(new byte[] { (byte) 0xA4) 0x02,
 //				0x03, 0x0A, 0x01, 0x01 }, data));
 //	}
 //
-//	@org.junit.Test
+//	@Test(groups = { "functional.encode","dialog"})
 //	public void testProcedureCancellationReasonEncode() throws Exception {
 //		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
 //
@@ -119,7 +119,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 //
 //		System.out.println(Utils.dump(data, data.length, false));
 //
-//		assertTrue(Arrays.equals(new byte[] { (byte) 0xA4, 0x05, (byte) 0x03,
+//		assertTrue( (byte, 0x05,Arrays.equals(new byte[] { (byte) 0xA4) 0x03,
 //				0x03, 0x0A, 0x01, 0x04 }, data));
 //	}
 	
@@ -146,7 +146,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 				21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","dialog"})
 	public void testUserSpecificReasonDecode() throws Exception {
 
 		// The raw data is hand made
@@ -154,7 +154,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 		AsnInputStream asnIs = new AsnInputStream(data);
 
 		int tag = asnIs.readTag();
-		assertEquals(4, tag);
+		assertEquals( tag,4);
 
 		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
 		mapUserAbortInfo.decodeAll(asnIs);
@@ -171,7 +171,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","dialog"})
 	public void testUserSpecificReasonEncode() throws Exception {
 		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
 		MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
@@ -187,10 +187,10 @@ public class MAPUserAbortInfoTest extends TestCase {
 
 		System.out.println(Utils.dump(data, data.length, false));
 
-		assertTrue(Arrays.equals(getDataUserSpecificReason(), data));
+		assertTrue(Arrays.equals(getDataUserSpecificReason(),data));
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","dialog"})
 	public void testUserResourceLimitationDecode() throws Exception {
 
 		// The raw data is hand made
@@ -198,7 +198,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 		AsnInputStream asnIs = new AsnInputStream(data);
 
 		int tag = asnIs.readTag();
-		assertEquals(4, tag);
+		assertEquals( tag,4);
 
 		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
 		mapUserAbortInfo.decodeAll(asnIs);
@@ -215,7 +215,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","dialog"})
 	public void testUserResourceLimitationEncode() throws Exception {
 		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
 		MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
@@ -231,10 +231,10 @@ public class MAPUserAbortInfoTest extends TestCase {
 
 		System.out.println(Utils.dump(data, data.length, false));
 
-		assertTrue(Arrays.equals(getUserResourceLimitationReason(), data));
+		assertTrue( Arrays.equals(getUserResourceLimitationReason(),data));
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","dialog"})
 	public void testResourceUnavailableDecode() throws Exception {
 
 		// The raw data is hand made
@@ -242,7 +242,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 		AsnInputStream asnIs = new AsnInputStream(data);
 
 		int tag = asnIs.readTag();
-		assertEquals(4, tag);
+		assertEquals( tag,4);
 
 		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
 		mapUserAbortInfo.decodeAll(asnIs);
@@ -256,11 +256,11 @@ public class MAPUserAbortInfoTest extends TestCase {
 		assertFalse(mapUserAbortChoice.isProcedureCancellationReason());
 		assertTrue(mapUserAbortChoice.isResourceUnavailableReason());
 		assertFalse(mapUserAbortChoice.isUserResourceLimitation());
-		assertEquals(ResourceUnavailableReason.shortTermResourceLimitation, mapUserAbortChoice.getResourceUnavailableReason());
+		assertEquals( mapUserAbortChoice.getResourceUnavailableReason(),ResourceUnavailableReason.shortTermResourceLimitation);
 
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","dialog"})
 	public void testResourceUnavailableEncode() throws Exception {
 		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
 
@@ -278,10 +278,10 @@ public class MAPUserAbortInfoTest extends TestCase {
 
 		System.out.println(Utils.dump(data, data.length, false));
 
-		assertTrue(Arrays.equals(getResourceUnavailableReason(), data));
+		assertTrue( Arrays.equals(getResourceUnavailableReason(),data));
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","dialog"})
 	public void testProcedureCancellationReasonDecode() throws Exception {
 
 		// The raw data is hand made
@@ -290,7 +290,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 		AsnInputStream asnIs = new AsnInputStream(data);
 
 		int tag = asnIs.readTag();
-		assertEquals(4, tag);
+		assertEquals( tag,4);
 
 		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
 		mapUserAbortInfo.decodeAll(asnIs);
@@ -310,11 +310,11 @@ public class MAPUserAbortInfoTest extends TestCase {
 		
 		assertNotNull(procdCancellReasn);
 		
-		assertEquals(procdCancellReasn, ProcedureCancellationReason.associatedProcedureFailure);
+		assertEquals( ProcedureCancellationReason.associatedProcedureFailure,procdCancellReasn);
 
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","dialog"})
 	public void testProcedureCancellationReasonEncode() throws Exception {
 		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
 
@@ -332,10 +332,10 @@ public class MAPUserAbortInfoTest extends TestCase {
 
 		System.out.println(Utils.dump(data, data.length, false));
 
-		assertTrue(Arrays.equals(getProcedureCancellationReason(), data));
+		assertTrue( Arrays.equals(getProcedureCancellationReason(),data));
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","dialog"})
 	public void testFullDecode() throws Exception {
 
 		// The raw data is hand made
@@ -344,7 +344,7 @@ public class MAPUserAbortInfoTest extends TestCase {
 		AsnInputStream asnIs = new AsnInputStream(data);
 
 		int tag = asnIs.readTag();
-		assertEquals(4, tag);
+		assertEquals( tag,4);
 
 		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
 		mapUserAbortInfo.decodeAll(asnIs);
@@ -364,12 +364,12 @@ public class MAPUserAbortInfoTest extends TestCase {
 		
 		assertNotNull(procdCancellReasn);
 		
-		assertEquals(procdCancellReasn, ProcedureCancellationReason.callRelease);
+		assertEquals( ProcedureCancellationReason.callRelease,procdCancellReasn);
 
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(mapUserAbortInfo.getExtensionContainer()));
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","dialog"})
 	public void testFullEncode() throws Exception {
 		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
 
@@ -387,6 +387,6 @@ public class MAPUserAbortInfoTest extends TestCase {
 
 		System.out.println(Utils.dump(data, data.length, false));
 
-		assertTrue(Arrays.equals(getDataFull(), data));
+		assertTrue( Arrays.equals(getDataFull(),data));
 	}
 }

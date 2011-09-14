@@ -24,12 +24,13 @@ package org.mobicents.protocols.ss7.isup.impl.stack.timers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.mobicents.protocols.ss7.isup.ISUPEvent;
 import org.mobicents.protocols.ss7.isup.ISUPTimeoutEvent;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
 
 /**
  * @author baranowb
@@ -48,7 +49,7 @@ public abstract class DoubleTimers extends EventTestHarness {
 	protected ISUPMessage request; // message exchanged within
 	protected ISUPMessage answer;
 
-	@Before
+	@BeforeClass
 	public void setUp() throws Exception {
 
 		super.setUp();
@@ -61,7 +62,7 @@ public abstract class DoubleTimers extends EventTestHarness {
 		this.answer = getAnswer();
 	}
 
-	@After
+	@AfterClass
 	public void tearDown() throws Exception {
 		super.provider.removeListener(this);
 		super.tearDown();
@@ -86,7 +87,7 @@ public abstract class DoubleTimers extends EventTestHarness {
 		return getRequest();
 	}
 	
-	@Test
+	//@Test(groups = { "functional.timer","timer.timeout.big"})
 	public void testBigTimeout() throws Exception {
 		// add expected events on remote and local end
 		List<EventReceived> expectedRemoteEventsReceived = new ArrayList<EventReceived>();
@@ -130,7 +131,7 @@ public abstract class DoubleTimers extends EventTestHarness {
 		super.compareEvents(expectedLocalEvents, expectedRemoteEventsReceived);
 	}
 
-	@Test
+	//@Test(groups = { "functional.timer","timer.timeout.big.answer"})
 	public void testBigTimeoutWithAnswer() throws Exception {
 		// add expected events on remote and local end
 		List<EventReceived> expectedRemoteEventsReceived = new ArrayList<EventReceived>();
@@ -178,7 +179,7 @@ public abstract class DoubleTimers extends EventTestHarness {
 		super.compareEvents(expectedLocalEvents, expectedRemoteEventsReceived);
 	}
 
-	@Test
+	//@Test(groups = { "functional.timer","timer.timeout.big.woanswer"})
 	public void testSmallTimeoutWithAnswer() throws Exception {
 		// add expected events on remote and local end
 		List<EventReceived> expectedRemoteEventsReceived = new ArrayList<EventReceived>();
@@ -215,7 +216,7 @@ public abstract class DoubleTimers extends EventTestHarness {
 		super.compareEvents(expectedLocalEvents, expectedRemoteEventsReceived);
 	}
 	
-	@Test
+	//@Test(groups = { "functional.timer","timer.answer"})
 	public void testNoTimeoutWithAnswer() throws Exception {
 		// add expected events on remote and local end
 		List<EventReceived> expectedRemoteEventsReceived = new ArrayList<EventReceived>();

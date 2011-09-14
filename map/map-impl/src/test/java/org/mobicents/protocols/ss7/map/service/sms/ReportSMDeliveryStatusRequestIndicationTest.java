@@ -24,7 +24,7 @@ package org.mobicents.protocols.ss7.map.service.sms;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -43,7 +43,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
  * @author sergey vetyutnev
  *
  */
-public class ReportSMDeliveryStatusRequestIndicationTest extends TestCase {
+public class ReportSMDeliveryStatusRequestIndicationTest  {
 	
 	private byte[] getEncodedData() {
 		return new byte[] { 48, 19, 4, 6, -111, 39, 34, 51, 19, 17, 4, 6, -111, 1, -112, 115, 84, -13, 10, 1, 1 };
@@ -55,7 +55,7 @@ public class ReportSMDeliveryStatusRequestIndicationTest extends TestCase {
 				-123, 2, 2, 43 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","service.sms"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedData();
@@ -65,20 +65,18 @@ public class ReportSMDeliveryStatusRequestIndicationTest extends TestCase {
 		ReportSMDeliveryStatusRequestIndicationImpl ind = new ReportSMDeliveryStatusRequestIndicationImpl(3);
 		ind.decodeAll(asn);
 
-		assertEquals(Tag.SEQUENCE, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 
 		ISDNAddressString msisdn = ind.getMsisdn();
-		assertEquals(AddressNature.international_number, msisdn.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, msisdn.getNumberingPlan());
-		assertEquals("7222333111", msisdn.getAddress());
+		assertEquals( msisdn.getAddressNature(),AddressNature.international_number);
+		assertEquals( msisdn.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( msisdn.getAddress(),"7222333111");
 		AddressString sca = ind.getServiceCentreAddress();
-		assertEquals(AddressNature.international_number, sca.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, sca.getNumberingPlan());
-		assertEquals("100937453", sca.getAddress());
-		assertEquals(SMDeliveryOutcome.absentSubscriber, ind.getSMDeliveryOutcome());
-		assertEquals(false, (boolean)ind.getGprsSupportIndicator());		
-		assertEquals(false, (boolean)ind.getDeliveryOutcomeIndicator());		
+		assertEquals( sca.getAddressNature(),AddressNature.international_number);
+		assertEquals( sca.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( sca.getAddress(),"100937453");
+		assertEquals( ind.getSMDeliveryOutcome(),SMDeliveryOutcome.absentSubscriber);
 
 		
 		rawData = getEncodedDataFull();
@@ -88,27 +86,27 @@ public class ReportSMDeliveryStatusRequestIndicationTest extends TestCase {
 		ind = new ReportSMDeliveryStatusRequestIndicationImpl(3);
 		ind.decodeAll(asn);
 
-		assertEquals(Tag.SEQUENCE, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 
 		msisdn = ind.getMsisdn();
-		assertEquals(AddressNature.network_specific_number, msisdn.getAddressNature());
-		assertEquals(NumberingPlan.national, msisdn.getNumberingPlan());
-		assertEquals("111222333", msisdn.getAddress());
+		assertEquals( msisdn.getAddressNature(),AddressNature.network_specific_number);
+		assertEquals( msisdn.getNumberingPlan(),NumberingPlan.national);
+		assertEquals( msisdn.getAddress(),"111222333");
 		sca = ind.getServiceCentreAddress();
-		assertEquals(AddressNature.international_number, sca.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, sca.getNumberingPlan());
-		assertEquals("333222111", sca.getAddress());
-		assertEquals(SMDeliveryOutcome.successfulTransfer, ind.getSMDeliveryOutcome());
-		assertEquals(444, (int) ind.getAbsentSubscriberDiagnosticSM());		
+		assertEquals( sca.getAddressNature(),AddressNature.international_number);
+		assertEquals( sca.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( sca.getAddress(),"333222111");
+		assertEquals( ind.getSMDeliveryOutcome(),SMDeliveryOutcome.successfulTransfer);
+		assertEquals( (int) ind.getAbsentSubscriberDiagnosticSM(),444);		
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(ind.getExtensionContainer()));
-		assertEquals(true, (boolean)ind.getGprsSupportIndicator());		
-		assertEquals(false, (boolean)ind.getDeliveryOutcomeIndicator());		
-		assertEquals(SMDeliveryOutcome.memoryCapacityExceeded, ind.getAdditionalSMDeliveryOutcome());
-		assertEquals(555, (int) ind.getAdditionalAbsentSubscriberDiagnosticSM());		
+		assertEquals( (boolean)ind.getGprsSupportIndicator(),true);		
+		assertEquals( (boolean)ind.getDeliveryOutcomeIndicator(),false);		
+		assertEquals( ind.getAdditionalSMDeliveryOutcome(),SMDeliveryOutcome.memoryCapacityExceeded);
+		assertEquals( (int) ind.getAdditionalAbsentSubscriberDiagnosticSM(),555);		
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","service.sms"})
 	public void testEncode() throws Exception {
 
 		ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "7222333111");
@@ -121,7 +119,7 @@ public class ReportSMDeliveryStatusRequestIndicationTest extends TestCase {
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 
 		
 		msisdn = new ISDNAddressStringImpl(AddressNature.network_specific_number, NumberingPlan.national, "111222333");
@@ -134,7 +132,7 @@ public class ReportSMDeliveryStatusRequestIndicationTest extends TestCase {
 		
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedDataFull();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 		
 		
 	}

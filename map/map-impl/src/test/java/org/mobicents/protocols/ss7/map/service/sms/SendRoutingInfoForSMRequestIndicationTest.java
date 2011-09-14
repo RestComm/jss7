@@ -36,14 +36,16 @@ import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+
+import org.testng.*;import org.testng.annotations.*;
 
 /**
  * 
  * @author sergey vetyutnev
  *
  */
-public class SendRoutingInfoForSMRequestIndicationTest extends TestCase {
+public class SendRoutingInfoForSMRequestIndicationTest  {
 	
 	private byte[] getEncodedDataSimple() {
 		return new byte[] { 48, 20, -128, 7, -111, 49, 84, 119, 84, 85, -15, -127, 1, 0, -126, 6, -111, -119, 18, 17, 51, 51 };
@@ -60,7 +62,7 @@ public class SendRoutingInfoForSMRequestIndicationTest extends TestCase {
 				49, 3, -105, 97 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","service.sms"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedDataSimple();
@@ -70,18 +72,18 @@ public class SendRoutingInfoForSMRequestIndicationTest extends TestCase {
 		SendRoutingInfoForSMRequestIndicationImpl ind = new SendRoutingInfoForSMRequestIndicationImpl();
 		ind.decodeAll(asn);
 
-		assertEquals(Tag.SEQUENCE, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 
 		ISDNAddressString msisdn = ind.getMsisdn();
-		assertEquals(AddressNature.international_number, msisdn.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, msisdn.getNumberingPlan());
-		assertEquals("13457745551", msisdn.getAddress());
-		assertEquals(false, (boolean) ind.getSm_RP_PRI());		
+		assertEquals( msisdn.getAddressNature(),AddressNature.international_number);
+		assertEquals( msisdn.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( msisdn.getAddress(),"13457745551");
+		assertEquals( (boolean) ind.getSm_RP_PRI(),false);		
 		AddressString sca = ind.getServiceCentreAddress();
-		assertEquals(AddressNature.international_number, sca.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, sca.getNumberingPlan());
-		assertEquals("9821113333", sca.getAddress());
+		assertEquals( sca.getAddressNature(),AddressNature.international_number);
+		assertEquals( sca.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( sca.getAddress(),"9821113333");
 
 		
 		rawData = getEncodedDataComplex();
@@ -91,19 +93,19 @@ public class SendRoutingInfoForSMRequestIndicationTest extends TestCase {
 		ind = new SendRoutingInfoForSMRequestIndicationImpl();
 		ind.decodeAll(asn);
 
-		assertEquals(Tag.SEQUENCE, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 
 		msisdn = ind.getMsisdn();
-		assertEquals(AddressNature.international_number, msisdn.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, msisdn.getNumberingPlan());
-		assertEquals("13457745551", msisdn.getAddress());
-		assertEquals(false, (boolean) ind.getSm_RP_PRI());		
+		assertEquals( msisdn.getAddressNature(),AddressNature.international_number);
+		assertEquals( msisdn.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( msisdn.getAddress(),"13457745551");
+		assertEquals( (boolean) ind.getSm_RP_PRI(),false);		
 		sca = ind.getServiceCentreAddress();
-		assertEquals(AddressNature.international_number, sca.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, sca.getNumberingPlan());
-		assertEquals("9821113333", sca.getAddress());
-		assertEquals(true, (boolean) ind.getGprsSupportIndicator());
+		assertEquals( sca.getAddressNature(),AddressNature.international_number);
+		assertEquals( sca.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( sca.getAddress(),"9821113333");
+		assertEquals( (boolean) ind.getGprsSupportIndicator(),true);
 		assertTrue(Arrays.equals(new byte[] { -111, 105, 49, 3, -105, 97 }, ind.getSM_RP_SMEA()));
 
 		
@@ -114,25 +116,25 @@ public class SendRoutingInfoForSMRequestIndicationTest extends TestCase {
 		ind = new SendRoutingInfoForSMRequestIndicationImpl();
 		ind.decodeAll(asn);
 
-		assertEquals(Tag.SEQUENCE, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 
 		msisdn = ind.getMsisdn();
-		assertEquals(AddressNature.international_number, msisdn.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, msisdn.getNumberingPlan());
-		assertEquals("111222333", msisdn.getAddress());
-		assertEquals(true, (boolean) ind.getSm_RP_PRI());		
+		assertEquals( msisdn.getAddressNature(),AddressNature.international_number);
+		assertEquals( msisdn.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( msisdn.getAddress(),"111222333");
+		assertEquals( (boolean) ind.getSm_RP_PRI(),true);		
 		sca = ind.getServiceCentreAddress();
-		assertEquals(AddressNature.network_specific_number, sca.getAddressNature());
-		assertEquals(NumberingPlan.national, sca.getNumberingPlan());
-		assertEquals("4444", sca.getAddress());
-		assertEquals(true, (boolean) ind.getGprsSupportIndicator());
+		assertEquals( sca.getAddressNature(),AddressNature.network_specific_number);
+		assertEquals( sca.getNumberingPlan(),NumberingPlan.national);
+		assertEquals( sca.getAddress(),"4444");
+		assertEquals( (boolean) ind.getGprsSupportIndicator(),true);
 		assertTrue(Arrays.equals(new byte[] { -111, 105, 49, 3, -105, 97 }, ind.getSM_RP_SMEA()));
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(ind.getExtensionContainer()));
-		assertEquals(SM_RP_MTI.SMS_Status_Report, ind.getSM_RP_MTI());
+		assertEquals( ind.getSM_RP_MTI(),SM_RP_MTI.SMS_Status_Report);
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","service.sms"})
 	public void testEncode() throws Exception {
 
 		ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "13457745551");
@@ -144,7 +146,7 @@ public class SendRoutingInfoForSMRequestIndicationTest extends TestCase {
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedDataSimple();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 
 		
 		msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "13457745551");
@@ -156,7 +158,7 @@ public class SendRoutingInfoForSMRequestIndicationTest extends TestCase {
 		
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedDataComplex();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 
 		
 		msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
@@ -169,6 +171,6 @@ public class SendRoutingInfoForSMRequestIndicationTest extends TestCase {
 		
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedDataFull();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 	}
 }

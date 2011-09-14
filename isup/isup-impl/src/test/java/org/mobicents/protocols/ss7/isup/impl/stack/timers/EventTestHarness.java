@@ -22,8 +22,8 @@
 
 package org.mobicents.protocols.ss7.isup.impl.stack.timers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,8 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.junit.After;
-import org.junit.Before;
 import org.mobicents.protocols.ss7.isup.ISUPEvent;
 import org.mobicents.protocols.ss7.isup.ISUPListener;
 import org.mobicents.protocols.ss7.isup.ISUPProvider;
@@ -62,7 +60,7 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 	protected List<EventReceived> localEventsReceived;
 	// events sent to remote ISUP peer.
 	protected List<EventReceived> remoteEventsReceived;
-	@Before
+	
 	public void setUp() throws Exception {
 		
 		this.userPart = new TimerTestMtp3UserPart();
@@ -79,9 +77,10 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 		remoteEventsReceived = new ArrayList<EventTestHarness.EventReceived>();
 	}
 
-	@After
+	
 	public void tearDown() throws Exception {
-		
+		//this is done in tests
+		//this.stack.stop();
 	}
 
 
@@ -98,11 +97,11 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 		}
 		
 		for (int index = 0; index < expectedLocalEvents.size(); index++) {
-			assertEquals("Local received event does not match, index[" + index + "]", expectedLocalEvents.get(index), localEventsReceived.get(index));
+			assertEquals(localEventsReceived.get(index),expectedLocalEvents.get(index), "Local received event does not match, index[" + index + "]");
 		}
 
 		for (int index = 0; index < expectedLocalEvents.size(); index++) {
-			assertEquals("Remote received event does not match, index[" + index + "]", expectedRemoteEventsReceived.get(index), remoteEventsReceived.get(index));
+			assertEquals( remoteEventsReceived.get(index),expectedRemoteEventsReceived.get(index), "Remote received event does not match, index[" + index + "]");
 		}
 	}
 

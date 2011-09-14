@@ -25,7 +25,7 @@ package org.mobicents.protocols.ss7.tcap.asn;
 import java.io.IOException;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import org.testng.annotations.Test; import static org.testng.Assert.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -44,7 +44,8 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
  * @author sergey vetyutnev
  *
  */
-public class InvokeTest extends TestCase {
+@Test(groups = { "asn" })
+public class InvokeTest  {
 
 	private byte[] getData() {
 		return new byte[] { 
@@ -65,7 +66,7 @@ public class InvokeTest extends TestCase {
 		return new byte[] { -95, 16, 2, 1, -5, -128, 1, 2, 6, 3, 40, 0, 1, 4, 3, 11, 22, 33 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.encode" })
 	public void testEncode() throws IOException, ParseException {
 		
 		byte[] expected = this.getData();
@@ -126,7 +127,7 @@ public class InvokeTest extends TestCase {
 	
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.decode" })
 	public void testDecodeWithParaSequ() throws IOException, ParseException {
 		
 		byte[] b = this.getData();

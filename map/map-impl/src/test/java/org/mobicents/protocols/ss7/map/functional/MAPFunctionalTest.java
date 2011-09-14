@@ -22,8 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.testng.Assert.*;
+import org.testng.*;import org.testng.annotations.*;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -32,11 +32,7 @@ import java.util.Properties;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
@@ -78,17 +74,16 @@ public class MAPFunctionalTest extends SccpHarness {
 	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
-	@Before
+	@BeforeTest
 	public void setUp() {
-//		this.setupLog4j();
-
+		// this.setupLog4j();
+		System.out.println("setUpTest");
 		super.setUp();
 
 		// this.setupLog4j();
 
 		// create some fake addresses.
-		GlobalTitle gt1 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "123");
-		GlobalTitle gt2 = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "321");
+		
 
 		peer1Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
 		peer2Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
@@ -103,6 +98,19 @@ public class MAPFunctionalTest extends SccpHarness {
 		this.server = new Server(this.stack2, this, peer2Address, peer1Address);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+
+	@AfterTest
+	public void tearDown() {
+		System.out.println("tearDownTest");
+		this.stack1.stop();
+		this.stack2.stop();
+		super.tearDown();
+	}
 	private void setupLog4j() {
 
 		InputStream inStreamLog4j = getClass().getResourceAsStream("/log4j.properties");
@@ -121,33 +129,20 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 
-	@After
-	public void tearDown() {
-
-		this.stack1.stop();
-		this.stack2.stop();
-		super.tearDown();
-	}
-
-	@Test
+	@Test(groups = { "functional.flow","dialog"})
 	public void testSimpleTCWithDialog() throws Exception {
 		server.setStep(FunctionalTestScenario.Action_Dialog_A);
 		client.setStep(FunctionalTestScenario.Action_Dialog_A);
 		client.actionA();
 		client.start();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
 
 	}
 
-	@Test
+	@Test(groups = { "functional.flow","dialog"})
 	public void testComplexTCWithDialog() throws Exception {
 		server.reset();
 		client.reset();
@@ -155,8 +150,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Dialog_A);
 		client.actionA();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
 
 		server.reset();
 		client.reset();
@@ -164,8 +159,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Dialog_B);
 		client.actionB();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
 
 		((MAPServiceSupplementaryImplWrapper) this.stack2.getMAPProvider().getMAPServiceSupplementary()).setTestMode(1);
 		server.reset();
@@ -174,8 +169,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Dialog_C);
 		client.actionB();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
 		((MAPServiceSupplementaryImplWrapper) this.stack2.getMAPProvider().getMAPServiceSupplementary()).setTestMode(0);
 
 		server.reset();
@@ -184,8 +179,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Dialog_D);
 		client.actionB();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
 
 		server.reset();
 		client.reset();
@@ -193,8 +188,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Dialog_E);
 		client.actionB();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
 
 		 ((MAPProviderImplWrapper) this.stack2.getMAPProvider()).setTestMode(1);
 		 server.reset();
@@ -203,14 +198,12 @@ public class MAPFunctionalTest extends SccpHarness {
 		 client.setStep(FunctionalTestScenario.Action_Dialog_F);
 		 client.actionB();
 		 waitForEnd();
-		 assertTrue("Client side did not finish: " + client.getStatus(),
-		 client.isFinished());
-		 assertTrue("Server side did not finish: " + server.getStatus(),
-		 server.isFinished());
+		assertTrue(client.isFinished(), "Client side did not finish: " + client.getStatus());
+		assertTrue(server.isFinished(), "Server side did not finish: " + server.getStatus());
 		 ((MAPProviderImplWrapper) this.stack2.getMAPProvider()).setTestMode(0);
 	}
 
-	@Test
+	@Test(groups = { "functional.flow","dialog"})
 	public void testComponents() throws Exception {
 		
 		server.reset();
@@ -219,8 +212,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Component_A);
 		client.actionB();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
 
 		server.reset();
 		client.reset();
@@ -228,8 +221,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Component_B);
 		client.actionB();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
 
 		server.reset();
 		client.reset();
@@ -237,8 +230,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Component_D);
 		client.actionB();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
 
 		server.reset();
 		client.reset();
@@ -246,8 +239,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Component_E);
 		client.actionB();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
 
 		server.reset();
 		client.reset();
@@ -255,8 +248,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Component_F);
 		client.actionB();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
 
 		server.reset();
 		client.reset();
@@ -264,8 +257,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Component_G);
 		client.actionB();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
 
 	}
 
@@ -278,8 +271,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_V1_A);
 		client.actionD();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
 
 		server.reset();
 		client.reset();
@@ -287,8 +280,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_V1_B);
 		client.actionD();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
 
 		server.reset();
 		client.reset();
@@ -296,8 +289,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_V1_C);
 		client.actionD();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
 		
 		server.reset();
 		client.reset();
@@ -305,8 +298,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_V1_D);
 		client.actionD();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
 
 		server.reset();
 		client.reset();
@@ -314,11 +307,11 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_V1_E);
 		client.actionD();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
 	}
 
-	@Test
+	@Test(groups = { "functional.flow","dialog"})
 	public void testSmsService() throws Exception {
 		server.reset();
 		client.reset();
@@ -326,8 +319,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Sms_AlertServiceCentre);
 		client.actionC();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
 		
 		server.reset();
 		client.reset();
@@ -335,8 +328,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Sms_ForwardSM);
 		client.actionC();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
 		
 		server.reset();
 		client.reset();
@@ -344,8 +337,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Sms_MoForwardSM);
 		client.actionC();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
 		
 		server.reset();
 		client.reset();
@@ -353,8 +346,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Sms_MtForwardSM);
 		client.actionC();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
 		
 		server.reset();
 		client.reset();
@@ -362,8 +355,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Sms_ReportSMDeliveryStatus);
 		client.actionC();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
 		
 		server.reset();
 		client.reset();
@@ -371,20 +364,13 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.setStep(FunctionalTestScenario.Action_Sms_SendRoutingInfoForSM);
 		client.actionC();
 		waitForEnd();
-		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
 	}
 
-	@Test
+	@Test(groups = { "functional.flow","dialog"})
 	public void testA() throws Exception {
 
-		// ....................................
-//		this.saveTrafficInFile();
-		
-
-		
-		
-		
 //		MapServiceFactory msf = this.stack1.getMAPProvider().getMapServiceFactory();
 //		IMEI a1 = msf.createIMEI("12345678901234");
 //
@@ -521,8 +507,8 @@ public class MAPFunctionalTest extends SccpHarness {
 //		client.setStep(FunctionalTestScenario.Action_Component_A);
 //		client.actionC();
 //		waitForEnd();
-//		assertTrue("Client side did not finish: " + client.getStatus(), client.isFinished());
-//		assertTrue("Server side did not finish: " + server.getStatus(), server.isFinished());
+//		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
+//		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
 	}
 	
 	private void waitForEnd() {
@@ -537,7 +523,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				if (new Date().getTime() - startTime.getTime() > _WAIT_TIMEOUT)
 					break;
 
-//				Thread.currentThread().sleep(1000000);
+//				 Thread.currentThread().sleep(1000000);
 			}
 		} catch (InterruptedException e) {
 			fail("Interrupted on wait!");

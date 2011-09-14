@@ -27,11 +27,8 @@
 
 package org.mobicents.protocols.ss7.sccp.parameter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,11 +37,7 @@ import java.util.HashMap;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
@@ -67,11 +60,11 @@ public class SccpAddressTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeMethod
 	public void setUp() {
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() {
 	}
 
@@ -103,7 +96,7 @@ public class SccpAddressTest {
 			fail("Address did not match");
 		}
 
-		assertEquals(1, i);
+		assertEquals(new Integer(1), i);
 	}
 
 	@Test

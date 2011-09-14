@@ -36,14 +36,15 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 
-import junit.framework.TestCase;
+import org.testng.*;import org.testng.annotations.*;
+import static org.testng.Assert.*;
 
 /**
  * 
  * @author sergey vetyutnev
  *
  */
-public class ForwardShortMessageRequestIndicationTest extends TestCase {
+public class ForwardShortMessageRequestIndicationTest {
 	
 	private byte[] getEncodedDataSimple() {
 		return new byte[] { 48, 38, -124, 7, -111, 34, 51, 67, -103, 32, 50, -126, 8, -111, 50, 17, 50, 33, 67, 51, -12, 4, 17, 11, 22, 33, 44, 55, 66, 77, 0,
@@ -55,7 +56,7 @@ public class ForwardShortMessageRequestIndicationTest extends TestCase {
 				1, 2, 3, 4, 5, 6, 7, 9, 8, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 0 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","service.sms"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedDataSimple();
@@ -103,7 +104,7 @@ public class ForwardShortMessageRequestIndicationTest extends TestCase {
 		assertTrue(ind.getMoreMessagesToSend());
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","service.sms"})
 	public void testEncode() throws Exception {
 
 		AddressString sca = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "223334990223");

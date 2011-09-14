@@ -33,6 +33,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.testng.annotations.Test;
 
 /**
  * Start time:12:21:06 2009-04-23<br>
@@ -75,7 +76,7 @@ public class BackwardCallIndicatorsTest extends ParameterHarness {
 		body[1] = (byte) 0x9D;
 		return body;
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, ParameterException {
 		BackwardCallIndicatorsImpl bci = new BackwardCallIndicatorsImpl(getBody1());
 
@@ -106,6 +107,8 @@ public class BackwardCallIndicatorsTest extends ParameterHarness {
 		body[1] = (byte) 0xBD;
 		return body;
 	}
+	
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, ParameterException {
 		BackwardCallIndicatorsImpl bci = new BackwardCallIndicatorsImpl(getBody2());
 

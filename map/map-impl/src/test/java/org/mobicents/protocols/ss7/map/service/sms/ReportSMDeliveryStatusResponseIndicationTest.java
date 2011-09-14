@@ -34,21 +34,21 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 /**
  * 
  * @author sergey vetyutnev
  *
  */
-public class ReportSMDeliveryStatusResponseIndicationTest extends TestCase {
+public class ReportSMDeliveryStatusResponseIndicationTest  {
 	
 	private byte[] getEncodedData() {
 		return new byte[] { 48, 49, 4, 6, -111, -120, 120, 119, 102, -10, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6,
 				48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","service.sms"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedData();
@@ -58,16 +58,16 @@ public class ReportSMDeliveryStatusResponseIndicationTest extends TestCase {
 		ReportSMDeliveryStatusResponseIndicationImpl ind = new ReportSMDeliveryStatusResponseIndicationImpl();
 		ind.decodeAll(asn);
 
-		assertEquals(Tag.SEQUENCE, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 
-		assertEquals(AddressNature.international_number, ind.getStoredMSISDN().getAddressNature());
-		assertEquals(NumberingPlan.ISDN, ind.getStoredMSISDN().getNumberingPlan());
-		assertEquals("888777666", ind.getStoredMSISDN().getAddress());
+		assertEquals( ind.getStoredMSISDN().getAddressNature(),AddressNature.international_number);
+		assertEquals( ind.getStoredMSISDN().getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( ind.getStoredMSISDN().getAddress(),"888777666");
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(ind.getExtensionContainer()));
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","service.sms"})
 	public void testEncode() throws Exception {
 
 		ISDNAddressString storedMSISDN = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "888777666");
@@ -79,7 +79,7 @@ public class ReportSMDeliveryStatusResponseIndicationTest extends TestCase {
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 	}
 }
 

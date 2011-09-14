@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.testng.annotations.Test;
 
 /**
  * Start time:14:11:03 2009-04-23<br>
@@ -59,7 +60,7 @@ public class NetworkRoutingNumberTest extends ParameterHarness {
 	}
 
 
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		NetworkRoutingNumberImpl bci = new NetworkRoutingNumberImpl(getBody(false,getSixDigits(), NetworkRoutingNumberImpl._NPI_ISDN_NP, NetworkRoutingNumberImpl._NAI_NRNI_NETWORK_SNF));
 
@@ -67,7 +68,7 @@ public class NetworkRoutingNumberTest extends ParameterHarness {
 		Object[] expectedValues = { false, NetworkRoutingNumberImpl._NPI_ISDN_NP, NetworkRoutingNumberImpl._NAI_NRNI_NETWORK_SNF,getSixDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}
-	
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		NetworkRoutingNumberImpl bci = new NetworkRoutingNumberImpl(getBody(true,getFiveDigits(), NetworkRoutingNumberImpl._NPI_ISDN_NP, NetworkRoutingNumberImpl._NAI_NRNI_NETWORK_SNF));
 

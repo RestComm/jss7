@@ -36,14 +36,14 @@ import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 /**
  * 
  * @author sergey vetyutnev
  *
  */
-public class InformServiceCentreRequestIndicationTest extends TestCase {
+public class InformServiceCentreRequestIndicationTest  {
 	
 	private byte[] getEncodedData() {
 		return new byte[] { 48, 4, 3, 2, 2, 64 };
@@ -54,7 +54,7 @@ public class InformServiceCentreRequestIndicationTest extends TestCase {
 				3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, 2, 2, 2, 43, -128, 2, 1, -68 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","service.sms"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedData();
@@ -64,8 +64,8 @@ public class InformServiceCentreRequestIndicationTest extends TestCase {
 		InformServiceCentreRequestIndicationImpl isc = new InformServiceCentreRequestIndicationImpl();
 		isc.decodeAll(asn);
 
-		assertEquals(Tag.SEQUENCE, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 		
 		MWStatus mwStatus = isc.getMwStatus();
 		assertNotNull(mwStatus);
@@ -81,8 +81,8 @@ public class InformServiceCentreRequestIndicationTest extends TestCase {
 		isc = new InformServiceCentreRequestIndicationImpl();
 		isc.decodeAll(asn);
 
-		assertEquals(Tag.SEQUENCE, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 		
 		MAPExtensionContainer extensionContainer = isc.getExtensionContainer();
 		ISDNAddressString storedMSISDN = isc.getStoredMSISDN();
@@ -91,22 +91,22 @@ public class InformServiceCentreRequestIndicationTest extends TestCase {
 		int additionalAbsentSubscriberDiagnosticSM = isc.getAdditionalAbsentSubscriberDiagnosticSM();
 
 		Assert.assertNotNull(storedMSISDN);
-		Assert.assertEquals(storedMSISDN.getAddressNature(), AddressNature.international_number);
-		Assert.assertEquals(storedMSISDN.getNumberingPlan(), NumberingPlan.ISDN);
-		Assert.assertEquals(storedMSISDN.getAddress(), "111222333");
+		Assert.assertEquals( AddressNature.international_number,storedMSISDN.getAddressNature());
+		Assert.assertEquals( NumberingPlan.ISDN,storedMSISDN.getNumberingPlan());
+		Assert.assertEquals( "111222333",storedMSISDN.getAddress());
 		Assert.assertNotNull(mwStatus);
 		Assert.assertFalse(mwStatus.getScAddressNotIncluded());
 		Assert.assertTrue(mwStatus.getMnrfSet());
 		Assert.assertFalse(mwStatus.getMcefSet());
 		Assert.assertTrue(mwStatus.getMnrgSet());
 		Assert.assertNotNull(absentSubscriberDiagnosticSM);
-		Assert.assertEquals((int) absentSubscriberDiagnosticSM, 555);
+		Assert.assertEquals( 555,(int) absentSubscriberDiagnosticSM);
 		Assert.assertNotNull(additionalAbsentSubscriberDiagnosticSM);
-		Assert.assertEquals((int) additionalAbsentSubscriberDiagnosticSM, 444);
+		Assert.assertEquals( 444,(int) additionalAbsentSubscriberDiagnosticSM);
 		Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","service.sms"})
 	public void testEncode() throws Exception {
 		
 		MWStatus mwStatus = new MWStatusImpl(false, true, false, false);
@@ -117,7 +117,7 @@ public class InformServiceCentreRequestIndicationTest extends TestCase {
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 
 		
 		ISDNAddressString storedMSISDN = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
@@ -132,7 +132,7 @@ public class InformServiceCentreRequestIndicationTest extends TestCase {
 		
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedDataFull();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 	}
 
 }

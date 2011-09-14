@@ -35,7 +35,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
 
-import junit.framework.TestCase;
+import org.testng.annotations.Test; import static org.testng.Assert.*;
 
 
 /**
@@ -43,7 +43,8 @@ import junit.framework.TestCase;
  * @author sergey vetyutnev
  *
  */
-public class RejectTest extends TestCase {
+@Test(groups = { "asn" })
+public class RejectTest  {
 	
 	private byte[] getData() {
 		return new byte[] { (byte) 164, 6, 2, 1, 1, (byte) 129, 1, 2 };
@@ -53,16 +54,16 @@ public class RejectTest extends TestCase {
 		return new byte[] { -92, 5, 5, 0, -128, 1, 0 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode" })
 	public void testDecode() throws IOException, ParseException {
 
 		byte[] b = getData();
 		AsnInputStream asnIs = new AsnInputStream(b);
 		Component comp = TcapFactory.createComponent(asnIs);
 
-		assertEquals("Wrong component Type", ComponentType.Reject, comp.getType());
+		assertEquals(ComponentType.Reject, comp.getType(),"Wrong component Type");
 		Reject rej = (Reject) comp;
-		assertEquals("Wrong invoke ID", new Long(1), rej.getInvokeId());
+		assertEquals(new Long(1), rej.getInvokeId(),"Wrong invoke ID");
 		Problem prb = rej.getProblem();
 		assertEquals(ProblemType.Invoke, prb.getType());
 		assertEquals(InvokeProblemType.MistypedParameter, prb.getInvokeProblemType());
@@ -72,7 +73,7 @@ public class RejectTest extends TestCase {
 		asnIs = new AsnInputStream(b);
 		comp = TcapFactory.createComponent(asnIs);
 
-		assertEquals("Wrong component Type", ComponentType.Reject, comp.getType());
+		assertEquals(ComponentType.Reject, comp.getType(),"Wrong component Type");
 		rej = (Reject) comp;
 		assertNull(rej.getInvokeId());
 		prb = rej.getProblem();
@@ -81,7 +82,7 @@ public class RejectTest extends TestCase {
 	}
 	
 	
-	@org.junit.Test
+	@Test(groups = { "functional.encode" })
 	public void testEncode() throws IOException, ParseException {
 
 		byte[] expected = this.getData();

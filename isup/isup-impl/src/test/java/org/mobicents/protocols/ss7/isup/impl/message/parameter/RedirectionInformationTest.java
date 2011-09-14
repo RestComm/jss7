@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.testng.annotations.Test;
 
 /**
  * Start time:20:07:45 2009-04-26<br>
@@ -59,7 +60,7 @@ public class RedirectionInformationTest extends ParameterHarness {
 		super.badBodies.add(new byte[3]);
 	}
 
-	
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		RedirectionInformationImpl bci = new RedirectionInformationImpl(getBody(RedirectionInformationImpl._RI_CALL_D_RNPR,RedirectionInformationImpl._ORR_UNA,1,RedirectionInformationImpl._RR_DEFLECTION_IE));
 	

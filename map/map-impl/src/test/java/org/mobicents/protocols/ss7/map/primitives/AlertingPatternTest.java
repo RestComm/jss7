@@ -21,17 +21,11 @@
  */
 package org.mobicents.protocols.ss7.map.primitives;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
@@ -54,15 +48,15 @@ public class AlertingPatternTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeTest
 	public void setUp() {
 	}
 
-	@After
+	@AfterTest
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","primitives"})
 	public void testDecode() throws Exception {
 		byte[] data = new byte[] { (byte) 0x04, 0x01, 0x07 };
 		
@@ -74,11 +68,11 @@ public class AlertingPatternTest {
 		assertNull(addNum.getAlertingLevel());
 		assertNotNull(addNum.getAlertingCategory());
 		
-		assertEquals(AlertingCategory.Category4, addNum.getAlertingCategory());
+		assertEquals( addNum.getAlertingCategory(),AlertingCategory.Category4);
 
 	}
 
-	@Test
+	@Test(groups = { "functional.encode","primitives"})
 	public void testEncode() throws Exception {
 		byte[] data = new byte[] { (byte) 0x04, 0x01, 0x07 };
 		

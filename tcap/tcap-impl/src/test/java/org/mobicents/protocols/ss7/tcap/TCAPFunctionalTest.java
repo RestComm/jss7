@@ -22,16 +22,13 @@
 
 package org.mobicents.protocols.ss7.tcap;
 
-import static org.junit.Assert.fail;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
@@ -43,7 +40,8 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
  */
 public class TCAPFunctionalTest extends SccpHarness {
 	public static final long WAIT_TIME = 500;
-    private static final int _WAIT_TIMEOUT = 90000;
+	private static final int _WAIT_TIMEOUT = 90000;
+	private static final int _WAIT_REMOVE = 30000;
     public static final long[] _ACN_ = new long[]{0, 4, 0, 0, 1, 0, 19, 2};
     private TCAPStackImpl tcapStack1;
     private TCAPStackImpl tcapStack2;
@@ -69,7 +67,7 @@ public class TCAPFunctionalTest extends SccpHarness {
     /* (non-Javadoc)
      * @see junit.framework.TestCase#setUp()
      */
-	@Before
+	@BeforeMethod
 	public void setUp() throws IllegalStateException {
 		System.out.println("setUp");
         super.setUp();
@@ -80,6 +78,10 @@ public class TCAPFunctionalTest extends SccpHarness {
         this.tcapStack1 = new TCAPStackImpl(this.sccpProvider1, 8);
         this.tcapStack2 = new TCAPStackImpl(this.sccpProvider2, 8);
         
+        this.tcapStack1.setInvokeTimeout(0);
+        this.tcapStack2.setInvokeTimeout(0);
+        
+       
         this.tcapStack1.start();
         this.tcapStack2.start();
         //create test classes
@@ -90,7 +92,7 @@ public class TCAPFunctionalTest extends SccpHarness {
     /* (non-Javadoc)
      * @see junit.framework.TestCase#tearDown()
      */
-	@After
+	@AfterMethod
 	public void tearDown() {
         this.tcapStack1.stop();
         this.tcapStack2.stop();
@@ -98,7 +100,7 @@ public class TCAPFunctionalTest extends SccpHarness {
 
     }
 	
-    @Test
+	@Test(groups = { "functional.flow"})
     public void testSimpleTCWithDialog() throws Exception{
     	
         long stamp = System.currentTimeMillis();
@@ -109,7 +111,7 @@ public class TCAPFunctionalTest extends SccpHarness {
         clientExpectedEvents.add(te);
         te = TestEvent.createSentEvent(EventType.End, null, 2,stamp+WAIT_TIME*2);
         clientExpectedEvents.add(te);
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2+tcapStack1.getDialogIdleTimeout());
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2+_WAIT_REMOVE);
         clientExpectedEvents.add(te);
         
         List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
@@ -119,10 +121,9 @@ public class TCAPFunctionalTest extends SccpHarness {
         serverExpectedEvents.add(te);
         te = TestEvent.createReceivedEvent(EventType.End, null, 2,stamp+WAIT_TIME*2);
         serverExpectedEvents.add(te);
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2+tcapStack1.getDialogIdleTimeout());
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2+_WAIT_REMOVE);
         serverExpectedEvents.add(te);
-        
-        
+
     	client.startClientDialog();
         client.sendBegin();
         client.waitFor(WAIT_TIME);

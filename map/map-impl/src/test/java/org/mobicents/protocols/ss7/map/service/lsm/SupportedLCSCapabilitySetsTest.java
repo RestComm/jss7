@@ -21,16 +21,11 @@
  */
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -56,15 +51,15 @@ public class SupportedLCSCapabilitySetsTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeTest
 	public void setUp() {
 	}
 
-	@After
+	@AfterTest
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecode() throws Exception {
 		byte[] rawData = getEncodedData();
 		AsnInputStream asn = new AsnInputStream(rawData);
@@ -73,16 +68,16 @@ public class SupportedLCSCapabilitySetsTest {
 		SupportedLCSCapabilitySetsImpl supportedLCSCapabilityTest = new SupportedLCSCapabilitySetsImpl();
 		supportedLCSCapabilityTest.decodeAll(asn);
 
-		assertEquals(Tag.STRING_BIT, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.STRING_BIT);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 
-		assertEquals(false, (boolean)supportedLCSCapabilityTest.getLcsCapabilitySet1());
-		assertEquals(true, (boolean)supportedLCSCapabilityTest.getLcsCapabilitySet2());
-		assertEquals(false, (boolean)supportedLCSCapabilityTest.getLcsCapabilitySet3());
-		assertEquals(false, (boolean)supportedLCSCapabilityTest.getLcsCapabilitySet4());
+		assertEquals( (boolean)supportedLCSCapabilityTest.getLcsCapabilitySet1(),false);
+		assertEquals( (boolean)supportedLCSCapabilityTest.getLcsCapabilitySet2(),true);
+		assertEquals( (boolean)supportedLCSCapabilityTest.getLcsCapabilitySet3(),false);
+		assertEquals( (boolean)supportedLCSCapabilityTest.getLcsCapabilitySet4(),false);
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 		
 		SupportedLCSCapabilitySetsImpl supportedLCSCapabilityTest = new SupportedLCSCapabilitySetsImpl(false, true, false, false);
@@ -92,7 +87,7 @@ public class SupportedLCSCapabilitySetsTest {
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 		
 	}
 

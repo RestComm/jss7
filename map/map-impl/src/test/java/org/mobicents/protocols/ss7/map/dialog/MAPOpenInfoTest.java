@@ -24,7 +24,9 @@ package org.mobicents.protocols.ss7.map.dialog;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+
+import org.testng.*;import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -41,14 +43,14 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
  * @author sergey vetyutnev
  * 
  */
-public class MAPOpenInfoTest extends TestCase {
+public class MAPOpenInfoTest  {
 
 	private byte[] getDataFull() {
 		return new byte[] { -96, 61, -128, 9, -106, 2, 36, -128, 3, 0, -128, 0, -14, -127, 7, -111, 19, 38, -104, -122, 3, -16, 48, 39, -96, 32, 48, 10, 6, 3,
 				42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","dialog"})
 	public void testDecode() throws Exception {
 
 		// The raw data is from packet 2 of nad1053.pcap
@@ -59,7 +61,7 @@ public class MAPOpenInfoTest extends TestCase {
 		AsnInputStream asnIs = new AsnInputStream(data);
 
 		int tag = asnIs.readTag();
-		assertEquals(0, tag);
+		assertEquals( tag,0);
 
 		MAPOpenInfoImpl mapOpenInfoImpl = new MAPOpenInfoImpl();
 		mapOpenInfoImpl.decodeAll(asnIs);
@@ -69,21 +71,21 @@ public class MAPOpenInfoTest extends TestCase {
 
 		assertNotNull(destRef);
 
-		assertEquals(AddressNature.international_number, destRef.getAddressNature());
-		assertEquals(NumberingPlan.land_mobile, destRef.getNumberingPlan());
-		assertEquals("204208300008002", destRef.getAddress());
+		assertEquals( destRef.getAddressNature(),AddressNature.international_number);
+		assertEquals( destRef.getNumberingPlan(),NumberingPlan.land_mobile);
+		assertEquals( destRef.getAddress(),"204208300008002");
 
 		assertNotNull(origRef);
 
-		assertEquals(AddressNature.international_number, origRef.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, origRef.getNumberingPlan());
-		assertEquals("31628968300", origRef.getAddress());
+		assertEquals( origRef.getAddressNature(),AddressNature.international_number);
+		assertEquals( origRef.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( origRef.getAddress(),"31628968300");
 
 		
 		asnIs = new AsnInputStream(this.getDataFull());
 
 		tag = asnIs.readTag();
-		assertEquals(0, tag);
+		assertEquals( tag,0);
 
 		mapOpenInfoImpl = new MAPOpenInfoImpl();
 		mapOpenInfoImpl.decodeAll(asnIs);
@@ -93,15 +95,15 @@ public class MAPOpenInfoTest extends TestCase {
 
 		assertNotNull(destRef);
 
-		assertEquals(AddressNature.international_number, destRef.getAddressNature());
-		assertEquals(NumberingPlan.land_mobile, destRef.getNumberingPlan());
-		assertEquals("204208300008002", destRef.getAddress());
+		assertEquals( destRef.getAddressNature(),AddressNature.international_number);
+		assertEquals( destRef.getNumberingPlan(),NumberingPlan.land_mobile);
+		assertEquals( destRef.getAddress(),"204208300008002");
 
 		assertNotNull(origRef);
 
-		assertEquals(AddressNature.international_number, origRef.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, origRef.getNumberingPlan());
-		assertEquals("31628968300", origRef.getAddress());
+		assertEquals( origRef.getAddressNature(),AddressNature.international_number);
+		assertEquals( origRef.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( origRef.getAddress(),"31628968300");
 
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(mapOpenInfoImpl.getExtensionContainer()));
 		
@@ -109,7 +111,7 @@ public class MAPOpenInfoTest extends TestCase {
 
 	//TODO Fix this
 	
-//	@org.junit.Test
+//	@Test(groups = { "functional.decode","dialog"})
 //	public void testDecode1() throws Exception {
 //
 //		// The raw data is from packet 2 of nad1053.pcap
@@ -129,19 +131,19 @@ public class MAPOpenInfoTest extends TestCase {
 //
 //		assertNotNull(destRef);
 //
-//		assertEquals(AddressNature.international_number, destRef.getAddressNature());
-//		assertEquals(NumberingPlan.land_mobile, destRef.getNumberingPlan());
-//		assertEquals("204208300008002", destRef.getAddress());
+//		assertEquals( destRef.getAddressNature(),AddressNature.international_number);
+//		assertEquals( destRef.getNumberingPlan(),NumberingPlan.land_mobile);
+//		assertEquals( destRef.getAddress(),"204208300008002");
 //
 //		assertNotNull(origRef);
 //
-//		assertEquals(AddressNature.international_number, origRef.getAddressNature());
-//		assertEquals(NumberingPlan.ISDN, origRef.getNumberingPlan());
-//		assertEquals("31628968300", origRef.getAddress());
+//		assertEquals( origRef.getAddressNature(),AddressNature.international_number);
+//		assertEquals( origRef.getNumberingPlan(),NumberingPlan.ISDN);
+//		assertEquals( origRef.getAddress(),"31628968300");
 //
 //	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","dialog"})
 	public void testEncode() throws Exception {
 
 		MapServiceFactory servFact = new MapServiceFactoryImpl();

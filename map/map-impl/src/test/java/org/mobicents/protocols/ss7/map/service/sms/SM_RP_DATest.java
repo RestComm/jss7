@@ -24,7 +24,8 @@ package org.mobicents.protocols.ss7.map.service.sms;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+import org.testng.*;import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -42,7 +43,7 @@ import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
  * @author sergey vetyutnev
  *
  */
-public class SM_RP_DATest extends TestCase {
+public class SM_RP_DATest {
 	
 	private byte[] getEncodedData_ServiceCentreAddressDA() {
 		return new byte[] { -124, 7, -111, 33, 49, -107, 6, 105, 0 };
@@ -60,7 +61,7 @@ public class SM_RP_DATest extends TestCase {
 		return new byte[] { (byte)133, 0 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","service.sms"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedData_ServiceCentreAddressDA();
@@ -70,13 +71,13 @@ public class SM_RP_DATest extends TestCase {
 		SM_RP_DAImpl da = new SM_RP_DAImpl();
 		da.decodeAll(asn);
 
-		assertEquals(4, tag);
-		assertEquals(Tag.CLASS_CONTEXT_SPECIFIC, asn.getTagClass());
+		assertEquals( tag,4);
+		assertEquals( asn.getTagClass(),Tag.CLASS_CONTEXT_SPECIFIC);
 		
 		AddressString nnm = da.getServiceCentreAddressDA();
-		assertEquals(AddressNature.international_number, nnm.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, nnm.getNumberingPlan());
-		assertEquals("121359609600", nnm.getAddress());
+		assertEquals( nnm.getAddressNature(),AddressNature.international_number);
+		assertEquals( nnm.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( nnm.getAddress(),"121359609600");
 		
 		
 		rawData = getEncodedData_LMSI();
@@ -86,8 +87,8 @@ public class SM_RP_DATest extends TestCase {
 		da = new SM_RP_DAImpl();
 		da.decodeAll(asn);
 
-		assertEquals(1, tag);
-		assertEquals(Tag.CLASS_CONTEXT_SPECIFIC, asn.getTagClass());
+		assertEquals( tag,1);
+		assertEquals( asn.getTagClass(),Tag.CLASS_CONTEXT_SPECIFIC);
 		
 		assertTrue(Arrays.equals(new byte[] { 0, 7, -112, -78 }, da.getLMSI().getData()));
 		
@@ -99,13 +100,13 @@ public class SM_RP_DATest extends TestCase {
 		da = new SM_RP_DAImpl();
 		da.decodeAll(asn);
 
-		assertEquals(0, tag);
-		assertEquals(Tag.CLASS_CONTEXT_SPECIFIC, asn.getTagClass());
+		assertEquals( tag,0);
+		assertEquals( asn.getTagClass(),Tag.CLASS_CONTEXT_SPECIFIC);
 
 		IMSI imsi = da.getIMSI();
-		assertEquals(41, (long)imsi.getMCC());
-		assertEquals(4, (long)imsi.getMNC());
-		assertEquals("0222161547", imsi.getMSIN());
+		assertEquals( (long)imsi.getMCC(),41);
+		assertEquals( (long)imsi.getMNC(),4);
+		assertEquals( imsi.getMSIN(),"0222161547");
 		
 		
 		rawData = getEncodedData_No();
@@ -115,15 +116,15 @@ public class SM_RP_DATest extends TestCase {
 		da = new SM_RP_DAImpl();
 		da.decodeAll(asn);
 
-		assertEquals(5, tag);
-		assertEquals(Tag.CLASS_CONTEXT_SPECIFIC, asn.getTagClass());
+		assertEquals( tag,5);
+		assertEquals( asn.getTagClass(),Tag.CLASS_CONTEXT_SPECIFIC);
 
 		assertTrue(da.getServiceCentreAddressDA() == null);		
 		assertTrue(da.getIMSI() == null);		
 		assertTrue(da.getLMSI() == null);		
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","service.sms"})
 	public void testEncode() throws Exception {
 
 		AddressStringImpl astr = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "121359609600");
@@ -134,7 +135,7 @@ public class SM_RP_DATest extends TestCase {
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData_ServiceCentreAddressDA();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 
 
 		LMSIImpl lmsi = new LMSIImpl(new byte[] { 0, 7, -112, -78 });
@@ -145,7 +146,7 @@ public class SM_RP_DATest extends TestCase {
 		
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedData_LMSI();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 
 		
 		IMSIImpl imsi = new IMSIImpl(41L, 4L, "0222161547");		
@@ -156,7 +157,7 @@ public class SM_RP_DATest extends TestCase {
 		
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedData_IMSI();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 		
 		
 		da = new SM_RP_DAImpl();
@@ -166,6 +167,6 @@ public class SM_RP_DATest extends TestCase {
 		
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedData_No();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 	}
 }

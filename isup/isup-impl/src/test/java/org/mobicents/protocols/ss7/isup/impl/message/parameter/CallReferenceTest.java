@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.testng.annotations.Test;
 
 /**
  * Start time:14:11:03 2009-04-23<br>
@@ -83,6 +84,7 @@ public class CallReferenceTest extends ParameterHarness {
 		
 		return body;
 	}
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		CallReferenceImpl cr = new CallReferenceImpl();
 		cr.decode(getBody1());

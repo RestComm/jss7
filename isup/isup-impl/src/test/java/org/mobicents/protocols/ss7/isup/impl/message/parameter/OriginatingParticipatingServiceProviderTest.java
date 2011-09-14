@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.testng.annotations.Test;
 
 /**
  * Start time:14:11:03 2009-04-23<br>
@@ -55,7 +56,7 @@ public class OriginatingParticipatingServiceProviderTest extends ParameterHarnes
 		super.goodBodies.add(getBody1());
 
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
 			InvocationTargetException, IOException, ParameterException {
 		OriginatingParticipatingServiceProviderImpl bci = new OriginatingParticipatingServiceProviderImpl(getBody1());
@@ -64,7 +65,7 @@ public class OriginatingParticipatingServiceProviderTest extends ParameterHarnes
 		Object[] expectedValues = { false, super.getSixDigitsString(), 3 };
 		super.testValues(bci, methodNames, expectedValues);
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
 			InvocationTargetException, IOException, ParameterException {
 		OriginatingParticipatingServiceProviderImpl bci = new OriginatingParticipatingServiceProviderImpl(getBody2());

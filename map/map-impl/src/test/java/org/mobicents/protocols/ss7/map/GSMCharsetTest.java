@@ -26,16 +26,18 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+
+import org.testng.*;import org.testng.annotations.*;
 
 /**
  * 
  * @author amit bhayani
  * 
  */
-public class GSMCharsetTest extends TestCase {
+public class GSMCharsetTest  {
 
-	@org.junit.Test
+	@Test(groups = { "functional.decode","gsm"}) //anything better than "gsm"
 	public void testDecode1() throws Exception {
 
 		// This raw data is from nad1053.pcap, 2nd packet.
@@ -54,11 +56,11 @@ public class GSMCharsetTest extends TestCase {
 
 		String s1 = bf.toString();
 
-		assertEquals(ussdString, s1);
+		assertEquals( s1,ussdString);
 
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","gsm"})
 	public void testEncode1() throws Exception {
 
 		// This raw data is from nad1053.pcap, 2nd packet.
@@ -83,7 +85,7 @@ public class GSMCharsetTest extends TestCase {
 
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.decode","gsm"})
 	public void testDecode2() throws Exception {
 
 		// This raw data is from nad1053.pcap, last packet.
@@ -107,11 +109,11 @@ public class GSMCharsetTest extends TestCase {
 
 		String s1 = bf.toString();
 
-		assertEquals(ussdString, s1);
+		assertEquals( s1,ussdString);
 
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.encode","gsm"})
 	public void testEncode2() throws Exception {
 
 		// This raw data is from nad1053.pcap, last packet.
@@ -141,7 +143,7 @@ public class GSMCharsetTest extends TestCase {
 
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","gsm"})
 	public void testDecode3() throws Exception {
 
 		byte[] data = new byte[] { 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72,
@@ -158,11 +160,11 @@ public class GSMCharsetTest extends TestCase {
 
 		String s1 = bf.toString();
 
-		assertEquals(ussdString, s1);
+		assertEquals( s1,ussdString);
 
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.encode","gsm"})
 	public void testEncode3() throws Exception {
 
 		// This raw data is from nad1053.pcap, last packet.
@@ -183,10 +185,10 @@ public class GSMCharsetTest extends TestCase {
 		}
 
 		assertTrue(Arrays.equals(rawData, data));
-
+		
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","gsm"})
 	public void testDecode4() throws Exception {
 
 		byte[] data = new byte[] { 0x2a, 0x1c, 0x6e, (byte)0xd4 };
@@ -202,11 +204,11 @@ public class GSMCharsetTest extends TestCase {
 
 		String s1 = bf.toString();
 
-		assertEquals(ussdString, s1);
+		assertEquals( s1,ussdString);
 
 	}
 	
-	//@org.junit.Test 
+	//@Test(groups = { "functional.encode","gsm"})
 	//TODO : This fails
 //	public void testEncode4() throws Exception {
 //
@@ -226,7 +228,7 @@ public class GSMCharsetTest extends TestCase {
 //			data[count++] = bb.get();
 //		}
 //
-//		assertTrue(Arrays.equals(rawData, data));
+//		assertTrue( data),Arrays.equals(rawData);
 //
 //	}
 }

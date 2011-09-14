@@ -35,7 +35,9 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
 import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
 
-
+import static org.testng.Assert.*;
+import org.testng.*;
+import org.testng.annotations.*;
 /**
  * Start time:09:26:46 2009-04-22<br>
  * Project: mobicents-isup-stack<br>
@@ -46,7 +48,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
 public class GRSTest extends MessageHarness {
 	
 	
-	
+	@Test(groups = { "functional.encode","functional.decode","message"})
 	public void testTwo_Params() throws Exception
 	{
 		byte[] message = getDefaultBody();
@@ -57,19 +59,19 @@ public class GRSTest extends MessageHarness {
 		
 		try{
 			RangeAndStatus RS = (RangeAndStatus) grs.getParameter(RangeAndStatus._PARAMETER_CODE);
-			assertNotNull("Range And Status return is null, it should not be",RS);
+			assertNotNull(RS,"Range And Status retrun is null, it shoul not be");
 			if(RS == null)
 				return;
 			byte range = RS.getRange();
-			assertEquals("Range is wrong,",0x01, range);
+			assertEquals(range,0x01,"Range is wrong,");
 			byte[] b=RS.getStatus();
-			assertNull("RangeAndStatus.getRange() is not null",b);
+			assertNull(b,"RangeAndStatus.getRange() is not null");
 		
 			
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-			super.fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
+			fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
 		}
 		
 	}

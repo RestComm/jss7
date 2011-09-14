@@ -22,16 +22,11 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.*;
+import org.testng.*;import org.testng.annotations.*;
 
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
@@ -53,15 +48,15 @@ public class CellGlobalIdOrServiceAreaIdOrLAITest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeTest
 	public void setUp() {
 	}
 
-	@After
+	@AfterTest
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecode() throws Exception {
 		byte[] data = new byte[] { (byte) 0x80, 0x07, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b };
 
@@ -73,12 +68,11 @@ public class CellGlobalIdOrServiceAreaIdOrLAITest {
 		cellGlobalIdOrServiceAreaIdOrLAI.decodeAll(asn);
 
 		assertNotNull(cellGlobalIdOrServiceAreaIdOrLAI.getCellGlobalIdOrServiceAreaIdFixedLength());
-		assertTrue(Arrays.equals(new byte[] { 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b },
-				cellGlobalIdOrServiceAreaIdOrLAI.getCellGlobalIdOrServiceAreaIdFixedLength()));
+		assertTrue(Arrays.equals(new byte[] { 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b },cellGlobalIdOrServiceAreaIdOrLAI.getCellGlobalIdOrServiceAreaIdFixedLength()));
 
 	}
 
-	@Test
+	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 
 		byte[] data = new byte[] { (byte) 0x80, 0x07, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b };
@@ -90,7 +84,7 @@ public class CellGlobalIdOrServiceAreaIdOrLAITest {
 		
 		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, encodedData));
+		assertTrue( Arrays.equals(data,encodedData));
 
 	}
 }

@@ -27,12 +27,8 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.gtt;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 
 /**
  *
@@ -51,28 +47,28 @@ public class PatternTest {
     public static void tearDownClass() throws Exception {
     }
 
-    @Before
+    @BeforeMethod
     public void setUp() {
     }
 
-    @After
+    @AfterMethod
     public void tearDown() {
     }
 
     /**
      * Test of getResult method, of class Pattern.
      */
-    @Test
+    @Test(groups = { "gtt"})
     public void testGetResult() {
         Pattern pattern = new Pattern("1101/rem 0,4/ins 0,9023629581");
         String result = pattern.getResult("1101");
-        assertEquals("9023629581", result);
+        assertEquals( result,"9023629581");
     }
 
     /**
      * Test of matches method, of class Pattern.
      */
-    @Test
+    @Test(groups = { "gtt"})
     public void testMatches() {
         Pattern pattern = new Pattern("1101/rem 0,4/ins 0,9023629581");
         assertTrue(pattern.matches("1101"));

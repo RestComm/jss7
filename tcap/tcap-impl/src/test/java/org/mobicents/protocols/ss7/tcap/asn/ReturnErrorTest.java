@@ -35,7 +35,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCodeType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
 
-import junit.framework.TestCase;
+import org.testng.annotations.Test; import static org.testng.Assert.*;
 
 /**
  * 
@@ -43,7 +43,8 @@ import junit.framework.TestCase;
  * @author sergey vetyutnev
  *
  */
-public class ReturnErrorTest extends TestCase {
+@Test(groups = { "asn" })
+public class ReturnErrorTest  {
 	
 	private byte[] getDataWithoutParameter() {
 		return new byte[] { 
@@ -109,21 +110,21 @@ public class ReturnErrorTest extends TestCase {
 		return new byte[] { -128, 2, 17, 17, -95, 4, -126, 2, 0, 0, -126, 1, 12, -125, 2, 51, 51 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode" })
 	public void testDecode() throws IOException, ParseException {
 	
 		byte[] b = getDataWithoutParameter();
 		AsnInputStream asnIs = new AsnInputStream(b);
 		Component comp = TcapFactory.createComponent(asnIs);
 
-		assertEquals("Wrong component Type", ComponentType.ReturnError, comp.getType());
+		assertEquals(ComponentType.ReturnError, comp.getType(),"Wrong component Type");
 		ReturnError re = (ReturnError) comp;
-		assertEquals("Wrong invoke ID", new Long(5), re.getInvokeId());
-		assertNotNull("No error code.", re.getErrorCode());
+		assertEquals(new Long(5), re.getInvokeId(),"Wrong invoke ID");
+		assertNotNull(re.getErrorCode(),"No error code.");
 		ErrorCode ec = re.getErrorCode();
-		assertEquals("Wrong error code type.", ErrorCodeType.Local, ec.getErrorType());
+		assertEquals(ErrorCodeType.Local, ec.getErrorType(),"Wrong error code type.");
 		long lec = ec.getLocalErrorCode();
-		assertEquals("wrong data content.", lec, 15);
+		assertEquals(lec, 15,"wrong data content.");
 		assertNull(re.getParameter());		
 
 		
@@ -131,21 +132,21 @@ public class ReturnErrorTest extends TestCase {
 		asnIs = new AsnInputStream(b);
 		comp = TcapFactory.createComponent(asnIs);
 
-		assertEquals("Wrong component Type",ComponentType.ReturnError, comp.getType());
+		assertEquals(ComponentType.ReturnError, comp.getType(),"Wrong component Type");
 		re = (ReturnError) comp;
-		assertEquals("Wrong invoke ID",new Long(5), re.getInvokeId());
-		assertNotNull("No error code.",re.getErrorCode());
+		assertEquals(new Long(5), re.getInvokeId(),"Wrong invoke ID");
+		assertNotNull(re.getErrorCode(),"No error code.");
 		ec = re.getErrorCode();
-		assertEquals("Wrong error code type.", ErrorCodeType.Local,ec.getErrorType());
+		assertEquals(ErrorCodeType.Local,ec.getErrorType(),"Wrong error code type.");
 		lec = ec.getLocalErrorCode();
-		assertEquals("wrong data content.",lec, 15);
+		assertEquals(lec, 15,"wrong data content.");
 		
-		assertNotNull("Parameter should not be null", re.getParameter());
+		assertNotNull(re.getParameter(),"Parameter should not be null");
 		Parameter p = re.getParameter();
-		assertEquals("Wrong parameter tag.", 0x00, p.getTag()); // 0x00 - since A is for tag class etc.
-		assertEquals("Wrong parameter tagClass.", Tag.CLASS_CONTEXT_SPECIFIC, p.getTagClass());
-		assertNotNull("Parameters array is null.", p.getParameters());
-		assertEquals("Wrong number of parameters in array.", 4, p.getParameters().length);
+		assertEquals(0x00, p.getTag(),"Wrong parameter tag."); // 0x00 - since A is for tag class etc.
+		assertEquals(Tag.CLASS_CONTEXT_SPECIFIC, p.getTagClass(),"Wrong parameter tagClass.");
+		assertNotNull(p.getParameters(),"Parameters array is null.");
+		assertEquals(4, p.getParameters().length,"Wrong number of parameters in array.");
 		assertTrue(Arrays.equals(this.getParameterData(), p.getData()));
 
 		
@@ -153,19 +154,19 @@ public class ReturnErrorTest extends TestCase {
 		asnIs = new AsnInputStream(b);
 		comp = TcapFactory.createComponent(asnIs);
 
-		assertEquals("Wrong component Type", ComponentType.ReturnError, comp.getType());
+		assertEquals(ComponentType.ReturnError, comp.getType(),"Wrong component Type");
 		re = (ReturnError) comp;
-		assertEquals("Wrong invoke ID", new Long(-1L), re.getInvokeId());
-		assertNotNull("No error code.", re.getErrorCode());
+		assertEquals(new Long(-1L), re.getInvokeId(),"Wrong invoke ID");
+		assertNotNull(re.getErrorCode(),"No error code.");
 		ec = re.getErrorCode();
-		assertEquals("Wrong error code type.", ErrorCodeType.Global, ec.getErrorType());
+		assertEquals(ErrorCodeType.Global, ec.getErrorType(),"Wrong error code type.");
 		long[] gec = ec.getGlobalErrorCode();
-		assertTrue("wrong data content.", Arrays.equals(new long[] { 1, 0, 22, 33 }, gec));
+		assertTrue(Arrays.equals(new long[] { 1, 0, 22, 33 }, gec),"wrong data content.");
 		assertNull(re.getParameter());
 	}
 	
 	
-	@org.junit.Test
+	@Test(groups = { "functional.encode" })
 	public void testEncode() throws IOException, ParseException {
 
 		byte[] expected = this.getDataWithoutParameter();

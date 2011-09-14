@@ -21,19 +21,11 @@
  */
 
 package org.mobicents.protocols.ss7.map.service.lsm;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.service.lsm.DeferredLocationEventType;
@@ -54,15 +46,15 @@ public class LocationTypeTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeTest
 	public void setUp() {
 	}
 
-	@After
+	@AfterTest
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecode() throws Exception {
 		byte[] data = new byte[] { 0x30, 0x03, (byte) 0x80, 0x01, 0x00 };
 		AsnInputStream asn = new AsnInputStream(data);
@@ -72,12 +64,12 @@ public class LocationTypeTest {
 		locType.decodeAll(asn);
 
 		assertNotNull(locType.getLocationEstimateType());
-		assertEquals(LocationEstimateType.currentLocation, locType.getLocationEstimateType());
+		assertEquals( locType.getLocationEstimateType(),LocationEstimateType.currentLocation);
 		assertNull(locType.getDeferredLocationEventType());
 
 	}
 
-	@Test
+	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 		byte[] data = new byte[] { 0x30, 0x03, (byte) 0x80, 0x01, 0x00 };
 
@@ -87,11 +79,11 @@ public class LocationTypeTest {
 
 		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, encodedData));
+		assertTrue( Arrays.equals(data,encodedData));
 
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecode1() throws Exception {
 		byte[] data = new byte[] { 0x30, 0x07, (byte) 0x80, 0x01, 0x00, (byte) 0x81, 0x02, 0x04, (byte) -16 };
 		AsnInputStream asn = new AsnInputStream(data);
@@ -101,7 +93,7 @@ public class LocationTypeTest {
 		locType.decodeAll(asn);
 
 		assertNotNull(locType.getLocationEstimateType());
-		assertEquals(LocationEstimateType.currentLocation, locType.getLocationEstimateType());
+		assertEquals( locType.getLocationEstimateType(),LocationEstimateType.currentLocation);
 		assertNotNull(locType.getDeferredLocationEventType());
 
 		assertNotNull(locType.getDeferredLocationEventType());
@@ -112,7 +104,7 @@ public class LocationTypeTest {
 
 	}
 
-	@Test
+	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode1() throws Exception {
 		byte[] data = new byte[] { 0x30, 0x07, (byte) 0x80, 0x01, 0x00, (byte) 0x81, 0x02, 0x04, (byte) -16 };
 
@@ -125,7 +117,7 @@ public class LocationTypeTest {
 
 		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, encodedData));
+		assertTrue( Arrays.equals(data,encodedData));
 	}
 
 }

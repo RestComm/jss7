@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.testng.annotations.Test;
 
 /**
  * Start time:14:11:03 2009-04-23<br>
@@ -65,7 +66,7 @@ public class GVNSUserGroupTest extends ParameterHarness {
 		bos.write(digits);
 		return bos.toByteArray();
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		GVNSUserGroupImpl bci = new GVNSUserGroupImpl(getBody(getSixDigits(), false));
 
@@ -73,7 +74,7 @@ public class GVNSUserGroupTest extends ParameterHarness {
 		Object[] expectedValues = { getSixDigitsString(), 3 };
 		super.testValues(bci, methodNames, expectedValues);
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		GVNSUserGroupImpl bci = new GVNSUserGroupImpl(getBody(getFiveDigits(), true));
 

@@ -1102,6 +1102,7 @@ public class DialogImpl implements Dialog {
 		TCEndIndicationImpl tcEndIndication = null;
 		try {
 			this.dialogLock.lock();
+			restartIdleTimer();
 			tcEndIndication = (TCEndIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider.getDialogPrimitiveFactory())
 					.createEndIndication(this);
 

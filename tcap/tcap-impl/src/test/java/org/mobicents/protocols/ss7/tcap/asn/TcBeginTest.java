@@ -24,9 +24,8 @@ package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.testng.annotations.Test; import static org.testng.Assert.*;
 
-import org.junit.Test;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -46,7 +45,8 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
  * @author baranowb
  * 
  */
-public class TcBeginTest extends TestCase {
+@Test(groups = { "asn" })
+public class TcBeginTest  {
 
 	/**
 	 * The data for this comes from nad1053.pcap USSD Wireshark Trace 2nd Packet
@@ -54,7 +54,7 @@ public class TcBeginTest extends TestCase {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	@org.junit.Test
+	@Test(groups = { "functional.encode" })
 	public void testBasicTCBeginEncode() throws IOException, ParseException {
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage();
 		tcm.setOriginatingTransactionId(1358955064L);
@@ -135,7 +135,7 @@ public class TcBeginTest extends TestCase {
 
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","functional.decode" })
 	public void testBasicTCBegin() throws IOException, ParseException {
 
 		// no idea how to check rest...?
@@ -165,22 +165,22 @@ public class TcBeginTest extends TestCase {
 
 		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
-		assertEquals("Expected TCInvoke", TCBeginMessage._TAG, tag);
+		assertEquals(TCBeginMessage._TAG, tag,"Expected TCInvoke");
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
 
-		assertEquals("Originating transaction id does not match", new Long(145031169L),
-				tcm.getOriginatingTransactionId());
-		assertNotNull("Dialog portion should not be null", tcm.getDialogPortion());
+		assertEquals(new Long(145031169L),
+				tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+		assertNotNull(tcm.getDialogPortion(),"Dialog portion should not be null");
 
-		assertNull("Component portion should not be present", tcm.getComponent());
+		assertNull(tcm.getComponent(),"Component portion should not be present");
 
 		DialogPortion dp = tcm.getDialogPortion();
 
-		assertFalse("Dialog should not be Uni", dp.isUnidirectional());
+		assertFalse(dp.isUnidirectional(),"Dialog should not be Uni");
 
 		DialogAPDU dapdu = dp.getDialogAPDU();
-		assertNotNull("APDU should not be null", dapdu);
-		assertEquals("Wrong APDU type", DialogAPDUType.Request, dapdu.getType());
+		assertNotNull(dapdu,"APDU should not be null");
+		assertEquals(DialogAPDUType.Request, dapdu.getType(),"Wrong APDU type");
 		DialogRequestAPDU dr = (DialogRequestAPDU) dapdu;
 		// rest is checked in dialog portion type!
 		AsnOutputStream aos = new AsnOutputStream();
@@ -191,7 +191,7 @@ public class TcBeginTest extends TestCase {
 
 	}
 
-	@org.junit.Test
+	@Test
 	public void testBasicTCBegin1() throws IOException, ParseException {
 
 		// no idea how to check rest...?
@@ -216,22 +216,22 @@ public class TcBeginTest extends TestCase {
 
 		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
-		assertEquals("Expected TCInvoke", TCBeginMessage._TAG, tag);
+		assertEquals(TCBeginMessage._TAG, tag,"Expected TCInvoke");
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
 
-		assertEquals("Originating transaction id does not match", new Long(436208353L),
-				tcm.getOriginatingTransactionId());
-		assertNotNull("Dialog portion should not be null", tcm.getDialogPortion());
+		assertEquals(new Long(436208353L),
+				tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+		assertNotNull(tcm.getDialogPortion(),"Dialog portion should not be null");
 
-		assertNotNull("Component portion should be present", tcm.getComponent());
+		assertNotNull(tcm.getComponent(),"Component portion should be present");
 
 		DialogPortion dp = tcm.getDialogPortion();
 
-		assertFalse("Dialog should not be Uni", dp.isUnidirectional());
+		assertFalse(dp.isUnidirectional(),"Dialog should not be Uni");
 
 		DialogAPDU dapdu = dp.getDialogAPDU();
-		assertNotNull("APDU should not be null", dapdu);
-		assertEquals("Wrong APDU type", DialogAPDUType.Request, dapdu.getType());
+		assertNotNull(dapdu,"APDU should not be null");
+		assertEquals(DialogAPDUType.Request, dapdu.getType(),"Wrong APDU type");
 		DialogRequestAPDU dr = (DialogRequestAPDU) dapdu;
 		// rest is checked in dialog portion type!
 		AsnOutputStream aos = new AsnOutputStream();
@@ -242,7 +242,7 @@ public class TcBeginTest extends TestCase {
 
 	}
 
-	@org.junit.Test
+	@Test
 	public void testTCBeginMessage_No_Dialog() throws IOException, ParseException {
 
 		// no idea how to check rest...?
@@ -288,34 +288,34 @@ public class TcBeginTest extends TestCase {
 
 		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
-		assertEquals("Expected TCBegin", TCBeginMessage._TAG, tag);
+		assertEquals(TCBeginMessage._TAG, tag,"Expected TCBegin");
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
 
-		assertNull("Dialog portion should not be present", tcm.getDialogPortion());
+		assertNull(tcm.getDialogPortion(),"Dialog portion should not be present");
 
-		assertEquals("Originating transaction id does not match", new Long(145031169L),
-				tcm.getOriginatingTransactionId());
+		assertEquals(new Long(145031169L),
+				tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
 		// comp portion
-		assertNotNull("Component portion should be present", tcm.getComponent());
-		assertEquals("Component count is wrong", 2, tcm.getComponent().length);
+		assertNotNull(tcm.getComponent(),"Component portion should be present");
+		assertEquals(2, tcm.getComponent().length,"Component count is wrong");
 		Component c = tcm.getComponent()[0];
-		assertEquals("Wrong component type", ComponentType.Invoke, c.getType());
+		assertEquals(ComponentType.Invoke, c.getType(),"Wrong component type");
 		Invoke i = (Invoke) c;
-		assertEquals("Wrong invoke ID", new Long(1), i.getInvokeId());
-		assertNull("Linked ID is not null", i.getLinkedId());
+		assertEquals(new Long(1), i.getInvokeId(),"Wrong invoke ID");
+		assertNull(i.getLinkedId(),"Linked ID is not null");
 
 		c = tcm.getComponent()[1];
-		assertEquals("Wrong component type", ComponentType.ReturnResult, c.getType());
+		assertEquals(ComponentType.ReturnResult, c.getType(),"Wrong component type");
 		ReturnResult rr = (ReturnResult) c;
-		assertEquals("Wrong invoke ID", new Long(2), rr.getInvokeId());
-		assertNotNull("Operation code should not be null", rr.getOperationCode());
+		assertEquals(new Long(2), rr.getInvokeId(),"Wrong invoke ID");
+		assertNotNull(rr.getOperationCode(),"Operation code should not be null");
 
 		OperationCode ocs = rr.getOperationCode();
 
-		assertEquals("Wrong Operation Code type", OperationCodeType.Local, ocs.getOperationType());
-		assertEquals("Wrong Operation Code", new Long(1), ocs.getLocalOperationCode());
+		assertEquals(OperationCodeType.Local, ocs.getOperationType(),"Wrong Operation Code type");
+		assertEquals(new Long(1), ocs.getLocalOperationCode(),"Wrong Operation Code");
 
-		assertNotNull("Parameter should not be null", rr.getParameter());
+		assertNotNull(rr.getParameter(),"Parameter should not be null");
 
 		AsnOutputStream aos = new AsnOutputStream();
 		tcm.encode(aos);
@@ -325,7 +325,7 @@ public class TcBeginTest extends TestCase {
 
 	}
 
-	@org.junit.Test
+	@Test
 	public void testTCBeginMessage_No_Component() throws IOException, ParseException {
 
 		// created by hand
@@ -363,33 +363,33 @@ public class TcBeginTest extends TestCase {
 
 		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
-		assertEquals("Expected TCBegin", TCBeginMessage._TAG, tag);
+		assertEquals(TCBeginMessage._TAG, tag,"Expected TCBegin");
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
-		assertNull("Component portion should not be present", tcm.getComponent());
-		assertNotNull("Dialog portion should not be null", tcm.getDialogPortion());
-		assertEquals("Originating transaction id does not match", new Long(145031169L),
-				tcm.getOriginatingTransactionId());
+		assertNull(tcm.getComponent(),"Component portion should not be present");
+		assertNotNull(tcm.getDialogPortion(),"Dialog portion should not be null");
+		assertEquals(new Long(145031169L),
+				tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
 
-		assertFalse("Dialog should not be Uni", tcm.getDialogPortion().isUnidirectional());
+		assertFalse(tcm.getDialogPortion().isUnidirectional(),"Dialog should not be Uni");
 		DialogAPDU _dapd = tcm.getDialogPortion().getDialogAPDU();
-		assertEquals("Wrong dialog APDU type!", DialogAPDUType.Response, _dapd.getType());
+		assertEquals(DialogAPDUType.Response, _dapd.getType(),"Wrong dialog APDU type!");
 
 		DialogResponseAPDU dapd = (DialogResponseAPDU) _dapd;
 
 		// check nulls first
-		assertNull("UserInformation should not be present", dapd.getUserInformation());
+		assertNull(dapd.getUserInformation(),"UserInformation should not be present");
 
 		// not nulls
-		assertNotNull("Result should not be null", dapd.getResult());
+		assertNotNull(dapd.getResult(),"Result should not be null");
 		Result r = dapd.getResult();
-		assertEquals("Wrong result", ResultType.Accepted, r.getResultType());
+		assertEquals(ResultType.Accepted, r.getResultType(),"Wrong result");
 
-		assertNotNull("Result Source Diagnostic should not be null", dapd.getResultSourceDiagnostic());
+		assertNotNull(dapd.getResultSourceDiagnostic(),"Result Source Diagnostic should not be null");
 
 		ResultSourceDiagnostic rsd = dapd.getResultSourceDiagnostic();
-		assertNull("User diagnostic should not be present", rsd.getDialogServiceUserType());
-		assertEquals("Wrong provider diagnostic type", DialogServiceProviderType.NoCommonDialogPortion,
-				rsd.getDialogServiceProviderType());
+		assertNull(rsd.getDialogServiceUserType(),"User diagnostic should not be present");
+		assertEquals(DialogServiceProviderType.NoCommonDialogPortion,
+				rsd.getDialogServiceProviderType(),"Wrong provider diagnostic type");
 
 		AsnOutputStream aos = new AsnOutputStream();
 		tcm.encode(aos);
@@ -399,7 +399,7 @@ public class TcBeginTest extends TestCase {
 
 	}
 
-	@org.junit.Test
+	@Test
 	public void testTCBeginMessage_No_Nothing() throws IOException, ParseException {
 
 		// no idea how to check rest...?
@@ -417,13 +417,13 @@ public class TcBeginTest extends TestCase {
 
 		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
-		assertEquals("Expected TCBegin", TCBeginMessage._TAG, tag);
+		assertEquals( TCBeginMessage._TAG, tag,"Expected TCBegin");
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
 
-		assertNull("Dialog portion should be null", tcm.getDialogPortion());
-		assertNull("Component portion should not be present", tcm.getComponent());
-		assertEquals("Originating transaction id does not match", new Long(145031169L),
-				tcm.getOriginatingTransactionId());
+		assertNull(tcm.getDialogPortion(),"Dialog portion should be null");
+		assertNull(tcm.getComponent(),"Component portion should not be present");
+		assertEquals(new Long(145031169L),
+				tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
 
 		AsnOutputStream aos = new AsnOutputStream();
 		tcm.encode(aos);
@@ -433,7 +433,7 @@ public class TcBeginTest extends TestCase {
 
 	}
 
-	@org.junit.Test
+	@Test
 	public void testTCBeginMessage_All() throws IOException, ParseException {
 
 		// no idea how to check rest...?
@@ -500,57 +500,57 @@ public class TcBeginTest extends TestCase {
 
 		AsnInputStream ais = new AsnInputStream(b);
 		int tag = ais.readTag();
-		assertEquals("Expected TCBegin", TCBeginMessage._TAG, tag);
+		assertEquals(TCBeginMessage._TAG, tag,"Expected TCBegin");
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
 
 		// universal
-		assertEquals("Originating transaction id does not match", new Long(145031169L),
-				tcm.getOriginatingTransactionId());
+		assertEquals(new Long(145031169L),
+				tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
 
 		// dialog portion
-		assertNotNull("Dialog portion should not be null", tcm.getDialogPortion());
+		assertNotNull(tcm.getDialogPortion(),"Dialog portion should not be null");
 
-		assertFalse("Dialog should not be Uni", tcm.getDialogPortion().isUnidirectional());
+		assertFalse(tcm.getDialogPortion().isUnidirectional(),"Dialog should not be Uni");
 		DialogAPDU _dapd = tcm.getDialogPortion().getDialogAPDU();
-		assertEquals("Wrong dialog APDU type!", DialogAPDUType.Response, _dapd.getType());
+		assertEquals(DialogAPDUType.Response, _dapd.getType(),"Wrong dialog APDU type!");
 
 		DialogResponseAPDU dapd = (DialogResponseAPDU) _dapd;
 
 		// check nulls first
-		assertNull("UserInformation should not be present", dapd.getUserInformation());
+		assertNull(dapd.getUserInformation(),"UserInformation should not be present");
 
 		// not nulls
-		assertNotNull("Result should not be null", dapd.getResult());
+		assertNotNull(dapd.getResult(),"Result should not be null");
 		Result r = dapd.getResult();
-		assertEquals("Wrong result", ResultType.RejectedPermanent, r.getResultType());
+		assertEquals(ResultType.RejectedPermanent, r.getResultType(),"Wrong result");
 
-		assertNotNull("Result Source Diagnostic should not be null", dapd.getResultSourceDiagnostic());
+		assertNotNull(dapd.getResultSourceDiagnostic(),"Result Source Diagnostic should not be null");
 
 		ResultSourceDiagnostic rsd = dapd.getResultSourceDiagnostic();
-		assertNull("User diagnostic should not be present", rsd.getDialogServiceUserType());
-		assertEquals("Wrong provider diagnostic type", DialogServiceProviderType.Null, rsd.getDialogServiceProviderType());
+		assertNull(rsd.getDialogServiceUserType(),"User diagnostic should not be present");
+		assertEquals(DialogServiceProviderType.Null, rsd.getDialogServiceProviderType(),"Wrong provider diagnostic type");
 
 		// comp portion
-		assertNotNull("Component portion should be present", tcm.getComponent());
-		assertEquals("Component count is wrong", 2, tcm.getComponent().length);
+		assertNotNull(tcm.getComponent(),"Component portion should be present");
+		assertEquals(2, tcm.getComponent().length,"Component count is wrong");
 		Component c = tcm.getComponent()[0];
-		assertEquals("Wrong component type", ComponentType.Invoke, c.getType());
+		assertEquals(ComponentType.Invoke, c.getType(),"Wrong component type");
 		Invoke i = (Invoke) c;
-		assertEquals("Wrong invoke ID", new Long(1), i.getInvokeId());
-		assertNull("Linked ID is not null", i.getLinkedId());
+		assertEquals(new Long(1), i.getInvokeId(),"Wrong invoke ID");
+		assertNull(i.getLinkedId(),"Linked ID is not null");
 
 		c = tcm.getComponent()[1];
-		assertEquals("Wrong component type", ComponentType.ReturnResultLast, c.getType());
+		assertEquals(ComponentType.ReturnResultLast, c.getType(),"Wrong component type");
 		ReturnResultLast rrl = (ReturnResultLast) c;
-		assertEquals("Wrong invoke ID", new Long(2), rrl.getInvokeId());
-		assertNotNull("Operation code should not be null", rrl.getOperationCode());
+		assertEquals(new Long(2), rrl.getInvokeId(),"Wrong invoke ID");
+		assertNotNull(rrl.getOperationCode(),"Operation code should not be null");
 
 		OperationCode ocs = rrl.getOperationCode();
 
-		assertEquals("Wrong Operation Code type", OperationCodeType.Local, ocs.getOperationType());
-		assertEquals("Wrong Operation Code", new Long(0x00FF), ocs.getLocalOperationCode());
+		assertEquals(OperationCodeType.Local, ocs.getOperationType(),"Wrong Operation Code type");
+		assertEquals(new Long(0x00FF), ocs.getLocalOperationCode(),"Wrong Operation Code");
 
-		assertNotNull("Parameter should not be null", rrl.getParameter());
+		assertNotNull(rrl.getParameter(),"Parameter should not be null");
 
 		AsnOutputStream aos = new AsnOutputStream();
 		tcm.encode(aos);
@@ -609,7 +609,7 @@ public class TcBeginTest extends TestCase {
 				0, 0 };
 		AsnInputStream ais = new AsnInputStream(TCAP);
 		int tag = ais.readTag();
-		assertEquals("Expected TCBegin", TCBeginMessage._TAG, tag);
+		assertEquals(TCBeginMessage._TAG, tag,"Expected TCBegin");
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
 	}
 

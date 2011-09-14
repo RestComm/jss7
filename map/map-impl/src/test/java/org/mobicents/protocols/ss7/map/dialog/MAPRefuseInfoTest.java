@@ -24,7 +24,9 @@ package org.mobicents.protocols.ss7.map.dialog;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+
+import org.testng.*;import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -39,7 +41,7 @@ import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextNameImpl;
  * @author sergey vetyutnev
  *
  */
-public class MAPRefuseInfoTest extends TestCase {
+public class MAPRefuseInfoTest  {
 
 	private byte[] getData() {
 		return new byte[] { (byte) 0xA3, 0x03, (byte) 0x0A, 0x01, 0x00 };
@@ -50,7 +52,7 @@ public class MAPRefuseInfoTest extends TestCase {
 				22, 23, 24, 25, 26, -95, 3, 31, 32, 33, 6, 5, 42, 3, 4, 5, 6 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","dialog"})  
 	public void testDecode() throws Exception {
 		// The raw data is from last packet of long ussd-abort from msc2.txt
 		byte[] data = this.getData();
@@ -58,7 +60,7 @@ public class MAPRefuseInfoTest extends TestCase {
 		AsnInputStream asnIs = new AsnInputStream(data);
 
 		int tag = asnIs.readTag();
-		assertEquals(3, tag);
+		assertEquals( tag,3);
 
 		MAPRefuseInfoImpl mapRefuseInfoImpl = new MAPRefuseInfoImpl();
 		mapRefuseInfoImpl.decodeAll(asnIs);
@@ -67,27 +69,27 @@ public class MAPRefuseInfoTest extends TestCase {
 
 		assertNotNull(reason);
 
-		assertEquals(Reason.noReasonGiven, reason);
+		assertEquals( reason,Reason.noReasonGiven);
 
 		
 		data = this.getDataFull();
 		asnIs = new AsnInputStream(data);
 
 		tag = asnIs.readTag();
-		assertEquals(3, tag);
+		assertEquals( tag,3);
 
 		mapRefuseInfoImpl = new MAPRefuseInfoImpl();
 		mapRefuseInfoImpl.decodeAll(asnIs);
 
 		reason = mapRefuseInfoImpl.getReason();
 		assertNotNull(reason);
-		assertEquals(Reason.invalidOriginatingReference, reason);
+		assertEquals( reason,Reason.invalidOriginatingReference);
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(mapRefuseInfoImpl.getExtensionContainer()));
 		assertNotNull(mapRefuseInfoImpl.getAlternativeAcn());
 		assertTrue(Arrays.equals(new long[] { 1, 2, 3, 4, 5, 6 }, mapRefuseInfoImpl.getAlternativeAcn().getOid()));
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","dialog"})
 	public void testEncode() throws Exception {
 
 		MAPRefuseInfoImpl mapRefuseInfoImpl = new MAPRefuseInfoImpl();

@@ -32,7 +32,9 @@ package org.mobicents.protocols.ss7.isup.impl.message;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+import org.testng.*;
+import org.testng.annotations.*;
 
 import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
@@ -46,7 +48,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationC
  * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public abstract class MessageHarness extends TestCase {
+public abstract class MessageHarness {
 	protected ISUPParameterFactory parameterFactory = new ISUPParameterFactoryImpl();
 	protected ISUPMessageFactory messageFactory = new ISUPMessageFactoryImpl(parameterFactory);
 
@@ -96,6 +98,7 @@ public abstract class MessageHarness extends TestCase {
 
 	protected abstract ISUPMessage getDefaultMessage();
 
+	@Test(groups = { "functional.encode","functional.decode","message"})
 	public void testOne() throws Exception {
 
 		byte[] defaultBody = getDefaultBody();
@@ -105,10 +108,10 @@ public abstract class MessageHarness extends TestCase {
 		msg.decode(defaultBody,parameterFactory);
 		byte[] encodedBody = msg.encode();
 		boolean equal = Arrays.equals(defaultBody, encodedBody);
-		assertTrue(makeStringCompare(defaultBody, encodedBody), equal);
+		assertTrue(equal,makeStringCompare(defaultBody, encodedBody));
 		CircuitIdentificationCode cic = msg.getCircuitIdentificationCode();
-		assertNotNull("CircuitIdentificationCode must not be null", cic);
-		assertEquals("CircuitIdentificationCode value does not match", cic.getCIC(), getDefaultCIC());
+		assertNotNull(cic,"CircuitIdentificationCode must not be null");
+		assertEquals( getDefaultCIC(),cic.getCIC(),"CircuitIdentificationCode value does not match");
 
 	}
 

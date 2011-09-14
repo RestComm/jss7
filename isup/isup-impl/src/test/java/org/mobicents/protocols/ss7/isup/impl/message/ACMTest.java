@@ -30,7 +30,9 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message;
 
-import org.junit.Test;
+import static org.testng.Assert.*;
+import org.testng.*;
+import org.testng.annotations.*;
 import org.mobicents.protocols.ss7.isup.message.AddressCompleteMessage;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators;
@@ -45,7 +47,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationC
  */
 public class ACMTest extends MessageHarness {
 
-	@Test
+	@Test(groups = { "functional.encode","functional.decode","message"})
 	public void testTwo_Params() throws Exception {
 
 		byte[] message = getDefaultBody();
@@ -55,24 +57,24 @@ public class ACMTest extends MessageHarness {
 		AddressCompleteMessage acm = super.messageFactory.createACM();
 		((AbstractISUPMessage)acm).decode(message,parameterFactory);
 
-		assertNotNull("BackwardCallIndicator is null", acm.getBackwardCallIndicators());
-		assertNotNull("OptionalBackwardCallIndicator is null", acm.getOptionalBackwardCallIndicators());
-		assertNotNull("Cause Indicator is null", acm.getCauseIndicators());
+		assertNotNull( acm.getBackwardCallIndicators(),"BackwardCallIndicator is null");
+		assertNotNull( acm.getOptionalBackwardCallIndicators(),"OptionalBackwardCallIndicator is null");
+		assertNotNull( acm.getCauseIndicators(),"Cause Indicator is null");
 
 		BackwardCallIndicators bci = acm.getBackwardCallIndicators();
-		assertEquals("BackwardCallIndicator charge indicator does not match", bci.getChargeIndicator(), 1);
-		assertEquals("BackwardCallIndicator called party status does not match", bci.getCalledPartysStatusIndicator(), 0);
-		assertEquals("BackwardCallIndicator called party category does not match", bci.getCalledPartysCategoryIndicator(), 0);
+		assertEquals( 1, bci.getChargeIndicator(),"BackwardCallIndicator charge indicator does not match");
+		assertEquals( 0, bci.getCalledPartysStatusIndicator(),"BackwardCallIndicator called party status does not match");
+		assertEquals( 0, bci.getCalledPartysCategoryIndicator(),"BackwardCallIndicator called party category does not match");
 		assertFalse(bci.isInterworkingIndicator());
 		assertFalse(bci.isEndToEndInformationIndicator());
 		assertFalse(bci.isIsdnAccessIndicator());
 		assertFalse(bci.isHoldingIndicator());
 		assertTrue(bci.isEchoControlDeviceIndicator());
-		assertEquals("BackwardCallIndicator sccp method does not match", bci.getSccpMethodIndicator(), 0);
+		assertEquals( 0, bci.getSccpMethodIndicator(),"BackwardCallIndicator sccp method does not match");
 
 		CircuitIdentificationCode cic = acm.getCircuitIdentificationCode();
-		assertNotNull("CircuitIdentificationCode must not be null", cic);
-		assertEquals("CircuitIdentificationCode value does not match", cic.getCIC(), getDefaultCIC());
+		assertNotNull( cic,"CircuitIdentificationCode must not be null");
+		assertEquals( getDefaultCIC(), cic.getCIC(),"CircuitIdentificationCode value does not match");
 
 	}
 

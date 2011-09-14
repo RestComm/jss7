@@ -31,6 +31,7 @@
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.testng.annotations.Test;
 
 /**
  * Start time:13:37:14 2009-04-23<br>
@@ -57,7 +58,7 @@ public class CallDiversionInformationTest extends ParameterHarness {
 		return new byte[]{0x22};
 	}
 	
-	
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws ParameterException
 	{
 		CallDiversionInformationImpl cdi = new CallDiversionInformationImpl(getBody1());

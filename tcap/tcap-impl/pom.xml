@@ -1,4 +1,7 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -12,7 +15,7 @@
 	<name>Mobicents SS7 :: TCAP :: Impl :: ${pom.artifactId}</name>
 
 	<properties>
-   		<skipTests>true</skipTests>
+		<skipTests>false</skipTests>
 	</properties>
 
 	<dependencies>
@@ -32,7 +35,7 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 			<artifactId>sccp-impl</artifactId>
-			<!-- classifier>tests</classifier-->
+			<!-- classifier>tests</classifier -->
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -42,7 +45,10 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
@@ -70,10 +76,14 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-					<configuration>
-					<excludes>
-						<exclude>**/TestEvent.java</exclude>
-					</excludes>
+
+				<configuration>
+					<suiteXmlFiles>
+						<!-- -->
+						<suiteXmlFile>testng-methods.xml</suiteXmlFile>
+						 
+						<suiteXmlFile>testng-classes.xml</suiteXmlFile>
+					</suiteXmlFiles>
 				</configuration>
 			</plugin>
 		</plugins>

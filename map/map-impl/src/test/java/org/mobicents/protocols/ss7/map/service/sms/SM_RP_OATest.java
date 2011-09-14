@@ -34,14 +34,16 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 
-import junit.framework.TestCase;
 
+import static org.testng.Assert.*;
+import org.testng.*;
+import org.testng.annotations.*;
 /**
  * 
  * @author sergey vetyutnev
  *
  */
-public class SM_RP_OATest extends TestCase {
+public class SM_RP_OATest {
 	
 	private byte[] getEncodedData_Msisdn() {
 		return new byte[] { (byte)130, 7, (byte)145, (byte)147, 51, 88, 38, 101, 89 };
@@ -55,7 +57,7 @@ public class SM_RP_OATest extends TestCase {
 		return new byte[] { (byte)133, 0 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","service.sms"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedData_ServiceCentreAddressOA();
@@ -65,13 +67,13 @@ public class SM_RP_OATest extends TestCase {
 		SM_RP_OAImpl oa = new SM_RP_OAImpl();
 		oa.decodeAll(asn);
 
-		assertEquals(4, tag);
-		assertEquals(Tag.CLASS_CONTEXT_SPECIFIC, asn.getTagClass());
+		assertEquals( tag,4);
+		assertEquals( asn.getTagClass(),Tag.CLASS_CONTEXT_SPECIFIC);
 		
 		AddressString nnm = oa.getServiceCentreAddressOA();
-		assertEquals(AddressNature.international_number, nnm.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, nnm.getNumberingPlan());
-		assertEquals("18017011111", nnm.getAddress());
+		assertEquals( nnm.getAddressNature(),AddressNature.international_number);
+		assertEquals( nnm.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( nnm.getAddress(),"18017011111");
 
 		
 		rawData = getEncodedData_Msisdn();
@@ -81,13 +83,13 @@ public class SM_RP_OATest extends TestCase {
 		oa = new SM_RP_OAImpl();
 		oa.decodeAll(asn);
 
-		assertEquals(2, tag);
-		assertEquals(Tag.CLASS_CONTEXT_SPECIFIC, asn.getTagClass());
+		assertEquals( tag,2);
+		assertEquals( asn.getTagClass(),Tag.CLASS_CONTEXT_SPECIFIC);
 		
 		ISDNAddressString msisdn = oa.getMsisdn();
-		assertEquals(AddressNature.international_number, msisdn.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, msisdn.getNumberingPlan());
-		assertEquals("393385625695", msisdn.getAddress());
+		assertEquals( msisdn.getAddressNature(),AddressNature.international_number);
+		assertEquals( msisdn.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( msisdn.getAddress(),"393385625695");
 
 		
 		rawData = getEncodedData_No();
@@ -97,14 +99,14 @@ public class SM_RP_OATest extends TestCase {
 		oa = new SM_RP_OAImpl();
 		oa.decodeAll(asn);
 
-		assertEquals(5, tag);
-		assertEquals(Tag.CLASS_CONTEXT_SPECIFIC, asn.getTagClass());
+		assertEquals( tag,5);
+		assertEquals( asn.getTagClass(),Tag.CLASS_CONTEXT_SPECIFIC);
 		
-		assertEquals(null, oa.getServiceCentreAddressOA());
-		assertEquals(null, oa.getMsisdn());
+		assertEquals( oa.getServiceCentreAddressOA(),null);
+		assertEquals( oa.getMsisdn(),null);
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","service.sms"})
 	public void testEncode() throws Exception {
 		
 		AddressStringImpl astr = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "18017011111");
@@ -116,7 +118,7 @@ public class SM_RP_OATest extends TestCase {
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData_ServiceCentreAddressOA();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 		
 		
 		ISDNAddressStringImpl isdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "393385625695");
@@ -128,7 +130,7 @@ public class SM_RP_OATest extends TestCase {
 		
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedData_Msisdn();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 		
 		
 		oa = new SM_RP_OAImpl();
@@ -138,6 +140,6 @@ public class SM_RP_OATest extends TestCase {
 		
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedData_No();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 	}
 }

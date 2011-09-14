@@ -22,17 +22,11 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -59,15 +53,15 @@ public class LCSClientIDTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeTest
 	public void setUp() {
 	}
 
-	@After
+	@AfterTest
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecode() throws Exception {
 		byte[] data = new byte[] { (byte)0xa0, 0x1b, (byte) 0x80, 0x01, 0x02, (byte) 0x83, 0x01, 0x00, (byte) 0xa4, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e, 0x6e, 0x72,
 				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
@@ -79,20 +73,20 @@ public class LCSClientIDTest {
 		lcsClientID.decodeAll(asn);
 
 		assertNotNull(lcsClientID.getLCSClientType());
-		assertEquals(LCSClientType.plmnOperatorServices, lcsClientID.getLCSClientType());
+		assertEquals( lcsClientID.getLCSClientType(),LCSClientType.plmnOperatorServices);
 
 		assertNotNull(lcsClientID.getLCSClientInternalID());
-		assertEquals(LCSClientInternalID.broadcastService, lcsClientID.getLCSClientInternalID());
+		assertEquals( lcsClientID.getLCSClientInternalID(),LCSClientInternalID.broadcastService);
 
 		LCSClientName lcsClientName = lcsClientID.getLCSClientName();
 		assertNotNull(lcsClientName);
-		assertEquals((byte) 0x0f, lcsClientName.getDataCodingScheme());
+		assertEquals( lcsClientName.getDataCodingScheme(),(byte) 0x0f);
 		USSDString nameString = lcsClientName.getNameString();
-		assertEquals("ndmgapp2ndmgapp2", nameString.getString());
+		assertEquals( nameString.getString(),"ndmgapp2ndmgapp2");
 
 	}
 
-	@Test
+	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 
 		byte[] data = new byte[] { (byte)0xa0, 0x1b, (byte) 0x80, 0x01, 0x02, (byte) 0x83, 0x01, 0x00, (byte) 0xa4, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e, 0x6e, 0x72,
@@ -109,7 +103,7 @@ public class LCSClientIDTest {
 		
 		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, encodedData));
+		assertTrue( Arrays.equals(data,encodedData));
 
 	}
 }

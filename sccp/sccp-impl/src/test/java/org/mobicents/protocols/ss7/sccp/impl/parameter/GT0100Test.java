@@ -27,8 +27,6 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,11 +35,9 @@ import java.util.Arrays;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
+
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
@@ -68,18 +64,18 @@ public class GT0100Test {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeMethod
 	public void setUp() {
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() {
 	}
 
 	/**
 	 * Test of decode method, of class GT0011.
 	 */
-	@Test
+	@Test(groups = { "parameter","functional.decode"})
 	public void testDecodeEven() throws Exception {
 		// wrap data with input stream
 		ByteArrayInputStream in = new ByteArrayInputStream(dataEven);
@@ -88,15 +84,15 @@ public class GT0100Test {
 		GT0100 gt1 = (GT0100) codec.decode(in);
 
 		// check results
-		assertEquals(0, gt1.getTranslationType());
-		assertEquals(NumberingPlan.ISDN_TELEPHONY, gt1.getNumberingPlan());
-		assertEquals("9023629581", gt1.getDigits());
+		assertEquals( gt1.getTranslationType(),0);
+		assertEquals( gt1.getNumberingPlan(),NumberingPlan.ISDN_TELEPHONY);
+		assertEquals( gt1.getDigits(),"9023629581");
 	}
 
 	/**
 	 * Test of encode method, of class GT0011.
 	 */
-	@Test
+	@Test(groups = { "parameter","functional.encode"})
 	public void testEncodeEven() throws Exception {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		GT0100 gt = new GT0100(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.NATIONAL, "9023629581");
@@ -106,13 +102,13 @@ public class GT0100Test {
 		byte[] res = bout.toByteArray();
 
 		boolean correct = Arrays.equals(dataEven, res);
-		assertTrue("Incorrect encoding", correct);
+		assertTrue( correct,"Incorrect encoding");
 	}
 	
 	/**
 	 * Test of decode method, of class GT0011.
 	 */
-	@Test
+	@Test(groups = { "parameter","functional.decode"})
 	public void testDecodeOdd() throws Exception {
 		// wrap data with input stream
 		ByteArrayInputStream in = new ByteArrayInputStream(dataOdd);
@@ -121,15 +117,15 @@ public class GT0100Test {
 		GT0100 gt1 = (GT0100) codec.decode(in);
 
 		// check results
-		assertEquals(0, gt1.getTranslationType());
-		assertEquals(NumberingPlan.ISDN_TELEPHONY, gt1.getNumberingPlan());
-		assertEquals("902362958", gt1.getDigits());
+		assertEquals( gt1.getTranslationType(),0);
+		assertEquals( gt1.getNumberingPlan(),NumberingPlan.ISDN_TELEPHONY);
+		assertEquals( gt1.getDigits(),"902362958");
 	}
 
 	/**
 	 * Test of encode method, of class GT0011.
 	 */
-	@Test
+	@Test(groups = { "parameter","functional.encode"})
 	public void testEncodeOdd() throws Exception {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		GT0100 gt = new GT0100(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.NATIONAL, "902362958");
@@ -139,10 +135,10 @@ public class GT0100Test {
 		byte[] res = bout.toByteArray();
 
 		boolean correct = Arrays.equals(dataOdd, res);
-		assertTrue("Incorrect encoding", correct);
+		assertTrue( correct,"Incorrect encoding");
 	}
 
-	@Test
+	@Test(groups = { "parameter","functional.encode"})
 	public void testSerialization() throws Exception {
 		GT0100 gt = new GT0100(0, NumberingPlan.ISDN_MOBILE, NatureOfAddress.NATIONAL, "9023629581");
 
@@ -161,10 +157,10 @@ public class GT0100Test {
 		GT0100 aiOut = reader.read("GT0100", GT0100.class);
 
 		// check results
-		assertEquals(NatureOfAddress.NATIONAL, aiOut.getNatureOfAddress());
-		assertEquals(0, aiOut.getTranslationType());
-		assertEquals(NumberingPlan.ISDN_MOBILE, aiOut.getNumberingPlan());
-		assertEquals("9023629581", aiOut.getDigits());
+		assertEquals( aiOut.getNatureOfAddress(),NatureOfAddress.NATIONAL);
+		assertEquals( aiOut.getTranslationType(),0);
+		assertEquals( aiOut.getNumberingPlan(),NumberingPlan.ISDN_MOBILE);
+		assertEquals( aiOut.getDigits(),"9023629581");
 	}
 
 }

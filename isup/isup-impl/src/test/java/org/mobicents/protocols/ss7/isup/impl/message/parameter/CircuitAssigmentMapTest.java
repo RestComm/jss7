@@ -34,7 +34,10 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
-
+import org.testng.annotations.Test;
+import static org.testng.Assert.*;
+import org.testng.*;
+import org.testng.annotations.*;
 /**
  * Start time:14:11:03 2009-04-23<br>
  * Project: mobicents-isup-stack<br>
@@ -64,7 +67,7 @@ public class CircuitAssigmentMapTest extends ParameterHarness {
 		body[2]=67;
 		return body;
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		CircuitAssigmentMapImpl bci = new CircuitAssigmentMapImpl(getBody1());
 	
@@ -77,8 +80,7 @@ public class CircuitAssigmentMapTest extends ParameterHarness {
 		Object[] expectedValues = { 12, format};
 		super.testValues(bci, methodNames, expectedValues);
 	}
-
-	
+	@Test(groups = { "functional.flags","parameter"})
 	public void testBoundries() throws IOException, ParameterException
 	{
 		CircuitAssigmentMapImpl bci = new CircuitAssigmentMapImpl(getBody1());
@@ -113,15 +115,16 @@ public class CircuitAssigmentMapTest extends ParameterHarness {
 			
 		}
 	}
+	@Test(groups = { "functional.flags","parameter"})
 	public void testEnableDissable() throws IOException, ParameterException
 	{
 		CircuitAssigmentMapImpl bci = new CircuitAssigmentMapImpl(getBody1());
 		
-		assertFalse("Circuit was enabled, it should not.", bci.isCircuitEnabled(30));
+		assertFalse(bci.isCircuitEnabled(30),"Circuit was enabled, it should not.");
 		bci.enableCircuit(30);
-		assertTrue("Circuit was not enabled, it should not.", bci.isCircuitEnabled(30));
+		assertTrue(bci.isCircuitEnabled(30),"Circuit was not enabled, it should not.");
 		bci.disableCircuit(30);
-		assertFalse("Circuit was not disabled, it should not.", bci.isCircuitEnabled(30));
+		assertFalse(bci.isCircuitEnabled(30),"Circuit was not disabled, it should not.");
 		super.makeCompare(getBody1(), bci.encode());
 		
 	}

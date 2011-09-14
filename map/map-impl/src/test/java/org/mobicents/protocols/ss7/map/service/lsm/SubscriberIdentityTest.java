@@ -22,18 +22,10 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
@@ -59,15 +51,15 @@ public class SubscriberIdentityTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeTest
 	public void setUp() {
 	}
 
-	@After
+	@AfterTest
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecode() throws Exception {
 		byte[] data = new byte[] { (byte) 0x80, 0x08, 0x27, (byte) 0x94, (byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
 
@@ -83,13 +75,13 @@ public class SubscriberIdentityTest {
 		assertNotNull(imsi);
 		assertNull(msisdn);
 		
-		assertEquals(724l, imsi.getMCC());
-		assertEquals(99l, imsi.getMNC());
-		assertEquals("9900000007", imsi.getMSIN());
+		assertEquals( imsi.getMCC(),new Long(724l));
+		assertEquals( imsi.getMNC(),new Long(99l));
+		assertEquals( imsi.getMSIN(),"9900000007");
 		
 	}
 
-	@Test
+	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 		byte[] data = new byte[] { (byte) 0x80, 0x08, 0x27, (byte) 0x94, (byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
 
@@ -100,6 +92,6 @@ public class SubscriberIdentityTest {
 		
 		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, encodedData));
+		assertTrue( Arrays.equals(data,encodedData));
 	}
 }

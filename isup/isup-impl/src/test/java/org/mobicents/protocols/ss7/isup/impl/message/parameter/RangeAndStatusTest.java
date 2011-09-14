@@ -36,7 +36,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
-
+import org.testng.annotations.Test;
+import static org.testng.Assert.*;
+import org.testng.*;
+import org.testng.annotations.*;
 /**
  * Start time:14:11:03 2009-04-23<br>
  * Project: mobicents-isup-stack<br>
@@ -54,7 +57,7 @@ public class RangeAndStatusTest extends ParameterHarness {
 
 	}
 
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		RangeAndStatusImpl bci = new RangeAndStatusImpl(getBody((byte)12,new byte[]{0x0F,0x04}));
 		//not a best here. ech.
@@ -65,7 +68,7 @@ public class RangeAndStatusTest extends ParameterHarness {
 									new byte[]{0x0F,0x04}};
 		super.testValues(bci, methodNames, expectedValues);
 	}
-
+	@Test(groups = { "functional.flags","parameter"})
 	public void testAffectedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		RangeAndStatusImpl bci = new RangeAndStatusImpl(getBody((byte)12,new byte[]{0x0F,0x04}));
 		assertEquals((byte)12, bci.getRange());

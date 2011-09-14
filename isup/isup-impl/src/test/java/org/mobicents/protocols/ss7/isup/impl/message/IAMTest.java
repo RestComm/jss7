@@ -32,7 +32,9 @@ package org.mobicents.protocols.ss7.isup.impl.message;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.InitialAddressMessage;
 
-
+import static org.testng.Assert.*;
+import org.testng.*;
+import org.testng.annotations.*;
 
 /**
  * Start time:15:07:07 2009-07-17<br>
@@ -43,7 +45,7 @@ import org.mobicents.protocols.ss7.isup.message.InitialAddressMessage;
 public class IAMTest extends MessageHarness{
 
 
-	
+	@Test(groups = { "functional.encode","functional.decode","message"})
 	public void testTwo_Parameters() throws Exception
 	{
 		byte[] message = getDefaultBody();

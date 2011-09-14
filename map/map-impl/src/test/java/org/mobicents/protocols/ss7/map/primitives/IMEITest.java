@@ -28,20 +28,20 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 /**
  * 
  * @author sergey vetyutnev
  *
  */
-public class IMEITest extends TestCase {
+public class IMEITest  {
 	
 	private byte[] getEncodedData() {
 		return new byte[] { 4, 8, 33, 67, 101, (byte)135, 9, 33, 67, 101 };
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.decode","primitives"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedData();
@@ -52,13 +52,13 @@ public class IMEITest extends TestCase {
 		IMEIImpl imei = new IMEIImpl();
 		imei.decodeAll(asn);
 
-		assertEquals(Tag.STRING_OCTET, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.STRING_OCTET);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 		
-		assertEquals("1234567890123456", imei.getIMEI());
+		assertEquals( imei.getIMEI(),"1234567890123456");
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.encode","primitives"})
 	public void testEncode() throws Exception {
 		
 		IMEIImpl imei = new IMEIImpl("1234567890123456");
@@ -70,7 +70,7 @@ public class IMEITest extends TestCase {
 		
 		byte[] rawData = getEncodedData();		
 		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 		
 	}
 

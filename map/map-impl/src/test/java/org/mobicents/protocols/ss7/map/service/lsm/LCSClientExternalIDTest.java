@@ -22,17 +22,11 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -63,15 +57,15 @@ public class LCSClientExternalIDTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeTest
 	public void setUp() {
 	}
 
-	@After
+	@AfterTest
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecode() throws Exception {
 		byte[] data = new byte[] { (byte)0xb0, 0x07, (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70 };
 		
@@ -82,11 +76,11 @@ public class LCSClientExternalIDTest {
 		lcsClientExterId.decodeAll(asn);
 		
 		assertNotNull(lcsClientExterId.getExternalAddress());
-		assertEquals("55619007", lcsClientExterId.getExternalAddress().getAddress());
+		assertEquals( lcsClientExterId.getExternalAddress().getAddress(),"55619007");
 		
 	}
 
-	@Test
+	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 		
 		byte[] data = new byte[] { (byte)0xb0, 0x07, (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70 };
@@ -98,7 +92,7 @@ public class LCSClientExternalIDTest {
 		
 		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, encodedData));
+		assertTrue( Arrays.equals(data,encodedData));
 
 	}
 }

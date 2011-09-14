@@ -35,7 +35,10 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
 import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
 
+import static org.testng.Assert.*;
 
+import org.testng.*;
+import org.testng.annotations.*;
 /**
  * Start time:09:26:46 2009-04-22<br>
  * Project: mobicents-isup-stack<br>
@@ -46,7 +49,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
 public class GRATest extends MessageHarness {
 	
 	
-	
+	@Test(groups = { "functional.encode","functional.decode","message"})
 	public void testTwo_Params() throws Exception
 	{
 		byte[] message = getDefaultBody();
@@ -57,29 +60,29 @@ public class GRATest extends MessageHarness {
 		
 		try{
 			RangeAndStatus RS = (RangeAndStatus) grs.getParameter(RangeAndStatus._PARAMETER_CODE);
-			assertNotNull("Range And Status return is null, it should not be",RS);
+			assertNotNull(RS,"Range And Status retrun is null, it shoul not be");
 			if(RS == null)
 				return;
 			byte range = RS.getRange();
-			assertEquals("Range is wrong,",0x01, range);
+			assertEquals(range,0x01,"Range is wrong,");
 			byte[] b=RS.getStatus();
-			assertNotNull("RangeAndStatus.getRange() is null",b);
+			assertNotNull(b,"RangeAndStatus.getRange() is null");
 			if(b == null)
 			{
 				return;
 			}	
-			assertEquals("Length of param is wrong",1 ,b.length);
+			assertEquals(b.length,1 ,"Length of param is wrong");
 			if(b.length != 1)
 				return;
-			assertTrue("RangeAndStatus.getRange() is wrong,", super.makeCompare(b, new byte[]{
+			assertTrue(super.makeCompare(b, new byte[]{
 					0x02
-					}));
+					}),"RangeAndStatus.getRange() is wrong");
 		
 			
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-			super.fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
+			fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
 		}
 		
 	}

@@ -22,15 +22,11 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.translation;
 
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import org.testng.annotations.*;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.testng.Assert.*;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
@@ -67,13 +63,13 @@ public class PCSSNSccpStackImplTest extends SccpHarness {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeMethod
 	public void setUp() throws IllegalStateException {
 		super.setUp();
 
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() {
 		super.tearDown();
 	}
@@ -81,7 +77,7 @@ public class PCSSNSccpStackImplTest extends SccpHarness {
 	/**
 	 * Test of configure method, of class SccpStackImpl.
 	 */
-	@Test
+	@Test(groups = { "gtt","functional.route"})
 	public void testRemoteRoutingBasedOnSsn() throws Exception {
 		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
 		a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
@@ -95,10 +91,10 @@ public class PCSSNSccpStackImplTest extends SccpHarness {
 		u1.send();
 		u2.send();
 
-		Thread.currentThread().sleep(1000);
+		Thread.currentThread().sleep(3000);
 
-		assertTrue("Message not received", u1.check());
-		assertTrue("Message not received", u2.check());
+		assertTrue( u1.check(),"Message not received");
+		assertTrue( u2.check(),"Message not received");
 	}
 	
 }

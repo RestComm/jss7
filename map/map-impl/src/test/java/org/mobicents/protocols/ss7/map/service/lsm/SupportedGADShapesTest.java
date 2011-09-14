@@ -21,16 +21,11 @@
  */
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -53,15 +48,15 @@ public class SupportedGADShapesTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeTest
 	public void setUp() {
 	}
 
-	@After
+	@AfterTest
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecode() throws Exception {
 		byte[] rawData = getEncodedData();
 		AsnInputStream asn = new AsnInputStream(rawData);
@@ -70,19 +65,19 @@ public class SupportedGADShapesTest {
 		SupportedGADShapesImpl supportedLCSCapabilityTest = new SupportedGADShapesImpl();
 		supportedLCSCapabilityTest.decodeAll(asn);
 
-		assertEquals(Tag.STRING_BIT, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.STRING_BIT);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 
-		assertEquals(true, (boolean) supportedLCSCapabilityTest.getEllipsoidArc());
-		assertEquals(true, (boolean) supportedLCSCapabilityTest.getEllipsoidPoint());
-		assertEquals(true, (boolean) supportedLCSCapabilityTest.getEllipsoidPointWithAltitude());
-		assertEquals(true, (boolean) supportedLCSCapabilityTest.getEllipsoidPointWithAltitudeAndUncertaintyElipsoid());
-		assertEquals(true, (boolean) supportedLCSCapabilityTest.getEllipsoidPointWithUncertaintyCircle());
-		assertEquals(true, (boolean) supportedLCSCapabilityTest.getEllipsoidPointWithUncertaintyEllipse());
-		assertEquals(true, (boolean) supportedLCSCapabilityTest.getPolygon());
+		assertEquals( (boolean) supportedLCSCapabilityTest.getEllipsoidArc(),true);
+		assertEquals( (boolean) supportedLCSCapabilityTest.getEllipsoidPoint(),true);
+		assertEquals( (boolean) supportedLCSCapabilityTest.getEllipsoidPointWithAltitude(),true);
+		assertEquals( (boolean) supportedLCSCapabilityTest.getEllipsoidPointWithAltitudeAndUncertaintyElipsoid(),true);
+		assertEquals( (boolean) supportedLCSCapabilityTest.getEllipsoidPointWithUncertaintyCircle(),true);
+		assertEquals( (boolean) supportedLCSCapabilityTest.getEllipsoidPointWithUncertaintyEllipse(),true);
+		assertEquals( (boolean) supportedLCSCapabilityTest.getPolygon(),true);
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 
 		SupportedGADShapesImpl supportedLCSCapabilityTest = new SupportedGADShapesImpl(true, true, true, true, true, true, true);
@@ -92,7 +87,7 @@ public class SupportedGADShapesTest {
 
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData();
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 
 	}
 }

@@ -28,20 +28,20 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 /**
  * 
  * @author sergey vetyutnev
  *
  */
-public class MWStatusTest extends TestCase {
+public class MWStatusTest  {
 	
 	private byte[] getEncodedData() {
 		return new byte[] { 3, 2, 2, 64 };
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.decode","service.sms"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedData();
@@ -51,16 +51,16 @@ public class MWStatusTest extends TestCase {
 		MWStatusImpl mws = new MWStatusImpl();
 		mws.decodeAll(asn);
 
-		assertEquals(Tag.STRING_BIT, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.STRING_BIT);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 
-		assertEquals(false, (boolean)mws.getMcefSet());
-		assertEquals(true, (boolean)mws.getMnrfSet());
-		assertEquals(false, (boolean)mws.getMnrgSet());
-		assertEquals(false, (boolean)mws.getScAddressNotIncluded());
+		assertEquals( (boolean)mws.getMcefSet(),false);
+		assertEquals( (boolean)mws.getMnrfSet(),true);
+		assertEquals( (boolean)mws.getMnrgSet(),false);
+		assertEquals( (boolean)mws.getScAddressNotIncluded(),false);
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","service.sms"})
 	public void testEncode() throws Exception {
 		
 		MWStatusImpl mws = new MWStatusImpl(false, true, false, false);
@@ -70,7 +70,7 @@ public class MWStatusTest extends TestCase {
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 		
 	}
 

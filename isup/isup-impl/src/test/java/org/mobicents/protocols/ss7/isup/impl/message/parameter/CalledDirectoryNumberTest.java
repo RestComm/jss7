@@ -36,6 +36,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledDirectoryNumber;
+import org.testng.annotations.Test;
 
 /**
  * Start time:14:11:03 2009-04-23<br>
@@ -79,7 +80,7 @@ public class CalledDirectoryNumberTest extends ParameterHarness {
 		bos.write(super.getFiveDigits());
 		return bos.toByteArray();
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		CalledDirectoryNumberImpl bci = new CalledDirectoryNumberImpl(getBody1());
 		bci.getNumberingPlanIndicator();
@@ -87,7 +88,7 @@ public class CalledDirectoryNumberTest extends ParameterHarness {
 		Object[] expectedValues = { CalledDirectoryNumberImpl._NPI_ISDN_NP, CalledDirectoryNumberImpl._INNI_RESERVED, CalledDirectoryNumber._NAI_SUBSCRIBER_NUMBER, false, super.getSixDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		CalledDirectoryNumberImpl bci = new CalledDirectoryNumberImpl(getBody2());
 

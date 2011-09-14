@@ -36,7 +36,10 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitStateIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
 
+import static org.testng.Assert.*;
 
+import org.testng.*;
+import org.testng.annotations.*;
 /**
  * Start time:09:26:46 2009-04-22<br>
  * Project: mobicents-isup-stack<br>
@@ -47,7 +50,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
 public class CQRTest extends MessageHarness {
 	
 	
-	
+	@Test(groups = { "functional.encode","functional.decode","message"})
 	public void testTwo_Params() throws Exception
 	{
 		byte[] message = getDefaultBody();
@@ -58,35 +61,35 @@ public class CQRTest extends MessageHarness {
 		
 		try{
 			RangeAndStatus RS = (RangeAndStatus) grs.getParameter(RangeAndStatus._PARAMETER_CODE);
-			assertNotNull("Range And Status return is null, it should not be",RS);
+			assertNotNull(RS,"Range And Status retrun is null, it shoul not be");
 			if(RS == null)
 				return;
 			byte range = RS.getRange();
-			assertEquals("Range is wrong,",0x01, range);
+			assertEquals(range,0x01,"Range is wrong,");
 			byte[] b=RS.getStatus();
-			assertNull("RangeAndStatus.getRange() is not null",b);
+			assertNull(b,"RangeAndStatus.getRange() is not null");
 		
 			
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-			super.fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
+			fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
 		}
 		try{
 			CircuitStateIndicator CSI = (CircuitStateIndicator) grs.getParameter(CircuitStateIndicator._PARAMETER_CODE);
-			assertNotNull("Circuit State Indicator return is null, it should not be",CSI);
+			assertNotNull(CSI,"Circuit State Indicator return is null, it should not be");
 			if(CSI == null)
 				return;
-			assertNotNull("CircuitStateIndicator getCircuitState return is null, it should not be",CSI.getCircuitState());
+			assertNotNull(CSI.getCircuitState(),"CircuitStateIndicator getCircuitState return is null, it should not be");
 			byte[] circuitState = CSI.getCircuitState();
-			assertEquals("CircuitStateIndicator.getCircuitState() length is nto correct,",3, circuitState.length);
-			assertEquals("CircuitStateIndicator.getCircuitState()[0] value is not correct,",1, CSI.getMaintenanceBlockingState(circuitState[0]));
-			assertEquals("CircuitStateIndicator.getCircuitState()[1] value is not correct,",2, CSI.getMaintenanceBlockingState(circuitState[1]));
-			assertEquals("CircuitStateIndicator.getCircuitState()[2] value is not correct,",3, CSI.getMaintenanceBlockingState(circuitState[2]));
+			assertEquals(circuitState.length,3, "CircuitStateIndicator.getCircuitState() length is nto correct");
+			assertEquals( CSI.getMaintenanceBlockingState(circuitState[0]),1,"CircuitStateIndicator.getCircuitState()[0] value is not correct");
+			assertEquals( CSI.getMaintenanceBlockingState(circuitState[1]),2,"CircuitStateIndicator.getCircuitState()[1] value is not correct");
+			assertEquals( CSI.getMaintenanceBlockingState(circuitState[2]),3,"CircuitStateIndicator.getCircuitState()[2] value is not correct");
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-			super.fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
+			fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
 		}
 
 	}

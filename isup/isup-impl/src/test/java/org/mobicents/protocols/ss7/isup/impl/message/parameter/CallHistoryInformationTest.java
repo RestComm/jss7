@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.testng.annotations.Test;
 
 /**
  * Start time:14:11:03 2009-04-23<br>
@@ -63,7 +64,7 @@ public class CallHistoryInformationTest extends ParameterHarness {
 		body[1]=120;
 		return body;
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		CallHistoryInformationImpl bci = new CallHistoryInformationImpl(getBody1());
 	

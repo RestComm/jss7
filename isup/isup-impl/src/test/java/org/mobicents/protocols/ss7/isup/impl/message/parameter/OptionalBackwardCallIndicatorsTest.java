@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.testng.annotations.Test;
 
 /**
  * Start time:16:20:47 2009-04-26<br>
@@ -52,7 +53,7 @@ public class OptionalBackwardCallIndicatorsTest extends ParameterHarness {
 		super.goodBodies.add(new byte[] { 8 });
 		super.badBodies.add(new byte[] { 8, 8 });
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		OptionalBackwardCallIndicatorsImpl bci = new OptionalBackwardCallIndicatorsImpl();
 

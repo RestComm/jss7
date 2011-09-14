@@ -36,7 +36,10 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.InstructionIndicators;
-
+import org.testng.annotations.Test;
+import static org.testng.Assert.*;
+import org.testng.*;
+import org.testng.annotations.*;
 /**
  * Start time:17:28:44 2009-04-26<br>
  * Project: mobicents-isup-stack<br>
@@ -112,11 +115,11 @@ public class ParameterCompatibilityInformationTest extends ParameterHarness{
 		super.goodBodies.add(getBody1());
 	}
 
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		ParameterCompatibilityInformationImpl bci = new ParameterCompatibilityInformationImpl(getBody1());
 	
-		assertEquals("Wrong number of instructions. ",4, bci.size());
+		assertEquals(bci.size(),4, "Wrong number of instructions. ");
 		
 		//Yeah this is different
 		
@@ -157,7 +160,7 @@ public class ParameterCompatibilityInformationTest extends ParameterHarness{
 		
 		
 		byte parameterCode = bci.getParameterCode(0);
-		assertEquals("Wrong parameter code",1, parameterCode);
+		assertEquals( parameterCode,1,"Wrong parameter code");
 		
 		
 		

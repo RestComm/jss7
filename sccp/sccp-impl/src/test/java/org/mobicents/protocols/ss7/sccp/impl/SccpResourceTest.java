@@ -22,14 +22,9 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.testng.annotations.*;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.testng.Assert.*;
 
 /**
  * @author amit bhayani
@@ -48,7 +43,7 @@ public class SccpResourceTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeMethod
 	public void setUp() {
 		SccpResource resource = new SccpResource();
 		resource.start();
@@ -57,11 +52,11 @@ public class SccpResourceTest {
 		resource.stop();
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() {
 	}
-
-	@Test
+	
+	@Test(groups = { "sccpresource","functional.encode"})
 	public void testSerialization() throws Exception {
 		SccpResource resource = new SccpResource();
 		resource.start();
@@ -85,14 +80,14 @@ public class SccpResourceTest {
 		SccpResource resource1 = new SccpResource();
 		resource1.start();
 
-		assertEquals(2, resource1.getRemoteSpcs().size());
+		assertEquals( resource1.getRemoteSpcs().size(),2);
 		RemoteSignalingPointCode rsp1Temp = resource1.getRemoteSpc(1);
 		assertNotNull(rsp1Temp);
-		assertEquals(6034, rsp1Temp.getRemoteSpc());
+		assertEquals( rsp1Temp.getRemoteSpc(),6034);
 		
-		assertEquals(2, resource1.getRemoteSsns().size());
+		assertEquals( resource1.getRemoteSsns().size(),2);
 		RemoteSubSystem rss1Temp = resource1.getRemoteSsn(1);
-		assertEquals(8, rss1Temp.getRemoteSsn());
+		assertEquals( rss1Temp.getRemoteSsn(),8);
 	}
 
 }

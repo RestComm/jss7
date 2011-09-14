@@ -4,15 +4,19 @@
   <classpathentry kind="src" path="isup-api/src/test/java"/>
   <classpathentry kind="src" path="isup-impl/src/main/java"/>
   <classpathentry kind="src" path="isup-impl/src/test/java"/>
+  <classpathentry kind="var" path="M2_REPO/com/beust/jcommander/1.12/jcommander-1.12.jar"/>
   <classpathentry kind="var" path="M2_REPO/concurrent/concurrent/1.3.4/concurrent-1.3.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/javolution/javolution/5.5.1/javolution-5.5.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/junit/junit/4.1/junit-4.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/beanshell/bsh/2.0b4/bsh-2.0b4.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/management/linkset/1.0.0-SNAPSHOT/linkset-1.0.0-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/management/shell/1.0.0-SNAPSHOT/shell-1.0.0-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/mtp/mtp-api/1.0.0-SNAPSHOT/mtp-api-1.0.0-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/mtp/mtp/1.0.0-SNAPSHOT/mtp-1.0.0-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/stream/stream/1.0.0.CR1/stream-1.0.0.CR1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/testng/testng/6.2/testng-6.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/yaml/snakeyaml/1.6/snakeyaml-1.6.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -22,9 +22,7 @@
 
 package org.mobicents.protocols.ss7.indicator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,11 +30,8 @@ import java.io.ByteArrayOutputStream;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 
 /**
  * @author amit bhayani
@@ -59,32 +54,32 @@ public class AddressIndicatorTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeMethod
 	public void setUp() {
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","indicator"})
 	public void testDecode() throws Exception {
 		byte b = 0x42;
 		AddressIndicator ai = new AddressIndicator(b);
 		assertFalse(ai.pcPresent());
 		assertTrue(ai.ssnPresent());
-		assertEquals(GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED, ai.getGlobalTitleIndicator());
-		assertEquals(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, ai.getRoutingIndicator());
+		assertEquals( ai.getGlobalTitleIndicator(),GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED);
+		assertEquals( ai.getRoutingIndicator(),RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN);
 	}
 
-	@Test
+	@Test(groups = { "functional.encode","indicator"})
 	public void testEncode() throws Exception {
 		AddressIndicator ai = new AddressIndicator(false, true, RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
 				GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED);
-		assertEquals(66, (int)ai.getValue());
+		assertEquals( (int)ai.getValue(),66);
 	}
 	
-	@Test
+	@Test(groups = { "functional.encode","indicator"})
 	public void testSerialize() throws Exception {
 		AddressIndicator ai = new AddressIndicator(false, true, RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
 				GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED);
@@ -106,8 +101,8 @@ public class AddressIndicatorTest {
 		
 		assertFalse(aiOut.pcPresent());
 		assertTrue(aiOut.ssnPresent());
-		assertEquals(GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED, aiOut.getGlobalTitleIndicator());
-		assertEquals(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, aiOut.getRoutingIndicator());
+		assertEquals( aiOut.getGlobalTitleIndicator(),GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED);
+		assertEquals( aiOut.getRoutingIndicator(),RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN);
 	}
 
 }

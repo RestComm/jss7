@@ -28,15 +28,16 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-
-import junit.framework.TestCase;
+import org.testng.annotations.Test;
+import static org.testng.Assert.*;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class DialogAbortAPDUTest extends TestCase {
+@Test(groups = { "asn" })
+public class DialogAbortAPDUTest {
 
 	private byte[] getData() {
 		return new byte[] { 100, 3, (byte) 128, 1, 0 };
@@ -46,7 +47,7 @@ public class DialogAbortAPDUTest extends TestCase {
 		return new byte[] { 100, 21, (byte) 128, 1, 1, (byte) 190, 16, 40, 14, 6, 7, 4, 0, 0, 1, 1, 1, 1, (byte) 160, 3, 1, 2, 3 };
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.decode" })
 	public void testDecode() throws IOException, ParseException, AsnException {
 
 		byte[] b = getData();

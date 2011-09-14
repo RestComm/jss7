@@ -30,20 +30,20 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 /**
  * 
  * @author sergey vetyutnev
  *
  */
-public class FTNAddressStringTest extends TestCase {
+public class FTNAddressStringTest  {
 	
 	private byte[] getEncodedData() {
 		return new byte[] { 4, 6, -72, 33, 67, 101, -121, 9 };
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.decode","primitives"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedData();
@@ -54,15 +54,15 @@ public class FTNAddressStringTest extends TestCase {
 		FTNAddressStringImpl addrStr = new FTNAddressStringImpl();
 		addrStr.decodeAll(asn);
 
-		assertEquals(Tag.STRING_OCTET, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.STRING_OCTET);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 		
-		assertEquals(AddressNature.network_specific_number, addrStr.getAddressNature());
-		assertEquals(NumberingPlan.national, addrStr.getNumberingPlan());
-		assertEquals("1234567890", addrStr.getAddress());
+		assertEquals( addrStr.getAddressNature(),AddressNature.network_specific_number);
+		assertEquals( addrStr.getNumberingPlan(),NumberingPlan.national);
+		assertEquals( addrStr.getAddress(),"1234567890");
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.encode","primitives"})
 	public void testEncode() throws Exception {
 		
 		FTNAddressStringImpl addrStr = new FTNAddressStringImpl(AddressNature.network_specific_number, NumberingPlan.national, "1234567890");
@@ -74,7 +74,7 @@ public class FTNAddressStringTest extends TestCase {
 		
 		byte[] rawData = getEncodedData();		
 		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 		
 	}
 

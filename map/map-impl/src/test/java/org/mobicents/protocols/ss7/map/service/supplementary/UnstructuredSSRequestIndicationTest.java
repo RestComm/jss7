@@ -21,17 +21,13 @@
  */
 package org.mobicents.protocols.ss7.map.service.supplementary;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.*;
+import org.testng.*;
+import org.testng.annotations.*;
 
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
@@ -50,15 +46,15 @@ public class UnstructuredSSRequestIndicationTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeTest
 	public void setUp() {
 	}
 
-	@After
+	@AfterTest
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","service.ussd"})
 	public void testDecode() throws Exception {
 		byte[] data = new byte[] { 0x30, 0x3e, 0x04, 0x01, 0x0f, 0x04, 0x39, (byte) 0xd5, (byte) 0xe9, (byte) 0x94, 0x08, (byte) 0x9a, (byte) 0xd2,
 				(byte) 0xe5, 0x69, (byte) 0xf7, 0x19, (byte) 0xa4, 0x03, 0x21, (byte) 0xcb, 0x6c, (byte) 0xf6, 0x1b, 0x74, 0x7d, (byte) 0xcb, (byte) 0xd9,
@@ -72,16 +68,16 @@ public class UnstructuredSSRequestIndicationTest {
 		UnstructuredSSRequestIndicationImpl addNum = new UnstructuredSSRequestIndicationImpl();
 		addNum.decodeAll(asn);
 		byte dataCodingScheme = addNum.getUSSDDataCodingScheme();
-		assertEquals((byte) 0x0f, dataCodingScheme);
+		assertEquals( dataCodingScheme,(byte) 0x0f);
 
 		USSDString ussdString = addNum.getUSSDString();
 		assertNotNull(ussdString);
 
-		assertEquals("USSD String : Hello World <CR> 1. Balance <CR> 2. Texts Remaining", ussdString.getString());
+		assertEquals( ussdString.getString(),"USSD String : Hello World <CR> 1. Balance <CR> 2. Texts Remaining");
 
 	}
 
-	@Test
+	@Test(groups = { "functional.encode","service.ussd"})
 	public void testEncode() throws Exception {
 		byte[] data = new byte[] { 0x30, 0x3e, 0x04, 0x01, 0x0f, 0x04, 0x39, (byte) 0xd5, (byte) 0xe9, (byte) 0x94, 0x08, (byte) 0x9a, (byte) 0xd2,
 				(byte) 0xe5, 0x69, (byte) 0xf7, 0x19, (byte) 0xa4, 0x03, 0x21, (byte) 0xcb, 0x6c, (byte) 0xf6, 0x1b, 0x74, 0x7d, (byte) 0xcb, (byte) 0xd9,
@@ -97,6 +93,6 @@ public class UnstructuredSSRequestIndicationTest {
 
 		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue(Arrays.equals(data, encodedData));
+		assertTrue( Arrays.equals(data,encodedData));
 	}
 }

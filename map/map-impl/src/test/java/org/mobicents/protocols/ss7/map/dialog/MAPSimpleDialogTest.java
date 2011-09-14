@@ -24,7 +24,7 @@ package org.mobicents.protocols.ss7.map.dialog;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -35,7 +35,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
  * @author sergey vetyutnev
  * 
  */
-public class MAPSimpleDialogTest extends TestCase  {
+public class MAPSimpleDialogTest   {
 
 	private byte[] getDataAcceptInfo() {
 		return new byte[] { -95, 41, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23,
@@ -47,13 +47,13 @@ public class MAPSimpleDialogTest extends TestCase  {
 				24, 25, 26, -95, 3, 31, 32, 33 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.decode","dialog"})
 	public void testDecode() throws Exception {
 
 		AsnInputStream asnIs = new AsnInputStream(this.getDataAcceptInfo());
 
 		int tag = asnIs.readTag();
-		assertEquals(1, tag);
+		assertEquals( tag,1);
 
 		MAPAcceptInfoImpl accInfo = new MAPAcceptInfoImpl();
 		accInfo.decodeAll(asnIs);
@@ -63,7 +63,7 @@ public class MAPSimpleDialogTest extends TestCase  {
 		asnIs = new AsnInputStream(this.getDataCloseInfo());
 
 		tag = asnIs.readTag();
-		assertEquals(2, tag);
+		assertEquals( tag,2);
 
 		MAPCloseInfoImpl closeInfo = new MAPCloseInfoImpl();
 		closeInfo.decodeAll(asnIs);
@@ -71,7 +71,7 @@ public class MAPSimpleDialogTest extends TestCase  {
 		
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","dialog"})
 	public void testEncode() throws Exception {
 
 		byte[] b = this.getDataAcceptInfo();
@@ -81,7 +81,7 @@ public class MAPSimpleDialogTest extends TestCase  {
 		AsnOutputStream asnOS = new AsnOutputStream();
 		accInfo.encodeAll(asnOS);
 		byte[] data = asnOS.toByteArray();
-		assertTrue(Arrays.equals(b, data));
+		assertTrue( Arrays.equals(b,data));
 
 		
 		b = this.getDataCloseInfo();
@@ -91,7 +91,7 @@ public class MAPSimpleDialogTest extends TestCase  {
 		asnOS = new AsnOutputStream();
 		closeInfo.encodeAll(asnOS);
 		data = asnOS.toByteArray();
-		assertTrue(Arrays.equals(b, data));
+		assertTrue( Arrays.equals(b,data));
 	}
 	
 }

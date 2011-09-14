@@ -34,6 +34,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
+import org.testng.annotations.Test;
+
 /**
  * Start time:14:11:03 2009-04-23<br>
  * Project: mobicents-isup-stack<br>
@@ -70,7 +72,7 @@ public class CorrelationIDTest extends ParameterHarness {
 		bos.write(super.getFiveDigits());
 		return bos.toByteArray();
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
 		//CorrelationID bci = new CorrelationID(getBody1());
 	

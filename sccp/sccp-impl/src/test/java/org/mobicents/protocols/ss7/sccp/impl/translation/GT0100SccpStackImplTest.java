@@ -22,13 +22,10 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.translation;
 
-import static org.junit.Assert.assertTrue;
+import org.testng.annotations.*;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.testng.Assert.*;
+
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -60,13 +57,13 @@ public class GT0100SccpStackImplTest extends SccpHarness {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeMethod
 	public void setUp() throws IllegalStateException {
 		super.setUp();
 
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() {
 		super.tearDown();
 	}
@@ -77,7 +74,7 @@ public class GT0100SccpStackImplTest extends SccpHarness {
 	protected static final String GT1_pattern_digits = "1/???????/90";
 	protected static final String GT2_pattern_digits = "0/??????/21";
 	
-	@Test
+	@Test(groups = { "gtt","functional.route"})
 	public void testRemoteRoutingBasedOnGT_DPC_SSN() throws Exception {
 		
 		GT0100 gt1 = new GT0100(0,NumberingPlan.ISDN_MOBILE,NatureOfAddress.NATIONAL,GT1_digits);
@@ -140,14 +137,14 @@ public class GT0100SccpStackImplTest extends SccpHarness {
 		u1.send();
 		u2.send();
 
-		Thread.currentThread().sleep(1000);
+		Thread.currentThread().sleep(3000);
 
-		assertTrue("Message not received", u1.check());
-		assertTrue("Message not received", u2.check());
+		assertTrue( u1.check(),"Message not received");
+		assertTrue( u2.check(),"Message not received");
 	}
 	
 	
-	@Test
+	@Test(groups = { "gtt","functional.route"})
 	public void testRemoteRoutingBasedOnGT() throws Exception {
 		
 		//here we do as above, however receiving stack needs also rule, to match it localy.
@@ -231,10 +228,10 @@ public class GT0100SccpStackImplTest extends SccpHarness {
 		u1.send();
 		u2.send();
 
-		Thread.currentThread().sleep(1000);
+		Thread.currentThread().sleep(3000);
 
-		assertTrue("Message not received", u1.check());
-		assertTrue("Message not received", u2.check());
+		assertTrue( u1.check(),"Message not received");
+		assertTrue( u2.check(),"Message not received");
 	}
 	
 	

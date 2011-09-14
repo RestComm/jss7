@@ -26,7 +26,9 @@ import org.mobicents.protocols.ss7.isup.message.AnswerMessage;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
 import org.mobicents.protocols.ss7.isup.message.parameter.ServiceActivation;
-
+import static org.testng.Assert.*;
+import org.testng.*;
+import org.testng.annotations.*;
 /**
  * Start time:09:26:46 2009-04-22<br>
  * Project: mobicents-isup-stack<br>
@@ -38,7 +40,7 @@ public class ANMTest extends MessageHarness {
 
 	
 
-	
+	@Test(groups = { "functional.encode","functional.decode","message"})
 	public void testTwo_Params() throws Exception
 	{
 		byte[] message = getDefaultBody();
@@ -48,44 +50,44 @@ public class ANMTest extends MessageHarness {
 		((AbstractISUPMessage)ANM).decode(message,parameterFactory);
 		try{
 			CallReference cr = (CallReference) ANM.getParameter(CallReference._PARAMETER_CODE);
-			assertNotNull("Call Reference return is null, it should not be",cr);
+			assertNotNull(cr,"Call Reference return is null, it should not be");
 			if(cr == null)
 				return;
-			super.assertEquals("CallIdentity missmatch",65793, cr.getCallIdentity());
-			super.assertEquals("SignalingPointCode missmatch",478, cr.getSignalingPointCode());
+			assertEquals(cr.getCallIdentity(),65793, "CallIdentity missmatch");
+			assertEquals(cr.getSignalingPointCode(),478, "SignalingPointCode missmatch");
 			
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-			super.fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
+			fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
 		}
 		try{
 			ServiceActivation sa = (ServiceActivation) ANM.getParameter(ServiceActivation._PARAMETER_CODE);
-			assertNotNull("Service Activation return is null, it should not be",sa);
+			assertNotNull(sa,"Service Activation return is null, it should not be");
 			if(sa == null)
 				return;
 			
 			byte[] b=sa.getFeatureCodes();
-			assertNotNull("ServerActivation.getFeatureCodes() is null",b);
+			assertNotNull(b,"ServerActivation.getFeatureCodes() is null");
 			if(b == null)
 			{
 				return;
 			}	
-			assertEquals("Length of param is wrong",7 ,b.length);
+			assertEquals(b.length,7 ,"Length of param is wrong");
 			if(b.length != 7)
 				return;
-			assertTrue("Content of ServiceActivation.getFeatureCodes is wrong", super.makeCompare(b, new byte[]{0x01
+			assertTrue(super.makeCompare(b, new byte[]{0x01
 					,0x02
 					,0x03
 					,0x04
 					,0x05
 					,0x06
-					,0x07}));
+					,0x07}),"Content of ServiceActivation.getFeatureCodes is wrong");
 			
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-			super.fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
+			fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
 		}
 
 	}

@@ -36,6 +36,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledINNumber;
+import org.testng.annotations.Test;
 
 /**
  * Start time:14:11:03 2009-04-23<br>
@@ -79,7 +80,7 @@ public class CalledINNumberTest extends ParameterHarness {
 		bos.write(super.getFiveDigits());
 		return bos.toByteArray();
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		CalledINNumberImpl bci = new CalledINNumberImpl(getBody1());
 	
@@ -87,7 +88,7 @@ public class CalledINNumberTest extends ParameterHarness {
 		Object[] expectedValues = { CalledINNumberImpl._NPI_ISDN, CalledINNumberImpl._APRI_ALLOWED, CalledINNumber._NAI_SUBSCRIBER_NUMBER, false, super.getSixDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
 		CalledINNumberImpl bci = new CalledINNumberImpl(getBody2());
 

@@ -35,7 +35,9 @@ import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators
 import org.mobicents.protocols.ss7.isup.message.parameter.ConnectedNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.EventInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumUsed;
-
+import static org.testng.Assert.*;
+import org.testng.*;
+import org.testng.annotations.*;
 /**
  * Start time:15:07:07 2009-07-17<br>
  * Project: mobicents-isup-stack<br>
@@ -44,7 +46,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumUsed
  */
 public class CPGTest extends MessageHarness{
 
-
+	@Test(groups = { "functional.encode","functional.decode","message"})
 	public void testTwo_Parameters() throws Exception
 	{
 		byte[] message = getDefaultBody();
@@ -58,36 +60,36 @@ public class CPGTest extends MessageHarness{
 		assertNotNull(cpg.getParameter(ConnectedNumber._PARAMETER_CODE));
 		
 		EventInformation ei=(EventInformation) cpg.getParameter(EventInformation._PARAMETER_CODE);
-		assertEquals("EventInformation has wrong value: ",0x02 ,ei.getEventIndicator());
+		assertEquals(ei.getEventIndicator(),0x02 ,"EventInformation has wrong value: ");
 		
 		BackwardCallIndicators bci=(BackwardCallIndicators) cpg.getParameter(BackwardCallIndicators._PARAMETER_CODE);
 		
-		assertEquals("BackwardCallIndicators value getChargeIndicator  does not match:",bci._CHARGE_INDICATOR_CHARGE,bci.getChargeIndicator());
-		assertEquals("BackwardCallIndicators value getCalledPartysStatusIndicator  does not match:",bci._CPSI_SUBSCRIBER_FREE,bci.getCalledPartysStatusIndicator());
-		assertEquals("BackwardCallIndicators value getCalledPartysCategoryIndicator  does not match:",bci._CPCI_PAYPHONE,bci.getCalledPartysCategoryIndicator());
-		assertEquals("BackwardCallIndicators value getEndToEndMethodIndicator  does not match:",bci._ETEMI_SCCP,bci.getEndToEndMethodIndicator());
-		assertEquals("BackwardCallIndicators value isInterworkingIndicator  does not match:",bci._II_IE,bci.isInterworkingIndicator());
-		assertEquals("BackwardCallIndicators value isEndToEndInformationIndicator  does not match:",bci._ETEII_NO_IA,bci.isEndToEndInformationIndicator());
-		assertEquals("BackwardCallIndicators value isIsdnUserPartIndicator  does not match:",bci._ISDN_UPI_UATW,bci.isIsdnUserPartIndicator());
-		assertEquals("BackwardCallIndicators value isHoldingIndicator  does not match:",bci._HI_REQUESTED,bci.isHoldingIndicator());
-		assertEquals("BackwardCallIndicators value isIsdnAccessIndicator  does not match:",bci._ISDN_AI_TA_ISDN,bci.isIsdnAccessIndicator());
-		assertEquals("BackwardCallIndicators value isEchoControlDeviceIndicator  does not match:",bci._ECDI_IECD_NOT_INCLUDED,bci.isEchoControlDeviceIndicator());
-		assertEquals("BackwardCallIndicators value getSccpMethodIndicator  does not match:",bci._SCCP_MI_CONNECTION_ORIENTED,bci.getSccpMethodIndicator());
+		assertEquals(bci.getChargeIndicator(),bci._CHARGE_INDICATOR_CHARGE,"BackwardCallIndicators value getChargeIndicator  does not match:");
+		assertEquals(bci.getCalledPartysStatusIndicator(),bci._CPSI_SUBSCRIBER_FREE,"BackwardCallIndicators value getCalledPartysStatusIndicator  does not match:");
+		assertEquals(bci.getCalledPartysCategoryIndicator(),bci._CPCI_PAYPHONE,"BackwardCallIndicators value getCalledPartysCategoryIndicator  does not match:");
+		assertEquals(bci.getEndToEndMethodIndicator(),bci._ETEMI_SCCP,"BackwardCallIndicators value getEndToEndMethodIndicator  does not match:");
+		assertEquals(bci.isInterworkingIndicator(),bci._II_IE,"BackwardCallIndicators value isInterworkingIndicator  does not match:");
+		assertEquals(bci.isEndToEndInformationIndicator(),bci._ETEII_NO_IA,"BackwardCallIndicators value isEndToEndInformationIndicator  does not match:");
+		assertEquals(bci.isIsdnUserPartIndicator(),bci._ISDN_UPI_UATW,"BackwardCallIndicators value isIsdnUserPartIndicator  does not match:");
+		assertEquals(bci.isHoldingIndicator(),bci._HI_REQUESTED,"BackwardCallIndicators value isHoldingIndicator  does not match:");
+		assertEquals(bci.isIsdnAccessIndicator(),bci._ISDN_AI_TA_ISDN,"BackwardCallIndicators value isIsdnAccessIndicator  does not match:");
+		assertEquals(bci.isEchoControlDeviceIndicator(),bci._ECDI_IECD_NOT_INCLUDED,"BackwardCallIndicators value isEchoControlDeviceIndicator  does not match:");
+		assertEquals(bci.getSccpMethodIndicator(),bci._SCCP_MI_CONNECTION_ORIENTED,"BackwardCallIndicators value getSccpMethodIndicator  does not match:");
 		
 		
 		
 		TransmissionMediumUsed tmu=(TransmissionMediumUsed) cpg.getParameter(TransmissionMediumUsed._PARAMETER_CODE);
-		assertEquals("TransmissionMediumUsed value getTransimissionMediumUsed  does not match:",0x03,tmu.getTransimissionMediumUsed());
+		assertEquals(tmu.getTransimissionMediumUsed(),0x03,"TransmissionMediumUsed value getTransimissionMediumUsed  does not match:");
 		
 		ConnectedNumber cn=(ConnectedNumber) cpg.getParameter(ConnectedNumber._PARAMETER_CODE);
 		
 		//XXX: note this can fail, once we decide when APRI is done
 		
-		assertEquals("ConnectedNumber value getNatureOfAddressIndicator  does not match:",cn._NAI_SUBSCRIBER_NUMBER,cn.getNatureOfAddressIndicator());
-		assertEquals("ConnectedNumber value getNumberingPlanIndicator  does not match:",cn._NPI_TELEX,cn.getNumberingPlanIndicator());
-		assertEquals("ConnectedNumber value getAddressRepresentationRestrictedIndicator  does not match:",cn._APRI_NOT_AVAILABLE,cn.getAddressRepresentationRestrictedIndicator());
-		assertEquals("ConnectedNumber value getScreeningIndicator  does not match:",cn._SI_NETWORK_PROVIDED,cn.getScreeningIndicator(),cn._SI_NETWORK_PROVIDED);
-		assertEquals("ConnectedNumber value getAddress  does not match:","380683",cn.getAddress());
+		assertEquals(cn.getNatureOfAddressIndicator(),cn._NAI_SUBSCRIBER_NUMBER,"ConnectedNumber value getNatureOfAddressIndicator  does not match:");
+		assertEquals(cn.getNumberingPlanIndicator(),cn._NPI_TELEX,"ConnectedNumber value getNumberingPlanIndicator  does not match:");
+		assertEquals(cn.getAddressRepresentationRestrictedIndicator(),cn._APRI_NOT_AVAILABLE,"ConnectedNumber value getAddressRepresentationRestrictedIndicator  does not match:");
+		assertEquals(cn._SI_NETWORK_PROVIDED,cn.getScreeningIndicator(),cn._SI_NETWORK_PROVIDED,"ConnectedNumber value getScreeningIndicator  does not match:");
+		assertEquals(cn.getAddress(),"380683","ConnectedNumber value getAddress  does not match:");
 		
 		
 		

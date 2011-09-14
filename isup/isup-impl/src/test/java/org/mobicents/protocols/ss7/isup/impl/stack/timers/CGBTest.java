@@ -41,7 +41,6 @@ public class CGBTest extends DoubleTimers {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.isup.impl.stack.DoubleTimers#getSmallerT()
 	 */
-	
 	protected long getSmallerT() {
 		return ISUPTimeoutEvent.T18_DEFAULT+3000;
 	}

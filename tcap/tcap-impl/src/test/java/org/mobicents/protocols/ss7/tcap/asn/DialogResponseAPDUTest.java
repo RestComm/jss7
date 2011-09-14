@@ -25,7 +25,9 @@ package org.mobicents.protocols.ss7.tcap.asn;
 import java.io.IOException;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import org.testng.annotations.*;
+
+import static org.testng.Assert.*;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -36,7 +38,8 @@ import org.mobicents.protocols.asn.AsnOutputStream;
  * @author sergey vetyutnev
  * 
  */
-public class DialogResponseAPDUTest extends TestCase {
+@Test(groups = { "asn" })
+public class DialogResponseAPDUTest {
 
 	private byte[] getData() {
 		return new byte[] { 97, 44, (byte) 128, 2, 7, (byte) 128, (byte) 161, 9, 6, 7, 4, 0, 0, 1, 0, 21, 2, (byte) 162, 3, 2, 1, 0, (byte) 163, 5, (byte) 161,
@@ -53,7 +56,7 @@ public class DialogResponseAPDUTest extends TestCase {
 				3, 2, 1, 2 };
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.encode","functional.decode" })
 	public void testResponseAPDU() throws IOException, ParseException, AsnException {
 
 		byte[] b = getData();

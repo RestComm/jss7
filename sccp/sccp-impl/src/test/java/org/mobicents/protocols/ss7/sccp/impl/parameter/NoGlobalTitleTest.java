@@ -22,19 +22,14 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 import org.mobicents.protocols.ss7.sccp.parameter.NoGlobalTitle;
 
 /**
@@ -58,15 +53,15 @@ public class NoGlobalTitleTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeMethod
 	public void setUp() {
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "parameter","functional.encode"})
 	public void testSerialization() throws Exception {
 		NoGlobalTitle gt = new NoGlobalTitle("9023629581");
 
@@ -85,7 +80,7 @@ public class NoGlobalTitleTest {
 		NoGlobalTitle aiOut = reader.read("NoGlobalTitle", NoGlobalTitle.class);
 
 		// check results
-		assertEquals("9023629581", aiOut.getDigits());
+		assertEquals( aiOut.getDigits(),"9023629581");
 	}
 
 }

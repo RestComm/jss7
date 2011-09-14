@@ -33,7 +33,10 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.IOException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
-
+import org.testng.annotations.Test;
+import static org.testng.Assert.*;
+import org.testng.*;
+import org.testng.annotations.*;
 /**
  * Start time:13:20:04 2009-04-26<br>
  * Project: mobicents-isup-stack<br>
@@ -50,7 +53,7 @@ public class NetworkManagementControlsTest extends ParameterHarness {
 		super.goodBodies.add(new byte[] { 0x0E });
 		super.goodBodies.add(new byte[] { 0x0E, 32, 45, 0x0A });
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws IOException, ParameterException {
 
 		boolean[] bools = new boolean[] { true, true, false, true, false, true, true };

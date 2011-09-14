@@ -22,7 +22,8 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
-import static org.junit.Assert.assertEquals;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,11 +31,7 @@ import java.io.ByteArrayOutputStream;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.ss7.sccp.parameter.GT0010;
 
 /**
@@ -56,17 +53,17 @@ public class GT0010Test {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeMethod
 	public void setUp() {
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() {
 	}
 
 
 
-	@Test
+	@Test(groups = { "parameter","functional.encode"})
 	public void testSerialization() throws Exception {
 		GT0010 gt = new GT0010(0, "9023629581");
 
@@ -85,8 +82,8 @@ public class GT0010Test {
 		GT0010 aiOut = reader.read("GT0010", GT0010.class);
 
 		// check results
-		assertEquals(0, aiOut.getTranslationType());
-		assertEquals("9023629581", aiOut.getDigits());
+		assertEquals( aiOut.getTranslationType(),0);
+		assertEquals( aiOut.getDigits(),"9023629581");
 	}
 
 }

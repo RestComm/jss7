@@ -24,7 +24,9 @@ package org.mobicents.protocols.ss7.map.service.sms;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+
+import org.testng.*;import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -42,7 +44,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
  * @author sergey vetyutnev
  *
  */
-public class LocationInfoWithLMSITest extends TestCase {
+public class LocationInfoWithLMSITest  {
 	
 	private byte[] getEncodedData() {
 		return new byte[] { -96, 15, -127, 7, -111, -105, 48, 115, 0, 34, -14, 4, 4, 0, 3, 98, 49 };
@@ -53,7 +55,7 @@ public class LocationInfoWithLMSITest extends TestCase {
 				6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -123, 0, -122, 6, -71, -119, 103, 69, 35, -15 };
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.decode","service.sms"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedData();
@@ -63,13 +65,13 @@ public class LocationInfoWithLMSITest extends TestCase {
 		LocationInfoWithLMSIImpl liw = new LocationInfoWithLMSIImpl();
 		liw.decodeAll(asn);
 
-		assertEquals(0, tag);
-		assertEquals(Tag.CLASS_CONTEXT_SPECIFIC, asn.getTagClass());
+		assertEquals( tag,0);
+		assertEquals( asn.getTagClass(),Tag.CLASS_CONTEXT_SPECIFIC);
 		
 		ISDNAddressString nnm = liw.getNetworkNodeNumber();
-		assertEquals(AddressNature.international_number, nnm.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, nnm.getNumberingPlan());
-		assertEquals("79033700222", nnm.getAddress());
+		assertEquals( nnm.getAddressNature(),AddressNature.international_number);
+		assertEquals( nnm.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( nnm.getAddress(),"79033700222");
 		assertTrue(Arrays.equals(new byte[] { 0, 3, 98, 49 }, liw.getLMSI().getData()));
 		
 		
@@ -80,23 +82,23 @@ public class LocationInfoWithLMSITest extends TestCase {
 		liw = new LocationInfoWithLMSIImpl();
 		liw.decodeAll(asn);
 
-		assertEquals(0, tag);
-		assertEquals(Tag.CLASS_CONTEXT_SPECIFIC, asn.getTagClass());
+		assertEquals( tag,0);
+		assertEquals( asn.getTagClass(),Tag.CLASS_CONTEXT_SPECIFIC);
 		
 		nnm = liw.getNetworkNodeNumber();
-		assertEquals(AddressNature.national_significant_number, nnm.getAddressNature());
-		assertEquals(NumberingPlan.national, nnm.getNumberingPlan());
-		assertEquals("1234567890", nnm.getAddress());
+		assertEquals( nnm.getAddressNature(),AddressNature.national_significant_number);
+		assertEquals( nnm.getNumberingPlan(),NumberingPlan.national);
+		assertEquals( nnm.getAddress(),"1234567890");
 		assertTrue(Arrays.equals(new byte[] { 4, 3, 2, 1 }, liw.getLMSI().getData()));
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(liw.getExtensionContainer()));
-		assertEquals(AdditionalNumberType.sgsn, liw.getAdditionalNumberType());
+		assertEquals( liw.getAdditionalNumberType(),AdditionalNumberType.sgsn);
 		nnm = liw.getAdditionalNumber();
-		assertEquals(AddressNature.network_specific_number, nnm.getAddressNature());
-		assertEquals(NumberingPlan.private_plan, nnm.getNumberingPlan());
-		assertEquals("987654321", nnm.getAddress());
+		assertEquals( nnm.getAddressNature(),AddressNature.network_specific_number);
+		assertEquals( nnm.getNumberingPlan(),NumberingPlan.private_plan);
+		assertEquals( nnm.getAddress(),"987654321");
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode","service.sms"})
 	public void testEncode() throws Exception {
 		
 		ISDNAddressString nnm = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "79033700222");
@@ -108,7 +110,7 @@ public class LocationInfoWithLMSITest extends TestCase {
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 		
 		nnm = new ISDNAddressStringImpl(AddressNature.national_significant_number, NumberingPlan.national, "1234567890");
 		ISDNAddressStringImpl an = new ISDNAddressStringImpl(AddressNature.network_specific_number, NumberingPlan.private_plan, "987654321");
@@ -120,7 +122,7 @@ public class LocationInfoWithLMSITest extends TestCase {
 		
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedDataFull();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 		
 	}
 }

@@ -27,8 +27,9 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.junit.After;
-import org.junit.Before;
+
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
@@ -145,13 +146,13 @@ public abstract class SccpHarness {
 		sccpStack2.stop();
 
 	}
-	@Before
+	@BeforeMethod
 	public void setUp() throws IllegalStateException {
 		this.setUpStack1();
 		this.setUpStack2();
 	
 	}
-	@After
+	@AfterMethod
 	public void tearDown() throws IllegalStateException  {
 		this.tearDownStack1();
 		this.tearDownStack2();

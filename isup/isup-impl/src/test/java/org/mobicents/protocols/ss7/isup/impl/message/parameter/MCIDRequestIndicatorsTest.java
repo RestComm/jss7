@@ -31,6 +31,7 @@
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.testng.annotations.Test;
 
 /**
  * Start time:11:34:01 2009-04-24<br>
@@ -57,7 +58,7 @@ public class MCIDRequestIndicatorsTest extends ParameterHarness {
 
 		return new byte[] { (byte) b0 };
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws ParameterException {
 		MCIDRequestIndicatorsImpl eci = new MCIDRequestIndicatorsImpl(getBody(MCIDRequestIndicatorsImpl._INDICATOR_REQUESTED, MCIDRequestIndicatorsImpl._INDICATOR_REQUESTED));
 

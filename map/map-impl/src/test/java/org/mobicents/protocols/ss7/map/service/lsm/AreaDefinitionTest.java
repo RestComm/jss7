@@ -22,17 +22,12 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.*;
+import org.testng.*;import org.testng.annotations.*;
 
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -58,15 +53,15 @@ public class AreaDefinitionTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeTest
 	public void setUp() {
 	}
 
-	@After
+	@AfterTest
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecode() throws Exception {
 		// TODO this is self generated trace. We need trace from operator
 		byte[] data = new byte[] { 0x30, 0x16, (byte) 0xa0, 0x14, 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08, (byte) 0x80, 0x01,
@@ -81,14 +76,14 @@ public class AreaDefinitionTest {
 		AreaList areaList = areaDef.getAreaList();
 
 		assertNotNull(areaList);
-		assertEquals(2, areaList.getAreas().length);
+		assertEquals( areaList.getAreas().length,2);
 		Area[] areas = areaList.getAreas();
 		assertNotNull(areas[0].getAreaIdentification());
 		assertTrue(Arrays.equals(new byte[] { 0x09, 0x70, 0x71 }, areas[0].getAreaIdentification()));
 
 	}
 
-	@Test
+	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 		// TODO this is self generated trace. We need trace from operator
 		byte[] data = new byte[] { 0x30, 0x16, (byte) 0xa0, 0x14, 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08, (byte) 0x80, 0x01,
@@ -108,7 +103,7 @@ public class AreaDefinitionTest {
 		byte[] encodedData = asnOS.toByteArray();
 
 
-		assertTrue(Arrays.equals(data, encodedData));
+		assertTrue( Arrays.equals(data,encodedData));
 
 	}
 }

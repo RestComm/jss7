@@ -22,15 +22,11 @@
 
 package org.mobicents.protocols.ss7.sccp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayInputStream;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.UnitDataImpl;
 import org.mobicents.protocols.ss7.sccp.message.UnitData;
@@ -44,16 +40,16 @@ public class UnitDataTest {
 
 	private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
 
-	@Before
+	@BeforeMethod
 	public void setUp() {
 
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "udts", "functional.decode",})
 	public void testDecode() throws Exception {
 		// This is data comes from Dialogic MTU test sending the SMS message
 		byte[] b = new byte[] { 0x01, 0x03, 0x05, 0x09, 0x02, 0x42, 0x08, 0x04, 0x43, 0x01, 0x00, 0x08, 0x5D, 0x62,
@@ -72,18 +68,18 @@ public class UnitDataTest {
 
 		SccpAddress calledAdd = testObjectDecoded.getCalledPartyAddress();
 		assertNotNull(calledAdd);
-		assertEquals(8, calledAdd.getSubsystemNumber());
+		assertEquals( calledAdd.getSubsystemNumber(),8);
 		assertNull(calledAdd.getGlobalTitle());
 
 		SccpAddress callingAdd = testObjectDecoded.getCallingPartyAddress();
 		assertNotNull(callingAdd);
-		assertEquals(1, callingAdd.getSignalingPointCode());
-		assertEquals(8, callingAdd.getSubsystemNumber());
+		assertEquals( callingAdd.getSignalingPointCode(),1);
+		assertEquals( callingAdd.getSubsystemNumber(),8);
 		assertNull(callingAdd.getGlobalTitle());
 
 	}
 
-	@Test
+	@Test(groups = { "udts", "functional.decode",})
 	public void testDecode1() throws Exception {
 		// This is data comes from Dialogic MTU test
 		byte[] b = new byte[] { 0x00, 0x03, 0x05, 0x09, 0x02, 0x42, 0x01, 0x04, 0x43, 0x01, 0x00, 0x01, 0x05, 0x03,
@@ -96,13 +92,13 @@ public class UnitDataTest {
 
 		SccpAddress calledAdd = testObjectDecoded.getCalledPartyAddress();
 		assertNotNull(calledAdd);
-		assertEquals(1, calledAdd.getSubsystemNumber());
+		assertEquals( calledAdd.getSubsystemNumber(),1);
 		assertNull(calledAdd.getGlobalTitle());
 
 		SccpAddress callingAdd = testObjectDecoded.getCallingPartyAddress();
 		assertNotNull(callingAdd);
-		assertEquals(1, callingAdd.getSignalingPointCode());
-		assertEquals(1, callingAdd.getSubsystemNumber());
+		assertEquals( callingAdd.getSignalingPointCode(),1);
+		assertEquals( callingAdd.getSubsystemNumber(),1);
 		assertNull(callingAdd.getGlobalTitle());
 
 	}

@@ -31,6 +31,7 @@
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.testng.annotations.Test;
 
 /**
  * Start time:11:34:01 2009-04-24<br>
@@ -66,7 +67,7 @@ public class InformationRequestIndicatorsTest extends ParameterHarness {
 		return new byte[] { (byte) b0, (byte) b1 };
 
 	}
-
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws ParameterException {
 		InformationRequestIndicatorsImpl eci = new InformationRequestIndicatorsImpl(getBody(InformationRequestIndicatorsImpl._INDICATOR_REQUESTED, InformationRequestIndicatorsImpl._INDICATOR_NOT_REQUESTED,
 				InformationRequestIndicatorsImpl._INDICATOR_REQUESTED, InformationRequestIndicatorsImpl._INDICATOR_NOT_REQUESTED, InformationRequestIndicatorsImpl._INDICATOR_NOT_REQUESTED, 10));

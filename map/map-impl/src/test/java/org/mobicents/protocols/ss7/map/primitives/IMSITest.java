@@ -28,20 +28,20 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 /**
  * 
  * @author sergey vetyutnev
  *
  */
-public class IMSITest extends TestCase {
+public class IMSITest  {
 	
 	private byte[] getEncodedData() {
 		return new byte[] { 4, 8, 16, 33, 2, 2, 16, -119, 34, -9 };
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.decode","primitives"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedData();
@@ -52,15 +52,15 @@ public class IMSITest extends TestCase {
 		IMSIImpl imsi = new IMSIImpl();
 		imsi.decodeAll(asn);
 
-		assertEquals(Tag.STRING_OCTET, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.STRING_OCTET);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 		
-		assertEquals(11, (long)imsi.getMCC());
-		assertEquals(22, (long)imsi.getMNC());
-		assertEquals("0200198227", imsi.getMSIN());
+		assertEquals( (long)imsi.getMCC(),11);
+		assertEquals( (long)imsi.getMNC(),22);
+		assertEquals( imsi.getMSIN(),"0200198227");
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.encode","primitives"})
 	public void testEncode() throws Exception {
 		
 		IMSIImpl imsi = new IMSIImpl(11L, 22L, "0200198227");
@@ -72,7 +72,7 @@ public class IMSITest extends TestCase {
 		
 		byte[] rawData = getEncodedData();		
 		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 		
 	}
 

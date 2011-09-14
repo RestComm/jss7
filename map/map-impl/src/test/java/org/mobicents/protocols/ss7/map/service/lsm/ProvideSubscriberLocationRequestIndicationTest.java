@@ -22,17 +22,10 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
@@ -70,15 +63,15 @@ public class ProvideSubscriberLocationRequestIndicationTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeTest
 	public void setUp() {
 	}
 
-	@After
+	@AfterTest
 	public void tearDown() {
 	}
 
-	@Test
+	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecodeProvideSubscriberLocationRequestIndication() throws Exception {
 		// The trace is from Brazilian operator
 		byte[] rawData = new byte[] { 0x30, 0x41, 0x30, 0x03, (byte) 0x80, 0x01, 0x00, 0x04, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70, (byte) 0xa0, 0x1b,
@@ -96,36 +89,36 @@ public class ProvideSubscriberLocationRequestIndicationTest {
 
 		LocationType locationType = reqInd.getLocationType();
 		assertNotNull(locationType);
-		assertEquals(LocationEstimateType.currentLocation, locationType.getLocationEstimateType());
+		assertEquals( locationType.getLocationEstimateType(),LocationEstimateType.currentLocation);
 
 		ISDNAddressString mlcNumber = reqInd.getMlcNumber();
 		assertNotNull(mlcNumber);
-		assertEquals(AddressNature.international_number, mlcNumber.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, mlcNumber.getNumberingPlan());
-		assertEquals("55619007", mlcNumber.getAddress());
+		assertEquals( mlcNumber.getAddressNature(),AddressNature.international_number);
+		assertEquals( mlcNumber.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( mlcNumber.getAddress(),"55619007");
 
 		LCSClientID lcsClientId = reqInd.getLCSClientID();
 		assertNotNull(lcsClientId);
-		assertEquals(LCSClientType.plmnOperatorServices, lcsClientId.getLCSClientType());
-		assertEquals(LCSClientInternalID.broadcastService, lcsClientId.getLCSClientInternalID());
+		assertEquals( lcsClientId.getLCSClientType(),LCSClientType.plmnOperatorServices);
+		assertEquals( lcsClientId.getLCSClientInternalID(),LCSClientInternalID.broadcastService);
 		LCSClientName lcsClientName = lcsClientId.getLCSClientName();
 		assertNotNull(lcsClientName);
-		assertEquals((byte) 0x0f, lcsClientName.getDataCodingScheme());
-		assertEquals("ndmgapp2ndmgapp2", lcsClientName.getNameString().getString());
+		assertEquals( lcsClientName.getDataCodingScheme(),(byte) 0x0f);
+		assertEquals( lcsClientName.getNameString().getString(),"ndmgapp2ndmgapp2");
 
 		IMSI imsi = reqInd.getIMSI();
 		assertNotNull(imsi);
-		assertEquals(724l, imsi.getMCC());
-		assertEquals(99l, imsi.getMNC());
-		assertEquals("9900000007", imsi.getMSIN());
+		assertEquals( imsi.getMCC(),new Long(724l));
+		assertEquals( imsi.getMNC(),new Long(99l));
+		assertEquals( imsi.getMSIN(),"9900000007");
 
-		assertEquals(1, reqInd.getLCSPriority());
+		assertEquals( reqInd.getLCSPriority(),new Integer(1));
 
 		LCSQoS lcsQoS = reqInd.getLCSQoS();
 		assertNotNull(lcsQoS);
 		ResponseTime respTime = lcsQoS.getResponseTime();
 		assertNotNull(respTime);
-		assertEquals(ResponseTimeCategory.lowdelay, respTime.getResponseTimeCategory());
+		assertEquals( respTime.getResponseTimeCategory(),ResponseTimeCategory.lowdelay);
 
 		SupportedGADShapes suppGadShapes = reqInd.getSupportedGADShapes();
 		assertNotNull(suppGadShapes);
@@ -139,7 +132,7 @@ public class ProvideSubscriberLocationRequestIndicationTest {
 		assertTrue(suppGadShapes.getPolygon());
 	}
 
-	@Test
+	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 		// The trace is from Brazilian operator
 		byte[] data = new byte[] { 0x30, 0x41, 0x30, 0x03, (byte) 0x80, 0x01, 0x00, 0x04, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70, (byte) 0xa0, 0x1b,
@@ -170,6 +163,6 @@ public class ProvideSubscriberLocationRequestIndicationTest {
 		reqInd.encodeAll(asnOS);
 
 		byte[] encodedData = asnOS.toByteArray();
-		assertTrue(Arrays.equals(data, encodedData));
+		assertTrue( Arrays.equals(data,encodedData));
 	}
 }

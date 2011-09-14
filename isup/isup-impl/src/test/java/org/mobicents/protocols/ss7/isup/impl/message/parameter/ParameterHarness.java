@@ -36,7 +36,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+import org.testng.*;
+import org.testng.annotations.*;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 
@@ -47,7 +49,7 @@ import org.mobicents.protocols.ss7.isup.ParameterException;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
  *         </a>
  */
-public abstract class ParameterHarness extends TestCase {
+public abstract class ParameterHarness  {
 
 	// 21 10000011 Address....................... 83
 	// 22 01100000 Address....................... 60
@@ -131,6 +133,8 @@ public abstract class ParameterHarness extends TestCase {
 
 		return out;
 	}
+	
+	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testDecodeEncode() throws IOException, ParameterException {
 
 		for (int index = 0; index < this.goodBodies.size(); index++) {
@@ -139,7 +143,7 @@ public abstract class ParameterHarness extends TestCase {
 			doTestDecode(goodBody, true, component, index);
 			byte[] encodedBody = component.encode();
 			boolean equal = Arrays.equals(goodBody, encodedBody);
-			assertTrue("Body index: " + index + "\n" + makeCompare(goodBody, encodedBody), equal);
+			assertTrue(equal,"Body index: " + index + "\n" + makeCompare(goodBody, encodedBody));
 
 		}
 		for (int index = 0; index < this.badBodies.size(); index++) {
@@ -148,7 +152,7 @@ public abstract class ParameterHarness extends TestCase {
 			AbstractISUPParameter component = this.getTestedComponent();
 			doTestDecode(badBody, false, component, index);
 			byte[] encodedBody = component.encode();
-
+			//TODO: make some tests here?
 		}
 
 	}
@@ -200,10 +204,10 @@ public abstract class ParameterHarness extends TestCase {
 				}
 				if(expectedValues[index].getClass().isArray() )
 				{
-					assertTrue("Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index], Arrays.deepEquals(new Object[]{expectedValues[index]},new Object[]{ v}));
+					assertTrue(Arrays.deepEquals(new Object[]{expectedValues[index]},new Object[]{ v}),"Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index]);
 				}else
 				{
-					assertEquals("Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index], expectedValues[index], v);
+					assertEquals(  v,expectedValues[index],"Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index]);
 				}
 
 			}

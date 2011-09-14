@@ -34,20 +34,20 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 /**
  * 
  * @author sergey vetyutnev
  *
  */
-public class AlertServiceCentreRequestIndicationTest extends TestCase {
+public class AlertServiceCentreRequestIndicationTest  {
 	
 	private byte[] getEncodedData() {
 		return new byte[] { 48, 18, 4, 7, -111, -110, 17, 19, 50, 19, -15, 4, 7, -111, -108, -120, 115, 0, -110, -14 };
 	}
 	
-	@org.junit.Test
+	@Test
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedData();
@@ -57,21 +57,21 @@ public class AlertServiceCentreRequestIndicationTest extends TestCase {
 		AlertServiceCentreRequestIndicationImpl asc = new AlertServiceCentreRequestIndicationImpl();
 		asc.decodeAll(asn);
 
-		assertEquals(Tag.SEQUENCE, tag);
-		assertEquals(Tag.CLASS_UNIVERSAL, asn.getTagClass());
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 		
 		ISDNAddressString msisdn = asc.getMsisdn();
-		assertEquals(AddressNature.international_number, msisdn.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, msisdn.getNumberingPlan());
-		assertEquals("29113123311", msisdn.getAddress());
+		assertEquals( msisdn.getAddressNature(),AddressNature.international_number);
+		assertEquals( msisdn.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( msisdn.getAddress(),"29113123311");
 		
 		AddressString sca = asc.getServiceCentreAddress();
-		assertEquals(AddressNature.international_number, sca.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, sca.getNumberingPlan());
-		assertEquals("49883700292", sca.getAddress());
+		assertEquals( sca.getAddressNature(),AddressNature.international_number);
+		assertEquals( sca.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( sca.getAddress(),"49883700292");
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.encode"})
 	public void testEncode() throws Exception {
 
 		ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "29113123311");
@@ -83,6 +83,6 @@ public class AlertServiceCentreRequestIndicationTest extends TestCase {
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 	}
 }

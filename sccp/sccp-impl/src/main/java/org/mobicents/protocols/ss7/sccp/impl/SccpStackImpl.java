@@ -30,6 +30,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import javolution.util.ReentrantLock;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
@@ -55,7 +57,7 @@ public class SccpStackImpl implements SccpStack {
 	// Management Messages
 
 	protected volatile State state = State.IDLE;
-
+	private ReentrantLock stateLock = new ReentrantLock();
 	// provider ref, this can be real provider or pipe, for tests.
 	protected SccpProviderImpl sccpProvider;
 
@@ -132,19 +134,24 @@ public class SccpStackImpl implements SccpStack {
 	 */
 	public void start() throws IllegalStateException {
 		logger.info("Starting ...");
-
-		executor = Executors.newFixedThreadPool(1);
-
-		layer3exec = Executors.newFixedThreadPool(1);
-
-		logger.info("Starting routing engine...");
-		this.sccpRoutingControl.start();
-		logger.info("Starting management ...");
-		this.sccpManagement.start();
-		logger.info("Starting MSU handler...");
-		layer3exec.execute(new MtpStreamHandler());
-
-		this.state = State.RUNNING;
+		stateLock.lock();
+		try{
+			executor = Executors.newFixedThreadPool(1);
+	
+			layer3exec = Executors.newFixedThreadPool(1);
+	
+			logger.info("Starting routing engine...");
+			this.sccpRoutingControl.start();
+			logger.info("Starting management ...");
+			this.sccpManagement.start();
+			logger.info("Starting MSU handler...");
+			layer3exec.execute(new MtpStreamHandler());
+	
+			this.state = State.RUNNING;
+		}finally
+		{
+			stateLock.unlock();
+		}
 	}
 
 	/*
@@ -154,17 +161,25 @@ public class SccpStackImpl implements SccpStack {
 	 */
 	public void stop() {
 		logger.info("Stopping ...");
-
-		executor = null;
-
-		layer3exec = null;
-
-		logger.info("Stopping management...");
-		this.sccpManagement.stop();
-		logger.info("Stopping routing engine...");
-		this.sccpRoutingControl.stop();
-		logger.info("Stopping MSU handler...");
-		this.state = State.IDLE;
+		stateLock.lock();
+		try
+		{
+			this.state = State.IDLE;
+			executor = null;
+	
+			layer3exec = null;
+	
+			logger.info("Stopping management...");
+			this.sccpManagement.stop();
+			logger.info("Stopping routing engine...");
+			this.sccpRoutingControl.stop();
+			logger.info("Stopping MSU handler...");
+			
+		}finally
+		{
+			stateLock.unlock();
+		}
+		
 	}
 
 	/*
@@ -299,42 +314,54 @@ public class SccpStackImpl implements SccpStack {
 
 		public void run() {
 			// Execute only till state is Running
+
 			while (state == State.RUNNING) {
-
+				stateLock.lock();
 				try {
-					// Execute the MTP3UserPart
-					mtp3UserPart.execute();
-
-					rxBytes = 0;
-					rxBuffer.clear();
+//					try {
+//						Thread.sleep(5);
+//					} catch (InterruptedException e2) {
+//						// TODO Auto-generated catch block
+//						e2.printStackTrace();
+//					}
 					try {
-						rxBytes = mtp3UserPart.read(rxBuffer);
-						if (rxBytes != 0) {
-							byte[] data = new byte[rxBytes];
-							rxBuffer.flip();
-							rxBuffer.get(data);
-							MessageHandler handler = new MessageHandler(data);
-							executor.execute(handler);
-						}
-					} catch (IOException e) {
-						logger.error("Error while readig data from Mtp3UserPart", e);
-					}
+						// Execute the MTP3UserPart
+						mtp3UserPart.execute();
 
-					// Iterate till we send all data
-					while (!txDataQueue.isEmpty()) {
-						txBuffer.clear();
-						txBuffer.put(txDataQueue.poll());
-						txBuffer.flip();
+						rxBytes = 0;
+						rxBuffer.clear();
 						try {
-							txBytes = mtp3UserPart.write(txBuffer);
+							rxBytes = mtp3UserPart.read(rxBuffer);
+							if (rxBytes != 0) {
+								byte[] data = new byte[rxBytes];
+								rxBuffer.flip();
+								rxBuffer.get(data);
+								MessageHandler handler = new MessageHandler(data);
+								executor.execute(handler);
+							}
 						} catch (IOException e) {
-							logger.error("Error while writting data to Mtp3UserPart", e);
+							logger.error("Error while readig data from Mtp3UserPart", e);
 						}
-					}// while txDataQueue
-				} catch (IOException e1) {
-					logger.error("Error in MtpStreamHandler", e1);
+
+						// Iterate till we send all data
+						while (!txDataQueue.isEmpty()) {
+							txBuffer.clear();
+							txBuffer.put(txDataQueue.poll());
+							txBuffer.flip();
+							try {
+								txBytes = mtp3UserPart.write(txBuffer);
+							} catch (IOException e) {
+								logger.error("Error while writting data to Mtp3UserPart", e);
+							}
+						}// while txDataQueue
+					} catch (IOException e1) {
+						logger.error("Error in MtpStreamHandler", e1);
+					}
+				} finally {
+					stateLock.unlock();
 				}
 			}// end of while
+
 		}
 	}
 }

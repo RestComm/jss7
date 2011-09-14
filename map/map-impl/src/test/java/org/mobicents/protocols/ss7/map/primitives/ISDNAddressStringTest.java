@@ -24,7 +24,7 @@ package org.mobicents.protocols.ss7.map.primitives;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -37,13 +37,13 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
  * @author sergey vetyutnev
  *
  */
-public class ISDNAddressStringTest extends TestCase {
+public class ISDNAddressStringTest  {
 	
 	private byte[] getEncodedData() {
 		return new byte[] { -126, 7, -111, -105, 114, 99, 80, 24, -7 };
 	}
 
-	@org.junit.Test
+	@Test(groups = { "functional.decode","primitives"})
 	public void testDecode() throws Exception {
 		
 		byte[] rawData = getEncodedData();
@@ -54,16 +54,15 @@ public class ISDNAddressStringTest extends TestCase {
 		ISDNAddressStringImpl addStr = new ISDNAddressStringImpl();
 		addStr.decodeAll(asn);
 
-		assertEquals(2, tag);
-		assertEquals(Tag.CLASS_CONTEXT_SPECIFIC, asn.getTagClass());
+		assertEquals( tag,2);
+		assertEquals( asn.getTagClass(),Tag.CLASS_CONTEXT_SPECIFIC);
 		assertFalse(addStr.isExtension());
-		assertEquals(AddressNature.international_number, addStr
-				.getAddressNature());
-		assertEquals(NumberingPlan.ISDN, addStr.getNumberingPlan());
-		assertEquals("79273605819", addStr.getAddress());
+		assertEquals( addStr.getAddressNature(),AddressNature.international_number);
+		assertEquals( addStr.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( addStr.getAddress(),"79273605819");
 	}
 	
-	@org.junit.Test
+	@Test(groups = { "functional.encode","primitives"})
 	public void testEncode() throws Exception {
 		
 		ISDNAddressStringImpl addStr = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "79273605819");
@@ -75,7 +74,7 @@ public class ISDNAddressStringTest extends TestCase {
 		
 		byte[] rawData = getEncodedData();		
 		
-		assertTrue(Arrays.equals(rawData, encodedData));
+		assertTrue( Arrays.equals(rawData,encodedData));
 		
 	}
 

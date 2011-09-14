@@ -11,7 +11,9 @@
 	<artifactId>map-impl</artifactId>
 
 	<name>Mobicents SS7 :: MAP :: Impl :: ${pom.artifactId}</name>
-
+	<properties>
+		<log.file.name>tests.log</log.file.name>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -21,7 +23,10 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>concurrent</groupId>
@@ -82,6 +87,19 @@
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+
+				<configuration>
+					<suiteXmlFiles>
+						<!-- 						
+						<suiteXmlFile>testng-methods.xml</suiteXmlFile>
+						 -->
+						<suiteXmlFile>testng-classes.xml</suiteXmlFile>
+					</suiteXmlFiles>
 				</configuration>
 			</plugin>
 		</plugins>
