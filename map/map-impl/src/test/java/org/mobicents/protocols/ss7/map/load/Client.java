@@ -182,9 +182,9 @@ public class Client extends TestHarness {
 		// The Charset is null, here we let system use default Charset (UTF-7 as
 		// explained in GSM 03.38. However if MAP User wants, it can set its own
 		// impl of Charset
-		USSDString ussdString = this.mapProvider.getMapServiceFactory().createUSSDString("*125*+31628839999#", null);
+		USSDString ussdString = this.mapProvider.getMapParameterFactory().createUSSDString("*125*+31628839999#", null);
 
-		ISDNAddressString msisdn = this.mapProvider.getMapServiceFactory().createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN,
+		ISDNAddressString msisdn = this.mapProvider.getMapParameterFactory().createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN,
 				"31628838002");
 
 		mapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, null, msisdn);
@@ -348,9 +348,9 @@ public class Client extends TestHarness {
 		try {
 			byte ussdDataCodingScheme = 0x0f;
 
-			USSDString ussdString = this.mapProvider.getMapServiceFactory().createUSSDString("1", null);
+			USSDString ussdString = this.mapProvider.getMapParameterFactory().createUSSDString("1", null);
 
-			AddressString msisdn = this.mapProvider.getMapServiceFactory().createAddressString(AddressNature.international_number, NumberingPlan.ISDN,
+			AddressString msisdn = this.mapProvider.getMapParameterFactory().createAddressString(AddressNature.international_number, NumberingPlan.ISDN,
 					"31628838002");
 
 			mapDialog.addUnstructuredSSResponse(unstrReqInd.getInvokeId(), ussdDataCodingScheme, ussdString);

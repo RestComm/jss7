@@ -30,8 +30,8 @@ import org.testng.*;import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
+import org.mobicents.protocols.ss7.map.MapParameterFactoryImpl;
+import org.mobicents.protocols.ss7.map.api.MapParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
@@ -146,7 +146,7 @@ public class MAPOpenInfoTest  {
 	@Test(groups = { "functional.encode","dialog"})
 	public void testEncode() throws Exception {
 
-		MapServiceFactory servFact = new MapServiceFactoryImpl();
+		MapParameterFactory servFact = new MapParameterFactoryImpl();
 
 		MAPOpenInfoImpl mapOpenInfoImpl = new MAPOpenInfoImpl();
 		AddressString destReference = servFact.createAddressString(AddressNature.international_number,

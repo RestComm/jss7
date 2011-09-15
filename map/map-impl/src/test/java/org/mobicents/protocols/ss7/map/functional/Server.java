@@ -35,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
-import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
+import org.mobicents.protocols.ss7.map.api.MapParameterFactory;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
@@ -115,7 +115,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	private MAPStack mapStack;
 	private MAPProvider mapProvider;
 
-	private MapServiceFactory mapServiceFactory;
+	private MapParameterFactory MapParameterFactory;
 
 	private boolean _S_recievedMAPOpenInfo, _S_recievedMAPCloseInfo;
 	private boolean _S_recievedMAPAbort;
@@ -137,7 +137,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		this.remoteAddress = remoteAddress;
 		this.mapProvider = this.mapStack.getMAPProvider();
 
-		this.mapServiceFactory = this.mapProvider.getMapServiceFactory();
+		this.MapParameterFactory = this.mapProvider.getMapParameterFactory();
 
 		this.mapProvider.addMAPDialogListener(this);
 		this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
@@ -376,7 +376,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 				if (this.dialogStep == 1)
 					mapDialog.send();
 				else {
-					USSDString ussdStrObj = this.mapProvider.getMapServiceFactory().createUSSDString("Your balance is 500");
+					USSDString ussdStrObj = this.mapProvider.getMapParameterFactory().createUSSDString("Your balance is 500");
 					byte ussdDataCodingScheme = (byte) 0x0F;
 					((MAPDialogSupplementary) mapDialog).addProcessUnstructuredSSResponse(this.savedInvokeId, ussdDataCodingScheme, ussdStrObj);
 					
@@ -580,7 +580,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 				MAPDialogSupplementary mapDialog = procUnstrInd.getMAPDialog();
 				Long invokeId = procUnstrInd.getInvokeId();
 
-				USSDString ussdStringObj = this.mapServiceFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
+				USSDString ussdStringObj = this.MapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
 
 				try {
 					mapDialog.addUnstructuredSSRequest((byte) 0x0F, ussdStringObj, null, null);
@@ -638,7 +638,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 				oc.setLocalOperationCode((long) MAPOperationCode.processUnstructuredSS_Request);
 				returnResult.setOperationCode(oc);
 
-				USSDString ussdStrObj = this.mapProvider.getMapServiceFactory().createUSSDString("Your balance is 500");
+				USSDString ussdStrObj = this.mapProvider.getMapParameterFactory().createUSSDString("Your balance is 500");
 				byte ussdDataCodingScheme = (byte) 0x0F;
 				ProcessUnstructuredSSResponseIndicationImpl req = new ProcessUnstructuredSSResponseIndicationImpl(ussdDataCodingScheme, ussdStrObj);
 				AsnOutputStream aos = new AsnOutputStream();
@@ -661,7 +661,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 				break;
 
 			case Action_Component_E: {
-				Problem problem = this.mapProvider.getMapServiceFactory().createProblemInvoke(InvokeProblemType.DuplicateInvokeID);
+				Problem problem = this.mapProvider.getMapParameterFactory().createProblemInvoke(InvokeProblemType.DuplicateInvokeID);
 				try {
 					mapDialog.sendRejectComponent(invokeId, problem);
 				} catch (MAPException e) {
@@ -671,7 +671,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 				break;
 
 			case Action_Component_G: {
-				Problem problem = this.mapProvider.getMapServiceFactory().createProblemGeneral(GeneralProblemType.MistypedComponent);
+				Problem problem = this.mapProvider.getMapParameterFactory().createProblemGeneral(GeneralProblemType.MistypedComponent);
 				try {
 					mapDialog.sendRejectComponent(null, problem);
 				} catch (MAPException e) {
@@ -824,19 +824,19 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 		this._S_recievedSmsRequestIndication = true;
 		
-		IMSI imsi = this.mapServiceFactory.createIMSI(250L, 99L, "777000");
-		ISDNAddressString networkNodeNumber = this.mapServiceFactory.createISDNAddressString(AddressNature.network_specific_number, NumberingPlan.national,
+		IMSI imsi = this.MapParameterFactory.createIMSI(250L, 99L, "777000");
+		ISDNAddressString networkNodeNumber = this.MapParameterFactory.createISDNAddressString(AddressNature.network_specific_number, NumberingPlan.national,
 				"111000111");
-		LMSI lmsi = this.mapServiceFactory.createLMSI(new byte[] { 75, 74, 73, 72 });
+		LMSI lmsi = this.MapParameterFactory.createLMSI(new byte[] { 75, 74, 73, 72 });
 		AdditionalNumberType additionalNumberType = AdditionalNumberType.sgsn;
-		ISDNAddressString additionalNumber = this.mapServiceFactory.createISDNAddressString(AddressNature.subscriber_number, NumberingPlan.private_plan,
+		ISDNAddressString additionalNumber = this.MapParameterFactory.createISDNAddressString(AddressNature.subscriber_number, NumberingPlan.private_plan,
 				"000111000");
-		LocationInfoWithLMSI locationInfoWithLMSI = this.mapServiceFactory.createLocationInfoWithLMSI(networkNodeNumber, lmsi,
+		LocationInfoWithLMSI locationInfoWithLMSI = this.MapParameterFactory.createLocationInfoWithLMSI(networkNodeNumber, lmsi,
 				MAPExtensionContainerTest.GetTestExtensionContainer(), additionalNumberType, additionalNumber);
 
 
-		ISDNAddressString storedMSISDN = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
-		MWStatus mwStatus = this.mapServiceFactory.createMWStatus(false, true, false, true);
+		ISDNAddressString storedMSISDN = this.MapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+		MWStatus mwStatus = this.MapParameterFactory.createMWStatus(false, true, false, true);
 		Integer absentSubscriberDiagnosticSM = 555;
 		Integer additionalAbsentSubscriberDiagnosticSM = 444;
 		
@@ -901,7 +901,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 		this._S_recievedSmsRequestIndication = true;
 		
-		ISDNAddressString storedMSISDN = this.mapServiceFactory.createISDNAddressString(AddressNature.network_specific_number, NumberingPlan.national,
+		ISDNAddressString storedMSISDN = this.MapParameterFactory.createISDNAddressString(AddressNature.network_specific_number, NumberingPlan.national,
 				"111000111");
 
 		try {

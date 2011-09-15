@@ -29,8 +29,8 @@ import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
+import org.mobicents.protocols.ss7.map.MapParameterFactoryImpl;
+import org.mobicents.protocols.ss7.map.api.MapParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
@@ -43,7 +43,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.AdditionalNumber;
  * 
  */
 public class AdditionalNumberTest {
-	MapServiceFactory mapServiceFactory = null;
+	MapParameterFactory MapParameterFactory = null;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -55,7 +55,7 @@ public class AdditionalNumberTest {
 
 	@BeforeTest
 	public void setUp() {
-		mapServiceFactory = new MapServiceFactoryImpl();
+		MapParameterFactory = new MapParameterFactoryImpl();
 	}
 
 	@AfterTest
@@ -83,7 +83,7 @@ public class AdditionalNumberTest {
 	public void testEncode() throws Exception {
 		byte[] data = new byte[] { (byte) 0x80, 0x05, (byte)0x91, (byte) 0x55, 0x16, 0x09, 0x70 };
 		
-		ISDNAddressString isdnAdd = mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "55619007");
+		ISDNAddressString isdnAdd = MapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "55619007");
 		AdditionalNumber addNum = new AdditionalNumberImpl(isdnAdd, null);
 		
 		AsnOutputStream asnOS = new AsnOutputStream();

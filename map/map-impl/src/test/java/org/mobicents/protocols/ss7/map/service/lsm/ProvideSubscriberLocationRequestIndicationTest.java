@@ -28,8 +28,8 @@ import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
+import org.mobicents.protocols.ss7.map.MapParameterFactoryImpl;
+import org.mobicents.protocols.ss7.map.api.MapParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -53,7 +53,7 @@ import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
  */
 public class ProvideSubscriberLocationRequestIndicationTest {
 
-	MapServiceFactory mapServiceFactory = new MapServiceFactoryImpl();
+	MapParameterFactory MapParameterFactory = new MapParameterFactoryImpl();
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -144,13 +144,13 @@ public class ProvideSubscriberLocationRequestIndicationTest {
 		LocationType locationType = new LocationTypeImpl(LocationEstimateType.currentLocation, null);
 		ISDNAddressString mlcNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "55619007");
 
-		USSDString nameString = mapServiceFactory.createUSSDString("ndmgapp2ndmgapp2");
+		USSDString nameString = MapParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
 		LCSClientName lcsClientName = new LCSClientNameImpl((byte) 0x0f, nameString, null);
 
 		LCSClientID lcsClientID = new LCSClientIDImpl(LCSClientType.plmnOperatorServices, null, LCSClientInternalID.broadcastService, lcsClientName, null,
 				null, null);
 
-		IMSI imsi = mapServiceFactory.createIMSI(724l, 99l, "9900000007");
+		IMSI imsi = MapParameterFactory.createIMSI(724l, 99l, "9900000007");
 
 		LCSQoS lcsQoS = new LCSQoSImpl(null, null, null, new ResponseTimeImpl(ResponseTimeCategory.lowdelay), null);
 

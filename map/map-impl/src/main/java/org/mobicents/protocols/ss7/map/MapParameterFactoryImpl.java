@@ -25,7 +25,7 @@ package org.mobicents.protocols.ss7.map;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
+import org.mobicents.protocols.ss7.map.api.MapParameterFactory;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
@@ -83,7 +83,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
  * @author amit bhayani
  * 
  */
-public class MapServiceFactoryImpl implements MapServiceFactory {
+public class MapParameterFactoryImpl implements MapParameterFactory {
 
 	public ProcessUnstructuredSSRequestIndication createProcessUnstructuredSSRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
 			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString) {
@@ -110,7 +110,7 @@ public class MapServiceFactoryImpl implements MapServiceFactory {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.MapServiceFactory#createUnstructuredSSNotifyRequestIndication(byte, org.mobicents.protocols.ss7.map.api.primitives.USSDString, org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern, org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString)
+	 * @see org.mobicents.protocols.ss7.map.api.MapParameterFactory#createUnstructuredSSNotifyRequestIndication(byte, org.mobicents.protocols.ss7.map.api.primitives.USSDString, org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern, org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString)
 	 */
 	@Override
 	public UnstructuredSSNotifyRequestIndication createUnstructuredSSNotifyRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
@@ -120,7 +120,7 @@ public class MapServiceFactoryImpl implements MapServiceFactory {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.MapServiceFactory#createUnstructuredSSNotifyResponseIndication()
+	 * @see org.mobicents.protocols.ss7.map.api.MapParameterFactory#createUnstructuredSSNotifyResponseIndication()
 	 */
 	@Override
 	public UnstructuredSSNotifyResponseIndication createUnstructuredSSNotifyResponseIndication() {

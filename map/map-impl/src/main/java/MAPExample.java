@@ -32,7 +32,7 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
-import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
+import org.mobicents.protocols.ss7.map.api.MapParameterFactory;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
@@ -64,7 +64,7 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	private MAPStack mapStack;
 	private MAPProvider mapProvider;
 
-	MapServiceFactory servFact;
+	MapParameterFactory servFact;
 
 	SccpAddress destAddress = null;
 
@@ -84,7 +84,7 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 
 		mapStack = new MAPStackImpl(sccpPprovider, 8);
 		mapProvider = mapStack.getMAPProvider();
-		servFact = mapProvider.getMapServiceFactory();
+		servFact = mapProvider.getMapParameterFactory();
 
 		mapProvider.addMAPDialogListener(this);
 		mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);

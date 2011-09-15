@@ -61,7 +61,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
  * @author sergey vetyutnev
  * 
  */
-public interface MapServiceFactory {
+public interface MapParameterFactory {
 
 	public ProcessUnstructuredSSRequestIndication createProcessUnstructuredSSRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
 			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString);

@@ -255,11 +255,6 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		}
 	}
 
-	@Override
-	public Boolean checkInvokeTimeOut(MAPDialog dialog, Invoke invoke) {
-		return false;
-	}
-
 	private void forwardShortMessageRequest(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		
 		if (parameter == null)

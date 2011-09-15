@@ -263,18 +263,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.MAPServiceBase#checkInvokeTimeOut
-	 * (org.mobicents.protocols.ss7.map.api.MAPDialog,
-	 * org.mobicents.protocols.ss7.tcap.asn.comp.Invoke)
-	 */
-	@Override
-	public Boolean checkInvokeTimeOut(MAPDialog dialog, Invoke invoke) {
-		return false;
-	}
+	
 
 	/*
 	 * (non-Javadoc)

@@ -29,8 +29,8 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
+import org.mobicents.protocols.ss7.map.MapParameterFactoryImpl;
+import org.mobicents.protocols.ss7.map.api.MapParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSRequestorID;
 
@@ -42,7 +42,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.LCSRequestorID;
  */
 public class LCSRequestorIDTest {
 
-	MapServiceFactory mapServiceFactory = new MapServiceFactoryImpl();
+	MapParameterFactory MapParameterFactory = new MapParameterFactoryImpl();
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -83,7 +83,7 @@ public class LCSRequestorIDTest {
 		byte[] data = new byte[] { (byte) 0xb0, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x81, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3,
 				0x65, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
 
-		USSDString nameString = mapServiceFactory.createUSSDString("ndmgapp2ndmgapp2");
+		USSDString nameString = MapParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
 		LCSRequestorIDImpl lcsRequestorID = new LCSRequestorIDImpl((byte) 0x0f, nameString, null);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		lcsRequestorID.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, Tag.SEQUENCE);

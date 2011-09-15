@@ -31,8 +31,8 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.MapServiceFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MapServiceFactory;
+import org.mobicents.protocols.ss7.map.MapParameterFactoryImpl;
+import org.mobicents.protocols.ss7.map.api.MapParameterFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.Area;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaDefinition;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaList;
@@ -43,7 +43,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.AreaType;
  * 
  */
 public class AreaDefinitionTest {
-	MapServiceFactory mapServiceFactory = new MapServiceFactoryImpl();
+	MapParameterFactory MapParameterFactory = new MapParameterFactoryImpl();
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {

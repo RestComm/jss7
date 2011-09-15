@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
@@ -37,7 +38,10 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSuppl
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
 /**
@@ -85,6 +89,10 @@ public abstract class MAPServiceBaseImpl implements MAPServiceBase {
 		}
 	}
 
+	
+	public abstract void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)
+	throws MAPParsingComponentException;
+	
 	/**
 	 * Adding MAP Dialog into MAPProviderImpl.dialogs Used when creating a new
 	 * outgoing MAP Dialog
@@ -102,20 +110,42 @@ public abstract class MAPServiceBaseImpl implements MAPServiceBase {
 	protected void removeMAPServiceListener(MAPServiceListener mapServiceListener) {
 		this.serviceListeners.remove(mapServiceListener);
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public MAPApplicationContext getMAPv1ApplicationContext(int operationCode, Invoke invoke) {
 		return null;
 	}
-
-	public Boolean isActivated() {
+	
+	/**
+	 * This method is invoked when MAPProviderImpl.onInvokeTimeOut() is invoked.
+	 * An InvokeTimeOut may be a normal situation for the component class 2, 3,
+	 * or 4. In this case checkInvokeTimeOut() should return true and deliver to
+	 * the MAP-user correct indication
+	 * 
+	 * @param dialog
+	 * @param invoke
+	 * @return
+	 */
+	public boolean checkInvokeTimeOut(MAPDialog dialog, Invoke invoke) {
+		return false;
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isActivated() {
 		return this._isActivated;
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	public void acivate() {
 		this._isActivated = true;
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	public void deactivate() {
 		this._isActivated = false;
 

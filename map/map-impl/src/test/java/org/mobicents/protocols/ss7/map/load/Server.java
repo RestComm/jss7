@@ -308,14 +308,14 @@ public class Server extends TestHarness {
 		try {
 			long invokeId = procUnstrReqInd.getInvokeId();
 
-			USSDString ussdStrObj = this.mapProvider.getMapServiceFactory().createUSSDString(
+			USSDString ussdStrObj = this.mapProvider.getMapParameterFactory().createUSSDString(
 					"USSD String : Hello World <CR> 1. Balance <CR> 2. Texts Remaining");
 			byte ussdDataCodingScheme = (byte) 0x0F;
 			MAPDialogSupplementary dialog = procUnstrReqInd.getMAPDialog();
 
 			dialog.setUserObject(invokeId);
 
-			ISDNAddressString msisdn = this.mapProvider.getMapServiceFactory().createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN,
+			ISDNAddressString msisdn = this.mapProvider.getMapParameterFactory().createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN,
 					"31628838002");
 
 			dialog.addUnstructuredSSRequest(ussdDataCodingScheme, ussdStrObj, null, msisdn);
@@ -372,11 +372,11 @@ public class Server extends TestHarness {
 			logger.debug(String.format("onUnstructuredSSResponseIndication for DialogId=%d", unstrResInd.getMAPDialog().getDialogId()));
 		}
 		try {
-			USSDString ussdStrObj = this.mapProvider.getMapServiceFactory().createUSSDString("Your balance is 500");
+			USSDString ussdStrObj = this.mapProvider.getMapParameterFactory().createUSSDString("Your balance is 500");
 			byte ussdDataCodingScheme = (byte) 0x0F;
 			MAPDialogSupplementary dialog = unstrResInd.getMAPDialog();
 
-			AddressString msisdn = this.mapProvider.getMapServiceFactory().createAddressString(AddressNature.international_number, NumberingPlan.ISDN,
+			AddressString msisdn = this.mapProvider.getMapParameterFactory().createAddressString(AddressNature.international_number, NumberingPlan.ISDN,
 					"31628838002");
 
 			dialog.addProcessUnstructuredSSResponse(((Long) dialog.getUserObject()).longValue(), ussdDataCodingScheme, ussdStrObj);

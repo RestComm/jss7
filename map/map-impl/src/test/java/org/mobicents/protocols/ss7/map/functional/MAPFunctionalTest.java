@@ -371,7 +371,7 @@ public class MAPFunctionalTest extends SccpHarness {
 	@Test(groups = { "functional.flow","dialog"})
 	public void testA() throws Exception {
 
-//		MapServiceFactory msf = this.stack1.getMAPProvider().getMapServiceFactory();
+//		MapParameterFactory msf = this.stack1.getMAPProvider().getMapParameterFactory();
 //		IMEI a1 = msf.createIMEI("12345678901234");
 //
 //		AsnOutputStream aos = new AsnOutputStream();
@@ -385,7 +385,7 @@ public class MAPFunctionalTest extends SccpHarness {
 //		 int fff=0;
 //		 fff++;
 		
-//		MapServiceFactory msf = this.stack1.getMAPProvider().getMapServiceFactory();
+//		MapParameterFactory msf = this.stack1.getMAPProvider().getMapParameterFactory();
 //
 //		ISDNAddressString n1 = msf.createISDNAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "98765");
 //		LMSI n2 = msf.createLMSI(new byte[] { 21, 22, 23, 24 });
@@ -406,7 +406,7 @@ public class MAPFunctionalTest extends SccpHarness {
 //		fff++;
 		
 		
-//		MapServiceFactory msf = this.stack1.getMAPProvider().getMapServiceFactory();
+//		MapParameterFactory msf = this.stack1.getMAPProvider().getMapParameterFactory();
 //		MAPOpenInfoImpl a1 = new MAPOpenInfoImpl();
 //		a1.setExtensionContainer(MAPFunctionalTest.GetTestExtensionContainer(msf));
 //		AddressString n1 = msf.createAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "1234567"); 		
@@ -429,7 +429,7 @@ public class MAPFunctionalTest extends SccpHarness {
 //		fff++;
 
 		
-//		MapServiceFactory msf = this.stack1.getMAPProvider().getMapServiceFactory();
+//		MapParameterFactory msf = this.stack1.getMAPProvider().getMapParameterFactory();
 //		ISDNAddressString a1 = msf.createISDNAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "98765");
 //
 //		AsnOutputStream aos = new AsnOutputStream();
@@ -444,7 +444,7 @@ public class MAPFunctionalTest extends SccpHarness {
 //		fff++;
 
 		
-//		MapServiceFactory msf = this.stack1.getMAPProvider().getMapServiceFactory();
+//		MapParameterFactory msf = this.stack1.getMAPProvider().getMapParameterFactory();
 //		
 ////		AddressString asx = msf.createAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "98765");
 ////		SM_RP_DAImpl sm = (SM_RP_DAImpl)msf.createSM_RP_DA(asx);

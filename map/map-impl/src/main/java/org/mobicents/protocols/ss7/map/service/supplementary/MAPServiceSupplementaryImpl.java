@@ -165,10 +165,6 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		}
 	}
 
-	public Boolean checkInvokeTimeOut(MAPDialog dialog, Invoke invoke) {
-		return false;
-	}
-
 	private void unstructuredSSNotifyRequest(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding unstructuredSSNotifyIndication: Parameter is mandatory but not found",
