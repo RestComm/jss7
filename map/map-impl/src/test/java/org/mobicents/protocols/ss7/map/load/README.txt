@@ -6,3 +6,4 @@ To run test follow the steps
 4) Start client by calling "ant client"
 
 Note : The build depends on environment variable M2_HOME which points to your .m2/repository. Please make sure you set this before executing test
+For example for me in linux it points to /home/abhayani/.m2/repository
