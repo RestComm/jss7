@@ -18,9 +18,11 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<!-- different junit version... -->
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<scope>provided</scope>
+			<version>4.1</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
