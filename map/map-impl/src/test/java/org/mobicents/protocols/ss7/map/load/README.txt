@@ -4,3 +4,5 @@ To run test follow the steps
 2) Clean the previous execution logs by calling "ant clean"
 3) Start server by calling "ant server"
 4) Start client by calling "ant client"
+
+Note : The build depends on environment variable M2_HOME which points to your .m2/repository. Please make sure you set this before executing test
