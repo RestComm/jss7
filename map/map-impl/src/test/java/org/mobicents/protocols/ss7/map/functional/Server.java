@@ -177,6 +177,8 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		case Action_Sms_MtForwardSM:
 		case Action_Sms_SendRoutingInfoForSM:
 		case Action_Sms_ReportSMDeliveryStatus:
+		case Action_TestMsgLength_A:
+		case Action_TestMsgLength_B:
 			return _S_recievedSmsRequestIndication && _S_recievedMAPOpenInfo;
 
 		case Action_Component_A:
@@ -251,6 +253,8 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		case Action_Sms_MtForwardSM:
 		case Action_Sms_SendRoutingInfoForSM:
 		case Action_Sms_ReportSMDeliveryStatus:
+		case Action_TestMsgLength_A:
+		case Action_TestMsgLength_B:
 			status += "_S_recievedMAPOpenInfo[" + _S_recievedMAPOpenInfo + "]"
 			+ "\n";
 			status += "_S_recievedSmsRequestIndication[" + _S_recievedSmsRequestIndication + "]"
@@ -466,6 +470,8 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		case Action_Sms_MtForwardSM:
 		case Action_Sms_SendRoutingInfoForSM:
 		case Action_Sms_ReportSMDeliveryStatus:
+		case Action_TestMsgLength_A:
+		case Action_TestMsgLength_B:
 		case Action_V1_A:
 		case Action_V1_B:
 		case Action_V1_E:

@@ -428,8 +428,8 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
 		MAPApplicationContext appCnt = null;
 		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.shortMsgMORelayContext, MAPApplicationContextVersion.version3);
-		AddressString orgiReference = this.mapServiceFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628968300");
-		AddressString destReference = this.mapServiceFactory.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile,
+		AddressString orgiReference = this.MapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628968300");
+		AddressString destReference = this.MapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile,
 				"204208300008002");
 
 		clientDialogSms = this.mapProvider.getMAPServiceSms().createNewDialog(appCnt, this.thisAddress, orgiReference, this.remoteAddress, destReference);
@@ -444,11 +444,11 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 			Arrays.fill(sm_RP_UI, (byte) 22);
 		}
 		
-		IMSI imsi1 = this.mapServiceFactory.createIMSI(250L, 99L, "1357999");
-		SM_RP_DA sm_RP_DA = this.mapServiceFactory.createSM_RP_DA(imsi1);
-		ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
-		SM_RP_OA sm_RP_OA = this.mapServiceFactory.createSM_RP_OA_Msisdn(msisdn1);
-		IMSI imsi2 = this.mapServiceFactory.createIMSI(250L, 07L, "123456789");
+		IMSI imsi1 = this.MapParameterFactory.createIMSI(250L, 99L, "1357999");
+		SM_RP_DA sm_RP_DA = this.MapParameterFactory.createSM_RP_DA(imsi1);
+		ISDNAddressString msisdn1 = this.MapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+		SM_RP_OA sm_RP_OA = this.MapParameterFactory.createSM_RP_OA_Msisdn(msisdn1);
+		IMSI imsi2 = this.MapParameterFactory.createIMSI(250L, 07L, "123456789");
 
 		Long invokeId = clientDialogSms.addMoForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, null, imsi2);
 		
@@ -483,6 +483,8 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		case Action_Sms_MoForwardSM:
 		case Action_Sms_MtForwardSM:
 		case Action_Sms_ReportSMDeliveryStatus:
+		case Action_TestMsgLength_A:
+		case Action_TestMsgLength_B:
 			return _S_recievedSmsRespIndication && _S_receivedEndInfo;
 		case Action_Sms_SendRoutingInfoForSM:
 			return _S_recievedSmsRespIndication && _S_recievedInformSC && _S_receivedEndInfo;
@@ -550,6 +552,8 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		case Action_Sms_MoForwardSM:
 		case Action_Sms_MtForwardSM:
 		case Action_Sms_ReportSMDeliveryStatus:
+		case Action_TestMsgLength_A:
+		case Action_TestMsgLength_B:
 			status += "_S_recievedSmsRespIndication[" + _S_recievedSmsRespIndication + "]" + "\n";
 			status += "_S_receivedEndInfo[" + _S_receivedEndInfo + "]" + "\n";
 			break;
@@ -680,12 +684,12 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 						Arrays.fill(sm_RP_UI, (byte) 22);
 					}
 
-					IMSI imsi1 = this.mapServiceFactory.createIMSI(250L, 99L, "1357999");
-					SM_RP_DA sm_RP_DA = this.mapServiceFactory.createSM_RP_DA(imsi1);
-					ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN,
+					IMSI imsi1 = this.MapParameterFactory.createIMSI(250L, 99L, "1357999");
+					SM_RP_DA sm_RP_DA = this.MapParameterFactory.createSM_RP_DA(imsi1);
+					ISDNAddressString msisdn1 = this.MapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN,
 							"111222333");
-					SM_RP_OA sm_RP_OA = this.mapServiceFactory.createSM_RP_OA_Msisdn(msisdn1);
-					IMSI imsi2 = this.mapServiceFactory.createIMSI(250L, 07L, "123456789");
+					SM_RP_OA sm_RP_OA = this.MapParameterFactory.createSM_RP_OA_Msisdn(msisdn1);
+					IMSI imsi2 = this.MapParameterFactory.createIMSI(250L, 07L, "123456789");
 
 					Long invokeId = clientDialogSms.addMoForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, null, imsi2);
 
@@ -738,6 +742,8 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		case Action_Sms_SendRoutingInfoForSM:
 		case Action_Sms_ReportSMDeliveryStatus:
 		case Action_Sms_ForwardSM:
+		case Action_TestMsgLength_A:
+		case Action_TestMsgLength_B:
 		case Action_V1_A:
 		case Action_Component_A:
 		case Action_Component_B:

@@ -371,8 +371,17 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	@Test(groups = { "functional.flow","dialog"})
 	public void testMsgLength() throws Exception {
-
-		this.saveTrafficInFile();
+		
+//		this.saveTrafficInFile();
+		
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_TestMsgLength_A);
+		client.setStep(FunctionalTestScenario.Action_TestMsgLength_A);
+		client.actionE();
+		waitForEnd();
+		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
 		
 		server.reset();
 		client.reset();
@@ -536,10 +545,10 @@ public class MAPFunctionalTest extends SccpHarness {
 
 				Thread.currentThread().sleep(100);
 
-//				if (new Date().getTime() - startTime.getTime() > _WAIT_TIMEOUT)
-//					break;
+				if (new Date().getTime() - startTime.getTime() > _WAIT_TIMEOUT)
+					break;
 
-				 Thread.currentThread().sleep(1000000);
+//				 Thread.currentThread().sleep(1000000);
 			}
 		} catch (InterruptedException e) {
 			fail("Interrupted on wait!");
