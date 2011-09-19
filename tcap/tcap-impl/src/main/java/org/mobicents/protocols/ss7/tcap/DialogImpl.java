@@ -58,6 +58,7 @@ import org.mobicents.protocols.ss7.tcap.asn.DialogResponseAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.DialogServiceUserType;
 import org.mobicents.protocols.ss7.tcap.asn.DialogUniAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
+import org.mobicents.protocols.ss7.tcap.asn.ParseException;
 import org.mobicents.protocols.ss7.tcap.asn.Result;
 import org.mobicents.protocols.ss7.tcap.asn.ResultSourceDiagnostic;
 import org.mobicents.protocols.ss7.tcap.asn.ResultType;
@@ -144,7 +145,7 @@ public class DialogImpl implements Dialog {
 	private int seqControl;
 
 	// If the Dialogue Portion is sent in TCBegin message, the first received
-	// Continue message should have the Dialogue Portio too
+	// Continue message should have the Dialogue Portion too
 	private boolean dpSentInBegin = false;
 
 	private static final int getIndexFromInvokeId(Long l) {
@@ -846,7 +847,212 @@ public class DialogImpl implements Dialog {
 		}
 
 	}
+	
+	@Override
+	public int getMaxUserDataLength() {
+		
+		// TODO: Implement getting data from SCCP level using:
+		// int getMaxUserDataLength(SccpAddress localAddress, SccpAddress remoteAddress);
 
+		// now we use 272 SIF length limit
+		// maximum size = 248 (recommended), if GlobalTitle is present
+		// maximum size can be 255, if no GlobalTitle is present in both localAddress & remoteAddress
+		// maximum size by ANSI = 252
+		
+//		if (this.localAddress.getGlobalTitle() == null || this.remoteAddress.getGlobalTitle() == null)
+//			return 255;
+		
+		return 248;
+	}	
+
+	@Override
+	public int getDataLength(TCBeginRequest event) throws TCAPSendException {
+		
+		TCBeginMessageImpl tcbm = (TCBeginMessageImpl) TcapFactory.createTCBeginMessage();
+
+		if (event.getApplicationContextName() != null) {
+			DialogPortion dp = TcapFactory.createDialogPortion();
+			dp.setUnidirectional(false);
+			DialogRequestAPDU apdu = TcapFactory.createDialogAPDURequest();
+			dp.setDialogAPDU(apdu);
+			apdu.setApplicationContextName(event.getApplicationContextName());
+			if (event.getUserInformation() != null) {
+				apdu.setUserInformation(event.getUserInformation());
+			}
+			tcbm.setDialogPortion(dp);
+		}
+
+		// now comps
+		tcbm.setOriginatingTransactionId(this.localTransactionId);
+		if (this.scheduledComponentList.size() > 0) {
+			Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
+			for (int index = 0; index < this.scheduledComponentList.size(); index++) {
+				componentsToSend[index] = this.scheduledComponentList.get(index);
+			}
+			tcbm.setComponent(componentsToSend);
+		}
+
+		AsnOutputStream aos = new AsnOutputStream();
+		try {
+			tcbm.encode(aos);
+		} catch (ParseException e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Failed to encode message while length testing: ", e);
+			}
+			throw new TCAPSendException("Error encoding TCBeginRequest", e);
+		}
+		return aos.size();
+	}
+
+	@Override
+	public int getDataLength(TCContinueRequest event) throws TCAPSendException {
+
+		TCContinueMessageImpl tcbm = (TCContinueMessageImpl) TcapFactory.createTCContinueMessage();
+
+		if (event.getApplicationContextName() != null) {
+
+			// set dialog portion
+			DialogPortion dp = TcapFactory.createDialogPortion();
+			dp.setUnidirectional(false);
+			DialogResponseAPDU apdu = TcapFactory.createDialogAPDUResponse();
+			dp.setDialogAPDU(apdu);
+			apdu.setApplicationContextName(event.getApplicationContextName());
+			if (event.getUserInformation() != null) {
+				apdu.setUserInformation(event.getUserInformation());
+			}
+			// WHERE THE HELL THIS COMES FROM!!!!
+			// WHEN REJECTED IS USED !!!!!
+			Result res = TcapFactory.createResult();
+			res.setResultType(ResultType.Accepted);
+			ResultSourceDiagnostic rsd = TcapFactory.createResultSourceDiagnostic();
+			rsd.setDialogServiceUserType(DialogServiceUserType.Null);
+			apdu.setResultSourceDiagnostic(rsd);
+			apdu.setResult(res);
+			tcbm.setDialogPortion(dp);
+
+		}
+
+		tcbm.setOriginatingTransactionId(this.localTransactionId);
+		tcbm.setDestinationTransactionId(this.remoteTransactionId);
+		if (this.scheduledComponentList.size() > 0) {
+			Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
+			for (int index = 0; index < this.scheduledComponentList.size(); index++) {
+				componentsToSend[index] = this.scheduledComponentList.get(index);
+			}
+			tcbm.setComponent(componentsToSend);
+		}
+
+		AsnOutputStream aos = new AsnOutputStream();
+		try {
+			tcbm.encode(aos);
+		} catch (Exception e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Failed to encode message while length testing: ", e);
+			}
+			throw new TCAPSendException("Error encoding TCContinueRequest", e);
+		}
+		
+		return aos.size();
+	}
+
+	@Override
+	public int getDataLength(TCEndRequest event) throws TCAPSendException {
+
+		// TC-END request primitive issued in response to a TC-BEGIN
+		// indication primitive
+		TCEndMessageImpl tcbm = (TCEndMessageImpl) TcapFactory.createTCEndMessage();
+		tcbm.setDestinationTransactionId(this.remoteTransactionId);
+
+		if (event.getTerminationType() == TerminationType.Basic) {
+			if (this.scheduledComponentList.size() > 0) {
+				Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
+				for (int index = 0; index < this.scheduledComponentList.size(); index++) {
+					componentsToSend[index] = this.scheduledComponentList.get(index);
+				}
+				tcbm.setComponent(componentsToSend);
+			}
+		}
+
+		if (state == TRPseudoState.InitialReceived) {
+			ApplicationContextName acn = event.getApplicationContextName();
+			if (acn != null) { // acn & DialogPortion is absent in TCAP V1
+
+				// set dialog portion
+				DialogPortion dp = TcapFactory.createDialogPortion();
+				dp.setUnidirectional(false);
+				DialogResponseAPDU apdu = TcapFactory.createDialogAPDUResponse();
+				dp.setDialogAPDU(apdu);
+
+				apdu.setApplicationContextName(event.getApplicationContextName());
+				if (event.getUserInformation() != null) {
+					apdu.setUserInformation(event.getUserInformation());
+				}
+
+				// WHERE THE HELL THIS COMES FROM!!!!
+				// WHEN REJECTED IS USED !!!!!
+				Result res = TcapFactory.createResult();
+				res.setResultType(ResultType.Accepted);
+				ResultSourceDiagnostic rsd = TcapFactory.createResultSourceDiagnostic();
+				rsd.setDialogServiceUserType(DialogServiceUserType.Null);
+				apdu.setResultSourceDiagnostic(rsd);
+				apdu.setResult(res);
+				tcbm.setDialogPortion(dp);
+			}
+		}
+
+		AsnOutputStream aos = new AsnOutputStream();
+		try {
+			tcbm.encode(aos);
+		} catch (Exception e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Failed to encode message while length testing: ", e);
+			}
+			throw new TCAPSendException("Error encoding TCEndRequest", e);
+		}
+		
+		return aos.size();
+	}
+
+	@Override
+	public int getDataLength(TCUniRequest event) throws TCAPSendException {
+
+		TCUniMessageImpl msg = (TCUniMessageImpl) TcapFactory.createTCUniMessage();
+
+		if (event.getApplicationContextName() != null) {
+			DialogPortion dp = TcapFactory.createDialogPortion();
+			DialogUniAPDU apdu = TcapFactory.createDialogAPDUUni();
+			apdu.setApplicationContextName(event.getApplicationContextName());
+			if (event.getUserInformation() != null) {
+				apdu.setUserInformation(event.getUserInformation());
+			}
+			dp.setUnidirectional(true);
+			dp.setDialogAPDU(apdu);
+			msg.setDialogPortion(dp);
+
+		}
+
+		if (this.scheduledComponentList.size() > 0) {
+			Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
+			for (int index = 0; index < this.scheduledComponentList.size(); index++) {
+				componentsToSend[index] = this.scheduledComponentList.get(index);
+			}
+			msg.setComponent(componentsToSend);
+
+		}
+
+		AsnOutputStream aos = new AsnOutputStream();
+		try {
+			msg.encode(aos);
+		} catch (Exception e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Failed to encode message while length testing: ", e);
+			}
+			throw new TCAPSendException("Error encoding TCUniRequest", e);
+		}
+		
+		return aos.size();
+	}
+	
 	// /////////////////
 	// LOCAL METHODS //
 	// /////////////////

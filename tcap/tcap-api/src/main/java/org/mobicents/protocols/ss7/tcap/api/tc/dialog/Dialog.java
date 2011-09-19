@@ -188,4 +188,42 @@ public interface Dialog {
 	 */
 	public TRPseudoState getState();
 
+	/**
+	 * Return the maximum TCAP message length (in bytes) that are allowed for this dialog
+	 * @return
+	 */
+	public int getMaxUserDataLength();
+
+	/**
+	 * Return the TCAP message length (in bytes) that will be after encoding
+	 * This value must not exceed getMaxUserDataLength() value
+	 * @param event
+	 * @return
+	 */
+	public int getDataLength(TCBeginRequest event) throws TCAPSendException;
+
+	/**
+	 * Return the TCAP message length (in bytes) that will be after encoding
+	 * This value must not exceed getMaxUserDataLength() value
+	 * @param event
+	 * @return
+	 */
+	public int getDataLength(TCContinueRequest event) throws TCAPSendException;
+
+	/**
+	 * Return the TCAP message length (in bytes) that will be after encoding
+	 * This value must not exceed getMaxUserDataLength() value
+	 * @param event
+	 * @return
+	 */
+	public int getDataLength(TCEndRequest event) throws TCAPSendException;
+	
+	/**
+	 * Return the TCAP message length (in bytes) that will be after encoding
+	 * This value must not exceed getMaxUserDataLength() value
+	 * @param event
+	 * @return
+	 */
+	public int getDataLength(TCUniRequest event) throws TCAPSendException;
+
 }

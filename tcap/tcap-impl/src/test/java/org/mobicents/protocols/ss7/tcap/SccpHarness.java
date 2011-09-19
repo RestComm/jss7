@@ -199,7 +199,12 @@ public abstract class SccpHarness {
 		
 		public void execute() throws IOException {
 			// We dont use this
-			
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}

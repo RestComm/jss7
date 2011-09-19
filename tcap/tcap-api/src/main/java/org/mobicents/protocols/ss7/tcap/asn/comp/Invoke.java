@@ -80,4 +80,16 @@ public interface Invoke extends Component {
 	public void setParameter(Parameter p);
 
 	public Parameter getParameter();
+	
+	/**
+	 * @return the current invokeTimeout value
+	 */
+	public long getTimeout();
+	
+	/**
+	 * Setting the Invoke timeout in milliseconds
+	 * Must be invoked before sendComponent() invoking
+	 * @param invokeTimeout
+	 */
+	public void setTimeout(long invokeTimeout);
 }
