@@ -1415,6 +1415,18 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	protected void fireTCBegin(Dialog tcapDialog, ApplicationContextName acn, AddressString destReference, AddressString origReference,
 			MAPExtensionContainer mapExtensionContainer) throws MAPException {
 
+		TCBeginRequest tcBeginReq = encodeTCBegin(tcapDialog, acn, destReference, origReference, mapExtensionContainer);
+
+		try {
+			tcapDialog.send(tcBeginReq);
+		} catch (TCAPSendException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+
+	}
+
+	protected TCBeginRequest encodeTCBegin(Dialog tcapDialog, ApplicationContextName acn, AddressString destReference, AddressString origReference,
+			MAPExtensionContainer mapExtensionContainer) throws MAPException {
 		TCBeginRequest tcBeginReq = this.getTCAPProvider().getDialogPrimitiveFactory().createBegin(tcapDialog);
 
 		// we do not set ApplicationContextName if MAP Version 1
@@ -1440,18 +1452,23 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 			tcBeginReq.setUserInformation(userInformation);
 		}
-
-		try {
-			tcapDialog.send(tcBeginReq);
-		} catch (TCAPSendException e) {
-			throw new MAPException(e.getMessage(), e);
-		}
-
+		return tcBeginReq;
 	}
 
 	protected void fireTCContinue(Dialog tcapDialog, Boolean sendMapAcceptInfo, ApplicationContextName acn, MAPExtensionContainer mapExtensionContainer)
 			throws MAPException {
 
+		TCContinueRequest tcContinueReq = encodeTCContinue(tcapDialog, sendMapAcceptInfo, acn, mapExtensionContainer);
+
+		try {
+			tcapDialog.send(tcContinueReq);
+		} catch (TCAPSendException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+	}
+
+	protected TCContinueRequest encodeTCContinue(Dialog tcapDialog, Boolean sendMapAcceptInfo, ApplicationContextName acn,
+			MAPExtensionContainer mapExtensionContainer) throws MAPException {
 		TCContinueRequest tcContinueReq = this.getTCAPProvider().getDialogPrimitiveFactory().createContinue(tcapDialog);
 
 		// we do not set ApplicationContextName if MAP Version 1
@@ -1476,17 +1493,23 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 			tcContinueReq.setUserInformation(userInformation);
 		}
-
-		try {
-			tcapDialog.send(tcContinueReq);
-		} catch (TCAPSendException e) {
-			throw new MAPException(e.getMessage(), e);
-		}
+		return tcContinueReq;
 	}
 
 	protected void fireTCEnd(Dialog tcapDialog, Boolean sendMapCloseInfo, boolean prearrangedEnd, ApplicationContextName acn,
 			MAPExtensionContainer mapExtensionContainer) throws MAPException {
 
+		TCEndRequest endRequest = encodeTCEnd(tcapDialog, sendMapCloseInfo, prearrangedEnd, acn, mapExtensionContainer);
+
+		try {
+			tcapDialog.send(endRequest);
+		} catch (TCAPSendException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+	}
+
+	protected TCEndRequest encodeTCEnd(Dialog tcapDialog, Boolean sendMapCloseInfo, boolean prearrangedEnd, ApplicationContextName acn,
+			MAPExtensionContainer mapExtensionContainer) throws MAPException {
 		TCEndRequest endRequest = this.getTCAPProvider().getDialogPrimitiveFactory().createEnd(tcapDialog);
 
 		if (!prearrangedEnd) {
@@ -1516,12 +1539,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 			endRequest.setUserInformation(userInformation);
 		}
-
-		try {
-			tcapDialog.send(endRequest);
-		} catch (TCAPSendException e) {
-			throw new MAPException(e.getMessage(), e);
-		}
+		return endRequest;
 	}
 
 	/**

@@ -415,6 +415,19 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 				e.printStackTrace();
 			}
 			break;
+			
+		case Action_TestMsgLength_A:
+		case Action_TestMsgLength_B:
+			try {
+				if (!_S_recievedSmsRequestIndication)
+					mapDialog.send();
+				else
+					mapDialog.close(false);
+			} catch (MAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
 		}
 	}
 	
@@ -710,30 +723,60 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	public void onMoForwardShortMessageIndication(MoForwardShortMessageRequestIndication moForwSmInd) {
 
 		MAPDialogSms d = moForwSmInd.getMAPDialog();
-		
+
 		SM_RP_DA sm_RP_DA = moForwSmInd.getSM_RP_DA();
 		SM_RP_OA sm_RP_OA = moForwSmInd.getSM_RP_OA();
 		byte[] sm_RP_UI = moForwSmInd.getSM_RP_UI();
 		MAPExtensionContainer extensionContainer = moForwSmInd.getExtensionContainer();
 		IMSI imsi2 = moForwSmInd.getIMSI();
+		
+		if (this.step == FunctionalTestScenario.Action_TestMsgLength_A || this.step == FunctionalTestScenario.Action_TestMsgLength_B) {
+			Assert.assertNotNull(sm_RP_DA);
+			Assert.assertNotNull(sm_RP_DA.getIMSI());
+			Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMCC()), 250);
+			Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMNC()), 99);
+			Assert.assertEquals(sm_RP_DA.getIMSI().getMSIN(), "1357999");
+			Assert.assertNotNull(sm_RP_OA);
+			Assert.assertNotNull(sm_RP_OA.getMsisdn());
+			Assert.assertEquals(sm_RP_OA.getMsisdn().getAddressNature(), AddressNature.international_number);
+			Assert.assertEquals(sm_RP_OA.getMsisdn().getNumberingPlan(), NumberingPlan.ISDN);
+			Assert.assertEquals(sm_RP_OA.getMsisdn().getAddress(), "111222333");
+			Assert.assertNotNull(sm_RP_UI);
+			byte[] testArr;
+			if (this.step == FunctionalTestScenario.Action_TestMsgLength_A) {
+				testArr = new byte[20];
+				Arrays.fill(testArr, (byte) 11);
+			} else {
+				testArr = new byte[170];
+				Arrays.fill(testArr, (byte) 22);
+			}
+			
+			Assert.assertTrue(Arrays.equals(sm_RP_UI, testArr));
+			Assert.assertNull(extensionContainer);
+			Assert.assertNotNull(imsi2);
+			Assert.assertEquals((long) (imsi2.getMCC()), 250);
+			Assert.assertEquals((long) (imsi2.getMNC()), 7);
+			Assert.assertEquals(imsi2.getMSIN(), "123456789");
 
-		Assert.assertNotNull(sm_RP_DA);
-		Assert.assertNotNull(sm_RP_DA.getIMSI());
-		Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMCC()), 250);
-		Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMNC()), 99);
-		Assert.assertEquals(sm_RP_DA.getIMSI().getMSIN(), "1357999");
-		Assert.assertNotNull(sm_RP_OA);
-		Assert.assertNotNull(sm_RP_OA.getMsisdn());
-		Assert.assertEquals(sm_RP_OA.getMsisdn().getAddressNature(), AddressNature.international_number);
-		Assert.assertEquals(sm_RP_OA.getMsisdn().getNumberingPlan(), NumberingPlan.ISDN);
-		Assert.assertEquals(sm_RP_OA.getMsisdn().getAddress(), "111222333");
-		Assert.assertNotNull(sm_RP_UI);
-		Assert.assertTrue(Arrays.equals(sm_RP_UI, new byte[] { 21, 22, 23, 24, 25 }));
-		Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
-		Assert.assertNotNull(imsi2);
-		Assert.assertEquals((long) (imsi2.getMCC()), 250);
-		Assert.assertEquals((long) (imsi2.getMNC()), 7);
-		Assert.assertEquals(imsi2.getMSIN(), "123456789");
+		} else {
+			Assert.assertNotNull(sm_RP_DA);
+			Assert.assertNotNull(sm_RP_DA.getIMSI());
+			Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMCC()), 250);
+			Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMNC()), 99);
+			Assert.assertEquals(sm_RP_DA.getIMSI().getMSIN(), "1357999");
+			Assert.assertNotNull(sm_RP_OA);
+			Assert.assertNotNull(sm_RP_OA.getMsisdn());
+			Assert.assertEquals(sm_RP_OA.getMsisdn().getAddressNature(), AddressNature.international_number);
+			Assert.assertEquals(sm_RP_OA.getMsisdn().getNumberingPlan(), NumberingPlan.ISDN);
+			Assert.assertEquals(sm_RP_OA.getMsisdn().getAddress(), "111222333");
+			Assert.assertNotNull(sm_RP_UI);
+			Assert.assertTrue(Arrays.equals(sm_RP_UI, new byte[] { 21, 22, 23, 24, 25 }));
+			Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+			Assert.assertNotNull(imsi2);
+			Assert.assertEquals((long) (imsi2.getMCC()), 250);
+			Assert.assertEquals((long) (imsi2.getMNC()), 7);
+			Assert.assertEquals(imsi2.getMSIN(), "123456789");
+		}
 
 		this._S_recievedSmsRequestIndication = true;
 		

@@ -111,6 +111,7 @@ public class MAPFunctionalTest extends SccpHarness {
 		this.stack2.stop();
 		super.tearDown();
 	}
+	
 	private void setupLog4j() {
 
 		InputStream inStreamLog4j = getClass().getResourceAsStream("/log4j.properties");
@@ -369,6 +370,21 @@ public class MAPFunctionalTest extends SccpHarness {
 	}
 
 	@Test(groups = { "functional.flow","dialog"})
+	public void testMsgLength() throws Exception {
+
+		this.saveTrafficInFile();
+		
+		server.reset();
+		client.reset();
+		server.setStep(FunctionalTestScenario.Action_TestMsgLength_B);
+		client.setStep(FunctionalTestScenario.Action_TestMsgLength_B);
+		client.actionE();
+		waitForEnd();
+		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
+		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
+	}
+
+	@Test(groups = { "functional.flow","dialog"})
 	public void testA() throws Exception {
 
 //		MapParameterFactory msf = this.stack1.getMAPProvider().getMapParameterFactory();
@@ -520,10 +536,10 @@ public class MAPFunctionalTest extends SccpHarness {
 
 				Thread.currentThread().sleep(100);
 
-				if (new Date().getTime() - startTime.getTime() > _WAIT_TIMEOUT)
-					break;
+//				if (new Date().getTime() - startTime.getTime() > _WAIT_TIMEOUT)
+//					break;
 
-//				 Thread.currentThread().sleep(1000000);
+				 Thread.currentThread().sleep(1000000);
 			}
 		} catch (InterruptedException e) {
 			fail("Interrupted on wait!");

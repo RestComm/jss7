@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import junit.framework.Assert;
@@ -420,6 +421,44 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 			clientDialogSms.release();
 		}
 	}
+
+	public void actionE() throws Exception {
+
+		this.mapProvider.getMAPServiceSms().acivate();
+
+		MAPApplicationContext appCnt = null;
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.shortMsgMORelayContext, MAPApplicationContextVersion.version3);
+		AddressString orgiReference = this.mapServiceFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628968300");
+		AddressString destReference = this.mapServiceFactory.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile,
+				"204208300008002");
+
+		clientDialogSms = this.mapProvider.getMAPServiceSms().createNewDialog(appCnt, this.thisAddress, orgiReference, this.remoteAddress, destReference);
+		clientDialogSms.setExtentionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+
+		byte[] sm_RP_UI;
+		if (this.step == FunctionalTestScenario.Action_TestMsgLength_A) {
+			sm_RP_UI = new byte[20];
+			Arrays.fill(sm_RP_UI, (byte) 11);
+		} else {
+			sm_RP_UI = new byte[170];
+			Arrays.fill(sm_RP_UI, (byte) 22);
+		}
+		
+		IMSI imsi1 = this.mapServiceFactory.createIMSI(250L, 99L, "1357999");
+		SM_RP_DA sm_RP_DA = this.mapServiceFactory.createSM_RP_DA(imsi1);
+		ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+		SM_RP_OA sm_RP_OA = this.mapServiceFactory.createSM_RP_OA_Msisdn(msisdn1);
+		IMSI imsi2 = this.mapServiceFactory.createIMSI(250L, 07L, "123456789");
+
+		Long invokeId = clientDialogSms.addMoForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, null, imsi2);
+		
+		int maxMsgLen = clientDialogSms.getMaxUserDataLength();
+		int curMsgLen = clientDialogSms.getMessageUserDataLengthOnSend();
+		if (curMsgLen > maxMsgLen)
+			clientDialogSms.cancelInvocation(invokeId);
+
+		clientDialogSms.send();
+	}
 	
 	public boolean isFinished() {
 
@@ -622,6 +661,40 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		case Action_Component_D:
 			try {
 				mapDialog.send();
+			} catch (MAPException e) {
+				logger.error(e);
+				throw new RuntimeException(e);
+			}
+			break;
+			
+		case Action_TestMsgLength_A:
+		case Action_TestMsgLength_B:
+			try {
+				if (!_S_recievedSmsRespIndication) {
+					byte[] sm_RP_UI;
+					if (this.step == FunctionalTestScenario.Action_TestMsgLength_A) {
+						sm_RP_UI = new byte[20];
+						Arrays.fill(sm_RP_UI, (byte) 11);
+					} else {
+						sm_RP_UI = new byte[170];
+						Arrays.fill(sm_RP_UI, (byte) 22);
+					}
+
+					IMSI imsi1 = this.mapServiceFactory.createIMSI(250L, 99L, "1357999");
+					SM_RP_DA sm_RP_DA = this.mapServiceFactory.createSM_RP_DA(imsi1);
+					ISDNAddressString msisdn1 = this.mapServiceFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN,
+							"111222333");
+					SM_RP_OA sm_RP_OA = this.mapServiceFactory.createSM_RP_OA_Msisdn(msisdn1);
+					IMSI imsi2 = this.mapServiceFactory.createIMSI(250L, 07L, "123456789");
+
+					Long invokeId = clientDialogSms.addMoForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, null, imsi2);
+
+					int maxMsgLen = clientDialogSms.getMaxUserDataLength();
+					int curMsgLen = clientDialogSms.getMessageUserDataLengthOnSend();
+					Assert.assertTrue(curMsgLen <= maxMsgLen);
+					
+					mapDialog.send();
+				}
 			} catch (MAPException e) {
 				logger.error(e);
 				throw new RuntimeException(e);

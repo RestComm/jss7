@@ -40,6 +40,9 @@ import org.mobicents.protocols.ss7.map.errors.MAPErrorMessageImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
@@ -413,6 +416,81 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		this.userObject = userObject;
 	}
 
+	@Override
+	public int getMaxUserDataLength() {
+		return this.getTcapDialog().getMaxUserDataLength();
+	}
+	
+	/**
+	 * Return the MAP message length (in bytes) that will be after encoding
+	 * if TC-BEGIN or TC-CONTINUE cases
+	 * This value must not exceed getMaxUserDataLength() value
+	 * @return
+	 */
+	@Override
+	public int getMessageUserDataLengthOnSend() throws MAPException {
+
+		try {
+			switch (this.tcapDialog.getState()) {
+			case Idle:
+				ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+						.createApplicationContextName(this.appCntx.getOID());
+
+				TCBeginRequest tb = this.mapProviderImpl.encodeTCBegin(this.getTcapDialog(), acn, destReference, origReference, this.extContainer);
+				return tcapDialog.getDataLength(tb);
+
+			case Active:
+				// Its Active send TC-CONTINUE
+
+				TCContinueRequest tc = this.mapProviderImpl.encodeTCContinue(this.getTcapDialog(), false, null, null);
+				return tcapDialog.getDataLength(tc);
+
+			case InitialReceived:
+				// Its first Reply to TC-Begin
+
+				ApplicationContextName acn1 = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+						.createApplicationContextName(this.appCntx.getOID());
+
+				tc = this.mapProviderImpl.encodeTCContinue(this.getTcapDialog(), true, acn1, this.extContainer);
+				return tcapDialog.getDataLength(tc);
+			}
+		} catch (TCAPSendException e) {
+			throw new MAPException("TCAPSendException when getMessageUserDataLengthOnSend", e);
+		}
+
+		throw new MAPException("Bad TCAP Dialog state: " + this.tcapDialog.getState());
+	}
+	
+	/**
+	 * Return the MAP message length (in bytes) that will be after encoding
+	 * if TC-END case
+	 * This value must not exceed getMaxUserDataLength() value
+	 * @param prearrangedEnd
+	 * @return
+	 */
+	@Override
+	public int getMessageUserDataLengthOnClose(boolean prearrangedEnd) throws MAPException {
+
+		try {
+			switch (this.tcapDialog.getState()) {
+			case InitialReceived:
+				ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+						.createApplicationContextName(this.appCntx.getOID());
+
+				TCEndRequest te = this.mapProviderImpl.encodeTCEnd(this.getTcapDialog(), true, prearrangedEnd, acn, this.extContainer);
+				return tcapDialog.getDataLength(te);
+
+			case Active:
+				te = this.mapProviderImpl.encodeTCEnd(this.getTcapDialog(), false, prearrangedEnd, null, null);
+				return tcapDialog.getDataLength(te);
+			}
+		} catch (TCAPSendException e) {
+			throw new MAPException("TCAPSendException when getMessageUserDataLengthOnSend", e);
+		}
+
+		throw new MAPException("Bad TCAP Dialog state: " + this.tcapDialog.getState());
+	}
+	
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();

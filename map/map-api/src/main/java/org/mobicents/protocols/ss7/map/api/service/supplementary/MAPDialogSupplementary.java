@@ -54,6 +54,9 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	public Long addProcessUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
 			throws MAPException;
 
+	public Long addProcessUnstructuredSSRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
+			ISDNAddressString msisdn) throws MAPException;
+
 	/**
 	 * Add's a new ProcessUnstructured SS Response as Component.
 	 * 
@@ -87,6 +90,9 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	public Long addUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
 			throws MAPException;
 
+	public Long addUnstructuredSSRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
+			ISDNAddressString msisdn) throws MAPException;
+
 	/**
 	 * Add's a new Unstructured SS Response
 	 * 
@@ -119,5 +125,8 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 */
 	public Long addUnstructuredSSNotifyRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
 			throws MAPException;
+
+	public Long addUnstructuredSSNotifyRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
+			ISDNAddressString msisdn) throws MAPException;
 
 }

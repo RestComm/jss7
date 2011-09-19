@@ -36,8 +36,9 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 
-import org.testng.*;import org.testng.annotations.*;
 import static org.testng.Assert.*;
+
+import org.testng.*;import org.testng.annotations.*;
 
 /**
  * 
@@ -104,7 +105,7 @@ public class ForwardShortMessageRequestIndicationTest {
 		assertTrue(ind.getMoreMessagesToSend());
 	}
 
-	@Test(groups = { "functional.encode","service.sms"})
+	@Test(groups = { "functional.decode","service.sms"})
 	public void testEncode() throws Exception {
 
 		AddressString sca = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "223334990223");

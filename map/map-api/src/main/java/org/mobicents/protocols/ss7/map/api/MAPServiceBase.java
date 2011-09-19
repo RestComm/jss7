@@ -104,17 +104,6 @@ public interface MAPServiceBase {
 //	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)
 //			throws MAPParsingComponentException;
 
-//	/**
-//	 * This method is invoked when MAPProviderImpl.onInvokeTimeOut() is invoked.
-//	 * An InvokeTimeOut may be a normal situation for the component class 2, 3,
-//	 * or 4. In this case checkInvokeTimeOut() should return true and deliver to
-//	 * the MAP-user correct indication
-//	 * 
-//	 * @param dialog
-//	 * @param invoke
-//	 * @return
-//	 */
-//	public boolean checkInvokeTimeOut(MAPDialog dialog, Invoke invoke);
 
 	public boolean isActivated();
 

@@ -59,8 +59,18 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
 	public Long addProcessUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
 			throws MAPException {
+		return this.addProcessUnstructuredSSRequest(_Timer_Default, ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
+	}
+
+	@Override
+	public Long addProcessUnstructuredSSRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
+			ISDNAddressString msisdn) throws MAPException {
 
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		if (customInvokeTimeout == _Timer_Default)
+			invoke.setTimeout(600000); // 10 minutes
+		else
+			invoke.setTimeout(customInvokeTimeout);
 
 		// Operation Code
 		OperationCode oc = TcapFactory.createOperationCode();
@@ -119,8 +129,18 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
 	public Long addUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
 			throws MAPException {
+		return this.addUnstructuredSSRequest(_Timer_Default, ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
+	}
+
+	@Override
+	public Long addUnstructuredSSRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
+			ISDNAddressString msisdn) throws MAPException {
 
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		if (customInvokeTimeout == _Timer_Default)
+			invoke.setTimeout(_Timer_ml);
+		else
+			invoke.setTimeout(customInvokeTimeout);
 
 		// Operation Code
 		OperationCode oc = TcapFactory.createOperationCode();
@@ -150,11 +170,21 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
 		return invokeId;
 	}
-
+	
 	public Long addUnstructuredSSNotifyRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
 			throws MAPException {
+		return this.addUnstructuredSSNotifyRequest(_Timer_Default, ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
+	}
+
+	@Override
+	public Long addUnstructuredSSNotifyRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
+			ISDNAddressString msisdn) throws MAPException {
 
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		if (customInvokeTimeout == _Timer_Default)
+			invoke.setTimeout(_Timer_ml);
+		else
+			invoke.setTimeout(customInvokeTimeout);
 
 		// Operation Code
 		OperationCode oc = TcapFactory.createOperationCode();

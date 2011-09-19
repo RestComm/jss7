@@ -263,8 +263,6 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 		}
 	}
 
-	
-
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -145,8 +145,17 @@ public enum FunctionalTestScenario {
 	/**
 	 * TC-BEGIN+INVOKE(opCode=46) -> TC-CONTINUE(empty) -> TC-ABORT(UserReason) (->Abort V1)
 	 */
-	Action_V1_E(45);
+	Action_V1_E(45),
 
+	/**
+	 * TC-BEGIN+MtForward(Short SMS) -> TC-END+MtForward(Response)
+	 */
+	Action_TestMsgLength_A(51),
+	/**
+	 * TC-BEGIN -> TC-CONTINUE -> TC-CONTINUE+MtForward(Long SMS) -> TC-END+MtForward(Response)
+	 */
+	Action_TestMsgLength_B(52);
+	
 	
 	private int code;
 

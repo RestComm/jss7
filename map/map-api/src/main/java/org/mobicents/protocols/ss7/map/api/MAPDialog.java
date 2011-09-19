@@ -38,6 +38,13 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
  * 
  */
 public interface MAPDialog {
+	
+	public static int _Timer_s = 10000;
+	public static int _Timer_m = 30000;
+	public static int _Timer_ml = 600000;
+	public static int _Timer_l = 136800000;
+	
+	public static int _Timer_Default = -1;
 
 	/**
 	 * Remove MAPDialog without sending any messages and invoking events
@@ -189,4 +196,27 @@ public interface MAPDialog {
 	public void setUserObject(Object userObject);
 	
 	public MAPApplicationContext getApplicationContext();
+	
+	/**
+	 * Return the maximum MAP message length (in bytes) that are allowed for this dialog
+	 * @return
+	 */
+	public int getMaxUserDataLength();
+	
+	/**
+	 * Return the MAP message length (in bytes) that will be after encoding
+	 * if TC-BEGIN or TC-CONTINUE cases
+	 * This value must not exceed getMaxUserDataLength() value
+	 * @return
+	 */
+	public int getMessageUserDataLengthOnSend() throws MAPException;
+	
+	/**
+	 * Return the MAP message length (in bytes) that will be after encoding
+	 * if TC-END case
+	 * This value must not exceed getMaxUserDataLength() value
+	 * @param prearrangedEnd
+	 * @return
+	 */
+	public int getMessageUserDataLengthOnClose(boolean prearrangedEnd) throws MAPException;
 }

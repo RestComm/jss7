@@ -104,6 +104,19 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 			byte[] geranPositioningData, byte[] utranPositioningData, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai, byte[] hgmlcAddress,
 			Integer lcsServiceTypeID, Boolean saiPresent, Boolean pseudonymIndicator, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator)
 			throws MAPException {
+		return this.addSubscriberLocationReportRequest(_Timer_Default, lcsEvent, lcsClientID, lcsLocationInfo, msisdn, imsi, imei, naEsrd, naEsrk,
+				locationEstimate, ageOfLocationEstimate, slrArgExtensionContainer, addLocationEstimate, deferredmtlrData, lcsReferenceNumber,
+				geranPositioningData, utranPositioningData, cellIdOrSai, hgmlcAddress, lcsServiceTypeID, saiPresent, pseudonymIndicator,
+				accuracyFulfilmentIndicator);
+	}
+
+	@Override
+	public Long addSubscriberLocationReportRequest(int customInvokeTimeout, LCSEvent lcsEvent, LCSClientID lcsClientID, LCSLocationInfo lcsLocationInfo,
+			ISDNAddressString msisdn, IMSI imsi, IMEI imei, ISDNAddressString naEsrd, ISDNAddressString naEsrk, byte[] locationEstimate,
+			Integer ageOfLocationEstimate, SLRArgExtensionContainer slrArgExtensionContainer, byte[] addLocationEstimate, DeferredmtlrData deferredmtlrData,
+			Byte lcsReferenceNumber, byte[] geranPositioningData, byte[] utranPositioningData, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai,
+			byte[] hgmlcAddress, Integer lcsServiceTypeID, Boolean saiPresent, Boolean pseudonymIndicator,
+			AccuracyFulfilmentIndicator accuracyFulfilmentIndicator) throws MAPException {
 
 		if (lcsEvent == null || lcsClientID == null || lcsLocationInfo == null) {
 			throw new MAPException("Mandatroy parameters lCSEvent, lCSClientID or lCSLocationInfo cannot be null");
@@ -111,6 +124,10 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 
 		try {
 			Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+			if (customInvokeTimeout == _Timer_Default)
+				invoke.setTimeout(_Timer_m);
+			else
+				invoke.setTimeout(customInvokeTimeout);
 
 			// Operation Code
 			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
@@ -192,6 +209,12 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 	@Override
 	public Long addSendRoutingInfoForLCSRequest(ISDNAddressString mlcNumber, SubscriberIdentity targetMS, MAPExtensionContainer extensionContainer)
 			throws MAPException {
+		return this.addSendRoutingInfoForLCSRequest(_Timer_Default, mlcNumber, targetMS, extensionContainer);
+	}
+
+	@Override
+	public Long addSendRoutingInfoForLCSRequest(int customInvokeTimeout, ISDNAddressString mlcNumber, SubscriberIdentity targetMS,
+			MAPExtensionContainer extensionContainer) throws MAPException {
 
 		if (mlcNumber == null || targetMS == null) {
 			throw new MAPException("Mandatroy parameters mlcNumber or targetMS cannot be null");
@@ -199,6 +222,10 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 
 		try {
 			Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+			if (customInvokeTimeout == _Timer_Default)
+				invoke.setTimeout(_Timer_m);
+			else
+				invoke.setTimeout(customInvokeTimeout);
 
 			// Operation Code
 			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
@@ -297,6 +324,16 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 			IMSI imsi, ISDNAddressString msisdn, LMSI lmsi, IMEI imei, Integer lcsPriority, LCSQoS lcsQoS, MAPExtensionContainer extensionContainer,
 			SupportedGADShapes supportedGADShapes, Byte lcsReferenceNumber, Integer lcsServiceTypeID, LCSCodeword lcsCodeword, LCSPrivacyCheck lcsPrivacyCheck,
 			AreaEventInfo areaEventInfo, byte[] hgmlcAddress) throws MAPException {
+		return this.addProvideSubscriberLocationRequest(_Timer_Default, locationType, mlcNumber, lcsClientID, privacyOverride, imsi, msisdn, lmsi, imei,
+				lcsPriority, lcsQoS, extensionContainer, supportedGADShapes, lcsReferenceNumber, lcsServiceTypeID, lcsCodeword, lcsPrivacyCheck, areaEventInfo,
+				hgmlcAddress);
+	}
+
+	@Override
+	public Long addProvideSubscriberLocationRequest(int customInvokeTimeout, LocationType locationType, ISDNAddressString mlcNumber, LCSClientID lcsClientID,
+			Boolean privacyOverride, IMSI imsi, ISDNAddressString msisdn, LMSI lmsi, IMEI imei, Integer lcsPriority, LCSQoS lcsQoS,
+			MAPExtensionContainer extensionContainer, SupportedGADShapes supportedGADShapes, Byte lcsReferenceNumber, Integer lcsServiceTypeID,
+			LCSCodeword lcsCodeword, LCSPrivacyCheck lcsPrivacyCheck, AreaEventInfo areaEventInfo, byte[] hgmlcAddress) throws MAPException {
 
 		if (locationType == null || mlcNumber == null) {
 			throw new MAPException("Mandatroy parameters locationType or mlcNumber cannot be null");
@@ -304,6 +341,10 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 
 		try {
 			Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+			if (customInvokeTimeout == _Timer_Default)
+				invoke.setTimeout(_Timer_ml);
+			else
+				invoke.setTimeout(customInvokeTimeout);
 
 			// Operation Code
 			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
@@ -382,5 +423,6 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 
 		this.sendReturnResultLastComponent(resultLast);
 	}
+
 
 }
