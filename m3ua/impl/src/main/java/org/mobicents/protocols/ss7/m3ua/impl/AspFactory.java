@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.M3UAChannel;
 import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
 import org.mobicents.protocols.ss7.m3ua.M3UASelectionKey;
+import org.mobicents.protocols.ss7.m3ua.impl.sctp.SctpChannel;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 
 import com.sun.nio.sctp.AbstractNotificationHandler;
@@ -97,7 +98,8 @@ public abstract class AspFactory implements CommunicationListener, XMLSerializab
 	}
 
 	/**
-	 * @param m3uaManagement the m3uaManagement to set
+	 * @param m3uaManagement
+	 *            the m3uaManagement to set
 	 */
 	public void setM3uaManagement(M3UAManagement m3uaManagement) {
 		this.m3uaManagement = m3uaManagement;
@@ -140,25 +142,29 @@ public abstract class AspFactory implements CommunicationListener, XMLSerializab
 		return associationHandler;
 	}
 
-	class AssociationHandler extends AbstractNotificationHandler<Object> {
+	class AssociationHandler extends AbstractNotificationHandler<SctpChannel> {
 		@Override
-		public HandlerResult handleNotification(AssociationChangeNotification not, Object obj) {
+		public HandlerResult handleNotification(AssociationChangeNotification not, SctpChannel sctpChannel) {
 			switch (not.event()) {
 			case COMM_UP:
+				int outbound = not.association().maxOutboundStreams();
+				int inbound = not.association().maxInboundStreams();
+
 				if (logger.isInfoEnabled()) {
-					int outbound = not.association().maxOutboundStreams();
-					int inbound = not.association().maxInboundStreams();
 					logger.info(String.format(
 							"AspFactory=%s New association setup with %d outbound streams, and %d inbound streams.\n",
 							name, outbound, inbound));
 				}
+
+				// Recreate SLS table. Minimum of two is correct?
+				sctpChannel.createSLSTable(Math.min(inbound, outbound)-1);
 				break;
 			}
 			return HandlerResult.CONTINUE;
 		}
 
 		@Override
-		public HandlerResult handleNotification(ShutdownNotification not, Object obj) {
+		public HandlerResult handleNotification(ShutdownNotification not, SctpChannel obj) {
 			if (logger.isInfoEnabled()) {
 				logger.info(String.format("AspFactory=%s Association SHUTDOWN", name));
 			}

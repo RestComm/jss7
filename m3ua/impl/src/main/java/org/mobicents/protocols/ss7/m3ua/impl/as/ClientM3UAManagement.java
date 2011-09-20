@@ -79,7 +79,7 @@ public class ClientM3UAManagement extends M3UAManagement {
 	// Stores the Future for every ASP that needs to be started
 	private volatile FastMap<String, ScheduledFuture> aspVsscheduledFuture = new FastMap<String, ScheduledFuture>();
 
-	private final ScheduledExecutorService schedExecService = Executors.newSingleThreadScheduledExecutor();
+	private ScheduledExecutorService schedExecService = null;
 
 	/**
 	 * 
@@ -111,6 +111,8 @@ public class ClientM3UAManagement extends M3UAManagement {
 		} catch (FileNotFoundException e) {
 			logger.warn(String.format("Failed to load the SS7 client route file. \n%s", e.getMessage()));
 		}
+		
+		this.schedExecService = Executors.newSingleThreadScheduledExecutor();
 	}
 
 	@Override

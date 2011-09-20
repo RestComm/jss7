@@ -43,6 +43,9 @@ import com.sun.nio.sctp.SctpStandardSocketOptions;
  * 
  */
 public class SctpChannel extends M3UAChannelImpl {
+	
+	
+	private static final int MAX_SLS = 32;
 
 	// receiver buffer
 	private ByteBuffer rxBuffer = ByteBuffer.allocateDirect(8192);
@@ -55,6 +58,8 @@ public class SctpChannel extends M3UAChannelImpl {
 	private SctpProvider provider;
 
 	private NotificationHandler notificationHandler = null;
+	
+	private int slsTable[] = new int[MAX_SLS];
 
 	/**
 	 * Creates new channel.
@@ -94,6 +99,18 @@ public class SctpChannel extends M3UAChannelImpl {
 
 	public void setNotificationHandler(NotificationHandler notificationHandler) {
 		this.notificationHandler = notificationHandler;
+	}
+	
+	public void createSLSTable(int minimumBoundStream){
+		
+		//Stream 0 is for management messages, we start from 1
+		int stream = 1;
+		for (int i = 0; i < MAX_SLS; i++) {
+			if (stream > minimumBoundStream) {
+				stream = 1;
+			}
+			slsTable[i] = stream++;
+		}
 	}
 
 	/**
@@ -184,7 +201,7 @@ public class SctpChannel extends M3UAChannelImpl {
 		rxBuffer.clear();
 
 		// reading data from SctpChannel
-		while ((msgInfo = ((com.sun.nio.sctp.SctpChannel) channel).receive(rxBuffer, null, notificationHandler)) != null) {
+		while ((msgInfo = ((com.sun.nio.sctp.SctpChannel) channel).receive(rxBuffer, this, notificationHandler)) != null) {
 			int len = msgInfo.bytes();
 
 			if (len <= 0) {
@@ -249,8 +266,12 @@ public class SctpChannel extends M3UAChannelImpl {
 					// Label, subject of course to the maximum number of streams
 					// supported by the underlying SCTP association.
 					PayloadData payload = (PayloadData) msg;
-					// TODO : What about sls greater than streamNumber?
-					msgInfo = MessageInfo.createOutgoing(null, payload.getData().getSLS());
+					
+					int seqControl = payload.getData().getSLS();
+					//we use max 32 streams
+					seqControl = seqControl & 0x1F;
+					
+					msgInfo = MessageInfo.createOutgoing(null, this.slsTable[seqControl]);
 
 					// 7.1. SCTP Payload Protocol Identifier : IANA has assigned
 					// an M3UA value (3) for the Payload Protocol Identifier in

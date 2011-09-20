@@ -118,7 +118,7 @@ public class ServerM3UAProcess implements M3UAProcess {
 			payload.setData(data);
 
 			As as = this.serverM3UAManagement.m3uaRouter.getAs(data.getDpc(), data.getOpc(), (short) data.getSI());
-			if (as != null && as.getState() == AsState.ACTIVE || as.getState() == AsState.PENDING) {
+			if (as != null && (as.getState() == AsState.ACTIVE || as.getState() == AsState.PENDING)) {
 				payload.setRoutingContext(as.getRoutingContext());
 				as.write(payload);
 			} else {
