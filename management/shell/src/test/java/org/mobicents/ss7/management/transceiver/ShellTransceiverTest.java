@@ -22,7 +22,6 @@
 
 package org.mobicents.ss7.management.transceiver;
 
-import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -33,11 +32,9 @@ import java.nio.channels.SelectionKey;
 import javolution.util.FastList;
 import javolution.util.FastSet;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.*;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 
 public class ShellTransceiverTest {
     private InetAddress localhost;
@@ -59,7 +56,7 @@ public class ShellTransceiverTest {
     public static void tearDownClass() throws Exception {
     }
 
-    @Before
+    @BeforeTest
     public void setUp() throws UnknownHostException, IOException {
         localhost = InetAddress.getLocalHost();
 
@@ -68,7 +65,7 @@ public class ShellTransceiverTest {
 
     }
 
-    @After
+    @AfterTest
     public void tearDown() {
     }
 

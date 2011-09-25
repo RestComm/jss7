@@ -22,16 +22,13 @@
 
 package org.mobicents.ss7.management.transceiver;
 
-import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.*;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 
 public class MessageTest {
     private MessageFactory messageFactory = new MessageFactory();
@@ -45,14 +42,6 @@ public class MessageTest {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test

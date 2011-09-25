@@ -22,16 +22,13 @@
 
 package org.mobicents.ss7.management.console;
 
-import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.*;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 import org.mobicents.ss7.management.console.Console;
 import org.mobicents.ss7.management.console.ConsoleListener;
 
@@ -42,68 +39,58 @@ import org.mobicents.ss7.management.console.ConsoleListener;
  */
 public class ConsoleTest {
 
-    ByteArrayInputStream in = null;
-    ByteArrayOutputStream out = null;
-    Console console = null;
-    ConsoleListener listener = null;
+	ByteArrayInputStream in = null;
+	ByteArrayOutputStream out = null;
+	Console console = null;
+	ConsoleListener listener = null;
 
-    public ConsoleTest() {
-    }
+	public ConsoleTest() {
+	}
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+	}
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+	}
 
-    @Before
-    public void setUp() {
+	@Test
+	public void testConsole() throws IOException {
 
-    }
+		String message = "This is some message";
+		in = new ByteArrayInputStream(message.getBytes());
 
-    @After
-    public void tearDown() {
-    }
+		out = new ByteArrayOutputStream();
 
-    @Test
-    public void testConsole() throws IOException {
+		listener = new TestConsoleListener(out);
 
-        String message = "This is some message";
-        in = new ByteArrayInputStream(message.getBytes());
+		console = new Console(in, out, listener, null);
+		console.start();
 
-        out = new ByteArrayOutputStream();
+		assertEquals(message, new String(out.toByteArray()));
+	}
 
-        listener = new TestConsoleListener(out);
+	private class TestConsoleListener implements ConsoleListener {
 
-        console = new Console(in, out, listener, null);
-        console.start();
+		ByteArrayOutputStream out;
+		Console console;
 
-        assertEquals("Sent message should be equal to received", message,
-                new String(out.toByteArray()));
-    }
+		TestConsoleListener(ByteArrayOutputStream out) {
+			this.out = out;
+		}
 
-    private class TestConsoleListener implements ConsoleListener {
+		public void commandEntered(String consoleInput) {
 
-        ByteArrayOutputStream out;
-        Console console;
+			System.out.println(consoleInput);
 
-        TestConsoleListener(ByteArrayOutputStream out) {
-            this.out = out;
-        }
+			this.console.write(consoleInput);
 
-        public void commandEntered(String consoleInput) {
+		}
 
-            System.out.println(consoleInput);
-
-            this.console.write(consoleInput);
-
-        }
-
-        public void setConsole(Console console) {
-            this.console = console;
-        }
-    }
+		public void setConsole(Console console) {
+			this.console = console;
+		}
+	}
 
 }
