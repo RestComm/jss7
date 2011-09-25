@@ -27,12 +27,9 @@
 
 package org.mobicents.protocols.ss7.mtp;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.testng.Assert.*;
+
+import org.testng.*;import org.testng.annotations.*;
 
 /**
  *
@@ -58,13 +55,7 @@ public class MTPSchedulerTest implements Runnable {
     public static void tearDownClass() throws Exception {
     }
 
-    @Before
-    public void setUp() {
-    }
 
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of schedule method, of class MTPScheduler.
@@ -80,8 +71,8 @@ public class MTPSchedulerTest implements Runnable {
         scheduler.schedule(task, 1000);
         
         Thread.currentThread().sleep(5000);
-        assertTrue("Task is not executed", done);
-        assertFalse("Task executed more then one time", failed);
+        assertTrue(done, "Task is not executed");
+        assertFalse(failed, "Task executed more then one time");
     }
 
 
@@ -105,8 +96,8 @@ public class MTPSchedulerTest implements Runnable {
         task.cancel();
         
         Thread.currentThread().sleep(4000);
-        assertFalse("Task is  executed", done);
-        assertFalse("Task executed more then one time", failed);
+        assertFalse(done, "Task is  executed");
+        assertFalse(failed, "Task executed more then one time");
     }
     
     public void run() {

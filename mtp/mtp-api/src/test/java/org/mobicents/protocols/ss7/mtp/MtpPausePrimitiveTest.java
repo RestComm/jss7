@@ -21,14 +21,10 @@
  */
 
 package org.mobicents.protocols.ss7.mtp;
+import static org.testng.Assert.*;
 
-import static org.junit.Assert.assertEquals;
+import org.testng.*;import org.testng.annotations.*;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  * @author abhayani
@@ -50,13 +46,7 @@ public class MtpPausePrimitiveTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
-	public void setUp() {
-	}
 
-	@After
-	public void tearDown() {
-	}
 
 	/**
 	 * Test of schedule method, of class MTPScheduler.

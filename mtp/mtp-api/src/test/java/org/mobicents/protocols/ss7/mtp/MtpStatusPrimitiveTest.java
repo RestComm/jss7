@@ -22,13 +22,9 @@
 
 package org.mobicents.protocols.ss7.mtp;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.*;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.*;import org.testng.annotations.*;
 
 /**
  * @author amit bhayani
@@ -50,13 +46,6 @@ public class MtpStatusPrimitiveTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
-	public void setUp() {
-	}
-
-	@After
-	public void tearDown() {
-	}
 
 	/**
 	 * Test of schedule method, of class MTPScheduler.
