@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.mobicents</groupId>
 		<artifactId>mobicents-parent</artifactId>
-		<version>2.20-SNAPSHOT</version>
+		<version>2.19</version>
 	</parent>
 
 	<artifactId>ss7-parent</artifactId>
@@ -33,12 +33,13 @@
 		<compiler.plugin.version>2.0.2</compiler.plugin.version>
 		<compile.source>1.5</compile.source>
 		<!-- mobicents but not strictly ss7 -->
-		<asn.version>1.0.0-SNAPSHOT</asn.version>
+		<asn.version>1.0.0.CR1</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
 	</properties>
 
 	<modules>
 		<module>docs</module>
+		<module>congestion</module>
 		<module>clock</module>
 		<module>m3ua</module>
 		<module>mtp</module>
