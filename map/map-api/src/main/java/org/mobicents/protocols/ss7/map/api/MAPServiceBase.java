@@ -89,15 +89,15 @@ public interface MAPServiceBase {
 	 */
 	public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext);
 
-	/**
-	 * Generate ApplicationContext depending on operationCode for MAP v1
-	 * 
-	 * @param operationCode
-	 * @param invoke
-	 * @return ApplicationContext or null if operationCode is not supported by a service
-	 */
-	public MAPApplicationContext getMAPv1ApplicationContext(int operationCode, Invoke invoke); 
-
+//	/**
+//	 * Generate ApplicationContext depending on operationCode for MAP v1
+//	 * 
+//	 * @param operationCode
+//	 * @param invoke
+//	 * @return ApplicationContext or null if operationCode is not supported by a service
+//	 */
+//	public MAPApplicationContext getMAPv1ApplicationContext(int operationCode, Invoke invoke); 
+//
 //	/**
 //	 * Process a component
 //	 */
