@@ -28,8 +28,8 @@ import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.MapParameterFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MapParameterFactory;
+import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
+import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberIdentity;
@@ -41,7 +41,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberIdentity;
  * 
  */
 public class SubscriberIdentityTest {
-	MapParameterFactory MapParameterFactory = new MapParameterFactoryImpl();
+	MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -85,7 +85,7 @@ public class SubscriberIdentityTest {
 	public void testEncode() throws Exception {
 		byte[] data = new byte[] { (byte) 0x80, 0x08, 0x27, (byte) 0x94, (byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
 
-		IMSI imsi = this.MapParameterFactory.createIMSI(724l, 99l, "9900000007");
+		IMSI imsi = this.MAPParameterFactory.createIMSI(724l, 99l, "9900000007");
 		SubscriberIdentityImpl subsIdent = new SubscriberIdentityImpl(imsi);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		subsIdent.encodeAll(asnOS);

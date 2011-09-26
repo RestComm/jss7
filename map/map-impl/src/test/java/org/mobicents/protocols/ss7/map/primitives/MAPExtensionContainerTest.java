@@ -31,8 +31,8 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.MapParameterFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MapParameterFactory;
+import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
+import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
 
@@ -41,10 +41,10 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
  * 
  */
 public class MAPExtensionContainerTest {
-	MapParameterFactory mapServiceFactory = new MapParameterFactoryImpl();
+	MAPParameterFactory mapServiceFactory = new MAPParameterFactoryImpl();
 	
 	public static MAPExtensionContainer GetTestExtensionContainer() {
-		MapParameterFactory mapServiceFactory = new MapParameterFactoryImpl(); 
+		MAPParameterFactory mapServiceFactory = new MAPParameterFactoryImpl(); 
 		
 		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
 		al.add(mapServiceFactory

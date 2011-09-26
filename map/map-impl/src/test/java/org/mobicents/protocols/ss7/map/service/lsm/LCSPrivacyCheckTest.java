@@ -30,8 +30,8 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.MapParameterFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MapParameterFactory;
+import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
+import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSPrivacyCheck;
 import org.mobicents.protocols.ss7.map.api.service.lsm.PrivacyCheckRelatedAction;
 
@@ -40,7 +40,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.PrivacyCheckRelatedAction
  * 
  */
 public class LCSPrivacyCheckTest {
-	MapParameterFactory MapParameterFactory = new MapParameterFactoryImpl();
+	MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {

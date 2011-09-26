@@ -30,8 +30,8 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.MapParameterFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MapParameterFactory;
+import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
+import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSCodeword;
 
@@ -40,7 +40,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.LCSCodeword;
  *
  */
 public class LCSCodewordTest {
-	MapParameterFactory MapParameterFactory = new MapParameterFactoryImpl();
+	MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -80,7 +80,7 @@ public class LCSCodewordTest {
 		byte[] data = new byte[] { 0x30, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x81, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72,
 				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
 
-		USSDString nameString = MapParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
+		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
 		LCSCodewordImpl lcsCodeword = new LCSCodewordImpl((byte) 0x0f, nameString);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		lcsCodeword.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);

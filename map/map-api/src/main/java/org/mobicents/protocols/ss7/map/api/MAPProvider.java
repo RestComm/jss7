@@ -66,11 +66,11 @@ public interface MAPProvider {
 	// mapServiceListener);
 
 	/**
-	 * Get the {@link MapParameterFactory}
+	 * Get the {@link MAPParameterFactory}
 	 * 
 	 * @return
 	 */
-	public MapParameterFactory getMapParameterFactory();
+	public MAPParameterFactory getMAPParameterFactory();
 
 	/**
 	 * Get the {@link MAPErrorMessageFactory}

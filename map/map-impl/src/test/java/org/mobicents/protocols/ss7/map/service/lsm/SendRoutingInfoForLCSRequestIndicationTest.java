@@ -29,8 +29,8 @@ import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.MapParameterFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MapParameterFactory;
+import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
+import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -44,7 +44,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
  * 
  */
 public class SendRoutingInfoForLCSRequestIndicationTest {
-	MapParameterFactory MapParameterFactory = new MapParameterFactoryImpl();
+	MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -101,10 +101,10 @@ public class SendRoutingInfoForLCSRequestIndicationTest {
 		byte[] data = new byte[] { 0x30, 0x13, (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70, (byte) 0xa1, 0x0a, (byte) 0x80, 0x08, 0x27, (byte) 0x94,
 				(byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
 
-		IMSI imsi = this.MapParameterFactory.createIMSI(724l, 99l, "9900000007");
+		IMSI imsi = this.MAPParameterFactory.createIMSI(724l, 99l, "9900000007");
 		SubscriberIdentity subsIdent = new SubscriberIdentityImpl(imsi);
 
-		ISDNAddressString mlcNumber = this.MapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "55619007");
+		ISDNAddressString mlcNumber = this.MAPParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "55619007");
 
 		SendRoutingInfoForLCSRequestIndicationImpl rtgInfnoForLCSreqInd = new SendRoutingInfoForLCSRequestIndicationImpl(mlcNumber, subsIdent);
 
