@@ -271,7 +271,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				// Selecting the MAP service that can perform the operation, getting
 				// ApplicationContext
 				for (MAPServiceBase ser : this.mapServices) {
-					MAPApplicationContext ac = ser.getMAPv1ApplicationContext(operationCode, invoke);
+					MAPApplicationContext ac = ((MAPServiceBaseImpl)ser).getMAPv1ApplicationContext(operationCode, invoke);
 					if (ac != null) {
 						perfSer = ser;
 						mapAppCtx = ac;

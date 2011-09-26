@@ -113,7 +113,6 @@ public abstract class MAPServiceBaseImpl implements MAPServiceBase {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public MAPApplicationContext getMAPv1ApplicationContext(int operationCode, Invoke invoke) {
 		return null;
 	}
