@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>ss7-trace-parser-parent</artifactId>
+		<groupId>org.mobicents.protocols.ss7.tools.traceparser</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.mobicents.protocols.ss7.tools.traseparser</groupId>
+  <artifactId>ss7-trace-parser</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <name>Mobicents Trase Parser :: Parser</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javolution</groupId>
+			<artifactId>javolution</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.asn</groupId>
+			<artifactId>asn</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+			<artifactId>sccp-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+			<artifactId>sccp-impl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+			<artifactId>tcap-impl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+			<artifactId>tcap-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.map</groupId>
+			<artifactId>map-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.map</groupId>
+			<artifactId>map-impl</artifactId>
+		</dependency>
+	</dependencies>
+
+
+</project>
