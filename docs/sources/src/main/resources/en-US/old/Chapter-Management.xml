@@ -1,0 +1,427 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter
+	id="management">
+
+	<title>Management</title>
+	<para>&THIS.PLATFORM; &THIS.APPLICATION;
+		provides Shell client to manage configuration. This chapter describes available commands.
+	</para>
+	<para>Shell client can be started with following command:</para>
+	<programlisting>
+[$] ./bin/ss7-run.sh
+	</programlisting>
+	<para>Once console starts, it will print following information:</para>
+	<screen>
+=========================================================================
+
+Mobicents SS7: release.version=1.0.0-SNAPSHOT
+This is free software, with components licensed under the GNU General Public License
+version 2 and other licenses. For further details visit http://mobicents.org
+=========================================================================
+
+mobicents>
+	</screen>
+	<section
+		id="management_command_connect">
+		<title>Connect</title>
+		<para>Shell needs to connect to managed instance. Command to connect has following structure:</para>
+		<programlisting>
+ss7 connect &lt;IP&gt; &lt;PORT&gt; </programlisting>
+		<example>
+			<title>Connec to remote machine</title>
+			<screen>
+mobicents>ss7 connect 10.65.208.215 3435
+
+mobicents(10.65.208.215:3435)>
+			</screen>
+		</example>
+	</section>
+	<section
+		id="management_linkset">
+		<title>Linkset</title>
+		<para>
+			Linksets are managed by
+			<literal>linkset</literal>
+			command. It allows to perform following:
+		</para>
+		<itemizedlist>
+			<listitem>
+				<para>create linkset</para>
+			</listitem>
+			<listitem>
+				<para>delete linkset</para>
+			</listitem>
+			<listitem>
+				<para>activate linkset</para>
+			</listitem>
+			<listitem>
+				<para>deactivate linkset</para>
+			</listitem>
+			<listitem>
+				<para>create link</para>
+			</listitem>
+			<listitem>
+				<para>delete link</para>
+			</listitem>
+			<listitem>
+				<para>activate link</para>
+			</listitem>
+			<listitem>
+				<para>deactivate link</para>
+			</listitem>
+			<listitem>
+				<para>list state of linksets and present links</para>
+			</listitem>
+		</itemizedlist>
+
+		<section
+			id="management_linkset_create">
+			<title>Create Linkset</title>
+			<para>Linkset can be create by issuing command with following structure:</para>
+			<programlisting>
+linkset create &lt;linkset-type&gt; opc &lt;point-code&gt; apc &lt;point-code&gt; ni &lt;network-id&gt; &lt;linkset-name&gt; 
+			</programlisting>
+			<para>or in case of dialogic:</para>
+			<programlisting>
+linkset create dialogic opc &lt;point-code&gt; apc &lt;point-code&gt; ni &lt;network-id&gt; srcmod &lt;src-mode&gt; destmod &lt;dest-mode&gt; &lt;linkset-name&gt;
+
+			</programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>linkset-type</term>
+					<listitem>
+						<para>
+							refers to type of linkset to be created, ie.
+							<literal>dahdi</literal>
+							,
+							<literal>dialogic</literal>
+							or
+							<literal>m3ua</literal>
+							. Correct values depend on which linkset factories have been deployed. <!-- AMIT: add reference to linkset section/chapter -->
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>point-code</term>
+					<listitem>
+						<para>
+							is simply
+							<literal>MTP</literal>
+							point - either local(
+							<literal>opc</literal>
+							) or remote(
+							<literal>dpc</literal>
+							)
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>ni</term>
+					<listitem>
+						<para>is simply network identifier. It can have following values:</para>
+						<variablelist>
+							<varlistentry>
+								<term>0</term>
+								<listitem>
+									<para>International network</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>1</term>
+								<listitem>
+									<para>Spare (for international use only)</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>2</term>
+								<listitem>
+									<para>National network</para>
+								</listitem>
+							</varlistentry>
+							<varlistentry>
+								<term>3</term>
+								<listitem>
+									<para>Reserved for national use</para>
+								</listitem>
+							</varlistentry>
+						</variablelist>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>linkset-name</term>
+					<listitem>
+						<para>simple string name, which identifies linkset</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Linkset creation</title>
+				<screen>
+mobicents(10.65.208.215:3435)>linkset create dahdi opc 1 apc 2 ni 0 linkset1
+LinkSet successfully added
+mobicents(10.65.208.215:3435)>linkset create dialogic opc 3 apc 4 ni 3 srcmod 1 destmod 2 linkset2
+LinkSet successfully added
+				</screen>
+			</example>
+		</section>
+
+
+		<section
+			id="management_linkset_delete">
+			<title>Remove Linkset</title>
+			<para>Linkset can be deleted by issuing command with following structure:</para>
+			<programlisting>
+linkset delete  &lt;linkset-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+
+				<varlistentry>
+					<term>linkset-name</term>
+					<listitem>
+						<para>is name set during link creation</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Linkset Removal</title>
+				<screen>
+mobicents(10.65.208.215:3435)>linkset delete linkset1
+LinkSet successfully deleted
+				</screen>
+			</example>
+		</section>
+
+		<section
+			id="management_linkset_activate">
+			<title>Activate Linkset</title>
+			<para>Linkset can be deleted by issuing command with following structure:</para>
+			<programlisting>
+linkset activate  &lt;linkset-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+
+				<varlistentry>
+					<term>linkset-name</term>
+					<listitem>
+						<para>is name set during link creation</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Linkset Activation</title>
+				<screen>
+mobicents(10.65.208.215)>linkset activate linkset1
+LinkSet activated successfully
+				</screen>
+			</example>
+		</section>
+
+		<section
+			id="management_linkset_deactivate">
+			<title>Deactivate Linkset</title>
+			<para>Linkset can be deactivated by issuing command with following structure:</para>
+			<programlisting>
+linkset deactivate  &lt;linkset-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+
+				<varlistentry>
+					<term>linkset-name</term>
+					<listitem>
+						<para>is name set during link creation</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Linkset Deactivateion</title>
+				<screen>
+mobicents(10.65.208.215)>linkset deactivate linkset1
+LinkSet deactivated successfully
+				</screen>
+			</example>
+		</section>
+
+		<section
+			id="management_linkset_link_create">
+			<title>Create Link</title>
+			<para>
+				<literal>Link</literal>
+				can be created in
+				<literal>Linkset</literal>
+				by issuing command with following structure:
+			</para>
+			<programlisting>
+linkset link create span &lt;span-num&gt; code &lt;code-num&gt; channel &lt;channel-num&gt; &lt;linkset-name&gt; &lt;link-name&gt; 
+			</programlisting>
+			<para>Where:</para>
+			<variablelist>
+
+				<varlistentry>
+					<term>span-num</term>
+					<listitem>
+						<para>integer number. It represents port number in card(indexed from 0).</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>code-num</term>
+					<listitem>
+						<para>link code(sls assigned to this link).</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>channel-num</term>
+					<listitem>
+						<para>integer number indicating time slot number(TDM time slot). </para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>linkset-name</term>
+					<listitem>
+						<para>is name set during link creation.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>link-name</term>
+					<listitem>
+						<para>name which identifies link in linkset.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title></title>
+				<screen>
+mobicents(10.65.208.215:3435)>linkset link create span 1 code 1 channel 1 linkset1 link1
+Link successfully added
+				</screen>
+			</example>
+		</section>
+		<section
+			id="management_linkset_link_delete">
+			<title>Remove Link</title>
+			<para>
+				<literal>Link</literal>
+				can be removed from in
+				<literal>Linkset</literal>
+				by issuing command with following structure:
+			</para>
+			<programlisting>
+linkset link delete &lt;linkset-name&gt; &lt;link-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+
+				<varlistentry>
+					<term>linkset-name</term>
+					<listitem>
+						<para>is name set during link creation</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>link-name</term>
+					<listitem>
+						<para>name which identifies link in linkset</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Link Removal</title>
+				<screen>
+mobicents(10.65.208.215:3435)>linkset link delete linkset1 link1
+Link successfully deleted
+				</screen>
+			</example>
+		</section>
+		<section
+			id="management_linkset_link_activate">
+			<title>Activate Link</title>
+			<para>Link can be activated by issuing command with following structure:</para>
+			<programlisting>
+linkset link activate &lt;linkset-name&gt; &lt;link-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>linkset-name</term>
+					<listitem>
+						<para>is name set during link creation</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>link-name</term>
+					<listitem>
+						<para>name which identifies link in linkset</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Link Activation</title>
+				<screen>
+mobicents(10.65.208.215:3435)>linkset link activate linkset1 link1
+Link activated successfully
+			</screen>
+			</example>
+		</section>
+		<section
+			id="management_linkset_link_deactivate">
+			<title>Deactivate Link</title>
+			<para>Link can be deactivated by issuing command with following structure:</para>
+			<programlisting>
+linkset link deactivate &lt;linkset-name&gt; &lt;link-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>linkset-name</term>
+					<listitem>
+						<para>is name set during link creation</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>link-name</term>
+					<listitem>
+						<para>name which identifies link in linkset</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Link Deactivateion</title>
+				<screen>
+mobicents(10.65.208.215:3435)>linkset link deactivate linkset1 link1
+Link deactivated successfully
+				</screen>
+			</example>
+		</section>
+		<section
+			id="management_linkset_show">
+			<title>Show status</title>
+			<para>Link can be deactivated by issuing command with following structure:</para>
+			<programlisting>
+linkset link deactivate &lt;linkset-name&gt; &lt;link-name&gt; </programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>linkset-name</term>
+					<listitem>
+						<para>is name set during link creation</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>link-name</term>
+					<listitem>
+						<para>name which identifies link in linkset</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Link Deactivateion</title>
+				<screen>
+mobicents(10.65.208.215:3435)>linkset link deactivate linkset1 link1
+Link deactivated successfully
+				</screen>
+			</example>
+		</section>
+	</section>
+
+linkset show
+</chapter>
+

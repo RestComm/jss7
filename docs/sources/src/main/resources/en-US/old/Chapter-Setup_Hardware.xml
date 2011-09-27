@@ -1,0 +1,462 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter
+	id="setup_hardware">
+	<title>Hardware Setup</title>
+	<para>
+		This chapter contains steps to configure hardware drivers for different types of
+		<literal>SS7</literal>
+		cards.
+	</para>
+	<important>
+		<para>Ensure that you have root/administrator privileges before proceeding.</para>
+	</important>
+	<section
+		id="setup_hardware_sangoma">
+		<title>Sangoma</title>
+		<para>
+			Following section describe how to install Sangoma card on
+			<literal>RHEL</literal>
+			operating system.
+		</para>
+		<section>
+			<title>Dependencies Installation</title>
+			<para>Following procedure ensures required dependencies.</para>
+			<procedure>
+				<step>
+					<para>yum update kernel*</para>
+				</step>
+				<step>
+					<para>yum install kernel-xen-devel</para>
+				</step>
+				<step>
+					<para>yum install make</para>
+				</step>
+				<step>
+					<para>yum install bison</para>
+				</step>
+				<step>
+					<para>yum install openssh-server</para>
+				</step>
+				<step>
+					<para>yum install flex</para>
+				</step>
+				<step>
+					<para>yum install gcc</para>
+				</step>
+				<step>
+					<para>yum install gcc-c++</para>
+				</step>
+				<step>
+					<para>yum install zlib-devel</para>
+				</step>
+				<step>
+					<para>yum install newt-devel</para>
+				</step>
+				<step>
+					<para>yum install ncurses-devel</para>
+				</step>
+				<step>
+					<para>yum install openssl-devel</para>
+				</step>
+				<step>
+					<para>yum install libtermcap-devel</para>
+				</step>
+				<step>
+					<para>yum install libtool</para>
+				</step>
+				<step>
+					<para>
+						Restart the server (from comand line execute
+						<literal>init 6</literal>
+						)
+					</para>
+				</step>
+				<step>
+					<para>yum update –exclude xen-libs</para>
+				</step>
+
+
+
+			</procedure>
+		</section>
+		<section>
+			<title>DAHDI Installation</title>
+			<note>
+				<para>
+					All software is kept at
+					<literal>/usr/src</literal>
+					as per default, however this is not mandatory and you can install driver at any location you wish.
+					Substitute the path correctly in
+					steps below if dahdi drivers are not downloaded at
+					<literal>/usr/src</literal>
+				</para>
+			</note>
+			<procedure>
+				<step>
+					<para>cd /usr/src</para>
+				</step>
+				<step>
+					<para>wget http://downloads.asterisk.org/pub/telephony/dahdi-linux-complete/releases/dahdi-linux-complete-2.2.1+2.2.1.tar.gz</para>
+				</step>
+				<step>
+					<para>tar -xvzf dahdi-linux-complete-2.2.1+2.2.1.tar.gz</para>
+				</step>
+				<step>
+					<para>cd dahdi-linux-complete-2.2.1+2.2.1</para>
+				</step>
+				<step>
+					<para>make all</para>
+				</step>
+				<step>
+					<para>make install</para>
+				</step>
+				<step>
+					<para>make config</para>
+				</step>
+			</procedure>
+		</section>
+		<section>
+			<title>WANPipe Installation</title>
+			<procedure>
+				<step>
+					<para>cd ~</para>
+				</step>
+				<step>
+					<para>wget ftp://ftp.sangoma.com/linux/current_wanpipe/wanpipe-3.5.14.tgz</para>
+				</step>
+				<step>
+					<para>tar -xvzf wanpipe-3.5.14.tgz</para>
+				</step>
+				<step>
+					<para>cd wanpipe-3.5.14</para>
+				</step>
+				<step>
+					<para>./Setup dahdi</para>
+					<para>This will start installation shell</para>
+				</step>
+				<step>
+					<para>
+						Answer
+						<literal>y</literal>
+						to:
+						<screen>Would you like to install WANPIPE now? [y] (y/n)</screen>
+					</para>
+				</step>
+				<step>
+					<para>
+						enter destination folder( default is
+						<literal>/usr/src/zaptel</literal>
+						)
+					</para>
+				</step>
+				<step>
+					<para>wait for compilation to finish</para>
+					<important>
+						<para>Ensure all steps finish successfully!</para>
+					</important>
+				</step>
+				<step>
+					<para>
+						Answer
+						<literal>y</literal>
+						to:
+
+					</para>
+					<screen>Would you like to configure wanpipe devices for DAHDI? (y/n)</screen>
+				</step>
+				<step>
+					<para>
+						Answer
+						<literal>2(NO)</literal>
+						to:
+
+					</para>
+					<screen>
+Would you like to generate /etc/asterisk/chan_dahdi.conf 
+
+1. YES 
+2. NO
+						</screen>
+				</step>
+				<step>
+					<para>
+						Asnwer
+						<literal>2. E1</literal>
+						to:
+
+					</para>
+					<screen>
+Select media type for AFT-A108 on port 1 [slot:4 bus:4 span:1] 
+
+1. T1 
+2. E1 
+3. Unused 
+4. Exit
+					</screen>
+					<para>It should show the configuration for port 1</para>
+				</step>
+				<step>
+					<para>
+						Answer
+						<literal>1(YES)</literal>
+						to:
+					</para>
+					<screen>
+Configuring port 1 on 108 as E1, line coding:HDB3, framing:CRC4  
+
+1. YES - Keep these settings 
+2. NO  - Configure line coding and framing 
+[1-2, ENTER='YES']: 1
+					</screen>
+				</step>
+				<step>
+					<para>
+						Answer
+						<literal>1(NORMAL)</literal>
+						to question about clock synchronization:
+					</para>
+					<screen>
+Select clock for AFT-A108 on port 1 [slot:4 bus:4 span:1] 
+
+1. NORMAL 
+2. MASTER 
+[1-2]:1
+					</screen>
+				</step>
+				<step>
+					<para>
+						Answer
+						<literal>1(PRI CPE)</literal>
+						to:
+					</para>
+					<screen>
+Select signalling type for AFT-A108 on port 1 [slot:4 bus:4 span:1] 
+
+1. Zaptel/Dahdi - PRI CPE 
+2. Zaptel/Dahdi - PRI NET 
+3. Zaptel/Dahdi - E &amp; M 
+4. Zaptel/Dahdi - E &amp; M Wink 
+5. Zaptel/Dahdi - FXS - Loop Start 
+6. Zaptel/Dahdi - FXS - Ground Start 
+7. Zaptel/Dahdi - FXS - Kewl Start 
+8. Zaptel/Dahdi - FX0 - Loop Start 
+9. Zaptel/Dahdi - FX0 - Ground Start 
+10. Zaptel/Dahdi - FX0 - Kewl Start 
+11. Sangoma SMG/sangoma_prid- PRI CPE 
+12. Sangoma SMG/sangoma_prid- PRI NET 
+[1-12]:1
+					</screen>
+				</step>
+				<step>
+					<para>
+						Answer
+						<literal>2(NO)</literal>
+						to:
+					</para>
+					<screen>
+Would you like to enable hardware DTMF detection? 
+
+1. YES 
+2. NO 
+[1-2, ENTER='YES']:2
+					</screen>
+				</step>
+				<step>
+					<para>Above step is last, now setup will repeat itself for each port present on your sangoma card. For instance A102 has only one port,
+						hence
+						above setup will be repeated only once. For A108, it will repeat itself seven times.</para>
+					<para>
+						However you need not configure all the ports and depends on how many links are available for you. Lets assume that we have only
+						one
+						link. Hence for rest of the ports select
+						<literal>Unused</literal>
+						option as shown bellow:
+					</para>
+					<para>
+						Answer
+						<literal>3(Unused)</literal>
+						to:
+					</para>
+					<screen>
+Select media type for AFT-A108 on port 2 [slot:4 bus:4 span:2] 
+
+1. T1 
+2. E1 
+3. Unused 
+4. Exit 
+[1-4, ENTER='E1']: 3
+					</screen>
+				</step>
+				<step>
+					<para>
+						Once all ports are configured, answer
+						<literal>1(YES)</literal>
+						to:
+					</para>
+					<screen>
+Configuration Complete! Please select following: 
+
+1. YES - Continue 
+2. NO - Exit 
+[1-2]: 1
+					</screen>
+				</step>
+				<step>
+					<para>
+						Answer
+						<literal>1(Save &amp; restart)</literal>
+						to:
+					</para>
+					<screen>
+Dahdi and Wanpipe configuration complete: choose action 
+
+1. Save cfg: Restart Asterisk &amp; Wanpipe now 
+2. Save cfg: Restart Asterisk &amp; Wanpipe when convenient 
+3. Save cfg: Stop Asterisk &amp; Wanpipe now 
+4. Save cfg: Stop Asterisk &amp; Wanpipe when convenient 
+5. Save cfg: Save cfg only (Not Recommanded!!!) 
+6. Do not save cfg: Exit 
+[1-6]:1
+					</screen>
+				</step>
+				<step>
+					<para>
+						Wait for
+						<literal>WanRouter</literal>
+						to start and
+						answer
+						<literal>1(YES)</literal>
+						to:
+					</para>
+					<screen>
+Would you like wanrouter to start on system boot? 
+
+1. YES 
+2. NO 
+[1-2]:1
+					</screen>
+				</step>
+				<step>
+					<para>
+						Answer
+						<literal>1(YES)</literal>
+						to:
+					</para>
+					<screen>
+Would you like to execute 'dahdi_cfg' each time wanrouter starts? 
+
+1. YES 
+2. NO 
+[1-2]:1
+					</screen>
+				</step>
+				<step>
+					<para>
+						This concludes installation of
+						<literal>WANPipe</literal>
+						. You may check status by typing:
+					</para>
+					<screen>
+$ wanrouter status
+					</screen>
+					<!-- AMIT: Add output from that command. -->
+				</step>
+				<step>
+					<para>
+						Stop wanrouter before proceeding!
+					</para>
+					<screen>
+$ wanrouter stop
+					</screen>
+				</step>
+
+
+
+			</procedure>
+		</section>
+		<section>
+			<title>WANPipe Configuration</title>
+			<procedure>
+				<step>
+					<para>vi /etc/wanpipe/wanpipe1.conf</para>
+				</step>
+				<step>
+					<para>
+						change the
+						<literal>TDMV_DCHAN</literal>
+						from 16 to 0. For Mobicents Media Server all chhanles are same and mobicents media server will
+						differentiate between the voice and
+						signalling channel via its configuration.
+					</para>
+				</step>
+				<step>
+					<para>
+						change
+						<literal>TDMV_HWEC</literal>
+						from
+						<literal>YES</literal>
+						to
+						<literal>NO</literal>
+						as we don't want any Hardware Echo Cancellation
+					</para>
+				</step>
+
+			</procedure>
+		</section>
+		<section>
+			<title>Dahdi Configuration</title>
+			<procedure>
+				<step>
+					<para>vi /etc/dahdi/system.conf</para>
+				</step>
+				<step>
+					<para>Change the bchan=1-31 and remove/comment-out echocanceller and hardhdlc</para>
+				</step>
+				<step>
+					<para>
+						Restart
+						<literal>wanrouter:</literal>
+					</para>
+					<screen>
+$ wanrouter start
+					</screen>
+
+				</step>
+				<step>
+					<para>Observe log:</para>
+					<screen>
+$ tail -f /var/log/messages
+
+
+Oct  5 15:10:16 dhcp211-127 kernel: wanpipe1: Enable E1 CCS Signalling mode! 
+Oct  5 15:10:16 dhcp211-127 kernel: wanpipe2: Enable E1 CCS Signalling mode! 
+Oct  5 15:10:16 dhcp211-127 kernel: wanpipe1:    AIS : ON 
+Oct  5 15:10:18 dhcp211-127 kernel: wanpipe2:    LOS : ON 
+Oct  5 15:10:18 dhcp211-127 kernel: wanpipe1: Disable transmit AIS alarm 
+Oct  5 15:10:26 dhcp211-127 kernel: wanpipe1:    LOF : OFF 
+Oct  5 15:10:27 dhcp211-127 kernel: wanpipe1:    RED : OFF 
+Oct  5 15:10:27 dhcp211-127 kernel: wanpipe1: Disable transmit YEL alarm 
+Oct  5 15:10:27 dhcp211-127 kernel: wanpipe1:    AIS : OFF 
+Oct  5 15:10:40 dhcp211-127 kernel: wanpipe1:    RAI : OFF 
+Oct  5 15:10:48 dhcp211-127 kernel: wanpipe1: E1 connected! 
+Oct  5 15:10:48 dhcp211-127 kernel: wanpipe1: AFT communications enabled! 
+Oct  5 15:10:48 dhcp211-127 kernel: wanpipe1: AFT Global TDM Intr 
+Oct  5 15:10:48 dhcp211-127 kernel: wanpipe1: Global TDM Ring Resync TDM = 0x1 
+Oct  5 15:10:48 dhcp211-127 kernel: ADDRCONF(NETDEV_CHANGE): w1g1: link becomes ready
+					</screen>
+					<note>
+						<para>
+							Even if you get w1g1: link becomes ready in the logs doesn't mean Link is configured well from other end (MSC/HLR). This is just hardware
+							indication saying that loop is complete and card is capable of sending and receiving data.
+						</para>
+					</note>
+				</step>
+			</procedure>
+		</section>
+	</section>
+
+
+</chapter>
+

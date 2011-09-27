@@ -1,0 +1,196 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter
+	id="setup">
+	<title>Source and Binary Setup</title>
+	<section
+		id="preinstall_requirements_and_prerequisites">
+		<title>Pre-Install Requirements and Prerequisites</title>
+		<para>Ensure that the following requirements have been met before continuing with the install.</para>
+		<section
+			id="hardware_requirements">
+			<title>Hardware Requirements</title>
+			<para>The
+				Stack doesn't change the &THIS.PLATFORM;
+				Hardware Requirements, however it requires
+				<acronym>SS7</acronym>
+				card.
+			</para>
+			<note>
+				<!-- Is this proper statement ? -->
+				<para>Desired is high performance machine to process voice and data channels.</para>
+			</note>
+		</section>
+		<section
+			id="software_prerequisites">
+			<title>Software Prerequisites</title>
+			<para>The Stack depends on : </para>
+			<itemizedlist>
+				<listitem>
+					<para>&THIS.PLATFORM;
+						<literal>ASN</literal>
+						library
+					</para>
+				</listitem>
+				<listitem>
+					<para>&THIS.PLATFORM;
+						<literal>Stream</literal>
+						library
+					</para>
+				</listitem>
+				<listitem>
+					<para>&THIS.PLATFORM;
+						<literal>M3UA</literal>
+						library
+					</para>
+				</listitem>
+			</itemizedlist>
+		</section>
+	</section>
+
+	<section
+		id="source_code">
+		<title>&THIS.PLATFORM;  &THIS.APPLICATION;
+			Source Code
+		</title>
+		<para></para>
+
+		<section
+			id="release_source_building">
+			<title>Release Source Code Building</title>
+			<procedure>
+				<step>
+					<title>Downloading the source code</title>
+					<important>
+						<para>
+							Subversion is used to manage its source code. Instructions for using Subversion, including install, can be found at
+							<ulink
+								url="http://svnbook.red-bean.com" />
+						</para>
+					</important>
+					<para>Use
+						SVN to checkout a specific release source, the base URL is &THIS.RELEASE_SOURCE_CODE_URL;,
+						then add the specific release version, lets consider &THIS.VERSION;.
+					</para>
+					<programlisting>[usr]$ svn co &THIS.RELEASE_SOURCE_CODE_URL;/${module}/&THIS.VERSION; &THIS.APPLICATION.DIRNAME;-${module}-&THIS.VERSION;</programlisting>
+					<note>
+						<para>
+							Note that source tree is divided into modules, one for each layer of
+							<acronym>SS7</acronym>
+							.
+						</para>
+					</note>
+				</step>
+				<step>
+					<title>Building the source code</title>
+					<important>
+						<para>
+							Maven 2.0.9 (or higher) is used to build the release. Instructions for using Maven2, including install, can be found at
+							<ulink
+								url="http://maven.apache.org" />
+						</para>
+					</important>
+					<para>Use Maven to build the binaries.</para>
+					<programlisting>
+				    [usr]$ cd &THIS.APPLICATION.DIRNAME;-${module}-&THIS.VERSION;
+				    [usr]$ mvn install
+				    </programlisting>
+					<para>
+						Once the process finishes you should have the
+						<literal>binary</literal>
+						jar files in the
+						<filename>target</filename>
+						directory of
+						<literal>module</literal>
+						.
+					</para>
+				</step>
+			</procedure>
+		</section>
+
+		<section
+			id="trunk_source_building">
+			<title>Development Trunk Source Building</title>
+			<para>
+				Similar process as for
+				<xref
+					linkend="release_source_building" />,
+				the only change is the SVN source code URL, which is &THIS.TRUNK_SOURCE_CODE_URL;.
+			</para>
+		</section>
+
+
+		<section
+			id="binary_release">
+			<title>Binary release</title>
+			<para>You
+				can obtain binary release from &THIS.RELEASE_BINARY_URL;
+				(section
+				<literal>Mobicents Protocols Suite</literal>
+				) .
+				It contains following:
+			</para>
+			<variablelist>
+				<varlistentry>
+					<term>Documentation</term>
+					<listitem>
+						<para>Up to date documentation for current release.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Dependencies</term>
+					<listitem>
+						<para>
+							All required dependencies, ie.
+							<literal>M3UA</literal>
+							,
+							<literal>Stream</literal>
+							,
+							<literal>ASN</literal>
+							.
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Linksets</term>
+					<listitem>
+						<para>Linkset implementation for specific hardware.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Binary release</term>
+					<listitem>
+						<para>All supported protocol modules as jar files.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>SS7 Service</term>
+					<listitem>
+						<para>
+							SS7 service which can be deployed in
+							<literal>JBoss</literal>
+							server
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Shell CLI	</term>
+					<listitem>
+						<para>Shell
+							like tool to manage &THIS.PLATFORM; &THIS.APPLICATION;.
+						</para>
+					</listitem>
+				</varlistentry>
+
+			</variablelist>
+			<para>Binary release has following layout:</para>
+			<!-- AMIT: Add image here. -->
+		</section>
+
+	</section>
+
+
+
+</chapter>
+
