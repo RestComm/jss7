@@ -1,0 +1,46 @@
+<assembly>
+	<id>stack</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<files>
+		<file>
+			<source>src/main/config/sccp-beans.xml</source>
+			<destName>META-INF/jboss-beans.xml</destName>
+			<filtered>true</filtered>
+		</file>
+		<file>
+			<source>src/main/config/jboss-structure.xml</source>
+			<destName>META-INF/jboss-structure.xml</destName>
+		</file>
+		<file>
+			<source>src/main/config/sccp-routing.txt</source>
+			<destName>sccp-routing.txt</destName>
+		</file>
+	</files>
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>/lib</outputDirectory>
+			<unpack>false</unpack>
+			<scope>compile</scope>
+			<includes>
+				<include>org.mobicents.protocols.ss7.sccp:sccp-api</include>
+				<include>org.mobicents.protocols.ss7.sccp:sccp-impl</include>
+				<include>org.mobicents.protocols.ss7.m3ua:m3ua-api</include>
+				<include>org.mobicents.protocols.ss7.m3ua:m3ua-impl</include>
+				<include>org.mobicents.protocols.ss7.mtp:mtp</include>
+				<include>org.mobicents.protocols.stream:stream</include>
+			</includes>
+		</dependencySet>
+		
+	</dependencySets>
+	<!-- DO NO USE componentDescriptors - seems like there is a bug which gets all deps, regardles of include/exclude -->
+	<!-- 
+	<componentDescriptors>
+		<componentDescriptor>
+			src/main/assembly/common.xml
+		</componentDescriptor>
+	</componentDescriptors>
+	 -->
+</assembly>
