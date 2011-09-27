@@ -1,0 +1,648 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="layer_isup">
+
+	<title>ISDN User Part (ISUP) Layer</title>
+
+	<para></para>
+	<section>
+		<title>Introduction</title>
+		<para>
+			The
+			<acronym>ISDN</acronym>
+			User Part (
+			<acronym>ISUP</acronym>
+			) defines the protocol used to set-up,
+			manage, and release trunk
+			circuits that carry voice and data between
+			terminating line exchanges
+			(e.g., between a calling party and a
+			called party).
+			<acronym>ISUP</acronym>
+			is used for both
+			<acronym>ISDN</acronym>
+			and non-
+			<acronym>ISDN</acronym>
+			calls.
+			However, calls that originate and terminate at the same switch
+			do not
+			use
+			<acronym>ISUP</acronym>
+			signaling.
+		</para>
+		<para>
+			<acronym>ISUP</acronym>
+			is defined in
+			<acronym>ITU-T</acronym>
+			<literal>Q.763</literal>
+			specification.
+		</para>
+	</section>
+	<section>
+		<title>Design and API Overview</title>
+		<note>
+			<para>
+				<acronym>SS7</acronym>
+				design allows
+				<acronym>ISUP</acronym>
+				to be used on top of
+				<acronym>SCCP</acronym>,
+				however currently &THIS.PLATFORM;
+				<acronym>ISUP</acronym>
+				does not support this use case.
+			</para>
+		</note>
+
+		<!-- something here? -->
+
+
+		<section>
+			<title>Transactions</title>
+			<note>
+				<para>For messages definition please refer to source or Q.763.
+				</para>
+			</note>
+			<para>
+				<acronym>ISUP</acronym>
+				specification declares only messages and parameters to pass
+				information about trunks and circuits setup.
+			&THIS.PLATFORM;
+				<acronym>ISUP</acronym>
+				introduces notion of transactions. Transaction groups messages
+				which logically belong to single interaction (like associating circuit to
+				call or releasing circuit).
+				Server transactions are used as reference for incoming request. It
+				provides means of sending answer back to originating peer.
+				Client transaction are used as reference for outgoing requests. It
+				provides means of sending request to remote peer.
+				Depending on type of action and messages involved, life time of transaction
+				varies. Diagram below depicts transaction scope:
+			</para>
+			<mediaobject id="ss7_design_isup_transactions_1">
+				<imageobject>
+					<imagedata width="300px" align="center"
+						fileref="images/ss7-isup-design-transaction-overview1.png" format="PNG" />
+				</imageobject>
+				<caption>
+					<para>
+						<acronym>ISUP</acronym>
+						transactions overview
+					</para>
+				</caption>
+			</mediaobject>
+			<note>
+				<para>Depending on transaction state machine messages #2 and #3 may
+					not be present.</para>
+			</note>
+			<para>
+				Following transactions types are defined by &THIS.PLATFORM;
+				<acronym>ISUP</acronym>
+				:
+				<table frame="all" pgwide="1">
+					<title>Transaction types</title>
+					<tgroup colsep="1" cols="4">
+						<colspec colnum="1" colname="c0" />
+						<colspec colnum="2" colname="c1" />
+						<colspec colnum="3" colname="c2" />
+						<colspec colnum="4" colname="c3" />
+						<thead>
+							<row>
+								<entry>Name</entry>
+								<entry>Initial message</entry>
+								<entry>Intermediate messages</entry>
+								<entry>Final message</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry>IAM</entry>
+								<entry>IAM</entry>
+								<entry>ACM</entry>
+								<entry>ANM</entry>
+							</row>
+							<row>
+								<entry>REL</entry>
+								<entry>REL</entry>
+								<entry></entry>
+								<entry>RLC</entry>
+							</row>
+							<row>
+								<entry>CGB</entry>
+								<entry>CGB</entry>
+								<entry></entry>
+								<entry>CGBA</entry>
+							</row>
+							<row>
+								<entry>GRS</entry>
+								<entry>GRS</entry>
+								<entry></entry>
+								<entry>GRA</entry>
+							</row>
+							<row>
+								<entry>CGU</entry>
+								<entry>CGU</entry>
+								<entry></entry>
+								<entry>CGUA</entry>
+							</row>
+							<row>
+								<entry>RSC</entry>
+								<entry>RSC</entry>
+								<entry></entry>
+								<entry></entry>
+							</row>
+							<row>
+								<entry>UBL</entry>
+								<entry>UBL</entry>
+								<entry></entry>
+								<entry>UBA</entry>
+							</row>
+							<!-- Here more will go. -->
+
+						</tbody>
+					</tgroup>
+				</table>
+
+			</para>
+			<para>Common part of transactions is defined as follows:</para>
+			<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.isup;
+
+import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+
+public interface ISUPTransaction {
+	/**
+	 * Get unique transaction key associated with this transaction
+	 * @return
+	 */
+	public TransactionKey getTransactionKey();
+	/**
+	 * Determine if this transaction is server.
+	 * @return
+	 */
+	public boolean isServerTransaction();
+	/**
+	 * Get original message which started this transaction
+	 * @return
+	 */
+	public ISUPMessage getOriginalMessage();
+	/**
+	 * Determine if transaction has terminated properly.
+	 * @return
+	 */
+	public boolean isTerminated();
+	/**
+	 * Determine if transaction has timeout.
+	 * @return
+	 */
+	public boolean isTimedout();
+	
+}
+			</programlisting>
+			<para>Above interface declares <literal>getTransactionKey</literal> method. It returns transaction key which is unique for certain transaction.</para>
+			<para>Client transaction is defined as follows: </para>
+			<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.isup;
+
+import java.io.IOException;
+
+public interface ISUPClientTransaction extends ISUPTransaction {
+	/**
+	 * Send request for which this transaction has been created.
+	 * @throws ParameterRangeInvalidException
+	 * @throws IOException
+	 */
+	public void sendRequest() throws ParameterRangeInvalidException, IOException;
+	/**
+	 * State of this transaction
+	 * @return
+	 */
+	public ISUPClientTransactionState getState();
+}
+			</programlisting>
+			<para>Server transaction is defined accordingly to its role:</para>
+			<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.isup;
+
+import java.io.IOException;
+import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+
+public interface ISUPServerTransaction extends ISUPTransaction{
+	
+	/**
+	 * Send answer via this transaction.
+	 * @param msg
+	 * @throws ParameterRangeInvalidException
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 */
+	public void sendAnswer(ISUPMessage msg) throws ParameterRangeInvalidException
+		,IllegalArgumentException, IOException;
+	/**
+	 * Get state of this transaction.
+	 * @return
+	 */
+	public ISUPServerTransactionState getState();
+	
+}
+			</programlisting>
+		</section>
+		<section>
+			<title>Factories</title>
+			<para><acronym>ISUP</acronym> stack declares separate factories for messages and their parameters. However both interfaces are too big to have any use if mentioned in documentation.
+			Please refer to source for details.</para>
+			
+		</section>
+		<section>
+			<title>Stack</title>
+			<para><acronym>ISUP</acronym> stack relies on <acronym>MTP</acronym> to provide transport. Stack interface is defined as follows: </para>
+			<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.isup;
+
+public interface ISUPStack {
+
+	public ISUPProvider getIsupProvider();
+
+	public void stop();
+
+	public void start();
+}
+			</programlisting>
+			<para>
+			Stack declares provider which allows user to access stack facilities, send messages statelesly and register listener. Provider is defined as follows:
+			</para>
+			<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.isup;
+
+import java.io.IOException;
+
+import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+
+public interface ISUPProvider {
+	/**
+	 * Stateles message send over MTP. No state is maintained.
+	 * 
+	 * @param msg
+	 * @throws ParameterRangeInvalidException
+	 * @throws IOException
+	 */
+	public void sendMessage(ISUPMessage msg) throws ParameterRangeInvalidException, IOException;
+
+	public void addListener(ISUPListener listener);
+
+	public void removeListener(ISUPListener listener);
+
+	public ISUPParameterFactory getParameterFactory();
+
+	public ISUPMessageFactory getMessageFactory();
+	/**
+	 * Create new client transaction if it does not exist.
+	 * @param msg
+	 * @return
+	 * @throws TransactionAlredyExistsException
+	 * @throws IllegalArgumentException
+	 */
+	public ISUPClientTransaction createClientTransaction(ISUPMessage msg) 
+			throws TransactionAlredyExistsException, IllegalArgumentException;
+	/**
+	 * Create new server transaction if it does not exist.
+	 * @param msg
+	 * @return
+	 * @throws TransactionAlredyExistsException
+	 * @throws IllegalArgumentException
+	 */
+	public ISUPServerTransaction createServerTransaction(ISUPMessage msg) 
+			throws TransactionAlredyExistsException, IllegalArgumentException;
+
+}
+			</programlisting>
+			<para>
+			Provider allows to register listener. Listener contains set of call backs useful for <acronym>ISUP</acronym> user. It is defined as follows: 
+			</para>
+			<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.isup;
+
+import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+
+/**
+ *
+ * @author kulikov
+ * @author baranowb
+ */
+public interface ISUPListener {
+	
+	/**
+	 * Called once stack receives proper ISUP message. Message holds reference to ongoing transaction if it exists.
+	 * @param message
+	 */
+	public void onMessage(ISUPMessage message);
+	// etc
+	/**
+	 * Called once transaction times out. Transaction times out if there 
+	 * is no answer received within configured time.
+	 */
+	public void onTransactionTimeout(ISUPClientTransaction tx);
+	/**
+	 * Called once transaction times out. Transaction times out if there 
+	 * is no answer received within configured time.
+	 */
+	public void onTransactionTimeout(ISUPServerTransaction tx);
+	/**
+	 * Called once transaction ends its lifecycle.
+	 */
+	public void onTransactionEnded(ISUPClientTransaction tx);
+	/**
+	 * Called once transaction ends its lifecycle.
+	 */
+	public void onTransactionEnded(ISUPServerTransaction tx);
+
+	
+	//transport methods
+	/**
+	 * Method called when transport provider is not able to send/rcv messages, 
+	 * any calls to send methods after this callback will throw exception
+	 */
+	public void onTransportDown();
+	/**
+	 * Method called when transport provider is able to send/rcv messages, 
+	 * any calls to send methods after this callback are welcome.
+	 */
+	public void onTransportUp();
+
+	
+}
+			</programlisting>
+		</section>
+	</section>
+	<section>
+		<title>Configuration</title>
+		<para><acronym>ISUP</acronym> stack supports following configuration parameters:</para>
+		<table frame="all" pgwide="1">
+				<title>M3UserConnector's Configuration Properties</title>
+				<tgroup colsep="1" cols="4">
+				   	<colspec colnum="1" colname="c0"/>
+				    <colspec colnum="2" colname="c1"/>
+				    <colspec colnum="3" colname="c2"/>
+				    <colspec colnum="4" colname="c3"/>
+				    <thead>
+						<row>
+				    	    <entry>Property Name</entry>
+				   	    	<entry>Description</entry>
+				   	    	<entry>Property Type</entry>
+				   	    	<entry>Default Value</entry>
+				    	</row>
+					</thead>
+					<tbody>
+						<row>
+				   			<entry>isup.dpc</entry>
+				   	    	<entry>Default DPC used by ISUP layer for originating messages</entry>
+				   	    	<entry>java.lang.Integer</entry>
+				   	    	<entry></entry>
+				    	</row>
+				    	<row>
+				   			<entry>isup.opc</entry>
+				   	    	<entry>Default OPC used by ISUP layer for originating messages</entry>
+				   	    	<entry>java.lang.Integer</entry>
+				   	    	<entry></entry>
+				    	</row>
+				    	<row>
+				   			<entry>isup.sls</entry>
+				   	    	<entry>Default SLS used by ISUP layer for originating messages</entry>
+				   	    	<entry>java.lang.Integer</entry>
+				   	    	<entry></entry>
+				    	</row>
+				    	<row>
+				   			<entry>isup.ssi</entry>
+				   	    	<entry>Default SSI used by ISUP layer for originating messages</entry>
+				   	    	<entry>java.lang.Integer</entry>
+				   	    	<entry></entry>
+				    	</row>
+					    <row>
+					   		<entry>isup.client.timeout</entry>
+					   	    <entry>Value of timeout in milisecond. It controls timeout of client transaction. This value must be lower than <literal>isup.general.timeout</literal> </entry>
+					   	    <entry>java.lang.Long</entry>
+					   	    <entry>30.000</entry>
+					    </row>
+					    <row>
+					   		<entry>isup.general.timeout</entry>
+					   	    <entry>Value of timeout in milisecond. It controls timeout of client transaction and server transaction. This value must be greater than <literal>isup.general.timeout</literal> </entry>
+					   	    <entry>java.lang.Long</entry>
+					   	    <entry>120.000</entry>
+					    </row>
+					    
+					 </tbody>
+			    </tgroup>
+	        </table>
+	        
+	</section>
+	<section>
+			<title>Dependencies</title>
+			<para><acronym>ISUP</acronym> depends on following:</para>
+			<itemizedlist>
+				<listitem>
+					<para>Transport</para>
+				</listitem>
+			</itemizedlist>
+		</section>
+	<section>
+		<title>Example</title>
+		<para></para>
+		<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.isup.impl;
+
+import java.io.IOException;
+
+import org.mobicents.protocols.ss7.isup.ISUPClientTransaction;
+import org.mobicents.protocols.ss7.isup.ISUPListener;
+import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.isup.ISUPProvider;
+import org.mobicents.protocols.ss7.isup.ISUPServerTransaction;
+import org.mobicents.protocols.ss7.isup.ISUPStack;
+import org.mobicents.protocols.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.protocols.ss7.isup.TransactionAlredyExistsException;
+import org.mobicents.protocols.ss7.isup.message.AddressCompleteMessage;
+import org.mobicents.protocols.ss7.isup.message.AnswerMessage;
+import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+import org.mobicents.protocols.ss7.isup.message.InitialAddressMessage;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
+import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
+import org.mobicents.protocols.ss7.isup.message.parameter.ForwardCallIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.NatureOfConnectionIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumRequirement;
+
+/**
+ * @author baranowb
+ * 
+ */
+public class ClientIAM implements ISUPListener {
+	private MTPProvider mtpProvider;
+	private ISUPStack isupStack;
+	private ISUPProvider provider;
+	private ISUPMessageFactory factory;
+	private ISUPParameterFactory parameterFactory;
+
+
+	private ISUPClientTransaction ctx;
+	
+	
+	public ClientIAM(MTPProvider mtpProvider) {
+		super();
+		
+		Properties props = new Properties();
+		props.setProperty("isup.opc","123");
+        props.setProperty("isup.dpc","321");
+        props.setProperty("isup.sls","0");
+        props.setProperty("isup.ssi","0");
+        //no need to set timeout, default value is ok;
+        
+		this.isupStack = new ISUPStackImpl(mtpProvider,props);
+		this.isupStack.start();
+		this.provider = this.isupStack.getIsupProvider();
+		this.factory = this.provider.getMessageFactory();
+		this.parameterFactory = this.provider.getParameterFactory();
+	}
+
+	public void start() throws IllegalArgumentException, TransactionAlredyExistsException
+		, ParameterRangeInvalidException, IOException {
+		InitialAddressMessage iam = this.factory.createIAM();
+
+		// create obligatory params!
+		NatureOfConnectionIndicators nais = this.parameterFactory.createNatureOfConnectionIndicators();
+		nais.setContinuityCheckIndicator(
+			NatureOfConnectionIndicators._CCI_PERFORMED_ON_PREVIOUS_CIRCUIT);
+		nais.setEchoControlDeviceIndicator(NatureOfConnectionIndicators._ECDI_INCLUDED);
+		nais.setSatelliteIndicator(NatureOfConnectionIndicators._SI_TWO_SATELLITE);
+
+		ForwardCallIndicators fcis = this.parameterFactory.createForwardCallIndicators();
+		fcis.setEndToEndInformationIndicator(true);
+		fcis.setEndToEndMethodIndicator(fcis._ETEMI_PASSALONG);
+		fcis.setInterworkingIndicator(false);
+		fcis.setIsdnAccessIndicator(true);
+
+		CallingPartyCategory cpg = this.parameterFactory.createCallingPartyCategory();
+		// ?
+		cpg.setCallingPartyCategory((byte) 1);
+
+		TransmissionMediumRequirement tmr = this.
+			parameterFactory.createTransmissionMediumRequirement();
+		tmr.setTransimissionMediumRequirement(tmr._MEDIUM_14x64_KBIT_UNRESTRICTED);
+
+		CalledPartyNumber cpn = this.parameterFactory.createCalledPartyNumber();
+		cpn.setAddress("123455");
+		cpn.setNumberingPlanIndicator(cpn._NPI_ISDN);
+		cpn.setNatureOfAddresIndicator(cpn._NAI_NATIONAL_SN);
+		cpn.setInternalNetworkNumberIndicator(cpn._INN_ROUTING_ALLOWED);
+
+		iam.setNatureOfConnectionIndicators(nais);
+		iam.setForwardCallIndicators(fcis);
+		iam.setCallingPartCategory(cpg);
+		iam.setTransmissionMediumRequirement(tmr);
+		iam.setCalledPartyNumber(cpn);
+
+		CircuitIdentificationCode cic = this.parameterFactory.createCircuitIdentificationCode();
+		cic.setCIC(12);
+		iam.setCircuitIdentificationCode(cic);
+		
+		ctx = this.provider.createClientTransaction(iam);
+
+		ctx.sendRequest();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.isup.ISUPListener#onMessage(org.mobicents
+	 * .protocols.ss7.isup.message.ISUPMessage)
+	 */
+	public void onMessage(ISUPMessage message) {
+		switch (message.getMessageType().getCode()) {
+		case AddressCompleteMessage.MESSAGE_CODE:
+			
+			//ACM is send back as first
+	
+			break;
+		case AnswerMessage.MESSAGE_CODE:
+			//second, this terminates transaction
+			break;
+		default:
+
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.isup.ISUPListener#onTransactionEnded(org.
+	 * mobicents.protocols.ss7.isup.ISUPClientTransaction)
+	 */
+	public void onTransactionEnded(ISUPClientTransaction tx) {
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.isup.ISUPListener#onTransactionEnded(org.
+	 * mobicents.protocols.ss7.isup.ISUPServerTransaction)
+	 */
+	public void onTransactionEnded(ISUPServerTransaction tx) {
+
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.isup.ISUPListener#onTransactionTimeout(org
+	 * .mobicents.protocols.ss7.isup.ISUPClientTransaction)
+	 */
+	public void onTransactionTimeout(ISUPClientTransaction tx) {
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.isup.ISUPListener#onTransactionTimeout(org
+	 * .mobicents.protocols.ss7.isup.ISUPServerTransaction)
+	 */
+	public void onTransactionTimeout(ISUPServerTransaction tx) {
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.isup.ISUPListener#onTransportDown()
+	 */
+	public void onTransportDown() {
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.isup.ISUPListener#onTransportUp()
+	 */
+	public void onTransportUp() {
+		// TODO Auto-generated method stub
+
+	}
+
+
+
+}
+
+		</programlisting>
+	</section>
+</chapter>
+

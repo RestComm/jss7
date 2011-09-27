@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents</groupId>
+		<artifactId>mobicents-parent</artifactId>
+		<version>2.20-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>map-load</artifactId>
+
+	<name>Mobicents SS7 :: MAP :: LOAD :: ${pom.artifactId}</name>
+	<packaging>jar</packaging>
+
+	<properties>
+		<mobicents.tools.mavenplugin.eclipse.version>
+			1.0.0.BETA2
+		</mobicents.tools.mavenplugin.eclipse.version>
+		<concurrent.version>1.3.4</concurrent.version>
+		<log4j.version>1.2.14</log4j.version>
+		<junit.version>3.8.1</junit.version>
+		<testng.version>6.2</testng.version>
+		<javolution.version>5.5.1</javolution.version>
+		<compiler.plugin.version>2.0.2</compiler.plugin.version>
+		<compile.source>1.5</compile.source>
+		<!-- mobicents but not strictly ss7 -->
+		<asn.version>1.0.0-SNAPSHOT</asn.version>
+		<stream.version>1.0.0.CR1</stream.version>
+		<ss7.version>1.0.0-SNAPSHOT</ss7.version>
+		
+		<!-- data -->
+		<assemble.dir>${pom.build.directory}/load</assemble.dir>
+	</properties>
+
+	<dependencies>
+		<!--  does not work.... lol
+		<dependency>
+			<artifactId>ss7-parent</artifactId>
+			<groupId>org.mobicents.protocols.ss7</groupId>
+			<version>${ss7.version}</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+		
+		 -->
+		<!-- SS7 -->
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.map</groupId>
+			<artifactId>map-api</artifactId>
+			<version>${ss7.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.map</groupId>
+			<artifactId>map-impl</artifactId>
+			<version>${ss7.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+			<artifactId>sccp-api</artifactId>
+			<version>${ss7.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+			<artifactId>sccp-impl</artifactId>
+			<version>${ss7.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mobicents.protocols.asn</groupId>
+			<artifactId>asn</artifactId>
+			<version>${asn.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+			<artifactId>tcap-impl</artifactId>
+			<version>${ss7.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+			<artifactId>tcap-api</artifactId>
+			<version>${ss7.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<artifactId>mtp-api</artifactId>
+			<version>${ss7.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+			<artifactId>m3ua-api</artifactId>
+			<version>${ss7.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+			<artifactId>m3ua-impl</artifactId>
+			<version>${ss7.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.mobicents.protocols.stream</groupId>
+			<artifactId>stream</artifactId>
+			<version>${stream.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>concurrent</groupId>
+			<artifactId>concurrent</artifactId>
+			<version>${concurrent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Not managed deps 
+
+		<dependency>
+			<groupId>org.mobicents.external.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+		</dependency>
+-->
+		<dependency>
+			<groupId>javolution</groupId>
+			<artifactId>javolution</artifactId>
+			<version>${javolution.version}</version>
+		</dependency>
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<finalName>${pom.artifactId}</finalName>
+				<plugins>
+					<plugin>
+						<artifactId>maven-eclipse-plugin</artifactId>
+						<groupId>org.mobicents.tools</groupId>
+						<version>
+					${mobicents.tools.mavenplugin.eclipse.version}
+						</version>
+						<inherited>false</inherited>
+						<configuration>
+							<classpathExcludes>
+								<exclude>xml-apis:xml-apis</exclude>
+								<exclude>jtidy:jtidy</exclude>
+							</classpathExcludes>
+							<resolveTransitiveDependencies>
+								true
+					</resolveTransitiveDependencies>
+							<eclipseProjectName>
+								mobicents-map-load
+					</eclipseProjectName>
+						</configuration>
+					</plugin>
+					<plugin>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<source>1.5</source>
+							<target>1.5</target>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+
+		</profile>
+		<profile>
+			<id>assemble</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<finalName>${pom.artifactId}</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-dependency-jar</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<!-- this artifact :) -->
+										<artifactItem>
+											<groupId>${pom.groupId}</groupId>
+											<artifactId>${pom.artifactId}</artifactId>
+											<version>${pom.version}</version>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+									</outputDirectory>
+											<destFileName>
+												map-load.jar
+									</destFileName>
+										</artifactItem>
+
+										<!-- deps -->
+										<artifactItem>
+											<groupId>org.mobicents.protocols.ss7.map</groupId>
+											<artifactId>map-api</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+									</outputDirectory>
+											<destFileName>
+												map-api.jar
+									</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>org.mobicents.protocols.ss7.map</groupId>
+											<artifactId>map-impl</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+									</outputDirectory>
+											<destFileName>
+												map-impl.jar
+									</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+											<artifactId>sccp-api</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+									</outputDirectory>
+											<destFileName>
+												sccp-api.jar
+									</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+											<artifactId>sccp-impl</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+									</outputDirectory>
+											<destFileName>
+												sccp-impl.jar
+									</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+											<artifactId>m3ua-api</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+									</outputDirectory>
+											<destFileName>
+												m3ua-api.jar
+									</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+											<artifactId>m3ua-impl</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+									</outputDirectory>
+											<destFileName>
+												m3ua-impl.jar
+									</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>org.mobicents.protocols.asn</groupId>
+											<artifactId>asn</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+									</outputDirectory>
+											<destFileName>
+												asn.jar
+									</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+											<artifactId>tcap-api</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+									</outputDirectory>
+											<destFileName>
+												tcap-api.jar
+									</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+											<artifactId>tcap-impl</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+									</outputDirectory>
+											<destFileName>
+												tcap-impl.jar
+									</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+											<artifactId>mtp-api</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+									</outputDirectory>
+											<destFileName>
+												mtp-api.jar
+									</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>org.mobicents.protocols.stream</groupId>
+											<artifactId>stream</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+									</outputDirectory>
+											<destFileName>
+												stream.jar
+									</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>javolution</groupId>
+											<artifactId>javolution</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+									</outputDirectory>
+											<destFileName>
+												javolution.jar
+									</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>concurrent</groupId>
+											<artifactId>concurrent</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+									</outputDirectory>
+											<destFileName>
+												concurrent.jar
+									</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>log4j</groupId>
+											<artifactId>log4j</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+									</outputDirectory>
+											<destFileName>
+												log4j.jar
+									</destFileName>
+										</artifactItem>
+										<!-- <artifactItem> <groupId>org.mobicents.external.appframework</groupId> <artifactId>appframework</artifactId> <type>jar</type> <overWrite>true</overWrite> 
+											<outputDirectory> ${assemble.dir}/lib </outputDirectory> <destFileName> appframework.jar </destFileName> </artifactItem> <artifactItem> <groupId>org.mobicents.external.appframework</groupId> 
+											<artifactId>swing-layout</artifactId> <type>jar</type> <overWrite>true</overWrite> <outputDirectory> ${assemble.dir}/lib </outputDirectory> <destFileName> 
+											swing-layout.jar </destFileName> </artifactItem> <artifactItem> <groupId>org.mobicents.external.appframework</groupId> <artifactId>swing-worker</artifactId> 
+											<type>jar</type> <overWrite>true</overWrite> <outputDirectory> ${assemble.dir}/lib </outputDirectory> <destFileName> swing-worker.jar </destFileName> 
+											</artifactItem> <artifactItem> <groupId>org.mobicents.external.opencsv</groupId> <artifactId>opencsv</artifactId> <type>jar</type> <overWrite>true</overWrite> 
+											<outputDirectory> ${assemble.dir}/lib </outputDirectory> <destFileName> opencsv.jar </destFileName> </artifactItem> -->
+									</artifactItems>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- 
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy-DU</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<copy
+											overwrite="true"
+											file="bin/run.sh"
+											todir="${assemble.dir}" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+ 					-->
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+
+
+</project>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dpcVsAsList>
+	<Key type="java.lang.Integer" value="2"/>
+	<Value type="javolution.util.FastList">
+		<java.lang.String value="AS1"/>
+	</Value>
+</dpcVsAsList>

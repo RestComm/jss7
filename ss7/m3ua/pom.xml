@@ -1,0 +1,153 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<parent>
+		<artifactId>ss7-parent</artifactId>
+		<groupId>org.mobicents.protocols.ss7</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+
+	<artifactId>m3ua</artifactId>
+	<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+	<version>1.0.0-SNAPSHOT</version>
+
+	<packaging>pom</packaging>
+
+	<name>Mobicents SS7 :: M3UA :: Parent :: ${pom.artifactId}</name>
+	
+	<properties>
+		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
+	</properties>
+
+	<modules>
+		<module>api</module>
+		<module>impl</module>
+	</modules>
+
+	<developers>
+		<developer>
+			<id>oleg.kulikoff</id>
+			<name>Oleg Kulikoff</name>
+			<email>oleg.kulikoff@gmail.com</email>
+			<organization>JBoss/Red Hat</organization>
+			<organizationUrl>http://www.redhat.com/</organizationUrl>
+			<roles>
+				<role>Active Developer</role>
+			</roles>
+			<timezone>+3</timezone>
+		</developer>
+		<developer>
+			<id>amit.bhayani</id>
+			<name>Amit Bhayani</name>
+			<email>amit.bhayani@gmail.com</email>
+			<organization>JBoss/Red Hat</organization>
+			<organizationUrl>http://www.redhat.com/</organizationUrl>
+			<roles>
+				<role>Active Developer</role>
+			</roles>
+			<timezone>+5.5</timezone>
+		</developer>
+		<developer>
+			<id>baranowb</id>
+			<name>Bartosz Baranowski</name>
+			<email>baranowb@gmail.com</email>
+			<organization>JBoss/Red Hat</organization>
+			<organizationUrl>http://www.redhat.com/</organizationUrl>
+			<roles>
+				<role>Active Developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>GNU GENERAL PUBLIC LICENSE</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<!-- -->
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<groupId>org.mobicents.tools</groupId>
+				<version>
+					${mobicents.tools.mavenplugin.eclipse.version}
+				</version>
+				<inherited>false</inherited>
+				<executions />
+				<configuration>
+					<classpathExcludes>
+						<exclude>xml-apis:xml-apis</exclude>
+						<exclude>jtidy:jtidy</exclude>
+					</classpathExcludes>
+					<resolveTransitiveDependencies>
+						true
+					</resolveTransitiveDependencies>
+					<eclipseProjectName>
+						mobicents-m3ua
+					</eclipseProjectName>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules>
+				<!-- If copy paste, please look... cmon <module>docs</module> -->
+			</modules>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<version>2.0-beta-9</version>
+						<configuration>
+							<autoVersionSubmodules>
+								true
+							</autoVersionSubmodules>
+							<remoteTagging>true</remoteTagging>
+							<tagBase>
+								https://mobicents.googlecode.com/svn/tags/protocols/ss7/m3ua
+							</tagBase>
+							<preparationGoals>clean install</preparationGoals>
+						</configuration>
+					</plugin>
+					<plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-compiler-plugin</artifactId>
+                                <version>2.3</version>
+                                <configuration>
+                                  <compilerArgument>-XDignore.symbol.file=true</compilerArgument>
+                                </configuration>
+                        </plugin>
+					
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>release</id>
+			<modules>
+				<module>release</module>
+			</modules>
+			<!-- Add more if required -->
+		</profile>
+	</profiles>
+	<scm>
+		<connection>
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/m3ua
+		</connection>
+		<developerConnection>
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/m3ua
+		</developerConnection>
+		<url>
+			http://mobicents.googlecode.com/svn/trunk/protocols/ss7/m3ua
+		</url>
+	</scm>
+
+</project>

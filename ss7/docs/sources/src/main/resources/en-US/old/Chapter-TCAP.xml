@@ -1,0 +1,1409 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter id="layer_tcap">
+
+	<title>Transaction Capabilities Applications Part (TCAP) Layer</title>
+
+	<para></para>
+	<section>
+		<title>Introduction</title>
+		<important><para>For better understanding of this chapter please read ITU-T Q.771 to Q.774.</para> </important>
+		<para><acronym>TCAP</acronym> supports the exchange of non-circuit related data between
+			applications across the <acronym>SS7</acronym> network using the <acronym>SCCP</acronym> connectionless
+			service. Queries and responses sent between SSPs and SCPs are carried
+			in TCAP messages. For example, an SSP sends a <acronym>TCAP</acronym> query to determine
+			the routing number associated with a dialed 800/888 number and to
+			check the personal identification number (<acronym>PIN</acronym>) of a calling card
+			user. In mobile networks (IS-41 and <acronym>GSM</acronym>), <acronym>TCAP</acronym> carries Mobile
+			Application Part (<acronym>MAP</acronym>) messages sent between mobile switches and
+			databases to support user authentication, equipment identification,
+			and roaming.</para>
+			<para>
+			<acronym>TCAP</acronym> messages and parameters are refered as <literal>primitives</literal>. Primitives are exchanged 
+				within logical entity called dialog. There are two types of dialogs:
+				<itemizedlist>
+					<listitem>
+						<para>Unstructured - short lived, it is created only to deliver single message (<literal>Unstructured primitive</literal>), after delivery dialog is invalidated. </para>
+					</listitem>
+					<listitem>
+						<para>Structured - long lived, it is created when exchange starts and lives until it is terminated. </para>
+					</listitem>
+				</itemizedlist>
+			</para>
+			<para>
+				<acronym>TCAP</acronym> defines following message types:
+			</para>			
+			<itemizedlist>
+				<listitem>
+					<para>Unstructured - creates Unstructured dialog. Unstructured dialog is invalidated once this message is either sent or consumed. It is meant for messages which dont require answer or interaction.</para>
+				</listitem>
+				<listitem>
+					<para>Begin - message sent to begin Structured dialog, it carries context information for dialog being created</para>
+				</listitem>
+				<listitem>
+					<para>Continue - continues Structured dialog</para>
+				</listitem>
+				<listitem>
+					<para>End - ends Structured dialog in graceful way</para>
+				</listitem>
+				<listitem>
+					<para>Abort - aborts Structured dialog</para>
+				</listitem>
+			</itemizedlist>
+			<para><acronym>TCAP</acronym> messages convey two types of information:</para>
+			<itemizedlist>
+				<listitem>
+					<para>components - elements which carry information on requested operation, their status and result.</para>
+				</listitem>
+				<listitem>
+					<para>dialog related - dialog context(application context name) and application specific information(user information)</para>
+				</listitem>
+			</itemizedlist>
+	</section>
+	<section>
+		<title>Design and API Overview</title>
+		<para>&THIS.PLATFORM; &THIS.APPLICATION; <acronym>TCAP</acronym> builds abstraction layer over protocol definition. 
+		It introduces simplified <acronym>API</acronym> in favor of <acronym>JAIN TCAP</acronym>.
+		<!-- is this correct use of "in favor" ? -->  
+		  </para>
+		  <para>All interactions are handled by <acronym>TCAP</acronym> Dialog. Dialog agregates local and remote transactions into single reference.
+		  It maintains state associated with both ends and supervises proper encoding and content of exchanged primitives.  
+		  Diagram below depicts logical structure of <acronym>TCAP</acronym> and application using it:</para>
+		  <mediaobject id="ss7_design_tcap_overview_1">
+			<imageobject>
+				<imagedata width="300px" align="center"
+				fileref="images/ss7-tcap-design-overview1.png" format="PNG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; &THIS.APPLICATION; TCAP Dialog
+				</para>
+			</caption>
+		</mediaobject>
+		  <note>
+		  	<para> TC and TR layers are explained in ITU-T Q.77X specifications. This <acronym>API</acronym> does not expose those layers directly.</para>
+		  </note>
+		  <section>
+		  	<title>TCAP Dialog overview</title>
+		  	<para><literal>TCAPDialog</literal> is a class representing two <acronym>TCAP</acronym> transactions(remote and local transaction form logical dialog).
+		  	 Messages(primitives) are exchanged by means of this  class. It is defined by following interface: 		  	 
+		  	</para>
+		  	<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.api.tc.dialog;
+
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.TCAPException;
+import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortRequest;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
+
+
+public interface Dialog {
+
+	/**
+	 * returns this dialog ID. It MUST be unique at any given time in local
+	 * stack.
+	 * 
+	 * @return
+	 */
+	public Long getDialogId();
+
+	/**
+	 * Gets local sccp address
+	 * 
+	 * @return
+	 */
+	public SccpAddress getLocalAddress();
+
+	/**
+	 * Gets remote sccp address
+	 * 
+	 * @return
+	 */
+	public SccpAddress getRemoteAddress();
+
+	/**
+	 * Last sent/received ACN
+	 * 
+	 * @return the acn
+	 */
+	public ApplicationContextName getApplicationContextName();
+
+	/**
+	 * Last sent/received UI
+	 * 
+	 * @return the ui
+	 */
+	public UserInformation getUserInformation();
+
+	/**
+	 * returns new, unique for this dialog, invocation id to be used in
+	 * TC_INVOKE. If there is no free invoke id, it returns null. Invoke ID is
+	 * freed once operation using it is canceled, timeouts or simply returns
+	 * final value.
+	 * 
+	 * @return
+	 */
+	public Long getNewInvokeId() throws TCAPException;
+
+	/**
+	 * Cancels INVOKE pending to be sent. It is equivalent to TC-U-CANCEL.
+	 * 
+	 * @return <ul>
+	 *         <li><b>true</b> - if operation has been success and invoke id has been
+	 			 return to pool of available ids.</li>
+	 *         <li><b>false</b> -</li>
+	 *         </ul>
+	 * @throws TCAPException
+	 *             - thrown if passed invoke id is wrong
+	 */
+	public boolean cancelInvocation(Long invokeId) throws TCAPException;
+
+	/**
+	 * 
+	 * @return <ul>
+	 *         <li><b>true </b></li> - if dialog is established(at least one
+	 *         TC_CONTINUE has been sent/received.)
+	 *         <li><b>false</b></li> - no TC_CONTINUE sent/received
+	 *         </ul>
+	 */
+	public boolean isEstabilished();
+
+	/**
+	 * 
+	 * @return <ul>
+	 *         <li><b>true </b></li> - if dialog is structured - its created
+	 *         with TC_BEGIN not TC_UNI
+	 *         <li><b>false</b></li> - otherwise
+	 *         </ul>
+	 */
+	public boolean isStructured();
+
+	// //////////////////
+	// Sender methods //
+	// //////////////////
+	/**
+	 * Schedules component for sending. All components on list are queued. 
+	 Components are sent once message primitive is issued.
+	 * 
+	 * @param componentRequest
+	 * @throws TCAPSendException
+	 */
+	public void sendComponent(Component componentRequest) throws TCAPSendException;
+	/**
+	 * Send initial primitive for Structured dialog. 
+	 * @param event
+	 * @throws TCAPSendException - thrown if dialog is in bad state, ie.
+	  Being has already been sent or dialog has been removed.
+	 */
+	public void send(TCBeginRequest event) throws TCAPSendException;
+	/**
+	 * Sends intermediate primitive for Structured dialog.
+	 * @param event
+	 * @throws TCAPSendException - thrown if dialog is in bad state, ie.
+	  Begin has not been sent or dialog has been removed.
+	 */
+	public void send(TCContinueRequest event) throws TCAPSendException;
+	/**
+	 * Sends dialog end request.
+	 * @param event
+	 * @throws TCAPSendException - thrown if dialog is in bad state, ie.
+	  Begin has not been sent or dialog has been removed.
+	 */
+	public void send(TCEndRequest event) throws TCAPSendException;
+	/**
+	 * Sends Abort primitive with indication to user as source of termination.
+	 * @param event
+	 * @throws TCAPSendException
+	 */
+	public void send(TCUserAbortRequest event) throws TCAPSendException;
+	/**
+	 * Sends unstructured dialog primitive. After this method returns dialog
+	  is expunged from stack as its life cycle reaches end.
+	 * @param event
+	 * @throws TCAPSendException
+	 */
+	public void send(TCUniRequest event) throws TCAPSendException;
+
+	/**
+	 * Programmer hook to release.
+	 */
+	public void release();
+	
+	/**
+	 * Resets timeout timer for particular operation.
+	 * @param invokeId
+	 * @throws TCAPException
+	 */
+	public void resetTimer(Long invokeId) throws TCAPException;
+
+	/**
+	 * Returns the state of this Dialog
+	 * 
+	 * @return
+	 */
+	public TRPseudoState getState();
+
+}]]>
+		  	</programlisting>
+				<important>
+					<para> <literal>Application Context</literal> and <literal>User Information</literal> and negotiation process is described Q.771.
+						<literal>Application Context</literal> and <literal>User Information</literal> are user specific and identify capabilities of peer establishing dialog.
+					</para>
+				</important>
+		  	<para>
+		  	Each dialog has associated state machine which it follows. There are two types of dialogs, hence two machines are defined:
+		  	</para>
+		  	<mediaobject id="ss7_design_tcap_fsm_1">
+				<imageobject>
+					<imagedata width="300px" align="center"
+					fileref="images/ss7-tcap-dialog-fsm1.png" format="PNG" />
+				</imageobject>
+				<caption>
+					<para>TCAP Structured Dialog FSM
+					</para>
+				</caption>
+			</mediaobject>
+		  	<mediaobject id="ss7_design_tcap_fsm_2">
+				<imageobject>
+					<imagedata width="300px" align="center"
+					fileref="images/ss7-tcap-dialog-fsm2.png" format="PNG" />
+				</imageobject>
+				<caption>
+					<para>TCAP Unstructured Dialog FSM
+					</para>
+				</caption>
+			</mediaobject>
+			<para>Each dialog has associated separate invoke id space. This space includes all integer numbers from set of &lt;-128,127&gt;. Invoke id is reference number for operation related components, please refer to <xref linkend="operations"/> for more details.</para>
+		  </section>
+		  <section id="operations">
+		  	<title>Operation primitives
+		  	</title>
+		  	<note><para>In <acronym>TCAP</acronym> operation primitives are also refered as <literal>Components</literal>. </para> </note>
+		  	<para>Operation pritmitives are sent as part of messages. Each primitive is scheduled in dialog and sent once user request message to be sent.
+		  	</para>
+		  	<para>There are following primitives defined: </para>
+		  	<variablelist>
+		  		<varlistentry>
+		  			<term>Invoke</term>
+		  			<listitem>
+		  				<para>This element indicates that peer request some operation to be invoked. <acronym>TCAP</acronym> user populates it with specific to user <literal>OperationCode</literal> and <literal>Parameter</literal>. </para>
+		  				<programlisting language="Java" role="JAVA"><![CDATA[
+public interface Invoke extends Component{
+
+	
+	public InvokeClass getInvokeClass();
+
+	/**
+	 * 
+	 * @param invokeClass
+	 */
+	public void setInvokeClass(InvokeClass invokeClass);
+
+	/**
+	 * @return the invokeTimeout
+	 */
+	public long getInvokeTimeout();
+
+	/**
+	 * Sets timeout for this invoke operation in miliseconds. If no indication
+	 * on operation status is received, before this value passes, operation
+	 * timesout.
+	 * 
+	 * @param invokeTimeout
+	 *            the invokeTimeout to set
+	 */
+	public void setInvokeTimeout(long invokeTimeout);
+
+	// optional
+	public void setLinkedId(Long i);
+
+	public Long getLinkedId();
+
+	// mandatory
+	public void setOperationCode(OperationCode i);
+
+	public OperationCode getOperationCode();
+
+	// optional
+	public void setParameter(Parameter p);
+
+	public Parameter getParameter();
+}
+
+package org.mobicents.protocols.ss7.tcap.api.tc.component;
+
+/**
+ * Class of invoke type, ref Q.771 2.3.1.3.
+ * <ul>
+ * <li>Class 1 – Both success and failure are reported.</li>
+ * <li>Class 2 – Only failure is reported.</li>
+ * <li>Class 3 – Only success is reported.</li>
+ * <li>Class 4 – Neither success, nor failure is reported.</li>
+ * <ul>
+ * 
+ */
+public enum InvokeClass {
+
+	Class1, Class2, Class3, Class4;
+}
+		  				]]>
+		  				</programlisting>
+		  			</listitem>
+		  		</varlistentry>
+		  		<varlistentry>
+		  			<term>ReturnResult</term>
+		  			<listitem>
+		  				<para>This element indicates partial result of <literal>Invoke</literal>. <acronym>TCAP</acronym> user populates it with specific to user <literal>OperationCode</literal> and <literal>Parameter</literal>. </para>
+		  				<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.asn.comp;
+
+public interface ReturnResult extends ... {
+	
+	//opt all
+	public void setOperationCode(OperationCode oc);
+	public OperationCode getOperationCode();
+	
+	public void setParameter(Parameter p);
+	public Parameter getParameter();
+	
+}
+		  				]]>
+		  				</programlisting>
+		  			</listitem>
+		  		</varlistentry>
+		  		<varlistentry>
+		  			<term>ReturnResultLast</term>
+		  			<listitem>
+		  				<para>This element indicates final result of <literal>Invoke</literal>. After this element is consumed  <literal>InvokeId</literal> associated with its operation is set free. <acronym>TCAP</acronym> user populates it with specific to user <literal>OperationCode</literal> and <literal>Parameter</literal>. </para>
+		  				<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.asn.comp;
+
+public interface ReturnResult extends ... {
+	
+	//opt all
+	public void setOperationCode(OperationCode oc);
+	public OperationCode getOperationCode();
+	
+	public void setParameter(Parameter p);
+	public Parameter getParameter();
+	
+}
+		  				]]>
+		  				</programlisting>
+		  			</listitem>
+		  		</varlistentry>
+		  		<varlistentry>
+		  			<term>Reject</term>
+		  			<listitem>
+		  				<para>This element indicates that peer rejected <literal>Invoke</literal>. It contains <literal>Problem</literal> which indiactes cause of rejection.</para>
+		  				<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.asn.comp;
+
+import org.mobicents.protocols.asn.Tag;
+
+public interface Reject extends Component {
+
+	public Problem getProblem();
+	public void setProblem(Problem p);
+	
+}
+		  				]]>
+		  				</programlisting>
+		  			</listitem>
+		  		</varlistentry>
+		  	</variablelist>
+		  	<para>Listed primitives can be scheduled to send with dialog <literal>sendComponent</literal> method. As such each extends super interface for components: 
+		  	</para>
+		  	<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.asn.comp;
+
+import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.tcap.asn.Encodable;
+
+public interface Component extends Encodable{
+
+	//this is doubled by each interface, 
+	public void setInvokeId(Long i);
+	public Long getInvokeId();
+	
+	public ComponentType getType();
+	
+}]]>
+			</programlisting> 
+		  	<para>
+		  	Additionaly &THIS.APPLICATION; <acronym>TCAP</acronym> defines elements to convey user specific information inside operation primitives:</para>
+		  	<variablelist>
+		  		<varlistentry>
+		  			<term>OperationCode</term>
+		  			<listitem>
+		  				<para>contains information on user specific operation - identifies this operation by code in user context.</para>
+		  				<programlisting language="Java" role="JAVA"><![CDATA[
+import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.tcap.asn.Encodable;
+
+public interface OperationCode extends Encodable{
+
+	public void setOperationType(OperationCodeType t);
+	public OperationCodeType getOperationType();
+	
+	public void setCode(Long i);
+	public Long getCode();
+
+}
+		  				]]>
+		  				</programlisting> 
+		  			</listitem>
+		  		</varlistentry>
+		  		<varlistentry>
+		  			<term>Parameter</term>
+		  			<listitem>
+		  				<para>container for user specific (encoded) parameter/s. Its content should be decoded in context to user context and <literal>OperationCode</literal> value.</para>
+		  				<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.asn.comp;
+
+import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.tcap.asn.Encodable;
+
+/**
+ * This class embeds Parameter/Parameters. It can be either primitive or
+ * constructed. It supports two types of encoding - content as byte[] - either
+ * simple or complex - depends on how TC-User sets parameters, or content as
+ * Parameter[] - in this case encoding is done as constructed element. It
+ * supports following cases:
+ * <ul>
+ * <li><br>
+ * byte[] as primitive -
+ * 
+ * <pre>
+ * Parameter p = ....
+ *  p.setTag(0x01);
+ *  p.setTagClass({@link Tag.CLASS_APPLICATION});
+ *  p.setData(new byte[]{ENCODED});
+ *  p.setPrimitive(true);
+ * </pre>
+ * 
+ * </li>
+ * <li><br>
+ * byte[] as constructed
+ * 
+ * <pre>
+ * Parameter p = ....
+ *  p.setTag(0x01);
+ *  p.setTagClass({@link Tag.CLASS_APPLICATION});
+ *  p.setData(new byte[]{ENCODED});
+ *  p.setPrimitive(false);
+ * </pre>
+ * 
+ * </li>
+ * <li><br>
+ * As constructed, with Parameter[] -
+ * 
+ * <pre>
+ * Parameter[] params = ....;
+ *  Parameter p = ....
+ *  p.setTag(0x01);
+ *  p.setTagClass({@link Tag.CLASS_APPLICATION});
+ *  //This sets primitive explicitly to false, it must be constructed type.
+ *  p.setParameters(params);
+ * </pre>
+ * 
+ * </li>
+ * </ul>
+ * Note that on read only byte[] is filled! In case TC-USER makes call to
+ * {@link #getParameters()} method - it triggers parsing to array, so it is
+ * perfectly legal to obtain byte[], rather than Parameter[].
+ * 
+ */
+public interface Parameter extends Encodable {
+
+
+	public byte[] getData();
+	/**
+	 * Sets content as raw byte[]. invocation parameter must be encoded by user.
+	 * @param b
+	 */
+	public void setData(byte[] b);
+
+	/**
+	 * Determine if this parameter is of primitive type - not constructed.
+	 * @return
+	 */
+	public boolean isPrimitive();
+
+	public void setPrimitive(boolean b);
+
+	/**
+	 * @return the tag
+	 */
+	public int getTag();
+
+	/**
+	 * @param tag
+	 *            the tag to set
+	 */
+	public void setTag(int tag);
+
+	/**
+	 * @return the tagClass
+	 */
+	public int getTagClass();
+
+	/**
+	 * @param tagClass
+	 *            the tagClass to set
+	 */
+	public void setTagClass(int tagClass);
+	/**
+	 * Return decoded raw byte[] data.
+	 * @return
+	 */
+	public Parameter[] getParameters();
+	/**
+	 * Sets Parameter[]. Automaticly marks this object as constructed - {@link #isPrimitive()} will return false.
+	 * @param paramss
+	 */
+	public void setParameters(Parameter[] paramss);
+
+}
+		  				]]>
+		  				</programlisting> 
+		  			</listitem>
+		  		</varlistentry>
+		  		<varlistentry>
+		  			<term>Problem</term>
+		  			<listitem>
+		  				<para>contains information on problem which occurred. It is part of <literal>Reject</literal> component.</para>
+		  				<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.asn.comp;
+
+import org.mobicents.protocols.ss7.tcap.asn.Encodable;
+
+public interface Problem extends Encodable {
+
+
+	public ProblemType getType();
+	public void setType(ProblemType t);
+
+	public void setGeneralProblemType(GeneralProblemType t);
+	public GeneralProblemType getGeneralProblemType();
+	
+	public void setInvokeProblemType(InvokeProblemType t);
+	public InvokeProblemType getInvokeProblemType();
+	
+	public void setReturnErrorProblemType(ReturnErrorProblemType t);
+	public ReturnErrorProblemType getReturnErrorProblemType();
+	
+	public void setReturnResultProblemType(ReturnResultProblemType t);
+	public ReturnResultProblemType getReturnResultProblemType();
+	
+	
+}
+		  				]]>
+		  				</programlisting>
+		  			</listitem>
+		  		</varlistentry>
+		  	</variablelist>
+		  	<para> Operation primitives are created by factory defined as follows: </para>
+		  	<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.api;
+
+
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
+
+public interface ComponentPrimitiveFactory {
+
+	public Invoke createTCInvokeRequest();
+
+	public Reject createTCRejectRequest();
+
+	public ReturnResultLast createTCResultLastRequest();
+
+	public ReturnResult createTCResultRequest();
+
+	public OperationCode createOperationCode(boolean isGlobal, Long code);
+	
+	public Parameter createParameter();
+	
+	public Parameter createParameter(int tag, int tagClass, boolean isPrimitive);
+	
+	public Problem createProblem(ProblemType pt);
+}]]>
+		  	</programlisting>
+		  
+		  </section>
+		  <section>
+		  		<title>Dialog primitives</title>
+		  		<para>Dialog primitives are in other words messages exchanged. Primitives are passed to dialog object which forms proper message from following:</para>
+		  		<itemizedlist>
+		  			<listitem>
+		  				<para>primitive and information passed in it</para>
+		  			</listitem>
+		  			<listitem>
+		  				<para>components scheduled in dialog</para>
+		  			</listitem>
+		  		</itemizedlist>
+		  		<para>Message formed by dialog, can be logicaly depicted as follows:</para>
+		  		<mediaobject id="ss7_design_tcap_dialog_message1">
+					<imageobject>
+						<imagedata width="300px" align="center"
+						fileref="images/ss7-tcap-design-dialog-message1.png" format="PNG" />
+					</imageobject>
+					<caption>
+						<para><acronym>TCAP</acronym> message structure
+						</para>
+					</caption>
+				</mediaobject>
+
+		  		<para>Each component eligible for passing to dialog is a child of following interface: </para>
+		  		<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
+
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+
+
+public interface DialogRequest {
+	/**
+	 * Return dialog for this indication
+	 * @return
+	 */
+	public Dialog getDialog();
+	/**
+	 * Determine type: Begin, Continue...
+	 */
+	public EventType getType();
+	
+}]]>
+			</programlisting>
+			<para>Each component eligible for passing as indication to listener is a child of following interface: </para>
+			<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
+
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
+
+public interface DialogIndication {
+
+	
+	/**
+	 * Return dialog for this indication
+	 * @return
+	 */
+	public Dialog getDialog();
+	/**
+	 * get components if present, if there are none, it will return null;
+	 * @return
+	 */
+	public Component[] getComponents();
+	
+	public EventType getType();
+	
+	public Byte getQos();
+}]]>
+			</programlisting>
+			<para>&THIS.PLATFORM; <acronym>TCAP</acronym> defines primitives :</para>
+			<variablelist>
+				<varlistentry>
+					<term>TCBegin</term>
+					<listitem>
+						<para>Exchanged as initial message in structured dialog. Starts negotiation of <literal>Application Context Name</literal> and <literal>User Information</literal>. Its interface is defined as follows: </para>
+						<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
+
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+
+public interface TCBeginRequest extends DialogRequest {
+	/**
+	 * Sets QOS optional parameter. Its passed to lower layer
+	 * @param b
+	 */
+	public void setQOS(Byte b) throws IllegalArgumentException;
+	public Byte getQOS();
+
+	//only getter, since we send via Dialog object, ID is ensured to be present.
+	
+	
+	/**
+	 * Destination address. If this address is different than one 
+	 * in dialog, this value will overwrite dialog value.
+	 */
+	public SccpAddress getDestinationAddress();
+	public void setDestinationAddress(SccpAddress dest);
+	/**
+	 * Origin address. If this address is different than one in dialog,
+	 * this value will overwrite dialog value.
+	 */
+	public SccpAddress getOriginatingAddress();
+	public void setOriginatingAddress(SccpAddress dest);
+	
+	/**
+	 * Application context name for this dialog. 
+	 * @return
+	 */
+	public ApplicationContextName getApplicationContextName();
+	public void setApplicationContextName(ApplicationContextName acn);
+	/**
+	 * User information for this dialog.
+	 * @return
+	 */
+	public UserInformation getUserInformation();	
+	public void setUserInformation(UserInformation acn);
+	
+	
+}
+
+
+						]]>
+						</programlisting>
+						<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
+
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+
+public interface TCBeginIndication extends DialogIndication {
+
+	public Byte getQOS();
+
+	public ApplicationContextName getApplicationContextName();
+
+	public UserInformation getUserInformation();
+
+	public SccpAddress getDestinationAddress();
+
+	public SccpAddress getOriginatingAddress();
+
+}
+
+						]]>
+						</programlisting>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>TCContinue</term>
+					<listitem>
+						<para>Exchanged as intermediate message until dialog reaches its end. Its interface defined as follows:</para>
+						<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
+
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+
+public interface TCContinueRequest extends DialogRequest {
+
+	/**
+	 * Sets QOS optional parameter. Its passed to lower layer
+	 * 
+	 * @param b
+	 */
+	public void setQOS(Byte b) throws IllegalArgumentException;
+
+	public Byte getQOS();
+
+	/**
+	 * Sets origin address. This parameter is used only in first TCContinue,
+	 * sent as response to TCBegin. This parameter, if set, changes local peer
+	 * address(remote end will send request to value set by this method).
+	 * 
+	 * @return
+	 */
+	public SccpAddress getOriginatingAddress();
+
+	public void setOriginatingAddress(SccpAddress dest);
+
+	/**
+	 * Application context name for this dialog.
+	 * 
+	 * @return
+	 */
+	public ApplicationContextName getApplicationContextName();
+
+	public void setApplicationContextName(ApplicationContextName acn);
+
+	/**
+	 * User information for this dialog.
+	 * 
+	 * @return
+	 */
+	public UserInformation getUserInformation();
+
+	public void setUserInformation(UserInformation acn);
+
+}
+						]]>
+						</programlisting>
+						<programlisting language="Java" role="JAVA"><![CDATA[
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+
+public interface TCContinueIndication extends DialogIndication {
+
+	public Byte getQOS();
+
+	public ApplicationContextName getApplicationContextName();
+
+	public UserInformation getUserInformation();
+
+	public SccpAddress getOriginatingAddress();
+}
+						]]>
+						</programlisting>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>TCEnd</term>
+					<listitem>
+						<para>Sent to terminate dialog(and two transactions associated with it). Its interface is defined as follows:</para>
+						<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
+
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+
+
+public interface TCEndRequest extends DialogRequest {
+	/**
+	 * Sets QOS optional parameter. Its passed to SCCP layer?
+	 * 
+	 * @param b
+	 */
+	public void setQOS(Byte b) throws IllegalArgumentException;
+
+	public Byte getQOS();
+
+	/**
+	 * Application context name for this dialog.
+	 * 
+	 * @return
+	 */
+	public ApplicationContextName getApplicationContextName();
+
+	public void setApplicationContextName(ApplicationContextName acn);
+
+	/**
+	 * User information for this dialog.
+	 * 
+	 * @return
+	 */
+	public UserInformation getUserInformation();
+
+	public void setUserInformation(UserInformation acn);
+
+	/**
+	 * Type of termination. See values of
+	 * {@link org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType
+	 * TerminationType} enum.
+	 * 
+	 * @param t
+	 */
+	public void setTermination(TerminationType t);
+
+	public TerminationType getTerminationType();
+}
+						]]>
+						</programlisting>
+						<programlisting language="Java" role="JAVA"><![CDATA[
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+
+public interface TCEndIndication extends DialogIndication {
+
+	public Byte getQOS();
+
+	// parts from DialogPortion, if present
+	public ApplicationContextName getApplicationContextName();
+
+	public UserInformation getUserInformation();
+
+}
+						]]>
+						</programlisting>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>TCUserAbort</term>
+					<listitem>
+						<para>Sent to abort dialog beeing created or ongoign one. Its interface is defined as follows:</para>
+						<programlisting language="Java" role="JAVA"><![CDATA[
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+
+/**
+ * <pre>
+ * -- NOTE – When the Abort Message is generated 
+ *		by the Transaction sublayer, a p-Abort Cause must be
+ * -- present.The u-abortCause may be generated by the component sublayer 
+ *		in which case it is an ABRT
+ * -- APDU, or by the TC-User in which case it could be either an ABRT 
+ *		APDU or data in some user-defined
+ * -- abstract syntax.
+ * </pre>
+ * 
+ */
+public interface TCUserAbortRequest extends DialogRequest {
+
+	public void setQOS(Byte b) throws IllegalArgumentException;
+
+	public Byte getQOS();
+
+	public ApplicationContextName getApplicationContextName();
+
+	public void setApplicationContextName(ApplicationContextName acn);
+
+	public UserInformation getUserInformation();
+
+	public void setUserInformation(UserInformation acn);
+
+}
+						]]>
+						</programlisting>
+						<programlisting language="Java" role="JAVA"><![CDATA[
+
+import org.mobicents.protocols.ss7.tcap.asn.AbortSource;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+
+/**
+ * <pre>
+ * -- NOTE – When the Abort Message is generated by the 
+ * 			Transaction sublayer, a p-Abort Cause must be
+ * -- present.The u-abortCause may be generated by the 
+ * 		component sublayer in which case it is an ABRT
+ * -- APDU, or by the TC-User in which case it could be 
+ * 		either an ABRT APDU or data in some user-defined
+ * -- abstract syntax.
+ * </pre>
+ *
+ */
+public interface TCUserAbortIndication extends DialogIndication {
+
+
+	public UserInformation getUserInformation();
+
+	public AbortSource getAbortSource();
+
+}
+						]]>
+						</programlisting>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>TCPAbort</term>
+					<listitem>
+						<para>Sent to abort dialog beeing created or ongoign one. It is sent by provider, it indicates problem on transport or stack layer. Its interface is defined as follows:</para>
+						
+						<programlisting language="Java" role="JAVA"><![CDATA[
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
+
+/**
+ * <pre>
+ * -- NOTE – When the Abort Message is generated by the 
+ * 			Transaction sublayer, a p-Abort Cause must be
+ * -- present.The u-abortCause may be generated by the 
+ * 			component sublayer in which case it is an ABRT
+ * -- APDU, or by the TC-User in which case it could be 
+ * 		either an ABRT APDU or data in some user-defined
+ * -- abstract syntax.
+ * </pre>
+ * 
+ */
+public interface TCPAbortIndication extends DialogIndication{
+
+	//mandatory
+	public PAbortCauseType getPAbortCause();
+}
+
+						]]>
+						</programlisting>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>TCUni</term>
+					<listitem>
+						<para>Only message available for unstructured dialog. Its interface is defined as follows:</para>
+						<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
+
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+
+public interface TCUniRequest extends DialogRequest {
+
+	/**
+	 * Sets QOS optional parameter. Its passed to lower layer
+	 * 
+	 * @param b
+	 */
+	public void setQOS(Byte b) throws IllegalArgumentException;
+
+	public Byte getQOS();
+
+	/**
+	 * Destination address. If this address is different than one in dialog,
+	 * this value will overwrite dialog value.
+	 */
+	public SccpAddress getDestinationAddress();
+
+	public void setDestinationAddress(SccpAddress dest);
+
+	/**
+	 * Origin address. If this address is different than one in dialog, this
+	 * value will overwrite dialog value.
+	 */
+	public SccpAddress getOriginatingAddress();
+
+	public void setOriginatingAddress(SccpAddress dest);
+
+	/**
+	 * Application context name for this dialog.
+	 * 
+	 * @return
+	 */
+	public ApplicationContextName getApplicationContextName();
+
+	public void setApplicationContextName(ApplicationContextName acn);
+
+	/**
+	 * User information for this dialog.
+	 * 
+	 * @return
+	 */
+	public UserInformation getUserInformation();
+
+	public void setUserInformation(UserInformation acn);
+
+}
+						]]>
+						</programlisting>
+						<programlisting language="Java" role="JAVA"><![CDATA[
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+
+/**
+ * @author baranowb
+ * 
+ */
+public interface TCUniIndication extends DialogIndication {
+
+	public Byte getQOS();
+
+	// parts from DialogPortion, if present
+	public ApplicationContextName getApplicationContextName();
+
+	public UserInformation getUserInformation();
+
+	public SccpAddress getDestinationAddress();
+
+	public SccpAddress getOriginatingAddress();
+}
+						]]>
+						</programlisting>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<para>Dialog primitives are created(as components) by means of factory. Factory is defined in following way:</para>
+			<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.api;
+
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortRequest;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+
+public interface DialogPrimitiveFactory {
+
+	public TCBeginRequest createBegin(Dialog d);
+
+	public TCContinueRequest createContinue(Dialog d);
+
+	public TCEndRequest createEnd(Dialog d);
+
+	public TCUserAbortRequest createUAbort(Dialog d);
+	
+	public TCUniRequest createUni(Dialog d);
+	
+	public ApplicationContextName createApplicationContextName(long[] oid);
+	
+	public UserInformation createUserInformation();
+	
+}]]>
+				</programlisting>
+		  </section>
+		  
+		  <section>
+		  		<title>Stack</title>
+		  		<para><acronym>TCAP</acronym> is part of <acronym>SS7</acronym> protocol stack. AS such it relies on <acronym>SCCP</acronym> as means of transport. To create <acronym>TCAP</acronym> stack you require properly configured <acronym>SCCP</acronym> layer.
+		  		Please refer to <xref linkend="layer_sccp"/> for details and examples. </para>
+		  		<para>&THIS.PLATFORM; <acronym>TCAP</acronym> is defined by provider and <literal>stack</literal> interfaces. 
+		  		Interfaces are defined as follows: </para>
+		  		<programlisting language="Java" role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.tcap.api;
+
+public interface TCAPStack {
+
+	/**
+	 * Returns stack provider.
+	 * @return
+	 */
+	public TCAPProvider getProvider();
+	/**
+	 * Stops this stack and transport layer(SCCP)
+	 */
+	public void stop();
+}
+]]>
+				</programlisting>
+				<programlisting language="Java" role="JAVA"><![CDATA[			
+package org.mobicents.protocols.ss7.tcap.api;
+
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+
+public interface TCAPProvider {
+
+	/**
+	 * Create new structured dialog.
+	 * @param localAddress - desired local address
+	 * @param remoteAddress - initial remote address, it can change after first TCContinue. 
+	 * @return
+	 */
+	public Dialog getNewDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException;
+	/**
+	 * Create new unstructured dialog.
+	 * @param localAddress
+	 * @param remoteAddress
+	 * @return
+	 * @throws TCAPException
+	 */
+	public Dialog getNewUnstructuredDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException;
+
+	///////////////
+	// Factories //
+	///////////////
+	
+	public DialogPrimitiveFactory getDialogPrimitiveFactory();
+	public ComponentPrimitiveFactory getComponentPrimitiveFactory();
+	
+	///////////////
+	// Listeners //
+	///////////////	
+	
+	public void addTCListener(TCListener lst);
+
+	public void removeTCListener(TCListener lst);
+}]]>
+				</programlisting>
+				<para>Provider allows user to access stack facitlities, create dialogs and register as listener for incoming messages. Listener declares set of callbacks methods.
+				It is defined as follows: </para>
+				<programlisting language="Java" role="JAVA"><![CDATA[	
+package org.mobicents.protocols.ss7.tcap.api;
+
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.*;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+
+public interface TCListener {
+
+	// dialog handlers
+	/**
+	 * Invoked for TC_UNI. See Q.771 3.1.2.2.2.1
+	 */
+	public void onTCUni(TCUniIndication ind);
+
+	/**
+	 * Invoked for TC_BEGIN. See Q.771 3.1.2.2.2.1
+	 */
+	public void onTCBegin(TCBeginIndication ind);
+
+	/**
+	 * Invoked for TC_CONTINUE dialog primitive. See Q.771
+	 * 3.1.2.2.2.2/3.1.2.2.2.3
+	 * 
+	 * @param ind
+	 */
+	public void onTCContinue(TCContinueIndication ind);
+
+	/**
+	 * Invoked for TC_END dialog primitive. See Q.771 3.1.2.2.2.4
+	 * 
+	 * @param ind
+	 */
+	public void onTCEnd(TCEndIndication ind);
+
+	/**
+	 * Invoked for TC-U-Abort primitive(P-Abort-Cause is present.). See Q.771
+	 * 3.1.2.2.2.4
+	 * 
+	 * @param ind
+	 */
+	public void onTCUserAbort(TCUserAbortIndication ind);
+
+	/**
+	 * Invoked when dialog has been terminated by some unpredicatable
+	 * environment cause. See Q.771 3.1.4.2
+	 * 
+	 * @param ind
+	 */
+	public void onTCPAbort(TCPAbortIndication ind);
+
+	/**
+	 * Called once dialog is released. It is invoked once primitives are
+	 * delivered. Indicates that stack has no reference, and dialog object is
+	 * considered invalid.
+	 * 
+	 * @param d
+	 */
+	public void dialogReleased(Dialog d);
+
+	/**
+	 * 
+	 * @param tcInvokeRequest
+	 */
+	public void onInvokeTimeout(Invoke tcInvokeRequest);
+
+}
+
+				]]>
+				</programlisting>
+		  </section>
+	</section>
+	<section>
+			<title>Dependencies</title>
+			<para><acronym>TCAP</acronym> depends on following:</para>
+			<itemizedlist>
+				<listitem>
+					<para>Transport</para>
+				</listitem>
+				<listitem>
+					<para>SCCP</para>
+				</listitem>
+			</itemizedlist>
+	</section>
+	<section>
+		<title>Example</title>
+		<para></para>
+		<programlisting language="Java" role="JAVA"><![CDATA[	
+		
+public class Client implements TCListener{
+	//encoded Application Context Name
+	public static final long[] _ACN_ = new long[] { 0, 4, 0, 0, 1, 0, 19, 2 };
+	
+	private TCAPStack stack;
+	private SccpAddress thisAddress;
+	private SccpAddress remoteAddress;
+	
+	private TCAPProvider tcapProvider;
+
+
+	
+	private Dialog clientDialog;
+	
+	Client(SccpProvider sccpPprovider, SccpAddress thisAddress,SccpAddress remoteAddress) {
+		super();
+		this.stack = new TCAPStackImpl(sccpPprovider);
+		this.runningTestCase = runningTestCase;
+		this.thisAddress = thisAddress;
+		this.remoteAddress = remoteAddress;
+		this.tcapProvider = this.stack.getProvider();
+		this.tcapProvider.addTCListener(this);
+	}
+
+	public void start() throws TCAPException, TCAPSendException
+	{
+		clientDialog = this.tcapProvider.getNewDialog(thisAddress, remoteAddress);
+		ComponentPrimitiveFactory cpFactory = this.tcapProvider.getComponentPrimitiveFactory();
+		
+		//create some INVOKE
+		Invoke invoke = cpFactory.createTCInvokeRequest();
+		invoke.setInvokeId(this.clientDialog.getNewInvokeId());
+		
+		invoke.setOperationCode(cpFactory.createOperationCode(true,new Long(12)));
+		//no parameter
+		this.clientDialog.sendComponent(invoke);
+		
+		ApplicationContextName acn = this.tcapProvider.getDialogPrimitiveFactory()
+			.createApplicationContextName(_ACN_);
+		//UI is optional!
+		TCBeginRequest tcbr = this.tcapProvider.getDialogPrimitiveFactory().createBegin(this.clientDialog);
+		tcbr.setApplicationContextName(acn);
+		this.clientDialog.send(tcbr);
+	}
+	
+	public void dialogReleased(Dialog d) {
+	
+		
+	}
+
+	public void onInvokeTimeout(Invoke tcInvokeRequest) {
+	
+	}
+
+	public void onTCBegin(TCBeginIndication ind) {
+		
+		
+	}
+
+	public void onTCContinue(TCContinueIndication ind) {
+
+		//send end
+		TCEndRequest end = this.tcapProvider.getDialogPrimitiveFactory().createEnd(ind.getDialog());
+		end.setTermination(TerminationType.Basic);
+		try {
+			ind.getDialog().send(end);
+			
+		} catch (TCAPSendException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void onTCEnd(TCEndIndication ind) {
+		//should not happen, in this scenario, we send data.
+	}
+
+	public void onTCUni(TCUniIndication ind) {
+		//not going to happen
+	
+	}
+
+
+	public void onTCPAbort(TCPAbortIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onTCUserAbort(TCUserAbortIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+}
+
+		]]>
+		</programlisting>
+	</section>
+</chapter>
+

@@ -1,0 +1,20 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+<authorgroup
+	id="authors">
+	<author>
+		<firstname>Amit</firstname>
+		<surname>Bhayani</surname>
+		<email>&AUTHOR.EMAIL.AMIT;</email>
+	</author>
+	<author>
+		<firstname>Bartosz</firstname>
+		<surname>Baranowski</surname>
+		<email>&AUTHOR.EMAIL.BARTOSZ;</email>
+	</author>
+	<author>
+		<firstname>Oleg</firstname>
+		<surname>Kulikov</surname>
+		<email>&AUTHOR.EMAIL.OLEG;</email>
+	</author>
+</authorgroup>
