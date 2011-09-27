@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
+	xmlns="urn:jboss:bean-deployer:2.0">
+
+	<!-- 
+	<bean name="localAddress" class="java.net.InetSocketAddress">
+		<constructor>
+			<parameter>127.0.0.1</parameter>
+			<parameter>8936</parameter>
+		</constructor>
+	</bean>
+	<bean name="remoteAddress" class="java.net.InetSocketAddress">
+		<constructor>
+			<parameter>127.0.0.1</parameter>
+			<parameter>4201</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="m3ua_linkset_1" class="org.mobicents.protocols.ss7.mtp.provider.m3ua.Provider">
+		<property name="name">m3ua1</property>
+		<property name="adjacentPointCode">12345</property>
+		<property name="originalPointCode">54321</property>
+		<property name="remoteAddress">	
+			<inject bean="remoteAddress"/>
+		</property>
+		<property name="localAddress">
+			<inject bean="localAddress"/>
+		</property>
+	</bean>
+ 	-->
+	<!-- Endpoint definition  -->
+	<bean name="SccpService" class="org.mobicents.protocols.ss7.sccp.impl.SccpService">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7.sccp:service=SccpService" ,exposedInterface=org.mobicents.protocols.ss7.sccp.impl.SccpServiceMBean.class,registerDirectly=true)</annotation>
+		<property name="jndiName">java:/mobicents/ss7/sccp</property>
+		<property name="configPath">${catalina.home}/deploy/a${pom.artifactId}-stack/sccp-routing.txt</property>
+		<!-- 
+		<property name="linksets">
+			<list>
+                <inject bean="m3ua_linkset_1" />
+            </list>
+		</property>
+		 -->
+	</bean>
+
+</deployment>

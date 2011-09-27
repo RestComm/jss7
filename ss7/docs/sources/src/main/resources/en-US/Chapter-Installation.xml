@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter
+	id="installation">
+
+	<title>Installation
+	</title>
+	<para>This
+		chapter describes how to install &THIS.PLATFORM; &THIS.APPLICATION;
+		components.
+	</para>
+	<important>
+		<para>You should have <literal>JVM</literal> and <literal>JBoss</literal> installed, prior to installation. Please refer to:
+		<xref linkend="jboss_home_setup"/> and <xref linkend="jdk-installing_configuring_and_running"/> </para>
+	</important>
+
+	<section
+	id="installation_ss7_service">
+		<title>SS7 Service</title>
+		<section id="installation_ss7_service_configuration">
+			<title>Configuration</title>
+			<para>Service configuration is located in <filename>XXX</filename>. </para><!-- ADD more here? -->
+		</section>
+		<section id="installation_ss7_service_install">
+			<title>Installing &THIS.PLATFORM; SS7 Service</title>
+			<para>To install the SS7 Service simply execute provided ant script <filename>build.xml</filename> target:</para>
+			<programlisting>
+			[usr]$ ant deploy-ss7-service
+			</programlisting>
+			<para>The script will copy the SS7 Service archive to the <literal>default</literal> &THIS.PLATFORM; <literal>JBoss</literal> server profile deploy directory, to deploy to another server profile use the argument <literal>-Dnode=</literal>.</para>
+		</section>
+		
+		<section id="installation_ss7_service_uninstall">
+			<title>Uninstalling &THIS.PLATFORM; SS7 Service</title>
+			<para>To uninstall the SS7 Service simply execute provided ant script <filename>build.xml</filename> target:</para>
+			<programlisting>
+			[usr]$ ant undeploy-ss7-service
+			</programlisting>
+			<para>The script will delete the SS7 Service archive from the <literal>default</literal> &THIS.PLATFORM; <literal>JBoss</literal> server profile deploy directory, to deploy to another server profile use the argument <literal>-Dnode=</literal>.</para>
+		</section>			
+	</section>
+	<section
+		id="installation_ss7_shell">
+		<title>Shell</title>
+		<section id="installation_ss7_shell_configuration">
+			<title>Configuration</title>
+			<para>Shell does not require configuration.</para><!-- ADD more here? -->
+		</section>
+		<section id="installation_ss7_shell_install">
+			<title>Installing &THIS.PLATFORM; Shell</title>
+			<para>To install the Shell simply execute provided ant script <filename>build.xml</filename> target:</para>
+			<programlisting>
+			[usr]$ ant deploy-ss7-shell
+			</programlisting>
+			<para>The script will copy the Shell archive to the <literal>default</literal> &THIS.PLATFORM; <literal>JBoss</literal> server profile deploy directory, to deploy to another server profile use the argument <literal>-Dnode=</literal>.</para>
+		</section>
+		
+		<section id="installation_ss7_shell_uninstall">
+			<title>Uninstalling &THIS.PLATFORM; Shell</title>
+			<para>To uninstall the Shell simply execute provided ant script <filename>build.xml</filename> target:</para>
+			<programlisting>
+			[usr]$ ant undeploy-ss7-shell
+			</programlisting>
+			<para>The script will delete the Shell archive from the <literal>default</literal> &THIS.PLATFORM; <literal>JBoss</literal> server profile deploy directory, to deploy to another server profile use the argument <literal>-Dnode=</literal>.</para>
+		</section>			
+		
+	</section>
+
+</chapter>

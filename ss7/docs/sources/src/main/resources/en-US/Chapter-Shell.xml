@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter
+	id="shell">
+	<title>Shell Command Line</title>
+	<section>
+		<title>Introduction</title>
+		<para>&THIS.PLATFORM; &THIS.APPLICATION;
+			provides Shell client to manage configuration of &THIS.APPLICATION; Services. This chapter describes how to install and start client. Also it describes available
+			commands and provides examples.
+			To see examples of specific flow, to perform certain tasks, please refer to sections in chapter devoted to
+			<literal>Linksets</literal>, <literal>SCCP</literal> or <literal>M3UA</literal>
+			
+			. <!-- TODO add XREF -->
+		</para>
+	</section>
+	<section
+		id="shell_start">
+		<title>Starting</title>
+		<para>
+			Shell client can be started with following command from
+			<filename>$JBOSS_HOME/bin</filename>
+			:
+		</para>
+		<programlisting>[$] ./ss7-run.sh</programlisting>
+		<para>Once console starts, it will print following information:</para>
+		<screen>
+=========================================================================
+
+Mobicents SS7: release.version=1.0.0-SNAPSHOT
+This is free software, with components licensed under the GNU General Public License
+version 2 and other licenses. For further details visit http://mobicents.org
+=========================================================================
+
+mobicents>
+		</screen>
+
+		<para>
+			The
+			<literal>ss7-run</literal>
+			script supports following options
+		</para>
+
+		<screen><![CDATA[
+Usage: SS7 [OPTIONS]
+Valid Options
+-v           Display version number and exit
+-h           This help screen
+]]>
+		</screen>
+
+		<para>Shell needs to connect to managed instance. Command to connect has following structure:</para>
+		<programlisting>
+ss7 connect &lt;IP&gt; &lt;PORT&gt; </programlisting>
+		<example>
+			<title>Connec to remote machine</title>
+			<screen>
+mobicents>ss7 connect 10.65.208.215 3435
+
+mobicents(10.65.208.215:3435)>
+			</screen>
+		</example>
+		<note>
+			<para>
+				Host IP and port are optional, if not specified, shell will try to connect to
+				<literal>127.0.0.1:3435</literal>
+			</para>
+		</note>
+
+		<para>Command to disconnect has following structure:</para>
+		<programlisting>ss7 discconnect </programlisting>
+		<example>
+			<title>Disconnect</title>
+			<screen>
+mobicents(10.65.208.215:3435)>ss7 disconnect
+
+Bye
+mobicents>
+			</screen>
+		</example>
+	</section>
+
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Shell_Linkset.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Shell_Sccp.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Shell_M3UA.xml" />
+	
+
+</chapter>

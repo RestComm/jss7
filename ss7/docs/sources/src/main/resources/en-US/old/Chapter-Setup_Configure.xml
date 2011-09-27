@@ -1,0 +1,748 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter
+	id="setup_configure">
+
+	<title>Configuration</title>
+	<para>This
+		chapter describes setup of linkset, SS7 service and application on top of &THIS.PLATFORM; &THIS.APPLICATION;.
+	</para>
+	<!-- Not sure if its even good idea to have it... -->
+	<section
+		id="setup_configure_linkset">
+		<title>Linkset</title>
+		<para> There is no direct way to configure the <literal>Linkset</literal> or <literal>Link</literal>. You have to use the Shell command line interface to configure the <literal>Linkset</literal>. For more details please refer to <xref linkend="management"/>.</para>
+
+	</section>
+	<section
+		id="setup_configure_ss7_service">
+		<title>SS7 Service</title>
+		<para>
+			<literal>SS7</literal>
+			service serves two purposes:
+		</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					start
+					<literal>SCCP</literal>
+					stack and routing
+				</para>
+			</listitem>
+			<listitem>
+				<para>start shell extension</para>
+			</listitem>
+		</itemizedlist>
+		<para>
+			This service is JMX based. It requires JMX enabled container such as
+			<literal>JBoss</literal>
+			. It has following structure:
+		</para>
+		<mediaobject
+			id="ss7_service_1">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/ss7-service1.png"
+					format="PNG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; &THIS.APPLICATION;
+					general design
+				</para>
+			</caption>
+		</mediaobject>
+		<variablelist>
+			<varlistentry>
+				<term>lib</term>
+				<listitem>
+					<para>contains all dependencies for service to run</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>META-INF</term>
+				<listitem>
+					<para>
+						contains meta data about service, specifically for
+						<literal>JBoss</literal>
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>sccp-routing.txt</term>
+				<listitem>
+					<para>contains definition of sccp level routing</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+
+		<note>
+			<para>
+				For better understanding of content of configuration files, please refer to
+				<link
+					linkend="http://docs.redhat.com/docs/en-US/JBoss_Enterprise_Web_Platform/5/pdf/JBoss_Microcontainer_User_Guide/JBoss_Enterprise_Web_Platform-5-JBoss_Microcontainer_User_Guide-en-US.pdf">Microcontainer User Guide</link>
+			</para>
+		</note>
+		<section>
+			<title>Meta Data</title>
+
+			<para>
+				Service meta data contains definition of service structure. It is defined in
+				<filename>jboss-structure.xml</filename>
+				file. In most cases you will not need to edit this file. Just for reference, file has following content:
+			</para>
+			<programlisting
+				language="XML"
+				role="XML"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<structure>
+    <context>
+        <path name=""/>
+        <metaDataPath>
+            <path name="META-INF"/>
+        </metaDataPath>        
+        <classpath>
+            <path name="" />
+            <path name="lib" suffixes=".jar" />
+        </classpath>
+    </context>
+</structure>
+			]]>
+			</programlisting>
+		</section>
+		<section>
+			<title>Configuration</title>
+			<para>
+				Service is configured with single file
+				<filename>jboss-beans.xml</filename>
+				.
+			</para>
+			<para>Service configuration has following elements:</para>
+			<variablelist>
+				<varlistentry>
+					<term>Linkset Factory management bean</term>
+					<listitem>
+						<para>This bean manages defined linkset factories. Its definition looks as follows:</para>
+						<programlisting
+							language="XML"
+							role="XML"><![CDATA[
+	<bean name="LinksetFactoryFactory"
+		class="org.mobicents.ss7.linkset.oam.LinksetFactoryFactory">
+		<incallback method="addFactory" />
+		<uncallback method="removeFactory" />
+	</bean>
+						]]>
+						</programlisting>
+						<table
+							frame="all"
+							pgwide="1">
+							<title>Linkset Factory management bean Configuration parameters</title>
+							<tgroup
+								colsep="1"
+								cols="3">
+								<colspec
+									colnum="1"
+									colname="c0" />
+								<colspec
+									colnum="2"
+									colname="c1" />
+								<colspec
+									colnum="3"
+									colname="c2" />
+								<thead>
+									<row>
+										<entry>Name</entry>
+										<entry>Type</entry>
+										<entry>Description</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry></entry>
+										<entry></entry>
+										<entry></entry>
+									</row>
+								</tbody>
+							</tgroup>
+						</table>
+						<note>
+							<para>
+								Note
+								<literal>incallback</literal>
+								tag. This tag ensures that all defined linkset factory beans, will be automaticlly added to this management bean.
+							</para>
+						</note>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Linkset Factories</term>
+					<listitem>
+						<para>
+							Linkset factories create specific implementation of
+							<literal>Linkset</literal>
+							.
+							Factories are defined as folllows:
+						</para>
+						<programlisting
+							language="XML"
+							role="XML"><![CDATA[
+<bean name="DahdiLinksetFactory"
+	class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+</bean>
+
+<bean name="DialogicLinksetFactory"
+	class="org.mobicents.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
+</bean>
+
+<bean name="M3UALinksetFactory"
+	class="org.mobicents.ss7.m3ua.oam.M3UALinksetFactory">
+</bean>
+					]]>
+						</programlisting>
+						<table
+							frame="all"
+							pgwide="1">
+							<title>Linkset Factories Configuration parameters</title>
+							<tgroup
+								colsep="1"
+								cols="3">
+								<colspec
+									colnum="1"
+									colname="c0" />
+								<colspec
+									colnum="2"
+									colname="c1" />
+								<colspec
+									colnum="3"
+									colname="c2" />
+								<thead>
+									<row>
+										<entry>Name</entry>
+										<entry>Type</entry>
+										<entry>Description</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry></entry>
+										<entry></entry>
+										<entry></entry>
+									</row>
+								</tbody>
+							</tgroup>
+						</table>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>LinksetManager</term>
+					<listitem>
+						<para>
+							<literal>LinksetManager</literal>
+							bean as name suggests manages links and linksets. It is capable of persisting information about created objects and upon restart, it
+							can recreate links.
+							It supports single configuration property:
+							<literal>persistDir</literal>
+							. It controls location where manager persists links information. Manager is defined as follows:
+						</para>
+						<programlisting
+							language="XML"
+							role="XML"><![CDATA[
+<bean name="LinksetManager"
+	class="org.mobicents.ss7.linkset.oam.LinksetManager">
+
+	<property name="linksetFactoryFactory">
+		<inject bean="LinksetFactoryFactory" />
+	</property>
+	<property name="persistDir">${jboss.server.data.dir}</property>
+</bean>
+]]>
+						</programlisting>
+						<table
+							frame="all"
+							pgwide="1">
+							<title>LinksetManager Configuration parameters</title>
+							<tgroup
+								colsep="1"
+								cols="3">
+								<colspec
+									colnum="1"
+									colname="c0" />
+								<colspec
+									colnum="2"
+									colname="c1" />
+								<colspec
+									colnum="3"
+									colname="c2" />
+								<thead>
+									<row>
+										<entry>Name</entry>
+										<entry>Type</entry>
+										<entry>Description</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry>persistDir</entry>
+										<entry>java.lang.String</entry>
+										<entry>
+											destination directory where information about links is stored. It overrides
+											<literal>System</literal>
+											level property
+											<literal>linkset.persist.dir</literal>
+											. It has form of URI/URL.
+										</entry>
+									</row>
+
+									<row>
+										<entry>layer4</entry>
+										<entry>org.mobicents.ss7
+										.linkset.oam.Layer4</entry>
+										<entry>For every new linkset added, <literal>LinksetManager</literal> calls back the 
+										<literal>Layer4</literal> <literal>add</literal> method passing reference to newly added linkset. 
+										Similarly for every existing linkset removed, 
+										<literal>LinksetManager</literal> calls back the 
+										<literal>Layer4</literal> <literal>remove</literal> method passing reference to removed linkset. </entry>
+									</row>
+									<row>
+										<entry>linksetFactoryFactory</entry>
+										<entry>org.mobicents.ss7.linkset
+											.oam.LinksetFactoryFactory</entry> 
+										<entry>Factory that holds map of linkset factory name vs <literal>LinksetFactory</literal> configured for this setup</entry>
+									</row>
+
+								</tbody>
+							</tgroup>
+						</table>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>ShellExecutor</term>
+					<listitem>
+						<para>
+							Executor is shell command line plug residing in
+							<literal>SS7 Service</literal>
+							. It executes commands received from remote host. It is defined as follows:
+						</para>
+						<programlisting
+							language="XML"
+							role="XML"><![CDATA[
+<bean name="ShellExecutor"
+	class="org.mobicents.ss7.ShellExecutor">
+	<property name="address">127.0.0.1</property>
+	<property name="port">3435</property>
+</bean>	
+]]>
+						</programlisting>
+						<table
+							frame="all"
+							pgwide="1">
+							<title>ShellExecutor Configuration parameters</title>
+							<tgroup
+								colsep="1"
+								cols="3">
+								<colspec
+									colnum="1"
+									colname="c0" />
+								<colspec
+									colnum="2"
+									colname="c1" />
+								<colspec
+									colnum="3"
+									colname="c2" />
+								<thead>
+									<row>
+										<entry>Name</entry>
+										<entry>Type</entry>
+										<entry>Description</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry>address</entry>
+										<entry>java.lang.String</entry>
+										<entry>This property sets address to which ShellExecutor will bind. It has form of host name(including IP address).</entry>
+									</row>
+									<row>
+										<entry>port</entry>
+										<entry>java.lang.Integer</entry>
+										<entry>This property sets port to which ShellExecutor will bind.</entry>
+									</row>
+
+									<row>
+										<entry>linksetExecutor</entry>
+										<entry>org.mobicents.ss7
+										.linkset.oam.LinksetExecutor</entry>
+										<entry>This property sets reference to <literal>LinksetExecutor</literal> to which 
+										ShellExecutor will pass commands related to linkset management</entry>
+									</row>
+								</tbody>
+							</tgroup>
+						</table>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>SS7Service</term>
+					<listitem>
+						<para></para>
+						<programlisting
+							language="XML"
+							role="XML"><![CDATA[
+<bean name="SS7Service" class="org.mobicents.ss7.SS7Service">
+	<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX
+		(name="org.mobicents.ss7: service=SS7Service",exposedInterface=
+		org.mobicents.ss7. SS7ServiceMBean.class,registerDirectly=true)</annotation>
+	<property name="jndiName">java:/mobicents/ss7/sccp</property>
+	<property name="configPath">${catalina.home}/deploy/
+		mobicents-ss7-service/sccp-routing.txt</property>
+	<property name="linksetManager"><inject bean="LinksetManager" /></property>
+	<property name="shellExecutor"><inject bean="ShellExecutor" /></property>		
+</bean>
+]]>
+						</programlisting>
+						<table
+							frame="all"
+							pgwide="1">
+							<title>SS7Service Configuration parameters</title>
+							<tgroup
+								colsep="1"
+								cols="3">
+								<colspec
+									colnum="1"
+									colname="c0" />
+								<colspec
+									colnum="2"
+									colname="c1" />
+								<colspec
+									colnum="3"
+									colname="c2" />
+								<thead>
+									<row>
+										<entry>Name</entry>
+										<entry>Type</entry>
+										<entry>Description</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry>jndiName</entry>
+										<entry>java.lang.String</entry>
+										<entry>
+											<literal>JNDI</literal>
+											name under which service will be bound.
+										</entry>
+									</row>
+									<row>
+										<entry>configPath</entry>
+										<entry>java.lang.String</entry>
+										<entry>
+											Path to file with
+											<literal>SCCP</literal>
+											routes definition. It has form of URI/URL
+										</entry>
+									</row>
+									<row>
+										<entry>linksetManager</entry>
+										<entry>org.mobicents.ss7.linkset
+										.oam.LinksetManager</entry>
+										<entry>Reference to <literal>LinksetManager</literal></entry>
+									</row>
+									<row>
+										<entry>shellExecutor</entry>
+										<entry>org.mobicents.ss7
+										.ShellExecutor</entry>
+										<entry>Reference to <literal>ShellExecutor</literal></entry>
+									</row>
+
+								</tbody>
+							</tgroup>
+						</table>
+					</listitem>
+				</varlistentry>
+
+
+			</variablelist>
+
+
+		</section>
+		<section>
+			<title>SCCP Routing information</title>
+			<para>
+				<literal>SS7 Service</literal>
+				contains single file in which
+				<literal>SCCP</literal>
+				stack holds routes definition(
+				<filename>sccp-routing.txt</filename>
+				).
+				Example entry looks as follows:
+			</para>
+			<!-- bad xml? -->
+			<example>
+				<title>sccp-routing.txt example entry</title>
+				<programlisting
+					language="XML"
+					role="XML"><![CDATA[
+0; #ISDN_MOBILE#NATIONAL#9023629581# ; #ISDN_MOBILE#INTERNATIONAL#79023629581# ;linkset#14083#14155#0
+]]>
+				</programlisting>
+			</example>
+			<para>
+				Above file is managed by
+				<literal>SCCP</literal>
+				stack and
+				<literal>ShellExecutor</literal>
+				, it is not encouraged practice to edit this file by hand. However for complete rerefence, you can find structure of this file below:
+			</para>
+			<example>
+				<title>sccp-routing.txt example entry</title>
+				<programlisting
+					language="XML"
+					role="XML"><![CDATA[
+sequence;pattern;translation;mtpinfo
+]]>
+				</programlisting>
+			</example>
+			<variablelist>
+				<varlistentry>
+					<term>sequence</term>
+					<listitem>
+						<para>is simple sequence number, each entry increases it by 1.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>pattern</term>
+					<listitem>
+						<para>
+							is simply
+							<literal>SCCP</literal>
+							like regular expresion. Destination address of message is matched against this to check which rule should be triggered.
+						</para>
+						<para>
+							Fields of
+							<literal>pattern</literal>
+							separated by
+							<literal>#</literal>
+							, empty value is indicated by single
+							<literal>space</literal>
+							.
+							<literal>pattern</literal>
+							has following fields:
+						</para>
+						<table
+							frame="all"
+							pgwide="1">
+							<title>pattern content</title>
+							<tgroup
+								colsep="1"
+								cols="3">
+								<colspec
+									colnum="1"
+									colname="c0" />
+								<colspec
+									colnum="2"
+									colname="c1" />
+								<colspec
+									colnum="3"
+									colname="c2" />
+								<thead>
+									<row>
+										<entry>Name</entry>
+										<entry>Type</entry>
+										<entry>Description</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry>translation type</entry>
+										<entry>java.lang.Integer</entry>
+										<entry>Network specific ID which determines how global title analysis is performed.</entry>
+									</row>
+									<row>
+										<entry>numbering plan</entry>
+										<entry>enum</entry>
+										<entry>Determines which numbering plan is used for global title. It can have one of following values:
+											UNKNOWN, ISDN_TELEPHONY, DATA, TELEX, MERITIME_MOBILE, LAND_MOBILE, ISDN_MOBILE</entry>
+									</row>
+									<row>
+										<entry>nature of address</entry>
+										<entry>enum</entry>
+										<entry>Determines type of address. It can have one of following values:
+											SPARE, SUBSCRIBER, UNKNOWN, NATIONAL, INTERNATIONAL</entry>
+									</row>
+									<row>
+										<entry>digits</entry>
+										<entry>java.lang.String</entry>
+										<entry>Simply digits of number, ie: +91 417688345892</entry>
+									</row>
+									<row>
+										<entry>sub-system number</entry>
+										<entry>java.lang.Integer</entry>
+										<entry>local subsystem number, used to route between local services in SS7, ie. between HLR and VLR.</entry>
+									</row>
+								</tbody>
+							</tgroup>
+						</table>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>translation</term>
+					<listitem>
+						<para>
+							has the same structure as
+							<literal>pattern</literal>
+							. If
+							<literal>pattern</literal>
+							matches, destintion address is changed to
+							<literal>translation</literal>
+							.
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>mtpinfo</term>
+					<listitem>
+						<para>
+							<literal>mtpinfo</literal>
+							indicates which link should be chosen when routing to remote location. In case routing is performed localy, its not present.
+						</para>
+						<table
+							frame="all"
+							pgwide="1">
+							<title>mtpinfo content</title>
+							<tgroup
+								colsep="1"
+								cols="3">
+								<colspec
+									colnum="1"
+									colname="c0" />
+								<colspec
+									colnum="2"
+									colname="c1" />
+								<colspec
+									colnum="3"
+									colname="c2" />
+								<thead>
+									<row>
+										<entry>Name</entry>
+										<entry>Type</entry>
+										<entry>Description</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry>name</entry>
+										<entry>java.lang.String</entry>
+										<entry></entry>
+									</row>
+									<row>
+										<entry>adjacent point code</entry>
+										<entry>java.lang.Integer</entry>
+										<entry>point code of remote, mtp link.</entry>
+									</row>
+									<row>
+										<entry>origin point code</entry>
+										<entry>java.lang.Integer</entry>
+										<entry>polint code of local, mtp link.</entry>
+									</row>
+									<row>
+										<entry>signaling link selector</entry>
+										<entry>java.lang.Integer</entry>
+										<entry>number indicating TDM multiplexed link.</entry>
+									</row>
+
+
+								</tbody>
+							</tgroup>
+						</table>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+
+		</section>
+		<section
+			id="setup_configure_application">
+			<title>Application protocols</title>
+			<para>
+				Applications which use
+				<literal>SCCP</literal>
+				do not have to configure it. Only step required to enable application to use
+				<literal>SCCP</literal>
+				is to look up
+				<literal>SCCP</literal>
+				provider and register as listener.
+				It can be done with following code:
+			</para>
+			<programlisting>
+import org.jboss.jmx.adaptor.rmi.RMIAdaptor;
+import java.util.*;
+import javax.management.MBeanServerConnection;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import org.mobicents.protocols.ss7.*;
+import org.mobicents.protocols.ss7.sccp.*;
+import org.mobicents.protocols.ss7.indicator.*;
+
+public class Test implements SccpListener
+{
+
+	private SccpProvider sccpProvider;
+ 	private MBeanServerConnection createMBeanServerConnection()
+           throws NamingException
+ 	{	
+ 		//no arg is ok, if we run in JBoss
+	 	InitialContext ctx = new InitialContext();
+	 	
+ 	   
+ 	 	String adapterName = "jmx/invoker/RMIAdaptor";
+ 	   
+ 	 	Object obj = ctx.lookup(adapterName);
+ 	 	ctx.close();
+ 	   
+ 	 	if (!(obj instanceof RMIAdaptor))
+ 	 	{
+ 	 	 	throw new ClassCastException
+ 	 	 	("Object not of type: RMIAdaptorImpl, but: " +
+ 	 	 	(obj == null ? "not found" : obj.getClass().getName()));
+ 	 	}
+
+ 	 	return (MBeanServerConnection) obj;
+  }
+
+  public void start() throws Excetpion
+  {
+    //SS7Service is JMX bean, lets use it to get 
+  	MBeanServerConnection con = createMBeanServerConnection();
+  	ObjectName on = new ObjectName("org.mobicents.ss7:service=SS7Service");
+  	
+    String providerJndiName = con.invoke(on,"getJndiName",null,null);
+    InitialContext ctx = new InitialContext();
+	 	
+    this.sccpProvider = (SccpProvider) ctx.lookup(providerJndiName);
+    ctx.close();
+    
+    SccpAddress localAddress = ....;
+    
+    sccProvider.registerSccpListener(localAddress,this);
+  }
+
+  public void stop()
+  {
+  	SccpAddress localAddress = ....;
+  	this.sccpProvider.deregisterSccpListener(localAddress);
+  
+  }
+
+  public void onMessage(SccpMessage message)
+  {
+  		//our listener.
+  }
+
+}
+			</programlisting>
+		</section>
+	</section>
+
+
+</chapter>

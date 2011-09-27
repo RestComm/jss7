@@ -1,0 +1,18 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Methods" parallel="methods" thread-count="5"  verbose="1">
+	<test name="simple">
+	
+		 <groups>
+		    <run>
+		      <include name="parameter"  />
+		      <include name="message"  />
+		      
+		    </run>
+	  	</groups>
+
+	  	<packages>
+      		<package name="org.mobicents.protocols.ss7.isup.impl.message" />
+      		<package name="org.mobicents.protocols.ss7.isup.impl.message.parameter" />
+  		 </packages>
+	</test>
+</suite>
