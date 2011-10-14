@@ -118,13 +118,15 @@ public class ClientM3UAManagement extends M3UAManagement {
 	@Override
 	public void stop() throws IOException {
 		super.stop();
-
-		// selector.close();
-
 		// Stop the Exexcutor service
 		this.schedExecService.shutdownNow();
-
+		
+		
 		this.storeRoute();
+
+		
+		this.selector.close();
+		
 	}
 
 	public FastMap<Integer, FastList<String>> getDpcVsAsName() {

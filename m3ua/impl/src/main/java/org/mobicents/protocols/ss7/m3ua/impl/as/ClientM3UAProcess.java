@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.m3ua.impl.as;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedSelectorException;
 
 import javolution.util.FastList;
 
@@ -132,29 +133,34 @@ public class ClientM3UAProcess implements M3UAProcess {
 		}
 
 		clientM3UAManagement.getM3uaScheduler().tick();
-
-		FastList<M3UASelectionKey> selections = clientM3UAManagement.selector.selectNow();
-
-		for (FastList.Node<M3UASelectionKey> n = selections.head(), end = selections.tail(); (n = n.getNext()) != end;) {
-			M3UASelectionKey key = n.getValue();
-			
-//			if(!key.isValid()){
-//				//If Key is not valid, lets go to next one
-//				continue;
-//			}
-			
-			if (key.isReadable()) {
-				if (logger.isTraceEnabled()) {
-					logger.trace("Transmitting data from M3UA channel to hardware");
+		try{
+			FastList<M3UASelectionKey> selections = clientM3UAManagement.selector.selectNow();
+	
+			for (FastList.Node<M3UASelectionKey> n = selections.head(), end = selections.tail(); (n = n.getNext()) != end;) {
+				M3UASelectionKey key = n.getValue();
+				
+	//			if(!key.isValid()){
+	//				//If Key is not valid, lets go to next one
+	//				continue;
+	//			}
+				
+				if (key.isReadable()) {
+					if (logger.isTraceEnabled()) {
+						logger.trace("Transmitting data from M3UA channel to hardware");
+					}
+					read(key);
 				}
-				read(key);
+	
+				if (key.isWritable()) {
+					write(key);
+				}
 			}
-
-			if (key.isWritable()) {
-				write(key);
-			}
+		}catch(ClosedSelectorException cse)
+		{
+			//do nothing, its a valid case for competing threads here.
 		}
 	}
+	
 
 	private void read(M3UASelectionKey key) {
 		M3UAChannel channel = null;
