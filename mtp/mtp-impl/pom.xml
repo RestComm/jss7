@@ -35,6 +35,11 @@
 			<groupId>javolution</groupId>
 			<artifactId>javolution</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>mtp-api</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
 	</dependencies>
 
 </project>
