@@ -54,6 +54,10 @@
 			<groupId>javolution</groupId>
 			<artifactId>javolution</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<artifactId>mtp</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
