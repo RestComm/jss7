@@ -38,10 +38,19 @@
 			<artifactId>shell</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+		</dependency>
+
 		<!-- javolution -->
 		<dependency>
 			<groupId>javolution</groupId>
 			<artifactId>javolution</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<artifactId>mtp</artifactId>
 		</dependency>
 	</dependencies>
 
