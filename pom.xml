@@ -46,6 +46,7 @@
 		<module>sccp</module>
 		<module>tcap</module>
 		<module>map</module>
+		<module>cap</module>
 		<module>service</module>
 		<module>sgw</module>
 	</modules>
@@ -179,6 +180,18 @@
 			<dependency>
 				<artifactId>map-impl</artifactId>
 				<groupId>org.mobicents.protocols.ss7.map</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+
+			<!-- CAP -->
+			<dependency>
+				<artifactId>cap-api</artifactId>
+				<groupId>org.mobicents.protocols.ss7.cap</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>cap-impl</artifactId>
+				<groupId>org.mobicents.protocols.ss7.cap</groupId>
 				<version>${pom.version}</version>
 			</dependency>
 
