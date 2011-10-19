@@ -176,8 +176,8 @@ public class MessageFactoryImpl implements MessageFactory {
             message = this.createMessage(messageClass, messageType);
             
             // obtain remaining length of the message and prepare buffer
-            length = ((header[4] & 0xff << 24) | (header[5] & 0xff << 16)
-                    | (header[6] & 0xff << 8) | (header[7] & 0xff)) - 8;
+            length = (((header[4] & 0xff) << 24) | ((header[5] & 0xff) << 16)
+                    | ((header[6] & 0xff) << 8) | (header[7] & 0xff)) - 8;
             
             if(length == 0){
                 //This is only header message,no body
