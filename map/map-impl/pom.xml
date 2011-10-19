@@ -75,6 +75,10 @@
 			<artifactId>m3ua-api</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<artifactId>mtp</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
