@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.sccp.impl.mgmt.ssp;
 import org.testng.annotations.*;
 import static org.testng.Assert.*;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.User;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.Mtp3PrimitiveMessageType;
@@ -253,7 +254,8 @@ public class SSPTest extends SccpHarness {
 		
 		
 		
-		super.data1.add(createPausePrimitive(getStack2PC()));
+//		super.data1.add(createPausePrimitive(getStack2PC()));
+		this.mtp3UserPart1.sendPauseMessageToLocalUser(getStack2PC());
 		
 		
 		

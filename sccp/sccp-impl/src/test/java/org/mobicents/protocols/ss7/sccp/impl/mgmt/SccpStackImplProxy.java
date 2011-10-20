@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.mgmt;
 
+import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.sccp.impl.SccpRoutingControl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 
@@ -47,5 +48,4 @@ public class SccpStackImplProxy extends SccpStackImpl {
 	{
 		return (SccpManagementProxy) super.sccpManagement;
 	}
-	
 }

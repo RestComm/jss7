@@ -23,56 +23,77 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPartBaseImpl;
 
 /**
  * @author abhayani
  * @author baranowb
+ * @author sergey vetyutnev
  */
-public class Mtp3UserPartImpl implements Mtp3UserPart {
+public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
 
-	protected ConcurrentLinkedQueue<byte[]> readFrom;
-	protected ConcurrentLinkedQueue<byte[]> writeTo;
-
-	Mtp3UserPartImpl(ConcurrentLinkedQueue<byte[]> readFrom, ConcurrentLinkedQueue<byte[]> writeTo) {
-		this.readFrom = readFrom;
-		this.writeTo = writeTo;
-	}
-
+//	protected ConcurrentLinkedQueue<byte[]> readFrom;
+//	protected ConcurrentLinkedQueue<byte[]> writeTo;
 	
-	public int read(ByteBuffer b) throws IOException {
-		int dataRead = 0;
-		while (!this.readFrom.isEmpty()) {
-			byte[] rxData = this.readFrom.poll();
-			System.out.println("Read " + Arrays.toString(rxData));
-			dataRead = dataRead + rxData.length;
-			b.put(rxData);
-		}
-		return dataRead;
-	}
+	private Mtp3UserPartImpl otherPart;
 
+	Mtp3UserPartImpl() {
+		this.start();
+	}
 	
-	public int write(ByteBuffer b) throws IOException {
-		int dataAdded = 0;
-		if (b.hasRemaining()) {
-			byte[] txData = new byte[b.limit() - b.position()];
-			b.get(txData);
-			dataAdded = dataAdded + txData.length;
-			System.out.println("Write " + Arrays.toString(txData));
-			this.writeTo.add(txData);
-		}
-		return dataAdded;
+	public void setOtherPart(Mtp3UserPartImpl otherPart) {
+		this.otherPart = otherPart;
 	}
-
 
 	@Override
-	public void execute() throws IOException {
-		//We don't use this
-		
+	public void sendMessage(Mtp3TransferPrimitive msg) throws IOException {
+		this.otherPart.sendTransferMessageToLocalUser(msg, msg.getSls());
 	}
+
+	public void sendPauseMessageToLocalUser(int affectedDpc) {
+		Mtp3PausePrimitive msg = new Mtp3PausePrimitive(affectedDpc);
+		this.sendPauseMessageToLocalUser(msg);
+	}	
+
+	public void sendResumeMessageToLocalUser(int affectedDpc) {
+		Mtp3ResumePrimitive msg = new Mtp3ResumePrimitive(affectedDpc);
+		this.sendResumeMessageToLocalUser(msg);
+	}	
+
+	public void sendStatusMessageToLocalUser(int affectedDpc, Mtp3StatusCause cause, int congestionLevel) {
+		Mtp3StatusPrimitive msg = new Mtp3StatusPrimitive(affectedDpc, cause, congestionLevel);
+		this.sendStatusMessageToLocalUser(msg);
+	}
+	
+//	public int read(ByteBuffer b) throws IOException {
+//		int dataRead = 0;
+//		while (!this.readFrom.isEmpty()) {
+//			byte[] rxData = this.readFrom.poll();
+//			System.out.println("Read " + Arrays.toString(rxData));
+//			dataRead = dataRead + rxData.length;
+//			b.put(rxData);
+//		}
+//		return dataRead;
+//	}
+//
+//	
+//	public int write(ByteBuffer b) throws IOException {
+//		int dataAdded = 0;
+//		if (b.hasRemaining()) {
+//			byte[] txData = new byte[b.limit() - b.position()];
+//			b.get(txData);
+//			dataAdded = dataAdded + txData.length;
+//			System.out.println("Write " + Arrays.toString(txData));
+//			this.writeTo.add(txData);
+//		}
+//		return dataAdded;
+//	}
 
 }

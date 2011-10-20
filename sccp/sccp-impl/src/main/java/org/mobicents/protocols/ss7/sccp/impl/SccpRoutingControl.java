@@ -28,6 +28,8 @@ import java.io.IOException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.mtp.Mtp3;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
@@ -96,7 +98,8 @@ public class SccpRoutingControl {
 				this.sccpManagement.onMessage(msg, msg.getSls());
 				return;
 			}
-			SccpListener listener = this.sccpProviderImpl.ssnToListener.get(ssn);
+			//SccpListener listener = this.sccpProviderImpl.ssnToListener.get(ssn);
+			SccpListener listener = this.sccpProviderImpl.getSccpListener(ssn);
 			if (listener == null) {
 
 				// Notify Management
@@ -139,20 +142,27 @@ public class SccpRoutingControl {
 
 		int dpc = message.getCalledPartyAddress().getSignalingPointCode();
 		int sls = ((SccpMessageImpl) message).getSls();
-		int ssi = this.sccpStackImpl.ni << 2;
+//		int ssi = this.sccpStackImpl.ni << 2;
 
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		// encoding routing label
-		bout.write((byte) (((ssi & 0x0F) << 4) | (SccpStackImpl.SI_SCCP & 0x0F)));
-		bout.write((byte) dpc);
-		bout.write((byte) (((dpc >> 8) & 0x3F) | ((this.sccpStackImpl.localSpc & 0x03) << 6)));
-		bout.write((byte) (this.sccpStackImpl.localSpc >> 2));
-		bout.write((byte) (((this.sccpStackImpl.localSpc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
-
 		((SccpMessageImpl) message).encode(bout);
-
-		byte[] msg = bout.toByteArray();
-		this.sccpStackImpl.txDataQueue.add(msg);
+		
+		Mtp3TransferPrimitive msg = new Mtp3TransferPrimitive(Mtp3._SI_SERVICE_SCCP, this.sccpStackImpl.ni, 0, this.sccpStackImpl.localSpc, dpc, sls,
+				bout.toByteArray());
+		this.sccpStackImpl.mtp3UserPart.sendMessage(msg);
+		
+//		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+//		// encoding routing label
+//		bout.write((byte) (((ssi & 0x0F) << 4) | (SccpStackImpl.SI_SCCP & 0x0F)));
+//		bout.write((byte) dpc);
+//		bout.write((byte) (((dpc >> 8) & 0x3F) | ((this.sccpStackImpl.localSpc & 0x03) << 6)));
+//		bout.write((byte) (this.sccpStackImpl.localSpc >> 2));
+//		bout.write((byte) (((this.sccpStackImpl.localSpc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
+//
+//		((SccpMessageImpl) message).encode(bout);
+//
+//		byte[] msg = bout.toByteArray();
+//		this.sccpStackImpl.txDataQueue.add(msg);
 	}
 
 	private void translationFunction(SccpMessage msg, final boolean returnError, final boolean fromMtp) throws IOException {
@@ -293,7 +303,8 @@ public class SccpRoutingControl {
 					// type to either connection-oriented control or
 					// connectionless control and based on the availability of
 					// the subsystem;
-					SccpListener listener = this.sccpProviderImpl.ssnToListener.get(ssn);
+					//SccpListener listener = this.sccpProviderImpl.ssnToListener.get(ssn);
+					SccpListener listener = this.sccpProviderImpl.getSccpListener(ssn);
 					if (listener == null) {
 						// TODO: Notification to management for local SSN is not
 						// taken care yet
