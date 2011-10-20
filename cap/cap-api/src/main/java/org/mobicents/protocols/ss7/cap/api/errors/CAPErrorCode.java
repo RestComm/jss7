@@ -31,6 +31,9 @@ package org.mobicents.protocols.ss7.cap.api.errors;
  */
 public interface CAPErrorCode {
 
+	public static final int minimalCodeValue = 0;
+	public static final int maximumCodeValue = 51;
+	
 	public static final int canceled = 0;
 	public static final int cancelFailed = 1;
 	public static final int eTCFailed = 3;

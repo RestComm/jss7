@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.cap.api;
 
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 
@@ -39,34 +40,34 @@ public interface CAPDialogListener {
 	public void onDialogDelimiter(CAPDialog capDialog);
 
 	/**
-	 * When T_BEGIN received. If CAP user rejects this dialog it should call
+	 * When TC-BEGIN received. If CAP user rejects this dialog it should call
 	 * CAPDialog.abort()
 	 */
 	public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber);
 	
 	/**
-	 * When T_CONTINUE or T_END received with dialogueResponse DialoguePDU
+	 * When TC-CONTINUE or TC-END received with dialogueResponse DialoguePDU
 	 * (AARE-apdu) (dialog accepted) this is called before ComponentPortion is
 	 * called
 	 */
 	public void onDialogAccept(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber);
 
 	/**
-	 * When T_ABORT received with user abort
+	 * When TC-ABORT received with user abort
 	 * userReason is defined only if generalReason=UserSpecific
 	 */
 	public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, CAPUserAbortReason userReason);
 
 	/**
-	 * When T_ABORT received with provider abort
+	 * When TC-ABORT received with provider abort
 	 * 
 	 */
 	public void onDialogProviderAbort(CAPDialog capDialog, PAbortCauseType abortCause);
 
 	/**
-	 * When T_CLOSE received 
+	 * When TC-END received 
 	 */
-	public void onDialogClose(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber);
+	public void onDialogClose(CAPDialog capDialog);
 
 	/**
 	 * Called when the CADDialog has been released
@@ -81,5 +82,11 @@ public interface CAPDialogListener {
 	 * @param capDialog
 	 */
 	public void onDialogTimeout(CAPDialog capDialog);
+
+	/**
+	 * Called to notice of abnormal cases
+	 * 
+	 */
+	public void onDialogNotice(CAPDialog capDialog, CAPNoticeProblemDiagnostic noticeProblemDiagnostic);
 
 }

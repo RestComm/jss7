@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap.api;
 
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPComponentErrorReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
@@ -58,4 +59,13 @@ public interface CAPServiceListener {
 	 * @param invokeId
 	 */
 	public void onInvokeTimeout(CAPDialog capDialog, Long invokeId);
+	
+	/**
+	 * Invoked when bad component has beed received from the peer
+	 *  
+	 * @param mapDialog
+	 * @param invokeId
+	 * @param providerError
+	 */
+	public void onProviderErrorComponent(CAPDialog mapDialog, Long invokeId, CAPComponentErrorReason providerError);
 }

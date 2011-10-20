@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * 
  */
 public interface CAPServiceBase {
-	public CAPProvider getMAPProvider();
+	public CAPProvider getCAPProvider();
 
 	/**
 	 * Creates a new Dialog.
@@ -50,7 +50,7 @@ public interface CAPServiceBase {
 	 *            point at which the primitive is issued.
 	 * 
 	 * @param origAddress
-	 *            A valid SCCP address identifying the requestor of a MAP
+	 *            A valid SCCP address identifying the requestor of a CAP
 	 *            dialogue. As an implementation option, this parameter may
 	 *            also, in the request, be implicitly associated with the
 	 *            service access point at which the primitive is issued.
