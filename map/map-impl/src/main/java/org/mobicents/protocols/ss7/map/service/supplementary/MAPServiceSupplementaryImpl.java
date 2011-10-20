@@ -83,7 +83,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
 		MAPDialogSupplementaryImpl dialog = new MAPDialogSupplementaryImpl(appCntx, tcapDialog, this.mapProviderImpl, this, origReference, destReference);
 
-		this.PutMADDialogIntoCollection(dialog);
+		this.putMAPDialogIntoCollection(dialog);
 
 		return dialog;
 	}

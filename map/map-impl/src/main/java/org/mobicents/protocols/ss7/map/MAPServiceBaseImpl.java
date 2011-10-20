@@ -22,8 +22,8 @@
 
 package org.mobicents.protocols.ss7.map;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -34,7 +34,6 @@ import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
@@ -52,7 +51,8 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
  */
 public abstract class MAPServiceBaseImpl implements MAPServiceBase {
 	protected Boolean _isActivated = false;
-	protected Set<MAPServiceListener> serviceListeners = new HashSet<MAPServiceListener>();
+	//protected Set<MAPServiceListener> serviceListeners = new HashSet<MAPServiceListener>();
+	protected List<MAPServiceListener> serviceListeners = new CopyOnWriteArrayList<MAPServiceListener>();
 	protected MAPProviderImpl mapProviderImpl = null;
 
 	protected MAPServiceBaseImpl(MAPProviderImpl mapProviderImpl) {
@@ -60,7 +60,7 @@ public abstract class MAPServiceBaseImpl implements MAPServiceBase {
 	}
 
 	public MAPProvider getMAPProvider() {
-		return this.getMAPProvider();
+		return this.mapProviderImpl;
 	}
 
 	/**
@@ -91,7 +91,7 @@ public abstract class MAPServiceBaseImpl implements MAPServiceBase {
 
 	
 	public abstract void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)
-	throws MAPParsingComponentException;
+			throws MAPParsingComponentException;
 	
 	/**
 	 * Adding MAP Dialog into MAPProviderImpl.dialogs Used when creating a new
@@ -99,7 +99,7 @@ public abstract class MAPServiceBaseImpl implements MAPServiceBase {
 	 * 
 	 * @param dialog
 	 */
-	protected void PutMADDialogIntoCollection(MAPDialogImpl dialog) {
+	protected void putMAPDialogIntoCollection(MAPDialogImpl dialog) {
 		this.mapProviderImpl.addDialog((MAPDialogImpl) dialog);
 	}
 
@@ -153,25 +153,25 @@ public abstract class MAPServiceBaseImpl implements MAPServiceBase {
 
 	protected void deliverErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
 		for (MAPServiceListener serLis : this.serviceListeners) {
-			((MAPServiceSupplementaryListener) serLis).onErrorComponent(mapDialog, invokeId, mapErrorMessage);
+			serLis.onErrorComponent(mapDialog, invokeId, mapErrorMessage);
 		}
 	}
 
 	protected void deliverRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
 		for (MAPServiceListener serLis : this.serviceListeners) {
-			((MAPServiceSupplementaryListener) serLis).onRejectComponent(mapDialog, invokeId, problem);
+			serLis.onRejectComponent(mapDialog, invokeId, problem);
 		}
 	}
 
 	protected void deliverProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
 		for (MAPServiceListener serLis : this.serviceListeners) {
-			((MAPServiceSupplementaryListener) serLis).onProviderErrorComponent(mapDialog, invokeId, providerError);
+			serLis.onProviderErrorComponent(mapDialog, invokeId, providerError);
 		}
 	}
 
 	protected void deliverInvokeTimeout(MAPDialog mapDialog, Invoke invoke) {
 		for (MAPServiceListener serLis : this.serviceListeners) {
-			((MAPServiceSupplementaryListener) serLis).onInvokeTimeout(mapDialog, invoke.getInvokeId());
+			serLis.onInvokeTimeout(mapDialog, invoke.getInvokeId());
 		}
 	}
 

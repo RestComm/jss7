@@ -24,10 +24,6 @@ package org.mobicents.protocols.ss7.map.api;
 
 import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckData;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
-import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -74,10 +70,6 @@ public interface MAPServiceBase {
 	 *            Processing of the Originating-reference shall be performed
 	 *            according to the supplementary service descriptions and other
 	 *            service descriptions, e.g. operator determined barring.
-	 * 
-	 * @param extContainer
-	 *            This parameter is an optional parameter that can be included
-	 *            in the mapMAP-OpenInfo PDU
 	 * @return
 	 */
 	public MAPDialog createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress,

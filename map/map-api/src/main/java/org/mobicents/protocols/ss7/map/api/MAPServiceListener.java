@@ -34,7 +34,7 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
  */
 public interface MAPServiceListener {
 	/**
-	 * Invoked when TC-U-REJECT primitive is received from the other peer
+	 * Invoked when TC-U-ERROR primitive is received from the other peer
 	 * 
 	 * @param mapDialog
 	 * @param invokeId
@@ -52,6 +52,7 @@ public interface MAPServiceListener {
 	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError);
 
 	/**
+	 * Invoked when TC-U-REJECT primitive is received from the other peer
 	 * @param mapDialog
 	 * @param invokeId
 	 *            This parameter is optional and may be the null

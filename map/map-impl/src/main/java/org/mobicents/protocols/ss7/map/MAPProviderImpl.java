@@ -25,8 +25,10 @@ package org.mobicents.protocols.ss7.map;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
@@ -120,7 +122,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	protected Logger loger = Logger.getLogger(MAPProviderImpl.class);
 
-	private Set<MAPDialogListener> dialogListeners = new HashSet<MAPDialogListener>();
+	private List<MAPDialogListener> dialogListeners = new CopyOnWriteArrayList<MAPDialogListener>();
 
 	protected Map<Long, MAPDialogImpl> dialogs = new HashMap<Long, MAPDialogImpl>();
 

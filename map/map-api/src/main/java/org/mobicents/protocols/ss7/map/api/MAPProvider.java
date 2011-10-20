@@ -34,7 +34,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSuppl
  */
 public interface MAPProvider {
 
-	public static final int NETWORK_UNSTRUCTURED_SS_CONTEXT_V2 = 1;
+//	public static final int NETWORK_UNSTRUCTURED_SS_CONTEXT_V2 = 1;
 
 	/**
 	 * Add MAP Dialog listener to the Stack
@@ -49,21 +49,6 @@ public interface MAPProvider {
 	 * @param mapDialogListener
 	 */
 	public void removeMAPDialogListener(MAPDialogListener mapDialogListener);
-
-	// /**
-	// * Add MAP Service listener to the stack
-	// *
-	// * @param mapServiceListener
-	// */
-	// public void addMAPServiceListener(MAPServiceListener mapServiceListener);
-	//
-	// /**
-	// * Remove MAP Service listener from the stack
-	// *
-	// * @param mapServiceListener
-	// */
-	// public void removeMAPServiceListener(MAPServiceListener
-	// mapServiceListener);
 
 	/**
 	 * Get the {@link MAPParameterFactory}

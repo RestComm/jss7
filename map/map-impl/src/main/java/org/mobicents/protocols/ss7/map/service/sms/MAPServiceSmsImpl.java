@@ -85,7 +85,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		MAPDialogSmsImpl dialog = new MAPDialogSmsImpl(appCntx, tcapDialog, this.mapProviderImpl,
 				this, origReference, destReference);
 
-		this.PutMADDialogIntoCollection(dialog);
+		this.putMAPDialogIntoCollection(dialog);
 
 		return dialog;
 	}
