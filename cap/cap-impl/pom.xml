@@ -64,17 +64,7 @@
 			<version>${pom.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
-			<artifactId>m3ua-impl</artifactId>
-			<scope>test</scope>
-		</dependency>
 
-		<dependency>
-			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
-			<artifactId>m3ua-api</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.map</groupId>
 			<artifactId>map-api</artifactId>
