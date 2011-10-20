@@ -285,7 +285,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		MAPDialogLsmImpl dialog = new MAPDialogLsmImpl(appCntx, tcapDialog, this.mapProviderImpl, this, origReference, destReference);
 
-		this.PutMADDialogIntoCollection(dialog);
+		this.putMAPDialogIntoCollection(dialog);
 
 		return dialog;
 	}

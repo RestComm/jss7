@@ -83,7 +83,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 	protected MAPDialogState state = MAPDialogState.Idle;
 	
-	protected Boolean normalDialogShutDown = false;
+	protected boolean normalDialogShutDown = false;
 	
 	private Set<Long> incomingInvokeList = new HashSet<Long>();
 
@@ -494,7 +494,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("DialogId=").append(this.getDialogId()).append("MAPDialogState=").append(this.getState())
+		sb.append("MAPDialog: DialogId=").append(this.getDialogId()).append("MAPDialogState=").append(this.getState())
 				.append("MAPApplicationContext=").append(this.appCntx).append("TCAPDialogState=")
 				.append(this.tcapDialog.getState());
 		return sb.toString();

@@ -22,14 +22,11 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPartBaseImpl;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
@@ -49,11 +46,11 @@ public abstract class SccpHarness {
 	protected SccpStackImpl sccpStack2 = new SccpStackImpl();
 	protected SccpProvider sccpProvider2 = sccpStack2.getSccpProvider();
 
-	private ConcurrentLinkedQueue<byte[]> data1 = new ConcurrentLinkedQueue<byte[]>();
-	private ConcurrentLinkedQueue<byte[]> data2 = new ConcurrentLinkedQueue<byte[]>();
+//	private ConcurrentLinkedQueue<byte[]> data1 = new ConcurrentLinkedQueue<byte[]>();
+//	private ConcurrentLinkedQueue<byte[]> data2 = new ConcurrentLinkedQueue<byte[]>();
 
-	private Mtp3UserPart mtp3UserPart1 = new Mtp3UserPartImpl(data1, data2);
-	private Mtp3UserPart mtp3UserPart2 = new Mtp3UserPartImpl(data2, data1);
+	private Mtp3UserPartImpl mtp3UserPart1 = new Mtp3UserPartImpl();
+	private Mtp3UserPartImpl mtp3UserPart2 = new Mtp3UserPartImpl();
 
 	protected Router router1 = new Router();
 	protected Router router2 = new Router();
@@ -66,7 +63,8 @@ public abstract class SccpHarness {
 	 * 
 	 */
 	public SccpHarness() {
-		// TODO Auto-generated constructor stub
+		mtp3UserPart1.setOtherPart(mtp3UserPart2);
+		mtp3UserPart2.setOtherPart(mtp3UserPart1);
 	}
 
 	private void setUpStack1() {
@@ -176,67 +174,93 @@ public abstract class SccpHarness {
 		}
 	}
 
-	private class Mtp3UserPartImpl implements Mtp3UserPart {
+	private class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
 
-		private ConcurrentLinkedQueue<byte[]> readFrom;
-		private ConcurrentLinkedQueue<byte[]> writeTo;
+//		private ConcurrentLinkedQueue<byte[]> readFrom;
+//		private ConcurrentLinkedQueue<byte[]> writeTo;
+		
+		private Mtp3UserPartImpl otherPart;
 		
 		private boolean saveTrafficInFile = false;
 
-		Mtp3UserPartImpl(ConcurrentLinkedQueue<byte[]> readFrom, ConcurrentLinkedQueue<byte[]> writeTo) {
-			this.readFrom = readFrom;
-			this.writeTo = writeTo;
+		Mtp3UserPartImpl() {
+			this.start();
+		}
+		
+		public void setOtherPart(Mtp3UserPartImpl otherPart) {
+			this.otherPart = otherPart;
 		}
 
 		@Override
-		public int read(ByteBuffer b) throws IOException {
-			int dataRead = 0;
-			while (!this.readFrom.isEmpty()) {
-				byte[] rxData = this.readFrom.poll();
-				System.out.println("Read " + Arrays.toString(rxData));
-				dataRead = dataRead + rxData.length;
-				b.put(rxData);
-			}
-			return dataRead;
-		}
-
-		@Override
-		public int write(ByteBuffer b) throws IOException {
-			int dataAdded = 0;
-			if (b.hasRemaining()) {
-				byte[] txData = new byte[b.limit() - b.position()];
-				b.get(txData);
-				dataAdded = dataAdded + txData.length;
-				System.out.println("Write " + Arrays.toString(txData));
-				this.writeTo.add(txData);
-				
-				if (saveTrafficInFile) {
-					try {
-						FileOutputStream fs = new FileOutputStream("MsgLog.txt", true);
-						int ln = txData.length;
-						fs.write(ln & 0xFF);
-						fs.write(ln >> 8);
-						fs.write(txData);
-						fs.close();
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+		public void sendMessage(Mtp3TransferPrimitive msg) throws IOException {
+			if (saveTrafficInFile) {
+				try {
+					byte[] txData = msg.encodeMtp3();
+					FileOutputStream fs = new FileOutputStream("MsgLog.txt", true);
+					int ln = txData.length;
+					fs.write(ln & 0xFF);
+					fs.write(ln >> 8);
+					fs.write(txData);
+					fs.close();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
-			return dataAdded;
+
+			this.otherPart.sendTransferMessageToLocalUser(msg, msg.getSls());
 		}
 
 //		@Override
-		public void execute() throws IOException {
-			//We dont use this
-			
-			try {
-				//FIXME: this has to be changed to some MTP change!!!
-				Thread.sleep(100);
-			} catch( Exception e ) {
-			}
-		}
+//		public int read(ByteBuffer b) throws IOException {
+//			int dataRead = 0;
+//			while (!this.readFrom.isEmpty()) {
+//				byte[] rxData = this.readFrom.poll();
+//				System.out.println("Read " + Arrays.toString(rxData));
+//				dataRead = dataRead + rxData.length;
+//				b.put(rxData);
+//			}
+//			return dataRead;
+//		}
+//
+//		@Override
+//		public int write(ByteBuffer b) throws IOException {
+//			int dataAdded = 0;
+//			if (b.hasRemaining()) {
+//				byte[] txData = new byte[b.limit() - b.position()];
+//				b.get(txData);
+//				dataAdded = dataAdded + txData.length;
+//				System.out.println("Write " + Arrays.toString(txData));
+//				this.writeTo.add(txData);
+//				
+//				if (saveTrafficInFile) {
+//					try {
+//						FileOutputStream fs = new FileOutputStream("MsgLog.txt", true);
+//						int ln = txData.length;
+//						fs.write(ln & 0xFF);
+//						fs.write(ln >> 8);
+//						fs.write(txData);
+//						fs.close();
+//					} catch (Exception e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
+//			}
+//			return dataAdded;
+//		}
+
+//		@Override
+//		public void execute() throws IOException {
+//			//We dont use this
+//			
+//			try {
+//				//FIXME: this has to be changed to some MTP change!!!
+//				Thread.sleep(100);
+//			} catch( Exception e ) {
+//			}
+//		}
+
 
 	}
 
