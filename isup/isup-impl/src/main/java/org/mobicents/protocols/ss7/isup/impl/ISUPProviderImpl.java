@@ -47,6 +47,7 @@ import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageFactoryImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 
 /**
  * @author baranowb
@@ -370,7 +371,7 @@ public class ISUPProviderImpl implements ISUPProvider {
 		return this.executors[index];
 	}
 
-	void send(byte[] encoded) {
+	void send(Mtp3TransferPrimitive encoded) throws IOException {
 		this.stack.send(encoded);
 	}
 

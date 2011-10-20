@@ -28,13 +28,8 @@
  */
 package org.mobicents.protocols.ss7.isup.impl;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.isup.CircuitManager;
@@ -42,11 +37,15 @@ import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ISUPProvider;
 import org.mobicents.protocols.ss7.isup.ISUPStack;
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.impl.message.AbstractISUPMessage;
-import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
+import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
-import org.mobicents.protocols.ss7.mtp.Utils;
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
 
 /**
  * Start time:12:14:57 2009-09-04<br>
@@ -54,19 +53,18 @@ import org.mobicents.protocols.ss7.mtp.Utils;
  * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public class ISUPStackImpl implements ISUPStack {
+public class ISUPStackImpl implements ISUPStack, Mtp3UserPartListener {
 
 	private Logger logger = Logger.getLogger(ISUPStackImpl.class);
 
-
-
 	private State state = State.IDLE;
-	//dont quite like the idea of so many threads... but.
-	private ExecutorService executor;
-	private ExecutorService layer3exec;
+	// dont quite like the idea of so many threads... but.
+	// private ExecutorService executor;
+	// private ExecutorService layer3exec;
 
-	protected ConcurrentLinkedQueue<byte[]> txDataQueue = new ConcurrentLinkedQueue<byte[]>();
-	
+	// protected ConcurrentLinkedQueue<byte[]> txDataQueue = new
+	// ConcurrentLinkedQueue<byte[]>();
+
 	private Mtp3UserPart mtp3UserPart = null;
 	private CircuitManager circuitManager = null;
 	private ISUPProviderImpl provider;
@@ -86,24 +84,24 @@ public class ISUPStackImpl implements ISUPStack {
 		if (state != State.CONFIGURED) {
 			throw new IllegalStateException("Stack has not been configured or is already running!");
 		}
-		if(state == State.RUNNING)
-		{
-			//throw new StartFailedException("Can not start stack again!");
+		if (state == State.RUNNING) {
+			// throw new StartFailedException("Can not start stack again!");
 			throw new IllegalStateException("Can not start stack again!");
 		}
-		if(this.mtp3UserPart == null)
-		{
+		if (this.mtp3UserPart == null) {
 			throw new IllegalStateException("No Mtp3UserPart present!");
 		}
-		
-		if(this.circuitManager == null)
-		{
+
+		if (this.circuitManager == null) {
 			throw new IllegalStateException("No CircuitManager present!");
 		}
-		this.executor = Executors.newFixedThreadPool(1);
-		this.layer3exec = Executors.newFixedThreadPool(1);
+		// this.executor = Executors.newFixedThreadPool(1);
+		// this.layer3exec = Executors.newFixedThreadPool(1);
 		this.provider.start();
-		this.layer3exec.execute(new MtpStreamHandler());
+		// this.layer3exec.execute(new MtpStreamHandler());
+
+		this.mtp3UserPart.addMtp3UserPartListener(this);
+
 		this.state = State.RUNNING;
 
 	}
@@ -112,12 +110,15 @@ public class ISUPStackImpl implements ISUPStack {
 		if (state != State.RUNNING) {
 			throw new IllegalStateException("Stack is not running!");
 		}
-		if(state == State.CONFIGURED)
-		{
-			throw new IllegalStateException("Can not stop stack again!");
-		}
-		this.executor.shutdown();
-		this.layer3exec.shutdown();
+		// if(state == State.CONFIGURED)
+		// {
+		// throw new IllegalStateException("Can not stop stack again!");
+		// }
+
+		this.mtp3UserPart.removeMtp3UserPartListener(this);
+
+		// this.executor.shutdown();
+		// this.layer3exec.shutdown();
 		this.provider.stop();
 		this.state = State.CONFIGURED;
 
@@ -129,17 +130,17 @@ public class ISUPStackImpl implements ISUPStack {
 	/**
      *
      */
-	public void configure(Properties props)  {
+	public void configure(Properties props) {
 		if (state != State.IDLE) {
 			throw new IllegalStateException("Stack already been configured or is already running!");
 		}
 
-		this.provider = new ISUPProviderImpl(this,props);
+		this.provider = new ISUPProviderImpl(this, props);
 		this.parameterFactory = this.provider.getParameterFactory();
 		this.messageFactory = this.provider.getMessageFactory();
 		this.state = State.CONFIGURED;
 	}
-	
+
 	public Mtp3UserPart getMtp3UserPart() {
 		return mtp3UserPart;
 	}
@@ -150,129 +151,197 @@ public class ISUPStackImpl implements ISUPStack {
 
 	public void setCircuitManager(CircuitManager mgr) {
 		this.circuitManager = mgr;
-		
+
 	}
 
 	public CircuitManager getCircuitManager() {
 		return this.circuitManager;
 	}
-	// ---------------- private methods and class defs
 
+	// ---------------- private methods and class defs
 
 	/**
 	 * @param message
 	 */
-	void send(byte[] message) {
+	void send(Mtp3TransferPrimitive message) throws IOException {
+		
+		if (this.state != State.RUNNING)
+			return;
+		
 		// here we have encoded msg, nothing more, need to add MTP3 label.
-		txDataQueue.add(message);
-	}
-
-	private class MtpStreamHandler implements Runnable {
-		ByteBuffer rxBuffer = ByteBuffer.allocateDirect(1000);
-		ByteBuffer txBuffer = ByteBuffer.allocateDirect(1000);
-		int rxBytes = 0;
-		@SuppressWarnings("unused")
-		int txBytes = 0;
-
-		public void run() {
-			// Execute only till state is Running
-			while (state == State.RUNNING) {
-
-				try {
-					//Execute the MTP3UserPart
-					mtp3UserPart.execute();
-
-					rxBytes = 0;
-					rxBuffer.clear();
-					try {
-						rxBytes = mtp3UserPart.read(rxBuffer);
-						if (rxBytes != 0) {
-							byte[] data = new byte[rxBytes];
-							rxBuffer.flip();
-							rxBuffer.get(data);
-							MessageHandler handler = new MessageHandler(data);
-							executor.execute(handler);
-						}
-					} catch (IOException e) {
-						logger.error("Error while readig data from Mtp3UserPart", e);
-					}
-
-					// Iterate till we send all data
-					while (!txDataQueue.isEmpty()) {
-						txBuffer.clear();
-						txBuffer.put(txDataQueue.poll());
-						txBuffer.flip();
-						try {
-							txBytes = mtp3UserPart.write(txBuffer);
-						} catch (IOException e) {
-							logger.error("Error while writting data to Mtp3UserPart", e);
-						}
-					}// while txDataQueue
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}// end of while
-		}
-	}
-	private class MessageHandler implements Runnable {
-		// MSU as input stream
-		private byte[] msu;
-		private ISUPMessage message;
-
-		protected MessageHandler(byte[] msu) {
-			this.msu = msu;
-
-		}
-
-		private ISUPMessage parse() throws IOException {
-			try {
-				// FIXME: change this, dont copy over and over?
-				
-				int commandCode = msu[7];//	1(SIO) +    3(RL) + 1(SLS) + 2(CIC) + 1(CODE)
-												// http://pt.com/page/tutorials/ss7-tutorial/mtp
-				byte[] payload = new byte[msu.length - 5];
-				System.arraycopy(msu, 5, payload, 0, payload.length);
-				byte sls = msu[5];
-				// for post processing
-				AbstractISUPMessage msg = (AbstractISUPMessage) messageFactory.createCommand(commandCode);
-				msg.decode(payload, parameterFactory);
-				msg.setSls(sls); //store SLS...
-				return msg;
-
-			} catch (Exception e) {
-				// FIXME: what should we do here? send back?
-				e.printStackTrace();
-				logger.error("Failed on data: " + Utils.hexDump(null, msu));
-			}
-			return null;
-		}
-
-		public void run() {
-			if (message == null) {
-				try {
-					message = parse();
-				} catch (IOException e) {
-					logger.warn("Corrupted message received");
-					return;
-				}
-			}
-			// deliver to provider, so it can check up on circuit, play with
-			// timers and deliver.
-			if(message!=null)
-			{
-				try{
-					provider.receive(message);
-				}catch(Exception e)
-				{
-					//TODO: add proper answer?
-				}
-			}
+		// txDataQueue.add(message);
+		try {
+			this.mtp3UserPart.sendMessage(message);
+		} catch (IOException e) {
+			// log here Exceptions from MTP3 level
+			logger.error("IOException when sending the message to MTP3 level: " + e.getMessage(), e);
+			e.printStackTrace();
+			throw e;
 		}
 	}
 
 	private enum State {
 		IDLE, CONFIGURED, RUNNING;
 	}
+
+	@Override
+	public void onMtp3PauseMessage(Mtp3PausePrimitive arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onMtp3ResumeMessage(Mtp3ResumePrimitive arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onMtp3StatusMessage(Mtp3StatusPrimitive arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onMtp3TransferMessage(Mtp3TransferPrimitive mtpMsg) {
+		// int commandCode = msu[7];
+		// http://pt.com/page/tutorials/ss7-tutorial/mtp
+		// byte[] payload = new byte[msu.length - 5];
+		// System.arraycopy(msu, 5, payload, 0, payload.length);
+		// byte sls = msu[5];
+		// for post processing
+		// AbstractISUPMessage msg = (AbstractISUPMessage)
+		// messageFactory.createCommand(commandCode);
+		// msg.decode(payload, parameterFactory);
+		// msg.setSls(sls); // store SLS...
+		// return msg;
+		
+		if (this.state != State.RUNNING)
+			return;
+
+		// process only ISUP messages
+		if (mtpMsg.getSi() != Mtp3._SI_SERVICE_ISUP)
+			return;
+		
+		// 1(SIO) + 3(RL) + 1(SLS) + 2(CIC) + 1(CODE)
+		byte[] payload = mtpMsg.getData();
+		int commandCode = payload[2];
+
+		AbstractISUPMessage msg = (AbstractISUPMessage) messageFactory.createCommand(commandCode);
+		try {
+			msg.decode(payload, parameterFactory);
+		} catch (ParameterException e) {
+			logger.error("Error decoding of incoming Mtp3TransferPrimitive" + e.getMessage(), e);
+			e.printStackTrace();
+		}
+		msg.setSls(mtpMsg.getSls()); // store SLS...
+		provider.receive(msg);
+	}
+
+	// private class MtpStreamHandler implements Runnable {
+	// ByteBuffer rxBuffer = ByteBuffer.allocateDirect(1000);
+	// ByteBuffer txBuffer = ByteBuffer.allocateDirect(1000);
+	// int rxBytes = 0;
+	// @SuppressWarnings("unused")
+	// int txBytes = 0;
+	//
+	// public void run() {
+	// // Execute only till state is Running
+	// while (state == State.RUNNING) {
+	//
+	// try {
+	// //Execute the MTP3UserPart
+	// mtp3UserPart.execute();
+	//
+	// rxBytes = 0;
+	// rxBuffer.clear();
+	// try {
+	// rxBytes = mtp3UserPart.read(rxBuffer);
+	// if (rxBytes != 0) {
+	// byte[] data = new byte[rxBytes];
+	// rxBuffer.flip();
+	// rxBuffer.get(data);
+	// MessageHandler handler = new MessageHandler(data);
+	// executor.execute(handler);
+	// }
+	// } catch (IOException e) {
+	// logger.error("Error while readig data from Mtp3UserPart", e);
+	// }
+	//
+	// // Iterate till we send all data
+	// while (!txDataQueue.isEmpty()) {
+	// txBuffer.clear();
+	// txBuffer.put(txDataQueue.poll());
+	// txBuffer.flip();
+	// try {
+	// txBytes = mtp3UserPart.write(txBuffer);
+	// } catch (IOException e) {
+	// logger.error("Error while writting data to Mtp3UserPart", e);
+	// }
+	// }// while txDataQueue
+	// } catch (IOException e1) {
+	// // TODO Auto-generated catch block
+	// e1.printStackTrace();
+	// }
+	// }// end of while
+	// }
+	// }
+	//
+	// private class MessageHandler implements Runnable {
+	// // MSU as input stream
+	// private byte[] msu;
+	// private ISUPMessage message;
+	//
+	// protected MessageHandler(byte[] msu) {
+	// this.msu = msu;
+	//
+	// }
+	//
+	// private ISUPMessage parse() throws IOException {
+	// try {
+	// // FIXME: change this, dont copy over and over?
+	//
+	// int commandCode = msu[7];// 1(SIO) + 3(RL) + 1(SLS) + 2(CIC) + 1(CODE)
+	// // http://pt.com/page/tutorials/ss7-tutorial/mtp
+	// byte[] payload = new byte[msu.length - 5];
+	// System.arraycopy(msu, 5, payload, 0, payload.length);
+	// byte sls = msu[5];
+	// // for post processing
+	// AbstractISUPMessage msg = (AbstractISUPMessage)
+	// messageFactory.createCommand(commandCode);
+	// msg.decode(payload, parameterFactory);
+	// msg.setSls(sls); //store SLS...
+	// return msg;
+	//
+	// } catch (Exception e) {
+	// // FIXME: what should we do here? send back?
+	// e.printStackTrace();
+	// logger.error("Failed on data: " + Utils.hexDump(null, msu));
+	// }
+	// return null;
+	// }
+	//
+	// public void run() {
+	// if (message == null) {
+	// try {
+	// message = parse();
+	// } catch (IOException e) {
+	// logger.warn("Corrupted message received");
+	// return;
+	// }
+	// }
+	// // deliver to provider, so it can check up on circuit, play with
+	// // timers and deliver.
+	// if(message!=null)
+	// {
+	// try{
+	// provider.receive(message);
+	// }catch(Exception e)
+	// {
+	// //TODO: add proper answer?
+	// }
+	// }
+	// }
+	// }
 
 }

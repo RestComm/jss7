@@ -59,6 +59,7 @@ import org.mobicents.protocols.ss7.isup.message.UnblockingAckMessage;
 import org.mobicents.protocols.ss7.isup.message.UnblockingMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 
 /**
  *
@@ -158,7 +159,7 @@ class Circuit implements Runnable {
 			lock.lock();
 			bos.reset();
 			// FIXME: add SEG creation?
-			byte[] msg = decorate(message);
+			Mtp3TransferPrimitive msg = decorate(message);
 			// process timers
 			switch (message.getMessageType().getCode()) {
 			case ReleaseMessage.MESSAGE_CODE:
@@ -210,7 +211,7 @@ class Circuit implements Runnable {
 	 * @throws ParameterException 
 	 * @throws IOException 
 	 */
-	private byte[] decorate(ISUPMessage message) throws ParameterException, IOException {
+	private Mtp3TransferPrimitive decorate(ISUPMessage message) throws ParameterException, IOException {
 		((AbstractISUPMessage) message).encode(bos);
 		byte[] encoded = bos.toByteArray();
 		int opc = this.provider.getLocalSpc();
@@ -218,17 +219,21 @@ class Circuit implements Runnable {
 		int si = Mtp3._SI_SERVICE_ISUP;
 		int ni = this.provider.getNi();
 		int sls = message.getSls() & 0x0F; //promote
-		int ssi = ni << 2;
+//		int ssi = ni << 2;
 
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		// encoding routing label
-		bout.write((byte) (((ssi & 0x0F) << 4) | (si & 0x0F)));
-		bout.write((byte) dpc);
-		bout.write((byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6)));
-		bout.write((byte) (opc >> 2));
-		bout.write((byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
-		bout.write(encoded);
-		byte[] msg = bout.toByteArray();
+	
+//		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+//		// encoding routing label
+//		bout.write((byte) (((ssi & 0x0F) << 4) | (si & 0x0F)));
+//		bout.write((byte) dpc);
+//		bout.write((byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6)));
+//		bout.write((byte) (opc >> 2));
+//		bout.write((byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
+//		bout.write(encoded);
+//		byte[] msg = bout.toByteArray();
+
+		
+		Mtp3TransferPrimitive msg = new Mtp3TransferPrimitive(si, ni, 0, opc, dpc, sls, encoded);
 		return msg;
 	}
 
@@ -292,7 +297,7 @@ class Circuit implements Runnable {
 
 	private Future t1;
 	private Future t5;
-	private byte[] t1t5encodedREL; // keep encoded value, so we can simply send,
+	private Mtp3TransferPrimitive t1t5encodedREL; // keep encoded value, so we can simply send,
 									// without spending CPU on encoding.
 	private ReleaseMessage t1t5REL; // keep for timers.
 	private Future t7;
@@ -303,42 +308,42 @@ class Circuit implements Runnable {
 	// FIXME: t11
 	private Future t12;
 	private Future t13;
-	private byte[] t12t13encodedBLO; // keep encoded value, so we can simply
+	private Mtp3TransferPrimitive t12t13encodedBLO; // keep encoded value, so we can simply
 										// send, without spending CPU on
 										// encoding.
 	private BlockingMessage t12t13BLO; // keep for timers.
 
 	private Future t14;
 	private Future t15;
-	private byte[] t14t15encodedUBL; // keep encoded value, so we can simply
+	private Mtp3TransferPrimitive t14t15encodedUBL; // keep encoded value, so we can simply
 										// send, without spending CPU on
 										// encoding.
 	private UnblockingMessage t14t15UBL; // keep for timers.
 
 	private Future t16;
 	private Future t17;
-	private byte[] t16t17encodedRSC; // keep encoded value, so we can simply
+	private Mtp3TransferPrimitive t16t17encodedRSC; // keep encoded value, so we can simply
 										// send, without spending CPU on
 										// encoding.
 	private ResetCircuitMessage t16t17RSC; // keep for timers.
 
 	private Future t18;
 	private Future t19;
-	private byte[] t18t19encodedCGB; // keep encoded value, so we can simply
+	private Mtp3TransferPrimitive t18t19encodedCGB; // keep encoded value, so we can simply
 										// send, without spending CPU on
 										// encoding.
 	private CircuitGroupBlockingMessage t18t19CGB; // keep for timers.
 
 	private Future t20;
 	private Future t21;
-	private byte[] t20t21encodedCGU; // keep encoded value, so we can simply
+	private Mtp3TransferPrimitive t20t21encodedCGU; // keep encoded value, so we can simply
 										// send, without spending CPU on
 										// encoding.
 	private CircuitGroupUnblockingMessage t20t21CGU; // keep for timers.
 
 	private Future t22;
 	private Future t23;
-	private byte[] t22t23encodedGRS; // keep encoded value, so we can simply
+	private Mtp3TransferPrimitive t22t23encodedGRS; // keep encoded value, so we can simply
 										// send, without spending CPU on
 										// encoding.
 	private CircuitGroupResetMessage t22t23GRS; // keep for timers.
@@ -351,7 +356,7 @@ class Circuit implements Runnable {
 
 	// FIXME: t34 - check how SEG works
 
-	private void startRELTimers(byte[] encoded, ReleaseMessage rel) {
+	private void startRELTimers(Mtp3TransferPrimitive encoded, ReleaseMessage rel) {
 		// FIXME: add lock ?
 		this.t1t5encodedREL = encoded;
 		this.t1t5REL = rel;
@@ -398,7 +403,7 @@ class Circuit implements Runnable {
 	 * @param encoded
 	 * @param message
 	 */
-	private void startBLOTimers(byte[] encoded, BlockingMessage message) {
+	private void startBLOTimers(Mtp3TransferPrimitive encoded, BlockingMessage message) {
 		this.t12t13BLO = message;
 		this.t12t13encodedBLO = encoded;
 		// it is started always.
@@ -422,7 +427,7 @@ class Circuit implements Runnable {
 	 * @param encoded
 	 * @param message
 	 */
-	private void startUBLTimers(byte[] encoded, UnblockingMessage message) {
+	private void startUBLTimers(Mtp3TransferPrimitive encoded, UnblockingMessage message) {
 		this.t14t15UBL = message;
 		this.t14t15encodedUBL = encoded;
 		// it is started always.
@@ -447,7 +452,7 @@ class Circuit implements Runnable {
 	 * @param encoded
 	 * @param message
 	 */
-	private void startRSCTimers(byte[] encoded, ResetCircuitMessage message) {
+	private void startRSCTimers(Mtp3TransferPrimitive encoded, ResetCircuitMessage message) {
 		this.t16t17RSC = message;
 		this.t16t17encodedRSC = encoded;
 		// it is started always.
@@ -506,7 +511,7 @@ class Circuit implements Runnable {
 	 * @param encoded
 	 * @param message
 	 */
-	private void startGRSTimers(byte[] encoded, CircuitGroupResetMessage message) {
+	private void startGRSTimers(Mtp3TransferPrimitive encoded, CircuitGroupResetMessage message) {
 		this.t22t23GRS = message;
 		this.t22t23encodedGRS = encoded;
 		// it is started always.
@@ -529,7 +534,7 @@ class Circuit implements Runnable {
 	 * @param encoded
 	 * @param message
 	 */
-	private void startCGUTimers(byte[] encoded, CircuitGroupUnblockingMessage message) {
+	private void startCGUTimers(Mtp3TransferPrimitive encoded, CircuitGroupUnblockingMessage message) {
 		this.t20t21CGU = message;
 		this.t20t21encodedCGU = encoded;
 		// it is started always.
@@ -553,7 +558,7 @@ class Circuit implements Runnable {
 	 * @param encoded
 	 * @param message
 	 */
-	private void startCGBTimers(byte[] encoded, CircuitGroupBlockingMessage message) {
+	private void startCGBTimers(Mtp3TransferPrimitive encoded, CircuitGroupBlockingMessage message) {
 		this.t18t19CGB = message;
 		this.t18t19encodedCGB = encoded;
 		// it is started always.
