@@ -22,13 +22,15 @@
 
 package org.mobicents.ss7.hardware.dialogic;
 
+
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 /**
  *
  * @author amit bhayani
  * @author Oleg Kulikov
+ * @author sergey vetyutnev
+ * 
  */
 public class InterProcessCommunicator {
 
@@ -39,6 +41,8 @@ public class InterProcessCommunicator {
 	/** The identifier of the destination module */
 	private int destination;
 
+	private byte[] readBuffer = new byte[1000];
+	
 	/**
 	 * Creates a new instance of InterProcessCommunicator
 	 * 
@@ -57,23 +61,19 @@ public class InterProcessCommunicator {
 	 * 
 	 * @return received datagram.
 	 */
-	public int read(ByteBuffer b) throws IOException {
+	public byte[] read() {
 		//TODO Make JNI use native ByteBuffer
 		
-		byte[] buffer = new byte[1000];
-		int len = receive(source, buffer);
+		int len = receive(source, readBuffer);
 
 		if (len == -1) {
-			// throw new IOException("Unable to read message from IPC");
-			// GCT_grab is used and its async now. Will return -1 if there are
 			// no messages in queue
-			return 0;
+			return null;
 		}
-
-		// Fill the ByteBuffer
-		b.put(buffer, 0, len);
-
-		return len;
+	
+		byte[] tempBuf = new byte[len];
+		System.arraycopy(readBuffer, 0, tempBuf, 0, len);
+		return tempBuf;
 	}
 
 	/**
@@ -82,21 +82,19 @@ public class InterProcessCommunicator {
 	 * @param packet
 	 *            the datagram to be sent.
 	 */
-	public int write(ByteBuffer b) throws IOException {
+	public int write(byte[] msg) throws IOException {
 		//TODO Make JNI use native ByteBuffer
-		
-		int status = -1;
 
-		if (b.hasRemaining()) {
-			byte[] packet = new byte[b.limit()-b.position()];
-			b.get(packet);
-			status = send(source, destination, packet);
-		}
+		//TODO I do not sure if "synchronized" needs here, may be dialogic GCT_send() method is thread-safe ? 
+		synchronized (this) {
+			int status = send(source, destination, msg);
 
-		if (status != 0) {
-			throw new IOException("Can not send packet");
+			if (status != 0) {
+				throw new IOException("Dialogic card: Can not send packet by GCT_send() method");
+			}
+			
+			return status;
 		}
-		return status;
 	}
 
 	/**
