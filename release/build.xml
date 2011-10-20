@@ -2,13 +2,13 @@
 <project name="ss7.release.sf" default="package" basedir=".">
 
 	<!-- Components Versions -->
-	<property name="release.version" value="1.0.0-SNAPSHOT" />
+	<property name="release.version" value="2.0.0-SNAPSHOT" />
 
-	<property name="ss7.version" value="1.0.0-SNAPSHOT" />
+	<property name="ss7.version" value="2.0.0-SNAPSHOT" />
 
 
-	<property name="asn.version" value="1.0.0-SNAPSHOT" />
-	<property name="stream.version" value="1.0.0-SNAPSHOT" />
+	<property name="asn.version" value="1.0.0.CR1" />
+	<property name="stream.version" value="1.0.0.CR1" />
 	
 
 	<property name="protocols.build.list" value="parent,m3ua,mtp,isup,sccp,tcap,map" />
@@ -23,7 +23,7 @@
 	<property name="test.skip" value="true" />
 	<!-- Definition -->
 
-	<property name="release.name" value="point" />
+	<property name="release.name" value="SNAPSHOT" />
 
 	<property environment="sys" />
 	<condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="mvn">
@@ -67,6 +67,7 @@
 
 	<target name="checkout-sources">
 		<echo>Checking out sources</echo>
+		 <mkdir dir="${checkout.basedir}"/>
 		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../">
 			<arg line="validate -P checkout -Dcheckout.dir=${checkout.basedir}" />
 		</exec>
@@ -74,7 +75,7 @@
 
 	<target name="build-sources-asn">
 		<exec executable="${mvn.executable}" dir="${checkout.basedir}/asn">
-			<arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
+			<arg line="install -Prelease,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
 		</exec>
 	</target>
 
@@ -149,11 +150,11 @@
 			<fileset dir="${checkout.basedir}/ss7/map/release/point">
 				<include name="**" />
 			</fileset>
-			<!--
+			<!---->
 			<fileset dir="${checkout.basedir}/ss7/isup/release/point">
 				<include name="**" />
 			</fileset>
-			-->
+			
 		</copy>
 
 		<echo>Copy Native</echo>

@@ -11,7 +11,7 @@
 
 	<artifactId>sources-checkout</artifactId>
 	<groupId>org.mobicents.protocols.ss7.release</groupId>
-	<version>1.0.0-SNAPSHOT</version> <!-- ??? proper version? -->
+	<version>2.0.0-SNAPSHOT</version> <!-- ??? proper version? -->
 
 	<properties>
 
@@ -20,16 +20,17 @@
 		<checkout.password />
 
 			<!-- TAGS 
-		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/asn/asn-1.0.0.BETA3</asn.connectionURL>
-		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/stream/stream-1.0.0.BETA3</stream.connectionURL>
+		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/asn/asn-1.0.0.CR1</asn.connectionURL>
+		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/stream/stream-1.0.0.CR1</stream.connectionURL>
 
-		<ss7.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/mobicents-ss7-1.0.0.BETA8</ss7.connectionURL>
+		<ss7.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/mobicents-ss7-1.0.0.CR1</ss7.connectionURL>
  		-->
 		<!-- TRUNK -->
 
 		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/asn</asn.connectionURL>
 		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/stream</stream.connectionURL>
 		<ss7.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/protocols/ss7</ss7.connectionURL>
+		
 
 		
 	</properties>
@@ -42,6 +43,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-scm-plugin</artifactId>
+						<version>1.5</version>
 						<inherited>false</inherited>
 						<executions>
 							<execution>

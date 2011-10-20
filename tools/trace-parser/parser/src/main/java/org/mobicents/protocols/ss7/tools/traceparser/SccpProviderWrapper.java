@@ -40,29 +40,24 @@ import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
  */
 public class SccpProviderWrapper implements SccpProvider {
 
-	@Override
 	public MessageFactory getMessageFactory() {
 		return new MessageFactoryImpl();
 	}
 
-	@Override
 	public ParameterFactory getParameterFactory() {
 		return new ParameterFactoryImpl();
 	}
 
-	@Override
 	public void registerSccpListener(int ssn, SccpListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void deregisterSccpListener(int ssn) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void send(SccpMessage message, int seqControl) throws IOException {
 		// TODO Auto-generated method stub
 

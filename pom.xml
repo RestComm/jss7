@@ -9,7 +9,7 @@
 
 	<artifactId>ss7-parent</artifactId>
 	<groupId>org.mobicents.protocols.ss7</groupId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
@@ -28,7 +28,7 @@
 		<testng.version>6.2</testng.version>
 		<javolution.version>5.5.1</javolution.version>
 		<compiler.plugin.version>2.0.2</compiler.plugin.version>
-		<compile.source>1.5</compile.source>
+		<compile.source>1.7</compile.source>
 		<!-- mobicents but not strictly ss7 -->
 		<asn.version>1.0.0.CR1</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
@@ -274,8 +274,8 @@
 			<id>amit.bhayani</id>
 			<name>Amit Bhayani</name>
 			<email>amit.bhayani@gmail.com</email>
-			<organization>JBoss/Red Hat</organization>
-			<organizationUrl>http://www.redhat.com/</organizationUrl>
+			<organization>Mobite Technologies Pvt Ltd</organization>
+			<organizationUrl>http://www.mobite.co.in/</organizationUrl>
 			<roles>
 				<role>Active Developer</role>
 			</roles>

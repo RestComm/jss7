@@ -47,17 +47,14 @@ public abstract class TraceReaderDriverBase implements TraceReaderDriver {
 	}
 	
 
-	@Override
 	public void addTraceListener(TraceReaderListener listener) {
 		this.listeners.add(listener);
 	}
 
-	@Override
 	public void removeTraceListener(TraceReaderListener listener) {
 		this.listeners.remove(listener);
 	}
 
-	@Override
 	public void stop() {
 		this.isStarted = false;
 	}

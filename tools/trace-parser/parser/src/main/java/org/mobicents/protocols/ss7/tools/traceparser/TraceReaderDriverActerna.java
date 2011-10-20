@@ -36,7 +36,6 @@ public class TraceReaderDriverActerna extends TraceReaderDriverBase implements T
 		super(processControl, fileName);
 	}
 	
-	@Override
 	public void startTraceFile() throws TraceReaderException {
 		
 		if (this.listeners.size() == 0)

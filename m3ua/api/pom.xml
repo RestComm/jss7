@@ -4,15 +4,11 @@
 	<parent>
 		<artifactId>m3ua</artifactId>
 		<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>2.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>m3ua-api</artifactId>
 	<name>Mobicents SS7 :: M3UA :: Api :: ${pom.artifactId}</name>
-
-	<properties>
-		<maven.test.skip>false</maven.test.skip>
-	</properties>
 
 	<dependencies>
 		<!--
@@ -37,15 +33,5 @@
 
 	<build>
 		<finalName>${pom.artifactId}-${pom.version}</finalName>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<groupId>org.apache.maven.plugins</groupId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-		</plugins>
 	</build>
 </project>
