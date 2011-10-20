@@ -25,7 +25,8 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dialogic_InterProcessComm
 	MSG *m;
 	int i;
 
-	h = GCT_grab(src_module_id);
+	// h = GCT_grab(src_module_id);
+	h = GCT_receive(src_module_id);
 
 	if (h == 0) {
 		return -1;
@@ -139,6 +140,12 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dialogic_InterProcessComm
 	}
 
 	status = GCT_send(dest_module_id,(HDR *)m);
+
+	/* If the function does not return success then the calling program must release
+	the message back to the system using relm().
+	*/
+	if(status!=0)
+		relm(m);
 
 	/*
 	printf("Sent %d bytes, status %d", len, status);

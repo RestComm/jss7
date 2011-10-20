@@ -23,9 +23,10 @@
 package org.mobicents.ss7.hardware.dahdi;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
 
 /**
  *
@@ -34,26 +35,26 @@ import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
  */
 public class DahdiMtp3UserPart implements Mtp3UserPart {
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#read(java.nio.ByteBuffer)
-	 */
 	@Override
-	public int read(ByteBuffer arg0) throws IOException {
+	public void addMtp3UserPartListener(Mtp3UserPartListener arg0) {
 		// TODO Auto-generated method stub
-		return 0;
+		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#write(java.nio.ByteBuffer)
-	 */
 	@Override
-	public int write(ByteBuffer arg0) throws IOException {
+	public int getMaxUserDataLength(int arg0) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public void execute() throws IOException {
+	public void removeMtp3UserPartListener(Mtp3UserPartListener arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendMessage(Mtp3TransferPrimitive arg0) throws IOException {
 		// TODO Auto-generated method stub
 		
 	}
