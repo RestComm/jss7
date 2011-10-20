@@ -86,7 +86,7 @@ public abstract class ISUPMessageImpl extends AbstractISUPMessage {
 	protected Map<Integer, Integer> optionalCodeToIndex;
 
 	protected CircuitIdentificationCode cic;
-	protected byte sls;
+	protected int sls;
 	public ISUPMessageImpl(Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes,
 			Map<Integer, Integer> mandatoryCode2Index, Map<Integer, Integer> mandatoryVariableCode2Index,
 			Map<Integer, Integer> optionalCode2Index) {
@@ -114,16 +114,16 @@ public abstract class ISUPMessageImpl extends AbstractISUPMessage {
 	}
 
 	@Override
-	public void setSls(byte sls) {
-		if(sls>=16 || sls<0)
-		{
-			throw new IllegalArgumentException("SLS must be in range of one byte, it is: "+sls+"!");
-		}
-		this.sls = sls;
+	public void setSls(int sls) {
+//		if(sls>=16 || sls<0)
+//		{
+//			throw new IllegalArgumentException("SLS must be in range of one byte, it is: "+sls+"!");
+//		}
+		this.sls = (sls & 0x0F);
 	}
 
 	@Override
-	public byte getSls() {
+	public int getSls() {
 		return this.sls;
 	}
 

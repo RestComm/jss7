@@ -39,9 +39,9 @@ public interface ISUPMessage {
 	 * Sets sls to be used when this message is send. If message is received, it contians sls of link on which it has been received.
 	 * @param sls
 	 */
-	public void setSls(byte sls);
+	public void setSls(int sls);
 	
-	public byte getSls();
+	public int getSls();
 	/**
 	 * Get mandatory field, CIC.
 	 * @return

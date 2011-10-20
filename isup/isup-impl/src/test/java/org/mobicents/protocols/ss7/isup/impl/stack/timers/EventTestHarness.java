@@ -43,7 +43,9 @@ import org.mobicents.protocols.ss7.isup.impl.ISUPStackImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.AbstractISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPartBaseImpl;
 
 /**
  * @author baranowb
@@ -64,6 +66,7 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 	public void setUp() throws Exception {
 		
 		this.userPart = new TimerTestMtp3UserPart();
+		this.userPart.start();
 		this.stack = new ISUPStackImpl();
 		this.stack.configure(getSpecificConfig());
 		this.provider = this.stack.getIsupProvider();
@@ -144,21 +147,25 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 		int si = Mtp3._SI_SERVICE_ISUP;
 		int ni = 2;
 		int sls = 3;
-		int ssi = ni << 2;
+//		int ssi = ni << 2;
 
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		// encoding routing label
-		bout.write((byte) (((ssi & 0x0F) << 4) | (si & 0x0F)));
-		bout.write((byte) dpc);
-		bout.write((byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6)));
-		bout.write((byte) (opc >> 2));
-		bout.write((byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
+//		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+//		// encoding routing label
+//		bout.write((byte) (((ssi & 0x0F) << 4) | (si & 0x0F)));
+//		bout.write((byte) dpc);
+//		bout.write((byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6)));
+//		bout.write((byte) (opc >> 2));
+//		bout.write((byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
 
 		try {
 			byte[] message = ((AbstractISUPMessage) answer).encode();
-			bout.write(message);
-			byte[] msg = bout.toByteArray();
-			this.userPart.toRead.add(msg);
+//			bout.write(message);
+//			byte[] msg = bout.toByteArray();
+
+//			this.userPart.toRead.add(msg);
+			Mtp3TransferPrimitive mtpMsg = new Mtp3TransferPrimitive(si, ni, 0, opc, dpc, sls, message);
+			this.userPart.sendTransferMessageToLocalUser(mtpMsg, mtpMsg.getSls());
+			
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -294,61 +301,84 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 	}
 
 	
-	private class TimerTestMtp3UserPart implements Mtp3UserPart
+	private class TimerTestMtp3UserPart extends Mtp3UserPartBaseImpl
 	{
 
-		private ArrayList<byte[]> toRead = new ArrayList();
-		/* (non-Javadoc)
-		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#execute()
-		 */
-		@Override
-		public void execute() throws IOException {
-			
-			
+		public void sendTransferMessageToLocalUser(Mtp3TransferPrimitive msg, int seqControl) {
+			super.sendTransferMessageToLocalUser(msg, seqControl);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#read(java.nio.ByteBuffer)
-		 */
 		@Override
-		public int read(ByteBuffer arg0) throws IOException {
-			if(toRead.size()>0)
-			{
-				byte[] data = toRead.remove(0);
-				arg0.put(data);
-				return data.length;
-			}
-			return 0;
-		}
+		public void sendMessage(Mtp3TransferPrimitive mtpMsg) throws IOException {
 
-		/* (non-Javadoc)
-		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#write(java.nio.ByteBuffer)
-		 */
-		@Override
-		public int write(ByteBuffer arg0) throws IOException {
 			// here we have to parse ISUPMsg and store in receivedRemote
 			long tstamp = System.currentTimeMillis();
-			byte[] msu = new byte[arg0.limit()];
-			arg0.get(msu);
-			//arg0.s
-			// FIXME: change this, dont copy over and over.
-			int commandCode = msu[7];// 3(RL) + 1(SI)+2(CIC) -
-			// http://pt.com/page/tutorials/ss7-tutorial/mtp
-			byte[] payload = new byte[msu.length - 5];
-			System.arraycopy(msu, 5, payload, 0, payload.length);
-			// for post processing
+			byte[] payload = mtpMsg.getData();
+			int commandCode = payload[2];
 			AbstractISUPMessage msg = (AbstractISUPMessage) provider.getMessageFactory().createCommand(commandCode);
 			try {
 				msg.decode(payload, provider.getParameterFactory());
 				MessageEventReceived event = new MessageEventReceived(tstamp, new ISUPEvent(provider, msg));
 				remoteEventsReceived.add(event);
-				return msu.length;
 			} catch (ParameterException e) {
 				e.printStackTrace();
 				fail("Failed on message write: " + e);
 			}
-			return 0;
 		}
+
+		
+//		private ArrayList<byte[]> toRead = new ArrayList();
+////		/* (non-Javadoc)
+////		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#execute()
+////		 */
+////		@Override
+////		public void execute() throws IOException {
+////			
+////			
+////		}
+//
+//		/* (non-Javadoc)
+//		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#read(java.nio.ByteBuffer)
+//		 */
+//		@Override
+//		public int read(ByteBuffer arg0) throws IOException {
+//			if(toRead.size()>0)
+//			{
+//				byte[] data = toRead.remove(0);
+//				arg0.put(data);
+//				return data.length;
+//			}
+//			return 0;
+//		}
+//
+//		/* (non-Javadoc)
+//		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#write(java.nio.ByteBuffer)
+//		 */
+//		@Override
+//		public int write(ByteBuffer arg0) throws IOException {
+//			// here we have to parse ISUPMsg and store in receivedRemote
+//			long tstamp = System.currentTimeMillis();
+//			byte[] msu = new byte[arg0.limit()];
+//			arg0.get(msu);
+//			//arg0.s
+//			// FIXME: change this, dont copy over and over.
+//			int commandCode = msu[7];// 3(RL) + 1(SI)+2(CIC) -
+//			// http://pt.com/page/tutorials/ss7-tutorial/mtp
+//			byte[] payload = new byte[msu.length - 5];
+//			System.arraycopy(msu, 5, payload, 0, payload.length);
+//			// for post processing
+//			AbstractISUPMessage msg = (AbstractISUPMessage) provider.getMessageFactory().createCommand(commandCode);
+//			try {
+//				msg.decode(payload, provider.getParameterFactory());
+//				MessageEventReceived event = new MessageEventReceived(tstamp, new ISUPEvent(provider, msg));
+//				remoteEventsReceived.add(event);
+//				return msu.length;
+//			} catch (ParameterException e) {
+//				e.printStackTrace();
+//				fail("Failed on message write: " + e);
+//			}
+//			return 0;
+//		}
 //	
 //		public void print(StringBuffer sb, int leftPad, int descPad) {
 //			 // left pad
