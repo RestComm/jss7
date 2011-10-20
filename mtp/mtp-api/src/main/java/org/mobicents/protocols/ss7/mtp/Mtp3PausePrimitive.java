@@ -25,17 +25,10 @@ package org.mobicents.protocols.ss7.mtp;
 /**
  *
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class Mtp3PausePrimitive extends Mtp3Primitive {
-
-	private byte[] value = new byte[6];
-
-	public Mtp3PausePrimitive(byte[] rawData) {
-		this.type = PAUSE;
-
-		this.affectedDpc = (((rawData[2] & 0xff) << 24) + ((rawData[3] & 0xFF) << 16) + ((rawData[4] & 0xFF) << 8) + (rawData[5] & 0xFF));
-	}
 
 	/**
 	 * @param type
@@ -44,21 +37,15 @@ public class Mtp3PausePrimitive extends Mtp3Primitive {
 	public Mtp3PausePrimitive(int affectedDpc) {
 		super(PAUSE, affectedDpc);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.mtp.Mtp3Primitive#getValue()
-	 */
+	
 	@Override
-	public byte[] getValue() {
-		value[0] = (byte) SERVICE_INDICATOR;
-		value[1] = (byte) PAUSE;
-		value[2] = (byte) (this.affectedDpc >> 24);
-		value[3] = (byte) (this.affectedDpc >> 16);
-		value[4] = (byte) (this.affectedDpc >> 8);
-		value[5] = (byte) (this.affectedDpc);
-		return value;
-	}
+	public String toString() {
 
+		StringBuilder sb = new StringBuilder();
+		sb.append("MTP-PAUSE: AffectedDpc=");
+		sb.append(this.affectedDpc);
+
+		return sb.toString();
+	}
 }
+
