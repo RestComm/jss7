@@ -35,6 +35,7 @@ import javolution.util.FastMap;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
@@ -119,45 +120,45 @@ public class SccpManagement implements SccpListener {
 	 * 
 	 * @param in
 	 */
-	protected void handleMtp3Primitive(DataInputStream in) {
-		try {
-			int mtpParam = in.readUnsignedByte();
-			int affectedPc;
-			switch (mtpParam) {
-			case MTP3_PAUSE:
-				affectedPc = in.readInt();
-				if (logger.isEnabledFor(Level.WARN)) {
-					logger.warn(String.format("MTP3 PAUSE received for dpc=%d", affectedPc));
-				}
-				this.handleMtp3Pause(affectedPc);
-				break;
-			case MTP3_RESUME:
-				affectedPc = in.readInt();
-				if (logger.isInfoEnabled()) {
-					logger.info(String.format("MTP3 RESUME received for dpc=%d", affectedPc));
-				}
-				this.handleMtp3Resume(affectedPc);
-				break;
-			case MTP3_STATUS:
-				int status = in.readUnsignedByte();
-				affectedPc = in.readInt();
-				int congStatus = in.readShort();
-				int unavailabiltyCause = in.readShort();
-				if (logger.isEnabledFor(Level.WARN)) {
-					logger.warn(String
-							.format("MTP3 STATUS received for dpc=%d, status=%d, Congestion Status=%d, Unavailability Cause=%d",
-									affectedPc, status, congStatus, unavailabiltyCause));
-				}
-				this.handleMtp3Status(status, affectedPc, congStatus, unavailabiltyCause);
-				break;
-			default:
-				logger.error(String.format("Received unrecognized MTP3 primitive %d", mtpParam));
-				break;
-			}
-		} catch (IOException e) {
-			logger.error("Error while parsing MTP Parameter ", e);
-		}
-	}
+//	protected void handleMtp3Primitive(DataInputStream in) {
+//		try {
+//			int mtpParam = in.readUnsignedByte();
+//			int affectedPc;
+//			switch (mtpParam) {
+//			case MTP3_PAUSE:
+//				affectedPc = in.readInt();
+//				if (logger.isEnabledFor(Level.WARN)) {
+//					logger.warn(String.format("MTP3 PAUSE received for dpc=%d", affectedPc));
+//				}
+//				this.handleMtp3Pause(affectedPc);
+//				break;
+//			case MTP3_RESUME:
+//				affectedPc = in.readInt();
+//				if (logger.isInfoEnabled()) {
+//					logger.info(String.format("MTP3 RESUME received for dpc=%d", affectedPc));
+//				}
+//				this.handleMtp3Resume(affectedPc);
+//				break;
+//			case MTP3_STATUS:
+//				int status = in.readUnsignedByte();
+//				affectedPc = in.readInt();
+//				int congStatus = in.readShort();
+//				int unavailabiltyCause = in.readShort();
+//				if (logger.isEnabledFor(Level.WARN)) {
+//					logger.warn(String
+//							.format("MTP3 STATUS received for dpc=%d, status=%d, Congestion Status=%d, Unavailability Cause=%d",
+//									affectedPc, status, congStatus, unavailabiltyCause));
+//				}
+//				this.handleMtp3Status(status, affectedPc, congStatus, unavailabiltyCause);
+//				break;
+//			default:
+//				logger.error(String.format("Received unrecognized MTP3 primitive %d", mtpParam));
+//				break;
+//			}
+//		} catch (IOException e) {
+//			logger.error("Error while parsing MTP Parameter ", e);
+//		}
+//	}
 
 	@Override
 	public void onMessage(SccpMessage message, int seqControl) {
@@ -242,7 +243,8 @@ public class SccpManagement implements SccpListener {
 				return;
 			}
 
-			SccpListener listener = this.sccpProviderImpl.ssnToListener.get(affectedSsn);
+			//SccpListener listener = this.sccpProviderImpl.ssnToListener.get(affectedSsn);
+			SccpListener listener = this.sccpProviderImpl.getSccpListener(affectedSsn);
 			if (listener != null) {
 				this.sendSSA(message, affectedSsn);
 				return;
@@ -343,82 +345,96 @@ public class SccpManagement implements SccpListener {
 		// else we drop it; SCCP Management for local SSN is not taken care
 	}
 
-	private void handleMtp3Pause(int affectedPc) {
+	protected void handleMtp3Pause(int affectedPc) {
 		// Look at Q.714 Section 5.2.2
 		this.cancelAllSst(affectedPc, true);
 		this.prohibitRsp(affectedPc);
 
 	}
 
-	private void handleMtp3Resume(int affectedPc) {
+	protected void handleMtp3Resume(int affectedPc) {
 		// Look at Q.714 Section 5.2.2
 		this.allowRsp(affectedPc);
 
 	}
 
-	private void handleMtp3Status(int status, int affectedPc, int congStatus, int unavailabiltyCause) {
-		if (status == 2) {
+	protected void handleMtp3Status(Mtp3StatusCause cause, int affectedPc, int congStatus) {
+		
+		switch (cause) {
+		case SignallingNetworkCongested:
 			// Signaling Network Congestion
+			break;
+			
+		case UserPartUnavailability_Unknown:
+		case UserPartUnavailability_InaccessibleRemoteUser:
+			this.prohibitAllSsn(affectedPc);
 
-		} else if (status == 1) {
-			// Remote User Unavailable
-			switch (unavailabiltyCause) {
-			case UNAVAILABILITY_CAUSE_UNKNOWN:
-			case UNAVAILABILITY_CAUSE_INACCESSIBLE:
+			SubSystemTest sstForSsn1 = this.cancelAllSst(affectedPc, false);
+			if (sstForSsn1 != null) {
+				sstForSsn1.setRecdMtpStatusResp(true);
+			} else {
+				// ITU-T Q.714 5.3.4.2 Actions at the initiating node
 
-				this.prohibitAllSsn(affectedPc);
+				// A subsystem status test for SSN = 1 is initiated when an
+				// MTP-STATUS indication primitive is received with
+				// "remote user inaccessibility" or "unknown" information
+				// for the SCCP at a remote signalling point
 
-				SubSystemTest sstForSsn1 = this.cancelAllSst(affectedPc, false);
-				if (sstForSsn1 != null) {
-					sstForSsn1.setRecdMtpStatusResp(true);
-				} else {
-					// ITU-T Q.714 5.3.4.2 Actions at the initiating node
-
-					// A subsystem status test for SSN = 1 is initiated when an
-					// MTP-STATUS indication primitive is received with
-					// "remote user inaccessibility" or "unknown" information
-					// for the SCCP at a remote signalling point
-
-					// Start sending the SST for SSN1
-					FastList<SubSystemTest> ssts = dpcVsSst.get(affectedPc);
-					if (ssts == null) {
-						ssts = new FastList<SubSystemTest>();
-						dpcVsSst.put(affectedPc, ssts);
-					}
-					SubSystemTest sst = new SubSystemTest(1, affectedPc, ssts);
-
-					// ssts.add(sst);
-					sst.startTest();
+				// Start sending the SST for SSN1
+				FastList<SubSystemTest> ssts = dpcVsSst.get(affectedPc);
+				if (ssts == null) {
+					ssts = new FastList<SubSystemTest>();
+					dpcVsSst.put(affectedPc, ssts);
 				}
+				SubSystemTest sst = new SubSystemTest(1, affectedPc, ssts);
 
-				break;
-
-			case UNAVAILABILITY_CAUSE_UNEQUIPED:
-				// See ITU-T Q.714 5.2.2 Signalling point prohibited
-
-				// In the case where the SCCP has received an MTP-STATUS
-				// indication primitive relating to an unavailable SCCP, the
-				// SCCP marks the status of the SCCP and each SSN for the
-				// relevant destination to "prohibited" and initiates a
-				// subsystem status test with SSN = 1. If the cause in the
-				// MTP-STATUS indication primitive indicates "unequipped user",
-				// then no subsystem status test is initiated.
-				this.prohibitAllSsn(affectedPc);
-
-				// Discontinues all subsystem status tests (including SSN = 1)
-				// if an MTP-PAUSE or MTP-STATUS indication primitive is
-				// received with a cause of "unequipped SCCP"
-				this.cancelAllSst(affectedPc, true);
-				break;
-			default:
-				logger.error(String.format("Error in handling MTP3 STATUS. Received unknown unavailability cisue=%d",
-						unavailabiltyCause));
-				break;
+				// ssts.add(sst);
+				sst.startTest();
 			}
+			break;
+			
+		case UserPartUnavailability_UnequippedRemoteUser:
+			// See ITU-T Q.714 5.2.2 Signalling point prohibited
 
-		} else {
-			logger.error(String.format("Error in handling MTP3 STATUS. Received unknown status=%d", status));
+			// In the case where the SCCP has received an MTP-STATUS
+			// indication primitive relating to an unavailable SCCP, the
+			// SCCP marks the status of the SCCP and each SSN for the
+			// relevant destination to "prohibited" and initiates a
+			// subsystem status test with SSN = 1. If the cause in the
+			// MTP-STATUS indication primitive indicates "unequipped user",
+			// then no subsystem status test is initiated.
+			this.prohibitAllSsn(affectedPc);
+
+			// Discontinues all subsystem status tests (including SSN = 1)
+			// if an MTP-PAUSE or MTP-STATUS indication primitive is
+			// received with a cause of "unequipped SCCP"
+			this.cancelAllSst(affectedPc, true);
+			break;
 		}
+		
+//		if (status == 2) {
+//			// Signaling Network Congestion
+//
+//		} else if (status == 1) {
+//			// Remote User Unavailable
+//			switch (unavailabiltyCause) {
+//			case UNAVAILABILITY_CAUSE_UNKNOWN:
+//			case UNAVAILABILITY_CAUSE_INACCESSIBLE:
+//
+//
+//				break;
+//
+//			case UNAVAILABILITY_CAUSE_UNEQUIPED:
+//				break;
+//			default:
+//				logger.error(String.format("Error in handling MTP3 STATUS. Received unknown unavailability cisue=%d",
+//						unavailabiltyCause));
+//				break;
+//			}
+//
+//		} else {
+//			logger.error(String.format("Error in handling MTP3 STATUS. Received unknown status=%d", status));
+//		}
 	}
 
 	private void prohibitAllSsn(int affectedPc) {

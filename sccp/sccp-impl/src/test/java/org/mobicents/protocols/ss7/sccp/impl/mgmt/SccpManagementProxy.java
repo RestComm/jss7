@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
 import org.mobicents.protocols.ss7.sccp.impl.SccpManagement;
 import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpRoutingControl;
@@ -42,7 +44,7 @@ import org.mobicents.protocols.ss7.sccp.message.UnitData;
  *
  */
 public class SccpManagementProxy extends SccpManagement {
-
+	
 	private int seq = 0; //seq, to mark messages, so we get them correctly
 	//separate lists, thats better
 	private List<SccpMgmtMessage> mgmtMessages = new ArrayList<SccpMgmtMessage>();
@@ -113,44 +115,88 @@ public class SccpManagementProxy extends SccpManagement {
 		super.stop();
 	}
 
-	protected void handleMtp3Primitive(DataInputStream in) {
-		ByteArrayOutputStream boas = new ByteArrayOutputStream();
-		DataOutputStream dos = new DataOutputStream(boas);
-		try {
-			
-			int mtpParam = in.readUnsignedByte();
-			dos.writeByte(mtpParam & 0xFF);
-			
-			switch (mtpParam) {
-			case MTP3_PAUSE:
-			case MTP3_RESUME:
-				int affectedPc = in.readInt();
-				dos.writeInt(affectedPc);
-				Mtp3PrimitiveMessage prim = new Mtp3PrimitiveMessage(seq++,mtpParam,affectedPc);
-				mtp3Messages.add(prim);
-				break;
-			case MTP3_STATUS:
-				//here we have more :)
-				int status = in.readUnsignedByte();
-				dos.writeByte(status & 0xFF);
-				affectedPc = in.readInt();
-				dos.writeInt(affectedPc);
-				int congStatus = in.readShort();
-				dos.writeShort(congStatus);
-				int unavailabiltyCause = in.readShort();
-				dos.writeShort(unavailabiltyCause);
-				prim = new Mtp3PrimitiveMessage(seq++,mtpParam,affectedPc,status,congStatus,unavailabiltyCause);
-				mtp3Messages.add(prim);
-				break;
-			default:
-				encounteredError = true;
-				break;
-			}
-		} catch (IOException e) {
-			encounteredError = true;
-			e.printStackTrace();
-		}
-		super.handleMtp3Primitive(new DataInputStream(new ByteArrayInputStream(boas.toByteArray())));
+	@Override
+	protected void handleMtp3Pause(int affectedPc) {
+		super.handleMtp3Pause(affectedPc);
+		
+		Mtp3PrimitiveMessage prim = new Mtp3PrimitiveMessage(seq++,MTP3_PAUSE,affectedPc);
+		mtp3Messages.add(prim);
 	}
 
+	@Override
+	protected void handleMtp3Resume(int affectedPc) {
+		super.handleMtp3Resume(affectedPc);
+		
+		Mtp3PrimitiveMessage prim = new Mtp3PrimitiveMessage(seq++,MTP3_RESUME,affectedPc);
+		mtp3Messages.add(prim);
+	}
+
+	@Override
+	protected void handleMtp3Status(Mtp3StatusCause cause, int affectedPc, int congStatus) {
+		super.handleMtp3Status(cause, affectedPc, congStatus);
+
+		int status = 0;
+		int unavailabiltyCause = 0;
+		switch(cause){
+		case SignallingNetworkCongested:
+			status = 2;
+			break;
+		case UserPartUnavailability_Unknown:
+			unavailabiltyCause = 0;
+			status = 1;
+			break;
+		case UserPartUnavailability_UnequippedRemoteUser:
+			unavailabiltyCause = 1;
+			status = 1;
+			break;
+		case UserPartUnavailability_InaccessibleRemoteUser:
+			unavailabiltyCause = 2;
+			status = 1;
+			break;
+		}
+		Mtp3PrimitiveMessage prim = new Mtp3PrimitiveMessage(seq++,MTP3_STATUS,affectedPc,status,congStatus,unavailabiltyCause);
+		mtp3Messages.add(prim);
+	}
+	
+//	protected void handleMtp3Primitive(DataInputStream in) {
+//		ByteArrayOutputStream boas = new ByteArrayOutputStream();
+//		DataOutputStream dos = new DataOutputStream(boas);
+//		try {
+//			
+//			int mtpParam = in.readUnsignedByte();
+//			dos.writeByte(mtpParam & 0xFF);
+//			
+//			switch (mtpParam) {
+//			case MTP3_PAUSE:
+//			case MTP3_RESUME:
+//				int affectedPc = in.readInt();
+//				dos.writeInt(affectedPc);
+//				Mtp3PrimitiveMessage prim = new Mtp3PrimitiveMessage(seq++,mtpParam,affectedPc);
+//				mtp3Messages.add(prim);
+//				break;
+//			case MTP3_STATUS:
+//				//here we have more :)
+//				int status = in.readUnsignedByte();
+//				dos.writeByte(status & 0xFF);
+//				affectedPc = in.readInt();
+//				dos.writeInt(affectedPc);
+//				int congStatus = in.readShort();
+//				dos.writeShort(congStatus);
+//				int unavailabiltyCause = in.readShort();
+//				dos.writeShort(unavailabiltyCause);
+//				prim = new Mtp3PrimitiveMessage(seq++,mtpParam,affectedPc,status,congStatus,unavailabiltyCause);
+//				mtp3Messages.add(prim);
+//				break;
+//			default:
+//				encounteredError = true;
+//				break;
+//			}
+//		} catch (IOException e) {
+//			encounteredError = true;
+//			e.printStackTrace();
+//		}
+//		super.handleMtp3Primitive(new DataInputStream(new ByteArrayInputStream(boas.toByteArray())));
+//	}
+
 }
+

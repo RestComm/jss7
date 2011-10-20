@@ -30,6 +30,7 @@ import java.io.ObjectOutputStream;
 
 
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.User;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.Mtp3CongestionType;
@@ -107,7 +108,11 @@ public class MtpPrimitivesTest extends SccpHarness {
 		//now on one side we will inject pause, try to send message, check on other side
 		//inject resume, send message and check on other side.
 		
-		super.data1.add(createPausePrimitive(getStack2PC()));
+		
+//		super.data1.add(createPausePrimitive(getStack2PC()));
+		this.mtp3UserPart1.sendPauseMessageToLocalUser(getStack2PC());
+		
+		
 		Thread.currentThread().sleep(500);
 		//now s1 thinks s2 is not available
 		assertTrue(u1.getMessages().size() == 0,"U1 Received message, it should not!");
@@ -139,7 +144,9 @@ public class MtpPrimitivesTest extends SccpHarness {
 		assertTrue(u2.getMessages().size() == 0,"U2 received message, it should not! ");
 		
 		//noooow lets inject mtp3_resume and retry	
-		super.data1.add(createResumePrimitive(getStack2PC()));
+//		super.data1.add(createResumePrimitive(getStack2PC()));
+		this.mtp3UserPart1.sendResumeMessageToLocalUser(getStack2PC());
+
 		
 		Thread.currentThread().sleep(500);
         stack = (SccpStackImplProxy) sccpStack1;
@@ -195,7 +202,10 @@ public class MtpPrimitivesTest extends SccpHarness {
 		//now on one side we will inject pause, try to send message, check on other side
 		//inject resume, send message and check on other side.
 		
-		super.data1.add(createStatusPrimitive(getStack2PC(),Mtp3StatusType.RemoteUserUnavailable,Mtp3CongestionType.NULL,Mtp3UnavailabiltyCauseType.CAUSE_UNEQUIPED));
+		
+//		super.data1.add(createStatusPrimitive(getStack2PC(),Mtp3StatusType.RemoteUserUnavailable,Mtp3CongestionType.NULL,Mtp3UnavailabiltyCauseType.CAUSE_UNEQUIPED));
+		this.mtp3UserPart1.sendStatusMessageToLocalUser(getStack2PC(), Mtp3StatusCause.UserPartUnavailability_UnequippedRemoteUser, 0);
+		
 		Thread.currentThread().sleep(500);
 		//now s1 thinks s2 is not available
 		assertTrue( u1.getMessages().size() == 0,"U1 Received message, it should not!");
@@ -227,7 +237,17 @@ public class MtpPrimitivesTest extends SccpHarness {
 		assertTrue(u2.getMessages().size() == 0,"U2 received message, it should not! ");
 		
 //		//noooow lets inject another status, this will enable SST/SSA
-		super.data1.add(createStatusPrimitive(getStack2PC(),Mtp3StatusType.RemoteUserUnavailable,Mtp3CongestionType.NULL,type));
+//		super.data1.add(createStatusPrimitive(getStack2PC(), Mtp3StatusType.RemoteUserUnavailable, Mtp3CongestionType.NULL, type));
+		Mtp3StatusCause cs = Mtp3StatusCause.UserPartUnavailability_Unknown;
+		switch (type) {
+		case CAUSE_INACCESSIBLE:
+			cs = Mtp3StatusCause.UserPartUnavailability_InaccessibleRemoteUser;
+			break;
+		case CAUSE_UNEQUIPED:
+			cs = Mtp3StatusCause.UserPartUnavailability_UnequippedRemoteUser;
+			break;
+		}
+		this.mtp3UserPart1.sendStatusMessageToLocalUser(getStack2PC(), cs, 0);
 		
 		Thread.currentThread().sleep(12000);
         stack = (SccpStackImplProxy) sccpStack1;
@@ -270,52 +290,52 @@ public class MtpPrimitivesTest extends SccpHarness {
 	}
 	
 	
-	/**
-	 * @param stack2pc
-	 * @return
-	 */
-	protected static byte[] createStatusPrimitive(int pc, Mtp3StatusType status, Mtp3CongestionType congType, Mtp3UnavailabiltyCauseType unavType) {
-		
-		byte[] b= new byte[]{
-		    	0,
-				(byte)(Mtp3PrimitiveMessageType.MTP3_STATUS.getType() & 0x00FF),
-				(byte)(status.getType() & 0xFF),
-				(byte)(pc >> 24 & 0xFF),
-				(byte)(pc >> 16 & 0xFF),
-				(byte)(pc >> 8 & 0xFF),
-				(byte)(pc & 0xFF),
-				(byte)(congType.getType() >> 8 & 0xFF),
-				(byte)(congType.getType() & 0xFF),
-				(byte)(unavType.getType() >> 8 & 0xFF),
-				(byte)(unavType.getType() & 0xFF)
-				
-				};
-		return b;
-	}
-
-	protected static byte[] createPausePrimitive(int pc) throws Exception
-	{
-		byte[] b= new byte[]{
-		0,
-		(byte)(Mtp3PrimitiveMessageType.MTP3_PAUSE.getType() & 0x00FF),
-		(byte)(pc >> 24 & 0xFF),
-		(byte)(pc >> 16 & 0xFF),
-		(byte)(pc >> 8 & 0xFF),
-		(byte)(pc & 0xFF)
-		};
-		return b;
-	}
-	protected static byte[] createResumePrimitive(int pc) throws Exception
-	{
-		byte[] b= new byte[]{
-		0,
-		(byte)(Mtp3PrimitiveMessageType.MTP3_RESUME.getType() & 0x00FF),
-		(byte)(pc >> 24 & 0xFF),
-		(byte)(pc >> 16 & 0xFF),
-		(byte)(pc >> 8 & 0xFF),
-		(byte)(pc & 0xFF)
-		};
-		return b;
-	}
+//	/**
+//	 * @param stack2pc
+//	 * @return
+//	 */
+//	protected static byte[] createStatusPrimitive(int pc, Mtp3StatusType status, Mtp3CongestionType congType, Mtp3UnavailabiltyCauseType unavType) {
+//		
+//		byte[] b= new byte[]{
+//		    	0,
+//				(byte)(Mtp3PrimitiveMessageType.MTP3_STATUS.getType() & 0x00FF),
+//				(byte)(status.getType() & 0xFF),
+//				(byte)(pc >> 24 & 0xFF),
+//				(byte)(pc >> 16 & 0xFF),
+//				(byte)(pc >> 8 & 0xFF),
+//				(byte)(pc & 0xFF),
+//				(byte)(congType.getType() >> 8 & 0xFF),
+//				(byte)(congType.getType() & 0xFF),
+//				(byte)(unavType.getType() >> 8 & 0xFF),
+//				(byte)(unavType.getType() & 0xFF)
+//				
+//				};
+//		return b;
+//	}
+//
+//	protected static byte[] createPausePrimitive(int pc) throws Exception
+//	{
+//		byte[] b= new byte[]{
+//		0,
+//		(byte)(Mtp3PrimitiveMessageType.MTP3_PAUSE.getType() & 0x00FF),
+//		(byte)(pc >> 24 & 0xFF),
+//		(byte)(pc >> 16 & 0xFF),
+//		(byte)(pc >> 8 & 0xFF),
+//		(byte)(pc & 0xFF)
+//		};
+//		return b;
+//	}
+//	protected static byte[] createResumePrimitive(int pc) throws Exception
+//	{
+//		byte[] b= new byte[]{
+//		0,
+//		(byte)(Mtp3PrimitiveMessageType.MTP3_RESUME.getType() & 0x00FF),
+//		(byte)(pc >> 24 & 0xFF),
+//		(byte)(pc >> 16 & 0xFF),
+//		(byte)(pc >> 8 & 0xFF),
+//		(byte)(pc & 0xFF)
+//		};
+//		return b;
+//	}
 
 }

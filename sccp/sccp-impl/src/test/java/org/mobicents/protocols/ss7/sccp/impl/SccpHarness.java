@@ -22,9 +22,6 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.router.Router;
 
@@ -40,11 +37,11 @@ public abstract class SccpHarness {
 	protected SccpStackImpl sccpStack2;
 	protected SccpProvider sccpProvider2;
 
-	protected ConcurrentLinkedQueue<byte[]> data1 = new ConcurrentLinkedQueue<byte[]>();
-	protected ConcurrentLinkedQueue<byte[]> data2 = new ConcurrentLinkedQueue<byte[]>();
+//	protected ConcurrentLinkedQueue<byte[]> data1 = new ConcurrentLinkedQueue<byte[]>();
+//	protected ConcurrentLinkedQueue<byte[]> data2 = new ConcurrentLinkedQueue<byte[]>();
 
-	protected Mtp3UserPart mtp3UserPart1 = new Mtp3UserPartImpl(data1, data2);
-	protected Mtp3UserPart mtp3UserPart2 = new Mtp3UserPartImpl(data2, data1);
+	protected Mtp3UserPartImpl mtp3UserPart1 = new Mtp3UserPartImpl();
+	protected Mtp3UserPartImpl mtp3UserPart2 = new Mtp3UserPartImpl();
 
 	protected Router router1 = new Router();
 	protected Router router2 = new Router();
@@ -56,7 +53,8 @@ public abstract class SccpHarness {
 	 * 
 	 */
 	public SccpHarness() {
-		// TODO Auto-generated constructor stub
+		mtp3UserPart1.setOtherPart(mtp3UserPart2);
+		mtp3UserPart2.setOtherPart(mtp3UserPart1);
 	}
 
 	protected void createStack1()
