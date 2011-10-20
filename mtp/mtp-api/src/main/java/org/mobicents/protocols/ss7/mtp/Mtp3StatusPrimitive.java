@@ -24,94 +24,45 @@ package org.mobicents.protocols.ss7.mtp;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class Mtp3StatusPrimitive extends Mtp3Primitive {
 
-	private byte[] value = new byte[11];
-
+	private Mtp3StatusCause cause;
 	/**
-	 * One of the following: <br/>
-	 * • 1 = Remote User Unavailable <br/>
-	 * • 2 = Signaling Network Congestion
-	 */
-	private int status;
-
-	/**
-	 * Congestion status (if status = 0x02).<br/>
+	 * Dialogic: Congestion status (if status = 0x02).<br/>
 	 * This field is set to the current congestion level in the range 0 to 3, <br/>
 	 * where 0 means no congestion and 3 means maximum congestion. <br/>
 	 * Many networks use only a single level of congestion (that is, 1). <br/>
 	 */
-	private int congestionStatus;
+	private int congestionLevel;
 
-	/**
-	 * (if status = Remote User Unavailable(1))<br/>
-	 * The unavailabilty cause may be one of the following:<br/>
-	 * 0 = Unknown<br/>
-	 * 1 = Unequipped User<br/>
-	 * 2 = Inaccessible User<br/>
-	 */
-	private int unavailabiltyCause;
-
-	public Mtp3StatusPrimitive(byte[] rawData) {
-		this.type = STATUS;
-		
-		this.status = rawData[2] & 0xff;
-
-		this.affectedDpc = (((rawData[3] & 0xff) << 24) + ((rawData[4] & 0xff) << 16) + ((rawData[5] & 0xff) << 8) + (rawData[6] & 0xff));
-
-		this.congestionStatus = (((rawData[7] & 0xff) << 8) + (rawData[8] & 0xff));
-
-		this.unavailabiltyCause = (((rawData[9] & 0xff) << 8) + (rawData[10] & 0xff));
-	}
-
-	/**
-	 * @param type
-	 * @param affectedDpc
-	 */
-	public Mtp3StatusPrimitive(int affectedDpc, int status, int congestionStatus, int unavailabiltyCause) {
+	public Mtp3StatusPrimitive(int affectedDpc, Mtp3StatusCause cause, int congestionLevel) {
 		super(STATUS, affectedDpc);
-		this.status = status;
-		this.congestionStatus = congestionStatus;
-		this.unavailabiltyCause = unavailabiltyCause;
+		this.cause = cause;
+		this.congestionLevel = congestionLevel;
 	}
 
-	public int getStatus() {
-		return status;
+	public Mtp3StatusCause getCause() {
+		return this.cause;
 	}
 
-	public int getCongestionStatus() {
-		return congestionStatus;
+	public int getCongestionLevel() {
+		return this.congestionLevel;
 	}
-
-	public int getUnavailabiltyCause() {
-		return unavailabiltyCause;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.mtp.Mtp3Primitive#getValue()
-	 */
+	
 	@Override
-	public byte[] getValue() {
-		value[0] = (byte) SERVICE_INDICATOR;
-		value[1] = (byte) STATUS;
+	public String toString() {
 
-		value[2] = (byte) this.status;
+		StringBuilder sb = new StringBuilder();
+		sb.append("MTP-STATUS: AffectedDpc=");
+		sb.append(this.affectedDpc);
+		sb.append("Cause=");
+		sb.append(this.cause.toString());
+		sb.append("CongLevel=");
+		sb.append(this.congestionLevel);
 
-		value[3] = (byte) (this.affectedDpc >> 24);
-		value[4] = (byte) (this.affectedDpc >> 16);
-		value[5] = (byte) (this.affectedDpc >> 8);
-		value[6] = (byte) (this.affectedDpc);
-
-		value[7] = (byte) (this.congestionStatus >> 8);
-		value[8] = (byte) (this.congestionStatus);
-
-		value[9] = (byte) (this.unavailabiltyCause >> 8);
-		value[10] = (byte) (this.unavailabiltyCause);
-		return value;
+		return sb.toString();
 	}
-
 }

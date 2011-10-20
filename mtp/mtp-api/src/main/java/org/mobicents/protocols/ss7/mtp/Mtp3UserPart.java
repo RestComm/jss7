@@ -23,18 +23,33 @@
 package org.mobicents.protocols.ss7.mtp;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public interface Mtp3UserPart {
 
-	public int read(ByteBuffer b) throws IOException;
+	public void addMtp3UserPartListener(Mtp3UserPartListener listener);
 
-	public int write(ByteBuffer b) throws IOException;
+	public void removeMtp3UserPartListener(Mtp3UserPartListener listener);
 
-	public void execute() throws IOException;
+	/**
+	 * Return the maximum data field length of the MTP-TRANSFER message to the DPC
+	 * 
+	 * @param dpc
+	 * @return
+	 */
+	public int getMaxUserDataLength(int dpc);
+
+	/**
+	 * If message delivering failed: MTP-PAUSE or MTR-STATUS indication will be
+	 * sent
+	 * 
+	 * @param msg
+	 * 
+	 */
+	public void sendMessage(Mtp3TransferPrimitive msg) throws IOException;
 
 }
