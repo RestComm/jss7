@@ -81,7 +81,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.map</groupId>
-			<artifactId>map-api</artifactId>
+			<artifactId>map-impl</artifactId>
 		</dependency>
 	</dependencies>
 
