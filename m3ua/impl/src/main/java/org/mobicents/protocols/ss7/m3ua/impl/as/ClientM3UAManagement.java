@@ -90,13 +90,13 @@ public class ClientM3UAManagement extends M3UAManagement {
 
 	@Override
 	public void start() throws IOException {
-		selector = m3uaProvider.openSelector();
-
+		this.selector = m3uaProvider.openSelector();
+		this.schedExecService = Executors.newSingleThreadScheduledExecutor();
 		super.start();
 
 		this.clientRoutePersistFile.clear();
 
-		if (persistDir != null) {
+		if (this.persistDir != null) {
 			this.clientRoutePersistFile.append(persistDir).append(File.separator).append(CLIENTROUTE_PERSIST_FILE_NAME);
 		} else {
 			this.clientRoutePersistFile
@@ -112,7 +112,7 @@ public class ClientM3UAManagement extends M3UAManagement {
 			logger.warn(String.format("Failed to load the SS7 client route file. \n%s", e.getMessage()));
 		}
 		
-		this.schedExecService = Executors.newSingleThreadScheduledExecutor();
+		
 	}
 
 	@Override
