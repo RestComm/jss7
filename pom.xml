@@ -139,7 +139,7 @@
 			<dependency>
 				<artifactId>isup-api</artifactId>
 				<groupId>org.mobicents.protocols.ss7.isup</groupId>
-				<version>${isup.version}</version>
+				<version>${pom.version}</version>
 			</dependency>
 			<dependency>
 				<artifactId>isup-impl</artifactId>
