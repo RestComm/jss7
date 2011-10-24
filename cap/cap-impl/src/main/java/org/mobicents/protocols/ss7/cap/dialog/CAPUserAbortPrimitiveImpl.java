@@ -106,7 +106,7 @@ public class CAPUserAbortPrimitiveImpl implements CAPAsnPrimitive {
 
 		int code = (int)ais.readInteger();
 		
-		this.reason = CAPUserAbortReason.getInstatse(code);
+		this.reason = CAPUserAbortReason.getInstance(code);
 		if (this.reason == null)
 			this.reason = CAPUserAbortReason.no_reason_given;
 
