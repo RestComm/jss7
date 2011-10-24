@@ -19,26 +19,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.mobicents.protocols.ss7.cap.api.dialog;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
- * 
- * 
  */
 public enum CAPGeneralAbortReason {
-	// Reason is absent or unrecognizable
-	BadReasonData(0),
+	// Received data is absent or unrecognizable
+	BadReceivedData(0),
 	// TCAP Dialog is destroyed when CapDialog is alive and not shutting down
 	TcapDialogDestroyedData(1),
 	// Application context name does not supported
 	ACNNotSupported(2),
-	// Other part has been refused the Dialog with AARE apdu with abortReason=null or abortReason=no-reason-given 
+	// Other part has been refused the Dialog with AARE apdu with
+	// abortReason=null or abortReason=no-reason-given
 	DialogRefused(3),
+	// Other part has been refused the Dialog with AARE apdu with
+	// abortReason=null or abortReason=NoCommonDialogPortion
+	NoCommonDialogPortionReceived(4),
 	// User abort, CAPUserAbortReason is present in the message
-	UserSpecific(4);
+	UserSpecific(5);
 
 	private int code;
 

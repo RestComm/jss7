@@ -20,33 +20,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.dialog;
+package org.mobicents.protocols.ss7.cap.api.primitives;
 
 /**
- * 
- * @author sergey vetyutnev
- * 
- */
-public enum CAPNoticeProblemDiagnostic {
-	AbnormalComponentReceivedFromThePeer(0), 
-	MessageCannotBeDeliveredToThePeer(1),
-	DuplicatedInvokeIdReceived(2),
-	UnknownLinkedIdReceived(3),
-	UnrecognizedOperation(4),
-	LinkedResponseUnexpected(5),
-	UnexpectedLinkedOperation(6),
-	AbnormalDialogAction(7);
+*
+Extensions {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE (1..bound.&numOfExtensions) OF
+ExtensionField
+ExtensionField ::= SEQUENCE {
+type EXTENSION.&id ({SupportedExtensions}),
+-- shall identify the value of an EXTENSION type
+criticality CriticalityType DEFAULT ignore,
+value [1] EXTENSION.&ExtensionType ({SupportedExtensions}{@type}),
+...
+}
+-- This parameter indicates an extension of an argument data type.
+-- Its content is network operator specific 
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface Extensions {
 
-//	AbnormalEventDetectedByThePeer(0), 
-//	ResponseRejectedByThePeer(1), 
-	
-	private int code;
-
-	private CAPNoticeProblemDiagnostic(int code) {
-		this.code = code;
-	}
-
-	public int getCode() {
-		return this.code;
-	}
+	// ..........................
 }

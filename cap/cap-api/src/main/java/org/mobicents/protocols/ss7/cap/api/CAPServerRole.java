@@ -20,29 +20,30 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.dialog;
+package org.mobicents.protocols.ss7.cap.api;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public enum CAPNoticeProblemDiagnostic {
-	AbnormalComponentReceivedFromThePeer(0), 
-	MessageCannotBeDeliveredToThePeer(1),
-	DuplicatedInvokeIdReceived(2),
-	UnknownLinkedIdReceived(3),
-	UnrecognizedOperation(4),
-	LinkedResponseUnexpected(5),
-	UnexpectedLinkedOperation(6),
-	AbnormalDialogAction(7);
+public enum CAPServerRole {
+	// GSM Service Switching Function
+	gsmSSF(0),
+	// GSM Assisting Service Switching Function
+	assistingGsmSSF(1),
+	// GSM Specialized Resource Function
+	gsmSRF(2),
+	// Short Message Service Service Switching Function
+	smsSSF(3),
+	// GPRS Service Switching Function
+	gprsSSF(4),
+	// GSM Service Control Function
+	gsmSCF(10);
 
-//	AbnormalEventDetectedByThePeer(0), 
-//	ResponseRejectedByThePeer(1), 
-	
 	private int code;
 
-	private CAPNoticeProblemDiagnostic(int code) {
+	private CAPServerRole(int code) {
 		this.code = code;
 	}
 
