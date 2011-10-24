@@ -101,7 +101,7 @@ public abstract class CAPServiceBaseImpl implements CAPServiceBase {
 	 * 
 	 * @param dialog
 	 */
-	protected void PutCAPDialogIntoCollection(CAPDialogImpl dialog) {
+	protected void putCAPDialogIntoCollection(CAPDialogImpl dialog) {
 		this.capProviderImpl.addDialog((CAPDialogImpl) dialog);
 	}
 

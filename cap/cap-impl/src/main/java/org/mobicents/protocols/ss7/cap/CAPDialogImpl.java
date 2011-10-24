@@ -31,6 +31,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPServiceBase;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
@@ -38,6 +39,7 @@ import org.mobicents.protocols.ss7.cap.errors.CAPErrorMessageImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
@@ -170,20 +172,95 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	
 	@Override
 	public void send() throws CAPException {
-		// TODO Auto-generated method stub
-		// ...........................
+
+		synchronized (this) {
+			switch (this.tcapDialog.getState()) {
+
+			case Idle:
+				ApplicationContextName acn = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+						.createApplicationContextName(this.appCntx.getOID());
+
+				this.capProviderImpl.fireTCBegin(this.getTcapDialog(), acn, this.gprsReferenceNumber);
+				this.gprsReferenceNumber = null;
+
+				this.setState(CAPDialogState.InitialSent);
+				break;
+
+			case Active:
+				// Its Active send TC-CONTINUE
+
+				this.capProviderImpl.fireTCContinue(this.getTcapDialog(), null, null);
+				break;
+
+			case InitialReceived:
+				// Its first Reply to TC-Begin
+
+				ApplicationContextName acn1 = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+						.createApplicationContextName(this.appCntx.getOID());
+
+				this.capProviderImpl.fireTCContinue(this.getTcapDialog(), acn1, this.gprsReferenceNumber);
+				this.gprsReferenceNumber = null;
+
+				this.setState(CAPDialogState.Active);
+				break;
+
+			case InitialSent: // we have sent TC-BEGIN already, need to wait
+				throw new CAPException("Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
+			case Expunged: // dialog has been terminated on TC level, cant send
+				throw new CAPException("Dialog has been terminated, can not send primitives!");
+			}
+		}
 	}
 
 	@Override
 	public void close(boolean prearrangedEnd) throws CAPException {
-		// TODO Auto-generated method stub
-		// ...........................
+
+		synchronized (this) {
+			switch (this.tcapDialog.getState()) {
+			case InitialReceived:
+				ApplicationContextName acn = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+						.createApplicationContextName(this.appCntx.getOID());
+
+				this.setNormalDialogShutDown();
+				this.capProviderImpl.fireTCEnd(this.getTcapDialog(), prearrangedEnd, acn, this.gprsReferenceNumber);
+				this.gprsReferenceNumber = null;
+
+				this.setState(CAPDialogState.Expunged);
+				break;
+
+			case Active:
+				this.setNormalDialogShutDown();
+				this.capProviderImpl.fireTCEnd(this.getTcapDialog(), prearrangedEnd, null, null);
+
+				this.setState(CAPDialogState.Expunged);
+				break;
+
+			case Idle:
+				throw new CAPException("Awaiting TC-BEGIN to be sent, can not send another dialog initiating primitive!");
+			case InitialSent: // we have sent TC-BEGIN already, need to wait
+				throw new CAPException("Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
+			case Expunged: // dialog has been terminated on TC level, cant send
+				throw new CAPException("Dialog has been terminated, can not send primitives!");
+			}
+		}
 	}
 
 	@Override
 	public void abort(CAPUserAbortReason abortReason) throws CAPException {
-		// TODO Auto-generated method stub
-		// ...........................
+
+		synchronized (this) {
+			// Dialog is not started or has expunged - we need not send TC-U-ABORT,
+			// only Dialog removing
+			if (this.getState() == CAPDialogState.Expunged || this.getState() == CAPDialogState.Idle) {
+				this.setState(CAPDialogState.Expunged);
+				return;
+			}
+
+			this.setNormalDialogShutDown();
+			this.capProviderImpl.fireTCAbort(this.getTcapDialog(), CAPGeneralAbortReason.UserSpecific, abortReason);
+
+			this.setState(CAPDialogState.Expunged);
+		}
 	}
 
 	@Override

@@ -45,6 +45,9 @@ public class CAPUserAbortPrimitiveImpl implements CAPAsnPrimitive {
 	
 	private CAPUserAbortReason reason;
 	
+	public CAPUserAbortPrimitiveImpl() {
+	}
+	
 	public CAPUserAbortPrimitiveImpl(CAPUserAbortReason reason) {
 		this.reason = reason;
 	}

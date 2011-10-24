@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.cap;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +35,8 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
@@ -53,19 +56,7 @@ import org.mobicents.protocols.ss7.cap.dialog.CAPGprsReferenceNumberImpl;
 import org.mobicents.protocols.ss7.cap.dialog.CAPUserAbortPrimitiveImpl;
 import org.mobicents.protocols.ss7.cap.errors.CAPErrorMessageFactoryImpl;
 import org.mobicents.protocols.ss7.cap.errors.CAPErrorMessageImpl;
-import org.mobicents.protocols.ss7.map.MAPDialogImpl;
-import org.mobicents.protocols.ss7.map.MAPDialogState;
-import org.mobicents.protocols.ss7.map.MAPServiceBaseImpl;
-import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
-import org.mobicents.protocols.ss7.map.api.MAPDialogueAS;
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
-import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortReason;
 import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckData;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.dialog.MAPOpenInfoImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
@@ -82,8 +73,10 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndicati
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.DialogServiceProviderType;
 import org.mobicents.protocols.ss7.tcap.asn.DialogServiceUserType;
 import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
+import org.mobicents.protocols.ss7.tcap.asn.ResultSourceDiagnostic;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
@@ -92,7 +85,6 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCodeType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
-import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCodeType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
@@ -188,341 +180,319 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			this.dialogs.remove(dialogId);
 		}
 	}
+
+	private void SendUnsupportedAcn(ApplicationContextName acn, Dialog dialog, String cs) {
+		StringBuffer s = new StringBuffer();
+		s.append(cs + " ApplicationContextName is received: ");
+		for (long l : acn.getOid()) {
+			s.append(l).append(", ");
+		}
+		loger.warn(s.toString());
+		
+		try {
+			this.fireTCAbort(dialog, CAPGeneralAbortReason.ACNNotSupported, null);
+		} catch (CAPException e1) {
+			loger.error("Error while firing TC-U-ABORT. ", e1);
+		}
+	}
+
+	private CAPGprsReferenceNumberImpl ParseUserInfo(UserInformation userInfo, Dialog dialog) {
+		
+		// Parsing userInfo
+		CAPGprsReferenceNumberImpl referenceNumber = null;
+			
+		// Checking UserData ObjectIdentifier
+		if (!userInfo.isOid()) {
+			loger.warn("onTCBegin: userInfo.isOid() is null");
+			return null;
+		}
+
+		if (!Arrays.equals(CAPGprsReferenceNumberImpl.CAP_Dialogue_OId, userInfo.getOidValue())) {
+			loger.warn("onTCBegin: userInfo.isOid() has bad value");
+			return null;
+		}
+
+		if (!userInfo.isAsn()) {
+			loger.warn("onTCBegin: userInfo.isAsn() is null");
+			return null;
+		}
+
+		try {
+			referenceNumber = new CAPGprsReferenceNumberImpl();
+			byte[] asnData = userInfo.getEncodeType();
+
+			AsnInputStream ais = new AsnInputStream(asnData);
+
+			int tag = ais.readTag();
+			// It should be SEQUENCE Tag
+			if (tag != Tag.SEQUENCE || ais.getTagClass() != Tag.CLASS_UNIVERSAL || ais.isTagPrimitive()) {
+				loger.warn("onTCBegin: Error parsing CAPGprsReferenceNumber: bad tag or tag class or is primitive");
+				return null;
+			}
+
+			referenceNumber.decodeAll(ais);
+		} catch (AsnException e) {
+			loger.error("AsnException when parsing CAP-OPEN Pdu: " + e.getMessage());
+			return null;
+		} catch (IOException e) {
+			loger.error("IOException when parsing CAP-OPEN Pdu: " + e.getMessage());
+			return null;
+		} catch (CAPParsingComponentException e) {
+			loger.error("CAPParsingComponentException when parsing CAP-OPEN Pdu: " + e.getMessage());
+			return null;
+		}
+			
+		return referenceNumber;
+	}	
 	
 	public void onTCBegin(TCBeginIndication tcBeginIndication) {
 		
 		ApplicationContextName acn = tcBeginIndication.getApplicationContextName();
 		Component[] comps = tcBeginIndication.getComponents();
 
-		// TODO ....................... CAPGeneralAbortReason CAPUserAbortReason
-//		// ACN must be present in CAMEL
-//		if (acn == null) {
-//			loger.warn("Received TCBeginIndication without application context name");
-//
-//			try {
-//				this.fireTCAbort(tcBeginIndication.getDialog(), CAPGeneralAbortReason.BadReasonData, CAPUserAbortReason);
-//			} catch (MAPException e) {
-//				loger.error("Error while firing TC-U-ABORT. ", e);
-//			}
-//			return;
-//		}
-//
-//		MAPApplicationContext mapAppCtx = null;
-//		MAPServiceBase perfSer = null;
-//		if (acn == null) {
-//			// ApplicationContext is absent but components are absent - MAP
-//			// Version 1
-//
-//			// - if no application-context-name is included in the primitive and
-//			// if presence of components is indicated, wait for the first
-//			// TC-INVOKE primitive, and derive a version 1
-//			// application-context-name from the operation code according to
-//			// table 12.1/1 (note 1);
-//
-//			// a) if no application-context-name can be derived (i.e. the
-//			// operation code does not exist in MAP V1 specifications), the MAP
-//			// PM shall issue a TC-U-ABORT request primitive (note 2). The local
-//			// MAP-User is not informed.
-//
-//			// Extracting Invoke and operationCode
-//			Invoke invoke = null;
-//			int operationCode = -1;
-//			for (Component c : comps) {
-//				if (c.getType() == ComponentType.Invoke) {
-//					invoke = (Invoke) c;
-//					break;
-//				}
-//			}
-//			if (invoke != null) {
-//				OperationCode oc = invoke.getOperationCode();
-//				if (oc != null && oc.getOperationType() == OperationCodeType.Local) {
-//					operationCode = (int) (long) oc.getLocalOperationCode();
-//				}
-//			}
-//			if (operationCode != -1) {
-//				// Selecting the MAP service that can perform the operation, getting
-//				// ApplicationContext
-//				for (MAPServiceBase ser : this.mapServices) {
-//					MAPApplicationContext ac = ((MAPServiceBaseImpl)ser).getMAPv1ApplicationContext(operationCode, invoke);
-//					if (ac != null) {
-//						perfSer = ser;
-//						mapAppCtx = ac;
-//						break;
-//					}
-//				}
-//			}
-//			
-//			if (mapAppCtx == null) {
-//				// Invoke not found or has bad operationCode or operationCode is not supported
-//				try {
-//					this.fireTCAbortV1(tcBeginIndication.getDialog());
-//					return;
-//				} catch (MAPException e) {
-//					loger.error("Error while firing TC-U-ABORT. ", e);
-//				}
-//			}
-//		} else {
-//			// ApplicationContext is present - MAP Version 2 or higher
-//			if (MAPApplicationContext.getProtocolVersion(acn.getOid()) < 2) {
-//				// if a version 1 application-context-name is included, the MAP
-//				// PM shall issue a TC-U-ABORT
-//				// request primitive with abort-reason "User-specific" and
-//				// user-information "MAP-ProviderAbortInfo"
-//				// indicating "abnormalDialogue". The local MAP-user shall not
-//				// be informed.
-//				loger.error("Bad version of ApplicationContext if ApplicationContext exists. Must be 2 or greater");
-//				try {
-//					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null);
-//				} catch (MAPException e) {
-//					loger.error("Error while firing TC-U-ABORT. ", e);
-//				}
-//				return;
-//			}
-//			
-//			mapAppCtx = MAPApplicationContext.getInstance(acn.getOid());
-//			
-//			// Check if ApplicationContext is recognizable for the implemented
-//			// services
-//			// If no - TC-U-ABORT - ACN-Not-Supported
-//
-//			if (mapAppCtx == null) {
-//				StringBuffer s = new StringBuffer();
-//				s.append("Unrecognizable ApplicationContextName is received: ");
-//				for (long l : acn.getOid()) {
-//					s.append(l).append(", ");
-//				}
-//
-//				loger.error(s.toString());
-//				try {
-//					this.fireTCAbortACNNotSupported(tcBeginIndication.getDialog(), null, null);
-//				} catch (MAPException e) {
-//					loger.error("Error while firing TC-U-ABORT. ", e);
-//				}
-//
-//				return;
-//			}
-//		}
-//
-//		AddressString destReference = null;
-//		AddressString origReference = null;
-//		MAPExtensionContainer extensionContainer = null;
-//
-//		UserInformation userInfo = tcBeginIndication.getUserInformation();
-//		if (userInfo == null) {
-//			// if no User-information is present it is checked whether
-//			// presence of User Information in the
-//			// TC-BEGIN indication primitive is required for the received
-//			// application-context-name. If User
-//			// Information is required but not present, a TC-U-ABORT request
-//			// primitive with abort-reason
-//			// "User-specific" and user-information "MAP-ProviderAbortInfo"
-//			// indicating "abnormalDialogue"
-//			// shall be issued. The local MAP-user shall not be informed.
-//
-//			// TODO : From where do we know id userInfo is required for a
-//			// give
-//			// application-context-name?
-//			// May be if neither destinationReference nor
-//			// originationReference is needed
-//			// then no userInfo is needed (there is an
-//			// ApplicationContextName list in the specification)
-//
-//			// TODO: Make a checking if MAP-OPEN is not needed -> continue
-//			// without sending TC-U-ABORT - how?
-//		} else {
-//			// if an application-context-name different from version 1 is
-//			// included in the primitive and if User-
-//			// information is present, the User-information must constitute
-//			// a syntactically correct MAP-OPEN
-//			// dialogue PDU. Otherwise a TC-U-ABORT request primitive with
-//			// abort-reason "User-specific" and
-//			// user-information "MAP-ProviderAbortInfo" indicating
-//			// "abnormalDialogue" shall be issued and the
-//			// local MAP-user shall not be informed.
-//
-//			MAPOpenInfoImpl mapOpenInfoImpl = new MAPOpenInfoImpl();
-//
-//			if (!userInfo.isOid()) {
-//				loger.error("When parsing TC-BEGIN: userInfo.isOid() check failed");
-//				try {
-//					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null);
-//				} catch (MAPException e) {
-//					loger.error("Error while firing TC-U-ABORT. ", e);
-//				}
-//				return;
-//			}
-//
-//			long[] oid = userInfo.getOidValue();
-//
-//			MAPDialogueAS mapDialAs = MAPDialogueAS.getInstance(oid);
-//
-//			if (mapDialAs == null) {
-//				loger.error("When parsing TC-BEGIN: Expected MAPDialogueAS.MAP_DialogueAS but is null");
-//				try {
-//					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null);
-//				} catch (MAPException e) {
-//					loger.error("Error while firing TC-U-ABORT. ", e);
-//				}
-//				return;
-//			}
-//
-//			if (!userInfo.isAsn()) {
-//				loger.error("When parsing TC-BEGIN: userInfo.isAsn() check failed");
-//				try {
-//					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null);
-//				} catch (MAPException e) {
-//					loger.error("Error while firing TC-U-ABORT. ", e);
-//				}
-//				return;
-//			}
-//
-//			try {
-//				byte[] asnData = userInfo.getEncodeType();
-//
-//				AsnInputStream ais = new AsnInputStream(asnData);
-//
-//				int tag = ais.readTag();
-//
-//				// It should be MAP_OPEN Tag
-//				if (tag != MAPOpenInfoImpl.MAP_OPEN_INFO_TAG) {
-//					loger.error("When parsing TC-BEGIN: MAP-OPEN dialog PDU must be received");
-//					try {
-//						this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null);
-//					} catch (MAPException e) {
-//						loger.error("Error while firing TC-U-ABORT. ", e);
-//					}
-//					return;
-//				}
-//
-//				mapOpenInfoImpl.decodeAll(ais);
-//
-//				destReference = mapOpenInfoImpl.getDestReference();
-//				origReference = mapOpenInfoImpl.getOrigReference();
-//				extensionContainer = mapOpenInfoImpl.getExtensionContainer();
-//			} catch (AsnException e) {
-//				e.printStackTrace();
-//				loger.error("AsnException when parsing MAP-OPEN Pdu: " + e.getMessage(), e);
-//				try {
-//					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null);
-//				} catch (MAPException e1) {
-//					loger.error("Error while firing TC-U-ABORT. ", e1);
-//				}
-//				return;
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//				loger.error("IOException when parsing MAP-OPEN Pdu: " + e.getMessage());
-//				try {
-//					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null);
-//				} catch (MAPException e1) {
-//					loger.error("Error while firing TC-U-ABORT. ", e1);
-//				}
-//				return;
-//			} catch (MAPParsingComponentException e) {
-//				e.printStackTrace();
-//				loger.error("MAPException when parsing MAP-OPEN Pdu: " + e.getMessage());
-//				try {
-//					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null);
-//				} catch (MAPException e1) {
-//					loger.error("Error while firing TC-U-ABORT. ", e1);
-//				}
-//				return;
-//			}
-//		}
-//
-//		// if an application-context-name different from version 1 is
-//		// received in a syntactically correct TC-
-//		// BEGIN indication primitive but is not acceptable from a load
-//		// control point of view, the MAP PM
-//		// shall ignore this dialogue request. The MAP-user is not informed.
-//		// TODO: Checking if MAP PM is overloaded - if so - reject some less
-//		// important ApplicationContexts
-//		// without sending any responses and MAP user informing
-//
-//		// Selecting the MAP service that can perform the ApplicationContext
-//		if (perfSer == null) {
-//			for (MAPServiceBase ser : this.mapServices) {
-//
-//				ServingCheckData chkRes = ser.isServingService(mapAppCtx);
-//				switch (chkRes.getResult()) {
-//				case AC_Serving:
-//					perfSer = ser;
-//					break;
-//
-//				case AC_VersionIncorrect:
-//					try {
-//						this.fireTCAbortACNNotSupported(tcBeginIndication.getDialog(), null, chkRes.getAlternativeApplicationContext());
-//					} catch (MAPException e1) {
-//						loger.error("Error while firing TC-U-ABORT. ", e1);
-//					}
-//					break;
-//				}
-//
-//				if (perfSer != null)
-//					break;
-//			}
-//		}
-//
-//		// No MAPService can accept the received ApplicationContextName
-//		if (perfSer == null) {
-//			StringBuffer s = new StringBuffer();
-//			s.append("Unsupported ApplicationContextName is received: ");
-//			for (long l : acn.getOid()) {
-//				s.append(l).append(", ");
-//			}
-//
-//			loger.error(s.toString());
-//			try {
-//				this.fireTCAbortACNNotSupported(tcBeginIndication.getDialog(), null, null);
-//			} catch (MAPException e1) {
-//				loger.error("Error while firing TC-U-ABORT. ", e1);
-//			}
-//
-//			return;
-//		}
-//
-//		// MAPService is not activated
-//		if (!perfSer.isActivated()) {
-//			StringBuffer s = new StringBuffer();
-//			s.append("ApplicationContextName of not activated MAPService is received: ");
-//			for (long l : acn.getOid()) {
-//				s.append(l).append(", ");
-//			}
-//
-//			try {
-//				this.fireTCAbortACNNotSupported(tcBeginIndication.getDialog(), null, null);
-//			} catch (MAPException e1) {
-//				loger.error("Error while firing TC-U-ABORT. ", e1);
-//			}
-//		}
-//
-//		MAPDialogImpl mapDialogImpl = ((MAPServiceBaseImpl) perfSer).createNewDialogIncoming(mapAppCtx, tcBeginIndication.getDialog());
-//		synchronized (mapDialogImpl) {
-//			this.addDialog(mapDialogImpl);
-//
-//			mapDialogImpl.setState(MAPDialogState.InitialReceived);
-//
-//			this.deliverDialogRequest(mapDialogImpl, destReference, origReference, extensionContainer);
-//			if (mapDialogImpl.getState() == MAPDialogState.Expunged)
-//				// The Dialog was aborter or refused
-//				return;
-//
-//			// Now let us decode the Components
-//			if (comps != null) {
-//				processComponents(mapDialogImpl, comps);
-//			}
-//
-//			this.deliverDialogDelimiter(mapDialogImpl);
-//		}
-	}	
+		// ACN must be present in CAMEL
+		if (acn == null) {
+			loger.warn("onTCBegin: Received TCBeginIndication without application context name");
+
+			try {
+				this.fireTCAbort(tcBeginIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null);
+			} catch (CAPException e) {
+				loger.error("Error while firing TC-U-ABORT. ", e);
+			}
+			return;
+		}
+
+		CAPApplicationContext capAppCtx = CAPApplicationContext.getInstance(acn.getOid());
+		// Check if ApplicationContext is recognizable for CAP
+		// If no - TC-U-ABORT - ACN-Not-Supported
+		if (capAppCtx == null) {
+			SendUnsupportedAcn(acn, tcBeginIndication.getDialog(), "onTCBegin: Unrecognizable");
+			return;
+		}
+
+		// Parsing CAPGprsReferenceNumber if exists
+		CAPGprsReferenceNumberImpl referenceNumber = null;
+		UserInformation userInfo = tcBeginIndication.getUserInformation();
+		if (userInfo != null) {
+			referenceNumber = ParseUserInfo(userInfo, tcBeginIndication.getDialog());
+			if (referenceNumber == null) {
+				try {
+					this.fireTCAbort(tcBeginIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null);
+				} catch (CAPException e) {
+					loger.error("Error while firing TC-U-ABORT. ", e);
+				}
+				
+				return;
+			}
+		}
+
+		// Selecting the CAP service that can perform the ApplicationContext
+		CAPServiceBase perfSer = null;
+		for (CAPServiceBase ser : this.capServices) {
+
+			ServingCheckData chkRes = ser.isServingService(capAppCtx);
+			switch (chkRes.getResult()) {
+			case AC_Serving:
+				perfSer = ser;
+				break;
+
+			case AC_VersionIncorrect:
+				SendUnsupportedAcn(acn, tcBeginIndication.getDialog(), "onTCBegin: Unsupported");
+				return;
+			}
+
+			if (perfSer != null)
+				break;
+		}
+
+		// No CAPService can accept the received ApplicationContextName
+		if (perfSer == null) {
+			SendUnsupportedAcn(acn, tcBeginIndication.getDialog(), "onTCBegin: Unsupported");
+			return;
+		}
+
+		// CAPService is not activated
+		if (!perfSer.isActivated()) {
+			SendUnsupportedAcn(acn, tcBeginIndication.getDialog(), "onTCBegin: Inactive CAPService");
+			return;
+		}
+
+		CAPDialogImpl capDialogImpl = ((CAPServiceBaseImpl) perfSer).createNewDialogIncoming(capAppCtx, tcBeginIndication.getDialog());
+		synchronized (capDialogImpl) {
+			this.addDialog(capDialogImpl);
+
+			capDialogImpl.setState(CAPDialogState.InitialReceived);
+
+			this.deliverDialogRequest(capDialogImpl, referenceNumber);
+			if (capDialogImpl.getState() == CAPDialogState.Expunged)
+				// The Dialog was aborter or refused
+				return;
+
+			// Now let us decode the Components
+			if (comps != null) {
+				processComponents(capDialogImpl, comps);
+			}
+
+			this.deliverDialogDelimiter(capDialogImpl);
+		}
+	}
 	
 	public void onTCContinue(TCContinueIndication tcContinueIndication) {
-		// TODO .......................
-		// .....................................
+
+		Dialog tcapDialog = tcContinueIndication.getDialog();
+
+		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+
+		if (capDialogImpl == null) {
+			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
+			try {
+				this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null);
+			} catch (CAPException e) {
+				loger.error("Error while firing TC-U-ABORT. ", e);
+			}
+			return;
+		}
+
+		synchronized (capDialogImpl) {
+			if (capDialogImpl.getState() == CAPDialogState.InitialSent) {
+				ApplicationContextName acn = tcContinueIndication.getApplicationContextName();
+				
+				if (acn == null) {
+					loger.warn("CAP Dialog is in InitialSent state but no application context name is received");
+					try {
+						this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null);
+					} catch (CAPException e) {
+						loger.error("Error while firing TC-U-ABORT. ", e);
+					}
+
+					capDialogImpl.setNormalDialogShutDown();
+					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
+					capDialogImpl.setState(CAPDialogState.Expunged);
+
+					return;
+				}
+
+				CAPApplicationContext capAcn = CAPApplicationContext.getInstance(acn.getOid());
+				if (capAcn == null || !capAcn.equals(capDialogImpl.getApplicationContext())) {
+					loger.warn(String.format("Received first TC-CONTINUE. But the received ACN is not the equal to the original ACN"));
+
+					try {
+						this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null);
+					} catch (CAPException e) {
+						loger.error("Error while firing TC-U-ABORT. ", e);
+					}
+
+					capDialogImpl.setNormalDialogShutDown();
+					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
+					capDialogImpl.setState(CAPDialogState.Expunged);
+
+					return;
+				}
+
+				// Parsing CAPGprsReferenceNumber if exists
+				// we ignore all errors this
+				CAPGprsReferenceNumberImpl referenceNumber = null;
+				UserInformation userInfo = tcContinueIndication.getUserInformation();
+				if (userInfo != null) {
+					referenceNumber = ParseUserInfo(userInfo, tcContinueIndication.getDialog());
+				}
+
+				capDialogImpl.setState(CAPDialogState.Active);
+				this.deliverDialogAccept(capDialogImpl, referenceNumber);
+
+				if (capDialogImpl.getState() == CAPDialogState.Expunged)
+					// The Dialog was aborter
+					return;
+			}
+
+			// Now let us decode the Components
+			if (capDialogImpl.getState() == CAPDialogState.Active) {
+				Component[] comps = tcContinueIndication.getComponents();
+				if (comps != null) {
+					processComponents(capDialogImpl, comps);
+				}
+			} else {
+				// This should never happen
+				loger.error(String.format("Received TC-CONTINUE. CAPDialog=%s. But state is not Active", capDialogImpl));
+			}
+
+			this.deliverDialogDelimiter(capDialogImpl);
+		}
 	}	
 	
 	public void onTCEnd(TCEndIndication tcEndIndication) {
-		// TODO .......................
-		// .....................................
+
+		Dialog tcapDialog = tcEndIndication.getDialog();
+
+		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+
+		if (capDialogImpl == null) {
+			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
+			try {
+				this.fireTCAbort(tcEndIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null);
+			} catch (CAPException e) {
+				loger.error("Error while firing TC-U-ABORT. ", e);
+			}
+			return;
+		}
+
+		synchronized (capDialogImpl) {
+			if (capDialogImpl.getState() == CAPDialogState.InitialSent) {
+				ApplicationContextName acn = tcEndIndication.getApplicationContextName();
+
+				if (acn == null) {
+					loger.warn("CAP Dialog is in InitialSent state but no application context name is received");
+					try {
+						this.fireTCAbort(tcEndIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null);
+					} catch (CAPException e) {
+						loger.error("Error while firing TC-U-ABORT. ", e);
+					}
+
+					capDialogImpl.setNormalDialogShutDown();
+					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
+					capDialogImpl.setState(CAPDialogState.Expunged);
+
+					return;
+				}
+				
+				CAPApplicationContext capAcn = CAPApplicationContext.getInstance(acn.getOid());
+
+				if (capAcn == null || !capAcn.equals(capDialogImpl.getApplicationContext())) {
+					loger.error(String.format("Received first TC-END. CAPDialog=%s. But CAPApplicationContext=%s", capDialogImpl, capAcn));
+
+					capDialogImpl.setNormalDialogShutDown();
+					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
+					capDialogImpl.setState(CAPDialogState.Expunged);
+
+					return;
+				}
+
+				capDialogImpl.setState(CAPDialogState.Active);
+
+				// Parsing CAPGprsReferenceNumber if exists
+				// we ignore all errors this
+				CAPGprsReferenceNumberImpl referenceNumber = null;
+				UserInformation userInfo = tcEndIndication.getUserInformation();
+				if (userInfo != null) {
+					referenceNumber = ParseUserInfo(userInfo, tcEndIndication.getDialog());
+				}
+
+				this.deliverDialogAccept(capDialogImpl, referenceNumber);
+				if (capDialogImpl.getState() == CAPDialogState.Expunged)
+					// The Dialog was aborter
+					return;
+			}
+
+			// Now let us decode the Components
+			Component[] comps = tcEndIndication.getComponents();
+			if (comps != null) {
+				processComponents(capDialogImpl, comps);
+			}
+
+			capDialogImpl.setNormalDialogShutDown();
+			this.deliverDialogClose(capDialogImpl);
+			capDialogImpl.setState(CAPDialogState.Expunged);
+		}
 	}	
 
 	public void onTCUni(TCUniIndication arg0) {
@@ -575,7 +545,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 					// TCAP Dialog is destroyed when CapDialog is alive and not shutting down
 					capDialogImpl.setNormalDialogShutDown();
-					this.deliverDialogUserAbort(capDialogImpl, CAPGeneralAbortReason.BadReasonData, null);
+					this.deliverDialogUserAbort(capDialogImpl, CAPGeneralAbortReason.BadReceivedData, null);
 					
 					capDialogImpl.setState(CAPDialogState.Expunged);
 				}
@@ -584,13 +554,96 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 	}
 
 	public void onTCPAbort(TCPAbortIndication tcPAbortIndication) {
-		// TODO .......................
-		// ....................................
+		Dialog tcapDialog = tcPAbortIndication.getDialog();
+
+		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+
+		if (capDialogImpl == null) {
+			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
+			return;
+		}
+
+		synchronized (capDialogImpl) {
+			PAbortCauseType pAbortCause = tcPAbortIndication.getPAbortCause();
+
+			capDialogImpl.setNormalDialogShutDown();
+			this.deliverDialogProviderAbort(capDialogImpl, pAbortCause);
+
+			capDialogImpl.setState(CAPDialogState.Expunged);
+		}
 	}
 
 	public void onTCUserAbort(TCUserAbortIndication tcUserAbortIndication) {
-		// TODO .......................
-		// ....................................
+		
+		Dialog tcapDialog = tcUserAbortIndication.getDialog();
+
+		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+
+		if (capDialogImpl == null) {
+			loger.error("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
+			return;
+		}
+
+		synchronized (capDialogImpl) {
+			CAPGeneralAbortReason generalReason = CAPGeneralAbortReason.BadReceivedData;
+			CAPUserAbortReason userReason = null;
+
+			if (tcUserAbortIndication.IsAareApdu()) {
+				if (capDialogImpl.getState() == CAPDialogState.InitialSent) {
+					generalReason = CAPGeneralAbortReason.DialogRefused;
+					ResultSourceDiagnostic resultSourceDiagnostic = tcUserAbortIndication.getResultSourceDiagnostic();
+					if (resultSourceDiagnostic != null) {
+						if (resultSourceDiagnostic.getDialogServiceUserType() == DialogServiceUserType.AcnNotSupported) {
+							generalReason = CAPGeneralAbortReason.ACNNotSupported;
+						} else if (resultSourceDiagnostic.getDialogServiceProviderType() == DialogServiceProviderType.NoCommonDialogPortion) {
+							generalReason = CAPGeneralAbortReason.NoCommonDialogPortionReceived;
+						}
+					}
+				}
+			} else {
+				UserInformation userInfo = tcUserAbortIndication.getUserInformation();
+
+				if (userInfo != null) {
+					// Checking userInfo.Oid==CAPUserAbortPrimitiveImpl.CAP_AbortReason_OId
+					if (!userInfo.isOid()) {
+						loger.warn("When parsing TCUserAbortIndication indication: userInfo.isOid() is null");
+					} else {
+						if (Arrays.equals(userInfo.getOidValue(), CAPUserAbortPrimitiveImpl.CAP_AbortReason_OId)) {
+							loger.warn("When parsing TCUserAbortIndication indication: userInfo.getOidValue() must be CAPUserAbortPrimitiveImpl.CAP_AbortReason_OId");
+						} else if (!userInfo.isAsn()) {
+							loger.warn("When parsing TCUserAbortIndication indication: userInfo.isAsn() check failed");
+						} else {
+							try {
+								byte[] asnData = userInfo.getEncodeType();
+
+								AsnInputStream ais = new AsnInputStream(asnData);
+
+								int tag = ais.readTag();
+								if (tag != Tag.ENUMERATED || ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive()) {
+									loger.warn("When parsing TCUserAbortIndication indication: userInfo has bad tag or tagClass or is not primitive");
+								} else {
+									CAPUserAbortPrimitiveImpl capUserAbortPrimitive = new CAPUserAbortPrimitiveImpl(); 
+									capUserAbortPrimitive.decodeAll(ais);
+									generalReason = CAPGeneralAbortReason.UserSpecific;
+									userReason = capUserAbortPrimitive.getCAPUserAbortReason();
+								}
+							} catch (AsnException e) {
+								loger.warn("When parsing TCUserAbortIndication indication: AsnException" + e.getMessage(), e);
+							} catch (IOException e) {
+								loger.warn("When parsing TCUserAbortIndication indication: IOException" + e.getMessage(), e);
+							} catch (CAPParsingComponentException e) {
+								loger.warn("When parsing TCUserAbortIndication indication: CAPParsingComponentException" + e.getMessage(), e);
+							}
+						}
+					}
+				}
+			}
+
+			capDialogImpl.setNormalDialogShutDown();
+			this.deliverDialogUserAbort(capDialogImpl, generalReason, userReason);
+
+			capDialogImpl.setState(CAPDialogState.Expunged);
+		}
 	}
 
 	private void processComponents(CAPDialogImpl capDialogImpl, Component[] components) {
@@ -965,13 +1018,6 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			tcUserAbort.setApplicationContextName(tcapDialog.getApplicationContextName());
 			break;
 			
-		case DialogRefused:
-		case BadReasonData:
-		case TcapDialogDestroyedData:
-			tcUserAbort.setDialogServiceUserType(DialogServiceUserType.NoReasonGive);
-			tcUserAbort.setApplicationContextName(tcapDialog.getApplicationContextName());
-			break;
-			
 		case UserSpecific:
 			if (userAbortReason == null)
 				userAbortReason = CAPUserAbortReason.no_reason_given;
@@ -986,6 +1032,12 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			userInformation.setEncodeType(localasnOs.toByteArray());
 
 			tcUserAbort.setUserInformation(userInformation);
+			break;
+			
+		case DialogRefused:
+		default:
+			tcUserAbort.setDialogServiceUserType(DialogServiceUserType.NoReasonGive);
+			tcUserAbort.setApplicationContextName(tcapDialog.getApplicationContextName());
 			break;
 		}
 
