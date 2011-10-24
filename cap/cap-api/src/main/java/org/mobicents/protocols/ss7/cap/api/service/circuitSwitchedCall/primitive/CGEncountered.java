@@ -20,19 +20,45 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
 *
-Extensions {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE (1..bound.&numOfExtensions) OF ExtensionField
-numOfExtensions ::= 10
+CGEncountered ::= ENUMERATED {
+noCGencountered (0),
+manualCGencountered (1),
+scpOverload (2)
+}
+-- Indicates the type of automatic call gapping encountered, if any. 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Extensions {
+public enum CGEncountered {
+	noCGencountered (0),
+	manualCGencountered (1),
+	scpOverload (2);
 
-	public ExtensionField[] getExtensionFields();
+	private int code;
 
-	public void setExtensionFields(ExtensionField[] fieldsList);
+	private CGEncountered(int code) {
+		this.code = code;
+	}
+	
+	public static CGEncountered getInstance(int code) {
+		switch (code) {
+		case 0:
+			return CGEncountered.noCGencountered;
+		case 1:
+			return CGEncountered.manualCGencountered;
+		case 2:
+			return CGEncountered.scpOverload;
+		default:
+			return null;
+		}
+	}
+	
+	public int getCode() {
+		return code;
+	}
 }

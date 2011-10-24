@@ -20,19 +20,38 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
 *
-Extensions {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE (1..bound.&numOfExtensions) OF ExtensionField
-numOfExtensions ::= 10
+BothwayThroughConnectionInd ::= ENUMERATED {
+  bothwayPathRequired(0), bothwayPathNotRequired(1)}
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Extensions {
+public enum BothwayThroughConnectionInd {
+	bothwayPathRequired(0), 
+	bothwayPathNotRequired(1);
 
-	public ExtensionField[] getExtensionFields();
+	private int code;
 
-	public void setExtensionFields(ExtensionField[] fieldsList);
+	private BothwayThroughConnectionInd(int code) {
+		this.code = code;
+	}
+
+	public static BothwayThroughConnectionInd getInstance(int code) {
+		switch (code) {
+		case 0:
+			return BothwayThroughConnectionInd.bothwayPathRequired;
+		case 1:
+			return BothwayThroughConnectionInd.bothwayPathNotRequired;
+		default:
+			return null;
+		}
+	}
+
+	public int getCode() {
+		return this.code;
+	}
 }

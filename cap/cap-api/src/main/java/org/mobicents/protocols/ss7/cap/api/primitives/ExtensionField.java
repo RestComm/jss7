@@ -24,15 +24,43 @@ package org.mobicents.protocols.ss7.cap.api.primitives;
 
 /**
 *
-Extensions {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE (1..bound.&numOfExtensions) OF ExtensionField
-numOfExtensions ::= 10
+ExtensionField ::= SEQUENCE {
+	type EXTENSION.&id ({SupportedExtensions}),
+	-- shall identify the value of an EXTENSION type
+	criticality CriticalityType DEFAULT ignore,
+	value [1] EXTENSION.&ExtensionType ({SupportedExtensions}{@type}),
+	...
+}
+-- This parameter indicates an extension of an argument data type.
+-- Its content is network operator specific
+ 
+CriticalityType  ::= ENUMERATED { 
+        ignore    (0), 
+        abort     (1) 
+        } 
+Code ::= CHOICE {local   INTEGER, 
+                 global  OBJECT IDENTIFIER} 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Extensions {
+public interface ExtensionField {
 
-	public ExtensionField[] getExtensionFields();
+	public Integer getLocalCode();
 
-	public void setExtensionFields(ExtensionField[] fieldsList);
+	public long[] getGlobalCode();
+
+	public CriticalityType getCriticalityType();
+
+	public byte[] getData();
+
+	
+	public void setLocalCode(Integer localCode);
+
+	public void setGlobalCode(long[] globalCode);
+
+	public void setCriticalityType(CriticalityType criticalityType);
+
+	public void setData(byte[] data);
 }
+

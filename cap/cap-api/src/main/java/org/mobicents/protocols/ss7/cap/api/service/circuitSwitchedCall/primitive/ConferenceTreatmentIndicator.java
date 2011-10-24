@@ -20,19 +20,43 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
 *
-Extensions {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE (1..bound.&numOfExtensions) OF ExtensionField
-numOfExtensions ::= 10
+conferenceTreatmentIndicator [1] OCTET STRING (SIZE(1)) OPTIONAL,
+-- acceptConferenceRequest 'xxxx xx01'B
+-- rejectConferenceRequest 'xxxx xx10'B
+-- if absent from Connect or ContinueWithArgument,
+-- then CAMEL service does not affect conference treatment
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Extensions {
+public enum ConferenceTreatmentIndicator {
 
-	public ExtensionField[] getExtensionFields();
+	acceptConferenceRequest(1), 
+	rejectConferenceRequest(2);
 
-	public void setExtensionFields(ExtensionField[] fieldsList);
+	private int code;
+
+	private ConferenceTreatmentIndicator(int code) {
+		this.code = code;
+	}
+
+	public static ConferenceTreatmentIndicator getInstance(int code) {
+		switch (code & 0x03) {
+		case 1:
+			return ConferenceTreatmentIndicator.acceptConferenceRequest;
+		case 2:
+			return ConferenceTreatmentIndicator.rejectConferenceRequest;
+		default:
+			return null;
+		}
+	}
+
+	public int getCode() {
+		return this.code;
+	}
 }
+

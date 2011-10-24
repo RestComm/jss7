@@ -20,32 +20,49 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
 *
-CGEncountered ::= ENUMERATED {
-noCGencountered (0),
-manualCGencountered (1),
-scpOverload (2)
+ConnectedNumberTreatmentInd ::= ENUMERATED {
+noINImpact (0),
+presentationRestricted (1),
+presentCalledINNumber (2),
+presentCallINNumberRestricted (3)
 }
--- Indicates the type of automatic call gapping encountered, if any. 
+-- This parameter is used to suppress or to display the connected number.
 * 
 * @author sergey vetyutnev
 * 
 */
-public enum CGEncountered {
-	noCGencountered (0),
-	manualCGencountered (1),
-	scpOverload (2);
+public enum ConnectedNumberTreatmentInd {
+	noINImpact (0),
+	presentationRestricted (1),
+	presentCalledINNumber (2),
+	presentCallINNumberRestricted (3);
 
 	private int code;
 
-	private CGEncountered(int code) {
+	private ConnectedNumberTreatmentInd(int code) {
 		this.code = code;
 	}
-	
+
+	public static ConnectedNumberTreatmentInd getInstance(int code) {
+		switch (code) {
+		case 0:
+			return ConnectedNumberTreatmentInd.noINImpact;
+		case 1:
+			return ConnectedNumberTreatmentInd.presentationRestricted;
+		case 2:
+			return ConnectedNumberTreatmentInd.presentCalledINNumber;
+		case 3:
+			return ConnectedNumberTreatmentInd.presentCallINNumberRestricted;
+		default:
+			return null;
+		}
+	}
+
 	public int getCode() {
-		return code;
+		return this.code;
 	}
 }

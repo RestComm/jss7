@@ -67,7 +67,7 @@ public enum CAPUserAbortReason {
 		this.code = code;
 	}
 
-	public static CAPUserAbortReason getInstatse(int code) {
+	public static CAPUserAbortReason getInstance(int code) {
 		switch (code) {
 		case 1:
 			return CAPUserAbortReason.no_reason_given;

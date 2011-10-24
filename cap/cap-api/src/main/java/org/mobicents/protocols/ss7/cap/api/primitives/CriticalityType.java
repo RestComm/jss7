@@ -24,15 +24,37 @@ package org.mobicents.protocols.ss7.cap.api.primitives;
 
 /**
 *
-Extensions {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE (1..bound.&numOfExtensions) OF ExtensionField
-numOfExtensions ::= 10
+CriticalityType  ::= ENUMERATED { 
+        ignore    (0), 
+        abort     (1) 
+        } 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Extensions {
+public enum CriticalityType {
+	typeIgnore(0), 
+	typeAbort(1);
 
-	public ExtensionField[] getExtensionFields();
+	private int code;
 
-	public void setExtensionFields(ExtensionField[] fieldsList);
+	private CriticalityType(int code) {
+		this.code = code;
+	}
+	
+	public static CriticalityType getInstance(int code) {
+		switch (code) {
+		case 0:
+			return CriticalityType.typeIgnore;
+		case 1:
+			return CriticalityType.typeAbort;
+		default:
+			return null;
+		}
+	}
+
+	public int getCode() {
+		return this.code;
+	}
 }
+

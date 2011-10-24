@@ -22,11 +22,21 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
+import org.mobicents.protocols.ss7.cap.api.primitives.Digits;
+import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.Extensions;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CGEncountered;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
 
 
 /**
@@ -88,30 +98,54 @@ initialDPArgExtension [59] InitialDPArgExtension {bound} OPTIONAL,
 public interface InitialDPRequestIndication extends CircuitSwitchedCallMessage {
 
 	public int getServiceKey();
-	
+
 	public byte[] getCalledPartyNumber();
-	
+
 	public CalledPartyNumber getCalledPartyNumberIsup();
-	
+
 	public byte[] getCallingPartyNumber();
-	
+
 	public CallingPartyNumber getCallingPartyNumberIsup();
-	
+
 	public byte[] getCallingPartysCategory();
-	
+
 	public CallingPartyCategory getCallingPartysCategoryIsup();
-	
+
 	public CGEncountered getCGEncountered();
-	
+
 	public IPSSPCapabilities getIPSSPCapabilities();
-	
+
 	public byte[] getLocationNumber();
-	
+
 	public LocationNumber getLocationNumberIsup();
-	
+
 	public byte[] getOriginalCalledPartyID();
-	
+
 	public OriginalCalledNumber getOriginalCalledPartyIDIsup();
+
+	public Extensions getExtensions();
+
+	public byte[] getHighLayerCompatibility(); // TODO: ISUP version
+
+	public Digits getAdditionalCallingPartyNumber();
+
+	public GenericNumber getAdditionalCallingPartyNumberIsup();
+	
+	public BearerCapability getBearerCapability();
+	
+	public EventTypeBCSM getEventTypeBCSM();
+
+	public byte[] getRedirectingPartyID();
+
+	public RedirectingNumber getRedirectingPartyIDIsup();
+
+	public byte[] getRedirectionInformation();
+
+	public RedirectionInformation getRedirectionInformationIsup();
+
+	public byte[] getCause();
+
+	public CauseIndicators getCauseIsup();
 
 	// ..................................
 }

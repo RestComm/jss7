@@ -20,19 +20,41 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
 *
-Extensions {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE (1..bound.&numOfExtensions) OF ExtensionField
-numOfExtensions ::= 10
+callDiversionTreatmentIndicator [2] OCTET STRING (SIZE(1)) OPTIONAL,
+-- callDiversionAllowed 'xxxx xx01'B
+-- callDiversionNotAllowed 'xxxx xx10'B
+-- if absent from Connect or ContinueWithArgument,
+-- then CAMEL service does not affect call diversion treatment
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Extensions {
+public enum CallDiversionTreatmentIndicator {
+	callDiversionAllowed(1),
+	callDiversionNotAllowed(2);
 
-	public ExtensionField[] getExtensionFields();
+	private int code;
 
-	public void setExtensionFields(ExtensionField[] fieldsList);
+	private CallDiversionTreatmentIndicator(int code) {
+		this.code = code;
+	}
+
+	public static CallDiversionTreatmentIndicator getInstance(int code) {
+		switch (code & 0x03) {
+		case 1:
+			return CallDiversionTreatmentIndicator.callDiversionAllowed;
+		case 2:
+			return CallDiversionTreatmentIndicator.callDiversionNotAllowed;
+		default:
+			return null;
+		}
+	}
+
+	public int getCode() {
+		return this.code;
+	}
 }

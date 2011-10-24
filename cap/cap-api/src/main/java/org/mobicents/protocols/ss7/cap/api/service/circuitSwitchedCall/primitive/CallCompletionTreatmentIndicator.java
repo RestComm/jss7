@@ -20,19 +20,43 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
 *
-Extensions {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE (1..bound.&numOfExtensions) OF ExtensionField
-numOfExtensions ::= 10
+callCompletionTreatmentIndicator [2] OCTET STRING (SIZE(1)) OPTIONAL,
+-- acceptCallCompletionServiceRequest 'xxxx xx01'B,
+-- rejectCallCompletionServiceRequest 'xxxx xx10'B
+-- if absent from Connect or ContinueWithArgument,
+-- then CAMEL service does not affect call completion treatment
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Extensions {
+public enum CallCompletionTreatmentIndicator {
+	
+	acceptCallCompletionServiceRequest(1),
+	rejectCallCompletionServiceRequest(2);
 
-	public ExtensionField[] getExtensionFields();
+	private int code;
 
-	public void setExtensionFields(ExtensionField[] fieldsList);
+	private CallCompletionTreatmentIndicator(int code) {
+		this.code = code;
+	}
+
+	public static CallCompletionTreatmentIndicator getInstance(int code) {
+		switch (code & 0x03) {
+		case 1:
+			return CallCompletionTreatmentIndicator.acceptCallCompletionServiceRequest;
+		case 2:
+			return CallCompletionTreatmentIndicator.rejectCallCompletionServiceRequest;
+		default:
+			return null;
+		}
+	}
+
+	public int getCode() {
+		return this.code;
+	}
+
 }

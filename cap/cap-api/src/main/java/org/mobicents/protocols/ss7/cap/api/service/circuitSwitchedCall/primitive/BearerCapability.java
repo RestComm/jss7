@@ -20,19 +20,31 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
+
+import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformationPrime;
 
 /**
 *
-Extensions {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE (1..bound.&numOfExtensions) OF ExtensionField
-numOfExtensions ::= 10
+BearerCapability {PARAMETERS-BOUND : bound} ::= CHOICE {
+bearerCap [0] OCTET STRING (SIZE(2..bound.&maxBearerCapabilityLength))
+}
+-- Indicates the type of bearer capability connection to the user. For bearerCap, the ISUP User
+-- Service Information, ETSI EN 300 356-1 [23]
+-- encoding shall be used.
+
+MAXIMUM-FOR-BEARER-CAPABILITY ::= 11
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Extensions {
+public interface BearerCapability {
 
-	public ExtensionField[] getExtensionFields();
+	public byte[] getBearerCap();
 
-	public void setExtensionFields(ExtensionField[] fieldsList);
+	public UserServiceInformationPrime getUserServiceInformationPrime();
+
+	public UserServiceInformation getUserServiceInformation();
+
 }

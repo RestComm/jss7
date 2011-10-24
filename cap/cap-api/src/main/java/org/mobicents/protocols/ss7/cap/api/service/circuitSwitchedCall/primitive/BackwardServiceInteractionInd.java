@@ -20,19 +20,31 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
 *
-Extensions {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE (1..bound.&numOfExtensions) OF ExtensionField
-numOfExtensions ::= 10
+BackwardServiceInteractionInd ::= SEQUENCE {
+conferenceTreatmentIndicator [1] OCTET STRING (SIZE(1)) OPTIONAL,
+-- acceptConferenceRequest 'xxxx xx01'B
+-- rejectConferenceRequest 'xxxx xx10'B
+-- if absent from Connect or ContinueWithArgument,
+-- then CAMEL service does not affect conference treatement
+callCompletionTreatmentIndicator [2] OCTET STRING (SIZE(1)) OPTIONAL,
+-- acceptCallCompletionServiceRequest 'xxxx xx01'B,
+-- rejectCallCompletionServiceRequest 'xxxx xx10'B
+-- if absent from Connect or ContinueWithArgument,
+-- then CAMEL service does not affect call completion treatment
+...
+}
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Extensions {
+public interface BackwardServiceInteractionInd {
 
-	public ExtensionField[] getExtensionFields();
+	public ConferenceTreatmentIndicator getConferenceTreatmentIndicator();
 
-	public void setExtensionFields(ExtensionField[] fieldsList);
+	public CallCompletionTreatmentIndicator getCallCompletionTreatmentIndicator();
+
 }

@@ -49,6 +49,25 @@ public enum CAPGeneralAbortReason {
 		this.code = code;
 	}
 	
+	public static CAPGeneralAbortReason getInstance(int code) {
+		switch (code) {
+		case 0:
+			return CAPGeneralAbortReason.BadReceivedData;
+		case 1:
+			return CAPGeneralAbortReason.TcapDialogDestroyedData;
+		case 2:
+			return CAPGeneralAbortReason.ACNNotSupported;
+		case 3:
+			return CAPGeneralAbortReason.DialogRefused;
+		case 4:
+			return CAPGeneralAbortReason.NoCommonDialogPortionReceived;
+		case 5:
+			return CAPGeneralAbortReason.UserSpecific;
+		default:
+			return null;
+		}
+	}
+	
 	public int getCode() {
 		return code;
 	}
