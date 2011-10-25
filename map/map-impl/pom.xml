@@ -64,20 +64,14 @@
 			<version>${pom.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
-			<artifactId>m3ua-impl</artifactId>
-			<scope>test</scope>
-		</dependency>
 
-		<dependency>
-			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
-			<artifactId>m3ua-api</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 			<artifactId>mtp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.congestion</groupId>
+			<artifactId>congestion</artifactId>
 		</dependency>
 	</dependencies>
 
