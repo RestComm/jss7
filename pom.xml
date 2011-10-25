@@ -225,6 +225,11 @@
 				<artifactId>javolution</artifactId>
 				<version>${javolution.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.mobicents.protocols.ss7.congestion</groupId>
+				<artifactId>congestion</artifactId>
+				<version>${pom.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
