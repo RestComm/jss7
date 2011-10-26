@@ -87,7 +87,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 	}
 	
 	
-	public void start() {
+	public void start() throws Exception {
 
 		if (this.isStarted)
 			return;
@@ -103,7 +103,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 		this.isStarted = true;
 	}
 
-	public void stop() {
+	public void stop() throws Exception {
 
 		if (!this.isStarted)
 			return;
