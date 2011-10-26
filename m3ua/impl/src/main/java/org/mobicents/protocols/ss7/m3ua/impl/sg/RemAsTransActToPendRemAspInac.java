@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.m3ua.impl.sg;
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.AsState;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.AspState;
@@ -46,32 +47,38 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
  * </p>
  * 
  * 
- *   <ul>
- *
- *     <li>
- *     	<p> If the {@link TrafficModeType} for this {@link RemAsImpl} is Loadshare and 
- *     	there are {@link RemAsImpl} that are still {@link AspState.ACTIVE}, {@link RemAsImpl}
- *      remains {@link AsState.ACTIVE}. If number of {@link RemAsImpl} in {@link AspState.ACTIVE}
- *      is greater than minimum Asp required for load balancing, it just returns false and 
- *      transition doesn't happen. However if number of {@link RemAsImpl} in {@link AspState.ACTIVE}
- *      is less than minimum Asp required for load balancing, it sends {@link Status.INFO_Insufficient_ASP_Resources_Active}
- *      {@link Notify} to remote ASP who are {@link AspState.INACTIVE} and transition doesn't happen.
- *    	</p>
- *    
- *    	<p>
- *    		If there are no {@link RemAsImpl} in {@link AspState.ACTIVE}, it transitions to {@link AsState.PENDIING} and
- *    		sends {@link Status.INFO_AS_PENDING} {@link Notify} to remote ASP who are {@link AspState.INACTIVE}.
- *    	</p>
- *     </li>
- *
- *     <li>
- *     	<p> If the {@link TrafficModeType} for this {@link RemAsImpl} is Override 
- *     		it transitions to {@link AsState.PENDIING} and sends {@link Status.INFO_AS_PENDING} {@link Notify} 
- *     		to remote ASP who are {@link AspState.INACTIVE}.
- *    	</p>
- *     </li>
- *
- *   </ul>
+ * <ul>
+ * 
+ * <li>
+ * <p>
+ * If the {@link TrafficModeType} for this {@link RemAsImpl} is Loadshare and
+ * there are {@link RemAsImpl} that are still {@link AspState.ACTIVE},
+ * {@link RemAsImpl} remains {@link AsState.ACTIVE}. If number of
+ * {@link RemAsImpl} in {@link AspState.ACTIVE} is greater than minimum Asp
+ * required for load balancing, it just returns false and transition doesn't
+ * happen. However if number of {@link RemAsImpl} in {@link AspState.ACTIVE} is
+ * less than minimum Asp required for load balancing, it sends
+ * {@link Status.INFO_Insufficient_ASP_Resources_Active} {@link Notify} to
+ * remote ASP who are {@link AspState.INACTIVE} and transition doesn't happen.
+ * </p>
+ * 
+ * <p>
+ * If there are no {@link RemAsImpl} in {@link AspState.ACTIVE}, it transitions
+ * to {@link AsState.PENDIING} and sends {@link Status.INFO_AS_PENDING}
+ * {@link Notify} to remote ASP who are {@link AspState.INACTIVE}.
+ * </p>
+ * </li>
+ * 
+ * <li>
+ * <p>
+ * If the {@link TrafficModeType} for this {@link RemAsImpl} is Override it
+ * transitions to {@link AsState.PENDIING} and sends
+ * {@link Status.INFO_AS_PENDING} {@link Notify} to remote ASP who are
+ * {@link AspState.INACTIVE}.
+ * </p>
+ * </li>
+ * 
+ * </ul>
  * 
  * @author amit bhayani
  * 
@@ -80,19 +87,19 @@ public class RemAsTransActToPendRemAspInac implements TransitionHandler {
 
 	private static final Logger logger = Logger.getLogger(RemAsTransActToPendRemAspInac.class);
 
-	private RemAsImpl as = null;
+	private As as = null;
 	private FSM fsm;
 
 	private int lbCount = 0;
 
-	public RemAsTransActToPendRemAspInac(RemAsImpl as, FSM fsm) {
+	public RemAsTransActToPendRemAspInac(As as, FSM fsm) {
 		this.as = as;
 		this.fsm = fsm;
 	}
 
 	public boolean process(State state) {
 		try {
-			RemAspImpl remAsp = (RemAspImpl) this.fsm.getAttribute(RemAsImpl.ATTRIBUTE_ASP);
+			Asp remAsp = (Asp) this.fsm.getAttribute(As.ATTRIBUTE_ASP);
 
 			if (this.as.getTrafficModeType().getMode() == TrafficModeType.Broadcast) {
 				// We don't support this
@@ -105,7 +112,7 @@ public class RemAsTransActToPendRemAspInac implements TransitionHandler {
 
 				for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
 						.getNext()) != end;) {
-					RemAspImpl remAspImpl = (RemAspImpl) n.getValue();
+					Asp remAspImpl = n.getValue();
 					if (remAspImpl.getState() == AspState.ACTIVE) {
 						this.lbCount++;
 					}
@@ -125,7 +132,7 @@ public class RemAsTransActToPendRemAspInac implements TransitionHandler {
 
 					for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
 							.getNext()) != end;) {
-						remAsp = (RemAspImpl) n.getValue();
+						remAsp = n.getValue();
 						if (remAsp.getState() == AspState.INACTIVE) {
 							Notify notify = this.createNotify(remAsp, Status.STATUS_Other,
 									Status.INFO_Insufficient_ASP_Resources_Active);
@@ -142,7 +149,7 @@ public class RemAsTransActToPendRemAspInac implements TransitionHandler {
 
 			for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
 					.getNext()) != end;) {
-				remAsp = (RemAspImpl) n.getValue();
+				remAsp = n.getValue();
 				if (remAsp.getState() == AspState.INACTIVE) {
 					Notify notify = this.createNotify(remAsp, Status.STATUS_AS_State_Change, Status.INFO_AS_PENDING);
 					remAsp.getAspFactory().write(notify);
@@ -154,11 +161,10 @@ public class RemAsTransActToPendRemAspInac implements TransitionHandler {
 		return true;
 	}
 
-	private Notify createNotify(RemAspImpl remAsp, int type, int info) {
-		Notify msg = (Notify) this.as.getM3UAProvider().getMessageFactory()
-				.createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
+	private Notify createNotify(Asp remAsp, int type, int info) {
+		Notify msg = (Notify) this.as.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
 
-		Status status = this.as.getM3UAProvider().getParameterFactory().createStatus(type, info);
+		Status status = this.as.getParameterFactory().createStatus(type, info);
 		msg.setStatus(status);
 
 		if (remAsp.getASPIdentifier() != null) {

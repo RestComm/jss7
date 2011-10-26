@@ -23,6 +23,8 @@
 package org.mobicents.protocols.ss7.m3ua.impl.sg;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.impl.As;
+import org.mobicents.protocols.ss7.m3ua.impl.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
@@ -33,52 +35,51 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 
 public class RemAsTransActToActRemAspUp implements TransitionHandler {
 
-    private static final Logger logger = Logger.getLogger(RemAsTransActToActRemAspUp.class);
+	private static final Logger logger = Logger.getLogger(RemAsTransActToActRemAspUp.class);
 
-    private RemAsImpl as = null;
-    private FSM fsm;
+	private As as = null;
+	private FSM fsm;
 
-    public RemAsTransActToActRemAspUp(RemAsImpl as, FSM fsm) {
-        this.as = as;
-        this.fsm = fsm;
-    }
+	public RemAsTransActToActRemAspUp(As as, FSM fsm) {
+		this.as = as;
+		this.fsm = fsm;
+	}
 
-    public boolean process(State state) {
-        try {
+	public boolean process(State state) {
+		try {
 
-            RemAspImpl remAsp = (RemAspImpl) this.fsm.getAttribute(RemAsImpl.ATTRIBUTE_ASP);
+			Asp remAsp = (Asp) this.fsm.getAttribute(As.ATTRIBUTE_ASP);
 
-            if (remAsp == null) {
-                logger.error(String.format("No ASP found. %s", this.fsm.toString()));
-                return false;
-            }
+			if (remAsp == null) {
+				logger.error(String.format("No ASP found. %s", this.fsm.toString()));
+				return false;
+			}
 
-            // Send AS is ACTIVE notify
-            Notify msg = createNotify(remAsp);
-            remAsp.getAspFactory().write(msg);
-            return true;
-        } catch (Exception e) {
-            logger.error(String.format("Error while translating Rem AS to INACTIVE message. %s", this.fsm.toString()),
-                    e);
-        }
-        return false;
-    }
+			// Send AS is ACTIVE notify
+			Notify msg = createNotify(remAsp);
+			remAsp.getAspFactory().write(msg);
+			return true;
+		} catch (Exception e) {
+			logger.error(String.format("Error while translating Rem AS to INACTIVE message. %s", this.fsm.toString()),
+					e);
+		}
+		return false;
+	}
 
-    private Notify createNotify(RemAspImpl remAsp) {
-        Notify msg = (Notify) this.as.getM3UAProvider().getMessageFactory().createMessage(MessageClass.MANAGEMENT,
-                MessageType.NOTIFY);
+	private Notify createNotify(Asp remAsp) {
+		Notify msg = (Notify) this.as.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
 
-        Status status = this.as.getM3UAProvider().getParameterFactory().createStatus(Status.STATUS_AS_State_Change,
-                Status.INFO_AS_ACTIVE);
-        msg.setStatus(status);
+		Status status = this.as.getParameterFactory()
+				.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE);
+		msg.setStatus(status);
 
-        if (remAsp.getASPIdentifier() != null) {
-            msg.setASPIdentifier(remAsp.getASPIdentifier());
-        }
+		if (remAsp.getASPIdentifier() != null) {
+			msg.setASPIdentifier(remAsp.getASPIdentifier());
+		}
 
-        msg.setRoutingContext(this.as.getRoutingContext());
+		msg.setRoutingContext(this.as.getRoutingContext());
 
-        return msg;
-    }
+		return msg;
+	}
 
 }

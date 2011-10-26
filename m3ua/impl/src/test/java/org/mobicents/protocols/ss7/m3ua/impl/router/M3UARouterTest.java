@@ -82,7 +82,7 @@ public class M3UARouterTest {
 
         RoutingKeyImpl rk1 = (RoutingKeyImpl) factory.createRoutingKey(null, rc, null, null, dpc, servInds, opcList);
 
-        this.m3uaRouter.addRk(rk1, new AsImpl("AsImpl1", rc, rk1, null, m3uaProvider));
+        this.m3uaRouter.addRk(rk1, new As("AsImpl1", rc, rk1, null));
 
         // RK DPC=123 OPC=4 SI=2
         rc = factory.createRoutingContext(new long[] { 2 });
@@ -92,7 +92,7 @@ public class M3UARouterTest {
 
         RoutingKeyImpl rk2 = (RoutingKeyImpl) factory.createRoutingKey(null, rc, null, null, dpc, servInds, opcList);
 
-        this.m3uaRouter.addRk(rk2, new AsImpl("AsImpl2", rc, rk2, null, m3uaProvider));
+        this.m3uaRouter.addRk(rk2, new As("AsImpl2", rc, rk2, null));
 
         // RK DPC=123
         rc = factory.createRoutingContext(new long[] { 3 });
@@ -100,7 +100,7 @@ public class M3UARouterTest {
 
         RoutingKeyImpl rk3 = (RoutingKeyImpl) factory.createRoutingKey(null, rc, null, null, dpc, null, null);
 
-        this.m3uaRouter.addRk(rk3, new AsImpl("AsImpl3", rc, rk3, null, m3uaProvider));
+        this.m3uaRouter.addRk(rk3, new As("AsImpl3", rc, rk3, null));
 
         // Retrieve As for message where dpc=123 opc=1, si=2
         As resultAs = this.m3uaRouter.getAs(123, 1, (short) 2);
@@ -119,19 +119,4 @@ public class M3UARouterTest {
 
     }
 
-    private class AsImpl extends As {
-
-        public AsImpl(String name, RoutingContext rc, RoutingKey rk, TrafficModeType trMode, M3UAProvider provider) {
-            super(name, rc, rk, trMode, provider);
-        }
-
-		/* (non-Javadoc)
-		 * @see org.mobicents.protocols.ss7.m3ua.impl.As#init()
-		 */
-		@Override
-		public void init() {
-			// TODO Auto-generated method stub
-			
-		}
-    }
 }

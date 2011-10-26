@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.m3ua.impl.as;
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.AspState;
 import org.mobicents.protocols.ss7.m3ua.impl.TransitionState;
@@ -42,10 +43,10 @@ public class AsTransActToActNtfyInsAsp implements TransitionHandler {
 
     private static final Logger logger = Logger.getLogger(AsTransActToActNtfyInsAsp.class);
 
-    private AsImpl as = null;
+    private As as = null;
     private FSM fsm;
 
-    public AsTransActToActNtfyInsAsp(AsImpl as, FSM fsm) {
+    public AsTransActToActNtfyInsAsp(As as, FSM fsm) {
         this.as = as;
         this.fsm = fsm;
     }

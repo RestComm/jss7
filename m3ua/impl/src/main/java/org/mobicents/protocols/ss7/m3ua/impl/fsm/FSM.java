@@ -89,7 +89,7 @@ public class FSM extends M3UATask {
     public void removeAttribute(String name) {
         attributes.remove(name);
     }
-
+    
     public Transition createTransition(String name, String from, String to) {
         if (name.equals("timeout")) {
             throw new IllegalArgumentException("timeout is illegal name for transition");

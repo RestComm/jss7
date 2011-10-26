@@ -23,21 +23,35 @@
 package org.mobicents.protocols.ss7.m3ua.impl.sg;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.sctp.Association;
+import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
+import org.mobicents.protocols.ss7.m3ua.impl.AsState;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.as.LocalAspFactory;
+import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAOAMMessages;
+import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.router.ServerM3UARouter;
+import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
+import org.mobicents.protocols.ss7.m3ua.message.MessageFactory;
+import org.mobicents.protocols.ss7.m3ua.message.MessageType;
+import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.ss7.m3ua.parameter.DestinationPointCode;
 import org.mobicents.protocols.ss7.m3ua.parameter.OPCList;
+import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
 import org.mobicents.protocols.ss7.m3ua.parameter.ServiceIndicators;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 
 /**
  * @author amit bhayani
@@ -48,6 +62,9 @@ public class ServerM3UAManagement extends M3UAManagement {
 	private static final Logger logger = Logger.getLogger(ServerM3UAManagement.class);
 
 	protected ServerM3UARouter m3uaRouter = new ServerM3UARouter();
+
+	protected MessageFactory messageFactory = new MessageFactoryImpl();
+	protected ParameterFactory parameterFactory = new ParameterFactoryImpl();
 
 	/**
 	 * 
@@ -83,8 +100,7 @@ public class ServerM3UAManagement extends M3UAManagement {
 			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
 		}
 
-		RoutingContext rcObj = m3uaProvider.getParameterFactory().createRoutingContext(
-				new long[] { Long.parseLong(rc) });
+		RoutingContext rcObj = this.parameterFactory.createRoutingContext(new long[] { Long.parseLong(rc) });
 
 		// Routing Key
 		if (args[5] == null || args[5].compareTo("rk") != 0) {
@@ -96,7 +112,7 @@ public class ServerM3UAManagement extends M3UAManagement {
 		}
 
 		int dpc = Integer.parseInt(args[7]);
-		DestinationPointCode dspobj = m3uaProvider.getParameterFactory().createDestinationPointCode(dpc, (short) 0);
+		DestinationPointCode dspobj = this.parameterFactory.createDestinationPointCode(dpc, (short) 0);
 		OPCList opcListObj = null;
 		ServiceIndicators si = null;
 		TrafficModeType trMode = null;
@@ -124,7 +140,7 @@ public class ServerM3UAManagement extends M3UAManagement {
 					masks[count] = 0; // TODO mask should be sent in command
 				}
 
-				opcListObj = m3uaProvider.getParameterFactory().createOPCList(opcs, masks);
+				opcListObj = this.parameterFactory.createOPCList(opcs, masks);
 
 				if (args.length >= 13) {
 					if (args[10].compareTo("si") == 0) {
@@ -188,69 +204,67 @@ public class ServerM3UAManagement extends M3UAManagement {
 			}
 			// TODO : Check for duplication of RoutingKey
 		}
-		RoutingKey rk = m3uaProvider.getParameterFactory().createRoutingKey(null, rcObj, trMode, null,
+		RoutingKey rk = this.parameterFactory.createRoutingKey(null, rcObj, trMode, null,
 				new DestinationPointCode[] { dspobj }, si != null ? new ServiceIndicators[] { si } : null,
 				opcListObj != null ? new OPCList[] { opcListObj } : null);
-		RemAsImpl as = new RemAsImpl(name, rcObj, rk, trMode, this.m3uaProvider);
-
+		As as = new As(name, rcObj, rk, trMode, Functionality.SGW);
+		as.setM3UAManagement(this);
 		m3uaRouter.addRk(rk, as);
 
 		m3uaScheduler.execute(as.getFSM());
 		appServers.add(as);
-		
+
 		this.store();
-		
+
 		return as;
 
 	}
 
 	/**
-	 * Command to create ASPFactory is "m3ua rasp create ip <ip> port <port>
-	 * <asp-name>"
+	 * Command to create ASPFactory is
+	 * "m3ua rasp create <asp-name> <assoc-name>"
 	 * 
 	 * @param args
 	 * @return
 	 * @throws Exception
 	 */
 	public AspFactory createAspFactory(String[] args) throws Exception {
-		if (args.length != 8) {
+		if (args.length != 5) {
 			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
 		}
 
-		if (args[3] == null || args[3].compareTo("ip") != 0) {
+		if (args[3] == null || args[4] == null) {
 			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
 		}
 
-		if (args[4] == null) {
-			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
-		}
-		String ip = args[4];
-
-		if (args[5] == null || args[5].compareTo("port") != 0) {
-			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
-		}
-
-		int port = Integer.parseInt(args[6]);
-
-		if (args[7] == null) {
-			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
-		}
-
-		String name = args[7];
+		String name = args[3];
 
 		for (FastList.Node<AspFactory> n = aspfactories.head(), end = aspfactories.tail(); (n = n.getNext()) != end;) {
 			AspFactory fact = n.getValue();
 			if (fact.getName().compareTo(name) == 0) {
 				throw new Exception(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_NAME_EXIST, name));
 			}
-
-			if (fact.getIp().compareTo(ip) == 0 && fact.getPort() == port) {
-				throw new Exception(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_IPPORT_EXIST, ip, port));
-			}
 		}
-		AspFactory factory = new RemAspFactory(name, ip, port, this.m3uaProvider, this);
+
+		String associationName = args[4];
+		Association association = this.sctpManagement.getAssociation(associationName);
+
+		if (association == null) {
+			throw new Exception(String.format("No Association found for name=%s", associationName));
+		}
+
+		if (association.isStarted()) {
+			throw new Exception(String.format("Association=%s is started", associationName));
+		}
+
+		if (association.getAssociationListener() != null) {
+			throw new Exception(String.format("Association=%s is already associated", associationName));
+		}
+
+		AspFactory factory = new RemAspFactory(name);
 		aspfactories.add(factory);
-		
+		factory.setAssociation(association);
+
 		this.store();
 		return factory;
 	}
@@ -264,7 +278,33 @@ public class ServerM3UAManagement extends M3UAManagement {
 	 */
 	@Override
 	public void managementStartAsp(String aspName) throws Exception {
-		throw new UnsupportedOperationException("Start ASP not supported in SGW");
+		RemAspFactory remAspFactory = (RemAspFactory) this.getAspFactory(aspName);
+
+		if (remAspFactory == null) {
+			throw new Exception(String.format("No ASP found by name=%s", aspName));
+		}
+
+		// If the AspList for this AsFactory is zero means yet no ASP is created
+		if (remAspFactory.getAspList().size() == 0) {
+			throw new Exception(String.format("ASP name=%s not assigned to any AS", aspName));
+		}
+
+		if (remAspFactory.getStatus()) {
+			throw new Exception(String.format("ASP name=%s already started", aspName));
+		}
+
+		remAspFactory.start();
+		this.store();
+	}
+
+	private AspFactory getAspFactory(String aspName) {
+		for (FastList.Node<AspFactory> n = aspfactories.head(), end = aspfactories.tail(); (n = n.getNext()) != end;) {
+			AspFactory aspFactory = n.getValue();
+			if (aspFactory.getName().compareTo(aspName) == 0) {
+				return aspFactory;
+			}
+		}
+		return null;
 	}
 
 	/*
@@ -276,8 +316,17 @@ public class ServerM3UAManagement extends M3UAManagement {
 	 */
 	@Override
 	public void managementStopAsp(String aspName) throws Exception {
-		throw new UnsupportedOperationException("Stop ASP not supported in SGW");
-	}
+		AspFactory aspFact = this.getAspFactory(aspName);
+
+		if (aspFact == null) {
+			throw new Exception(String.format("No ASP found by name %s", aspName));
+		}
+
+		aspFact.stop();
+
+		this.store();
+
+		logger.info(String.format("Stopped ASP name=%s ", aspFact.getName()));	}
 
 	private ServiceIndicators createSi(String args[], int index) throws Exception {
 		ServiceIndicators si = null;
@@ -294,7 +343,7 @@ public class ServerM3UAManagement extends M3UAManagement {
 			sis[count] = Short.parseShort(sitArr[count]);
 		}
 
-		si = m3uaProvider.getParameterFactory().createServiceIndicators(sis);
+		si = this.parameterFactory.createServiceIndicators(sis);
 		return si;
 
 	}
@@ -305,11 +354,11 @@ public class ServerM3UAManagement extends M3UAManagement {
 		}
 
 		if (args[index].compareTo("broadcast") == 0) {
-			return this.m3uaProvider.getParameterFactory().createTrafficModeType(TrafficModeType.Broadcast);
+			return this.parameterFactory.createTrafficModeType(TrafficModeType.Broadcast);
 		} else if (args[index].compareTo("override") == 0) {
-			return this.m3uaProvider.getParameterFactory().createTrafficModeType(TrafficModeType.Override);
+			return this.parameterFactory.createTrafficModeType(TrafficModeType.Override);
 		} else if (args[index].compareTo("loadshare") == 0) {
-			return this.m3uaProvider.getParameterFactory().createTrafficModeType(TrafficModeType.Loadshare);
+			return this.parameterFactory.createTrafficModeType(TrafficModeType.Loadshare);
 		}
 		throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
 	}
@@ -327,11 +376,23 @@ public class ServerM3UAManagement extends M3UAManagement {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement#startAsp(org.mobicents.protocols.ss7.m3ua.impl.AspFactory)
-	 */
 	@Override
-	public void startAsp(AspFactory aspFactory) {
-		//We do nothing here
+	public void sendMessage(Mtp3TransferPrimitive mtp3) throws IOException {
+		ProtocolData data = this.parameterFactory.createProtocolData(mtp3);
+		PayloadData payload = (PayloadData) messageFactory.createMessage(MessageClass.TRANSFER_MESSAGES,
+				MessageType.PAYLOAD);
+		payload.setData(data);
+
+		As as = this.m3uaRouter.getAs(data.getDpc(), data.getOpc(), (short) data.getSI());
+		if (as != null && (as.getState() == AsState.ACTIVE || as.getState() == AsState.PENDING)) {
+			payload.setRoutingContext(as.getRoutingContext());
+			as.write(payload);
+		} else {
+			logger.error(String.format("No AS found for this message. Dropping message %s", payload));
+		}
+
+		payload.setRoutingContext(as.getRoutingContext());
+		as.write(payload);
+
 	}
 }

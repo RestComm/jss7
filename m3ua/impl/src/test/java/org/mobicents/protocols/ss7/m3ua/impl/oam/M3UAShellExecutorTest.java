@@ -32,9 +32,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAManagement;
-import org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAProcess;
 import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAManagement;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAProcess;
 
 /**
  * 
@@ -73,7 +71,7 @@ public class M3UAShellExecutorTest {
 	}
 
 	@After
-	public void tearDown() throws IOException {
+	public void tearDown() throws Exception {
 		// Clean up
 		ClientM3UAManagement clientM3UAMgmt = new ClientM3UAManagement();
 		clientM3UAMgmt.start();
@@ -90,7 +88,7 @@ public class M3UAShellExecutorTest {
 	}
 
 	@Test
-	public void testServerCommands() throws IOException {
+	public void testServerCommands() throws Exception {
 		ServerM3UAManagement serverM3UAMgmt = new ServerM3UAManagement();
 		serverM3UAMgmt.start();
 		m3uaExec.setM3uaManagement(serverM3UAMgmt);
@@ -136,7 +134,7 @@ public class M3UAShellExecutorTest {
 	}
 
 	@Test
-	public void testClientCommands() throws IOException {
+	public void testClientCommands() throws Exception {
 		ClientM3UAManagement clientM3UAMgmt = new ClientM3UAManagement();
 		clientM3UAMgmt.start();
 		m3uaExec.setM3uaManagement(clientM3UAMgmt);

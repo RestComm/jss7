@@ -38,7 +38,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
  * @author amit bhayani
  *
  */
-public class SctpProvider implements M3UAProvider {
+public class SctpProvider implements M3UAProvider { 
 	
 	private static final SctpProvider provider = new SctpProvider();  
 	

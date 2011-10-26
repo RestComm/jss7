@@ -31,24 +31,42 @@ import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
+import org.mobicents.protocols.ss7.m3ua.Functionality;
+import org.mobicents.protocols.ss7.m3ua.impl.as.AsNoTrans;
+import org.mobicents.protocols.ss7.m3ua.impl.as.AsStateEnterPen;
+import org.mobicents.protocols.ss7.m3ua.impl.as.AsStatePenTimeout;
+import org.mobicents.protocols.ss7.m3ua.impl.as.AsTransActToActNtfyAltAspAct;
+import org.mobicents.protocols.ss7.m3ua.impl.as.AsTransActToActNtfyInsAsp;
+import org.mobicents.protocols.ss7.m3ua.impl.as.AsTransActToPen;
+import org.mobicents.protocols.ss7.m3ua.impl.as.AsTransInActToDwn;
+import org.mobicents.protocols.ss7.m3ua.impl.as.AsTransPendToAct;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
-import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
-import org.mobicents.protocols.ss7.m3ua.message.MessageType;
+import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsNoTrans;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsStatePenTimeout;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransActToActRemAspAct;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransActToPendRemAspDwn;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransActToPendRemAspInac;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransDwnToInact;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransInactToAct;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransInactToDwn;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransInactToInact;
+import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransPendToAct;
+import org.mobicents.protocols.ss7.m3ua.message.MessageFactory;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
-import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
+import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
-import org.mobicents.protocols.ss7.mtp.Mtp3Primitive;
 
 /**
  * 
  * @author amit bhayani
  * 
  */
-public abstract class As implements XMLSerializable {
+public class As implements XMLSerializable {
 
 	private static final Logger logger = Logger.getLogger(As.class);
 
@@ -71,34 +89,170 @@ public abstract class As implements XMLSerializable {
 	protected RoutingContext rc;
 	private RoutingKey rk;
 	protected TrafficModeType trMode;
-	protected M3UAProvider m3UAProvider = null;
 
 	protected TrafficModeType defaultTrafModType;
 
 	protected ConcurrentLinkedQueue<PayloadData> penQueue = new ConcurrentLinkedQueue<PayloadData>();
 
-	// Queue for incoming Payload messages. Message received from peer
-	protected ConcurrentLinkedQueue<byte[]> rxQueue = new ConcurrentLinkedQueue<byte[]>();
-
 	protected FSM fsm;
+
+	protected ParameterFactory parameterFactory = new ParameterFactoryImpl();
+
+	protected MessageFactory messageFactory = new MessageFactoryImpl();
+
+	protected M3UAManagement m3UAManagement = null;
+
+	private Functionality functionality = null;
 
 	public As() {
 
 	}
 
-	public As(String name, RoutingContext rc, RoutingKey rk, TrafficModeType trMode, M3UAProvider provider) {
+	public As(String name, RoutingContext rc, RoutingKey rk, TrafficModeType trMode, Functionality functionality) {
 		this.name = name;
 		this.rc = rc;
 		this.rk = rk;
 		this.trMode = trMode;
-		this.m3UAProvider = provider;
-
-		this.defaultTrafModType = this.m3UAProvider.getParameterFactory().createTrafficModeType(
-				TrafficModeType.Loadshare);
+		this.functionality = functionality;
+		this.defaultTrafModType = this.parameterFactory.createTrafficModeType(TrafficModeType.Loadshare);
 		init();
 	}
 
-	public abstract void init();
+	public void init() {
+		this.fsm = new FSM(this.name);
+
+		if (this.functionality == Functionality.IPSP) {
+			// Define states
+			fsm.createState(AsState.DOWN.toString());
+			fsm.createState(AsState.ACTIVE.toString());
+			fsm.createState(AsState.INACTIVE.toString());
+			fsm.createState(AsState.PENDING.toString()).setOnTimeOut(new AsStatePenTimeout(this, this.fsm), 2000)
+					.setOnEnter(new AsStateEnterPen(this, this.fsm));
+
+			fsm.setStart(AsState.DOWN.toString());
+			fsm.setEnd(AsState.DOWN.toString());
+			// Define Transitions
+
+			// ******************************************************************/
+			// STATE DOWN /
+			// ******************************************************************/
+			fsm.createTransition(TransitionState.AS_STATE_CHANGE_INACTIVE, AsState.DOWN.toString(),
+					AsState.INACTIVE.toString());
+			fsm.createTransition(TransitionState.ASP_DOWN, AsState.DOWN.toString(), AsState.DOWN.toString());
+
+			// ******************************************************************/
+			// STATE INACTIVE /
+			// ******************************************************************/
+			fsm.createTransition(TransitionState.AS_STATE_CHANGE_INACTIVE, AsState.INACTIVE.toString(),
+					AsState.INACTIVE.toString());
+
+			fsm.createTransition(TransitionState.AS_STATE_CHANGE_ACTIVE, AsState.INACTIVE.toString(),
+					AsState.ACTIVE.toString());
+
+			fsm.createTransition(TransitionState.ASP_DOWN, AsState.INACTIVE.toString(), AsState.DOWN.toString())
+					.setHandler(new AsTransInActToDwn(this, this.fsm));
+
+			// ******************************************************************/
+			// STATE ACTIVE /
+			// ******************************************************************/
+			fsm.createTransition(TransitionState.AS_STATE_CHANGE_ACTIVE, AsState.ACTIVE.toString(),
+					AsState.ACTIVE.toString());
+
+			fsm.createTransition(TransitionState.OTHER_ALTERNATE_ASP_ACTIVE, AsState.ACTIVE.toString(),
+					AsState.ACTIVE.toString()).setHandler(new AsTransActToActNtfyAltAspAct(this, this.fsm));
+
+			fsm.createTransition(TransitionState.OTHER_INSUFFICIENT_ASP, AsState.ACTIVE.toString(),
+					AsState.ACTIVE.toString()).setHandler(new AsTransActToActNtfyInsAsp(this, this.fsm));
+
+			fsm.createTransition(TransitionState.AS_STATE_CHANGE_PENDING, AsState.ACTIVE.toString(),
+					AsState.PENDING.toString());
+
+			fsm.createTransition(TransitionState.ASP_DOWN, AsState.ACTIVE.toString(), AsState.PENDING.toString())
+					.setHandler(new AsTransActToPen(this, this.fsm));
+
+			// ******************************************************************/
+			// STATE PENDING /
+			// ******************************************************************/
+			// As transitions to DOWN from PENDING when Pending Timer timesout
+			fsm.createTransition(TransitionState.AS_DOWN, AsState.PENDING.toString(), AsState.DOWN.toString());
+
+			// As transitions to INACTIVE from PENDING when Pending Timer
+			// timesout
+			fsm.createTransition(TransitionState.AS_INACTIVE, AsState.PENDING.toString(), AsState.INACTIVE.toString());
+
+			// If in PENDING and one of the ASP is ACTIVE again
+			fsm.createTransition(TransitionState.AS_STATE_CHANGE_ACTIVE, AsState.PENDING.toString(),
+					AsState.ACTIVE.toString()).setHandler(new AsTransPendToAct(this, this.fsm));
+
+			// If As is PENDING and far end sends INACTIVE we still remain
+			// PENDING as that message from pending queue can be sent once As
+			// becomes ACTIVE before T(r) expires
+			fsm.createTransition(TransitionState.AS_STATE_CHANGE_INACTIVE, AsState.PENDING.toString(),
+					AsState.INACTIVE.toString()).setHandler(new AsNoTrans());
+
+			fsm.createTransition(TransitionState.ASP_DOWN, AsState.PENDING.toString(), AsState.PENDING.toString())
+					.setHandler(new AsNoTrans());
+		} else {
+			// Define states
+			fsm.createState(AsState.DOWN.toString());
+			fsm.createState(AsState.ACTIVE.toString());
+			fsm.createState(AsState.INACTIVE.toString());
+			fsm.createState(AsState.PENDING.toString()).setOnTimeOut(new RemAsStatePenTimeout(this, this.fsm), 2000);
+
+			fsm.setStart(AsState.DOWN.toString());
+			fsm.setEnd(AsState.DOWN.toString());
+			// Define Transitions
+
+			// ******************************************************************/
+			// STATE DOWN /
+			// ******************************************************************/
+			fsm.createTransition(TransitionState.ASP_UP, AsState.DOWN.toString(), AsState.INACTIVE.toString())
+					.setHandler(new RemAsTransDwnToInact(this, this.fsm));
+
+			// ******************************************************************/
+			// STATE INACTIVE /
+			// ******************************************************************/
+			// TODO : Add Pluggable policy for AS?
+			fsm.createTransition(TransitionState.ASP_ACTIVE, AsState.INACTIVE.toString(), AsState.ACTIVE.toString())
+					.setHandler(new RemAsTransInactToAct(this, this.fsm));
+
+			fsm.createTransition(TransitionState.ASP_DOWN, AsState.INACTIVE.toString(), AsState.DOWN.toString())
+					.setHandler(new RemAsTransInactToDwn(this, this.fsm));
+
+			fsm.createTransition(TransitionState.ASP_UP, AsState.INACTIVE.toString(), AsState.INACTIVE.toString())
+					.setHandler(new RemAsTransInactToInact(this, this.fsm));
+
+			// ******************************************************************/
+			// STATE ACTIVE /
+			// ******************************************************************/
+			fsm.createTransition(TransitionState.ASP_INACTIVE, AsState.ACTIVE.toString(), AsState.PENDING.toString())
+					.setHandler(new RemAsTransActToPendRemAspInac(this, this.fsm));
+
+			fsm.createTransition(TransitionState.ASP_DOWN, AsState.ACTIVE.toString(), AsState.PENDING.toString())
+					.setHandler(new RemAsTransActToPendRemAspDwn(this, this.fsm));
+
+			fsm.createTransition(TransitionState.ASP_ACTIVE, AsState.ACTIVE.toString(), AsState.ACTIVE.toString())
+					.setHandler(new RemAsTransActToActRemAspAct(this, this.fsm));
+
+			fsm.createTransition(TransitionState.ASP_UP, AsState.ACTIVE.toString(), AsState.PENDING.toString())
+					.setHandler(new RemAsTransActToPendRemAspInac(this, this.fsm));
+
+			// ******************************************************************/
+			// STATE PENDING /
+			// ******************************************************************/
+			fsm.createTransition(TransitionState.ASP_DOWN, AsState.PENDING.toString(), AsState.DOWN.toString())
+					.setHandler(new RemAsNoTrans());
+
+			fsm.createTransition(TransitionState.ASP_UP, AsState.PENDING.toString(), AsState.INACTIVE.toString())
+					.setHandler(new RemAsNoTrans());
+
+			fsm.createTransition(TransitionState.ASP_ACTIVE, AsState.PENDING.toString(), AsState.ACTIVE.toString())
+					.setHandler(new RemAsTransPendToAct(this, this.fsm));
+
+			fsm.createTransition(TransitionState.AS_DOWN, AsState.PENDING.toString(), AsState.DOWN.toString());
+			fsm.createTransition(TransitionState.AS_INACTIVE, AsState.PENDING.toString(), AsState.INACTIVE.toString());
+		}
+	}
 
 	/**
 	 * Every As has unique name
@@ -107,6 +261,22 @@ public abstract class As implements XMLSerializable {
 	 */
 	public String getName() {
 		return this.name;
+	}
+
+	public void setM3UAManagement(M3UAManagement m3uaManagement) {
+		m3UAManagement = m3uaManagement;
+	}
+
+	public M3UAManagement getM3UAManagement() {
+		return m3UAManagement;
+	}
+
+	public MessageFactory getMessageFactory() {
+		return messageFactory;
+	}
+
+	public ParameterFactory getParameterFactory() {
+		return parameterFactory;
 	}
 
 	/**
@@ -173,23 +343,6 @@ public abstract class As implements XMLSerializable {
 	}
 
 	/**
-	 * Get {@link M3UAProvider}
-	 * 
-	 * @return
-	 */
-	public M3UAProvider getM3UAProvider() {
-		return m3UAProvider;
-	}
-
-	/**
-	 * 
-	 * @param m3uaProvider
-	 */
-	public void setM3UAProvider(M3UAProvider m3uaProvider) {
-		m3UAProvider = m3uaProvider;
-	}
-
-	/**
 	 * If the {@link TrafficModeType} is loadshare, set the minimum number of
 	 * {@link Asp} that should be
 	 * {@link org.mobicents.protocols.ss7.m3ua.impl.AspState#ACTIVE} before
@@ -242,6 +395,31 @@ public abstract class As implements XMLSerializable {
 		appServerProcs.add(asp);
 	}
 
+	public Asp removeAppServerProcess(String aspName) throws Exception {
+		Asp asp = null;
+		for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
+			Asp aspTemp = n.getValue();
+			if (aspTemp.getName().equals(aspName)) {
+				asp = aspTemp;
+				break;
+			}
+		}
+
+		if (asp == null) {
+			throw new Exception(String.format("No ASP found for name=%s", aspName));
+		}
+
+		if (asp.getState() != AspState.DOWN) {
+			throw new Exception(String.format("ASP=%s is still %s. Bring it DOWN before removing from this As",
+					aspName, asp.getState()));
+		}
+
+		this.appServerProcs.remove(asp);
+		asp.setAs(null);
+		asp.getFSM().cancel();
+		return asp;
+	}
+
 	/**
 	 * The {@link Asp} state has changed causing the state change for this As
 	 * too.
@@ -276,9 +454,9 @@ public abstract class As implements XMLSerializable {
 					break;
 				}
 			}
-			
-			if(!aspFound){
-				//This should never happen.
+
+			if (!aspFound) {
+				// This should never happen.
 				logger.error(String.format("Tx : no ACTIVE Asp for message=%s", message));
 			}
 
@@ -293,36 +471,6 @@ public abstract class As implements XMLSerializable {
 		default:
 			throw new IOException(String.format("As name=%s is not ACTIVE", this.name));
 		}
-	}
-
-	/**
-	 * 
-	 * @param msu
-	 * @throws IOException
-	 */
-	public void write(byte[] msu) throws IOException {
-		ProtocolData data = m3UAProvider.getParameterFactory().createProtocolData(0, msu);
-
-		PayloadData payload = (PayloadData) this.m3UAProvider.getMessageFactory().createMessage(
-				MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD);
-		payload.setRoutingContext(this.rc);
-		payload.setData(data);
-		this.write(payload);
-	}
-
-	public void received(PayloadData payload) {
-		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("Rx : PayloadData=%s for As=%s", payload.toString(), this.name));
-		}
-		this.rxQueue.add(payload.getData().getMsu());
-	}
-
-	public void received(Mtp3Primitive primitive) {
-		this.rxQueue.add(primitive.getValue());
-	}
-
-	public byte[] poll() {
-		return this.rxQueue.poll();
 	}
 
 	public void clearPendingQueue() {

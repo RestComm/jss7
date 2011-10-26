@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.m3ua.impl.sg;
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.AspState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
@@ -56,10 +57,10 @@ public class RemAsTransPendToAct implements TransitionHandler {
 
 	private static final Logger logger = Logger.getLogger(RemAsTransPendToAct.class);
 
-	private RemAsImpl as = null;
+	private As as = null;
 	private FSM fsm;
 
-	public RemAsTransPendToAct(RemAsImpl as, FSM fsm) {
+	public RemAsTransPendToAct(As as, FSM fsm) {
 		this.as = as;
 		this.fsm = fsm;
 	}
@@ -76,7 +77,7 @@ public class RemAsTransPendToAct implements TransitionHandler {
 			// are INACTIVE or ACTIVE
 			for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
 					.getNext()) != end;) {
-				RemAspImpl remAspImpl = (RemAspImpl) n.getValue();
+				Asp remAspImpl = n.getValue();
 
 				if (remAspImpl.getState() == AspState.INACTIVE || remAspImpl.getState() == AspState.ACTIVE) {
 					Notify msg = createNotify(remAspImpl);
@@ -85,7 +86,7 @@ public class RemAsTransPendToAct implements TransitionHandler {
 			}// end of for
 
 			// Send the PayloadData (if any) from pending queue to other side
-			Asp causeAsp = (Asp) this.fsm.getAttribute(RemAsImpl.ATTRIBUTE_ASP);
+			Asp causeAsp = (Asp) this.fsm.getAttribute(As.ATTRIBUTE_ASP);
 			this.as.sendPendingPayloadData(causeAsp);
 
 			return true;
@@ -96,11 +97,10 @@ public class RemAsTransPendToAct implements TransitionHandler {
 		return false;
 	}
 
-	private Notify createNotify(RemAspImpl remAsp) {
-		Notify msg = (Notify) this.as.getM3UAProvider().getMessageFactory()
-				.createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
+	private Notify createNotify(Asp remAsp) {
+		Notify msg = (Notify) this.as.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
 
-		Status status = this.as.getM3UAProvider().getParameterFactory()
+		Status status = this.as.getParameterFactory()
 				.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE);
 		msg.setStatus(status);
 

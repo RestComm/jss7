@@ -27,12 +27,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.channels.SelectionKey;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import javolution.text.TextBuilder;
 import javolution.util.FastList;
@@ -42,17 +36,21 @@ import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.M3UAChannel;
-import org.mobicents.protocols.ss7.m3ua.M3UASelectionKey;
-import org.mobicents.protocols.ss7.m3ua.M3UASelector;
+import org.mobicents.protocols.sctp.Association;
+import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.AsState;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
-import org.mobicents.protocols.ss7.m3ua.impl.CommunicationListener.CommunicationState;
 import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAOAMMessages;
-import org.mobicents.protocols.ss7.m3ua.impl.sctp.SctpChannel;
+import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
+import org.mobicents.protocols.ss7.m3ua.message.MessageFactory;
+import org.mobicents.protocols.ss7.m3ua.message.MessageType;
+import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
+import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 
 /**
  * @author amit bhayani
@@ -68,18 +66,13 @@ public class ClientM3UAManagement extends M3UAManagement {
 
 	private final TextBuilder clientRoutePersistFile = TextBuilder.newInstance();
 
-	protected M3UASelector selector;
-
 	// Stores DPC vs List of AS such that this DPC can by served by List of AS's
 	private FastMap<Integer, FastList<As>> dpcRoute = new FastMap<Integer, FastList<As>>();
 
 	// Stores DPC vs List of AS names. This is explicitly for persisting to xml
 	private FastMap<Integer, FastList<String>> dpcVsAsName = new FastMap<Integer, FastList<String>>();
 
-	// Stores the Future for every ASP that needs to be started
-	private volatile FastMap<String, ScheduledFuture> aspVsscheduledFuture = new FastMap<String, ScheduledFuture>();
-
-	private ScheduledExecutorService schedExecService = null;
+	protected MessageFactory messageFactory = new MessageFactoryImpl();
 
 	/**
 	 * 
@@ -89,14 +82,12 @@ public class ClientM3UAManagement extends M3UAManagement {
 	}
 
 	@Override
-	public void start() throws IOException {
-		this.selector = m3uaProvider.openSelector();
-		this.schedExecService = Executors.newSingleThreadScheduledExecutor();
+	public void start() throws Exception {
 		super.start();
 
 		this.clientRoutePersistFile.clear();
 
-		if (this.persistDir != null) {
+		if (persistDir != null) {
 			this.clientRoutePersistFile.append(persistDir).append(File.separator).append(CLIENTROUTE_PERSIST_FILE_NAME);
 		} else {
 			this.clientRoutePersistFile
@@ -111,22 +102,13 @@ public class ClientM3UAManagement extends M3UAManagement {
 		} catch (FileNotFoundException e) {
 			logger.warn(String.format("Failed to load the SS7 client route file. \n%s", e.getMessage()));
 		}
-		
-		
+
 	}
 
 	@Override
-	public void stop() throws IOException {
+	public void stop() throws Exception {
 		super.stop();
-		// Stop the Exexcutor service
-		this.schedExecService.shutdownNow();
-		
-		
 		this.storeRoute();
-
-		
-		this.selector.close();
-		
 	}
 
 	public FastMap<Integer, FastList<String>> getDpcVsAsName() {
@@ -168,6 +150,12 @@ public class ClientM3UAManagement extends M3UAManagement {
 
 		asList.remove(asTemp);
 		asNames.remove(asName);
+
+		if (asNames.size() == 0) {
+			// If there are no other AS's routing for this DPC, lets remove the
+			// asList
+			dpcVsAsName.remove(dpc);
+		}
 
 		this.storeRoute();
 
@@ -260,8 +248,7 @@ public class ClientM3UAManagement extends M3UAManagement {
 			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
 		}
 
-		RoutingContext rcObj = m3uaProvider.getParameterFactory().createRoutingContext(
-				new long[] { Long.parseLong(rc) });
+		RoutingContext rcObj = this.parameterFactory.createRoutingContext(new long[] { Long.parseLong(rc) });
 
 		String name = args[5];
 
@@ -272,7 +259,8 @@ public class ClientM3UAManagement extends M3UAManagement {
 			}
 		}
 
-		AsImpl as = new AsImpl(name, rcObj, null, null, this.m3uaProvider);
+		As as = new As(name, rcObj, null, null, Functionality.IPSP);
+		as.setM3UAManagement(this);
 		m3uaScheduler.execute(as.getFSM());
 		appServers.add(as);
 
@@ -283,67 +271,48 @@ public class ClientM3UAManagement extends M3UAManagement {
 	}
 
 	/**
-	 * Command to craete ASPFactory is "m3ua asp create ip <local-ip> port
-	 * <local-port> remip <remip> remport <remport> <asp-name>"
+	 * Command to craete ASPFactory is "m3ua asp create <asp-name> <assoc-name>"
 	 * 
 	 * @param args
 	 * @return
 	 */
 	public AspFactory createAspFactory(String[] args) throws Exception {
 
-		if (args.length != 12) {
+		if (args.length != 5) {
 			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
 		}
 
-		if (args[3] == null || args[3].compareTo("ip") != 0) {
+		if (args[3] == null || args[4] == null) {
 			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
 		}
 
-		if (args[4] == null) {
-			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
-		}
-		String ip = args[4];
-
-		if (args[5] == null || args[5].compareTo("port") != 0) {
-			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
-		}
-
-		int port = Integer.parseInt(args[6]);
-
-		if (args[7] == null || args[7].compareTo("remip") != 0) {
-			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
-		}
-
-		if (args[8] == null) {
-			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
-		}
-		String remIp = args[8];
-
-		if (args[9] == null || args[9].compareTo("remport") != 0) {
-			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
-		}
-
-		int remPort = Integer.parseInt(args[10]);
-
-		if (args[11] == null) {
-			throw new Exception(M3UAOAMMessages.INVALID_COMMAND);
-		}
-
-		String name = args[11];
+		String name = args[3];
 
 		for (FastList.Node<AspFactory> n = aspfactories.head(), end = aspfactories.tail(); (n = n.getNext()) != end;) {
 			AspFactory fact = n.getValue();
 			if (fact.getName().compareTo(name) == 0) {
 				throw new Exception(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_NAME_EXIST, name));
 			}
-
-			if (fact.getIp().compareTo(ip) == 0 && fact.getPort() == port) {
-				throw new Exception(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_IPPORT_EXIST, ip, port));
-			}
 		}
 
-		AspFactory factory = new LocalAspFactory(name, ip, port, remIp, remPort, this.m3uaProvider, this);
+		String associationName = args[4];
+		Association association = this.sctpManagement.getAssociation(associationName);
+
+		if (association == null) {
+			throw new Exception(String.format("No Association found for name=%s", associationName));
+		}
+
+		if (association.isStarted()) {
+			throw new Exception(String.format("Association=%s is started", associationName));
+		}
+
+		if (association.getAssociationListener() != null) {
+			throw new Exception(String.format("Association=%s is already associated", associationName));
+		}
+
+		AspFactory factory = new LocalAspFactory(name);
 		aspfactories.add(factory);
+		factory.setAssociation(association);
 
 		this.store();
 
@@ -370,52 +339,10 @@ public class ClientM3UAManagement extends M3UAManagement {
 		localAspFact.start();
 		this.store();
 
-		this.startAsp(localAspFact);
-	}
-
-	public void startAsp(AspFactory aspFactory) {
-		if (!(aspFactory instanceof LocalAspFactory)) {
-			logger.error("Trying to start the AspFactory that is not instance of LocalAspFactory. Will not be started");
-			return;
-		}
-		String aspName = aspFactory.getName();
-		ScheduledFuture future = this.schedExecService.scheduleWithFixedDelay(new LocalAspFactoryStarter(
-				(LocalAspFactory) aspFactory), 2, 30, TimeUnit.SECONDS);
-		this.aspVsscheduledFuture.put(aspName, future);
-	}
-
-	private LocalAspFactory _start(LocalAspFactory localAspFact) throws Exception {
-
-		M3UAChannel channel = this.m3uaProvider.openChannel();
-		channel.bind(new InetSocketAddress(localAspFact.getIp(), localAspFact.getPort()));
-
-		M3UASelectionKey skey = channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-		skey.attach(localAspFact);
-
-		channel.connect(new InetSocketAddress(localAspFact.getRemIp(), localAspFact.getRemPort()));
-
-		if (channel.isConnectionPending()) {
-
-			// TODO Loop? Or may be sleep for while?
-			while (!channel.isConnected()) {
-				channel.finishConnect();
-			}
-		}
-
-		localAspFact.setChannel(channel);
-		((SctpChannel) channel).setNotificationHandler(localAspFact.getAssociationHandler());
-
-		logger.info(String.format("Started ASP name=%s local-ip=%s local-pot=%d rem-ip=%s rem-port=%d",
-				localAspFact.getName(), localAspFact.getIp(), localAspFact.getPort(), localAspFact.getRemIp(),
-				localAspFact.getRemPort()));
-
-		localAspFact.onCommStateChange(CommunicationState.UP);
-
-		return localAspFact;
 	}
 
 	public void managementStopAsp(String aspName) throws Exception {
-		LocalAspFactory localAspFact = (LocalAspFactory) this.getAspFactory(aspName);
+		AspFactory localAspFact = this.getAspFactory(aspName);
 
 		if (localAspFact == null) {
 			throw new Exception(String.format("No ASP found by name %s", aspName));
@@ -423,16 +350,27 @@ public class ClientM3UAManagement extends M3UAManagement {
 
 		localAspFact.stop();
 
-		ScheduledFuture future = this.aspVsscheduledFuture.get(aspName);
-		if (future != null) {
-			future.cancel(true);
+		this.store();
+
+		logger.info(String.format("Stopped ASP name=%s ", localAspFact.getName()));
+	}
+
+	@Override
+	public void sendMessage(Mtp3TransferPrimitive mtp3) throws IOException {
+		ProtocolData data = this.parameterFactory.createProtocolData(mtp3);
+		PayloadData payload = (PayloadData) messageFactory.createMessage(MessageClass.TRANSFER_MESSAGES,
+				MessageType.PAYLOAD);
+		payload.setData(data);
+
+		As as = this.getAsForDpc(data.getDpc(), data.getSLS());
+		if (as == null) {
+			logger.error(String.format("Tx : No AS found for routing message %s", payload));
+			return;
 		}
 
-		this.store();
-		
-		logger.info(String.format("Stopped ASP name=%s local-ip=%s local-pot=%d rem-ip=%s rem-port=%d",
-				localAspFact.getName(), localAspFact.getIp(), localAspFact.getPort(), localAspFact.getRemIp(),
-				localAspFact.getRemPort()));
+		payload.setRoutingContext(as.getRoutingContext());
+		as.write(payload);
+
 	}
 
 	private AspFactory getAspFactory(String aspName) {
@@ -500,32 +438,6 @@ public class ClientM3UAManagement extends M3UAManagement {
 		} catch (XMLStreamException ex) {
 			// this.logger.info(
 			// "Error while re-creating Linksets from persisted file", ex);
-		}
-	}
-
-	/**
-	 * Tries to start the AspFactory. If successful cancels the schedule.
-	 * 
-	 * @author amit bhayani
-	 * 
-	 */
-	class LocalAspFactoryStarter implements Runnable {
-		LocalAspFactory localAspFact = null;
-
-		LocalAspFactoryStarter(LocalAspFactory localAspFact) {
-			this.localAspFact = localAspFact;
-		}
-
-		public void run() {
-			try {
-				LocalAspFactory factory = _start(localAspFact);
-				// If not exception means it started correctly, lets stop the
-				// schedule
-				ScheduledFuture future = aspVsscheduledFuture.get(this.localAspFact.getName());
-				future.cancel(true);
-			} catch (Exception e) {
-				logger.error(String.format("Error while starting ASPFactory=%s", this.localAspFact.getName()), e);
-			}
 		}
 	}
 }

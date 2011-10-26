@@ -48,6 +48,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ServiceIndicators;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 import org.mobicents.protocols.ss7.m3ua.parameter.UserCause;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 
 /**
  * 
@@ -58,13 +59,13 @@ public class ParameterFactoryImpl implements ParameterFactory {
 		return new ProtocolDataImpl(opc, dpc, si, ni, mp, sls, data);
 	}
 
-	public ProtocolData createProtocolData(byte[] msu) {
-		return new ProtocolDataImpl(msu);
+	public ProtocolData createProtocolData(byte[] payloadData) {
+		ProtocolDataImpl p = new ProtocolDataImpl(payloadData);
+		return p;
 	}
 
-	public ProtocolData createProtocolData(int mp, byte[] msu) {
-		ProtocolDataImpl p = new ProtocolDataImpl();
-		p.load(msu);
+	public ProtocolData createProtocolData(Mtp3TransferPrimitive mtp3TransferPrimitive) {
+		ProtocolDataImpl p = new ProtocolDataImpl(mtp3TransferPrimitive);
 		return p;
 	}
 
@@ -232,7 +233,7 @@ public class ParameterFactoryImpl implements ParameterFactory {
 			break;
 		case ParameterImpl.Heartbeat_Data:
 			p = new HeartbeatDataImpl(value);
-			break;			
+			break;
 		default:
 			p = new UnknownParameterImpl(tag, value.length, value);
 			break;

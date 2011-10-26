@@ -80,7 +80,11 @@ public abstract class M3UAMessageImpl implements M3UAMessage {
 	}
 
 	protected void decode(byte[] data) {
-		int pos = 0;
+		this.decode(data, 0);
+	}
+
+	protected void decode(byte[] data, int initialPos) {
+		int pos = initialPos;
 		while (pos < data.length) {
 			short tag = (short) ((data[pos] & 0xff) << 8 | (data[pos + 1] & 0xff));
 			short len = (short) ((data[pos + 2] & 0xff) << 8 | (data[pos + 3] & 0xff));

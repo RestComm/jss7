@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.as;
 
+import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
@@ -38,9 +39,9 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
  */
 public class AsTransPenToInAct implements TransitionHandler {
 
-	private AsImpl as;
+	private As as;
 
-	public AsTransPenToInAct(AsImpl as, FSM fsm) {
+	public AsTransPenToInAct(As as, FSM fsm) {
 		this.as = as;
 	}
 

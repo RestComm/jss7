@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.m3ua.impl.parameter;
 
 import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 
 /**
  * Implements Protocol Data parameter.
@@ -32,153 +33,128 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
  */
 public class ProtocolDataImpl extends ParameterImpl implements ProtocolData {
 
-    // FIXME: Oleg why the hell this class does not reuse mtp.util class to
-    // manipulate RL ?
-    private int opc;
-    private int dpc;
-    private int si;
-    private int ni;
-    private int mp;
-    private int sls;
-    private byte[] data;
+	private int opc;
+	private int dpc;
+	private int si;
+	private int ni;
+	private int mp;
+	private int sls;
+	private byte[] data;
 
-    private byte[] value;
+	protected ProtocolDataImpl() {
+		this.tag = ParameterImpl.Protocol_Data;
+	}
 
-    protected ProtocolDataImpl() {
-        this.tag = ParameterImpl.Protocol_Data;
-    }
+	protected ProtocolDataImpl(Mtp3TransferPrimitive mtp3TransferPrimitive) {
+		this();
+		this.opc = mtp3TransferPrimitive.getOpc();
+		this.dpc = mtp3TransferPrimitive.getDpc();
+		this.si = mtp3TransferPrimitive.getSi();
+		this.ni = mtp3TransferPrimitive.getNi();
+		this.mp = mtp3TransferPrimitive.getMp();
+		this.sls = mtp3TransferPrimitive.getSls();
+		this.data = mtp3TransferPrimitive.getData();
+	}
 
-    protected ProtocolDataImpl(int opc, int dpc, int si, int ni, int mp,
-            int sls, byte[] data) {
-        this.tag = ParameterImpl.Protocol_Data;
-        this.opc = opc;
-        this.dpc = dpc;
-        this.si = si;
-        this.ni = ni;
-        this.mp = mp;
-        this.sls = sls;
-        this.data = data;
-        encode();
-    }
-    
-    /**
-     * Creates new parameter with specified value.
-     * 
-     * @param valueData
-     *            the value of this parameter
-     */
-    protected ProtocolDataImpl(byte[] valueData) {
-        this.tag = ParameterImpl.Protocol_Data;
-        opc = ((valueData[0] & 0xff) << 24) | ((valueData[1] & 0xff) << 16)
-                | ((valueData[2] & 0xff) << 8) | (valueData[3] & 0xff);
-        dpc = ((valueData[4] & 0xff) << 24) | ((valueData[5] & 0xff) << 16)
-                | ((valueData[6] & 0xff) << 8) | (valueData[7] & 0xff);
+	protected ProtocolDataImpl(int opc, int dpc, int si, int ni, int mp, int sls, byte[] data) {
+		this();
+		this.opc = opc;
+		this.dpc = dpc;
+		this.si = si;
+		this.ni = ni;
+		this.mp = mp;
+		this.sls = sls;
+		this.data = data;
+		encode();
+	}
 
-        si = valueData[8] & 0xff;
-        ni = valueData[9] & 0xff;
-        mp = valueData[10] & 0xff;
-        sls = valueData[11] & 0xff;
+	/**
+	 * Creates new parameter with specified value.
+	 * 
+	 * @param valueData
+	 *            the value of this parameter
+	 */
+	protected ProtocolDataImpl(byte[] valueData) {
+		this();
 
-        data = new byte[valueData.length - 12];
-        System.arraycopy(valueData, 12, data, 0, valueData.length - 12);
-        
-        this.value = valueData;
-    }    
+		this.opc = ((valueData[0] & 0xff) << 24) | ((valueData[1] & 0xff) << 16) | ((valueData[2] & 0xff) << 8)
+				| (valueData[3] & 0xff);
+		this.dpc = ((valueData[4] & 0xff) << 24) | ((valueData[5] & 0xff) << 16) | ((valueData[6] & 0xff) << 8)
+				| (valueData[7] & 0xff);
 
-    protected void load(byte[] msu) {
-        this.data = new byte[msu.length - 5];
-        this.ni = (msu[0] & 0xc0) >> 6;
-        this.mp = (msu[0] & 0x30) >> 4;
-        this.si = msu[0] & 0x0f;
-        this.dpc = (msu[1] & 0xff | ((msu[2] & 0x3f) << 8));
-        this.opc = ((msu[2] & 0xC0) >> 6) | ((msu[3] & 0xff) << 2)
-                | ((msu[4] & 0x0f) << 10);
-        this.sls = (msu[4] & 0xf0) >> 4;
-        System.arraycopy(msu, 5, data, 0, data.length);
-        encode();
-    }
+		this.si = valueData[8] & 0xff;
+		this.ni = valueData[9] & 0xff;
+		this.mp = valueData[10] & 0xff;
+		this.sls = valueData[11] & 0xff;
 
-    private void encode() {
-        // create byte array taking into account data, point codes and
-        // indicators;
-        this.value = new byte[data.length + 12];
-        // insert data
-        System.arraycopy(data, 0, value, 12, data.length);
+		this.data = new byte[valueData.length - 12];
+		System.arraycopy(valueData, 12, data, 0, valueData.length - 12);
+	}
 
-        // encode originated point codes
-        value[0] = (byte) (opc >> 24);
-        value[1] = (byte) (opc >> 16);
-        value[2] = (byte) (opc >> 8);
-        value[3] = (byte) (opc);
+	private byte[] encode() {
+		// create byte array taking into account data, point codes and
+		// indicators;
+		byte[] value = new byte[data.length + 12];
+		// insert data
+		System.arraycopy(data, 0, value, 12, data.length);
 
-        // encode destination point code
-        value[4] = (byte) (dpc >> 24);
-        value[5] = (byte) (dpc >> 16);
-        value[6] = (byte) (dpc >> 8);
-        value[7] = (byte) (dpc);
+		// encode originated point codes
+		value[0] = (byte) (opc >> 24);
+		value[1] = (byte) (opc >> 16);
+		value[2] = (byte) (opc >> 8);
+		value[3] = (byte) (opc);
 
-        // encode indicators
-        value[8] = (byte) (si);
-        value[9] = (byte) (ni);
-        value[10] = (byte) (mp);
-        value[11] = (byte) (sls);
-    }
+		// encode destination point code
+		value[4] = (byte) (dpc >> 24);
+		value[5] = (byte) (dpc >> 16);
+		value[6] = (byte) (dpc >> 8);
+		value[7] = (byte) (dpc);
 
-    public int getOpc() {
-        return opc;
-    }
+		// encode indicators
+		value[8] = (byte) (si);
+		value[9] = (byte) (ni);
+		value[10] = (byte) (mp);
+		value[11] = (byte) (sls);
 
-    public int getDpc() {
-        return dpc;
-    }
+		return value;
+	}
 
-    public int getSI() {
-        return si;
-    }
+	public int getOpc() {
+		return opc;
+	}
 
-    public int getNI() {
-        return ni;
-    }
+	public int getDpc() {
+		return dpc;
+	}
 
-    public int getMP() {
-        return mp;
-    }
+	public int getSI() {
+		return si;
+	}
 
-    public int getSLS() {
-        return sls;
-    }
+	public int getNI() {
+		return ni;
+	}
 
-    public byte[] getData() {
-        return data;
-    }
+	public int getMP() {
+		return mp;
+	}
 
-    @Override
-    protected byte[] getValue() {
-        return value;
-    }
+	public int getSLS() {
+		return sls;
+	}
 
-    public byte[] getMsu() {
-        // create extended byte array
-        byte[] msu = new byte[data.length + 5];
+	public byte[] getData() {
+		return data;
+	}
 
-        // encode service information octet and routing label
-        int ssi = ni << 2;
-        msu[0] = (byte) (((ssi & 0x0F) << 4) | (si & 0x0F));
-        msu[1] = (byte) dpc;
-        msu[2] = (byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6));
-        msu[3] = (byte) (opc >> 2);
-        msu[4] = (byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4));
+	@Override
+	protected byte[] getValue() {
+		return this.encode();
+	}
 
-        // copy data
-        System.arraycopy(data, 0, msu, 5, data.length);
-        return msu;
-    }
-
-    @Override
-    public String toString() {
-        return String.format(
-                "Protocol opc=%d dpc=%d si=%d ni=%d sls=%d", opc,
-                dpc, si, ni, sls);
-    }
+	@Override
+	public String toString() {
+		return String.format("Protocol opc=%d dpc=%d si=%d ni=%d sls=%d", opc, dpc, si, ni, sls);
+	}
 
 }

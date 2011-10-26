@@ -27,17 +27,20 @@ import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
+import org.mobicents.protocols.sctp.Association;
+import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.AspState;
-import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
 import org.mobicents.protocols.ss7.m3ua.impl.TransitionState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
+import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
+import org.mobicents.protocols.ss7.m3ua.message.MessageFactory;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
 import org.mobicents.protocols.ss7.m3ua.message.aspsm.ASPDown;
 import org.mobicents.protocols.ss7.m3ua.message.aspsm.ASPDownAck;
@@ -50,8 +53,11 @@ import org.mobicents.protocols.ss7.m3ua.message.asptm.ASPInactiveAck;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.ss7.m3ua.parameter.ASPIdentifier;
 import org.mobicents.protocols.ss7.m3ua.parameter.ErrorCode;
+import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 
 /**
  * 
@@ -61,18 +67,23 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 public class RemAspFactory extends AspFactory {
 
 	private static Logger logger = Logger.getLogger(RemAspFactory.class);
-	
-	public RemAspFactory(){
+
+	protected ParameterFactory parameterFactory = new ParameterFactoryImpl();
+	protected MessageFactory messageFactory = new MessageFactoryImpl();
+
+	private volatile boolean channelConnected = false;
+
+	public RemAspFactory() {
 		super();
 	}
 
-	public RemAspFactory(String name, String ip, int port, M3UAProvider provider, M3UAManagement m3uaManagement) {
-		super(name, ip, port, provider, m3uaManagement);
+	public RemAspFactory(String name) {
+		super(name);
 	}
 
 	@Override
 	public Asp createAsp() {
-		RemAspImpl remAsp = new RemAspImpl(this.name, this.m3UAProvider, this);
+		Asp remAsp = new Asp(this.name, this, Functionality.SGW);
 		this.aspList.add(remAsp);
 		return remAsp;
 	}
@@ -164,7 +175,12 @@ public class RemAspFactory extends AspFactory {
 		}
 
 		if (asp.getState() == AspState.ACTIVE) {
-			asp.getAs().received(payload);
+			ProtocolData protocolData = payload.getData();
+			Mtp3TransferPrimitive mtp3TransferPrimitive = new Mtp3TransferPrimitive(protocolData.getSI(),
+					protocolData.getNI(), protocolData.getMP(), protocolData.getOpc(), protocolData.getDpc(),
+					protocolData.getSLS(), protocolData.getData());
+			asp.getAs().getM3UAManagement()
+					.sendTransferMessageToLocalUser(mtp3TransferPrimitive, payload.getData().getSLS());
 		} else {
 			logger.error(String.format("Received PayloadData for RoutingContext=%d. But ASP State=%s. Message=%s", rc,
 					asp.getState(), payload));
@@ -173,8 +189,8 @@ public class RemAspFactory extends AspFactory {
 	}
 
 	private void handleAspDown(ASPDown aspDown) {
-		ASPDownAck aspDwnAck = (ASPDownAck) this.m3UAProvider.getMessageFactory().createMessage(
-				MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK);
+		ASPDownAck aspDwnAck = (ASPDownAck) this.messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+				MessageType.ASP_DOWN_ACK);
 		this.write(aspDwnAck);
 
 		// ASPSM should be given to all ASP's
@@ -196,8 +212,8 @@ public class RemAspFactory extends AspFactory {
 	}
 
 	private void handleAspUp(ASPUp aspUp) {
-		ASPUpAck aspUpAck = (ASPUpAck) this.m3UAProvider.getMessageFactory().createMessage(
-				MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK);
+		ASPUpAck aspUpAck = (ASPUpAck) this.messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+				MessageType.ASP_UP_ACK);
 
 		ASPIdentifier aspId = aspUp.getASPIdentifier();
 		if (aspId != null) {
@@ -262,7 +278,7 @@ public class RemAspFactory extends AspFactory {
 		}
 
 		for (long routCntx : rcs) {
-			RemAspImpl remAsp = this.getAsp(routCntx);
+			Asp remAsp = this.getAsp(routCntx);
 
 			// RemAsp is null means Remote AS is null
 			if (remAsp == null) {
@@ -270,14 +286,13 @@ public class RemAspFactory extends AspFactory {
 				// that is not defined (by either static configuration or
 				// dynamic registration), the SGP/IPSP MUST respond with an
 				// ERROR message with the Error Code "Invalid Routing Context".
-				RoutingContext rc1 = this.m3UAProvider.getParameterFactory().createRoutingContext(
-						new long[] { routCntx });
+				RoutingContext rc1 = this.parameterFactory.createRoutingContext(new long[] { routCntx });
 				this.sendError(ErrorCode.Invalid_Routing_Context, rc1);
 			}
 
 			As appServer = remAsp.getAs();
 
-			ASPInactiveAck aspInactAck = (ASPInactiveAck) this.m3UAProvider.getMessageFactory().createMessage(
+			ASPInactiveAck aspInactAck = (ASPInactiveAck) this.messageFactory.createMessage(
 					MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE_ACK);
 			aspInactAck.setRoutingContext(appServer.getRoutingContext());
 
@@ -325,7 +340,7 @@ public class RemAspFactory extends AspFactory {
 		TrafficModeType trfModType = aspActive.getTrafficModeType();
 
 		for (long routCntx : rcs) {
-			RemAspImpl remAsp = this.getAsp(routCntx);
+			Asp remAsp = this.getAsp(routCntx);
 
 			// RemAsp is null means Remote AS is null
 			if (remAsp == null) {
@@ -334,8 +349,7 @@ public class RemAspFactory extends AspFactory {
 				// (by either static configuration or dynamic registration),
 				// the peer MUST respond with an ERROR message with the
 				// Error Code "No configured AS for ASP".
-				RoutingContext rc1 = this.m3UAProvider.getParameterFactory().createRoutingContext(
-						new long[] { routCntx });
+				RoutingContext rc1 = this.parameterFactory.createRoutingContext(new long[] { routCntx });
 				this.sendError(ErrorCode.No_Configured_AS_for_ASP, rc1);
 				// TODO : Shouldn't is be ErrorCode.Invalid_Routing_Context ?
 				continue;
@@ -373,7 +387,7 @@ public class RemAspFactory extends AspFactory {
 				}
 			}
 
-			ASPActiveAck aspActAck = (ASPActiveAck) this.m3UAProvider.getMessageFactory().createMessage(
+			ASPActiveAck aspActAck = (ASPActiveAck) this.messageFactory.createMessage(
 					MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK);
 			aspActAck.setTrafficModeType(appServer.getTrafficModeType());
 			aspActAck.setRoutingContext(appServer.getRoutingContext());
@@ -392,11 +406,11 @@ public class RemAspFactory extends AspFactory {
 		}
 	}
 
-	private RemAspImpl getAsp(long rc) {
+	private Asp getAsp(long rc) {
 		for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
 			Asp asp = n.getValue();
 			if (asp.getAs().getRoutingContext().getRoutingContexts()[0] == rc) {
-				return (RemAspImpl) asp;
+				return asp;
 			}
 		}
 		return null;
@@ -404,37 +418,30 @@ public class RemAspFactory extends AspFactory {
 
 	private void sendError(int iErrCode, RoutingContext rc) {
 		// Send Error
-		org.mobicents.protocols.ss7.m3ua.message.mgmt.Error error = (org.mobicents.protocols.ss7.m3ua.message.mgmt.Error) this.m3UAProvider
-				.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.ERROR);
+		org.mobicents.protocols.ss7.m3ua.message.mgmt.Error error = (org.mobicents.protocols.ss7.m3ua.message.mgmt.Error) this.messageFactory
+				.createMessage(MessageClass.MANAGEMENT, MessageType.ERROR);
 
-		ErrorCode errCode = this.m3UAProvider.getParameterFactory().createErrorCode(iErrCode);
+		ErrorCode errCode = this.parameterFactory.createErrorCode(iErrCode);
 		error.setErrorCode(errCode);
 		error.setRoutingContext(rc);
 		this.write(error);
 	}
 
 	@Override
-	public void start() {
+	public void start() throws Exception {
 		this.started = true;
+		this.association.start();
 	}
 
 	@Override
-	public void stop() {
+	public void stop() throws Exception {
 		this.started = false;
-	}
-
-	public void onCommStateChange(CommunicationState state) {
-		switch (state) {
-		case UP:
-			signalAspFsm(TransitionState.COMM_UP);
-			break;
-		case SHUTDOWN:
-			signalAspFsm(TransitionState.COMM_DOWN);
-			break;
-		case LOST:
-			signalAspFsm(TransitionState.COMM_DOWN);
-			break;
+		
+		if(this.channelConnected){
+			throw new Exception("Still few ASP's are connected. Bring down the ASP's first");
 		}
+		
+		this.association.stop();
 	}
 
 	private void signalAspFsm(String asptransition) {
@@ -447,6 +454,36 @@ public class RemAspFactory extends AspFactory {
 				logger.error(e.getMessage(), e);
 			}
 		}
+	}
+
+	/**
+	 * AssociationListener methods
+	 */
+	public void onCommunicationUp(Association association) {
+		this.channelConnected = true;
+		signalAspFsm(TransitionState.COMM_UP);
+	}
+
+	public void onCommunicationShutdown(Association association) {
+		this.channelConnected = false;
+		signalAspFsm(TransitionState.COMM_DOWN);
+	}
+
+	public void onCommunicationLost(Association association) {
+		this.channelConnected = false;
+		signalAspFsm(TransitionState.COMM_DOWN);
+	}
+
+	public void onCommunicationRestart(Association association) {
+		// TODO ?
+	}
+
+	public void onPayload(Association association, org.mobicents.protocols.sctp.PayloadData payloadData) {
+		// TODO where is streamNumber stored?
+
+		byte[] m3uadata = payloadData.getData();
+		M3UAMessage m3UAMessage = this.messageFactory.createSctpMessage(m3uadata);
+		this.read(m3UAMessage);
 	}
 
 	/**

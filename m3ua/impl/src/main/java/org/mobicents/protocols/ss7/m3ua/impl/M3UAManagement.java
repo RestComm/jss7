@@ -26,7 +26,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javolution.text.TextBuilder;
 import javolution.util.FastList;
@@ -36,16 +38,22 @@ import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
+import org.mobicents.protocols.sctp.Management;
 import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAOAMMessages;
+import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.scheduler.M3UAScheduler;
-import org.mobicents.protocols.ss7.m3ua.impl.sctp.SctpProvider;
+import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPartBaseImpl;
 
 /**
  * @author amit bhayani
  * 
  */
-public abstract class M3UAManagement {
+public abstract class M3UAManagement extends Mtp3UserPartBaseImpl {
 	private static final Logger logger = Logger.getLogger(M3UAManagement.class);
 	private static final String AS_LIST = "asList";
 	private static final String ASP_FACTORY_LIST = "aspFactoryList";
@@ -54,7 +62,6 @@ public abstract class M3UAManagement {
 	protected FastList<AspFactory> aspfactories = new FastList<AspFactory>();
 
 	protected M3UAScheduler m3uaScheduler = new M3UAScheduler();
-	protected final M3UAProvider m3uaProvider = SctpProvider.provider();
 
 	protected static final String M3UA_PERSIST_DIR_KEY = "m3ua.persist.dir";
 	protected static final String USER_DIR_KEY = "user.dir";
@@ -68,6 +75,12 @@ public abstract class M3UAManagement {
 
 	protected String persistDir = null;
 
+	protected ParameterFactory parameterFactory = new ParameterFactoryImpl();
+
+	protected Management sctpManagement = null;
+
+	private ScheduledExecutorService fsmTicker;
+
 	public M3UAManagement() {
 		binding.setClassAttribute(CLASS_ATTRIBUTE);
 	}
@@ -80,11 +93,15 @@ public abstract class M3UAManagement {
 		this.persistDir = persistDir;
 	}
 
-	public M3UAProvider getM3uaProvider() {
-		return m3uaProvider;
+	public Management getSctpManagement() {
+		return sctpManagement;
 	}
 
-	public void start() throws IOException {
+	public void setSctpManagement(Management sctpManagement) {
+		this.sctpManagement = sctpManagement;
+	}
+
+	public void start() throws Exception {
 		this.persistFile.clear();
 
 		if (persistDir != null) {
@@ -102,11 +119,15 @@ public abstract class M3UAManagement {
 			logger.warn(String.format("Failed to load the SS7 configuration file. \n%s", e.getMessage()));
 		}
 
+		fsmTicker = Executors.newSingleThreadScheduledExecutor();
+		fsmTicker.scheduleAtFixedRate(m3uaScheduler, 500, 500, TimeUnit.MILLISECONDS);
+
 		logger.info("Started M3UAManagement");
 	}
 
-	public void stop() throws IOException {
+	public void stop() throws Exception {
 		this.store();
+		fsmTicker.shutdown();
 	}
 
 	public FastList<As> getAppServers() {
@@ -115,10 +136,6 @@ public abstract class M3UAManagement {
 
 	public FastList<AspFactory> getAspfactories() {
 		return aspfactories;
-	}
-
-	public M3UAScheduler getM3uaScheduler() {
-		return m3uaScheduler;
 	}
 
 	/**
@@ -130,6 +147,31 @@ public abstract class M3UAManagement {
 	 */
 	public abstract As createAppServer(String args[]) throws Exception;
 
+	public As destroyAs(String asName) throws Exception {
+		As as = null;
+		for (FastList.Node<As> n = appServers.head(), end = appServers.tail(); (n = n.getNext()) != end;) {
+			As asTemp = n.getValue();
+			if (asTemp.getName().equals(asName)) {
+				as = asTemp;
+			}
+		}
+
+		if (as == null) {
+			throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_NO_AS, asName));
+		}
+		
+		if(as.getAspList().size() != 0){
+			throw new Exception(String.format("As=%s still has ASP's assigned. Unassign Asp's before destroying this As", asName));
+		}
+		
+		as.getFSM().cancel();
+		appServers.remove(as);
+		
+		this.store();
+		
+		return as;
+	}
+
 	/**
 	 * Create new {@link AspFactory}
 	 * 
@@ -138,6 +180,31 @@ public abstract class M3UAManagement {
 	 * @throws Exception
 	 */
 	public abstract AspFactory createAspFactory(String[] args) throws Exception;
+
+	public AspFactory destroyAspFactory(String aspName) throws Exception {
+		AspFactory aspFactroy = null;
+		for (FastList.Node<AspFactory> n = aspfactories.head(), end = aspfactories.tail(); (n = n.getNext()) != end;) {
+			if (n.getValue().getName().equals(aspName)) {
+				aspFactroy = n.getValue();
+				break;
+			}
+		}
+
+		if (aspFactroy == null) {
+			throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_NO_ASP, aspName));
+		}
+
+		if (aspFactroy.getAspList().size() != 0) {
+			throw new Exception("Asp are still assigned to As. Unassign all");
+		}
+
+		this.aspfactories.remove(aspFactroy);
+		aspFactroy.unsetAssociation();
+
+		this.store();
+
+		return aspFactroy;
+	}
 
 	/**
 	 * Associate {@link Asp} to {@link As}
@@ -163,7 +230,7 @@ public abstract class M3UAManagement {
 
 		AspFactory aspFactroy = null;
 		for (FastList.Node<AspFactory> n = aspfactories.head(), end = aspfactories.tail(); (n = n.getNext()) != end;) {
-			if (n.getValue().getName().compareTo(aspName) == 0) {
+			if (n.getValue().getName().equals(aspName)) {
 				aspFactroy = n.getValue();
 				break;
 			}
@@ -179,6 +246,26 @@ public abstract class M3UAManagement {
 
 		this.store();
 
+		return asp;
+	}
+
+	public Asp unassignAspFromAs(String asName, String aspName) throws Exception {
+		// check ASP and AS exist with given name
+		As as = null;
+		for (FastList.Node<As> n = appServers.head(), end = appServers.tail(); (n = n.getNext()) != end;) {
+			if (n.getValue().getName().compareTo(asName) == 0) {
+				as = n.getValue();
+				break;
+			}
+		}
+
+		if (as == null) {
+			throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_NO_AS, asName));
+		}
+
+		Asp asp = as.removeAppServerProcess(aspName);
+		asp.getAspFactory().destroyAsp(asp);
+		this.store();
 		return asp;
 	}
 
@@ -200,14 +287,21 @@ public abstract class M3UAManagement {
 	 */
 	public abstract void managementStopAsp(String aspName) throws Exception;
 
-	/**
-	 * This method starts the ASP. Not for management but for taking care of
-	 * internal processes
-	 * 
-	 * @param aspFactory
-	 *            The AspFactory to be started
-	 */
-	public abstract void startAsp(AspFactory aspFactory);
+	public void sendTransferMessageToLocalUser(Mtp3TransferPrimitive msg, int seqControl) {
+		super.sendTransferMessageToLocalUser(msg, seqControl);
+	}
+
+	public void sendPauseMessageToLocalUser(Mtp3PausePrimitive msg) {
+		super.sendPauseMessageToLocalUser(msg);
+	}
+
+	public void sendResumeMessageToLocalUser(Mtp3ResumePrimitive msg) {
+		super.sendResumeMessageToLocalUser(msg);
+	}
+
+	public void sendStatusMessageToLocalUser(Mtp3StatusPrimitive msg) {
+		super.sendStatusMessageToLocalUser(msg);
+	}
 
 	/**
 	 * Persist
@@ -246,16 +340,9 @@ public abstract class M3UAManagement {
 			aspfactories = reader.read(ASP_FACTORY_LIST, FastList.class);
 			appServers = reader.read(AS_LIST, FastList.class);
 
-			for (FastList.Node<AspFactory> n = aspfactories.head(), end = aspfactories.tail(); (n = n.getNext()) != end;) {
-				AspFactory factory = n.getValue();
-				factory.setM3UAProvider(m3uaProvider);
-				factory.setM3uaManagement(this);
-			}
-
 			// Create Asp's and assign to each of the AS
 			for (FastList.Node<As> n = appServers.head(), end = appServers.tail(); (n = n.getNext()) != end;) {
 				As as = n.getValue();
-				as.setM3UAProvider(m3uaProvider);
 				m3uaScheduler.execute(as.getFSM());
 
 				// All the Asp's for this As added in temp list
@@ -283,7 +370,7 @@ public abstract class M3UAManagement {
 				AspFactory factory = n.getValue();
 				if (factory.getStatus()) {
 					try {
-						startAsp(factory);
+						// startAsp(factory);
 					} catch (Exception e) {
 						logger.error(
 								String.format("Error starting the AspFactory=%s while loading from XML",

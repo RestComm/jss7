@@ -24,8 +24,6 @@ package org.mobicents.protocols.ss7.m3ua.impl.as;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -65,7 +63,7 @@ public class ClientM3UAManagementTest {
 	}
 
 	@After
-	public void tearDown() throws IOException {
+	public void tearDown() throws Exception {
 		clientM3UAMgmt.getAppServers().clear();
 		clientM3UAMgmt.getAspfactories().clear();
 		clientM3UAMgmt.getDpcVsAsName().clear();

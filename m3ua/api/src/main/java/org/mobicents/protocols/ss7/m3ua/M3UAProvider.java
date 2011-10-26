@@ -45,7 +45,7 @@ public interface M3UAProvider {
      * @return new server channel.
      * @throws java.io.IOException
      */
-    public M3UAServerChannel openServerChannel() throws IOException;
+    public M3UAServerChannel openServerChannel() throws IOException; 
     
     /**
      * Opens new M3UA multiplexer.

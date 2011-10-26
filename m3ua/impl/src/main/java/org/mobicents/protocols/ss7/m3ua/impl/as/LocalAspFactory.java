@@ -22,24 +22,23 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.as;
 
-import java.io.IOException;
-
 import javolution.util.FastList;
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
+import org.mobicents.protocols.sctp.Association;
+import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.AspState;
-import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
 import org.mobicents.protocols.ss7.m3ua.impl.TransitionState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
+import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
+import org.mobicents.protocols.ss7.m3ua.message.MessageFactory;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
 import org.mobicents.protocols.ss7.m3ua.message.aspsm.ASPDown;
 import org.mobicents.protocols.ss7.m3ua.message.aspsm.ASPDownAck;
@@ -60,12 +59,16 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ASPIdentifier;
 import org.mobicents.protocols.ss7.m3ua.parameter.AffectedPointCode;
 import org.mobicents.protocols.ss7.m3ua.parameter.CongestedIndication;
 import org.mobicents.protocols.ss7.m3ua.parameter.CongestedIndication.CongestionLevel;
+import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 import org.mobicents.protocols.ss7.m3ua.parameter.UserCause;
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 
 /**
  * 
@@ -75,66 +78,46 @@ import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
 public class LocalAspFactory extends AspFactory {
 	private static final Logger logger = Logger.getLogger(LocalAspFactory.class);
 
-	private static final String REM_IP = "remIp";
-	private static final String REM_PORT = "remPort";
-	//private static final String CHANNEL_CONNECTED = "chanConn";
+	// private static final String CHANNEL_CONNECTED = "chanConn";
 
 	private static long ASP_ID = 1l;
-
-	private String remIp;
-	private int remPort;
-	boolean channelConnected = false;
+	private volatile boolean channelConnected = false;
 
 	private ASPIdentifier aspid;
-	
+
+	protected ParameterFactory parameterFactory = new ParameterFactoryImpl();
+	protected MessageFactory messageFactory = new MessageFactoryImpl();
+
 	public LocalAspFactory() {
 		super();
 	}
 
-	public LocalAspFactory(String name, String localIp, int localPort, String remIp, int remPort, M3UAProvider provider, M3UAManagement m3uaManagement) {
-		super(name, localIp, localPort, provider, m3uaManagement);
-		this.remIp = remIp;
-		this.remPort = remPort;
-		this.aspid = this.m3UAProvider.getParameterFactory().createASPIdentifier(this.generateId());
-	}
-
-	public String getRemIp() {
-		return remIp;
-	}
-
-	public int getRemPort() {
-		return remPort;
+	public LocalAspFactory(String name) {
+		super(name);
+		this.aspid = parameterFactory.createASPIdentifier(this.generateId());
 	}
 
 	@Override
 	public Asp createAsp() {
-		AspImpl remAsp = new AspImpl(this.name, this.m3UAProvider, this);
+		Asp remAsp = new Asp(this.name, this, Functionality.IPSP);
 		remAsp.setASPIdentifier(aspid);
 		this.aspList.add(remAsp);
 		return remAsp;
 	}
 
 	@Override
-	public void start() {
+	public void start() throws Exception {
+		this.association.start();
 		this.started = true;
 	}
 
 	@Override
-	public void stop() {
+	public void stop() throws Exception {
 		this.started = false;
 
-		if (this.channel != null) {
-			try {
-				this.channelConnected = this.channel.isConnected();
-			} catch (IOException e1) {
-				logger.error(String.format("Error while checking if channel is connected for LocalAspfactory=%s",
-						this.name));
-			}
-		}
-
 		if (this.channelConnected) {
-			ASPDown aspDown = (ASPDown) this.m3UAProvider.getMessageFactory().createMessage(
-					MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
+			ASPDown aspDown = (ASPDown) this.messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+					MessageType.ASP_DOWN);
 			this.write(aspDown);
 			for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
 				Asp asp = n.getValue();
@@ -160,6 +143,7 @@ public class LocalAspFactory extends AspFactory {
 				}
 			}
 		}
+
 	}
 
 	@Override
@@ -305,8 +289,9 @@ public class LocalAspFactory extends AspFactory {
 
 				UserCause userCause = dupu.getUserCause();
 				cause = userCause.getCause();
-				Mtp3StatusPrimitive mtpPausePrimi = new Mtp3StatusPrimitive(affectedPcs[i], 1, 0, cause);
-				asp.getAs().received(mtpPausePrimi);
+				Mtp3StatusPrimitive mtpPausePrimi = new Mtp3StatusPrimitive(affectedPcs[i],
+						Mtp3StatusCause.getMtp3StatusCause(cause), 0);
+				asp.getAs().getM3UAManagement().sendStatusMessageToLocalUser(mtpPausePrimi);
 			}
 		} else {
 			logger.error(String.format("Received DUPU for RoutingContext=%d. But ASP State=%s. Message=%s", rc,
@@ -346,8 +331,9 @@ public class LocalAspFactory extends AspFactory {
 						cong = congLevel.getLevel();
 					}
 				}
-				Mtp3StatusPrimitive mtpPausePrimi = new Mtp3StatusPrimitive(affectedPcs[i], 2, cong, 0);
-				asp.getAs().received(mtpPausePrimi);
+				Mtp3StatusPrimitive mtpPausePrimi = new Mtp3StatusPrimitive(affectedPcs[i],
+						Mtp3StatusCause.SignallingNetworkCongested, cong);
+				asp.getAs().getM3UAManagement().sendStatusMessageToLocalUser(mtpPausePrimi);
 			}
 		} else {
 			logger.error(String.format("Received SCON for RoutingContext=%d. But ASP State=%s. Message=%s", rc,
@@ -380,7 +366,7 @@ public class LocalAspFactory extends AspFactory {
 
 			for (int i = 0; i < affectedPcs.length; i++) {
 				Mtp3PausePrimitive mtpPausePrimi = new Mtp3PausePrimitive(affectedPcs[i]);
-				asp.getAs().received(mtpPausePrimi);
+				asp.getAs().getM3UAManagement().sendPauseMessageToLocalUser(mtpPausePrimi);
 			}
 		} else {
 			logger.error(String.format("Received DUNA for RoutingContext=%d. But ASP State=%s. Message=%s", rc,
@@ -411,7 +397,7 @@ public class LocalAspFactory extends AspFactory {
 			int[] affectedPcs = affectedPcObjs.getPointCodes();
 			for (int i = 0; i < affectedPcs.length; i++) {
 				Mtp3ResumePrimitive mtpResumePrimi = new Mtp3ResumePrimitive(affectedPcs[i]);
-				asp.getAs().received(mtpResumePrimi);
+				asp.getAs().getM3UAManagement().sendResumeMessageToLocalUser(mtpResumePrimi);
 			}
 		} else {
 			logger.error(String.format("Received DAVA for RoutingContext=%d. But ASP State=%s. Message=%s", rc,
@@ -431,7 +417,12 @@ public class LocalAspFactory extends AspFactory {
 		}
 
 		if (asp.getState() == AspState.ACTIVE) {
-			asp.getAs().received(payload);
+			ProtocolData protocolData = payload.getData();
+			Mtp3TransferPrimitive mtp3TransferPrimitive = new Mtp3TransferPrimitive(protocolData.getSI(),
+					protocolData.getNI(), protocolData.getMP(), protocolData.getOpc(), protocolData.getDpc(),
+					protocolData.getSLS(), protocolData.getData());
+			asp.getAs().getM3UAManagement()
+					.sendTransferMessageToLocalUser(mtp3TransferPrimitive, payload.getData().getSLS());
 		} else {
 			logger.error(String.format("Rx : PayloadData for RoutingContext=%d. But ASP State=%s. Message=%s", rc,
 					asp.getState(), payload));
@@ -497,24 +488,13 @@ public class LocalAspFactory extends AspFactory {
 				}
 			}
 
-			// Close Channel if management stopped this
-			if (channel != null && this.channelConnected) {
-				try {
-					channel.close();
-					if (logger.isDebugEnabled()) {
-						logger.debug(String.format("Closed the channel for LocalAspFactory name=%s", this.getName()));
-					}
-				} catch (IOException e) {
-					logger.error(String.format("IOException when trying to close channel for LocalAspFactory=%s",
-							this.name));
-				}
-			}
+			this.association.stop();
 		}
 	}
 
 	private void handleHeartbeat(Heartbeat hrtBeat) {
-		HeartbeatAck hrtBeatAck = (HeartbeatAck) this.m3UAProvider.getMessageFactory().createMessage(
-				MessageClass.ASP_STATE_MAINTENANCE, MessageType.HEARTBEAT_ACK);
+		HeartbeatAck hrtBeatAck = (HeartbeatAck) this.messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+				MessageType.HEARTBEAT_ACK);
 		hrtBeatAck.setHeartbeatData(hrtBeat.getHeartbeatData());
 		this.write(hrtBeatAck);
 
@@ -560,8 +540,7 @@ public class LocalAspFactory extends AspFactory {
 
 	private void handleCommUp() {
 		this.channelConnected = true;
-		ASPUp aspUp = (ASPUp) this.m3UAProvider.getMessageFactory().createMessage(MessageClass.ASP_STATE_MAINTENANCE,
-				MessageType.ASP_UP);
+		ASPUp aspUp = (ASPUp) this.messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
 		aspUp.setASPIdentifier(this.aspid);
 		this.write(aspUp);
 
@@ -576,9 +555,9 @@ public class LocalAspFactory extends AspFactory {
 	}
 
 	private void handleCommDown() {
-		
+
 		logger.warn(String.format("Communication channel down for LocalAspFactroy=%s", this.name));
-		
+
 		this.channelConnected = false;
 		for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
 			Asp asp = n.getValue();
@@ -588,19 +567,6 @@ public class LocalAspFactory extends AspFactory {
 			} catch (UnknownTransitionException e) {
 				logger.error(e.getMessage(), e);
 			}
-		}
-
-		if (this.channel != null) {
-			try {
-				this.channel.close();
-			} catch (IOException e) {
-				logger.error(String.format("Error while closing channel for LocalAspFactory=%s", this.name));
-			}
-		}
-		
-		//If communication is down not because of management reason, try to bring it up again
-		if(this.started){
-			this.m3uaManagement.startAsp(this);
 		}
 	}
 
@@ -635,8 +601,8 @@ public class LocalAspFactory extends AspFactory {
 
 	// Private Methods
 	protected void sendAspActive(As as) {
-		ASPActive aspActive = (ASPActive) this.m3UAProvider.getMessageFactory().createMessage(
-				MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE);
+		ASPActive aspActive = (ASPActive) this.messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
+				MessageType.ASP_ACTIVE);
 		aspActive.setRoutingContext(as.getRoutingContext());
 		aspActive.setTrafficModeType(as.getTrafficModeType());
 		this.write(aspActive);
@@ -652,20 +618,6 @@ public class LocalAspFactory extends AspFactory {
 		return null;
 	}
 
-	public void onCommStateChange(CommunicationState state) {
-		switch (state) {
-		case UP:
-			this.handleCommUp();
-			break;
-		case SHUTDOWN:
-			this.handleCommDown();
-			break;
-		case LOST:
-			this.handleCommDown();
-			break;
-		}
-	}
-
 	private long generateId() {
 		ASP_ID++;
 		if (ASP_ID == 4294967295l) {
@@ -675,29 +627,29 @@ public class LocalAspFactory extends AspFactory {
 	}
 
 	/**
-	 * XML Serialization/Deserialization
+	 * AssociationListener methods
 	 */
-	protected static final XMLFormat<LocalAspFactory> LOCAL_ASP_FACTORY_XML = new XMLFormat<LocalAspFactory>(
-			LocalAspFactory.class) {
+	public void onCommunicationUp(Association association) {
+		this.handleCommUp();
+	}
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, LocalAspFactory localAspFactory)
-				throws XMLStreamException {
-			ASP_FACTORY_XML.read(xml, localAspFactory);
-			localAspFactory.remIp = xml.getAttribute(REM_IP).toString();
-			localAspFactory.remPort = xml.getAttribute(REM_PORT).toInt();
-			// localAspFactory.channelConnected =
-			// xml.getAttribute(CHANNEL_CONNECTED).toBoolean();
-		}
+	public void onCommunicationShutdown(Association association) {
+		this.handleCommDown();
+	}
 
-		@Override
-		public void write(LocalAspFactory localAspFactory, javolution.xml.XMLFormat.OutputElement xml)
-				throws XMLStreamException {
-			ASP_FACTORY_XML.write(localAspFactory, xml);
-			xml.setAttribute(REM_IP, localAspFactory.remIp);
-			xml.setAttribute(REM_PORT, localAspFactory.remPort);
-			// xml.setAttribute(CHANNEL_CONNECTED,
-			// localAspFactory.channelConnected);
-		}
-	};
+	public void onCommunicationLost(Association association) {
+		this.handleCommDown();
+	}
+
+	public void onCommunicationRestart(Association association) {
+		// TODO ?
+	}
+
+	public void onPayload(Association association, org.mobicents.protocols.sctp.PayloadData payloadData) {
+		// TODO where is streamNumber stored?
+		logger.debug("PayloadData=" + payloadData);
+		byte[] m3uadata = payloadData.getData();
+		M3UAMessage m3UAMessage = this.messageFactory.createSctpMessage(m3uadata);
+		this.read(m3UAMessage);
+	}
 }

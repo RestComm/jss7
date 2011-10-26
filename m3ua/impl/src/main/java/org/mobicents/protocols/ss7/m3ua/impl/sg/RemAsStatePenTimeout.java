@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.m3ua.impl.sg;
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.AspState;
 import org.mobicents.protocols.ss7.m3ua.impl.TransitionState;
@@ -46,13 +47,13 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Status;
  */
 public class RemAsStatePenTimeout implements StateEventHandler {
 
-	private RemAsImpl as;
+	private As as;
 	private FSM fsm;
 	private static final Logger logger = Logger.getLogger(RemAsStatePenTimeout.class);
 
 	boolean inactive = false;
 
-	public RemAsStatePenTimeout(RemAsImpl as, FSM fsm) {
+	public RemAsStatePenTimeout(As as, FSM fsm) {
 		this.as = as;
 		this.fsm = fsm;
 	}
@@ -74,14 +75,14 @@ public class RemAsStatePenTimeout implements StateEventHandler {
 	 */
 	public void onEvent(State state) {
 		this.inactive = false;
-		
-		//Clear the Pending Queue for this As
+
+		// Clear the Pending Queue for this As
 		this.as.clearPendingQueue();
-		
+
 		// check if there are any ASP's who are INACTIVE, transition to
 		// INACTIVE else DOWN
 		for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n.getNext()) != end;) {
-			RemAspImpl remAspImpl = (RemAspImpl) n.getValue();
+			Asp remAspImpl = n.getValue();
 			if (remAspImpl.getState() == AspState.INACTIVE) {
 				try {
 
@@ -110,12 +111,11 @@ public class RemAsStatePenTimeout implements StateEventHandler {
 		}
 	}
 
-	private Notify createNotify(RemAspImpl remAsp) {
-		Notify msg = (Notify) this.as.getM3UAProvider().getMessageFactory()
-				.createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
+	private Notify createNotify(Asp remAsp) {
+		Notify msg = (Notify) this.as.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
 
-		Status status = this.as.getM3UAProvider().getParameterFactory()
-				.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE);
+		Status status = this.as.getParameterFactory().createStatus(Status.STATUS_AS_State_Change,
+				Status.INFO_AS_INACTIVE);
 		msg.setStatus(status);
 
 		if (remAsp.getASPIdentifier() != null) {

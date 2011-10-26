@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.m3ua.impl.as;
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
+import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.AspState;
 import org.mobicents.protocols.ss7.m3ua.impl.TransitionState;
@@ -38,20 +40,20 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
  * T(r) expires.
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class AsStatePenTimeout implements StateEventHandler {
 
-    private AsImpl as;
-    private FSM fsm;
-    private static final Logger logger = Logger.getLogger(AsStatePenTimeout.class);
+	private As as;
+	private FSM fsm;
+	private static final Logger logger = Logger.getLogger(AsStatePenTimeout.class);
 
-    boolean inactive = false;
+	boolean inactive = false;
 
-    public AsStatePenTimeout(AsImpl as, FSM fsm) {
-        this.as = as;
-        this.fsm = fsm;
-    }
+	public AsStatePenTimeout(As as, FSM fsm) {
+		this.as = as;
+		this.fsm = fsm;
+	}
 
 	/**
 	 * <p>
@@ -68,38 +70,42 @@ public class AsStatePenTimeout implements StateEventHandler {
 	 * one ASP is in ASP-INACTIVE; otherwise, it will move to AS-DOWN state.
 	 * </p>
 	 */
-    public void onEvent(State state) {
-    	
-		//Clear the Pending Queue for this As
+	public void onEvent(State state) {
+
+		if (logger.isEnabledFor(Priority.WARN)) {
+			logger.warn(String.format("PENDING timedout for As=%s", this.as.getName()));
+		}
+
+		// Clear the Pending Queue for this As
 		this.as.clearPendingQueue();
+
+		this.inactive = false;
 		
-        this.inactive = false;
-        // check if there are any ASP's who are INACTIVE, transition to
-        // INACTIVE else DOWN
-        for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
-                .getNext()) != end;) {
-            Asp asp = n.getValue();
-            if (asp.getState() == AspState.INACTIVE) {
-                try {
-                    this.fsm.signal(TransitionState.AS_INACTIVE);
-                    inactive = true;
-                    break;
-                } catch (UnknownTransitionException e) {
-                	logger.error(e.getMessage(), e);
-                }
+		// check if there are any ASP's who are INACTIVE, transition to
+		// INACTIVE else DOWN
+		for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n.getNext()) != end;) {
+			Asp asp = n.getValue();
+			if (asp.getState() == AspState.INACTIVE) {
+				try {
+					this.fsm.signal(TransitionState.AS_INACTIVE);
+					inactive = true;
+					break;
+				} catch (UnknownTransitionException e) {
+					logger.error(e.getMessage(), e);
+				}
 
-            }// if
-        }// for
+			}// if
+		}// for
 
-        if (!this.inactive) {
-            // else transition to DOWN
-            try {
-                this.fsm.signal(TransitionState.AS_DOWN);
-                inactive = true;
-            } catch (UnknownTransitionException e) {
-            	logger.error(e.getMessage(), e);
-            }
-        }
-    }
+		if (!this.inactive) {
+			// else transition to DOWN
+			try {
+				this.fsm.signal(TransitionState.AS_DOWN);
+				inactive = true;
+			} catch (UnknownTransitionException e) {
+				logger.error(e.getMessage(), e);
+			}
+		}
+	}
 
 }

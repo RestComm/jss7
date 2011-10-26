@@ -95,6 +95,22 @@ public class MessageFactoryTest {
 		assertEquals(3, protocolData.getNI());
 		assertEquals(0, protocolData.getMP());
 
+		// Test with sctp
+		M3UAMessageImpl messageImpl1 = messageFactory.createSctpMessage(data);
+		assertEquals(MessageType.PAYLOAD, messageImpl1.getMessageType());
+		PayloadData payloadData1 = (PayloadData) messageImpl1;
+		assertEquals(0l, payloadData1.getNetworkAppearance().getNetApp());
+		assertEquals(1, payloadData1.getRoutingContext().getRoutingContexts().length);
+		assertEquals(25l, payloadData1.getRoutingContext().getRoutingContexts()[0]);
+		ProtocolData protocolData1 = payloadData1.getData();
+		assertNotNull(protocolData1);
+		assertEquals(6045, protocolData1.getOpc());
+		assertEquals(6172, protocolData1.getDpc());
+		assertEquals(3, protocolData1.getSI());
+		assertEquals(2, protocolData1.getSLS());
+		assertEquals(3, protocolData1.getNI());
+		assertEquals(0, protocolData1.getMP());
+
 	}
 
 	@Test
@@ -126,13 +142,30 @@ public class MessageFactoryTest {
 		byteBuffer.put(data);
 		byteBuffer.flip();
 		M3UAMessageImpl messageImpl = messageFactory.createMessage(byteBuffer);
-		
+
 		assertEquals(MessageType.PAYLOAD, messageImpl.getMessageType());
 		PayloadData payloadData = (PayloadData) messageImpl;
 		assertNull(payloadData.getNetworkAppearance());
 		assertEquals(1, payloadData.getRoutingContext().getRoutingContexts().length);
 		assertEquals(1l, payloadData.getRoutingContext().getRoutingContexts()[0]);
 		ProtocolData protocolData = payloadData.getData();
+		assertNotNull(protocolData);
+		assertEquals(2, protocolData.getOpc());
+		assertEquals(1, protocolData.getDpc());
+		assertEquals(3, protocolData.getSI());
+		assertEquals(1, protocolData.getSLS());
+		assertEquals(2, protocolData.getNI());
+		assertEquals(0, protocolData.getMP());
+
+		// Test with SCTP
+		messageImpl = messageFactory.createSctpMessage(data);
+
+		assertEquals(MessageType.PAYLOAD, messageImpl.getMessageType());
+		payloadData = (PayloadData) messageImpl;
+		assertNull(payloadData.getNetworkAppearance());
+		assertEquals(1, payloadData.getRoutingContext().getRoutingContexts().length);
+		assertEquals(1l, payloadData.getRoutingContext().getRoutingContexts()[0]);
+		protocolData = payloadData.getData();
 		assertNotNull(protocolData);
 		assertEquals(2, protocolData.getOpc());
 		assertEquals(1, protocolData.getDpc());
@@ -170,13 +203,30 @@ public class MessageFactoryTest {
 		byteBuffer.put(data);
 		byteBuffer.flip();
 		M3UAMessageImpl messageImpl = messageFactory.createMessage(byteBuffer);
-		
+
 		assertEquals(MessageType.PAYLOAD, messageImpl.getMessageType());
 		PayloadData payloadData = (PayloadData) messageImpl;
 		assertNull(payloadData.getNetworkAppearance());
 		assertEquals(1, payloadData.getRoutingContext().getRoutingContexts().length);
 		assertEquals(1l, payloadData.getRoutingContext().getRoutingContexts()[0]);
 		ProtocolData protocolData = payloadData.getData();
+		assertNotNull(protocolData);
+		assertEquals(2, protocolData.getOpc());
+		assertEquals(1, protocolData.getDpc());
+		assertEquals(3, protocolData.getSI());
+		assertEquals(15, protocolData.getSLS());
+		assertEquals(2, protocolData.getNI());
+		assertEquals(0, protocolData.getMP());
+
+		// Test with SCTP
+		messageImpl = messageFactory.createSctpMessage(data);
+
+		assertEquals(MessageType.PAYLOAD, messageImpl.getMessageType());
+		payloadData = (PayloadData) messageImpl;
+		assertNull(payloadData.getNetworkAppearance());
+		assertEquals(1, payloadData.getRoutingContext().getRoutingContexts().length);
+		assertEquals(1l, payloadData.getRoutingContext().getRoutingContexts()[0]);
+		protocolData = payloadData.getData();
 		assertNotNull(protocolData);
 		assertEquals(2, protocolData.getOpc());
 		assertEquals(1, protocolData.getDpc());

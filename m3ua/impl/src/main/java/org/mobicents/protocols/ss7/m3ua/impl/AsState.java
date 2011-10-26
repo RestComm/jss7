@@ -25,33 +25,33 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public enum AsState {
-    DOWN("DOWN"), INACTIVE("INACTIVE"), ACTIVE("ACTIVE"), PENDING("PENDING");
+	DOWN("DOWN"), INACTIVE("INACTIVE"), ACTIVE("ACTIVE"), PENDING("PENDING");
 
-    private String name;
+	private String name;
 
-    private AsState(String name) {
-        this.name = name;
-    }
+	private AsState(String name) {
+		this.name = name;
+	}
 
-    public String getName() {
-        return this.name;
-    }
+	public String getName() {
+		return this.name;
+	}
 
-    public static AsState getState(String name) {
-        if (name.compareTo(DOWN.getName()) == 0) {
-            return DOWN;
-        } else if (name.compareTo(INACTIVE.getName()) == 0) {
-            return INACTIVE;
-        } else if (name.compareTo(ACTIVE.getName()) == 0) {
-            return ACTIVE;
-        } else if (name.compareTo(PENDING.getName()) == 0) {
-            return PENDING;
-        }
+	public static AsState getState(String name) {
+		if (name.equals(DOWN.getName())) {
+			return DOWN;
+		} else if (name.equals(INACTIVE.getName())) {
+			return INACTIVE;
+		} else if (name.equals(ACTIVE.getName())) {
+			return ACTIVE;
+		} else if (name.equals(PENDING.getName())) {
+			return PENDING;
+		}
 
-        return null;
-    }
+		return null;
+	}
 
 }

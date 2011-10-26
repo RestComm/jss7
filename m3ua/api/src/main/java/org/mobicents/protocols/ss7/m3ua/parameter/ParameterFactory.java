@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.m3ua.parameter;
 
 import org.mobicents.protocols.ss7.m3ua.parameter.CongestedIndication.CongestionLevel;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 
 /**
  * Constructs parameters.
@@ -62,7 +63,9 @@ public interface ParameterFactory {
      *            the message signaling unit
      * @return Protocol data parameter
      */
-    public ProtocolData createProtocolData(int mp, byte[] msu);
+    public ProtocolData createProtocolData(Mtp3TransferPrimitive mtp3TransferPrimitive);
+    
+    public ProtocolData createProtocolData(byte[] payloadData);
 
     public NetworkAppearance createNetworkAppearance(long netApp);
 
@@ -90,7 +93,7 @@ public interface ParameterFactory {
 
     public ServiceIndicators createServiceIndicators(short[] inds);
 
-    public TrafficModeType createTrafficModeType(int mode);
+    public TrafficModeType createTrafficModeType(int mode); 
 
     public RegistrationStatus createRegistrationStatus(int status);
 

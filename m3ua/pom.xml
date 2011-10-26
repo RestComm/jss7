@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 
@@ -11,12 +12,11 @@
 
 	<artifactId>m3ua</artifactId>
 	<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
-	<version>1.0.0-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
 	<name>Mobicents SS7 :: M3UA :: Parent :: ${pom.artifactId}</name>
-	
+
 	<properties>
 		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
 	</properties>
@@ -26,48 +26,6 @@
 		<module>impl</module>
 	</modules>
 
-	<developers>
-		<developer>
-			<id>oleg.kulikoff</id>
-			<name>Oleg Kulikoff</name>
-			<email>oleg.kulikoff@gmail.com</email>
-			<organization>JBoss/Red Hat</organization>
-			<organizationUrl>http://www.redhat.com/</organizationUrl>
-			<roles>
-				<role>Active Developer</role>
-			</roles>
-			<timezone>+3</timezone>
-		</developer>
-		<developer>
-			<id>amit.bhayani</id>
-			<name>Amit Bhayani</name>
-			<email>amit.bhayani@gmail.com</email>
-			<organization>JBoss/Red Hat</organization>
-			<organizationUrl>http://www.redhat.com/</organizationUrl>
-			<roles>
-				<role>Active Developer</role>
-			</roles>
-			<timezone>+5.5</timezone>
-		</developer>
-		<developer>
-			<id>baranowb</id>
-			<name>Bartosz Baranowski</name>
-			<email>baranowb@gmail.com</email>
-			<organization>JBoss/Red Hat</organization>
-			<organizationUrl>http://www.redhat.com/</organizationUrl>
-			<roles>
-				<role>Active Developer</role>
-			</roles>
-			<timezone>+1</timezone>
-		</developer>
-	</developers>
-	<licenses>
-		<license>
-			<name>GNU GENERAL PUBLIC LICENSE</name>
-			<url>http://www.gnu.org/licenses/gpl.html</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
 	<!-- -->
 	<build>
 		<plugins>
@@ -118,15 +76,6 @@
 							<preparationGoals>clean install</preparationGoals>
 						</configuration>
 					</plugin>
-					<plugin>
-                                <groupId>org.apache.maven.plugins</groupId>
-                                <artifactId>maven-compiler-plugin</artifactId>
-                                <version>2.3</version>
-                                <configuration>
-                                  <compilerArgument>-XDignore.symbol.file=true</compilerArgument>
-                                </configuration>
-                        </plugin>
-					
 				</plugins>
 			</build>
 		</profile>
@@ -138,16 +87,5 @@
 			<!-- Add more if required -->
 		</profile>
 	</profiles>
-	<scm>
-		<connection>
-			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/m3ua
-		</connection>
-		<developerConnection>
-			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7/m3ua
-		</developerConnection>
-		<url>
-			http://mobicents.googlecode.com/svn/trunk/protocols/ss7/m3ua
-		</url>
-	</scm>
 
 </project>

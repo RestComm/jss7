@@ -48,7 +48,6 @@ import org.mobicents.protocols.ss7.m3ua.parameter.LocalRKIdentifier;
 import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.OPCList;
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
-import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 import org.mobicents.protocols.ss7.m3ua.parameter.RegistrationStatus;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.ServiceIndicators;
@@ -102,52 +101,55 @@ public class ParameterTest {
 
 	@Test
 	public void testProtocolData() throws IOException {
+
+		// Trace from wireshark
+		byte[] userData = new byte[] { 0x09, (byte) 0x80, 0x03, 0x0c, 0x15, 0x09, 0x12, 0x05, 0x00, 0x12, 0x04, 0x55,
+				0x16, 0x09, (byte) 0x90, 0x09, 0x12, 0x07, 0x00, 0x12, 0x04, 0x55, 0x16, 0x09, 0x00, 0x5f, 0x62, 0x5d,
+				0x48, 0x04, 0x3a, (byte) 0x8c, 0x10, 0x04, 0x6b, 0x3f, 0x28, 0x3d, 0x06, 0x07, 0x00, 0x11, (byte) 0x86,
+				0x05, 0x01, 0x01, 0x01, (byte) 0xa0, 0x32, 0x60, 0x30, (byte) 0x80, 0x02, 0x07, (byte) 0x80,
+				(byte) 0xa1, 0x09, 0x06, 0x07, 0x04, 0x00, 0x00, 0x01, 0x00, 0x13, 0x02, (byte) 0xbe, 0x1f, 0x28, 0x1d,
+				0x06, 0x07, 0x04, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, (byte) 0xa0, 0x12, (byte) 0xa0, 0x10,
+				(byte) 0x80, 0x07, (byte) 0x91, 0x55, 0x16, 0x28, (byte) 0x81, 0x00, 0x70, (byte) 0x81, 0x05,
+				(byte) 0x91, 0x55, 0x16, 0x09, 0x00, 0x6c, 0x14, (byte) 0xa1, 0x12, 0x02, 0x01, 0x00, 0x02, 0x01, 0x3b,
+				0x30, 0x0a, 0x04, 0x01, 0x0f, 0x04, 0x05, 0x2a, (byte) 0xd9, (byte) 0x8c, 0x36, 0x02 };
+
+		byte[] protocolData = new byte[userData.length + 12];
+
+		System.arraycopy(userData, 0, protocolData, 12, userData.length);
+		protocolData[0] = 0x00;
+		protocolData[1] = 0x00;
+		protocolData[2] = 0x1e;
+		protocolData[3] = (byte) 0xd4;
+		protocolData[4] = 0x00;
+		protocolData[5] = 0x00;
+		protocolData[6] = 0x08;
+		protocolData[7] = (byte) 0x98;
+		protocolData[8] = 0x03;
+		protocolData[9] = 0x03;
+		protocolData[10] = 0x00;
+		protocolData[11] = 0x0f;
+
 		int si = 3;
 		int mp = 0;
-		int ni = 2;
-		int dpc = 14150;
-		int opc = 1408;
-		int sls = 1;
-		ProtocolDataImpl p1 = (ProtocolDataImpl) factory.createProtocolData(opc, dpc, si, ni, mp, sls, new byte[] { 1,
-				2, 3, 4 });
+		int ni = 3;
+		int dpc = 2200;
+		int opc = 7892;
+		int sls = 15;
+		ProtocolDataImpl p1 = (ProtocolDataImpl) factory.createProtocolData(opc, dpc, si, ni, mp, sls, userData);
 
-		// Test with MTP3 Routing fields
-		byte[] mtp3Data = new byte[9];
-		/**
-		 * MTP3 Routing is formed as :- SLS(4) | OPC(14) | DPC(14) | NI(2) |
-		 * MP(2) | SI(4)
-		 */
-		mtp3Data[0] = (byte) (((ni << 6) & 0xC0) | ((mp << 4) & 0x30) | (si & 0xf));
-		// this.dpc = (msu[1] & 0xff | ((msu[2] & 0x3f) << 8));
-		mtp3Data[1] = (byte) (dpc & 0xff);
-		mtp3Data[2] = (byte) (((dpc >> 8) & 0x3f) | ((opc & 0x03) << 6));
-		mtp3Data[3] = (byte) ((opc >> 2) & 0xff);
-		mtp3Data[4] = (byte) (((opc >> 10) & 0x3f) | ((sls << 4) & 0xF0));
-		mtp3Data[5] = 1;
-		mtp3Data[6] = 2;
-		mtp3Data[7] = 3;
-		mtp3Data[8] = 4;
+		assertTrue(Arrays.equals(protocolData, p1.getValue()));
 
-		// this.opc = ((msu[2] & 0xC0) >> 6) | ((msu[3] & 0xff) << 2) | ((msu[4]
-		// & 0x0f) << 10);
-
-		ProtocolData p3 = factory.createProtocolData(0, mtp3Data);
-
-		((ProtocolDataImpl) p1).write(out);
-
-		byte[] data = out.array();
-
-		ProtocolDataImpl p2 = (ProtocolDataImpl) factory.createParameter(getTag(data), getValue(data));
+		ProtocolDataImpl p2 = (ProtocolDataImpl) factory.createProtocolData(protocolData);
 
 		assertEquals(p1.getTag(), p2.getTag());
 		assertEquals(p1.getOpc(), p2.getOpc());
 		assertEquals(p1.getDpc(), p2.getDpc());
-		assertEquals(p2.getSI(), p3.getSI());
-		assertEquals(p2.getNI(), p3.getNI());
-		assertEquals(p2.getMP(), p3.getMP());
-		assertEquals(p2.getSLS(), p3.getSLS());
+		assertEquals(p2.getSI(), p2.getSI());
+		assertEquals(p2.getNI(), p2.getNI());
+		assertEquals(p2.getMP(), p2.getMP());
+		assertEquals(p2.getSLS(), p2.getSLS());
 
-		boolean isDataCorrect = Arrays.equals(p2.getData(), p3.getData());
+		boolean isDataCorrect = Arrays.equals(p2.getData(), p2.getData());
 		assertTrue("Data mismatch", isDataCorrect);
 	}
 
