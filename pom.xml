@@ -35,6 +35,7 @@
 		<!-- mobicents but not strictly ss7 -->
 		<asn.version>1.0.0-SNAPSHOT</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
+		<sctp.version>1.0.0-SNAPSHOT</sctp.version>
 	</properties>
 
 	<modules>
@@ -66,6 +67,12 @@
 				<groupId>org.mobicents.protocols.stream</groupId>
 				<artifactId>stream</artifactId>
 				<version>${stream.version}</version>
+			</dependency>
+			<!-- SCTP -->
+			<dependency>
+				<groupId>org.mobicents.protocols.sctp</groupId>
+				<artifactId>sctp</artifactId>
+				<version>${sctp.version}</version>
 			</dependency>
 			<!-- Clock -->
 			<dependency>
