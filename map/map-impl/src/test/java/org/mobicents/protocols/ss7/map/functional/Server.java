@@ -739,9 +739,9 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		if (this.step == FunctionalTestScenario.Action_TestMsgLength_A || this.step == FunctionalTestScenario.Action_TestMsgLength_B) {
 			Assert.assertNotNull(sm_RP_DA);
 			Assert.assertNotNull(sm_RP_DA.getIMSI());
-			Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMCC()), 250);
-			Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMNC()), 99);
-			Assert.assertEquals(sm_RP_DA.getIMSI().getMSIN(), "1357999");
+//			Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMCC()), 250);
+//			Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMNC()), 99);
+			Assert.assertEquals(sm_RP_DA.getIMSI().getData(), "250991357999");
 			Assert.assertNotNull(sm_RP_OA);
 			Assert.assertNotNull(sm_RP_OA.getMsisdn());
 			Assert.assertEquals(sm_RP_OA.getMsisdn().getAddressNature(), AddressNature.international_number);
@@ -760,16 +760,16 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 			Assert.assertTrue(Arrays.equals(sm_RP_UI, testArr));
 			Assert.assertNull(extensionContainer);
 			Assert.assertNotNull(imsi2);
-			Assert.assertEquals((long) (imsi2.getMCC()), 250);
-			Assert.assertEquals((long) (imsi2.getMNC()), 7);
-			Assert.assertEquals(imsi2.getMSIN(), "123456789");
+//			Assert.assertEquals((long) (imsi2.getMCC()), 250);
+//			Assert.assertEquals((long) (imsi2.getMNC()), 7);
+			Assert.assertEquals(imsi2.getData(), "25007123456789");
 
 		} else {
 			Assert.assertNotNull(sm_RP_DA);
 			Assert.assertNotNull(sm_RP_DA.getIMSI());
-			Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMCC()), 250);
-			Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMNC()), 99);
-			Assert.assertEquals(sm_RP_DA.getIMSI().getMSIN(), "1357999");
+//			Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMCC()), 250);
+//			Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMNC()), 99);
+			Assert.assertEquals(sm_RP_DA.getIMSI().getData(), "250991357999");
 			Assert.assertNotNull(sm_RP_OA);
 			Assert.assertNotNull(sm_RP_OA.getMsisdn());
 			Assert.assertEquals(sm_RP_OA.getMsisdn().getAddressNature(), AddressNature.international_number);
@@ -779,9 +779,9 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 			Assert.assertTrue(Arrays.equals(sm_RP_UI, new byte[] { 21, 22, 23, 24, 25 }));
 			Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
 			Assert.assertNotNull(imsi2);
-			Assert.assertEquals((long) (imsi2.getMCC()), 250);
-			Assert.assertEquals((long) (imsi2.getMNC()), 7);
-			Assert.assertEquals(imsi2.getMSIN(), "123456789");
+//			Assert.assertEquals((long) (imsi2.getMCC()), 250);
+//			Assert.assertEquals((long) (imsi2.getMNC()), 7);
+			Assert.assertEquals(imsi2.getData(), "25007123456789");
 		}
 
 		this._S_recievedSmsRequestIndication = true;
@@ -873,7 +873,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 		this._S_recievedSmsRequestIndication = true;
 		
-		IMSI imsi = this.MAPParameterFactory.createIMSI(250L, 99L, "777000");
+		IMSI imsi = this.MAPParameterFactory.createIMSI("25099777000");
 		ISDNAddressString networkNodeNumber = this.MAPParameterFactory.createISDNAddressString(AddressNature.network_specific_number, NumberingPlan.national,
 				"111000111");
 		LMSI lmsi = this.MAPParameterFactory.createLMSI(new byte[] { 75, 74, 73, 72 });
@@ -1033,9 +1033,9 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 		Assert.assertNotNull(sm_RP_DA);
 		Assert.assertNotNull(sm_RP_DA.getIMSI());
-		Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMCC()), 250);
-		Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMNC()), 99);
-		Assert.assertEquals(sm_RP_DA.getIMSI().getMSIN(), "1357999");
+//		Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMCC()), 250);
+//		Assert.assertEquals((long) (sm_RP_DA.getIMSI().getMNC()), 99);
+		Assert.assertEquals(sm_RP_DA.getIMSI().getData(), "250991357999");
 		Assert.assertNotNull(sm_RP_OA);
 		Assert.assertNotNull(sm_RP_OA.getMsisdn());
 		Assert.assertEquals(sm_RP_OA.getMsisdn().getAddressNature(), AddressNature.international_number);

@@ -184,7 +184,12 @@ public abstract class SccpHarness {
 		private boolean saveTrafficInFile = false;
 
 		Mtp3UserPartImpl() {
-			this.start();
+			try {
+				this.start();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		public void setOtherPart(Mtp3UserPartImpl otherPart) {

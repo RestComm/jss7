@@ -274,12 +274,12 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 			break;
 
 		case Action_Sms_MoForwardSM: {
-			IMSI imsi1 = this.MAPParameterFactory.createIMSI(250L, 99L, "1357999");
+			IMSI imsi1 = this.MAPParameterFactory.createIMSI("250991357999");
 			SM_RP_DA sm_RP_DA = this.MAPParameterFactory.createSM_RP_DA(imsi1);
 			ISDNAddressString msisdn1 = this.MAPParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
 			SM_RP_OA sm_RP_OA = this.MAPParameterFactory.createSM_RP_OA_Msisdn(msisdn1);
 			byte[] sm_RP_UI = new byte[] { 21, 22, 23, 24, 25 };
-			IMSI imsi2 = this.MAPParameterFactory.createIMSI(250L, 07L, "123456789");
+			IMSI imsi2 = this.MAPParameterFactory.createIMSI("25007123456789");
 
 			clientDialogSms.addMoForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, MAPExtensionContainerTest.GetTestExtensionContainer(), imsi2);
 		}
@@ -296,7 +296,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 			break;
 
 		case Action_Sms_ForwardSM: {
-			IMSI imsi1 = this.MAPParameterFactory.createIMSI(250L, 99L, "1357999");
+			IMSI imsi1 = this.MAPParameterFactory.createIMSI("250991357999");
 			SM_RP_DA sm_RP_DA = this.MAPParameterFactory.createSM_RP_DA(imsi1);
 			ISDNAddressString msisdn1 = this.MAPParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
 			SM_RP_OA sm_RP_OA = this.MAPParameterFactory.createSM_RP_OA_Msisdn(msisdn1);
@@ -404,7 +404,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		}
 			break;		
 		case Action_V1_E: {
-			IMSI imsi1 = this.MAPParameterFactory.createIMSI(250L, 99L, "1357999");
+			IMSI imsi1 = this.MAPParameterFactory.createIMSI("250991357999");
 			SM_RP_DA sm_RP_DA = this.MAPParameterFactory.createSM_RP_DA(imsi1);
 			ISDNAddressString msisdn1 = this.MAPParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
 			SM_RP_OA sm_RP_OA = this.MAPParameterFactory.createSM_RP_OA_Msisdn(msisdn1);
@@ -444,11 +444,11 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 			Arrays.fill(sm_RP_UI, (byte) 22);
 		}
 		
-		IMSI imsi1 = this.MAPParameterFactory.createIMSI(250L, 99L, "1357999");
+		IMSI imsi1 = this.MAPParameterFactory.createIMSI("250991357999");
 		SM_RP_DA sm_RP_DA = this.MAPParameterFactory.createSM_RP_DA(imsi1);
 		ISDNAddressString msisdn1 = this.MAPParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
 		SM_RP_OA sm_RP_OA = this.MAPParameterFactory.createSM_RP_OA_Msisdn(msisdn1);
-		IMSI imsi2 = this.MAPParameterFactory.createIMSI(250L, 07L, "123456789");
+		IMSI imsi2 = this.MAPParameterFactory.createIMSI("25007123456789");
 
 		Long invokeId = clientDialogSms.addMoForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, null, imsi2);
 		
@@ -684,12 +684,12 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 						Arrays.fill(sm_RP_UI, (byte) 22);
 					}
 
-					IMSI imsi1 = this.MAPParameterFactory.createIMSI(250L, 99L, "1357999");
+					IMSI imsi1 = this.MAPParameterFactory.createIMSI("250991357999");
 					SM_RP_DA sm_RP_DA = this.MAPParameterFactory.createSM_RP_DA(imsi1);
 					ISDNAddressString msisdn1 = this.MAPParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN,
 							"111222333");
 					SM_RP_OA sm_RP_OA = this.MAPParameterFactory.createSM_RP_OA_Msisdn(msisdn1);
-					IMSI imsi2 = this.MAPParameterFactory.createIMSI(250L, 07L, "123456789");
+					IMSI imsi2 = this.MAPParameterFactory.createIMSI("25007123456789");
 
 					Long invokeId = clientDialogSms.addMoForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, null, imsi2);
 
@@ -975,9 +975,9 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		ISDNAddressString additionalNumber = locationInfoWithLMSI.getAdditionalNumber();
 
 		Assert.assertNotNull(imsi);
-		Assert.assertEquals((long) (imsi.getMCC()), 250);
-		Assert.assertEquals((long) (imsi.getMNC()), 99);
-		Assert.assertEquals(imsi.getMSIN(), "777000");
+//		Assert.assertEquals((long) (imsi.getMCC()), 250);
+//		Assert.assertEquals((long) (imsi.getMNC()), 99);
+		Assert.assertEquals(imsi.getData(), "25099777000");
 		Assert.assertNotNull(networkNodeNumber);
 		Assert.assertEquals(networkNodeNumber.getAddressNature(), AddressNature.network_specific_number);
 		Assert.assertEquals(networkNodeNumber.getNumberingPlan(), NumberingPlan.national);
