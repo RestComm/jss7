@@ -49,7 +49,6 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
@@ -132,6 +131,16 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 
 	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)
 			throws MAPParsingComponentException {
+
+		// if an application-context-name different from version 1 is
+		// received in a syntactically correct TC-
+		// BEGIN indication primitive but is not acceptable from a load
+		// control point of view, the MAP PM
+		// shall ignore this dialogue request. The MAP-user is not informed.
+		if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
+			// we reject all supplementary services when congestion
+			return;
+		}
 
 		MAPDialogSupplementaryImpl mapDialogSupplementaryImpl = (MAPDialogSupplementaryImpl) mapDialog;
 
