@@ -45,7 +45,12 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
 	private Mtp3UserPartImpl otherPart;
 
 	Mtp3UserPartImpl() {
-		this.start();
+		try {
+			this.start();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void setOtherPart(Mtp3UserPartImpl otherPart) {
