@@ -27,7 +27,8 @@ import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.sctp.Association;
+import org.mobicents.protocols.api.Association;
+import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
@@ -77,8 +78,8 @@ public class RemAspFactory extends AspFactory {
 		super();
 	}
 
-	public RemAspFactory(String name) {
-		super(name);
+	public RemAspFactory(String name, Management transportManagement) {
+		super(name, transportManagement);
 	}
 
 	@Override
@@ -429,19 +430,19 @@ public class RemAspFactory extends AspFactory {
 
 	@Override
 	public void start() throws Exception {
+		this.transportManagement.startAssociation(this.association.getName());
 		this.started = true;
-		this.association.start();
 	}
 
 	@Override
 	public void stop() throws Exception {
 		this.started = false;
-		
-		if(this.channelConnected){
+
+		if (this.channelConnected) {
 			throw new Exception("Still few ASP's are connected. Bring down the ASP's first");
 		}
-		
-		this.association.stop();
+
+		this.transportManagement.stopAssociation(this.association.getName());
 	}
 
 	private void signalAspFsm(String asptransition) {
@@ -478,7 +479,7 @@ public class RemAspFactory extends AspFactory {
 		// TODO ?
 	}
 
-	public void onPayload(Association association, org.mobicents.protocols.sctp.PayloadData payloadData) {
+	public void onPayload(Association association, org.mobicents.protocols.api.PayloadData payloadData) {
 		// TODO where is streamNumber stored?
 
 		byte[] m3uadata = payloadData.getData();

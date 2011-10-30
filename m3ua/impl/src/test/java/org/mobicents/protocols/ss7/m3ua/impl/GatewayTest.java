@@ -23,9 +23,6 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
@@ -34,9 +31,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mobicents.protocols.sctp.Management;
+import org.mobicents.protocols.api.Management;
+import org.mobicents.protocols.sctp.ManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAManagement;
-import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAManagement;
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
@@ -67,8 +64,6 @@ public class GatewayTest {
 	private ServerM3UAManagement serverM3UAMgmt = null;
 	private ClientM3UAManagement clientM3UAMgmt = null;
 
-	private ParameterFactoryImpl parmFactory = new ParameterFactoryImpl();
-
 	private As remAs;
 	private Asp remAsp;
 	private AspFactory remAspFactory;
@@ -94,19 +89,19 @@ public class GatewayTest {
 		client = new Client();
 		server = new Server();
 
-		this.sctpManagement = new Management("server-management");
+		this.sctpManagement = new ManagementImpl("server-management");
 		this.sctpManagement.setSingleThread(true);
 		this.sctpManagement.setConnectDelay(1000 * 5);// setting connection
 														// delay to 5 secs
 		this.sctpManagement.start();
 
 		this.serverM3UAMgmt = new ServerM3UAManagement();
-		this.serverM3UAMgmt.setSctpManagement(this.sctpManagement);
+		this.serverM3UAMgmt.setTransportManagement(this.sctpManagement);
 		this.serverM3UAMgmt.addMtp3UserPartListener(server);
 		this.serverM3UAMgmt.start();
 
 		this.clientM3UAMgmt = new ClientM3UAManagement();
-		this.clientM3UAMgmt.setSctpManagement(this.sctpManagement);
+		this.clientM3UAMgmt.setTransportManagement(this.sctpManagement);
 		this.clientM3UAMgmt.addMtp3UserPartListener(client);
 		this.clientM3UAMgmt.start();
 
@@ -186,8 +181,7 @@ public class GatewayTest {
 		public void start() throws Exception {
 
 			// 1. Create SCTP Association
-			sctpManagement.createAssociation(CLIENT_HOST, CLIENT_PORT, SERVER_HOST, SERVER_PORT,
-					CLIENT_ASSOCIATION_NAME);
+			sctpManagement.addAssociation(CLIENT_HOST, CLIENT_PORT, SERVER_HOST, SERVER_PORT, CLIENT_ASSOCIATION_NAME);
 
 			// 2. Create AS
 			// m3ua as create rc <rc> <ras-name>
@@ -231,7 +225,7 @@ public class GatewayTest {
 
 			// 5. Destroy As
 			clientM3UAMgmt.destroyAs("client-testas");
-			
+
 			// 6. remove sctp
 			sctpManagement.removeAssociation(CLIENT_ASSOCIATION_NAME);
 		}
@@ -281,10 +275,10 @@ public class GatewayTest {
 		private void start() throws Exception {
 
 			// 1. Create SCTP Server
-			sctpManagement.createServer(SERVER_NAME, SERVER_HOST, SERVER_PORT);
+			sctpManagement.addServer(SERVER_NAME, SERVER_HOST, SERVER_PORT);
 
 			// 2. Create SCTP Server Association
-			sctpManagement.createServerAssociation(CLIENT_HOST, CLIENT_PORT, SERVER_NAME, SERVER_ASSOCIATION_NAME);
+			sctpManagement.addServerAssociation(CLIENT_HOST, CLIENT_PORT, SERVER_NAME, SERVER_ASSOCIATION_NAME);
 
 			// 3. Start Server
 			sctpManagement.startServer(SERVER_NAME);
@@ -311,7 +305,7 @@ public class GatewayTest {
 
 		public void stop() throws Exception {
 			serverM3UAMgmt.managementStopAsp("server-testasp");
-			
+
 			serverM3UAMgmt.unassignAspFromAs("server-testas", "server-testasp");
 
 			// 4. destroy aspFactory
@@ -319,10 +313,9 @@ public class GatewayTest {
 
 			// 5. Destroy As
 			serverM3UAMgmt.destroyAs("server-testas");
-			
-			
+
 			sctpManagement.removeAssociation(SERVER_ASSOCIATION_NAME);
-			
+
 			sctpManagement.stopServer(SERVER_NAME);
 			sctpManagement.removeServer(SERVER_NAME);
 		}

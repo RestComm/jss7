@@ -22,11 +22,11 @@
 
 package org.mobicents.protocols.ss7.m3ua.message;
 
-import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 
 /**
  * Constructs M3UA message.
  * 
+ * @author amit bhayani
  * @author kulikov
  */
 public interface MessageFactory {
@@ -41,5 +41,5 @@ public interface MessageFactory {
 	 */
 	public M3UAMessage createMessage(int messageClass, int messageType);
 
-	public M3UAMessageImpl createSctpMessage(byte[] buffer);
+	public M3UAMessage createSctpMessage(byte[] buffer);
 }

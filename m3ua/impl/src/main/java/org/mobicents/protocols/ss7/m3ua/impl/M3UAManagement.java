@@ -38,7 +38,7 @@ import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.sctp.Management;
+import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAOAMMessages;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.scheduler.M3UAScheduler;
@@ -77,7 +77,7 @@ public abstract class M3UAManagement extends Mtp3UserPartBaseImpl {
 
 	protected ParameterFactory parameterFactory = new ParameterFactoryImpl();
 
-	protected Management sctpManagement = null;
+	protected Management transportManagement = null;
 
 	private ScheduledExecutorService fsmTicker;
 
@@ -93,15 +93,17 @@ public abstract class M3UAManagement extends Mtp3UserPartBaseImpl {
 		this.persistDir = persistDir;
 	}
 
-	public Management getSctpManagement() {
-		return sctpManagement;
+	public Management getTransportManagement() {
+		return transportManagement;
 	}
 
-	public void setSctpManagement(Management sctpManagement) {
-		this.sctpManagement = sctpManagement;
+	public void setTransportManagement(Management transportManagement) {
+		this.transportManagement = transportManagement;
 	}
 
 	public void start() throws Exception {
+		super.start();
+
 		this.persistFile.clear();
 
 		if (persistDir != null) {
@@ -126,6 +128,8 @@ public abstract class M3UAManagement extends Mtp3UserPartBaseImpl {
 	}
 
 	public void stop() throws Exception {
+		super.stop();
+
 		this.store();
 		fsmTicker.shutdown();
 	}
@@ -159,16 +163,17 @@ public abstract class M3UAManagement extends Mtp3UserPartBaseImpl {
 		if (as == null) {
 			throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_NO_AS, asName));
 		}
-		
-		if(as.getAspList().size() != 0){
-			throw new Exception(String.format("As=%s still has ASP's assigned. Unassign Asp's before destroying this As", asName));
+
+		if (as.getAspList().size() != 0) {
+			throw new Exception(String.format(
+					"As=%s still has ASP's assigned. Unassign Asp's before destroying this As", asName));
 		}
-		
+
 		as.getFSM().cancel();
 		appServers.remove(as);
-		
+
 		this.store();
-		
+
 		return as;
 	}
 
@@ -365,12 +370,12 @@ public abstract class M3UAManagement extends Mtp3UserPartBaseImpl {
 				}
 			}
 
-			// Start the ASP's if it was originally started
+			// Set the transportManagement
 			for (FastList.Node<AspFactory> n = aspfactories.head(), end = aspfactories.tail(); (n = n.getNext()) != end;) {
 				AspFactory factory = n.getValue();
 				if (factory.getStatus()) {
 					try {
-						// startAsp(factory);
+						factory.setTransportManagement(this.transportManagement);
 					} catch (Exception e) {
 						logger.error(
 								String.format("Error starting the AspFactory=%s while loading from XML",

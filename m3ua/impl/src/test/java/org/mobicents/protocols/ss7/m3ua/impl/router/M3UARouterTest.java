@@ -29,6 +29,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
@@ -82,7 +83,7 @@ public class M3UARouterTest {
 
         RoutingKeyImpl rk1 = (RoutingKeyImpl) factory.createRoutingKey(null, rc, null, null, dpc, servInds, opcList);
 
-        this.m3uaRouter.addRk(rk1, new As("AsImpl1", rc, rk1, null));
+        this.m3uaRouter.addRk(rk1, new As("AsImpl1", rc, rk1, null, Functionality.SGW));
 
         // RK DPC=123 OPC=4 SI=2
         rc = factory.createRoutingContext(new long[] { 2 });
@@ -92,7 +93,7 @@ public class M3UARouterTest {
 
         RoutingKeyImpl rk2 = (RoutingKeyImpl) factory.createRoutingKey(null, rc, null, null, dpc, servInds, opcList);
 
-        this.m3uaRouter.addRk(rk2, new As("AsImpl2", rc, rk2, null));
+        this.m3uaRouter.addRk(rk2, new As("AsImpl2", rc, rk2, null, Functionality.SGW));
 
         // RK DPC=123
         rc = factory.createRoutingContext(new long[] { 3 });
@@ -100,7 +101,7 @@ public class M3UARouterTest {
 
         RoutingKeyImpl rk3 = (RoutingKeyImpl) factory.createRoutingKey(null, rc, null, null, dpc, null, null);
 
-        this.m3uaRouter.addRk(rk3, new As("AsImpl3", rc, rk3, null));
+        this.m3uaRouter.addRk(rk3, new As("AsImpl3", rc, rk3, null, Functionality.SGW));
 
         // Retrieve As for message where dpc=123 opc=1, si=2
         As resultAs = this.m3uaRouter.getAs(123, 1, (short) 2);

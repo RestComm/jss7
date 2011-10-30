@@ -30,8 +30,9 @@ import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.sctp.Association;
-import org.mobicents.protocols.sctp.AssociationListener;
+import org.mobicents.protocols.api.Association;
+import org.mobicents.protocols.api.AssociationListener;
+import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
@@ -59,6 +60,8 @@ public abstract class AspFactory implements AssociationListener, XMLSerializable
 
 	private ByteBuffer txBuffer = ByteBuffer.allocateDirect(8192);
 
+	protected Management transportManagement = null;
+
 	public AspFactory() {
 
 		// clean transmission buffer
@@ -67,9 +70,10 @@ public abstract class AspFactory implements AssociationListener, XMLSerializable
 		txBuffer.flip();
 	}
 
-	public AspFactory(String name) {
+	public AspFactory(String name, Management transportManagement) {
 		this();
 		this.name = name;
+		this.transportManagement = transportManagement;
 	}
 
 	public abstract void start() throws Exception;
@@ -78,6 +82,10 @@ public abstract class AspFactory implements AssociationListener, XMLSerializable
 
 	public boolean getStatus() {
 		return this.started;
+	}
+
+	public void setTransportManagement(Management transportManagement) {
+		this.transportManagement = transportManagement;
 	}
 
 	public void setAssociation(Association association) {
@@ -119,21 +127,21 @@ public abstract class AspFactory implements AssociationListener, XMLSerializable
 				byte[] data = new byte[txBuffer.limit()];
 				txBuffer.get(data);
 
-				org.mobicents.protocols.sctp.PayloadData payloadData = null;
+				org.mobicents.protocols.api.PayloadData payloadData = null;
 
 				switch (message.getMessageClass()) {
 				case MessageClass.ASP_STATE_MAINTENANCE:
 				case MessageClass.MANAGEMENT:
 				case MessageClass.ROUTING_KEY_MANAGEMENT:
-					payloadData = new org.mobicents.protocols.sctp.PayloadData(data.length, data, true, true, 3, 0);
+					payloadData = new org.mobicents.protocols.api.PayloadData(data.length, data, true, true, 3, 0);
 					break;
 				case MessageClass.TRANSFER_MESSAGES:
 					PayloadData payload = (PayloadData) message;
-					payloadData = new org.mobicents.protocols.sctp.PayloadData(data.length, data, true, false, 3,
+					payloadData = new org.mobicents.protocols.api.PayloadData(data.length, data, true, false, 3,
 							payload.getData().getSLS());
 					break;
 				default:
-					payloadData = new org.mobicents.protocols.sctp.PayloadData(data.length, data, true, true, 3, 0);
+					payloadData = new org.mobicents.protocols.api.PayloadData(data.length, data, true, true, 3, 0);
 					break;
 				}
 

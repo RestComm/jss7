@@ -29,7 +29,6 @@ import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
 import org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAManagement;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAManagement;
 import org.mobicents.ss7.management.console.ShellExecutor;
 
 /**

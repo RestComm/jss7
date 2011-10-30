@@ -36,7 +36,7 @@ import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.sctp.Association;
+import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.AsState;
@@ -296,7 +296,7 @@ public class ClientM3UAManagement extends M3UAManagement {
 		}
 
 		String associationName = args[4];
-		Association association = this.sctpManagement.getAssociation(associationName);
+		Association association = this.transportManagement.getAssociation(associationName);
 
 		if (association == null) {
 			throw new Exception(String.format("No Association found for name=%s", associationName));
@@ -310,7 +310,7 @@ public class ClientM3UAManagement extends M3UAManagement {
 			throw new Exception(String.format("Association=%s is already associated", associationName));
 		}
 
-		AspFactory factory = new LocalAspFactory(name);
+		AspFactory factory = new LocalAspFactory(name, this.transportManagement);
 		aspfactories.add(factory);
 		factory.setAssociation(association);
 

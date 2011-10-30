@@ -27,19 +27,27 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javolution.util.FastMap;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.api.Association;
+import org.mobicents.protocols.api.AssociationListener;
+import org.mobicents.protocols.api.Management;
+import org.mobicents.protocols.api.PayloadData;
+import org.mobicents.protocols.api.Server;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.AsState;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.AspState;
-import org.mobicents.protocols.ss7.m3ua.impl.CommunicationListener.CommunicationState;
 import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.asptm.ASPActiveImpl;
@@ -69,7 +77,9 @@ public class SgFSMTest {
 
 	private ParameterFactoryImpl parmFactory = new ParameterFactoryImpl();
 	private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
-	private ServerM3UAManagement serverM3UAMgmt = new ServerM3UAManagement();
+	private ServerM3UAManagement serverM3UAMgmt = null;
+
+	private TransportManagement transportManagement = null;
 
 	public SgFSMTest() {
 	}
@@ -83,13 +93,16 @@ public class SgFSMTest {
 	}
 
 	@Before
-	public void setUp() throws IOException {
-		serverM3UAMgmt.start();
+	public void setUp() throws Exception {
+		this.transportManagement = new TransportManagement();
+		this.serverM3UAMgmt = new ServerM3UAManagement();
+		this.serverM3UAMgmt.setTransportManagement(this.transportManagement);
+		this.serverM3UAMgmt.start();
 
 	}
 
 	@After
-	public void tearDown() throws IOException {
+	public void tearDown() throws Exception {
 		serverM3UAMgmt.getAppServers().clear();
 		serverM3UAMgmt.getAspfactories().clear();
 		serverM3UAMgmt.stop();
@@ -98,6 +111,8 @@ public class SgFSMTest {
 	@Test
 	public void testSingleAspInAs() throws Exception {
 		// 5.1.1. Single ASP in an Application Server ("1+0" sparing),
+		TestAssociation testAssociation = (TestAssociation) this.transportManagement.addAssociation(null, 0, null, 0,
+				"testAssoc1");
 
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
@@ -115,13 +130,12 @@ public class SgFSMTest {
 				.split(" "));
 		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
 		// 2777);
-		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp"
-				.split(" "));
+		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("m3ua rasp create testasp testAssoc1".split(" "));
 
 		Asp remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
 
 		// Check for Communication UP
-		aspFactory.onCommStateChange(CommunicationState.UP);
+		testAssociation.signalCommUp();
 
 		assertEquals(AspState.DOWN, remAsp.getState());
 
@@ -130,10 +144,10 @@ public class SgFSMTest {
 		aspFactory.read(message);
 
 		assertEquals(AspState.INACTIVE, remAsp.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
 		// also the AS should be INACTIVE now
 		assertEquals(AsState.INACTIVE, remAs.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE));
 
 		// Check for ASP_ACTIVE
@@ -141,37 +155,41 @@ public class SgFSMTest {
 		((ASPActiveImpl) message).setRoutingContext(rc);
 		aspFactory.read(message);
 		assertEquals(AspState.ACTIVE, remAsp.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK,
+				-1, -1));
 		// also the AS should be ACTIVE now
 		assertEquals(AsState.ACTIVE, remAs.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
 
 		// Check for ASP_INACTIVE
 		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE);
 		aspFactory.read(message);
 		assertEquals(AspState.INACTIVE, remAsp.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE_ACK, -1,
-				-1));
+		assertTrue(validateMessage(testAssociation, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE_ACK,
+				-1, -1));
 		// also the AS should be PENDING now
 		assertEquals(AsState.PENDING, remAs.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_PENDING));
 
 		// Check for ASP_DOWN
 		message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
 		aspFactory.read(message);
 		assertEquals(AspState.DOWN, remAsp.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK, -1,
+				-1));
 
 		// Make sure we don't have any more
-		assertNull(aspFactory.txPoll());
+		assertNull(testAssociation.txPoll());
 	}
 
 	@Test
 	public void testSingleAspInMultipleAs() throws Exception {
 		// 5.1.1.3. Single ASP in Multiple Application Servers (Each with "1+0"
 		// Sparing)
+		TestAssociation testAssociation = (TestAssociation) this.transportManagement.addAssociation(null, 0, null, 0,
+				"testAssoc1");
 
 		// Define 1st AS
 		RoutingContext rc1 = parmFactory.createRoutingContext(new long[] { 100 });
@@ -209,15 +227,15 @@ public class SgFSMTest {
 
 		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
 		// 2777);
-		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp"
-				.split(" "));
+		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("m3ua rasp create testasp testAssoc1".split(" "));
 
 		// Both ASP uses same underlying M3UAChannel
 		Asp remAsp1 = serverM3UAMgmt.assignAspToAs("testas1", "testasp");
 		Asp remAsp2 = serverM3UAMgmt.assignAspToAs("testas2", "testasp");
 
 		// Check for Communication UP
-		aspFactory.onCommStateChange(CommunicationState.UP);
+		testAssociation.signalCommUp();
+
 		assertEquals(AspState.DOWN, remAsp1.getState());
 		assertEquals(AspState.DOWN, remAsp2.getState());
 		// Both AS are yet DOWN
@@ -229,13 +247,13 @@ public class SgFSMTest {
 		aspFactory.read(message);
 		assertEquals(AspState.INACTIVE, remAsp1.getState());
 		assertEquals(AspState.INACTIVE, remAsp2.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
 		// also both the AS should be INACTIVE now
 		assertEquals(AsState.INACTIVE, remAs1.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE));
 		assertEquals(AsState.INACTIVE, remAs2.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE));
 
 		// Check for ASP_ACTIVE for both Routing Contexts
@@ -244,16 +262,18 @@ public class SgFSMTest {
 		aspFactory.read(message);
 		assertEquals(AspState.ACTIVE, remAsp1.getState());
 		assertEquals(AspState.ACTIVE, remAsp2.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK,
+				-1, -1));
 		// also both the AS should be ACTIVE now
 		assertEquals(AsState.ACTIVE, remAs1.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
 		// We will have two ACK's one each for each RC
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK,
+				-1, -1));
 
 		assertEquals(AsState.ACTIVE, remAs2.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
 
 		// Check for ASP_INACTIVE for ASP1
@@ -265,11 +285,11 @@ public class SgFSMTest {
 		// The ASP2 should still be ACTIVE as we sent ASP_INACTIVE only for 100
 		// RC
 		assertEquals(AspState.ACTIVE, remAsp2.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE_ACK, -1,
-				-1));
+		assertTrue(validateMessage(testAssociation, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE_ACK,
+				-1, -1));
 		// AS1 should be PENDING now
 		assertEquals(AsState.PENDING, remAs1.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_PENDING));
 
 		// But AS2 is still ACTIVE
@@ -280,16 +300,22 @@ public class SgFSMTest {
 		aspFactory.read(message);
 		assertEquals(AspState.DOWN, remAsp1.getState());
 		assertEquals(AspState.DOWN, remAsp2.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK, -1,
+				-1));
 
 		// Make sure we don't have any more messages to be sent
-		assertNull(aspFactory.txPoll());
+		assertNull(testAssociation.txPoll());
 
 	}
 
 	@Test
 	public void testTwoAspInAsOverride() throws Exception {
 		// 5.1.2. Two ASPs in Application Server ("1+1" Sparing)
+
+		TestAssociation testAssociation1 = (TestAssociation) this.transportManagement.addAssociation(null, 0, null, 0,
+				"testAssoc1");
+		TestAssociation testAssociation2 = (TestAssociation) this.transportManagement.addAssociation(null, 0, null, 0,
+				"testAssoc2");
 
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
@@ -308,42 +334,40 @@ public class SgFSMTest {
 
 		// AspFactory aspFactory1 = sgw.createAspFactory("testasp1",
 		// "127.0.0.1", 2777);
-		AspFactory aspFactory1 = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp1"
-				.split(" "));
+		AspFactory aspFactory1 = serverM3UAMgmt.createAspFactory("m3ua rasp create testasp1 testAssoc1".split(" "));
 
 		// AspFactory aspFactory2 = sgw.createAspFactory("testasp2",
 		// "127.0.0.1", 2778);
-		AspFactory aspFactory2 = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2778 testasp2"
-				.split(" "));
+		AspFactory aspFactory2 = serverM3UAMgmt.createAspFactory("m3ua rasp create testasp2 testAssoc2".split(" "));
 
 		Asp remAsp1 = serverM3UAMgmt.assignAspToAs("testas", "testasp1");
 		Asp remAsp2 = serverM3UAMgmt.assignAspToAs("testas", "testasp2");
 
 		// Check for Communication UP for ASP1
-		aspFactory1.onCommStateChange(CommunicationState.UP);
+		testAssociation1.signalCommUp();
 		assertEquals(AspState.DOWN, remAsp1.getState());
 
 		// Check for Communication UP for ASP2
-		aspFactory2.onCommStateChange(CommunicationState.UP);
+		testAssociation2.signalCommUp();
 		assertEquals(AspState.DOWN, remAsp2.getState());
 
 		// Check for ASP_UP for ASP1
 		M3UAMessageImpl message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
 		aspFactory1.read(message);
 		assertEquals(AspState.INACTIVE, remAsp1.getState());
-		assertTrue(validateMessage(aspFactory1, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
 		// also the AS should be INACTIVE now
 		assertEquals(AsState.INACTIVE, remAs.getState());
-		assertTrue(validateMessage(aspFactory1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE));
 
 		// Check for ASP_UP for ASP2
 		aspFactory2.read(message);
 		assertEquals(AspState.INACTIVE, remAsp2.getState());
-		assertTrue(validateMessage(aspFactory2, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation2, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
 		// also the AS should be INACTIVE now
 		assertEquals(AsState.INACTIVE, remAs.getState());
-		assertTrue(validateMessage(aspFactory2, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation2, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE));
 
 		// Check for ASP_ACTIVE for ASP1
@@ -351,14 +375,14 @@ public class SgFSMTest {
 		((ASPActiveImpl) message).setRoutingContext(rc);
 		aspFactory1.read(message);
 		assertEquals(AspState.ACTIVE, remAsp1.getState());
-		assertTrue(validateMessage(aspFactory1, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK, -1,
-				-1));
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK,
+				-1, -1));
 		// also the AS should be ACTIVE now and ACTIVE should be delivered to
 		// both the ASPs
 		assertEquals(AsState.ACTIVE, remAs.getState());
-		assertTrue(validateMessage(aspFactory1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
-		assertTrue(validateMessage(aspFactory2, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation2, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
 
 		// INACTIVATE the ASP1
@@ -366,14 +390,14 @@ public class SgFSMTest {
 		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE);
 		aspFactory1.read(message);
 		assertEquals(AspState.INACTIVE, remAsp1.getState());
-		assertTrue(validateMessage(aspFactory1, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE_ACK, -1,
-				-1));
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_TRAFFIC_MAINTENANCE,
+				MessageType.ASP_INACTIVE_ACK, -1, -1));
 		// also the AS should be PENDING now and should send PENDING NTFY to
 		// both the ASPS
 		assertEquals(AsState.PENDING, remAs.getState());
-		assertTrue(validateMessage(aspFactory1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_PENDING));
-		assertTrue(validateMessage(aspFactory2, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation2, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_PENDING));
 
 		// ACTIVATE ASP2
@@ -381,14 +405,14 @@ public class SgFSMTest {
 		((ASPActiveImpl) message).setRoutingContext(rc);
 		aspFactory2.read(message);
 		assertEquals(AspState.ACTIVE, remAsp2.getState());
-		assertTrue(validateMessage(aspFactory2, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK, -1,
-				-1));
+		assertTrue(validateMessage(testAssociation2, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK,
+				-1, -1));
 		// also the AS should be ACTIVE now and ACTIVE should be delivered to
 		// both the ASPs
 		assertEquals(AsState.ACTIVE, remAs.getState());
-		assertTrue(validateMessage(aspFactory2, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation2, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
-		assertTrue(validateMessage(aspFactory1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
 
 		// 5.2.2. 1+1 Sparing, Backup Override
@@ -397,25 +421,31 @@ public class SgFSMTest {
 		((ASPActiveImpl) message).setRoutingContext(rc);
 		aspFactory1.read(message);
 		assertEquals(AspState.ACTIVE, remAsp1.getState());
-		assertTrue(validateMessage(aspFactory1, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK, -1,
-				-1));
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK,
+				-1, -1));
 		// The AS remains ACTIVE and sends NTFY(Alt ASP-Act) to ASP2
 		assertEquals(AsState.ACTIVE, remAs.getState());
 
 		// ASP2 should get Alternate ASP is active
-		assertTrue(validateMessage(aspFactory2, MessageClass.MANAGEMENT, MessageType.NOTIFY, Status.STATUS_Other,
+		assertTrue(validateMessage(testAssociation2, MessageClass.MANAGEMENT, MessageType.NOTIFY, Status.STATUS_Other,
 				Status.INFO_Alternate_ASP_Active));
 		// The state of ASP2 now should be INACTIVE
 		assertEquals(AspState.INACTIVE, remAsp2.getState());
 
-		assertNull(aspFactory1.txPoll());
-		assertNull(aspFactory2.txPoll());
+		assertNull(testAssociation1.txPoll());
+		assertNull(testAssociation2.txPoll());
 
 	}
 
 	@Test
 	public void testTwoAspInAsLoadshare() throws Exception {
 		// 5.1.2. Two ASPs in Application Server ("1+1" Sparing)
+
+		TestAssociation testAssociation1 = (TestAssociation) this.transportManagement.addAssociation(null, 0, null, 0,
+				"testAssoc1");
+		TestAssociation testAssociation2 = (TestAssociation) this.transportManagement.addAssociation(null, 0, null, 0,
+				"testAssoc2");
+
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory
@@ -435,43 +465,41 @@ public class SgFSMTest {
 
 		// AspFactory aspFactory1 = sgw.createAspFactory("testasp1",
 		// "127.0.0.1", 2777);
-		AspFactory aspFactory1 = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp1"
-				.split(" "));
+		AspFactory aspFactory1 = serverM3UAMgmt.createAspFactory("m3ua rasp create testasp1 testAssoc1".split(" "));
 
 		// AspFactory aspFactory2 = sgw.createAspFactory("testasp2",
 		// "127.0.0.1", 2778);
-		AspFactory aspFactory2 = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2778 testasp2"
-				.split(" "));
+		AspFactory aspFactory2 = serverM3UAMgmt.createAspFactory("m3ua rasp create testasp2 testAssoc2".split(" "));
 
 		Asp remAsp1 = serverM3UAMgmt.assignAspToAs("testas", "testasp1");
 		Asp remAsp2 = serverM3UAMgmt.assignAspToAs("testas", "testasp2");
 
 		// Check for Communication UP for ASP1
-		aspFactory1.onCommStateChange(CommunicationState.UP);
+		testAssociation1.signalCommUp();
 		assertEquals(AspState.DOWN, remAsp1.getState());
 
 		// Check for Communication UP for ASP2
-		aspFactory2.onCommStateChange(CommunicationState.UP);
+		testAssociation2.signalCommUp();
 		assertEquals(AspState.DOWN, remAsp2.getState());
 
 		// Check for ASP_UP for ASP1
 		M3UAMessageImpl message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
 		aspFactory1.read(message);
 		assertEquals(AspState.INACTIVE, remAsp1.getState());
-		assertTrue(validateMessage(aspFactory1, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
 		// also the AS should be INACTIVE now
 		assertEquals(AsState.INACTIVE, remAs.getState());
-		assertTrue(validateMessage(aspFactory1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE));
 
 		// Check for ASP_UP for ASP2
 		message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
 		aspFactory2.read(message);
 		assertEquals(AspState.INACTIVE, remAsp2.getState());
-		assertTrue(validateMessage(aspFactory2, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation2, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
 		// also the AS should be INACTIVE
 		assertEquals(AsState.INACTIVE, remAs.getState());
-		assertTrue(validateMessage(aspFactory2, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation2, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE));
 
 		// Check for ASP_ACTIVE for ASP1
@@ -479,8 +507,8 @@ public class SgFSMTest {
 		((ASPActiveImpl) message).setRoutingContext(rc);
 		aspFactory1.read(message);
 		assertEquals(AspState.ACTIVE, remAsp1.getState());
-		assertTrue(validateMessage(aspFactory1, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK, -1,
-				-1));
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK,
+				-1, -1));
 		// But AS still INACTIVE as atleast 2 ASP's should be ACTIVE
 		assertEquals(AsState.INACTIVE, remAs.getState());
 
@@ -489,24 +517,24 @@ public class SgFSMTest {
 		((ASPActiveImpl) message).setRoutingContext(rc);
 		aspFactory2.read(message);
 		assertEquals(AspState.ACTIVE, remAsp2.getState());
-		assertTrue(validateMessage(aspFactory2, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK, -1,
-				-1));
+		assertTrue(validateMessage(testAssociation2, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK,
+				-1, -1));
 		// Now AS will be ACTIVE and send NTFY to both the ASP's
 		assertEquals(AsState.ACTIVE, remAs.getState());
-		assertTrue(validateMessage(aspFactory1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
-		assertTrue(validateMessage(aspFactory2, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation2, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
 
 		// INACTIVATE ASP1.But AS remains ACTIVE in any case
 		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE);
 		aspFactory1.read(message);
 		assertEquals(AspState.INACTIVE, remAsp1.getState());
-		assertTrue(validateMessage(aspFactory1, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE_ACK, -1,
-				-1));
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_TRAFFIC_MAINTENANCE,
+				MessageType.ASP_INACTIVE_ACK, -1, -1));
 		// ASP1 also receives NTFY Ins ASP Resource as we have fallen bellow
 		// threshold
-		assertTrue(validateMessage(aspFactory1, MessageClass.MANAGEMENT, MessageType.NOTIFY, Status.STATUS_Other,
+		assertTrue(validateMessage(testAssociation1, MessageClass.MANAGEMENT, MessageType.NOTIFY, Status.STATUS_Other,
 				Status.INFO_Insufficient_ASP_Resources_Active));
 		// AS remains ACTIVE
 		assertEquals(AsState.ACTIVE, remAs.getState());
@@ -515,8 +543,9 @@ public class SgFSMTest {
 		message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
 		aspFactory1.read(message);
 		assertEquals(AspState.DOWN, remAsp1.getState());
-		assertTrue(validateMessage(aspFactory1, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK, -1, -1));
-		assertNull(aspFactory1.txPoll());
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK, -1,
+				-1));
+		assertNull(testAssociation1.txPoll());
 		// AS remains ACTIVE
 		assertEquals(AsState.ACTIVE, remAs.getState());
 
@@ -525,21 +554,24 @@ public class SgFSMTest {
 		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE);
 		aspFactory2.read(message);
 		assertEquals(AspState.INACTIVE, remAsp2.getState());
-		assertTrue(validateMessage(aspFactory2, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE_ACK, -1,
-				-1));
+		assertTrue(validateMessage(testAssociation2, MessageClass.ASP_TRAFFIC_MAINTENANCE,
+				MessageType.ASP_INACTIVE_ACK, -1, -1));
 		// AS remains ACTIVE
 		assertEquals(AsState.PENDING, remAs.getState());
 		// AS state change NTFY message
-		assertTrue(validateMessage(aspFactory2, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation2, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_PENDING));
 
-		assertNull(aspFactory1.txPoll());
-		assertNull(aspFactory2.txPoll());
+		assertNull(testAssociation1.txPoll());
+		assertNull(testAssociation2.txPoll());
 	}
 
 	@Test
 	public void testAspUpReceivedWhileASPIsAlreadyUp() throws Exception {
 		// Test bug http://code.google.com/p/mobicents/issues/detail?id=2436
+
+		TestAssociation testAssociation1 = (TestAssociation) this.transportManagement.addAssociation(null, 0, null, 0,
+				"testAssoc1");
 
 		// 4.3.4.1. ASP Up Procedures from http://tools.ietf.org/html/rfc4666
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
@@ -558,13 +590,12 @@ public class SgFSMTest {
 				.split(" "));
 		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
 		// 2777);
-		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp"
-				.split(" "));
+		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("m3ua rasp create testasp testAssoc1".split(" "));
 
 		Asp remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
 
 		// Check for Communication UP
-		aspFactory.onCommStateChange(CommunicationState.UP);
+		testAssociation1.signalCommUp();
 
 		assertEquals(AspState.DOWN, remAsp.getState());
 
@@ -573,10 +604,10 @@ public class SgFSMTest {
 		aspFactory.read(message);
 
 		assertEquals(AspState.INACTIVE, remAsp.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
 		// also the AS should be INACTIVE now
 		assertEquals(AsState.INACTIVE, remAs.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE));
 
 		// Check for ASP_ACTIVE
@@ -584,10 +615,11 @@ public class SgFSMTest {
 		((ASPActiveImpl) message).setRoutingContext(rc);
 		aspFactory.read(message);
 		assertEquals(AspState.ACTIVE, remAsp.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK,
+				-1, -1));
 		// also the AS should be ACTIVE now
 		assertEquals(AsState.ACTIVE, remAs.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
 
 		// Check for ASP_UP received while ASP is already UP
@@ -596,23 +628,27 @@ public class SgFSMTest {
 		// The ASP Transitions to INACTIVE
 		assertEquals(AspState.INACTIVE, remAsp.getState());
 		// Receives ASP_UP Ack messages
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
 		// As well as receives Error message
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.ERROR,
+		assertTrue(validateMessage(testAssociation1, MessageClass.MANAGEMENT, MessageType.ERROR,
 				ErrorCode.Unexpected_Message, 100));
 
 		// also the AS should be PENDING now
 		assertEquals(AsState.PENDING, remAs.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_PENDING));
 
 		// Make sure we don't have any more
-		assertNull(aspFactory.txPoll());
+		assertNull(testAssociation1.txPoll());
 
 	}
 
 	@Test
 	public void testPendingQueue() throws Exception {
+
+		TestAssociation testAssociation1 = (TestAssociation) this.transportManagement.addAssociation(null, 0, null, 0,
+				"testAssoc1");
+
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory
@@ -629,13 +665,12 @@ public class SgFSMTest {
 				.split(" "));
 		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
 		// 2777);
-		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 2777 testasp"
-				.split(" "));
+		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("m3ua rasp create testasp testAssoc1".split(" "));
 
 		Asp remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
 
 		// Check for Communication UP
-		aspFactory.onCommStateChange(CommunicationState.UP);
+		testAssociation1.signalCommUp();
 
 		assertEquals(AspState.DOWN, remAsp.getState());
 
@@ -644,10 +679,10 @@ public class SgFSMTest {
 		aspFactory.read(message);
 
 		assertEquals(AspState.INACTIVE, remAsp.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
 		// also the AS should be INACTIVE now
 		assertEquals(AsState.INACTIVE, remAs.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE));
 
 		// Check for ASP_ACTIVE
@@ -655,21 +690,22 @@ public class SgFSMTest {
 		((ASPActiveImpl) message).setRoutingContext(rc);
 		aspFactory.read(message);
 		assertEquals(AspState.ACTIVE, remAsp.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK,
+				-1, -1));
 		// also the AS should be ACTIVE now
 		assertEquals(AsState.ACTIVE, remAs.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
 
 		// Check for ASP_INACTIVE
 		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE);
 		aspFactory.read(message);
 		assertEquals(AspState.INACTIVE, remAsp.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE_ACK, -1,
-				-1));
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_TRAFFIC_MAINTENANCE,
+				MessageType.ASP_INACTIVE_ACK, -1, -1));
 		// also the AS should be PENDING now
 		assertEquals(AsState.PENDING, remAs.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_PENDING));
 
 		// Add PayloadData
@@ -687,20 +723,20 @@ public class SgFSMTest {
 		((ASPActiveImpl) message).setRoutingContext(rc);
 		aspFactory.read(message);
 
-		assertTrue(validateMessage(aspFactory, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK, -1, -1));
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK, -1, -1));
 		// also the AS should be ACTIVE now
 		assertEquals(AsState.ACTIVE, remAs.getState());
-		assertTrue(validateMessage(aspFactory, MessageClass.MANAGEMENT, MessageType.NOTIFY,
+		assertTrue(validateMessage(testAssociation1, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
 
 		// Also we should have PayloadData
-		M3UAMessage payLoadTemp = aspFactory.txPoll();
+		M3UAMessage payLoadTemp = testAssociation1.txPoll();
 		assertNotNull(payLoadTemp);
 		assertEquals(MessageClass.TRANSFER_MESSAGES, payLoadTemp.getMessageClass());
 		assertEquals(MessageType.PAYLOAD, payLoadTemp.getMessageType());
 
 		// Make sure we don't have any more
-		assertNull(aspFactory.txPoll());
+		assertNull(testAssociation1.txPoll());
 	}
 
 	/**
@@ -715,8 +751,8 @@ public class SgFSMTest {
 	 *            Message
 	 * @return
 	 */
-	private boolean validateMessage(AspFactory factory, int msgClass, int msgType, int type, int info) {
-		M3UAMessage message = factory.txPoll();
+	private boolean validateMessage(TestAssociation testAssociation, int msgClass, int msgType, int type, int info) {
+		M3UAMessage message = testAssociation.txPoll();
 		if (message == null) {
 			return false;
 		}
@@ -754,4 +790,203 @@ public class SgFSMTest {
 
 	}
 
+	class TestAssociation implements Association {
+
+		private AssociationListener associationListener = null;
+		private String name = null;
+		private LinkedList<M3UAMessage> messageRxFromUserPart = new LinkedList<M3UAMessage>();
+
+		TestAssociation(String name) {
+			this.name = name;
+		}
+
+		M3UAMessage txPoll() {
+			return messageRxFromUserPart.poll();
+		}
+
+		@Override
+		public AssociationListener getAssociationListener() {
+			return this.associationListener;
+		}
+
+		@Override
+		public String getHostAddress() {
+			return null;
+		}
+
+		@Override
+		public int getHostPort() {
+			return 0;
+		}
+
+		@Override
+		public String getName() {
+			return null;
+		}
+
+		@Override
+		public String getPeerAddress() {
+			return null;
+		}
+
+		@Override
+		public int getPeerPort() {
+			return 0;
+		}
+
+		@Override
+		public String getServerName() {
+			return null;
+		}
+
+		@Override
+		public boolean isStarted() {
+			return false;
+		}
+
+		@Override
+		public void send(PayloadData payloadData) throws Exception {
+			M3UAMessage m3uaMessage = messageFactory.createSctpMessage(payloadData.getData());
+			this.messageRxFromUserPart.add(m3uaMessage);
+		}
+
+		@Override
+		public void setAssociationListener(AssociationListener associationListener) {
+			this.associationListener = associationListener;
+		}
+
+		public void signalCommUp() {
+			this.associationListener.onCommunicationUp(this);
+		}
+
+		public void signalCommLost() {
+			this.associationListener.onCommunicationLost(this);
+		}
+
+	}
+
+	class TransportManagement implements Management {
+
+		private FastMap<String, Association> associations = new FastMap<String, Association>();
+
+		@Override
+		public Association addAssociation(String hostAddress, int hostPort, String peerAddress, int peerPort,
+				String assocName) throws Exception {
+			TestAssociation testAssociation = new TestAssociation(assocName);
+			this.associations.put(assocName, testAssociation);
+			return testAssociation;
+		}
+
+		@Override
+		public Server addServer(String serverName, String hostAddress, int port) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Association addServerAssociation(String peerAddress, int peerPort, String serverName, String assocName)
+				throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Association getAssociation(String assocName) throws Exception {
+			return this.associations.get(assocName);
+		}
+
+		@Override
+		public Map<String, Association> getAssociations() {
+			return associations.unmodifiable();
+		}
+
+		@Override
+		public int getConnectDelay() {
+			return 0;
+		}
+
+		@Override
+		public String getName() {
+			return null;
+		}
+
+		@Override
+		public List<Server> getServers() {
+			return null;
+		}
+
+		@Override
+		public int getWorkerThreads() {
+			return 0;
+		}
+
+		@Override
+		public boolean isSingleThread() {
+			return false;
+		}
+
+		@Override
+		public void removeAssociation(String assocName) throws Exception {
+
+		}
+
+		@Override
+		public void removeServer(String serverName) throws Exception {
+
+		}
+
+		@Override
+		public void setConnectDelay(int connectDelay) {
+
+		}
+
+		@Override
+		public void setSingleThread(boolean arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void setWorkerThreads(int arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void start() throws Exception {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void startAssociation(String arg0) throws Exception {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void startServer(String arg0) throws Exception {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void stop() throws Exception {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void stopAssociation(String arg0) throws Exception {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void stopServer(String arg0) throws Exception {
+			// TODO Auto-generated method stub
+
+		}
+
+	}
 }

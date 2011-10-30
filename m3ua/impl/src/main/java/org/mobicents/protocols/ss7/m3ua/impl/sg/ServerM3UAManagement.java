@@ -28,13 +28,12 @@ import java.io.IOException;
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.sctp.Association;
+import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.AsState;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
-import org.mobicents.protocols.ss7.m3ua.impl.as.LocalAspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAOAMMessages;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
@@ -247,7 +246,7 @@ public class ServerM3UAManagement extends M3UAManagement {
 		}
 
 		String associationName = args[4];
-		Association association = this.sctpManagement.getAssociation(associationName);
+		Association association = this.transportManagement.getAssociation(associationName);
 
 		if (association == null) {
 			throw new Exception(String.format("No Association found for name=%s", associationName));
@@ -261,7 +260,7 @@ public class ServerM3UAManagement extends M3UAManagement {
 			throw new Exception(String.format("Association=%s is already associated", associationName));
 		}
 
-		AspFactory factory = new RemAspFactory(name);
+		AspFactory factory = new RemAspFactory(name, this.transportManagement);
 		aspfactories.add(factory);
 		factory.setAssociation(association);
 
@@ -326,7 +325,8 @@ public class ServerM3UAManagement extends M3UAManagement {
 
 		this.store();
 
-		logger.info(String.format("Stopped ASP name=%s ", aspFact.getName()));	}
+		logger.info(String.format("Stopped ASP name=%s ", aspFact.getName()));
+	}
 
 	private ServiceIndicators createSi(String args[], int index) throws Exception {
 		ServiceIndicators si = null;
@@ -390,9 +390,5 @@ public class ServerM3UAManagement extends M3UAManagement {
 		} else {
 			logger.error(String.format("No AS found for this message. Dropping message %s", payload));
 		}
-
-		payload.setRoutingContext(as.getRoutingContext());
-		as.write(payload);
-
 	}
 }

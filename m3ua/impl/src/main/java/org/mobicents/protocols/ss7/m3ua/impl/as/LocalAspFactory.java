@@ -26,7 +26,8 @@ import javolution.util.FastList;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.sctp.Association;
+import org.mobicents.protocols.api.Association;
+import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
@@ -92,8 +93,8 @@ public class LocalAspFactory extends AspFactory {
 		super();
 	}
 
-	public LocalAspFactory(String name) {
-		super(name);
+	public LocalAspFactory(String name, Management transportManagement) {
+		super(name, transportManagement);
 		this.aspid = parameterFactory.createASPIdentifier(this.generateId());
 	}
 
@@ -107,7 +108,7 @@ public class LocalAspFactory extends AspFactory {
 
 	@Override
 	public void start() throws Exception {
-		this.association.start();
+		this.transportManagement.startAssociation(this.association.getName());
 		this.started = true;
 	}
 
@@ -488,7 +489,12 @@ public class LocalAspFactory extends AspFactory {
 				}
 			}
 
-			this.association.stop();
+			try {
+				this.transportManagement.stopAssociation(this.association.getName());
+			} catch (Exception e) {
+				logger.error(String.format("Exception while starting the Association=%s", this.association.getName()),
+						e);
+			}
 		}
 	}
 
@@ -645,9 +651,8 @@ public class LocalAspFactory extends AspFactory {
 		// TODO ?
 	}
 
-	public void onPayload(Association association, org.mobicents.protocols.sctp.PayloadData payloadData) {
+	public void onPayload(Association association, org.mobicents.protocols.api.PayloadData payloadData) {
 		// TODO where is streamNumber stored?
-		logger.debug("PayloadData=" + payloadData);
 		byte[] m3uadata = payloadData.getData();
 		M3UAMessage m3UAMessage = this.messageFactory.createSctpMessage(m3uadata);
 		this.read(m3UAMessage);

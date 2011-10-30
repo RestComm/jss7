@@ -24,13 +24,21 @@ package org.mobicents.protocols.ss7.m3ua.impl.oam;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javolution.util.FastMap;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.protocols.api.Association;
+import org.mobicents.protocols.api.AssociationListener;
+import org.mobicents.protocols.api.Management;
+import org.mobicents.protocols.api.PayloadData;
+import org.mobicents.protocols.api.Server;
 import org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAManagement;
 import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAManagement;
 
@@ -42,6 +50,9 @@ import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAManagement;
 public class M3UAShellExecutorTest {
 
 	M3UAShellExecutor m3uaExec = null;
+	private TransportManagement transportManagement = null;
+	ClientM3UAManagement clientM3UAMgmt = null;
+	ServerM3UAManagement serverM3UAMgmt = null;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -55,33 +66,25 @@ public class M3UAShellExecutorTest {
 	public void setUp() throws Exception {
 		m3uaExec = new M3UAShellExecutor();
 
-		// Clean up
-		ClientM3UAManagement clientM3UAMgmt = new ClientM3UAManagement();
-		clientM3UAMgmt.start();
-		clientM3UAMgmt.getAppServers().clear();
-		clientM3UAMgmt.getAspfactories().clear();
-		clientM3UAMgmt.getDpcVsAsName().clear();
-		clientM3UAMgmt.stop();
+		this.transportManagement = new TransportManagement();
 
-		ServerM3UAManagement serverM3UAMgmt = new ServerM3UAManagement();
+		this.clientM3UAMgmt = new ClientM3UAManagement();
+		this.clientM3UAMgmt.setTransportManagement(this.transportManagement);
+		this.clientM3UAMgmt.start();
+
+		this.serverM3UAMgmt = new ServerM3UAManagement();
+		this.serverM3UAMgmt.setTransportManagement(this.transportManagement);
 		serverM3UAMgmt.start();
-		serverM3UAMgmt.getAppServers().clear();
-		serverM3UAMgmt.getAspfactories().clear();
-		serverM3UAMgmt.stop();
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		// Clean up
-		ClientM3UAManagement clientM3UAMgmt = new ClientM3UAManagement();
-		clientM3UAMgmt.start();
 		clientM3UAMgmt.getAppServers().clear();
 		clientM3UAMgmt.getAspfactories().clear();
 		clientM3UAMgmt.getDpcVsAsName().clear();
 		clientM3UAMgmt.stop();
 
-		ServerM3UAManagement serverM3UAMgmt = new ServerM3UAManagement();
-		serverM3UAMgmt.start();
 		serverM3UAMgmt.getAppServers().clear();
 		serverM3UAMgmt.getAspfactories().clear();
 		serverM3UAMgmt.stop();
@@ -89,9 +92,10 @@ public class M3UAShellExecutorTest {
 
 	@Test
 	public void testServerCommands() throws Exception {
-		ServerM3UAManagement serverM3UAMgmt = new ServerM3UAManagement();
-		serverM3UAMgmt.start();
+
 		m3uaExec.setM3uaManagement(serverM3UAMgmt);
+
+		this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc1");
 
 		// Test creating new AS
 		String result = m3uaExec.execute("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode loadshare testas"
@@ -111,16 +115,12 @@ public class M3UAShellExecutorTest {
 		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas2"), result);
 
 		// create ASP
-		result = m3uaExec.execute("m3ua rasp create ip 127.0.0.1 port 2777 testasp1".split(" "));
+		result = m3uaExec.execute("m3ua rasp create testasp1 testAssoc1".split(" "));
 		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, "testasp1"), result);
 
 		// Error for same name
-		result = m3uaExec.execute("m3ua rasp create ip 127.0.0.1 port 2778 testasp1".split(" "));
+		result = m3uaExec.execute("m3ua rasp create testasp1 testAssoc1".split(" "));
 		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_NAME_EXIST, "testasp1"), result);
-
-		// Error for same IP:Port
-		result = m3uaExec.execute("m3ua rasp create ip 127.0.0.1 port 2777 testasp2".split(" "));
-		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_IPPORT_EXIST, "127.0.0.1", 2777), result);
 
 		// assign ASP to AS
 		result = m3uaExec.execute("m3ua ras add testas testasp1".split(" "));
@@ -135,9 +135,9 @@ public class M3UAShellExecutorTest {
 
 	@Test
 	public void testClientCommands() throws Exception {
-		ClientM3UAManagement clientM3UAMgmt = new ClientM3UAManagement();
-		clientM3UAMgmt.start();
 		m3uaExec.setM3uaManagement(clientM3UAMgmt);
+
+		this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc1");
 
 		// Test creating new AS
 		String result = m3uaExec.execute("m3ua as create rc 100 testas".split(" "));
@@ -148,19 +148,12 @@ public class M3UAShellExecutorTest {
 		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_FAIL_NAME_EXIST, "testas"), result);
 
 		// create ASP
-		result = m3uaExec.execute("m3ua asp create ip 127.0.0.1 port 2777 remip 127.0.0.1 remport 2777 testasp1"
-				.split(" "));
+		result = m3uaExec.execute("m3ua asp create testasp1 testAssoc1".split(" "));
 		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, "testasp1"), result);
 
 		// Error for same name
-		result = m3uaExec.execute("m3ua asp create ip 127.0.0.1 port 2778 remip 127.0.0.1 remport 2777 testasp1"
-				.split(" "));
+		result = m3uaExec.execute("m3ua asp create testasp1 testAssoc1".split(" "));
 		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_NAME_EXIST, "testasp1"), result);
-
-		// Error for same IP:Port
-		result = m3uaExec.execute("m3ua asp create ip 127.0.0.1 port 2777 remip 127.0.0.1 remport 2777 testasp2"
-				.split(" "));
-		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_IPPORT_EXIST, "127.0.0.1", 2777), result);
 
 		// assign ASP to AS
 		result = m3uaExec.execute("m3ua as add testas testasp1".split(" "));
@@ -183,5 +176,198 @@ public class M3UAShellExecutorTest {
 		assertEquals(String.format(M3UAOAMMessages.REMOVE_AS_ROUTE_FOR_DPC_SUCCESSFULL, "testas", 1177), result);
 
 		clientM3UAMgmt.stop();
+	}
+
+	class TestAssociation implements Association {
+
+		private AssociationListener associationListener = null;
+		private String name = null;
+
+		TestAssociation(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public AssociationListener getAssociationListener() {
+			return this.associationListener;
+		}
+
+		@Override
+		public String getHostAddress() {
+			return null;
+		}
+
+		@Override
+		public int getHostPort() {
+			return 0;
+		}
+
+		@Override
+		public String getName() {
+			return null;
+		}
+
+		@Override
+		public String getPeerAddress() {
+			return null;
+		}
+
+		@Override
+		public int getPeerPort() {
+			return 0;
+		}
+
+		@Override
+		public String getServerName() {
+			return null;
+		}
+
+		@Override
+		public boolean isStarted() {
+			return false;
+		}
+
+		@Override
+		public void send(PayloadData payloadData) throws Exception {
+		}
+
+		@Override
+		public void setAssociationListener(AssociationListener associationListener) {
+			this.associationListener = associationListener;
+		}
+
+		public void signalCommUp() {
+			this.associationListener.onCommunicationUp(this);
+		}
+
+		public void signalCommLost() {
+			this.associationListener.onCommunicationLost(this);
+		}
+
+	}
+
+	class TransportManagement implements Management {
+
+		private FastMap<String, Association> associations = new FastMap<String, Association>();
+
+		@Override
+		public Association addAssociation(String hostAddress, int hostPort, String peerAddress, int peerPort,
+				String assocName) throws Exception {
+			TestAssociation testAssociation = new TestAssociation(assocName);
+			this.associations.put(assocName, testAssociation);
+			return testAssociation;
+		}
+
+		@Override
+		public Server addServer(String serverName, String hostAddress, int port) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Association addServerAssociation(String peerAddress, int peerPort, String serverName, String assocName)
+				throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Association getAssociation(String assocName) throws Exception {
+			return this.associations.get(assocName);
+		}
+
+		@Override
+		public Map<String, Association> getAssociations() {
+			return associations.unmodifiable();
+		}
+
+		@Override
+		public int getConnectDelay() {
+			return 0;
+		}
+
+		@Override
+		public String getName() {
+			return null;
+		}
+
+		@Override
+		public List<Server> getServers() {
+			return null;
+		}
+
+		@Override
+		public int getWorkerThreads() {
+			return 0;
+		}
+
+		@Override
+		public boolean isSingleThread() {
+			return false;
+		}
+
+		@Override
+		public void removeAssociation(String assocName) throws Exception {
+
+		}
+
+		@Override
+		public void removeServer(String serverName) throws Exception {
+
+		}
+
+		@Override
+		public void setConnectDelay(int connectDelay) {
+
+		}
+
+		@Override
+		public void setSingleThread(boolean arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void setWorkerThreads(int arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void start() throws Exception {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void startAssociation(String arg0) throws Exception {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void startServer(String arg0) throws Exception {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void stop() throws Exception {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void stopAssociation(String arg0) throws Exception {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void stopServer(String arg0) throws Exception {
+			// TODO Auto-generated method stub
+
+		}
+
 	}
 }
