@@ -126,6 +126,11 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	protected Map<Long, MAPDialogImpl> dialogs = new HashMap<Long, MAPDialogImpl>();
 
+	/**
+	 * Congestion sources name list. Congestion is where this collection is not empty
+	 */
+	protected Map<String, String> congSources = new HashMap<String, String>();
+
 	private TCAPProvider tcapProvider = null;
 
 	private final MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
@@ -210,6 +215,25 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		synchronized (this.dialogs) {
 			this.dialogs.remove(dialogId);
 		}
+	}
+	
+	public void onCongestionFinish(String congName) {
+		synchronized (this.congSources) {
+			this.congSources.put(congName, congName);
+		}
+	}
+
+	public void onCongestionStart(String congName) {
+		synchronized (this.congSources) {
+			this.congSources.remove(congName);
+		}
+	}
+
+	public boolean isCongested() {
+		if (this.congSources.size() > 0)
+			return true;
+		else
+			return false;
 	}
 
 	public void onTCBegin(TCBeginIndication tcBeginIndication) {
@@ -458,15 +482,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				return;
 			}
 		}
-
-		// if an application-context-name different from version 1 is
-		// received in a syntactically correct TC-
-		// BEGIN indication primitive but is not acceptable from a load
-		// control point of view, the MAP PM
-		// shall ignore this dialogue request. The MAP-user is not informed.
-		// TODO: Checking if MAP PM is overloaded - if so - reject some less
-		// important ApplicationContexts
-		// without sending any responses and MAP user informing
 
 		// Selecting the MAP service that can perform the ApplicationContext
 		if (perfSer == null) {
