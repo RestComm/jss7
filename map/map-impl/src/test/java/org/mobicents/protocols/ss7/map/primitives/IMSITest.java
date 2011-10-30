@@ -55,15 +55,15 @@ public class IMSITest  {
 		assertEquals( tag,Tag.STRING_OCTET);
 		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 		
-		assertEquals( (long)imsi.getMCC(),11);
-		assertEquals( (long)imsi.getMNC(),22);
-		assertEquals( imsi.getMSIN(),"0200198227");
+//		assertEquals( (long)imsi.getMCC(),11);
+//		assertEquals( (long)imsi.getMNC(),22);
+		assertEquals( imsi.getData(),"011220200198227");
 	}
 	
 	@Test(groups = { "functional.encode","primitives"})
 	public void testEncode() throws Exception {
 		
-		IMSIImpl imsi = new IMSIImpl(11L, 22L, "0200198227");
+		IMSIImpl imsi = new IMSIImpl("011220200198227");
 		AsnOutputStream asnOS = new AsnOutputStream();
 		
 		imsi.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
