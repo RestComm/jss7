@@ -76,9 +76,9 @@ public class MtForwardShortMessageRequestIndicationTest  {
 		SM_RP_DA da = ind.getSM_RP_DA();
 		SM_RP_OA oa = ind.getSM_RP_OA();
 		byte[] ui = ind.getSM_RP_UI();
-		assertEquals( (long) da.getIMSI().getMCC(),11);
-		assertEquals( (long) da.getIMSI().getMNC(),22);
-		assertEquals( da.getIMSI().getMSIN(),"2221128514");
+//		assertEquals( (long) da.getIMSI().getMCC(),11);
+//		assertEquals( (long) da.getIMSI().getMNC(),22);
+		assertEquals( da.getIMSI().getData(),"011222221128514");
 		assertEquals( oa.getServiceCentreAddressOA().getAddressNature(),AddressNature.international_number);
 		assertEquals( oa.getServiceCentreAddressOA().getNumberingPlan(),NumberingPlan.ISDN);
 		assertEquals( oa.getServiceCentreAddressOA().getAddress(),"18129600096");
@@ -98,9 +98,9 @@ public class MtForwardShortMessageRequestIndicationTest  {
 		oa = ind.getSM_RP_OA();
 		ui = ind.getSM_RP_UI();
 		Boolean moreMesToSend = ind.getMoreMessagesToSend();
-		assertEquals( (long) da.getIMSI().getMCC(),100);
-		assertEquals( (long) da.getIMSI().getMNC(),88);
-		assertEquals( da.getIMSI().getMSIN(),"3344556677");
+//		assertEquals( (long) da.getIMSI().getMCC(),100);
+//		assertEquals( (long) da.getIMSI().getMNC(),88);
+		assertEquals( da.getIMSI().getData(),"100883344556677");
 		assertEquals( oa.getServiceCentreAddressOA().getAddressNature(),AddressNature.international_number);
 		assertEquals( oa.getServiceCentreAddressOA().getNumberingPlan(),NumberingPlan.ISDN);
 		assertEquals( oa.getServiceCentreAddressOA().getAddress(),"1111122222");
@@ -112,7 +112,7 @@ public class MtForwardShortMessageRequestIndicationTest  {
 	@Test(groups = { "functional.encode","service.sms"})
 	public void testEncode() throws Exception {
 
-		IMSI imsi = new IMSIImpl(11L, 22L, "2221128514");
+		IMSI imsi = new IMSIImpl("011222221128514");
 		SM_RP_DA sm_RP_DA = new SM_RP_DAImpl(imsi);
 		AddressString sca = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "18129600096");
 		SM_RP_OAImpl sm_RP_OA = new SM_RP_OAImpl();
@@ -129,7 +129,7 @@ public class MtForwardShortMessageRequestIndicationTest  {
 		assertTrue( Arrays.equals(rawData,encodedData));
 
 		
-		imsi = new IMSIImpl(100L, 88L, "3344556677");
+		imsi = new IMSIImpl("100883344556677");
 		sm_RP_DA = new SM_RP_DAImpl(imsi);
 		sca = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "1111122222");
 		sm_RP_OA = new SM_RP_OAImpl();

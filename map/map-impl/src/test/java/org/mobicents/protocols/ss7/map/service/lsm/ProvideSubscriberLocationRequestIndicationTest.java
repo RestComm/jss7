@@ -108,9 +108,9 @@ public class ProvideSubscriberLocationRequestIndicationTest {
 
 		IMSI imsi = reqInd.getIMSI();
 		assertNotNull(imsi);
-		assertEquals( imsi.getMCC(),new Long(724l));
-		assertEquals( imsi.getMNC(),new Long(99l));
-		assertEquals( imsi.getMSIN(),"9900000007");
+//		assertEquals( imsi.getMCC(),new Long(724l));
+//		assertEquals( imsi.getMNC(),new Long(99l));
+		assertEquals( imsi.getData(),"724999900000007");
 
 		assertEquals( reqInd.getLCSPriority(),new Integer(1));
 
@@ -150,7 +150,7 @@ public class ProvideSubscriberLocationRequestIndicationTest {
 		LCSClientID lcsClientID = new LCSClientIDImpl(LCSClientType.plmnOperatorServices, null, LCSClientInternalID.broadcastService, lcsClientName, null,
 				null, null);
 
-		IMSI imsi = MAPParameterFactory.createIMSI(724l, 99l, "9900000007");
+		IMSI imsi = MAPParameterFactory.createIMSI("724999900000007");
 
 		LCSQoS lcsQoS = new LCSQoSImpl(null, null, null, new ResponseTimeImpl(ResponseTimeCategory.lowdelay), null);
 

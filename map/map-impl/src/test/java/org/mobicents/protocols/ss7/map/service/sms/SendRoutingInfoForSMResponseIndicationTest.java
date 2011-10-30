@@ -74,9 +74,9 @@ public class SendRoutingInfoForSMResponseIndicationTest  {
 		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 
 		IMSI imsi = ind.getIMSI();
-		assertEquals( (long)imsi.getMCC(),200L);
-		assertEquals( (long)imsi.getMNC(),99L);
-		assertEquals( imsi.getMSIN(),"0200111227");
+//		assertEquals( (long)imsi.getMCC(),200L);
+//		assertEquals( (long)imsi.getMNC(),99L);
+		assertEquals( imsi.getData(),"200990200111227");
 		LocationInfoWithLMSI li = ind.getLocationInfoWithLMSI();
 		ISDNAddressString nnn = li.getNetworkNodeNumber();
 		assertEquals( nnn.getAddressNature(),AddressNature.international_number);
@@ -97,9 +97,9 @@ public class SendRoutingInfoForSMResponseIndicationTest  {
 		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 
 		imsi = ind.getIMSI();
-		assertEquals( (long)imsi.getMCC(),111L);
-		assertEquals( (long)imsi.getMNC(),3L);
-		assertEquals( imsi.getMSIN(),"222333111");
+//		assertEquals( (long)imsi.getMCC(),111L);
+//		assertEquals( (long)imsi.getMNC(),3L);
+		assertEquals( imsi.getData(),"11103222333111");
 		li = ind.getLocationInfoWithLMSI();
 		nnn = li.getNetworkNodeNumber();
 		assertEquals( nnn.getAddressNature(),AddressNature.subscriber_number);
@@ -118,7 +118,7 @@ public class SendRoutingInfoForSMResponseIndicationTest  {
 	@Test(groups = { "functional.encode","service.sms"})
 	public void testEncode() throws Exception {
 		
-		IMSI imsi = new IMSIImpl(200L, 99L, "0200111227");
+		IMSI imsi = new IMSIImpl("200990200111227");
 		ISDNAddressString nnn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "12032100295");
 		LMSI lmsi = new LMSIImpl(new byte[] { 0, 3, 98, 49 });
 
@@ -133,7 +133,7 @@ public class SendRoutingInfoForSMResponseIndicationTest  {
 		assertTrue( Arrays.equals(rawData,encodedData));
 
 		
-		imsi = new IMSIImpl(111L, 3L, "222333111");
+		imsi = new IMSIImpl("11103222333111");
 		nnn = new ISDNAddressStringImpl(AddressNature.subscriber_number, NumberingPlan.land_mobile, "00001111");
 		lmsi = new LMSIImpl(new byte[] { 0, 2, 1, 0 });
 		ISDNAddressString additionalNumber = new ISDNAddressStringImpl(AddressNature.national_significant_number, NumberingPlan.land_mobile, "99999999");

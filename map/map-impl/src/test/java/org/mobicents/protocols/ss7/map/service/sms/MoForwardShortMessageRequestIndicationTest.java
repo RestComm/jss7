@@ -117,9 +117,9 @@ public class MoForwardShortMessageRequestIndicationTest  {
 		assertEquals( oa.getMsisdn().getNumberingPlan(),NumberingPlan.ISDN);
 		assertEquals( oa.getMsisdn().getAddress(),"223334990223");
 		assertTrue(Arrays.equals(ui, new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4 }));
-		assertEquals( (long)imsi.getMCC(),1);
-		assertEquals( (long)imsi.getMNC(),1);
-		assertEquals( imsi.getMSIN(),"2233349902");
+//		assertEquals( (long)imsi.getMCC(),1);
+//		assertEquals( (long)imsi.getMNC(),1);
+		assertEquals( imsi.getData(),"001012233349902");
 		
 		
 		rawData = getEncodedDataNoDaOa();
@@ -156,16 +156,16 @@ public class MoForwardShortMessageRequestIndicationTest  {
 		oa = ind.getSM_RP_OA();
 		ui = ind.getSM_RP_UI();
 		imsi = ind.getIMSI();
-		assertEquals( (long)da.getIMSI().getMCC(),201);
-		assertEquals( (long)da.getIMSI().getMNC(),1);
-		assertEquals( da.getIMSI().getMSIN(),"1234567890");
+//		assertEquals( (long)da.getIMSI().getMCC(),201);
+//		assertEquals( (long)da.getIMSI().getMNC(),1);
+		assertEquals( da.getIMSI().getData(),"201011234567890");
 		assertEquals( oa.getServiceCentreAddressOA().getAddressNature(),AddressNature.network_specific_number);
 		assertEquals( oa.getServiceCentreAddressOA().getNumberingPlan(),NumberingPlan.land_mobile);
 		assertEquals( oa.getServiceCentreAddressOA().getAddress(),"0123456789");
 		assertTrue(Arrays.equals(ui, new byte[] { 11, 22, 33, 44, 55, 66, 77, 88, 99 }));
-		assertEquals( (long)imsi.getMCC(),240);
-		assertEquals( (long)imsi.getMNC(),88);
-		assertEquals( imsi.getMSIN(),"1122334455");
+//		assertEquals( (long)imsi.getMCC(),240);
+//		assertEquals( (long)imsi.getMNC(),88);
+		assertEquals( imsi.getData(),"240881122334455");
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(ind.getExtensionContainer()));
 	}
 
@@ -194,7 +194,7 @@ public class MoForwardShortMessageRequestIndicationTest  {
 		sm_RP_OA = new SM_RP_OAImpl();
 		sm_RP_OA.setMsisdn(msisdn);
 		sm_RP_UI = new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4 };
-		IMSI imsi = new IMSIImpl(1L, 1L, "2233349902");
+		IMSI imsi = new IMSIImpl("001012233349902");
 		ind = new MoForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, null, imsi);
 		
 		asnOS = new AsnOutputStream();
@@ -218,14 +218,14 @@ public class MoForwardShortMessageRequestIndicationTest  {
 		assertTrue( Arrays.equals(rawData,encodedData));
 
 		
-		IMSI imsi0 = new IMSIImpl(201L, 1L, "1234567890");
+		IMSI imsi0 = new IMSIImpl("201011234567890");
 		sm_RP_DA = new SM_RP_DAImpl(imsi0);
 		msisdn = new ISDNAddressStringImpl(AddressNature.network_specific_number, NumberingPlan.land_mobile, "0123456789");
 		sm_RP_OA = new SM_RP_OAImpl();
 		sm_RP_OA.setServiceCentreAddressOA(msisdn);
 		sm_RP_UI = new byte[] { 11, 22, 33, 44, 55, 66, 77, 88, 99 };
 		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
-		imsi = new IMSIImpl(240L, 88L, "1122334455");
+		imsi = new IMSIImpl("240881122334455");
 		ind = new MoForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, extensionContainer, imsi);
 		
 		asnOS = new AsnOutputStream();
