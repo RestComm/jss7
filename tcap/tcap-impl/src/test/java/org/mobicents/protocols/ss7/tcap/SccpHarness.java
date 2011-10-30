@@ -171,7 +171,12 @@ public abstract class SccpHarness {
 		private Mtp3UserPartImpl otherPart;
 
 		Mtp3UserPartImpl() {
-			this.start();
+			try {
+				this.start();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		
