@@ -40,33 +40,19 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
  */
 public class IMSIImpl extends TbcdString implements IMSI {
 
-	private Long MCC;
-	private Long MNC;
-	private String MSIN;
+	private String data;
 
 	
 	public IMSIImpl() {
 	}
 	
-	public IMSIImpl(Long MCC, Long MNC, String MSIN) {
-		this.MCC = MCC;
-		this.MNC = MNC;
-		this.MSIN = MSIN;
+	public IMSIImpl(String data) {
+		this.data = data;
 	}
 
 	@Override
-	public Long getMCC() {
-		return this.MCC;
-	}
-
-	@Override
-	public Long getMNC() {
-		return this.MNC;
-	}
-
-	@Override
-	public String getMSIN() {
-		return this.MSIN;
+	public String getData() {
+		return this.data;
 	}
 
 	
@@ -115,13 +101,14 @@ public class IMSIImpl extends TbcdString implements IMSI {
 
 		try {
 			String res = this.decodeString(ansIS, length);
+			this.data = res;
 
-			String sMcc = res.substring(0, 3);
-			String sMnc = res.substring(3, 5);
-			this.MSIN = res.substring(5);
-
-			this.MCC = (long) Integer.parseInt(sMcc);
-			this.MNC = (long) Integer.parseInt(sMnc);
+//			String sMcc = res.substring(0, 3);
+//			String sMnc = res.substring(3, 5);
+//			this.MSIN = res.substring(5);
+//
+//			this.MCC = (long) Integer.parseInt(sMcc);
+//			this.MNC = (long) Integer.parseInt(sMnc);
 		} catch (IOException e) {
 			throw new MAPParsingComponentException("IOException when decoding IMSI: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
@@ -150,33 +137,37 @@ public class IMSIImpl extends TbcdString implements IMSI {
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.MCC == null || this.MNC == null || this.MSIN == null)
-			throw new MAPException("Error while encoding the IMSI: MMC, MNC or MSIN is not defined");
+		if (this.data == null)
+			throw new MAPException("Error while encoding the IMSI: data is not defined");
 
-		if (this.MCC < 0 || this.MCC > 999)
-			throw new MAPException("Error while encoding the IMSI: Bad MCC value");
-		if (this.MNC < 0 || this.MNC > 99)
-			throw new MAPException("Error while encoding the IMSI: Bad MNC value");
-		if (this.MSIN.length() < 1 || this.MSIN.length() > 11)
-			throw new MAPException("Error while encoding the IMSI: Bad MSIN value");
 
-		StringBuilder sb = new StringBuilder();
-		if (this.MCC < 100)
-			sb.append("0");
-		if (this.MCC < 10)
-			sb.append("0");
-		sb.append(this.MCC);
-		if (this.MNC < 10)
-			sb.append("0");
-		sb.append(this.MNC);
-		sb.append(this.MSIN);
+//		if (this.MCC == null || this.MNC == null || this.MSIN == null)
+//			throw new MAPException("Error while encoding the IMSI: MMC, MNC or MSIN is not defined");
+//
+//		if (this.MCC < 0 || this.MCC > 999)
+//			throw new MAPException("Error while encoding the IMSI: Bad MCC value");
+//		if (this.MNC < 0 || this.MNC > 99)
+//			throw new MAPException("Error while encoding the IMSI: Bad MNC value");
+//		if (this.MSIN.length() < 1 || this.MSIN.length() > 11)
+//			throw new MAPException("Error while encoding the IMSI: Bad MSIN value");
+//
+//		StringBuilder sb = new StringBuilder();
+//		if (this.MCC < 100)
+//			sb.append("0");
+//		if (this.MCC < 10)
+//			sb.append("0");
+//		sb.append(this.MCC);
+//		if (this.MNC < 10)
+//			sb.append("0");
+//		sb.append(this.MNC);
+//		sb.append(this.MSIN);
 
-		this.encodeString(asnOs, sb.toString());
+		this.encodeString(asnOs, this.data);
 	}
 
 	
 	@Override
 	public String toString() {
-		return "IMSI [MCC=" + this.MCC + ", MNC=" + this.MNC + ", MSIN=" + this.MSIN + "]";
+		return "IMSI [" + this.data + "]";
 	}
 }
