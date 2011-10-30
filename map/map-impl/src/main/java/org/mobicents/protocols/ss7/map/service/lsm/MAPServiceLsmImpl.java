@@ -106,6 +106,17 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 	@Override
 	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)
 			throws MAPParsingComponentException {
+
+		// if an application-context-name different from version 1 is
+		// received in a syntactically correct TC-
+		// BEGIN indication primitive but is not acceptable from a load
+		// control point of view, the MAP PM
+		// shall ignore this dialogue request. The MAP-user is not informed.
+		if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
+			// we reject all lms services when congestion
+			return;
+		}
+		
 		MAPDialogLsmImpl mAPDialogLsmImpl = (MAPDialogLsmImpl) mapDialog;
 
 		Long ocValue = oc.getLocalOperationCode();
