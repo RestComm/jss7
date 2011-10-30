@@ -71,7 +71,7 @@
 			<!-- SCTP -->
 			<dependency>
 				<groupId>org.mobicents.protocols.sctp</groupId>
-				<artifactId>sctp</artifactId>
+				<artifactId>sctp-api</artifactId>
 				<version>${sctp.version}</version>
 			</dependency>
 			<!-- Clock -->
