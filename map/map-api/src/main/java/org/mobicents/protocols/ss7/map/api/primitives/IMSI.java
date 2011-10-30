@@ -40,10 +40,10 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  */
 public interface IMSI {
 
-	public Long getMCC();
-
-	public Long getMNC();
-
-	public String getMSIN();
+	/**
+	 * Returns all digits of IMSI (MCC+MNC+MSIN)
+	 * @return
+	 */
+	public String getData();
 
 }
