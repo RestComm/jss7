@@ -89,9 +89,9 @@ public class SendRoutingInfoForLCSRequestIndicationTest {
 		assertNotNull(imsi);
 		assertNull(msisdn);
 		
-		assertEquals( imsi.getMCC(),new Long(724l));
-		assertEquals( imsi.getMNC(),new Long(99l));
-		assertEquals( imsi.getMSIN(),"9900000007");
+//		assertEquals( imsi.getMCC(),new Long(724l));
+//		assertEquals( imsi.getMNC(),new Long(99l));
+		assertEquals( imsi.getData(),"724999900000007");
 
 	}
 
@@ -101,7 +101,7 @@ public class SendRoutingInfoForLCSRequestIndicationTest {
 		byte[] data = new byte[] { 0x30, 0x13, (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70, (byte) 0xa1, 0x0a, (byte) 0x80, 0x08, 0x27, (byte) 0x94,
 				(byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
 
-		IMSI imsi = this.MAPParameterFactory.createIMSI(724l, 99l, "9900000007");
+		IMSI imsi = this.MAPParameterFactory.createIMSI("724999900000007");
 		SubscriberIdentity subsIdent = new SubscriberIdentityImpl(imsi);
 
 		ISDNAddressString mlcNumber = this.MAPParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "55619007");

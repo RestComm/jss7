@@ -104,9 +104,10 @@ public class SM_RP_DATest {
 		assertEquals( asn.getTagClass(),Tag.CLASS_CONTEXT_SPECIFIC);
 
 		IMSI imsi = da.getIMSI();
-		assertEquals( (long)imsi.getMCC(),41);
-		assertEquals( (long)imsi.getMNC(),4);
-		assertEquals( imsi.getMSIN(),"0222161547");
+		assertEquals( imsi.getData(),"041040222161547");
+//		assertEquals( (long)imsi.getMCC(),41);
+//		assertEquals( (long)imsi.getMNC(),4);
+//		assertEquals( imsi.getMSIN(),"0222161547");
 		
 		
 		rawData = getEncodedData_No();
@@ -149,7 +150,7 @@ public class SM_RP_DATest {
 		assertTrue( Arrays.equals(rawData,encodedData));
 
 		
-		IMSIImpl imsi = new IMSIImpl(41L, 4L, "0222161547");		
+		IMSIImpl imsi = new IMSIImpl("041040222161547");		
 		da = new SM_RP_DAImpl(imsi);
 		
 		asnOS = new AsnOutputStream();
