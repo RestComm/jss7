@@ -28,13 +28,14 @@ import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
+import org.mobicents.ss7.congestion.CongestionListener;
 
 /**
  * 
  * @author amit bhayani
  * 
  */
-public class MAPStackImpl implements MAPStack {
+public class MAPStackImpl implements MAPStack, CongestionListener {
 
 	protected TCAPStack tcapStack = null;
 
@@ -108,4 +109,13 @@ public class MAPStackImpl implements MAPStack {
 		IDLE, CONFIGURED, RUNNING;
 	}
 
+	@Override
+	public void onCongestionStart(String congName) {
+		this.mapProvider.onCongestionStart(congName);
+	}
+
+	@Override
+	public void onCongestionFinish(String congName) {
+		this.mapProvider.onCongestionFinish(congName);
+	}
 }

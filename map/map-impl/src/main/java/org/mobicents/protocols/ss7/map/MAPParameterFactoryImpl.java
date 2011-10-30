@@ -173,8 +173,8 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 	}
 
 	@Override
-	public IMSI createIMSI(Long MCC, Long MNC, String MSIN) {
-		return new IMSIImpl(MCC, MNC, MSIN);
+	public IMSI createIMSI(String data) {
+		return new IMSIImpl(data);
 	}
 
 	@Override
