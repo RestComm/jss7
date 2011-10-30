@@ -144,15 +144,11 @@ public interface MAPParameterFactory {
 	/**
 	 * Creates a new instance of {@link IMSI}
 	 * 
-	 * @param MCC
-	 *            Mobile Country Code
-	 * @param MNC
-	 *            Mobile Network Code
-	 * @param MSIN
-	 *            Mobile Subscriber Identification Number
+	 * @param data
+	 *            whole data string 
 	 * @return new instance of {@link IMSI}
 	 */
-	public IMSI createIMSI(Long MCC, Long MNC, String MSIN);
+	public IMSI createIMSI(String data);
 
 	public IMEI createIMEI(String imei);
 
