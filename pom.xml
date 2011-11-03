@@ -49,6 +49,7 @@
 		<module>cap</module>
 		<module>service</module>
 		<module>sgw</module>
+		<module>inap</module>
 	</modules>
 
 	<!-- declare our babies -->
@@ -180,6 +181,18 @@
 			<dependency>
 				<artifactId>map-impl</artifactId>
 				<groupId>org.mobicents.protocols.ss7.map</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+
+			<!-- INAP -->
+			<dependency>
+				<artifactId>inap-api</artifactId>
+				<groupId>org.mobicents.protocols.ss7.inap</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>inap-impl</artifactId>
+				<groupId>org.mobicents.protocols.ss7.inap</groupId>
 				<version>${pom.version}</version>
 			</dependency>
 
