@@ -10,6 +10,14 @@
 	<artifactId>cap-impl</artifactId>
 
 	<name>Mobicents SS7 :: CAP :: Impl :: ${pom.artifactId}</name>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.mobicents.protocols.ss7.inap</groupId>
+				<artifactId>inap-api</artifactId>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<properties>
 		<log.file.name>tests.log</log.file.name>
 	</properties>
@@ -76,6 +84,10 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.isup</groupId>
 			<artifactId>isup-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.isup</groupId>
+			<artifactId>isup-impl</artifactId>
 		</dependency>
 	</dependencies>
 
