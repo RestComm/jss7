@@ -32,6 +32,7 @@ import org.mobicents.protocols.ss7.inap.api.INAPException;
 import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
 import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 
 /**
 * 
@@ -45,14 +46,14 @@ public class LegIDImpl implements LegID, INAPAsnPrimitive {
 
 	public static final String _PrimitiveName = "LegID";
 
-	private byte[] sendingSideID;
-	private byte[] receivingSideID;	
+	private LegType sendingSideID;
+	private LegType receivingSideID;	
 	
 	
 	public LegIDImpl() {
 	}
 	
-	public LegIDImpl(boolean isSendingSideID, byte[] legID) {
+	public LegIDImpl(boolean isSendingSideID, LegType legID) {
 		if (isSendingSideID)
 			this.sendingSideID = legID;
 		else
@@ -61,12 +62,12 @@ public class LegIDImpl implements LegID, INAPAsnPrimitive {
 	
 	
 	@Override
-	public byte[] getSendingSideID() {
+	public LegType getSendingSideID() {
 		return sendingSideID;
 	}
 
 	@Override
-	public byte[] getReceivingSideID() {
+	public LegType getReceivingSideID() {
 		return receivingSideID;
 	}
 
@@ -123,18 +124,27 @@ public class LegIDImpl implements LegID, INAPAsnPrimitive {
 			throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag class or is not primitive: TagClass=" + asnIS.getTagClass(),
 					INAPParsingComponentExceptionReason.MistypedParameter);
 
+		byte[] buf;
 		switch (asnIS.getTag()) {
 		case _ID_sendingSideID:
-			this.sendingSideID = asnIS.readOctetStringData(length);
-			if (this.sendingSideID.length != 1)
+			buf = asnIS.readOctetStringData(length);
+			if (buf.length != 1)
 				throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName + ": sendingSideID length must be 1 but it equals "
-						+ this.sendingSideID.length, INAPParsingComponentExceptionReason.MistypedParameter);
+						+ buf.length, INAPParsingComponentExceptionReason.MistypedParameter);
+			this.sendingSideID = LegType.getInstance(buf[0]);
+			if (this.sendingSideID == null)
+				throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName + ": sendingSideID value must be 1 or 2 it equals "
+						+ buf[0], INAPParsingComponentExceptionReason.MistypedParameter);
 			break;
 		case _ID_receivingSideID:
-			this.receivingSideID = asnIS.readOctetStringData(length);
-			if (this.receivingSideID.length != 1)
-				throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName + ": receivingSideID length must be 1 but it equals "
-						+ this.receivingSideID.length, INAPParsingComponentExceptionReason.MistypedParameter);
+			buf = asnIS.readOctetStringData(length);
+			if (buf.length != 1)
+				throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName + ": sendingSideID length must be 1 but it equals "
+						+ buf.length, INAPParsingComponentExceptionReason.MistypedParameter);
+			this.receivingSideID = LegType.getInstance(buf[0]);
+			if (this.receivingSideID == null)
+				throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName + ": sendingSideID value must be 1 or 2 it equals "
+						+ buf[0], INAPParsingComponentExceptionReason.MistypedParameter);
 			break;
 		default:
 			throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag : tag=" + asnIS.getTag(),
@@ -167,13 +177,12 @@ public class LegIDImpl implements LegID, INAPAsnPrimitive {
 		if (this.sendingSideID == null && this.receivingSideID == null || this.sendingSideID != null && this.receivingSideID != null)
 			throw new INAPException("Error while encoding the " + _PrimitiveName + ": one of sendingSideID or receivingSideID (not both) nust not be empty");
 
-		if (this.sendingSideID != null && this.sendingSideID.length != 1 || this.receivingSideID != null && this.receivingSideID.length != 1)
-			throw new INAPException("Error while encoding the " + _PrimitiveName + ": data field length must equal 4");
-
+		byte[] buf = new byte[1];
 		if (this.sendingSideID != null)
-			asnOs.writeOctetStringData(sendingSideID);
+			buf[0] = (byte) sendingSideID.getCode();
 		else
-			asnOs.writeOctetStringData(receivingSideID);
+			buf[0] = (byte) receivingSideID.getCode();
+		asnOs.writeOctetStringData(buf);
 	}
 
 	@Override
@@ -181,13 +190,13 @@ public class LegIDImpl implements LegID, INAPAsnPrimitive {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("LegID [");
-		if (this.sendingSideID != null && this.sendingSideID.length > 0) {
+		if (this.sendingSideID != null) {
 			sb.append("sendingSideID=");
-			sb.append(sendingSideID[0]);
+			sb.append(sendingSideID);
 		}
-		if (this.receivingSideID != null && this.receivingSideID.length > 0) {
+		if (this.receivingSideID != null) {
 			sb.append("receivingSideID=");
-			sb.append(receivingSideID[0]);
+			sb.append(receivingSideID);
 		}
 		sb.append("]");
 		
