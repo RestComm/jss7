@@ -58,10 +58,8 @@ ServiceKey::= Integer4
 */
 public interface LegID {
 
-	public boolean isSendingSideID();
+	public byte[] getSendingSideID();
 
-	public boolean isReceivingSideID();
-
-	public byte[] getLegId();
+	public byte[] getReceivingSideID();
 
 }
