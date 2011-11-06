@@ -95,6 +95,11 @@ public class TraceParserForm {
 	private JCheckBox cbDialogDet;
 	private JCheckBox cbCompDet;
 	private JTextField tfDialogIdFilter2;
+	private JPanel panel_3;
+	private JRadioButton rdbtnMap;
+	private JLabel lblProtocol;
+	private JRadioButton rdbtnCap;
+	private final ButtonGroup buttonGroup_1 = new ButtonGroup();
 
 	public static void main(String[] args) {
 		
@@ -148,7 +153,7 @@ public class TraceParserForm {
 		frmSsTraceParser = new JFrame();
 		frmSsTraceParser.setTitle("SS7 Trace Parser");
 		frmSsTraceParser.setResizable(false);
-		frmSsTraceParser.setBounds(100, 100, 569, 473);
+		frmSsTraceParser.setBounds(100, 100, 569, 521);
 		frmSsTraceParser.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JPanel panel = new JPanel();
@@ -170,6 +175,11 @@ public class TraceParserForm {
 					newPar.setFileTypeN(ParseDriverType.Acterna);
 				if (rdbtnTpSimpleSeq.isSelected())
 					newPar.setFileTypeN(ParseDriverType.SimpleSeq);
+
+				if (rdbtnMap.isSelected())
+					newPar.setParseProtocol(ParseProtocol.Map);
+				if (rdbtnCap.isSelected())
+					newPar.setParseProtocol(ParseProtocol.Cap);
 
 				newPar.setSourceFilePath(tfFilePath.getText());
 
@@ -266,7 +276,7 @@ public class TraceParserForm {
 		panel_2.add(rdbtnTpSimpleSeq);
 		
 		tfFilePath = new JTextField();
-		tfFilePath.setBounds(10, 97, 481, 20);
+		tfFilePath.setBounds(20, 157, 481, 20);
 		panel_1.add(tfFilePath);
 		tfFilePath.setColumns(10);
 		
@@ -290,11 +300,11 @@ public class TraceParserForm {
 				}
 			}
 		});
-		btnFilePath.setBounds(501, 96, 52, 23);
+		btnFilePath.setBounds(511, 156, 52, 23);
 		panel_1.add(btnFilePath);
 		
 		JLabel lblPathToThe = new JLabel("Trace file path");
-		lblPathToThe.setBounds(10, 82, 153, 14);
+		lblPathToThe.setBounds(20, 142, 153, 14);
 		panel_1.add(lblPathToThe);
 		
 		this.cbApplicationContextFilter = new JCheckBox("ApplicationContext filter");
@@ -303,7 +313,7 @@ public class TraceParserForm {
 				tfApplicationContextFilter.setEnabled(cbApplicationContextFilter.isSelected());
 			}
 		});
-		cbApplicationContextFilter.setBounds(10, 126, 210, 23);
+		cbApplicationContextFilter.setBounds(20, 186, 210, 23);
 		panel_1.add(cbApplicationContextFilter);
 		
 		cbMsgLog = new JCheckBox("Messages logging");
@@ -314,12 +324,12 @@ public class TraceParserForm {
 				cbTcapData.setEnabled(cbMsgLog.isSelected());
 			}
 		});
-		cbMsgLog.setBounds(10, 188, 210, 23);
+		cbMsgLog.setBounds(20, 248, 210, 23);
 		panel_1.add(cbMsgLog);
 		
 		tfApplicationContextFilter = new JTextField();
 		tfApplicationContextFilter.setEnabled(false);
-		tfApplicationContextFilter.setBounds(226, 127, 153, 20);
+		tfApplicationContextFilter.setBounds(236, 187, 153, 20);
 		panel_1.add(tfApplicationContextFilter);
 		tfApplicationContextFilter.setColumns(10);
 		
@@ -330,18 +340,18 @@ public class TraceParserForm {
 				tfDialogIdFilter2.setEnabled(cbDialogIdFilter.isSelected());
 			}
 		});
-		cbDialogIdFilter.setBounds(10, 157, 210, 23);
+		cbDialogIdFilter.setBounds(20, 217, 210, 23);
 		panel_1.add(cbDialogIdFilter);
 		
 		tfDialogIdFilter = new JTextField();
 		tfDialogIdFilter.setEnabled(false);
 		tfDialogIdFilter.setColumns(10);
-		tfDialogIdFilter.setBounds(226, 158, 153, 20);
+		tfDialogIdFilter.setBounds(236, 218, 153, 20);
 		panel_1.add(tfDialogIdFilter);
 		
 		pnMsgLog = new JPanel();
 		pnMsgLog.setBorder(new LineBorder(new Color(0, 0, 0)));
-		pnMsgLog.setBounds(10, 218, 543, 143);
+		pnMsgLog.setBounds(20, 278, 543, 143);
 		panel_1.add(pnMsgLog);
 		pnMsgLog.setLayout(null);
 		
@@ -418,20 +428,41 @@ public class TraceParserForm {
 		pnMsgLog.add(cbCompDet);
 		
 		lblMessagesPerformed = new JLabel("Messages performed");
-		lblMessagesPerformed.setBounds(10, 372, 140, 14);
+		lblMessagesPerformed.setBounds(20, 432, 140, 14);
 		panel_1.add(lblMessagesPerformed);
 		
 		tfMsgCnt = new JTextField();
 		tfMsgCnt.setEditable(false);
-		tfMsgCnt.setBounds(160, 369, 86, 20);
+		tfMsgCnt.setBounds(170, 429, 86, 20);
 		panel_1.add(tfMsgCnt);
 		tfMsgCnt.setColumns(10);
 		
 		tfDialogIdFilter2 = new JTextField();
 		tfDialogIdFilter2.setEnabled(false);
 		tfDialogIdFilter2.setColumns(10);
-		tfDialogIdFilter2.setBounds(389, 158, 153, 20);
+		tfDialogIdFilter2.setBounds(399, 218, 153, 20);
 		panel_1.add(tfDialogIdFilter2);
+		
+		panel_3 = new JPanel();
+		panel_3.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panel_3.setLayout(null);
+		panel_3.setBounds(10, 69, 543, 58);
+		panel_1.add(panel_3);
+		
+		rdbtnMap = new JRadioButton("MAP");
+		buttonGroup_1.add(rdbtnMap);
+		rdbtnMap.setSelected(true);
+		rdbtnMap.setBounds(6, 28, 109, 23);
+		panel_3.add(rdbtnMap);
+		
+		lblProtocol = new JLabel("Protocol");
+		lblProtocol.setBounds(15, 11, 154, 14);
+		panel_3.add(lblProtocol);
+		
+		rdbtnCap = new JRadioButton("CAP");
+		buttonGroup_1.add(rdbtnCap);
+		rdbtnCap.setBounds(137, 28, 146, 23);
+		panel_3.add(rdbtnCap);
 	}
 	
 	private void setParameters(Ss7ParseParameters par) {
@@ -443,6 +474,15 @@ public class TraceParserForm {
 				break;
 			case SimpleSeq:
 				rdbtnTpSimpleSeq.setSelected(true);
+				break;
+			}
+			
+			switch (par.getParseProtocol()) {
+			case Map:
+				rdbtnMap.setSelected(true);
+				break;
+			case Cap:
+				rdbtnCap.setSelected(true);
 				break;
 			}
 			

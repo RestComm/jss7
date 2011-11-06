@@ -30,6 +30,7 @@ package org.mobicents.protocols.ss7.tools.traceparser;
 public class Ss7ParseParameters {
 	
 	private ParseDriverType fileTypeN = ParseDriverType.Acterna;	
+	private ParseProtocol protocol = ParseProtocol.Map;	
 	private String sourceFilePath = "";	
 	private String msgLogFilePath = "";	
 	private Integer applicationContextFilter = null;	
@@ -75,6 +76,10 @@ public class Ss7ParseParameters {
 		return detailedComponents;
 	}
 
+	public ParseProtocol getParseProtocol() {
+		return protocol;
+	}
+
 	
 	public void setFileTypeN( ParseDriverType fileTypeN ) {
 		this.fileTypeN = fileTypeN;
@@ -110,6 +115,10 @@ public class Ss7ParseParameters {
 
 	public void setDetailedComponents(boolean detailedComponents) {
 		this.detailedComponents = detailedComponents;
+	}
+
+	public void setParseProtocol(ParseProtocol protocol) {
+		this.protocol = protocol;
 	}
 }
 
