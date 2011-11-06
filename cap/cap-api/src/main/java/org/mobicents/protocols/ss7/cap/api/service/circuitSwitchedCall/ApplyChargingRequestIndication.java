@@ -22,23 +22,35 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
-import org.mobicents.protocols.ss7.cap.api.CAPServiceListener;
+import org.mobicents.protocols.ss7.cap.api.primitives.AChChargingAddress;
+import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
+import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
 
 /**
- * 
- * @author sergey vetyutnev
- * 
- */
-public interface CAPServiceCircuitSwitchedCallListener extends CAPServiceListener {
+*
+ApplyChargingArg {PARAMETERS-BOUND : bound} ::= SEQUENCE {
+aChBillingChargingCharacteristics [0] AChBillingChargingCharacteristics {bound},
+partyToCharge [2] SendingSideID DEFAULT sendingSideID : leg1,
+extensions [3] Extensions {bound} OPTIONAL,
+aChChargingAddress [50] AChChargingAddress {bound}
+DEFAULT legID:sendingSideID:leg1,
+...
+}
 
-	public void onInitialDPRequestIndication(InitialDPRequestIndication ind);
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface ApplyChargingRequestIndication extends CircuitSwitchedCallMessage {
 
-	public void onRequestReportBCSMEventRequestIndication(RequestReportBCSMEventRequestIndication ind);
+	public CAMELAChBillingChargingCharacteristics getAChBillingChargingCharacteristics();
 
-	public void onApplyChargingRequestIndication(ApplyChargingRequestIndication ind);
+	public SendingSideID getPartyToCharge();
 
-	public void onEventReportBCSMRequestIndication(EventReportBCSMRequestIndication ind);
+	public CAPExtensions getExtensions();
 
-	public void onContinueRequestIndication(ContinueRequestIndication ind);
+	public AChChargingAddress getAChChargingAddress();
 
 }
+

@@ -20,40 +20,35 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
+
+import org.mobicents.protocols.ss7.cap.api.primitives.Cause;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
+*
+tBusySpecificInfo [8] SEQUENCE {
+busyCause [0] Cause {bound} OPTIONAL,
+callForwarded [50] NULL OPTIONAL,
+routeNotPermitted [51] NULL OPTIONAL,
+forwardingDestinationNumber [52] CalledPartyNumber {bound} OPTIONAL,
+...
+},
+
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface TBusySpecificInfo {
+
+	public Cause getBusyCause();
 	
-	private CAPParsingComponentExceptionReason reason;
+	public boolean getCallForwarded();
+	
+	public boolean getRouteNotPermitted();
+	
+	public byte[] getForwardingDestinationNumber();
+	
+	public CalledPartyNumber getForwardingDestinationNumberIsup();
 
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
-	}
 }

@@ -20,40 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
+
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LocationInformation;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
-	
-	private CAPParsingComponentExceptionReason reason;
+*
+callAcceptedSpecificInfo [20] SEQUENCE {
+locationInformation [50] LocationInformation OPTIONAL,
+...
+},
 
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
-	}
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface CallAcceptedSpecificInfo {
 
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
-	}
+	public LocationInformation getLocationInformation();
 
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
-	}
 }

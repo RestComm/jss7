@@ -78,7 +78,11 @@ public interface ServiceInteractionIndicatorsTwo {
 	public ConnectedNumberTreatmentInd getConnectedNumberTreatmentInd();
 	
 	public Boolean getNonCUGCall();
-
-	// ................................
+	
+	public HoldTreatmentIndicator getHoldTreatmentIndicator();
+	
+	public CwTreatmentIndicator getCwTreatmentIndicator();
+	
+	public EctTreatmentIndicator getEctTreatmentIndicator();
 
 }

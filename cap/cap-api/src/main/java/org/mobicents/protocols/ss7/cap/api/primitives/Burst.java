@@ -20,40 +20,35 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.primitives;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
-	
-	private CAPParsingComponentExceptionReason reason;
+*
+Burst ::= SEQUENCE {
+numberOfBursts [0] INTEGER (1..3) DEFAULT 1,
+3GPP
+Release 7 32 3GPP TS 29.078 7.0.0 (2005-06)
+burstInterval [1] INTEGER (1..1200) DEFAULT 2,
+numberOfTonesInBurst [2] INTEGER (1..3) DEFAULT 3,
+toneDuration [3] INTEGER (1..20) DEFAULT 2,
+toneInterval [4] INTEGER (1..20) DEFAULT 2,
+...
+}
 
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
-	}
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface Burst {
 
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
-	}
+	public int getNumberOfBursts();
 
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
+	public int getBurstInterval();
 
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
+	public int getNumberOfTonesInBurst();
 
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
-	}
+	public int getToneDuration();
+
+	public int getToneInterval();
+
 }

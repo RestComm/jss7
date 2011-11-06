@@ -20,40 +20,33 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
+
+import java.util.ArrayList;
+
+import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
+import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
-	
-	private CAPParsingComponentExceptionReason reason;
+*
+RequestReportBCSMEventArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
+ bcsmEvents       [0] SEQUENCE SIZE(1..bound.&numOfBCSMEvents) OF 
+            BCSMEvent {bound}, 
+ extensions       [2] Extensions {bound}      OPTIONAL, 
+ ... 
+ } 
+-- Indicates the BCSM related events for notification. 
 
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
-	}
+numOfBCSMEvents = 30
 
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
-	}
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface RequestReportBCSMEventRequestIndication extends CircuitSwitchedCallMessage {
 
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
+	public ArrayList<BCSMEvent> getBCSMEventList();
 
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
+	public CAPExtensions getExtensions();
 
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
-	}
 }

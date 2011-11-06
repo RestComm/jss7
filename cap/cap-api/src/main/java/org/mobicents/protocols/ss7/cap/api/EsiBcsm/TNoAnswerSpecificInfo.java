@@ -20,40 +20,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
+
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
-	
-	private CAPParsingComponentExceptionReason reason;
+*
+tNoAnswerSpecificInfo [9] SEQUENCE {
+callForwarded [50] NULL OPTIONAL,
+forwardingDestinationNumber [52] CalledPartyNumber {bound} OPTIONAL,
+...
+},
 
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
-	}
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface TNoAnswerSpecificInfo {
 
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
-	}
+	public boolean getCallForwarded();
 
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
+	public byte[] getForwardingDestinationNumber();
 
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
+	public CalledPartyNumber getForwardingDestinationNumberIsup();
 
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
-	}
 }

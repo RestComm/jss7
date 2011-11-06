@@ -20,40 +20,21 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
-	
-	private CAPParsingComponentExceptionReason reason;
+*
+oAbandonSpecificInfo [21] SEQUENCE {
+routeNotPermitted [50] NULL OPTIONAL,
+...
+},
 
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
-	}
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface OAbandonSpecificInfo {
 
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
-	}
+	public boolean getRouteNotPermitted();
 
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
-	}
 }

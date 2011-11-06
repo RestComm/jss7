@@ -22,12 +22,17 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
+import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
 import org.mobicents.protocols.ss7.cap.api.primitives.Digits;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
-import org.mobicents.protocols.ss7.cap.api.primitives.Extensions;
+import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
+import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CGEncountered;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InitialDPArgExtension;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
@@ -37,6 +42,14 @@ import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LocationInformation;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.SubscriberState;
+import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.CUGIndex;
+import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.CUGInterlock;
+import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.ExtBasicServiceCode;
 
 
 /**
@@ -90,7 +103,7 @@ callForwardingSS-Pending [58] NULL OPTIONAL,
 initialDPArgExtension [59] InitialDPArgExtension {bound} OPTIONAL,
 ...
 } 
- 
+
 * 
 * @author sergey vetyutnev
 * 
@@ -105,7 +118,7 @@ public interface InitialDPRequestIndication extends CircuitSwitchedCallMessage {
 
 	public byte[] getCallingPartyNumber();
 
-	public CallingPartyNumber getCallingPartyNumberIsup();
+	public CallingPartyNumber getCallingPartyNumberIsup() throws CAPException;
 
 	public byte[] getCallingPartysCategory();
 
@@ -123,16 +136,16 @@ public interface InitialDPRequestIndication extends CircuitSwitchedCallMessage {
 
 	public OriginalCalledNumber getOriginalCalledPartyIDIsup();
 
-	public Extensions getExtensions();
+	public CAPExtensions getExtensions();
 
 	public byte[] getHighLayerCompatibility(); // TODO: ISUP version
 
 	public Digits getAdditionalCallingPartyNumber();
 
 	public GenericNumber getAdditionalCallingPartyNumberIsup();
-	
+
 	public BearerCapability getBearerCapability();
-	
+
 	public EventTypeBCSM getEventTypeBCSM();
 
 	public byte[] getRedirectingPartyID();
@@ -147,6 +160,34 @@ public interface InitialDPRequestIndication extends CircuitSwitchedCallMessage {
 
 	public CauseIndicators getCauseIsup();
 
-	// ..................................
+	public ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo();
+
+	public byte[] getCarrier(); // TODO: ISUP version
+
+	public CUGIndex getCugIndex();
+
+	public CUGInterlock getCugInterlock();
+
+	public boolean getCugOutgoingAccess();
+
+	public IMSI getIMSI();
+
+	public SubscriberState getSubscriberState();
+
+	public LocationInformation getLocationInformation();
+
+	public ExtBasicServiceCode getExtBasicServiceCode();
+
+	public CallReferenceNumber getCallReferenceNumber();
+
+	public ISDNAddressString getMscAddress();
+
+	public CalledPartyBCDNumber getCalledPartyBCDNumber();
+
+	public TimeAndTimezone getTimeAndTimezone();
+
+	public boolean getCallForwardingSSPending();
+
+	public InitialDPArgExtension getInitialDPArgExtension();
 }
 

@@ -20,40 +20,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.primitives;
+
+import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
-	
-	private CAPParsingComponentExceptionReason reason;
+*
+AChChargingAddress {PARAMETERS-BOUND : bound} ::= CHOICE {
+legID [2] LegID,
+srfConnection [50] CallSegmentID {bound}
+}
 
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
-	}
+CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..bound.&numOfCSs)
+numOfCSs ::= 127
 
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
-	}
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface AChChargingAddress {
 
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
+	public LegID getLegID();
 
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
+	public int getSrfConnection();
 
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
-	}
 }

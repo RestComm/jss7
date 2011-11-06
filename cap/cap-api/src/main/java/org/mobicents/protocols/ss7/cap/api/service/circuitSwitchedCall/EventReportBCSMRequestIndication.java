@@ -22,23 +22,36 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
-import org.mobicents.protocols.ss7.cap.api.CAPServiceListener;
+import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
+import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
+import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 
 /**
- * 
- * @author sergey vetyutnev
- * 
- */
-public interface CAPServiceCircuitSwitchedCallListener extends CAPServiceListener {
+*
+EventReportBCSMArg {PARAMETERS-BOUND : bound} ::= SEQUENCE {
+eventTypeBCSM [0] EventTypeBCSM,
+eventSpecificInformationBCSM [2] EventSpecificInformationBCSM {bound} OPTIONAL,
+legID [3] ReceivingSideID OPTIONAL,
+miscCallInfo [4] MiscCallInfo DEFAULT {messageType request},
+extensions [5] Extensions {bound} OPTIONAL,
+...
+}
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface EventReportBCSMRequestIndication {
 
-	public void onInitialDPRequestIndication(InitialDPRequestIndication ind);
+	public EventTypeBCSM getEventTypeBCSM();
 
-	public void onRequestReportBCSMEventRequestIndication(RequestReportBCSMEventRequestIndication ind);
+	public EventSpecificInformationBCSM getEventSpecificInformationBCSM();
 
-	public void onApplyChargingRequestIndication(ApplyChargingRequestIndication ind);
+	public ReceivingSideID getLegID();
 
-	public void onEventReportBCSMRequestIndication(EventReportBCSMRequestIndication ind);
+	public MiscCallInfo getMiscCallInfo();
 
-	public void onContinueRequestIndication(ContinueRequestIndication ind);
+	public CAPExtensions getExtensions();
 
 }

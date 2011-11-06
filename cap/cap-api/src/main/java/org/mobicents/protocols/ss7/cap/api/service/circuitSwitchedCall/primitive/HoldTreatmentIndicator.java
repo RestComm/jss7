@@ -20,40 +20,43 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
-	
-	private CAPParsingComponentExceptionReason reason;
+*
+holdTreatmentIndicator    [50] OCTET STRING (SIZE(1))     OPTIONAL, 
+ -- applicable to InitialDP, Connect and ContinueWithArgument 
+ -- acceptHoldRequest 'xxxx xx01'B 
+ -- rejectHoldRequest 'xxxx xx10'B 
+ -- if absent from Connect or ContinueWithArgument, 
+ -- then CAMEL service does not affect call hold treatment
+* 
+* @author sergey vetyutnev
+* 
+*/
+public enum HoldTreatmentIndicator {
+	acceptHoldRequest(1),
+	rejectHoldRequest(2);
 
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
+	private int code;
+
+	private HoldTreatmentIndicator(int code) {
+		this.code = code;
 	}
 
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
+	public static HoldTreatmentIndicator getInstance(int code) {
+		switch (code & 0x03) {
+		case 1:
+			return HoldTreatmentIndicator.acceptHoldRequest;
+		case 2:
+			return HoldTreatmentIndicator.rejectHoldRequest;
+		default:
+			return null;
+		}
 	}
 
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
+	public int getCode() {
+		return this.code;
 	}
 }
+

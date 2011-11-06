@@ -20,40 +20,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.primitives;
+
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DpSpecificCriteria;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
-	
-	private CAPParsingComponentExceptionReason reason;
+*
+BCSMEvent{PARAMETERS-BOUND : bound} ::= SEQUENCE { 
+ eventTypeBCSM      [0] EventTypeBCSM, 
+ monitorMode       [1] MonitorMode, 
+ legID        [2] LegID         OPTIONAL, 
+ dpSpecificCriteria     [30] DpSpecificCriteria {bound}    OPTIONAL, 
+ automaticRearm      [50] NULL         OPTIONAL, 
+ ... 
+ } 
+-- Indicates the BCSM Event information for monitoring.
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface BCSMEvent {
 
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
-	}
+	public EventTypeBCSM getEventTypeBCSM();
 
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
-	}
+	public MonitorMode getMonitorMode();
 
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
+	public LegID getLegID();
 
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
+	public DpSpecificCriteria getDpSpecificCriteria();
 
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
-	}
+	public boolean getAutomaticRearm();
+
 }

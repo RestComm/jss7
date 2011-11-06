@@ -20,40 +20,25 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
-	
-	private CAPParsingComponentExceptionReason reason;
+*
+ChargeIndicator ::= OCTET STRING (SIZE (1))
+-- As specified in ITU-T Recommendation Q.763 as follows:
+-- no indication 'xxxx xx00'B
+-- no charge 'xxxx xx01'B
+-- charge 'xxxx xx10'B
+-- spare 'xxxx xx11'B
+-- Sending entity shall fill the upper six bits with '0's.
+-- Receiving entity shall ignore the upper six bits.
 
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
-	}
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface ChargeIndicator {
 
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
-	}
+	public byte[] getData();
 
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
-	}
 }

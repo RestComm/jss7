@@ -20,40 +20,33 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
+*
+DpSpecificInfoAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE {
+...,
+oServiceChangeSpecificInfo [0] SEQUENCE {
+ext-basicServiceCode [0] Ext-BasicServiceCode OPTIONAL,
+...
+}
+collectedInfoSpecificInfo [2] SEQUENCE {
+calledPartyNumber [0] CalledPartyNumber OPTIONAL,
+...
+}
+tServiceChangeSpecificInfo [1] SEQUENCE {
+ext-basicServiceCode [0] Ext-BasicServiceCode OPTIONAL,
+...
+}
+}
+-- This datatype is for extension in future releases.
+
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface DpSpecificInfoAlt {
+
+	// TODO: implement it
 	
-	private CAPParsingComponentExceptionReason reason;
-
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
-	}
 }

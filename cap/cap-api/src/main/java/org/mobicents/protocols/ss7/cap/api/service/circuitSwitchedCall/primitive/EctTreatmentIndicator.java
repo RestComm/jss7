@@ -20,40 +20,42 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
-	
-	private CAPParsingComponentExceptionReason reason;
+*
+ectTreatmentIndicator    [52] OCTET STRING (SIZE(1))     OPTIONAL, 
+ -- applicable to InitialDP, Connect and ContinueWithArgument 
+ -- acceptEctRequest 'xxxx xx01'B 
+ -- rejectEctRequest 'xxxx xx10'B 
+ -- if absent from Connect or ContinueWithArgument, 
+ -- then CAMEL service does not affect explicit call transfer treatment
+* 
+* @author sergey vetyutnev
+* 
+*/
+public enum EctTreatmentIndicator {
+	acceptEctRequest(1),
+	rejectEctRequest(2);
 
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
+	private int code;
+
+	private EctTreatmentIndicator(int code) {
+		this.code = code;
 	}
 
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
+	public static EctTreatmentIndicator getInstance(int code) {
+		switch (code & 0x03) {
+		case 1:
+			return EctTreatmentIndicator.acceptEctRequest;
+		case 2:
+			return EctTreatmentIndicator.rejectEctRequest;
+		default:
+			return null;
+		}
 	}
 
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
+	public int getCode() {
+		return this.code;
 	}
 }

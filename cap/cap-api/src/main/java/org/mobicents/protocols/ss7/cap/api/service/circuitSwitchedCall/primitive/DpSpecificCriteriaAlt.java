@@ -20,40 +20,27 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
-	
-	private CAPParsingComponentExceptionReason reason;
+*
+DpSpecificCriteriaAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE {
+...,
+changeOfPositionControlInfo [0] ChangeOfPositionControlInfo {bound}
+numberOfDigits [1] NumberOfDigits OPTIONAL,
+}
 
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
-	}
+NumberOfDigits ::= INTEGER (1..255)
+-- Indicates the number of digits to be collected.
 
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
-	}
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface DpSpecificCriteriaAlt {
 
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
+	public ChangeOfLocation[] getChangeOfPositionControlInfo();
 
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
+	public Integer getNumberOfDigits();
 
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
-	}
 }

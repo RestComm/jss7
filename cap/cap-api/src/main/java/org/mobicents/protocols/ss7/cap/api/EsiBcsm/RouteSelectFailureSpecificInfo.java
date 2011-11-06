@@ -20,19 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
+
+import org.mobicents.protocols.ss7.cap.api.primitives.Cause;
 
 /**
 *
-Extensions {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE (1..bound.&numOfExtensions) OF ExtensionField
-numOfExtensions ::= 10
+routeSelectFailureSpecificInfo [2] SEQUENCE {
+failureCause [0] Cause {bound} OPTIONAL,
+...
+},
+
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Extensions {
+public interface RouteSelectFailureSpecificInfo {
 
-	public ExtensionField[] getExtensionFields();
+	public Cause getFailureCause();
 
-	public void setExtensionFields(ExtensionField[] fieldsList);
 }

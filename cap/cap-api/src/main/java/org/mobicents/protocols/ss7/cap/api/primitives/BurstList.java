@@ -20,40 +20,24 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.primitives;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
-	
-	private CAPParsingComponentExceptionReason reason;
+*
+BurstList ::= SEQUENCE {
+warningPeriod [0] INTEGER (1..1200) DEFAULT 30,
+bursts [1] Burst,
+...
+}
+-- warningPeriod is measured in 1 second units.
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface BurstList {
 
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
-	}
+	public int getWarningPeriod();
 
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
-	}
+	public Burst getBurst();
 
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
-	}
 }

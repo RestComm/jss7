@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.cap.api.service.sms;
 
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPServiceBase;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -31,7 +32,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author sergey vetyutnev
  * 
  */
-public interface CAPServiceSms {
+public interface CAPServiceSms extends CAPServiceBase {
 
 	public CAPDialogSms createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress) throws CAPException;
 

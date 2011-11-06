@@ -20,40 +20,42 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
-	
-	private CAPParsingComponentExceptionReason reason;
+*
+cwTreatmentIndicator    [51] OCTET STRING (SIZE(1))     OPTIONAL, 
+ -- applicable to InitialDP, Connect and ContinueWithArgument 
+ -- acceptCw 'xxxx xx01'B 
+ -- rejectCw 'xxxx xx10'B 
+ -- if absent from Connect or ContinueWithArgument, 
+ -- then CAMEL service does not affect call waiting treatment 
+* 
+* @author sergey vetyutnev
+* 
+*/
+public enum CwTreatmentIndicator {
+	acceptCw(1),
+	rejectCw(2);
 
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
+	private int code;
+
+	private CwTreatmentIndicator(int code) {
+		this.code = code;
 	}
 
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
+	public static CwTreatmentIndicator getInstance(int code) {
+		switch (code & 0x03) {
+		case 1:
+			return CwTreatmentIndicator.acceptCw;
+		case 2:
+			return CwTreatmentIndicator.rejectCw;
+		default:
+			return null;
+		}
 	}
 
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
+	public int getCode() {
+		return this.code;
 	}
 }

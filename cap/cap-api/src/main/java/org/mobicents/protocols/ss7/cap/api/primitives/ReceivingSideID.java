@@ -20,40 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.primitives;
+
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
+*
+ReceivingSideID ::= CHOICE {
+receivingSideID [1] LegType
+}
+-- used to identify LegID in operations sent from gsmSSF to gsmSCF
+
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface ReceivingSideID {
+
+	public LegType getReceivingSideID();
 	
-	private CAPParsingComponentExceptionReason reason;
-
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
-	}
 }

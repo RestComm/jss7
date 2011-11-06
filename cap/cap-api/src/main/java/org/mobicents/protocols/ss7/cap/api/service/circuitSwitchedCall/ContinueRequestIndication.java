@@ -20,40 +20,24 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class CAPParsingComponentException extends Exception {
-	
-	private CAPParsingComponentExceptionReason reason;
+*
+continue OPERATION ::= {
+RETURN RESULT FALSE
+ALWAYS RESPONDS FALSE
+CODE opcode-continue}
+-- Direction: gsmSCF -> gsmSSF, Timer: Tcue
+-- This operation is used to request the gsmSSF to proceed with call processing at the
+-- DP at which it previously suspended call processing to await gsmSCF instructions
+-- (i.e. proceed to the next point in call in the BCSM). The gsmSSF continues call
+-- processing without substituting new data from gsmSCF.
 
-	public CAPParsingComponentException() {
-		// TODO Auto-generated constructor stub
-	}
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface ContinueRequestIndication {
 
-	public CAPParsingComponentException(String message, CAPParsingComponentExceptionReason reason) {
-		super(message);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentException(Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentException(String message, Throwable cause, CAPParsingComponentExceptionReason reason) {
-		super(message, cause);
-		
-		this.reason = reason;
-	}
-
-	public CAPParsingComponentExceptionReason getReason() {
-		return this.reason;
-	}
 }
