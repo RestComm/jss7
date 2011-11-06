@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.lsm;
+package org.mobicents.protocols.ss7.map.api.primitives;
 
 /**
  * CellGlobalIdOrServiceAreaIdOrLAI ::= CHOICE {
@@ -51,7 +51,7 @@ public interface CellGlobalIdOrServiceAreaIdOrLAI {
 	 * 
 	 * @return
 	 */
-	public byte[] getCellGlobalIdOrServiceAreaIdFixedLength();
+	public CellGlobalIdOrServiceAreaIdFixedLength getCellGlobalIdOrServiceAreaIdFixedLength();
 	
 	/**
 	 * LAIFixedLength ::= OCTET STRING (SIZE (5))
@@ -68,6 +68,6 @@ public interface CellGlobalIdOrServiceAreaIdOrLAI {
 	 * 
 	 * @return
 	 */
-	public byte[] getLAIFixedLength();
+	public LAIFixedLength getLAIFixedLength();
 
 }

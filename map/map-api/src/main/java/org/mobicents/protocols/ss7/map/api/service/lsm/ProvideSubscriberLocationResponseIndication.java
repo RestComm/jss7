@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
