@@ -50,6 +50,7 @@ public class DialogImplWrapper extends DialogImpl {
 	
 	private int acnValue;
 	private int acnVersion;
+	protected int curOpc;
 	
 	public DialogImplWrapper(SccpAddress localAddress, SccpAddress remoteAddress, Long origTransactionId, boolean structured,
 			ScheduledExecutorService executor, TCAPProviderImpl provider, int seqControl) {
@@ -85,6 +86,19 @@ public class DialogImplWrapper extends DialogImpl {
 			return null;
 		
 		for (Component c : components) {
+
+			boolean rev = false;
+			if (curOpc == this.getLocalAddress().getSignalingPointCode()) {
+				if (c.getType() != ComponentType.Invoke)
+					rev = true;
+			} else {
+				if (c.getType() == ComponentType.Invoke)
+					rev = true;
+			}
+			if (rev) {
+				c.setInvokeId(-c.getInvokeId());
+			}
+			
 			switch(c.getType()){
 			case Invoke:
 				invLst.put(c.getInvokeId(), (Invoke) c);
