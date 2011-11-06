@@ -52,10 +52,16 @@ import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorCode;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageFactory;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCall;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprs;
+import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSms;
 import org.mobicents.protocols.ss7.cap.dialog.CAPGprsReferenceNumberImpl;
 import org.mobicents.protocols.ss7.cap.dialog.CAPUserAbortPrimitiveImpl;
 import org.mobicents.protocols.ss7.cap.errors.CAPErrorMessageFactoryImpl;
 import org.mobicents.protocols.ss7.cap.errors.CAPErrorMessageImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.CAPServiceGprsImpl;
+import org.mobicents.protocols.ss7.cap.service.sms.CAPServiceSmsImpl;
 import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckData;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
@@ -114,22 +120,34 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 	private final CAPErrorMessageFactory capErrorMessageFactory = new CAPErrorMessageFactoryImpl();
 
 	protected Set<CAPServiceBase> capServices = new HashSet<CAPServiceBase>();
-//	private final CAPServiceSms capServiceSms = new CAPServiceSmsImpl(this);
+	private final CAPServiceCircuitSwitchedCall capServiceCircuitSwitchedCall = new CAPServiceCircuitSwitchedCallImpl(this);
+	private final CAPServiceGprs capServiceGprs = new CAPServiceGprsImpl(this);
+	private final CAPServiceSms capServiceSms = new CAPServiceSmsImpl(this);
 	
 
 	public CAPProviderImpl(TCAPProvider tcapProvider) {
 		this.tcapProvider = tcapProvider;
 
-//		this.capServices.add(this.capServiceSms);
+		this.capServices.add(this.capServiceCircuitSwitchedCall);
+		this.capServices.add(this.capServiceGprs);
+		this.capServices.add(this.capServiceSms);
 	}
 
 	public TCAPProvider getTCAPProvider() {
 		return this.tcapProvider;
 	}
 
-//	public CAPServiceSms getCAPServiceSms() {
-//		return this.capServiceSms;
-//	}
+	public CAPServiceCircuitSwitchedCall getCAPServiceCircuitSwitchedCall() {
+		return this.capServiceCircuitSwitchedCall;
+	}
+
+	public CAPServiceGprs getCAPServiceGprs() {
+		return this.capServiceGprs;
+	}
+
+	public CAPServiceSms getCAPServiceSms() {
+		return this.capServiceSms;
+	}
 
 
 	@Override

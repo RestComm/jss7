@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap.service.gprs;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.cap.CAPDialogImpl;
 import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
 import org.mobicents.protocols.ss7.cap.CAPServiceBaseImpl;
@@ -32,6 +33,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPDialogGprs;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprs;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprsListener;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallImpl;
 import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckData;
 import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckResult;
 import org.mobicents.protocols.ss7.map.dialog.ServingCheckDataImpl;
@@ -48,7 +50,9 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
  */
 public class CAPServiceGprsImpl extends CAPServiceBaseImpl implements CAPServiceGprs {
 
-	protected CAPServiceGprsImpl(CAPProviderImpl capProviderImpl) {
+	protected Logger loger = Logger.getLogger(CAPServiceGprsImpl.class);
+
+	public CAPServiceGprsImpl(CAPProviderImpl capProviderImpl) {
 		super(capProviderImpl);
 	}
 
@@ -85,7 +89,12 @@ public class CAPServiceGprsImpl extends CAPServiceBaseImpl implements CAPService
 
 	@Override
 	public ServingCheckData isServingService(CAPApplicationContext dialogApplicationContext) {
-		// TODO Auto-generated method stub
+		switch (dialogApplicationContext) {
+		case CapV3_gprsSSF_gsmSCF:
+		case CapV3_gsmSCF_gprsSSF:
+			return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
+		}
+		
 		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
 	}
 

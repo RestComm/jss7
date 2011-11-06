@@ -43,7 +43,7 @@ public class CAPGprsReferenceNumberImpl implements CAPGprsReferenceNumber, CAPAs
 
 	protected static final int DESTINATION_REF_TAG = 0;
 	protected static final int ORIGINATION_REF_TAG = 1;
-	
+
 	public static final long[] CAP_Dialogue_OId = new long[] { 0, 4, 0, 0, 1, 1, 5, 2 };
 
 	private Integer destinationReference;

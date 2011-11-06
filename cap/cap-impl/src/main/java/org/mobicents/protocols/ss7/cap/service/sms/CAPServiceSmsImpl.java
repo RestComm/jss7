@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap.service.sms;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.cap.CAPDialogImpl;
 import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
 import org.mobicents.protocols.ss7.cap.CAPServiceBaseImpl;
@@ -32,6 +33,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPDialogSms;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSms;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSmsListener;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallImpl;
 import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckData;
 import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckResult;
 import org.mobicents.protocols.ss7.map.dialog.ServingCheckDataImpl;
@@ -48,7 +50,9 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
  */
 public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceSms {
 
-	protected CAPServiceSmsImpl(CAPProviderImpl capProviderImpl) {
+	protected Logger loger = Logger.getLogger(CAPServiceSmsImpl.class);
+
+	public CAPServiceSmsImpl(CAPProviderImpl capProviderImpl) {
 		super(capProviderImpl);
 	}
 
@@ -85,7 +89,12 @@ public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceS
 
 	@Override
 	public ServingCheckData isServingService(CAPApplicationContext dialogApplicationContext) {
-		// TODO Auto-generated method stub
+		switch (dialogApplicationContext) {
+		case CapV3_cap3_sms:
+		case CapV4_cap4_sms:
+			return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
+		}
+		
 		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
 	}
 
