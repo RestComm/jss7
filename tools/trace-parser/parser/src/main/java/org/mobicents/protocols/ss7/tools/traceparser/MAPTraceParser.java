@@ -33,6 +33,15 @@ import java.util.Map;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.CAPDialogImpl;
+import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
+import org.mobicents.protocols.ss7.cap.api.CAPDialog;
+import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
+import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
@@ -60,6 +69,7 @@ import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
@@ -74,7 +84,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
  * @author sergey vetyutnev
  * 
  */
-public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, Runnable, ProcessControl {
+public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, CAPDialogListener, Runnable, ProcessControl {
 	
 	private Ss7ParseParameters par;
 	private Thread t;
@@ -89,6 +99,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 	private TCAPStackImplWrapper tcapStack;
 	private SccpProviderWrapper sccpProvider;
 	private MAPProviderImpl mapProvider;
+	private CAPProviderImpl capProvider;
 	private MessageFactoryImpl msgFact = new MessageFactoryImpl(); 
 
 	private Map<Integer, Map<Long, DialogImplWrapper>> dialogs = new HashMap<Integer, Map<Long, DialogImplWrapper>>();
@@ -141,15 +152,27 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 			this.sccpProvider = new SccpProviderWrapper();
 			this.tcapStack = new TCAPStackImplWrapper(this.sccpProvider, 1);
 			this.tcapProvider = (TCAPProviderImplWrapper) this.tcapStack.getProvider();
+
 			this.mapProvider = new MAPProviderImpl(this.tcapProvider);
 
 			this.mapProvider.getMAPServiceSupplementary().acivate();
 			this.mapProvider.getMAPServiceSms().acivate();
+			this.mapProvider.getMAPServiceLsm().acivate();
+
+			
+			this.mapProvider.addMAPDialogListener(this);
+
+			this.capProvider = new CAPProviderImpl(this.tcapProvider);
+
+			this.capProvider.getCAPServiceCircuitSwitchedCall().acivate();
+			this.capProvider.getCAPServiceGprs().acivate();
+			this.capProvider.getCAPServiceSms().acivate();
 
 			this.tcapStack.start();
 			this.mapProvider.start();
+			this.capProvider.start();
 			
-			this.mapProvider.addMAPDialogListener(this);
+			this.capProvider.addCAPDialogListener(this);
 			
 			this.driver.addTraceListener(this);
 			
@@ -169,6 +192,8 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 				this.pw.close();
 			if (this.mapProvider != null)
 				this.mapProvider.stop();
+			if (this.capProvider != null)
+				this.capProvider.stop();
 			if (this.tcapStack != null)
 				this.tcapStack.stop();
 			if (this.driver != null)
@@ -302,6 +327,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 						if (!CheckDialogIdFilter(originatingTransactionId, destinationTransactionId))
 							return;
 
+						di.curOpc = message.getOpc();
 						di.processContinue(tcm, localAddress, remoteAddress);
 
 						if (this.pw != null) {
@@ -339,8 +365,13 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 						DialogRequestAPDU apdu = (DialogRequestAPDU) apduN;
 						ApplicationContextName acnV = apdu.getApplicationContextName();
 						if (acnV != null) {
-							di.setAcnValue(((int) acnV.getOid()[6]));
-							di.setAcnVersion(((int) acnV.getOid()[7]));
+							if (acnV.getOid()[5] == 0) {
+								di.setAcnValue(((int) acnV.getOid()[6]));
+								di.setAcnVersion(((int) acnV.getOid()[7]));
+							} else {
+								di.setAcnValue(((int) acnV.getOid()[7]));
+								di.setAcnVersion(((int) acnV.getOid()[5]));
+							}
 						}
 					}
 				}
@@ -352,6 +383,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 				if (!CheckDialogIdFilter(originatingTransactionId, Integer.MIN_VALUE))
 					return;
 
+				di.curOpc = message.getOpc();
 				di.processBegin(tcb, localAddress, remoteAddress);
 
 				if (this.pw != null) {
@@ -359,7 +391,8 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 					if (this.par.getTcapMsgData()) {
 						LogDataTag(aisMsg, "Begin", tcb.getComponent(), di.getAcnValue(), di.getAcnVersion(), tcb.getDialogPortion());
 					}
-//					this.LogComponents(tcb.getComponent(), di.getAcnValue(), di.getAcnVersion(), comp);
+					// this.LogComponents(tcb.getComponent(),
+					// di.getAcnValue(), di.getAcnVersion(), comp);
 				}
 				break;
 			}
@@ -387,6 +420,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 						if (!CheckDialogIdFilter(destinationTransactionId, Integer.MIN_VALUE))
 							return;
 
+						di.curOpc = message.getOpc();
 						di.processEnd(teb, localAddress, remoteAddress);
 
 						if (this.pw != null) {
@@ -427,6 +461,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 						if (!CheckDialogIdFilter(destinationTransactionId, Integer.MIN_VALUE))
 							return;
 
+						di.curOpc = message.getOpc();
 						di.processAbort(tub, localAddress, remoteAddress);
 
 						if (this.pw != null) {
@@ -853,5 +888,71 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, R
 	private class LogData {
 		public byte[] dialogPortion;
 		public byte[] componentPortion;
+	}
+
+	@Override
+	public void onDialogAccept(CAPDialog arg0, CAPGprsReferenceNumber arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogClose(CAPDialog arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogDelimiter(CAPDialog capDialog) {
+		// TODO Auto-generated method stub
+		
+		try {
+			capDialog.send();
+		} catch (CAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onDialogNotice(CAPDialog arg0, CAPNoticeProblemDiagnostic arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogProviderAbort(CAPDialog arg0, PAbortCauseType arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber arg1) {
+		// TODO Auto-generated method stub
+		
+		DialogImplWrapper di = (DialogImplWrapper)((CAPDialogImpl)capDialog).getTcapDialog();
+		if (capDialog.getApplicationContext() != null) {
+//			di.setAcnValue(capDialog.getApplicationContext().getApplicationContextName().getApplicationContextCode());
+			di.setAcnVersion(capDialog.getApplicationContext().getVersion().getVersion());
+		}
+	}
+
+	@Override
+	public void onDialogResease(CAPDialog arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogTimeout(CAPDialog capDialog) {
+		// TODO Auto-generated method stub
+		
+		capDialog.keepAlive();
+	}
+
+	@Override
+	public void onDialogUserAbort(CAPDialog arg0, CAPGeneralAbortReason arg1, CAPUserAbortReason arg2) {
+		// TODO Auto-generated method stub
+		
 	}
 }
