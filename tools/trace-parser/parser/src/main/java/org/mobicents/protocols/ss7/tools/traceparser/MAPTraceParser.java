@@ -116,6 +116,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 		this.t.start();
 	}
 
+	@Override
 	public void run() {
 		
 		String filePath = this.par.getSourceFilePath();
@@ -208,6 +209,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	}
 	
 
+	@Override
 	public void ss7Message(byte[] data) throws TraceReaderException {
 		this.msgCount++;
 		
@@ -233,7 +235,6 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 			int sio = in.read();
 			int si = sio & 0x0F;
-			
 			int ni = sio >>> 6;
 			int prioriy = (sio & 0x30) >>> 4;
 			if (si == 3) {
@@ -796,6 +797,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 			this.pw.print("???");
 	}
 
+	@Override
 	public void onDialogDelimiter(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 		
@@ -807,6 +809,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 		}
 	}
 
+	@Override
 	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
@@ -817,61 +820,73 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 		}
 	}
 
+	@Override
 	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
 			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, MAPAbortSource abortSource,
 			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public void onDialogClose(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public void onDialogResease(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public void onDialogTimeout(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 		
 		mapDialog.keepAlive();
 	}
 
+	@Override
 	public boolean isFinished() {
 		return this.taskIsFinished;
 	}
 
+	@Override
 	public String getErrorMessage() {
 		return this.errorMessage;
 	}
 
+	@Override
 	public void interrupt() {
 		this.needInterrupt = true;
 	}
 	
+	@Override
 	public boolean checkNeedInterrupt() {
 		if (this.needInterrupt) {
 			this.errorMessage = "User break";
@@ -881,6 +896,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 			return false;
 	}
 
+	@Override
 	public int getMsgCount() {
 		return this.msgCount;
 	}
