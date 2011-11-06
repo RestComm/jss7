@@ -31,17 +31,18 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AccuracyFulfilmentIndicator;
-import org.mobicents.protocols.ss7.map.api.service.lsm.CellGlobalIdOrServiceAreaIdOrLAI;
 import org.mobicents.protocols.ss7.map.api.service.lsm.DeferredmtlrData;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SLRArgExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportRequestIndication;
+import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
@@ -658,7 +659,9 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.cellIdOrSai = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
-				((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellIdOrSai).decodeAll(ais);
+				AsnInputStream ais2 = ais.readSequenceStream();
+				ais2.readTag();
+				((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellIdOrSai).decodeAll(ais2);
 				break;
 			case _TAG_H_GMLC_ADDRESS:
 				// h-gmlc-Address [14] GSN-Address
@@ -887,6 +890,15 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 
 		if (this.cellIdOrSai != null) {
 			// cellIdOrSai [13] CellGlobalIdOrServiceAreaIdOrLAI OPTIONAL,
+			try {
+				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_CELL_ID_OR_SAI);
+				int pos = asnOs.StartContentDefiniteLength();
+				((CellGlobalIdOrServiceAreaIdOrLAIImpl) this.cellIdOrSai).encodeAll(asnOs);
+				asnOs.FinalizeContent(pos);
+			} catch (AsnException e) {
+				throw new MAPException("AsnException while encoding parameter cellIdOrSai", e);
+			}
+
 			((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellIdOrSai).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_CELL_ID_OR_SAI);
 		}
 

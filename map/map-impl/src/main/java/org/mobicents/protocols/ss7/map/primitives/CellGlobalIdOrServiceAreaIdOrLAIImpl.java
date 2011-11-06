@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.lsm;
+package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
 
@@ -31,8 +31,9 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.service.lsm.CellGlobalIdOrServiceAreaIdOrLAI;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdFixedLength;
+import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
+import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 
 /**
  * @author amit bhayani
@@ -40,11 +41,11 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
  */
 public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServiceAreaIdOrLAI, MAPAsnPrimitive {
 	
-	private static final int _TAG_CELL_GLOBAL_ID_OR_SERVICE_AREAR_ID= 0;
+	private static final int _TAG_CELL_GLOBAL_ID_OR_SERVICE_AREAR_ID = 0;
 	private static final int _TAG_LAI = 1;
 
-	private byte[] cellGlobalIdOrServiceAreaIdFixedLength = null;
-	private byte[] laiFixedLength = null;
+	private CellGlobalIdOrServiceAreaIdFixedLength cellGlobalIdOrServiceAreaIdFixedLength = null;
+	private LAIFixedLength laiFixedLength = null;
 
 	/**
 	 * 
@@ -53,20 +54,16 @@ public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServi
 		super();
 	}
 
-	/**
-	 * @param cellGlobalIdOrServiceAreaIdFixedLength
-	 * @param laiFixedLength
-	 */
-	public CellGlobalIdOrServiceAreaIdOrLAIImpl(byte[] cellGlobalIdOrServiceAreaIdFixedLength, byte[] laiFixedLength) throws MAPException {
-
-		if (cellGlobalIdOrServiceAreaIdFixedLength != null && laiFixedLength != null) {
-			throw new MAPException("Either cellGlobalIdOrServiceAreaIdFixedLength or laiFixedLength can be set. Not both");
-		}
+	public CellGlobalIdOrServiceAreaIdOrLAIImpl(CellGlobalIdOrServiceAreaIdFixedLength cellGlobalIdOrServiceAreaIdFixedLength) {
 
 		this.cellGlobalIdOrServiceAreaIdFixedLength = cellGlobalIdOrServiceAreaIdFixedLength;
-		this.laiFixedLength = laiFixedLength;
 	}
 
+	public CellGlobalIdOrServiceAreaIdOrLAIImpl(LAIFixedLength laiFixedLength) {
+
+		this.laiFixedLength = laiFixedLength;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -75,7 +72,7 @@ public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServi
 	 * #getCellGlobalIdOrServiceAreaIdFixedLength()
 	 */
 	@Override
-	public byte[] getCellGlobalIdOrServiceAreaIdFixedLength() {
+	public CellGlobalIdOrServiceAreaIdFixedLength getCellGlobalIdOrServiceAreaIdFixedLength() {
 		return this.cellGlobalIdOrServiceAreaIdFixedLength;
 	}
 
@@ -86,7 +83,7 @@ public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServi
 	 * CellGlobalIdOrServiceAreaIdOrLAI#getLAIFixedLength()
 	 */
 	@Override
-	public byte[] getLAIFixedLength() {
+	public LAIFixedLength getLAIFixedLength() {
 		return this.laiFixedLength;
 	}
 
@@ -95,10 +92,11 @@ public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServi
 	 */
 	@Override
 	public int getTag() throws MAPException {
-		if(this.cellGlobalIdOrServiceAreaIdFixedLength != null ){
-			return 0;
+		if (this.cellGlobalIdOrServiceAreaIdFixedLength != null) {
+			return _TAG_CELL_GLOBAL_ID_OR_SERVICE_AREAR_ID;
+		} else {
+			return _TAG_LAI;
 		}
-		return 1;
 	}
 
 	/* (non-Javadoc)
@@ -106,7 +104,7 @@ public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServi
 	 */
 	@Override
 	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
+		return Tag.CLASS_CONTEXT_SPECIFIC;
 	}
 
 	/* (non-Javadoc)
@@ -126,10 +124,10 @@ public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServi
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding CellGlobalIdOrServiceAreaIdOrLAI: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding CellGlobalIdOrServiceAreaIdOrLAI: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}		
 	}
@@ -142,26 +140,28 @@ public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServi
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding CellGlobalIdOrServiceAreaIdOrLAI: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding CellGlobalIdOrServiceAreaIdOrLAI: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}		
 	}
-	
-	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
+	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		
 		if (asnIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !asnIS.isTagPrimitive())
 			throw new MAPParsingComponentException("Error while decoding CellGlobalIdOrServiceAreaIdOrLAI: bad tag class or is not primitive: TagClass=" + asnIS.getTagClass(),
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
 		switch (asnIS.getTag()) {
 		case _TAG_CELL_GLOBAL_ID_OR_SERVICE_AREAR_ID:
-			this.cellGlobalIdOrServiceAreaIdFixedLength = asnIS.readOctetStringData(length);
+			this.cellGlobalIdOrServiceAreaIdFixedLength = new CellGlobalIdOrServiceAreaIdFixedLengthImpl();
+			((CellGlobalIdOrServiceAreaIdFixedLengthImpl)this.cellGlobalIdOrServiceAreaIdFixedLength).decodeData(asnIS, length);
 			break;
 		case _TAG_LAI:
-			this.laiFixedLength = asnIS.readOctetStringData(length);
+			this.laiFixedLength = new LAIFixedLengthImpl();
+			((LAIFixedLengthImpl)this.laiFixedLength).decodeData(asnIS, length);
 			break;
 		default:
 			throw new MAPParsingComponentException(
@@ -189,7 +189,7 @@ public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServi
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding AdditionalNumber: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding CellGlobalIdOrServiceAreaIdOrLAI: " + e.getMessage(), e);
 		}		
 	}
 
@@ -198,12 +198,29 @@ public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServi
 	 */
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+
+		if (this.cellGlobalIdOrServiceAreaIdFixedLength == null && this.laiFixedLength == null)
+			throw new MAPException("Error while encoding the CellGlobalIdOrServiceAreaIdOrLAI: both cellGlobalIdOrServiceAreaIdFixedLength and laiFixedLength are not defined");
+		
 		if(this.cellGlobalIdOrServiceAreaIdFixedLength != null){
-			asnOs.write(this.cellGlobalIdOrServiceAreaIdFixedLength);
+			((CellGlobalIdOrServiceAreaIdFixedLengthImpl)this.cellGlobalIdOrServiceAreaIdFixedLength).encodeData(asnOs);
 		} else {
-			asnOs.write(this.laiFixedLength);
+			((LAIFixedLengthImpl)this.laiFixedLength).encodeData(asnOs);
 		}
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("CellGlobalIdOrServiceAreaIdOrLAI [");
+		if (this.cellGlobalIdOrServiceAreaIdFixedLength != null)
+			sb.append(this.cellGlobalIdOrServiceAreaIdFixedLength.toString());
+		if (this.laiFixedLength != null)
+			sb.append(this.laiFixedLength.toString());
+		sb.append("]");
 
-
+		return sb.toString();
+	}
 }
+
