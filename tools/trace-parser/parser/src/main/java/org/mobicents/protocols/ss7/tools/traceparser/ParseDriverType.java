@@ -28,7 +28,7 @@ package org.mobicents.protocols.ss7.tools.traceparser;
  * 
  */
 public enum ParseDriverType {
-	Acterna(1), SimpleSeq(2);
+	Acterna(1), SimpleSeq(2), Pcap(3);
 
 	int code;
 

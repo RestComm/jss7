@@ -79,6 +79,7 @@ public class TraceParserForm {
 	private JCheckBox cbDialogIdFilter;
 	private JRadioButton rdbtnTpActerna;
 	private JRadioButton rdbtnTpSimpleSeq;
+	private JRadioButton rdbtnTpPcap;
 	private JButton btnStart;
 	private JButton btnStop;
 	private JPanel pnMsgLog;
@@ -175,6 +176,8 @@ public class TraceParserForm {
 					newPar.setFileTypeN(ParseDriverType.Acterna);
 				if (rdbtnTpSimpleSeq.isSelected())
 					newPar.setFileTypeN(ParseDriverType.SimpleSeq);
+				if (rdbtnTpPcap.isSelected())
+					newPar.setFileTypeN(ParseDriverType.Pcap);
 
 				if (rdbtnMap.isSelected())
 					newPar.setParseProtocol(ParseProtocol.Map);
@@ -272,8 +275,13 @@ public class TraceParserForm {
 		
 		rdbtnTpSimpleSeq = new JRadioButton("Simple sequence");
 		buttonGroup.add(rdbtnTpSimpleSeq);
-		rdbtnTpSimpleSeq.setBounds(137, 28, 146, 23);
+		rdbtnTpSimpleSeq.setBounds(137, 28, 126, 23);
 		panel_2.add(rdbtnTpSimpleSeq);
+		
+		rdbtnTpPcap = new JRadioButton("Pcap");
+		buttonGroup.add(rdbtnTpPcap);
+		rdbtnTpPcap.setBounds(275, 28, 101, 23);
+		panel_2.add(rdbtnTpPcap);
 		
 		tfFilePath = new JTextField();
 		tfFilePath.setBounds(20, 157, 481, 20);
@@ -474,6 +482,9 @@ public class TraceParserForm {
 				break;
 			case SimpleSeq:
 				rdbtnTpSimpleSeq.setSelected(true);
+				break;
+			case Pcap:
+				rdbtnTpPcap.setSelected(true);
 				break;
 			}
 			

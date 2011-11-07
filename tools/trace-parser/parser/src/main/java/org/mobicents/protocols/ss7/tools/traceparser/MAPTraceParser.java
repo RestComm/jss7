@@ -128,6 +128,9 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 		case SimpleSeq:
 			this.driver = new TraceReaderDriverSimpleSeq(this, filePath);
 			break;
+		case Pcap:
+			this.driver = new TraceReaderDriverPcap(this, filePath);
+			break;
 		default:
 			this.setFinishedState("Unknown TraceReaderDriver: " + this.par.getFileTypeN());
 			return;
@@ -306,6 +309,15 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				int acnValue = 0;
 				int acnVersion = 0;
 				if (dpcData != null) {
+					
+					
+					// TODO: remove it
+					if (destinationTransactionId == 3452) {
+						destinationTransactionId = 5048;
+					}
+					// TODO: remove it
+					
+					
 					DialogImplWrapper di = dpcData.get(destinationTransactionId);
 					if (di != null) {
 						int opc = message.getOpc();
