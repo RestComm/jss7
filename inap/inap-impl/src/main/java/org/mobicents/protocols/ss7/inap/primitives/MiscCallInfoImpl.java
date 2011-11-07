@@ -31,64 +31,60 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.inap.api.INAPException;
 import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
 import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
-import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
+import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoDpAssignment;
+import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
+
 
 /**
 * 
 * @author sergey vetyutnev
 * 
 */
-public class LegIDImpl implements LegID, INAPAsnPrimitive {
+public class MiscCallInfoImpl implements MiscCallInfo, INAPAsnPrimitive {
 
-	public static final int _ID_sendingSideID = 0;
-	public static final int _ID_receivingSideID = 1;
+	public static final int _ID_messageType = 0;
+	public static final int _ID_dpAssignment = 1;
 
-	public static final String _PrimitiveName = "LegID";
+	public static final String _PrimitiveName = "MiscCallInfo";
 
-	private LegType sendingSideID;
-	private LegType receivingSideID;	
+	private MiscCallInfoMessageType messageType;
+	private MiscCallInfoDpAssignment dpAssignment;	
+
 	
-	
-	public LegIDImpl() {
+	public MiscCallInfoImpl() {
 	}
 	
-	public LegIDImpl(boolean isSendingSideID, LegType legID) {
-		if (isSendingSideID)
-			this.sendingSideID = legID;
-		else
-			this.receivingSideID = legID;
+	public MiscCallInfoImpl(MiscCallInfoMessageType messageType, MiscCallInfoDpAssignment dpAssignment) {
+		this.messageType = messageType;
+		this.dpAssignment = dpAssignment;
 	}
-	
 	
 	@Override
-	public LegType getSendingSideID() {
-		return sendingSideID;
+	public MiscCallInfoMessageType getMessageType() {
+		return messageType;
 	}
 
 	@Override
-	public LegType getReceivingSideID() {
-		return receivingSideID;
+	public MiscCallInfoDpAssignment getDpAssignment() {
+		return dpAssignment;
 	}
-
+	
+	
 	
 	@Override
 	public int getTag() throws INAPException {
-		if (this.sendingSideID != null) {
-			return _ID_sendingSideID;
-		} else {
-			return _ID_receivingSideID;
-		}
+		return Tag.SEQUENCE;
 	}
 
 	@Override
 	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
+		return Tag.CLASS_UNIVERSAL;
 	}
 
 	@Override
 	public boolean getIsPrimitive() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -119,50 +115,54 @@ public class LegIDImpl implements LegID, INAPAsnPrimitive {
 	}
 
 	private void _decode(AsnInputStream asnIS, int length) throws INAPParsingComponentException, IOException, AsnException {
-		
-		if (asnIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !asnIS.isTagPrimitive())
-			throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag class or is not primitive: TagClass=" + asnIS.getTagClass(),
-					INAPParsingComponentExceptionReason.MistypedParameter);
 
-		byte[] buf;
-		switch (asnIS.getTag()) {
-		case _ID_sendingSideID:
-			buf = asnIS.readOctetStringData(length);
-			if (buf.length != 1)
-				throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName + ": sendingSideID length must be 1 but it equals "
-						+ buf.length, INAPParsingComponentExceptionReason.MistypedParameter);
-			this.sendingSideID = LegType.getInstance(buf[0]);
-			if (this.sendingSideID == null)
-				throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName + ": sendingSideID value must be 1 or 2 it equals "
-						+ buf[0], INAPParsingComponentExceptionReason.MistypedParameter);
-			break;
-		case _ID_receivingSideID:
-			buf = asnIS.readOctetStringData(length);
-			if (buf.length != 1)
-				throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName + ": sendingSideID length must be 1 but it equals "
-						+ buf.length, INAPParsingComponentExceptionReason.MistypedParameter);
-			this.receivingSideID = LegType.getInstance(buf[0]);
-			if (this.receivingSideID == null)
-				throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName + ": sendingSideID value must be 1 or 2 it equals "
-						+ buf[0], INAPParsingComponentExceptionReason.MistypedParameter);
-			break;
-		default:
-			throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag : tag=" + asnIS.getTag(),
-					INAPParsingComponentExceptionReason.MistypedParameter);
+		this.messageType = null;
+		this.dpAssignment = null;
+
+		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+		int i1;
+		while (true) {
+			if (ais.available() == 0)
+				break;
+
+			int tag = ais.readTag();
+			
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {
+				case _ID_messageType:
+					i1 = (int)ais.readInteger();
+					this.messageType = MiscCallInfoMessageType.getInstance(i1);
+					break;
+				case _ID_dpAssignment:
+					i1 = (int)ais.readInteger();
+					this.dpAssignment = MiscCallInfoDpAssignment.getInstance(i1);
+					break;
+
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else {
+				ais.advanceElement();
+			}
 		}
+
+		if (this.messageType == null)
+			throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName + ": messageType is mandatory but not found ",
+					INAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws INAPException {
 		
-		this.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, this.getTag());
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws INAPException {
 		
 		try {
-			asnOs.writeTag(tagClass, true, tag);
+			asnOs.writeTag(tagClass, false, tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
@@ -174,32 +174,38 @@ public class LegIDImpl implements LegID, INAPAsnPrimitive {
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws INAPException {
 
-		if (this.sendingSideID == null && this.receivingSideID == null || this.sendingSideID != null && this.receivingSideID != null)
-			throw new INAPException("Error while encoding the " + _PrimitiveName + ": one of sendingSideID or receivingSideID (not both) must not be empty");
+		if (this.messageType == null)
+			throw new INAPException("Error while encoding the " + _PrimitiveName + ": messageType must not be empty");
 
-		byte[] buf = new byte[1];
-		if (this.sendingSideID != null)
-			buf[0] = (byte) sendingSideID.getCode();
-		else
-			buf[0] = (byte) receivingSideID.getCode();
-		asnOs.writeOctetStringData(buf);
+		try {
+			asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_messageType, this.messageType.getCode());
+
+			if (this.dpAssignment != null)
+				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_dpAssignment, this.dpAssignment.getCode());
+		} catch (IOException e) {
+			throw new INAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new INAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public String toString() {
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("LegID [");
-		if (this.sendingSideID != null) {
-			sb.append("sendingSideID=");
-			sb.append(sendingSideID);
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		if (this.messageType != null) {
+			sb.append("messageType=");
+			sb.append(messageType);
 		}
-		if (this.receivingSideID != null) {
-			sb.append("receivingSideID=");
-			sb.append(receivingSideID);
+		if (this.dpAssignment != null) {
+			sb.append(", dpAssignment=");
+			sb.append(dpAssignment);
 		}
 		sb.append("]");
-		
+
 		return sb.toString();
 	}
 }
+
