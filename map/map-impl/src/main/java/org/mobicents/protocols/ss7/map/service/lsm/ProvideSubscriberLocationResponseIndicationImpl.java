@@ -389,7 +389,9 @@ public class ProvideSubscriberLocationResponseIndicationImpl extends LsmMessageI
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
-				((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellGlobalIdOrServiceAreaIdOrLAI).decodeAll(ais);
+				AsnInputStream ais2 = ais.readSequenceStream();
+				ais2.readTag();
+				((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellGlobalIdOrServiceAreaIdOrLAI).decodeAll(ais2);
 				break;
 			case _TAG_SAI_PRESENT:
 				// sai-Present [7] NULL OPTIONAL,
@@ -528,7 +530,14 @@ public class ProvideSubscriberLocationResponseIndicationImpl extends LsmMessageI
 		}
 
 		if (this.cellGlobalIdOrServiceAreaIdOrLAI != null) {
-			((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellGlobalIdOrServiceAreaIdOrLAI).encodeAll(asnOs);
+			try {
+				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_CELL_ID_OR_SAI);
+				int pos = asnOs.StartContentDefiniteLength();
+				((CellGlobalIdOrServiceAreaIdOrLAIImpl) this.cellGlobalIdOrServiceAreaIdOrLAI).encodeAll(asnOs);
+				asnOs.FinalizeContent(pos);
+			} catch (AsnException e) {
+				throw new MAPException("AsnException while encoding parameter cellGlobalIdOrServiceAreaIdOrLAI", e);
+			}
 		}
 
 		if (this.saiPresent != null) {

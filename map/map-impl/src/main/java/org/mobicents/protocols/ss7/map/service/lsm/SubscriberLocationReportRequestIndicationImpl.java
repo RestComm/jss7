@@ -658,7 +658,9 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				this.cellIdOrSai = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
-				((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellIdOrSai).decodeAll(ais);
+				AsnInputStream ais2 = ais.readSequenceStream();
+				ais2.readTag();
+				((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellIdOrSai).decodeAll(ais2);
 				break;
 			case _TAG_H_GMLC_ADDRESS:
 				// h-gmlc-Address [14] GSN-Address
@@ -887,7 +889,14 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 
 		if (this.cellIdOrSai != null) {
 			// cellIdOrSai [13] CellGlobalIdOrServiceAreaIdOrLAI OPTIONAL,
-			((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellIdOrSai).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_CELL_ID_OR_SAI);
+			try {
+				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_CELL_ID_OR_SAI);
+				int pos = asnOs.StartContentDefiniteLength();
+				((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellIdOrSai).encodeAll(asnOs);
+				asnOs.FinalizeContent(pos);
+			} catch (AsnException e) {
+				throw new MAPException("AsnException while encoding parameter cellGlobalIdOrServiceAreaIdOrLAI", e);
+			}
 		}
 
 		if (this.hgmlcAddress != null) {
