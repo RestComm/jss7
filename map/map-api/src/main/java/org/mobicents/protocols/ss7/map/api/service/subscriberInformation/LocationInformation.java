@@ -59,7 +59,7 @@ LocationInformation ::= SEQUENCE {
 */
 public interface LocationInformation {
 
-	public AgeOfLocationInformation getAgeOfLocationInformation();
+	public Integer getAgeOfLocationInformation();
 
 	public GeographicalInformation getGeographicalInformation();
 

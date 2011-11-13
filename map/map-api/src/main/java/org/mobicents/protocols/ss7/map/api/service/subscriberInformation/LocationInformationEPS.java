@@ -57,7 +57,7 @@ public interface LocationInformationEPS {
 
 	public boolean getCurrentLocationRetrieved();
 
-	public AgeOfLocationInformation getAgeOfLocationInformation();
+	public Integer getAgeOfLocationInformation();
 
 	public DiameterIdentity getMmeName();
 
