@@ -53,6 +53,6 @@ Ext-BearerServiceCode ::= OCTET STRING (SIZE (1..5))
 */
 public interface ExtBearerServiceCode {
 
-	public void getData();
+	public byte[] getData();
 
 }

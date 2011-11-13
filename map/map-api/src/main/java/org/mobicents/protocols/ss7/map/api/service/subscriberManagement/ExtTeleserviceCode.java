@@ -47,6 +47,6 @@ Ext-TeleserviceCode ::= OCTET STRING (SIZE (1..5))
 */
 public interface ExtTeleserviceCode {
 
-	public void getData();
+	public byte[] getData();
 
 }
