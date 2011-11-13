@@ -31,9 +31,8 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AudibleIndicator;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
+import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
@@ -41,66 +40,29 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  * @author sergey vetyutnev
  * 
  */
-public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBillingChargingCharacteristics, CAPAsnPrimitive {
+public class ReceivingSideIDImpl implements ReceivingSideID, CAPAsnPrimitive {
 
-	public static final int _ID_timeDurationCharging = 0;
+	public static final int _ID_receivingSideID = 1;
 
-	public static final int _ID_maxCallPeriodDuration = 0;
-	public static final int _ID_releaseIfdurationExceeded = 1;
-	public static final int _ID_tariffSwitchInterval = 2;
-	public static final int _ID_audibleIndicator = 3;
-	public static final int _ID_extensions = 4;
+	public static final String _PrimitiveName = "ReceivingSideID";
 
-	public static final String _PrimitiveName = "CAMELAChBillingChargingCharacteristics";
+	private LegType receivingSideID;
 
-	private byte[] data;
-	private long maxCallPeriodDuration;
-	private boolean releaseIfdurationExceeded;
-	private Long tariffSwitchInterval;
-	private AudibleIndicator audibleIndicator;
-	private CAPExtensions extensions;
-	
-
-	@Override
-	public byte[] getData() {
-		return data;
-	}
-
-	@Override
-	public long getMaxCallPeriodDuration() {
-		return maxCallPeriodDuration;
-	}
-
-	@Override
-	public boolean getReleaseIfdurationExceeded() {
-		return releaseIfdurationExceeded;
-	}
-
-	@Override
-	public Long getTariffSwitchInterval() {
-		return tariffSwitchInterval;
-	}
-
-	@Override
-	public AudibleIndicator getAudibleIndicator() {
-		return audibleIndicator;
-	}
-
-	@Override
-	public CAPExtensions getExtensions() {
-		return extensions;
-	}
 	
 	
+	@Override
+	public LegType getReceivingSideID() {
+		return receivingSideID;
+	}
 	
 	@Override
 	public int getTag() throws CAPException {
-		return Tag.STRING_OCTET;
+		return _ID_receivingSideID;
 	}
 
 	@Override
 	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
+		return Tag.CLASS_CONTEXT_SPECIFIC;
 	}
 
 	@Override
@@ -145,68 +107,16 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 
 	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
 
-		this.data = null;
-		this.maxCallPeriodDuration = -1;
-		this.releaseIfdurationExceeded = false;
-		this.tariffSwitchInterval = 0L;
-		this.audibleIndicator = null; // TODO: DEFAULT tone: FALSE
-		this.extensions = null;
+		this.receivingSideID = null;
 		
-		this.data = ansIS.readOctetStringData(length);
+		if (ansIS.getTag() != _ID_receivingSideID || ansIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ansIS.isTagPrimitive())
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+					+ ": choice receivingSideID has bad tag or tagClass or is not primitive", CAPParsingComponentExceptionReason.MistypedParameter);
 
-		AsnInputStream aiss = new AsnInputStream(this.data);
-		int tag = aiss.readTag();
-		if (tag != _ID_timeDurationCharging || aiss.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || aiss.isTagPrimitive())
-			throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
-					+ ": CAMEL-AChBillingChargingCharacteristics choice has bad tag oe tagClass or is primitive, tag=" + tag + ", tagClass="
-					+ aiss.getTagClass(), CAPParsingComponentExceptionReason.MistypedParameter);
-		
-		AsnInputStream ais = aiss.readSequenceStream();
-		while (true) {
-			if (ais.available() == 0)
-				break;
-
-			tag = ais.readTag();
-
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_maxCallPeriodDuration:
-					this.maxCallPeriodDuration = ais.readInteger();
-					break;
-				case _ID_releaseIfdurationExceeded:
-					int ln = ais.readLength();
-					if (ln == 1) { // IMPLICIT
-						this.releaseIfdurationExceeded = ais.readBooleanData(ln);
-					} else { // EXPLICIT - from trace
-						AsnInputStream ais2 = ais.readSequenceStreamData(ln);
-						int tag2 = ais2.readTag();
-						if (tag2 != Tag.BOOLEAN && ais2.getTagClass() != Tag.CLASS_UNIVERSAL)
-							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": wrong releaseIfdurationExceeded EXPLICIT-coding tag or tagClass", CAPParsingComponentExceptionReason.MistypedParameter);
-						this.releaseIfdurationExceeded = ais2.readBoolean();
-					}
-					break;
-				case _ID_tariffSwitchInterval:
-					ais.advanceElement(); // TODO: implement it
-					break;
-				case _ID_audibleIndicator:
-					ais.advanceElement(); // TODO: implement it
-					break;
-				case _ID_extensions:
-					ais.advanceElement(); // TODO: implement it
-					break;
-
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-
-		if (this.maxCallPeriodDuration == -1)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": maxCallPeriodDuration is mandatory but not found",
+		int i1 = (int)ansIS.readIntegerData(length); 
+		this.receivingSideID = LegType.getInstance(i1);
+		if (this.receivingSideID == null)
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad LegType parameter",
 					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -227,4 +137,5 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 		// TODO Auto-generated method stub
 		
 	}
+
 }

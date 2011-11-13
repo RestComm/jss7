@@ -170,6 +170,42 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 			}
 			break;
 
+		case CAPOperationCode.applyChargingReport:
+			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric) {
+				if (compType == ComponentType.Invoke) {
+					applyChargingReportRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+				}
+			}
+			break;
+
+		case CAPOperationCode.releaseCall:
+			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric) {
+				if (compType == ComponentType.Invoke) {
+					releaseCallRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+				}
+			}
+			break;
+
+		case CAPOperationCode.connect:
+			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric) {
+				if (compType == ComponentType.Invoke) {
+					connectRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+				}
+			}
+			break;
+
+		case CAPOperationCode.callInformationRequest:
+			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric) {
+				if (compType == ComponentType.Invoke) {
+					callInformationRequestRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+				}
+			}
+			break;
+
 		default:
 			new CAPParsingComponentException("", CAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
@@ -262,12 +298,12 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 	private void eventReportBCSMRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
 
 		if (parameter == null)
-			throw new CAPParsingComponentException("Error while decoding eventReportBCSM: Parameter is mandatory but not found",
+			throw new CAPParsingComponentException("Error while decoding eventReportBCSMRequest: Parameter is mandatory but not found",
 					CAPParsingComponentExceptionReason.MistypedParameter);
 
 		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
 			throw new CAPParsingComponentException(
-					"Error while decoding eventReportBCSM: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+					"Error while decoding eventReportBCSMRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
 					CAPParsingComponentExceptionReason.MistypedParameter);
 
 		byte[] buf = parameter.getData();
@@ -282,7 +318,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 			try {
 				((CAPServiceCircuitSwitchedCallListener) serLis).onEventReportBCSMRequestIndication(ind);
 			} catch (Exception e) {
-				loger.error("Error processing requestReportBCSMEventRequest: " + e.getMessage(), e);
+				loger.error("Error processing eventReportBCSMRequest: " + e.getMessage(), e);
 			}
 		}
 	}
@@ -299,6 +335,118 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 				((CAPServiceCircuitSwitchedCallListener) serLis).onContinueRequestIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing continueRequest: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void applyChargingReportRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+
+		if (parameter == null)
+			throw new CAPParsingComponentException("Error while decoding applyChargingReportRequest: Parameter is mandatory but not found",
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+			throw new CAPParsingComponentException(
+					"Error while decoding applyChargingReportRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		ApplyChargingReportRequestIndicationImpl ind = new ApplyChargingReportRequestIndicationImpl();
+		ind.decodeData(ais, buf.length);
+
+		ind.setInvokeId(invokeId);
+		ind.setCAPDialog(capDialogImpl);
+
+		for (CAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((CAPServiceCircuitSwitchedCallListener) serLis).onApplyChargingReportRequestIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing applyChargingReportRequest: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void releaseCallRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+
+		if (parameter == null)
+			throw new CAPParsingComponentException("Error while decoding releaseCallRequest: Parameter is mandatory but not found",
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+			throw new CAPParsingComponentException(
+					"Error while decoding releaseCallRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		ReleaseCallRequestIndicationImpl ind = new ReleaseCallRequestIndicationImpl();
+		ind.decodeData(ais, buf.length);
+
+		ind.setInvokeId(invokeId);
+		ind.setCAPDialog(capDialogImpl);
+
+		for (CAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((CAPServiceCircuitSwitchedCallListener) serLis).onReleaseCalltRequestIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing applyChargingReportRequest: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void connectRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+
+		if (parameter == null)
+			throw new CAPParsingComponentException("Error while decoding connectRequest: Parameter is mandatory but not found",
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new CAPParsingComponentException(
+					"Error while decoding connectRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		ConnectRequestIndicationImpl ind = new ConnectRequestIndicationImpl();
+		ind.decodeData(ais, buf.length);
+
+		ind.setInvokeId(invokeId);
+		ind.setCAPDialog(capDialogImpl);
+
+		for (CAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((CAPServiceCircuitSwitchedCallListener) serLis).onConnectRequestIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing eventReportBCSMRequest: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void callInformationRequestRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+
+		if (parameter == null)
+			throw new CAPParsingComponentException("Error while decoding callInformationRequestRequest: Parameter is mandatory but not found",
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new CAPParsingComponentException(
+					"Error while decoding callInformationRequestRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		CallInformationRequestRequestIndicationImpl ind = new CallInformationRequestRequestIndicationImpl();
+		ind.decodeData(ais, buf.length);
+
+		ind.setInvokeId(invokeId);
+		ind.setCAPDialog(capDialogImpl);
+
+		for (CAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((CAPServiceCircuitSwitchedCallListener) serLis).onCallInformationRequestRequestIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing eventReportBCSMRequest: " + e.getMessage(), e);
 			}
 		}
 	}

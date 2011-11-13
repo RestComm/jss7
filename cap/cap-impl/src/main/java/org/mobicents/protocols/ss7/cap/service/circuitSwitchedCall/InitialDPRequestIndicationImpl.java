@@ -31,30 +31,38 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.cap.api.isup.AdditionalCallingPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.OriginalCalledNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.RedirectingPartyIDCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
-import org.mobicents.protocols.ss7.cap.api.primitives.Digits;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CGEncountered;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Carrier;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InitialDPArgExtension;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
+import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.CallingPartyNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.LocationNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.OriginalCalledNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.RedirectingPartyIDCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CalledPartyBCDNumberImpl;
 import org.mobicents.protocols.ss7.cap.primitives.TimeAndTimezoneImpl;
-import org.mobicents.protocols.ss7.isup.ParameterException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallingPartyNumberImpl;
-import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
-import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
-import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.BearerCapabilityImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InitialDPArgExtensionImpl;
+import org.mobicents.protocols.ss7.inap.api.isup.CallingPartysCategoryInap;
+import org.mobicents.protocols.ss7.inap.api.isup.HighLayerCompatibilityInap;
+import org.mobicents.protocols.ss7.inap.api.isup.RedirectionInformationInap;
+import org.mobicents.protocols.ss7.inap.isup.CallingPartysCategoryInapImpl;
+import org.mobicents.protocols.ss7.inap.isup.RedirectionInformationInapImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -68,6 +76,7 @@ import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.service.callhandling.CallReferenceNumberImpl;
 import org.mobicents.protocols.ss7.map.service.subscriberInformation.LocationInformationImpl;
+import org.mobicents.protocols.ss7.map.service.subscriberManagement.ExtBasicServiceCodeImpl;
 
 /**
  * 
@@ -107,25 +116,27 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 	public static final int _ID_timeAndTimezone = 57;
 	public static final int _ID_callForwardingSS_Pending = 58;
 	public static final int _ID_initialDPArgExtension = 59;
+	
+	public static final String _PrimitiveName = "InitialDPRequestIndication";
 
 	private int serviceKey;
-	private byte[] calledPartyNumber;
-	private byte[] callingPartyNumber;
-	private byte[] callingPartysCategory;
+	private CalledPartyNumberCap calledPartyNumber;
+	private CallingPartyNumberCap callingPartyNumber;
+	private CallingPartysCategoryInap callingPartysCategory;
 	private CGEncountered CGEncountered;
 	private IPSSPCapabilities IPSSPCapabilities;
-	private byte[] locationNumber;
-	private byte[] originalCalledPartyID;
+	private LocationNumberCap locationNumber;
+	private OriginalCalledNumberCap originalCalledPartyID;
 	private CAPExtensions extensions;
-	private byte[] highLayerCompatibility;
-	private Digits additionalCallingPartyNumber;
+	private HighLayerCompatibilityInap highLayerCompatibility;
+	private AdditionalCallingPartyNumberCap additionalCallingPartyNumber;
 	private BearerCapability bearerCapability;
 	private EventTypeBCSM eventTypeBCSM;
-	private byte[] redirectingPartyID;
-	private byte[] redirectionInformation;
-	private byte[] cause;
+	private RedirectingPartyIDCap redirectingPartyID;
+	private RedirectionInformationInap redirectionInformation;
+	private CauseCap cause;
 	private ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo;
-	private byte[] carrier;
+	private Carrier carrier;
 	private CUGIndex cugIndex;
 	private CUGInterlock cugInterlock;
 	private boolean cugOutgoingAccess;
@@ -147,45 +158,18 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 	}
 
 	@Override
-	public byte[] getCalledPartyNumber() {
+	public CalledPartyNumberCap getCalledPartyNumber() {
 		return this.calledPartyNumber;
 	}
 
 	@Override
-	public CalledPartyNumber getCalledPartyNumberIsup() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public byte[] getCallingPartyNumber() {
+	public CallingPartyNumberCap getCallingPartyNumber() {
 		return callingPartyNumber;
 	}
 
 	@Override
-	public CallingPartyNumber getCallingPartyNumberIsup() throws CAPException {
-		
-		if (this.callingPartyNumber == null)
-			return null;
-		
-		CallingPartyNumberImpl res = new CallingPartyNumberImpl();
-		try {
-			res.decode(this.callingPartyNumber);
-		} catch (ParameterException e) {
-			throw new CAPException("ParameterException when decoding CallingPartyNumber: " + e.getLocalizedMessage(), e);
-		}
-		return res;
-	}
-
-	@Override
-	public byte[] getCallingPartysCategory() {
+	public CallingPartysCategoryInap getCallingPartysCategory() {
 		return callingPartysCategory;
-	}
-
-	@Override
-	public CallingPartyCategory getCallingPartysCategoryIsup() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -199,25 +183,13 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 	}
 
 	@Override
-	public byte[] getLocationNumber() {
+	public LocationNumberCap getLocationNumber() {
 		return locationNumber;
 	}
 
 	@Override
-	public LocationNumber getLocationNumberIsup() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public byte[] getOriginalCalledPartyID() {
+	public OriginalCalledNumberCap getOriginalCalledPartyID() {
 		return originalCalledPartyID;
-	}
-
-	@Override
-	public OriginalCalledNumber getOriginalCalledPartyIDIsup() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -226,19 +198,13 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 	}
 
 	@Override
-	public byte[] getHighLayerCompatibility() {
+	public HighLayerCompatibilityInap getHighLayerCompatibility() {
 		return highLayerCompatibility;
 	}
 
 	@Override
-	public Digits getAdditionalCallingPartyNumber() {
+	public AdditionalCallingPartyNumberCap getAdditionalCallingPartyNumber() {
 		return additionalCallingPartyNumber;
-	}
-
-	@Override
-	public GenericNumber getAdditionalCallingPartyNumberIsup() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -252,36 +218,18 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 	}
 
 	@Override
-	public byte[] getRedirectingPartyID() {
+	public RedirectingPartyIDCap getRedirectingPartyID() {
 		return redirectingPartyID;
 	}
 
 	@Override
-	public RedirectingNumber getRedirectingPartyIDIsup() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public byte[] getRedirectionInformation() {
+	public RedirectionInformationInap getRedirectionInformation() {
 		return redirectionInformation;
 	}
 
 	@Override
-	public RedirectionInformation getRedirectionInformationIsup() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public byte[] getCause() {
+	public CauseCap getCause() {
 		return cause;
-	}
-
-	@Override
-	public CauseIndicators getCauseIsup() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -290,7 +238,7 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 	}
 
 	@Override
-	public byte[] getCarrier() {
+	public Carrier getCarrier() {
 		return carrier;
 	}
 
@@ -383,13 +331,13 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding InitialDPRequest: " + e.getMessage(), e,
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding InitialDPRequest: " + e.getMessage(), e,
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding InitialDPRequest: " + e.getMessage(), e,
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -400,13 +348,13 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding InitialDPRequest: " + e.getMessage(), e,
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding InitialDPRequest: " + e.getMessage(), e,
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding InitialDPRequest: " + e.getMessage(), e,
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -467,31 +415,28 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 				if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 					switch (tag) {
 					case _ID_calledPartyNumber:
-						ais.advanceElement(); // TODO: implement it
+						byte[] buf = ais.readOctetString();
+						if (buf.length < 2 || buf.length > 18)
+							throw new CAPParsingComponentException(
+									"Error while decoding " + _PrimitiveName + ": calledPartyNumber must be from 2 to 18 bytes length, found: " + buf.length,
+									CAPParsingComponentExceptionReason.MistypedParameter);
+						this.calledPartyNumber = new CalledPartyNumberCapImpl(buf);
 						break;
 					case _ID_callingPartyNumber:
-						this.callingPartyNumber = ais.readOctetString();
-						if (this.callingPartyNumber.length < 2 || this.callingPartyNumber.length > 16)
+						buf = ais.readOctetString();
+						if (buf.length < 2 || buf.length > 10)
 							throw new CAPParsingComponentException(
-									"Error while decoding InitialDPRequest: Parameter callingPartyNumber must have the length from 2 to 16, found"
-											+ this.callingPartyNumber.length, CAPParsingComponentExceptionReason.MistypedParameter);
-						
-						
-						// TODO: remove it ......................
-						try {
-							CallingPartyNumber x1 =  this.getCallingPartyNumberIsup();
-							int zz=0;
-							zz++;
-						} catch (CAPException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						// TODO: remove it ......................
-						
-						
+									"Error while decoding InitialDPRequest: callingPartyNumber must be from 2 to 10 bytes length, found: " + buf.length,
+									CAPParsingComponentExceptionReason.MistypedParameter);
+						this.callingPartyNumber = new CallingPartyNumberCapImpl(buf);
 						break;
 					case _ID_callingPartysCategory:
-						ais.advanceElement(); // TODO: implement it
+						buf = ais.readOctetString();
+						if (buf.length < 1 || buf.length > 1)
+							throw new CAPParsingComponentException(
+									"Error while decoding InitialDPRequest: callingPartysCategory must be from 1 to 1 bytes length, found: " + buf.length,
+									CAPParsingComponentExceptionReason.MistypedParameter);
+						this.callingPartysCategory = new CallingPartysCategoryInapImpl(buf);
 						break;
 					case _ID_cGEncountered:
 						ais.advanceElement(); // TODO: implement it
@@ -500,10 +445,20 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 						ais.advanceElement(); // TODO: implement it
 						break;
 					case _ID_locationNumber:
-						ais.advanceElement(); // TODO: implement it
+						buf = ais.readOctetString();
+						if (buf.length < 2 || buf.length > 10)
+							throw new CAPParsingComponentException(
+									"Error while decoding InitialDPRequest: locationNumber must be from 2 to 10 bytes length, found: " + buf.length,
+									CAPParsingComponentExceptionReason.MistypedParameter);
+						this.locationNumber = new LocationNumberCapImpl(buf);
 						break;
 					case _ID_originalCalledPartyID:
-						ais.advanceElement(); // TODO: implement it
+						buf = ais.readOctetString();
+						if (buf.length < 2 || buf.length > 10)
+							throw new CAPParsingComponentException(
+									"Error while decoding InitialDPRequest: originalCalledPartyID must be from 2 to 10 bytes length, found: " + buf.length,
+									CAPParsingComponentExceptionReason.MistypedParameter);
+						this.originalCalledPartyID = new OriginalCalledNumberCapImpl(buf);
 						break;
 					case _ID_extensions:
 						ais.advanceElement(); // TODO: implement it
@@ -515,17 +470,30 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 						ais.advanceElement(); // TODO: implement it
 						break;
 					case _ID_bearerCapability:
-						ais.advanceElement(); // TODO: implement it
+						AsnInputStream ais2 = ais.readSequenceStream();
+						ais2.readTag();
+						this.bearerCapability = new BearerCapabilityImpl();
+						((BearerCapabilityImpl)this.bearerCapability).decodeAll(ais2);
 						break;
 					case _ID_eventTypeBCSM:
 						i1 = (int) ais.readInteger();
 						this.eventTypeBCSM = EventTypeBCSM.getInstance(i1);
 						break;
 					case _ID_redirectingPartyID:
-						ais.advanceElement(); // TODO: implement it
+						buf = ais.readOctetString();
+						if (buf.length < 2 || buf.length > 10)
+							throw new CAPParsingComponentException(
+									"Error while decoding InitialDPRequest: redirectingPartyID must be from 2 to 10 bytes length, found: " + buf.length,
+									CAPParsingComponentExceptionReason.MistypedParameter);
+						this.redirectingPartyID = new RedirectingPartyIDCapImpl(buf);
 						break;
 					case _ID_redirectionInformation:
-						ais.advanceElement(); // TODO: implement it
+						buf = ais.readOctetString();
+						if (buf.length < 2 || buf.length > 2)
+							throw new CAPParsingComponentException(
+									"Error while decoding InitialDPRequest: redirectionInformation must be from 2 to 2 bytes length, found: " + buf.length,
+									CAPParsingComponentExceptionReason.MistypedParameter);
+						this.redirectionInformation = new RedirectionInformationInapImpl(buf);
 						break;
 					case _ID_cause:
 						ais.advanceElement(); // TODO: implement it
@@ -557,7 +525,10 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 						((LocationInformationImpl)this.locationInformation).decodeAll(ais);
 						break;
 					case _ID_ext_basicServiceCode:
-						ais.advanceElement(); // TODO: implement it
+						ais2 = ais.readSequenceStream();
+						ais2.readTag();
+						this.extBasicServiceCode = new ExtBasicServiceCodeImpl();
+						((ExtBasicServiceCodeImpl)this.extBasicServiceCode).decodeAll(ais2);
 						break;
 					case _ID_callReferenceNumber:
 						this.callReferenceNumber = new CallReferenceNumberImpl();
@@ -579,23 +550,14 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 						ais.advanceElement(); // TODO: implement it
 						break;
 					case _ID_initialDPArgExtension:
-						ais.advanceElement(); // TODO: implement it
+						this.initialDPArgExtension = new InitialDPArgExtensionImpl();
+						((InitialDPArgExtensionImpl)this.initialDPArgExtension).decodeAll(ais);
 						break;
 						
 					default:
 						ais.advanceElement();
 						break;
 					}
-
-					// if (tag == Tag.NULL && ais.getTagClass() ==
-					// Tag.CLASS_UNIVERSAL) {
-					// if (!ais.isTagPrimitive())
-					// throw new MAPParsingComponentException(
-					// "Error while decoding forwardShortMessageRequest: Parameter moreMessagesToSend is not primitive",
-					// MAPParsingComponentExceptionReason.MistypedParameter);
-					// ais.readNull();
-					// this.moreMessagesToSend = true;
-
 				} else {
 					ais.advanceElement();
 				}

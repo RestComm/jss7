@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
+package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
@@ -31,63 +31,59 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
-import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
-import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
-import org.mobicents.protocols.ss7.cap.primitives.ReceivingSideIDImpl;
-import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSMImpl;
-import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
-import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
-import org.mobicents.protocols.ss7.inap.primitives.MiscCallInfoImpl;
+import org.mobicents.protocols.ss7.cap.api.primitives.Cause;
+import org.mobicents.protocols.ss7.cap.api.primitives.DateAndTime;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformation;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformationType;
+import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
-*
-* 
-* @author sergey vetyutnev
-* 
-*/
-public class EventReportBCSMRequestIndicationImpl extends CircuitSwitchedCallMessageImpl implements EventReportBCSMRequestIndication {
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
+public class RequestedInformationImpl implements RequestedInformation, CAPAsnPrimitive {
 
-	public static final int _ID_eventTypeBCSM = 0;
-	public static final int _ID_eventSpecificInformationBCSM = 2;
-	public static final int _ID_legID = 3;
-	public static final int _ID_miscCallInfo = 4;
-	public static final int _ID_extensions = 5;
+	public static final int _ID_requestedInformationType = 0;
+	public static final int _ID_requestedInformationValue = 1;
 
-	public static final String _PrimitiveName = "EventReportBCSMRequest";
+	public static final int _ID_callAttemptElapsedTimeValue = 0;
+	public static final int _ID_callStopTimeValue = 1;
+	public static final int _ID_callConnectedElapsedTimeValue = 2;
+	public static final int _ID_releaseCauseValue = 30;
+	                                               
+	public static final String _PrimitiveName = "RequestedInformation";
+
+	private RequestedInformationType tequestedInformationType;
+	private Integer callAttemptElapsedTimeValue;
+	private DateAndTime callStopTimeValue;
+	private Integer callConnectedElapsedTimeValue;
+	private Cause releaseCauseValue;
+
 	
-	private EventTypeBCSM eventTypeBCSM;
-	private EventSpecificInformationBCSM eventSpecificInformationBCSM;
-	private ReceivingSideID legID;
-	private MiscCallInfo miscCallInfo;
-	private CAPExtensions extensions;
-	
-
 	@Override
-	public EventTypeBCSM getEventTypeBCSM() {
-		return eventTypeBCSM;
+	public RequestedInformationType getRequestedInformationType() {
+		return tequestedInformationType;
 	}
 
 	@Override
-	public EventSpecificInformationBCSM getEventSpecificInformationBCSM() {
-		return eventSpecificInformationBCSM;
+	public Integer getCallAttemptElapsedTimeValue() {
+		return callAttemptElapsedTimeValue;
 	}
 
 	@Override
-	public ReceivingSideID getLegID() {
-		return legID;
+	public DateAndTime getCallStopTimeValue() {
+		return callStopTimeValue;
 	}
 
 	@Override
-	public MiscCallInfo getMiscCallInfo() {
-		return miscCallInfo;
+	public Integer getCallConnectedElapsedTimeValue() {
+		return callConnectedElapsedTimeValue;
 	}
 
 	@Override
-	public CAPExtensions getExtensions() {
-		return extensions;
+	public Cause getReleaseCauseValue() {
+		return releaseCauseValue;
 	}
 
 	
@@ -118,9 +114,6 @@ public class EventReportBCSMRequestIndicationImpl extends CircuitSwitchedCallMes
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (INAPParsingComponentException e) {
-			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -135,52 +128,57 @@ public class EventReportBCSMRequestIndicationImpl extends CircuitSwitchedCallMes
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (INAPParsingComponentException e) {
-			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException, INAPParsingComponentException {
-		
-		this.eventTypeBCSM = null;
-		this.eventSpecificInformationBCSM = null;
-		this.legID = null;
-		this.miscCallInfo = null; // TODO: DEFAULT {messageType request}
-		this.extensions = null;
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+
+		this.tequestedInformationType = null;
+		this.callAttemptElapsedTimeValue = null;
+		this.callStopTimeValue = null;
+		this.callConnectedElapsedTimeValue = null;
+		this.releaseCauseValue = null;
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		int i1;
+		boolean valueReceived = false;
 		while (true) {
 			if (ais.available() == 0)
 				break;
 
 			int tag = ais.readTag();
-			
+
 			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 				switch (tag) {
-				case _ID_eventTypeBCSM:
-					i1 = (int)ais.readInteger();
-					this.eventTypeBCSM = EventTypeBCSM.getInstance(i1);
+				case _ID_requestedInformationType:
+					int i1 = (int) ais.readInteger();
+					this.tequestedInformationType = RequestedInformationType.getInstance(i1);
 					break;
-				case _ID_eventSpecificInformationBCSM:
+				case _ID_requestedInformationValue:
+					valueReceived = true;
 					AsnInputStream ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					this.eventSpecificInformationBCSM = new EventSpecificInformationBCSMImpl();
-					((EventSpecificInformationBCSMImpl)this.eventSpecificInformationBCSM).decodeAll(ais2);
-					break;
-				case _ID_legID:
-					ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					this.legID = new ReceivingSideIDImpl();
-					((ReceivingSideIDImpl)this.legID).decodeAll(ais2);
-					break;
-				case _ID_miscCallInfo:
-					this.miscCallInfo = new MiscCallInfoImpl();
-					((MiscCallInfoImpl)this.miscCallInfo).decodeAll(ais);
-					break;
-				case _ID_extensions:
-					ais.advanceElement(); // TODO: implement it
+					int tag2 = ais2.readTag();
+					if (ais2.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad RequestedInformationValue tagClass",
+								CAPParsingComponentExceptionReason.MistypedParameter);
+
+					switch (tag2) {
+					case _ID_callAttemptElapsedTimeValue:
+						ais2.advanceElement(); // TODO: implement it
+						break;
+					case _ID_callStopTimeValue:
+						ais2.advanceElement(); // TODO: implement it
+						break;
+					case _ID_callConnectedElapsedTimeValue:
+						ais2.advanceElement(); // TODO: implement it
+						break;
+					case _ID_releaseCauseValue:
+						ais2.advanceElement(); // TODO: implement it
+						break;
+					default:
+						if (ais2.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad RequestedInformationValue tag",
+									CAPParsingComponentExceptionReason.MistypedParameter);
+					}
 					break;
 
 				default:
@@ -192,9 +190,9 @@ public class EventReportBCSMRequestIndicationImpl extends CircuitSwitchedCallMes
 			}
 		}
 
-		if (this.eventTypeBCSM == null)
-			throw new CAPParsingComponentException(
-					"Error while decoding " + _PrimitiveName + ": eventTypeBCSM is mandatory but not found ",
+		if (this.tequestedInformationType == null || !valueReceived)
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+					+ ": requestedInformationType and requestedInformationValue are mandatory but not found",
 					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -215,5 +213,4 @@ public class EventReportBCSMRequestIndicationImpl extends CircuitSwitchedCallMes
 		// TODO Auto-generated method stub
 		
 	}
-
 }

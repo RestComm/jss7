@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
+package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
@@ -31,58 +31,56 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.cap.api.primitives.AChChargingAddress;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
-import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeDurationChargingResult;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeInformation;
+import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.cap.primitives.ReceivingSideIDImpl;
-import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSMImpl;
-import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
-import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
-import org.mobicents.protocols.ss7.inap.primitives.MiscCallInfoImpl;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
-*
-* 
-* @author sergey vetyutnev
-* 
-*/
-public class EventReportBCSMRequestIndicationImpl extends CircuitSwitchedCallMessageImpl implements EventReportBCSMRequestIndication {
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
+public class TimeDurationChargingResultImpl implements TimeDurationChargingResult, CAPAsnPrimitive {
 
-	public static final int _ID_eventTypeBCSM = 0;
-	public static final int _ID_eventSpecificInformationBCSM = 2;
-	public static final int _ID_legID = 3;
-	public static final int _ID_miscCallInfo = 4;
-	public static final int _ID_extensions = 5;
-
-	public static final String _PrimitiveName = "EventReportBCSMRequest";
+	public static final int _ID_partyToCharge = 0;
+	public static final int _ID_timeInformation = 1;
+	public static final int _ID_legActive = 2;
+	public static final int _ID_callLegReleasedAtTcpExpiry = 3;
+	public static final int _ID_extensions = 4;
+	public static final int _ID_aChChargingAddress = 5;
 	
-	private EventTypeBCSM eventTypeBCSM;
-	private EventSpecificInformationBCSM eventSpecificInformationBCSM;
-	private ReceivingSideID legID;
-	private MiscCallInfo miscCallInfo;
+	public static final String _PrimitiveName = "TimeDurationChargingResult";
+
+	private ReceivingSideID partyToCharge;
+	private TimeInformation timeInformation;
+	private boolean legActive;
+	private boolean callLegReleasedAtTcpExpiry;
 	private CAPExtensions extensions;
-	
+	private AChChargingAddress aChChargingAddress;
 
 	@Override
-	public EventTypeBCSM getEventTypeBCSM() {
-		return eventTypeBCSM;
+	public ReceivingSideID getPartyToCharge() {
+		return partyToCharge;
 	}
 
 	@Override
-	public EventSpecificInformationBCSM getEventSpecificInformationBCSM() {
-		return eventSpecificInformationBCSM;
+	public TimeInformation getTimeInformation() {
+		return timeInformation;
 	}
 
 	@Override
-	public ReceivingSideID getLegID() {
-		return legID;
+	public boolean getLegActive() {
+		return legActive;
 	}
 
 	@Override
-	public MiscCallInfo getMiscCallInfo() {
-		return miscCallInfo;
+	public boolean getCallLegReleasedAtTcpExpiry() {
+		return callLegReleasedAtTcpExpiry;
 	}
 
 	@Override
@@ -90,6 +88,11 @@ public class EventReportBCSMRequestIndicationImpl extends CircuitSwitchedCallMes
 		return extensions;
 	}
 
+	@Override
+	public AChChargingAddress getAChChargingAddress() {
+		return aChChargingAddress;
+	}
+	
 	
 	@Override
 	public int getTag() throws CAPException {
@@ -118,8 +121,8 @@ public class EventReportBCSMRequestIndicationImpl extends CircuitSwitchedCallMes
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (INAPParsingComponentException e) {
-			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+		} catch (MAPParsingComponentException e) {
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -135,51 +138,52 @@ public class EventReportBCSMRequestIndicationImpl extends CircuitSwitchedCallMes
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (INAPParsingComponentException e) {
-			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+		} catch (MAPParsingComponentException e) {
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException, INAPParsingComponentException {
-		
-		this.eventTypeBCSM = null;
-		this.eventSpecificInformationBCSM = null;
-		this.legID = null;
-		this.miscCallInfo = null; // TODO: DEFAULT {messageType request}
-		this.extensions = null;
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
 
+		this.partyToCharge = null;
+		this.timeInformation = null;
+		this.legActive = true;
+		this.callLegReleasedAtTcpExpiry = false;
+		this.extensions = null;
+		this.aChChargingAddress = null; // TODO: DEFAULT legID:receivingSideID:leg1
+		
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		int i1;
 		while (true) {
 			if (ais.available() == 0)
 				break;
 
 			int tag = ais.readTag();
-			
+
 			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 				switch (tag) {
-				case _ID_eventTypeBCSM:
-					i1 = (int)ais.readInteger();
-					this.eventTypeBCSM = EventTypeBCSM.getInstance(i1);
-					break;
-				case _ID_eventSpecificInformationBCSM:
+				case _ID_partyToCharge:
 					AsnInputStream ais2 = ais.readSequenceStream();
 					ais2.readTag();
-					this.eventSpecificInformationBCSM = new EventSpecificInformationBCSMImpl();
-					((EventSpecificInformationBCSMImpl)this.eventSpecificInformationBCSM).decodeAll(ais2);
+					this.partyToCharge = new ReceivingSideIDImpl();
+					((ReceivingSideIDImpl)this.partyToCharge).decodeAll(ais2);
 					break;
-				case _ID_legID:
+				case _ID_timeInformation:
 					ais2 = ais.readSequenceStream();
 					ais2.readTag();
-					this.legID = new ReceivingSideIDImpl();
-					((ReceivingSideIDImpl)this.legID).decodeAll(ais2);
+					this.timeInformation = new TimeInformationImpl();
+					((TimeInformationImpl)this.timeInformation).decodeAll(ais2);
 					break;
-				case _ID_miscCallInfo:
-					this.miscCallInfo = new MiscCallInfoImpl();
-					((MiscCallInfoImpl)this.miscCallInfo).decodeAll(ais);
+				case _ID_legActive:
+					this.legActive = ais.readBoolean();
+					break;
+				case _ID_callLegReleasedAtTcpExpiry:
+					ais.advanceElement(); // TODO: implement it
 					break;
 				case _ID_extensions:
+					ais.advanceElement(); // TODO: implement it
+					break;
+				case _ID_aChChargingAddress:
 					ais.advanceElement(); // TODO: implement it
 					break;
 
@@ -192,9 +196,8 @@ public class EventReportBCSMRequestIndicationImpl extends CircuitSwitchedCallMes
 			}
 		}
 
-		if (this.eventTypeBCSM == null)
-			throw new CAPParsingComponentException(
-					"Error while decoding " + _PrimitiveName + ": eventTypeBCSM is mandatory but not found ",
+		if (this.partyToCharge == null || this.timeInformation == null)
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": partyToCharge and timeInformation are mandatory but not found",
 					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -215,5 +218,4 @@ public class EventReportBCSMRequestIndicationImpl extends CircuitSwitchedCallMes
 		// TODO Auto-generated method stub
 		
 	}
-
 }
