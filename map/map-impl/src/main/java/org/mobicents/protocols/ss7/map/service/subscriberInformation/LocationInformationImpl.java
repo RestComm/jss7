@@ -34,7 +34,6 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.AgeOfLocationInformation;
 import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.GeodeticInformation;
 import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.GeographicalInformation;
 import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LSAIdentity;
@@ -66,7 +65,7 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 	public static final int _ID_locationInformationEPS = 10;
 	public static final int _ID_userCSGInformation = 11;	
 	
-	private AgeOfLocationInformation ageOfLocationInformation;
+	private Integer ageOfLocationInformation;
 	private GeographicalInformation geographicalInformation;
 	private ISDNAddressString vlrNumber;
 	private LocationNumber locationNumber;
@@ -82,7 +81,7 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 
 	
 	@Override
-	public AgeOfLocationInformation getAgeOfLocationInformation() {
+	public Integer getAgeOfLocationInformation() {
 		return this.ageOfLocationInformation;
 	}
 
@@ -220,7 +219,7 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 
 				switch (tag) {
 				case Tag.INTEGER: // AgeOfLocationInformation
-					ais.advanceElement(); // TODO: implement it
+					this.ageOfLocationInformation = (int) ais.readInteger();
 					break;
 
 				default:
