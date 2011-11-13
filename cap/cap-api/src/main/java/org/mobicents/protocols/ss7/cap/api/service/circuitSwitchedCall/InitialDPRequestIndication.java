@@ -22,26 +22,26 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
-import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.isup.AdditionalCallingPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.OriginalCalledNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.RedirectingPartyIDCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
-import org.mobicents.protocols.ss7.cap.api.primitives.Digits;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CGEncountered;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Carrier;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InitialDPArgExtension;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
-import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
-import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
-import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
+import org.mobicents.protocols.ss7.inap.api.isup.CallingPartysCategoryInap;
+import org.mobicents.protocols.ss7.inap.api.isup.HighLayerCompatibilityInap;
+import org.mobicents.protocols.ss7.inap.api.isup.RedirectionInformationInap;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
@@ -112,57 +112,39 @@ public interface InitialDPRequestIndication extends CircuitSwitchedCallMessage {
 
 	public int getServiceKey();
 
-	public byte[] getCalledPartyNumber();
+	public CalledPartyNumberCap getCalledPartyNumber();
 
-	public CalledPartyNumber getCalledPartyNumberIsup();
+	public CallingPartyNumberCap getCallingPartyNumber();
 
-	public byte[] getCallingPartyNumber();
-
-	public CallingPartyNumber getCallingPartyNumberIsup() throws CAPException;
-
-	public byte[] getCallingPartysCategory();
-
-	public CallingPartyCategory getCallingPartysCategoryIsup();
+	public CallingPartysCategoryInap getCallingPartysCategory();
 
 	public CGEncountered getCGEncountered();
 
 	public IPSSPCapabilities getIPSSPCapabilities();
 
-	public byte[] getLocationNumber();
+	public LocationNumberCap getLocationNumber();
 
-	public LocationNumber getLocationNumberIsup();
-
-	public byte[] getOriginalCalledPartyID();
-
-	public OriginalCalledNumber getOriginalCalledPartyIDIsup();
+	public OriginalCalledNumberCap getOriginalCalledPartyID();
 
 	public CAPExtensions getExtensions();
 
-	public byte[] getHighLayerCompatibility(); // TODO: ISUP version
+	public HighLayerCompatibilityInap getHighLayerCompatibility();
 
-	public Digits getAdditionalCallingPartyNumber();
-
-	public GenericNumber getAdditionalCallingPartyNumberIsup();
+	public AdditionalCallingPartyNumberCap getAdditionalCallingPartyNumber();
 
 	public BearerCapability getBearerCapability();
 
 	public EventTypeBCSM getEventTypeBCSM();
 
-	public byte[] getRedirectingPartyID();
+	public RedirectingPartyIDCap getRedirectingPartyID();
 
-	public RedirectingNumber getRedirectingPartyIDIsup();
+	public RedirectionInformationInap getRedirectionInformation();
 
-	public byte[] getRedirectionInformation();
-
-	public RedirectionInformation getRedirectionInformationIsup();
-
-	public byte[] getCause();
-
-	public CauseIndicators getCauseIsup();
+	public CauseCap getCause();
 
 	public ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo();
 
-	public byte[] getCarrier(); // TODO: ISUP version
+	public Carrier getCarrier();
 
 	public CUGIndex getCugIndex();
 

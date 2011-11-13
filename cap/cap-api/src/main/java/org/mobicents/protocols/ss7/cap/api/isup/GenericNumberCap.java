@@ -20,26 +20,24 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.isup;
 
 /**
 *
-Cause {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
-bound.&minCauseLength .. bound.&maxCauseLength))
--- Indicates the cause for interface related information.
--- Refer to ETSI EN 300 356-1 [23] Cause parameter for encoding.
--- For the use of cause and location values refer to ITU-T Recommendation Q.850 [47]
--- Shall always include the cause value and shall also include the diagnostics field,
--- if available.
 
-minCauseLength ::= 2
-maxCauseLength ::= 32
+ISUP GenericNumber wrapper
+
+GenericNumber {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
+bound.&minGenericNumberLength .. bound.&maxGenericNumberLength))
+-- Indicates a generic number. Refer to ETSI EN 300 356-1 [23] Generic number for encoding.
+GenericNumbers {PARAMETERS-BOUND : bound} ::= SET SIZE(1..bound.&numOfGenericNumbers) OF
+GenericNumber {bound}
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Cause {
+public interface GenericNumberCap {
 
 	public byte[] getData();
 

@@ -20,26 +20,30 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.isup;
 
 /**
 *
-Cause {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
-bound.&minCauseLength .. bound.&maxCauseLength))
--- Indicates the cause for interface related information.
--- Refer to ETSI EN 300 356-1 [23] Cause parameter for encoding.
--- For the use of cause and location values refer to ITU-T Recommendation Q.850 [47]
--- Shall always include the cause value and shall also include the diagnostics field,
--- if available.
+-- Indicates the type of bearer capability connection to the user. For bearerCap, the ISUP User
+-- Service Information, ETSI EN 300 356-1 [23]
+-- encoding shall be used.
 
-minCauseLength ::= 2
-maxCauseLength ::= 32
+User service information prime (1st priority)
+or
+User service information (2nd priority) (Note 3)
+
+NOTE 3: If User service information prime and User service information are present, then one of the following two
+mapping rules shall be applied. The principles for the choice of mapping rule are specified in
+3GPP TS 23.078 [7].
+- One of User service information prime or User service information is mapped to Bearer Capability.
+- User service information prime is mapped to BearerCapability and User service information is mapped
+to Bearer Capability2.
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Cause {
+public interface BearerCap {
 
 	public byte[] getData();
 

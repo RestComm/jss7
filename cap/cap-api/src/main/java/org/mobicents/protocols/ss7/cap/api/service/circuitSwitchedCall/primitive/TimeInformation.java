@@ -20,27 +20,27 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
 *
-Cause {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
-bound.&minCauseLength .. bound.&maxCauseLength))
--- Indicates the cause for interface related information.
--- Refer to ETSI EN 300 356-1 [23] Cause parameter for encoding.
--- For the use of cause and location values refer to ITU-T Recommendation Q.850 [47]
--- Shall always include the cause value and shall also include the diagnostics field,
--- if available.
+TimeInformation ::= CHOICE {
+timeIfNoTariffSwitch [0] TimeIfNoTariffSwitch,
+timeIfTariffSwitch [1] TimeIfTariffSwitch
+}
+-- Indicates call duration information
 
-minCauseLength ::= 2
-maxCauseLength ::= 32
+TimeIfNoTariffSwitch ::= INTEGER(0..864000)
+-- TimeIfNoTariffSwitch is measured in 100 millisecond intervals
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Cause {
+public interface TimeInformation {
 
-	public byte[] getData();
+	public Integer getTimeIfNoTariffSwitch();
+
+	public TimeIfTariffSwitch getTimeIfTariffSwitch();
 
 }

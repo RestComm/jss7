@@ -20,26 +20,27 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
 *
-Cause {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
-bound.&minCauseLength .. bound.&maxCauseLength))
--- Indicates the cause for interface related information.
--- Refer to ETSI EN 300 356-1 [23] Cause parameter for encoding.
--- For the use of cause and location values refer to ITU-T Recommendation Q.850 [47]
--- Shall always include the cause value and shall also include the diagnostics field,
--- if available.
+LowLayerCompatibility {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE ( 
+ bound.&minLowLayerCompatibilityLength .. bound.&maxLowLayerCompatibilityLength)) 
+-- indicates the LowLayerCompatibility for the calling party. 
+-- Refer to 3GPP TS 24.008 [9] for encoding. 
+-- It shall be coded as in the value part defined in 3GPP TS 24.008. 
+-- i.e. the 3GPP TS 24.008 IEI and 3GPP TS 24.008 octet length indicator 
+-- shall not be included.
 
-minCauseLength ::= 2
-maxCauseLength ::= 32
-
+minLowLayerCompatibilityLength ::= 1
+maxLowLayerCompatibilityLength ::= 16
+ 
+} 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Cause {
+public interface LowLayerCompatibility {
 
 	public byte[] getData();
 

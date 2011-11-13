@@ -20,26 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
 *
-Cause {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
-bound.&minCauseLength .. bound.&maxCauseLength))
--- Indicates the cause for interface related information.
--- Refer to ETSI EN 300 356-1 [23] Cause parameter for encoding.
--- For the use of cause and location values refer to ITU-T Recommendation Q.850 [47]
--- Shall always include the cause value and shall also include the diagnostics field,
--- if available.
 
-minCauseLength ::= 2
-maxCauseLength ::= 32
+AlertingPattern ::= OCTET STRING (SIZE(3))
+-- Indicates a specific pattern that is used to alert a subscriber
+-- (e.g. distinctive ringing, tones, etc.).
+-- The encoding of the last octet of this parameter is as defined in 3GPP TS 29.002 [11].
+-- Only the trailing OCTET is used, the remaining OCTETS shall be sent as NULL (zero)
+-- The receiving side shall ignore the leading two OCTETS.
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Cause {
+public interface AlertingPattern {
 
 	public byte[] getData();
 

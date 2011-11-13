@@ -20,26 +20,21 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
 *
-Cause {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
-bound.&minCauseLength .. bound.&maxCauseLength))
--- Indicates the cause for interface related information.
--- Refer to ETSI EN 300 356-1 [23] Cause parameter for encoding.
--- For the use of cause and location values refer to ITU-T Recommendation Q.850 [47]
--- Shall always include the cause value and shall also include the diagnostics field,
--- if available.
-
-minCauseLength ::= 2
-maxCauseLength ::= 32
+NAOliInfo ::= OCTET STRING (SIZE (1)) 
+--  NA Oli information takes the same value as defined in ANSI T1.113-1995 [92] 
+--  e.g. '3D'H  – Decimal value 61 - Cellular Service (Type 1) 
+--   '3E'H  – Decimal value 62 - Cellular Service (Type 2) 
+--   '3F'H  – Decimal value 63 - Cellular Service (roaming) 
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Cause {
+public interface NAOliInfo {
 
 	public byte[] getData();
 

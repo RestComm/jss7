@@ -22,7 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
-import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.inap.api.isup.HighLayerCompatibilityInap;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.UUData;
@@ -48,8 +49,15 @@ InitialDPArgExtension {PARAMETERS-BOUND : bound} ::= SEQUENCE {
  ..., 
  enhancedDialledServicesAllowed  [11] NULL         OPTIONAL, 
  uu-Data        [12] UU-Data        OPTIONAL
+}
+
+-- If iPSSPCapabilities is not present then this denotes that a colocated gsmSRF is not  
+-- supported by the gsmSSF. If present, then the gsmSSF supports a colocated gsmSRF capable  
+-- of playing announcements via elementaryMessageIDs and variableMessages, the playing of 
+-- tones and the collection of DTMF digits. Other supported capabilities are explicitly  
+-- detailed in the IPSSPCapabilities parameter itself. 
+-- Carrier is included at the discretion of the gsmSSF operator.  
  
-} 
 * 
 * @author sergey vetyutnev
 * 
@@ -58,9 +66,7 @@ public interface InitialDPArgExtension {
 
 	public ISDNAddressString getGmscAddress();
 
-	public byte[] getForwardingDestinationNumber();
-
-	public CalledPartyNumber getForwardingDestinationNumberIsup();
+	public CalledPartyNumberCap getForwardingDestinationNumber();
 
 	public MSClassmark2 getMSClassmark2();
 
@@ -74,11 +80,11 @@ public interface InitialDPArgExtension {
 
 	public ExtBasicServiceCode getExtBasicServiceCode2();
 
-	public byte[] getHighLayerCompatibility2(); // TODO: ISUP version
+	public HighLayerCompatibilityInap getHighLayerCompatibility2();
 
-	public byte[] getLowLayerCompatibility(); // TODO: ISUP version
+	public LowLayerCompatibility getLowLayerCompatibility();
 
-	public byte[] getLowLayerCompatibility2(); // TODO: ISUP version
+	public LowLayerCompatibility getLowLayerCompatibility2();
 
 	public boolean getEnhancedDialledServicesAllowed();
 

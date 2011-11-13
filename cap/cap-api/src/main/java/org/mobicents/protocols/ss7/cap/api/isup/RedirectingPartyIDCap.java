@@ -20,26 +20,25 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.isup;
 
 /**
 *
-Cause {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
-bound.&minCauseLength .. bound.&maxCauseLength))
--- Indicates the cause for interface related information.
--- Refer to ETSI EN 300 356-1 [23] Cause parameter for encoding.
--- For the use of cause and location values refer to ITU-T Recommendation Q.850 [47]
--- Shall always include the cause value and shall also include the diagnostics field,
--- if available.
+ISUP RedirectingNumber wrapper
 
-minCauseLength ::= 2
-maxCauseLength ::= 32
+RedirectingPartyID {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE ( 
+ bound.&minRedirectingPartyIDLength .. bound.&maxRedirectingPartyIDLength)) 
+-- Indicates redirecting number. 
+-- Refer to ETSI EN 300 356-1 [23] Redirecting number for encoding. 
+
+minRedirectingPartyIDLength ::= 2
+maxRedirectingPartyIDLength ::= 10
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Cause {
+public interface RedirectingPartyIDCap {
 
 	public byte[] getData();
 

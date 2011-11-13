@@ -22,24 +22,43 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
-import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
+import org.mobicents.protocols.ss7.cap.api.primitives.Cause;
+import org.mobicents.protocols.ss7.cap.api.primitives.DateAndTime;
 
 /**
 *
-BearerCapability {PARAMETERS-BOUND : bound} ::= CHOICE {
-bearerCap [0] OCTET STRING (SIZE(2..bound.&maxBearerCapabilityLength))
-}
--- Indicates the type of bearer capability connection to the user. For bearerCap, the ISUP User
--- Service Information, ETSI EN 300 356-1 [23]
--- encoding shall be used.
 
-MAXIMUM-FOR-BEARER-CAPABILITY ::= 11
+RequestedInformationTypeList ::= SEQUENCE SIZE (1.. numOfInfoItems) OF RequestedInformationType
+
+RequestedInformation {PARAMETERS-BOUND : bound} ::= SEQUENCE {
+requestedInformationType [0] RequestedInformationType,
+requestedInformationValue [1] RequestedInformationValue {bound},
+...
+}
+
+RequestedInformationValue {PARAMETERS-BOUND : bound} ::= CHOICE {
+callAttemptElapsedTimeValue [0] INTEGER (0..255),
+callStopTimeValue [1] DateAndTime,
+callConnectedElapsedTimeValue [2] Integer4,
+releaseCauseValue [30] Cause {bound}
+}
+-- The callAttemptElapsedTimeValue is specified in seconds. The unit for the
+-- callConnectedElapsedTimeValue is 100 milliseconds
+ 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface BearerCapability {
+public interface RequestedInformation {
+	
+	public RequestedInformationType getRequestedInformationType();
 
-	public BearerCap getBearerCap();
+	public Integer getCallAttemptElapsedTimeValue();
+
+	public DateAndTime getCallStopTimeValue();
+
+	public Integer getCallConnectedElapsedTimeValue();
+
+	public Cause getReleaseCauseValue();
 
 }

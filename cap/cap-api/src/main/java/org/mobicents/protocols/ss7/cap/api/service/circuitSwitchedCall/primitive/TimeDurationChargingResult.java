@@ -20,27 +20,39 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
+
+import org.mobicents.protocols.ss7.cap.api.primitives.AChChargingAddress;
+import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
+import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 
 /**
 *
-Cause {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
-bound.&minCauseLength .. bound.&maxCauseLength))
--- Indicates the cause for interface related information.
--- Refer to ETSI EN 300 356-1 [23] Cause parameter for encoding.
--- For the use of cause and location values refer to ITU-T Recommendation Q.850 [47]
--- Shall always include the cause value and shall also include the diagnostics field,
--- if available.
-
-minCauseLength ::= 2
-maxCauseLength ::= 32
+timeDurationChargingResult [0] SEQUENCE {
+partyToCharge [0] ReceivingSideID,
+timeInformation [1] TimeInformation,
+legActive [2] BOOLEAN DEFAULT TRUE,
+callLegReleasedAtTcpExpiry [3] NULL OPTIONAL,
+extensions [4] Extensions {bound} OPTIONAL,
+aChChargingAddress [5] AChChargingAddress {bound}
+DEFAULT legID:receivingSideID:leg1,
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface Cause {
+public interface TimeDurationChargingResult {
 
-	public byte[] getData();
+	public ReceivingSideID getPartyToCharge();
+
+	public TimeInformation getTimeInformation();
+
+	public boolean getLegActive();
+
+	public boolean getCallLegReleasedAtTcpExpiry();
+
+	public CAPExtensions getExtensions();
+
+	public AChChargingAddress getAChChargingAddress();
 
 }

@@ -20,27 +20,51 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
-*
-Cause {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
-bound.&minCauseLength .. bound.&maxCauseLength))
--- Indicates the cause for interface related information.
--- Refer to ETSI EN 300 356-1 [23] Cause parameter for encoding.
--- For the use of cause and location values refer to ITU-T Recommendation Q.850 [47]
--- Shall always include the cause value and shall also include the diagnostics field,
--- if available.
+ *
+ 
+RequestedInformationType ::= ENUMERATED {
+callAttemptElapsedTime (0),
+callStopTime (1),
+callConnectedElapsedTime (2),
+releaseCause (30)
+}
+ 
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
+public enum RequestedInformationType {
 
-minCauseLength ::= 2
-maxCauseLength ::= 32
+	callAttemptElapsedTime (0),
+	callStopTime (1),
+	callConnectedElapsedTime (2),
+	releaseCause (30);
+	
+	private int code;
 
-* 
-* @author sergey vetyutnev
-* 
-*/
-public interface Cause {
+	private RequestedInformationType(int code) {
+		this.code = code;
+	}
 
-	public byte[] getData();
+	public static RequestedInformationType getInstance(int code) {
+		switch (code) {
+		case 0:
+			return RequestedInformationType.callAttemptElapsedTime;
+		case 1:
+			return RequestedInformationType.callStopTime;
+		case 2:
+			return RequestedInformationType.callConnectedElapsedTime;
+		case 30:
+			return RequestedInformationType.releaseCause;
+		}
 
+		return null;
+	}
+
+	public int getCode() {
+		return code;
+	}
 }
