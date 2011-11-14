@@ -20,52 +20,47 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.m3ua.impl.scheduler;
-
-import javolution.util.FastList;
+package org.mobicents.protocols.ss7.m3ua.impl;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 
 /**
- * 
  * @author amit bhayani
  * 
  */
-public class M3UAScheduler implements Runnable {
-	private static final Logger logger = Logger.getLogger(M3UAScheduler.class);
+public class THPeerAsPendToAct implements TransitionHandler {
 
-	// TODO : Synchronize tasks? Use Iterator?
-	protected FastList<M3UATask> tasks = new FastList<M3UATask>();
+	private static final Logger logger = Logger.getLogger(THPeerAsPendToAct.class);
 
-	public void execute(M3UATask task) {
-		if(task == null){
-			return;
-		}
-		this.tasks.add(task);
+	private As as = null;
+	private FSM fsm;
+
+	/**
+	 * 
+	 */
+	public THPeerAsPendToAct(As as, FSM fsm) {
+		this.as = as;
+		this.fsm = fsm;
 	}
 
-	public void run() {
-		long now = System.currentTimeMillis();
-		for (FastList.Node<M3UATask> n = tasks.head(), end = tasks.tail(); (n = n.getNext()) != end;) {
-			M3UATask task = n.getValue();
-			// check if has been canceled from different thread.
-			if (task.canceled) {
-				tasks.remove(task);
-			} else {
-
-				try {
-					task.run(now);
-				} catch (Exception e) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Failuer on task run.", e);
-					}
-				}
-				// check if its canceled after run;
-				if (task.canceled) {
-					tasks.remove(task);
-				}
-			}
-			// tempTask = null;
-		}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler#process(org
+	 * .mobicents.protocols.ss7.m3ua.impl.fsm.State)
+	 */
+	@Override
+	public boolean process(State state) {
+		
+		// Send the PayloadData (if any) from pending queue to other side
+		Asp causeAsp = (Asp) this.fsm.getAttribute(As.ATTRIBUTE_ASP);
+		this.as.sendPendingPayloadData(causeAsp);
+		
+		return true;
 	}
+
 }

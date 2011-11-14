@@ -20,9 +20,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.m3ua.impl.oam;
+package org.mobicents.protocols.ss7.m3ua.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.Map;
@@ -39,18 +39,29 @@ import org.mobicents.protocols.api.AssociationListener;
 import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.api.PayloadData;
 import org.mobicents.protocols.api.Server;
-import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.ExchangeType;
+import org.mobicents.protocols.ss7.m3ua.Functionality;
+import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 
 /**
+ * Test the serialization/de-serialization
  * 
  * @author amit bhayani
  * 
  */
-public class M3UAShellExecutorTest {
+public class M3UAManagementTest {
 
-	M3UAShellExecutor m3uaExec = null;
+	private M3UAManagement m3uaMgmt = null;
 	private TransportManagement transportManagement = null;
-	M3UAManagement clientM3UAMgmt = null;
+	private ParameterFactoryImpl factory = new ParameterFactoryImpl();
+
+	/**
+	 * 
+	 */
+	public M3UAManagementTest() {
+		// TODO Auto-generated constructor stub
+	}
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -62,77 +73,76 @@ public class M3UAShellExecutorTest {
 
 	@Before
 	public void setUp() throws Exception {
-		m3uaExec = new M3UAShellExecutor();
-
 		this.transportManagement = new TransportManagement();
 
-		this.clientM3UAMgmt = new M3UAManagement();
-		this.clientM3UAMgmt.setTransportManagement(this.transportManagement);
-		this.clientM3UAMgmt.start();
-
+		this.m3uaMgmt = new M3UAManagement();
+		this.m3uaMgmt.setTransportManagement(this.transportManagement);
+		this.m3uaMgmt.start();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		// Clean up
-		clientM3UAMgmt.getAppServers().clear();
-		clientM3UAMgmt.getAspfactories().clear();
-		clientM3UAMgmt.getRoute().clear();
-		clientM3UAMgmt.stop();
-
+		m3uaMgmt.stop();
 	}
 
 	@Test
-	public void testServerCommands() throws Exception {
+	public void testSerialization() throws Exception {
 
-		m3uaExec.setM3uaManagement(clientM3UAMgmt);
+		Association association = this.transportManagement.addAssociation(null, 0, null, 0, "ASPAssoc1");
 
-		this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc1");
+		RoutingContext rc = factory.createRoutingContext(new long[] { 1 });
+		As as1 = this.m3uaMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, null, rc, null);
 
-		// Test creating new AS
-		String result = m3uaExec.execute("m3ua as create testas AS mode SE rc 100 traffic-mode loadshare".split(" "));
-		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas"), result);
+		AspFactory aspFactory = this.m3uaMgmt.createAspFactory("ASP1", "ASPAssoc1");
 
-		// Try adding same again
-		result = m3uaExec.execute("m3ua as create testas AS mode SE rc 100 traffic-mode loadshare".split(" "));
-		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_FAIL_NAME_EXIST, "testas"), result);
+		this.m3uaMgmt.assignAspToAs("AS1", "ASP1");
 
-		// Create AS with only mandatory params
-		result = m3uaExec.execute("m3ua as create testas1 AS".split(" "));
-		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas1"), result);
+		this.m3uaMgmt.addRoute(123, 1, 1, "AS1");
 
-		// Create AS with all params
-		result = m3uaExec.execute("m3ua as create testas2 AS mode DE ipspType CLIENT rc 100 traffic-mode loadshare"
-				.split(" "));
-		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas2"), result);
+		this.m3uaMgmt.managementStartAsp("ASP1");
 
-		// create ASP
-		result = m3uaExec.execute("m3ua asp create testasp1 testAssoc1".split(" "));
-		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, "testasp1"), result);
+		this.m3uaMgmt.stop();
 
-		// Error for same name
-		result = m3uaExec.execute("m3ua asp create testasp1 testAssoc1".split(" "));
-		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_NAME_EXIST, "testasp1"), result);
+		M3UAManagement m3uaMgmt1 = new M3UAManagement();
+		m3uaMgmt1.setTransportManagement(this.transportManagement);
+		m3uaMgmt1.start();
 
-		// assign ASP to AS
-		result = m3uaExec.execute("m3ua as add testas testasp1".split(" "));
-		assertEquals(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_SUCESSFULL, "testasp1", "testas"), result);
+		assertEquals(1, m3uaMgmt1.getAppServers().size());
+		assertEquals(1, m3uaMgmt1.getAspfactories().size());
+		FastMap<String, As[]> route = m3uaMgmt1.getRoute();
+		assertEquals(1, route.size());
 
-		// add again
-		result = m3uaExec.execute("m3ua as add testas testasp1".split(" "));
-		assertEquals(String.format("Cannot assign ASP=%s to AS=%s. This ASP is already assigned to this AS", "testasp1",
-				"testas"), result);
+		// Make sure AS is not null
+		As[] asList = route.get("123:1:1");
 
-		clientM3UAMgmt.stop();
+		assertNotNull(asList[0]);
+
+		assertEquals(2, ((TestAssociation) association).getNoOfTimeStartCalled());
+		
+		this.m3uaMgmt.managementStopAsp("ASP1");
+		
+		this.m3uaMgmt.unassignAspFromAs("AS1", "ASP1");
+		
+		this.m3uaMgmt.removeRoute(123, 1, 1, "AS1");
+		
+		this.m3uaMgmt.destroyAspFactory("ASP1");
+		
+		this.m3uaMgmt.destroyAs("AS1");
+
 	}
 
 	class TestAssociation implements Association {
 
+		private int noOfTimeStartCalled = 0;
 		private AssociationListener associationListener = null;
 		private String name = null;
 
 		TestAssociation(String name) {
 			this.name = name;
+		}
+
+		public int getNoOfTimeStartCalled() {
+			return noOfTimeStartCalled;
 		}
 
 		@Override
@@ -152,7 +162,7 @@ public class M3UAShellExecutorTest {
 
 		@Override
 		public String getName() {
-			return null;
+			return this.name;
 		}
 
 		@Override
@@ -192,11 +202,19 @@ public class M3UAShellExecutorTest {
 			this.associationListener.onCommunicationLost(this);
 		}
 
+		protected void start() {
+			this.noOfTimeStartCalled++;
+		}
+
+		protected void stop() {
+			this.noOfTimeStartCalled--;
+		}
+
 	}
 
 	class TransportManagement implements Management {
 
-		private FastMap<String, Association> associations = new FastMap<String, Association>();
+		private FastMap<String, TestAssociation> associations = new FastMap<String, TestAssociation>();
 
 		@Override
 		public Association addAssociation(String hostAddress, int hostPort, String peerAddress, int peerPort,
@@ -226,7 +244,7 @@ public class M3UAShellExecutorTest {
 
 		@Override
 		public Map<String, Association> getAssociations() {
-			return associations.unmodifiable();
+			return null;
 		}
 
 		@Override
@@ -288,9 +306,9 @@ public class M3UAShellExecutorTest {
 		}
 
 		@Override
-		public void startAssociation(String arg0) throws Exception {
-			// TODO Auto-generated method stub
-
+		public void startAssociation(String assocName) throws Exception {
+			TestAssociation testAssociation = this.associations.get(assocName);
+			testAssociation.start();
 		}
 
 		@Override

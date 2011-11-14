@@ -20,52 +20,44 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.m3ua.impl.scheduler;
-
-import javolution.util.FastList;
+package org.mobicents.protocols.ss7.m3ua.impl;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 
 /**
+ * NTFY is received by this ASP stating that other ASP is ACTIVE and
+ * corresponding AS is Override traffic mode. Hence this ASP should be moved to
+ * INACTIVE state
  * 
  * @author amit bhayani
  * 
  */
-public class M3UAScheduler implements Runnable {
-	private static final Logger logger = Logger.getLogger(M3UAScheduler.class);
+public class THPeerAsActToActNtfyAltAspAct implements TransitionHandler {
 
-	// TODO : Synchronize tasks? Use Iterator?
-	protected FastList<M3UATask> tasks = new FastList<M3UATask>();
+	private static final Logger logger = Logger.getLogger(THPeerAsActToActNtfyAltAspAct.class);
 
-	public void execute(M3UATask task) {
-		if(task == null){
-			return;
-		}
-		this.tasks.add(task);
+	private As as = null;
+	private FSM fsm;
+
+	public THPeerAsActToActNtfyAltAspAct(As as, FSM fsm) {
+		this.as = as;
+		this.fsm = fsm;
 	}
 
-	public void run() {
-		long now = System.currentTimeMillis();
-		for (FastList.Node<M3UATask> n = tasks.head(), end = tasks.tail(); (n = n.getNext()) != end;) {
-			M3UATask task = n.getValue();
-			// check if has been canceled from different thread.
-			if (task.canceled) {
-				tasks.remove(task);
-			} else {
+	public boolean process(State state) {
+		Asp causeAsp = (Asp) this.fsm.getAttribute(As.ATTRIBUTE_ASP);
 
-				try {
-					task.run(now);
-				} catch (Exception e) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Failuer on task run.", e);
-					}
-				}
-				// check if its canceled after run;
-				if (task.canceled) {
-					tasks.remove(task);
-				}
-			}
-			// tempTask = null;
+		try {
+			FSM aspLocalFSM = causeAsp.getLocalFSM();
+			aspLocalFSM.signal(TransitionState.OTHER_ALTERNATE_ASP_ACTIVE);
+		} catch (UnknownTransitionException e) {
+			logger.error(e.getMessage(), e);
 		}
+		return true;
 	}
+
 }

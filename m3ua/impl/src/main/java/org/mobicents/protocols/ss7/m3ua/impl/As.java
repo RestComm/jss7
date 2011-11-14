@@ -31,34 +31,18 @@ import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
-import org.mobicents.protocols.ss7.m3ua.impl.as.AsNoTrans;
-import org.mobicents.protocols.ss7.m3ua.impl.as.AsStateEnterPen;
-import org.mobicents.protocols.ss7.m3ua.impl.as.AsStatePenTimeout;
-import org.mobicents.protocols.ss7.m3ua.impl.as.AsTransActToActNtfyAltAspAct;
-import org.mobicents.protocols.ss7.m3ua.impl.as.AsTransActToActNtfyInsAsp;
-import org.mobicents.protocols.ss7.m3ua.impl.as.AsTransActToPen;
-import org.mobicents.protocols.ss7.m3ua.impl.as.AsTransInActToDwn;
-import org.mobicents.protocols.ss7.m3ua.impl.as.AsTransPendToAct;
+import org.mobicents.protocols.ss7.m3ua.IPSPType;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsNoTrans;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsStatePenTimeout;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransActToActRemAspAct;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransActToPendRemAspDwn;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransActToPendRemAspInac;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransDwnToInact;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransInactToAct;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransInactToDwn;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransInactToInact;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.RemAsTransPendToAct;
+import org.mobicents.protocols.ss7.m3ua.impl.parameter.RoutingContextImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.parameter.TrafficModeTypeImpl;
 import org.mobicents.protocols.ss7.m3ua.message.MessageFactory;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
-import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 
 /**
@@ -72,7 +56,6 @@ public class As implements XMLSerializable {
 
 	private static final String NAME = "name";
 	private static final String ROUTING_CONTEXT = "routingContext";
-	private static final String ROUTINIG_KEY = "routingKey";
 	private static final String TRAFFIC_MODE = "trafficMode";
 	private static final String DEFAULT_TRAFFIC_MODE = "defTrafficMode";
 	private static final String ASP_LIST = "asps";
@@ -87,14 +70,21 @@ public class As implements XMLSerializable {
 
 	protected String name;
 	protected RoutingContext rc;
-	private RoutingKey rk;
 	protected TrafficModeType trMode;
 
 	protected TrafficModeType defaultTrafModType;
 
 	protected ConcurrentLinkedQueue<PayloadData> penQueue = new ConcurrentLinkedQueue<PayloadData>();
 
-	protected FSM fsm;
+	/**
+	 * Peer FSM maintains state such that it receives the NTFY from other side
+	 */
+	private FSM peerFSM;
+
+	/**
+	 * Local FSM maintains state such that it sends the NTFY to other side
+	 */
+	private FSM localFSM;
 
 	protected ParameterFactory parameterFactory = new ParameterFactoryImpl();
 
@@ -103,155 +93,218 @@ public class As implements XMLSerializable {
 	protected M3UAManagement m3UAManagement = null;
 
 	private Functionality functionality = null;
+	private ExchangeType exchangeType = null;
+	private IPSPType ipspType = null;
 
 	public As() {
 
 	}
 
-	public As(String name, RoutingContext rc, RoutingKey rk, TrafficModeType trMode, Functionality functionality) {
+	public As(String name, RoutingContext rc, TrafficModeType trMode, Functionality functionality,
+			ExchangeType exchangeType, IPSPType ipspType) {
 		this.name = name;
 		this.rc = rc;
-		this.rk = rk;
 		this.trMode = trMode;
 		this.functionality = functionality;
+		this.exchangeType = exchangeType;
+		this.ipspType = ipspType;
 		this.defaultTrafModType = this.parameterFactory.createTrafficModeType(TrafficModeType.Loadshare);
 		init();
 	}
 
 	public void init() {
-		this.fsm = new FSM(this.name);
 
-		if (this.functionality == Functionality.IPSP) {
-			// Define states
-			fsm.createState(AsState.DOWN.toString());
-			fsm.createState(AsState.ACTIVE.toString());
-			fsm.createState(AsState.INACTIVE.toString());
-			fsm.createState(AsState.PENDING.toString()).setOnTimeOut(new AsStatePenTimeout(this, this.fsm), 2000)
-					.setOnEnter(new AsStateEnterPen(this, this.fsm));
-
-			fsm.setStart(AsState.DOWN.toString());
-			fsm.setEnd(AsState.DOWN.toString());
-			// Define Transitions
-
-			// ******************************************************************/
-			// STATE DOWN /
-			// ******************************************************************/
-			fsm.createTransition(TransitionState.AS_STATE_CHANGE_INACTIVE, AsState.DOWN.toString(),
-					AsState.INACTIVE.toString());
-			fsm.createTransition(TransitionState.ASP_DOWN, AsState.DOWN.toString(), AsState.DOWN.toString());
-
-			// ******************************************************************/
-			// STATE INACTIVE /
-			// ******************************************************************/
-			fsm.createTransition(TransitionState.AS_STATE_CHANGE_INACTIVE, AsState.INACTIVE.toString(),
-					AsState.INACTIVE.toString());
-
-			fsm.createTransition(TransitionState.AS_STATE_CHANGE_ACTIVE, AsState.INACTIVE.toString(),
-					AsState.ACTIVE.toString());
-
-			fsm.createTransition(TransitionState.ASP_DOWN, AsState.INACTIVE.toString(), AsState.DOWN.toString())
-					.setHandler(new AsTransInActToDwn(this, this.fsm));
-
-			// ******************************************************************/
-			// STATE ACTIVE /
-			// ******************************************************************/
-			fsm.createTransition(TransitionState.AS_STATE_CHANGE_ACTIVE, AsState.ACTIVE.toString(),
-					AsState.ACTIVE.toString());
-
-			fsm.createTransition(TransitionState.OTHER_ALTERNATE_ASP_ACTIVE, AsState.ACTIVE.toString(),
-					AsState.ACTIVE.toString()).setHandler(new AsTransActToActNtfyAltAspAct(this, this.fsm));
-
-			fsm.createTransition(TransitionState.OTHER_INSUFFICIENT_ASP, AsState.ACTIVE.toString(),
-					AsState.ACTIVE.toString()).setHandler(new AsTransActToActNtfyInsAsp(this, this.fsm));
-
-			fsm.createTransition(TransitionState.AS_STATE_CHANGE_PENDING, AsState.ACTIVE.toString(),
-					AsState.PENDING.toString());
-
-			fsm.createTransition(TransitionState.ASP_DOWN, AsState.ACTIVE.toString(), AsState.PENDING.toString())
-					.setHandler(new AsTransActToPen(this, this.fsm));
-
-			// ******************************************************************/
-			// STATE PENDING /
-			// ******************************************************************/
-			// As transitions to DOWN from PENDING when Pending Timer timesout
-			fsm.createTransition(TransitionState.AS_DOWN, AsState.PENDING.toString(), AsState.DOWN.toString());
-
-			// As transitions to INACTIVE from PENDING when Pending Timer
-			// timesout
-			fsm.createTransition(TransitionState.AS_INACTIVE, AsState.PENDING.toString(), AsState.INACTIVE.toString());
-
-			// If in PENDING and one of the ASP is ACTIVE again
-			fsm.createTransition(TransitionState.AS_STATE_CHANGE_ACTIVE, AsState.PENDING.toString(),
-					AsState.ACTIVE.toString()).setHandler(new AsTransPendToAct(this, this.fsm));
-
-			// If As is PENDING and far end sends INACTIVE we still remain
-			// PENDING as that message from pending queue can be sent once As
-			// becomes ACTIVE before T(r) expires
-			fsm.createTransition(TransitionState.AS_STATE_CHANGE_INACTIVE, AsState.PENDING.toString(),
-					AsState.INACTIVE.toString()).setHandler(new AsNoTrans());
-
-			fsm.createTransition(TransitionState.ASP_DOWN, AsState.PENDING.toString(), AsState.PENDING.toString())
-					.setHandler(new AsNoTrans());
-		} else {
-			// Define states
-			fsm.createState(AsState.DOWN.toString());
-			fsm.createState(AsState.ACTIVE.toString());
-			fsm.createState(AsState.INACTIVE.toString());
-			fsm.createState(AsState.PENDING.toString()).setOnTimeOut(new RemAsStatePenTimeout(this, this.fsm), 2000);
-
-			fsm.setStart(AsState.DOWN.toString());
-			fsm.setEnd(AsState.DOWN.toString());
-			// Define Transitions
-
-			// ******************************************************************/
-			// STATE DOWN /
-			// ******************************************************************/
-			fsm.createTransition(TransitionState.ASP_UP, AsState.DOWN.toString(), AsState.INACTIVE.toString())
-					.setHandler(new RemAsTransDwnToInact(this, this.fsm));
-
-			// ******************************************************************/
-			// STATE INACTIVE /
-			// ******************************************************************/
-			// TODO : Add Pluggable policy for AS?
-			fsm.createTransition(TransitionState.ASP_ACTIVE, AsState.INACTIVE.toString(), AsState.ACTIVE.toString())
-					.setHandler(new RemAsTransInactToAct(this, this.fsm));
-
-			fsm.createTransition(TransitionState.ASP_DOWN, AsState.INACTIVE.toString(), AsState.DOWN.toString())
-					.setHandler(new RemAsTransInactToDwn(this, this.fsm));
-
-			fsm.createTransition(TransitionState.ASP_UP, AsState.INACTIVE.toString(), AsState.INACTIVE.toString())
-					.setHandler(new RemAsTransInactToInact(this, this.fsm));
-
-			// ******************************************************************/
-			// STATE ACTIVE /
-			// ******************************************************************/
-			fsm.createTransition(TransitionState.ASP_INACTIVE, AsState.ACTIVE.toString(), AsState.PENDING.toString())
-					.setHandler(new RemAsTransActToPendRemAspInac(this, this.fsm));
-
-			fsm.createTransition(TransitionState.ASP_DOWN, AsState.ACTIVE.toString(), AsState.PENDING.toString())
-					.setHandler(new RemAsTransActToPendRemAspDwn(this, this.fsm));
-
-			fsm.createTransition(TransitionState.ASP_ACTIVE, AsState.ACTIVE.toString(), AsState.ACTIVE.toString())
-					.setHandler(new RemAsTransActToActRemAspAct(this, this.fsm));
-
-			fsm.createTransition(TransitionState.ASP_UP, AsState.ACTIVE.toString(), AsState.PENDING.toString())
-					.setHandler(new RemAsTransActToPendRemAspInac(this, this.fsm));
-
-			// ******************************************************************/
-			// STATE PENDING /
-			// ******************************************************************/
-			fsm.createTransition(TransitionState.ASP_DOWN, AsState.PENDING.toString(), AsState.DOWN.toString())
-					.setHandler(new RemAsNoTrans());
-
-			fsm.createTransition(TransitionState.ASP_UP, AsState.PENDING.toString(), AsState.INACTIVE.toString())
-					.setHandler(new RemAsNoTrans());
-
-			fsm.createTransition(TransitionState.ASP_ACTIVE, AsState.PENDING.toString(), AsState.ACTIVE.toString())
-					.setHandler(new RemAsTransPendToAct(this, this.fsm));
-
-			fsm.createTransition(TransitionState.AS_DOWN, AsState.PENDING.toString(), AsState.DOWN.toString());
-			fsm.createTransition(TransitionState.AS_INACTIVE, AsState.PENDING.toString(), AsState.INACTIVE.toString());
+		switch (this.functionality) {
+		case IPSP:
+			if (this.exchangeType == ExchangeType.SE) {
+				if (this.ipspType == IPSPType.CLIENT) {
+					// If this AS is IPSP and client side, it should wait for
+					// NTFY from other side
+					this.initPeerFSM();
+				} else {
+					// else this will send NTFY to other side
+					this.initLocalFSM();
+				}
+			} else {
+				// If this is IPSP and DE, it should maintain two states. One
+				// for sending NTFY to other side and other for receiving NTFY
+				// form other side
+				this.initPeerFSM();
+				this.initLocalFSM();
+			}
+			break;
+		case AS:
+			if (this.exchangeType == ExchangeType.SE) {
+				// If this is AS side, it should always receive NTFY from other
+				// side
+				this.initPeerFSM();
+			} else {
+				// If DE, it should maintain two states.
+				this.initPeerFSM();
+				this.initLocalFSM();
+			}
+			break;
+		case SGW:
+			if (this.exchangeType == ExchangeType.SE) {
+				// If this is SGW, it should always send the NTFY to other side
+				this.initLocalFSM();
+			} else {
+				// If DE, it should maintain two states.
+				this.initPeerFSM();
+				this.initLocalFSM();
+			}
+			break;
 		}
+	}
+
+	/**
+	 * Initialize FSM for AS side
+	 **/
+	private void initPeerFSM() {
+		this.peerFSM = new FSM(this.name + "_PEER");
+		// Define states
+		this.peerFSM.createState(AsState.DOWN.toString());
+		this.peerFSM.createState(AsState.ACTIVE.toString());
+		this.peerFSM.createState(AsState.INACTIVE.toString());
+		this.peerFSM.createState(AsState.PENDING.toString())
+				.setOnTimeOut(new AsStatePenTimeout(this, this.peerFSM), 2000)
+				.setOnEnter(new AsStateEnterPen(this, this.peerFSM));
+
+		this.peerFSM.setStart(AsState.DOWN.toString());
+		this.peerFSM.setEnd(AsState.DOWN.toString());
+		// Define Transitions
+
+		// ******************************************************************/
+		// STATE DOWN /
+		// ******************************************************************/
+		this.peerFSM.createTransition(TransitionState.AS_STATE_CHANGE_INACTIVE, AsState.DOWN.toString(),
+				AsState.INACTIVE.toString());
+		this.peerFSM.createTransition(TransitionState.ASP_DOWN, AsState.DOWN.toString(), AsState.DOWN.toString());
+
+		// ******************************************************************/
+		// STATE INACTIVE /
+		// ******************************************************************/
+		this.peerFSM.createTransition(TransitionState.AS_STATE_CHANGE_INACTIVE, AsState.INACTIVE.toString(),
+				AsState.INACTIVE.toString());
+
+		this.peerFSM.createTransition(TransitionState.AS_STATE_CHANGE_ACTIVE, AsState.INACTIVE.toString(),
+				AsState.ACTIVE.toString());
+
+		this.peerFSM.createTransition(TransitionState.ASP_DOWN, AsState.INACTIVE.toString(), AsState.DOWN.toString())
+				.setHandler(new THPeerAsInActToDwn(this, this.peerFSM));
+
+		// ******************************************************************/
+		// STATE ACTIVE /
+		// ******************************************************************/
+		this.peerFSM.createTransition(TransitionState.AS_STATE_CHANGE_ACTIVE, AsState.ACTIVE.toString(),
+				AsState.ACTIVE.toString());
+
+		this.peerFSM.createTransition(TransitionState.OTHER_ALTERNATE_ASP_ACTIVE, AsState.ACTIVE.toString(),
+				AsState.ACTIVE.toString()).setHandler(new THPeerAsActToActNtfyAltAspAct(this, this.peerFSM));
+
+		this.peerFSM.createTransition(TransitionState.OTHER_INSUFFICIENT_ASP, AsState.ACTIVE.toString(),
+				AsState.ACTIVE.toString()).setHandler(new THPeerAsActToActNtfyInsAsp(this, this.peerFSM));
+
+		this.peerFSM.createTransition(TransitionState.AS_STATE_CHANGE_PENDING, AsState.ACTIVE.toString(),
+				AsState.PENDING.toString());
+
+		this.peerFSM.createTransition(TransitionState.ASP_DOWN, AsState.ACTIVE.toString(), AsState.PENDING.toString())
+				.setHandler(new THPeerAsActToPen(this, this.peerFSM));
+
+		// ******************************************************************/
+		// STATE PENDING /
+		// ******************************************************************/
+		// As transitions to DOWN from PENDING when Pending Timer timesout
+		this.peerFSM.createTransition(TransitionState.AS_DOWN, AsState.PENDING.toString(), AsState.DOWN.toString());
+
+		// As transitions to INACTIVE from PENDING when Pending Timer
+		// timesout
+		this.peerFSM.createTransition(TransitionState.AS_INACTIVE, AsState.PENDING.toString(),
+				AsState.INACTIVE.toString());
+
+		// If in PENDING and one of the ASP is ACTIVE again
+		this.peerFSM.createTransition(TransitionState.AS_STATE_CHANGE_ACTIVE, AsState.PENDING.toString(),
+				AsState.ACTIVE.toString()).setHandler(new THPeerAsPendToAct(this, this.peerFSM));
+
+		// If As is PENDING and far end sends INACTIVE we still remain
+		// PENDING as that message from pending queue can be sent once As
+		// becomes ACTIVE before T(r) expires
+		this.peerFSM.createTransition(TransitionState.AS_STATE_CHANGE_INACTIVE, AsState.PENDING.toString(),
+				AsState.INACTIVE.toString()).setHandler(new THNoTrans());
+
+		this.peerFSM.createTransition(TransitionState.ASP_DOWN, AsState.PENDING.toString(), AsState.PENDING.toString())
+				.setHandler(new THNoTrans());
+	}
+
+	/**
+	 * Initialize FSM for SGW side
+	 **/
+	private void initLocalFSM() {
+		this.localFSM = new FSM(this.name + "_LOCAL");
+
+		// Define states
+		this.localFSM.createState(AsState.DOWN.toString());
+		this.localFSM.createState(AsState.ACTIVE.toString());
+		this.localFSM.createState(AsState.INACTIVE.toString());
+		this.localFSM.createState(AsState.PENDING.toString()).setOnTimeOut(
+				new RemAsStatePenTimeout(this, this.localFSM), 2000);
+
+		this.localFSM.setStart(AsState.DOWN.toString());
+		this.localFSM.setEnd(AsState.DOWN.toString());
+		// Define Transitions
+
+		// ******************************************************************/
+		// STATE DOWN /
+		// ******************************************************************/
+		this.localFSM.createTransition(TransitionState.ASP_UP, AsState.DOWN.toString(), AsState.INACTIVE.toString())
+				.setHandler(new THLocalAsDwnToInact(this, this.localFSM));
+		this.localFSM.createTransition(TransitionState.ASP_DOWN, AsState.DOWN.toString(), AsState.DOWN.toString());
+
+		// ******************************************************************/
+		// STATE INACTIVE /
+		// ******************************************************************/
+		// TODO : Add Pluggable policy for AS?
+		this.localFSM.createTransition(TransitionState.ASP_ACTIVE, AsState.INACTIVE.toString(),
+				AsState.ACTIVE.toString()).setHandler(new THLocalAsInactToAct(this, this.localFSM));
+
+		this.localFSM.createTransition(TransitionState.ASP_DOWN, AsState.INACTIVE.toString(), AsState.DOWN.toString())
+				.setHandler(new THLocalAsInactToDwn(this, this.localFSM));
+
+		this.localFSM
+				.createTransition(TransitionState.ASP_UP, AsState.INACTIVE.toString(), AsState.INACTIVE.toString())
+				.setHandler(new THLocalAsInactToInact(this, this.localFSM));
+
+		// ******************************************************************/
+		// STATE ACTIVE /
+		// ******************************************************************/
+		this.localFSM.createTransition(TransitionState.ASP_INACTIVE, AsState.ACTIVE.toString(),
+				AsState.PENDING.toString()).setHandler(new THLocalAsActToPendRemAspInac(this, this.localFSM));
+
+		this.localFSM.createTransition(TransitionState.ASP_DOWN, AsState.ACTIVE.toString(), AsState.PENDING.toString())
+				.setHandler(new THLocalAsActToPendRemAspDwn(this, this.localFSM));
+
+		this.localFSM
+				.createTransition(TransitionState.ASP_ACTIVE, AsState.ACTIVE.toString(), AsState.ACTIVE.toString())
+				.setHandler(new THLocalAsActToActRemAspAct(this, this.localFSM));
+
+		this.localFSM.createTransition(TransitionState.ASP_UP, AsState.ACTIVE.toString(), AsState.PENDING.toString())
+				.setHandler(new THLocalAsActToPendRemAspInac(this, this.localFSM));
+
+		// ******************************************************************/
+		// STATE PENDING /
+		// ******************************************************************/
+		this.localFSM.createTransition(TransitionState.ASP_DOWN, AsState.PENDING.toString(), AsState.DOWN.toString())
+				.setHandler(new THNoTrans());
+
+		this.localFSM.createTransition(TransitionState.ASP_UP, AsState.PENDING.toString(), AsState.INACTIVE.toString())
+				.setHandler(new THNoTrans());
+
+		this.localFSM.createTransition(TransitionState.ASP_ACTIVE, AsState.PENDING.toString(),
+				AsState.ACTIVE.toString()).setHandler(new THLocalAsPendToAct(this, this.localFSM));
+
+		this.localFSM.createTransition(TransitionState.AS_DOWN, AsState.PENDING.toString(), AsState.DOWN.toString());
+		this.localFSM.createTransition(TransitionState.AS_INACTIVE, AsState.PENDING.toString(),
+				AsState.INACTIVE.toString());
 	}
 
 	/**
@@ -293,8 +346,16 @@ public class As implements XMLSerializable {
 	 * 
 	 * @return
 	 */
-	public AsState getState() {
-		return AsState.getState(this.fsm.getState().getName());
+	// public AsState getState() {
+	// return AsState.getState(this.peerFSM.getState().getName());
+	// }
+
+	public FSM getPeerFSM() {
+		return peerFSM;
+	}
+
+	public FSM getLocalFSM() {
+		return localFSM;
 	}
 
 	/**
@@ -306,13 +367,16 @@ public class As implements XMLSerializable {
 		return this.rc;
 	}
 
-	/**
-	 * Get the {@link RoutingKey} configured for this As
-	 * 
-	 * @return
-	 */
-	public RoutingKey getRoutingKey() {
-		return this.rk;
+	public Functionality getFunctionality() {
+		return functionality;
+	}
+
+	public ExchangeType getExchangeType() {
+		return exchangeType;
+	}
+
+	public IPSPType getIpspType() {
+		return ipspType;
 	}
 
 	/**
@@ -367,35 +431,18 @@ public class As implements XMLSerializable {
 	}
 
 	/**
-	 * Get the {@link FSM} for this As
-	 * 
-	 * @return
-	 */
-	public FSM getFSM() {
-		return this.fsm;
-	}
-
-	/**
 	 * Add new {@link Asp} for this As.
 	 * 
 	 * @param asp
 	 * @throws Exception
 	 *             throws exception if the Asp with same name already exist
 	 */
-	public void addAppServerProcess(Asp asp) throws Exception {
-		// Check if already added?
-		for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
-			Asp aspTemp = n.getValue();
-			if (aspTemp.getName().equals(asp.getName())) {
-				throw new Exception(String.format("Asp name=%s already added", asp.getName()));
-			}
-		}
-
+	protected void addAppServerProcess(Asp asp) throws Exception {
 		asp.setAs(this);
 		appServerProcs.add(asp);
 	}
 
-	public Asp removeAppServerProcess(String aspName) throws Exception {
+	protected Asp removeAppServerProcess(String aspName) throws Exception {
 		Asp asp = null;
 		for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
 			Asp aspTemp = n.getValue();
@@ -409,28 +456,39 @@ public class As implements XMLSerializable {
 			throw new Exception(String.format("No ASP found for name=%s", aspName));
 		}
 
-		if (asp.getState() != AspState.DOWN) {
-			throw new Exception(String.format("ASP=%s is still %s. Bring it DOWN before removing from this As",
-					aspName, asp.getState()));
+		FSM aspLocalFSM = asp.getLocalFSM();
+		if (aspLocalFSM != null) {
+			AspState aspLocalState = AspState.getState(aspLocalFSM.getState().getName());
+
+			if (aspLocalState != AspState.DOWN) {
+				throw new Exception(String.format(
+						"ASP=%s local FSM is still %s. Bring it DOWN before removing from this As", aspName,
+						aspLocalState));
+			}
+		}
+
+		FSM aspPeerFSM = asp.getPeerFSM();
+		if (aspPeerFSM != null) {
+			AspState aspPeerState = AspState.getState(aspPeerFSM.getState().getName());
+
+			if (aspPeerState != AspState.DOWN) {
+				throw new Exception(String.format(
+						"ASP=%s peer FSM is still %s. Bring it DOWN before removing from this As", aspName,
+						aspPeerState));
+			}
 		}
 
 		this.appServerProcs.remove(asp);
 		asp.setAs(null);
-		asp.getFSM().cancel();
-		return asp;
-	}
 
-	/**
-	 * The {@link Asp} state has changed causing the state change for this As
-	 * too.
-	 * 
-	 * @param asp
-	 * @param asTransition
-	 * @throws UnknownTransitionException
-	 */
-	public void aspStateChange(Asp asp, String asTransition) throws UnknownTransitionException {
-		this.fsm.setAttribute(ATTRIBUTE_ASP, asp);
-		this.fsm.signal(asTransition);
+		if (aspLocalFSM != null) {
+			aspLocalFSM.cancel();
+		}
+
+		if (aspPeerFSM != null) {
+			aspPeerFSM.cancel();
+		}
+		return asp;
 	}
 
 	/**
@@ -442,13 +500,34 @@ public class As implements XMLSerializable {
 	 */
 	public void write(PayloadData message) throws IOException {
 
-		switch (this.getState()) {
+		FSM fsm = null;
+		boolean isASPLocalFsm = true;
+
+		if (this.functionality == Functionality.AS
+				|| (this.functionality == Functionality.SGW && this.exchangeType == ExchangeType.DE)
+				|| (this.functionality == Functionality.IPSP && this.ipspType == IPSPType.CLIENT)
+				|| (this.functionality == Functionality.IPSP && this.ipspType == IPSPType.SERVER && this.exchangeType == ExchangeType.DE)) {
+			fsm = this.peerFSM;
+		} else {
+			fsm = this.localFSM;
+			isASPLocalFsm = false;
+		}
+
+		switch (AsState.getState(fsm.getState().getName())) {
 		case ACTIVE:
 			boolean aspFound = false;
 			// TODO : Algo to select correct ASP
 			for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
 				Asp aspTemp = n.getValue();
-				if (aspTemp.getState() == AspState.ACTIVE) {
+				FSM aspFsm = null;
+
+				if (isASPLocalFsm) {
+					aspFsm = aspTemp.getLocalFSM();
+				} else {
+					aspFsm = aspTemp.getPeerFSM();
+				}
+
+				if (AspState.getState(aspFsm.getState().getName()) == AspState.ACTIVE) {
 					aspTemp.getAspFactory().write(message);
 					aspFound = true;
 					break;
@@ -499,11 +578,15 @@ public class As implements XMLSerializable {
 		public void read(javolution.xml.XMLFormat.InputElement xml, As as) throws XMLStreamException {
 			as.name = xml.getAttribute(NAME, "");
 			as.minAspActiveForLb = xml.getAttribute(MIN_ASP_ACT_LB).toInt();
-			as.rc = xml.get(ROUTING_CONTEXT);
-			as.rk = xml.get(ROUTINIG_KEY);
-			as.trMode = xml.get(TRAFFIC_MODE);
-			as.defaultTrafModType = xml.get(DEFAULT_TRAFFIC_MODE);
-			as.appServerProcs = xml.get(ASP_LIST);
+
+			as.functionality = Functionality.getFunctionality(xml.getAttribute("functionality", ""));
+			as.exchangeType = ExchangeType.getExchangeType(xml.getAttribute("exchangeType", ""));
+			as.ipspType = IPSPType.getIPSPType(xml.getAttribute("ipspType", ""));
+
+			as.rc = xml.get(ROUTING_CONTEXT, RoutingContextImpl.class);
+			as.trMode = xml.get(TRAFFIC_MODE, TrafficModeTypeImpl.class);
+			as.defaultTrafModType = xml.get(DEFAULT_TRAFFIC_MODE, TrafficModeTypeImpl.class);
+			as.appServerProcs = xml.get(ASP_LIST, FastList.class);
 			as.init();
 		}
 
@@ -511,11 +594,17 @@ public class As implements XMLSerializable {
 		public void write(As as, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
 			xml.setAttribute(NAME, as.name);
 			xml.setAttribute(MIN_ASP_ACT_LB, as.minAspActiveForLb);
-			xml.add(as.rc, ROUTING_CONTEXT);
-			xml.add(as.rk, ROUTINIG_KEY);
-			xml.add(as.trMode, TRAFFIC_MODE);
-			xml.add(as.defaultTrafModType, DEFAULT_TRAFFIC_MODE);
-			xml.add(as.appServerProcs, ASP_LIST);
+			xml.setAttribute("functionality", as.functionality.getType());
+			xml.setAttribute("exchangeType", as.exchangeType.getType());
+			if (as.ipspType != null) {
+				xml.setAttribute("ipspType", as.ipspType.getType());
+			}
+
+			xml.add((RoutingContextImpl) as.rc, ROUTING_CONTEXT, RoutingContextImpl.class);
+			xml.add((TrafficModeTypeImpl) as.trMode, TRAFFIC_MODE, TrafficModeTypeImpl.class);
+			xml.add((TrafficModeTypeImpl) as.defaultTrafModType, DEFAULT_TRAFFIC_MODE, TrafficModeTypeImpl.class);
+			xml.add(as.appServerProcs, ASP_LIST, FastList.class);
+
 		}
 	};
 }

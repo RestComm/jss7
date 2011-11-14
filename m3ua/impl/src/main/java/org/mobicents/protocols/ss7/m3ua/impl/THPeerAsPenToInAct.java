@@ -20,52 +20,35 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.m3ua.impl.scheduler;
+package org.mobicents.protocols.ss7.m3ua.impl;
 
-import javolution.util.FastList;
-
-import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 
 /**
+ * <p>
+ * When the far end As transitions to INACTIVE, the local As should also
+ * transition on INACTIVE
+ * </p>
+ * <p>
+ * Clear the pending queue
+ * </p>
  * 
  * @author amit bhayani
  * 
  */
-public class M3UAScheduler implements Runnable {
-	private static final Logger logger = Logger.getLogger(M3UAScheduler.class);
+public class THPeerAsPenToInAct implements TransitionHandler {
 
-	// TODO : Synchronize tasks? Use Iterator?
-	protected FastList<M3UATask> tasks = new FastList<M3UATask>();
+	private As as;
 
-	public void execute(M3UATask task) {
-		if(task == null){
-			return;
-		}
-		this.tasks.add(task);
+	public THPeerAsPenToInAct(As as, FSM fsm) {
+		this.as = as;
 	}
 
-	public void run() {
-		long now = System.currentTimeMillis();
-		for (FastList.Node<M3UATask> n = tasks.head(), end = tasks.tail(); (n = n.getNext()) != end;) {
-			M3UATask task = n.getValue();
-			// check if has been canceled from different thread.
-			if (task.canceled) {
-				tasks.remove(task);
-			} else {
-
-				try {
-					task.run(now);
-				} catch (Exception e) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Failuer on task run.", e);
-					}
-				}
-				// check if its canceled after run;
-				if (task.canceled) {
-					tasks.remove(task);
-				}
-			}
-			// tempTask = null;
-		}
+	public boolean process(State state) {
+		this.as.clearPendingQueue();
+		return true;
 	}
+
 }

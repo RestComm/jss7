@@ -26,8 +26,8 @@ import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
-import org.mobicents.protocols.ss7.m3ua.Functionality;
-import org.mobicents.protocols.ss7.m3ua.impl.as.AspTransDwnToAspUpSnt;
+import org.mobicents.protocols.ss7.m3ua.ExchangeType;
+import org.mobicents.protocols.ss7.m3ua.IPSPType;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.message.MessageFactory;
@@ -44,7 +44,15 @@ public class Asp implements XMLSerializable {
 
 	protected String name;
 
-	protected FSM fsm;
+	/**
+	 * Local FSM is such that it sends ASP_UP to other side
+	 **/
+	protected FSM localFSM;
+
+	/**
+	 * Peer FSM is such that it receives ASP_UP from other side
+	 **/
+	protected FSM peerFSM;
 
 	protected AspFactory aspFactory;
 
@@ -52,214 +60,277 @@ public class Asp implements XMLSerializable {
 
 	protected ASPIdentifier aSPIdentifier;
 
-	private Functionality functionality = null;
-
 	private MessageFactory messageFactory = new MessageFactoryImpl();
 
 	public Asp() {
 
 	}
 
-	public Asp(String name, AspFactory aspFactroy, Functionality functionality) {
+	public Asp(String name, AspFactory aspFactroy) {
 		this.name = name;
 		this.aspFactory = aspFactroy;
-		this.functionality = functionality;
 		this.init();
 	}
 
 	private void init() {
-		this.fsm = new FSM(this.name);
-		if (this.functionality == Functionality.IPSP) {
-			// Define states
-			fsm.createState(AspState.DOWN_SENT.toString());
-			fsm.createState(AspState.DOWN.toString());
-			fsm.createState(AspState.UP_SENT.toString());
-			fsm.createState(AspState.INACTIVE.toString());
-			fsm.createState(AspState.ACTIVE_SENT.toString());
-			fsm.createState(AspState.ACTIVE.toString());
-			fsm.createState(AspState.INACTIVE_SENT.toString());
 
-			fsm.setStart(AspState.DOWN.toString());
-			fsm.setEnd(AspState.DOWN.toString());
-
-			// Define Transitions
-
-			// ******************************************************************/
-			// DOWN /
-			// ******************************************************************/
-			fsm.createTransition(TransitionState.COMM_UP, AspState.DOWN.toString(), AspState.UP_SENT.toString());
-			// .setHandler(new AspTransDwnToAspUpSnt(this, this.fsm));
-
-			fsm.createTransition(TransitionState.COMM_DOWN, AspState.DOWN.toString(), AspState.DOWN.toString());
-
-			// ******************************************************************/
-			// UP_SENT/
-			// ******************************************************************/
-			// TODO Keep sending ASP_UP. Also wrong logic here, every ASP will
-			// send ASP_UP ?
-			fsm.createTimeoutTransition(AspState.UP_SENT.toString(), AspState.UP_SENT.toString(), 2000).setHandler(
-					new AspTransDwnToAspUpSnt(this, this.fsm));
-
-			fsm.createTransition(TransitionState.ASP_INACTIVE, AspState.UP_SENT.toString(),
-					AspState.INACTIVE.toString());
-
-			fsm.createTransition(TransitionState.ASP_ACTIVE_SENT, AspState.UP_SENT.toString(),
-					AspState.ACTIVE_SENT.toString());
-
-			fsm.createTransition(TransitionState.ASP_DOWN_SENT, AspState.UP_SENT.toString(),
-					AspState.DOWN_SENT.toString());
-
-			fsm.createTransition(TransitionState.COMM_DOWN, AspState.UP_SENT.toString(), AspState.DOWN.toString());
-
-			// ******************************************************************/
-			// ACTIVE_SENT/
-			// ******************************************************************/
-			// TODO Keep sending ASP_ACTIVE ?
-			fsm.createTimeoutTransition(AspState.ACTIVE_SENT.toString(), AspState.ACTIVE_SENT.toString(), 2000);
-
-			fsm.createTransition(TransitionState.ASP_ACTIVE_ACK, AspState.ACTIVE_SENT.toString(),
-					AspState.ACTIVE.toString());
-			// .setHandler(new AspTransActSntToAct(this, this.fsm));
-
-			fsm.createTransition(TransitionState.ASP_DOWN_SENT, AspState.ACTIVE_SENT.toString(),
-					AspState.DOWN_SENT.toString());
-
-			fsm.createTransition(TransitionState.COMM_DOWN, AspState.ACTIVE_SENT.toString(), AspState.DOWN.toString());
-
-			// ******************************************************************/
-			// ACTIVE/
-			// ******************************************************************/
-			fsm.createTransition(TransitionState.ASP_INACTIVE_SENT, AspState.ACTIVE.toString(),
-					AspState.INACTIVE_SENT.toString());
-			// .setHandler(new AspTransActToInactSnt(this, this.fsm));
-
-			fsm.createTransition(TransitionState.OTHER_ALTERNATE_ASP_ACTIVE, AspState.ACTIVE.toString(),
-					AspState.INACTIVE.toString());
-
-			fsm.createTransition(TransitionState.ASP_DOWN_SENT, AspState.ACTIVE.toString(),
-					AspState.DOWN_SENT.toString());
-
-			fsm.createTransition(TransitionState.COMM_DOWN, AspState.ACTIVE.toString(), AspState.DOWN.toString());
-			// .setHandler(new AspTransActToDwn(this, this.fsm));
-
-			// ******************************************************************/
-			// INACTIVE/
-			// ******************************************************************/
-			fsm.createTransition(TransitionState.COMM_DOWN, AspState.INACTIVE.toString(), AspState.DOWN.toString());
-			// .setHandler(new AspTransInactToDwn(this, this.fsm));
-
-			fsm.createTransition(TransitionState.ASP_ACTIVE_SENT, AspState.INACTIVE.toString(),
-					AspState.ACTIVE_SENT.toString());
-
-			fsm.createTransition(TransitionState.ASP_DOWN_SENT, AspState.INACTIVE.toString(),
-					AspState.DOWN_SENT.toString());
-
-			// ******************************************************************/
-			// INACTIVE_SENT/
-			// ******************************************************************/
-			// TODO keep sending INACTIVE ASP ?
-			fsm.createTimeoutTransition(AspState.INACTIVE_SENT.toString(), AspState.INACTIVE_SENT.toString(), 2000);
-			// TODO Take care of this .setHandler(new
-			// AspTransActToInactSnt(this,
-			// this.fsm));
-
-			fsm.createTransition(TransitionState.ASP_INACTIVE_ACK, AspState.INACTIVE_SENT.toString(),
-					AspState.INACTIVE.toString());
-
-			fsm.createTransition(TransitionState.ASP_DOWN_SENT, AspState.INACTIVE_SENT.toString(),
-					AspState.DOWN_SENT.toString());
-
-			fsm.createTransition(TransitionState.COMM_DOWN, AspState.INACTIVE_SENT.toString(), AspState.DOWN.toString());
-
-			// ******************************************************************/
-			// DOWN_SENT/
-			// ******************************************************************/
-			fsm.createTransition(TransitionState.ASP_DOWN_ACK, AspState.DOWN_SENT.toString(), AspState.DOWN.toString());
-
-			fsm.createTransition(TransitionState.COMM_DOWN, AspState.DOWN_SENT.toString(), AspState.DOWN.toString());
-		} else {
-			// Define states
-			fsm.createState(AspState.DOWN.toString());
-			fsm.createState(AspState.ACTIVE.toString());
-			fsm.createState(AspState.INACTIVE.toString());
-
-			fsm.setStart(AspState.DOWN.toString());
-			fsm.setEnd(AspState.DOWN.toString());
-
-			// Define Transitions
-
-			// ******************************************************************/
-			// STATE DOWN /
-			// ******************************************************************/
-			fsm.createTransition(TransitionState.COMM_UP, AspState.DOWN.toString(), AspState.DOWN.toString());
-			fsm.createTransition(TransitionState.COMM_DOWN, AspState.DOWN.toString(), AspState.DOWN.toString());
-			fsm.createTransition(TransitionState.ASP_UP, AspState.DOWN.toString(), AspState.INACTIVE.toString());
-			// .setHandler(new RemAspTransDwnToInact(this, fsm));
-
-			// If the SGP receives any other M3UA messages before an ASP Up
-			// message
-			// is received (other than ASP Down; see Section 4.3.4.2), the SGP
-			// MAY
-			// discard them.
-			fsm.createTransition(TransitionState.DAUD, AspState.DOWN.toString(), AspState.DOWN.toString());
-			fsm.createTransition(TransitionState.ASP_ACTIVE, AspState.DOWN.toString(), AspState.DOWN.toString());
-			fsm.createTransition(TransitionState.ASP_INACTIVE, AspState.DOWN.toString(), AspState.DOWN.toString());
-			fsm.createTransition(TransitionState.PAYLOAD, AspState.DOWN.toString(), AspState.DOWN.toString());
-
-			fsm.createTransition(TransitionState.ASP_DOWN, AspState.DOWN.toString(), AspState.DOWN.toString());
-			// TODO : For REG_REQ/DREG_REQ we don't support dynamic adding of
-			// key.
-			// Handle this
-
-			// ******************************************************************/
-			// STATE INACTIVE /
-			// ******************************************************************/
-			fsm.createTransition(TransitionState.COMM_DOWN, AspState.INACTIVE.toString(), AspState.DOWN.toString());
-			// Mo transition needed? .setHandler(new RemAspTransInactToDwn(this,
-			// this.fsm));
-
-			fsm.createTransition(TransitionState.ASP_UP, AspState.INACTIVE.toString(), AspState.INACTIVE.toString());
-
-			fsm.createTransition(TransitionState.ASP_DOWN, AspState.INACTIVE.toString(), AspState.DOWN.toString());
-
-			fsm.createTransition(TransitionState.ASP_ACTIVE, AspState.INACTIVE.toString(), AspState.ACTIVE.toString());
-
-			// TODO: Ignore payload if Remote ASP is still INACTIVE. may be log
-			// it?
-			fsm.createTransition(TransitionState.PAYLOAD, AspState.INACTIVE.toString(), AspState.INACTIVE.toString());
-
-			// ******************************************************************/
-			// STATE ACTIVE /
-			// ******************************************************************/
-			fsm.createTransition(TransitionState.COMM_DOWN, AspState.ACTIVE.toString(), AspState.DOWN.toString());
-
-			fsm.createTransition(TransitionState.ASP_UP, AspState.ACTIVE.toString(), AspState.INACTIVE.toString());
-
-			fsm.createTransition(TransitionState.ASP_DOWN, AspState.ACTIVE.toString(), AspState.DOWN.toString());
-
-			fsm.createTransition(TransitionState.ASP_INACTIVE, AspState.ACTIVE.toString(), AspState.INACTIVE.toString());
-			// No transition handler .setHandler(new RemAspTransActToInact(this,
-			// this.fsm));
-
-			fsm.createTransition(TransitionState.PAYLOAD, AspState.ACTIVE.toString(), AspState.ACTIVE.toString());
-
-			// This transition will be signaled from SGW
-			fsm.createTransition(TransitionState.OTHER_ALTERNATE_ASP_ACTIVE, AspState.ACTIVE.toString(),
-					AspState.INACTIVE.toString());
-
+		switch (this.aspFactory.functionality) {
+		case IPSP:
+			if (this.aspFactory.exchangeType == ExchangeType.SE) {
+				if (this.aspFactory.ipspType == IPSPType.CLIENT) {
+					// If this ASP is IPSP and client side, it should send the
+					// ASP_UP to other side
+					this.initLocalFSM();
+				} else {
+					// else this will receive ASP_UP from other side
+					this.initPeerFSM();
+				}
+			} else {
+				// If this is IPSP and DE, it should maintain two states. One
+				// for sending ASP_UP to other side and other for receiving
+				// ASP_UP form
+				// other side
+				this.initPeerFSM();
+				this.initLocalFSM();
+			}
+			break;
+		case AS:
+			if (this.aspFactory.exchangeType == ExchangeType.SE) {
+				// If this is AS side, it should always send the ASP_UP to other
+				// side
+				this.initLocalFSM();
+			} else {
+				// If DE it should maintain two states
+				this.initPeerFSM();
+				this.initLocalFSM();
+			}
+			break;
+		case SGW:
+			if (this.aspFactory.exchangeType == ExchangeType.SE) {
+				// If this is SGW, it should always receive ASP_UP from other
+				// side
+				this.initPeerFSM();
+			} else {
+				// If DE it should maintain two states
+				this.initPeerFSM();
+				this.initLocalFSM();
+			}
+			break;
 		}
+	}
+
+	private void initLocalFSM() {
+		this.localFSM = new FSM(this.name + "_LOCAL");
+		// Define states
+		this.localFSM.createState(AspState.DOWN_SENT.toString());
+		this.localFSM.createState(AspState.DOWN.toString());
+		this.localFSM.createState(AspState.UP_SENT.toString());
+		this.localFSM.createState(AspState.INACTIVE.toString());
+		this.localFSM.createState(AspState.ACTIVE_SENT.toString());
+		this.localFSM.createState(AspState.ACTIVE.toString());
+		this.localFSM.createState(AspState.INACTIVE_SENT.toString());
+
+		this.localFSM.setStart(AspState.DOWN.toString());
+		this.localFSM.setEnd(AspState.DOWN.toString());
+
+		// Define Transitions
+
+		// ******************************************************************/
+		// DOWN /
+		// ******************************************************************/
+		this.localFSM.createTransition(TransitionState.COMM_UP, AspState.DOWN.toString(), AspState.UP_SENT.toString());
+		// .setHandler(new AspTransDwnToAspUpSnt(this, this.fsm));
+
+		this.localFSM.createTransition(TransitionState.COMM_DOWN, AspState.DOWN.toString(), AspState.DOWN.toString());
+
+		// ******************************************************************/
+		// UP_SENT/
+		// ******************************************************************/
+		// Keep sending ASP_UP if timeout occurs.
+		this.localFSM.createTimeoutTransition(AspState.UP_SENT.toString(), AspState.UP_SENT.toString(), 2000)
+				.setHandler(new THLocalAspDwnToAspUpSnt(this, this.localFSM));
+
+		this.localFSM.createTransition(TransitionState.ASP_INACTIVE, AspState.UP_SENT.toString(),
+				AspState.INACTIVE.toString());
+
+		this.localFSM.createTransition(TransitionState.ASP_ACTIVE_SENT, AspState.UP_SENT.toString(),
+				AspState.ACTIVE_SENT.toString());
+
+		this.localFSM.createTransition(TransitionState.ASP_DOWN_SENT, AspState.UP_SENT.toString(),
+				AspState.DOWN_SENT.toString());
+
+		this.localFSM
+				.createTransition(TransitionState.COMM_DOWN, AspState.UP_SENT.toString(), AspState.DOWN.toString());
+
+		// ******************************************************************/
+		// ACTIVE_SENT/
+		// ******************************************************************/
+		// TODO Keep sending ASP_ACTIVE ?
+		this.localFSM.createTimeoutTransition(AspState.ACTIVE_SENT.toString(), AspState.ACTIVE_SENT.toString(), 2000);
+
+		this.localFSM.createTransition(TransitionState.ASP_ACTIVE_ACK, AspState.ACTIVE_SENT.toString(),
+				AspState.ACTIVE.toString());
+		// .setHandler(new AspTransActSntToAct(this, this.fsm));
+
+		this.localFSM.createTransition(TransitionState.ASP_DOWN_SENT, AspState.ACTIVE_SENT.toString(),
+				AspState.DOWN_SENT.toString());
+
+		this.localFSM.createTransition(TransitionState.COMM_DOWN, AspState.ACTIVE_SENT.toString(),
+				AspState.DOWN.toString());
+
+		// ******************************************************************/
+		// ACTIVE/
+		// ******************************************************************/
+		this.localFSM.createTransition(TransitionState.ASP_INACTIVE_SENT, AspState.ACTIVE.toString(),
+				AspState.INACTIVE_SENT.toString());
+		// .setHandler(new AspTransActToInactSnt(this, this.fsm));
+
+		this.localFSM.createTransition(TransitionState.OTHER_ALTERNATE_ASP_ACTIVE, AspState.ACTIVE.toString(),
+				AspState.INACTIVE.toString());
+
+		this.localFSM.createTransition(TransitionState.ASP_DOWN_SENT, AspState.ACTIVE.toString(),
+				AspState.DOWN_SENT.toString());
+
+		this.localFSM.createTransition(TransitionState.COMM_DOWN, AspState.ACTIVE.toString(), AspState.DOWN.toString());
+		// .setHandler(new AspTransActToDwn(this, this.fsm));
+
+		// ******************************************************************/
+		// INACTIVE/
+		// ******************************************************************/
+		this.localFSM.createTransition(TransitionState.COMM_DOWN, AspState.INACTIVE.toString(),
+				AspState.DOWN.toString());
+		// .setHandler(new AspTransInactToDwn(this, this.fsm));
+
+		this.localFSM.createTransition(TransitionState.ASP_ACTIVE_SENT, AspState.INACTIVE.toString(),
+				AspState.ACTIVE_SENT.toString());
+
+		this.localFSM.createTransition(TransitionState.ASP_DOWN_SENT, AspState.INACTIVE.toString(),
+				AspState.DOWN_SENT.toString());
+
+		// ******************************************************************/
+		// INACTIVE_SENT/
+		// ******************************************************************/
+		// TODO keep sending INACTIVE ASP ?
+		this.localFSM.createTimeoutTransition(AspState.INACTIVE_SENT.toString(), AspState.INACTIVE_SENT.toString(),
+				2000);
+		// TODO Take care of this .setHandler(new
+		// AspTransActToInactSnt(this,
+		// this.fsm));
+
+		this.localFSM.createTransition(TransitionState.ASP_INACTIVE_ACK, AspState.INACTIVE_SENT.toString(),
+				AspState.INACTIVE.toString());
+
+		this.localFSM.createTransition(TransitionState.ASP_DOWN_SENT, AspState.INACTIVE_SENT.toString(),
+				AspState.DOWN_SENT.toString());
+
+		this.localFSM.createTransition(TransitionState.COMM_DOWN, AspState.INACTIVE_SENT.toString(),
+				AspState.DOWN.toString());
+
+		// ******************************************************************/
+		// DOWN_SENT/
+		// ******************************************************************/
+		this.localFSM.createTransition(TransitionState.ASP_DOWN_ACK, AspState.DOWN_SENT.toString(),
+				AspState.DOWN.toString());
+
+		this.localFSM.createTransition(TransitionState.COMM_DOWN, AspState.DOWN_SENT.toString(),
+				AspState.DOWN.toString());
+	}
+
+	private void initPeerFSM() {
+		this.peerFSM = new FSM(this.name + "_PEER");
+		// Define states
+		this.peerFSM.createState(AspState.DOWN.toString());
+		this.peerFSM.createState(AspState.ACTIVE.toString());
+		this.peerFSM.createState(AspState.INACTIVE.toString());
+
+		this.peerFSM.setStart(AspState.DOWN.toString());
+		this.peerFSM.setEnd(AspState.DOWN.toString());
+
+		// Define Transitions
+
+		// ******************************************************************/
+		// STATE DOWN /
+		// ******************************************************************/
+		this.peerFSM.createTransition(TransitionState.COMM_UP, AspState.DOWN.toString(), AspState.DOWN.toString());
+		this.peerFSM.createTransition(TransitionState.COMM_DOWN, AspState.DOWN.toString(), AspState.DOWN.toString());
+		this.peerFSM.createTransition(TransitionState.ASP_UP, AspState.DOWN.toString(), AspState.INACTIVE.toString());
+		// .setHandler(new RemAspTransDwnToInact(this, fsm));
+
+		// If the SGP receives any other M3UA messages before an ASP Up
+		// message
+		// is received (other than ASP Down; see Section 4.3.4.2), the SGP
+		// MAY
+		// discard them.
+		this.peerFSM.createTransition(TransitionState.DAUD, AspState.DOWN.toString(), AspState.DOWN.toString());
+		this.peerFSM.createTransition(TransitionState.ASP_ACTIVE, AspState.DOWN.toString(), AspState.DOWN.toString());
+		this.peerFSM.createTransition(TransitionState.ASP_INACTIVE, AspState.DOWN.toString(), AspState.DOWN.toString());
+		this.peerFSM.createTransition(TransitionState.PAYLOAD, AspState.DOWN.toString(), AspState.DOWN.toString());
+
+		this.peerFSM.createTransition(TransitionState.ASP_DOWN, AspState.DOWN.toString(), AspState.DOWN.toString());
+		// TODO : For REG_REQ/DREG_REQ we don't support dynamic adding of
+		// key.
+		// Handle this
+
+		// ******************************************************************/
+		// STATE INACTIVE /
+		// ******************************************************************/
+		this.peerFSM
+				.createTransition(TransitionState.COMM_DOWN, AspState.INACTIVE.toString(), AspState.DOWN.toString());
+		// Mo transition needed? .setHandler(new RemAspTransInactToDwn(this,
+		// this.fsm));
+
+		this.peerFSM.createTransition(TransitionState.ASP_UP, AspState.INACTIVE.toString(),
+				AspState.INACTIVE.toString());
+
+		this.peerFSM.createTransition(TransitionState.ASP_DOWN, AspState.INACTIVE.toString(), AspState.DOWN.toString());
+
+		this.peerFSM.createTransition(TransitionState.ASP_ACTIVE, AspState.INACTIVE.toString(),
+				AspState.ACTIVE.toString());
+
+		// TODO: Ignore payload if Remote ASP is still INACTIVE. may be log
+		// it?
+		this.peerFSM.createTransition(TransitionState.PAYLOAD, AspState.INACTIVE.toString(),
+				AspState.INACTIVE.toString());
+
+		// ******************************************************************/
+		// STATE ACTIVE /
+		// ******************************************************************/
+		this.peerFSM.createTransition(TransitionState.COMM_DOWN, AspState.ACTIVE.toString(), AspState.DOWN.toString());
+
+		this.peerFSM.createTransition(TransitionState.ASP_UP, AspState.ACTIVE.toString(), AspState.INACTIVE.toString());
+
+		this.peerFSM.createTransition(TransitionState.ASP_DOWN, AspState.ACTIVE.toString(), AspState.DOWN.toString());
+
+		this.peerFSM.createTransition(TransitionState.ASP_INACTIVE, AspState.ACTIVE.toString(),
+				AspState.INACTIVE.toString());
+		// No transition handler .setHandler(new RemAspTransActToInact(this,
+		// this.fsm));
+
+		this.peerFSM.createTransition(TransitionState.PAYLOAD, AspState.ACTIVE.toString(), AspState.ACTIVE.toString());
+
+		// This transition will be signaled from SGW
+		this.peerFSM.createTransition(TransitionState.OTHER_ALTERNATE_ASP_ACTIVE, AspState.ACTIVE.toString(),
+				AspState.INACTIVE.toString());
 	}
 
 	public String getName() {
 		return this.name;
 	}
 
-	public AspState getState() {
-		return AspState.getState(this.fsm.getState().getName());
+	// public AspState getState() {
+	// return AspState.getState(this.localFSM.getState().getName());
+	// }
+
+	// public FSM getFSM() {
+	// return this.localFSM;
+	// }
+
+	public FSM getLocalFSM() {
+		return localFSM;
 	}
 
-	public FSM getFSM() {
-		return this.fsm;
+	public FSM getPeerFSM() {
+		return peerFSM;
 	}
 
 	public As getAs() {
