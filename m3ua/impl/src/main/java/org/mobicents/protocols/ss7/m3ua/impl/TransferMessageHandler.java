@@ -11,7 +11,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class TransferMessageHandler extends MessageHandler {
 
@@ -80,7 +80,7 @@ public class TransferMessageHandler extends MessageHandler {
 						.sendTransferMessageToLocalUser(mtp3TransferPrimitive, payload.getData().getSLS());
 			} else {
 				logger.error(String.format(
-						"Rx : PayloadData for Aspfactory=%s for RoutingContext=%d. But ASP State=%s. Message=%s",
+						"Rx : PayloadData for Aspfactory=%s for RoutingContext=%s. But ASP State=%s. Message=%s",
 						this.aspFactory.getName(), rc, aspState, payload));
 			}
 		}

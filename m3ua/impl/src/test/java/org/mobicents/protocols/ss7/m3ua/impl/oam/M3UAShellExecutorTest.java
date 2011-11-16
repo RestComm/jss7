@@ -106,6 +106,11 @@ public class M3UAShellExecutorTest {
 				.split(" "));
 		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas2"), result);
 
+		// Create AS of type IPSP
+		result = m3uaExec.execute("m3ua as create MTUAS IPSP mode DE ipspType server rc 1 traffic-mode loadshare"
+				.split(" "));
+		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "MTUAS"), result);
+
 		// create ASP
 		result = m3uaExec.execute("m3ua asp create testasp1 testAssoc1".split(" "));
 		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, "testasp1"), result);
@@ -120,8 +125,8 @@ public class M3UAShellExecutorTest {
 
 		// add again
 		result = m3uaExec.execute("m3ua as add testas testasp1".split(" "));
-		assertEquals(String.format("Cannot assign ASP=%s to AS=%s. This ASP is already assigned to this AS", "testasp1",
-				"testas"), result);
+		assertEquals(String.format("Cannot assign ASP=%s to AS=%s. This ASP is already assigned to this AS",
+				"testasp1", "testas"), result);
 
 		clientM3UAMgmt.stop();
 	}

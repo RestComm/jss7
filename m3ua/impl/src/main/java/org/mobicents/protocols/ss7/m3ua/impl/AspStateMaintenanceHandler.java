@@ -240,18 +240,18 @@ public class AspStateMaintenanceHandler extends MessageHandler {
 				}
 			}// for
 
-			if (stopAssociation) {
-				try {
-					this.aspFactory.transportManagement.stopAssociation(this.aspFactory.association.getName());
-				} catch (Exception e) {
-					logger.error(
-							String.format("Exception while starting the Association=%s",
-									this.aspFactory.association.getName()), e);
-				}
-			} else {
+			if (!stopAssociation) {
 				logger.error(String
-						.format("Not stopping the underlying Association=%s for AspFactory=%s as atleast one of the ASP's is Double Exchange and Peer ASP state is still not down",
+						.format("Ungracefully stopping the underlying Association=%s for AspFactory=%s. Atleast one of the ASP's is Double Exchange and Peer ASP state is still not down",
 								this.aspFactory.association.getName(), this.aspFactory.getName()));
+			}
+
+			try {
+				this.aspFactory.transportManagement.stopAssociation(this.aspFactory.association.getName());
+			} catch (Exception e) {
+				logger.error(
+						String.format("Exception while starting the Association=%s",
+								this.aspFactory.association.getName()), e);
 			}
 		} else {
 			logger.error(String.format("Received ASPDOWN_ACK=%s for ASPFactory=%s. But Aspfactory is down.", aspUpAck,

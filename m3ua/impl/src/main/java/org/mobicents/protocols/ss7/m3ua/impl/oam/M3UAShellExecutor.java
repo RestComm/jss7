@@ -190,7 +190,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 		}
 
 		this.m3uaManagement.unassignAspFromAs(args[3], args[4]);
-		return String.format(M3UAOAMMessages.ADD_ASP_TO_AS_SUCESSFULL, args[4], args[3]);
+		return String.format("Successfully removed ASP name=%s to AS name=%s", args[4], args[3]);
 	}
 
 	private TrafficModeType getTrafficModeType(String mode) {
@@ -336,9 +336,21 @@ public class M3UAShellExecutor implements ShellExecutor {
 					return M3UAOAMMessages.INVALID_COMMAND;
 
 				} else if (command.equals("destroy")) {
+					
+					if (args.length < 4) {
+						return M3UAOAMMessages.INVALID_COMMAND;
+					}
 
+					String assocName = args[3];
+					if (assocName == null) {
+						return M3UAOAMMessages.INVALID_COMMAND;
+					}
+
+					this.sctpManagement.removeAssociation(assocName);
+					return String.format("Successfully removed association=%s", assocName);
+					
 				} else if (command.equals("show")) {
-
+					return M3UAOAMMessages.NOT_SUPPORTED_YET;
 				}
 
 				return M3UAOAMMessages.INVALID_COMMAND;

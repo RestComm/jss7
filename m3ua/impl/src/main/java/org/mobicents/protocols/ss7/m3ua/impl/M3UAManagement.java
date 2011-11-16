@@ -692,6 +692,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 			// Create Asp's and assign to each of the AS. Schedule the FSM's
 			for (FastList.Node<As> n = appServers.head(), end = appServers.tail(); (n = n.getNext()) != end;) {
 				As as = n.getValue();
+				as.setM3UAManagement(this);
 				FSM asLocalFSM = as.getLocalFSM();
 				m3uaScheduler.execute(asLocalFSM);
 
