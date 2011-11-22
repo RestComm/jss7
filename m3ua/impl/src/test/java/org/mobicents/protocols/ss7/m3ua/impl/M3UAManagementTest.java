@@ -75,7 +75,7 @@ public class M3UAManagementTest {
 	public void setUp() throws Exception {
 		this.transportManagement = new TransportManagement();
 
-		this.m3uaMgmt = new M3UAManagement();
+		this.m3uaMgmt = new M3UAManagement("M3UAManagementTest");
 		this.m3uaMgmt.setTransportManagement(this.transportManagement);
 		this.m3uaMgmt.start();
 	}
@@ -103,7 +103,7 @@ public class M3UAManagementTest {
 
 		this.m3uaMgmt.stop();
 
-		M3UAManagement m3uaMgmt1 = new M3UAManagement();
+		M3UAManagement m3uaMgmt1 = new M3UAManagement("M3UAManagementTest");
 		m3uaMgmt1.setTransportManagement(this.transportManagement);
 		m3uaMgmt1.start();
 

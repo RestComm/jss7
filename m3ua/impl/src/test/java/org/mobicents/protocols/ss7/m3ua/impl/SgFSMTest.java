@@ -93,7 +93,7 @@ public class SgFSMTest {
 	@Before
 	public void setUp() throws Exception {
 		this.transportManagement = new TransportManagement();
-		this.serverM3UAMgmt = new M3UAManagement();
+		this.serverM3UAMgmt = new M3UAManagement("SgFSMTest");
 		this.serverM3UAMgmt.setTransportManagement(this.transportManagement);
 		this.serverM3UAMgmt.start();
 

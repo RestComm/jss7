@@ -66,7 +66,7 @@ public class M3UAShellExecutorTest {
 
 		this.transportManagement = new TransportManagement();
 
-		this.clientM3UAMgmt = new M3UAManagement();
+		this.clientM3UAMgmt = new M3UAManagement("M3UAShellExecutorTest");
 		this.clientM3UAMgmt.setTransportManagement(this.transportManagement);
 		this.clientM3UAMgmt.start();
 

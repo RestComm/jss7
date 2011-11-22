@@ -94,7 +94,7 @@ public class RemSgFSMTest {
 	@Before
 	public void setUp() throws Exception {
 		this.transportManagement = new TransportManagement();
-		this.clientM3UAMgmt = new M3UAManagement();
+		this.clientM3UAMgmt = new M3UAManagement("RemSgFSMTest");
 		this.clientM3UAMgmt.setTransportManagement(this.transportManagement);
 		this.clientM3UAMgmt.start();
 

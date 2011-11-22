@@ -97,13 +97,13 @@ public class GatewayTest {
 		client = new Client();
 		server = new Server();
 
-		this.sctpManagement = new ManagementImpl("server-management");
+		this.sctpManagement = new ManagementImpl("GatewayTest");
 		this.sctpManagement.setSingleThread(true);
 		this.sctpManagement.setConnectDelay(1000 * 5);// setting connection
 														// delay to 5 secs
 		this.sctpManagement.start();
 
-		this.m3uaMgmt = new M3UAManagement();
+		this.m3uaMgmt = new M3UAManagement("GatewayTest");
 		this.m3uaMgmt.setTransportManagement(this.sctpManagement);
 		this.m3uaMgmt.addMtp3UserPartListener(mtp3UserPartListener);
 		this.m3uaMgmt.start();

@@ -91,6 +91,8 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 
 	private final TextBuilder persistFile = TextBuilder.newInstance();
 
+	private final String name;
+
 	private String persistDir = null;
 
 	protected ParameterFactory parameterFactory = new ParameterFactoryImpl();
@@ -104,12 +106,17 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 
 	private int maxAsForRoute = 4;
 
-	public M3UAManagement() {
+	public M3UAManagement(String name) {
+		this.name = name;
 		binding.setClassAttribute(CLASS_ATTRIBUTE);
 		binding.setAlias(AspFactory.class, "aspFactory");
 		binding.setAlias(As.class, "as");
 		binding.setAlias(Asp.class, "asp");
 
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public String getPersistDir() {
@@ -147,10 +154,11 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		this.persistFile.clear();
 
 		if (persistDir != null) {
-			this.persistFile.append(persistDir).append(File.separator).append(PERSIST_FILE_NAME);
+			this.persistFile.append(persistDir).append(File.separator).append(this.name).append("_")
+					.append(PERSIST_FILE_NAME);
 		} else {
 			persistFile.append(System.getProperty(M3UA_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY)))
-					.append(File.separator).append(PERSIST_FILE_NAME);
+					.append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
 		}
 
 		logger.info(String.format("M3UA configuration file path %s", persistFile.toString()));
