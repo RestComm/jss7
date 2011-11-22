@@ -14,6 +14,8 @@
 	<property name="assemble.dir" value="${ant.file.mobicents.release}/../target/load" />
 	<path id="project.class.path">
 	
+		<pathelement location="${assemble.dir}/sctp-api.jar" />
+		<pathelement location="${assemble.dir}/sctp-impl.jar" />
 		<pathelement location="${assemble.dir}/map-api.jar" />
 		<pathelement location="${assemble.dir}/map-impl.jar" />
 		<pathelement location="${assemble.dir}/map-load.jar" />
@@ -24,6 +26,7 @@
 		<pathelement location="${assemble.dir}/m3ua-api.jar" />
 		<pathelement location="${assemble.dir}/m3ua-impl.jar" />
 		<pathelement location="${assemble.dir}/mtp-api.jar" />
+		<pathelement location="${assemble.dir}/mtp.jar" />
 		
 		<!-- mobicents 3rd party -->
 		<pathelement location="${assemble.dir}/asn.jar" />
@@ -68,7 +71,7 @@
 		<delete dir="server" />
 		<mkdir dir="server" />
 		<delete file="log4j-server.log" />
-		<java classname="${packageprefix}.Server" fork="true" maxmemory="128m" classpathref="project.class.path" dir="server">
+		<java classname="${packageprefix}.Server" fork="true" maxmemory="1024m" classpathref="project.class.path" dir="server">
 			<jvmarg value="-Dlog.file.name=log4j-server.log" />
 			<!--
 			<jvmarg value="-XX:+PrintGCDetails" />
@@ -80,10 +83,10 @@
 		<echo message="${cp.property}" />
 		<delete dir="client" />
 		<mkdir dir="client" />
-		<java classname="${packageprefix}.Client" fork="true" maxmemory="128m" classpathref="project.class.path" dir="client">
+		<java classname="${packageprefix}.Client" fork="true" maxmemory="1024m" classpathref="project.class.path" dir="client">
 			<jvmarg value="-Dlog.file.name=log4j-client.log" />
-			<arg value="100" />
-			<arg value="2" />
+			<arg value="10000" />
+			<arg value="10" />
 		</java>
 	</target>
 	<!--

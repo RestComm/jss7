@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -31,22 +29,27 @@
 		<asn.version>1.0.0-SNAPSHOT</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
 		<ss7.version>1.0.0-SNAPSHOT</ss7.version>
-		
+		<sctp.version>1.0.0-SNAPSHOT</sctp.version>
 		<!-- data -->
 		<assemble.dir>${pom.build.directory}/load</assemble.dir>
 	</properties>
 
 	<dependencies>
-		<!--  does not work.... lol
+		<!-- does not work.... lol <dependency> <artifactId>ss7-parent</artifactId> 
+			<groupId>org.mobicents.protocols.ss7</groupId> <version>${ss7.version}</version> 
+			<type>pom</type> <scope>import</scope> </dependency> -->
+		<!-- SCTP -->
 		<dependency>
-			<artifactId>ss7-parent</artifactId>
-			<groupId>org.mobicents.protocols.ss7</groupId>
-			<version>${ss7.version}</version>
-			<type>pom</type>
-			<scope>import</scope>
+			<groupId>org.mobicents.protocols.sctp</groupId>
+			<artifactId>sctp-api</artifactId>
+			<version>${sctp.version}</version>
 		</dependency>
-		
-		 -->
+
+		<dependency>
+			<groupId>org.mobicents.protocols.sctp</groupId>
+			<artifactId>sctp-impl</artifactId>
+			<version>${sctp.version}</version>
+		</dependency>
 		<!-- SS7 -->
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.map</groupId>
@@ -91,6 +94,11 @@
 			<artifactId>mtp-api</artifactId>
 			<version>${ss7.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<artifactId>mtp</artifactId>
+			<version>${ss7.version}</version>
+		</dependency>		
 
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
@@ -103,7 +111,7 @@
 			<artifactId>m3ua-impl</artifactId>
 			<version>${ss7.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.mobicents.protocols.stream</groupId>
 			<artifactId>stream</artifactId>
@@ -128,13 +136,8 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Not managed deps 
-
-		<dependency>
-			<groupId>org.mobicents.external.opencsv</groupId>
-			<artifactId>opencsv</artifactId>
-		</dependency>
--->
+		<!-- Not managed deps <dependency> <groupId>org.mobicents.external.opencsv</groupId> 
+			<artifactId>opencsv</artifactId> </dependency> -->
 		<dependency>
 			<groupId>javolution</groupId>
 			<artifactId>javolution</artifactId>
@@ -165,10 +168,10 @@
 							</classpathExcludes>
 							<resolveTransitiveDependencies>
 								true
-					</resolveTransitiveDependencies>
+							</resolveTransitiveDependencies>
 							<eclipseProjectName>
 								mobicents-map-load
-					</eclipseProjectName>
+							</eclipseProjectName>
 						</configuration>
 					</plugin>
 					<plugin>
@@ -212,13 +215,40 @@
 											<overWrite>true</overWrite>
 											<outputDirectory>
 												${assemble.dir}
-									</outputDirectory>
+											</outputDirectory>
 											<destFileName>
 												map-load.jar
-									</destFileName>
+											</destFileName>
 										</artifactItem>
 
 										<!-- deps -->
+
+										<artifactItem>
+											<groupId>org.mobicents.protocols.sctp</groupId>
+											<artifactId>sctp-api</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+											</outputDirectory>
+											<destFileName>
+												sctp-api.jar
+											</destFileName>
+										</artifactItem>
+
+										<artifactItem>
+											<groupId>org.mobicents.protocols.sctp</groupId>
+											<artifactId>sctp-impl</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+											</outputDirectory>
+											<destFileName>
+												sctp-impl.jar
+											</destFileName>
+										</artifactItem>
+
 										<artifactItem>
 											<groupId>org.mobicents.protocols.ss7.map</groupId>
 											<artifactId>map-api</artifactId>
@@ -226,10 +256,10 @@
 											<overWrite>true</overWrite>
 											<outputDirectory>
 												${assemble.dir}
-									</outputDirectory>
+											</outputDirectory>
 											<destFileName>
 												map-api.jar
-									</destFileName>
+											</destFileName>
 										</artifactItem>
 										<artifactItem>
 											<groupId>org.mobicents.protocols.ss7.map</groupId>
@@ -238,10 +268,10 @@
 											<overWrite>true</overWrite>
 											<outputDirectory>
 												${assemble.dir}
-									</outputDirectory>
+											</outputDirectory>
 											<destFileName>
 												map-impl.jar
-									</destFileName>
+											</destFileName>
 										</artifactItem>
 										<artifactItem>
 											<groupId>org.mobicents.protocols.ss7.sccp</groupId>
@@ -250,10 +280,10 @@
 											<overWrite>true</overWrite>
 											<outputDirectory>
 												${assemble.dir}
-									</outputDirectory>
+											</outputDirectory>
 											<destFileName>
 												sccp-api.jar
-									</destFileName>
+											</destFileName>
 										</artifactItem>
 										<artifactItem>
 											<groupId>org.mobicents.protocols.ss7.sccp</groupId>
@@ -262,10 +292,10 @@
 											<overWrite>true</overWrite>
 											<outputDirectory>
 												${assemble.dir}
-									</outputDirectory>
+											</outputDirectory>
 											<destFileName>
 												sccp-impl.jar
-									</destFileName>
+											</destFileName>
 										</artifactItem>
 										<artifactItem>
 											<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
@@ -274,10 +304,10 @@
 											<overWrite>true</overWrite>
 											<outputDirectory>
 												${assemble.dir}
-									</outputDirectory>
+											</outputDirectory>
 											<destFileName>
 												m3ua-api.jar
-									</destFileName>
+											</destFileName>
 										</artifactItem>
 										<artifactItem>
 											<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
@@ -286,10 +316,10 @@
 											<overWrite>true</overWrite>
 											<outputDirectory>
 												${assemble.dir}
-									</outputDirectory>
+											</outputDirectory>
 											<destFileName>
 												m3ua-impl.jar
-									</destFileName>
+											</destFileName>
 										</artifactItem>
 										<artifactItem>
 											<groupId>org.mobicents.protocols.asn</groupId>
@@ -298,10 +328,10 @@
 											<overWrite>true</overWrite>
 											<outputDirectory>
 												${assemble.dir}
-									</outputDirectory>
+											</outputDirectory>
 											<destFileName>
 												asn.jar
-									</destFileName>
+											</destFileName>
 										</artifactItem>
 										<artifactItem>
 											<groupId>org.mobicents.protocols.ss7.tcap</groupId>
@@ -310,10 +340,10 @@
 											<overWrite>true</overWrite>
 											<outputDirectory>
 												${assemble.dir}
-									</outputDirectory>
+											</outputDirectory>
 											<destFileName>
 												tcap-api.jar
-									</destFileName>
+											</destFileName>
 										</artifactItem>
 										<artifactItem>
 											<groupId>org.mobicents.protocols.ss7.tcap</groupId>
@@ -322,10 +352,10 @@
 											<overWrite>true</overWrite>
 											<outputDirectory>
 												${assemble.dir}
-									</outputDirectory>
+											</outputDirectory>
 											<destFileName>
 												tcap-impl.jar
-									</destFileName>
+											</destFileName>
 										</artifactItem>
 										<artifactItem>
 											<groupId>org.mobicents.protocols.ss7.mtp</groupId>
@@ -334,11 +364,23 @@
 											<overWrite>true</overWrite>
 											<outputDirectory>
 												${assemble.dir}
-									</outputDirectory>
+											</outputDirectory>
 											<destFileName>
 												mtp-api.jar
-									</destFileName>
+											</destFileName>
 										</artifactItem>
+										<artifactItem>
+											<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+											<artifactId>mtp</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+											</outputDirectory>
+											<destFileName>
+												mtp.jar
+											</destFileName>
+										</artifactItem>										
 										<artifactItem>
 											<groupId>org.mobicents.protocols.stream</groupId>
 											<artifactId>stream</artifactId>
@@ -346,10 +388,10 @@
 											<overWrite>true</overWrite>
 											<outputDirectory>
 												${assemble.dir}
-									</outputDirectory>
+											</outputDirectory>
 											<destFileName>
 												stream.jar
-									</destFileName>
+											</destFileName>
 										</artifactItem>
 										<artifactItem>
 											<groupId>javolution</groupId>
@@ -358,10 +400,10 @@
 											<overWrite>true</overWrite>
 											<outputDirectory>
 												${assemble.dir}
-									</outputDirectory>
+											</outputDirectory>
 											<destFileName>
 												javolution.jar
-									</destFileName>
+											</destFileName>
 										</artifactItem>
 										<artifactItem>
 											<groupId>concurrent</groupId>
@@ -370,10 +412,10 @@
 											<overWrite>true</overWrite>
 											<outputDirectory>
 												${assemble.dir}
-									</outputDirectory>
+											</outputDirectory>
 											<destFileName>
 												concurrent.jar
-									</destFileName>
+											</destFileName>
 										</artifactItem>
 										<artifactItem>
 											<groupId>log4j</groupId>
@@ -382,45 +424,34 @@
 											<overWrite>true</overWrite>
 											<outputDirectory>
 												${assemble.dir}
-									</outputDirectory>
+											</outputDirectory>
 											<destFileName>
 												log4j.jar
-									</destFileName>
+											</destFileName>
 										</artifactItem>
-										<!-- <artifactItem> <groupId>org.mobicents.external.appframework</groupId> <artifactId>appframework</artifactId> <type>jar</type> <overWrite>true</overWrite> 
-											<outputDirectory> ${assemble.dir}/lib </outputDirectory> <destFileName> appframework.jar </destFileName> </artifactItem> <artifactItem> <groupId>org.mobicents.external.appframework</groupId> 
-											<artifactId>swing-layout</artifactId> <type>jar</type> <overWrite>true</overWrite> <outputDirectory> ${assemble.dir}/lib </outputDirectory> <destFileName> 
-											swing-layout.jar </destFileName> </artifactItem> <artifactItem> <groupId>org.mobicents.external.appframework</groupId> <artifactId>swing-worker</artifactId> 
-											<type>jar</type> <overWrite>true</overWrite> <outputDirectory> ${assemble.dir}/lib </outputDirectory> <destFileName> swing-worker.jar </destFileName> 
-											</artifactItem> <artifactItem> <groupId>org.mobicents.external.opencsv</groupId> <artifactId>opencsv</artifactId> <type>jar</type> <overWrite>true</overWrite> 
-											<outputDirectory> ${assemble.dir}/lib </outputDirectory> <destFileName> opencsv.jar </destFileName> </artifactItem> -->
+										<!-- <artifactItem> <groupId>org.mobicents.external.appframework</groupId> 
+											<artifactId>appframework</artifactId> <type>jar</type> <overWrite>true</overWrite> 
+											<outputDirectory> ${assemble.dir}/lib </outputDirectory> <destFileName> appframework.jar 
+											</destFileName> </artifactItem> <artifactItem> <groupId>org.mobicents.external.appframework</groupId> 
+											<artifactId>swing-layout</artifactId> <type>jar</type> <overWrite>true</overWrite> 
+											<outputDirectory> ${assemble.dir}/lib </outputDirectory> <destFileName> swing-layout.jar 
+											</destFileName> </artifactItem> <artifactItem> <groupId>org.mobicents.external.appframework</groupId> 
+											<artifactId>swing-worker</artifactId> <type>jar</type> <overWrite>true</overWrite> 
+											<outputDirectory> ${assemble.dir}/lib </outputDirectory> <destFileName> swing-worker.jar 
+											</destFileName> </artifactItem> <artifactItem> <groupId>org.mobicents.external.opencsv</groupId> 
+											<artifactId>opencsv</artifactId> <type>jar</type> <overWrite>true</overWrite> 
+											<outputDirectory> ${assemble.dir}/lib </outputDirectory> <destFileName> opencsv.jar 
+											</destFileName> </artifactItem> -->
 									</artifactItems>
 								</configuration>
 							</execution>
 						</executions>
 					</plugin>
-					<!-- 
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>deploy-DU</id>
-								<phase>install</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<tasks>
-										<copy
-											overwrite="true"
-											file="bin/run.sh"
-											todir="${assemble.dir}" />
-									</tasks>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
- 					-->
+					<!-- <plugin> <artifactId>maven-antrun-plugin</artifactId> <executions> 
+						<execution> <id>deploy-DU</id> <phase>install</phase> <goals> <goal>run</goal> 
+						</goals> <configuration> <tasks> <copy overwrite="true" file="bin/run.sh" 
+						todir="${assemble.dir}" /> </tasks> </configuration> </execution> </executions> 
+						</plugin> -->
 				</plugins>
 			</build>
 		</profile>
