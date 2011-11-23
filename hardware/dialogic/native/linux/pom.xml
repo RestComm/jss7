@@ -39,7 +39,7 @@
 					<compilerProvider>generic</compilerProvider>
 					<compilerStartOptions>
 						<compilerStartOption>
-							-fPIC -O
+							-fPIC -O -m32
 						</compilerStartOption>
 					</compilerStartOptions>
 
@@ -59,7 +59,7 @@
 
 					<linkerStartOptions>
 						<linkerStartOption>
-							-shared -lc -ldl -L${include.dialogic.gctlib} -lgctlib 
+							-shared -lc -ldl -L${include.dialogic.gctlib} -lgctlib -m32
 						</linkerStartOption>
 					</linkerStartOptions>
 
