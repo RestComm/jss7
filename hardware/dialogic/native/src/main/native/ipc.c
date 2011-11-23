@@ -112,8 +112,9 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dialogic_InterProcessComm
 	int i;
 	MSG   *m;
 	
-	
+/*	
 	printf("*********Preparing for sending data*******");
+*/	
 
 	len = (*env)->GetArrayLength(env, msg_buffer);
     body = (*env)->GetByteArrayElements(env, msg_buffer, 0);
