@@ -101,6 +101,7 @@ public class DialogicMtp3UserPart extends Mtp3UserPartBaseImpl {
 
 	@Override
 	public void sendMessage(Mtp3TransferPrimitive msg) throws IOException {
+		
 		if (this.isStarted) {
 			byte[] buf = msg.encodeMtp3();
 			this.ipc.write(buf);
