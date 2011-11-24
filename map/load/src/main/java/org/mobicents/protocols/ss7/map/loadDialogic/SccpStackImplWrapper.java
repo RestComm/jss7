@@ -67,7 +67,7 @@ public class SccpStackImplWrapper extends SccpStackImpl {
 	@Override
 	protected void send(SccpMessageImpl message) throws IOException {
 		super.send(message);
-		logger.warn("Sccp msg sent received");
+		logger.warn("Sccp msg has sent");
 	}
 }
 
