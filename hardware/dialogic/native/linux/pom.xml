@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		<artifactId>mobicents-dialogic-native</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>2.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>libmobicents-dialogic-linux</artifactId>
@@ -39,7 +39,7 @@
 					<compilerProvider>generic</compilerProvider>
 					<compilerStartOptions>
 						<compilerStartOption>
-							-fPIC -O
+							-fPIC -O -m32
 						</compilerStartOption>
 					</compilerStartOptions>
 
@@ -59,7 +59,7 @@
 
 					<linkerStartOptions>
 						<linkerStartOption>
-							-shared -lc -ldl -L${include.dialogic.gctlib} -lgctlib 
+							-shared -lc -ldl -L${include.dialogic.gctlib} -lgctlib -m32
 						</linkerStartOption>
 					</linkerStartOptions>
 
