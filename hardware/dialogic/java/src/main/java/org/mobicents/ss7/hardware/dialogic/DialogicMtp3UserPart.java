@@ -221,9 +221,11 @@ public class DialogicMtp3UserPart extends Mtp3UserPartBaseImpl {
 					Mtp3StatusPrimitive msgStatus = new Mtp3StatusPrimitive(affectedDpc, cause, congestionLevel);
 					sendStatusMessageToLocalUser(msgStatus);
 					break;
-				}
 
-				logger.error("Error while parsing system messages from the Dialogic card: unknown primitive type: " + type);
+				default:
+					logger.error("Error while parsing system messages from the Dialogic card: unknown primitive type: " + type);
+				}
+				
 			} catch (IOException e) {
 				logger.error("IOException while parsing system messages from the Dialogic card: " + e.getMessage(), e);
 			}
