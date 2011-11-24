@@ -118,6 +118,12 @@
 			<version>${stream.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+			<artifactId>mobicents-dialogic</artifactId>
+			<version>${ss7.version}</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>concurrent</groupId>
@@ -142,6 +148,11 @@
 			<groupId>javolution</groupId>
 			<artifactId>javolution</artifactId>
 			<version>${javolution.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.congestion</groupId>
+			<artifactId>congestion</artifactId>
+			<version>${stream.version}</version>
 		</dependency>
 	</dependencies>
 
