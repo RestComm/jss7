@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
+import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
@@ -54,6 +55,7 @@ import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageReques
 import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.InformServiceCentreRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
+import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener;
 import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageRequestIndication;
@@ -82,7 +84,7 @@ import org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart;
  * @author sergey vetyutnev
  * 
  */
-public class ClientDialogic extends TestHarnessDialogic {
+public class ClientDialogic implements MAPDialogListener, MAPServiceSmsListener {
 
 	private static Logger logger;
 
@@ -223,7 +225,7 @@ public class ClientDialogic extends TestHarnessDialogic {
 			nbConcurrentDialogs--;
 		}
 	}
-
+	
 	public static void main(String args[]) {
 
 //		int noOfCalls = Integer.parseInt(args[0]);
@@ -245,7 +247,7 @@ public class ClientDialogic extends TestHarnessDialogic {
 //			BasicConfigurator.configure();
 //		}
 		
-		BasicConfigurator.configure();
+//		BasicConfigurator.configure();
 	
 		logger = Logger.getLogger(ClientDialogic.class);
 
