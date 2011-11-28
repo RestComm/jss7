@@ -460,7 +460,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 	 *            The name of the ASP to be started
 	 * @throws Exception
 	 */
-	public void managementStartAsp(String aspName) throws Exception {
+	public void startAsp(String aspName) throws Exception {
 		AspFactory aspFactory = this.getAspFactory(aspName);
 
 		if (aspFactory == null) {
@@ -486,7 +486,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 	 *            The name of the ASP to be stopped
 	 * @throws Exception
 	 */
-	public void managementStopAsp(String aspName) throws Exception {
+	public void stopAsp(String aspName) throws Exception {
 		AspFactory aspFactory = this.getAspFactory(aspName);
 
 		if (aspFactory == null) {

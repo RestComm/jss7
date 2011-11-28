@@ -322,5 +322,17 @@ public class M3UAShellExecutorTest {
 
 		}
 
+		@Override
+		public String getPersistDir() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setPersistDir(String arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
 	}
 }

@@ -99,7 +99,7 @@ public class M3UAManagementTest {
 
 		this.m3uaMgmt.addRoute(123, 1, 1, "AS1");
 
-		this.m3uaMgmt.managementStartAsp("ASP1");
+		this.m3uaMgmt.startAsp("ASP1");
 
 		this.m3uaMgmt.stop();
 
@@ -119,7 +119,7 @@ public class M3UAManagementTest {
 
 		assertEquals(2, ((TestAssociation) association).getNoOfTimeStartCalled());
 		
-		this.m3uaMgmt.managementStopAsp("ASP1");
+		this.m3uaMgmt.stopAsp("ASP1");
 		
 		this.m3uaMgmt.unassignAspFromAs("AS1", "ASP1");
 		
@@ -333,6 +333,18 @@ public class M3UAManagementTest {
 		public void stopServer(String arg0) throws Exception {
 			// TODO Auto-generated method stub
 
+		}
+
+		@Override
+		public String getPersistDir() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setPersistDir(String arg0) {
+			// TODO Auto-generated method stub
+			
 		}
 
 	}

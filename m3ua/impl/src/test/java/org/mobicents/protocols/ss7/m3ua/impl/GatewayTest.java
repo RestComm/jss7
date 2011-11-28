@@ -199,13 +199,13 @@ public class GatewayTest {
 			m3uaMgmt.addRoute(1408, -1, -1, "client-testas");
 
 			// 6. Start ASP
-			m3uaMgmt.managementStartAsp("client-testasp");
+			m3uaMgmt.startAsp("client-testasp");
 
 		}
 
 		public void stop() throws Exception {
 			// 1. stop ASP
-			m3uaMgmt.managementStopAsp("client-testasp");
+			m3uaMgmt.stopAsp("client-testasp");
 
 		}
 
@@ -272,12 +272,12 @@ public class GatewayTest {
 			m3uaMgmt.addRoute(123, -1, -1, "server-testas");
 
 			// 7. Start ASP
-			m3uaMgmt.managementStartAsp("server-testasp");
+			m3uaMgmt.startAsp("server-testasp");
 
 		}
 
 		public void stop() throws Exception {
-			m3uaMgmt.managementStopAsp("server-testasp");
+			m3uaMgmt.stopAsp("server-testasp");
 			
 			// 2.Remove route
 			m3uaMgmt.removeRoute(123, -1, -1, "server-testas");
