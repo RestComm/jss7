@@ -77,7 +77,7 @@
 				<para>
 					<literal>Shell</literal> is Command Line Interface (CLI) tool which allows to manage different aspects of &THIS.PLATFORM; &THIS.APPLICATION; in interactive manner. 
 					It connects to different instances of &THIS.PLATFORM; &THIS.APPLICATION; which manage <literal>Linksets</literal>,
-					<literal>SCCP</literal> resource, routing and <literal>M3UA</literal>. For detailed information please refer to:	<xref linkend="shell" />.
+					<literal>SCCP</literal> resource, routing, <literal>M3UA</literal> and <literal>SCTP</literal>. For detailed information please refer to:	<xref linkend="shell" />.
 					Usually <literal>Shell</literal> will be invoked from remote machine(remote to <literal>Linksets</literal> and application protocols).
 
 				</para>
@@ -197,80 +197,6 @@
 				</para>
 			</caption>
 		</mediaobject>		
-		
-		<section id="mobicents_signaling_gateway_m3ua">
-			<title>&THIS.PLATFORM; M3UA Stack</title>
-	
-			<para>
-				M3UA is client-server protocol supporting the transport of any SS7 MTP3-User signalling (e.g., ISUP and SCCP messages) over IP. M3UA is defined
-				by the IETF SIGTRAN working group in RFC 4666. 
-				&THIS.PLATFORM; M3UA Stack can be used on Application Server side or can be used on Signaling Gateway side. 
-			</para>
-		
-			<note>
-				<title>Note</title>
-				<para>
-					&THIS.PLATFORM; M3UA Stack uses Java SCTP layer which is available from JDK 7 onwards
-				</para>
-			</note>
-					
-			<section id="mobicents_signaling_gateway_m3ua_as">
-				<title>&THIS.PLATFORM; M3UA Stack on AS side</title>		
-				<para>
-					Diagram below demonstrates the &THIS.PLATFORM; M3UA Stack used on Application Server (AS) side. 
-					The information below explains the basic functionality of the &THIS.PLATFORM; M3UA Stack when used as an Application Server 
-					which will communicate with an External Signaling Gateway 
-				</para>
-				<mediaobject
-					id="m3ua_AS">
-					<imageobject>
-						<imagedata
-							width="300px"
-							align="center"
-							fileref="images/M3UAAs.jpg"
-							format="JPG" />
-					</imageobject>
-					<caption>
-						<para>&THIS.PLATFORM; M3UA Stack configured on AS side
-						</para>
-					</caption>
-				</mediaobject>
-				<para>
-					To use M3UA Stack as AS, the Routing Context (RC) must be known. See Section <xref linkend="configuring_Rem_SGW"/> for configuring M3UA Stack 
-					as AS.
-				</para>
-			</section>
-			
-			<section id="mobicents_signaling_gateway_m3ua_SG">
-				<title>&THIS.PLATFORM; M3UA Stack on SG side</title>			
-				<para>
-					Diagram below demonstrates the &THIS.PLATFORM; M3UA Stack used on Signaling Gateway (SG) side. 
-					The &THIS.PLATFORM; Signaling Gateway provides the Nodal Interworking Function (NIF) that allows SS7 Signaling (SCCP/ISUP)
-					to be inter-worked into the M3UA/IP Network as shown in <xref linkend="mobicents_signaling_gateway"/>
-					
-				</para>
-				<mediaobject
-					id="m3ua_SGW">
-					<imageobject>
-						<imagedata
-							width="300px"
-							align="center"
-							fileref="images/M3UASgw.jpg"
-							format="JPG" />
-					</imageobject>
-					<caption>
-						<para>&THIS.PLATFORM; M3UA Stack configured on SG side
-						</para>
-					</caption>
-				</mediaobject>
-				<para>
-					&THIS.PLATFORM; M3UA Stack used on SG side will share common point code with a set of M3UA Application Server. 
-					M3UA stack on SG side can be configured as Loadbalance or Override traffic mode. It doesn't support Broadcast traffic mode. 
-					See Section <xref linkend="configuring_sgw"/> for configuring M3UA Stack as SG. &THIS.PLATFORM; M3UA Stack used on SG side 
-					doesn't support routing key management messages. The Routing Key should be provisioned statically using the management console.
-				</para>	
-			</section>	
-		</section>
 	 </section>	 
 </chapter>
 
