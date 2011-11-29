@@ -19,6 +19,7 @@
 ------------------
 
   * ASN v@ASN_VERSION@
+  * SCTP v@SCTP_VERSION@
   * SS7 v@SS7_VERSION@
 
   
@@ -27,6 +28,7 @@ SVN Trunk Checkout
 ------------------
 
 http://mobicents.googlecode.com/svn/trunk/protocols/asn
+http://mobicents.googlecode.com/svn/trunk/protocols/sctp
 http://mobicents.googlecode.com/svn/trunk/protocols/ss7
 
 
@@ -35,6 +37,7 @@ SVN Trunk Browse
 ------------------
 
 http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/asn
+http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/sctp
 http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/ss7  
   
 ------------------
@@ -42,6 +45,7 @@ http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/ss7
 ------------------
 
 http://mobicents.googlecode.com/svn/tags/protocols/asn/asn-@ASN_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/asn/asn-@SCTP_VERSION@
 http://mobicents.googlecode.com/svn/tags/protocols/ss7/ss7-@SS7_VERSION@
 
 

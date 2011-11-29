@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
 
 	<parent>
 		<artifactId>mobicents-parent</artifactId>
 		<groupId>org.mobicents</groupId>
-		<version>2.20-SNAPSHOT</version>
+		<version>2.20</version>
 	</parent>
 
 	<artifactId>sources-checkout</artifactId>
@@ -19,19 +20,17 @@
 		<checkout.username>mobicents-read-only</checkout.username>
 		<checkout.password />
 
-			<!-- TAGS 
-		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/asn/asn-1.0.0.BETA3</asn.connectionURL>
-		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/stream/stream-1.0.0.BETA3</stream.connectionURL>
-
-		<ss7.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/mobicents-ss7-1.0.0.BETA8</ss7.connectionURL>
- 		-->
+		<!-- TAGS <asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/asn/asn-1.0.0.BETA3</asn.connectionURL> 
+			<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/stream/stream-1.0.0.BETA3</stream.connectionURL> 
+			<ss7.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/mobicents-ss7-1.0.0.BETA8</ss7.connectionURL> -->
 		<!-- TRUNK -->
 
 		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/asn</asn.connectionURL>
+		<sctp.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/sctp</sctp.connectionURL>
 		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/stream</stream.connectionURL>
-		<ss7.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/protocols/ss7</ss7.connectionURL>
+		<ss7.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/branches/protocols/ss7/1.x</ss7.connectionURL>
 
-		
+
 	</properties>
 
 	<profiles>
@@ -42,6 +41,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-scm-plugin</artifactId>
+						<version>1.5</version>
 						<inherited>false</inherited>
 						<executions>
 							<execution>
@@ -56,10 +56,31 @@
 									<skipCheckoutIfExists>true</skipCheckoutIfExists>
 									<checkoutDirectory>
 										${checkout.basedir}/asn
-							</checkoutDirectory>
+									</checkoutDirectory>
 									<connectionUrl>
 										${asn.connectionURL}
-							</connectionUrl>
+									</connectionUrl>
+									<username>${checkout.username}</username>
+									<password>${checkout.password}</password>
+								</configuration>
+							</execution>
+
+							<execution>
+								<id>sctp-checkout</id>
+								<goals>
+									<goal>checkout</goal>
+								</goals>
+								<phase>validate</phase>
+								<configuration>
+									<scmVersion>HEAD</scmVersion>
+									<scmVersionType>revision</scmVersionType>
+									<skipCheckoutIfExists>true</skipCheckoutIfExists>
+									<checkoutDirectory>
+										${checkout.basedir}/sctp
+									</checkoutDirectory>
+									<connectionUrl>
+										${sctp.connectionURL}
+									</connectionUrl>
 									<username>${checkout.username}</username>
 									<password>${checkout.password}</password>
 								</configuration>
@@ -103,7 +124,7 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
 	</profiles>
 	<build>
 		<plugins>
@@ -122,52 +143,4 @@
 		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/release</developerConnection>
 		<url>http://mobicents.googlecode.com/svn/tags/protocols/ss7/release</url>
 	</scm>
-
-	<repositories>
-		<repository>
-			<id>maven</id>
-			<name>Maven Repository</name>
-			<url>http://repo1.maven.org/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>jboss</id>
-			<name>JBoss Repository</name>
-			<url>http://repository.jboss.org/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>jboss-snapshots</id>
-			<name>JBoss Snapshot Repository</name>
-			<url>http://snapshots.jboss.org/maven2</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-
-		<repository>
-			<id>jboss-public-repository-group</id>
-			<name>JBoss Public Maven Repository Group</name>
-			<url>
-				https://repository.jboss.org/nexus/content/groups/public/
-			</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
-	</repositories>
-
 </project>
