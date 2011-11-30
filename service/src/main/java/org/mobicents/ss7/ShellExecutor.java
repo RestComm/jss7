@@ -167,13 +167,14 @@ public class ShellExecutor implements Runnable {
 									chan.send(messageFactory.createMessage("Invalid Subject"));
 								} else {
 									// Nullify examined options
-									options[0] = null;
+									//options[0] = null;
 
 									switch (subject) {
 									case LINKSET:
 										this.txMessage = this.linksetExecutor.execute(options);
 										chan.send(messageFactory.createMessage(this.txMessage));
 										break;
+									case SCTP:
 									case M3UA:
 										this.txMessage = this.m3UAShellExecutor.execute(options);
 										chan.send(messageFactory.createMessage(this.txMessage));

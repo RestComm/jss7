@@ -41,6 +41,7 @@
 	<modules>
 		<module>docs</module>
 		<module>clock</module>
+		<module>congestion</module>
 		<module>m3ua</module>
 		<module>mtp</module>
 		<module>management</module>

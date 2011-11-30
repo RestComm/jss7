@@ -2,26 +2,32 @@
 <deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="urn:jboss:bean-deployer:2.0">
 
-	<!-- ==================================================================== -->
-	<!-- M3UA -->
-	<!-- ClientM3UAManagement is managing the ASP side commands -->
-	<!-- ==================================================================== -->
-	<bean name="ClientM3UAManagement"
-		class="org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAManagement">
-		<property name="persistDir">${jboss.server.data.dir}</property>
+
+	<bean name="SCTPManagement" class="org.mobicents.protocols.sctp.ManagementImpl">
+		<constructor>
+		         <parameter>SCTPManagement</parameter>
+	   	</constructor>
+		<property name="singleThread">true</property>
+		<property name="connectDelay">30000</property>
 	</bean>
 
-	<bean name="M3UAShellExecutor"
-		class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
-		<property name="m3uaManagement">
-			<inject bean="ClientM3UAManagement" />
+	<!-- ==================================================================== -->
+	<!-- M3UA -->
+	<!-- M3UAManagement is managing the m3ua side commands -->
+	<!-- ==================================================================== -->
+	<bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement">
+		<property name="persistDir">${jboss.server.data.dir}</property>
+		<property name="transportManagement">
+			<inject bean="SCTPManagement" />
 		</property>
 	</bean>
 
-	<bean name="Mtp3UserPart"
-		class="org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAProcess">
-		<property name="clientM3UAManagement">
-			<inject bean="ClientM3UAManagement" />
+	<bean name="M3UAShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
+		<property name="m3uaManagement">
+			<inject bean="Mtp3UserPart" />
+		</property>
+		<property name="sctpManagement">
+			<inject bean="SCTPManagement" />
 		</property>
 	</bean>
 

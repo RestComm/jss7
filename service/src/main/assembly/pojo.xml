@@ -36,6 +36,8 @@
 				<include>org.mobicents.protocols.ss7.hardware:mobicents-dahdi</include>
 				<include>org.mobicents.protocols.ss7.hardware:mobicents-dialogic</include>
 				<include>org.mobicents.protocols.ss7.hardware:mobicents-m3ua</include>
+				<include>org.mobicents.protocols.sctp:sctp-api</include>
+				<include>org.mobicents.protocols.sctp:sctp-impl</include>
 			</includes>
 		</dependencySet>
 		

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="map-api/src/main/java"/>
 	<classpathentry kind="src" path="map-impl/src/test/java"/>
 	<classpathentry kind="src" path="map-impl/src/main/java"/>
-	<classpathentry kind="src" path="load/src/main/java"/>
+	<classpathentry kind="src" path="map-api/src/main/java"/>
 	<classpathentry kind="var" path="M2_REPO/apache-xerces/xml-apis/2.9.1/xml-apis-2.9.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/bcel/bcel/5.1/bcel-5.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/beust/jcommander/1.12/jcommander-1.12.jar"/>
@@ -58,10 +57,13 @@
 	<classpathentry kind="var" path="M2_REPO/org/jboss/security/jbosssx-client/2.0.3.SP1/jbosssx-client-2.0.3.SP1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/test/jboss-test/1.1.4.GA/jboss-test-1.1.4.GA.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/asn/asn/1.0.0-SNAPSHOT/asn-1.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/sctp/sctp-api/1.0.0-SNAPSHOT/sctp-api-1.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/congestion/congestion/1.0.0-SNAPSHOT/congestion-1.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/m3ua/m3ua-api/1.0.0-SNAPSHOT/m3ua-api-1.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/m3ua/m3ua-impl/1.0.0-SNAPSHOT/m3ua-impl-1.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/management/shell/1.0.0-SNAPSHOT/shell-1.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/mtp/mtp-api/1.0.0-SNAPSHOT/mtp-api-1.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/mtp/mtp/1.0.0-SNAPSHOT/mtp-1.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/sccp/sccp-api/1.0.0-SNAPSHOT/sccp-api-1.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/sccp/sccp-impl/1.0.0-SNAPSHOT/sccp-impl-1.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/protocols/ss7/tcap/tcap-api/1.0.0-SNAPSHOT/tcap-api-1.0.0-SNAPSHOT.jar"/>

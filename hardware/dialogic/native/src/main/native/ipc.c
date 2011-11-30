@@ -25,7 +25,10 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dialogic_InterProcessComm
 	MSG *m;
 	int i;
 
+	//Function to receive a message from a module's own message queue. This function returns immediately if there are no messages ready.
 	// h = GCT_grab(src_module_id);
+
+	// Function to receive a message from a module's own message queue. The function does not return until a message is ready.
 	h = GCT_receive(src_module_id);
 
 	if (h == 0) {

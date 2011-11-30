@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>ss7-parent</artifactId>
@@ -29,7 +30,7 @@
 		<dependency>
 			<artifactId>mtp-api</artifactId>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<artifactId>mtp</artifactId>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
@@ -39,13 +40,13 @@
 			<groupId>org.mobicents.protocols.ss7.management</groupId>
 		</dependency>
 
-		<!-- Hardware Dahdi Java-->
+		<!-- Hardware Dahdi Java -->
 		<dependency>
 			<artifactId>mobicents-dahdi</artifactId>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		</dependency>
 
-		<!-- Hardware Dialogic Java-->
+		<!-- Hardware Dialogic Java -->
 		<dependency>
 			<artifactId>mobicents-dialogic</artifactId>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
@@ -56,11 +57,11 @@
 			<artifactId>m3ua-api</artifactId>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
 		</dependency>
-		
+
 		<dependency>
 			<artifactId>m3ua-impl</artifactId>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
-		</dependency>		
+		</dependency>
 
 		<dependency>
 			<groupId>log4j</groupId>
@@ -84,6 +85,14 @@
 		<dependency>
 			<artifactId>shell</artifactId>
 			<groupId>org.mobicents.protocols.ss7.management</groupId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.sctp</groupId>
+			<artifactId>sctp-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.sctp</groupId>
+			<artifactId>sctp-impl</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -131,7 +140,8 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<copy todir="${jboss.home}/server/${node}/deploy/mobicents-ss7-service">
+								<copy
+									todir="${jboss.home}/server/${node}/deploy/mobicents-ss7-service">
 									<fileset dir="${project.build.directory}/mobicents-ss7-service">
 									</fileset>
 								</copy>
@@ -147,7 +157,8 @@
 						<configuration>
 							<tasks>
 								<delete failonerror="false" includeemptydirs="true">
-									<fileset dir="${jboss.home}/server/${node}/deploy/mobicents-ss7-service" />
+									<fileset
+										dir="${jboss.home}/server/${node}/deploy/mobicents-ss7-service" />
 								</delete>
 							</tasks>
 						</configuration>
