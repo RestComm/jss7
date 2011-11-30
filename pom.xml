@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.mobicents</groupId>
 		<artifactId>mobicents-parent</artifactId>
-		<version>2.19</version>
+		<version>2.20</version>
 	</parent>
 
 	<artifactId>ss7-parent</artifactId>
@@ -23,7 +23,7 @@
 	<properties>
 		<!-- maven.test.skip>false</maven.test.skip -->
 		<mobicents.tools.mavenplugin.eclipse.version>
-			1.0.0.BETA2
+			1.0.0.FINAL
 		</mobicents.tools.mavenplugin.eclipse.version>
 		<concurrent.version>1.3.4</concurrent.version>
 		<log4j.version>1.2.14</log4j.version>
@@ -33,9 +33,9 @@
 		<compiler.plugin.version>2.0.2</compiler.plugin.version>
 		<compile.source>1.7</compile.source>
 		<!-- mobicents but not strictly ss7 -->
-		<asn.version>1.0.0-SNAPSHOT</asn.version>
+		<asn.version>1.0.0.CR1</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
-		<sctp.version>1.0.0-SNAPSHOT</sctp.version>
+		<sctp.version>1.0.0.BETA1</sctp.version>
 	</properties>
 
 	<modules>
@@ -50,7 +50,7 @@
 		<module>tcap</module>
 		<module>map</module>
 		<module>service</module>
-		<module>sgw</module>
+		<!--  module>sgw</module -->
 	</modules>
 
 	<!-- declare our babies -->
@@ -72,6 +72,12 @@
 			<dependency>
 				<groupId>org.mobicents.protocols.sctp</groupId>
 				<artifactId>sctp-api</artifactId>
+				<version>${sctp.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mobicents.protocols.sctp</groupId>
+				<artifactId>sctp-impl</artifactId>
 				<version>${sctp.version}</version>
 			</dependency>
 			<!-- Clock -->
@@ -366,51 +372,4 @@
 			http://mobicents.googlecode.com/svn/trunk/protocols/ss7
 		</url>
 	</scm>
-
-	<repositories>
-		<repository>
-			<id>maven</id>
-			<name>Maven Repository</name>
-			<url>http://repo1.maven.org/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>jboss</id>
-			<name>JBoss Repository</name>
-			<url>http://repository.jboss.org/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>jboss-snapshots</id>
-			<name>JBoss Snapshot Repository</name>
-			<url>http://snapshots.jboss.org/maven2</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-
-		<repository>
-			<id>jboss-public-repository-group</id>
-			<name>JBoss Public Maven Repository Group</name>
-			<url>
-				https://repository.jboss.org/nexus/content/groups/public/
-			</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
-	</repositories>
 </project>
