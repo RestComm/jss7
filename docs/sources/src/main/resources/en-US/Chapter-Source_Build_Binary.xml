@@ -196,9 +196,11 @@ Halting VM]]></screen>
 			<listitem>
 				<para><literal>M3UA</literal></para>
 			</listitem>
+			<!-- 
 			<listitem>
 				<para><literal>dahdi</literal></para>
-			</listitem>			
+			</listitem>		
+			 -->	
 			<listitem>
 				<para><literal>dialogic</literal></para>
 			</listitem>			
@@ -209,101 +211,35 @@ Halting VM]]></screen>
 		<section id="configuring_Rem_SGW">
 			<title>Configuring M3UA</title>
 			<para> 
-				<literal>ClientM3UAProcess</literal> is only needed if the underlying SS7 service will leverage <literal>M3UA</literal>.
-				<literal>ClientM3UAProcess</literal> acts as remote Signaling Gateway Process. <literal>M3UAShellExecutor</literal>
-				accepts the <literal>M3UA</literal> commands and executes necessary operations. <literal>ClientM3UAManagement</literal> 
-				contains the list of Application Server (AS) (and list  of Application Server Process (ASP) within each AS) connecting 
-				to external Signaling Gateway (SG) and also manages them. 
+				<literal>M3UAManagement</literal> is only needed if the underlying SS7 service will leverage <literal>M3UA</literal>.
+				<classname>M3UAManagement</classname> configuration is further explained in <xref linkend="mobicents_m3ua_management" /> 
 			</para>
 			
 					<programlisting language="XML" role="XML"><![CDATA[
 	<!-- ==================================================================== -->
-	<!-- M3UA                                                                 -->
-	<!-- ClientM3UAManagement is managing the ASP side commands               -->
+	<!-- M3UA -->
+	<!-- M3UAManagement is managing the m3ua side commands -->
 	<!-- ==================================================================== -->
-	<bean name="ClientM3UAManagement"
-		class="org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAManagement">
+	<bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement">
+		<constructor>
+			<parameter>Mtp3UserPart</parameter>
+		</constructor>
 		<property name="persistDir">${jboss.server.data.dir}</property>
+		<property name="transportManagement">
+			<inject bean="SCTPManagement" />
+		</property>
 	</bean>
 
 	<bean name="M3UAShellExecutor"
 		class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
 		<property name="m3uaManagement">
-			<inject bean="ClientM3UAManagement" />
+			<inject bean="Mtp3UserPart" />
 		</property>
-	</bean>
-
-	<bean name="Mtp3UserPart"
-		class="org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAProcess">
-		<property name="clientM3UAManagement">
-			<inject bean="ClientM3UAManagement" />
+		<property name="sctpManagement">
+			<inject bean="SCTPManagement" />
 		</property>
 	</bean>]]>
                         </programlisting>		
-			<para><literal>ClientM3UAManagement</literal> when started looks for file's <filename>m3ua-client.xml</filename> and 
-			<filename>m3ua-clientroute.xml</filename>. The <filename>m3ua-client.xml</filename> contains serialized information about 
-			AS and ASP configured for this <literal>ClientM3UAProcess</literal>. The <filename>m3ua-clientroute.xml</filename> contains 
-			serialized information about defined routes. 
-			</para>			
-			<para>
-				Route maintains the availability status of a remote Point Code in the SS7 network via one or more Signaling Gateways.
-				Application Hosts connecting to Signaling Gateways will require the configuration of Routes for each Remote Signaling 
-				Point Code they wish to communicate with.
-			</para>
-
-		</section>
-					
-		<section id="configuring_LinksetFactory">
-			<title>Configuring dahdi</title>
-			<para><literal>Dahdi</literal> based MTP layer will only be used when you have installed dahdi based SS7 hardware (Sangoma or Diguim cards). 
-			
-			<literal>DahdiLinksetFactory</literal> is responsible to create 
-			new instances of corresponding <literal>DahdiLinkset</literal> when instructed by <literal>LinksetManager</literal>. 
-			</para>
-			
-			<itemizedlist>
-				<listitem>
-					<para><literal>DahdiLinksetFactory</literal> </para>
-					<programlisting language="XML" role="XML"><![CDATA[
-	<bean name="DahdiLinksetFactory"
-		class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
-	</bean>]]>
-                        </programlisting>					
-				</listitem>
-			</itemizedlist>					
-			
-			<para> <literal>LinksetFactoryFactory</literal> is just a call-back class listening for new factories deployed 
-			and maintains Map of available factory name vs factory. You should never touch this bean.</para>
-			
-		<section id="configuring_LinksetManager">
-			<title>Configuring LinksetManager</title>
-			<para> 
-				<literal>LinksetManager</literal> is responsible for managing <literal>Linkset</literal> and <literal>Link</literal>.
-			</para>
-			<programlisting language="XML" role="XML"><![CDATA[<!-- ================================================ -->
-    <!-- Linkset manager Service                                              -->
-    <!-- ================================================ -->
-	<bean name="LinksetManager"
-		class="org.mobicents.ss7.linkset.oam.LinksetManager">
-
-		<property name="linksetFactoryFactory">
-			<inject bean="LinksetFactoryFactory" />
-		</property>
-		<property name="persistDir">${jboss.server.data.dir}</property>
-	</bean>
-	
-	<bean name="LinksetExecutor"
-		class="org.mobicents.ss7.linkset.oam.LinksetExecutor">
-		<property name="linksetManager">
-			<inject bean="LinksetManager" />
-		</property>
-	</bean>]]></programlisting>		
-			<para>LinksetManager when started looks for file  <filename>linksetmanager.xml</filename> containing serialized information about 
-			underlying linksets and links. The directory path is configurable by changing value of <literal>persistDir</literal> property.</para>
-			<warning><para><filename>linksetmanager.xml</filename> should never be edited by hand. Always use Shell Client to connect to 
-			&THIS.PLATFORM; &THIS.APPLICATION; and execute commands.</para></warning>	
-			<para><literal>LinksetExecutor</literal> accepts the <literal>linkset</literal> commands and executes necessary operations.</para>
-		</section>	
 		</section>
 		
 		<section id="configuring_dialogic">
@@ -341,21 +277,15 @@ Halting VM]]></screen>
     <!-- Shell Service                                                        -->
     <!-- ================================================ -->
 	<!-- Define Shell Executor -->
-	<bean name="ShellExecutor"
-		class="org.mobicents.ss7.ShellExecutor">
+	<bean name="ShellExecutor" class="org.mobicents.ss7.ShellExecutor">
 		<property name="address">${jboss.bind.address}</property>
 		<property name="port">3435</property>
-		<!-- LinksetExecutor required only if dahdi based hardware is installed. -->
-		<property name="linksetExecutor">
-			<inject bean="LinksetExecutor" />
-		</property>
-		<!-- M3UAShellExecutor required only if M3UA will be leveraged. -->
-		<property name="m3UAShellExecutor">
-			<inject bean="M3UAShellExecutor" />
-		</property>
-		<!-- To manage SCCP resource and rules -->
+
 		<property name="sccpExecutor">
 			<inject bean="SccpExecutor" />
+		</property>
+		<property name="m3UAShellExecutor">
+			<inject bean="M3UAShellExecutor" />
 		</property>
 	</bean>]]></programlisting>		
 			<para>By default ShellExecutor listens at <literal>jboss.bind.address</literal> and port <literal>3435</literal>. 
@@ -493,264 +423,7 @@ Halting VM]]></screen>
 		
 		
 <!-- Configuring Signaling Gateway -->		
-		<section
-			id="installing_sgw_binary">
-			<title>Installing &THIS.PLATFORM; Signaling Gateway Binary</title>
-			<para>
-				&THIS.PLATFORM; Signaling Gateway Binary doesn't require any additional steps. You may copy <literal>mobicents-sgw</literal>
-				to any folder of your choice.
-			</para>	
-		</section>		
-		
-		
-		<section
-			id="running_sgw_binary">
-			<title>Running &THIS.PLATFORM; Signaling Gateway</title>
-			<para>
-				In the Linux terminal or Windows command prompt, the
-				&THIS.PLATFORM; Signaling Gateway has started successfully if the
-				last line of output is similar to the following
-			</para>
-			<programlisting><![CDATA[15:51:18,247 INFO  [MainDeployer] [[[[[[[[[ Mobicents Signaling Gateway: release.version=]]>&THIS.VERSION; <![CDATA[Started ]]]]]]]]]]]></programlisting>
-			
-			<section id="starting_sgw_binary">
-			<title>Starting &THIS.PLATFORM; Signaling Gateway</title>			
-				<procedure>
-					<title>
-						Running the &THIS.PLATFORM; Signaling Gateway on Linux
-					</title>
-					<step>
-						<para>
-							Change the working directory to installation
-							directory (the one in which the zip file's
-							contents was extracted to)
-						</para>
-						<screen>downloads]$ cd &quot;mobicents-ss7-&lt;version&gt;/ss7/mobicents-sgw&quot;</screen>
-					</step>
-					<step>
-						<para>
-							(Optional) Ensure that the
-							<filename>bin/run.sh</filename>
-							start script is executable.
-						</para>
-						<screen>mobicents-sgw$ chmod +x bin/run.sh</screen>
-					</step>
-					<step>
-						<para>
-							Execute the
-							<filename>run.sh</filename>
-							Bourne shell script.
-						</para>
-						<screen>mobicents-sgw$ ./bin/run.sh</screen>
-					</step>
-				</procedure>
 	
-				<procedure>
-					<title>
-						Running the &THIS.PLATFORM; Signaling Gateway on <productname>Windows</productname>
-					</title>
-					<step>
-						<para>
-							Using Windows Explorer, navigate to the <filename>bin</filename> subfolder in the installation directory.
-						</para>
-					</step>
-					<step>
-						<para>
-							The preferred way to start the &THIS.PLATFORM; Signaling Gateway is from the Command Prompt. The command
-							line interface displays details of the startup
-							process, including any problems encountered
-							during the startup process.
-						</para>
-						<para>
-							Open the Command Prompt via the <guilabel>Start</guilabel> menu and navigate to the correct folder:
-						</para>
-						<screen>C:\Users\&lt;user&gt;\My	Downloads&gt;cd &quot;mobicents-ss7-&lt;version&gt;\ss7\mobicents-sgw&quot;</screen>
-					</step>
-					<step>
-						<para>
-							Start the Gateway by executing one of the following files:
-							<itemizedlist>
-								<listitem>
-									<para>
-										<filename>run.bat</filename>
-										batch file:
-									</para>
-									<screen>C:\Users\&lt;user&gt;\My Downloads\mms-standalone&lt;version&gt;&gt;bin\run.bat</screen>
-								</listitem>
-							</itemizedlist>
-						</para>
-					</step>
-				</procedure>	
-			</section>		
-			<section id="sgw-Running-alter">
-				<title>Start the Gateway With Alternate Configuration</title>
-				<para>
-					Using <literal>run.sh</literal> without any arguments binds the gateway to <literal>127.0.0.1</literal>. 
-					To bind gateway to different ip, pass the ip address as value to <literal>-b</literal> command line option. 
-					For example to bind the server to <literal>115.252.103.220</literal>
-				</para>
-				<screen>mobicents-sgw$ ./bin/run.sh -b 115.252.103.220</screen>
-			</section>	
-			<section id="sgw-Stopping">
-				<title>Stopping</title>
-				<para>
-					The only option to stop the gateway is by pressing <literal>Ctrl c</literal>  and bringing down the JVM or kill the process.
-				</para>
-			</section>					
-		</section>			
-		
-	<section id="configuring_sgw">
-		<title>
-			Configuring &THIS.PLATFORM; Signaling Gateway
-		</title>
-		<para>Configuration is done through an XML descriptor named <filename>sgw-beans.xml</filename> and is 
-		located at <filename>mobicents-sgw/deploy</filename>, </para>
-		
-		<section id="configuring_SGWP">
-			<title>Configuring Signaling Gateway Process</title>
-			<para> 
-				Signaling Gateway Process that contains the list of Remote Application Server (Rem AS) (and list 
-				of Remote Application Server Process (Rem ASP) within each rem AS) connecting to external Application Server (AS).  
-				<literal>M3UAShellExecutor</literal> accepts the <literal>M3UA</literal> commands and executes necessary operations.
-			</para>
-			
-					<programlisting language="XML" role="XML"><![CDATA[
-    <!-- ================================================ -->
-    <!-- Signalling Gateway Process Service               -->
-    <!-- ================================================ -->
-	<bean name="SgpImpl"
-		class="org.mobicents.protocols.ss7.m3ua.impl.sg.SgpImpl">
-		<constructor>
-			<parameter>${sgw.bind.address}</parameter>
-			<parameter>3434</parameter>
-		</constructor>
-	</bean>
-
-	<bean name="M3UAShellExecutor"
-		class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
-		<property name="sgp">
-			<inject bean="SgpImpl" />
-		</property>
-	</bean>]]>
-                        </programlisting>	
-			<para>
-				<literal>SgpImpl</literal> listens at ip <literal>${sgw.bind.address}</literal> and port <literal>3434</literal> for incoming
-				request from ASP. 
-			</para>
-
-		</section>
-					
-		<section id="sgw_configuring_LinksetFactory">
-			<title>Configuring LinksetFactory</title>
-			<para> Concrete implementation of <literal>LinksetFactory</literal> is responsible to create 
-			new instances of corresponding <literal>Linkset</literal> when instructed by <literal>LinksetManager</literal>. 
-			&THIS.PLATFORM; Signaling Gateway defines two linkset factories : </para>
-			
-			<itemizedlist>
-				<listitem>
-					<para><literal>DahdiLinksetFactory</literal> </para>
-					<programlisting language="XML" role="XML"><![CDATA[
-	<bean name="DahdiLinksetFactory"
-		class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
-	</bean>]]>
-                        </programlisting>					
-				</listitem>
-				<listitem>
-					<para><literal>DialogicLinksetFactory</literal></para>
-					 <programlisting language="XML" role="XML"><![CDATA[
-	<bean name="DialogicLinksetFactory"
-		class="org.mobicents.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
-	</bean>]]>
-                        </programlisting>
-				</listitem>
-			</itemizedlist>					
-			<para>Its highly unlikely that you would require both the factories on same gateway. If you have <literal>dahdi</literal> based 
-			SS7 card installed, keep <literal>DahdiLinksetFactory</literal> and remove other. If you have <literal>dialogic</literal> based 
-			SS7 card installed, keep <literal>DialogicLinksetFactory</literal> and remove other. 
-			</para>
-			<para> <literal>LinksetFactoryFactory</literal> is just a call-back class listening for new factories deployed 
-			and maintains Map of available factory name vs factory. You should never touch this bean.</para>
-		</section>	
-		<section id="sgw_configuring_LinksetManager">
-			<title>Configuring LinksetManager</title>
-			<para> 
-				<literal>LinksetManager</literal> is responsible for managing <literal>Linkset</literal> and <literal>Link</literal>.
-			</para>
-			<programlisting language="XML" role="XML"><![CDATA[<!-- ================================================ -->
-    <!-- Linkset manager Service                                              -->
-    <!-- ================================================ -->
-	<bean name="LinksetManager"
-		class="org.mobicents.ss7.linkset.oam.LinksetManager">
-
-		<property name="linksetFactoryFactory">
-			<inject bean="LinksetFactoryFactory" />
-		</property>
-		<property name="persistDir">${linkset.persist.dir}</property>
-	</bean>
-	
-	<bean name="LinksetExecutor"
-		class="org.mobicents.ss7.linkset.oam.LinksetExecutor">
-		<property name="linksetManager">
-			<inject bean="LinksetManager" />
-		</property>
-	</bean>]]></programlisting>		
-			<para>LinksetManager when started looks for file  <filename>linksetmanager.xml</filename> containing serialized information about 
-			underlying linksets and links. The directory path is configurable by changing value of <literal>persistDir</literal> property.</para>
-			<warning><para><filename>linksetmanager.xml</filename> should never be edited by hand. Always use Shell Client to connect to 
-			&THIS.PLATFORM; Signaling Gateway and execute commands.</para></warning>	
-			<para><literal>LinksetExecutor</literal> accepts the <literal>linkset</literal> commands and executes necessary operations.</para>
-		</section>	
-		
-		<section id="sgw_configuring_ShellExecutor">
-			<title>Configuring ShellExecutor</title>
-			<para> 
-				<literal>ShellExecutor</literal> is responsible for listening to incoming command. Received commands are executed on local resources to 
-				perform actions like creation and management of <literal>Linkset</literal>, 
-				management of <literal>M3UA</literal> stack.
-			</para>
-			<programlisting language="XML" role="XML"><![CDATA[<!-- ================================================ -->
-    <!-- Shell Service                                                        -->
-    <!-- ================================================ -->
-	<bean name="ShellExecutor"
-		class="org.mobicents.ss7.sgw.ShellExecutor">
-		<property name="address">${sgw.bind.address}</property>
-		<property name="port">3436</property>
-		<property name="linksetExecutor">
-			<inject bean="LinksetExecutor" />
-		</property>
-		<property name="m3UAShellExecutor">
-			<inject bean="M3UAShellExecutor" />
-		</property>
-	</bean>]]></programlisting>		
-			<para>By default ShellExecutor listens at <literal>sgw.bind.address</literal> and port <literal>3436</literal>. 
-			You may set the <literal>address</literal> property to any valid IP address that your host is assigned. 
-			The shell commands are exchanged over TCP/IP.</para>
-		</section>	
-		
-		<section id="sgw_configuring_SGW">
-			<title>Configuring SignalingGateway</title>
-			<para> 
-				<literal>SignalingGateway</literal> acts as core engine binding all the components together. 
-			</para>
-			<programlisting language="XML" role="XML"><![CDATA[        <!-- ================================================ -->
-    <!-- Mobicents Signaling Gateway                                      -->
-    <!-- ================================================ -->
-	<bean name="SignalingGateway"
-		class="org.mobicents.ss7.sgw.SignalingGateway">
-
-		<property name="shellExecutor">
-			<inject bean="ShellExecutor" />
-		</property>
-
-		<property name="nodalInterworkingFunction">
-			<inject bean="NodalInterworkingFunction" />
-		</property>
-
-	</bean>]]></programlisting>		
-			<para>The <literal>NodalInterworkingFunction</literal> sits between the SS7 netwrok and IP network and routes messages 
-			to/from both the MTP3 and the M3UA layer, based on the SS7 DPC or DPC/SI address information</para>
-		</section>			
-	</section>		
 		
 	<section
 		id="source_code">
