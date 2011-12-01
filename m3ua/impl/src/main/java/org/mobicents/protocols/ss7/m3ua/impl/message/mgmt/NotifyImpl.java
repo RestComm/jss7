@@ -92,7 +92,9 @@ public class NotifyImpl extends M3UAMessageImpl implements Notify {
 	}
 
 	public void setRoutingContext(RoutingContext rc) {
-		parameters.put(Parameter.Routing_Context, rc);
+		if (rc != null) {
+			parameters.put(Parameter.Routing_Context, rc);
+		}
 	}
 
 	public void setStatus(Status status) {

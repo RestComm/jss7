@@ -70,7 +70,9 @@ public class ASPInactiveAckImpl extends M3UAMessageImpl implements ASPInactiveAc
 	}
 
 	public void setRoutingContext(RoutingContext rc) {
-		parameters.put(Parameter.Routing_Context, rc);
+		if (rc != null) {
+			parameters.put(Parameter.Routing_Context, rc);
+		}
 	}
 
 }

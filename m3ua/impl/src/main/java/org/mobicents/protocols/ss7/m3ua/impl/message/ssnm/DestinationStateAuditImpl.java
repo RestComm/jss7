@@ -80,7 +80,9 @@ public class DestinationStateAuditImpl extends M3UAMessageImpl implements Destin
 	}
 
 	public void setRoutingContexts(RoutingContext routingCntx) {
-		parameters.put(Parameter.Routing_Context, routingCntx);
+		if (routingCntx != null) {
+			parameters.put(Parameter.Routing_Context, routingCntx);
+		}
 	}
 
 	@Override

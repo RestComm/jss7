@@ -80,7 +80,9 @@ public class DestinationUnavailableImpl extends M3UAMessageImpl implements Desti
 	}
 
 	public void setRoutingContexts(RoutingContext routingCntx) {
-		parameters.put(Parameter.Routing_Context, routingCntx);
+		if (routingCntx != null) {
+			parameters.put(Parameter.Routing_Context, routingCntx);
+		}
 	}
 
 	@Override

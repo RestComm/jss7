@@ -78,7 +78,9 @@ public class ASPActiveImpl extends M3UAMessageImpl implements ASPActive {
 	}
 
 	public void setRoutingContext(RoutingContext rc) {
-		parameters.put(Parameter.Routing_Context, rc);
+		if (rc != null) {
+			parameters.put(Parameter.Routing_Context, rc);
+		}
 
 	}
 

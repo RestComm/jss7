@@ -82,7 +82,9 @@ public class SignallingCongestionImpl extends M3UAMessageImpl implements Signall
 	}
 
 	public void setRoutingContexts(RoutingContext routingCntx) {
-		parameters.put(Parameter.Routing_Context, routingCntx);
+		if (routingCntx != null) {
+			parameters.put(Parameter.Routing_Context, routingCntx);
+		}
 	}
 
 	public ConcernedDPC getConcernedDPC() {

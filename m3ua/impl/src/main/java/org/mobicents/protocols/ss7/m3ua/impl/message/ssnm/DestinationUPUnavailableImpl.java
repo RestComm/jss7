@@ -85,7 +85,9 @@ public class DestinationUPUnavailableImpl extends M3UAMessageImpl implements Des
 	}
 
 	public void setRoutingContext(RoutingContext routingCntx) {
-		parameters.put(Parameter.Routing_Context, routingCntx);
+		if (routingCntx != null) {
+			parameters.put(Parameter.Routing_Context, routingCntx);
+		}
 	}
 
 	public void setUserCause(UserCause usrCau) {

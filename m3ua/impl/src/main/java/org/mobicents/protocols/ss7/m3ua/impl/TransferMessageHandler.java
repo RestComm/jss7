@@ -47,8 +47,7 @@ public class TransferMessageHandler extends MessageHandler {
 						.sendTransferMessageToLocalUser(mtp3TransferPrimitive, payload.getData().getSLS());
 			} else {
 				logger.error(String.format(
-						"Rx : PayloadData for Aspfactory=%s for RoutingContext=%d. But ASP State=%s. Message=%s", rc,
-						this.aspFactory.getName(), aspState, payload));
+						"Rx : PayloadData for Aspfactory=%s with null RoutingContext. But ASP State=%s. Message=%s", this.aspFactory.getName(), aspState, payload));
 			}
 
 		} else {
