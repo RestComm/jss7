@@ -180,11 +180,11 @@
 			<fileset dir="${checkout.basedir}/ss7/map/release/point">
 				<include name="**" />
 			</fileset>
-			<!--
+			
 			<fileset dir="${checkout.basedir}/ss7/isup/release/point">
 				<include name="**" />
 			</fileset>
-			-->
+			
 		</copy>
 
 		<echo>Copy Native</echo>
@@ -199,7 +199,7 @@
 			</fileset>
 		</copy>
 
-		<echo>Copy Docs</echo>
+		<echo>Copy SS7 Docs</echo>
 		<copy todir="${zip.dir}/ss7/docs" failonerror="${failoncopy}">
 			<fileset dir="${checkout.basedir}/ss7/docs/jdocbook-mobicents/target/docbook/docbook/publish">
 				<include name="**" />
