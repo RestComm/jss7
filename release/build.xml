@@ -187,7 +187,7 @@
 
 		<echo>Copy Docs</echo>
 		<copy todir="${zip.dir}/ss7/docs" failonerror="${failoncopy}">
-			<fileset dir="${checkout.basedir}/ss7/docs/jdocbook-mobicents/target/docbook/publish">
+			<fileset dir="${checkout.basedir}/ss7/docs/jdocbook-mobicents/target/docbook/dockbook/publish">
 				<include name="**" />
 			</fileset>
 		</copy>
