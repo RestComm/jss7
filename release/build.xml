@@ -175,9 +175,11 @@
 
 		<echo>Copy Native</echo>
 		<copy todir="${zip.dir}/ss7/native" failonerror="${failoncopy}">
+			<!--
 			<fileset dir="${checkout.basedir}/ss7/hardware/dahdi/native/linux/target">
 				<include name="*.so" />
 			</fileset>
+			-->
 			<fileset dir="${checkout.basedir}/ss7/hardware/dialogic/native/linux/target">
 				<include name="*.so" />
 			</fileset>

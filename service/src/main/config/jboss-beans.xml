@@ -5,8 +5,8 @@
 
 	<bean name="SCTPManagement" class="org.mobicents.protocols.sctp.ManagementImpl">
 		<constructor>
-		         <parameter>SCTPManagement</parameter>
-	   	</constructor>
+			<parameter>SCTPManagement</parameter>
+		</constructor>
 		<property name="singleThread">true</property>
 		<property name="connectDelay">30000</property>
 	</bean>
@@ -16,13 +16,17 @@
 	<!-- M3UAManagement is managing the m3ua side commands -->
 	<!-- ==================================================================== -->
 	<bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement">
+		<constructor>
+			<parameter>Mtp3UserPart</parameter>
+		</constructor>
 		<property name="persistDir">${jboss.server.data.dir}</property>
 		<property name="transportManagement">
 			<inject bean="SCTPManagement" />
 		</property>
 	</bean>
 
-	<bean name="M3UAShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
+	<bean name="M3UAShellExecutor"
+		class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
 		<property name="m3uaManagement">
 			<inject bean="Mtp3UserPart" />
 		</property>
@@ -101,7 +105,8 @@
 	<!-- Mobicents SS7 Service -->
 	<!-- ==================================================================== -->
 	<bean name="SS7Service" class="org.mobicents.ss7.SS7Service">
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=SS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=SS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+		</annotation>
 		<property name="jndiName">java:/mobicents/ss7/sccp</property>
 		<property name="stack">
 			<inject bean="SccpProvider" />
