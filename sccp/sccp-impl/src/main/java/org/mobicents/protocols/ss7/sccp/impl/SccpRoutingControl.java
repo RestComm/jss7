@@ -284,7 +284,14 @@ public class SccpRoutingControl {
 
 	private void route(SccpMessage msg, boolean fromMtp) throws IOException {
 
-		boolean returnError = ((SccpMessageImpl) msg).getProtocolClass().getHandling() == ProtocolClass.HANDLING_RET_ERR;
+		boolean returnError = false;
+		
+		ProtocolClass protocolClass = ((SccpMessageImpl) msg).getProtocolClass();
+		
+		if(protocolClass != null){
+			returnError = protocolClass.getHandling() == ProtocolClass.HANDLING_RET_ERR;
+		}
+		
 		SccpAddress calledPartyAddress = msg.getCalledPartyAddress();
 
 		int dpc = calledPartyAddress.getSignalingPointCode();
