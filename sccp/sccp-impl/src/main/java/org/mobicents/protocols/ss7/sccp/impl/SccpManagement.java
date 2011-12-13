@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -48,7 +47,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * 
  */
 public class SccpManagement implements SccpListener {
-	private static final Logger logger = Logger.getLogger(SccpManagement.class);
+	private final Logger logger;
 
 	protected static final int MTP3_PAUSE = 3;
 	protected static final int MTP3_RESUME = 4;
@@ -81,8 +80,12 @@ public class SccpManagement implements SccpListener {
 
 	// Keeps track of how many SST are running for given DPC
 	private final FastMap<Integer, FastList<SubSystemTest>> dpcVsSst = new FastMap<Integer, FastList<SubSystemTest>>();
+	
+	private final String name;
 
-	public SccpManagement(SccpProviderImpl sccpProviderImpl, SccpStackImpl sccpStackImpl) {
+	public SccpManagement(String name, SccpProviderImpl sccpProviderImpl, SccpStackImpl sccpStackImpl) {
+		this.name = name;
+		this.logger = Logger.getLogger(SccpManagement.class.getCanonicalName()+"-"+this.name);
 		this.sccpProviderImpl = sccpProviderImpl;
 		this.sccpStackImpl = sccpStackImpl;
 	}
@@ -173,7 +176,7 @@ public class SccpManagement implements SccpListener {
 
 			if (logger.isInfoEnabled()) {
 				logger.info(String
-						.format("Received SCMG message. Message Type=SSA, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
+						.format("Rx : SSA, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
 								affectedSsn, affectedPc, subsystemMultiplicity, seqControl));
 			}
 
@@ -200,7 +203,7 @@ public class SccpManagement implements SccpListener {
 		case SSP:
 			if (logger.isEnabledFor(Level.WARN)) {
 				logger.warn(String
-						.format("Received SCMG message. Message Type=SSP, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
+						.format("Rx : SSP, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
 								affectedSsn, affectedPc, subsystemMultiplicity, seqControl));
 			}
 
@@ -239,6 +242,12 @@ public class SccpManagement implements SccpListener {
 				// UPU message is returned to the SST initiating node by the
 				// MTP.
 
+				if (logger.isInfoEnabled()) {
+					logger.info(String
+							.format("Rx : SST, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
+									affectedSsn, affectedPc, subsystemMultiplicity, seqControl));
+				}
+				
 				this.sendSSA(message, affectedSsn);
 				return;
 			}

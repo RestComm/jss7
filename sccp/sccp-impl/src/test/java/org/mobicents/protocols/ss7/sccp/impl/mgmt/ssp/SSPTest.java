@@ -57,13 +57,13 @@ public class SSPTest extends SccpHarness {
 
 	
 	protected void createStack1() {
-		sccpStack1 = new SccpStackImplProxy();
+		sccpStack1 = new SccpStackImplProxy("sspTestSccpStack1");
 		sccpProvider1 = sccpStack1.getSccpProvider();
 	}
 
 	
 	protected void createStack2() {
-		sccpStack2 = new SccpStackImplProxy();
+		sccpStack2 = new SccpStackImplProxy("sspTestSccpStack2");
 		sccpProvider2= sccpStack2.getSccpProvider();
 	}
 

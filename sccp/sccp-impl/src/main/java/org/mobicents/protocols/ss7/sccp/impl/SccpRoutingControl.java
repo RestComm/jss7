@@ -87,7 +87,8 @@ public class SccpRoutingControl {
 	protected void routeMssgFromMtp(SccpMessageImpl msg) throws IOException {
 		// TODO if the local SCCP or node is in an overload condition, SCRC
 		// shall inform SCMG
-
+		//boolean returnError = msg.getProtocolClass().getHandling() == ProtocolClass.HANDLING_RET_ERR;
+		
 		boolean returnError = false;
 		
 		ProtocolClass protocolClass = ((SccpMessageImpl) msg).getProtocolClass();
@@ -292,7 +293,14 @@ public class SccpRoutingControl {
 
 	private void route(SccpMessage msg, boolean fromMtp) throws IOException {
 
-		boolean returnError = ((SccpMessageImpl) msg).getProtocolClass().getHandling() == ProtocolClass.HANDLING_RET_ERR;
+		boolean returnError = false;
+		
+		ProtocolClass protocolClass = ((SccpMessageImpl) msg).getProtocolClass();
+		
+		if(protocolClass != null){
+			returnError = protocolClass.getHandling() == ProtocolClass.HANDLING_RET_ERR;
+		}
+		
 		SccpAddress calledPartyAddress = msg.getCalledPartyAddress();
 
 		int dpc = calledPartyAddress.getSignalingPointCode();

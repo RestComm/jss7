@@ -71,7 +71,7 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
 			SccpListener existingListener = ssnToListener.get(ssn);
 			if (existingListener != null) {
 				if (logger.isEnabledFor(Level.WARN)) {
-					logger.warn(String.format("Registering SccpListener=%s for already existing SccpListnere=% for SSN=%d", listener, existingListener, ssn));
+					logger.warn(String.format("Registering SccpListener=%s for already existing SccpListnere=%s for SSN=%d", listener, existingListener, ssn));
 				}
 			}
 			FastMap<Integer, SccpListener> newListener = new FastMap<Integer, SccpListener>();
@@ -88,7 +88,7 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
 			SccpListener existingListener = newListener.remove(ssn);
 			if (existingListener == null) {
 				if (logger.isEnabledFor(Level.WARN)) {
-					logger.warn(String.format("No existing SccpListnere=% for SSN=%d", existingListener, ssn));
+					logger.warn(String.format("No existing SccpListnere=%s for SSN=%d", existingListener, ssn));
 				}
 			}
 			ssnToListener = newListener;

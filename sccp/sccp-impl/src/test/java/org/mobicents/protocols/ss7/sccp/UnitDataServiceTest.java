@@ -1,0 +1,84 @@
+package org.mobicents.protocols.ss7.sccp;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+
+import java.io.ByteArrayInputStream;
+
+import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.UnitDataServiceImpl;
+import org.mobicents.protocols.ss7.sccp.message.UnitDataService;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
+public class UnitDataServiceTest {
+	private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
+
+	@BeforeMethod
+	public void setUp() {
+
+	}
+
+	@AfterMethod
+	public void tearDown() {
+	}
+
+	@Test(groups = { "udts", "functional.decode", })
+	public void testDecode() throws Exception {
+		//
+		byte[] b = new byte[] { 0x0A, 0x00, 0x03, 0x0D, 0x11, 0x0A, 0x52, (byte) 0x92, 0x00, 0x11, 0x04, (byte) 0x99,
+				(byte) 0x99, (byte) 0x99, (byte) 0x99, 0x09, 0x04, 0x03, (byte) 0xBE, 0x06, (byte) 0x92, (byte) 0x83,
+				0x65, (byte) 0x81, (byte) 0x80, 0x48, 0x04, 0x00, 0x00, 0x00, 0x01, 0x49, 0x04, 0x00, 0x17, 0x3A, 0x26,
+				0x6B, 0x2A, 0x28, 0x28, 0x06, 0x07, 0x00, 0x11, (byte) 0x86, 0x05, 0x01, 0x01, 0x01, (byte) 0xA0, 0x1D,
+				0x61, 0x1B, (byte) 0x80, 0x02, 0x07, (byte) 0x80, (byte) 0xA1, 0x09, 0x06, 0x07, 0x04, 0x00, 0x00,
+				0x01, 0x00, 0x32, 0x01, (byte) 0xA2, 0x03, 0x02, 0x01, 0x00, (byte) 0xA3, 0x05, (byte) 0xA1, 0x03,
+				0x02, 0x01, 0x00, 0x6C, 0x46, (byte) 0xA1, 0x3C, 0x02, 0x01, 0x02, 0x02, 0x01, 0x17, 0x30, 0x34,
+				(byte) 0xA0, 0x32, 0x30, 0x06, (byte) 0x80, 0x01, 0x0E, (byte) 0x81, 0x01, 0x01, 0x30, 0x06,
+				(byte) 0x80, 0x01, 0x0D, (byte) 0x81, 0x01, 0x01, 0x30, 0x0B, (byte) 0x80, 0x01, 0x11, (byte) 0x81,
+				0x01, 0x01, (byte) 0xA2, 0x03, (byte) 0x80, 0x01, 0x01, 0x30, 0x0B, (byte) 0x80, 0x01, 0x11,
+				(byte) 0x81, 0x01, 0x01, (byte) 0xA2, 0x03, (byte) 0x80, 0x01, 0x02, 0x30, 0x06, (byte) 0x80, 0x01,
+				0x12, (byte) 0x81, 0x01, 0x01, (byte) 0xA1, 0x06, 0x02, 0x01, 0x03, 0x02, 0x01, 0x1F, 0x00, 0x00, 0x00 };
+
+		UnitDataServiceImpl testObjectDecoded = (UnitDataServiceImpl) messageFactory.createMessage(
+				UnitDataService.MESSAGE_TYPE, new ByteArrayInputStream(b));
+		System.out.println(testObjectDecoded);
+		assertNotNull(testObjectDecoded);
+
+		
+
+	}
+
+	// @Test(groups = { "udts", "functional.decode",})
+	// public void testDecode1() throws Exception {
+	// // This is data comes from Dialogic MTU test
+	// byte[] b = new byte[] { 0x00, 0x03, 0x05, 0x09, 0x02, 0x42, 0x01, 0x04,
+	// 0x43, 0x01, 0x00, 0x01, 0x05, 0x03,
+	// 0x08, 0x02, 0x00, 0x00 };
+	//
+	// UnitDataImpl testObjectDecoded = (UnitDataImpl)
+	// messageFactory.createMessage(UnitData.MESSAGE_TYPE,
+	// new ByteArrayInputStream(b));
+	// System.out.println(testObjectDecoded);
+	// assertNotNull(testObjectDecoded);
+	//
+	// SccpAddress calledAdd = testObjectDecoded.getCalledPartyAddress();
+	// assertNotNull(calledAdd);
+	// assertEquals( calledAdd.getSubsystemNumber(),1);
+	// assertNull(calledAdd.getGlobalTitle());
+	//
+	// SccpAddress callingAdd = testObjectDecoded.getCallingPartyAddress();
+	// assertNotNull(callingAdd);
+	// assertEquals( callingAdd.getSignalingPointCode(),1);
+	// assertEquals( callingAdd.getSubsystemNumber(),1);
+	// assertNull(callingAdd.getGlobalTitle());
+	//
+	// }
+}
