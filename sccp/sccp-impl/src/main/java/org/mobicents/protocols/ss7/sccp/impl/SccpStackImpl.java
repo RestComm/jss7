@@ -45,7 +45,7 @@ import org.mobicents.protocols.ss7.sccp.impl.router.Router;
  * 
  */
 public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
-	private static final Logger logger = Logger.getLogger(SccpStackImpl.class);
+	private final Logger logger;
 
 	protected final static int OP_READ_WRITE = 3;
 
@@ -75,14 +75,19 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
 	protected int localSpc;
 	protected int ni = 2;
+	
+	private final String name;
 
 //	protected ConcurrentLinkedQueue<byte[]> txDataQueue = new ConcurrentLinkedQueue<byte[]>();
 
-	public SccpStackImpl() {
+	public SccpStackImpl(String name) {
+		this.name = name;
+		this.logger = Logger.getLogger(SccpStackImpl.class.getCanonicalName()+"-"+this.name);
+		
 		messageFactory = new MessageFactoryImpl();
 		sccpProvider = new SccpProviderImpl(this);
 		// FIXME: make this configurable
-		sccpManagement = new SccpManagement(sccpProvider, this);
+		sccpManagement = new SccpManagement(name, sccpProvider, this);
 		sccpRoutingControl = new SccpRoutingControl(sccpProvider, this);
 
 		sccpManagement.setSccpRoutingControl(sccpRoutingControl);
@@ -213,8 +218,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
 	protected void send(SccpMessageImpl message) throws IOException {
 
-		if (this.state != State.RUNNING)
+		if (this.state != State.RUNNING){
+			logger.error("Trying to send SCCP message from SCCP user but SCCP stack is not RUNNING");
 			return;
+		}
 		
 		try {
 			this.sccpRoutingControl.routeMssgFromSccpUser(message);
@@ -231,27 +238,36 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
 	@Override
 	public void onMtp3PauseMessage(Mtp3PausePrimitive msg) {
+		
+		logger.warn(String.format("Rx : %s", msg));
 
-		if (this.state != State.RUNNING)
+		if (this.state != State.RUNNING){
+			logger.error("Cannot consume MTP3 PASUE message as SCCP stack is not RUNNING");
 			return;
+		}
 		
 		sccpManagement.handleMtp3Pause(msg.getAffectedDpc());
 	}
 
 	@Override
 	public void onMtp3ResumeMessage(Mtp3ResumePrimitive msg) {
+		logger.warn(String.format("Rx : %s", msg));
 
-		if (this.state != State.RUNNING)
+		if (this.state != State.RUNNING){
+			logger.error("Cannot consume MTP3 RESUME message as SCCP stack is not RUNNING");
 			return;
+		}
 		
 		sccpManagement.handleMtp3Resume(msg.getAffectedDpc());
 	}
 
 	@Override
 	public void onMtp3StatusMessage(Mtp3StatusPrimitive msg) {
-
-		if (this.state != State.RUNNING)
+		logger.warn(String.format("Rx : %s", msg));
+		if (this.state != State.RUNNING){
+			logger.error("Cannot consume MTP3 STATUS message as SCCP stack is not RUNNING");
 			return;
+		}
 		
 		sccpManagement.handleMtp3Status(msg.getCause(), msg.getAffectedDpc(), msg.getCongestionLevel());
 	}
@@ -259,12 +275,16 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 	@Override
 	public void onMtp3TransferMessage(Mtp3TransferPrimitive mtp3Msg) {
 
-		if (this.state != State.RUNNING)
+		if (this.state != State.RUNNING){
+			logger.error("Received MTP3TransferPrimitive from lower layer but SCCP stack is not RUNNING");
 			return;
+		}
 
 		// process only SCCP messages
-		if (mtp3Msg.getSi() != Mtp3._SI_SERVICE_SCCP)
+		if (mtp3Msg.getSi() != Mtp3._SI_SERVICE_SCCP){
+			logger.warn(String.format("Received Mtp3TransferPrimitive from lower layer with Service Indicator=%d whic is not SCCP. Dropping this message", mtp3Msg.getSi()));
 			return;
+		}
 		
 		SccpMessageImpl msg = null;
 		try {
@@ -275,6 +295,11 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 			msg.setDpc(mtp3Msg.getDpc());
 			msg.setOpc(mtp3Msg.getOpc());
 			msg.setSls(mtp3Msg.getSls());
+			
+			if(logger.isDebugEnabled()){
+				logger.debug(String.format("Rx : SCCP message from MTP %s", msg));
+			}
+			
 			sccpRoutingControl.routeMssgFromMtp(msg);
 		} catch (IOException e) {
 			logger.error("IOException while decoding SCCP message: " + e.getMessage(), e);

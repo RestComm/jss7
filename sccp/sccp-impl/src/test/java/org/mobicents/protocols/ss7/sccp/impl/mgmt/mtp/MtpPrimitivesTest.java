@@ -65,13 +65,13 @@ public class MtpPrimitivesTest extends SccpHarness {
 
 	
 	protected void createStack1() {
-		sccpStack1 = new SccpStackImplProxy();
+		sccpStack1 = new SccpStackImplProxy("MtpPrimitivesTestSccpStack1");
 		sccpProvider1 = sccpStack1.getSccpProvider();
 	}
 
 	
 	protected void createStack2() {
-		sccpStack2 = new SccpStackImplProxy();
+		sccpStack2 = new SccpStackImplProxy("MtpPrimitivesTestSccpStack2");
 		sccpProvider2= sccpStack2.getSccpProvider();
 	}
 

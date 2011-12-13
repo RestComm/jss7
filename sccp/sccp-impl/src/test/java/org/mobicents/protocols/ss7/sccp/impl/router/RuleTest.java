@@ -206,7 +206,7 @@ public class RuleTest {
 		assertEquals( translatedAddress.getAddressIndicator().getRoutingIndicator(),RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE);
 		assertEquals(translatedAddress.getAddressIndicator().getGlobalTitleIndicator(),GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS);
 		assertEquals( translatedAddress.getSignalingPointCode(),6045);
-		assertEquals( translatedAddress.getSubsystemNumber(),180);
+		assertEquals( translatedAddress.getSubsystemNumber(),6);
 		assertEquals( translatedAddress.getGlobalTitle().getDigits(),"4414257897897");
 		
 		GT0100 gt = (GT0100)translatedAddress.getGlobalTitle();

@@ -59,7 +59,7 @@ public abstract class SccpHarness {
 
 	protected void createStack1()
 	{
-		sccpStack1 = new SccpStackImpl();
+		sccpStack1 = new SccpStackImpl("testSccpStack1");
 		sccpProvider1 = sccpStack1.getSccpProvider();
 	}
 	protected void setUpStack1() {
@@ -89,7 +89,7 @@ public abstract class SccpHarness {
 	}
 	protected void createStack2()
 	{
-		sccpStack2 = new SccpStackImpl();
+		sccpStack2 = new SccpStackImpl("testSccpStack2");
 		sccpProvider2 = sccpStack2.getSccpProvider();
 	}
 	protected void setUpStack2() {
@@ -133,16 +133,16 @@ public abstract class SccpHarness {
 	}
 
 	private void tearDownStack2() {
-		router1.getRules().clear();
-		router1.getPrimaryAddresses().clear();
-		router1.getBackupAddresses().clear();
-		router1.stop();
+		router2.getRules().clear();
+		router2.getPrimaryAddresses().clear();
+		router2.getBackupAddresses().clear();
+		router2.stop();
 
-		resource1.getRemoteSpcs().clear();
-		resource1.getRemoteSsns().clear();
-		resource1.stop();
+		resource2.getRemoteSpcs().clear();
+		resource2.getRemoteSsns().clear();
+		resource2.stop();
 
-		sccpStack1.stop();
+		sccpStack2.stop();
 
 	}
 	

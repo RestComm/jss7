@@ -22,15 +22,9 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.mgmt;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
 import org.mobicents.protocols.ss7.sccp.impl.SccpManagement;
 import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
@@ -54,8 +48,8 @@ public class SccpManagementProxy extends SccpManagement {
 	 * @param sccpProviderImpl
 	 * @param sccpStackImpl
 	 */
-	public SccpManagementProxy(SccpProviderImpl sccpProviderImpl, SccpStackImpl sccpStackImpl) {
-		super(sccpProviderImpl, sccpStackImpl);
+	public SccpManagementProxy(String name, SccpProviderImpl sccpProviderImpl, SccpStackImpl sccpStackImpl) {
+		super(name, sccpProviderImpl, sccpStackImpl);
 		// TODO Auto-generated constructor stub
 	}
 	
