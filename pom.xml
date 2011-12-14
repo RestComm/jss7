@@ -9,7 +9,7 @@
 
 	<artifactId>ss7-parent</artifactId>
 	<groupId>org.mobicents.protocols.ss7</groupId>
-	<version>1.0.0.CR2</version>
+	<version>1.0.0-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
@@ -362,13 +362,13 @@
 
 	<scm>
 		<connection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/mobicents-ss7-1.0.0.CR2
+			scm:svn:https://mobicents.googlecode.com/svn/branches/protocols/ss7/1.x
 		</connection>
 		<developerConnection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/ss7/mobicents-ss7-1.0.0.CR2
+			scm:svn:https://mobicents.googlecode.com/svn/branches/protocols/ss7/1.x
 		</developerConnection>
 		<url>
-			http://mobicents.googlecode.com/svn/tags/protocols/ss7/mobicents-ss7-1.0.0.CR2
+			http://mobicents.googlecode.com/svn/branches/protocols/ss7/1.x
 		</url>
 	</scm>
 </project>
