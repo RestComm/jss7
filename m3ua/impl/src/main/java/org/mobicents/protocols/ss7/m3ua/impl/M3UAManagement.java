@@ -148,7 +148,11 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		if (this.transportManagement == null) {
 			throw new NullPointerException("TransportManagement is null");
 		}
-
+		
+		if(maxAsForRoute <1 || maxAsForRoute > 4){
+			throw new Exception("Max AS for a route can be minimum 1 or maximum 4");
+		}
+		
 		super.start();
 
 		this.persistFile.clear();
@@ -529,7 +533,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 				}
 			}
 		} else {
-			asArray = new As[4];
+			asArray = new As[this.maxAsForRoute];
 			route.put(key, asArray);
 		}
 
