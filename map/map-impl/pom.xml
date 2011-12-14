@@ -84,9 +84,9 @@
 
 				<configuration>
 					<suiteXmlFiles>
-						<!-- 						
+						<!-- 	-->					
 						<suiteXmlFile>testng-methods.xml</suiteXmlFile>
-						 -->
+						 
 						<suiteXmlFile>testng-classes.xml</suiteXmlFile>
 					</suiteXmlFiles>
 				</configuration>
