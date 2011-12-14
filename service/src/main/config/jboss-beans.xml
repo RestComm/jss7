@@ -15,6 +15,7 @@
 	<!-- M3UA -->
 	<!-- M3UAManagement is managing the m3ua side commands -->
 	<!-- ==================================================================== -->
+	<!-- -->
 	<bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement">
 		<constructor>
 			<parameter>Mtp3UserPart</parameter>
@@ -34,13 +35,16 @@
 			<inject bean="SCTPManagement" />
 		</property>
 	</bean>
-
+	 
 	<!-- ==================================================================== -->
 	<!-- Dialogic Mtp3UserPart -->
 	<!-- ==================================================================== -->
-	<!-- <bean name="Mtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart"> 
-		<property name="sourceModuleId">61</property> <property name="destinationModuleId">34</property> 
-		</bean> -->
+	<!-- 
+	<bean name="Mtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart"> 
+		<property name="sourceModuleId">61</property> 
+		<property name="destinationModuleId">34</property> 
+	</bean> 
+	--> 
 
 	<!-- ==================================================================== -->
 	<!-- SCCP Router Service -->
@@ -65,8 +69,11 @@
 	</bean>
 
 	<bean name="SccpStack" class="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl">
-		<property name="localSpc">6172</property>
-		<property name="ni">3</property>
+		<constructor>
+			<parameter>SccpStack</parameter>
+		</constructor>
+		<property name="localSpc">2</property>
+		<property name="ni">2</property>
 		<property name="router">
 			<inject bean="Router" />
 		</property>
