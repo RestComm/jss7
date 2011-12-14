@@ -139,7 +139,7 @@ public class ClientDialogic implements MAPDialogListener, MAPServiceSmsListener 
 	}
 
 	private void initSCCP() {
-		this.sccpStack = new SccpStackImplWrapper(logger);
+		this.sccpStack = new SccpStackImplWrapper("ClientDialogicSccpStack", logger);
 		this.sccpStack.setLocalSpc(CLIENT_SPC);
 		this.sccpStack.setNi(NETWORK_INDICATOR);
 		this.sccpStack.setMtp3UserPart(this.dialogic);

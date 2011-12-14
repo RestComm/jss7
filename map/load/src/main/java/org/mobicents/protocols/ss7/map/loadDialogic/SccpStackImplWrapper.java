@@ -36,7 +36,8 @@ public class SccpStackImplWrapper extends SccpStackImpl {
 	
 	private Logger logger;
 
-	public SccpStackImplWrapper(Logger logger) {
+	public SccpStackImplWrapper(String name, Logger logger) {
+		super(name);
 		this.logger = logger;
 	}
 	

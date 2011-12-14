@@ -109,7 +109,7 @@ public class Client extends TestHarness {
 
 		// FInally start ASP
 		// Set 5: Finally start ASP
-		this.clientM3UAMgmt.managementStartAsp("ASP1");
+		this.clientM3UAMgmt.startAsp("ASP1");
 	}
 
 	private void initSCTP() throws Exception {
@@ -145,7 +145,7 @@ public class Client extends TestHarness {
 	}
 
 	private void initSCCP() {
-		this.sccpStack = new SccpStackImpl();
+		this.sccpStack = new SccpStackImpl("MapLoadClientSccpStack");
 		this.sccpStack.setLocalSpc(CLIENT_SPC);
 		this.sccpStack.setNi(NETWORK_INDICATOR);
 		this.sccpStack.setMtp3UserPart(this.clientM3UAMgmt);

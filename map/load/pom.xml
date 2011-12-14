@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.mobicents</groupId>
 		<artifactId>mobicents-parent</artifactId>
-		<version>2.20-SNAPSHOT</version>
+		<version>2.20</version>
 	</parent>
 
 	<artifactId>map-load</artifactId>
@@ -51,6 +51,12 @@
 			<version>${sctp.version}</version>
 		</dependency>
 		<!-- SS7 -->
+
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.congestion</groupId>
+			<artifactId>congestion</artifactId>
+			<version>${ss7.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.map</groupId>
 			<artifactId>map-api</artifactId>
@@ -98,7 +104,7 @@
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 			<artifactId>mtp</artifactId>
 			<version>${ss7.version}</version>
-		</dependency>		
+		</dependency>
 
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
@@ -233,6 +239,19 @@
 										</artifactItem>
 
 										<!-- deps -->
+
+										<artifactItem>
+											<groupId>org.mobicents.protocols.ss7.congestion</groupId>
+											<artifactId>congestion</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+											</outputDirectory>
+											<destFileName>
+												mobicents-congestion.jar
+											</destFileName>
+										</artifactItem>
 
 										<artifactItem>
 											<groupId>org.mobicents.protocols.sctp</groupId>
@@ -391,7 +410,7 @@
 											<destFileName>
 												mtp.jar
 											</destFileName>
-										</artifactItem>										
+										</artifactItem>
 										<artifactItem>
 											<groupId>org.mobicents.protocols.stream</groupId>
 											<artifactId>stream</artifactId>

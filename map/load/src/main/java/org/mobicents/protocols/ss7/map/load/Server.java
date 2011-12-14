@@ -98,7 +98,7 @@ public class Server extends TestHarness {
 		this.initMAP();
 
 		// 7. Start ASP
-		serverM3UAMgmt.managementStartAsp("RASP1");
+		serverM3UAMgmt.startAsp("RASP1");
 	}
 
 	private void initSCTP() throws Exception {
@@ -141,7 +141,7 @@ public class Server extends TestHarness {
 	}
 
 	private void initSCCP() {
-		this.sccpStack = new SccpStackImpl();
+		this.sccpStack = new SccpStackImpl("MapLoadServerSccpStack");
 		this.sccpStack.setLocalSpc(SERVET_SPC);
 		this.sccpStack.setNi(NETWORK_INDICATOR);
 		this.sccpStack.setMtp3UserPart(this.serverM3UAMgmt);
