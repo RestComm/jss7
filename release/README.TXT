@@ -45,7 +45,7 @@ http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/ss7
 ------------------
 
 http://mobicents.googlecode.com/svn/tags/protocols/asn/asn-@ASN_VERSION@
-http://mobicents.googlecode.com/svn/tags/protocols/asn/asn-@SCTP_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/sctp/sctp-@SCTP_VERSION@
 http://mobicents.googlecode.com/svn/tags/protocols/ss7/ss7-@SS7_VERSION@
 
 
