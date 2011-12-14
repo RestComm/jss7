@@ -40,11 +40,12 @@
 			<groupId>org.mobicents.protocols.ss7.management</groupId>
 		</dependency>
 
-		<!-- Hardware Dahdi Java -->
+		<!-- Hardware Dahdi Java 
 		<dependency>
 			<artifactId>mobicents-dahdi</artifactId>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		</dependency>
+		-->
 
 		<!-- Hardware Dialogic Java -->
 		<dependency>

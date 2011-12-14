@@ -105,12 +105,13 @@
 				<version>${pom.version}</version>
 			</dependency>
 
-			<!-- Hardware Dahdi Java -->
+			<!-- Hardware Dahdi Java 
 			<dependency>
 				<artifactId>mobicents-dahdi</artifactId>
 				<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 				<version>${pom.version}</version>
 			</dependency>
+			-->
 
 			<!-- Hardware Dialogic Java -->
 			<dependency>
