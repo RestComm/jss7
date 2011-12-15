@@ -48,10 +48,10 @@ import org.mobicents.protocols.ss7.sccp.impl.router.Router;
  */
 public abstract class SccpHarness {
 
-	protected SccpStackImpl sccpStack1 = new SccpStackImpl();
+	protected SccpStackImpl sccpStack1 = new SccpStackImpl("tcapTestSccpStack1");
 	protected SccpProvider sccpProvider1 = sccpStack1.getSccpProvider();
 
-	protected SccpStackImpl sccpStack2 = new SccpStackImpl();
+	protected SccpStackImpl sccpStack2 = new SccpStackImpl("tcapTestSccpStack2");
 	protected SccpProvider sccpProvider2 = sccpStack2.getSccpProvider();
 
 //	private ConcurrentLinkedQueue<byte[]> data1 = new ConcurrentLinkedQueue<byte[]>();

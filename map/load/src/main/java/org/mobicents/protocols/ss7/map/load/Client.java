@@ -24,11 +24,14 @@ package org.mobicents.protocols.ss7.map.load;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.impl.As;
+import org.mobicents.protocols.sctp.ManagementImpl;
+import org.mobicents.protocols.ss7.m3ua.ExchangeType;
+import org.mobicents.protocols.ss7.m3ua.Functionality;
+import org.mobicents.protocols.ss7.m3ua.IPSPType;
 import org.mobicents.protocols.ss7.m3ua.impl.Asp;
-import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
-import org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAManagement;
-import org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAProcess;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
+import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
@@ -79,58 +82,73 @@ public class Client extends TestHarness {
 	private SccpResource sccpResource;
 
 	// M3UA
-	private ClientM3UAManagement clientM3UAMgmt;
-	private ClientM3UAProcess clientM3UAProcess;
+	private M3UAManagement clientM3UAMgmt;
+
+	// SCTP
+	private ManagementImpl sctpManagement;
 
 	// a ramp-up period is required for performance testing.
-	int endCount = 0;
+	int endCount = -100;
 
 	AtomicInteger nbConcurrentDialogs = new AtomicInteger(0);
 
 	long start = 0l;
 
 	protected void initializeStack() throws Exception {
+
+		this.initSCTP();
+
 		// Initialize M3UA first
 		this.initM3UA();
 
 		// Initialize SCCP
 		this.initSCCP();
-		
-		//Initialize MAP
+
+		// Initialize MAP
 		this.initMAP();
+
+		// FInally start ASP
+		// Set 5: Finally start ASP
+		this.clientM3UAMgmt.startAsp("ASP1");
+	}
+
+	private void initSCTP() throws Exception {
+		this.sctpManagement = new ManagementImpl("Client");
+		this.sctpManagement.setSingleThread(true);
+		this.sctpManagement.setConnectDelay(10000);
+		this.sctpManagement.start();
+
+		// 1. Create SCTP Association
+		sctpManagement.addAssociation(CLIENT_IP, CLIENT_PORT, SERVER_IP, SERVER_PORT, CLIENT_ASSOCIATION_NAME);
+
 	}
 
 	private void initM3UA() throws Exception {
-		this.clientM3UAMgmt = new ClientM3UAManagement();
+		this.clientM3UAMgmt = new M3UAManagement("Client");
+		this.clientM3UAMgmt.setTransportManagement(this.sctpManagement);
 		this.clientM3UAMgmt.start();
 
-		// start the ClientM3UAProcess
-		this.clientM3UAProcess = new ClientM3UAProcess();
-		this.clientM3UAProcess.setClientM3UAManagement(this.clientM3UAMgmt);
-		this.clientM3UAProcess.start();
-
-		// Step 1 : Create App Server
-		As as = this.clientM3UAMgmt.createAppServer(String.format("m3ua as create rc %d AS1", ROUTING_CONTEXT).split(" "));
+		// m3ua as create rc <rc> <ras-name>
+		RoutingContext rc = factory.createRoutingContext(new long[] { 100l });
+		TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
+		this.clientM3UAMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType);
 
 		// Step 2 : Create ASP
-		AspFactory aspFactor = this.clientM3UAMgmt.createAspFactory(String.format("m3ua asp create ip %s port %d remip %s remport %d ASP1", CLIENT_IP,
-				CLIENT_PORT, SERVER_IP, SERVER_PORT).split(" "));
+		this.clientM3UAMgmt.createAspFactory("ASP1", CLIENT_ASSOCIATION_NAME);
 
 		// Step3 : Assign ASP to AS
 		Asp asp = this.clientM3UAMgmt.assignAspToAs("AS1", "ASP1");
 
 		// Step 4: Add Route. Remote point code is 2
-		this.clientM3UAMgmt.addRouteAsForDpc(SERVET_SPC, "AS1");
+		clientM3UAMgmt.addRoute(SERVET_SPC, -1, -1, "AS1");
 
-		// Set 5: Finally start ASP
-		this.clientM3UAMgmt.managementStartAsp("ASP1");
 	}
 
 	private void initSCCP() {
-		this.sccpStack = new SccpStackImpl();
+		this.sccpStack = new SccpStackImpl("MapLoadClientSccpStack");
 		this.sccpStack.setLocalSpc(CLIENT_SPC);
 		this.sccpStack.setNi(NETWORK_INDICATOR);
-		this.sccpStack.setMtp3UserPart(this.clientM3UAProcess);
+		this.sccpStack.setMtp3UserPart(this.clientM3UAMgmt);
 
 		sccpResource = new SccpResource();
 		sccpResource.start();
@@ -147,13 +165,13 @@ public class Client extends TestHarness {
 	}
 
 	private void initMAP() {
-		
+
 		System.out.println("initMAP");
-		
+
 		this.mapStack = new MAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
 		this.mapProvider = this.mapStack.getMAPProvider();
-		
-		System.out.println("this.mapProvider = "+this.mapProvider);
+
+		System.out.println("this.mapProvider = " + this.mapProvider);
 
 		this.mapProvider.addMAPDialogListener(this);
 		this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
@@ -166,15 +184,13 @@ public class Client extends TestHarness {
 	}
 
 	private void initiateUSSD() throws MAPException {
-		
-		System.out.println("initiateUSSD");
-		System.out.println(this.mapProvider);
-		System.out.println(this.mapProvider.getMAPServiceSupplementary());
-		
+
+		//System.out.println("initiateUSSD");
+
 		// First create Dialog
 		MAPDialogSupplementary mapDialog = this.mapProvider.getMAPServiceSupplementary().createNewDialog(
-				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, MAPApplicationContextVersion.version2),
-				SCCP_CLIENT_ADDRESS, null, SCCP_SERVER_ADDRESS, null);
+				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
+						MAPApplicationContextVersion.version2), SCCP_CLIENT_ADDRESS, null, SCCP_SERVER_ADDRESS, null);
 
 		byte ussdDataCodingScheme = 0x0f;
 
@@ -184,13 +200,13 @@ public class Client extends TestHarness {
 		// impl of Charset
 		USSDString ussdString = this.mapProvider.getMAPParameterFactory().createUSSDString("*125*+31628839999#", null);
 
-		ISDNAddressString msisdn = this.mapProvider.getMAPParameterFactory().createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN,
-				"31628838002");
+		ISDNAddressString msisdn = this.mapProvider.getMAPParameterFactory().createISDNAddressString(
+				AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
 
 		mapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, null, msisdn);
-		
+
 		nbConcurrentDialogs.incrementAndGet();
-		
+
 		// This will initiate the TC-BEGIN with INVOKE component
 		mapDialog.send();
 	}
@@ -211,13 +227,14 @@ public class Client extends TestHarness {
 
 		try {
 			client.initializeStack();
-			
-			Thread.sleep(5000);
+
+			Thread.sleep(20000);
 
 			while (client.endCount < NDIALOGS) {
 				while (client.nbConcurrentDialogs.intValue() >= MAXCONCURRENTDIALOGS) {
 
-					logger.info("nbConcurrentInvite = " + client.nbConcurrentDialogs.intValue() + " Waiting for max CRCX count to go down!");
+					logger.warn("nbConcurrentInvite = " + client.nbConcurrentDialogs.intValue()
+							+ " Waiting for max CRCX count to go down!");
 
 					synchronized (client) {
 						try {
@@ -251,7 +268,8 @@ public class Client extends TestHarness {
 	 */
 	@Override
 	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
-		logger.error(String.format("onErrorComponent for Dialog=%d and invokeId=%d MAPErrorMessage=%s", mapDialog.getDialogId(), invokeId, mapErrorMessage));
+		logger.error(String.format("onErrorComponent for Dialog=%d and invokeId=%d MAPErrorMessage=%s",
+				mapDialog.getDialogId(), invokeId, mapErrorMessage));
 	}
 
 	/*
@@ -264,8 +282,8 @@ public class Client extends TestHarness {
 	 */
 	@Override
 	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
-		logger.error(String.format("onProviderErrorComponent for Dialog=%d and invokeId=%d MAPProviderError=%s", mapDialog.getDialogId(), invokeId,
-				providerError));
+		logger.error(String.format("onProviderErrorComponent for Dialog=%d and invokeId=%d MAPProviderError=%s",
+				mapDialog.getDialogId(), invokeId, providerError));
 	}
 
 	/*
@@ -278,7 +296,8 @@ public class Client extends TestHarness {
 	 */
 	@Override
 	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
-		logger.error(String.format("onRejectComponent for Dialog=%d and invokeId=%d Problem=%s", mapDialog.getDialogId(), invokeId, problem));
+		logger.error(String.format("onRejectComponent for Dialog=%d and invokeId=%d Problem=%s",
+				mapDialog.getDialogId(), invokeId, problem));
 	}
 
 	/*
@@ -307,8 +326,8 @@ public class Client extends TestHarness {
 	public void onProcessUnstructuredSSRequestIndication(ProcessUnstructuredSSRequestIndication procUnstrReqInd) {
 		// This error condition. Client should never receive the
 		// ProcessUnstructuredSSRequestIndication
-		logger.error(String.format("onProcessUnstructuredSSRequestIndication for Dialog=%d and invokeId=%d", procUnstrReqInd.getMAPDialog().getDialogId(),
-				procUnstrReqInd.getInvokeId()));
+		logger.error(String.format("onProcessUnstructuredSSRequestIndication for Dialog=%d and invokeId=%d",
+				procUnstrReqInd.getMAPDialog().getDialogId(), procUnstrReqInd.getInvokeId()));
 	}
 
 	/*
@@ -323,7 +342,8 @@ public class Client extends TestHarness {
 	@Override
 	public void onProcessUnstructuredSSResponseIndication(ProcessUnstructuredSSResponseIndication procUnstrResInd) {
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("Rx ProcessUnstructuredSSResponseIndication.  USSD String=%s", procUnstrResInd.getUSSDString()));
+			logger.debug(String.format("Rx ProcessUnstructuredSSResponseIndication.  USSD String=%s",
+					procUnstrResInd.getUSSDString()));
 		}
 
 	}
@@ -341,7 +361,8 @@ public class Client extends TestHarness {
 	public void onUnstructuredSSRequestIndication(UnstructuredSSRequestIndication unstrReqInd) {
 
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("Rx UnstructuredSSRequestIndication. USSD String=%s ", unstrReqInd.getUSSDString()));
+			logger.debug(String.format("Rx UnstructuredSSRequestIndication. USSD String=%s ",
+					unstrReqInd.getUSSDString()));
 		}
 		MAPDialogSupplementary mapDialog = unstrReqInd.getMAPDialog();
 
@@ -350,14 +371,15 @@ public class Client extends TestHarness {
 
 			USSDString ussdString = this.mapProvider.getMAPParameterFactory().createUSSDString("1", null);
 
-			AddressString msisdn = this.mapProvider.getMAPParameterFactory().createAddressString(AddressNature.international_number, NumberingPlan.ISDN,
-					"31628838002");
+			AddressString msisdn = this.mapProvider.getMAPParameterFactory().createAddressString(
+					AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
 
 			mapDialog.addUnstructuredSSResponse(unstrReqInd.getInvokeId(), ussdDataCodingScheme, ussdString);
 			mapDialog.send();
 
 		} catch (MAPException e) {
-			logger.error(String.format("Error while sending UnstructuredSSResponse for Dialog=%d", mapDialog.getDialogId()));
+			logger.error(String.format("Error while sending UnstructuredSSResponse for Dialog=%d",
+					mapDialog.getDialogId()));
 		}
 	}
 
@@ -374,8 +396,8 @@ public class Client extends TestHarness {
 	public void onUnstructuredSSResponseIndication(UnstructuredSSResponseIndication unstrResInd) {
 		// This error condition. Client should never receive the
 		// UnstructuredSSResponseIndication
-		logger.error(String.format("onUnstructuredSSResponseIndication for Dialog=%d and invokeId=%d", unstrResInd.getMAPDialog().getDialogId(),
-				unstrResInd.getInvokeId()));
+		logger.error(String.format("onUnstructuredSSResponseIndication for Dialog=%d and invokeId=%d", unstrResInd
+				.getMAPDialog().getDialogId(), unstrResInd.getInvokeId()));
 	}
 
 	/*
@@ -391,8 +413,8 @@ public class Client extends TestHarness {
 	public void onUnstructuredSSNotifyRequestIndication(UnstructuredSSNotifyRequestIndication unstrNotifyInd) {
 		// This error condition. Client should never receive the
 		// UnstructuredSSNotifyRequestIndication
-		logger.error(String.format("onUnstructuredSSNotifyRequestIndication for Dialog=%d and invokeId=%d", unstrNotifyInd.getMAPDialog().getDialogId(),
-				unstrNotifyInd.getInvokeId()));
+		logger.error(String.format("onUnstructuredSSNotifyRequestIndication for Dialog=%d and invokeId=%d",
+				unstrNotifyInd.getMAPDialog().getDialogId(), unstrNotifyInd.getInvokeId()));
 	}
 
 	/*
@@ -420,10 +442,12 @@ public class Client extends TestHarness {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer)
 	 */
 	@Override
-	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer) {
+	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
+			MAPExtensionContainer extensionContainer) {
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("onDialogRequest for DialogId=%d DestinationReference=%s OriginReference=%s MAPExtensionContainer=%s",
-					mapDialog.getDialogId(), destReference, origReference, extensionContainer));
+			logger.debug(String
+					.format("onDialogRequest for DialogId=%d DestinationReference=%s OriginReference=%s MAPExtensionContainer=%s",
+							mapDialog.getDialogId(), destReference, origReference, extensionContainer));
 		}
 	}
 
@@ -438,7 +462,8 @@ public class Client extends TestHarness {
 	@Override
 	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("onDialogAccept for DialogId=%d MAPExtensionContainer=%s", mapDialog.getDialogId(), extensionContainer));
+			logger.debug(String.format("onDialogAccept for DialogId=%d MAPExtensionContainer=%s",
+					mapDialog.getDialogId(), extensionContainer));
 		}
 	}
 
@@ -456,8 +481,10 @@ public class Client extends TestHarness {
 	@Override
 	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
 			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
-		logger.error(String.format("onDialogReject for DialogId=%d MAPRefuseReason=%s MAPProviderError=%s ApplicationContextName=%s MAPExtensionContainer=%s",
-				mapDialog.getDialogId(), refuseReason, providerError, alternativeApplicationContext, extensionContainer));
+		logger.error(String
+				.format("onDialogReject for DialogId=%d MAPRefuseReason=%s MAPProviderError=%s ApplicationContextName=%s MAPExtensionContainer=%s",
+						mapDialog.getDialogId(), refuseReason, providerError, alternativeApplicationContext,
+						extensionContainer));
 	}
 
 	/*
@@ -470,9 +497,10 @@ public class Client extends TestHarness {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer)
 	 */
 	@Override
-	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, MAPExtensionContainer extensionContainer) {
-		logger.error(String.format("onDialogUserAbort for DialogId=%d MAPUserAbortChoice=%s MAPExtensionContainer=%s", mapDialog.getDialogId(), userReason,
-				extensionContainer));
+	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason,
+			MAPExtensionContainer extensionContainer) {
+		logger.error(String.format("onDialogUserAbort for DialogId=%d MAPUserAbortChoice=%s MAPExtensionContainer=%s",
+				mapDialog.getDialogId(), userReason, extensionContainer));
 	}
 
 	/*
@@ -486,10 +514,11 @@ public class Client extends TestHarness {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer)
 	 */
 	@Override
-	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, MAPAbortSource abortSource,
-			MAPExtensionContainer extensionContainer) {
-		logger.error(String.format("onDialogProviderAbort for DialogId=%d MAPAbortProviderReason=%s MAPAbortSource=%s MAPExtensionContainer=%s",
-				mapDialog.getDialogId(), abortProviderReason, abortSource, extensionContainer));
+	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason,
+			MAPAbortSource abortSource, MAPExtensionContainer extensionContainer) {
+		logger.error(String
+				.format("onDialogProviderAbort for DialogId=%d MAPAbortProviderReason=%s MAPAbortSource=%s MAPExtensionContainer=%s",
+						mapDialog.getDialogId(), abortProviderReason, abortSource, extensionContainer));
 	}
 
 	/*
@@ -508,7 +537,7 @@ public class Client extends TestHarness {
 		int ndialogs = nbConcurrentDialogs.decrementAndGet();
 
 		if (ndialogs > MAXCONCURRENTDIALOGS) {
-			System.out.println("Concurrent invites = " + ndialogs);
+			logger.warn("Concurrent Dialogs active = " + ndialogs);
 		}
 		synchronized (this) {
 			if (ndialogs < MAXCONCURRENTDIALOGS / 2)
@@ -517,13 +546,16 @@ public class Client extends TestHarness {
 
 		this.endCount++;
 
+		if ((this.endCount % 100) == 0) {
+			logger.warn("Completed 100 Dialogs");
+		}
 		if (this.endCount == NDIALOGS) {
 			long current = System.currentTimeMillis();
 			float sec = (float) (current - start) / 1000f;
 
-			logger.info("Total time in sec = " + sec);
-			logger.info("Thrupt = " + (float) (NDIALOGS / sec));
-		}
+			logger.warn("Total time in sec = " + sec);
+			logger.warn("Thrupt = " + (float) (NDIALOGS / sec));
+		} 
 	}
 
 	/*
@@ -536,7 +568,8 @@ public class Client extends TestHarness {
 	 */
 	@Override
 	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
-		logger.error(String.format("onDialogNotice for DialogId=%d MAPNoticeProblemDiagnostic=%s ", mapDialog.getDialogId(), noticeProblemDiagnostic));
+		logger.error(String.format("onDialogNotice for DialogId=%d MAPNoticeProblemDiagnostic=%s ",
+				mapDialog.getDialogId(), noticeProblemDiagnostic));
 	}
 
 	/*

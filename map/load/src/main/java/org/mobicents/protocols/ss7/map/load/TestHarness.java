@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.SimpleLayout;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -67,8 +68,15 @@ public abstract class TestHarness implements MAPDialogListener, MAPServiceSupple
 
 	protected final int ROUTING_CONTEXT = 100;
 	
+	protected final String SERVER_ASSOCIATION_NAME = "serverAsscoiation";
+	protected final String CLIENT_ASSOCIATION_NAME = "clientAsscoiation";
+	
+	protected final String SERVER_NAME = "testserver";
+	
 	protected final SccpAddress SCCP_CLIENT_ADDRESS = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, CLIENT_SPC, null, SSN);
 	protected final SccpAddress SCCP_SERVER_ADDRESS = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, SERVET_SPC, null, SSN);
+	
+	protected final ParameterFactoryImpl factory = new ParameterFactoryImpl();
 
 	protected TestHarness() {
 		init();

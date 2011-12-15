@@ -41,7 +41,9 @@ public enum Subject {
 	 * M3UA Subject. Any command to manage the M3UA should begin with m3ua
 	 * subject
 	 */
-	M3UA("m3ua");
+	M3UA("m3ua"),
+	
+	SCTP("sctp");
 
 	private String subject = null;
 
@@ -72,6 +74,8 @@ public enum Subject {
 			return M3UA;
 		} else if (subject.equals(SCCP.getSubject())) {
 			return SCCP;
+		} else if (subject.equals(SCTP.getSubject())) {
+			return SCTP;
 		}
 		return null;
 	}

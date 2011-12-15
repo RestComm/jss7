@@ -22,66 +22,58 @@
 
 package org.mobicents.protocols.ss7.m3ua.parameter;
 
-
 /**
  * Protocl data parameter.
  * 
  * @author kulikov
  */
 public interface ProtocolData extends Parameter {
-    /** 
-     * Gets origination point code.
-     * 
-     * @return point code value in decimal format.
-     */
-    public int getOpc();
-    
-    /**
-     * Gets destination point code
-     * 
-     * @return point code value in decimal format
-     */
-    public int getDpc();
-    
-    /**
-     * Gets the service indicator.
-     * 
-     * @return service indicator value.
-     */
-    public int getSI();
-    
-    /**
-     * Gets the network indicator.
-     * 
-     * @return the network indicator value.
-     */
-    public int getNI();
-    
-    /**
-     * Gets the message priority.
-     * 
-     * @return message priority value.
-     */
-    public int getMP();
-    
-    /**
-     * Gets the signaling link selection.
-     * 
-     * @return the signaling link selection value
-     */
-    public int getSLS();
+	/**
+	 * Gets origination point code.
+	 * 
+	 * @return point code value in decimal format.
+	 */
+	public int getOpc();
 
-    /**
-     * Gets the payload of message.
-     * 
-     * @return binary message.
-     */
-    public byte[] getData();
+	/**
+	 * Gets destination point code
+	 * 
+	 * @return point code value in decimal format
+	 */
+	public int getDpc();
 
-    /**
-     * Gets the message encoded as SS7 message signaling unit.
-     * 
-     * @return binary message signaling unit
-     */
-    public byte[] getMsu();
+	/**
+	 * Gets the service indicator.
+	 * 
+	 * @return service indicator value.
+	 */
+	public int getSI();
+
+	/**
+	 * Gets the network indicator.
+	 * 
+	 * @return the network indicator value.
+	 */
+	public int getNI();
+
+	/**
+	 * Gets the message priority.
+	 * 
+	 * @return message priority value.
+	 */
+	public int getMP();
+
+	/**
+	 * Gets the signaling link selection.
+	 * 
+	 * @return the signaling link selection value
+	 */
+	public int getSLS();
+
+	/**
+	 * Gets the payload of message.
+	 * 
+	 * @return binary message.
+	 */
+	public byte[] getData();
 }

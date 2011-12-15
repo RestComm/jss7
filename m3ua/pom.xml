@@ -8,6 +8,7 @@
 		<version>2.0.0-SNAPSHOT</version>
 	</parent>
 
+
 	<artifactId>m3ua</artifactId>
 	<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
 
@@ -20,6 +21,7 @@
 		<module>impl</module>
 	</modules>
 
+	<!-- -->
 	<build>
 		<plugins>
 			<plugin>
