@@ -26,36 +26,46 @@ import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
 
-public class M3UAScheduler {
-    protected static final Logger logger = Logger.getLogger(M3UAScheduler.class);
-    protected FastList<M3UATask> tasks = new FastList<M3UATask>();
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
+public class M3UAScheduler implements Runnable {
+	private static final Logger logger = Logger.getLogger(M3UAScheduler.class);
 
-    public void execute(M3UATask task) {
-        this.tasks.add(task);
-    }
+	// TODO : Synchronize tasks? Use Iterator?
+	protected FastList<M3UATask> tasks = new FastList<M3UATask>();
 
-    public void tick() {
-        long now = System.currentTimeMillis();
-        for (FastList.Node<M3UATask> n = tasks.head(), end = tasks.tail(); (n = n.getNext()) != end;) {
-            M3UATask task = n.getValue();
-            // check if has been canceled from different thread.
-            if (task.canceled) {
-                tasks.remove(task);
-            } else {
+	public void execute(M3UATask task) {
+		if(task == null){
+			return;
+		}
+		this.tasks.add(task);
+	}
 
-                try {
-                    task.run(now);
-                } catch (Exception e) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Failuer on task run.", e);
-                    }
-                }
-                // check if its canceled after run;
-                if (task.canceled) {
-                    tasks.remove(task);
-                }
-            }
-            // tempTask = null;
-        }
-    }
+	public void run() {
+		long now = System.currentTimeMillis();
+		for (FastList.Node<M3UATask> n = tasks.head(), end = tasks.tail(); (n = n.getNext()) != end;) {
+			M3UATask task = n.getValue();
+			// check if has been canceled from different thread.
+			if (task.canceled) {
+				tasks.remove(task);
+			} else {
+
+				try {
+					task.run(now);
+				} catch (Exception e) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Failuer on task run.", e);
+					}
+				}
+				// check if its canceled after run;
+				if (task.canceled) {
+					tasks.remove(task);
+				}
+			}
+			// tempTask = null;
+		}
+	}
 }

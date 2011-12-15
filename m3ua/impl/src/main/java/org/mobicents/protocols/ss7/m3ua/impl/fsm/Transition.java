@@ -22,56 +22,56 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.fsm;
 
-
 /**
  * 
  * @author amit bhayani
  * @author kulikov
- *
+ * 
  */
 public class Transition {
 
-    private String name;
-    protected State destination;
+	private String name;
+	protected State destination;
 
-    private TransitionHandler handler;
-    private State state;
+	private TransitionHandler handler;
 
-    protected Transition(String name, State destination) {
-        this.name = name;
-        this.destination = destination;
-    }
+	protected Transition(String name, State destination) {
+		this.name = name;
+		this.destination = destination;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setHandler(TransitionHandler handler) {
-        this.handler = handler;
-    }
+	public void setHandler(TransitionHandler handler) {
+		this.handler = handler;
+	}
 
-    protected State process(State state) {
-        this.state = state;
-        // leave current state
-        state.leave();
+	protected State process(State state) {
+		// leave current state
+		state.leave();
 
-        // new Thread(this).start();
-        if (handler != null) {
-            if (!handler.process(state)) {
-                // If handler couldn't process this transition successfully,
-                // return the old state. But this means the LeaveAction could
-                // have been executed and we are ok with that
-                return this.state;
-            }
-        }
+		// new Thread(this).start();
+		if (handler != null) {
+			if (!handler.process(state)) {
+				// If handler couldn't process this transition successfully,
+				// return the old state. But this means the LeaveAction could
+				// have been executed and we are ok with that. Also we call
+				// cancelLeave on State so as to assign back the last timeout
+				// value
+				state.cancelLeave();
+				return state;
+			}
+		}
 
-        // enter to the destination
-        this.destination.enter();
-        return this.destination;
-    }
+		// enter to the destination
+		this.destination.enter();
+		return this.destination;
+	}
 
-    @Override
-    public String toString() {
-        return name;
-    }
+	@Override
+	public String toString() {
+		return name;
+	}
 }

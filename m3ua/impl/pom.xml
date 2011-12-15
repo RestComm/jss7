@@ -38,11 +38,6 @@
 			<artifactId>shell</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-		</dependency>
-
 		<!-- javolution -->
 		<dependency>
 			<groupId>javolution</groupId>
@@ -52,9 +47,33 @@
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 			<artifactId>mtp</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.sctp</groupId>
+			<artifactId>sctp-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.sctp</groupId>
+			<artifactId>sctp-impl</artifactId>
+			<version>${sctp.version}</version>
+			<scope>test</scope>
+		</dependency>		
 	</dependencies>
 
 	<build>
 		<finalName>${pom.artifactId}-${pom.version}</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<version>2.3</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<compilerArgument>
+						-XDignore.symbol.file=true
+					</compilerArgument>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 </project>

@@ -23,29 +23,27 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
 import javolution.util.FastList;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAManagement;
-import org.mobicents.protocols.ss7.m3ua.impl.as.ClientM3UAProcess;
+import org.mobicents.protocols.api.Management;
+import org.mobicents.protocols.sctp.ManagementImpl;
+import org.mobicents.protocols.ss7.m3ua.ExchangeType;
+import org.mobicents.protocols.ss7.m3ua.Functionality;
+import org.mobicents.protocols.ss7.m3ua.IPSPType;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
-import org.mobicents.protocols.ss7.m3ua.impl.parameter.ProtocolDataImpl;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAManagement;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAProcess;
-import org.mobicents.protocols.ss7.m3ua.parameter.DestinationPointCode;
-import org.mobicents.protocols.ss7.m3ua.parameter.LocalRKIdentifier;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
-import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
-import org.mobicents.protocols.ss7.m3ua.parameter.ServiceIndicators;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
+import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
 
 /**
  * 
@@ -54,18 +52,34 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
  */
 public class GatewayTest {
 
-	private ParameterFactoryImpl parmFactory = new ParameterFactoryImpl();
+	private static final Logger logger = Logger.getLogger(GatewayTest.class);
 
-	As remAs;
-	Asp remAsp;
-	AspFactory remAspFactory;
+	private static final String SERVER_NAME = "testserver";
+	private static final String SERVER_HOST = "127.0.0.1";
+	private static final int SERVER_PORT = 2345;
 
-	As localAs;
-	Asp localAsp;
-	AspFactory localAspFactory;
+	private static final String SERVER_ASSOCIATION_NAME = "serverAsscoiation";
+	private static final String CLIENT_ASSOCIATION_NAME = "clientAsscoiation";
+
+	private static final String CLIENT_HOST = "127.0.0.1";
+	private static final int CLIENT_PORT = 2346;
+
+	private Management sctpManagement = null;
+	private M3UAManagement m3uaMgmt = null;
+	private ParameterFactoryImpl factory = new ParameterFactoryImpl();
+
+	private As remAs;
+	private Asp remAsp;
+	private AspFactory remAspFactory;
+
+	private As localAs;
+	private Asp localAsp;
+	private AspFactory localAspFactory;
 
 	private Server server;
 	private Client client;
+
+	private Mtp3UserPartListenerImpl mtp3UserPartListener = null;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -76,36 +90,31 @@ public class GatewayTest {
 	}
 
 	@Before
-	public void setUp() throws IOException {
-		// Clean up
-		ClientM3UAManagement clientM3UAMgmt = new ClientM3UAManagement();
-		clientM3UAMgmt.start();
-		
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		clientM3UAMgmt.getAppServers().clear();
-		clientM3UAMgmt.getAspfactories().clear();
-		clientM3UAMgmt.getDpcVsAsName().clear();
-		clientM3UAMgmt.stop();
+	public void setUp() throws Exception {
 
-		ServerM3UAManagement serverM3UAMgmt = new ServerM3UAManagement();
-		serverM3UAMgmt.start();
-		serverM3UAMgmt.getAppServers().clear();
-		serverM3UAMgmt.getAspfactories().clear();
-		serverM3UAMgmt.stop();
-		
-
+		mtp3UserPartListener = new Mtp3UserPartListenerImpl();
 
 		client = new Client();
 		server = new Server();
+
+		this.sctpManagement = new ManagementImpl("GatewayTest");
+		this.sctpManagement.setSingleThread(true);
+		this.sctpManagement.setConnectDelay(1000 * 5);// setting connection
+														// delay to 5 secs
+		this.sctpManagement.start();
+
+		this.m3uaMgmt = new M3UAManagement("GatewayTest");
+		this.m3uaMgmt.setTransportManagement(this.sctpManagement);
+		this.m3uaMgmt.addMtp3UserPartListener(mtp3UserPartListener);
+		this.m3uaMgmt.start();
+
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws Exception {
+
+		this.sctpManagement.stop();
+		this.m3uaMgmt.stop();
 	}
 
 	@Test
@@ -119,14 +128,14 @@ public class GatewayTest {
 		System.out.println("Starting Client");
 		client.start();
 
-		Thread.sleep(20000);
+		Thread.sleep(10000);
 
 		// Both AS and ASP should be ACTIVE now
-		assertEquals(AspState.ACTIVE, remAsp.getState());
-		assertEquals(AsState.ACTIVE, remAs.getState());
+		assertEquals(AspState.ACTIVE, AspState.getState(remAsp.getPeerFSM().getState().getName()));
+		assertEquals(AsState.ACTIVE, AsState.getState(remAs.getLocalFSM().getState().getName()));
 
-		assertEquals(AspState.ACTIVE, localAsp.getState());
-		assertEquals(AsState.ACTIVE, localAs.getState());
+		assertEquals(AspState.ACTIVE, AspState.getState(localAsp.getLocalFSM().getState().getName()));
+		assertEquals(AsState.ACTIVE, AsState.getState(localAs.getPeerFSM().getState().getName()));
 
 		client.sendPayload();
 		server.sendPayload();
@@ -134,190 +143,196 @@ public class GatewayTest {
 		Thread.sleep(1000);
 
 		client.stop();
+		logger.debug("Stopped Client");
 		// Give time to exchnge ASP_DOWN messages
 		Thread.sleep(100);
 
 		// The AS is Pending
-		assertEquals(AsState.PENDING, localAs.getState());
-		assertEquals(AsState.PENDING, remAs.getState());
+		assertEquals(AsState.PENDING, AsState.getState(localAs.getPeerFSM().getState().getName()));
+		assertEquals(AsState.PENDING, AsState.getState(remAs.getLocalFSM().getState().getName()));
 
 		// Let the AS go in DOWN state
-		Thread.sleep(2000);
+		Thread.sleep(4000);
+		logger.debug("Woke from 4000 sleep");
 
 		// The AS is Pending
-		assertEquals(AsState.DOWN, localAs.getState());
-		assertEquals(AsState.DOWN, remAs.getState());
+		assertEquals(AsState.DOWN, AsState.getState(localAs.getPeerFSM().getState().getName()));
+		assertEquals(AsState.DOWN, AsState.getState(remAs.getLocalFSM().getState().getName()));
 
 		client.stopClient();
 		server.stop();
 
 		Thread.sleep(100);
 
-		assertEquals(1, server.getReceivedData().size());
-		assertEquals(1, client.getReceivedData().size());
+		// we should receive two MTP3 data
+		assertEquals(2, mtp3UserPartListener.getReceivedData().size());
 
 	}
 
-	private class Client implements Runnable {
-		ByteBuffer rxBuffer = ByteBuffer.allocateDirect(1000);
-		ByteBuffer txBuffer = ByteBuffer.allocateDirect(1000);
-
-		
-		ClientM3UAProcess rsgw;
-		ClientM3UAManagement clientM3UAMgmt;
-		private FastList<byte[]> receivedData = new FastList<byte[]>();
-		private volatile boolean started = false;
+	private class Client {
 
 		public Client() {
 		}
 
-		public FastList<byte[]> getReceivedData() {
-			return receivedData;
-		}
-
 		public void start() throws Exception {
-			// Set-up Rem Signaling Gateway
-			clientM3UAMgmt = new ClientM3UAManagement();
-			clientM3UAMgmt.start();
 
-			rsgw = new ClientM3UAProcess();
-			rsgw.setClientM3UAManagement(clientM3UAMgmt);
-			rsgw.start();
+			// 1. Create SCTP Association
+			sctpManagement.addAssociation(CLIENT_HOST, CLIENT_PORT, SERVER_HOST, SERVER_PORT, CLIENT_ASSOCIATION_NAME);
 
+			// 2. Create AS
 			// m3ua as create rc <rc> <ras-name>
-			localAs = clientM3UAMgmt.createAppServer("m3ua as create rc 100 client-testas".split(" "));
+			RoutingContext rc = factory.createRoutingContext(new long[] { 100l });
+			TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
+			localAs = m3uaMgmt.createAs("client-testas", Functionality.AS, ExchangeType.SE, IPSPType.CLIENT, rc,
+					trafficModeType);
+
+			// 3. Create ASP
 			// m3ua asp create ip <local-ip> port <local-port> remip <remip>
 			// remport <remport> <asp-name>
-			// localAspFactory = rsgw.createAspFactory("client-testasp",
-			// "127.0.0.1", 3777, "127.0.0.1", 3112);
-			localAspFactory = clientM3UAMgmt
-					.createAspFactory("m3ua asp create ip 127.0.0.1 port 3777 remip 127.0.0.1 remport 3112 client-testasp"
-							.split(" "));
-			localAsp = clientM3UAMgmt.assignAspToAs("client-testas", "client-testasp");
+			localAspFactory = m3uaMgmt.createAspFactory("client-testasp", CLIENT_ASSOCIATION_NAME);
 
+			// 4. Assign ASP to AS
+			localAsp = m3uaMgmt.assignAspToAs("client-testas", "client-testasp");
+
+			// 5. Define Route
 			// Define Route
-			clientM3UAMgmt.addRouteAsForDpc(123, "client-testas");
+			m3uaMgmt.addRoute(1408, -1, -1, "client-testas");
 
-			clientM3UAMgmt.managementStartAsp("client-testasp");
+			// 6. Start ASP
+			m3uaMgmt.startAsp("client-testasp");
 
-			started = true;
-			new Thread(this).start();
 		}
 
 		public void stop() throws Exception {
-			clientM3UAMgmt.managementStopAsp("client-testasp");
-			clientM3UAMgmt.stop();
+			// 1. stop ASP
+			m3uaMgmt.stopAsp("client-testasp");
+
 		}
 
-		public void stopClient() {
-			started = false;
+		public void stopClient() throws Exception {
+
+			// 2.Remove route
+			m3uaMgmt.removeRoute(1408, -1, -1, "client-testas");
+
+			// 3. Unassign ASP from AS
+			// clientM3UAMgmt.
+			m3uaMgmt.unassignAspFromAs("client-testas", "client-testasp");
+
+			// 4. destroy aspFactory
+			m3uaMgmt.destroyAspFactory("client-testasp");
+
+			// 5. Destroy As
+			m3uaMgmt.destroyAs("client-testas");
+
+			// 6. remove sctp
+			sctpManagement.removeAssociation(CLIENT_ASSOCIATION_NAME);
 		}
 
 		public void sendPayload() throws Exception {
-			ProtocolDataImpl p1 = (ProtocolDataImpl) parmFactory.createProtocolData(1408, 123, 3, 1, 0, 1, new byte[] {
+			Mtp3TransferPrimitive mtp3TransferPrimitive = new Mtp3TransferPrimitive(3, 1, 0, 123, 1408, 1, new byte[] {
 					1, 2, 3, 4 });
-			txBuffer.clear();
-			txBuffer.put(p1.getMsu());
-			txBuffer.flip();
-			rsgw.write(txBuffer);
+			m3uaMgmt.sendMessage(mtp3TransferPrimitive);
 		}
-
-		public void run() {
-			while (started) {
-				try {
-					rsgw.execute();
-					rxBuffer.clear();
-					int rxBytes = rsgw.read(rxBuffer);
-
-					if (rxBytes > 0) {
-						byte[] data = new byte[rxBytes];
-						rxBuffer.flip();
-						rxBuffer.get(data);
-						receivedData.add(data);
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
 	}
 
-	private class Server implements Runnable {
-		ByteBuffer rxBuffer = ByteBuffer.allocateDirect(1000);
-		ByteBuffer txBuffer = ByteBuffer.allocateDirect(1000);
-
-		
-		ServerM3UAProcess sgw;
-		ServerM3UAManagement serverM3UAMgmt;
-
-		private volatile boolean started = false;
-
-		private FastList<byte[]> receivedData = new FastList<byte[]>();
+	private class Server {
 
 		public Server() {
 
 		}
 
-		public FastList<byte[]> getReceivedData() {
-			return receivedData;
-		}
+		private void start() throws Exception {
 
-		public void start() throws Exception {
-			serverM3UAMgmt = new ServerM3UAManagement();
-			serverM3UAMgmt.start();
+			// 1. Create SCTP Server
+			sctpManagement.addServer(SERVER_NAME, SERVER_HOST, SERVER_PORT);
 
-			// Set-up Signaling Gateway
-			sgw = new ServerM3UAProcess("127.0.0.1", 3112);
-			sgw.setServerM3UAManagement(serverM3UAMgmt);
-			sgw.start();
+			// 2. Create SCTP Server Association
+			sctpManagement.addServerAssociation(CLIENT_HOST, CLIENT_PORT, SERVER_NAME, SERVER_ASSOCIATION_NAME);
 
+			// 3. Start Server
+			sctpManagement.startServer(SERVER_NAME);
+
+			// 4. Create RAS
 			// m3ua ras create rc <rc> rk dpc <dpc> opc <opc-list> si <si-list>
 			// traffic-mode {broadcast|loadshare|override} <ras-name>
-			remAs = serverM3UAMgmt
-					.createAppServer("m3ua ras create rc 100 rk dpc 123 si 3 traffic-mode override server-testas"
-							.split(" "));
-			// m3ua rasp create ip <ip> port <port> <asp-name>"
-			remAspFactory = serverM3UAMgmt.createAspFactory("m3ua rasp create ip 127.0.0.1 port 3777 server-testasp"
-					.split(" "));
-			remAsp = serverM3UAMgmt.assignAspToAs("server-testas", "server-testasp");
+			RoutingContext rc = factory.createRoutingContext(new long[] { 100l });
+			TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
+			remAs = m3uaMgmt.createAs("server-testas", Functionality.SGW, ExchangeType.SE, IPSPType.CLIENT, rc,
+					trafficModeType);
 
-			started = true;
-			new Thread(this).start();
+			// 5. Create RASP
+			// m3ua rasp create <asp-name> <assoc-name>"
+			remAspFactory = m3uaMgmt.createAspFactory("server-testasp", SERVER_ASSOCIATION_NAME);
+
+			// 6. Assign ASP to AS
+			remAsp = m3uaMgmt.assignAspToAs("server-testas", "server-testasp");
+
+			// 5. Define Route
+			// Define Route
+			m3uaMgmt.addRoute(123, -1, -1, "server-testas");
+
+			// 7. Start ASP
+			m3uaMgmt.startAsp("server-testasp");
+
 		}
 
-		public void stop() throws IOException {
-			started = false;
-			sgw.stop();
+		public void stop() throws Exception {
+			m3uaMgmt.stopAsp("server-testasp");
+			
+			// 2.Remove route
+			m3uaMgmt.removeRoute(123, -1, -1, "server-testas");
+
+			m3uaMgmt.unassignAspFromAs("server-testas", "server-testasp");
+
+			// 4. destroy aspFactory
+			m3uaMgmt.destroyAspFactory("server-testasp");
+
+			// 5. Destroy As
+			m3uaMgmt.destroyAs("server-testas");
+
+			sctpManagement.removeAssociation(SERVER_ASSOCIATION_NAME);
+
+			sctpManagement.stopServer(SERVER_NAME);
+			sctpManagement.removeServer(SERVER_NAME);
 		}
 
 		public void sendPayload() throws Exception {
-			ProtocolDataImpl p1 = (ProtocolDataImpl) parmFactory.createProtocolData(1408, 123, 3, 1, 0, 1, new byte[] {
+			Mtp3TransferPrimitive mtp3TransferPrimitive = new Mtp3TransferPrimitive(3, 1, 0, 1408, 123, 1, new byte[] {
 					1, 2, 3, 4 });
-			txBuffer.clear();
-			txBuffer.put(p1.getMsu());
-			txBuffer.flip();
-			sgw.write(txBuffer);
+			m3uaMgmt.sendMessage(mtp3TransferPrimitive);
 		}
 
-		public void run() {
-			while (started) {
-				try {
-					sgw.execute();
-					rxBuffer.clear();
-					int rxBytes = sgw.read(rxBuffer);
+	}
 
-					if (rxBytes > 0) {
-						byte[] data = new byte[rxBytes];
-						rxBuffer.flip();
-						rxBuffer.get(data);
-						receivedData.add(data);
-					}
+	private class Mtp3UserPartListenerImpl implements Mtp3UserPartListener {
 
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+		private FastList<Mtp3TransferPrimitive> receivedData = new FastList<Mtp3TransferPrimitive>();
+
+		public FastList<Mtp3TransferPrimitive> getReceivedData() {
+			return receivedData;
+		}
+
+		@Override
+		public void onMtp3PauseMessage(Mtp3PausePrimitive arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onMtp3ResumeMessage(Mtp3ResumePrimitive arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onMtp3StatusMessage(Mtp3StatusPrimitive arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onMtp3TransferMessage(Mtp3TransferPrimitive value) {
+			receivedData.add(value);
 		}
 
 	}

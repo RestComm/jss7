@@ -116,7 +116,7 @@ public class RoutingContextImpl extends ParameterImpl implements RoutingContext,
 			rc.rcs = new long[size];
 			size = 0;
 			while (xml.hasNext()) {
-				rc.rcs[size++] = xml.get(ROUTING_CONTEXT);
+				rc.rcs[size++] = xml.get(ROUTING_CONTEXT, Long.class);
 			}
 			rc.encode();
 		}
@@ -125,7 +125,7 @@ public class RoutingContextImpl extends ParameterImpl implements RoutingContext,
 		public void write(RoutingContextImpl rc, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
 			xml.setAttribute(ARRAY_SIZE, rc.rcs.length);
 			for (Long l : rc.rcs) {
-				xml.add(l, ROUTING_CONTEXT);
+				xml.add(l, ROUTING_CONTEXT, Long.class);
 			}
 		}
 	};

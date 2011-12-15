@@ -22,6 +22,11 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.oam;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public interface M3UAOAMMessages {
 
 	/**
