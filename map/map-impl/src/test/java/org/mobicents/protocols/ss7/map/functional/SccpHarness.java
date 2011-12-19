@@ -39,12 +39,15 @@ import org.mobicents.protocols.ss7.sccp.impl.router.Router;
  * 
  */
 public abstract class SccpHarness {
+	
+	protected String sccpStack1Name = null;
+	protected String sccpStack2Name = null;
 
-	protected SccpStackImpl sccpStack1 = new SccpStackImpl("MapTestSccpStack1");
-	protected SccpProvider sccpProvider1 = sccpStack1.getSccpProvider();
+	protected SccpStackImpl sccpStack1 = null;
+	protected SccpProvider sccpProvider1= null;
 
-	protected SccpStackImpl sccpStack2 = new SccpStackImpl("MapTestSccpStack2");
-	protected SccpProvider sccpProvider2 = sccpStack2.getSccpProvider();
+	protected SccpStackImpl sccpStack2 = null;
+	protected SccpProvider sccpProvider2 = null;
 
 //	private ConcurrentLinkedQueue<byte[]> data1 = new ConcurrentLinkedQueue<byte[]>();
 //	private ConcurrentLinkedQueue<byte[]> data2 = new ConcurrentLinkedQueue<byte[]>();
@@ -52,11 +55,11 @@ public abstract class SccpHarness {
 	private Mtp3UserPartImpl mtp3UserPart1 = new Mtp3UserPartImpl();
 	private Mtp3UserPartImpl mtp3UserPart2 = new Mtp3UserPartImpl();
 
-	protected Router router1 = new Router();
-	protected Router router2 = new Router();
+	protected Router router1;
+	protected Router router2;
 
-	protected SccpResource resource1 = new SccpResource();
-	protected SccpResource resource2 = new SccpResource();
+	protected SccpResource resource1;
+	protected SccpResource resource2;
 
 	
 	/**
@@ -67,65 +70,60 @@ public abstract class SccpHarness {
 		mtp3UserPart2.setOtherPart(mtp3UserPart1);
 	}
 
+	protected void createStack1() {
+		sccpStack1 = new SccpStackImpl(sccpStack1Name);
+		sccpProvider1 = sccpStack1.getSccpProvider();
+	}
+
 	private void setUpStack1() {
-		try {
-			router1.start();
-			router1.getRules().clear();
-			router1.getPrimaryAddresses().clear();
-			router1.getBackupAddresses().clear();
-		} catch (Exception e) {
-			// ignore
-		}
-
-		resource1.start();
-		resource1.getRemoteSpcs().clear();
-		resource1.getRemoteSsns().clear();
-
-		resource1.getRemoteSpcs().put(1, new RemoteSignalingPointCode(2, 0, 0));
-		resource1.getRemoteSsns().put(1, new RemoteSubSystem(2, 8, 0));
-
-		sccpStack1.setRouter(router1);
-		sccpStack1.setSccpResource(resource1);
+		createStack1();
+		
 		sccpStack1.setLocalSpc(1);
 		sccpStack1.setNi(2);
 		sccpStack1.setMtp3UserPart(mtp3UserPart1);
 		sccpStack1.start();
+		
+		router1 = sccpStack1.getRouter();
+
+		resource1 = sccpStack1.getSccpResource();
+
+		resource1.getRemoteSpcs().put(1, new RemoteSignalingPointCode(2, 0, 0));
+		resource1.getRemoteSsns().put(1, new RemoteSubSystem(2, 8, 0));
+
+
+	}
+
+	protected void createStack2() {
+		sccpStack2 = new SccpStackImpl(sccpStack2Name);
+		sccpProvider2 = sccpStack2.getSccpProvider();
 	}
 
 	private void setUpStack2() {
-		try {
-			router2.start();
-			router2.getRules().clear();
-			router2.getPrimaryAddresses().clear();
-			router2.getBackupAddresses().clear();
-		} catch (Exception e) {
-			// ignore
-		}
-
-		resource2.start();
-		resource2.getRemoteSpcs().clear();
-		resource2.getRemoteSsns().clear();
-
-		resource2.getRemoteSpcs().put(1, new RemoteSignalingPointCode(1, 0, 0));
-		resource2.getRemoteSsns().put(1, new RemoteSubSystem(1, 8, 0));
-
-		sccpStack2.setRouter(router2);
-		sccpStack2.setSccpResource(resource2);
+		createStack2();
+		
 		sccpStack2.setLocalSpc(2);
 		sccpStack2.setNi(2);
 		sccpStack2.setMtp3UserPart(mtp3UserPart2);
 		sccpStack2.start();
+
+		
+		router2 = sccpStack2.getRouter();
+		
+		resource2 = sccpStack2.getSccpResource();
+
+		resource2.getRemoteSpcs().put(1, new RemoteSignalingPointCode(1, 0, 0));
+		resource2.getRemoteSsns().put(1, new RemoteSubSystem(1, 8, 0));
+
+		
 	}
 
 	private void tearDownStack1() {
 		router1.getRules().clear();
 		router1.getPrimaryAddresses().clear();
 		router1.getBackupAddresses().clear();
-		router1.stop();
 
 		resource1.getRemoteSpcs().clear();
 		resource1.getRemoteSsns().clear();
-		resource1.stop();
 
 		sccpStack1.stop();
 
@@ -135,11 +133,9 @@ public abstract class SccpHarness {
 		router1.getRules().clear();
 		router1.getPrimaryAddresses().clear();
 		router1.getBackupAddresses().clear();
-		router1.stop();
 
 		resource1.getRemoteSpcs().clear();
 		resource1.getRemoteSsns().clear();
-		resource1.stop();
 
 		sccpStack1.stop();
 

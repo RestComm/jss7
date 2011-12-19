@@ -92,7 +92,7 @@ public class Client extends TestHarness {
 
 	AtomicInteger nbConcurrentDialogs = new AtomicInteger(0);
 
-	long start = 0l;
+	volatile long start = 0l;
 
 	protected void initializeStack() throws Exception {
 
@@ -149,18 +149,18 @@ public class Client extends TestHarness {
 		this.sccpStack.setLocalSpc(CLIENT_SPC);
 		this.sccpStack.setNi(NETWORK_INDICATOR);
 		this.sccpStack.setMtp3UserPart(this.clientM3UAMgmt);
+		
+		this.sccpStack.start();
 
-		sccpResource = new SccpResource();
-		sccpResource.start();
-
-		this.sccpStack.setSccpResource(this.sccpResource);
+//		sccpResource = new SccpResource();
+//		sccpResource.start();
+//
+//		this.sccpStack.setSccpResource(this.sccpResource);
 
 		RemoteSignalingPointCode rspc = new RemoteSignalingPointCode(SERVET_SPC, 0, 0);
 		RemoteSubSystem rss = new RemoteSubSystem(SERVET_SPC, SSN, 0);
 		this.sccpStack.getSccpResource().addRemoteSpc(0, rspc);
 		this.sccpStack.getSccpResource().addRemoteSsn(0, rss);
-
-		this.sccpStack.start();
 
 	}
 
@@ -233,8 +233,8 @@ public class Client extends TestHarness {
 			while (client.endCount < NDIALOGS) {
 				while (client.nbConcurrentDialogs.intValue() >= MAXCONCURRENTDIALOGS) {
 
-					logger.warn("nbConcurrentInvite = " + client.nbConcurrentDialogs.intValue()
-							+ " Waiting for max CRCX count to go down!");
+//					logger.warn("Number of concurrent MAP dialog's = " + client.nbConcurrentDialogs.intValue()
+//							+ " Waiting for max dialog count to go down!");
 
 					synchronized (client) {
 						try {
@@ -247,6 +247,7 @@ public class Client extends TestHarness {
 
 				if (client.endCount == 0) {
 					client.start = System.currentTimeMillis();
+					logger.warn("StartTie = "+client.start);
 				}
 
 				client.initiateUSSD();
@@ -551,6 +552,7 @@ public class Client extends TestHarness {
 		}
 		if (this.endCount == NDIALOGS) {
 			long current = System.currentTimeMillis();
+			logger.warn("Current Time = "+current);
 			float sec = (float) (current - start) / 1000f;
 
 			logger.warn("Total time in sec = " + sec);

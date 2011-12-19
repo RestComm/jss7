@@ -144,10 +144,10 @@ public class ClientDialogic implements MAPDialogListener, MAPServiceSmsListener 
 		this.sccpStack.setNi(NETWORK_INDICATOR);
 		this.sccpStack.setMtp3UserPart(this.dialogic);
 
-		sccpResource = new SccpResource();
-		sccpResource.start();
-
-		this.sccpStack.setSccpResource(this.sccpResource);
+//		sccpResource = new SccpResource();
+//		sccpResource.start();
+//
+//		this.sccpStack.setSccpResource(this.sccpResource);
 
 		RemoteSignalingPointCode rspc = new RemoteSignalingPointCode(SERVET_SPC, 0, 0);
 		RemoteSubSystem rss = new RemoteSubSystem(SERVET_SPC, SSN, 0);

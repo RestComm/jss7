@@ -50,11 +50,13 @@ public class GT0001SccpStackImplTest extends SccpHarness {
 	}
 
 	@BeforeClass
-	public static void setUpClass() throws Exception {
+	public void setUpClass() throws Exception {
+		this.sccpStack1Name = "GT0001TestSccpStack1";
+		this.sccpStack2Name = "GT0001TestSccpStack2";
 	}
 
 	@AfterClass
-	public static void tearDownClass() throws Exception {
+	public void tearDownClass() throws Exception {
 	}
 
 	@BeforeMethod

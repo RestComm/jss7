@@ -31,6 +31,8 @@ import static org.testng.Assert.*;
  * 
  */
 public class SccpResourceTest {
+	
+	private SccpResource resource = null;
 
 	public SccpResourceTest() {
 	}
@@ -45,21 +47,21 @@ public class SccpResourceTest {
 
 	@BeforeMethod
 	public void setUp() {
-		SccpResource resource = new SccpResource();
+		resource = new SccpResource("SccpResourceTest");
 		resource.start();
-		resource.getRemoteSpcs().clear();
-		resource.getRemoteSsns().clear();
-		resource.stop();
+
 	}
 
 	@AfterMethod
 	public void tearDown() {
+		resource.getRemoteSpcs().clear();
+		resource.getRemoteSsns().clear();
+		
+		resource.stop();
 	}
 	
 	@Test(groups = { "sccpresource","functional.encode"})
 	public void testSerialization() throws Exception {
-		SccpResource resource = new SccpResource();
-		resource.start();
 
 		RemoteSignalingPointCode rsp1 = new RemoteSignalingPointCode(6034, 0, 0);
 		RemoteSignalingPointCode rsp2 = new RemoteSignalingPointCode(6045, 0, 0);
@@ -73,11 +75,7 @@ public class SccpResourceTest {
 		resource.addRemoteSsn(1, rss1);
 		resource.addRemoteSsn(2, rss2);
 
-		resource.stop();
-
-		resource = null;// just
-
-		SccpResource resource1 = new SccpResource();
+		SccpResource resource1 = new SccpResource("SccpResourceTest");
 		resource1.start();
 
 		assertEquals( resource1.getRemoteSpcs().size(),2);

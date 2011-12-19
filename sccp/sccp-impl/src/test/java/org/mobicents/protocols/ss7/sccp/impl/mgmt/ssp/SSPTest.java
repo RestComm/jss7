@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.sccp.impl.mgmt.ssp;
 
 import org.testng.annotations.*;
+
 import static org.testng.Assert.*;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
@@ -48,11 +49,13 @@ public class SSPTest extends SccpHarness {
 	}
 
 	@BeforeClass
-	public static void setUpClass() throws Exception {
+	public void setUpClass() throws Exception {
+		this.sccpStack1Name = "SSPTestSccpStack1";
+		this.sccpStack2Name = "SSPTestSccpStack2";
 	}
 
 	@AfterClass
-	public static void tearDownClass() throws Exception {
+	public void tearDownClass() throws Exception {
 	}
 
 	

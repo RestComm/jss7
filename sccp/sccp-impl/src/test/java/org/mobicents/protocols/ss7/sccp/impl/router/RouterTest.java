@@ -40,7 +40,8 @@ public class RouterTest {
 	private Rule rule1, rule2;
 
 	private SccpAddress primaryAddr1, primaryAddr2;
-
+	private Router router = null;
+	
 	public RouterTest() {
 	}
 
@@ -68,21 +69,18 @@ public class RouterTest {
 				"333/---/4"), 0);
 
 		// cleans config file
-		Router router = new Router();
-		try {
-			router.start();
-			router.getRules().clear();
-			router.getPrimaryAddresses().clear();
-			router.getBackupAddresses().clear();
-			router.stop();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		router = new Router("RouterTest");
+		router.start();
 
 	}
 
 	@AfterMethod
 	public void tearDown() {
+		router.getRules().clear();
+		router.getPrimaryAddresses().clear();
+		router.getBackupAddresses().clear();
+		
+		router.stop();
 	}
 
 	/**
@@ -90,8 +88,6 @@ public class RouterTest {
 	 */
 	@Test(groups = { "router","functional"})
 	public void testRouter() throws Exception {
-		Router router = new Router();
-		router.start();
 		router.getRules().put(1, rule1);
 		assertEquals( router.getRules().size(),1);
 		router.getRules().put(2, rule2);
@@ -110,21 +106,17 @@ public class RouterTest {
 		assertEquals( router.getPrimaryAddresses().size(),1);
 
 		assertEquals( router.getBackupAddresses().size(),0);
-		router.stop();
 	}
 	
 	@Test(groups = { "router","functional.encode"})
 	public void testSerialization() throws Exception {
-		Router router = new Router();
-		router.start();
 		router.getRules().put(1, rule1);	
 		router.getPrimaryAddresses().put(1, primaryAddr1);
 		router.getPrimaryAddresses().put(2, primaryAddr2);
 		router.stop();
 		
-		router = null;//just
 		
-		Router router1 = new Router();
+		Router router1 = new Router(router.getName());
 		router1.start();
 		assertEquals( router1.getRules().size(),1);
 		Rule rule = router1.getRules().values().iterator().next();

@@ -31,6 +31,7 @@ import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
+import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.Router;
 import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
@@ -52,21 +53,12 @@ public class SccpExecutor {
 
 	}
 
-	public Router getRouter() {
-		return router;
+	public void setSccpStack(SccpStackImpl sccpStack) {
+		this.router = sccpStack.getRouter();
+		this.sccpResource = sccpStack.getSccpResource();
 	}
 
-	public void setRouter(Router router) {
-		this.router = router;
-	}
 
-	public SccpResource getSccpResource() {
-		return sccpResource;
-	}
-
-	public void setSccpResource(SccpResource sccpResource) {
-		this.sccpResource = sccpResource;
-	}
 
 	public String execute(String[] options) {
 		if (this.router == null || this.sccpResource == null) {

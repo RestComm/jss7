@@ -145,19 +145,21 @@ public class Server extends TestHarness {
 		this.sccpStack.setLocalSpc(SERVET_SPC);
 		this.sccpStack.setNi(NETWORK_INDICATOR);
 		this.sccpStack.setMtp3UserPart(this.serverM3UAMgmt);
+		
+		this.sccpStack.start();
 
 		// Clean orevious resources if present
-		this.sccpResource = new SccpResource();
-		this.sccpResource.start();
-
-		this.sccpStack.setSccpResource(this.sccpResource);
+//		this.sccpResource = new SccpResource();
+//		this.sccpResource.start();
+//
+//		this.sccpStack.setSccpResource(this.sccpResource);
 
 		RemoteSignalingPointCode rspc = new RemoteSignalingPointCode(CLIENT_SPC, 0, 0);
 		RemoteSubSystem rss = new RemoteSubSystem(CLIENT_SPC, SSN, 0);
 		this.sccpStack.getSccpResource().addRemoteSpc(0, rspc);
 		this.sccpStack.getSccpResource().addRemoteSsn(0, rss);
 
-		this.sccpStack.start();
+
 
 	}
 

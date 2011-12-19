@@ -67,12 +67,14 @@ public class DialogIdleEndTest extends SccpHarness {
 	}
 
 	@BeforeClass
-	public static void setUpClass() throws Exception {
+	public void setUpClass() throws Exception {
+		this.sccpStack1Name = "DialogIdleEndTestSccpStack1";
+		this.sccpStack2Name = "DialogIdleEndTestSccpStack2";
 		System.out.println("setUpClass");
 	}
 
 	@AfterClass
-	public static void tearDownClass() throws Exception {
+	public void tearDownClass() throws Exception {
 		System.out.println("tearDownClass");
 	}
 

@@ -199,11 +199,18 @@ public class Router {
 	private FastMap<Integer, SccpAddress> primaryAddresses = new FastMap<Integer, SccpAddress>();
 
 	private FastMap<Integer, SccpAddress> backupAddresses = new FastMap<Integer, SccpAddress>();
+	
+	private final String name;
 
-	public Router() {
+	public Router(String name) {
+		this.name = name;
 
 		binding.setAlias(Rule.class, RULE);
 		binding.setClassAttribute(CLASS_ATTRIBUTE);
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public String getPersistDir() {
@@ -218,10 +225,10 @@ public class Router {
 		this.persistFile.clear();
 
 		if (persistDir != null) {
-			this.persistFile.append(persistDir).append(File.separator).append(PERSIST_FILE_NAME);
+			this.persistFile.append(persistDir).append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
 		} else {
 			persistFile.append(System.getProperty(SCCP_ROUTER_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY)))
-					.append(File.separator).append(PERSIST_FILE_NAME);
+					.append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
 		}
 
 		logger.info(String.format("SCCP Router configuration file path %s", persistFile.toString()));
@@ -232,7 +239,7 @@ public class Router {
 			logger.warn(String.format("Failed to load the SS7 configuration file. \n%s", e.getMessage()));
 		}
 
-		logger.info("Started LinksetManager");
+		logger.info("Started SCCP Router");
 	}
 
 	public void stop() {

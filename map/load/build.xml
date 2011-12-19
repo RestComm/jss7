@@ -72,7 +72,7 @@
 		<delete dir="server" />
 		<mkdir dir="server" />
 		<delete file="log4j-server.log" />
-		<java classname="${packageprefix}.Server" fork="true" maxmemory="1024m" classpathref="project.class.path" dir="server">
+		<java classname="${packageprefix}.Server" fork="true" maxmemory="1536m" classpathref="project.class.path" dir="server">
 			<jvmarg value="-Dlog.file.name=log4j-server.log" />
 			<!--
 			<jvmarg value="-XX:+PrintGCDetails" />
@@ -84,7 +84,7 @@
 		<echo message="${cp.property}" />
 		<delete dir="client" />
 		<mkdir dir="client" />
-		<java classname="${packageprefix}.Client" fork="true" maxmemory="1024m" classpathref="project.class.path" dir="client">
+		<java classname="${packageprefix}.Client" fork="true" maxmemory="1536m" classpathref="project.class.path" dir="client">
 			<jvmarg value="-Dlog.file.name=log4j-client.log" />
 			<arg value="10000" />
 			<arg value="10" />
