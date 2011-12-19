@@ -22,17 +22,29 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.oam;
 
-import org.testng.annotations.*;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
+import java.io.IOException;
+
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
 import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
+import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.Router;
 import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * @author amit bhayani
@@ -42,9 +54,10 @@ public class SccpExecutorTest {
 
 	private Router router = null;
 	private SccpResource sccpResource = null;
+	private SccpStackImpl sccpStack = null;
 
 	private SccpExecutor sccpExecutor = null;
-
+	
 	/**
 	 * 
 	 */
@@ -61,26 +74,31 @@ public class SccpExecutorTest {
 
 	@BeforeMethod
 	public void setUp() throws IllegalStateException {
-		this.router = new Router();
-		this.router.start();
-		this.router.getRules().clear();
-		this.router.getPrimaryAddresses().clear();
-		this.router.getBackupAddresses().clear();
+		Mtp3UserPartImpl mtp3UserPartImpl = new Mtp3UserPartImpl();
+		
+		this.sccpStack = new SccpStackImpl("SccpExecutorTest");
+		this.sccpStack.setMtp3UserPart(mtp3UserPartImpl);
+		this.sccpStack.start();
+		
+		this.router = this.sccpStack.getRouter();
 
-		this.sccpResource = new SccpResource();
-		this.sccpResource.start();
-		this.sccpResource.getRemoteSpcs().clear();
-		this.sccpResource.getRemoteSsns().clear();
+		this.sccpResource = this.sccpStack.getSccpResource();
 
 		sccpExecutor = new SccpExecutor();
-		sccpExecutor.setRouter(this.router);
-		sccpExecutor.setSccpResource(this.sccpResource);
+		sccpExecutor.setSccpStack(this.sccpStack);
 	}
 
 	@AfterMethod
 	public void tearDown() {
-		this.router.stop();
-		this.sccpResource.stop();
+		this.router.getRules().clear();
+		this.router.getPrimaryAddresses().clear();
+		this.router.getBackupAddresses().clear();
+		
+		this.sccpResource.start();
+		this.sccpResource.getRemoteSpcs().clear();
+		this.sccpResource.getRemoteSsns().clear();
+		
+		this.sccpStack.stop();
 	}
 
 	@Test(groups = { "oam","functional.mgmt"})
@@ -142,6 +160,36 @@ public class SccpExecutorTest {
 		rssCmd = "sccp rss show 1";
 		this.sccpExecutor.execute(rssCmd.split(" "));
 
+	}
+	
+	class Mtp3UserPartImpl implements Mtp3UserPart {
+
+		@Override
+		public void addMtp3UserPartListener(Mtp3UserPartListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public int getMaxUserDataLength(int arg0) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public void removeMtp3UserPartListener(Mtp3UserPartListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void sendMessage(Mtp3TransferPrimitive arg0) throws IOException {
+			// TODO Auto-generated method stub
+			
+		}
+
+	
+		
 	}
 
 }

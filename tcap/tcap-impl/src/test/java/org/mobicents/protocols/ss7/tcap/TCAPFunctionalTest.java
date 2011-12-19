@@ -55,12 +55,14 @@ public class TCAPFunctionalTest extends SccpHarness {
     }
     
 	@BeforeClass
-	public static void setUpClass() throws Exception {
+	public void setUpClass() throws Exception {
+		this.sccpStack1Name = "TCAPFunctionalTestSccpStack1";
+		this.sccpStack2Name = "TCAPFunctionalTestSccpStack2";
 		System.out.println("setUpClass");
 	}
 
 	@AfterClass
-	public static void tearDownClass() throws Exception {
+	public void tearDownClass() throws Exception {
 		System.out.println("tearDownClass");
 	}
 

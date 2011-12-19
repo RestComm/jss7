@@ -77,6 +77,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 	protected int ni = 2;
 	
 	private final String name;
+	
+	private String persistDir = null;
 
 //	protected ConcurrentLinkedQueue<byte[]> txDataQueue = new ConcurrentLinkedQueue<byte[]>();
 
@@ -95,6 +97,14 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
 		this.state = State.CONFIGURED;
 
+	}
+	
+	public String getPersistDir() {
+		return persistDir;
+	}
+
+	public void setPersistDir(String persistDir) {
+		this.persistDir = persistDir;
 	}
 
 	/*
@@ -142,6 +152,13 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		// executor = Executors.newFixedThreadPool(1);
 		//
 		// layer3exec = Executors.newFixedThreadPool(1);
+		this.router = new Router(this.name);
+		this.router.setPersistDir(this.persistDir);
+		this.router.start();
+		
+		this.sccpResource = new SccpResource(this.name);
+		this.sccpResource.setPersistDir(this.persistDir);
+		this.sccpResource.start();
 
 		logger.info("Starting routing engine...");
 		this.sccpRoutingControl.start();
@@ -181,6 +198,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		logger.info("Stopping routing engine...");
 		this.sccpRoutingControl.stop();
 		logger.info("Stopping MSU handler...");
+		
+		this.sccpResource.stop();
+		
+		this.router.stop();
 
 		// }finally
 		// {
@@ -189,27 +210,12 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.sccp.SccpStack#setRouter(org.mobicents.protocols
-	 * .ss7.sccp.Router)
-	 */
-	public void setRouter(Router router) {
-		this.router = router;
-	}
-
 	public Router getRouter() {
 		return this.router;
 	}
 
 	public SccpResource getSccpResource() {
 		return sccpResource;
-	}
-
-	public void setSccpResource(SccpResource sccpResource) {
-		this.sccpResource = sccpResource;
 	}
 
 	private enum State {

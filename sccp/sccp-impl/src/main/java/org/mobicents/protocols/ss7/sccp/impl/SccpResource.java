@@ -62,8 +62,11 @@ public class SccpResource {
 	private FastMap<Integer, RemoteSubSystem> remoteSsns = new FastMap<Integer, RemoteSubSystem>();
 
 	private FastMap<Integer, RemoteSignalingPointCode> remoteSpcs = new FastMap<Integer, RemoteSignalingPointCode>();
+	
+	private final String name;
 
-	public SccpResource() {
+	public SccpResource(String name) {
+		this.name = name;
 		binding.setClassAttribute(CLASS_ATTRIBUTE);
 	}
 
@@ -79,10 +82,10 @@ public class SccpResource {
 		this.persistFile.clear();
 
 		if (persistDir != null) {
-			this.persistFile.append(persistDir).append(File.separator).append(PERSIST_FILE_NAME);
+			this.persistFile.append(persistDir).append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
 		} else {
 			persistFile.append(System.getProperty(SCCP_RESOURCE_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY)))
-					.append(File.separator).append(PERSIST_FILE_NAME);
+					.append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
 		}
 
 		logger.info(String.format("SCCP Resource configuration file path %s", persistFile.toString()));

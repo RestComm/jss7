@@ -60,12 +60,13 @@ public class MAPFunctionalTest extends SccpHarness {
 	private Server server;
 
 	@BeforeClass
-	public static void setUpClass() throws Exception {
+	public void setUpClass() throws Exception {
+
 		System.out.println("setUpClass");
 	}
 
 	@AfterClass
-	public static void tearDownClass() throws Exception {
+	public void tearDownClass() throws Exception {
 		System.out.println("tearDownClass");
 	}
 
@@ -78,6 +79,10 @@ public class MAPFunctionalTest extends SccpHarness {
 	public void setUp() {
 		// this.setupLog4j();
 		System.out.println("setUpTest");
+		
+		this.sccpStack1Name = "MAPFunctionalTestSccpStack1";
+		this.sccpStack2Name = "MAPFunctionalTestSccpStack2";
+		
 		super.setUp();
 
 		// this.setupLog4j();

@@ -56,11 +56,13 @@ public class PCSSNSccpStackImplTest extends SccpHarness {
 	}
 
 	@BeforeClass
-	public static void setUpClass() throws Exception {
+	public void setUpClass() throws Exception {
+		this.sccpStack1Name = "PCSSNSccTestSccpStack1";
+		this.sccpStack2Name = "PCSSNSccTestSccpStack2";
 	}
 
 	@AfterClass
-	public static void tearDownClass() throws Exception {
+	public void tearDownClass() throws Exception {
 	}
 
 	@BeforeMethod

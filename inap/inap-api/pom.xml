@@ -11,10 +11,6 @@
 
 	<name>Mobicents SS7 :: INAP :: Api :: ${pom.artifactId}</name>
 
-	<properties>
-		<maven.test.skip>false</maven.test.skip>
-	</properties>
-
 	<dependencies>
 		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
 			<version>${log4j.version}</version> </dependency> -->
