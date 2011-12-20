@@ -206,6 +206,15 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 			}
 			break;
 
+		case CAPOperationCode.callInformationReport:
+			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric) {
+				if (compType == ComponentType.Invoke) {
+					callInformationReportRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+				}
+			}
+			break;
+
 		default:
 			new CAPParsingComponentException("", CAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
@@ -445,6 +454,34 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				((CAPServiceCircuitSwitchedCallListener) serLis).onCallInformationRequestRequestIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing eventReportBCSMRequest: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void callInformationReportRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+
+		if (parameter == null)
+			throw new CAPParsingComponentException("Error while decoding callInformationReportRequest: Parameter is mandatory but not found",
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new CAPParsingComponentException(
+					"Error while decoding callInformationReportRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		CallInformationReportRequestIndicationImpl ind = new CallInformationReportRequestIndicationImpl();
+		ind.decodeData(ais, buf.length);
+
+		ind.setInvokeId(invokeId);
+		ind.setCAPDialog(capDialogImpl);
+
+		for (CAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((CAPServiceCircuitSwitchedCallListener) serLis).onCallInformationReportRequestIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing eventReportBCSMRequest: " + e.getMessage(), e);
 			}

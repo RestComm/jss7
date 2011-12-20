@@ -44,6 +44,8 @@ public class CAPGprsReferenceNumberImpl implements CAPGprsReferenceNumber, CAPAs
 	protected static final int DESTINATION_REF_TAG = 0;
 	protected static final int ORIGINATION_REF_TAG = 1;
 
+	public static final String _PrimitiveName = "CAPGprsReferenceNumber";
+
 	public static final long[] CAP_Dialogue_OId = new long[] { 0, 4, 0, 0, 1, 1, 5, 2 };
 
 	private Integer destinationReference;
@@ -139,11 +141,33 @@ public class CAPGprsReferenceNumberImpl implements CAPGprsReferenceNumber, CAPAs
 			case Tag.CLASS_CONTEXT_SPECIFIC:
 				switch (tag) {
 				case DESTINATION_REF_TAG:
-					this.destinationReference = (int)ais.readInteger();
+					if (localAis.isTagPrimitive()) {
+						this.destinationReference = (int) localAis.readInteger();
+					} else {
+						AsnInputStream ais2 = localAis.readSequenceStream();
+						int tag2 = ais2.readTag();
+						if (tag2 != Tag.INTEGER || ais2.getTagClass() != Tag.CLASS_UNIVERSAL) {
+							throw new CAPParsingComponentException(
+									"Error while decoding CAPGprsReferenceNumber: Bad tag or tagClass when decoding EXPLICIT destinationReference",
+									CAPParsingComponentExceptionReason.MistypedParameter);
+						}
+						this.destinationReference = (int) ais2.readInteger();
+					}
 					break;
 
 				case ORIGINATION_REF_TAG:
-					this.originationReference = (int)ais.readInteger();
+					if (localAis.isTagPrimitive()) {
+						this.originationReference = (int) localAis.readInteger();
+					} else {
+						AsnInputStream ais2 = localAis.readSequenceStream();
+						int tag2 = ais2.readTag();
+						if (tag2 != Tag.INTEGER || ais2.getTagClass() != Tag.CLASS_UNIVERSAL) {
+							throw new CAPParsingComponentException(
+									"Error while decoding CAPGprsReferenceNumber: Bad tag or tagClass when decoding EXPLICIT destinationReference",
+									CAPParsingComponentExceptionReason.MistypedParameter);
+						}
+						this.originationReference = (int) ais2.readInteger();
+					}
 					break;
 
 				default:
@@ -182,15 +206,42 @@ public class CAPGprsReferenceNumberImpl implements CAPGprsReferenceNumber, CAPAs
 	public void encodeData(AsnOutputStream aos) throws CAPException {
 
 		try {
-			if (this.destinationReference != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, DESTINATION_REF_TAG, this.destinationReference);
-
-			if (this.originationReference != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, ORIGINATION_REF_TAG, this.originationReference);
+			if (this.destinationReference != null) {
+				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, DESTINATION_REF_TAG);
+				int i1 = aos.StartContentDefiniteLength();
+				aos.writeInteger(Tag.CLASS_UNIVERSAL, Tag.INTEGER, this.destinationReference);
+				aos.FinalizeContent(i1);
+			}
+			if (this.originationReference != null) {
+				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, ORIGINATION_REF_TAG);
+				int i1 = aos.StartContentDefiniteLength();
+				aos.writeInteger(Tag.CLASS_UNIVERSAL, Tag.INTEGER, this.originationReference);
+				aos.FinalizeContent(i1);
+			}
 		} catch (IOException e) {
 			throw new CAPException("IOException when encoding CAPGprsReferenceNumber: " + e.getMessage(), e);
 		} catch (AsnException e) {
 			throw new CAPException("AsnException when encoding CAPGprsReferenceNumber: " + e.getMessage(), e);
 		}
 	}
+	
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		if (this.destinationReference != null) {
+			sb.append("destinationReference=");
+			sb.append(destinationReference);
+		}
+		if (this.originationReference != null) {
+			sb.append(", originationReference=");
+			sb.append(originationReference);
+		}
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
+

@@ -250,13 +250,13 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 			referenceNumber.decodeAll(ais);
 		} catch (AsnException e) {
-			loger.error("AsnException when parsing CAP-OPEN Pdu: " + e.getMessage());
+			loger.error("AsnException when parsing CAP-OPEN Pdu: " + e.getMessage(), e);
 			return null;
 		} catch (IOException e) {
-			loger.error("IOException when parsing CAP-OPEN Pdu: " + e.getMessage());
+			loger.error("IOException when parsing CAP-OPEN Pdu: " + e.getMessage(), e);
 			return null;
 		} catch (CAPParsingComponentException e) {
-			loger.error("CAPParsingComponentException when parsing CAP-OPEN Pdu: " + e.getMessage());
+			loger.error("CAPParsingComponentException when parsing CAP-OPEN Pdu: " + e.getMessage(), e);
 			return null;
 		}
 			

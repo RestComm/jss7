@@ -20,9 +20,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
+package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -31,61 +32,44 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.primitives.Cause;
-import org.mobicents.protocols.ss7.cap.api.primitives.DateAndTime;
+import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
+import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformation;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformationType;
-import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
-import org.mobicents.protocols.ss7.cap.primitives.CauseImpl;
-import org.mobicents.protocols.ss7.cap.primitives.DateAndTimeImpl;
+import org.mobicents.protocols.ss7.cap.primitives.ReceivingSideIDImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.RequestedInformationImpl;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class RequestedInformationImpl implements RequestedInformation, CAPAsnPrimitive {
+public class CallInformationReportRequestIndicationImpl extends CircuitSwitchedCallMessageImpl implements CallInformationReportRequestIndication {
 
-	public static final int _ID_requestedInformationType = 0;
-	public static final int _ID_requestedInformationValue = 1;
+	public static final int _ID_requestedInformationList = 0;
+	public static final int _ID_extensions = 2;
+	public static final int _ID_legID = 3;
 
-	public static final int _ID_callAttemptElapsedTimeValue = 0;
-	public static final int _ID_callStopTimeValue = 1;
-	public static final int _ID_callConnectedElapsedTimeValue = 2;
-	public static final int _ID_releaseCauseValue = 30;
-	                                               
-	public static final String _PrimitiveName = "RequestedInformation";
+	public static final String _PrimitiveName = "CallInformationReportRequestIndication";
 
-	private RequestedInformationType tequestedInformationType;
-	private Integer callAttemptElapsedTimeValue;
-	private DateAndTime callStopTimeValue;
-	private Integer callConnectedElapsedTimeValue;
-	private Cause releaseCauseValue;
+	private ArrayList<RequestedInformation> requestedInformationList;
+	private CAPExtensions extensions;
+	private ReceivingSideID legID;
 
 	
 	@Override
-	public RequestedInformationType getRequestedInformationType() {
-		return tequestedInformationType;
+	public ArrayList<RequestedInformation> getRequestedInformationList() {
+		return requestedInformationList;
 	}
 
 	@Override
-	public Integer getCallAttemptElapsedTimeValue() {
-		return callAttemptElapsedTimeValue;
+	public CAPExtensions getExtensions() {
+		return extensions;
 	}
 
 	@Override
-	public DateAndTime getCallStopTimeValue() {
-		return callStopTimeValue;
-	}
-
-	@Override
-	public Integer getCallConnectedElapsedTimeValue() {
-		return callConnectedElapsedTimeValue;
-	}
-
-	@Override
-	public Cause getReleaseCauseValue() {
-		return releaseCauseValue;
+	public ReceivingSideID getLegID() {
+		return legID;
 	}
 
 	
@@ -134,55 +118,46 @@ public class RequestedInformationImpl implements RequestedInformation, CAPAsnPri
 	}
 
 	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
-
-		this.tequestedInformationType = null;
-		this.callAttemptElapsedTimeValue = null;
-		this.callStopTimeValue = null;
-		this.callConnectedElapsedTimeValue = null;
-		this.releaseCauseValue = null;
+		
+		this.requestedInformationList = null;
+		this.extensions = null;
+		this.legID = null;  // TODO: DEFAULT receivingSideID:leg2 
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		boolean valueReceived = false;
 		while (true) {
 			if (ais.available() == 0)
 				break;
 
 			int tag = ais.readTag();
-
+			
 			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 				switch (tag) {
-				case _ID_requestedInformationType:
-					int i1 = (int) ais.readInteger();
-					this.tequestedInformationType = RequestedInformationType.getInstance(i1);
-					break;
-				case _ID_requestedInformationValue:
-					valueReceived = true;
+				case _ID_requestedInformationList:
+					this.requestedInformationList = new ArrayList<RequestedInformation>();
 					AsnInputStream ais2 = ais.readSequenceStream();
-					int tag2 = ais2.readTag();
-					if (ais2.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad RequestedInformationValue tagClass",
-								CAPParsingComponentExceptionReason.MistypedParameter);
+					while (true) {
+						if (ais2.available() == 0)
+							break;
 
-					switch (tag2) {
-					case _ID_callAttemptElapsedTimeValue:
-						this.callAttemptElapsedTimeValue = (int)ais2.readInteger();
-						break;
-					case _ID_callStopTimeValue:
-						this.callStopTimeValue = new DateAndTimeImpl();
-						((DateAndTimeImpl)this.callStopTimeValue).decodeAll(ais2);
-						break;
-					case _ID_callConnectedElapsedTimeValue:
-						this.callConnectedElapsedTimeValue = (int)ais2.readInteger();
-						break;
-					case _ID_releaseCauseValue:
-						this.releaseCauseValue = new CauseImpl();
-						((CauseImpl)this.releaseCauseValue).decodeAll(ais2);
-						break;
-					default:
-						if (ais2.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
-							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad RequestedInformationValue tag",
+						int tag2 = ais2.readTag();
+						if (tag2 != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || ais2.isTagPrimitive())
+							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+									+ ": bad RequestedInformation tag or tagClass or RequestedInformation is primitive ",
 									CAPParsingComponentExceptionReason.MistypedParameter);
+
+						RequestedInformationImpl el = new RequestedInformationImpl();
+						el.decodeAll(ais2);
+						this.requestedInformationList.add(el);
 					}
+					break;
+				case _ID_extensions:
+					ais.advanceElement(); // TODO: implement it
+					break;
+				case _ID_legID:
+					ais2 = ais.readSequenceStream();
+					ais2.readTag();
+					this.legID = new ReceivingSideIDImpl();
+					((ReceivingSideIDImpl) this.legID).decodeAll(ais2);
 					break;
 
 				default:
@@ -194,9 +169,8 @@ public class RequestedInformationImpl implements RequestedInformation, CAPAsnPri
 			}
 		}
 
-		if (this.tequestedInformationType == null || !valueReceived)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-					+ ": requestedInformationType and requestedInformationValue are mandatory but not found",
+		if (this.requestedInformationList == null)
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": requestedInformationList is mandatory but not found ",
 					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 

@@ -62,6 +62,7 @@ import org.mobicents.protocols.ss7.inap.api.isup.CallingPartysCategoryInap;
 import org.mobicents.protocols.ss7.inap.api.isup.HighLayerCompatibilityInap;
 import org.mobicents.protocols.ss7.inap.api.isup.RedirectionInformationInap;
 import org.mobicents.protocols.ss7.inap.isup.CallingPartysCategoryInapImpl;
+import org.mobicents.protocols.ss7.inap.isup.HighLayerCompatibilityInapImpl;
 import org.mobicents.protocols.ss7.inap.isup.RedirectionInformationInapImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
@@ -76,6 +77,7 @@ import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.service.callhandling.CallReferenceNumberImpl;
 import org.mobicents.protocols.ss7.map.service.subscriberInformation.LocationInformationImpl;
+import org.mobicents.protocols.ss7.map.service.subscriberInformation.SubscriberStateImpl;
 import org.mobicents.protocols.ss7.map.service.subscriberManagement.ExtBasicServiceCodeImpl;
 
 /**
@@ -464,7 +466,12 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 						ais.advanceElement(); // TODO: implement it
 						break;
 					case _ID_highLayerCompatibility:
-						ais.advanceElement(); // TODO: implement it
+						buf = ais.readOctetString();
+						if (buf.length < 2 || buf.length > 2)
+							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+									+ ": highLayerCompatibility must be from 2 to 2 bytes length, found: " + buf.length,
+									CAPParsingComponentExceptionReason.MistypedParameter);
+						this.highLayerCompatibility = new HighLayerCompatibilityInapImpl(buf);
 						break;
 					case _ID_additionalCallingPartyNumber:
 						ais.advanceElement(); // TODO: implement it
@@ -518,7 +525,10 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 						((IMSIImpl)this.imsi).decodeAll(ais);
 						break;
 					case _ID_subscriberState:
-						ais.advanceElement(); // TODO: implement it
+						ais2 = ais.readSequenceStream();
+						ais2.readTag();
+						this.subscriberState = new SubscriberStateImpl();
+						((SubscriberStateImpl)this.subscriberState).decodeAll(ais2);
 						break;
 					case _ID_locationInformation:
 						this.locationInformation = new LocationInformationImpl();
