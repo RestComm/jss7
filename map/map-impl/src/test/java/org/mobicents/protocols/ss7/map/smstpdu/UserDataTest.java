@@ -87,7 +87,7 @@ public class UserDataTest {
 
 		UserDataImpl impl = new UserDataImpl(this.getData1(), new DataCodingSchemeImpl(8), 50, false, null);
 		impl.decode();
-		assertEquals(impl.getDecodedString(), "я у маши,мы в кино пойдЄм");
+		assertEquals(impl.getDecodedString(), "\u042f \u0443 \u043c\u0430\u0448\u0438,\u043c\u044b \u0432 \u043a\u0438\u043d\u043e \u043f\u043e\u0439\u0434\u0451\u043c");
 		assertNull(impl.getDecodedUserDataHeader());
 
 		impl = new UserDataImpl(this.getData2(), new DataCodingSchemeImpl(0), 160, true, null);
@@ -101,12 +101,12 @@ public class UserDataTest {
 
 		impl = new UserDataImpl(this.getData3(), new DataCodingSchemeImpl(8), 114, false, null);
 		impl.decode();
-		assertEquals(impl.getDecodedString(), "ѕ–»¬≈“ ѕќƒ–”∆≈Ќ№ ј! ј  “џ,„“ќ Ќќ¬ќ√ќ?„≈ћ «јЌ»ћј≈Ў№—я?»ЌЌј");
+		assertEquals(impl.getDecodedString(), "\u041f\u0420\u0418\u0412\u0415\u0422 \u041f\u041e\u0414\u0420\u0423\u0416\u0415\u041d\u042c\u041a\u0410!\u041a\u0410\u041a \u0422\u042b,\u0427\u0422\u041e \u041d\u041e\u0412\u041e\u0413\u041e?\u0427\u0415\u041c \u0417\u0410\u041d\u0418\u041c\u0410\u0415\u0428\u042c\u0421\u042f?\u0418\u041d\u041d\u0410");
 		assertNull(impl.getDecodedUserDataHeader());
 
 		impl = new UserDataImpl(this.getData4(), new DataCodingSchemeImpl(8), 139, true, null);
 		impl.decode();
-		assertEquals(impl.getDecodedString(), " от него улетит самый замечательный ангелочек!ѕросто улет,а ты как");
+		assertEquals(impl.getDecodedString(), " \u043e\u0442 \u043d\u0435\u0433\u043e \u0443\u043b\u0435\u0442\u0438\u0442 \u0441\u0430\u043c\u044b\u0439 \u0437\u0430\u043c\u0435\u0447\u0430\u0442\u0435\u043b\u044c\u043d\u044b\u0439 \u0430\u043d\u0433\u0435\u043b\u043e\u0447\u0435\u043a!\u041f\u0440\u043e\u0441\u0442\u043e \u0443\u043b\u0435\u0442,\u0430 \u0442\u044b \u043a\u0430\u043a");
 		assertNotNull(impl.getDecodedUserDataHeader());
 		mp = impl.getDecodedUserDataHeader().getAllData();
 		assertEquals(mp.size(), 1);
@@ -119,7 +119,7 @@ public class UserDataTest {
 
 		impl = new UserDataImpl(this.getData6(), new DataCodingSchemeImpl(0), 63, false, null);
 		impl.decode();
-		assertEquals(impl.getDecodedString(), "        /\\_/\\\n       (-  §  -)                    \n          ");
+		assertEquals(impl.getDecodedString(), "        /\\_/\\\n       (-  \u00a4  -)                    \n          ");
 		assertNull(impl.getDecodedUserDataHeader());
 
 	}
@@ -127,7 +127,7 @@ public class UserDataTest {
 	@Test(groups = { "functional.encode","smstpdu"})
 	public void testEncode() throws Exception {
 
-		UserDataImpl impl = new UserDataImpl("я у маши,мы в кино пойдЄм", new DataCodingSchemeImpl(8), null, null);
+		UserDataImpl impl = new UserDataImpl("\u042f \u0443 \u043c\u0430\u0448\u0438,\u043c\u044b \u0432 \u043a\u0438\u043d\u043e \u043f\u043e\u0439\u0434\u0451\u043c", new DataCodingSchemeImpl(8), null, null);
 		impl.encode();
 		assertTrue(Arrays.equals(impl.getEncodedData(), this.getData1()));
 		assertEquals(impl.getEncodedUserDataLength(), 50);
@@ -143,14 +143,14 @@ public class UserDataTest {
 		assertTrue(Arrays.equals(impl.getEncodedData(), this.getData2()));
 		assertEquals(impl.getEncodedUserDataLength(), 160);		
 
-		impl = new UserDataImpl("ѕ–»¬≈“ ѕќƒ–”∆≈Ќ№ ј! ј  “џ,„“ќ Ќќ¬ќ√ќ?„≈ћ «јЌ»ћј≈Ў№—я?»ЌЌј", new DataCodingSchemeImpl(8), null, null);
+		impl = new UserDataImpl("\u041f\u0420\u0418\u0412\u0415\u0422 \u041f\u041e\u0414\u0420\u0423\u0416\u0415\u041d\u042c\u041a\u0410!\u041a\u0410\u041a \u0422\u042b,\u0427\u0422\u041e \u041d\u041e\u0412\u041e\u0413\u041e?\u0427\u0415\u041c \u0417\u0410\u041d\u0418\u041c\u0410\u0415\u0428\u042c\u0421\u042f?\u0418\u041d\u041d\u0410", new DataCodingSchemeImpl(8), null, null);
 		impl.encode();
 		assertTrue(Arrays.equals(impl.getEncodedData(), this.getData3()));
 		assertEquals(impl.getEncodedUserDataLength(), 114);
 
 		udh = new UserDataHeaderImpl();
 		udh.addInformationElement(8, new byte[] { 0, -47, 3, 2 });
-		impl = new UserDataImpl(" от него улетит самый замечательный ангелочек!ѕросто улет,а ты как", new DataCodingSchemeImpl(8), udh, null);
+		impl = new UserDataImpl(" \u043e\u0442 \u043d\u0435\u0433\u043e \u0443\u043b\u0435\u0442\u0438\u0442 \u0441\u0430\u043c\u044b\u0439 \u0437\u0430\u043c\u0435\u0447\u0430\u0442\u0435\u043b\u044c\u043d\u044b\u0439 \u0430\u043d\u0433\u0435\u043b\u043e\u0447\u0435\u043a!\u041f\u0440\u043e\u0441\u0442\u043e \u0443\u043b\u0435\u0442,\u0430 \u0442\u044b \u043a\u0430\u043a", new DataCodingSchemeImpl(8), udh, null);
 		impl.encode();
 		assertTrue(Arrays.equals(impl.getEncodedData(), this.getData4()));
 		assertEquals(impl.getEncodedUserDataLength(), 139);		
@@ -160,7 +160,7 @@ public class UserDataTest {
 		assertTrue(Arrays.equals(impl.getEncodedData(), this.getData5()));
 		assertEquals(impl.getEncodedUserDataLength(), 79);
 
-		impl = new UserDataImpl("        /\\_/\\\n       (-  §  -)                    \n          ", new DataCodingSchemeImpl(0), null, null);
+		impl = new UserDataImpl("        /\\_/\\\n       (-  \u00a4  -)                    \n          ", new DataCodingSchemeImpl(0), null, null);
 		impl.encode();
 		assertTrue(Arrays.equals(impl.getEncodedData(), this.getData6()));
 		assertEquals(impl.getEncodedUserDataLength(), 63);
