@@ -22,36 +22,43 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
+import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
-import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
-import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformation;
 
 /**
-*
-EventReportBCSMArg {PARAMETERS-BOUND : bound} ::= SEQUENCE {
-eventTypeBCSM [0] EventTypeBCSM,
-eventSpecificInformationBCSM [2] EventSpecificInformationBCSM {bound} OPTIONAL,
-legID [3] ReceivingSideID OPTIONAL,
-miscCallInfo [4] MiscCallInfo DEFAULT {messageType request},
-extensions [5] Extensions {bound} OPTIONAL,
-...
-}
-* 
-* @author sergey vetyutnev
-* 
-*/
-public interface EventReportBCSMRequestIndication extends CircuitSwitchedCallMessage {
+ * 
 
-	public EventTypeBCSM getEventTypeBCSM();
+callInformationReport {PARAMETERS-BOUND : bound} OPERATION ::= { 
+ ARGUMENT  CallInformationReportArg {bound} 
+ RETURN RESULT FALSE 
+ ALWAYS RESPONDS FALSE 
+ CODE   opcode-callInformationReport} 
+-- Direction: gsmSSF -> gsmSCF, Timer: T  
+cirp
+-- This operation is used to send specific call information for a single call party to the gsmSCF as 
+-- requested by the gsmSCF in a previous CallInformationRequest. 
+ 
+CallInformationReportArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
+ requestedInformationList   [0] RequestedInformationList {bound}, 
+ extensions       [2] Extensions {bound}      OPTIONAL, 
+ legID        [3] ReceivingSideID DEFAULT receivingSideID:leg2, 
+ ... 
+ } 
 
-	public EventSpecificInformationBCSM getEventSpecificInformationBCSM();
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
+public interface CallInformationReportRequestIndication extends CircuitSwitchedCallMessage {
 
-	public ReceivingSideID getLegID();
-
-	public MiscCallInfo getMiscCallInfo();
+	public ArrayList<RequestedInformation> getRequestedInformationList();
 
 	public CAPExtensions getExtensions();
 
+	public ReceivingSideID getLegID();
+
 }
+

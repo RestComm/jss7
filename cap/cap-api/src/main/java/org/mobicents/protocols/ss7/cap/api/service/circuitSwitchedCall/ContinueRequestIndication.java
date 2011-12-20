@@ -38,6 +38,6 @@ CODE opcode-continue}
 * @author sergey vetyutnev
 * 
 */
-public interface ContinueRequestIndication {
+public interface ContinueRequestIndication extends CircuitSwitchedCallMessage {
 
 }

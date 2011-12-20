@@ -92,7 +92,7 @@ OCSIApplicable ::= NULL
 * @author sergey vetyutnev
 * 
 */
-public interface ConnectRequestIndication {
+public interface ConnectRequestIndication extends CircuitSwitchedCallMessage {
 
 	public DestinationRoutingAddress getDestinationRoutingAddress();
 

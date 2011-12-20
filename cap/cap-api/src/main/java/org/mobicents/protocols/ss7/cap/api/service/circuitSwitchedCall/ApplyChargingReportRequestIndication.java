@@ -53,7 +53,7 @@ aChChargingAddress [5] AChChargingAddress {bound} DEFAULT legID:receivingSideID:
 * @author sergey vetyutnev
 * 
 */
-public interface ApplyChargingReportRequestIndication {
+public interface ApplyChargingReportRequestIndication extends CircuitSwitchedCallMessage {
 
 	public TimeDurationChargingResult getTimeDurationChargingResult();
 

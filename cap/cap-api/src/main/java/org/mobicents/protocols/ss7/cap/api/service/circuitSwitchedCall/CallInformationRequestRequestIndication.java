@@ -59,7 +59,7 @@ legID [3] SendingSideID DEFAULT sendingSideID:leg2,
 * @author sergey vetyutnev
 * 
 */
-public interface CallInformationRequestRequestIndication {
+public interface CallInformationRequestRequestIndication extends CircuitSwitchedCallMessage {
 
 	public ArrayList<RequestedInformationType> getRequestedInformationTypeList();
 
