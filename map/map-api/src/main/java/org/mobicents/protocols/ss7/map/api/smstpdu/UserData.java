@@ -20,36 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.primitives;
+package org.mobicents.protocols.ss7.map.api.smstpdu;
 
 import org.mobicents.protocols.ss7.map.api.MAPException;
 
 /**
  * 
- LAIFixedLength ::= OCTET STRING (SIZE (5))
-	-- Refers to Location Area Identification defined in 3GPP TS 23.003 [17].
-	-- The internal structure is defined as follows:
-	-- octet 1 bits 4321	Mobile Country Code 1st digit
-	--         bits 8765	Mobile Country Code 2nd digit
-	-- octet 2 bits 4321	Mobile Country Code 3rd digit
-	--         bits 8765	Mobile Network Code 3rd digit
-	--			or filler (1111) for 2 digit MNCs
-	-- octet 3 bits 4321	Mobile Network Code 1st digit
-	--         bits 8765	Mobile Network Code 2nd digit
-	-- octets 4 and 5	Location Area Code according to 3GPP TS 24.008 [35]
-
- * 
  * @author sergey vetyutnev
  * 
  */
-public interface LAIFixedLength {
+public interface UserData {
 
-	public byte[] getData();
+	public byte[] getEncodedData();
 
-	public int getMCC() throws MAPException;
+	public boolean getEncodedUserDataHeaderIndicator();
+	
+	public int getEncodedUserDataLength();
+	
+	public String getDecodedString();
 
-	public int getMNC() throws MAPException;
+	public UserDataHeader getDecodedUserDataHeader();
 
-	public int getLac() throws MAPException;
+	public void encode() throws MAPException;
+
+	public void decode() throws MAPException;
 
 }

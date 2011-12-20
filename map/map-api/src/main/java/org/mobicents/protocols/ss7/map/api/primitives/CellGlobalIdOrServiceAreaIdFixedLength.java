@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import org.mobicents.protocols.ss7.map.api.MAPException;
+
 /**
  *
 CellGlobalIdOrServiceAreaIdFixedLength ::= OCTET STRING (SIZE (7))
@@ -47,5 +49,18 @@ CellGlobalIdOrServiceAreaIdFixedLength ::= OCTET STRING (SIZE (7))
 public interface CellGlobalIdOrServiceAreaIdFixedLength {
 
 	public byte[] getData();
+
+	public int getMCC() throws MAPException;
+
+	public int getMNC() throws MAPException;
+
+	public int getLac() throws MAPException;
+
+	/**
+	 * Cell Identity (CI) value or Service Area Code (SAC) value
+	 * 
+	 * @return
+	 */
+	public int getCellId() throws MAPException;
 
 }

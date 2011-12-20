@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
+
 /**
  *
  * ForwardSM-Arg ::= SEQUENCE {
@@ -42,7 +43,7 @@ public interface ForwardShortMessageRequestIndication extends SmsMessage {
 
 	public SM_RP_OA getSM_RP_OA();
 
-	public byte[] getSM_RP_UI();
+	public SmsSignalInfo getSM_RP_UI();
 
 	public boolean getMoreMessagesToSend();
 

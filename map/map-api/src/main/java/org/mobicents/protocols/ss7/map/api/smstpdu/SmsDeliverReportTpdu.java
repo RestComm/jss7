@@ -20,36 +20,51 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.primitives;
-
-import org.mobicents.protocols.ss7.map.api.MAPException;
+package org.mobicents.protocols.ss7.map.api.smstpdu;
 
 /**
- * 
- LAIFixedLength ::= OCTET STRING (SIZE (5))
-	-- Refers to Location Area Identification defined in 3GPP TS 23.003 [17].
-	-- The internal structure is defined as follows:
-	-- octet 1 bits 4321	Mobile Country Code 1st digit
-	--         bits 8765	Mobile Country Code 2nd digit
-	-- octet 2 bits 4321	Mobile Country Code 3rd digit
-	--         bits 8765	Mobile Network Code 3rd digit
-	--			or filler (1111) for 2 digit MNCs
-	-- octet 3 bits 4321	Mobile Network Code 1st digit
-	--         bits 8765	Mobile Network Code 2nd digit
-	-- octets 4 and 5	Location Area Code according to 3GPP TS 24.008 [35]
-
+ * SMS-DELIVER-REPORT pdu
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LAIFixedLength {
+public interface SmsDeliverReportTpdu extends SmsTpdu {
 
-	public byte[] getData();
+	/**
+	 * @return TP-UDHI field
+	 */
+	public boolean getUserDataHeaderIndicator();
+	
+	/**
+	 * @return TP-FCS field
+	 * Returns null if no failure occured and the result is ACK
+	 */
+	public FailureCause getFailureCause();
+	
+	/**
+	 * @return TP-PI field
+	 */
+	public ParameterIndicator getParameterIndicator();
 
-	public int getMCC() throws MAPException;
-
-	public int getMNC() throws MAPException;
-
-	public int getLac() throws MAPException;
+	/**
+	 * @return TP-PID field
+	 */
+	public ProtocolIdentifier getProtocolIdentifier();
+	
+	/**
+	 * @return TP-DCS field
+	 */
+	public DataCodingScheme getDataCodingScheme();
+	
+	/**
+	 * @return TP-UDL field
+	 */
+	public int getUserDataLength();
+	
+	/**
+	 * @return TP-UD field
+	 */
+	public UserData getUserData();
 
 }
+

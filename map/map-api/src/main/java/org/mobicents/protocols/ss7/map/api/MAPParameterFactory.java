@@ -42,16 +42,20 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpdu;
 import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
@@ -220,6 +224,12 @@ public interface MAPParameterFactory {
 	 */
 	public SM_RP_OA createSM_RP_OA();
 
+	public SmsSignalInfo createSmsSignalInfo(byte[] data, Charset gsm8Charset);
+
+	public SmsSignalInfo createSmsSignalInfo(SmsTpdu data, Charset gsm8Charset) throws MAPException;
+
+	public SM_RP_SMEA createSM_RP_SMEA(byte[] data);
+	
 	/**
 	 * Creates a new instance of {@link MAPUserAbortChoice}
 	 * 
@@ -261,7 +271,12 @@ public interface MAPParameterFactory {
 	
 	public CellGlobalIdOrServiceAreaIdFixedLength createCellGlobalIdOrServiceAreaIdFixedLength(byte[] data);
 
+	public CellGlobalIdOrServiceAreaIdFixedLength createCellGlobalIdOrServiceAreaIdFixedLength(int mcc, int mnc, int lac, int cellId) throws MAPException;
+
 	public LAIFixedLength createLAIFixedLength(byte[] data);
+	public LAIFixedLength createLAIFixedLength(int mcc, int mnc, int lac) throws MAPException;
+
+	public CallReferenceNumber createCallReferenceNumber(byte[] data);
 	
 	public Problem createProblemGeneral(GeneralProblemType prob);
 	public Problem createProblemInvoke(InvokeProblemType prob);

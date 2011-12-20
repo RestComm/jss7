@@ -20,36 +20,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.primitives;
-
-import org.mobicents.protocols.ss7.map.api.MAPException;
+package org.mobicents.protocols.ss7.map.api.smstpdu;
 
 /**
- * 
- LAIFixedLength ::= OCTET STRING (SIZE (5))
-	-- Refers to Location Area Identification defined in 3GPP TS 23.003 [17].
-	-- The internal structure is defined as follows:
-	-- octet 1 bits 4321	Mobile Country Code 1st digit
-	--         bits 8765	Mobile Country Code 2nd digit
-	-- octet 2 bits 4321	Mobile Country Code 3rd digit
-	--         bits 8765	Mobile Network Code 3rd digit
-	--			or filler (1111) for 2 digit MNCs
-	-- octet 3 bits 4321	Mobile Network Code 1st digit
-	--         bits 8765	Mobile Network Code 2nd digit
-	-- octets 4 and 5	Location Area Code according to 3GPP TS 24.008 [35]
-
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LAIFixedLength {
+public interface ValidityPeriod {
 
-	public byte[] getData();
+	public ValidityPeriodFormat getValidityPeriodFormat();
 
-	public int getMCC() throws MAPException;
+	public Integer getRelativeFormatValue();
 
-	public int getMNC() throws MAPException;
+	/**
+	 * @return Return the relative format period in hours
+	 */
+	public Double getRelativeFormatHours();
 
-	public int getLac() throws MAPException;
+	public AbsoluteTimeStamp getAbsoluteFormatValue();
+
+	public ValidityEnhancedFormatData getEnhancedFormatValue();
 
 }

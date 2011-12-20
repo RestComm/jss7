@@ -25,6 +25,12 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
 /**
 *
 CallReferenceNumber ::= OCTET STRING (SIZE (1..8)) 
+
+The use of this parameter and the conditions for its presence are specified in 3GPP TS 23.078 [98] and 3GPP TS 23.079 [99].
+
+This parameter gives the call reference number assigned to the call by the CCF. For encoding see
+GSM 09.02 [20].
+
 * 
 * @author sergey vetyutnev
 * 

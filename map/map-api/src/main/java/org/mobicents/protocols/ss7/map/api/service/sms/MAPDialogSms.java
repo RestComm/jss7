@@ -52,9 +52,9 @@ public interface MAPDialogSms extends MAPDialog {
 	 * @return invokeId
 	 * @throws MAPException
 	 */
-	public Long addForwardShortMessageRequest(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, byte[] sm_RP_UI, boolean moreMessagesToSend) throws MAPException;
+	public Long addForwardShortMessageRequest(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, SmsSignalInfo sm_RP_UI, boolean moreMessagesToSend) throws MAPException;
 
-	public Long addForwardShortMessageRequest(int customInvokeTimeout, SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, byte[] sm_RP_UI, boolean moreMessagesToSend)
+	public Long addForwardShortMessageRequest(int customInvokeTimeout, SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, SmsSignalInfo sm_RP_UI, boolean moreMessagesToSend)
 			throws MAPException;
 
 	/**
@@ -81,10 +81,10 @@ public interface MAPDialogSms extends MAPDialog {
 	 * @return invokeId
 	 * @throws MAPException
 	 */
-	public Long addMoForwardShortMessageRequest(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, byte[] sm_RP_UI, MAPExtensionContainer extensionContainer, IMSI imsi)
+	public Long addMoForwardShortMessageRequest(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, SmsSignalInfo sm_RP_UI, MAPExtensionContainer extensionContainer, IMSI imsi)
 			throws MAPException;
 
-	public Long addMoForwardShortMessageRequest(int customInvokeTimeout, SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, byte[] sm_RP_UI,
+	public Long addMoForwardShortMessageRequest(int customInvokeTimeout, SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, SmsSignalInfo sm_RP_UI,
 			MAPExtensionContainer extensionContainer, IMSI imsi) throws MAPException;
 
 	/**
@@ -97,7 +97,7 @@ public interface MAPDialogSms extends MAPDialog {
 	 *            optional
 	 * @throws MAPException
 	 */
-	public void addMoForwardShortMessageResponse(long invokeId, byte[] sm_RP_UI, MAPExtensionContainer extensionContainer) throws MAPException;
+	public void addMoForwardShortMessageResponse(long invokeId, SmsSignalInfo sm_RP_UI, MAPExtensionContainer extensionContainer) throws MAPException;
 
 	/**
 	 * Sending MAP-MT-FORWARD-SHORT-MESSAGE request
@@ -115,10 +115,10 @@ public interface MAPDialogSms extends MAPDialog {
 	 * @return
 	 * @throws MAPException
 	 */
-	public Long addMtForwardShortMessageRequest(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, byte[] sm_RP_UI, boolean moreMessagesToSend,
+	public Long addMtForwardShortMessageRequest(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, SmsSignalInfo sm_RP_UI, boolean moreMessagesToSend,
 			MAPExtensionContainer extensionContainer) throws MAPException;
 
-	public Long addMtForwardShortMessageRequest(int customInvokeTimeout, SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, byte[] sm_RP_UI, boolean moreMessagesToSend,
+	public Long addMtForwardShortMessageRequest(int customInvokeTimeout, SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, SmsSignalInfo sm_RP_UI, boolean moreMessagesToSend,
 			MAPExtensionContainer extensionContainer) throws MAPException;
 
 	/**
@@ -131,7 +131,7 @@ public interface MAPDialogSms extends MAPDialog {
 	 *            optional
 	 * @throws MAPException
 	 */
-	public void addMtForwardShortMessageResponse(long invokeId, byte[] sm_RP_UI, MAPExtensionContainer extensionContainer) throws MAPException;
+	public void addMtForwardShortMessageResponse(long invokeId, SmsSignalInfo sm_RP_UI, MAPExtensionContainer extensionContainer) throws MAPException;
 
 	/**
 	 * Sending MAP-SEND-ROUTING-INFO-FOR-SM request
@@ -154,10 +154,10 @@ public interface MAPDialogSms extends MAPDialog {
 	 * @throws MAPException
 	 */
 	public Long addSendRoutingInfoForSMRequest(ISDNAddressString msisdn, boolean sm_RP_PRI, AddressString serviceCentreAddress,
-			MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, byte[] sM_RP_SMEA) throws MAPException;
+			MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, SM_RP_SMEA sM_RP_SMEA) throws MAPException;
 
 	public Long addSendRoutingInfoForSMRequest(int customInvokeTimeout, ISDNAddressString msisdn, boolean sm_RP_PRI, AddressString serviceCentreAddress,
-			MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, byte[] sM_RP_SMEA) throws MAPException;
+			MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, SM_RP_SMEA sM_RP_SMEA) throws MAPException;
 	
 	/**
 	 * Sending MAP-SEND-ROUTING-INFO-FOR-SM response

@@ -20,36 +20,45 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.primitives;
+package org.mobicents.protocols.ss7.map.api.smstpdu;
+
+import java.io.OutputStream;
 
 import org.mobicents.protocols.ss7.map.api.MAPException;
 
 /**
- * 
- LAIFixedLength ::= OCTET STRING (SIZE (5))
-	-- Refers to Location Area Identification defined in 3GPP TS 23.003 [17].
-	-- The internal structure is defined as follows:
-	-- octet 1 bits 4321	Mobile Country Code 1st digit
-	--         bits 8765	Mobile Country Code 2nd digit
-	-- octet 2 bits 4321	Mobile Country Code 3rd digit
-	--         bits 8765	Mobile Network Code 3rd digit
-	--			or filler (1111) for 2 digit MNCs
-	-- octet 3 bits 4321	Mobile Network Code 1st digit
-	--         bits 8765	Mobile Network Code 2nd digit
-	-- octets 4 and 5	Location Area Code according to 3GPP TS 24.008 [35]
+The TP-Service-Centre-Time-Stamp field is given in semi-octet representation, and represents the local time in the 
+following way:
+ 
+Year:  Month:  Day:  Hour:  Minute:  Second:  Time Zone 
+Digits:  2  2  2  2  2  2  2 (Semi-octets) 
 
+The Time Zone indicates the difference, expressed in quarters of an hour, between the local time and GMT. In the first 
+of the two semi-octets, the first bit (bit 3 of the seventh octet of the TP-Service-Centre-Time-Stamp field) represents the 
+algebraic sign of this difference (0: positive, 1: negative).
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LAIFixedLength {
+public interface AbsoluteTimeStamp {
 
-	public byte[] getData();
+	public int getYear();
 
-	public int getMCC() throws MAPException;
+	public int getMonth();
 
-	public int getMNC() throws MAPException;
+	public int getDay();
 
-	public int getLac() throws MAPException;
+	public int getHour();
+
+	public int getMinute();
+
+	public int getSecond();
+
+	/**
+	 * @return the timeZone in in quarters of an hour
+	 */
+	public int getTimeZone();
+
+	public void encodedData(OutputStream stm) throws MAPException;
 
 }

@@ -60,7 +60,7 @@ public interface MoForwardShortMessageRequestIndication extends SmsMessage {
 
 	public SM_RP_OA getSM_RP_OA();
 
-	public byte[] getSM_RP_UI();
+	public SmsSignalInfo getSM_RP_UI();
 
 	public MAPExtensionContainer getExtensionContainer();
 

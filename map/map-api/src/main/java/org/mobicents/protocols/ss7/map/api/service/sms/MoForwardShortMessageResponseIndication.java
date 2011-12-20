@@ -38,7 +38,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  */
 public interface MoForwardShortMessageResponseIndication extends SmsMessage {
 
-	public byte[] getSM_RP_UI();
+	public SmsSignalInfo getSM_RP_UI();
 
 	public MAPExtensionContainer getExtensionContainer();
 

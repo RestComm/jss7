@@ -20,36 +20,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.primitives;
+package org.mobicents.protocols.ss7.map.api.smstpdu;
 
-import org.mobicents.protocols.ss7.map.api.MAPException;
+import java.util.Map;
 
 /**
- * 
- LAIFixedLength ::= OCTET STRING (SIZE (5))
-	-- Refers to Location Area Identification defined in 3GPP TS 23.003 [17].
-	-- The internal structure is defined as follows:
-	-- octet 1 bits 4321	Mobile Country Code 1st digit
-	--         bits 8765	Mobile Country Code 2nd digit
-	-- octet 2 bits 4321	Mobile Country Code 3rd digit
-	--         bits 8765	Mobile Network Code 3rd digit
-	--			or filler (1111) for 2 digit MNCs
-	-- octet 3 bits 4321	Mobile Network Code 1st digit
-	--         bits 8765	Mobile Network Code 2nd digit
-	-- octets 4 and 5	Location Area Code according to 3GPP TS 24.008 [35]
-
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LAIFixedLength {
+public interface UserDataHeader {
 
-	public byte[] getData();
+	public static int _InformationElementIdentifier_ConcatenatedShortMessages8bit = 0x00;
+	public static int _InformationElementIdentifier_ConcatenatedShortMessages16bit = 0x08;
+	public static int _InformationElementIdentifier_NationalLanguageSingleShift = 0x24;
+	public static int _InformationElementIdentifier_NationalLanguageLockingShift = 0x25;
 
-	public int getMCC() throws MAPException;
+	public byte[] getEncodedData();
 
-	public int getMNC() throws MAPException;
+	public Map<Integer, byte[]> getAllData();
 
-	public int getLac() throws MAPException;
+	public void addInformationElement(int informationElementIdentifier, byte[] encodedData);
+
+	public void addInformationElement(UserDataHeaderElement informationElement);
+
+	public byte[] getInformationElementData(int informationElementIdentifier);
+
+	public NationalLanguageLockingShiftIdentifier getNationalLanguageLockingShift();
+
+	public NationalLanguageSingleShiftIdentifier getNationalLanguageSingleShift();
+
+	public ConcatenatedShortMessagesIdentifier getConcatenatedShortMessagesIdentifier();
 
 }

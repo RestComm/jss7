@@ -76,7 +76,7 @@ public interface SendRoutingInfoForSMRequestIndication extends SmsMessage {
 	
 	public SM_RP_MTI getSM_RP_MTI();
 
-	public byte[] getSM_RP_SMEA();
+	public SM_RP_SMEA getSM_RP_SMEA();
 }
 
 
