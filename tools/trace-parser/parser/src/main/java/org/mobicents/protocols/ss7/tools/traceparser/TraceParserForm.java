@@ -264,8 +264,8 @@ public class TraceParserForm {
 		panel_2.setLayout(null);
 		
 		rdbtnTpActerna = new JRadioButton("Acterna");
-		buttonGroup.add(rdbtnTpActerna);
 		rdbtnTpActerna.setSelected(true);
+		buttonGroup.add(rdbtnTpActerna);
 		rdbtnTpActerna.setBounds(6, 28, 109, 23);
 		panel_2.add(rdbtnTpActerna);
 		
@@ -292,8 +292,16 @@ public class TraceParserForm {
 		btnFilePath.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser chooser = new JFileChooser();
-				TraceFileFilter filter = new TraceFileFilter();
+				String filterName = null;
+				if (rdbtnTpActerna.isSelected())
+					filterName = "Acterna";
+				if (rdbtnTpSimpleSeq.isSelected())
+					filterName = "Simple";
+				if (rdbtnTpPcap.isSelected())
+					filterName = "Pcap";
+				TraceFileFilter filter = new TraceFileFilter(filterName);
 				chooser.setFileFilter(filter);
+				chooser.addChoosableFileFilter(filter);
 				File f = new File(tfFilePath.getText());
 				chooser.setSelectedFile(f);
 				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -538,6 +546,12 @@ public class TraceParserForm {
 	
 	private class TraceFileFilter extends FileFilter {
 
+		private String name;
+
+		public TraceFileFilter(String name) {
+			this.name = name;
+		}
+
 		@Override
 		public boolean accept(File f) {
 			if(f.isDirectory())
@@ -547,8 +561,17 @@ public class TraceParserForm {
 			int i1 = s.lastIndexOf('.');
 			if (i1 > 0) {
 				String s1 = s.substring(i1 + 1);
-				if (s1.length() == 3 && s1.startsWith("p0"))
-					return true;
+
+				if (this.name.equals("Acterna")) {
+					if (s1.length() == 3 && s1.startsWith("p0"))
+						return true;
+				} else if (this.name.equals("Simple")) {
+					if (s1.equals("msg"))
+						return true;
+				} else if (this.name.equals("Pcap")) {
+					if (s1.equals("pcap"))
+						return true;
+				}
 			}
 
 			return false;
@@ -556,9 +579,8 @@ public class TraceParserForm {
 
 		@Override
 		public String getDescription() {
-			return "";
+			return this.name;
 		}
-		
 	}
 }
 

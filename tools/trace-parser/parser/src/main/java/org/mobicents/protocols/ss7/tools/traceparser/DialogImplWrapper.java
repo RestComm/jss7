@@ -50,6 +50,7 @@ public class DialogImplWrapper extends DialogImpl {
 	
 	private int acnValue;
 	private int acnVersion;
+	protected int curOpcOrig;
 	protected int curOpc;
 	
 	public DialogImplWrapper(SccpAddress localAddress, SccpAddress remoteAddress, Long origTransactionId, boolean structured,
@@ -88,7 +89,7 @@ public class DialogImplWrapper extends DialogImpl {
 		for (Component c : components) {
 
 			boolean rev = false;
-			if (curOpc == this.getLocalAddress().getSignalingPointCode()) {
+			if (curOpc == this.curOpcOrig) {
 				if (c.getType() != ComponentType.Invoke)
 					rev = true;
 			} else {

@@ -27,6 +27,7 @@ import java.io.DataInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,14 +54,37 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.InformServiceCentreRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener;
+import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsCommandTpdu;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsDeliverReportTpdu;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsDeliverTpdu;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsStatusReportTpdu;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpdu;
+import org.mobicents.protocols.ss7.map.api.smstpdu.UserData;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentationImpl;
 import org.mobicents.protocols.ss7.sccp.message.UnitData;
+import org.mobicents.protocols.ss7.sccp.message.XUnitData;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.tcap.DialogImpl;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.DialogAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.DialogPortion;
@@ -70,6 +94,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
@@ -84,8 +109,8 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
  * @author sergey vetyutnev
  * 
  */
-public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, CAPDialogListener, Runnable, ProcessControl {
-	
+public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, CAPDialogListener, Runnable, ProcessControl, MAPServiceSmsListener {
+
 	private Ss7ParseParameters par;
 	private Thread t;
 	private boolean taskIsFinished = false;
@@ -152,6 +177,8 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 					return;
 				}
 			}
+			
+			this.xLst.clear();
 
 			this.sccpProvider = new SccpProviderWrapper();
 			this.tcapStack = new TCAPStackImplWrapper(this.sccpProvider, 1);
@@ -165,6 +192,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 			
 			this.mapProvider.addMAPDialogListener(this);
+			this.mapProvider.getMAPServiceSms().addMAPServiceListener((MAPServiceSmsListener) this);
 
 			this.capProvider = new CAPProviderImpl(this.tcapProvider);
 
@@ -173,8 +201,10 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 			this.capProvider.getCAPServiceSms().acivate();
 
 			this.tcapStack.start();
-			this.mapProvider.start();
-			this.capProvider.start();
+			if (this.par.getParseProtocol() == ParseProtocol.Map)
+				this.mapProvider.start();
+			else
+				this.capProvider.start();
 			
 			this.capProvider.addCAPDialogListener(this);
 			
@@ -274,7 +304,13 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 		}
 	}
 
-	
+	HashMap<Long, XUnitDataDef> xLst = new HashMap<Long, XUnitDataDef>();
+
+	private class XUnitDataDef {
+		public int remainingSegm;
+		public ArrayList<byte[]> dLst = new ArrayList<byte[]>();
+	}
+
 	public void onMessage(SccpMessageImpl message, int seqControl) {
 		try {
 			byte[] data = null;
@@ -285,8 +321,54 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				data = ((UnitData) message).getData();
 				localAddress = ((UnitData) message).getCalledPartyAddress();
 				remoteAddress = ((UnitData) message).getCallingPartyAddress();
-			} else
+			} else if (message.getType() == XUnitData.MESSAGE_TYPE) {
+				XUnitData xMsg = (XUnitData) message;
+				data = xMsg.getData();
+				localAddress = xMsg.getCalledPartyAddress();
+				remoteAddress = xMsg.getCallingPartyAddress();
+
+				SegmentationImpl sgm = (SegmentationImpl)xMsg.getSegmentation();
+				if (sgm != null && (!sgm.isFirstSegIndication() || sgm.getRemainingSegments() > 0)) {
+					XUnitDataDef msgDef;
+					long ind = 0;
+					for (byte bt : sgm.getSegmentationLocalRef()) {
+						ind = (ind << 8) + (bt & 0xFF);
+					}
+					if (!sgm.isFirstSegIndication()) {
+						msgDef = xLst.get(ind);
+						if (msgDef == null)
+							return;
+						if (msgDef.remainingSegm - 1 != sgm.getRemainingSegments()) {
+							xLst.remove(ind);
+							return;
+						}
+					} else {
+						msgDef = new XUnitDataDef();
+						xLst.put(ind, msgDef);
+					}
+					msgDef.remainingSegm = sgm.getRemainingSegments();
+					msgDef.dLst.add(data);
+					
+					if (sgm.getRemainingSegments() == 0) {
+						int ln = 0;
+						for (byte[] buf : msgDef.dLst) {
+							ln += buf.length;
+						}
+						data = new byte[ln];
+						int offs = 0;
+						for (byte[] buf : msgDef.dLst) {
+							System.arraycopy(buf, 0, data, offs, buf.length);
+							offs += buf.length;
+						}
+						xLst.remove(ind);
+					} else {
+						return;
+					}
+				}
+
+			} else {
 				return;
+			}
 
 			// asnData - it should pass
 			AsnInputStream ais = new AsnInputStream(data);
@@ -396,6 +478,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				if (!CheckDialogIdFilter(originatingTransactionId, Integer.MIN_VALUE))
 					return;
 
+				di.curOpcOrig = message.getOpc();
 				di.curOpc = message.getOpc();
 				di.processBegin(tcb, localAddress, remoteAddress);
 
@@ -982,5 +1065,155 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	public void onDialogUserAbort(CAPDialog arg0, CAPGeneralAbortReason arg1, CAPUserAbortReason arg2) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInvokeTimeout(MAPDialog mapDialog, Long invokeId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	// SMS service listener
+	private void parseSmsSignalInfo(SmsSignalInfo si, boolean isMo, boolean isMt) {
+
+		if (si == null)
+			return;
+		
+		if (isMo) {
+			try {
+				SmsTpdu tpdu = si.decodeTpdu(true);
+				parseSmsTpdu(tpdu);
+			} catch (MAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		if (isMt) {
+			try {
+				SmsTpdu tpdu = si.decodeTpdu(false);
+				parseSmsTpdu(tpdu);
+			} catch (MAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void parseSmsTpdu(SmsTpdu tpdu) throws MAPException {
+		
+		UserData ud = null;
+		switch (tpdu.getSmsTpduType()) {
+		case SMS_DELIVER_REPORT: {
+			SmsDeliverReportTpdu t = (SmsDeliverReportTpdu) tpdu;
+//			ud = t.getUserData();
+		}
+			break;
+		case SMS_SUBMIT: {
+			SmsSubmitTpdu t = (SmsSubmitTpdu) tpdu;
+			ud = t.getUserData();
+		}
+			break;
+		case SMS_COMMAND: {
+			SmsCommandTpdu t = (SmsCommandTpdu) tpdu;
+		}
+			break;
+		case SMS_DELIVER: {
+			SmsDeliverTpdu t = (SmsDeliverTpdu) tpdu;
+			ud = t.getUserData();
+		}
+			break;
+		case SMS_SUBMIT_REPORT: {
+			SmsSubmitTpdu t = (SmsSubmitTpdu) tpdu;
+//			ud = t.getUserData();
+		}
+			break;
+		case SMS_STATUS_REPORT: {
+			SmsStatusReportTpdu t = (SmsStatusReportTpdu) tpdu;
+//			ud = t.getUserData();
+		}
+			break;
+		}
+
+		if (ud != null) {
+			ud.decode();
+			int i1 = 0;
+			i1++;
+		}
+	}
+	
+	@Override
+	public void onForwardShortMessageIndication(ForwardShortMessageRequestIndication forwSmInd) {
+		this.parseSmsSignalInfo(forwSmInd.getSM_RP_UI(), true, true);
+	}
+
+	@Override
+	public void onForwardShortMessageRespIndication(ForwardShortMessageResponseIndication forwSmRespInd) {
+	}
+
+	@Override
+	public void onMoForwardShortMessageIndication(MoForwardShortMessageRequestIndication moForwSmInd) {
+		this.parseSmsSignalInfo(moForwSmInd.getSM_RP_UI(), true, false);
+	}
+
+	@Override
+	public void onMoForwardShortMessageRespIndication(MoForwardShortMessageResponseIndication moForwSmRespInd) {
+		this.parseSmsSignalInfo(moForwSmRespInd.getSM_RP_UI(), false, true);
+	}
+
+	@Override
+	public void onMtForwardShortMessageIndication(MtForwardShortMessageRequestIndication mtForwSmInd) {
+		this.parseSmsSignalInfo(mtForwSmInd.getSM_RP_UI(), false, true);
+	}
+
+	@Override
+	public void onMtForwardShortMessageRespIndication(MtForwardShortMessageResponseIndication mtForwSmRespInd) {
+		this.parseSmsSignalInfo(mtForwSmRespInd.getSM_RP_UI(), true, false);
+	}
+
+	@Override
+	public void onSendRoutingInfoForSMIndication(SendRoutingInfoForSMRequestIndication sendRoutingInfoForSMInd) {
+	}
+
+	@Override
+	public void onSendRoutingInfoForSMRespIndication(SendRoutingInfoForSMResponseIndication sendRoutingInfoForSMRespInd) {
+	}
+
+	@Override
+	public void onReportSMDeliveryStatusIndication(ReportSMDeliveryStatusRequestIndication reportSMDeliveryStatusInd) {
+	}
+
+	@Override
+	public void onReportSMDeliveryStatusRespIndication(ReportSMDeliveryStatusResponseIndication reportSMDeliveryStatusRespInd) {
+	}
+
+	@Override
+	public void onInformServiceCentreIndication(InformServiceCentreRequestIndication informServiceCentreInd) {
+	}
+
+	@Override
+	public void onAlertServiceCentreIndication(AlertServiceCentreRequestIndication alertServiceCentreInd) {
+	}
+
+	@Override
+	public void onAlertServiceCentreRespIndication(AlertServiceCentreResponseIndication alertServiceCentreInd) {
 	}
 }
