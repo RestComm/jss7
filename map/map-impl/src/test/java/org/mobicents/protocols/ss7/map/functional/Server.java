@@ -74,8 +74,10 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
@@ -84,6 +86,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseIndicationImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
@@ -93,10 +96,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Return;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
 /**
  * 
@@ -732,7 +732,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 		SM_RP_DA sm_RP_DA = moForwSmInd.getSM_RP_DA();
 		SM_RP_OA sm_RP_OA = moForwSmInd.getSM_RP_OA();
-		byte[] sm_RP_UI = moForwSmInd.getSM_RP_UI();
+		SmsSignalInfo sm_RP_UI = moForwSmInd.getSM_RP_UI();
 		MAPExtensionContainer extensionContainer = moForwSmInd.getExtensionContainer();
 		IMSI imsi2 = moForwSmInd.getIMSI();
 		
@@ -757,7 +757,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 				Arrays.fill(testArr, (byte) 22);
 			}
 			
-			Assert.assertTrue(Arrays.equals(sm_RP_UI, testArr));
+			Assert.assertTrue(Arrays.equals(sm_RP_UI.getData(), testArr));
 			Assert.assertNull(extensionContainer);
 			Assert.assertNotNull(imsi2);
 //			Assert.assertEquals((long) (imsi2.getMCC()), 250);
@@ -776,7 +776,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 			Assert.assertEquals(sm_RP_OA.getMsisdn().getNumberingPlan(), NumberingPlan.ISDN);
 			Assert.assertEquals(sm_RP_OA.getMsisdn().getAddress(), "111222333");
 			Assert.assertNotNull(sm_RP_UI);
-			Assert.assertTrue(Arrays.equals(sm_RP_UI, new byte[] { 21, 22, 23, 24, 25 }));
+			Assert.assertTrue(Arrays.equals(sm_RP_UI.getData(), new byte[] { 21, 22, 23, 24, 25 }));
 			Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
 			Assert.assertNotNull(imsi2);
 //			Assert.assertEquals((long) (imsi2.getMCC()), 250);
@@ -786,7 +786,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 		this._S_recievedSmsRequestIndication = true;
 		
-		byte[] sm_RP_UI2 = new byte[] { 21, 22, 23, 24, 25 };
+		SmsSignalInfo sm_RP_UI2 = new SmsSignalInfoImpl(new byte[] { 21, 22, 23, 24, 25 }, null);
 		try {
 			d.addMoForwardShortMessageResponse(moForwSmInd.getInvokeId(), sm_RP_UI2, MAPExtensionContainerTest.GetTestExtensionContainer());
 		} catch (MAPException e) {
@@ -809,7 +809,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		
 		SM_RP_DA sm_RP_DA = mtForwSmInd.getSM_RP_DA();
 		SM_RP_OA sm_RP_OA = mtForwSmInd.getSM_RP_OA();
-		byte[] sm_RP_UI = mtForwSmInd.getSM_RP_UI();
+		SmsSignalInfo sm_RP_UI = mtForwSmInd.getSM_RP_UI();
 		MAPExtensionContainer extensionContainer = mtForwSmInd.getExtensionContainer();
 		Boolean moreMessagesToSend = mtForwSmInd.getMoreMessagesToSend();
 
@@ -822,13 +822,13 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		Assert.assertEquals(sm_RP_OA.getServiceCentreAddressOA().getNumberingPlan(), NumberingPlan.ISDN);
 		Assert.assertEquals(sm_RP_OA.getServiceCentreAddressOA().getAddress(), "111222333");
 		Assert.assertNotNull(sm_RP_UI);
-		Assert.assertTrue(Arrays.equals(sm_RP_UI, new byte[] { 21, 22, 23, 24, 25 }));
+		Assert.assertTrue(Arrays.equals(sm_RP_UI.getData(), new byte[] { 21, 22, 23, 24, 25 }));
 		Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
 		Assert.assertTrue(moreMessagesToSend);
 
 		this._S_recievedSmsRequestIndication = true;
 		
-		byte[] sm_RP_UI2 = new byte[] { 21, 22, 23, 24, 25 };
+		SmsSignalInfo sm_RP_UI2 = new SmsSignalInfoImpl(new byte[] { 21, 22, 23, 24, 25 }, null);
 		try {
 			d.addMtForwardShortMessageResponse(mtForwSmInd.getInvokeId(), sm_RP_UI2, MAPExtensionContainerTest.GetTestExtensionContainer());
 		} catch (MAPException e) {
@@ -855,7 +855,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		MAPExtensionContainer extensionContainer = sendRoutingInfoForSMInd.getExtensionContainer();
 		Boolean gprsSupportIndicator = sendRoutingInfoForSMInd.getGprsSupportIndicator();
 		SM_RP_MTI sM_RP_MTI = sendRoutingInfoForSMInd.getSM_RP_MTI();
-		byte[] sM_RP_SMEA = sendRoutingInfoForSMInd.getSM_RP_SMEA();
+		SM_RP_SMEA sM_RP_SMEA = sendRoutingInfoForSMInd.getSM_RP_SMEA();
 
 		Assert.assertNotNull(msisdn);
 		Assert.assertEquals(msisdn.getAddressNature(), AddressNature.international_number);
@@ -869,7 +869,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
 		Assert.assertTrue(gprsSupportIndicator);
 		Assert.assertEquals(sM_RP_MTI, SM_RP_MTI.SMS_Status_Report);
-		Assert.assertTrue(Arrays.equals(sM_RP_SMEA, new byte[] { 90, 91 }));
+		Assert.assertTrue(Arrays.equals(sM_RP_SMEA.getData(), new byte[] { 90, 91 }));
 
 		this._S_recievedSmsRequestIndication = true;
 		
@@ -1029,7 +1029,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		
 		SM_RP_DA sm_RP_DA = forwSmInd.getSM_RP_DA();
 		SM_RP_OA sm_RP_OA = forwSmInd.getSM_RP_OA();
-		byte[] sm_RP_UI = forwSmInd.getSM_RP_UI();
+		SmsSignalInfo sm_RP_UI = forwSmInd.getSM_RP_UI();
 
 		Assert.assertNotNull(sm_RP_DA);
 		Assert.assertNotNull(sm_RP_DA.getIMSI());
@@ -1042,7 +1042,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		Assert.assertEquals(sm_RP_OA.getMsisdn().getNumberingPlan(), NumberingPlan.ISDN);
 		Assert.assertEquals(sm_RP_OA.getMsisdn().getAddress(), "111222333");
 		Assert.assertNotNull(sm_RP_UI);
-		Assert.assertTrue(Arrays.equals(sm_RP_UI, new byte[] { 21, 22, 23, 24, 25 }));
+		Assert.assertTrue(Arrays.equals(sm_RP_UI.getData(), new byte[] { 21, 22, 23, 24, 25 }));
 		if (this.step == FunctionalTestScenario.Action_V1_E)
 			Assert.assertFalse(forwSmInd.getMoreMessagesToSend());
 		else

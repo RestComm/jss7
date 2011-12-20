@@ -54,7 +54,7 @@ public class USSDStringTest {
 
 	@Test(groups = { "functional.decode","primitives"})
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { 0x04, 0x04, 0x2a, 0x1c, 0x6e, (byte)0xd4 };
+		byte[] data = new byte[] { 0x04, 0x04, 0x2a, 0x1c, 0x6e, (byte)0x04 };
 		
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
@@ -69,7 +69,7 @@ public class USSDStringTest {
 	//TODO Fix the GSMEncoder. This is failing 
 	@Test(groups = { "functional.encode","primitives"})
 	public void testEncode() throws Exception {
-		byte[] data = new byte[] { 0x04, 0x04, 0x2a, 0x1c, 0x6e, (byte)0xd4 };
+		byte[] data = new byte[] { 0x04, 0x04, 0x2a, 0x1c, 0x6e, (byte)0x04 };
 		
 		USSDStringImpl ussdStr = new USSDStringImpl("*88#", null);
 		

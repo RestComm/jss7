@@ -32,6 +32,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
@@ -106,7 +107,7 @@ public class SendRoutingInfoForSMRequestIndicationTest  {
 		assertEquals( sca.getNumberingPlan(),NumberingPlan.ISDN);
 		assertEquals( sca.getAddress(),"9821113333");
 		assertEquals( (boolean) ind.getGprsSupportIndicator(),true);
-		assertTrue(Arrays.equals(new byte[] { -111, 105, 49, 3, -105, 97 }, ind.getSM_RP_SMEA()));
+		assertTrue(Arrays.equals(new byte[] { -111, 105, 49, 3, -105, 97 }, ind.getSM_RP_SMEA().getData()));
 
 		
 		rawData = getEncodedDataFull();
@@ -129,7 +130,7 @@ public class SendRoutingInfoForSMRequestIndicationTest  {
 		assertEquals( sca.getNumberingPlan(),NumberingPlan.national);
 		assertEquals( sca.getAddress(),"4444");
 		assertEquals( (boolean) ind.getGprsSupportIndicator(),true);
-		assertTrue(Arrays.equals(new byte[] { -111, 105, 49, 3, -105, 97 }, ind.getSM_RP_SMEA()));
+		assertTrue(Arrays.equals(new byte[] { -111, 105, 49, 3, -105, 97 }, ind.getSM_RP_SMEA().getData()));
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(ind.getExtensionContainer()));
 		assertEquals( ind.getSM_RP_MTI(),SM_RP_MTI.SMS_Status_Report);
 	}
@@ -151,7 +152,8 @@ public class SendRoutingInfoForSMRequestIndicationTest  {
 		
 		msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "13457745551");
 		sca = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "9821113333");
-		ind = new SendRoutingInfoForSMRequestIndicationImpl(msisdn, false, sca, null, true, null, new byte[] { -111, 105, 49, 3, -105, 97 });
+		SM_RP_SMEA ui = new SM_RP_SMEAImpl(new byte[] { -111, 105, 49, 3, -105, 97 });
+		ind = new SendRoutingInfoForSMRequestIndicationImpl(msisdn, false, sca, null, true, null, ui);
 		
 		asnOS = new AsnOutputStream();
 		ind.encodeAll(asnOS);
@@ -163,8 +165,9 @@ public class SendRoutingInfoForSMRequestIndicationTest  {
 		
 		msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
 		sca = new AddressStringImpl(AddressNature.network_specific_number, NumberingPlan.national, "4444");
+		ui = new SM_RP_SMEAImpl(new byte[] { -111, 105, 49, 3, -105, 97 });
 		ind = new SendRoutingInfoForSMRequestIndicationImpl(msisdn, true, sca, MAPExtensionContainerTest.GetTestExtensionContainer(), true,
-				SM_RP_MTI.SMS_Status_Report, new byte[] { -111, 105, 49, 3, -105, 97 });
+				SM_RP_MTI.SMS_Status_Report, ui);
 		
 		asnOS = new AsnOutputStream();
 		ind.encodeAll(asnOS);

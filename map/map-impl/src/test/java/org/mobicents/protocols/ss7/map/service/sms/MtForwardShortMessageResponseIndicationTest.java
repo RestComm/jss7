@@ -28,6 +28,7 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 
 import static org.testng.Assert.*;
@@ -58,14 +59,14 @@ public class MtForwardShortMessageResponseIndicationTest  {
 		assertEquals( tag,Tag.SEQUENCE);
 		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 
-		assertTrue(Arrays.equals(new byte[] { 11, 22, 33, 44, 55 }, ind.getSM_RP_UI()));
+		assertTrue(Arrays.equals(new byte[] { 11, 22, 33, 44, 55 }, ind.getSM_RP_UI().getData()));
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(ind.getExtensionContainer()));
 	}
 
 	@Test(groups = { "functional.encode","service.sms"})
 	public void testEncode() throws Exception {
 
-		byte[] ui = new byte[] { 11, 22, 33, 44, 55 };
+		SmsSignalInfo ui = new SmsSignalInfoImpl(new byte[] { 11, 22, 33, 44, 55 }, null);
 		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
 		MtForwardShortMessageResponseIndicationImpl ind = new MtForwardShortMessageResponseIndicationImpl(ui, extensionContainer);
 		

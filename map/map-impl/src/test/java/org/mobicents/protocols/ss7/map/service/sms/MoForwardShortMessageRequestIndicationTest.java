@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
@@ -87,14 +88,14 @@ public class MoForwardShortMessageRequestIndicationTest  {
 		
 		SM_RP_DA da = ind.getSM_RP_DA();
 		SM_RP_OA oa = ind.getSM_RP_OA();
-		byte[] ui = ind.getSM_RP_UI();
+		SmsSignalInfo ui = ind.getSM_RP_UI();
 		assertEquals( da.getServiceCentreAddressDA().getAddressNature(),AddressNature.international_number);
 		assertEquals( da.getServiceCentreAddressDA().getNumberingPlan(),NumberingPlan.ISDN);
 		assertEquals( da.getServiceCentreAddressDA().getAddress(),"223334990223");
 		assertEquals( oa.getMsisdn().getAddressNature(),AddressNature.international_number);
 		assertEquals( oa.getMsisdn().getNumberingPlan(),NumberingPlan.ISDN);
 		assertEquals( oa.getMsisdn().getAddress(),"2311231234334");
-		assertTrue(Arrays.equals(ui, new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8 }));
+		assertTrue(Arrays.equals(ui.getData(), new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8 }));
 		
 		rawData = getEncodedDataComplex();
 		asn = new AsnInputStream(rawData);
@@ -116,7 +117,7 @@ public class MoForwardShortMessageRequestIndicationTest  {
 		assertEquals( oa.getMsisdn().getAddressNature(),AddressNature.international_number);
 		assertEquals( oa.getMsisdn().getNumberingPlan(),NumberingPlan.ISDN);
 		assertEquals( oa.getMsisdn().getAddress(),"223334990223");
-		assertTrue(Arrays.equals(ui, new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4 }));
+		assertTrue(Arrays.equals(ui.getData(), new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4 }));
 //		assertEquals( (long)imsi.getMCC(),1);
 //		assertEquals( (long)imsi.getMNC(),1);
 		assertEquals( imsi.getData(),"001012233349902");
@@ -140,7 +141,7 @@ public class MoForwardShortMessageRequestIndicationTest  {
 		assertNull(da.getLMSI());
 		assertNull(oa.getMsisdn());
 		assertNull(oa.getServiceCentreAddressOA());
-		assertTrue(Arrays.equals(ui, new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,4, 4, 4, 4, 4, 4, 99, 88, 77, 66, 55, 44, 44, 33, 22, 11, 11, 0 }));
+		assertTrue(Arrays.equals(ui.getData(), new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,4, 4, 4, 4, 4, 4, 99, 88, 77, 66, 55, 44, 44, 33, 22, 11, 11, 0 }));
 		
 		rawData = getEncodedDataFull();
 		asn = new AsnInputStream(rawData);
@@ -162,7 +163,7 @@ public class MoForwardShortMessageRequestIndicationTest  {
 		assertEquals( oa.getServiceCentreAddressOA().getAddressNature(),AddressNature.network_specific_number);
 		assertEquals( oa.getServiceCentreAddressOA().getNumberingPlan(),NumberingPlan.land_mobile);
 		assertEquals( oa.getServiceCentreAddressOA().getAddress(),"0123456789");
-		assertTrue(Arrays.equals(ui, new byte[] { 11, 22, 33, 44, 55, 66, 77, 88, 99 }));
+		assertTrue(Arrays.equals(ui.getData(), new byte[] { 11, 22, 33, 44, 55, 66, 77, 88, 99 }));
 //		assertEquals( (long)imsi.getMCC(),240);
 //		assertEquals( (long)imsi.getMNC(),88);
 		assertEquals( imsi.getData(),"240881122334455");
@@ -177,7 +178,7 @@ public class MoForwardShortMessageRequestIndicationTest  {
 		ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "2311231234334");
 		SM_RP_OAImpl sm_RP_OA = new SM_RP_OAImpl();
 		sm_RP_OA.setMsisdn(msisdn);
-		byte[] sm_RP_UI = new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8 };
+		SmsSignalInfo sm_RP_UI = new SmsSignalInfoImpl(new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8 }, null);
 		MoForwardShortMessageRequestIndicationImpl ind = new MoForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, null, null);
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
@@ -193,7 +194,8 @@ public class MoForwardShortMessageRequestIndicationTest  {
 		msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "223334990223");
 		sm_RP_OA = new SM_RP_OAImpl();
 		sm_RP_OA.setMsisdn(msisdn);
-		sm_RP_UI = new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4 };
+		sm_RP_UI = new SmsSignalInfoImpl(new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+				3, 4, 4, 4, 4, 4, 4 }, null);
 		IMSI imsi = new IMSIImpl("001012233349902");
 		ind = new MoForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, null, imsi);
 		
@@ -207,7 +209,8 @@ public class MoForwardShortMessageRequestIndicationTest  {
 		
 		sm_RP_DA = new SM_RP_DAImpl();
 		sm_RP_OA = new SM_RP_OAImpl();
-		sm_RP_UI = new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 99, 88, 77, 66, 55, 44, 44, 33, 22, 11, 11, 0 };
+		sm_RP_UI = new SmsSignalInfoImpl(new byte[] { 11, 22, 33, 44, 55, 66, 77, 0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+				3, 4, 4, 4, 4, 4, 4, 99, 88, 77, 66, 55, 44, 44, 33, 22, 11, 11, 0 }, null);
 		ind = new MoForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, null, null);
 
 		asnOS = new AsnOutputStream();
@@ -223,7 +226,7 @@ public class MoForwardShortMessageRequestIndicationTest  {
 		msisdn = new ISDNAddressStringImpl(AddressNature.network_specific_number, NumberingPlan.land_mobile, "0123456789");
 		sm_RP_OA = new SM_RP_OAImpl();
 		sm_RP_OA.setServiceCentreAddressOA(msisdn);
-		sm_RP_UI = new byte[] { 11, 22, 33, 44, 55, 66, 77, 88, 99 };
+		sm_RP_UI = new SmsSignalInfoImpl(new byte[] { 11, 22, 33, 44, 55, 66, 77, 88, 99 }, null);
 		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
 		imsi = new IMSIImpl("240881122334455");
 		ind = new MoForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, extensionContainer, imsi);
