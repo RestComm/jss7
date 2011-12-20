@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.inap.primitives;
 
 import static org.testng.Assert.*;
+import org.testng.*;import org.testng.annotations.*;
 
 import java.util.Arrays;
 
@@ -31,8 +32,12 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoDpAssignment;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
-import org.testng.*;import org.testng.annotations.*;
 
+/**
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
 public class MiscCallInfoTest {
 	
 	private byte[] getData1() {
