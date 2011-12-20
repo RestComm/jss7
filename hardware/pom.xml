@@ -21,7 +21,9 @@
 	</properties>
 
 	<modules>
+		<!--
 		<module>dahdi</module>
+		-->
 		<module>dialogic</module>
 	</modules>
 
