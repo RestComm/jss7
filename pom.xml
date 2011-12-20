@@ -20,7 +20,7 @@
 	<properties>
 		<!-- maven.test.skip>false</maven.test.skip -->
 		<mobicents.tools.mavenplugin.eclipse.version>
-			1.0.0.BETA2
+			1.0.0.FINAL
 		</mobicents.tools.mavenplugin.eclipse.version>
 		<concurrent.version>1.3.4</concurrent.version>
 		<log4j.version>1.2.14</log4j.version>
