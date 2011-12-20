@@ -52,6 +52,8 @@ public class SM_RP_DAImpl implements SM_RP_DA, MAPAsnPrimitive {
 	private static final int _TAG_ServiceCentreAddressDA = 4;
 	private static final int _TAG_NoSM_RP_DA = 5;
 
+	public static final String _PrimitiveName = "SM_RP_DA";
+
 	private IMSI imsi;
 	private LMSI lmsi;
 	private AddressString serviceCentreAddressDA;
@@ -116,10 +118,10 @@ public class SM_RP_DAImpl implements SM_RP_DA, MAPAsnPrimitive {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -130,10 +132,10 @@ public class SM_RP_DAImpl implements SM_RP_DA, MAPAsnPrimitive {
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -145,7 +147,7 @@ public class SM_RP_DAImpl implements SM_RP_DA, MAPAsnPrimitive {
 		this.serviceCentreAddressDA = null;
 
 		if (ansIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ansIS.isTagPrimitive())
-			throw new MAPParsingComponentException("Error while decoding SM_RP_DA: bad tag class or is not primitive: TagClass=" + ansIS.getTagClass(),
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag class or is not primitive: TagClass=" + ansIS.getTagClass(),
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
 		switch(ansIS.getTag()) {
@@ -168,10 +170,10 @@ public class SM_RP_DAImpl implements SM_RP_DA, MAPAsnPrimitive {
 			try {
 				ansIS.readNullData(length);
 			} catch (AsnException e) {
-				throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+				throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 						MAPParsingComponentExceptionReason.MistypedParameter);
 			} catch (IOException e) {
-				throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+				throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 						MAPParsingComponentExceptionReason.MistypedParameter);
 			}
 			break;
@@ -196,7 +198,7 @@ public class SM_RP_DAImpl implements SM_RP_DA, MAPAsnPrimitive {
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding SM_RP_DA: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 

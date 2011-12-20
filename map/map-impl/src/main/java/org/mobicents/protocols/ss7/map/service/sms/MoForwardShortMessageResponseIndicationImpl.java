@@ -33,6 +33,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
@@ -42,21 +43,21 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
  */
 public class MoForwardShortMessageResponseIndicationImpl extends SmsMessageImpl implements MoForwardShortMessageResponseIndication {
 
-	private byte[] sm_RP_UI;
+	private SmsSignalInfoImpl sm_RP_UI;
 	private MAPExtensionContainer extensionContainer;
 
 
 	public MoForwardShortMessageResponseIndicationImpl() {
 	}
 
-	public MoForwardShortMessageResponseIndicationImpl(byte[] sm_RP_UI, MAPExtensionContainer extensionContainer) {
-		this.sm_RP_UI = sm_RP_UI;
+	public MoForwardShortMessageResponseIndicationImpl(SmsSignalInfo sm_RP_UI, MAPExtensionContainer extensionContainer) {
+		this.sm_RP_UI = (SmsSignalInfoImpl)sm_RP_UI;
 		this.extensionContainer = extensionContainer;
 	}
 
 	
 	@Override
-	public byte[] getSM_RP_UI() {
+	public SmsSignalInfo getSM_RP_UI() {
 		return this.sm_RP_UI;
 	}
 
@@ -130,7 +131,8 @@ public class MoForwardShortMessageResponseIndicationImpl extends SmsMessageImpl 
 					if (!ais.isTagPrimitive())
 						throw new MAPParsingComponentException("Error while decoding moForwardShortMessageResponse: Parameter sm-RP-UI is not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
-					this.sm_RP_UI = ais.readOctetString();
+					this.sm_RP_UI = new SmsSignalInfoImpl();
+					this.sm_RP_UI.decodeAll(ais);
 					break;
 
 				case Tag.SEQUENCE:
@@ -175,16 +177,10 @@ public class MoForwardShortMessageResponseIndicationImpl extends SmsMessageImpl 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		try {
-			if (this.sm_RP_UI != null)
-				asnOs.writeOctetString(this.sm_RP_UI);
-			if (this.extensionContainer != null)
-				((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs);
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding moForwardShortMessageResponse: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding moForwardShortMessageResponse: " + e.getMessage(), e);
-		}
+		if (this.sm_RP_UI != null)
+			this.sm_RP_UI.encodeAll(asnOs);
+		if (this.extensionContainer != null)
+			((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
 	}	
 	
 	@Override
@@ -194,7 +190,7 @@ public class MoForwardShortMessageResponseIndicationImpl extends SmsMessageImpl 
 
 		if (this.sm_RP_UI != null) {
 			sb.append(", sm_RP_UI=[");
-			sb.append(this.printDataArr(this.sm_RP_UI));
+			sb.append(this.sm_RP_UI.toString());
 			sb.append("]");
 		}
 		if (this.extensionContainer != null) {
@@ -203,16 +199,6 @@ public class MoForwardShortMessageResponseIndicationImpl extends SmsMessageImpl 
 		}
 
 		sb.append("]");
-
-		return sb.toString();
-	}
-
-	private String printDataArr(byte[] arr) {
-		StringBuilder sb = new StringBuilder();
-		for (int b : arr) {
-			sb.append(b);
-			sb.append(", ");
-		}
 
 		return sb.toString();
 	}

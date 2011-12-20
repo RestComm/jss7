@@ -64,6 +64,8 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 	public static final int _ID_sai_Present = 9;
 	public static final int _ID_locationInformationEPS = 10;
 	public static final int _ID_userCSGInformation = 11;	
+
+	public static final String _PrimitiveName = "LocationInformation";
 	
 	private Integer ageOfLocationInformation;
 	private GeographicalInformation geographicalInformation;
@@ -168,10 +170,10 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LocationInformation: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding LocationInformation: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -182,10 +184,10 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LocationInformation: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding LocationInformation: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -237,7 +239,8 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 					((ISDNAddressStringImpl) this.vlrNumber).decodeAll(ais);
 					break;
 				case _ID_locationNumber:
-					ais.advanceElement(); // TODO: implement it
+					this.locationNumber = new LocationNumberImpl();
+					((LocationNumberImpl) this.locationNumber).decodeAll(ais);
 					break;
 				case _ID_cellGlobalIdOrServiceAreaIdOrLAI:
 					this.cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();

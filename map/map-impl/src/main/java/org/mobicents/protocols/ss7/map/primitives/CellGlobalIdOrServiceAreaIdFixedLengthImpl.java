@@ -36,24 +36,144 @@ import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaI
 
 /**
 *
-* 
 * @author sergey vetyutnev
 * 
 */
 public class CellGlobalIdOrServiceAreaIdFixedLengthImpl implements CellGlobalIdOrServiceAreaIdFixedLength, MAPAsnPrimitive {
-	
+
 	private byte[] data;
-	
+
 	public CellGlobalIdOrServiceAreaIdFixedLengthImpl() {
 	}
-	
+
 	public CellGlobalIdOrServiceAreaIdFixedLengthImpl(byte[] data) {
 		this.data = data;
+	}
+
+	public CellGlobalIdOrServiceAreaIdFixedLengthImpl(int mcc, int mnc, int lac, int cellId) throws MAPException {
+
+		if (mcc < 1 || mcc > 999)
+			throw new MAPException("Bad mcc value");
+		if (mnc < 0 || mnc > 999)
+			throw new MAPException("Bad mnc value");
+
+		this.data = new byte[7];
+
+		StringBuilder sb = new StringBuilder();
+		StringBuilder sb2 = new StringBuilder();
+		if (mcc < 100)
+			sb.append("0");
+		if (mcc < 10)
+			sb.append("0");
+		sb.append(mcc);
+		
+		if (mnc < 100) {
+			if (mnc < 10)
+				sb2.append("0");
+			sb2.append(mnc);
+		} else {
+			sb.append(mnc % 10);
+			sb2.append(mnc / 10);
+		}
+
+		AsnOutputStream asnOs = new AsnOutputStream();
+		TbcdString.encodeString(asnOs, sb.toString());
+		System.arraycopy(asnOs.toByteArray(), 0, this.data, 0, 2);
+
+		asnOs = new AsnOutputStream();
+		TbcdString.encodeString(asnOs, sb2.toString());
+		System.arraycopy(asnOs.toByteArray(), 0, this.data, 2, 1);
+
+		data[3] = (byte)(lac / 256);
+		data[4] = (byte)(lac % 256);
+		data[5] = (byte)(cellId / 256);
+		data[6] = (byte)(cellId % 256);
 	}
 
 	@Override
 	public byte[] getData() {
 		return data;
+	}
+
+	@Override
+	public int getMCC() throws MAPException {
+		
+		if (data == null)
+			throw new MAPException("Data must not be empty");
+		if (data.length != 7)
+			throw new MAPException("Data length must be equal 7");
+		
+		AsnInputStream ansIS = new AsnInputStream(data);
+		String res = null;
+		try {
+			res = TbcdString.decodeString(ansIS, 3);
+		} catch (IOException e) {
+			throw new MAPException("IOException when decoding TbcdString: " + e.getMessage(), e);
+		} catch (MAPParsingComponentException e) {
+			throw new MAPException("MAPParsingComponentException when decoding TbcdString: " + e.getMessage(), e);
+		}
+
+		if (res.length() < 5 || res.length() > 6)
+			throw new MAPException("Decoded TbcdString must be equal 5 or 6");
+		
+		String sMcc = res.substring(0, 3);
+
+		return Integer.parseInt(sMcc);
+	}
+
+	@Override
+	public int getMNC() throws MAPException {
+		
+		if (data == null)
+			throw new MAPException("Data must not be empty");
+		if (data.length != 7)
+			throw new MAPException("Data length must be equal 7");
+		
+		AsnInputStream ansIS = new AsnInputStream(data);
+		String res = null;
+		try {
+			res = TbcdString.decodeString(ansIS, 3);
+		} catch (IOException e) {
+			throw new MAPException("IOException when decoding TbcdString: " + e.getMessage(), e);
+		} catch (MAPParsingComponentException e) {
+			throw new MAPException("MAPParsingComponentException when decoding TbcdString: " + e.getMessage(), e);
+		}
+
+		if (res.length() < 5 || res.length() > 6)
+			throw new MAPException("Decoded TbcdString must be equal 5 or 6");
+		
+		String sMnc;
+		if (res.length() == 5) {
+			sMnc = res.substring(3);
+		} else {
+			sMnc = res.substring(4) + res.substring(3, 4);
+		}
+
+		return Integer.parseInt(sMnc);
+	}
+
+	@Override
+	public int getLac() throws MAPException {
+
+		if (data == null)
+			throw new MAPException("Data must not be empty");
+		if (data.length != 7)
+			throw new MAPException("Data length must be equal 7");
+
+		int res = (data[3] & 0xFF) * 256 + (data[4] & 0xFF);
+		return res;
+	}
+
+	@Override
+	public int getCellId() throws MAPException {
+
+		if (data == null)
+			throw new MAPException("Data must not be empty");
+		if (data.length != 7)
+			throw new MAPException("Data length must be equal 7");
+
+		int res = (data[5] & 0xFF) * 256 + (data[6] & 0xFF);
+		return res;
 	}
 
 	
@@ -144,7 +264,40 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl implements CellGlobalIdO
 	
 	@Override
 	public String toString() {
-		return "CellGlobalIdOrServiceAreaIdFixedLength [Data= " + this.printDataArr() + "]";
+		
+		int mcc = 0;
+		int mnc = 0;
+		int lac = 0;
+		int cellId = 0;
+		boolean goodData = false;
+		
+		try {
+			mcc = this.getMCC();
+			mnc = this.getMNC();
+			lac = this.getLac();
+			cellId = this.getCellId();
+			goodData = true;
+		} catch (MAPException e) {
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("CellGlobalIdOrServiceAreaIdFixedLength [");
+		if (goodData) {
+			sb.append("MCC=");
+			sb.append(mcc);
+			sb.append(", MNC=");
+			sb.append(mnc);
+			sb.append(", Lac=");
+			sb.append(lac);
+			sb.append(", CellId(SAC)=");
+			sb.append(cellId);
+		} else {
+			sb.append("Data=");
+			sb.append(this.printDataArr());
+		}
+		sb.append("]");
+		
+		return sb.toString();
 	}
 	
 	private String printDataArr() {

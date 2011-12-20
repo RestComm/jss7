@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
@@ -46,18 +47,18 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 
 	private SM_RP_DA sM_RP_DA;
 	private SM_RP_OA sM_RP_OA;
-	private byte[] sM_RP_UI;
+	private SmsSignalInfoImpl sM_RP_UI;
 	private boolean moreMessagesToSend;
 	private MAPExtensionContainer extensionContainer;
 	
 	public MtForwardShortMessageRequestIndicationImpl() {
 	}	
 	
-	public MtForwardShortMessageRequestIndicationImpl(SM_RP_DA sM_RP_DA, SM_RP_OA sM_RP_OA, byte[] sM_RP_UI, boolean moreMessagesToSend,
+	public MtForwardShortMessageRequestIndicationImpl(SM_RP_DA sM_RP_DA, SM_RP_OA sM_RP_OA, SmsSignalInfo sM_RP_UI, boolean moreMessagesToSend,
 			MAPExtensionContainer extensionContainer) {
 		this.sM_RP_DA = sM_RP_DA;
 		this.sM_RP_OA = sM_RP_OA;
-		this.sM_RP_UI = sM_RP_UI;
+		this.sM_RP_UI = (SmsSignalInfoImpl)sM_RP_UI;
 		this.moreMessagesToSend = moreMessagesToSend;
 		this.extensionContainer = extensionContainer;
 	}	
@@ -74,7 +75,7 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 	}
 
 	@Override
-	public byte[] getSM_RP_UI() {
+	public SmsSignalInfo getSM_RP_UI() {
 		return this.sM_RP_UI;
 	}
 
@@ -177,7 +178,8 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 				if (tag != Tag.STRING_OCTET)
 					throw new MAPParsingComponentException("Error while decoding mtForwardShortMessageRequest: Parameter 2 tag must be STRING_OCTET, found: "
 							+ tag, MAPParsingComponentExceptionReason.MistypedParameter);
-				this.sM_RP_UI = ais.readOctetString();
+				this.sM_RP_UI = new SmsSignalInfoImpl();
+				this.sM_RP_UI.decodeAll(ais);
 				break;
 
 			default:
@@ -238,7 +240,7 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 		try {
 			((SM_RP_DAImpl)this.sM_RP_DA).encodeAll(asnOs);
 			((SM_RP_OAImpl)this.sM_RP_OA).encodeAll(asnOs);
-			asnOs.writeOctetString(this.sM_RP_UI);
+			this.sM_RP_UI.encodeAll(asnOs);
 
 			if (this.moreMessagesToSend)
 				asnOs.writeNull();
@@ -266,7 +268,7 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 		}
 		if (this.sM_RP_UI != null) {
 			sb.append(", sm_RP_UI=[");
-			sb.append(this.printDataArr(this.sM_RP_UI));
+			sb.append(this.sM_RP_UI.toString());
 			sb.append("]");
 		}
 		if (this.extensionContainer != null) {
@@ -278,16 +280,6 @@ public class MtForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 		}
 
 		sb.append("]");
-
-		return sb.toString();
-	}
-
-	private String printDataArr(byte[] arr) {
-		StringBuilder sb = new StringBuilder();
-		for (int b : arr) {
-			sb.append(b);
-			sb.append(", ");
-		}
 
 		return sb.toString();
 	}

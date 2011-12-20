@@ -23,9 +23,9 @@
 package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
@@ -38,52 +38,56 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
  */
 public abstract class TbcdString implements MAPAsnPrimitive {
 
-	protected int DIGIT_1_MASK = 0x0F;
-	protected int DIGIT_2_MASK = 0xF0;
+	protected static int DIGIT_1_MASK = 0x0F;
+	protected static int DIGIT_2_MASK = 0xF0;
 
-	protected String decodeString(AsnInputStream ansIS, int length) throws IOException, MAPParsingComponentException {
+	public static String decodeString(InputStream ansIS, int length) throws IOException, MAPParsingComponentException {
 		StringBuilder s = new StringBuilder();
 		for (int i1 = 0; i1 < length; i1++) {
 			int b = ansIS.read();
 
 			int digit1 = (b & DIGIT_1_MASK);
-			s.append(this.decodeNumber(digit1));
+			s.append(decodeNumber(digit1));
 
 			int digit2 = ((b & DIGIT_2_MASK) >> 4);
 
 			if (digit2 == 15) {
 				// this is mask
 			} else {
-				s.append(this.decodeNumber(digit2));
+				s.append(decodeNumber(digit2));
 			}
 		}
 
 		return s.toString();
 	}
-	
-	protected void encodeString(AsnOutputStream asnOs, String data) throws MAPException {
+
+	public static void encodeString(OutputStream asnOs, String data) throws MAPException {
 		char[] chars = data.toCharArray();
 		for (int i = 0; i < chars.length; i = i + 2) {
 			char a = chars[i];
 
-			int digit1 = this.encodeNumber(a);
+			int digit1 = encodeNumber(a);
 			int digit2;
 			if ((i + 1) == chars.length) {
 				// add the filler instead
 				digit2 = 15;
 			} else {
 				char b = chars[i + 1];
-				digit2 = this.encodeNumber(b);
+				digit2 = encodeNumber(b);
 			}
 
 			int digit = (digit2 << 4) | digit1;
 
-			asnOs.write(digit);
+			try {
+				asnOs.write(digit);
+			} catch (IOException e) {
+				throw new MAPException("Error when encoding TbcdString: " + e.getMessage(), e);
+			}
 		}
 		
 	}
 	
-	protected int encodeNumber(char c) throws MAPException {
+	protected static int encodeNumber(char c) throws MAPException {
 		switch (c) {
 		case '0':
 			return 0;
@@ -123,7 +127,7 @@ public abstract class TbcdString implements MAPAsnPrimitive {
 		}
 	}
 
-	protected char decodeNumber(int i) throws MAPParsingComponentException {
+	protected static char decodeNumber(int i) throws MAPParsingComponentException {
 		switch (i) {
 		case 0:
 			return '0';

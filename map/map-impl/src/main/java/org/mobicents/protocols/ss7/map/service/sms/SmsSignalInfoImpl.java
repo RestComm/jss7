@@ -20,9 +20,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.callhandling;
+package org.mobicents.protocols.ss7.map.service.sms;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -31,26 +32,37 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
+import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpdu;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.smstpdu.SmsTpduImpl;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class CallReferenceNumberImpl implements CallReferenceNumber, MAPAsnPrimitive {
+public class SmsSignalInfoImpl implements SmsSignalInfo, MAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "CallReferenceNumber";
-
+	public static final String _PrimitiveName = "SmsSignalInfo";
+	
 	private byte[] data;
-
+	private Charset gsm8Charset;
 	
-	public CallReferenceNumberImpl(){
+	public SmsSignalInfoImpl() {
 	}
-	
-	public CallReferenceNumberImpl(byte[] data) {
+
+	public SmsSignalInfoImpl(byte[] data, Charset gsm8Charset) {
 		this.data = data;
+		this.gsm8Charset = gsm8Charset;
+	}
+
+	public SmsSignalInfoImpl(SmsTpdu tpdu, Charset gsm8Charset) throws MAPException {
+		if (tpdu == null)
+			throw new MAPException("SmsTpdu must not be null");
+
+		this.data = tpdu.encodeData();
+		this.gsm8Charset = gsm8Charset;
 	}
 
 
@@ -59,6 +71,10 @@ public class CallReferenceNumberImpl implements CallReferenceNumber, MAPAsnPrimi
 		return this.data;
 	}
 
+	@Override
+	public SmsTpdu decodeTpdu(boolean mobileOriginatedMessage) throws MAPException {
+		return SmsTpduImpl.createInstance(this.data, mobileOriginatedMessage, this.gsm8Charset);
+	}
 	
 	@Override
 	public int getTag() throws MAPException {
@@ -72,7 +88,7 @@ public class CallReferenceNumberImpl implements CallReferenceNumber, MAPAsnPrimi
 
 	@Override
 	public boolean getIsPrimitive() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -82,10 +98,10 @@ public class CallReferenceNumberImpl implements CallReferenceNumber, MAPAsnPrimi
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding CallReferenceNumber: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding CallReferenceNumber: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -96,21 +112,17 @@ public class CallReferenceNumberImpl implements CallReferenceNumber, MAPAsnPrimi
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding CallReferenceNumber: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding CallReferenceNumber: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		
+	private void _decode(AsnInputStream ansIS, int length) throws IOException, AsnException {
+
 		this.data = ansIS.readOctetStringData(length);
-		
-		if (this.data.length < 1 || this.data.length > 8)
-			throw new MAPParsingComponentException("Error decoding CallReferenceNumber: length must be from 1 to 8, real length = " + length,
-					MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	@Override
@@ -140,21 +152,28 @@ public class CallReferenceNumberImpl implements CallReferenceNumber, MAPAsnPrimi
 
 		asnOs.writeOctetStringData(data);
 	}
-
+	
 	@Override
 	public String toString() {
-		return "CallReferenceNumber [Data= " + this.printDataArr() + "]";
-	}
-	
-	private String printDataArr() {
+
 		StringBuilder sb = new StringBuilder();
-		if( this.data!=null ) {
-			for( int b : this.data ) {
-				sb.append(b);
-				sb.append(" ");
-			}
+		sb.append("SmsSignalInfo [");
+
+		try {
+			SmsTpdu tpdu = SmsTpduImpl.createInstance(this.data, true, gsm8Charset);
+			sb.append("MO: ");
+			sb.append(tpdu.toString());
+		} catch (MAPException e) {
 		}
-		
+		try {
+			SmsTpdu tpdu = SmsTpduImpl.createInstance(this.data, false, gsm8Charset);
+			sb.append("MT: ");
+			sb.append(tpdu.toString());
+		} catch (MAPException e) {
+		}
+
+		sb.append("]");
+
 		return sb.toString();
 	}
 }

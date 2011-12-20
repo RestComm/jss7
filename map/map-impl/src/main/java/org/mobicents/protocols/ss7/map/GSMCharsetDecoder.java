@@ -31,17 +31,19 @@ import java.nio.charset.CoderResult;
 /**
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class GSMCharsetDecoder extends CharsetDecoder {
 
-	byte[] mask = new byte[] { 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01 };
+	private byte[] mask = new byte[] { 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01 };
 
-	int bitpos = 0;
-	byte leftOver;
-
-	// TODO : What does escape mean?
-	static final byte ESCAPE = 0x1B;
+	private int bitpos = 0;
+	private int decodedBytes = 0;
+	private byte leftOver;
+	private	GSMCharset cs;
+	private boolean escape;
+	private GSMCharsetDecodingData encodingData;
 
 	/**
 	 * Constructs a Decoder.
@@ -50,12 +52,23 @@ public class GSMCharsetDecoder extends CharsetDecoder {
 			float maxCharsPerByte) {
 		super(cs, averageCharsPerByte, maxCharsPerByte);
 		implReset();
+		this.cs = (GSMCharset) cs;
+	}
+
+	public void setGSMCharsetDecodingData(GSMCharsetDecodingData encodingData) {
+		this.encodingData = encodingData;
+	}
+
+	public GSMCharsetDecodingData getGSMCharsetDecodingData() {
+		return this.encodingData;
 	}
 
 	@Override
 	protected void implReset() {
 		bitpos = 0;
+		decodedBytes = 0;
 		leftOver = 0;
+		escape = false;
 	}
 
 	// TODO is this ok?
@@ -104,19 +117,19 @@ public class GSMCharsetDecoder extends CharsetDecoder {
 				data = (byte) (data | leftOver);
 
 				// We have 7 bits now to form char
-				out.put((char) GSMCharset.BYTE_TO_CHAR[data]);
+				putChar(data, out);
 
 				// This means we not only used previous 6 bits and 1 bit from
 				// current byte to form char, but now we also have 7 bits left
 				// over from current byte and hence we can get another char
 				if (bitpos == 6) {
 					data = (byte) (((tempData & 0xFE)) >>> 1);
-					out.put((char) GSMCharset.BYTE_TO_CHAR[data]);
+					putChar(data, out);
 				}
 			} else {
 				// For this iteration we have all 7 bits to form the char
 				// from byte that we read
-				out.put((char) GSMCharset.BYTE_TO_CHAR[data]);
+				putChar(data, out);
 			}
 
 			//assign the left over bits
@@ -129,7 +142,36 @@ public class GSMCharsetDecoder extends CharsetDecoder {
 		}
 
 		return CoderResult.UNDERFLOW;
-
 	}
 
+	private void putChar(byte data, CharBuffer out) {
+		
+		this.decodedBytes++;
+		if (this.encodingData != null) {
+			if (this.decodedBytes <= this.encodingData.leadingSeptetSkipCount)
+				return;
+			if (this.decodedBytes > this.encodingData.totalSeptetCount)
+				return;
+		}
+
+		int code = 0;
+		if (escape) {
+			escape = false;
+			if (this.cs.extensionTable != null)
+				code = this.cs.extensionTable[data];
+		} else {
+			if (data == GSMCharset.ESCAPE) {
+				escape = true;
+				return;
+			}
+			else {
+				code = this.cs.mainTable[data];
+			}
+		}
+
+		if (code == 0)
+			out.put(' ');
+		else
+			out.put((char) code);
+	}
 }

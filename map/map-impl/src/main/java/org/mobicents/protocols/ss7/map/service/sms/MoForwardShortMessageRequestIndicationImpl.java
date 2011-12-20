@@ -36,6 +36,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
@@ -49,7 +50,7 @@ public class MoForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 	
 	private SM_RP_DA sm_RP_DA;
 	private SM_RP_OA sm_RP_OA;
-	private byte[] sm_RP_UI;
+	private SmsSignalInfoImpl sm_RP_UI;
 	private MAPExtensionContainer extensionContainer;
 	private IMSI imsi;
 
@@ -57,10 +58,10 @@ public class MoForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 	public MoForwardShortMessageRequestIndicationImpl() {
 	}
 	
-	public MoForwardShortMessageRequestIndicationImpl(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, byte[] sm_RP_UI, MAPExtensionContainer extensionContainer, IMSI imsi) {
+	public MoForwardShortMessageRequestIndicationImpl(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, SmsSignalInfo sm_RP_UI, MAPExtensionContainer extensionContainer, IMSI imsi) {
 		this.sm_RP_DA = sm_RP_DA;
 		this.sm_RP_OA = sm_RP_OA;
-		this.sm_RP_UI = sm_RP_UI;
+		this.sm_RP_UI = (SmsSignalInfoImpl)sm_RP_UI;
 		this.extensionContainer = extensionContainer;
 		this.imsi = imsi;
 	}
@@ -76,7 +77,7 @@ public class MoForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 	}
 
 	@Override
-	public byte[] getSM_RP_UI() {
+	public SmsSignalInfo getSM_RP_UI() {
 		return this.sm_RP_UI;
 	}
 
@@ -179,7 +180,8 @@ public class MoForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 				if (tag != Tag.STRING_OCTET)
 					throw new MAPParsingComponentException("Error while decoding moForwardShortMessageRequest: Parameter 2 tag must be STRING_OCTET, found: "
 							+ tag, MAPParsingComponentExceptionReason.MistypedParameter);
-				this.sm_RP_UI = ais.readOctetString();
+				this.sm_RP_UI = new SmsSignalInfoImpl();
+				this.sm_RP_UI.decodeAll(ais);
 				break;
 
 			default:
@@ -207,7 +209,6 @@ public class MoForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 		if (num < 3)
 			throw new MAPParsingComponentException("Error while decoding moForwardShortMessageRequest: Needs at least 3 mandatory parameters, found " + num,
 					MAPParsingComponentExceptionReason.MistypedParameter);
-
 	}
 
 	@Override
@@ -235,20 +236,14 @@ public class MoForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 		if (this.sm_RP_DA == null || this.sm_RP_OA == null || this.sm_RP_UI == null)
 			throw new MAPException("sm_RP_DA,sm_RP_OA and sm_RP_UI must not be null");
 
-		try {
-			((SM_RP_DAImpl)this.sm_RP_DA).encodeAll(asnOs);
-			((SM_RP_OAImpl)this.sm_RP_OA).encodeAll(asnOs);
-			asnOs.writeOctetString(this.sm_RP_UI);
+		((SM_RP_DAImpl) this.sm_RP_DA).encodeAll(asnOs);
+		((SM_RP_OAImpl) this.sm_RP_OA).encodeAll(asnOs);
+		this.sm_RP_UI.encodeAll(asnOs);
 
-			if (this.extensionContainer != null)
-				((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs);
-			if (this.imsi != null)
-				((IMSIImpl)this.imsi).encodeAll(asnOs);
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding moForwardShortMessageRequest: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding moForwardShortMessageRequest: " + e.getMessage(), e);
-		}
+		if (this.extensionContainer != null)
+			((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
+		if (this.imsi != null)
+			((IMSIImpl) this.imsi).encodeAll(asnOs);
 	}	
 	
 	@Override
@@ -266,7 +261,7 @@ public class MoForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 		}
 		if (this.sm_RP_UI != null) {
 			sb.append(", sm_RP_UI=[");
-			sb.append(this.printDataArr(this.sm_RP_UI));
+			sb.append(this.sm_RP_UI.toString());
 			sb.append("]");
 		}
 		if (this.extensionContainer != null) {
@@ -279,16 +274,6 @@ public class MoForwardShortMessageRequestIndicationImpl extends SmsMessageImpl i
 		}
 
 		sb.append("]");
-
-		return sb.toString();
-	}
-
-	private String printDataArr(byte[] arr) {
-		StringBuilder sb = new StringBuilder();
-		for (int b : arr) {
-			sb.append(b);
-			sb.append(", ");
-		}
 
 		return sb.toString();
 	}

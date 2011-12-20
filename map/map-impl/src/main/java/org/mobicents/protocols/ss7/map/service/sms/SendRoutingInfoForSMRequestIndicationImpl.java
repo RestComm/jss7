@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRequestIndication;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
@@ -61,21 +62,21 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsMessageImpl im
 	private MAPExtensionContainer extensionContainer;
 	private boolean gprsSupportIndicator;
 	private SM_RP_MTI sM_RP_MTI;
-	private byte[] sM_RP_SMEA;
+	private SM_RP_SMEAImpl sM_RP_SMEA;
 
 	
 	public SendRoutingInfoForSMRequestIndicationImpl() {
 	}
 
 	public SendRoutingInfoForSMRequestIndicationImpl(ISDNAddressString msisdn, boolean sm_RP_PRI, AddressString serviceCentreAddress,
-			MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, byte[] sM_RP_SMEA) {
+			MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, SM_RP_SMEA sM_RP_SMEA) {
 		this.msisdn = msisdn;
 		this.sm_RP_PRI = sm_RP_PRI;
 		this.serviceCentreAddress = serviceCentreAddress;
 		this.extensionContainer = extensionContainer;
 		this.gprsSupportIndicator = gprsSupportIndicator;
 		this.sM_RP_MTI = sM_RP_MTI;
-		this.sM_RP_SMEA = sM_RP_SMEA;
+		this.sM_RP_SMEA = (SM_RP_SMEAImpl)sM_RP_SMEA;
 	}
 	
 	@Override
@@ -109,7 +110,7 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsMessageImpl im
 	}
 
 	@Override
-	public byte[] getSM_RP_SMEA() {
+	public SM_RP_SMEA getSM_RP_SMEA() {
 		return this.sM_RP_SMEA;
 	}
 
@@ -239,7 +240,8 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsMessageImpl im
 							throw new MAPParsingComponentException(
 									"Error while decoding sendRoutingInfoForSMRequest.sM_RP_SMEA: Parameter sM_RP_SMEA is not primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
-						this.sM_RP_SMEA = ais.readOctetString();
+						this.sM_RP_SMEA = new SM_RP_SMEAImpl();
+						this.sM_RP_SMEA.decodeAll(ais);
 						break;
 
 					default:
@@ -299,7 +301,7 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsMessageImpl im
 			if (this.sM_RP_MTI != null)
 				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_sm_RP_MTI, this.sM_RP_MTI.getCode());
 			if (this.sM_RP_SMEA != null)
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_sm_RP_SMEA, this.sM_RP_SMEA);
+				this.sM_RP_SMEA.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_sm_RP_SMEA);
 			
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding sendRoutingInfoForSMRequest: " + e.getMessage(), e);
@@ -336,20 +338,10 @@ public class SendRoutingInfoForSMRequestIndicationImpl extends SmsMessageImpl im
 		}
 		if (this.sM_RP_SMEA != null) {
 			sb.append(", sM_RP_SMEA=");
-			sb.append(this.printDataArr(this.sM_RP_SMEA));
+			sb.append(this.sM_RP_SMEA.toString());
 		}
 
 		sb.append("]");
-
-		return sb.toString();
-	}
-
-	private String printDataArr(byte[] arr) {
-		StringBuilder sb = new StringBuilder();
-		for (int b : arr) {
-			sb.append(b);
-			sb.append(", ");
-		}
 
 		return sb.toString();
 	}

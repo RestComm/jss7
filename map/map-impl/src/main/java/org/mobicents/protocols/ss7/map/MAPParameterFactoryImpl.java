@@ -44,16 +44,20 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpdu;
 import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortChoiceImpl;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdFixedLengthImpl;
@@ -67,10 +71,13 @@ import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPPrivateExtensionImpl;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
+import org.mobicents.protocols.ss7.map.service.callhandling.CallReferenceNumberImpl;
 import org.mobicents.protocols.ss7.map.service.sms.LocationInfoWithLMSIImpl;
 import org.mobicents.protocols.ss7.map.service.sms.MWStatusImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SM_RP_DAImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SM_RP_OAImpl;
+import org.mobicents.protocols.ss7.map.service.sms.SM_RP_SMEAImpl;
+import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSRequestIndicationImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseIndicationImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSNotifyRequestIndicationImpl;
@@ -227,10 +234,25 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 		res.setServiceCentreAddressOA(serviceCentreAddressOA);
 		return res;
 	}
-
+	
 	@Override
 	public SM_RP_OA createSM_RP_OA() {
 		return new SM_RP_OAImpl();
+	}
+
+	@Override
+	public SmsSignalInfo createSmsSignalInfo(byte[] data, Charset gsm8Charset) {
+		return new SmsSignalInfoImpl(data, gsm8Charset);
+	}
+
+	@Override
+	public SmsSignalInfo createSmsSignalInfo(SmsTpdu data, Charset gsm8Charset) throws MAPException {
+		return new SmsSignalInfoImpl(data, gsm8Charset);
+	}
+
+	@Override
+	public SM_RP_SMEA createSM_RP_SMEA(byte[] data) {
+		return new SM_RP_SMEAImpl(data);
 	}
 
 	@Override
@@ -289,8 +311,23 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 	}
 
 	@Override
+	public CellGlobalIdOrServiceAreaIdFixedLength createCellGlobalIdOrServiceAreaIdFixedLength(int mcc, int mnc, int lac, int cellId) throws MAPException {
+		return new CellGlobalIdOrServiceAreaIdFixedLengthImpl(mcc, mnc, lac, cellId);
+	}
+
+	@Override
 	public LAIFixedLength createLAIFixedLength(byte[] data) {
 		return new LAIFixedLengthImpl(data);
+	}
+
+	@Override
+	public LAIFixedLength createLAIFixedLength(int mcc, int mnc, int lac) throws MAPException {
+		return new LAIFixedLengthImpl(mcc, mnc, lac);
+	}
+
+	@Override
+	public CallReferenceNumber createCallReferenceNumber(byte[] data) {
+		return new CallReferenceNumberImpl(data);
 	}
 
 }

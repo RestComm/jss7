@@ -32,12 +32,15 @@ import java.util.BitSet;
 /**
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class GSMCharsetEncoder extends CharsetEncoder {
 
-	int bitpos = 0;
-	byte carryOver;
+	private	int bitpos = 0;
+	private	int carryOver;
+	private	GSMCharset cs;
+	private GSMCharsetEncodingData encodingData;
 
 	// The mask to check if corresponding bit in read byte is 1 or 0 and hence
 	// store it i BitSet accordingly
@@ -52,6 +55,18 @@ public class GSMCharsetEncoder extends CharsetEncoder {
 			float maxBytesPerChar) {
 		super(cs, averageBytesPerChar, maxBytesPerChar);
 		implReset();
+		this.cs = (GSMCharset) cs;
+
+		if (encodingData != null)
+			encodingData.totalSeptetCount = 0;
+	}
+
+	public void setGSMCharsetEncodingData(GSMCharsetEncodingData encodingData) {
+		this.encodingData = encodingData;
+	}
+
+	public GSMCharsetEncodingData getGSMCharsetEncodingData() {
+		return this.encodingData;
 	}
 
 	@Override
@@ -77,61 +92,73 @@ public class GSMCharsetEncoder extends CharsetEncoder {
 
 	@Override
 	protected CoderResult encodeLoop(CharBuffer in, ByteBuffer out) {
+
+		if (this.encodingData != null && this.encodingData.leadingBuffer != null) {
+			int septetCount = (this.encodingData.leadingBuffer.length * 8 + 6) / 7;
+			bitpos = septetCount % 8;
+			this.encodingData.totalSeptetCount = septetCount; 
+			for (int ind = 0; ind < this.encodingData.leadingBuffer.length; ind++) {
+				out.put(this.encodingData.leadingBuffer[ind]);
+			}
+		}
+		
 		while (in.hasRemaining()) {
 
 			// Read the first char
 			char c = in.get();
 
-			for (int i = 0; i < GSMCharset.BYTE_TO_CHAR.length; i++) {
-
-				// Get the index of BYTE_TO_CHAR where this char is present.
-				if (GSMCharset.BYTE_TO_CHAR[i] == c) {
-
-					// The index represents the byte for us, from which least
-					// significant 7 bits are to be consumed
-					rawData = (byte) i;
-
-					for (int j = 0; j < mask.length; j++) {
-						if ((rawData & mask[j]) == mask[j]) {
-							bitSet.set(bitpos);
-						}
-						bitpos++;
-					}
-
+			boolean found = false;
+			// searching a char in the main character table
+			for (int i = 0; i < this.cs.mainTable.length; i++) {
+				if (this.cs.mainTable[i] == c) {
+					found = true;
+					this.putByte(i, out);
 					break;
-				}// end of if(GSMCharset.BYTE_TO_CHAR[i] == c)
+				}
+			}
+			
+			// searching a char in the extension character table
+			if (!found && this.cs.extensionTable != null) {
+				for (int i = 0; i < this.cs.mainTable.length; i++) {
+					if (this.cs.extensionTable[i] == c) {
+						found = true;
+						this.putByte(GSMCharsetEncoder.ESCAPE, out);
+						this.putByte(i, out);
+						break;
+					}
+				}
+			}
 
-				// TODO : What if we get char that doesn't match? Throw error?
-				// Or ignore like we are doing now?
+			if (!found) {
+				// found no suitable symbol - encode a space char
+				this.putByte(0x20, out);
 			}
 		}
-
-		// All the char's are read and corresponding BitSet also filled. Now
-		// each 7 Bits forms one byte and to be added to ByteBuffer out
-		int b = 0x00;
-		for (int count = 0; count < bitpos; count++) {
-
-			// If 7 bits are read, add it to ByteBuffer.
-			if (count > 0 && (count % 8) == 0) {
-				out.put((byte) (b & 0xFF));
-
-				// reset previous byte for next byte formation
-				b = 0x00;
-			}
-
-			// Formation of byte. Keep moving each bit to left and append
-			// current bit
-			if (bitSet.get(count)) {
-				b = (b | 1 << (count % 8));
-			}
-		}// end of For loop
-
-		// The final one if total bits are not LCM of 8
-		//if (bitpos % 8 != 0) {
-			out.put((byte) (b & 0xFF));
-		//}
+		
+		if (bitpos != 0) {
+			// writing a carryOver data
+			out.put((byte) carryOver);
+		}
 
 		return CoderResult.UNDERFLOW;
 	}
+	
+	private void putByte(int data, ByteBuffer out) {
 
+		if (bitpos == 0) {
+			carryOver = data;
+		} else {
+			int i1 = data << (8 - bitpos);
+			out.put((byte) (i1 | carryOver));
+			carryOver = data >>> bitpos;
+		}
+
+		bitpos++;
+		if (bitpos == 8) {
+			bitpos = 0;
+		}
+
+		if (this.encodingData != null)
+			this.encodingData.totalSeptetCount++;
+	}
 }

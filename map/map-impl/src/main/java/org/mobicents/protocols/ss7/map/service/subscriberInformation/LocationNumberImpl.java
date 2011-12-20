@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.callhandling;
+package org.mobicents.protocols.ss7.map.service.subscriberInformation;
 
 import java.io.IOException;
 
@@ -31,7 +31,7 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LocationNumber;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
@@ -39,26 +39,19 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
  * @author sergey vetyutnev
  * 
  */
-public class CallReferenceNumberImpl implements CallReferenceNumber, MAPAsnPrimitive {
+public class LocationNumberImpl implements LocationNumber, MAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "CallReferenceNumber";
-
+	public static final String _PrimitiveName = "LocationNumber";
+	
 	private byte[] data;
 
 	
-	public CallReferenceNumberImpl(){
-	}
 	
-	public CallReferenceNumberImpl(byte[] data) {
-		this.data = data;
-	}
-
-
 	@Override
 	public byte[] getData() {
-		return this.data;
+		return data;
 	}
-
+	
 	
 	@Override
 	public int getTag() throws MAPException {
@@ -72,7 +65,7 @@ public class CallReferenceNumberImpl implements CallReferenceNumber, MAPAsnPrimi
 
 	@Override
 	public boolean getIsPrimitive() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -82,10 +75,10 @@ public class CallReferenceNumberImpl implements CallReferenceNumber, MAPAsnPrimi
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding CallReferenceNumber: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding CallReferenceNumber: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -96,66 +89,37 @@ public class CallReferenceNumberImpl implements CallReferenceNumber, MAPAsnPrimi
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding CallReferenceNumber: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding CallReferenceNumber: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		
-		this.data = ansIS.readOctetStringData(length);
-		
-		if (this.data.length < 1 || this.data.length > 8)
-			throw new MAPParsingComponentException("Error decoding CallReferenceNumber: length must be from 1 to 8, real length = " + length,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+	private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		this.data = ais.readOctetStringData(length);
+		if (this.data.length < 2 || this.data.length > 10)
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": value must be from 2 to 10 bytes length, found: "
+					+ this.data.length, MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		// TODO Auto-generated method stub
 		
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-
-		if (this.data == null || this.data.length == 0)
-			throw new MAPException("Error when encoding " + _PrimitiveName + ": data is empty");
-
-		asnOs.writeOctetStringData(data);
-	}
-
-	@Override
-	public String toString() {
-		return "CallReferenceNumber [Data= " + this.printDataArr() + "]";
-	}
-	
-	private String printDataArr() {
-		StringBuilder sb = new StringBuilder();
-		if( this.data!=null ) {
-			for( int b : this.data ) {
-				sb.append(b);
-				sb.append(" ");
-			}
-		}
+		// TODO Auto-generated method stub
 		
-		return sb.toString();
 	}
 }
-
