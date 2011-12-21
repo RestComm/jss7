@@ -208,27 +208,26 @@ public class GSMCharsetTest  {
 
 	}
 	
-	//@Test(groups = { "functional.encode","gsm"})
-	//TODO : This fails
-//	public void testEncode4() throws Exception {
-//
-//		// This raw data is from nad1053.pcap, last packet.
+	@Test(groups = { "functional.encode","gsm"})
+	public void testEncode4() throws Exception {
+
+		// This raw data is from nad1053.pcap, last packet.
 //		byte[] rawData = new byte[] { 0x2a, 0x1c, 0x6e, (byte)0xd4 };
-//
-//		String ussdString = "*88#";
-//
-//		GSMCharset cs = new GSMCharset("GSM", new String[] {});
-//		ByteBuffer bb = cs.encode(ussdString);
-//
-//		// Not using bb.array() as it also includes the bytes beyond limit till
-//		// capacity
-//		byte[] data = new byte[bb.limit()];
-//		int count = 0;
-//		while (bb.hasRemaining()) {
-//			data[count++] = bb.get();
-//		}
-//
-//		assertTrue( data),Arrays.equals(rawData);
-//
-//	}
+		byte[] rawData = new byte[] { 0x2a, 0x1c, 0x6e, (byte)0x4 };
+
+		String ussdString = "*88#";
+
+		GSMCharset cs = new GSMCharset("GSM", new String[] {});
+		ByteBuffer bb = cs.encode(ussdString);
+
+		// Not using bb.array() as it also includes the bytes beyond limit till
+		// capacity
+		byte[] data = new byte[bb.limit()];
+		int count = 0;
+		while (bb.hasRemaining()) {
+			data[count++] = bb.get();
+		}
+
+		assertTrue(Arrays.equals(rawData, data));
+	}
 }
