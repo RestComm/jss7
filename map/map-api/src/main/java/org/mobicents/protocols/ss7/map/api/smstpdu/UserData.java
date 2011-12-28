@@ -31,13 +31,15 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
  */
 public interface UserData {
 
+	public DataCodingScheme getDataCodingScheme();
+
 	public byte[] getEncodedData();
 
 	public boolean getEncodedUserDataHeaderIndicator();
 	
 	public int getEncodedUserDataLength();
 	
-	public String getDecodedString();
+	public String getDecodedMessage();
 
 	public UserDataHeader getDecodedUserDataHeader();
 

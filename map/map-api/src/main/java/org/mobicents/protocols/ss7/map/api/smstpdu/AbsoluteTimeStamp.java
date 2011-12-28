@@ -59,6 +59,6 @@ public interface AbsoluteTimeStamp {
 	 */
 	public int getTimeZone();
 
-	public void encodedData(OutputStream stm) throws MAPException;
+	public void encodeData(OutputStream stm) throws MAPException;
 
 }

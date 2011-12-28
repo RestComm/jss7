@@ -41,6 +41,11 @@ public interface SmsStatusReportTpdu extends SmsTpdu {
 	public boolean getMoreMessagesToSend();
 
 	/**
+	 * @return TP-LP field
+	 */
+	public boolean getForwardedOrSpawned();
+
+	/**
 	 * @return TP-SRQ field
 	 */
 	public StatusReportQualifier getStatusReportQualifier();

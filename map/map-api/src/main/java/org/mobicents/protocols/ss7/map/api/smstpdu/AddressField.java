@@ -67,6 +67,6 @@ public interface AddressField {
 
 	public String getAddressValue();
 
-	public void encodedData(OutputStream stm) throws MAPException;
+	public void encodeData(OutputStream stm) throws MAPException;
 
 }

@@ -37,6 +37,9 @@ public interface SmsDeliverTpdu extends SmsTpdu {
 
 	/**
 	 * @return TP-LP field
+	 * false: The message has not been forwarded and is not a spawned message (or the
+	 * sending network entity (e.g. an SC) does not support the setting of this bit.)
+	 * true:  The message has either been forwarded or is a spawned message.
 	 */
 	public boolean getForwardedOrSpawned();
 	

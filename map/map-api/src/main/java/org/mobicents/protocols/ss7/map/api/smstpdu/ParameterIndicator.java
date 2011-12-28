@@ -29,6 +29,8 @@ package org.mobicents.protocols.ss7.map.api.smstpdu;
  */
 public interface ParameterIndicator {
 
+	public int getCode();
+
 	public boolean getTP_UDLPresence();
 
 	public boolean getTP_DCSPresence();
