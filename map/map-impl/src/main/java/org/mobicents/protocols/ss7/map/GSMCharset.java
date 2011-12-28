@@ -45,7 +45,7 @@ public class GSMCharset extends Charset {
 	protected static final float averageCharsPerByte = 8 / 7f;
 	protected static final float maxCharsPerByte = 2f;
 
-	protected static final float averageBytesPerChar = 1f;
+	protected static final float averageBytesPerChar = 2f;
 	protected static final float maxBytesPerChar = 2f;
 
 	protected static final int BUFFER_SIZE = 256;
