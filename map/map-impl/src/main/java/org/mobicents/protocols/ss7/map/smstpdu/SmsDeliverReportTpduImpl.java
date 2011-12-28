@@ -42,24 +42,26 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.UserData;
  * 
  */
 public class SmsDeliverReportTpduImpl extends SmsTpduImpl implements SmsDeliverReportTpdu {
-	
+
 	private boolean userDataHeaderIndicator;
 	private FailureCause failureCause;
 	private ParameterIndicator parameterIndicator;
-	private ProtocolIdentifierImpl protocolIdentifier;
-	private DataCodingSchemeImpl dataCodingScheme;
+	private ProtocolIdentifier protocolIdentifier;
+	private DataCodingScheme dataCodingScheme;
 	private int userDataLength;
-	private UserDataImpl smsUserData;
+	private UserDataImpl userData;
 
 	private SmsDeliverReportTpduImpl() {
 		this.tpduType = SmsTpduType.SMS_DELIVER_REPORT;
 		this.mobileOriginatedMessage = true;
 	}
-	
-	public SmsDeliverReportTpduImpl(boolean userDataHeaderIndicator) {
+
+	public SmsDeliverReportTpduImpl(FailureCause failureCause, ProtocolIdentifierImpl protocolIdentifier, UserDataImpl userData) {
 		this();
 
-		this.userDataHeaderIndicator = userDataHeaderIndicator;
+		this.failureCause = failureCause;
+		this.protocolIdentifier = protocolIdentifier;
+		this.userData = userData;
 	}
 
 	public SmsDeliverReportTpduImpl(byte[] data, Charset gsm8Charset) throws MAPException {
@@ -116,7 +118,7 @@ public class SmsDeliverReportTpduImpl extends SmsTpduImpl implements SmsDeliverR
 			} catch (IOException e) {
 				throw new MAPException("IOException while creating a new SmsDeliverTpduImpl instance: " + e.getMessage(), e);
 			}
-			smsUserData = new UserDataImpl(buf, dataCodingScheme, userDataLength, userDataHeaderIndicator, gsm8Charset);
+			userData = new UserDataImpl(buf, dataCodingScheme, userDataLength, userDataHeaderIndicator, gsm8Charset);
 		}
 	}
 
@@ -152,19 +154,87 @@ public class SmsDeliverReportTpduImpl extends SmsTpduImpl implements SmsDeliverR
 
 	@Override
 	public UserData getUserData() {
-		return smsUserData;
+		return userData;
 	}
 
 	@Override
 	public byte[] encodeData() throws MAPException {
 
+		if (this.userData != null) {
+			this.userData.encode();
+			this.userDataHeaderIndicator = this.userData.getEncodedUserDataHeaderIndicator();
+			this.userDataLength = this.userData.getEncodedUserDataLength();
+			this.dataCodingScheme = this.userData.getDataCodingScheme();
+
+			if (this.userData.getEncodedData().length > _UserDataDeliverReportLimit)
+				throw new MAPException("User data field length may not increase " + _UserDataDeliverReportLimit);
+		}
+
 		AsnOutputStream res = new AsnOutputStream();
 
 		// byte 0
-		res.write(SmsTpduType.SMS_DELIVER_REPORT.getCode() | (this.userDataHeaderIndicator ? _MASK_TP_UDHI : 0));
+		res.write(SmsTpduType.SMS_DELIVER_REPORT.getEncodedValue() | (this.userDataHeaderIndicator ? _MASK_TP_UDHI : 0));
 
-		// TODO: implement encoding .............................
+		if (this.failureCause != null)
+			res.write(this.failureCause.getCode());
+
+		this.parameterIndicator = new ParameterIndicatorImpl(this.userData != null, this.dataCodingScheme != null, this.protocolIdentifier != null);
+		res.write(this.parameterIndicator.getCode());
+
+		if (this.protocolIdentifier != null) {
+			res.write(this.protocolIdentifier.getCode());
+		}
+		if (this.dataCodingScheme != null) {
+			res.write(this.dataCodingScheme.getCode());
+		}
+
+		if (this.userData != null) {
+			res.write(this.userDataLength);
+			res.write(this.userData.getEncodedData());
+		}
 
 		return res.toByteArray();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("SMS-DELIVER-REPORT tpdu [");
+
+		boolean started = false;
+		if (this.userDataHeaderIndicator) {
+			sb.append("userDataHeaderIndicator");
+			started = true;
+		}
+
+		if (this.failureCause != null) {
+			if (started)
+				sb.append(", ");
+			sb.append("failureCause=");
+			sb.append(this.failureCause.toString());
+			started = true;
+		}
+		if (this.parameterIndicator != null) {
+			if (started)
+				sb.append(", ");
+			sb.append(this.parameterIndicator.toString());
+			started = true;
+		}
+		if (this.protocolIdentifier != null) {
+			if (started)
+				sb.append(", ");
+			sb.append(this.protocolIdentifier.toString());
+			started = true;
+		}
+		if (this.userData != null) {
+			sb.append("\nMSG [");
+			sb.append(this.userData.toString());
+			sb.append("]");
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }

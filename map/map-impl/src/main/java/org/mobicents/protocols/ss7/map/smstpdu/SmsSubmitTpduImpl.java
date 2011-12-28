@@ -52,27 +52,30 @@ public class SmsSubmitTpduImpl extends SmsTpduImpl implements SmsSubmitTpdu {
 	private boolean userDataHeaderIndicator;
 	private boolean statusReportRequest;
 	private int messageReference;
-	private AddressFieldImpl destinationAddress;
-	private ProtocolIdentifierImpl protocolIdentifier;
-	private DataCodingSchemeImpl dataCodingScheme;
+	private AddressField destinationAddress;
+	private ProtocolIdentifier protocolIdentifier;
+	private DataCodingScheme dataCodingScheme;
 	private ValidityPeriod validityPeriod;
 	private int userDataLength;
-	private UserDataImpl smsUserData;
+	private UserData userData;
 
 	private SmsSubmitTpduImpl() {
 		this.tpduType = SmsTpduType.SMS_SUBMIT;
 		this.mobileOriginatedMessage = true;
 	}
 
-	public SmsSubmitTpduImpl(boolean rejectDuplicates, ValidityPeriodFormat validityPeriodFormat, boolean replyPathExists, boolean userDataHeaderIndicator,
-			boolean statusReportRequest) {
+	public SmsSubmitTpduImpl(boolean rejectDuplicates, boolean replyPathExists, boolean statusReportRequest, int messageReference,
+			AddressField destinationAddress, ProtocolIdentifier protocolIdentifier, ValidityPeriod validityPeriod, UserData userData) {
 		this();
 
 		this.rejectDuplicates = rejectDuplicates;
-		this.validityPeriodFormat = validityPeriodFormat;
 		this.replyPathExists = replyPathExists;
-		this.userDataHeaderIndicator = userDataHeaderIndicator;
 		this.statusReportRequest = statusReportRequest;
+		this.messageReference = messageReference;
+		this.destinationAddress = destinationAddress;
+		this.protocolIdentifier = protocolIdentifier;
+		this.validityPeriod = validityPeriod;
+		this.userData = userData;
 	}
 
 	public SmsSubmitTpduImpl(byte[] data, Charset gsm8Charset) throws MAPException {
@@ -112,7 +115,7 @@ public class SmsSubmitTpduImpl extends SmsTpduImpl implements SmsSubmitTpdu {
 		if (bt == -1)
 			throw new MAPException("Error creating a new SmsSubmitTpdu instance: dataCodingScheme field has not been found");
 		this.dataCodingScheme = new DataCodingSchemeImpl(bt);
-		
+
 		switch (this.validityPeriodFormat) {
 		case fieldPresentRelativeFormat:
 			bt = stm.read();
@@ -148,7 +151,7 @@ public class SmsSubmitTpduImpl extends SmsTpduImpl implements SmsSubmitTpdu {
 		} catch (IOException e) {
 			throw new MAPException("IOException while creating a new SmsDeliverTpdu instance: " + e.getMessage(), e);
 		}
-		smsUserData = new UserDataImpl(buf, dataCodingScheme, userDataLength, userDataHeaderIndicator, gsm8Charset);
+		userData = new UserDataImpl(buf, dataCodingScheme, userDataLength, userDataHeaderIndicator, gsm8Charset);
 	}
 
 	@Override
@@ -208,23 +211,119 @@ public class SmsSubmitTpduImpl extends SmsTpduImpl implements SmsSubmitTpdu {
 
 	@Override
 	public UserData getUserData() {
-		return smsUserData;
+		return userData;
 	}
 
 	@Override
 	public byte[] encodeData() throws MAPException {
 
-		if (validityPeriodFormat == null)
-			throw new MAPException("Error encoding a SmsSubmitTpdu: validityPeriodFormat is null");
+		if (this.destinationAddress == null || this.protocolIdentifier == null || this.userData == null)
+			throw new MAPException("Error encoding a SmsSubmitTpdu: destinationAddress, protocolIdentifier and userData must not be null");
 
+		if (this.validityPeriod == null) {
+			this.validityPeriodFormat = ValidityPeriodFormat.fieldNotPresent;
+		} else if (this.validityPeriod.getRelativeFormatValue() != null) {
+			this.validityPeriodFormat = ValidityPeriodFormat.fieldPresentRelativeFormat;
+		} else if (this.validityPeriod.getAbsoluteFormatValue() != null) {
+			this.validityPeriodFormat = ValidityPeriodFormat.fieldPresentAbsoluteFormat;
+		} else if (this.validityPeriod.getEnhancedFormatValue() != null) {
+			this.validityPeriodFormat = ValidityPeriodFormat.fieldPresentEnhancedFormat;
+		} else {
+			this.validityPeriodFormat = ValidityPeriodFormat.fieldNotPresent;
+		}
+
+		this.userData.encode();
+		this.userDataHeaderIndicator = this.userData.getEncodedUserDataHeaderIndicator();
+		this.userDataLength = this.userData.getEncodedUserDataLength();
+		this.dataCodingScheme = this.userData.getDataCodingScheme();
+
+		if (this.userData.getEncodedData().length > _UserDataLimit)
+			throw new MAPException("User data field length may not increase " + _UserDataLimit);
+		
 		AsnOutputStream res = new AsnOutputStream();
 
 		// byte 0
-		res.write(SmsTpduType.SMS_SUBMIT.getCode() | (this.rejectDuplicates ? _MASK_TP_RD : 0) | (this.validityPeriodFormat.getCode() << 3)
+		res.write(SmsTpduType.SMS_SUBMIT.getEncodedValue() | (this.rejectDuplicates ? _MASK_TP_RD : 0) | (this.validityPeriodFormat.getCode() << 3)
 				| (this.replyPathExists ? _MASK_TP_RP : 0) | (this.userDataHeaderIndicator ? _MASK_TP_UDHI : 0) | (this.statusReportRequest ? _MASK_TP_SRR : 0));
 
-		// TODO: implement encoding
+		res.write(this.messageReference);
+		this.destinationAddress.encodeData(res);
+		res.write(this.protocolIdentifier.getCode());
+		res.write(this.dataCodingScheme.getCode());
 
+		switch (this.validityPeriodFormat) {
+		case fieldPresentRelativeFormat:
+			res.write(this.validityPeriod.getRelativeFormatValue());
+			break;
+		case fieldPresentAbsoluteFormat:
+			this.validityPeriod.getAbsoluteFormatValue().encodeData(res);
+			break;
+		case fieldPresentEnhancedFormat:
+			res.write(this.validityPeriod.getEnhancedFormatValue().getData());
+			break;
+		}
+
+		res.write(this.userDataLength);
+		res.write(this.userData.getEncodedData());
+		
 		return res.toByteArray();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("SMS-SUBMIT tpdu [");
+		
+		boolean started = false;
+		if (this.rejectDuplicates) {
+			sb.append("rejectDuplicates");
+			started = true;
+		}
+		if (this.replyPathExists) {
+			if (started)
+				sb.append(", ");
+			sb.append("replyPathExists");
+			started = true;
+		}
+		if (this.userDataHeaderIndicator) {
+			if (started)
+				sb.append(", ");
+			sb.append("userDataHeaderIndicator");
+			started = true;
+		}
+		if (this.statusReportRequest) {
+			if (started)
+				sb.append(", ");
+			sb.append("statusReportRequest");
+			started = true;
+		}
+		
+		if (started)
+			sb.append(", ");
+		sb.append("messageReference=");
+		sb.append(this.messageReference);
+		if (this.destinationAddress != null) {
+			sb.append(", destinationAddress [");
+			sb.append(this.destinationAddress.toString());
+			sb.append("]");
+		}
+		if (this.protocolIdentifier != null) {
+			sb.append(", ");
+			sb.append(this.protocolIdentifier.toString());
+		}
+		if (this.validityPeriod != null) {
+			sb.append(", ");
+			sb.append(this.validityPeriod.toString());
+		}
+		if (this.userData != null) {
+			sb.append("\nMSG [");
+			sb.append(this.userData.toString());
+			sb.append("]");
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }

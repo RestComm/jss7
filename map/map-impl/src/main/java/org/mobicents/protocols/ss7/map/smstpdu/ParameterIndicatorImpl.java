@@ -35,19 +35,24 @@ public class ParameterIndicatorImpl implements ParameterIndicator {
 	private static int _MASK_TP_DCS = 0x02;
 	private static int _MASK_TP_PID = 0x01;
 	
-	private int data;
+	private int code;
 
 	public ParameterIndicatorImpl(int code) {
-		this.data = code;
+		this.code = code;
 	}
 
 	public ParameterIndicatorImpl(boolean TP_UDLPresence, boolean getTP_DCSPresence, boolean getTP_PIDPresence) {
-		this.data = (TP_UDLPresence ? _MASK_TP_UDL : 0) + (getTP_DCSPresence ? _MASK_TP_DCS : 0) + (getTP_PIDPresence ? _MASK_TP_PID : 0);
+		this.code = (TP_UDLPresence ? _MASK_TP_UDL : 0) + (getTP_DCSPresence ? _MASK_TP_DCS : 0) + (getTP_PIDPresence ? _MASK_TP_PID : 0);
+	}
+
+	@Override
+	public int getCode() {
+		return code;
 	}
 
 	@Override
 	public boolean getTP_UDLPresence() {
-		if ((this.data & _MASK_TP_UDL) != 0)
+		if ((this.code & _MASK_TP_UDL) != 0)
 			return true;
 		else
 			return false;
@@ -55,7 +60,7 @@ public class ParameterIndicatorImpl implements ParameterIndicator {
 
 	@Override
 	public boolean getTP_DCSPresence() {
-		if ((this.data & _MASK_TP_DCS) != 0)
+		if ((this.code & _MASK_TP_DCS) != 0)
 			return true;
 		else
 			return false;
@@ -63,7 +68,7 @@ public class ParameterIndicatorImpl implements ParameterIndicator {
 
 	@Override
 	public boolean getTP_PIDPresence() {
-		if ((this.data & _MASK_TP_PID) != 0)
+		if ((this.code & _MASK_TP_PID) != 0)
 			return true;
 		else
 			return false;

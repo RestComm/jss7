@@ -106,7 +106,7 @@ public class AddressFieldImpl implements AddressField {
 	}
 
 	@Override
-	public void encodedData(OutputStream stm) throws MAPException {
+	public void encodeData(OutputStream stm) throws MAPException {
 
 		if (typeOfNumber == null || numberingPlanIdentification == null || addressValue == null)
 			throw new MAPException("Error encoding AddressFieldImpl: typeOfNumber, addressValue and numberingPlanIdentification fields must not be null");

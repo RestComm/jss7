@@ -46,6 +46,12 @@ public abstract class SmsTpduImpl implements SmsTpdu {
 	protected static int _MASK_TP_RP = 0x80;
 	protected static int _MASK_TP_VPF = 0x18;
 
+	protected static int _UserDataLimit = 140;
+	protected static int _UserDataStatusReportLimit = 131;
+	protected static int _UserDataSubmitReportLimit = 152;
+	protected static int _UserDataDeliverReportLimit = 159;
+	protected static int _CommandDataLimit = 146;
+
 	protected boolean mobileOriginatedMessage;
 	protected SmsTpduType tpduType;
 
@@ -89,15 +95,4 @@ public abstract class SmsTpduImpl implements SmsTpdu {
 	public SmsTpduType getSmsTpduType() {
 		return tpduType;
 	}
-
-	
-//	private String printDataArr(byte[] arr) {
-//		StringBuilder sb = new StringBuilder();
-//		for (int b : arr) {
-//			sb.append(b);
-//			sb.append(", ");
-//		}
-//
-//		return sb.toString();
-//	}
 }

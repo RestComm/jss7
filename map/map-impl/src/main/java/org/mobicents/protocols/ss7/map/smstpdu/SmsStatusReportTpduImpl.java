@@ -48,29 +48,39 @@ public class SmsStatusReportTpduImpl extends SmsTpduImpl implements SmsStatusRep
 
 	private boolean userDataHeaderIndicator;
 	private boolean moreMessagesToSend;
+	private boolean forwardedOrSpawned;
 	private StatusReportQualifier statusReportQualifier;
 	private int messageReference;
 	private AddressField recipientAddress;
-	private AbsoluteTimeStampImpl serviceCentreTimeStamp;
+	private AbsoluteTimeStamp serviceCentreTimeStamp;
 	private AbsoluteTimeStamp dischargeTime;
 	private Status status;
 	private ParameterIndicator parameterIndicator;
-	private ProtocolIdentifierImpl protocolIdentifier;
-	private DataCodingSchemeImpl dataCodingScheme;
+	private ProtocolIdentifier protocolIdentifier;
+	private DataCodingScheme dataCodingScheme;
 	private int userDataLength;
-	private UserDataImpl smsUserData;
+	private UserDataImpl userData;
 
 	private SmsStatusReportTpduImpl() {
 		this.tpduType = SmsTpduType.SMS_STATUS_REPORT;
 		this.mobileOriginatedMessage = false;
 	}
 
-	public SmsStatusReportTpduImpl(boolean userDataHeaderIndicator, boolean moreMessagesToSend, StatusReportQualifier statusReportQualifier) {
+	public SmsStatusReportTpduImpl(boolean moreMessagesToSend, boolean forwardedOrSpawned, StatusReportQualifier statusReportQualifier, int messageReference,
+			AddressField recipientAddress, AbsoluteTimeStamp serviceCentreTimeStamp, AbsoluteTimeStamp dischargeTime, Status status,
+			ProtocolIdentifier protocolIdentifier, UserDataImpl userData) {
 		this();
 
-		this.userDataHeaderIndicator = userDataHeaderIndicator;
 		this.moreMessagesToSend = moreMessagesToSend;
+		this.forwardedOrSpawned = forwardedOrSpawned;
 		this.statusReportQualifier = statusReportQualifier;
+		this.messageReference = messageReference;
+		this.recipientAddress = recipientAddress;
+		this.serviceCentreTimeStamp = serviceCentreTimeStamp;
+		this.dischargeTime = dischargeTime;
+		this.status = status;
+		this.protocolIdentifier = protocolIdentifier;
+		this.userData = userData;
 	}
 	
 	public SmsStatusReportTpduImpl(byte[] data, Charset gsm8Charset) throws MAPException {
@@ -88,6 +98,8 @@ public class SmsStatusReportTpduImpl extends SmsTpduImpl implements SmsStatusRep
 			this.userDataHeaderIndicator = true;
 		if ((bt & _MASK_TP_MMS) == 0)
 			this.moreMessagesToSend = true;
+		if ((bt & _MASK_TP_LP) != 0)
+			this.forwardedOrSpawned = true;
 		int code = (bt & _MASK_TP_SRQ) >> 5;
 		this.statusReportQualifier = StatusReportQualifier.getInstance(code);
 
@@ -136,7 +148,7 @@ public class SmsStatusReportTpduImpl extends SmsTpduImpl implements SmsStatusRep
 			} catch (IOException e) {
 				throw new MAPException("IOException while creating a new SmsStatusReport instance: " + e.getMessage(), e);
 			}
-			smsUserData = new UserDataImpl(buf, dataCodingScheme, userDataLength, userDataHeaderIndicator, gsm8Charset);
+			userData = new UserDataImpl(buf, dataCodingScheme, userDataLength, userDataHeaderIndicator, gsm8Charset);
 		}
 	}
 
@@ -148,6 +160,11 @@ public class SmsStatusReportTpduImpl extends SmsTpduImpl implements SmsStatusRep
 	@Override
 	public boolean getMoreMessagesToSend() {
 		return this.moreMessagesToSend;
+	}
+
+	@Override
+	public boolean getForwardedOrSpawned() {
+		return this.forwardedOrSpawned;
 	}
 
 	@Override
@@ -202,23 +219,126 @@ public class SmsStatusReportTpduImpl extends SmsTpduImpl implements SmsStatusRep
 
 	@Override
 	public UserData getUserData() {
-		return smsUserData;
+		return userData;
 	}
 
 	@Override
 	public byte[] encodeData() throws MAPException {
 
-		if (statusReportQualifier == null)
-			throw new MAPException("Error encoding a SmsStatusReportTpdu: statusReportQualifier is null");
+		if (statusReportQualifier == null || this.recipientAddress == null || this.serviceCentreTimeStamp == null || this.dischargeTime == null
+				|| this.status == null)
+			throw new MAPException(
+					"Error encoding a SmsStatusReportTpdu: statusReportQualifier, recipientAddress, serviceCentreTimeStamp, dischargeTime and status must no be null");
+
+		if (this.userData != null) {
+			this.userData.encode();
+			this.userDataHeaderIndicator = this.userData.getEncodedUserDataHeaderIndicator();
+			this.userDataLength = this.userData.getEncodedUserDataLength();
+			this.dataCodingScheme = this.userData.getDataCodingScheme();
+			if (this.userData.getEncodedData().length > _UserDataStatusReportLimit)
+				throw new MAPException("User data field length may not increase " + _UserDataStatusReportLimit);
+		}
 
 		AsnOutputStream res = new AsnOutputStream();
 
 		// byte 0
-		res.write(SmsTpduType.SMS_COMMAND.getCode() | (this.userDataHeaderIndicator ? _MASK_TP_UDHI : 0) | (!this.moreMessagesToSend ? _MASK_TP_MMS : 0)
-				| (this.statusReportQualifier.getCode() << 5));
+		res.write(SmsTpduType.SMS_COMMAND.getEncodedValue() | (this.userDataHeaderIndicator ? _MASK_TP_UDHI : 0)
+				| (!this.moreMessagesToSend ? _MASK_TP_MMS : 0) | (this.forwardedOrSpawned ? _MASK_TP_LP : 0) | (this.statusReportQualifier.getCode() << 5));
 
-		// TODO: implement encoding
+		res.write(this.messageReference);
+		this.recipientAddress.encodeData(res);
+		this.serviceCentreTimeStamp.encodeData(res);
+		this.dischargeTime.encodeData(res);
+		res.write(this.status.getCode());
+
+		this.parameterIndicator = new ParameterIndicatorImpl(this.userData != null, this.dataCodingScheme != null, this.protocolIdentifier != null);
+
+		if (this.parameterIndicator.getCode() != 0) {
+			res.write(this.parameterIndicator.getCode());
+		}
+		if (this.protocolIdentifier != null) {
+			res.write(this.protocolIdentifier.getCode());
+		}
+		if (this.dataCodingScheme != null) {
+			res.write(this.dataCodingScheme.getCode());
+		}
+
+		if (this.userData != null) {
+			res.write(this.userDataLength);
+			res.write(this.userData.getEncodedData());
+		}
 
 		return res.toByteArray();
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("SMS-STATUS-REPORT tpdu [");
+
+		boolean started = false;
+		if (this.userDataHeaderIndicator) {
+			sb.append("userDataHeaderIndicator");
+			started = true;
+		}
+		if (this.moreMessagesToSend) {
+			if (started)
+				sb.append(", ");
+			sb.append("moreMessagesToSend");
+			started = true;
+		}
+		if (this.forwardedOrSpawned) {
+			if (started)
+				sb.append(", ");
+			sb.append("forwardedOrSpawned");
+			started = true;
+		}
+		if (this.statusReportQualifier != null) {
+			if (started)
+				sb.append(", ");
+			sb.append("statusReportQualifier=");
+			sb.append(this.statusReportQualifier);
+		}
+
+		sb.append(", messageReference=");
+		sb.append(this.messageReference);
+		if (this.recipientAddress != null) {
+			sb.append(", recipientAddress [");
+			sb.append(this.recipientAddress.toString());
+			sb.append("]");
+		}
+		if (this.serviceCentreTimeStamp != null) {
+			sb.append(", serviceCentreTimeStamp [");
+			sb.append(this.serviceCentreTimeStamp.toString());
+			sb.append("]");
+		}
+		if (this.dischargeTime != null) {
+			sb.append(", dischargeTime [");
+			sb.append(this.dischargeTime.toString());
+			sb.append("]");
+		}
+		if (this.status != null) {
+			sb.append(", ");
+			sb.append(this.status.toString());
+		}
+		if (this.parameterIndicator != null) {
+			sb.append(", ");
+			sb.append(this.parameterIndicator.toString());
+		}
+		if (this.protocolIdentifier != null) {
+			sb.append(", ");
+			sb.append(this.protocolIdentifier.toString());
+		}
+		if (this.userData != null) {
+			sb.append("\nMSG [");
+			sb.append(this.userData.toString());
+			sb.append("]");
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
+

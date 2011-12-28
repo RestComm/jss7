@@ -132,7 +132,7 @@ public class AbsoluteTimeStampImpl implements AbsoluteTimeStamp {
 	}
 
 	@Override
-	public void encodedData(OutputStream stm) throws MAPException {
+	public void encodeData(OutputStream stm) throws MAPException {
 
 		try {
 			stm.write(constractEncodesVal(this.year));
@@ -144,7 +144,7 @@ public class AbsoluteTimeStampImpl implements AbsoluteTimeStamp {
 			if (this.timeZone >= 0)
 				stm.write(constractEncodesVal(this.timeZone));
 			else
-				stm.write(constractEncodesVal((-this.timeZone) | 0x08));
+				stm.write(constractEncodesVal((-this.timeZone)) | 0x08);
 		} catch (IOException e) {
 			// This can no occur
 		}
@@ -177,8 +177,6 @@ public class AbsoluteTimeStampImpl implements AbsoluteTimeStamp {
 		sb.append(" GMT");
 		if (this.timeZone >= 0)
 			sb.append("+");
-		else
-			sb.append("-");
 		sb.append(this.timeZone / 4);
 		sb.append(":");
 		sb.append((this.timeZone % 4) * 15);

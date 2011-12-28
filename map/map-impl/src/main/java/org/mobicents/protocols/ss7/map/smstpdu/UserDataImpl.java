@@ -57,6 +57,9 @@ public class UserDataImpl implements UserData {
 	private boolean encodedUserDataHeaderIndicator;
 	private UserDataHeader decodedUserDataHeader;
 	private String decodedMessage;
+	
+	private boolean isDecoded;
+	private boolean isEncoded;
 
 	public UserDataImpl(byte[] encodedData, DataCodingScheme dataCodingScheme, int encodedUserDataLength, boolean encodedUserDataHeaderIndicator, Charset gsm8Charset) {
 		this.encodedData = encodedData;
@@ -67,6 +70,8 @@ public class UserDataImpl implements UserData {
 		else
 			this.dataCodingScheme = new DataCodingSchemeImpl(0);
 		this.gsm8Charset = gsm8Charset;
+		
+		this.isEncoded = true;
 	}
 
 	public UserDataImpl(String decodedMessage, DataCodingScheme dataCodingScheme, UserDataHeader decodedUserDataHeader, Charset gsm8Charset) {
@@ -77,6 +82,13 @@ public class UserDataImpl implements UserData {
 		else
 			this.dataCodingScheme = new DataCodingSchemeImpl(0);
 		this.gsm8Charset = gsm8Charset;
+		
+		this.isDecoded = true;
+	}
+
+	@Override
+	public DataCodingScheme getDataCodingScheme() {
+		return this.dataCodingScheme;
 	}
 
 	@Override
@@ -100,12 +112,16 @@ public class UserDataImpl implements UserData {
 	}
 
 	@Override
-	public String getDecodedString() {
+	public String getDecodedMessage() {
 		return decodedMessage;
 	}
 
 	@Override
 	public void encode() throws MAPException {
+
+		if (this.isEncoded)
+			return;
+		this.isEncoded = true;
 
 		this.encodedData = null;
 		this.encodedUserDataLength = 0;
@@ -150,8 +166,10 @@ public class UserDataImpl implements UserData {
 				ByteBuffer bb = null;
 				try {
 					bb = encoder.encode(CharBuffer.wrap(this.decodedMessage));
-				} catch (CharacterCodingException e) {
+				} catch (Exception e) {
 					// This can not occur
+					int fff=0;
+					fff++;
 				}
 				this.encodedUserDataLength = encoder.getGSMCharsetEncodingData().getTotalSeptetCount();
 				if (bb != null) {
@@ -197,6 +215,10 @@ public class UserDataImpl implements UserData {
 
 	@Override
 	public void decode() throws MAPException {
+
+		if (this.isDecoded)
+			return;
+		this.isDecoded = true;
 
 		this.decodedUserDataHeader = null;
 		this.decodedMessage = null;
@@ -323,7 +345,9 @@ public class UserDataImpl implements UserData {
 			if (this.encodedData != null)
 				sb.append(printDataArr(this.encodedData));
 		} else {
+			sb.append("Msg:[");
 			sb.append(this.decodedMessage);
+			sb.append("]");
 			if (this.decodedUserDataHeader != null) {
 				sb.append("\n");
 				sb.append(this.decodedUserDataHeader.toString());

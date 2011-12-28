@@ -44,10 +44,10 @@ public class SmsCommandTpduImpl extends SmsTpduImpl implements SmsCommandTpdu {
 	private boolean userDataHeaderIndicator;
 	private boolean statusReportRequest;
 	private int messageReference;
-	private ProtocolIdentifierImpl protocolIdentifier;
+	private ProtocolIdentifier protocolIdentifier;
 	private CommandType commandType;
 	private int messageNumber;
-	private AddressFieldImpl destinationAddress;
+	private AddressField destinationAddress;
 	private int commandDataLength;
 	private CommandData commandData;
 
@@ -56,11 +56,17 @@ public class SmsCommandTpduImpl extends SmsTpduImpl implements SmsCommandTpdu {
 		this.mobileOriginatedMessage = true;
 	}
 
-	public SmsCommandTpduImpl(boolean userDataHeaderIndicator, boolean statusReportRequest) {
+	public SmsCommandTpduImpl(boolean statusReportRequest, int messageReference, ProtocolIdentifier protocolIdentifier, CommandType commandType,
+			int messageNumber, AddressField destinationAddress, CommandData commandData) {
 		this();
 		
-		this.userDataHeaderIndicator = userDataHeaderIndicator;
 		this.statusReportRequest = statusReportRequest;
+		this.messageReference = messageReference;
+		this.protocolIdentifier = protocolIdentifier;
+		this.commandType = commandType;
+		this.messageNumber = messageNumber;
+		this.destinationAddress = destinationAddress;
+		this.commandData = commandData;
 	}
 
 	public SmsCommandTpduImpl(byte[] data) throws MAPException {
@@ -103,7 +109,7 @@ public class SmsCommandTpduImpl extends SmsTpduImpl implements SmsCommandTpdu {
 		if (this.commandDataLength == -1)
 			throw new MAPException("Error creating a new SmsCommandTpdu instance: commandDataLength field has not been found");
 
-		int avail = stm.available();
+		int avail = this.commandDataLength;
 		byte[] buf = new byte[avail];
 		try {
 			stm.read(buf);
@@ -160,14 +166,79 @@ public class SmsCommandTpduImpl extends SmsTpduImpl implements SmsCommandTpdu {
 
 	@Override
 	public byte[] encodeData() throws MAPException {
-		
+
+		if (this.protocolIdentifier == null || this.commandData == null || commandType == null || destinationAddress == null)
+			throw new MAPException("Error encoding a SmsCommandTpdu: protocolIdentifier, messageNumber, destinationAddress and commandData must not be null");
+
 		AsnOutputStream res = new AsnOutputStream();
 
 		// byte 0
-		res.write(SmsTpduType.SMS_COMMAND.getCode() | (this.userDataHeaderIndicator ? _MASK_TP_UDHI : 0) | (this.statusReportRequest ? _MASK_TP_SRR : 0));
+		res.write(SmsTpduType.SMS_COMMAND.getEncodedValue() | (this.userDataHeaderIndicator ? _MASK_TP_UDHI : 0) | (this.statusReportRequest ? _MASK_TP_SRR : 0));
 
-		// TODO: implement encoding
+		this.commandData.encode();
+		this.commandDataLength = this.commandData.getEncodedData().length;
+
+		if (this.commandDataLength > _CommandDataLimit)
+			throw new MAPException("Command data field length may not increase " + _CommandDataLimit);
+
+		res.write(this.messageReference);
+		res.write(this.protocolIdentifier.getCode());
+		res.write(this.commandType.getCode());
+		res.write(this.messageNumber);
+		this.destinationAddress.encodeData(res);
+
+		res.write(this.commandDataLength);
+		res.write(this.commandData.getEncodedData());
 
 		return res.toByteArray();
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("SMS-COMMAND tpdu [");
+
+		boolean started = false;
+		if (this.userDataHeaderIndicator) {
+			sb.append("userDataHeaderIndicator");
+			started = true;
+		}
+		if (this.statusReportRequest) {
+			if (started)
+				sb.append(", ");
+			sb.append("statusReportRequest");
+			started = true;
+		}
+
+		if (started)
+			sb.append(", ");
+		sb.append("messageReference=");
+		sb.append(this.messageReference);
+		if (this.protocolIdentifier != null) {
+			sb.append(", ");
+			sb.append(this.protocolIdentifier.toString());
+		}
+		if (this.commandType != null) {
+			sb.append(", ");
+			sb.append(this.commandType.toString());
+		}
+		sb.append(", messageNumber=");
+		sb.append(this.messageNumber);
+		if (this.destinationAddress != null) {
+			sb.append(", destinationAddress [");
+			sb.append(this.destinationAddress.toString());
+			sb.append("]");
+		}
+		if (this.commandData != null) {
+			sb.append("\nCOMMAND [");
+			sb.append(this.commandData.toString());
+			sb.append("]");
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
+
