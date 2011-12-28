@@ -61,7 +61,7 @@ public class AbsoluteTimeStampTest {
 
 		AbsoluteTimeStampImpl impl = new AbsoluteTimeStampImpl(7, 5, 15, 15, 0, 41, 12);
 		ByteArrayOutputStream stm = new ByteArrayOutputStream();
-		impl.encodedData(stm);
+		impl.encodeData(stm);
 		assertTrue(Arrays.equals(stm.toByteArray(), this.getData()));
 	}
 }

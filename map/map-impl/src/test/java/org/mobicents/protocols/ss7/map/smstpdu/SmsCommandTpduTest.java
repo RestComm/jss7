@@ -22,12 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.smstpdu;
 
-
 import static org.testng.Assert.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.Arrays;
 
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
@@ -39,28 +35,41 @@ import org.testng.*;import org.testng.annotations.*;
  * @author sergey vetyutnev
  * 
  */
-public class AddressFieldTest {
+public class SmsCommandTpduTest {
 
-	public byte[] getData() {
-		return new byte[] { 11, -111, 39, 34, -125, 72, 35, -15 };
+	public byte[] getData1() {
+		return new byte[] { 2, 11, 33, 44, 12, 13, -111, 17, 34, 51, 68, 85, 102, -9, 5, 115, 101, 116, 32, 65 };
 	}
 
 	@Test(groups = { "functional.decode","smstpdu"})
 	public void testDecode() throws Exception {
 
-		InputStream stm = new ByteArrayInputStream(this.getData());
-		AddressFieldImpl impl = AddressFieldImpl.createMessage(stm);
-		assertEquals(impl.getTypeOfNumber(), TypeOfNumber.InternationalNumber);
-		assertEquals(impl.getNumberingPlanIdentification(), NumberingPlanIdentification.ISDNTelephoneNumberingPlan);
-		assertEquals(impl.getAddressValue(), "72223884321");
+		SmsCommandTpduImpl impl = new SmsCommandTpduImpl(this.getData1());
+		assertFalse(impl.getUserDataHeaderIndicator());
+		assertFalse(impl.getStatusReportRequest());
+		assertEquals(impl.getMessageReference(), 11);
+		assertEquals(impl.getProtocolIdentifier().getCode(), 33);
+		assertEquals(impl.getCommandType().getCode(), 44);
+		assertEquals(impl.getMessageNumber(), 12);
+		assertEquals(impl.getDestinationAddress().getTypeOfNumber(), TypeOfNumber.InternationalNumber);
+		assertEquals(impl.getDestinationAddress().getNumberingPlanIdentification(), NumberingPlanIdentification.ISDNTelephoneNumberingPlan);
+		assertTrue(impl.getDestinationAddress().getAddressValue().equals("1122334455667"));
+		impl.getCommandData().decode();
+		assertEquals(impl.getCommandDataLength(), 5);
+		assertTrue(impl.getCommandData().getDecodedMessage().equals("set A"));
 	}
 
 	@Test(groups = { "functional.encode","smstpdu"})
 	public void testEncode() throws Exception {
 
-		AddressFieldImpl impl = new AddressFieldImpl(TypeOfNumber.InternationalNumber, NumberingPlanIdentification.ISDNTelephoneNumberingPlan, "72223884321");
-		ByteArrayOutputStream stm = new ByteArrayOutputStream();
-		impl.encodeData(stm);
-		assertTrue(Arrays.equals(stm.toByteArray(), this.getData()));
+		AddressFieldImpl destinationAddress = new AddressFieldImpl(TypeOfNumber.InternationalNumber, NumberingPlanIdentification.ISDNTelephoneNumberingPlan,
+				"1122334455667");
+		ProtocolIdentifierImpl pi = new ProtocolIdentifierImpl(33);
+		CommandTypeImpl commandType = new CommandTypeImpl(44);
+		CommandDataImpl commandData = new CommandDataImpl("set A");
+		SmsCommandTpduImpl impl = new SmsCommandTpduImpl(false, 11, pi, commandType, 12, destinationAddress, commandData);
+		byte[] enc = impl.encodeData();
+		assertTrue(Arrays.equals(enc, this.getData1()));
 	}
 }
+
