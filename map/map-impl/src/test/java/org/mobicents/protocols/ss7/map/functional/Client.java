@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import junit.framework.Assert;
@@ -88,10 +89,24 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstruct
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
+import org.mobicents.protocols.ss7.map.api.smstpdu.AddressField;
+import org.mobicents.protocols.ss7.map.api.smstpdu.DataCodingScheme;
+import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
+import org.mobicents.protocols.ss7.map.api.smstpdu.ProtocolIdentifier;
+import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
+import org.mobicents.protocols.ss7.map.api.smstpdu.UserData;
+import org.mobicents.protocols.ss7.map.api.smstpdu.UserDataHeader;
+import org.mobicents.protocols.ss7.map.api.smstpdu.ValidityPeriod;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.sms.AlertServiceCentreRequestIndicationImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SM_RP_SMEAImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.AddressFieldImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.DataCodingSchemeImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.ProtocolIdentifierImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.SmsSubmitTpduImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.UserDataImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.ValidityPeriodImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
@@ -274,7 +289,15 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 			SM_RP_DA sm_RP_DA = this.MAPParameterFactory.createSM_RP_DA(imsi1);
 			ISDNAddressString msisdn1 = this.MAPParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
 			SM_RP_OA sm_RP_OA = this.MAPParameterFactory.createSM_RP_OA_Msisdn(msisdn1);
-			SmsSignalInfo sm_RP_UI = new SmsSignalInfoImpl(new byte[] { 21, 22, 23, 24, 25 }, null);
+
+			AddressFieldImpl da = new AddressFieldImpl(TypeOfNumber.InternationalNumber, NumberingPlanIdentification.ISDNTelephoneNumberingPlan, "700007");
+			ProtocolIdentifierImpl pi = new ProtocolIdentifierImpl(0);
+			ValidityPeriodImpl vp = new ValidityPeriodImpl(100);
+			DataCodingSchemeImpl dcs = new DataCodingSchemeImpl(0);
+			UserDataImpl ud = new UserDataImpl("Hello, world !!!", dcs, null, null);
+			SmsSubmitTpduImpl tpdu = new SmsSubmitTpduImpl(false, true, false, 55, da, pi, vp, ud);
+			SmsSignalInfo sm_RP_UI = new SmsSignalInfoImpl(tpdu, null);
+
 			IMSI imsi2 = this.MAPParameterFactory.createIMSI("25007123456789");
 
 			clientDialogSms.addMoForwardShortMessageRequest(sm_RP_DA, sm_RP_OA, sm_RP_UI, MAPExtensionContainerTest.GetTestExtensionContainer(), imsi2);

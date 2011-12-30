@@ -85,6 +85,9 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstruct
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
+import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
+import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseIndicationImpl;
@@ -764,6 +767,40 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 //			Assert.assertEquals((long) (imsi2.getMNC()), 7);
 			Assert.assertEquals(imsi2.getData(), "25007123456789");
 
+		} else if (this.step == FunctionalTestScenario.Action_Sms_MoForwardSM) {
+			Assert.assertNotNull(sm_RP_DA);
+			Assert.assertNotNull(sm_RP_DA.getIMSI());
+			Assert.assertEquals(sm_RP_DA.getIMSI().getData(), "250991357999");
+			Assert.assertNotNull(sm_RP_OA);
+			Assert.assertNotNull(sm_RP_OA.getMsisdn());
+			Assert.assertEquals(sm_RP_OA.getMsisdn().getAddressNature(), AddressNature.international_number);
+			Assert.assertEquals(sm_RP_OA.getMsisdn().getNumberingPlan(), NumberingPlan.ISDN);
+			Assert.assertEquals(sm_RP_OA.getMsisdn().getAddress(), "111222333");
+			Assert.assertNotNull(sm_RP_UI);
+			
+			try {
+				SmsSubmitTpdu tpdu = (SmsSubmitTpdu) sm_RP_UI.decodeTpdu(true);
+				tpdu.getUserData().decode();
+				Assert.assertFalse(tpdu.getRejectDuplicates());
+				Assert.assertTrue(tpdu.getReplyPathExists());
+				Assert.assertFalse(tpdu.getStatusReportRequest());
+				Assert.assertEquals(tpdu.getMessageReference(), 55);
+				Assert.assertEquals(tpdu.getDestinationAddress().getTypeOfNumber(), TypeOfNumber.InternationalNumber);
+				Assert.assertEquals(tpdu.getDestinationAddress().getNumberingPlanIdentification(), NumberingPlanIdentification.ISDNTelephoneNumberingPlan);
+				Assert.assertTrue(tpdu.getDestinationAddress().getAddressValue().equals("700007"));
+				Assert.assertEquals(tpdu.getProtocolIdentifier().getCode(), 0);
+				Assert.assertEquals((int) tpdu.getValidityPeriod().getRelativeFormatValue(), 100);
+				Assert.assertEquals(tpdu.getUserData().getDataCodingScheme().getCode(), 0);
+				Assert.assertTrue(tpdu.getUserData().getDecodedMessage().equals("Hello, world !!!"));
+			} catch (MAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+			Assert.assertNotNull(imsi2);
+			Assert.assertEquals(imsi2.getData(), "25007123456789");
 		} else {
 			Assert.assertNotNull(sm_RP_DA);
 			Assert.assertNotNull(sm_RP_DA.getIMSI());
