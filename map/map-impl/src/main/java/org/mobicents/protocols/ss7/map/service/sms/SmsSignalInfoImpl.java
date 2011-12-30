@@ -159,15 +159,19 @@ public class SmsSignalInfoImpl implements SmsSignalInfo, MAPAsnPrimitive {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SmsSignalInfo [");
 
+		boolean moExists = false;
 		try {
 			SmsTpdu tpdu = SmsTpduImpl.createInstance(this.data, true, gsm8Charset);
-			sb.append("MO: ");
+			sb.append("MO case: ");
 			sb.append(tpdu.toString());
+			moExists = true;
 		} catch (MAPException e) {
 		}
 		try {
+			if (moExists)
+				sb.append("\n");
 			SmsTpdu tpdu = SmsTpduImpl.createInstance(this.data, false, gsm8Charset);
-			sb.append("MT: ");
+			sb.append("MT case: ");
 			sb.append(tpdu.toString());
 		} catch (MAPException e) {
 		}
