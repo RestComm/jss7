@@ -24,23 +24,15 @@ package org.mobicents.protocols.ss7.map.api.smstpdu;
 
 /**
  * 
+ *
  * @author sergey vetyutnev
  * 
  */
-public interface DataCodingScheme {
-
-	public int getCode();
-
-	public DataCodingGroup getDataCodingGroup();
-
-	public DataCodingSchemaMessageClass getMessageClass();
-
-	public DataCodingSchemaIndicationType getDataCodingSchemaIndicationType();
-
-	public Boolean getSetIndicationActive();
-
-	public CharacterSet getCharacterSet();
-
-	public boolean getIsCompressed();
-
+public enum DataCodingGroup {
+	GeneralGroup, 
+	MessageMarkedForAutomaticDeletionGroup, 
+	MessageWaitingIndicationGroupDiscardMessage, 
+	MessageWaitingIndicationGroupStoreMessage, 
+	DataCodingMessageClass,
+	Reserved;
 }

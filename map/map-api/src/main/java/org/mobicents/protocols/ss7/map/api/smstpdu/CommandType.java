@@ -31,4 +31,6 @@ public interface CommandType {
 
 	public int getCode();
 
+	public CommandTypeValue getCommandTypeValue();
+
 }
