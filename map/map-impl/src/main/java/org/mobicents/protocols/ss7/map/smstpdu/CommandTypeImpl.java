@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.smstpdu;
 
 import org.mobicents.protocols.ss7.map.api.smstpdu.CommandType;
+import org.mobicents.protocols.ss7.map.api.smstpdu.CommandTypeValue;
 
 /**
  * 
@@ -37,9 +38,18 @@ public class CommandTypeImpl implements CommandType {
 		this.code = code;
 	}
 
+	public CommandTypeImpl(CommandTypeValue value) {
+		this.code = value.getCode();
+	}
+
 	@Override
 	public int getCode() {
 		return this.code;
+	}
+
+	@Override
+	public CommandTypeValue getCommandTypeValue() {
+		return CommandTypeValue.getInstance(this.code);
 	}
 
 	@Override
@@ -53,3 +63,4 @@ public class CommandTypeImpl implements CommandType {
 		return sb.toString();
 	}
 }
+
