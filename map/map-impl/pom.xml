@@ -73,6 +73,14 @@
 			<groupId>org.mobicents.protocols.ss7.congestion</groupId>
 			<artifactId>congestion</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.isup</groupId>
+			<artifactId>isup-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.isup</groupId>
+			<artifactId>isup-impl</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
