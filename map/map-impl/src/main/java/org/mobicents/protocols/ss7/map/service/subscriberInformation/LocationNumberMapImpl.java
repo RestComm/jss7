@@ -28,10 +28,13 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.LocationNumberImpl;
+import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LocationNumber;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LocationNumberMap;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
@@ -39,20 +42,48 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
  * @author sergey vetyutnev
  * 
  */
-public class LocationNumberImpl implements LocationNumber, MAPAsnPrimitive {
+public class LocationNumberMapImpl implements LocationNumberMap, MAPAsnPrimitive {
 
 	public static final String _PrimitiveName = "LocationNumber";
 	
 	private byte[] data;
 
-	
+	public LocationNumberMapImpl() {
+	}
+
+	public LocationNumberMapImpl(byte[] data) {
+		this.data = data;
+	}
+
+	public LocationNumberMapImpl(LocationNumber locationNumber) throws MAPException {
+		if (locationNumber == null)
+			throw new MAPException("The locationNumber parameter must not be null");
+		try {
+			this.data = ((LocationNumberImpl) locationNumber).encode();
+		} catch (ParameterException e) {
+			throw new MAPException("ParameterException when encoding locationNumber: " + e.getMessage(), e);
+		}
+	}
 	
 	@Override
 	public byte[] getData() {
 		return data;
 	}
-	
-	
+
+	@Override
+	public LocationNumber getLocationNumber() throws MAPException {
+		if (this.data == null)
+			throw new MAPException("The data has not been filled");
+		
+		try {
+			LocationNumberImpl ln = new LocationNumberImpl();
+			ln.decode(this.data);
+			return ln;
+		} catch (ParameterException e) {
+			throw new MAPException("ParameterException when decoding locationNumber: " + e.getMessage(), e);
+		}
+	}
+
 	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_OCTET;
@@ -107,19 +138,61 @@ public class LocationNumberImpl implements LocationNumber, MAPAsnPrimitive {
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		// TODO Auto-generated method stub
 		
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
 		
+		if (this.data == null)
+			throw new MAPException("Data must not be null");
+		if (this.data.length < 2 || this.data.length > 10)
+			throw new MAPException("Data length must be from 2 to 10");
+		
+		asnOs.writeOctetStringData(data);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("LocationNumberMap [");
+
+		if (this.data != null) {
+			sb.append("data=");
+			sb.append(this.printDataArr(this.data));
+			sb.append("\n");
+			try {
+				sb.append(this.getLocationNumber().toString());
+			} catch (MAPException e) {
+			}
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
+	
+	private String printDataArr(byte[] arr) {
+		StringBuilder sb = new StringBuilder();
+		for (int b : arr) {
+			sb.append(b);
+			sb.append(", ");
+		}
+
+		return sb.toString();
 	}
 }

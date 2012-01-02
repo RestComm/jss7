@@ -51,6 +51,16 @@ public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimi
 	private ExtBearerServiceCode extBearerService;
 	private ExtTeleserviceCode extTeleservice;	
 
+	public ExtBasicServiceCodeImpl() {
+	}
+
+	public ExtBasicServiceCodeImpl(ExtBearerServiceCode extBearerService) {
+		this.extBearerService = extBearerService;
+	}
+
+	public ExtBasicServiceCodeImpl(ExtTeleserviceCode extTeleservice) {
+		this.extTeleservice = extTeleservice;
+	}
 	
 	@Override
 	public ExtBearerServiceCode getExtBearerService() {
@@ -141,20 +151,52 @@ public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimi
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		// TODO Auto-generated method stub
 		
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+
+		if (this.extBearerService == null && this.extTeleservice == null)
+			throw new MAPException("Both extBearerService and extTeleservice must not be null");
+		if (this.extBearerService != null && this.extTeleservice != null)
+			throw new MAPException("Both extBearerService and extTeleservice must not be not null");
+
+		if (this.extBearerService != null) {
+			((ExtBearerServiceCodeImpl) this.extBearerService).encodeData(asnOs);
+		} else {
+			((ExtTeleserviceCodeImpl) this.extTeleservice).encodeData(asnOs);
+		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("ExtBasicServiceCode [");
+
+		if (this.extBearerService != null) {
+			sb.append(this.extBearerService.toString());
+		}
+		if (this.extTeleservice != null) {
+			sb.append(this.extTeleservice.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

@@ -53,6 +53,14 @@ public class SubscriberStateImpl implements SubscriberState, MAPAsnPrimitive {
 	private NotReachableReason notReachableReason;
 
 	
+	public SubscriberStateImpl() {
+	}
+
+	public SubscriberStateImpl(SubscriberStateChoice subscriberStateChoice, NotReachableReason notReachableReason) {
+		this.subscriberStateChoice = subscriberStateChoice;
+		this.notReachableReason = notReachableReason;
+	}
+
 	@Override
 	public SubscriberStateChoice getSubscriberStateChoice() {
 		return subscriberStateChoice;
@@ -89,7 +97,7 @@ public class SubscriberStateImpl implements SubscriberState, MAPAsnPrimitive {
 		if (this.subscriberStateChoice != null && this.subscriberStateChoice == SubscriberStateChoice.netDetNotReachable)
 			return Tag.CLASS_UNIVERSAL;
 		else
-			return Tag.CLASS_UNIVERSAL;
+			return Tag.CLASS_CONTEXT_SPECIFIC;
 	}
 
 	@Override
@@ -169,19 +177,58 @@ public class SubscriberStateImpl implements SubscriberState, MAPAsnPrimitive {
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		// TODO Auto-generated method stub
 		
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+
+		if (this.subscriberStateChoice == null)
+			throw new MAPException("subscriberStateChoice must not be null");
+		if (this.subscriberStateChoice == SubscriberStateChoice.netDetNotReachable) {
+			if (this.notReachableReason == null)
+				throw new MAPException("notReachableReason must not be null when subscriberStateChoice is netDetNotReachable");
+
+			try {
+				asnOs.writeIntegerData(this.notReachableReason.getCode());
+			} catch (IOException e) {
+				throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+			}
+		} else {
+			asnOs.writeNullData();
+		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SubscriberState [");
+
+		if (this.subscriberStateChoice != null) {
+			sb.append("subscriberStateChoice=");
+			sb.append(this.subscriberStateChoice);
+		}
+		if (this.notReachableReason != null) {
+			sb.append(", notReachableReason=");
+			sb.append(this.notReachableReason);
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }

@@ -46,6 +46,12 @@ public class ExtBearerServiceCodeImpl implements ExtBearerServiceCode, MAPAsnPri
 	private byte[] data;
 
 	
+	public ExtBearerServiceCodeImpl() {
+	}
+
+	public ExtBearerServiceCodeImpl(byte[] data) {
+		this.data = data;
+	}
 	
 	@Override
 	public byte[] getData() {
@@ -106,20 +112,56 @@ public class ExtBearerServiceCodeImpl implements ExtBearerServiceCode, MAPAsnPri
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		// TODO Auto-generated method stub
 		
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+
+		if (this.data == null)
+			throw new MAPException("data must not be null");
+		if (this.data.length < 1 && this.data.length > 5)
+			throw new MAPException("data length must be from 1 to 5");
+
+		asnOs.writeOctetStringData(data);
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("ExtBearerServiceCode [");
+
+		if (this.data != null) {
+			sb.append("data=");
+			sb.append(printDataArr(this.data));
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
+
+	private String printDataArr(byte[] arr) {
+		StringBuilder sb = new StringBuilder();
+		for (int b : arr) {
+			sb.append(b);
+			sb.append(" ");
+		}
+
+		return sb.toString();
+	}
 }
