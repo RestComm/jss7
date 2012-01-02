@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.map.api.service.subscriberInformation;
 
+import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
+import org.mobicents.protocols.ss7.map.api.MAPException;
+
 /**
 *
 LocationNumber ::= OCTET STRING (SIZE (2..10))
@@ -31,8 +34,10 @@ LocationNumber ::= OCTET STRING (SIZE (2..10))
 * @author sergey vetyutnev
 * 
 */
-public interface LocationNumber {
+public interface LocationNumberMap {
 
 	public byte[] getData();
+
+	public LocationNumber getLocationNumber() throws MAPException ;
 
 }

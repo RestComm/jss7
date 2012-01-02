@@ -65,7 +65,7 @@ public interface LocationInformation {
 
 	public ISDNAddressString getVlrNumber();
 
-	public LocationNumber getLocationNumber();
+	public LocationNumberMap getLocationNumber();
 
 	public CellGlobalIdOrServiceAreaIdOrLAI getCellGlobalIdOrServiceAreaIdOrLAI();
 
