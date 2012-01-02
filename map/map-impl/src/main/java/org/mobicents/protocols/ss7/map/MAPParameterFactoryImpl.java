@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.map;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
@@ -51,6 +52,19 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.GeodeticInformation;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.GeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LSAIdentity;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LocationInformation;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LocationInformationEPS;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LocationNumberMap;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.NotReachableReason;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.SubscriberState;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.SubscriberStateChoice;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.UserCSGInformation;
+import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.ExtBasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.ExtBearerServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.ExtTeleserviceCode;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
@@ -78,6 +92,12 @@ import org.mobicents.protocols.ss7.map.service.sms.SM_RP_DAImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SM_RP_OAImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SM_RP_SMEAImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
+import org.mobicents.protocols.ss7.map.service.subscriberInformation.LocationInformationImpl;
+import org.mobicents.protocols.ss7.map.service.subscriberInformation.LocationNumberMapImpl;
+import org.mobicents.protocols.ss7.map.service.subscriberInformation.SubscriberStateImpl;
+import org.mobicents.protocols.ss7.map.service.subscriberManagement.ExtBasicServiceCodeImpl;
+import org.mobicents.protocols.ss7.map.service.subscriberManagement.ExtBearerServiceCodeImpl;
+import org.mobicents.protocols.ss7.map.service.subscriberManagement.ExtTeleserviceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSRequestIndicationImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseIndicationImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSNotifyRequestIndicationImpl;
@@ -330,4 +350,48 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 		return new CallReferenceNumberImpl(data);
 	}
 
+	@Override
+	public LocationInformation createLocationInformation(Integer ageOfLocationInformation, GeographicalInformation geographicalInformation,
+			ISDNAddressString vlrNumber, LocationNumberMap locationNumber, CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI,
+			MAPExtensionContainer extensionContainer, LSAIdentity selectedLSAId, ISDNAddressString mscNumber, GeodeticInformation geodeticInformation,
+			boolean currentLocationRetrieved, boolean saiPresent, LocationInformationEPS locationInformationEPS, UserCSGInformation userCSGInformation) {
+		return new LocationInformationImpl(ageOfLocationInformation, geographicalInformation, vlrNumber, locationNumber, cellGlobalIdOrServiceAreaIdOrLAI,
+				extensionContainer, selectedLSAId, mscNumber, geodeticInformation, currentLocationRetrieved, saiPresent, locationInformationEPS,
+				userCSGInformation);
+	}
+
+	@Override
+	public LocationNumberMap createLocationNumberMap(byte[] data) {
+		return new LocationNumberMapImpl(data);
+	}
+
+	@Override
+	public LocationNumberMap createLocationNumberMap(LocationNumber locationNumber) throws MAPException {
+		return new LocationNumberMapImpl(locationNumber);
+	}
+
+	@Override
+	public SubscriberState createSubscriberState(SubscriberStateChoice subscriberStateChoice, NotReachableReason notReachableReason) {
+		return new SubscriberStateImpl(subscriberStateChoice, notReachableReason);
+	}
+
+	@Override
+	public ExtBasicServiceCode createExtBasicServiceCode(ExtBearerServiceCode extBearerServiceCode) {
+		return new ExtBasicServiceCodeImpl(extBearerServiceCode);
+	}
+
+	@Override
+	public ExtBasicServiceCode createExtBasicServiceCode(ExtTeleserviceCode extTeleserviceCode) {
+		return new ExtBasicServiceCodeImpl(extTeleserviceCode);
+	}
+
+	@Override
+	public ExtBearerServiceCode createExtBearerServiceCode(byte[] data) {
+		return new ExtBearerServiceCodeImpl(data);
+	}
+
+	@Override
+	public ExtTeleserviceCode createExtTeleserviceCode(byte[] data) {
+		return new ExtTeleserviceCodeImpl(data);
+	}
 }
