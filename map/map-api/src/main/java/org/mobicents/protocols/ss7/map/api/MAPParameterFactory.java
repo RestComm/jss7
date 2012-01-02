@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.map.api;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
@@ -49,6 +50,19 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.GeodeticInformation;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.GeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LSAIdentity;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LocationInformation;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LocationInformationEPS;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LocationNumberMap;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.NotReachableReason;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.SubscriberState;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.SubscriberStateChoice;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.UserCSGInformation;
+import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.ExtBasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.ExtBearerServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.ExtTeleserviceCode;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
@@ -277,7 +291,20 @@ public interface MAPParameterFactory {
 	public LAIFixedLength createLAIFixedLength(int mcc, int mnc, int lac) throws MAPException;
 
 	public CallReferenceNumber createCallReferenceNumber(byte[] data);
-	
+
+	public LocationInformation createLocationInformation(Integer ageOfLocationInformation, GeographicalInformation geographicalInformation,
+			ISDNAddressString vlrNumber, LocationNumberMap locationNumber, CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI,
+			MAPExtensionContainer extensionContainer, LSAIdentity selectedLSAId, ISDNAddressString mscNumber, GeodeticInformation geodeticInformation,
+			boolean currentLocationRetrieved, boolean saiPresent, LocationInformationEPS locationInformationEPS, UserCSGInformation userCSGInformation);
+	public LocationNumberMap createLocationNumberMap(byte[] data);
+	public LocationNumberMap createLocationNumberMap(LocationNumber locationNumber) throws MAPException;
+	public SubscriberState createSubscriberState(SubscriberStateChoice subscriberStateChoice, NotReachableReason notReachableReason);
+
+	public ExtBasicServiceCode createExtBasicServiceCode(ExtBearerServiceCode extBearerServiceCode);
+	public ExtBasicServiceCode createExtBasicServiceCode(ExtTeleserviceCode extTeleserviceCode);
+	public ExtBearerServiceCode createExtBearerServiceCode(byte[] data);
+	public ExtTeleserviceCode createExtTeleserviceCode(byte[] data);
+
 	public Problem createProblemGeneral(GeneralProblemType prob);
 	public Problem createProblemInvoke(InvokeProblemType prob);
 	public Problem createProblemResult(ReturnResultProblemType prob);
