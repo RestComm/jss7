@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
-import org.mobicents.protocols.ss7.cap.api.primitives.Cause;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 
 /**
 *
@@ -37,6 +37,6 @@ failureCause [0] Cause {bound} OPTIONAL,
 */
 public interface RouteSelectFailureSpecificInfo {
 
-	public Cause getFailureCause();
+	public CauseCap getFailureCause();
 
 }

@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
-import org.mobicents.protocols.ss7.cap.api.primitives.Cause;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 
 /**
 *
@@ -37,6 +37,6 @@ busyCause [0] Cause {bound} OPTIONAL,
 */
 public interface OCalledPartyBusySpecificInfo {
 
-	public Cause getBusyCause();
+	public CauseCap getBusyCause();
 
 }
