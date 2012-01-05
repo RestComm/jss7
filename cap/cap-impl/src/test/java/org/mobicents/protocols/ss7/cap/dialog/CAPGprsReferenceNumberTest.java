@@ -1,5 +1,3 @@
-package org.mobicents.protocols.ss7.cap.dialog;
-
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2011, Red Hat, Inc. and individual contributors
@@ -21,6 +19,8 @@ package org.mobicents.protocols.ss7.cap.dialog;
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
+package org.mobicents.protocols.ss7.cap.dialog;
 
 import static org.testng.Assert.*;
 

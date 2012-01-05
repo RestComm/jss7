@@ -37,6 +37,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.primitives.CAMELAChBillingChargingCharacteristicsImpl;
+import org.mobicents.protocols.ss7.cap.primitives.ReceivingSideIDImpl;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
 
 /**
@@ -145,8 +146,10 @@ public class ApplyChargingRequestIndicationImpl extends CircuitSwitchedCallMessa
 					((CAMELAChBillingChargingCharacteristicsImpl) this.aChBillingChargingCharacteristics).decodeAll(ais);
 					break;
 				case _ID_partyToCharge:
+					AsnInputStream ais2 = ais.readSequenceStream();
+					ais2.readTag();
 					this.partyToCharge = new SendingSideIDImpl();
-					((SendingSideIDImpl) this.partyToCharge).decodeAll(ais);
+					((SendingSideIDImpl) this.partyToCharge).decodeAll(ais2);
 					break;
 				case _ID_extensions:
 					ais.advanceElement(); // TODO: implement it

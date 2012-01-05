@@ -49,6 +49,13 @@ public class SendingSideIDImpl implements SendingSideID, CAPAsnPrimitive {
 	public LegType sendingSideID;
 
 	
+	public SendingSideIDImpl() {
+	}
+
+	public SendingSideIDImpl(LegType sendingSideID) {
+		this.sendingSideID = sendingSideID;
+	}
+	
 	@Override
 	public LegType getSendingSideID() {
 		return sendingSideID;
@@ -109,39 +116,62 @@ public class SendingSideIDImpl implements SendingSideID, CAPAsnPrimitive {
 		
 		this.sendingSideID = null;
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		int tag = ais.readTag();
-		if (tag != _ID_sendingSideID || ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+		if (ansIS.getTag() != _ID_sendingSideID || ansIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
 			throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName + ": sendingSideID choice has bad tag oe tagClass, tag="
-					+ tag + ", tagClass=" + ais.getTagClass(), CAPParsingComponentExceptionReason.MistypedParameter);
+					+ ansIS.getTag() + ", tagClass=" + ansIS.getTagClass(), CAPParsingComponentExceptionReason.MistypedParameter);
 
-		byte[] buf = ais.readOctetString();
-		if (buf.length != 1)
-			throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName + ": LegType must be an octetString with the length=1",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-
-		this.sendingSideID = LegType.getInstance(buf[0]);
+		int i1 = (int)ansIS.readIntegerData(length); 
+		this.sendingSideID = LegType.getInstance(i1);
 		if (this.sendingSideID == null)
-			throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName + ": LegType must be leg1 or leg2, but the code = " + buf[0],
+			throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName + ": LegType must be leg1 or leg2, but the code = " + i1,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		if (this.sendingSideID == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": sendingSideID field must not be null");
+
+		try {
+			asnOs.writeIntegerData(this.sendingSideID.getCode());
+		} catch (IOException e) {
+			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		
+		if (this.sendingSideID != null) {
+			sb.append("sendingSideID=");
+			sb.append(sendingSideID.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

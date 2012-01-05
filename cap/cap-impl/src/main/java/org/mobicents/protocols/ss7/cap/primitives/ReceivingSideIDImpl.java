@@ -49,6 +49,12 @@ public class ReceivingSideIDImpl implements ReceivingSideID, CAPAsnPrimitive {
 	private LegType receivingSideID;
 
 	
+	public ReceivingSideIDImpl() {
+	}
+
+	public ReceivingSideIDImpl(LegType receivingSideID) {
+		this.receivingSideID = receivingSideID;
+	}
 	
 	@Override
 	public LegType getReceivingSideID() {
@@ -122,20 +128,49 @@ public class ReceivingSideIDImpl implements ReceivingSideID, CAPAsnPrimitive {
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		if (this.receivingSideID == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": sendingSideID field must not be null");
+
+		try {
+			asnOs.writeIntegerData(this.receivingSideID.getCode());
+		} catch (IOException e) {
+			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		
+		if (this.receivingSideID != null) {
+			sb.append("receivingSideID=");
+			sb.append(receivingSideID.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

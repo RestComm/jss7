@@ -31,12 +31,12 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.primitives.Cause;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.DateAndTime;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformation;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformationType;
+import org.mobicents.protocols.ss7.cap.isup.CauseCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
-import org.mobicents.protocols.ss7.cap.primitives.CauseImpl;
 import org.mobicents.protocols.ss7.cap.primitives.DateAndTimeImpl;
 
 /**
@@ -60,7 +60,7 @@ public class RequestedInformationImpl implements RequestedInformation, CAPAsnPri
 	private Integer callAttemptElapsedTimeValue;
 	private DateAndTime callStopTimeValue;
 	private Integer callConnectedElapsedTimeValue;
-	private Cause releaseCauseValue;
+	private CauseCap releaseCauseValue;
 
 	
 	@Override
@@ -84,7 +84,7 @@ public class RequestedInformationImpl implements RequestedInformation, CAPAsnPri
 	}
 
 	@Override
-	public Cause getReleaseCauseValue() {
+	public CauseCap getReleaseCauseValue() {
 		return releaseCauseValue;
 	}
 
@@ -175,8 +175,8 @@ public class RequestedInformationImpl implements RequestedInformation, CAPAsnPri
 						this.callConnectedElapsedTimeValue = (int)ais2.readInteger();
 						break;
 					case _ID_releaseCauseValue:
-						this.releaseCauseValue = new CauseImpl();
-						((CauseImpl)this.releaseCauseValue).decodeAll(ais2);
+						this.releaseCauseValue = new CauseCapImpl();
+						((CauseCapImpl)this.releaseCauseValue).decodeAll(ais2);
 						break;
 					default:
 						if (ais2.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)

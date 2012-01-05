@@ -50,6 +50,7 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 	public static final int _ID_tariffSwitchInterval = 2;
 	public static final int _ID_audibleIndicator = 3;
 	public static final int _ID_extensions = 4;
+	public static final int _ID_extensions_In_ReleaseIfDurationExceeded = 10;
 
 	public static final String _PrimitiveName = "CAMELAChBillingChargingCharacteristics";
 
@@ -59,8 +60,27 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 	private Long tariffSwitchInterval;
 	private AudibleIndicator audibleIndicator;
 	private CAPExtensions extensions;
-	
+	private boolean isCAPVersion3orLater;
 
+	
+	public CAMELAChBillingChargingCharacteristicsImpl() {
+	}
+	
+	public CAMELAChBillingChargingCharacteristicsImpl(byte[] data) {
+		this.data = data;
+	}
+
+	public CAMELAChBillingChargingCharacteristicsImpl(long maxCallPeriodDuration, boolean releaseIfdurationExceeded, Long tariffSwitchInterval,
+			AudibleIndicator audibleIndicator, CAPExtensions extensions, boolean isCAPVersion3orLater) {
+		this.maxCallPeriodDuration = maxCallPeriodDuration;
+		this.releaseIfdurationExceeded = releaseIfdurationExceeded;
+		this.tariffSwitchInterval = tariffSwitchInterval;
+		this.audibleIndicator = audibleIndicator;
+		this.extensions = extensions;
+		this.isCAPVersion3orLater = isCAPVersion3orLater;
+	}
+
+	
 	@Override
 	public byte[] getData() {
 		return data;
@@ -148,7 +168,7 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 		this.data = null;
 		this.maxCallPeriodDuration = -1;
 		this.releaseIfdurationExceeded = false;
-		this.tariffSwitchInterval = 0L;
+		this.tariffSwitchInterval = null;
 		this.audibleIndicator = null; // TODO: DEFAULT tone: FALSE
 		this.extensions = null;
 		
@@ -160,7 +180,7 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 			throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
 					+ ": CAMEL-AChBillingChargingCharacteristics choice has bad tag oe tagClass or is primitive, tag=" + tag + ", tagClass="
 					+ aiss.getTagClass(), CAPParsingComponentExceptionReason.MistypedParameter);
-		
+
 		AsnInputStream ais = aiss.readSequenceStream();
 		while (true) {
 			if (ais.available() == 0)
@@ -175,25 +195,46 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 					break;
 				case _ID_releaseIfdurationExceeded:
 					int ln = ais.readLength();
-					if (ln == 1) { // IMPLICIT
+					if (ln == 1) { // IMPLICIT - IN CAP V3 and later
+
 						this.releaseIfdurationExceeded = ais.readBooleanData(ln);
-					} else { // EXPLICIT - from trace
+					} else { // EXPLICIT - from trace - IN CAP V2
+
 						AsnInputStream ais2 = ais.readSequenceStreamData(ln);
-						int tag2 = ais2.readTag();
-						if (tag2 != Tag.BOOLEAN && ais2.getTagClass() != Tag.CLASS_UNIVERSAL)
-							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": wrong releaseIfdurationExceeded EXPLICIT-coding tag or tagClass", CAPParsingComponentExceptionReason.MistypedParameter);
-						this.releaseIfdurationExceeded = ais2.readBoolean();
+						int num = 0;
+						while (true) {
+							if (ais2.available() == 0)
+								break;
+
+							int tag2 = ais2.readTag();
+							boolean parsed = false;
+							if (num == 0) {
+								if (tag2 == Tag.BOOLEAN && ais2.getTagClass() == Tag.CLASS_UNIVERSAL) {
+									this.releaseIfdurationExceeded = ais2.readBoolean();
+									parsed = true;
+								}
+							}
+							if (ais2.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC && tag2 == _ID_extensions_In_ReleaseIfDurationExceeded) {
+								this.extensions = new CAPExtensionsImpl();
+								((CAPExtensionsImpl) this.extensions).decodeAll(ais2);
+								parsed = true;
+							}
+							if (!parsed)
+								ais2.advanceElement();
+
+							num++;
+						}
 					}
 					break;
 				case _ID_tariffSwitchInterval:
-					ais.advanceElement(); // TODO: implement it
+					this.tariffSwitchInterval = ais.readInteger();
 					break;
 				case _ID_audibleIndicator:
 					ais.advanceElement(); // TODO: implement it
 					break;
 				case _ID_extensions:
-					ais.advanceElement(); // TODO: implement it
+					this.extensions = new CAPExtensionsImpl();
+					((CAPExtensionsImpl) this.extensions).decodeAll(ais);
 					break;
 
 				default:
@@ -212,19 +253,104 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
 		
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
 		
+		if (this.data == null) {
+			// encoding internal octet string
+			if (this.maxCallPeriodDuration < 1 || this.maxCallPeriodDuration > 864000)
+				throw new CAPException("Error while encoding " + _PrimitiveName + ": maxCallPeriodDuration must be from 1 to 864000");
+			if (this.tariffSwitchInterval != null && (this.tariffSwitchInterval < 1 || this.tariffSwitchInterval > 86400))
+				throw new CAPException("Error while encoding " + _PrimitiveName + ": tariffSwitchInterval must be from 1 to 86400");
+
+			try {
+				AsnOutputStream aos = new AsnOutputStream();
+				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_timeDurationCharging);
+				int pos = aos.StartContentDefiniteLength();
+
+				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_maxCallPeriodDuration, this.maxCallPeriodDuration);
+
+				if (this.isCAPVersion3orLater) {
+					if (this.releaseIfdurationExceeded)
+						aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_releaseIfdurationExceeded, true);
+				} else {
+					if (this.releaseIfdurationExceeded || this.extensions != null) {
+						aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_releaseIfdurationExceeded);
+						int pos2 = aos.StartContentDefiniteLength();
+						aos.writeBoolean(true);
+						if (this.extensions != null) {
+							((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions_In_ReleaseIfDurationExceeded);
+						}
+						aos.FinalizeContent(pos2);
+					}
+				}
+
+				if (this.tariffSwitchInterval != null)
+					aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_tariffSwitchInterval, this.tariffSwitchInterval);
+
+				if (this.audibleIndicator != null) {
+					// TODO: implement it
+				}
+
+				if (this.extensions != null && this.isCAPVersion3orLater)
+					((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
+				
+				aos.FinalizeContent(pos);
+				this.data = aos.toByteArray();
+			} catch (IOException e) {
+				throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+			} catch (AsnException e) {
+				throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+			}
+		}
+
+		asnOs.writeOctetStringData(data);
+	}
+
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [timeDurationCharging [");
+
+		sb.append("maxCallPeriodDuration=");
+		sb.append(this.maxCallPeriodDuration);
+		if (this.releaseIfdurationExceeded) {
+			sb.append(", releaseIfdurationExceeded");
+		}
+		if (this.tariffSwitchInterval != null) {
+			sb.append(", tariffSwitchInterval=");
+			sb.append(tariffSwitchInterval);
+		}
+		if (this.audibleIndicator != null) {
+			sb.append(", audibleIndicator=");
+			sb.append(audibleIndicator.toString());
+		}
+		if (this.extensions != null) {
+			sb.append(", extensions=");
+			sb.append(extensions.toString());
+		}
+
+		sb.append("]]");
+
+		return sb.toString();
 	}
 }

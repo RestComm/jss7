@@ -40,12 +40,110 @@ import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
  */
 public class TimeAndTimezoneImpl implements TimeAndTimezone, CAPAsnPrimitive {
 
+	public static final String _PrimitiveName = "TimeAndTimezone";
+
 	private byte[] data;
 	
+	
+	public TimeAndTimezoneImpl() {
+	}
+	
+	public TimeAndTimezoneImpl(byte[] data) {
+		this.data = data;
+	}
+
+	public TimeAndTimezoneImpl(int year, int month, int day, int hour, int minute, int second, int timeZone) {
+		this.data = new byte[8];
+		this.data[0] = (byte) encodeByte(year / 100);
+		this.data[1] = (byte) encodeByte(year % 100);
+		this.data[2] = (byte) encodeByte(month);
+		this.data[3] = (byte) encodeByte(day);
+		this.data[4] = (byte) encodeByte(hour);
+		this.data[5] = (byte) encodeByte(minute);
+		this.data[6] = (byte) encodeByte(second);
+		if (timeZone >= 0)
+			this.data[7] = (byte) encodeByte(timeZone);
+		else
+			this.data[7] = (byte) (encodeByte(-timeZone) | 0x08);
+	}
 
 	@Override
 	public byte[] getData() {
 		return this.data;
+	}
+
+	@Override
+	public int getYear() {
+
+		if (this.data == null || this.data.length != 8)
+			return 0;
+
+		return this.decodeByte((int) data[0]) * 100 + (int) this.decodeByte(data[1]);
+	}
+
+	@Override
+	public int getMonth() {
+
+		if (this.data == null || this.data.length != 8)
+			return 0;
+
+		return this.decodeByte((int)data[2]);
+	}
+
+	@Override
+	public int getDay() {
+
+		if (this.data == null || this.data.length != 8)
+			return 0;
+
+		return this.decodeByte((int)data[3]);
+	}
+
+	@Override
+	public int getHour() {
+
+		if (this.data == null || this.data.length != 8)
+			return 0;
+
+		return this.decodeByte((int)data[4]);
+	}
+
+	@Override
+	public int getMinute() {
+
+		if (this.data == null || this.data.length != 8)
+			return 0;
+
+		return this.decodeByte((int)data[5]);
+	}
+
+	@Override
+	public int getSecond() {
+
+		if (this.data == null || this.data.length != 8)
+			return 0;
+
+		return this.decodeByte((int)data[6]);
+	}
+
+	@Override
+	public int getTimeZone() {
+
+		if (this.data == null || this.data.length != 8)
+			return 0;
+
+		int res = decodeByte((byte) (data[7] & 0xF7));
+		if ((data[7] & 0x08) != 0)
+			res = -res;
+		return res;
+	}
+
+	private int decodeByte(int bt) {
+		return (bt & 0x0F) * 10 + ((bt & 0xF0) >> 4);
+	}
+
+	private int encodeByte(int val) {
+		return (val / 10) | (val % 10) << 4;
 	}
 
 	@Override
@@ -60,7 +158,7 @@ public class TimeAndTimezoneImpl implements TimeAndTimezone, CAPAsnPrimitive {
 
 	@Override
 	public boolean getIsPrimitive() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -102,20 +200,57 @@ public class TimeAndTimezoneImpl implements TimeAndTimezone, CAPAsnPrimitive {
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		if (this.data == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field must not be null");
+		if (this.data.length != 8)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field length must be equal 8");
+
+		asnOs.writeOctetStringData(data);
 	}
 
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		if (data != null) {
+			sb.append("year=");
+			sb.append(this.getYear());
+			sb.append(", month=");
+			sb.append(this.getMonth());
+			sb.append(", day=");
+			sb.append(this.getDay());
+			sb.append(", hour=");
+			sb.append(this.getHour());
+			sb.append(", minite=");
+			sb.append(this.getMinute());
+			sb.append(", second=");
+			sb.append(this.getSecond());
+			sb.append(", timeZone=");
+			sb.append(this.getTimeZone());
+		}
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

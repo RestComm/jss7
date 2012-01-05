@@ -161,8 +161,10 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 					ais.advanceElement(); // TODO: implement it
 					break;
 				case _ID_legID:
+					ais2 = ais.readSequenceStream();
+					ais2.readTag();
 					this.legID = new SendingSideIDImpl();
-					((SendingSideIDImpl) this.legID).decodeAll(ais);
+					((SendingSideIDImpl) this.legID).decodeAll(ais2);
 					break;
 
 				default:

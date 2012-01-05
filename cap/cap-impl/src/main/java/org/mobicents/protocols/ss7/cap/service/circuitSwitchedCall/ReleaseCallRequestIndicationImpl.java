@@ -31,9 +31,9 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.primitives.Cause;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ReleaseCallRequestIndication;
-import org.mobicents.protocols.ss7.cap.primitives.CauseImpl;
+import org.mobicents.protocols.ss7.cap.isup.CauseCapImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
@@ -45,11 +45,11 @@ public class ReleaseCallRequestIndicationImpl extends CircuitSwitchedCallMessage
 
 	public static final String _PrimitiveName = "ReleaseCalltRequestIndication";
 	
-	private Cause cause;
+	private CauseCap cause;
 
 	
 	@Override
-	public Cause getCause() {
+	public CauseCap getCause() {
 		return cause;
 	}
 	
@@ -107,8 +107,8 @@ public class ReleaseCallRequestIndicationImpl extends CircuitSwitchedCallMessage
 
 	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
 
-		this.cause = new CauseImpl();
-		((CauseImpl) this.cause).decodeData(ansIS, length);
+		this.cause = new CauseCapImpl();
+		((CauseCapImpl) this.cause).decodeData(ansIS, length);
 	}
 
 	@Override

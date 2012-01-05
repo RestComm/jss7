@@ -35,6 +35,8 @@ import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DpSpecificCriteria;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.DpSpecificCriteriaImpl;
+import org.mobicents.protocols.ss7.inap.api.INAPException;
 import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
@@ -60,7 +62,18 @@ public class BCSMEventImpl implements BCSMEvent, CAPAsnPrimitive {
 	private LegID legID;
 	private DpSpecificCriteria dpSpecificCriteria;
 	private boolean automaticRearm;	
+
 	
+	public BCSMEventImpl() {
+	}
+
+	public BCSMEventImpl(EventTypeBCSM eventTypeBCSM, MonitorMode monitorMode, LegID legID, DpSpecificCriteria dpSpecificCriteria, boolean automaticRearm) {
+		this.eventTypeBCSM = eventTypeBCSM;
+		this.monitorMode = monitorMode;
+		this.legID = legID;
+		this.dpSpecificCriteria = dpSpecificCriteria;
+		this.automaticRearm = automaticRearm;
+	}
 
 	@Override
 	public EventTypeBCSM getEventTypeBCSM() {
@@ -170,16 +183,20 @@ public class BCSMEventImpl implements BCSMEvent, CAPAsnPrimitive {
 					this.monitorMode = MonitorMode.getInstance(i1);
 					break;
 				case _ID_legID:
-					this.legID = new LegIDImpl(); 
+					this.legID = new LegIDImpl();
 					AsnInputStream ais2 = ais.readSequenceStream();
 					ais2.readTag();
 					((LegIDImpl) this.legID).decodeAll(ais2);
 					break;
 				case _ID_dpSpecificCriteria:
-					ais.advanceElement(); // TODO: implement it
+					ais2 = ais.readSequenceStream();
+					ais2.readTag();
+					this.dpSpecificCriteria = new DpSpecificCriteriaImpl();
+					((DpSpecificCriteriaImpl) this.dpSpecificCriteria).decodeAll(ais2);
 					break;
 				case _ID_automaticRearm:
-					ais.advanceElement(); // TODO: implement it
+					ais.readNull();
+					this.automaticRearm = true;	
 					break;
 
 				default:
@@ -198,20 +215,89 @@ public class BCSMEventImpl implements BCSMEvent, CAPAsnPrimitive {
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
 		
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+	public void encodeData(AsnOutputStream aos) throws CAPException {
+
+		try {
+			if (this.eventTypeBCSM == null || this.monitorMode == null)
+				throw new CAPException("Error while encoding " + _PrimitiveName + ": eventTypeBCSM and monitorMode must not be null");
+
+			aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_eventTypeBCSM, this.eventTypeBCSM.getCode());
+			aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_monitorMode, this.monitorMode.getCode());
+
+			if (this.legID != null) {
+				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_legID);
+				int pos = aos.StartContentDefiniteLength();
+				((LegIDImpl) this.legID).encodeAll(aos);
+				aos.FinalizeContent(pos);
+			}
+
+			if (this.dpSpecificCriteria != null) {
+				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_dpSpecificCriteria);
+				int pos = aos.StartContentDefiniteLength();
+				((DpSpecificCriteriaImpl) this.dpSpecificCriteria).encodeAll(aos);
+				aos.FinalizeContent(pos);
+			}
+
+			if (this.automaticRearm) {
+				aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_automaticRearm);
+			}
+		} catch (IOException e) {
+			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (INAPException e) {
+			throw new CAPException("INAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		
+		if (this.eventTypeBCSM != null) {
+			sb.append("eventTypeBCSM=");
+			sb.append(eventTypeBCSM);
+		}
+		if (this.monitorMode != null) {
+			sb.append(", monitorMode=");
+			sb.append(monitorMode);
+		}
+		if (this.legID != null) {
+			sb.append(", legID=");
+			sb.append(legID.toString());
+		}
+		if (this.dpSpecificCriteria != null) {
+			sb.append(", dpSpecificCriteria=");
+			sb.append(dpSpecificCriteria.toString());
+		}
+		if (this.automaticRearm) {
+			sb.append(", automaticRearm");
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
+

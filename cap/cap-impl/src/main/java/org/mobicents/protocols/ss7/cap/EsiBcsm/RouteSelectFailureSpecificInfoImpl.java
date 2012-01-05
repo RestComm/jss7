@@ -32,9 +32,9 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.RouteSelectFailureSpecificInfo;
-import org.mobicents.protocols.ss7.cap.api.primitives.Cause;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.isup.CauseCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
-import org.mobicents.protocols.ss7.cap.primitives.CauseImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
@@ -48,11 +48,18 @@ public class RouteSelectFailureSpecificInfoImpl implements RouteSelectFailureSpe
 
 	public static final String _PrimitiveName = "RouteSelectFailureSpecificInfo";
 
-	private Cause failureCause;
+	private CauseCap failureCause;
+
 	
+	public RouteSelectFailureSpecificInfoImpl() {
+	}
+	
+	public RouteSelectFailureSpecificInfoImpl(CauseCap failureCause) {
+		this.failureCause = failureCause;
+	}
 	
 	@Override
-	public Cause getFailureCause() {
+	public CauseCap getFailureCause() {
 		return failureCause;
 	}
 	
@@ -121,8 +128,8 @@ public class RouteSelectFailureSpecificInfoImpl implements RouteSelectFailureSpe
 			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 				switch (tag) {
 				case _ID_failureCause:
-					this.failureCause = new CauseImpl();
-					((CauseImpl) this.failureCause).decodeAll(ais);
+					this.failureCause = new CauseCapImpl();
+					((CauseCapImpl) this.failureCause).decodeAll(ais);
 					break;
 
 				default:
@@ -137,19 +144,41 @@ public class RouteSelectFailureSpecificInfoImpl implements RouteSelectFailureSpe
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+	public void encodeData(AsnOutputStream aos) throws CAPException {
+		if (this.failureCause != null) {
+			((CauseCapImpl) this.failureCause).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_failureCause);
+		}
+	}
+	
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		if (this.failureCause != null) {
+			sb.append("failureCause=");
+			sb.append(failureCause);
+		}
+		sb.append("]");
+
+		return sb.toString();
 	}
 }

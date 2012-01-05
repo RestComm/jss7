@@ -40,8 +40,17 @@ import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
  */
 public class CalledPartyBCDNumberImpl implements CalledPartyBCDNumber, CAPAsnPrimitive {
 
+	public static final String _PrimitiveName = "CalledPartyBCDNumber";
+
 	private byte[] data;
+
 	
+	public CalledPartyBCDNumberImpl() {
+	}
+	
+	public CalledPartyBCDNumberImpl(byte[] data) {
+		this.data = data;
+	}
 
 	@Override
 	public byte[] getData() {
@@ -61,7 +70,7 @@ public class CalledPartyBCDNumberImpl implements CalledPartyBCDNumber, CAPAsnPri
 
 	@Override
 	public boolean getIsPrimitive() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -103,20 +112,53 @@ public class CalledPartyBCDNumberImpl implements CalledPartyBCDNumber, CAPAsnPri
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		if (this.data == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field must not be null");
+
+		asnOs.writeOctetStringData(data);
+	}
+	
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		if (this.data != null) {
+			sb.append("data=");
+			sb.append(printDataArr(data));
+		}
+		sb.append("]");
+
+		return sb.toString();
 	}
 
+	private String printDataArr(byte[] arr) {
+		StringBuilder sb = new StringBuilder();
+		for (int b : arr) {
+			sb.append(b);
+			sb.append(", ");
+		}
+
+		return sb.toString();
+	}
 }

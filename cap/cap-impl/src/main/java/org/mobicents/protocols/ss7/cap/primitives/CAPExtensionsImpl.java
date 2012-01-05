@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.cap.primitives;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -31,30 +32,40 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.primitives.Cause;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
+import org.mobicents.protocols.ss7.cap.api.primitives.ExtensionField;
 
 /**
-*
-* 
-* @author sergey vetyutnev
-* 
-*/
-public class CauseImpl implements Cause, CAPAsnPrimitive {
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
+public class CAPExtensionsImpl implements CAPExtensions, CAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "Cause";
+	public static final String _PrimitiveName = "CAPExtensions";
 
-	private byte[] data;
+	private ExtensionField[] extensionFields;
 
-	@Override
-	public byte[] getData() {
-		return data;
+	public CAPExtensionsImpl() {
+	}
+
+	public CAPExtensionsImpl(ExtensionField[] fieldsList) {
+		this.extensionFields = fieldsList;
 	}
 	
+	@Override
+	public ExtensionField[] getExtensionFields() {
+		return extensionFields;
+	}
+
+	@Override
+	public void setExtensionFields(ExtensionField[] fieldsList) {
+		this.extensionFields = fieldsList;
+	}
 	
 	@Override
 	public int getTag() throws CAPException {
-		return Tag.STRING_OCTET;
+		return Tag.SEQUENCE;
 	}
 
 	@Override
@@ -64,7 +75,7 @@ public class CauseImpl implements Cause, CAPAsnPrimitive {
 
 	@Override
 	public boolean getIsPrimitive() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -78,9 +89,6 @@ public class CauseImpl implements Cause, CAPAsnPrimitive {
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -96,37 +104,84 @@ public class CauseImpl implements Cause, CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.data = ansIS.readOctetStringData(length);
-		if (this.data.length < 2 || this.data.length > 32)
-			throw new CAPParsingComponentException(
-					"Error while decoding " + _PrimitiveName + ": data must be from 2 to 32 bytes length, found: " + this.data.length,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		
+		this.extensionFields = null;
+
+		ArrayList<ExtensionField> res = new ArrayList<ExtensionField>();
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		while (true) {
+			if (ais.available() == 0)
+				break;
+
+			int tag = ais.readTag();
+			if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || tag != Tag.SEQUENCE || ais.isTagPrimitive())
+				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Bad ExtensionField tag or tag class or is primitive",
+						CAPParsingComponentExceptionReason.MistypedParameter);
+
+			ExtensionFieldImpl elem = new ExtensionFieldImpl();
+			elem.decodeAll(ais);
+			res.add(elem);
+		}
+
+		this.extensionFields = new ExtensionField[res.size()];
+		res.toArray(this.extensionFields);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
 		
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		if (this.extensionFields == null)
+			throw new CAPException("Error while decoding " + _PrimitiveName + ": extensionFields field must not be null");
+		if (this.extensionFields.length < 1 || this.extensionFields.length > 10)
+			throw new CAPException("Error while decoding " + _PrimitiveName + ": extensionFields field length must be from 1 to 10");
+
+		for (ExtensionField fld : this.extensionFields) {
+			((ExtensionFieldImpl) fld).encodeAll(asnOs);
+		}
+	}
+	
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.extensionFields != null) {
+			boolean isFirst = true;
+			for (ExtensionField fld : this.extensionFields) {
+				if (isFirst)
+					isFirst = false;
+				else
+					sb.append("\n");
+				sb.append(fld.toString());
+			}
+		}
+		sb.append("]");
+
+		return sb.toString();
 	}
 }
