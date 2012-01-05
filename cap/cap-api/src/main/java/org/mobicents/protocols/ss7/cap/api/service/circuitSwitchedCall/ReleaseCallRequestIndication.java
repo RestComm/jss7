@@ -22,7 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
-import org.mobicents.protocols.ss7.cap.api.primitives.Cause;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+
 
 /**
 *
@@ -44,6 +45,6 @@ ReleaseCallArg {PARAMETERS-BOUND : bound} ::= Cause {bound}
 */
 public interface ReleaseCallRequestIndication extends CircuitSwitchedCallMessage {
 	
-	public Cause getCause();
+	public CauseCap getCause();
 
 }
