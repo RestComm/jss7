@@ -49,14 +49,14 @@ public class SmsDeliverReportTpduImpl extends SmsTpduImpl implements SmsDeliverR
 	private ProtocolIdentifier protocolIdentifier;
 	private DataCodingScheme dataCodingScheme;
 	private int userDataLength;
-	private UserDataImpl userData;
+	private UserData userData;
 
 	private SmsDeliverReportTpduImpl() {
 		this.tpduType = SmsTpduType.SMS_DELIVER_REPORT;
 		this.mobileOriginatedMessage = true;
 	}
 
-	public SmsDeliverReportTpduImpl(FailureCause failureCause, ProtocolIdentifierImpl protocolIdentifier, UserDataImpl userData) {
+	public SmsDeliverReportTpduImpl(FailureCause failureCause, ProtocolIdentifier protocolIdentifier, UserData userData) {
 		this();
 
 		this.failureCause = failureCause;

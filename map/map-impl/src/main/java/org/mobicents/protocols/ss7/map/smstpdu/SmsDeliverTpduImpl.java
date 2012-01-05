@@ -61,7 +61,7 @@ public class SmsDeliverTpduImpl extends SmsTpduImpl implements SmsDeliverTpdu {
 	}
 
 	public SmsDeliverTpduImpl(boolean moreMessagesToSend, boolean forwardedOrSpawned, boolean replyPathExists, boolean statusReportIndication,
-			AddressField originatingAddress, ProtocolIdentifier protocolIdentifier, AbsoluteTimeStampImpl serviceCentreTimeStamp, UserData userData) {
+			AddressField originatingAddress, ProtocolIdentifier protocolIdentifier, AbsoluteTimeStamp serviceCentreTimeStamp, UserData userData) {
 		this();
 
 		this.moreMessagesToSend = moreMessagesToSend;

@@ -58,8 +58,8 @@ public class SmsSubmitReportTpduImpl extends SmsTpduImpl implements SmsSubmitRep
 		this.mobileOriginatedMessage = false;
 	}
 
-	public SmsSubmitReportTpduImpl(FailureCause failureCause, AbsoluteTimeStamp serviceCentreTimeStamp, ProtocolIdentifierImpl protocolIdentifier,
-			UserDataImpl userData) {
+	public SmsSubmitReportTpduImpl(FailureCause failureCause, AbsoluteTimeStamp serviceCentreTimeStamp, ProtocolIdentifier protocolIdentifier,
+			UserData userData) {
 		this();
 
 		this.failureCause = failureCause;

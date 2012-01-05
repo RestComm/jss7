@@ -44,6 +44,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
+import org.mobicents.protocols.ss7.map.api.MAPSmsTpduParameterFactory;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
@@ -134,6 +135,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	private TCAPProvider tcapProvider = null;
 
 	private final MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
+	private final MAPSmsTpduParameterFactory mapSmsTpduParameterFactory = new MAPSmsTpduParameterFactoryImpl();
 	private final MAPErrorMessageFactory mapErrorMessageFactory = new MAPErrorMessageFactoryImpl();
 
 	protected Set<MAPServiceBase> mapServices = new HashSet<MAPServiceBase>();
@@ -175,6 +177,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	public MAPParameterFactory getMAPParameterFactory() {
 		return MAPParameterFactory;
+	}
+
+	public MAPSmsTpduParameterFactory getMAPSmsTpduParameterFactory() {
+		return mapSmsTpduParameterFactory;
 	}
 	
 	public MAPErrorMessageFactory getMAPErrorMessageFactory() {

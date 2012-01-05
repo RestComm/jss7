@@ -59,7 +59,7 @@ public class SmsStatusReportTpduImpl extends SmsTpduImpl implements SmsStatusRep
 	private ProtocolIdentifier protocolIdentifier;
 	private DataCodingScheme dataCodingScheme;
 	private int userDataLength;
-	private UserDataImpl userData;
+	private UserData userData;
 
 	private SmsStatusReportTpduImpl() {
 		this.tpduType = SmsTpduType.SMS_STATUS_REPORT;
@@ -68,7 +68,7 @@ public class SmsStatusReportTpduImpl extends SmsTpduImpl implements SmsStatusRep
 
 	public SmsStatusReportTpduImpl(boolean moreMessagesToSend, boolean forwardedOrSpawned, StatusReportQualifier statusReportQualifier, int messageReference,
 			AddressField recipientAddress, AbsoluteTimeStamp serviceCentreTimeStamp, AbsoluteTimeStamp dischargeTime, Status status,
-			ProtocolIdentifier protocolIdentifier, UserDataImpl userData) {
+			ProtocolIdentifier protocolIdentifier, UserData userData) {
 		this();
 
 		this.moreMessagesToSend = moreMessagesToSend;
