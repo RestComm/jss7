@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
-import org.mobicents.protocols.ss7.cap.api.primitives.Cause;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.DateAndTime;
 
 /**
@@ -59,6 +59,6 @@ public interface RequestedInformation {
 
 	public Integer getCallConnectedElapsedTimeValue();
 
-	public Cause getReleaseCauseValue();
+	public CauseCap getReleaseCauseValue();
 
 }
