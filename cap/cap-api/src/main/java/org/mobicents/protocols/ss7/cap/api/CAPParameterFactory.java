@@ -22,7 +22,28 @@
 
 package org.mobicents.protocols.ss7.cap.api;
 
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.RouteSelectFailureSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
+import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
+import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
+import org.mobicents.protocols.ss7.cap.api.primitives.CriticalityType;
+import org.mobicents.protocols.ss7.cap.api.primitives.DateAndTime;
+import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.ExtensionField;
+import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
+import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
+import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
+import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AudibleIndicator;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DpSpecificCriteria;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DpSpecificCriteriaAlt;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.MidCallControlInfo;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 
 /**
  * 
@@ -32,5 +53,32 @@ import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 public interface CAPParameterFactory {
 	
 	public CAPGprsReferenceNumber createCAPGprsReferenceNumber(Integer destinationReference, Integer originationReference);
+	
+	public RouteSelectFailureSpecificInfo createRouteSelectFailureSpecificInfo(CauseCap failureCause);
+	
+	public CauseCap createCauseCap(byte[] data);
+	public CauseCap createCauseCap(CauseIndicators causeIndicators) throws CAPException;
+	
+	public DpSpecificCriteria createDpSpecificCriteria(Integer applicationTimer);
+	public DpSpecificCriteria createDpSpecificCriteria(MidCallControlInfo midCallControlInfo);
+	public DpSpecificCriteria createDpSpecificCriteria(DpSpecificCriteriaAlt dpSpecificCriteriaAlt);
 
+	public BCSMEvent createBCSMEvent(EventTypeBCSM eventTypeBCSM, MonitorMode monitorMode, LegID legID, DpSpecificCriteria dpSpecificCriteria,
+			boolean automaticRearm);
+	
+	public CalledPartyBCDNumber createCalledPartyBCDNumber(byte[] data);
+
+	public ExtensionField createExtensionField(Integer localCode, CriticalityType criticalityType, byte[] data);
+	public ExtensionField createExtensionField(long[] globalCode, CriticalityType criticalityType, byte[] data);
+	public CAPExtensions createCAPExtensions(ExtensionField[] fieldsList);
+	
+	public CAMELAChBillingChargingCharacteristics createCAMELAChBillingChargingCharacteristics(byte[] data);
+	public CAMELAChBillingChargingCharacteristics createCAMELAChBillingChargingCharacteristics(long maxCallPeriodDuration, boolean releaseIfdurationExceeded,
+			Long tariffSwitchInterval, AudibleIndicator audibleIndicator, CAPExtensions extensions, boolean isCAPVersion3orLater);
+	
+	public DateAndTime createDateAndTime(int year, int month, int day, int hour, int minute, int second);
+	public TimeAndTimezone createTimeAndTimezone(int year, int month, int day, int hour, int minute, int second, int timeZone);
+
+	public SendingSideID createSendingSideID(LegType sendingSideID);
+	public ReceivingSideID createReceivingSideID(LegType receivingSideID);
 }
