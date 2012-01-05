@@ -64,4 +64,16 @@ public interface DateAndTime {
 
 	public int getSecond();
 
+	public void setYear(int year);
+
+	public void setMonth(int month);
+
+	public void setDay(int day);
+
+	public void setHour(int hour);
+
+	public void setMinute(int minute);
+
+	public void setSecond(int second);
+
 }

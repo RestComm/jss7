@@ -124,6 +124,61 @@ public class DateAndTimeImpl implements DateAndTime, CAPAsnPrimitive {
 		return this.decodeByte((int)data[6]);
 	}
 
+	@Override
+	public void setYear(int year) {
+
+		if (this.data == null || this.data.length != 7)
+			this.data = new byte[7];
+
+		this.data[0] = (byte) encodeByte(year / 100);
+		this.data[1] = (byte) encodeByte(year % 100);
+	}
+
+	@Override
+	public void setMonth(int month) {
+
+		if (this.data == null || this.data.length != 7)
+			this.data = new byte[7];
+
+		this.data[2] = (byte) encodeByte(month);
+	}
+
+	@Override
+	public void setDay(int day) {
+
+		if (this.data == null || this.data.length != 7)
+			this.data = new byte[7];
+
+		this.data[3] = (byte) encodeByte(day);
+	}
+
+	@Override
+	public void setHour(int hour) {
+
+		if (this.data == null || this.data.length != 7)
+			this.data = new byte[7];
+
+		this.data[4] = (byte) encodeByte(hour);
+	}
+
+	@Override
+	public void setMinute(int minute) {
+
+		if (this.data == null || this.data.length != 7)
+			this.data = new byte[7];
+
+		this.data[5] = (byte) encodeByte(minute);
+	}
+
+	@Override
+	public void setSecond(int second) {
+
+		if (this.data == null || this.data.length != 7)
+			this.data = new byte[7];
+
+		this.data[6] = (byte) encodeByte(second);
+	}
+
 	private int decodeByte(int bt) {
 		return (bt & 0x0F) * 10 + ((bt & 0xF0) >> 4);
 	}

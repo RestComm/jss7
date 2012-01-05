@@ -93,10 +93,28 @@ public interface TimeAndTimezone {
 	public int getMinute();
 
 	public int getSecond();
-	
+
 	/**
 	 * @return the timeZone in in quarters of an hour
 	 */
 	public int getTimeZone();
+
+	public void setYear(int year);
+
+	public void setMonth(int month);
+
+	public void setDay(int day);
+
+	public void setHour(int hour);
+
+	public void setMinute(int minute);
+
+	public void setSecond(int second);
+
+	/**
+	 * @param timeZone
+	 *            the timeZone in in quarters of an hour
+	 */
+	public void setTimeZone(int timeZone);
 
 }

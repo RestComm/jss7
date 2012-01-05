@@ -123,7 +123,7 @@ public class TimeAndTimezoneImpl implements TimeAndTimezone, CAPAsnPrimitive {
 		if (this.data == null || this.data.length != 8)
 			return 0;
 
-		return this.decodeByte((int)data[6]);
+		return this.decodeByte((int) data[6]);
 	}
 
 	@Override
@@ -138,6 +138,73 @@ public class TimeAndTimezoneImpl implements TimeAndTimezone, CAPAsnPrimitive {
 		return res;
 	}
 
+	@Override
+	public void setYear(int year) {
+
+		if (this.data == null || this.data.length != 8)
+			this.data = new byte[8];
+
+		this.data[0] = (byte) encodeByte(year / 100);
+		this.data[1] = (byte) encodeByte(year % 100);
+	}
+
+	@Override
+	public void setMonth(int month) {
+
+		if (this.data == null || this.data.length != 8)
+			this.data = new byte[8];
+
+		this.data[2] = (byte) encodeByte(month);
+	}
+
+	@Override
+	public void setDay(int day) {
+
+		if (this.data == null || this.data.length != 8)
+			this.data = new byte[8];
+
+		this.data[3] = (byte) encodeByte(day);
+	}
+
+	@Override
+	public void setHour(int hour) {
+
+		if (this.data == null || this.data.length != 8)
+			this.data = new byte[8];
+
+		this.data[4] = (byte) encodeByte(hour);
+	}
+
+	@Override
+	public void setMinute(int minute) {
+
+		if (this.data == null || this.data.length != 8)
+			this.data = new byte[8];
+
+		this.data[5] = (byte) encodeByte(minute);
+	}
+
+	@Override
+	public void setSecond(int second) {
+
+		if (this.data == null || this.data.length != 8)
+			this.data = new byte[8];
+
+		this.data[6] = (byte) encodeByte(second);
+	}
+
+	@Override
+	public void setTimeZone(int timeZone) {
+
+		if (this.data == null || this.data.length != 8)
+			this.data = new byte[8];
+
+		if (timeZone >= 0)
+			this.data[7] = (byte) encodeByte(timeZone);
+		else
+			this.data[7] = (byte) (encodeByte(-timeZone) | 0x08);
+	}
+	
 	private int decodeByte(int bt) {
 		return (bt & 0x0F) * 10 + ((bt & 0xF0) >> 4);
 	}
