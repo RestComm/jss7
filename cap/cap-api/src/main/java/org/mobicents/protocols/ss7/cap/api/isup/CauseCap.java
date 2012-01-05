@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.cap.api.isup;
 
+import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+
 /**
 *
 ISUP CauseIndicators wrapper
@@ -44,5 +47,7 @@ maxCauseLength ::= 32
 public interface CauseCap {
 
 	public byte[] getData();
+
+	public CauseIndicators getCauseIndicators() throws CAPException;
 
 }
