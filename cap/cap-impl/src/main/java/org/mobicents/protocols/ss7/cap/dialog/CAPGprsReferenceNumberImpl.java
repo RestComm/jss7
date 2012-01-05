@@ -198,7 +198,7 @@ public class CAPGprsReferenceNumberImpl implements CAPGprsReferenceNumber, CAPAs
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding CAPGprsReferenceNumber: " + e.getMessage(), e);
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 	
