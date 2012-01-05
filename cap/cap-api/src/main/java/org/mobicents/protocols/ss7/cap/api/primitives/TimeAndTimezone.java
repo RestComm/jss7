@@ -82,4 +82,21 @@ public interface TimeAndTimezone {
 
 	public byte[] getData();
 
+	public int getYear();
+
+	public int getMonth();
+
+	public int getDay();
+
+	public int getHour();
+
+	public int getMinute();
+
+	public int getSecond();
+	
+	/**
+	 * @return the timeZone in in quarters of an hour
+	 */
+	public int getTimeZone();
+
 }

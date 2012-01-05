@@ -51,7 +51,17 @@ DateAndTime ::= OCTET STRING (SIZE(7))
 public interface DateAndTime {
 
 	public byte[] getData();
-	
-	// TODO: implement: public DateTime getDateTime();
-	
+
+	public int getYear();
+
+	public int getMonth();
+
+	public int getDay();
+
+	public int getHour();
+
+	public int getMinute();
+
+	public int getSecond();
+
 }

@@ -52,15 +52,23 @@ public interface ExtensionField {
 
 	public CriticalityType getCriticalityType();
 
+	/**
+	 * 
+	 * @return Encoded field parameter without tag and length fields
+	 */
 	public byte[] getData();
 
-	
+
 	public void setLocalCode(Integer localCode);
 
 	public void setGlobalCode(long[] globalCode);
 
 	public void setCriticalityType(CriticalityType criticalityType);
 
+	/**
+	 * @param data
+	 *            Encoded field parameter without tag and length fields
+	 */
 	public void setData(byte[] data);
 }
 

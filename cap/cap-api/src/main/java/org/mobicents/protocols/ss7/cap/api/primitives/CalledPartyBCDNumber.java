@@ -46,4 +46,7 @@ public interface CalledPartyBCDNumber {
 
 	public byte[] getData();
 
+	// TODO: implement "Called party BCD number" from 24.008 (Mobile radio
+	// interface Layer 3 specification; Core network protocols)
+
 }
