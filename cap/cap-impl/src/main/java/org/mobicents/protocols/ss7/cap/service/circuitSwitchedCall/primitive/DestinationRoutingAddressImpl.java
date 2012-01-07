@@ -121,13 +121,14 @@ public class DestinationRoutingAddressImpl implements DestinationRoutingAddress,
 			if (tag != Tag.STRING_OCTET && ais.getTagClass() != Tag.CLASS_UNIVERSAL)
 				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag or tagClass when decoding CalledPartyNumber",
 						CAPParsingComponentExceptionReason.MistypedParameter);			
-			
-			byte[] buf = ais.readOctetString();
-			if (buf.length < 2 || buf.length > 18)
-				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": CalledPartyNumber must be from 2 to 18 bytes length, found: "
-						+ buf.length, CAPParsingComponentExceptionReason.MistypedParameter);
-			
-			CalledPartyNumberCap cpn = new CalledPartyNumberCapImpl(buf);
+
+			CalledPartyNumberCap cpn = new CalledPartyNumberCapImpl();
+			((CalledPartyNumberCapImpl)cpn).decodeAll(ais);
+//			byte[] buf = ais.readOctetString();
+//			if (buf.length < 2 || buf.length > 18)
+//				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": CalledPartyNumber must be from 2 to 18 bytes length, found: "
+//						+ buf.length, CAPParsingComponentExceptionReason.MistypedParameter);
+//			CalledPartyNumberCap cpn = new CalledPartyNumberCapImpl(buf);
 			this.calledPartyNumber.add(cpn);
 		}
 	}

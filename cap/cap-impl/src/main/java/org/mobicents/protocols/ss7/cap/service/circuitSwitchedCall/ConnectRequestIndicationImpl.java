@@ -43,6 +43,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.NAOliInfo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
+import org.mobicents.protocols.ss7.cap.isup.GenericNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.DestinationRoutingAddressImpl;
 import org.mobicents.protocols.ss7.inap.api.isup.CallingPartysCategoryInap;
 import org.mobicents.protocols.ss7.inap.api.isup.RedirectionInformationInap;
@@ -57,24 +58,24 @@ import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.CUGInter
  */
 public class ConnectRequestIndicationImpl extends CircuitSwitchedCallMessageImpl implements ConnectRequestIndication {
 
-	public static final int _ID_destinationRoutingAddress =0;
-	public static final int _ID_alertingPattern =1;
-	public static final int _ID_originalCalledPartyID =6;
-	public static final int _ID_extensions =10;
-	public static final int _ID_carrier =11;
-	public static final int _ID_callingPartysCategory =28;
-	public static final int _ID_redirectingPartyID =29;
-	public static final int _ID_redirectionInformation =30;
-	public static final int _ID_genericNumbers =14;
-	public static final int _ID_serviceInteractionIndicatorsTwo =15;
-	public static final int _ID_chargeNumber =19;
-	public static final int _ID_legToBeConnected =21;
-	public static final int _ID_cug_Interlock =31;
-	public static final int _ID_cug_OutgoingAccess =32;
-	public static final int _ID_suppressionOfAnnouncement =55;
-	public static final int _ID_oCSIApplicable =56;
-	public static final int _ID_naOliInfo =57;
-	public static final int _ID_bor_InterrogationRequested =58;
+	public static final int _ID_destinationRoutingAddress = 0;
+	public static final int _ID_alertingPattern = 1;
+	public static final int _ID_originalCalledPartyID = 6;
+	public static final int _ID_extensions = 10;
+	public static final int _ID_carrier = 11;
+	public static final int _ID_callingPartysCategory = 28;
+	public static final int _ID_redirectingPartyID = 29;
+	public static final int _ID_redirectionInformation = 30;
+	public static final int _ID_genericNumbers = 14;
+	public static final int _ID_serviceInteractionIndicatorsTwo = 15;
+	public static final int _ID_chargeNumber = 19;
+	public static final int _ID_legToBeConnected = 21;
+	public static final int _ID_cug_Interlock = 31;
+	public static final int _ID_cug_OutgoingAccess = 32;
+	public static final int _ID_suppressionOfAnnouncement = 55;
+	public static final int _ID_oCSIApplicable = 56;
+	public static final int _ID_naOliInfo = 57;
+	public static final int _ID_bor_InterrogationRequested = 58;
 
 	public static final String _PrimitiveName = "ConnectRequestIndication";
 	
@@ -295,7 +296,22 @@ public class ConnectRequestIndicationImpl extends CircuitSwitchedCallMessageImpl
 					ais.advanceElement(); // TODO: implement it
 					break;
 				case _ID_genericNumbers:
-					ais.advanceElement(); // TODO: implement it
+					this.genericNumbers = new ArrayList<GenericNumberCap>();
+					AsnInputStream ais2 = ais.readSequenceStreamData(length);
+					while (true) {
+						if (ais2.available() == 0)
+							break;
+
+						int tag2 = ais2.readTag();
+						if (ais2.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC && tag2 != Tag.STRING_OCTET)
+							throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
+									+ " genericNumbers parameter SET must consist of OCTET_STRING elements",
+									CAPParsingComponentExceptionReason.MistypedParameter);
+
+						GenericNumberCapImpl elem = new GenericNumberCapImpl();
+						elem.decodeAll(ais2);
+						this.genericNumbers.add(elem);
+					}
 					break;
 				case _ID_serviceInteractionIndicatorsTwo:
 					ais.advanceElement(); // TODO: implement it

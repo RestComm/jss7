@@ -49,6 +49,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InitialDPArgExtension;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
+import org.mobicents.protocols.ss7.cap.isup.AdditionalCallingPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.CallingPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.LocationNumberCapImpl;
@@ -58,6 +59,7 @@ import org.mobicents.protocols.ss7.cap.primitives.CalledPartyBCDNumberImpl;
 import org.mobicents.protocols.ss7.cap.primitives.TimeAndTimezoneImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.BearerCapabilityImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InitialDPArgExtensionImpl;
+import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
 import org.mobicents.protocols.ss7.inap.api.isup.CallingPartysCategoryInap;
 import org.mobicents.protocols.ss7.inap.api.isup.HighLayerCompatibilityInap;
 import org.mobicents.protocols.ss7.inap.api.isup.RedirectionInformationInap;
@@ -341,6 +343,9 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 		} catch (MAPParsingComponentException e) {
 			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (INAPParsingComponentException e) {
+			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -358,10 +363,14 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 		} catch (MAPParsingComponentException e) {
 			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (INAPParsingComponentException e) {
+			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws INAPParsingComponentException, CAPParsingComponentException, MAPParsingComponentException,
+			IOException, AsnException {
 
 		this.serviceKey = 0;
 		this.calledPartyNumber = null;
@@ -417,28 +426,16 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 				if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 					switch (tag) {
 					case _ID_calledPartyNumber:
-						byte[] buf = ais.readOctetString();
-						if (buf.length < 2 || buf.length > 18)
-							throw new CAPParsingComponentException(
-									"Error while decoding " + _PrimitiveName + ": calledPartyNumber must be from 2 to 18 bytes length, found: " + buf.length,
-									CAPParsingComponentExceptionReason.MistypedParameter);
-						this.calledPartyNumber = new CalledPartyNumberCapImpl(buf);
+						this.calledPartyNumber = new CalledPartyNumberCapImpl();
+						((CalledPartyNumberCapImpl)this.calledPartyNumber).decodeAll(ais);
 						break;
 					case _ID_callingPartyNumber:
-						buf = ais.readOctetString();
-						if (buf.length < 2 || buf.length > 10)
-							throw new CAPParsingComponentException(
-									"Error while decoding InitialDPRequest: callingPartyNumber must be from 2 to 10 bytes length, found: " + buf.length,
-									CAPParsingComponentExceptionReason.MistypedParameter);
-						this.callingPartyNumber = new CallingPartyNumberCapImpl(buf);
+						this.callingPartyNumber = new CallingPartyNumberCapImpl();
+						((CallingPartyNumberCapImpl) this.callingPartyNumber).decodeAll(ais);
 						break;
 					case _ID_callingPartysCategory:
-						buf = ais.readOctetString();
-						if (buf.length < 1 || buf.length > 1)
-							throw new CAPParsingComponentException(
-									"Error while decoding InitialDPRequest: callingPartysCategory must be from 1 to 1 bytes length, found: " + buf.length,
-									CAPParsingComponentExceptionReason.MistypedParameter);
-						this.callingPartysCategory = new CallingPartysCategoryInapImpl(buf);
+						this.callingPartysCategory = new CallingPartysCategoryInapImpl();
+						((CallingPartysCategoryInapImpl) this.callingPartysCategory).decodeAll(ais);
 						break;
 					case _ID_cGEncountered:
 						ais.advanceElement(); // TODO: implement it
@@ -447,34 +444,29 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 						ais.advanceElement(); // TODO: implement it
 						break;
 					case _ID_locationNumber:
-						buf = ais.readOctetString();
-						if (buf.length < 2 || buf.length > 10)
-							throw new CAPParsingComponentException(
-									"Error while decoding InitialDPRequest: locationNumber must be from 2 to 10 bytes length, found: " + buf.length,
-									CAPParsingComponentExceptionReason.MistypedParameter);
-						this.locationNumber = new LocationNumberCapImpl(buf);
+						this.locationNumber = new LocationNumberCapImpl();
+						((LocationNumberCapImpl) this.locationNumber).decodeAll(ais);
 						break;
 					case _ID_originalCalledPartyID:
-						buf = ais.readOctetString();
-						if (buf.length < 2 || buf.length > 10)
-							throw new CAPParsingComponentException(
-									"Error while decoding InitialDPRequest: originalCalledPartyID must be from 2 to 10 bytes length, found: " + buf.length,
-									CAPParsingComponentExceptionReason.MistypedParameter);
-						this.originalCalledPartyID = new OriginalCalledNumberCapImpl(buf);
+						this.originalCalledPartyID = new OriginalCalledNumberCapImpl();
+						((OriginalCalledNumberCapImpl) this.originalCalledPartyID).decodeAll(ais);
 						break;
 					case _ID_extensions:
 						ais.advanceElement(); // TODO: implement it
 						break;
 					case _ID_highLayerCompatibility:
-						buf = ais.readOctetString();
-						if (buf.length < 2 || buf.length > 2)
-							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": highLayerCompatibility must be from 2 to 2 bytes length, found: " + buf.length,
-									CAPParsingComponentExceptionReason.MistypedParameter);
-						this.highLayerCompatibility = new HighLayerCompatibilityInapImpl(buf);
+//						byte[] buf = ais.readOctetString();
+//						if (buf.length < 2 || buf.length > 2)
+//							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+//									+ ": highLayerCompatibility must be from 2 to 2 bytes length, found: " + buf.length,
+//									CAPParsingComponentExceptionReason.MistypedParameter);
+//						this.highLayerCompatibility = new HighLayerCompatibilityInapImpl(buf);
+						this.highLayerCompatibility = new HighLayerCompatibilityInapImpl();
+						((HighLayerCompatibilityInapImpl) this.highLayerCompatibility).decodeAll(ais);
 						break;
 					case _ID_additionalCallingPartyNumber:
-						ais.advanceElement(); // TODO: implement it
+						this.additionalCallingPartyNumber = new AdditionalCallingPartyNumberCapImpl();
+						((AdditionalCallingPartyNumberCapImpl)this.additionalCallingPartyNumber).decodeAll(ais);
 						break;
 					case _ID_bearerCapability:
 						AsnInputStream ais2 = ais.readSequenceStream();
@@ -487,20 +479,18 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 						this.eventTypeBCSM = EventTypeBCSM.getInstance(i1);
 						break;
 					case _ID_redirectingPartyID:
-						buf = ais.readOctetString();
-						if (buf.length < 2 || buf.length > 10)
-							throw new CAPParsingComponentException(
-									"Error while decoding InitialDPRequest: redirectingPartyID must be from 2 to 10 bytes length, found: " + buf.length,
-									CAPParsingComponentExceptionReason.MistypedParameter);
-						this.redirectingPartyID = new RedirectingPartyIDCapImpl(buf);
+						this.redirectingPartyID = new RedirectingPartyIDCapImpl();
+						((RedirectingPartyIDCapImpl) this.redirectingPartyID).decodeAll(ais);
 						break;
 					case _ID_redirectionInformation:
-						buf = ais.readOctetString();
-						if (buf.length < 2 || buf.length > 2)
-							throw new CAPParsingComponentException(
-									"Error while decoding InitialDPRequest: redirectionInformation must be from 2 to 2 bytes length, found: " + buf.length,
-									CAPParsingComponentExceptionReason.MistypedParameter);
-						this.redirectionInformation = new RedirectionInformationInapImpl(buf);
+//						byte[] buf = ais.readOctetString();
+//						if (buf.length < 2 || buf.length > 2)
+//							throw new CAPParsingComponentException(
+//									"Error while decoding InitialDPRequest: redirectionInformation must be from 2 to 2 bytes length, found: " + buf.length,
+//									CAPParsingComponentExceptionReason.MistypedParameter);
+//						this.redirectionInformation = new RedirectionInformationInapImpl(buf);
+						this.redirectionInformation = new RedirectionInformationInapImpl();
+						((RedirectionInformationInapImpl) this.redirectionInformation).decodeAll(ais);
 						break;
 					case _ID_cause:
 						ais.advanceElement(); // TODO: implement it

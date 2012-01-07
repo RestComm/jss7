@@ -232,12 +232,14 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
 					ais.advanceElement(); // TODO: implement it
 					break;
 				case _ID_forwardingDestinationNumber:
-					byte[] buf = ais.readOctetString();
-					if (buf.length < 2 || buf.length > 18)
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ": forwardingDestinationNumber must be from 2 to 18 bytes length, found: " + buf.length,
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.forwardingDestinationNumber = new CalledPartyNumberCapImpl(buf);
+//					byte[] buf = ais.readOctetString();
+//					if (buf.length < 2 || buf.length > 18)
+//						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+//								+ ": forwardingDestinationNumber must be from 2 to 18 bytes length, found: " + buf.length,
+//								CAPParsingComponentExceptionReason.MistypedParameter);
+//					this.forwardingDestinationNumber = new CalledPartyNumberCapImpl(buf);
+					this.forwardingDestinationNumber = new CalledPartyNumberCapImpl();
+					((CalledPartyNumberCapImpl)this.forwardingDestinationNumber).decodeAll(ais);
 					break;
 				case _ID_ms_Classmark2:
 					ais.advanceElement(); // TODO: implement it

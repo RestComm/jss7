@@ -51,6 +51,13 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 	private BearerCap bearerCap;
 
 	
+	public BearerCapabilityImpl() {
+	}
+
+	public BearerCapabilityImpl(BearerCap bearerCap) {
+		this.bearerCap = bearerCap;
+	}
+	
 	@Override
 	public BearerCap getBearerCap() {
 		return bearerCap;
@@ -116,12 +123,15 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 			switch (tag) {
 			case _ID_bearerCap:
-				byte[] buf = ais.readOctetStringData(length);
-				if (buf.length < 2 || buf.length > 11)
-					throw new CAPParsingComponentException(
-							"Error while decoding " + _PrimitiveName + ": bearerCap must be from 2 to 11 bytes length, found: " + buf.length,
-							CAPParsingComponentExceptionReason.MistypedParameter);
-				this.bearerCap = new BearerCapImpl(buf);
+				this.bearerCap = new BearerCapImpl();
+				((BearerCapImpl) this.bearerCap).decodeData(ais, length);
+
+//				byte[] buf = ais.readOctetStringData(length);
+//				if (buf.length < 2 || buf.length > 11)
+//					throw new CAPParsingComponentException(
+//							"Error while decoding " + _PrimitiveName + ": bearerCap must be from 2 to 11 bytes length, found: " + buf.length,
+//							CAPParsingComponentExceptionReason.MistypedParameter);
+//				this.bearerCap = new BearerCapImpl(buf);
 				break;
 
 			default:
@@ -136,19 +146,44 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		if (this.bearerCap == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": bearerCap must not be null");
+
+		((BearerCapImpl) this.bearerCap).encodeData(asnOs);
+	}
+	
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		if (this.bearerCap != null) {
+			sb.append("bearerCap=");
+			sb.append(bearerCap.toString());
+		}
+		sb.append("]");
+
+		return sb.toString();
 	}
 }
+
