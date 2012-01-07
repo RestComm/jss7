@@ -11,6 +11,7 @@
 	  	 -->
 	  	<packages>
       		<package name="org.mobicents.protocols.ss7.inap.primitives" />
+      		<package name="org.mobicents.protocols.ss7.inap.isup" />
   		 </packages>
 	</test>
 	
