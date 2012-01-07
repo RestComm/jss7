@@ -27,7 +27,15 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.RouteSelectFailureSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
+import org.mobicents.protocols.ss7.cap.api.isup.AdditionalCallingPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.api.isup.GenericNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.OriginalCalledNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.RedirectingPartyIDCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
@@ -40,12 +48,21 @@ import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
 import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AudibleIndicator;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DpSpecificCriteria;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DpSpecificCriteriaAlt;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.MidCallControlInfo;
 import org.mobicents.protocols.ss7.cap.dialog.CAPGprsReferenceNumberImpl;
+import org.mobicents.protocols.ss7.cap.isup.AdditionalCallingPartyNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.BearerCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.CallingPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.CauseCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.GenericNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.LocationNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.OriginalCalledNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.RedirectingPartyIDCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.BCSMEventImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAMELAChBillingChargingCharacteristicsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
@@ -55,10 +72,18 @@ import org.mobicents.protocols.ss7.cap.primitives.ExtensionFieldImpl;
 import org.mobicents.protocols.ss7.cap.primitives.ReceivingSideIDImpl;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
 import org.mobicents.protocols.ss7.cap.primitives.TimeAndTimezoneImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.BearerCapabilityImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.DpSpecificCriteriaImpl;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
 
 /**
  * 
@@ -158,5 +183,90 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 	@Override
 	public ReceivingSideID createReceivingSideID(LegType receivingSideID) {
 		return new ReceivingSideIDImpl(receivingSideID);
+	}
+
+	@Override
+	public BearerCap createBearerCap(byte[] data) {
+		return new BearerCapImpl(data);
+	}
+
+	@Override
+	public BearerCap createBearerCap(UserServiceInformation userServiceInformation) throws CAPException {
+		return new BearerCapImpl(userServiceInformation);
+	}
+
+	@Override
+	public BearerCapability createBearerCapability(BearerCap bearerCap) {
+		return new BearerCapabilityImpl(bearerCap);
+	}
+
+	@Override
+	public AdditionalCallingPartyNumberCap createAdditionalCallingPartyNumberCap(byte[] data) {
+		return new AdditionalCallingPartyNumberCapImpl(data);
+	}
+
+	@Override
+	public AdditionalCallingPartyNumberCap createAdditionalCallingPartyNumberCap(GenericNumber genericNumber) throws CAPException {
+		return new AdditionalCallingPartyNumberCapImpl(genericNumber);
+	}
+
+	@Override
+	public CalledPartyNumberCap createCalledPartyNumberCap(byte[] data) {
+		return new CalledPartyNumberCapImpl(data);
+	}
+
+	@Override
+	public CalledPartyNumberCap createCalledPartyNumberCap(CalledPartyNumber calledPartyNumber) throws CAPException {
+		return new CalledPartyNumberCapImpl(calledPartyNumber);
+	}
+
+	@Override
+	public CallingPartyNumberCap createCallingPartyNumberCap(byte[] data) {
+		return new CallingPartyNumberCapImpl(data);
+	}
+
+	@Override
+	public CallingPartyNumberCap createCallingPartyNumberCap(CallingPartyNumber callingPartyNumber) throws CAPException {
+		return new CallingPartyNumberCapImpl(callingPartyNumber);
+	}
+
+	@Override
+	public GenericNumberCap createGenericNumberCap(byte[] data) {
+		return new GenericNumberCapImpl(data);
+	}
+
+	@Override
+	public GenericNumberCap createGenericNumberCap(GenericNumber genericNumber) throws CAPException {
+		return new GenericNumberCapImpl(genericNumber);
+	}
+
+	@Override
+	public LocationNumberCap createLocationNumberCap(byte[] data) {
+		return new LocationNumberCapImpl(data);
+	}
+
+	@Override
+	public LocationNumberCap createLocationNumberCap(LocationNumber locationNumber) throws CAPException {
+		return new LocationNumberCapImpl(locationNumber);
+	}
+
+	@Override
+	public OriginalCalledNumberCap createOriginalCalledNumberCap(byte[] data) {
+		return new OriginalCalledNumberCapImpl(data);
+	}
+
+	@Override
+	public OriginalCalledNumberCap createOriginalCalledNumberCap(OriginalCalledNumber originalCalledNumber) throws CAPException {
+		return new OriginalCalledNumberCapImpl(originalCalledNumber);
+	}
+
+	@Override
+	public RedirectingPartyIDCap createRedirectingPartyIDCap(byte[] data) {
+		return new RedirectingPartyIDCapImpl(data);
+	}
+
+	@Override
+	public RedirectingPartyIDCap createRedirectingPartyIDCap(RedirectingNumber redirectingNumber) throws CAPException {
+		return new RedirectingPartyIDCapImpl(redirectingNumber);
 	}
 }

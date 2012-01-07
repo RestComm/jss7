@@ -45,7 +45,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 */
 public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "Cause";
+	public static final String _PrimitiveName = "CauseCap";
 
 	private byte[] data;
 	
@@ -56,7 +56,7 @@ public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
 	public CauseCapImpl(byte[] data) {
 		this.data = data;
 	}
-	
+
 	public CauseCapImpl(CauseIndicators causeIndicators) throws CAPException {
 		if (causeIndicators == null)
 			throw new CAPException("The causeIndicators parameter must not be null");
@@ -85,7 +85,7 @@ public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
 			throw new CAPException("ParameterException when decoding locationNumber: " + e.getMessage(), e);
 		}
 	}
-	
+
 	@Override
 	public int getTag() throws CAPException {
 		return Tag.STRING_OCTET;
@@ -169,8 +169,8 @@ public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
 
 		if (this.data == null)
 			throw new CAPException("data field must not be null");
-		if (this.data.length < 1 && this.data.length > 5)
-			throw new CAPException("data field length must be from 1 to 5");
+		if (this.data.length < 2 && this.data.length > 32)
+			throw new CAPException("data field length must be from 2 to 32");
 
 		asnOs.writeOctetStringData(data);
 	}

@@ -31,11 +31,11 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.isup.RedirectingPartyIDCap;
+import org.mobicents.protocols.ss7.cap.api.isup.GenericNumberCap;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.isup.ParameterException;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectingNumberImpl;
-import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNumberImpl;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 
 /**
 *
@@ -43,26 +43,26 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
 * @author sergey vetyutnev
 * 
 */
-public class RedirectingPartyIDCapImpl implements RedirectingPartyIDCap, CAPAsnPrimitive {
+public class GenericNumberCapImpl implements GenericNumberCap, CAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "RedirectingPartyIDCap";
+	public static final String _PrimitiveName = "GenericNumberCap";
 
 	private byte[] data;
 
-	public RedirectingPartyIDCapImpl() {
+	public GenericNumberCapImpl() {
 	}
 
-	public RedirectingPartyIDCapImpl(byte[] data) {
+	public GenericNumberCapImpl(byte[] data) {
 		this.data = data;
 	}
 
-	public RedirectingPartyIDCapImpl(RedirectingNumber redirectingNumber) throws CAPException {
-		if (redirectingNumber == null)
-			throw new CAPException("The redirectingNumber parameter must not be null");
+	public GenericNumberCapImpl(GenericNumber genericNumber) throws CAPException {
+		if (genericNumber == null)
+			throw new CAPException("The genericNumber parameter must not be null");
 		try {
-			this.data = ((RedirectingNumberImpl) redirectingNumber).encode();
+			this.data = ((GenericNumberImpl) genericNumber).encode();
 		} catch (ParameterException e) {
-			throw new CAPException("ParameterException when encoding redirectingNumber: " + e.getMessage(), e);
+			throw new CAPException("ParameterException when encoding genericNumber: " + e.getMessage(), e);
 		}
 	}
 
@@ -72,16 +72,16 @@ public class RedirectingPartyIDCapImpl implements RedirectingPartyIDCap, CAPAsnP
 	}
 
 	@Override
-	public RedirectingNumber getRedirectingNumber() throws CAPException {
+	public GenericNumber getGenericNumber() throws CAPException {
 		if (this.data == null)
 			throw new CAPException("The data has not been filled");
 
 		try {
-			RedirectingNumberImpl ocn = new RedirectingNumberImpl();
+			GenericNumberImpl ocn = new GenericNumberImpl();
 			ocn.decode(this.data);
 			return ocn;
 		} catch (ParameterException e) {
-			throw new CAPException("ParameterException when decoding RedirectingNumber: " + e.getMessage(), e);
+			throw new CAPException("ParameterException when decoding GenericNumber: " + e.getMessage(), e);
 		}
 	}
 
@@ -135,12 +135,12 @@ public class RedirectingPartyIDCapImpl implements RedirectingPartyIDCap, CAPAsnP
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, CAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
 		this.data = ansIS.readOctetStringData(length);
-		if (this.data.length < 2 || this.data.length > 10)
+		if (this.data.length < 3 || this.data.length > 11)
 			throw new CAPParsingComponentException(
-					"Error while decoding " + _PrimitiveName + ": data must be from 2 to 10 bytes length, found: " + this.data.length,
+					"Error while decoding " + _PrimitiveName + ": data must be from 3 to 11 bytes length, found: " + this.data.length,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -167,8 +167,8 @@ public class RedirectingPartyIDCapImpl implements RedirectingPartyIDCap, CAPAsnP
 
 		if (this.data == null)
 			throw new CAPException("data field must not be null");
-		if (this.data.length < 2 && this.data.length > 10)
-			throw new CAPException("data field length must be from 2 to 10");
+		if (this.data.length < 3 && this.data.length > 11)
+			throw new CAPException("data field length must be from 3 to 11");
 
 		asnOs.writeOctetStringData(data);
 	}
@@ -184,9 +184,9 @@ public class RedirectingPartyIDCapImpl implements RedirectingPartyIDCap, CAPAsnP
 			sb.append(printDataArr(this.data));
 			sb.append("]");
 			try {
-				RedirectingNumber rn = this.getRedirectingNumber();
+				GenericNumber gn = this.getGenericNumber();
 				sb.append(", ");
-				sb.append(rn.toString());
+				sb.append(gn.toString());
 			} catch (CAPException e) {
 			}
 		}
