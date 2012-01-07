@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.cap.api.isup;
 
+import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+
 /**
 *
 ISUP CalledPartyNumber wrapper
@@ -50,5 +53,7 @@ maxCalledPartyNumberLength ::= 18
 public interface CalledPartyNumberCap {
 
 	public byte[] getData();
+
+	public CalledPartyNumber getCalledPartyNumber() throws CAPException;
 
 }

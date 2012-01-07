@@ -22,8 +22,22 @@
 
 package org.mobicents.protocols.ss7.cap.api.isup;
 
+import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
+
 /**
 *
+bearerCapability:
+This parameter indicates the type of the bearer capability connection or the transmission medium requirements to
+the user. It is a network option to select which of the two parameters to be used:
+- bearerCap:
+This parameter contains the value of the ISUP User Service Information parameter.
+The parameter "bearerCapability" shall be included in the "InitialDP" operation only in the case the ISUP User
+Service Information parameter is available at the gsmSSF.
+If User Service Information and User Service Information Prime are available at the gsmSSF, then the
+"bearerCap" shall contain the value of the User Service Information Prime parameter.
+
+
 -- Indicates the type of bearer capability connection to the user. For bearerCap, the ISUP User
 -- Service Information, ETSI EN 300 356-1 [23]
 -- encoding shall be used.
@@ -46,5 +60,7 @@ to Bearer Capability2.
 public interface BearerCap {
 
 	public byte[] getData();
+
+	public UserServiceInformation getUserServiceInformation() throws CAPException;
 
 }

@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.cap.api.isup;
 
+import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
+
 /**
 *
 ISUP OriginalCalledNumber wrapper
@@ -41,5 +44,7 @@ maxOriginalCalledPartyIDLength ::= 10
 public interface OriginalCalledNumberCap {
 
 	public byte[] getData();
+
+	public OriginalCalledNumber getOriginalCalledNumber() throws CAPException;
 
 }

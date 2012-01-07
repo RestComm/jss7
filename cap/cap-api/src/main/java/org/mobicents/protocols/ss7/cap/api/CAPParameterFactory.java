@@ -24,7 +24,15 @@ package org.mobicents.protocols.ss7.cap.api;
 
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.RouteSelectFailureSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
+import org.mobicents.protocols.ss7.cap.api.isup.AdditionalCallingPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.api.isup.GenericNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.OriginalCalledNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.RedirectingPartyIDCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
@@ -37,13 +45,21 @@ import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
 import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AudibleIndicator;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DpSpecificCriteria;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DpSpecificCriteriaAlt;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.MidCallControlInfo;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
 
 /**
  * 
@@ -81,4 +97,24 @@ public interface CAPParameterFactory {
 
 	public SendingSideID createSendingSideID(LegType sendingSideID);
 	public ReceivingSideID createReceivingSideID(LegType receivingSideID);
+
+	public BearerCap createBearerCap(byte[] data);
+	public BearerCap createBearerCap(UserServiceInformation userServiceInformation) throws CAPException;
+	public BearerCapability createBearerCapability(BearerCap bearerCap);
+
+	public AdditionalCallingPartyNumberCap createAdditionalCallingPartyNumberCap(byte[] data);
+	public AdditionalCallingPartyNumberCap createAdditionalCallingPartyNumberCap(GenericNumber genericNumber) throws CAPException;
+	public CalledPartyNumberCap createCalledPartyNumberCap(byte[] data);
+	public CalledPartyNumberCap createCalledPartyNumberCap(CalledPartyNumber calledPartyNumber) throws CAPException;
+	public CallingPartyNumberCap createCallingPartyNumberCap(byte[] data);
+	public CallingPartyNumberCap createCallingPartyNumberCap(CallingPartyNumber callingPartyNumber) throws CAPException;
+	public GenericNumberCap createGenericNumberCap(byte[] data);
+	public GenericNumberCap createGenericNumberCap(GenericNumber genericNumber) throws CAPException;
+	public LocationNumberCap createLocationNumberCap(byte[] data);
+	public LocationNumberCap createLocationNumberCap(LocationNumber locationNumber) throws CAPException;
+	public OriginalCalledNumberCap createOriginalCalledNumberCap(byte[] data);
+	public OriginalCalledNumberCap createOriginalCalledNumberCap(OriginalCalledNumber originalCalledNumber) throws CAPException;
+	public RedirectingPartyIDCap createRedirectingPartyIDCap(byte[] data);
+	public RedirectingPartyIDCap createRedirectingPartyIDCap(RedirectingNumber redirectingNumber) throws CAPException;
+
 }

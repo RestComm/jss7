@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.cap.api.isup;
 
+import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
+
 /**
 *
 ISUP RedirectingNumber wrapper
@@ -41,5 +44,7 @@ maxRedirectingPartyIDLength ::= 10
 public interface RedirectingPartyIDCap {
 
 	public byte[] getData();
+
+	public RedirectingNumber getRedirectingNumber() throws CAPException;
 
 }

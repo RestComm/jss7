@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.cap.api.isup;
 
+import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
+
 /**
 *
 *
@@ -41,5 +44,7 @@ maxCallingPartyNumberLength ::= 10
 public interface CallingPartyNumberCap {
 
 	public byte[] getData();
+
+	public CallingPartyNumber getCallingPartyNumber() throws CAPException;
 
 }

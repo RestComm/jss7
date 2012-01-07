@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.cap.api.isup;
 
+import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
+
 /**
 *
 ISUP LocationNumber wrapper
@@ -41,5 +44,7 @@ maxLocationNumberLength ::= 10
 public interface LocationNumberCap {
 
 	public byte[] getData();
+
+	public LocationNumber getLocationNumber() throws CAPException;
 
 }
