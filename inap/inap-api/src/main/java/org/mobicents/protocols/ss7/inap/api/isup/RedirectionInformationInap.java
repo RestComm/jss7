@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.inap.api.isup;
 
+import org.mobicents.protocols.ss7.inap.api.INAPException;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
+
 /**
 *
 ISUP RedirectionInformation wrapper
@@ -36,5 +39,7 @@ RedirectionInformation::= OCTET STRING (SIZE (2))
 public interface RedirectionInformationInap {
 
 	public byte[] getData();
+
+	public RedirectionInformation getRedirectionInformation() throws INAPException;
 
 }

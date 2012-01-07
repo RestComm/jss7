@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.inap.api.isup;
 
+import org.mobicents.protocols.ss7.inap.api.INAPException;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
+
 /**
 *
 ISUP CallingPartyCategory wrapper
@@ -39,5 +42,7 @@ CallingPartysCategory::= OCTET STRING (SIZE (1))
 public interface CallingPartysCategoryInap {
 
 	public byte[] getData();
+
+	public CallingPartyCategory getCallingPartyCategory() throws INAPException;
 
 }

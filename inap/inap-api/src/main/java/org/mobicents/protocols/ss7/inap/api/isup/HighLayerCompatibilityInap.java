@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.inap.api.isup;
 
+import org.mobicents.protocols.ss7.inap.api.INAPException;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
+
 /**
 *
 ISUP HighLayerCompatibility wrapper
@@ -38,5 +41,7 @@ highLayerCompatibilityLength ::= 2
 public interface HighLayerCompatibilityInap {
 
 	public byte[] getData();
+
+	public UserTeleserviceInformation getHighLayerCompatibility() throws INAPException;
 
 }
