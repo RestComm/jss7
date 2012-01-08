@@ -22,8 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
-import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 
 /**
 *
@@ -42,13 +42,11 @@ forwardingDestinationNumber [52] CalledPartyNumber {bound} OPTIONAL,
 public interface TBusySpecificInfo {
 
 	public CauseCap getBusyCause();
-	
+
 	public boolean getCallForwarded();
-	
+
 	public boolean getRouteNotPermitted();
-	
-	public byte[] getForwardingDestinationNumber();
-	
-	public CalledPartyNumber getForwardingDestinationNumberIsup();
+
+	public CalledPartyNumberCap getForwardingDestinationNumber();
 
 }

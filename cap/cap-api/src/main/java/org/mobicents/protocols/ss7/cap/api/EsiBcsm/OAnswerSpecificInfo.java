@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
-import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.ExtBasicServiceCode;
 
 /**
@@ -43,9 +43,7 @@ ext-basicServiceCode2 [55] Ext-BasicServiceCode OPTIONAL,
 */
 public interface OAnswerSpecificInfo {
 
-	public byte[] getDestinationAddress();
-
-	public CalledPartyNumber getDestinationAddressIsup();
+	public CalledPartyNumberCap getDestinationAddress();
 
 	public boolean getOrCall();
 

@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
-import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 
 /**
 *
@@ -40,8 +40,6 @@ public interface TNoAnswerSpecificInfo {
 
 	public boolean getCallForwarded();
 
-	public byte[] getForwardingDestinationNumber();
-
-	public CalledPartyNumber getForwardingDestinationNumberIsup();
+	public CalledPartyNumberCap getForwardingDestinationNumber();
 
 }

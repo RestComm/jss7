@@ -22,7 +22,25 @@
 
 package org.mobicents.protocols.ss7.cap.api;
 
+import java.util.ArrayList;
+
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.CallAcceptedSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ChargeIndicator;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAbandonSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OCalledPartyBusySpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OChangeOfPositionSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OMidCallSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ONoAnswerSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OTermSeizedSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.RouteSelectFailureSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TAnswerSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TBusySpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TChangeOfPositionSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TDisconnectSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TMidCallSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TNoAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.isup.AdditionalCallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
@@ -33,6 +51,7 @@ import org.mobicents.protocols.ss7.cap.api.isup.GenericNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.OriginalCalledNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.RedirectingPartyIDCap;
+import org.mobicents.protocols.ss7.cap.api.primitives.AChChargingAddress;
 import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
@@ -47,9 +66,15 @@ import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AudibleIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DpSpecificCriteria;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DpSpecificCriteriaAlt;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.MidCallControlInfo;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformation;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeDurationChargingResult;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeIfTariffSwitch;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeInformation;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
@@ -60,6 +85,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
+import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.ExtBasicServiceCode;
 
 /**
  * 
@@ -69,8 +95,6 @@ import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation
 public interface CAPParameterFactory {
 	
 	public CAPGprsReferenceNumber createCAPGprsReferenceNumber(Integer destinationReference, Integer originationReference);
-	
-	public RouteSelectFailureSpecificInfo createRouteSelectFailureSpecificInfo(CauseCap failureCause);
 	
 	public CauseCap createCauseCap(byte[] data);
 	public CauseCap createCauseCap(CauseIndicators causeIndicators) throws CAPException;
@@ -116,5 +140,50 @@ public interface CAPParameterFactory {
 	public OriginalCalledNumberCap createOriginalCalledNumberCap(OriginalCalledNumber originalCalledNumber) throws CAPException;
 	public RedirectingPartyIDCap createRedirectingPartyIDCap(byte[] data);
 	public RedirectingPartyIDCap createRedirectingPartyIDCap(RedirectingNumber redirectingNumber) throws CAPException;
+	
+	public RouteSelectFailureSpecificInfo createRouteSelectFailureSpecificInfo(CauseCap failureCause);
+	public OCalledPartyBusySpecificInfo createOCalledPartyBusySpecificInfo(CauseCap busyCause);
+	public ONoAnswerSpecificInfo createONoAnswerSpecificInfo();
+	public OAnswerSpecificInfo createOAnswerSpecificInfo(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall,
+			ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode, ExtBasicServiceCode extBasicServiceCode2);
+	public ODisconnectSpecificInfo createODisconnectSpecificInfo(CauseCap releaseCause);
+	public TBusySpecificInfo createTBusySpecificInfo(CauseCap busyCause, boolean callForwarded, boolean routeNotPermitted,
+			CalledPartyNumberCap forwardingDestinationNumber);
+	public TNoAnswerSpecificInfo createTNoAnswerSpecificInfo(boolean callForwarded, CalledPartyNumberCap forwardingDestinationNumber);
+	public TAnswerSpecificInfo createTAnswerSpecificInfo(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall,
+			ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode, ExtBasicServiceCode extBasicServiceCode2);
+	public TDisconnectSpecificInfo createTDisconnectSpecificInfo(CauseCap releaseCause);
+
+	public DestinationRoutingAddress createDestinationRoutingAddress(ArrayList<CalledPartyNumberCap> calledPartyNumber);
+	
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(RouteSelectFailureSpecificInfo routeSelectFailureSpecificInfo);
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(OCalledPartyBusySpecificInfo oCalledPartyBusySpecificInfo);
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(ONoAnswerSpecificInfo oNoAnswerSpecificInfo);
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(OAnswerSpecificInfo oAnswerSpecificInfo);
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(OMidCallSpecificInfo oMidCallSpecificInfo);
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(ODisconnectSpecificInfo oDisconnectSpecificInfo);
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(TBusySpecificInfo tBusySpecificInfo);
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(TNoAnswerSpecificInfo tNoAnswerSpecificInfo);
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(TAnswerSpecificInfo tAnswerSpecificInfo);
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(TMidCallSpecificInfo tMidCallSpecificInfo);
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(TDisconnectSpecificInfo tDisconnectSpecificInfo);
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(OTermSeizedSpecificInfo oTermSeizedSpecificInfo);
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(CallAcceptedSpecificInfo callAcceptedSpecificInfo);
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(OAbandonSpecificInfo oAbandonSpecificInfo);
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(OChangeOfPositionSpecificInfo oChangeOfPositionSpecificInfo);
+	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(TChangeOfPositionSpecificInfo tChangeOfPositionSpecificInfo);
+
+	public RequestedInformation createRequestedInformation_CallAttemptElapsedTime(int callAttemptElapsedTimeValue);
+	public RequestedInformation createRequestedInformation_CallConnectedElapsedTime(int callConnectedElapsedTimeValue);
+	public RequestedInformation createRequestedInformation_CallStopTime(DateAndTime callStopTimeValue);
+	public RequestedInformation createRequestedInformation_ReleaseCause(CauseCap releaseCauseValue);
+
+	public TimeDurationChargingResult createTimeDurationChargingResult(ReceivingSideID partyToCharge, TimeInformation timeInformation, boolean legActive,
+			boolean callLegReleasedAtTcpExpiry, CAPExtensions extensions, AChChargingAddress aChChargingAddress);
+	public TimeIfTariffSwitch createTimeIfTariffSwitch(int timeSinceTariffSwitch, Integer tariffSwitchInterval);
+	public TimeInformation createTimeInformation(int timeIfNoTariffSwitch);
+	public TimeInformation createTimeInformation(TimeIfTariffSwitch timeIfTariffSwitch);
 
 }
+
+
