@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
+package org.mobicents.protocols.ss7.cap.EsiBcsm;
 
 import java.io.IOException;
 
@@ -31,9 +31,7 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
-import org.mobicents.protocols.ss7.cap.isup.BearerCapImpl;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ONoAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
@@ -42,41 +40,26 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  * @author sergey vetyutnev
  * 
  */
-public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
+public class ONoAnswerSpecificInfoImpl implements ONoAnswerSpecificInfo, CAPAsnPrimitive {
 
-	public static final int _ID_bearerCap = 0;
+	public static final String _PrimitiveName = "ONoAnswerSpecificInfo";
 
-	public static final String _PrimitiveName = "BearerCap";
-
-	private BearerCap bearerCap;
-
-	
-	public BearerCapabilityImpl() {
+	public ONoAnswerSpecificInfoImpl() {
 	}
 
-	public BearerCapabilityImpl(BearerCap bearerCap) {
-		this.bearerCap = bearerCap;
-	}
-	
-	@Override
-	public BearerCap getBearerCap() {
-		return bearerCap;
-	}
-
-	
 	@Override
 	public int getTag() throws CAPException {
-		return _ID_bearerCap;
+		return Tag.SEQUENCE;
 	}
 
 	@Override
 	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
+		return Tag.CLASS_UNIVERSAL;
 	}
 
 	@Override
 	public boolean getIsPrimitive() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -114,46 +97,29 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		}
 	}
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
-
-		this.bearerCap = null;
-
-		int tag = ais.getTag();
-
-		if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-			switch (tag) {
-			case _ID_bearerCap:
-				this.bearerCap = new BearerCapImpl();
-				((BearerCapImpl) this.bearerCap).decodeData(ais, length);
-
-//				byte[] buf = ais.readOctetStringData(length);
-//				if (buf.length < 2 || buf.length > 11)
-//					throw new CAPParsingComponentException(
-//							"Error while decoding " + _PrimitiveName + ": bearerCap must be from 2 to 11 bytes length, found: " + buf.length,
-//							CAPParsingComponentExceptionReason.MistypedParameter);
-//				this.bearerCap = new BearerCapImpl(buf);
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+		
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		while (true) {
+			if (ais.available() == 0)
 				break;
 
-			default:
-				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
-						CAPParsingComponentExceptionReason.MistypedParameter);
-			}
-		} else {
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			int tag = ais.readTag();
+
+			ais.advanceElement();
 		}
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
 		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			asnOs.writeTag(tagClass, false, tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
@@ -164,23 +130,14 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-
-		if (this.bearerCap == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": bearerCap must not be null");
-
-		((BearerCapImpl) this.bearerCap).encodeData(asnOs);
 	}
-
+	
 	@Override
 	public String toString() {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-		if (this.bearerCap != null) {
-			sb.append("bearerCap=");
-			sb.append(bearerCap.toString());
-		}
 		sb.append("]");
 
 		return sb.toString();

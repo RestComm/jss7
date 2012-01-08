@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
+package org.mobicents.protocols.ss7.cap.EsiBcsm;
 
 import java.io.IOException;
 
@@ -31,9 +31,11 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
-import org.mobicents.protocols.ss7.cap.isup.BearerCapImpl;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TBusySpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.CauseCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
@@ -42,41 +44,64 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  * @author sergey vetyutnev
  * 
  */
-public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
+public class TBusySpecificInfoImpl implements TBusySpecificInfo, CAPAsnPrimitive {
 
-	public static final int _ID_bearerCap = 0;
+	public static final int _ID_busyCause = 0;
+	public static final int _ID_callForwarded = 50;
+	public static final int _ID_routeNotPermitted = 51;
+	public static final int _ID_forwardingDestinationNumber = 52;
 
-	public static final String _PrimitiveName = "BearerCap";
+	public static final String _PrimitiveName = "TBusySpecificInfo";
 
-	private BearerCap bearerCap;
+	private CauseCap busyCause;
+	private boolean callForwarded;
+	private boolean routeNotPermitted;
+	private CalledPartyNumberCap forwardingDestinationNumber;
 
-	
-	public BearerCapabilityImpl() {
+
+	public TBusySpecificInfoImpl() {
 	}
 
-	public BearerCapabilityImpl(BearerCap bearerCap) {
-		this.bearerCap = bearerCap;
+	public TBusySpecificInfoImpl(CauseCap busyCause, boolean callForwarded, boolean routeNotPermitted, CalledPartyNumberCap forwardingDestinationNumber) {
+		this.busyCause = busyCause;
+		this.callForwarded = callForwarded;
+		this.routeNotPermitted = routeNotPermitted;
+		this.forwardingDestinationNumber = forwardingDestinationNumber;
 	}
-	
+
 	@Override
-	public BearerCap getBearerCap() {
-		return bearerCap;
+	public CauseCap getBusyCause() {
+		return busyCause;
 	}
 
-	
+	@Override
+	public boolean getCallForwarded() {
+		return callForwarded;
+	}
+
+	@Override
+	public boolean getRouteNotPermitted() {
+		return routeNotPermitted;
+	}
+
+	@Override
+	public CalledPartyNumberCap getForwardingDestinationNumber() {
+		return forwardingDestinationNumber;
+	}
+
 	@Override
 	public int getTag() throws CAPException {
-		return _ID_bearerCap;
+		return Tag.SEQUENCE;
 	}
 
 	@Override
 	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
+		return Tag.CLASS_UNIVERSAL;
 	}
 
 	@Override
 	public boolean getIsPrimitive() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -114,46 +139,59 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		}
 	}
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
 
-		this.bearerCap = null;
-
-		int tag = ais.getTag();
-
-		if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-			switch (tag) {
-			case _ID_bearerCap:
-				this.bearerCap = new BearerCapImpl();
-				((BearerCapImpl) this.bearerCap).decodeData(ais, length);
-
-//				byte[] buf = ais.readOctetStringData(length);
-//				if (buf.length < 2 || buf.length > 11)
-//					throw new CAPParsingComponentException(
-//							"Error while decoding " + _PrimitiveName + ": bearerCap must be from 2 to 11 bytes length, found: " + buf.length,
-//							CAPParsingComponentExceptionReason.MistypedParameter);
-//				this.bearerCap = new BearerCapImpl(buf);
+		this.busyCause = null;
+		this.callForwarded = false;
+		this.routeNotPermitted = false;
+		this.forwardingDestinationNumber = null;
+		
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		while (true) {
+			if (ais.available() == 0)
 				break;
 
-			default:
-				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
-						CAPParsingComponentExceptionReason.MistypedParameter);
+			int tag = ais.readTag();
+
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {
+				case _ID_busyCause:
+					this.busyCause = new CauseCapImpl();
+					((CauseCapImpl) this.busyCause).decodeAll(ais);
+					break;
+				case _ID_callForwarded:
+					ais.readNull();
+					this.callForwarded = true;
+					break;
+				case _ID_routeNotPermitted:
+					ais.readNull();
+					this.routeNotPermitted = true;
+					break;
+				case _ID_forwardingDestinationNumber:
+					this.forwardingDestinationNumber = new CalledPartyNumberCapImpl();
+					((CalledPartyNumberCapImpl) this.forwardingDestinationNumber).decodeAll(ais);
+					break;
+
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else {
+				ais.advanceElement();
 			}
-		} else {
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
 		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			asnOs.writeTag(tagClass, false, tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
@@ -165,10 +203,20 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		if (this.bearerCap == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": bearerCap must not be null");
-
-		((BearerCapImpl) this.bearerCap).encodeData(asnOs);
+		try {
+			if (this.busyCause != null)
+				((CauseCapImpl) this.busyCause).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_busyCause);
+			if (this.callForwarded)
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callForwarded);
+			if (this.routeNotPermitted)
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_routeNotPermitted);
+			if (this.forwardingDestinationNumber != null)
+				((CalledPartyNumberCapImpl) this.forwardingDestinationNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_forwardingDestinationNumber);
+		} catch (IOException e) {
+			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
@@ -177,10 +225,24 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-		if (this.bearerCap != null) {
-			sb.append("bearerCap=");
-			sb.append(bearerCap.toString());
+
+		if (this.busyCause != null) {
+			sb.append("busyCause= [");
+			sb.append(busyCause);
+			sb.append("]");
 		}
+		if (this.callForwarded) {
+			sb.append(", callForwarded");
+		}
+		if (this.routeNotPermitted) {
+			sb.append(", routeNotPermitted");
+		}
+		if (this.forwardingDestinationNumber != null) {
+			sb.append("forwardingDestinationNumber= [");
+			sb.append(forwardingDestinationNumber);
+			sb.append("]");
+		}
+
 		sb.append("]");
 
 		return sb.toString();

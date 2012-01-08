@@ -51,6 +51,18 @@ public class TimeInformationImpl implements TimeInformation, CAPAsnPrimitive {
 	private Integer timeIfNoTariffSwitch;
 	private TimeIfTariffSwitch timeIfTariffSwitch;
 	
+
+	public TimeInformationImpl() {
+	}
+
+	public TimeInformationImpl(int timeIfNoTariffSwitch) {
+		this.timeIfNoTariffSwitch = timeIfNoTariffSwitch;
+	}
+
+	public TimeInformationImpl(TimeIfTariffSwitch timeIfTariffSwitch) {
+		this.timeIfTariffSwitch = timeIfTariffSwitch;
+	}
+
 	@Override
 	public Integer getTimeIfNoTariffSwitch() {
 		return timeIfNoTariffSwitch;
@@ -60,7 +72,7 @@ public class TimeInformationImpl implements TimeInformation, CAPAsnPrimitive {
 	public TimeIfTariffSwitch getTimeIfTariffSwitch() {
 		return timeIfTariffSwitch;
 	}
-	
+
 	
 	@Override
 	public int getTag() throws CAPException {
@@ -147,19 +159,59 @@ public class TimeInformationImpl implements TimeInformation, CAPAsnPrimitive {
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+	public void encodeData(AsnOutputStream aos) throws CAPException {
+
+		if (this.timeIfNoTariffSwitch == null && this.timeIfTariffSwitch == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": both timeIfNoTariffSwitch and this.timeIfTariffSwitch must not be null");
+
+		try {
+			if (this.timeIfNoTariffSwitch != null) {
+				if (this.timeIfNoTariffSwitch < 0 || this.timeIfNoTariffSwitch > 864000)
+					throw new CAPException("Error while encoding " + _PrimitiveName + ": timeIfNoTariffSwitch must be from 0 to 864000");
+				aos.writeIntegerData(this.timeIfNoTariffSwitch);
+			} else {
+				((TimeIfTariffSwitchImpl) this.timeIfTariffSwitch).encodeData(aos);
+			}
+		} catch (IOException e) {
+			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.timeIfNoTariffSwitch != null) {
+			sb.append("timeIfNoTariffSwitch=");
+			sb.append(timeIfNoTariffSwitch);
+		}
+		if (this.timeIfTariffSwitch != null) {
+			sb.append("timeIfTariffSwitch=");
+			sb.append(timeIfTariffSwitch.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }

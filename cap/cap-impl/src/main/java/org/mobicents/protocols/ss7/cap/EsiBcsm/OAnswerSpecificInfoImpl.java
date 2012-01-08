@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
+package org.mobicents.protocols.ss7.cap.EsiBcsm;
 
 import java.io.IOException;
 
@@ -31,42 +31,77 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeIfTariffSwitch;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ChargeIndicator;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.ExtBasicServiceCode;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class TimeIfTariffSwitchImpl implements TimeIfTariffSwitch, CAPAsnPrimitive {
+public class OAnswerSpecificInfoImpl implements OAnswerSpecificInfo, CAPAsnPrimitive {
 
-	public static final int _ID_timeSinceTariffSwitch = 0;
-	public static final int _ID_tariffSwitchInterval = 1;
+	public static final int _ID_destinationAddress = 50;
+	public static final int _ID_orCall = 51;
+	public static final int _ID_forwardedCall = 52;
+	public static final int _ID_chargeIndicator = 53;
+	public static final int _ID_extbasicServiceCode = 54;
+	public static final int _ID_extbasicServiceCode2 = 55;
 
-	public static final String _PrimitiveName = "TimeIfTariffSwitch";
+	public static final String _PrimitiveName = "OAnswerSpecificInfo";
 
-	private int timeSinceTariffSwitch;
-	private Integer tariffSwitchInterval;	
-	
+	private CalledPartyNumberCap destinationAddress;
+	private boolean orCall;
+	private boolean forwardedCall;
+	private ChargeIndicator chargeIndicator;
+	private ExtBasicServiceCode extBasicServiceCode;
+	private ExtBasicServiceCode extBasicServiceCode2;
 
-	public TimeIfTariffSwitchImpl() {
+	public OAnswerSpecificInfoImpl() {
 	}
 
-	public TimeIfTariffSwitchImpl(int timeSinceTariffSwitch, Integer tariffSwitchInterval) {
-		this.timeSinceTariffSwitch = timeSinceTariffSwitch;
-		this.tariffSwitchInterval = tariffSwitchInterval;
+	public OAnswerSpecificInfoImpl(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall, ChargeIndicator chargeIndicator,
+			ExtBasicServiceCode extBasicServiceCode, ExtBasicServiceCode extBasicServiceCode2) {
+		this.destinationAddress = destinationAddress;
+		this.orCall = orCall;
+		this.forwardedCall = forwardedCall;
+		this.chargeIndicator = chargeIndicator;
+		this.extBasicServiceCode = extBasicServiceCode;
+		this.extBasicServiceCode2 = extBasicServiceCode2;
 	}
 
 	@Override
-	public int getTimeSinceTariffSwitch() {
-		return timeSinceTariffSwitch;
+	public CalledPartyNumberCap getDestinationAddress() {
+		return destinationAddress;
 	}
 
 	@Override
-	public Integer getTariffSwitchInterval() {
-		return tariffSwitchInterval;
+	public boolean getOrCall() {
+		return orCall;
+	}
+
+	@Override
+	public boolean getForwardedCall() {
+		return forwardedCall;
+	}
+
+	@Override
+	public ChargeIndicator getChargeIndicator() {
+		return chargeIndicator;
+	}
+
+	@Override
+	public ExtBasicServiceCode getExtBasicServiceCode() {
+		return extBasicServiceCode;
+	}
+
+	@Override
+	public ExtBasicServiceCode getExtBasicServiceCode2() {
+		return extBasicServiceCode2;
 	}
 
 	@Override
@@ -121,9 +156,13 @@ public class TimeIfTariffSwitchImpl implements TimeIfTariffSwitch, CAPAsnPrimiti
 
 	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
 
-		this.timeSinceTariffSwitch = -1;
-		this.tariffSwitchInterval = null;
-		
+		this.destinationAddress = null;
+		this.orCall = false;
+		this.forwardedCall = false;
+		this.chargeIndicator = null;
+		this.extBasicServiceCode = null;
+		this.extBasicServiceCode2 = null;
+
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		while (true) {
 			if (ais.available() == 0)
@@ -133,11 +172,29 @@ public class TimeIfTariffSwitchImpl implements TimeIfTariffSwitch, CAPAsnPrimiti
 
 			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 				switch (tag) {
-				case _ID_timeSinceTariffSwitch:
-					this.timeSinceTariffSwitch = (int)ais.readInteger();
+				case _ID_destinationAddress:
+					ais.advanceElement();
+					// TODO: implement it
 					break;
-				case _ID_tariffSwitchInterval:
-					this.tariffSwitchInterval = (int)ais.readInteger();
+				case _ID_orCall:
+					ais.advanceElement();
+					// TODO: implement it
+					break;
+				case _ID_forwardedCall:
+					ais.advanceElement();
+					// TODO: implement it
+					break;
+				case _ID_chargeIndicator:
+					ais.advanceElement();
+					// TODO: implement it
+					break;
+				case _ID_extbasicServiceCode:
+					ais.advanceElement();
+					// TODO: implement it
+					break;
+				case _ID_extbasicServiceCode2:
+					ais.advanceElement();
+					// TODO: implement it
 					break;
 
 				default:
@@ -148,22 +205,18 @@ public class TimeIfTariffSwitchImpl implements TimeIfTariffSwitch, CAPAsnPrimiti
 				ais.advanceElement();
 			}
 		}
-
-		if (this.timeSinceTariffSwitch == -1)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": timeSinceTariffSwitch is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
 		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			asnOs.writeTag(tagClass, false, tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
@@ -173,23 +226,25 @@ public class TimeIfTariffSwitchImpl implements TimeIfTariffSwitch, CAPAsnPrimiti
 	}
 
 	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+	public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		try {
-			if (this.timeSinceTariffSwitch < 0 || this.timeSinceTariffSwitch > 864000)
-				throw new CAPException("Error while encoding " + _PrimitiveName + ": timeSinceTariffSwitch must be from 0 to 864000");
-			
-			aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_timeSinceTariffSwitch, this.timeSinceTariffSwitch);
-
-			if (this.tariffSwitchInterval != null){
-				if (this.tariffSwitchInterval < 1 || this.tariffSwitchInterval > 864000)
-					throw new CAPException("Error while encoding " + _PrimitiveName + ": tariffSwitchInterval must be from 1 to 864000");
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_tariffSwitchInterval, this.tariffSwitchInterval);
-			}
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		if (this.destinationAddress != null) {
+			// TODO: implement it
+		}
+		if (this.orCall) {
+			// TODO: implement it
+		}
+		if (this.forwardedCall) {
+			// TODO: implement it
+		}
+		if (this.chargeIndicator != null) {
+			// TODO: implement it
+		}
+		if (this.extBasicServiceCode != null) {
+			// TODO: implement it
+		}
+		if (this.extBasicServiceCode2 != null) {
+			// TODO: implement it
 		}
 	}
 
@@ -199,12 +254,32 @@ public class TimeIfTariffSwitchImpl implements TimeIfTariffSwitch, CAPAsnPrimiti
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-
-		sb.append("timeSinceTariffSwitch=");
-		sb.append(timeSinceTariffSwitch);
-		if (this.tariffSwitchInterval != null) {
-			sb.append(", tariffSwitchInterval=");
-			sb.append(tariffSwitchInterval);
+		
+		if (this.destinationAddress != null) {
+			sb.append("destinationAddress= [");
+			sb.append(destinationAddress.toString());
+			sb.append("]");
+		}
+		if (this.orCall) {
+			sb.append(", orCall");
+		}
+		if (this.forwardedCall) {
+			sb.append(", forwardedCall");
+		}
+		if (this.chargeIndicator != null) {
+			sb.append(", chargeIndicator= [");
+			sb.append(chargeIndicator.toString());
+			sb.append("]");
+		}
+		if (this.extBasicServiceCode != null) {
+			sb.append(", extBasicServiceCode= [");
+			sb.append(extBasicServiceCode.toString());
+			sb.append("]");
+		}
+		if (this.extBasicServiceCode2 != null) {
+			sb.append(", extBasicServiceCode2= [");
+			sb.append(extBasicServiceCode2.toString());
+			sb.append("]");
 		}
 
 		sb.append("]");

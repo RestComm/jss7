@@ -56,16 +56,38 @@ public class RequestedInformationImpl implements RequestedInformation, CAPAsnPri
 	                                               
 	public static final String _PrimitiveName = "RequestedInformation";
 
-	private RequestedInformationType tequestedInformationType;
+	private RequestedInformationType requestedInformationType;
 	private Integer callAttemptElapsedTimeValue;
 	private DateAndTime callStopTimeValue;
 	private Integer callConnectedElapsedTimeValue;
 	private CauseCap releaseCauseValue;
 
+	public RequestedInformationImpl() {
+	}
+
+	public RequestedInformationImpl(RequestedInformationType requestedInformationType, int intValue) {
+		if (requestedInformationType == RequestedInformationType.callAttemptElapsedTime) {
+			this.requestedInformationType = RequestedInformationType.callAttemptElapsedTime;
+			this.callAttemptElapsedTimeValue = intValue;
+		} else {
+			this.requestedInformationType = RequestedInformationType.callConnectedElapsedTime;
+			this.callConnectedElapsedTimeValue = intValue;
+		}
+	}
+
+	public RequestedInformationImpl(DateAndTime callStopTimeValue) {
+		this.requestedInformationType = RequestedInformationType.callStopTime;
+		this.callStopTimeValue = callStopTimeValue;
+	}
+
+	public RequestedInformationImpl(CauseCap releaseCauseValue) {
+		this.requestedInformationType = RequestedInformationType.releaseCause;
+		this.releaseCauseValue = releaseCauseValue;
+	}
 	
 	@Override
 	public RequestedInformationType getRequestedInformationType() {
-		return tequestedInformationType;
+		return requestedInformationType;
 	}
 
 	@Override
@@ -135,7 +157,7 @@ public class RequestedInformationImpl implements RequestedInformation, CAPAsnPri
 
 	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.tequestedInformationType = null;
+		this.requestedInformationType = null;
 		this.callAttemptElapsedTimeValue = null;
 		this.callStopTimeValue = null;
 		this.callConnectedElapsedTimeValue = null;
@@ -153,7 +175,7 @@ public class RequestedInformationImpl implements RequestedInformation, CAPAsnPri
 				switch (tag) {
 				case _ID_requestedInformationType:
 					int i1 = (int) ais.readInteger();
-					this.tequestedInformationType = RequestedInformationType.getInstance(i1);
+					this.requestedInformationType = RequestedInformationType.getInstance(i1);
 					break;
 				case _ID_requestedInformationValue:
 					valueReceived = true;
@@ -194,7 +216,7 @@ public class RequestedInformationImpl implements RequestedInformation, CAPAsnPri
 			}
 		}
 
-		if (this.tequestedInformationType == null || !valueReceived)
+		if (this.requestedInformationType == null || !valueReceived)
 			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
 					+ ": requestedInformationType and requestedInformationValue are mandatory but not found",
 					CAPParsingComponentExceptionReason.MistypedParameter);
@@ -202,19 +224,100 @@ public class RequestedInformationImpl implements RequestedInformation, CAPAsnPri
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+	public void encodeData(AsnOutputStream aos) throws CAPException {
+
+		if (this.requestedInformationType == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": requestedInformationType must not be null");
+
+		try {
+			aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_requestedInformationType, this.requestedInformationType.getCode());
+
+			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_requestedInformationValue);
+			int pos = aos.StartContentDefiniteLength();
+
+			switch (this.requestedInformationType) {
+			case callAttemptElapsedTime:
+				if (this.callAttemptElapsedTimeValue == null)
+					throw new CAPException("Error while encoding " + _PrimitiveName + ": callAttemptElapsedTimeValue must not be null for "
+							+ requestedInformationType.toString() + " requestedInformationType");
+				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callAttemptElapsedTimeValue, this.callAttemptElapsedTimeValue);
+				break;
+			case callStopTime:
+				if (this.callStopTimeValue == null)
+					throw new CAPException("Error while encoding " + _PrimitiveName + ": callStopTimeValue must not be null for "
+							+ requestedInformationType.toString() + " requestedInformationType");
+				((DateAndTimeImpl) this.callStopTimeValue).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_callStopTimeValue);
+				break;
+			case callConnectedElapsedTime:
+				if (this.callConnectedElapsedTimeValue == null)
+					throw new CAPException("Error while encoding " + _PrimitiveName + ": callConnectedElapsedTimeValue must not be null for "
+							+ requestedInformationType.toString() + " requestedInformationType");
+				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callConnectedElapsedTimeValue, this.callConnectedElapsedTimeValue);
+				break;
+			case releaseCause:
+				if (this.releaseCauseValue == null)
+					throw new CAPException("Error while encoding " + _PrimitiveName + ": releaseCauseValue must not be null for "
+							+ requestedInformationType.toString() + " requestedInformationType");
+				((CauseCapImpl) this.releaseCauseValue).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_releaseCauseValue);
+				break;
+			default:
+				throw new CAPException("Error while encoding " + _PrimitiveName + ": bad requestedInformationType value");
+			}
+
+			aos.FinalizeContent(pos);
+		} catch (IOException e) {
+			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		if (this.requestedInformationType != null) {
+			sb.append("requestedInformationType=");
+			sb.append(requestedInformationType);
+		}
+		if (this.callAttemptElapsedTimeValue != null) {
+			sb.append(", callAttemptElapsedTimeValue=");
+			sb.append(callAttemptElapsedTimeValue);
+		}
+		if (this.callStopTimeValue != null) {
+			sb.append(", callStopTimeValue=");
+			sb.append(callStopTimeValue.toString());
+		}
+		if (this.callConnectedElapsedTimeValue != null) {
+			sb.append(", callConnectedElapsedTimeValue=");
+			sb.append(callConnectedElapsedTimeValue);
+		}
+		if (this.releaseCauseValue != null) {
+			sb.append(", releaseCauseValue=");
+			sb.append(releaseCauseValue.toString());
+		}
+		sb.append("]");
+
+		return sb.toString();
 	}
 }
+

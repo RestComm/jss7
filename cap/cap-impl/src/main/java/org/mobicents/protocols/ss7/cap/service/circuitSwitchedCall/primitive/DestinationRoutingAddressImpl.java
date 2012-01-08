@@ -49,13 +49,19 @@ public class DestinationRoutingAddressImpl implements DestinationRoutingAddress,
 
 	public ArrayList<CalledPartyNumberCap> calledPartyNumber;
 
+	
+	public DestinationRoutingAddressImpl() {
+	}
+
+	public DestinationRoutingAddressImpl(ArrayList<CalledPartyNumberCap> calledPartyNumber) {
+		this.calledPartyNumber = calledPartyNumber;
+	}
 
 	@Override
 	public ArrayList<CalledPartyNumberCap> getCalledPartyNumber() {
 		return calledPartyNumber;
 	}
 
-	
 	@Override
 	public int getTag() throws CAPException {
 		return Tag.SEQUENCE;
@@ -124,30 +130,57 @@ public class DestinationRoutingAddressImpl implements DestinationRoutingAddress,
 
 			CalledPartyNumberCap cpn = new CalledPartyNumberCapImpl();
 			((CalledPartyNumberCapImpl)cpn).decodeAll(ais);
-//			byte[] buf = ais.readOctetString();
-//			if (buf.length < 2 || buf.length > 18)
-//				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": CalledPartyNumber must be from 2 to 18 bytes length, found: "
-//						+ buf.length, CAPParsingComponentExceptionReason.MistypedParameter);
-//			CalledPartyNumberCap cpn = new CalledPartyNumberCapImpl(buf);
 			this.calledPartyNumber.add(cpn);
 		}
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		if (this.calledPartyNumber == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": calledPartyNumber must not be null");
+		if (this.calledPartyNumber.size() != 1)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": calledPartyNumber count must be equal 1");
+
+		for (CalledPartyNumberCap cpn : this.calledPartyNumber) {
+			((CalledPartyNumberCapImpl) cpn).encodeAll(asnOs);
+		}
+	}
+
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		if (this.calledPartyNumber != null) {
+			sb.append("calledPartyNumber=[");
+			for (CalledPartyNumberCap cpn : this.calledPartyNumber) {
+				sb.append(cpn.toString());
+				sb.append(", ");
+			}
+			sb.append("]");
+		}
+		sb.append("]");
+
+		return sb.toString();
 	}
 }

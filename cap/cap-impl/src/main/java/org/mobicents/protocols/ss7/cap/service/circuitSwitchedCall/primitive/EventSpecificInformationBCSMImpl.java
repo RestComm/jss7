@@ -28,7 +28,15 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.EsiBcsm.OAnswerSpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.EsiBcsm.OCalledPartyBusySpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.EsiBcsm.ODisconnectSpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.EsiBcsm.ONoAnswerSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.RouteSelectFailureSpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.EsiBcsm.TAnswerSpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.EsiBcsm.TBusySpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.EsiBcsm.TDisconnectSpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.EsiBcsm.TNoAnswerSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
@@ -94,6 +102,74 @@ public class EventSpecificInformationBCSMImpl implements EventSpecificInformatio
 	private OAbandonSpecificInfo oAbandonSpecificInfo;
 	private OChangeOfPositionSpecificInfo oChangeOfPositionSpecificInfo;
 	private TChangeOfPositionSpecificInfo tChangeOfPositionSpecificInfo;
+
+	
+	public EventSpecificInformationBCSMImpl() {
+	}
+	
+	public EventSpecificInformationBCSMImpl(RouteSelectFailureSpecificInfo routeSelectFailureSpecificInfo) {
+		this.routeSelectFailureSpecificInfo = routeSelectFailureSpecificInfo;
+	}
+	
+	public EventSpecificInformationBCSMImpl(OCalledPartyBusySpecificInfo oCalledPartyBusySpecificInfo) {
+		this.oCalledPartyBusySpecificInfo = oCalledPartyBusySpecificInfo;
+	}
+	
+	public EventSpecificInformationBCSMImpl(ONoAnswerSpecificInfo oNoAnswerSpecificInfo) {
+		this.oNoAnswerSpecificInfo = oNoAnswerSpecificInfo;
+	}
+	
+	public EventSpecificInformationBCSMImpl(OAnswerSpecificInfo oAnswerSpecificInfo) {
+		this.oAnswerSpecificInfo = oAnswerSpecificInfo;
+	}
+	
+	public EventSpecificInformationBCSMImpl(OMidCallSpecificInfo oMidCallSpecificInfo) {
+		this.oMidCallSpecificInfo = oMidCallSpecificInfo;
+	}
+	
+	public EventSpecificInformationBCSMImpl(ODisconnectSpecificInfo oDisconnectSpecificInfo) {
+		this.oDisconnectSpecificInfo = oDisconnectSpecificInfo;
+	}
+	
+	public EventSpecificInformationBCSMImpl(TBusySpecificInfo tBusySpecificInfo) {
+		this.tBusySpecificInfo = tBusySpecificInfo;
+	}
+	
+	public EventSpecificInformationBCSMImpl(TNoAnswerSpecificInfo tNoAnswerSpecificInfo) {
+		this.tNoAnswerSpecificInfo = tNoAnswerSpecificInfo;
+	}
+	
+	public EventSpecificInformationBCSMImpl(TAnswerSpecificInfo tAnswerSpecificInfo) {
+		this.tAnswerSpecificInfo = tAnswerSpecificInfo;
+	}
+	
+	public EventSpecificInformationBCSMImpl(TMidCallSpecificInfo tMidCallSpecificInfo) {
+		this.tMidCallSpecificInfo = tMidCallSpecificInfo;
+	}
+	
+	public EventSpecificInformationBCSMImpl(TDisconnectSpecificInfo tDisconnectSpecificInfo) {
+		this.tDisconnectSpecificInfo = tDisconnectSpecificInfo;
+	}
+	
+	public EventSpecificInformationBCSMImpl(OTermSeizedSpecificInfo oTermSeizedSpecificInfo) {
+		this.oTermSeizedSpecificInfo = oTermSeizedSpecificInfo;
+	}
+	
+	public EventSpecificInformationBCSMImpl(CallAcceptedSpecificInfo callAcceptedSpecificInfo) {
+		this.callAcceptedSpecificInfo = callAcceptedSpecificInfo;
+	}
+	
+	public EventSpecificInformationBCSMImpl(OAbandonSpecificInfo oAbandonSpecificInfo) {
+		this.oAbandonSpecificInfo = oAbandonSpecificInfo;
+	}
+	
+	public EventSpecificInformationBCSMImpl(OChangeOfPositionSpecificInfo oChangeOfPositionSpecificInfo) {
+		this.oChangeOfPositionSpecificInfo = oChangeOfPositionSpecificInfo;
+	}
+	
+	public EventSpecificInformationBCSMImpl(TChangeOfPositionSpecificInfo tChangeOfPositionSpecificInfo) {
+		this.tChangeOfPositionSpecificInfo = tChangeOfPositionSpecificInfo;
+	}
 
 	
 	@Override
@@ -289,48 +365,63 @@ public class EventSpecificInformationBCSMImpl implements EventSpecificInformatio
 				((RouteSelectFailureSpecificInfoImpl) this.routeSelectFailureSpecificInfo).decodeData(ais, length);
 				break;
 			case _ID_oCalledPartyBusySpecificInfo:
-				ais.advanceElementData(length);
+				this.oCalledPartyBusySpecificInfo = new OCalledPartyBusySpecificInfoImpl();
+				((OCalledPartyBusySpecificInfoImpl) this.oCalledPartyBusySpecificInfo).decodeData(ais, length);
 				break;
 			case _ID_oNoAnswerSpecificInfo:
-				ais.advanceElementData(length);
+				this.oNoAnswerSpecificInfo = new ONoAnswerSpecificInfoImpl();
+				((ONoAnswerSpecificInfoImpl) this.oNoAnswerSpecificInfo).decodeData(ais, length);
 				break;
 			case _ID_oAnswerSpecificInfo:
-				ais.advanceElementData(length);
+				this.oAnswerSpecificInfo = new OAnswerSpecificInfoImpl();
+				((OAnswerSpecificInfoImpl) this.oAnswerSpecificInfo).decodeData(ais, length);
 				break;
 			case _ID_oMidCallSpecificInfo:
+				// TODO: implement it
 				ais.advanceElementData(length);
 				break;
 			case _ID_oDisconnectSpecificInfo:
-				ais.advanceElementData(length);
+				this.oDisconnectSpecificInfo = new ODisconnectSpecificInfoImpl();
+				((ODisconnectSpecificInfoImpl) this.oDisconnectSpecificInfo).decodeData(ais, length);
 				break;
 			case _ID_tBusySpecificInfo:
-				ais.advanceElementData(length);
+				this.tBusySpecificInfo = new TBusySpecificInfoImpl();
+				((TBusySpecificInfoImpl) this.tBusySpecificInfo).decodeData(ais, length);
 				break;
 			case _ID_tNoAnswerSpecificInfo:
-				ais.advanceElementData(length);
+				this.tNoAnswerSpecificInfo = new TNoAnswerSpecificInfoImpl();
+				((TNoAnswerSpecificInfoImpl) this.tNoAnswerSpecificInfo).decodeData(ais, length);
 				break;
 			case _ID_tAnswerSpecificInfo:
-				ais.advanceElementData(length);
+				this.tAnswerSpecificInfo = new TAnswerSpecificInfoImpl();
+				((TAnswerSpecificInfoImpl) this.tAnswerSpecificInfo).decodeData(ais, length);
 				break;
 			case _ID_tMidCallSpecificInfo:
+				// TODO: implement it
 				ais.advanceElementData(length);
 				break;
 			case _ID_tDisconnectSpecificInfo:
-				ais.advanceElementData(length);
+				this.tDisconnectSpecificInfo = new TDisconnectSpecificInfoImpl();
+				((TDisconnectSpecificInfoImpl) this.tDisconnectSpecificInfo).decodeData(ais, length);
 				break;
 			case _ID_oTermSeizedSpecificInfo:
+				// TODO: implement it
 				ais.advanceElementData(length);
 				break;
 			case _ID_callAcceptedSpecificInfo:
+				// TODO: implement it
 				ais.advanceElementData(length);
 				break;
 			case _ID_oAbandonSpecificInfo:
+				// TODO: implement it
 				ais.advanceElementData(length);
 				break;
 			case _ID_oChangeOfPositionSpecificInfo:
+				// TODO: implement it
 				ais.advanceElementData(length);
 				break;
 			case _ID_tChangeOfPositionSpecificInfo:
+				// TODO: implement it
 				ais.advanceElementData(length);
 				break;
 
@@ -346,19 +437,147 @@ public class EventSpecificInformationBCSMImpl implements EventSpecificInformatio
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
 
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
 
+		if (routeSelectFailureSpecificInfo != null) {
+			((RouteSelectFailureSpecificInfoImpl) routeSelectFailureSpecificInfo).encodeData(asnOs);
+			return;
+		} else if (oCalledPartyBusySpecificInfo != null) {
+			((OCalledPartyBusySpecificInfoImpl) oCalledPartyBusySpecificInfo).encodeData(asnOs);
+			return;
+		} else if (oNoAnswerSpecificInfo != null) {
+			((ONoAnswerSpecificInfoImpl) oNoAnswerSpecificInfo).encodeData(asnOs);
+			return;
+		} else if (oAnswerSpecificInfo != null) {
+			((OAnswerSpecificInfoImpl) oAnswerSpecificInfo).encodeData(asnOs);
+			return;
+		} else if (oMidCallSpecificInfo != null) {
+			// TODO: implement it
+		} else if (oDisconnectSpecificInfo != null) {
+			((ODisconnectSpecificInfoImpl) oDisconnectSpecificInfo).encodeData(asnOs);
+			return;
+		} else if (tBusySpecificInfo != null) {
+			((TBusySpecificInfoImpl) tBusySpecificInfo).encodeData(asnOs);
+			return;
+		} else if (tNoAnswerSpecificInfo != null) {
+			((TNoAnswerSpecificInfoImpl) tNoAnswerSpecificInfo).encodeData(asnOs);
+			return;
+		} else if (tAnswerSpecificInfo != null) {
+			((TAnswerSpecificInfoImpl) tAnswerSpecificInfo).encodeData(asnOs);
+			return;
+		} else if (tMidCallSpecificInfo != null) {
+			// TODO: implement it
+		} else if (tDisconnectSpecificInfo != null) {
+			((TDisconnectSpecificInfoImpl) tDisconnectSpecificInfo).encodeData(asnOs);
+			return;
+		} else if (oTermSeizedSpecificInfo != null) {
+			// TODO: implement it
+		} else if (callAcceptedSpecificInfo != null) {
+			// TODO: implement it
+		} else if (oAbandonSpecificInfo != null) {
+			// TODO: implement it
+		} else if (oChangeOfPositionSpecificInfo != null) {
+			// TODO: implement it
+		} else if (tChangeOfPositionSpecificInfo != null) {
+			// TODO: implement it
+		}
+
+		throw new CAPException("Error while encoding " + _PrimitiveName + ": no choice is specified");
+	}
+
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (routeSelectFailureSpecificInfo != null) {
+			sb.append("routeSelectFailureSpecificInfo=[");
+			sb.append(routeSelectFailureSpecificInfo.toString());
+			sb.append("]");
+		} else if (oCalledPartyBusySpecificInfo != null) {
+			sb.append("oCalledPartyBusySpecificInfo=[");
+			sb.append(oCalledPartyBusySpecificInfo.toString());
+			sb.append("]");
+		} else if (oNoAnswerSpecificInfo != null) {
+			sb.append("oNoAnswerSpecificInfo=[");
+			sb.append(oNoAnswerSpecificInfo.toString());
+			sb.append("]");
+		} else if (oAnswerSpecificInfo != null) {
+			sb.append("oAnswerSpecificInfo=[");
+			sb.append(oAnswerSpecificInfo.toString());
+			sb.append("]");
+		} else if (oMidCallSpecificInfo != null) {
+			sb.append("oMidCallSpecificInfo=[");
+			sb.append(oMidCallSpecificInfo.toString());
+			sb.append("]");
+		} else if (oDisconnectSpecificInfo != null) {
+			sb.append("oDisconnectSpecificInfo=[");
+			sb.append(oDisconnectSpecificInfo.toString());
+			sb.append("]");
+		} else if (tBusySpecificInfo != null) {
+			sb.append("tBusySpecificInfo=[");
+			sb.append(tBusySpecificInfo.toString());
+			sb.append("]");
+		} else if (tNoAnswerSpecificInfo != null) {
+			sb.append("tNoAnswerSpecificInfo=[");
+			sb.append(tNoAnswerSpecificInfo.toString());
+			sb.append("]");
+		} else if (tAnswerSpecificInfo != null) {
+			sb.append("tAnswerSpecificInfo=[");
+			sb.append(tAnswerSpecificInfo.toString());
+			sb.append("]");
+		} else if (tMidCallSpecificInfo != null) {
+			sb.append("tMidCallSpecificInfo=[");
+			sb.append(tMidCallSpecificInfo.toString());
+			sb.append("]");
+		} else if (tDisconnectSpecificInfo != null) {
+			sb.append("tDisconnectSpecificInfo=[");
+			sb.append(tDisconnectSpecificInfo.toString());
+			sb.append("]");
+		} else if (oTermSeizedSpecificInfo != null) {
+			sb.append("oTermSeizedSpecificInfo=[");
+			sb.append(oTermSeizedSpecificInfo.toString());
+			sb.append("]");
+		} else if (callAcceptedSpecificInfo != null) {
+			sb.append("callAcceptedSpecificInfo=[");
+			sb.append(callAcceptedSpecificInfo.toString());
+			sb.append("]");
+		} else if (oAbandonSpecificInfo != null) {
+			sb.append("oAbandonSpecificInfo=[");
+			sb.append(oAbandonSpecificInfo.toString());
+			sb.append("]");
+		} else if (oChangeOfPositionSpecificInfo != null) {
+			sb.append("oChangeOfPositionSpecificInfo=[");
+			sb.append(oChangeOfPositionSpecificInfo.toString());
+			sb.append("]");
+		} else if (tChangeOfPositionSpecificInfo != null) {
+			sb.append("tChangeOfPositionSpecificInfo=[");
+			sb.append(tChangeOfPositionSpecificInfo.toString());
+			sb.append("]");
+		}
+		
+		sb.append("]");
+
+		return sb.toString();
 	}
 }
+
