@@ -55,10 +55,13 @@ import org.mobicents.protocols.ss7.cap.isup.CallingPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.LocationNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.OriginalCalledNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.RedirectingPartyIDCapImpl;
+import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CalledPartyBCDNumberImpl;
 import org.mobicents.protocols.ss7.cap.primitives.TimeAndTimezoneImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.BearerCapabilityImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.IPSSPCapabilitiesImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InitialDPArgExtensionImpl;
+import org.mobicents.protocols.ss7.inap.api.INAPException;
 import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
 import org.mobicents.protocols.ss7.inap.api.isup.CallingPartysCategoryInap;
 import org.mobicents.protocols.ss7.inap.api.isup.HighLayerCompatibilityInap;
@@ -66,6 +69,7 @@ import org.mobicents.protocols.ss7.inap.api.isup.RedirectionInformationInap;
 import org.mobicents.protocols.ss7.inap.isup.CallingPartysCategoryInapImpl;
 import org.mobicents.protocols.ss7.inap.isup.HighLayerCompatibilityInapImpl;
 import org.mobicents.protocols.ss7.inap.isup.RedirectionInformationInapImpl;
+import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -154,7 +158,57 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 	private TimeAndTimezone timeAndTimezone;
 	private boolean callForwardingSSPending;
 	private InitialDPArgExtension initialDPArgExtension;
+
+	private boolean isCAPVersion3orLater;
+
 	
+	public InitialDPRequestIndicationImpl(boolean isCAPVersion3orLater) {
+		this.isCAPVersion3orLater = isCAPVersion3orLater;
+	}
+	
+	public InitialDPRequestIndicationImpl(int serviceKey, CalledPartyNumberCap calledPartyNumber, CallingPartyNumberCap callingPartyNumber,
+			CallingPartysCategoryInap callingPartysCategory, CGEncountered CGEncountered, IPSSPCapabilities IPSSPCapabilities,
+			LocationNumberCap locationNumber, OriginalCalledNumberCap originalCalledPartyID, CAPExtensions extensions,
+			HighLayerCompatibilityInap highLayerCompatibility, AdditionalCallingPartyNumberCap additionalCallingPartyNumber, BearerCapability bearerCapability,
+			EventTypeBCSM eventTypeBCSM, RedirectingPartyIDCap redirectingPartyID, RedirectionInformationInap redirectionInformation, CauseCap cause,
+			ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Carrier carrier, CUGIndex cugIndex, CUGInterlock cugInterlock,
+			boolean cugOutgoingAccess, IMSI imsi, SubscriberState subscriberState, LocationInformation locationInformation,
+			ExtBasicServiceCode extBasicServiceCode, CallReferenceNumber callReferenceNumber, ISDNAddressString mscAddress,
+			CalledPartyBCDNumber calledPartyBCDNumber, TimeAndTimezone timeAndTimezone, boolean callForwardingSSPending,
+			InitialDPArgExtension initialDPArgExtension, boolean isCAPVersion3orLater) {
+		this.serviceKey = serviceKey;
+		this.calledPartyNumber = calledPartyNumber;
+		this.callingPartyNumber = callingPartyNumber;
+		this.callingPartysCategory = callingPartysCategory;
+		this.CGEncountered = CGEncountered;
+		this.IPSSPCapabilities = IPSSPCapabilities;
+		this.locationNumber = locationNumber;
+		this.originalCalledPartyID = originalCalledPartyID;
+		this.extensions = extensions;
+		this.highLayerCompatibility = highLayerCompatibility;
+		this.additionalCallingPartyNumber = additionalCallingPartyNumber;
+		this.bearerCapability = bearerCapability;
+		this.eventTypeBCSM = eventTypeBCSM;
+		this.redirectingPartyID = redirectingPartyID;
+		this.redirectionInformation = redirectionInformation;
+		this.cause = cause;
+		this.serviceInteractionIndicatorsTwo = serviceInteractionIndicatorsTwo;
+		this.carrier = carrier;
+		this.cugIndex = cugIndex;
+		this.cugInterlock = cugInterlock;
+		this.cugOutgoingAccess = cugOutgoingAccess;
+		this.imsi = imsi;
+		this.subscriberState = subscriberState;
+		this.locationInformation = locationInformation;
+		this.extBasicServiceCode = extBasicServiceCode;
+		this.callReferenceNumber = callReferenceNumber;
+		this.mscAddress = mscAddress;
+		this.calledPartyBCDNumber = calledPartyBCDNumber;
+		this.timeAndTimezone = timeAndTimezone;
+		this.callForwardingSSPending = callForwardingSSPending;
+		this.initialDPArgExtension = initialDPArgExtension;
+		this.isCAPVersion3orLater = isCAPVersion3orLater;
+	}
 
 	@Override
 	public int getServiceKey() {
@@ -440,8 +494,9 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 					case _ID_cGEncountered:
 						ais.advanceElement(); // TODO: implement it
 						break;
-					case _ID_iPSSPCapabilities:
-						ais.advanceElement(); // TODO: implement it
+					case _ID_iPSSPCapabilities:	
+						this.IPSSPCapabilities = new IPSSPCapabilitiesImpl();
+						((IPSSPCapabilitiesImpl) this.IPSSPCapabilities).decodeAll(ais);
 						break;
 					case _ID_locationNumber:
 						this.locationNumber = new LocationNumberCapImpl();
@@ -452,15 +507,10 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 						((OriginalCalledNumberCapImpl) this.originalCalledPartyID).decodeAll(ais);
 						break;
 					case _ID_extensions:
-						ais.advanceElement(); // TODO: implement it
+						this.extensions = new CAPExtensionsImpl();
+						((CAPExtensionsImpl) this.extensions).decodeAll(ais);
 						break;
 					case _ID_highLayerCompatibility:
-//						byte[] buf = ais.readOctetString();
-//						if (buf.length < 2 || buf.length > 2)
-//							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-//									+ ": highLayerCompatibility must be from 2 to 2 bytes length, found: " + buf.length,
-//									CAPParsingComponentExceptionReason.MistypedParameter);
-//						this.highLayerCompatibility = new HighLayerCompatibilityInapImpl(buf);
 						this.highLayerCompatibility = new HighLayerCompatibilityInapImpl();
 						((HighLayerCompatibilityInapImpl) this.highLayerCompatibility).decodeAll(ais);
 						break;
@@ -483,12 +533,6 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 						((RedirectingPartyIDCapImpl) this.redirectingPartyID).decodeAll(ais);
 						break;
 					case _ID_redirectionInformation:
-//						byte[] buf = ais.readOctetString();
-//						if (buf.length < 2 || buf.length > 2)
-//							throw new CAPParsingComponentException(
-//									"Error while decoding InitialDPRequest: redirectionInformation must be from 2 to 2 bytes length, found: " + buf.length,
-//									CAPParsingComponentExceptionReason.MistypedParameter);
-//						this.redirectionInformation = new RedirectionInformationInapImpl(buf);
 						this.redirectionInformation = new RedirectionInformationInapImpl();
 						((RedirectionInformationInapImpl) this.redirectionInformation).decodeAll(ais);
 						break;
@@ -547,13 +591,14 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 						((TimeAndTimezoneImpl)this.timeAndTimezone).decodeAll(ais);
 						break;
 					case _ID_callForwardingSS_Pending:
-						ais.advanceElement(); // TODO: implement it
+						ais.readNull();
+						this.callForwardingSSPending = true;
 						break;
 					case _ID_initialDPArgExtension:
-						this.initialDPArgExtension = new InitialDPArgExtensionImpl();
+						this.initialDPArgExtension = new InitialDPArgExtensionImpl(this.isCAPVersion3orLater);
 						((InitialDPArgExtensionImpl)this.initialDPArgExtension).decodeAll(ais);
 						break;
-						
+
 					default:
 						ais.advanceElement();
 						break;
@@ -574,20 +619,250 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+	public void encodeData(AsnOutputStream aos) throws CAPException {
+
+		try {
+			aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_serviceKey, this.serviceKey);
+
+			if (this.calledPartyNumber != null)
+				((CalledPartyNumberCapImpl) this.calledPartyNumber).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_calledPartyNumber);
+			if (this.callingPartyNumber != null)
+				((CallingPartyNumberCapImpl) this.callingPartyNumber).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_callingPartyNumber);
+			if (this.callingPartysCategory != null)
+				((CallingPartysCategoryInapImpl) this.callingPartysCategory).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_callingPartysCategory);
+			if (this.CGEncountered != null) {
+				// TODO: implement it - _ID_cGEncountered
+			}
+			if (this.IPSSPCapabilities != null)
+				((IPSSPCapabilitiesImpl) this.IPSSPCapabilities).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_iPSSPCapabilities);
+			if (this.locationNumber != null)
+				((LocationNumberCapImpl) this.locationNumber).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationNumber);
+			if (this.originalCalledPartyID != null)
+				((OriginalCalledNumberCapImpl) this.originalCalledPartyID).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_originalCalledPartyID);
+			if (this.extensions != null)
+				((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
+			if (this.highLayerCompatibility != null)
+				((HighLayerCompatibilityInapImpl) this.highLayerCompatibility).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_highLayerCompatibility);
+			if (this.additionalCallingPartyNumber != null)
+				((AdditionalCallingPartyNumberCapImpl) this.additionalCallingPartyNumber).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_additionalCallingPartyNumber);
+			if (this.bearerCapability != null) {
+				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_bearerCapability);
+				int pos = aos.StartContentDefiniteLength();
+				((AdditionalCallingPartyNumberCapImpl) this.bearerCapability).encodeAll(aos);
+				aos.FinalizeContent(pos);
+			}
+			if (this.eventTypeBCSM != null)
+				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_eventTypeBCSM, this.eventTypeBCSM.getCode());
+			if (this.redirectingPartyID != null)
+				((RedirectingPartyIDCapImpl) this.redirectingPartyID).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_redirectingPartyID);
+			if (this.redirectionInformation != null)
+				((RedirectionInformationInapImpl) this.redirectionInformation).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_redirectionInformation);
+			if (this.cause != null) {
+				// TODO: implement it - _ID_cause
+			}
+			if (this.serviceInteractionIndicatorsTwo != null) {
+				// TODO: implement it - _ID_serviceInteractionIndicatorsTwo
+			}
+			if (this.carrier != null) {
+				// TODO: implement it - _ID_carrier
+			}
+			if (this.cugIndex != null) {
+				// TODO: implement it - _ID_cug_Index
+			}
+			if (this.cugInterlock != null) {
+				// TODO: implement it - _ID_cug_Interlock
+			}
+			if (this.cugOutgoingAccess) {
+				// TODO: implement it - _ID_cug_OutgoingAccess
+			}
+			if (this.imsi != null)
+				((IMSIImpl) this.imsi).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_iMSI);
+			if (this.subscriberState != null) {
+				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_subscriberState);
+				int pos = aos.StartContentDefiniteLength();
+				((SubscriberStateImpl) this.subscriberState).encodeAll(aos);
+				aos.FinalizeContent(pos);
+			}
+			if (this.locationInformation != null)
+				((LocationInformationImpl) this.locationInformation).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationInformation);
+			if (this.extBasicServiceCode != null) {
+				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_ext_basicServiceCode);
+				int pos = aos.StartContentDefiniteLength();
+				((ExtBasicServiceCodeImpl) this.extBasicServiceCode).encodeAll(aos);
+				aos.FinalizeContent(pos);
+			}
+			if (this.callReferenceNumber != null)
+				((CallReferenceNumberImpl) this.callReferenceNumber).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_callReferenceNumber);
+			if (this.mscAddress != null)
+				((ISDNAddressStringImpl) this.mscAddress).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_mscAddress);
+			if (this.calledPartyBCDNumber != null)
+				((CalledPartyBCDNumberImpl) this.calledPartyBCDNumber).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_calledPartyBCDNumber);
+			if (this.timeAndTimezone != null)
+				((TimeAndTimezoneImpl) this.timeAndTimezone).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_timeAndTimezone);
+			if (this.callForwardingSSPending)
+				aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callForwardingSS_Pending);
+			if (this.initialDPArgExtension != null)
+				((InitialDPArgExtensionImpl) this.initialDPArgExtension).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_initialDPArgExtension);
+
+		} catch (IOException e) {
+			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (INAPException e) {
+			throw new CAPException("INAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (MAPException e) {
+			throw new CAPException("MAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
-	
+
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		sb.append("serviceKey=");
+		sb.append(serviceKey);
+		if (this.calledPartyNumber != null) {
+			sb.append(", calledPartyNumber=");
+			sb.append(calledPartyNumber.toString());
+		}
+		if (this.callingPartyNumber != null) {
+			sb.append(", callingPartyNumber=");
+			sb.append(callingPartyNumber.toString());
+		}
+		if (this.callingPartysCategory != null) {
+			sb.append(", callingPartysCategory=");
+			sb.append(callingPartysCategory.toString());
+		}
+		if (this.CGEncountered != null) {
+			sb.append(", CGEncountered=");
+			sb.append(CGEncountered.toString());
+		}
+		if (this.IPSSPCapabilities != null) {
+			sb.append(", IPSSPCapabilities=");
+			sb.append(IPSSPCapabilities.toString());
+		}
+		if (this.locationNumber != null) {
+			sb.append(", locationNumber=");
+			sb.append(locationNumber.toString());
+		}
+		if (this.originalCalledPartyID != null) {
+			sb.append(", originalCalledPartyID=");
+			sb.append(originalCalledPartyID.toString());
+		}
+		if (this.extensions != null) {
+			sb.append(", extensions=");
+			sb.append(extensions.toString());
+		}
+		if (this.highLayerCompatibility != null) {
+			sb.append(", highLayerCompatibility=");
+			sb.append(highLayerCompatibility.toString());
+		}
+		if (this.additionalCallingPartyNumber != null) {
+			sb.append(", additionalCallingPartyNumber=");
+			sb.append(additionalCallingPartyNumber.toString());
+		}
+		if (this.bearerCapability != null) {
+			sb.append(", bearerCapability=");
+			sb.append(bearerCapability.toString());
+		}
+		if (this.eventTypeBCSM != null) {
+			sb.append(", eventTypeBCSM=");
+			sb.append(eventTypeBCSM.toString());
+		}
+		if (this.redirectingPartyID != null) {
+			sb.append(", redirectingPartyID=");
+			sb.append(redirectingPartyID.toString());
+		}
+		if (this.redirectionInformation != null) {
+			sb.append(", redirectionInformation=");
+			sb.append(redirectionInformation.toString());
+		}
+		if (this.cause != null) {
+			sb.append(", cause=");
+			sb.append(cause.toString());
+		}
+		if (this.serviceInteractionIndicatorsTwo != null) {
+			sb.append(", serviceInteractionIndicatorsTwo=");
+			sb.append(serviceInteractionIndicatorsTwo.toString());
+		}
+		if (this.carrier != null) {
+			sb.append(", carrier=");
+			sb.append(carrier.toString());
+		}
+		if (this.cugIndex != null) {
+			sb.append(", cugIndex=");
+			sb.append(cugIndex.toString());
+		}
+		if (this.cugInterlock != null) {
+			sb.append(", cugInterlock=");
+			sb.append(cugInterlock.toString());
+		}
+		if (this.cugOutgoingAccess) {
+			sb.append(", cugOutgoingAccess");
+		}
+		if (this.imsi != null) {
+			sb.append(", imsi=");
+			sb.append(imsi.toString());
+		}
+		if (this.subscriberState != null) {
+			sb.append(", subscriberState=");
+			sb.append(subscriberState.toString());
+		}
+		if (this.locationInformation != null) {
+			sb.append(", locationInformation=");
+			sb.append(locationInformation.toString());
+		}
+		if (this.extBasicServiceCode != null) {
+			sb.append(", extBasicServiceCode=");
+			sb.append(extBasicServiceCode.toString());
+		}
+		if (this.callReferenceNumber != null) {
+			sb.append(", callReferenceNumber=");
+			sb.append(callReferenceNumber.toString());
+		}
+		if (this.mscAddress != null) {
+			sb.append(", mscAddress=");
+			sb.append(mscAddress.toString());
+		}
+		if (this.calledPartyBCDNumber != null) {
+			sb.append(", calledPartyBCDNumber=");
+			sb.append(calledPartyBCDNumber.toString());
+		}
+		if (this.timeAndTimezone != null) {
+			sb.append(", timeAndTimezone=");
+			sb.append(timeAndTimezone.toString());
+		}
+		if (this.callForwardingSSPending) {
+			sb.append(", callForwardingSSPending");
+		}
+		if (this.initialDPArgExtension != null) {
+			sb.append(", initialDPArgExtension=");
+			sb.append(initialDPArgExtension.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
+

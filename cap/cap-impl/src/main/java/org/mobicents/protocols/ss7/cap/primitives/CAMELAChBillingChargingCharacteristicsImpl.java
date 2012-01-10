@@ -60,6 +60,7 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 	private Long tariffSwitchInterval;
 	private AudibleIndicator audibleIndicator;
 	private CAPExtensions extensions;
+
 	private boolean isCAPVersion3orLater;
 
 	
@@ -253,7 +254,6 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 

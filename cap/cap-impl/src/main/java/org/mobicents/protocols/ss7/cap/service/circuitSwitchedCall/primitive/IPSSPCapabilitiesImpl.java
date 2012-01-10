@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.primitives;
+package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
@@ -31,186 +31,114 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
+import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class TimeAndTimezoneImpl implements TimeAndTimezone, CAPAsnPrimitive {
+public class IPSSPCapabilitiesImpl implements IPSSPCapabilities, CAPAsnPrimitive {
+	
+	public static int _Mask_IPRoutingAddress = 0x01;
+	public static int _Mask_VoiceBack = 0x02;
+	public static int _Mask_VoiceInformation_SpeechRecognition = 0x04;
+	public static int _Mask_VoiceInformation_VoiceRecognition = 0x08;
+	public static int _Mask_GenerationOfVoiceAnnouncementsFromTextSupported = 0x10;
 
-	public static final String _PrimitiveName = "TimeAndTimezone";
+	public static final String _PrimitiveName = "IPSSPCapabilities";
 
 	private byte[] data;
+
 	
-	
-	public TimeAndTimezoneImpl() {
+	public IPSSPCapabilitiesImpl() {
 	}
 	
-	public TimeAndTimezoneImpl(byte[] data) {
+	public IPSSPCapabilitiesImpl(byte[] data) {
 		this.data = data;
 	}
+	
+	public IPSSPCapabilitiesImpl(boolean IPRoutingAddressSupported, boolean VoiceBackSupported, boolean VoiceInformationSupportedViaSpeechRecognition,
+			boolean VoiceInformationSupportedViaVoiceRecognition, boolean GenerationOfVoiceAnnouncementsFromTextSupported, byte[] extraData) {
+		int firstByte = (IPRoutingAddressSupported ? _Mask_IPRoutingAddress : 0) | (VoiceBackSupported ? _Mask_VoiceBack : 0)
+				| (VoiceInformationSupportedViaSpeechRecognition ? _Mask_VoiceInformation_SpeechRecognition : 0)
+				| (VoiceInformationSupportedViaVoiceRecognition ? _Mask_VoiceInformation_VoiceRecognition : 0)
+				| (GenerationOfVoiceAnnouncementsFromTextSupported ? _Mask_GenerationOfVoiceAnnouncementsFromTextSupported : 0);
+		int extraCnt = 0;
+		if (extraData != null)
+			extraCnt = extraData.length;
+		if (extraCnt > 3)
+			extraCnt = 3;
 
-	public TimeAndTimezoneImpl(int year, int month, int day, int hour, int minute, int second, int timeZone) {
-		this.data = new byte[8];
-		this.data[0] = (byte) encodeByte(year / 100);
-		this.data[1] = (byte) encodeByte(year % 100);
-		this.data[2] = (byte) encodeByte(month);
-		this.data[3] = (byte) encodeByte(day);
-		this.data[4] = (byte) encodeByte(hour);
-		this.data[5] = (byte) encodeByte(minute);
-		this.data[6] = (byte) encodeByte(second);
-		if (timeZone >= 0)
-			this.data[7] = (byte) encodeByte(timeZone);
-		else
-			this.data[7] = (byte) (encodeByte(-timeZone) | 0x08);
+		this.data = new byte[1 + extraCnt];
+		this.data[0] = (byte) firstByte;
+		if (extraCnt > 0)
+			System.arraycopy(extraData, 0, this.data, 1, extraCnt);
 	}
-
+	
 	@Override
 	public byte[] getData() {
 		return this.data;
 	}
 
 	@Override
-	public int getYear() {
+	public boolean IPRoutingAddressSupported() {
 
-		if (this.data == null || this.data.length != 8)
-			return 0;
+		if (this.data == null || this.data.length == 0)
+			return false;
 
-		return this.decodeByte((int) data[0]) * 100 + (int) this.decodeByte(data[1]);
+		return (((int) this.data[0]) & _Mask_IPRoutingAddress) != 0;
 	}
 
 	@Override
-	public int getMonth() {
+	public boolean VoiceBackSupported() {
 
-		if (this.data == null || this.data.length != 8)
-			return 0;
+		if (this.data == null || this.data.length == 0)
+			return false;
 
-		return this.decodeByte((int)data[2]);
+		return (((int) this.data[0]) & _Mask_VoiceBack) != 0;
 	}
 
 	@Override
-	public int getDay() {
+	public boolean VoiceInformationSupportedViaSpeechRecognition() {
 
-		if (this.data == null || this.data.length != 8)
-			return 0;
+		if (this.data == null || this.data.length == 0)
+			return false;
 
-		return this.decodeByte((int)data[3]);
+		return (((int) this.data[0]) & _Mask_VoiceInformation_SpeechRecognition) != 0;
 	}
 
 	@Override
-	public int getHour() {
+	public boolean VoiceInformationSupportedViaVoiceRecognition() {
 
-		if (this.data == null || this.data.length != 8)
-			return 0;
+		if (this.data == null || this.data.length == 0)
+			return false;
 
-		return this.decodeByte((int)data[4]);
+		return (((int) this.data[0]) & _Mask_VoiceInformation_VoiceRecognition) != 0;
 	}
 
 	@Override
-	public int getMinute() {
+	public boolean GenerationOfVoiceAnnouncementsFromTextSupported() {
 
-		if (this.data == null || this.data.length != 8)
-			return 0;
+		if (this.data == null || this.data.length == 0)
+			return false;
 
-		return this.decodeByte((int)data[5]);
+		return (((int) this.data[0]) & _Mask_GenerationOfVoiceAnnouncementsFromTextSupported) != 0;
 	}
 
 	@Override
-	public int getSecond() {
+	public byte[] getExtraData() {
 
-		if (this.data == null || this.data.length != 8)
-			return 0;
+		if (this.data == null || this.data.length < 2)
+			return null;
 
-		return this.decodeByte((int) data[6]);
-	}
-
-	@Override
-	public int getTimeZone() {
-
-		if (this.data == null || this.data.length != 8)
-			return 0;
-
-		int res = decodeByte((byte) (data[7] & 0xF7));
-		if ((data[7] & 0x08) != 0)
-			res = -res;
+		int extraCount = this.data.length;
+		if (extraCount > 3)
+			extraCount = 3;
+		byte[] res = new byte[extraCount];
+		System.arraycopy(this.data, 1, res, 0, extraCount);
 		return res;
-	}
-
-	@Override
-	public void setYear(int year) {
-
-		if (this.data == null || this.data.length != 8)
-			this.data = new byte[8];
-
-		this.data[0] = (byte) encodeByte(year / 100);
-		this.data[1] = (byte) encodeByte(year % 100);
-	}
-
-	@Override
-	public void setMonth(int month) {
-
-		if (this.data == null || this.data.length != 8)
-			this.data = new byte[8];
-
-		this.data[2] = (byte) encodeByte(month);
-	}
-
-	@Override
-	public void setDay(int day) {
-
-		if (this.data == null || this.data.length != 8)
-			this.data = new byte[8];
-
-		this.data[3] = (byte) encodeByte(day);
-	}
-
-	@Override
-	public void setHour(int hour) {
-
-		if (this.data == null || this.data.length != 8)
-			this.data = new byte[8];
-
-		this.data[4] = (byte) encodeByte(hour);
-	}
-
-	@Override
-	public void setMinute(int minute) {
-
-		if (this.data == null || this.data.length != 8)
-			this.data = new byte[8];
-
-		this.data[5] = (byte) encodeByte(minute);
-	}
-
-	@Override
-	public void setSecond(int second) {
-
-		if (this.data == null || this.data.length != 8)
-			this.data = new byte[8];
-
-		this.data[6] = (byte) encodeByte(second);
-	}
-
-	@Override
-	public void setTimeZone(int timeZone) {
-
-		if (this.data == null || this.data.length != 8)
-			this.data = new byte[8];
-
-		if (timeZone >= 0)
-			this.data[7] = (byte) encodeByte(timeZone);
-		else
-			this.data[7] = (byte) (encodeByte(-timeZone) | 0x08);
-	}
-	
-	private int decodeByte(int bt) {
-		return (bt & 0x0F) * 10 + ((bt & 0xF0) >> 4);
-	}
-
-	private int encodeByte(int val) {
-		return (val / 10) | (val % 10) << 4;
 	}
 
 	@Override
@@ -260,8 +188,8 @@ public class TimeAndTimezoneImpl implements TimeAndTimezone, CAPAsnPrimitive {
 	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 		
 		this.data = ansIS.readOctetStringData(length);
-		if (this.data.length < 8 || this.data.length > 8)
-			throw new CAPParsingComponentException("Error decoding TimeAndTimezone: length must be from 8 to 8, real length = " + length,
+		if (this.data.length < 1 || this.data.length > 4)
+			throw new CAPParsingComponentException("Error decoding " + _PrimitiveName + ": length must be from 1 to 4, real length = " + length,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -288,8 +216,8 @@ public class TimeAndTimezoneImpl implements TimeAndTimezone, CAPAsnPrimitive {
 
 		if (this.data == null)
 			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field must not be null");
-		if (this.data.length != 8)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field length must be equal 8");
+		if (this.data.length < 1 || this.data.length > 4)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field length must be from 1 to 4");
 
 		asnOs.writeOctetStringData(data);
 	}
@@ -301,23 +229,28 @@ public class TimeAndTimezoneImpl implements TimeAndTimezone, CAPAsnPrimitive {
 		sb.append(_PrimitiveName);
 		sb.append(" [");
 		if (data != null) {
-			sb.append("year=");
-			sb.append(this.getYear());
-			sb.append(", month=");
-			sb.append(this.getMonth());
-			sb.append(", day=");
-			sb.append(this.getDay());
-			sb.append(", hour=");
-			sb.append(this.getHour());
-			sb.append(", minite=");
-			sb.append(this.getMinute());
-			sb.append(", second=");
-			sb.append(this.getSecond());
-			sb.append(", timeZone=");
-			sb.append(this.getTimeZone());
+			if (this.IPRoutingAddressSupported())
+				sb.append("IPRoutingAddressSupported, ");
+			if (this.VoiceBackSupported())
+				sb.append("VoiceBackSupported, ");
+			if (this.VoiceInformationSupportedViaSpeechRecognition())
+				sb.append("VoiceInformationSupportedViaSpeechRecognition, ");
+			if (this.VoiceInformationSupportedViaVoiceRecognition())
+				sb.append("VoiceInformationSupportedViaVoiceRecognition, ");
+			if (this.GenerationOfVoiceAnnouncementsFromTextSupported())
+				sb.append("GenerationOfVoiceAnnouncementsFromTextSupported, ");
+			byte[] eArr = this.getExtraData();
+			if (eArr != null) {
+				sb.append("ExtraData=");
+				for (int i1 = 0; i1 < eArr.length; i1++) {
+					sb.append(eArr[i1]);
+					sb.append(", ");
+				}
+			}
 		}
 		sb.append("]");
 
 		return sb.toString();
 	}
 }
+

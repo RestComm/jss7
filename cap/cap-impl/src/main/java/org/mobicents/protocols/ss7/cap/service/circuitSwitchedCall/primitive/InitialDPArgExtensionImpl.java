@@ -38,6 +38,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.inap.api.isup.HighLayerCompatibilityInap;
+import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -46,6 +47,7 @@ import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.MSClass
 import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.OfferedCamel4Functionalities;
 import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.SupportedCamelPhases;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 
 /**
  * 
@@ -83,8 +85,33 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
 	private LowLayerCompatibility lowLayerCompatibility2;
 	private boolean enhancedDialledServicesAllowed;
 	private UUData uuData;	
+
+	private boolean isCAPVersion3orLater;
 	
-	
+
+	public InitialDPArgExtensionImpl(boolean isCAPVersion3orLater) {
+		this.isCAPVersion3orLater = isCAPVersion3orLater;
+	}
+
+	public InitialDPArgExtensionImpl(ISDNAddressString gmscAddress, CalledPartyNumberCap forwardingDestinationNumber, MSClassmark2 msClassmark2, IMEI imei,
+			SupportedCamelPhases supportedCamelPhases, OfferedCamel4Functionalities offeredCamel4Functionalities, BearerCapability bearerCapability2,
+			ExtBasicServiceCode extBasicServiceCode2, HighLayerCompatibilityInap highLayerCompatibility2, LowLayerCompatibility lowLayerCompatibility,
+			LowLayerCompatibility lowLayerCompatibility2, boolean enhancedDialledServicesAllowed, UUData uuData, boolean isCAPVersion3orLater) {
+		this.gmscAddress = gmscAddress;
+		this.forwardingDestinationNumber = forwardingDestinationNumber;
+		this.msClassmark2 = msClassmark2;
+		this.imei = imei;
+		this.supportedCamelPhases = supportedCamelPhases;
+		this.offeredCamel4Functionalities = offeredCamel4Functionalities;
+		this.bearerCapability2 = bearerCapability2;
+		this.extBasicServiceCode2 = extBasicServiceCode2;
+		this.highLayerCompatibility2 = highLayerCompatibility2;
+		this.lowLayerCompatibility = lowLayerCompatibility;
+		this.lowLayerCompatibility2 = lowLayerCompatibility2;
+		this.enhancedDialledServicesAllowed = enhancedDialledServicesAllowed;
+		this.uuData = uuData;
+		this.isCAPVersion3orLater = isCAPVersion3orLater;
+	}
 
 	@Override
 	public ISDNAddressString getGmscAddress() {
@@ -229,17 +256,24 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
 			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 				switch (tag) {
 				case _ID_gmscAddress:
-					ais.advanceElement(); // TODO: implement it
+					if (isCAPVersion3orLater) {
+						this.gmscAddress = new ISDNAddressStringImpl();
+						((ISDNAddressStringImpl) this.gmscAddress).decodeAll(ais);
+					}
+					else {
+						// in CAP V2 naCarrierInformation parameter - we do not implement it
+						ais.advanceElement(); 
+					}
 					break;
 				case _ID_forwardingDestinationNumber:
-//					byte[] buf = ais.readOctetString();
-//					if (buf.length < 2 || buf.length > 18)
-//						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-//								+ ": forwardingDestinationNumber must be from 2 to 18 bytes length, found: " + buf.length,
-//								CAPParsingComponentExceptionReason.MistypedParameter);
-//					this.forwardingDestinationNumber = new CalledPartyNumberCapImpl(buf);
-					this.forwardingDestinationNumber = new CalledPartyNumberCapImpl();
-					((CalledPartyNumberCapImpl)this.forwardingDestinationNumber).decodeAll(ais);
+					if (isCAPVersion3orLater) {
+						this.forwardingDestinationNumber = new CalledPartyNumberCapImpl();
+						((CalledPartyNumberCapImpl) this.forwardingDestinationNumber).decodeAll(ais);
+					} else {
+						// in CAP V2 gmscAddress parameter
+						this.gmscAddress = new ISDNAddressStringImpl();
+						((ISDNAddressStringImpl) this.gmscAddress).decodeAll(ais);
+					}
 					break;
 				case _ID_ms_Classmark2:
 					ais.advanceElement(); // TODO: implement it
@@ -282,25 +316,141 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
 			} else {
 				ais.advanceElement();
 			}
-			break;
 		}
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+	public void encodeData(AsnOutputStream aos) throws CAPException {
+
+		try {
+			if (isCAPVersion3orLater) {
+				if (this.gmscAddress != null)
+					((ISDNAddressStringImpl) this.gmscAddress).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_gmscAddress);
+				if (this.forwardingDestinationNumber != null)
+					((CalledPartyNumberCapImpl) this.forwardingDestinationNumber).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_forwardingDestinationNumber);
+			} else {
+				if (this.gmscAddress != null)
+					((ISDNAddressStringImpl) this.gmscAddress).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_forwardingDestinationNumber);
+			}
+			
+			if (msClassmark2 != null) {
+				// TODO: implement it
+			}
+			if (imei != null) {
+				// TODO: implement it
+			}
+			if (supportedCamelPhases != null) {
+				// TODO: implement it
+			}
+			if (offeredCamel4Functionalities != null) {
+				// TODO: implement it
+			}
+			if (bearerCapability2 != null) {
+				// TODO: implement it
+			}
+			if (extBasicServiceCode2 != null) {
+				// TODO: implement it
+			}
+			if (highLayerCompatibility2 != null) {
+				// TODO: implement it
+			}
+			if (lowLayerCompatibility != null) {
+				// TODO: implement it
+			}
+			if (lowLayerCompatibility2 != null) {
+				// TODO: implement it
+			}
+			if (enhancedDialledServicesAllowed) {
+				// TODO: implement it
+			}
+			if (uuData != null) {
+				// TODO: implement it
+			}
+		} catch (MAPException e) {
+			throw new CAPException("MAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.gmscAddress != null) {
+			sb.append(", gmscAddress=");
+			sb.append(gmscAddress);
+		}
+		if (this.forwardingDestinationNumber != null) {
+			sb.append(", forwardingDestinationNumber=");
+			sb.append(forwardingDestinationNumber);
+		}
+		if (this.msClassmark2 != null) {
+			sb.append(", msClassmark2=");
+			sb.append(msClassmark2.toString());
+		}
+		if (this.imei != null) {
+			sb.append(", imei=");
+			sb.append(imei.toString());
+		}
+		if (this.supportedCamelPhases != null) {
+			sb.append(", supportedCamelPhases=");
+			sb.append(supportedCamelPhases.toString());
+		}
+		if (this.offeredCamel4Functionalities != null) {
+			sb.append(", offeredCamel4Functionalities=");
+			sb.append(offeredCamel4Functionalities.toString());
+		}
+		if (this.bearerCapability2 != null) {
+			sb.append(", bearerCapability2=");
+			sb.append(bearerCapability2.toString());
+		}
+		if (this.extBasicServiceCode2 != null) {
+			sb.append(", extBasicServiceCode2=");
+			sb.append(extBasicServiceCode2.toString());
+		}
+		if (this.highLayerCompatibility2 != null) {
+			sb.append(", highLayerCompatibility2=");
+			sb.append(highLayerCompatibility2.toString());
+		}
+		if (this.lowLayerCompatibility != null) {
+			sb.append(", lowLayerCompatibility=");
+			sb.append(lowLayerCompatibility.toString());
+		}
+		if (this.lowLayerCompatibility2 != null) {
+			sb.append(", lowLayerCompatibility2=");
+			sb.append(lowLayerCompatibility2.toString());
+		}
+		if (this.enhancedDialledServicesAllowed ) {
+			sb.append(", enhancedDialledServicesAllowed");
+		}
+		if (this.uuData != null) {
+			sb.append(", uuData=");
+			sb.append(uuData.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }
+
