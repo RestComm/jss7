@@ -34,6 +34,8 @@ import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.Supporte
 
 /**
 *
+
+CAP V4:
 InitialDPArgExtension {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
  gmscAddress       [0] ISDN-AddressString      OPTIONAL, 
  forwardingDestinationNumber   [1] CalledPartyNumber {bound}    OPTIONAL, 
@@ -49,6 +51,13 @@ InitialDPArgExtension {PARAMETERS-BOUND : bound} ::= SEQUENCE {
  ..., 
  enhancedDialledServicesAllowed  [11] NULL         OPTIONAL, 
  uu-Data        [12] UU-Data        OPTIONAL
+}
+
+CAP V2:
+InitialDPArgExtension ::= SEQUENCE {
+naCarrierInformation [0] NACarrierInformation OPTIONAL,
+gmscAddress [1] ISDN-AddressString OPTIONAL,
+...
 }
 
 -- If iPSSPCapabilities is not present then this denotes that a colocated gsmSRF is not  

@@ -58,16 +58,22 @@ bound.&minIPSSPCapabilitiesLength .. bound.&maxIPSSPCapabilitiesLength)) (SIZE =
  */
 public interface IPSSPCapabilities {
 
-	public byte getSourceData();
-	
+	public byte[] getData();
+
 	public boolean IPRoutingAddressSupported();
-	
+
 	public boolean VoiceBackSupported();
-	
-	public boolean VoiceInformationSupportedCiaSpeechRecognition();
-	
-	public boolean VoiceInformationSupportedCiaVoiceRecognition();
-	
+
+	public boolean VoiceInformationSupportedViaSpeechRecognition();
+
+	public boolean VoiceInformationSupportedViaVoiceRecognition();
+
 	public boolean GenerationOfVoiceAnnouncementsFromTextSupported();
-	
+
+	/**
+	 * @return 2, 3 and 3 byte array: Bilateral Part: Network operator/equipment
+	 *         vendor specific (if present)
+	 */
+	public byte[] getExtraData();
+
 }
