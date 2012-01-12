@@ -23,6 +23,10 @@
 package org.mobicents.protocols.ss7.cap.api;
 
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageFactory;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCall;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprs;
+import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSms;
+import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 
 /**
  * 
@@ -66,6 +70,11 @@ public interface CAPProvider {
 	 * @return
 	 */
 	public CAPDialog getCAPDialog(Long dialogId);
-	
-//	public CAPServiceSms getCAPServiceSms();
+
+	public TCAPProvider getTCAPProvider();
+
+	public CAPServiceCircuitSwitchedCall getCAPServiceCircuitSwitchedCall();
+	public CAPServiceGprs getCAPServiceGprs();
+	public CAPServiceSms getCAPServiceSms();
+		
 }
