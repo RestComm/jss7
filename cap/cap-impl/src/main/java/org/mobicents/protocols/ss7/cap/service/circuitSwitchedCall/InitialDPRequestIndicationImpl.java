@@ -161,11 +161,11 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 
 	private boolean isCAPVersion3orLater;
 
-	
+
 	public InitialDPRequestIndicationImpl(boolean isCAPVersion3orLater) {
 		this.isCAPVersion3orLater = isCAPVersion3orLater;
 	}
-	
+
 	public InitialDPRequestIndicationImpl(int serviceKey, CalledPartyNumberCap calledPartyNumber, CallingPartyNumberCap callingPartyNumber,
 			CallingPartysCategoryInap callingPartysCategory, CGEncountered CGEncountered, IPSSPCapabilities IPSSPCapabilities,
 			LocationNumberCap locationNumber, OriginalCalledNumberCap originalCalledPartyID, CAPExtensions extensions,
@@ -665,7 +665,7 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 			if (this.bearerCapability != null) {
 				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_bearerCapability);
 				int pos = aos.StartContentDefiniteLength();
-				((AdditionalCallingPartyNumberCapImpl) this.bearerCapability).encodeAll(aos);
+				((BearerCapabilityImpl) this.bearerCapability).encodeAll(aos);
 				aos.FinalizeContent(pos);
 			}
 			if (this.eventTypeBCSM != null)

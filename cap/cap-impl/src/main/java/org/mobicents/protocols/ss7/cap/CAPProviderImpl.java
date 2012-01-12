@@ -133,18 +133,22 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		this.capServices.add(this.capServiceSms);
 	}
 
+	@Override
 	public TCAPProvider getTCAPProvider() {
 		return this.tcapProvider;
 	}
 
+	@Override
 	public CAPServiceCircuitSwitchedCall getCAPServiceCircuitSwitchedCall() {
 		return this.capServiceCircuitSwitchedCall;
 	}
 
+	@Override
 	public CAPServiceGprs getCAPServiceGprs() {
 		return this.capServiceGprs;
 	}
 
+	@Override
 	public CAPServiceSms getCAPServiceSms() {
 		return this.capServiceSms;
 	}
