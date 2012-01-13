@@ -37,4 +37,17 @@ public enum AlertingLevel {
 	public byte getLevel() {
 		return this.level;
 	}
+
+	public static AlertingLevel getInstance(byte data) {
+		switch (data) {
+		case 0:
+			return Level0;
+		case 1:
+			return Level1;
+		case 2:
+			return Level2;
+		}
+
+		return null;
+	}
 }

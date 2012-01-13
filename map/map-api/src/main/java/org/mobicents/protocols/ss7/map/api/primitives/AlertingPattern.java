@@ -45,10 +45,15 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  *		-- Alerting categories are defined in GSM 02.07
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  *
  */
 public interface AlertingPattern {
+
+	public byte[] getData();
+
 	public AlertingLevel getAlertingLevel();
-	
+
 	public AlertingCategory getAlertingCategory();
+
 }

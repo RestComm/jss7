@@ -37,4 +37,21 @@ public enum AlertingCategory {
 	public byte getCategory() {
 		return this.category;
 	}
+
+	public static AlertingCategory getInstance(byte data) {
+		switch (data) {
+		case 4:
+			return Category1;
+		case 5:
+			return Category2;
+		case 6:
+			return Category3;
+		case 7:
+			return Category4;
+		case 8:
+			return Category5;
+		}
+
+		return null;
+	}
 }

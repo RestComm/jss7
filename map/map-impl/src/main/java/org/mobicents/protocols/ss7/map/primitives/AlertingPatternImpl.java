@@ -36,38 +36,64 @@ import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 
-	private AlertingLevel alertingLevel;
-	private AlertingCategory alertingCategory;
+	public static final String _PrimitiveName = "AlertingPattern";
 
-	/**
-	 * 
-	 */
+	private byte[] data;
+	
 	public AlertingPatternImpl() {
-		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * @param patternType
-	 * @param alertingPattern
-	 */
 	public AlertingPatternImpl(AlertingLevel alertingLevel) {
-		super();
-		this.alertingLevel = alertingLevel;
-
+		this.data = new byte[] { alertingLevel.getLevel() };
 	}
 
-	/**
-	 * @param alertingCategory
-	 */
 	public AlertingPatternImpl(AlertingCategory alertingCategory) {
-		super();
-		this.alertingCategory = alertingCategory;
+		this.data = new byte[] { alertingCategory.getCategory() };
 	}
 
+	@Override
+	public byte[] getData() {
+		return data;
+	}
+
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern#
+	 * getAlertingLevel()
+	 */
+	@Override
+	public AlertingLevel getAlertingLevel() {
+
+		if (this.data == null || this.data.length != 1)
+			return null;
+		else
+			return AlertingLevel.getInstance(this.data[0]);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern#
+	 * getAlertingCategory()
+	 */
+	@Override
+	public AlertingCategory getAlertingCategory() {
+
+		if (this.data == null || this.data.length != 1)
+			return null;
+		else
+			return AlertingCategory.getInstance(this.data[0]);
+	}
+	
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -116,10 +142,10 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding AlertingPattern: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding AlertingPattern: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -136,51 +162,20 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding AlertingPattern: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding AlertingPattern: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 		if (length != 1)
-			throw new MAPParsingComponentException("Error decoding AlertingPattern: the AlertingPattern field must contain 1 octets. Contains: " + length,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new MAPParsingComponentException("Error decoding AlertingPattern: the " + _PrimitiveName + " field must contain 1 octets. Contains: "
+					+ length, MAPParsingComponentExceptionReason.MistypedParameter);
 
-		byte[] rawdata = ansIS.readOctetStringData(length);
-		int data = rawdata[0];
-
-		switch (data) {
-		case 0:
-			this.alertingLevel = AlertingLevel.Level0;
-			break;
-		case 1:
-			this.alertingLevel = AlertingLevel.Level1;
-			break;
-		case 2:
-			this.alertingLevel = AlertingLevel.Level2;
-			break;
-		case 4:
-			this.alertingCategory = AlertingCategory.Category1;
-			break;
-		case 5:
-			this.alertingCategory = AlertingCategory.Category2;
-			break;
-		case 6:
-			this.alertingCategory = AlertingCategory.Category3;
-			break;
-		case 7:
-			this.alertingCategory = AlertingCategory.Category4;
-			break;
-		case 8:
-			this.alertingCategory = AlertingCategory.Category5;
-			break;
-		default:
-			// Reserved
-		}
-
+		this.data = ansIS.readOctetStringData(length);
 	}
 
 	/*
@@ -210,7 +205,7 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding AlertingPattern: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -223,39 +218,34 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 	 */
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		if (this.alertingLevel == null && this.alertingCategory == null)
-			throw new MAPException("Error when encoding AlertingPattern: alertingLevel and alertingCategory is empty");
-
-		byte[] rawData = null;
-		if (this.alertingLevel != null) {
-			rawData = new byte[] { this.alertingLevel.getLevel() };
-		} else {
-			rawData = new byte[] { this.alertingCategory.getCategory() };
-		}
+		if (this.data == null)
+			throw new MAPException("Error when encoding " + _PrimitiveName + ": data must not be empty");
+		if (this.data.length != 1)
+			throw new MAPException("Error when encoding " + _PrimitiveName + ": data length must be equal 1");
 		
-		asnOs.writeOctetStringData(rawData);
+		asnOs.writeOctetStringData(this.data);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern#
-	 * getAlertingLevel()
-	 */
 	@Override
-	public AlertingLevel getAlertingLevel() {
-		return this.alertingLevel;
-	}
+	public String toString() {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern#
-	 * getAlertingCategory()
-	 */
-	@Override
-	public AlertingCategory getAlertingCategory() {
-		return this.alertingCategory;
-	}
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
 
+		AlertingLevel al = this.getAlertingLevel();
+		if (al != null) {
+			sb.append("AlertingLevel=");
+			sb.append(al);
+		}
+		AlertingCategory ac = this.getAlertingCategory();
+		if (al != null) {
+			sb.append(" AlertingCategory=");
+			sb.append(ac);
+		}
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
+
