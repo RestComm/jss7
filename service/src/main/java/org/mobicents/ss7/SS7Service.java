@@ -41,11 +41,45 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
 	private Logger logger = Logger.getLogger(SS7Service.class);
 
+	private static final String rLogo = " ]]]]]]]]] ";
+	private static final String lLogo = " [[[[[[[[[ ";
+
 	@Override
 	public void startService() throws Exception {
-		// starting sccp router
+		// starting
 		rebind(stack);
-		logger.info("[[[[[[[[[ Mobicents SS7 service started ]]]]]]]]]");
+		logger.info(generateMessageWithLogo("service started"));
+	}
+
+	private String generateMessageWithLogo(String message) {
+		return lLogo + getSS7Name() + " " + getSS7Version() + " " + message + rLogo;
+	}
+
+	public String getSS7Name() {
+		String name = Version.instance.getProperty("name");
+		if (name != null) {
+			return name;
+		} else {
+			return "Mobicents JAIN SLEE";
+		}
+	}
+
+	public String getSS7Vendor() {
+		String vendor = Version.instance.getProperty("vendor");
+		if (vendor != null) {
+			return vendor;
+		} else {
+			return "JBoss, a division of Red Hat";
+		}
+	}
+
+	public String getSS7Version() {
+		String version = Version.instance.getProperty("version");
+		if (version != null) {
+			return version;
+		} else {
+			return "2.0";
+		}
 	}
 
 	public void setJndiName(String jndiName) {
@@ -72,7 +106,7 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
 		}
 
-		logger.info("Stopped SS7 service");
+		logger.info(generateMessageWithLogo("service stopped"));
 	}
 
 	/**
