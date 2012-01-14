@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
+
 /**
 *
 
@@ -36,8 +38,10 @@ AlertingPattern ::= OCTET STRING (SIZE(3))
 * @author sergey vetyutnev
 * 
 */
-public interface AlertingPattern {
+public interface AlertingPatternCap {
 
 	public byte[] getData();
+
+	public AlertingPattern getAlertingPattern();
 
 }

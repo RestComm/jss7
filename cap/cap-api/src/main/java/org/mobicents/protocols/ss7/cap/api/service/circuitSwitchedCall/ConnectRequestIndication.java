@@ -29,7 +29,7 @@ import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.OriginalCalledNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.RedirectingPartyIDCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AlertingPattern;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AlertingPatternCap;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Carrier;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.NAOliInfo;
@@ -96,7 +96,7 @@ public interface ConnectRequestIndication extends CircuitSwitchedCallMessage {
 
 	public DestinationRoutingAddress getDestinationRoutingAddress();
 
-	public AlertingPattern getAlertingPattern();
+	public AlertingPatternCap getAlertingPattern();
 
 	public OriginalCalledNumberCap getOriginalCalledPartyID();
 

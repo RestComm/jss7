@@ -38,4 +38,8 @@ public interface NAOliInfo {
 
 	public byte[] getData();
 
+	public Integer getValue();
+	
+	// TODO: implement getting info according to ANSI T1.113-1995
+
 }
