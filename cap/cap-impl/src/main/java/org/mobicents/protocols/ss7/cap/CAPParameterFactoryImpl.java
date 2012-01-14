@@ -74,6 +74,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
 import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AlertingPatternCap;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AudibleIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
@@ -85,6 +86,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InitialDPArgExtension;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.LowLayerCompatibility;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.MidCallControlInfo;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.NAOliInfo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformation;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformationType;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeDurationChargingResult;
@@ -109,12 +111,14 @@ import org.mobicents.protocols.ss7.cap.primitives.ExtensionFieldImpl;
 import org.mobicents.protocols.ss7.cap.primitives.ReceivingSideIDImpl;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
 import org.mobicents.protocols.ss7.cap.primitives.TimeAndTimezoneImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AlertingPatternCapImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.BearerCapabilityImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.DestinationRoutingAddressImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.DpSpecificCriteriaImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSMImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.IPSSPCapabilitiesImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InitialDPArgExtensionImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.NAOliInfoImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.RequestedInformationImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.TimeDurationChargingResultImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.TimeIfTariffSwitchImpl;
@@ -130,6 +134,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.UUData;
@@ -509,5 +514,25 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 		return new InitialDPArgExtensionImpl(gmscAddress, forwardingDestinationNumber, msClassmark2, imei, supportedCamelPhases, offeredCamel4Functionalities,
 				bearerCapability2, extBasicServiceCode2, highLayerCompatibility2, lowLayerCompatibility, lowLayerCompatibility2,
 				enhancedDialledServicesAllowed, uuData, isCAPVersion3orLater);
+	}
+
+	@Override
+	public AlertingPatternCap createAlertingPatternCap(AlertingPattern alertingPattern) {
+		return new AlertingPatternCapImpl(alertingPattern);
+	}
+
+	@Override
+	public AlertingPatternCap createAlertingPatternCap(byte[] data) {
+		return new AlertingPatternCapImpl(data);
+	}
+
+	@Override
+	public NAOliInfo createNAOliInfo(byte[] data) {
+		return new NAOliInfoImpl(data);
+	}
+
+	@Override
+	public NAOliInfo createNAOliInfo(int value) {
+		return new NAOliInfoImpl(value);
 	}
 }

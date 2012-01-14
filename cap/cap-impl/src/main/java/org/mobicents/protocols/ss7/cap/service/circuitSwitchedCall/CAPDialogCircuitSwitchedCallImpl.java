@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
+import java.util.ArrayList;
+
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.cap.CAPDialogImpl;
 import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
@@ -33,23 +35,35 @@ import org.mobicents.protocols.ss7.cap.api.isup.AdditionalCallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.api.isup.GenericNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.OriginalCalledNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.RedirectingPartyIDCap;
+import org.mobicents.protocols.ss7.cap.api.primitives.AChChargingAddress;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
+import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
 import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AlertingPatternCap;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CGEncountered;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Carrier;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InitialDPArgExtension;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.NAOliInfo;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformation;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformationType;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeDurationChargingResult;
 import org.mobicents.protocols.ss7.inap.api.isup.CallingPartysCategoryInap;
 import org.mobicents.protocols.ss7.inap.api.isup.HighLayerCompatibilityInap;
 import org.mobicents.protocols.ss7.inap.api.isup.RedirectionInformationInap;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
@@ -110,10 +124,6 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 				&& this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric)
 			throw new CAPException(
 					"Bad application context name for addInitialDPRequest: must be CapV1_gsmSSF_to_gsmSCF, CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
-	
-		// TODO: implement it - making parameter false and null for low application contexts ???
-//		if (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
-//			moreMessagesToSend = false;
 
 		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
 		if (customInvokeTimeout == _Timer_Default)
@@ -130,6 +140,268 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 				bearerCapability, eventTypeBCSM, redirectingPartyID, redirectionInformation, cause, serviceInteractionIndicatorsTwo, carrier, cugIndex,
 				cugInterlock, cugOutgoingAccess, imsi, subscriberState, locationInformation, extBasicServiceCode, callReferenceNumber, mscAddress,
 				calledPartyBCDNumber, timeAndTimezone, callForwardingSSPending, initialDPArgExtension, this.appCntx.getVersion().getVersion() >= 3);
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		invoke.setParameter(p);
+
+		Long invokeId;
+		try {
+			invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+		} catch (TCAPException e) {
+			throw new CAPException(e.getMessage(), e);
+		}
+
+		this.sendInvokeComponent(invoke);
+		
+		return invokeId;
+	}
+
+	@Override
+	public Long addApplyChargingReportRequest(TimeDurationChargingResult timeDurationChargingResult) throws CAPException {
+
+		return addApplyChargingReportRequest(_Timer_Default, timeDurationChargingResult);
+	}
+
+	@Override
+	public Long addApplyChargingReportRequest(int customInvokeTimeout, TimeDurationChargingResult timeDurationChargingResult) throws CAPException {
+
+		if (this.appCntx != CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF && this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+				&& this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric)
+			throw new CAPException(
+					"Bad application context name for addApplyChargingReportRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
+
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		if (customInvokeTimeout == _Timer_Default)
+			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+		else
+			invoke.setTimeout(customInvokeTimeout);
+
+		OperationCode oc = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long)CAPOperationCode.applyChargingReport);
+		invoke.setOperationCode(oc);
+
+		ApplyChargingReportRequestIndicationImpl req = new ApplyChargingReportRequestIndicationImpl(timeDurationChargingResult);
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		invoke.setParameter(p);
+
+		Long invokeId;
+		try {
+			invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+		} catch (TCAPException e) {
+			throw new CAPException(e.getMessage(), e);
+		}
+
+		this.sendInvokeComponent(invoke);
+		
+		return invokeId;
+	}
+
+	@Override
+	public Long addApplyChargingRequest(CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics, SendingSideID partyToCharge,
+			CAPExtensions extensions, AChChargingAddress aChChargingAddress) throws CAPException {
+
+		return addApplyChargingRequest(_Timer_Default, aChBillingChargingCharacteristics, partyToCharge, extensions, aChChargingAddress);
+	}
+
+	@Override
+	public Long addApplyChargingRequest(int customInvokeTimeout, CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics,
+			SendingSideID partyToCharge, CAPExtensions extensions, AChChargingAddress aChChargingAddress) throws CAPException {
+
+		if (this.appCntx != CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF && this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+				&& this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric)
+			throw new CAPException(
+					"Bad application context name for addApplyChargingRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
+
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		if (customInvokeTimeout == _Timer_Default)
+			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+		else
+			invoke.setTimeout(customInvokeTimeout);
+
+		OperationCode oc = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long)CAPOperationCode.applyCharging);
+		invoke.setOperationCode(oc);
+
+		ApplyChargingRequestIndicationImpl req = new ApplyChargingRequestIndicationImpl(aChBillingChargingCharacteristics, partyToCharge, extensions,
+				aChChargingAddress);
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		invoke.setParameter(p);
+
+		Long invokeId;
+		try {
+			invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+		} catch (TCAPException e) {
+			throw new CAPException(e.getMessage(), e);
+		}
+
+		this.sendInvokeComponent(invoke);
+		
+		return invokeId;
+	}
+
+	@Override
+	public Long addCallInformationReportRequest(ArrayList<RequestedInformation> requestedInformationList, CAPExtensions extensions, ReceivingSideID legID)
+			throws CAPException {
+
+		return addCallInformationReportRequest(_Timer_Default, requestedInformationList, extensions, legID);
+	}
+
+	@Override
+	public Long addCallInformationReportRequest(int customInvokeTimeout, ArrayList<RequestedInformation> requestedInformationList, CAPExtensions extensions,
+			ReceivingSideID legID) throws CAPException {
+
+		if (this.appCntx != CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF && this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+				&& this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric)
+			throw new CAPException(
+					"Bad application context name for addCallInformationReportRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
+
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		if (customInvokeTimeout == _Timer_Default)
+			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+		else
+			invoke.setTimeout(customInvokeTimeout);
+
+		OperationCode oc = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long)CAPOperationCode.callInformationReport);
+		invoke.setOperationCode(oc);
+
+		CallInformationReportRequestIndicationImpl req = new CallInformationReportRequestIndicationImpl(requestedInformationList, extensions, legID);
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		invoke.setParameter(p);
+
+		Long invokeId;
+		try {
+			invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+		} catch (TCAPException e) {
+			throw new CAPException(e.getMessage(), e);
+		}
+
+		this.sendInvokeComponent(invoke);
+		
+		return invokeId;
+	}
+
+	@Override
+	public Long addCallInformationRequestRequest(ArrayList<RequestedInformationType> requestedInformationTypeList, CAPExtensions extensions, SendingSideID legID)
+			throws CAPException {
+
+		return addCallInformationRequestRequest(_Timer_Default, requestedInformationTypeList, extensions, legID);
+	}
+
+	@Override
+	public Long addCallInformationRequestRequest(int customInvokeTimeout, ArrayList<RequestedInformationType> requestedInformationTypeList,
+			CAPExtensions extensions, SendingSideID legID) throws CAPException {
+
+		if (this.appCntx != CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF && this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+				&& this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric)
+			throw new CAPException(
+					"Bad application context name for addCallInformationRequestRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
+
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		if (customInvokeTimeout == _Timer_Default)
+			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+		else
+			invoke.setTimeout(customInvokeTimeout);
+
+		OperationCode oc = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long)CAPOperationCode.callInformationRequest);
+		invoke.setOperationCode(oc);
+
+		CallInformationRequestRequestIndicationImpl req = new CallInformationRequestRequestIndicationImpl(requestedInformationTypeList, extensions, legID);
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		invoke.setParameter(p);
+
+		Long invokeId;
+		try {
+			invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+		} catch (TCAPException e) {
+			throw new CAPException(e.getMessage(), e);
+		}
+
+		this.sendInvokeComponent(invoke);
+		
+		return invokeId;
+	}
+
+	@Override
+	public Long addConnectRequest(DestinationRoutingAddress destinationRoutingAddress, AlertingPatternCap alertingPattern,
+			OriginalCalledNumberCap originalCalledPartyID, CAPExtensions extensions, Carrier carrier, CallingPartysCategoryInap callingPartysCategory,
+			RedirectingPartyIDCap redirectingPartyID, RedirectionInformationInap redirectionInformation, ArrayList<GenericNumberCap> genericNumbers,
+			ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, LocationNumberCap chargeNumber, LegID legToBeConnected, CUGInterlock cugInterlock,
+			boolean cugOutgoingAccess, boolean suppressionOfAnnouncement, boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested)
+			throws CAPException {
+
+		return addConnectRequest(_Timer_Default, destinationRoutingAddress, alertingPattern, originalCalledPartyID, extensions, carrier, callingPartysCategory,
+				redirectingPartyID, redirectionInformation, genericNumbers, serviceInteractionIndicatorsTwo, chargeNumber, legToBeConnected, cugInterlock,
+				cugOutgoingAccess, suppressionOfAnnouncement, ocsIApplicable, naoliInfo, borInterrogationRequested);
+	}
+
+	@Override
+	public Long addConnectRequest(int customInvokeTimeout, DestinationRoutingAddress destinationRoutingAddress, AlertingPatternCap alertingPattern,
+			OriginalCalledNumberCap originalCalledPartyID, CAPExtensions extensions, Carrier carrier, CallingPartysCategoryInap callingPartysCategory,
+			RedirectingPartyIDCap redirectingPartyID, RedirectionInformationInap redirectionInformation, ArrayList<GenericNumberCap> genericNumbers,
+			ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, LocationNumberCap chargeNumber, LegID legToBeConnected, CUGInterlock cugInterlock,
+			boolean cugOutgoingAccess, boolean suppressionOfAnnouncement, boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested)
+			throws CAPException {
+
+		if (this.appCntx != CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF && this.appCntx != CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
+				&& this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric
+				&& this.appCntx != CAPApplicationContext.CapV4_scf_gsmSSFGeneric)
+			throw new CAPException(
+					"Bad application context name for addConnectRequest: must be CapV1_gsmSSF_to_gsmSCF, CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_scf_gsmSSFGeneric");
+		
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		if (customInvokeTimeout == _Timer_Default)
+			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+		else
+			invoke.setTimeout(customInvokeTimeout);
+
+		OperationCode oc = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long)CAPOperationCode.connect);
+		invoke.setOperationCode(oc);
+
+		ConnectRequestIndicationImpl req = new ConnectRequestIndicationImpl(destinationRoutingAddress, alertingPattern, originalCalledPartyID, extensions,
+				carrier, callingPartysCategory, redirectingPartyID, redirectionInformation, genericNumbers, serviceInteractionIndicatorsTwo, chargeNumber,
+				legToBeConnected, cugInterlock, cugOutgoingAccess, suppressionOfAnnouncement, ocsIApplicable, naoliInfo, borInterrogationRequested);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 

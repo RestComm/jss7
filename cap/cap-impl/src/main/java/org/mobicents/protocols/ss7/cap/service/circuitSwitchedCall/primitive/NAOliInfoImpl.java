@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
+package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
@@ -31,36 +31,46 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeDurationChargingResult;
-import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.TimeDurationChargingResultImpl;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.NAOliInfo;
+import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class ApplyChargingReportRequestIndicationImpl extends CircuitSwitchedCallMessageImpl implements ApplyChargingReportRequestIndication {
+public class NAOliInfoImpl implements NAOliInfo, CAPAsnPrimitive {
 
-	public static final int _ID_timeDurationChargingResult = 0;
+	public static final String _PrimitiveName = "NAOliInfo";
 
-	public static final int _ID_partyToCharge = 0;
-
-	public static final String _PrimitiveName = "ApplyChargingReportRequestIndication";
-
-	private TimeDurationChargingResult timeDurationChargingResult;
+	private byte[] data;
+	
+	// TODO: implement getting and setting info according to ANSI T1.113-1995
 	
 	
-	public ApplyChargingReportRequestIndicationImpl() {
+	public NAOliInfoImpl() {
 	}
+	
+	public NAOliInfoImpl(byte[] data) {
+		this.data = data;
+	}
+	
+	public NAOliInfoImpl(int value) {
+		this.data = new byte[] { (byte) value };
+	}
+	
 
-	public ApplyChargingReportRequestIndicationImpl(TimeDurationChargingResult timeDurationChargingResult) {
-		this.timeDurationChargingResult = timeDurationChargingResult;
+	@Override
+	public byte[] getData() {
+		return this.data;
 	}
 
 	@Override
-	public TimeDurationChargingResult getTimeDurationChargingResult() {
-		return timeDurationChargingResult;
+	public Integer getValue() {
+		if (this.data != null && this.data.length == 1)
+			return (int) this.data[0];
+		else
+			return null;
 	}
 
 	
@@ -109,20 +119,11 @@ public class ApplyChargingReportRequestIndicationImpl extends CircuitSwitchedCal
 	}
 
 	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
-
-		this.timeDurationChargingResult = null;
-
-		byte[] buf = ansIS.readOctetStringData(length);
-		AsnInputStream aiss = new AsnInputStream(buf);
-
-		int tag = aiss.readTag();
-
-		if (tag != _ID_timeDurationChargingResult || aiss.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || aiss.isTagPrimitive())
-			throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
-					+ ": bad tag or tagClass or is primitive of the choice timeDurationChargingResult", CAPParsingComponentExceptionReason.MistypedParameter);
-
-		this.timeDurationChargingResult = new TimeDurationChargingResultImpl();
-		((TimeDurationChargingResultImpl) this.timeDurationChargingResult).decodeAll(aiss);
+		
+		this.data = ansIS.readOctetStringData(length);
+		if (this.data.length < 1 || this.data.length > 1)
+			throw new CAPParsingComponentException("Error decoding " + _PrimitiveName + ": length must be from 1 to 1, real length = " + length,
+					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	@Override
@@ -146,17 +147,12 @@ public class ApplyChargingReportRequestIndicationImpl extends CircuitSwitchedCal
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		if (this.timeDurationChargingResult == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": timeDurationChargingResult must not be null");
+		if (this.data == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field must not be null");
+		if (this.data.length != 1)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field length must be equal 1");
 
-		try {
-			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_timeDurationChargingResult);
-			int pos = asnOs.StartContentDefiniteLength();
-			((TimeDurationChargingResultImpl) this.timeDurationChargingResult).encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
+		asnOs.writeOctetStringData(data);
 	}
 
 	@Override
@@ -165,12 +161,11 @@ public class ApplyChargingReportRequestIndicationImpl extends CircuitSwitchedCal
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-
-		if (this.timeDurationChargingResult != null) {
-			sb.append("timeDurationChargingResult=");
-			sb.append(timeDurationChargingResult.toString());
+		Integer val = this.getValue();
+		if (val != null) {
+			sb.append("data=");
+			sb.append(val);
 		}
-
 		sb.append("]");
 
 		return sb.toString();

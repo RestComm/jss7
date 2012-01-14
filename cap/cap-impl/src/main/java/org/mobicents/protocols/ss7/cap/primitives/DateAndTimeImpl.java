@@ -32,7 +32,6 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.primitives.DateAndTime;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
 *
@@ -214,9 +213,6 @@ public class DateAndTimeImpl implements DateAndTime, CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -231,13 +227,10 @@ public class DateAndTimeImpl implements DateAndTime, CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
 		this.data = ansIS.readOctetStringData(length);
 		if (this.data.length < 7 || this.data.length > 7)

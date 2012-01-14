@@ -35,10 +35,10 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformation;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformationType;
+import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
-import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.RequestedInformationImpl;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 
 
 /**
@@ -57,7 +57,17 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 	private ArrayList<RequestedInformationType> requestedInformationTypeList;
 	private CAPExtensions extensions;
 	private SendingSideID legID;	
+
 	
+	public CallInformationRequestRequestIndicationImpl() {
+	}
+	
+	public CallInformationRequestRequestIndicationImpl(ArrayList<RequestedInformationType> requestedInformationTypeList, CAPExtensions extensions,
+			SendingSideID legID) {
+		this.requestedInformationTypeList = requestedInformationTypeList;
+		this.extensions = extensions;
+		this.legID = legID;
+	}
 
 	@Override
 	public ArrayList<RequestedInformationType> getRequestedInformationTypeList() {
@@ -123,7 +133,7 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 
 		this.requestedInformationTypeList = null;
 		this.extensions = null;
-		this.legID = null; // TODO: DEFAULT sendingSideID:leg2
+		this.legID = new SendingSideIDImpl(LegType.leg2);
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		while (true) {
@@ -158,7 +168,8 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 					}
 					break;
 				case _ID_extensions:
-					ais.advanceElement(); // TODO: implement it
+					this.extensions = new CAPExtensionsImpl();
+					((CAPExtensionsImpl) this.extensions).decodeAll(ais);
 					break;
 				case _ID_legID:
 					ais2 = ais.readSequenceStream();
@@ -183,19 +194,85 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+	public void encodeData(AsnOutputStream aos) throws CAPException {
+
+		if (this.requestedInformationTypeList == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": requestedInformationTypeList must not be null");
+		if (this.requestedInformationTypeList.size() < 1 || this.requestedInformationTypeList.size() > 4)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": requestedInformationTypeList size must be from 1 to 4");
+
+		try {
+			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_requestedInformationTypeList);
+			int pos = aos.StartContentDefiniteLength();
+			for (RequestedInformationType ri : this.requestedInformationTypeList) {
+				aos.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, ri.getCode());
+			}
+			aos.FinalizeContent(pos);
+
+			if (this.extensions != null)
+				((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
+
+			if (this.legID != null) {
+				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_legID);
+				pos = aos.StartContentDefiniteLength();
+				((SendingSideIDImpl) this.legID).encodeAll(aos);
+				aos.FinalizeContent(pos);
+			}			
+
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (IOException e) {
+			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.requestedInformationTypeList != null) {
+			sb.append("requestedInformationTypeList=[");
+			boolean firstItem = true;
+			for (RequestedInformationType ri : this.requestedInformationTypeList) {
+				if (firstItem)
+					firstItem = false;
+				else
+					sb.append(", ");
+				sb.append(ri.toString());
+			}
+			sb.append("]");
+		}
+		if (this.extensions != null) {
+			sb.append(", extensions=");
+			sb.append(extensions.toString());
+		}
+		if (this.legID != null) {
+			sb.append(", legID=");
+			sb.append(legID.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }
