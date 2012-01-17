@@ -51,4 +51,8 @@ public interface CAPServiceCircuitSwitchedCallListener extends CAPServiceListene
 
 	public void onCallInformationReportRequestIndication(CallInformationReportRequestIndication ind);
 
+	public void onActivityTestRequestIndication(ActivityTestRequestIndication ind);
+
+	public void onActivityTestResponseIndication(ActivityTestResponseIndication ind);
+
 }

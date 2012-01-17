@@ -22,10 +22,10 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
-import org.mobicents.protocols.ss7.cap.api.isup.AdditionalCallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.OriginalCalledNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.RedirectingPartyIDCap;
@@ -130,7 +130,12 @@ public interface InitialDPRequestIndication extends CircuitSwitchedCallMessage {
 
 	public HighLayerCompatibilityInap getHighLayerCompatibility();
 
-	public AdditionalCallingPartyNumberCap getAdditionalCallingPartyNumber();
+	/**
+	 * Use Digits.getGenericNumber() for AdditionalCallingPartyNumber 
+	 * 
+	 * @return
+	 */
+	public Digits getAdditionalCallingPartyNumber();
 
 	public BearerCapability getBearerCapability();
 
