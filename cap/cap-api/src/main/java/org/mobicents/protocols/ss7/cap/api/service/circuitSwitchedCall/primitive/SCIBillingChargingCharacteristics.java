@@ -28,7 +28,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
 
 SCIBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE ( 
  bound.&minSCIBillingChargingLength .. bound.&maxSCIBillingChargingLength)) 
- (CONSTRAINED BY {-- shall be the result of the BER-encoded value of type –- 
+ (CONSTRAINED BY {-- shall be the result of the BER-encoded value of type 
  CAMEL-SCIBillingChargingCharacteristics}) 
 -- Indicates AOC information to be sent to a Mobile Station 
 -- The violation of the UserDefinedConstraint shall be handled as an ASN.1 syntax error.
