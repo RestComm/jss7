@@ -48,6 +48,13 @@ public class ReleaseCallRequestIndicationImpl extends CircuitSwitchedCallMessage
 	private CauseCap cause;
 
 	
+	public ReleaseCallRequestIndicationImpl() {
+	}
+	
+	public ReleaseCallRequestIndicationImpl(CauseCap cause) {
+		this.cause = cause;
+	}
+	
 	@Override
 	public CauseCap getCause() {
 		return cause;
@@ -113,19 +120,46 @@ public class ReleaseCallRequestIndicationImpl extends CircuitSwitchedCallMessage
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		if (this.cause == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": cause must not be null");
+
+		((CauseCapImpl) this.cause).encodeData(asnOs);
+	}
+
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.cause != null) {
+			sb.append("cause=");
+			sb.append(cause.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }
+

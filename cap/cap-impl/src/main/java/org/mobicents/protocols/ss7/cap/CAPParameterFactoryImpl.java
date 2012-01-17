@@ -53,11 +53,11 @@ import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TDisconnectSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TMidCallSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TNoAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
-import org.mobicents.protocols.ss7.cap.api.isup.AdditionalCallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 import org.mobicents.protocols.ss7.cap.api.isup.GenericNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.OriginalCalledNumberCap;
@@ -93,11 +93,11 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeIfTariffSwitch;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeInformation;
 import org.mobicents.protocols.ss7.cap.dialog.CAPGprsReferenceNumberImpl;
-import org.mobicents.protocols.ss7.cap.isup.AdditionalCallingPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.BearerCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.CallingPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.CauseCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.DigitsImpl;
 import org.mobicents.protocols.ss7.cap.isup.GenericNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.LocationNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.OriginalCalledNumberCapImpl;
@@ -129,6 +129,7 @@ import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
@@ -259,13 +260,18 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 	}
 
 	@Override
-	public AdditionalCallingPartyNumberCap createAdditionalCallingPartyNumberCap(byte[] data) {
-		return new AdditionalCallingPartyNumberCapImpl(data);
+	public Digits createDigits(byte[] data) {
+		return new DigitsImpl(data);
 	}
 
 	@Override
-	public AdditionalCallingPartyNumberCap createAdditionalCallingPartyNumberCap(GenericNumber genericNumber) throws CAPException {
-		return new AdditionalCallingPartyNumberCapImpl(genericNumber);
+	public Digits createDigits(GenericNumber genericNumber) throws CAPException {
+		return new DigitsImpl(genericNumber);
+	}
+
+	@Override
+	public Digits createDigits(GenericDigits genericDigits) throws CAPException {
+		return new DigitsImpl(genericDigits);
 	}
 
 	@Override

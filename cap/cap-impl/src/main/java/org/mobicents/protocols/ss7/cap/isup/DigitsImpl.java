@@ -31,10 +31,12 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.isup.AdditionalCallingPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericDigitsImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNumberImpl;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 
 /**
@@ -43,32 +45,45 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 * @author sergey vetyutnev
 * 
 */
-public class AdditionalCallingPartyNumberCapImpl implements AdditionalCallingPartyNumberCap, CAPAsnPrimitive {
+public class DigitsImpl implements Digits, CAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "AdditionalCallingPartyNumberCap";
+	public static final String _PrimitiveName = "Digits";
 
 	private byte[] data;
 
-	public AdditionalCallingPartyNumberCapImpl() {
+	
+	public DigitsImpl() {
 	}
-
-	public AdditionalCallingPartyNumberCapImpl(byte[] data) {
+	
+	public DigitsImpl(byte[] data) {
 		this.data = data;
 	}
 
-	public AdditionalCallingPartyNumberCapImpl(GenericNumber genericNumber) throws CAPException {
-		if (genericNumber == null)
-			throw new CAPException("The genericNumber parameter must not be null");
-		try {
-			this.data = ((GenericNumberImpl) genericNumber).encode();
-		} catch (ParameterException e) {
-			throw new CAPException("ParameterException when encoding genericNumber: " + e.getMessage(), e);
-		}
+	public DigitsImpl(GenericDigits genericDigits) throws CAPException {
+		this.setGenericDigits(genericDigits);
+	}
+
+	public DigitsImpl(GenericNumber genericNumber) throws CAPException {
+		this.setGenericNumber(genericNumber);
 	}
 
 	@Override
 	public byte[] getData() {
 		return data;
+	}
+
+	@Override
+	public GenericDigits getGenericDigits() throws CAPException {
+		if (this.data == null)
+			throw new CAPException("The data has not been filled");
+
+		try {
+			GenericDigitsImpl ocn = new GenericDigitsImpl();
+			ocn.decode(this.data);
+			return ocn;
+		} catch (ParameterException e) {
+			throw new CAPException("ParameterException when decoding GenericDigits: " + e.getMessage(), e);
+		}
 	}
 
 	@Override
@@ -82,6 +97,35 @@ public class AdditionalCallingPartyNumberCapImpl implements AdditionalCallingPar
 			return ocn;
 		} catch (ParameterException e) {
 			throw new CAPException("ParameterException when decoding GenericNumber: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void setData(byte[] data) {
+		this.data=data;
+	}
+
+	@Override
+	public void setGenericDigits(GenericDigits genericDigits) throws CAPException {
+		
+		if (genericDigits == null)
+			throw new CAPException("The genericDigits parameter must not be null");
+		try {
+			this.data = ((GenericDigitsImpl) genericDigits).encode();
+		} catch (ParameterException e) {
+			throw new CAPException("ParameterException when encoding genericDigits: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void setGenericNumber(GenericNumber genericNumber) throws CAPException {
+		
+		if (genericNumber == null)
+			throw new CAPException("The genericNumber parameter must not be null");
+		try {
+			this.data = ((GenericNumberImpl) genericNumber).encode();
+		} catch (ParameterException e) {
+			throw new CAPException("ParameterException when encoding genericNumber: " + e.getMessage(), e);
 		}
 	}
 
@@ -112,9 +156,6 @@ public class AdditionalCallingPartyNumberCapImpl implements AdditionalCallingPar
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (CAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -129,18 +170,15 @@ public class AdditionalCallingPartyNumberCapImpl implements AdditionalCallingPar
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (CAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, CAPParsingComponentException, IOException, AsnException {
 
 		this.data = ansIS.readOctetStringData(length);
-		if (this.data.length < 2 || this.data.length > 11)
+		if (this.data.length < 2 || this.data.length > 16)
 			throw new CAPParsingComponentException(
-					"Error while decoding " + _PrimitiveName + ": data must be from 2 to 11 bytes length, found: " + this.data.length,
+					"Error while decoding " + _PrimitiveName + ": data must be from 2 to 16 bytes length, found: " + this.data.length,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -167,8 +205,8 @@ public class AdditionalCallingPartyNumberCapImpl implements AdditionalCallingPar
 
 		if (this.data == null)
 			throw new CAPException("data field must not be null");
-		if (this.data.length < 2 && this.data.length > 11)
-			throw new CAPException("data field length must be from 2 to 11");
+		if (this.data.length < 2 && this.data.length > 16)
+			throw new CAPException("data field length must be from 2 to 16");
 
 		asnOs.writeOctetStringData(data);
 	}
@@ -185,8 +223,12 @@ public class AdditionalCallingPartyNumberCapImpl implements AdditionalCallingPar
 			sb.append("]");
 			try {
 				GenericNumber gn = this.getGenericNumber();
-				sb.append(", ");
+				sb.append(", genericNumber");
 				sb.append(gn.toString());
+
+				GenericDigits gd = this.getGenericDigits();
+				sb.append(", genericDigits");
+				sb.append(gd.toString());
 			} catch (CAPException e) {
 			}
 		}
@@ -206,3 +248,4 @@ public class AdditionalCallingPartyNumberCapImpl implements AdditionalCallingPar
 		return sb.toString();
 	}
 }
+

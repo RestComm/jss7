@@ -127,7 +127,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		switch (ocValueInt) {
 		case CAPOperationCode.initialDP:
 			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
-					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric) {
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric) {
 				if (compType == ComponentType.Invoke) {
 					this.initialDpRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
 				}
@@ -136,7 +136,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		case CAPOperationCode.requestReportBCSMEvent:
 			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
-					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric) {
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric
+					|| acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
 				if (compType == ComponentType.Invoke) {
 					this.requestReportBCSMEventRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
 				}
@@ -144,8 +145,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 			break;
 
 		case CAPOperationCode.applyCharging:
-			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
-					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric) {
+			if (acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+					|| acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
 				if (compType == ComponentType.Invoke) {
 					this.applyChargingRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
 				}
@@ -154,7 +155,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		case CAPOperationCode.eventReportBCSM:
 			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
-					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric) {
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric
+					|| acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
 				if (compType == ComponentType.Invoke) {
 					eventReportBCSMRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
 				}
@@ -163,7 +165,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		case CAPOperationCode.continueCode:
 			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
-					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric) {
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric
+					|| acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
 				if (compType == ComponentType.Invoke) {
 					continueRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
 				}
@@ -171,8 +174,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 			break;
 
 		case CAPOperationCode.applyChargingReport:
-			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
-					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric) {
+			if (acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+					|| acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
 				if (compType == ComponentType.Invoke) {
 					applyChargingReportRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
 				}
@@ -181,7 +184,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		case CAPOperationCode.releaseCall:
 			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
-					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric) {
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric
+					|| acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
 				if (compType == ComponentType.Invoke) {
 					releaseCallRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
 				}
@@ -190,7 +194,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		case CAPOperationCode.connect:
 			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
-					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric) {
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric
+					|| acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
 				if (compType == ComponentType.Invoke) {
 					connectRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
 				}
@@ -198,8 +203,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 			break;
 
 		case CAPOperationCode.callInformationRequest:
-			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
-					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric) {
+			if (acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+					|| acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
 				if (compType == ComponentType.Invoke) {
 					callInformationRequestRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
 				}
@@ -207,10 +212,26 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 			break;
 
 		case CAPOperationCode.callInformationReport:
-			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
-					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric) {
+			if (acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+					|| acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
 				if (compType == ComponentType.Invoke) {
 					callInformationReportRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+				}
+			}
+			break;
+
+		case CAPOperationCode.activityTest:
+			if (acn == CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric
+					|| acn == CAPApplicationContext.CapV2_assistGsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV3_gsmSSF_scfAssistHandoff
+					|| acn == CAPApplicationContext.CapV4_gsmSSF_scfAssistHandoff || acn == CAPApplicationContext.CapV2_gsmSRF_to_gsmSCF
+					|| acn == CAPApplicationContext.CapV3_gsmSRF_gsmSCF || acn == CAPApplicationContext.CapV4_gsmSRF_gsmSCF
+					|| acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
+				if (compType == ComponentType.Invoke) {
+					activityTestRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+				}
+				if (compType == ComponentType.ReturnResultLast) {
+					activityTestResponse(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
 				}
 			}
 			break;
@@ -484,6 +505,38 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 				((CAPServiceCircuitSwitchedCallListener) serLis).onCallInformationReportRequestIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing eventReportBCSMRequest: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void activityTestRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+
+		ActivityTestRequestIndicationImpl ind = new ActivityTestRequestIndicationImpl();
+
+		ind.setInvokeId(invokeId);
+		ind.setCAPDialog(capDialogImpl);
+
+		for (CAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((CAPServiceCircuitSwitchedCallListener) serLis).onActivityTestRequestIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing activityTestRequest: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void activityTestResponse(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+
+		ActivityTestResponseIndicationImpl ind = new ActivityTestResponseIndicationImpl();
+
+		ind.setInvokeId(invokeId);
+		ind.setCAPDialog(capDialogImpl);
+
+		for (CAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((CAPServiceCircuitSwitchedCallListener) serLis).onActivityTestResponseIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing activityTestResponse: " + e.getMessage(), e);
 			}
 		}
 	}

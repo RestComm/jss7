@@ -31,10 +31,10 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.isup.AdditionalCallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.OriginalCalledNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.RedirectingPartyIDCap;
@@ -49,9 +49,9 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InitialDPArgExtension;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
-import org.mobicents.protocols.ss7.cap.isup.AdditionalCallingPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.CallingPartyNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.DigitsImpl;
 import org.mobicents.protocols.ss7.cap.isup.LocationNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.OriginalCalledNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.RedirectingPartyIDCapImpl;
@@ -137,7 +137,7 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 	private OriginalCalledNumberCap originalCalledPartyID;
 	private CAPExtensions extensions;
 	private HighLayerCompatibilityInap highLayerCompatibility;
-	private AdditionalCallingPartyNumberCap additionalCallingPartyNumber;
+	private Digits additionalCallingPartyNumber;
 	private BearerCapability bearerCapability;
 	private EventTypeBCSM eventTypeBCSM;
 	private RedirectingPartyIDCap redirectingPartyID;
@@ -169,7 +169,7 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 	public InitialDPRequestIndicationImpl(int serviceKey, CalledPartyNumberCap calledPartyNumber, CallingPartyNumberCap callingPartyNumber,
 			CallingPartysCategoryInap callingPartysCategory, CGEncountered CGEncountered, IPSSPCapabilities IPSSPCapabilities,
 			LocationNumberCap locationNumber, OriginalCalledNumberCap originalCalledPartyID, CAPExtensions extensions,
-			HighLayerCompatibilityInap highLayerCompatibility, AdditionalCallingPartyNumberCap additionalCallingPartyNumber, BearerCapability bearerCapability,
+			HighLayerCompatibilityInap highLayerCompatibility, Digits additionalCallingPartyNumber, BearerCapability bearerCapability,
 			EventTypeBCSM eventTypeBCSM, RedirectingPartyIDCap redirectingPartyID, RedirectionInformationInap redirectionInformation, CauseCap cause,
 			ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Carrier carrier, CUGIndex cugIndex, CUGInterlock cugInterlock,
 			boolean cugOutgoingAccess, IMSI imsi, SubscriberState subscriberState, LocationInformation locationInformation,
@@ -261,7 +261,7 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 	}
 
 	@Override
-	public AdditionalCallingPartyNumberCap getAdditionalCallingPartyNumber() {
+	public Digits getAdditionalCallingPartyNumber() {
 		return additionalCallingPartyNumber;
 	}
 
@@ -515,8 +515,8 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 						((HighLayerCompatibilityInapImpl) this.highLayerCompatibility).decodeAll(ais);
 						break;
 					case _ID_additionalCallingPartyNumber:
-						this.additionalCallingPartyNumber = new AdditionalCallingPartyNumberCapImpl();
-						((AdditionalCallingPartyNumberCapImpl)this.additionalCallingPartyNumber).decodeAll(ais);
+						this.additionalCallingPartyNumber = new DigitsImpl();
+						((DigitsImpl)this.additionalCallingPartyNumber).decodeAll(ais);
 						break;
 					case _ID_bearerCapability:
 						AsnInputStream ais2 = ais.readSequenceStream();
@@ -661,7 +661,7 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 			if (this.highLayerCompatibility != null)
 				((HighLayerCompatibilityInapImpl) this.highLayerCompatibility).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_highLayerCompatibility);
 			if (this.additionalCallingPartyNumber != null)
-				((AdditionalCallingPartyNumberCapImpl) this.additionalCallingPartyNumber).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_additionalCallingPartyNumber);
+				((DigitsImpl) this.additionalCallingPartyNumber).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_additionalCallingPartyNumber);
 			if (this.bearerCapability != null) {
 				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_bearerCapability);
 				int pos = aos.StartContentDefiniteLength();

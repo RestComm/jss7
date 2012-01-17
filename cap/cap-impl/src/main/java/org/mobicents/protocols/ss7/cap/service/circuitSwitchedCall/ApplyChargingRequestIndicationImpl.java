@@ -140,7 +140,8 @@ public class ApplyChargingRequestIndicationImpl extends CircuitSwitchedCallMessa
 	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
 		this.aChBillingChargingCharacteristics = null;
-		this.partyToCharge = new SendingSideIDImpl(LegType.leg1);
+		this.partyToCharge = null;
+//		this.partyToCharge = new SendingSideIDImpl(LegType.leg1);
 		this.extensions = null;
 		this.aChChargingAddress = null; // TODO: DEFAULT legID:sendingSideID:leg1
 

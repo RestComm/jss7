@@ -27,17 +27,16 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequestIndication;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class ContinueRequestIndicationImpl extends CircuitSwitchedCallMessageImpl implements ContinueRequestIndication {
+public class ActivityTestRequestIndicationImpl extends CircuitSwitchedCallMessageImpl implements ActivityTestRequestIndication {
 
-	public static final String _PrimitiveName = "ContinueRequest";
-
+	public static final String _PrimitiveName = "ActivityTestRequest";
 	@Override
 	public int getTag() throws CAPException {
 		throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");

@@ -133,7 +133,8 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 
 		this.requestedInformationTypeList = null;
 		this.extensions = null;
-		this.legID = new SendingSideIDImpl(LegType.leg2);
+		this.legID = null;
+//		this.legID = new SendingSideIDImpl(LegType.leg2);
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		while (true) {
@@ -234,7 +235,7 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 				pos = aos.StartContentDefiniteLength();
 				((SendingSideIDImpl) this.legID).encodeAll(aos);
 				aos.FinalizeContent(pos);
-			}			
+			}
 
 		} catch (AsnException e) {
 			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);

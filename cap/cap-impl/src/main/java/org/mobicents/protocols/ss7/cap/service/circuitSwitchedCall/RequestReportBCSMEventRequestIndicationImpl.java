@@ -36,6 +36,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequestIndication;
 import org.mobicents.protocols.ss7.cap.primitives.BCSMEventImpl;
+import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
@@ -52,6 +53,15 @@ public class RequestReportBCSMEventRequestIndicationImpl extends CircuitSwitched
 
 	private ArrayList<BCSMEvent> bcsmEventList;
 	private CAPExtensions extensions;
+
+
+	public RequestReportBCSMEventRequestIndicationImpl() {
+	}
+
+	public RequestReportBCSMEventRequestIndicationImpl(ArrayList<BCSMEvent> bcsmEventList, CAPExtensions extensions) {
+		this.bcsmEventList = bcsmEventList;
+		this.extensions = extensions;
+	}
 	
 	@Override
 	public ArrayList<BCSMEvent> getBCSMEventList() {
@@ -149,7 +159,8 @@ public class RequestReportBCSMEventRequestIndicationImpl extends CircuitSwitched
 					
 					break;
 				case _ID_extensions:
-					ais.advanceElement(); // TODO: implement it
+					this.extensions = new CAPExtensionsImpl();
+					((CAPExtensionsImpl) this.extensions).decodeAll(ais);
 					break;
 
 				default:
@@ -168,20 +179,73 @@ public class RequestReportBCSMEventRequestIndicationImpl extends CircuitSwitched
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		// TODO Auto-generated method stub
-		
+	public void encodeData(AsnOutputStream aos) throws CAPException {
+
+		if (this.bcsmEventList == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": bcsmEventList must not be null");
+		if (this.bcsmEventList.size() < 1 || this.bcsmEventList.size() > 30)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": bcsmEventList length must be from 1 to 30");
+
+		try {
+			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_bcsmEvents);
+			int pos = aos.StartContentDefiniteLength();
+			for (BCSMEvent be : this.bcsmEventList) {
+				BCSMEventImpl bee = (BCSMEventImpl) be;
+				bee.encodeAll(aos);
+			}
+			aos.FinalizeContent(pos);
+
+			if (this.extensions != null)
+				((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
+
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.bcsmEventList != null) {
+			sb.append("bcsmEventList=[");
+			boolean firstItem = true;
+			for (BCSMEvent be : this.bcsmEventList) {
+				if (firstItem)
+					firstItem = false;
+				else
+					sb.append(", ");
+				sb.append(be.toString());
+			}
+			sb.append("]");
+		}
+		if (this.extensions != null) {
+			sb.append(", extensions=");
+			sb.append(extensions.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
