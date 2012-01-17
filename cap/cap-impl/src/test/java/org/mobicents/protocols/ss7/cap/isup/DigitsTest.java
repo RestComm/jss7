@@ -38,7 +38,7 @@ import org.testng.*;import org.testng.annotations.*;
  * @author sergey vetyutnev
  * 
  */
-public class AdditionalCallingPartyNumberCapTest {
+public class DigitsTest {
 
 	public byte[] getData() {
 		return new byte[] {  };

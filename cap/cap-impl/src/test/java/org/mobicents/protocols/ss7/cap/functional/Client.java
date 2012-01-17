@@ -36,6 +36,8 @@ import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponseIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
@@ -369,6 +371,18 @@ public class Client implements CAPDialogListener, CAPServiceCircuitSwitchedCallL
 
 	@Override
 	public void onCallInformationReportRequestIndication(CallInformationReportRequestIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onActivityTestRequestIndication(ActivityTestRequestIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onActivityTestResponseIndication(ActivityTestResponseIndication ind) {
 		// TODO Auto-generated method stub
 		
 	}

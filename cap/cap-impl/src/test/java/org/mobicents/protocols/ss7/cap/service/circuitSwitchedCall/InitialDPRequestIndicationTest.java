@@ -29,10 +29,10 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
-import org.mobicents.protocols.ss7.cap.isup.AdditionalCallingPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.BearerCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.CallingPartyNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.DigitsImpl;
 import org.mobicents.protocols.ss7.cap.isup.LocationNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.OriginalCalledNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.RedirectingPartyIDCapImpl;
@@ -250,11 +250,11 @@ public class InitialDPRequestIndicationTest {
 		IPSSPCapabilitiesImpl IPSSPCapabilities = new IPSSPCapabilitiesImpl(true, true, false, false, true, null);
 		LocationNumberCapImpl locationNumber = new LocationNumberCapImpl(getLocationNumber());
 		HighLayerCompatibilityInapImpl highLayerCompatibility = new HighLayerCompatibilityInapImpl(getHighLayerCompatibility());
-		AdditionalCallingPartyNumberCapImpl additionalCallingPartyNumber = new AdditionalCallingPartyNumberCapImpl(getAdditionalCallingPartyNumberCap());
+		DigitsImpl additionalCallingPartyNumber = new DigitsImpl(getAdditionalCallingPartyNumberCap());
 		SubscriberStateImpl subscriberState = new SubscriberStateImpl(SubscriberStateChoice.notProvidedFromVLR, null);
 		LocationInformationImpl locationInformation = new LocationInformationImpl(111, null, null, null, null, null, null, null, null, false, false, null, null);
 		CalledPartyBCDNumberImpl calledPartyBCDNumber = new CalledPartyBCDNumberImpl(getCalledPartyBCDNumber());
-		
+
 		elem = new InitialDPRequestIndicationImpl(110, calledPartyNumber, callingPartyNumber, callingPartysCategory, null, IPSSPCapabilities, locationNumber,
 				originalCalledPartyID, CAPExtensionsTest.createTestCAPExtensions(), highLayerCompatibility, additionalCallingPartyNumber, bearerCapability,
 				EventTypeBCSM.collectedInfo, redirectingPartyID, redirectionInformation, null, null, null, null, null, false, imsi, subscriberState, locationInformation,
