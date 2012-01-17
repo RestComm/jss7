@@ -20,25 +20,40 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
-
-import org.mobicents.protocols.ss7.cap.api.isup.Digits;
+package org.mobicents.protocols.ss7.cap.api.primitives;
 
 /**
 *
-midCallEvents [1] CHOICE {
-dTMFDigitsCompleted [3] Digits {bound},
-dTMFDigitsTimeOut [4] Digits {bound}
-} OPTIONAL,
+
+TimerID ::= ENUMERATED { 
+ tssf        (0) 
+ } 
+-- Indicates the timer to be reset. 
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface MidCallEvents {
+public enum TimerID {
 
-	public Digits getDTMFDigitsCompleted();
+	tssf(0);
 
-	public Digits getDTMFDigitsTimeOut();
+	private int code;
 
+	private TimerID(int code) {
+		this.code = code;
+	}
+
+	public int getCode() {
+		return this.code;
+	}
+
+	public static TimerID getInstance(int code) {
+		switch (code) {
+		case 0:
+			return TimerID.tssf;
+		default:
+			return null;
+		}
+	}
 }

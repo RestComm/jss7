@@ -20,25 +20,44 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
-
-import org.mobicents.protocols.ss7.cap.api.isup.Digits;
+package org.mobicents.protocols.ss7.cap.api.primitives;
 
 /**
 *
-midCallEvents [1] CHOICE {
-dTMFDigitsCompleted [3] Digits {bound},
-dTMFDigitsTimeOut [4] Digits {bound}
-} OPTIONAL,
+
+AppendFreeFormatData ::= ENUMERATED { 
+ overwrite (0), 
+ append  (1) 
+ } 
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface MidCallEvents {
+public enum AppendFreeFormatData {
 
-	public Digits getDTMFDigitsCompleted();
+	 overwrite(0), 
+	 append(1); 
 
-	public Digits getDTMFDigitsTimeOut();
+	private int code;
 
+	private AppendFreeFormatData(int code) {
+		this.code = code;
+	}
+
+	public int getCode() {
+		return this.code;
+	}
+
+	public static AppendFreeFormatData getInstance(int code) {
+		switch (code) {
+		case 0:
+			return AppendFreeFormatData.overwrite;
+		case 1:
+			return AppendFreeFormatData.append;
+		default:
+			return null;
+		}
+	}
 }
+

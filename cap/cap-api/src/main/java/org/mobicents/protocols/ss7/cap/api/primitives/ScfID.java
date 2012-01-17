@@ -20,25 +20,24 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
-
-import org.mobicents.protocols.ss7.cap.api.isup.Digits;
+package org.mobicents.protocols.ss7.cap.api.primitives;
 
 /**
 *
-midCallEvents [1] CHOICE {
-dTMFDigitsCompleted [3] Digits {bound},
-dTMFDigitsTimeOut [4] Digits {bound}
-} OPTIONAL,
+ScfID {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE( 
+ bound.&minScfIDLength .. bound.&maxScfIDLength)) 
+-- defined by network operator. 
+-- Indicates the gsmSCF identity.
+
+minScfIDLength ::= 2
+maxScfIDLength ::= 10
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface MidCallEvents {
+public interface ScfID {
 
-	public Digits getDTMFDigitsCompleted();
-
-	public Digits getDTMFDigitsTimeOut();
+	public byte[] getData();
 
 }

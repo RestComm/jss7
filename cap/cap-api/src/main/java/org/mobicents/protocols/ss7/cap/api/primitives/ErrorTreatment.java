@@ -20,25 +20,50 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
-
-import org.mobicents.protocols.ss7.cap.api.isup.Digits;
+package org.mobicents.protocols.ss7.cap.api.primitives;
 
 /**
 *
-midCallEvents [1] CHOICE {
-dTMFDigitsCompleted [3] Digits {bound},
-dTMFDigitsTimeOut [4] Digits {bound}
-} OPTIONAL,
+
+ErrorTreatment ::= ENUMERATED { 
+ stdErrorAndInfo      (0), 
+ help        (1), 
+ repeatPrompt      (2) 
+ } 
+-- stdErrorAndInfomeans returning the 'ImproperCallerResponse' error in the event of an error 
+-- condition during collection of user info. 
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface MidCallEvents {
+public enum ErrorTreatment {
 
-	public Digits getDTMFDigitsCompleted();
+	 stdErrorAndInfo(0), 
+	 help(1), 
+	 repeatPrompt(2); 
 
-	public Digits getDTMFDigitsTimeOut();
 
+	private int code;
+
+	private ErrorTreatment(int code) {
+		this.code = code;
+	}
+
+	public int getCode() {
+		return this.code;
+	}
+
+	public static ErrorTreatment getInstance(int code) {
+		switch (code) {
+		case 0:
+			return ErrorTreatment.stdErrorAndInfo;
+		case 1:
+			return ErrorTreatment.help;
+		case 2:
+			return ErrorTreatment.repeatPrompt;
+		default:
+			return null;
+		}
+	}
 }
