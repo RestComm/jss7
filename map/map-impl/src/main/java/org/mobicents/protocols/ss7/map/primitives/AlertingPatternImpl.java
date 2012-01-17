@@ -47,6 +47,10 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 	
 	public AlertingPatternImpl() {
 	}
+	
+	public AlertingPatternImpl(byte[] data) {
+		this.data = data;
+	}
 
 	public AlertingPatternImpl(AlertingLevel alertingLevel) {
 		this.data = new byte[] { alertingLevel.getLevel() };
@@ -239,7 +243,7 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 			sb.append(al);
 		}
 		AlertingCategory ac = this.getAlertingCategory();
-		if (al != null) {
+		if (ac != null) {
 			sb.append(" AlertingCategory=");
 			sb.append(ac);
 		}
