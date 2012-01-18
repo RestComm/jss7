@@ -7,6 +7,7 @@
 		<constructor>
 			<parameter>SCTPManagement</parameter>
 		</constructor>
+		<property name="persistDir">${jboss.server.data.dir}</property>
 		<property name="singleThread">true</property>
 		<property name="connectDelay">30000</property>
 	</bean>
