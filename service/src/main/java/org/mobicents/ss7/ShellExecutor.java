@@ -171,19 +171,32 @@ public class ShellExecutor implements Runnable {
 
 									switch (subject) {
 									case LINKSET:
-										this.txMessage = this.linksetExecutor.execute(options);
-										chan.send(messageFactory.createMessage(this.txMessage));
+										if(this.linksetExecutor == null){
+											this.txMessage = "Error! LinksetExecutor is null";
+										} else{
+											this.txMessage = this.linksetExecutor.execute(options);
+										}
 										break;
 									case SCTP:
 									case M3UA:
-										this.txMessage = this.m3UAShellExecutor.execute(options);
-										chan.send(messageFactory.createMessage(this.txMessage));
+										if(this.m3UAShellExecutor == null){
+											this.txMessage = "Error! M3UAShellExecutor is null";
+										} else {
+											this.txMessage = this.m3UAShellExecutor.execute(options);
+										}
 										break;
 									case SCCP:
-										this.txMessage = this.sccpExecutor.execute(options);
-										chan.send(messageFactory.createMessage(this.txMessage));
+										if(this.sccpExecutor == null){
+											this.txMessage = "Error! SccpExecutor is null";
+										} else {
+											this.txMessage = this.sccpExecutor.execute(options);
+										}
+										break;
+									default:
+										this.txMessage = "Invalid Subject";
 										break;
 									}
+									chan.send(messageFactory.createMessage(this.txMessage));
 								}
 							} // if (rxMessage.compareTo("disconnect")
 						} // if (msg != null)
@@ -209,7 +222,9 @@ public class ShellExecutor implements Runnable {
 					}
 				}
 			} catch (IOException e) {
-				logger.error("Error while operating on ChannelSelectionKey", e);
+				logger.error("IO Exception while operating on ChannelSelectionKey", e);
+			} catch (Exception e){
+				logger.error("Exception while operating on ChannelSelectionKey", e);
 			}
 
 			try {
