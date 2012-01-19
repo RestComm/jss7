@@ -110,7 +110,11 @@ public class GT0011  extends GlobalTitle {
 		public void read(InputElement xml, GT0011 ai) throws XMLStreamException {
 			ai.tt = xml.getAttribute(TRANSLATION_TYPE).toInt();
 			ai.es = EncodingScheme.valueOf(xml.getAttribute(ENCODING_SCHEME).toInt());
-			ai.np = NumberingPlan.valueOf(xml.getAttribute(NUMBERING_PLAN).toInt());
+			try {
+				ai.np = NumberingPlan.valueOf(xml.getAttribute(NUMBERING_PLAN).toInt());
+			} catch (IOException e) {
+				throw new XMLStreamException(e);
+			}
 			ai.digits = xml.getAttribute(DIGITS).toString();
 		}
 	};    

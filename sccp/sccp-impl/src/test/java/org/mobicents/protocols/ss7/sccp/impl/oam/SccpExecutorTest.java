@@ -162,6 +162,18 @@ public class SccpExecutorTest {
 
 	}
 	
+	/**
+	 * Test for bug http://code.google.com/p/mobicents/issues/detail?id=3057
+	 * NPE when creating SCCP primary address via CLI
+	 */
+	@Test(groups = { "oam","functional.mgmt"})
+	public void testManageAddress() {
+		String prim_addressCmd = "sccp primary_add create 1 71 6535 8 0 0 12 93707100007";
+		String result = this.sccpExecutor.execute(prim_addressCmd.split(" "));
+		assertEquals( result,SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED);
+		assertEquals( this.router.getPrimaryAddresses().size(),1);
+	}
+	
 	class Mtp3UserPartImpl implements Mtp3UserPart {
 
 		@Override

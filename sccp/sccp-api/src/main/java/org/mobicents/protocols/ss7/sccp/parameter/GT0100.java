@@ -120,8 +120,12 @@ public class GT0100 extends GlobalTitle {
 		public void read(InputElement xml, GT0100 ai) throws XMLStreamException {
 			ai.tt = xml.getAttribute(TRANSLATION_TYPE).toInt();
 			ai.encodingScheme = EncodingScheme.valueOf(xml.getAttribute(ENCODING_SCHEME).toInt());
-			ai.np = NumberingPlan.valueOf(xml.getAttribute(NUMBERING_PLAN).toInt());
-			ai.nai = NatureOfAddress.valueOf(xml.getAttribute(NATURE_OF_ADDRESS_INDICATOR).toInt());
+			try {
+				ai.np = NumberingPlan.valueOf(xml.getAttribute(NUMBERING_PLAN).toInt());
+				ai.nai = NatureOfAddress.valueOf(xml.getAttribute(NATURE_OF_ADDRESS_INDICATOR).toInt());
+			} catch (IOException e) {
+				throw new XMLStreamException(e);
+			}
 			ai.digits = xml.getAttribute(DIGITS).toString();
 		}
 	};
