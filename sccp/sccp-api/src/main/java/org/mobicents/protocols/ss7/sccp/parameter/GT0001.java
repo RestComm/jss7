@@ -95,7 +95,11 @@ public class GT0001 extends GlobalTitle {
 
 		public void read(InputElement xml, GT0001 ai) throws XMLStreamException {
 			//ai.gti = GlobalTitleIndicator.valueOf(xml.getAttribute(GLOBALTITLE_INDICATOR).toInt());
-			ai.nai = NatureOfAddress.valueOf(xml.getAttribute(NATURE_OF_ADDRESS_INDICATOR).toInt());
+			try {
+				ai.nai = NatureOfAddress.valueOf(xml.getAttribute(NATURE_OF_ADDRESS_INDICATOR).toInt());
+			} catch (IOException e) {
+				throw new XMLStreamException(e);
+			}
 			ai.digits = xml.getAttribute(DIGITS).toString();
 		}
 	};
