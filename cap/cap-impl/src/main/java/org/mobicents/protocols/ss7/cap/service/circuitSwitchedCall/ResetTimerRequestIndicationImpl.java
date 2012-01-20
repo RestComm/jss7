@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -33,44 +32,49 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
-import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformationType;
+import org.mobicents.protocols.ss7.cap.api.primitives.TimerID;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequestIndication;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
-import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
-
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class CallInformationRequestRequestIndicationImpl extends CircuitSwitchedCallMessageImpl implements CallInformationRequestRequestIndication {
+public class ResetTimerRequestIndicationImpl extends CircuitSwitchedCallMessageImpl implements ResetTimerRequestIndication {
 
-	public static final int _ID_requestedInformationTypeList = 0;
+	public static final int _ID_timerID = 0;
+	public static final int _ID_timervalue = 1;
 	public static final int _ID_extensions = 2;
-	public static final int _ID_legID = 3;
+	public static final int _ID_callSegmentID = 3;
+	
+	public static final String _PrimitiveName = "ConnectToResourceIndication";
 
-	public static final String _PrimitiveName = "CallInformationRequestRequestIndication";	
-
-	private ArrayList<RequestedInformationType> requestedInformationTypeList;
+	private TimerID timerID;
+	private int timerValue;
 	private CAPExtensions extensions;
-	private SendingSideID legID;	
+	private Integer callSegmentID;
+	
+	
+	public ResetTimerRequestIndicationImpl() {
+	}
+
+	public ResetTimerRequestIndicationImpl(TimerID timerID, int timerValue, CAPExtensions extensions, Integer callSegmentID) {
+		this.timerID = timerID;
+		this.timerValue = timerValue;
+		this.extensions = extensions;
+		this.callSegmentID = callSegmentID;
+	}
 
 	
-	public CallInformationRequestRequestIndicationImpl() {
-	}
-	
-	public CallInformationRequestRequestIndicationImpl(ArrayList<RequestedInformationType> requestedInformationTypeList, CAPExtensions extensions,
-			SendingSideID legID) {
-		this.requestedInformationTypeList = requestedInformationTypeList;
-		this.extensions = extensions;
-		this.legID = legID;
+	@Override
+	public TimerID getTimerID() {
+		return timerID;
 	}
 
 	@Override
-	public ArrayList<RequestedInformationType> getRequestedInformationTypeList() {
-		return requestedInformationTypeList;
+	public int getTimerValue() {
+		return timerValue;
 	}
 
 	@Override
@@ -79,11 +83,10 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 	}
 
 	@Override
-	public SendingSideID getLegID() {
-		return legID;
+	public Integer getCallSegmentID() {
+		return callSegmentID;
 	}
-	
-	
+
 	@Override
 	public int getTag() throws CAPException {
 		return Tag.SEQUENCE;
@@ -130,10 +133,10 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 
 	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.requestedInformationTypeList = null;
+		this.timerID = TimerID.tssf;
+		this.timerValue = -1;
 		this.extensions = null;
-		this.legID = null;
-//		this.legID = new SendingSideIDImpl(LegType.leg2);
+		this.callSegmentID = null;
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		while (true) {
@@ -144,38 +147,19 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 
 			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 				switch (tag) {
-				case _ID_requestedInformationTypeList:
-					this.requestedInformationTypeList = new ArrayList<RequestedInformationType>();
-					AsnInputStream ais2 = ais.readSequenceStream();
-					while (true) {
-						if (ais2.available() == 0)
-							break;
-
-						int tag2 = ais2.readTag();
-
-						if (tag2 != Tag.ENUMERATED || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || !ais2.isTagPrimitive())
-							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": bad RequestedInformationType tag or tagClass or RequestedInformationType is not primitive",
-									CAPParsingComponentExceptionReason.MistypedParameter);
-
-						int i1 = (int) ais2.readInteger();
-						RequestedInformationType el = RequestedInformationType.getInstance(i1);
-						if (el == null)
-							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": bad RequestedInformationType value",
-									CAPParsingComponentExceptionReason.MistypedParameter);
-						this.requestedInformationTypeList.add(el);
-					}
+				case _ID_timerID:
+					int i1 = (int) ais.readInteger();
+					this.timerID = TimerID.getInstance(i1);
+					break;
+				case _ID_timervalue:
+					this.timerValue = (int) ais.readInteger();
 					break;
 				case _ID_extensions:
 					this.extensions = new CAPExtensionsImpl();
 					((CAPExtensionsImpl) this.extensions).decodeAll(ais);
 					break;
-				case _ID_legID:
-					ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					this.legID = new SendingSideIDImpl();
-					((SendingSideIDImpl) this.legID).decodeAll(ais2);
+				case _ID_callSegmentID:
+					this.callSegmentID = (int) ais.readInteger();
 					break;
 
 				default:
@@ -187,9 +171,9 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 			}
 		}
 
-		if (this.requestedInformationTypeList == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-					+ ": Parameter requestedInformationTypeList is mandatory parameters, but not found", CAPParsingComponentExceptionReason.MistypedParameter);
+		if (this.timerValue == -1)
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": timerValue is mandatory but not found",
+					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	@Override
@@ -213,33 +197,22 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 	@Override
 	public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		if (this.requestedInformationTypeList == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": requestedInformationTypeList must not be null");
-		if (this.requestedInformationTypeList.size() < 1 || this.requestedInformationTypeList.size() > 4)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": requestedInformationTypeList size must be from 1 to 4");
+		if (this.timerID == null)
+			this.timerID = TimerID.tssf;
 
 		try {
-			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_requestedInformationTypeList);
-			int pos = aos.StartContentDefiniteLength();
-			for (RequestedInformationType ri : this.requestedInformationTypeList) {
-				aos.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, ri.getCode());
-			}
-			aos.FinalizeContent(pos);
 
+			aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_timerID, this.timerID.getCode());
+			aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_timervalue, this.timerValue);
 			if (this.extensions != null)
 				((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
+			if (this.callSegmentID != null)
+				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callSegmentID, this.callSegmentID);
 
-			if (this.legID != null) {
-				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_legID);
-				pos = aos.StartContentDefiniteLength();
-				((SendingSideIDImpl) this.legID).encodeAll(aos);
-				aos.FinalizeContent(pos);
-			}
-
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		} catch (IOException e) {
 			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -250,25 +223,19 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 		sb.append(_PrimitiveName);
 		sb.append(" [");
 
-		if (this.requestedInformationTypeList != null) {
-			sb.append("requestedInformationTypeList=[");
-			boolean firstItem = true;
-			for (RequestedInformationType ri : this.requestedInformationTypeList) {
-				if (firstItem)
-					firstItem = false;
-				else
-					sb.append(", ");
-				sb.append(ri.toString());
-			}
-			sb.append("]");
+		if (this.timerID != null) {
+			sb.append("timerID=");
+			sb.append(timerID.toString());
 		}
+		sb.append(", timerValue=");
+		sb.append(timerValue);
 		if (this.extensions != null) {
 			sb.append(", extensions=");
 			sb.append(extensions.toString());
 		}
-		if (this.legID != null) {
-			sb.append(", legID=");
-			sb.append(legID.toString());
+		if (this.callSegmentID != null) {
+			sb.append(", callSegmentID=");
+			sb.append(callSegmentID.toString());
 		}
 
 		sb.append("]");
@@ -276,3 +243,4 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 		return sb.toString();
 	}
 }
+

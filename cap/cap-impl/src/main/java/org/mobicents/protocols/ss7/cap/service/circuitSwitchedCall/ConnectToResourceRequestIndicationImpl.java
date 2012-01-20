@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -32,45 +31,56 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
-import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformationType;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
+import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
-import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
-
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwoImpl;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class CallInformationRequestRequestIndicationImpl extends CircuitSwitchedCallMessageImpl implements CallInformationRequestRequestIndication {
+public class ConnectToResourceRequestIndicationImpl extends CircuitSwitchedCallMessageImpl implements ConnectToResourceRequestIndication {
 
-	public static final int _ID_requestedInformationTypeList = 0;
-	public static final int _ID_extensions = 2;
-	public static final int _ID_legID = 3;
+	public static final int _ID_resourceAddress_ipRoutingAddress = 0;
+	public static final int _ID_resourceAddress_none = 3;
+	public static final int _ID_extensions = 4;
+	public static final int _ID_serviceInteractionIndicatorsTwo = 7;
+	public static final int _ID_callSegmentID = 50;
+	
+	public static final String _PrimitiveName = "ConnectToResourceIndication";
 
-	public static final String _PrimitiveName = "CallInformationRequestRequestIndication";	
-
-	private ArrayList<RequestedInformationType> requestedInformationTypeList;
+	private CalledPartyNumberCap resourceAddress_IPRoutingAddress;
+	private boolean resourceAddress_Null;
 	private CAPExtensions extensions;
-	private SendingSideID legID;	
+	private ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo;
+	private Integer callSegmentID;
 
 	
-	public CallInformationRequestRequestIndicationImpl() {
+	public ConnectToResourceRequestIndicationImpl() {
 	}
 	
-	public CallInformationRequestRequestIndicationImpl(ArrayList<RequestedInformationType> requestedInformationTypeList, CAPExtensions extensions,
-			SendingSideID legID) {
-		this.requestedInformationTypeList = requestedInformationTypeList;
+	public ConnectToResourceRequestIndicationImpl(CalledPartyNumberCap resourceAddress_IPRoutingAddress, boolean resourceAddress_Null, CAPExtensions extensions,
+			ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Integer callSegmentID) {
+		this.resourceAddress_IPRoutingAddress = resourceAddress_IPRoutingAddress;
+		this.resourceAddress_Null = resourceAddress_Null;
 		this.extensions = extensions;
-		this.legID = legID;
+		this.serviceInteractionIndicatorsTwo = serviceInteractionIndicatorsTwo;
+		this.callSegmentID = callSegmentID;
+	}
+	
+	@Override
+	public CalledPartyNumberCap getResourceAddress_IPRoutingAddress() {
+		return resourceAddress_IPRoutingAddress;
 	}
 
 	@Override
-	public ArrayList<RequestedInformationType> getRequestedInformationTypeList() {
-		return requestedInformationTypeList;
+	public boolean getResourceAddress_Null() {
+		return resourceAddress_Null;
 	}
 
 	@Override
@@ -79,11 +89,15 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 	}
 
 	@Override
-	public SendingSideID getLegID() {
-		return legID;
+	public ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo() {
+		return serviceInteractionIndicatorsTwo;
 	}
-	
-	
+
+	@Override
+	public Integer getCallSegmentID() {
+		return callSegmentID;
+	}
+
 	@Override
 	public int getTag() throws CAPException {
 		return Tag.SEQUENCE;
@@ -130,10 +144,11 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 
 	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.requestedInformationTypeList = null;
+		this.resourceAddress_IPRoutingAddress = null;
+		this.resourceAddress_Null = false;
 		this.extensions = null;
-		this.legID = null;
-//		this.legID = new SendingSideIDImpl(LegType.leg2);
+		this.serviceInteractionIndicatorsTwo = null;
+		this.callSegmentID = null;
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		while (true) {
@@ -144,38 +159,25 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 
 			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 				switch (tag) {
-				case _ID_requestedInformationTypeList:
-					this.requestedInformationTypeList = new ArrayList<RequestedInformationType>();
-					AsnInputStream ais2 = ais.readSequenceStream();
-					while (true) {
-						if (ais2.available() == 0)
-							break;
 
-						int tag2 = ais2.readTag();
-
-						if (tag2 != Tag.ENUMERATED || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || !ais2.isTagPrimitive())
-							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": bad RequestedInformationType tag or tagClass or RequestedInformationType is not primitive",
-									CAPParsingComponentExceptionReason.MistypedParameter);
-
-						int i1 = (int) ais2.readInteger();
-						RequestedInformationType el = RequestedInformationType.getInstance(i1);
-						if (el == null)
-							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": bad RequestedInformationType value",
-									CAPParsingComponentExceptionReason.MistypedParameter);
-						this.requestedInformationTypeList.add(el);
-					}
+				case _ID_resourceAddress_ipRoutingAddress:
+					this.resourceAddress_IPRoutingAddress = new CalledPartyNumberCapImpl();
+					((CalledPartyNumberCapImpl) this.resourceAddress_IPRoutingAddress).decodeAll(ais);
+					break;
+				case _ID_resourceAddress_none:
+					ais.readNull();
+					this.resourceAddress_Null = true;
 					break;
 				case _ID_extensions:
 					this.extensions = new CAPExtensionsImpl();
 					((CAPExtensionsImpl) this.extensions).decodeAll(ais);
 					break;
-				case _ID_legID:
-					ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					this.legID = new SendingSideIDImpl();
-					((SendingSideIDImpl) this.legID).decodeAll(ais2);
+				case _ID_serviceInteractionIndicatorsTwo:
+					this.serviceInteractionIndicatorsTwo = new ServiceInteractionIndicatorsTwoImpl();
+					((ServiceInteractionIndicatorsTwoImpl) this.serviceInteractionIndicatorsTwo).decodeAll(ais);
+					break;
+				case _ID_callSegmentID:
+					this.callSegmentID = (int) ais.readInteger();
 					break;
 
 				default:
@@ -187,9 +189,14 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 			}
 		}
 
-		if (this.requestedInformationTypeList == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-					+ ": Parameter requestedInformationTypeList is mandatory parameters, but not found", CAPParsingComponentExceptionReason.MistypedParameter);
+		int choiceCnt = 0;
+		if (this.resourceAddress_IPRoutingAddress != null)
+			choiceCnt++;
+		if (this.resourceAddress_Null)
+			choiceCnt++;
+		if (choiceCnt != 1)
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": resourceAddress parameter must have 1 choice, found: "
+					+ choiceCnt, CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	@Override
@@ -213,33 +220,31 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 	@Override
 	public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		if (this.requestedInformationTypeList == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": requestedInformationTypeList must not be null");
-		if (this.requestedInformationTypeList.size() < 1 || this.requestedInformationTypeList.size() > 4)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": requestedInformationTypeList size must be from 1 to 4");
+		int choiceCnt = 0;
+		if (this.resourceAddress_IPRoutingAddress != null)
+			choiceCnt++;
+		if (this.resourceAddress_Null)
+			choiceCnt++;
+		if (choiceCnt != 1)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": resourceAddress parameter must have 1 choice, found: " + choiceCnt);
 
 		try {
-			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_requestedInformationTypeList);
-			int pos = aos.StartContentDefiniteLength();
-			for (RequestedInformationType ri : this.requestedInformationTypeList) {
-				aos.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, ri.getCode());
-			}
-			aos.FinalizeContent(pos);
 
+			if (this.resourceAddress_IPRoutingAddress != null)
+				((CalledPartyNumberCapImpl) this.resourceAddress_IPRoutingAddress).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_resourceAddress_ipRoutingAddress);
+			if (this.resourceAddress_Null)
+				aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_resourceAddress_none);
 			if (this.extensions != null)
 				((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
+			if (this.serviceInteractionIndicatorsTwo != null)
+				((ServiceInteractionIndicatorsTwoImpl) this.serviceInteractionIndicatorsTwo).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_serviceInteractionIndicatorsTwo);
+			if (this.callSegmentID != null)
+				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callSegmentID, this.callSegmentID);
 
-			if (this.legID != null) {
-				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_legID);
-				pos = aos.StartContentDefiniteLength();
-				((SendingSideIDImpl) this.legID).encodeAll(aos);
-				aos.FinalizeContent(pos);
-			}
-
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		} catch (IOException e) {
 			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -250,25 +255,24 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 		sb.append(_PrimitiveName);
 		sb.append(" [");
 
-		if (this.requestedInformationTypeList != null) {
-			sb.append("requestedInformationTypeList=[");
-			boolean firstItem = true;
-			for (RequestedInformationType ri : this.requestedInformationTypeList) {
-				if (firstItem)
-					firstItem = false;
-				else
-					sb.append(", ");
-				sb.append(ri.toString());
-			}
-			sb.append("]");
+		if (this.resourceAddress_IPRoutingAddress != null) {
+			sb.append("resourceAddress: IPRoutingAddress=");
+			sb.append(resourceAddress_IPRoutingAddress.toString());
+		}
+		if (this.resourceAddress_Null) {
+			sb.append(" resourceAddress: Null");
 		}
 		if (this.extensions != null) {
 			sb.append(", extensions=");
 			sb.append(extensions.toString());
 		}
-		if (this.legID != null) {
-			sb.append(", legID=");
-			sb.append(legID.toString());
+		if (this.serviceInteractionIndicatorsTwo != null) {
+			sb.append(", serviceInteractionIndicatorsTwo=");
+			sb.append(serviceInteractionIndicatorsTwo.toString());
+		}
+		if (this.callSegmentID != null) {
+			sb.append(", callSegmentID=");
+			sb.append(callSegmentID.toString());
 		}
 
 		sb.append("]");
@@ -276,3 +280,4 @@ public class CallInformationRequestRequestIndicationImpl extends CircuitSwitched
 		return sb.toString();
 	}
 }
+

@@ -261,7 +261,7 @@ public class TimeAndTimezoneImpl implements TimeAndTimezone, CAPAsnPrimitive {
 		
 		this.data = ansIS.readOctetStringData(length);
 		if (this.data.length < 8 || this.data.length > 8)
-			throw new CAPParsingComponentException("Error decoding TimeAndTimezone: length must be from 8 to 8, real length = " + length,
+			throw new CAPParsingComponentException("Error decoding " + _PrimitiveName + ": length must be from 8 to 8, real length = " + length,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 

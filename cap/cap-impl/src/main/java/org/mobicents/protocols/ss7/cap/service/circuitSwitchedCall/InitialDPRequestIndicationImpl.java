@@ -613,7 +613,7 @@ public class InitialDPRequestIndicationImpl extends CircuitSwitchedCallMessageIm
 		}
 
 		if (num < 1)
-			throw new CAPParsingComponentException("Error while decoding InitialDPRequest: Needs at least 1 mandatory parameters, found " + num,
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Needs at least 1 mandatory parameters, found " + num,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 

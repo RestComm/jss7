@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
+package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
@@ -31,49 +31,43 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.primitives.AChChargingAddress;
-import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
+import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
 import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
-import org.mobicents.protocols.ss7.cap.primitives.CAMELAChBillingChargingCharacteristicsImpl;
-import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FCIBCCCAMELsequence1;
+import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class ApplyChargingRequestIndicationImpl extends CircuitSwitchedCallMessageImpl implements ApplyChargingRequestIndication {
+public class FCIBCCCAMELsequence1Impl implements FCIBCCCAMELsequence1, CAPAsnPrimitive {
 
-	public static final int _ID_aChBillingChargingCharacteristics = 0;
-	public static final int _ID_partyToCharge = 2;
-	public static final int _ID_extensions = 3;
-	public static final int _ID_aChChargingAddress = 50;
+	public static final int _ID_freeFormatData = 0;
+	public static final int _ID_partyToCharge = 1;
+	public static final int _ID_appendFreeFormatData = 2;
 
-	public static final String _PrimitiveName = "ApplyChargingRequestIndication";
+	public static final String _PrimitiveName = "FCIBCCCAMELsequence1";
 
-	private CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics;
+	private byte[] freeFormatData;
 	private SendingSideID partyToCharge;
-	private CAPExtensions extensions;
-	private AChChargingAddress aChChargingAddress;
+	private AppendFreeFormatData appendFreeFormatData;
 
-	
-	public ApplyChargingRequestIndicationImpl() {
+
+	public FCIBCCCAMELsequence1Impl() {
 	}
-	
-	public ApplyChargingRequestIndicationImpl(CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics, SendingSideID partyToCharge,
-			CAPExtensions extensions, AChChargingAddress aChChargingAddress) {
-		this.aChBillingChargingCharacteristics = aChBillingChargingCharacteristics;
+
+	public FCIBCCCAMELsequence1Impl(byte[] freeFormatData, SendingSideID partyToCharge, AppendFreeFormatData appendFreeFormatData) {
+		this.freeFormatData = freeFormatData;
 		this.partyToCharge = partyToCharge;
-		this.extensions = extensions;
-		this.aChChargingAddress = aChChargingAddress;
+		this.appendFreeFormatData = appendFreeFormatData;
 	}
 	
 	@Override
-	public CAMELAChBillingChargingCharacteristics getAChBillingChargingCharacteristics() {
-		return aChBillingChargingCharacteristics;
+	public byte[] getFreeFormatData() {
+		return freeFormatData;
 	}
 
 	@Override
@@ -82,16 +76,10 @@ public class ApplyChargingRequestIndicationImpl extends CircuitSwitchedCallMessa
 	}
 
 	@Override
-	public CAPExtensions getExtensions() {
-		return extensions;
+	public AppendFreeFormatData getAppendFreeFormatData() {
+		return appendFreeFormatData;
 	}
 
-	@Override
-	public AChChargingAddress getAChChargingAddress() {
-		return aChChargingAddress;
-	}
-
-	
 	@Override
 	public int getTag() throws CAPException {
 		return Tag.SEQUENCE;
@@ -138,11 +126,9 @@ public class ApplyChargingRequestIndicationImpl extends CircuitSwitchedCallMessa
 
 	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.aChBillingChargingCharacteristics = null;
-		this.partyToCharge = null;
-//		this.partyToCharge = new SendingSideIDImpl(LegType.leg1);
-		this.extensions = null;
-		this.aChChargingAddress = null; // TODO: DEFAULT legID:sendingSideID:leg1
+		this.freeFormatData = null;
+		this.partyToCharge = new SendingSideIDImpl(LegType.leg1);
+		this.appendFreeFormatData = AppendFreeFormatData.overwrite;
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		while (true) {
@@ -150,12 +136,15 @@ public class ApplyChargingRequestIndicationImpl extends CircuitSwitchedCallMessa
 				break;
 
 			int tag = ais.readTag();
-			
+
 			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 				switch (tag) {
-				case _ID_aChBillingChargingCharacteristics:
-					this.aChBillingChargingCharacteristics = new CAMELAChBillingChargingCharacteristicsImpl();
-					((CAMELAChBillingChargingCharacteristicsImpl) this.aChBillingChargingCharacteristics).decodeAll(ais);
+				case _ID_freeFormatData:
+					this.freeFormatData = ais.readOctetString();
+					if (this.freeFormatData.length < 1 || this.freeFormatData.length > 160)
+						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ": freeFormatData length must be from 1 to 160, found: " + this.freeFormatData.length,
+								CAPParsingComponentExceptionReason.MistypedParameter);
 					break;
 				case _ID_partyToCharge:
 					AsnInputStream ais2 = ais.readSequenceStream();
@@ -163,12 +152,9 @@ public class ApplyChargingRequestIndicationImpl extends CircuitSwitchedCallMessa
 					this.partyToCharge = new SendingSideIDImpl();
 					((SendingSideIDImpl) this.partyToCharge).decodeAll(ais2);
 					break;
-				case _ID_extensions:
-					this.extensions = new CAPExtensionsImpl();
-					((CAPExtensionsImpl) this.extensions).decodeAll(ais);
-					break;
-				case _ID_aChChargingAddress:
-					ais.advanceElement(); // TODO: implement it
+				case _ID_appendFreeFormatData:
+					int i1 = (int)ais.readInteger();
+					this.appendFreeFormatData = AppendFreeFormatData.getInstance(i1);
 					break;
 
 				default:
@@ -180,8 +166,8 @@ public class ApplyChargingRequestIndicationImpl extends CircuitSwitchedCallMessa
 			}
 		}
 
-		if (this.aChBillingChargingCharacteristics==null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": aChBillingChargingCharacteristics is mandatory but not found ",
+		if (this.freeFormatData == null)
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": freeFormatData is mandatory but not found",
 					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -206,25 +192,26 @@ public class ApplyChargingRequestIndicationImpl extends CircuitSwitchedCallMessa
 	@Override
 	public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		if (this.aChBillingChargingCharacteristics == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": aChBillingChargingCharacteristics must not be null");
+		if (this.freeFormatData == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": freeFormatData must not be null");
+		if (this.freeFormatData.length < 1 || this.freeFormatData.length > 160)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": freeFormatData length must not be from 1 to 160, found: "
+					+ this.freeFormatData.length);
 
 		try {
-			if (this.aChBillingChargingCharacteristics != null)
-				((CAMELAChBillingChargingCharacteristicsImpl) this.aChBillingChargingCharacteristics).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
-						_ID_aChBillingChargingCharacteristics);
+			aos.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_freeFormatData, this.freeFormatData);
+
 			if (this.partyToCharge != null) {
 				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_partyToCharge);
 				int pos = aos.StartContentDefiniteLength();
 				((SendingSideIDImpl) this.partyToCharge).encodeAll(aos);
 				aos.FinalizeContent(pos);
-			}			
-			if (this.extensions != null)
-				((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
-			if (this.aChChargingAddress != null) {
-				// TODO: implement it - _ID_cause
 			}
+			if (this.appendFreeFormatData != null)
+				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_appendFreeFormatData, this.appendFreeFormatData.getCode());
 
+		} catch (IOException e) {
+			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		} catch (AsnException e) {
 			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
@@ -237,24 +224,31 @@ public class ApplyChargingRequestIndicationImpl extends CircuitSwitchedCallMessa
 		sb.append(_PrimitiveName);
 		sb.append(" [");
 
-		if (this.aChBillingChargingCharacteristics != null) {
-			sb.append("aChBillingChargingCharacteristics=");
-			sb.append(aChBillingChargingCharacteristics.toString());
+		if (this.freeFormatData != null) {
+			sb.append("freeFormatData=[");
+			sb.append(printDataArr(freeFormatData));
+			sb.append("]");
 		}
 		if (this.partyToCharge != null) {
 			sb.append(", partyToCharge=");
 			sb.append(partyToCharge.toString());
 		}
-		if (this.extensions != null) {
-			sb.append(", extensions=");
-			sb.append(extensions.toString());
-		}
-		if (this.aChChargingAddress != null) {
-			sb.append(", aChChargingAddress=");
-			sb.append(aChChargingAddress.toString());
+		if (this.appendFreeFormatData != null) {
+			sb.append(", appendFreeFormatData=");
+			sb.append(appendFreeFormatData.toString());
 		}
 
 		sb.append("]");
+
+		return sb.toString();
+	}
+
+	private String printDataArr(byte[] arr) {
+		StringBuilder sb = new StringBuilder();
+		for (int b : arr) {
+			sb.append(b);
+			sb.append(", ");
+		}
 
 		return sb.toString();
 	}
