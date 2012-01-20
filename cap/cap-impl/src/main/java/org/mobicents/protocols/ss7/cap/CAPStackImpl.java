@@ -89,6 +89,11 @@ public class CAPStackImpl implements CAPStack {
 		this.state = State.CONFIGURED;
 	}
 
+	@Override
+	public TCAPStack getTCAPStack() {
+		return this.tcapStack;
+	}
+
 	private enum State {
 		IDLE, CONFIGURED, RUNNING;
 	}

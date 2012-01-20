@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api;
 
+import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
+
 /**
  * 
  * @author sergey vetyutnev
@@ -34,4 +36,7 @@ public interface CAPStack {
 	public void stop();
 
 	public void start() throws IllegalStateException;
+
+	public TCAPStack getTCAPStack();
+
 }
