@@ -40,16 +40,22 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityT
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponseIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistRequestInstructionsRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallListener;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EstablishTemporaryConnectionRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ReleaseCallRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequestIndication;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.InitialDPRequestIndicationImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
@@ -383,6 +389,42 @@ public class Client implements CAPDialogListener, CAPServiceCircuitSwitchedCallL
 
 	@Override
 	public void onActivityTestResponseIndication(ActivityTestResponseIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAssistRequestInstructionsRequestIndication(AssistRequestInstructionsRequestIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onEstablishTemporaryConnectionRequestIndication(EstablishTemporaryConnectionRequestIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDisconnectForwardConnectionRequestIndication(DisconnectForwardConnectionRequestIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onResetTimerRequestIndication(ResetTimerRequestIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onFurnishChargingInformationRequestIndication(FurnishChargingInformationRequestIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectToResourceRequestIndication(ConnectToResourceRequestIndication ind) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -41,50 +41,46 @@ import org.testng.*;import org.testng.annotations.*;
 public class GenericNumberCapTest {
 
 	public byte[] getData() {
-		return new byte[] {  };
+		return new byte[] { (byte) 157, 7, 1, (byte) 131, 20, 7, 1, 9, 0 };
 	}
 
 	public byte[] getIntData() {
-		return new byte[] {  };
+		return new byte[] { 1, -125, 20, 7, 1, 9, 0 };
 	}
 
 	@Test(groups = { "functional.decode","isup"})
 	public void testDecode() throws Exception {
 
-//		byte[] data = this.getData();
-//		AsnInputStream ais = new AsnInputStream(data);
-//		GenericNumberCapImpl elem = new GenericNumberCapImpl();
-//		int tag = ais.readTag();
-//		elem.decodeAll(ais);
-//		GenericNumber gn = elem.getGenericNumber();
-//		assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
-//		assertEquals(gn.getNatureOfAddressIndicator(), 3);
-//		assertTrue(gn.getAddress().equals("7010900"));
-//		assertEquals(gn.getNumberingPlanIndicator(), 1);
-//		assertEquals(gn.getAddressRepresentationRestrictedIndicator(), 1);
-//		assertEquals(gn.getNumberQualifierIndicator(), 1);
-//		assertEquals(gn.getScreeningIndicator(), 0);
-		
-		// TODO: implement decoding test after getting encoded data
+		byte[] data = this.getData();
+		AsnInputStream ais = new AsnInputStream(data);
+		GenericNumberCapImpl elem = new GenericNumberCapImpl();
+		int tag = ais.readTag();
+		elem.decodeAll(ais);
+		GenericNumber gn = elem.getGenericNumber();
+		assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
+		assertEquals(gn.getNatureOfAddressIndicator(), 3);
+		assertTrue(gn.getAddress().equals("7010900"));
+		assertEquals(gn.getNumberingPlanIndicator(), 1);
+		assertEquals(gn.getAddressRepresentationRestrictedIndicator(), 1);
+		assertEquals(gn.getNumberQualifierIndicator(), 1);
+		assertEquals(gn.getScreeningIndicator(), 0);
 	}
 
 	@Test(groups = { "functional.encode","isup"})
 	public void testEncode() throws Exception {
 
-//		GenericNumberCapImpl elem = new GenericNumberCapImpl(this.getIntData());
-//		AsnOutputStream aos = new AsnOutputStream();
-//		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 29);
-//		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
-//
-//		GenericNumber rn = new GenericNumberImpl(3, "7010900", 1, 1, 1, false, 0);
-//		elem = new GenericNumberCapImpl(rn);
-//		aos = new AsnOutputStream();
-//		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 29);
-//		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+		GenericNumberCapImpl elem = new GenericNumberCapImpl(this.getIntData());
+		AsnOutputStream aos = new AsnOutputStream();
+		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 29);
+		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+
+		GenericNumber rn = new GenericNumberImpl(3, "7010900", 1, 1, 1, false, 0);
+		elem = new GenericNumberCapImpl(rn);
+		aos = new AsnOutputStream();
+		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 29);
+		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
 		
 		// int natureOfAddresIndicator, String address, int numberQualifierIndicator, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator,
 		// boolean numberIncomplete, int screeningIndicator
-		
-		// TODO: resolve ISUP GenericNumber encoding failure 
 	}
 }

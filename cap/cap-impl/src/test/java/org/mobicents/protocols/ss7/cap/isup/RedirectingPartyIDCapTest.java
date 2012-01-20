@@ -76,10 +76,9 @@ public class RedirectingPartyIDCapTest {
 		elem = new RedirectingPartyIDCapImpl(rn);
 		aos = new AsnOutputStream();
 		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 29);
-//		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
-		
-		// TODO: fix ISUP.RedirectingNumber encoding problem: encoded data does not correspond to the original trace data
+		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
 		
 //		int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationRestrictedIndicator
 	}
 }
+

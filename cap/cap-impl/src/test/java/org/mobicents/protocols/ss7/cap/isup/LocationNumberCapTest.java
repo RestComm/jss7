@@ -41,11 +41,11 @@ import org.testng.*;import org.testng.annotations.*;
 public class LocationNumberCapTest {
 
 	public byte[] getData() {
-		return new byte[] { (byte) 138, 8, (byte) 132, (byte) 151, 8, 2, (byte) 151, 1, 32, (byte) 144 };
+		return new byte[] { (byte) 138, 8, (byte) 132, (byte) 151, 8, 2, (byte) 151, 1, 32, 0 };
 	}
 
 	public byte[] getIntData() {
-		return new byte[] { (byte) 132, (byte) 151, 8, 2, (byte) 151, 1, 32, (byte) 144 };
+		return new byte[] { (byte) 132, (byte) 151, 8, 2, (byte) 151, 1, 32, 0 };
 	}
 
 	@Test(groups = { "functional.decode","isup"})
@@ -78,9 +78,7 @@ public class LocationNumberCapTest {
 		elem = new LocationNumberCapImpl(cpn);
 		aos = new AsnOutputStream();
 		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 10);
-//		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
-		
-		// TODO: fix ISUP.LocationNumber encoding problem
+		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
 		
 //		int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator, int addressRepresentationREstrictedIndicator,
 //		int screeningIndicator
