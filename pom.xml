@@ -32,7 +32,8 @@
 		<!-- mobicents but not strictly ss7 -->
 		<asn.version>2.0.0-SNAPSHOT</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
-		<sctp.version>1.0.0.BETA1</sctp.version>
+		<sctp.version>1.0.0-SNAPSHOT</sctp.version>
+		<commons.version>1.0.0-SNAPSHOT</commons.version>
 	</properties>
 
 	<modules>
@@ -70,6 +71,12 @@
 				<artifactId>stream</artifactId>
 				<version>${stream.version}</version>
 			</dependency>
+			<!-- utils -->
+			<dependency>
+				<groupId>org.mobicents.commons</groupId>
+				<artifactId>commons</artifactId>
+				<version>${commons.version}</version>
+			</dependency>			
 			<!-- SCTP -->
 			<dependency>
 				<groupId>org.mobicents.protocols.sctp</groupId>
