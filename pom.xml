@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -32,7 +33,8 @@
 		<!-- mobicents but not strictly ss7 -->
 		<asn.version>1.0.0.CR1</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
-		<sctp.version>1.0.0.BETA1</sctp.version>
+		<sctp.version>1.0.0-SNAPSHOT</sctp.version>
+		<commons.version>1.0.0-SNAPSHOT</commons.version>
 	</properties>
 
 	<modules>
@@ -48,7 +50,7 @@
 		<module>tcap</module>
 		<module>map</module>
 		<module>service</module>
-		<!--  module>sgw</module -->
+		<!-- module>sgw</module -->
 	</modules>
 
 	<!-- declare our babies -->
@@ -65,6 +67,12 @@
 				<groupId>org.mobicents.protocols.stream</groupId>
 				<artifactId>stream</artifactId>
 				<version>${stream.version}</version>
+			</dependency>
+			<!-- utils -->
+			<dependency>
+				<groupId>org.mobicents.commons</groupId>
+				<artifactId>commons</artifactId>
+				<version>${commons.version}</version>
 			</dependency>
 			<!-- SCTP -->
 			<dependency>
@@ -102,13 +110,9 @@
 				<version>${pom.version}</version>
 			</dependency>
 
-			<!-- Hardware Dahdi Java 
-			<dependency>
-				<artifactId>mobicents-dahdi</artifactId>
-				<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-				<version>${pom.version}</version>
-			</dependency>
-			-->
+			<!-- Hardware Dahdi Java <dependency> <artifactId>mobicents-dahdi</artifactId> 
+				<groupId>org.mobicents.protocols.ss7.hardware</groupId> <version>${pom.version}</version> 
+				</dependency> -->
 
 			<!-- Hardware Dialogic Java -->
 			<dependency>

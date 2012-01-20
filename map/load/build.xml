@@ -86,7 +86,7 @@
 		<mkdir dir="client" />
 		<java classname="${packageprefix}.Client" fork="true" maxmemory="1536m" classpathref="project.class.path" dir="client">
 			<jvmarg value="-Dlog.file.name=log4j-client.log" />
-			<arg value="10000" />
+			<arg value="10000000" />
 			<arg value="10" />
 		</java>
 	</target>
