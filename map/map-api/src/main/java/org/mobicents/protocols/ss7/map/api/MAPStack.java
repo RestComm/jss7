@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api;
 
+import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
+
 /**
  * 
  * @author amit bhayani
@@ -34,7 +36,9 @@ public interface MAPStack {
 	public void stop();
 
 	public void start() throws IllegalStateException;
-	
+
+	public TCAPStack getTCAPStack();
+
 	/**
 	 * As soon as congestion starts in the underlying source, it calls this
 	 * method to notify about it. Notification is only one-time till the
