@@ -87,6 +87,11 @@ public class MAPStackImpl implements MAPStack, CongestionListener {
 		this.state = State.CONFIGURED;
 	}
 
+	@Override
+	public TCAPStack getTCAPStack() {
+		return this.tcapStack;
+	}
+
 	// // ///////////////
 	// // CONF METHOD //
 	// // ///////////////
