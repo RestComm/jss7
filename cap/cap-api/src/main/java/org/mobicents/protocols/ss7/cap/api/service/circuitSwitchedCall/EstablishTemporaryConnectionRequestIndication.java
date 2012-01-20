@@ -75,7 +75,7 @@ EstablishTemporaryConnectionArg {PARAMETERS-BOUND : bound} ::= SEQUENCE {
  * @author sergey vetyutnev
  * 
  */
-public interface EstablishTemporaryConnectionIndication extends CircuitSwitchedCallMessage {
+public interface EstablishTemporaryConnectionRequestIndication extends CircuitSwitchedCallMessage {
 
 	/**
 	 * Use Digits.getGenericNumber() for AssistingSSPIPRoutingAddress

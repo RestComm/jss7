@@ -53,6 +53,9 @@ FCIBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= OCTET STRING (S
 -- This parameter indicates the billing and/or charging characteristics. 
 -- The violation of the UserDefinedConstraint shall be handled as an ASN.1 syntax error.
 
+minFCIBillingChargingLength ::= 5
+maxFCIBillingChargingLength ::= 255
+
 CAMEL-FCIBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= CHOICE{ 
  fCIBCCCAMELsequence1    [0] SEQUENCE { 
   freeFormatData      [0] OCTET STRING (SIZE( 
@@ -67,7 +70,7 @@ CAMEL-FCIBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= CHOICE{
 * @author sergey vetyutnev
 * 
 */
-public interface FurnishChargingInformationIndication extends CircuitSwitchedCallMessage {
+public interface FurnishChargingInformationRequestIndication extends CircuitSwitchedCallMessage {
 
 	public FCIBCCCAMELsequence1 getFCIBCCCAMELsequence1();
 

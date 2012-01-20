@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import org.mobicents.protocols.ss7.inap.api.primitives.BothwayThroughConnectionInd;
+
 /**
 *
 ServiceInteractionIndicatorsTwo ::= SEQUENCE {
@@ -77,7 +79,7 @@ public interface ServiceInteractionIndicatorsTwo {
 	
 	public ConnectedNumberTreatmentInd getConnectedNumberTreatmentInd();
 	
-	public Boolean getNonCUGCall();
+	public boolean getNonCUGCall();
 	
 	public HoldTreatmentIndicator getHoldTreatmentIndicator();
 	

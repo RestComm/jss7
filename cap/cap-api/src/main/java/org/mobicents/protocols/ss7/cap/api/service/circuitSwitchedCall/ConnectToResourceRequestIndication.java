@@ -22,41 +22,42 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
-import org.mobicents.protocols.ss7.cap.api.primitives.TimerID;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
 
 /**
 *
 
-resetTimer {PARAMETERS-BOUND : bound} OPERATION ::= { 
- ARGUMENT  ResetTimerArg {bound} 
+connectToResource {PARAMETERS-BOUND : bound} OPERATION ::= { 
+ ARGUMENT  ConnectToResourceArg {bound} 
  RETURN RESULT FALSE 
  ERRORS   {missingParameter | 
-     parameterOutOfRange | 
+     systemFailure | 
      taskRefused | 
      unexpectedComponentSequence | 
      unexpectedDataValue | 
      unexpectedParameter | 
      unknownCSID} 
- CODE   opcode-resetTimer} 
+ CODE   opcode-connectToResource} 
 -- Direction: gsmSCF -> gsmSSF, Timer: T  
-rt 
--- This operation is used to request the gsmSSF to refresh an application timer in the gsmSSF. 
+ctr 
+-- This operation is used to connect a call segment from the gsmSSF to the 
+-- gsmSRF. 
  
-ResetTimerArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
- timerID        [0] TimerID DEFAULT tssf, 
- timervalue       [1] TimerValue, 
- extensions       [2] Extensions {bound}      OPTIONAL, 
- callSegmentID      [3] CallSegmentID {bound}     OPTIONAL, 
+ConnectToResourceArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
+ resourceAddress CHOICE { 
+  ipRoutingAddress     [0] IPRoutingAddress {bound}, 
+  none        [3] NULL 
+  }, 
+ extensions       [4] Extensions {bound}      OPTIONAL, 
+ serviceInteractionIndicatorsTwo  [7] ServiceInteractionIndicatorsTwo   OPTIONAL, 
+ callSegmentID      [50] CallSegmentID {bound}     OPTIONAL, 
  ... 
  } 
 
-TimerID ::= ENUMERATED { 
- tssf        (0) 
- } 
--- Indicates the timer to be reset. 
-TimerValue ::= Integer4 
--- Indicates the timer value (in seconds). 
+IPRoutingAddress {PARAMETERS-BOUND : bound} ::= CalledPartyNumber {bound} 
+-- Indicates the routeing address for the IP.
 
 CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..bound.&numOfCSs)
 numOfCSs ::= 127
@@ -65,14 +66,17 @@ numOfCSs ::= 127
 * @author sergey vetyutnev
 * 
 */
-public interface ResetTimerIndication extends CircuitSwitchedCallMessage {
+public interface ConnectToResourceRequestIndication extends CircuitSwitchedCallMessage {
 
-	public TimerID getTimerID();
+	public CalledPartyNumberCap getResourceAddress_IPRoutingAddress();
 
-	public int getTimerValue();
+	public boolean getResourceAddress_Null();
 
 	public CAPExtensions getExtensions();
+
+	public ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo();
 
 	public Integer getCallSegmentID();
 
 }
+

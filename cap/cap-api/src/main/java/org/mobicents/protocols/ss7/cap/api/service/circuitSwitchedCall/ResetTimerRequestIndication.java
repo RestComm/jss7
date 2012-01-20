@@ -22,42 +22,41 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
-import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
+import org.mobicents.protocols.ss7.cap.api.primitives.TimerID;
 
 /**
 *
 
-connectToResource {PARAMETERS-BOUND : bound} OPERATION ::= { 
- ARGUMENT  ConnectToResourceArg {bound} 
+resetTimer {PARAMETERS-BOUND : bound} OPERATION ::= { 
+ ARGUMENT  ResetTimerArg {bound} 
  RETURN RESULT FALSE 
  ERRORS   {missingParameter | 
-     systemFailure | 
+     parameterOutOfRange | 
      taskRefused | 
      unexpectedComponentSequence | 
      unexpectedDataValue | 
      unexpectedParameter | 
      unknownCSID} 
- CODE   opcode-connectToResource} 
+ CODE   opcode-resetTimer} 
 -- Direction: gsmSCF -> gsmSSF, Timer: T  
-ctr 
--- This operation is used to connect a call segment from the gsmSSF to the 
--- gsmSRF. 
+rt 
+-- This operation is used to request the gsmSSF to refresh an application timer in the gsmSSF. 
  
-ConnectToResourceArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
- resourceAddress CHOICE { 
-  ipRoutingAddress     [0] IPRoutingAddress {bound}, 
-  none        [3] NULL 
-  }, 
- extensions       [4] Extensions {bound}      OPTIONAL, 
- serviceInteractionIndicatorsTwo  [7] ServiceInteractionIndicatorsTwo   OPTIONAL, 
- callSegmentID      [50] CallSegmentID {bound}     OPTIONAL, 
+ResetTimerArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
+ timerID        [0] TimerID DEFAULT tssf, 
+ timervalue       [1] TimerValue, 
+ extensions       [2] Extensions {bound}      OPTIONAL, 
+ callSegmentID      [3] CallSegmentID {bound}     OPTIONAL, 
  ... 
  } 
 
-IPRoutingAddress {PARAMETERS-BOUND : bound} ::= CalledPartyNumber {bound} 
--- Indicates the routeing address for the IP.
+TimerID ::= ENUMERATED { 
+ tssf        (0) 
+ } 
+-- Indicates the timer to be reset. 
+TimerValue ::= Integer4 
+-- Indicates the timer value (in seconds). 
 
 CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..bound.&numOfCSs)
 numOfCSs ::= 127
@@ -66,15 +65,14 @@ numOfCSs ::= 127
 * @author sergey vetyutnev
 * 
 */
-public interface ConnectToResourceIndication extends CircuitSwitchedCallMessage {
+public interface ResetTimerRequestIndication extends CircuitSwitchedCallMessage {
 
-	public CalledPartyNumberCap getIPRoutingAddress();
+	public TimerID getTimerID();
+
+	public int getTimerValue();
 
 	public CAPExtensions getExtensions();
-
-	public ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo();
 
 	public Integer getCallSegmentID();
 
 }
-
