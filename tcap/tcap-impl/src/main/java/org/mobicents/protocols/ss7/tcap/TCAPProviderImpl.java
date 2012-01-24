@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.tcap;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,7 +85,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	protected ScheduledExecutorService _EXECUTOR;
 	// boundry for Uni directional dialogs :), tx id is always encoded
 	// on 4 octets, so this is its max value
-	private static final long _4_OCTETS_LONG_FILL = 4294967295l;
+	//private static final long _4_OCTETS_LONG_FILL = 4294967295l;
+	private DialogIdIndex dialogIdIndex;
 	private ComponentPrimitiveFactory componentPrimitiveFactory;
 	private DialogPrimitiveFactory dialogPrimitiveFactory;
 	private SccpProvider sccpProvider;
@@ -101,7 +101,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	private Map<Long, DialogImpl> dialogs = new HashMap<Long, DialogImpl>();
 	private int ssn;
 
-	protected TCAPProviderImpl(SccpProvider sccpProvider, TCAPStackImpl stack, int ssn) {
+	protected TCAPProviderImpl(SccpProvider sccpProvider, TCAPStackImpl stack, int ssn, int maxDialogs) {
 		super();
 		this.sccpProvider = sccpProvider;
 		this.ssn = ssn;
@@ -111,7 +111,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 		this.componentPrimitiveFactory = new ComponentPrimitiveFactoryImpl(this);
 		this.dialogPrimitiveFactory = new DialogPrimitiveFactoryImpl(this.componentPrimitiveFactory);
-
+		this.dialogIdIndex = new DialogIdIndex(maxDialogs);
 	}
 
 	/*
@@ -144,14 +144,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 	// some help methods... crude but will work for first impl.
 	private Long getAvailableTxId() throws TCAPException {
-		for (long l = 0; l <= _4_OCTETS_LONG_FILL; l++) {
-			Long ll = new Long(l);
-			if (this.dialogs.containsKey(ll)) {
-			} else {
-				return ll;
-			}
-		}
-		throw new TCAPException("Not enough resources!");
+		Long poped = this.dialogIdIndex.pop();
+		if(poped == null)
+		    throw new TCAPException("Not enough resources!");
+		return poped;
 	}
 
 	// get next Seq Control value available
@@ -164,16 +160,16 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		return seqControl;
 	}
 
-	private Long getAvailableUniTxId() throws TCAPException {
-		for (long l = -1; l >= Long.MIN_VALUE; l--) {
-			Long ll = new Long(l);
-			if (this.dialogs.containsKey(ll)) {
-			} else {
-				return ll;
-			}
-		}
-		throw new TCAPException("Not enough resources!");
-	}
+//	private Long getAvailableUniTxId() throws TCAPException {
+//		for (long l = -1; l >= Long.MIN_VALUE; l--) {
+//			Long ll = new Long(l);
+//			if (this.dialogs.containsKey(ll)) {
+//			} else {
+//				return ll;
+//			}
+//		}
+//		throw new TCAPException("Not enough resources!");
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -241,8 +237,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	 * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress)
 	 */
 	public Dialog getNewUnstructuredDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
-		Long id = this.getAvailableUniTxId();
-		// TODO : Do we can for Seq Control here?
+		Long id = this.getAvailableTxId();
 		return _getDialog(localAddress, remoteAddress, id, false, getNextSeqControl());
 	}
 
@@ -476,7 +471,9 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	}
 
 	public void release(DialogImpl d) {
-		this.dialogs.remove(d.getDialogId());
+	    Long did = d.getDialogId();
+		this.dialogs.remove(did);
+		this.dialogIdIndex.push(did);
 		try {
 			for (int index = 0; index < this.tcListeners.size(); index++) {
 				TCListener lst = this.tcListeners.get(index);

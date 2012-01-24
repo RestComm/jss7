@@ -59,8 +59,13 @@ public class TCAPStackImpl implements TCAPStack {
     }
     //for tests only
     public TCAPStackImpl(SccpProvider sccpProvider, int ssn) {
+       this(sccpProvider,ssn,DialogIdIndex.INITIAL_SIZE);
+    }
+    
+    
+    public TCAPStackImpl(SccpProvider sccpProvider, int ssn, int maxDialogs) {
         this.sccpProvider = sccpProvider;
-        this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn);
+        this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn,maxDialogs);
         this.state = State.CONFIGURED;
     }
 

@@ -1604,8 +1604,8 @@ public class DialogImpl implements Dialog {
 
 		public void run() {
 			//its ok not to lock.
+		    //NOTE: this removes dialog from stack, until than, it 'locks' dialog ID!
 			provider.release(d);
-
 		}
 
 	}
