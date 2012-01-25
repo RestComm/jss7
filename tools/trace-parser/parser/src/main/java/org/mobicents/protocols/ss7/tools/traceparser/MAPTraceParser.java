@@ -426,8 +426,10 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 						di.processContinue(tcm, localAddress, remoteAddress);
 
 						if (this.pw != null) {
-							this.pw.print("TC-CONTINUE: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", originatingTransactionId="
-									+ originatingTransactionId + ", destinationTransactionId=" + destinationTransactionId);
+//							this.pw.print("TC-CONTINUE: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", originatingTransactionId="
+//									+ originatingTransactionId + ", destinationTransactionId=" + destinationTransactionId);
+							this.pw.print("TC-CONTINUE: ");
+							this.printAddresses(message, originatingTransactionId, destinationTransactionId);
 							if (this.par.getTcapMsgData()) {
 								LogDataTag(aisMsg, "Continue", tcm.getComponent(), acnValue, acnVersion, tcm.getDialogPortion());
 							}
@@ -483,7 +485,9 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				di.processBegin(tcb, localAddress, remoteAddress);
 
 				if (this.pw != null) {
-					this.pw.print("TC-BEGIN: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", originatingTransactionId=" + originatingTransactionId);
+//					this.pw.print("TC-BEGIN: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", originatingTransactionId=" + originatingTransactionId);
+					this.pw.print("TC-BEGIN: ");
+					this.printAddresses(message, originatingTransactionId, -1);
 					if (this.par.getTcapMsgData()) {
 						LogDataTag(aisMsg, "Begin", tcb.getComponent(), di.getAcnValue(), di.getAcnVersion(), tcb.getDialogPortion());
 					}
@@ -520,8 +524,10 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 						di.processEnd(teb, localAddress, remoteAddress);
 
 						if (this.pw != null) {
-							this.pw.print("TC-END: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", destinationTransactionId="
-									+ destinationTransactionId);
+//							this.pw.print("TC-END: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", destinationTransactionId="
+//									+ destinationTransactionId);
+							this.pw.print("TC-END: ");
+							this.printAddresses(message, -1, destinationTransactionId);
 							if (this.par.getTcapMsgData()) {
 								LogDataTag(aisMsg, "End", teb.getComponent(), acnValue, acnVersion, teb.getDialogPortion());
 							}
@@ -561,8 +567,10 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 						di.processAbort(tub, localAddress, remoteAddress);
 
 						if (this.pw != null) {
-							this.pw.print("TC-ABORT: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", destinationTransactionId="
-									+ destinationTransactionId);
+//							this.pw.print("TC-ABORT: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", destinationTransactionId="
+//									+ destinationTransactionId);
+							this.pw.print("TC-ABORT: ");
+							this.printAddresses(message, -1, destinationTransactionId);
 							if (this.par.getTcapMsgData()) {
 								LogDataTag(aisMsg, "Abort", null, acnValue, acnVersion, tub.getDialogPortion());
 							}
@@ -580,6 +588,21 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void printAddresses(SccpMessageImpl message, long originationTransactionId, long destinationTransactionId) {
+		this.pw.print("OPC=" + message.getOpc() + ", DPC=" + message.getDpc());
+		if (originationTransactionId != -1)
+			this.pw.print(", originationTransactionId=" + originationTransactionId);
+		if (destinationTransactionId != -1)
+			this.pw.print(", destinationTransactionId=" + destinationTransactionId);
+		this.pw.println();
+		if (message.getCalledPartyAddress() != null)
+			this.pw.print("CalledPartyAddress=" + message.getCalledPartyAddress().toString());
+		if (message.getCallingPartyAddress() != null)
+			this.pw.print(", CallingPartyAddress=" + message.getCallingPartyAddress().toString());
+
+//		this.pw.print("OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", destinationTransactionId=" + destinationTransactionId);
 	}
 
 	private boolean CheckDialogIdFilter(long originatingTransactionId, long destinationTransactionId) {
