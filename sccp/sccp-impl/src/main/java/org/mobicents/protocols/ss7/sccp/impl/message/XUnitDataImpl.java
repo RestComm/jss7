@@ -59,15 +59,16 @@ public class XUnitDataImpl extends SccpMessageImpl implements XUnitData {
 	private SegmentationImpl segmentation;
 	private ImportanceImpl importance;
 
-	private SccpAddressCodec addressCodec = new SccpAddressCodec();
-
-	protected XUnitDataImpl() {
-		super(MESSAGE_TYPE);
+	private SccpAddressCodec addressCodec;
+	
+	protected XUnitDataImpl(boolean removeSpc) {
+		super(MESSAGE_TYPE, removeSpc);
+		this.addressCodec = new SccpAddressCodec(removeSpc);
 	}
 
 	protected XUnitDataImpl(HopCounter hopCounter, ProtocolClass pClass, SccpAddress calledParty,
-			SccpAddress callingParty) {
-		super(MESSAGE_TYPE);
+			SccpAddress callingParty, boolean removeSpc) {
+		this(removeSpc);
 		this.hopCounter = hopCounter;
 		this.protocolClass = (ProtocolClassImpl) pClass;
 		this.calledParty = calledParty;

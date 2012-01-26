@@ -51,14 +51,15 @@ public class UnitDataServiceImpl extends SccpMessageImpl implements UnitDataServ
 
 	private byte[] data;
 	private ReturnCause returnCause;
-	private SccpAddressCodec addressCodec = new SccpAddressCodec();
+	private SccpAddressCodec addressCodec;
 
-	protected UnitDataServiceImpl() {
-		super(MESSAGE_TYPE);
+	protected UnitDataServiceImpl(boolean removeSpc) {
+		super(MESSAGE_TYPE, removeSpc);
+		this.addressCodec = new SccpAddressCodec(removeSpc);
 	}
 
-	protected UnitDataServiceImpl(ReturnCause returnCause, SccpAddress calledParty, SccpAddress callingParty) {
-		super(MESSAGE_TYPE);
+	protected UnitDataServiceImpl(ReturnCause returnCause, SccpAddress calledParty, SccpAddress callingParty, boolean removeSpc) {
+		this(removeSpc);
 
 		this.returnCause = returnCause;
 		this.calledParty = calledParty;

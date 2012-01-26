@@ -23,8 +23,6 @@
 package org.mobicents.protocols.ss7.sccp.parameter;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
@@ -103,7 +101,7 @@ public class GT0100 extends GlobalTitle {
 	}
 
 	public String toString() {
-		return "{tt=" + tt + ", np=" + np + ", na=" + nai + ", digist=" + digits + "}";
+		return "GT0100{tt=" + tt + ", np=" + np + ", na=" + nai + ", digits=" + digits + "}";
 	}
 
 	// default XML representation.

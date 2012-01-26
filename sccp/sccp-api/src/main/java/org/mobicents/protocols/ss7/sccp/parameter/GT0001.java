@@ -23,8 +23,6 @@
 package org.mobicents.protocols.ss7.sccp.parameter;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
@@ -82,6 +80,10 @@ public class GT0001 extends GlobalTitle {
 		hash = 53 * hash + (this.gti != null ? this.gti.hashCode() : 0);
 		hash = 53 * hash + (this.digits != null ? this.digits.hashCode() : 0);
 		return hash;
+	}
+	
+	public String toString() {
+		return "GT0001{na=" + nai + ", digits=" + digits + "}";
 	}
 
 	// default XML representation.

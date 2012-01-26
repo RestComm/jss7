@@ -62,15 +62,16 @@ public class XUnitDataServiceImpl extends SccpMessageImpl implements XUnitDataSe
     private Segmentation segmentation;
     private Importance importance;
     private ReturnCause returnCause;
-    private SccpAddressCodec addressCodec = new SccpAddressCodec();
+    private SccpAddressCodec addressCodec;
     
 
-    protected XUnitDataServiceImpl() {
-        super(MESSAGE_TYPE);
+    protected XUnitDataServiceImpl(boolean removeSpc) {
+        super(MESSAGE_TYPE, removeSpc);
+        this.addressCodec = new SccpAddressCodec(removeSpc);
     }
     
-    protected XUnitDataServiceImpl(HopCounter hopCounter, ReturnCause returnCause, SccpAddress calledParty, SccpAddress callingParty) {
-        super(MESSAGE_TYPE);
+    protected XUnitDataServiceImpl(HopCounter hopCounter, ReturnCause returnCause, SccpAddress calledParty, SccpAddress callingParty, boolean removeSpc) {
+        this(removeSpc);
         this.hopCounter = hopCounter;
         this.returnCause =  returnCause;
         this.calledParty = calledParty;

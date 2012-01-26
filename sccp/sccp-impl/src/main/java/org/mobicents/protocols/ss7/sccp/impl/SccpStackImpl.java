@@ -79,24 +79,20 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 	private final String name;
 	
 	private String persistDir = null;
+	
+	private boolean removeSpc = false;
 
 //	protected ConcurrentLinkedQueue<byte[]> txDataQueue = new ConcurrentLinkedQueue<byte[]>();
 
 	public SccpStackImpl(String name) {
 		this.name = name;
 		this.logger = Logger.getLogger(SccpStackImpl.class.getCanonicalName()+"-"+this.name);
-		
-		messageFactory = new MessageFactoryImpl();
-		sccpProvider = new SccpProviderImpl(this);
-		// FIXME: make this configurable
-		sccpManagement = new SccpManagement(name, sccpProvider, this);
-		sccpRoutingControl = new SccpRoutingControl(sccpProvider, this);
-
-		sccpManagement.setSccpRoutingControl(sccpRoutingControl);
-		sccpRoutingControl.setSccpManagement(sccpManagement);
 
 		this.state = State.CONFIGURED;
-
+	}
+	
+	public String getName(){
+		return this.name;
 	}
 	
 	public String getPersistDir() {
@@ -139,6 +135,14 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 	public void setMtp3UserPart(Mtp3UserPart mtp3UserPart) {
 		this.mtp3UserPart = mtp3UserPart;
 	}
+	
+	public void setRemoveSpc(boolean removeSpc){
+		this.removeSpc = removeSpc;
+	}
+	
+	public boolean getRemoveSpc(){
+		return this.removeSpc;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -152,6 +156,17 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		// executor = Executors.newFixedThreadPool(1);
 		//
 		// layer3exec = Executors.newFixedThreadPool(1);
+		
+		this.messageFactory = new MessageFactoryImpl(this.removeSpc);
+		
+		this.sccpProvider = new SccpProviderImpl(this);
+		// FIXME: make this configurable
+		this.sccpManagement = new SccpManagement(name, sccpProvider, this);
+		this.sccpRoutingControl = new SccpRoutingControl(sccpProvider, this);
+
+		this.sccpManagement.setSccpRoutingControl(sccpRoutingControl);
+		this.sccpRoutingControl.setSccpManagement(sccpManagement);
+		
 		this.router = new Router(this.name);
 		this.router.setPersistDir(this.persistDir);
 		this.router.start();
@@ -218,7 +233,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		return sccpResource;
 	}
 
-	private enum State {
+	protected enum State {
 		IDLE, CONFIGURED, RUNNING;
 	}
 

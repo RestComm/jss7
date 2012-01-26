@@ -40,6 +40,8 @@ public abstract class SccpMessageImpl implements SccpMessage {
 	protected SccpAddress calledParty;
 	protected SccpAddress callingParty;
 	protected ProtocolClass protocolClass;
+	
+	protected boolean removeSpc = false;
 
 	// These are MTP3 signaling information set when message is received from
 	// MTP3
@@ -47,8 +49,9 @@ public abstract class SccpMessageImpl implements SccpMessage {
 	private int opc = -1;
 	private int dpc = -1;
 
-	protected SccpMessageImpl(int type) {
+	protected SccpMessageImpl(int type, boolean removeSpc) {
 		this.type = type;
+		this.removeSpc = removeSpc;
 	}
 
 	public int getSls() {

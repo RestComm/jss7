@@ -33,6 +33,7 @@ import java.io.ObjectOutputStream;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
+import org.mobicents.protocols.ss7.sccp.impl.SccpStackImplProxy;
 import org.mobicents.protocols.ss7.sccp.impl.User;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.Mtp3CongestionType;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.Mtp3PrimitiveMessage;
@@ -41,7 +42,6 @@ import org.mobicents.protocols.ss7.sccp.impl.mgmt.Mtp3StatusType;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.Mtp3UnavailabiltyCauseType;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.SccpMgmtMessage;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.SccpMgmtMessageType;
-import org.mobicents.protocols.ss7.sccp.impl.mgmt.SccpStackImplProxy;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**

@@ -62,7 +62,7 @@ public class XUnitDataTest {
     private static final HopCounter _HOPE_COUTNER = new HopCounterImpl(14);
     private static final ProtocolClassImpl _PROTOCOL_CLASS = new ProtocolClassImpl(1,1);
     
-    private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
+    private MessageFactoryImpl messageFactory = new MessageFactoryImpl(false);
 
     @BeforeMethod
     public void setUp() {
