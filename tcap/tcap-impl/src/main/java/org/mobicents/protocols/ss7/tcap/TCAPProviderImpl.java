@@ -261,14 +261,14 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				break;
 			// TODO: determine action based on cause?
 			case UnitDataService.MESSAGE_TYPE:
-				data = ((XUnitData) message).getData();
-				localAddress = ((XUnitData) message).getCalledPartyAddress();
-				remoteAddress = ((XUnitData) message).getCallingPartyAddress();
+				data = ((UnitDataService) message).getData();
+				localAddress = ((UnitDataService) message).getCalledPartyAddress();
+				remoteAddress = ((UnitDataService) message).getCallingPartyAddress();
 				break;
 			case XUnitDataService.MESSAGE_TYPE:
-				data = ((XUnitData) message).getData();
-				localAddress = ((XUnitData) message).getCalledPartyAddress();
-				remoteAddress = ((XUnitData) message).getCallingPartyAddress();
+				data = ((XUnitDataService) message).getData();
+				localAddress = ((XUnitDataService) message).getCalledPartyAddress();
+				remoteAddress = ((XUnitDataService) message).getCallingPartyAddress();
 				break;
 			}
 			// FIXME: Qs state that OtxID and DtxID consittute to dialog id.....
