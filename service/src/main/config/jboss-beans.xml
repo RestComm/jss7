@@ -51,9 +51,10 @@
 		<constructor>
 			<parameter>SccpStack</parameter>
 		</constructor>
-		<property name="localSpc">2</property>
-		<property name="ni">2</property>
+		<property name="localSpc">6535</property>
+		<property name="ni">3</property>
 		<property name="persistDir">${jboss.server.data.dir}</property>
+		<property name="removeSpc">true</property>
 		<property name="mtp3UserPart">
 			<inject bean="Mtp3UserPart" />
 		</property>
