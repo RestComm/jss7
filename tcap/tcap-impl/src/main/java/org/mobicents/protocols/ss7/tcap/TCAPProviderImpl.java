@@ -381,7 +381,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	public void send(byte[] data, Byte desiredQos, SccpAddress destinationAddress, SccpAddress originatingAddress,
 			int seqControl) throws IOException {
 		// FIXME: add QOS
-		ProtocolClass pClass = parameterFactory.createProtocolClass(0, 0);
+		ProtocolClass pClass = parameterFactory.createProtocolClass(1, ProtocolClass.HANDLING_RET_ERR);
 		UnitData msg = messageFactory.createUnitData(pClass, destinationAddress, originatingAddress);
 		msg.setData(data);
 		sccpProvider.send(msg, seqControl);
