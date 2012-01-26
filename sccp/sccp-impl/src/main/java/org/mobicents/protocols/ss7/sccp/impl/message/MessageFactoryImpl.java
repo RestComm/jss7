@@ -43,39 +43,45 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  */
 public class MessageFactoryImpl implements MessageFactory {
 	private static final Logger logger = Logger.getLogger(MessageFactoryImpl.class);
+	
+	private boolean removeSpc = false;
+	
+	public MessageFactoryImpl(boolean removeSpc){
+		this.removeSpc = removeSpc;
+	}
 
 	
 	//TODO: add checks, PC vs Q.713 Table 1
 	public UnitData createUnitData(ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty) {
-		return new UnitDataImpl(pClass, calledParty, callingParty);
+		return new UnitDataImpl(pClass, calledParty, callingParty, this.removeSpc);
 	}
 
 	public UnitDataService createUnitDataService(ReturnCause returnCause, SccpAddress calledParty, SccpAddress callingParty) {
-		return new UnitDataServiceImpl(returnCause, calledParty, callingParty);
+		return new UnitDataServiceImpl(returnCause, calledParty, callingParty, this.removeSpc);
 	}
 	
 	public XUnitData createXUnitData(HopCounter hopCounter, ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty) {
-		return new XUnitDataImpl(hopCounter, pClass, calledParty, callingParty);
+		return new XUnitDataImpl(hopCounter, pClass, calledParty, callingParty, this.removeSpc);
 	}
 
 	public XUnitDataService createXUnitDataService(HopCounter hopCounter, ReturnCause rc, SccpAddress calledParty, SccpAddress callingParty) {
-		return new XUnitDataServiceImpl(hopCounter, rc, calledParty, callingParty);
+		return new XUnitDataServiceImpl(hopCounter, rc, calledParty, callingParty, this.removeSpc);
 	}
 
 	public SccpMessageImpl createMessage(int type, InputStream in) throws IOException {
 		SccpMessageImpl msg = null;
 		switch (type) {
 		case UnitData.MESSAGE_TYPE:
-			msg = new UnitDataImpl();
+			msg = new UnitDataImpl(this.removeSpc);
 			break;
 		case UnitDataService.MESSAGE_TYPE:
-			msg = new UnitDataServiceImpl();
+			msg = new UnitDataServiceImpl(this.removeSpc);
 			break;
 		case XUnitData.MESSAGE_TYPE:
-			msg = new XUnitDataImpl();
+			msg = new XUnitDataImpl(this.removeSpc);
 			break;
 		case XUnitDataService.MESSAGE_TYPE:
-			msg = new XUnitDataServiceImpl();
+			msg = new XUnitDataServiceImpl(this.removeSpc);
 			break;
 		}
 		if (msg != null) {

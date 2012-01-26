@@ -41,14 +41,15 @@ public class UnitDataImpl extends SccpMessageImpl implements UnitData {
 
 	protected byte[] data;
 
-	private SccpAddressCodec addressCodec = new SccpAddressCodec();
+	private SccpAddressCodec addressCodec;
 
-	protected UnitDataImpl() {
-		super(MESSAGE_TYPE);
+	protected UnitDataImpl(boolean removeSpc) {
+		super(MESSAGE_TYPE, removeSpc);
+		this.addressCodec = new SccpAddressCodec(removeSpc);
 	}
 
-	protected UnitDataImpl(ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty) {
-		super(MESSAGE_TYPE);
+	protected UnitDataImpl(ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty, boolean removeSpc) {
+		this(removeSpc);
 		this.protocolClass = (ProtocolClassImpl) pClass;
 		this.calledParty = (SccpAddress) calledParty;
 		this.callingParty = (SccpAddress) callingParty;

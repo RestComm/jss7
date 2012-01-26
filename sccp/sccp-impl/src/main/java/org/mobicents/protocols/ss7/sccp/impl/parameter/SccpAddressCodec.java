@@ -49,11 +49,20 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author Oleg Kulikov
  */
 public class SccpAddressCodec {
+	
+	private static final byte ROUTE_ON_PC_FLAG = 0x40;
+	
+	private static final short REMOVE_PC_FLAG = 0xFE;
+	
+	private static final byte PC_PRESENT_FLAG = 0x01;
 
 	private GTCodec gtCodec = new GTCodec();
+	
+	private boolean removeSpc = false;
 
 	/** Creates a new instance of UnitDataMandatoryVariablePart */
-	public SccpAddressCodec() {
+	public SccpAddressCodec(boolean removeSpc) {
+		this.removeSpc = removeSpc;
 	}
 
 	public SccpAddress decode(byte[] buffer) throws IOException {
@@ -83,9 +92,18 @@ public class SccpAddressCodec {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		AddressIndicator ai = address.getAddressIndicator();
-		out.write(ai.getValue());
+		byte aiValue = ai.getValue();
+		
+		if(this.removeSpc && ((aiValue & ROUTE_ON_PC_FLAG) == 0x00)){
+			//Routing on GT so lets remove PC flag
+			
+			aiValue = (byte)(aiValue & REMOVE_PC_FLAG);
+		}
+		
+		out.write(aiValue);
 
-		if (ai.pcPresent()) {
+		if ((aiValue & PC_PRESENT_FLAG) == PC_PRESENT_FLAG) {
+			//If Point Code included in SCCP Address
 			byte b1 = (byte) address.getSignalingPointCode();
 			byte b2 = (byte) ((address.getSignalingPointCode() >> 8) & 0x3f);
 

@@ -20,14 +20,18 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.sccp.impl.mgmt;
+package org.mobicents.protocols.ss7.sccp.impl;
 
+import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpRoutingControl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
+import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl.State;
+import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
+import org.mobicents.protocols.ss7.sccp.impl.router.Router;
 
 /**
  * @author baranowb
- *
+ * 
  */
 public class SccpStackImplProxy extends SccpStackImpl {
 
@@ -36,15 +40,38 @@ public class SccpStackImplProxy extends SccpStackImpl {
 	 */
 	public SccpStackImplProxy(String name) {
 		super(name);
-		super.sccpManagement = new SccpManagementProxy(name, sccpProvider, this); 
+	}
+
+	public SccpManagementProxy getManagementProxy() {
+		return (SccpManagementProxy) super.sccpManagement;
+	}
+
+	@Override
+	public void start() {
+		this.messageFactory = new MessageFactoryImpl(this.getRemoveSpc());
+
+		this.sccpProvider = new SccpProviderImpl(this);
+
+		super.sccpManagement = new SccpManagementProxy(this.getName(), sccpProvider, this);
 		super.sccpRoutingControl = new SccpRoutingControl(sccpProvider, this);
 
 		super.sccpManagement.setSccpRoutingControl(sccpRoutingControl);
 		super.sccpRoutingControl.setSccpManagement(sccpManagement);
-	}
 
-	public SccpManagementProxy getManagementProxy()
-	{
-		return (SccpManagementProxy) super.sccpManagement;
+		this.router = new Router(this.getName());
+		this.router.setPersistDir(this.getPersistDir());
+		this.router.start();
+
+		this.sccpResource = new SccpResource(this.getName());
+		this.sccpResource.setPersistDir(this.getPersistDir());
+		this.sccpResource.start();
+
+		this.sccpRoutingControl.start();
+		this.sccpManagement.start();
+		// layer3exec.execute(new MtpStreamHandler());
+
+		this.mtp3UserPart.addMtp3UserPartListener(this);
+
+		this.state = State.RUNNING;
 	}
 }

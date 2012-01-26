@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
  * 
  */
 public class UnitDataServiceTest {
-	private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
+	private MessageFactoryImpl messageFactory = new MessageFactoryImpl(false);
 
 	@BeforeMethod
 	public void setUp() {

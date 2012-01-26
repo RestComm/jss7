@@ -38,7 +38,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  */
 public class UnitDataTest {
 
-	private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
+	private MessageFactoryImpl messageFactory = new MessageFactoryImpl(false);
 
 	@BeforeMethod
 	public void setUp() {
