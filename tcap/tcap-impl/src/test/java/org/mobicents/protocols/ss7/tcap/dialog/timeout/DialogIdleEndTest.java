@@ -22,16 +22,16 @@
 
 package org.mobicents.protocols.ss7.tcap.dialog.timeout;
 
+import static org.testng.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.testng.annotations.*;
-import static org.testng.Assert.*;
 import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.EventType;
-import org.mobicents.protocols.ss7.tcap.SccpHarness;
 import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
 import org.mobicents.protocols.ss7.tcap.TestEvent;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
@@ -41,6 +41,11 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.DialogServiceUserType;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * Test for call flow.
