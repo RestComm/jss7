@@ -33,6 +33,6 @@ package org.mobicents.protocols.ss7.m3ua.parameter;
  * 
  */
 public interface HeartbeatData extends Parameter {
-    public String getData();
+    public byte[] getData();
 
 }

@@ -55,7 +55,9 @@ public class HeartbeatAckImpl extends M3UAMessageImpl implements HeartbeatAck {
 	}
 
 	public void setHeartbeatData(HeartbeatData hrBtData) {
-		parameters.put(Parameter.Heartbeat_Data, hrBtData);
+		if(hrBtData != null){
+			parameters.put(Parameter.Heartbeat_Data, hrBtData);
+		}
 	}
 
 }

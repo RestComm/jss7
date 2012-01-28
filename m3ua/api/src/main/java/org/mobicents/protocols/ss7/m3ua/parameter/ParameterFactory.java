@@ -116,5 +116,7 @@ public interface ParameterFactory {
     public ErrorCode createErrorCode(int code);
 
     public Status createStatus(int type, int info);
+    
+    public HeartbeatData createHeartbeatData(byte[] data);
 
 }

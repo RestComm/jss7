@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.parameter;
 
+import org.mobicents.commons.HexTools;
 import org.mobicents.protocols.ss7.m3ua.parameter.HeartbeatData;
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 
@@ -31,29 +32,24 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
  *
  */
 public class HeartbeatDataImpl extends ParameterImpl implements HeartbeatData {
-    private String string;
+    private byte[] value = null;
 
     protected HeartbeatDataImpl(byte[] value) {
-        this.tag = Parameter.INFO_String;
-        this.string = new String(value);
+        this.tag = Parameter.Heartbeat_Data;
+        this.value = value;
     }
 
-    protected HeartbeatDataImpl(String string) {
-        this.tag = Parameter.INFO_String;
-        this.string = string;
-    }
-
-    public String getData() {
-        return this.string;
+    public byte[] getData() {
+        return this.value;
     }
 
     @Override
     protected byte[] getValue() {
-        return this.string.getBytes();
+        return this.value;
     }
 
     @Override
     public String toString() {
-        return String.format("HeartbeatData : data = %s ", this.string);
+        return String.format("HeartbeatData : data = %s ", HexTools.dump(this.value, 0));
     }
 }
