@@ -33,6 +33,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.DeregistrationStatus;
 import org.mobicents.protocols.ss7.m3ua.parameter.DestinationPointCode;
 import org.mobicents.protocols.ss7.m3ua.parameter.DiagnosticInfo;
 import org.mobicents.protocols.ss7.m3ua.parameter.ErrorCode;
+import org.mobicents.protocols.ss7.m3ua.parameter.HeartbeatData;
 import org.mobicents.protocols.ss7.m3ua.parameter.InfoString;
 import org.mobicents.protocols.ss7.m3ua.parameter.LocalRKIdentifier;
 import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
@@ -157,6 +158,10 @@ public class ParameterFactoryImpl implements ParameterFactory {
 
 	public Status createStatus(int type, int info) {
 		return new StatusImpl(type, info);
+	}
+	
+	public HeartbeatData createHeartbeatData(byte[] data){
+		return new HeartbeatDataImpl(data);
 	}
 
 	public Parameter createParameter(int tag, byte[] value) {
