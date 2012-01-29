@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<remoteSsn>
-	<Key type="java.lang.Integer" value="0"/>
-	<Value type="org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem" remoteSpc="2" remoteSsn="8" remoteSsnFlag="0"/>
-</remoteSsn>
-<remoteSpc>
-	<Key type="java.lang.Integer" value="0"/>
-	<Value type="org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode" remoteSpc="2" remoteSpcFlag="0" mask="0"/>
-</remoteSpc>
