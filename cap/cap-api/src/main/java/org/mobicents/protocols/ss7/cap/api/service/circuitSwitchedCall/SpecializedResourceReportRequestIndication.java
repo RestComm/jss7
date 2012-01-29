@@ -48,7 +48,7 @@ SpecializedResourceReportArg ::= CHOICE {
 * @author sergey vetyutnev
 * 
 */
-public interface SpecializedResourceReportIndication extends CircuitSwitchedCallMessage {
+public interface SpecializedResourceReportRequestIndication extends CircuitSwitchedCallMessage {
 
 	public boolean IsAllAnnouncementsComplete();
 

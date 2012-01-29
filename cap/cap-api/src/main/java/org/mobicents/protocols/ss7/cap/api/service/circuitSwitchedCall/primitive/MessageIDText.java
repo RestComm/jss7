@@ -26,10 +26,8 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
 *
 
  text        [1] SEQUENCE { 
-  messageContent      [0] IA5String (SIZE( 
-   bound.&minMessageContentLength .. bound.&maxMessageContentLength)), 
-  attributes       [1] OCTET STRING (SIZE( 
-   bound.&minAttributesLength .. bound.&maxAttributesLength))     OPTIONAL 
+  messageContent      [0] IA5String (SIZE(bound.&minMessageContentLength .. bound.&maxMessageContentLength)), 
+  attributes       [1] OCTET STRING (SIZE(bound.&minAttributesLength .. bound.&maxAttributesLength))     OPTIONAL 
  }, 
 
 minMessageContentLength ::= 1
@@ -46,5 +44,5 @@ public interface MessageIDText {
 	public String getMessageContent();
 
 	public byte[] getAttributes();
-	
+
 }

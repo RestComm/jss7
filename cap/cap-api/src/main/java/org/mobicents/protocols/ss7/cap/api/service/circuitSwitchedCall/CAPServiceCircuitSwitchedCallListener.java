@@ -67,4 +67,16 @@ public interface CAPServiceCircuitSwitchedCallListener extends CAPServiceListene
 
 	public void onFurnishChargingInformationRequestIndication(FurnishChargingInformationRequestIndication ind);
 
+	public void onSendChargingInformationRequestIndication(SendChargingInformationRequestIndication ind);
+
+	public void onSpecializedResourceReportRequestIndication(SpecializedResourceReportRequestIndication ind);
+
+	public void onPlayAnnouncementRequestIndication(PlayAnnouncementRequestIndication ind);
+
+	public void onPromptAndCollectUserInformationRequestIndication(PromptAndCollectUserInformationRequestIndication ind);
+
+	public void onPromptAndCollectUserInformationResponseIndication(PromptAndCollectUserInformationResponseIndication ind);
+
+	public void onCancelRequestIndication(CancelRequestIndication ind);
+
 }

@@ -30,10 +30,8 @@ import java.util.ArrayList;
 MessageID {PARAMETERS-BOUND : bound} ::= CHOICE { 
  elementaryMessageID     [0] Integer4, 
  text        [1] SEQUENCE { 
-  messageContent      [0] IA5String (SIZE( 
-   bound.&minMessageContentLength .. bound.&maxMessageContentLength)), 
-  attributes       [1] OCTET STRING (SIZE( 
-   bound.&minAttributesLength .. bound.&maxAttributesLength))     OPTIONAL 
+  messageContent      [0] IA5String (SIZE(bound.&minMessageContentLength .. bound.&maxMessageContentLength)), 
+  attributes       [1] OCTET STRING (SIZE(bound.&minAttributesLength .. bound.&maxAttributesLength))     OPTIONAL 
  }, 
  elementaryMessageIDs    [29] SEQUENCE SIZE (1.. bound.&numOfMessageIDs) OF Integer4, 
  variableMessage      [30] SEQUENCE { 

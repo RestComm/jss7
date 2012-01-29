@@ -42,11 +42,13 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
 */
 public interface VariablePartDate {
 
+	public byte[] getData();
+
 	public int getYear();
 
-	public int getMongth();
+	public int getMonth();
 
-	public int getDat();
+	public int getDay();
 
 }
 

@@ -59,7 +59,7 @@ SendChargingInformationArg {PARAMETERS-BOUND : bound}::= SEQUENCE {
 * @author sergey vetyutnev
 * 
 */
-public interface SendChargingInformationIndication extends CircuitSwitchedCallMessage {
+public interface SendChargingInformationRequestIndication extends CircuitSwitchedCallMessage {
 
 	public SCIBillingChargingCharacteristics getSCIBillingChargingCharacteristics();
 

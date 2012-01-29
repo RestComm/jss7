@@ -54,11 +54,11 @@ InvokeID ::= TCInvokeIdSet (from TCAP)
 * @author sergey vetyutnev
 * 
 */
-public interface CancelIndication extends CircuitSwitchedCallMessage {
+public interface CancelRequestIndication extends CircuitSwitchedCallMessage {
 
-	int getInvokeID();
+	public Integer getInvokeID();
 
-	boolean getAllRequests();
+	public boolean getAllRequests();
 
 	public CallSegmentToCancel getCallSegmentToCancel();
 

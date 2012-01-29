@@ -56,7 +56,7 @@ CollectedDigits ::= SEQUENCE {
 */
 public interface CollectedDigits {
 
-	public int getMinimumNbOfDigits();
+	public Integer getMinimumNbOfDigits();
 
 	public int getMaximumNbOfDigits();
 
@@ -72,11 +72,11 @@ public interface CollectedDigits {
 
 	public ErrorTreatment getErrorTreatment();
 
-	public boolean getInterruptableAnnInd();
+	public Boolean getInterruptableAnnInd();
 
-	public boolean getVoiceInformation();
+	public Boolean getVoiceInformation();
 
-	public boolean getVoiceBack();
+	public Boolean getVoiceBack();
 
 }
 

@@ -46,7 +46,13 @@ numOfInfoItems INTEGER ::= 4
 */
 public interface VariablePartPrice {
 
-	public int getPrice();
+	public byte[] getData();
+
+	public double getPrice();
+
+	public int getPriceIntegerPart();
+
+	public int getPriceHundredthPart();
 
 }
 
