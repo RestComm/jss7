@@ -42,6 +42,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistReq
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallListener;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequestIndication;
@@ -50,9 +51,14 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.Establish
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponseIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ReleaseCallRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequestIndication;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequestIndication;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
@@ -336,6 +342,42 @@ public class Server implements CAPDialogListener, CAPServiceCircuitSwitchedCallL
 
 	@Override
 	public void onConnectToResourceRequestIndication(ConnectToResourceRequestIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendChargingInformationRequestIndication(SendChargingInformationRequestIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSpecializedResourceReportRequestIndication(SpecializedResourceReportRequestIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPlayAnnouncementRequestIndication(PlayAnnouncementRequestIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPromptAndCollectUserInformationRequestIndication(PromptAndCollectUserInformationRequestIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPromptAndCollectUserInformationResponseIndication(PromptAndCollectUserInformationResponseIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCancelRequestIndication(CancelRequestIndication ind) {
 		// TODO Auto-generated method stub
 		
 	}
