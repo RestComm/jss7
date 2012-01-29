@@ -31,47 +31,73 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
-import org.mobicents.protocols.ss7.cap.isup.BearerCapImpl;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.VariablePartTime;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
+public class VariablePartTimeImpl implements VariablePartTime, CAPAsnPrimitive {
 
-	public static final int _ID_bearerCap = 0;
+	public static final String _PrimitiveName = "VariablePartDate";
 
-	public static final String _PrimitiveName = "BearerCap";
-
-	private BearerCap bearerCap;
-
+	private byte[] data;
 	
-	public BearerCapabilityImpl() {
+	public VariablePartTimeImpl() {
 	}
 
-	public BearerCapabilityImpl(BearerCap bearerCap) {
-		this.bearerCap = bearerCap;
+	public VariablePartTimeImpl(byte[] data) {
+		this.data = data;
 	}
-	
+
+	public VariablePartTimeImpl(int hour, int minute) {
+		this.data = new byte[2];
+
+		this.data[0] = (byte) this.encodeByte(hour);
+		this.data[1] = (byte) this.encodeByte(minute);
+	}
+
 	@Override
-	public BearerCap getBearerCap() {
-		return bearerCap;
+	public byte[] getData() {
+		return this.data;
 	}
 
-	
+	@Override
+	public int getHour() {
+
+		if (this.data == null || this.data.length != 2)
+			return 0;
+
+		return this.decodeByte(data[0]);
+	}
+
+	@Override
+	public int getMinute() {
+
+		if (this.data == null || this.data.length != 2)
+			return 0;
+
+		return this.decodeByte(data[1]);
+	}
+
+	private int decodeByte(int bt) {
+		return (bt & 0x0F) * 10 + ((bt & 0xF0) >> 4);
+	}
+
+	private int encodeByte(int val) {
+		return (val / 10) | (val % 10) << 4;
+	}
+
 	@Override
 	public int getTag() throws CAPException {
-		return _ID_bearerCap;
+		return Tag.STRING_OCTET;
 	}
 
 	@Override
 	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
+		return Tag.CLASS_UNIVERSAL;
 	}
 
 	@Override
@@ -91,9 +117,6 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -108,33 +131,15 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.bearerCap = null;
-
-		int tag = ais.getTag();
-
-		if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-			switch (tag) {
-			case _ID_bearerCap:
-				this.bearerCap = new BearerCapImpl();
-				((BearerCapImpl) this.bearerCap).decodeData(ais, length);
-				break;
-
-			default:
-				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
-						CAPParsingComponentExceptionReason.MistypedParameter);
-			}
-		} else {
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
+		this.data = ansIS.readOctetStringData(length);
+		if (this.data.length < 2 || this.data.length > 2)
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": data must be from 2 to 2 bytes length, found: "
+					+ this.data.length, CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	@Override
@@ -158,10 +163,12 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		if (this.bearerCap == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": bearerCap must not be null");
+		if (this.data == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field must not be null");
+		if (this.data.length != 2)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field length must be equal 2");
 
-		((BearerCapImpl) this.bearerCap).encodeData(asnOs);
+		asnOs.writeOctetStringData(data);
 	}
 
 	@Override
@@ -170,13 +177,16 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-		if (this.bearerCap != null) {
-			sb.append("bearerCap=");
-			sb.append(bearerCap.toString());
+
+		if (this.data != null && this.data.length == 2) {
+			sb.append("hour=");
+			sb.append(this.getHour());
+			sb.append(", minute=");
+			sb.append(this.getMinute());
 		}
+
 		sb.append("]");
 
 		return sb.toString();
 	}
 }
-

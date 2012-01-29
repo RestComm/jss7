@@ -299,6 +299,66 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 			}
 			break;
 
+		case CAPOperationCode.sendChargingInformation:
+			if (acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+					|| acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric) {
+				if (compType == ComponentType.Invoke) {
+					sendChargingInformationRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+				}
+			}
+			break;
+
+		case CAPOperationCode.specializedResourceReport:
+			if (acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+					|| acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV2_assistGsmSSF_to_gsmSCF
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfAssistHandoff || acn == CAPApplicationContext.CapV4_gsmSSF_scfAssistHandoff
+					|| acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric || acn == CAPApplicationContext.CapV2_gsmSRF_to_gsmSCF
+					|| acn == CAPApplicationContext.CapV3_gsmSRF_gsmSCF || acn == CAPApplicationContext.CapV4_gsmSRF_gsmSCF) {
+				if (compType == ComponentType.Invoke) {
+					specializedResourceReportRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+				}
+			}
+			break;
+
+		case CAPOperationCode.playAnnouncement:
+			if (acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+					|| acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV2_assistGsmSSF_to_gsmSCF
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfAssistHandoff || acn == CAPApplicationContext.CapV4_gsmSSF_scfAssistHandoff
+					|| acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric || acn == CAPApplicationContext.CapV2_gsmSRF_to_gsmSCF
+					|| acn == CAPApplicationContext.CapV3_gsmSRF_gsmSCF || acn == CAPApplicationContext.CapV4_gsmSRF_gsmSCF) {
+				if (compType == ComponentType.Invoke) {
+					playAnnouncementRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+				}
+			}
+			break;
+
+		case CAPOperationCode.promptAndCollectUserInformation:
+			if (acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+					|| acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV2_assistGsmSSF_to_gsmSCF
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfAssistHandoff || acn == CAPApplicationContext.CapV4_gsmSSF_scfAssistHandoff
+					|| acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric || acn == CAPApplicationContext.CapV2_gsmSRF_to_gsmSCF
+					|| acn == CAPApplicationContext.CapV3_gsmSRF_gsmSCF || acn == CAPApplicationContext.CapV4_gsmSRF_gsmSCF) {
+				if (compType == ComponentType.Invoke) {
+					promptAndCollectUserInformationRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+				}
+				if (compType == ComponentType.ReturnResultLast) {
+					promptAndCollectUserInformationResponse(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+				}
+			}
+			break;
+
+		case CAPOperationCode.cancelCode:
+			if (acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+					|| acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV2_assistGsmSSF_to_gsmSCF
+					|| acn == CAPApplicationContext.CapV3_gsmSSF_scfAssistHandoff || acn == CAPApplicationContext.CapV4_gsmSSF_scfAssistHandoff
+					|| acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric || acn == CAPApplicationContext.CapV2_gsmSRF_to_gsmSCF
+					|| acn == CAPApplicationContext.CapV3_gsmSRF_gsmSCF || acn == CAPApplicationContext.CapV4_gsmSRF_gsmSCF) {
+				if (compType == ComponentType.Invoke) {
+					cancelRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+				}
+			}
+			break;
+
 		default:
 			new CAPParsingComponentException("", CAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
@@ -757,6 +817,182 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 				((CAPServiceCircuitSwitchedCallListener) serLis).onFurnishChargingInformationRequestIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing furnishChargingInformationRequest: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void sendChargingInformationRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+
+		if (parameter == null)
+			throw new CAPParsingComponentException("Error while decoding sendChargingInformationRequest: Parameter is mandatory but not found",
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+			throw new CAPParsingComponentException(
+					"Error while decoding sendChargingInformationRequest: Bad tag or tagClass or parameter is not primitive, received tag=" + parameter.getTag(),
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		SendChargingInformationRequestIndicationImpl ind = new SendChargingInformationRequestIndicationImpl();
+		ind.decodeData(ais, buf.length);
+
+		ind.setInvokeId(invokeId);
+		ind.setCAPDialog(capDialogImpl);
+
+		for (CAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((CAPServiceCircuitSwitchedCallListener) serLis).onSendChargingInformationRequestIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing sendChargingInformationRequest: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void specializedResourceReportRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+
+		if (parameter == null)
+			throw new CAPParsingComponentException("Error while decoding specializedResourceReportRequest: Parameter is mandatory but not found",
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (capDialogImpl.getApplicationContext().getVersion().getVersion() < 4) {
+			if (parameter.getTag() != Tag.NULL || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+				throw new CAPParsingComponentException(
+						"Error while decoding specializedResourceReportRequest: Bad tag or tagClass or parameter is not primitive, received tag="
+								+ parameter.getTag(), CAPParsingComponentExceptionReason.MistypedParameter);
+		} else {
+			if (parameter.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || parameter.isPrimitive())
+				throw new CAPParsingComponentException(
+						"Error while decoding specializedResourceReportRequest: Bad tagClass or parameter is primitive, received tag="
+								+ parameter.getTag(), CAPParsingComponentExceptionReason.MistypedParameter);
+		}
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		SpecializedResourceReportRequestIndicationImpl ind = new SpecializedResourceReportRequestIndicationImpl(capDialogImpl.getApplicationContext()
+				.getVersion().getVersion() < 4);
+		ind.decodeData(ais, buf.length);
+
+		ind.setInvokeId(invokeId);
+		ind.setCAPDialog(capDialogImpl);
+
+		for (CAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((CAPServiceCircuitSwitchedCallListener) serLis).onSpecializedResourceReportRequestIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing specializedResourceReportRequest: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void playAnnouncementRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+
+		if (parameter == null)
+			throw new CAPParsingComponentException("Error while decoding playAnnouncementRequest: Parameter is mandatory but not found",
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+			throw new CAPParsingComponentException(
+					"Error while decoding playAnnouncementRequest: Bad tag or tagClass or parameter is not primitive, received tag=" + parameter.getTag(),
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		PlayAnnouncementRequestIndicationImpl ind = new PlayAnnouncementRequestIndicationImpl();
+		ind.decodeData(ais, buf.length);
+
+		ind.setInvokeId(invokeId);
+		ind.setCAPDialog(capDialogImpl);
+
+		for (CAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((CAPServiceCircuitSwitchedCallListener) serLis).onPlayAnnouncementRequestIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing playAnnouncementRequest: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void promptAndCollectUserInformationRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId)
+			throws CAPParsingComponentException {
+
+		if (parameter == null)
+			throw new CAPParsingComponentException("Error while decoding promptAndCollectUserInformationRequest: Parameter is mandatory but not found",
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+			throw new CAPParsingComponentException(
+					"Error while decoding playAnnouncementRequest: Bad tag or tagClass or parameter is not primitive, received tag=" + parameter.getTag(),
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		PromptAndCollectUserInformationRequestIndicationImpl ind = new PromptAndCollectUserInformationRequestIndicationImpl();
+		ind.decodeData(ais, buf.length);
+
+		ind.setInvokeId(invokeId);
+		ind.setCAPDialog(capDialogImpl);
+
+		for (CAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((CAPServiceCircuitSwitchedCallListener) serLis).onPromptAndCollectUserInformationRequestIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing promptAndCollectUserInformationRequest: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void promptAndCollectUserInformationResponse(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId)
+			throws CAPParsingComponentException {
+
+		if (parameter == null)
+			throw new CAPParsingComponentException("Error while decoding promptAndCollectUserInformationResponse: Parameter is mandatory but not found",
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (parameter.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+			throw new CAPParsingComponentException("Error while decoding promptAndCollectUserInformationResponse: bad tagClass",
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		PromptAndCollectUserInformationResponseIndicationImpl ind = new PromptAndCollectUserInformationResponseIndicationImpl();
+		ind.decodeData(ais, buf.length);
+
+		ind.setInvokeId(invokeId);
+		ind.setCAPDialog(capDialogImpl);
+
+		for (CAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((CAPServiceCircuitSwitchedCallListener) serLis).onPromptAndCollectUserInformationResponseIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing promptAndCollectUserInformationResponse: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void cancelRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+
+		if (parameter == null)
+			throw new CAPParsingComponentException("Error while decoding cancelRequest: Parameter is mandatory but not found",
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (parameter.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+			throw new CAPParsingComponentException("Error while decoding cancelRequest: bad tagClass",
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		CancelRequestIndicationImpl ind = new CancelRequestIndicationImpl();
+		ind.decodeData(ais, buf.length);
+
+		ind.setInvokeId(invokeId);
+		ind.setCAPDialog(capDialogImpl);
+
+		for (CAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((CAPServiceCircuitSwitchedCallListener) serLis).onCancelRequestIndication(ind);
+			} catch (Exception e) {
+				loger.error("Error processing cancelRequest: " + e.getMessage(), e);
 			}
 		}
 	}

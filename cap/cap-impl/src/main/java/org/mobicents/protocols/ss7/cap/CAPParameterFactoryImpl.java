@@ -69,6 +69,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
 import org.mobicents.protocols.ss7.cap.api.primitives.CriticalityType;
 import org.mobicents.protocols.ss7.cap.api.primitives.DateAndTime;
+import org.mobicents.protocols.ss7.cap.api.primitives.ErrorTreatment;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.ExtensionField;
 import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
@@ -76,11 +77,18 @@ import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.primitives.ScfID;
 import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
 import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AOCBeforeAnswer;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AOCSubsequent;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AlertingPatternCap;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AudibleIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BackwardServiceInteractionInd;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAI_GSM0224;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELSCIBillingChargingCharacteristicsAlt;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CallSegmentToCancel;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedDigits;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedInfo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ConnectedNumberTreatmentInd;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CwTreatmentIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
@@ -92,16 +100,27 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ForwardServiceInteractionInd;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.HoldTreatmentIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InbandInfo;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InformationToSend;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InitialDPArgExtension;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.LowLayerCompatibility;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.MessageID;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.MessageIDText;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.MidCallControlInfo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.NAOliInfo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformation;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformationType;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.SCIBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeDurationChargingResult;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeIfTariffSwitch;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeInformation;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Tone;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.VariableMessage;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.VariablePart;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.VariablePartDate;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.VariablePartPrice;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.VariablePartTime;
 import org.mobicents.protocols.ss7.cap.dialog.CAPGprsReferenceNumberImpl;
 import org.mobicents.protocols.ss7.cap.isup.BearerCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
@@ -122,20 +141,38 @@ import org.mobicents.protocols.ss7.cap.primitives.ReceivingSideIDImpl;
 import org.mobicents.protocols.ss7.cap.primitives.ScfIDImpl;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
 import org.mobicents.protocols.ss7.cap.primitives.TimeAndTimezoneImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AOCBeforeAnswerImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AOCSubsequentImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AlertingPatternCapImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.BearerCapabilityImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAI_GSM0224Impl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAMELSCIBillingChargingCharacteristicsAltImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CallSegmentToCancelImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CollectedDigitsImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CollectedInfoImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.DestinationRoutingAddressImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.DpSpecificCriteriaImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSMImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.FCIBCCCAMELsequence1Impl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.IPSSPCapabilitiesImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InbandInfoImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InformationToSendImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InitialDPArgExtensionImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.MessageIDImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.MessageIDTextImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.NAOliInfoImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.RequestedInformationImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.SCIBillingChargingCharacteristicsImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwoImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.TimeDurationChargingResultImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.TimeIfTariffSwitchImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.TimeInformationImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.ToneImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.VariableMessageImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.VariablePartDateImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.VariablePartImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.VariablePartPriceImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.VariablePartTimeImpl;
 import org.mobicents.protocols.ss7.inap.api.isup.HighLayerCompatibilityInap;
 import org.mobicents.protocols.ss7.inap.api.primitives.BothwayThroughConnectionInd;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
@@ -574,4 +611,168 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 	public FCIBCCCAMELsequence1 createFCIBCCCAMELsequence1(byte[] freeFormatData, SendingSideID partyToCharge, AppendFreeFormatData appendFreeFormatData) {
 		return new FCIBCCCAMELsequence1Impl(freeFormatData, partyToCharge, appendFreeFormatData);
 	}
+
+	@Override
+	public CAMELSCIBillingChargingCharacteristicsAlt createCAMELSCIBillingChargingCharacteristicsAlt() {
+		return new CAMELSCIBillingChargingCharacteristicsAltImpl();
+	}
+
+	@Override
+	public CAI_GSM0224 createCAI_GSM0224(Integer e1, Integer e2, Integer e3, Integer e4, Integer e5, Integer e6, Integer e7) {
+		return new CAI_GSM0224Impl(e1, e2, e3, e4, e5, e6, e7);
+	}
+
+	@Override
+	public AOCSubsequent createAOCSubsequent(CAI_GSM0224 cai_GSM0224, Integer tariffSwitchInterval) {
+		return new AOCSubsequentImpl(cai_GSM0224, tariffSwitchInterval);
+	}
+
+	@Override
+	public AOCBeforeAnswer createAOCBeforeAnswer(CAI_GSM0224 aocInitial, AOCSubsequent aocSubsequent) {
+		return new AOCBeforeAnswerImpl(aocInitial, aocSubsequent);
+	}
+
+	@Override
+	public SCIBillingChargingCharacteristics createSCIBillingChargingCharacteristics(AOCBeforeAnswer aocBeforeAnswer) {
+		return new SCIBillingChargingCharacteristicsImpl(aocBeforeAnswer);
+	}
+
+	@Override
+	public SCIBillingChargingCharacteristics createSCIBillingChargingCharacteristics(AOCSubsequent aocSubsequent) {
+		return new SCIBillingChargingCharacteristicsImpl(aocSubsequent);
+	}
+
+	@Override
+	public SCIBillingChargingCharacteristics createSCIBillingChargingCharacteristics(CAMELSCIBillingChargingCharacteristicsAlt aocExtension) {
+		return new SCIBillingChargingCharacteristicsImpl(aocExtension);
+	}
+
+	@Override
+	public VariablePartPrice createVariablePartPrice(byte[] data) {
+		return new VariablePartPriceImpl(data);
+	}
+
+	@Override
+	public VariablePartPrice createVariablePartPrice(double price) {
+		return new VariablePartPriceImpl(price);
+	}
+
+	@Override
+	public VariablePartPrice createVariablePartPrice(int integerPart, int hundredthPart) {
+		return new VariablePartPriceImpl(integerPart, hundredthPart);
+	}
+
+	@Override
+	public VariablePartDate createVariablePartDate(byte[] data) {
+		return new VariablePartDateImpl(data);
+	}
+
+	@Override
+	public VariablePartDate createVariablePartDate(int year, int month, int day) {
+		return new VariablePartDateImpl(year, month, day);
+	}
+
+	@Override
+	public VariablePartTime createVariablePartTime(byte[] data) {
+		return new VariablePartTimeImpl(data);
+	}
+
+	@Override
+	public VariablePartTime createVariablePartTime(int hour, int minute) {
+		return new VariablePartTimeImpl(hour, minute);
+	}
+
+	@Override
+	public VariablePart createVariablePart(Integer integer) {
+		return new VariablePartImpl(integer);
+	}
+
+	@Override
+	public VariablePart createVariablePart(Digits number) {
+		return new VariablePartImpl(number);
+	}
+
+	@Override
+	public VariablePart createVariablePart(VariablePartTime time) {
+		return new VariablePartImpl(time);
+	}
+
+	@Override
+	public VariablePart createVariablePart(VariablePartDate date) {
+		return new VariablePartImpl(date);
+	}
+
+	@Override
+	public VariablePart createVariablePart(VariablePartPrice price) {
+		return new VariablePartImpl(price);
+	}
+
+	@Override
+	public MessageIDText createMessageIDText(String messageContent, byte[] attributes) {
+		return new MessageIDTextImpl(messageContent, attributes);
+	}
+
+	@Override
+	public VariableMessage createVariableMessage(int elementaryMessageID, ArrayList<VariablePart> variableParts) {
+		return new VariableMessageImpl(elementaryMessageID, variableParts);
+	}
+
+	@Override
+	public MessageID createMessageID(Integer elementaryMessageID) {
+		return new MessageIDImpl(elementaryMessageID);
+	}
+
+	@Override
+	public MessageID createMessageID(MessageIDText text) {
+		return new MessageIDImpl(text);
+	}
+
+	@Override
+	public MessageID createMessageID(ArrayList<Integer> elementaryMessageIDs) {
+		return new MessageIDImpl(elementaryMessageIDs);
+	}
+
+	@Override
+	public MessageID createMessageID(VariableMessage variableMessage) {
+		return new MessageIDImpl(variableMessage);
+	}
+
+	@Override
+	public InbandInfo createInbandInfo(MessageID messageID, Integer numberOfRepetitions, Integer duration, Integer interval) {
+		return new InbandInfoImpl(messageID, numberOfRepetitions, duration, interval);
+	}
+
+	@Override
+	public Tone createTone(int toneID, Integer duration) {
+		return new ToneImpl(toneID, duration);
+	}
+
+	@Override
+	public InformationToSend createInformationToSend(InbandInfo inbandInfo) {
+		return new InformationToSendImpl(inbandInfo);
+	}
+
+	@Override
+	public InformationToSend createInformationToSend(Tone tone) {
+		return new InformationToSendImpl(tone);
+	}
+
+	@Override
+	public CollectedDigits createCollectedDigits(Integer minimumNbOfDigits, int maximumNbOfDigits, byte[] endOfReplyDigit, byte[] cancelDigit,
+			byte[] startDigit, Integer firstDigitTimeOut, Integer interDigitTimeOut, ErrorTreatment errorTreatment, Boolean interruptableAnnInd,
+			Boolean voiceInformation, Boolean voiceBack) {
+		return new CollectedDigitsImpl(minimumNbOfDigits, maximumNbOfDigits, endOfReplyDigit, cancelDigit, startDigit, firstDigitTimeOut, interDigitTimeOut,
+				errorTreatment, interruptableAnnInd, voiceInformation, voiceBack);
+	}
+
+	@Override
+	public CollectedInfo createCollectedInfo(CollectedDigits collectedDigits) {
+		return new CollectedInfoImpl(collectedDigits);
+	}
+
+	@Override
+	public CallSegmentToCancel createCallSegmentToCancel(Integer invokeID, Integer callSegmentID) {
+		return new CallSegmentToCancelImpl(invokeID, callSegmentID);
+	}
 }
+

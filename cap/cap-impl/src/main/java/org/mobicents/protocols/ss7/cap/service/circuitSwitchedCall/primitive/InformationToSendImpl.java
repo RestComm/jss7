@@ -31,42 +31,58 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
-import org.mobicents.protocols.ss7.cap.isup.BearerCapImpl;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InbandInfo;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InformationToSend;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Tone;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
+public class InformationToSendImpl implements InformationToSend, CAPAsnPrimitive {
 
-	public static final int _ID_bearerCap = 0;
+	public static final int _ID_inbandInfo = 0;
+	public static final int _ID_tone = 1;
 
-	public static final String _PrimitiveName = "BearerCap";
+	public static final String _PrimitiveName = "InformationToSend";
 
-	private BearerCap bearerCap;
+	private InbandInfo inbandInfo;
+	private Tone tone;
 
 	
-	public BearerCapabilityImpl() {
+	public InformationToSendImpl() {
 	}
 
-	public BearerCapabilityImpl(BearerCap bearerCap) {
-		this.bearerCap = bearerCap;
+	public InformationToSendImpl(InbandInfo inbandInfo) {
+		this.inbandInfo = inbandInfo;
+	}
+
+	public InformationToSendImpl(Tone tone) {
+		this.tone = tone;
 	}
 	
 	@Override
-	public BearerCap getBearerCap() {
-		return bearerCap;
+	public InbandInfo getInbandInfo() {
+		return inbandInfo;
+	}
+	
+	@Override
+	public Tone getTone() {
+		return tone;
 	}
 
-	
 	@Override
 	public int getTag() throws CAPException {
-		return _ID_bearerCap;
+
+		if (this.inbandInfo != null) {
+			return _ID_inbandInfo;
+		} else if (this.tone != null) {
+			return _ID_tone;
+		} else {
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": no of choices has been definite");
+		}
 	}
 
 	@Override
@@ -76,7 +92,7 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 
 	@Override
 	public boolean getIsPrimitive() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -90,9 +106,6 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -108,31 +121,29 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.bearerCap = null;
+		this.inbandInfo = null;
+		this.tone = null;
 
-		int tag = ais.getTag();
+		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tagClass or is primitive",
+					CAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-			switch (tag) {
-			case _ID_bearerCap:
-				this.bearerCap = new BearerCapImpl();
-				((BearerCapImpl) this.bearerCap).decodeData(ais, length);
-				break;
-
-			default:
-				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
-						CAPParsingComponentExceptionReason.MistypedParameter);
-			}
-		} else {
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
+		switch (ais.getTag()) {
+		case _ID_inbandInfo:
+			this.inbandInfo = new InbandInfoImpl();
+			((InbandInfoImpl) this.inbandInfo).decodeData(ais, length);
+			break;
+		case _ID_tone:
+			this.tone = new ToneImpl();
+			((ToneImpl) this.tone).decodeData(ais, length);
+			break;
+		default:
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -158,10 +169,19 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		if (this.bearerCap == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": bearerCap must not be null");
+		int choiceCnt = 0;
+		if (this.inbandInfo != null)
+			choiceCnt++;
+		if (this.tone != null)
+			choiceCnt++;
 
-		((BearerCapImpl) this.bearerCap).encodeData(asnOs);
+		if (choiceCnt != 1)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: " + choiceCnt);
+
+		if (this.inbandInfo != null)
+			((InbandInfoImpl) this.inbandInfo).encodeData(asnOs);
+		if (this.tone != null)
+			((ToneImpl) this.tone).encodeData(asnOs);
 	}
 
 	@Override
@@ -170,10 +190,16 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-		if (this.bearerCap != null) {
-			sb.append("bearerCap=");
-			sb.append(bearerCap.toString());
+		
+		if (this.inbandInfo != null) {
+			sb.append("inbandInfo=");
+			sb.append(inbandInfo.toString());
 		}
+		if (this.tone != null) {
+			sb.append(" tone=");
+			sb.append(tone.toString());
+		}
+
 		sb.append("]");
 
 		return sb.toString();

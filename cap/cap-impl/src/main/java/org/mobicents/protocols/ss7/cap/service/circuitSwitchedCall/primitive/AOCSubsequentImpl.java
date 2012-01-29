@@ -31,52 +31,57 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
-import org.mobicents.protocols.ss7.cap.isup.BearerCapImpl;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AOCSubsequent;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAI_GSM0224;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
- * @author sergey vetyutnev
- * 
- */
-public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
+*
+* 
+* @author sergey vetyutnev
+* 
+*/
+public class AOCSubsequentImpl implements AOCSubsequent, CAPAsnPrimitive {
 
-	public static final int _ID_bearerCap = 0;
+	public static final int _ID_cAI_GSM0224 = 0;
+	public static final int _ID_tariffSwitchInterval = 1;
 
-	public static final String _PrimitiveName = "BearerCap";
+	public static final String _PrimitiveName = "AOCSubsequent";
 
-	private BearerCap bearerCap;
+	private CAI_GSM0224 cai_GSM0224;
+	private Integer tariffSwitchInterval;
 
-	
-	public BearerCapabilityImpl() {
+	public AOCSubsequentImpl() {
 	}
 
-	public BearerCapabilityImpl(BearerCap bearerCap) {
-		this.bearerCap = bearerCap;
+	public AOCSubsequentImpl(CAI_GSM0224 cai_GSM0224, Integer tariffSwitchInterval) {
+		this.cai_GSM0224 = cai_GSM0224;
+		this.tariffSwitchInterval = tariffSwitchInterval;
 	}
 	
 	@Override
-	public BearerCap getBearerCap() {
-		return bearerCap;
+	public CAI_GSM0224 getCAI_GSM0224() {
+		return cai_GSM0224;
 	}
 
-	
+	@Override
+	public Integer getTariffSwitchInterval() {
+		return tariffSwitchInterval;
+	}
+
 	@Override
 	public int getTag() throws CAPException {
-		return _ID_bearerCap;
+		return Tag.SEQUENCE;
 	}
 
 	@Override
 	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
+		return Tag.CLASS_UNIVERSAL;
 	}
 
 	@Override
 	public boolean getIsPrimitive() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -90,9 +95,6 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -108,33 +110,43 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.bearerCap = null;
+		this.cai_GSM0224 = null;
+		this.tariffSwitchInterval = null;
 
-		int tag = ais.getTag();
-
-		if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-			switch (tag) {
-			case _ID_bearerCap:
-				this.bearerCap = new BearerCapImpl();
-				((BearerCapImpl) this.bearerCap).decodeData(ais, length);
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		while (true) {
+			if (ais.available() == 0)
 				break;
 
-			default:
-				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
-						CAPParsingComponentExceptionReason.MistypedParameter);
+			int tag = ais.readTag();
+
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {
+				case _ID_cAI_GSM0224:
+					this.cai_GSM0224 = new CAI_GSM0224Impl();
+					((CAI_GSM0224Impl) this.cai_GSM0224).decodeAll(ais);
+					break;
+				case _ID_tariffSwitchInterval:
+					this.tariffSwitchInterval = (int) ais.readInteger();
+					break;
+
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else {
+				ais.advanceElement();
 			}
-		} else {
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
+
+		if (this.cai_GSM0224 == null)
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": cai_GSM0224 is mandatory but not found",
+					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	@Override
@@ -156,12 +168,21 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 	}
 
 	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+	public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		if (this.bearerCap == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": bearerCap must not be null");
+		if (this.cai_GSM0224 == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": cai_GSM0224 must not be null");
 
-		((BearerCapImpl) this.bearerCap).encodeData(asnOs);
+		try {
+			((CAI_GSM0224Impl) this.cai_GSM0224).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_cAI_GSM0224);
+
+			if (this.tariffSwitchInterval != null)
+				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_tariffSwitchInterval, this.tariffSwitchInterval);
+		} catch (IOException e) {
+			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
@@ -170,10 +191,16 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-		if (this.bearerCap != null) {
-			sb.append("bearerCap=");
-			sb.append(bearerCap.toString());
+
+		if (this.cai_GSM0224 != null) {
+			sb.append("cai_GSM0224=");
+			sb.append(cai_GSM0224.toString());
 		}
+		if (this.tariffSwitchInterval != null) {
+			sb.append(", tariffSwitchInterval=");
+			sb.append(tariffSwitchInterval);
+		}
+
 		sb.append("]");
 
 		return sb.toString();

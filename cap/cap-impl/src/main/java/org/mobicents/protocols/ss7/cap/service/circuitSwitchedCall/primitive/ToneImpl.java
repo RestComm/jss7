@@ -31,52 +31,56 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
-import org.mobicents.protocols.ss7.cap.isup.BearerCapImpl;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Tone;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
+public class ToneImpl implements Tone, CAPAsnPrimitive {
 
-	public static final int _ID_bearerCap = 0;
+	public static final int _ID_toneID = 0;
+	public static final int _ID_duration = 1;
 
-	public static final String _PrimitiveName = "BearerCap";
+	public static final String _PrimitiveName = "Tone";
 
-	private BearerCap bearerCap;
+	private int toneID;
+	private Integer duration;
 
 	
-	public BearerCapabilityImpl() {
+	public ToneImpl() {
 	}
-
-	public BearerCapabilityImpl(BearerCap bearerCap) {
-		this.bearerCap = bearerCap;
+	
+	public ToneImpl(int toneID, Integer duration) {
+		this.toneID = toneID;
+		this.duration = duration;
 	}
 	
 	@Override
-	public BearerCap getBearerCap() {
-		return bearerCap;
+	public int getToneID() {
+		return toneID;
 	}
 
-	
+	@Override
+	public Integer getDuration() {
+		return duration;
+	}
+
 	@Override
 	public int getTag() throws CAPException {
-		return _ID_bearerCap;
+		return Tag.SEQUENCE;
 	}
 
 	@Override
 	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
+		return Tag.CLASS_UNIVERSAL;
 	}
 
 	@Override
 	public boolean getIsPrimitive() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -90,9 +94,6 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -108,38 +109,50 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.bearerCap = null;
+		this.toneID = 0;
+		this.duration = null;
+		boolean toneIDRecieved = false;
 
-		int tag = ais.getTag();
-
-		if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-			switch (tag) {
-			case _ID_bearerCap:
-				this.bearerCap = new BearerCapImpl();
-				((BearerCapImpl) this.bearerCap).decodeData(ais, length);
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		while (true) {
+			if (ais.available() == 0)
 				break;
 
-			default:
-				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
-						CAPParsingComponentExceptionReason.MistypedParameter);
+			int tag = ais.readTag();
+
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {
+				case _ID_toneID:
+					this.toneID = (int) ais.readInteger();
+					toneIDRecieved = true;
+					break;
+				case _ID_duration:
+					this.duration = (int) ais.readInteger();
+					break;
+
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else {
+				ais.advanceElement();
 			}
-		} else {
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
+
+		if (toneIDRecieved == false)
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": toneID is mandatory but not found",
+					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+		
 	}
 
 	@Override
@@ -156,12 +169,18 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 	}
 
 	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+	public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		if (this.bearerCap == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": bearerCap must not be null");
+		try {
+			aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_toneID, this.toneID);
+			if (this.duration != null)
+				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_duration, this.duration);
 
-		((BearerCapImpl) this.bearerCap).encodeData(asnOs);
+		} catch (IOException e) {
+			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
@@ -170,10 +189,14 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-		if (this.bearerCap != null) {
-			sb.append("bearerCap=");
-			sb.append(bearerCap.toString());
+
+		sb.append("toneID=");
+		sb.append(this.toneID);
+		if (this.duration != null) {
+			sb.append(", duration=");
+			sb.append(this.duration);
 		}
+
 		sb.append("]");
 
 		return sb.toString();

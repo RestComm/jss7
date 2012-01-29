@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
+package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
 
@@ -31,42 +31,39 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
-import org.mobicents.protocols.ss7.cap.isup.BearerCapImpl;
-import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.cap.api.isup.Digits;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponseIndication;
+import org.mobicents.protocols.ss7.cap.isup.DigitsImpl;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
+public class PromptAndCollectUserInformationResponseIndicationImpl extends CircuitSwitchedCallMessageImpl implements PromptAndCollectUserInformationResponseIndication {
 
-	public static final int _ID_bearerCap = 0;
+	public static final int _ID_digitsResponse = 0;
 
-	public static final String _PrimitiveName = "BearerCap";
+	public static final String _PrimitiveName = "PromptAndCollectUserInformationResponseIndication";
 
-	private BearerCap bearerCap;
+	public Digits digitsResponse;
 
-	
-	public BearerCapabilityImpl() {
+
+	public PromptAndCollectUserInformationResponseIndicationImpl() {
 	}
 
-	public BearerCapabilityImpl(BearerCap bearerCap) {
-		this.bearerCap = bearerCap;
+	public PromptAndCollectUserInformationResponseIndicationImpl(Digits digitsResponse) {
+		this.digitsResponse = digitsResponse;
 	}
-	
+
 	@Override
-	public BearerCap getBearerCap() {
-		return bearerCap;
+	public Digits getDigitsResponse() {
+		return digitsResponse;
 	}
 
-	
 	@Override
 	public int getTag() throws CAPException {
-		return _ID_bearerCap;
+		return _ID_digitsResponse;
 	}
 
 	@Override
@@ -91,9 +88,6 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -108,31 +102,24 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.bearerCap = null;
+		this.digitsResponse = null;
 
-		int tag = ais.getTag();
+		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tagClass or is not primitive",
+					CAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-			switch (tag) {
-			case _ID_bearerCap:
-				this.bearerCap = new BearerCapImpl();
-				((BearerCapImpl) this.bearerCap).decodeData(ais, length);
-				break;
-
-			default:
-				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
-						CAPParsingComponentExceptionReason.MistypedParameter);
-			}
-		} else {
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
+		switch (ais.getTag()) {
+		case _ID_digitsResponse:
+			this.digitsResponse = new DigitsImpl();
+			((DigitsImpl) this.digitsResponse).decodeData(ais, length);
+			break;
+		default:
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -158,10 +145,15 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		if (this.bearerCap == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": bearerCap must not be null");
+		int choiceCnt = 0;
+		if (this.digitsResponse != null)
+			choiceCnt++;
+		
+		if (choiceCnt != 1)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: " + choiceCnt);
 
-		((BearerCapImpl) this.bearerCap).encodeData(asnOs);
+		if (this.digitsResponse != null)
+			((DigitsImpl) this.digitsResponse).encodeData(asnOs);
 	}
 
 	@Override
@@ -170,13 +162,14 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-		if (this.bearerCap != null) {
-			sb.append("bearerCap=");
-			sb.append(bearerCap.toString());
+		
+		if (this.digitsResponse != null) {
+			sb.append("digitsResponse=");
+			sb.append(digitsResponse.toString());
 		}
+
 		sb.append("]");
 
 		return sb.toString();
 	}
 }
-

@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -31,53 +30,37 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
-import org.mobicents.protocols.ss7.cap.isup.BearerCapImpl;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELSCIBillingChargingCharacteristicsAlt;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
+public class CAMELSCIBillingChargingCharacteristicsAltImpl implements CAMELSCIBillingChargingCharacteristicsAlt, CAPAsnPrimitive {
 
-	public static final int _ID_bearerCap = 0;
+	public static final String _PrimitiveName = "CAMELSCIBillingChargingCharacteristicsAlt";
 
-	public static final String _PrimitiveName = "BearerCap";
 
-	private BearerCap bearerCap;
-
-	
-	public BearerCapabilityImpl() {
+	public CAMELSCIBillingChargingCharacteristicsAltImpl() {
 	}
-
-	public BearerCapabilityImpl(BearerCap bearerCap) {
-		this.bearerCap = bearerCap;
-	}
-	
-	@Override
-	public BearerCap getBearerCap() {
-		return bearerCap;
-	}
-
 	
 	@Override
 	public int getTag() throws CAPException {
-		return _ID_bearerCap;
+		return Tag.SEQUENCE;
 	}
 
 	@Override
 	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
+		return Tag.CLASS_UNIVERSAL;
 	}
 
 	@Override
 	public boolean getIsPrimitive() {
-		return true;
+		return false;
 	}
+
 
 	@Override
 	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
@@ -90,9 +73,6 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -108,33 +88,13 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.bearerCap = null;
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
-		int tag = ais.getTag();
-
-		if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-			switch (tag) {
-			case _ID_bearerCap:
-				this.bearerCap = new BearerCapImpl();
-				((BearerCapImpl) this.bearerCap).decodeData(ais, length);
-				break;
-
-			default:
-				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
-						CAPParsingComponentExceptionReason.MistypedParameter);
-			}
-		} else {
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
 	}
 
 	@Override
@@ -157,11 +117,6 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-
-		if (this.bearerCap == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": bearerCap must not be null");
-
-		((BearerCapImpl) this.bearerCap).encodeData(asnOs);
 	}
 
 	@Override
@@ -170,13 +125,8 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-		if (this.bearerCap != null) {
-			sb.append("bearerCap=");
-			sb.append(bearerCap.toString());
-		}
 		sb.append("]");
 
 		return sb.toString();
 	}
 }
-

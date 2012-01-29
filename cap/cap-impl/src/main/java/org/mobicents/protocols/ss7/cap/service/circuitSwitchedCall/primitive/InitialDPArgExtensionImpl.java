@@ -179,7 +179,6 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
 	}
 
 	
-	
 	@Override
 	public int getTag() throws CAPException {
 		return Tag.SEQUENCE;

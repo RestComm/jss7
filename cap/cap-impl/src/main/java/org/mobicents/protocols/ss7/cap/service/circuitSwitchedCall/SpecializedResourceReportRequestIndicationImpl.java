@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
+package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
 
@@ -31,47 +31,65 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
-import org.mobicents.protocols.ss7.cap.isup.BearerCapImpl;
-import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequestIndication;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
+public class SpecializedResourceReportRequestIndicationImpl extends CircuitSwitchedCallMessageImpl implements SpecializedResourceReportRequestIndication {
 
-	public static final int _ID_bearerCap = 0;
+	public static final int _ID_allAnnouncementsComplete = 50;
+	public static final int _ID_firstAnnouncementStarted = 51;
 
-	public static final String _PrimitiveName = "BearerCap";
+	public static final String _PrimitiveName = "SpecializedResourceReportRequestIndication";
 
-	private BearerCap bearerCap;
+	private boolean isAllAnnouncementsComplete;
+	private boolean isFirstAnnouncementStarted;
 
-	
-	public BearerCapabilityImpl() {
+	private boolean isCAPVersion4orLater;
+
+
+	public SpecializedResourceReportRequestIndicationImpl(boolean isCAPVersion4orLater) {
+		this.isCAPVersion4orLater = isCAPVersion4orLater;
 	}
 
-	public BearerCapabilityImpl(BearerCap bearerCap) {
-		this.bearerCap = bearerCap;
+	public SpecializedResourceReportRequestIndicationImpl(boolean isAllAnnouncementsComplete, boolean isFirstAnnouncementStarted, boolean isCAPVersion4orLater) {
+		this.isAllAnnouncementsComplete = isAllAnnouncementsComplete;
+		this.isFirstAnnouncementStarted = isFirstAnnouncementStarted;
+		this.isCAPVersion4orLater = isCAPVersion4orLater;
 	}
 	
 	@Override
-	public BearerCap getBearerCap() {
-		return bearerCap;
+	public boolean IsAllAnnouncementsComplete() {
+		return isAllAnnouncementsComplete;
 	}
 
-	
+	@Override
+	public boolean IsFirstAnnouncementStarted() {
+		return isFirstAnnouncementStarted;
+	}
+
 	@Override
 	public int getTag() throws CAPException {
-		return _ID_bearerCap;
+		if (this.isCAPVersion4orLater) {
+			if (this.isAllAnnouncementsComplete)
+				return _ID_allAnnouncementsComplete;
+			else
+				return _ID_firstAnnouncementStarted;
+		} else {
+			return Tag.NULL;
+		}
 	}
 
 	@Override
 	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
+		if (this.isCAPVersion4orLater) {
+			return Tag.CLASS_CONTEXT_SPECIFIC;
+		} else {
+			return Tag.CLASS_UNIVERSAL;
+		}
 	}
 
 	@Override
@@ -91,9 +109,6 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -108,33 +123,38 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.bearerCap = null;
-
-		int tag = ais.getTag();
-
-		if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-			switch (tag) {
-			case _ID_bearerCap:
-				this.bearerCap = new BearerCapImpl();
-				((BearerCapImpl) this.bearerCap).decodeData(ais, length);
+		this.isAllAnnouncementsComplete = false;
+		this.isFirstAnnouncementStarted = false;
+		
+		if (this.isCAPVersion4orLater) {
+			if (ansIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag class for CAP V4 or later. It must must be CONTEXT_SPECIFIC",
+						CAPParsingComponentExceptionReason.MistypedParameter);
+			
+			switch (ansIS.getTag()) {
+			case _ID_allAnnouncementsComplete:
+				this.isAllAnnouncementsComplete = true;
 				break;
-
+			case _ID_firstAnnouncementStarted:
+				this.isFirstAnnouncementStarted = true;
+				break;
 			default:
-				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
+				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag for CAP V4 or later.",
 						CAPParsingComponentExceptionReason.MistypedParameter);
 			}
+			
 		} else {
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			if (ansIS.getTagClass() != Tag.CLASS_UNIVERSAL)
+				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag class for CAP V2 or V3. It must must be UNIVERSAL",
+						CAPParsingComponentExceptionReason.MistypedParameter);
 		}
+
+		ansIS.readNullData(length);
 	}
 
 	@Override
@@ -158,10 +178,12 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		if (this.bearerCap == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": bearerCap must not be null");
+		if (this.isCAPVersion4orLater) {
+			if (this.isAllAnnouncementsComplete && this.isFirstAnnouncementStarted || !this.isAllAnnouncementsComplete && !this.isFirstAnnouncementStarted)
+				throw new CAPException("Error while encoding " + _PrimitiveName + ": only one of choice must be selected when CAP V4 or later");
+		}
 
-		((BearerCapImpl) this.bearerCap).encodeData(asnOs);
+		asnOs.writeNullData();
 	}
 
 	@Override
@@ -170,10 +192,14 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-		if (this.bearerCap != null) {
-			sb.append("bearerCap=");
-			sb.append(bearerCap.toString());
+
+		if (this.isAllAnnouncementsComplete) {
+			sb.append("isAllAnnouncementsComplete");
 		}
+		if (this.isFirstAnnouncementStarted) {
+			sb.append(" isFirstAnnouncementStarted");
+		}
+
 		sb.append("]");
 
 		return sb.toString();
