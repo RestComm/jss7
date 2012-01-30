@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
+import java.io.FileOutputStream;
+
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.router.Router;
 
@@ -63,7 +65,6 @@ public abstract class SccpHarness {
 	protected void createStack1()
 	{
 		sccpStack1 = new SccpStackImpl(sccpStack1Name);
-		sccpProvider1 = sccpStack1.getSccpProvider();
 	}
 	protected void setUpStack1() {
 		createStack1();
@@ -72,6 +73,8 @@ public abstract class SccpHarness {
 		sccpStack1.setNi(2);
 		sccpStack1.setMtp3UserPart(mtp3UserPart1);
 		sccpStack1.start();
+
+		sccpProvider1 = sccpStack1.getSccpProvider();
 		
 		router1 = sccpStack1.getRouter();
 
@@ -84,7 +87,6 @@ public abstract class SccpHarness {
 	protected void createStack2()
 	{
 		sccpStack2 = new SccpStackImpl(sccpStack2Name);
-		sccpProvider2 = sccpStack2.getSccpProvider();
 	}
 	protected void setUpStack2() {
 		createStack2();
@@ -93,6 +95,8 @@ public abstract class SccpHarness {
 		sccpStack2.setNi(2);
 		sccpStack2.setMtp3UserPart(mtp3UserPart2);
 		sccpStack2.start();
+
+		sccpProvider2 = sccpStack2.getSccpProvider();
 		
 		router2 = sccpStack2.getRouter();
 		router2.getRules().clear();
@@ -154,6 +158,24 @@ public abstract class SccpHarness {
 		this.tearDownStack1();
 		this.tearDownStack2();
 	}
-
-
+	
+	/**
+	 * After this method invoking all MTP traffic will be save into the file "MsgLog.txt"
+	 * file format:
+	 * [message][message]...[message]
+	 * [message] ::= { byte-length low byte, byte-length high byte, byte[] message }
+	 */
+	public void saveTrafficInFile() {
+		((Mtp3UserPartImpl) this.mtp3UserPart1).saveTrafficInFile = true;
+		((Mtp3UserPartImpl) this.mtp3UserPart2).saveTrafficInFile = true;
+		
+		try {
+			FileOutputStream fs = new FileOutputStream("MsgLog.txt", false);
+			fs.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
+

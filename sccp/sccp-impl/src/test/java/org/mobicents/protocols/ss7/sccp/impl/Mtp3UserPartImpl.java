@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
@@ -42,6 +43,8 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
 //	protected ConcurrentLinkedQueue<byte[]> writeTo;
 	
 	private Mtp3UserPartImpl otherPart;
+	
+	protected boolean saveTrafficInFile = false;
 
 	Mtp3UserPartImpl() {
 		try {
@@ -58,6 +61,21 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
 
 	@Override
 	public void sendMessage(Mtp3TransferPrimitive msg) throws IOException {
+		if (saveTrafficInFile) {
+			try {
+				byte[] txData = msg.encodeMtp3();
+				FileOutputStream fs = new FileOutputStream("MsgLog.txt", true);
+				int ln = txData.length;
+				fs.write(ln & 0xFF);
+				fs.write(ln >> 8);
+				fs.write(txData);
+				fs.close();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 		this.otherPart.sendTransferMessageToLocalUser(msg, msg.getSls());
 	}
 
