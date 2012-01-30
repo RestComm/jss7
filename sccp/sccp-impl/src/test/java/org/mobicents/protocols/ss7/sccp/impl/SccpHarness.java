@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
+import java.io.FileOutputStream;
+
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.router.Router;
 
@@ -156,6 +158,24 @@ public abstract class SccpHarness {
 		this.tearDownStack1();
 		this.tearDownStack2();
 	}
-
-
+	
+	/**
+	 * After this method invoking all MTP traffic will be save into the file "MsgLog.txt"
+	 * file format:
+	 * [message][message]...[message]
+	 * [message] ::= { byte-length low byte, byte-length high byte, byte[] message }
+	 */
+	public void saveTrafficInFile() {
+		((Mtp3UserPartImpl) this.mtp3UserPart1).saveTrafficInFile = true;
+		((Mtp3UserPartImpl) this.mtp3UserPart2).saveTrafficInFile = true;
+		
+		try {
+			FileOutputStream fs = new FileOutputStream("MsgLog.txt", false);
+			fs.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
+
