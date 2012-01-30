@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.mobicents.protocols.ss7.cap.CAPStackImpl;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
@@ -98,6 +99,7 @@ public class CAPFunctionalTest extends SccpHarness {
 
 		this.stack1.start();
 		this.stack2.start();
+
 		// create test classes
 		this.client = new Client(this.stack1, this, peer1Address, peer2Address);
 		this.server = new Server(this.stack2, this, peer2Address, peer1Address);
