@@ -41,7 +41,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 public class SccpProviderWrapper implements SccpProvider {
 
 	public MessageFactory getMessageFactory() {
-		return new MessageFactoryImpl();
+		return new MessageFactoryImpl(false);
 	}
 
 	public ParameterFactory getParameterFactory() {

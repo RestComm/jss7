@@ -125,7 +125,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	private SccpProviderWrapper sccpProvider;
 	private MAPProviderImpl mapProvider;
 	private CAPProviderImpl capProvider;
-	private MessageFactoryImpl msgFact = new MessageFactoryImpl(); 
+	private MessageFactoryImpl msgFact = new MessageFactoryImpl(false); 
 
 	private Map<Integer, Map<Long, DialogImplWrapper>> dialogs = new HashMap<Integer, Map<Long, DialogImplWrapper>>();
 	private long dialogEnumerator = 0;
