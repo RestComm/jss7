@@ -39,6 +39,8 @@
 				<include>org.mobicents.protocols.ss7.hardware:mobicents-m3ua</include>
 				<include>org.mobicents.protocols.sctp:sctp-api</include>
 				<include>org.mobicents.protocols.sctp:sctp-impl</include>	
+				<include>org.mobicents.protocols.ss7.isup:isup-api</include>	
+				<include>org.mobicents.protocols.ss7.isup:isup-impl</include>	
 				<include>org.mobicents.commons:commons</include>			
 			</includes>
 		</dependencySet>

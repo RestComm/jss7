@@ -11,7 +11,7 @@
 
 	<properties>
 		<include.dialogic>/opt/dpklnx/INC</include.dialogic>
-		<include.dialogic.gctlib>/opt/dpklnx</include.dialogic.gctlib>
+		<include.dialogic.gctlib>/opt/dpklnx/lib32</include.dialogic.gctlib>
 	</properties>
 	<name>Mobicents SS7 :: Hardware :: ${pom.artifactId}</name>
 	<packaging>so</packaging>

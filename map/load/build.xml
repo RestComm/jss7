@@ -13,9 +13,12 @@
 
 	<property name="assemble.dir" value="${ant.file.mobicents.release}/../target/load" />
 	<path id="project.class.path">
-	
+		<pathelement location="${assemble.dir}/sctp-api.jar" />
+		<pathelement location="${assemble.dir}/sctp-impl.jar" />
 		<pathelement location="${assemble.dir}/map-api.jar" />
 		<pathelement location="${assemble.dir}/map-impl.jar" />
+		<pathelement location="${assemble.dir}/isup-api.jar" />
+		<pathelement location="${assemble.dir}/isup-impl.jar" />
 		<pathelement location="${assemble.dir}/map-load.jar" />
 		<pathelement location="${assemble.dir}/tcap-api.jar" />
 		<pathelement location="${assemble.dir}/tcap-impl.jar" />
@@ -24,6 +27,9 @@
 		<pathelement location="${assemble.dir}/m3ua-api.jar" />
 		<pathelement location="${assemble.dir}/m3ua-impl.jar" />
 		<pathelement location="${assemble.dir}/mtp-api.jar" />
+		<pathelement location="${assemble.dir}/mtp.jar" />
+		<pathelement location="${assemble.dir}/mobicents-congestion.jar" />
+		<pathelement location="${assemble.dir}/commons.jar" />
 		
 		<!-- mobicents 3rd party -->
 		<pathelement location="${assemble.dir}/asn.jar" />
