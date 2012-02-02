@@ -13,7 +13,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public abstract class MessageHandler {
 
@@ -32,15 +32,23 @@ public abstract class MessageHandler {
 		this.aspFactory.write(error);
 	}
 
+	/**
+	 * Get's the ASP for any ASP Traffic Maintenance, Management, Signalling
+	 * Network Management and Transfer m3ua message's received which has null
+	 * Routing Context
+	 * 
+	 * @return
+	 */
 	protected Asp getAspForNullRc() {
 		// We know if null RC, ASP cannot be shared and AspFactory will
 		// have only one ASP
 
 		Asp asp = this.aspFactory.getAspList().get(0);
 
-		if (asp.getAs().getRoutingContext() != null) {
+		if (this.aspFactory.getAspList().size() > 1) {
 			// verify that AS to which this ASP is added is also having null
-			// RC.
+			// RC or this asp is not shared by any other AS in which case we
+			// know messages are intended for same AS
 
 			ErrorCode errorCodeObj = this.aspFactory.parameterFactory
 					.createErrorCode(ErrorCode.Invalid_Routing_Context);
