@@ -102,10 +102,12 @@ public class GSMCharsetEncoder extends CharsetEncoder {
 			}
 		}
 		
+		char lastChar = ' ';
 		while (in.hasRemaining()) {
 
 			// Read the first char
 			char c = in.get();
+			lastChar = c;
 
 			boolean found = false;
 			// searching a char in the main character table
@@ -134,15 +136,24 @@ public class GSMCharsetEncoder extends CharsetEncoder {
 				this.putByte(0x20, out);
 			}
 		}
-		
+
 		if (bitpos != 0) {
+			// USSD: replace 7-bit pad with <CR>
+			if (this.encodingData != null && this.encodingData.ussdStyleEncoding && bitpos == 7)
+				carryOver |= 0x1A;
+
 			// writing a carryOver data
 			out.put((byte) carryOver);
+		} else {
+
+			// USSD: adding extra <CR> if the last symbol is <CR> and no padding
+			if (this.encodingData != null && this.encodingData.ussdStyleEncoding && lastChar == '\r')
+				out.put((byte) 0x0D);
 		}
 
 		return CoderResult.UNDERFLOW;
 	}
-	
+
 	private void putByte(int data, ByteBuffer out) {
 
 		if (bitpos == 0) {
@@ -162,3 +173,4 @@ public class GSMCharsetEncoder extends CharsetEncoder {
 			this.encodingData.totalSeptetCount++;
 	}
 }
+

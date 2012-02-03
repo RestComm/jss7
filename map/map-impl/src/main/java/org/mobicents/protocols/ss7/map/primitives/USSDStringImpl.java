@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.map.primitives;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 
 import org.mobicents.protocols.asn.AsnException;
@@ -32,6 +33,10 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.GSMCharset;
+import org.mobicents.protocols.ss7.map.GSMCharsetDecoder;
+import org.mobicents.protocols.ss7.map.GSMCharsetDecodingData;
+import org.mobicents.protocols.ss7.map.GSMCharsetEncoder;
+import org.mobicents.protocols.ss7.map.GSMCharsetEncodingData;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
@@ -155,9 +160,20 @@ public class USSDStringImpl implements USSDString, MAPAsnPrimitive {
 			charset = new GSMCharset("GSM", new String[] {});
 		}
 		
-		CharBuffer bf = this.charset.decode(bb);
-
-		this.ussdString = bf.toString();
+//		CharBuffer bf = this.charset.decode(bb);
+//		this.ussdString = bf.toString();
+		GSMCharsetDecoder decoder = (GSMCharsetDecoder) this.charset.newDecoder();
+		decoder.setGSMCharsetDecodingData(new GSMCharsetDecodingData());		
+		CharBuffer bf = null;
+		try {
+			bf = decoder.decode(bb);
+		} catch (CharacterCodingException e) {
+			// This can not occur
+		}
+		if (bf != null)
+			this.ussdString = bf.toString();
+		else
+			this.ussdString = "";
 	}
 
 	/* (non-Javadoc)
@@ -191,17 +207,29 @@ public class USSDStringImpl implements USSDString, MAPAsnPrimitive {
 		if (this.ussdString == null) {
 			throw new MAPException("Error while encoding USSDString the mandatory USSDString is not defined");
 		}
-		ByteBuffer bb = this.charset.encode(ussdString);
-
-		// Not using bb.array() as it also includes the bytes beyond limit till
-		// capacity
-		encodedString = new byte[bb.limit()];
-		int count = 0;
-		while (bb.hasRemaining()) {
-			encodedString[count++] = bb.get();
-		}
 		
-		asnOs.writeOctetStringData(this.encodedString);
-	}
+//		ByteBuffer bb = this.charset.encode(ussdString);
+//		// Not using bb.array() as it also includes the bytes beyond limit till
+//		// capacity
+//		encodedString = new byte[bb.limit()];
+//		int count = 0;
+//		while (bb.hasRemaining()) {
+//			encodedString[count++] = bb.get();
+//		}
 
+		GSMCharsetEncoder encoder = (GSMCharsetEncoder) charset.newEncoder();
+		encoder.setGSMCharsetEncodingData(new GSMCharsetEncodingData());
+		ByteBuffer bb = null;
+		try {
+			bb = encoder.encode(CharBuffer.wrap(this.ussdString));
+		} catch (Exception e) {
+			// This can not occur
+		}
+		if (bb != null) {
+			this.encodedString = new byte[bb.limit()];
+			bb.get(this.encodedString);
+			asnOs.writeOctetStringData(this.encodedString);
+		}		
+	}
 }
+

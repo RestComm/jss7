@@ -124,7 +124,11 @@ public class GSMCharsetDecoder extends CharsetDecoder {
 				// over from current byte and hence we can get another char
 				if (bitpos == 6) {
 					data = (byte) (((tempData & 0xFE)) >>> 1);
-					putChar(data, out);
+					
+					if (this.encodingData != null && this.encodingData.ussdStyleEncoding && data == '\r' && !in.hasRemaining()) {
+						// case when found '\r' at the byte border if USSD style: skip final '\r' char
+					} else
+						putChar(data, out);
 				}
 			} else {
 				// For this iteration we have all 7 bits to form the char

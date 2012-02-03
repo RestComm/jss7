@@ -168,8 +168,6 @@ public class UserDataImpl implements UserData {
 					bb = encoder.encode(CharBuffer.wrap(this.decodedMessage));
 				} catch (Exception e) {
 					// This can not occur
-					int fff=0;
-					fff++;
 				}
 				this.encodedUserDataLength = encoder.getGSMCharsetEncodingData().getTotalSeptetCount();
 				if (bb != null) {
