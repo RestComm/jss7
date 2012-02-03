@@ -28,206 +28,81 @@ import java.util.Arrays;
 
 import static org.testng.Assert.*;
 
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class GSMCharsetTest  {
 
-	@Test(groups = { "functional.decode","gsm"}) //anything better than "gsm"
-	public void testDecode1() throws Exception {
-
-		// This raw data is from nad1053.pcap, 2nd packet.
-		byte[] data = new byte[] { (byte) 0xaa, (byte) 0x98, (byte) 0xac,
-				(byte) 0xa6, 0x5a, (byte) 0xcd, 0x62, 0x36, 0x19, 0x0e, 0x37,
-				(byte) 0xcb, (byte) 0xe5, 0x72, (byte) 0xb9, 0x11 };
-
-		// The USSD String represented by above raw data
-		String ussdString = "*125*+31628839999#";
-
-		GSMCharset cs = new GSMCharset("GSM", new String[] {});
-
-		ByteBuffer bb = ByteBuffer.wrap(data);
-
-		CharBuffer bf = cs.decode(bb);
-
-		String s1 = bf.toString();
-
-		assertEquals( s1,ussdString);
-
-	}
-
 	@Test(groups = { "functional.encode","gsm"})
-	public void testEncode1() throws Exception {
+	public void testEncode() throws Exception {
 
-		// This raw data is from nad1053.pcap, 2nd packet.
-		byte[] rawData = new byte[] { (byte) 0xaa, (byte) 0x98, (byte) 0xac,
-				(byte) 0xa6, 0x5a, (byte) 0xcd, 0x62, 0x36, 0x19, 0x0e, 0x37,
-				(byte) 0xcb, (byte) 0xe5, 0x72, (byte) 0xb9, 0x11 };
-
-		String ussdString = "*125*+31628839999#";
-
-		GSMCharset cs = new GSMCharset("GSM", new String[] {});
-		ByteBuffer bb = cs.encode(ussdString);
-
-		// Not using bb.array() as it also includes the abytes beyond limit till
-		// capacity
-		byte[] data = new byte[bb.limit()];
-		int count = 0;
-		while (bb.hasRemaining()) {
-			data[count++] = bb.get();
-		}
-
-		assertTrue(Arrays.equals(rawData, data));
-
-	}
-
-	@Test(groups = { "functional.decode","gsm"})
-	public void testDecode2() throws Exception {
-
-		// This raw data is from nad1053.pcap, last packet.
-		byte[] data = new byte[] { (byte) 0xd9, (byte) 0x77, 0x1d, 0x44,
-				(byte) 0x7e, (byte) 0xbb, 0x41, 0x74, 0x10, 0x3a, 0x6c, 0x2f,
-				(byte) 0x83, (byte) 0xca, (byte) 0xee, 0x77, (byte) 0xfd,
-				(byte) 0x8c, 0x06, (byte) 0x8d, (byte) 0xe5, 0x65, 0x72,
-				(byte) 0x9a, 0x0e, (byte) 0xa2, (byte) 0xbf, 0x41, (byte) 0xe3,
-				0x30, (byte) 0x9b, 0x0d, (byte) 0xa2, (byte) 0xa3, (byte) 0xd3,
-				0x73, (byte) 0x90, (byte) 0xbb, (byte) 0xde, 0x16, (byte) 0x97,
-				(byte) 0xe5, 0x2e, 0x10 };
-
-		// The USSD String represented by above raw data
-		String ussdString = "You don t have enough credit to call this number. ";
-
-		GSMCharset cs = new GSMCharset("GSM", new String[] {});
-
-		ByteBuffer bb = ByteBuffer.wrap(data);
-
-		CharBuffer bf = cs.decode(bb);
-
-		String s1 = bf.toString();
-
-		assertEquals( s1,ussdString);
-
-	}
-	
-	@Test(groups = { "functional.encode","gsm"})
-	public void testEncode2() throws Exception {
-
-		// This raw data is from nad1053.pcap, last packet.
-		byte[] rawData = new byte[] { (byte) 0xd9, (byte) 0x77, 0x1d, 0x44,
-				(byte) 0x7e, (byte) 0xbb, 0x41, 0x74, 0x10, 0x3a, 0x6c, 0x2f,
-				(byte) 0x83, (byte) 0xca, (byte) 0xee, 0x77, (byte) 0xfd,
-				(byte) 0x8c, 0x06, (byte) 0x8d, (byte) 0xe5, 0x65, 0x72,
-				(byte) 0x9a, 0x0e, (byte) 0xa2, (byte) 0xbf, 0x41, (byte) 0xe3,
-				0x30, (byte) 0x9b, 0x0d, (byte) 0xa2, (byte) 0xa3, (byte) 0xd3,
-				0x73, (byte) 0x90, (byte) 0xbb, (byte) 0xde, 0x16, (byte) 0x97,
-				(byte) 0xe5, 0x2e, 0x10 };
-
-		String ussdString = "You don t have enough credit to call this number. ";
-
-		GSMCharset cs = new GSMCharset("GSM", new String[] {});
-		ByteBuffer bb = cs.encode(ussdString);
-
-		// Not using bb.array() as it also includes the bytes beyond limit till
-		// capacity
-		byte[] data = new byte[bb.limit()];
-		int count = 0;
-		while (bb.hasRemaining()) {
-			data[count++] = bb.get();
-		}
-
-		assertTrue(Arrays.equals(rawData, data));
-
-	}
-	
-	@Test(groups = { "functional.decode","gsm"})
-	public void testDecode3() throws Exception {
-
-		byte[] data = new byte[] { 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72,
-				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
-
-		// The USSD String represented by above raw data
-		String ussdString = "ndmgapp2ndmgapp2";
-
-		GSMCharset cs = new GSMCharset("GSM", new String[] {});
-
-		ByteBuffer bb = ByteBuffer.wrap(data);
-
-		CharBuffer bf = cs.decode(bb);
-
-		String s1 = bf.toString();
-
-		assertEquals( s1,ussdString);
-
-	}
-	
-	@Test(groups = { "functional.encode","gsm"})
-	public void testEncode3() throws Exception {
-
-		// This raw data is from nad1053.pcap, last packet.
-		byte[] rawData = new byte[] { 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72,
-				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
-
-		String ussdString = "ndmgapp2ndmgapp2";
-
-		GSMCharset cs = new GSMCharset("GSM", new String[] {});
-		ByteBuffer bb = cs.encode(ussdString);
-
-		// Not using bb.array() as it also includes the bytes beyond limit till
-		// capacity
-		byte[] data = new byte[bb.limit()];
-		int count = 0;
-		while (bb.hasRemaining()) {
-			data[count++] = bb.get();
-		}
-
-		assertTrue(Arrays.equals(rawData, data));
+		// case: adding '\r' instead of '@' - USSD style
+		this.doTestEncode("1234567", new byte[] { 49, -39, -116, 86, -77, -35, 26 }); 
+		// case: adding double '\r' when '\r' will be removed at the decoder side - USSD style
+		this.doTestEncode("1234567\r", new byte[] { 49, -39, -116, 86, -77, -35, 26, 13 });
 		
-	}
-	
-	@Test(groups = { "functional.decode","gsm"})
-	public void testDecode4() throws Exception {
-
-		byte[] data = new byte[] { 0x2a, 0x1c, 0x6e, (byte)0xd4 };
-
+		// This raw data is from nad1053.pcap, 2nd packet.
+		this.doTestEncode("*125*+31628839999#", new byte[] { (byte) 0xaa, (byte) 0x98, (byte) 0xac, (byte) 0xa6, 0x5a, (byte) 0xcd, 0x62, 0x36, 0x19, 0x0e,
+				0x37, (byte) 0xcb, (byte) 0xe5, 0x72, (byte) 0xb9, 0x11 });
+		// This raw data is from nad1053.pcap, last packet.
+		this.doTestEncode("You don t have enough credit to call this number. ", new byte[] { (byte) 0xd9, (byte) 0x77, 0x1d, 0x44, (byte) 0x7e, (byte) 0xbb,
+				0x41, 0x74, 0x10, 0x3a, 0x6c, 0x2f, (byte) 0x83, (byte) 0xca, (byte) 0xee, 0x77, (byte) 0xfd, (byte) 0x8c, 0x06, (byte) 0x8d, (byte) 0xe5,
+				0x65, 0x72, (byte) 0x9a, 0x0e, (byte) 0xa2, (byte) 0xbf, 0x41, (byte) 0xe3, 0x30, (byte) 0x9b, 0x0d, (byte) 0xa2, (byte) 0xa3, (byte) 0xd3,
+				0x73, (byte) 0x90, (byte) 0xbb, (byte) 0xde, 0x16, (byte) 0x97, (byte) 0xe5, 0x2e, 0x10 });
 		// The USSD String represented by above raw data
-		String ussdString = "*88#";
+		this.doTestEncode("ndmgapp2ndmgapp2", new byte[] { 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72, (byte) 0xfb, 0x1c,
+				(byte) 0x86, (byte) 0xc3, 0x65 });
+//		this.doTestEncode("*88#", new byte[] { 0x2a, 0x1c, 0x6e, (byte)0xd4 });
+		this.doTestEncode("*88#", new byte[] { 0x2a, 0x1c, 0x6e, (byte)0x4 });
+	}
+
+	@Test(groups = { "functional.decode","gsm"})
+	public void testDecode() throws Exception {
+
+		this.doTestDecode("1234567", new byte[] { 49, -39, -116, 86, -77, -35, 26 });
+		this.doTestDecode("1234567\r\r", new byte[] { 49, -39, -116, 86, -77, -35, 26, 13 });
+
+		// This raw data is from nad1053.pcap, 2nd packet.
+		this.doTestDecode("*125*+31628839999#", new byte[] { (byte) 0xaa, (byte) 0x98, (byte) 0xac, (byte) 0xa6, 0x5a, (byte) 0xcd, 0x62, 0x36, 0x19, 0x0e,
+				0x37, (byte) 0xcb, (byte) 0xe5, 0x72, (byte) 0xb9, 0x11 });
+		// This raw data is from nad1053.pcap, last packet.
+		this.doTestDecode("You don t have enough credit to call this number. ", new byte[] { (byte) 0xd9, (byte) 0x77, 0x1d, 0x44, (byte) 0x7e, (byte) 0xbb,
+				0x41, 0x74, 0x10, 0x3a, 0x6c, 0x2f, (byte) 0x83, (byte) 0xca, (byte) 0xee, 0x77, (byte) 0xfd, (byte) 0x8c, 0x06, (byte) 0x8d, (byte) 0xe5,
+				0x65, 0x72, (byte) 0x9a, 0x0e, (byte) 0xa2, (byte) 0xbf, 0x41, (byte) 0xe3, 0x30, (byte) 0x9b, 0x0d, (byte) 0xa2, (byte) 0xa3, (byte) 0xd3,
+				0x73, (byte) 0x90, (byte) 0xbb, (byte) 0xde, 0x16, (byte) 0x97, (byte) 0xe5, 0x2e, 0x10 });
+		// The USSD String represented by above raw data
+		this.doTestDecode("ndmgapp2ndmgapp2", new byte[] { 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72, (byte) 0xfb, 0x1c,
+				(byte) 0x86, (byte) 0xc3, 0x65 });
+		this.doTestDecode("*88#", new byte[] { 0x2a, 0x1c, 0x6e, (byte)0xd4 });
+	}
+
+	private void doTestEncode(String decodedString, byte[] encodedData) throws Exception {
 
 		GSMCharset cs = new GSMCharset("GSM", new String[] {});
+		GSMCharsetEncoder encoder = (GSMCharsetEncoder) cs.newEncoder();
+		ByteBuffer bb = encoder.encode(CharBuffer.wrap(decodedString));
+		byte[] data = new byte[bb.limit()];
+		bb.get(data);
 
-		ByteBuffer bb = ByteBuffer.wrap(data);
+		assertTrue(Arrays.equals(encodedData, data));
+	}
 
-		CharBuffer bf = cs.decode(bb);
+	private void doTestDecode(String decodedString, byte[] encodedData)
+			throws Exception {
 
+		ByteBuffer bb = ByteBuffer.wrap(encodedData);
+		GSMCharset cs = new GSMCharset("GSM", new String[] {});
+		GSMCharsetDecoder decoder = (GSMCharsetDecoder) cs.newDecoder();
+		CharBuffer bf = null;
+		bf = decoder.decode(bb);
 		String s1 = bf.toString();
 
-		assertEquals( s1,ussdString);
-
-	}
-	
-	@Test(groups = { "functional.encode","gsm"})
-	public void testEncode4() throws Exception {
-
-		// This raw data is from nad1053.pcap, last packet.
-//		byte[] rawData = new byte[] { 0x2a, 0x1c, 0x6e, (byte)0xd4 };
-		byte[] rawData = new byte[] { 0x2a, 0x1c, 0x6e, (byte)0x4 };
-
-		String ussdString = "*88#";
-
-		GSMCharset cs = new GSMCharset("GSM", new String[] {});
-		ByteBuffer bb = cs.encode(ussdString);
-
-		// Not using bb.array() as it also includes the bytes beyond limit till
-		// capacity
-		byte[] data = new byte[bb.limit()];
-		int count = 0;
-		while (bb.hasRemaining()) {
-			data[count++] = bb.get();
-		}
-
-		assertTrue(Arrays.equals(rawData, data));
+		assertTrue(s1.equals(decodedString));
 	}
 }
+

@@ -109,9 +109,18 @@ public class GSMCharsetDecoder extends CharsetDecoder {
 				// This means we not only used previous 6 bits and 1 bit from
 				// current byte to form char, but now we also have 7 bits left
 				// over from current byte and hence we can get another char
+//				if (bitpos == 6) {
+//					data = (byte) (((tempData & 0xFE)) >>> 1);
+//					out.put((char) GSMCharset.BYTE_TO_CHAR[data]);
+//				}
 				if (bitpos == 6) {
 					data = (byte) (((tempData & 0xFE)) >>> 1);
-					out.put((char) GSMCharset.BYTE_TO_CHAR[data]);
+					
+					if (data == '\r' && !in.hasRemaining()) {
+						// case when found '\r' at the byte border if USSD style: skip final '\r' char
+					} else
+						out.put((char) GSMCharset.BYTE_TO_CHAR[data]);
+//						putChar(data, out);
 				}
 			} else {
 				// For this iteration we have all 7 bits to form the char

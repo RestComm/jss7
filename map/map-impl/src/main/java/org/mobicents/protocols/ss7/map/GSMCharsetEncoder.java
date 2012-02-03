@@ -77,10 +77,14 @@ public class GSMCharsetEncoder extends CharsetEncoder {
 
 	@Override
 	protected CoderResult encodeLoop(CharBuffer in, ByteBuffer out) {
+		
+		char lastChar = ' ';
+		
 		while (in.hasRemaining()) {
 
 			// Read the first char
 			char c = in.get();
+			lastChar = c;
 
 			for (int i = 0; i < GSMCharset.BYTE_TO_CHAR.length; i++) {
 
@@ -127,9 +131,25 @@ public class GSMCharsetEncoder extends CharsetEncoder {
 		}// end of For loop
 
 		// The final one if total bits are not LCM of 8
-		//if (bitpos % 8 != 0) {
+		if (bitpos % 8 != 0) {
+			// USSD: replace 7-bit pad with <CR>
+			if (bitpos % 8 == 1)
+				b |= 0x1A;
+
+			// writing a carryOver data
 			out.put((byte) (b & 0xFF));
-		//}
+		} else {
+			// writing a carryOver data
+			out.put((byte) (b & 0xFF));
+
+			// USSD: adding extra <CR> if the last symbol is <CR> and no padding
+			if (lastChar == '\r')
+				out.put((byte) 0x0D);
+		}
+//		// The final one if total bits are not LCM of 8
+//		//if (bitpos % 8 != 0) {
+//			out.put((byte) (b & 0xFF));
+//		//}
 
 		return CoderResult.UNDERFLOW;
 	}
