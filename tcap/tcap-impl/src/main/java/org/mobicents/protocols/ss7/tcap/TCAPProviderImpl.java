@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.tcap;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,10 +145,15 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 	// some help methods... crude but will work for first impl.
 	private Long getAvailableTxId() throws TCAPException {
-		Long poped = this.dialogIdIndex.pop();
-		if(poped == null)
-		    throw new TCAPException("Not enough resources!");
-		return poped;
+		try{
+			Long poped = this.dialogIdIndex.pop();
+			return poped;
+		}catch(EmptyStackException e){
+			String s = String.format("Maximum concurrent dialogs %d already active. Cannot create more Dialogs", 
+					this.dialogIdIndex.initialSize);
+			logger.error(s);
+			throw new TCAPException(s);
+		}
 	}
 
 	// get next Seq Control value available

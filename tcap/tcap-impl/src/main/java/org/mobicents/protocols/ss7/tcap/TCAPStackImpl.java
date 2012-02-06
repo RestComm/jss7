@@ -42,6 +42,7 @@ public class TCAPStackImpl implements TCAPStack {
 	// default value of idle timeout and after TC_END remove of task.
 	public static final long _DIALOG_TIMEOUT = 60000;
 	public static final long _INVOKE_TIMEOUT = 30000;
+	public static final long _DIALOG_REMOVE_TIMEOUT = 30000;
 	// TCAP state data, it is used ONLY on client side
     protected TCAPProviderImpl tcapProvider;
     private SccpProvider sccpProvider;
@@ -51,6 +52,7 @@ public class TCAPStackImpl implements TCAPStack {
     
 	private long dialogTimeout = _DIALOG_TIMEOUT;
 	private long invokeTimeout = _INVOKE_TIMEOUT;
+	private long removeTimeout = _DIALOG_REMOVE_TIMEOUT;
     private static final Logger logger = Logger.getLogger(TCAPStackImpl.class);
 
     public TCAPStackImpl() {
@@ -155,5 +157,19 @@ public class TCAPStackImpl implements TCAPStack {
 
         IDLE, CONFIGURED, RUNNING;
     }
+
+
+	@Override
+	public void setDialogRemoveTimeout(long l) {
+		if(l<0)
+		{
+			throw new IllegalArgumentException("Dialog remove timeout value must be greater or equal to zero.");
+		}
+		this.removeTimeout = l;
+	}
+	@Override
+	public long getDialogRemoveTimeout() {
+		return this.removeTimeout;
+	}
 
 }

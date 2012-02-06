@@ -98,8 +98,6 @@ import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCUserAbortIndicationIm
  */
 public class DialogImpl implements Dialog {
 
-	// timeout of remove task after TC_END
-	private static final int _REMOVE_TIMEOUT = 30000;
 	
 	
 	private static final Logger logger = Logger.getLogger(DialogImpl.class);
@@ -108,7 +106,7 @@ public class DialogImpl implements Dialog {
 	private ReentrantLock dialogLock = new ReentrantLock();
 	
 	// values for timer timeouts
-	private long removeTaskTimeout = _REMOVE_TIMEOUT; 
+	private long removeTaskTimeout;
 	private long idleTaskTimeout;
 	
 	// sent/received acn, holds last acn/ui.
@@ -183,6 +181,7 @@ public class DialogImpl implements Dialog {
 		
 		TCAPStack stack = this.provider.getStack();
 		this.idleTaskTimeout = stack.getDialogIdleTimeout();
+		this.removeTaskTimeout = stack.getDialogRemoveTimeout();
 		//start
 		startIdleTimer();
 	}

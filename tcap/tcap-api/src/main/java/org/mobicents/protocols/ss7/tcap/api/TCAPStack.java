@@ -59,8 +59,21 @@ public interface TCAPStack {
 
 	public long getDialogIdleTimeout();
 	
+	/**
+	 * Sets millisecond value for Invoke timeout
+	 * @param v
+	 */
 	public void setInvokeTimeout(long v); 
 
 	public long getInvokeTimeout();
+	
+	/**
+	 * Sets millisecond value for Dialog remove timeout. After TCAP end is sent or received
+	 * Dialog will be still maintained till remove timeout milliseconds.
+	 * @param l
+	 */
+	public void setDialogRemoveTimeout(long l);
+	
+	public long getDialogRemoveTimeout();
 
 }
