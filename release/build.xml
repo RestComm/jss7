@@ -6,9 +6,10 @@
 
 	<property name="ss7.version" value="1.0.0-SNAPSHOT" />
 
-    <property name="sctp.version" value="1.0.0-SNAPSHOT" />
+    	<property name="sctp.version" value="1.0.0-SNAPSHOT" />
 	<property name="asn.version" value="1.0.0-SNAPSHOT" />
 	<property name="stream.version" value="1.0.0-SNAPSHOT" />
+	<property name="commons.version" value="1.0.0-SNAPSHOT" />
 	
 
 	<property name="protocols.build.list" value="parent,m3ua,mtp,isup,sccp,tcap,map" />
@@ -51,7 +52,7 @@
 	</target>
 
 	<target name="checkout" description="Checks out src and downloads everything that is required." depends="checkout-sources" />
-	<target name="build" description="Builds components sources and everything associated." depends="build-sources-sctp,build-sources-asn,build-sources-stream,build-sources-ss7" />
+	<target name="build" description="Builds components sources and everything associated." depends="build-sources-commons,build-sources-sctp,build-sources-asn,build-sources-stream,build-sources-ss7" />
 	<target name="copy" depends="copy-asn,copy-sctp,copy-protocols-ss7" />
 	<target name="package" description="Builds builds binary package." depends="init,clean,checkout,zip.src,build,notes,copy,zip.binary" />
 	<target name="clean">
@@ -74,6 +75,12 @@
 
 	<target name="build-sources-asn">
 		<exec executable="${mvn.executable}" dir="${checkout.basedir}/asn">
+			<arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
+		</exec>
+	</target>
+
+	<target name="build-sources-commons">
+		<exec executable="${mvn.executable}" dir="${checkout.basedir}/commons">
 			<arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
 		</exec>
 	</target>
