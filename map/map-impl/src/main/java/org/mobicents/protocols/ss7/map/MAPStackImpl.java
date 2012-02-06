@@ -42,13 +42,17 @@ public class MAPStackImpl implements MAPStack, CongestionListener {
 	protected MAPProviderImpl mapProvider = null;
 
 	private State state = State.IDLE;
-
-	public MAPStackImpl(SccpProvider sccpPprovider, int ssn) {
-		this.tcapStack = new TCAPStackImpl(sccpPprovider, ssn);
+	
+	public MAPStackImpl(SccpProvider sccpPprovider, int ssn, int maxDialogs) {
+		this.tcapStack = new TCAPStackImpl(sccpPprovider, ssn, maxDialogs);
 		TCAPProvider tcapProvider = tcapStack.getProvider();
 		mapProvider = new MAPProviderImpl(tcapProvider);
 
 		this.state = State.CONFIGURED;
+	}
+
+	public MAPStackImpl(SccpProvider sccpPprovider, int ssn) {
+		this(sccpPprovider, ssn, 5000);
 	}
 
 	public MAPStackImpl(TCAPProvider tcapProvider) {
