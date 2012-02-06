@@ -102,6 +102,24 @@
 												mobicents-ss7-shell.jar
 											</destFileName>
 										</artifactItem>
+										<artifactItem>
+											<groupId>
+												javolution
+											</groupId>
+											<artifactId>
+												javolution
+											</artifactId>
+											<version>
+												${javolution.version}
+											</version>
+											<type>jar</type>
+											<outputDirectory>
+												${tool.directory.lib}
+											</outputDirectory>
+											<destFileName>
+												javolution.jar
+											</destFileName>
+										</artifactItem>
 									</artifactItems>
 								</configuration>
 							</execution>
