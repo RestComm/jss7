@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>mobicents-ss7-docs</artifactId>
 		<groupId>org.mobicents.protocols.ss7.docs</groupId>
-		<version>1.0.0.CR3</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-ss7-docs-jdocbook-jbcp</artifactId>

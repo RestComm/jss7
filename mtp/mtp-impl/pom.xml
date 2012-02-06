@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 		<artifactId>mtp-parent</artifactId>
-		<version>1.0.0.CR3</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mtp</artifactId>
