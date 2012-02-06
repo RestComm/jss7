@@ -11,7 +11,7 @@
 			provides Shell client to manage configuration of &THIS.APPLICATION; Services. This chapter describes how to install and start client. Also it describes available
 			commands and provides examples.
 			To see examples of specific flow, to perform certain tasks, please refer to sections in chapter devoted to
-			<literal>Linksets</literal>, <literal>SCCP</literal> or <literal>M3UA</literal>
+			<literal>SCCP</literal> or <literal>M3UA</literal>
 			
 			. <!-- TODO add XREF -->
 		</para>
@@ -81,8 +81,9 @@ mobicents>
 			</screen>
 		</example>
 	</section>
-
+	<!-- 
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Shell_Linkset.xml" />
+	 -->
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Shell_Sccp.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Shell_M3UA.xml" />
 	

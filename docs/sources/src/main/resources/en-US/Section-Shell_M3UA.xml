@@ -327,32 +327,42 @@ Not supported yet
 				<varlistentry>
 					<term>as-name</term>
 					<listitem>
-						<para>simple string name, which identifies AS. Make sure this is unique</para>
+						<para>simple string name, which identifies AS. Make sure this is unique. This is mandatory parameter</para>
 					</listitem>
 				</varlistentry>	
 				<varlistentry>
 					<term>AS | SGW | IPSP</term>
 					<listitem>
-						<para>Specify if this is of type AS or SGW or IPSP</para>
+						<para>Specify if this is of type AS or SGW or IPSP. This is mandatory parameter</para>
 					</listitem>
 				</varlistentry>	
 				<varlistentry>
 					<term>SE | DE</term>
 					<listitem>
-						<para>Specify if the single or double exchange of ASP State Maintenance (ASPSM) and ASP Traffic Maintenance (ASPTM) messages should be performed</para>
+						<para>Specify if the single or double exchange of ASP State Maintenance (ASPSM) and ASP Traffic Maintenance (ASPTM) messages should be performed.
+						This is mandatory parameter.</para>
 					</listitem>
 				</varlistentry>		
 				<varlistentry>
 					<term>client | server</term>
 					<listitem>
-						<para>If As if of type IPSP, speicfy here if its client or server type.</para>
+						<para>If As if of type IPSP, speicfy here if its client or server type. </para>
 					</listitem>
 				</varlistentry>													
 				<varlistentry>
 					<term>routing-context</term>
 					<listitem>
 						<para>
-							refers to Routing Context already configured on M3UA stack on SGW side.
+							refers to Routing Context already configured on M3UA stack on SGW side. This is optional parameter. 
+							If no Routing Context is passed, Application Server Process (assigned to this AS) may not be configured 
+							to process signalling traffic related to more than one Application Server, over a single SCTP Association
+						</para>
+						<para>
+							Also if ASP is configured to process siganlling traffic from always one AS, irrespective of received messages
+							have routing context set or not, it will always be delieverd to AS for further processing. However if ASP 
+							is configured to process siganlling traffic related to more than one AS over a single SCTP Association and 
+							signalling message is received without RC, it drops the message and sends back Error message. Respective 
+							log4j error is also logged.
 						</para>
 					</listitem>
 				</varlistentry>

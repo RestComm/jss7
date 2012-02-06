@@ -31,10 +31,10 @@
 		<compiler.plugin.version>2.0.2</compiler.plugin.version>
 		<compile.source>1.7</compile.source>
 		<!-- mobicents but not strictly ss7 -->
-		<asn.version>1.0.0.CR1</asn.version>
+		<asn.version>1.0.0.CR2</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
-		<sctp.version>1.0.0-SNAPSHOT</sctp.version>
-		<commons.version>1.0.0-SNAPSHOT</commons.version>
+		<sctp.version>1.0.0.CR1</sctp.version>
+		<commons.version>1.0.0.CR1</commons.version>
 	</properties>
 
 	<modules>
@@ -68,7 +68,7 @@
 				<artifactId>stream</artifactId>
 				<version>${stream.version}</version>
 			</dependency>
-			<!-- utils -->
+			<!-- commons -->
 			<dependency>
 				<groupId>org.mobicents.commons</groupId>
 				<artifactId>commons</artifactId>

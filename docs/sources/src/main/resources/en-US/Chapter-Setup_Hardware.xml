@@ -7,12 +7,15 @@
 	<para>
 		This chapter contains reference to configure hardware drivers for different types of <literal>SS7</literal> cards.
 	</para>
+	<!-- 
 	<para>
 	&THIS.PLATFORM; &THIS.APPLICATION; supports <literal>dahdi</literal> based SS7 cards like <literal>diguim</literal> and <literal>sangoma</literal>. 
 	Generally <literal>dahdi</literal> based SS7 crads doesn't have MTP2/MTP3 support on board and relies on external software to provide these services. 
 	</para>
-	<para>&THIS.PLATFORM; &THIS.APPLICATION; also supports <literal>dialogic</literal> based SS7 cards which has on board support for MTP2/MTP3</para>
+	 -->
+	<para>&THIS.PLATFORM; &THIS.APPLICATION; supports <literal>dialogic</literal> based SS7 cards which has on board support for MTP2/MTP3</para>
 
+    <!--  
 	<section
 		id="setup_hardware_sangoma">
 		<title>Sangoma</title>
@@ -28,7 +31,7 @@
 			To install Diguim cards visit the Diguim site at <ulink url="http://www.digium.com/en/products/digital/"></ulink>
 		</para>
 	</section>
-	
+	-->
 	<section
 		id="setup_hardware_dialogic">
 		<title>Dialogic</title>

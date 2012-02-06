@@ -11,56 +11,66 @@
 		id="installing_and_using">
 		<title>Installing</title>
 		<para>&THIS.PLATFORM; SS7 stack at its core requires only Java if you are using only <literal>M3UA</literal>. 
-		However if you plan to use <literal>dahdi</literal> or <literal>dialogic</literal> SS7 hardware, respective SS7 cards 
+		However if you plan to use SS7 hardware, respective SS7 cards 
 		needs to be installed on the server along with native libraries.</para>
 		
 		<para>A simple way to get started is to download and install binary. This will provide you with all the dependencies you need to get going. 
 		You can obtain binary release from &THIS.RELEASE_BINARY_URL;
 		</para>
 
-		<section
-			id="dependencies">
+		<section id="binary">
 			<title>Binary</title>
 			<para>The &THIS.PLATFORM; &THIS.APPLICATION; binary is broken down into a few modules.</para>
-			<para>The following is a description of the important services and libraries that make up &THIS.PLATFORM; &THIS.APPLICATION;</para>
+			
+			<para>Binary release has following layout:</para>
+			<mediaobject id="binary_layout">
+				<imageobject>
+					<imagedata width="300px" align="center" fileref="images/binnar-structure.png" format="PNG" />
+				</imageobject>
+				<caption>
+					<para>&THIS.PLATFORM; &THIS.APPLICATION; binary layout.
+					</para>
+				</caption>
+			</mediaobject>					
+			<note>
+				<title>Note</title>
+				<para>
+					X.Y.Z in above layout is the respective release version of binary.
+				</para>
+			</note>
+			
+			<para>The following is a description of the important services and libraries that make up &THIS.PLATFORM; &THIS.APPLICATION; binary</para>
 			<itemizedlist>
 				<listitem>
 					<para><literal>asn</literal> : Abstract Syntax Notation One (ASN.1) library is used by various &THIS.PLATFORM; &THIS.APPLICATION;
 					protocols to encode/decode the structured data exchanged between Signaling Point over networks. To know more about asn library refer to 
 					document included with asn. Applications using any of the &THIS.PLATFORM; &THIS.APPLICATION; User Protocols may never need to call asn API directly,
 					however it must be in classpath as &THIS.PLATFORM; &THIS.APPLICATION; User Protocols refers this library.</para>
-				</listitem>
-				<!-- 
-				<listitem>
-					<para><literal>stream</literal> : All I/O operation within &THIS.PLATFORM; &THIS.APPLICATION; is asynchronous. 
-					Stream API enables the user to abstract I/O operation. To know more about stream library refer to 
-					document included with stream. 
+					<para>
+						To understand more about asn, refer to documentation included in <filename>asn/docs</filename>
 					</para>
 				</listitem>
-				 -->
 				<listitem>
-					<para><literal>ss7</literal> : ss7 contains the service that is deployed in JBoss AS and libraries that end applications refers to.
-					It also includes &THIS.PLATFORM; Signaling Gateway.
+					<para><literal>sctp</literal> : Stream Control Transmission Protocol (SCTP) Library is providing the convenient API's over Java SCTP. 
+					This library will be used only if M3UA layer is used. 
+					</para>
+					<para>
+						To understand more about sctp, refer to documentation included in <filename>sctp/docs</filename>
+					</para>
+				</listitem>
+				<listitem>
+					<para><literal>ss7</literal> : ss7 contains the core protocol libraries to be used by end application as well as 
+					service that is deployed in JBoss AS.
 					The sub-modules included in ss7 are 
 					</para>
 					<itemizedlist>
 						<listitem>
 							<para><literal>docs</literal> : User guide for &THIS.PLATFORM; &THIS.APPLICATION; </para>
 						</listitem>
-						<listitem>
-							<para><literal>mobicents-sgw</literal> : Standalone Signaling Gateway as explained in section 
-							<xref linkend="mobicents_signaling_gateway" /> </para>
-							<para>mobicents-sgw binary has following layout:</para>
-							<mediaobject id="binary_sgw">
-								<imageobject>
-									<imagedata width="300px" align="center" fileref="images/sgw-binary.png" format="PNG" />
-								</imageobject>
-							</mediaobject>
-														
-						</listitem>							
+											
 						<listitem>
 							<para><literal>mobicents-ss7-service</literal> : SS7 service is the core engine as explained in section 
-							<xref linkend="design_overview_ss7_service" /> </para>
+							<xref linkend="mobicents_ss7_service" /> </para>
 							
 							<para>mobicents-ss7-service binary has following layout:</para>
 							<mediaobject id="binary_ss7-service">
@@ -78,57 +88,63 @@
 							<para><literal>protocols</literal> : The &THIS.PLATFORM; &THIS.APPLICATION; User Protocols libraries. Your application would directly 
 							call the API's exposed by these libraries. Depending on application you may be either interested in <literal>TCAP</literal>, 
 							<literal>MAP</literal> or both or <literal>ISUP</literal> libraries</para>
+							<mediaobject id="binary_ss7-protocols">
+								<imageobject>
+									<imagedata width="300px" align="center" fileref="images/binary-ss7-protocols.png" format="PNG" />
+								</imageobject>
+							</mediaobject>							
 						</listitem>	
 						<listitem>
-							<para><literal>shell</literal> : the Command Line Interface (CLI) module to manage the &THIS.PLATFORM; &THIS.APPLICATION;.
+							<para><literal>shell</literal> : the Command Line Interface (CLI) module to manage the <literal>mobicents-ss7-service</literal>.
 							Refer <xref linkend="shell"/> to understand how to use shell</para>
 						</listitem>	
 					</itemizedlist>
 				</listitem>				
-				<!-- <listitem> <para>&THIS.PLATFORM; <literal>M3UA</literal> library </para> </listitem> -->
 			</itemizedlist>
-			<para>Binary release has following layout:</para>
-			<mediaobject id="binary_layout">
-				<imageobject>
-					<imagedata width="300px" align="center" fileref="images/binnar-structure.png" format="PNG" />
-			</imageobject>
-			<caption>
-				<para>&THIS.PLATFORM; &THIS.APPLICATION; binary layout.
-				</para>
-			</caption>
-		</mediaobject>			
 		</section>
 	</section>
-
-		<section
-			id="installing_binary">
-			<title>Installing &THIS.PLATFORM; SS7 Service Binary</title>
-			<para>The upper layers of Mobicents SS7 viz., TCAP, MAP depends on &THIS.PLATFORM; SS7 Service and &THIS.PLATFORM; SS7 Service
-			must be installed before upper layers can be used. The &THIS.PLATFORM; SS7 Service binary requires that you have 
-			JBoss Application Server installed and JBOSS_HOME system property set. To know further details on setting JBOSS_HOME look 
-			<xref linkend="jboss_home_setup" /> </para>
-			
-			<para>Once JBOSS_HOME is properly set, use ant to deploy the mobicents-ss7-service, shell scripts and shell library.</para>
-			<important>
-						<para>
-							Ant 1.6 (or higher) is used to install the binary. Instructions for using Ant, including install, can be found at <ulink url="http://ant.apache.org/" /></para>
-			</important>
-			<programlisting>
+	<section id="mobicents_ss7_service">
+		<title>&THIS.PLATFORM; SS7 Service</title>
+		<para>
+			As the name indicates &THIS.PLATFORM; SS7 Service is a deployable service that can be deployed in any container that supports
+			<literal>JMX</literal> and exposes <literal>JNDI</literal>
+		</para>
+		<para>
+			&THIS.PLATFORM; SS7 Service exposes convenient way of configuring SS7 stack via CLI commands. Service wraps SS7 level 4 i.e., SCCP
+			and lower layers and exposes it via JNDI such that layer above can do the look-up and use it in any application. The advantage of doing
+			so is SCCP and lower layers remains same while above layers can register it-self based on Sub System Number (SSN). 
+		</para>
+	</section>
+	
+	<section
+		id="installing_binary">
+		<title>Installing &THIS.PLATFORM; SS7 Service Binary</title>
+		<para>The upper layers of Mobicents SS7 viz., TCAP, MAP depends on &THIS.PLATFORM; SS7 Service and &THIS.PLATFORM; SS7 Service
+		must be installed before upper layers can be used. The &THIS.PLATFORM; SS7 Service binary requires that you have 
+		JBoss Application Server installed and JBOSS_HOME system property set. To know further details on setting JBOSS_HOME look 
+		<xref linkend="jboss_home_setup" /> </para>
+		
+		<para>Once JBOSS_HOME is properly set, use ant to deploy the mobicents-ss7-service, shell scripts and shell library.</para>
+		<important>
+					<para>
+						Ant 1.6 (or higher) is used to install the binary. Instructions for using Ant, including install, can be found at <ulink url="http://ant.apache.org/" /></para>
+		</important>
+		<programlisting>
 [usr]$ cd &THIS.APPLICATION.DIRNAME;-&THIS.VERSION;/ss7
 [usr]$ ant deploy
-			</programlisting>
-			<para>To undeploy these services</para>
-			<programlisting>
+		</programlisting>
+		<para>To undeploy these services</para>
+		<programlisting>
 [usr]$ cd &THIS.APPLICATION.DIRNAME;-&THIS.VERSION;/ss7
 [usr]$ ant undeploy
-			</programlisting>		
-			
-			<para>
-				While above steps will deploy the necessary ss7 service and shell components, the <literal>java.library.path</literal>
-				should be set to point the directory containing native component or should be copied to JBoss native library path manually. 
-				This step is only required if you are using the SS7 board on server.  
-			</para>	
-		</section>
+		</programlisting>		
+		
+		<para>
+			While above steps will deploy the necessary ss7 service and shell components, the <literal>java.library.path</literal>
+			should be set to point the directory containing native component or should be copied to JBoss native library path manually. 
+			This step is only required if you are using the SS7 board on server.  
+		</para>	
+	</section>
 
 
 
@@ -217,8 +233,23 @@ Halting VM]]></screen>
 			
 					<programlisting language="XML" role="XML"><![CDATA[
 	<!-- ==================================================================== -->
-	<!-- M3UA -->
-	<!-- M3UAManagement is managing the m3ua side commands -->
+	<!-- SCTP                                                                 -->
+	<!-- SCTP Management is used by M3UA only. Comment out if you are using   -->
+    <!-- SS7 hardware                                                         -->
+	<!-- ==================================================================== -->
+	<bean name="SCTPManagement" class="org.mobicents.protocols.sctp.ManagementImpl">
+		<constructor>
+			<parameter>SCTPManagement</parameter>
+		</constructor>
+		<property name="persistDir">${jboss.server.data.dir}</property>
+		<property name="singleThread">true</property>
+		<property name="connectDelay">30000</property>
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- M3UA                                                                 -->
+	<!-- M3UAManagement is managing the m3ua side commands                    -->
+	<!-- Comment out if you are using SS7 hardware                            -->
 	<!-- ==================================================================== -->
 	<bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement">
 		<constructor>
@@ -239,7 +270,25 @@ Halting VM]]></screen>
 			<inject bean="SCTPManagement" />
 		</property>
 	</bean>]]>
-                        </programlisting>		
+            </programlisting>		
+			<para>
+				<classname>org.mobicents.protocols.sctp.ManagementImpl</classname> takes <classname>String</classname> as constructor
+				argument. The name is prepend to <literal>xml</literal> file created by SCTP stack for persisting state of SCTP resources. 
+				The <literal>xml</literal> is stored in path specified by <literal>persistDir</literal> property above.
+			</para>
+			<para>
+				For example in above case, when &THIS.PLATFORM; SS7 Service is started file <filename>SCTPManagement_sctp.xml</filename> 
+				will be created at <filename>$JBOSS_HOME/server/profile_name/data</filename> directory
+			</para>
+			<para>
+				<classname>org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement</classname> takes <classname>String</classname> as constructor
+				argument. The name is prepend to <literal>xml</literal> file created by M3UA stack for persisting state of M3UA resources. 
+				The <literal>xml</literal> is stored in path specified by <literal>persistDir</literal> property above.
+			</para>
+			<para>
+				For example in above case, when &THIS.PLATFORM; SS7 Service is started file <filename>Mtp3UserPart_m3ua.xml</filename> 
+				will be created at <filename>$JBOSS_HOME/server/profile_name/data</filename> directory
+			</para>
 		</section>
 		
 		<section id="configuring_dialogic">
@@ -260,17 +309,95 @@ Halting VM]]></screen>
 		</bean>]]>
                         </programlisting>					
 			
-			<para> <literal>sourceModuleId</literal> is source module id and should match with configured in 
+			<para> <literal>sourceModuleId</literal> is source module id and should match with one configured in 
 			system.txt used by dialogic drivers. Here 61 is assigned for Mobicents process. <literal>destinationModuleId</literal> 
-			is destination module id. 34 is Dialogic MTP3 module id.</para>
+			is destination module id. 34 is default Dialogic MTP3 module id.</para>
 			</section>
 		
-		
+		<section id="configuring_SCCP">
+			<title>Configuring SCCP</title>
+			<para> 
+				As name suggests <literal>SccpStack</literal> initiates the SCCP stack routines. 
+			</para>
+			<programlisting language="XML" role="XML"><![CDATA[	<!-- ==================================================================== -->
+	<!-- SCCP Service -->
+	<!-- ==================================================================== -->
+	<bean name="SccpStack" class="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl">
+		<constructor>
+			<parameter>SccpStack</parameter>
+		</constructor>
+		<property name="localSpc">6535</property>
+		<property name="ni">3</property>
+		<property name="persistDir">${jboss.server.data.dir}</property>
+		<property name="removeSpc">true</property>
+		<property name="mtp3UserPart">
+			<inject bean="Mtp3UserPart" />
+		</property>
+	</bean>
+
+	<bean name="SccpExecutor"
+		class="org.mobicents.protocols.ss7.sccp.impl.oam.SccpExecutor">
+		<property name="sccpStack">
+			<inject bean="SccpStack" />
+		</property>
+	</bean>]]></programlisting>	
+			<para>
+				<classname>org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl</classname> takes <classname>String</classname> as constructor
+				argument. The name is prepend to <literal>xml</literal> file created by SCCP stack for persisting state of SCCP resources. 
+				The <literal>xml</literal> is stored in path specified by <literal>persistDir</literal> property above.
+			</para>
+			<para>
+				For example in above case, when &THIS.PLATFORM; SS7 Service is started two file's <filename>SccpStack_sccpresource.xml</filename> 
+				and <filename>SccpStack_sccprouter.xml</filename> will be created at <filename>$JBOSS_HOME/server/profile_name/data</filename> directory
+			</para>				
+			<para>				
+				Stack has following properties: 
+				<variablelist>
+					<varlistentry>
+						<term>localSpc</term>
+						<listitem>
+							<para>property specifies the local signaling point code.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>ni</term>
+						<listitem>
+							<para>specifies the network indicator that forms the part of service information octet (SIO)</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>persistDir</term>
+						<listitem>
+							<para>As explained above</para>
+						</listitem>
+					</varlistentry>					
+					<varlistentry>
+						<term>removeSpc</term>
+						<listitem>
+							<para>
+								After Global Title Translation, if the SCCP address includes the destination point code (DPC)
+								however Address Indicator (AI) indicates route on Global Title and <literal>removeSpc</literal> is
+								set to true, DPC will be removed from SCCP Address. The same rule applies for both calling as
+								well as called party SCCP Address. 
+							</para>
+						</listitem>
+					</varlistentry>					
+					<varlistentry>
+						<term>mtp3UserPart</term>
+						<listitem>
+							<para>specifies SS7 Level 3 to be used as transport medium(  be it SS7 card or M3UA)</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</para>
+
+			<para> <literal>SccpExecutor</literal> accepts <literal>sccp</literal> commands and executes necessary operations</para>
+		</section>			
 		<section id="configuring_ShellExecutor">
 			<title>Configuring ShellExecutor</title>
 			<para> 
-				<literal>ShellExecutor</literal> is responsible for listening to incoming command. Received commands are executed on local resources to 
-				perform actions like creation and management of <literal>SCCP</literal> routing rule, creation and management of <literal>Linkset</literal>, 
+				<literal>ShellExecutor</literal> is responsible for listening incoming commands. Received commands are executed on local resources to 
+				perform actions like creation and management of <literal>SCCP</literal> routing rule, management of <literal>SCTP</literal> and 
 				management of <literal>M3UA</literal> stack.
 			</para>
 			<programlisting language="XML" role="XML"><![CDATA[<!-- ================================================ -->
@@ -294,114 +421,11 @@ Halting VM]]></screen>
 			<note><para>To understand JBoss bind options look at 
 			<ulink url="http://docs.jboss.org/jbossas/docs/Installation_And_Getting_Started_Guide/5/html_single/index.html">Installation_And_Getting_Started_Guide</ulink> </para> </note>
 				
-		</section>	
-		
-		<section id="configuring_SCCP">
-			<title>Configuring SCCP</title>
-			<para> 
-				As name suggests <literal>SccpStack</literal> initiates the SCCP stack routines. 
-				Stack has following properties: 
-				
-				
-				<variablelist>
-					<varlistentry>
-						<term>localSpc</term>
-						<listitem>
-							<para>property 
-				specifies the local signaling point code.</para>
-						</listitem>
-					</varlistentry>
-					<varlistentry>
-						<term>ni</term>
-						<listitem>
-							<para>specifies the network indicator that forms 
-				the part of service information octet (SIO)</para>
-						</listitem>
-					</varlistentry>
-					<varlistentry>
-						<term>Router</term>
-						<listitem>
-							<para>manages the route for SCCP. When Router is started it looks for file <filename>sccprouter.xml</filename> 
-			containing the serialized information about routes configured. The directory path is configurable by changing value of
-			<literal>persistDir</literal> property</para>
-						</listitem>
-					</varlistentry>
-					<varlistentry>
-						<term>SccpResource</term>
-						<listitem>
-							<para>manages the remote resource for SCCP, for example Remote Subsystem Number and
-			Remote Signalling Pointcode. When SccpResource is started it looks for file <filename>sccpresource.xml</filename> 
-			containing the serialized information about resources configured. The directory path is configurable by changing value of
-			<literal>persistDir</literal> property</para>
-						</listitem>
-					</varlistentry>
-					<varlistentry>
-						<term>mtp3UserPart</term>
-						<listitem>
-							<para>specifies SS7 Level 3 to be used as transport medium(  be it SS7 card or M3UA)</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-				
-				
-			
-			</para>
-
-			<para> <literal>SccpExecutor</literal> accepts <literal>sccp</literal> commands and executes necessary operations</para>
-			
-			<para> <literal>SccpProvider</literal> is bound to JNDI by SS7 Service and is used by upper layers</para>	
-			
-			
-			<programlisting language="XML" role="XML"><![CDATA[	<!-- ==================================================================== -->
-	<!-- SCCP Router Service -->
-	<!-- ==================================================================== -->
-	<!--Define Router for SCCP -->
-	<bean name="Router" class="org.mobicents.protocols.ss7.sccp.impl.router.Router">
-		<property name="persistDir">${jboss.server.data.dir}</property>
-	</bean>
-
-	<bean name="SccpResource" class="org.mobicents.protocols.ss7.sccp.impl.SccpResource">
-		<property name="persistDir">${jboss.server.data.dir}</property>
-	</bean>
-
-	<bean name="SccpExecutor"
-		class="org.mobicents.protocols.ss7.sccp.impl.oam.SccpExecutor">
-		<property name="router">
-			<inject bean="Router" />
-		</property>
-		<property name="sccpResource">
-			<inject bean="SccpResource" />
-		</property>
-	</bean>
-
-	<bean name="SccpStack" class="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl">
-		<property name="localSpc">2</property>
-		<property name="ni">2</property>
-		<property name="router">
-			<inject bean="Router" />
-		</property>
-		<property name="sccpResource">
-			<inject bean="SccpResource" />
-		</property>
-		<property name="mtp3UserPart">
-			<inject bean="Mtp3UserPart" />
-		</property>
-	</bean>
-
-	<bean name="SccpProvider"
-		class="org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl">
-		<constructor factoryMethod="getSccpProvider">
-			<factory bean="SccpStack" />
-		</constructor>
-	</bean>]]></programlisting>		
-			
 		</section>			
-		
 		<section id="configuring_SS7Service">
 			<title>Configuring SS7Service</title>
 			<para> 
 				<literal>SS7Service</literal> acts as core engine binding all the components together. 
-				To get holistic view of SS7 Service look at <xref linkend="design_overview_ss7_service" /> 
 			</para>
 			<programlisting language="XML" role="XML"><![CDATA[	<!-- ==================================================================== -->
 	<!-- Mobicents SS7 Service -->
@@ -413,7 +437,7 @@ Halting VM]]></screen>
 		      registerDirectly=true)</annotation>
 		<property name="jndiName">java:/mobicents/ss7/sccp</property>
 		<property name="stack">
-			<inject bean="SccpProvider" />
+			<inject bean="SccpStack" property="sccpProvider" />
 		</property>
 	</bean>]]></programlisting>		
 			<para> SS7 service binds SccpProvider to JNDI <literal>java:/mobicents/ss7/sccp</literal>. 
@@ -468,20 +492,21 @@ Halting VM]]></screen>
 				<step>
 					<title>Building the source code</title>
 					<para>Now that we have the source the next step is to build and install the source. 
-					&THIS.PLATFORM; &THIS.APPLICATION; uses Maven 2 to build the system. There are three profiles. Default one builds only java source. The other two profiles 
-					available "dahdilinux" and "dialogiclinux" additionaly compile native modules.</para>
+					&THIS.PLATFORM; &THIS.APPLICATION; uses Maven 2 to build the system. There are two profiles. Default one builds only java source. The other profile 
+					"dialogiclinux" additionaly compile native modules.</para>
 					<note>
 						<para>
 							Native modules are supported only for linux OS for now.
 						</para>
-					</note>					
+					</note>		
+					<!-- 			
 					<para>Use "dahdilinux" profile if linux server on which this code is built already has dahdi module installed. 
 					Make sure you pass "include.zap" system property pointing to correct directory where dahdi is installed</para>
 					<programlisting>
 [usr]$ cd &THIS.APPLICATION.DIRNAME;-&THIS.VERSION;
 [usr]$ mvn install -Pdahdilinux -Dinclude.zap=/usr/include/dahdi
 				    </programlisting>
-				    
+				     -->
 					<para>Use "dialogiclinux" profile if linux server on which this code is built already has dialogic module installed. 
 					Make sure you pass "include.dialogic" and "include.dialogic.gctlib" system property pointing to correct directory where 
 					dialogic libraries are installed. include.dialogic.gctlib points to directory where <literal>gctload</literal> is present (generally

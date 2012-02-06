@@ -2,7 +2,12 @@
 <deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="urn:jboss:bean-deployer:2.0">
 
-
+	<!-- ==================================================================== -->
+	<!-- SCTP                                                                 -->
+	<!-- SCTP Management is used by M3UA only. Comment out if you are using   -->
+        <!-- SS7 hardware                                                         -->
+	<!-- ==================================================================== -->
+	<!-- -->
 	<bean name="SCTPManagement" class="org.mobicents.protocols.sctp.ManagementImpl">
 		<constructor>
 			<parameter>SCTPManagement</parameter>
@@ -13,10 +18,10 @@
 	</bean>
 
 	<!-- ==================================================================== -->
-	<!-- M3UA -->
-	<!-- M3UAManagement is managing the m3ua side commands -->
+	<!-- M3UA                                                                 -->
+	<!-- M3UAManagement is managing the m3ua side commands                    -->
+	<!-- Comment out if you are using SS7 hardware                            -->
 	<!-- ==================================================================== -->
-	<!-- -->
 	<bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement">
 		<constructor>
 			<parameter>Mtp3UserPart</parameter>
@@ -38,7 +43,9 @@
 	</bean>
 
 	<!-- ==================================================================== -->
-	<!-- Dialogic Mtp3UserPart -->
+	<!-- Dialogic Mtp3UserPart                                                -->
+	<!-- If you are using Dialogic SS7 hardware uncomment this and commnet    -->
+        <!-- out M3UA and SCTP beans                                              -->
 	<!-- ==================================================================== -->
 	<!-- <bean name="Mtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart"> 
 		<property name="sourceModuleId">61</property> <property name="destinationModuleId">34</property> 

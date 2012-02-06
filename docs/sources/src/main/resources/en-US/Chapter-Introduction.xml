@@ -83,5 +83,42 @@ to build the application
 			bandwidth of n x 64 kbit/s, where n = 120, 480, 1920, etc.
 		</para>
 	</section>
-
+	
+	<section>
+		<title>The Basics</title>
+		<important>
+			<para>Be aware, &THIS.PLATFORM; &THIS.APPLICATION; is subject to changes as it is under active development!
+			</para>
+		</important>
+		<para>The &THIS.PLATFORM; &THIS.APPLICATION; is logically divided into two sections. 
+		The lower section includes SS7 Level 3 and below. The lower section is influenced by type of SS7 hardware (Level 1) used.
+		</para>
+		<para>
+		The upper section includes SS7 Level 4 and above.
+		This logical division is widely based on flexibility of &THIS.PLATFORM; &THIS.APPLICATION; to allow usage of M3UA or any SS7 hardware 
+		available in the market and yet &THIS.PLATFORM; &THIS.APPLICATION; Level 4 and above remains the same. 
+		</para>
+		
+		<para>
+			&THIS.PLATFORM; &THIS.APPLICATION; also includes support for M3UA (SIGTRAN)
+		</para>
+		
+		<important>
+			<para>If you use &THIS.PLATFORM; M3UA stack, you have to use JDK 7 to run the stack as well as to compile source code. M3UA leverages Java SCTP which is available only from JDK 7.</para>
+		</important>
+	</section>
+	<section>
+		<title>Design</title>
+		<para>
+			&THIS.PLATFORM; &THIS.APPLICATION; uses the abstraction layer at level 3, such that this abstraction layer exposes same API to layer 4
+			while it can be configured to interact with any SS7 cards via card specific module or &THIS.PLATFORM; &THIS.APPLICATION; M3UA layer.
+		</para>
+		<para>
+			Below diagram gives further detail on how this abstraction is achieved.
+		</para>
+		<para>
+			&THIS.PLATFORM; &THIS.APPLICATION; is designed such that it can be used in any container like JBoss Application Server or it can
+			be also fired as standalone Java Application. 
+		</para>
+	</section>
 </chapter>

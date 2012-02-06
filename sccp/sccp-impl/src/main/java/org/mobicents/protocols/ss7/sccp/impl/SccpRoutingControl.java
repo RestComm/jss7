@@ -186,7 +186,11 @@ public class SccpRoutingControl {
 
 		if (rule == null) {
 			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn(String.format("Received SccpMessage=%s for Translation but no matching Rule found for local routing", msg));
+				if(fromMtp){
+					logger.warn(String.format("Received SccpMessage=%s for Translation but no matching Rule found for local routing", msg));
+				} else {
+					logger.warn(String.format("Received SccpMessage=%s for Translation but no matching Rule found for remote routing", msg));
+				}
 			}
 
 			// Translation failed return error
