@@ -32,6 +32,7 @@ import javolution.xml.stream.XMLStreamException;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.AssociationListener;
+import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
@@ -589,9 +590,21 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 
 	@Override
 	public void onPayload(Association association, org.mobicents.protocols.api.PayloadData payloadData) {
-		// TODO where is streamNumber stored?
+		
 		byte[] m3uadata = payloadData.getData();
-		M3UAMessage m3UAMessage = this.messageFactory.createSctpMessage(m3uadata);
-		this.read(m3UAMessage);
+		M3UAMessage m3UAMessage;
+		if (association.getIpChannelType() == IpChannelType.Sctp) {
+			// TODO where is streamNumber stored?
+			m3UAMessage = this.messageFactory.createSctpMessage(m3uadata);
+			this.read(m3UAMessage);
+		} else {
+			ByteBuffer buffer = ByteBuffer.wrap(m3uadata);
+			while (true) {
+				m3UAMessage = this.messageFactory.createMessage(buffer);
+				if (m3UAMessage == null)
+					break;
+				this.read(m3UAMessage);
+			}
+		}
 	}
 }
