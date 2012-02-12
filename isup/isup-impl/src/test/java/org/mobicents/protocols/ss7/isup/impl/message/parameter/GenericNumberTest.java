@@ -30,9 +30,12 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
+import static org.testng.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
@@ -53,8 +56,10 @@ public class GenericNumberTest extends ParameterHarness {
 	public GenericNumberTest() throws IOException {
 		super.badBodies.add(new byte[1]);
 
+//		super.goodBodies.add(getBody(GenericNumberImpl._NQIA_CONNECTED_NUMBER, false, GenericNumber._NAI_NATIONAL_SN, GenericNumberImpl._NI_COMPLETE, GenericNumberImpl._NPI_ISDN,
+//				GenericNumberImpl._APRI_NOT_AVAILABLE, GenericNumberImpl._SI_USER_PROVIDED_VERIFIED_FAILED, getSixDigits()));
 		super.goodBodies.add(getBody(GenericNumberImpl._NQIA_CONNECTED_NUMBER, false, GenericNumber._NAI_NATIONAL_SN, GenericNumberImpl._NI_COMPLETE, GenericNumberImpl._NPI_ISDN,
-				GenericNumberImpl._APRI_NOT_AVAILABLE, GenericNumberImpl._SI_USER_PROVIDED_VERIFIED_FAILED, getSixDigits()));
+				GenericNumberImpl._APRI_ALLOWED, GenericNumberImpl._SI_USER_PROVIDED_VERIFIED_FAILED, getSixDigits()));
 
 	}
 
@@ -77,14 +82,19 @@ public class GenericNumberTest extends ParameterHarness {
 		bos.write(digits);
 		return bos.toByteArray();
 	}
+	
 	@Test(groups = { "functional.encode","functional.decode","parameter"})
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
+//		GenericNumberImpl bci = new GenericNumberImpl(getBody(GenericNumberImpl._NQIA_CONNECTED_NUMBER, false, GenericNumber._NAI_NATIONAL_SN, GenericNumberImpl._NI_COMPLETE, GenericNumberImpl._NPI_ISDN,
+//				GenericNumberImpl._APRI_NOT_AVAILABLE, GenericNumberImpl._SI_USER_PROVIDED_VERIFIED_FAILED, getSixDigits()));
 		GenericNumberImpl bci = new GenericNumberImpl(getBody(GenericNumberImpl._NQIA_CONNECTED_NUMBER, false, GenericNumber._NAI_NATIONAL_SN, GenericNumberImpl._NI_COMPLETE, GenericNumberImpl._NPI_ISDN,
-				GenericNumberImpl._APRI_NOT_AVAILABLE, GenericNumberImpl._SI_USER_PROVIDED_VERIFIED_FAILED, getSixDigits()));
+				GenericNumberImpl._APRI_ALLOWED, GenericNumberImpl._SI_USER_PROVIDED_VERIFIED_FAILED, getSixDigits()));
 
 		String[] methodNames = { "getNumberQualifierIndicator", "getNatureOfAddressIndicator", "isNumberIncomplete", "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator",
 				"getScreeningIndicator", "getAddress" };
-		Object[] expectedValues = { GenericNumberImpl._NQIA_CONNECTED_NUMBER, GenericNumber._NAI_NATIONAL_SN, GenericNumberImpl._NI_COMPLETE, GenericNumberImpl._NPI_ISDN, GenericNumberImpl._APRI_NOT_AVAILABLE,
+//		Object[] expectedValues = { GenericNumberImpl._NQIA_CONNECTED_NUMBER, GenericNumber._NAI_NATIONAL_SN, GenericNumberImpl._NI_COMPLETE, GenericNumberImpl._NPI_ISDN, GenericNumberImpl._APRI_NOT_AVAILABLE,
+//				GenericNumberImpl._SI_USER_PROVIDED_VERIFIED_FAILED, getSixDigitsString() };
+		Object[] expectedValues = { GenericNumberImpl._NQIA_CONNECTED_NUMBER, GenericNumber._NAI_NATIONAL_SN, GenericNumberImpl._NI_COMPLETE, GenericNumberImpl._NPI_ISDN, GenericNumberImpl._APRI_ALLOWED,
 				GenericNumberImpl._SI_USER_PROVIDED_VERIFIED_FAILED, getSixDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}
@@ -98,7 +108,11 @@ public class GenericNumberTest extends ParameterHarness {
 	 */
 	
 	public AbstractISUPParameter getTestedComponent() {
-		return new GenericNumberImpl(0, "1", 1, 1, 1, false, 1);
+//		return new GenericNumberImpl(0, "1", 1, 1, 1, false, 1);
+		return new GenericNumberImpl(GenericNumber._NAI_NATIONAL_SN, getSixDigitsString(), GenericNumberImpl._NQIA_CONNECTED_NUMBER,
+				GenericNumberImpl._NPI_ISDN, GenericNumberImpl._APRI_ALLOWED, false, GenericNumberImpl._SI_USER_PROVIDED_VERIFIED_FAILED);
+//		int natureOfAddresIndicator, String address, int numberQualifierIndicator, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator,
+//		boolean numberIncomplete, int screeningIndicator
 	}
 
 }

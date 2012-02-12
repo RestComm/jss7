@@ -102,7 +102,7 @@ public class GenericNumberImpl extends AbstractNAINumber implements GenericNumbe
 	 */
 	protected void doAddressPresentationRestricted() {
 
-		if (this.addressRepresentationRestrictedIndicator == _APRI_NOT_AVAILABLE)
+		if (this.addressRepresentationRestrictedIndicator != _APRI_NOT_AVAILABLE)
 			return;
 		// NOTE 1 � If the parameter is included and the address presentation
 		// restricted indicator indicates

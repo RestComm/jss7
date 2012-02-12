@@ -105,7 +105,7 @@ public class LocationNumberImpl extends AbstractNAINumber implements LocationNum
 	 */
 	protected void doAddressPresentationRestricted() {
 
-		if (this.addressRepresentationREstrictedIndicator == _APRI_NOT_AVAILABLE)
+		if (this.addressRepresentationREstrictedIndicator != _APRI_NOT_AVAILABLE)
 			return;
 		// NOTE 1 � If the parameter is included and the address presentation
 		// restricted indicator indicates

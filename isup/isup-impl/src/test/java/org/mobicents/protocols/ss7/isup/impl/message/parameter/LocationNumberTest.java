@@ -53,8 +53,10 @@ public class LocationNumberTest extends ParameterHarness {
 	public LocationNumberTest() throws IOException {
 		super.badBodies.add(new byte[1]);
 
+//		super.goodBodies.add(getBody( false, LocationNumber._NAI_NATIONAL_SN, LocationNumberImpl._INN_ROUTING_ALLOWED, LocationNumberImpl._NPI_ISDN,
+//				LocationNumberImpl._APRI_NOT_AVAILABLE, LocationNumberImpl._SI_NETWORK_PROVIDED, getSixDigits()));
 		super.goodBodies.add(getBody( false, LocationNumber._NAI_NATIONAL_SN, LocationNumberImpl._INN_ROUTING_ALLOWED, LocationNumberImpl._NPI_ISDN,
-				LocationNumberImpl._APRI_NOT_AVAILABLE, LocationNumberImpl._SI_NETWORK_PROVIDED, getSixDigits()));
+				LocationNumberImpl._APRI_ALLOWED, LocationNumberImpl._SI_NETWORK_PROVIDED, getSixDigits()));
 
 	}
 
@@ -97,7 +99,11 @@ public class LocationNumberTest extends ParameterHarness {
 	 */
 	
 	public AbstractISUPParameter getTestedComponent() {
-		return new LocationNumberImpl(1,"1",1,1,1,1);
+//		return new LocationNumberImpl(1,"1",1,1,1,1);
+		return new LocationNumberImpl(LocationNumber._NAI_NATIONAL_SN, getSixDigitsString(), LocationNumberImpl._NPI_ISDN,
+				LocationNumberImpl._INN_ROUTING_ALLOWED, LocationNumberImpl._APRI_ALLOWED, LocationNumberImpl._SI_NETWORK_PROVIDED);
+//		public LocationNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator, int addressRepresentationREstrictedIndicator,
+//				int screeningIndicator) {
 	}
 
 }
