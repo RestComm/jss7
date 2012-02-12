@@ -40,6 +40,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.AssociationListener;
+import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.api.PayloadData;
 import org.mobicents.protocols.api.Server;
@@ -899,6 +900,12 @@ public class SgFSMTest {
 			this.associationListener.onCommunicationLost(this);
 		}
 
+		@Override
+		public IpChannelType getIpChannelType() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 	}
 
 	class TransportManagement implements Management {
@@ -1032,6 +1039,33 @@ public class SgFSMTest {
 
 		@Override
 		public void setPersistDir(String arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Association addAssociation(String arg0, int arg1, String arg2,
+				int arg3, String arg4, IpChannelType arg5) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Server addServer(String arg0, String arg1, int arg2,
+				IpChannelType arg3) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Association addServerAssociation(String arg0, int arg1,
+				String arg2, String arg3, IpChannelType arg4) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void removeAllResourses() throws Exception {
 			// TODO Auto-generated method stub
 			
 		}
