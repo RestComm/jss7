@@ -32,7 +32,7 @@
 		<!-- mobicents but not strictly ss7 -->
 		<asn.version>1.0.0.CR2</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
-		<sctp.version>1.0.0.CR1</sctp.version>
+		<sctp.version>1.0.0-SNAPSHOT</sctp.version>
 		<commons.version>1.0.0.CR1</commons.version>
 	</properties>
 
