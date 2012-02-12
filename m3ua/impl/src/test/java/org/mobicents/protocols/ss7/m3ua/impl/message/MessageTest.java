@@ -21,20 +21,15 @@
  */
 
 package org.mobicents.protocols.ss7.m3ua.impl.message;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.ss7.m3ua.impl.message.aspsm.ASPDownAckImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.aspsm.ASPDownImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.aspsm.ASPUpAckImpl;
@@ -107,11 +102,11 @@ public class MessageTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeMethod
 	public void setUp() {
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() {
 	}
 

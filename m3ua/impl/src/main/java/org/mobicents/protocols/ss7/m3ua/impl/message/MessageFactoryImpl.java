@@ -240,7 +240,7 @@ public class MessageFactoryImpl implements MessageFactory {
 		M3UAMessageImpl messageTemp = this.createMessage(messageClass, messageType);
 
 		// obtain remaining length of the message and prepare buffer
-		dataLen = (((header[4] & 0xff) << 24) | ((header[5] & 0xff) << 16) | ((header[6] & 0xff) << 8) | (header[7] & 0xff)) - 8;
+		dataLen = (((buffer[4] & 0xff) << 24) | ((buffer[5] & 0xff) << 16) | ((buffer[6] & 0xff) << 8) | (buffer[7] & 0xff)) - 8;
 
 		if (buffer.length >= (dataLen - 8)) {
 			// parsing params of this message

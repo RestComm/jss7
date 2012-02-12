@@ -22,15 +22,11 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
+
 import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.mgmt.NotifyImpl;
@@ -60,11 +56,11 @@ public class AspTransitionStateTest {
     public static void tearDownClass() throws Exception {
     }
 
-    @Before
+    @BeforeMethod
     public void setUp() {
     }
 
-    @After
+    @AfterMethod
     public void tearDown() {
     }
 

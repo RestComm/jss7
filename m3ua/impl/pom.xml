@@ -23,12 +23,9 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<!-- different junit version... -->
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.1</version>
-			<scope>test</scope>
-		</dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+		</dependency>		
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
 			<artifactId>m3ua-api</artifactId>
@@ -59,7 +56,6 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.sctp</groupId>
 			<artifactId>sctp-impl</artifactId>
-			<version>${sctp.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -67,6 +63,17 @@
 	<build>
 		<finalName>${pom.artifactId}-${pom.version}</finalName>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+
+				<configuration>
+					<suiteXmlFiles>
+						<suiteXmlFile>testng-methods.xml</suiteXmlFile>
+						<suiteXmlFile>testng-classes.xml</suiteXmlFile>
+					</suiteXmlFiles>
+				</configuration>
+			</plugin>		
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -79,6 +86,24 @@
 					</compilerArgument>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>.</directory>
+							<includes>
+								<include>*_m3ua.xml</include>
+								<include>*_sctp.xml</include>
+								<include>debuglog.txt</include>
+							</includes>
+							<!-- <excludes> <exclude>**/important.log</exclude> <exclude>**/another-important.log</exclude> 
+								</excludes> -->
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>			
 		</plugins>
 	</build>
 </project>

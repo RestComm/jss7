@@ -22,15 +22,13 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl;
 
-import static org.junit.Assert.assertEquals;
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
+
 import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.sctp.ManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
@@ -89,7 +87,7 @@ public class GatewayTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeMethod
 	public void setUp() throws Exception {
 
 		mtp3UserPartListener = new Mtp3UserPartListenerImpl();
@@ -110,7 +108,7 @@ public class GatewayTest {
 
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() throws Exception {
 
 		this.sctpManagement.stop();

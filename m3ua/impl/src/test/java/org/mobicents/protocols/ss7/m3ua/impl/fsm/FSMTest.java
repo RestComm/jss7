@@ -1,16 +1,14 @@
 package org.mobicents.protocols.ss7.m3ua.impl.fsm;
 
-import static org.junit.Assert.*;
+
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.mobicents.protocols.ss7.m3ua.impl.scheduler.M3UAScheduler;
 
 /**
@@ -35,7 +33,7 @@ public class FSMTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeMethod
 	public void setUp() throws Exception {
 
 		timedOut = false;
@@ -47,7 +45,7 @@ public class FSMTest {
 		scheduledExecutorService.scheduleAtFixedRate(m3uaScheduler, 500, 500, TimeUnit.MILLISECONDS);
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() throws Exception {
 
 	}
