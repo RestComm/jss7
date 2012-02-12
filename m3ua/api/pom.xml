@@ -10,10 +10,6 @@
 	<artifactId>m3ua-api</artifactId>
 	<name>Mobicents SS7 :: M3UA :: Api :: ${pom.artifactId}</name>
 
-	<properties>
-		<maven.test.skip>false</maven.test.skip>
-	</properties>
-
 	<dependencies>
 		<!--
 			<dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId>
@@ -37,15 +33,5 @@
 
 	<build>
 		<finalName>${pom.artifactId}-${pom.version}</finalName>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<groupId>org.apache.maven.plugins</groupId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-		</plugins>
 	</build>
 </project>

@@ -22,10 +22,7 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,11 +30,9 @@ import java.util.Map;
 
 import javolution.util.FastMap;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
+
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.AssociationListener;
 import org.mobicents.protocols.api.IpChannelType;
@@ -91,7 +86,7 @@ public class SgFSMTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeMethod
 	public void setUp() throws Exception {
 		this.transportManagement = new TransportManagement();
 		this.serverM3UAMgmt = new M3UAManagement("SgFSMTest");
@@ -100,7 +95,7 @@ public class SgFSMTest {
 
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() throws Exception {
 		serverM3UAMgmt.getAppServers().clear();
 		serverM3UAMgmt.getAspfactories().clear();

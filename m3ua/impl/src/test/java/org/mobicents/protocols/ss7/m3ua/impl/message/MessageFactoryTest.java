@@ -22,22 +22,21 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.message;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mobicents.protocols.ss7.m3ua.impl.message.transfer.PayloadDataImpl;
-import org.mobicents.protocols.ss7.m3ua.impl.parameter.ProtocolDataImpl;
-import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
+import java.io.IOException;
+
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import static org.junit.Assert.*;
 
 /**
  * @author amit bhayani
@@ -62,11 +61,11 @@ public class MessageFactoryTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeMethod
 	public void setUp() {
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() {
 	}
 

@@ -22,9 +22,6 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.parameter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,11 +33,9 @@ import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
+
 import org.mobicents.protocols.ss7.m3ua.parameter.CongestedIndication.CongestionLevel;
 import org.mobicents.protocols.ss7.m3ua.parameter.DeregistrationStatus;
 import org.mobicents.protocols.ss7.m3ua.parameter.DestinationPointCode;
@@ -74,12 +69,12 @@ public class ParameterTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	@Before
+	@BeforeMethod
 	public void setUp() {
 		out = ByteBuffer.allocate(8192);
 	}
 
-	@After
+	@AfterMethod
 	public void tearDown() {
 	}
 
@@ -150,7 +145,7 @@ public class ParameterTest {
 		assertEquals(p2.getSLS(), p2.getSLS());
 
 		boolean isDataCorrect = Arrays.equals(p2.getData(), p2.getData());
-		assertTrue("Data mismatch", isDataCorrect);
+		assertTrue(isDataCorrect, "Data mismatch");
 	}
 
 	/**
@@ -175,7 +170,7 @@ public class ParameterTest {
 		assertEquals(p1.getSLS(), p2.getSLS());
 
 		boolean isDataCorrect = Arrays.equals(p1.getData(), p2.getData());
-		assertTrue("Data mismatch", isDataCorrect);
+		assertTrue(isDataCorrect, "Data mismatch");
 	}
 
 	@Test
