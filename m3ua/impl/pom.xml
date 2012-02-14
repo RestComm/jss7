@@ -31,9 +31,7 @@
 			<artifactId>m3ua-api</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
-		<!-- dependency> <groupId>org.mobicents.protocols.stream</groupId> <artifactId>stream</artifactId> 
-			</dependency -->
-
+		
 		<!-- shell -->
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.management</groupId>
