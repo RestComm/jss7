@@ -1,0 +1,28 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Methods" parallel="methods" thread-count="1"  verbose="1">
+	<test name="simple">
+		<!-- 
+	    <groups>
+		    <run>
+		      <include name="encode"  />
+		      <include name="asn"  />
+		    </run>
+	  	</groups>
+	  	 -->
+	  	 <!-- 
+	  	<packages>
+      		<package name="org.mobicents.protocols.ss7.sccp.impl.parameter" />
+      		<package name="org.mobicents.protocols.ss7.sccp.impl.gtt" />
+      		<package name="org.mobicents.protocols.ss7.indicator" />
+      		<package name="org.mobicents.protocols.ss7.sccp.parameter" />
+  		 </packages>
+  		  -->
+  		 <classes>
+  		 	<class name="org.mobicents.protocols.ss7.m3ua.impl.AspTransitionStateTest"></class>
+  		 	<class name="org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryTest"></class>
+  		 	<class name="org.mobicents.protocols.ss7.m3ua.impl.message.MessageTest"></class>
+  		 	<class name="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutorTest"></class>
+  		 	<class name="org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterTest"></class>
+  		 </classes>
+	</test>
+</suite>
