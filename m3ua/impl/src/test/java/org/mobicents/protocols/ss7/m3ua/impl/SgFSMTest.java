@@ -129,7 +129,7 @@ public class SgFSMTest {
 		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
-		As remAs = serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc, null);
+		As remAs = serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc, null, null);
 		FSM asLocalFSM = remAs.getLocalFSM();
 
 		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
@@ -213,7 +213,7 @@ public class SgFSMTest {
 		RoutingKey rKey1 = parmFactory.createRoutingKey(lRkId1, rc1, null, null, dpc1, servInds1, null);
 
 		// As remAs1 = sgw.createAppServer("testas1", rc1, rKey1, trModType1);
-		As remAs1 = serverM3UAMgmt.createAs("testas1", Functionality.SGW, ExchangeType.SE, null, rc1, null);
+		As remAs1 = serverM3UAMgmt.createAs("testas1", Functionality.SGW, ExchangeType.SE, null, rc1, null, null);
 		FSM as1LocalFSM = remAs1.getLocalFSM();
 
 		// Define 2nd AS
@@ -230,7 +230,7 @@ public class SgFSMTest {
 		RoutingKey rKey2 = parmFactory.createRoutingKey(lRkId2, rc2, null, null, dpc2, servInds2, null);
 
 		// As remAs2 = sgw.createAppServer("testas2", rc2, rKey2, trModType2);
-		As remAs2 = serverM3UAMgmt.createAs("testas2", Functionality.SGW, ExchangeType.SE, null, rc2, null);
+		As remAs2 = serverM3UAMgmt.createAs("testas2", Functionality.SGW, ExchangeType.SE, null, rc2, null, null);
 		FSM as2LocalFSM = remAs2.getLocalFSM();
 
 		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
@@ -341,7 +341,7 @@ public class SgFSMTest {
 		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
-		As remAs = serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc, overrideMode);
+		As remAs = serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc, overrideMode, null);
 		FSM asLocalFSM = remAs.getLocalFSM();
 
 		// AspFactory aspFactory1 = sgw.createAspFactory("testasp1",
@@ -475,7 +475,7 @@ public class SgFSMTest {
 		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
-		As remAs = serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc, trModType);
+		As remAs = serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc, trModType, null);
 
 		FSM asLocalFSM = remAs.getLocalFSM();
 
@@ -613,7 +613,7 @@ public class SgFSMTest {
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
 
-		As remAs = serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc, trModType);
+		As remAs = serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc, trModType, null);
 		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
 		// 2777);
 		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
@@ -690,7 +690,7 @@ public class SgFSMTest {
              RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
 
              // As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
-             As remAs = serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc, trModType);
+             As remAs = serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc, trModType, null);
              FSM asLocalFSM = remAs.getLocalFSM(); 
              
              // AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",

@@ -33,6 +33,7 @@ import org.mobicents.protocols.ss7.m3ua.impl.As;
 import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
@@ -75,12 +76,13 @@ public class M3UAShellExecutor implements ShellExecutor {
 	/**
 	 * m3ua as create <as-name> <AS | SGW | IPSP> mode <SE | DE> ipspType <
 	 * client | server > rc <routing-context> traffic-mode <traffic mode>
+	 * network-appearance <network appearance>
 	 * 
 	 * @param args
 	 * @return
 	 */
 	private String createAs(String[] args) throws Exception {
-		if (args.length < 5 || args.length > 13) {
+		if (args.length < 5 || args.length > 15) {
 			return M3UAOAMMessages.INVALID_COMMAND;
 		}
 
@@ -95,6 +97,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 		IPSPType ipspType = null;
 		RoutingContext rc = null;
 		TrafficModeType trafficModeType = null;
+		NetworkAppearance na = null;
 
 		if (functionlaity == null) {
 			return M3UAOAMMessages.INVALID_COMMAND;
@@ -120,12 +123,14 @@ public class M3UAShellExecutor implements ShellExecutor {
 				rc = parameterFactory.createRoutingContext(new long[] { rcLong });
 			} else if (key.equals("traffic-mode")) {
 				trafficModeType = getTrafficModeType(args[count++]);
+			} else if (key.equals("network-appearance")) {
+				na = parameterFactory.createNetworkAppearance(Long.parseLong(args[count++]));
 			} else {
 				return M3UAOAMMessages.INVALID_COMMAND;
 			}
 		}
 
-		As as = this.m3uaManagement.createAs(asName, functionlaity, exchangeType, ipspType, rc, trafficModeType);
+		As as = this.m3uaManagement.createAs(asName, functionlaity, exchangeType, ipspType, rc, trafficModeType, na);
 		return String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, as.getName());
 	}
 
@@ -336,7 +341,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 					return M3UAOAMMessages.INVALID_COMMAND;
 
 				} else if (command.equals("destroy")) {
-					
+
 					if (args.length < 4) {
 						return M3UAOAMMessages.INVALID_COMMAND;
 					}
@@ -348,7 +353,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 
 					this.sctpManagement.removeAssociation(assocName);
 					return String.format("Successfully removed association=%s", assocName);
-					
+
 				} else if (command.equals("show")) {
 					return M3UAOAMMessages.NOT_SUPPORTED_YET;
 				}
@@ -365,7 +370,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 
 	private String executeM3UA(String[] args) {
 		try {
-			if (args.length < 3 || args.length > 13) {
+			if (args.length < 3 || args.length > 15) {
 				// any command will have atleast 3 args
 				return M3UAOAMMessages.INVALID_COMMAND;
 			}

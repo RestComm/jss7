@@ -52,7 +52,9 @@ public class PayloadDataImpl extends M3UAMessageImpl implements PayloadData {
 	}
 
 	public void setNetworkAppearance(NetworkAppearance p) {
-		parameters.put(Parameter.Network_Appearance, p);
+		if(p!=null){
+			parameters.put(Parameter.Network_Appearance, p);
+		}
 	}
 
 	public RoutingContext getRoutingContext() {
@@ -78,7 +80,9 @@ public class PayloadDataImpl extends M3UAMessageImpl implements PayloadData {
 	}
 
 	public void setCorrelationId(CorrelationId corrId) {
-		parameters.put(Parameter.Correlation_ID, corrId);
+		if(corrId != null){
+			parameters.put(Parameter.Correlation_ID, corrId);
+		}
 	}
 
 	@Override

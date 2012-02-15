@@ -36,11 +36,13 @@ import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.parameter.NetworkAppearanceImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.RoutingContextImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.TrafficModeTypeImpl;
 import org.mobicents.protocols.ss7.m3ua.message.MessageFactory;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
+import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
@@ -56,6 +58,7 @@ public class As implements XMLSerializable {
 
 	private static final String NAME = "name";
 	private static final String ROUTING_CONTEXT = "routingContext";
+	private static final String NETWORK_APPEARANCE = "networkAppearance";
 	private static final String TRAFFIC_MODE = "trafficMode";
 	private static final String DEFAULT_TRAFFIC_MODE = "defTrafficMode";
 	private static final String ASP_LIST = "asps";
@@ -95,13 +98,14 @@ public class As implements XMLSerializable {
 	private Functionality functionality = null;
 	private ExchangeType exchangeType = null;
 	private IPSPType ipspType = null;
+	private NetworkAppearance networkAppearance = null;
 
 	public As() {
 
 	}
 
 	public As(String name, RoutingContext rc, TrafficModeType trMode, Functionality functionality,
-			ExchangeType exchangeType, IPSPType ipspType) {
+			ExchangeType exchangeType, IPSPType ipspType, NetworkAppearance networkAppearance) {
 		this.name = name;
 		this.rc = rc;
 		this.trMode = trMode;
@@ -109,6 +113,7 @@ public class As implements XMLSerializable {
 		this.exchangeType = exchangeType;
 		this.ipspType = ipspType;
 		this.defaultTrafModType = this.parameterFactory.createTrafficModeType(TrafficModeType.Loadshare);
+		this.networkAppearance = networkAppearance;
 		init();
 	}
 
@@ -379,6 +384,10 @@ public class As implements XMLSerializable {
 		return ipspType;
 	}
 
+	public NetworkAppearance getNetworkAppearance() {
+		return networkAppearance;
+	}
+
 	/**
 	 * Set the {@link TrafficModeType}
 	 * 
@@ -584,6 +593,7 @@ public class As implements XMLSerializable {
 			as.ipspType = IPSPType.getIPSPType(xml.getAttribute("ipspType", ""));
 
 			as.rc = xml.get(ROUTING_CONTEXT, RoutingContextImpl.class);
+			as.networkAppearance = xml.get(NETWORK_APPEARANCE, NetworkAppearanceImpl.class);
 			as.trMode = xml.get(TRAFFIC_MODE, TrafficModeTypeImpl.class);
 			as.defaultTrafModType = xml.get(DEFAULT_TRAFFIC_MODE, TrafficModeTypeImpl.class);
 			as.appServerProcs = xml.get(ASP_LIST, FastList.class);
@@ -601,6 +611,7 @@ public class As implements XMLSerializable {
 			}
 
 			xml.add((RoutingContextImpl) as.rc, ROUTING_CONTEXT, RoutingContextImpl.class);
+			xml.add((NetworkAppearanceImpl) as.networkAppearance, NETWORK_APPEARANCE, NetworkAppearanceImpl.class);
 			xml.add((TrafficModeTypeImpl) as.trMode, TRAFFIC_MODE, TrafficModeTypeImpl.class);
 			xml.add((TrafficModeTypeImpl) as.defaultTrafModType, DEFAULT_TRAFFIC_MODE, TrafficModeTypeImpl.class);
 			xml.add(as.appServerProcs, ASP_LIST, FastList.class);
