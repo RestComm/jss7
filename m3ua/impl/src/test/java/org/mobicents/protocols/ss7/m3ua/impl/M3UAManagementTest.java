@@ -39,6 +39,7 @@ import org.mobicents.protocols.api.Server;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 
 /**
@@ -88,7 +89,8 @@ public class M3UAManagementTest {
 		Association association = this.transportManagement.addAssociation(null, 0, null, 0, "ASPAssoc1");
 
 		RoutingContext rc = factory.createRoutingContext(new long[] { 1 });
-		As as1 = this.m3uaMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, null, rc, null);
+		NetworkAppearance na = factory.createNetworkAppearance(12l);
+		As as1 = this.m3uaMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, null, rc, null, na);
 
 		AspFactory aspFactory = this.m3uaMgmt.createAspFactory("ASP1", "ASPAssoc1");
 
@@ -108,7 +110,7 @@ public class M3UAManagementTest {
 		assertEquals(1, m3uaMgmt1.getAspfactories().size());
 		FastMap<String, As[]> route = m3uaMgmt1.getRoute();
 		assertEquals(1, route.size());
-
+		
 		// Make sure AS is not null
 		As[] asList = route.get("123:1:1");
 

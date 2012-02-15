@@ -120,7 +120,7 @@ public class RemSgFSMTest {
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
-		As as = this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, rc, null);
+		As as = this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, rc, null, null);
 
 		AspFactory localAspFactory = this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 		localAspFactory.start();
@@ -195,13 +195,13 @@ public class RemSgFSMTest {
 		RoutingContext rc1 = parmFactory.createRoutingContext(new long[] { 100 });
 
 		// As remAs1 = rsgw.createAppServer("testas1", rc1, rKey1, trModType1);
-		As remAs1 = this.clientM3UAMgmt.createAs("testas1", Functionality.AS, ExchangeType.SE, null, rc1, null);
+		As remAs1 = this.clientM3UAMgmt.createAs("testas1", Functionality.AS, ExchangeType.SE, null, rc1, null, null);
 
 		// Define 2nd AS
 		RoutingContext rc2 = parmFactory.createRoutingContext(new long[] { 200 });
 
 		// As remAs2 = rsgw.createAppServer("testas2", rc2, rKey2, trModType2);
-		As remAs2 = clientM3UAMgmt.createAs("testas2", Functionality.AS, ExchangeType.SE, null, rc2, null);
+		As remAs2 = clientM3UAMgmt.createAs("testas2", Functionality.AS, ExchangeType.SE, null, rc2, null, null);
 
 		AspFactory aspFactory = clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 		aspFactory.start();
@@ -323,7 +323,7 @@ public class RemSgFSMTest {
 		TrafficModeType trModType = parmFactory.createTrafficModeType(TrafficModeType.Override);
 
 		// As remAs = rsgw.createAppServer("testas", rc, rKey, trModType);
-		As remAs = this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, rc, null);
+		As remAs = this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, rc, null, null);
 
 		AspFactory aspFactory1 = this.clientM3UAMgmt.createAspFactory("testasp1", "testAssoc1");
 		aspFactory1.start();
@@ -442,7 +442,7 @@ public class RemSgFSMTest {
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
-		As as = this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, rc, null);
+		As as = this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, rc, null, null);
 		FSM asPeerFSM = as.getPeerFSM();
 		
 		AspFactory localAspFactory = clientM3UAMgmt.createAspFactory("testasp", "testAssoc");

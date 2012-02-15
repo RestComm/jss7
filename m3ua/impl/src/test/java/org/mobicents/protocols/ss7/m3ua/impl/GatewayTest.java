@@ -182,7 +182,7 @@ public class GatewayTest {
 			RoutingContext rc = factory.createRoutingContext(new long[] { 100l });
 			TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
 			localAs = m3uaMgmt.createAs("client-testas", Functionality.AS, ExchangeType.SE, IPSPType.CLIENT, rc,
-					trafficModeType);
+					trafficModeType, null);
 
 			// 3. Create ASP
 			// m3ua asp create ip <local-ip> port <local-port> remip <remip>
@@ -256,7 +256,7 @@ public class GatewayTest {
 			RoutingContext rc = factory.createRoutingContext(new long[] { 100l });
 			TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
 			remAs = m3uaMgmt.createAs("server-testas", Functionality.SGW, ExchangeType.SE, IPSPType.CLIENT, rc,
-					trafficModeType);
+					trafficModeType, null);
 
 			// 5. Create RASP
 			// m3ua rasp create <asp-name> <assoc-name>"

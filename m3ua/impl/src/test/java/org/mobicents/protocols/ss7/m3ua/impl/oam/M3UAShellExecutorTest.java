@@ -100,7 +100,7 @@ public class M3UAShellExecutorTest {
 		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas1"), result);
 
 		// Create AS with all params
-		result = m3uaExec.execute("m3ua as create testas2 AS mode DE ipspType CLIENT rc 100 traffic-mode loadshare"
+		result = m3uaExec.execute("m3ua as create testas2 AS mode DE ipspType CLIENT rc 100 traffic-mode loadshare network-appearance 12"
 				.split(" "));
 		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas2"), result);
 
