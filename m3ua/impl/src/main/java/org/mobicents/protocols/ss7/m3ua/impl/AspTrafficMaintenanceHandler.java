@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class AspTrafficMaintenanceHandler extends MessageHandler {
 
@@ -185,6 +185,29 @@ public class AspTrafficMaintenanceHandler extends MessageHandler {
 		}
 	}
 
+	private void handleAspActiveAck(Asp asp, ASPActiveAck aspActiveAck, TrafficModeType trMode) {
+		As as = asp.getAs();
+		
+		if(trMode == null){
+			trMode = asp.getAs().getDefaultTrafficModeType();
+		}
+		
+		as.setTrafficModeType(trMode);
+
+		FSM fsm = asp.getLocalFSM();
+		if (fsm == null) {
+			logger.error(String.format("Received ASPACTIVE_ACK=%s for ASP=%s. But local FSM is null.", aspActiveAck,
+					this.aspFactory.getName()));
+			return;
+		}
+
+		try {
+			fsm.signal(TransitionState.ASP_ACTIVE_ACK);
+		} catch (UnknownTransitionException e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+
 	protected void handleAspActiveAck(ASPActiveAck aspActiveAck) {
 		if (!this.aspFactory.started) {
 			// If management stopped this ASP, ignore ASPActiveAck
@@ -200,25 +223,25 @@ public class AspTrafficMaintenanceHandler extends MessageHandler {
 						&& aspFactory.getExchangeType() == ExchangeType.SE && aspFactory.getIpspType() == IPSPType.CLIENT)) {
 
 			TrafficModeType trMode = aspActiveAck.getTrafficModeType();
+			
+			if (rc == null) {
+				Asp asp = this.getAspForNullRc();
 
-			long[] rcs = rc.getRoutingContexts();
-			for (int count = 0; count < rcs.length; count++) {
-				Asp asp = this.aspFactory.getAsp(rcs[count]);
-				asp.getAs().setTrafficModeType(trMode);
-
-				FSM fsm = asp.getLocalFSM();
-				if (fsm == null) {
-					logger.error(String.format("Received ASPACTIVE_ACK=%s for ASP=%s. But local FSM is null.",
-							aspActiveAck, this.aspFactory.getName()));
+				if (asp == null) {
+					// Error condition
+					logger.error(String
+							.format("Rx : ASP ACTIVE_ACK=%s with null RC for Aspfactory=%s. But no ASP configured for null RC. Sent back Error",
+									aspActiveAck, this.aspFactory.getName()));
 					return;
 				}
-
-				try {
-					fsm.signal(TransitionState.ASP_ACTIVE_ACK);
-				} catch (UnknownTransitionException e) {
-					logger.error(e.getMessage(), e);
-				}
-			}// for
+				handleAspActiveAck(asp, aspActiveAck, trMode);
+			} else {
+				long[] rcs = rc.getRoutingContexts();
+				for (int count = 0; count < rcs.length; count++) {
+					Asp asp = this.aspFactory.getAsp(rcs[count]);
+					handleAspActiveAck(asp, aspActiveAck, trMode);
+				}// for
+			}
 
 		} else {
 			// TODO : Should we silently drop ASPACTIVE_ACK?

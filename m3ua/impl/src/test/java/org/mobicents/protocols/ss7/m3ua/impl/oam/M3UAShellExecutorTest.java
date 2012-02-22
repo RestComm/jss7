@@ -33,6 +33,7 @@ import static org.testng.Assert.*;
 
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.AssociationListener;
+import org.mobicents.protocols.api.AssociationType;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.api.PayloadData;
@@ -125,6 +126,11 @@ public class M3UAShellExecutorTest {
 		result = m3uaExec.execute("m3ua as add testas testasp1".split(" "));
 		assertEquals(String.format("Cannot assign ASP=%s to AS=%s. This ASP is already assigned to this AS",
 				"testasp1", "testas"), result);
+		
+		
+		//Test Routes
+		result = m3uaExec.execute("m3ua route add testas 2 -1 -1".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.ADD_ROUTE_AS_FOR_DPC_SUCCESSFULL, "testas", 2), result);
 
 		clientM3UAMgmt.stop();
 	}
@@ -197,6 +203,12 @@ public class M3UAShellExecutorTest {
 
 		@Override
 		public IpChannelType getIpChannelType() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public AssociationType getAssociationType() {
 			// TODO Auto-generated method stub
 			return null;
 		}

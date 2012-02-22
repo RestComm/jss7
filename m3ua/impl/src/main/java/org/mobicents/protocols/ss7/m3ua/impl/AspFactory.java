@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAOAMMessages;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
@@ -590,10 +591,10 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 
 	@Override
 	public void onPayload(Association association, org.mobicents.protocols.api.PayloadData payloadData) {
-		
+
 		byte[] m3uadata = payloadData.getData();
 		M3UAMessage m3UAMessage;
-		if (association.getIpChannelType() == IpChannelType.Sctp) {
+		if (association.getIpChannelType() == IpChannelType.SCTP) {
 			// TODO where is streamNumber stored?
 			m3UAMessage = this.messageFactory.createSctpMessage(m3uadata);
 			this.read(m3UAMessage);
@@ -605,6 +606,35 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 					break;
 				this.read(m3UAMessage);
 			}
+		}
+	}
+
+	public void show(StringBuffer sb) {
+		sb.append(M3UAOAMMessages.SHOW_ASP_NAME).append(this.name).append(M3UAOAMMessages.SHOW_SCTP_ASSOC)
+				.append(this.associationName).append(M3UAOAMMessages.SHOW_STARTED).append(this.started);
+
+		sb.append(M3UAOAMMessages.NEW_LINE);
+		sb.append(M3UAOAMMessages.SHOW_ASSIGNED_TO);
+
+		for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
+			Asp asp = n.getValue();
+			sb.append(M3UAOAMMessages.TAB).append(M3UAOAMMessages.SHOW_AS_NAME).append(asp.getAs().getName())
+					.append(M3UAOAMMessages.SHOW_FUNCTIONALITY).append(this.functionality)
+					.append(M3UAOAMMessages.SHOW_MODE).append(this.exchangeType);
+
+			if (this.functionality == Functionality.IPSP) {
+				sb.append(M3UAOAMMessages.SHOW_IPSP_TYPE).append(this.ipspType);
+			}
+
+			if (asp.getLocalFSM() != null) {
+				sb.append(M3UAOAMMessages.SHOW_LOCAL_FSM_STATE).append(asp.getLocalFSM().getState());
+			}
+
+			if (asp.getPeerFSM() != null) {
+				sb.append(M3UAOAMMessages.SHOW_PEER_FSM_STATE).append(asp.getPeerFSM().getState());
+			}
+			
+			sb.append(M3UAOAMMessages.NEW_LINE);
 		}
 	}
 }

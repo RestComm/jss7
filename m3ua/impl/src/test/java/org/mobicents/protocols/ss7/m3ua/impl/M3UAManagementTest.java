@@ -32,6 +32,7 @@ import org.testng.annotations.*;
 import static org.testng.Assert.*;
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.AssociationListener;
+import org.mobicents.protocols.api.AssociationType;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.api.PayloadData;
@@ -211,6 +212,12 @@ public class M3UAManagementTest {
 
 		@Override
 		public IpChannelType getIpChannelType() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public AssociationType getAssociationType() {
 			// TODO Auto-generated method stub
 			return null;
 		}
