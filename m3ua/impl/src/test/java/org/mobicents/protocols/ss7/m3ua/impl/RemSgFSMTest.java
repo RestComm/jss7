@@ -34,6 +34,7 @@ import static org.testng.Assert.*;
 
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.AssociationListener;
+import org.mobicents.protocols.api.AssociationType;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.api.PayloadData;
@@ -111,8 +112,12 @@ public class RemSgFSMTest {
 		return AsState.getState(fsm.getState().getName());
 	}
 
+	/**
+	 * Test with RC Set
+	 * @throws Exception
+	 */
 	@Test
-	public void testSingleAspInAs() throws Exception {
+	public void testSingleAspInAsWithRC() throws Exception {
 
 		// 5.1.1. Single ASP in an Application Server ("1+0" sparing),
 		this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc1");
@@ -171,6 +176,85 @@ public class RemSgFSMTest {
 		assertEquals(AspState.ACTIVE, this.getAspState(aspLocalFSM));
 		// also the AS should be ACTIVE now
 		assertEquals(AsState.ACTIVE, this.getAsState(asPeerFSM));
+
+		// Lets stop ASP Factory
+		localAspFactory.stop();
+
+		assertEquals(AspState.DOWN_SENT, this.getAspState(aspLocalFSM));
+		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN, -1, -1));
+		// also the AS is PENDING
+		assertEquals(AsState.PENDING, this.getAsState(asPeerFSM));
+
+		// Make sure we don't have any more
+		assertNull(testAssociation.txPoll());
+
+	}
+	
+	/**
+	 * Test with RC Set
+	 * @throws Exception
+	 */
+	@Test
+	public void testSingleAspInAsWithoutRC() throws Exception {
+
+		// 5.1.1. Single ASP in an Application Server ("1+0" sparing),
+		this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc1");
+
+		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
+		As as = this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, null, null, null);
+
+		AspFactory localAspFactory = this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		localAspFactory.start();
+
+		Asp asp = clientM3UAMgmt.assignAspToAs("testas", "testasp");
+
+		// Signal for Communication UP
+		TestAssociation testAssociation = (TestAssociation) this.transportManagement.getAssociation("testAssoc1");
+		testAssociation.signalCommUp();
+
+		// Once comunication is UP, ASP_UP should have been sent.
+		FSM aspLocalFSM = asp.getLocalFSM();
+		assertEquals(AspState.UP_SENT, this.getAspState(aspLocalFSM));
+		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP, -1, -1));
+
+		// The other side will send ASP_UP_ACK and after that NTFY(AS-INACTIVE)
+		M3UAMessageImpl message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+				MessageType.ASP_UP_ACK);
+		localAspFactory.read(message);
+
+		Notify notify = (Notify) messageFactory.createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
+
+		Status status = parmFactory.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE);
+		notify.setStatus(status);
+		localAspFactory.read(notify);
+
+		assertEquals(AspState.ACTIVE_SENT, this.getAspState(aspLocalFSM));
+		assertTrue(validateMessage(testAssociation, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE, -1,
+				-1));
+
+		FSM asPeerFSM = as.getPeerFSM();
+		// also the AS should be INACTIVE now
+		assertEquals(AsState.INACTIVE, this.getAsState(asPeerFSM));
+
+		// The other side will send ASP_ACTIVE_ACK and after that
+		// NTFY(AS-ACTIVE)
+		ASPActiveAck aspActiveAck = (ASPActiveAck) messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
+				MessageType.ASP_ACTIVE_ACK);
+
+		localAspFactory.read(aspActiveAck);
+
+		notify = (Notify) messageFactory.createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
+
+		status = parmFactory.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE);
+		notify.setStatus(status);
+		localAspFactory.read(notify);
+
+		assertEquals(AspState.ACTIVE, this.getAspState(aspLocalFSM));
+		// also the AS should be ACTIVE now
+		assertEquals(AsState.ACTIVE, this.getAsState(asPeerFSM));
+		
+		//Since we didn't set the Traffic Mode while creating AS, it should now be set to loadshare as default
+		assertEquals(TrafficModeType.Loadshare, as.getTrafficModeType().getMode());
 
 		// Lets stop ASP Factory
 		localAspFactory.stop();
@@ -285,6 +369,9 @@ public class RemSgFSMTest {
 		// the AS1 should be ACTIVE now but AS2 still INACTIVE
 		assertEquals(AsState.ACTIVE, this.getAsState(as1PeerFSM));
 		assertEquals(AsState.INACTIVE, this.getAsState(as2PeerFSM));
+		
+		//Check the TrafficMode for AS1
+		assertEquals(TrafficModeType.Loadshare, remAs1.getTrafficModeType().getMode());
 
 		notify = (Notify) messageFactory.createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
 		notify.setRoutingContext(rc2);
@@ -294,6 +381,9 @@ public class RemSgFSMTest {
 		// the AS2 is also ACTIVE now
 		assertEquals(AsState.ACTIVE, this.getAsState(as1PeerFSM));
 		assertEquals(AsState.ACTIVE, this.getAsState(as2PeerFSM));
+		
+		//Check the TrafficMode for AS2
+		assertEquals(TrafficModeType.Loadshare, remAs2.getTrafficModeType().getMode());
 
 		// Lets stop ASP Factory
 		aspFactory.stop();
@@ -671,6 +761,12 @@ public class RemSgFSMTest {
 
 		@Override
 		public IpChannelType getIpChannelType() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public AssociationType getAssociationType() {
 			// TODO Auto-generated method stub
 			return null;
 		}

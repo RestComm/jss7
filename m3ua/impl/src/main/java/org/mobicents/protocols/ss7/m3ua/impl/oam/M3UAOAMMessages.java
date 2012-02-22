@@ -69,5 +69,43 @@ public interface M3UAOAMMessages {
 	public static final String CMD_NOTSUPPORTED_M3UAMANAGEMENT_IS_SERVER = "The M3UAManagement is Server side and doesnt support command %s";
 	
 	public static final String NOT_SUPPORTED_YET = "Not supported yet";
+	
+	public static final String NO_ASP_DEFINED_YET = "No ASP defined yet";
+	
+	public static final String NO_AS_DEFINED_YET = "No AS defined yet";
+	
+	public static final String NO_ROUTE_DEFINED_YET = "No Route defined yet";
+	
+	/**
+	 * Generic constants
+	 */
+	public static final String TAB = "        ";
+	
+	public static final String NEW_LINE = "\n";
+	
+	public static final String COMMA = ",";
+	
+	/**
+	 * Show command specific contsnats
+	 */
+	public static final String SHOW_ASSIGNED_TO = "Assigned to :\n";
+	
+	public static final String SHOW_ASP_NAME = "ASP name=";
+	
+	public static final String SHOW_AS_NAME = "AS name=";
+	
+	public static final String SHOW_SCTP_ASSOC = " sctpAssoc=";
+	
+	public static final String SHOW_STARTED = " started=";
+	
+	public static final String SHOW_FUNCTIONALITY = " functionality=";
+	
+	public static final String SHOW_MODE = " mode=";
+	
+	public static final String SHOW_IPSP_TYPE = " ipspType=";
+	
+	public static final String SHOW_LOCAL_FSM_STATE = " localFSMState=";
+	
+	public static final String SHOW_PEER_FSM_STATE = " peerFSMState=";
 
 }

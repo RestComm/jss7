@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.m3ua.impl.oam;
 
 import java.util.Arrays;
 
+import javolution.util.FastList;
+import javolution.util.FastMap;
+
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
@@ -49,9 +52,10 @@ public class M3UAShellExecutor implements ShellExecutor {
 	private static final Logger logger = Logger.getLogger(M3UAShellExecutor.class);
 
 	private M3UAManagement m3uaManagement;
-	protected Management sctpManagement = null;
 
 	protected ParameterFactory parameterFactory = new ParameterFactoryImpl();
+
+	private SCTPShellExecutor sctpShellExecutor = new SCTPShellExecutor();
 
 	public M3UAShellExecutor() {
 
@@ -66,11 +70,11 @@ public class M3UAShellExecutor implements ShellExecutor {
 	}
 
 	public Management getSctpManagement() {
-		return sctpManagement;
+		return this.sctpShellExecutor.getSctpManagement();
 	}
 
 	public void setSctpManagement(Management sctpManagement) {
-		this.sctpManagement = sctpManagement;
+		this.sctpShellExecutor.setSctpManagement(sctpManagement);
 	}
 
 	/**
@@ -215,157 +219,60 @@ public class M3UAShellExecutor implements ShellExecutor {
 		return this.parameterFactory.createTrafficModeType(iMode);
 	}
 
-	public String executeSctp(String[] args) {
-		try {
-			if (args.length < 3 || args.length > 10) {
-				// any command will have atleast 3 args
-				return M3UAOAMMessages.INVALID_COMMAND;
-			}
-
-			if (args[1] == null) {
-				return M3UAOAMMessages.INVALID_COMMAND;
-			}
-
-			if (args[1].equals("server")) {
-				String command = args[2];
-
-				if (command == null) {
-					return M3UAOAMMessages.INVALID_COMMAND;
-				} else if (command.equals("create")) {
-
-					if (args.length < 6) {
-						return M3UAOAMMessages.INVALID_COMMAND;
-					}
-
-					String serverName = args[3];
-					if (serverName == null) {
-						return M3UAOAMMessages.INVALID_COMMAND;
-					}
-
-					String hostAddress = args[4];
-					if (hostAddress == null) {
-						return M3UAOAMMessages.INVALID_COMMAND;
-					}
-
-					int hostPort = Integer.parseInt(args[5]);
-
-					this.sctpManagement.addServer(serverName, hostAddress, hostPort);
-
-					return String.format("Successfully added Server=%s", serverName);
-
-				} else if (command.equals("destroy")) {
-					if (args.length < 4) {
-						return M3UAOAMMessages.INVALID_COMMAND;
-					}
-
-					String serverName = args[3];
-					if (serverName == null) {
-						return M3UAOAMMessages.INVALID_COMMAND;
-					}
-
-					this.sctpManagement.removeServer(serverName);
-					return String.format("Successfully removed Server=%s", serverName);
-
-				} else if (command.equals("start")) {
-					if (args.length < 4) {
-						return M3UAOAMMessages.INVALID_COMMAND;
-					}
-
-					String serverName = args[3];
-					if (serverName == null) {
-						return M3UAOAMMessages.INVALID_COMMAND;
-					}
-
-					this.sctpManagement.startServer(serverName);
-					return String.format("Successfully started Server=%s", serverName);
-				} else if (command.equals("stop")) {
-					if (args.length < 4) {
-						return M3UAOAMMessages.INVALID_COMMAND;
-					}
-
-					String serverName = args[3];
-					if (serverName == null) {
-						return M3UAOAMMessages.INVALID_COMMAND;
-					}
-
-					this.sctpManagement.stopServer(serverName);
-					return String.format("Successfully stopped Server=%s", serverName);
-				} else if (command.equals("show")) {
-					return M3UAOAMMessages.NOT_SUPPORTED_YET;
-				}
-
-				return M3UAOAMMessages.INVALID_COMMAND;
-
-			} else if (args[1].equals("association")) {
-				String command = args[2];
-
-				if (command == null) {
-					return M3UAOAMMessages.INVALID_COMMAND;
-				} else if (command.equals("create")) {
-					if (args.length < 8 || args.length > 9) {
-						return M3UAOAMMessages.INVALID_COMMAND;
-					}
-
-					String assocName = args[3];
-					if (assocName == null) {
-						return M3UAOAMMessages.INVALID_COMMAND;
-					}
-
-					String type = args[4];
-					if (type == null) {
-						return M3UAOAMMessages.INVALID_COMMAND;
-					} else if (type.equals("CLIENT")) {
-						if (args.length < 9) {
-							return M3UAOAMMessages.INVALID_COMMAND;
-						}
-
-						String peerIp = args[5];
-						int peerPort = Integer.parseInt(args[6]);
-
-						String hostIp = args[7];
-						int hostPort = Integer.parseInt(args[8]);
-
-						this.sctpManagement.addAssociation(hostIp, hostPort, peerIp, peerPort, assocName);
-
-						return String.format("Successfully added client Associtaion=%s", assocName);
-					} else if (type.equals("SERVER")) {
-						String serverName = args[5];
-
-						String peerIp = args[6];
-						int peerPort = Integer.parseInt(args[7]);
-
-						this.sctpManagement.addServerAssociation(peerIp, peerPort, serverName, assocName);
-						return String.format("Successfully added server Associtaion=%s", assocName);
-					}
-
-					return M3UAOAMMessages.INVALID_COMMAND;
-
-				} else if (command.equals("destroy")) {
-
-					if (args.length < 4) {
-						return M3UAOAMMessages.INVALID_COMMAND;
-					}
-
-					String assocName = args[3];
-					if (assocName == null) {
-						return M3UAOAMMessages.INVALID_COMMAND;
-					}
-
-					this.sctpManagement.removeAssociation(assocName);
-					return String.format("Successfully removed association=%s", assocName);
-
-				} else if (command.equals("show")) {
-					return M3UAOAMMessages.NOT_SUPPORTED_YET;
-				}
-
-				return M3UAOAMMessages.INVALID_COMMAND;
-			}
-
-			return M3UAOAMMessages.INVALID_COMMAND;
-		} catch (Exception e) {
-			logger.error(String.format("Error while executing comand %s", Arrays.toString(args)), e);
-			return e.getMessage();
+	private String showAspFactories() {
+		FastList<AspFactory> aspfactories = this.m3uaManagement.getAspfactories();
+		if (aspfactories.size() == 0) {
+			return M3UAOAMMessages.NO_ASP_DEFINED_YET;
 		}
+		StringBuffer sb = new StringBuffer();
+		for (FastList.Node<AspFactory> n = aspfactories.head(), end = aspfactories.tail(); (n = n.getNext()) != end;) {
+			AspFactory aspFactory = n.getValue();
+			sb.append(M3UAOAMMessages.NEW_LINE);
+			aspFactory.show(sb);
+			sb.append(M3UAOAMMessages.NEW_LINE);
+		}
+		return sb.toString();
+	}
+
+	private String showRoutes() {
+		FastMap<String, As[]> route = this.m3uaManagement.getRoute();
+
+		if (route.size() == 0) {
+			return M3UAOAMMessages.NO_ROUTE_DEFINED_YET;
+		}
+		StringBuffer sb = new StringBuffer();
+		for (FastMap.Entry<String, As[]> e = route.head(), end = route.tail(); (e = e.getNext()) != end;) {
+			String key = e.getKey();
+			As[] asList = e.getValue();
+
+			sb.append(M3UAOAMMessages.NEW_LINE);
+			sb.append(key);
+			sb.append(M3UAOAMMessages.TAB);
+			for (int i = 0; i < asList.length; i++) {
+				As as = asList[i];
+				if (as != null) {
+					sb.append(as.getName());
+					sb.append(M3UAOAMMessages.COMMA);
+				}
+			}
+			sb.append(M3UAOAMMessages.NEW_LINE);
+		}
+		return sb.toString();
+	}
+
+	private String showAs() {
+		FastList<As> appServers = this.m3uaManagement.getAppServers();
+		if (appServers.size() == 0) {
+			return M3UAOAMMessages.NO_AS_DEFINED_YET;
+		}
+		StringBuffer sb = new StringBuffer();
+		for (FastList.Node<As> n = appServers.head(), end = appServers.tail(); (n = n.getNext()) != end;) {
+			As as = n.getValue();
+			sb.append(M3UAOAMMessages.NEW_LINE);
+			as.show(sb);
+			sb.append(M3UAOAMMessages.NEW_LINE);
+		}
+		return sb.toString();
 	}
 
 	private String executeM3UA(String[] args) {
@@ -395,7 +302,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 				} else if (rasCmd.equals("remove")) {
 					return this.removeAspFromAs(args);
 				} else if (rasCmd.equals("show")) {
-					return M3UAOAMMessages.NOT_SUPPORTED_YET;
+					return this.showAs();
 				}
 				return M3UAOAMMessages.INVALID_COMMAND;
 			} else if (args[1].equals("asp")) {
@@ -434,7 +341,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 					return String.format("Successfully destroyed ASP name=%s", aspName);
 
 				} else if (raspCmd.equals("show")) {
-					return M3UAOAMMessages.NOT_SUPPORTED_YET;
+					return this.showAspFactories();
 
 				} else if (raspCmd.equals("start")) {
 					if (args.length < 4) {
@@ -519,7 +426,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 				}
 
 				if (routeCmd.equals("show")) {
-					return M3UAOAMMessages.NOT_SUPPORTED_YET;
+					return this.showRoutes();
 
 				}
 			}
@@ -534,7 +441,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 		if (args[0].equals("m3ua")) {
 			return this.executeM3UA(args);
 		} else if (args[0].equals("sctp")) {
-			return this.executeSctp(args);
+			return this.sctpShellExecutor.execute(args);
 		}
 		return M3UAOAMMessages.INVALID_COMMAND;
 	}

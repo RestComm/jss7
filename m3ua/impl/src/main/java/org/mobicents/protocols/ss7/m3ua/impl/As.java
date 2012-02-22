@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javolution.util.FastList;
@@ -36,6 +37,7 @@ import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAOAMMessages;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.NetworkAppearanceImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.RoutingContextImpl;
@@ -415,6 +417,10 @@ public class As implements XMLSerializable {
 		this.trMode = this.defaultTrafModType;
 	}
 
+	public TrafficModeType getDefaultTrafficModeType() {
+		return this.defaultTrafModType;
+	}
+
 	/**
 	 * If the {@link TrafficModeType} is loadshare, set the minimum number of
 	 * {@link Asp} that should be
@@ -618,4 +624,46 @@ public class As implements XMLSerializable {
 
 		}
 	};
+
+	public void show(StringBuffer sb) {
+		sb.append(M3UAOAMMessages.SHOW_AS_NAME).append(this.name).append(M3UAOAMMessages.SHOW_FUNCTIONALITY)
+				.append(this.functionality).append(M3UAOAMMessages.SHOW_MODE).append(this.exchangeType);
+
+		if (this.functionality == Functionality.IPSP) {
+			sb.append(M3UAOAMMessages.SHOW_IPSP_TYPE).append(this.ipspType);
+		}
+
+		if (this.rc != null) {
+			sb.append(" rc=").append(Arrays.toString(this.rc.getRoutingContexts()));
+		}
+
+		if (this.trMode != null) {
+			sb.append(" trMode=").append(this.trMode.getMode());
+		}
+
+		sb.append(" defaultTrMode=").append(this.defaultTrafModType.getMode());
+
+		if (this.networkAppearance != null) {
+			sb.append(" na=").append(this.networkAppearance.getNetApp());
+		}
+
+		if (this.getLocalFSM() != null) {
+			sb.append(M3UAOAMMessages.SHOW_LOCAL_FSM_STATE).append(this.getLocalFSM().getState());
+		}
+
+		if (this.getPeerFSM() != null) {
+			sb.append(M3UAOAMMessages.SHOW_PEER_FSM_STATE).append(this.getPeerFSM().getState());
+		}
+
+		sb.append(M3UAOAMMessages.NEW_LINE);
+		sb.append(M3UAOAMMessages.SHOW_ASSIGNED_TO);
+
+		for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
+			Asp aspTemp = n.getValue();
+			AspFactory aspFactory = aspTemp.getAspFactory();
+			sb.append(M3UAOAMMessages.TAB).append(M3UAOAMMessages.SHOW_ASP_NAME).append(aspFactory.getName())
+					.append(M3UAOAMMessages.SHOW_STARTED).append(aspFactory.getStatus());
+			sb.append(M3UAOAMMessages.NEW_LINE);
+		}
+	}
 }
