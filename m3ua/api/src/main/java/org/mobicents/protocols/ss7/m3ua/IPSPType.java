@@ -13,9 +13,9 @@ public enum IPSPType {
 	}
 
 	public static IPSPType getIPSPType(String type) {
-		if (TYPE_CLIENT.equals(type)) {
+		if (TYPE_CLIENT.equalsIgnoreCase(type)) {
 			return CLIENT;
-		} else if (TYPE_SERVER.equals(type)) {
+		} else if (TYPE_SERVER.equalsIgnoreCase(type)) {
 			return SERVER;
 		}
 
