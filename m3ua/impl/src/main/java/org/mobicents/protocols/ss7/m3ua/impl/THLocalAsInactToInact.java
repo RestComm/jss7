@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
@@ -34,7 +35,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class THLocalAsInactToInact implements TransitionHandler {
 
@@ -50,16 +51,18 @@ public class THLocalAsInactToInact implements TransitionHandler {
 
 	public boolean process(State state) {
 		try {
+			if (as.getFunctionality() != Functionality.IPSP) {
+				//Send Notify only for ASP or SGW
+				Asp remAsp = (Asp) this.fsm.getAttribute(As.ATTRIBUTE_ASP);
 
-			Asp remAsp = (Asp) this.fsm.getAttribute(As.ATTRIBUTE_ASP);
+				if (remAsp == null) {
+					logger.error(String.format("No ASP found. %s", this.fsm.toString()));
+					return false;
+				}
 
-			if (remAsp == null) {
-				logger.error(String.format("No ASP found. %s", this.fsm.toString()));
-				return false;
+				Notify msg = createNotify(remAsp);
+				remAsp.getAspFactory().write(msg);
 			}
-
-			Notify msg = createNotify(remAsp);
-			remAsp.getAspFactory().write(msg);
 			return true;
 		} catch (Exception e) {
 			logger.error(String.format("Error while translating Rem AS to INACTIVE message. %s", this.fsm.toString()),

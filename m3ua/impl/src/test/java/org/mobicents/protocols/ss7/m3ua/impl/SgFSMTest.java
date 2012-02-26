@@ -64,6 +64,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 
 /**
+ * This test is for FSM for SGW side ASP and AS
  * 
  * @author amit bhayani
  * 

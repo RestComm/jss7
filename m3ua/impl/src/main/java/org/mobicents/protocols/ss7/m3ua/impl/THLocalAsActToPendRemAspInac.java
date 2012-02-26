@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
@@ -130,17 +131,21 @@ public class THLocalAsActToPendRemAspInac implements TransitionHandler {
 					// care of traffic, don't change state but send the "Ins.
 					// ASPs" to INACTIVE ASP's
 
-					for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
-							.getNext()) != end;) {
-						remAsp = n.getValue();
+					if (as.getFunctionality() != Functionality.IPSP) {
+						// In any case send Notify only for ASP or SGW
 
-						FSM aspPeerFSM = remAsp.getPeerFSM();
-						AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
+						for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
+								.getNext()) != end;) {
+							remAsp = n.getValue();
 
-						if (aspState == AspState.INACTIVE) {
-							Notify notify = this.createNotify(remAsp, Status.STATUS_Other,
-									Status.INFO_Insufficient_ASP_Resources_Active);
-							remAsp.getAspFactory().write(notify);
+							FSM aspPeerFSM = remAsp.getPeerFSM();
+							AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
+
+							if (aspState == AspState.INACTIVE) {
+								Notify notify = this.createNotify(remAsp, Status.STATUS_Other,
+										Status.INFO_Insufficient_ASP_Resources_Active);
+								remAsp.getAspFactory().write(notify);
+							}
 						}
 					}
 
@@ -151,16 +156,21 @@ public class THLocalAsActToPendRemAspInac implements TransitionHandler {
 			// We have reached here means AS is transitioning to be PENDING.
 			// Send new AS STATUS to all INACTIVE APS's
 
-			for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
-					.getNext()) != end;) {
-				remAsp = n.getValue();
+			if (as.getFunctionality() != Functionality.IPSP) {
+				// Send Notify only for ASP or SGW
 
-				FSM aspPeerFSM = remAsp.getPeerFSM();
-				AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
+				for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
+						.getNext()) != end;) {
+					remAsp = n.getValue();
 
-				if (aspState == AspState.INACTIVE) {
-					Notify notify = this.createNotify(remAsp, Status.STATUS_AS_State_Change, Status.INFO_AS_PENDING);
-					remAsp.getAspFactory().write(notify);
+					FSM aspPeerFSM = remAsp.getPeerFSM();
+					AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
+
+					if (aspState == AspState.INACTIVE) {
+						Notify notify = this
+								.createNotify(remAsp, Status.STATUS_AS_State_Change, Status.INFO_AS_PENDING);
+						remAsp.getAspFactory().write(notify);
+					}
 				}
 			}
 		} catch (Exception e) {

@@ -120,8 +120,8 @@ public class AspStateMaintenanceHandler extends MessageHandler {
 					.getNext()) != end;) {
 				Asp asp = n.getValue();
 
-				FSM fsm = asp.getLocalFSM();
-				if (fsm == null) {
+				FSM aspLocalFSM = asp.getLocalFSM();
+				if (aspLocalFSM == null) {
 					logger.error(String.format("Received ASPUP_ACK=%s for ASP=%s. But local FSM is null.", aspUpAck,
 							this.aspFactory.getName()));
 					return;
@@ -132,14 +132,35 @@ public class AspStateMaintenanceHandler extends MessageHandler {
 				if (!transToActive) {
 					// Transition to INACTIVE
 					try {
-						fsm.signal(TransitionState.ASP_INACTIVE);
+						aspLocalFSM.signal(TransitionState.ASP_INACTIVE);
 					} catch (UnknownTransitionException e) {
 						logger.error(e.getMessage(), e);
 					}
 				} else {
 					// Transition to ACTIVE_SENT
 					try {
-						fsm.signal(TransitionState.ASP_ACTIVE_SENT);
+						aspLocalFSM.signal(TransitionState.ASP_ACTIVE_SENT);
+
+						if (aspFactory.getFunctionality() == Functionality.IPSP) {
+							// If its IPSP, we know NTFY will not be received,
+							// so transition AS FSM here
+							As as = asp.getAs();
+							FSM asPeerFSM = as.getPeerFSM();
+
+							if (asPeerFSM == null) {
+								logger.error(String.format(
+										"Received ASPUP_ACK=%s for ASP=%s. But Peer FSM of AS=%s is null.", aspUpAck,
+										this.aspFactory.getName(), as));
+								return;
+							}
+
+							AsState asPeerFSMState = AsState.getState(asPeerFSM.getState().getName());
+							if (AsState.DOWN == asPeerFSMState) {
+								// Transition to INACTIVE only if its DOWN
+								asPeerFSM.setAttribute(As.ATTRIBUTE_ASP, asp);
+								asPeerFSM.signal(TransitionState.AS_STATE_CHANGE_INACTIVE);
+							}
+						}
 					} catch (UnknownTransitionException e) {
 						logger.error(e.getMessage(), e);
 					}

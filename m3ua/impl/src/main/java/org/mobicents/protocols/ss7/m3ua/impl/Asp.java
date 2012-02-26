@@ -254,12 +254,9 @@ public class Asp implements XMLSerializable {
 		this.peerFSM.createTransition(TransitionState.COMM_UP, AspState.DOWN.toString(), AspState.DOWN.toString());
 		this.peerFSM.createTransition(TransitionState.COMM_DOWN, AspState.DOWN.toString(), AspState.DOWN.toString());
 		this.peerFSM.createTransition(TransitionState.ASP_UP, AspState.DOWN.toString(), AspState.INACTIVE.toString());
-		// .setHandler(new RemAspTransDwnToInact(this, fsm));
 
-		// If the SGP receives any other M3UA messages before an ASP Up
-		// message
-		// is received (other than ASP Down; see Section 4.3.4.2), the SGP
-		// MAY
+		// If the SGP receives any other M3UA messages before an ASP Up message
+		// is received (other than ASP Down; see Section 4.3.4.2), the SGP MAY
 		// discard them.
 		this.peerFSM.createTransition(TransitionState.DAUD, AspState.DOWN.toString(), AspState.DOWN.toString());
 		this.peerFSM.createTransition(TransitionState.ASP_ACTIVE, AspState.DOWN.toString(), AspState.DOWN.toString());
@@ -316,14 +313,6 @@ public class Asp implements XMLSerializable {
 	public String getName() {
 		return this.name;
 	}
-
-	// public AspState getState() {
-	// return AspState.getState(this.localFSM.getState().getName());
-	// }
-
-	// public FSM getFSM() {
-	// return this.localFSM;
-	// }
 
 	public FSM getLocalFSM() {
 		return localFSM;

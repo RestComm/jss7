@@ -1,5 +1,7 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
+import javolution.util.FastList;
+
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
@@ -187,22 +189,37 @@ public class AspTrafficMaintenanceHandler extends MessageHandler {
 
 	private void handleAspActiveAck(Asp asp, ASPActiveAck aspActiveAck, TrafficModeType trMode) {
 		As as = asp.getAs();
-		
-		if(trMode == null){
+
+		if (trMode == null) {
 			trMode = asp.getAs().getDefaultTrafficModeType();
 		}
-		
+
 		as.setTrafficModeType(trMode);
 
-		FSM fsm = asp.getLocalFSM();
-		if (fsm == null) {
+		FSM aspLocalFSM = asp.getLocalFSM();
+		if (aspLocalFSM == null) {
 			logger.error(String.format("Received ASPACTIVE_ACK=%s for ASP=%s. But local FSM is null.", aspActiveAck,
 					this.aspFactory.getName()));
 			return;
 		}
 
 		try {
-			fsm.signal(TransitionState.ASP_ACTIVE_ACK);
+			aspLocalFSM.signal(TransitionState.ASP_ACTIVE_ACK);
+
+			if (aspFactory.getFunctionality() == Functionality.IPSP) {
+				// If its IPSP, we know NTFY will not be received,
+				// so transition AS FSM here
+				FSM asPeerFSM = as.getPeerFSM();
+
+				if (asPeerFSM == null) {
+					logger.error(String.format("Received ASPACTIVE_ACK=%s for ASP=%s. But Peer FSM of AS=%s is null.",
+							aspActiveAck, this.aspFactory.getName(), as));
+					return;
+				}
+
+				asPeerFSM.setAttribute(As.ATTRIBUTE_ASP, asp);
+				asPeerFSM.signal(TransitionState.AS_STATE_CHANGE_ACTIVE);
+			}
 		} catch (UnknownTransitionException e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -223,7 +240,7 @@ public class AspTrafficMaintenanceHandler extends MessageHandler {
 						&& aspFactory.getExchangeType() == ExchangeType.SE && aspFactory.getIpspType() == IPSPType.CLIENT)) {
 
 			TrafficModeType trMode = aspActiveAck.getTrafficModeType();
-			
+
 			if (rc == null) {
 				Asp asp = this.getAspForNullRc();
 
@@ -317,23 +334,39 @@ public class AspTrafficMaintenanceHandler extends MessageHandler {
 				|| (aspFactory.getFunctionality() == Functionality.IPSP
 						&& aspFactory.getExchangeType() == ExchangeType.SE && aspFactory.getIpspType() == IPSPType.CLIENT)) {
 
-			long[] rcs = aspInactiveAck.getRoutingContext().getRoutingContexts();
-			for (int count = 0; count < rcs.length; count++) {
-				Asp asp = this.aspFactory.getAsp(rcs[count]);
+			if (rc == null) {
+				Asp asp = this.getAspForNullRc();
 
-				FSM fsm = asp.getLocalFSM();
-				if (fsm == null) {
-					logger.error(String.format("Received ASPINACTIVE_ACK=%s for ASP=%s. But local FSM is null.",
-							aspInactiveAck, this.aspFactory.getName()));
+				if (asp == null) {
+					// Error condition
+					logger.error(String
+							.format("Rx : ASPINACTIVE_ACK=%s with null RC for Aspfactory=%s. But no ASP configured for null RC. Sent back Error",
+									aspInactiveAck, this.aspFactory.getName()));
 					return;
 				}
+				handleAspInactiveAck(asp, aspInactiveAck);
+			} else {
 
-				try {
-					fsm.signal(TransitionState.ASP_INACTIVE_ACK);
-				} catch (UnknownTransitionException e) {
-					logger.error(e.getMessage(), e);
-				}
-			}// for
+				long[] rcs = aspInactiveAck.getRoutingContext().getRoutingContexts();
+				for (int count = 0; count < rcs.length; count++) {
+					Asp asp = this.aspFactory.getAsp(rcs[count]);
+
+					if (asp == null) {
+						// this is error. Send back error
+						RoutingContext rcObj = this.aspFactory.parameterFactory
+								.createRoutingContext(new long[] { rcs[count] });
+						ErrorCode errorCodeObj = this.aspFactory.parameterFactory
+								.createErrorCode(ErrorCode.Invalid_Routing_Context);
+						sendError(rcObj, errorCodeObj);
+						logger.error(String
+								.format("Rx : ASPINACTIVE_ACK=%s with RC=%d for Aspfactory=%s. But no ASP configured for this RC. Sending back Error",
+										aspInactiveAck, rcs[count], this.aspFactory.getName()));
+						continue;
+					}
+
+					handleAspInactiveAck(asp, aspInactiveAck);
+				}// for
+			}
 
 		} else {
 			// TODO : Should we silently drop ASPINACTIVE_ACK?
@@ -343,6 +376,55 @@ public class AspTrafficMaintenanceHandler extends MessageHandler {
 			sendError(rc, errorCodeObj);
 		}
 
+	}
+
+	private void handleAspInactiveAck(Asp asp, ASPInactiveAck aspInactiveAck) {
+		FSM aspLocalFSM = asp.getLocalFSM();
+		if (aspLocalFSM == null) {
+			logger.error(String.format("Received ASPINACTIVE_ACK=%s for ASP=%s. But local FSM is null.",
+					aspInactiveAck, this.aspFactory.getName()));
+			return;
+		}
+
+		As as = asp.getAs();
+
+		try {
+			aspLocalFSM.signal(TransitionState.ASP_INACTIVE_ACK);
+
+			if (this.aspFactory.getFunctionality() == Functionality.IPSP) {
+				// If its IPSP, we know NTFY will not be received,
+				// so transition AS FSM here
+				FSM asPeerFSM = as.getPeerFSM();
+
+				if (asPeerFSM == null) {
+					logger.error(String.format(
+							"Received ASPINACTIVE_ACK=%s for ASP=%s. But Peer FSM of AS=%s is null.", aspInactiveAck,
+							this.aspFactory.getName(), as));
+					return;
+				}
+
+				if (as.getTrafficModeType().getMode() == TrafficModeType.Loadshare) {
+					// If it is loadshare and if there is atleast one other ASP
+					// who ACTIVE, dont transition AS to INACTIVE
+					for (FastList.Node<Asp> n = as.getAspList().head(), end = as.getAspList().tail(); (n = n.getNext()) != end;) {
+						Asp remAspImpl = n.getValue();
+
+						FSM aspPeerFSM = remAspImpl.getPeerFSM();
+						AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
+
+						if (aspState == AspState.ACTIVE) {
+							return;
+						}
+					}
+				}
+				
+				//TODO : Check if other ASP are INACTIVE, if yes ACTIVATE them
+				asPeerFSM.setAttribute(As.ATTRIBUTE_ASP, asp);
+				asPeerFSM.signal(TransitionState.AS_STATE_CHANGE_PENDING);
+			}
+		} catch (UnknownTransitionException e) {
+			logger.error(e.getMessage(), e);
+		}
 	}
 
 }

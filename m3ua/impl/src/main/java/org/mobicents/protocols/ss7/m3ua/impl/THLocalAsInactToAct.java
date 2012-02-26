@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
@@ -37,7 +38,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class THLocalAsInactToAct implements TransitionHandler {
 
@@ -87,17 +88,21 @@ public class THLocalAsInactToAct implements TransitionHandler {
 
 			// Iterate through ASP's and send AS_ACTIVE to ASP's who
 			// are INACTIVE or ACTIVE
-			for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
-					.getNext()) != end;) {
-				Asp remAspImpl = n.getValue();
+			if (as.getFunctionality() != Functionality.IPSP) {
+				// Send Notify only for ASP or SGW
 
-				FSM aspPeerFSM = remAspImpl.getPeerFSM();
-				AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
+				for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
+						.getNext()) != end;) {
+					Asp remAspImpl = n.getValue();
 
-				if (aspState == AspState.INACTIVE || aspState == AspState.ACTIVE) {
-					Notify msg = createNotify(remAspImpl);
-					remAspImpl.getAspFactory().write(msg);
-				}
+					FSM aspPeerFSM = remAspImpl.getPeerFSM();
+					AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
+
+					if (aspState == AspState.INACTIVE || aspState == AspState.ACTIVE) {
+						Notify msg = createNotify(remAspImpl);
+						remAspImpl.getAspFactory().write(msg);
+					}
+				}//for
 			}
 
 			return true;
