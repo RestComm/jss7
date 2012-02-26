@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
@@ -70,20 +71,25 @@ public class THLocalAsPendToAct implements TransitionHandler {
 		}
 
 		try {
-			// Iterate through ASP's and send AS_ACTIVE to ASP's who
-			// are INACTIVE or ACTIVE
-			for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
-					.getNext()) != end;) {
-				Asp remAspImpl = n.getValue();
 
-				FSM aspPeerFSM = remAspImpl.getPeerFSM();
-				AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
+			if (as.getFunctionality() != Functionality.IPSP) {
+				// Send Notify only for ASP or SGW
 
-				if (aspState == AspState.INACTIVE || aspState == AspState.ACTIVE) {
-					Notify msg = createNotify(remAspImpl);
-					remAspImpl.getAspFactory().write(msg);
-				}
-			}// end of for
+				// Iterate through ASP's and send AS_ACTIVE to ASP's who
+				// are INACTIVE or ACTIVE
+				for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
+						.getNext()) != end;) {
+					Asp remAspImpl = n.getValue();
+
+					FSM aspPeerFSM = remAspImpl.getPeerFSM();
+					AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
+
+					if (aspState == AspState.INACTIVE || aspState == AspState.ACTIVE) {
+						Notify msg = createNotify(remAspImpl);
+						remAspImpl.getAspFactory().write(msg);
+					}
+				}// end of for
+			}
 
 			// Send the PayloadData (if any) from pending queue to other side
 			Asp causeAsp = (Asp) this.fsm.getAttribute(As.ATTRIBUTE_ASP);
