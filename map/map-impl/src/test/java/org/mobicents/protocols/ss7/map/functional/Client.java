@@ -245,6 +245,32 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 		clientDialog.send();
 	}
 
+	public void actionBB() throws MAPException {
+		this.mapProvider.getMAPServiceSupplementary().acivate();
+
+		MAPApplicationContext appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
+				MAPApplicationContextVersion.version2);
+
+		AddressString orgiReference = this.MAPParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "1115550000");
+		AddressString destReference = this.MAPParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "888777");
+		IMSI eriImsi = this.MAPParameterFactory.createIMSI("12345");
+		AddressString eriVlrNo = this.MAPParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "556677");
+
+		ISDNAddressString msisdn = this.MAPParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
+
+		clientDialog = this.mapProvider.getMAPServiceSupplementary()
+				.createNewDialog(appCnt, this.thisAddress, orgiReference, this.remoteAddress, destReference);
+		clientDialog.addEricssonData(eriImsi, eriVlrNo);
+
+		USSDString ussdString = this.MAPParameterFactory.createUSSDString(MAPFunctionalTest.USSD_STRING);
+
+		savedInvokeId = clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString, null, msisdn);
+
+		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
+
+		clientDialog.send();
+	}
+
 	public void actionC() throws Exception {
 		
 		this.mapProvider.getMAPServiceSms().acivate();
@@ -496,6 +522,8 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 			return _S_receivedUnstructuredSSIndication && _S_sentEnd;
 		case Action_Dialog_F:
 			return _S_receivedAbortInfo;
+		case Action_Dialog_Eri:
+			return _S_receivedEndInfo;
 
 		case Action_Sms_AlertServiceCentre:
 		case Action_Sms_ForwardSM:
@@ -564,6 +592,10 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
 		case Action_Dialog_F:
 			status += "_S_receivedAbortInfo[" + _S_receivedAbortInfo + "]" + "\n";
+			break;
+
+		case Action_Dialog_Eri:
+			status += "_S_receivedEndInfo[" + _S_receivedEndInfo + "]" + "\n";
 			break;
 
 		case Action_Sms_AlertServiceCentre:
@@ -743,6 +775,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 			break;
 
 		case Action_Dialog_D:
+		case Action_Dialog_Eri:
 			if (MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer))
 				_S_receivedMAPOpenInfoExtentionContainer = true;
 
@@ -833,6 +866,8 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	@Override
 	public void onDialogClose(MAPDialog mapDialog) {
+		int fff = 0;
+		fff++;
 	}
 
 	@Override
@@ -1098,6 +1133,12 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	public void onForwardShortMessageRespIndication(ForwardShortMessageResponseIndication forwSmRespInd) {
 
 		this._S_recievedSmsRespIndication = true;
+	}
+
+	@Override
+	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

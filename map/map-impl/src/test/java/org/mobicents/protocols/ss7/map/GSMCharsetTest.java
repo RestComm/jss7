@@ -41,6 +41,10 @@ public class GSMCharsetTest  {
 	@Test(groups = { "functional.encode","gsm"})
 	public void testEncode() throws Exception {
 
+		this.doTestEncode("123456\r", new byte[] { 49, -39, -116, 86, -77, 53, 26 }, true);
+		this.doTestEncode("1\r", new byte[] { -79, 6 }, true);
+		this.doTestEncode("1", new byte[] { 49 }, true);
+
 		// case: adding '\r' instead of '@' - USSD style
 		this.doTestEncode("1234567", new byte[] { 49, -39, -116, 86, -77, -35, 26 }, true); 
 		// case: adding double '\r' when '\r' will be removed at the decoder side - USSD style
@@ -68,6 +72,10 @@ public class GSMCharsetTest  {
 	@Test(groups = { "functional.decode","gsm"})
 	public void testDecode() throws Exception {
 
+		this.doTestDecode("123456\r", new byte[] { 49, -39, -116, 86, -77, 53, 26 }, true, 0, 0);
+		this.doTestDecode("1\r", new byte[] { -79, 6 }, true, 0, 0);
+		this.doTestDecode("1", new byte[] { 49 }, true, 0, 0);
+		
 		this.doTestDecode("1234567", new byte[] { 49, -39, -116, 86, -77, -35, 26 }, true, 0, 0);
 		this.doTestDecode("1234567\r\r", new byte[] { 49, -39, -116, 86, -77, -35, 26, 13 }, true, 0, 0);
 		this.doTestDecode("1234567", new byte[] { 49, -39, -116, 86, -77, -35, 0 }, false, 7, 0);

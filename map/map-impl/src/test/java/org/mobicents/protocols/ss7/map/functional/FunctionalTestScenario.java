@@ -61,6 +61,11 @@ public enum FunctionalTestScenario {
 	 * TC-ABORT(MAP-ProviderAbortInfo) 
 	 */
 	Action_Dialog_F(5),
+	/**
+	 * TC-BEGIN + Ericsson-style MAP-OpenInfo + addProcessUnstructuredSSRequest
+	 * TC-END
+	 */
+	Action_Dialog_Eri(6),
 
 	/**
 	 * TC-BEGIN + addProcessUnstructuredSSRequest

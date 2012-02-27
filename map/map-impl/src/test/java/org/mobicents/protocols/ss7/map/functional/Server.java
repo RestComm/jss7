@@ -120,7 +120,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	private MAPParameterFactory MAPParameterFactory;
 
-	private boolean _S_recievedMAPOpenInfo, _S_recievedMAPCloseInfo;
+	private boolean _S_recievedMAPOpenInfo, _S_recievedMAPCloseInfo, _S_eriStyle;
 	private boolean _S_recievedMAPAbort;
 	private boolean _S_recievedMAPOpenInfoExtentionContainer;
 	private boolean _S_recievedProcessUnstructuredSSIndication;
@@ -173,6 +173,9 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 		case Action_Dialog_F:
 			return true;
+
+		case Action_Dialog_Eri:
+			return _S_recievedProcessUnstructuredSSIndication && _S_recievedMAPOpenInfo && _S_eriStyle;
 
 		case Action_Sms_AlertServiceCentre:
 		case Action_Sms_ForwardSM:
@@ -250,6 +253,12 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		case Action_Dialog_F:
 			break;
 
+		case Action_Dialog_Eri:
+			status += "_S_recievedMAPOpenInfo[" + _S_recievedMAPOpenInfo + "]" + "\n";
+			status += "_S_recievedProcessUnstructuredSSIndication[" + _S_recievedProcessUnstructuredSSIndication + "]" + "\n";
+			status += "_S_eriStyle[" + _S_eriStyle + "]" + "\n";
+			break;
+
 		case Action_Sms_AlertServiceCentre:
 		case Action_Sms_ForwardSM:
 		case Action_Sms_MoForwardSM:
@@ -308,6 +317,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	public void reset() {
 		this._S_recievedMAPOpenInfo = false;
 		this._S_recievedMAPCloseInfo = false;
+		this._S_eriStyle = false;
 		this._S_recievedMAPOpenInfoExtentionContainer = false;
 		this._S_recievedProcessUnstructuredSSIndication = false;
 		this._S_recievedSmsRequestIndication = false;
@@ -352,6 +362,15 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 			logger.debug("Sending MAPAcceptInfo ");
 			try {
 				mapDialog.send();
+			} catch (MAPException e) {
+				logger.error(e);
+				throw new RuntimeException(e);
+			}
+			break;
+
+		case Action_Dialog_Eri:
+			try {
+				mapDialog.close(false);
 			} catch (MAPException e) {
 				logger.error(e);
 				throw new RuntimeException(e);
@@ -490,6 +509,23 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
+	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
+
+		switch (this.step) {
+
+		case Action_Dialog_Eri:
+			this._S_recievedMAPOpenInfo = true;
+			
+			if (eriImsi != null && eriImsi.getData().equals("12345") && eriVlrNo != null && eriVlrNo.getAddress().equals("556677")
+					&& destReference != null && destReference.getAddress().endsWith("888777") && origReference != null
+					&& origReference.getAddress().endsWith("1115550000")) {
+				_S_eriStyle = true;
+			}
+			break;
+		}
+	}
+
+	@Override
 	public void onDialogAccept(MAPDialog mapDialog,
 			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
@@ -589,7 +625,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		switch( this.step ) {
 		case Action_Dialog_A:
 		case Action_Dialog_D:
-		case Action_Dialog_E:
+		case Action_Dialog_E: {
 			String ussdString = procUnstrInd.getUSSDString().getString();
 			AddressString msisdn = procUnstrInd.getMSISDNAddressString();
 			logger.debug("Received ProcessUnstructuredSSIndication " + ussdString + " from MSISDN " + msisdn.getAddress());
@@ -614,6 +650,20 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 				logger.debug("InvokeId =  " + invokeId);
 			}
+		}
+			break;
+
+		case Action_Dialog_Eri: {
+			String ussdString = procUnstrInd.getUSSDString().getString();
+			AddressString msisdn = procUnstrInd.getMSISDNAddressString();
+			logger.debug("Received ProcessUnstructuredSSIndication " + ussdString + " from MSISDN " + msisdn.getAddress());
+
+			if (!ussdString.equals(MAPFunctionalTest.USSD_STRING)) {
+				unexpected += " Received USSDString " + ussdString + ". But was expected " + MAPFunctionalTest.USSD_STRING;
+			} else {
+				this._S_recievedProcessUnstructuredSSIndication = true;
+			}
+		}
 			break;
 			
 		case Action_Component_A:
