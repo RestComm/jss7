@@ -47,10 +47,13 @@ public abstract class TbcdString implements MAPAsnPrimitive {
 			int b = ansIS.read();
 
 			int digit1 = (b & DIGIT_1_MASK);
-			s.append(decodeNumber(digit1));
+			if (digit1 == 15) {
+				// this is mask
+			} else {
+				s.append(decodeNumber(digit1));
+			}
 
 			int digit2 = ((b & DIGIT_2_MASK) >> 4);
-
 			if (digit2 == 15) {
 				// this is mask
 			} else {

@@ -32,8 +32,10 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
@@ -49,6 +51,8 @@ public class MAPOpenInfoImpl implements MAPAsnPrimitive {
 
 	protected static final int DESTINATION_REF_TAG = 0x00;
 	protected static final int ORIGINATION_REF_TAG = 0x01;
+	protected static final int ERI_MSISDN_TAG = 0x02;
+	protected static final int ERI_NLR_NO_TAG = 0x03;
 
 	protected static final int OPEN_INFO_TAG_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
 	protected static final boolean OPEN_INFO_TAG_PC_PRIMITIVE = true;
@@ -57,6 +61,10 @@ public class MAPOpenInfoImpl implements MAPAsnPrimitive {
 	private AddressString destReference;
 	private AddressString origReference;
 	private MAPExtensionContainer extensionContainer;
+
+	private boolean eriStyle;
+	private IMSI eriImsi;
+	private AddressString eriVlrNo;
 
 	public AddressString getDestReference() {
 		return this.destReference;
@@ -70,20 +78,43 @@ public class MAPOpenInfoImpl implements MAPAsnPrimitive {
 		return extensionContainer;
 	}
 
+	public boolean getEriStyle() {
+		return this.eriStyle;
+	}
+
+	public IMSI getEriImsi() {
+		return eriImsi;
+	}
+
+	public AddressString getEriVlrNo() {
+		return eriVlrNo;
+	}
+
 	public void setDestReference(AddressString destReference) {
 		this.destReference = destReference;
 	}
 
 	public void setOrigReference(AddressString origReference) {
 		this.origReference = origReference;
-
 	}
 
 	public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
 		this.extensionContainer = extensionContainer;
 	}
 
+	public void setEriStyle(boolean eriStyle) {
+		this.eriStyle = eriStyle;
+	}
 
+	public void setEriImsi(IMSI eriImsi) {
+		this.eriImsi = eriImsi;
+	}
+
+	public void setEriVlrNo(AddressString eriVlrNo) {
+		this.eriVlrNo = eriVlrNo;
+	}
+
+	
 	@Override
 	public int getTag() throws MAPException {
 		return MAP_OPEN_INFO_TAG;
@@ -150,12 +181,28 @@ public class MAPOpenInfoImpl implements MAPAsnPrimitive {
 		// ... } OPTIONAL,
 		// ... } OPTIONAL},
 
-		this.setDestReference(null);
-		this.setOrigReference(null);
-		this.setExtensionContainer(null);
+		this.destReference = null;
+		this.origReference = null;
+		this.extensionContainer = null;
+		this.eriStyle = false;
+		this.eriImsi = null;
+		this.eriVlrNo = null;
 
 		AsnInputStream localAis = ais.readSequenceStreamData(length);
 
+		// checking for Ericsson-style
+		int startPos = localAis.position();
+		while (localAis.available() > 0) {
+			int tag = localAis.readTag();
+			if (localAis.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC && tag == ERI_MSISDN_TAG) {
+				this.eriStyle = true;
+				break;
+			}
+			localAis.advanceElement();
+		}
+
+		// parsing
+		localAis.position(startPos);
 		while (localAis.available() > 0) {
 			int tag = localAis.readTag();
 
@@ -163,13 +210,28 @@ public class MAPOpenInfoImpl implements MAPAsnPrimitive {
 			case Tag.CLASS_CONTEXT_SPECIFIC:
 				switch (tag) {
 				case DESTINATION_REF_TAG:
-					this.destReference = new AddressStringImpl();
-					((AddressStringImpl)this.destReference).decodeAll(localAis);
+					if (this.eriStyle) {
+						this.eriImsi = new IMSIImpl();
+						((IMSIImpl) this.eriImsi).decodeAll(localAis);
+					} else {
+						this.destReference = new AddressStringImpl();
+						((AddressStringImpl) this.destReference).decodeAll(localAis);
+					}
 					break;
 
 				case ORIGINATION_REF_TAG:
 					this.origReference = new AddressStringImpl();
 					((AddressStringImpl)this.origReference).decodeAll(localAis);
+					break;
+
+				case ERI_MSISDN_TAG:
+					this.destReference = new AddressStringImpl();
+					((AddressStringImpl) this.destReference).decodeAll(localAis);
+					break;
+
+				case ERI_NLR_NO_TAG:
+					this.eriVlrNo = new AddressStringImpl();
+					((AddressStringImpl)this.eriVlrNo).decodeAll(localAis);
 					break;
 
 				default:
@@ -220,14 +282,29 @@ public class MAPOpenInfoImpl implements MAPAsnPrimitive {
 	@Override
 	public void encodeData(AsnOutputStream asnOS) throws MAPException {
 
-		if (this.destReference != null)
-			((AddressStringImpl)this.destReference).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, DESTINATION_REF_TAG);
+		if (this.eriStyle) {
 
-		if (this.origReference != null)
-			((AddressStringImpl)this.origReference).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, ORIGINATION_REF_TAG);
+			if (this.destReference == null)
+				throw new MAPException("Error when encoding MAPOpenInf Ericsson style: destReference parameter must not be null");
 
-		if (this.extensionContainer != null)
-			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOS);
+			if (this.eriImsi != null)
+				((IMSIImpl) this.eriImsi).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, DESTINATION_REF_TAG);
+			if (this.origReference != null)
+				((AddressStringImpl) this.origReference).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, ORIGINATION_REF_TAG);
+			((AddressStringImpl) this.destReference).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, ERI_MSISDN_TAG);
+			if (this.eriVlrNo != null)
+				((AddressStringImpl) this.eriVlrNo).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, ERI_NLR_NO_TAG);
+		} else {
+			
+			if (this.destReference != null)
+				((AddressStringImpl) this.destReference).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, DESTINATION_REF_TAG);
+
+			if (this.origReference != null)
+				((AddressStringImpl) this.origReference).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, ORIGINATION_REF_TAG);
+
+			if (this.extensionContainer != null)
+				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOS);
+		}
 	}
-
 }
+

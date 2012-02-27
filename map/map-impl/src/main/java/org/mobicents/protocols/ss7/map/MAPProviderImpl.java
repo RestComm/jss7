@@ -58,6 +58,7 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorCode;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms;
@@ -366,6 +367,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		AddressString destReference = null;
 		AddressString origReference = null;
 		MAPExtensionContainer extensionContainer = null;
+		boolean eriStyle = false;
+		IMSI eriImsi = null;
+		AddressString eriVlrNo = null;
 
 		UserInformation userInfo = tcBeginIndication.getUserInformation();
 		if (userInfo == null) {
@@ -459,6 +463,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				destReference = mapOpenInfoImpl.getDestReference();
 				origReference = mapOpenInfoImpl.getOrigReference();
 				extensionContainer = mapOpenInfoImpl.getExtensionContainer();
+				eriStyle = mapOpenInfoImpl.getEriStyle();
+				eriImsi = mapOpenInfoImpl.getEriImsi();
+				eriVlrNo = mapOpenInfoImpl.getEriVlrNo();
 			} catch (AsnException e) {
 				e.printStackTrace();
 				loger.error("AsnException when parsing MAP-OPEN Pdu: " + e.getMessage(), e);
@@ -552,7 +559,11 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 			mapDialogImpl.setState(MAPDialogState.InitialReceived);
 
-			this.deliverDialogRequest(mapDialogImpl, destReference, origReference, extensionContainer);
+			if (eriStyle) {
+				this.deliverDialogRequestEri(mapDialogImpl, destReference, origReference, eriImsi, eriVlrNo);
+			} else {
+				this.deliverDialogRequest(mapDialogImpl, destReference, origReference, extensionContainer);
+			}
 			if (mapDialogImpl.getState() == MAPDialogState.Expunged)
 				// The Dialog was aborter or refused
 				return;
@@ -1385,6 +1396,12 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		}
 	}
 
+	private void deliverDialogRequestEri(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
+		for (MAPDialogListener listener : this.dialogListeners) {
+			listener.onDialogRequestEricsson(mapDialog, destReference, origReference, eriImsi, eriVlrNo);
+		}
+	}
+
 	private void deliverDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
 		for (MAPDialogListener listener : this.dialogListeners) {
 			listener.onDialogAccept(mapDialog, extensionContainer);
@@ -1436,9 +1453,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	}
 
 	protected void fireTCBegin(Dialog tcapDialog, ApplicationContextName acn, AddressString destReference, AddressString origReference,
-			MAPExtensionContainer mapExtensionContainer) throws MAPException {
+			MAPExtensionContainer mapExtensionContainer, boolean isEriStyle, IMSI imsiEri, AddressString vlrNoEri) throws MAPException {
 
-		TCBeginRequest tcBeginReq = encodeTCBegin(tcapDialog, acn, destReference, origReference, mapExtensionContainer);
+		TCBeginRequest tcBeginReq = encodeTCBegin(tcapDialog, acn, destReference, origReference, mapExtensionContainer, isEriStyle, imsiEri, vlrNoEri);
 
 		try {
 			tcapDialog.send(tcBeginReq);
@@ -1449,18 +1466,22 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	}
 
 	protected TCBeginRequest encodeTCBegin(Dialog tcapDialog, ApplicationContextName acn, AddressString destReference, AddressString origReference,
-			MAPExtensionContainer mapExtensionContainer) throws MAPException {
+			MAPExtensionContainer mapExtensionContainer, boolean eriStyle, IMSI eriImsi, AddressString eriVlrNo) throws MAPException {
 		TCBeginRequest tcBeginReq = this.getTCAPProvider().getDialogPrimitiveFactory().createBegin(tcapDialog);
 
 		// we do not set ApplicationContextName if MAP Version 1
 		if (MAPApplicationContext.getProtocolVersion(acn.getOid()) > 1)
 			tcBeginReq.setApplicationContextName(acn);
 
-		if ((destReference != null || origReference != null || mapExtensionContainer != null) && MAPApplicationContext.getProtocolVersion(acn.getOid()) > 1) {
+		if ((destReference != null || origReference != null || mapExtensionContainer != null || eriStyle)
+				&& MAPApplicationContext.getProtocolVersion(acn.getOid()) > 1) {
 			MAPOpenInfoImpl mapOpn = new MAPOpenInfoImpl();
 			mapOpn.setDestReference(destReference);
 			mapOpn.setOrigReference(origReference);
 			mapOpn.setExtensionContainer(mapExtensionContainer);
+			mapOpn.setEriStyle(eriStyle);
+			mapOpn.setEriImsi(eriImsi);
+			mapOpn.setEriVlrNo(eriVlrNo);
 
 			AsnOutputStream localasnOs = new AsnOutputStream();
 			mapOpn.encodeAll(localasnOs);
