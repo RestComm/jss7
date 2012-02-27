@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.map.api;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
@@ -210,13 +212,24 @@ public interface MAPDialog {
 	 * @return
 	 */
 	public int getMessageUserDataLengthOnSend() throws MAPException;
-	
+
 	/**
-	 * Return the MAP message length (in bytes) that will be after encoding
-	 * if TC-END case
-	 * This value must not exceed getMaxUserDataLength() value
+	 * Return the MAP message length (in bytes) that will be after encoding if
+	 * TC-END case This value must not exceed getMaxUserDataLength() value
+	 * 
 	 * @param prearrangedEnd
 	 * @return
 	 */
+
 	public int getMessageUserDataLengthOnClose(boolean prearrangedEnd) throws MAPException;
+
+	/**
+	 * This method should be invoked after MAPDialog creation if Ericsson-style
+	 * ASN.1 syntax is used
+	 * 
+	 * @param imsi
+	 * @param vlrNo
+	 */
+	public void addEricssonData(IMSI imsi, AddressString vlrNo);
+
 }
