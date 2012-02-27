@@ -56,6 +56,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponseIndication;
@@ -130,6 +131,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	private Map<Integer, Map<Long, DialogImplWrapper>> dialogs = new HashMap<Integer, Map<Long, DialogImplWrapper>>();
 	private long dialogEnumerator = 0;
 	private long tcapLogMsg = 0;
+	private ArrayList<String> msgData = new ArrayList<String>();
 	
 
 	public MAPTraceParser(Ss7ParseParameters par) {
@@ -316,6 +318,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 			byte[] data = null;
 			SccpAddress localAddress = null;
 			SccpAddress remoteAddress = null;
+			this.msgData.clear();
 
 			if (message.getType() == UnitData.MESSAGE_TYPE) {
 				data = ((UnitData) message).getData();
@@ -433,6 +436,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 							if (this.par.getTcapMsgData()) {
 								LogDataTag(aisMsg, "Continue", tcm.getComponent(), acnValue, acnVersion, tcm.getDialogPortion());
 							}
+							this.printMsgData();
 							
 //							this.LogComponents(tcm.getComponent(), acnValue, acnVersion, comp);
 						}
@@ -491,6 +495,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 					if (this.par.getTcapMsgData()) {
 						LogDataTag(aisMsg, "Begin", tcb.getComponent(), di.getAcnValue(), di.getAcnVersion(), tcb.getDialogPortion());
 					}
+					this.printMsgData();
 					// this.LogComponents(tcb.getComponent(),
 					// di.getAcnValue(), di.getAcnVersion(), comp);
 				}
@@ -531,6 +536,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 							if (this.par.getTcapMsgData()) {
 								LogDataTag(aisMsg, "End", teb.getComponent(), acnValue, acnVersion, teb.getDialogPortion());
 							}
+							this.printMsgData();
 							
 //							this.LogComponents(teb.getComponent(), acnValue, acnVersion, comp);
 						}
@@ -574,6 +580,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 							if (this.par.getTcapMsgData()) {
 								LogDataTag(aisMsg, "Abort", null, acnValue, acnVersion, tub.getDialogPortion());
 							}
+							this.printMsgData();
 							
 //							this.LogComponents(null, acnValue, acnVersion, comp);
 							this.pw.println();
@@ -588,6 +595,16 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void printMsgData() {
+		for (String s : this.msgData) {
+			this.pw.print(s);
+			this.pw.println();
+		}
+		this.pw.println();
+		this.pw.println();
+		this.pw.flush();
 	}
 	
 	private void printAddresses(SccpMessageImpl message, long originationTransactionId, long destinationTransactionId) {
@@ -675,8 +692,6 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 			}
 			
 			this.pw.println();
-			this.pw.println();
-			this.pw.flush();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -796,6 +811,14 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				this.pw.print(e.getMessage());
 			}
 		}
+
+//		if (comp != null) {
+//			for (Component c : comp) {
+//				this.pw.print("\n");
+//				this.pw.print(c.getType());
+//				this.pw.print(": ");
+//			}
+//		}
 	}
 	
 	private String LodSequenceName(int dep, int tag, int tagClass, int ind, String parent) {
@@ -929,7 +952,16 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 	@Override
 	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
+		
+		DialogImplWrapper di = (DialogImplWrapper)((MAPDialogImpl)mapDialog).getTcapDialog();
+		if (mapDialog.getApplicationContext() != null) {
+			di.setAcnValue(mapDialog.getApplicationContext().getApplicationContextName().getApplicationContextCode());
+			di.setAcnVersion(mapDialog.getApplicationContext().getApplicationContextVersion().getVersion());
+		}
+	}
+
+	@Override
+	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
 		
 		DialogImplWrapper di = (DialogImplWrapper)((MAPDialogImpl)mapDialog).getTcapDialog();
 		if (mapDialog.getApplicationContext() != null) {
@@ -1186,57 +1218,71 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	@Override
 	public void onForwardShortMessageIndication(ForwardShortMessageRequestIndication forwSmInd) {
 		this.parseSmsSignalInfo(forwSmInd.getSM_RP_UI(), true, true);
+		this.msgData.add(forwSmInd.toString());
 	}
 
 	@Override
 	public void onForwardShortMessageRespIndication(ForwardShortMessageResponseIndication forwSmRespInd) {
+		this.msgData.add(forwSmRespInd.toString());
 	}
 
 	@Override
 	public void onMoForwardShortMessageIndication(MoForwardShortMessageRequestIndication moForwSmInd) {
 		this.parseSmsSignalInfo(moForwSmInd.getSM_RP_UI(), true, false);
+		this.msgData.add(moForwSmInd.toString());
 	}
 
 	@Override
 	public void onMoForwardShortMessageRespIndication(MoForwardShortMessageResponseIndication moForwSmRespInd) {
 		this.parseSmsSignalInfo(moForwSmRespInd.getSM_RP_UI(), false, true);
+		this.msgData.add(moForwSmRespInd.toString());
 	}
 
 	@Override
 	public void onMtForwardShortMessageIndication(MtForwardShortMessageRequestIndication mtForwSmInd) {
 		this.parseSmsSignalInfo(mtForwSmInd.getSM_RP_UI(), false, true);
+		this.msgData.add(mtForwSmInd.toString());
 	}
 
 	@Override
 	public void onMtForwardShortMessageRespIndication(MtForwardShortMessageResponseIndication mtForwSmRespInd) {
 		this.parseSmsSignalInfo(mtForwSmRespInd.getSM_RP_UI(), true, false);
+		this.msgData.add(mtForwSmRespInd.toString());
 	}
 
 	@Override
 	public void onSendRoutingInfoForSMIndication(SendRoutingInfoForSMRequestIndication sendRoutingInfoForSMInd) {
+		this.msgData.add(sendRoutingInfoForSMInd.toString());
 	}
 
 	@Override
 	public void onSendRoutingInfoForSMRespIndication(SendRoutingInfoForSMResponseIndication sendRoutingInfoForSMRespInd) {
+		this.msgData.add(sendRoutingInfoForSMRespInd.toString());
 	}
 
 	@Override
 	public void onReportSMDeliveryStatusIndication(ReportSMDeliveryStatusRequestIndication reportSMDeliveryStatusInd) {
+		this.msgData.add(reportSMDeliveryStatusInd.toString());
 	}
 
 	@Override
 	public void onReportSMDeliveryStatusRespIndication(ReportSMDeliveryStatusResponseIndication reportSMDeliveryStatusRespInd) {
+		this.msgData.add(reportSMDeliveryStatusRespInd.toString());
 	}
 
 	@Override
 	public void onInformServiceCentreIndication(InformServiceCentreRequestIndication informServiceCentreInd) {
+		this.msgData.add(informServiceCentreInd.toString());
 	}
 
 	@Override
 	public void onAlertServiceCentreIndication(AlertServiceCentreRequestIndication alertServiceCentreInd) {
+		this.msgData.add(alertServiceCentreInd.toString());
 	}
 
 	@Override
 	public void onAlertServiceCentreRespIndication(AlertServiceCentreResponseIndication alertServiceCentreInd) {
+		this.msgData.add(alertServiceCentreInd.toString());
 	}
 }
+
