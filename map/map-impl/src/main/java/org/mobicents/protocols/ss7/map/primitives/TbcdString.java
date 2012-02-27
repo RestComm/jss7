@@ -47,10 +47,13 @@ public abstract class TbcdString implements MAPAsnPrimitive {
 			int b = ansIS.read();
 
 			int digit1 = (b & DIGIT_1_MASK);
-			s.append(this.decodeNumber(digit1));
+			if (digit1 == 15) {
+				// this is mask
+			} else {
+				s.append(this.decodeNumber(digit1));
+			}
 
 			int digit2 = ((b & DIGIT_2_MASK) >> 4);
-
 			if (digit2 == 15) {
 				// this is mask
 			} else {
@@ -60,7 +63,7 @@ public abstract class TbcdString implements MAPAsnPrimitive {
 
 		return s.toString();
 	}
-	
+
 	protected void encodeString(AsnOutputStream asnOs, String data) throws MAPException {
 		char[] chars = data.toCharArray();
 		for (int i = 0; i < chars.length; i = i + 2) {

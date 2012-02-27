@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.errors.MAPErrorMessageImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
@@ -80,6 +81,10 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	protected AddressString destReference;
 	protected AddressString origReference;
 	protected MAPExtensionContainer extContainer = null;
+
+	protected boolean eriStyle;
+	protected IMSI eriImsi;
+	protected AddressString eriVlrNo;
 
 	protected MAPDialogState state = MAPDialogState.Idle;
 	
@@ -245,12 +250,11 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			switch (this.tcapDialog.getState()) {
 
 			case Idle:
-				ApplicationContextName acn = this.mapProviderImpl
-						.getTCAPProvider().getDialogPrimitiveFactory()
+				ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
 						.createApplicationContextName(this.appCntx.getOID());
 
-				this.mapProviderImpl.fireTCBegin(this.getTcapDialog(), acn,
-						destReference, origReference, this.extContainer);
+				this.mapProviderImpl.fireTCBegin(this.getTcapDialog(), acn, destReference, origReference, this.extContainer, this.eriStyle, this.eriImsi,
+						this.eriVlrNo);
 				this.extContainer = null;
 
 				this.setState(MAPDialogState.InitialSent);
@@ -436,7 +440,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 				ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
 						.createApplicationContextName(this.appCntx.getOID());
 
-				TCBeginRequest tb = this.mapProviderImpl.encodeTCBegin(this.getTcapDialog(), acn, destReference, origReference, this.extContainer);
+				TCBeginRequest tb = this.mapProviderImpl.encodeTCBegin(this.getTcapDialog(), acn, destReference, origReference, this.extContainer,
+						this.eriStyle, this.eriImsi, this.eriVlrNo);
+
 				return tcapDialog.getDataLength(tb);
 
 			case Active:
@@ -498,6 +504,13 @@ public abstract class MAPDialogImpl implements MAPDialog {
 				.append("MAPApplicationContext=").append(this.appCntx).append("TCAPDialogState=")
 				.append(this.tcapDialog.getState());
 		return sb.toString();
+	}
+
+	@Override
+	public void addEricssonData(IMSI imsi, AddressString vlrNo){
+		this.eriStyle = true;
+		this.eriImsi = imsi;
+		this.eriVlrNo = vlrNo;
 	}
 
 }
