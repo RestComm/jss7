@@ -29,6 +29,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 
@@ -49,8 +50,14 @@ public interface MAPDialogListener {
 	 * When T_BEGIN received. If MAP user rejects this dialog it should call
 	 * MAPDialog.refuse()
 	 */
-	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
-			MAPExtensionContainer extensionContainer);
+	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer);
+
+	/**
+	 * When T_BEGIN received. If MAP user rejects this dialog it should call
+	 * This eveent is the onDialogRequest() method for Ericsson-style ASN.1 syntax
+	 * MAPDialog.refuse()
+	 */
+	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi, AddressString eriVlrNo);
 
 	/**
 	 * When T_CONTINUE or T_END received with dialogueResponse DialoguePDU
