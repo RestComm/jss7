@@ -23,8 +23,10 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import javolution.util.FastList;
+import javolution.util.FastSet;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
@@ -103,6 +105,20 @@ public class THLocalAsInactToAct implements TransitionHandler {
 						remAspImpl.getAspFactory().write(msg);
 					}
 				}//for
+			}
+			
+			//We want to pass MTP3 RESUME only for SE. If its DE the peer transition handler will take care of MTP3 RESUME
+			if(as.getExchangeType() == ExchangeType.SE){
+				FastSet<AsStateListener> asStateListeners = this.as.getAsStateListeners();
+				for (FastSet.Record r = asStateListeners.head(), end = asStateListeners.tail(); (r = r.getNext()) != end;) {
+					AsStateListener asAsStateListener = asStateListeners.valueOf(r);
+					try {
+						asAsStateListener.onAsActive(this.as);
+					} catch (Exception e) {
+						logger.error(String.format("Error while calling AsStateListener=%s onAsActive method for As=%s",
+								asAsStateListener, this.as));
+					}
+				}
 			}
 
 			return true;

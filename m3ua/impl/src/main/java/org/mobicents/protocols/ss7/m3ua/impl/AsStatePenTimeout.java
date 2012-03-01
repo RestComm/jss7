@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import javolution.util.FastList;
+import javolution.util.FastSet;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
@@ -103,6 +104,18 @@ public class AsStatePenTimeout implements StateEventHandler {
 				inactive = true;
 			} catch (UnknownTransitionException e) {
 				logger.error(e.getMessage(), e);
+			}
+		}
+		
+		//Now send MTP3 PAUSE 
+		FastSet<AsStateListener> asStateListeners = this.as.getAsStateListeners();
+		for (FastSet.Record r = asStateListeners.head(), end = asStateListeners.tail(); (r = r.getNext()) != end;) {
+			AsStateListener asAsStateListener = asStateListeners.valueOf(r);
+			try {
+				asAsStateListener.onAsInActive(this.as);
+			} catch (Exception e) {
+				logger.error(String.format("Error while calling AsStateListener=%s onAsInActive method for As=%s",
+						asAsStateListener, this.as));
 			}
 		}
 	}

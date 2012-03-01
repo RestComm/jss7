@@ -174,6 +174,8 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		} catch (FileNotFoundException e) {
 			logger.warn(String.format("Failed to load the SS7 configuration file. \n%s", e.getMessage()));
 		}
+		
+		this.routeManagement.reset();
 
 		fsmTicker = Executors.newSingleThreadScheduledExecutor();
 		fsmTicker.scheduleAtFixedRate(m3uaScheduler, 500, 500, TimeUnit.MILLISECONDS);

@@ -23,8 +23,11 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import javolution.util.FastList;
+import javolution.util.FastSet;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.ExchangeType;
+import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.StateEventHandler;
@@ -90,8 +93,11 @@ public class RemAsStatePenTimeout implements StateEventHandler {
 						this.fsm.signal(TransitionState.AS_INACTIVE);
 						inactive = true;
 					}
-					Notify msg = createNotify(remAspImpl);
-					remAspImpl.getAspFactory().write(msg);
+					
+					if(this.as.getFunctionality() != Functionality.IPSP){
+						Notify msg = createNotify(remAspImpl);
+						remAspImpl.getAspFactory().write(msg);
+					}
 				} catch (UnknownTransitionException e) {
 					logger.error(String.format("Error while translating Rem AS to INACTIVE. %s", this.fsm.toString()),
 							e);
@@ -107,6 +113,20 @@ public class RemAsStatePenTimeout implements StateEventHandler {
 				inactive = true;
 			} catch (UnknownTransitionException e) {
 				logger.error(String.format("Error while translating Rem AS to DOWN. %s", this.fsm.toString()), e);
+			}
+		}
+		
+		//We want to pass MTP3 PAUSE only for SE. If its DE the peer transition handler will take care of MTP3 PAUSE
+		if(as.getExchangeType() == ExchangeType.SE){
+			FastSet<AsStateListener> asStateListeners = this.as.getAsStateListeners();
+			for (FastSet.Record r = asStateListeners.head(), end = asStateListeners.tail(); (r = r.getNext()) != end;) {
+				AsStateListener asAsStateListener = asStateListeners.valueOf(r);
+				try {
+					asAsStateListener.onAsInActive(this.as);
+				} catch (Exception e) {
+					logger.error(String.format("Error while calling AsStateListener=%s onAsInActive method for As=%s",
+							asAsStateListener, this.as));
+				}
 			}
 		}
 	}
