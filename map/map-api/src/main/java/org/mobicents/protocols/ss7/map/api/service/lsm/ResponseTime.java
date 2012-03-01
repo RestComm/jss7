@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 /**
  * 
  * ResponseTime ::= SEQUENCE {
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface ResponseTime {
+public interface ResponseTime extends Serializable {
 
 	public ResponseTimeCategory getResponseTimeCategory();
 }

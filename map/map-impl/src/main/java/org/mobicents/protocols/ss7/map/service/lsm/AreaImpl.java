@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -256,6 +257,31 @@ public class AreaImpl implements Area, MAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new MAPException("AsnException when encoding Area: " + e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(areaIdentification);
+		result = prime * result + ((areaType == null) ? 0 : areaType.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AreaImpl other = (AreaImpl) obj;
+		if (!Arrays.equals(areaIdentification, other.areaIdentification))
+			return false;
+		if (areaType != other.areaType)
+			return false;
+		return true;
 	}
 
 }

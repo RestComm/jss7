@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 /**
  * Area ::= SEQUENCE {
  *   areaType [0] AreaType,
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface Area {
+public interface Area extends Serializable {
 	
 	public AreaType getAreaType();
 	

@@ -21,6 +21,8 @@
  */
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  * AlertingPattern ::= OCTET STRING (SIZE (1) )
  *		-- This type is used to represent Alerting Pattern
@@ -48,7 +50,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface AlertingPattern {
+public interface AlertingPattern extends Serializable {
 
 	public byte[] getData();
 

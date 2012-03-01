@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.MAPException;
 
 /**
@@ -42,7 +44,7 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
  * @author sergey vetyutnev
  * 
  */
-public interface LAIFixedLength {
+public interface LAIFixedLength extends Serializable {
 
 	public byte[] getData();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
@@ -37,7 +39,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * @author amit bhayani
  *
  */
-public interface LCSQoS {
+public interface LCSQoS extends Serializable {
 	
 	/**
 	 * Horizontal-Accuracy ::= OCTET STRING (SIZE (1))

@@ -60,9 +60,11 @@ public abstract class TestHarness implements MAPDialogListener, MAPServiceSupple
 	protected final int SSN = 8;
 
 	// M3UA details
+	//protected final String CLIENT_IP = "172.31.96.40";
 	protected final String CLIENT_IP = "127.0.0.1";
 	protected final int CLIENT_PORT = 2345;
 
+	//protected final String SERVER_IP = "172.31.96.41";
 	protected final String SERVER_IP = "127.0.0.1";
 	protected final int SERVER_PORT = 3434;
 

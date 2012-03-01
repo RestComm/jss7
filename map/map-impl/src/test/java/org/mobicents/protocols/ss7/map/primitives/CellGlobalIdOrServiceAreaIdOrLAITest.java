@@ -22,9 +22,15 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
-import static org.testng.Assert.*;
-import org.testng.*;import org.testng.annotations.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -32,7 +38,11 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdFixedLength;
-import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 /**
  * @author amit bhayani
@@ -88,5 +98,28 @@ public class CellGlobalIdOrServiceAreaIdOrLAITest {
 
 		assertTrue( Arrays.equals(data,encodedData));
 
+	}
+	
+	@Test(groups = { "functional.serialize", "service.lsm" })
+	public void testSerialization() throws Exception {
+		CellGlobalIdOrServiceAreaIdFixedLength par = new CellGlobalIdOrServiceAreaIdFixedLengthImpl(new byte[] { 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b });
+		CellGlobalIdOrServiceAreaIdOrLAIImpl original = new CellGlobalIdOrServiceAreaIdOrLAIImpl(par);
+
+		// serialize
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(out);
+		oos.writeObject(original);
+		oos.close();
+
+		// deserialize
+		byte[] pickled = out.toByteArray();
+		InputStream in = new ByteArrayInputStream(pickled);
+		ObjectInputStream ois = new ObjectInputStream(in);
+		Object o = ois.readObject();
+		CellGlobalIdOrServiceAreaIdOrLAIImpl copy = (CellGlobalIdOrServiceAreaIdOrLAIImpl) o;
+		
+		//test result
+		assertEquals(copy, original);
+		
 	}
 }

@@ -218,4 +218,29 @@ public class AreaDefinitionImpl implements AreaDefinition, MAPAsnPrimitive {
 		((AreaListImpl) this.areaList).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 0);
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((areaList == null) ? 0 : areaList.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AreaDefinitionImpl other = (AreaDefinitionImpl) obj;
+		if (areaList == null) {
+			if (other.areaList != null)
+				return false;
+		} else if (!areaList.equals(other.areaList))
+			return false;
+		return true;
+	}
+
 }

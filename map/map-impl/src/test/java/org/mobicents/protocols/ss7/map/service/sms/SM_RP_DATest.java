@@ -22,10 +22,15 @@
 
 package org.mobicents.protocols.ss7.map.service.sms;
 
-import java.util.Arrays;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
-import static org.testng.Assert.*;
-import org.testng.*;import org.testng.annotations.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -37,6 +42,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
+import org.testng.annotations.Test;
 
 /**
  * 
@@ -169,5 +175,65 @@ public class SM_RP_DATest {
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedData_No();		
 		assertTrue( Arrays.equals(rawData,encodedData));
+	}
+	
+	@Test(groups = { "functional.serialize", "service.sms" })
+	public void testSerialization() throws Exception {
+		AddressStringImpl astr = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "121359609600");
+		SM_RP_DAImpl original = new SM_RP_DAImpl(astr);
+		
+		// serialize
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(out);
+		oos.writeObject(original);
+		oos.close();
+
+		// deserialize
+		byte[] pickled = out.toByteArray();
+		InputStream in = new ByteArrayInputStream(pickled);
+		ObjectInputStream ois = new ObjectInputStream(in);
+		Object o = ois.readObject();
+		SM_RP_DAImpl copy = (SM_RP_DAImpl) o;
+		
+		//test result
+		assertEquals(copy.getServiceCentreAddressDA(), original.getServiceCentreAddressDA());
+		
+		
+		LMSIImpl lmsi = new LMSIImpl(new byte[] { 0, 7, -112, -78 });
+		original = new SM_RP_DAImpl(lmsi);
+		// serialize
+		out = new ByteArrayOutputStream();
+		oos = new ObjectOutputStream(out);
+		oos.writeObject(original);
+		oos.close();
+
+		// deserialize
+		pickled = out.toByteArray();
+		in = new ByteArrayInputStream(pickled);
+		ois = new ObjectInputStream(in);
+		o = ois.readObject();
+		copy = (SM_RP_DAImpl) o;
+		
+		//test result
+		assertEquals(copy.getLMSI(), original.getLMSI());
+		
+		
+		IMSIImpl imsi = new IMSIImpl("041040222161547");		
+		original = new SM_RP_DAImpl(imsi);
+		// serialize
+		out = new ByteArrayOutputStream();
+		oos = new ObjectOutputStream(out);
+		oos.writeObject(original);
+		oos.close();
+
+		// deserialize
+		pickled = out.toByteArray();
+		in = new ByteArrayInputStream(pickled);
+		ois = new ObjectInputStream(in);
+		o = ois.readObject();
+		copy = (SM_RP_DAImpl) o;
+		
+		//test result
+		assertEquals(copy.getIMSI(), original.getIMSI());
 	}
 }

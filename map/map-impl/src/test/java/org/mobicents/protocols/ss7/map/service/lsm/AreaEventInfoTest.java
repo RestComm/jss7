@@ -22,9 +22,15 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.testng.Assert.*;
-import org.testng.*;import org.testng.annotations.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -38,8 +44,11 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.AreaEventInfo;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaList;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.OccurrenceInfo;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 /**
  * @author amit bhayani
@@ -119,5 +128,36 @@ public class AreaEventInfoTest {
 
 		assertTrue( Arrays.equals(data,encodedData));
 
+	}
+	
+	@Test(groups = { "functional.serialize", "service.lsm" })
+	public void testSerialization() throws Exception {
+		Area area1 = new AreaImpl(AreaType.utranCellId, new byte[] { 0x09, 0x70, 0x71 });
+		Area area2 = new AreaImpl(AreaType.routingAreaId, new byte[] { 0x04, 0x30, 0x31 });
+
+		AreaList areaList = new AreaListImpl(new Area[] { area1, area2 });
+
+		AreaDefinition areaDef = new AreaDefinitionImpl(areaList);
+
+		AreaEventInfo original = new AreaEventInfoImpl(areaDef, OccurrenceInfo.multipleTimeEvent, 32766);
+
+		// serialize
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(out);
+		oos.writeObject(original);
+		oos.close();
+
+		// deserialize
+		byte[] pickled = out.toByteArray();
+		InputStream in = new ByteArrayInputStream(pickled);
+		ObjectInputStream ois = new ObjectInputStream(in);
+		Object o = ois.readObject();
+		AreaEventInfoImpl copy = (AreaEventInfoImpl) o;
+		
+		//test result
+		assertEquals(copy.getAreaDefinition(), original.getAreaDefinition());
+		assertEquals(copy.getOccurrenceInfo(), original.getOccurrenceInfo());
+		assertEquals(copy.getIntervalTime(), original.getIntervalTime());
+		
 	}
 }

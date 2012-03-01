@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 
 /**
  * 
@@ -36,7 +38,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  * 
  */
-public interface IMEI {
+public interface IMEI extends Serializable {
 
 	public String getIMEI();
 	

@@ -259,4 +259,35 @@ public class AdditionalNumberImpl implements AdditionalNumber, MAPAsnPrimitive {
 		return sb.toString();
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((mSCNumber == null) ? 0 : mSCNumber.hashCode());
+		result = prime * result + ((sGSNNumber == null) ? 0 : sGSNNumber.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AdditionalNumberImpl other = (AdditionalNumberImpl) obj;
+		if (mSCNumber == null) {
+			if (other.mSCNumber != null)
+				return false;
+		} else if (!mSCNumber.equals(other.mSCNumber))
+			return false;
+		if (sGSNNumber == null) {
+			if (other.sGSNNumber != null)
+				return false;
+		} else if (!sGSNNumber.equals(other.sGSNNumber))
+			return false;
+		return true;
+	}
+
 }

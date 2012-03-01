@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  * CellGlobalIdOrServiceAreaIdOrLAI ::= CHOICE {
  *    cellGlobalIdOrServiceAreaIdFixedLength [0] CellGlobalIdOrServiceAreaIdFixedLength,
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author amit bhayani
  *
  */
-public interface CellGlobalIdOrServiceAreaIdOrLAI {
+public interface CellGlobalIdOrServiceAreaIdOrLAI extends Serializable {
 	
 	/**
 	 * CellGlobalIdOrServiceAreaIdFixedLength ::= OCTET STRING (SIZE (7))

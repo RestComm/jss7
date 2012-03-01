@@ -247,7 +247,7 @@ public class Client extends TestHarness {
 
 				if (client.endCount == 0) {
 					client.start = System.currentTimeMillis();
-					logger.warn("StartTie = "+client.start);
+					logger.warn("StartTime = "+client.start);
 				}
 
 				client.initiateUSSD();
@@ -535,29 +535,6 @@ public class Client extends TestHarness {
 			logger.debug(String.format("DialogClose for Dialog=%d", mapDialog.getDialogId()));
 		}
 
-		int ndialogs = nbConcurrentDialogs.decrementAndGet();
-
-		if (ndialogs > MAXCONCURRENTDIALOGS) {
-			logger.warn("Concurrent Dialogs active = " + ndialogs);
-		}
-		synchronized (this) {
-			if (ndialogs < MAXCONCURRENTDIALOGS / 2)
-				this.notify();
-		}
-
-		this.endCount++;
-
-		if ((this.endCount % 100) == 0) {
-			logger.warn("Completed 100 Dialogs");
-		}
-		if (this.endCount == NDIALOGS) {
-			long current = System.currentTimeMillis();
-			logger.warn("Current Time = "+current);
-			float sec = (float) (current - start) / 1000f;
-
-			logger.warn("Total time in sec = " + sec);
-			logger.warn("Thrupt = " + (float) (NDIALOGS / sec));
-		} 
 	}
 
 	/*
@@ -586,6 +563,30 @@ public class Client extends TestHarness {
 		if (logger.isDebugEnabled()) {
 			logger.debug(String.format("onDialogResease for DialogId=%d", mapDialog.getDialogId()));
 		}
+		
+		int ndialogs = nbConcurrentDialogs.decrementAndGet();
+
+		if (ndialogs > MAXCONCURRENTDIALOGS) {
+			logger.warn("Concurrent Dialogs active = " + ndialogs);
+		}
+		synchronized (this) {
+			if (ndialogs < MAXCONCURRENTDIALOGS / 2)
+				this.notify();
+		}
+
+		this.endCount++;
+
+		if ((this.endCount % 100) == 0) {
+			logger.warn("Completed 100 Dialogs");
+		}
+		if (this.endCount == NDIALOGS) {
+			long current = System.currentTimeMillis();
+			logger.warn("Current Time = "+current);
+			float sec = (float) (current - start) / 1000f;
+
+			logger.warn("Total time in sec = " + sec);
+			logger.warn("Thrupt = " + (float) (NDIALOGS / sec));
+		} 
 	}
 
 	/*

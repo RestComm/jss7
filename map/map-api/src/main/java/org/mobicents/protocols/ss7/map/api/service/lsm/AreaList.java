@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 /**
  * AreaList ::= SEQUENCE SIZE (1..maxNumOfAreas) OF Area
  * 
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface AreaList {
+public interface AreaList extends Serializable {
 
 	public Area[] getAreas();
 }

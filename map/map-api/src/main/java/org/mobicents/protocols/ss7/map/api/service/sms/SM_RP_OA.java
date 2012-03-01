@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
@@ -39,7 +41,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
  * @author sergey vetyutnev
  * 
  */
-public interface SM_RP_OA {
+public interface SM_RP_OA extends Serializable {
 
 	public ISDNAddressString getMsisdn();
 

@@ -22,18 +22,27 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
-
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
-import org.mobicents.protocols.ss7.map.api.service.lsm.LCSPrivacyCheck;
 import org.mobicents.protocols.ss7.map.api.service.lsm.PrivacyCheckRelatedAction;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 /**
  * @author amit bhayani
@@ -87,5 +96,29 @@ public class LCSPrivacyCheckTest {
 		byte[] encodedData = asnOS.toByteArray();
 
 		assertTrue( Arrays.equals(data,encodedData));
+	}
+	
+	@Test(groups = { "functional.serialize", "service.lsm" })
+	public void testSerialization() throws Exception {
+		PrivacyCheckRelatedAction callSessionUnrelated = PrivacyCheckRelatedAction.allowedWithoutNotification;
+		PrivacyCheckRelatedAction callSessionRelated = PrivacyCheckRelatedAction.allowedIfNoResponse;
+
+		LCSPrivacyCheckImpl original = new LCSPrivacyCheckImpl(callSessionUnrelated, callSessionRelated);
+
+		// serialize
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(out);
+		oos.writeObject(original);
+		oos.close();
+
+		// deserialize
+		byte[] pickled = out.toByteArray();
+		InputStream in = new ByteArrayInputStream(pickled);
+		ObjectInputStream ois = new ObjectInputStream(in);
+		Object o = ois.readObject();
+		LCSPrivacyCheckImpl copy = (LCSPrivacyCheckImpl) o;
+		
+		//test result
+		assertEquals(copy, original);
 	}
 }

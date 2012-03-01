@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.MAPException;
 
 /**
@@ -46,7 +48,7 @@ CellGlobalIdOrServiceAreaIdFixedLength ::= OCTET STRING (SIZE (7))
  * @author sergey vetyutnev
  * 
  */
-public interface CellGlobalIdOrServiceAreaIdFixedLength {
+public interface CellGlobalIdOrServiceAreaIdFixedLength extends Serializable {
 
 	public byte[] getData();
 

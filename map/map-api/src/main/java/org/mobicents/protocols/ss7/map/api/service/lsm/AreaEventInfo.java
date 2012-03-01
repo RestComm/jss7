@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 /**
  * AreaEventInfo ::= SEQUENCE {
  *     areaDefinition [0] AreaDefinition,
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface AreaEventInfo {
+public interface AreaEventInfo extends Serializable {
 	
 	public AreaDefinition getAreaDefinition();
 	

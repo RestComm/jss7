@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.mobicents.protocols.asn.AsnException;
@@ -220,6 +221,28 @@ public class AreaListImpl implements AreaList, MAPAsnPrimitive {
 		for (int count = 0; count < areas.length; count++) {
 			((AreaImpl)areas[count]).encodeAll(asnOs);
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(areas);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AreaListImpl other = (AreaListImpl) obj;
+		if (!Arrays.equals(areas, other.areas))
+			return false;
+		return true;
 	}
 
 }

@@ -266,4 +266,29 @@ public class LCSPrivacyCheckImpl implements LCSPrivacyCheck, MAPAsnPrimitive {
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((callSessionRelated == null) ? 0 : callSessionRelated.hashCode());
+		result = prime * result + ((callSessionUnrelated == null) ? 0 : callSessionUnrelated.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LCSPrivacyCheckImpl other = (LCSPrivacyCheckImpl) obj;
+		if (callSessionRelated != other.callSessionRelated)
+			return false;
+		if (callSessionUnrelated != other.callSessionUnrelated)
+			return false;
+		return true;
+	}
+
 }

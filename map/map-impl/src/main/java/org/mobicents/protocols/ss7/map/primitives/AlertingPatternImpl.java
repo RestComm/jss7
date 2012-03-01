@@ -22,6 +22,7 @@
 package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -251,5 +252,29 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 
 		return sb.toString();
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(data);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AlertingPatternImpl other = (AlertingPatternImpl) obj;
+		if (!Arrays.equals(data, other.data))
+			return false;
+		return true;
+	}
+	
+	
 }
 

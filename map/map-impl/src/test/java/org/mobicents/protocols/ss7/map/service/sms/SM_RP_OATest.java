@@ -22,6 +22,14 @@
 
 package org.mobicents.protocols.ss7.map.service.sms;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -33,11 +41,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
-
-
-import static org.testng.Assert.*;
-import org.testng.*;
-import org.testng.annotations.*;
+import org.testng.annotations.Test;
 /**
  * 
  * @author sergey vetyutnev
@@ -141,5 +145,48 @@ public class SM_RP_OATest {
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedData_No();		
 		assertTrue( Arrays.equals(rawData,encodedData));
+	}
+	
+	@Test(groups = { "functional.serialize", "service.sms" })
+	public void testSerialization() throws Exception {
+		AddressStringImpl astr = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "18017011111");
+		SM_RP_OAImpl original = new SM_RP_OAImpl();
+		
+		// serialize
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(out);
+		oos.writeObject(original);
+		oos.close();
+
+		// deserialize
+		byte[] pickled = out.toByteArray();
+		InputStream in = new ByteArrayInputStream(pickled);
+		ObjectInputStream ois = new ObjectInputStream(in);
+		Object o = ois.readObject();
+		SM_RP_OAImpl copy = (SM_RP_OAImpl) o;
+		
+		//test result
+		assertEquals(copy.getServiceCentreAddressOA(), original.getServiceCentreAddressOA());
+		
+		
+		
+		ISDNAddressStringImpl isdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "393385625695");
+		original = new SM_RP_OAImpl();
+		original.setMsisdn(isdn);
+		// serialize
+		out = new ByteArrayOutputStream();
+		oos = new ObjectOutputStream(out);
+		oos.writeObject(original);
+		oos.close();
+
+		// deserialize
+		pickled = out.toByteArray();
+		in = new ByteArrayInputStream(pickled);
+		ois = new ObjectInputStream(in);
+		o = ois.readObject();
+		copy = (SM_RP_OAImpl) o;
+		
+		//test result
+		assertEquals(copy.getMsisdn(), original.getMsisdn());
 	}
 }

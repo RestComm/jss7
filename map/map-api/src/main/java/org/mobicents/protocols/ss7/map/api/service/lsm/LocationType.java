@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 /**
  * LocationType ::= SEQUENCE {
  *    locationEstimateType [0] LocationEstimateType,
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface LocationType {
+public interface LocationType extends Serializable {
 	LocationEstimateType getLocationEstimateType();
 	
 	/**

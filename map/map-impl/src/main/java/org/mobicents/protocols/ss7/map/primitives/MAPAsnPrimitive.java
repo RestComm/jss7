@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -32,7 +34,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  * @author sergey vetyutnev
  * 
  */
-public interface MAPAsnPrimitive {
+public interface MAPAsnPrimitive extends Serializable {
 
 	public int getTag() throws MAPException;
 

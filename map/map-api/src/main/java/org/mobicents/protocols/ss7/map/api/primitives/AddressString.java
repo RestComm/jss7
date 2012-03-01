@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 
 /**
  * 
@@ -78,7 +80,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author amit bhayani
  *
  */
-public interface AddressString {
+public interface AddressString extends Serializable {
 	
 	public AddressNature getAddressNature();
 	

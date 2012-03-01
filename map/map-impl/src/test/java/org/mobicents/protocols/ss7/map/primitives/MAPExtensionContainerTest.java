@@ -22,11 +22,16 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
-import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -35,6 +40,11 @@ import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 /**
  * @author sergey vetyutnev
@@ -140,6 +150,42 @@ public class MAPExtensionContainerTest {
 		byte[] res = asnOS.toByteArray();
 
 		assertTrue( Arrays.equals(data,res));
+	}
+	
+	@Test(groups = { "functional.equality", "primitives" })
+	public void testEquality() throws Exception {
+		MAPExtensionContainerImpl original = (MAPExtensionContainerImpl)GetTestExtensionContainer();
+		MAPExtensionContainerImpl copy = (MAPExtensionContainerImpl)GetTestExtensionContainer();
+		assertEquals(copy, original);
+	}
+	
+	@Test(groups = { "functional.serialize", "primitives" })
+	public void testSerialization() throws Exception {
+		MAPExtensionContainerImpl original = (MAPExtensionContainerImpl)GetTestExtensionContainer();
+		// serialize
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(out);
+		oos.writeObject(original);
+		oos.close();
+
+		// deserialize
+		byte[] pickled = out.toByteArray();
+		InputStream in = new ByteArrayInputStream(pickled);
+		ObjectInputStream ois = new ObjectInputStream(in);
+		Object o = ois.readObject();
+		MAPExtensionContainerImpl copy = (MAPExtensionContainerImpl) o;
+		
+		//test result
+		assertTrue(Arrays.equals(copy.getPcsExtensions(), original.getPcsExtensions()));
+		assertEquals(copy.getPrivateExtensionList().size(), original.getPrivateExtensionList().size());
+		
+		ArrayList<MAPPrivateExtension> copyPriExt = copy.getPrivateExtensionList();
+		ArrayList<MAPPrivateExtension> originalPriExt = original.getPrivateExtensionList();
+		
+		for(int i=0;i<copyPriExt.size();i++){
+			assertEquals(copyPriExt.get(i), originalPriExt.get(i));
+		}
+		
 	}
 	
 	private byte[] getEncodedData() {

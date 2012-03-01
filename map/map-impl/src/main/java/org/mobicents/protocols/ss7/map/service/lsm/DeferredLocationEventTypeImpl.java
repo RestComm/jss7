@@ -200,4 +200,29 @@ public class DeferredLocationEventTypeImpl implements DeferredLocationEventType,
 		return this.bitString.get(_INDEX_BEING_INSIDE_AREA);
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((bitString == null) ? 0 : bitString.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DeferredLocationEventTypeImpl other = (DeferredLocationEventTypeImpl) obj;
+		if (bitString == null) {
+			if (other.bitString != null)
+				return false;
+		} else if (!bitString.equals(other.bitString))
+			return false;
+		return true;
+	}
+
 }

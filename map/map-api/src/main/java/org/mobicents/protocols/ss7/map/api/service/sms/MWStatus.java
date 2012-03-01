@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
+import java.io.Serializable;
+
 /**
 *
 * MW-Status ::= BIT STRING {
@@ -37,7 +39,7 @@ package org.mobicents.protocols.ss7.map.api.service.sms;
 * @author sergey vetyutnev
 * 
 */
-public interface MWStatus {
+public interface MWStatus extends Serializable {
 
 	public boolean getScAddressNotIncluded();
 

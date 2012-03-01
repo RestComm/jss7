@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
 
@@ -38,7 +40,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
  * @author amit bhayani
  *
  */
-public interface AdditionalNumber {
+public interface AdditionalNumber extends Serializable {
 	
 	public ISDNAddressString getMSCNumber();
 	public ISDNAddressString getSGSNNumber();

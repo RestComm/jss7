@@ -222,5 +222,39 @@ public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServi
 
 		return sb.toString();
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((cellGlobalIdOrServiceAreaIdFixedLength == null) ? 0 : cellGlobalIdOrServiceAreaIdFixedLength
+						.hashCode());
+		result = prime * result + ((laiFixedLength == null) ? 0 : laiFixedLength.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CellGlobalIdOrServiceAreaIdOrLAIImpl other = (CellGlobalIdOrServiceAreaIdOrLAIImpl) obj;
+		if (cellGlobalIdOrServiceAreaIdFixedLength == null) {
+			if (other.cellGlobalIdOrServiceAreaIdFixedLength != null)
+				return false;
+		} else if (!cellGlobalIdOrServiceAreaIdFixedLength.equals(other.cellGlobalIdOrServiceAreaIdFixedLength))
+			return false;
+		if (laiFixedLength == null) {
+			if (other.laiFixedLength != null)
+				return false;
+		} else if (!laiFixedLength.equals(other.laiFixedLength))
+			return false;
+		return true;
+	}
 }
 

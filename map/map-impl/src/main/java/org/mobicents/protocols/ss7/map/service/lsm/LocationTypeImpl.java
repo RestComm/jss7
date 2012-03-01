@@ -253,4 +253,32 @@ public class LocationTypeImpl implements LocationType, MAPAsnPrimitive {
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((deferredLocationEventType == null) ? 0 : deferredLocationEventType.hashCode());
+		result = prime * result + ((locationEstimateType == null) ? 0 : locationEstimateType.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LocationTypeImpl other = (LocationTypeImpl) obj;
+		if (deferredLocationEventType == null) {
+			if (other.deferredLocationEventType != null)
+				return false;
+		} else if (!deferredLocationEventType.equals(other.deferredLocationEventType))
+			return false;
+		if (locationEstimateType != other.locationEstimateType)
+			return false;
+		return true;
+	}
+
 }

@@ -22,10 +22,16 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
-
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -35,6 +41,11 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AdditionalNumber;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 /**
  * TODO Self generated trace. Please test from real trace
@@ -92,5 +103,27 @@ public class AdditionalNumberTest {
 		byte[] encodedData = asnOS.toByteArray();
 
 		assertTrue( Arrays.equals(data,encodedData));
+	}
+	
+	@Test(groups = { "functional.serialize", "service.lsm" })
+	public void testSerialization() throws Exception {
+		ISDNAddressString isdnAdd = MAPParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "55619007");
+		AdditionalNumber original = new AdditionalNumberImpl(isdnAdd, null);
+		// serialize
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(out);
+		oos.writeObject(original);
+		oos.close();
+
+		// deserialize
+		byte[] pickled = out.toByteArray();
+		InputStream in = new ByteArrayInputStream(pickled);
+		ObjectInputStream ois = new ObjectInputStream(in);
+		Object o = ois.readObject();
+		AdditionalNumberImpl copy = (AdditionalNumberImpl) o;
+		
+		//test result
+		assertEquals(copy.getMSCNumber(), original.getMSCNumber());
+		
 	}
 }

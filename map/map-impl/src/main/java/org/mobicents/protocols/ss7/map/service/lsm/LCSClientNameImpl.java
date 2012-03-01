@@ -294,4 +294,35 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + dataCodingScheme;
+		result = prime * result + ((lcsFormatIndicator == null) ? 0 : lcsFormatIndicator.hashCode());
+		result = prime * result + ((nameString == null) ? 0 : nameString.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LCSClientNameImpl other = (LCSClientNameImpl) obj;
+		if (dataCodingScheme != other.dataCodingScheme)
+			return false;
+		if (lcsFormatIndicator != other.lcsFormatIndicator)
+			return false;
+		if (nameString == null) {
+			if (other.nameString != null)
+				return false;
+		} else if (!nameString.equals(other.nameString))
+			return false;
+		return true;
+	}
+
 }

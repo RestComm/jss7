@@ -21,6 +21,8 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 /**
  * 
  * SupportedLCS-CapabilitySets ::= BIT STRING {
@@ -41,7 +43,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface SupportedLCSCapabilitySets {
+public interface SupportedLCSCapabilitySets extends Serializable {
 	
 	public boolean getLcsCapabilitySet1();
 	
