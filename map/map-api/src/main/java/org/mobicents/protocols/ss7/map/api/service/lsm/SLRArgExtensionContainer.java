@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 /**
  * SLR-ArgExtensionContainer ::= SEQUENCE {
  *		privateExtensionList [0]PrivateExtensionList OPTIONAL,
@@ -31,6 +33,6 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface SLRArgExtensionContainer {
+public interface SLRArgExtensionContainer extends Serializable {
 	//TODO
 }

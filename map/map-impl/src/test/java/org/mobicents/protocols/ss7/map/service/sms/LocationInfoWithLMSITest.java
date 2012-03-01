@@ -22,11 +22,15 @@
 
 package org.mobicents.protocols.ss7.map.service.sms;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
-
-import static org.testng.Assert.*;
-
-import org.testng.*;import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -38,6 +42,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.testng.annotations.Test;
 
 /**
  * 
@@ -124,5 +129,29 @@ public class LocationInfoWithLMSITest  {
 		rawData = getEncodedDataFull();		
 		assertTrue( Arrays.equals(rawData,encodedData));
 		
+	}
+	
+	@Test(groups = { "functional.serialize", "service.sms" })
+	public void testSerialization() throws Exception {
+		ISDNAddressString nnm = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "79033700222");
+		LMSIImpl lmsi = new LMSIImpl(new byte[] { 0, 3, 98, 49 });
+		LocationInfoWithLMSIImpl original = new LocationInfoWithLMSIImpl(nnm, lmsi, null, null, null);
+		
+		// serialize
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(out);
+		oos.writeObject(original);
+		oos.close();
+
+		// deserialize
+		byte[] pickled = out.toByteArray();
+		InputStream in = new ByteArrayInputStream(pickled);
+		ObjectInputStream ois = new ObjectInputStream(in);
+		Object o = ois.readObject();
+		LocationInfoWithLMSIImpl copy = (LocationInfoWithLMSIImpl) o;
+		
+		//test result
+		assertEquals(copy.getNetworkNodeNumber(), original.getNetworkNodeNumber());
+		assertEquals(copy.getLMSI(), original.getLMSI());
 	}
 }

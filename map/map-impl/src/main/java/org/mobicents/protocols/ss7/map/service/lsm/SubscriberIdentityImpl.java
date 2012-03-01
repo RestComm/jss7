@@ -245,4 +245,35 @@ public class SubscriberIdentityImpl implements SubscriberIdentity, MAPAsnPrimiti
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((imsi == null) ? 0 : imsi.hashCode());
+		result = prime * result + ((msisdn == null) ? 0 : msisdn.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SubscriberIdentityImpl other = (SubscriberIdentityImpl) obj;
+		if (imsi == null) {
+			if (other.imsi != null)
+				return false;
+		} else if (!imsi.equals(other.imsi))
+			return false;
+		if (msisdn == null) {
+			if (other.msisdn != null)
+				return false;
+		} else if (!msisdn.equals(other.msisdn))
+			return false;
+		return true;
+	}
+
 }

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
@@ -46,7 +48,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * @author sergey vetyutnev
  * 
  */
-public interface LocationInfoWithLMSI {
+public interface LocationInfoWithLMSI extends Serializable {
 	
 	public ISDNAddressString getNetworkNodeNumber();
 

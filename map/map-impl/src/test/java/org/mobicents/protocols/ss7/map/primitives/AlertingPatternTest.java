@@ -21,19 +21,27 @@
  */
 package org.mobicents.protocols.ss7.map.primitives;
 
-import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
-
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingCategory;
-import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.service.lsm.AdditionalNumber;
-import org.mobicents.protocols.ss7.map.service.lsm.AdditionalNumberImpl;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingLevel;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 /**
  * @author amit bhayani
@@ -84,5 +92,46 @@ public class AlertingPatternTest {
 		byte[] encodedData = asnOS.toByteArray();
 
 		assertTrue(Arrays.equals(data, encodedData));
+	}
+	
+	@Test(groups = { "functional.serialize", "primitives" })
+	public void testSerialization() throws Exception {
+		AlertingPatternImpl original = new AlertingPatternImpl(AlertingCategory.Category4);
+		// serialize
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(out);
+		oos.writeObject(original);
+		oos.close();
+
+		// deserialize
+		byte[] pickled = out.toByteArray();
+		InputStream in = new ByteArrayInputStream(pickled);
+		ObjectInputStream ois = new ObjectInputStream(in);
+		Object o = ois.readObject();
+		AlertingPatternImpl copy = (AlertingPatternImpl) o;
+		
+		//test result
+		assertEquals(copy.getAlertingCategory(), original.getAlertingCategory());
+		assertEquals(copy, original);
+		assertNull(copy.getAlertingLevel());
+		
+		original = new AlertingPatternImpl(AlertingLevel.Level1);
+		// serialize
+		out = new ByteArrayOutputStream();
+		oos = new ObjectOutputStream(out);
+		oos.writeObject(original);
+		oos.close();
+
+		// deserialize
+		pickled = out.toByteArray();
+		in = new ByteArrayInputStream(pickled);
+		ois = new ObjectInputStream(in);
+		o = ois.readObject();
+		copy = (AlertingPatternImpl) o;
+		
+		//test result
+		assertEquals(copy.getAlertingLevel(), original.getAlertingLevel());
+		assertEquals(copy, original);
+		assertNull(copy.getAlertingCategory());
 	}
 }

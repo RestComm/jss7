@@ -47,7 +47,8 @@ public class USSDStringImpl implements USSDString, MAPAsnPrimitive {
 	private String ussdString;
 	private byte[] encodedString;
 
-	private Charset charset;
+	//TODO : Should Charset be serializable?
+	private transient Charset charset;
 
 	/**
 	 * 
@@ -202,6 +203,31 @@ public class USSDStringImpl implements USSDString, MAPAsnPrimitive {
 		}
 		
 		asnOs.writeOctetStringData(this.encodedString);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((ussdString == null) ? 0 : ussdString.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		USSDStringImpl other = (USSDStringImpl) obj;
+		if (ussdString == null) {
+			if (other.ussdString != null)
+				return false;
+		} else if (!ussdString.equals(other.ussdString))
+			return false;
+		return true;
 	}
 
 }

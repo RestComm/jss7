@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
@@ -34,7 +36,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
  * @author amit bhayani
  *
  */
-public interface SubscriberIdentity {
+public interface SubscriberIdentity extends Serializable {
 	
 	public IMSI getIMSI();
 	

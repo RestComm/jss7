@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 /**
  * 
  * Deferredmt-lrData ::= SEQUENCE {
@@ -35,7 +37,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface DeferredmtlrData {
+public interface DeferredmtlrData extends Serializable {
 	
 	/**
      *

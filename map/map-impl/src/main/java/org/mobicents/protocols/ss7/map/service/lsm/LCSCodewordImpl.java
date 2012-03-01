@@ -259,4 +259,32 @@ public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + dataCodingScheme;
+		result = prime * result + ((lcsCodewordString == null) ? 0 : lcsCodewordString.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LCSCodewordImpl other = (LCSCodewordImpl) obj;
+		if (dataCodingScheme != other.dataCodingScheme)
+			return false;
+		if (lcsCodewordString == null) {
+			if (other.lcsCodewordString != null)
+				return false;
+		} else if (!lcsCodewordString.equals(other.lcsCodewordString))
+			return false;
+		return true;
+	}
+
 }

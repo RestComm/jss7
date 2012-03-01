@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
 import java.nio.charset.Charset;
 
 /**
@@ -35,7 +36,7 @@ import java.nio.charset.Charset;
  * @author amit bhayani
  * 
  */
-public interface USSDString {
+public interface USSDString extends Serializable {
 
 	/**
 	 * Get the decoded USSD String

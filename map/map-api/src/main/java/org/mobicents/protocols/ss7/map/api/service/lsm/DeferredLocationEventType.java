@@ -21,6 +21,8 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 /**
  * DeferredLocationEventType ::= BIT STRING {
  *		msAvailable (0) ,
@@ -37,7 +39,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface DeferredLocationEventType {
+public interface DeferredLocationEventType extends Serializable {
 	
 	public boolean getMsAvailable();
 	

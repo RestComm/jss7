@@ -45,6 +45,7 @@
 package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -275,6 +276,31 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension, MAPAsnPrimi
 			sb.append(b);
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(data);
+		result = prime * result + Arrays.hashCode(oId);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MAPPrivateExtensionImpl other = (MAPPrivateExtensionImpl) obj;
+		if (!Arrays.equals(data, other.data))
+			return false;
+		if (!Arrays.equals(oId, other.oId))
+			return false;
+		return true;
 	}
 
 	

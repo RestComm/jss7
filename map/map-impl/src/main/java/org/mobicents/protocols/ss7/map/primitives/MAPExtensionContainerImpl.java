@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -262,6 +263,34 @@ public class MAPExtensionContainerImpl implements MAPExtensionContainer, MAPAsnP
 		return sb.toString();
 	}
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(pcsExtensions);
+		result = prime * result + ((privateExtensionList == null) ? 0 : privateExtensionList.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MAPExtensionContainerImpl other = (MAPExtensionContainerImpl) obj;
+		if (!Arrays.equals(pcsExtensions, other.pcsExtensions))
+			return false;
+		if (privateExtensionList == null) {
+			if (other.privateExtensionList != null)
+				return false;
+		} else if (!privateExtensionList.equals(other.privateExtensionList))
+			return false;
+		return true;
+	}
+
 	private String ArrayToString(byte[] array) {
 		StringBuilder sb = new StringBuilder();
 		int i1 = 0;

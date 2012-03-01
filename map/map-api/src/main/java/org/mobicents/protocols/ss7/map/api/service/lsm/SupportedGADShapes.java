@@ -21,6 +21,8 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 /**
  * SupportedGADShapes ::= BIT STRING {
  *      ellipsoidPoint (0),
@@ -35,7 +37,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface SupportedGADShapes {
+public interface SupportedGADShapes extends Serializable {
 	public boolean getEllipsoidPoint();
 	
 	public boolean getEllipsoidPointWithUncertaintyCircle();

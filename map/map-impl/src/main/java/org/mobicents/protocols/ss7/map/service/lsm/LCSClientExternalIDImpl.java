@@ -204,5 +204,36 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((extensionContainer == null) ? 0 : extensionContainer.hashCode());
+		result = prime * result + ((externalAddress == null) ? 0 : externalAddress.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LCSClientExternalIDImpl other = (LCSClientExternalIDImpl) obj;
+		if (extensionContainer == null) {
+			if (other.extensionContainer != null)
+				return false;
+		} else if (!extensionContainer.equals(other.extensionContainer))
+			return false;
+		if (externalAddress == null) {
+			if (other.externalAddress != null)
+				return false;
+		} else if (!externalAddress.equals(other.externalAddress))
+			return false;
+		return true;
+	}
+
 
 }

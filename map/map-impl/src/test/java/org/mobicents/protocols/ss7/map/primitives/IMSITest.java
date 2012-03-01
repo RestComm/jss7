@@ -22,13 +22,20 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-
-import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
  * 
@@ -74,6 +81,27 @@ public class IMSITest  {
 		
 		assertTrue( Arrays.equals(rawData,encodedData));
 		
+	}
+	
+	@Test(groups = { "functional.serialize", "primitives" })
+	public void testSerialization() throws Exception {
+		IMSIImpl original = new IMSIImpl("011220200198227");
+		// serialize
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(out);
+		oos.writeObject(original);
+		oos.close();
+
+		// deserialize
+		byte[] pickled = out.toByteArray();
+		InputStream in = new ByteArrayInputStream(pickled);
+		ObjectInputStream ois = new ObjectInputStream(in);
+		Object o = ois.readObject();
+		IMSIImpl copy = (IMSIImpl) o;
+		
+		//test result
+		assertEquals(copy.getData(), original.getData());
+	
 	}
 
 }

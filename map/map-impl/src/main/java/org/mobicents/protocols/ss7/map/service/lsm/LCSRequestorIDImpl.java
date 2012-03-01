@@ -293,4 +293,35 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 			throw new MAPException("AsnException when encoding ProcessUnstructuredSSRequestIndication", e);
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + dataCodingScheme;
+		result = prime * result + ((lcsFormatIndicator == null) ? 0 : lcsFormatIndicator.hashCode());
+		result = prime * result + ((requestorIDString == null) ? 0 : requestorIDString.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LCSRequestorIDImpl other = (LCSRequestorIDImpl) obj;
+		if (dataCodingScheme != other.dataCodingScheme)
+			return false;
+		if (lcsFormatIndicator != other.lcsFormatIndicator)
+			return false;
+		if (requestorIDString == null) {
+			if (other.requestorIDString != null)
+				return false;
+		} else if (!requestorIDString.equals(other.requestorIDString))
+			return false;
+		return true;
+	}
 }

@@ -40,6 +40,15 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
+ * Below is Ericsson MAP-OpenInfo
+ * 
+ * MAP−OpenInfo ::= SEQUENCE (
+ *		imsi					(0)	IMSI OPTIONAL,
+ *		originationReference 	(1)	AddressString OPTIONAL,
+ *		msisdn					(2)	AddressString,
+ *		...
+ *		vlrNo					(3)	AddressString OPTIONAL
+ *	)
  * 
  * @author amit bhayani
  * @author sergey vetyutnev

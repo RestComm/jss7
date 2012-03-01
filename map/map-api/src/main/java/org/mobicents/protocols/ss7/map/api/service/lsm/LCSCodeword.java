@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 
 /**
@@ -33,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
  * @author amit bhayani
  *
  */
-public interface LCSCodeword {
+public interface LCSCodeword extends Serializable {
 	
 	/**
 	 * USSD-DataCodingScheme ::= OCTET STRING (SIZE (1))

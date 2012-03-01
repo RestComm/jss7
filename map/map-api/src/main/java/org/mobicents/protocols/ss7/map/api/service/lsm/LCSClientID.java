@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 
 /**
@@ -38,7 +40,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
  * @author amit bhayani
  *
  */
-public interface LCSClientID {
+public interface LCSClientID extends Serializable {
 	LCSClientType getLCSClientType();
 	
 	LCSClientExternalID getLCSClientExternalID();

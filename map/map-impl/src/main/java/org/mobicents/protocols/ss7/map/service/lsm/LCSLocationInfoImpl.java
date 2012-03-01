@@ -404,5 +404,65 @@ public class LCSLocationInfoImpl implements LCSLocationInfo, MAPAsnPrimitive {
 		
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((additionalLCSCapabilitySets == null) ? 0 : additionalLCSCapabilitySets.hashCode());
+		result = prime * result + ((additionalNumber == null) ? 0 : additionalNumber.hashCode());
+		result = prime * result + ((extensionContainer == null) ? 0 : extensionContainer.hashCode());
+		result = prime * result + ((gprsNodeIndicator == null) ? 0 : gprsNodeIndicator.hashCode());
+		result = prime * result + ((lmsi == null) ? 0 : lmsi.hashCode());
+		result = prime * result + ((networkNodeNumber == null) ? 0 : networkNodeNumber.hashCode());
+		result = prime * result + ((supportedLCSCapabilitySets == null) ? 0 : supportedLCSCapabilitySets.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LCSLocationInfoImpl other = (LCSLocationInfoImpl) obj;
+		if (additionalLCSCapabilitySets == null) {
+			if (other.additionalLCSCapabilitySets != null)
+				return false;
+		} else if (!additionalLCSCapabilitySets.equals(other.additionalLCSCapabilitySets))
+			return false;
+		if (additionalNumber == null) {
+			if (other.additionalNumber != null)
+				return false;
+		} else if (!additionalNumber.equals(other.additionalNumber))
+			return false;
+		if (extensionContainer == null) {
+			if (other.extensionContainer != null)
+				return false;
+		} else if (!extensionContainer.equals(other.extensionContainer))
+			return false;
+		if (gprsNodeIndicator == null) {
+			if (other.gprsNodeIndicator != null)
+				return false;
+		} else if (!gprsNodeIndicator.equals(other.gprsNodeIndicator))
+			return false;
+		if (lmsi == null) {
+			if (other.lmsi != null)
+				return false;
+		} else if (!lmsi.equals(other.lmsi))
+			return false;
+		if (networkNodeNumber == null) {
+			if (other.networkNodeNumber != null)
+				return false;
+		} else if (!networkNodeNumber.equals(other.networkNodeNumber))
+			return false;
+		if (supportedLCSCapabilitySets == null) {
+			if (other.supportedLCSCapabilitySets != null)
+				return false;
+		} else if (!supportedLCSCapabilitySets.equals(other.supportedLCSCapabilitySets))
+			return false;
+		return true;
+	}
 
 }

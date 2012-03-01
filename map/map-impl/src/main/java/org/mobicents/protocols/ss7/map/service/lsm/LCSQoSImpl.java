@@ -351,4 +351,53 @@ public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((extensionContainer == null) ? 0 : extensionContainer.hashCode());
+		result = prime * result + ((horizontalAccuracy == null) ? 0 : horizontalAccuracy.hashCode());
+		result = prime * result + ((responseTime == null) ? 0 : responseTime.hashCode());
+		result = prime * result + ((verticalAccuracy == null) ? 0 : verticalAccuracy.hashCode());
+		result = prime * result + ((verticalCoordinateRequest == null) ? 0 : verticalCoordinateRequest.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LCSQoSImpl other = (LCSQoSImpl) obj;
+		if (extensionContainer == null) {
+			if (other.extensionContainer != null)
+				return false;
+		} else if (!extensionContainer.equals(other.extensionContainer))
+			return false;
+		if (horizontalAccuracy == null) {
+			if (other.horizontalAccuracy != null)
+				return false;
+		} else if (!horizontalAccuracy.equals(other.horizontalAccuracy))
+			return false;
+		if (responseTime == null) {
+			if (other.responseTime != null)
+				return false;
+		} else if (!responseTime.equals(other.responseTime))
+			return false;
+		if (verticalAccuracy == null) {
+			if (other.verticalAccuracy != null)
+				return false;
+		} else if (!verticalAccuracy.equals(other.verticalAccuracy))
+			return false;
+		if (verticalCoordinateRequest == null) {
+			if (other.verticalCoordinateRequest != null)
+				return false;
+		} else if (!verticalCoordinateRequest.equals(other.verticalCoordinateRequest))
+			return false;
+		return true;
+	}
+
 }

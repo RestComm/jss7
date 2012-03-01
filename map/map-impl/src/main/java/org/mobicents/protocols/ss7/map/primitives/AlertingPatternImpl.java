@@ -258,4 +258,29 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 		return this.alertingCategory;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((alertingCategory == null) ? 0 : alertingCategory.hashCode());
+		result = prime * result + ((alertingLevel == null) ? 0 : alertingLevel.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AlertingPatternImpl other = (AlertingPatternImpl) obj;
+		if (alertingCategory != other.alertingCategory)
+			return false;
+		if (alertingLevel != other.alertingLevel)
+			return false;
+		return true;
+	}
+
 }

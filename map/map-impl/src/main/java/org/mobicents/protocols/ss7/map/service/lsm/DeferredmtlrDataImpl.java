@@ -294,4 +294,38 @@ public class DeferredmtlrDataImpl implements DeferredmtlrData, MAPAsnPrimitive {
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((deferredLocationEventType == null) ? 0 : deferredLocationEventType.hashCode());
+		result = prime * result + ((lcsLocationInfo == null) ? 0 : lcsLocationInfo.hashCode());
+		result = prime * result + ((terminationCause == null) ? 0 : terminationCause.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DeferredmtlrDataImpl other = (DeferredmtlrDataImpl) obj;
+		if (deferredLocationEventType == null) {
+			if (other.deferredLocationEventType != null)
+				return false;
+		} else if (!deferredLocationEventType.equals(other.deferredLocationEventType))
+			return false;
+		if (lcsLocationInfo == null) {
+			if (other.lcsLocationInfo != null)
+				return false;
+		} else if (!lcsLocationInfo.equals(other.lcsLocationInfo))
+			return false;
+		if (terminationCause != other.terminationCause)
+			return false;
+		return true;
+	}
+
 }

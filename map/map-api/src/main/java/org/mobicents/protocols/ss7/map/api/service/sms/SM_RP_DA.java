@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
@@ -40,7 +42,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
  * @author sergey vetyutnev
  * 
  */
-public interface SM_RP_DA {
+public interface SM_RP_DA extends Serializable {
 
 	public IMSI getIMSI();
 

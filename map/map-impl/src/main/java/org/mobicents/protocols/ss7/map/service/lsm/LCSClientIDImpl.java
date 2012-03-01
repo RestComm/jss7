@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -423,6 +424,58 @@ public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 			// lcsRequestorID [6] LCSRequestorID
 			((LCSRequestorIDImpl)this.lcsRequestorID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_REQUESTOR_ID);
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(lcsAPN);
+		result = prime * result + ((lcsClientDialedByMS == null) ? 0 : lcsClientDialedByMS.hashCode());
+		result = prime * result + ((lcsClientExternalID == null) ? 0 : lcsClientExternalID.hashCode());
+		result = prime * result + ((lcsClientInternalID == null) ? 0 : lcsClientInternalID.hashCode());
+		result = prime * result + ((lcsClientName == null) ? 0 : lcsClientName.hashCode());
+		result = prime * result + ((lcsClientType == null) ? 0 : lcsClientType.hashCode());
+		result = prime * result + ((lcsRequestorID == null) ? 0 : lcsRequestorID.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LCSClientIDImpl other = (LCSClientIDImpl) obj;
+		if (!Arrays.equals(lcsAPN, other.lcsAPN))
+			return false;
+		if (lcsClientDialedByMS == null) {
+			if (other.lcsClientDialedByMS != null)
+				return false;
+		} else if (!lcsClientDialedByMS.equals(other.lcsClientDialedByMS))
+			return false;
+		if (lcsClientExternalID == null) {
+			if (other.lcsClientExternalID != null)
+				return false;
+		} else if (!lcsClientExternalID.equals(other.lcsClientExternalID))
+			return false;
+		if (lcsClientInternalID != other.lcsClientInternalID)
+			return false;
+		if (lcsClientName == null) {
+			if (other.lcsClientName != null)
+				return false;
+		} else if (!lcsClientName.equals(other.lcsClientName))
+			return false;
+		if (lcsClientType != other.lcsClientType)
+			return false;
+		if (lcsRequestorID == null) {
+			if (other.lcsRequestorID != null)
+				return false;
+		} else if (!lcsRequestorID.equals(other.lcsRequestorID))
+			return false;
+		return true;
 	}
 
 }

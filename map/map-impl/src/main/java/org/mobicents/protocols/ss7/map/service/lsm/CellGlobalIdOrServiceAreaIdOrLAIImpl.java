@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -203,6 +204,31 @@ public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServi
 		} else {
 			asnOs.write(this.laiFixedLength);
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(cellGlobalIdOrServiceAreaIdFixedLength);
+		result = prime * result + Arrays.hashCode(laiFixedLength);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CellGlobalIdOrServiceAreaIdOrLAIImpl other = (CellGlobalIdOrServiceAreaIdOrLAIImpl) obj;
+		if (!Arrays.equals(cellGlobalIdOrServiceAreaIdFixedLength, other.cellGlobalIdOrServiceAreaIdFixedLength))
+			return false;
+		if (!Arrays.equals(laiFixedLength, other.laiFixedLength))
+			return false;
+		return true;
 	}
 
 

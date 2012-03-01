@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  * IMSI ::= TBCD-STRING (SIZE (3..8)) -- digits of MCC, MNC, MSIN are
  * concatenated in this order.
@@ -38,7 +40,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  * 
  */
-public interface IMSI {
+public interface IMSI extends Serializable {
 
 	/**
 	 * Returns all digits of IMSI (MCC+MNC+MSIN)
