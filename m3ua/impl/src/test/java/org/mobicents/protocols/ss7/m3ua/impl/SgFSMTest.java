@@ -24,14 +24,18 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 
 
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import javolution.util.FastMap;
-
-import org.testng.annotations.*;
-import static org.testng.Assert.*;
 
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.AssociationListener;
@@ -62,6 +66,17 @@ import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
 import org.mobicents.protocols.ss7.m3ua.parameter.ServiceIndicators;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
+import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3Primitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * This test is for FSM for SGW side ASP and AS
@@ -74,6 +89,8 @@ public class SgFSMTest {
 	private ParameterFactoryImpl parmFactory = new ParameterFactoryImpl();
 	private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
 	private M3UAManagement serverM3UAMgmt = null;
+	private Semaphore semaphore = null;
+	private Mtp3UserPartListenerimpl mtp3UserPartListener = null;
 
 	private TransportManagement transportManagement = null;
 
@@ -90,9 +107,12 @@ public class SgFSMTest {
 
 	@BeforeMethod
 	public void setUp() throws Exception {
+		semaphore = new Semaphore(0);
 		this.transportManagement = new TransportManagement();
 		this.serverM3UAMgmt = new M3UAManagement("SgFSMTest");
 		this.serverM3UAMgmt.setTransportManagement(this.transportManagement);
+		this.mtp3UserPartListener = new Mtp3UserPartListenerimpl();
+		this.serverM3UAMgmt.addMtp3UserPartListener(this.mtp3UserPartListener);
 		this.serverM3UAMgmt.start();
 
 	}
@@ -121,24 +141,17 @@ public class SgFSMTest {
 
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
-		DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory
-				.createDestinationPointCode(123, (short) 0) };
-
-		ServiceIndicators[] servInds = new ServiceIndicators[] { parmFactory.createServiceIndicators(new short[] { 3 }) };
-
-		TrafficModeType trModType = parmFactory.createTrafficModeType(TrafficModeType.Override);
-		LocalRKIdentifier lRkId = parmFactory.createLocalRKIdentifier(1);
-		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
-
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
 		As remAs = serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc, null, null);
 		FSM asLocalFSM = remAs.getLocalFSM();
 
-		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
-		// 2777);
 		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 
 		Asp remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
+		
+		// Create Route
+		this.serverM3UAMgmt.addRoute(2, -1, -1, "testas");
+		
 		FSM aspPeerFSM = remAsp.getPeerFSM();
 
 		// Check for Communication UP
@@ -170,6 +183,18 @@ public class SgFSMTest {
 		assertTrue(validateMessage(testAssociation, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
 		
+		// Check if MTP3 RESUME received
+		//lets wait for 2second to receive the MTP3 primitive before giving up 
+		semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
+		
+		Mtp3Primitive mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
+		assertNotNull(mtp3Primitive);
+		assertEquals(Mtp3Primitive.RESUME, mtp3Primitive.getType());
+		assertEquals(2, mtp3Primitive.getAffectedDpc());
+		//No more MTP3 Primitive or message
+		assertNull(this.mtp3UserPartListener.rxMtp3PrimitivePoll());
+		assertNull(this.mtp3UserPartListener.rxMtp3TransferPrimitivePoll());
+		
 		//Since we didn't set the Traffic Mode while creating AS, it should now be set to loadshare as default
 		assertEquals(TrafficModeType.Loadshare, remAs.getTrafficModeType().getMode());
 
@@ -193,6 +218,17 @@ public class SgFSMTest {
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK, -1,
 				-1));
 
+		//lets wait for 3 seconds to receive the MTP3 primitive before giving up. We know Pending timeout is 2 secs
+		semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
+
+		mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
+		assertNotNull(mtp3Primitive);
+		assertEquals(Mtp3Primitive.PAUSE, mtp3Primitive.getType());
+		assertEquals(2, mtp3Primitive.getAffectedDpc());
+		//No more MTP3 Primitive or message
+		assertNull(this.mtp3UserPartListener.rxMtp3PrimitivePoll());
+		assertNull(this.mtp3UserPartListener.rxMtp3TransferPrimitivePoll());
+		
 		// Make sure we don't have any more
 		assertNull(testAssociation.txPoll());
 	}
@@ -203,16 +239,6 @@ public class SgFSMTest {
 		TestAssociation testAssociation = (TestAssociation) this.transportManagement.addAssociation(null, 0, null, 0,
 				"testAssoc1");
 
-
-		DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory
-				.createDestinationPointCode(123, (short) 0) };
-
-		ServiceIndicators[] servInds = new ServiceIndicators[] { parmFactory.createServiceIndicators(new short[] { 3 }) };
-
-		TrafficModeType trModType = parmFactory.createTrafficModeType(TrafficModeType.Override);
-		LocalRKIdentifier lRkId = parmFactory.createLocalRKIdentifier(1);
-		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, null, null, null, dpc, servInds, null);
-
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
 		As remAs = serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, null, null, null);
 		FSM asLocalFSM = remAs.getLocalFSM();
@@ -222,6 +248,10 @@ public class SgFSMTest {
 		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 
 		Asp remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
+		
+		// Create Route
+		this.serverM3UAMgmt.addRoute(2, -1, -1, "testas");
+		
 		FSM aspPeerFSM = remAsp.getPeerFSM();
 
 		// Check for Communication UP
@@ -252,6 +282,18 @@ public class SgFSMTest {
 		assertTrue(validateMessage(testAssociation, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
 		
+		// Check if MTP3 RESUME received
+		//lets wait for 2second to receive the MTP3 primitive before giving up 
+		semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
+		
+		Mtp3Primitive mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
+		assertNotNull(mtp3Primitive);
+		assertEquals(Mtp3Primitive.RESUME, mtp3Primitive.getType());
+		assertEquals(2, mtp3Primitive.getAffectedDpc());
+		//No more MTP3 Primitive or message
+		assertNull(this.mtp3UserPartListener.rxMtp3PrimitivePoll());
+		assertNull(this.mtp3UserPartListener.rxMtp3TransferPrimitivePoll());
+		
 		//Since we didn't set the Traffic Mode while creating AS, it should now be set to loadshare as default
 		assertEquals(TrafficModeType.Loadshare, remAs.getTrafficModeType().getMode());
 
@@ -273,7 +315,18 @@ public class SgFSMTest {
 		assertEquals(AspState.DOWN, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK, -1,
 				-1));
-
+		
+		//lets wait for 3 seconds to receive the MTP3 primitive before giving up. We know Pending timeout is 2 secs
+		semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
+		
+		mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
+		assertNotNull(mtp3Primitive);
+		assertEquals(Mtp3Primitive.PAUSE, mtp3Primitive.getType());
+		assertEquals(2, mtp3Primitive.getAffectedDpc());
+		//No more MTP3 Primitive or message
+		assertNull(this.mtp3UserPartListener.rxMtp3PrimitivePoll());
+		assertNull(this.mtp3UserPartListener.rxMtp3TransferPrimitivePoll());
+		
 		// Make sure we don't have any more
 		assertNull(testAssociation.txPoll());
 	}
@@ -288,32 +341,12 @@ public class SgFSMTest {
 		// Define 1st AS
 		RoutingContext rc1 = parmFactory.createRoutingContext(new long[] { 100 });
 
-		DestinationPointCode[] dpc1 = new DestinationPointCode[] { parmFactory.createDestinationPointCode(123,
-				(short) 0) };
-
-		ServiceIndicators[] servInds1 = new ServiceIndicators[] { parmFactory
-				.createServiceIndicators(new short[] { 3 }) };
-
-		TrafficModeType trModType1 = parmFactory.createTrafficModeType(TrafficModeType.Override);
-		LocalRKIdentifier lRkId1 = parmFactory.createLocalRKIdentifier(1);
-		RoutingKey rKey1 = parmFactory.createRoutingKey(lRkId1, rc1, null, null, dpc1, servInds1, null);
-
 		// As remAs1 = sgw.createAppServer("testas1", rc1, rKey1, trModType1);
 		As remAs1 = serverM3UAMgmt.createAs("testas1", Functionality.SGW, ExchangeType.SE, null, rc1, null, null);
 		FSM as1LocalFSM = remAs1.getLocalFSM();
 
 		// Define 2nd AS
 		RoutingContext rc2 = parmFactory.createRoutingContext(new long[] { 200 });
-
-		DestinationPointCode[] dpc2 = new DestinationPointCode[] { parmFactory.createDestinationPointCode(124,
-				(short) 0) };
-
-		ServiceIndicators[] servInds2 = new ServiceIndicators[] { parmFactory
-				.createServiceIndicators(new short[] { 3 }) };
-
-		TrafficModeType trModType2 = parmFactory.createTrafficModeType(TrafficModeType.Override);
-		LocalRKIdentifier lRkId2 = parmFactory.createLocalRKIdentifier(1);
-		RoutingKey rKey2 = parmFactory.createRoutingKey(lRkId2, rc2, null, null, dpc2, servInds2, null);
 
 		// As remAs2 = sgw.createAppServer("testas2", rc2, rKey2, trModType2);
 		As remAs2 = serverM3UAMgmt.createAs("testas2", Functionality.SGW, ExchangeType.SE, null, rc2, null, null);
@@ -416,15 +449,6 @@ public class SgFSMTest {
 
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 		TrafficModeType overrideMode = parmFactory.createTrafficModeType(TrafficModeType.Override);
-
-		DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory
-				.createDestinationPointCode(123, (short) 0) };
-
-		ServiceIndicators[] servInds = new ServiceIndicators[] { parmFactory.createServiceIndicators(new short[] { 3 }) };
-
-		TrafficModeType trModType = parmFactory.createTrafficModeType(TrafficModeType.Override);
-		LocalRKIdentifier lRkId = parmFactory.createLocalRKIdentifier(1);
-		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
 		As remAs = serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc, overrideMode, null);
@@ -1156,6 +1180,42 @@ public class SgFSMTest {
 			// TODO Auto-generated method stub
 			
 		}
+	}
+	
+	class Mtp3UserPartListenerimpl implements Mtp3UserPartListener {
+		private LinkedList<Mtp3Primitive> mtp3Primitives = new LinkedList<Mtp3Primitive>();
+		private LinkedList<Mtp3TransferPrimitive> mtp3TransferPrimitives = new LinkedList<Mtp3TransferPrimitive>();
 
+		Mtp3Primitive rxMtp3PrimitivePoll() {
+			return this.mtp3Primitives.poll();
+		}
+
+		Mtp3TransferPrimitive rxMtp3TransferPrimitivePoll() {
+			return this.mtp3TransferPrimitives.poll();
+		}
+
+		@Override
+		public void onMtp3PauseMessage(Mtp3PausePrimitive pause) {
+			this.mtp3Primitives.add(pause);
+			semaphore.release();
+		}
+
+		@Override
+		public void onMtp3ResumeMessage(Mtp3ResumePrimitive resume) {
+			this.mtp3Primitives.add(resume);
+			semaphore.release();
+		}
+
+		@Override
+		public void onMtp3StatusMessage(Mtp3StatusPrimitive status) {
+			this.mtp3Primitives.add(status);
+			semaphore.release();
+		}
+
+		@Override
+		public void onMtp3TransferMessage(Mtp3TransferPrimitive transfer) {
+			this.mtp3TransferPrimitives.add(transfer);
+			semaphore.release();
+		}
 	}
 }

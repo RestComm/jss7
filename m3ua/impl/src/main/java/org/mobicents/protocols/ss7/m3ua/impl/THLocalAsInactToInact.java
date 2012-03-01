@@ -59,7 +59,7 @@ public class THLocalAsInactToInact implements TransitionHandler {
 					logger.error(String.format("No ASP found. %s", this.fsm.toString()));
 					return false;
 				}
-
+				
 				Notify msg = createNotify(remAsp);
 				remAsp.getAspFactory().write(msg);
 			}

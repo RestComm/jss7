@@ -114,9 +114,14 @@ public class M3UAManagementTest {
 		
 		// Make sure AS is not null
 		As[] asList = route.get("123:1:1");
+		As routeAs = asList[0];
+		assertNotNull(routeAs);
+		
+		As managementAs = m3uaMgmt1.getAppServers().get(0);
 
-		assertNotNull(asList[0]);
-
+		//Make sure both m3uamanagament and route are pointing to same AS instance
+		assertEquals(routeAs, managementAs);
+		
 		assertEquals(2, ((TestAssociation) association).getNoOfTimeStartCalled());
 		
 		this.m3uaMgmt.stopAsp("ASP1");

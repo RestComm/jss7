@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javolution.util.FastList;
+import javolution.util.FastSet;
 import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
@@ -72,6 +73,9 @@ public class As implements XMLSerializable {
 
 	// List of all the ASP's for this AS
 	protected FastList<Asp> appServerProcs = new FastList<Asp>();
+
+	// List of As state listeners
+	private FastSet<AsStateListener> asStateListeners = new FastSet<AsStateListener>();
 
 	protected String name;
 	protected RoutingContext rc;
@@ -195,7 +199,7 @@ public class As implements XMLSerializable {
 				AsState.INACTIVE.toString());
 
 		this.peerFSM.createTransition(TransitionState.AS_STATE_CHANGE_ACTIVE, AsState.INACTIVE.toString(),
-				AsState.ACTIVE.toString());
+				AsState.ACTIVE.toString()).setHandler(new THPeerAsInActToAct(this, this.peerFSM));
 
 		this.peerFSM.createTransition(TransitionState.ASP_DOWN, AsState.INACTIVE.toString(), AsState.DOWN.toString())
 				.setHandler(new THPeerAsInActToDwn(this, this.peerFSM));
@@ -665,5 +669,27 @@ public class As implements XMLSerializable {
 					.append(M3UAOAMMessages.SHOW_STARTED).append(aspFactory.getStatus());
 			sb.append(M3UAOAMMessages.NEW_LINE);
 		}
+	}
+
+	/**
+	 * Add the {@link AsStateListener} listening for As state
+	 * 
+	 * @param listener
+	 */
+	protected void addAsStateListener(AsStateListener listener) {
+		this.asStateListeners.add(listener);
+	}
+
+	/**
+	 * Remove already added {@link AsStateListener}
+	 * 
+	 * @param listener
+	 */
+	protected void removeAsStateListener(AsStateListener listener) {
+		this.asStateListeners.remove(listener);
+	}
+
+	public FastSet<AsStateListener> getAsStateListeners() {
+		return asStateListeners;
 	}
 }

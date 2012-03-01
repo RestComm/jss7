@@ -82,9 +82,6 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 	private static final String TAB_INDENT = "\t";
 	private static final String CLASS_ATTRIBUTE = "type";
 
-	private static final String KEY_SEPARATOR = ":";
-	private static final int WILDCARD = -1;
-
 	protected FastList<As> appServers = new FastList<As>();
 	protected FastList<AspFactory> aspfactories = new FastList<AspFactory>();
 
@@ -103,9 +100,9 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 
 	private ScheduledExecutorService fsmTicker;
 
-	private RouteMap<String, As[]> route = new RouteMap<String, As[]>();
-
-	private int maxAsForRoute = 4;
+	protected int maxAsForRoute = 4;
+	
+	private M3UARouteManagement routeManagement = null;
 
 	public M3UAManagement(String name) {
 		this.name = name;
@@ -113,6 +110,8 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		binding.setAlias(AspFactory.class, "aspFactory");
 		binding.setAlias(As.class, "as");
 		binding.setAlias(Asp.class, "asp");
+		
+		this.routeManagement = new M3UARouteManagement(this);
 
 	}
 
@@ -175,6 +174,8 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		} catch (FileNotFoundException e) {
 			logger.warn(String.format("Failed to load the SS7 configuration file. \n%s", e.getMessage()));
 		}
+		
+		this.routeManagement.reset();
 
 		fsmTicker = Executors.newSingleThreadScheduledExecutor();
 		fsmTicker.scheduleAtFixedRate(m3uaScheduler, 500, 500, TimeUnit.MILLISECONDS);
@@ -198,7 +199,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 	}
 
 	public FastMap<String, As[]> getRoute() {
-		return this.route;
+		return this.routeManagement.route;
 	}
 
 	protected As getAs(String asName) {
@@ -274,7 +275,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 					"As=%s still has ASP's assigned. Unassign Asp's before destroying this As", asName));
 		}
 
-		for (FastMap.Entry<String, As[]> e = this.route.head(), end = this.route.tail(); (e = e.getNext()) != end;) {
+		for (FastMap.Entry<String, As[]> e = this.routeManagement.route.head(), end = this.routeManagement.route.tail(); (e = e.getNext()) != end;) {
 			As[] asList = e.getValue();
 			for (int count = 0; count < asList.length; count++) {
 				As asTemp = asList[count];
@@ -507,84 +508,11 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 	}
 
 	public void addRoute(int dpc, int opc, int si, String asName) throws Exception {
-		As as = null;
-		for (FastList.Node<As> n = appServers.head(), end = appServers.tail(); (n = n.getNext()) != end;) {
-			if (n.getValue().getName().compareTo(asName) == 0) {
-				as = n.getValue();
-				break;
-			}
-		}
-
-		if (as == null) {
-			throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_NO_AS, asName));
-		}
-
-		String key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR).append(si))
-				.toString();
-
-		As[] asArray = route.get(key);
-
-		if (asArray != null) {
-			// check is this As is already added
-			for (int count = 0; count < asArray.length; count++) {
-				As asTemp = asArray[count];
-				if (asTemp != null && as.equals(asTemp)) {
-					throw new Exception(String.format("As=%s already added for dpc=%d opc=%d si=%d", as.getName(), dpc,
-							opc, si));
-				}
-			}
-		} else {
-			asArray = new As[this.maxAsForRoute];
-			route.put(key, asArray);
-		}
-
-		// Add to first empty slot
-		for (int count = 0; count < asArray.length; count++) {
-			if (asArray[count] == null) {
-				asArray[count] = as;
-				this.store();
-				return;
-			}
-
-		}
-
-		throw new Exception(String.format("dpc=%d opc=%d si=%d combination already has maximum possible As",
-				as.getName(), dpc, opc, si));
+		this.routeManagement.addRoute(dpc, opc, si, asName);
 	}
 
 	public void removeRoute(int dpc, int opc, int si, String asName) throws Exception {
-		As as = null;
-		for (FastList.Node<As> n = appServers.head(), end = appServers.tail(); (n = n.getNext()) != end;) {
-			if (n.getValue().getName().compareTo(asName) == 0) {
-				as = n.getValue();
-				break;
-			}
-		}
-
-		if (as == null) {
-			throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_NO_AS, asName));
-		}
-
-		String key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR).append(si))
-				.toString();
-
-		As[] asArray = route.get(key);
-
-		if (asArray == null) {
-			throw new Exception(String.format("No AS=%s configured  for dpc=%d opc=%d si=%d", as.getName(), dpc, opc,
-					si));
-		}
-
-		for (int count = 0; count < asArray.length; count++) {
-			As asTemp = asArray[count];
-			if (asTemp != null && as.equals(asTemp)) {
-				asArray[count] = null;
-				this.store();
-				return;
-			}
-		}
-
-		throw new Exception(String.format("No AS=%s configured  for dpc=%d opc=%d si=%d", as.getName(), dpc, opc, si));
+		this.routeManagement.removeRoute(dpc, opc, si, asName);
 	}
 
 	public void sendTransferMessageToLocalUser(Mtp3TransferPrimitive msg, int seqControl) {
@@ -613,56 +541,6 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		return null;
 	}
 
-	private As getAsForRoute(int dpc, int opc, int si, int sls) {
-		String key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR).append(si))
-				.toString();
-		As[] asArray = route.get(key);
-
-		if (asArray == null) {
-			key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR)
-					.append(WILDCARD)).toString();
-
-			asArray = route.get(key);
-
-			if (asArray == null) {
-				key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(WILDCARD).append(KEY_SEPARATOR)
-						.append(WILDCARD)).toString();
-
-				asArray = route.get(key);
-			}
-		}
-
-		if (asArray == null) {
-			return null;
-		}
-
-		for (int count = 0; count < asArray.length; count++) {
-			As as = asArray[count];
-
-			FSM fsm = null;
-			if (as != null) {
-				if (as.getFunctionality() == Functionality.AS
-						|| (as.getFunctionality() == Functionality.SGW && as.getExchangeType() == ExchangeType.DE)
-						|| (as.getFunctionality() == Functionality.IPSP && as.getExchangeType() == ExchangeType.DE)
-						|| (as.getFunctionality() == Functionality.IPSP && as.getExchangeType() == ExchangeType.SE && as
-								.getIpspType() == IPSPType.CLIENT)) {
-					fsm = as.getPeerFSM();
-				} else {
-					fsm = as.getLocalFSM();
-				}
-
-				AsState asState = AsState.getState(fsm.getState().getName());
-
-				if (asState == AsState.ACTIVE) {
-					return as;
-				}
-
-			}// if (as != null)
-		}// for
-
-		return null;
-	}
-
 	/**
 	 * Persist
 	 */
@@ -678,7 +556,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 			writer.setIndentation(TAB_INDENT);
 			writer.write(aspfactories, ASP_FACTORY_LIST, FastList.class);
 			writer.write(appServers, AS_LIST, FastList.class);
-			writer.write(route, DPC_VS_AS_LIST, RouteMap.class);
+			writer.write(this.routeManagement.route, DPC_VS_AS_LIST, RouteMap.class);
 
 			writer.close();
 		} catch (Exception e) {
@@ -700,7 +578,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 			reader.setBinding(binding);
 			aspfactories = reader.read(ASP_FACTORY_LIST, FastList.class);
 			appServers = reader.read(AS_LIST, FastList.class);
-			route = reader.read(DPC_VS_AS_LIST, RouteMap.class);
+			this.routeManagement.route = reader.read(DPC_VS_AS_LIST, RouteMap.class);
 
 			// Create Asp's and assign to each of the AS. Schedule the FSM's
 			for (FastList.Node<As> n = appServers.head(), end = appServers.tail(); (n = n.getNext()) != end;) {
@@ -768,7 +646,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 				MessageType.PAYLOAD);
 		payload.setData(data);
 		
-		As as = this.getAsForRoute(data.getDpc(), data.getOpc(), data.getSI(), data.getSLS());
+		As as = this.routeManagement.getAsForRoute(data.getDpc(), data.getOpc(), data.getSI(), data.getSLS());
 		if (as == null) {
 			logger.error(String.format("Tx : No AS found for routing message %s", payload));
 			return;
