@@ -31,6 +31,7 @@ import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPDialogState;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
@@ -46,12 +47,12 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
@@ -82,7 +83,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	protected AddressString origReference;
 	protected MAPExtensionContainer extContainer = null;
 
-	protected MAPDialogState state = MAPDialogState.Idle;
+	protected MAPDialogState state = MAPDialogState.IDLE;
 	
 	protected boolean normalDialogShutDown = false;
 	
@@ -121,7 +122,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 	public void release() {
 		this.setNormalDialogShutDown();
-		this.setState(MAPDialogState.Expunged);
+		this.setState(MAPDialogState.EXPUNGED);
 		
 		if (this.tcapDialog != null)
 			this.tcapDialog.release();
@@ -177,8 +178,8 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		synchronized (this) {
 			// Dialog is not started or has expunged - we need not send TC-U-ABORT,
 			// only Dialog removing
-			if (this.getState() == MAPDialogState.Expunged || this.getState() == MAPDialogState.Idle) {
-				this.setState(MAPDialogState.Expunged);
+			if (this.getState() == MAPDialogState.EXPUNGED || this.getState() == MAPDialogState.IDLE) {
+				this.setState(MAPDialogState.EXPUNGED);
 				return;
 			}
 
@@ -186,7 +187,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			this.mapProviderImpl.fireTCAbortUser(this.getTcapDialog(), mapUserAbortChoice, this.extContainer);
 			this.extContainer = null;
 
-			this.setState(MAPDialogState.Expunged);
+			this.setState(MAPDialogState.EXPUNGED);
 		}
 	}
 
@@ -194,7 +195,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 		synchronized (this) {
 			// Dialog must be in the InitialReceived state
-			if (this.getState() != MAPDialogState.InitialReceived) {
+			if (this.getState() != MAPDialogState.INITIAL_RECEIVED) {
 				throw new MAPException("Refuse can be called in the Dialog InitialReceived state");
 			}
 
@@ -202,7 +203,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			this.mapProviderImpl.fireTCAbortRefused(this.getTcapDialog(), reason, this.extContainer);
 			this.extContainer = null;
 
-			this.setState(MAPDialogState.Expunged);
+			this.setState(MAPDialogState.EXPUNGED);
 		}
 	}
 
@@ -220,7 +221,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 						prearrangedEnd, acn, this.extContainer);
 				this.extContainer = null;
 
-				this.setState(MAPDialogState.Expunged);
+				this.setState(MAPDialogState.EXPUNGED);
 				break;
 
 			case Active:
@@ -228,7 +229,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 				this.mapProviderImpl.fireTCEnd(this.getTcapDialog(), false,
 						prearrangedEnd, null, null);
 
-				this.setState(MAPDialogState.Expunged);
+				this.setState(MAPDialogState.EXPUNGED);
 				break;
 				
 			case Idle:
@@ -258,7 +259,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 						this.eriVlrNo);
 				this.extContainer = null;
 
-				this.setState(MAPDialogState.InitialSent);
+				this.setState(MAPDialogState.INITIAL_SENT);
 				break;
 
 			case Active:
@@ -279,7 +280,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 						acn1, this.extContainer);
 				this.extContainer = null;
 
-				this.setState(MAPDialogState.Active);
+				this.setState(MAPDialogState.ACTIVE);
 				break;
 
 			case InitialSent: // we have sent TC-BEGIN already, need to wait
@@ -302,12 +303,12 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 	protected synchronized void setState(MAPDialogState newState) {
 		// add checks?
-		if (this.state == MAPDialogState.Expunged) {
+		if (this.state == MAPDialogState.EXPUNGED) {
 			return;
 		}
 		
 		this.state = newState;
-		if (newState == MAPDialogState.Expunged) {
+		if (newState == MAPDialogState.EXPUNGED) {
 			this.mapProviderImpl.removeDialog(tcapDialog.getDialogId());
 			this.mapProviderImpl.deliverDialogResease(this);
 		}

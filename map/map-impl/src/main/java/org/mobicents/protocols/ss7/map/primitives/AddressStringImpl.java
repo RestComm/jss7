@@ -23,7 +23,9 @@
 package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
-import java.io.OutputStream;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -43,6 +45,10 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
  * 
  */
 public class AddressStringImpl extends TbcdString implements AddressString {
+	
+	private static final String NAI = "nai";
+	private static final String NPI = "npi";
+	private static final String NUMBER = "number";
 
 	protected int NO_EXTENSION_MASK = 0x80;
 	protected int NATURE_OF_ADD_IND_MASK = 0x70;
@@ -57,8 +63,7 @@ public class AddressStringImpl extends TbcdString implements AddressString {
 	public AddressStringImpl() {
 	}
 
-	public AddressStringImpl(AddressNature addressNature,
-			NumberingPlan numberingPlan, String address) {
+	public AddressStringImpl(AddressNature addressNature, NumberingPlan numberingPlan, String address) {
 		super();
 		this.addressNature = addressNature;
 		this.numberingPlan = numberingPlan;
@@ -80,8 +85,7 @@ public class AddressStringImpl extends TbcdString implements AddressString {
 	public boolean isExtension() {
 		return isExtension;
 	}
-	
-	
+
 	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_OCTET;
@@ -129,7 +133,7 @@ public class AddressStringImpl extends TbcdString implements AddressString {
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException {
 
 		this._testLengthDecode(length);
-		
+
 		// The first byte has extension, nature of address indicator and
 		// numbering plan indicator
 		int nature = ansIS.read();
@@ -153,13 +157,13 @@ public class AddressStringImpl extends TbcdString implements AddressString {
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		
+
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
+
 		try {
 			asnOs.writeTag(tagClass, true, tag);
 			int pos = asnOs.StartContentDefiniteLength();
@@ -178,10 +182,10 @@ public class AddressStringImpl extends TbcdString implements AddressString {
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		
+
 		if (this.addressNature == null || this.numberingPlan == null || this.address == null)
 			throw new MAPException("Error when encoding AddressString: addressNature, numberingPlan or address is empty");
-		
+
 		this._testLengthEncode();
 
 		int nature = 1;
@@ -237,5 +241,25 @@ public class AddressStringImpl extends TbcdString implements AddressString {
 			return false;
 		return true;
 	}
-}
 
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<AddressStringImpl> ADDRESS_STRING_XML = new XMLFormat<AddressStringImpl>(AddressStringImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, AddressStringImpl addressStringImpl) throws XMLStreamException {
+			addressStringImpl.addressNature = AddressNature.getInstance(xml.getAttribute(NAI, 0));
+			addressStringImpl.numberingPlan = NumberingPlan.getInstance(xml.getAttribute(NPI, 0));
+			addressStringImpl.address = xml.getAttribute(NUMBER, "");
+		}
+
+		@Override
+		public void write(AddressStringImpl addressStringImpl, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+
+			xml.setAttribute(NAI, addressStringImpl.addressNature.getIndicator());
+			xml.setAttribute(NPI, addressStringImpl.numberingPlan.getIndicator());
+			xml.setAttribute(NUMBER, addressStringImpl.address);
+		}
+	};
+}

@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.map.service.supplementary;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -44,7 +47,11 @@ import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
  * @author amit bhayani
  * 
  */
-public class ProcessUnstructuredSSRequestIndicationImpl extends USSDMessageImpl implements ProcessUnstructuredSSRequestIndication {
+public class ProcessUnstructuredSSRequestIndicationImpl extends USSDMessageImpl implements
+		ProcessUnstructuredSSRequestIndication {
+
+	private static final String MSISDN = "msisdn";
+	private static final String ALERTING_PATTERN = "alertingPattern";
 
 	private static final int _TAG_MSISDN = 0;
 
@@ -59,8 +66,8 @@ public class ProcessUnstructuredSSRequestIndicationImpl extends USSDMessageImpl 
 		super();
 	}
 
-	public ProcessUnstructuredSSRequestIndicationImpl(byte ussdDataCodingSch, USSDString ussdString, AlertingPattern alertingPattern,
-			ISDNAddressString msisdnAddressString) {
+	public ProcessUnstructuredSSRequestIndicationImpl(byte ussdDataCodingSch, USSDString ussdString,
+			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString) {
 		super(ussdDataCodingSch, ussdString);
 		this.alertingPattern = alertingPattern;
 		this.msisdnAddressString = msisdnAddressString;
@@ -110,10 +117,11 @@ public class ProcessUnstructuredSSRequestIndicationImpl extends USSDMessageImpl 
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new MAPParsingComponentException("IOException when decoding ProcessUnstructuredSSRequestIndication: "
+					+ e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException(
+					"AsnException when decoding ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -124,15 +132,17 @@ public class ProcessUnstructuredSSRequestIndicationImpl extends USSDMessageImpl 
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new MAPParsingComponentException("IOException when decoding ProcessUnstructuredSSRequestIndication: "
+					+ e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException(
+					"AsnException when decoding ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException,
+			AsnException {
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
@@ -156,7 +166,7 @@ public class ProcessUnstructuredSSRequestIndicationImpl extends USSDMessageImpl 
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
 		this.ussdString = new USSDStringImpl();
-		((USSDStringImpl)this.ussdString).decodeAll(ais);
+		((USSDStringImpl) this.ussdString).decodeAll(ais);
 
 		while (true) {
 			if (ais.available() == 0)
@@ -173,13 +183,13 @@ public class ProcessUnstructuredSSRequestIndicationImpl extends USSDMessageImpl 
 							MAPParsingComponentExceptionReason.MistypedParameter);
 
 				this.msisdnAddressString = new ISDNAddressStringImpl();
-				((ISDNAddressStringImpl)this.msisdnAddressString).decodeAll(ais);
+				((ISDNAddressStringImpl) this.msisdnAddressString).decodeAll(ais);
 				break;
 			default:
 				// alertingPattern AlertingPattern OPTIONAL
 				if (tag == Tag.STRING_OCTET && ais.getTagClass() == Tag.CLASS_UNIVERSAL && ais.isTagPrimitive()) {
 					this.alertingPattern = new AlertingPatternImpl();
-					((AlertingPatternImpl)this.alertingPattern).decodeAll(ais);
+					((AlertingPatternImpl) this.alertingPattern).decodeAll(ais);
 				} else {
 					ais.advanceElement();
 				}
@@ -215,14 +225,15 @@ public class ProcessUnstructuredSSRequestIndicationImpl extends USSDMessageImpl 
 		try {
 			asnOs.writeOctetString(new byte[] { this.ussdDataCodingSch });
 
-			((USSDStringImpl)this.ussdString).encodeAll(asnOs);
+			((USSDStringImpl) this.ussdString).encodeAll(asnOs);
 
 			if (this.alertingPattern != null) {
-				((AlertingPatternImpl)this.alertingPattern).encodeAll(asnOs);
+				((AlertingPatternImpl) this.alertingPattern).encodeAll(asnOs);
 			}
 
 			if (this.msisdnAddressString != null) {
-				((ISDNAddressStringImpl)this.msisdnAddressString).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_MSISDN);
+				((ISDNAddressStringImpl) this.msisdnAddressString).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+						_TAG_MSISDN);
 			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding ProcessUnstructuredSSRequestIndication", e);
@@ -230,5 +241,29 @@ public class ProcessUnstructuredSSRequestIndicationImpl extends USSDMessageImpl 
 			throw new MAPException("AsnException when encoding ProcessUnstructuredSSRequestIndication", e);
 		}
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<ProcessUnstructuredSSRequestIndicationImpl> PROCESS_UNSTRUCTURED_SS_REQUEST_XML = new XMLFormat<ProcessUnstructuredSSRequestIndicationImpl>(
+			ProcessUnstructuredSSRequestIndicationImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml,
+				ProcessUnstructuredSSRequestIndicationImpl ussdMessage) throws XMLStreamException {
+			USSD_MESSAGE_XML.read(xml, ussdMessage);
+			ussdMessage.msisdnAddressString = xml.get(MSISDN, ISDNAddressStringImpl.class);
+			ussdMessage.alertingPattern = xml.get(ALERTING_PATTERN, AlertingPatternImpl.class);
+
+		}
+
+		@Override
+		public void write(ProcessUnstructuredSSRequestIndicationImpl ussdMessage,
+				javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			USSD_MESSAGE_XML.write(ussdMessage, xml);
+			xml.add(((ISDNAddressStringImpl) ussdMessage.msisdnAddressString), MSISDN, ISDNAddressStringImpl.class);
+			xml.add(((AlertingPatternImpl) ussdMessage.alertingPattern), ALERTING_PATTERN, AlertingPatternImpl.class);
+		}
+	};
 
 }

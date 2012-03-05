@@ -48,6 +48,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
@@ -451,6 +452,17 @@ public class Client extends TestHarness {
 							mapDialog.getDialogId(), destReference, origReference, extensionContainer));
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.map.api.MAPDialogListener#onDialogRequestEricsson(org.mobicents.protocols.ss7.map.api.MAPDialog, org.mobicents.protocols.ss7.map.api.primitives.AddressString, org.mobicents.protocols.ss7.map.api.primitives.AddressString, org.mobicents.protocols.ss7.map.api.primitives.IMSI, org.mobicents.protocols.ss7.map.api.primitives.AddressString)
+	 */
+	@Override
+	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI arg3, AddressString arg4) {
+		if (logger.isDebugEnabled()) {
+			logger.debug(String.format("onDialogRequest for DialogId=%d DestinationReference=%s OriginReference=%s ",
+					mapDialog.getDialogId(), destReference, origReference));
+		}		
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -600,4 +612,6 @@ public class Client extends TestHarness {
 	public void onDialogTimeout(MAPDialog mapDialog) {
 		logger.error(String.format("onDialogTimeout for DialogId=%d", mapDialog.getDialogId()));
 	}
+
+
 }

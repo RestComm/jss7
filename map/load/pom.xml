@@ -131,7 +131,11 @@
 			<artifactId>stream</artifactId>
 			<version>${stream.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+			<artifactId>mobicents-dialogic</artifactId>
+			<version>${ss7.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.mobicents.commons</groupId>
 			<artifactId>commons</artifactId>

@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api;
 
+import org.mobicents.protocols.ss7.map.api.dialog.MAPDialogState;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
@@ -40,13 +41,20 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
  * 
  */
 public interface MAPDialog {
-	
+
 	public static int _Timer_s = 10000;
 	public static int _Timer_m = 30000;
 	public static int _Timer_ml = 600000;
 	public static int _Timer_l = 136800000;
-	
+
 	public static int _Timer_Default = -1;
+
+	/**
+	 * Returns the current {@link MAPDialogState} of this Dialog
+	 * 
+	 * @return
+	 */
+	public MAPDialogState getState();
 
 	/**
 	 * Remove MAPDialog without sending any messages and invoking events
@@ -55,11 +63,12 @@ public interface MAPDialog {
 
 	/**
 	 * This method can be called on timeout of dialog, inside
-	 * {@link MAPDialogListener#onDialogTimeout(Dialog)} callback. If its called,
-	 * dialog wont be removed in case application does not perform 'send'.
+	 * {@link MAPDialogListener#onDialogTimeout(Dialog)} callback. If its
+	 * called, dialog wont be removed in case application does not perform
+	 * 'send'.
 	 */
 	public void keepAlive();
-	
+
 	/**
 	 * Returns this Dialog's ID. This ID is actually TCAP's Dialog ID.
 	 * {@link org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog}
@@ -153,7 +162,7 @@ public interface MAPDialog {
 	 * @throws MAPException
 	 */
 	public void sendErrorComponent(Long invokeId, MAPErrorMessage mapErrorMessage) throws MAPException;
-	
+
 	/**
 	 * Sends the TC-U-REJECT component
 	 * 
@@ -165,7 +174,7 @@ public interface MAPDialog {
 	public void sendRejectComponent(Long invokeId, Problem problem) throws MAPException;
 
 	/**
-	 * Reset the Invoke Timeout timer for the Invoke. (TC-TIMER-RESET)  
+	 * Reset the Invoke Timeout timer for the Invoke. (TC-TIMER-RESET)
 	 * 
 	 * @param invokeId
 	 * @throws MAPException
@@ -176,11 +185,11 @@ public interface MAPDialog {
 	 * Causes local termination of an operation invocation (TC-U-CANCEL)
 	 * 
 	 * @param invokeId
-	 * @return true:OK, false: Invoke not found 
+	 * @return true:OK, false: Invoke not found
 	 * @throws MAPException
 	 */
 	public boolean cancelInvocation(Long invokeId) throws MAPException;
-	
+
 	/**
 	 * Getting from the MAPDialog a user-defined object to save relating to the
 	 * Dialog information
@@ -196,19 +205,22 @@ public interface MAPDialog {
 	 * @param userObject
 	 */
 	public void setUserObject(Object userObject);
-	
+
 	public MAPApplicationContext getApplicationContext();
-	
+
 	/**
-	 * Return the maximum MAP message length (in bytes) that are allowed for this dialog
+	 * Return the maximum MAP message length (in bytes) that are allowed for
+	 * this dialog
+	 * 
 	 * @return
 	 */
 	public int getMaxUserDataLength();
-	
+
 	/**
-	 * Return the MAP message length (in bytes) that will be after encoding
-	 * if TC-BEGIN or TC-CONTINUE cases
-	 * This value must not exceed getMaxUserDataLength() value
+	 * Return the MAP message length (in bytes) that will be after encoding if
+	 * TC-BEGIN or TC-CONTINUE cases This value must not exceed
+	 * getMaxUserDataLength() value
+	 * 
 	 * @return
 	 */
 	public int getMessageUserDataLengthOnSend() throws MAPException;

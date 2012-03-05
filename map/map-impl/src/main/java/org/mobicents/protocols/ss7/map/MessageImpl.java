@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.map;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
 
@@ -31,6 +34,9 @@ import org.mobicents.protocols.ss7.map.api.MAPMessage;
  * 
  */
 public abstract class MessageImpl implements MAPMessage {
+	
+	private static final String INVOKE_ID = "invokeId";
+	
 	private long invokeId;
 	private MAPDialog mapDialog;
 
@@ -49,5 +55,21 @@ public abstract class MessageImpl implements MAPMessage {
 	public void setMAPDialog(MAPDialog mapDialog) {
 		this.mapDialog = mapDialog;
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<MessageImpl> MAP_MESSAGE_XML = new XMLFormat<MessageImpl>(MessageImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, MessageImpl message) throws XMLStreamException {
+			message.invokeId = xml.getAttribute(INVOKE_ID, -1l);
+		}
+
+		@Override
+		public void write(MessageImpl message, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(INVOKE_ID, message.invokeId);
+		}
+	};
 
 }

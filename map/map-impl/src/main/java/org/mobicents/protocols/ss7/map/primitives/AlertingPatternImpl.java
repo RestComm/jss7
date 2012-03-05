@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.map.primitives;
 import java.io.IOException;
 import java.util.Arrays;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -36,6 +39,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.AlertingLevel;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 
 /**
+ * TODO : Add XML Serialization
+ * 
  * @author amit bhayani
  * @author sergey vetyutnev
  * 
@@ -45,10 +50,10 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 	public static final String _PrimitiveName = "AlertingPattern";
 
 	private byte[] data;
-	
+
 	public AlertingPatternImpl() {
 	}
-	
+
 	public AlertingPatternImpl(byte[] data) {
 		this.data = data;
 	}
@@ -65,7 +70,6 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 	public byte[] getData() {
 		return data;
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -96,9 +100,7 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 		else
 			return AlertingCategory.getInstance(this.data[0]);
 	}
-	
-	
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -227,7 +229,7 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 			throw new MAPException("Error when encoding " + _PrimitiveName + ": data must not be empty");
 		if (this.data.length != 1)
 			throw new MAPException("Error when encoding " + _PrimitiveName + ": data length must be equal 1");
-		
+
 		asnOs.writeOctetStringData(this.data);
 	}
 
@@ -274,7 +276,31 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 			return false;
 		return true;
 	}
-	
-	
-}
 
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<AlertingPatternImpl> ADDRESS_STRING_XML = new XMLFormat<AlertingPatternImpl>(AlertingPatternImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, AlertingPatternImpl alertingPatternImpl) throws XMLStreamException {
+			int size = xml.getAttribute("size", 0);
+			alertingPatternImpl.data = new byte[size];
+			for(int i=0;i<size;i++){
+				alertingPatternImpl.data[i] = xml.get("value", Byte.class);
+			}
+		}
+
+		@Override
+		public void write(AlertingPatternImpl alertingPatternImpl, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			
+			byte[] tempdata = alertingPatternImpl.data;
+			xml.setAttribute("size",tempdata  == null ? 0 : tempdata.length);
+			for (int i = 0; i < tempdata.length; i++) {
+				xml.add(tempdata[i], "value", Byte.class);
+			}
+
+		}
+	};
+
+}
