@@ -26,7 +26,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * 
  */
 public enum AlertingCategory {
-	Category1((byte)4), Category2((byte)5), Category3((byte)6), Category4((byte)7), Category5((byte)8);
+	Category1((byte) 4), Category2((byte) 5), Category3((byte) 6), Category4((byte) 7), Category5((byte) 8);
 
 	private final byte category;
 
@@ -36,5 +36,22 @@ public enum AlertingCategory {
 
 	public byte getCategory() {
 		return this.category;
+	}
+
+	public static AlertingCategory getInstance(byte category) {
+		switch (category) {
+		case 4:
+			return Category1;
+		case 5:
+			return Category2;
+		case 6:
+			return Category3;
+		case 7:
+			return Category4;
+		case 8:
+			return Category5;
+		default:
+			return null;
+		}
 	}
 }

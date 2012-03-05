@@ -26,7 +26,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * 
  */
 public enum AlertingLevel {
-	Level0((byte)0), Level1((byte)1), Level2((byte)2);
+	Level0((byte) 0), Level1((byte) 1), Level2((byte) 2);
 
 	private final byte level;
 
@@ -36,5 +36,18 @@ public enum AlertingLevel {
 
 	public byte getLevel() {
 		return this.level;
+	}
+
+	public static AlertingLevel getInstanc(byte level) {
+		switch (level) {
+		case 0:
+			return Level0;
+		case 1:
+			return Level1;
+		case 2:
+			return Level2;
+		default:
+			return null;
+		}
 	}
 }

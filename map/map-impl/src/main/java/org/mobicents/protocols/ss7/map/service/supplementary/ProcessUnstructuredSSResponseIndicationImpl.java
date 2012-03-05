@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.map.service.supplementary;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -40,7 +43,8 @@ import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
  * @author amit bhayani
  * 
  */
-public class ProcessUnstructuredSSResponseIndicationImpl extends USSDMessageImpl implements ProcessUnstructuredSSResponseIndication {
+public class ProcessUnstructuredSSResponseIndicationImpl extends USSDMessageImpl implements
+		ProcessUnstructuredSSResponseIndication {
 
 	/**
 	 * 
@@ -75,10 +79,12 @@ public class ProcessUnstructuredSSResponseIndicationImpl extends USSDMessageImpl
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ProcessUnstructuredSSResponseIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException(
+					"IOException when decoding ProcessUnstructuredSSResponseIndication: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ProcessUnstructuredSSResponseIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException(
+					"AsnException when decoding ProcessUnstructuredSSResponseIndication: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -89,15 +95,18 @@ public class ProcessUnstructuredSSResponseIndicationImpl extends USSDMessageImpl
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ProcessUnstructuredSSResponseIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException(
+					"IOException when decoding ProcessUnstructuredSSResponseIndication: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ProcessUnstructuredSSResponseIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException(
+					"AsnException when decoding ProcessUnstructuredSSResponseIndication: " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException,
+			AsnException {
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
@@ -121,7 +130,7 @@ public class ProcessUnstructuredSSResponseIndicationImpl extends USSDMessageImpl
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
 		this.ussdString = new USSDStringImpl();
-		((USSDStringImpl)this.ussdString).decodeAll(ais);
+		((USSDStringImpl) this.ussdString).decodeAll(ais);
 
 	}
 
@@ -153,7 +162,7 @@ public class ProcessUnstructuredSSResponseIndicationImpl extends USSDMessageImpl
 		try {
 			asnOs.writeOctetString(new byte[] { this.ussdDataCodingSch });
 
-			((USSDStringImpl)this.ussdString).encodeAll(asnOs);
+			((USSDStringImpl) this.ussdString).encodeAll(asnOs);
 
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding ProcessUnstructuredSSResponseIndication", e);
@@ -161,5 +170,25 @@ public class ProcessUnstructuredSSResponseIndicationImpl extends USSDMessageImpl
 			throw new MAPException("AsnException when encoding ProcessUnstructuredSSResponseIndication", e);
 		}
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<ProcessUnstructuredSSResponseIndicationImpl> PROCESS_UNSTRUCTURED_SS_RESPONSE_XML = new XMLFormat<ProcessUnstructuredSSResponseIndicationImpl>(
+			ProcessUnstructuredSSResponseIndicationImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml,
+				ProcessUnstructuredSSResponseIndicationImpl ussdMessage) throws XMLStreamException {
+			USSD_MESSAGE_XML.read(xml, ussdMessage);
+
+		}
+
+		@Override
+		public void write(ProcessUnstructuredSSResponseIndicationImpl ussdMessage,
+				javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			USSD_MESSAGE_XML.write(ussdMessage, xml);
+		}
+	};
 
 }

@@ -45,6 +45,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
@@ -135,7 +136,7 @@ public class Server extends TestHarness {
 
 		// Step3 : Assign ASP to AS
 		Asp asp = this.serverM3UAMgmt.assignAspToAs("RAS1", "RASP1");
-		
+
 		// Step 4: Add Route. Remote point code is 2
 		this.serverM3UAMgmt.addRoute(CLIENT_SPC, -1, -1, "RAS1");
 	}
@@ -145,21 +146,19 @@ public class Server extends TestHarness {
 		this.sccpStack.setLocalSpc(SERVET_SPC);
 		this.sccpStack.setNi(NETWORK_INDICATOR);
 		this.sccpStack.setMtp3UserPart(this.serverM3UAMgmt);
-		
+
 		this.sccpStack.start();
 
 		// Clean orevious resources if present
-//		this.sccpResource = new SccpResource();
-//		this.sccpResource.start();
-//
-//		this.sccpStack.setSccpResource(this.sccpResource);
+		// this.sccpResource = new SccpResource();
+		// this.sccpResource.start();
+		//
+		// this.sccpStack.setSccpResource(this.sccpResource);
 
 		RemoteSignalingPointCode rspc = new RemoteSignalingPointCode(CLIENT_SPC, 0, 0);
 		RemoteSubSystem rss = new RemoteSubSystem(CLIENT_SPC, SSN, 0);
 		this.sccpStack.getSccpResource().addRemoteSpc(0, rspc);
 		this.sccpStack.getSccpResource().addRemoteSsn(0, rss);
-
-
 
 	}
 
@@ -206,6 +205,15 @@ public class Server extends TestHarness {
 			logger.debug(String
 					.format("onDialogRequest for DialogId=%d DestinationReference=%s OriginReference=%s MAPExtensionContainer=%s",
 							mapDialog.getDialogId(), destReference, origReference, extensionContainer));
+		}
+	}
+
+	@Override
+	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
+			IMSI imsi, AddressString vlr) {
+		if (logger.isDebugEnabled()) {
+			logger.debug(String.format("onDialogRequest for DialogId=%d DestinationReference=%s OriginReference=%s ",
+					mapDialog.getDialogId(), destReference, origReference));
 		}
 	}
 

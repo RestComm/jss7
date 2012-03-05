@@ -48,6 +48,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
@@ -131,7 +132,8 @@ public class Client extends TestHarness {
 		// m3ua as create rc <rc> <ras-name>
 		RoutingContext rc = factory.createRoutingContext(new long[] { 100l });
 		TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
-		this.clientM3UAMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType, null);
+		this.clientM3UAMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType,
+				null);
 
 		// Step 2 : Create ASP
 		this.clientM3UAMgmt.createAspFactory("ASP1", CLIENT_ASSOCIATION_NAME);
@@ -149,13 +151,13 @@ public class Client extends TestHarness {
 		this.sccpStack.setLocalSpc(CLIENT_SPC);
 		this.sccpStack.setNi(NETWORK_INDICATOR);
 		this.sccpStack.setMtp3UserPart(this.clientM3UAMgmt);
-		
+
 		this.sccpStack.start();
 
-//		sccpResource = new SccpResource();
-//		sccpResource.start();
-//
-//		this.sccpStack.setSccpResource(this.sccpResource);
+		// sccpResource = new SccpResource();
+		// sccpResource.start();
+		//
+		// this.sccpStack.setSccpResource(this.sccpResource);
 
 		RemoteSignalingPointCode rspc = new RemoteSignalingPointCode(SERVET_SPC, 0, 0);
 		RemoteSubSystem rss = new RemoteSubSystem(SERVET_SPC, SSN, 0);
@@ -185,7 +187,7 @@ public class Client extends TestHarness {
 
 	private void initiateUSSD() throws MAPException {
 
-		//System.out.println("initiateUSSD");
+		// System.out.println("initiateUSSD");
 
 		// First create Dialog
 		MAPDialogSupplementary mapDialog = this.mapProvider.getMAPServiceSupplementary().createNewDialog(
@@ -233,8 +235,9 @@ public class Client extends TestHarness {
 			while (client.endCount < NDIALOGS) {
 				while (client.nbConcurrentDialogs.intValue() >= MAXCONCURRENTDIALOGS) {
 
-//					logger.warn("Number of concurrent MAP dialog's = " + client.nbConcurrentDialogs.intValue()
-//							+ " Waiting for max dialog count to go down!");
+					// logger.warn("Number of concurrent MAP dialog's = " +
+					// client.nbConcurrentDialogs.intValue()
+					// + " Waiting for max dialog count to go down!");
 
 					synchronized (client) {
 						try {
@@ -247,7 +250,7 @@ public class Client extends TestHarness {
 
 				if (client.endCount == 0) {
 					client.start = System.currentTimeMillis();
-					logger.warn("StartTie = "+client.start);
+					logger.warn("StartTie = " + client.start);
 				}
 
 				client.initiateUSSD();
@@ -452,6 +455,15 @@ public class Client extends TestHarness {
 		}
 	}
 
+	@Override
+	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
+			IMSI imsi, AddressString vlr) {
+		if (logger.isDebugEnabled()) {
+			logger.debug(String.format("onDialogRequest for DialogId=%d DestinationReference=%s OriginReference=%s ",
+					mapDialog.getDialogId(), destReference, origReference));
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -552,12 +564,12 @@ public class Client extends TestHarness {
 		}
 		if (this.endCount == NDIALOGS) {
 			long current = System.currentTimeMillis();
-			logger.warn("Current Time = "+current);
+			logger.warn("Current Time = " + current);
 			float sec = (float) (current - start) / 1000f;
 
 			logger.warn("Total time in sec = " + sec);
 			logger.warn("Thrupt = " + (float) (NDIALOGS / sec));
-		} 
+		}
 	}
 
 	/*

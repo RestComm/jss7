@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
@@ -46,7 +49,8 @@ public class ISDNAddressStringImpl extends AddressStringImpl implements ISDNAddr
 	@Override
 	protected void _testLengthDecode(int length) throws MAPParsingComponentException {
 		if (length > 9)
-			throw new MAPParsingComponentException("Error when decoding FTNAddressString: mesage length must not exceed 9",
+			throw new MAPParsingComponentException(
+					"Error when decoding FTNAddressString: mesage length must not exceed 9",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -59,7 +63,26 @@ public class ISDNAddressStringImpl extends AddressStringImpl implements ISDNAddr
 
 	@Override
 	public String toString() {
-		return "ISDNAddressString[AddressNature=" + this.addressNature + ", NumberingPlan=" + this.numberingPlan + ", Address="
-				+ this.address + "]";
+		return "ISDNAddressString[AddressNature=" + this.addressNature + ", NumberingPlan=" + this.numberingPlan
+				+ ", Address=" + this.address + "]";
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<ISDNAddressStringImpl> ISDN_ADDRESS_STRING_XML = new XMLFormat<ISDNAddressStringImpl>(
+			ISDNAddressStringImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, ISDNAddressStringImpl isdnAddressStringImpl)
+				throws XMLStreamException {
+			ADDRESS_STRING_XML.read(xml, isdnAddressStringImpl);
+		}
+
+		@Override
+		public void write(ISDNAddressStringImpl isdnAddressStringImpl, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+			ADDRESS_STRING_XML.write(isdnAddressStringImpl, xml);
+		}
+	};
 }

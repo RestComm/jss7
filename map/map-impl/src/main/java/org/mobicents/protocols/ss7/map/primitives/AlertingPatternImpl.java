@@ -23,6 +23,9 @@ package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -39,6 +42,9 @@ import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
  * 
  */
 public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
+	
+	private static final String LEVEL = "level";
+	private static final String CATEGORY = "category";
 
 	private AlertingLevel alertingLevel;
 	private AlertingCategory alertingCategory;
@@ -144,10 +150,12 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException,
+			AsnException {
 		if (length != 1)
-			throw new MAPParsingComponentException("Error decoding AlertingPattern: the AlertingPattern field must contain 1 octets. Contains: " + length,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new MAPParsingComponentException(
+					"Error decoding AlertingPattern: the AlertingPattern field must contain 1 octets. Contains: "
+							+ length, MAPParsingComponentExceptionReason.MistypedParameter);
 
 		byte[] rawdata = ansIS.readOctetStringData(length);
 		int data = rawdata[0];
@@ -232,7 +240,7 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 		} else {
 			rawData = new byte[] { this.alertingCategory.getCategory() };
 		}
-		
+
 		asnOs.writeOctetStringData(rawData);
 	}
 
@@ -282,5 +290,36 @@ public class AlertingPatternImpl implements AlertingPattern, MAPAsnPrimitive {
 			return false;
 		return true;
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<AlertingPatternImpl> ADDRESS_STRING_XML = new XMLFormat<AlertingPatternImpl>(
+			AlertingPatternImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, AlertingPatternImpl alertingPatternImpl)
+				throws XMLStreamException {
+			String level = xml.getAttribute(LEVEL, null);
+			if (level != null) {
+				alertingPatternImpl.alertingLevel = AlertingLevel.getInstanc(Byte.parseByte(level));
+			}
+
+			String category = xml.getAttribute(CATEGORY, null);
+			if (category != null) {
+				alertingPatternImpl.alertingCategory = AlertingCategory.getInstance(Byte.parseByte(category));
+			}
+		}
+
+		@Override
+		public void write(AlertingPatternImpl alertingPatternImpl, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+			if (alertingPatternImpl.alertingLevel != null) {
+				xml.setAttribute(LEVEL, alertingPatternImpl.alertingLevel.getLevel());
+			} else {
+				xml.setAttribute(CATEGORY, alertingPatternImpl.alertingCategory.getCategory());
+			}
+		}
+	};
 
 }

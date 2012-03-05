@@ -21,17 +21,31 @@
  */
 package org.mobicents.protocols.ss7.map.service.supplementary;
 
-import static org.testng.Assert.*;
-import org.testng.*;
-import org.testng.annotations.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingCategory;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 /**
  * Real trace.
@@ -58,7 +72,7 @@ public class ProcessUnstructuredSSRequestIndicationTest {
 	public void tearDown() {
 	}
 
-	@Test(groups = { "functional.decode","service.ussd"})
+	@Test(groups = { "functional.decode", "service.ussd" })
 	public void testDecode() throws Exception {
 		byte[] data = new byte[] { 0x30, 0x0a, 0x04, 0x01, 0x0f, 0x04, 0x05, 0x2a, (byte) 0xd9, (byte) 0x8c, 0x36, 0x02 };
 
@@ -68,27 +82,64 @@ public class ProcessUnstructuredSSRequestIndicationTest {
 		ProcessUnstructuredSSRequestIndicationImpl addNum = new ProcessUnstructuredSSRequestIndicationImpl();
 		addNum.decodeAll(asn);
 		byte dataCodingScheme = addNum.getUSSDDataCodingScheme();
-		assertEquals( dataCodingScheme,(byte) 0x0f);
+		assertEquals(dataCodingScheme, (byte) 0x0f);
 
 		USSDString ussdString = addNum.getUSSDString();
 		assertNotNull(ussdString);
 
-		assertEquals( ussdString.getString(),"*234#");
+		assertEquals(ussdString.getString(), "*234#");
 
 	}
 
-	@Test(groups = { "functional.encode","service.ussd"})
+	@Test(groups = { "functional.encode", "service.ussd" })
 	public void testEncode() throws Exception {
 		byte[] data = new byte[] { 0x30, 0x0a, 0x04, 0x01, 0x0f, 0x04, 0x05, 0x2a, (byte) 0xd9, (byte) 0x8c, 0x36, 0x02 };
 
 		USSDString ussdStr = new USSDStringImpl("*234#", null);
-		ProcessUnstructuredSSRequestIndicationImpl addNum = new ProcessUnstructuredSSRequestIndicationImpl((byte) 0x0f, ussdStr, null, null);
+		ProcessUnstructuredSSRequestIndicationImpl addNum = new ProcessUnstructuredSSRequestIndicationImpl((byte) 0x0f,
+				ussdStr, null, null);
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 		addNum.encodeAll(asnOS);
 
 		byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue( Arrays.equals(data,encodedData));
+		assertTrue(Arrays.equals(data, encodedData));
+	}
+
+	@Test(groups = { "functional.xml.serialize", "service.ussd" })
+	public void testXMLSerialize() throws Exception {
+
+		ISDNAddressStringImpl isdnAddress = new ISDNAddressStringImpl(AddressNature.international_number,
+				NumberingPlan.ISDN, "79273605819");
+		AlertingPatternImpl alertingPattern = new AlertingPatternImpl(AlertingCategory.Category3);
+		USSDString ussdStr = new USSDStringImpl("*234#", null);
+		ProcessUnstructuredSSRequestIndicationImpl original = new ProcessUnstructuredSSRequestIndicationImpl(
+				(byte) 0x0f, ussdStr, alertingPattern, isdnAddress);
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "processUnstructuredSSRequest", ProcessUnstructuredSSRequestIndicationImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		ProcessUnstructuredSSRequestIndicationImpl copy = reader.read("processUnstructuredSSRequest",
+				ProcessUnstructuredSSRequestIndicationImpl.class);
+
+		assertEquals(copy.getMSISDNAddressString(), original.getMSISDNAddressString());
+		assertEquals(copy.getUSSDDataCodingScheme(), original.getUSSDDataCodingScheme());
+		assertEquals(copy.getUSSDString(), original.getUSSDString());
+		assertEquals(copy.getAlertingPattern(), original.getAlertingPattern());
+
 	}
 }

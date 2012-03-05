@@ -47,6 +47,7 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequestIndication;
@@ -316,6 +317,13 @@ public class ClientDialogic implements MAPDialogListener, MAPServiceSmsListener 
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void onDialogRequestEricsson(MAPDialog arg0, AddressString arg1, AddressString arg2, IMSI arg3,
+			AddressString arg4) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
@@ -476,5 +484,7 @@ public class ClientDialogic implements MAPDialogListener, MAPServiceSmsListener 
 		// TODO Auto-generated method stub
 		
 	}
+
+
 
 }
