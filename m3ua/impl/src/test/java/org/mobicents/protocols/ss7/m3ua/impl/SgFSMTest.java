@@ -1017,6 +1017,15 @@ public class SgFSMTest {
 			return null;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.api.Association#getExtraHostAddresses()
+		 */
+		@Override
+		public String[] getExtraHostAddresses() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 	}
 
 	class TransportManagement implements Management {
@@ -1155,14 +1164,14 @@ public class SgFSMTest {
 		}
 
 		@Override
-		public Association addAssociation(String arg0, int arg1, String arg2, int arg3, String arg4, IpChannelType arg5)
+		public Association addAssociation(String arg0, int arg1, String arg2, int arg3, String arg4, IpChannelType arg5, String[] extraHostAddresses)
 				throws Exception {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		public Server addServer(String arg0, String arg1, int arg2, IpChannelType arg3) throws Exception {
+		public Server addServer(String arg0, String arg1, int arg2, IpChannelType arg3, String[] extraHostAddresses) throws Exception {
 			// TODO Auto-generated method stub
 			return null;
 		}

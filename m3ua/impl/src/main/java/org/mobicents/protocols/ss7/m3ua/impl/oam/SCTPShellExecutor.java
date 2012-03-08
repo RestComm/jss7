@@ -38,6 +38,16 @@ public class SCTPShellExecutor implements ShellExecutor {
 			sb.append("SERVER ").append(server.getIpChannelType().getType()).append(" name=").append(server.getName())
 					.append(" started=").append(server.isStarted()).append(" hostIp=").append(server.getHostAddress())
 					.append(" hostPort=").append(server.getHostport());
+			
+			String[] secondaryHostAdd = server.getExtraHostAddresses();
+			
+			if(secondaryHostAdd != null && secondaryHostAdd.length > 0){
+				sb.append(" secondaryHost=");
+				for(int i=0;i<secondaryHostAdd.length;i++){
+					sb.append(secondaryHostAdd[i]).append(" ");
+				}
+			}
+			
 			List<String> associations = server.getAssociations();
 			sb.append(M3UAOAMMessages.NEW_LINE);
 			sb.append("Associations:");
@@ -68,7 +78,18 @@ public class SCTPShellExecutor implements ShellExecutor {
 			} else {
 				sb.append(" server=").append(asso.getServerName());
 			}
+			
 			sb.append(" type=").append(asso.getAssociationType());
+			
+			String[] secondaryHostAdd = asso.getExtraHostAddresses();
+			
+			if(secondaryHostAdd != null && secondaryHostAdd.length > 0){
+				sb.append(" secondaryHost=");
+				for(int i=0;i<secondaryHostAdd.length;i++){
+					sb.append(secondaryHostAdd[i]).append(" ");
+				}
+			}
+			
 			sb.append(M3UAOAMMessages.NEW_LINE);
 		}
 
@@ -108,6 +129,17 @@ public class SCTPShellExecutor implements ShellExecutor {
 						return M3UAOAMMessages.INVALID_COMMAND;
 					}
 
+					String[] hostAddresses = hostAddress.split(",");
+					String primaryAddress = hostAddresses[0];
+					String[] secondaryAddresses = null;
+
+					if (hostAddresses.length > 1) {
+						secondaryAddresses = new String[(hostAddresses.length - 1)];
+						for (int i = 0; i < secondaryAddresses.length; i++) {
+							secondaryAddresses[i] = hostAddresses[(i + 1)];
+						}
+					}
+
 					int hostPort = Integer.parseInt(args[5]);
 
 					IpChannelType ipChnnelType = null;
@@ -120,7 +152,8 @@ public class SCTPShellExecutor implements ShellExecutor {
 						ipChnnelType = IpChannelType.SCTP;
 					}
 
-					this.sctpManagement.addServer(serverName, hostAddress, hostPort, ipChnnelType);
+					this.sctpManagement.addServer(serverName, primaryAddress, hostPort, ipChnnelType,
+							secondaryAddresses);
 
 					return String.format(SCTPOAMMessages.ADD_SERVER_SUCCESS, serverName);
 
@@ -194,6 +227,18 @@ public class SCTPShellExecutor implements ShellExecutor {
 						int peerPort = Integer.parseInt(args[6]);
 
 						String hostIp = args[7];
+
+						String[] hostAddresses = hostIp.split(",");
+						String primaryAddress = hostAddresses[0];
+						String[] secondaryAddresses = null;
+
+						if (hostAddresses.length > 1) {
+							secondaryAddresses = new String[(hostAddresses.length - 1)];
+							for (int i = 0; i < secondaryAddresses.length; i++) {
+								secondaryAddresses[i] = hostAddresses[(i + 1)];
+							}
+						}
+
 						int hostPort = Integer.parseInt(args[8]);
 
 						IpChannelType ipChnnelType = null;
@@ -206,7 +251,8 @@ public class SCTPShellExecutor implements ShellExecutor {
 							ipChnnelType = IpChannelType.SCTP;
 						}
 
-						this.sctpManagement.addAssociation(hostIp, hostPort, peerIp, peerPort, assocName, ipChnnelType);
+						this.sctpManagement.addAssociation(primaryAddress, hostPort, peerIp, peerPort, assocName,
+								ipChnnelType, secondaryAddresses);
 
 						return String.format(SCTPOAMMessages.ADD_CLIENT_ASSOCIATION_SUCCESS, assocName);
 					} else if (type.equals("SERVER")) {
