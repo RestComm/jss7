@@ -38,6 +38,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 	private static final Logger logger = Logger.getLogger(Mtp3UserPartBaseImpl.class);
 
 	private static final int MAX_SLS = 32;
+	private static final int SLS_FILTER = 0x1F;
 
 	// The count of threads that will be used for message delivering to Mtp3UserPartListener's
 	// For single thread model this value should be equal 1
@@ -128,6 +129,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 		if (this.isStarted) {
 			MsgTransferDeliveryHandler hdl = new MsgTransferDeliveryHandler(msg);
 
+			seqControl = seqControl & SLS_FILTER;
 			this.msgDeliveryExecutors[this.slsTable[seqControl]].execute(hdl);
 		}
 	}
