@@ -41,4 +41,6 @@ public interface MAPServiceSupplementaryListener extends MAPServiceListener {
 	public void onUnstructuredSSResponseIndication(UnstructuredSSResponseIndication unstrResInd);
 
 	public void onUnstructuredSSNotifyRequestIndication(UnstructuredSSNotifyRequestIndication unstrNotifyInd);
+
+	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponseIndication unstrNotifyInd);
 }
