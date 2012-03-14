@@ -87,6 +87,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSuppl
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
@@ -1116,6 +1117,12 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	@Override
 	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponseIndication unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}

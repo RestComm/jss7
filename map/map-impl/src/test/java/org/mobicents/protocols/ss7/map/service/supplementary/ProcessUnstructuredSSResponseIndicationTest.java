@@ -22,14 +22,25 @@
 package org.mobicents.protocols.ss7.map.service.supplementary;
 
 import static org.testng.Assert.*;
+
 import org.testng.*;
 import org.testng.annotations.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingCategory;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
 /**
@@ -87,5 +98,36 @@ public class ProcessUnstructuredSSResponseIndicationTest {
 		byte[] encodedData = asnOS.toByteArray();
 
 		assertTrue( Arrays.equals(data,encodedData));
+	}
+	
+	@Test(groups = { "functional.xml.serialize", "service.ussd" })
+	public void testXMLSerialize() throws Exception {
+
+		USSDString ussdStr = new USSDStringImpl("Your balance = 350", null);
+		ProcessUnstructuredSSResponseIndicationImpl original = new ProcessUnstructuredSSResponseIndicationImpl((byte) 0x0f, ussdStr);
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "processUnstructuredSSResponse", ProcessUnstructuredSSResponseIndicationImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		ProcessUnstructuredSSResponseIndicationImpl copy = reader.read("processUnstructuredSSResponse",
+				ProcessUnstructuredSSResponseIndicationImpl.class);
+
+		assertEquals(copy.getInvokeId(), original.getInvokeId());
+		assertEquals(copy.getUSSDDataCodingScheme(), original.getUSSDDataCodingScheme());
+		assertEquals(copy.getUSSDString(), original.getUSSDString());
+
 	}
 }
