@@ -167,7 +167,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 			if (compType == ComponentType.Invoke)
 				this.unstructuredSSNotifyRequest(parameter, mapDialogSupplementaryImpl, invokeId);
 			else
-				// error?
+				this.unstructuredSSNotifyResponse(parameter, mapDialogSupplementaryImpl, invokeId);
 				break;
 		default:
 			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
@@ -202,26 +202,14 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 	}
 	
 	private void unstructuredSSNotifyResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
-		if (parameter == null)
-			throw new MAPParsingComponentException("Error while decoding unstructuredSSNotifyIndication: Parameter is mandatory but not found",
-					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-			throw new MAPParsingComponentException(
-					"Error while decoding unstructuredSSNotifyIndication: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
-					MAPParsingComponentExceptionReason.MistypedParameter);
-
-		byte[] buf = parameter.getData();
-		AsnInputStream ais = new AsnInputStream(buf);
-
-		UnstructuredSSNotifyRequestIndicationImpl ind = new UnstructuredSSNotifyRequestIndicationImpl();
-		ind.decodeData(ais, buf.length);
+		UnstructuredSSNotifyResponseIndicationImpl ind = new UnstructuredSSNotifyResponseIndicationImpl();
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
-				((MAPServiceSupplementaryListener) serLis).onUnstructuredSSNotifyRequestIndication(ind);
+				((MAPServiceSupplementaryListener) serLis).onUnstructuredSSNotifyResponseIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing unstructuredSSNotifyIndication: " + e.getMessage(), e);
 			}
