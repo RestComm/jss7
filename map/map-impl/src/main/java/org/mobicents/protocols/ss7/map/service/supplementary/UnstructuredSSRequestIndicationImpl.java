@@ -253,6 +253,27 @@ public class UnstructuredSSRequestIndicationImpl extends USSDMessageImpl impleme
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("UnstructuredSSRequest [");
+
+		sb.append(super.toString());
+		
+		if (alertingPattern != null) {
+			sb.append(", alertingPattern=");
+			sb.append(alertingPattern.toString());
+		}
+		if (msisdnAddressString != null) {
+			sb.append(", msisdn=");
+			sb.append(msisdnAddressString.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
+
 	/**
 	 * XML Serialization/Deserialization
 	 */

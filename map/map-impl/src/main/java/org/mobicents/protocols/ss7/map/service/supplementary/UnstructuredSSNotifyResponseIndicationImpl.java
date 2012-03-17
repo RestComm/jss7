@@ -148,4 +148,14 @@ public class UnstructuredSSNotifyResponseIndicationImpl extends MessageImpl impl
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		throw new MAPException("UnstructuredSSNotifyResponseIndication has no MAP message primitive");
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("UnstructuredSSNotifyResponse [");
+		sb.append("]");
+
+		return sb.toString();
+	}
+
 }

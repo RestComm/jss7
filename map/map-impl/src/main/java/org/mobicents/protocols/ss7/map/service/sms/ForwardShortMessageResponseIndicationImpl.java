@@ -92,5 +92,14 @@ public class ForwardShortMessageResponseIndicationImpl extends SmsMessageImpl im
 
 		throw new MAPException("ForwardShortMessageResponseIndication has no MAP message primitive");
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("ForwardShortMessageResponse [");
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
 
