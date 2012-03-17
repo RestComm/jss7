@@ -901,7 +901,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 	protected void deliverDialogResease(CAPDialog capDialog) {
 		for (CAPDialogListener listener : this.dialogListeners) {
-			listener.onDialogResease(capDialog);
+			listener.onDialogRelease(capDialog);
 		}
 	}
 

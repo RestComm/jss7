@@ -74,7 +74,7 @@ public interface CAPDialogListener {
 	 * 
 	 * @param capDialog
 	 */
-	public void onDialogResease(CAPDialog capDialog);
+	public void onDialogRelease(CAPDialog capDialog);
 
 	/**
 	 * Called when the CADDialog is about to aborted because of TimeOut

@@ -29,6 +29,8 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPMessageType;
+import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequestIndication;
@@ -60,7 +62,17 @@ public class SpecializedResourceReportRequestIndicationImpl extends CircuitSwitc
 		this.isFirstAnnouncementStarted = isFirstAnnouncementStarted;
 		this.isCAPVersion4orLater = isCAPVersion4orLater;
 	}
-	
+
+	@Override
+	public CAPMessageType getMessageType() {
+		return CAPMessageType.specializedResourceReport_Request;
+	}
+
+	@Override
+	public int getOperationCode() {
+		return CAPOperationCode.specializedResourceReport;
+	}
+
 	@Override
 	public boolean IsAllAnnouncementsComplete() {
 		return isAllAnnouncementsComplete;

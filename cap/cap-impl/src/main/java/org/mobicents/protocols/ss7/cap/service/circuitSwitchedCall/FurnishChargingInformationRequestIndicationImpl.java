@@ -29,6 +29,8 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPMessageType;
+import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequestIndication;
@@ -55,7 +57,17 @@ public class FurnishChargingInformationRequestIndicationImpl extends CircuitSwit
 	public FurnishChargingInformationRequestIndicationImpl(FCIBCCCAMELsequence1 FCIBCCCAMELsequence1) {
 		this.FCIBCCCAMELsequence1 = FCIBCCCAMELsequence1;
 	}
-	
+
+	@Override
+	public CAPMessageType getMessageType() {
+		return CAPMessageType.furnishChargingInformation_Request;
+	}
+
+	@Override
+	public int getOperationCode() {
+		return CAPOperationCode.furnishChargingInformation;
+	}
+
 	@Override
 	public FCIBCCCAMELsequence1 getFCIBCCCAMELsequence1() {
 		return this.FCIBCCCAMELsequence1;

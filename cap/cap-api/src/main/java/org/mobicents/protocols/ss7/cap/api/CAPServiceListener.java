@@ -68,4 +68,13 @@ public interface CAPServiceListener {
 	 * @param providerError
 	 */
 	public void onProviderErrorComponent(CAPDialog mapDialog, Long invokeId, CAPComponentErrorReason providerError);
+
+	/**
+	 * Called when any CAPMessage received (Invoke, ReturnResult, ReturnResultLast components)
+	 * This component will be invoked before the special service component 
+	 * 
+	 * @param mapDialog
+	 */
+	public void onCAPMessage(CAPMessage capMessage);
+
 }

@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPMessage;
  * @author sergey vetyutnev
  * 
  */
-public class MessageImpl implements CAPMessage {
+public abstract class MessageImpl implements CAPMessage {
 	private long invokeId;
 	private CAPDialog capDialog;
 

@@ -30,6 +30,8 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPMessageType;
+import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
@@ -62,7 +64,17 @@ public class RequestReportBCSMEventRequestIndicationImpl extends CircuitSwitched
 		this.bcsmEventList = bcsmEventList;
 		this.extensions = extensions;
 	}
-	
+
+	@Override
+	public CAPMessageType getMessageType() {
+		return CAPMessageType.requestReportBCSMEvent_Request;
+	}
+
+	@Override
+	public int getOperationCode() {
+		return CAPOperationCode.requestReportBCSMEvent;
+	}
+
 	@Override
 	public ArrayList<BCSMEvent> getBCSMEventList() {
 		return bcsmEventList;

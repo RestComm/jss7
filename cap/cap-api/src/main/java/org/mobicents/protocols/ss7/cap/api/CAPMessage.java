@@ -39,4 +39,8 @@ public interface CAPMessage {
 
 	public void setCAPDialog(CAPDialog capDialog);
 
+	public CAPMessageType getMessageType(); 
+	
+	public int getOperationCode(); 
+
 }

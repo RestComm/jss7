@@ -29,6 +29,8 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPMessageType;
+import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
@@ -73,7 +75,17 @@ public class PlayAnnouncementRequestIndicationImpl extends CircuitSwitchedCallMe
 		this.callSegmentID = callSegmentID;
 		this.requestAnnouncementStartedNotification = requestAnnouncementStartedNotification;
 	}
-	
+
+	@Override
+	public CAPMessageType getMessageType() {
+		return CAPMessageType.playAnnouncement_Request;
+	}
+
+	@Override
+	public int getOperationCode() {
+		return CAPOperationCode.playAnnouncement;
+	}
+
 	@Override
 	public InformationToSend getInformationToSend() {
 		return informationToSend;

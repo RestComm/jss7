@@ -29,6 +29,8 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPMessageType;
+import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequestIndication;
@@ -56,6 +58,16 @@ public class ApplyChargingReportRequestIndicationImpl extends CircuitSwitchedCal
 
 	public ApplyChargingReportRequestIndicationImpl(TimeDurationChargingResult timeDurationChargingResult) {
 		this.timeDurationChargingResult = timeDurationChargingResult;
+	}
+
+	@Override
+	public CAPMessageType getMessageType() {
+		return CAPMessageType.applyChargingReport_Request;
+	}
+
+	@Override
+	public int getOperationCode() {
+		return CAPOperationCode.applyChargingReport;
 	}
 
 	@Override

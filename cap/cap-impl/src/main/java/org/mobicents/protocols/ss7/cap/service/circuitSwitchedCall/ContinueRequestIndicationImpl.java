@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPMessageType;
+import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequestIndication;
@@ -37,6 +39,16 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueR
 public class ContinueRequestIndicationImpl extends CircuitSwitchedCallMessageImpl implements ContinueRequestIndication {
 
 	public static final String _PrimitiveName = "ContinueRequest";
+
+	@Override
+	public CAPMessageType getMessageType() {
+		return CAPMessageType.continue_Request;
+	}
+
+	@Override
+	public int getOperationCode() {
+		return CAPOperationCode.continueCode;
+	}
 
 	@Override
 	public int getTag() throws CAPException {

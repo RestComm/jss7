@@ -27,6 +27,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPMessage;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPStack;
@@ -283,7 +284,7 @@ public class Client implements CAPDialogListener, CAPServiceCircuitSwitchedCallL
 	}
 
 	@Override
-	public void onDialogResease(CAPDialog capDialog) {
+	public void onDialogRelease(CAPDialog capDialog) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -467,6 +468,12 @@ public class Client implements CAPDialogListener, CAPServiceCircuitSwitchedCallL
 
 	@Override
 	public void onCancelRequestIndication(CancelRequestIndication ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCAPMessage(CAPMessage capMessage) {
 		// TODO Auto-generated method stub
 		
 	}
