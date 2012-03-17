@@ -1443,7 +1443,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	protected void deliverDialogResease(MAPDialog mapDialog) {
 		for (MAPDialogListener listener : this.dialogListeners) {
-			listener.onDialogResease(mapDialog);
+			listener.onDialogRelease(mapDialog);
 		}
 	}
 

@@ -29,6 +29,8 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPMessageType;
+import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
@@ -85,6 +87,16 @@ public class SendRoutingInfoForLCSResponseIndicationImpl extends LsmMessageImpl 
 		this.hGmlcAddress = hGmlcAddress;
 		this.pprAddress = pprAddress;
 		this.additionalVGmlcAddress = additionalVGmlcAddress;
+	}
+
+	@Override
+	public MAPMessageType getMessageType() {
+		return MAPMessageType.sendRoutingInfoForLCS_Response;
+	}
+
+	@Override
+	public int getOperationCode() {
+		return MAPOperationCode.sendRoutingInfoForLCS;
 	}
 
 	/*

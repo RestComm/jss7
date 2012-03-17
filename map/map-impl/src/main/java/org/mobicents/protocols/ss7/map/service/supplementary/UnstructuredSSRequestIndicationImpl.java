@@ -32,6 +32,8 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPMessageType;
+import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
@@ -70,6 +72,16 @@ public class UnstructuredSSRequestIndicationImpl extends USSDMessageImpl impleme
 		super(ussdDataCodingSch, ussdString);
 		this.alertingPattern = alertingPattern;
 		this.msisdnAddressString = msisdnAddressString;
+	}
+
+	@Override
+	public MAPMessageType getMessageType() {
+		return MAPMessageType.unstructuredSSRequest_Request;
+	}
+
+	@Override
+	public int getOperationCode() {
+		return MAPOperationCode.unstructuredSS_Request;
 	}
 
 	/*

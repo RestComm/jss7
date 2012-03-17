@@ -29,6 +29,8 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPMessageType;
+import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
@@ -157,6 +159,16 @@ public class SubscriberLocationReportRequestIndicationImpl extends LsmMessageImp
 		this.saiPresent = saiPresent;
 		this.pseudonymIndicator = pseudonymIndicator;
 		this.accuracyFulfilmentIndicator = accuracyFulfilmentIndicator;
+	}
+
+	@Override
+	public MAPMessageType getMessageType() {
+		return MAPMessageType.subscriberLocationReport_Request;
+	}
+
+	@Override
+	public int getOperationCode() {
+		return MAPOperationCode.subscriberLocationReport;
 	}
 
 	/*

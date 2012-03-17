@@ -26,6 +26,8 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPMessageType;
+import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponseIndication;
@@ -36,6 +38,16 @@ public class AlertServiceCentreResponseIndicationImpl extends SmsMessageImpl imp
 	public int getTag() throws MAPException {
 		
 		throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
+	}
+
+	@Override
+	public MAPMessageType getMessageType() {
+		return MAPMessageType.alertServiceCentre_Response;
+	}
+
+	@Override
+	public int getOperationCode() {
+		return MAPOperationCode.alertServiceCentre;
 	}
 
 	@Override

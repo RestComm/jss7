@@ -45,7 +45,6 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
@@ -168,6 +167,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 		provideSubsLoctReqInd.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
+			serLis.onMAPMessage(provideSubsLoctReqInd);
 			((MAPServiceLsmListener) serLis).onProvideSubscriberLocationRequestIndication(provideSubsLoctReqInd);
 		}
 
@@ -189,6 +189,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 		provideSubsLoctResInd.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
+			serLis.onMAPMessage(provideSubsLoctResInd);
 			((MAPServiceLsmListener) serLis).onProvideSubscriberLocationResponseIndication(provideSubsLoctResInd);
 		}
 
@@ -210,6 +211,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 		reqInd.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
+			serLis.onMAPMessage(reqInd);
 			((MAPServiceLsmListener) serLis).onSubscriberLocationReportRequestIndication(reqInd);
 		}
 	}
@@ -230,6 +232,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 		resInd.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
+			serLis.onMAPMessage(resInd);
 			((MAPServiceLsmListener) serLis).onSubscriberLocationReportResponseIndication(resInd);
 		}
 	}
@@ -250,6 +253,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 		reqInd.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
+			serLis.onMAPMessage(reqInd);
 			((MAPServiceLsmListener) serLis).onSendRoutingInforForLCSRequestIndication(reqInd);
 		}
 	}
@@ -270,6 +274,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 		resInd.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
+			serLis.onMAPMessage(resInd);
 			((MAPServiceLsmListener) serLis).onSendRoutingInforForLCSResponseIndication(resInd);
 		}
 	}
