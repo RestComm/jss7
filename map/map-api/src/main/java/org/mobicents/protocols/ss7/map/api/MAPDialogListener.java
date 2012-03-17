@@ -106,7 +106,7 @@ public interface MAPDialogListener {
 	 * 
 	 * @param mapDialog
 	 */
-	public void onDialogResease(MAPDialog mapDialog);
+	public void onDialogRelease(MAPDialog mapDialog);
 
 	/**
 	 * Called when the MADDialog is about to aborted because of TimeOut

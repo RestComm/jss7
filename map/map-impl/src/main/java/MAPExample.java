@@ -30,6 +30,7 @@ import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
+import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
@@ -208,7 +209,7 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 
 	}
 
-	public void onDialogResease(MAPDialog mapDialog) {
+	public void onDialogRelease(MAPDialog mapDialog) {
 		
 	}
 
@@ -299,6 +300,12 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	 */
 	@Override
 	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponseIndication unstrNotifyInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onMAPMessage(MAPMessage mapMessage) {
 		// TODO Auto-generated method stub
 		
 	}

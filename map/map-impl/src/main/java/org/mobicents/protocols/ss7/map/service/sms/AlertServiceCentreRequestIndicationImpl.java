@@ -29,6 +29,8 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPMessageType;
+import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
@@ -46,13 +48,28 @@ public class AlertServiceCentreRequestIndicationImpl extends SmsMessageImpl impl
 
 	private ISDNAddressString msisdn;
 	private AddressString serviceCentreAddress;
+	private int operationCode;
 	
-	public AlertServiceCentreRequestIndicationImpl() {
+	public AlertServiceCentreRequestIndicationImpl(int operationCode) {
+		this.operationCode = operationCode;
 	}
 	
 	public AlertServiceCentreRequestIndicationImpl(ISDNAddressString msisdn, AddressString serviceCentreAddress) {
 		this.msisdn = msisdn;
 		this.serviceCentreAddress = serviceCentreAddress;
+	}
+
+	@Override
+	public MAPMessageType getMessageType() {
+		if (this.operationCode == MAPOperationCode.alertServiceCentre)
+			return MAPMessageType.alertServiceCentre_Request;
+		else
+			return MAPMessageType.alertServiceCentreWithoutResult_Request;
+	}
+
+	@Override
+	public int getOperationCode() {
+		return this.operationCode;
 	}
 	
 	@Override

@@ -68,4 +68,13 @@ public interface MAPServiceListener {
 	 * @param invokeId
 	 */
 	public void onInvokeTimeout(MAPDialog mapDialog, Long invokeId);
+
+	/**
+	 * Called when any MAPMessage received (Invoke, ReturnResult, ReturnResultLast components)
+	 * This component will be invoked before the special service component 
+	 * 
+	 * @param mapDialog
+	 */
+	public void onMAPMessage(MAPMessage mapMessage);
+
 }

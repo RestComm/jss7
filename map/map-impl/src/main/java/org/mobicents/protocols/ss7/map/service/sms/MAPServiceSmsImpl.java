@@ -246,7 +246,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		case MAPOperationCode.alertServiceCentre:
 			if (acn == MAPApplicationContextName.shortMsgAlertContext && vers >= 2) {
 				if (compType == ComponentType.Invoke)
-					this.alertServiceCentreRequest(parameter, mapDialogSmsImpl, invokeId);
+					this.alertServiceCentreRequest(parameter, mapDialogSmsImpl, invokeId, ocValueInt);
 				else
 					this.alertServiceCentreResponse(parameter, mapDialogSmsImpl, invokeId);
 			}
@@ -255,7 +255,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		case MAPOperationCode.alertServiceCentreWithoutResult:
 			if (acn == MAPApplicationContextName.shortMsgAlertContext && vers == 1) {
 				if (compType == ComponentType.Invoke)
-					this.alertServiceCentreRequest(parameter, mapDialogSmsImpl, invokeId);
+					this.alertServiceCentreRequest(parameter, mapDialogSmsImpl, invokeId, ocValueInt);
 			}
 			break;
 			
@@ -285,6 +285,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
+				serLis.onMAPMessage(ind);
 				((MAPServiceSmsListener) serLis).onForwardShortMessageIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing forwardShortMessageRequest: " + e.getMessage(), e);
@@ -302,6 +303,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			
 			try {
+				serLis.onMAPMessage(ind);
 				((MAPServiceSmsListener) serLis).onForwardShortMessageRespIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing forwardShortMessageResponse: " + e.getMessage(), e);
@@ -330,6 +332,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
+				serLis.onMAPMessage(ind);
 				((MAPServiceSmsListener) serLis).onMoForwardShortMessageIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onMoForwardShortMessageIndication: " + e.getMessage(), e);
@@ -357,6 +360,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
+				serLis.onMAPMessage(ind);
 				((MAPServiceSmsListener) serLis).onMoForwardShortMessageRespIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onMoForwardShortMessageRespIndication: " + e.getMessage(), e);
@@ -385,6 +389,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
+				serLis.onMAPMessage(ind);
 				((MAPServiceSmsListener) serLis).onMtForwardShortMessageIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onMtForwardShortMessageIndication: " + e.getMessage(), e);
@@ -412,6 +417,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
+				serLis.onMAPMessage(ind);
 				((MAPServiceSmsListener) serLis).onMtForwardShortMessageRespIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onMtForwardShortMessageRespIndication: " + e.getMessage(), e);
@@ -440,6 +446,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
+				serLis.onMAPMessage(ind);
 				((MAPServiceSmsListener) serLis).onSendRoutingInfoForSMIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onSendRoutingInfoForSMIndication: " + e.getMessage(), e);
@@ -470,6 +477,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
+				serLis.onMAPMessage(ind);
 				((MAPServiceSmsListener) serLis).onSendRoutingInfoForSMRespIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onSendRoutingInfoForSMRespIndication: " + e.getMessage(), e);
@@ -499,6 +507,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
+				serLis.onMAPMessage(ind);
 				((MAPServiceSmsListener) serLis).onReportSMDeliveryStatusIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onReportSMDeliveryStatusIndication: " + e.getMessage(), e);
@@ -526,6 +535,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
+				serLis.onMAPMessage(ind);
 				((MAPServiceSmsListener) serLis).onReportSMDeliveryStatusRespIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onReportSMDeliveryStatusRespIndication: " + e.getMessage(), e);
@@ -554,6 +564,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
+				serLis.onMAPMessage(ind);
 				((MAPServiceSmsListener) serLis).onInformServiceCentreIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onInformServiceCentreIndication: " + e.getMessage(), e);
@@ -561,7 +572,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		}
 	}
 	
-	private void alertServiceCentreRequest(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+	private void alertServiceCentreRequest(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId, int operationCode) throws MAPParsingComponentException {
 
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding alertServiceCentreRequest: Parameter is mandatory but not found",
@@ -572,7 +583,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 					"Error while decoding alertServiceCentreRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		AlertServiceCentreRequestIndicationImpl ind = new AlertServiceCentreRequestIndicationImpl();
+		AlertServiceCentreRequestIndicationImpl ind = new AlertServiceCentreRequestIndicationImpl(operationCode);
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 		ind.decodeData(ais, buf.length);
@@ -582,6 +593,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
+				serLis.onMAPMessage(ind);
 				((MAPServiceSmsListener) serLis).onAlertServiceCentreIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onAlertServiceCentreIndication: " + e.getMessage(), e);
@@ -599,6 +611,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			
 			try {
+				serLis.onMAPMessage(ind);
 				((MAPServiceSmsListener) serLis).onAlertServiceCentreRespIndication(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onAlertServiceCentreRespIndication: " + e.getMessage(), e);
@@ -606,7 +619,6 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 			
 		}
 	}
-
 }
 
 

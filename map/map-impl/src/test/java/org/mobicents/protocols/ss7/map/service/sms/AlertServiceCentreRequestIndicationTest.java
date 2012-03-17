@@ -27,6 +27,7 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -34,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 
-import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
+import static org.testng.Assert.*;import org.testng.annotations.*;
 
 /**
  * 
@@ -54,7 +55,7 @@ public class AlertServiceCentreRequestIndicationTest  {
 		AsnInputStream asn = new AsnInputStream(rawData);
 
 		int tag = asn.readTag();
-		AlertServiceCentreRequestIndicationImpl asc = new AlertServiceCentreRequestIndicationImpl();
+		AlertServiceCentreRequestIndicationImpl asc = new AlertServiceCentreRequestIndicationImpl(MAPOperationCode.alertServiceCentre);
 		asc.decodeAll(asn);
 
 		assertEquals( tag,Tag.SEQUENCE);

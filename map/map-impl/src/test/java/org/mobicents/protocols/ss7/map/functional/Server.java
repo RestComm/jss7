@@ -32,6 +32,7 @@ import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
@@ -585,7 +586,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 		
 	}
 
-	public void onDialogResease(MAPDialog mapDialog) {
+	public void onDialogRelease(MAPDialog mapDialog) {
 		int i1=0;
 		i1 = 1;		
 	}
@@ -1119,6 +1120,12 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 	@Override
 	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponseIndication unstrNotifyInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onMAPMessage(MAPMessage mapMessage) {
 		// TODO Auto-generated method stub
 		
 	}

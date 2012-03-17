@@ -38,7 +38,9 @@ public interface MAPMessage {
 	public MAPDialog getMAPDialog();
 
 	public void setMAPDialog(MAPDialog mapDialog);
-	
 
+	public MAPMessageType getMessageType();
+
+	public int getOperationCode();
 
 }
