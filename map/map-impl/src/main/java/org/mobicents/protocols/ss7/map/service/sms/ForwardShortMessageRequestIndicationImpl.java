@@ -245,7 +245,7 @@ public class ForwardShortMessageRequestIndicationImpl extends SmsMessageImpl imp
 			throw new MAPException("AsnException when encoding forwardShortMessageRequest: " + e.getMessage(), e);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

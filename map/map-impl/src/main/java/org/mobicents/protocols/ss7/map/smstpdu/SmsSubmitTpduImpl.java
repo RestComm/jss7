@@ -318,6 +318,12 @@ public class SmsSubmitTpduImpl extends SmsTpduImpl implements SmsSubmitTpdu {
 		}
 		if (this.userData != null) {
 			sb.append("\nMSG [");
+			try {
+				this.userData.decode();
+			} catch (MAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			sb.append(this.userData.toString());
 			sb.append("]");
 		}

@@ -178,6 +178,15 @@ public class UnstructuredSSResponseIndicationImpl extends USSDMessageImpl implem
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("UnstructuredSSResponse [");
+		sb.append("]");
+
+		return sb.toString();
+	}
+
 	/**
 	 * XML Serialization/Deserialization
 	 */

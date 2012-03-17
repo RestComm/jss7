@@ -79,8 +79,12 @@ public class AddressFieldImpl implements AddressField {
 
 			// Address-Value
 			res.addressValue = TbcdString.decodeString(stm, addressArrayLength);
-			if (res.addressValue.length() != addressLength)
-				throw new MAPException("Error when creating AddressField: found address string length does not correspond Address-Length field");
+//			if (res.addressValue.length() == addressLength) {
+//			} else if (res.addressValue.length() == addressLength + 1 && res.addressValue.length() > 0) {
+//				res.addressValue = res.addressValue.substring(0, res.addressValue.length() - 1);
+//			} else {
+//				throw new MAPException("Error when creating AddressField: found address string length does not correspond Address-Length field");
+//			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when creating AddressField: " + e.getMessage(), e);
 		} catch (MAPParsingComponentException e) {

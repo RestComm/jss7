@@ -72,6 +72,22 @@ public abstract class USSDMessageImpl extends MessageImpl implements USSDMessage
 		return this.ussdString;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("ussdDataCodingSch=");
+		sb.append(ussdDataCodingSch);
+		if (ussdString != null) {
+			sb.append(", ussdString=");
+			sb.append(ussdString.getString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
+
 	/**
 	 * XML Serialization/Deserialization
 	 */

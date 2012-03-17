@@ -254,6 +254,27 @@ public class ProcessUnstructuredSSRequestIndicationImpl extends USSDMessageImpl 
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("ProcessUnstructuredSSRequest [");
+
+		sb.append(super.toString());
+		
+		if (alertingPattern != null) {
+			sb.append(", alertingPattern=");
+			sb.append(alertingPattern.toString());
+		}
+		if (msisdnAddressString != null) {
+			sb.append(", msisdn=");
+			sb.append(msisdnAddressString.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
+
 	/**
 	 * XML Serialization/Deserialization
 	 */

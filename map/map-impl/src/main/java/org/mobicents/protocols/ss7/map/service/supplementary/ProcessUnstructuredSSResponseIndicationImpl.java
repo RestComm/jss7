@@ -183,6 +183,15 @@ public class ProcessUnstructuredSSResponseIndicationImpl extends USSDMessageImpl
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("ProcessUnstructuredSSResponse [");
+		sb.append("]");
+
+		return sb.toString();
+	}
+
 	/**
 	 * XML Serialization/Deserialization
 	 */
