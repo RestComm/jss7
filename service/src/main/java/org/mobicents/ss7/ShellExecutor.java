@@ -222,9 +222,19 @@ public class ShellExecutor implements Runnable {
 					}
 				}
 			} catch (IOException e) {
-				logger.error("IO Exception while operating on ChannelSelectionKey", e);
+				logger.error("IO Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
+				try {
+					this.closeChannel();
+				} catch (IOException e1) {
+					logger.error("IO Exception while closing Channel", e);
+				}
 			} catch (Exception e){
-				logger.error("Exception while operating on ChannelSelectionKey", e);
+				logger.error("Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
+				try {
+					this.closeChannel();
+				} catch (IOException e1) {
+					logger.error("IO Exception while closing Channel", e);
+				}
 			}
 
 			try {
