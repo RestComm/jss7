@@ -57,6 +57,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupple
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
@@ -610,5 +611,11 @@ public class Client extends TestHarness {
 	@Override
 	public void onDialogTimeout(MAPDialog mapDialog) {
 		logger.error(String.format("onDialogTimeout for DialogId=%d", mapDialog.getDialogId()));
+	}
+
+	@Override
+	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponseIndication arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }

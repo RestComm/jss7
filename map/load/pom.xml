@@ -30,6 +30,7 @@
 		<stream.version>1.0.0.CR1</stream.version>
 		<ss7.version>1.0.0-SNAPSHOT</ss7.version>
 		<sctp.version>1.0.0-SNAPSHOT</sctp.version>
+		<commons.version>1.0.0-SNAPSHOT</commons.version>
 		<!-- data -->
 		<assemble.dir>${pom.build.directory}/load</assemble.dir>
 	</properties>
@@ -117,7 +118,16 @@
 			<artifactId>m3ua-impl</artifactId>
 			<version>${ss7.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.isup</groupId>
+			<artifactId>isup-api</artifactId>
+			<version>${ss7.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.isup</groupId>
+			<artifactId>isup-impl</artifactId>
+			<version>${ss7.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.stream</groupId>
 			<artifactId>stream</artifactId>
@@ -129,8 +139,11 @@
 			<artifactId>mobicents-dialogic</artifactId>
 			<version>${ss7.version}</version>
 		</dependency>
-
-
+		<dependency>
+			<groupId>org.mobicents.commons</groupId>
+			<artifactId>commons</artifactId>
+			<version>${commons.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>concurrent</groupId>
 			<artifactId>concurrent</artifactId>
@@ -299,6 +312,30 @@
 											</destFileName>
 										</artifactItem>
 										<artifactItem>
+											<groupId>org.mobicents.protocols.ss7.isup</groupId>
+											<artifactId>isup-api</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+											</outputDirectory>
+											<destFileName>
+												isup-api.jar
+											</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>org.mobicents.protocols.ss7.isup</groupId>
+											<artifactId>isup-impl</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+											</outputDirectory>
+											<destFileName>
+												iusp-impl.jar
+											</destFileName>
+										</artifactItem>										
+										<artifactItem>
 											<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 											<artifactId>sccp-api</artifactId>
 											<type>jar</type>
@@ -418,6 +455,18 @@
 												stream.jar
 											</destFileName>
 										</artifactItem>
+										<artifactItem>
+											<groupId>org.mobicents.commons</groupId>
+											<artifactId>commons</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+											</outputDirectory>
+											<destFileName>
+												commons.jar
+											</destFileName>
+										</artifactItem>										
 										<artifactItem>
 											<groupId>javolution</groupId>
 											<artifactId>javolution</artifactId>
