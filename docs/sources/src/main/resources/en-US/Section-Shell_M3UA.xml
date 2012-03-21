@@ -46,7 +46,7 @@
 			id="shell_m3ua_sctp_server_create">
 			<title>Create SCTP Server</title>
 			<para>SCTP Server can be created by issuing command with following structure:</para>
-			<programlisting>sctp server create &lt;server-name&gt; &lt;host-ip&gt; &lt;host-port&gt;</programlisting>
+			<programlisting>sctp server create &lt;server-name&gt; &lt;host-ip&gt; &lt;host-port&gt; &lt;socket-type&gt;</programlisting>
 			<para>Where:</para>
 			<variablelist>
 				<varlistentry>
@@ -62,7 +62,10 @@
 					<term>host-ip</term>
 					<listitem>
 						<para>
-							The host ip address where underlying SCTP server socket will bind 
+							The host ip address where underlying SCTP server socket will bind. For SCTP multi-home support, 
+							you can pass comma separated ip addresses that this server socket will bind to. 
+							If the primary ip address becomes unavailable, it will automatically fall back to secondary address. For socket-type TCP, comma separated values will be ignored and only
+							first value (primary address) will be used
 						</para>
 					</listitem>
 				</varlistentry>
@@ -73,7 +76,18 @@
 							The host port where underlying SCTP server socket will bind 
 						</para>
 					</listitem>
-				</varlistentry>					
+				</varlistentry>		
+				
+				<varlistentry>
+					<term>socket-type</term>
+					<listitem>
+						<para>
+							This is optional. If not passed default is SCTP else specify as TCP.
+						</para>
+					</listitem>
+				</varlistentry>										
+				
+							
 			</variablelist>
 			<example>
 				<title>SCTP Server creation</title>
@@ -82,6 +96,20 @@ mobicents(127.0.0.1:3436)>sctp server create TestServer 127.0.0.1 2905
 Successfully added Server=TestServer
 				</screen>
 			</example>
+			<example>
+				<title>SCTP Server creation with multi-home</title>
+				<screen>
+mobicents(127.0.0.1:3436)>sctp server create TestServer 10.2.50.145,10.2.50.146 2905
+Successfully added Server=TestServer
+				</screen>
+			</example>			
+			<example>
+				<title>TCP Server creation</title>
+				<screen>
+mobicents(127.0.0.1:3436)>sctp server create TestServerTCP 10.2.50.145 2906 TCP
+Successfully added Server=TestServerTCP
+				</screen>
+			</example>			
 		</section>	
 		
 		<section
@@ -167,8 +195,14 @@ Successfully stopped Server=TestServer
 			<example>
 				<title>Show SCTP Server</title>
 				<screen>
-mobicents(127.0.0.1:3436)>sctp server show
-Not supported yet
+mobicents(local)>sctp server show
+
+SERVER TCP name=TestServerTCP started=false hostIp=10.2.50.145 hostPort=2906
+Associations:
+
+SERVER SCTP name=TestServer started=false hostIp=10.2.50.145 hostPort=2905 secondaryHost=10.2.50.146 
+Associations:
+
 				</screen>
 			</example>
 		</section>			
@@ -177,7 +211,7 @@ Not supported yet
 			id="shell_m3ua_sctp_association_create">
 			<title>Create SCTP Association</title>
 			<para>Association can be created by issuing command with following structure:</para>
-			<programlisting>sctp association create &lt;assoc-name&gt; &lt;CLIENT | SERVER&gt; &lt;server-name&gt; &lt;peer-ip&gt; &lt;peer-port&gt; &lt;host-ip&gt; &lt;host-port&gt;</programlisting>
+			<programlisting>sctp association create &lt;assoc-name&gt; &lt;CLIENT | SERVER&gt; &lt;server-name&gt; &lt;peer-ip&gt; &lt;peer-port&gt; &lt;host-ip&gt; &lt;host-port&gt; &lt;socket-type&gt;</programlisting>
 			<para>Where:</para>
 			<variablelist>
 				<varlistentry>
@@ -193,6 +227,9 @@ Not supported yet
 					<listitem>
 						<para>
 							If this association is client side or server side. If its client side, it will initiate the connection to peer and bind's to host-ip:host-port trying to connect to peer-ip:peer-port.
+							For SCTP multi-home support, you can pass comma separated ip addresses that this association will bind to. 
+							If the primary ip address becomes unavailable, it will automatically fall back to secondary address. For socket-type TCP, comma separated values will be ignored and only
+							first value (primary address) will be used							
 						</para>
 						<para>If its server side, it waits for peer to initiate connection. The connection request will be accepted from peer-ip:peer-port. host-ip and host-port is not required, even if passed 
 						it will be ignored</para>
@@ -208,13 +245,21 @@ Not supported yet
 						<para>If this association is client side, server-name shouldn't be passed.
 						</para>
 					</listitem>
-				</varlistentry>								
+				</varlistentry>	
+				<varlistentry>
+					<term>socket-type</term>
+					<listitem>
+						<para>
+							This is optional. If not passed default is SCTP else specify as TCP. If association is of SERVER type, the socket-type should match with one specified while creating server. 
+						</para>
+					</listitem>
+				</varlistentry>												
 			</variablelist>
 			<example>
 				<title>Create CLIENT SCTP Association</title>
 				<screen>
-mobicents(192.168.56.1:3436)>sctp association create Assoc1 CLIENT 192.168.56.101 2905 192.168.56.1 2905
-Successfully added client Association=Assoc1
+mobicents(local)>sctp association create Assoc1 CLIENT 192.168.56.101 2905 192.168.56.1,192.168.56.1 2905
+Successfully added client Associtaion=Assoc1
 				</screen>
 			</example>
 			<example>
@@ -260,8 +305,11 @@ Successfully removed association=Assoc1
 			<example>
 				<title>Show SCTP Association</title>
 				<screen>
-mobicents(192.168.56.1:3436)>sctp association show
-Not supported yet
+mobicents(local)>sctp association show
+
+ASSOCIATION SCTP name=Assoc1 started=false peerIp=192.168.56.101 peerPort=2905 hostIp=192.168.56.1 hostPort2905 type=CLIENT secondaryHost=192.168.56.1 
+
+ASSOCIATION SCTP name=Assoc2 started=false peerIp=192.168.56.1 peerPort=2905 server=TestServer type=SERVER
 				</screen>
 			</example>
 		</section>		
@@ -321,7 +369,7 @@ Not supported yet
 			id="shell_m3ua_as_side_create">
 			<title>Create AS</title>
 			<para>Application Server (AS) can be created by issuing command with following structure:</para>
-			<programlisting>m3ua as create &lt;as-name&gt; &lt;AS | SGW | IPSP&gt; mode &lt;SE | DE&gt; ipspType &lt;client | server&gt; rc &lt;routing-context&gt; traffic-mode &lt;traffic mode&gt; </programlisting>
+			<programlisting>m3ua as create &lt;as-name&gt; &lt;AS | SGW | IPSP&gt; mode &lt;SE | DE&gt; ipspType &lt;client | server&gt; rc &lt;routing-context&gt; traffic-mode &lt;traffic mode&gt; &lt;network-appearance&gt;</programlisting>
 			<para>Where:</para>
 			<variablelist>
 				<varlistentry>
@@ -374,6 +422,20 @@ Not supported yet
 						</para>
 					</listitem>
 				</varlistentry>
+				<varlistentry>
+					<term>network-appearance</term>
+					<listitem>
+						<para>
+							The Network Appearance is a M3UA local reference
+   shared by SG and AS (typically an integer) that, together with an
+   Signaling Point Code, uniquely identifies an SS7 node by indicating
+   the specific SS7 network to which it belongs.  It can be used to
+   distinguish between signalling traffic associated with different
+   networks being sent between the SG and the ASP over a common SCTP
+   association. This is optional.
+						</para>
+					</listitem>
+				</varlistentry>				
 			</variablelist>
 			<example>
 				<title>AS (IPSP) creation</title>
@@ -385,7 +447,7 @@ Successfully created AS name=AS1
 			<example>
 				<title>AS creation</title>
 				<screen>
-mobicents(127.0.0.1:3435)>m3ua as create AS2 AS mode SE rc 100 traffic-mode loadshare
+mobicents(127.0.0.1:3435)>m3ua as create AS2 AS mode SE rc 100 traffic-mode loadshare network-appearance 12
 Successfully created AS name=AS2
 				</screen>
 			</example>			
@@ -422,8 +484,14 @@ Successfully destroyed AS name=AS1
 			<example>
 				<title>Show AS</title>
 				<screen>
-mobicents(127.0.0.1:3435)>m3ua as show
-Not supported yet
+mobicents(local)>m3ua as show
+
+AS name=AS2 functionality=AS mode=SE rc=[100] trMode=2 defaultTrMode=2 na=12 peerFSMState=DOWN
+Assigned to :
+
+
+AS name=AS1 functionality=IPSP mode=DE ipspType=SERVER rc=[1] trMode=2 defaultTrMode=2 localFSMState=DOWN peerFSMState=DOWN
+Assigned to :
 				</screen>
 			</example>
 		</section>			
@@ -487,8 +555,10 @@ Successfully destroyed ASP name=ASP1
 			<example>
 				<title>Show ASP</title>
 				<screen>
-mobicents(127.0.0.1:3435)>m3ua asp show
-Not supported yet
+mobicents(local)>m3ua asp show 
+
+ASP name=ASP1 sctpAssoc=Assoc1 started=false
+Assigned to :
 				</screen>
 			</example>
 		</section>		
@@ -693,7 +763,9 @@ mobicents(127.0.0.1:3435)>m3ua route remove AS1 2 -1 -1
 			<example>
 				<title>Show Route</title>
 				<screen>
-mobicents(127.0.0.1:3435)>m3ua route show
+mobicents(local)>m3ua route show
+
+2:-1:-1        AS1,AS2,
 				</screen>
 			</example>
 		</section>

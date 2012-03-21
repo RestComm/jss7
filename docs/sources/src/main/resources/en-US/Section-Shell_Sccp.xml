@@ -345,6 +345,13 @@ sccp rule show &lt;id&gt;</programlisting>
 					</listitem>
 				</varlistentry>
 			</variablelist>
+			<example>
+				<title>SCCP Rule Show</title>
+				<screen>
+mobicents(local)>sccp rule show 1
+pattern(pc=2,ssn=8,AI=71,gt=GT0001{na=NATIONAL, digits=123456789});paddress(1);saddress(-1);mask(R)
+				</screen>
+			</example>			
 		</section>
 			
 		</section>
@@ -640,14 +647,15 @@ sccp backup_add show &lt;id&gt;
 					</listitem>
 				</varlistentry>
 			</variablelist>
+			<example>
+				<title>SCCP Primary Address show</title>
+				<screen>
+mobicents(local)>sccp primary_add show
+key=1  pc=2,ssn=8,AI=71,gt=GT0001{na=NATIONAL, digits=123456789}
+				</screen>
+			</example>			
 		</section>
 		</section>
-		
-		
-		
-		
-		
-		
 		
 		
 		<section id="resource_rsp_management">
@@ -759,6 +767,14 @@ sccp rsp show &lt;id&gt;
 					</listitem>
 				</varlistentry>
 			</variablelist>
+	
+			<example>
+				<title>Remote Signalin Point show</title>
+				<screen>
+mobicents(local)>sccp rsp show
+key=1  rsp=6477 rsp-flag=0 mask=0 rsp-prohibited=false
+				</screen>
+			</example>			
 		</section>
 		</section>			
 		
@@ -876,9 +892,13 @@ sccp rss show &lt;id&gt;
 					</listitem>
 				</varlistentry>
 			</variablelist>
+			<example>
+				<title>Remote Sub-System show</title>
+				<screen>
+mobicents(local)>sccp rss show
+key=1  rsp=6477 rss=8 rss-flag=0 rss-prohibited=false
+				</screen>
+			</example>			
 		</section>
 		</section>			
-				
-		
-				
 	</section>

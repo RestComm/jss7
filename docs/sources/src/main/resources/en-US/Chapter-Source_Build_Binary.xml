@@ -88,11 +88,13 @@
 							<para><literal>protocols</literal> : The &THIS.PLATFORM; &THIS.APPLICATION; User Protocols libraries. Your application would directly 
 							call the API's exposed by these libraries. Depending on application you may be either interested in <literal>TCAP</literal>, 
 							<literal>MAP</literal> or both or <literal>ISUP</literal> libraries</para>
+							<!-- 
 							<mediaobject id="binary_ss7-protocols">
 								<imageobject>
 									<imagedata width="300px" align="center" fileref="images/binary-ss7-protocols.png" format="PNG" />
 								</imageobject>
-							</mediaobject>							
+							</mediaobject>
+							 -->							
 						</listitem>	
 						<listitem>
 							<para><literal>shell</literal> : the Command Line Interface (CLI) module to manage the <literal>mobicents-ss7-service</literal>.
