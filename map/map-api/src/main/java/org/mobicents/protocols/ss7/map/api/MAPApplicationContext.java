@@ -113,7 +113,11 @@ public class MAPApplicationContext {
 			if (contextVersion == 3) 
 				return true;
 			else
-				return false;			
+				return false;	
+		case anyTimeEnquiryContext:
+			if (contextVersion == 3){
+				return true;
+			}
 		}
 		
 		return false;

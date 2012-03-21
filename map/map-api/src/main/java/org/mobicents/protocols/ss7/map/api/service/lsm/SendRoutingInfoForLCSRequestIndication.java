@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 
 /**
  * 

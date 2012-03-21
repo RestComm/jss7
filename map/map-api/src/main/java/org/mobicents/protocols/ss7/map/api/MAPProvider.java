@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.map.api;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.MAPServiceSubscriberInformation;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
 
 /**
@@ -77,5 +78,7 @@ public interface MAPProvider {
 	public MAPServiceSms getMAPServiceSms();
 	
 	public MAPServiceLsm getMAPServiceLsm();
+	
+	public MAPServiceSubscriberInformation getMapServiceSubscriberInformation();
 
 }

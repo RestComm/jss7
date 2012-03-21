@@ -20,12 +20,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.lsm;
+package org.mobicents.protocols.ss7.map.api.primitives;
 
 import java.io.Serializable;
 
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
-import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
 /**
  * SubscriberIdentity ::= CHOICE { 
