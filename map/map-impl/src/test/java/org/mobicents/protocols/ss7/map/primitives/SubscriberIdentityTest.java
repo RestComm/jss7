@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.lsm;
+package org.mobicents.protocols.ss7.map.primitives;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -40,6 +40,7 @@ import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.primitives.SubscriberIdentityImpl;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -71,7 +72,7 @@ public class SubscriberIdentityTest {
 	public void tearDown() {
 	}
 
-	@Test(groups = { "functional.decode","service.lsm"})
+	@Test(groups = { "functional.decode","primitives"})
 	public void testDecode() throws Exception {
 		byte[] data = new byte[] { (byte) 0x80, 0x08, 0x27, (byte) 0x94, (byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
 
@@ -93,7 +94,7 @@ public class SubscriberIdentityTest {
 		
 	}
 
-	@Test(groups = { "functional.encode","service.lsm"})
+	@Test(groups = { "functional.encode","primitives"})
 	public void testEncode() throws Exception {
 		byte[] data = new byte[] { (byte) 0x80, 0x08, 0x27, (byte) 0x94, (byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
 
@@ -107,7 +108,7 @@ public class SubscriberIdentityTest {
 		assertTrue( Arrays.equals(data,encodedData));
 	}
 	
-	@Test(groups = { "functional.serialize", "service.lsm" })
+	@Test(groups = { "functional.serialize", "primitives" })
 	public void testSerialization() throws Exception {
 		IMSI imsi = this.MAPParameterFactory.createIMSI("724999900000007");
 		SubscriberIdentityImpl original = new SubscriberIdentityImpl(imsi);
