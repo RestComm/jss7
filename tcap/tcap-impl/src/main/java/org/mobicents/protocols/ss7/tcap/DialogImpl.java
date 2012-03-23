@@ -36,7 +36,6 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
-import org.mobicents.protocols.ss7.tcap.api.TCListener;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.OperationState;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
@@ -74,13 +73,13 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCUniMessage;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.DialogPrimitiveFactoryImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCBeginIndicationImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCContinueIndicationImpl;
@@ -129,7 +128,7 @@ public class DialogImpl implements Dialog {
 	private static final boolean _INVOKEID_FREE = false;
 	private static final int _INVOKE_TABLE_SHIFT = 128;
 
-	private boolean[] invokeIDTable = new boolean[255];
+	private boolean[] invokeIDTable = new boolean[256];
 	private int freeCount = invokeIDTable.length;
 
 	// only originating side keeps FSM, see: Q.771 - 3.1.5
@@ -1712,5 +1711,4 @@ public class DialogImpl implements Dialog {
 		return super.toString() + ": Local[" + this.localTransactionId + "] Remote[" + this.remoteTransactionId
 				+ "], LocalAddress[" + localAddress + "] RemoteAddress[" + this.remoteAddress + "]";
 	}
-
 }
