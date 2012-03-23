@@ -24,21 +24,21 @@
 
   
 ------------------
-SVN Trunk Checkout
+SVN Branch Checkout
 ------------------
 
-http://mobicents.googlecode.com/svn/trunk/protocols/asn
+http://mobicents.googlecode.com/svn/branches/protocols/asn/1.x
 http://mobicents.googlecode.com/svn/trunk/protocols/sctp
-http://mobicents.googlecode.com/svn/trunk/protocols/ss7
+http://mobicents.googlecode.com/svn/branches/protocols/ss7/1.x
 
 
 ------------------
-SVN Trunk Browse
+SVN Branch Browse
 ------------------
 
-http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/asn
+http://code.google.com/p/mobicents/source/browse/#svn%2Fbranches%2Fprotocols%2Fasn%2F1.x
 http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/sctp
-http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/ss7  
+http://code.google.com/p/mobicents/source/browse/#svn%2Fbranches%2Fprotocols%2Fss7%2F1.x  
   
 ------------------
  SVN Tag Checkout
@@ -46,7 +46,7 @@ http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/ss7
 
 http://mobicents.googlecode.com/svn/tags/protocols/asn/asn-@ASN_VERSION@
 http://mobicents.googlecode.com/svn/tags/protocols/sctp/sctp-@SCTP_VERSION@
-http://mobicents.googlecode.com/svn/tags/protocols/ss7/ss7-@SS7_VERSION@
+http://mobicents.googlecode.com/svn/tags/protocols/ss7/mobicents-ss7-@SS7_VERSION@
 
 
   
