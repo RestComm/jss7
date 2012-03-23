@@ -38,6 +38,7 @@ import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
@@ -595,9 +596,9 @@ public class Client extends TestHarness {
 	 * (org.mobicents.protocols.ss7.map.api.MAPDialog)
 	 */
 	@Override
-	public void onDialogResease(MAPDialog mapDialog) {
+	public void onDialogRelease(MAPDialog mapDialog) {
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("onDialogResease for DialogId=%d", mapDialog.getDialogId()));
+			logger.debug(String.format("onDialogRelease for DialogId=%d", mapDialog.getDialogId()));
 		}
 	}
 
@@ -617,5 +618,10 @@ public class Client extends TestHarness {
 	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponseIndication arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void onMAPMessage(MAPMessage arg0) {
+		//We ignore this
 	}
 }

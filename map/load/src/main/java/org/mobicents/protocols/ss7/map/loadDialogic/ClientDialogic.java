@@ -31,6 +31,7 @@ import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
@@ -357,7 +358,7 @@ public class ClientDialogic implements MAPDialogListener, MAPServiceSmsListener 
 	}
 
 	@Override
-	public void onDialogResease(MAPDialog mapDialog) {
+	public void onDialogRelease(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -478,6 +479,9 @@ public class ClientDialogic implements MAPDialogListener, MAPServiceSmsListener 
 		
 	}
 
-
+	@Override
+	public void onMAPMessage(MAPMessage arg0) {
+		//We ignore this
+	}
 
 }
