@@ -26,13 +26,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
+import org.mobicents.protocols.ss7.sccp.message.SccpAddressedMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
-import org.mobicents.protocols.ss7.sccp.message.UnitData;
-import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -68,7 +70,7 @@ public class User implements SccpListener {
 			return false;
 		}
 		SccpMessage msg = messages.get(0);
-		if (msg.getType() != UnitData.MESSAGE_TYPE) {
+		if (msg.getType() != SccpMessage.MESSAGE_TYPE_UDT) {
 			return false;
 		}
 
@@ -86,7 +88,7 @@ public class User implements SccpListener {
 	protected boolean matchCalledPartyAddress()
 	{
 		SccpMessage msg = messages.get(0);
-		UnitData udt = (UnitData) msg;
+		SccpAddressedMessage udt = (SccpAddressedMessage) msg;
 		if (!address.equals(udt.getCalledPartyAddress())) {
 			return false;
 		}
@@ -96,7 +98,7 @@ public class User implements SccpListener {
 	protected boolean matchCallingPartyAddress()
 	{
 		SccpMessage msg = messages.get(0);
-		UnitData udt = (UnitData) msg;
+		SccpAddressedMessage udt = (SccpAddressedMessage) msg;
 		if (!dest.equals(udt.getCallingPartyAddress())) {
 			return false;
 		}
@@ -105,21 +107,93 @@ public class User implements SccpListener {
 
 	public void send() throws IOException {
 		MessageFactory messageFactory = provider.getMessageFactory();
-		ParameterFactory paramFactory = provider.getParameterFactory();
 
-		ProtocolClass pClass = paramFactory.createProtocolClass(0, 0);
-		UnitData udt = messageFactory.createUnitData(pClass, dest, address);
-		udt.setData(new byte[10]);
-		provider.send(udt,1);
+//		ParameterFactory paramFactory = provider.getParameterFactory();
+//		ProtocolClass pClass = paramFactory.createProtocolClass(0, 0);
+//		UnitData udt = messageFactory.createUnitData(pClass, dest, address);
+//		udt.setData(new byte[10]);
+//		provider.send(udt,1);
+
+		SccpDataMessage udt = messageFactory.createDataMessageClass0(dest, address, new byte[10], ssn, false, null, null);
+		provider.send(udt);
 	}
 
-	public void onMessage(SccpMessage message, int seqControl) {
+	SccpAddress localAddress;
+	
+	@Override
+	public void onMessage(SccpDataMessage message) {
 		this.messages.add(message);
-		System.out.println(String.format("SccpMessage=%s seqControl=%d", message, seqControl));
+		System.out.println(String.format("SccpDataMessage=%s seqControl=%d", message, message.getSls()));
+
+	
+	
+	
+	
+//		localAddress = message.getCalledPartyAddress();
+//		SccpAddress remoteAddress = message.getCallingPartyAddress();
+//
+//		// now decode content
+//
+//		byte[] data = message.getData();
+//
+//		// some data encoded in
+//		CallRequest cr = new CallRequest(data);
+//
+//		byte[] answerData;
+//
+//		if (cr.getCallee().equals(this.localAddress)) {
+//			EstablihsCallAnswer eca = new EstablihsCallAnswer(cr);
+//			answerData = eca.encode();
+//
+//		} else {
+//			TearDownCallAnswer tdca = new TearDownCallAnswer(cr);
+//			answerData = tdca.encode();
+//		}
+//
+//		HopCounter hc = this.sccpProvider.getParameterFactory().createHopCounter(5);
+//
+////		XUnitData sccpAnswer = this.sccpProvider.getMessageFactory().createXUnitData(hc, xudt.getProtocolClass(), message.getCallingPartyAddress(),
+////				this.localAddress);
+//		SccpDataMessage sccpAnswer = this.provider.getMessageFactory().createDataMessageClass0(message.getCallingPartyAddress(), this.localAddress, 
+//				answerData, localSsn, returnMessageOnError, hopCounter, importance);   
+//
+//		this.sccpProvider.send(sccpAnswer);
+	
 	}
 
 	public List<SccpMessage> getMessages() {
 		return messages;
 	}
 
+	@Override
+	public void onCoordRequest(int dpc, int ssn, int multiplicityIndicator) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCoordResponse(int dpc, int ssn, int multiplicityIndicator) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onState(int dpc, int ssn, boolean inService, int multiplicityIndicator) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPcState(int dpc, SignallingPointStatus status, int restrictedImportanceLevel, RemoteSccpStatus remoteSccpStatus) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNotice(SccpNoticeMessage message) {
+		this.messages.add(message);
+		System.out.println(String.format("SccpNoticeMessage=%s seqControl=%d", message, message.getSls()));
+	}
+
 }
+

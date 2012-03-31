@@ -49,14 +49,13 @@ public class SccpResourceTest {
 	public void setUp() {
 		resource = new SccpResource("SccpResourceTest");
 		resource.start();
+		resource.removeAllResourses();
 
 	}
 
 	@AfterMethod
 	public void tearDown() {
-		resource.getRemoteSpcs().clear();
-		resource.getRemoteSsns().clear();
-		
+		resource.removeAllResourses();
 		resource.stop();
 	}
 	
@@ -66,14 +65,20 @@ public class SccpResourceTest {
 		RemoteSignalingPointCode rsp1 = new RemoteSignalingPointCode(6034, 0, 0);
 		RemoteSignalingPointCode rsp2 = new RemoteSignalingPointCode(6045, 0, 0);
 
-		RemoteSubSystem rss1 = new RemoteSubSystem(6034, 8, 0);
-		RemoteSubSystem rss2 = new RemoteSubSystem(6045, 8, 0);
+		RemoteSubSystem rss1 = new RemoteSubSystem(6034, 8, 0, false);
+		RemoteSubSystem rss2 = new RemoteSubSystem(6045, 8, 0, false);
+
+		ConcernedSignalingPointCode csp1 = new ConcernedSignalingPointCode(603);
+		ConcernedSignalingPointCode csp2 = new ConcernedSignalingPointCode(604);
 
 		resource.addRemoteSpc(1, rsp1);
 		resource.addRemoteSpc(2, rsp2);
 
 		resource.addRemoteSsn(1, rss1);
 		resource.addRemoteSsn(2, rss2);
+
+		resource.addConcernedSpc(1, csp1);
+		resource.addConcernedSpc(2, csp2);
 
 		SccpResource resource1 = new SccpResource("SccpResourceTest");
 		resource1.start();
@@ -86,6 +91,10 @@ public class SccpResourceTest {
 		assertEquals( resource1.getRemoteSsns().size(),2);
 		RemoteSubSystem rss1Temp = resource1.getRemoteSsn(1);
 		assertEquals( rss1Temp.getRemoteSsn(),8);
+		
+		assertEquals(resource1.getConcernedSpcs().size(), 2);
+		ConcernedSignalingPointCode cspc1Temp = resource1.getConcernedSpc(1);
+		assertEquals(cspc1Temp.getRemoteSpc(), 603);
 	}
 
 }

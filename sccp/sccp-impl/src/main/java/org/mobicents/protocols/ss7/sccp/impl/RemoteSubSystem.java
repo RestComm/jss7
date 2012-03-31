@@ -35,10 +35,12 @@ public class RemoteSubSystem implements XMLSerializable {
 	private static final String REMOTE_SPC = "remoteSpc";
 	private static final String REMOTE_SSN = "remoteSsn";
 	private static final String REMOTE_SSN_FLAG = "remoteSsnFlag";
+	private static final String MARK_PROHIBITED_WHEN_SPC_RESUMING = "markProhibitedWhenSpcResuming";
 
 	private int remoteSpc;
 	private int remoteSsn;
 	private int remoteSsnFlag;
+	private boolean markProhibitedWhenSpcResuming;
 
 	private boolean remoteSsnProhibited;
 	
@@ -46,10 +48,11 @@ public class RemoteSubSystem implements XMLSerializable {
 		
 	}
 
-	public RemoteSubSystem(int remoteSpc, int remoteSsn, int remoteSsnFlag) {
+	public RemoteSubSystem(int remoteSpc, int remoteSsn, int remoteSsnFlag, boolean markProhibitedWhenSpcResuming) {
 		this.remoteSpc = remoteSpc;
 		this.remoteSsn = remoteSsn;
 		this.remoteSsnFlag = remoteSsnFlag;
+		this.markProhibitedWhenSpcResuming = markProhibitedWhenSpcResuming;
 	}
 
 	public boolean isRemoteSsnProhibited() {
@@ -72,10 +75,16 @@ public class RemoteSubSystem implements XMLSerializable {
 		return remoteSsnFlag;
 	}
 
+	public boolean getMarkProhibitedWhenSpcResuming() {
+		return markProhibitedWhenSpcResuming;
+	}
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("rsp=").append(this.remoteSpc).append(" rss=").append(this.remoteSsn).append(" rss-flag=")
 				.append(this.remoteSsnFlag).append(" rss-prohibited=").append(this.remoteSsnProhibited);
+		if (this.markProhibitedWhenSpcResuming)
+			sb.append(" markProhibitedWhenSpcResuming");
 		return sb.toString();
 	}
 
@@ -110,6 +119,7 @@ public class RemoteSubSystem implements XMLSerializable {
 			xml.setAttribute(REMOTE_SPC, ai.remoteSpc);
 			xml.setAttribute(REMOTE_SSN, ai.remoteSsn);
 			xml.setAttribute(REMOTE_SSN_FLAG, ai.remoteSsnFlag);
+			xml.setAttribute(MARK_PROHIBITED_WHEN_SPC_RESUMING, ai.markProhibitedWhenSpcResuming);
 
 		}
 
@@ -117,6 +127,7 @@ public class RemoteSubSystem implements XMLSerializable {
 			ai.remoteSpc = xml.getAttribute(REMOTE_SPC).toInt();
 			ai.remoteSsn = xml.getAttribute(REMOTE_SSN).toInt();
 			ai.remoteSsnFlag = xml.getAttribute(REMOTE_SSN_FLAG).toInt();
+			ai.markProhibitedWhenSpcResuming = xml.getAttribute(MARK_PROHIBITED_WHEN_SPC_RESUMING).toBoolean();
 		}
 	};
 }

@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,18 +36,22 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
+import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
+import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
-import org.mobicents.protocols.ss7.sccp.message.UnitData;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
-public class SccpManagement implements SccpListener {
+public class SccpManagement {
 	private final Logger logger;
 
 	protected static final int MTP3_PAUSE = 3;
@@ -72,6 +77,9 @@ public class SccpManagement implements SccpListener {
 	protected static final int UNAVAILABILITY_CAUSE_UNEQUIPED = 1;
 	protected static final int UNAVAILABILITY_CAUSE_INACCESSIBLE = 2;
 
+//	private static final int SST_TIMER_DURATION_MIN = 10000;
+//	private static final int SST_TIMER_DURATION_MAX = 600000;
+
 	private SccpProviderImpl sccpProviderImpl;
 	private SccpStackImpl sccpStackImpl;
 	private SccpRoutingControl sccpRoutingControl;
@@ -80,6 +88,8 @@ public class SccpManagement implements SccpListener {
 
 	// Keeps track of how many SST are running for given DPC
 	private final FastMap<Integer, FastList<SubSystemTest>> dpcVsSst = new FastMap<Integer, FastList<SubSystemTest>>();
+	// Keeps the time when the last SSP (after recdMsgForProhibitedSsn()) has been sent
+	private final FastMap<DpcSsn, Long> dpcSspSent = new FastMap<DpcSsn, Long>();
 	
 	private final String name;
 
@@ -98,74 +108,8 @@ public class SccpManagement implements SccpListener {
 		this.sccpRoutingControl = sccpRoutingControl;
 	}
 
-	/**
-	 * <p>
-	 * Handles the MTP3/User Part Communication PAUSE, RESUME and STATUS
-	 * </p>
-	 * <ul>
-	 * <li>
-	 * The structure of <i>PAUSE</i> is SI=0 (byte), type=3 (byte), affected dpc
-	 * = int(4 bytes)</li>
-	 * <li>
-	 * The structure of <i>RESUME</i> is SI=0 (byte), type=4 (byte), affected
-	 * dpc = int(4 bytes)</li>
-	 * <li>
-	 * The structure of <i>STATUS</i> is SI=0 (byte), type=5 (byte), status=1 or
-	 * 2 (byte) where 1 = Remote User Unavailable and 2 = Signaling Network
-	 * Congestion, affected dpc = int(4 bytes), congestion status = 2 bytes in
-	 * range of 0 to 3 where 0 means no congestion and 3 means maximum
-	 * congestion, Unavailabilty cause = 2 bytes (if status = Remote User
-	 * Unavailable(1)). The unavailabilty cause may be one of the following: 0 =
-	 * Unknown 1 = Unequipped User 2 = Inaccessible User
-	 * 
-	 * </li>
-	 * </ul>
-	 * 
-	 * @param in
-	 */
-//	protected void handleMtp3Primitive(DataInputStream in) {
-//		try {
-//			int mtpParam = in.readUnsignedByte();
-//			int affectedPc;
-//			switch (mtpParam) {
-//			case MTP3_PAUSE:
-//				affectedPc = in.readInt();
-//				if (logger.isEnabledFor(Level.WARN)) {
-//					logger.warn(String.format("MTP3 PAUSE received for dpc=%d", affectedPc));
-//				}
-//				this.handleMtp3Pause(affectedPc);
-//				break;
-//			case MTP3_RESUME:
-//				affectedPc = in.readInt();
-//				if (logger.isInfoEnabled()) {
-//					logger.info(String.format("MTP3 RESUME received for dpc=%d", affectedPc));
-//				}
-//				this.handleMtp3Resume(affectedPc);
-//				break;
-//			case MTP3_STATUS:
-//				int status = in.readUnsignedByte();
-//				affectedPc = in.readInt();
-//				int congStatus = in.readShort();
-//				int unavailabiltyCause = in.readShort();
-//				if (logger.isEnabledFor(Level.WARN)) {
-//					logger.warn(String
-//							.format("MTP3 STATUS received for dpc=%d, status=%d, Congestion Status=%d, Unavailability Cause=%d",
-//									affectedPc, status, congStatus, unavailabiltyCause));
-//				}
-//				this.handleMtp3Status(status, affectedPc, congStatus, unavailabiltyCause);
-//				break;
-//			default:
-//				logger.error(String.format("Received unrecognized MTP3 primitive %d", mtpParam));
-//				break;
-//			}
-//		} catch (IOException e) {
-//			logger.error("Error while parsing MTP Parameter ", e);
-//		}
-//	}
-
-	@Override
-	public void onMessage(SccpMessage message, int seqControl) {
-		byte[] data = ((UnitData) message).getData();
+	public void onManagementMessage(SccpDataMessage message) {
+		byte[] data = message.getData();
 		int messgType = data[0] & 0xff;
 		int affectedSsn = data[1] & 0xff;
 		int affectedPc = (data[2] & 0xff) | ((data[3] & 0xff) << 8);
@@ -177,58 +121,32 @@ public class SccpManagement implements SccpListener {
 			if (logger.isInfoEnabled()) {
 				logger.info(String
 						.format("Rx : SSA, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
-								affectedSsn, affectedPc, subsystemMultiplicity, seqControl));
+								affectedSsn, affectedPc, subsystemMultiplicity, message.getSls()));
 			}
 
-			// Mark remote SSN Allowed
-			this.allowSsn(affectedPc, affectedSsn);
-
 			// Stop the SST if already started
-			FastList<SubSystemTest> ssts1 = dpcVsSst.get(affectedPc);
-			SubSystemTest sst1 = null;
-			if (ssts1 != null) {
-				for (FastList.Node<SubSystemTest> n = ssts1.head(), end = ssts1.tail(); (n = n.getNext()) != end;) {
-					sst1 = n.getValue();
-					if (sst1.getSsn() == affectedSsn) {
-						break;
-					}
-				}
+			this.cancelSst(affectedPc, affectedSsn);
 
-				if (sst1 != null) {
-					sst1.stopTest();
-					// ssts1.remove(sst1);
-				}
+			if (affectedSsn == 1) {
+				this.allowRsp(affectedPc, false, RemoteSccpStatus.available);
+			} else {
+				// Mark remote SSN Allowed
+				this.allowSsn(affectedPc, affectedSsn);
 			}
 			break;
 		case SSP:
 			if (logger.isEnabledFor(Level.WARN)) {
 				logger.warn(String
 						.format("Rx : SSP, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
-								affectedSsn, affectedPc, subsystemMultiplicity, seqControl));
+								affectedSsn, affectedPc, subsystemMultiplicity, message.getSls()));
 			}
 
-			this.prohibitSsn(affectedPc, affectedSsn);
-			// Initiate SubSystem Status Test Procedure
-
-			SubSystemTest sst = null;
-			FastList<SubSystemTest> ssts = dpcVsSst.get(affectedPc);
-			if (ssts == null) {
-				ssts = new FastList<SubSystemTest>();
-				dpcVsSst.put(affectedPc, ssts);
+			if (affectedSsn == 1) {
+				// A subsystem prohibited message with SSN = 1 is not allowed
+			} else {
+				this.prohibitSsn(affectedPc, affectedSsn);
+				this.startSst(affectedPc, affectedSsn);
 			}
-
-			for (FastList.Node<SubSystemTest> n = ssts.head(), end = ssts.tail(); (n = n.getNext()) != end;) {
-				sst = n.getValue();
-				if (sst.getSsn() == affectedSsn) {
-					break;
-				}
-			}
-
-			if (sst == null) {
-				sst = new SubSystemTest(affectedSsn, affectedPc, ssts);
-			}
-			// ssts.add(sst);
-			sst.startTest();
 
 			break;
 		case SST:
@@ -245,22 +163,21 @@ public class SccpManagement implements SccpListener {
 				if (logger.isInfoEnabled()) {
 					logger.info(String
 							.format("Rx : SST, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
-									affectedSsn, affectedPc, subsystemMultiplicity, seqControl));
+									affectedSsn, affectedPc, subsystemMultiplicity, message.getSls()));
 				}
 				
 				this.sendSSA(message, affectedSsn);
-				return;
-			}
+			} else {
 
-			//SccpListener listener = this.sccpProviderImpl.ssnToListener.get(affectedSsn);
-			SccpListener listener = this.sccpProviderImpl.getSccpListener(affectedSsn);
-			if (listener != null) {
-				this.sendSSA(message, affectedSsn);
-				return;
-			}
+				SccpListener listener = this.sccpProviderImpl.getSccpListener(affectedSsn);
+				if (listener != null) {
+					this.sendSSA(message, affectedSsn);
+					return;
+				}
 
-			if (logger.isInfoEnabled()) {
-				logger.info(String.format("Received SST for unavailable SSN=%d", affectedSsn));
+				if (logger.isInfoEnabled()) {
+					logger.info(String.format("Received SST for unavailable SSN=%d", affectedSsn));
+				}
 			}
 
 			break;
@@ -283,87 +200,92 @@ public class SccpManagement implements SccpListener {
 			logger.error("Received SCMG with unknown MessageType.");
 			break;
 		}
-
 	}
 
-	private void sendSSA(SccpMessage msg, int affectedSsn) {
-		SccpAddress calledAdd = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
-				((SccpMessageImpl) msg).getOpc(), null, 1);// SSN=1 for SCMG
-		SccpAddress callingAdd = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, sccpStackImpl.localSpc,
-				null, 1);// SSN=1 for SCMG
+	private void sendManagementMessage(int dpc, int messageTypeCode, int affectedSsn, int subsystemMultiplicityIndicator) {
 
-		ProtocolClass pClass = sccpProviderImpl.getParameterFactory().createProtocolClass(0, 0);
-		UnitData udt = sccpProviderImpl.getMessageFactory().createUnitData(pClass, calledAdd, callingAdd);
+		Mtp3ServiceAccessPoint sap = this.sccpStackImpl.router.findMtp3ServiceAccessPoint(dpc, 0);
+		if (sap == null) {
+			logger.warn(String.format("Failed sendManagementMessage : Mtp3ServiceAccessPoint has not found for dpc=%d", dpc));
+			return;
+		}
+		int affectedPc;
+		if (messageTypeCode == SST || messageTypeCode == SOG) {
+			affectedPc = dpc;
+		} else {
+			affectedPc = sap.getOpc();
+		}
+
+		SccpAddress calledAdd = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, dpc, null, 1);
+		SccpAddress callingAdd = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, affectedPc, null, 1);
+
 		byte[] data = new byte[5];
-		data[0] = SSA;
+		data[0] = (byte) messageTypeCode;
 		data[1] = (byte) affectedSsn; // affected SSN
-		data[2] = (byte) (sccpStackImpl.localSpc & 0x000000ff);
-		data[3] = (byte) ((sccpStackImpl.localSpc & 0x0000ff00) >> 8);
-		data[4] = 0;
-		udt.setData(data);
-
-		// set the SLS
-		((SccpMessageImpl) udt).setSls(((SccpMessageImpl) msg).getSls());
+		data[2] = (byte) (affectedPc & 0x000000ff);
+		data[3] = (byte) ((affectedPc & 0x0000ff00) >> 8);
+		data[4] = (byte) subsystemMultiplicityIndicator;
+		SccpDataMessageImpl msg = (SccpDataMessageImpl) sccpProviderImpl.getMessageFactory().createDataMessageClass0(calledAdd, callingAdd, data, -1, false,
+				null, null);
 
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("Tx :SSA SCCP Message=%s Affected SSN=%d", msg.toString(), affectedSsn));
+			logger.debug(String.format("Tx :SCMG Type=%d, Affected SSN=%d, AffectedPc=%d", messageTypeCode, affectedSsn, affectedPc));
 		}
 
 		try {
-			this.sccpRoutingControl.send(udt);
+			this.sccpRoutingControl.sendMessageToMtp(msg);
 		} catch (IOException e) {
-			logger.error(String.format("Exception while trying to send SSP message=%s", udt), e);
+			logger.error(String.format("Exception while trying to send SSP message=%s", msg), e);
+		}
+	}
+
+	private void sendSSA(SccpMessage msg, int affectedSsn) {
+		this.sendManagementMessage(((SccpMessageImpl) msg).getIncomingOpc(), SSA, affectedSsn, 0);
+	}
+
+	protected void broadcastChangedSsnState(int affectedSsn, boolean inService) {
+
+		FastMap<Integer, ConcernedSignalingPointCode> lst = this.sccpStackImpl.getSccpResource().getConcernedSpcs();
+		for (FastMap.Entry<Integer, ConcernedSignalingPointCode> e = lst.head(), end = lst.tail(); (e = e.getNext()) != end;) {
+			ConcernedSignalingPointCode concernedSubSystem = e.getValue();
+
+			int dpc = concernedSubSystem.getRemoteSpc();
+			if (inService)
+				this.sendManagementMessage(dpc, SSA, affectedSsn, 0);
+			else
+				this.sendManagementMessage(dpc, SSP, affectedSsn, 0);
 		}
 	}
 
 	protected void recdMsgForProhibitedSsn(SccpMessage msg, int ssn) {
-		// Send SSP
-		int opc = ((SccpMessageImpl) msg).getOpc();
-		if (opc != -1) {
-			// received message from MTP for SSN which is prohibited
 
-			SccpAddress calledAdd = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
-					((SccpMessageImpl) msg).getOpc(), null, 1);// SSN=1 for SCMG
-			SccpAddress callingAdd = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
-					sccpStackImpl.localSpc, null, 1);// SSN=1 for SCMG
-
-			ProtocolClass pClass = sccpProviderImpl.getParameterFactory().createProtocolClass(0, 0);
-			UnitData udt = sccpProviderImpl.getMessageFactory().createUnitData(pClass, calledAdd, callingAdd);
-			byte[] data = new byte[5];
-			data[0] = SSP;
-			data[1] = (byte) ssn; // affected SSN
-			data[2] = (byte) (sccpStackImpl.localSpc & 0x000000ff);
-			data[3] = (byte) ((sccpStackImpl.localSpc & 0x0000ff00) >> 8);
-			data[4] = 0;
-			udt.setData(data);
-
-			// set the SLS
-			((SccpMessageImpl) udt).setSls(((SccpMessageImpl) msg).getSls());
-
-			if (logger.isDebugEnabled()) {
-				logger.debug(String.format("Tx :SSP SCCP Message=%s Affected SSN=%d", msg.toString(), ssn));
-			}
-
-			try {
-				this.sccpRoutingControl.send(udt);
-			} catch (IOException e) {
-				logger.error(String.format("Exception while trying to send SSP message=%s", udt), e);
-			}
+		// we do not send new SSP's to the same DPC+SSN during the one second interval  
+		int dpc = msg.getIncomingOpc();
+		DpcSsn key = new DpcSsn(dpc, ssn);
+		long now = System.currentTimeMillis();
+		synchronized (this.dpcSspSent) {
+			Long dt = this.dpcSspSent.get(key);
+			if (dt != null && now - dt < 1000)
+				return;
+			this.dpcSspSent.put(key, now);
 		}
 
-		// else we drop it; SCCP Management for local SSN is not taken care
+		// Send SSP (when message is mtp3-originated)
+		if(msg.getIsMtpOriginated()) {
+			this.sendManagementMessage(dpc, SSP, ssn, 0);
+		}
 	}
 
 	protected void handleMtp3Pause(int affectedPc) {
 		// Look at Q.714 Section 5.2.2
 		this.cancelAllSst(affectedPc, true);
-		this.prohibitRsp(affectedPc);
+		this.prohibitRsp(affectedPc, true, RemoteSccpStatus.inaccessible);
 
 	}
 
 	protected void handleMtp3Resume(int affectedPc) {
 		// Look at Q.714 Section 5.2.2
-		this.allowRsp(affectedPc);
+		this.allowRsp(affectedPc, true, RemoteSccpStatus.available);
 
 	}
 
@@ -372,11 +294,13 @@ public class SccpManagement implements SccpListener {
 		switch (cause) {
 		case SignallingNetworkCongested:
 			// Signaling Network Congestion
+			// TODO: implement congestion management
 			break;
 			
 		case UserPartUnavailability_Unknown:
 		case UserPartUnavailability_InaccessibleRemoteUser:
-			this.prohibitAllSsn(affectedPc);
+			this.prohibitRsp(affectedPc, false, (cause == Mtp3StatusCause.UserPartUnavailability_Unknown ? RemoteSccpStatus.unavailableReasonUnknown
+					: RemoteSccpStatus.inaccessible));
 
 			SubSystemTest sstForSsn1 = this.cancelAllSst(affectedPc, false);
 			if (sstForSsn1 != null) {
@@ -390,15 +314,7 @@ public class SccpManagement implements SccpListener {
 				// for the SCCP at a remote signalling point
 
 				// Start sending the SST for SSN1
-				FastList<SubSystemTest> ssts = dpcVsSst.get(affectedPc);
-				if (ssts == null) {
-					ssts = new FastList<SubSystemTest>();
-					dpcVsSst.put(affectedPc, ssts);
-				}
-				SubSystemTest sst = new SubSystemTest(1, affectedPc, ssts);
-
-				// ssts.add(sst);
-				sst.startTest();
+				this.startSst(affectedPc, 1);
 			}
 			break;
 			
@@ -412,7 +328,7 @@ public class SccpManagement implements SccpListener {
 			// subsystem status test with SSN = 1. If the cause in the
 			// MTP-STATUS indication primitive indicates "unequipped user",
 			// then no subsystem status test is initiated.
-			this.prohibitAllSsn(affectedPc);
+			this.prohibitRsp(affectedPc, false, RemoteSccpStatus.unequipped);
 
 			// Discontinues all subsystem status tests (including SSN = 1)
 			// if an MTP-PAUSE or MTP-STATUS indication primitive is
@@ -420,88 +336,174 @@ public class SccpManagement implements SccpListener {
 			this.cancelAllSst(affectedPc, true);
 			break;
 		}
-		
-//		if (status == 2) {
-//			// Signaling Network Congestion
-//
-//		} else if (status == 1) {
-//			// Remote User Unavailable
-//			switch (unavailabiltyCause) {
-//			case UNAVAILABILITY_CAUSE_UNKNOWN:
-//			case UNAVAILABILITY_CAUSE_INACCESSIBLE:
-//
-//
-//				break;
-//
-//			case UNAVAILABILITY_CAUSE_UNEQUIPED:
-//				break;
-//			default:
-//				logger.error(String.format("Error in handling MTP3 STATUS. Received unknown unavailability cisue=%d",
-//						unavailabiltyCause));
-//				break;
-//			}
-//
-//		} else {
-//			logger.error(String.format("Error in handling MTP3 STATUS. Received unknown status=%d", status));
-//		}
 	}
 
 	private void prohibitAllSsn(int affectedPc) {
+		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
 		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
 		for (FastMap.Entry<Integer, RemoteSubSystem> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
 			RemoteSubSystem remoteSsn = e.getValue();
 			if (remoteSsn.getRemoteSpc() == affectedPc) {
-				remoteSsn.setRemoteSsnProhibited(true);
+				if (!remoteSsn.isRemoteSsnProhibited()) {
+					remoteSsn.setRemoteSsnProhibited(true);
+
+					for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
+						try {
+							e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), false, 0);
+						} catch (Exception ee) {
+						}
+					}
+				}
 			}
 		}
 	}
 
 	private void allowAllSsn(int affectedPc) {
+
+		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
 		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
 		for (FastMap.Entry<Integer, RemoteSubSystem> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
 			RemoteSubSystem remoteSsn = e.getValue();
 			if (remoteSsn.getRemoteSpc() == affectedPc) {
-				remoteSsn.setRemoteSsnProhibited(false);
+
+				if (remoteSsn.getMarkProhibitedWhenSpcResuming()) {
+					if (!remoteSsn.isRemoteSsnProhibited()) {
+						remoteSsn.setRemoteSsnProhibited(true);
+						this.startSst(affectedPc, remoteSsn.getRemoteSsn());
+
+						for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
+							try {
+								e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), false, 0);
+							} catch (Exception ee) {
+							}
+						}
+					}
+
+				} else {
+					if (remoteSsn.isRemoteSsnProhibited()) {
+						remoteSsn.setRemoteSsnProhibited(false);
+
+						for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
+							try {
+								e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), true, 0);
+							} catch (Exception ee) {
+							}
+						}
+					}
+				}
 			}
 		}
 	}
 
-	private void prohibitRsp(int affectedPc) {
+	private void prohibitRsp(int affectedPc, boolean spcChanging, RemoteSccpStatus remoteSccpStatus) {
+
 		RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(affectedPc);
 		if (remoteSpc != null) {
-			remoteSpc.setRemoteSpcProhibited(true);
+			if (spcChanging)
+				remoteSpc.setRemoteSpcProhibited(true);
+			if (remoteSccpStatus != null && remoteSccpStatus != RemoteSccpStatus.available)
+				remoteSpc.setRemoteSccpProhibited(true);
+
+			FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
+			for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
+				try {
+					e1.getValue().onPcState(affectedPc,
+							(remoteSpc.isRemoteSpcProhibited() ? SignallingPointStatus.inaccessible : SignallingPointStatus.accessible), 0, remoteSccpStatus);
+				} catch (Exception ee) {
+				}
+			}
 		}
 
 		this.prohibitAllSsn(affectedPc);
 	}
 
-	private void allowRsp(int affectedPc) {
+	private void allowRsp(int affectedPc, boolean spcChanging, RemoteSccpStatus remoteSccpStatus) {
+
 		RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(affectedPc);
 		if (remoteSpc != null) {
-			remoteSpc.setRemoteSpcProhibited(false);
+			if (spcChanging)
+				remoteSpc.setRemoteSpcProhibited(false);
+			if (remoteSccpStatus != null && remoteSccpStatus == RemoteSccpStatus.available)
+				remoteSpc.setRemoteSccpProhibited(false);
+
+			FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
+			for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
+				try {
+					e1.getValue().onPcState(affectedPc, SignallingPointStatus.accessible, 0, remoteSccpStatus);
+				} catch (Exception ee) {
+				}
+			}
 		}
 
 		this.allowAllSsn(affectedPc);
 	}
 
 	private void prohibitSsn(int affectedPc, int ssn) {
+
+		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
 		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
 		for (FastMap.Entry<Integer, RemoteSubSystem> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
 			RemoteSubSystem remoteSsn = e.getValue();
 			if (remoteSsn.getRemoteSpc() == affectedPc && remoteSsn.getRemoteSsn() == ssn) {
-				remoteSsn.setRemoteSsnProhibited(true);
+				if (!remoteSsn.isRemoteSsnProhibited()) {
+					remoteSsn.setRemoteSsnProhibited(true);
+
+					for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
+						try {
+							e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), false, 0);
+						} catch (Exception ee) {
+						}
+					}
+				}
 				break;
 			}
 		}
 	}
 
 	private void allowSsn(int affectedPc, int ssn) {
+
+		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
 		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
 		for (FastMap.Entry<Integer, RemoteSubSystem> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
 			RemoteSubSystem remoteSsn = e.getValue();
 			if (remoteSsn.getRemoteSpc() == affectedPc && (ssn == 1 || remoteSsn.getRemoteSsn() == ssn)) {
-				remoteSsn.setRemoteSsnProhibited(false);
+				if (remoteSsn.isRemoteSsnProhibited()) {
+					remoteSsn.setRemoteSsnProhibited(false);
+
+					for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
+						try {
+							e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), true, 0);
+						} catch (Exception ee) {
+						}
+					}
+				}
 				break;
+			}
+		}
+	}
+
+	private void startSst(int affectedPc, int affectedSsn) {
+
+		FastList<SubSystemTest> ssts = this.getSubSystemTestListForAffectedDpc(affectedPc, true);
+		synchronized (ssts) {
+			SubSystemTest sst = getSubSystemTestBySsn(ssts, affectedSsn);
+			if (sst == null) {
+				sst = new SubSystemTest(affectedSsn, affectedPc, ssts);
+				sst.startTest();
+			} else {
+				sst.resetTimerDuration();
+				sst.stopTest();
+				sst.startTest();
+			}
+		}
+	}
+
+	private void cancelSst(int affectedPc, int affectedSsn) {
+		FastList<SubSystemTest> ssts1 = this.getSubSystemTestListForAffectedDpc(affectedPc, false);
+		if (ssts1 != null) {
+			SubSystemTest sst1 = getSubSystemTestBySsn(ssts1, affectedSsn);
+			if (sst1 != null) {
+				sst1.stopTest();
 			}
 		}
 	}
@@ -509,15 +511,18 @@ public class SccpManagement implements SccpListener {
 	private SubSystemTest cancelAllSst(int affectedPc, boolean cancelSstForSsn1) {
 		SubSystemTest sstForSsn1 = null;
 		// cancel all SST if any
-		FastList<SubSystemTest> ssts = dpcVsSst.get(affectedPc);
+		FastList<SubSystemTest> ssts = this.getSubSystemTestListForAffectedDpc(affectedPc, false);
 		if (ssts != null) {
-			// TODO : Amit: Added n.getValue() != null check. Evaluate
-			// javolution.FastList as why for loop continues even after removing
-			// last element?
-			for (FastList.Node<SubSystemTest> n = ssts.head(), endSst = ssts.tail(); ((n = n.getNext()) != endSst)
-					&& n.getValue() != null;) {
-				SubSystemTest sst = n.getValue();
-
+			ArrayList<SubSystemTest> arr = new ArrayList<SubSystemTest>();
+			synchronized (ssts) {
+				// TODO : Amit: Added n.getValue() != null check. Evaluate
+				// javolution.FastList as why for loop continues even after removing
+				// last element?
+				for (FastList.Node<SubSystemTest> n = ssts.head(), endSst = ssts.tail(); ((n = n.getNext()) != endSst) && n.getValue() != null;) {
+					arr.add(n.getValue());
+				}
+			}
+			for (SubSystemTest sst : arr) {
 				// If SSN = 1 but flag ssn1 is false, means we don't stop this
 				// SST and return back the reference to it
 				if (sst.getSsn() == 1 && !cancelSstForSsn1) {
@@ -525,11 +530,35 @@ public class SccpManagement implements SccpListener {
 					continue;
 				}
 				sst.stopTest();
-				// ssts.remove(sst);
 			}
 		}
 
 		return sstForSsn1;
+	}
+	
+	private FastList<SubSystemTest> getSubSystemTestListForAffectedDpc(int affectedPc, boolean createIfAbsent) {
+		synchronized (dpcVsSst) {
+			FastList<SubSystemTest> ssts = dpcVsSst.get(affectedPc);
+			if (ssts != null || !createIfAbsent)
+				return ssts;
+
+			ssts = new FastList<SubSystemTest>();
+			dpcVsSst.put(affectedPc, ssts);
+			return ssts;
+		}
+	}
+
+	private SubSystemTest getSubSystemTestBySsn(FastList<SubSystemTest> ssts, int affectedSsn) {
+		synchronized (ssts) {
+			SubSystemTest sst = null;
+			for (FastList.Node<SubSystemTest> n = ssts.head(), end = ssts.tail(); (n = n.getNext()) != end;) {
+				sst = n.getValue();
+				if (sst.getSsn() == affectedSsn) {
+					break;
+				}
+			}
+			return sst;
+		}
 	}
 
 	private class SubSystemTest implements Runnable {
@@ -550,29 +579,12 @@ public class SccpManagement implements SccpListener {
 		private int ssn = 0;
 		private int affectedPc = 0;
 
-		private SccpAddress callingAdd = null;
-		private SccpAddress calledAdd = null;
-
-		private UnitData udt = null;
+		private int currentTimerDelay = sccpStackImpl.sstTimerDuration_Min;
 
 		SubSystemTest(int ssn, int affectedPc, FastList<SubSystemTest> testsList) {
 			this.ssn = ssn;
 			this.affectedPc = affectedPc;
 			this.testsList = testsList;
-
-			// SSN=1 for SCMG
-			calledAdd = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, affectedPc, null, 1);
-			callingAdd = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, sccpStackImpl.localSpc, null, 1);
-
-			ProtocolClass pClass = sccpProviderImpl.getParameterFactory().createProtocolClass(0, 0);
-			udt = sccpProviderImpl.getMessageFactory().createUnitData(pClass, calledAdd, callingAdd);
-			byte[] data = new byte[5];
-			data[0] = 3; // SST
-			data[1] = (byte) ssn; // affected SSN
-			data[2] = (byte) (this.affectedPc & 0x000000ff);
-			data[3] = (byte) ((this.affectedPc & 0x0000ff00) >> 8);
-			data[4] = 0;
-			udt.setData(data);
 		}
 
 		public int getSsn() {
@@ -583,60 +595,85 @@ public class SccpManagement implements SccpListener {
 			this.recdMtpStatusResp = recdMtpStatusResp;
 		}
 
-		synchronized void stopTest() {
-			started = false;
-			Future f = this.testFuture;
-			if (f != null) {
-				this.testsList.remove(this);
-				this.testFuture = null;
-				f.cancel(false);
+		void stopTest() {
+			synchronized (this.testsList) {
+				started = false;
+				Future f = this.testFuture;
+				if (f != null) {
+					this.testsList.remove(this);
+					this.testFuture = null;
+					f.cancel(false);
+				}
 			}
 
-			notify();
-		}
-
-		synchronized void startTest() {
-			if (!started) {
-				this.testFuture = managementExecutors.schedule(this, 10000, TimeUnit.MILLISECONDS);
-				started = true;
-				this.testsList.add(this);
+			try {
+				notify();
+			} catch (Exception e) {
 			}
-
 		}
 
-		public synchronized void run() {
+		void startTest() {
+			synchronized (this.testsList) {
+				if (!started) {
+					this.testFuture = managementExecutors.schedule(this, currentTimerDelay, TimeUnit.MILLISECONDS);
+
+					// increase the "T(stat info)" timer delay up to 10 minutes for the next step
+					currentTimerDelay = (int) (currentTimerDelay * sccpStackImpl.sstTimerDuration_IncreaseFactor);
+					if (currentTimerDelay > sccpStackImpl.sstTimerDuration_Max)
+						currentTimerDelay = sccpStackImpl.sstTimerDuration_Max;
+					
+						started = true;
+					this.testsList.add(this);
+				}
+			}
+		}
+		
+		private void resetTimerDuration() {
+			currentTimerDelay = sccpStackImpl.sstTimerDuration_Min;
+		}
+
+		public void run() {
 
 			if (started) {
 
-				if (this.ssn == 1 && !this.recdMtpStatusResp) {
-					// If no MTP STATUS received, means we consider previously
-					// unavailable (SCCP) has recovered
+				synchronized (this.testsList) {
+					if (this.ssn == 1 && !this.recdMtpStatusResp) {
+						// If no MTP STATUS received, means we consider
+						// previously
+						// unavailable (SCCP) has recovered
 
-					// TODO Take care of updating translation table;
+						this.stopTest();
+
+						// Stop the SST if already started
+						FastList<SubSystemTest> ssts1 = getSubSystemTestListForAffectedDpc(affectedPc, false);
+						if (ssts1 != null) {
+							SubSystemTest sst1 = getSubSystemTestBySsn(ssts1, ssn);
+							if (sst1 != null) {
+								sst1.stopTest();
+							}
+						}
+
+						if (ssn == 1) {
+							allowRsp(affectedPc, false, RemoteSccpStatus.available);
+						} else {
+							// Mark remote SSN Allowed
+							allowSsn(affectedPc, ssn);
+						}
+						
+						return;
+
+					}
+					// Set it false again so we wait for response again after
+					// sending SST for SSN = 1 bellow
+					this.recdMtpStatusResp = false;
+
+					// TODO : How much to sleep?
 					this.stopTest();
-					return;
-
-				}
-				// Set it false again so we wait for response again after
-				// sending SST for SSN = 1 bellow
-				this.recdMtpStatusResp = false;
-
-				if (logger.isDebugEnabled()) {
-					logger.debug(String.format("Tx :SST SCCP Message=%s Affected SSN=%d", udt.toString(), ssn));
+					this.startTest();
 				}
 
-				try {
-					sccpRoutingControl.send(udt);
-				} catch (IOException e1) {
-					logger.error(String
-							.format("Error while trying to send SST UnitData Called Address=%s Calling Address=%s Affected SSN=%d",
-									calledAdd.toString(), callingAdd.toString(), this.ssn));
-				}
-
-				// TODO : How much to sleep?
-				this.stopTest();
-				this.startTest();
-
+				sendManagementMessage(affectedPc, SST, ssn, 0);
+				
 			}// while
 
 		}// run
@@ -648,7 +685,9 @@ public class SccpManagement implements SccpListener {
 	 */
 	public void start() {
 
-		this.dpcVsSst.clear();
+		synchronized (dpcVsSst) {
+			this.dpcVsSst.clear();
+		}
 		managementExecutors = Executors.newScheduledThreadPool(1);
 
 	}
@@ -678,6 +717,42 @@ public class SccpManagement implements SccpListener {
 			return S_SSC;
 		default:
 			return S_DEFAULT;
+		}
+	}
+
+	private class DpcSsn {
+		
+		private int dpc;
+		private int ssn;
+
+		public DpcSsn(int aDpc, int aSsn) {
+			dpc = aDpc;
+			ssn = aSsn;
+		}
+
+		public int getDpc() {
+			return dpc;
+		}
+
+		public int getSsn() {
+			return ssn;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null && !(obj instanceof DpcSsn))
+				return false;
+
+			DpcSsn y = (DpcSsn) obj;
+			if (this.dpc == y.dpc && this.ssn == y.ssn)
+				return true;
+			else
+				return false;
+		}
+
+		@Override
+		public int hashCode() {
+			return this.dpc + 256 * 256 * this.ssn;
 		}
 	}
 }

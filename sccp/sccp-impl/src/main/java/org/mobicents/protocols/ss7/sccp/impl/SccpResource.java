@@ -26,14 +26,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-
 import javolution.text.TextBuilder;
 import javolution.util.FastMap;
 import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Logger;
 
 /**
@@ -50,6 +48,7 @@ public class SccpResource {
 
 	private static final String REMOTE_SSN = "remoteSsn";
 	private static final String REMOTE_SPC = "remoteSpc";
+	private static final String CONCERNED_SPC = "concernedSpc";
 
 	private final TextBuilder persistFile = TextBuilder.newInstance();
 
@@ -60,8 +59,8 @@ public class SccpResource {
 	private String persistDir = null;
 
 	private FastMap<Integer, RemoteSubSystem> remoteSsns = new FastMap<Integer, RemoteSubSystem>();
-
 	private FastMap<Integer, RemoteSignalingPointCode> remoteSpcs = new FastMap<Integer, RemoteSignalingPointCode>();
+	private FastMap<Integer, ConcernedSignalingPointCode> concernedSpcs = new FastMap<Integer, ConcernedSignalingPointCode>();
 	
 	private final String name;
 
@@ -104,8 +103,23 @@ public class SccpResource {
 	}
 
 	public void addRemoteSsn(int remoteSsnid, RemoteSubSystem remoteSsn) {
-		this.remoteSsns.put(remoteSsnid, remoteSsn);
-		this.store();
+		synchronized (this) {
+			FastMap<Integer, RemoteSubSystem> newRemoteSsns = new FastMap<Integer, RemoteSubSystem>();
+			newRemoteSsns.putAll(this.remoteSsns);
+			newRemoteSsns.put(remoteSsnid, remoteSsn);
+			this.remoteSsns = newRemoteSsns;
+			this.store();
+		}
+	}
+
+	public void removeRemoteSsn(int remoteSsnid) {
+		synchronized (this) {
+			FastMap<Integer, RemoteSubSystem> newRemoteSsns = new FastMap<Integer, RemoteSubSystem>();
+			newRemoteSsns.putAll(this.remoteSsns);
+			newRemoteSsns.remove(remoteSsnid);
+			this.remoteSsns = newRemoteSsns;
+			this.store();
+		}
 	}
 
 	public RemoteSubSystem getRemoteSsn(int remoteSsnid) {
@@ -114,8 +128,7 @@ public class SccpResource {
 
 	public RemoteSubSystem getRemoteSsn(int spc, int remoteSsn) {
 
-		for (FastMap.Entry<Integer, RemoteSubSystem> e = this.remoteSsns.head(), end = this.remoteSsns.tail(); (e = e
-				.getNext()) != end;) {
+		for (FastMap.Entry<Integer, RemoteSubSystem> e = this.remoteSsns.head(), end = this.remoteSsns.tail(); (e = e.getNext()) != end;) {
 			RemoteSubSystem remoteSubSystem = e.getValue();
 			if (remoteSubSystem.getRemoteSpc() == spc && remoteSsn == remoteSubSystem.getRemoteSsn()) {
 				return remoteSubSystem;
@@ -130,8 +143,23 @@ public class SccpResource {
 	}
 
 	public void addRemoteSpc(int remoteSpcId, RemoteSignalingPointCode remoteSpc) {
-		this.remoteSpcs.put(remoteSpcId, remoteSpc);
-		this.store();
+		synchronized (this) {
+			FastMap<Integer, RemoteSignalingPointCode> newRemoteSpcs = new FastMap<Integer, RemoteSignalingPointCode>(); 
+			newRemoteSpcs.putAll(this.remoteSpcs);
+			newRemoteSpcs.put(remoteSpcId, remoteSpc);
+			this.remoteSpcs = newRemoteSpcs; 
+			this.store();
+		}
+	}
+
+	public void removeRemoteSpc(int remoteSpcId) {
+		synchronized (this) {
+			FastMap<Integer, RemoteSignalingPointCode> newRemoteSpcs = new FastMap<Integer, RemoteSignalingPointCode>(); 
+			newRemoteSpcs.putAll(this.remoteSpcs);
+			newRemoteSpcs.remove(remoteSpcId);
+			this.remoteSpcs = newRemoteSpcs; 
+			this.store();
+		}
 	}
 
 	public RemoteSignalingPointCode getRemoteSpc(int remoteSpcId) {
@@ -154,10 +182,65 @@ public class SccpResource {
 		return remoteSpcs;
 	}
 
+	public void addConcernedSpc(int concernedSpcId, ConcernedSignalingPointCode concernedSpc) {
+		synchronized (this) {
+			FastMap<Integer, ConcernedSignalingPointCode> newConcernedSpcs = new FastMap<Integer, ConcernedSignalingPointCode>(); 
+			newConcernedSpcs.putAll(this.concernedSpcs);
+			newConcernedSpcs.put(concernedSpcId, concernedSpc);
+			this.concernedSpcs = newConcernedSpcs; 
+			this.store();
+		}
+	}
+
+	public void removeConcernedSpc(int concernedSpcId) {
+		synchronized (this) {
+			FastMap<Integer, ConcernedSignalingPointCode> newConcernedSpcs = new FastMap<Integer, ConcernedSignalingPointCode>(); 
+			newConcernedSpcs.putAll(this.concernedSpcs);
+			newConcernedSpcs.remove(concernedSpcId);
+			this.concernedSpcs = newConcernedSpcs; 
+			this.store();
+		}
+	}
+
+	public ConcernedSignalingPointCode getConcernedSpc(int concernedSpcId) {
+		return this.concernedSpcs.get(concernedSpcId);
+	}
+
+	public ConcernedSignalingPointCode getConcernedSpcByPC(int remotePC) {
+		for (FastMap.Entry<Integer, ConcernedSignalingPointCode> e = this.concernedSpcs.head(), end = this.concernedSpcs.tail(); (e = e.getNext()) != end;) {
+			ConcernedSignalingPointCode concernedSubSystem = e.getValue();
+			if (concernedSubSystem.getRemoteSpc() == remotePC) {
+				return concernedSubSystem;
+			}
+
+		}
+		return null;
+	}
+	
+	public FastMap<Integer, ConcernedSignalingPointCode> getConcernedSpcs() {
+		return concernedSpcs;
+	}
+
+	public void removeAllResourses() {
+
+		synchronized (this) {
+			if (this.remoteSsns.size() == 0 && this.remoteSpcs.size() == 0 && this.concernedSpcs.size() == 0)
+				// no resources allocated - nothing to do
+				return;
+
+			remoteSsns = new FastMap<Integer, RemoteSubSystem>();
+			remoteSpcs = new FastMap<Integer, RemoteSignalingPointCode>();
+			concernedSpcs = new FastMap<Integer, ConcernedSignalingPointCode>();
+
+			// We store the cleared state
+			this.store();
+		}
+	}
+
 	/**
 	 * Persist
 	 */
-	private void store() {
+	public void store() {
 
 		// TODO : Should we keep reference to Objects rather than recreating
 		// everytime?
@@ -169,6 +252,7 @@ public class SccpResource {
 			writer.setIndentation(TAB_INDENT);
 			writer.write(remoteSsns, REMOTE_SSN, FastMap.class);
 			writer.write(remoteSpcs, REMOTE_SPC, FastMap.class);
+			writer.write(concernedSpcs, CONCERNED_SPC, FastMap.class);
 
 			writer.close();
 		} catch (Exception e) {
@@ -190,6 +274,7 @@ public class SccpResource {
 			reader.setBinding(binding);
 			remoteSsns = reader.read(REMOTE_SSN, FastMap.class);
 			remoteSpcs = reader.read(REMOTE_SPC, FastMap.class);
+			concernedSpcs = reader.read(CONCERNED_SPC, FastMap.class);
 		} catch (XMLStreamException ex) {
 			// this.logger.info(
 			// "Error while re-creating Linksets from persisted file", ex);

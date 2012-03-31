@@ -23,7 +23,7 @@
 package org.mobicents.protocols.ss7.sccp.parameter;
 
 /**
- * Protocol class
+ * Protocol class (contains class data (0-3) and "return message on error" option for connectionless classes)
  * 
  * The "protocol class" parameter field is a one-octet parameter and is structured as follows:
  * Bits 1-4 indicating protocol class are coded as follows:
@@ -37,21 +37,21 @@ package org.mobicents.protocols.ss7.sccp.parameter;
  * @author kulikov
  */
 public interface ProtocolClass extends Parameter{
-	
+
 	public static final int PARAMETER_CODE = 0x05;
-	
+
 	public static final int HANDLING_RET_ERR = 0x08;
     /**
      * The value of protocol class.
      * 
      * @return protocol class code
      */
-    public int getValue();
-    
+    public int getProtocolClass();
+
     /**
-     * Gets the message handling value
+     * Gets a "return message on error" flag
      * 
-     * @return message handling value.
+     * @return
      */
-    public int getHandling();
+    public boolean getReturnMessageOnError();
 }

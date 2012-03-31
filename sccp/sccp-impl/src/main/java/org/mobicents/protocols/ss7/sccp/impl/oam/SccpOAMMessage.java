@@ -60,7 +60,7 @@ public interface SccpOAMMessage {
 
 	public static final String NO_BACKUP_ADDRESS = "No backup address defined for id=%d";
 
-	public static final String RSPC_ALREADY_EXIST = "Remote Signaling Pointcode already exist";
+	public static final String RSPC_ALREADY_EXIST = "Remote Signaling Pointcode already exists";
 
 	public static final String RSPC_DOESNT_EXIST = "Remote Signaling Pointcode doesn't exist";
 
@@ -70,7 +70,7 @@ public interface SccpOAMMessage {
 
 	public static final String RSPC_SUCCESSFULLY_DELETED = "Remote Signaling Pointcode successfully deleted";
 
-	public static final String RSS_ALREADY_EXIST = "Remote Subsystem already exist";
+	public static final String RSS_ALREADY_EXIST = "Remote Subsystem already exists";
 
 	public static final String RSS_DOESNT_EXIST = "Remote Subsystem doesn't exist";
 
@@ -79,4 +79,49 @@ public interface SccpOAMMessage {
 	public static final String RSS_SUCCESSFULLY_MODIFIED = "Remote Subsystem successfully modified";
 
 	public static final String RSS_SUCCESSFULLY_DELETED = "Remote Subsystem successfully deleted";
+
+	public static final String LMR_ALREADY_EXIST = "Long message rule already exists";
+
+	public static final String LMR_DOESNT_EXIST = "Long message rule doesn't exist";
+
+	public static final String LMR_SUCCESSFULLY_ADDED = "Long message rule successfully added";
+
+	public static final String LMR_SUCCESSFULLY_MODIFIED = "Long message rule successfully modified";
+
+	public static final String LMR_SUCCESSFULLY_DELETED = "Long message rule successfully deleted";
+
+	public static final String SAP_ALREADY_EXIST = "Service access point already exists";
+
+	public static final String SAP_DOESNT_EXIST = "Service access point doesn't exist";
+
+	public static final String SAP_SUCCESSFULLY_ADDED = "Service access point successfully added";
+
+	public static final String SAP_SUCCESSFULLY_MODIFIED = "Service access point successfully modified";
+
+	public static final String SAP_SUCCESSFULLY_DELETED = "Service access point successfully deleted";
+
+	public static final String MUP_DOESNT_EXIST = "Mtp3UserPart doesn't exist";
+
+	public static final String DEST_ALREADY_EXIST = "Destination definition already exists";
+
+	public static final String DEST_DOESNT_EXIST = "Destination definition doesn't exist";
+
+	public static final String DEST_SUCCESSFULLY_ADDED = "Destination definition successfully added";
+
+	public static final String DEST_SUCCESSFULLY_MODIFIED = "Destination definition successfully modified";
+
+	public static final String DEST_SUCCESSFULLY_DELETED = "Destination definition successfully deleted";
+
+	public static final String CS_ALREADY_EXIST = "Concerned spc already exists";
+
+	public static final String CS_DOESNT_EXIST = "Concerned spc doesn't exist";
+
+	public static final String CS_SUCCESSFULLY_ADDED = "Concerned spc successfully added";
+
+	public static final String CS_SUCCESSFULLY_MODIFIED = "Concerned spc successfully modified";
+
+	public static final String CS_SUCCESSFULLY_DELETED = "Concerned spc successfully deleted";
+
+	public static final String PARAMETER_SUCCESSFULLY_SET = "Parameter has been successfully set";
+
 }

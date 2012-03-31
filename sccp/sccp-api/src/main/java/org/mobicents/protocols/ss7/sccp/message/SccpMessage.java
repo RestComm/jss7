@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.sccp.message;
 
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-
 /**
  * Specifies the SCCP messages formats and codes for the support of
  * connection-oriented services, connectionless services and the management of
@@ -40,8 +38,18 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * 
  * @author baranowb
  * @author kulikov
+ * @author sergey vetyutnev
  */
 public interface SccpMessage {
+	
+	public final static int MESSAGE_TYPE_UNDEFINED = -1;
+	public final static int MESSAGE_TYPE_UDT = 0x09;
+	public final static int MESSAGE_TYPE_UDTS = 0x0A;
+	public final static int MESSAGE_TYPE_XUDT = 0x11;
+	public final static int MESSAGE_TYPE_XUDTS = 0x12;
+	public final static int MESSAGE_TYPE_LUDT = 0x13;
+	public final static int MESSAGE_TYPE_LUDTS = 0x14;
+
 	/**
 	 * The message type code consists of a one octet field and is mandatory for
 	 * all messages. The message type code uniquely defines the function and
@@ -51,15 +59,16 @@ public interface SccpMessage {
 	 */
 	public int getType();
 
-	//public ProtocolClass getProtocolClass(); //FIXME check if this is present in others, think it is.
+	public boolean getIsMtpOriginated();
 
-	public SccpAddress getCalledPartyAddress();
+	public int getOriginLocalSsn();
 
-	public SccpAddress getCallingPartyAddress();
-	
-//	public void setProtocolClass(ProtocolClass v); //FIXME check if this is present in others, think it is.
-//
-	public void setCalledPartyAddress(SccpAddress v);
+	public int getSls();
 
-	public void setCallingPartyAddress(SccpAddress v);
+	public int getIncomingOpc();
+
+	public void setIncomingOpc(int opc);
+
+	public int getIncomingDpc();
+
 }

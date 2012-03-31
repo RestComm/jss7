@@ -44,7 +44,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  */
 public class SccpAddressTest {
 
-	private SccpAddressCodec codec = new SccpAddressCodec(false);
+//	private SccpAddressCodec codec = new SccpAddressCodec(false);
 	private byte[] data = new byte[] { 0x12, (byte) 0x92, 0x00, 0x11, 0x04, (byte) 0x97, 0x20, (byte) 0x73, 0x00,
 			(byte) 0x92, 0x09 };
 
@@ -72,7 +72,7 @@ public class SccpAddressTest {
 	 */
 	@Test(groups = { "parameter", "functional.decode" })
 	public void testDecode1() throws Exception {
-		SccpAddress address = codec.decode(data);
+		SccpAddress address = SccpAddressCodec.decode(data);
 
 		assertEquals(address.getSignalingPointCode(), 0);
 		assertEquals(address.getSubsystemNumber(), 146);
@@ -81,7 +81,7 @@ public class SccpAddressTest {
 
 	@Test(groups = { "parameter", "functional.decode" })
 	public void testDecode2() throws Exception {
-		SccpAddress address = codec.decode(new byte[] { 0x42, 0x08 });
+		SccpAddress address = SccpAddressCodec.decode(new byte[] { 0x42, 0x08 });
 
 		assertEquals(address.getSignalingPointCode(), 0);
 		assertEquals(address.getSubsystemNumber(), 8);
@@ -96,14 +96,14 @@ public class SccpAddressTest {
 		GlobalTitle gt = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL,
 				"79023700299");
 		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt, 146);
-		byte[] bin = codec.encode(address);
+		byte[] bin = SccpAddressCodec.encode(address, false);
 		assertTrue(Arrays.equals(data, bin), "Wrong encoding");
 	}
 
 	@Test(groups = { "parameter", "functional.encode" })
 	public void testEncode2() throws Exception {
 		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 0, null, 8);
-		byte[] bin = codec.encode(address);
+		byte[] bin = SccpAddressCodec.encode(address, false);
 		assertTrue(Arrays.equals(new byte[] { 0x42, 0x08 }, bin), "Wrong encoding");
 	}
 
@@ -115,12 +115,12 @@ public class SccpAddressTest {
 	@Test(groups = { "parameter", "functional.encode" })
 	public void testEncode3() throws Exception {
 		byte[] data1 = new byte[] { 0x12, 0x06, 0x00, 0x11, 0x04, 0x39, 0x07, (byte) 0x92, 0x49, 0x00, 0x06 };
-		SccpAddressCodec codec = new SccpAddressCodec(true);
+//		SccpAddressCodec codec = new SccpAddressCodec(true);
 
 		GlobalTitle gt = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL,
 				"93702994006");
 		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 5530, gt, 6);
-		byte[] bin = codec.encode(address);
+		byte[] bin = SccpAddressCodec.encode(address, true);
 		assertTrue(Arrays.equals(data1, bin), "Wrong encoding");
 		
 		//Now test decode

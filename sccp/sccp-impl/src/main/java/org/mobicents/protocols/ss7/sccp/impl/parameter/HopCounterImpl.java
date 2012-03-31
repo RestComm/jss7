@@ -44,6 +44,10 @@ public class HopCounterImpl extends AbstractParameter implements HopCounter {
         return value;
     }
 
+	public void setValue(int value) {
+		this.value = value;
+	}
+
 	public void decode(InputStream in) throws IOException {
 		if(in.read()!=1)
 		{

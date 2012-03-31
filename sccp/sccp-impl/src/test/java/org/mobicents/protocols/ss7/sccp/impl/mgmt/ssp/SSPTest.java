@@ -26,7 +26,8 @@ import org.testng.annotations.*;
 
 import static org.testng.Assert.*;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
-import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
+import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImplProxy;
 import org.mobicents.protocols.ss7.sccp.impl.User;
@@ -40,6 +41,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * 
  * @author amit bhayani
  * @author baranowb
+ * @author sergey vetyutnev
  */
 public class SSPTest extends SccpHarness {
 
@@ -88,20 +90,22 @@ public class SSPTest extends SccpHarness {
 		assertTrue(i==1);
 	}
 	
+
+	
 	/**
 	 * Test of configure method, of class SccpStackImpl.
 	 */
-	//@Test(groups = { "ssp","functional.mgmt"})
+	@Test(groups = { "ssp","functional.mgmt"})
 	public void testRemoteRoutingBasedOnSsn() throws Exception {
-		
-		//Amit commented out this test as it fails
-		
-		
+
 		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, 8);
 		a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), null, 8);
 
 		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
 		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+		
+		sccpStack1.setSstTimerDuration_Min(5000);
+		sccpStack1.setSstTimerDuration_IncreaseFactor(1);
 
 		u1.register();
 		//u2.register();
@@ -110,111 +114,111 @@ public class SSPTest extends SccpHarness {
 		u1.send();
 		u2.send();
 
-		Thread.currentThread().sleep(1000);
+		Thread.sleep(100);
 
-		assertTrue( u1.getMessages().size() == 1,"U1 did not receiv message, it should!");
-		assertTrue( u1.check(),"Inproper message not received!");
-		assertTrue( u2.getMessages().size() ==0,"U2 Received message, it should not!");
+		assertTrue(u1.getMessages().size() == 1, "U1 did not receiv message, it should!");
+		assertTrue(u1.check(), "Inproper message not received!");
+		assertTrue(u2.getMessages().size() == 0, "U2 Received message, it should not!");
 		
 		//now lets check functional.mgmt part
 		
 		SccpStackImplProxy stack = (SccpStackImplProxy) sccpStack1;
-		
-		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0,"U1 received Mtp3 Primitve, it should not!");
-		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 1,"U1 did not receive Management message, it should !");
+
+		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0, "U1 received Mtp3 Primitve, it should not!");
+		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 1, "U1 did not receive Management message, it should !");
 		SccpMgmtMessage rmsg1_ssp = stack.getManagementProxy().getMgmtMessages().get(0);
-		SccpMgmtMessage emsg1_ssp = new SccpMgmtMessage(0,SccpMgmtMessageType.SSP.getType(), getSSN(), 2, 0);
-		assertEquals( rmsg1_ssp,emsg1_ssp,"Failed to match management message in U1");
+		SccpMgmtMessage emsg1_ssp = new SccpMgmtMessage(0, SccpMgmtMessageType.SSP.getType(), getSSN(), 2, 0);
+		assertEquals(rmsg1_ssp, emsg1_ssp, "Failed to match management message in U1");
 		
 		//check if there is no SST
-		 stack = (SccpStackImplProxy) sccpStack2;
+		stack = (SccpStackImplProxy) sccpStack2;
+
+		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0, "U2 received Mtp3 Primitve, it should not!");
+		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 0, "U2 did not receive Management message, it should !");
+
+		Thread.sleep(6000);
 		
-		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0,"U2 received Mtp3 Primitve, it should not!");
-		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 0,"U2 did not receive Management message, it should !");
-		
-		Thread.currentThread().sleep(12000);
-		
-		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0,"U2 received Mtp3 Primitve, it should not!");
-		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 1,"U2 did not receive Management message, it should !");
+		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0, "U2 received Mtp3 Primitve, it should not!");
+		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 1, "U2 did not receive Management message, it should !");
 		SccpMgmtMessage rmsg2_sst = stack.getManagementProxy().getMgmtMessages().get(0);
-		SccpMgmtMessage emsg2_sst = new SccpMgmtMessage(0,SccpMgmtMessageType.SST.getType(), getSSN(), 2, 0);
-		assertEquals( rmsg2_sst,emsg2_sst,"Failed to match management message in U2");
-		
-		assertTrue(rmsg2_sst.getTstamp()>=rmsg1_ssp.getTstamp(),"Out of sync messages, SST received before SSP.");
-		
-		//register;
+		SccpMgmtMessage emsg2_sst = new SccpMgmtMessage(0, SccpMgmtMessageType.SST.getType(), getSSN(), 2, 0);
+		assertEquals(rmsg2_sst, emsg2_sst, "Failed to match management message in U2");
+
+		assertTrue(rmsg2_sst.getTstamp() >= rmsg1_ssp.getTstamp(), "Out of sync messages, SST received before SSP.");
+
+		// register;
 		u2.register();
-		Thread.currentThread().sleep(12000);
+		Thread.sleep(5000);
 		stack = (SccpStackImplProxy) sccpStack1;
-		//double check first message.
-		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0,"U1 received Mtp3 Primitve, it should not!");
-		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 2,"U1 did not receive Management message, it should !");
+		// double check first message.
+		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0, "U1 received Mtp3 Primitve, it should not!");
+		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 2, "U1 did not receive Management message, it should !");
 		rmsg1_ssp = stack.getManagementProxy().getMgmtMessages().get(0);
-		emsg1_ssp = new SccpMgmtMessage(0,SccpMgmtMessageType.SSP.getType(), getSSN(), 2, 0);
-		assertEquals( rmsg1_ssp,emsg1_ssp,"Failed to match management message in U1");
+		emsg1_ssp = new SccpMgmtMessage(0, SccpMgmtMessageType.SSP.getType(), getSSN(), 2, 0);
+		assertEquals(rmsg1_ssp, emsg1_ssp, "Failed to match management message in U1");
 		
 		//now second message MUST be SSA here 
 		SccpMgmtMessage rmsg1_ssa = stack.getManagementProxy().getMgmtMessages().get(1);
-		SccpMgmtMessage emsg1_ssa = new SccpMgmtMessage(1,SccpMgmtMessageType.SSA.getType(), getSSN(), 2, 0);
+		SccpMgmtMessage emsg1_ssa = new SccpMgmtMessage(1, SccpMgmtMessageType.SSA.getType(), getSSN(), 2, 0);
 		
-		assertEquals( rmsg1_ssa,emsg1_ssa,"Failed to match management message in U1");
+		assertEquals(rmsg1_ssa, emsg1_ssa, "Failed to match management message in U1");
 
 		//now lets check other one
 		//check if there is no SST
-		 stack = (SccpStackImplProxy) sccpStack2;
-		
-		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0,"U2 received Mtp3 Primitve, it should not!");
-		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 2,"U2 did not receive Management message, it should !");
+		stack = (SccpStackImplProxy) sccpStack2;
+
+		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0, "U2 received Mtp3 Primitve, it should not!");
+		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 2, "U2 did not receive Management message, it should !");
 		rmsg2_sst = stack.getManagementProxy().getMgmtMessages().get(0);
-		emsg2_sst = new SccpMgmtMessage(0,SccpMgmtMessageType.SST.getType(), getSSN(), 2, 0);
-		assertEquals( rmsg2_sst,emsg2_sst,"Failed to match management message in U2");
-		
+		emsg2_sst = new SccpMgmtMessage(0, SccpMgmtMessageType.SST.getType(), getSSN(), 2, 0);
+		assertEquals(rmsg2_sst, emsg2_sst, "Failed to match management message in U2");
+
 		rmsg2_sst = stack.getManagementProxy().getMgmtMessages().get(1);
-		emsg2_sst = new SccpMgmtMessage(1,SccpMgmtMessageType.SST.getType(), getSSN(), 2, 0);
-		assertEquals( rmsg2_sst,emsg2_sst,"Failed to match management message in U2");
-		assertTrue(rmsg2_sst.getTstamp()>=rmsg1_ssp.getTstamp(),"Out of sync messages, SST received before SSP.");
+		emsg2_sst = new SccpMgmtMessage(1, SccpMgmtMessageType.SST.getType(), getSSN(), 2, 0);
+		assertEquals(rmsg2_sst, emsg2_sst, "Failed to match management message in U2");
+		assertTrue(rmsg2_sst.getTstamp() >= rmsg1_ssp.getTstamp(), "Out of sync messages, SST received before SSP.");
 		
 		//now lets wait and check if there is nothing more
-		Thread.currentThread().sleep(12000);
+		Thread.sleep(5000);
 		stack = (SccpStackImplProxy) sccpStack1;
 		//double check first message.
-		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0,"U1 received Mtp3 Primitve, it should not!");
-		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 2,"U1 received more functional.mgmt messages than it should !");
+		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0, "U1 received Mtp3 Primitve, it should not!");
+		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 2, "U1 received more functional.mgmt messages than it should !");
 		
-		 stack = (SccpStackImplProxy) sccpStack2;
-			
-		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0,"U2 received Mtp3 Primitve, it should not!");
-		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 2,"U2 received more functional.mgmt messages than it should!");
+		stack = (SccpStackImplProxy) sccpStack2;
+
+		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0, "U2 received Mtp3 Primitve, it should not!");
+		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 2, "U2 received more functional.mgmt messages than it should!");
 		
 		//try to send;
 		
 		u1.send();
 
-		Thread.currentThread().sleep(1000);
+		Thread.sleep(100);
 
-		assertTrue( u1.getMessages().size() == 1,"U1 did not receiv message, it should!");
-		assertTrue( u1.check(),"Inproper message not received!");
-		assertTrue( u2.getMessages().size() == 1,"U2 did not receiv message, it should!");
-		
+		assertTrue(u1.getMessages().size() == 1, "U1 did not receiv message, it should!");
+		assertTrue(u1.check(), "Inproper message not received!");
+		assertTrue(u2.getMessages().size() == 1, "U2 did not receiv message, it should!");
+
 		//TODO: should we check flags in MgmtProxies.
-		 
+
 	}
 	
 	
 	/**
 	 * At first the SSN is not available and henvce U1 should receive SSP. After that MTP3Pause recevied for peer(u2, pc2). The resume and all should work again
 	 */
-	//@Test(groups = { "ssp","functional.mgmt"})
+	@Test(groups = { "ssp","functional.mgmt"})
 	public void testRemoteRoutingBasedOnSsn1() throws Exception {
-		
-		//Amit commented out this test as it fails
-		
-		
+
 		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, 8);
 		a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), null, 8);
 
 		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
 		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+
+		sccpStack1.setSstTimerDuration_Min(5000);
+		sccpStack1.setSstTimerDuration_IncreaseFactor(1);
 
 		u1.register();
 		//u2.register();
@@ -223,62 +227,59 @@ public class SSPTest extends SccpHarness {
 		u1.send();
 		u2.send();
 
-		Thread.currentThread().sleep(1000);
+		Thread.sleep(100);
 
-		assertTrue( u1.getMessages().size() == 1,"U1 did not receiv message, it should!");
-		assertTrue( u1.check(),"Inproper message not received!");
-		assertTrue( u2.getMessages().size() ==0,"U2 Received message, it should not!");
+		assertTrue(u1.getMessages().size() == 1, "U1 did not receiv message, it should!");
+		assertTrue(u1.check(), "Inproper message not received!");
+		assertTrue(u2.getMessages().size() == 0, "U2 Received message, it should not!");
 		
 		//now lets check mgmt part
-		
+
 		SccpStackImplProxy stack = (SccpStackImplProxy) sccpStack1;
-		
-		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0,"U1 received Mtp3 Primitve, it should not!");
-		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 1,"U1 did not receive Management message, it should !");
+
+		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0, "U1 received Mtp3 Primitve, it should not!");
+		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 1, "U1 did not receive Management message, it should !");
 		SccpMgmtMessage rmsg1_ssp = stack.getManagementProxy().getMgmtMessages().get(0);
-		SccpMgmtMessage emsg1_ssp = new SccpMgmtMessage(0,SccpMgmtMessageType.SSP.getType(), getSSN(), 2, 0);
-		assertEquals( rmsg1_ssp,emsg1_ssp,"Failed to match management message in U1");
-		
-		//check if there is no SST
-		 stack = (SccpStackImplProxy) sccpStack2;
-		
-		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0,"U2 received Mtp3 Primitve, it should not!");
-		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 0,"U2 did not receive Management message, it should !");
-		
-		Thread.currentThread().sleep(12000);
-		
-		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0,"U2 received Mtp3 Primitve, it should not!");
-		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 1,"U2 did not receive Management message, it should !");
+		SccpMgmtMessage emsg1_ssp = new SccpMgmtMessage(0, SccpMgmtMessageType.SSP.getType(), getSSN(), 2, 0);
+		assertEquals(rmsg1_ssp, emsg1_ssp, "Failed to match management message in U1");
+
+		// check if there is no SST
+		stack = (SccpStackImplProxy) sccpStack2;
+
+		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0, "U2 received Mtp3 Primitve, it should not!");
+		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 0, "U2 did not receive Management message, it should !");
+
+		Thread.sleep(6000);
+
+		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0, "U2 received Mtp3 Primitve, it should not!");
+		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 1, "U2 did not receive Management message, it should !");
 		SccpMgmtMessage rmsg2_sst = stack.getManagementProxy().getMgmtMessages().get(0);
-		SccpMgmtMessage emsg2_sst = new SccpMgmtMessage(0,SccpMgmtMessageType.SST.getType(), getSSN(), 2, 0);
-		assertEquals( rmsg2_sst,emsg2_sst,"Failed to match management message in U2");
-		
-		assertTrue(rmsg2_sst.getTstamp()>=rmsg1_ssp.getTstamp(),"Out of sync messages, SST received before SSP.");
-		
-		
-		
-//		super.data1.add(createPausePrimitive(getStack2PC()));
+		SccpMgmtMessage emsg2_sst = new SccpMgmtMessage(0, SccpMgmtMessageType.SST.getType(), getSSN(), 2, 0);
+		assertEquals(rmsg2_sst, emsg2_sst, "Failed to match management message in U2");
+
+		assertTrue(rmsg2_sst.getTstamp() >= rmsg1_ssp.getTstamp(), "Out of sync messages, SST received before SSP.");		
+
+
+		//		super.data1.add(createPausePrimitive(getStack2PC()));
 		this.mtp3UserPart1.sendPauseMessageToLocalUser(getStack2PC());
+
+		//register;
+		u2.register();
+		Thread.sleep(5000);
+		stack = (SccpStackImplProxy) sccpStack1;
+		//double check first message.
+		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 1);
+		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 1);
+		rmsg1_ssp = stack.getManagementProxy().getMgmtMessages().get(0);
+		emsg1_ssp = new SccpMgmtMessage(0, SccpMgmtMessageType.SSP.getType(), getSSN(), 2, 0);
+		assertEquals(rmsg1_ssp, emsg1_ssp, "Failed to match management message in U1");
 		
-		
-		
-//		//register;
-//		u2.register();
-//		Thread.currentThread().sleep(12000);
-//		stack = (SccpStackImplProxy) sccpStack1;
-//		//double check first message.
-//		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 0, it should not!","U1 received Mtp3 Primitve);
-//		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 2, it should !","U1 did not receive Management message);
-//		rmsg1_ssp = stack.getManagementProxy().getMgmtMessages().get(0);
-//		emsg1_ssp = new SccpMgmtMessage(0,SccpMgmtMessageType.SSP.getType(), getSSN(), 2, 0);
-//		assertEquals( rmsg1_ssp,emsg1_ssp,"Failed to match management message in U1");
-//		
 //		//now second message MUST be SSA here 
 //		SccpMgmtMessage rmsg1_ssa = stack.getManagementProxy().getMgmtMessages().get(1);
 //		SccpMgmtMessage emsg1_ssa = new SccpMgmtMessage(1,SccpMgmtMessageType.SSA.getType(), getSSN(), 2, 0);
 //		
 //		assertEquals( rmsg1_ssa,emsg1_ssa,"Failed to match management message in U1");
-//
+
 //		//now lets check other one
 //		//check if there is no SST
 //		 stack = (SccpStackImplProxy) sccpStack2;
@@ -319,7 +320,79 @@ public class SSPTest extends SccpHarness {
 		//TODO: should we check flags in MgmtProxies.
 		 
 	}	
-	
+
+	/**
+	 * Test of configure method, of class SccpStackImpl.
+	 */
+	@Test(groups = { "ssp", "functional.mgmt" })
+	public void RecdMsgForProhibitedSsnTest() throws Exception {
+
+		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, 8);
+		a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), null, 8);
+
+		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+
+		sccpStack1.setSstTimerDuration_Min(5000);
+		sccpStack1.setSstTimerDuration_IncreaseFactor(1);
+
+		u1.register();
+		//u2.register();
+		//this will cause: u1 stack will receive SSP, u2 stack will get SST and message.
+		Thread.sleep(100);
+
+		RemoteSubSystem rss = sccpStack1.getSccpResource().getRemoteSsn(1); 
+		u1.send();
+		Thread.sleep(200);
+		assertEquals(((SccpStackImplProxy) sccpStack1).getManagementProxy().getMgmtMessages().size(), 1);
+		rss.setRemoteSsnProhibited(false);
+		u1.send();
+		Thread.sleep(200);
+		// we do not send SSP during a second after sending
+		assertEquals(((SccpStackImplProxy) sccpStack1).getManagementProxy().getMgmtMessages().size(), 1);
+
+		Thread.sleep(2000);
+		rss.setRemoteSsnProhibited(false);
+		u1.send();
+		Thread.sleep(100);
+		assertEquals(((SccpStackImplProxy) sccpStack1).getManagementProxy().getMgmtMessages().size(), 2);
+	}
+
+	/**
+	 * Test of configure method, of class SccpStackImpl.
+	 */
+	@Test(groups = { "ssp", "functional.mgmt" })
+	public void ConsernedSpcTest() throws Exception {
+
+		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, 8);
+		a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), null, 8);
+
+		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+
+		sccpStack1.setSstTimerDuration_Min(5000);
+		sccpStack1.setSstTimerDuration_IncreaseFactor(1);
+
+		ConcernedSignalingPointCode cspc = new ConcernedSignalingPointCode(2);
+		sccpStack1.getSccpResource().addConcernedSpc(1, cspc);
+
+		Thread.sleep(100);
+
+		assertEquals(((SccpStackImplProxy) sccpStack2).getManagementProxy().getMgmtMessages().size(), 0);
+
+		u1.register();
+		Thread.sleep(100);
+		
+		assertEquals(((SccpStackImplProxy) sccpStack2).getManagementProxy().getMgmtMessages().size(), 1);
+		assertEquals(((SccpStackImplProxy) sccpStack2).getManagementProxy().getMgmtMessages().get(0).getType(), SccpMgmtMessageType.SSA);
+
+		u1.deregister();
+		Thread.sleep(100);
+		
+		assertEquals(((SccpStackImplProxy) sccpStack2).getManagementProxy().getMgmtMessages().size(), 2);
+		assertEquals(((SccpStackImplProxy) sccpStack2).getManagementProxy().getMgmtMessages().get(1).getType(), SccpMgmtMessageType.SSP);
+		
+	}
 	
 	protected static byte[] createPausePrimitive(int pc) throws Exception
 	{

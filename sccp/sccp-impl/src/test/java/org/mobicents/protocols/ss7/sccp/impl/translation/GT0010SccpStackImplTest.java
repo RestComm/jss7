@@ -30,8 +30,9 @@ import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.User;
 import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
+import org.mobicents.protocols.ss7.sccp.impl.router.RuleType;
+import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
-import org.mobicents.protocols.ss7.sccp.message.UnitData;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0010;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -85,20 +86,20 @@ public class GT0010SccpStackImplTest extends SccpHarness {
 		
 		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0010(0,GT2_pattern_digits), getSSN());
 		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0010(0,GT1_pattern_digits), getSSN());
-		Rule rule1 = new Rule(rule1SccpAddress, "K/R/K");
+		Rule rule1 = new Rule(RuleType.Solitary, rule1SccpAddress, "K/R/K");
 		rule1.setPrimaryAddressId(22);
-		Rule rule2 = new Rule(rule2SccpAddress, "R/R/R");
+		Rule rule2 = new Rule(RuleType.Solitary, rule2SccpAddress, "R/R/R");
 		rule2.setPrimaryAddressId(33);
-		super.router1.getRules().put(1, rule1);
-		super.router2.getRules().put(1, rule2);
+		super.router1.addRule(1, rule1);
+		super.router2.addRule(1, rule2);
 		
 		//add addresses to translate
 		SccpAddress primary1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), GlobalTitle.getInstance("-/-/-"), getSSN());
 		SccpAddress primary2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), GlobalTitle.getInstance("-/-/-"), getSSN());
 		
 		
-		super.router1.getPrimaryAddresses().put(22, primary1SccpAddress);
-		super.router2.getPrimaryAddresses().put(33, primary2SccpAddress);
+		super.router1.addPrimaryAddress(22, primary1SccpAddress);
+		super.router2.addPrimaryAddress(33, primary2SccpAddress);
 		
 		
 		//now create users, we need to override matchX methods, since our rules do kinky stuff with digits, plus 
@@ -107,7 +108,7 @@ public class GT0010SccpStackImplTest extends SccpHarness {
 	
 			protected boolean matchCalledPartyAddress() {
 				SccpMessage msg = messages.get(0);
-				UnitData udt = (UnitData) msg;
+				SccpDataMessage udt = (SccpDataMessage) msg;
 				SccpAddress addressToMatch = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, getSSN());
 				if (!addressToMatch.equals(udt.getCalledPartyAddress())) {
 					return false;
@@ -121,7 +122,7 @@ public class GT0010SccpStackImplTest extends SccpHarness {
 	
 			protected boolean matchCalledPartyAddress() {
 				SccpMessage msg = messages.get(0);
-				UnitData udt = (UnitData) msg;
+				SccpDataMessage udt = (SccpDataMessage) msg;
 				SccpAddress addressToMatch = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, getStack2PC(), new GT0010(0,"02"), getSSN());
 				if (!addressToMatch.equals(udt.getCalledPartyAddress())) {
 					return false;

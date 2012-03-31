@@ -27,63 +27,80 @@ import java.io.InputStream;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
-import org.mobicents.protocols.ss7.sccp.message.UnitData;
-import org.mobicents.protocols.ss7.sccp.message.UnitDataService;
-import org.mobicents.protocols.ss7.sccp.message.XUnitData;
-import org.mobicents.protocols.ss7.sccp.message.XUnitDataService;
+import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * 
  * @author kulikov
+ * @author sergey vetyutnev
+ * 
  */
 public class MessageFactoryImpl implements MessageFactory {
 	private static final Logger logger = Logger.getLogger(MessageFactoryImpl.class);
-	
-	private boolean removeSpc = false;
-	
-	public MessageFactoryImpl(boolean removeSpc){
-		this.removeSpc = removeSpc;
+
+	private SccpStackImpl sccpStackImpl;
+
+	public MessageFactoryImpl(SccpStackImpl sccpStackImpl) {
+		this.sccpStackImpl = sccpStackImpl;
 	}
 
-	
-	//TODO: add checks, PC vs Q.713 Table 1
-	public UnitData createUnitData(ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty) {
-		return new UnitDataImpl(pClass, calledParty, callingParty, this.removeSpc);
+	@Override
+	public SccpDataMessage createDataMessageClass0(SccpAddress calledParty, SccpAddress callingParty, byte[] data, int localSsn, boolean returnMessageOnError,
+			HopCounter hopCounter, Importance importance) {
+		return new SccpDataMessageImpl(this.sccpStackImpl, new ProtocolClassImpl(0, returnMessageOnError), 0, localSsn, calledParty, callingParty, data, hopCounter,
+				importance);
 	}
 
-	public UnitDataService createUnitDataService(ReturnCause returnCause, SccpAddress calledParty, SccpAddress callingParty) {
-		return new UnitDataServiceImpl(returnCause, calledParty, callingParty, this.removeSpc);
-	}
-	
-	public XUnitData createXUnitData(HopCounter hopCounter, ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty) {
-		return new XUnitDataImpl(hopCounter, pClass, calledParty, callingParty, this.removeSpc);
-	}
-
-	public XUnitDataService createXUnitDataService(HopCounter hopCounter, ReturnCause rc, SccpAddress calledParty, SccpAddress callingParty) {
-		return new XUnitDataServiceImpl(hopCounter, rc, calledParty, callingParty, this.removeSpc);
+	@Override
+	public SccpDataMessage createDataMessageClass1(SccpAddress calledParty, SccpAddress callingParty, byte[] data, int sls, int localSsn, boolean returnMessageOnError,
+			HopCounter hopCounter, Importance importance) {
+		return new SccpDataMessageImpl(this.sccpStackImpl, new ProtocolClassImpl(1, returnMessageOnError), sls, localSsn, calledParty, callingParty, data, hopCounter,
+				importance);
 	}
 
-	public SccpMessageImpl createMessage(int type, InputStream in) throws IOException {
-		SccpMessageImpl msg = null;
-		switch (type) {
-		case UnitData.MESSAGE_TYPE:
-			msg = new UnitDataImpl(this.removeSpc);
+	public SccpNoticeMessage createNoticeMessage(int origMsgType, ReturnCause returnCause, SccpAddress calledParty, SccpAddress callingParty, byte[] data,
+			HopCounter hopCounter, Importance importance) {
+		int type = SccpMessage.MESSAGE_TYPE_UNDEFINED;
+		switch (origMsgType) {
+		case SccpMessage.MESSAGE_TYPE_UDT:
+			type = SccpMessage.MESSAGE_TYPE_UDTS;
 			break;
-		case UnitDataService.MESSAGE_TYPE:
-			msg = new UnitDataServiceImpl(this.removeSpc);
+		case SccpMessage.MESSAGE_TYPE_XUDT:
+			type = SccpMessage.MESSAGE_TYPE_XUDTS;
 			break;
-		case XUnitData.MESSAGE_TYPE:
-			msg = new XUnitDataImpl(this.removeSpc);
-			break;
-		case XUnitDataService.MESSAGE_TYPE:
-			msg = new XUnitDataServiceImpl(this.removeSpc);
+		case SccpMessage.MESSAGE_TYPE_LUDT:
+			type = SccpMessage.MESSAGE_TYPE_LUDTS;
 			break;
 		}
+	
+		return new SccpNoticeMessageImpl(this.sccpStackImpl, type, returnCause, calledParty, callingParty, data, hopCounter, importance);
+	}
+	
+	public SccpMessageImpl createMessage(int type, int opc, int dpc, int sls, InputStream in) throws IOException {
+		SccpMessageImpl msg = null;
+		switch (type) {
+		case SccpMessage.MESSAGE_TYPE_UDT:
+		case SccpMessage.MESSAGE_TYPE_XUDT:
+		case SccpMessage.MESSAGE_TYPE_LUDT:
+			msg = new SccpDataMessageImpl(this.sccpStackImpl, type, opc, dpc, sls);
+			break;
+
+		case SccpMessage.MESSAGE_TYPE_UDTS:
+		case SccpMessage.MESSAGE_TYPE_XUDTS:
+		case SccpMessage.MESSAGE_TYPE_LUDTS:
+			msg = new SccpNoticeMessageImpl(this.sccpStackImpl, type, opc, dpc, sls);
+			break;
+		}
+
 		if (msg != null) {
 			msg.decode(in);
 		} else if (logger.isEnabledFor(Level.WARN)) {
@@ -91,5 +108,5 @@ public class MessageFactoryImpl implements MessageFactory {
 		}
 		return msg;
 	}
-
 }
+

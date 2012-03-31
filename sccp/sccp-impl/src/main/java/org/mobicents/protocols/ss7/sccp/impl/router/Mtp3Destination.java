@@ -1,0 +1,114 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011, Red Hat, Inc. and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
+package org.mobicents.protocols.ss7.sccp.impl.router;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.XMLSerializable;
+import javolution.xml.stream.XMLStreamException;
+
+/**
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
+public class Mtp3Destination implements XMLSerializable {
+	private static final String FIRST_DPC = "firstDpc";
+	private static final String LAST_DPC = "lastDpc";
+	private static final String FIRST_SLS = "firstSls";
+	private static final String LAST_SLS = "lastSls";
+	private static final String SLS_MASK = "slsMask";
+
+	private int firstDpc;
+	private int lastDpc;
+	private int firstSls;
+	private int lastSls;
+	private int slsMask;
+
+	public Mtp3Destination() {
+	}
+
+	public Mtp3Destination(int firstDpc, int lastDpc, int firstSls, int lastSls, int slsMask) {
+		this.firstDpc = firstDpc;
+		this.lastDpc = lastDpc;
+		this.firstSls = firstSls;
+		this.lastSls = lastSls;
+		this.slsMask = slsMask;
+	}
+
+	public int getFirstDpc() {
+		return this.firstDpc;
+	}
+
+	public int getLastDpc() {
+		return this.lastDpc;
+	}
+
+	public int getFirstSls() {
+		return this.firstSls;
+	}
+
+	public int getLastSls() {
+		return this.lastSls;
+	}
+
+	public int getSlsMask() {
+		return this.slsMask;
+	}
+
+	public boolean match(int dpc, int sls) {
+		sls = (sls & this.slsMask);
+		if (dpc >= this.firstDpc && dpc <= this.lastDpc && sls >= this.firstSls && sls <= this.lastSls)
+			return true;
+		else
+			return false;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("firstDpc=").append(this.firstDpc).append(", lastDpc=").append(this.lastDpc).append(", firstSls=").append(this.firstSls).append(", lastSls=")
+				.append(this.lastSls).append(", slsMask=").append(this.slsMask);
+		return sb.toString();
+	}
+
+	protected static final XMLFormat<Mtp3Destination> XML = new XMLFormat<Mtp3Destination>(
+			Mtp3Destination.class) {
+
+		public void write(Mtp3Destination dest, OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(FIRST_DPC, dest.firstDpc);
+			xml.setAttribute(LAST_DPC, dest.lastDpc);
+			xml.setAttribute(FIRST_SLS, dest.firstSls);
+			xml.setAttribute(LAST_SLS, dest.lastSls);
+			xml.setAttribute(SLS_MASK, dest.slsMask);
+		}
+
+		public void read(InputElement xml, Mtp3Destination dest) throws XMLStreamException {
+			dest.firstDpc = xml.getAttribute(FIRST_DPC).toInt();
+			dest.lastDpc = xml.getAttribute(LAST_DPC).toInt();
+			dest.firstSls = xml.getAttribute(FIRST_SLS).toInt();
+			dest.lastSls = xml.getAttribute(LAST_SLS).toInt();
+			dest.slsMask = xml.getAttribute(SLS_MASK).toInt();
+		}
+	};
+}
+

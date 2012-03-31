@@ -22,10 +22,14 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
+import java.util.concurrent.Executors;
+
+import javolution.util.FastMap;
+
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpRoutingControl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl.State;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.Router;
 
@@ -48,7 +52,7 @@ public class SccpStackImplProxy extends SccpStackImpl {
 
 	@Override
 	public void start() {
-		this.messageFactory = new MessageFactoryImpl(this.getRemoveSpc());
+		this.messageFactory = new MessageFactoryImpl(this);
 
 		this.sccpProvider = new SccpProviderImpl(this);
 
@@ -70,8 +74,24 @@ public class SccpStackImplProxy extends SccpStackImpl {
 		this.sccpManagement.start();
 		// layer3exec.execute(new MtpStreamHandler());
 
-		this.mtp3UserPart.addMtp3UserPartListener(this);
+		this.timerExecutors = Executors.newScheduledThreadPool(1);
+
+		for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserPart.head(), end = this.mtp3UserPart.tail(); (e = e.getNext()) != end;) {
+			Mtp3UserPart mup = e.getValue();
+			mup.addMtp3UserPartListener(this);
+		}
+//		this.mtp3UserPart.addMtp3UserPartListener(this);
 
 		this.state = State.RUNNING;
 	}
+
+	public int getReassemplyCacheSize() {
+		return reassemplyCache.size();
+	}
+
+	@Override
+	public void setReassemblyTimerDelay(int reassemblyTimerDelay) {
+		this.reassemblyTimerDelay = reassemblyTimerDelay;
+	}
+
 }

@@ -23,24 +23,11 @@
 package org.mobicents.protocols.ss7.sccp.impl.translation;
 
 
-import java.io.IOException;
 import org.testng.annotations.*;
-
 import static org.testng.Assert.*;
-import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
-import org.mobicents.protocols.ss7.sccp.SccpListener;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.User;
-import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
-import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
-import org.mobicents.protocols.ss7.sccp.message.UnitData;
-import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
-import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**

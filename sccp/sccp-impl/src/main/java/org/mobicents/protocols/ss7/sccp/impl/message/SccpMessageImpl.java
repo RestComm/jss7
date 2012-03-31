@@ -24,34 +24,50 @@ package org.mobicents.protocols.ss7.sccp.impl.message;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+
+import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
+import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * 
  * @author kulikov
  * @author baranowb
+ * @author sergey vetyutnev
  */
 public abstract class SccpMessageImpl implements SccpMessage {
 
-	private int type; // private :)
-	protected SccpAddress calledParty;
-	protected SccpAddress callingParty;
-	protected ProtocolClass protocolClass;
-	
-	protected boolean removeSpc = false;
+	protected boolean isMtpOriginated;
+	protected int type;
+	protected int localOriginSsn = -1;
+	protected SccpStackImpl sccpStackImpl;
 
-	// These are MTP3 signaling information set when message is received from
-	// MTP3
-	private int sls = 0;
-	private int opc = -1;
-	private int dpc = -1;
+	// These are MTP3 signaling information set when message is received from MTP3
+	protected int incomingOpc;
+	protected int incomingDpc;
+	protected int sls;
+	// These are MTP3 signaling information that will be set into a MTP3 message when sending to MTP3
+	protected int outgoingDpc = -1;
 
-	protected SccpMessageImpl(int type, boolean removeSpc) {
+
+	protected SccpMessageImpl(SccpStackImpl sccpStackImpl, int type, int sls, int localSsn) {
+		this.isMtpOriginated = false;
+		this.sccpStackImpl = sccpStackImpl;
 		this.type = type;
-		this.removeSpc = removeSpc;
+		this.localOriginSsn = localSsn;
+		this.incomingOpc = -1;
+		this.incomingDpc = -1;
+		this.sls = sls; 
+	}
+
+	protected SccpMessageImpl(SccpStackImpl sccpStackImpl, int type, int incomingOpc, int incomingDpc, int incomingSls) {
+		this.isMtpOriginated = true;
+		this.sccpStackImpl = sccpStackImpl;
+		this.type = type;
+		this.incomingOpc = incomingOpc;
+		this.incomingDpc = incomingDpc;
+		this.sls = incomingSls;
 	}
 
 	public int getSls() {
@@ -62,60 +78,48 @@ public abstract class SccpMessageImpl implements SccpMessage {
 		this.sls = sls;
 	}
 
-	public int getOpc() {
-		return opc;
+	public int getIncomingOpc() {
+		return incomingOpc;
 	}
 
-	public void setOpc(int opc) {
-		this.opc = opc;
+	public void setIncomingOpc(int opc) {
+		this.incomingOpc = opc;
 	}
 
-	public int getDpc() {
-		return dpc;
+	public int getIncomingDpc() {
+		return incomingDpc;
 	}
 
-	public void setDpc(int dpc) {
-		this.dpc = dpc;
+	public int getOutgoingDpc() {
+		return outgoingDpc;
 	}
 
+	public void setIncomingDpc(int dpc) {
+		this.incomingDpc = dpc;
+	}
+
+	public void setOutgoingDpc(int dpc) {
+		this.outgoingDpc = dpc;
+	}
+
+	@Override
 	public int getType() {
 		return type;
 	}
 
-	public SccpAddress getCalledPartyAddress() {
-		return calledParty;
-	}
-
-	public void setCalledPartyAddress(SccpAddress calledParty) {
-		this.calledParty = calledParty;
-	}
-
-	public SccpAddress getCallingPartyAddress() {
-		return callingParty;
-	}
-
-	public void setCallingPartyAddress(SccpAddress callingParty) {
-		this.callingParty = callingParty;
-	}
-
-	public ProtocolClass getProtocolClass() {
-		return protocolClass;
-	}
-
-	public void setProtocolClass(ProtocolClass protocolClass) {
-		this.protocolClass = protocolClass;
+	@Override
+	public boolean getIsMtpOriginated() {
+		return isMtpOriginated;
 	}
 
 	@Override
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("sls=").append(this.sls).append(" opc=").append(this.opc).append(" dpc=").append(this.dpc)
-				.append(" CallingAddress(").append(this.callingParty).append(") CalledParty(").append(this.calledParty)
-				.append(")");
-		return sb.toString();
+	public int getOriginLocalSsn() {
+		return localOriginSsn;
 	}
 
 	public abstract void decode(InputStream in) throws IOException;
 
-	public abstract void encode(OutputStream out) throws IOException;
+	public abstract EncodingResultData encode(LongMessageRuleType longMessageRuleType, int maxMtp3UserDataLength, Logger logger) throws IOException;
+	
 }
+

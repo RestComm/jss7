@@ -37,7 +37,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
  * @author kulikov
  */
 public class GTCodec {
-	private GTCodec getCodec(GlobalTitle gt) {
+	private static GTCodec getCodec(GlobalTitle gt) {
 		switch (gt.getIndicator()) {
 		case GLOBAL_TITLE_INCLUDES_NATURE_OF_ADDRESS_INDICATOR_ONLY:
 			return new GT0001Codec((GT0001) gt);
@@ -52,12 +52,12 @@ public class GTCodec {
 		}
 	}
 
-	public void encode(GlobalTitle gt, OutputStream out) throws IOException {
-		GTCodec codec = this.getCodec(gt);
+	public static void encode(GlobalTitle gt, OutputStream out) throws IOException {
+		GTCodec codec = getCodec(gt);
 		codec.encode(out);
 	}
 
-	public GlobalTitle decode(GlobalTitleIndicator gti, InputStream in) throws IOException {
+	public static GlobalTitle decode(GlobalTitleIndicator gti, InputStream in) throws IOException {
 		GTCodec codec = null;
 		switch (gti) {
 		case GLOBAL_TITLE_INCLUDES_NATURE_OF_ADDRESS_INDICATOR_ONLY:

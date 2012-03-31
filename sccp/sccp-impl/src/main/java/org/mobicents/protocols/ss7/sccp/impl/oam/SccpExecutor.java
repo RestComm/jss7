@@ -28,12 +28,18 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.AddressIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
+import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
+import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRule;
+import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRuleType;
+import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
+import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.sccp.impl.router.Router;
 import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
+import org.mobicents.protocols.ss7.sccp.impl.router.RuleType;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
@@ -48,6 +54,7 @@ public class SccpExecutor {
 
 	private Router router = null;
 	private SccpResource sccpResource = null;
+	private SccpStackImpl sccpStack = null;
 
 	public SccpExecutor() {
 
@@ -56,8 +63,8 @@ public class SccpExecutor {
 	public void setSccpStack(SccpStackImpl sccpStack) {
 		this.router = sccpStack.getRouter();
 		this.sccpResource = sccpStack.getSccpResource();
+		this.sccpStack = sccpStack;
 	}
-
 
 
 	public String execute(String[] options) {
@@ -83,11 +90,23 @@ public class SccpExecutor {
 			} else if (firstOption.equals("primary_add")) {
 				return this.managePrimAddress(options);
 			} else if (firstOption.equals("backup_add")) {
-				return this.managebackupAddress(options);
+				return this.manageBackupAddress(options);
 			} else if (firstOption.equals("rsp")) {
 				return this.manageRsp(options);
 			} else if (firstOption.equals("rss")) {
 				return this.manageRss(options);
+			} else if (firstOption.equals("lmr")) {
+				return this.manageLmr(options);
+			} else if (firstOption.equals("sap")) {
+				return this.manageSap(options);
+			} else if (firstOption.equals("dest")) {
+				return this.manageDest(options);
+			} else if (firstOption.equals("csp")) {
+				return this.manageConcernedSpc(options);
+			} else if (firstOption.equals("set")) {
+				return this.manageSet(options);
+			} else if (firstOption.equals("get")) {
+				return this.manageGet(options);
 			}
 		} catch (Exception e) {
 			logger.error("Error while executing command ", e);
@@ -128,9 +147,18 @@ public class SccpExecutor {
 
 			int remoteSs = Integer.parseInt(options[5]);
 			int remoteSsFlag = Integer.parseInt(options[6]);
+			boolean markProhibitedWhenSpcResuming = false;
+			if (options.length >= 8) {
+				if (!options[7].toLowerCase().equals("prohibitedwhenspcresuming")) {
+					return SccpOAMMessage.INVALID_COMMAND;
+				} else {
+					markProhibitedWhenSpcResuming = true;
+				}
+			}
 
-			RemoteSubSystem rsscObj = new RemoteSubSystem(remoteSpc, remoteSs, remoteSsFlag);
+			RemoteSubSystem rsscObj = new RemoteSubSystem(remoteSpc, remoteSs, remoteSsFlag, markProhibitedWhenSpcResuming);
 			this.sccpResource.addRemoteSsn(remoteSsId, rsscObj);
+			this.sccpResource.store();
 
 			return SccpOAMMessage.RSS_SUCCESSFULLY_ADDED;
 		} else if (command.equals("modify")) {
@@ -149,9 +177,18 @@ public class SccpExecutor {
 
 			int remoteSs = Integer.parseInt(options[5]);
 			int remoteSsFlag = Integer.parseInt(options[6]);
+			boolean markProhibitedWhenSpcResuming = false;
+			if (options.length >= 8) {
+				if (!options[7].toLowerCase().equals("prohibitedwhenspcresuming")) {
+					return SccpOAMMessage.INVALID_COMMAND;
+				} else {
+					markProhibitedWhenSpcResuming = true;
+				}
+			}
 
-			RemoteSubSystem rsscObj = new RemoteSubSystem(remoteSpc, remoteSs, remoteSsFlag);
+			RemoteSubSystem rsscObj = new RemoteSubSystem(remoteSpc, remoteSs, remoteSsFlag, markProhibitedWhenSpcResuming);
 			this.sccpResource.addRemoteSsn(remoteSsId, rsscObj);
+			this.sccpResource.store();
 
 			return SccpOAMMessage.RSS_SUCCESSFULLY_MODIFIED;
 		} else if (command.equals("delete")) {
@@ -163,7 +200,8 @@ public class SccpExecutor {
 				return SccpOAMMessage.RSS_DOESNT_EXIST;
 			}
 
-			this.sccpResource.getRemoteSsns().remove(remoteSsId);
+			this.sccpResource.removeRemoteSsn(remoteSsId);
+			this.sccpResource.store();
 			return SccpOAMMessage.RSS_SUCCESSFULLY_DELETED;
 		} else if (command.equals("show")) {
 			if (options.length == 4) {
@@ -224,6 +262,7 @@ public class SccpExecutor {
 
 			RemoteSignalingPointCode rspcObj = new RemoteSignalingPointCode(remoteSpc, remoteSpcFlag, mask);
 			this.sccpResource.addRemoteSpc(remoteSpcId, rspcObj);
+			this.sccpResource.store();
 
 			return SccpOAMMessage.RSPC_SUCCESSFULLY_ADDED;
 		} else if (command.equals("modify")) {
@@ -242,6 +281,7 @@ public class SccpExecutor {
 
 			RemoteSignalingPointCode rspcObj = new RemoteSignalingPointCode(remoteSpc, remoteSpcFlag, mask);
 			this.sccpResource.addRemoteSpc(remoteSpcId, rspcObj);
+			this.sccpResource.store();
 
 			return SccpOAMMessage.RSPC_SUCCESSFULLY_MODIFIED;
 		} else if (command.equals("delete")) {
@@ -253,7 +293,8 @@ public class SccpExecutor {
 				return SccpOAMMessage.RSPC_DOESNT_EXIST;
 			}
 
-			this.sccpResource.getRemoteSpcs().remove(remoteSpcId);
+			this.sccpResource.removeRemoteSpc(remoteSpcId);
+			this.sccpResource.store();
 			return SccpOAMMessage.RSPC_SUCCESSFULLY_DELETED;
 
 		} else if (command.equals("show")) {
@@ -306,12 +347,12 @@ public class SccpExecutor {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
 			int primAddressId = Integer.parseInt(options[3]);
-			if (this.router.getPrimaryAddresses().get(primAddressId) != null) {
+			if (this.router.getPrimaryAddress(primAddressId) != null) {
 				return SccpOAMMessage.ADDRESS_ALREADY_EXIST;
 			}
 			SccpAddress primAddress = this.createAddress(options, 4);
 
-			this.router.getPrimaryAddresses().put(primAddressId, primAddress);
+			this.router.addPrimaryAddress(primAddressId, primAddress);
 			this.router.store();
 			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED;
 		} else if (command.equals("modify")) {
@@ -319,12 +360,12 @@ public class SccpExecutor {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
 			int primAddressId = Integer.parseInt(options[3]);
-			if (this.router.getPrimaryAddresses().get(primAddressId) == null) {
+			if (this.router.getPrimaryAddress(primAddressId) == null) {
 				return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
 			}
 			SccpAddress primAddress = this.createAddress(options, 4);
 
-			this.router.getPrimaryAddresses().put(primAddressId, primAddress);
+			this.router.addPrimaryAddress(primAddressId, primAddress);
 			this.router.store();
 			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_MODIFIED;
 		} else if (command.equals("delete")) {
@@ -332,9 +373,10 @@ public class SccpExecutor {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
 			int primAddressId = Integer.parseInt(options[3]);
-			if (this.router.getPrimaryAddresses().remove(primAddressId) == null) {
+			if (this.router.getPrimaryAddress(primAddressId) == null) {
 				return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
 			}
+			this.router.removePrimaryAddress(primAddressId);
 			this.router.store();
 			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_DELETED;
 
@@ -342,7 +384,7 @@ public class SccpExecutor {
 
 			if (options.length == 4) {
 				int primAddressId = Integer.parseInt(options[3]);
-				SccpAddress pa = this.router.getPrimaryAddresses().get(primAddressId);
+				SccpAddress pa = this.router.getPrimaryAddress(primAddressId);
 				if (pa == null) {
 					return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
 				}
@@ -370,7 +412,7 @@ public class SccpExecutor {
 		return SccpOAMMessage.INVALID_COMMAND;
 	}
 
-	private String managebackupAddress(String[] options) throws Exception {
+	private String manageBackupAddress(String[] options) throws Exception {
 		// Minimum 3 needed. Show
 		if (options.length < 3) {
 			return SccpOAMMessage.INVALID_COMMAND;
@@ -387,12 +429,12 @@ public class SccpExecutor {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
 			int backupAddressId = Integer.parseInt(options[3]);
-			if (this.router.getBackupAddresses().get(backupAddressId) != null) {
+			if (this.router.getBackupAddress(backupAddressId) != null) {
 				return SccpOAMMessage.ADDRESS_ALREADY_EXIST;
 			}
 			SccpAddress backupAddress = this.createAddress(options, 4);
 
-			this.router.getBackupAddresses().put(backupAddressId, backupAddress);
+			this.router.addBackupAddress(backupAddressId, backupAddress);
 			this.router.store();
 			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED;
 		} else if (command.equals("modify")) {
@@ -400,12 +442,12 @@ public class SccpExecutor {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
 			int backupAddressId = Integer.parseInt(options[3]);
-			if (this.router.getBackupAddresses().get(backupAddressId) == null) {
+			if (this.router.getBackupAddress(backupAddressId) == null) {
 				return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
 			}
 			SccpAddress backupAddress = this.createAddress(options, 4);
 
-			this.router.getBackupAddresses().put(backupAddressId, backupAddress);
+			this.router.addBackupAddress(backupAddressId, backupAddress);
 			this.router.store();
 			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_MODIFIED;
 
@@ -414,15 +456,16 @@ public class SccpExecutor {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
 			int backupAddressId = Integer.parseInt(options[3]);
-			if (this.router.getBackupAddresses().remove(backupAddressId) == null) {
+			if (this.router.getBackupAddress(backupAddressId) == null) {
 				return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
 			}
+			this.router.removeBackupAddress(backupAddressId);
 			this.router.store();
 			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_DELETED;
 		} else if (command.equals("show")) {
 			if (options.length == 4) {
 				int backupAddressId = Integer.parseInt(options[3]);
-				SccpAddress pa = this.router.getBackupAddresses().get(backupAddressId);
+				SccpAddress pa = this.router.getBackupAddress(backupAddressId);
 				if (pa == null) {
 					return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
 				}
@@ -511,14 +554,14 @@ public class SccpExecutor {
 	 */
 	private String createRule(String[] options) throws Exception {
 		// Minimum is 13
-		if (options.length < 13) {
+		if (options.length < 14) {
 			return SccpOAMMessage.INVALID_COMMAND;
 		}
 		int ruleId;
 		Rule rule = null;
 		ruleId = Integer.parseInt(options[3]);
 
-		rule = this.router.getRules().get(ruleId);
+		rule = this.router.getRule(ruleId);
 
 		if (rule != null) {
 			return SccpOAMMessage.RULE_ALREADY_EXIST;
@@ -530,28 +573,44 @@ public class SccpExecutor {
 			return SccpOAMMessage.INVALID_MASK;
 		}
 
-		int pAddressId = Integer.parseInt(options[12]);
+		RuleType ruleType;
+		String s1 = options[12].toLowerCase();
+		if (s1.equals("solitary")) {
+			ruleType = RuleType.Solitary;
+		} else if (s1.equals("dominant")) {
+			ruleType = RuleType.Dominant;
+		} else if (s1.equals("loadshared")) {
+			ruleType = RuleType.Loadshared;
+		} else {
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
+		
+		int pAddressId = Integer.parseInt(options[13]);
 
-		SccpAddress pAddress = this.router.getPrimaryAddresses().get(pAddressId);
+		SccpAddress pAddress = this.router.getPrimaryAddress(pAddressId);
 		if (pAddress == null) {
 			return String.format(SccpOAMMessage.NO_PRIMARY_ADDRESS, pAddressId);
 		}
 
 		int sAddressId = -1;
-		if (options.length > 13) {
-			sAddressId = Integer.parseInt(options[13]);
-			SccpAddress sAddress = this.router.getBackupAddresses().get(sAddressId);
+		if (options.length > 14) {
+			sAddressId = Integer.parseInt(options[14]);
+			SccpAddress sAddress = this.router.getBackupAddress(sAddressId);
 			if (sAddress == null) {
 				return String.format(SccpOAMMessage.NO_BACKUP_ADDRESS, sAddressId);
 			}
 		}
 
+		if (sAddressId == -1 && ruleType != RuleType.Solitary) {
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
+
 		SccpAddress pattern = this.createAddress(options, 5);
 
-		rule = new Rule(pattern, mask);
+		rule = new Rule(ruleType, pattern, mask);
 		rule.setPrimaryAddressId(pAddressId);
 		rule.setSecondaryAddressId(sAddressId);
-		this.router.getRules().put(ruleId, rule);
+		this.router.addRule(ruleId, rule);
 		this.router.store();
 		return SccpOAMMessage.RULE_SUCCESSFULLY_ADDED;
 	}
@@ -565,7 +624,7 @@ public class SccpExecutor {
 		Rule rule = null;
 		ruleId = Integer.parseInt(options[3]);
 
-		rule = this.router.getRules().get(ruleId);
+		rule = this.router.getRule(ruleId);
 
 		if (rule == null) {
 			return SccpOAMMessage.RULE_DOESNT_EXIST;
@@ -577,25 +636,44 @@ public class SccpExecutor {
 			return SccpOAMMessage.INVALID_MASK;
 		}
 
-		int pAddressId = Integer.parseInt(options[12]);
+		RuleType ruleType;
+		String s1 = options[12].toLowerCase();
+		if (s1.equals("solitary")) {
+			ruleType = RuleType.Solitary;
+		} else if (s1.equals("dominant")) {
+			ruleType = RuleType.Dominant;
+		} else if (s1.equals("loadshared")) {
+			ruleType = RuleType.Loadshared;
+		} else {
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
 
-		SccpAddress pAddress = this.router.getPrimaryAddresses().get(pAddressId);
+		int pAddressId = Integer.parseInt(options[13]);
+
+		SccpAddress pAddress = this.router.getPrimaryAddress(pAddressId);
 		if (pAddress == null) {
 			return String.format(SccpOAMMessage.NO_PRIMARY_ADDRESS, pAddressId);
 		}
 
-		if (options.length > 13) {
-			int sAddressId = Integer.parseInt(options[13]);
-			SccpAddress sAddress = this.router.getBackupAddresses().get(sAddressId);
+		int sAddressId = -1;
+		if (options.length > 14) {
+			sAddressId = Integer.parseInt(options[14]);
+			SccpAddress sAddress = this.router.getBackupAddress(sAddressId);
 			if (sAddress == null) {
 				return String.format(SccpOAMMessage.NO_BACKUP_ADDRESS, sAddressId);
 			}
 		}
 
+		if (sAddressId == -1 && ruleType != RuleType.Solitary) {
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
+
 		SccpAddress pattern = this.createAddress(options, 5);
 
-		rule = new Rule(pattern, mask);
-		this.router.getRules().put(ruleId, rule);
+		rule = new Rule(ruleType, pattern, mask);
+		rule.setPrimaryAddressId(pAddressId);
+		rule.setSecondaryAddressId(sAddressId);
+		this.router.addRule(ruleId, rule);
 		this.router.store();
 		return SccpOAMMessage.RULE_SUCCESSFULLY_MODIFIED;
 	}
@@ -613,14 +691,13 @@ public class SccpExecutor {
 			return SccpOAMMessage.INVALID_COMMAND;
 		}
 		int ruleId;
-		Rule rule = null;
 		ruleId = Integer.parseInt(options[3]);
 
-		rule = this.router.getRules().remove(ruleId);
-
-		if (rule == null) {
+		if (this.router.getRule(ruleId) == null) {
 			return SccpOAMMessage.RULE_DOESNT_EXIST;
 		}
+		this.router.removeRule(ruleId);
+		this.router.store();
 
 		return SccpOAMMessage.RULE_SUCCESSFULLY_REMOVED;
 	}
@@ -642,7 +719,7 @@ public class SccpExecutor {
 		int ruleId = -1;
 		if (options.length == 4) {
 			ruleId = Integer.parseInt(options[3]);
-			Rule rule = this.router.getRules().remove(ruleId);
+			Rule rule = this.router.getRule(ruleId);
 			if (rule == null) {
 				return SccpOAMMessage.RULE_DOESNT_EXIST;
 			}
@@ -710,4 +787,528 @@ public class SccpExecutor {
 		return sccpAddress;
 	}
 
+	private String manageLmr(String[] options) throws Exception {
+		// Minimum 3 needed. Show
+		if (options.length < 3) {
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
+
+		String command = options[2];
+
+		if (command == null) {
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
+
+		if (command.equals("create")) {
+			if (options.length < 7) {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+
+			int lmrId = Integer.parseInt(options[3]);
+			if (this.router.getLongMessageRule(lmrId) != null) {
+				return SccpOAMMessage.LMR_ALREADY_EXIST;
+			}
+
+			int firstSpc = Integer.parseInt(options[4]);
+			int lastSpc = Integer.parseInt(options[5]);
+
+			LongMessageRuleType ruleType;
+			String s1 = options[6].toLowerCase();
+			if (s1.equals("udt")) {
+				ruleType = LongMessageRuleType.LongMessagesForbidden;
+			} else if (s1.equals("xudt")) {
+				ruleType = LongMessageRuleType.XudtEnabled;
+			} else if (s1.equals("ludt")) {
+				ruleType = LongMessageRuleType.LudtEnabled;
+			} else if (s1.equals("ludt_segm")) {
+				ruleType = LongMessageRuleType.LudtEnabled_WithSegmentationField;
+			} else {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+
+			LongMessageRule lmr = new LongMessageRule(firstSpc, lastSpc, ruleType);
+			this.router.addLongMessageRule(lmrId, lmr);
+			this.router.store();
+
+			return SccpOAMMessage.LMR_SUCCESSFULLY_ADDED;
+		} else if (command.equals("modify")) {
+			if (options.length < 7) {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+			int lmrId = Integer.parseInt(options[3]);
+			if (this.router.getLongMessageRule(lmrId) == null) {
+				return SccpOAMMessage.LMR_DOESNT_EXIST;
+			}
+
+			int firstSpc = Integer.parseInt(options[4]);
+			int lastSpc = Integer.parseInt(options[5]);
+
+			LongMessageRuleType ruleType;
+			String s1 = options[6].toLowerCase();
+			if (s1.equals("udt")) {
+				ruleType = LongMessageRuleType.LongMessagesForbidden;
+			} else if (s1.equals("xudt")) {
+				ruleType = LongMessageRuleType.XudtEnabled;
+			} else if (s1.equals("ludt")) {
+				ruleType = LongMessageRuleType.LudtEnabled;
+			} else if (s1.equals("ludt_segm")) {
+				ruleType = LongMessageRuleType.LudtEnabled_WithSegmentationField;
+			} else {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+
+			LongMessageRule lmr = new LongMessageRule(firstSpc, lastSpc, ruleType);
+			this.router.addLongMessageRule(lmrId, lmr);
+			this.router.store();
+
+			return SccpOAMMessage.LMR_SUCCESSFULLY_MODIFIED;
+		} else if (command.equals("delete")) {
+			if (options.length < 4) {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+			int lmrId = Integer.parseInt(options[3]);
+			if (this.router.getLongMessageRule(lmrId) == null) {
+				return SccpOAMMessage.LMR_DOESNT_EXIST;
+			}
+
+			this.router.removeLongMessageRule(lmrId);
+			this.router.store();
+
+			return SccpOAMMessage.LMR_SUCCESSFULLY_DELETED;
+		} else if (command.equals("show")) {
+			if (options.length == 4) {
+				int lmrId = Integer.parseInt(options[3]);
+				LongMessageRule lmr = this.router.getLongMessageRule(lmrId);
+				if (lmr == null) {
+					return SccpOAMMessage.LMR_DOESNT_EXIST;
+				}
+				return lmr.toString();
+			}
+
+			if (this.router.getLongMessageRules().size() == 0) {
+				return SccpOAMMessage.LMR_DOESNT_EXIST;
+			}
+
+			StringBuffer sb = new StringBuffer();
+			for (FastMap.Entry<Integer, LongMessageRule> e = this.router.getLongMessageRules().head(), end = this.router.getLongMessageRules().tail(); (e = e
+					.getNext()) != end;) {
+				int key = e.getKey();
+				LongMessageRule lmr = e.getValue();
+				sb.append("key=");
+				sb.append(key);
+				sb.append("  ");
+				sb.append(lmr);
+				sb.append("\n");
+			}
+			return sb.toString();
+		}
+
+		return SccpOAMMessage.INVALID_COMMAND;
+	}
+
+	private String manageSap(String[] options) throws Exception {
+		// Minimum 3 needed. Show
+		if (options.length < 3) {
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
+
+		String command = options[2];
+
+		if (command == null) {
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
+
+		if (command.equals("create")) {
+			if (options.length < 7) {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+
+			int sapId = Integer.parseInt(options[3]);
+			if (this.router.getMtp3ServiceAccessPoint(sapId) != null) {
+				return SccpOAMMessage.SAP_ALREADY_EXIST;
+			}
+
+			int mtp3Id = Integer.parseInt(options[4]);
+			int opc = Integer.parseInt(options[5]);
+			int ni = Integer.parseInt(options[6]);
+
+			if (this.sccpStack.getMtp3UserPart(mtp3Id) == null) {
+				return SccpOAMMessage.MUP_DOESNT_EXIST;
+			}
+
+			Mtp3ServiceAccessPoint sap = new Mtp3ServiceAccessPoint(mtp3Id, opc, ni);
+			this.router.addMtp3ServiceAccessPoint(sapId, sap);
+			this.router.store();
+
+			return SccpOAMMessage.SAP_SUCCESSFULLY_ADDED;
+		} else if (command.equals("modify")) {
+			if (options.length < 7) {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+			int sapId = Integer.parseInt(options[3]);
+			if (this.router.getMtp3ServiceAccessPoint(sapId) == null) {
+				return SccpOAMMessage.SAP_DOESNT_EXIST;
+			}
+
+			int mtp3Id = Integer.parseInt(options[4]);
+			int opc = Integer.parseInt(options[5]);
+			int ni = Integer.parseInt(options[6]);
+
+			if (this.sccpStack.getMtp3UserPart(mtp3Id) == null) {
+				return SccpOAMMessage.MUP_DOESNT_EXIST;
+			}
+
+			Mtp3ServiceAccessPoint sap = new Mtp3ServiceAccessPoint(mtp3Id, opc, ni);
+			this.router.addMtp3ServiceAccessPoint(sapId, sap);
+			this.router.store();
+
+			return SccpOAMMessage.SAP_SUCCESSFULLY_MODIFIED;
+		} else if (command.equals("delete")) {
+			if (options.length < 4) {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+			int sapId = Integer.parseInt(options[3]);
+			if (this.router.getMtp3ServiceAccessPoint(sapId) == null) {
+				return SccpOAMMessage.SAP_DOESNT_EXIST;
+			}
+
+			this.router.removeMtp3ServiceAccessPoint(sapId);
+			this.router.store();
+
+			return SccpOAMMessage.SAP_SUCCESSFULLY_DELETED;
+		} else if (command.equals("show")) {
+			if (options.length == 4) {
+				int sapId = Integer.parseInt(options[3]);
+				Mtp3ServiceAccessPoint sap = this.router.getMtp3ServiceAccessPoint(sapId);
+				if (sap == null) {
+					return SccpOAMMessage.SAP_DOESNT_EXIST;
+				}
+				return sap.toString();
+			}
+
+			if (this.router.getMtp3ServiceAccessPoints().size() == 0) {
+				return SccpOAMMessage.SAP_DOESNT_EXIST;
+			}
+
+			StringBuffer sb = new StringBuffer();
+			for (FastMap.Entry<Integer, Mtp3ServiceAccessPoint> e = this.router.getMtp3ServiceAccessPoints().head(), end = this.router
+					.getMtp3ServiceAccessPoints().tail(); (e = e.getNext()) != end;) {
+				int key = e.getKey();
+				Mtp3ServiceAccessPoint sap = e.getValue();
+				sb.append("key=");
+				sb.append(key);
+				sb.append("  ");
+				sb.append(sap);
+				sb.append("\n");
+			}
+			return sb.toString();
+		}
+
+		return SccpOAMMessage.INVALID_COMMAND;
+	}
+
+	private String manageDest(String[] options) throws Exception {
+		// Minimum 4 needed. Show
+		if (options.length < 4) {
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
+
+		String command = options[2];
+
+		if (command == null) {
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
+
+		if (command.equals("create")) {
+			if (options.length < 10) {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+
+			int sapId = Integer.parseInt(options[3]);
+			Mtp3ServiceAccessPoint sap = this.router.getMtp3ServiceAccessPoint(sapId);
+			if (sap == null) {
+				return SccpOAMMessage.SAP_DOESNT_EXIST;
+			}
+			int destId = Integer.parseInt(options[4]);
+			if (sap.getMtp3Destination(destId) != null) {
+				return SccpOAMMessage.DEST_ALREADY_EXIST;
+			}
+
+			int firstDpc = Integer.parseInt(options[5]);
+			int lastDpc = Integer.parseInt(options[6]);
+			int firstSls = Integer.parseInt(options[7]);
+			int lastSls = Integer.parseInt(options[8]);
+			int slsMask = Integer.parseInt(options[9]);
+
+			Mtp3Destination dest = new Mtp3Destination(firstDpc, lastDpc, firstSls, lastSls, slsMask);
+			sap.addMtp3Destination(destId, dest);
+			this.router.store();
+
+			return SccpOAMMessage.DEST_SUCCESSFULLY_ADDED;
+		} else if (command.equals("modify")) {
+			if (options.length < 10) {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+			
+			int sapId = Integer.parseInt(options[3]);
+			Mtp3ServiceAccessPoint sap = this.router.getMtp3ServiceAccessPoint(sapId);
+			if (sap == null) {
+				return SccpOAMMessage.SAP_DOESNT_EXIST;
+			}
+			int destId = Integer.parseInt(options[4]);
+			if (sap.getMtp3Destination(destId) == null) {
+				return SccpOAMMessage.DEST_DOESNT_EXIST;
+			}
+
+			int firstDpc = Integer.parseInt(options[5]);
+			int lastDpc = Integer.parseInt(options[6]);
+			int firstSls = Integer.parseInt(options[7]);
+			int lastSls = Integer.parseInt(options[8]);
+			int slsMask = Integer.parseInt(options[9]);
+
+			Mtp3Destination dest = new Mtp3Destination(firstDpc, lastDpc, firstSls, lastSls, slsMask);
+			sap.addMtp3Destination(destId, dest);
+			this.router.store();
+
+			return SccpOAMMessage.DEST_SUCCESSFULLY_MODIFIED;
+		} else if (command.equals("delete")) {
+			if (options.length < 5) {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+
+			int sapId = Integer.parseInt(options[3]);
+			Mtp3ServiceAccessPoint sap = this.router.getMtp3ServiceAccessPoint(sapId);
+			if (sap == null) {
+				return SccpOAMMessage.SAP_DOESNT_EXIST;
+			}
+			int destId = Integer.parseInt(options[4]);
+			if (sap.getMtp3Destination(destId) == null) {
+				return SccpOAMMessage.DEST_DOESNT_EXIST;
+			}
+
+			sap.removeMtp3Destination(destId);
+			this.router.store();
+
+			return SccpOAMMessage.DEST_SUCCESSFULLY_DELETED;
+		} else if (command.equals("show")) {
+			if (options.length == 5) {
+				int sapId = Integer.parseInt(options[3]);
+				Mtp3ServiceAccessPoint sap = this.router.getMtp3ServiceAccessPoint(sapId);
+				if (sap == null) {
+					return SccpOAMMessage.SAP_DOESNT_EXIST;
+				}
+				int destId = Integer.parseInt(options[4]);
+				Mtp3Destination dest = sap.getMtp3Destination(destId);
+				if (dest == null) {
+					return SccpOAMMessage.DEST_DOESNT_EXIST;
+				}
+
+				return dest.toString();
+			}
+
+			if (options.length == 4) {
+				int sapId = Integer.parseInt(options[3]);
+				Mtp3ServiceAccessPoint sap = this.router.getMtp3ServiceAccessPoint(sapId);
+				if (sap == null) {
+					return SccpOAMMessage.SAP_DOESNT_EXIST;
+				}
+				return sap.toString();
+			}
+
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
+
+		return SccpOAMMessage.INVALID_COMMAND;
+	}
+
+	private String manageConcernedSpc(String[] options) throws Exception {
+		// Minimum 3 needed. Show
+		if (options.length < 3) {
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
+
+		String command = options[2];
+
+		if (command == null) {
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
+
+		if (command.equals("create")) {
+			if (options.length < 5) {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+
+			int concernedSpcId = Integer.parseInt(options[3]);
+			if (this.sccpResource.getConcernedSpc(concernedSpcId) != null) {
+				return SccpOAMMessage.CS_ALREADY_EXIST;
+			}
+
+			int spc = Integer.parseInt(options[4]);
+
+			ConcernedSignalingPointCode conSpc = new ConcernedSignalingPointCode(spc);
+			this.sccpResource.addConcernedSpc(concernedSpcId, conSpc);
+			this.sccpResource.store();
+
+			return SccpOAMMessage.CS_SUCCESSFULLY_ADDED;
+		} else if (command.equals("modify")) {
+			if (options.length < 5) {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+
+			int concernedSpcId = Integer.parseInt(options[3]);
+			if (this.sccpResource.getConcernedSpc(concernedSpcId) == null) {
+				return SccpOAMMessage.CS_DOESNT_EXIST;
+			}
+
+			int spc = Integer.parseInt(options[4]);
+
+			ConcernedSignalingPointCode conSpc = new ConcernedSignalingPointCode(spc);
+			this.sccpResource.addConcernedSpc(concernedSpcId, conSpc);
+			this.sccpResource.store();
+
+			return SccpOAMMessage.CS_SUCCESSFULLY_MODIFIED;
+		} else if (command.equals("delete")) {
+			if (options.length < 4) {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+			int concernedSpcId = Integer.parseInt(options[3]);
+			if (this.sccpResource.getConcernedSpc(concernedSpcId) == null) {
+				return SccpOAMMessage.CS_DOESNT_EXIST;
+			}
+
+			this.sccpResource.removeConcernedSpc(concernedSpcId);
+			this.sccpResource.store();
+			return SccpOAMMessage.CS_SUCCESSFULLY_DELETED;
+		} else if (command.equals("show")) {
+			if (options.length == 4) {
+				int concernedSpcId = Integer.parseInt(options[3]);
+				ConcernedSignalingPointCode conSpc = this.sccpResource.getConcernedSpc(concernedSpcId);
+				if (conSpc == null) {
+					return SccpOAMMessage.CS_DOESNT_EXIST;
+				}
+				return conSpc.toString();
+			}
+
+			if(this.sccpResource.getConcernedSpcs().size() == 0){
+				return SccpOAMMessage.CS_DOESNT_EXIST;
+			}
+
+			StringBuffer sb = new StringBuffer();
+			for (FastMap.Entry<Integer, ConcernedSignalingPointCode> e = this.sccpResource.getConcernedSpcs().head(), end = this.sccpResource
+					.getConcernedSpcs().tail(); (e = e.getNext()) != end;) {
+				int key = e.getKey();
+				ConcernedSignalingPointCode ConcSpc = e.getValue();
+				sb.append("key=");
+				sb.append(key);
+				sb.append("  ");
+				sb.append(ConcSpc);
+				sb.append("\n");
+			}
+			return sb.toString();
+		}
+
+		return SccpOAMMessage.INVALID_COMMAND;
+	}
+
+	private String manageSet(String[] options) throws Exception {
+		// Minimum 4 needed. Show
+		if (options.length < 4) {
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
+
+		String parName = options[2].toLowerCase();
+
+		if (parName.equals("zmarginxudtmessage")) {
+			int val = Integer.parseInt(options[3]);
+			this.sccpStack.setZMarginXudtMessage(val);
+		} else if (parName.equals("reassemblytimerdelay")) {
+			int val = Integer.parseInt(options[3]);
+			this.sccpStack.setReassemblyTimerDelay(val);
+		} else if (parName.equals("maxdatamessage")) {
+			int val = Integer.parseInt(options[3]);
+			this.sccpStack.setMaxDataMessage(val);
+		} else if (parName.equals("removespc")) {
+			boolean val = Boolean.parseBoolean(options[3]);
+			this.sccpStack.setRemoveSpc(val);
+		} else if (parName.equals("ssttimerduration_min")) {
+			int val = Integer.parseInt(options[3]);
+			this.sccpStack.setSstTimerDuration_Min(val);
+		} else if (parName.equals("ssttimerduration_max")) {
+			int val = Integer.parseInt(options[3]);
+			this.sccpStack.setSstTimerDuration_Max(val);
+		} else if (parName.equals("ssttimerduration_increasefactor")) {
+			double val = Double.parseDouble(options[3]);
+			this.sccpStack.setSstTimerDuration_IncreaseFactor(val);
+		} else {
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
+
+		return SccpOAMMessage.PARAMETER_SUCCESSFULLY_SET;
+	}
+
+	private String manageGet(String[] options) throws Exception {
+		// Minimum 2 needed. Show
+		if (options.length < 2) {
+			return SccpOAMMessage.INVALID_COMMAND;
+		}
+
+		if (options.length == 3) {
+			String parName = options[2].toLowerCase();
+
+			StringBuilder sb = new StringBuilder();
+			sb.append(options[2]);
+			sb.append(" = ");
+			if (parName.equals("zmarginxudtmessage")) {
+				sb.append(this.sccpStack.getZMarginXudtMessage());
+			} else if (parName.equals("reassemblytimerdelay")) {
+				sb.append(this.sccpStack.getReassemblyTimerDelay());
+			} else if (parName.equals("maxdatamessage")) {
+				sb.append(this.sccpStack.getMaxDataMessage());
+			} else if (parName.equals("removespc")) {
+				sb.append(this.sccpStack.isRemoveSpc());
+			} else if (parName.equals("ssttimerduration_min")) {
+				sb.append(this.sccpStack.getSstTimerDuration_Min());
+			} else if (parName.equals("ssttimerduration_max")) {
+				sb.append(this.sccpStack.getSstTimerDuration_Max());
+			} else if (parName.equals("ssttimerduration_increasefactor")) {
+				sb.append(this.sccpStack.getSstTimerDuration_IncreaseFactor());
+			} else {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+
+			return sb.toString();
+		} else {
+			StringBuilder sb = new StringBuilder();
+			sb.append("zMarginXudtMessage = ");
+			sb.append(this.sccpStack.getZMarginXudtMessage());
+			sb.append("\n");
+
+			sb.append("reassemblyTimerDelay = ");
+			sb.append(this.sccpStack.getReassemblyTimerDelay());
+			sb.append("\n");
+
+			sb.append("maxDataMessage = ");
+			sb.append(this.sccpStack.getMaxDataMessage());
+			sb.append("\n");
+
+			sb.append("removeSpc = ");
+			sb.append(this.sccpStack.isRemoveSpc());
+			sb.append("\n");
+
+			sb.append("sstTimerDuration_Min = ");
+			sb.append(this.sccpStack.getSstTimerDuration_Min());
+			sb.append("\n");
+
+			sb.append("sstTimerDuration_Max = ");
+			sb.append(this.sccpStack.getSstTimerDuration_Max());
+			sb.append("\n");
+
+			sb.append("sstTimerDuration_IncreaseFactor = ");
+			sb.append(this.sccpStack.getSstTimerDuration_IncreaseFactor());
+			sb.append("\n");
+
+			return sb.toString();
+		}
+	}
 }
+

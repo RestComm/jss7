@@ -53,42 +53,42 @@ public interface SccpStack {
 	 */
 	public SccpProvider getSccpProvider();
 
-	/**
-	 * <p>
-	 * Set the local signaling point for this SCCP instance. The local signaling
-	 * point will be added as OPC for outgoing MTP3 MSU.
-	 * </p>
-	 * <p>
-	 * For incoming MSU, after translation the point code of the Called Party
-	 * Address (SCCP Address) will compared with localSpc, if it matches MSU
-	 * will be consumed
-	 * </p>
-	 * 
-	 * @param localSpc
-	 */
-	public void setLocalSpc(int localSpc);
-
-	/**
-	 * Get the local signaling point set for this SCCP instance
-	 * 
-	 * @return
-	 */
-	public int getLocalSpc();
-
-	/**
-	 * Set the Network Indicator value. This value will be set in Service
-	 * Information Octet (SIO) for outgoing MTP3 MSU
-	 * 
-	 * @param ni
-	 */
-	public void setNi(int ni);
-
-	/**
-	 * Get the Network Indicator value.
-	 * 
-	 * @return
-	 */
-	public int getNi();
+//	/**
+//	 * <p>
+//	 * Set the local signaling point for this SCCP instance. The local signaling
+//	 * point will be added as OPC for outgoing MTP3 MSU.
+//	 * </p>
+//	 * <p>
+//	 * For incoming MSU, after translation the point code of the Called Party
+//	 * Address (SCCP Address) will compared with localSpc, if it matches MSU
+//	 * will be consumed
+//	 * </p>
+//	 * 
+//	 * @param localSpc
+//	 */
+//	public void setLocalSpc(int localSpc);
+//
+//	/**
+//	 * Get the local signaling point set for this SCCP instance
+//	 * 
+//	 * @return
+//	 */
+//	public int getLocalSpc();
+//
+//	/**
+//	 * Set the Network Indicator value. This value will be set in Service
+//	 * Information Octet (SIO) for outgoing MTP3 MSU
+//	 * 
+//	 * @param ni
+//	 */
+//	public void setNi(int ni);
+//
+//	/**
+//	 * Get the Network Indicator value.
+//	 * 
+//	 * @return
+//	 */
+//	public int getNi();
 
 	/**
 	 * If set, the signaling point code from SCCP called/calling address will be
@@ -102,6 +102,6 @@ public interface SccpStack {
 	 * Get the remove siganling point code flag
 	 * @return
 	 */
-	public boolean getRemoveSpc();
+	public boolean isRemoveSpc();
 
 }

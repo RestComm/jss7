@@ -56,16 +56,15 @@ public class SccpAddressCodec {
 	
 	private static final byte PC_PRESENT_FLAG = 0x01;
 
-	private GTCodec gtCodec = new GTCodec();
-	
-	private boolean removeSpc = false;
+//	private GTCodec gtCodec = new GTCodec();
+//	private boolean removeSpc = false;
 
-	/** Creates a new instance of UnitDataMandatoryVariablePart */
-	public SccpAddressCodec(boolean removeSpc) {
-		this.removeSpc = removeSpc;
-	}
+//	/** Creates a new instance of UnitDataMandatoryVariablePart */
+//	public SccpAddressCodec(boolean removeSpc) {
+//		this.removeSpc = removeSpc;
+//	}
 
-	public SccpAddress decode(byte[] buffer) throws IOException {
+	public static SccpAddress decode(byte[] buffer) throws IOException {
 		ByteArrayInputStream bin = new ByteArrayInputStream(buffer);
 
 		int b = bin.read() & 0xff;
@@ -84,17 +83,17 @@ public class SccpAddressCodec {
 			ssn = bin.read() & 0xff;
 		}
 
-		GlobalTitle globalTitle = gtCodec.decode(addressIndicator.getGlobalTitleIndicator(), bin);
+		GlobalTitle globalTitle = GTCodec.decode(addressIndicator.getGlobalTitleIndicator(), bin);
 		return new SccpAddress(addressIndicator.getRoutingIndicator(), pc, globalTitle, ssn);
 	}
 
-	public byte[] encode(SccpAddress address) throws IOException {
+	public static byte[] encode(SccpAddress address, boolean removeSpc) throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		AddressIndicator ai = address.getAddressIndicator();
 		byte aiValue = ai.getValue();
 		
-		if(this.removeSpc && ((aiValue & ROUTE_ON_PC_FLAG) == 0x00)){
+		if(removeSpc && ((aiValue & ROUTE_ON_PC_FLAG) == 0x00)){
 			//Routing on GT so lets remove PC flag
 			
 			aiValue = (byte)(aiValue & REMOVE_PC_FLAG);
@@ -116,7 +115,7 @@ public class SccpAddressCodec {
 		}
 
 		if (ai.getGlobalTitleIndicator() != GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED) {
-			gtCodec.encode(address.getGlobalTitle(), out);
+			GTCodec.encode(address.getGlobalTitle(), out);
 		}
 		return out.toByteArray();
 

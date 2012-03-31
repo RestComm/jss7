@@ -26,8 +26,9 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * 
@@ -67,10 +68,17 @@ public interface SccpProvider extends Serializable {
 	 * 
 	 * @param message
 	 *            Message to be sent
-	 * @param seqControl
-	 *            Determines the SLS used to send the message
 	 * @throws IOException
 	 */
-	public void send(SccpMessage message, int seqControl) throws IOException;
+	public void send(SccpDataMessage message) throws IOException;
+
+	/**
+	 * Return the maximum length (in bytes) of the sccp message data
+	 * 
+	 * @param calledPartyAddress
+	 * @param callingPartyAddress
+	 * @return
+	 */
+	public int getMaxUserDataLength(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress);
 
 }

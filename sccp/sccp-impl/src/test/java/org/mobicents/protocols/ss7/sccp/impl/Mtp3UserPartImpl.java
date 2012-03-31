@@ -24,7 +24,10 @@ package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
@@ -43,10 +46,11 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
 //	protected ConcurrentLinkedQueue<byte[]> writeTo;
 	
 	private Mtp3UserPartImpl otherPart;
+	private ArrayList<Mtp3TransferPrimitive> messages = new ArrayList<Mtp3TransferPrimitive>();
 	
 	protected boolean saveTrafficInFile = false;
 
-	Mtp3UserPartImpl() {
+	public Mtp3UserPartImpl() {
 		try {
 			this.start();
 		} catch (Exception e) {
@@ -76,8 +80,21 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
 			}
 		}
 
-		this.otherPart.sendTransferMessageToLocalUser(msg, msg.getSls());
+		if (this.otherPart != null)
+			this.otherPart.sendTransferMessageToLocalUser(msg, msg.getSls());
+		else
+			this.messages.add(msg);
 	}
+
+	public void sendTransferMessageToLocalUser(int opc, int dpc, byte[] data) {
+		int si = Mtp3._SI_SERVICE_SCCP;
+		int ni = 2;
+		int mp = 0;
+		int sls = 0;
+		Mtp3TransferPrimitive msg = new Mtp3TransferPrimitive(si, ni, mp, opc, dpc, sls, data);
+		int seqControl = 0;
+		this.sendTransferMessageToLocalUser(msg, seqControl);
+	}	
 
 	public void sendPauseMessageToLocalUser(int affectedDpc) {
 		Mtp3PausePrimitive msg = new Mtp3PausePrimitive(affectedDpc);
@@ -93,29 +110,14 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
 		Mtp3StatusPrimitive msg = new Mtp3StatusPrimitive(affectedDpc, cause, congestionLevel);
 		this.sendStatusMessageToLocalUser(msg);
 	}
-	
-//	public int read(ByteBuffer b) throws IOException {
-//		int dataRead = 0;
-//		while (!this.readFrom.isEmpty()) {
-//			byte[] rxData = this.readFrom.poll();
-//			System.out.println("Read " + Arrays.toString(rxData));
-//			dataRead = dataRead + rxData.length;
-//			b.put(rxData);
-//		}
-//		return dataRead;
-//	}
-//
-//	
-//	public int write(ByteBuffer b) throws IOException {
-//		int dataAdded = 0;
-//		if (b.hasRemaining()) {
-//			byte[] txData = new byte[b.limit() - b.position()];
-//			b.get(txData);
-//			dataAdded = dataAdded + txData.length;
-//			System.out.println("Write " + Arrays.toString(txData));
-//			this.writeTo.add(txData);
-//		}
-//		return dataAdded;
-//	}
 
+	public List<Mtp3TransferPrimitive> getMessages() {
+		return messages;
+	}
+
+	@Override
+	public int getMaxUserDataLength(int dpc) {
+		return 1000;
+	}
 }
+

@@ -52,7 +52,6 @@ public class SccpAddress implements Parameter, XMLSerializable { // impl? pfff
 	private boolean translated;
 
 	public SccpAddress() {
-
 	}
 
 	/**
@@ -96,6 +95,9 @@ public class SccpAddress implements Parameter, XMLSerializable { // impl? pfff
 	}
 
 	public boolean equals(Object other) {
+		if (other == null) {
+			return false;
+		}
 		if (!(other instanceof SccpAddress)) {
 			return false;
 		}

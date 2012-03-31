@@ -23,12 +23,15 @@
 package org.mobicents.protocols.ss7.sccp;
 
 import java.io.Serializable;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
+
+import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 
 /**
  * 
  * @author Oleg Kulikov
  * @author baranowb
+ * @author serey vetyutnev
  */
 public interface SccpListener extends Serializable {
 
@@ -38,9 +41,55 @@ public interface SccpListener extends Serializable {
 	 * 
 	 * @param message
 	 *            Message received
-	 * @param seqControl
-	 *            The SeqControl value between 0 to 31 indicating the SLS over
-	 *            which message is received
 	 */
-	public void onMessage(SccpMessage message, int seqControl);
+	public void onMessage(SccpDataMessage message);
+
+	/**
+	 * Called when N-NOTICE indication (on receiving UDTS, XUDTS or LUDTS)
+	 * N-NOTICE indication is the means by which the SCCP returns to the originating
+	 * user a SCCP-SDU which could not reach the final destination.
+	 * 
+	 * @param message
+	 *            Message received
+	 */
+	public void onNotice(SccpNoticeMessage message);
+
+	/**
+	 * Indication of N-COORD request
+	 * 
+	 * @param dpc
+	 * @param ssn
+	 * @param multiplicityIndicator
+	 */
+	public void onCoordRequest(int dpc, int ssn, int multiplicityIndicator);
+
+	/**
+	 * Indication of N-COORD response
+	 * 
+	 * @param dpc
+	 * @param ssn
+	 * @param multiplicityIndicator
+	 */
+	public void onCoordResponse(int dpc, int ssn, int multiplicityIndicator);
+
+	/**
+	 * Indication of N-STATE (subsystem state)
+	 * 
+	 * @param dpc
+	 * @param ssn
+	 * @param inService
+	 * @param multiplicityIndicator
+	 */
+	public void onState(int dpc, int ssn, boolean inService, int multiplicityIndicator);
+
+	/**
+	 * Indication of N-PCSTATE (pointcode state)
+	 * 
+	 * @param dpc
+	 * @param status
+	 * @param restrictedImportanceLevel
+	 * @param remoteSccpStatus
+	 */
+	public void onPcState(int dpc, SignallingPointStatus status, int restrictedImportanceLevel, RemoteSccpStatus remoteSccpStatus);
+
 }

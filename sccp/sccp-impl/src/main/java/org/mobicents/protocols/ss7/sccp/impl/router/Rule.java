@@ -40,6 +40,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 /**
  * @author amit bhayani
  * @author kulikov
+ * @author sergey vetyutnev
  */
 public class Rule implements Serializable {
 
@@ -49,6 +50,7 @@ public class Rule implements Serializable {
 	 */
 	private static final long serialVersionUID = 2147449454267320237L;
 
+	private static final String RULETYPE = "ruleType";
 	private static final String PATTERN = "pattern";
 	private static final String OPEN_BRACKET = "(";
 	private static final String CLOSE_BRACKET = ")";
@@ -58,6 +60,8 @@ public class Rule implements Serializable {
 
 	private final static String SEPARATOR = ";";
 
+	private RuleType ruleType = RuleType.Solitary;
+	
 	/** Pattern used for selecting rule */
 	private SccpAddress pattern;
 
@@ -86,13 +90,22 @@ public class Rule implements Serializable {
 	 * @param mtpInfo
 	 *            MTP routing info
 	 */
-	public Rule(SccpAddress pattern, String mask) {
+	public Rule(RuleType ruleType, SccpAddress pattern, String mask) {
+		this.ruleType = ruleType;
 		this.pattern = pattern;
 		this.mask = mask;
 
 		configure();
 	}
-	
+
+	public RuleType getRuleType() {
+		return ruleType;
+	}
+
+	public void setRuleType(RuleType ruleType) {
+		this.ruleType = ruleType;
+	}
+
 	public SccpAddress getPattern() {
 		return pattern;
 	}
@@ -122,14 +135,16 @@ public class Rule implements Serializable {
 	 * 
 	 * @param address
 	 *            the origin address
+	 * @param ruleAddress
+	 *            the address from the rule
 	 * @return translated address
 	 */
-	public SccpAddress translate(SccpAddress address, SccpAddress primaryAddress) {
+	public SccpAddress translate(SccpAddress address, SccpAddress ruleAddress) {
 
 		String digits = address.getGlobalTitle().getDigits();
 		String patternDigits = pattern.getGlobalTitle().getDigits();
 
-		String primaryDigits = primaryAddress.getGlobalTitle().getDigits();
+		String primaryDigits = ruleAddress.getGlobalTitle().getDigits();
 
 		// step #1. translate digits
 		String translatedDigits = translateDigits(digits, maskPattern, patternDigits.split("/"),
@@ -138,19 +153,21 @@ public class Rule implements Serializable {
 		GlobalTitle gt = null;
 
 		if (translatedDigits != null && !translatedDigits.equals("")) {
-			GlobalTitleIndicator gti = primaryAddress.getAddressIndicator().getGlobalTitleIndicator();
-			GlobalTitle primaryGt = primaryAddress.getGlobalTitle();
+			GlobalTitleIndicator gti = ruleAddress.getAddressIndicator().getGlobalTitleIndicator();
+			GlobalTitle primaryGt = ruleAddress.getGlobalTitle();
 			gt = createNewGT(gti, primaryGt, translatedDigits);
 
 			if (gt == null) {
-				// lets use GT from received adderss
+				// lets use GT from received address
 				gt = createNewGT(address.getAddressIndicator().getGlobalTitleIndicator(), address.getGlobalTitle(),
 						translatedDigits);
 			}
 		}
 
-		SccpAddress sccpAddress = new SccpAddress(primaryAddress.getAddressIndicator().getRoutingIndicator(),
-				primaryAddress.getSignalingPointCode(), gt, primaryAddress.getSubsystemNumber());
+		int ssn = address.getSubsystemNumber();
+		if (ruleAddress.getSubsystemNumber() > 0)
+			ssn = ruleAddress.getSubsystemNumber();
+		SccpAddress sccpAddress = new SccpAddress(ruleAddress.getAddressIndicator().getRoutingIndicator(), ruleAddress.getSignalingPointCode(), gt, ssn);
 
 		// This is translated message
 		sccpAddress.setTranslated(true);
@@ -369,6 +386,7 @@ public class Rule implements Serializable {
 	protected static final XMLFormat<Rule> RULE_XML = new XMLFormat<Rule>(Rule.class) {
 
 		public void read(javolution.xml.XMLFormat.InputElement xml, Rule rule) throws XMLStreamException {
+			rule.ruleType = RuleType.valueOf(xml.getAttribute(RULETYPE).toString());
 			rule.mask = xml.getAttribute(MASK).toString();
 			rule.primaryAddressId = xml.getAttribute(PRIMARY_ADDRESS).toInt();
 			rule.secondaryAddressId = xml.getAttribute(SECONDARY_ADDRESS).toInt();
@@ -377,6 +395,7 @@ public class Rule implements Serializable {
 		}
 
 		public void write(Rule rule, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(RULETYPE, rule.ruleType.toString());
 			xml.setAttribute(MASK, rule.mask);
 			xml.setAttribute(PRIMARY_ADDRESS, rule.primaryAddressId);
 			xml.setAttribute(SECONDARY_ADDRESS, rule.secondaryAddressId);
@@ -386,6 +405,11 @@ public class Rule implements Serializable {
 
 	public String toString() {
 		StringBuffer buff = new StringBuffer();
+		buff.append(RULETYPE);
+		buff.append(OPEN_BRACKET);
+		buff.append(ruleType.toString());
+		buff.append(CLOSE_BRACKET);
+		buff.append(SEPARATOR);
 
 		buff.append(PATTERN);
 		buff.append(OPEN_BRACKET);

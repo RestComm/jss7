@@ -28,7 +28,6 @@ package org.mobicents.protocols.ss7.sccp.impl.parameter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
 import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
 
 /**
@@ -45,7 +44,7 @@ public class SegmentationImpl extends AbstractParameter  implements Segmentation
 	private boolean firstSegIndication = false;
 	private boolean class1Selected = false;
 	private byte remainingSegments = 0x0F;
-	private byte[] segmentationLocalRef = null;
+	private int segmentationLocalRef;
 
 	/**
 	 * 
@@ -54,7 +53,7 @@ public class SegmentationImpl extends AbstractParameter  implements Segmentation
 		// TODO Auto-generated constructor stub
 	}
 
-	public SegmentationImpl(boolean firstSegIndication, boolean class1Selected, byte remainingSegments, byte[] segmentationLocalRef) {
+	public SegmentationImpl(boolean firstSegIndication, boolean class1Selected, byte remainingSegments, int segmentationLocalRef) {
 		super();
 		this.firstSegIndication = firstSegIndication;
 		this.class1Selected = class1Selected;
@@ -148,14 +147,11 @@ public class SegmentationImpl extends AbstractParameter  implements Segmentation
 		this.remainingSegments = remainingSegments;
 	}
 
-	public byte[] getSegmentationLocalRef() {
+	public int getSegmentationLocalRef() {
 		return segmentationLocalRef;
 	}
 
-	public void setSegmentationLocalRef(byte[] segmentationLocalRef) {
-		if (segmentationLocalRef != null && segmentationLocalRef.length != 4) {
-			throw new IllegalArgumentException("Segmentation reference wrong size: " + segmentationLocalRef.length);
-		}
+	public void setSegmentationLocalRef(int segmentationLocalRef) {
 		this.segmentationLocalRef = segmentationLocalRef;
 
 	}
@@ -184,11 +180,7 @@ public class SegmentationImpl extends AbstractParameter  implements Segmentation
 		this.firstSegIndication = ((v >> 7) & 0x01) == _TRUE;
 		this.class1Selected = ((v >> 6) & 0x01) == _TRUE;
 		this.remainingSegments = (byte) (v & 0x0F);
-		if (remainingSegments < 0 || remainingSegments > 0x0F) {
-			throw new IOException("Wrong value of remaining segments: " + remainingSegments);
-		}
-		this.segmentationLocalRef = new byte[buffer.length-1];
-		System.arraycopy(buffer, 1, this.segmentationLocalRef, 0, this.segmentationLocalRef.length);
+		this.segmentationLocalRef = (buffer[1] & 0xFF) + ((buffer[2] & 0xFF) << 8) + ((buffer[3] & 0xFF) << 16);
 	}
 
 	/*
@@ -198,51 +190,61 @@ public class SegmentationImpl extends AbstractParameter  implements Segmentation
 	 */
 	
 	public byte[] encode() throws IOException {
-		if(this.segmentationLocalRef == null)
-		{
-			throw new IOException("No segmentation reference.");
-		}
-		byte[] buffer = new byte[1+this.segmentationLocalRef.length];
-		System.arraycopy(this.segmentationLocalRef, 0,buffer, 1,  this.segmentationLocalRef.length);
+		byte[] buffer = new byte[4];
 		int v = this.remainingSegments & 0x0F;
 		v |= ( (this.class1Selected?_TRUE:_FALSE) << 6);
 		v |= ( (this.firstSegIndication?_TRUE:_FALSE) << 7);
 		buffer[0] = (byte) v;
+		buffer[1] = (byte)(this.segmentationLocalRef & 0xFF);
+		buffer[2] = (byte)((this.segmentationLocalRef >> 8) & 0xFF);
+		buffer[3] = (byte)((this.segmentationLocalRef >> 16) & 0xFF);
+
 		return buffer;
 	}
-
 	
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (class1Selected ? 1231 : 1237);
-		result = prime * result + (firstSegIndication ? 1231 : 1237);
-		result = prime * result + remainingSegments;
-		result = prime * result + Arrays.hashCode(segmentationLocalRef);
-		return result;
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Segmentation [remainingSegments=");
+		sb.append(this.getRemainingSegments());
+		if (this.isFirstSegIndication())
+			sb.append(" firstSegment");
+		if (this.isClass1Selected())
+			sb.append(" class1Selected");
+		sb.append(" localRef=");
+		sb.append(this.getSegmentationLocalRef());
+		sb.append("]");
+		return sb.toString();
 	}
-
 	
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SegmentationImpl other = (SegmentationImpl) obj;
-		if (class1Selected != other.class1Selected)
-			return false;
-		if (firstSegIndication != other.firstSegIndication)
-			return false;
-		if (remainingSegments != other.remainingSegments)
-			return false;
-		if (!Arrays.equals(segmentationLocalRef, other.segmentationLocalRef))
-			return false;
-		return true;
-	}
-
-	
-
-	
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = 1;
+//		result = prime * result + (class1Selected ? 1231 : 1237);
+//		result = prime * result + (firstSegIndication ? 1231 : 1237);
+//		result = prime * result + remainingSegments;
+//		result = prime * result + Arrays.hashCode(segmentationLocalRef);
+//		return result;
+//	}
+//
+//	
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		SegmentationImpl other = (SegmentationImpl) obj;
+//		if (class1Selected != other.class1Selected)
+//			return false;
+//		if (firstSegIndication != other.firstSegIndication)
+//			return false;
+//		if (remainingSegments != other.remainingSegments)
+//			return false;
+//		if (!Arrays.equals(segmentationLocalRef, other.segmentationLocalRef))
+//			return false;
+//		return true;
+//	}
 }
+

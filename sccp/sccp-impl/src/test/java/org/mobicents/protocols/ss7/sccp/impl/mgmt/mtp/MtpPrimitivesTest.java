@@ -25,11 +25,6 @@ package org.mobicents.protocols.ss7.sccp.impl.mgmt.mtp;
 import org.testng.annotations.*;
 
 import static org.testng.Assert.*;
-
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-
-
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
@@ -215,9 +210,9 @@ public class MtpPrimitivesTest extends SccpHarness {
 		assertTrue( u2.getMessages().size() ==0,"U2 Received message, it should not!");
 		
 		//lets check stack functional.mgmt messages
-		
-       SccpStackImplProxy stack = (SccpStackImplProxy) sccpStack1;
-		
+
+		SccpStackImplProxy stack = (SccpStackImplProxy) sccpStack1;
+
 		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 1,"U1 did not receive Mtp3 Primitve, it should !");
 		assertTrue(stack.getManagementProxy().getMgmtMessages().size() == 0,"U1 received Management message, it should not!");
 		Mtp3PrimitiveMessage rmtpPause = stack.getManagementProxy().getMtp3Messages().get(0);
@@ -252,7 +247,7 @@ public class MtpPrimitivesTest extends SccpHarness {
 		}
 		this.mtp3UserPart1.sendStatusMessageToLocalUser(getStack2PC(), cs, 0);
 		
-		Thread.currentThread().sleep(12000);
+		Thread.sleep(15000);
         stack = (SccpStackImplProxy) sccpStack1;
 		
 		assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 2,"U1 did not receive Mtp3 Primitve, it should !");

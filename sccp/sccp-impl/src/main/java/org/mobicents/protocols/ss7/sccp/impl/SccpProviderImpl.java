@@ -32,11 +32,12 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * 
@@ -78,6 +79,8 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
 			newListener.putAll(ssnToListener);
 			newListener.put(ssn, listener);
 			ssnToListener = newListener;
+			
+			this.stack.broadcastChangedSsnState(ssn, true);
 		}
 	}
 
@@ -92,6 +95,8 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
 				}
 			}
 			ssnToListener = newListener;
+
+			this.stack.broadcastChangedSsnState(ssn, false);
 		}
 	}
 	
@@ -99,11 +104,19 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
 		return ssnToListener.get(ssn);
 	}
 
-	public void send(SccpMessage message, int seqControl) throws IOException {
-		
-		SccpMessageImpl msg = ((SccpMessageImpl) message);
-		msg.setSls(seqControl);
+	protected FastMap<Integer, SccpListener> getAllSccpListeners() {
+		return ssnToListener;
+	}
+
+	@Override
+	public void send(SccpDataMessage message) throws IOException {
+
+		SccpDataMessageImpl msg = ((SccpDataMessageImpl) message);
 		stack.send(msg);
 	}
 
+	@Override
+	public int getMaxUserDataLength(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress) {
+		return this.stack.getMaxUserDataLength(calledPartyAddress, callingPartyAddress);
+	}
 }

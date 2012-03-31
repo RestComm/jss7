@@ -24,19 +24,25 @@ package org.mobicents.protocols.ss7.sccp.parameter;
 
 import java.io.Serializable;
 
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+
 /**
  *
  * @author kulikov
  */
 public interface ParameterFactory extends Serializable  {
-    /** 
-     * Creates protocol class parameter.
-     * 
-     * @param value the value of the parameter
-     * @return parameter
-     */
-    public ProtocolClass createProtocolClass(int value, int handling);
-    
+
+	/**
+	 * Create SccpAddress parameter
+	 * 
+	 * @param ri
+	 * @param dpc
+	 * @param gt
+	 * @param ssn
+	 * @return
+	 */
+	public SccpAddress createSccpAddress(RoutingIndicator ri, int dpc, GlobalTitle gt, int ssn);
+	
     /**
      * Create Importance parameter.
      * 
@@ -44,17 +50,25 @@ public interface ParameterFactory extends Serializable  {
      * @return parameter
      */
     public Importance createImportance(int value);
-    
-    /**
-     * Create segemntation parameter
-     * 
-     * @return parameter.
-     */
-    public Segmentation createSegmentation();
+
     /**
      * Create hop counter parameter
      */
     public HopCounter createHopCounter(int hopCount);
+
     
-    public ReturnCause createReturnCause(int cause);
+//    public ReturnCause createReturnCause(int cause);
+//  /** 
+//  * Creates protocol class parameter.
+//  * 
+//  * @param value the value of the parameter
+//  * @return parameter
+//  */
+// public ProtocolClass createProtocolClass(int pClass, boolean returnMessageOnError);
+//    /**
+//     * Create segemntation parameter
+//     * 
+//     * @return parameter.
+//     */
+//    public Segmentation createSegmentation();
 }

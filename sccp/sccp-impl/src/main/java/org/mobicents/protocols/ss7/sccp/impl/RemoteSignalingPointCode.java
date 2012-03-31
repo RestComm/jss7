@@ -39,6 +39,7 @@ public class RemoteSignalingPointCode implements XMLSerializable {
 	private int remoteSpcFlag;
 	private int mask;
 	private boolean remoteSpcProhibited;
+	private boolean remoteSccpProhibited;
 	
 	public RemoteSignalingPointCode(){
 		
@@ -69,15 +70,23 @@ public class RemoteSignalingPointCode implements XMLSerializable {
 		return remoteSpcProhibited;
 	}
 
+	public boolean isRemoteSccpProhibited() {
+		return remoteSccpProhibited;
+	}
+
 	public void setRemoteSpcProhibited(boolean remoteSpcProhibited) {
 		this.remoteSpcProhibited = remoteSpcProhibited;
+	}
+
+	public void setRemoteSccpProhibited(boolean remoteSccpProhibited) {
+		this.remoteSccpProhibited = remoteSccpProhibited;
 	}
 
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("rsp=").append(this.remoteSpc).append(" rsp-flag=").append(this.remoteSpcFlag).append(" mask=")
-				.append(this.mask).append(" rsp-prohibited=").append(this.remoteSpcProhibited);
+		sb.append("rsp=").append(this.remoteSpc).append(" rsp-flag=").append(this.remoteSpcFlag).append(" mask=").append(this.mask).append(" rsp-prohibited=")
+				.append(this.remoteSpcProhibited).append(" rsccp-prohibited=").append(this.remoteSccpProhibited);
 		return sb.toString();
 	}
 

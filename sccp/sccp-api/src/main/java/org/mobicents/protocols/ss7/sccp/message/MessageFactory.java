@@ -23,9 +23,9 @@
 package org.mobicents.protocols.ss7.sccp.message;
 
 import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
-import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
+import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -33,23 +33,47 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * 
  * @author baranowb
  * @author kulikov
+ * @author sergey vetyutnev
+ * 
  */
 public interface MessageFactory extends Serializable {
-	/**
-	 * Creates unit data message.
-	 * 
-	 * @return sccp message.
-	 */
-	public UnitData createUnitData(ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty);
-
-	public UnitDataService createUnitDataService(ReturnCause returnCause, SccpAddress calledParty, SccpAddress callingParty);
 
 	/**
-	 * Creates extended unit data message.
+	 * Create a SCCP data transfer message (class 0)
 	 * 
-	 * @return sccp message.
+	 * @param calledParty
+	 * @param callingParty
+	 * @param data
+	 * @param localSsn
+	 * @param returnMessageOnError
+	 * @param hopCounter
+	 *            This parameter is optional
+	 * @param importance
+	 *            This parameter is optional
+	 * @return
 	 */
-	public XUnitData createXUnitData(HopCounter hopCounter, ProtocolClass pClass, SccpAddress calledParty, SccpAddress callingParty);
+	public SccpDataMessage createDataMessageClass0(SccpAddress calledParty, SccpAddress callingParty, byte[] data, int localSsn, boolean returnMessageOnError,
+			HopCounter hopCounter, Importance importance);
 
-	public XUnitDataService createXUnitDataService(HopCounter hopCounter, ReturnCause rc, SccpAddress calledParty, SccpAddress callingParty);
+	/**
+	 * Create a SCCP data transfer message (class 1)
+	 * 
+	 * @param calledParty
+	 * @param callingParty
+	 * @param data
+	 * @param sls
+	 * @param localSsn
+	 * @param returnMessageOnError
+	 * @param hopCounter
+	 *            This parameter is optional
+	 * @param importance
+	 *            This parameter is optional
+	 * @return
+	 */
+	public SccpDataMessage createDataMessageClass1(SccpAddress calledParty, SccpAddress callingParty, byte[] data, int sls, int localSsn,
+			boolean returnMessageOnError, HopCounter hopCounter, Importance importance);
+
+//	public SccpNoticeMessage createNoticeMessage(ReturnCause returnCause, int outgoingSls, SccpAddress calledParty, SccpAddress callingParty, byte[] data,
+//			HopCounter hopCounter, Importance importance);
+
 }

@@ -54,26 +54,29 @@ public class ProtocolClassImpl extends AbstractParameter implements ProtocolClas
 	public ProtocolClassImpl() {
 	}
 
-	public ProtocolClassImpl(int pClass, int msgHandling) {
+	public ProtocolClassImpl(int pClass, boolean returnMessageOnError) {
 		this.pClass = pClass;
-		this.msgHandling = msgHandling;
+		if (pClass == 0 || pClass == 1)
+			this.msgHandling = (returnMessageOnError ? HANDLING_RET_ERR : 0);
+		else
+			this.msgHandling = 0;
 	}
 
-	public int getValue() {
-		return pClass;
+	@Override
+	public int getProtocolClass() {
+		return this.pClass;
 	}
 
-
-	public int getHandling() {
-		return msgHandling;
+	@Override
+	public boolean getReturnMessageOnError() {
+		return (this.msgHandling & HANDLING_RET_ERR) != 0 ? true : false;
 	}
 
 	public void decode(InputStream in) throws IOException {
-		if(in.read()!=1)
-		{
+		if (in.read() != 1) {
 			throw new IOException();
 		}
-	
+
 		int b = in.read() & 0xff;
 
 		pClass = b & 0x0f;
@@ -124,9 +127,5 @@ public class ProtocolClassImpl extends AbstractParameter implements ProtocolClas
 	public String toString() {
 		return "ProtocolClass [msgHandling=" + msgHandling + ", pClass=" + pClass + "]";
 	}
-
-	
-
-
-
 }
+
