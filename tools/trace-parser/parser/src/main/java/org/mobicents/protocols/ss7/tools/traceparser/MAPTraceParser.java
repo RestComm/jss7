@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.tools.traceparser;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,15 +40,47 @@ import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPMessage;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPComponentErrorReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponseIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistRequestInstructionsRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallListener;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EstablishTemporaryConnectionRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponseIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ReleaseCallRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprsListener;
+import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSmsListener;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPMessage;
+import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
@@ -58,6 +91,13 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequestIndication;
@@ -73,6 +113,13 @@ import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusRes
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRequestIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMResponseIndication;
 import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsCommandTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsDeliverReportTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsDeliverTpdu;
@@ -80,12 +127,12 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.SmsStatusReportTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.UserData;
+import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentationImpl;
-import org.mobicents.protocols.ss7.sccp.message.UnitData;
-import org.mobicents.protocols.ss7.sccp.message.XUnitData;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.DialogAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.DialogPortion;
@@ -110,7 +157,8 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
  * @author sergey vetyutnev
  * 
  */
-public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, CAPDialogListener, Runnable, ProcessControl, MAPServiceSmsListener {
+public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, CAPDialogListener, Runnable, ProcessControl, MAPServiceSmsListener,
+		MAPServiceSupplementaryListener, MAPServiceLsmListener, CAPServiceCircuitSwitchedCallListener, CAPServiceGprsListener, CAPServiceSmsListener {
 
 	private Ss7ParseParameters par;
 	private Thread t;
@@ -124,14 +172,15 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	private TCAPProviderImplWrapper tcapProvider;
 	private TCAPStackImplWrapper tcapStack;
 	private SccpProviderWrapper sccpProvider;
+	private SccpStackImpl sccpStack = new SccpStackImpl("TraceParserSccpStack");
 	private MAPProviderImpl mapProvider;
 	private CAPProviderImpl capProvider;
-	private MessageFactoryImpl msgFact = new MessageFactoryImpl(false); 
+	private MessageFactoryImpl msgFact; 
 
 	private Map<Integer, Map<Long, DialogImplWrapper>> dialogs = new HashMap<Integer, Map<Long, DialogImplWrapper>>();
 	private long dialogEnumerator = 0;
 	private long tcapLogMsg = 0;
-	private ArrayList<String> msgData = new ArrayList<String>();
+	private ArrayList<String> msgDetailBuffer = new ArrayList<String>(); 
 	
 
 	public MAPTraceParser(Ss7ParseParameters par) {
@@ -182,7 +231,8 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 			
 			this.xLst.clear();
 
-			this.sccpProvider = new SccpProviderWrapper();
+			this.sccpProvider = new SccpProviderWrapper(this.sccpStack);
+			this.msgFact = new MessageFactoryImpl(this.sccpStack);
 			this.tcapStack = new TCAPStackImplWrapper(this.sccpProvider, 1);
 			this.tcapProvider = (TCAPProviderImplWrapper) this.tcapStack.getProvider();
 
@@ -192,15 +242,19 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 			this.mapProvider.getMAPServiceSms().acivate();
 			this.mapProvider.getMAPServiceLsm().acivate();
 
-			
 			this.mapProvider.addMAPDialogListener(this);
-			this.mapProvider.getMAPServiceSms().addMAPServiceListener((MAPServiceSmsListener) this);
+			this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
+			this.mapProvider.getMAPServiceSms().addMAPServiceListener(this);
+			this.mapProvider.getMAPServiceLsm().addMAPServiceListener(this);
 
 			this.capProvider = new CAPProviderImpl(this.tcapProvider);
 
 			this.capProvider.getCAPServiceCircuitSwitchedCall().acivate();
 			this.capProvider.getCAPServiceGprs().acivate();
 			this.capProvider.getCAPServiceSms().acivate();
+			this.capProvider.getCAPServiceCircuitSwitchedCall().addCAPServiceListener(this);
+			this.capProvider.getCAPServiceGprs().addCAPServiceListener(this);
+			this.capProvider.getCAPServiceSms().addCAPServiceListener(this);
 
 			this.tcapStack.start();
 			if (this.par.getParseProtocol() == ParseProtocol.Map)
@@ -284,14 +338,13 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				int sls = ((b4 & 0xf0) >> 4);
 
 				int type = in.readUnsignedByte();
-				SccpMessageImpl msg = msgFact.createMessage(type, in);
-				if (msg != null) {
-					msg.setDpc(dpc);
-					msg.setOpc(opc);
-					msg.setSls(sls);
+				SccpMessageImpl msg = msgFact.createMessage(type, opc, dpc, sls, in);
+				if (msg != null && (msg instanceof SccpDataMessageImpl)) {
+//					msg.setDpc(dpc);
+//					msg.setOpc(opc);
+//					msg.setSls(sls);
 
-//					this.tcapProvider.onMessage(msg, 0);
-					this.onMessage(msg, 0);
+					this.onMessage((SccpDataMessageImpl)msg, 0);
 				} else {
 					// unknown sccp message type
 					return;
@@ -306,71 +359,83 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 		}
 	}
 
-	HashMap<Long, XUnitDataDef> xLst = new HashMap<Long, XUnitDataDef>();
+	HashMap<MessageReassemblyProcess, XUnitDataDef> xLst = new HashMap<MessageReassemblyProcess, XUnitDataDef>();
 
 	private class XUnitDataDef {
 		public int remainingSegm;
 		public ArrayList<byte[]> dLst = new ArrayList<byte[]>();
 	}
+	
+	public class MessageReassemblyProcess {
+		private int segmentationLocalRef;
+		private SccpAddress callingPartyAddress;
 
-	public void onMessage(SccpMessageImpl message, int seqControl) {
+		public MessageReassemblyProcess(int segmentationLocalRef, SccpAddress callingPartyAddress) {
+			this.segmentationLocalRef = segmentationLocalRef;
+			this.callingPartyAddress = callingPartyAddress;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null)
+				return false;
+			if (!(obj instanceof MessageReassemblyProcess))
+				return false;
+			MessageReassemblyProcess x = (MessageReassemblyProcess) obj;
+			if (this.segmentationLocalRef != x.segmentationLocalRef)
+				return false;
+
+			if (this.callingPartyAddress == null || x.callingPartyAddress == null)
+				return false;
+
+			return this.callingPartyAddress.equals(x.callingPartyAddress);
+		}
+
+		@Override
+		public int hashCode() {
+			return this.segmentationLocalRef;
+		}
+	}
+
+	public void onMessage(SccpDataMessageImpl message, int seqControl) {
 		try {
-			byte[] data = null;
-			SccpAddress localAddress = null;
-			SccpAddress remoteAddress = null;
-			this.msgData.clear();
+			this.msgDetailBuffer.clear();
 
-			if (message.getType() == UnitData.MESSAGE_TYPE) {
-				data = ((UnitData) message).getData();
-				localAddress = ((UnitData) message).getCalledPartyAddress();
-				remoteAddress = ((UnitData) message).getCallingPartyAddress();
-			} else if (message.getType() == XUnitData.MESSAGE_TYPE) {
-				XUnitData xMsg = (XUnitData) message;
-				data = xMsg.getData();
-				localAddress = xMsg.getCalledPartyAddress();
-				remoteAddress = xMsg.getCallingPartyAddress();
+			byte[] data = message.getData();
+			SccpAddress localAddress = message.getCalledPartyAddress();
+			SccpAddress remoteAddress = message.getCallingPartyAddress();
 
-				SegmentationImpl sgm = (SegmentationImpl)xMsg.getSegmentation();
-				if (sgm != null && (!sgm.isFirstSegIndication() || sgm.getRemainingSegments() > 0)) {
-					XUnitDataDef msgDef;
-					long ind = 0;
-					for (byte bt : sgm.getSegmentationLocalRef()) {
-						ind = (ind << 8) + (bt & 0xFF);
-					}
-					if (!sgm.isFirstSegIndication()) {
-						msgDef = xLst.get(ind);
-						if (msgDef == null)
-							return;
-						if (msgDef.remainingSegm - 1 != sgm.getRemainingSegments()) {
-							xLst.remove(ind);
-							return;
-						}
-					} else {
-						msgDef = new XUnitDataDef();
-						xLst.put(ind, msgDef);
-					}
-					msgDef.remainingSegm = sgm.getRemainingSegments();
-					msgDef.dLst.add(data);
-					
-					if (sgm.getRemainingSegments() == 0) {
-						int ln = 0;
-						for (byte[] buf : msgDef.dLst) {
-							ln += buf.length;
-						}
-						data = new byte[ln];
-						int offs = 0;
-						for (byte[] buf : msgDef.dLst) {
-							System.arraycopy(buf, 0, data, offs, buf.length);
-							offs += buf.length;
-						}
-						xLst.remove(ind);
-					} else {
+			Segmentation sgm = message.getSegmentation();
+			if (sgm != null) {
+				if (sgm.isFirstSegIndication()) {
+					if (sgm.getRemainingSegments() > 0) {
+						MessageReassemblyProcess mrp = new MessageReassemblyProcess(sgm.getSegmentationLocalRef(), message.getCallingPartyAddress());
+						XUnitDataDef dd = new XUnitDataDef();
+						dd.remainingSegm = sgm.getRemainingSegments();
+						dd.dLst.add(data);
+						xLst.put(mrp, dd);
+						
 						return;
 					}
-				}
+				} else {
+					MessageReassemblyProcess mrp = new MessageReassemblyProcess(sgm.getSegmentationLocalRef(), message.getCallingPartyAddress());
+					XUnitDataDef dd = xLst.get(mrp);
+					if (dd == null)
+						return;
+					dd.remainingSegm--;
+					if (dd.remainingSegm != sgm.getRemainingSegments())
+						return;
+					dd.dLst.add(data);
 
-			} else {
-				return;
+					if (dd.remainingSegm > 0)
+						return;
+					xLst.remove(mrp);
+					ByteArrayOutputStream stm = new ByteArrayOutputStream();
+					for (byte[] buf : dd.dLst) {
+						stm.write(buf);
+					}
+					data = stm.toByteArray();
+				}
 			}
 
 			// asnData - it should pass
@@ -389,7 +454,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				// begin);
 				long originatingTransactionId = tcm.getOriginatingTransactionId();
 				long destinationTransactionId = tcm.getDestinationTransactionId();
-				int dpc = message.getDpc();
+				int dpc = message.getIncomingDpc();
 				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
 				int acnValue = 0;
 				int acnVersion = 0;
@@ -405,7 +470,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 					
 					DialogImplWrapper di = dpcData.get(destinationTransactionId);
 					if (di != null) {
-						int opc = message.getOpc();
+						int opc = message.getIncomingOpc();
 						Map<Long, DialogImplWrapper> opcData = this.dialogs.get(opc);
 						if (opcData == null) {
 							opcData = new HashMap<Long, DialogImplWrapper>();
@@ -425,7 +490,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 						if (!CheckDialogIdFilter(originatingTransactionId, destinationTransactionId))
 							return;
 
-						di.curOpc = message.getOpc();
+						di.curOpc = message.getIncomingOpc();
 						di.processContinue(tcm, localAddress, remoteAddress);
 
 						if (this.pw != null) {
@@ -451,7 +516,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				DialogImplWrapper di = new DialogImplWrapper(localAddress, remoteAddress, ++this.dialogEnumerator, true, this.tcapProvider.getExecuter(),
 						this.tcapProvider, 0);
 				long originatingTransactionId = tcb.getOriginatingTransactionId();
-				int opc = message.getOpc();
+				int opc = message.getIncomingOpc();
 				Map<Long, DialogImplWrapper> opcData = this.dialogs.get(opc);
 				if (opcData == null) {
 					opcData = new HashMap<Long, DialogImplWrapper>();
@@ -484,20 +549,17 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				if (!CheckDialogIdFilter(originatingTransactionId, Integer.MIN_VALUE))
 					return;
 
-				di.curOpcOrig = message.getOpc();
-				di.curOpc = message.getOpc();
+				di.curOpcOrig = message.getIncomingOpc();
+				di.curOpc = message.getIncomingDpc();
 				di.processBegin(tcb, localAddress, remoteAddress);
 
 				if (this.pw != null) {
-//					this.pw.print("TC-BEGIN: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", originatingTransactionId=" + originatingTransactionId);
 					this.pw.print("TC-BEGIN: ");
 					this.printAddresses(message, originatingTransactionId, -1);
 					if (this.par.getTcapMsgData()) {
 						LogDataTag(aisMsg, "Begin", tcb.getComponent(), di.getAcnValue(), di.getAcnVersion(), tcb.getDialogPortion());
 					}
 					this.printMsgData();
-					// this.LogComponents(tcb.getComponent(),
-					// di.getAcnValue(), di.getAcnVersion(), comp);
 				}
 				break;
 			}
@@ -506,7 +568,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				TCEndMessage teb = TcapFactory.createTCEndMessage(ais);
 				long destinationTransactionId = teb.getDestinationTransactionId();
 
-				int dpc = message.getDpc();
+				int dpc = message.getIncomingDpc();
 				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
 				int acnValue = 0;
 				int acnVersion = 0;
@@ -525,7 +587,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 						if (!CheckDialogIdFilter(destinationTransactionId, Integer.MIN_VALUE))
 							return;
 
-						di.curOpc = message.getOpc();
+						di.curOpc = message.getIncomingOpc();
 						di.processEnd(teb, localAddress, remoteAddress);
 
 						if (this.pw != null) {
@@ -550,7 +612,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				TCAbortMessage tub = TcapFactory.createTCAbortMessage(ais);
 				long destinationTransactionId = tub.getDestinationTransactionId();
 
-				int dpc = message.getDpc();
+				int dpc = message.getIncomingDpc();
 				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
 				int acnValue = 0;
 				int acnVersion = 0;
@@ -569,7 +631,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 						if (!CheckDialogIdFilter(destinationTransactionId, Integer.MIN_VALUE))
 							return;
 
-						di.curOpc = message.getOpc();
+						di.curOpc = message.getIncomingOpc();
 						di.processAbort(tub, localAddress, remoteAddress);
 
 						if (this.pw != null) {
@@ -598,7 +660,14 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	}
 	
 	private void printMsgData() {
-		for (String s : this.msgData) {
+		
+//		if (this.msgDetailBuffer.size() > 1) {
+//			int i1 = 0;
+//			i1++;
+//		}
+		
+		for (String s : this.msgDetailBuffer) {
+			this.pw.print("--- ");
 			this.pw.print(s);
 			this.pw.println();
 		}
@@ -606,9 +675,9 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 		this.pw.println();
 		this.pw.flush();
 	}
-	
-	private void printAddresses(SccpMessageImpl message, long originationTransactionId, long destinationTransactionId) {
-		this.pw.print("OPC=" + message.getOpc() + ", DPC=" + message.getDpc());
+
+	private void printAddresses(SccpDataMessageImpl message, long originationTransactionId, long destinationTransactionId) {
+		this.pw.print("OPC=" + message.getIncomingOpc() + ", DPC=" + message.getIncomingDpc());
 		if (originationTransactionId != -1)
 			this.pw.print(", originationTransactionId=" + originationTransactionId);
 		if (destinationTransactionId != -1)
@@ -799,7 +868,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				}
 			}
 		}
-		
+
 		if (logData != null) {
 			try {
 				AsnInputStream ais = new AsnInputStream(logData);
@@ -1009,12 +1078,6 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	}
 
 	@Override
-	public void onDialogResease(MAPDialog mapDialog) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onDialogTimeout(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 		
@@ -1101,12 +1164,6 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 //			di.setAcnValue(capDialog.getApplicationContext().getApplicationContextName().getApplicationContextCode());
 			di.setAcnVersion(capDialog.getApplicationContext().getVersion().getVersion());
 		}
-	}
-
-	@Override
-	public void onDialogResease(CAPDialog arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -1218,71 +1275,322 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	@Override
 	public void onForwardShortMessageIndication(ForwardShortMessageRequestIndication forwSmInd) {
 		this.parseSmsSignalInfo(forwSmInd.getSM_RP_UI(), true, true);
-		this.msgData.add(forwSmInd.toString());
 	}
 
 	@Override
 	public void onForwardShortMessageRespIndication(ForwardShortMessageResponseIndication forwSmRespInd) {
-		this.msgData.add(forwSmRespInd.toString());
 	}
 
 	@Override
 	public void onMoForwardShortMessageIndication(MoForwardShortMessageRequestIndication moForwSmInd) {
 		this.parseSmsSignalInfo(moForwSmInd.getSM_RP_UI(), true, false);
-		this.msgData.add(moForwSmInd.toString());
 	}
 
 	@Override
 	public void onMoForwardShortMessageRespIndication(MoForwardShortMessageResponseIndication moForwSmRespInd) {
 		this.parseSmsSignalInfo(moForwSmRespInd.getSM_RP_UI(), false, true);
-		this.msgData.add(moForwSmRespInd.toString());
 	}
 
 	@Override
 	public void onMtForwardShortMessageIndication(MtForwardShortMessageRequestIndication mtForwSmInd) {
 		this.parseSmsSignalInfo(mtForwSmInd.getSM_RP_UI(), false, true);
-		this.msgData.add(mtForwSmInd.toString());
 	}
 
 	@Override
 	public void onMtForwardShortMessageRespIndication(MtForwardShortMessageResponseIndication mtForwSmRespInd) {
 		this.parseSmsSignalInfo(mtForwSmRespInd.getSM_RP_UI(), true, false);
-		this.msgData.add(mtForwSmRespInd.toString());
 	}
 
 	@Override
 	public void onSendRoutingInfoForSMIndication(SendRoutingInfoForSMRequestIndication sendRoutingInfoForSMInd) {
-		this.msgData.add(sendRoutingInfoForSMInd.toString());
 	}
 
 	@Override
 	public void onSendRoutingInfoForSMRespIndication(SendRoutingInfoForSMResponseIndication sendRoutingInfoForSMRespInd) {
-		this.msgData.add(sendRoutingInfoForSMRespInd.toString());
 	}
 
 	@Override
 	public void onReportSMDeliveryStatusIndication(ReportSMDeliveryStatusRequestIndication reportSMDeliveryStatusInd) {
-		this.msgData.add(reportSMDeliveryStatusInd.toString());
 	}
 
 	@Override
 	public void onReportSMDeliveryStatusRespIndication(ReportSMDeliveryStatusResponseIndication reportSMDeliveryStatusRespInd) {
-		this.msgData.add(reportSMDeliveryStatusRespInd.toString());
 	}
 
 	@Override
 	public void onInformServiceCentreIndication(InformServiceCentreRequestIndication informServiceCentreInd) {
-		this.msgData.add(informServiceCentreInd.toString());
 	}
 
 	@Override
 	public void onAlertServiceCentreIndication(AlertServiceCentreRequestIndication alertServiceCentreInd) {
-		this.msgData.add(alertServiceCentreInd.toString());
 	}
 
 	@Override
 	public void onAlertServiceCentreRespIndication(AlertServiceCentreResponseIndication alertServiceCentreInd) {
-		this.msgData.add(alertServiceCentreInd.toString());
+	}
+
+	@Override
+	public void onMAPMessage(MAPMessage msg) {
+
+		msgDetailBuffer.add(msg.toString());
+	}
+
+	@Override
+	public void onCAPMessage(CAPMessage msg) {
+
+		msgDetailBuffer.add(msg.toString());
+	}
+
+	@Override
+	public void onDialogRelease(CAPDialog arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogRelease(MAPDialog arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProcessUnstructuredSSRequestIndication(ProcessUnstructuredSSRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProcessUnstructuredSSResponseIndication(ProcessUnstructuredSSResponseIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUnstructuredSSNotifyRequestIndication(UnstructuredSSNotifyRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponseIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUnstructuredSSRequestIndication(UnstructuredSSRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUnstructuredSSResponseIndication(UnstructuredSSResponseIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProvideSubscriberLocationRequestIndication(ProvideSubscriberLocationRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProvideSubscriberLocationResponseIndication(ProvideSubscriberLocationResponseIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendRoutingInforForLCSRequestIndication(SendRoutingInfoForLCSRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendRoutingInforForLCSResponseIndication(SendRoutingInfoForLCSResponseIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSubscriberLocationReportRequestIndication(SubscriberLocationReportRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSubscriberLocationReportResponseIndication(SubscriberLocationReportResponseIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onErrorComponent(CAPDialog arg0, Long arg1, CAPErrorMessage arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInvokeTimeout(CAPDialog arg0, Long arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderErrorComponent(CAPDialog arg0, Long arg1, CAPComponentErrorReason arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRejectComponent(CAPDialog arg0, Long arg1, Problem arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onActivityTestRequestIndication(ActivityTestRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onActivityTestResponseIndication(ActivityTestResponseIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onApplyChargingReportRequestIndication(ApplyChargingReportRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onApplyChargingRequestIndication(ApplyChargingRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAssistRequestInstructionsRequestIndication(AssistRequestInstructionsRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCallInformationReportRequestIndication(CallInformationReportRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCallInformationRequestRequestIndication(CallInformationRequestRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCancelRequestIndication(CancelRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectRequestIndication(ConnectRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectToResourceRequestIndication(ConnectToResourceRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onContinueRequestIndication(ContinueRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDisconnectForwardConnectionRequestIndication(DisconnectForwardConnectionRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onEstablishTemporaryConnectionRequestIndication(EstablishTemporaryConnectionRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onEventReportBCSMRequestIndication(EventReportBCSMRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onFurnishChargingInformationRequestIndication(FurnishChargingInformationRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInitialDPRequestIndication(InitialDPRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPlayAnnouncementRequestIndication(PlayAnnouncementRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPromptAndCollectUserInformationRequestIndication(PromptAndCollectUserInformationRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPromptAndCollectUserInformationResponseIndication(PromptAndCollectUserInformationResponseIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onReleaseCalltRequestIndication(ReleaseCallRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRequestReportBCSMEventRequestIndication(RequestReportBCSMEventRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onResetTimerRequestIndication(ResetTimerRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendChargingInformationRequestIndication(SendChargingInformationRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSpecializedResourceReportRequestIndication(SpecializedResourceReportRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

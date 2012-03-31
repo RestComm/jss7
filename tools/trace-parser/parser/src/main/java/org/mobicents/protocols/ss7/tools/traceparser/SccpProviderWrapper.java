@@ -26,11 +26,14 @@ import java.io.IOException;
 
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
+import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 
 /**
@@ -39,9 +42,15 @@ import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
  * 
  */
 public class SccpProviderWrapper implements SccpProvider {
+	
+	private SccpStackImpl stack;
+
+	public SccpProviderWrapper(SccpStackImpl stack) {
+		this.stack = stack;
+	}
 
 	public MessageFactory getMessageFactory() {
-		return new MessageFactoryImpl(false);
+		return new MessageFactoryImpl(this.stack);
 	}
 
 	public ParameterFactory getParameterFactory() {
@@ -61,6 +70,18 @@ public class SccpProviderWrapper implements SccpProvider {
 	public void send(SccpMessage message, int seqControl) throws IOException {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public int getMaxUserDataLength(SccpAddress arg0, SccpAddress arg1) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void send(SccpDataMessage arg0) throws IOException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
