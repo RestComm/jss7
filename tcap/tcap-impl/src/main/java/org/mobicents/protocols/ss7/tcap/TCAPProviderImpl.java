@@ -36,16 +36,14 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
-import org.mobicents.protocols.ss7.sccp.message.UnitData;
-import org.mobicents.protocols.ss7.sccp.message.UnitDataService;
-import org.mobicents.protocols.ss7.sccp.message.XUnitData;
-import org.mobicents.protocols.ss7.sccp.message.XUnitDataService;
+import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcap.api.DialogPrimitiveFactory;
@@ -153,23 +151,12 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	// get next Seq Control value available
 	private int getNextSeqControl() {
 		seqControl++;
-		if (seqControl > 31) {
+		if (seqControl > 255) {
 			seqControl = 0;
 
 		}
 		return seqControl;
 	}
-
-//	private Long getAvailableUniTxId() throws TCAPException {
-//		for (long l = -1; l >= Long.MIN_VALUE; l--) {
-//			Long ll = new Long(l);
-//			if (this.dialogs.containsKey(ll)) {
-//			} else {
-//				return ll;
-//			}
-//		}
-//		throw new TCAPException("Not enough resources!");
-//	}
 
 	/*
 	 * (non-Javadoc)
@@ -241,36 +228,192 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		return _getDialog(localAddress, remoteAddress, id, false, getNextSeqControl());
 	}
 
-	public void onMessage(SccpMessage message, int seqControl) {
+	public void send(byte[] data, Byte desiredQos, SccpAddress destinationAddress, SccpAddress originatingAddress,
+			int seqControl) throws IOException {
+		// FIXME: add QOS
+		SccpDataMessage msg = messageFactory.createDataMessageClass1(destinationAddress, originatingAddress, data, seqControl, this.ssn, false, null, null);
+		sccpProvider.send(msg);
+	}
+
+	public int getMaxUserDataLength(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress) {
+		return this.sccpProvider.getMaxUserDataLength(calledPartyAddress, callingPartyAddress);
+	}
+
+	public void deliver(DialogImpl dialogImpl, TCBeginIndicationImpl msg) {
+
 		try {
-			byte[] data = null;
-			SccpAddress localAddress = null;
-			SccpAddress remoteAddress = null;
-
-			switch (message.getType()) {
-
-			case UnitData.MESSAGE_TYPE:
-				data = ((UnitData) message).getData();
-				localAddress = ((UnitData) message).getCalledPartyAddress();
-				remoteAddress = ((UnitData) message).getCallingPartyAddress();
-				break;
-			case XUnitData.MESSAGE_TYPE:
-				data = ((XUnitData) message).getData();
-				localAddress = ((XUnitData) message).getCalledPartyAddress();
-				remoteAddress = ((XUnitData) message).getCallingPartyAddress();
-				break;
-			// TODO: determine action based on cause?
-			case UnitDataService.MESSAGE_TYPE:
-				data = ((UnitDataService) message).getData();
-				localAddress = ((UnitDataService) message).getCalledPartyAddress();
-				remoteAddress = ((UnitDataService) message).getCallingPartyAddress();
-				break;
-			case XUnitDataService.MESSAGE_TYPE:
-				data = ((XUnitDataService) message).getData();
-				localAddress = ((XUnitDataService) message).getCalledPartyAddress();
-				remoteAddress = ((XUnitDataService) message).getCallingPartyAddress();
-				break;
+			for (int index = 0; index < this.tcListeners.size(); index++) {
+				TCListener lst = this.tcListeners.get(index);
+				lst.onTCBegin(msg);
 			}
+		} catch (Exception e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Received exception while delivering data to transport layer.", e);
+			}
+		}
+
+	}
+
+	public void deliver(DialogImpl dialogImpl, TCContinueIndicationImpl tcContinueIndication) {
+		try {
+			for (int index = 0; index < this.tcListeners.size(); index++) {
+				TCListener lst = this.tcListeners.get(index);
+				lst.onTCContinue(tcContinueIndication);
+			}
+		} catch (Exception e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Received exception while delivering data to transport layer.", e);
+			}
+		}
+
+	}
+
+	public void deliver(DialogImpl dialogImpl, TCEndIndicationImpl tcEndIndication) {
+		try {
+			for (int index = 0; index < this.tcListeners.size(); index++) {
+				TCListener lst = this.tcListeners.get(index);
+				lst.onTCEnd(tcEndIndication);
+			}
+		} catch (Exception e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Received exception while delivering data to transport layer.", e);
+			}
+		}
+	}
+
+	public void deliver(DialogImpl dialogImpl, TCPAbortIndicationImpl tcAbortIndication) {
+		try {
+			for (int index = 0; index < this.tcListeners.size(); index++) {
+				TCListener lst = this.tcListeners.get(index);
+				lst.onTCPAbort(tcAbortIndication);
+			}
+		} catch (Exception e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Received exception while delivering data to transport layer.", e);
+			}
+		}
+
+	}
+
+	public void deliver(DialogImpl dialogImpl, TCUserAbortIndicationImpl tcAbortIndication) {
+		try {
+			for (int index = 0; index < this.tcListeners.size(); index++) {
+				TCListener lst = this.tcListeners.get(index);
+				lst.onTCUserAbort(tcAbortIndication);
+			}
+		} catch (Exception e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Received exception while delivering data to transport layer.", e);
+			}
+		}
+
+	}
+
+	public void deliver(DialogImpl dialogImpl, TCUniIndicationImpl tcUniIndication) {
+		try {
+			for (int index = 0; index < this.tcListeners.size(); index++) {
+				TCListener lst = this.tcListeners.get(index);
+				lst.onTCUni(tcUniIndication);
+			}
+		} catch (Exception e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Received exception while delivering data to transport layer.", e);
+			}
+		}
+	}
+
+	public void release(DialogImpl d) {
+	    Long did = d.getDialogId();
+		this.dialogs.remove(did);
+		this.dialogIdIndex.push(did);
+		try {
+			for (int index = 0; index < this.tcListeners.size(); index++) {
+				TCListener lst = this.tcListeners.get(index);
+				lst.onDialogReleased(d);
+			}
+		} catch (Exception e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Received exception while delivering dialog release.", e);
+			}
+		}
+	}
+
+	/**
+	 * @param d
+	 */
+	public void timeout(DialogImpl d) {
+		try {
+			for (int index = 0; index < this.tcListeners.size(); index++) {
+				TCListener lst = this.tcListeners.get(index);
+				lst.onDialogTimeout(d);
+			}
+		} catch (Exception e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Received exception while delivering dialog release.", e);
+			}
+		}
+		
+	}
+	
+	public TCAPStackImpl getStack()
+	{
+		return this.stack;
+	}
+	
+	// ///////////////////////////////////////////
+	// Some methods invoked by operation FSM //
+	// //////////////////////////////////////////
+	public Future createOperationTimer(Runnable operationTimerTask, long invokeTimeout) {
+
+		return this._EXECUTOR.schedule(operationTimerTask, invokeTimeout, TimeUnit.MILLISECONDS);
+	}
+
+	public void operationTimedOut(InvokeImpl tcInvokeRequestImpl) {
+		try {
+			for (int index = 0; index < this.tcListeners.size(); index++) {
+				TCListener lst = this.tcListeners.get(index);
+				lst.onInvokeTimeout(tcInvokeRequestImpl);
+			}
+		} catch (Exception e) {
+			if (logger.isEnabledFor(Level.ERROR)) {
+				logger.error("Received exception while delivering Begin.", e);
+			}
+		}
+	}
+
+
+	void start() {
+		logger.info("Starting TCAP Provider");
+		this._EXECUTOR = Executors.newScheduledThreadPool(4);		
+		this.sccpProvider.registerSccpListener(ssn, this);
+		logger.info("Registered SCCP listener with address " + ssn);
+	}
+
+	void stop() {
+		this._EXECUTOR.shutdown();
+		this.sccpProvider.deregisterSccpListener(ssn);
+
+	}
+
+	@Override
+	public void onCoordRequest(int arg0, int arg1, int arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCoordResponse(int arg0, int arg1, int arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onMessage(SccpDataMessage message) {
+		try {
+			byte[] data = message.getData();
+			SccpAddress localAddress = message.getCalledPartyAddress();
+			SccpAddress remoteAddress = message.getCallingPartyAddress();
+
 			// FIXME: Qs state that OtxID and DtxID consittute to dialog id.....
 
 			// asnData - it should pass
@@ -378,171 +521,22 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		}
 	}
 
-	public void send(byte[] data, Byte desiredQos, SccpAddress destinationAddress, SccpAddress originatingAddress,
-			int seqControl) throws IOException {
-		// FIXME: add QOS
-		ProtocolClass pClass = parameterFactory.createProtocolClass(1, ProtocolClass.HANDLING_RET_ERR);
-		UnitData msg = messageFactory.createUnitData(pClass, destinationAddress, originatingAddress);
-		msg.setData(data);
-		sccpProvider.send(msg, seqControl);
-	}
-
-	public void deliver(DialogImpl dialogImpl, TCBeginIndicationImpl msg) {
-
-		try {
-			for (int index = 0; index < this.tcListeners.size(); index++) {
-				TCListener lst = this.tcListeners.get(index);
-				lst.onTCBegin(msg);
-			}
-		} catch (Exception e) {
-			if (logger.isEnabledFor(Level.ERROR)) {
-				logger.error("Received exception while delivering data to transport layer.", e);
-			}
-		}
-
-	}
-
-	public void deliver(DialogImpl dialogImpl, TCContinueIndicationImpl tcContinueIndication) {
-		try {
-			for (int index = 0; index < this.tcListeners.size(); index++) {
-				TCListener lst = this.tcListeners.get(index);
-				lst.onTCContinue(tcContinueIndication);
-			}
-		} catch (Exception e) {
-			if (logger.isEnabledFor(Level.ERROR)) {
-				logger.error("Received exception while delivering data to transport layer.", e);
-			}
-		}
-
-	}
-
-	public void deliver(DialogImpl dialogImpl, TCEndIndicationImpl tcEndIndication) {
-		try {
-			for (int index = 0; index < this.tcListeners.size(); index++) {
-				TCListener lst = this.tcListeners.get(index);
-				lst.onTCEnd(tcEndIndication);
-			}
-		} catch (Exception e) {
-			if (logger.isEnabledFor(Level.ERROR)) {
-				logger.error("Received exception while delivering data to transport layer.", e);
-			}
-		}
-	}
-
-	public void deliver(DialogImpl dialogImpl, TCPAbortIndicationImpl tcAbortIndication) {
-		try {
-			for (int index = 0; index < this.tcListeners.size(); index++) {
-				TCListener lst = this.tcListeners.get(index);
-				lst.onTCPAbort(tcAbortIndication);
-			}
-		} catch (Exception e) {
-			if (logger.isEnabledFor(Level.ERROR)) {
-				logger.error("Received exception while delivering data to transport layer.", e);
-			}
-		}
-
-	}
-
-	public void deliver(DialogImpl dialogImpl, TCUserAbortIndicationImpl tcAbortIndication) {
-		try {
-			for (int index = 0; index < this.tcListeners.size(); index++) {
-				TCListener lst = this.tcListeners.get(index);
-				lst.onTCUserAbort(tcAbortIndication);
-			}
-		} catch (Exception e) {
-			if (logger.isEnabledFor(Level.ERROR)) {
-				logger.error("Received exception while delivering data to transport layer.", e);
-			}
-		}
-
-	}
-
-	public void deliver(DialogImpl dialogImpl, TCUniIndicationImpl tcUniIndication) {
-		try {
-			for (int index = 0; index < this.tcListeners.size(); index++) {
-				TCListener lst = this.tcListeners.get(index);
-				lst.onTCUni(tcUniIndication);
-			}
-		} catch (Exception e) {
-			if (logger.isEnabledFor(Level.ERROR)) {
-				logger.error("Received exception while delivering data to transport layer.", e);
-			}
-		}
-	}
-
-	public void release(DialogImpl d) {
-	    Long did = d.getDialogId();
-		this.dialogs.remove(did);
-		this.dialogIdIndex.push(did);
-		try {
-			for (int index = 0; index < this.tcListeners.size(); index++) {
-				TCListener lst = this.tcListeners.get(index);
-				lst.onDialogReleased(d);
-			}
-		} catch (Exception e) {
-			if (logger.isEnabledFor(Level.ERROR)) {
-				logger.error("Received exception while delivering dialog release.", e);
-			}
-		}
-
-	}
-	
-	/**
-	 * @param d
-	 */
-	public void timeout(DialogImpl d) {
-		try {
-			for (int index = 0; index < this.tcListeners.size(); index++) {
-				TCListener lst = this.tcListeners.get(index);
-				lst.onDialogTimeout(d);
-			}
-		} catch (Exception e) {
-			if (logger.isEnabledFor(Level.ERROR)) {
-				logger.error("Received exception while delivering dialog release.", e);
-			}
-		}
+	@Override
+	public void onNotice(SccpNoticeMessage arg0) {
+		// TODO Auto-generated method stub
 		
 	}
-	
-	public TCAPStackImpl getStack()
-	{
-		return this.stack;
-	}
-	
-	// ///////////////////////////////////////////
-	// Some methods invoked by operation FSM //
-	// //////////////////////////////////////////
-	public Future createOperationTimer(Runnable operationTimerTask, long invokeTimeout) {
 
-		return this._EXECUTOR.schedule(operationTimerTask, invokeTimeout, TimeUnit.MILLISECONDS);
+	@Override
+	public void onPcState(int arg0, SignallingPointStatus arg1, int arg2, RemoteSccpStatus arg3) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	public void operationTimedOut(InvokeImpl tcInvokeRequestImpl) {
-		try {
-			for (int index = 0; index < this.tcListeners.size(); index++) {
-				TCListener lst = this.tcListeners.get(index);
-				lst.onInvokeTimeout(tcInvokeRequestImpl);
-			}
-		} catch (Exception e) {
-			if (logger.isEnabledFor(Level.ERROR)) {
-				logger.error("Received exception while delivering Begin.", e);
-			}
-		}
+	@Override
+	public void onState(int arg0, int arg1, boolean arg2, int arg3) {
+		// TODO Auto-generated method stub
+		
 	}
-
-
-	void start() {
-		logger.info("Starting TCAP Provider");
-		this._EXECUTOR = Executors.newScheduledThreadPool(4);		
-		this.sccpProvider.registerSccpListener(ssn, this);
-		logger.info("Registered SCCP listener with address " + ssn);
-	}
-
-	void stop() {
-		this._EXECUTOR.shutdown();
-		this.sccpProvider.deregisterSccpListener(ssn);
-
-	}
-
-	
 }
+

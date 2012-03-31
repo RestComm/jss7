@@ -36,7 +36,6 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
-import org.mobicents.protocols.ss7.tcap.api.TCListener;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.OperationState;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
@@ -847,22 +846,11 @@ public class DialogImpl implements Dialog {
 		}
 
 	}
-	
+
 	@Override
 	public int getMaxUserDataLength() {
-		
-		// TODO: Implement getting data from SCCP level using:
-		// int getMaxUserDataLength(SccpAddress localAddress, SccpAddress remoteAddress);
 
-		// now we use 272 SIF length limit
-		// maximum size = 248 (recommended), if GlobalTitle is present
-		// maximum size can be 255, if no GlobalTitle is present in both localAddress & remoteAddress
-		// maximum size by ANSI = 252
-		
-//		if (this.localAddress.getGlobalTitle() == null || this.remoteAddress.getGlobalTitle() == null)
-//			return 255;
-		
-		return 248;
+		return this.provider.getMaxUserDataLength(remoteAddress, localAddress);
 	}	
 
 	@Override
