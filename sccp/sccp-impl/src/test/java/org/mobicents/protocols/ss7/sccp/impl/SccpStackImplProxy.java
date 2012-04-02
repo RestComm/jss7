@@ -76,7 +76,7 @@ public class SccpStackImplProxy extends SccpStackImpl {
 
 		this.timerExecutors = Executors.newScheduledThreadPool(1);
 
-		for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserPart.head(), end = this.mtp3UserPart.tail(); (e = e.getNext()) != end;) {
+		for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserParts.head(), end = this.mtp3UserParts.tail(); (e = e.getNext()) != end;) {
 			Mtp3UserPart mup = e.getValue();
 			mup.addMtp3UserPartListener(this);
 		}

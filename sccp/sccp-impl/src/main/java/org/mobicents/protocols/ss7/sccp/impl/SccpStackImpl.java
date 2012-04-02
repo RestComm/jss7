@@ -25,11 +25,14 @@ package org.mobicents.protocols.ss7.sccp.impl;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import javolution.util.FastMap;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -102,7 +105,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 	protected SccpManagement sccpManagement;
 	protected SccpRoutingControl sccpRoutingControl;
 
-	protected FastMap<Integer, Mtp3UserPart> mtp3UserPart = new FastMap<Integer, Mtp3UserPart>();
+	protected FastMap<Integer, Mtp3UserPart> mtp3UserParts = new FastMap<Integer, Mtp3UserPart>();
 	protected ScheduledExecutorService timerExecutors;
 	protected FastMap<MessageReassemblyProcess, SccpSegmentableMessageImpl> reassemplyCache = new FastMap<MessageReassemblyProcess, SccpSegmentableMessageImpl>();
 
@@ -145,12 +148,22 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		return sccpProvider;
 	}
 
-	public FastMap<Integer, Mtp3UserPart> getMtp3UserParts() {
-		return mtp3UserPart;
+	public Map<Integer, Mtp3UserPart> getMtp3UserParts() {
+		return mtp3UserParts;
+	}
+	
+	public void setMtp3UserParts(Map<Integer, Mtp3UserPart> mtp3UserPartsTemp){
+		if(mtp3UserPartsTemp!= null){
+			synchronized (this) {
+				FastMap<Integer, Mtp3UserPart> newMtp3UserPart = new FastMap<Integer, Mtp3UserPart>();
+				newMtp3UserPart.putAll(mtp3UserPartsTemp);
+				this.mtp3UserParts = newMtp3UserPart;
+			}
+		}
 	}
 
 	public Mtp3UserPart getMtp3UserPart(int id) {
-		return mtp3UserPart.get(id);
+		return mtp3UserParts.get(id);
 	}
 
 	public void setMtp3UserPart(int id, Mtp3UserPart mtp3UserPart) {
@@ -159,9 +172,9 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		} else {
 			synchronized (this) {
 				FastMap<Integer, Mtp3UserPart> newMtp3UserPart = new FastMap<Integer, Mtp3UserPart>();
-				newMtp3UserPart.putAll(this.mtp3UserPart);
+				newMtp3UserPart.putAll(this.mtp3UserParts);
 				newMtp3UserPart.put(id, mtp3UserPart);
-				this.mtp3UserPart = newMtp3UserPart;
+				this.mtp3UserParts = newMtp3UserPart;
 			}
 		}
 	}
@@ -169,9 +182,9 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 	public void removeMtp3UserPart(int id) {
 		synchronized (this) {
 			FastMap<Integer, Mtp3UserPart> newMtp3UserPart = new FastMap<Integer, Mtp3UserPart>();
-			newMtp3UserPart.putAll(this.mtp3UserPart);
+			newMtp3UserPart.putAll(this.mtp3UserParts);
 			newMtp3UserPart.remove(id);
-			this.mtp3UserPart = newMtp3UserPart;
+			this.mtp3UserParts = newMtp3UserPart;
 		}
 	}
 
@@ -311,7 +324,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
 		this.timerExecutors = Executors.newScheduledThreadPool(1);
 
-		for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserPart.head(), end = this.mtp3UserPart.tail(); (e = e.getNext()) != end;) {
+		for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserParts.head(), end = this.mtp3UserParts.tail(); (e = e.getNext()) != end;) {
 			Mtp3UserPart mup = e.getValue();
 			mup.addMtp3UserPartListener(this);
 		}
@@ -334,7 +347,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		//
 		// layer3exec = null;
 
-		for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserPart.head(), end = this.mtp3UserPart.tail(); (e = e.getNext()) != end;) {
+		for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserParts.head(), end = this.mtp3UserParts.tail(); (e = e.getNext()) != end;) {
 			Mtp3UserPart mup = e.getValue();
 			mup.removeMtp3UserPartListener(this);
 		}

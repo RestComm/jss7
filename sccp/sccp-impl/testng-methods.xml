@@ -16,9 +16,10 @@
       		<package name="org.mobicents.protocols.ss7.sccp.parameter" />
   		 </packages>
   		 <classes>
+  		 <!-- 
   		 	<class name="org.mobicents.protocols.ss7.sccp.UnitDataTest"></class>
   		 	<class name="org.mobicents.protocols.ss7.sccp.XUnitDataTest"></class>
-  		 	<!-- 
+  		 	
   		 	<class name="org.mobicents.protocols.ss7.sccp.UnitDataServiceTest"></class>
   		 	 -->
   		 </classes>
