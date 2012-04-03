@@ -47,7 +47,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 public class MessageFactoryImpl implements MessageFactory {
 	private static final Logger logger = Logger.getLogger(MessageFactoryImpl.class);
 
-	private SccpStackImpl sccpStackImpl;
+	private transient SccpStackImpl sccpStackImpl;
 
 	public MessageFactoryImpl(SccpStackImpl sccpStackImpl) {
 		this.sccpStackImpl = sccpStackImpl;
