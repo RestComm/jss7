@@ -61,11 +61,11 @@ public class RouterTest {
 		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,
 				GlobalTitle.getInstance(1, "123456789"), 0);
 
-		rule1 = new Rule(RuleType.Solitary, pattern, "R");
+		rule1 = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, pattern, "R");
 		rule1.setPrimaryAddressId(211);
 		rule1.setSecondaryAddressId(212);
 
-		rule2 = new Rule(RuleType.Dominant, pattern, "K");
+		rule2 = new Rule(RuleType.Loadshared, LoadSharingAlgorithm.Bit4, pattern, "K");
 
 		primaryAddr1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 123, GlobalTitle.getInstance(1,
 				"333/---/4"), 0);
@@ -185,6 +185,7 @@ public class RouterTest {
 		Mtp3Destination dst = sap.getMtp3Destination(1);
 
 		assertEquals( rl.getPrimaryAddressId(), rule2.getPrimaryAddressId());
+		assertEquals( rl.getLoadSharingAlgorithm(), rule2.getLoadSharingAlgorithm());
 		assertEquals( adp.getSignalingPointCode(), primaryAddr2.getSignalingPointCode());
 		assertEquals( adb.getSignalingPointCode(), primaryAddr1.getSignalingPointCode());
 		assertEquals( lmr.getFirstSpc(), longMessageRule1.getFirstSpc());

@@ -31,6 +31,7 @@ import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImplProxy;
 import org.mobicents.protocols.ss7.sccp.impl.User;
+import org.mobicents.protocols.ss7.sccp.impl.router.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
 import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
@@ -124,7 +125,7 @@ public class LoadSharingTest extends SccpHarness {
 		
 		// ---- Solitary case
 		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		Rule rule = new Rule(RuleType.Solitary, pattern, "K");
+		Rule rule = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, pattern, "K");
 		rule.setPrimaryAddressId(1);
 		sccpStack1.getRouter().addRule(1, rule);
 
@@ -176,7 +177,7 @@ public class LoadSharingTest extends SccpHarness {
 		Thread.sleep(100);
 
 		// ---- Dominant case
-		rule = new Rule(RuleType.Dominant, pattern, "K");
+		rule = new Rule(RuleType.Dominant, LoadSharingAlgorithm.Undefined, pattern, "K");
 		rule.setPrimaryAddressId(1);
 		rule.setSecondaryAddressId(1);
 		sccpStack1.getRouter().addRule(1, rule);
@@ -229,24 +230,24 @@ public class LoadSharingTest extends SccpHarness {
 		Thread.sleep(100);
 
 		// ---- Loadshared case
-		rule = new Rule(RuleType.Loadshared, pattern, "K");
+		rule = new Rule(RuleType.Loadshared, LoadSharingAlgorithm.Bit4, pattern, "K");
 		rule.setPrimaryAddressId(1);
 		rule.setSecondaryAddressId(1);
 		sccpStack1.getRouter().addRule(1, rule);
 
 		// Primary and backup are available
-		//   - class 1 (route by sls): sls = 0xFF: primary route (sls & 0x10 rule)
+		//   - class 1 (route by sls): sls = 0xEF: primary route (sls & 0x10 rule)
 		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0xFF, 8, true, null, null);
+		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0xEF, 8, true, null, null);
 		sccpProvider1.send(message);
 		Thread.sleep(100);
 		assertEquals(u1.getMessages().size(), 3);
 		assertEquals(u2.getMessages().size(), 5);
 		assertEquals(mtp3UserPart11.getMessages().size(), 1);
 
-		//   - class 1 (route by sls): sls = 0xEF: backup route (sls & 0x10 rule)
+		//   - class 1 (route by sls): sls = 0xFF: backup route (sls & 0x10 rule)
 		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0xEF, 8, true, null, null);
+		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0xFF, 8, true, null, null);
 		sccpProvider1.send(message);
 		Thread.sleep(100);
 		assertEquals(u1.getMessages().size(), 3);

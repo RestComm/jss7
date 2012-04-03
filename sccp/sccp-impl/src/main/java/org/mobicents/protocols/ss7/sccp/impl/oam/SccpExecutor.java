@@ -33,6 +33,7 @@ import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
+import org.mobicents.protocols.ss7.sccp.impl.router.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRule;
 import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
@@ -605,9 +606,24 @@ public class SccpExecutor {
 			return SccpOAMMessage.INVALID_COMMAND;
 		}
 
+		LoadSharingAlgorithm algo = LoadSharingAlgorithm.Undefined;
+		if (ruleType == RuleType.Loadshared) {
+			if (options.length < 16) {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+			s1 = options[15].toLowerCase();
+			if (s1.equals("bit3")) {
+				algo = LoadSharingAlgorithm.Bit3;
+			} else if (s1.equals("bit4")) {
+				algo = LoadSharingAlgorithm.Bit4;
+			} else {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+		}
+
 		SccpAddress pattern = this.createAddress(options, 5);
 
-		rule = new Rule(ruleType, pattern, mask);
+		rule = new Rule(ruleType, algo, pattern, mask);
 		rule.setPrimaryAddressId(pAddressId);
 		rule.setSecondaryAddressId(sAddressId);
 		this.router.addRule(ruleId, rule);
@@ -668,9 +684,24 @@ public class SccpExecutor {
 			return SccpOAMMessage.INVALID_COMMAND;
 		}
 
+		LoadSharingAlgorithm algo = LoadSharingAlgorithm.Undefined;
+		if (ruleType == RuleType.Loadshared) {
+			if (options.length < 16) {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+			s1 = options[15].toLowerCase();
+			if (s1.equals("bit3")) {
+				algo = LoadSharingAlgorithm.Bit3;
+			} else if (s1.equals("bit4")) {
+				algo = LoadSharingAlgorithm.Bit4;
+			} else {
+				return SccpOAMMessage.INVALID_COMMAND;
+			}
+		}
+
 		SccpAddress pattern = this.createAddress(options, 5);
 
-		rule = new Rule(ruleType, pattern, mask);
+		rule = new Rule(ruleType, algo, pattern, mask);
 		rule.setPrimaryAddressId(pAddressId);
 		rule.setSecondaryAddressId(sAddressId);
 		this.router.addRule(ruleId, rule);

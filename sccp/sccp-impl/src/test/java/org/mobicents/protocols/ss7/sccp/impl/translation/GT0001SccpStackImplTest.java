@@ -30,6 +30,7 @@ import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.User;
+import org.mobicents.protocols.ss7.sccp.impl.router.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
 import org.mobicents.protocols.ss7.sccp.impl.router.RuleType;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
@@ -89,9 +90,9 @@ public class GT0001SccpStackImplTest extends SccpHarness {
 		
 		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,GT2_pattern_digits), getSSN());
 		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,GT1_pattern_digits), getSSN());
-		Rule rule1 = new Rule(RuleType.Solitary, rule1SccpAddress, "K/R/K");
+		Rule rule1 = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule1SccpAddress, "K/R/K");
 		rule1.setPrimaryAddressId(22);
-		Rule rule2 = new Rule(RuleType.Solitary, rule2SccpAddress, "R/R/R");
+		Rule rule2 = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule2SccpAddress, "R/R/R");
 		rule2.setPrimaryAddressId(33);
 		super.router1.addRule(1, rule1);
 		super.router2.addRule(1, rule2);
@@ -160,9 +161,9 @@ public class GT0001SccpStackImplTest extends SccpHarness {
 
 		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,GT2_pattern_digits), getSSN());
 		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,GT1_pattern_digits), getSSN());
-		Rule rule1 = new Rule(RuleType.Solitary, rule1SccpAddress, "K/R/K");
+		Rule rule1 = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule1SccpAddress, "K/R/K");
 		rule1.setPrimaryAddressId(22);
-		Rule rule2 = new Rule(RuleType.Solitary, rule2SccpAddress, "R/K/R");
+		Rule rule2 = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule2SccpAddress, "R/K/R");
 		rule2.setPrimaryAddressId(33);
 		super.router1.addRule(1, rule1);
 		super.router2.addRule(1, rule2);
@@ -185,9 +186,9 @@ public class GT0001SccpStackImplTest extends SccpHarness {
 		//2. add rules to make translation to above
 		rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,"23456/?/8"), getSSN());
 		rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,"02/?"), getSSN());
-		rule1 = new Rule(RuleType.Solitary, rule1SccpAddress, "K/K/K");
+		rule1 = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule1SccpAddress, "K/K/K");
 		rule1.setPrimaryAddressId(44);
-		rule2 = new Rule(RuleType.Solitary, rule2SccpAddress, "K/K");
+		rule2 = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule2SccpAddress, "K/K");
 		rule2.setPrimaryAddressId(66);
 		super.router1.addRule(2, rule1);
 		super.router2.addRule(2, rule2);

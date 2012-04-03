@@ -51,6 +51,7 @@ public class Rule implements Serializable {
 	private static final long serialVersionUID = 2147449454267320237L;
 
 	private static final String RULETYPE = "ruleType";
+	private static final String LS_ALGO = "loadSharingAlgo";
 	private static final String PATTERN = "pattern";
 	private static final String OPEN_BRACKET = "(";
 	private static final String CLOSE_BRACKET = ")";
@@ -61,6 +62,7 @@ public class Rule implements Serializable {
 	private final static String SEPARATOR = ";";
 
 	private RuleType ruleType = RuleType.Solitary;
+	private LoadSharingAlgorithm loadSharingAlgo = LoadSharingAlgorithm.Undefined;
 	
 	/** Pattern used for selecting rule */
 	private SccpAddress pattern;
@@ -90,10 +92,11 @@ public class Rule implements Serializable {
 	 * @param mtpInfo
 	 *            MTP routing info
 	 */
-	public Rule(RuleType ruleType, SccpAddress pattern, String mask) {
+	public Rule(RuleType ruleType, LoadSharingAlgorithm loadSharingAlgo, SccpAddress pattern, String mask) {
 		this.ruleType = ruleType;
 		this.pattern = pattern;
 		this.mask = mask;
+		this.loadSharingAlgo = loadSharingAlgo;
 
 		configure();
 	}
@@ -104,6 +107,14 @@ public class Rule implements Serializable {
 
 	public void setRuleType(RuleType ruleType) {
 		this.ruleType = ruleType;
+	}
+
+	public LoadSharingAlgorithm getLoadSharingAlgorithm() {
+		return loadSharingAlgo;
+	}
+
+	public void setLoadSharingAlgorithm(LoadSharingAlgorithm loadSharingAlgo) {
+		this.loadSharingAlgo = loadSharingAlgo;
 	}
 
 	public SccpAddress getPattern() {
@@ -387,6 +398,7 @@ public class Rule implements Serializable {
 
 		public void read(javolution.xml.XMLFormat.InputElement xml, Rule rule) throws XMLStreamException {
 			rule.ruleType = RuleType.valueOf(xml.getAttribute(RULETYPE).toString());
+			rule.loadSharingAlgo = LoadSharingAlgorithm.valueOf(xml.getAttribute(LS_ALGO).toString());
 			rule.mask = xml.getAttribute(MASK).toString();
 			rule.primaryAddressId = xml.getAttribute(PRIMARY_ADDRESS).toInt();
 			rule.secondaryAddressId = xml.getAttribute(SECONDARY_ADDRESS).toInt();
@@ -396,6 +408,7 @@ public class Rule implements Serializable {
 
 		public void write(Rule rule, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
 			xml.setAttribute(RULETYPE, rule.ruleType.toString());
+			xml.setAttribute(LS_ALGO, rule.loadSharingAlgo.toString());
 			xml.setAttribute(MASK, rule.mask);
 			xml.setAttribute(PRIMARY_ADDRESS, rule.primaryAddressId);
 			xml.setAttribute(SECONDARY_ADDRESS, rule.secondaryAddressId);
@@ -410,6 +423,14 @@ public class Rule implements Serializable {
 		buff.append(ruleType.toString());
 		buff.append(CLOSE_BRACKET);
 		buff.append(SEPARATOR);
+
+		if (this.ruleType == RuleType.Loadshared) {
+			buff.append(LS_ALGO);
+			buff.append(OPEN_BRACKET);
+			buff.append(this.loadSharingAlgo.toString());
+			buff.append(CLOSE_BRACKET);
+			buff.append(SEPARATOR);
+		}
 
 		buff.append(PATTERN);
 		buff.append(OPEN_BRACKET);

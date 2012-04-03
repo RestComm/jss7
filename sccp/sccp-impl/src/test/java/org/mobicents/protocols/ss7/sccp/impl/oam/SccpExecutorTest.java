@@ -36,6 +36,7 @@ import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
+import org.mobicents.protocols.ss7.sccp.impl.router.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRule;
 import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
@@ -154,17 +155,19 @@ public class SccpExecutorTest {
 		assertEquals(this.router.getRules().size(), 3);
 		assertEquals(this.router.getRule(3).getRuleType(), RuleType.Dominant);
 
-		createRuleCmd2 = "sccp rule create 4 R 71 2 8 0 0 3 123456789 loadshared 1 1";
+		createRuleCmd2 = "sccp rule create 4 R 71 2 8 0 0 3 123456789 loadshared 1 1 bit3";
 		result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
 		assertTrue(result.equals(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED));
 		assertEquals(this.router.getRules().size(), 4);
 		assertEquals(this.router.getRule(4).getRuleType(), RuleType.Loadshared);
+		assertEquals(this.router.getRule(4).getLoadSharingAlgorithm(), LoadSharingAlgorithm.Bit3);
 
-		createRuleCmd2 = "sccp rule modify 1 R 71 2 8 0 0 3 123456789 loadshared 1 1";
+		createRuleCmd2 = "sccp rule modify 1 R 71 2 8 0 0 3 123456789 loadshared 1 1 bit4";
 		result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
 		assertTrue(result.equals(SccpOAMMessage.RULE_SUCCESSFULLY_MODIFIED));
 		assertEquals(this.router.getRules().size(), 4);
 		assertEquals(this.router.getRule(1).getRuleType(), RuleType.Loadshared);
+		assertEquals(this.router.getRule(1).getLoadSharingAlgorithm(), LoadSharingAlgorithm.Bit4);
 
 		createRuleCmd2 = "sccp rule modify 1 R 71 2 8 0 0 3 123456789 dominant 1 1";
 		result = this.sccpExecutor.execute(createRuleCmd2.split(" "));

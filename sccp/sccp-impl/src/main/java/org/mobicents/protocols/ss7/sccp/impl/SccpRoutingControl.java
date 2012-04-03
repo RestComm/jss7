@@ -37,6 +37,7 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpNoticeMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
+import org.mobicents.protocols.ss7.sccp.impl.router.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRule;
 import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
@@ -349,9 +350,7 @@ public class SccpRoutingControl {
 					else
 						translationAddress = translationAddressSec;
 				} else {
-					// TODO: implement algorithms for selecting a destination
-					// now selecting depends on 0x10 bit of sls
-					if ((msg.getSls() & 0x10) != 0)
+					if (this.selectLoadSharingRoute(rule.getLoadSharingAlgorithm(), msg))
 						translationAddress = translationAddressPri;
 					else
 						translationAddress = translationAddressSec;
@@ -369,6 +368,26 @@ public class SccpRoutingControl {
 
 		// routing procedures then continue's
 		this.route(msg);
+	}
+
+	private boolean selectLoadSharingRoute(LoadSharingAlgorithm loadSharingAlgo, SccpAddressedMessageImpl msg) {
+
+		if (loadSharingAlgo == LoadSharingAlgorithm.Bit4) {
+			if ((msg.getSls() & 0x10) == 0)
+				return true;
+			else
+				return false;
+		} else if (loadSharingAlgo == LoadSharingAlgorithm.Bit3) {
+			if ((msg.getSls() & 0x08) == 0)
+				return true;
+			else
+				return false;
+		} else {
+			// TODO: implement complicated algorithms for selecting a destination
+			// (CallingPartyAddress & SLS depended)
+			// Look at Q.815 8.1.3 - active loadsharing 
+			return true;
+		}
 	}
 
 	private void route(SccpAddressedMessageImpl msg) throws IOException {

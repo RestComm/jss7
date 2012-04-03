@@ -29,6 +29,7 @@ import static org.testng.Assert.*;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.User;
+import org.mobicents.protocols.ss7.sccp.impl.router.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
 import org.mobicents.protocols.ss7.sccp.impl.router.RuleType;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
@@ -86,9 +87,9 @@ public class GT0010SccpStackImplTest extends SccpHarness {
 		
 		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0010(0,GT2_pattern_digits), getSSN());
 		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0010(0,GT1_pattern_digits), getSSN());
-		Rule rule1 = new Rule(RuleType.Solitary, rule1SccpAddress, "K/R/K");
+		Rule rule1 = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule1SccpAddress, "K/R/K");
 		rule1.setPrimaryAddressId(22);
-		Rule rule2 = new Rule(RuleType.Solitary, rule2SccpAddress, "R/R/R");
+		Rule rule2 = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule2SccpAddress, "R/R/R");
 		rule2.setPrimaryAddressId(33);
 		super.router1.addRule(1, rule1);
 		super.router2.addRule(1, rule2);
