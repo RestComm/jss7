@@ -56,8 +56,8 @@ public class MessageFactoryImpl implements MessageFactory {
 	@Override
 	public SccpDataMessage createDataMessageClass0(SccpAddress calledParty, SccpAddress callingParty, byte[] data, int localSsn, boolean returnMessageOnError,
 			HopCounter hopCounter, Importance importance) {
-		return new SccpDataMessageImpl(this.sccpStackImpl, new ProtocolClassImpl(0, returnMessageOnError), 0, localSsn, calledParty, callingParty, data, hopCounter,
-				importance);
+		return new SccpDataMessageImpl(this.sccpStackImpl, new ProtocolClassImpl(0, returnMessageOnError), sccpStackImpl.newSls(), localSsn, calledParty,
+				callingParty, data, hopCounter, importance);
 	}
 
 	@Override

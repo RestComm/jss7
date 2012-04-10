@@ -580,9 +580,9 @@ public class SccpRoutingControl {
 
 		msg.setOutgoingDpc(msg.getCalledPartyAddress().getSignalingPointCode());
 
-		if (msg.getSccpCreatesSls()) {
-			msg.setSls(this.sccpStackImpl.newSls());
-		}
+//		if (msg.getSccpCreatesSls()) {
+//			msg.setSls(this.sccpStackImpl.newSls());
+//		}
 
 		ReturnCauseValue er = this.send(msg);
 		if (er != null) {
