@@ -62,6 +62,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.ReturnCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
+ * 
  * @author amit bhayani
  * @author baranowb
  * @author sergey vetyutnev
