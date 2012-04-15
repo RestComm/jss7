@@ -237,9 +237,12 @@ public class SccpRoutingControl {
 		if (this.sccpStackImpl.router.spcIsLocal(translationAddress.getSignalingPointCode())) {
 			// destination PC is local
 			int ssn = translationAddress.getSubsystemNumber();
-			if (ssn == 1 || this.sccpProviderImpl.getSccpListener(ssn) != null) {
+			if (ssn == 0 || ssn == 1 || this.sccpProviderImpl.getSccpListener(ssn) != null) {
 				return TranslationAddressCheckingResult.destinationAvailable;
 			} else {
+				if (logger.isEnabledFor(Level.WARN)) {
+					logger.warn(String.format("Received SccpMessage=%s for Translation but no local SSN is present for %s Address ", msg, destName));
+				}				
 				return TranslationAddressCheckingResult.destinationUnavailable_SubsystemFailure;
 			}
 		}
@@ -255,6 +258,10 @@ public class SccpRoutingControl {
 		}
 		
 		if (remoteSpc.isRemoteSpcProhibited()) {
+			if (logger.isEnabledFor(Level.WARN)) {
+				logger.warn(String.format("Received SccpMessage=%s for Translation but %s Remote Signaling Pointcode = %d is prohibited ", msg, destName,
+						translationAddress.getSignalingPointCode()));
+			}			
 			return TranslationAddressCheckingResult.destinationUnavailable_MtpFailure;
 		}			
 
@@ -270,6 +277,10 @@ public class SccpRoutingControl {
 					return TranslationAddressCheckingResult.translationFailure;
 				}
 				if (remoteSubSystem.isRemoteSsnProhibited()) {
+					if (logger.isEnabledFor(Level.WARN)) {
+						logger.warn(String.format("Received SccpMessage=%s for Translation but %s Remote SubSystem = %d (dpc=%d) is prohibited ", msg,
+								destName, translationAddress.getSubsystemNumber(), translationAddress.getSignalingPointCode()));
+					}					
 					return TranslationAddressCheckingResult.destinationUnavailable_SubsystemFailure;
 				}
 			}
@@ -282,8 +293,8 @@ public class SccpRoutingControl {
 
 		// checking for hop counter
 		if (!msg.reduceHopCounter()) {
-			if (logger.isDebugEnabled()) {
-				logger.debug(String.format("Received SccpMessage for Translation but hop counter violation detected\nSccpMessage=%s", msg));
+			if (logger.isEnabledFor(Level.WARN)) {
+				logger.warn(String.format("Received SccpMessage for Translation but hop counter violation detected\nSccpMessage=%s", msg));
 			}
 			this.sendSccpError(msg, ReturnCauseValue.HOP_COUNTER_VIOLATION);
 			return;

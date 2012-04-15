@@ -42,7 +42,7 @@
 						true
 					</resolveTransitiveDependencies>
 					<eclipseProjectName>
-						mobicents-sccp-stack
+						sccp
 					</eclipseProjectName>
 				</configuration>
 			</plugin>

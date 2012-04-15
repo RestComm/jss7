@@ -10,10 +10,11 @@
 	  	</groups>
 	  	 -->
 	  	<packages>
+	  		<package name="org.mobicents.protocols.ss7.sccp.impl" />
       		<package name="org.mobicents.protocols.ss7.sccp.impl.parameter" />
       		<package name="org.mobicents.protocols.ss7.sccp.impl.gtt" />
       		<package name="org.mobicents.protocols.ss7.indicator" />
-      		<package name="org.mobicents.protocols.ss7.sccp.parameter" />
+      		<package name="org.mobicents.protocols.ss7.sccp.impl.message" />
   		 </packages>
   		 <classes>
   		 <!-- 
