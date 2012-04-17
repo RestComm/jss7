@@ -375,20 +375,6 @@ Halting VM]]></screen>
 				
 				<variablelist>
 					<varlistentry>
-						<term>localSpc</term>
-						<listitem>
-							<para>property 
-				specifies the local signaling point code.</para>
-						</listitem>
-					</varlistentry>
-					<varlistentry>
-						<term>ni</term>
-						<listitem>
-							<para>specifies the network indicator that forms 
-				the part of service information octet (SIO)</para>
-						</listitem>
-					</varlistentry>
-					<varlistentry>
 						<term>Router</term>
 						<listitem>
 							<para>manages the route for SCCP. When Router is started it looks for file <filename>sccprouter.xml</filename> 
@@ -408,7 +394,11 @@ Halting VM]]></screen>
 					<varlistentry>
 						<term>mtp3UserPart</term>
 						<listitem>
-							<para>specifies SS7 Level 3 to be used as transport medium(  be it SS7 card or M3UA)</para>
+							<para>Specifies SS7 Level 3 to be used as transport medium (be it SS7 card or M3UA). 
+							This property is indexed and more than one mtp3UserPart can be used. 
+							In the listing below the property with the index "1" is defined ("property name="mtp3UserPart[1]"). 
+							For the each mtp3UserPart a logical "service access point" (sap) 
+							must be configured (Refer <xref linkend="sccp"/> on how to configure service access points).</para>
 						</listitem>
 					</varlistentry>
 				</variablelist>
@@ -445,15 +435,13 @@ Halting VM]]></screen>
 	</bean>
 
 	<bean name="SccpStack" class="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl">
-		<property name="localSpc">2</property>
-		<property name="ni">2</property>
 		<property name="router">
 			<inject bean="Router" />
 		</property>
 		<property name="sccpResource">
 			<inject bean="SccpResource" />
 		</property>
-		<property name="mtp3UserPart">
+		<property name="mtp3UserPart[1]">
 			<inject bean="Mtp3UserPart" />
 		</property>
 	</bean>
