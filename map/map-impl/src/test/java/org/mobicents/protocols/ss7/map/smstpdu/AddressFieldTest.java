@@ -32,7 +32,7 @@ import java.util.Arrays;
 
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -43,6 +43,10 @@ public class AddressFieldTest {
 
 	public byte[] getData() {
 		return new byte[] { 11, -111, 39, 34, -125, 72, 35, -15 };
+	}
+
+	public byte[] getDataAlphaNumeric() {
+		return new byte[] { 0x07, (byte) 0xd0, (byte) 0xc1, (byte) 0xeb, 0x70, 0x08 };
 	}
 
 	@Test(groups = { "functional.decode","smstpdu"})
@@ -63,4 +67,24 @@ public class AddressFieldTest {
 		impl.encodeData(stm);
 		assertTrue(Arrays.equals(stm.toByteArray(), this.getData()));
 	}
+
+    @Test(groups = { "functional.decode", "smstpduAlphaNumeric" })
+    public void testDecodeAlphaNumeric() throws Exception {
+
+            InputStream stm = new ByteArrayInputStream(this.getDataAlphaNumeric());
+            AddressFieldImpl impl = AddressFieldImpl.createMessage(stm);
+            assertEquals(impl.getTypeOfNumber(), TypeOfNumber.Alphanumeric);
+            assertEquals(impl.getNumberingPlanIdentification(), NumberingPlanIdentification.Unknown);
+            assertEquals(impl.getAddressValue(), "AWCC");
+    }
+
+    @Test(groups = { "functional.encode", "smstpduAlphaNumeric" })
+    public void testEncodeAlphaNumeric() throws Exception {
+
+            AddressFieldImpl impl = new AddressFieldImpl(TypeOfNumber.Alphanumeric, NumberingPlanIdentification.Unknown, "AWCC");
+            ByteArrayOutputStream stm = new ByteArrayOutputStream();
+            impl.encodeData(stm);
+            byte[] encodedData = stm.toByteArray();
+            assertTrue(Arrays.equals(encodedData, this.getDataAlphaNumeric()));
+    }
 }

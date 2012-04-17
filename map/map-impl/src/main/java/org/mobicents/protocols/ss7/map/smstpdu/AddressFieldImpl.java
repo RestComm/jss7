@@ -25,7 +25,14 @@ package org.mobicents.protocols.ss7.map.smstpdu;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 
+import org.mobicents.protocols.ss7.map.GSMCharset;
+import org.mobicents.protocols.ss7.map.GSMCharsetDecoder;
+import org.mobicents.protocols.ss7.map.GSMCharsetDecodingData;
+import org.mobicents.protocols.ss7.map.GSMCharsetEncoder;
+import org.mobicents.protocols.ss7.map.GSMCharsetEncodingData;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.smstpdu.AddressField;
@@ -67,8 +74,6 @@ public class AddressFieldImpl implements AddressField {
 				throw new MAPException("Error creating AddressField: Address-Length field not found");
 			if (addressLength < 0 || addressLength > 20)
 				throw new MAPException("Error creating AddressField: Address-Length field must be equal from 0 to 20, found: addressLength");
-			
-			int addressArrayLength = (addressLength + 1) / 2;
 
 			// Type-of-Address
 			int typeOfAddress = stm.read();
@@ -77,14 +82,28 @@ public class AddressFieldImpl implements AddressField {
 			res.typeOfNumber = TypeOfNumber.getInstance((typeOfAddress & 0x70) >> 4);
 			res.numberingPlanIdentification = NumberingPlanIdentification.getInstance(typeOfAddress & 0x0F);
 
+			int addressArrayLength = (addressLength + 1) / 2;
+
 			// Address-Value
-			res.addressValue = TbcdString.decodeString(stm, addressArrayLength);
-//			if (res.addressValue.length() == addressLength) {
-//			} else if (res.addressValue.length() == addressLength + 1 && res.addressValue.length() > 0) {
-//				res.addressValue = res.addressValue.substring(0, res.addressValue.length() - 1);
-//			} else {
-//				throw new MAPException("Error when creating AddressField: found address string length does not correspond Address-Length field");
-//			}
+			if (res.typeOfNumber == TypeOfNumber.Alphanumeric) {
+				byte[] rawAddress = new byte[addressArrayLength];
+				int dataRead = stm.read(rawAddress);
+
+				ByteBuffer bb = ByteBuffer.wrap(rawAddress, 0, dataRead);
+				GSMCharset cs = new GSMCharset(GSMCharset.GSM_CANONICAL_NAME, new String[] {});
+				GSMCharsetDecoder decoder = (GSMCharsetDecoder) cs.newDecoder();
+				int totalSeptetCount = (addressLength < 14 ? addressArrayLength : addressArrayLength + 1);
+				GSMCharsetDecodingData encodingData = new GSMCharsetDecodingData(totalSeptetCount, 0);
+				decoder.setGSMCharsetDecodingData(encodingData);
+
+				CharBuffer bf = decoder.decode(bb);
+				res.addressValue = bf.toString();
+			} else {
+				// Address-Value
+				res.addressValue = TbcdString.decodeString(stm, addressArrayLength);
+			}
+		
+		
 		} catch (IOException e) {
 			throw new MAPException("IOException when creating AddressField: " + e.getMessage(), e);
 		} catch (MAPParsingComponentException e) {
@@ -118,9 +137,37 @@ public class AddressFieldImpl implements AddressField {
 		try {
 			int addrLen = addressValue.length();
 			int tpOfAddr = 0x80 + (this.typeOfNumber.getCode() << 4) + this.numberingPlanIdentification.getCode();
-			stm.write(addrLen);
-			stm.write(tpOfAddr);
-			TbcdString.encodeString(stm, addressValue);
+
+			if (this.typeOfNumber == TypeOfNumber.Alphanumeric) {
+				GSMCharset cs = new GSMCharset(GSMCharset.GSM_CANONICAL_NAME, new String[] {});
+				GSMCharsetEncoder encoder = (GSMCharsetEncoder) cs.newEncoder();
+				ByteBuffer bb = encoder.encode(CharBuffer.wrap(this.addressValue));
+				int dataLength = bb.limit();
+				byte[] data = new byte[dataLength];
+				bb.get(data);
+
+				// As per 3GPP TS 23.040 (23040-3a[1].pdf)
+				// The Address-Length field is an integer representation of the
+				// number of useful semi-octets within the Address-Value field,
+				// i.e. excludes any semi octet containing only fill bits.
+
+// TODO Here we have added flag 0xF0 as filler check. This needs
+// to verify for correctness
+//				if ((data[dataLength - 1] & 0xF0) == 0x00) {
+//					dataLength = (dataLength * 2) - 1;
+//				} else {
+//					dataLength = dataLength * 2;
+//				}
+				int semiOct = addrLen * 2 - (int) (addrLen / 4);				
+
+				stm.write(semiOct);
+				stm.write(tpOfAddr);
+				stm.write(data);
+			} else {
+				stm.write(addrLen);
+				stm.write(tpOfAddr);
+				TbcdString.encodeString(stm, addressValue);
+			}
 		} catch (IOException e) {
 			// This can not occur
 		}
