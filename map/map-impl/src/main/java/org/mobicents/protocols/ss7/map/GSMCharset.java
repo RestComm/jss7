@@ -42,6 +42,8 @@ import java.nio.charset.CharsetEncoder;
  */
 public class GSMCharset extends Charset {
 
+	public static final String GSM_CANONICAL_NAME = "GSM";
+
 	protected static final float averageCharsPerByte = 8 / 7f;
 	protected static final float maxCharsPerByte = 2f;
 
