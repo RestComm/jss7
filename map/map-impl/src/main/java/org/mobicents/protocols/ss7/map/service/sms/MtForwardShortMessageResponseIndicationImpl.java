@@ -202,7 +202,7 @@ public class MtForwardShortMessageResponseIndicationImpl extends SmsMessageImpl 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("MoForwardShortMessageResponse [");
+		sb.append("MtForwardShortMessageResponse [");
 
 		if (this.sM_RP_UI != null) {
 			sb.append(", sm_RP_UI=[");
