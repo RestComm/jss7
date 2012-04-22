@@ -96,7 +96,7 @@ public class Rule implements Serializable {
 		this.ruleType = ruleType;
 		this.pattern = pattern;
 		this.mask = mask;
-		this.loadSharingAlgo = loadSharingAlgo;
+		this.setLoadSharingAlgorithm(loadSharingAlgo);
 
 		configure();
 	}
@@ -114,7 +114,10 @@ public class Rule implements Serializable {
 	}
 
 	public void setLoadSharingAlgorithm(LoadSharingAlgorithm loadSharingAlgo) {
-		this.loadSharingAlgo = loadSharingAlgo;
+		if (loadSharingAlgo == null)
+			this.loadSharingAlgo = LoadSharingAlgorithm.Undefined;
+		else
+			this.loadSharingAlgo = loadSharingAlgo;
 	}
 
 	public SccpAddress getPattern() {

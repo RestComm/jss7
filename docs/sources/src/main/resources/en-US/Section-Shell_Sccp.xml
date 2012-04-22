@@ -8,7 +8,7 @@
 		<para>
 			SCCP provides connectionless and connection-oriented network services. This includes address(GTT) translation and routing, flow control
 			segmentation and reassembly. 
-			</para>
+		</para>
 		<para>
 			A global title is an address (e.g., a dialed 800 number, calling card number, or mobile subscriber identification number)
 			which is translated by SCCP into a destination point code and subsystem number. A subsystem number uniquely identifies an
@@ -16,16 +16,272 @@
 			-based services
 		</para>
 		<para>
-			As <acronym>SCCP</acronym> acts as message router, it requires means to configure routing information.
-			<acronym>CLI</acronym> provides way to easily manage routing rules information in &THIS.PLATFORM; <acronym>SCCP</acronym>
-			implementation. 
-		</para>	
-		
+			The first step for SCCP configuring is a service access points (sap) definition. This step is mandatory. 
+			Each SCCP stack can use one or more Mtp3UserPart (Refer <xref linkend="configuring_SCCP"/> about Mtp3UserPart setting).
+			A sap is a logical definition of the Mtp3UserPart (corresponded local SPC, network indicator (NI) and a set of destinations (remote SPC list)).
+			The index of a sap must correspont to the index of the sap.   
+		</para>
 		<para>
-			User should also configure the remote subsystem number and remote signaling pointcode. In some cases where global title is used,
-			<acronym>SCCP</acronym> will only require configuring of remote signaling pointcode and configuring of remote subsystem is not required.
+			The second step is a definition of a list of available remote signalling pointcodes (SPC - rsp) and 
+			a list of available remote Sub-Systems (SNN - rss). This step is also mandatory. 
+			If routing only by GlobalTytle is used the remote Sub-Systems configuring is not required.
+		</para>
+		<para>
+			As <acronym>SCCP</acronym> acts as message router, it requires means to configure routing information.
+			Rules (rule), primary (primary_add) and backup (backup_add) (if backup addresses are available) addresses should be configured.
 		</para>	
+		<para>
+			If XUDT and LUDT messages are availavle in the SS7 network, user should config a set of long message rules (lmr) that will allow
+			long messages. This step is not mandatory. If no long message rule is configured only UDT messages will be used.
+		</para>
+		<para>
+			The last step is also optional. A user can configure a set of concerned signaling point codes (csp). Each point code will be announced
+			when local SCCP user becomes (un)available.
+		</para>
+		<para>
+			User can also configure general SCCP parameters (Refer <xref linkend="shell_sccp_param"/> about general parameters setting).
+		</para>
+					
 		
+		<section
+			id="sap_management">
+			<title>Service access points and destinations management</title>
+			<para>SCCP service access points (sap) and destinations (dest) 
+			are managed by <command>sccp sap</command> and <command>sccp dest</command> commands. 
+			They allows to perform following:</para>
+			<itemizedlist>
+				<listitem>
+					<para><command>sccp sap create</command></para>
+				</listitem>
+				<listitem>
+					<para><command>sccp sap modify</command></para>
+				</listitem>				
+				<listitem>
+					<para><command>sccp sap delete</command></para>
+				</listitem>
+				<listitem>
+					<para><command>sccp sap show</command></para>
+				</listitem>
+				<listitem>
+					<para><command>sccp dest create</command></para>
+				</listitem>
+				<listitem>
+					<para><command>sccp dest modify</command></para>
+				</listitem>				
+				<listitem>
+					<para><command>sccp dest delete</command></para>
+				</listitem>
+				<listitem>
+					<para><command>sccp dest show</command></para>
+				</listitem>
+			</itemizedlist>		
+
+			<section
+				id="shell_sccpsap_create">
+				<title>Create service access point</title>
+				<para>Sap can be created by issuing command with following structure:</para>
+				<programlisting>sccp sap create &lt;id&gt; &lt;mtp3-id&gt; &lt;opc&gt; &lt;ni&gt;</programlisting>
+				<variablelist>
+					<varlistentry>
+						<term>&lt;id&gt;</term>
+						<listitem>
+							<para>A unique number to identify this sap</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&lt;mtp3-id&gt;</term>
+						<listitem>
+							<para>A Mtp3UserPart index that is used as an index of mtp3UserPart property for SccpStack bean.
+							Refer to <xref linkend="configuring_SCCP"/> for details. For each Mtp3UserPart a sap must be configured.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&lt;opc&gt;</term>
+						<listitem>
+							<para>Specifies the local signaling point code.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&lt;ni&gt;</term>
+						<listitem>
+							<para>Specifies the network indicator that forms 
+								the part of service information octet (SIO)</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+				<para>For each of sap one or more destinations should be configured. Refer to <xref linkend="shell_sccpdest_create"/> for details.</para>
+				<example>
+					<title>SCCP sap creation</title>
+					<screen>
+mobicents(10.65.208.215:3435)>sccp sap create 1 1 101 2 
+mobicents(10.65.208.215:3435)>sccp sap create 2 2 102 2
+					</screen>
+				</example>
+			</section>			
+
+			<section id="shell_sccpsap_modify">
+				<title>Modify existing sap</title>
+				<para>Sap can be modified by issuing command with following structure:</para>
+				<programlisting>sccp sap modify &lt;id&gt; &lt;mtp3-id&gt; &lt;opc&gt; &lt;ni&gt;</programlisting>
+				<para>Meaning of parameters is the same.</para>
+			</section>			
+
+			<section id="shell_sccp_sap_delete">
+				<title>Delete SCCP service access point</title>
+				<para>SCCP sap can be deleted by issuing command with following structure:</para>
+				<programlisting>sccp sap delete &lt;id&gt; </programlisting>
+				<para>Where:</para>
+				<variablelist>
+					<varlistentry>
+						<term>&lt;id&gt;</term>
+						<listitem>
+							<para>is id set during sap creation</para>
+						</listitem>
+						</varlistentry>
+				</variablelist>
+				<example>
+					<title>SCCP sap Removal</title>
+					<screen>
+mobicents(10.65.208.215:3435)>sccp sap delete 1
+Service access point successfully removed
+					</screen>
+				</example>
+			</section>	
+		
+			<section id="shell_sccp_sap_show">
+				<title>Show SCCP service access point</title>
+				<para>Saps can be viewed by issuing command with following structure:</para>
+				<programlisting>sccp sap show &lt;id&gt;</programlisting>
+				<para>Where:</para>
+				<variablelist>
+					<varlistentry>
+						<term>&lt;id&gt;</term>
+						<listitem>
+							<para>id is optional. If passed only sap matching the id will be shown, else all the saps will be shown</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</section>
+
+			<section
+				id="shell_sccpdest_create">
+				<title>Create destination for service access point</title>
+				<para>Destination can be created by issuing command with following structure:</para>
+				<programlisting>sccp dest create &lt;sap-id&gt; &lt;id&gt; &lt;first-dpc&gt; &lt;last-dpc&gt; &lt;first-sls&gt; &lt;last-sls&gt; &lt;sls-mask&gt;</programlisting>
+				<variablelist>
+					<varlistentry>
+						<term>&lt;sap-id&gt;</term>
+						<listitem>
+							<para>An identifier of the sap for which the destination is being created</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&lt;id&gt;</term>
+						<listitem>
+							<para>A number to identify this destination. The number must be unique for each sap.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&lt;first-dpc&gt;</term>
+						<listitem>
+							<para>Specifies the first value of the remote signaling point codes range.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&lt;last-dpc&gt;</term>
+						<listitem>
+							<para>Specifies the last value of the remote signaling point codes range. 
+							If destination specifies a single signalling point code, this value must be equal first-dpc</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&lt;first-sls&gt;</term>
+						<listitem>
+							<para>Specifies the first value of the SLS range.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&lt;last-sls&gt;</term>
+						<listitem>
+							<para>Specifies the last value of the SLS range.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&lt;sls-mask&gt;</term>
+						<listitem>
+							<para>Specifies the mask value. SLS af a message will be exposed by bitwise AND operation with this mask 
+							before comparing with first-sls and last-sls valuers.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+				<para>SLS value range is from 0 to 255. If the destination cover all possible SLS's use first-sls=0, last-sls=255, sls-mask=255</para>
+				<example>
+					<title>SCCP destination creation</title>
+					<screen>
+mobicents(10.65.208.215:3435)>sccp dest create 1 1 201 201 0 7 7 
+mobicents(10.65.208.215:3435)>sccp dest create 2 1 300 399 0 255 255
+					</screen>
+				</example>
+			</section>			
+
+			<section id="shell_sccpdest_modify">
+				<title>Modify existing destination for service access point</title>
+				<para>Destination can be modified by issuing command with following structure:</para>
+				<programlisting>sccp dest modify &lt;sap-id&gt; &lt;id&gt; &lt;first-dpc&gt; &lt;last-dpc&gt; &lt;first-sls&gt; &lt;last-sls&gt; &lt;sls-mask&gt;</programlisting>
+				<para>Meaning of parameters is the same.</para>
+			</section>			
+
+			<section id="shell_sccp_dest_delete">
+				<title>Delete SCCP destination for service access point</title>
+				<para>SCCP destination can be deleted by issuing command with following structure:</para>
+				<programlisting>sccp dest delete &lt;sap-id&gt; &lt;id&gt; </programlisting>
+				<para>Where:</para>
+				<variablelist>
+					<varlistentry>
+						<term>&lt;sap-id&gt;</term>
+						<listitem>
+							<para>An identifier of the sap for which the destination has been created</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&lt;id&gt;</term>
+						<listitem>
+							<para>is id set during destination creation</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+				<example>
+					<title>SCCP destination Removal</title>
+					<screen>
+mobicents(10.65.208.215:3435)>sccp destination delete 1 1
+Destination definition successfully deleted
+					</screen>
+				</example>
+			</section>	
+		
+			<section id="shell_sccp_dest_show">
+				<title>Show SCCP destination for service access point</title>
+				<para>Destinations can be viewed by issuing command with following structure:</para>
+				<programlisting>sccp dest show &lt;sap-id&gt; &lt;id&gt;</programlisting>
+				<para>Where:</para>
+				<variablelist>
+					<varlistentry>
+						<term>&lt;sap-id&gt;</term>
+						<listitem>
+							<para>An identifier of the sap for which the destination has been created</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&lt;id&gt;</term>
+						<listitem>
+							<para>id is optional. If passed only destination matching the id will be shown, else all destinations of the saps will be shown</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</section>
+		</section>
+
+				
 		<section id="rule_management">
 			<title>Rule Management</title>
 			<para>SCCP routing rules are managed by <command>sccp rule</command> command. It allows to perform following:</para>
@@ -42,16 +298,13 @@
 				<listitem>
 					<para><command>sccp rule show</command></para>
 				</listitem>
-			</itemizedlist>		
-			
-			
-		<section
-			id="shell_sccprule_create">
+			</itemizedlist>
+		<section id="shell_sccprule_create">
 			<title>Create Rule</title>
-			<para>Rule can be create by issuing command with following structure:</para>
+			<para>Rule can be created by issuing command with following structure:</para>
 			<programlisting>
 sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; &lt;numbering-plan&gt;  
-&lt;nature-of-address-indicator&gt; &lt;digits&gt; &lt;primary-address-id&gt; &lt;backup-address-id&gt;
+&lt;nature-of-address-indicator&gt; &lt;digits&gt; &lt;ruleType&gt; &lt;primary-address-id&gt; &lt;backup-address-id&gt; &lt;loadsharing-algorithm&gt;
 </programlisting>
 			<para>This command should be specified after <command>primary_add</command> and <command>backup_add</command> are configured. 
 			Please refer  <xref linkend="address_management"/> on how to configure <command>primary_add</command> and <command>backup_add</command></para>
@@ -283,6 +536,54 @@ sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-cod
 					</listitem>
 				</varlistentry>		
 				<varlistentry>
+					<term>&lt;ruleType&gt;</term>
+					<listitem>
+						<para>Rule type. One of following values is possible.</para>
+						<table frame="all" pgwide="1">
+							<title>Rule type values</title>
+							<tgroup colsep="1" cols="2">
+								<colspec colnum="1" colname="c0" colwidth="3*"/>
+								<colspec colnum="2" colname="c1" colwidth="3*"/>
+								<thead>
+									<row>
+										<entry>Value</entry>
+										<entry>Description</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry>
+											solitary
+										</entry>													
+										<entry>
+											Only one (primary) address is used for routing (&lt;backup-address-id&gt; may be missed in this case).
+										</entry>
+									</row>
+									<row>
+										<entry>
+											dominant
+										</entry>														
+										<entry>
+											Both (primary and backup) addresses are used and mandatory.
+											If both of addresses are available the primary address is used for routing.
+										</entry>
+									</row>
+									<row>
+										<entry>
+											loadshared
+										</entry>														
+										<entry>
+											Both (primary and backup) addresses are used and mandatory.
+											If both of addresses are available either primary or backup address is used for routing.
+											The &lt;loadsharing-algorithm&gt; should be configured in this case.
+										</entry>
+									</row>
+								</tbody>
+							</tgroup>							
+						</table> 						
+					</listitem>
+				</varlistentry>	
+				<varlistentry>
 					<term>&lt;primary-address-id&gt;</term>
 					<listitem>
 						<para>Identifies the SCCP Address used as the primary translation</para>
@@ -291,7 +592,50 @@ sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-cod
 				<varlistentry>
 					<term>&lt;backup-address-id&gt;</term>
 					<listitem>
-						<para>Identifies the SCCP Address used as the backup translation incase if pointcode specified by primary address is not available</para>
+						<para>Identifies the SCCP Address used as the backup translation in case if pointcode specified by primary address is not available.
+						Backup address is used only dominant and loadshared address types</para>
+					</listitem>
+				</varlistentry>					
+				<varlistentry>
+					<term>&lt;loadsharing-algorithm&gt;</term>
+					<listitem>
+						<para>This parameter is mandatory if &lt;ruleType&gt; parameter is "loadshared".
+						Loadsharing algorithm is configired here. Possible values of the parameter: 						
+						</para>
+						<table frame="all" pgwide="1">
+							<title>Rule type values</title>
+							<tgroup colsep="1" cols="2">
+								<colspec colnum="1" colname="c0" colwidth="1*"/>
+								<colspec colnum="2" colname="c1" colwidth="3*"/>
+								<thead>
+									<row>
+										<entry>Value</entry>
+										<entry>Description</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry>
+											bit4
+										</entry>													
+										<entry>
+											<para>if( (SLS &amp; 0x10) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
+											<para>This algorithm is the best if all traffic is local (mobisents stack) originated</para>  
+										</entry>
+									</row>
+									<row>
+										<entry>
+											bit3
+										</entry>														
+										<entry>
+											<para>if( (SLS &amp; 0x08) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
+											<para>This algorithm can be used if not all traffic is local (mobisents stack) originated.
+											But only 8 links in the both linksets is acceptable.</para>  
+										</entry>
+									</row>
+								</tbody>
+							</tgroup>							
+						</table> 						
 					</listitem>
 				</varlistentry>					
 			</variablelist>	
@@ -299,12 +643,21 @@ sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-cod
 			<example>
 				<title>SCCP Rule creation</title>
 				<screen>
-mobicents(10.65.208.215:3435)>sccp rule create 1 R 71 2 8 0 0 3 123456789 1 
-mobicents(10.65.208.215:3435)>sccp rule create 2 R 71 2 8 0 0 3 123456789 1 1
+mobicents(10.65.208.215:3435)>sccp rule create 1 R 71 2 8 0 0 3 123456789 solitary 1 
+mobicents(10.65.208.215:3435)>sccp rule create 2 R 71 2 8 0 0 3 123456789 dominant 1 1
+mobicents(10.65.208.215:3435)>sccp rule create 2 R 71 2 8 0 0 3 123456789 loadshared 1 1 bit4
 				</screen>
 			</example>
 		</section>			
 
+		<section id="shell_sccprule_modify">
+			<title>Modify existing Rule</title>
+			<para>Rule can be modified by issuing command with following structure:</para>
+			<programlisting>sccp rule modify &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; &lt;numbering-plan&gt;  
+&lt;nature-of-address-indicator&gt; &lt;digits&gt; &lt;ruleType&gt; &lt;primary-address-id&gt; &lt;backup-address-id&gt;</programlisting>
+			<para>Meaning of parameters is the same.</para>
+		</section>			
+		
 		<section
 			id="shell_sccp_rule_delete">
 			<title>Delete SCCP Rule</title>
@@ -353,7 +706,7 @@ sccp rule show &lt;id&gt;</programlisting>
 			<title>Address Management</title>
 			<para>The command is used to define primary or backup address of translation. The global title
 			address information of this command is combined with the global title being translated by examining the
-			mask provided in the <command>sccp rule create</command> command.The syntanx remains same except for primary address
+			mask provided in the <command>sccp rule create</command> command.The syntax remains same except for primary address
 			<command>sccp primary_add</command> is used and for backup address <command>sccp backup_add</command> is used </para>
 			<itemizedlist>
 				<listitem>
@@ -378,7 +731,7 @@ sccp rule show &lt;id&gt;</programlisting>
 		<section
 			id="shell_sccpaddress_create">
 			<title>Create Address</title>
-			<para>Address can be create by issuing command with following structure:</para>
+			<para>Address can be created by issuing command with following structure:</para>
 			<itemizedlist>
 				<listitem>
 					<para>For primary address</para>
@@ -570,6 +923,28 @@ mobicents(10.65.208.215:3435)>sccp backup_add create 1 71 3 8 0 0 3 123456789
 			</example>
 		</section>			
 
+		<section id="shell_sccpaddress_modify">
+			<title>Modify existing Address</title>
+			<para>Address can be modified by issuing command with following structure:</para>
+			<itemizedlist>
+				<listitem>
+					<para>For primary address</para>
+			<programlisting>
+sccp primary_add modify &lt;id&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; &lt;numbering-plan&gt;  
+&lt;nature-of-address-indicator&gt; &lt;digits&gt;
+</programlisting>
+				</listitem>
+				<listitem>
+					<para>For backup address</para>
+			<programlisting>
+sccp backup_add modify &lt;id&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; &lt;numbering-plan&gt;  
+&lt;nature-of-address-indicator&gt; &lt;digits&gt;
+</programlisting>
+				</listitem>				
+			</itemizedlist>
+			<para>Meaning of parameters is the same.</para>
+		</section>			
+				
 		<section
 			id="shell_sccp_address_delete">
 			<title>Delete Address</title>
@@ -644,15 +1019,9 @@ sccp backup_add show &lt;id&gt;
 		</section>
 		
 		
-		
-		
-		
-		
-		
-		
 		<section id="resource_rsp_management">
 			<title>Remote Signaling Point Management</title>
-			<para>SCCP resources includes remote signaling point and remote subsytem. 
+			<para>SCCP resources includes remote signaling point and remote subsystem. 
 			Each remote signaling point that SCCP can communicate with must be configured using <command>sccp rsp</command> command
 			</para>
 			<itemizedlist>
@@ -669,13 +1038,12 @@ sccp backup_add show &lt;id&gt;
 					<para><command>sccp rsp show</command></para>
 				</listitem>
 			</itemizedlist>		
-		<section
-			id="shell_sccprsp_create">
+		<section id="shell_sccprsp_create">
 			<title>Create Remote Signaling Point</title>
 			<para>Remote signaling point can be create by issuing command with following structure:</para>
 			
 			<programlisting>
-sccp rsp create &lt;id&gt; &lt;remote-spc&gt; &lt;rspc-flag&gt; &lt;mask&gt; 
+sccp rsp create &lt;id&gt; &lt;remote-spc&gt; &lt;rspc-flag&gt; &lt;mask&gt;
 </programlisting>
 			
 			
@@ -707,7 +1075,6 @@ sccp rsp create &lt;id&gt; &lt;remote-spc&gt; &lt;rspc-flag&gt; &lt;mask&gt;
 					</listitem>
 				</varlistentry>	
 			</variablelist>	
-	
 			<example>
 				<title>Remote Signalin Point creation</title>
 				<screen>
@@ -716,6 +1083,13 @@ mobicents(10.65.208.215:3435)>sccp rsp create 1 6477 0 0
 			</example>
 		</section>			
 
+		<section id="shell_sccprsp_modify">
+			<title>Modify existing Remote Signaling Point</title>
+			<para>Remote Signaling Point can be modified by issuing command with following structure:</para>
+			<programlisting>sccp rsp modify &lt;id&gt; &lt;remote-spc&gt; &lt;rspc-flag&gt; &lt;mask&gt;</programlisting>
+			<para>Meaning of parameters is the same.</para>
+		</section>			
+		
 		<section
 			id="shell_sccp_rsp_delete">
 			<title>Delete Remote Signaling Point</title>
@@ -786,13 +1160,12 @@ sccp rsp show &lt;id&gt;
 			<para>This command should be specified after remote signaling point is configured. 
 			Please refer <xref linkend="resource_rsp_management"/> on how to configure remote signaling point</para>
 			
-		<section
-			id="shell_sccprss_create">
+		<section id="shell_sccprss_create">
 			<title>Create Remote Sub-System</title>
 			<para>Remote subsystem can be created by issuing command with following structure:</para>
 			
 			<programlisting>
-sccp rss create &lt;id&gt; &lt;remote-spc&gt; &lt;remote-ssn&gt; &lt;rss-flag&gt;  
+sccp rss create &lt;id&gt; &lt;remote-spc&gt; &lt;remote-ssn&gt; &lt;rss-flag&gt; &lt;mark-prohibited-when-spc-resuming&gt;
 </programlisting>
 			
 			
@@ -823,18 +1196,31 @@ sccp rss create &lt;id&gt; &lt;remote-spc&gt; &lt;remote-ssn&gt; &lt;rss-flag&gt
 						<para>32 bit value. Not used for now. Reserved for future</para>
 					</listitem>
 				</varlistentry>		
+				<varlistentry>
+					<term>&lt;mark-prohibited-when-spc-resuming&gt;</term>
+					<listitem>
+						<para>This parameter is optional, its possible value is: prohibitedWhenSpcResuming.
+						When this parameter is present configured subsystem is marked as prohibited when its corresponded signalling point code has been resumed.</para>
+					</listitem>
+				</varlistentry>	
 			</variablelist>	
 	
 			<example>
 				<title>Remote Sub-System creation</title>
 				<screen>
-mobicents(10.65.208.215:3435)>sccp rss create 1 6477 8 0
+mobicents(10.65.208.215:3435)>sccp rss create 1 6477 8 0 prohibitedWhenSpcResuming
 				</screen>
 			</example>
 		</section>			
-
-		<section
-			id="shell_sccp_rss_delete">
+		
+		<section id="shell_sccprss_modify">
+			<title>Modify existing Remote Sub-System</title>
+			<para>Remote Sub-System can be modified by issuing command with following structure:</para>
+			<programlisting>sccp rss modify &lt;id&gt; &lt;remote-spc&gt; &lt;remote-ssn&gt; &lt;rss-flag&gt; &lt;mark-prohibited-when-spc-resuming&gt;</programlisting>
+			<para>Meaning of parameters is the same.</para>
+		</section>			
+		
+		<section id="shell_sccp_rss_delete">
 			<title>Delete Remote Sub-System</title>
 		
 			<programlisting>
@@ -879,6 +1265,419 @@ sccp rss show &lt;id&gt;
 		</section>
 		</section>			
 				
+		<section id="shell_sccp_lmr_management">
+			<title>Long message rules Management</title>
+			<para>Long message rules describe which message types (UDT/XUDT/LUDT) will be used for outgoing message encoding depends on dpc.
+			If no long message rules is configured only UDT messages will be used.
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para><command>sccp lmr create</command></para>
+				</listitem>
+				<listitem>
+					<para><command>sccp lmr modify</command></para>
+				</listitem>				
+				<listitem>
+					<para><command>sccp lmr delete</command></para>
+				</listitem>
+				<listitem>
+					<para><command>sccp lmr show</command></para>
+				</listitem>
+			</itemizedlist>		
 		
-				
+			<section id="shell_sccplmr_create">
+				<title>Create Long message rule</title>
+				<para>Long message rule can be created by issuing command with following structure:</para>
+			
+				<programlisting>
+sccp lmr create &lt;id&gt; &lt;first-spc&gt; &lt;last-spc&gt; &lt;long-message-rule-type&gt;
+</programlisting>
+			
+			
+				<variablelist>
+					<varlistentry>
+						<term>&lt;id&gt;</term>
+						<listitem>
+							<para>A unique number to identify this Long message rule</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&lt;first-spc&gt;</term>
+						<listitem>
+							<para>Specifies the first value of the remote signaling point codes range. (for which Long message rule will apply)
+							</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&lt;last-spc&gt;</term>
+						<listitem>
+							<para>Specifies the last value of the remote signaling point codes range.
+							If Long message rule specifies a single signalling point code, this value must be equal first-spc.</para>
+						</listitem>
+					</varlistentry>	
+					<varlistentry>
+						<term>&lt;long-message-rule-type&gt;</term>
+						<listitem>
+							<para>Specifies which message types will be used for the remote signaling point codes range.
+							Possible values are: udt, xudt and ludt.</para>
+						</listitem>
+					</varlistentry>	
+				</variablelist>	
+	
+				<example>
+					<title>Long message rule creation</title>
+					<screen>
+mobicents(10.65.208.215:3435)>sccp lmr create 1 201 201 xudt
+mobicents(10.65.208.215:3435)>sccp lmr create 2 230 239 udt
+					</screen>
+				</example>
+			</section>			
+		
+			<section id="shell_sccplmr_modify">
+				<title>Modify existing Long message rule</title>
+				<para>Long message rule can be modified by issuing command with following structure:</para>
+				<programlisting>sccp lmr modify &lt;id&gt; &lt;first-spc&gt; &lt;last-spc&gt; &lt;long-message-rule-type&gt;</programlisting>
+				<para>Meaning of parameters is the same.</para>
+			</section>			
+		
+		<section id="shell_sccp_lmr_delete">
+			<title>Delete Modify existing Long</title>
+		
+			<programlisting>
+sccp lmr delete &lt;id&gt;
+</programlisting>
+			<para>Where:</para>
+			<variablelist>
+
+				<varlistentry>
+					<term>&lt;id&gt;</term>
+					<listitem>
+						<para>is id set during Long message rule creation</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Long message rule removal</title>
+				<screen>
+mobicents(10.65.208.215:3435)>sccp lmr delete 1
+				</screen>
+			</example>
+		</section>	
+		
+		<section
+			id="shell_sccp_lmr_show">
+			<title>Show Long message rule/s</title>
+			<para>Long message rule can be viewed by issuing command with following structure:</para>
+			
+			<programlisting>
+sccp lmr show &lt;id&gt; 
+</programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>&lt;id&gt;</term>
+					<listitem>
+						<para>id is optional. If passed only Long message rule matching the id will be shown, 
+						else all the rules will be shown</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</section>
+		</section>			
+
+		<section id="shell_sccp_csp_management">
+			<title>Concerned signaling point codes Management</title>
+			<para>Concerned signaling point codes define a DPC list which will be noticed when local SSN is registered (SSA messages) or unregistered (SSP messages).
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para><command>sccp csp create</command></para>
+				</listitem>
+				<listitem>
+					<para><command>sccp csp modify</command></para>
+				</listitem>				
+				<listitem>
+					<para><command>sccp csp delete</command></para>
+				</listitem>
+				<listitem>
+					<para><command>sccp csp show</command></para>
+				</listitem>
+			</itemizedlist>		
+		
+			<section id="shell_sccpcsp_create">
+				<title>Create Concerned signaling point code</title>
+				<para>Concerned signaling point codes can be created by issuing command with following structure:</para>
+			
+				<programlisting>
+sccp csp create &lt;id&gt; &lt;spc&gt;
+</programlisting>
+			
+				<variablelist>
+					<varlistentry>
+						<term>&lt;id&gt;</term>
+						<listitem>
+							<para>A unique number to identify this Concerned signaling point code</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&lt;spc&gt;</term>
+						<listitem>
+							<para>Specifies the value of the remote signaling point code, which will be noticed.
+							</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>	
+	
+				<example>
+					<title>Concerned signaling point code creation</title>
+					<screen>
+mobicents(10.65.208.215:3435)>sccp csp create 1 201
+mobicents(10.65.208.215:3435)>sccp csp create 2 202
+					</screen>
+				</example>
+			</section>			
+		
+			<section id="shell_sccpcsp_modify">
+				<title>Modify existing Concerned signaling point code</title>
+				<para>Concerned signaling point code can be modified by issuing command with following structure:</para>
+				<programlisting>sccp csp modify &lt;id&gt; &lt;spc&gt;</programlisting>
+				<para>Meaning of parameters is the same.</para>
+			</section>			
+		
+		<section id="shell_sccp_csp_delete">
+			<title>Delete Concerned signaling point code</title>
+		
+			<programlisting>
+sccp csp delete &lt;id&gt;
+</programlisting>
+			<para>Where:</para>
+			<variablelist>
+
+				<varlistentry>
+					<term>&lt;id&gt;</term>
+					<listitem>
+						<para>is id set during Concerned signaling point code creation</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<example>
+				<title>Concerned signaling point code removal</title>
+				<screen>
+mobicents(10.65.208.215:3435)>sccp csp delete 1
+				</screen>
+			</example>
+		</section>	
+		
+		<section id="shell_sccp_csp_show">
+			<title>Show Concerned signaling point code/s</title>
+			<para>Concerned signaling point code can be viewed by issuing command with following structure:</para>
+			
+			<programlisting>
+sccp csp show &lt;id&gt; 
+</programlisting>
+			<para>Where:</para>
+			<variablelist>
+				<varlistentry>
+					<term>&lt;id&gt;</term>
+					<listitem>
+						<para>id is optional. If passed only Concerned signaling point code matching the id will be shown, 
+						else all the codes will be shown</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</section>
+		</section>			
+		
+	
+		<section id="shell_sccp_param">
+			<title>General parameters</title>
+			<para>User can set several general parameters that influence the whole SCCP stack.</para>
+			
+						<table frame="all" pgwide="1">
+							<title>SCCP general parameters</title>
+							<tgroup colsep="1" cols="4">
+								<colspec colnum="1" colname="c0" colwidth="2*"/>
+								<colspec colnum="2" colname="c1" colwidth="5*"/>
+								<colspec colnum="3" colname="c2" colwidth="1*"/>
+								<colspec colnum="4" colname="c3" colwidth="1*"/>
+																<thead>
+									<row>
+										<entry>Mnemonic name</entry>
+										<entry>Function</entry>
+										<entry>Value range</entry>
+										<entry>Default value</entry>
+																			</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry>
+											zMarginXudtMessage
+										</entry>														
+										<entry>
+											If the XUDT message data length greater this value, segmentation is processed. Otherwise no segmentation.
+										</entry>
+										<entry>
+											160 - 255
+										</entry>														
+										<entry>
+											240
+										</entry>														
+									</row>
+									<row>
+										<entry>
+											reassemblyTimerDelay
+										</entry>														
+										<entry>
+											SCCP segmented message reassembling timeout (in milliseconds).
+										</entry>
+										<entry>
+											10000 - 20000
+										</entry>														
+										<entry>
+											15000
+										</entry>														
+									</row>
+									<row>
+										<entry>
+											maxDataMessage
+										</entry>														
+										<entry>
+											Max available SCCP message data for all message types.
+										</entry>
+										<entry>
+											2560 - 3952
+										</entry>														
+										<entry>
+											2560
+										</entry>														
+									</row>
+									<row>
+										<entry>
+											removeSpc
+										</entry>														
+										<entry>
+											Remove PC from calledPartyAddress when sending to MTP3. 
+										After Global Title Translation, if the SCCP address includes the destination point code (DPC)
+										however Address Indicator (AI) indicates route on Global Title and removeSpc is set to true,
+										DPC will be removed from SCCP Address. The same rule applies for both calling as well as
+										called party SCCP Address.
+										</entry>
+										<entry>
+											true or false
+										</entry>														
+										<entry>
+											true
+										</entry>														
+									</row>									
+									<row>
+										<entry>
+											sstTimerDuration_Min
+										</entry>														
+										<entry>
+											Min (starting) SST sending interval (in milliseconds).
+										</entry>
+										<entry>
+											5000 - 10000
+										</entry>														
+										<entry>
+											10000
+										</entry>														
+									</row>									
+									<row>
+										<entry>
+											sstTimerDuration_Max
+										</entry>														
+										<entry>
+											Max (after increasing) SST sending interval (in milliseconds).
+										</entry>
+										<entry>
+											600000 - 1200000
+										</entry>														
+										<entry>
+											600000
+										</entry>														
+									</row>									
+									<row>
+										<entry>
+											sstTimerDuration_IncreaseFactor
+										</entry>														
+										<entry>
+											Multiplicator of SST sending interval (next interval will be greater the current by sstTimerDuration_IncreaseFactor).
+											This value has type "double".
+										</entry>
+										<entry>
+											1 - 4
+										</entry>														
+										<entry>
+											1.5
+										</entry>														
+									</row>									
+								</tbody>
+							</tgroup>							
+						</table>
+		
+			<section id="shell_sccp_param_set">
+				<title>General parameters setting</title>
+				<para>General parameter can be set by issuing command with following structure:</para>
+			
+				<programlisting>
+sccp set &lt;parameter-name&gt; &lt;parameter-value&gt;
+</programlisting>
+			
+				<variablelist>
+					<varlistentry>
+						<term>&lt;parameter-name&gt;</term>
+						<listitem>
+							<para>A mnemonic name of a parameter.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&lt;parameter-value&gt;</term>
+						<listitem>
+							<para>A value of a parameter.
+							</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>	
+	
+				<example>
+					<title>General parameters setting</title>
+					<screen>
+mobicents(10.65.208.215:3435)>sccp set zMarginXudtMessage 230
+mobicents(10.65.208.215:3435)>sccp set removeSpc false
+					</screen>
+				</example>
+			</section>			
+		
+			<section id="shell_sccp_param_get">
+				<title>General parameters getting</title>
+				<para>General parameter can be got by issuing command with following structure:</para>
+			
+				<programlisting>
+sccp get &lt;parameter-name&gt;
+</programlisting>
+			
+				<variablelist>
+					<varlistentry>
+						<term>&lt;parameter-name&gt;</term>
+						<listitem>
+							<para>A mnemonic name of a parameter. This parameter is optional. If a mnemonic name is absent all parameter values will be returned.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>	
+	
+				<example>
+					<title>General parameters getting</title>
+					<screen>
+mobicents(10.65.208.215:3435)>sccp get zMarginXudtMessage
+mobicents(10.65.208.215:3435)>sccp get
+					</screen>
+				</example>
+			</section>			
+					
+		</section>			
+			
+					
 	</section>
+
+	

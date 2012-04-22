@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
-
+ 
 <chapter
 	id="sccp">
 
@@ -165,10 +165,9 @@
 		
 		<para>
 			SccpProvider also exposes <classname>org.mobicents.protocols.ss7.sccp.message.MessageFactory</classname> and
-			<classname>org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory</classname> to create new concrete SccpMessage viz.,
-			<classname>org.mobicents.protocols.ss7.sccp.message.UnitData</classname> or 
-			<classname>org.mobicents.protocols.ss7.sccp.message.XUnitData</classname> passing the corresponding parameters created by leveraging 
-			ParameterFactory.
+			<classname>org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory</classname> to create new SccpMessage. For transfer data via
+			connectionless service <classname>org.mobicents.protocols.ss7.sccp.message.SccpDataMessage</classname> is used.
+			(This class use UDT, XUDT, LUDT SCCP message type for message transfer.)
 		</para>
 		
 			
@@ -212,6 +211,7 @@ public class Test implements SccpListener {
 
     private SccpProvider sccpProvider;
     private SccpAddress localAddress;
+    private int localSsn = 8;
 
     private static SccpProvider getSccpProvider() throws NamingException {
 
@@ -225,67 +225,63 @@ public class Test implements SccpListener {
         }
     }
 
-    public void start() throws Excetpion {
+    public void start() throws Exception {
 
         this.sccpProvider = getSccpProvider();
 
         int translationType = 0;
-        int subSystemNumber = 0;
 
         GlobalTitle gt = GlobalTitle.getInstance(translationType,
                 NumberingPlan.ISDN_MOBILE, NatureOfAddress.NATIONAL, "1234");
 
-        localAddress = new SccpAddress(gt, 0);
+		localAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, -1, gt, 0);
 
-        this.sccpProvider.registerSccpListener(localAddress, this);
+		this.sccpProvider.registerSccpListener(this.localSsn, this);
     }
 
     public void stop() {
-        this.sccpProvider.deregisterSccpListener(localAddress);
+        this.sccpProvider.deregisterSccpListener(this.localSsn);
     }
 
-    public void onMessage(SccpMessage message) {
+	public void onMessage(SccpDataMessage message) {
 
-        if (message.getType() == MessageType.UDT) {
-            throw new IlleagalArgumentException("Dont like UDT");
-        } else if (message.getType() == MessageType.XUDT) {
-            XUnitData xudt = (XUnitData) message;
-            localAddress = ((XUnitData) message).getCalledPartyAddress();
-            SccpAddress remoteAddress = ((XUnitData) message)
-                    .getCallingPartyAddress();
+		localAddress = message.getCalledPartyAddress();
+		SccpAddress remoteAddress = message.getCallingPartyAddress();
 
-            // now decode content
+		// now decode content
+		byte[] data = message.getData();
 
-            byte[] data = xudt.getData();
+		// processing a request
+		byte[] answerData = new byte[10];
+		// put custom executing code here and fill answerData
 
-            // some data encoded in
-            CallRequest cr = new CallRequest(data);
+		HopCounter hc = this.sccpProvider.getParameterFactory().createHopCounter(5);
 
-            byte[] answerData;
+		SccpDataMessage sccpAnswer = this.sccpProvider.getMessageFactory().createDataMessageClass1(remoteAddress, this.localAddress, answerData,
+				message.getSls(), localSsn, false, hc, null);
 
-            if (cr.getCallee().equals(this.localAddress)) {
-                EstablihsCallAnswer eca = new EstablihsCallAnswer(cr);
-                answerData = eca.encode();
-
-            } else {
-                TearDownCallAnswer tdca = new TearDownCallAnswer(cr);
-                answerData = tdca.encode();
-            }
-
-            HopCounter hc = this.sccpProvider.getParameterFactory()
-                    .createHopCounter(5);
-
-            XUnitData sccpAnswer = this.sccpProvider
-                    .getMessageFactory()
-                    .createXUnitData(hc, xudt.getProtocolClass(),
-                            message.getCallingPartyAddress(), this.localAddress);
-
-            this.sccpProvider.send(sccpAnswer);
-
-        }
-
+		try {
+			this.sccpProvider.send(sccpAnswer);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
+	public void onNotice(SccpNoticeMessage message) {
+	}
+
+	public void onCoordRequest(int dpc, int ssn, int multiplicityIndicator) {
+	}
+
+	public void onCoordResponse(int dpc, int ssn, int multiplicityIndicator) {
+	}
+
+	public void onState(int dpc, int ssn, boolean inService, int multiplicityIndicator) {
+	}
+
+	public void onPcState(int dpc, SignallingPointStatus status, int restrictedImportanceLevel, RemoteSccpStatus remoteSccpStatus) {
+	}
 }
 		</programlisting>
 	</section>
