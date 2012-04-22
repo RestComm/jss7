@@ -39,6 +39,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.errors.MAPErrorMessageImpl;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
@@ -47,12 +48,12 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
@@ -102,6 +103,14 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		this.destReference = destReference;
 		this.origReference = origReference;
 	}
+	
+    public SccpAddress getLocalAddress(){
+    	return this.getTcapDialog().getLocalAddress();
+    }
+    
+    public SccpAddress getRemoteAddress(){
+    	return this.getTcapDialog().getRemoteAddress();
+    }
 
 	@Override
 	public void keepAlive() {

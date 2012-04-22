@@ -29,6 +29,7 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
@@ -83,6 +84,18 @@ public interface MAPDialog {
 	 * @return
 	 */
 	public MAPServiceBase getService();
+	
+    /**
+     * 
+     * @return - sccp address which represents local peer
+     */
+    public SccpAddress getLocalAddress();
+
+    /**
+	 * 
+	 * @return - sccp address which represents remote peer
+	 */
+    public SccpAddress getRemoteAddress();	
 
 	/**
 	 * Set ExtentionContainer that will be send in 1) T-BEGIN 2) T-CONTINUE or
