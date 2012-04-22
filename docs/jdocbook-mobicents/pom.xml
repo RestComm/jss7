@@ -76,17 +76,17 @@
 				<version>2.3.0</version>
 				<extensions>true</extensions>
 				<dependencies>
-					<dependency>
-						<groupId>org.jboss</groupId>
-						<artifactId>jbossorg-docbook-xslt</artifactId>
-						<version>1.1.0</version>
-					</dependency>
-					<dependency>
-						<groupId>org.jboss</groupId>
-						<artifactId>jbossorg-jdocbook-style</artifactId>
-						<version>1.1.0</version>
-						<type>jdocbook-style</type>
-					</dependency>
+					 <dependency>
+                                                <groupId>org.mobicents.jdocbook</groupId>
+                                                <artifactId>telestax-xslt-ns</artifactId>
+                                                <version>1.0.0.FINAL</version>
+                                        </dependency>
+                                        <dependency>
+                                                <groupId>org.mobicents.jdocbook</groupId>
+                                                <artifactId>telestax-community-style</artifactId>
+                                                <type>jdocbook-style</type>
+                                                <version>1.0.0.FINAL</version>
+                                        </dependency>
 					<dependency>
 						<groupId>xml-resolver</groupId>
 						<artifactId>xml-resolver</artifactId>
