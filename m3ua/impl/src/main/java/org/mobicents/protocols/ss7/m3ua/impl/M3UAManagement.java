@@ -82,6 +82,8 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 	private static final String TAB_INDENT = "\t";
 	private static final String CLASS_ATTRIBUTE = "type";
 
+	protected static final int MAX_SEQUENCE_NUMBER = 256;
+
 	protected FastList<As> appServers = new FastList<As>();
 	protected FastList<AspFactory> aspfactories = new FastList<AspFactory>();
 
@@ -103,6 +105,13 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 	protected int maxAsForRoute = 4;
 
 	private M3UARouteManagement routeManagement = null;
+	
+	/**
+	 * Maximum sequence number received from SCCTP user. If SCCTP users sends
+	 * seq number greater than max, packet will be dropped and error message
+	 * will be logged
+	 */
+	private int maxSequenceNumber = MAX_SEQUENCE_NUMBER;
 
 	public M3UAManagement(String name) {
 		this.name = name;
@@ -117,6 +126,29 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 
 	public String getName() {
 		return name;
+	}
+
+	public int getMaxSequenceNumber() {
+		return maxSequenceNumber;
+	}
+
+	/**
+	 * Set the maximum SLS that can be used by SCTP. Internally SLS vs SCTP
+	 * Stream Sequence Number is maintained. Stream Seq Number 0 is for
+	 * management.
+	 * 
+	 * @param maxSls
+	 *            the maxSls to set
+	 */
+	public void setMaxSequenceNumber(int maxSequenceNumber) {
+		if (this.maxSequenceNumber < 1) {
+			this.maxSequenceNumber = 1;
+		}
+
+		if (this.maxSequenceNumber > MAX_SEQUENCE_NUMBER) {
+			this.maxSequenceNumber = MAX_SEQUENCE_NUMBER;
+		}
+		this.maxSequenceNumber = maxSequenceNumber;
 	}
 
 	public String getPersistDir() {
@@ -158,11 +190,10 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		this.persistFile.clear();
 
 		if (persistDir != null) {
-			this.persistFile.append(persistDir).append(File.separator).append(this.name).append("_")
-					.append(PERSIST_FILE_NAME);
+			this.persistFile.append(persistDir).append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
 		} else {
-			persistFile.append(System.getProperty(M3UA_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY)))
-					.append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
+			persistFile.append(System.getProperty(M3UA_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY))).append(File.separator).append(this.name).append("_")
+					.append(PERSIST_FILE_NAME);
 		}
 
 		logger.info(String.format("M3UA configuration file path %s", persistFile.toString()));
@@ -174,7 +205,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		} catch (FileNotFoundException e) {
 			logger.warn(String.format("Failed to load the SS7 configuration file. \n%s", e.getMessage()));
 		}
-		
+
 		this.routeManagement.reset();
 
 		fsmTicker = Executors.newSingleThreadScheduledExecutor();
@@ -231,8 +262,8 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 	 * @return
 	 * @throws Exception
 	 */
-	public As createAs(String asName, Functionality functionality, ExchangeType exchangeType, IPSPType ipspType,
-			RoutingContext rc, TrafficModeType trafficMode, NetworkAppearance na) throws Exception {
+	public As createAs(String asName, Functionality functionality, ExchangeType exchangeType, IPSPType ipspType, RoutingContext rc,
+			TrafficModeType trafficMode, NetworkAppearance na) throws Exception {
 
 		As as = this.getAs(asName);
 		if (as != null) {
@@ -271,12 +302,10 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		}
 
 		if (as.getAspList().size() != 0) {
-			throw new Exception(String.format(
-					"As=%s still has ASP's assigned. Unassign Asp's before destroying this As", asName));
+			throw new Exception(String.format("As=%s still has ASP's assigned. Unassign Asp's before destroying this As", asName));
 		}
 
-		for (FastMap.Entry<String, As[]> e = this.routeManagement.route.head(), end = this.routeManagement.route.tail(); (e = e
-				.getNext()) != end;) {
+		for (FastMap.Entry<String, As[]> e = this.routeManagement.route.head(), end = this.routeManagement.route.tail(); (e = e.getNext()) != end;) {
 			As[] asList = e.getValue();
 			for (int count = 0; count < asList.length; count++) {
 				As asTemp = asList[count];
@@ -330,7 +359,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 			throw new Exception(String.format("Association=%s is already associated", associationName));
 		}
 
-		factory = new AspFactory(aspName);
+		factory = new AspFactory(aspName, this.getMaxSequenceNumber());
 		factory.setAssociation(association);
 		factory.setTransportManagement(this.transportManagement);
 
@@ -383,8 +412,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		for (FastList.Node<Asp> n = as.getAspList().head(), end = as.getAspList().tail(); (n = n.getNext()) != end;) {
 			Asp asp = n.getValue();
 			if (asp.getName().equals(aspName)) {
-				throw new Exception(String.format(
-						"Cannot assign ASP=%s to AS=%s. This ASP is already assigned to this AS", aspName, asName));
+				throw new Exception(String.format("Cannot assign ASP=%s to AS=%s. This ASP is already assigned to this AS", aspName, asName));
 			}
 		}
 
@@ -396,37 +424,31 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 			// If AS has Null RC, this should be the first assignment of ASP to
 			// AS
 			if (asps.size() != 0) {
-				throw new Exception(String.format(
-						"Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS.", aspName, asName));
+				throw new Exception(String.format("Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS.", aspName, asName));
 			}
 		} else if (asps.size() > 0) {
 			// RoutingContext is not null, make sure there is no ASP that is
 			// assigned to AS with null RC
 			Asp asp = asps.get(0);
 			if (asp != null && asp.getAs().getRoutingContext() == null) {
-				throw new Exception(
-						String.format(
-								"Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS which has null RoutingContext.",
-								aspName, asName));
+				throw new Exception(String.format("Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS which has null RoutingContext.",
+						aspName, asName));
 			}
 		}
 
 		if (aspFactroy.getFunctionality() != null && aspFactroy.getFunctionality() != as.getFunctionality()) {
-			throw new Exception(String.format(
-					"Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS of type=%s", aspName,
-					asName, aspFactroy.getFunctionality()));
+			throw new Exception(String.format("Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS of type=%s", aspName, asName,
+					aspFactroy.getFunctionality()));
 		}
 
 		if (aspFactroy.getExchangeType() != null && aspFactroy.getExchangeType() != as.getExchangeType()) {
-			throw new Exception(String.format(
-					"Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS of ExchangeType=%s",
-					aspName, asName, aspFactroy.getExchangeType()));
+			throw new Exception(String.format("Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS of ExchangeType=%s", aspName, asName,
+					aspFactroy.getExchangeType()));
 		}
 
 		if (aspFactroy.getIpspType() != null && aspFactroy.getIpspType() != as.getIpspType()) {
-			throw new Exception(String.format(
-					"Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS of which has IPSP type=%s",
-					aspName, asName, aspFactroy.getIpspType()));
+			throw new Exception(String.format("Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS of which has IPSP type=%s", aspName,
+					asName, aspFactroy.getIpspType()));
 		}
 
 		aspFactroy.setExchangeType(as.getExchangeType());
@@ -618,18 +640,16 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 				try {
 					factory.setAssociation(this.transportManagement.getAssociation(factory.associationName));
 				} catch (Exception e1) {
-					logger.error(String.format(
-							"Error setting Assciation=%s for the AspFactory=%s while loading from XML",
-							factory.associationName, factory.getName()), e1);
+					logger.error(
+							String.format("Error setting Assciation=%s for the AspFactory=%s while loading from XML", factory.associationName,
+									factory.getName()), e1);
 				}
 
 				if (factory.getStatus()) {
 					try {
 						factory.start();
 					} catch (Exception e) {
-						logger.error(
-								String.format("Error starting the AspFactory=%s while loading from XML",
-										factory.getName()), e);
+						logger.error(String.format("Error starting the AspFactory=%s while loading from XML", factory.getName()), e);
 					}
 				}
 			}
@@ -643,8 +663,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 	@Override
 	public void sendMessage(Mtp3TransferPrimitive mtp3TransferPrimitive) throws IOException {
 		ProtocolData data = this.parameterFactory.createProtocolData(mtp3TransferPrimitive);
-		PayloadData payload = (PayloadData) messageFactory.createMessage(MessageClass.TRANSFER_MESSAGES,
-				MessageType.PAYLOAD);
+		PayloadData payload = (PayloadData) messageFactory.createMessage(MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD);
 		payload.setData(data);
 
 		As as = this.routeManagement.getAsForRoute(data.getDpc(), data.getOpc(), data.getSI(), data.getSLS());

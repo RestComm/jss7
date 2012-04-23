@@ -668,7 +668,7 @@ public class IPSPClientFSMTest {
 		}
 
 		public void signalCommUp() {
-			this.associationListener.onCommunicationUp(this);
+			this.associationListener.onCommunicationUp(this,1,1);
 		}
 
 		public void signalCommLost() {
@@ -691,6 +691,14 @@ public class IPSPClientFSMTest {
 		public String[] getExtraHostAddresses() {
 			// TODO Auto-generated method stub
 			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.api.Association#isConnected()
+		 */
+		@Override
+		public boolean isConnected() {
+			return false;
 		}
 
 	}

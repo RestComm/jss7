@@ -201,7 +201,7 @@ public class M3UAManagementTest {
 		}
 
 		public void signalCommUp() {
-			this.associationListener.onCommunicationUp(this);
+			this.associationListener.onCommunicationUp(this,1,1);
 		}
 
 		public void signalCommLost() {
@@ -232,6 +232,15 @@ public class M3UAManagementTest {
 		public String[] getExtraHostAddresses() {
 			// TODO Auto-generated method stub
 			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.api.Association#isConnected()
+		 */
+		@Override
+		public boolean isConnected() {
+			// TODO Auto-generated method stub
+			return false;
 		}
 
 	}

@@ -77,10 +77,12 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 	private static final Logger logger = Logger.getLogger(AspFactory.class);
 
 	private static long ASP_ID = 1l;
+	private static final int SCTP_PAYLOAD_PROT_ID_M3UA = 3;
 
 	private static final String NAME = "name";
 	private static final String STARTED = "started";
 	private static final String ASSOCIATION_NAME = "assocName";
+	private static final String MAX_SEQUENCE_NUMBER = "maxseqnumber";
 
 	private volatile boolean channelConnected = false;
 
@@ -115,6 +117,10 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 	protected ExchangeType exchangeType = null;
 
 	private long aspupSentTime = 0l;
+	
+	private int maxSequenceNumber = M3UAManagement.MAX_SEQUENCE_NUMBER;
+	private int[] slsTable = null;
+	private int maxOutboundStreams;
 
 	public AspFactory() {
 
@@ -126,9 +132,11 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 		txBuffer.flip();
 	}
 
-	public AspFactory(String name) {
+	public AspFactory(String name, int maxSequenceNumber) {
 		this();
 		this.name = name;
+		this.maxSequenceNumber = maxSequenceNumber;
+		this.slsTable = new int[this.maxSequenceNumber];
 	}
 
 	public void start() throws Exception {
@@ -396,15 +404,16 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 				case MessageClass.ASP_STATE_MAINTENANCE:
 				case MessageClass.MANAGEMENT:
 				case MessageClass.ROUTING_KEY_MANAGEMENT:
-					payloadData = new org.mobicents.protocols.api.PayloadData(data.length, data, true, true, 3, 0);
+					payloadData = new org.mobicents.protocols.api.PayloadData(data.length, data, true, true, SCTP_PAYLOAD_PROT_ID_M3UA, 0);
 					break;
 				case MessageClass.TRANSFER_MESSAGES:
 					PayloadData payload = (PayloadData) message;
-					payloadData = new org.mobicents.protocols.api.PayloadData(data.length, data, true, false, 3,
-							payload.getData().getSLS());
+					 int seqControl = payload.getData().getSLS();
+					payloadData = new org.mobicents.protocols.api.PayloadData(data.length, data, true, false, SCTP_PAYLOAD_PROT_ID_M3UA,
+							this.slsTable[seqControl]);
 					break;
 				default:
-					payloadData = new org.mobicents.protocols.api.PayloadData(data.length, data, true, true, 3, 0);
+					payloadData = new org.mobicents.protocols.api.PayloadData(data.length, data, true, true, SCTP_PAYLOAD_PROT_ID_M3UA, 0);
 					break;
 				}
 
@@ -549,6 +558,8 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 			aspFactory.name = xml.getAttribute(NAME, "");
 			aspFactory.associationName = xml.getAttribute(ASSOCIATION_NAME, "");
 			aspFactory.started = xml.getAttribute(STARTED).toBoolean();
+			aspFactory.maxSequenceNumber = xml.getAttribute(MAX_SEQUENCE_NUMBER, M3UAManagement.MAX_SEQUENCE_NUMBER);
+			aspFactory.slsTable = new int[aspFactory.maxSequenceNumber];
 		}
 
 		@Override
@@ -556,6 +567,7 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 			xml.setAttribute(NAME, aspFactory.name);
 			xml.setAttribute(ASSOCIATION_NAME, aspFactory.associationName);
 			xml.setAttribute(STARTED, aspFactory.started);
+			xml.setAttribute(MAX_SEQUENCE_NUMBER, aspFactory.maxSequenceNumber);
 		}
 	};
 
@@ -585,8 +597,30 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 	}
 
 	@Override
-	public void onCommunicationUp(Association association) {
+	public void onCommunicationUp(Association association, int maxInboundStreams, int maxOutboundStreams) {
+		this.maxOutboundStreams = maxOutboundStreams;
+		// Recreate SLS table. Minimum of two is correct?
+		this.createSLSTable(Math.min(maxInboundStreams, maxOutboundStreams) - 1);
 		this.handleCommUp();
+	}
+	
+	protected void createSLSTable(int minimumBoundStream) {
+
+		if (minimumBoundStream == 1) { // special case - only 1 stream
+			for (int i = 0; i < this.maxSequenceNumber; i++) {
+				slsTable[i] = 0;
+			}
+		} else {
+			slsTable[0] = 0;
+			// SCTP Stream 0 is for management messages, we start from 1
+			int stream = 1;
+			for (int i = 0; i < this.maxSequenceNumber; i++) {
+				if (stream > minimumBoundStream) {
+					stream = 1;
+				}
+				slsTable[i] = stream++;
+			}
+		}
 	}
 
 	@Override
@@ -607,6 +641,15 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 				this.read(m3UAMessage);
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.api.AssociationListener#inValidStreamId(org.mobicents.protocols.api.PayloadData)
+	 */
+	@Override
+	public void inValidStreamId(org.mobicents.protocols.api.PayloadData payloadData) {
+		logger.error(String.format("Tx : PayloadData with streamNumber=%d which is greater than or equal to maxSequenceNumber=%d. Droping PayloadData=%s",
+				payloadData.getStreamNumber(), this.maxOutboundStreams, payloadData));		
 	}
 
 	public void show(StringBuffer sb) {
@@ -637,5 +680,6 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 			sb.append(M3UAOAMMessages.NEW_LINE);
 		}
 	}
+
 }
 
