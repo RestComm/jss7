@@ -234,10 +234,13 @@ public class SccpRoutingControl {
 			return TranslationAddressCheckingResult.translationFailure;
 		}
 
+		int targetSsn = translationAddress.getSubsystemNumber();
+		if (targetSsn == 0)
+			targetSsn = msg.getCalledPartyAddress().getSubsystemNumber();
+
 		if (this.sccpStackImpl.router.spcIsLocal(translationAddress.getSignalingPointCode())) {
 			// destination PC is local
-			int ssn = translationAddress.getSubsystemNumber();
-			if (ssn == 0 || ssn == 1 || this.sccpProviderImpl.getSccpListener(ssn) != null) {
+			if (targetSsn == 1 || this.sccpProviderImpl.getSccpListener(targetSsn) != null) {
 				return TranslationAddressCheckingResult.destinationAvailable;
 			} else {
 				if (logger.isEnabledFor(Level.WARN)) {
@@ -266,9 +269,8 @@ public class SccpRoutingControl {
 		}			
 
 		if (translationAddress.getAddressIndicator().getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
-			int ssn = translationAddress.getSubsystemNumber();
-			if (ssn != 1) {
-				RemoteSubSystem remoteSubSystem = this.sccpStackImpl.getSccpResource().getRemoteSsn(translationAddress.getSignalingPointCode(), ssn);
+			if (targetSsn != 1) {
+				RemoteSubSystem remoteSubSystem = this.sccpStackImpl.getSccpResource().getRemoteSsn(translationAddress.getSignalingPointCode(), targetSsn);
 				if (remoteSubSystem == null) {
 					if (logger.isEnabledFor(Level.WARN)) {
 						logger.warn(String.format("Received SccpMessage=%s for Translation but no %s Remote SubSystem = %d (dpc=%d) resource defined ", msg,
