@@ -26,6 +26,10 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<artifactId>asn</artifactId>
+			<groupId>org.mobicents.protocols.asn</groupId>
+		</dependency>		
+		<dependency>
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 			<artifactId>sccp-api</artifactId>
 		</dependency>
@@ -112,6 +116,29 @@
 			<groupId>org.mobicents.protocols.ss7.isup</groupId>
 			<artifactId>isup-impl</artifactId>
 		</dependency>		
+		
+		<dependency>
+			<artifactId>congestion</artifactId>
+			<groupId>org.mobicents.protocols.ss7.congestion</groupId>
+		</dependency>		
+		<dependency>
+			<artifactId>map-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.map</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>map-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.map</groupId>
+		</dependency>
+
+		<dependency>
+			<artifactId>tcap-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>tcap-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+		</dependency>
+				
 	</dependencies>
 	<build>
 		<finalName>${pom.artifactId}-${pom.version}</finalName>
@@ -207,7 +234,7 @@
 						true
 					</resolveTransitiveDependencies>
 					<eclipseProjectName>
-						mobicents-ss7-service
+						service
 					</eclipseProjectName>
 				</configuration>
 			</plugin>
