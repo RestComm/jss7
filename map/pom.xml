@@ -39,7 +39,7 @@
 						true
 					</resolveTransitiveDependencies>
 					<eclipseProjectName>
-						mobicents-map-stack
+						map
 					</eclipseProjectName>
 				</configuration>
 			</plugin>

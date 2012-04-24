@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms;
@@ -33,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSuppl
  * @author amit bhayani
  * 
  */
-public interface MAPProvider {
+public interface MAPProvider extends Serializable {
 
 //	public static final int NETWORK_UNSTRUCTURED_SS_CONTEXT_V2 = 1;
 

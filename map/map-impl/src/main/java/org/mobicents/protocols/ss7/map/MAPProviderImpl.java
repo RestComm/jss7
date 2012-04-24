@@ -125,28 +125,28 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
  */
 public class MAPProviderImpl implements MAPProvider, TCListener {
 
-	protected Logger loger = Logger.getLogger(MAPProviderImpl.class);
+	protected static final Logger loger = Logger.getLogger(MAPProviderImpl.class);
 
-	private List<MAPDialogListener> dialogListeners = new CopyOnWriteArrayList<MAPDialogListener>();
+	private transient List<MAPDialogListener> dialogListeners = new CopyOnWriteArrayList<MAPDialogListener>();
 
-	protected Map<Long, MAPDialogImpl> dialogs = new HashMap<Long, MAPDialogImpl>();
+	protected transient Map<Long, MAPDialogImpl> dialogs = new HashMap<Long, MAPDialogImpl>();
 
 	/**
 	 * Congestion sources name list. Congestion is where this collection is not empty
 	 */
-	protected Map<String, String> congSources = new HashMap<String, String>();
+	protected transient Map<String, String> congSources = new HashMap<String, String>();
 
-	private TCAPProvider tcapProvider = null;
+	private transient TCAPProvider tcapProvider = null;
 
-	private final MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
-	private final MAPSmsTpduParameterFactory mapSmsTpduParameterFactory = new MAPSmsTpduParameterFactoryImpl();
-	private final MAPErrorMessageFactory mapErrorMessageFactory = new MAPErrorMessageFactoryImpl();
+	private final transient MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
+	private final transient MAPSmsTpduParameterFactory mapSmsTpduParameterFactory = new MAPSmsTpduParameterFactoryImpl();
+	private final transient MAPErrorMessageFactory mapErrorMessageFactory = new MAPErrorMessageFactoryImpl();
 
-	protected Set<MAPServiceBase> mapServices = new HashSet<MAPServiceBase>();
-	private final MAPServiceSupplementary mapServiceSupplementary = new MAPServiceSupplementaryImpl(this);
-	private final MAPServiceSms mapServiceSms = new MAPServiceSmsImpl(this);
-	private final MAPServiceLsm mapServiceLsm = new MAPServiceLsmImpl(this);
-	private final MAPServiceSubscriberInformation mapServiceSubscriberInformation = new MAPServiceSubscriberInformationImpl(this);
+	protected transient Set<MAPServiceBase> mapServices = new HashSet<MAPServiceBase>();
+	private final transient MAPServiceSupplementary mapServiceSupplementary = new MAPServiceSupplementaryImpl(this);
+	private final transient MAPServiceSms mapServiceSms = new MAPServiceSmsImpl(this);
+	private final transient MAPServiceLsm mapServiceLsm = new MAPServiceLsmImpl(this);
+	private final transient MAPServiceSubscriberInformation mapServiceSubscriberInformation = new MAPServiceSubscriberInformationImpl(this);
 
 	/**
 	 * public common methods
