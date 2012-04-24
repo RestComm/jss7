@@ -1102,15 +1102,12 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 						} catch (AsnException e) {
 							loger.error("When parsing TCUserAbortIndication indication: AsnException" + e.getMessage(), e);
-							e.printStackTrace();
 							parsePduResult = ParsePduResult.BadUserInfo;
 						} catch (IOException e) {
 							loger.error("When parsing TCUserAbortIndication indication: IOException" + e.getMessage(), e);
-							e.printStackTrace();
 							parsePduResult = ParsePduResult.BadUserInfo;
 						} catch (MAPParsingComponentException e) {
 							loger.error("When parsing TCUserAbortIndication indication: MAPParsingComponentException" + e.getMessage(), e);
-							e.printStackTrace();
 							parsePduResult = ParsePduResult.BadUserInfo;
 						}
 					}
