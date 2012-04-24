@@ -142,10 +142,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 	// some help methods... crude but will work for first impl.
 	private Long getAvailableTxId() throws TCAPException {
-		Long poped = this.dialogIdIndex.pop();
-		if(poped == null)
-		    throw new TCAPException("Not enough resources!");
-		return poped;
+		return this.dialogIdIndex.pop();
 	}
 
 	// get next Seq Control value available
