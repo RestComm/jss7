@@ -383,7 +383,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		logger.info("Starting TCAP Provider");
 		this._EXECUTOR = Executors.newScheduledThreadPool(4);		
 		this.sccpProvider.registerSccpListener(ssn, this);
-		logger.info("Registered SCCP listener with address " + ssn);
+		logger.info("Registered SCCP listener with SSN " + ssn);
 	}
 
 	void stop() {
@@ -513,7 +513,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				break;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error(String.format("Error while decoding Rx SccpMessage=%s", message), e);
 		}
 	}
