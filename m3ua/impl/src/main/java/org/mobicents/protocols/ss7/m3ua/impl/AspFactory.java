@@ -419,7 +419,7 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 
 				this.association.send(payloadData);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(String.format("Error while trying to send PayloadData to SCTP layer. M3UAMessage=%s", message));
 			}
 		}
 	}
@@ -611,7 +611,6 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 				slsTable[i] = 0;
 			}
 		} else {
-			slsTable[0] = 0;
 			// SCTP Stream 0 is for management messages, we start from 1
 			int stream = 1;
 			for (int i = 0; i < this.maxSequenceNumber; i++) {
