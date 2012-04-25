@@ -41,7 +41,7 @@
 						true
 					</resolveTransitiveDependencies>
 					<eclipseProjectName>
-						mobicents-m3ua
+						m3ua
 					</eclipseProjectName>
 				</configuration>
 			</plugin>
