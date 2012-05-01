@@ -28,6 +28,9 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp3.SLTMTest;
 
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
+import org.mobicents.protocols.ss7.scheduler.Task;
+
 /**
  * 
  * @author kulikov
@@ -61,14 +64,14 @@ public class Mtp2 {
     /**
      * Timers
      */
-    private final static int T2_TIMEOUT = 5000;
-    private final static int T3_TIMEOUT = 2000;
-    private final static int T4_TIMEOUT_NORMAL = 9500;
-    private final static int T4_TIMEOUT_EMERGENCY = 500;    // not a static, since it can change.
+    private final static int T2_TIMEOUT = 50;
+    private final static int T3_TIMEOUT = 10;
+    private final static int T4_TIMEOUT_NORMAL = 82;
+    private final static int T4_TIMEOUT_EMERGENCY = 5;    // not a static, since it can change.
     private int T4_TIMEOUT = T4_TIMEOUT_NORMAL;
-    private int T7_TIMEOUT = 2000;    // see Q704 - after alignemtn failure we need to wait before we retry
+    private int T7_TIMEOUT = 20;    // see Q704 - after alignemtn failure we need to wait before we retry
     // 800-1500.
-    private final static int T17_TIMEOUT = 1500;
+    private final static int T17_TIMEOUT = 15;
     private final static int fcstab[] = new int[]{0x0000, 0x1189, 0x2312,
         0x329b, 0x4624, 0x57ad, 0x6536, 0x74bf, 0x8c48, 0x9dc1, 0xaf5a,
         0xbed3, 0xca6c, 0xdbe5, 0xe97e, 0xf8f7, 0x1081, 0x0108, 0x3393,
@@ -284,13 +287,26 @@ public class Mtp2 {
     
     private static final Logger ROOT_LOGGER = Logger.getLogger(Mtp2.class);
     private final Logger logger; //actual logger.
-    public Mtp2(String name, Mtp1 channel) {
+    
+    private Scheduler scheduler;
+    
+    public Mtp2(String name, Mtp1 channel,Scheduler scheduler) {
         this.name = name;
         this.logger = ROOT_LOGGER.getLogger(name);
         this.channel = channel;
         channel.setLink(this);
         this.sls = channel.getCode();
-
+        this.scheduler=scheduler;
+        
+        if(scheduler!=null)
+        {
+        	t2Action = new T2Action(scheduler);
+        	t3Action = new T3Action(scheduler);
+        	t4Action = new T4Action(scheduler);
+        	t7Action = new T7Action(scheduler);
+        	t17Action = new T17Action(scheduler);
+        }
+        
         // init HDLC
         hdlc.fasthdlc_precalc();
         hdlc.fasthdlc_init(rxState);
@@ -302,6 +318,20 @@ public class Mtp2 {
         // init buffer
         for (int i = 0; i < this.transmissionBuffer.length; i++) {
             this.transmissionBuffer[i] = new Mtp2Buffer();
+        }
+    }
+    
+    public void setScheduler(Scheduler scheduler)
+    {
+    	this.scheduler=scheduler;
+    	
+    	if(t2Action==null && scheduler!=null)
+        {
+        	t2Action = new T2Action(scheduler);
+        	t3Action = new T3Action(scheduler);
+        	t4Action = new T4Action(scheduler);
+        	t7Action = new T7Action(scheduler);
+        	t17Action = new T17Action(scheduler);
         }
     }
     
@@ -412,7 +442,6 @@ public class Mtp2 {
         started = false;
         reset();
         this.channel.close();
-
     }
     // not used
     private void startInitialAlignment() {
@@ -471,18 +500,20 @@ public class Mtp2 {
         this.sendBIB = 1;
         this.retransmissionFSN = _OFF_RTR;
         this.retransmissionFSN_LastAcked = 0x7F;
-        this.retransmissionFSN_LastSent = 0x7F;
-        
+        this.retransmissionFSN_LastSent = 0x7F;        
     }
 
     public void fail() {
-        cleanupTimers();
+        cleanupTimers();        
+        this.reset();
+        
+        this.setState(MTP2_OUT_OF_SERVICE);
         
         if(logger.isDebugEnabled())
         {
         	logger.debug(String.format("(%s) Link Out of service", name));
         }
-        this.setState(MTP2_OUT_OF_SERVICE);
+        
         start_T17();
     }
 
@@ -524,15 +555,12 @@ public class Mtp2 {
     	if (this.txFrame!=null && this.txFrame.len != this.txFrame.offset) {
     		fillLSSUBuffer(this.nextStateFrame,indicator);
     		this.pendingLSSU = true; //should we check on entering here?
-    		
         } else {
         	this.txFrame = this.stateFrame; //set proper frame 
-        	fillLSSUBuffer(this.txFrame,indicator);
-        	
-
+        	fillLSSUBuffer(this.txFrame,indicator);        	
         }
-
     }
+    
     private void fillLSSUBuffer(Mtp2Buffer b, int indicator)
     {
     	b.len = 4;
@@ -551,7 +579,6 @@ public class Mtp2 {
         this.txFrame.frame[1] = (byte) (this.retransmissionFSN_LastSent | (this.sendFIB << 7));
         this.txFrame.frame[2] = 0;
         this.txFrame.offset = 0;
-
     }
 
     private void queueNextFrame() {
@@ -562,7 +589,6 @@ public class Mtp2 {
         } else {
             switch (state) {
                 case MTP2_OUT_OF_SERVICE:
-
                     // send SIOS ?
                     queueLSSU(FRAME_STATUS_INDICATION_OS);
                     break;
@@ -571,16 +597,13 @@ public class Mtp2 {
                     break;
                 case MTP2_PROVING:
                 case MTP2_ALIGNED:
-
                     // which way is correct?
                     if (emergency) {
                         queueLSSU(FRAME_STATUS_INDICATION_E);
                     } else {
-                        queueLSSU(FRAME_STATUS_INDICATION_N);
+                    	queueLSSU(FRAME_STATUS_INDICATION_N);
                     }
-           
                     break;
-
                 default:
 
                     // in service, we need to check buffer, otherwise its RTR
@@ -605,7 +628,6 @@ public class Mtp2 {
                     queueFISU();
             }
         }
-
     }
 
     public final static int PPP_FCS(int fcs, int c) {
@@ -1001,10 +1023,8 @@ public class Mtp2 {
      *            the number of received bytes.
      */
     private void processRx(byte[] buff, int len) {
-
     	 int i = 0;
-
-         // start HDLC alg
+    	 // start HDLC alg
          while (i < len) {
              while (rxState.bits <= 24 && i < len) {
                  int b = buff[i++] & 0xff;
@@ -1012,9 +1032,9 @@ public class Mtp2 {
                  if (rxState.state == 0) {
                      // octet counting mode
                      nCount = (nCount + 1) % 16;
-                     if (nCount == 0) {
-                         countError("on receive");
-                     }
+                	 if (nCount == 0) {
+                	 	 countError("on receive");
+                	 }
                  }
              }
 
@@ -1026,17 +1046,15 @@ public class Mtp2 {
                      countFrame();
 
                      // checking length and CRC of the received frame
-                     if (rxFrame.len == 0) {
+                     if (rxFrame.len == 0) {                    	 
                      } else if (rxFrame.len < 5) {
                          // frame must be at least 5 bytes in length
-                         countError("hdlc error, frame LI<5");
-
+                    	 countError("hdlc error, frame LI<5");
                      } else if (rxCRC == 0xF0B8) {
                          // good frame received
-                         processFrame();
+                    	 processFrame();
                      } else {
-                         countError("hdlc complete, wrong terms.");
-
+                    	 countError("hdlc complete, wrong terms.");
                      }
                      rxFrame.len = 0;
                      rxCRC = 0xffff;
@@ -1048,37 +1066,28 @@ public class Mtp2 {
                      // eCount = 0;
                      countFrame();
                      // "on receive, hdlc discard"
-
                      countError("hdlc discard.");
-
                      break;
                  case FastHDLC.RETURN_EMPTY_FLAG:
-
                 	 rxFrame.len = 0;
                      break;
                  default:
                      if (rxFrame.len > 279) {
-
                          rxState.state = 0;
                          rxFrame.len = 0;
                          rxCRC = 0xffff;
                          eCount = 0;
                          countFrame();
                          countError("Overlong MTP frame, entering octet mode on link '" + name + "'");
-
                      } else {
-
-                    	 rxFrame.frame[rxFrame.len++] = (byte)res;
+                         rxFrame.frame[rxFrame.len++] = (byte)res;
                          rxCRC = PPP_FCS(rxCRC, res & 0xff);
                      }
              }
-
          }
     }
 
     private void processTx(int bytesRead) throws IOException {
-
-
     	for (int i = 0; i < bytesRead && i < this.ioBufferSize; i++) {
             if (txState.bits < 8) {
                 // need more bits
@@ -1109,19 +1118,16 @@ public class Mtp2 {
             // txBuffer.put(i, (byte) hdlc.fasthdlc_tx_run_nocheck(txState));
             txBuffer[i] = (byte) hdlc.fasthdlc_tx_run_nocheck(txState);
         }
-    	
     }
 
     public void doRead() {
-        if (started) {
+    	if (started) {
             try {
-                int bytesRead = channel.read(rxBuffer);
-                
+            	int bytesRead = channel.read(rxBuffer);
                 if (bytesRead > 0) {
-                    processRx(rxBuffer, bytesRead);
-                }
+                	processRx(rxBuffer, bytesRead);
+                }                               
             } catch (Exception e) {
- 
             	if(logger.isEnabledFor(Level.ERROR))
             	{
             		logger.error(String.format("(%s) Can not read data from channel", name), e);
@@ -1133,13 +1139,12 @@ public class Mtp2 {
     }
 
     public void doWrite() {
-        if (!started) {
+    	if (!started) {        	           
             return;
         }
-        try {
-            processTx(this.ioBufferSize);
-            channel.write(txBuffer, this.ioBufferSize);
-           
+        try {        	
+        	processTx(this.ioBufferSize);
+            channel.write(txBuffer, this.ioBufferSize);            
         } catch (Exception e) {
         	if(logger.isEnabledFor(Level.ERROR))
         	{
@@ -1169,7 +1174,6 @@ public class Mtp2 {
         this.cleanupTimers();
         this.reset();
         if (this.state == MTP2_INSERVICE) {
-
             if (this.mtp3 != null) {
                 this.mtp3.linkFailed(this);
             }
@@ -1188,7 +1192,6 @@ public class Mtp2 {
         this.cleanupTimers();
         this.reset();
         if (this.state == MTP2_INSERVICE) {
-
             if (this.mtp3 != null) {
                 this.mtp3.linkFailed(this);
             }
@@ -1226,10 +1229,9 @@ public class Mtp2 {
     }
 
     private void countError(String info) {
-
-        eCount++;
-        //logger.warn(String.format("(%s) Error detected: %s, error count=%d", name, info, eCount));
-
+    	eCount++;
+    	
+    	//logger.info("ERROR:" + info);
         switch (state) {
             case MTP2_ALIGNED_READY:
             case MTP2_INSERVICE:
@@ -1287,20 +1289,45 @@ public class Mtp2 {
                 eCount--;
             }
         }
-    }    // //////////////////////
+    }    
+    
+    // //////////////////////
     // Timers and actions //
     // //////////////////////
-    private T2Action t2Action = new T2Action();
-    private T3Action t3Action = new T3Action();
-    private T4Action t4Action = new T4Action();
-    private T7Action t7Action = new T7Action();
-    private T17Action t17Action = new T17Action();
+    private T2Action t2Action;
+    private T3Action t3Action;
+    private T4Action t4Action;
+    private T7Action t7Action;
+    private T17Action t17Action;
 
-    protected MTPScheduler scheduler = new MTPScheduler();
-    
-    private class T2Action extends MTPTask {
-
-        public void perform() {
+    private class T2Action extends Task {
+    	private int ttl;
+    	
+    	public T2Action(Scheduler scheduler)
+    	{
+    		super(scheduler);
+    	}
+    	
+    	public int getQueueNumber()
+    	{
+    		return scheduler.HEARTBEAT_QUEUE;
+    	}
+    	
+    	public void start()
+    	{
+    		this.activate(true);
+    		ttl=T2_TIMEOUT;
+    		scheduler.submitHeatbeat(this);
+    	}
+    	
+        public long perform() {
+        	if(ttl>0)
+        	{
+        		ttl--;
+        		scheduler.submitHeatbeat(this);
+        		return 0;
+        	}
+        	
             // remove ref
             // T2.cancel(false);
             // T2 = null;
@@ -1320,12 +1347,39 @@ public class Mtp2 {
                     logger.warn("T2 fired in state[ " + STATE_NAMES[tmpState] + " ]");
                 }
             }
+            
+            return 0;
         }
     }
 
-    private class T3Action extends MTPTask  {
-
-        public void perform() {
+    private class T3Action extends Task  {
+    	private int ttl;
+    	
+    	public T3Action(Scheduler scheduler)
+    	{
+    		super(scheduler);
+    	}
+    	
+    	public int getQueueNumber()
+    	{
+    		return scheduler.HEARTBEAT_QUEUE;
+    	}
+    	
+    	public void start()
+    	{
+    		this.activate(true);
+    		ttl=T3_TIMEOUT;
+    		scheduler.submitHeatbeat(this);
+    	}
+    	
+        public long perform() {
+        	if(ttl>0)
+        	{
+        		ttl--;
+        		scheduler.submitHeatbeat(this);
+        		return 0;
+        	}
+        	
             // remove ref
             // T3.cancel(false);
             // T3 = null;
@@ -1344,13 +1398,39 @@ public class Mtp2 {
                     logger.warn("T3 fired in state[ " + STATE_NAMES[tmpState] + " ]");
                 }
             }
+            
+            return 0;
         }
     }
 
-    private class T4Action extends MTPTask  {
-
-        public void perform() {
-
+    private class T4Action extends Task  {
+    	private int ttl;
+    	
+    	public T4Action(Scheduler scheduler)
+    	{
+    		super(scheduler);
+    	}
+    	
+    	public int getQueueNumber()
+    	{
+    		return scheduler.HEARTBEAT_QUEUE;
+    	}
+    	
+    	public void start()
+    	{
+    		this.activate(true);
+    		ttl=T4_TIMEOUT;
+    		scheduler.submitHeatbeat(this);
+    	}
+    	
+        public long perform() {
+        	if(ttl>0)
+        	{
+        		ttl--;
+        		scheduler.submitHeatbeat(this);
+        		return 0;
+        	}
+        	
             // remove ref;
             // T4.cancel(false);
             // T4 = null;
@@ -1376,22 +1456,76 @@ public class Mtp2 {
                     logger.warn("T4 fired in state[ " + STATE_NAMES[tmpState] + " ]");
                 }
             }
+            
+            return 0;
         }
     }
 
-    private class T7Action extends MTPTask  {
-
-        public void perform() {
+    private class T7Action extends Task  {
+    	private int ttl;
+    	
+    	public T7Action(Scheduler scheduler)
+    	{
+    		super(scheduler);
+    	}
+    	
+    	public int getQueueNumber()
+    	{
+    		return scheduler.HEARTBEAT_QUEUE;
+    	}
+    	
+    	public void start()
+    	{
+    		this.activate(true);
+    		ttl=T7_TIMEOUT;
+    		scheduler.submitHeatbeat(this);
+    	}
+    	
+        public long perform() {
+        	if(ttl>0)
+        	{
+        		ttl--;
+        		scheduler.submitHeatbeat(this);
+        		return 0;
+        	}
+        	
             // FIXME: add this
             stop_T7();
+            return 0;
         }
     }
 
-    private class T17Action extends MTPTask  {
+    private class T17Action extends Task  {
+    	private int ttl;
+    	
+    	public T17Action(Scheduler scheduler)
+    	{
+    		super(scheduler);
+    	}
+    	
+    	public int getQueueNumber()
+    	{
+    		return scheduler.HEARTBEAT_QUEUE;
+    	}
+    	
+    	public void start()
+    	{
+    		this.activate(true);
+    		ttl=T17_TIMEOUT;
+    		scheduler.submitHeatbeat(this);
+    	}
+    	
         // first alig works different.
         private boolean initial = true;
 
-        public void perform() {
+        public long perform() {
+        	if(ttl>0)
+        	{
+        		ttl--;
+        		scheduler.submitHeatbeat(this);
+        		return 0;
+        	}
+        	
             logger.info(String.format("(%s) Restarting initial alignment", name));
             // there is somethin
             // T17.cancel(true);
@@ -1404,12 +1538,13 @@ public class Mtp2 {
                 initial = false;
             }
 
+            return 0;
         }
     }
 
     private void start_T2() {
         this.stop_T2();
-        scheduler.schedule(t2Action, T2_TIMEOUT);
+        t2Action.start();
     }
 
     private void stop_T2() {
@@ -1418,7 +1553,7 @@ public class Mtp2 {
 
     private void start_T3() {
         this.stop_T3();
-        scheduler.schedule(t3Action, T3_TIMEOUT);
+        t3Action.start();
     }
 
     private void stop_T3() {
@@ -1427,7 +1562,7 @@ public class Mtp2 {
 
     private void start_T4() {
         this.stop_T4();
-        scheduler.schedule(t4Action, T4_TIMEOUT);
+        t4Action.start();
     }
 
     private void stop_T4() {
@@ -1436,7 +1571,7 @@ public class Mtp2 {
 
     private void start_T7() {
         this.stop_T7();
-        scheduler.schedule(t7Action, T7_TIMEOUT);
+        t7Action.start();
     }
 
     private void stop_T7() {
@@ -1446,7 +1581,7 @@ public class Mtp2 {
     // MTP3 actaully, its accessed by it, we just keep some state in mtp2
     public void start_T17() {
         this.stop_T17();
-        scheduler.schedule(t17Action, T17_TIMEOUT);
+        t17Action.start();
     }
 
     public void stop_T17() {
@@ -1454,7 +1589,7 @@ public class Mtp2 {
     }
 
     public boolean isT17() {
-        return !t17Action.isCanceled();
+        return t17Action.isActive();
     }
 
 

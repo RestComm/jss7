@@ -129,10 +129,22 @@ public class Channel implements Mtp1 {
      * @return the number of bytes actualy read.
      */
     public int read(byte[] buffer) throws IOException {
-        return readData(fd, buffer);
+    	int result=readData(fd, buffer,ioBufferSize);
+    	if(result==-1)
+    	{
+    		doUnregister(fd);
+    		close();
+    		int zapid = 31 * (span - 1) + channelID;
+            fd = openChannel(zapid, ioBufferSize);
+            doRegister(fd);
+            
+    		return 0;
+    	}
+    	
+    	return result;
     }
 
-    public native int readData(int fd, byte[] buffer);
+    public native int readData(int fd, byte[] buffer, int bufferSize);
 
     /**
      * Writes specified data to the pipe.

@@ -150,7 +150,7 @@ public class Scheduler implements Runnable {
                     try {
                         duration = task.perform();
                         count++;
-                    } catch (Exception e) {
+                    } catch (Exception e) {                    	
                     }
                 }
 

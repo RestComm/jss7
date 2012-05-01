@@ -26,6 +26,8 @@ import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
+
 /**
  * The instance of this class represents the signaling link over which SS7
  * signaling takes place. A link is in {@link LinkState#UNAVAILABLE UNAVAILABLE}
@@ -56,6 +58,8 @@ public abstract class Link implements XMLSerializable {
     protected static final boolean TRUE = true;
     protected static final boolean FALSE = false;
 
+    protected Scheduler scheduler;
+    
     public Link() {
     }
 
@@ -63,6 +67,14 @@ public abstract class Link implements XMLSerializable {
         this.linkName = linkName;
     }
 
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
+
+    public void setScheduler(Scheduler scheduler) {
+        this.scheduler = scheduler;
+    }
+    
     /**
      * Configure this link.
      * 

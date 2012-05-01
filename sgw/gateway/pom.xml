@@ -10,42 +10,65 @@
 
 	<name>Mobicents SS7 :: SGW :: Gateway :: ${pom.artifactId}</name>
 
+	<properties>
+		<sctp.version>1.0.0.CR2</sctp.version>		
+	</properties>
+
 	<dependencies>
 		<!-- clock -->
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.clock</groupId>
 			<artifactId>clock</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<artifactId>mtp</artifactId>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<artifactId>linkset</artifactId>
 			<groupId>org.mobicents.protocols.ss7.management</groupId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
+
+		<dependency>
+                        <groupId>org.mobicents.protocols.sctp</groupId>
+                        <artifactId>sctp-api</artifactId>
+                        <version>${sctp.version}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>org.mobicents.protocols.sctp</groupId>
+                        <artifactId>sctp-impl</artifactId>
+                        <version>${sctp.version}</version>
+                </dependency>
 
 		<!-- M3UA -->
 		<dependency>
 			<artifactId>m3ua-api</artifactId>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<artifactId>m3ua-impl</artifactId>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Hardware Dahdi Java-->
 		<dependency>
 			<artifactId>mobicents-dahdi</artifactId>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Hardware Dialogic Java-->
 		<dependency>
 			<artifactId>mobicents-dialogic</artifactId>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

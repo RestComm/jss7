@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents</groupId>
 		<artifactId>mobicents-parent</artifactId>
-		<version>2.20</version>
+		<version>2.23-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>ss7-parent</artifactId>
@@ -38,6 +38,7 @@
 
 	<modules>
 		<module>docs</module>
+		<module>scheduler</module>
 		<module>clock</module>
 		<module>congestion</module>
 		<module>m3ua</module>
@@ -314,14 +315,14 @@
 			<id>jboss-releases-repository</id>
 			<name>JBoss Releases Repository</name>
 			<url>
-				https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
+				http://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
 			</url>
 		</repository>
 		<snapshotRepository>
 			<id>jboss-snapshots-repository</id>
 			<name>JBoss Snapshots Repository</name>
 			<url>
-				https://repository.jboss.org/nexus/content/repositories/snapshots/
+				http://repository.jboss.org/nexus/content/repositories/snapshots/
 			</url>
 		</snapshotRepository>
 	</distributionManagement>
@@ -374,4 +375,27 @@
 			http://mobicents.googlecode.com/svn/branches/protocols/ss7/1.x
 		</url>
 	</scm>
+	<pluginRepositories>
+	  <pluginRepository>
+	    <id>repository.jboss.org</id>
+	    <name>JBoss Repository</name>
+	    <url>
+         	http://repository.jboss.org
+	    </url>
+	  </pluginRepository>
+	  <pluginRepository>
+	    <id>snapshots.jboss.org</id>
+	    <name>JBoss Snapshots Repository</name>
+	    <layout>default</layout>
+	    <url>
+             	http://snapshots.jboss.org
+	    </url>
+	    <snapshots>
+		<enabled>true</enabled>
+	    </snapshots>
+	    <releases>
+                <enabled>false</enabled>
+	    </releases>
+	  </pluginRepository>
+	</pluginRepositories>
 </project>

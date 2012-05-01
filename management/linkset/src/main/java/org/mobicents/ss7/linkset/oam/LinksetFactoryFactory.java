@@ -22,6 +22,7 @@
 
 package org.mobicents.ss7.linkset.oam;
 
+import javolution.xml.XMLBinding;
 import javolution.util.FastMap;
 
 /**
@@ -42,7 +43,7 @@ public class LinksetFactoryFactory {
      * @param factory
      */
     public void addFactory(LinksetFactory factory) {
-        linksetFactories.put(factory.getName(), factory);
+    	linksetFactories.put(factory.getName(), factory);
     }
 
     /**
@@ -51,9 +52,23 @@ public class LinksetFactoryFactory {
      * @param factory
      */
     public void removeFactory(LinksetFactory factory) {
-        linksetFactories.remove(factory);
+    	linksetFactories.remove(factory);
     }
 
+    public void loadBinding(XMLBinding binding)
+    {
+    	FastMap.Entry<String, LinksetFactory> e = this.linksetFactories.head();
+        FastMap.Entry<String, LinksetFactory> end = this.linksetFactories.tail();
+        for (; (e = e.getNext()) != end;) {
+        	LinksetFactory linksetFactory = e.getValue();
+            if(linksetFactory.getLinkName()!=null)
+            	binding.setAlias(linksetFactory.getLinkClass(), linksetFactory.getLinkName());
+            
+            if(linksetFactory.getLinksetName()!=null)
+            	binding.setAlias(linksetFactory.getLinksetClass(), linksetFactory.getLinksetName());
+        }
+    }
+    
     /**
      * Create a new {@link Linkset} depending on the options passed.
      * 

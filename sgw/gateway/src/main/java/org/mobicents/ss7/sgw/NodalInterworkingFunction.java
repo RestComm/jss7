@@ -29,8 +29,15 @@ import javolution.util.FastList;
 import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.impl.sg.ServerM3UAProcess;
+
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+
 import org.mobicents.protocols.stream.api.SelectorKey;
 import org.mobicents.ss7.linkset.oam.Layer4;
 import org.mobicents.ss7.linkset.oam.Linkset;
@@ -38,8 +45,11 @@ import org.mobicents.ss7.linkset.oam.LinksetManager;
 import org.mobicents.ss7.linkset.oam.LinksetSelector;
 import org.mobicents.ss7.linkset.oam.LinksetStream;
 
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
+import org.mobicents.protocols.ss7.scheduler.Task;
+
 /** */
-public class NodalInterworkingFunction implements Layer4 {
+public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPartListener {
 
 	private static Logger logger = Logger.getLogger(NodalInterworkingFunction.class);
 
@@ -48,7 +58,7 @@ public class NodalInterworkingFunction implements Layer4 {
 
 	private LinksetManager linksetManager = null;
 
-	private ServerM3UAProcess serverM3UAProcess = null;
+	private M3UAManagement m3UAManagement = null;
 
 	private boolean started = false;
 
@@ -57,10 +67,10 @@ public class NodalInterworkingFunction implements Layer4 {
 	private byte[] rxBuffer;
 
 	private ConcurrentLinkedQueue<byte[]> mtpqueue = new ConcurrentLinkedQueue<byte[]>();
-	private ConcurrentLinkedQueue<PayloadData> m3uaqueue = new ConcurrentLinkedQueue<PayloadData>();
+	private ConcurrentLinkedQueue<Mtp3TransferPrimitive> m3uaqueue = new ConcurrentLinkedQueue<Mtp3TransferPrimitive>();
 
-	public NodalInterworkingFunction() {
-
+	public NodalInterworkingFunction(Scheduler scheduler) {
+		super(scheduler);
 	}
 
 	public LinksetManager getLinksetManager() {
@@ -71,13 +81,18 @@ public class NodalInterworkingFunction implements Layer4 {
 		this.linksetManager = linksetManager;
 	}
 
-
-	public ServerM3UAProcess getServerM3UAProcess() {
-		return serverM3UAProcess;
+	public int getQueueNumber()
+	{
+		return scheduler.INTERNETWORKING_QUEUE;
+	}
+	
+	public M3UAManagement getM3UAManagement() {
+		return m3UAManagement;
 	}
 
-	public void setServerM3UAProcess(ServerM3UAProcess serverM3UAProcess) {
-		this.serverM3UAProcess = serverM3UAProcess;
+	public void setM3UAManagement(M3UAManagement m3UAManagement) {
+		this.m3UAManagement = m3UAManagement;
+		this.m3UAManagement.addMtp3UserPartListener(this);
 	}
 
 	// Layer4 methods
@@ -109,51 +124,81 @@ public class NodalInterworkingFunction implements Layer4 {
 		}
 
 		this.started = true;
-
+		this.activate(false);
+		scheduler.submit(this,scheduler.INTERNETWORKING_QUEUE);
 	}
 
 	public void stop() throws Exception {
 		this.started = false;
 	}
 
-	protected void perform() throws IOException {
-
+	@Override
+	public long perform() {
+		Mtp3TransferPrimitive currPrimitive;
 		if (!started) {
-			return;
+			return 0;
 		}
-		FastList<SelectorKey> selected = linkSetSelector.selectNow(OP_READ_WRITE, 1);
+		
+		try
+		{
+			FastList<SelectorKey> selected = linkSetSelector.selectNow(OP_READ_WRITE, 1);
+			for (FastList.Node<SelectorKey> n = selected.head(), end = selected.tail(); (n = n.getNext()) != end;) {
+				SelectorKey key = n.getValue();
+				((LinksetStream) key.getStream()).read(rxBuffer);
 
-		for (FastList.Node<SelectorKey> n = selected.head(), end = selected.tail(); (n = n.getNext()) != end;) {
-			SelectorKey key = n.getValue();
-			// ((LinksetStream) key.getStream()).read(rxBuffer);
-
-			// Read data
-			if (rxBuffer != null) {
-				mtpqueue.offer(rxBuffer);
+				// Read data
+				if (rxBuffer != null) {
+					currPrimitive=new Mtp3TransferPrimitive();
+					currPrimitive.decodeMtp3(rxBuffer);
+					this.m3UAManagement.sendMessage(currPrimitive);					
+				}				
 			}
-
-			// write to stream
-			if (!m3uaqueue.isEmpty()) {
-				PayloadData txBuffer = m3uaqueue.poll();
-				// TODO : Select appropriate LinkSet to send this data
-				if (txBuffer != null) {
-					// linksetStream.write(txBuffer.getData().getMsu());
+		}
+		catch(IOException e)
+		{
+			
+		}
+								
+		try
+		{
+			// TODO
+			currPrimitive = null;
+			FastMap<String, Linkset> map = this.linksetManager.getLinksets();
+			while ((currPrimitive = m3uaqueue.poll()) != null)
+			{							
+				for (FastMap.Entry<String, Linkset> e = map.head(), end = map.tail(); (e = e.getNext()) != end;) {
+					Linkset value = e.getValue();
+					if(value.getApc()==currPrimitive.getDpc())
+						value.getLinksetStream().write(currPrimitive.encodeMtp3());
 				}
-			}
-		}// for
+			}									
+		}
+		catch(IOException e)
+		{
+			
+		}						
+		
+		scheduler.submit(this,scheduler.INTERNETWORKING_QUEUE);
+		return 0;
+	}
+	
+	public void onMtp3TransferMessage(Mtp3TransferPrimitive msg)
+	{
+		m3uaqueue.offer(msg);
+	}
 
-		// Sig Gateway will poll all its AspFactory for data
-		this.serverM3UAProcess.execute();
+	public void onMtp3PauseMessage(Mtp3PausePrimitive msg)
+	{
+		//not used
+	}
 
-		// TODO
-		// PayloadData payload = null;
-		// while ((payload = this.sgpImpl.poll()) != null) {
-		// m3uaqueue.add(payload);
-		// }
-		//
-		// byte[] msu = null;
-		// while ((msu = mtpqueue.poll()) != null) {
-		// this.sgpImpl.send(msu);
-		// }
+	public void onMtp3ResumeMessage(Mtp3ResumePrimitive msg)
+	{
+		//not used
+	}
+
+	public void onMtp3StatusMessage(Mtp3StatusPrimitive msg)
+	{
+		//not used
 	}
 }

@@ -93,7 +93,7 @@ public class As implements XMLSerializable {
 	/**
 	 * Local FSM maintains state such that it sends the NTFY to other side
 	 */
-	private FSM localFSM;
+	protected FSM localFSM;
 
 	protected ParameterFactory parameterFactory = new ParameterFactoryImpl();
 
@@ -357,9 +357,9 @@ public class As implements XMLSerializable {
 	 * 
 	 * @return
 	 */
-	// public AsState getState() {
-	// return AsState.getState(this.peerFSM.getState().getName());
-	// }
+	 public AsState getState() {
+		 return AsState.getState(this.peerFSM.getState().getName());
+	}
 
 	public FSM getPeerFSM() {
 		return peerFSM;

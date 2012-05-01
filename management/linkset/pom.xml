@@ -10,6 +10,10 @@
 	<artifactId>linkset</artifactId>
 	<name>Mobicents SS7 :: Management :: ${pom.artifactId}</name>
 
+	<properties>
+		<scheduler.version>1.0.0-SNAPSHOT</scheduler.version>
+	</properties>
+
 	<dependencies>
 		<!-- shell -->
 		<dependency>
@@ -32,6 +36,12 @@
 			<groupId>javolution</groupId>
 			<artifactId>javolution</artifactId>
 		</dependency>
+
+		<dependency>
+                        <groupId>org.mobicents.protocols.ss7.scheduler</groupId>
+                        <artifactId>scheduler</artifactId>
+			<version>${scheduler.version}</version>
+                </dependency>
 
 		<dependency>
 			<groupId>org.mobicents.protocols.stream</groupId>

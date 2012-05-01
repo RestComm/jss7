@@ -22,6 +22,7 @@
 
 package org.mobicents.ss7.linkset.oam;
 
+import java.io.IOException;
 import org.mobicents.protocols.stream.api.Stream;
 
 /**
@@ -49,5 +50,9 @@ public abstract class LinksetStream implements Stream {
      * @return
      */
     public abstract String getName();
+    
+    public abstract int write(byte[] paramArrayOfByte) throws IOException;
+    
+    public abstract int read(byte[] paramArrayOfByte) throws IOException;
 
 }

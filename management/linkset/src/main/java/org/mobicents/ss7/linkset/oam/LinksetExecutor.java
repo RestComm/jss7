@@ -79,15 +79,12 @@ public class LinksetExecutor implements ShellExecutor {
             } else if (firstOption.compareTo("delete") == 0) {
                 // Delete Linkset
                 return this.linksetManager.deleteLinkset(options);
-
             } else if (firstOption.compareTo("activate") == 0) {
                 // noshutdown Linkset
                 return this.linksetManager.activateLinkset(options);
-
             } else if (firstOption.compareTo("deactivate") == 0) {
                 // shutdown Linkset
                 return this.linksetManager.deactivateLinkset(options);
-
             } else if (firstOption.compareTo("link") == 0) {
                 // Operation for Link
 

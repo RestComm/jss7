@@ -41,6 +41,7 @@ import javolution.xml.stream.XMLStreamException;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.Management;
+import org.mobicents.protocols.ss7.m3ua.M3UAProvider;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
@@ -74,12 +75,12 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 	private static final String ASP_FACTORY_LIST = "aspFactoryList";
 	private static final String DPC_VS_AS_LIST = "route";
 
-	private static final String M3UA_PERSIST_DIR_KEY = "m3ua.persist.dir";
-	private static final String USER_DIR_KEY = "user.dir";
-	private static final String PERSIST_FILE_NAME = "m3ua.xml";
+	protected static final String M3UA_PERSIST_DIR_KEY = "m3ua.persist.dir";
+	protected static final String USER_DIR_KEY = "user.dir";
+	protected String PERSIST_FILE_NAME = "m3ua.xml";
 
-	private static final M3UAXMLBinding binding = new M3UAXMLBinding();
-	private static final String TAB_INDENT = "\t";
+	protected static final M3UAXMLBinding binding = new M3UAXMLBinding();
+	protected static final String TAB_INDENT = "\t";
 	private static final String CLASS_ATTRIBUTE = "type";
 
 	protected FastList<As> appServers = new FastList<As>();
@@ -87,11 +88,11 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 
 	protected M3UAScheduler m3uaScheduler = new M3UAScheduler();
 
-	private final TextBuilder persistFile = TextBuilder.newInstance();
+	protected final TextBuilder persistFile = TextBuilder.newInstance();
 
 	private final String name;
 
-	private String persistDir = null;
+	protected String persistDir = null;
 
 	protected ParameterFactory parameterFactory = new ParameterFactoryImpl();
 	protected MessageFactory messageFactory = new MessageFactoryImpl();

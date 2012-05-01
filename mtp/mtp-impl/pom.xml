@@ -10,12 +10,22 @@
 	<artifactId>mtp</artifactId>
 	<name>Mobicents SS7 :: MTP :: Impl :: ${pom.artifactId}</name>
 
+	<properties>
+		<scheduler.version>1.0.0-SNAPSHOT</scheduler.version>
+	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.mobicents.protocols.stream</groupId>
 			<artifactId>stream</artifactId>
 		</dependency>
+
+		<dependency>
+                        <groupId>org.mobicents.protocols.ss7.scheduler</groupId>
+                        <artifactId>scheduler</artifactId>
+			<version>${scheduler.version}</version>
+                </dependency>
+
 		<!-- non mobicents -->
 		<dependency>
 			<groupId>log4j</groupId>

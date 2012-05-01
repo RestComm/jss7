@@ -83,9 +83,9 @@ public class LinksetSelector implements StreamSelector {
     public FastList<SelectorKey> selectNow(int operation, int timeout)
             throws IOException {
 
-        selected.clear();
+    	selected.clear();
         for (Stream s : registered) {
-            if (((LinksetStream) s).poll(operation, timeout)) {
+        	if (((LinksetStream) s).poll(operation, timeout)) {
                 selected.add(((LinksetStream) s).selectorKey);
             }
         }
