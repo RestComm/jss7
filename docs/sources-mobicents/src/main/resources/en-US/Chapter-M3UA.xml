@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter id="m3ua">
+
+	<title>M3UA</title>
+	<para>
+	  M3UA stands for MTP Level 3 (MTP3) User Adaptation Layer as defined by the IETF SIGTRAN working group in <ulink url="http://tools.ietf.org/html/rfc4666">RFC 4666</ulink> (which replaces and supersedes RFC 3332). 
+	  M3UA enables the SS7 protocol's User Parts (e.g. ISUP, SCCP and TUP) to run over IP instead of legacy SS7. &THIS.PLATFORM; M3UA Stack use the services of Mobicents SCTP stack to transmit MTP-TRANSFER primitives.
+	</para>
+	
+	<note>
+	  <title>Note</title>
+	  <para>
+		To know more about Mobicents SCTP stack, read the documentation included with Mobicents SCTP library.
+	  </para>
+	</note>
+	
+	<para>
+	  &THIS.PLATFORM; M3UA Stack provides the transport of MTP-TRANSFER primitives across an established SCTP association between an SGP and an ASP. 
+	  The &THIS.PLATFORM; M3UA Stack may also be used for point-to-point signaling between two IP Server Processes (IPSPs).  
+	</para>
+	
+	<para>
+	  &THIS.PLATFORM; M3UA Stack provides flexibility to be configured as either Single Exchange (SE) or Double Exchange (DE) of ASP State Maintenance (ASPSM) Messages and 
+	  ASP Traffic Maintenance (ASPTM) messages  
+	</para>	
+	
+	<para>
+		Below diagram shows various layers involved 
+	</para>
+	<figure>
+		<title>Layers involved</title>
+		<mediaobject id="m3ua_generic">
+			<imageobject>
+				<imagedata align="center"
+					fileref="images/M3UAGeneric.jpg" format="JPG" />
+			</imageobject>
+		</mediaobject>
+	</figure>
+		
+	<section id="mobicents_m3ua_design_overview">
+	  <title>&THIS.PLATFORM; M3UA Design Overview</title>
+	
+	  <para>
+		The internal structure of &THIS.PLATFORM; M3UA stack looks like 
+	  </para>
+		
+	  <figure>
+		<title>Architecture</title>
+		<mediaobject id="m3ua_architecture">
+			<imageobject>
+				<imagedata align="center"
+					fileref="images/M3UAInternalArchitecture.jpg" format="JPG" />
+			</imageobject>
+		</mediaobject>
+	  </figure>		
+	
+	  <para>
+	    Instance of <classname>M3UAManagement</classname> manages the <classname>AS</classname>, <classname>AspFactory</classname> and routes.  
+	  </para>
+	  
+	</section>
+	<section id="mobicents_m3ua_management">
+		<title>M3UAManagement</title>
+		
+		<para>
+		  In addition to manage <classname>As</classname>, <classname>AspFactory</classname> and routes, management also persist the state of each in XXX_M3UA.xml file,
+		  where XXX is unique name give to management instance.
+		</para>
+		
+		<para> <classname>M3UAManagement</classname> is divided into two sections 1) managing the resources and 2) configuring management</para>
+		
+		<important>
+		  <title>Important </title>
+		  <para>
+		  	In case of Mobicents SS7 Service, the managing resources is taken care by Shell Command Line as explained in <xref linkend="shell_m3ua" /> and configuartion of management is done in
+		  	jboss-beans.xml as explained in <xref linkend="configuring_Rem_SGW" />
+		  </para>
+		</important>
+		
+		<section id="mobicents_m3ua_management_resource">
+  		  <title>API's to manage resource</title>		
+		  <variablelist>
+			<varlistentry>
+					<term>
+						<literal>public As createAs(String asName, Functionality functionality, ExchangeType exchangeType, IPSPType ipspType,
+			RoutingContext rc, TrafficModeType trafficMode)</literal>
+					</term>
+					<listitem>
+						<para>
+							Create's a new As of type specified by <classname>Functionality</classname>. <classname>Functionality</classname> is enum of type AS, IPSP or SGW.
+							If the <classname>Functionality</classname> is IPSP, 
+							<classname>IPSPType</classname> type should specify if its SERVER or CLIENT side. 
+						</para>
+						<para>
+							If <classname>Functionality</classname> is AS, it automatically assumes client side and tries to send the ASPUP to peer. 
+						</para>
+						<para>
+							If <classname>Functionality</classname> is SGW, it automatically assumes server side and wait's for ASPUP from peer.  
+						</para>
+						<para><classname>ExchangeType</classname> specifies if its single or double exchange.</para> 
+						
+						<para>
+							<classname>RoutingContext</classname> is not mandatory, if passed same value will be used in all the relevant ASP Traffic Maintenance, Management and Transfer Messages 
+						</para>
+						
+						<para>
+							<classname>TrafficModeType</classname> is not mandatory and default is Loadshare. Broadcast mode is not supported. 
+						</para>
+						<para>
+							Appropiate Exception is thrown if there is already As with same name. 						
+						</para>
+					</listitem>
+			</varlistentry>
+			
+			<varlistentry>
+					<term>
+						<literal>public AspFactory createAspFactory(String aspName, String associationName)</literal>
+					</term>
+					<listitem>
+						<para>
+							Create's a new <classname>AspFactory</classname>. There is one-to-one relation between <classname>AspFactory</classname> and SCTP's <classname>Asscoiation</classname>.
+							associationName represents the underlying SCTP Association. 
+						</para>
+						<para>
+							Appropiate Exception's are thrown if there is already AspFactory with same name or there is no SCTP Association with the given name or SCTP Association is already assigned to some other
+							AspFactory. 						
+						</para>
+					</listitem>
+			</varlistentry>
+			
+			<varlistentry>
+					<term>
+						<literal>public As destroyAs(String asName)</literal>
+					</term>
+					<listitem>
+						<para>
+							Destroy existing As. 
+						</para>
+						<para>
+							Appropiate Exception's are thrown if there is no As with given name, or As is ACTIVE or one ore more ASP's are assigned to this AS. 						
+						</para>
+					</listitem>
+			</varlistentry>	
+			
+			<varlistentry>
+					<term>
+						<literal>public AspFactory destroyAspFactory(String aspName)</literal>
+					</term>
+					<listitem>
+						<para>
+							Destroy existing AspFactory. 
+						</para>
+						<para>
+							Appropiate Exception's are thrown if there is no AspFactory with given name.						
+						</para>
+					</listitem>
+			</varlistentry>	
+			
+			<varlistentry>
+					<term>
+						<literal>public Asp assignAspToAs(String asName, String aspName)</literal>
+					</term>
+					<listitem>
+						<para>
+							Assign's the Asp (AspFactory with name aspName should be created before this step) to As. 
+						</para>
+						<para>
+							Appropiate Exception's are thrown if there is no AspFactory with given name or no As with given name.						
+						</para>
+					</listitem>
+			</varlistentry>	
+			
+			<varlistentry>
+					<term>
+						<literal>public Asp unassignAspFromAs(String asName, String aspName)</literal>
+					</term>
+					<listitem>
+						<para>
+							Unassign's the Asp from As. 
+						</para>
+						<para>
+							Appropiate Exception's are thrown if there is no ASP or As with given name.						
+						</para>
+					</listitem>
+			</varlistentry>	
+			
+			<varlistentry>
+					<term>
+						<literal>public void startAsp(String aspName)</literal>
+					</term>
+					<listitem>
+						<para>
+							Start's the ASP. The ASP state maintenance messages are exchanged if this ASP is of IPSP and client side or if its AS side. 
+							This will automatically start the underlying SCTP's Asscoiation.
+						</para>
+						<para>
+							Appropiate Exception's are thrown if there is no ASP with given name or ASP is already started.						
+						</para>
+					</listitem>
+			</varlistentry>		
+			
+			<varlistentry>
+					<term>
+						<literal>public void stopAsp(String aspName)</literal>
+					</term>
+					<listitem>
+						<para>
+							Stop's the ASP. This will automatically stop the underlying SCTP's Asscoiation.
+						</para>
+						<para>
+							Appropiate Exception's are thrown if there is no ASP with given name or ASP is already stoped.						
+						</para>
+					</listitem>
+			</varlistentry>	
+			
+			<varlistentry>
+					<term>
+						<literal>public void addRoute(int dpc, int opc, int si, String asName)</literal>
+					</term>
+					<listitem>
+						<para>
+							Add the As with the given asName as route for given dpc, opc and si. Specifying DPC is mandatory, however opc and si can be passed as -1 which is wild character.
+							For example if MTP3 User Application sends message with dpc=5, opc=4 and si=3, management will try to search the AS with exact value of dpc, opc and si. If not found, managemnt 
+							will subsitute si with wild character and serach again. If not found management will substitute opc with wild character and search again. If not found its an error and message
+							is dropped with appropriate error message.  
+						</para>
+						<para>
+							Appropiate Exception's are thrown if there are already maximum AS configured for give combination of dpc, opc and si or there is no As for given asName.				
+						</para>
+					</listitem>
+			</varlistentry>		
+			
+			<varlistentry>
+					<term>
+						<literal>public void removeRoute(int dpc, int opc, int si, String asName)</literal>
+					</term>
+					<listitem>
+						<para>
+							Remove the As as route for passed comibnation of dpc, opc and si.
+						</para>
+						<para>
+							Appropiate Exception's are thrown if is no As for given asName.				
+						</para>
+					</listitem>
+			</varlistentry>																										
+			
+		  </variablelist>
+		</section>
+			
+		<section id="mobicents_m3ua_management_configure">
+				<title>Configuration</title>			
+		  <variablelist>
+			<varlistentry>
+					<term>
+						<literal>setPersistDir</literal>
+					</term>
+					<listitem>
+						<para>
+							 Management when started looks for file XXX_M3UA.xml containing serialized state of underlying As, AspFactory and routes.
+							 Set the directory path to direct M3UAManagement to look at specified directory for underlying serialized file.
+						</para>
+						<para>
+							If directory path is not set, Management searches for system property <code>m3ua.persist.dir</code> to get the path for directory. 
+							Even if <code>m3ua.persist.dir</code> system property is not set, Management will look at System set property <code>user.dir</code>
+						</para>
+					</listitem>
+			</varlistentry>
+			
+			<varlistentry>
+					<term>
+						<literal>setTransportManagement</literal>
+					</term>
+					<listitem>
+						<para>
+							 Set the instance of SCTP transport <classname>Management</classname>
+						</para>
+						<important>
+							<title>Importnat</title>
+							<para>SCTP <classname>Management</classname> instance should have already been created and configured</para>
+						</important>
+					</listitem>
+			</varlistentry>	
+			
+			<varlistentry>
+					<term>
+						<literal>setMaxAsForRoute</literal>
+					</term>
+					<listitem>
+						<para>
+							 Maximum number of AS that can be configured for routing for same DPC.
+						</para>
+					</listitem>
+			</varlistentry>		
+			
+			<varlistentry>
+					<term>
+						<literal>setDeliveryMessageThreadCount</literal>
+					</term>
+					<listitem>
+						<para>
+							Number of threads for call back to <classname>Mtp3UserPartListener</classname>. The order is maintained with respect to SLS. For example same thread will make call back for every message with same SLS.
+							Default value is set to 1.							 
+						</para>
+					</listitem>
+			</varlistentry>							
+			
+		  </variablelist>
+		</section>	
+	</section>	
+</chapter>

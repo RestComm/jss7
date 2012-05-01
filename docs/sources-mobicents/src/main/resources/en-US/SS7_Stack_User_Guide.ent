@@ -1,0 +1,24 @@
+<!-- NOTES ON CHANGING ENTITY FILES
+Important: take care when changing entities for directories
+* Linux path separators must be: "/"
+* Windows path separators must be: "\"
+* Entities which represent directories MUST HAVE a final path separator:
+	my/path/  <- (final separator)
+If this final separator is missing, then the documentation will be wrong. -->
+
+<!-- Common entities: same across all books except for BOOKID -->
+<!ENTITY THIS.VERSION "1.0.0-SNAPSHOT">
+<!ENTITY THIS.PLATFORM "${THIS.PLATFORM}">
+<!ENTITY JEE.PLATFORM "${JEE.PLATFORM}">
+<!ENTITY BOOK_ID "SS7Stack_User_Guide">
+<!ENTITY YEAR "2010">
+<!ENTITY HOLDER "Red Hat Inc">
+<!ENTITY AUTHOR.EMAIL.AMIT "${author.email.amit}">
+<!ENTITY AUTHOR.EMAIL.BARTOSZ "${author.email.bartosz}">
+<!ENTITY AUTHOR.EMAIL.OLEG "${author.email.oleg}">
+<!ENTITY THIS.APPLICATION "SS7 Stack">
+<!ENTITY THIS.APPLICATION.DIRNAME "ss7"> 
+<!ENTITY THIS.ISSUE_TRACKER_URL "${THIS.ISSUE_TRACKER_URL}">
+<!ENTITY THIS.RELEASE_SOURCE_CODE_URL "${THIS.RELEASE_SOURCE_CODE_URL}">
+<!ENTITY THIS.TRUNK_SOURCE_CODE_URL "${THIS.TRUNK_SOURCE_CODE_URL}">
+<!ENTITY THIS.RELEASE_BINARY_URL "${THIS.RELEASE_BINARY_URL}">

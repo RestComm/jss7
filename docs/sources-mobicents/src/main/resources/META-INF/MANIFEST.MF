@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven Bundle Plugin
+Built-By: root
+Build-Jdk: 1.7.0_03
+Implementation-Title: org.mobicents.protocols.ss7.docs:mobicents-ss7-d
+ ocs-sources
+Implementation-Version: 1.0.0-SNAPSHOT
+Tool: Bnd-1.15.0
+Bundle-Name: Mobicents SS7 :: Docs :: Sources :: mobicents-ss7-docs-so
+ urces
+Implementation-URL: http://www.mobicents.org
+Implementation-Vendor-Id: TeleStax, Inc.
+Bundle-Version: 1.0.0.SNAPSHOT
+Bnd-LastModified: 1335865998973
+Bundle-ManifestVersion: 2
+Bundle-License: http://www.gnu.org/licenses/gpl.html
+Bundle-Description: Mobicents :: Parent pom for 2.x releases
+Bundle-SymbolicName: org.mobicents.protocols.ss7.docs.mobicents-ss7-do
+ cs-sources
+

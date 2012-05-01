@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+
+<chapter
+	id="isup">
+
+	<title>ISUP</title>
+
+	<para>
+		<acronym>ISUP</acronym>( ISDN User Part or ISUP ) is part of <acronym>SS7</acronym> which is used to establish telephone calls and manage call switches( <literal>exchanges</literal>).
+		Exchanges are connected via E1 or T1 trunks. Each trunk is divided by means of TDM into time slots. Each time slot is distinguished as circuit. Circuits (identified by code) are used 
+		as medium to transmit voice data between user equipment (or exchanges if more than one is involved). 
+		
+	</para>
+	<para> <acronym>ISUP</acronym> allows not only to setup a call, but to exchange information about exchange state and its resources(circuits).</para>
+	<note>
+		<para>&THIS.PLATFORM; <acronym>ISUP</acronym> is based on <acronym>ITU-T</acronym> <literal>Q.76X</literal> series of documents.</para>
+	</note>
+	
+	<section id="isup_config">
+		<title>ISUP Configuration</title>
+		<para>&THIS.PLATFORM; <acronym>ISUP</acronym> stack is configured with simple properties. Currently following properties are supported:</para>
+		<table
+						frame="all"
+						pgwide="1">
+						<title>ISUP Configuration options</title>
+						<tgroup
+							colsep="1"
+							cols="4">
+							<colspec
+								colnum="1"
+								colname="c0" />
+							<colspec
+								colnum="2"
+								colname="c1" />
+							<colspec
+								colnum="3"
+								colname="c2" />
+							<colspec
+								colnum="4"
+								colname="c3" />
+							<thead>
+								<row>
+									<entry>Name</entry>
+									<entry>Default value</entry>
+									<entry>Value range</entry>
+									<entry>Description</entry>
+								</row>
+							</thead>
+							<tbody>
+								<row>
+									<entry>ni</entry>
+									<entry>None, must be provided</entry>
+									<entry>0-3</entry>
+									<entry>Sets value of network indicator that should be used by stack.</entry>
+								</row>
+								<row>
+									<entry>localspc</entry>
+									<entry>None, must be provided</entry>
+									<entry>0 - (2^14)-1</entry>
+									<entry>Sets local signaling point code. It will be used as OPC for outgoing signaling units.</entry>
+								</row>
+								<row>
+									<entry>t1</entry>
+									<entry>4s</entry>
+									<entry>4s - 15s</entry>
+									<entry>Sets T1 value. Started when REL is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t5</entry>
+									<entry>5 min.</entry>
+									<entry>5min - 15 min</entry>
+									<entry>Sets T5 value. Started when initial REL is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t7</entry>
+									<entry>20s</entry>
+									<entry>20s -30s</entry>
+									<entry>Sets T7 value. (Re)Started when Address Message is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t12</entry>
+									<entry>15s</entry>
+									<entry>15s - 60s </entry>
+									<entry>Sets T12 value. Started when BLO is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t13</entry>
+									<entry>5min</entry>
+									<entry>5min - 15min</entry>
+									<entry>Sets T13 value. Started when initial BLO is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t14</entry>
+									<entry>5s</entry>
+									<entry>15s - 60s</entry>
+									<entry>Sets T14 value. Started when UBL is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t15</entry>
+									<entry>5min</entry>
+									<entry>5min - 15min</entry>
+									<entry>Sets T15 value. Started when initial UBL is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t16</entry>
+									<entry>5s</entry>
+									<entry>15s - 60s</entry>
+									<entry>Sets T16 value. Started when RSC is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t17</entry>
+									<entry>5min</entry>
+									<entry>5min - 15min</entry>
+									<entry>Sets T17 value. Started when initial RSC is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t18</entry>
+									<entry>5s</entry>
+									<entry>15s - 60s</entry>
+									<entry>Sets T18 value. Started when CGB is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t19</entry>
+									<entry>5min</entry>
+									<entry>5min - 15min</entry>
+									<entry>Sets T19 value. Started when initial CGB is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t20</entry>
+									<entry>5s</entry>
+									<entry>15s - 60s</entry>
+									<entry>Sets T20 value. Started when CGU is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t21</entry>
+									<entry>5min</entry>
+									<entry>5min - 15min</entry>
+									<entry>Sets T21 value. Started when initial CGU is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t22</entry>
+									<entry>5s</entry>
+									<entry>15s - 60s</entry>
+									<entry>Sets T22 value. Started when GRS is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t23</entry>
+									<entry>5min</entry>
+									<entry>5min - 15min</entry>
+									<entry>Sets T23 value. Started when initial GRS is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t28</entry>
+									<entry>10s</entry>
+									<entry>10s</entry>
+									<entry>Sets T28 value. Started when CQM is sent. See A.1/Q.764 </entry>
+								</row>
+								<row>
+									<entry>t33</entry>
+									<entry>12s</entry>
+									<entry>12s - 15s</entry>
+									<entry>Sets T33 value. Started when INR is sent. See A.1/Q.764 </entry>
+								</row>
+								<!-- 
+								<row>
+									<entry>t</entry>
+									<entry>ms</entry>
+									<entry>ms - ms</entry>
+									<entry>Sets T value. Started when REL is sent. See A.1/Q.764 </entry>
+								</row>
+								 -->
+							</tbody>
+						</tgroup>
+					</table>
+					<para>Note that before start user must provide two interfaces to stack:</para>
+					<variablelist>	
+						<varlistentry>
+							<term>Mtp3UserPart</term>
+							<listitem>
+								<para>implementation of transport layer which should be used by stack</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>CircuitManager</term>
+							<listitem>
+								<para>circuit manager implementation. This interface stores information on mapping between <literal>CIC</literal>(Circuit Identification Code) and <literal>DPC</literal>(Destination Point Code) used as destination for outgoing messages.</para>
+							</listitem>
+						</varlistentry>
+					</variablelist>
+	</section>
+	<section id="isup_usage">
+		<title>ISUP Usage</title>
+		<para> The <literal>org.mobicents.protocols.ss7.isup.ISUPStack</literal> interface defines the methods required to represent ISUP Protocol Stack. ISUPStack
+		exposes <literal>org.mobicents.protocols.ss7.isup.ISUPProvider</literal>. This interface defines the methods that will
+		be used by any registered ISUP User application implementing the <literal>org.mobicents.protocols.ss7.isup.ISUPListener</literal> to listen ISUP events(messages and timeouts). 
+		</para>
+	</section>
+	<section id="isup_example">
+		<title>ISUP Example</title>
+		<para>Below is simple example of stack usage:</para>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import org.mobicents.protocols.ss7.isup.ISUPEvent;
+import org.mobicents.protocols.ss7.isup.ISUPListener;
+import org.mobicents.protocols.ss7.isup.ISUPProvider;
+import org.mobicents.protocols.ss7.isup.ISUPStack;
+import org.mobicents.protocols.ss7.isup.ISUPTimeoutEvent;
+import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.ISUPStackImpl;
+import org.mobicents.protocols.ss7.isup.message.ISUPMessage;	
+
+import org.mobicents.ss7.linkset.oam.Layer4;
+import org.mobicents.ss7.linkset.oam.Linkset;
+
+public class ISUPTest implements ISUPListener
+{
+
+	protected ISUPStack stack;
+	protected ISUPProvider provider;
+
+	protected Linkset isupLinkSet;
+	
+	
+	public void setUp() throws Exception {
+		
+		this.isupLinkSet = ....; //same linksets as in SS7Service
+		this.stack = new ISUPStackImpl();
+		this.stack.configure(getSpecificConfig());
+		this.provider = this.stack.getIsupProvider();
+		this.provider.addListener(this);
+		Mtp3UserPart userPart = // create with proper factory, dahdii, dialogi, m3ua
+		this.stack.setMtp3UserPart(userPart);
+		CircuitManagerImpl circuitManager = new CircuitManagerImpl();
+		circuitManager.addCircuit(1, 431613); // CIC - 1, DPC for it - 431613
+		
+		
+		this.stack.setCircuitManager(circuitManager);
+		this.stack.start();
+
+	}
+	
+	
+	public void onEvent(ISUPEvent event) {
+		ISUPMessage msg = event.getMessage();
+		switch(msg.getCircuitIdentificationCode().getCIC())
+		{
+			case AddressCompleteMessage._COMMAND_CODE:
+			//only complete
+			break;
+			case ConnectedMessage._COMMAND_CODE:
+			case AnswerMessage._COMMAND_CODE:
+			//we are good to go
+			ConnectedNumber cn = (ConnectedNumber)msg.getParameter(ConnectedNumber._PARAMETER_CODE);
+			//do something
+			break;
+			case ReleaseMessage._COMMAND_CODE:
+			//remote end does not want to talk 
+			RealeaseCompleteMessage rlc = provider.getMessageFactory().createRLC();
+			rlc.setCircuitIdentificationCode(msg.getCircuitIdentificationCode());
+			rlc.setCauseIndicators(   ((ReleaseComplete)msg).getCauseIndicators());
+			provider.sendMessage(rlc);
+			
+		}
+
+	}
+
+	public void onTimeout(ISUPTimeoutEvent event) {
+		switch(event.getTimerId())
+		{
+			case ISUPTimeoutEvent.T1:
+				//do something
+				break;
+			case ISUPTimeoutEvent.T7:
+				//do even more
+				break;
+		}
+
+	}
+
+}
+		]]>
+	</programlisting>
+	</section>
+	
+</chapter>
