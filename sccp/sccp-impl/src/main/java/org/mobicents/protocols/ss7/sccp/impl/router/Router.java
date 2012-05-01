@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.Arrays;
 
 import javolution.text.TextBuilder;
 import javolution.util.FastMap;
@@ -195,13 +196,14 @@ public class Router {
 
 	private String persistDir = null;
 
+	private final RuleComparator ruleComparator = new RuleComparator();
 	// rule list
-	private FastMap<Integer, Rule> rules = new FastMap<Integer, Rule>();
+	private FastMap<Integer, Rule> rulesMap = new FastMap<Integer, Rule>();
 	private FastMap<Integer, SccpAddress> primaryAddresses = new FastMap<Integer, SccpAddress>();
 	private FastMap<Integer, SccpAddress> backupAddresses = new FastMap<Integer, SccpAddress>();
 	private FastMap<Integer, LongMessageRule> longMessageRules = new FastMap<Integer, LongMessageRule>();
 	private FastMap<Integer, Mtp3ServiceAccessPoint> saps = new FastMap<Integer, Mtp3ServiceAccessPoint>();
-	
+
 	private final String name;
 
 	public Router(String name) {
@@ -229,8 +231,8 @@ public class Router {
 		if (persistDir != null) {
 			this.persistFile.append(persistDir).append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
 		} else {
-			persistFile.append(System.getProperty(SCCP_ROUTER_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY)))
-					.append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
+			persistFile.append(System.getProperty(SCCP_ROUTER_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY))).append(File.separator).append(this.name)
+					.append("_").append(PERSIST_FILE_NAME);
 		}
 
 		logger.info(String.format("SCCP Router configuration file path %s", persistFile.toString()));
@@ -257,7 +259,7 @@ public class Router {
 	 */
 	public Rule findRule(SccpAddress calledParty) {
 
-		for (FastMap.Entry<Integer, Rule> e = this.rules.head(), end = this.rules.tail(); (e = e.getNext()) != end;) {
+		for (FastMap.Entry<Integer, Rule> e = this.rulesMap.head(), end = this.rulesMap.tail(); (e = e.getNext()) != end;) {
 			Rule rule = e.getValue();
 			if (rule.matches(calledParty)) {
 				return rule;
@@ -287,7 +289,7 @@ public class Router {
 	}
 
 	public Rule getRule(int id) {
-		return this.rules.get(id);
+		return this.rulesMap.get(id);
 	}
 
 	public SccpAddress getPrimaryAddress(int id) {
@@ -317,9 +319,9 @@ public class Router {
 	}
 
 	public FastMap<Integer, Rule> getRules() {
-		return rules;
+		return rulesMap;
 	}
-	
+
 	public FastMap<Integer, SccpAddress> getPrimaryAddresses() {
 		return primaryAddresses;
 	}
@@ -338,10 +340,29 @@ public class Router {
 
 	public void addRule(int id, Rule rule) {
 		synchronized (this) {
+			rule.setRuleId(id);
+			Rule[] rulesArray = new Rule[(this.rulesMap.size() + 1)];
+			int count = 0;
+
+			for (FastMap.Entry<Integer, Rule> e = this.rulesMap.head(), end = this.rulesMap.tail(); (e = e.getNext()) != end;) {
+				Integer ruleId = e.getKey();
+				Rule ruleTemp = e.getValue();
+				ruleTemp.setRuleId(ruleId);
+				rulesArray[count++] = ruleTemp;
+			}
+			
+			//add latest rule
+			rulesArray[count++] = rule;
+
+			// Sort
+			Arrays.sort(rulesArray, ruleComparator);
+
 			FastMap<Integer, Rule> newRule = new FastMap<Integer, Rule>();
-			newRule.putAll(this.rules);
-			newRule.put(id, rule);
-			this.rules = newRule;
+			for (int i = 0; i < rulesArray.length; i++) {
+				Rule ruleTemp = rulesArray[i]; 
+				newRule.put(ruleTemp.getRuleId(), ruleTemp);
+			}
+			 this.rulesMap = newRule;
 			this.store();
 		}
 	}
@@ -349,12 +370,12 @@ public class Router {
 	public void removeRule(int id) {
 		synchronized (this) {
 			FastMap<Integer, Rule> newRule = new FastMap<Integer, Rule>();
-			newRule.putAll(this.rules);
+			newRule.putAll(this.rulesMap);
 			newRule.remove(id);
-			this.rules = newRule;
+			this.rulesMap = newRule;
 			this.store();
 		}
-	}	
+	}
 
 	public void addPrimaryAddress(int id, SccpAddress primaryAddress) {
 		synchronized (this) {
@@ -459,12 +480,12 @@ public class Router {
 	public void removeAllResourses() {
 
 		synchronized (this) {
-			if (this.rules.size() == 0 && this.primaryAddresses.size() == 0 && this.backupAddresses.size() == 0 && this.longMessageRules.size() == 0
+			if (this.rulesMap.size() == 0 && this.primaryAddresses.size() == 0 && this.backupAddresses.size() == 0 && this.longMessageRules.size() == 0
 					&& this.saps.size() == 0)
 				// no resources allocated - nothing to do
 				return;
 
-			rules = new FastMap<Integer, Rule>();
+			rulesMap = new FastMap<Integer, Rule>();
 			primaryAddresses = new FastMap<Integer, SccpAddress>();
 			backupAddresses = new FastMap<Integer, SccpAddress>();
 			longMessageRules = new FastMap<Integer, LongMessageRule>();
@@ -488,7 +509,7 @@ public class Router {
 			// Enables cross-references.
 			// writer.setReferenceResolver(new XMLReferenceResolver());
 			writer.setIndentation(TAB_INDENT);
-			writer.write(rules, RULE, FastMap.class);
+			writer.write(rulesMap, RULE, FastMap.class);
 			writer.write(primaryAddresses, PRIMARY_ADDRESS, FastMap.class);
 			writer.write(backupAddresses, BACKUP_ADDRESS, FastMap.class);
 
@@ -513,7 +534,7 @@ public class Router {
 			reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
 
 			reader.setBinding(binding);
-			rules = reader.read(RULE, FastMap.class);
+			rulesMap = reader.read(RULE, FastMap.class);
 			primaryAddresses = reader.read(PRIMARY_ADDRESS, FastMap.class);
 			backupAddresses = reader.read(BACKUP_ADDRESS, FastMap.class);
 

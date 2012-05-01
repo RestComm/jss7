@@ -66,6 +66,8 @@ public class Rule implements Serializable {
 	
 	/** Pattern used for selecting rule */
 	private SccpAddress pattern;
+	
+	private int ruleId;
 
 	/** Translation method */
 	private int primaryAddressId = 0;
@@ -99,6 +101,20 @@ public class Rule implements Serializable {
 		this.setLoadSharingAlgorithm(loadSharingAlgo);
 
 		configure();
+	}
+
+	/**
+	 * @return the ruleId
+	 */
+	protected int getRuleId() {
+		return ruleId;
+	}
+
+	/**
+	 * @param ruleId the ruleId to set
+	 */
+	protected void setRuleId(int ruleId) {
+		this.ruleId = ruleId;
 	}
 
 	public RuleType getRuleType() {
@@ -391,7 +407,13 @@ public class Rule implements Serializable {
 				j++;
 			}
 		}
-		return true;
+		
+		if(j == digits.length){
+			//We compared all the digits and all of them matched, this Rule matches.
+			return true;
+		}
+		
+		return false;
 	}
 
 	/**
