@@ -102,8 +102,8 @@
 		<property name="linksetManager">
 			<inject bean="LinksetManager" />
 		</property>
-		<property name="m3UAShellExecutor">
-                        <inject bean="M3UAShellExecutor" />
+		<property name="m3UAManagement">
+                        <inject bean="Mtp3UserPart" />
                 </property>
 	</bean>
 
