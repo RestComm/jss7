@@ -187,7 +187,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 
-		UnstructuredSSNotifyRequestIndicationImpl ind = new UnstructuredSSNotifyRequestIndicationImpl();
+		UnstructuredSSNotifyRequestImpl ind = new UnstructuredSSNotifyRequestImpl();
 		ind.decodeData(ais, buf.length);
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
@@ -204,7 +204,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 	
 	private void unstructuredSSNotifyResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 
-		UnstructuredSSNotifyResponseIndicationImpl ind = new UnstructuredSSNotifyResponseIndicationImpl();
+		UnstructuredSSNotifyResponseImpl ind = new UnstructuredSSNotifyResponseImpl();
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
 
@@ -231,7 +231,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 
-		UnstructuredSSRequestIndicationImpl ind = new UnstructuredSSRequestIndicationImpl();
+		UnstructuredSSRequestImpl ind = new UnstructuredSSRequestImpl();
 		ind.decodeData(ais, buf.length);
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
@@ -260,7 +260,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 
-		UnstructuredSSResponseIndicationImpl ind = new UnstructuredSSResponseIndicationImpl();
+		UnstructuredSSResponseImpl ind = new UnstructuredSSResponseImpl();
 		ind.decodeData(ais, buf.length);
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
@@ -290,7 +290,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 
-		ProcessUnstructuredSSRequestIndicationImpl ind = new ProcessUnstructuredSSRequestIndicationImpl();
+		ProcessUnstructuredSSRequestImpl ind = new ProcessUnstructuredSSRequestImpl();
 		ind.decodeData(ais, buf.length);
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
@@ -321,7 +321,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 
-		ProcessUnstructuredSSResponseIndicationImpl ind = new ProcessUnstructuredSSResponseIndicationImpl();
+		ProcessUnstructuredSSResponseImpl ind = new ProcessUnstructuredSSResponseImpl();
 		ind.decodeData(ais, buf.length);
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);

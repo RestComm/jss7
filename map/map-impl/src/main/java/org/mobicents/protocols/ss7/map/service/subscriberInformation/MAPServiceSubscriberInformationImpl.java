@@ -205,7 +205,7 @@ public class MAPServiceSubscriberInformationImpl extends MAPServiceBaseImpl impl
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 
-		AnyTimeInterrogationRequestIndicationImpl ind = new AnyTimeInterrogationRequestIndicationImpl();
+		AnyTimeInterrogationRequestImpl ind = new AnyTimeInterrogationRequestImpl();
 		ind.decodeData(ais, buf.length);
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
@@ -235,7 +235,7 @@ public class MAPServiceSubscriberInformationImpl extends MAPServiceBaseImpl impl
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 
-		AnyTimeInterrogationResponseIndicationImpl ind = new AnyTimeInterrogationResponseIndicationImpl();
+		AnyTimeInterrogationResponseImpl ind = new AnyTimeInterrogationResponseImpl();
 		ind.decodeData(ais, buf.length);
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);

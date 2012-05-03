@@ -133,7 +133,7 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
 			oc.setLocalOperationCode((long) MAPOperationCode.provideSubscriberLocation);
 
-			SubscriberLocationReportRequestIndicationImpl req = new SubscriberLocationReportRequestIndicationImpl(lcsEvent, lcsClientID, lcsLocationInfo,
+			SubscriberLocationReportRequestImpl req = new SubscriberLocationReportRequestImpl(lcsEvent, lcsClientID, lcsLocationInfo,
 					msisdn, imsi, imei, naEsrd, naEsrk, locationEstimate, ageOfLocationEstimate, slrArgExtensionContainer, addLocationEstimate,
 					deferredmtlrData, lcsReferenceNumber, geranPositioningData, utranPositioningData, cellIdOrSai, hgmlcAddress, lcsServiceTypeID, saiPresent,
 					pseudonymIndicator, accuracyFulfilmentIndicator);
@@ -181,7 +181,7 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 		oc.setLocalOperationCode((long) MAPOperationCode.provideSubscriberLocation);
 		resultLast.setOperationCode(oc);
 
-		SubscriberLocationReportResponseIndicationImpl resInd = new SubscriberLocationReportResponseIndicationImpl(naEsrd, naEsrk, extensionContainer);
+		SubscriberLocationReportResponseImpl resInd = new SubscriberLocationReportResponseImpl(naEsrd, naEsrk, extensionContainer);
 
 		AsnOutputStream asnOs = new AsnOutputStream();
 		resInd.encodeAll(asnOs);
@@ -231,7 +231,7 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
 			oc.setLocalOperationCode((long) MAPOperationCode.sendRoutingInfoForLCS);
 
-			SendRoutingInfoForLCSRequestIndicationImpl req = new SendRoutingInfoForLCSRequestIndicationImpl(mlcNumber, targetMS, extensionContainer);
+			SendRoutingInfoForLCSRequestImpl req = new SendRoutingInfoForLCSRequestImpl(mlcNumber, targetMS, extensionContainer);
 
 			AsnOutputStream asnOs = new AsnOutputStream();
 			req.encodeAll(asnOs);
@@ -282,7 +282,7 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 		oc.setLocalOperationCode((long) MAPOperationCode.sendRoutingInfoForLCS);
 		resultLast.setOperationCode(oc);
 
-		SendRoutingInfoForLCSResponseIndicationImpl resInd = new SendRoutingInfoForLCSResponseIndicationImpl(targetMS, lcsLocationInfo, extensionContainer,
+		SendRoutingInfoForLCSResponseImpl resInd = new SendRoutingInfoForLCSResponseImpl(targetMS, lcsLocationInfo, extensionContainer,
 				vgmlcAddress, hGmlcAddress, pprAddress, additionalVGmlcAddress);
 
 		AsnOutputStream asnOs = new AsnOutputStream();
@@ -350,7 +350,7 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
 			oc.setLocalOperationCode((long) MAPOperationCode.provideSubscriberLocation);
 
-			ProvideSubscriberLocationRequestIndicationImpl req = new ProvideSubscriberLocationRequestIndicationImpl(locationType, mlcNumber, lcsClientID,
+			ProvideSubscriberLocationRequestImpl req = new ProvideSubscriberLocationRequestImpl(locationType, mlcNumber, lcsClientID,
 					privacyOverride, imsi, msisdn, lmsi, imei, lcsPriority, lcsQoS, extensionContainer, supportedGADShapes, lcsReferenceNumber,
 					lcsServiceTypeID, lcsCodeword, lcsPrivacyCheck, areaEventInfo, hgmlcAddress);
 
@@ -406,7 +406,7 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 		oc.setLocalOperationCode((long) MAPOperationCode.provideSubscriberLocation);
 		resultLast.setOperationCode(oc);
 
-		ProvideSubscriberLocationResponseIndicationImpl resInd = new ProvideSubscriberLocationResponseIndicationImpl(locationEstimate, geranPositioningData,
+		ProvideSubscriberLocationResponseImpl resInd = new ProvideSubscriberLocationResponseImpl(locationEstimate, geranPositioningData,
 				utranPositioningData, ageOfLocationEstimate, additionalLocationEstimate, extensionContainer, deferredMTLRResponseIndicator,
 				cellGlobalIdOrServiceAreaIdOrLAI, saiPresent, accuracyFulfilmentIndicator);
 

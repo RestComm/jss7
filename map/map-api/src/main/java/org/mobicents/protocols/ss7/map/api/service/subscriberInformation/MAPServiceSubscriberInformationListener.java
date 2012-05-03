@@ -29,7 +29,7 @@ import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
  */
 public interface MAPServiceSubscriberInformationListener extends MAPServiceListener {
 	
-	public void onAnyTimeInterrogationRequestIndication(AnyTimeInterrogationRequestIndication request);
+	public void onAnyTimeInterrogationRequestIndication(AnyTimeInterrogationRequest request);
 
-	public void onAnyTimeInterrogationResponseIndication(AnyTimeInterrogationResponseIndication response);
+	public void onAnyTimeInterrogationResponseIndication(AnyTimeInterrogationResponse response);
 }

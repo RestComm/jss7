@@ -105,7 +105,7 @@ public class MAPDialogSubscriberInformationImpl extends MAPDialogImpl implements
 		oc.setLocalOperationCode((long) MAPOperationCode.anyTimeInterrogation);
 		invoke.setOperationCode(oc);
 
-		AnyTimeInterrogationRequestIndicationImpl req = new AnyTimeInterrogationRequestIndicationImpl(subscriberIdentity, requestedInfo, gsmSCFAddress,
+		AnyTimeInterrogationRequestImpl req = new AnyTimeInterrogationRequestImpl(subscriberIdentity, requestedInfo, gsmSCFAddress,
 				extensionContainer);
 
 		AsnOutputStream aos = new AsnOutputStream();

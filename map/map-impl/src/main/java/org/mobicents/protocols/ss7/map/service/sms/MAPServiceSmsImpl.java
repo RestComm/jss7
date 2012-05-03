@@ -277,7 +277,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		ForwardShortMessageRequestIndicationImpl ind = new ForwardShortMessageRequestIndicationImpl();
+		ForwardShortMessageRequestImpl ind = new ForwardShortMessageRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -295,7 +295,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 	
 	private void forwardShortMessageResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 
-		ForwardShortMessageResponseIndicationImpl ind = new ForwardShortMessageResponseIndicationImpl();
+		ForwardShortMessageResponseImpl ind = new ForwardShortMessageResponseImpl();
 
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
@@ -324,7 +324,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		MoForwardShortMessageRequestIndicationImpl ind = new MoForwardShortMessageRequestIndicationImpl();
+		MoForwardShortMessageRequestImpl ind = new MoForwardShortMessageRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -342,7 +342,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 	
 	private void moForwardShortMessageResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		
-		MoForwardShortMessageResponseIndicationImpl ind = new MoForwardShortMessageResponseIndicationImpl();
+		MoForwardShortMessageResponseImpl ind = new MoForwardShortMessageResponseImpl();
 		
 		if (parameter != null) {
 			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
@@ -381,7 +381,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		MtForwardShortMessageRequestIndicationImpl ind = new MtForwardShortMessageRequestIndicationImpl();
+		MtForwardShortMessageRequestImpl ind = new MtForwardShortMessageRequestImpl();
 		ind.decodeData(ais, buf.length);
 		
 		ind.setInvokeId(invokeId);
@@ -399,7 +399,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 	
 	private void mtForwardShortMessageResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		
-		MtForwardShortMessageResponseIndicationImpl ind = new MtForwardShortMessageResponseIndicationImpl();
+		MtForwardShortMessageResponseImpl ind = new MtForwardShortMessageResponseImpl();
 
 		if (parameter != null) {
 			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
@@ -438,7 +438,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		SendRoutingInfoForSMRequestIndicationImpl ind = new SendRoutingInfoForSMRequestIndicationImpl();
+		SendRoutingInfoForSMRequestImpl ind = new SendRoutingInfoForSMRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -456,7 +456,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 	
 	private void sendRoutingInfoForSMResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		
-		SendRoutingInfoForSMResponseIndicationImpl ind = new SendRoutingInfoForSMResponseIndicationImpl();
+		SendRoutingInfoForSMResponseImpl ind = new SendRoutingInfoForSMResponseImpl();
 		
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse: Parameter is mandatory but not found",
@@ -498,7 +498,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		ReportSMDeliveryStatusRequestIndicationImpl ind = new ReportSMDeliveryStatusRequestIndicationImpl(mapDialogImpl.getApplicationContext()
+		ReportSMDeliveryStatusRequestImpl ind = new ReportSMDeliveryStatusRequestImpl(mapDialogImpl.getApplicationContext()
 				.getApplicationContextVersion().getVersion());
 		ind.decodeData(ais, buf.length);
 		
@@ -517,7 +517,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 	
 	private void reportSMDeliveryStatusResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		
-		ReportSMDeliveryStatusResponseIndicationImpl ind = new ReportSMDeliveryStatusResponseIndicationImpl();
+		ReportSMDeliveryStatusResponseImpl ind = new ReportSMDeliveryStatusResponseImpl();
 
 		if (parameter != null) {
 			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
@@ -554,7 +554,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 					"Error while decoding informServiceCentreRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		InformServiceCentreRequestIndicationImpl ind = new InformServiceCentreRequestIndicationImpl();
+		InformServiceCentreRequestImpl ind = new InformServiceCentreRequestImpl();
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 		ind.decodeData(ais, buf.length);
@@ -583,7 +583,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 					"Error while decoding alertServiceCentreRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		AlertServiceCentreRequestIndicationImpl ind = new AlertServiceCentreRequestIndicationImpl(operationCode);
+		AlertServiceCentreRequestImpl ind = new AlertServiceCentreRequestImpl(operationCode);
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 		ind.decodeData(ais, buf.length);
@@ -603,7 +603,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 	
 	private void alertServiceCentreResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		
-		AlertServiceCentreResponseIndicationImpl ind = new AlertServiceCentreResponseIndicationImpl();
+		AlertServiceCentreResponseImpl ind = new AlertServiceCentreResponseImpl();
 
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);

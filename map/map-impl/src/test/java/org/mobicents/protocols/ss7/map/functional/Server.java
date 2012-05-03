@@ -56,43 +56,43 @@ import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
-import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.InformServiceCentreRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.InformServiceCentreRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener;
 import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
-import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
-import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
-import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseIndicationImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
@@ -622,7 +622,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	/**
 	 * MAP Service Supplementary Listeners
 	 */
-	public void onProcessUnstructuredSSRequestIndication(ProcessUnstructuredSSRequestIndication procUnstrInd) {
+	public void onProcessUnstructuredSSRequestIndication(ProcessUnstructuredSSRequest procUnstrInd) {
 		
 		switch( this.step ) {
 		case Action_Dialog_A:
@@ -714,7 +714,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
 				USSDString ussdStrObj = this.mapProvider.getMAPParameterFactory().createUSSDString("Your balance is 500");
 				byte ussdDataCodingScheme = (byte) 0x0F;
-				ProcessUnstructuredSSResponseIndicationImpl req = new ProcessUnstructuredSSResponseIndicationImpl(ussdDataCodingScheme, ussdStrObj);
+				ProcessUnstructuredSSResponseImpl req = new ProcessUnstructuredSSResponseImpl(ussdDataCodingScheme, ussdStrObj);
 				AsnOutputStream aos = new AsnOutputStream();
 				try {
 					req.encodeData(aos);
@@ -763,17 +763,17 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onProcessUnstructuredSSResponseIndication(ProcessUnstructuredSSResponseIndication procUnstrResInd){
+	public void onProcessUnstructuredSSResponseIndication(ProcessUnstructuredSSResponse procUnstrResInd){
 		
 	}
 
 	@Override
-	public void onUnstructuredSSRequestIndication(UnstructuredSSRequestIndication unstrReqInd){
+	public void onUnstructuredSSRequestIndication(UnstructuredSSRequest unstrReqInd){
 		
 	}
 
 	@Override
-	public void onUnstructuredSSResponseIndication(UnstructuredSSResponseIndication unstrResInd){
+	public void onUnstructuredSSResponseIndication(UnstructuredSSResponse unstrResInd){
 		
 	}
 
@@ -781,7 +781,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	 * MAP Service Sms Listeners
 	 */
 	@Override
-	public void onMoForwardShortMessageIndication(MoForwardShortMessageRequestIndication moForwSmInd) {
+	public void onMoForwardShortMessageIndication(MoForwardShortMessageRequest moForwSmInd) {
 
 		MAPDialogSms d = moForwSmInd.getMAPDialog();
 
@@ -886,13 +886,13 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onMoForwardShortMessageRespIndication(MoForwardShortMessageResponseIndication moForwSmRespInd) {
+	public void onMoForwardShortMessageRespIndication(MoForwardShortMessageResponse moForwSmRespInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onMtForwardShortMessageIndication(MtForwardShortMessageRequestIndication mtForwSmInd) {
+	public void onMtForwardShortMessageIndication(MtForwardShortMessageRequest mtForwSmInd) {
 
 		MAPDialogSms d = mtForwSmInd.getMAPDialog();
 		
@@ -928,13 +928,13 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onMtForwardShortMessageRespIndication(MtForwardShortMessageResponseIndication mtForwSmRespInd) {
+	public void onMtForwardShortMessageRespIndication(MtForwardShortMessageResponse mtForwSmRespInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onSendRoutingInfoForSMIndication(SendRoutingInfoForSMRequestIndication sendRoutingInfoForSMInd) {
+	public void onSendRoutingInfoForSMIndication(SendRoutingInfoForSMRequest sendRoutingInfoForSMInd) {
 		
 		MAPDialogSms d = sendRoutingInfoForSMInd.getMAPDialog();
 		
@@ -990,13 +990,13 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onSendRoutingInfoForSMRespIndication(SendRoutingInfoForSMResponseIndication sendRoutingInfoForSMRespInd) {
+	public void onSendRoutingInfoForSMRespIndication(SendRoutingInfoForSMResponse sendRoutingInfoForSMRespInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onReportSMDeliveryStatusIndication(ReportSMDeliveryStatusRequestIndication reportSMDeliveryStatusInd) {
+	public void onReportSMDeliveryStatusIndication(ReportSMDeliveryStatusRequest reportSMDeliveryStatusInd) {
 		
 		MAPDialogSms d = reportSMDeliveryStatusInd.getMAPDialog();
 
@@ -1057,18 +1057,18 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onReportSMDeliveryStatusRespIndication(ReportSMDeliveryStatusResponseIndication reportSMDeliveryStatusRespInd) {
+	public void onReportSMDeliveryStatusRespIndication(ReportSMDeliveryStatusResponse reportSMDeliveryStatusRespInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onInformServiceCentreIndication(InformServiceCentreRequestIndication informServiceCentreInd) {
+	public void onInformServiceCentreIndication(InformServiceCentreRequest informServiceCentreInd) {
 		
 	}
 
 	@Override
-	public void onAlertServiceCentreIndication(AlertServiceCentreRequestIndication alertServiceCentreInd) {
+	public void onAlertServiceCentreIndication(AlertServiceCentreRequest alertServiceCentreInd) {
 
 		MAPDialogSms d = alertServiceCentreInd.getMAPDialog();
 
@@ -1097,7 +1097,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onAlertServiceCentreRespIndication(AlertServiceCentreResponseIndication alertServiceCentreInd) {
+	public void onAlertServiceCentreRespIndication(AlertServiceCentreResponse alertServiceCentreInd) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -1106,13 +1106,13 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSNotifyIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyIndication)
 	 */
 	@Override
-	public void onUnstructuredSSNotifyRequestIndication(UnstructuredSSNotifyRequestIndication unstrNotifyInd) {
+	public void onUnstructuredSSNotifyRequestIndication(UnstructuredSSNotifyRequest unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onForwardShortMessageIndication(ForwardShortMessageRequestIndication forwSmInd) {
+	public void onForwardShortMessageIndication(ForwardShortMessageRequest forwSmInd) {
 
 		MAPDialogSms d = forwSmInd.getMAPDialog();
 		
@@ -1150,7 +1150,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onForwardShortMessageRespIndication(ForwardShortMessageResponseIndication forwSmRespInd) {
+	public void onForwardShortMessageRespIndication(ForwardShortMessageResponse forwSmRespInd) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -1159,7 +1159,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSNotifyResponseIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication)
 	 */
 	@Override
-	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponseIndication unstrNotifyInd) {
+	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponse unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}

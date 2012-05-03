@@ -77,7 +77,7 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		oc.setLocalOperationCode((long) MAPOperationCode.processUnstructuredSS_Request);
 		invoke.setOperationCode(oc);
 
-		ProcessUnstructuredSSRequestIndicationImpl req = new ProcessUnstructuredSSRequestIndicationImpl(ussdDataCodingScheme, ussdString, alertingPatter,
+		ProcessUnstructuredSSRequestImpl req = new ProcessUnstructuredSSRequestImpl(ussdDataCodingScheme, ussdString, alertingPatter,
 				msisdn);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
@@ -113,7 +113,7 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		oc.setLocalOperationCode((long) MAPOperationCode.processUnstructuredSS_Request);
 		returnResult.setOperationCode(oc);
 
-		ProcessUnstructuredSSResponseIndicationImpl req = new ProcessUnstructuredSSResponseIndicationImpl(ussdDataCodingScheme, ussdString);
+		ProcessUnstructuredSSResponseImpl req = new ProcessUnstructuredSSResponseImpl(ussdDataCodingScheme, ussdString);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -147,7 +147,7 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Request);
 		invoke.setOperationCode(oc);
 
-		UnstructuredSSRequestIndicationImpl req = new UnstructuredSSRequestIndicationImpl(ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
+		UnstructuredSSRequestImpl req = new UnstructuredSSRequestImpl(ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -191,7 +191,7 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Notify);
 		invoke.setOperationCode(oc);
 
-		UnstructuredSSRequestIndicationImpl req = new UnstructuredSSRequestIndicationImpl(ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
+		UnstructuredSSRequestImpl req = new UnstructuredSSRequestImpl(ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -226,7 +226,7 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Request);
 		returnResult.setOperationCode(oc);
 
-		UnstructuredSSResponseIndicationImpl req = new UnstructuredSSResponseIndicationImpl(ussdDataCodingScheme, ussdString);
+		UnstructuredSSResponseImpl req = new UnstructuredSSResponseImpl(ussdDataCodingScheme, ussdString);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 

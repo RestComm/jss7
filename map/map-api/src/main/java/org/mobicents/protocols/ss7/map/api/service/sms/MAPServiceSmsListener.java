@@ -31,30 +31,30 @@ import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
  */
 public interface MAPServiceSmsListener extends MAPServiceListener {
 
-	public void onForwardShortMessageIndication(ForwardShortMessageRequestIndication forwSmInd);
+	public void onForwardShortMessageIndication(ForwardShortMessageRequest forwSmInd);
 
-	public void onForwardShortMessageRespIndication(ForwardShortMessageResponseIndication forwSmRespInd);
+	public void onForwardShortMessageRespIndication(ForwardShortMessageResponse forwSmRespInd);
 
-	public void onMoForwardShortMessageIndication(MoForwardShortMessageRequestIndication moForwSmInd);
+	public void onMoForwardShortMessageIndication(MoForwardShortMessageRequest moForwSmInd);
 
-	public void onMoForwardShortMessageRespIndication(MoForwardShortMessageResponseIndication moForwSmRespInd);
+	public void onMoForwardShortMessageRespIndication(MoForwardShortMessageResponse moForwSmRespInd);
 
-	public void onMtForwardShortMessageIndication(MtForwardShortMessageRequestIndication mtForwSmInd);
+	public void onMtForwardShortMessageIndication(MtForwardShortMessageRequest mtForwSmInd);
 
-	public void onMtForwardShortMessageRespIndication(MtForwardShortMessageResponseIndication mtForwSmRespInd);
+	public void onMtForwardShortMessageRespIndication(MtForwardShortMessageResponse mtForwSmRespInd);
 
-	public void onSendRoutingInfoForSMIndication(SendRoutingInfoForSMRequestIndication sendRoutingInfoForSMInd);
+	public void onSendRoutingInfoForSMIndication(SendRoutingInfoForSMRequest sendRoutingInfoForSMInd);
 
-	public void onSendRoutingInfoForSMRespIndication(SendRoutingInfoForSMResponseIndication sendRoutingInfoForSMRespInd);
+	public void onSendRoutingInfoForSMRespIndication(SendRoutingInfoForSMResponse sendRoutingInfoForSMRespInd);
 	
-	public void onReportSMDeliveryStatusIndication(ReportSMDeliveryStatusRequestIndication reportSMDeliveryStatusInd);
+	public void onReportSMDeliveryStatusIndication(ReportSMDeliveryStatusRequest reportSMDeliveryStatusInd);
 
-	public void onReportSMDeliveryStatusRespIndication(ReportSMDeliveryStatusResponseIndication reportSMDeliveryStatusRespInd);
+	public void onReportSMDeliveryStatusRespIndication(ReportSMDeliveryStatusResponse reportSMDeliveryStatusRespInd);
 
-	public void onInformServiceCentreIndication(InformServiceCentreRequestIndication informServiceCentreInd);
+	public void onInformServiceCentreIndication(InformServiceCentreRequest informServiceCentreInd);
 	
-	public void onAlertServiceCentreIndication(AlertServiceCentreRequestIndication alertServiceCentreInd);
+	public void onAlertServiceCentreIndication(AlertServiceCentreRequest alertServiceCentreInd);
 
-	public void onAlertServiceCentreRespIndication(AlertServiceCentreResponseIndication alertServiceCentreInd);
+	public void onAlertServiceCentreRespIndication(AlertServiceCentreResponse alertServiceCentreInd);
 
 }

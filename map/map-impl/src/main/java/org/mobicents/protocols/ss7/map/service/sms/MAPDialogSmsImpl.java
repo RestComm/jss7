@@ -91,7 +91,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		oc.setLocalOperationCode((long)MAPOperationCode.mo_forwardSM);
 		invoke.setOperationCode(oc);
 
-		ForwardShortMessageRequestIndicationImpl req = new ForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, moreMessagesToSend);
+		ForwardShortMessageRequestImpl req = new ForwardShortMessageRequestImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, moreMessagesToSend);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -155,7 +155,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		oc.setLocalOperationCode((long)MAPOperationCode.mo_forwardSM);
 		invoke.setOperationCode(oc);
 
-		MoForwardShortMessageRequestIndicationImpl req = new MoForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, extensionContainer, imsi);
+		MoForwardShortMessageRequestImpl req = new MoForwardShortMessageRequestImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, extensionContainer, imsi);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -197,7 +197,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 
 		if (sm_RP_UI != null || extensionContainer != null) {
 
-			MoForwardShortMessageResponseIndicationImpl req = new MoForwardShortMessageResponseIndicationImpl(sm_RP_UI, extensionContainer);
+			MoForwardShortMessageResponseImpl req = new MoForwardShortMessageResponseImpl(sm_RP_UI, extensionContainer);
 			AsnOutputStream aos = new AsnOutputStream();
 			req.encodeData(aos);
 
@@ -238,7 +238,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 			oc.setLocalOperationCode((long)MAPOperationCode.mt_forwardSM);
 			invoke.setOperationCode(oc);
 			
-			MtForwardShortMessageRequestIndicationImpl req = new MtForwardShortMessageRequestIndicationImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, moreMessagesToSend,
+			MtForwardShortMessageRequestImpl req = new MtForwardShortMessageRequestImpl(sm_RP_DA, sm_RP_OA, sm_RP_UI, moreMessagesToSend,
 					extensionContainer);
 			AsnOutputStream aos = new AsnOutputStream();
 			req.encodeData(aos);
@@ -280,7 +280,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 
 		if (sm_RP_UI != null || extensionContainer != null) {
 
-			MtForwardShortMessageResponseIndicationImpl resp = new MtForwardShortMessageResponseIndicationImpl(sm_RP_UI, extensionContainer);
+			MtForwardShortMessageResponseImpl resp = new MtForwardShortMessageResponseImpl(sm_RP_UI, extensionContainer);
 			AsnOutputStream aos = new AsnOutputStream();
 			resp.encodeData(aos);
 
@@ -323,7 +323,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		invoke.setOperationCode(oc);
 
 		try {
-			SendRoutingInfoForSMRequestIndicationImpl req = new SendRoutingInfoForSMRequestIndicationImpl(msisdn, sm_RP_PRI, serviceCentreAddress,
+			SendRoutingInfoForSMRequestImpl req = new SendRoutingInfoForSMRequestImpl(msisdn, sm_RP_PRI, serviceCentreAddress,
 					extensionContainer, gprsSupportIndicator, sM_RP_MTI, sM_RP_SMEA);
 			AsnOutputStream aos = new AsnOutputStream();
 			req.encodeData(aos);
@@ -365,7 +365,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		oc.setLocalOperationCode((long) MAPOperationCode.sendRoutingInfoForSM);
 		resultLast.setOperationCode(oc);
 
-		SendRoutingInfoForSMResponseIndicationImpl resp = new SendRoutingInfoForSMResponseIndicationImpl(imsi, locationInfoWithLMSI, extensionContainer);
+		SendRoutingInfoForSMResponseImpl resp = new SendRoutingInfoForSMResponseImpl(imsi, locationInfoWithLMSI, extensionContainer);
 		AsnOutputStream aos = new AsnOutputStream();
 		resp.encodeData(aos);
 
@@ -413,7 +413,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 			oc.setLocalOperationCode((long)MAPOperationCode.reportSM_DeliveryStatus);
 			invoke.setOperationCode(oc);
 			
-			ReportSMDeliveryStatusRequestIndicationImpl req = new ReportSMDeliveryStatusRequestIndicationImpl(this.getApplicationContext()
+			ReportSMDeliveryStatusRequestImpl req = new ReportSMDeliveryStatusRequestImpl(this.getApplicationContext()
 					.getApplicationContextVersion().getVersion(), msisdn, serviceCentreAddress, sMDeliveryOutcome, absentSubscriberDiagnosticSM,
 					extensionContainer, gprsSupportIndicator, deliveryOutcomeIndicator, additionalSMDeliveryOutcome, additionalAbsentSubscriberDiagnosticSM);
 			AsnOutputStream aos = new AsnOutputStream();
@@ -457,7 +457,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 
 		if (storedMSISDN != null || extensionContainer != null) {
 
-			ReportSMDeliveryStatusResponseIndicationImpl resp = new ReportSMDeliveryStatusResponseIndicationImpl(storedMSISDN, extensionContainer);
+			ReportSMDeliveryStatusResponseImpl resp = new ReportSMDeliveryStatusResponseImpl(storedMSISDN, extensionContainer);
 			AsnOutputStream aos = new AsnOutputStream();
 			resp.encodeData(aos);
 
@@ -500,7 +500,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 			oc.setLocalOperationCode((long)MAPOperationCode.informServiceCentre);
 			invoke.setOperationCode(oc);
 
-			InformServiceCentreRequestIndicationImpl req = new InformServiceCentreRequestIndicationImpl(storedMSISDN, mwStatus, extensionContainer,
+			InformServiceCentreRequestImpl req = new InformServiceCentreRequestImpl(storedMSISDN, mwStatus, extensionContainer,
 					absentSubscriberDiagnosticSM, additionalAbsentSubscriberDiagnosticSM);
 			AsnOutputStream aos = new AsnOutputStream();
 			req.encodeData(aos);
@@ -551,7 +551,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 				oc.setLocalOperationCode((long) MAPOperationCode.alertServiceCentre);
 			invoke.setOperationCode(oc);
 
-			AlertServiceCentreRequestIndicationImpl req = new AlertServiceCentreRequestIndicationImpl(msisdn, serviceCentreAddress);
+			AlertServiceCentreRequestImpl req = new AlertServiceCentreRequestImpl(msisdn, serviceCentreAddress);
 			AsnOutputStream aos = new AsnOutputStream();
 			req.encodeData(aos);
 			

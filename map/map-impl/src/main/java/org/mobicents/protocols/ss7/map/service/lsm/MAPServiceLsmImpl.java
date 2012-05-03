@@ -160,7 +160,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 		byte[] buf = param.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 
-		ProvideSubscriberLocationRequestIndicationImpl provideSubsLoctReqInd = new ProvideSubscriberLocationRequestIndicationImpl();
+		ProvideSubscriberLocationRequestImpl provideSubsLoctReqInd = new ProvideSubscriberLocationRequestImpl();
 		provideSubsLoctReqInd.decodeAll(ais);
 
 		provideSubsLoctReqInd.setInvokeId(invokeId);
@@ -182,7 +182,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 		byte[] buf = param.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 
-		ProvideSubscriberLocationResponseIndicationImpl provideSubsLoctResInd = new ProvideSubscriberLocationResponseIndicationImpl();
+		ProvideSubscriberLocationResponseImpl provideSubsLoctResInd = new ProvideSubscriberLocationResponseImpl();
 		provideSubsLoctResInd.decodeAll(ais);
 
 		provideSubsLoctResInd.setInvokeId(invokeId);
@@ -204,7 +204,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 
-		SubscriberLocationReportRequestIndicationImpl reqInd = new SubscriberLocationReportRequestIndicationImpl();
+		SubscriberLocationReportRequestImpl reqInd = new SubscriberLocationReportRequestImpl();
 		reqInd.decodeAll(ais);
 
 		reqInd.setInvokeId(invokeId);
@@ -225,7 +225,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 
-		SubscriberLocationReportResponseIndicationImpl resInd = new SubscriberLocationReportResponseIndicationImpl();
+		SubscriberLocationReportResponseImpl resInd = new SubscriberLocationReportResponseImpl();
 		resInd.decodeAll(ais);
 
 		resInd.setInvokeId(invokeId);
@@ -246,7 +246,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 
-		SendRoutingInfoForLCSRequestIndicationImpl reqInd = new SendRoutingInfoForLCSRequestIndicationImpl();
+		SendRoutingInfoForLCSRequestImpl reqInd = new SendRoutingInfoForLCSRequestImpl();
 		reqInd.decodeAll(ais);
 
 		reqInd.setInvokeId(invokeId);
@@ -267,7 +267,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 
-		SendRoutingInfoForLCSResponseIndicationImpl resInd = new SendRoutingInfoForLCSResponseIndicationImpl();
+		SendRoutingInfoForLCSResponseImpl resInd = new SendRoutingInfoForLCSResponseImpl();
 		resInd.decodeAll(ais);
 
 		resInd.setInvokeId(invokeId);

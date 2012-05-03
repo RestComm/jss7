@@ -62,7 +62,7 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 * 
 	 * @param invokeId
 	 *            The original invoke ID retrieved from
-	 *            {@link ProcessUnstructuredSSResponseIndication}
+	 *            {@link ProcessUnstructuredSSResponse}
 	 * @param ussdDataCodingScheme
 	 *            The Data Coding Scheme for this USSD String as defined in GSM
 	 *            03.38
@@ -98,7 +98,7 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 * 
 	 * @param invokeId
 	 *            The original invoke ID retrieved from
-	 *            {@link UnstructuredSSResponseIndication}
+	 *            {@link UnstructuredSSResponse}
 	 * @param ussdDataCodingScheme
 	 *            The Data Coding Scheme for this USSD String as defined in GSM
 	 *            03.38
