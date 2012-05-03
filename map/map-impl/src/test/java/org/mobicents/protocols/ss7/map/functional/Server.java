@@ -622,7 +622,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	/**
 	 * MAP Service Supplementary Listeners
 	 */
-	public void onProcessUnstructuredSSRequestIndication(ProcessUnstructuredSSRequest procUnstrInd) {
+	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrInd) {
 		
 		switch( this.step ) {
 		case Action_Dialog_A:
@@ -763,17 +763,17 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onProcessUnstructuredSSResponseIndication(ProcessUnstructuredSSResponse procUnstrResInd){
+	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse procUnstrResInd){
 		
 	}
 
 	@Override
-	public void onUnstructuredSSRequestIndication(UnstructuredSSRequest unstrReqInd){
+	public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd){
 		
 	}
 
 	@Override
-	public void onUnstructuredSSResponseIndication(UnstructuredSSResponse unstrResInd){
+	public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd){
 		
 	}
 
@@ -781,7 +781,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	 * MAP Service Sms Listeners
 	 */
 	@Override
-	public void onMoForwardShortMessageIndication(MoForwardShortMessageRequest moForwSmInd) {
+	public void onMoForwardShortMessageRequest(MoForwardShortMessageRequest moForwSmInd) {
 
 		MAPDialogSms d = moForwSmInd.getMAPDialog();
 
@@ -886,13 +886,13 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onMoForwardShortMessageRespIndication(MoForwardShortMessageResponse moForwSmRespInd) {
+	public void onMoForwardShortMessageResponse(MoForwardShortMessageResponse moForwSmRespInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onMtForwardShortMessageIndication(MtForwardShortMessageRequest mtForwSmInd) {
+	public void onMtForwardShortMessageRequest(MtForwardShortMessageRequest mtForwSmInd) {
 
 		MAPDialogSms d = mtForwSmInd.getMAPDialog();
 		
@@ -928,13 +928,13 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onMtForwardShortMessageRespIndication(MtForwardShortMessageResponse mtForwSmRespInd) {
+	public void onMtForwardShortMessageResponse(MtForwardShortMessageResponse mtForwSmRespInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onSendRoutingInfoForSMIndication(SendRoutingInfoForSMRequest sendRoutingInfoForSMInd) {
+	public void onSendRoutingInfoForSMRequest(SendRoutingInfoForSMRequest sendRoutingInfoForSMInd) {
 		
 		MAPDialogSms d = sendRoutingInfoForSMInd.getMAPDialog();
 		
@@ -990,13 +990,13 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onSendRoutingInfoForSMRespIndication(SendRoutingInfoForSMResponse sendRoutingInfoForSMRespInd) {
+	public void onSendRoutingInfoForSMResponse(SendRoutingInfoForSMResponse sendRoutingInfoForSMRespInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onReportSMDeliveryStatusIndication(ReportSMDeliveryStatusRequest reportSMDeliveryStatusInd) {
+	public void onReportSMDeliveryStatusRequest(ReportSMDeliveryStatusRequest reportSMDeliveryStatusInd) {
 		
 		MAPDialogSms d = reportSMDeliveryStatusInd.getMAPDialog();
 
@@ -1057,18 +1057,18 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onReportSMDeliveryStatusRespIndication(ReportSMDeliveryStatusResponse reportSMDeliveryStatusRespInd) {
+	public void onReportSMDeliveryStatusResponse(ReportSMDeliveryStatusResponse reportSMDeliveryStatusRespInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onInformServiceCentreIndication(InformServiceCentreRequest informServiceCentreInd) {
+	public void onInformServiceCentreRequest(InformServiceCentreRequest informServiceCentreInd) {
 		
 	}
 
 	@Override
-	public void onAlertServiceCentreIndication(AlertServiceCentreRequest alertServiceCentreInd) {
+	public void onAlertServiceCentreRequest(AlertServiceCentreRequest alertServiceCentreInd) {
 
 		MAPDialogSms d = alertServiceCentreInd.getMAPDialog();
 
@@ -1097,7 +1097,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onAlertServiceCentreRespIndication(AlertServiceCentreResponse alertServiceCentreInd) {
+	public void onAlertServiceCentreResponse(AlertServiceCentreResponse alertServiceCentreInd) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -1106,13 +1106,13 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSNotifyIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyIndication)
 	 */
 	@Override
-	public void onUnstructuredSSNotifyRequestIndication(UnstructuredSSNotifyRequest unstrNotifyInd) {
+	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onForwardShortMessageIndication(ForwardShortMessageRequest forwSmInd) {
+	public void onForwardShortMessageRequest(ForwardShortMessageRequest forwSmInd) {
 
 		MAPDialogSms d = forwSmInd.getMAPDialog();
 		
@@ -1150,7 +1150,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onForwardShortMessageRespIndication(ForwardShortMessageResponse forwSmRespInd) {
+	public void onForwardShortMessageResponse(ForwardShortMessageResponse forwSmRespInd) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -1159,7 +1159,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSNotifyResponseIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication)
 	 */
 	@Override
-	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponse unstrNotifyInd) {
+	public void onUnstructuredSSNotifyResponse(UnstructuredSSNotifyResponse unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}

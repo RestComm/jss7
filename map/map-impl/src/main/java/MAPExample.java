@@ -248,7 +248,7 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onProcessUnstructuredSSRequestIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication)
 	 */
 	@Override
-	public void onProcessUnstructuredSSRequestIndication(ProcessUnstructuredSSRequest procUnstrReqInd) {
+	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -257,7 +257,7 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onProcessUnstructuredSSResponseIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication)
 	 */
 	@Override
-	public void onProcessUnstructuredSSResponseIndication(ProcessUnstructuredSSResponse procUnstrResInd) {
+	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse procUnstrResInd) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -266,7 +266,7 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSRequestIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication)
 	 */
 	@Override
-	public void onUnstructuredSSRequestIndication(UnstructuredSSRequest unstrReqInd) {
+	public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -275,7 +275,7 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSResponseIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication)
 	 */
 	@Override
-	public void onUnstructuredSSResponseIndication(UnstructuredSSResponse unstrResInd) {
+	public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -284,7 +284,7 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSNotifyIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyIndication)
 	 */
 	@Override
-	public void onUnstructuredSSNotifyRequestIndication(UnstructuredSSNotifyRequest unstrNotifyInd) {
+	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -299,7 +299,7 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSNotifyResponseIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication)
 	 */
 	@Override
-	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponse unstrNotifyInd) {
+	public void onUnstructuredSSNotifyResponse(UnstructuredSSNotifyResponse unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}

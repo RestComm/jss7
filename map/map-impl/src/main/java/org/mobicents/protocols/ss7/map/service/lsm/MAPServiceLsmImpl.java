@@ -168,7 +168,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			serLis.onMAPMessage(provideSubsLoctReqInd);
-			((MAPServiceLsmListener) serLis).onProvideSubscriberLocationRequestIndication(provideSubsLoctReqInd);
+			((MAPServiceLsmListener) serLis).onProvideSubscriberLocationRequest(provideSubsLoctReqInd);
 		}
 
 	}
@@ -190,7 +190,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			serLis.onMAPMessage(provideSubsLoctResInd);
-			((MAPServiceLsmListener) serLis).onProvideSubscriberLocationResponseIndication(provideSubsLoctResInd);
+			((MAPServiceLsmListener) serLis).onProvideSubscriberLocationResponse(provideSubsLoctResInd);
 		}
 
 	}
@@ -212,7 +212,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			serLis.onMAPMessage(reqInd);
-			((MAPServiceLsmListener) serLis).onSubscriberLocationReportRequestIndication(reqInd);
+			((MAPServiceLsmListener) serLis).onSubscriberLocationReportRequest(reqInd);
 		}
 	}
 
@@ -233,7 +233,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			serLis.onMAPMessage(resInd);
-			((MAPServiceLsmListener) serLis).onSubscriberLocationReportResponseIndication(resInd);
+			((MAPServiceLsmListener) serLis).onSubscriberLocationReportResponse(resInd);
 		}
 	}
 
@@ -254,7 +254,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			serLis.onMAPMessage(reqInd);
-			((MAPServiceLsmListener) serLis).onSendRoutingInforForLCSRequestIndication(reqInd);
+			((MAPServiceLsmListener) serLis).onSendRoutingInforForLCSRequest(reqInd);
 		}
 	}
 
@@ -275,7 +275,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			serLis.onMAPMessage(resInd);
-			((MAPServiceLsmListener) serLis).onSendRoutingInforForLCSResponseIndication(resInd);
+			((MAPServiceLsmListener) serLis).onSendRoutingInforForLCSResponse(resInd);
 		}
 	}
 

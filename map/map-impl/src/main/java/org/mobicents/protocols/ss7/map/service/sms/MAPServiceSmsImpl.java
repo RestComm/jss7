@@ -286,7 +286,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSmsListener) serLis).onForwardShortMessageIndication(ind);
+				((MAPServiceSmsListener) serLis).onForwardShortMessageRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing forwardShortMessageRequest: " + e.getMessage(), e);
 			}
@@ -304,7 +304,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 			
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSmsListener) serLis).onForwardShortMessageRespIndication(ind);
+				((MAPServiceSmsListener) serLis).onForwardShortMessageResponse(ind);
 			} catch (Exception e) {
 				loger.error("Error processing forwardShortMessageResponse: " + e.getMessage(), e);
 			}			
@@ -333,7 +333,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSmsListener) serLis).onMoForwardShortMessageIndication(ind);
+				((MAPServiceSmsListener) serLis).onMoForwardShortMessageRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onMoForwardShortMessageIndication: " + e.getMessage(), e);
 			}
@@ -361,7 +361,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSmsListener) serLis).onMoForwardShortMessageRespIndication(ind);
+				((MAPServiceSmsListener) serLis).onMoForwardShortMessageResponse(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onMoForwardShortMessageRespIndication: " + e.getMessage(), e);
 			}
@@ -390,7 +390,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSmsListener) serLis).onMtForwardShortMessageIndication(ind);
+				((MAPServiceSmsListener) serLis).onMtForwardShortMessageRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onMtForwardShortMessageIndication: " + e.getMessage(), e);
 			}
@@ -418,7 +418,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSmsListener) serLis).onMtForwardShortMessageRespIndication(ind);
+				((MAPServiceSmsListener) serLis).onMtForwardShortMessageResponse(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onMtForwardShortMessageRespIndication: " + e.getMessage(), e);
 			}
@@ -447,7 +447,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSmsListener) serLis).onSendRoutingInfoForSMIndication(ind);
+				((MAPServiceSmsListener) serLis).onSendRoutingInfoForSMRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onSendRoutingInfoForSMIndication: " + e.getMessage(), e);
 			}
@@ -478,7 +478,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSmsListener) serLis).onSendRoutingInfoForSMRespIndication(ind);
+				((MAPServiceSmsListener) serLis).onSendRoutingInfoForSMResponse(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onSendRoutingInfoForSMRespIndication: " + e.getMessage(), e);
 			}
@@ -508,7 +508,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSmsListener) serLis).onReportSMDeliveryStatusIndication(ind);
+				((MAPServiceSmsListener) serLis).onReportSMDeliveryStatusRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onReportSMDeliveryStatusIndication: " + e.getMessage(), e);
 			}
@@ -536,7 +536,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSmsListener) serLis).onReportSMDeliveryStatusRespIndication(ind);
+				((MAPServiceSmsListener) serLis).onReportSMDeliveryStatusResponse(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onReportSMDeliveryStatusRespIndication: " + e.getMessage(), e);
 			}
@@ -565,7 +565,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSmsListener) serLis).onInformServiceCentreIndication(ind);
+				((MAPServiceSmsListener) serLis).onInformServiceCentreRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onInformServiceCentreIndication: " + e.getMessage(), e);
 			}
@@ -594,7 +594,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSmsListener) serLis).onAlertServiceCentreIndication(ind);
+				((MAPServiceSmsListener) serLis).onAlertServiceCentreRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onAlertServiceCentreIndication: " + e.getMessage(), e);
 			}
@@ -612,7 +612,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 			
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSmsListener) serLis).onAlertServiceCentreRespIndication(ind);
+				((MAPServiceSmsListener) serLis).onAlertServiceCentreResponse(ind);
 			} catch (Exception e) {
 				loger.error("Error processing onAlertServiceCentreRespIndication: " + e.getMessage(), e);
 			}			

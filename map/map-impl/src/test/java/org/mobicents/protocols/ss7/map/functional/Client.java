@@ -937,10 +937,10 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	/**
 	 * Supplementary Service Listeners
 	 */
-	public void onProcessUnstructuredSSRequestIndication(ProcessUnstructuredSSRequest procUnstrReqInd) {
+	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 	}
 
-	public void onUnstructuredSSResponseIndication(UnstructuredSSResponse unstrResInd) {
+	public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
 		switch (this.step) {
 		case Action_Dialog_A:
 		case Action_Dialog_D:
@@ -954,13 +954,13 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	 * Supplementary Service Listeners
 	 */
 	@Override
-	public void onMoForwardShortMessageIndication(MoForwardShortMessageRequest moForwSmInd) {
+	public void onMoForwardShortMessageRequest(MoForwardShortMessageRequest moForwSmInd) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onMoForwardShortMessageRespIndication(MoForwardShortMessageResponse moForwSmRespInd) {
+	public void onMoForwardShortMessageResponse(MoForwardShortMessageResponse moForwSmRespInd) {
 
 		SmsSignalInfo sm_RP_UI = moForwSmRespInd.getSM_RP_UI();
 		MAPExtensionContainer extensionContainer = moForwSmRespInd.getExtensionContainer();
@@ -973,13 +973,13 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onMtForwardShortMessageIndication(MtForwardShortMessageRequest mtForwSmInd) {
+	public void onMtForwardShortMessageRequest(MtForwardShortMessageRequest mtForwSmInd) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onMtForwardShortMessageRespIndication(MtForwardShortMessageResponse mtForwSmRespInd) {
+	public void onMtForwardShortMessageResponse(MtForwardShortMessageResponse mtForwSmRespInd) {
 
 		SmsSignalInfo sm_RP_UI = mtForwSmRespInd.getSM_RP_UI();
 		MAPExtensionContainer extensionContainer = mtForwSmRespInd.getExtensionContainer();
@@ -992,7 +992,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onProcessUnstructuredSSResponseIndication(ProcessUnstructuredSSResponse procUnstrResInd) {
+	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse procUnstrResInd) {
 		if (this.step == FunctionalTestScenario.Action_Component_D) {
 			if (_S_receivedResult)
 				_S_receivedResult2 = true;
@@ -1002,7 +1002,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onUnstructuredSSRequestIndication(UnstructuredSSRequest unstrReqInd) {
+	public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
 		switch (this.step) {
 		case Action_Dialog_A:
 		case Action_Dialog_D:
@@ -1013,13 +1013,13 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onSendRoutingInfoForSMIndication(SendRoutingInfoForSMRequest sendRoutingInfoForSMInd) {
+	public void onSendRoutingInfoForSMRequest(SendRoutingInfoForSMRequest sendRoutingInfoForSMInd) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onSendRoutingInfoForSMRespIndication(SendRoutingInfoForSMResponse sendRoutingInfoForSMRespInd) {
+	public void onSendRoutingInfoForSMResponse(SendRoutingInfoForSMResponse sendRoutingInfoForSMRespInd) {
 
 		IMSI imsi = sendRoutingInfoForSMRespInd.getIMSI();
 		MAPExtensionContainer extensionContainer = sendRoutingInfoForSMRespInd.getExtensionContainer();
@@ -1052,13 +1052,13 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onReportSMDeliveryStatusIndication(ReportSMDeliveryStatusRequest reportSMDeliveryStatusInd) {
+	public void onReportSMDeliveryStatusRequest(ReportSMDeliveryStatusRequest reportSMDeliveryStatusInd) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onReportSMDeliveryStatusRespIndication(ReportSMDeliveryStatusResponse reportSMDeliveryStatusRespInd) {
+	public void onReportSMDeliveryStatusResponse(ReportSMDeliveryStatusResponse reportSMDeliveryStatusRespInd) {
 
 		ISDNAddressString storedMSISDN = reportSMDeliveryStatusRespInd.getStoredMSISDN();
 		MAPExtensionContainer extensionContainer = reportSMDeliveryStatusRespInd.getExtensionContainer();
@@ -1078,7 +1078,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onInformServiceCentreIndication(InformServiceCentreRequest informServiceCentreInd) {
+	public void onInformServiceCentreRequest(InformServiceCentreRequest informServiceCentreInd) {
 		
 		MAPExtensionContainer extensionContainer = informServiceCentreInd.getExtensionContainer();
 		ISDNAddressString storedMSISDN = informServiceCentreInd.getStoredMSISDN();
@@ -1105,13 +1105,13 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	}
 
 	@Override
-	public void onAlertServiceCentreIndication(AlertServiceCentreRequest alertServiceCentreInd) {
+	public void onAlertServiceCentreRequest(AlertServiceCentreRequest alertServiceCentreInd) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onAlertServiceCentreRespIndication(AlertServiceCentreResponse alertServiceCentreInd) {
+	public void onAlertServiceCentreResponse(AlertServiceCentreResponse alertServiceCentreInd) {
 
 		this._S_recievedSmsRespIndication = true;
 	}
@@ -1120,19 +1120,19 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSNotifyIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyIndication)
 	 */
 	@Override
-	public void onUnstructuredSSNotifyRequestIndication(UnstructuredSSNotifyRequest unstrNotifyInd) {
+	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onForwardShortMessageIndication(ForwardShortMessageRequest forwSmInd) {
+	public void onForwardShortMessageRequest(ForwardShortMessageRequest forwSmInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onForwardShortMessageRespIndication(ForwardShortMessageResponse forwSmRespInd) {
+	public void onForwardShortMessageResponse(ForwardShortMessageResponse forwSmRespInd) {
 
 		this._S_recievedSmsRespIndication = true;
 	}
@@ -1147,7 +1147,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSNotifyResponseIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication)
 	 */
 	@Override
-	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponse unstrNotifyInd) {
+	public void onUnstructuredSSNotifyResponse(UnstructuredSSNotifyResponse unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}

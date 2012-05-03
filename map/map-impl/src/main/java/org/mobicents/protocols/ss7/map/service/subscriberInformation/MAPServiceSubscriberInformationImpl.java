@@ -212,7 +212,7 @@ public class MAPServiceSubscriberInformationImpl extends MAPServiceBaseImpl impl
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
-				((MAPServiceSubscriberInformationListener) serLis).onAnyTimeInterrogationRequestIndication(ind);
+				((MAPServiceSubscriberInformationListener) serLis).onAnyTimeInterrogationRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e);
 			}
@@ -242,7 +242,7 @@ public class MAPServiceSubscriberInformationImpl extends MAPServiceBaseImpl impl
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
-				((MAPServiceSubscriberInformationListener) serLis).onAnyTimeInterrogationResponseIndication(ind);
+				((MAPServiceSubscriberInformationListener) serLis).onAnyTimeInterrogationResponse(ind);
 			} catch (Exception e) {
 				loger.error("Error processing ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e);
 			}

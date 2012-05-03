@@ -32,15 +32,15 @@ import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
  */
 public interface MAPServiceSupplementaryListener extends MAPServiceListener {
 
-	public void onProcessUnstructuredSSRequestIndication(ProcessUnstructuredSSRequest procUnstrReqInd);
+	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd);
 
-	public void onProcessUnstructuredSSResponseIndication(ProcessUnstructuredSSResponse procUnstrResInd);
+	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse procUnstrResInd);
 
-	public void onUnstructuredSSRequestIndication(UnstructuredSSRequest unstrReqInd);
+	public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd);
 
-	public void onUnstructuredSSResponseIndication(UnstructuredSSResponse unstrResInd);
+	public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd);
 
-	public void onUnstructuredSSNotifyRequestIndication(UnstructuredSSNotifyRequest unstrNotifyInd);
+	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd);
 
-	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponse unstrNotifyInd);
+	public void onUnstructuredSSNotifyResponse(UnstructuredSSNotifyResponse unstrNotifyInd);
 }

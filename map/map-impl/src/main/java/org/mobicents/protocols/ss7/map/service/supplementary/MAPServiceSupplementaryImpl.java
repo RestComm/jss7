@@ -195,7 +195,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSupplementaryListener) serLis).onUnstructuredSSNotifyRequestIndication(ind);
+				((MAPServiceSupplementaryListener) serLis).onUnstructuredSSNotifyRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing unstructuredSSNotifyIndication: " + e.getMessage(), e);
 			}
@@ -211,7 +211,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSupplementaryListener) serLis).onUnstructuredSSNotifyResponseIndication(ind);
+				((MAPServiceSupplementaryListener) serLis).onUnstructuredSSNotifyResponse(ind);
 			} catch (Exception e) {
 				loger.error("Error processing unstructuredSSNotifyIndication: " + e.getMessage(), e);
 			}
@@ -239,7 +239,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSupplementaryListener) serLis).onUnstructuredSSRequestIndication(ind);
+				((MAPServiceSupplementaryListener) serLis).onUnstructuredSSRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing UnstructuredSSRequestIndication: " + e.getMessage(), e);
 			}
@@ -268,7 +268,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSupplementaryListener) serLis).onUnstructuredSSResponseIndication(ind);
+				((MAPServiceSupplementaryListener) serLis).onUnstructuredSSResponse(ind);
 			} catch (Exception e) {
 				loger.error("Error processing UnstructuredSSResponseIndication: " + e.getMessage(), e);
 			}
@@ -298,7 +298,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSupplementaryListener) serLis).onProcessUnstructuredSSRequestIndication(ind);
+				((MAPServiceSupplementaryListener) serLis).onProcessUnstructuredSSRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e);
 			}
@@ -329,7 +329,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceSupplementaryListener) serLis).onProcessUnstructuredSSResponseIndication(ind);
+				((MAPServiceSupplementaryListener) serLis).onProcessUnstructuredSSResponse(ind);
 			} catch (Exception e) {
 				loger.error("Error processing ProcessUnstructuredSSResponseIndication: " + e.getMessage(), e);
 			}
