@@ -45,6 +45,14 @@ public interface CAPDialog {
 	
 	public static int _Timer_Default = -1;
 
+
+	/* 
+	 * Setting this property to true lead that all sent to TCAP messages of this Dialog will be marked as "ReturnMessageOnError"
+	 * (SCCP will return the notification is the message has non been delivered to the peer)
+	 */
+	public void setReturnMessageOnError(boolean val);
+
+	public boolean getReturnMessageOnError();
 	
 	/**
 	 * This method can be called on timeout of dialog, inside

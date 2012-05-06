@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -73,6 +72,7 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndicatio
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCNoticeIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCPAbortIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
@@ -212,7 +212,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		loger.warn(s.toString());
 		
 		try {
-			this.fireTCAbort(dialog, CAPGeneralAbortReason.ACNNotSupported, null);
+			this.fireTCAbort(dialog, CAPGeneralAbortReason.ACNNotSupported, null, false);
 		} catch (CAPException e1) {
 			loger.error("Error while firing TC-U-ABORT. ", e1);
 		}
@@ -277,7 +277,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			loger.warn("onTCBegin: Received TCBeginIndication without application context name");
 
 			try {
-				this.fireTCAbort(tcBeginIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null);
+				this.fireTCAbort(tcBeginIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, false);
 			} catch (CAPException e) {
 				loger.error("Error while firing TC-U-ABORT. ", e);
 			}
@@ -299,7 +299,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			referenceNumber = ParseUserInfo(userInfo, tcBeginIndication.getDialog());
 			if (referenceNumber == null) {
 				try {
-					this.fireTCAbort(tcBeginIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null);
+					this.fireTCAbort(tcBeginIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, false);
 				} catch (CAPException e) {
 					loger.error("Error while firing TC-U-ABORT. ", e);
 				}
@@ -368,7 +368,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		if (capDialogImpl == null) {
 			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
 			try {
-				this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null);
+				this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, false);
 			} catch (CAPException e) {
 				loger.error("Error while firing TC-U-ABORT. ", e);
 			}
@@ -382,7 +382,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				if (acn == null) {
 					loger.warn("CAP Dialog is in InitialSent state but no application context name is received");
 					try {
-						this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null);
+						this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, capDialogImpl.getReturnMessageOnError());
 					} catch (CAPException e) {
 						loger.error("Error while firing TC-U-ABORT. ", e);
 					}
@@ -399,7 +399,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 					loger.warn(String.format("Received first TC-CONTINUE. But the received ACN is not the equal to the original ACN"));
 
 					try {
-						this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null);
+						this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, capDialogImpl.getReturnMessageOnError());
 					} catch (CAPException e) {
 						loger.error("Error while firing TC-U-ABORT. ", e);
 					}
@@ -451,7 +451,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		if (capDialogImpl == null) {
 			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
 			try {
-				this.fireTCAbort(tcEndIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null);
+				this.fireTCAbort(tcEndIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, false);
 			} catch (CAPException e) {
 				loger.error("Error while firing TC-U-ABORT. ", e);
 			}
@@ -465,7 +465,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				if (acn == null) {
 					loger.warn("CAP Dialog is in InitialSent state but no application context name is received");
 					try {
-						this.fireTCAbort(tcEndIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null);
+						this.fireTCAbort(tcEndIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, capDialogImpl.getReturnMessageOnError());
 					} catch (CAPException e) {
 						loger.error("Error while firing TC-U-ABORT. ", e);
 					}
@@ -665,6 +665,28 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			this.deliverDialogUserAbort(capDialogImpl, generalReason, userReason);
 
 			capDialogImpl.setState(CAPDialogState.Expunged);
+		}
+	}
+
+	@Override
+	public void onTCNotice(TCNoticeIndication ind) {
+
+		Dialog tcapDialog = ind.getDialog();
+
+		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+
+		if (capDialogImpl == null) {
+			loger.error("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
+			return;
+		}
+
+		synchronized (capDialogImpl) {
+			this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.MessageCannotBeDeliveredToThePeer);
+
+			if (capDialogImpl.getState() == CAPDialogState.InitialReceived) {
+				capDialogImpl.setNormalDialogShutDown();
+				capDialogImpl.setState(CAPDialogState.Expunged);
+			}
 		}
 	}
 
@@ -917,9 +939,12 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		}
 	}
 
-	protected void fireTCBegin(Dialog tcapDialog, ApplicationContextName acn, CAPGprsReferenceNumber gprsReferenceNumber) throws CAPException {
+	protected void fireTCBegin(Dialog tcapDialog, ApplicationContextName acn, CAPGprsReferenceNumber gprsReferenceNumber, boolean returnMessageOnError)
+			throws CAPException {
 
 		TCBeginRequest tcBeginReq = encodeTCBegin(tcapDialog, acn, gprsReferenceNumber);
+		if (returnMessageOnError)
+			tcBeginReq.setReturnMessageOnError(true);
 
 		try {
 			tcapDialog.send(tcBeginReq);
@@ -952,10 +977,12 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		return tcBeginReq;
 	}
 
-	protected void fireTCContinue(Dialog tcapDialog, ApplicationContextName acn, CAPGprsReferenceNumber gprsReferenceNumber)
+	protected void fireTCContinue(Dialog tcapDialog, ApplicationContextName acn, CAPGprsReferenceNumber gprsReferenceNumber, boolean returnMessageOnError)
 			throws CAPException {
 
 		TCContinueRequest tcContinueReq = encodeTCContinue(tcapDialog, acn, gprsReferenceNumber);
+		if (returnMessageOnError)
+			tcContinueReq.setReturnMessageOnError(true);
 
 		try {
 			tcapDialog.send(tcContinueReq);
@@ -988,10 +1015,12 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		return tcContinueReq;
 	}
 
-	protected void fireTCEnd(Dialog tcapDialog, boolean prearrangedEnd, ApplicationContextName acn, CAPGprsReferenceNumber gprsReferenceNumber)
-			throws CAPException {
+	protected void fireTCEnd(Dialog tcapDialog, boolean prearrangedEnd, ApplicationContextName acn, CAPGprsReferenceNumber gprsReferenceNumber,
+			boolean returnMessageOnError) throws CAPException {
 
 		TCEndRequest endRequest = encodeTCEnd(tcapDialog, prearrangedEnd, acn, gprsReferenceNumber);
+		if (returnMessageOnError)
+			endRequest.setReturnMessageOnError(true);
 
 		try {
 			tcapDialog.send(endRequest);
@@ -1030,7 +1059,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		return endRequest;
 	}
 
-	protected void fireTCAbort(Dialog tcapDialog, CAPGeneralAbortReason generalAbortReason, CAPUserAbortReason userAbortReason) throws CAPException {
+	protected void fireTCAbort(Dialog tcapDialog, CAPGeneralAbortReason generalAbortReason, CAPUserAbortReason userAbortReason, boolean returnMessageOnError)
+			throws CAPException {
 
 		TCUserAbortRequest tcUserAbort = this.getTCAPProvider().getDialogPrimitiveFactory().createUAbort(tcapDialog);
 
@@ -1062,6 +1092,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			tcUserAbort.setApplicationContextName(tcapDialog.getApplicationContextName());
 			break;
 		}
+		if (returnMessageOnError)
+			tcUserAbort.setReturnMessageOnError(true);
 
 		try {
 			tcapDialog.send(tcUserAbort);

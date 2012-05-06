@@ -46,6 +46,13 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+			<artifactId>sccp-impl</artifactId>
+			<type>test-jar</type>
+			<version>${pom.version}</version>
+			<scope>test</scope>
+		</dependency>		
+		<dependency>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 			<artifactId>mtp-api</artifactId>
 			<scope>test</scope>

@@ -73,6 +73,8 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	protected boolean normalDialogShutDown = false;
 	
 	private Set<Long> incomingInvokeList = new HashSet<Long>();
+
+	boolean returnMessageOnError = false;
 	
 
 	protected CAPDialogImpl(CAPApplicationContext appCntx, Dialog tcapDialog, CAPProviderImpl capProviderImpl, CAPServiceBase capService) {
@@ -80,6 +82,16 @@ public abstract class CAPDialogImpl implements CAPDialog {
 		this.tcapDialog = tcapDialog;
 		this.capProviderImpl = capProviderImpl;
 		this.capService = capService;
+	}
+
+	@Override
+	public void setReturnMessageOnError(boolean val) {
+		returnMessageOnError = val;
+	}
+
+	@Override
+	public boolean getReturnMessageOnError() {
+		return returnMessageOnError;
 	}
 	
 	@Override
@@ -180,7 +192,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 				ApplicationContextName acn = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
 						.createApplicationContextName(this.appCntx.getOID());
 
-				this.capProviderImpl.fireTCBegin(this.getTcapDialog(), acn, this.gprsReferenceNumber);
+				this.capProviderImpl.fireTCBegin(this.getTcapDialog(), acn, this.gprsReferenceNumber, this.getReturnMessageOnError());
 				this.gprsReferenceNumber = null;
 
 				this.setState(CAPDialogState.InitialSent);
@@ -189,7 +201,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 			case Active:
 				// Its Active send TC-CONTINUE
 
-				this.capProviderImpl.fireTCContinue(this.getTcapDialog(), null, null);
+				this.capProviderImpl.fireTCContinue(this.getTcapDialog(), null, null, this.getReturnMessageOnError());
 				break;
 
 			case InitialReceived:
@@ -198,7 +210,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 				ApplicationContextName acn1 = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
 						.createApplicationContextName(this.appCntx.getOID());
 
-				this.capProviderImpl.fireTCContinue(this.getTcapDialog(), acn1, this.gprsReferenceNumber);
+				this.capProviderImpl.fireTCContinue(this.getTcapDialog(), acn1, this.gprsReferenceNumber, this.getReturnMessageOnError());
 				this.gprsReferenceNumber = null;
 
 				this.setState(CAPDialogState.Active);
@@ -222,7 +234,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 						.createApplicationContextName(this.appCntx.getOID());
 
 				this.setNormalDialogShutDown();
-				this.capProviderImpl.fireTCEnd(this.getTcapDialog(), prearrangedEnd, acn, this.gprsReferenceNumber);
+				this.capProviderImpl.fireTCEnd(this.getTcapDialog(), prearrangedEnd, acn, this.gprsReferenceNumber, this.getReturnMessageOnError());
 				this.gprsReferenceNumber = null;
 
 				this.setState(CAPDialogState.Expunged);
@@ -230,7 +242,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 
 			case Active:
 				this.setNormalDialogShutDown();
-				this.capProviderImpl.fireTCEnd(this.getTcapDialog(), prearrangedEnd, null, null);
+				this.capProviderImpl.fireTCEnd(this.getTcapDialog(), prearrangedEnd, null, null, this.getReturnMessageOnError());
 
 				this.setState(CAPDialogState.Expunged);
 				break;
@@ -257,7 +269,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 			}
 
 			this.setNormalDialogShutDown();
-			this.capProviderImpl.fireTCAbort(this.getTcapDialog(), CAPGeneralAbortReason.UserSpecific, abortReason);
+			this.capProviderImpl.fireTCAbort(this.getTcapDialog(), CAPGeneralAbortReason.UserSpecific, abortReason, this.getReturnMessageOnError());
 
 			this.setState(CAPDialogState.Expunged);
 		}
