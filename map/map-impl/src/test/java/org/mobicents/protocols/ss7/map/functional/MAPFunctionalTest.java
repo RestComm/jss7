@@ -22,24 +22,63 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.io.InputStream;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
+import org.mobicents.protocols.ss7.map.api.MAPDialog;
+import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
+import org.mobicents.protocols.ss7.map.api.dialog.ProcedureCancellationReason;
+import org.mobicents.protocols.ss7.map.api.dialog.Reason;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSMDeliveryFailure;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSystemFailure;
+import org.mobicents.protocols.ss7.map.api.errors.SMEnumeratedDeliveryFailureCause;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
+import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterTest;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
@@ -53,14 +92,16 @@ public class MAPFunctionalTest extends SccpHarness {
 	private static Logger logger = Logger.getLogger(MAPFunctionalTest.class);
 	protected static final String USSD_STRING = "*133#";
 	protected static final String USSD_MENU = "Select 1)Wallpaper 2)Ringtone 3)Games";
-	private static final int _WAIT_TIMEOUT = 5000;
+	protected static final String USSD_RESPONSE = "1";
+	protected static final String USSD_FINAL_RESPONSE = "Thank you";
+
+	private static final int _TCAP_DIALOG_RELEASE_TIMEOUT = 0;
+	private static final int _WAIT_TIMEOUT = _TCAP_DIALOG_RELEASE_TIMEOUT + 5000;
 
 	private MAPStackImpl stack1;
 	private MAPStackImpl stack2;
 	private SccpAddress peer1Address;
 	private SccpAddress peer2Address;
-	private Client client;
-	private Server server;
 
 	@BeforeClass
 	public void setUpClass() throws Exception {
@@ -78,32 +119,28 @@ public class MAPFunctionalTest extends SccpHarness {
 	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
-	@BeforeTest
+	@BeforeMethod
 	public void setUp() {
 		// this.setupLog4j();
 		System.out.println("setUpTest");
-		
+
 		this.sccpStack1Name = "MAPFunctionalTestSccpStack1";
 		this.sccpStack2Name = "MAPFunctionalTestSccpStack2";
-		
+
 		super.setUp();
 
 		// this.setupLog4j();
 
 		// create some fake addresses.
-		
 
-		peer1Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
-		peer2Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
+		peer1Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, getSSN());
+		peer2Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), null, getSSN());
 
-		this.stack1 = new MAPStackImplWrapper(this.sccpProvider1, 8);
-		this.stack2 = new MAPStackImplWrapper(this.sccpProvider2, 8);
+		this.stack1 = new MAPStackImplWrapper(this.sccpProvider1, getSSN());
+		this.stack2 = new MAPStackImplWrapper(this.sccpProvider2, getSSN());
 
 		this.stack1.start();
 		this.stack2.start();
-		// create test classes
-		this.client = new Client(this.stack1, this, peer1Address, peer2Address);
-		this.server = new Server(this.stack2, this, peer2Address, peer1Address);
 	}
 
 	/*
@@ -112,14 +149,14 @@ public class MAPFunctionalTest extends SccpHarness {
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 
-	@AfterTest
+	@AfterMethod
 	public void tearDown() {
 		System.out.println("tearDownTest");
 		this.stack1.stop();
 		this.stack2.stop();
 		super.tearDown();
 	}
-	
+
 	private void setupLog4j() {
 
 		InputStream inStreamLog4j = getClass().getResourceAsStream("/log4j.properties");
@@ -138,440 +175,1081 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	}
 
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testComplexTCWithDialog() throws Exception {
 
-	@Test(groups = { "functional.flow","dialog"})
-	public void testSimpleTCWithDialog() throws Exception {
-		server.setStep(FunctionalTestScenario.Action_Dialog_A);
-		client.setStep(FunctionalTestScenario.Action_Dialog_A);
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			private int dialogStep; 
+			
+			@Override
+			public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
+				super.onUnstructuredSSRequest(unstrReqInd);
+
+				String ussdString = unstrReqInd.getUSSDString().getString();
+				AddressString msisdn = unstrReqInd.getMSISDNAddressString();
+				this.debug("Received UnstructuredSSRequestIndication " + ussdString);
+
+				assertEquals(MAPFunctionalTest.USSD_MENU, ussdString);
+
+				MAPDialogSupplementary mapDialog = unstrReqInd.getMAPDialog();
+				Long invokeId = unstrReqInd.getInvokeId();
+
+				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_RESPONSE);
+				try {
+					mapDialog.addUnstructuredSSResponse(invokeId, (byte) 0x0F, ussdStringObj);
+				} catch (MAPException e) {
+					this.error("Erro while trying to send UnstructuredSSResponse", e);
+					throw new RuntimeException(e);
+				}
+			}
+			
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				this.dialogStep++;
+				try {
+					if (this.dialogStep == 1) {
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.UnstructuredSSResponseIndication, null, sequence++));
+						mapDialog.send();
+					}
+				} catch (MAPException e) {
+					this.error("Error while trying to send Response", e);
+					throw new RuntimeException(e);
+				}
+			}
+			
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			private int dialogStep; 
+			private long processUnstructuredSSRequestInvokeId = 0l;
+
+			@Override
+			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
+				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
+				String ussdString = procUnstrReqInd.getUSSDString().getString();
+				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+				processUnstructuredSSRequestInvokeId = procUnstrReqInd.getInvokeId();
+				this.debug("InvokeId =  " + processUnstructuredSSRequestInvokeId);
+				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
+				try {
+					mapDialog.addUnstructuredSSRequest((byte) 0x0F, ussdStringObj, null, null);
+				} catch (MAPException e) {
+					this.error("Error while trying to send UnstructuredSSRequest", e);
+					throw new RuntimeException(e);
+				}
+			}
+
+			@Override
+			public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
+				super.onUnstructuredSSResponse(unstrResInd);
+				String ussdString = unstrResInd.getUSSDString().getString();
+				logger.debug("Received UnstructuredSSResponse " + ussdString);
+				assertEquals(MAPFunctionalTest.USSD_RESPONSE, ussdString);
+				MAPDialogSupplementary mapDialog = unstrResInd.getMAPDialog();
+				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_FINAL_RESPONSE);
+				try {
+					mapDialog.addProcessUnstructuredSSResponse(processUnstructuredSSRequestInvokeId, (byte) 0x0F, ussdStringObj);
+				} catch (MAPException e) {
+					logger.error(e);
+					throw new RuntimeException(e);
+				}
+			}
+			
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				this.dialogStep++;
+				try {
+					if (this.dialogStep == 1) {
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.UnstructuredSSRequestIndication, null, sequence++));
+						mapDialog.send();
+					} else {
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProcessUnstructuredSSResponseIndication, null, sequence++));
+						mapDialog.close(false);
+					}
+				} catch (MAPException e) {
+					this.error("Error while trying to send Response", e);
+					throw new RuntimeException(e);
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.UnstructuredSSRequestIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		clientExpectedEvents.add(te);
+		
+		te = TestEvent.createSentEvent(EventType.UnstructuredSSResponseIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);		
+
+		te = TestEvent.createReceivedEvent(EventType.ProcessUnstructuredSSResponseIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+		
+		te = TestEvent.createSentEvent(EventType.UnstructuredSSRequestIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);		
+
+		te = TestEvent.createReceivedEvent(EventType.UnstructuredSSResponseIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+		
+		te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSResponseIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);		
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
 		client.actionA();
-		client.start();
 		waitForEnd();
-		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
 
 	}
 
-	@Test(groups = { "functional.flow","dialog"})
-	public void testComplexTCWithDialog() throws Exception {
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testDialogRefuse() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+					ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
+				super.onDialogReject(mapDialog, refuseReason, providerError, alternativeApplicationContext, extensionContainer);
+				assertEquals(refuseReason, MAPRefuseReason.InvalidDestinationReference);
+				assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
+				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
+				String ussdString = procUnstrReqInd.getUSSDString().getString();
+				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+
+			}
+			
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					mapDialog.setExtentionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.DialogUserAbort, null, sequence++));
+					mapDialog.refuse(Reason.invalidDestinationReference);
+				} catch (MAPException e) {
+					this.error("Error while trying to send Refuse", e);
+					throw new RuntimeException(e);
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogReject, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
 		
-//		this.saveTrafficInFile();
-		
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Dialog_A);
-		client.setStep(FunctionalTestScenario.Action_Dialog_A);
+		te = TestEvent.createSentEvent(EventType.DialogUserAbort, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
 		client.actionA();
 		waitForEnd();
-		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
 
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Dialog_B);
-		client.setStep(FunctionalTestScenario.Action_Dialog_B);
-		client.actionB();
-		waitForEnd();
-		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
+	}
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testInvalidApplicationContext() throws Exception {
 
 		((MAPServiceSupplementaryImplWrapper) this.stack2.getMAPProvider().getMAPServiceSupplementary()).setTestMode(1);
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Dialog_C);
-		client.setStep(FunctionalTestScenario.Action_Dialog_C);
-		client.actionB();
-		waitForEnd();
-		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
-		((MAPServiceSupplementaryImplWrapper) this.stack2.getMAPProvider().getMAPServiceSupplementary()).setTestMode(0);
 
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Dialog_D);
-		client.setStep(FunctionalTestScenario.Action_Dialog_D);
-		client.actionB();
-		waitForEnd();
-		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+					ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
+				super.onDialogReject(mapDialog, refuseReason, providerError, alternativeApplicationContext, extensionContainer);
+				assertEquals(refuseReason, MAPRefuseReason.ApplicationContextNotSupported);
+				assertNotNull(alternativeApplicationContext);
+				assertTrue(Arrays.equals(alternativeApplicationContext.getOid(), new long[] { 1, 2, 3 }));
+			}
+		};
 
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Dialog_E);
-		client.setStep(FunctionalTestScenario.Action_Dialog_E);
-		client.actionB();
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address);
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogReject, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+
+		client.actionA();
 		waitForEnd();
-		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testDialogUserAbort() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+			@Override
+			public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
+				super.onUnstructuredSSRequest(unstrReqInd);
+
+				String ussdString = unstrReqInd.getUSSDString().getString();
+				AddressString msisdn = unstrReqInd.getMSISDNAddressString();
+				this.debug("Received UnstructuredSSRequestIndication " + ussdString);
+
+				assertEquals(MAPFunctionalTest.USSD_MENU, ussdString);
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+
+				try {
+					mapDialog.setExtentionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+					MAPUserAbortChoice choice = this.mapParameterFactory.createMAPUserAbortChoice();
+					choice.setProcedureCancellationReason(ProcedureCancellationReason.handoverCancellation);
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.DialogUserAbort, null, sequence++));
+					mapDialog.abort(choice);
+				} catch (MAPException e) {
+					this.error("Error while trying to send UserAbort", e);
+					throw new RuntimeException(e);
+				}
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
+				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
+				String ussdString = procUnstrReqInd.getUSSDString().getString();
+				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
+				try {
+					mapDialog.addUnstructuredSSRequest((byte) 0x0F, ussdStringObj, null, null);
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.UnstructuredSSRequestIndication, null, sequence++));
+					mapDialog.send();
+				} catch (MAPException e) {
+					this.error("Error while trying to send UnstructuredSSRequest", e);
+					throw new RuntimeException(e);
+				}
+			}
+
+			@Override
+			public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, MAPExtensionContainer extensionContainer) {
+				super.onDialogUserAbort(mapDialog, userReason, extensionContainer);
+				assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+				assertTrue(userReason.isProcedureCancellationReason());
+				assertEquals(ProcedureCancellationReason.handoverCancellation, userReason.getProcedureCancellationReason());
+			}
+
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.UnstructuredSSRequestIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.DialogUserAbort, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.UnstructuredSSRequestIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogUserAbort, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.actionA();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testReceivedDialogAbortInfo() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, MAPAbortSource abortSource,
+					MAPExtensionContainer extensionContainer) {
+
+				super.onDialogProviderAbort(mapDialog, abortProviderReason, abortSource, extensionContainer);
+
+				this.debug("Received DialogProviderAbort " + abortProviderReason.toString());
+				assertEquals(abortProviderReason, MAPAbortProviderReason.InvalidPDU);
+				assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address);
 
 		((MAPProviderImplWrapper) this.stack2.getMAPProvider()).setTestMode(1);
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Dialog_F);
-		client.setStep(FunctionalTestScenario.Action_Dialog_F);
-		client.actionB();
-		waitForEnd();
-		assertTrue(client.isFinished(), "Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(), "Server side did not finish: " + server.getStatus());
-		((MAPProviderImplWrapper) this.stack2.getMAPProvider()).setTestMode(0);
 
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Dialog_Eri);
-		client.setStep(FunctionalTestScenario.Action_Dialog_Eri);
-		client.actionBB();
-		waitForEnd();
-		assertTrue(client.isFinished(), "Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(), "Server side did not finish: " + server.getStatus());
-	}
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
 
-	@Test(groups = { "functional.flow","dialog"})
-	public void testComponents() throws Exception {
-		
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Component_A);
-		client.setStep(FunctionalTestScenario.Action_Component_A);
-		client.actionB();
-		waitForEnd();
-		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
+		te = TestEvent.createReceivedEvent(EventType.DialogProviderAbort, null, count++, stamp);
+		clientExpectedEvents.add(te);
 
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Component_B);
-		client.setStep(FunctionalTestScenario.Action_Component_B);
-		client.actionB();
-		waitForEnd();
-		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
 
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Component_D);
-		client.setStep(FunctionalTestScenario.Action_Component_D);
-		client.actionB();
-		waitForEnd();
-		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
 
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Component_E);
-		client.setStep(FunctionalTestScenario.Action_Component_E);
-		client.actionB();
+		client.actionA();
 		waitForEnd();
-		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
-
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Component_F);
-		client.setStep(FunctionalTestScenario.Action_Component_F);
-		client.actionB();
-		waitForEnd();
-		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
-
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Component_G);
-		client.setStep(FunctionalTestScenario.Action_Component_G);
-		client.actionB();
-		waitForEnd();
-		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
 
 	}
 
-	@Test
-	public void testV1() throws Exception {
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testEricssonDialog() throws Exception {
 
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_V1_A);
-		client.setStep(FunctionalTestScenario.Action_V1_A);
-		client.actionD();
-		waitForEnd();
-		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
 
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_V1_B);
-		client.setStep(FunctionalTestScenario.Action_V1_B);
-		client.actionD();
-		waitForEnd();
-		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
+		};
 
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_V1_C);
-		client.setStep(FunctionalTestScenario.Action_V1_C);
-		client.actionD();
-		waitForEnd();
-		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
-		
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_V1_D);
-		client.setStep(FunctionalTestScenario.Action_V1_D);
-		client.actionD();
-		waitForEnd();
-		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
 
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_V1_E);
-		client.setStep(FunctionalTestScenario.Action_V1_E);
-		client.actionD();
+			@Override
+			public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi,
+					AddressString eriVlrNo) {
+				super.onDialogRequestEricsson(mapDialog, destReference, origReference, eriImsi, eriVlrNo);
+				assertNotNull(eriImsi);
+				assertEquals(eriImsi.getData(), "12345");
+
+				assertNotNull(eriVlrNo);
+				assertEquals(eriVlrNo.getAddress(), "556677");
+
+				assertNotNull(destReference);
+				assertEquals(destReference.getAddress(), "888777");
+
+				assertNotNull(origReference);
+				assertEquals(origReference.getAddress(), "1115550000");
+			}
+
+			@Override
+			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
+				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
+				String ussdString = procUnstrReqInd.getUSSDString().getString();
+				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.DialogClose, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					logger.error(e);
+					throw new RuntimeException(e);
+				}
+			}
+
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogEricssonRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.DialogClose, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.actionEricssonDialog();
 		waitForEnd();
-		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
 	}
 
-	@Test(groups = { "functional.flow","dialog"})
-	public void testSmsService() throws Exception {
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Sms_AlertServiceCentre);
-		client.setStep(FunctionalTestScenario.Action_Sms_AlertServiceCentre);
-		client.actionC();
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testComponentErrorMessageSystemFailure() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+			@Override
+			public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
+				super.onErrorComponent(mapDialog, invokeId, mapErrorMessage);
+				assertTrue(mapErrorMessage.isEmSystemFailure());
+				MAPErrorMessageSystemFailure mes = mapErrorMessage.getEmSystemFailure();
+				assertNotNull(mes);
+				assertTrue(mes.getAdditionalNetworkResource() == null);
+				assertTrue(mes.getNetworkResource() == null);
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
+				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
+				String ussdString = procUnstrReqInd.getUSSDString().getString();
+				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+				MAPErrorMessage msg = this.mapErrorMessageFactory.createMAPErrorMessageSystemFailure(2, null, null, null);
+				try {
+					mapDialog.sendErrorComponent(procUnstrReqInd.getInvokeId(), msg);
+				} catch (MAPException e) {
+					this.error("Error while trying to send Error Component", e);
+					throw new RuntimeException(e);
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ErrorComponent, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while trying to send Error Component", e);
+					throw new RuntimeException(e);
+				}
+			}
+
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ErrorComponent, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ErrorComponent, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.actionA();
 		waitForEnd();
-		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
-		
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Sms_ForwardSM);
-		client.setStep(FunctionalTestScenario.Action_Sms_ForwardSM);
-		client.actionC();
-		waitForEnd();
-		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
-		
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Sms_MoForwardSM);
-		client.setStep(FunctionalTestScenario.Action_Sms_MoForwardSM);
-		client.actionC();
-		waitForEnd();
-		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
-		
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Sms_MtForwardSM);
-		client.setStep(FunctionalTestScenario.Action_Sms_MtForwardSM);
-		client.actionC();
-		waitForEnd();
-		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
-		
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Sms_ReportSMDeliveryStatus);
-		client.setStep(FunctionalTestScenario.Action_Sms_ReportSMDeliveryStatus);
-		client.actionC();
-		waitForEnd();
-		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
-		
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_Sms_SendRoutingInfoForSM);
-		client.setStep(FunctionalTestScenario.Action_Sms_SendRoutingInfoForSM);
-		client.actionC();
-		waitForEnd();
-		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
 	}
 
-	@Test(groups = { "functional.flow","dialog"})
-	public void testMsgLength() throws Exception {
-		
-//		this.saveTrafficInFile();
-		
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_TestMsgLength_A);
-		client.setStep(FunctionalTestScenario.Action_TestMsgLength_A);
-		client.actionE();
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testComponentErrorMessageSMDeliveryFailure() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+			@Override
+			public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
+				super.onErrorComponent(mapDialog, invokeId, mapErrorMessage);
+				assertTrue(mapErrorMessage.isEmSMDeliveryFailure());
+				MAPErrorMessageSMDeliveryFailure mes = mapErrorMessage.getEmSMDeliveryFailure();
+				assertNotNull(mes);
+				assertEquals(mes.getSMEnumeratedDeliveryFailureCause(), SMEnumeratedDeliveryFailureCause.scCongestion);
+				assertTrue(mes.getSignalInfo() == null);
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
+				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
+				String ussdString = procUnstrReqInd.getUSSDString().getString();
+				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+				MAPErrorMessage msg = this.mapErrorMessageFactory.createMAPErrorMessageSMDeliveryFailure(SMEnumeratedDeliveryFailureCause.scCongestion, null,
+						null);
+				try {
+					mapDialog.sendErrorComponent(procUnstrReqInd.getInvokeId(), msg);
+				} catch (MAPException e) {
+					this.error("Error while trying to send Error Component", e);
+					throw new RuntimeException(e);
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ErrorComponent, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while trying to send Error Component", e);
+					throw new RuntimeException(e);
+				}
+			}
+
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ErrorComponent, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ErrorComponent, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.actionA();
 		waitForEnd();
-		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
-		
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_TestMsgLength_B);
-		client.setStep(FunctionalTestScenario.Action_TestMsgLength_B);
-		client.actionE();
-		waitForEnd();
-		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
 	}
 
-	@Test(groups = { "functional.flow","dialog"})
-	public void testA() throws Exception {
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testComponentD() throws Exception {
 
-//		MAPParameterFactory msf = this.stack1.getMAPProvider().getMAPParameterFactory();
-//		IMEI a1 = msf.createIMEI("12345678901234");
-//
-//		AsnOutputStream aos = new AsnOutputStream();
-//		a1.encode(aos);
-//		byte[] buf = aos.toByteArray();
-//
-//		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(buf));
-//		IMEIImpl a11 = new IMEIImpl();
-//		a11.decode(ais, 0, false, 0, buf.length);
-//
-//		 int fff=0;
-//		 fff++;
-		
-//		MAPParameterFactory msf = this.stack1.getMAPProvider().getMAPParameterFactory();
-//
-//		ISDNAddressString n1 = msf.createISDNAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "98765");
-//		LMSI n2 = msf.createLMSI(new byte[] { 21, 22, 23, 24 });
-//		ISDNAddressString n3 = msf.createISDNAddressString(AddressNature.network_specific_number, NumberingPlan.land_mobile, "7654321");
-//		
-//		LocationInfoWithLMSI a1 = msf.createLocationInfoWithLMSI(n1, n2, MAPFunctionalTest.GetTestExtensionContainer(msf), AdditionalNumberType.msc, n3);		
-//
-//		AsnOutputStream aos = new AsnOutputStream();
-//		a1.encode(aos);
-//		byte[] buf = aos.toByteArray();
-//
-//		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(buf));
-//		LocationInfoWithLMSIImpl a11 = new LocationInfoWithLMSIImpl();
-//		a11.decode(ais, 0, false, 0, buf.length);
-//		
-//		boolean b1 = MAPFunctionalTest.CheckTestExtensionContainer(a11.getExtensionContainer());
-//		int fff=0;
-//		fff++;
-		
-		
-//		MAPParameterFactory msf = this.stack1.getMAPProvider().getMAPParameterFactory();
-//		MAPOpenInfoImpl a1 = new MAPOpenInfoImpl();
-//		a1.setExtensionContainer(MAPFunctionalTest.GetTestExtensionContainer(msf));
-//		AddressString n1 = msf.createAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "1234567"); 		
-//		AddressString n2 = msf.createAddressString(AddressNature.network_specific_number, NumberingPlan.land_mobile, "7654321");
-//		a1.setOrigReference(n1); 		
-//		a1.setDestReference(n2); 		
-//
-//		AsnOutputStream aos = new AsnOutputStream();
-//		a1.encode(aos);
-//		byte[] buf = aos.toByteArray();
-//
-//		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(buf));
-//		MAPOpenInfoImpl a11 = new MAPOpenInfoImpl();
-//		int tag = ais.readTag();
-//		a11.decode(ais);
-//		
-//		boolean b1 = MAPFunctionalTest.CheckTestExtensionContainer(a11.getExtensionContainer());
-//		
-//		int fff=0;
-//		fff++;
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			int responseReceived = 0;
 
-		
-//		MAPParameterFactory msf = this.stack1.getMAPProvider().getMAPParameterFactory();
-//		ISDNAddressString a1 = msf.createISDNAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "98765");
-//
-//		AsnOutputStream aos = new AsnOutputStream();
-//		a1.encode(aos);
-//		byte[] buf = aos.toByteArray();
-//
-//		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(buf));
-//		ISDNAddressString a2 = new ISDNAddressStringImpl();
-//		a2.decode(ais, 0, true, 0, buf.length);
-//		
-//		int fff=0;
-//		fff++;
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					mapDialog.send();
+				} catch (MAPException e) {
+					this.error("Error while sending response", e);
+					throw new RuntimeException(e);
+				}
+			}
 
-		
-//		MAPParameterFactory msf = this.stack1.getMAPProvider().getMAPParameterFactory();
-//		
-////		AddressString asx = msf.createAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "98765");
-////		SM_RP_DAImpl sm = (SM_RP_DAImpl)msf.createSM_RP_DA(asx);
-//		
-////		IMSIImpl imsi = (IMSIImpl)msf.createIMSI(250L, 7L, "12345");
-////		SM_RP_DAImpl sm = (SM_RP_DAImpl)msf.createSM_RP_DA(imsi);
-//
-////		byte[] data = new byte[] { 31, 32, 33, 34 };
-////		LMSIImpl lmsi = (LMSIImpl)msf.createLMSI(data);
-////		SM_RP_DAImpl sm = (SM_RP_DAImpl)msf.createSM_RP_DA(lmsi);
-//		
-////		SM_RP_DAImpl sm = (SM_RP_DAImpl)msf.createSM_RP_DA();
-//		
-////		LMSIImpl lmsi = new LMSIImpl();
-////		byte[] data = new byte[] { 31, 32, 33, 34 };
-////		lmsi.setData(data);
-////		sm.setLMSI(lmsi);
-//		
-//		SM_RP_OAImpl sm = (SM_RP_OAImpl)msf.createSM_RP_OA();
-//
-////		ISDNAddressString msisdn = msf.createISDNAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "98765");
-////		sm.setMsisdn(msisdn);
-////		AddressString serviceCentreAddressOA = msf.createAddressString(AddressNature.subscriber_number, NumberingPlan.ISDN, "98765");
-////		sm.setServiceCentreAddressOA(serviceCentreAddressOA);
-//
-//		
-//		AsnOutputStream aos = new AsnOutputStream();
-//		sm.encode(aos);
-//		byte[] buf = aos.toByteArray();
-//		
-//		aos.reset();
-//		aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, true, sm.getEnccodingTag());
-//		aos.writeLength(buf.length);
-//		aos.write(buf);
-//		buf = aos.toByteArray();
-//		
-//
-//		AsnInputStream ais = new AsnInputStream(new ByteArrayInputStream(buf));
-//		int tag = ais.readTag();
-//		int length = ais.readLength();
-//		if (length != ais.available()) {
-//			int fff = 0;
-//		}
-//		byte[] buf2 = new byte[length];
-//		ais.read(buf2);
-//		AsnInputStream ais2 = new AsnInputStream(new ByteArrayInputStream(buf2));
-//		
-////		SM_RP_DAImpl sm2 = new SM_RP_DAImpl();
-//		SM_RP_OAImpl sm2 = new SM_RP_OAImpl();
-//		sm2.setDecodedTag(tag);
-//		sm2.decode(ais2);
-//		
-//		int iii=0;
-//		iii++;
+			@Override
+			public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse procUnstrResponse) {
+				super.onProcessUnstructuredSSResponse(procUnstrResponse);
+				String ussdString = procUnstrResponse.getUSSDString().getString();
+				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+				responseReceived++;
+				assertEquals(ussdString, "Your balance is 500");
 
-		
-//		server.reset();
-//		client.reset();
-//		server.setStep(FunctionalTestScenario.Action_Component_A);
-//		client.setStep(FunctionalTestScenario.Action_Component_A);
-//		client.actionC();
-//		waitForEnd();
-//		assertTrue( client.isFinished(),"Client side did not finish: " + client.getStatus());
-//		assertTrue( server.isFinished(),"Server side did not finish: " + server.getStatus());
+			}
+
+			@Override
+			public void onDialogRelease(MAPDialog mapDialog) {
+				super.onDialogRelease(mapDialog);
+				assertEquals(this.responseReceived, 2);
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+			private long processUnstructuredSSRequestInvokeId = 0l;
+			private int dialogStep;
+
+			@Override
+			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
+				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
+				String ussdString = procUnstrReqInd.getUSSDString().getString();
+				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+
+				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+
+				processUnstructuredSSRequestInvokeId = procUnstrReqInd.getInvokeId();
+
+				ReturnResult returnResult = ((MAPProviderImpl) this.mapProvider).getTCAPProvider().getComponentPrimitiveFactory().createTCResultRequest();
+				returnResult.setInvokeId(processUnstructuredSSRequestInvokeId);
+
+				// Operation Code
+				OperationCode oc = TcapFactory.createOperationCode();
+				oc.setLocalOperationCode((long) MAPOperationCode.processUnstructuredSS_Request);
+				returnResult.setOperationCode(oc);
+
+				USSDString ussdStrObj = this.mapProvider.getMAPParameterFactory().createUSSDString("Your balance is 500");
+				byte ussdDataCodingScheme = (byte) 0x0F;
+				ProcessUnstructuredSSResponseImpl req = new ProcessUnstructuredSSResponseImpl(ussdDataCodingScheme, ussdStrObj);
+				AsnOutputStream aos = new AsnOutputStream();
+				try {
+					req.encodeData(aos);
+
+					Parameter p = ((MAPProviderImpl) this.mapProvider).getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+					p.setTagClass(req.getTagClass());
+					p.setPrimitive(req.getIsPrimitive());
+					p.setTag(req.getTag());
+					p.setData(aos.toByteArray());
+					returnResult.setParameter(p);
+
+					mapDialog.sendReturnResultComponent(returnResult);
+				} catch (MAPException e) {
+					this.error("Error while trying to send ProcessUnstructuredSSResponse", e);
+					throw new RuntimeException(e);
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				this.dialogStep++;
+				try {
+					if (this.dialogStep == 1) {
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProcessUnstructuredSSResponseIndication, null, sequence++));
+						mapDialog.send();
+					} else {
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProcessUnstructuredSSResponseIndication, null, sequence++));
+						USSDString ussdStrObj = this.mapProvider.getMAPParameterFactory().createUSSDString("Your balance is 500");
+						byte ussdDataCodingScheme = (byte) 0x0F;
+						((MAPDialogSupplementary) mapDialog).addProcessUnstructuredSSResponse(this.processUnstructuredSSRequestInvokeId, ussdDataCodingScheme,
+								ussdStrObj);
+
+						mapDialog.close(false);
+					}
+				} catch (MAPException e) {
+					this.error("Error while trying to send Response", e);
+					throw new RuntimeException(e);
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProcessUnstructuredSSResponseIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProcessUnstructuredSSResponseIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSResponseIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSResponseIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.actionA();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
 	}
-	
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testComponentDuplicateInvokeID() throws Exception {
+		// Action_Component_E
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+			@Override
+			public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
+				super.onRejectComponent(mapDialog, invokeId, problem);
+				InvokeProblemType invokeProblemType = problem.getInvokeProblemType();
+				assertNotNull(invokeProblemType);
+				assertEquals(invokeProblemType, InvokeProblemType.DuplicateInvokeID);
+				assertTrue(problem.getGeneralProblemType() == null);
+				assertTrue(problem.getReturnErrorProblemType() == null);
+				assertTrue(problem.getReturnResultProblemType() == null);
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
+				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
+				String ussdString = procUnstrReqInd.getUSSDString().getString();
+				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+
+				Problem problem = this.mapProvider.getMAPParameterFactory().createProblemInvoke(InvokeProblemType.DuplicateInvokeID);
+				try {
+					mapDialog.sendRejectComponent(procUnstrReqInd.getInvokeId(), problem);
+				} catch (MAPException e) {
+					this.error("Error while trying to send Duplicate InvokeId Component", e);
+					throw new RuntimeException(e);
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ErrorComponent, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while trying to send Error Component", e);
+					throw new RuntimeException(e);
+				}
+			}
+
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.RejectComponent, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ErrorComponent, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.actionA();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testComponentMistypedComponent() throws Exception {
+		//Action_Component_G
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+			@Override
+			public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
+				super.onRejectComponent(mapDialog, invokeId, problem);
+				GeneralProblemType generalProblemType = problem.getGeneralProblemType();
+				assertNotNull(generalProblemType);
+				assertEquals(generalProblemType,GeneralProblemType.MistypedComponent);
+				assertTrue(problem.getInvokeProblemType() == null);
+				assertTrue(problem.getReturnErrorProblemType() == null);
+				assertTrue(problem.getReturnResultProblemType() == null);
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
+				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
+				String ussdString = procUnstrReqInd.getUSSDString().getString();
+				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+				
+				Problem problem = this.mapProvider.getMAPParameterFactory().createProblemGeneral(GeneralProblemType.MistypedComponent);
+				try {
+					mapDialog.sendRejectComponent(procUnstrReqInd.getInvokeId(), problem);
+				} catch (MAPException e) {
+					this.error("Error while trying to send Duplicate InvokeId Component", e);
+					throw new RuntimeException(e);
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ErrorComponent, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while trying to send Error Component", e);
+					throw new RuntimeException(e);
+				}
+			}
+
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.RejectComponent, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ErrorComponent, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.actionA();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}	
+
 	private void waitForEnd() {
 		try {
-			Date startTime = new Date();
-			while (true) {
-				if (client.isFinished() && server.isFinished())
-					break;
-
-				Thread.currentThread().sleep(100);
-
-				if (new Date().getTime() - startTime.getTime() > _WAIT_TIMEOUT)
-					break;
-
-//				 Thread.currentThread().sleep(1000000);
-			}
+			Thread.currentThread().sleep(_WAIT_TIMEOUT);
 		} catch (InterruptedException e) {
 			fail("Interrupted on wait!");
 		}
 	}
+
 }

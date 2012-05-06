@@ -231,9 +231,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		}
 	}
 
-	protected void removeDialog(Long dialogId) {
+	protected MAPDialogImpl removeDialog(Long dialogId) {
 		synchronized (this.dialogs) {
-			this.dialogs.remove(dialogId);
+			return this.dialogs.remove(dialogId);
 		}
 	}
 	
@@ -910,7 +910,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	@Override
 	public void onDialogReleased(Dialog tcapDialog) {
 
-		MAPDialogImpl mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getDialogId());
+		MAPDialogImpl mapDialogImpl = this.removeDialog(tcapDialog.getDialogId());
 
 		if (mapDialogImpl != null) {
 			synchronized (mapDialogImpl) {
@@ -921,6 +921,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.ProviderMalfunction, MAPAbortSource.TCProblem, null);
 
 					mapDialogImpl.setState(MAPDialogState.EXPUNGED);
+				} else {
+					this.deliverDialogRelease(mapDialogImpl);
 				}
 			}
 		}
@@ -1417,7 +1419,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				// received by the dialogue initiator node), the MAP PM shall
 				// issue a MAP-OP EN Cnf primitive with the result parameter
 				// indicating Refused and a refuse reason Remote node not
-				// reachable”.
+				// reachableï¿½.
 				mapDialogImpl.setNormalDialogShutDown();
 				this.deliverDialogReject(mapDialogImpl, MAPRefuseReason.RemoteNodeNotReachable, null, null, null);
 				mapDialogImpl.setState(MAPDialogState.EXPUNGED);
@@ -1487,7 +1489,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		}
 	}
 
-	protected void deliverDialogResease(MAPDialog mapDialog) {
+	protected void deliverDialogRelease(MAPDialog mapDialog) {
 		for (MAPDialogListener listener : this.dialogListeners) {
 			listener.onDialogRelease(mapDialog);
 		}

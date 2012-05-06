@@ -316,10 +316,10 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		}
 		
 		this.state = newState;
-		if (newState == MAPDialogState.EXPUNGED) {
-			this.mapProviderImpl.removeDialog(tcapDialog.getDialogId());
-			this.mapProviderImpl.deliverDialogResease(this);
-		}
+//		if (newState == MAPDialogState.EXPUNGED) {
+//			this.mapProviderImpl.removeDialog(tcapDialog.getDialogId());
+//			this.mapProviderImpl.deliverDialogResease(this);
+//		}
 	}
 
 	public void sendInvokeComponent(Invoke invoke) throws MAPException {
