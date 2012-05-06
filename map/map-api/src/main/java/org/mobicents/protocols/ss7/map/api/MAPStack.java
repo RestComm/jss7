@@ -60,7 +60,4 @@ public interface MAPStack {
 	 *            The underlying source
 	 */
 	public void onCongestionFinish(String source);
-
-	// public void configure(Properties properties) throws
-	// ConfigurationException;
 }

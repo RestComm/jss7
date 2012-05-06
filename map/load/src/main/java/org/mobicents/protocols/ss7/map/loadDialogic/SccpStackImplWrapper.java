@@ -30,7 +30,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 
 public class SccpStackImplWrapper extends SccpStackImpl {
 	
@@ -66,7 +66,7 @@ public class SccpStackImplWrapper extends SccpStackImpl {
 	}
 
 	@Override
-	protected void send(SccpMessageImpl message) throws IOException {
+	protected void send(SccpDataMessageImpl message) throws IOException {
 		super.send(message);
 		logger.warn("Sccp msg has sent");
 	}

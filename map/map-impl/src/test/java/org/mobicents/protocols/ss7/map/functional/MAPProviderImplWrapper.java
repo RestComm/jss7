@@ -74,7 +74,7 @@ public class MAPProviderImplWrapper extends MAPProviderImpl {
 		if (this.testMode == 1) {
 			try {
 				this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.invalidPDU,
-						MAPExtensionContainerTest.GetTestExtensionContainer());
+						MAPExtensionContainerTest.GetTestExtensionContainer(), false);
 			} catch (MAPException e) {
 				loger.error("Error while firing TC-U-ABORT. ", e);
 			}

@@ -38,6 +38,7 @@ import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
@@ -54,16 +55,18 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
+import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
+import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
@@ -119,10 +122,10 @@ public class Client extends TestHarness {
 		this.sctpManagement.setSingleThread(true);
 		this.sctpManagement.setConnectDelay(10000);
 		this.sctpManagement.start();
+		this.sctpManagement.removeAllResourses();
 
 		// 1. Create SCTP Association
 		sctpManagement.addAssociation(CLIENT_IP, CLIENT_PORT, SERVER_IP, SERVER_PORT, CLIENT_ASSOCIATION_NAME);
-
 	}
 
 	private void initM3UA() throws Exception {
@@ -148,22 +151,20 @@ public class Client extends TestHarness {
 
 	private void initSCCP() {
 		this.sccpStack = new SccpStackImpl("MapLoadClientSccpStack");
-		this.sccpStack.setLocalSpc(CLIENT_SPC);
-		this.sccpStack.setNi(NETWORK_INDICATOR);
-		this.sccpStack.setMtp3UserPart(this.clientM3UAMgmt);
+		this.sccpStack.setMtp3UserPart(1, this.clientM3UAMgmt);
 
 		this.sccpStack.start();
-
-		// sccpResource = new SccpResource();
-		// sccpResource.start();
-		//
-		// this.sccpStack.setSccpResource(this.sccpResource);
+		this.sccpStack.removeAllResourses();
 
 		RemoteSignalingPointCode rspc = new RemoteSignalingPointCode(SERVET_SPC, 0, 0);
-		RemoteSubSystem rss = new RemoteSubSystem(SERVET_SPC, SSN, 0);
+		RemoteSubSystem rss = new RemoteSubSystem(SERVET_SPC, SSN, 0, false);
 		this.sccpStack.getSccpResource().addRemoteSpc(0, rspc);
 		this.sccpStack.getSccpResource().addRemoteSsn(0, rss);
 
+		Mtp3ServiceAccessPoint sap = new Mtp3ServiceAccessPoint(1, CLIENT_SPC, NETWORK_INDICATOR);
+		Mtp3Destination dest = new Mtp3Destination(SERVET_SPC, SERVET_SPC, 0, 255, 255);
+		this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, sap);
+		this.sccpStack.getRouter().addMtp3Destination(1, 1, dest);
 	}
 
 	private void initMAP() {
@@ -325,7 +326,7 @@ public class Client extends TestHarness {
 	 * api.service.supplementary.ProcessUnstructuredSSRequestIndication)
 	 */
 	@Override
-	public void onProcessUnstructuredSSRequestIndication(ProcessUnstructuredSSRequestIndication procUnstrReqInd) {
+	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 		// This error condition. Client should never receive the
 		// ProcessUnstructuredSSRequestIndication
 		logger.error(String.format("onProcessUnstructuredSSRequestIndication for Dialog=%d and invokeId=%d", procUnstrReqInd.getMAPDialog().getDialogId(),
@@ -342,7 +343,7 @@ public class Client extends TestHarness {
 	 * .api.service.supplementary.ProcessUnstructuredSSResponseIndication)
 	 */
 	@Override
-	public void onProcessUnstructuredSSResponseIndication(ProcessUnstructuredSSResponseIndication procUnstrResInd) {
+	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse procUnstrResInd) {
 		if (logger.isDebugEnabled()) {
 			logger.debug(String.format("Rx ProcessUnstructuredSSResponseIndication.  USSD String=%s", procUnstrResInd.getUSSDString()));
 		}
@@ -359,7 +360,7 @@ public class Client extends TestHarness {
 	 * .supplementary.UnstructuredSSRequestIndication)
 	 */
 	@Override
-	public void onUnstructuredSSRequestIndication(UnstructuredSSRequestIndication unstrReqInd) {
+	public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(String.format("Rx UnstructuredSSRequestIndication. USSD String=%s ", unstrReqInd.getUSSDString()));
@@ -392,7 +393,7 @@ public class Client extends TestHarness {
 	 * .supplementary.UnstructuredSSResponseIndication)
 	 */
 	@Override
-	public void onUnstructuredSSResponseIndication(UnstructuredSSResponseIndication unstrResInd) {
+	public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
 		// This error condition. Client should never receive the
 		// UnstructuredSSResponseIndication
 		logger.error(String.format("onUnstructuredSSResponseIndication for Dialog=%d and invokeId=%d", unstrResInd.getMAPDialog().getDialogId(),
@@ -409,14 +410,14 @@ public class Client extends TestHarness {
 	 * .service.supplementary.UnstructuredSSNotifyRequestIndication)
 	 */
 	@Override
-	public void onUnstructuredSSNotifyRequestIndication(UnstructuredSSNotifyRequestIndication unstrNotifyInd) {
+	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd) {
 		// This error condition. Client should never receive the
 		// UnstructuredSSNotifyRequestIndication
 		logger.error(String.format("onUnstructuredSSNotifyRequestIndication for Dialog=%d and invokeId=%d", unstrNotifyInd.getMAPDialog().getDialogId(),
 				unstrNotifyInd.getInvokeId()));
 	}
 
-	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponseIndication unstrNotifyInd) {
+	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponse unstrNotifyInd) {
 		// This error condition. Client should never receive the
 		// UnstructuredSSNotifyRequestIndication
 		logger.error(String.format("onUnstructuredSSNotifyResponseIndication for Dialog=%d and invokeId=%d", unstrNotifyInd.getMAPDialog().getDialogId(),
@@ -575,7 +576,7 @@ public class Client extends TestHarness {
 	 * (org.mobicents.protocols.ss7.map.api.MAPDialog)
 	 */
 	@Override
-	public void onDialogResease(MAPDialog mapDialog) {
+	public void onDialogRelease(MAPDialog mapDialog) {
 		if (logger.isDebugEnabled()) {
 			logger.debug(String.format("onDialogResease for DialogId=%d", mapDialog.getDialogId()));
 		}
@@ -615,6 +616,18 @@ public class Client extends TestHarness {
 	@Override
 	public void onDialogTimeout(MAPDialog mapDialog) {
 		logger.error(String.format("onDialogTimeout for DialogId=%d", mapDialog.getDialogId()));
+	}
+
+	@Override
+	public void onUnstructuredSSNotifyResponse(UnstructuredSSNotifyResponse unstrNotifyInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onMAPMessage(MAPMessage mapMessage) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

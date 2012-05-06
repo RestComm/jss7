@@ -56,6 +56,15 @@ public interface MAPDialog {
 	 */
 	public MAPDialogState getState();
 
+	/*
+	 * Setting this property to true lead that all sent to TCAP messages of this
+	 * Dialog will be marked as "ReturnMessageOnError" (SCCP will return the
+	 * notification is the message has non been delivered to the peer)
+	 */
+	public void setReturnMessageOnError(boolean val);
+
+	public boolean getReturnMessageOnError();
+
 	/**
 	 * Remove MAPDialog without sending any messages and invoking events
 	 */
