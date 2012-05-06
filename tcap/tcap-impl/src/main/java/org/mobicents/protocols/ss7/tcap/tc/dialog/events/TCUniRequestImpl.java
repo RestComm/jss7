@@ -33,10 +33,12 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
 /**
  * @author baranowb
+ * @author sergey vetyutnev
  * 
  */
 public class TCUniRequestImpl extends DialogRequestImpl implements TCUniRequest {
-	private Byte qos;
+
+	private boolean returnMessageOnError;
 	private SccpAddress originatingAddress, destinationAddress;
 
 	// fields
@@ -81,18 +83,6 @@ public class TCUniRequestImpl extends DialogRequestImpl implements TCUniRequest 
 	public SccpAddress getOriginatingAddress() {
 
 		return this.originatingAddress;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest#
-	 * getQOS()
-	 */
-	public Byte getQOS() {
-
-		return this.qos;
 	}
 
 	/*
@@ -151,23 +141,21 @@ public class TCUniRequestImpl extends DialogRequestImpl implements TCUniRequest 
 	 * 
 	 * @see
 	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest#
-	 * setQOS(java.lang.Byte)
-	 */
-	public void setQOS(Byte b) throws IllegalArgumentException {
-		this.qos = b;
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest#
 	 * setUserInformation(org.mobicents.protocols.ss7.tcap.asn.UserInformation)
 	 */
 	public void setUserInformation(UserInformation acn) {
 		this.userInformation = acn;
 
+	}
+
+	@Override
+	public void setReturnMessageOnError(boolean val) {
+		returnMessageOnError = val;
+	}
+
+	@Override
+	public boolean getReturnMessageOnError() {
+		return returnMessageOnError;
 	}
 
 }

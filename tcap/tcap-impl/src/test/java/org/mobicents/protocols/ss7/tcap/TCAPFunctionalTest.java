@@ -107,9 +107,9 @@ public class TCAPFunctionalTest extends SccpHarness {
         super.tearDown();
 
     }
-	
+
 	@Test(groups = { "functional.flow"})
-    public void testSimpleTCWithDialog() throws Exception{
+    public void simpleTCWithDialogTest() throws Exception{
     	
         long stamp = System.currentTimeMillis();
         List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
@@ -119,7 +119,8 @@ public class TCAPFunctionalTest extends SccpHarness {
         clientExpectedEvents.add(te);
         te = TestEvent.createSentEvent(EventType.End, null, 2,stamp+WAIT_TIME*2);
         clientExpectedEvents.add(te);
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2+_WAIT_REMOVE);
+//        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2+_WAIT_REMOVE);
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2);
         clientExpectedEvents.add(te);
         
         List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
@@ -129,7 +130,8 @@ public class TCAPFunctionalTest extends SccpHarness {
         serverExpectedEvents.add(te);
         te = TestEvent.createReceivedEvent(EventType.End, null, 2,stamp+WAIT_TIME*2);
         serverExpectedEvents.add(te);
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2+_WAIT_REMOVE);
+//        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2+_WAIT_REMOVE);
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2);
         serverExpectedEvents.add(te);
 
     	client.startClientDialog();
@@ -138,8 +140,30 @@ public class TCAPFunctionalTest extends SccpHarness {
         server.sendContinue();
         client.waitFor(WAIT_TIME);
         client.sendEnd(TerminationType.Basic);
-        waitForEnd();
-        
+        client.waitFor(WAIT_TIME);
+//        waitForEnd();
+
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
+
+    }
+
+	@Test(groups = { "functional.flow"})
+    public void uniMsgTest() throws Exception{
+
+        long stamp = System.currentTimeMillis();
+        List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.Uni, null, 0, stamp);
+		clientExpectedEvents.add(te);
+
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+        te = TestEvent.createReceivedEvent(EventType.Uni, null, 0,stamp);
+        serverExpectedEvents.add(te);
+
+    	client.startUniDialog();
+        client.sendUni();
+        client.waitFor(WAIT_TIME);
+
         client.compareEvents(clientExpectedEvents);
         server.compareEvents(serverExpectedEvents);
 

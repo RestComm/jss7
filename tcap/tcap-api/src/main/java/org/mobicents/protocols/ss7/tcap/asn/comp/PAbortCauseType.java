@@ -35,11 +35,10 @@ import org.mobicents.protocols.ss7.tcap.asn.ParseException;
 public enum PAbortCauseType {
 	// its encoded as INT
 
-	UnrecogniedMessageType(0), UnrecognizedTxID(1), BadlyFormattedTxPortion(2), IncorrectTxPortion(3), ResourceLimitation(
-			4),
+	UnrecognizedMessageType(0), UnrecognizedTxID(1), BadlyFormattedTxPortion(2), IncorrectTxPortion(3), ResourceLimitation(4),
 
 	// This is not there in specs, but used locally
-	DialogueIdleTimeout(125), AbnormalDialogue(126), NoCommonDialoguePortion(127);
+	DialogueIdleTimeout(125), AbnormalDialogue(126), NoCommonDialoguePortion(127), NoReasonGiven(128);
 
 	private int type = -1;
 
@@ -58,7 +57,7 @@ public enum PAbortCauseType {
 
 		switch (t) {
 		case 0:
-			return UnrecogniedMessageType;
+			return UnrecognizedMessageType;
 		case 1:
 			return UnrecognizedTxID;
 		case 2:
@@ -73,6 +72,8 @@ public enum PAbortCauseType {
 			return AbnormalDialogue;
 		case 127:
 			return NoCommonDialoguePortion;
+		case 128:
+			return NoReasonGiven;
 		default:
 			throw new ParseException("Wrong value of response: " + t);
 		}

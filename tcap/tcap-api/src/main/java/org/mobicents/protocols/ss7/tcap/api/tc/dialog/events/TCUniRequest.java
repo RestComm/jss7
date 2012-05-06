@@ -37,14 +37,9 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
  */
 public interface TCUniRequest extends DialogRequest {
 
-	/**
-	 * Sets QOS optional parameter. Its passed to SCCP layer?
-	 * 
-	 * @param b
-	 */
-	public void setQOS(Byte b) throws IllegalArgumentException;
+	public void setReturnMessageOnError(boolean val);
 
-	public Byte getQOS();
+	public boolean getReturnMessageOnError();
 
 	/**
 	 * Destination address. If this address is different than one in dialog,

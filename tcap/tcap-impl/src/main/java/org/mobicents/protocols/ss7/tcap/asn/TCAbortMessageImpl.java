@@ -44,7 +44,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 
 	private static final String _OCTET_STRING_ENCODE = "US-ASCII";
 
-	private Long destTxId;
+	private long destTxId;
 	private PAbortCauseType type;
 	private DialogPortion dp;
 
@@ -54,7 +54,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage#
 	 * getDestinationTransactionId()
 	 */
-	public Long getDestinationTransactionId() {
+	public long getDestinationTransactionId() {
 
 		return destTxId;
 	}
@@ -88,7 +88,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage#
 	 * setDestinationTransactionId()
 	 */
-	public void setDestinationTransactionId(Long t) {
+	public void setDestinationTransactionId(long t) {
 		this.destTxId = t;
 
 	}
@@ -177,8 +177,8 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
 
-		if (this.destTxId == null)
-			throw new ParseException("Error encoding TC-Abort: destTxId must not be null");
+//		if (this.destTxId == null)
+//			throw new ParseException("Error encoding TC-Abort: destTxId must not be null");
 
 		try {
 			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);

@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.tcap.tc.dialog.events;
 
-import org.mobicents.protocols.asn.External;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.AbortReason;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.EventType;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
 import org.mobicents.protocols.ss7.tcap.asn.AbortSource;

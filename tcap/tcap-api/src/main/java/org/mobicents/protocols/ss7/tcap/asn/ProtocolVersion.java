@@ -29,6 +29,6 @@ public interface ProtocolVersion extends Encodable{
 	public static final int _TAG_PROTOCOL_VERSION_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
 	public static final boolean _TAG_PROTOCOL_VERSION_PRIMITIVE = true;
 	
-	public int getProtocolVersion();
+	public boolean isSupportedVersion();
 	
 }

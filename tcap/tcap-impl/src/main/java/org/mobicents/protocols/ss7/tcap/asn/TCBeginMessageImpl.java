@@ -45,7 +45,7 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 
 	private static final String _OCTET_STRING_ENCODE = "US-ASCII";
 	// mandatory
-	private Long originatingTransactionId;
+	private long originatingTransactionId;
 	// opt
 	private DialogPortion dp;
 	// opt
@@ -80,7 +80,7 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#
 	 * getOriginatingTransactionId()
 	 */
-	public Long getOriginatingTransactionId() {
+	public long getOriginatingTransactionId() {
 
 		return this.originatingTransactionId;
 	}
@@ -115,7 +115,7 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#
 	 * setOriginatingTransactionId(java.lang.String)
 	 */
-	public void setOriginatingTransactionId(Long t) {
+	public void setOriginatingTransactionId(long t) {
 		this.originatingTransactionId = t;
 
 	}
@@ -189,8 +189,8 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
 		
-		if (this.originatingTransactionId == null)
-			throw new ParseException("Error encoding TC-Begin: originatingTransactionId must not be null");
+//		if (this.originatingTransactionId == null)
+//			throw new ParseException("Error encoding TC-Begin: originatingTransactionId must not be null");
 		
 		try {
 			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);

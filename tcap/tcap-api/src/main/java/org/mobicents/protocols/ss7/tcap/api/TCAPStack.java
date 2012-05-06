@@ -50,8 +50,7 @@ public interface TCAPStack {
 
 	/**
 	 * Sets millisecond value for dialog timeout. It specifies how long dialog
-	 * can be idle - not receive/send any messages. If '0' is passed, dialog
-	 * wont timeout at all.
+	 * can be idle - not receive/send any messages.
 	 * 
 	 * @param l
 	 */
@@ -62,5 +61,9 @@ public interface TCAPStack {
 	public void setInvokeTimeout(long v); 
 
 	public long getInvokeTimeout();
+	
+	public void setMaxDialogs(int v); 
+
+	public int getMaxDialogs();
 
 }

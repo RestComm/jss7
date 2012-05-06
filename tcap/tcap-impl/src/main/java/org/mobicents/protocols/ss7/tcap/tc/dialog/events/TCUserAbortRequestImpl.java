@@ -31,11 +31,12 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 /**
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class TCUserAbortRequestImpl extends DialogRequestImpl implements TCUserAbortRequest {
 
-	private Byte qos;
+	private boolean returnMessageOnError;
 
 	// fields
 	private ApplicationContextName applicationContextName;
@@ -55,10 +56,6 @@ public class TCUserAbortRequestImpl extends DialogRequestImpl implements TCUserA
 		return this.applicationContextName;
 	}
 
-	public Byte getQOS() {
-		return qos;
-	}
-
 	public UserInformation getUserInformation() {
 		return this.userInformation;
 	}
@@ -69,10 +66,6 @@ public class TCUserAbortRequestImpl extends DialogRequestImpl implements TCUserA
 
 	public void setApplicationContextName(ApplicationContextName acn) {
 		this.applicationContextName = acn;
-	}
-
-	public void setQOS(Byte b) throws IllegalArgumentException {
-		this.qos = b;
 	}
 
 	public void setUserInformation(UserInformation userInformation) {
@@ -88,6 +81,16 @@ public class TCUserAbortRequestImpl extends DialogRequestImpl implements TCUserA
 	@Override
 	public DialogServiceUserType getDialogServiceUserType() {
 		return this.dialogServiceUserType;
+	}
+
+	@Override
+	public void setReturnMessageOnError(boolean val) {
+		returnMessageOnError = val;
+	}
+
+	@Override
+	public boolean getReturnMessageOnError() {
+		return returnMessageOnError;
 	}
 
 }

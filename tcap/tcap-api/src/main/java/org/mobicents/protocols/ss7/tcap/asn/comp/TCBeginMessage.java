@@ -44,8 +44,8 @@ public interface TCBeginMessage extends Encodable {
 	public static final boolean _TAG_OTX_PC_PRIMITIVE = true;
 	public static final int _TAG_CLASS_OTX = Tag.CLASS_APPLICATION;
 	//mandatory
-	public Long getOriginatingTransactionId();
-	public void setOriginatingTransactionId(Long t);
+	public long getOriginatingTransactionId();
+	public void setOriginatingTransactionId(long t);
 	
 	//opt FIXME: make this External?
 	public DialogPortion getDialogPortion();

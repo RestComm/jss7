@@ -44,8 +44,8 @@ public interface TCEndMessage extends Encodable {
 	
 	
 	//mandatory
-	public Long getDestinationTransactionId();
-	public void setDestinationTransactionId(Long t);
+	public long getDestinationTransactionId();
+	public void setDestinationTransactionId(long t);
 	
 	//opt FIXME: make this External?
 	public DialogPortion getDialogPortion();

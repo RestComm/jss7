@@ -28,7 +28,6 @@ package org.mobicents.protocols.ss7.tcap.tc.dialog.events;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.EventType;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
@@ -38,7 +37,6 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
  */
 public class TCContinueIndicationImpl extends DialogIndicationImpl implements TCContinueIndication {
 
-	private Byte qos;
 	private SccpAddress originatingAddress;
 
 	// fields
@@ -78,18 +76,6 @@ public class TCContinueIndicationImpl extends DialogIndicationImpl implements TC
 	 * 
 	 * @see
 	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest#
-	 * getQOS()
-	 */
-	public Byte getQOS() {
-
-		return this.qos;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest#
 	 * getUserInformation()
 	 */
 	public UserInformation getUserInformation() {
@@ -120,18 +106,6 @@ public class TCContinueIndicationImpl extends DialogIndicationImpl implements TC
 	 */
 	public void setOriginatingAddress(SccpAddress dest) {
 		this.originatingAddress = dest;
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest#
-	 * setQOS(java.lang.Byte)
-	 */
-	public void setQOS(Byte b) throws IllegalArgumentException {
-		this.qos = b;
 
 	}
 

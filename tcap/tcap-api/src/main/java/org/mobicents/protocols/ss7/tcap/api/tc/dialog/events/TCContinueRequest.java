@@ -28,14 +28,9 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
 public interface TCContinueRequest extends DialogRequest {
 
-	/**
-	 * Sets QOS optional parameter. Its passed to SCCP layer?
-	 * 
-	 * @param b
-	 */
-	public void setQOS(Byte b) throws IllegalArgumentException;
+	public void setReturnMessageOnError(boolean val);
 
-	public Byte getQOS();
+	public boolean getReturnMessageOnError();
 
 	/**
 	 * Sets origin address. This parameter is used only in first TCContinue,

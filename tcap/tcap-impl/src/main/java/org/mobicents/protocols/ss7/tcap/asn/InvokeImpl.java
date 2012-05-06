@@ -52,7 +52,7 @@ public class InvokeImpl implements Invoke {
 
 	// local to stack
 	private InvokeClass invokeClass = InvokeClass.Class1;
-	private long invokeTimeout = TCAPStackImpl._INVOKE_TIMEOUT;
+	private long invokeTimeout = TCAPStackImpl._EMPTY_INVOKE_TIMEOUT;
 	private OperationState state = OperationState.Idle;
 	private Future timerFuture;
 	private OperationTimerTask operationTimerTask = new OperationTimerTask();
@@ -379,9 +379,8 @@ public class InvokeImpl implements Invoke {
 
 	public synchronized void startTimer() {
 		this.stopTimer();
-		if(this.invokeTimeout>0)
+		if (this.invokeTimeout > 0)
 			this.timerFuture = this.provider.createOperationTimer(this.operationTimerTask, this.invokeTimeout);
-
 	}
 
 	public synchronized void stopTimer() {

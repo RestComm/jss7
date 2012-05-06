@@ -22,12 +22,19 @@
 
 package org.mobicents.protocols.ss7.tcap;
 
+import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
+import org.mobicents.protocols.ss7.indicator.NumberingPlan;
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCNoticeIndication;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 
@@ -64,6 +71,28 @@ public class Client extends EventTestHarness{
 		super.sendBegin();
 	}
 
-	
-	
+	public void sendBeginUnreachableAddress(boolean returnMessageOnError) throws TCAPException, TCAPSendException {
+		System.err.println(this+" T["+System.currentTimeMillis()+"]send BEGIN");
+		ApplicationContextName acn = this.tcapProvider.getDialogPrimitiveFactory().createApplicationContextName(_ACN_);
+		// UI is optional!
+		TCBeginRequest tcbr = this.tcapProvider.getDialogPrimitiveFactory().createBegin(this.dialog);
+		tcbr.setApplicationContextName(acn);
+		
+		GlobalTitle gt = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "93702994006");
+		((DialogImpl) this.dialog).setRemoteAddress(new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt, 8));
+		tcbr.setReturnMessageOnError(returnMessageOnError);
+		
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.Begin, tcbr, sequence++));
+		this.dialog.send(tcbr);
+	}
+
+	public void releaseDialog() {
+		if (this.dialog != null)
+			this.dialog.release();
+		this.dialog = null;
+	}
+
+	public DialogImpl getCurDialog() {
+		return (DialogImpl) this.dialog;
+	}
 }

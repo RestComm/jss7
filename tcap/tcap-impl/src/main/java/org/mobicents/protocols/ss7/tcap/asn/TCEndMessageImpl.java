@@ -45,7 +45,7 @@ public class TCEndMessageImpl implements TCEndMessage {
 
 	private static final String _OCTET_STRING_ENCODE = "US-ASCII";
 	// mandatory
-	private Long destinationTransactionId;
+	private long destinationTransactionId;
 	// opt
 	private DialogPortion dp;
 	// opt
@@ -80,7 +80,7 @@ public class TCEndMessageImpl implements TCEndMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#
 	 * getOriginatingTransactionId()
 	 */
-	public Long getDestinationTransactionId() {
+	public long getDestinationTransactionId() {
 		          
 		return this.destinationTransactionId;
 	}
@@ -115,7 +115,7 @@ public class TCEndMessageImpl implements TCEndMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#
 	 * setOriginatingTransactionId(java.lang.String)
 	 */
-	public void setDestinationTransactionId(Long t) {
+	public void setDestinationTransactionId(long t) {
 		this.destinationTransactionId = t;
 
 	}
@@ -189,8 +189,8 @@ public class TCEndMessageImpl implements TCEndMessage {
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
 		
-		if (this.destinationTransactionId == null)
-			throw new ParseException("Error while encoding TC-End: destinationTransactionId must not be null");
+//		if (this.destinationTransactionId == null)
+//			throw new ParseException("Error while encoding TC-End: destinationTransactionId must not be null");
 		
 		try {
 			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);

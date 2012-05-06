@@ -33,14 +33,10 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
  * 
  */
 public interface TCEndRequest extends DialogRequest {
-	/**
-	 * Sets QOS optional parameter. Its passed to SCCP layer?
-	 * 
-	 * @param b
-	 */
-	public void setQOS(Byte b) throws IllegalArgumentException;
 
-	public Byte getQOS();
+	public void setReturnMessageOnError(boolean val);
+
+	public boolean getReturnMessageOnError();
 
 	/**
 	 * Application context name for this dialog.

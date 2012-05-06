@@ -46,8 +46,8 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	private static final String _OCTET_STRING_ENCODE = "US-ASCII";
 
 	// mandatory
-	private Long originatingTransactionId;
-	private Long destinationTransactionId;
+	private long originatingTransactionId;
+	private long destinationTransactionId;
 	// opt
 	private DialogPortion dp;
 	// opt
@@ -71,7 +71,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage#
 	 * getDestinationTransactionId()
 	 */
-	public Long getDestinationTransactionId() {
+	public long getDestinationTransactionId() {
 
 		return this.destinationTransactionId;
 	}
@@ -94,7 +94,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage#
 	 * getOriginatingTransactionId()
 	 */
-	public Long getOriginatingTransactionId() {
+	public long getOriginatingTransactionId() {
 
 		return this.originatingTransactionId;
 	}
@@ -117,7 +117,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage#
 	 * setDestinationTransactionId(java.lang.String)
 	 */
-	public void setDestinationTransactionId(Long t) {
+	public void setDestinationTransactionId(long t) {
 		this.destinationTransactionId = t;
 
 	}
@@ -140,7 +140,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage#
 	 * setOriginatingTransactionId(java.lang.String)
 	 */
-	public void setOriginatingTransactionId(Long t) {
+	public void setOriginatingTransactionId(long t) {
 
 		this.originatingTransactionId = t;
 	}
@@ -220,10 +220,10 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 */
 	public void encode(AsnOutputStream aos) throws ParseException {
 		
-		if (this.originatingTransactionId == null)
-			throw new ParseException("Error encoding TC-Continue: Originating transaction ID must not be null");
-		if (this.destinationTransactionId == null)
-			throw new ParseException("Error encoding TC-Continue: Destination transaction ID must not be null");
+//		if (this.originatingTransactionId == null)
+//			throw new ParseException("Error encoding TC-Continue: Originating transaction ID must not be null");
+//		if (this.destinationTransactionId == null)
+//			throw new ParseException("Error encoding TC-Continue: Destination transaction ID must not be null");
 
 		try {
 			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);

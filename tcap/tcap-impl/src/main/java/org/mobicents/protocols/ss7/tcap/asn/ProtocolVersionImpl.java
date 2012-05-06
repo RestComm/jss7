@@ -31,6 +31,7 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.BitSetStrictLength;
+import org.mobicents.protocols.asn.Tag;
 
 /**
  * @author baranowb
@@ -39,18 +40,11 @@ import org.mobicents.protocols.asn.BitSetStrictLength;
  */
 public class ProtocolVersionImpl implements ProtocolVersion {
 
-	//NOTE this is of type BitString, its not a sub type of it!, so no BitStrinHeader!
-	private static final BitSetStrictLength _VALUE = new BitSetStrictLength(1);
+	private boolean supportedVersion = true;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.ProtocolVersion#getProtocolVersion()
-	 */
-	public int getProtocolVersion() {
+	public boolean isSupportedVersion() {
 
-		return 1;
+		return supportedVersion;
 	}
 
 	/*
@@ -62,14 +56,13 @@ public class ProtocolVersionImpl implements ProtocolVersion {
 	 */
 	public void decode(AsnInputStream ais) throws ParseException {
 
-		
 		try {
 				
 			BitSetStrictLength readV = ais.readBitString();
-			if (readV.getStrictLength() == 1) {
+			if (readV.getStrictLength() >= 1 && readV.get(0)) {
 				// ok
 			} else {
-				throw new ParseException("wrong version number, set bits count: " + readV.length());
+				this.supportedVersion = false;
 			}
 		} catch (IOException e) {
 			throw new ParseException("IOException while decoding ProtocolVersion: " + e.getMessage(), e);
@@ -95,6 +88,17 @@ public class ProtocolVersionImpl implements ProtocolVersion {
 		aos.write(2);
 		aos.write(7);
 		aos.write(128);
-
+		
+//		BitSetStrictLength bs = new BitSetStrictLength(1);
+//		bs.set(0);
+//		try {
+//			aos.writeBitString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_PROTOCOL_VERSION, bs);
+//		} catch (AsnException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 }

@@ -28,6 +28,6 @@ package org.mobicents.protocols.ss7.tcap;
  */
 public enum EventType {
 
-	Begin, Continue,End,Uni, UAbort, PAbort, InvokeTimeout, DialogTimeout,DialogRelease
+	Begin, Continue,End,Uni, UAbort, PAbort, Notice, InvokeTimeout, DialogTimeout,DialogRelease
 	
 }

@@ -37,8 +37,4 @@ public class Client  extends EventTestHarness{
 		super(stack, thisAddress, remoteAddress);
 	
 	}
-
-
-	
-	
 }

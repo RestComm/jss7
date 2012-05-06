@@ -49,10 +49,10 @@ public interface TCContinueMessage extends Encodable {
 	public static final int _TAG_CLASS_DTX = Tag.CLASS_APPLICATION;
 	
 	//mandatory
-	public Long getOriginatingTransactionId();
-	public void setOriginatingTransactionId(Long t);
-	public Long getDestinationTransactionId();
-	public void setDestinationTransactionId(Long t);
+	public long getOriginatingTransactionId();
+	public void setOriginatingTransactionId(long t);
+	public long getDestinationTransactionId();
+	public void setDestinationTransactionId(long t);
 	//opt FIXME: make this External?
 	public DialogPortion getDialogPortion();
 	public void setDialogPortion(DialogPortion dp);

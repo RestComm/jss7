@@ -33,11 +33,12 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
 /**
  * @author baranowb
+ * @author sergey vetyutnev
  * 
  */
 public class TCEndRequestImpl extends DialogRequestImpl implements TCEndRequest {
 
-	private Byte qos;
+	private boolean returnMessageOnError;
 	private TerminationType terminationType;
 
 	// fields
@@ -58,18 +59,6 @@ public class TCEndRequestImpl extends DialogRequestImpl implements TCEndRequest 
 	 */
 	public ApplicationContextName getApplicationContextName() {
 		return applicationContextName;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest#
-	 * getQOS()
-	 */
-	public Byte getQOS() {
-
-		return this.qos;
 	}
 
 	/*
@@ -102,18 +91,6 @@ public class TCEndRequestImpl extends DialogRequestImpl implements TCEndRequest 
 	 * 
 	 * @see
 	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest#
-	 * setQOS(java.lang.Byte)
-	 */
-	public void setQOS(Byte b) throws IllegalArgumentException {
-		this.qos = b;
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest#
 	 * setUserInformation(org.mobicents.protocols.ss7.tcap.asn.UserInformation)
 	 */
 	public void setUserInformation(UserInformation acn) {
@@ -129,6 +106,16 @@ public class TCEndRequestImpl extends DialogRequestImpl implements TCEndRequest 
 	public void setTermination(TerminationType t) {
 		this.terminationType = t;
 
+	}
+
+	@Override
+	public void setReturnMessageOnError(boolean val) {
+		returnMessageOnError = val;
+	}
+
+	@Override
+	public boolean getReturnMessageOnError() {
+		return returnMessageOnError;
 	}
 
 }

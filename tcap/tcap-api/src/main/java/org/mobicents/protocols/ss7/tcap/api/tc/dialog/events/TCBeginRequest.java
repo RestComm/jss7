@@ -34,14 +34,10 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
  *
  */
 public interface TCBeginRequest extends DialogRequest {
-	/**
-	 * Sets QOS optional parameter. Its passed to lower layer
-	 * @param b
-	 */
-	public void setQOS(Byte b) throws IllegalArgumentException;
-	public Byte getQOS();
 
-	//only getter, since we send via Dialog object, ID is ensured to be present.
+	public void setReturnMessageOnError(boolean val);
+
+	public boolean getReturnMessageOnError();
 	
 	
 	/**

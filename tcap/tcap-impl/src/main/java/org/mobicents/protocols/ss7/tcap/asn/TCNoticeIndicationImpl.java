@@ -20,33 +20,63 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
+package org.mobicents.protocols.ss7.tcap.asn;
 
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCNoticeIndication;
 
 /**
- * @author baranowb
- * @author amit bhayani
+ * 
  * @author sergey vetyutnev
  * 
  */
-public interface TCNoticeIndication {
+public class TCNoticeIndicationImpl implements TCNoticeIndication {
 
-	public SccpAddress getLocalAddress();
-	public void setLocalAddress(SccpAddress val);
+	private SccpAddress localAddress;
+	private SccpAddress remoteAddress;
+	private ReturnCauseValue reportCause;
+	private Dialog dialog;
 
-	public SccpAddress getRemoteAddress();
-	public void setRemoteAddress(SccpAddress val);
+	@Override
+	public SccpAddress getLocalAddress() {
+		return localAddress;
+	}
 
-	public ReturnCauseValue getReportCause();
-	public void setReportCause(ReturnCauseValue val);
+	@Override
+	public void setLocalAddress(SccpAddress val) {
+		localAddress = val;
+	}
 
-	/* 
-	 * This value can be equal null if TCAP can not match any existant Dialog to the incoming data 
-	 */
-	public Dialog getDialog();
-	public void setDialog(Dialog val);
+	@Override
+	public SccpAddress getRemoteAddress() {
+		return remoteAddress;
+	}
 
+	@Override
+	public void setRemoteAddress(SccpAddress val) {
+		remoteAddress = val;
+	}
+
+	@Override
+	public ReturnCauseValue getReportCause() {
+		return reportCause;
+	}
+
+	@Override
+	public void setReportCause(ReturnCauseValue val) {
+		reportCause = val;
+	}
+
+	@Override
+	public Dialog getDialog() {
+		return dialog;
+	}
+
+	@Override
+	public void setDialog(Dialog val) {
+		dialog = val;
+	}
 }
+

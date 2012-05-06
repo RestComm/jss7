@@ -43,6 +43,7 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 	private ApplicationContextName acn;
 	private Result result;
 	private ResultSourceDiagnostic diagnostic;
+	private ProtocolVersion protocolVersion = new ProtocolVersionImpl();
 	
 	//optional
 	private UserInformation ui;
@@ -64,9 +65,9 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 	 * org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU#getProtocolVersion
 	 * ()
 	 */
-	public int getProtocolVersion() {
+	public ProtocolVersion getProtocolVersion() {
 
-		return 1;
+		return protocolVersion;
 	}
 
 	/*
@@ -163,7 +164,7 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 			if (tag == ProtocolVersion._TAG_PROTOCOL_VERSION && localAis.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 				// we have protocol version on a
 				// decode it
-				TcapFactory.createProtocolVersion(localAis);
+				this.protocolVersion = TcapFactory.createProtocolVersion(localAis);
 				tag = localAis.readTag();
 			}
 			
@@ -223,10 +224,7 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
 			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG_RESPONSE);
 			int pos = aos.StartContentDefiniteLength();
 			
-			// lets not omit protocol version, we check byte[] in tests, it
-			// screws them :)
-			ProtocolVersion pv = TcapFactory.createProtocolVersion();
-			pv.encode(aos);
+			this.protocolVersion.encode(aos);
 			this.acn.encode(aos);
 			this.result.encode(aos);
 			this.diagnostic.encode(aos);

@@ -37,7 +37,7 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
  */
 public class TCBeginIndicationImpl extends DialogIndicationImpl implements TCBeginIndication {
 
-	private Byte qos;
+//	private Byte qos;
 	private SccpAddress originatingAddress, destinationAddress;
 
 	// fields
@@ -86,17 +86,17 @@ public class TCBeginIndicationImpl extends DialogIndicationImpl implements TCBeg
 		return this.originatingAddress;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest#
-	 * getQOS()
-	 */
-	public Byte getQOS() {
-
-		return this.qos;
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see
+//	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest#
+//	 * getQOS()
+//	 */
+//	public Byte getQOS() {
+//
+//		return this.qos;
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -149,17 +149,17 @@ public class TCBeginIndicationImpl extends DialogIndicationImpl implements TCBeg
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest#
-	 * setQOS(java.lang.Byte)
-	 */
-	public void setQOS(Byte b) throws IllegalArgumentException {
-		this.qos = b;
-
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see
+//	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest#
+//	 * setQOS(java.lang.Byte)
+//	 */
+//	public void setQOS(Byte b) throws IllegalArgumentException {
+//		this.qos = b;
+//
+//	}
 
 	/*
 	 * (non-Javadoc)

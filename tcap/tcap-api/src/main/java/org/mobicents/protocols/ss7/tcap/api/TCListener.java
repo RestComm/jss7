@@ -26,11 +26,18 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCNoticeIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCPAbortIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 
+/**
+ * @author baranowb
+ * @author amit bhayani
+ * @author sergey vetyutnev
+ * 
+ */
 public interface TCListener {
 
 	// dialog handlers
@@ -68,12 +75,25 @@ public interface TCListener {
 	public void onTCUserAbort(TCUserAbortIndication ind);
 
 	/**
-	 * Invoked when dialog has been terminated by some unpredicatable
-	 * environment cause. See Q.771 3.1.4.2
+	 * Invoked TC-P-Abort (when dialog has been terminated by some unpredicatable
+	 * environment cause). See Q.771 3.1.4.2
 	 * 
 	 * @param ind
 	 */
 	public void onTCPAbort(TCPAbortIndication ind);
+
+	/**
+	 * Invoked when TC-Notice primitive has been received. 
+	 * A TC-NOTICE indication
+	 * primitive is only passed to the TC-user if the requested service (i.e.
+	 * transfer of components) cannot be provided (the network layer cannot
+	 * deliver the embedded message to the remote node) and the TC-user
+	 * requested the return option in the Quality of Service parameter of the
+	 * dialogue handling request primitive.
+	 * 
+	 * @param ind
+	 */
+	public void onTCNotice(TCNoticeIndication ind);
 
 	/**
 	 * Called once dialog is released. It is invoked once primitives are
@@ -97,3 +117,5 @@ public interface TCListener {
 	public void onDialogTimeout(Dialog d);
 
 }
+
+

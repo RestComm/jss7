@@ -168,8 +168,7 @@ public class TcBeginTest  {
 		assertEquals(TCBeginMessage._TAG, tag,"Expected TCInvoke");
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
 
-		assertEquals(new Long(145031169L),
-				tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+		assertEquals(145031169L, tcm.getOriginatingTransactionId(), "Originating transaction id does not match");
 		assertNotNull(tcm.getDialogPortion(),"Dialog portion should not be null");
 
 		assertNull(tcm.getComponent(),"Component portion should not be present");
@@ -219,8 +218,7 @@ public class TcBeginTest  {
 		assertEquals(TCBeginMessage._TAG, tag,"Expected TCInvoke");
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
 
-		assertEquals(new Long(436208353L),
-				tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+		assertEquals(436208353L, tcm.getOriginatingTransactionId(), "Originating transaction id does not match");
 		assertNotNull(tcm.getDialogPortion(),"Dialog portion should not be null");
 
 		assertNotNull(tcm.getComponent(),"Component portion should be present");
@@ -293,8 +291,7 @@ public class TcBeginTest  {
 
 		assertNull(tcm.getDialogPortion(),"Dialog portion should not be present");
 
-		assertEquals(new Long(145031169L),
-				tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+		assertEquals(145031169L, tcm.getOriginatingTransactionId(), "Originating transaction id does not match");
 		// comp portion
 		assertNotNull(tcm.getComponent(),"Component portion should be present");
 		assertEquals(2, tcm.getComponent().length,"Component count is wrong");
@@ -367,8 +364,7 @@ public class TcBeginTest  {
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
 		assertNull(tcm.getComponent(),"Component portion should not be present");
 		assertNotNull(tcm.getDialogPortion(),"Dialog portion should not be null");
-		assertEquals(new Long(145031169L),
-				tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+		assertEquals(145031169L, tcm.getOriginatingTransactionId(), "Originating transaction id does not match");
 
 		assertFalse(tcm.getDialogPortion().isUnidirectional(),"Dialog should not be Uni");
 		DialogAPDU _dapd = tcm.getDialogPortion().getDialogAPDU();
@@ -422,8 +418,7 @@ public class TcBeginTest  {
 
 		assertNull(tcm.getDialogPortion(),"Dialog portion should be null");
 		assertNull(tcm.getComponent(),"Component portion should not be present");
-		assertEquals(new Long(145031169L),
-				tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+		assertEquals(145031169L, tcm.getOriginatingTransactionId(), "Originating transaction id does not match");
 
 		AsnOutputStream aos = new AsnOutputStream();
 		tcm.encode(aos);
@@ -504,8 +499,7 @@ public class TcBeginTest  {
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage(ais);
 
 		// universal
-		assertEquals(new Long(145031169L),
-				tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+		assertEquals(145031169L, tcm.getOriginatingTransactionId(), "Originating transaction id does not match");
 
 		// dialog portion
 		assertNotNull(tcm.getDialogPortion(),"Dialog portion should not be null");
@@ -646,4 +640,87 @@ public class TcBeginTest  {
 		return ss;
 	}
 
+	
+	@Test(groups = { "functional.encode" })
+	public void testA() throws IOException, ParseException {
+		TCBeginMessage tcm = TcapFactory.createTCBeginMessage();
+		tcm.setOriginatingTransactionId(1358955064L);
+
+		// Create Dialog Portion
+		DialogPortion dp = TcapFactory.createDialogPortion();
+
+		dp.setOid(true);
+		dp.setOidValue(new long[] { 0, 0, 17, 773, 1, 1, 1 });
+
+		dp.setAsn(true);
+
+		DialogRequestAPDUImpl diRequestAPDUImpl = new DialogRequestAPDUImpl();
+
+		ApplicationContextNameImpl acn = new ApplicationContextNameImpl();
+		acn.setOid(new long[] { 0, 4, 0, 0, 1, 0, 19, 2 });
+
+		diRequestAPDUImpl.setApplicationContextName(acn);
+
+		UserInformation userInfo = new UserInformationImpl();
+		userInfo.setOid(true);
+		userInfo.setOidValue(new long[] { 0, 4, 0, 0, 1, 1, 1, 1 });
+
+		userInfo.setAsn(true);
+		userInfo.setEncodeType(new byte[] { (byte) 0xa0, (byte) 0x80, (byte) 0x80, 0x09, (byte) 0x96, 0x02, 0x24,
+				(byte) 0x80, 0x03, 0x00, (byte) 0x80, 0x00, (byte) 0xf2, (byte) 0x81, 0x07, (byte) 0x91, 0x13, 0x26,
+				(byte) 0x98, (byte) 0x86, 0x03, (byte) 0xf0, 0x00, 0x00 });
+
+		diRequestAPDUImpl.setUserInformation(userInfo);
+
+		dp.setDialogAPDU(diRequestAPDUImpl);
+
+		tcm.setDialogPortion(dp);
+
+		AsnOutputStream aos = new AsnOutputStream();
+
+		// INVOKE Component
+
+		Invoke invComp = TcapFactory.createComponentInvoke();
+		invComp.setInvokeId(-128l);
+
+		// Operation Code
+		OperationCode oc = TcapFactory.createOperationCode();
+		oc.setLocalOperationCode(591L);
+		invComp.setOperationCode(oc);
+
+		// Sequence of Parameter
+		Parameter p1 = TcapFactory.createParameter();
+		p1.setTagClass(Tag.CLASS_UNIVERSAL);
+		p1.setTag(0x04);
+		p1.setData(new byte[] { 0x0f });
+
+		Parameter p2 = TcapFactory.createParameter();
+		p2.setTagClass(Tag.CLASS_UNIVERSAL);
+		p2.setTag(0x04);
+		p2.setData(new byte[] { (byte) 0xaa, (byte) 0x98, (byte) 0xac, (byte) 0xa6, 0x5a, (byte) 0xcd, 0x62, 0x36,
+				0x19, 0x0e, 0x37, (byte) 0xcb, (byte) 0xe5, 0x72, (byte) 0xb9, 0x11 });
+
+		Parameter p3 = TcapFactory.createParameter();
+		p3.setTagClass(Tag.CLASS_CONTEXT_SPECIFIC);
+		p3.setTag(0x00);
+		p3.setData(new byte[] { (byte) 0x91, 0x13, 0x26, (byte) 0x88, (byte) 0x83, 0x00, (byte) 0xf2 });
+
+		Parameter p = TcapFactory.createParameter();
+		p.setTagClass(Tag.CLASS_UNIVERSAL);
+		p.setTag(0x04);
+		p.setParameters(new Parameter[] { p1, p2, p3 });
+
+		invComp.setParameter(p);
+
+		tcm.setComponent(new Component[] { invComp });
+
+		tcm.encode(aos);
+
+		byte[] encodedData = aos.toByteArray();
+
+		// Add more here?
+	}
+	
+	
+	
 }

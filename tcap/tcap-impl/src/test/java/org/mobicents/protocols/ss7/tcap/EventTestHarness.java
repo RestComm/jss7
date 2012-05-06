@@ -22,18 +22,17 @@
 
 package org.mobicents.protocols.ss7.tcap;
 
-import org.testng.annotations.Test;
 import static org.testng.Assert.*;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
+import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
@@ -41,15 +40,20 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndicatio
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCNoticeIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCPAbortIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.DialogServiceUserType;
+import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 
 /**
  * Super class for event based tests. Has capabilities for testing if events are
@@ -75,6 +79,8 @@ public abstract class EventTestHarness implements TCListener {
 	protected ApplicationContextName acn;
 	protected UserInformation ui;
 
+	protected PAbortCauseType pAbortCauseType;
+	
 	/**
 	 * @param stack
 	 * @param thisAddress
@@ -94,6 +100,13 @@ public abstract class EventTestHarness implements TCListener {
 			throw new IllegalStateException("Dialog exists...");
 		}
 		dialog = this.tcapProvider.getNewDialog(thisAddress, remoteAddress);
+	}
+
+	public void startUniDialog() throws TCAPException {
+		if (dialog != null) {
+			throw new IllegalStateException("Dialog exists...");
+		}
+		dialog = this.tcapProvider.getNewUnstructuredDialog(thisAddress, remoteAddress);
 	}
 
 	public void sendBegin() throws TCAPException, TCAPSendException {
@@ -136,15 +149,14 @@ public abstract class EventTestHarness implements TCListener {
 			end.setUserInformation(ui);
 			ui = null;
 		}
-		dialog.send(end);
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.End, end, sequence++));
+		dialog.send(end);
 
 	}
 
-	public void sendAbort(ApplicationContextName acn, UserInformation ui,DialogServiceUserType type) throws TCAPSendException
-	{
-		
-		System.err.println(this+" T["+System.currentTimeMillis()+"]send ABORT");
+	public void sendAbort(ApplicationContextName acn, UserInformation ui, DialogServiceUserType type) throws TCAPSendException {
+
+		System.err.println(this + " T[" + System.currentTimeMillis() + "]send ABORT");
 		TCUserAbortRequest abort = this.tcapProvider.getDialogPrimitiveFactory().createUAbort(dialog);
 		if (acn != null) {
 			abort.setApplicationContextName(acn);
@@ -153,11 +165,31 @@ public abstract class EventTestHarness implements TCListener {
 			abort.setUserInformation(ui);
 		}
 		abort.setDialogServiceUserType(type);
-		this.dialog.send(abort);
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.UAbort, abort, sequence++));
-		
+		this.dialog.send(abort);
+
 	}
-	
+
+	public void sendUni() throws TCAPException, TCAPSendException {
+		ComponentPrimitiveFactory cpFactory = this.tcapProvider.getComponentPrimitiveFactory();
+
+		//create some INVOKE
+		Invoke invoke = cpFactory.createTCInvokeRequest(InvokeClass.Class4);
+		invoke.setInvokeId(this.dialog.getNewInvokeId());
+		OperationCode oc = cpFactory.createOperationCode();
+		oc.setLocalOperationCode(new Long(12));
+		invoke.setOperationCode(oc);
+		//no parameter
+		this.dialog.sendComponent(invoke);
+
+		System.err.println(this+" T["+System.currentTimeMillis()+"]send UNI");
+		ApplicationContextName acn = this.tcapProvider.getDialogPrimitiveFactory().createApplicationContextName(_ACN_);
+		TCUniRequest tcur = this.tcapProvider.getDialogPrimitiveFactory().createUni(this.dialog);
+		tcur.setApplicationContextName(acn);
+		this.dialog.send(tcur);
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.Uni, tcur, sequence++));
+	}
+
 	public void onTCUni(TCUniIndication ind) {
 		System.err.println(this+" T["+System.currentTimeMillis()+"]onUni");
 		TestEvent te = TestEvent.createReceivedEvent(EventType.Uni, ind, sequence++);
@@ -211,6 +243,7 @@ public abstract class EventTestHarness implements TCListener {
 		TestEvent te = TestEvent.createReceivedEvent(EventType.PAbort, ind, sequence++);
 		this.observerdEvents.add(te);
 
+		pAbortCauseType = ind.getPAbortCause();
 	}
 
 	public void onDialogReleased(Dialog d) {
@@ -234,6 +267,13 @@ public abstract class EventTestHarness implements TCListener {
 
 	}
 
+	@Override
+	public void onTCNotice(TCNoticeIndication ind) {
+		System.err.println(this+" T["+System.currentTimeMillis()+"]onNotice");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.Notice, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
 	public List<TestEvent> getObserverdEvents() {
 		return observerdEvents;
 	}
@@ -247,7 +287,7 @@ public abstract class EventTestHarness implements TCListener {
 		}
 
 		for (int index = 0; index < expectedEvents.size(); index++) {
-			assertEquals(expectedEvents.get(index), observerdEvents.get(index),"Received event does not match, index[" + index + "]");
+			assertEquals(observerdEvents.get(index), expectedEvents.get(index),"Received event does not match, index[" + index + "]");
 		}
 	}
 

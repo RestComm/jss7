@@ -74,13 +74,15 @@ public class TCUnidentifiedMessage implements Encodable {
 
 			this.originatingTransactionId = Utils.readTransactionId(localAis);
 
-			tag = localAis.readTag();
+			if (localAis.available() > 0) {
+				tag = localAis.readTag();
 
-			if (tag != _TAG_DTX) {
-				return;
+				if (tag != _TAG_DTX) {
+					return;
+				}
+
+				this.destinationTransactionId = Utils.readTransactionId(localAis);
 			}
-
-			this.destinationTransactionId = Utils.readTransactionId(localAis);
 
 		} catch (IOException e) {
 			logger.error("Error while decoding for TCUnidentifiedMessage", e);

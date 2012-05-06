@@ -39,9 +39,13 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
  */
 public class TCAPStackImpl implements TCAPStack {
 
+	private static final Logger logger = Logger.getLogger(TCAPStackImpl.class);
+
 	// default value of idle timeout and after TC_END remove of task.
 	public static final long _DIALOG_TIMEOUT = 60000;
 	public static final long _INVOKE_TIMEOUT = 30000;
+	public static final int _MAX_DIALOGS = 5000;
+	public static final long _EMPTY_INVOKE_TIMEOUT = -1;
 	// TCAP state data, it is used ONLY on client side
     protected TCAPProviderImpl tcapProvider;
     private SccpProvider sccpProvider;
@@ -51,23 +55,19 @@ public class TCAPStackImpl implements TCAPStack {
     
 	private long dialogTimeout = _DIALOG_TIMEOUT;
 	private long invokeTimeout = _INVOKE_TIMEOUT;
-    private static final Logger logger = Logger.getLogger(TCAPStackImpl.class);
+	// TODO: make this configurable
+	private int maxDialogs = _MAX_DIALOGS;
 
     public TCAPStackImpl() {
         super();
 
     }
-    //for tests only
-    public TCAPStackImpl(SccpProvider sccpProvider, int ssn) {
-       this(sccpProvider,ssn,DialogIdIndex.INITIAL_SIZE);
-    }
-    
-    
-    public TCAPStackImpl(SccpProvider sccpProvider, int ssn, int maxDialogs) {
-        this.sccpProvider = sccpProvider;
-        this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn,maxDialogs);
-        this.state = State.CONFIGURED;
-    }
+
+	public TCAPStackImpl(SccpProvider sccpProvider, int ssn) {
+		this.sccpProvider = sccpProvider;
+		this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn);
+		this.state = State.CONFIGURED;
+	}
 
     public void start() throws IllegalStateException {
         logger.info("Starting ..." + tcapProvider);
@@ -108,17 +108,14 @@ public class TCAPStackImpl implements TCAPStack {
 	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#setDialogIdleTimeout(long)
 	 */
 	public void setDialogIdleTimeout(long v) {
-		if(v<0)
-		{
+		if (v < 0) {
 			throw new IllegalArgumentException("Timeout value must be greater or equal to zero.");
 		}
-		if(v<this.invokeTimeout)
-		{
+		if (v < this.invokeTimeout) {
 			throw new IllegalArgumentException("Timeout value must be greater or equal to invoke timeout.");
 		}
-		
+
 		this.dialogTimeout = v;
-		
 	}
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#getDialogIdleTimeout()
@@ -131,16 +128,13 @@ public class TCAPStackImpl implements TCAPStack {
 	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#setInvokeTimeout(long)
 	 */
 	public void setInvokeTimeout(long v) {
-		if(v<0)
-		{
+		if (v < 0) {
 			throw new IllegalArgumentException("Timeout value must be greater or equal to zero.");
 		}
-		if(v>this.dialogTimeout)
-		{
+		if (v > this.dialogTimeout) {
 			throw new IllegalArgumentException("Timeout value must be smaller or equal to dialog timeout.");
 		}
 		this.invokeTimeout = v;
-		
 	}
 	
 	/* (non-Javadoc)
@@ -150,10 +144,18 @@ public class TCAPStackImpl implements TCAPStack {
 		return this.invokeTimeout;
 	}
 	
-	
 	private enum State {
 
         IDLE, CONFIGURED, RUNNING;
     }
+
+	@Override
+	public void setMaxDialogs(int v) {
+		maxDialogs = v;
+	}
+	@Override
+	public int getMaxDialogs() {
+		return maxDialogs;
+	}
 
 }

@@ -41,9 +41,9 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
  */
 public interface TCUserAbortRequest extends DialogRequest {
 
-	public void setQOS(Byte b) throws IllegalArgumentException;
+	public void setReturnMessageOnError(boolean val);
 
-	public Byte getQOS();
+	public boolean getReturnMessageOnError();
 
 	public ApplicationContextName getApplicationContextName();
 
