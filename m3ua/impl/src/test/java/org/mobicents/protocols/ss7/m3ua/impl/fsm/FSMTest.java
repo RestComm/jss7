@@ -24,6 +24,7 @@ public class FSMTest {
 	private volatile boolean stateEntered = false;
 	private volatile boolean stateExited = false;
 	private volatile boolean transitionHandlerCalled = false;
+	private volatile int timeOutCount = 0;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -196,6 +197,36 @@ public class FSMTest {
 		assertEquals("STATE2", fsm.getState().getName());
 
 	}
+	
+	@Test
+	public void testTimeoutTransition() throws Exception {
+		FSM fsm = new FSM("test");
+
+		fsm.createState("STATE1");
+		fsm.createState("STATE2");
+		fsm.createState("STATE3");
+
+		fsm.setStart("STATE1");
+		fsm.setEnd("STATE3");
+
+		fsm.createTransition("GoToSTATE2", "STATE1", "STATE2");
+		fsm.createTimeoutTransition("STATE2", "STATE2", 1000l).setHandler(new State2TimeoutTransition());
+
+		m3uaScheduler.execute(fsm);
+
+		fsm.signal("GoToSTATE2");
+
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		assertTrue((2 <= timeOutCount) && (timeOutCount <= 3));
+		assertEquals("STATE2", fsm.getState().getName());
+
+	}	
 
 	class AsState1Exit implements StateEventHandler {
 
@@ -241,6 +272,16 @@ public class FSMTest {
 		@Override
 		public boolean process(State state) {
 			transitionHandlerCalled = true;
+			return true;
+		}
+
+	}
+	
+	class State2TimeoutTransition implements TransitionHandler {
+
+		@Override
+		public boolean process(State state) {
+			timeOutCount++;
 			return true;
 		}
 
