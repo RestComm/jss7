@@ -109,17 +109,165 @@ public class TraceReaderDriverPcap extends TraceReaderDriverBase implements Trac
 	}
 	
 	private void parsePacket(byte[] data) throws TraceReaderException {
+
+		// check the min possible length
+		if (data == null || data.length < 34) {
+			return;
+		}
 		
-		int startPos = 74;
+		// Ethernet II level
+		if (data[12] != 8 || data[13] != 0) {
+			// this is not IP protocol - return
+			return;
+		}		
 		
-		byte[] bufMsg = new byte[data.length - startPos + 3];
+		// IP protocol level
+		int version = (data[14] & 0xF0) >> 4;
+		int ipHeaderLen = (data[14] & 0x0F) * 4;
+		if (version != 4) {
+			// TODO: add support for IP V6
+			return;
+		}		
+		int ipProtocolId = data[23] & 0xFF;
+		if (ipProtocolId != 132) { // 132 == SCTP protocol
+			// TODO: add support for TCP protocol
+			return;
+		}
+		int startSctpBlock = 14 + ipHeaderLen;
+
+		// SCTP
+		// skip SCTP header
+		startSctpBlock += 12;
+
+		while (true) {
+			// check if else sctp block exists
+			if (data.length < startSctpBlock + 4)
+				break;
+			
+			int blockType = data[startSctpBlock] & 0xFF;
+			int blockLen = ((data[startSctpBlock + 2] & 0xFF) << 8) + (data[startSctpBlock + 3] & 0xFF);
+			if (blockLen == 0)
+				break;
+			if (data.length < startSctpBlock + blockLen)
+				break;
+
+			if (blockType == 0 && blockLen > 16) {
+				// for m3ua blockType==0
+				byte[] bufM3ua = new byte[blockLen - 16];
+				System.arraycopy(data, startSctpBlock + 16, bufM3ua, 0, blockLen - 16);
+				this.parseM3uaPacket(bufM3ua);
+			}
+
+			int suff = blockLen % 4;
+			if (suff > 0)
+				blockLen += 4 - suff;
+			startSctpBlock += blockLen;
+		}
+	}
+	
+	private void parseM3uaPacket(byte[] data) throws TraceReaderException {
+
+		if (data.length < 8)
+			return;
+		
+		int version = data[0] & 0xFF;
+		int messageClass = data[2] & 0xFF;
+		int messageType = data[3] & 0xFF;
+
+		if (messageClass == 1 && messageType == 1) { // parse only transfer message - payload data
+			int msgLen = ((data[4] & 0xFF) << 24) + ((data[5] & 0xFF) << 16) + ((data[6] & 0xFF) << 8) + (data[7] & 0xFF);
+
+			if (data.length < msgLen)
+				return;			
+
+			int pos = 8;
+			long networkAppearance = -1;
+			long routingContext = -1;
+			long correlationId = -1;
+			byte[] protocolData = null; 
+			while (true) {
+				if (pos + 4 > msgLen)
+					break;
+				int parLen = ((data[pos + 2] & 0xFF) << 8) + (data[pos + 3] & 0xFF);
+				if (pos + parLen > msgLen)
+					break;
+
+				if (data[pos] == 0x02 && data[pos + 1] == 0x00) {
+					// Network Appearance
+					networkAppearance = ((data[pos + 4] & 0xFF) << 24) + ((data[pos + 5] & 0xFF) << 16) + ((data[pos + 6] & 0xFF) << 8)
+							+ (data[pos + 7] & 0xFF);
+				}
+
+				if (data[pos] == 0x00 && data[pos + 1] == 0x06) {
+					// Routing Context
+					routingContext = ((data[pos + 4] & 0xFF) << 24) + ((data[pos + 5] & 0xFF) << 16) + ((data[pos + 6] & 0xFF) << 8) + (data[pos + 7] & 0xFF);
+				}
+
+				if (data[pos] == 0x02 && data[pos + 1] == 0x10) {
+					// Protocol Data
+					protocolData = new byte[parLen - 4];
+					System.arraycopy(data, pos + 4, protocolData, 0, parLen - 4);
+				}
+
+				if (data[pos] == 0x00 && data[pos + 1] == 0x13) {
+					// Correlation Id
+					correlationId = ((data[pos + 4] & 0xFF) << 24) + ((data[pos + 5] & 0xFF) << 16) + ((data[pos + 6] & 0xFF) << 8) + (data[pos + 7] & 0xFF);
+				}
+
+				pos += parLen;
+			}
+
+			if (protocolData != null) {
+				this.parseM3uaProtocolData(networkAppearance, routingContext, correlationId, protocolData);
+			}
+		}
+	}
+	
+	private void parseM3uaProtocolData(long networkAppearance, long routingContext, long correlationId, byte[] data) throws TraceReaderException {
+
+		if (data.length < 14) {
+			return;
+		}
+		
+		int opc = ((data[0] & 0xFF) << 24) + ((data[1] & 0xFF) << 16) + ((data[2] & 0xFF) << 8) + (data[3] & 0xFF);
+		int dpc = ((data[4] & 0xFF) << 24) + ((data[5] & 0xFF) << 16) + ((data[6] & 0xFF) << 8) + (data[7] & 0xFF);
+		int si = data[8] & 0xFF;
+		int ni = data[9] & 0xFF;
+		int mp = data[10] & 0xFF;
+		int sls = data[11] & 0xFF;
+		
+//		int startPos = 74;
+
+		byte[] bufMsg = new byte[data.length - 12 + 3 + 1 + 4];
 		bufMsg[0] = 0;
 		bufMsg[1] = 0;
-		bufMsg[2] = 63;
-		System.arraycopy(data, startPos, bufMsg, 3, data.length - startPos);
+		bufMsg[2] = 63; // li
+		bufMsg[3] = (byte)((ni << 6) + si); // sio
 		
+		// routing label
+//		int dpc = ((b2 & 0x3f) << 8) | (b1 & 0xff);
+//		int opc = ((b4 & 0x0f) << 10) | ((b3 & 0xff) << 2) | ((b2 & 0xc0) >> 6);
+//		int sls = ((b4 & 0xf0) >> 4);
+		bufMsg[4] = (byte) (dpc & 0xFF);
+		bufMsg[5] = (byte) (((dpc & 0x3F00) >> 8) | (opc & 0x03) << 6);
+		bufMsg[6] = (byte) ((opc & 0x03FC) >> 2);
+		bufMsg[7] = (byte) (((opc & 0x3C00) >> 10) | (sls & 0x0F) << 4);
+		
+		System.arraycopy(data, 12, bufMsg, 8, data.length - 12);
+
 		for (TraceReaderListener ls : this.listeners) {
 			ls.ss7Message(bufMsg);
-		}		
+		}
+		
+		
+//		byte[] bufMsg = new byte[data.length - 12 + 3];
+//		bufMsg[0] = 0;
+//		bufMsg[1] = 0;
+//		bufMsg[2] = 63;
+//		System.arraycopy(data, 12, bufMsg, 3, data.length - 12);
+//
+//		for (TraceReaderListener ls : this.listeners) {
+//			ls.ss7Message(bufMsg);
+//		}
 	}
 }

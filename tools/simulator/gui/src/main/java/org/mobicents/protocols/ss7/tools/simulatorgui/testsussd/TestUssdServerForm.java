@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,27 +20,35 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tools.traceparser;
+package org.mobicents.protocols.ss7.tools.simulatorgui.testsussd;
 
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import java.util.concurrent.ScheduledExecutorService;
-import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
-import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
+import javax.swing.JFrame;
+
+import org.mobicents.protocols.ss7.tools.simulatorgui.TestingForm;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class TCAPProviderImplWrapper extends TCAPProviderImpl {
-	
-	TCAPProviderImplWrapper(SccpProvider sccpProvider, TCAPStackImpl stack, int ssn) {
-		super(sccpProvider, stack, ssn);
+public class TestUssdServerForm extends TestingForm {
+
+	private static final long serialVersionUID = -3323069535001828614L;
+
+	public TestUssdServerForm(JFrame owner) {
+		super(owner);
 		
-	}
-	
-	public ScheduledExecutorService getExecuter() {
-		return this._EXECUTOR;
+		JPanel panel = new JPanel();
+		panel_c.add(panel, BorderLayout.CENTER);
+		GridBagLayout gbl_panel = new GridBagLayout();
+		gbl_panel.columnWidths = new int[]{0};
+		gbl_panel.rowHeights = new int[]{0};
+		gbl_panel.columnWeights = new double[]{Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{Double.MIN_VALUE};
+		panel.setLayout(gbl_panel);
 	}
 
 }

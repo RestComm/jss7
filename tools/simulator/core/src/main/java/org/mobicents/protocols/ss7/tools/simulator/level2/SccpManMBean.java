@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,27 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tools.traceparser;
-
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import java.util.concurrent.ScheduledExecutorService;
-import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
-import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
+package org.mobicents.protocols.ss7.tools.simulator.level2;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class TCAPProviderImplWrapper extends TCAPProviderImpl {
-	
-	TCAPProviderImplWrapper(SccpProvider sccpProvider, TCAPStackImpl stack, int ssn) {
-		super(sccpProvider, stack, ssn);
-		
-	}
-	
-	public ScheduledExecutorService getExecuter() {
-		return this._EXECUTOR;
-	}
+public interface SccpManMBean {
+
+	public int getDpc();
+
+	public void setDpc(int val);
+
+	public int getOpc();
+
+	public void setOpc(int val);
+
+	public int getNi();
+
+	public void setNi(int val);
+
+	public int getRemoteSsn();
+
+	public void setRemoteSsn(int val);
 
 }

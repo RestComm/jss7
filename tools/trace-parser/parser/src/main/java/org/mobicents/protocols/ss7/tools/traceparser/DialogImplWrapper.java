@@ -123,22 +123,22 @@ public class DialogImplWrapper extends DialogImpl {
 	public void processAbort(TCAbortMessage msg, SccpAddress localAddress2, SccpAddress remoteAddress2) {
 		super.processAbort(msg, localAddress2, remoteAddress2);
 	}
-	
+
 	@Override
-	public void processEnd(TCEndMessage msg, SccpAddress localAddress2, SccpAddress remoteAddress2) throws TCAPException {
+	public void processEnd(TCEndMessage msg, SccpAddress localAddress2, SccpAddress remoteAddress2) {
 		super.processEnd(msg, localAddress2, remoteAddress2);
 	}
-	
+
 	@Override
-	public void processContinue(TCContinueMessage msg, SccpAddress localAddress2, SccpAddress remoteAddress2) throws TCAPException {
+	public void processContinue(TCContinueMessage msg, SccpAddress localAddress2, SccpAddress remoteAddress2) {
 		super.processContinue(msg, localAddress2, remoteAddress2);
 	}
-	
+
 	@Override
-	public void processBegin(TCBeginMessage msg, SccpAddress localAddress2, SccpAddress remoteAddress2) throws TCAPException {
+	public void processBegin(TCBeginMessage msg, SccpAddress localAddress2, SccpAddress remoteAddress2) {
 		super.processBegin(msg, localAddress2, remoteAddress2);
 	}
-	
+
 	public void send(TCUserAbortRequest event) throws TCAPSendException {
 	}
 }
