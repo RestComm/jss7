@@ -44,7 +44,7 @@ public class M3UARouteManagement {
 
 	private static final Logger logger = Logger.getLogger(M3UARouteManagement.class);
 
-	private static final String KEY_SEPARATOR = ":";
+	protected static final String KEY_SEPARATOR = ":";
 	private static final int WILDCARD = -1;
 
 	private M3UAManagement m3uaManagement = null;
@@ -329,4 +329,8 @@ public class M3UARouteManagement {
 		}
 	}
 
+	public void removeAllResourses() throws Exception {
+		this.route.clear();
+		this.routeTable.clear();
+	}
 }

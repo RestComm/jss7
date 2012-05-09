@@ -27,6 +27,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -536,6 +538,85 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 
 	public void removeRoute(int dpc, int opc, int si, String asName) throws Exception {
 		this.routeManagement.removeRoute(dpc, opc, si, asName);
+	}
+
+	public void removeAllResourses() throws Exception {
+
+		if (!this.isStarted) {
+			throw new Exception(String.format("Management=%s not started", this.name));
+		}
+
+		if (this.appServers.size() == 0 && this.aspfactories.size() == 0)
+			// no resources allocated - nothing to do
+			return;
+
+		if (logger.isInfoEnabled()) {
+			logger.info(String.format("Removing allocated resources: AppServers=%d, AspFactories=%d", this.appServers.size(),
+					this.aspfactories.size()));
+		}
+
+		// Stopping asp factories
+		boolean someFactoriesIsStopped = false;
+		for (AspFactory aspFact : this.aspfactories) {
+			if (aspFact.started) {
+				someFactoriesIsStopped = true;
+				this.stopAsp(aspFact.getName());
+			}
+		}
+		// waiting 5 seconds till stopping factories
+		if (someFactoriesIsStopped) {
+			for (int step = 1; step < 50; step++) {
+				boolean allStopped = true;
+				for (AspFactory aspFact : this.aspfactories) {
+					if (aspFact.getAssociation() != null && aspFact.getAssociation().isConnected()) {
+						allStopped = false;
+						break;
+					}
+				}
+				if (allStopped)
+					return;
+
+				Thread.sleep(100);
+			}
+		}
+
+		// Remove routes
+		this.routeManagement.removeAllResourses();
+
+		// Unassign asp from as
+		FastMap<String, String> lstAsAsp = new FastMap<String, String>();
+		for (As as : this.appServers) {
+			for (FastList.Node<Asp> n = as.getAspList().head(), end = as.getAspList().tail(); (n = n.getNext()) != end;) {
+				Asp asp = n.getValue();
+				lstAsAsp.put(as.getName(), asp.getName());
+			}
+		}
+		for (FastMap.Entry<String, String> e = lstAsAsp.head(), end = lstAsAsp.tail(); (e = e.getNext()) != end;) {
+			String asName = e.getKey();
+			String aspName = e.getValue();
+			this.unassignAspFromAs(asName, aspName);
+		}
+
+		// Remove all AspFactories
+		ArrayList<AspFactory> lstAspFactory = new ArrayList<AspFactory>();
+		for (AspFactory aspFact : this.aspfactories) {
+			lstAspFactory.add(aspFact);
+		}
+		for (AspFactory aspFact : lstAspFactory) {
+			this.destroyAspFactory(aspFact.getName());
+		}
+
+		// Remove all AppServers
+		ArrayList<String> lst = new ArrayList<String>();
+		for (As as : this.appServers) {
+			lst.add(as.getName());
+		}
+		for (String n : lst) {
+			this.destroyAs(n);
+		}
+		
+		// We store the cleared state
+		this.store();
 	}
 
 	public void sendTransferMessageToLocalUser(Mtp3TransferPrimitive msg, int seqControl) {

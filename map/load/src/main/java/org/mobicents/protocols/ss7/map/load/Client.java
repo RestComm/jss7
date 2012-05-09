@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.load;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.sctp.ManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
@@ -99,9 +100,9 @@ public class Client extends TestHarness {
 
 	volatile long start = 0l;
 
-	protected void initializeStack() throws Exception {
+	protected void initializeStack(IpChannelType ipChannelType) throws Exception {
 
-		this.initSCTP();
+		this.initSCTP(ipChannelType);
 
 		// Initialize M3UA first
 		this.initM3UA();
@@ -117,7 +118,7 @@ public class Client extends TestHarness {
 		this.clientM3UAMgmt.startAsp("ASP1");
 	}
 
-	private void initSCTP() throws Exception {
+	private void initSCTP(IpChannelType ipChannelType) throws Exception {
 		this.sctpManagement = new ManagementImpl("Client");
 		this.sctpManagement.setSingleThread(true);
 		this.sctpManagement.setConnectDelay(10000);
@@ -125,13 +126,14 @@ public class Client extends TestHarness {
 		this.sctpManagement.removeAllResourses();
 
 		// 1. Create SCTP Association
-		sctpManagement.addAssociation(CLIENT_IP, CLIENT_PORT, SERVER_IP, SERVER_PORT, CLIENT_ASSOCIATION_NAME);
+		sctpManagement.addAssociation(CLIENT_IP, CLIENT_PORT, SERVER_IP, SERVER_PORT, CLIENT_ASSOCIATION_NAME, ipChannelType, null);
 	}
 
 	private void initM3UA() throws Exception {
 		this.clientM3UAMgmt = new M3UAManagement("Client");
 		this.clientM3UAMgmt.setTransportManagement(this.sctpManagement);
 		this.clientM3UAMgmt.start();
+		this.clientM3UAMgmt.removeAllResourses();
 
 		// m3ua as create rc <rc> <ras-name>
 		RoutingContext rc = factory.createRoutingContext(new long[] { 100l });
@@ -218,6 +220,9 @@ public class Client extends TestHarness {
 
 		int noOfCalls = Integer.parseInt(args[0]);
 		int noOfConcurrentCalls = Integer.parseInt(args[1]);
+		IpChannelType ipChannelType = IpChannelType.SCTP;
+		if (args.length >= 3 && args[2].toLowerCase().equals("tcp"))
+			ipChannelType = IpChannelType.TCP;
 
 		// logger.info("Number of calls to be completed = " + noOfCalls +
 		// " Number of concurrent calls to be maintained = " +
@@ -229,7 +234,7 @@ public class Client extends TestHarness {
 		final Client client = new Client();
 
 		try {
-			client.initializeStack();
+			client.initializeStack(ipChannelType);
 
 			Thread.sleep(20000);
 
@@ -260,7 +265,6 @@ public class Client extends TestHarness {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	/*

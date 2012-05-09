@@ -204,6 +204,10 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 		return this.started;
 	}
 
+//	public boolean isConnected() {
+//		return started && up;
+//	}
+
 	public Functionality getFunctionality() {
 		return functionality;
 	}
@@ -230,6 +234,10 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 
 	public void setTransportManagement(Management transportManagement) {
 		this.transportManagement = transportManagement;
+	}
+
+	public Association getAssociation() {
+		return this.association;
 	}
 
 	public void setAssociation(Association association) {

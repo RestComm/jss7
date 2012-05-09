@@ -192,4 +192,27 @@ public class MAPExtensionContainerTest {
 		return new byte[] { 48, 39, (byte) 160, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24,
 				25, 26, (byte) 161, 3, 31, 32, 33 };
 	}
+
+	
+	@Test(groups = { "functional.decode","primitives"})
+	public void testDecodeA() throws Exception {
+
+		byte[] data = this.getTestA();
+		AsnInputStream ais = new AsnInputStream(data);
+		int tag = ais.readTag();
+		MAPExtensionContainerImpl extCont = new MAPExtensionContainerImpl();
+		extCont.decodeAll(ais);
+
+		assertEquals(extCont.getPrivateExtensionList().size(), 1);
+		assertTrue(Arrays.equals(extCont.getPrivateExtensionList().get(0).getOId(), new long[] { 1, 2, 826, 0, 1249, 58, 1, 0 }));
+	}
+
+	private byte[] getTestA() {
+		return new byte[] { (byte) 0xAD, 
+				0x3F, (byte) 0xa0, 0x3d, 0x30, 0x3b, 0x06, 0x09, 0x2a, (byte) 0x86, 0x3a, 0x00, (byte) 0x89, 0x61, 0x3a, 0x01, 0x00, (byte) 0xa4,
+				0x2e, 0x30, 0x03, (byte) 0x81, 0x01, 0x11, 0x30, 0x03, (byte) 0x81, 0x01, 0x06, 0x30, 0x03, (byte) 0x81, 0x01, 0x07,
+				0x30, 0x18, (byte) 0x81, 0x01, 0x09, (byte) 0xa2, 0x13, 0x02, 0x01, 0x01, 0x04, 0x0e, 0x09, 0x01, 0x0a, 0x0a,
+				0x09, (byte) 0x84, 0x13, 0x32, (byte) 0x84, 0x30, 0x03, (byte) 0x92, 0x11, 0x07, 0x30, 0x03, (byte) 0x81, 0x01, 0x0a
+		};
+	}
 }
