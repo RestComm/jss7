@@ -65,7 +65,7 @@ public class M3UAScheduler implements Runnable {
 				}
 				// check if its canceled after run;
 				if (task.canceled) {
-					tasks.remove(task);
+					removed.add(task);
 				}
 			}
 			// tempTask = null;
