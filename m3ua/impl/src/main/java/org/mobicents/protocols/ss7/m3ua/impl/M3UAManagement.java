@@ -574,7 +574,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 					}
 				}
 				if (allStopped)
-					return;
+					break;
 
 				Thread.sleep(100);
 			}
