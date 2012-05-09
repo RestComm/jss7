@@ -129,11 +129,11 @@ public class GatewayTest {
 		Thread.sleep(10000);
 
 		// Both AS and ASP should be ACTIVE now
-		assertEquals(AspState.ACTIVE, AspState.getState(remAsp.getPeerFSM().getState().getName()));
-		assertEquals(AsState.ACTIVE, AsState.getState(remAs.getLocalFSM().getState().getName()));
+		assertEquals(AspState.getState(remAsp.getPeerFSM().getState().getName()), AspState.ACTIVE);
+		assertEquals(AsState.getState(remAs.getLocalFSM().getState().getName()), AsState.ACTIVE);
 
-		assertEquals(AspState.ACTIVE, AspState.getState(localAsp.getLocalFSM().getState().getName()));
-		assertEquals(AsState.ACTIVE, AsState.getState(localAs.getPeerFSM().getState().getName()));
+		assertEquals(AspState.getState(localAsp.getLocalFSM().getState().getName()), AspState.ACTIVE);
+		assertEquals(AsState.getState(localAs.getPeerFSM().getState().getName()), AsState.ACTIVE);
 
 		client.sendPayload();
 		server.sendPayload();
@@ -146,16 +146,16 @@ public class GatewayTest {
 		Thread.sleep(100);
 
 		// The AS is Pending
-		assertEquals(AsState.PENDING, AsState.getState(localAs.getPeerFSM().getState().getName()));
-		assertEquals(AsState.PENDING, AsState.getState(remAs.getLocalFSM().getState().getName()));
+		assertEquals( AsState.getState(localAs.getPeerFSM().getState().getName()), AsState.PENDING);
+		assertEquals(AsState.getState(remAs.getLocalFSM().getState().getName()), AsState.PENDING);
 
 		// Let the AS go in DOWN state
 		Thread.sleep(4000);
 		logger.debug("Woke from 4000 sleep");
 
 		// The AS is Pending
-		assertEquals(AsState.DOWN, AsState.getState(localAs.getPeerFSM().getState().getName()));
-		assertEquals(AsState.DOWN, AsState.getState(remAs.getLocalFSM().getState().getName()));
+		assertEquals( AsState.getState(localAs.getPeerFSM().getState().getName()), AsState.DOWN);
+		assertEquals(AsState.getState(remAs.getLocalFSM().getState().getName()), AsState.DOWN);
 
 		client.stopClient();
 		server.stop();

@@ -35,20 +35,46 @@ public interface M3UAOAMMessages {
 	public static final String INVALID_COMMAND = "Invalid Command";
 
 	public static final String ADD_ASP_TO_AS_SUCESSFULL = "Successfully added ASP name=%s to AS name=%s";
+	
+	public static final String REMOVE_ASP_FROM_AS_SUCESSFULL = "Successfully removed ASP name=%s from AS name=%s";
 
-	public static final String ADD_ASP_TO_AS_FAIL_NO_AS = "No AS found for given name %s";
+	public static final String NO_AS_FOUND = "No AS found for given name %s";
+	
+	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_THIS_AS = "Cannot assign ASP=%s to AS=%s. This ASP is already assigned to this AS";
+	
+	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_AS = "Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS.";
+	
+	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_AS_WITH_NULL_RC = "Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS which has null RoutingContext.";
+	
+	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_AS_TYPE = "Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS of type=%s";
+	
+	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_IPSP_TYPE = "Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS of which has IPSP type=%s";
+	
+	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_AS_EXCHANGETYPE = "Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS of ExchangeType=%s";
+	
+	public static final String ASP_NOT_ASSIGNED_TO_AS = "ASP name=%s not assigned to any AS yet";
 
-	public static final String ADD_ASP_TO_AS_FAIL_NO_ASP = "No ASP found for given name %s";
+	public static final String NO_ASP_FOUND = "No ASP found for given name %s";
+	
+	public static final String ASP_ALREADY_STOPPED = "ASP name=%s already stopped";
+	
+	public static final String ASP_ALREADY_STARTED = "ASP name=%s already started";
 
 	public static final String ASP_START_SUCESSFULL = "Successfully started ASP name=%s";
 
 	public static final String ASP_STOP_SUCESSFULL = "Successfully stopped ASP name=%s";
 
 	public static final String CREATE_AS_SUCESSFULL = "Successfully created AS name=%s";
+	
+	public static final String DESTROY_AS_SUCESSFULL = "Successfully destroyed AS name=%s";
+	
+	public static final String DESTROY_AS_FAILED_ASP_ASSIGNED = "As=%s still has ASP's assigned. Unassign Asp's before destroying this As";
 
 	public static final String CREATE_AS_FAIL_NAME_EXIST = "Creation of AS failed. Other AS with name=%s already exist";
 
 	public static final String CREATE_ASP_SUCESSFULL = "Successfully created ASP name=%s";
+	
+	public static final String DESTROY_ASP_SUCESSFULL = "Successfully destroyed ASP name=%s";
 
 	public static final String CREATE_ASP_FAIL_NAME_EXIST = "Creation of ASP failed. Other ASP with name=%s already exist";
 
@@ -57,8 +83,6 @@ public interface M3UAOAMMessages {
 	public static final String ROUTE_AS_FOR_DPC_EXIST = "AS=%s already routes for DPC=%d";
 
 	public static final String ADD_ROUTE_AS_FOR_DPC_SUCCESSFULL = "AS=%s successfully added as route for DPC=%d";
-
-	public static final String ADD_ROUTE_AS_FOR_DPC_FAIL_NO_AS = "No AS found for given name %s";
 
 	public static final String NO_ROUTE_DEFINED_FOR_DPC = "No route defined for DPC=%d";
 
@@ -75,6 +99,8 @@ public interface M3UAOAMMessages {
 	public static final String NO_AS_DEFINED_YET = "No AS defined yet";
 	
 	public static final String NO_ROUTE_DEFINED_YET = "No Route defined yet";
+	
+	public static final String AS_USED_IN_ROUTE_ERROR = "As=%s used in route=%s. Remove from route";
 	
 	/**
 	 * Generic constants

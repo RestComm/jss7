@@ -865,6 +865,11 @@ public class RemSgFSMTest {
 
 	class TestAssociation implements Association {
 
+		// Is the Association been started by management?
+		private volatile boolean started = false;
+		// Is the Association up (connection is established)
+		protected volatile boolean up = false;
+		
 		private AssociationListener associationListener = null;
 		private String name = null;
 		private LinkedList<M3UAMessage> messageRxFromUserPart = new LinkedList<M3UAMessage>();
@@ -914,7 +919,7 @@ public class RemSgFSMTest {
 
 		@Override
 		public boolean isStarted() {
-			return false;
+			return this.started;
 		}
 
 		@Override
@@ -929,10 +934,13 @@ public class RemSgFSMTest {
 		}
 
 		public void signalCommUp() {
+			this.started = true;
+			this.up = true;
 			this.associationListener.onCommunicationUp(this,1,1);
 		}
 
 		public void signalCommLost() {
+			this.up = false;
 			this.associationListener.onCommunicationLost(this);
 		}
 
@@ -962,8 +970,7 @@ public class RemSgFSMTest {
 		 */
 		@Override
 		public boolean isConnected() {
-			// TODO Auto-generated method stub
-			return false;
+			return this.started && this.up;
 		}
 
 	}

@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.oam;
 
-
 import java.util.List;
 import java.util.Map;
 
@@ -86,11 +85,11 @@ public class M3UAShellExecutorTest {
 
 		m3uaExec.setM3uaManagement(clientM3UAMgmt);
 
-		this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc1");
+		Association sctpAssociation = this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc1");
 
-		// Test creating new AS
+		// Test creating new AS testas
 		String result = m3uaExec.execute("m3ua as create testas AS mode SE rc 100 traffic-mode loadshare".split(" "));
-		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas"), result);
+		assertEquals(result, String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas"));
 
 		// Try adding same again
 		result = m3uaExec.execute("m3ua as create testas AS mode SE rc 100 traffic-mode loadshare".split(" "));
@@ -101,13 +100,11 @@ public class M3UAShellExecutorTest {
 		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas1"), result);
 
 		// Create AS with all params
-		result = m3uaExec.execute("m3ua as create testas2 AS mode DE ipspType CLIENT rc 100 traffic-mode loadshare network-appearance 12"
-				.split(" "));
+		result = m3uaExec.execute("m3ua as create testas2 AS mode DE ipspType CLIENT rc 100 traffic-mode loadshare network-appearance 12".split(" "));
 		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "testas2"), result);
 
 		// Create AS of type IPSP
-		result = m3uaExec.execute("m3ua as create MTUAS IPSP mode DE ipspType server rc 1 traffic-mode loadshare"
-				.split(" "));
+		result = m3uaExec.execute("m3ua as create MTUAS IPSP mode DE ipspType server rc 1 traffic-mode loadshare".split(" "));
 		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "MTUAS"), result);
 
 		// create ASP
@@ -118,24 +115,76 @@ public class M3UAShellExecutorTest {
 		result = m3uaExec.execute("m3ua asp create testasp1 testAssoc1".split(" "));
 		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_NAME_EXIST, "testasp1"), result);
 
+		// Error : Try to start Asp without assiging to any As
+		result = m3uaExec.execute("m3ua asp start testasp1".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.ASP_NOT_ASSIGNED_TO_AS, "testasp1"), result);
+
 		// assign ASP to AS
 		result = m3uaExec.execute("m3ua as add testas testasp1".split(" "));
 		assertEquals(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_SUCESSFULL, "testasp1", "testas"), result);
 
 		// add again
 		result = m3uaExec.execute("m3ua as add testas testasp1".split(" "));
-		assertEquals(String.format("Cannot assign ASP=%s to AS=%s. This ASP is already assigned to this AS",
-				"testasp1", "testas"), result);
-		
-		
-		//Test Routes
+		assertEquals(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_THIS_AS, "testasp1", "testas"), result);
+
+		// Test Routes
 		result = m3uaExec.execute("m3ua route add testas 2 -1 -1".split(" "));
 		assertEquals(String.format(M3UAOAMMessages.ADD_ROUTE_AS_FOR_DPC_SUCCESSFULL, "testas", 2), result);
+
+		// Start Asp
+		result = m3uaExec.execute("m3ua asp start testasp1".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.ASP_START_SUCESSFULL, "testasp1"), result);
+		assertTrue(sctpAssociation.isStarted());
+
+		// manually make Association up
+		((TestAssociation) sctpAssociation).signalCommUp();
+
+		// Error : starting Asp again
+		result = m3uaExec.execute("m3ua asp start testasp1".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.ASP_ALREADY_STARTED, "testasp1"), result);
+
+		// Stop Asp
+		result = m3uaExec.execute("m3ua asp stop testasp1".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.ASP_STOP_SUCESSFULL, "testasp1"), result);
+
+		// Lets wait for 3 seconds so underlying transport is killed
+		Thread.sleep(3500);
+
+		assertTrue(!sctpAssociation.isStarted());
+
+		// manually bring down
+		((TestAssociation) sctpAssociation).signalCommLost();
+
+		// Remove Asp
+		result = m3uaExec.execute("m3ua as remove testas testasp1".split(" "));
+		assertEquals(result, String.format(M3UAOAMMessages.REMOVE_ASP_FROM_AS_SUCESSFULL, "testasp1", "testas"));
+
+		// Destroy Asp
+		result = m3uaExec.execute("m3ua asp destroy testasp1".split(" "));
+		assertEquals(result, String.format(M3UAOAMMessages.DESTROY_ASP_SUCESSFULL, "testasp1"));
+
+		// Error : Destroy As
+		result = m3uaExec.execute("m3ua as destroy testas".split(" "));
+		assertEquals(result, String.format(M3UAOAMMessages.AS_USED_IN_ROUTE_ERROR, "testas", "2:-1:-1"));
+		
+		
+		// Remove route
+		result = m3uaExec.execute("m3ua route remove testas 2 -1 -1".split(" "));
+		assertEquals(String.format(M3UAOAMMessages.REMOVE_AS_ROUTE_FOR_DPC_SUCCESSFULL, "testas", 2), result);
+		
+		// Destroy As
+		result = m3uaExec.execute("m3ua as destroy testas".split(" "));
+		assertEquals(result, String.format(M3UAOAMMessages.DESTROY_AS_SUCESSFULL, "testas"));
 
 		clientM3UAMgmt.stop();
 	}
 
 	class TestAssociation implements Association {
+
+		// Is the Association been started by management?
+		private volatile boolean started = false;
+		// Is the Association up (connection is established)
+		protected volatile boolean up = false;
 
 		private AssociationListener associationListener = null;
 		private String name = null;
@@ -161,7 +210,7 @@ public class M3UAShellExecutorTest {
 
 		@Override
 		public String getName() {
-			return null;
+			return this.name;
 		}
 
 		@Override
@@ -181,7 +230,7 @@ public class M3UAShellExecutorTest {
 
 		@Override
 		public boolean isStarted() {
-			return false;
+			return this.started;
 		}
 
 		@Override
@@ -194,10 +243,12 @@ public class M3UAShellExecutorTest {
 		}
 
 		public void signalCommUp() {
-			this.associationListener.onCommunicationUp(this,1,1);
+			this.up = true;
+			this.associationListener.onCommunicationUp(this, 1, 1);
 		}
 
 		public void signalCommLost() {
+			this.up = false;
 			this.associationListener.onCommunicationLost(this);
 		}
 
@@ -219,15 +270,23 @@ public class M3UAShellExecutorTest {
 			return null;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.mobicents.protocols.api.Association#isConnected()
 		 */
 		@Override
 		public boolean isConnected() {
-			// TODO Auto-generated method stub
-			return false;
+			return started && up;
 		}
 
+		protected void start() {
+			this.started = true;
+		}
+
+		protected void stop() {
+			this.started = false;
+		}
 	}
 
 	class TransportManagement implements Management {
@@ -235,8 +294,7 @@ public class M3UAShellExecutorTest {
 		private FastMap<String, Association> associations = new FastMap<String, Association>();
 
 		@Override
-		public Association addAssociation(String hostAddress, int hostPort, String peerAddress, int peerPort,
-				String assocName) throws Exception {
+		public Association addAssociation(String hostAddress, int hostPort, String peerAddress, int peerPort, String assocName) throws Exception {
 			TestAssociation testAssociation = new TestAssociation(assocName);
 			this.associations.put(assocName, testAssociation);
 			return testAssociation;
@@ -249,8 +307,7 @@ public class M3UAShellExecutorTest {
 		}
 
 		@Override
-		public Association addServerAssociation(String peerAddress, int peerPort, String serverName, String assocName)
-				throws Exception {
+		public Association addServerAssociation(String peerAddress, int peerPort, String serverName, String assocName) throws Exception {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -324,9 +381,11 @@ public class M3UAShellExecutorTest {
 		}
 
 		@Override
-		public void startAssociation(String arg0) throws Exception {
-			// TODO Auto-generated method stub
-
+		public void startAssociation(String assocName) throws Exception {
+			Association association = this.associations.get(assocName);
+			if (association != null) {
+				((TestAssociation) association).start();
+			}
 		}
 
 		@Override
@@ -337,14 +396,15 @@ public class M3UAShellExecutorTest {
 
 		@Override
 		public void stop() throws Exception {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
-		public void stopAssociation(String arg0) throws Exception {
-			// TODO Auto-generated method stub
-
+		public void stopAssociation(String assocName) throws Exception {
+			Association association = this.associations.get(assocName);
+			if (association != null) {
+				((TestAssociation) association).stop();
+			}
 		}
 
 		@Override
@@ -362,26 +422,24 @@ public class M3UAShellExecutorTest {
 		@Override
 		public void setPersistDir(String arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
-		public Association addAssociation(String arg0, int arg1, String arg2,
-				int arg3, String arg4, IpChannelType arg5, String[] extraHostAddresses) throws Exception {
+		public Association addAssociation(String arg0, int arg1, String arg2, int arg3, String arg4, IpChannelType arg5, String[] extraHostAddresses)
+				throws Exception {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		public Server addServer(String arg0, String arg1, int arg2,
-				IpChannelType arg3, String[] extraHostAddresses) throws Exception {
+		public Server addServer(String arg0, String arg1, int arg2, IpChannelType arg3, String[] extraHostAddresses) throws Exception {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		public Association addServerAssociation(String arg0, int arg1,
-				String arg2, String arg3, IpChannelType arg4) throws Exception {
+		public Association addServerAssociation(String arg0, int arg1, String arg2, String arg3, IpChannelType arg4) throws Exception {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -389,7 +447,7 @@ public class M3UAShellExecutorTest {
 		@Override
 		public void removeAllResourses() throws Exception {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 	}

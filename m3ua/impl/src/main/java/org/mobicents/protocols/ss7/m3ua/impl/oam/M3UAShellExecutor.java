@@ -157,7 +157,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 
 		As as = this.m3uaManagement.destroyAs(asName);
 
-		return String.format("Successfully destroyed AS name=%s", asName);
+		return String.format(M3UAOAMMessages.DESTROY_AS_SUCESSFULL, asName);
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 		}
 
 		this.m3uaManagement.unassignAspFromAs(args[3], args[4]);
-		return String.format("Successfully removed ASP name=%s to AS name=%s", args[4], args[3]);
+		return String.format(M3UAOAMMessages.REMOVE_ASP_FROM_AS_SUCESSFULL, args[4], args[3]);
 	}
 
 	private TrafficModeType getTrafficModeType(String mode) {
@@ -338,7 +338,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 
 					String aspName = args[3];
 					this.m3uaManagement.destroyAspFactory(aspName);
-					return String.format("Successfully destroyed ASP name=%s", aspName);
+					return String.format(M3UAOAMMessages.DESTROY_ASP_SUCESSFULL, aspName);
 
 				} else if (raspCmd.equals("show")) {
 					return this.showAspFactories();
@@ -422,7 +422,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 					}
 
 					this.m3uaManagement.removeRoute(dpc, opc, si, asName);
-					return String.format(M3UAOAMMessages.REMOVE_AS_ROUTE_FOR_DPC_SUCCESSFULL, args[4], dpc);
+					return String.format(M3UAOAMMessages.REMOVE_AS_ROUTE_FOR_DPC_SUCCESSFULL, asName, dpc);
 				}
 
 				if (routeCmd.equals("show")) {

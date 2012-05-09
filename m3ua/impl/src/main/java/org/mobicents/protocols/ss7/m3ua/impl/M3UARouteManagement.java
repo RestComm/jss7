@@ -44,7 +44,7 @@ public class M3UARouteManagement {
 
 	private static final Logger logger = Logger.getLogger(M3UARouteManagement.class);
 
-	protected static final String KEY_SEPARATOR = ":";
+	private static final String KEY_SEPARATOR = ":";
 	private static final int WILDCARD = -1;
 
 	private M3UAManagement m3uaManagement = null;
@@ -115,7 +115,7 @@ public class M3UARouteManagement {
 		}
 
 		if (as == null) {
-			throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_NO_AS, asName));
+			throw new Exception(String.format(M3UAOAMMessages.NO_AS_FOUND, asName));
 		}
 
 		String key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR).append(si))
@@ -175,7 +175,7 @@ public class M3UARouteManagement {
 		}
 
 		if (as == null) {
-			throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_NO_AS, asName));
+			throw new Exception(String.format(M3UAOAMMessages.NO_AS_FOUND, asName));
 		}
 
 		String key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR).append(si))

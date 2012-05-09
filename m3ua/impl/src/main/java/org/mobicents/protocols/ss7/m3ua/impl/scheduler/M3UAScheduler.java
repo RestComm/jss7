@@ -36,6 +36,8 @@ public class M3UAScheduler implements Runnable {
 
 	// TODO : Synchronize tasks? Use Iterator?
 	protected FastList<M3UATask> tasks = new FastList<M3UATask>();
+	
+	private FastList<M3UATask> removed = new FastList<M3UATask>();
 
 	public void execute(M3UATask task) {
 		if(task == null){
@@ -50,7 +52,8 @@ public class M3UAScheduler implements Runnable {
 			M3UATask task = n.getValue();
 			// check if has been canceled from different thread.
 			if (task.canceled) {
-				tasks.remove(task);
+				//tasks.delete(n);
+				removed.add(task);
 			} else {
 
 				try {
@@ -66,6 +69,11 @@ public class M3UAScheduler implements Runnable {
 				}
 			}
 			// tempTask = null;
+		}
+		
+		if(this.removed.size() > 0){
+			this.tasks.removeAll(this.removed);
+			this.removed.clear();
 		}
 	}
 }
