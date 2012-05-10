@@ -90,7 +90,8 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 	private JButton btL2;
 	private JButton btL3;
 	private JButton btTestTask;
-	
+	private JButton btTermRemote;
+
 	public SimulatorGuiForm() {
 		setResizable(false);
 		addWindowListener(new WindowAdapter() {
@@ -171,13 +172,17 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 				saveData();
 
 				TestingForm dlg = null;
-				switch (((Instance_L3) cbTestTask.getSelectedItem()).intValue()) {
+				switch (((Instance_TestTask) cbTestTask.getSelectedItem()).intValue()) {
 				case Instance_TestTask.VAL_USSD_TEST_CLIENT: {
-					dlg = new TestUssdClientForm(getJFrame());
+					TestUssdClientForm testUssdClientForm = new TestUssdClientForm(getJFrame());
+					testUssdClientForm.setData(ussdClient);
+					dlg = testUssdClientForm;
 				}
 					break;
 				case Instance_TestTask.VAL_USSD_TEST_SERVER: {
-					dlg = new TestUssdServerForm(getJFrame());
+					TestUssdServerForm testUssdServerForm = new TestUssdServerForm(getJFrame());
+					testUssdServerForm.setData(ussdServer);
+					dlg = testUssdServerForm;
 				}
 					break;
 					
@@ -262,7 +267,7 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 		btTestTask = new JButton(". . .");
 		btTestTask.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				switch (((Instance_L3) cbTestTask.getSelectedItem()).intValue()) {
+				switch (((Instance_TestTask) cbTestTask.getSelectedItem()).intValue()) {
 				case Instance_TestTask.VAL_USSD_TEST_CLIENT: {
 					TestUssdClientParamForm frame = new TestUssdClientParamForm(getJFrame());
 					frame.setData(ussdClient);
@@ -282,9 +287,19 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 		});
 		btTestTask.setBounds(381, 104, 56, 23);
 		panel.add(btTestTask);
+		
+		btTermRemote = new JButton("Terminate remote host and exit");
+		btTermRemote.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				host.quit();
+				getJFrame().dispose();
+			}
+		});
+		btTermRemote.setBounds(10, 192, 297, 23);
+		panel.add(btTermRemote);
 	}
 
-	protected void startHost(String appName, final TesterHost hostImpl, TesterHostMBean host, M3uaManMBean m3ua, SccpManMBean sccp, MapManMBean map,
+	protected void startHost(String appName, boolean isRemote, final TesterHost hostImpl, TesterHostMBean host, M3uaManMBean m3ua, SccpManMBean sccp, MapManMBean map,
 			TestUssdClientManMBean ussdClient, TestUssdServerManMBean ussdServer) {
 		setTitle(getTitle() + appName);
 
@@ -295,6 +310,8 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 		this.map = map;
 		this.ussdClient = ussdClient;
 		this.ussdServer = ussdServer;
+
+		this.btTermRemote.setEnabled(isRemote);
 
 		this.tm = new javax.swing.Timer(1000, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

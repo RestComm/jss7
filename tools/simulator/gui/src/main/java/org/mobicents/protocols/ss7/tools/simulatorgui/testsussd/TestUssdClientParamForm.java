@@ -66,7 +66,7 @@ public class TestUssdClientParamForm extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("USSD test client settings");
-		setBounds(100, 100, 537, 283);
+		setBounds(100, 100, 537, 308);
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -74,7 +74,7 @@ public class TestUssdClientParamForm extends JDialog {
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panel_1.setBounds(10, 11, 511, 76);
+		panel_1.setBounds(10, 11, 511, 131);
 		panel.add(panel_1);
 		panel_1.setLayout(null);
 		
@@ -87,11 +87,11 @@ public class TestUssdClientParamForm extends JDialog {
 		panel_1.add(lblString);
 		
 		JLabel lblNewLabel = new JLabel("AddressNature");
-		lblNewLabel.setBounds(10, 47, 79, 14);
+		lblNewLabel.setBounds(10, 50, 136, 14);
 		panel_1.add(lblNewLabel);
 		
 		JLabel lblNumberingplan = new JLabel("NumberingPlan");
-		lblNumberingplan.setBounds(264, 47, 87, 14);
+		lblNumberingplan.setBounds(10, 81, 136, 14);
 		panel_1.add(lblNumberingplan);
 		
 		tbMsisdnAddress = new JTextField();
@@ -100,29 +100,29 @@ public class TestUssdClientParamForm extends JDialog {
 		tbMsisdnAddress.setColumns(10);
 
 		cbAddressNature = new JComboBox();
-		cbAddressNature.setBounds(99, 44, 140, 20);
+		cbAddressNature.setBounds(156, 47, 294, 20);
 		panel_1.add(cbAddressNature);
 
 		cbNumberingPlan = new JComboBox();
-		cbNumberingPlan.setBounds(361, 44, 140, 20);
+		cbNumberingPlan.setBounds(156, 78, 294, 20);
 		panel_1.add(cbNumberingPlan);
 		
 		JLabel lblDataCodingScheme = new JLabel("Data coding scheme");
-		lblDataCodingScheme.setBounds(10, 98, 149, 14);
+		lblDataCodingScheme.setBounds(10, 153, 149, 14);
 		panel.add(lblDataCodingScheme);
 		
 		JLabel lblNewLabel_1 = new JLabel("Alerting pattern value (-1 means does not use AlertingPattern)");
-		lblNewLabel_1.setBounds(10, 129, 339, 14);
+		lblNewLabel_1.setBounds(10, 184, 384, 14);
 		panel.add(lblNewLabel_1);
 		
 		tbDataCodingScheme = new JTextField();
-		tbDataCodingScheme.setBounds(423, 95, 86, 20);
+		tbDataCodingScheme.setBounds(423, 150, 86, 20);
 		panel.add(tbDataCodingScheme);
 		tbDataCodingScheme.setColumns(10);
 		
 		tbAlertingPattern = new JTextField();
 		tbAlertingPattern.setColumns(10);
-		tbAlertingPattern.setBounds(423, 126, 86, 20);
+		tbAlertingPattern.setBounds(423, 181, 86, 20);
 		panel.add(tbAlertingPattern);
 		
 		JButton button = new JButton("Load default values for side A");
@@ -131,7 +131,7 @@ public class TestUssdClientParamForm extends JDialog {
 				loadDataA();
 			}
 		});
-		button.setBounds(10, 180, 200, 23);
+		button.setBounds(10, 212, 256, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("Load default values for side B");
@@ -140,7 +140,7 @@ public class TestUssdClientParamForm extends JDialog {
 				loadDataB();
 			}
 		});
-		button_1.setBounds(224, 180, 200, 23);
+		button_1.setBounds(276, 212, 245, 23);
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("Reload");
@@ -149,7 +149,7 @@ public class TestUssdClientParamForm extends JDialog {
 				reloadData();
 			}
 		});
-		button_2.setBounds(10, 214, 144, 23);
+		button_2.setBounds(10, 246, 144, 23);
 		panel.add(button_2);
 		
 		JButton button_3 = new JButton("Save");
@@ -160,7 +160,7 @@ public class TestUssdClientParamForm extends JDialog {
 				}
 			}
 		});
-		button_3.setBounds(180, 214, 117, 23);
+		button_3.setBounds(277, 246, 117, 23);
 		panel.add(button_3);
 		
 		JButton button_4 = new JButton("Cancel");
@@ -169,7 +169,7 @@ public class TestUssdClientParamForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		button_4.setBounds(307, 214, 117, 23);
+		button_4.setBounds(404, 246, 117, 23);
 		panel.add(button_4);
 	}
 

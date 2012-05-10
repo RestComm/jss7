@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.tools.simulator.level1;
 
 
-
 /**
  * 
  * @author sergey vetyutnev

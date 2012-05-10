@@ -22,7 +22,10 @@
 
 package org.mobicents.protocols.ss7.tools.simulatorgui.testsussd;
 
+import javax.management.Notification;
 import javax.swing.JFrame;
+
+import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulatorgui.TestingForm;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
@@ -30,6 +33,9 @@ import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import javax.swing.JTextField;
 import java.awt.Insets;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /**
  * 
@@ -37,9 +43,14 @@ import java.awt.Insets;
  * 
  */
 public class TestUssdClientForm extends TestingForm {
+
 	private static final long serialVersionUID = 5761747864020450945L;
 
-	private JTextField textField;
+	private JTextField tbMessage;
+	private JLabel lbResult;
+	private JLabel lbMessage;
+
+	private TestUssdClientManMBean ussdClient; 
 
 	public TestUssdClientForm(JFrame owner) {
 		super(owner);
@@ -48,12 +59,12 @@ public class TestUssdClientForm extends TestingForm {
 		panel_c.add(panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0, 0, 0};
-		gbl_panel.rowHeights = new int[]{0, 0, 0};
+		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
 		gbl_panel.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
-		JLabel lblNewLabel = new JLabel("Msisdn address");
+		JLabel lblNewLabel = new JLabel("Message text");
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel.anchor = GridBagConstraints.EAST;
@@ -61,20 +72,106 @@ public class TestUssdClientForm extends TestingForm {
 		gbc_lblNewLabel.gridy = 0;
 		panel.add(lblNewLabel, gbc_lblNewLabel);
 		
-		textField = new JTextField();
-		GridBagConstraints gbc_textField = new GridBagConstraints();
-		gbc_textField.insets = new Insets(0, 0, 5, 0);
-		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField.gridx = 1;
-		gbc_textField.gridy = 0;
-		panel.add(textField, gbc_textField);
-		textField.setColumns(10);
+		tbMessage = new JTextField();
+		GridBagConstraints gbc_tbMessage = new GridBagConstraints();
+		gbc_tbMessage.insets = new Insets(0, 0, 5, 0);
+		gbc_tbMessage.fill = GridBagConstraints.HORIZONTAL;
+		gbc_tbMessage.gridx = 1;
+		gbc_tbMessage.gridy = 0;
+		panel.add(tbMessage, gbc_tbMessage);
+		tbMessage.setColumns(10);
 		
-		JLabel lblAddressNature = new JLabel("Msisdn Address Nature");
-		GridBagConstraints gbc_lblAddressNature = new GridBagConstraints();
-		gbc_lblAddressNature.insets = new Insets(0, 0, 0, 5);
-		gbc_lblAddressNature.gridx = 0;
-		gbc_lblAddressNature.gridy = 1;
-		panel.add(lblAddressNature, gbc_lblAddressNature);
+		JButton btSendProcessunstructuredrequest = new JButton("Send ProcessUnstructuredRequest");
+		btSendProcessunstructuredrequest.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				sendProcessUnstructuredRequest();
+			}
+		});
+		GridBagConstraints gbc_btSendProcessunstructuredrequest = new GridBagConstraints();
+		gbc_btSendProcessunstructuredrequest.insets = new Insets(0, 0, 5, 0);
+		gbc_btSendProcessunstructuredrequest.gridx = 1;
+		gbc_btSendProcessunstructuredrequest.gridy = 1;
+		panel.add(btSendProcessunstructuredrequest, gbc_btSendProcessunstructuredrequest);
+		
+		JButton btSendUnstructuredresponse = new JButton("Send UnstructuredResponse");
+		btSendUnstructuredresponse.addActionListener(new ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent e) {
+				sendUnstructuredResponse();
+			}
+		});
+		GridBagConstraints gbc_btSendUnstructuredresponse = new GridBagConstraints();
+		gbc_btSendUnstructuredresponse.insets = new Insets(0, 0, 5, 0);
+		gbc_btSendUnstructuredresponse.gridx = 1;
+		gbc_btSendUnstructuredresponse.gridy = 2;
+		panel.add(btSendUnstructuredresponse, gbc_btSendUnstructuredresponse);
+		
+		JLabel lblOperationResult = new JLabel("Operation result");
+		GridBagConstraints gbc_lblOperationResult = new GridBagConstraints();
+		gbc_lblOperationResult.insets = new Insets(0, 0, 5, 5);
+		gbc_lblOperationResult.gridx = 0;
+		gbc_lblOperationResult.gridy = 3;
+		panel.add(lblOperationResult, gbc_lblOperationResult);
+		
+		JButton btCloseCurrentDialog = new JButton("Close current Dialog");
+		btCloseCurrentDialog.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				closeCurrentDialog();
+			}
+		});
+		GridBagConstraints gbc_btCloseCurrentDialog = new GridBagConstraints();
+		gbc_btCloseCurrentDialog.insets = new Insets(0, 0, 5, 0);
+		gbc_btCloseCurrentDialog.gridx = 1;
+		gbc_btCloseCurrentDialog.gridy = 3;
+		panel.add(btCloseCurrentDialog, gbc_btCloseCurrentDialog);
+		
+		lbResult = new JLabel("-");
+		GridBagConstraints gbc_lbResult = new GridBagConstraints();
+		gbc_lbResult.insets = new Insets(0, 0, 5, 0);
+		gbc_lbResult.gridx = 1;
+		gbc_lbResult.gridy = 4;
+		panel.add(lbResult, gbc_lbResult);
+		
+		JLabel lblMessageReceived = new JLabel("Message received");
+		GridBagConstraints gbc_lblMessageReceived = new GridBagConstraints();
+		gbc_lblMessageReceived.insets = new Insets(0, 0, 0, 5);
+		gbc_lblMessageReceived.gridx = 0;
+		gbc_lblMessageReceived.gridy = 5;
+		panel.add(lblMessageReceived, gbc_lblMessageReceived);
+		
+		lbMessage = new JLabel("-");
+		GridBagConstraints gbc_lbMessage = new GridBagConstraints();
+		gbc_lbMessage.gridx = 1;
+		gbc_lbMessage.gridy = 5;
+		panel.add(lbMessage, gbc_lbMessage);
+	}
+
+	public void setData(TestUssdClientManMBean ussdClient) {
+		this.ussdClient = ussdClient;
+	}
+
+	private void sendProcessUnstructuredRequest() {
+		String msg = this.tbMessage.getText();
+		String res = this.ussdClient.performProcessUnstructuredRequest(msg);
+		this.lbResult.setText(res);
+	}
+
+	private void sendUnstructuredResponse() {
+		String msg = this.tbMessage.getText();
+		String res = this.ussdClient.performUnstructuredResponse(msg);
+		this.lbResult.setText(res);
+	}
+
+	private void closeCurrentDialog() {
+		String res = this.ussdClient.closeCurrentDialog();
+		this.lbResult.setText(res);
+	}
+
+	@Override
+	public void sendNotif(Notification notif) {
+		super.sendNotif(notif);
+
+		int i1=0;
+		i1++;
 	}
 }
+

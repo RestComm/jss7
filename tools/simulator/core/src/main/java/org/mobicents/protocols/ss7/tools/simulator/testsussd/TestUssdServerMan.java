@@ -83,14 +83,14 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 	private static final String AUTO_RESPONSE_STRING = "autoResponseString";
 	private static final String AUTO_UNSTRUCTURED_SS_REQUEST_STRING = "autoUnstructured_SS_RequestString";
 
-	private String msisdnAddress;
-	private AddressNature msisdnAddressNature;
-	private NumberingPlan msisdnNumberingPlan;
-	private int dataCodingScheme;
-	private int alertingPattern;
-	private ProcessSsRequestAction processSsRequestAction;
-	private String autoResponseString;
-	private String autoUnstructured_SS_RequestString;
+	private String msisdnAddress = "";
+	private AddressNature msisdnAddressNature = AddressNature.international_number;
+	private NumberingPlan msisdnNumberingPlan = NumberingPlan.ISDN;
+	private int dataCodingScheme = 0x0F;
+	private int alertingPattern = -1;
+	private ProcessSsRequestAction processSsRequestAction = new ProcessSsRequestAction(ProcessSsRequestAction.VAL_MANUAL_RESPONSE);
+	private String autoResponseString = "";
+	private String autoUnstructured_SS_RequestString = "";
 
 	private final String name;
 	private TesterHost testerHost;
@@ -141,6 +141,11 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 	}
 
 	@Override
+	public String getMsisdnAddressNature_Value() {
+		return msisdnAddressNature.toString();
+	}
+
+	@Override
 	public void setMsisdnAddressNature(AddressNatureType val) {
 		msisdnAddressNature = AddressNature.getInstance(val.intValue());
 		this.testerHost.markStore();
@@ -152,8 +157,13 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 	}
 
 	@Override
+	public String getMsisdnNumberingPlan_Value() {
+		return msisdnNumberingPlan.toString();
+	}
+
+	@Override
 	public void setMsisdnNumberingPlan(NumberingPlanType val) {
-		msisdnAddressNature = AddressNature.getInstance(val.intValue());
+		msisdnNumberingPlan = msisdnNumberingPlan.getInstance(val.intValue());
 		this.testerHost.markStore();
 	}
 
@@ -185,6 +195,11 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 	}
 
 	@Override
+	public String getProcessSsRequestAction_Value() {
+		return processSsRequestAction.toString();
+	}
+
+	@Override
 	public void setProcessSsRequestAction(ProcessSsRequestAction val) {
 		processSsRequestAction = val;
 		this.testerHost.markStore();
@@ -212,7 +227,27 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		this.testerHost.markStore();
 	}
 
-	
+	@Override
+	public void putMsisdnAddressNature(String val) {
+		AddressNatureType x = AddressNatureType.createInstance(val);
+		if (x != null)
+			this.setMsisdnAddressNature(x);
+	}
+
+	@Override
+	public void putMsisdnNumberingPlan(String val) {
+		NumberingPlanType x = NumberingPlanType.createInstance(val);
+		if (x != null)
+			this.setMsisdnNumberingPlan(x);
+	}
+
+	@Override
+	public void putProcessSsRequestAction(String val) {
+		ProcessSsRequestAction x = ProcessSsRequestAction.createInstance(val);
+		if (x != null)
+			this.setProcessSsRequestAction(x);
+	}
+
 	@Override
 	public String getCurrentRequestDef() {
 		if (this.currentDialog != null)

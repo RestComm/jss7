@@ -74,7 +74,7 @@ public class M3uaForm extends JDialog {
 		
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
-		setBounds(100, 100, 488, 552);
+		setBounds(100, 100, 534, 552);
 		setTitle("M3UA settings");
 		
 		JPanel panel = new JPanel();
@@ -112,7 +112,7 @@ public class M3uaForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		btnCance.setBounds(307, 490, 117, 23);
+		btnCance.setBounds(401, 490, 117, 23);
 		panel.add(btnCance);
 		
 		JButton btnSave = new JButton("Save");
@@ -123,7 +123,7 @@ public class M3uaForm extends JDialog {
 				}
 			}
 		});
-		btnSave.setBounds(180, 490, 117, 23);
+		btnSave.setBounds(274, 490, 117, 23);
 		panel.add(btnSave);
 
 		JButton btLoadA = new JButton("Load default values for side A");
@@ -132,7 +132,7 @@ public class M3uaForm extends JDialog {
 				loadDataA();
 			}
 		});
-		btLoadA.setBounds(10, 456, 200, 23);
+		btLoadA.setBounds(10, 456, 254, 23);
 		panel.add(btLoadA);
 
 		JButton btLoadB = new JButton("Load default values for side B");
@@ -141,7 +141,7 @@ public class M3uaForm extends JDialog {
 				loadDataB();
 			}
 		});
-		btLoadB.setBounds(224, 456, 200, 23);
+		btLoadB.setBounds(274, 456, 244, 23);
 		panel.add(btLoadB);
 
 		JButton btReload = new JButton("Reload");

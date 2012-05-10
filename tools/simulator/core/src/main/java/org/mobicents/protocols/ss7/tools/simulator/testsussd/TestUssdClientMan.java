@@ -79,7 +79,7 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	private static final String DATA_CODING_SCHEME = "dataCodingScheme";
 	private static final String ALERTING_PATTERN = "alertingPattern";
 
-	private String msisdnAddress = "1234";
+	private String msisdnAddress = "";
 	private AddressNature msisdnAddressNature = AddressNature.international_number;
 	private NumberingPlan msisdnNumberingPlan = NumberingPlan.ISDN;
 	private int dataCodingScheme = 0x0F;
@@ -133,6 +133,11 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	}
 
 	@Override
+	public String getMsisdnAddressNature_Value() {
+		return msisdnAddressNature.toString();
+	}
+
+	@Override
 	public void setMsisdnAddressNature(AddressNatureType val) {
 		msisdnAddressNature = AddressNature.getInstance(val.intValue());
 		this.testerHost.markStore();
@@ -144,8 +149,13 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	}
 
 	@Override
+	public String getMsisdnNumberingPlan_Value() {
+		return msisdnNumberingPlan.toString();
+	}
+
+	@Override
 	public void setMsisdnNumberingPlan(NumberingPlanType val) {
-		msisdnAddressNature = AddressNature.getInstance(val.intValue());
+		msisdnNumberingPlan = NumberingPlan.getInstance(val.intValue());
 		this.testerHost.markStore();
 	}
 
@@ -169,6 +179,20 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	public void setAlertingPattern(int val) {
 		alertingPattern = val;
 		this.testerHost.markStore();
+	}
+
+	@Override
+	public void putMsisdnAddressNature(String val) {
+		AddressNatureType x = AddressNatureType.createInstance(val);
+		if (x != null)
+			this.setMsisdnAddressNature(x);
+	}
+
+	@Override
+	public void putMsisdnNumberingPlan(String val) {
+		NumberingPlanType x = NumberingPlanType.createInstance(val);
+		if (x != null)
+			this.setMsisdnNumberingPlan(x);
 	}
 
 	@Override

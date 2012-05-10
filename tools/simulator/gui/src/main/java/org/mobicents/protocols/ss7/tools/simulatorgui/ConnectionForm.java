@@ -48,7 +48,9 @@ import org.mobicents.protocols.ss7.tools.simulator.level3.MapManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHostMBean;
 import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdClientMan;
+import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdServerMan;
+import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdServerManMBean;
 
 /**
  * 
@@ -154,7 +156,7 @@ public class ConnectionForm extends JFrame {
 		// starting the main form
 		SimulatorGuiForm frame = new SimulatorGuiForm();
 		host.addNotificationListener(frame, null, null);
-		frame.startHost(appName + "-local", host, host, host.getM3uaMan(), host.getSccpMan(), host.getMapMan(), host.getTestUssdClientMan(),
+		frame.startHost(appName + "-local", false, host, host, host.getM3uaMan(), host.getSccpMan(), host.getMapMan(), host.getTestUssdClientMan(),
 				host.getTestUssdServerMan());
 		frame.setVisible(true);
 
@@ -192,9 +194,9 @@ public class ConnectionForm extends JFrame {
 			ObjectName mbeanNameMap = new ObjectName(tagDomain + ":type=MapMan");
 			MapManMBean map = JMX.newMBeanProxy(mbsc, mbeanNameMap, MapManMBean.class, false);
 			ObjectName mbeanNameUssdClient = new ObjectName(tagDomain + ":type=TestUssdClientMan");
-			TestUssdClientMan ussdClient = JMX.newMBeanProxy(mbsc, mbeanNameUssdClient, TestUssdClientMan.class, false);
+			TestUssdClientManMBean ussdClient = JMX.newMBeanProxy(mbsc, mbeanNameUssdClient, TestUssdClientManMBean.class, false);
 			ObjectName mbeanNameUssdServer = new ObjectName(tagDomain + ":type=TestUssdServerMan");
-			TestUssdServerMan ussdServer = JMX.newMBeanProxy(mbsc, mbeanNameUssdServer, TestUssdServerMan.class, false);
+			TestUssdServerManMBean ussdServer = JMX.newMBeanProxy(mbsc, mbeanNameUssdServer, TestUssdServerManMBean.class, false);
 
 			// checking if MBean is workable
 			host.getInstance_L1_Value();
@@ -202,7 +204,7 @@ public class ConnectionForm extends JFrame {
 			// starting the main form
 			SimulatorGuiForm frame = new SimulatorGuiForm();
 			mbsc.addNotificationListener(mbeanNameTesterHost, frame, null, null);
-			frame.startHost(appName + "-remote", null, host, m3ua, sccp, map, ussdClient, ussdServer);
+			frame.startHost(appName + "-remote", true, null, host, m3ua, sccp, map, ussdClient, ussdServer);
 			frame.setVisible(true);
 
 			// closing the connection form

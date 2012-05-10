@@ -57,7 +57,7 @@ public class SccpForm extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("SCCP settings");
-		setBounds(100, 100, 489, 261);
+		setBounds(100, 100, 514, 261);
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -105,7 +105,7 @@ public class SccpForm extends JDialog {
 				loadDataA();
 			}
 		});
-		button.setBounds(10, 145, 200, 23);
+		button.setBounds(10, 145, 245, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("Load default values for side B");
@@ -114,7 +114,7 @@ public class SccpForm extends JDialog {
 				loadDataB();
 			}
 		});
-		button_1.setBounds(224, 145, 200, 23);
+		button_1.setBounds(265, 145, 234, 23);
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("Reload");
@@ -134,7 +134,7 @@ public class SccpForm extends JDialog {
 				}
 			}
 		});
-		button_3.setBounds(180, 179, 117, 23);
+		button_3.setBounds(255, 179, 117, 23);
 		panel.add(button_3);
 		
 		JButton button_4 = new JButton("Cancel");
@@ -143,7 +143,7 @@ public class SccpForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		button_4.setBounds(307, 179, 117, 23);
+		button_4.setBounds(382, 179, 117, 23);
 		panel.add(button_4);
 	}
 
@@ -203,9 +203,9 @@ public class SccpForm extends JDialog {
 		}
 		try {
 			remoteSsn = Integer.parseInt(tbRemoteSsn.getText());
-			return false;
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, "Exception when parsing RemoteSsn value: " + e.toString());
+			return false;
 		}
 
 		this.sccp.setDpc(dpc);

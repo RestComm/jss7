@@ -67,7 +67,7 @@ public class TestUssdServerParamForm extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("USSD test server settings");
-		setBounds(100, 100, 539, 380);
+		setBounds(100, 100, 539, 468);
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -75,7 +75,7 @@ public class TestUssdServerParamForm extends JDialog {
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setLayout(null);
-		panel_1.setBounds(10, 11, 511, 76);
+		panel_1.setBounds(10, 11, 511, 121);
 		panel.add(panel_1);
 		
 		JLabel label = new JLabel("Msisdn value");
@@ -87,42 +87,42 @@ public class TestUssdServerParamForm extends JDialog {
 		panel_1.add(label_1);
 		
 		JLabel label_2 = new JLabel("AddressNature");
-		label_2.setBounds(10, 47, 79, 14);
+		label_2.setBounds(10, 53, 103, 14);
 		panel_1.add(label_2);
 		
 		JLabel label_3 = new JLabel("NumberingPlan");
-		label_3.setBounds(264, 47, 87, 14);
+		label_3.setBounds(10, 84, 103, 14);
 		panel_1.add(label_3);
 		
 		tbMsisdnAddress = new JTextField();
 		tbMsisdnAddress.setColumns(10);
-		tbMsisdnAddress.setBounds(99, 19, 402, 20);
+		tbMsisdnAddress.setBounds(123, 19, 378, 20);
 		panel_1.add(tbMsisdnAddress);
 		
 		cbAddressNature = new JComboBox();
-		cbAddressNature.setBounds(99, 44, 140, 20);
+		cbAddressNature.setBounds(123, 50, 266, 20);
 		panel_1.add(cbAddressNature);
 		
 		cbNumberingPlan = new JComboBox();
-		cbNumberingPlan.setBounds(361, 44, 140, 20);
+		cbNumberingPlan.setBounds(123, 81, 266, 20);
 		panel_1.add(cbNumberingPlan);
 		
 		JLabel label_4 = new JLabel("Data coding scheme");
-		label_4.setBounds(10, 98, 149, 14);
+		label_4.setBounds(10, 143, 149, 14);
 		panel.add(label_4);
 		
 		tbDataCodingScheme = new JTextField();
 		tbDataCodingScheme.setColumns(10);
-		tbDataCodingScheme.setBounds(423, 95, 86, 20);
+		tbDataCodingScheme.setBounds(423, 140, 86, 20);
 		panel.add(tbDataCodingScheme);
 		
 		tbAlertingPattern = new JTextField();
 		tbAlertingPattern.setColumns(10);
-		tbAlertingPattern.setBounds(423, 126, 86, 20);
+		tbAlertingPattern.setBounds(423, 171, 86, 20);
 		panel.add(tbAlertingPattern);
 		
 		JLabel label_5 = new JLabel("Alerting pattern value (-1 means does not use AlertingPattern)");
-		label_5.setBounds(10, 129, 339, 14);
+		label_5.setBounds(10, 174, 403, 14);
 		panel.add(label_5);
 		
 		JButton button = new JButton("Load default values for side A");
@@ -131,7 +131,7 @@ public class TestUssdServerParamForm extends JDialog {
 				loadDataA();
 			}
 		});
-		button.setBounds(10, 274, 200, 23);
+		button.setBounds(10, 374, 246, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("Load default values for side B");
@@ -140,7 +140,7 @@ public class TestUssdServerParamForm extends JDialog {
 				loadDataB();
 			}
 		});
-		button_1.setBounds(224, 274, 200, 23);
+		button_1.setBounds(266, 374, 255, 23);
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("Cancel");
@@ -149,7 +149,7 @@ public class TestUssdServerParamForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		button_2.setBounds(307, 308, 117, 23);
+		button_2.setBounds(404, 408, 117, 23);
 		panel.add(button_2);
 		
 		JButton button_3 = new JButton("Save");
@@ -160,7 +160,7 @@ public class TestUssdServerParamForm extends JDialog {
 				}
 			}
 		});
-		button_3.setBounds(180, 308, 117, 23);
+		button_3.setBounds(180, 408, 117, 23);
 		panel.add(button_3);
 		
 		JButton button_4 = new JButton("Reload");
@@ -169,34 +169,34 @@ public class TestUssdServerParamForm extends JDialog {
 				reloadData();
 			}
 		});
-		button_4.setBounds(10, 308, 144, 23);
+		button_4.setBounds(10, 408, 144, 23);
 		panel.add(button_4);
 		
-		JLabel lblProcessssrequestaction = new JLabel("<html>The action when processing<br>ProcessSsRequest</html>");
-		lblProcessssrequestaction.setBounds(10, 155, 188, 34);
+		JLabel lblProcessssrequestaction = new JLabel("The action when processing ProcessSsRequest");
+		lblProcessssrequestaction.setBounds(10, 200, 499, 23);
 		panel.add(lblProcessssrequestaction);
 		
 		cbProcessSsRequestAction = new JComboBox();
 		cbProcessSsRequestAction.setToolTipText("<html>\r\nAction which be performed when ProcessSsUnstructuredRequest has been received. When manual response user must manually send a response or SsUnstructuredRequest to the UssdClient. \r\n<br>\r\nOther actions are: auto sending \"AutoResponseString\" as a response, \r\n<br>\r\nauto sending \"AutoUnstructured_SS_RequestString\" as a SsUnstructuredRequest and then auto sending \"AutoResponseString\" as a response to SsUnstructured response\r\n</html>");
-		cbProcessSsRequestAction.setBounds(226, 155, 283, 20);
+		cbProcessSsRequestAction.setBounds(10, 234, 511, 20);
 		panel.add(cbProcessSsRequestAction);
 		
 		tbAutoResponseString = new JTextField();
 		tbAutoResponseString.setColumns(10);
-		tbAutoResponseString.setBounds(266, 200, 255, 20);
+		tbAutoResponseString.setBounds(10, 287, 511, 20);
 		panel.add(tbAutoResponseString);
 		
 		JLabel lblAutuString = new JLabel("String of auto processUnsructuresSsResponse");
-		lblAutuString.setBounds(10, 203, 246, 14);
+		lblAutuString.setBounds(10, 265, 324, 14);
 		panel.add(lblAutuString);
 		
 		JLabel lblStringOfAuto = new JLabel("String of auto unsructuresSsRequest");
-		lblStringOfAuto.setBounds(10, 234, 246, 14);
+		lblStringOfAuto.setBounds(10, 318, 339, 14);
 		panel.add(lblStringOfAuto);
 		
 		tbAutoUnstructured_SS_RequestString = new JTextField();
 		tbAutoUnstructured_SS_RequestString.setColumns(10);
-		tbAutoUnstructured_SS_RequestString.setBounds(266, 231, 255, 20);
+		tbAutoUnstructured_SS_RequestString.setBounds(10, 343, 511, 20);
 		panel.add(tbAutoUnstructured_SS_RequestString);
 	}
 

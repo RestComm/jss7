@@ -38,9 +38,13 @@ public interface TestUssdServerManMBean {
 
 	public AddressNatureType getMsisdnAddressNature();
 
+	public String getMsisdnAddressNature_Value();
+
 	public void setMsisdnAddressNature(AddressNatureType val);
 
 	public NumberingPlanType getMsisdnNumberingPlan();
+
+	public String getMsisdnNumberingPlan_Value();
 
 	public void setMsisdnNumberingPlan(NumberingPlanType val);
 
@@ -52,8 +56,10 @@ public interface TestUssdServerManMBean {
 
 	public void setAlertingPattern(int val);
 
-
+	
 	public ProcessSsRequestAction getProcessSsRequestAction();
+
+	public String getProcessSsRequestAction_Value();
 
 	public void setProcessSsRequestAction(ProcessSsRequestAction val);
 
@@ -77,6 +83,11 @@ public interface TestUssdServerManMBean {
 
 	public String closeCurrentDialog();
 
-}
+	public void putMsisdnAddressNature(String val);
 
+	public void putMsisdnNumberingPlan(String val);
+
+	public void putProcessSsRequestAction(String val);
+
+}
 

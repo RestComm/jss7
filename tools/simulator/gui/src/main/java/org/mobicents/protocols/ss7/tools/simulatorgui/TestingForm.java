@@ -65,7 +65,7 @@ public class TestingForm extends JDialog {
 	private javax.swing.Timer tm;
 
 	private JPanel panel;
-	private TesterHostMBean host;
+	protected TesterHostMBean host;
 	private JTextField tbL1State;
 	private JTable tNotif;
 	private JButton btStart;

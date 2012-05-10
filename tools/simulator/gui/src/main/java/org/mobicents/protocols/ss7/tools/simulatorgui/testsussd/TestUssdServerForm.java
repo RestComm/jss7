@@ -23,7 +23,7 @@
 package org.mobicents.protocols.ss7.tools.simulatorgui.testsussd;
 
 import javax.swing.JFrame;
-
+import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdServerManMBean;
 import org.mobicents.protocols.ss7.tools.simulatorgui.TestingForm;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -38,6 +38,8 @@ public class TestUssdServerForm extends TestingForm {
 
 	private static final long serialVersionUID = -3323069535001828614L;
 
+	private TestUssdServerManMBean ussdServer; 
+
 	public TestUssdServerForm(JFrame owner) {
 		super(owner);
 		
@@ -49,6 +51,10 @@ public class TestUssdServerForm extends TestingForm {
 		gbl_panel.columnWeights = new double[]{Double.MIN_VALUE};
 		gbl_panel.rowWeights = new double[]{Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
+	}
+
+	public void setData(TestUssdServerManMBean ussdServer) {
+		this.ussdServer = ussdServer;
 	}
 
 }

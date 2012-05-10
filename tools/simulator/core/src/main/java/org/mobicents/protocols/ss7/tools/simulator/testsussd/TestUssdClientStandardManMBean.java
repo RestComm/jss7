@@ -48,7 +48,9 @@ public class TestUssdClientStandardManMBean extends StandardMBean {
 		MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[] { 
 				new MBeanAttributeInfo("MsisdnAddress", String.class.getName(), "Msisdn parameter: string", true, true, false),
 				new MBeanAttributeInfo("MsisdnAddressNature", AddressNatureType.class.getName(), "Msisdn parameter: AddressNature", true, true, false),
+				new MBeanAttributeInfo("MsisdnAddressNature_Value", String.class.getName(), "Msisdn parameter: AddressNature", true, false, false),
 				new MBeanAttributeInfo("MsisdnNumberingPlan", NumberingPlanType.class.getName(), "Msisdn parameter: NumberingPlan", true, true, false),
+				new MBeanAttributeInfo("MsisdnNumberingPlan_Value", String.class.getName(), "Msisdn parameter: NumberingPlan", true, false, false),
 				new MBeanAttributeInfo("DataCodingScheme", int.class.getName(), "USSD DataCodingScheme (default value: 15)", true, true, false),
 				new MBeanAttributeInfo("AlertingPattern", int.class.getName(), "AlertingPattern value (-1 means no AlertingPattern parameter)", true, true, false),
 				new MBeanAttributeInfo("CurrentRequestDef", String.class.getName(), "Definition of the current request Dialog", true, false, false),
@@ -60,6 +62,13 @@ public class TestUssdClientStandardManMBean extends StandardMBean {
 				new MBeanOperationInfo("performProcessUnstructuredRequest", "Send ProcessUnstructedSs request", signString, String.class.getName(), MBeanOperationInfo.ACTION),
 				new MBeanOperationInfo("performUnstructuredResponse", "Send UnstructedSs response", signString, String.class.getName(), MBeanOperationInfo.ACTION),
 				new MBeanOperationInfo("closeCurrentDialog", "Closing the current dialog", null, String.class.getName(), MBeanOperationInfo.ACTION),
+
+				new MBeanOperationInfo("putMsisdnAddressNature", "Msisdn parameter: AddressNature: "
+						+ "0:unknown,1:international_number,2:national_significant_number,3:network_specific_number,4:subscriber_number,5:reserved,6:abbreviated_number,7:reserved_for_extension", 
+						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("putMsisdnNumberingPlan", "Msisdn parameter: NumberingPlan: " + 
+						"0:unknown,1:ISDN,2:spare_2,3:data,4:telex,5:spare_5,6:land_mobile,7:spare_7,8:national,9:private_plan,15:reserved", 
+						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
 		};
 
 		return new MBeanInfo(TestUssdClientMan.class.getName(), "UssdClient test parameters management", attributes, null, operations, null);

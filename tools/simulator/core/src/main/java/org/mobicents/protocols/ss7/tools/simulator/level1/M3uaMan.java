@@ -25,7 +25,6 @@ package org.mobicents.protocols.ss7.tools.simulator.level1;
 import javolution.util.FastList;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
-
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.sctp.ManagementImpl;
@@ -45,7 +44,6 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
-import org.omg.PortableServer.POAManagerPackage.State;
 
 /**
  * 
@@ -465,19 +463,21 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		this.sctpManagement.removeAllResourses();
 
 		// init M3UA stack
-//		this.m3uaMgmt = new M3UAManagement("SimM3uaServer_" + name);
-//		this.m3uaMgmt.setTransportManagement(this.sctpManagement);
-////		this.m3uaMgmt.addMtp3UserPartListener(mtp3UserPartListener);
-//		this.m3uaMgmt.start();
-//		this.m3uaMgmt.getAppServers().clear();
-//		this.m3uaMgmt.getAspfactories().clear();
-//		this.m3uaMgmt.stop();
+		// ..............................
+		this.m3uaMgmt = new M3UAManagement("SimM3uaServer_" + name);
+		this.m3uaMgmt.setTransportManagement(this.sctpManagement);
+//		this.m3uaMgmt.addMtp3UserPartListener(mtp3UserPartListener);
+		this.m3uaMgmt.start();
+		this.m3uaMgmt.getAppServers().clear();
+		this.m3uaMgmt.getAspfactories().clear();
+		this.m3uaMgmt.stop();
 
 		this.m3uaMgmt = new M3UAManagement("SimM3uaServer_" + name);
 		this.m3uaMgmt.setTransportManagement(this.sctpManagement);
 //		this.m3uaMgmt.addMtp3UserPartListener(mtp3UserPartListener);
 		this.m3uaMgmt.start();
-		this.m3uaMgmt.removeAllResourses();
+//		this.m3uaMgmt.removeAllResourses();
+		// ..............................
 
 		// configure SCTP stack
 		String SERVER_NAME = "Server_" + name;

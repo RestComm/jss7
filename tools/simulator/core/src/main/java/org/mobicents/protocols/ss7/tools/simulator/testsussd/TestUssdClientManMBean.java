@@ -38,9 +38,13 @@ public interface TestUssdClientManMBean {
 
 	public AddressNatureType getMsisdnAddressNature();
 
+	public String getMsisdnAddressNature_Value();
+
 	public void setMsisdnAddressNature(AddressNatureType val);
 
 	public NumberingPlanType getMsisdnNumberingPlan();
+
+	public String getMsisdnNumberingPlan_Value();
 
 	public void setMsisdnNumberingPlan(NumberingPlanType val);
 
@@ -61,5 +65,9 @@ public interface TestUssdClientManMBean {
 	public String performUnstructuredResponse(String msg);
 
 	public String closeCurrentDialog();
+
+	public void putMsisdnAddressNature(String val);
+
+	public void putMsisdnNumberingPlan(String val);
 
 }

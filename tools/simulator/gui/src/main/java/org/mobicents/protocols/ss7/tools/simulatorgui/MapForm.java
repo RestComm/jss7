@@ -59,7 +59,7 @@ public class MapForm extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("MAP settings");
-		setBounds(100, 100, 489, 324);
+		setBounds(100, 100, 535, 324);
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -80,7 +80,7 @@ public class MapForm extends JDialog {
 				loadDataA();
 			}
 		});
-		button.setBounds(10, 216, 200, 23);
+		button.setBounds(10, 216, 254, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("Load default values for side B");
@@ -89,7 +89,7 @@ public class MapForm extends JDialog {
 				loadDataB();
 			}
 		});
-		button_1.setBounds(224, 216, 200, 23);
+		button_1.setBounds(274, 216, 244, 23);
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("Reload");
@@ -109,7 +109,7 @@ public class MapForm extends JDialog {
 				}
 			}
 		});
-		button_3.setBounds(180, 250, 117, 23);
+		button_3.setBounds(274, 250, 117, 23);
 		panel.add(button_3);
 		
 		JButton button_4 = new JButton("Cancel");
@@ -118,7 +118,7 @@ public class MapForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		button_4.setBounds(307, 250, 117, 23);
+		button_4.setBounds(401, 250, 117, 23);
 		panel.add(button_4);
 		
 		tbRemoteSsn = new JTextField();

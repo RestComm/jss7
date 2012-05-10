@@ -143,8 +143,8 @@ public class Main {
 		ObjectName nameM3uaMan = new ObjectName("SS7_Simulator_" + appName + ":type=M3uaMan");
 		ObjectName nameSccpMan = new ObjectName("SS7_Simulator_" + appName + ":type=SccpMan");
 		ObjectName nameMapMan = new ObjectName("SS7_Simulator_" + appName + ":type=MapMan");
-		ObjectName nameUssdClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=UssdClientMan");
-		ObjectName nameUssdServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=UssdServerMan");
+		ObjectName nameUssdClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestUssdClientMan");
+		ObjectName nameUssdServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestUssdServerMan");
 
 		// HtmlAdaptorServer
 		HtmlAdaptorServer adapter = null;
