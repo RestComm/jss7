@@ -105,13 +105,6 @@ public class TestUssdClientForm extends TestingForm {
 		gbc_btSendUnstructuredresponse.gridy = 2;
 		panel.add(btSendUnstructuredresponse, gbc_btSendUnstructuredresponse);
 		
-		JLabel lblOperationResult = new JLabel("Operation result");
-		GridBagConstraints gbc_lblOperationResult = new GridBagConstraints();
-		gbc_lblOperationResult.insets = new Insets(0, 0, 5, 5);
-		gbc_lblOperationResult.gridx = 0;
-		gbc_lblOperationResult.gridy = 3;
-		panel.add(lblOperationResult, gbc_lblOperationResult);
-		
 		JButton btCloseCurrentDialog = new JButton("Close current Dialog");
 		btCloseCurrentDialog.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -123,6 +116,13 @@ public class TestUssdClientForm extends TestingForm {
 		gbc_btCloseCurrentDialog.gridx = 1;
 		gbc_btCloseCurrentDialog.gridy = 3;
 		panel.add(btCloseCurrentDialog, gbc_btCloseCurrentDialog);
+		
+		JLabel lblOperationResult = new JLabel("Operation result");
+		GridBagConstraints gbc_lblOperationResult = new GridBagConstraints();
+		gbc_lblOperationResult.insets = new Insets(0, 0, 5, 5);
+		gbc_lblOperationResult.gridx = 0;
+		gbc_lblOperationResult.gridy = 4;
+		panel.add(lblOperationResult, gbc_lblOperationResult);
 		
 		lbResult = new JLabel("-");
 		GridBagConstraints gbc_lbResult = new GridBagConstraints();

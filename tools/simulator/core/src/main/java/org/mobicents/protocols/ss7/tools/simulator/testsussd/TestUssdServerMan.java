@@ -259,6 +259,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 	@Override
 	public String getState() {
 		StringBuilder sb = new StringBuilder();
+		sb.append("<html>");
 		sb.append(SOURCE_NAME);
 		sb.append(": CurDialog=");
 		MAPDialogSupplementary curDialog = currentDialog;
@@ -268,16 +269,17 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 			sb.append("No");
 		sb.append(", Pending dialogs=");
 		sb.append(this.currentDialogQuere.size());
-		sb.append(", Count: processUnstructuredSSRequest-");
+		sb.append("<br>Count: processUnstructuredSSRequest-");
 		sb.append(countProcUnstReq);
 		sb.append(", processUnstructuredSSResponse-");
 		sb.append(countProcUnstResp);
-		sb.append(", unstructuredSSRequest-");
+		sb.append("<br>unstructuredSSRequest-");
 		sb.append(countUnstReq);
 		sb.append(", unstructuredSSResponse-");
 		sb.append(countUnstResp);
 		sb.append(", unstructuredSSNotify-");
 		sb.append(countUnstNotifReq);
+		sb.append("</html>");
 		return sb.toString();
 	}
 
@@ -409,7 +411,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 //			currentRequestDef += "Sent procUnstrSsReq=\"" + msg + "\";";
 			this.countProcUnstResp++;
 			String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, null, null);
-			this.testerHost.sendNotif(SOURCE_NAME, "procUnstrSsResp: " + msg, uData, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + msg, uData, true);
 
 			return "ProcessUnstructuredSSResponse has been sent";
 		} catch (MAPException ex) {
@@ -550,7 +552,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		this.countProcUnstReq++;
 		String uData = this.createUssdMessageData(ind.getMAPDialog().getDialogId(), ind.getUSSDDataCodingScheme(), ind.getMSISDNAddressString(),
 				ind.getAlertingPattern());
-		this.testerHost.sendNotif(SOURCE_NAME, "procUnstrSsReq: " + ind.getUSSDString().getString(), uData, true);
+		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: procUnstrSsReq: " + ind.getUSSDString().getString(), uData, true);
 
 		switch (this.getProcessSsRequestAction().intValue()) {
 		case ProcessSsRequestAction.VAL_MANUAL_RESPONSE: {

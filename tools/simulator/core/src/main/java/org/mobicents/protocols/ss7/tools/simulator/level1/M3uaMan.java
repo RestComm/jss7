@@ -345,8 +345,46 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SCTP: ");
 		sb.append(this.isSctpConnectionUp ? "Connected" : "Disconnected");
-		sb.append("  M3UA: ");
-		sb.append(this.isM3uaConnectionActive ? "Active" : "Not active");
+		sb.append("  M3UA:");
+
+		this.m3uaMgmt.getAppServers();
+		FastList<As> lstAs = this.m3uaMgmt.getAppServers();
+		for (As as : lstAs) {
+			if (as.getName().equals("testas")) {
+				FSM lFsm = as.getLocalFSM();
+				FSM pFsm = as.getPeerFSM();
+				FSM lFsmP = null;
+				FSM pFsmP = null;
+
+				FastList<Asp> lstAsp = as.getAspList();
+				for (Asp asp : lstAsp) {
+					// we take only the first ASP (it should be a single)
+					lFsmP = asp.getLocalFSM();
+					pFsmP = asp.getPeerFSM();
+					break;
+				}
+
+				if (lFsm != null) {
+					sb.append(" lFsm:");
+					sb.append(lFsm.getState().toString());
+				}
+				if (pFsm != null) {
+					sb.append(" pFsm:");
+					sb.append(pFsm.getState().toString());
+				}
+				if (lFsmP != null) {
+					sb.append(" lFsmP:");
+					sb.append(lFsmP.getState().toString());
+				}
+				if (pFsmP != null) {
+					sb.append(" pFsmP:");
+					sb.append(pFsmP.getState().toString());
+				}
+
+				break;
+			}
+		}
+
 		return sb.toString();
 	}
 
@@ -436,7 +474,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 					FSM lFsm = as.getLocalFSM();
 					FSM pFsm = as.getPeerFSM();
 					if ((lFsm == null || lFsm.getState().getName().equals(AsState.ACTIVE.toString()))
-							&& (pFsm != null && pFsm.getState().getName().equals(AsState.ACTIVE.toString()))) {
+							&& (pFsm == null || pFsm.getState().getName().equals(AsState.ACTIVE.toString()))) {
 						active = true;
 					}
 					break;

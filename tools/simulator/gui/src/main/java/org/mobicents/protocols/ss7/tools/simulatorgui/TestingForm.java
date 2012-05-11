@@ -82,6 +82,8 @@ public class TestingForm extends JDialog {
 	private JTextField tbL2State;
 	private JLabel lblLState_2;
 	private JTextField tbL3State;
+	private JLabel lblTestingState;
+	private JLabel lbTestState;
 	
 	public TestingForm(JFrame owner) {
 		super(owner, true);
@@ -106,10 +108,10 @@ public class TestingForm extends JDialog {
 		panel_a_1 = new JPanel();
 		panel_a.add(panel_a_1);
 		GridBagLayout gbl_panel_a_1 = new GridBagLayout();
-		gbl_panel_a_1.columnWidths = new int[]{0, 0, 0};
-		gbl_panel_a_1.rowHeights = new int[]{0, 0, 0, 0, 0};
-		gbl_panel_a_1.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_panel_a_1.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_a_1.columnWidths = new int[]{0, 0, 0, 0, 0};
+		gbl_panel_a_1.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+		gbl_panel_a_1.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_a_1.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel_a_1.setLayout(gbl_panel_a_1);
 		
 		lblLState_1 = new JLabel("L1 state");
@@ -122,7 +124,7 @@ public class TestingForm extends JDialog {
 		
 		tbL1State = new JTextField();
 		GridBagConstraints gbc_tbL1State = new GridBagConstraints();
-		gbc_tbL1State.insets = new Insets(0, 0, 5, 0);
+		gbc_tbL1State.insets = new Insets(0, 0, 5, 5);
 		gbc_tbL1State.fill = GridBagConstraints.HORIZONTAL;
 		gbc_tbL1State.weightx = 4.0;
 		gbc_tbL1State.gridx = 1;
@@ -146,7 +148,7 @@ public class TestingForm extends JDialog {
 		tbL2State.setEditable(false);
 		tbL2State.setColumns(10);
 		GridBagConstraints gbc_tbL2State = new GridBagConstraints();
-		gbc_tbL2State.insets = new Insets(0, 0, 5, 0);
+		gbc_tbL2State.insets = new Insets(0, 0, 5, 5);
 		gbc_tbL2State.fill = GridBagConstraints.HORIZONTAL;
 		gbc_tbL2State.gridx = 1;
 		gbc_tbL2State.gridy = 1;
@@ -165,11 +167,26 @@ public class TestingForm extends JDialog {
 		tbL3State.setEditable(false);
 		tbL3State.setColumns(10);
 		GridBagConstraints gbc_tbL3State = new GridBagConstraints();
-		gbc_tbL3State.insets = new Insets(0, 0, 5, 0);
+		gbc_tbL3State.insets = new Insets(0, 0, 5, 5);
 		gbc_tbL3State.fill = GridBagConstraints.HORIZONTAL;
 		gbc_tbL3State.gridx = 1;
 		gbc_tbL3State.gridy = 2;
 		panel_a_1.add(tbL3State, gbc_tbL3State);
+		
+		lblTestingState = new JLabel("Testing state");
+		GridBagConstraints gbc_lblTestingState = new GridBagConstraints();
+		gbc_lblTestingState.insets = new Insets(0, 0, 5, 5);
+		gbc_lblTestingState.gridx = 0;
+		gbc_lblTestingState.gridy = 3;
+		panel_a_1.add(lblTestingState, gbc_lblTestingState);
+		
+		lbTestState = new JLabel("-");
+		GridBagConstraints gbc_lbTestState = new GridBagConstraints();
+		gbc_lbTestState.gridheight = 3;
+		gbc_lbTestState.insets = new Insets(0, 0, 0, 5);
+		gbc_lbTestState.gridx = 1;
+		gbc_lbTestState.gridy = 3;
+		panel_a_1.add(lbTestState, gbc_lbTestState);
 		
 		panel_a_but = new JPanel();
 		panel_a.add(panel_a_but, BorderLayout.SOUTH);
@@ -268,6 +285,7 @@ public class TestingForm extends JDialog {
 		tbL1State.setText(this.host.getL1State());
 		tbL2State.setText(this.host.getL2State());
 		tbL3State.setText(this.host.getL3State());
+		lbTestState.setText(this.host.getTestTaskState());
 	}
 
 	public void sendNotif(Notification notif) {

@@ -55,6 +55,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortChoiceImpl;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
@@ -207,6 +208,7 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	@Override
 	public String getState() {
 		StringBuilder sb = new StringBuilder();
+		sb.append("<html>");
 		sb.append(SOURCE_NAME);
 		sb.append(": CurDialog=");
 		MAPDialogSupplementary curDialog = currentDialog;
@@ -214,16 +216,17 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 			sb.append(curDialog.getDialogId());
 		else
 			sb.append("No");
-		sb.append(", Count: processUnstructuredSSRequest-");
+		sb.append("<br>Count: processUnstructuredSSRequest-");
 		sb.append(countProcUnstReq);
 		sb.append(", processUnstructuredSSResponse-");
 		sb.append(countProcUnstResp);
-		sb.append(", unstructuredSSRequest-");
+		sb.append("<br>unstructuredSSRequest-");
 		sb.append(countUnstReq);
 		sb.append(", unstructuredSSResponse-");
 		sb.append(countUnstResp);
 		sb.append(", unstructuredSSNotify-");
 		sb.append(countUnstNotifReq);
+		sb.append("</html>");
 		return sb.toString();
 	}
 
@@ -259,7 +262,9 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 			MAPDialogSupplementary curDialog = currentDialog;
 			if (curDialog != null) {
 				try {
-					curDialog.close(false);
+					MAPUserAbortChoice choice = new MAPUserAbortChoiceImpl();
+					choice.setUserSpecificReason();
+					curDialog.abort(choice);
 					this.doRemoveDialog();
 					return "The current dialog has been closed";
 				} catch (MAPException e) {
@@ -295,8 +300,9 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 				MAPApplicationContextVersion.version2);
 
 		try {
-			curDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(mapUssdAppContext, this.mapMan.createOrigAddress(),
+			currentDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(mapUssdAppContext, this.mapMan.createOrigAddress(),
 					this.mapMan.createOrigReference(), this.mapMan.createDestAddress(), this.mapMan.createDestReference());
+			curDialog = currentDialog;
 
 			ISDNAddressString msisdn = null;
 			if (this.msisdnAddress != null && !this.msisdnAddress.equals("")) {
@@ -313,7 +319,7 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 			currentRequestDef += "Sent procUnstrSsReq=\"" + msg + "\";";
 			this.countProcUnstReq++;
 			String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, msisdn, alPattern);
-			this.testerHost.sendNotif(SOURCE_NAME, "procUnstrSsReq: " + msg, uData, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsReq: " + msg, uData, true);
 			
 			return "ProcessUnstructuredSSRequest has been sent";
 		} catch (MAPException ex) {
@@ -477,7 +483,7 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 		currentRequestDef += "procUnstrSsResp=\"" + ind.getUSSDString().getString() + "\";";
 		this.countProcUnstResp++;
 		String uData = this.createUssdMessageData(curDialog.getDialogId(), ind.getUSSDDataCodingScheme(), null, null);
-		this.testerHost.sendNotif(SOURCE_NAME, "procUnstrSsResp: " + ind.getUSSDString().getString(), uData, true);
+		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: procUnstrSsResp: " + ind.getUSSDString().getString(), uData, true);
 		
 		this.doRemoveDialog();
 	}
