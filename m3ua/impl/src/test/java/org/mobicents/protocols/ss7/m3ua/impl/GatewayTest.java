@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.testng.annotations.*;
 import static org.testng.Assert.*;
 
+import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.sctp.ManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
@@ -42,6 +43,8 @@ import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
+
+import com.sun.nio.sctp.SctpChannel;
 
 /**
  * 
@@ -100,11 +103,13 @@ public class GatewayTest {
 		this.sctpManagement.setConnectDelay(1000 * 5);// setting connection
 														// delay to 5 secs
 		this.sctpManagement.start();
+		this.sctpManagement.removeAllResourses();
 
 		this.m3uaMgmt = new M3UAManagement("GatewayTest");
 		this.m3uaMgmt.setTransportManagement(this.sctpManagement);
 		this.m3uaMgmt.addMtp3UserPartListener(mtp3UserPartListener);
 		this.m3uaMgmt.start();
+		this.m3uaMgmt.removeAllResourses();
 
 	}
 
@@ -167,6 +172,19 @@ public class GatewayTest {
 
 	}
 
+	/**
+	 * @return true if sctp is supported by this OS and false in not
+	 */
+	public static boolean checkSctpEnabled() {
+		try {
+			SctpChannel socketChannel = SctpChannel.open();
+			socketChannel.close();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	private class Client {
 
 		public Client() {
@@ -174,8 +192,12 @@ public class GatewayTest {
 
 		public void start() throws Exception {
 
+			IpChannelType ipChannelType = IpChannelType.TCP;
+			if (checkSctpEnabled())
+				ipChannelType = IpChannelType.SCTP;
+
 			// 1. Create SCTP Association
-			sctpManagement.addAssociation(CLIENT_HOST, CLIENT_PORT, SERVER_HOST, SERVER_PORT, CLIENT_ASSOCIATION_NAME);
+			sctpManagement.addAssociation(CLIENT_HOST, CLIENT_PORT, SERVER_HOST, SERVER_PORT, CLIENT_ASSOCIATION_NAME, ipChannelType, null);
 
 			// 2. Create AS
 			// m3ua as create rc <rc> <ras-name>
@@ -241,11 +263,15 @@ public class GatewayTest {
 
 		private void start() throws Exception {
 
+			IpChannelType ipChannelType = IpChannelType.TCP;
+			if (checkSctpEnabled())
+				ipChannelType = IpChannelType.SCTP;
+
 			// 1. Create SCTP Server
-			sctpManagement.addServer(SERVER_NAME, SERVER_HOST, SERVER_PORT);
+			sctpManagement.addServer(SERVER_NAME, SERVER_HOST, SERVER_PORT, ipChannelType, null);
 
 			// 2. Create SCTP Server Association
-			sctpManagement.addServerAssociation(CLIENT_HOST, CLIENT_PORT, SERVER_NAME, SERVER_ASSOCIATION_NAME);
+			sctpManagement.addServerAssociation(CLIENT_HOST, CLIENT_PORT, SERVER_NAME, SERVER_ASSOCIATION_NAME, ipChannelType);
 
 			// 3. Start Server
 			sctpManagement.startServer(SERVER_NAME);
