@@ -115,7 +115,7 @@ public class M3UARouteManagement {
 		}
 
 		if (as == null) {
-			throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_NO_AS, asName));
+			throw new Exception(String.format(M3UAOAMMessages.NO_AS_FOUND, asName));
 		}
 
 		String key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR).append(si))
@@ -175,7 +175,7 @@ public class M3UARouteManagement {
 		}
 
 		if (as == null) {
-			throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_NO_AS, asName));
+			throw new Exception(String.format(M3UAOAMMessages.NO_AS_FOUND, asName));
 		}
 
 		String key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR).append(si))
@@ -329,4 +329,8 @@ public class M3UARouteManagement {
 		}
 	}
 
+	public void removeAllResourses() throws Exception {
+		this.route.clear();
+		this.routeTable.clear();
+	}
 }

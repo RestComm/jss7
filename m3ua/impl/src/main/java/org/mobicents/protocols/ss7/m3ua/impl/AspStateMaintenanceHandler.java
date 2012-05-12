@@ -268,6 +268,9 @@ public class AspStateMaintenanceHandler extends MessageHandler {
 			}
 
 			try {
+				if(this.aspFactory.aspFactoryStopTimer != null){
+					this.aspFactory.aspFactoryStopTimer.cancel();
+				}
 				this.aspFactory.transportManagement.stopAssociation(this.aspFactory.association.getName());
 			} catch (Exception e) {
 				logger.error(

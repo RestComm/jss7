@@ -167,13 +167,21 @@ public class MAPUserAbortInfoImpl implements MAPAsnPrimitive {
 		MAPUserAbortChoiceImpl usAbrtChoice = new MAPUserAbortChoiceImpl();
 		switch (tag) {
 		case MAPUserAbortChoiceImpl.USER_SPECIFIC_REASON_TAG:
-			localAis.readNull();
+			try {
+				localAis.readNull();
+			} catch (Exception e) {
+				// we ignore ASN bad syntax
+			}
 			usAbrtChoice.setUserSpecificReason();
 			this.setMAPUserAbortChoice(usAbrtChoice);
 			break;
 
 		case MAPUserAbortChoiceImpl.USER_RESOURCE_LIMITATION_TAG:
-			localAis.readNull();
+			try {
+				localAis.readNull();
+			} catch (Exception e) {
+				// we ignore ASN bad syntax
+			}
 			usAbrtChoice.setUserResourceLimitation();
 			this.setMAPUserAbortChoice(usAbrtChoice);
 			break;

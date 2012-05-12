@@ -85,8 +85,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 	protected MAPDialogState state = MAPDialogState.IDLE;
 	
-	protected boolean normalDialogShutDown = false;
-	
 	private Set<Long> incomingInvokeList = new HashSet<Long>();
 	
 	protected boolean eriStyle;
@@ -133,7 +131,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void release() {
-		this.setNormalDialogShutDown();
 		this.setState(MAPDialogState.EXPUNGED);
 		
 		if (this.tcapDialog != null)
@@ -144,18 +141,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		this.extContainer = extContainer;
 	}
 
-	/**
-	 * Setting that the MAP Dialog is normally shutting down - 
-	 * to prevent performing onDialogReleased()  
-	 */
-	protected void setNormalDialogShutDown() {
-		this.normalDialogShutDown = true;
-	}
-	
-	protected Boolean getNormalDialogShutDown() {
-		return this.normalDialogShutDown;
-	}
-	
 	/**
 	 * Adding the new incoming invokeId into incomingInvokeList list
 	 * 
@@ -195,7 +180,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
 				return;
 			}
 
-			this.setNormalDialogShutDown();
 			this.mapProviderImpl.fireTCAbortUser(this.getTcapDialog(), mapUserAbortChoice, this.extContainer, this.getReturnMessageOnError());
 			this.extContainer = null;
 
@@ -211,7 +195,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
 				throw new MAPException("Refuse can be called in the Dialog InitialReceived state");
 			}
 
-			this.setNormalDialogShutDown();
 			this.mapProviderImpl.fireTCAbortRefused(this.getTcapDialog(), reason, this.extContainer, this.getReturnMessageOnError());
 			this.extContainer = null;
 
@@ -228,7 +211,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
 						.getTCAPProvider().getDialogPrimitiveFactory()
 						.createApplicationContextName(this.appCntx.getOID());
 
-				this.setNormalDialogShutDown();
 				this.mapProviderImpl.fireTCEnd(this.getTcapDialog(), true, prearrangedEnd, acn, this.extContainer, this.getReturnMessageOnError());
 				this.extContainer = null;
 
@@ -236,7 +218,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
 				break;
 
 			case Active:
-				this.setNormalDialogShutDown();
 				this.mapProviderImpl.fireTCEnd(this.getTcapDialog(), false, prearrangedEnd, null, null, this.getReturnMessageOnError());
 
 				this.setState(MAPDialogState.EXPUNGED);
@@ -509,8 +490,8 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("MAPDialog: DialogId=").append(this.getDialogId()).append("MAPDialogState=").append(this.getState())
-				.append("MAPApplicationContext=").append(this.appCntx).append("TCAPDialogState=")
+		sb.append("MAPDialog: DialogId=").append(this.getDialogId()).append(" MAPDialogState=").append(this.getState())
+				.append(" MAPApplicationContext=").append(this.appCntx).append(" TCAPDialogState=")
 				.append(this.tcapDialog.getState());
 		return sb.toString();
 	}

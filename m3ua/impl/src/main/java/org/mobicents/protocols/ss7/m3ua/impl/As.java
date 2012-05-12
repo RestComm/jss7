@@ -472,7 +472,7 @@ public class As implements XMLSerializable {
 		}
 
 		if (asp == null) {
-			throw new Exception(String.format("No ASP found for name=%s", aspName));
+			throw new Exception(String.format(M3UAOAMMessages.NO_ASP_FOUND, aspName));
 		}
 
 		FSM aspLocalFSM = asp.getLocalFSM();

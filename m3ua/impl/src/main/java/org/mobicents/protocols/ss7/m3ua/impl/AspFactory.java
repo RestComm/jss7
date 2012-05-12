@@ -84,8 +84,6 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 	private static final String ASSOCIATION_NAME = "assocName";
 	private static final String MAX_SEQUENCE_NUMBER = "maxseqnumber";
 
-	private volatile boolean channelConnected = false;
-
 	protected String name;
 
 	protected boolean started = false;
@@ -98,6 +96,8 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 	private ByteBuffer txBuffer = ByteBuffer.allocateDirect(8192);
 
 	protected Management transportManagement = null;
+	
+	protected M3UAManagement m3UAManagement = null;
 
 	private ASPIdentifier aspid;
 
@@ -121,6 +121,8 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 	private int maxSequenceNumber = M3UAManagement.MAX_SEQUENCE_NUMBER;
 	private int[] slsTable = null;
 	private int maxOutboundStreams;
+	
+	protected AspFactoryStopTimer aspFactoryStopTimer = null;
 
 	public AspFactory() {
 
@@ -138,6 +140,14 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 		this.maxSequenceNumber = maxSequenceNumber;
 		this.slsTable = new int[this.maxSequenceNumber];
 	}
+	
+	public void setM3UAManagement(M3UAManagement m3uaManagement) {
+		m3UAManagement = m3uaManagement;
+	}
+
+	public M3UAManagement getM3UAManagement() {
+		return m3UAManagement;
+	}
 
 	public void start() throws Exception {
 		this.transportManagement.startAssociation(this.association.getName());
@@ -152,7 +162,7 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 				|| (this.functionality == Functionality.IPSP && this.exchangeType == ExchangeType.DE)
 				|| (this.functionality == Functionality.IPSP && this.exchangeType == ExchangeType.SE && this.ipspType == IPSPType.CLIENT)) {
 
-			if (this.channelConnected) {
+			if (this.association.isConnected()) {
 				ASPDown aspDown = (ASPDown) this.messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
 						MessageType.ASP_DOWN);
 				this.write(aspDown);
@@ -173,6 +183,10 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 						logger.error(e.getMessage(), e);
 					}
 				}
+				
+				//Start the timer to kill the underlying transport Association
+				aspFactoryStopTimer = new AspFactoryStopTimer(this);
+				this.m3UAManagement.m3uaScheduler.execute(aspFactoryStopTimer);
 			} else {
 				for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
 					Asp asp = n.getValue();
@@ -192,7 +206,7 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 			}
 
 		} else {
-			if (this.channelConnected) {
+			if (this.association.isConnected()) {
 				throw new Exception("Still few ASP's are connected. Bring down the ASP's first");
 			}
 
@@ -203,6 +217,10 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 	public boolean getStatus() {
 		return this.started;
 	}
+
+//	public boolean isConnected() {
+//		return started && up;
+//	}
 
 	public Functionality getFunctionality() {
 		return functionality;
@@ -230,6 +248,10 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 
 	public void setTransportManagement(Management transportManagement) {
 		this.transportManagement = transportManagement;
+	}
+
+	public Association getAssociation() {
+		return this.association;
 	}
 
 	public void setAssociation(Association association) {
@@ -473,8 +495,6 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 	}
 
 	private void handleCommDown() {
-
-		this.channelConnected = false;
 		for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
 			Asp asp = n.getValue();
 			try {
@@ -520,7 +540,6 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 	}
 
 	private void handleCommUp() {
-		this.channelConnected = true;
 		if (this.functionality == Functionality.AS
 				|| (this.functionality == Functionality.SGW && this.exchangeType == ExchangeType.DE)
 				|| (this.functionality == Functionality.IPSP && this.exchangeType == ExchangeType.DE)

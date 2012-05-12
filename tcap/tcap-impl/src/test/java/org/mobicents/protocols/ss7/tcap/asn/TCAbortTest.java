@@ -47,10 +47,15 @@ public class TCAbortTest  {
 				0x01, 0x01, (byte) 0xA0, 0x05, (byte) 0xA3, 0x03, 0x0A, 0x01, 0x00 };
 	}
 
+	private byte[] getBadEncodedMAPUserAbortInfo() {
+		return new byte[] { 103, 44, 73, 4, 0, 1, 0, 20, 107, 36, 40, 34, 6, 7, 0, 17, -122, 5, 1, 1, 1, -96, 23, 100, 21, -128, 1, 0, -66, 16, 40, 14, 6, 7,
+				4, 0, 0, 1, 1, 1, 1, -96, 3, -92, 1, -128 };
+	}
+
 	private byte[] getDataAbortCause() {
 		return new byte[] { 103, 9, 73, 4, 123, -91, 52, 19, 74, 1, 125 };
 	}
-	
+
 	@Test(groups = { "functional.encode" })
 	public void testBasicTCAbortTestEncode() throws IOException, ParseException {
 

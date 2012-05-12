@@ -22,6 +22,7 @@
 package org.mobicents.protocols.ss7.map.load;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.sctp.ManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
@@ -89,9 +90,9 @@ public class Server extends TestHarness {
 	// SCTP
 	private ManagementImpl sctpManagement;
 
-	protected void initializeStack() throws Exception {
+	protected void initializeStack(IpChannelType ipChannelType) throws Exception {
 
-		this.initSCTP();
+		this.initSCTP(ipChannelType);
 
 		// Initialize M3UA first
 		this.initM3UA();
@@ -106,7 +107,7 @@ public class Server extends TestHarness {
 		serverM3UAMgmt.startAsp("RASP1");
 	}
 
-	private void initSCTP() throws Exception {
+	private void initSCTP(IpChannelType ipChannelType) throws Exception {
 		this.sctpManagement = new ManagementImpl("Server");
 		this.sctpManagement.setSingleThread(true);
 		this.sctpManagement.setConnectDelay(10000);
@@ -114,10 +115,10 @@ public class Server extends TestHarness {
 		this.sctpManagement.removeAllResourses();
 
 		// 1. Create SCTP Server
-		sctpManagement.addServer(SERVER_NAME, SERVER_IP, SERVER_PORT);
+		sctpManagement.addServer(SERVER_NAME, SERVER_IP, SERVER_PORT, ipChannelType, null);
 
 		// 2. Create SCTP Server Association
-		sctpManagement.addServerAssociation(CLIENT_IP, CLIENT_PORT, SERVER_NAME, SERVER_ASSOCIATION_NAME);
+		sctpManagement.addServerAssociation(CLIENT_IP, CLIENT_PORT, SERVER_NAME, SERVER_ASSOCIATION_NAME, ipChannelType);
 
 		// 3. Start Server
 		sctpManagement.startServer(SERVER_NAME);
@@ -127,6 +128,7 @@ public class Server extends TestHarness {
 		this.serverM3UAMgmt = new M3UAManagement("Server");
 		this.serverM3UAMgmt.setTransportManagement(this.sctpManagement);
 		this.serverM3UAMgmt.start();
+		this.serverM3UAMgmt.removeAllResourses();
 
 		// Step 1 : Create App Server
 
@@ -504,9 +506,13 @@ public class Server extends TestHarness {
 	}
 
 	public static void main(String args[]) {
+		IpChannelType ipChannelType = IpChannelType.SCTP;
+		if (args.length >= 1 && args[0].toLowerCase().equals("tcp"))
+			ipChannelType = IpChannelType.TCP;
+
 		final Server server = new Server();
 		try {
-			server.initializeStack();
+			server.initializeStack(ipChannelType);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
