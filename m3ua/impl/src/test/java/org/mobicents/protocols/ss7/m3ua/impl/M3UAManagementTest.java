@@ -78,6 +78,7 @@ public class M3UAManagementTest {
 		this.m3uaMgmt = new M3UAManagement("M3UAManagementTest");
 		this.m3uaMgmt.setTransportManagement(this.transportManagement);
 		this.m3uaMgmt.start();
+		this.m3uaMgmt.removeAllResourses();
 	}
 
 	@AfterMethod
@@ -125,15 +126,15 @@ public class M3UAManagementTest {
 		
 		assertEquals(2, ((TestAssociation) association).getNoOfTimeStartCalled());
 		
-		this.m3uaMgmt.stopAsp("ASP1");
+		m3uaMgmt1.stopAsp("ASP1");
 		
-		this.m3uaMgmt.unassignAspFromAs("AS1", "ASP1");
+		m3uaMgmt1.unassignAspFromAs("AS1", "ASP1");
 		
-		this.m3uaMgmt.removeRoute(123, 1, 1, "AS1");
+		m3uaMgmt1.removeRoute(123, 1, 1, "AS1");
 		
-		this.m3uaMgmt.destroyAspFactory("ASP1");
+		m3uaMgmt1.destroyAspFactory("ASP1");
 		
-		this.m3uaMgmt.destroyAs("AS1");
+		m3uaMgmt1.destroyAs("AS1");
 
 	}
 

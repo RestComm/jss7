@@ -217,11 +217,11 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 
 	public void stop() throws Exception {
 
-		this.stopFactories();
+		this.store();
 
+		this.stopFactories();
 		super.stop();
 
-		this.store();
 		fsmTicker.shutdown();
 	}
 
@@ -521,6 +521,11 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 	 * @throws Exception
 	 */
 	public void stopAsp(String aspName) throws Exception {
+
+		this.doStopAsp(aspName, true);
+	}
+
+	private void doStopAsp(String aspName, boolean needStore) throws Exception {
 		AspFactory aspFactory = this.getAspFactory(aspName);
 
 		if (aspFactory == null) {
@@ -532,7 +537,9 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		}
 
 		aspFactory.stop();
-		this.store();
+	
+		if (needStore)
+			this.store();
 	}
 
 	public void addRoute(int dpc, int opc, int si, String asName) throws Exception {
@@ -605,7 +612,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		for (AspFactory aspFact : this.aspfactories) {
 			if (aspFact.started) {
 				someFactoriesIsStopped = true;
-				this.stopAsp(aspFact.getName());
+				this.doStopAsp(aspFact.getName(), false);
 			}
 		}
 		// waiting 5 seconds till stopping factories

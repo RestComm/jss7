@@ -157,6 +157,9 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 	public void stop() throws Exception {
 		this.started = false;
 
+		if (this.association == null)
+			return;
+
 		if (this.functionality == Functionality.AS
 				|| (this.functionality == Functionality.SGW && this.exchangeType == ExchangeType.DE)
 				|| (this.functionality == Functionality.IPSP && this.exchangeType == ExchangeType.DE)
