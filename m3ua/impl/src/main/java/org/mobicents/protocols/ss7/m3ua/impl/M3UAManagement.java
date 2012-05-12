@@ -216,6 +216,9 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 	}
 
 	public void stop() throws Exception {
+
+		this.stopFactories();
+
 		super.stop();
 
 		this.store();
@@ -555,30 +558,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 					this.aspfactories.size()));
 		}
 
-		// Stopping asp factories
-		boolean someFactoriesIsStopped = false;
-		for (AspFactory aspFact : this.aspfactories) {
-			if (aspFact.started) {
-				someFactoriesIsStopped = true;
-				this.stopAsp(aspFact.getName());
-			}
-		}
-		// waiting 5 seconds till stopping factories
-		if (someFactoriesIsStopped) {
-			for (int step = 1; step < 50; step++) {
-				boolean allStopped = true;
-				for (AspFactory aspFact : this.aspfactories) {
-					if (aspFact.getAssociation() != null && aspFact.getAssociation().isConnected()) {
-						allStopped = false;
-						break;
-					}
-				}
-				if (allStopped)
-					break;
-
-				Thread.sleep(100);
-			}
-		}
+		this.stopFactories();
 
 		// Remove routes
 		this.routeManagement.removeAllResourses();
@@ -617,6 +597,33 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		
 		// We store the cleared state
 		this.store();
+	}
+
+	private void stopFactories() throws Exception {
+		// Stopping asp factories
+		boolean someFactoriesIsStopped = false;
+		for (AspFactory aspFact : this.aspfactories) {
+			if (aspFact.started) {
+				someFactoriesIsStopped = true;
+				this.stopAsp(aspFact.getName());
+			}
+		}
+		// waiting 5 seconds till stopping factories
+		if (someFactoriesIsStopped) {
+			for (int step = 1; step < 50; step++) {
+				boolean allStopped = true;
+				for (AspFactory aspFact : this.aspfactories) {
+					if (aspFact.getAssociation() != null && aspFact.getAssociation().isConnected()) {
+						allStopped = false;
+						break;
+					}
+				}
+				if (allStopped)
+					break;
+
+				Thread.sleep(100);
+			}
+		}
 	}
 
 	public void sendTransferMessageToLocalUser(Mtp3TransferPrimitive msg, int seqControl) {
