@@ -96,6 +96,7 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	private int countUnstResp = 0;
 	private int countUnstNotifReq = 0;
 	private MAPDialogSupplementary currentDialog = null;
+	private Long invokeId = null;
 	private boolean isStarted = false;
 	private String currentRequestDef = "";
 
@@ -303,6 +304,7 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 			currentDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(mapUssdAppContext, this.mapMan.createOrigAddress(),
 					this.mapMan.createOrigReference(), this.mapMan.createDestAddress(), this.mapMan.createDestReference());
 			curDialog = currentDialog;
+			invokeId = null;
 
 			ISDNAddressString msisdn = null;
 			if (this.msisdnAddress != null && !this.msisdnAddress.equals("")) {
@@ -430,9 +432,35 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 
 	@Override
 	public String performUnstructuredResponse(String msg) {
-		// TODO Auto-generated method stub
-		return "";
-		
+		if (!isStarted)
+			return "The tester is not started";
+		MAPDialogSupplementary curDialog = currentDialog;
+		if (curDialog == null)
+			return "No current dialog exists. Start it previousely";
+		if (invokeId == null)
+			return "No pending unstructured request";
+
+		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
+		if (msg == null || msg.equals(""))
+			return "USSD message is empty";
+		USSDString ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg);
+
+		try {
+			curDialog.addUnstructuredSSResponse(invokeId, (byte) this.dataCodingScheme, ussdString);
+
+			curDialog.send();
+
+			invokeId = null;
+
+			currentRequestDef += "Sent unstrSsResp=\"" + msg + "\";";
+			this.countUnstResp++;
+			String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, null, null);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsResp: " + msg, uData, true);
+			
+			return "ProcessUnstructuredSSRequest has been sent";
+		} catch (MAPException ex) {
+			return "Exception when sending UnstructuredSSResponse: " + ex.toString();
+		}		
 	}
 
 
@@ -489,9 +517,19 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	}
 
 	@Override
-	public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
-		// TODO Auto-generated method stub
+	public void onUnstructuredSSRequest(UnstructuredSSRequest ind) {
+		if (!isStarted)
+			return;
+		MAPDialogSupplementary curDialog = currentDialog;
+		if (curDialog != ind.getMAPDialog())
+			return;
+
+		invokeId = ind.getInvokeId();
 		
+		currentRequestDef += "Rsvd: unstrSsReq=\"" + ind.getUSSDString().getString() + "\";";
+		this.countUnstReq++;
+		String uData = this.createUssdMessageData(curDialog.getDialogId(), ind.getUSSDDataCodingScheme(), null, null);
+		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: unstrSsReq: " + ind.getUSSDString().getString(), uData, true);
 	}
 
 	@Override
@@ -514,8 +552,6 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 
 	@Override
 	public void onDialogDelimiter(MAPDialog mapDialog) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

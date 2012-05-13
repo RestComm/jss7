@@ -295,8 +295,7 @@ public class TestingForm extends JDialog {
 		newRow.add(notif.getMessage());
 		newRow.add(notif.getUserData());
 		model.getDataVector().add(0,newRow);
-		// Метод выравнивает добавленную строку по ширине таблицы и оповещает всех
-		// слушателей о том что таблица изменилась.
+
 		model.newRowsAdded(new TableModelEvent(model));
 	}
 }

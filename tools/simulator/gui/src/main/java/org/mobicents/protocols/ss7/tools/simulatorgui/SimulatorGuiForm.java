@@ -53,6 +53,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 
 /**
  * 
@@ -165,7 +166,7 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 		btSave.setBounds(164, 158, 144, 23);
 		panel.add(btSave);
 		
-		btStart = new JButton("Start");
+		btStart = new JButton("Run test");
 		btStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Starting tests
@@ -188,8 +189,10 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 					
 					// TODO: other tests form options editing
 				}
-				if (dlg == null)
+				if (dlg == null) {
+					JOptionPane.showMessageDialog(getJFrame(), "No proper test task defined");
 					return;
+				}
 
 				testingForm = dlg;
 				dlg.setData(host);

@@ -352,9 +352,16 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			break;
 		case Instance_L1.VAL_DIALOGIC:
 			// TODO Implement L1 = DialogicCard
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L1.VAL_DIALOGIC has not been implemented yet", "", true);
+			break;
+
+		default:
+			// TODO: implement others test tasks ...
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L1." + this.instance_L1.toString() + " has not been implemented yet", "", true);
 			break;
 		}
 		if (!started) {
+			this.sendNotif(TesterHost.SOURCE_NAME, "Layer 1 has not started", "", true);
 			this.stop();
 			return;
 		}
@@ -375,9 +382,16 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			break;
 		case Instance_L2.VAL_ISUP:
 			// TODO Implement L2 = ISUP
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L2.VAL_ISUP has not been implemented yet", "", true);
+			break;
+
+		default:
+			// TODO: implement others test tasks ...
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L2." + this.instance_L2.toString() + " has not been implemented yet", "", true);
 			break;
 		}
 		if (!started) {
+			this.sendNotif(TesterHost.SOURCE_NAME, "Layer 2 has not started", "", true);
 			this.stop();
 			return;
 		}
@@ -398,12 +412,20 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			break;
 		case Instance_L3.VAL_CAP:
 			// TODO: implement CAP .......
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L3.VAL_CAP has not been implemented yet", "", true);
 			break;
 		case Instance_L3.VAL_INAP:
 			// TODO: implement INAP .......
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L3.VAL_INAP has not been implemented yet", "", true);
+			break;
+
+		default:
+			// TODO: implement others test tasks ...
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L3." + this.instance_L3.toString() + " has not been implemented yet", "", true);
 			break;
 		}
 		if (!started) {
+			this.sendNotif(TesterHost.SOURCE_NAME, "Layer 3 has not started", "", true);
 			this.stop();
 			return;
 		}
@@ -431,9 +453,13 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			}
 			break;
 
+		default:
 			// TODO: implement others test tasks ...
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_TestTask." + this.instance_TestTask.toString() + " has not been implemented yet", "", true);
+			break;
 		}
 		if (!started) {
+			this.sendNotif(TesterHost.SOURCE_NAME, "Testing task has not started", "", true);
 			this.stop();
 			return;
 		}

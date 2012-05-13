@@ -150,18 +150,21 @@ public class TestUssdClientForm extends TestingForm {
 	}
 
 	private void sendProcessUnstructuredRequest() {
+		this.lbMessage.setText("");
 		String msg = this.tbMessage.getText();
 		String res = this.ussdClient.performProcessUnstructuredRequest(msg);
 		this.lbResult.setText(res);
 	}
 
 	private void sendUnstructuredResponse() {
+		this.lbMessage.setText("");
 		String msg = this.tbMessage.getText();
 		String res = this.ussdClient.performUnstructuredResponse(msg);
 		this.lbResult.setText(res);
 	}
 
 	private void closeCurrentDialog() {
+		this.lbMessage.setText("");
 		String res = this.ussdClient.closeCurrentDialog();
 		this.lbResult.setText(res);
 	}
@@ -170,8 +173,15 @@ public class TestUssdClientForm extends TestingForm {
 	public void sendNotif(Notification notif) {
 		super.sendNotif(notif);
 
-		int i1=0;
-		i1++;
+		if (notif.getMessage().startsWith("Rsvd: procUnstrSsResp: ")) {
+			String s1 = notif.getMessage().substring(6);
+			this.lbMessage.setText(s1);
+		}
+
+		if (notif.getMessage().startsWith("Rsvd: unstrSsReq: ")) {
+			String s1 = notif.getMessage().substring(6);
+			this.lbMessage.setText(s1);
+		}
 	}
 }
 
