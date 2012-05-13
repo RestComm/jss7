@@ -97,7 +97,9 @@ public class ForwardShortMessageResponseImpl extends SmsMessageImpl implements F
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ForwardShortMessageResponse [");
-
+		if(this.getMAPDialog() != null){
+			sb.append("DialogId=").append(this.getMAPDialog().getDialogId());
+		}
 		sb.append("]");
 
 		return sb.toString();

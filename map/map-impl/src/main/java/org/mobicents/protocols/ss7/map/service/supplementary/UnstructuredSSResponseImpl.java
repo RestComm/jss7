@@ -182,6 +182,10 @@ public class UnstructuredSSResponseImpl extends SupplementaryMessageImpl impleme
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("UnstructuredSSResponse [");
+		if(this.getMAPDialog() != null){
+			sb.append("DialogId=").append(this.getMAPDialog().getDialogId());
+		}
+		sb.append(super.toString());
 		sb.append("]");
 
 		return sb.toString();

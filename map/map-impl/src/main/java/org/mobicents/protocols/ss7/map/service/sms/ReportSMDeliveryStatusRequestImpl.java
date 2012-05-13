@@ -378,8 +378,12 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 		StringBuilder sb = new StringBuilder();
 		sb.append("ReportSMDeliveryStatusRequest [");
 		
+		if(this.getMAPDialog() != null){
+			sb.append("DialogId=").append(this.getMAPDialog().getDialogId());
+		}
+		
 		if (this.msisdn != null) {
-			sb.append("msisdn=");
+			sb.append(", msisdn=");
 			sb.append(this.msisdn.toString());
 		}
 		if (this.serviceCentreAddress != null) {

@@ -250,9 +250,13 @@ public class ForwardShortMessageRequestImpl extends SmsMessageImpl implements Fo
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ForwardShortMessageRequest [");
+		
+		if(this.getMAPDialog() != null){
+			sb.append("DialogId=").append(this.getMAPDialog().getDialogId());
+		}
 
 		if (this.sM_RP_DA != null) {
-			sb.append("sm_RP_DA=");
+			sb.append(", sm_RP_DA=");
 			sb.append(this.sM_RP_DA.toString());
 		}
 		if (this.sM_RP_OA != null) {
