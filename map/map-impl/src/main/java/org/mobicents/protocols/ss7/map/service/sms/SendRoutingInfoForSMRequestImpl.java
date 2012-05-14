@@ -327,8 +327,12 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 		StringBuilder sb = new StringBuilder();
 		sb.append("SendRoutingInfoForSMRequest [");
 		
+		if(this.getMAPDialog() != null){
+			sb.append("DialogId=").append(this.getMAPDialog().getDialogId());
+		}
+		
 		if (this.msisdn != null) {
-			sb.append("msisdn=");
+			sb.append(", msisdn=");
 			sb.append(this.msisdn.toString());
 		}
 		sb.append(", sm_RP_PRI=");

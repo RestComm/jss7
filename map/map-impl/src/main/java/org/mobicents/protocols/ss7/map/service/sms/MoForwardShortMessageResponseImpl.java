@@ -199,6 +199,10 @@ public class MoForwardShortMessageResponseImpl extends SmsMessageImpl implements
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("MoForwardShortMessageResponse [");
+		
+		if(this.getMAPDialog() != null){
+			sb.append("DialogId=").append(this.getMAPDialog().getDialogId());
+		}
 
 		if (this.sm_RP_UI != null) {
 			sb.append(", sm_RP_UI=[");

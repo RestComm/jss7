@@ -254,6 +254,10 @@ public class UnstructuredSSNotifyRequestImpl extends SupplementaryMessageImpl im
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("UnstructuredSSNotifyRequest [");
+		
+		if(this.getMAPDialog() != null){
+			sb.append("DialogId=").append(this.getMAPDialog().getDialogId());
+		}
 
 		sb.append(super.toString());
 		
