@@ -54,16 +54,44 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSMDeliveryFailure;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSystemFailure;
 import org.mobicents.protocols.ss7.map.api.errors.SMEnumeratedDeliveryFailureCause;
+import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
+import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
+import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
+import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
+import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -75,6 +103,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -179,8 +208,8 @@ public class MAPFunctionalTest extends SccpHarness {
 	public void testComplexTCWithDialog() throws Exception {
 
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
-			private int dialogStep; 
-			
+			private int dialogStep;
+
 			@Override
 			public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
 				super.onUnstructuredSSRequest(unstrReqInd);
@@ -199,10 +228,10 @@ public class MAPFunctionalTest extends SccpHarness {
 					mapDialog.addUnstructuredSSResponse(invokeId, (byte) 0x0F, ussdStringObj);
 				} catch (MAPException e) {
 					this.error("Erro while trying to send UnstructuredSSResponse", e);
-					throw new RuntimeException(e);
+					fail("Erro while trying to add UnstructuredSSResponse");
 				}
 			}
-			
+
 			@Override
 			public void onDialogDelimiter(MAPDialog mapDialog) {
 				super.onDialogDelimiter(mapDialog);
@@ -214,14 +243,14 @@ public class MAPFunctionalTest extends SccpHarness {
 					}
 				} catch (MAPException e) {
 					this.error("Error while trying to send Response", e);
-					throw new RuntimeException(e);
+					fail("Erro while trying to send UnstructuredSSResponse");
 				}
 			}
-			
+
 		};
 
 		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
-			private int dialogStep; 
+			private int dialogStep;
 			private long processUnstructuredSSRequestInvokeId = 0l;
 
 			@Override
@@ -239,7 +268,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					mapDialog.addUnstructuredSSRequest((byte) 0x0F, ussdStringObj, null, null);
 				} catch (MAPException e) {
 					this.error("Error while trying to send UnstructuredSSRequest", e);
-					throw new RuntimeException(e);
+					fail("Erro while trying to add UnstructuredSSRequest");
 				}
 			}
 
@@ -255,10 +284,10 @@ public class MAPFunctionalTest extends SccpHarness {
 					mapDialog.addProcessUnstructuredSSResponse(processUnstructuredSSRequestInvokeId, (byte) 0x0F, ussdStringObj);
 				} catch (MAPException e) {
 					logger.error(e);
-					throw new RuntimeException(e);
+					fail("Erro while trying to add ProcessUnstructuredSSResponse");
 				}
 			}
-			
+
 			@Override
 			public void onDialogDelimiter(MAPDialog mapDialog) {
 				super.onDialogDelimiter(mapDialog);
@@ -273,7 +302,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					}
 				} catch (MAPException e) {
 					this.error("Error while trying to send Response", e);
-					throw new RuntimeException(e);
+					fail("Erro while trying to send UnstructuredSSRequest or ProcessUnstructuredSSResponse");
 				}
 			}
 		};
@@ -293,9 +322,9 @@ public class MAPFunctionalTest extends SccpHarness {
 
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		clientExpectedEvents.add(te);
-		
+
 		te = TestEvent.createSentEvent(EventType.UnstructuredSSResponseIndication, null, count++, stamp);
-		clientExpectedEvents.add(te);		
+		clientExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.ProcessUnstructuredSSResponseIndication, null, count++, stamp);
 		clientExpectedEvents.add(te);
@@ -317,18 +346,18 @@ public class MAPFunctionalTest extends SccpHarness {
 
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		serverExpectedEvents.add(te);
-		
+
 		te = TestEvent.createSentEvent(EventType.UnstructuredSSRequestIndication, null, count++, stamp);
-		serverExpectedEvents.add(te);		
+		serverExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.UnstructuredSSResponseIndication, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		serverExpectedEvents.add(te);
-		
+
 		te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSResponseIndication, null, count++, stamp);
-		serverExpectedEvents.add(te);		
+		serverExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		serverExpectedEvents.add(te);
@@ -363,7 +392,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
 
 			}
-			
+
 			@Override
 			public void onDialogDelimiter(MAPDialog mapDialog) {
 				super.onDialogDelimiter(mapDialog);
@@ -373,7 +402,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					mapDialog.refuse(Reason.invalidDestinationReference);
 				} catch (MAPException e) {
 					this.error("Error while trying to send Refuse", e);
-					throw new RuntimeException(e);
+					fail("Error while trying to send Refuse");
 				}
 			}
 		};
@@ -402,7 +431,7 @@ public class MAPFunctionalTest extends SccpHarness {
 
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		serverExpectedEvents.add(te);
-		
+
 		te = TestEvent.createSentEvent(EventType.DialogUserAbort, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
@@ -486,7 +515,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					mapDialog.abort(choice);
 				} catch (MAPException e) {
 					this.error("Error while trying to send UserAbort", e);
-					throw new RuntimeException(e);
+					fail("Error while trying to send UserAbort");
 				}
 			}
 		};
@@ -507,7 +536,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					mapDialog.send();
 				} catch (MAPException e) {
 					this.error("Error while trying to send UnstructuredSSRequest", e);
-					throw new RuntimeException(e);
+					fail("Error while trying to send UnstructuredSSRequest");
 				}
 			}
 
@@ -658,8 +687,8 @@ public class MAPFunctionalTest extends SccpHarness {
 					this.observerdEvents.add(TestEvent.createSentEvent(EventType.DialogClose, null, sequence++));
 					mapDialog.close(false);
 				} catch (MAPException e) {
-					logger.error(e);
-					throw new RuntimeException(e);
+					this.error("Error while trying to send empty response for received ProcessUnstructuredSSRequest", e);
+					fail("Error while trying to send empty response for received ProcessUnstructuredSSRequest");
 				}
 			}
 
@@ -736,8 +765,8 @@ public class MAPFunctionalTest extends SccpHarness {
 				try {
 					mapDialog.sendErrorComponent(procUnstrReqInd.getInvokeId(), msg);
 				} catch (MAPException e) {
-					this.error("Error while trying to send Error Component", e);
-					throw new RuntimeException(e);
+					this.error("Error while trying to add Error Component", e);
+					fail("Error while trying to add Error Component");
 				}
 			}
 
@@ -749,7 +778,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					mapDialog.close(false);
 				} catch (MAPException e) {
 					this.error("Error while trying to send Error Component", e);
-					throw new RuntimeException(e);
+					fail("Error while trying to send Error Component");
 				}
 			}
 
@@ -830,8 +859,8 @@ public class MAPFunctionalTest extends SccpHarness {
 				try {
 					mapDialog.sendErrorComponent(procUnstrReqInd.getInvokeId(), msg);
 				} catch (MAPException e) {
-					this.error("Error while trying to send Error Component", e);
-					throw new RuntimeException(e);
+					this.error("Error while trying to add Error Component", e);
+					fail("Error while trying to add Error Component");
 				}
 			}
 
@@ -843,7 +872,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					mapDialog.close(false);
 				} catch (MAPException e) {
 					this.error("Error while trying to send Error Component", e);
-					throw new RuntimeException(e);
+					fail("Error while trying to send Error Component");
 				}
 			}
 
@@ -905,7 +934,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					mapDialog.send();
 				} catch (MAPException e) {
 					this.error("Error while sending response", e);
-					throw new RuntimeException(e);
+					fail("Error while trying to send empty response");
 				}
 			}
 
@@ -968,7 +997,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					mapDialog.sendReturnResultComponent(returnResult);
 				} catch (MAPException e) {
 					this.error("Error while trying to send ProcessUnstructuredSSResponse", e);
-					throw new RuntimeException(e);
+					fail("Error while trying to send ProcessUnstructuredSSResponse");
 				}
 			}
 
@@ -991,7 +1020,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					}
 				} catch (MAPException e) {
 					this.error("Error while trying to send Response", e);
-					throw new RuntimeException(e);
+					fail("Error while trying to send ProcessUnstructuredSSResponse");
 				}
 			}
 		};
@@ -1086,7 +1115,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					mapDialog.sendRejectComponent(procUnstrReqInd.getInvokeId(), problem);
 				} catch (MAPException e) {
 					this.error("Error while trying to send Duplicate InvokeId Component", e);
-					throw new RuntimeException(e);
+					fail("Error while trying to add Duplicate InvokeId Component");
 				}
 			}
 
@@ -1098,7 +1127,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					mapDialog.close(false);
 				} catch (MAPException e) {
 					this.error("Error while trying to send Error Component", e);
-					throw new RuntimeException(e);
+					fail("Error while trying to send Duplicate InvokeId Component");
 				}
 			}
 
@@ -1150,7 +1179,7 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testComponentMistypedComponent() throws Exception {
-		//Action_Component_G
+		// Action_Component_G
 
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
 
@@ -1159,7 +1188,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				super.onRejectComponent(mapDialog, invokeId, problem);
 				GeneralProblemType generalProblemType = problem.getGeneralProblemType();
 				assertNotNull(generalProblemType);
-				assertEquals(generalProblemType,GeneralProblemType.MistypedComponent);
+				assertEquals(generalProblemType, GeneralProblemType.MistypedComponent);
 				assertTrue(problem.getInvokeProblemType() == null);
 				assertTrue(problem.getReturnErrorProblemType() == null);
 				assertTrue(problem.getReturnResultProblemType() == null);
@@ -1176,13 +1205,13 @@ public class MAPFunctionalTest extends SccpHarness {
 				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
 				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
 				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-				
+
 				Problem problem = this.mapProvider.getMAPParameterFactory().createProblemGeneral(GeneralProblemType.MistypedComponent);
 				try {
 					mapDialog.sendRejectComponent(procUnstrReqInd.getInvokeId(), problem);
 				} catch (MAPException e) {
-					this.error("Error while trying to send Duplicate InvokeId Component", e);
-					throw new RuntimeException(e);
+					this.error("Error while trying to add Duplicate InvokeId Component", e);
+					fail("Error while trying to add Duplicate InvokeId Component");
 				}
 			}
 
@@ -1194,7 +1223,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					mapDialog.close(false);
 				} catch (MAPException e) {
 					this.error("Error while trying to send Error Component", e);
-					throw new RuntimeException(e);
+					fail("Error while trying to add Duplicate InvokeId Component");
 				}
 			}
 
@@ -1242,8 +1271,1213 @@ public class MAPFunctionalTest extends SccpHarness {
 		client.compareEvents(clientExpectedEvents);
 		server.compareEvents(serverExpectedEvents);
 
-	}	
+	}
 
+	/**
+	 * Below are test for V1 of SMS's
+	 */
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testV1ReportSMDeliveryStatus() throws Exception {
+		// Action_V1_A
+		Client client = new Client(stack1, this, peer1Address, peer2Address);
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+			@Override
+			public void onReportSMDeliveryStatusRequest(ReportSMDeliveryStatusRequest reportSMDeliveryStatusInd) {
+				super.onReportSMDeliveryStatusRequest(reportSMDeliveryStatusInd);
+				MAPDialogSms d = reportSMDeliveryStatusInd.getMAPDialog();
+
+				ISDNAddressString msisdn = reportSMDeliveryStatusInd.getMsisdn();
+				AddressString sca = reportSMDeliveryStatusInd.getServiceCentreAddress();
+				SMDeliveryOutcome sMDeliveryOutcome = reportSMDeliveryStatusInd.getSMDeliveryOutcome();
+				Integer absentSubscriberDiagnosticSM = reportSMDeliveryStatusInd.getAbsentSubscriberDiagnosticSM();
+				MAPExtensionContainer extensionContainer = reportSMDeliveryStatusInd.getExtensionContainer();
+				Boolean gprsSupportIndicator = reportSMDeliveryStatusInd.getGprsSupportIndicator();
+				Boolean deliveryOutcomeIndicator = reportSMDeliveryStatusInd.getDeliveryOutcomeIndicator();
+				SMDeliveryOutcome additionalSMDeliveryOutcome = reportSMDeliveryStatusInd.getAdditionalSMDeliveryOutcome();
+				Integer additionalAbsentSubscriberDiagnosticSM = reportSMDeliveryStatusInd.getAdditionalAbsentSubscriberDiagnosticSM();
+
+				Assert.assertNotNull(msisdn);
+				Assert.assertEquals(msisdn.getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(msisdn.getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertEquals(msisdn.getAddress(), "111222333");
+				Assert.assertNotNull(sca);
+				Assert.assertEquals(sca.getAddressNature(), AddressNature.network_specific_number);
+				Assert.assertEquals(sca.getNumberingPlan(), NumberingPlan.national);
+				Assert.assertEquals(sca.getAddress(), "999000");
+				Assert.assertEquals(sMDeliveryOutcome, SMDeliveryOutcome.absentSubscriber);
+				Assert.assertNull(absentSubscriberDiagnosticSM);
+				Assert.assertFalse(gprsSupportIndicator);
+				Assert.assertFalse(deliveryOutcomeIndicator);
+				Assert.assertNull(additionalSMDeliveryOutcome);
+				Assert.assertNull(additionalAbsentSubscriberDiagnosticSM);
+				Assert.assertNull(extensionContainer);
+
+				try {
+					d.addReportSMDeliveryStatusResponse(reportSMDeliveryStatusInd.getInvokeId(), null, null);
+				} catch (MAPException e) {
+					this.error("Error while trying to add ReportSMDeliveryStatusResponse", e);
+					fail("Error while trying to add ReportSMDeliveryStatusResponse");
+				}
+
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ReportSMDeliveryStatusRespIndication, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while trying to send ReportSMDeliveryStatusResponse", e);
+					fail("Error while trying to send ReportSMDeliveryStatusResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ReportSMDeliveryStatusIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ReportSMDeliveryStatusRespIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ReportSMDeliveryStatusIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ReportSMDeliveryStatusRespIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendReportSMDeliveryStatusV1();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testV1AlertServiceCentreRequest() throws Exception {
+		// Action_V1_B
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address);
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+			@Override
+			public void onAlertServiceCentreRequest(AlertServiceCentreRequest alertServiceCentreInd) {
+				super.onAlertServiceCentreRequest(alertServiceCentreInd);
+				MAPDialogSms d = alertServiceCentreInd.getMAPDialog();
+
+				ISDNAddressString msisdn = alertServiceCentreInd.getMsisdn();
+				AddressString serviceCentreAddress = alertServiceCentreInd.getServiceCentreAddress();
+
+				Assert.assertNotNull(msisdn);
+				Assert.assertEquals(msisdn.getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(msisdn.getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertEquals(msisdn.getAddress(), "111222333");
+				Assert.assertNotNull(serviceCentreAddress);
+				Assert.assertEquals(serviceCentreAddress.getAddressNature(), AddressNature.subscriber_number);
+				Assert.assertEquals(serviceCentreAddress.getNumberingPlan(), NumberingPlan.national);
+				Assert.assertEquals(serviceCentreAddress.getAddress(), "0011");
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				mapDialog.release();
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.AlertServiceCentreIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.AlertServiceCentreIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendAlertServiceCentreRequestV1();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testV1AlertServiceCentreRequestReject() throws Exception {
+		// Action_V1_C
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+					ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
+				super.onDialogReject(mapDialog, refuseReason, providerError, alternativeApplicationContext, extensionContainer);
+				assertNotNull(refuseReason);
+				assertEquals(refuseReason, MAPRefuseReason.PotentialVersionIncompatibility);
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address);
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.AlertServiceCentreIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogReject, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+
+		client.sendAlertServiceCentreRequestV1Reject();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testV1AlertServiceCentreRequestReject2() throws Exception {
+		// Action_V1_D
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+					ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
+				super.onDialogReject(mapDialog, refuseReason, providerError, alternativeApplicationContext, extensionContainer);
+				assertNotNull(refuseReason);
+				assertEquals(refuseReason, MAPRefuseReason.PotentialVersionIncompatibility);
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address);
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.AlertServiceCentreIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogReject, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+
+		client.sendAlertServiceCentreRequestV1Reject2();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testV1ForwardShortMessageRequest() throws Exception {
+		// Action_V1_E
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					MAPUserAbortChoice choice = this.mapParameterFactory.createMAPUserAbortChoice();
+					choice.setProcedureCancellationReason(ProcedureCancellationReason.handoverCancellation);
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.DialogUserAbort, null, sequence++));
+					mapDialog.abort(choice);
+				} catch (MAPException e) {
+					this.error("Error while trying to send Abort", e);
+					fail("Error while trying to send Abort");
+				}
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onForwardShortMessageRequest(ForwardShortMessageRequest forwSmInd) {
+				super.onForwardShortMessageRequest(forwSmInd);
+				MAPDialogSms d = forwSmInd.getMAPDialog();
+
+				SM_RP_DA sm_RP_DA = forwSmInd.getSM_RP_DA();
+				SM_RP_OA sm_RP_OA = forwSmInd.getSM_RP_OA();
+				SmsSignalInfo sm_RP_UI = forwSmInd.getSM_RP_UI();
+
+				Assert.assertNotNull(sm_RP_DA);
+				Assert.assertNotNull(sm_RP_DA.getIMSI());
+				Assert.assertEquals(sm_RP_DA.getIMSI().getData(), "250991357999");
+				Assert.assertNotNull(sm_RP_OA);
+				Assert.assertNotNull(sm_RP_OA.getMsisdn());
+				Assert.assertEquals(sm_RP_OA.getMsisdn().getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(sm_RP_OA.getMsisdn().getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertEquals(sm_RP_OA.getMsisdn().getAddress(), "111222333");
+				Assert.assertNotNull(sm_RP_UI);
+				Assert.assertTrue(Arrays.equals(sm_RP_UI.getData(), new byte[] { 21, 22, 23, 24, 25 }));
+				Assert.assertFalse(forwSmInd.getMoreMessagesToSend());
+
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ForwardShortMessageRespIndication, null, sequence++));
+					mapDialog.send();
+				} catch (MAPException e) {
+					this.error("Error while sending the empty ForwardShortMessageResponse", e);
+					fail("Error while sending the empty ForwardShortMessageResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ForwardShortMessageIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.DialogUserAbort, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ForwardShortMessageIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ForwardShortMessageRespIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogProviderAbort, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendForwardShortMessageRequestV1();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * Below are test from testSmsService
+	 */
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testV2AlertServiceCentreRequest() throws Exception {
+		// Action_Sms_AlertServiceCentre
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address);
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+			@Override
+			public void onAlertServiceCentreRequest(AlertServiceCentreRequest alertServiceCentreInd) {
+				super.onAlertServiceCentreRequest(alertServiceCentreInd);
+				MAPDialogSms d = alertServiceCentreInd.getMAPDialog();
+
+				ISDNAddressString msisdn = alertServiceCentreInd.getMsisdn();
+				AddressString serviceCentreAddress = alertServiceCentreInd.getServiceCentreAddress();
+
+				Assert.assertNotNull(msisdn);
+				Assert.assertEquals(msisdn.getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(msisdn.getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertEquals(msisdn.getAddress(), "111222333");
+				Assert.assertNotNull(serviceCentreAddress);
+				Assert.assertEquals(serviceCentreAddress.getAddressNature(), AddressNature.subscriber_number);
+				Assert.assertEquals(serviceCentreAddress.getNumberingPlan(), NumberingPlan.national);
+				Assert.assertEquals(serviceCentreAddress.getAddress(), "0011");
+
+				try {
+					d.addAlertServiceCentreResponse(alertServiceCentreInd.getInvokeId());
+				} catch (MAPException e) {
+					this.error("Error when adding AlertServiceCentreResponse", e);
+					fail("Error when adding AlertServiceCentreResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.AlertServiceCentreRespIndication, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while trying to send AlertServiceCentreResponse", e);
+					fail("Error when sending AlertServiceCentreResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.AlertServiceCentreIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.AlertServiceCentreRespIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.AlertServiceCentreIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.AlertServiceCentreRespIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendAlertServiceCentreRequestV2();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testV2ForwardShortMessageRequest() throws Exception {
+		// Action_Sms_ForwardSM
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address);
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onForwardShortMessageRequest(ForwardShortMessageRequest forwSmInd) {
+				super.onForwardShortMessageRequest(forwSmInd);
+				MAPDialogSms d = forwSmInd.getMAPDialog();
+
+				SM_RP_DA sm_RP_DA = forwSmInd.getSM_RP_DA();
+				SM_RP_OA sm_RP_OA = forwSmInd.getSM_RP_OA();
+				SmsSignalInfo sm_RP_UI = forwSmInd.getSM_RP_UI();
+
+				Assert.assertNotNull(sm_RP_DA);
+				Assert.assertNotNull(sm_RP_DA.getIMSI());
+				Assert.assertEquals(sm_RP_DA.getIMSI().getData(), "250991357999");
+				Assert.assertNotNull(sm_RP_OA);
+				Assert.assertNotNull(sm_RP_OA.getMsisdn());
+				Assert.assertEquals(sm_RP_OA.getMsisdn().getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(sm_RP_OA.getMsisdn().getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertEquals(sm_RP_OA.getMsisdn().getAddress(), "111222333");
+				Assert.assertNotNull(sm_RP_UI);
+				Assert.assertTrue(Arrays.equals(sm_RP_UI.getData(), new byte[] { 21, 22, 23, 24, 25 }));
+				Assert.assertTrue(forwSmInd.getMoreMessagesToSend());
+				try {
+					d.addForwardShortMessageResponse(forwSmInd.getInvokeId());
+				} catch (MAPException e) {
+					this.error("Error while adding ForwardShortMessageResponse", e);
+					fail("Error when adding ForwardShortMessageResponse");
+				}
+
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ForwardShortMessageRespIndication, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty ForwardShortMessageResponse", e);
+					fail("Error when sending ForwardShortMessageResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ForwardShortMessageIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ForwardShortMessageRespIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ForwardShortMessageIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ForwardShortMessageRespIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendForwardShortMessageRequestV2();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testMoForwardShortMessageRequest() throws Exception {
+		// Action_Sms_MoForwardSM
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onMoForwardShortMessageResponse(MoForwardShortMessageResponse moForwSmRespInd) {
+				super.onMoForwardShortMessageResponse(moForwSmRespInd);
+				SmsSignalInfo sm_RP_UI = moForwSmRespInd.getSM_RP_UI();
+				MAPExtensionContainer extensionContainer = moForwSmRespInd.getExtensionContainer();
+
+				Assert.assertNotNull(sm_RP_UI);
+				Assert.assertTrue(Arrays.equals(sm_RP_UI.getData(), new byte[] { 21, 22, 23, 24, 25 }));
+				Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onMoForwardShortMessageRequest(MoForwardShortMessageRequest moForwSmInd) {
+				super.onMoForwardShortMessageRequest(moForwSmInd);
+				MAPDialogSms d = moForwSmInd.getMAPDialog();
+
+				SM_RP_DA sm_RP_DA = moForwSmInd.getSM_RP_DA();
+				SM_RP_OA sm_RP_OA = moForwSmInd.getSM_RP_OA();
+				SmsSignalInfo sm_RP_UI = moForwSmInd.getSM_RP_UI();
+				MAPExtensionContainer extensionContainer = moForwSmInd.getExtensionContainer();
+				IMSI imsi2 = moForwSmInd.getIMSI();
+
+				Assert.assertNotNull(sm_RP_DA);
+				Assert.assertNotNull(sm_RP_DA.getIMSI());
+				Assert.assertEquals(sm_RP_DA.getIMSI().getData(), "250991357999");
+				Assert.assertNotNull(sm_RP_OA);
+				Assert.assertNotNull(sm_RP_OA.getMsisdn());
+				Assert.assertEquals(sm_RP_OA.getMsisdn().getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(sm_RP_OA.getMsisdn().getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertEquals(sm_RP_OA.getMsisdn().getAddress(), "111222333");
+				Assert.assertNotNull(sm_RP_UI);
+
+				try {
+					SmsSubmitTpdu tpdu = (SmsSubmitTpdu) sm_RP_UI.decodeTpdu(true);
+					tpdu.getUserData().decode();
+					Assert.assertFalse(tpdu.getRejectDuplicates());
+					Assert.assertTrue(tpdu.getReplyPathExists());
+					Assert.assertFalse(tpdu.getStatusReportRequest());
+					Assert.assertEquals(tpdu.getMessageReference(), 55);
+					Assert.assertEquals(tpdu.getDestinationAddress().getTypeOfNumber(), TypeOfNumber.InternationalNumber);
+					Assert.assertEquals(tpdu.getDestinationAddress().getNumberingPlanIdentification(), NumberingPlanIdentification.ISDNTelephoneNumberingPlan);
+					Assert.assertTrue(tpdu.getDestinationAddress().getAddressValue().equals("700007"));
+					Assert.assertEquals(tpdu.getProtocolIdentifier().getCode(), 0);
+					Assert.assertEquals((int) tpdu.getValidityPeriod().getRelativeFormatValue(), 100);
+					Assert.assertEquals(tpdu.getUserData().getDataCodingScheme().getCode(), 0);
+					Assert.assertTrue(tpdu.getUserData().getDecodedMessage().equals("Hello, world !!!"));
+				} catch (MAPException e) {
+					this.error("Erro while trying to decode SmsSubmitTpdu", e);
+					fail("Erro while trying to decode SmsSubmitTpdu");
+				}
+
+				Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+				Assert.assertNotNull(imsi2);
+				Assert.assertEquals(imsi2.getData(), "25007123456789");
+
+				SmsSignalInfo sm_RP_UI2 = new SmsSignalInfoImpl(new byte[] { 21, 22, 23, 24, 25 }, null);
+				try {
+					d.addMoForwardShortMessageResponse(moForwSmInd.getInvokeId(), sm_RP_UI2, MAPExtensionContainerTest.GetTestExtensionContainer());
+				} catch (MAPException e) {
+					this.error("Error while adding MoForwardShortMessageResponse", e);
+					fail("Error while adding MoForwardShortMessageResponse");
+				}
+
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.MoForwardShortMessageRespIndication, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty ForwardShortMessageResponse", e);
+					fail("Error while sending the empty ForwardShortMessageResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.MoForwardShortMessageIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.MoForwardShortMessageRespIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.MoForwardShortMessageIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.MoForwardShortMessageRespIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendMoForwardShortMessageRequest();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testMtForwardShortMessageRequest() throws Exception {
+		// Action_Sms_MtForwardSM
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onMtForwardShortMessageResponse(MtForwardShortMessageResponse mtForwSmRespInd) {
+				super.onMtForwardShortMessageResponse(mtForwSmRespInd);
+				SmsSignalInfo sm_RP_UI = mtForwSmRespInd.getSM_RP_UI();
+				MAPExtensionContainer extensionContainer = mtForwSmRespInd.getExtensionContainer();
+
+				Assert.assertNotNull(sm_RP_UI);
+				Assert.assertTrue(Arrays.equals(sm_RP_UI.getData(), new byte[] { 21, 22, 23, 24, 25 }));
+				Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onMtForwardShortMessageRequest(MtForwardShortMessageRequest mtForwSmInd) {
+				super.onMtForwardShortMessageRequest(mtForwSmInd);
+
+				MAPDialogSms d = mtForwSmInd.getMAPDialog();
+
+				SM_RP_DA sm_RP_DA = mtForwSmInd.getSM_RP_DA();
+				SM_RP_OA sm_RP_OA = mtForwSmInd.getSM_RP_OA();
+				SmsSignalInfo sm_RP_UI = mtForwSmInd.getSM_RP_UI();
+				MAPExtensionContainer extensionContainer = mtForwSmInd.getExtensionContainer();
+				Boolean moreMessagesToSend = mtForwSmInd.getMoreMessagesToSend();
+
+				Assert.assertNotNull(sm_RP_DA);
+				Assert.assertNotNull(sm_RP_DA.getLMSI());
+				Assert.assertTrue(Arrays.equals(sm_RP_DA.getLMSI().getData(), new byte[] { 49, 48, 47, 46 }));
+				Assert.assertNotNull(sm_RP_OA);
+				Assert.assertNotNull(sm_RP_OA.getServiceCentreAddressOA());
+				Assert.assertEquals(sm_RP_OA.getServiceCentreAddressOA().getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(sm_RP_OA.getServiceCentreAddressOA().getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertEquals(sm_RP_OA.getServiceCentreAddressOA().getAddress(), "111222333");
+				Assert.assertNotNull(sm_RP_UI);
+				Assert.assertTrue(Arrays.equals(sm_RP_UI.getData(), new byte[] { 21, 22, 23, 24, 25 }));
+				Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+				Assert.assertTrue(moreMessagesToSend);
+
+				SmsSignalInfo sm_RP_UI2 = new SmsSignalInfoImpl(new byte[] { 21, 22, 23, 24, 25 }, null);
+
+				try {
+					d.addMtForwardShortMessageResponse(mtForwSmInd.getInvokeId(), sm_RP_UI2, MAPExtensionContainerTest.GetTestExtensionContainer());
+				} catch (MAPException e) {
+					this.error("Error while adding MtForwardShortMessageResponse", e);
+					fail("Error while adding MtForwardShortMessageResponse");
+				}
+
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.MtForwardShortMessageRespIndication, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty ForwardShortMessageResponse", e);
+					fail("Error while sending the empty ForwardShortMessageResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.MtForwardShortMessageIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.MtForwardShortMessageRespIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.MtForwardShortMessageIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.MtForwardShortMessageRespIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendMtForwardShortMessageRequest();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testReportSMDeliveryStatusRequest() throws Exception {
+		// Action_Sms_ReportSMDeliveryStatus
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onReportSMDeliveryStatusResponse(ReportSMDeliveryStatusResponse reportSMDeliveryStatusRespInd) {
+				super.onReportSMDeliveryStatusResponse(reportSMDeliveryStatusRespInd);
+				ISDNAddressString storedMSISDN = reportSMDeliveryStatusRespInd.getStoredMSISDN();
+				MAPExtensionContainer extensionContainer = reportSMDeliveryStatusRespInd.getExtensionContainer();
+
+				Assert.assertNotNull(storedMSISDN);
+				Assert.assertEquals(storedMSISDN.getAddressNature(), AddressNature.network_specific_number);
+				Assert.assertEquals(storedMSISDN.getNumberingPlan(), NumberingPlan.national);
+				Assert.assertEquals(storedMSISDN.getAddress(), "111000111");
+				Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onReportSMDeliveryStatusRequest(ReportSMDeliveryStatusRequest reportSMDeliveryStatusInd) {
+				super.onReportSMDeliveryStatusRequest(reportSMDeliveryStatusInd);
+
+				MAPDialogSms d = reportSMDeliveryStatusInd.getMAPDialog();
+
+				ISDNAddressString msisdn = reportSMDeliveryStatusInd.getMsisdn();
+				AddressString sca = reportSMDeliveryStatusInd.getServiceCentreAddress();
+				SMDeliveryOutcome sMDeliveryOutcome = reportSMDeliveryStatusInd.getSMDeliveryOutcome();
+				Integer absentSubscriberDiagnosticSM = reportSMDeliveryStatusInd.getAbsentSubscriberDiagnosticSM();
+				MAPExtensionContainer extensionContainer = reportSMDeliveryStatusInd.getExtensionContainer();
+				Boolean gprsSupportIndicator = reportSMDeliveryStatusInd.getGprsSupportIndicator();
+				Boolean deliveryOutcomeIndicator = reportSMDeliveryStatusInd.getDeliveryOutcomeIndicator();
+				SMDeliveryOutcome additionalSMDeliveryOutcome = reportSMDeliveryStatusInd.getAdditionalSMDeliveryOutcome();
+				Integer additionalAbsentSubscriberDiagnosticSM = reportSMDeliveryStatusInd.getAdditionalAbsentSubscriberDiagnosticSM();
+
+				Assert.assertNotNull(msisdn);
+				Assert.assertEquals(msisdn.getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(msisdn.getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertEquals(msisdn.getAddress(), "111222333");
+				Assert.assertNotNull(sca);
+				Assert.assertEquals(sca.getAddressNature(), AddressNature.network_specific_number);
+				Assert.assertEquals(sca.getNumberingPlan(), NumberingPlan.national);
+				Assert.assertEquals(sca.getAddress(), "999000");
+				Assert.assertEquals(sMDeliveryOutcome, SMDeliveryOutcome.absentSubscriber);
+
+				Assert.assertNotNull(absentSubscriberDiagnosticSM);
+				Assert.assertEquals((int) absentSubscriberDiagnosticSM, 555);
+				Assert.assertTrue(gprsSupportIndicator);
+				Assert.assertTrue(deliveryOutcomeIndicator);
+				Assert.assertEquals(additionalSMDeliveryOutcome, SMDeliveryOutcome.successfulTransfer);
+				Assert.assertNotNull(additionalAbsentSubscriberDiagnosticSM);
+				Assert.assertEquals((int) additionalAbsentSubscriberDiagnosticSM, 444);
+				Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+
+				ISDNAddressString storedMSISDN = this.mapParameterFactory.createISDNAddressString(AddressNature.network_specific_number,
+						NumberingPlan.national, "111000111");
+
+				try {
+					d.addReportSMDeliveryStatusResponse(reportSMDeliveryStatusInd.getInvokeId(), storedMSISDN,
+							MAPExtensionContainerTest.GetTestExtensionContainer());
+				} catch (MAPException e) {
+					this.error("Error while adding ReportSMDeliveryStatusResponse", e);
+				}
+
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ReportSMDeliveryStatusRespIndication, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty ForwardShortMessageResponse", e);
+					fail("Error while sending the empty ForwardShortMessageResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ReportSMDeliveryStatusIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ReportSMDeliveryStatusRespIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ReportSMDeliveryStatusIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ReportSMDeliveryStatusRespIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendReportSMDeliveryStatus();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testSendRoutingInfoForSM() throws Exception {
+		// Action_Sms_SendRoutingInfoForSM
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onSendRoutingInfoForSMResponse(SendRoutingInfoForSMResponse sendRoutingInfoForSMRespInd) {
+				super.onSendRoutingInfoForSMResponse(sendRoutingInfoForSMRespInd);
+				IMSI imsi = sendRoutingInfoForSMRespInd.getIMSI();
+				MAPExtensionContainer extensionContainer = sendRoutingInfoForSMRespInd.getExtensionContainer();
+				LocationInfoWithLMSI locationInfoWithLMSI = sendRoutingInfoForSMRespInd.getLocationInfoWithLMSI();
+				ISDNAddressString networkNodeNumber = locationInfoWithLMSI.getNetworkNodeNumber();
+				LMSI lmsi = locationInfoWithLMSI.getLMSI();
+				MAPExtensionContainer extensionContainer2 = locationInfoWithLMSI.getExtensionContainer();
+				AdditionalNumberType additionalNumberType = locationInfoWithLMSI.getAdditionalNumberType();
+				ISDNAddressString additionalNumber = locationInfoWithLMSI.getAdditionalNumber();
+
+				Assert.assertNotNull(imsi);
+				Assert.assertEquals(imsi.getData(), "25099777000");
+				Assert.assertNotNull(networkNodeNumber);
+				Assert.assertEquals(networkNodeNumber.getAddressNature(), AddressNature.network_specific_number);
+				Assert.assertEquals(networkNodeNumber.getNumberingPlan(), NumberingPlan.national);
+				Assert.assertEquals(networkNodeNumber.getAddress(), "111000111");
+				Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer2));
+				Assert.assertNotNull(lmsi);
+				Assert.assertTrue(Arrays.equals(lmsi.getData(), new byte[] { 75, 74, 73, 72 }));
+				Assert.assertEquals(additionalNumberType, AdditionalNumberType.sgsn);
+				Assert.assertNotNull(additionalNumber);
+				Assert.assertEquals(additionalNumber.getAddressNature(), AddressNature.subscriber_number);
+				Assert.assertEquals(additionalNumber.getNumberingPlan(), NumberingPlan.private_plan);
+				Assert.assertEquals(additionalNumber.getAddress(), "000111000");
+				Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onSendRoutingInfoForSMRequest(SendRoutingInfoForSMRequest sendRoutingInfoForSMInd) {
+				super.onSendRoutingInfoForSMRequest(sendRoutingInfoForSMInd);
+
+				MAPDialogSms d = sendRoutingInfoForSMInd.getMAPDialog();
+
+				ISDNAddressString msisdn = sendRoutingInfoForSMInd.getMsisdn();
+				Boolean sm_RP_PRI = sendRoutingInfoForSMInd.getSm_RP_PRI();
+				AddressString sca = sendRoutingInfoForSMInd.getServiceCentreAddress();
+				MAPExtensionContainer extensionContainer = sendRoutingInfoForSMInd.getExtensionContainer();
+				Boolean gprsSupportIndicator = sendRoutingInfoForSMInd.getGprsSupportIndicator();
+				SM_RP_MTI sM_RP_MTI = sendRoutingInfoForSMInd.getSM_RP_MTI();
+				SM_RP_SMEA sM_RP_SMEA = sendRoutingInfoForSMInd.getSM_RP_SMEA();
+
+				Assert.assertNotNull(msisdn);
+				Assert.assertEquals(msisdn.getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(msisdn.getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertEquals(msisdn.getAddress(), "111222333");
+				Assert.assertFalse(sm_RP_PRI);
+				Assert.assertNotNull(sca);
+				Assert.assertEquals(sca.getAddressNature(), AddressNature.network_specific_number);
+				Assert.assertEquals(sca.getNumberingPlan(), NumberingPlan.national);
+				Assert.assertEquals(sca.getAddress(), "999000");
+				Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+				Assert.assertTrue(gprsSupportIndicator);
+				Assert.assertEquals(sM_RP_MTI, SM_RP_MTI.SMS_Status_Report);
+				Assert.assertTrue(Arrays.equals(sM_RP_SMEA.getData(), new byte[] { 90, 91 }));
+
+				IMSI imsi = this.mapParameterFactory.createIMSI("25099777000");
+				ISDNAddressString networkNodeNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.network_specific_number,
+						NumberingPlan.national, "111000111");
+				LMSI lmsi = this.mapParameterFactory.createLMSI(new byte[] { 75, 74, 73, 72 });
+				AdditionalNumberType additionalNumberType = AdditionalNumberType.sgsn;
+				ISDNAddressString additionalNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.subscriber_number,
+						NumberingPlan.private_plan, "000111000");
+				LocationInfoWithLMSI locationInfoWithLMSI = this.mapParameterFactory.createLocationInfoWithLMSI(networkNodeNumber, lmsi,
+						MAPExtensionContainerTest.GetTestExtensionContainer(), additionalNumberType, additionalNumber);
+
+				ISDNAddressString storedMSISDN = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN,
+						"111222333");
+				MWStatus mwStatus = this.mapParameterFactory.createMWStatus(false, true, false, true);
+				Integer absentSubscriberDiagnosticSM = 555;
+				Integer additionalAbsentSubscriberDiagnosticSM = 444;
+
+				try {
+					d.addSendRoutingInfoForSMResponse(sendRoutingInfoForSMInd.getInvokeId(), imsi, locationInfoWithLMSI,
+							MAPExtensionContainerTest.GetTestExtensionContainer());
+					d.addInformServiceCentreRequest(storedMSISDN, mwStatus, MAPExtensionContainerTest.GetTestExtensionContainer(),
+							absentSubscriberDiagnosticSM, additionalAbsentSubscriberDiagnosticSM);
+				} catch (MAPException e) {
+					this.error("Error while adding SendRoutingInfoForSMResponse", e);
+					fail("Error while adding SendRoutingInfoForSMResponse");
+				}
+
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInfoForSMRespIndication, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty ForwardShortMessageResponse", e);
+					fail("Error while sending the empty ForwardShortMessageResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.SendRoutingInfoForSMIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendRoutingInfoForSMRespIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.InformServiceCentreIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendRoutingInfoForSMIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.SendRoutingInfoForSMRespIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendSendRoutingInfoForSM();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+	
+	/**
+	 * testMsgLength test
+	 */
+
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testAction_TestMsgLength_A() throws Exception {
+		// Action_Sms_MoForwardSM
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onMoForwardShortMessageResponse(MoForwardShortMessageResponse moForwSmRespInd) {
+				super.onMoForwardShortMessageResponse(moForwSmRespInd);
+				SmsSignalInfo sm_RP_UI = moForwSmRespInd.getSM_RP_UI();
+				MAPExtensionContainer extensionContainer = moForwSmRespInd.getExtensionContainer();
+
+				Assert.assertNotNull(sm_RP_UI);
+				Assert.assertTrue(Arrays.equals(sm_RP_UI.getData(), new byte[] { 21, 22, 23, 24, 25 }));
+				Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onMoForwardShortMessageRequest(MoForwardShortMessageRequest moForwSmInd) {
+				super.onMoForwardShortMessageRequest(moForwSmInd);
+				MAPDialogSms d = moForwSmInd.getMAPDialog();
+
+				SM_RP_DA sm_RP_DA = moForwSmInd.getSM_RP_DA();
+				SM_RP_OA sm_RP_OA = moForwSmInd.getSM_RP_OA();
+				SmsSignalInfo sm_RP_UI = moForwSmInd.getSM_RP_UI();
+				MAPExtensionContainer extensionContainer = moForwSmInd.getExtensionContainer();
+				IMSI imsi2 = moForwSmInd.getIMSI();
+
+				Assert.assertNotNull(sm_RP_DA);
+				Assert.assertNotNull(sm_RP_DA.getIMSI());
+				Assert.assertEquals(sm_RP_DA.getIMSI().getData(), "250991357999");
+				Assert.assertNotNull(sm_RP_OA);
+				Assert.assertNotNull(sm_RP_OA.getMsisdn());
+				Assert.assertEquals(sm_RP_OA.getMsisdn().getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(sm_RP_OA.getMsisdn().getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertEquals(sm_RP_OA.getMsisdn().getAddress(), "111222333");
+				Assert.assertNotNull(sm_RP_UI);
+
+				try {
+					SmsSubmitTpdu tpdu = (SmsSubmitTpdu) sm_RP_UI.decodeTpdu(true);
+					tpdu.getUserData().decode();
+					Assert.assertFalse(tpdu.getRejectDuplicates());
+					Assert.assertTrue(tpdu.getReplyPathExists());
+					Assert.assertFalse(tpdu.getStatusReportRequest());
+					Assert.assertEquals(tpdu.getMessageReference(), 55);
+					Assert.assertEquals(tpdu.getDestinationAddress().getTypeOfNumber(), TypeOfNumber.InternationalNumber);
+					Assert.assertEquals(tpdu.getDestinationAddress().getNumberingPlanIdentification(), NumberingPlanIdentification.ISDNTelephoneNumberingPlan);
+					Assert.assertTrue(tpdu.getDestinationAddress().getAddressValue().equals("700007"));
+					Assert.assertEquals(tpdu.getProtocolIdentifier().getCode(), 0);
+					Assert.assertEquals((int) tpdu.getValidityPeriod().getRelativeFormatValue(), 100);
+					Assert.assertEquals(tpdu.getUserData().getDataCodingScheme().getCode(), 0);
+					Assert.assertTrue(tpdu.getUserData().getDecodedMessage().equals("Hello, world !!!"));
+				} catch (MAPException e) {
+					this.error("Erro while trying to decode SmsSubmitTpdu", e);
+					fail("Erro while trying to decode SmsSubmitTpdu");
+				}
+
+				Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+				Assert.assertNotNull(imsi2);
+				Assert.assertEquals(imsi2.getData(), "25007123456789");
+
+				SmsSignalInfo sm_RP_UI2 = new SmsSignalInfoImpl(new byte[] { 21, 22, 23, 24, 25 }, null);
+				try {
+					d.addMoForwardShortMessageResponse(moForwSmInd.getInvokeId(), sm_RP_UI2, MAPExtensionContainerTest.GetTestExtensionContainer());
+				} catch (MAPException e) {
+					this.error("Error while adding MoForwardShortMessageResponse", e);
+					fail("Error while adding MoForwardShortMessageResponse");
+				}
+
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.MoForwardShortMessageRespIndication, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty ForwardShortMessageResponse", e);
+					fail("Error while sending the empty ForwardShortMessageResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.MoForwardShortMessageIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.MoForwardShortMessageRespIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.MoForwardShortMessageIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.MoForwardShortMessageRespIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendMoForwardShortMessageRequest();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}	
+	
+	
 	private void waitForEnd() {
 		try {
 			Thread.currentThread().sleep(_WAIT_TIMEOUT);

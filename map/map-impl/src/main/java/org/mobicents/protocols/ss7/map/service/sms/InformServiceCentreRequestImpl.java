@@ -273,9 +273,13 @@ public class InformServiceCentreRequestImpl extends SmsMessageImpl implements In
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("InformServiceCentreRequest [");
+		
+		if(this.getMAPDialog() != null){
+			sb.append("DialogId=").append(this.getMAPDialog().getDialogId());
+		}
 
 		if (this.storedMSISDN != null) {
-			sb.append("storedMSISDN=");
+			sb.append(", storedMSISDN=");
 			sb.append(this.storedMSISDN.toString());
 		}
 		if (this.mwStatus != null) {

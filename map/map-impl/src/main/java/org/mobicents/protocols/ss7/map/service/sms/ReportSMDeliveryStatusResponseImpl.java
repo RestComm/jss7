@@ -196,6 +196,10 @@ public class ReportSMDeliveryStatusResponseImpl extends SmsMessageImpl implement
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ReportSMDeliveryStatusResponse [");
+		
+		if(this.getMAPDialog() != null){
+			sb.append("DialogId=").append(this.getMAPDialog().getDialogId());
+		}
 
 		if (this.storedMSISDN != null) {
 			sb.append(", storedMSISDN=");

@@ -91,5 +91,23 @@ public class AlertServiceCentreResponseImpl extends SmsMessageImpl implements Al
 
 		throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("AlertServiceCentreResponse [");
+		
+		if(this.getMAPDialog() != null){
+			sb.append("DialogId=").append(this.getMAPDialog().getDialogId());
+		}
+		
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
 

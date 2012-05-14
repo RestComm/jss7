@@ -76,7 +76,7 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("ussdDataCodingSch=");
+		sb.append(", ussdDataCodingSch=");
 		sb.append(ussdDataCodingSch);
 		if (ussdString != null) {
 			sb.append(", ussdString=");

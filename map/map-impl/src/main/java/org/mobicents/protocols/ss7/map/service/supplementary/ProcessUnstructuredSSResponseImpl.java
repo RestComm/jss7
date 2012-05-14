@@ -187,6 +187,10 @@ public class ProcessUnstructuredSSResponseImpl extends SupplementaryMessageImpl 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ProcessUnstructuredSSResponse [");
+		if(this.getMAPDialog() != null){
+			sb.append("DialogId=").append(this.getMAPDialog().getDialogId());
+		}
+		sb.append(super.toString());
 		sb.append("]");
 
 		return sb.toString();
