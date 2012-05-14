@@ -26,6 +26,8 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
@@ -238,6 +240,18 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		returnResult.setParameter(p);
 
 		this.sendReturnResultLastComponent((ReturnResultLast) returnResult);
+	}
+
+	@Override
+	public void addUnstructuredSSNotifyResponse(long invokeId) throws MAPException {
+
+		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+
+		resultLast.setInvokeId(invokeId);
+
+		// we need not Operation Code because no answer
+
+		this.sendReturnResultLastComponent(resultLast);
 	}
 
 }
