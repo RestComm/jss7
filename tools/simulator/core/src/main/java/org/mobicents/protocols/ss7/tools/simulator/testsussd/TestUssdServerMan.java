@@ -533,7 +533,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 
 			this.countUnstNotifReq++;
 			String uData = this.createUssdMessageData(dlg.getDialogId(), this.dataCodingScheme, msisdn, alPattern);
-			this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsReq: " + msg, uData, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsNotify: " + msg, uData, true);
 
 			return "UnstructuredSSNotify has been sent";
 		} catch (MAPException ex) {

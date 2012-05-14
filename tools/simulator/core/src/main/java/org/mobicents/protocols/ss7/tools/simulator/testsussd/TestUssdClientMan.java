@@ -539,9 +539,19 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	}
 
 	@Override
-	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd) {
-		// TODO Auto-generated method stub
+	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest ind) {
+		if (!isStarted)
+			return;
+
+		MAPDialogSupplementary dlg = ind.getMAPDialog();
+		invokeId = ind.getInvokeId();
 		
+		this.countUnstNotifReq++;
+		String uData = this.createUssdMessageData(dlg.getDialogId(), ind.getUSSDDataCodingScheme(), null, null);
+		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: unstrSsNotify: " + ind.getUSSDString().getString(), uData, true);
+		
+		// dlg.addUnstructuredSSNotifyRequest(ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
+		// ...........................
 	}
 
 	@Override
