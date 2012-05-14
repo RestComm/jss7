@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tools.simulator.testsussd;
+package org.mobicents.protocols.ss7.tools.simulator.tests.ussd;
 
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
@@ -36,9 +36,9 @@ import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
  * @author sergey vetyutnev
  * 
  */
-public class TestUssdClientStandardManMBean extends StandardMBean {
+public class TestUssdServerStandardManMBean extends StandardMBean {
 
-	public TestUssdClientStandardManMBean(TestUssdClientMan impl, Class<TestUssdClientManMBean> intf) throws NotCompliantMBeanException {
+	public TestUssdServerStandardManMBean(TestUssdServerMan impl, Class<TestUssdServerManMBean> intf) throws NotCompliantMBeanException {
 		super(impl, intf);
 	}
 
@@ -53,14 +53,23 @@ public class TestUssdClientStandardManMBean extends StandardMBean {
 				new MBeanAttributeInfo("MsisdnNumberingPlan_Value", String.class.getName(), "Msisdn parameter: NumberingPlan", true, false, false),
 				new MBeanAttributeInfo("DataCodingScheme", int.class.getName(), "USSD DataCodingScheme (default value: 15)", true, true, false),
 				new MBeanAttributeInfo("AlertingPattern", int.class.getName(), "AlertingPattern value (-1 means no AlertingPattern parameter)", true, true, false),
+				new MBeanAttributeInfo("ProcessSsRequestAction", ProcessSsRequestAction.class.getName(), 
+						"Action which be performed when ProcessSsUnstructuredRequest has been received. When manual response user must manually send a response or SsUnstructuredRequest to the UssdClient. Other actions are: auto sending \"AutoResponseString\" as a response, auto sending \"AutoUnstructured_SS_RequestString\" as a SsUnstructuredRequest and then auto sending \"AutoResponseString\" as a response to SsUnstructured response", 
+						true, true, false),
+				new MBeanAttributeInfo("ProcessSsRequestAction_Value", String.class.getName(), 
+						"Action which be performed when ProcessSsUnstructuredRequest has been received. When manual response user must manually send a response or SsUnstructuredRequest to the UssdClient. Other actions are: auto sending \"AutoResponseString\" as a response, auto sending \"AutoUnstructured_SS_RequestString\" as a SsUnstructuredRequest and then auto sending \"AutoResponseString\" as a response to SsUnstructured response", 
+						true, false, false),
+				new MBeanAttributeInfo("AutoResponseString", String.class.getName(), "Value of auto ProcessSsUnstructured response", true, true, false),
+				new MBeanAttributeInfo("AutoUnstructured_SS_RequestString", String.class.getName(), "Value of auto SsUnstructured request", true, true, false),
 				new MBeanAttributeInfo("CurrentRequestDef", String.class.getName(), "Definition of the current request Dialog", true, false, false),
 		};
 
 		MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(), "Index number or value") };
 
 		MBeanOperationInfo[] operations = new MBeanOperationInfo[] {
-				new MBeanOperationInfo("performProcessUnstructuredRequest", "Send ProcessUnstructedSs request", signString, String.class.getName(), MBeanOperationInfo.ACTION),
-				new MBeanOperationInfo("performUnstructuredResponse", "Send UnstructedSs response", signString, String.class.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("performProcessUnstructuredResponse", "Send ProcessUnstructedSs response", signString, String.class.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("performUnstructuredRequest", "Send UnstructedSs request", signString, String.class.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("performUnstructuredNotify", "Send UnstructedSs notify", signString, String.class.getName(), MBeanOperationInfo.ACTION),
 				new MBeanOperationInfo("closeCurrentDialog", "Closing the current dialog", null, String.class.getName(), MBeanOperationInfo.ACTION),
 
 				new MBeanOperationInfo("putMsisdnAddressNature", "Msisdn parameter: AddressNature: "
@@ -69,9 +78,11 @@ public class TestUssdClientStandardManMBean extends StandardMBean {
 				new MBeanOperationInfo("putMsisdnNumberingPlan", "Msisdn parameter: NumberingPlan: " + 
 						"0:unknown,1:ISDN,2:spare_2,3:data,4:telex,5:spare_5,6:land_mobile,7:spare_7,8:national,9:private_plan,15:reserved", 
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("putProcessSsRequestAction", 
+						"Action which be performed when ProcessSsUnstructuredRequest has been received. 1:VAL_MANUAL_RESPONSE,2:VAL_AUTO_ProcessUnstructuredSSResponse,3:VAL_AUTO_Unstructured_SS_Request_Then_ProcessUnstructuredSSResponse", 
+						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
 		};
 
-		return new MBeanInfo(TestUssdClientMan.class.getName(), "UssdClient test parameters management", attributes, null, operations, null);
+		return new MBeanInfo(TestUssdServerMan.class.getName(), "UssdServer test parameters management", attributes, null, operations, null);
 	}
 }
-

@@ -40,9 +40,9 @@ import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaMan;
 import org.mobicents.protocols.ss7.tools.simulator.level2.SccpMan;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
-import org.mobicents.protocols.ss7.tools.simulator.testsussd.ProcessSsRequestAction;
-import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdClientMan;
-import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdServerMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.ProcessSsRequestAction;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerMan;
 
 import javolution.text.TextBuilder;
 import javolution.xml.XMLBinding;

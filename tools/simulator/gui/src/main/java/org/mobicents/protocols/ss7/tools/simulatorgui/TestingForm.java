@@ -51,6 +51,8 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Dimension;
 import javax.swing.JScrollPane;
+import java.awt.Dialog.ModalExclusionType;
+import java.awt.Window.Type;
 
 /**
  * 
@@ -87,6 +89,7 @@ public class TestingForm extends JDialog {
 	
 	public TestingForm(JFrame owner) {
 		super(owner, true);
+		setType(Type.UTILITY);
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -175,6 +178,7 @@ public class TestingForm extends JDialog {
 		
 		lblTestingState = new JLabel("Testing state");
 		GridBagConstraints gbc_lblTestingState = new GridBagConstraints();
+		gbc_lblTestingState.gridheight = 3;
 		gbc_lblTestingState.insets = new Insets(0, 0, 5, 5);
 		gbc_lblTestingState.gridx = 0;
 		gbc_lblTestingState.gridy = 3;

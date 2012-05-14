@@ -25,7 +25,7 @@ package org.mobicents.protocols.ss7.tools.simulatorgui.testsussd;
 import javax.management.Notification;
 import javax.swing.JFrame;
 
-import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdClientManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulatorgui.TestingForm;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
@@ -173,12 +173,17 @@ public class TestUssdClientForm extends TestingForm {
 	public void sendNotif(Notification notif) {
 		super.sendNotif(notif);
 
-		if (notif.getMessage().startsWith("Rsvd: procUnstrSsResp: ")) {
+		if (notif.getMessage().startsWith("Rcvd: procUnstrSsResp: ")) {
 			String s1 = notif.getMessage().substring(6);
 			this.lbMessage.setText(s1);
 		}
 
-		if (notif.getMessage().startsWith("Rsvd: unstrSsReq: ")) {
+		if (notif.getMessage().startsWith("Rcvd: unstrSsReq: ")) {
+			String s1 = notif.getMessage().substring(6);
+			this.lbMessage.setText(s1);
+		}
+
+		if (notif.getMessage().startsWith("Rcvd: unstrSsNotify: ")) {
 			String s1 = notif.getMessage().substring(6);
 			this.lbMessage.setText(s1);
 		}

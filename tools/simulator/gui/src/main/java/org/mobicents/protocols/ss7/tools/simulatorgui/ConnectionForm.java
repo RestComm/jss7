@@ -47,10 +47,10 @@ import org.mobicents.protocols.ss7.tools.simulator.level2.SccpManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHostMBean;
-import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdClientMan;
-import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdClientManMBean;
-import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdServerMan;
-import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdServerManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerManMBean;
 
 /**
  * 

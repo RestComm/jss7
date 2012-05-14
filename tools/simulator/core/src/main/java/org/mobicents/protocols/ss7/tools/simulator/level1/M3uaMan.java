@@ -501,21 +501,10 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		this.sctpManagement.removeAllResourses();
 
 		// init M3UA stack
-		// ..............................
 		this.m3uaMgmt = new M3UAManagement("SimM3uaServer_" + name);
 		this.m3uaMgmt.setTransportManagement(this.sctpManagement);
-////		this.m3uaMgmt.addMtp3UserPartListener(mtp3UserPartListener);
-//		this.m3uaMgmt.start();
-//		this.m3uaMgmt.getAppServers().clear();
-//		this.m3uaMgmt.getAspfactories().clear();
-//		this.m3uaMgmt.stop();
-//
-//		this.m3uaMgmt = new M3UAManagement("SimM3uaServer_" + name);
-//		this.m3uaMgmt.setTransportManagement(this.sctpManagement);
-////		this.m3uaMgmt.addMtp3UserPartListener(mtp3UserPartListener);
 		this.m3uaMgmt.start();
 		this.m3uaMgmt.removeAllResourses();
-		// ..............................
 
 		// configure SCTP stack
 		String SERVER_NAME = "Server_" + name;

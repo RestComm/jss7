@@ -37,10 +37,10 @@ import org.mobicents.protocols.ss7.tools.simulator.level3.MapManStandardMBean;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHostMBean;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHostStandardMBean;
-import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdClientManMBean;
-import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdClientStandardManMBean;
-import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdServerManMBean;
-import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdServerStandardManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientStandardManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerStandardManMBean;
 
 import com.sun.jdmk.comm.HtmlAdaptorServer;
 

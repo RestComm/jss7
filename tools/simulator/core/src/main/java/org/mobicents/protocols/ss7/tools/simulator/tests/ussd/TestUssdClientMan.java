@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tools.simulator.testsussd;
+package org.mobicents.protocols.ss7.tools.simulator.tests.ussd;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
@@ -99,6 +99,8 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	private Long invokeId = null;
 	private boolean isStarted = false;
 	private String currentRequestDef = "";
+	private boolean needSendSend = false;
+	private boolean needSendClose = false;
 
 
 	public TestUssdClientMan() {
@@ -292,7 +294,7 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 		MAPDialogSupplementary curDialog = currentDialog;
 		if (curDialog != null)
 			return "The current dialog exists. Finish it previousely";
-		
+
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 		if (msg == null || msg.equals(""))
 			return "USSD message is empty";
@@ -327,66 +329,6 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 		} catch (MAPException ex) {
 			return "Exception when sending ProcessUnstructuredSSRequest: " + ex.toString();
 		}		
-
-//		// here we make map call to peer :)
-//		MAPProvider mapProvider = this.mapStack.getMAPProvider();
-//		// here, if no dialog exists its initial call :)
-//		String punchedText = this._field_punch_display.getText();
-//		if (punchedText == null || punchedText.equals("")) {
-//			return;
-//		}
-//		USSDString ussdString = mapProvider.getMAPParameterFactory().createUSSDString(punchedText);
-//		if (this.clientDialog == null) {
-//			try {
-//				this.clientDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(mapUssdAppContext, peer1Address, orgiReference, peer2Address,
-//						destReference);
-//			} catch (MAPException ex) {
-//				Logger.getLogger(UssdsimulatorView.class.getName()).log(Level.SEVERE, null, ex);
-//				this._field_punch_display.setText("Failed to create MAP dialog: " + ex);
-//				this.onlyKeyPadContent = false;
-//				return;
-//			}
-//
-//			try {
-//				ISDNAddressString msisdn = this.mapStack.getMAPProvider().getMAPParameterFactory()
-//						.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
-//
-//				clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString,null, msisdn);
-//
-//				clientDialog.send();
-//				this._field_punch_display.setText("");
-//				this._keypad_button_break.setEnabled(true);
-//				this._field_result_display.append("\n");
-//				this._field_result_display.append(punchedText);
-//			} catch (MAPException ex) {
-//				Logger.getLogger(UssdsimulatorView.class.getName()).log(Level.SEVERE, null, ex);
-//				this._field_punch_display.setText("Failed to pass USSD request: " + ex);
-//				this.onlyKeyPadContent = false;
-//				return;
-//			}
-//		} else {
-//			// This is response to Unstructured Request from GW
-//
-//			try {
-//				ISDNAddressString msisdn = this.mapStack.getMAPProvider().getMAPParameterFactory()
-//				.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
-//				// clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F,
-//				// ussdString, msisdn);
-//				clientDialog.addUnstructuredSSResponse(this.ussdInditaion.getInvokeId(),  (byte) 0x0F, ussdString);
-//
-//				clientDialog.send();
-//				this._field_punch_display.setText("");
-//				this._keypad_button_break.setEnabled(true);
-//				this._field_result_display.append("\n");
-//				this._field_result_display.append(punchedText);
-//			} catch (MAPException ex) {
-//				Logger.getLogger(UssdsimulatorView.class.getName()).log(Level.SEVERE, null, ex);
-//				this._field_punch_display.setText("Failed to pass USSD request: " + ex);
-//				this.onlyKeyPadContent = false;
-//				return;
-//			}
-//		}
-		
 	}
 
 	private String createUssdMessageData(long dialogId, int dataCodingScheme, ISDNAddressString msisdn, AlertingPattern alPattern) {
@@ -457,7 +399,7 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 			String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, null, null);
 			this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsResp: " + msg, uData, true);
 			
-			return "ProcessUnstructuredSSRequest has been sent";
+			return "UnstructuredSSResponse has been sent";
 		} catch (MAPException ex) {
 			return "Exception when sending UnstructuredSSResponse: " + ex.toString();
 		}		
@@ -511,7 +453,7 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 		currentRequestDef += "procUnstrSsResp=\"" + ind.getUSSDString().getString() + "\";";
 		this.countProcUnstResp++;
 		String uData = this.createUssdMessageData(curDialog.getDialogId(), ind.getUSSDDataCodingScheme(), null, null);
-		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: procUnstrSsResp: " + ind.getUSSDString().getString(), uData, true);
+		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: procUnstrSsResp: " + ind.getUSSDString().getString(), uData, true);
 		
 		this.doRemoveDialog();
 	}
@@ -526,10 +468,10 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 
 		invokeId = ind.getInvokeId();
 		
-		currentRequestDef += "Rsvd: unstrSsReq=\"" + ind.getUSSDString().getString() + "\";";
+		currentRequestDef += "Rcvd: unstrSsReq=\"" + ind.getUSSDString().getString() + "\";";
 		this.countUnstReq++;
 		String uData = this.createUssdMessageData(curDialog.getDialogId(), ind.getUSSDDataCodingScheme(), null, null);
-		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: unstrSsReq: " + ind.getUSSDString().getString(), uData, true);
+		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: unstrSsReq: " + ind.getUSSDString().getString(), uData, true);
 	}
 
 	@Override
@@ -548,14 +490,14 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 		
 		this.countUnstNotifReq++;
 		String uData = this.createUssdMessageData(dlg.getDialogId(), ind.getUSSDDataCodingScheme(), null, null);
-		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: unstrSsNotify: " + ind.getUSSDString().getString(), uData, true);
+		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: unstrSsNotify: " + ind.getUSSDString().getString(), uData, true);
 
 		try {
 			dlg.addUnstructuredSSNotifyResponse(invokeId);
+			this.needSendClose = true;
 		} catch (MAPException e) {
 			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addUnstructuredSSNotifyResponse() : " + e.getMessage(), e, true);
 		}
-		// ...........................
 	}
 
 	@Override
@@ -566,6 +508,22 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 
 	@Override
 	public void onDialogDelimiter(MAPDialog mapDialog) {
+		try {
+			if (needSendSend) {
+				needSendSend = false;
+				mapDialog.send();
+			}
+		} catch (Exception e) {
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, true);
+		}
+		try {
+			if (needSendClose) {
+				needSendClose = false;
+				mapDialog.close(false);
+			}
+		} catch (Exception e) {
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, true);
+		}
 	}
 
 	@Override

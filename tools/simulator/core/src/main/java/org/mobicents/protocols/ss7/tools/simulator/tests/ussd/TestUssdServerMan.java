@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tools.simulator.testsussd;
+package org.mobicents.protocols.ss7.tools.simulator.tests.ussd;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -344,7 +344,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 				DialogData dd = (DialogData) currentDialog.getUserObject();
 				if (dd != null)
 					currentRequestDef = dd.currentRequestDef;
-				this.sendRsvdNotice(currentRequestDef, "CurDialog: ", "");
+				this.sendRcvdNotice(currentRequestDef, "CurDialog: ", "");
 			}
 		}
 	}
@@ -582,7 +582,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 			ind.getMAPDialog().setUserObject(dd);
 		}
 
-		dd.currentRequestDef += "Rsvd: procUnstrSsReq: " + ind.getUSSDString().getString();
+		dd.currentRequestDef += "Rcvd: procUnstrSsReq: " + ind.getUSSDString().getString();
 		String pref = "PendingDialog: ";
 		if (this.currentDialog == ind.getMAPDialog() || this.getProcessSsRequestAction().intValue() != ProcessSsRequestAction.VAL_MANUAL_RESPONSE) {
 			this.currentRequestDef = dd.currentRequestDef;
@@ -591,7 +591,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		this.countProcUnstReq++;
 		String uData = this.createUssdMessageData(ind.getMAPDialog().getDialogId(), ind.getUSSDDataCodingScheme(), ind.getMSISDNAddressString(),
 				ind.getAlertingPattern());
-		this.sendRsvdNotice("Rsvd: procUnstrSsReq: " + ind.getUSSDString().getString(), pref, uData);
+		this.sendRcvdNotice("Rcvd: procUnstrSsReq: " + ind.getUSSDString().getString(), pref, uData);
 
 		switch (this.getProcessSsRequestAction().intValue()) {
 		case ProcessSsRequestAction.VAL_MANUAL_RESPONSE: {
@@ -617,7 +617,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		}		
 	}
 
-	private void sendRsvdNotice(String msg, String pref, String uData) {
+	private void sendRcvdNotice(String msg, String pref, String uData) {
 		this.testerHost.sendNotif(SOURCE_NAME, pref + msg, uData, true);
 	}
 
@@ -641,11 +641,11 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		if (dd == null)
 			return;
 
-		dd.currentRequestDef += "Rsvd: unstrSsResp: " + ind.getUSSDString().getString();
+		dd.currentRequestDef += "Rcvd: unstrSsResp: " + ind.getUSSDString().getString();
 		String pref = "CurDialog: ";
 		this.countUnstResp++;
 		String uData = this.createUssdMessageData(ind.getMAPDialog().getDialogId(), ind.getUSSDDataCodingScheme(), null, null);
-		this.sendRsvdNotice("Rsvd: unstrSsResp: " + ind.getUSSDString().getString(), pref, uData);
+		this.sendRcvdNotice("Rcvd: unstrSsResp: " + ind.getUSSDString().getString(), pref, uData);
 
 		switch (this.getProcessSsRequestAction().intValue()) {
 		case ProcessSsRequestAction.VAL_MANUAL_RESPONSE: {

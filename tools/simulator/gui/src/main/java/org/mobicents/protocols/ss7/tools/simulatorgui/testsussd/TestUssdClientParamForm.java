@@ -37,7 +37,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
-import org.mobicents.protocols.ss7.tools.simulator.testsussd.TestUssdClientManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
