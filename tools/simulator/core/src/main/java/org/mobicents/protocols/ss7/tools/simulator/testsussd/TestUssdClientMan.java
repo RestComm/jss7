@@ -549,8 +549,12 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 		this.countUnstNotifReq++;
 		String uData = this.createUssdMessageData(dlg.getDialogId(), ind.getUSSDDataCodingScheme(), null, null);
 		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: unstrSsNotify: " + ind.getUSSDString().getString(), uData, true);
-		
-		// dlg.addUnstructuredSSNotifyRequest(ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
+
+		try {
+			dlg.addUnstructuredSSNotifyResponse(invokeId);
+		} catch (MAPException e) {
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addUnstructuredSSNotifyResponse() : " + e.getMessage(), e, true);
+		}
 		// ...........................
 	}
 
