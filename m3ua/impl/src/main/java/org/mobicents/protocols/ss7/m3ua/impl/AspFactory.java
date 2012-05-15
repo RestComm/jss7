@@ -209,9 +209,9 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 			}
 
 		} else {
-			if (this.association.isConnected()) {
-				throw new Exception("Still few ASP's are connected. Bring down the ASP's first");
-			}
+//			if (this.association.isConnected()) {
+//				throw new Exception("Still few ASP's are connected. Bring down the ASP's first");
+//			}
 
 			this.transportManagement.stopAssociation(this.association.getName());
 		}

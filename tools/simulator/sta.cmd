@@ -1,0 +1,1 @@
+java -cp .;simulator-core.jar;javolution.jar;jmxtools.jar;javolution.jar;log4j.jar;m3ua-api.jar;m3ua-impl.jar;sctp-api.jar;sctp-impl.jar;sccp-api.jar;sccp-impl.jar;mtp-api.jar;mtp.jar;commons.jar -Dcom.sun.management.jmxremote org.mobicents.protocols.ss7.tools.simulator.Main name=a1 http

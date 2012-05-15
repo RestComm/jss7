@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,27 +20,42 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tools.traceparser;
+package org.mobicents.protocols.ss7.tools.simulatorgui;
 
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import java.util.concurrent.ScheduledExecutorService;
-import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
-import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
+import java.awt.EventQueue;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class TCAPProviderImplWrapper extends TCAPProviderImpl {
+public class MainGui implements Runnable {
 	
-	TCAPProviderImplWrapper(SccpProvider sccpProvider, TCAPStackImpl stack, int ssn) {
-		super(sccpProvider, stack, ssn);
-		
-	}
-	
-	public ScheduledExecutorService getExecuter() {
-		return this._EXECUTOR;
+	private final String appName;
+
+	public MainGui(String appName) {
+		this.appName = appName;
 	}
 
+	public static void main(String[] args) {
+
+		String appName = "main";
+		if (args != null && args.length > 0) {
+			appName = args[0];
+		}
+
+		EventQueue.invokeLater(new MainGui(appName));
+	}
+
+	@Override
+	public void run() {
+		try {
+			ConnectionForm frame = new ConnectionForm();
+			frame.setAppName(appName);
+			frame.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
+

@@ -129,4 +129,6 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	public Long addUnstructuredSSNotifyRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
 			ISDNAddressString msisdn) throws MAPException;
 
+	public void addUnstructuredSSNotifyResponse(long invokeId) throws MAPException;
+
 }

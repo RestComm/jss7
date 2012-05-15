@@ -80,7 +80,6 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
-import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
@@ -92,34 +91,34 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener;
-import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.InformServiceCentreRequestIndication;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.InformServiceCentreRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener;
-import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsCommandTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsDeliverReportTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsDeliverTpdu;
@@ -301,6 +300,12 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	@Override
 	public void ss7Message(byte[] data) throws TraceReaderException {
 		this.msgCount++;
+		
+		if (this.msgCount == 106) {
+			// TODO: for tests - remove it
+			int fff = 0;
+			fff++;
+		}
 		
 		if (data == null || data.length < 5) {
 			throw new TraceReaderException("Too little data in the raw data");
@@ -616,6 +621,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
 				int acnValue = 0;
 				int acnVersion = 0;
+				
 				if (dpcData != null) {
 					DialogImplWrapper di = dpcData.get(destinationTransactionId);
 					if (di != null) {
@@ -1273,60 +1279,60 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	}
 	
 	@Override
-	public void onForwardShortMessageIndication(ForwardShortMessageRequestIndication forwSmInd) {
+	public void onForwardShortMessageRequest(ForwardShortMessageRequest forwSmInd) {
 		this.parseSmsSignalInfo(forwSmInd.getSM_RP_UI(), true, true);
 	}
 
 	@Override
-	public void onForwardShortMessageRespIndication(ForwardShortMessageResponseIndication forwSmRespInd) {
+	public void onForwardShortMessageResponse(ForwardShortMessageResponse forwSmRespInd) {
 	}
 
 	@Override
-	public void onMoForwardShortMessageIndication(MoForwardShortMessageRequestIndication moForwSmInd) {
+	public void onMoForwardShortMessageRequest(MoForwardShortMessageRequest moForwSmInd) {
 		this.parseSmsSignalInfo(moForwSmInd.getSM_RP_UI(), true, false);
 	}
 
 	@Override
-	public void onMoForwardShortMessageRespIndication(MoForwardShortMessageResponseIndication moForwSmRespInd) {
+	public void onMoForwardShortMessageResponse(MoForwardShortMessageResponse moForwSmRespInd) {
 		this.parseSmsSignalInfo(moForwSmRespInd.getSM_RP_UI(), false, true);
 	}
 
 	@Override
-	public void onMtForwardShortMessageIndication(MtForwardShortMessageRequestIndication mtForwSmInd) {
+	public void onMtForwardShortMessageRequest(MtForwardShortMessageRequest mtForwSmInd) {
 		this.parseSmsSignalInfo(mtForwSmInd.getSM_RP_UI(), false, true);
 	}
 
 	@Override
-	public void onMtForwardShortMessageRespIndication(MtForwardShortMessageResponseIndication mtForwSmRespInd) {
+	public void onMtForwardShortMessageResponse(MtForwardShortMessageResponse mtForwSmRespInd) {
 		this.parseSmsSignalInfo(mtForwSmRespInd.getSM_RP_UI(), true, false);
 	}
 
 	@Override
-	public void onSendRoutingInfoForSMIndication(SendRoutingInfoForSMRequestIndication sendRoutingInfoForSMInd) {
+	public void onSendRoutingInfoForSMRequest(SendRoutingInfoForSMRequest sendRoutingInfoForSMInd) {
 	}
 
 	@Override
-	public void onSendRoutingInfoForSMRespIndication(SendRoutingInfoForSMResponseIndication sendRoutingInfoForSMRespInd) {
+	public void onSendRoutingInfoForSMResponse(SendRoutingInfoForSMResponse sendRoutingInfoForSMRespInd) {
 	}
 
 	@Override
-	public void onReportSMDeliveryStatusIndication(ReportSMDeliveryStatusRequestIndication reportSMDeliveryStatusInd) {
+	public void onReportSMDeliveryStatusRequest(ReportSMDeliveryStatusRequest reportSMDeliveryStatusInd) {
 	}
 
 	@Override
-	public void onReportSMDeliveryStatusRespIndication(ReportSMDeliveryStatusResponseIndication reportSMDeliveryStatusRespInd) {
+	public void onReportSMDeliveryStatusResponse(ReportSMDeliveryStatusResponse reportSMDeliveryStatusRespInd) {
 	}
 
 	@Override
-	public void onInformServiceCentreIndication(InformServiceCentreRequestIndication informServiceCentreInd) {
+	public void onInformServiceCentreRequest(InformServiceCentreRequest informServiceCentreInd) {
 	}
 
 	@Override
-	public void onAlertServiceCentreIndication(AlertServiceCentreRequestIndication alertServiceCentreInd) {
+	public void onAlertServiceCentreRequest(AlertServiceCentreRequest alertServiceCentreInd) {
 	}
 
 	@Override
-	public void onAlertServiceCentreRespIndication(AlertServiceCentreResponseIndication alertServiceCentreInd) {
+	public void onAlertServiceCentreResponse(AlertServiceCentreResponse alertServiceCentreInd) {
 	}
 
 	@Override
@@ -1336,91 +1342,79 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	}
 
 	@Override
-	public void onCAPMessage(CAPMessage msg) {
-
-		msgDetailBuffer.add(msg.toString());
-	}
-
-	@Override
-	public void onDialogRelease(CAPDialog arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onDialogRelease(MAPDialog arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onProcessUnstructuredSSRequestIndication(ProcessUnstructuredSSRequestIndication arg0) {
+	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onProcessUnstructuredSSResponseIndication(ProcessUnstructuredSSResponseIndication arg0) {
+	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onUnstructuredSSNotifyRequestIndication(UnstructuredSSNotifyRequestIndication arg0) {
+	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponseIndication arg0) {
+	public void onUnstructuredSSNotifyResponse(UnstructuredSSNotifyResponse arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onUnstructuredSSRequestIndication(UnstructuredSSRequestIndication arg0) {
+	public void onUnstructuredSSRequest(UnstructuredSSRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onUnstructuredSSResponseIndication(UnstructuredSSResponseIndication arg0) {
+	public void onUnstructuredSSResponse(UnstructuredSSResponse arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onProvideSubscriberLocationRequestIndication(ProvideSubscriberLocationRequestIndication arg0) {
+	public void onProvideSubscriberLocationRequest(ProvideSubscriberLocationRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onProvideSubscriberLocationResponseIndication(ProvideSubscriberLocationResponseIndication arg0) {
+	public void onProvideSubscriberLocationResponse(ProvideSubscriberLocationResponse arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onSendRoutingInforForLCSRequestIndication(SendRoutingInfoForLCSRequestIndication arg0) {
+	public void onSendRoutingInforForLCSRequest(SendRoutingInfoForLCSRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onSendRoutingInforForLCSResponseIndication(SendRoutingInfoForLCSResponseIndication arg0) {
+	public void onSendRoutingInforForLCSResponse(SendRoutingInfoForLCSResponse arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onSubscriberLocationReportRequestIndication(SubscriberLocationReportRequestIndication arg0) {
+	public void onSubscriberLocationReportRequest(SubscriberLocationReportRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onSubscriberLocationReportResponseIndication(SubscriberLocationReportResponseIndication arg0) {
+	public void onSubscriberLocationReportResponse(SubscriberLocationReportResponse arg0) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -1589,6 +1583,18 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 	@Override
 	public void onSpecializedResourceReportRequestIndication(SpecializedResourceReportRequestIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCAPMessage(CAPMessage arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogRelease(CAPDialog arg0) {
 		// TODO Auto-generated method stub
 		
 	}
