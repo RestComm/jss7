@@ -39,6 +39,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.errors.MAPErrorMessageImpl;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
@@ -58,10 +59,13 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
 /**
  * 
- * MAP-DialoguePDU ::= CHOICE { map-open [0] MAP-OpenInfo, map-accept [1]
- * MAP-AcceptInfo, map-close [2] MAP-CloseInfo, map-refuse [3] MAP-RefuseInfo,
- * map-userAbort [4] MAP-UserAbortInfo, map-providerAbort [5]
- * MAP-ProviderAbortInfo}
+ * MAP-DialoguePDU ::= CHOICE { 
+ * 			map-open 			[0] 	MAP-OpenInfo, 
+ * 			map-accept 			[1] 	MAP-AcceptInfo, 
+ * 			map-close 			[2] 	MAP-CloseInfo, 
+ * 			map-refuse 			[3] 	MAP-RefuseInfo,
+ * 			map-userAbort 		[4] 	MAP-UserAbortInfo, 
+ * 			map-providerAbort 	[5]		MAP-ProviderAbortInfo}
  * 
  * @author amit bhayani
  * @author baranowb
@@ -112,6 +116,22 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	public boolean getReturnMessageOnError() {
 		return returnMessageOnError;
 	}
+	
+    /**
+     * 
+     * @return - local sccp address.
+     */
+    public SccpAddress getLocalAddress(){
+    	return this.tcapDialog.getLocalAddress();
+    }
+
+    /**
+         * 
+         * @return - sccp address of calling party
+         */
+    public SccpAddress getRemoteAddress(){
+    	return this.tcapDialog.getRemoteAddress();
+    }
 
 	@Override
 	public void keepAlive() {

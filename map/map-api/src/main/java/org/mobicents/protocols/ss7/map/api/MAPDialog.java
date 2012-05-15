@@ -29,6 +29,7 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
@@ -55,14 +56,32 @@ public interface MAPDialog {
 	 * @return
 	 */
 	public MAPDialogState getState();
+	
+    /**
+     * 
+     * @return - local sccp address.
+     */
+    public SccpAddress getLocalAddress();
 
-	/*
+    /**
+         * 
+         * @return - remote sccp address which represents remote peer
+         */
+    public SccpAddress getRemoteAddress(); 
+
+	/**
 	 * Setting this property to true lead that all sent to TCAP messages of this
 	 * Dialog will be marked as "ReturnMessageOnError" (SCCP will return the
 	 * notification is the message has non been delivered to the peer)
+	 * 
+	 * @param val
 	 */
 	public void setReturnMessageOnError(boolean val);
 
+	/**
+	 * If returnMessageOnError is set to true
+	 * @return
+	 */
 	public boolean getReturnMessageOnError();
 
 	/**
@@ -233,23 +252,22 @@ public interface MAPDialog {
 	 * @return
 	 */
 	public int getMessageUserDataLengthOnSend() throws MAPException;
-	
+
 	/**
-	 * Return the MAP message length (in bytes) that will be after encoding
-	 * if TC-END case
-	 * This value must not exceed getMaxUserDataLength() value
+	 * Return the MAP message length (in bytes) that will be after encoding if
+	 * TC-END case This value must not exceed getMaxUserDataLength() value
+	 * 
 	 * @param prearrangedEnd
 	 * @return
 	 */
 	public int getMessageUserDataLengthOnClose(boolean prearrangedEnd) throws MAPException;
-	
+
 	/**
-	 * This method should be invoked after MAPDialog creation
-	 * if Ericsson-style ASN.1 syntax is used
+	 * This method should be invoked after MAPDialog creation if Ericsson-style
+	 * ASN.1 syntax is used
 	 * 
 	 * @param imsi
 	 * @param vlrNo
 	 */
 	public void addEricssonData(IMSI imsi, AddressString vlrNo);
 }
-
