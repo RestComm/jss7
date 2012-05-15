@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tools.simulatorgui.testsussd;
+package org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd;
 
 import javax.management.Notification;
 import javax.swing.JFrame;

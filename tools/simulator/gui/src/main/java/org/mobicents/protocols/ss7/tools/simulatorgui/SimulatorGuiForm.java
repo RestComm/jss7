@@ -43,10 +43,10 @@ import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHostMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerManMBean;
-import org.mobicents.protocols.ss7.tools.simulatorgui.testsussd.TestUssdClientForm;
-import org.mobicents.protocols.ss7.tools.simulatorgui.testsussd.TestUssdClientParamForm;
-import org.mobicents.protocols.ss7.tools.simulatorgui.testsussd.TestUssdServerForm;
-import org.mobicents.protocols.ss7.tools.simulatorgui.testsussd.TestUssdServerParamForm;
+import org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd.TestUssdClientForm;
+import org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd.TestUssdClientParamForm;
+import org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd.TestUssdServerForm;
+import org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd.TestUssdServerParamForm;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
