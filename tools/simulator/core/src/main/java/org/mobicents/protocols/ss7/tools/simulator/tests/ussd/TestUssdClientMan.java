@@ -284,7 +284,7 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 
 	private void doRemoveDialog() {
 		currentDialog = null;
-		currentRequestDef = "";
+//		currentRequestDef = "";
 	}
 
 	@Override
@@ -294,6 +294,8 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 		MAPDialogSupplementary curDialog = currentDialog;
 		if (curDialog != null)
 			return "The current dialog exists. Finish it previousely";
+
+		currentRequestDef = "";
 
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 		if (msg == null || msg.equals(""))

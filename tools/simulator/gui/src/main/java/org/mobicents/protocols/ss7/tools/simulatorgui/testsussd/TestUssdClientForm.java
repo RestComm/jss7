@@ -49,6 +49,7 @@ public class TestUssdClientForm extends TestingForm {
 	private JTextField tbMessage;
 	private JLabel lbResult;
 	private JLabel lbMessage;
+	private JLabel lbState;
 
 	private TestUssdClientManMBean ussdClient; 
 
@@ -59,9 +60,9 @@ public class TestUssdClientForm extends TestingForm {
 		panel_c.add(panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0, 0, 0};
-		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
+		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
 		gbl_panel.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
 		JLabel lblNewLabel = new JLabel("Message text");
@@ -133,16 +134,23 @@ public class TestUssdClientForm extends TestingForm {
 		
 		JLabel lblMessageReceived = new JLabel("Message received");
 		GridBagConstraints gbc_lblMessageReceived = new GridBagConstraints();
-		gbc_lblMessageReceived.insets = new Insets(0, 0, 0, 5);
+		gbc_lblMessageReceived.insets = new Insets(0, 0, 5, 5);
 		gbc_lblMessageReceived.gridx = 0;
 		gbc_lblMessageReceived.gridy = 5;
 		panel.add(lblMessageReceived, gbc_lblMessageReceived);
 		
 		lbMessage = new JLabel("-");
 		GridBagConstraints gbc_lbMessage = new GridBagConstraints();
+		gbc_lbMessage.insets = new Insets(0, 0, 5, 0);
 		gbc_lbMessage.gridx = 1;
 		gbc_lbMessage.gridy = 5;
 		panel.add(lbMessage, gbc_lbMessage);
+		
+		lbState = new JLabel("-");
+		GridBagConstraints gbc_lbState = new GridBagConstraints();
+		gbc_lbState.gridx = 1;
+		gbc_lbState.gridy = 6;
+		panel.add(lbState, gbc_lbState);
 	}
 
 	public void setData(TestUssdClientManMBean ussdClient) {
@@ -187,6 +195,14 @@ public class TestUssdClientForm extends TestingForm {
 			String s1 = notif.getMessage().substring(6);
 			this.lbMessage.setText(s1);
 		}
+	}
+
+	@Override
+	public void refreshState() {
+		super.refreshState();
+
+		String s1 = this.ussdClient.getCurrentRequestDef();
+		this.lbState.setText(s1);
 	}
 }
 

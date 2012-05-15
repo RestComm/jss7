@@ -404,21 +404,24 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 
 		USSDString ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg);
-		MAPApplicationContext mapUssdAppContext = MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
-				MAPApplicationContextVersion.version2);
 
 		try {
 			curDialog.addProcessUnstructuredSSResponse(invokeId, (byte) this.dataCodingScheme, ussdString);
-
-//			currentRequestDef += "Sent procUnstrSsReq=\"" + msg + "\";";
-			this.countProcUnstResp++;
-			String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, null, null);
-			this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + msg, uData, true);
-
-			return "ProcessUnstructuredSSResponse has been sent";
-		} catch (MAPException ex) {
-			return "Exception when sending ProcessUnstructuredSSResponse: " + ex.toString();
+		} catch (MAPException e) {
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addProcessUnstructuredSSResponse() : " + e.getMessage(), e, true);
+			return "Exception when sending ProcessUnstructuredSSResponse: " + e.toString();
 		}
+
+		currentRequestDef += "procUnstrSsResp=\"" + msg + "\";";
+		DialogData dd = (DialogData) curDialog.getUserObject();
+		if (dd != null) {
+			dd.currentRequestDef = currentRequestDef;
+		}
+		this.countProcUnstResp++;
+		String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, null, null);
+		this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + msg, uData, true);
+
+		return "ProcessUnstructuredSSResponse has been sent";
 	}
 
 	public String sendUnstructuredRequest(MAPDialogSupplementary curDialog, String msg) {
@@ -426,26 +429,31 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 
 		USSDString ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg);
+		ISDNAddressString msisdn = null;
+		if (this.msisdnAddress != null && !this.msisdnAddress.equals("")) {
+			msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(this.msisdnAddressNature, this.msisdnNumberingPlan, this.msisdnAddress);
+		}
+		AlertingPattern alPattern = null;
+		if (this.alertingPattern >= 0 && this.alertingPattern <= 255)
+			alPattern = new AlertingPatternImpl(new byte[] { (byte) this.alertingPattern });
 
 		try {
-			ISDNAddressString msisdn = null;
-			if (this.msisdnAddress != null && !this.msisdnAddress.equals("")) {
-				msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(this.msisdnAddressNature, this.msisdnNumberingPlan, this.msisdnAddress);
-			}
-
-			AlertingPattern alPattern = null;
-			if (this.alertingPattern >= 0 && this.alertingPattern <= 255)
-				alPattern = new AlertingPatternImpl(new byte[] { (byte) this.alertingPattern });
 			curDialog.addUnstructuredSSRequest((byte) this.dataCodingScheme, ussdString, alPattern, msisdn);
-
-			this.countUnstReq++;
-			String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, null, null);
-			this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsReq: " + msg, uData, true);
-
-			return "UnstructuredSSRequest has been sent";
-		} catch (MAPException ex) {
-			return "Exception when sending UnstructuredSSRequest: " + ex.toString();
+		} catch (MAPException e) {
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addUnstructuredSSRequest() : " + e.getMessage(), e, true);
+			return "Exception when sending UnstructuredSSRequest: " + e.toString();
 		}
+
+		currentRequestDef += "unstrSsReq=\"" + msg + "\";";
+		DialogData dd = (DialogData) curDialog.getUserObject();
+		if (dd != null) {
+			dd.currentRequestDef = currentRequestDef;
+		}
+		this.countUnstReq++;
+		String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, null, null);
+		this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsReq: " + msg, uData, true);
+
+		return "UnstructuredSSRequest has been sent";
 	}
 
 	@Override
@@ -464,7 +472,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		long invokeId = dd.invokeId;
 
 		if (msg == null || msg.equals(""))
-			return "USSD message is empty ProcessUnstructuredSs request";
+			return "USSD message is empty";
 
 		String res = this.sendProcessUnstructuredResponse(curDialog, msg, invokeId);
 		
@@ -488,7 +496,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 			return "The current dialog does not opened. Open a dialog by UssdClient";
 
 		if (msg == null || msg.equals(""))
-			return "USSD message is empty UnstructuredSs request";
+			return "USSD message is empty";
 
 		String res = this.sendUnstructuredRequest(curDialog, msg);
 
@@ -514,18 +522,18 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		MAPApplicationContext mapUssdAppContext = MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
 				MAPApplicationContextVersion.version2);
 
+		ISDNAddressString msisdn = null;
+		if (this.msisdnAddress != null && !this.msisdnAddress.equals("")) {
+			msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(this.msisdnAddressNature, this.msisdnNumberingPlan, this.msisdnAddress);
+		}
+
+		AlertingPattern alPattern = null;
+		if (this.alertingPattern >= 0 && this.alertingPattern <= 255)
+			alPattern = new AlertingPatternImpl(new byte[] { (byte) this.alertingPattern });
+
 		try {
 			MAPDialogSupplementary dlg = mapProvider.getMAPServiceSupplementary().createNewDialog(mapUssdAppContext, this.mapMan.createOrigAddress(),
 					this.mapMan.createOrigReference(), this.mapMan.createDestAddress(), this.mapMan.createDestReference());
-
-			ISDNAddressString msisdn = null;
-			if (this.msisdnAddress != null && !this.msisdnAddress.equals("")) {
-				msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(this.msisdnAddressNature, this.msisdnNumberingPlan, this.msisdnAddress);
-			}
-
-			AlertingPattern alPattern = null;
-			if (this.alertingPattern >= 0 && this.alertingPattern <= 255)
-				alPattern = new AlertingPatternImpl(new byte[] { (byte) this.alertingPattern });
 			dlg.addUnstructuredSSNotifyRequest((byte) this.dataCodingScheme, ussdString, alPattern, msisdn);
 
 			dlg.send();
@@ -582,7 +590,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 			ind.getMAPDialog().setUserObject(dd);
 		}
 
-		dd.currentRequestDef += "Rcvd: procUnstrSsReq: " + ind.getUSSDString().getString();
+		dd.currentRequestDef += "procUnstrSsReq=\"" + ind.getUSSDString().getString() + "\";";
 		String pref = "PendingDialog: ";
 		if (this.currentDialog == ind.getMAPDialog() || this.getProcessSsRequestAction().intValue() != ProcessSsRequestAction.VAL_MANUAL_RESPONSE) {
 			this.currentRequestDef = dd.currentRequestDef;
@@ -598,6 +606,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 			dd.invokeId = ind.getInvokeId();
 		}
 			break;
+		
 		case ProcessSsRequestAction.VAL_AUTO_ProcessUnstructuredSSResponse: {
 			String msg = this.getAutoResponseString();
 			if (msg == null || msg.equals(""))
@@ -606,6 +615,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 			this.needSendClose = true;
 		}
 			break;
+		
 		case ProcessSsRequestAction.VAL_AUTO_Unstructured_SS_Request_Then_ProcessUnstructuredSSResponse: {
 			String msg = this.getAutoUnstructured_SS_RequestString();
 			if (msg == null || msg.equals(""))
@@ -641,7 +651,9 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		if (dd == null)
 			return;
 
-		dd.currentRequestDef += "Rcvd: unstrSsResp: " + ind.getUSSDString().getString();
+		dd.currentRequestDef += "unstrSsResp=\"" + ind.getUSSDString().getString() + "\";";
+		if (this.currentDialog == ind.getMAPDialog())
+			currentRequestDef = dd.currentRequestDef;
 		String pref = "CurDialog: ";
 		this.countUnstResp++;
 		String uData = this.createUssdMessageData(ind.getMAPDialog().getDialogId(), ind.getUSSDDataCodingScheme(), null, null);
@@ -653,9 +665,11 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 				return;
 		}
 			break;
+		
 		case ProcessSsRequestAction.VAL_AUTO_ProcessUnstructuredSSResponse: {
 		}
 			break;
+		
 		case ProcessSsRequestAction.VAL_AUTO_Unstructured_SS_Request_Then_ProcessUnstructuredSSResponse: {
 			String msg = this.getAutoResponseString();
 			if (msg == null || msg.equals(""))
@@ -765,6 +779,14 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 	public void onDialogRelease(MAPDialog mapDialog) {
 		if (this.currentDialog == mapDialog)
 			this.doRemoveDialog();
+		else {
+			if (this.getProcessSsRequestAction().intValue() != ProcessSsRequestAction.VAL_MANUAL_RESPONSE) {
+				DialogData dd = (DialogData) mapDialog.getUserObject();
+				if (dd != null) {
+					currentRequestDef = dd.currentRequestDef;
+				}
+			}
+		}
 	}
 
 	@Override
