@@ -2,412 +2,321 @@
 
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
 
-<chapter
-	id="simulator">
+<chapter id="simulator">
 
 	<title>SS7 Simulator</title>
 
 	<para>
-		SS7 Simulator is an application for testing SS7 stack
+		SS7 Simulator is an application for testing SS7 stack and displaying its functionality.
+		It is also a good example of how to use this stack. 
 	</para>
-	
-	
-	
-	
-	
-	
-	// ................................
-	
+
 	<para>
-		Mobile application part (<acronym>MAP</acronym>) is the protocol that is used to allow the
-		<acronym>GSM</acronym> network nodes within the Network Switching Subsystem (<acronym>NSS</acronym>
-		) to communicate with each other to provide services, such as roaming capability,
-		text messaging (<acronym>SMS</acronym>), Unstructured Supplementary Service Data (
-		<acronym>USSD</acronym>) and subscriber authentication. <acronym>MAP</acronym>
-		provides an application layer on which to build the services that support a
-		<acronym>GSM</acronym> network. This application layer provides a standardized set of services.
-		<acronym>MAP</acronym> uses the services of the <acronym>SS7</acronym>
-		network, specifically the Signaling Connection Control Part (<acronym>SCCP</acronym>
-		) and the Transaction Capabilities Application Part (<acronym>TCAP</acronym>)
+		SS7 Simulator contains three layers of SS7 stack components and one testing task layer which presents the concrete testing task. 
 	</para>
-	<important>
-		<para>For better understanding of this chapter please read GSM 09.02.</para>
-	</important>
-	<note>
-		<para>&THIS.PLATFORM; &THIS.APPLICATION;
-				MAP has implementation for USSD, SMS and Location Management Service (LMS) Messages only. Any contribution to implement
-				other messages are welcome. We will provide you all the help that you may need initially.
-		</para>
-	</note>
-	<section
-		id="map_usage">
-		<title>&THIS.APPLICATION; MAP 
-		</title>
-		<para>
-			The <classname>org.mobicents.protocols.ss7.map.api.MAPStack</classname>
-			interface defines the methods required to represent MAP Protocol Stack.
-			MAPStack exposes <classname>org.mobicents.protocols.ss7.map.api.MAPProvider</classname>
-			that interacts directly with MAPStack. This interface
-			defines the methods that will be used by any registered MAP User application implementing the
-			<classname>org.mobicents.protocols.ss7.map.api.MAPDialogListener</classname>
-			and
-			<classname>org.mobicents.protocols.ss7.map.api.MAPServiceListener</classname>
-			interface to listen MAP messages and dialogue handling primitives. 
-		</para>
-		
-		<para>
-			Each MAP-User interested in listening messages specific to MAP Service implements specific <classname>MAPServiceListener</classname>.
+
+	<para>
+		Layer 1 presents MTP-3 corresponded stack. It can be one of:
 			<itemizedlist> 
 				<listitem>
 					<para>
-						MAP-User interested only in USSD messages implements <classname>org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener</classname>
+						M3UA
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						MAP-User interested only in SMS messages implements <classname>org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener</classname>
+						DialogicCard (not yet implemented)
 					</para>
 				</listitem>
 					<listitem>
 					<para>
-						MAP-User interested only in USSD messages implements <classname>org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener</classname>
+						DahdiCard (not yet implemented)
 					</para>
 				</listitem>				
 			</itemizedlist>
-			MAP-User interested in all the services may implement all the service listener class.
-		</para>
-		<!--  <para>
-		The class diagram looks like
-		</para>
-		<mediaobject
-			id="map_classdia">
-			<imageobject>
-				<imagedata
-					width="300px"
-					align="center"
-					fileref="images/MapClassDiagram.png"
-					format="PNG" />
-			</imageobject>
-			<caption>
-				<para>&THIS.PLATFORM; &THIS.APPLICATION;
-					MAP Class Diagram
-				</para>
-			</caption>
-		</mediaobject>
-		 -->
+	</para>
 
-
-		<para>
-			The <classname>org.mobicents.protocols.ss7.map.MAPStackImpl</classname>
-			is concrete implementation of <classname>MAPStack</classname>.
-			The MAP User application creates instance of <classname>MAPStackImpl</classname>
-			passing the reference of <classname>SccpProvider</classname> and
-			Sub System Number. All incoming messages are checked for destination SSN, if it matches with the one registered with this <classname>MAPStackImpl</classname>
-			the corresponding listener is called else the peer receives error.
-		</para>
-
-		<programlisting
-			language="Java"
-			role="JAVA"><![CDATA[SccpProvider sccpProvider = getSccpProvider(); //JNDI lookup of SCCP Stack and get Provider
-        MAPStackImpl mapStack = new MAPStackImpl(sccpPprovider, 8);
-        ...]]>
-		</programlisting>
-
-		<para>
-			The reference to <classname>SccpProvider</classname> is received from <classname>SccpStack</classname>.
-			To get handle to <classname>SccpStack</classname> do the JNDI look-up passing the JNDI name configured in SS7 service as explained in
-			<xref linkend="sccp_access_point" />
-		</para>
-
-		<para>
-			The MAP User application should register the concrete implementation of <classname>MAPDialogListener</classname> with 
-			<classname>MAPProvider</classname> to listen for incoming MAP Dialog and MAP Primitive messages.
-		</para>
-		
-		<para>
-			The MAP User application should register the concrete implementation of <classname>MAPServiceListener</classname> with 
-			corresponding <classname>MAPServiceBase</classname> to listen for incoming MAP Service messages. Following <classname>MAPServiceBase</classname>
-			are exposed by <classname>MAPProvider</classname>
-			<itemizedlist>
+	<para>
+		Layer 2 presents :
+			<itemizedlist> 
 				<listitem>
-					<para>For LSM service <classname>org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm</classname></para>
+					<para>
+						SCCP
+					</para>
 				</listitem>
 				<listitem>
-					<para>For SMS service <classname>org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms</classname></para>
+					<para>
+						ISUP (not yet implemented)
+					</para>
 				</listitem>
-				<listitem>
-					<para>For USSD service <classname>org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary</classname></para>
-				</listitem>								
 			</itemizedlist>
-		</para>
-		
-		
+	</para>
 
-		<programlisting language="Java" role="JAVA"><![CDATA[
-public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryListener {
-		.....		
-		mapProvider = mapStack.getMAPProvider();
-        mapProvider.addMAPDialogListener(this);
-        mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
-        ....
-} ]]>
-	</programlisting>
+	<para>
+		Layer 3 presents :
+			<itemizedlist> 
+				<listitem>
+					<para>
+						TCAP+MAP
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						TCAP+CAP (not yet implemented)
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						TCAP+INAP (not yet implemented)
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
+
+	<para>
+		Testing task layer can present one of the following testing task:
+			<itemizedlist> 
+				<listitem>
+					<para>
+						USSD client test
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						USSD server test
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						SMCS SMS delivering test (not yet implemented)
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Dialogic MTU interconnection test (not yet implemented)
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Dialogic MTR interconnection test (not yet implemented)
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
+
+	<para>
+		A user can select for testing layers that he needs.
+		Some layers demand correct low layers. For example TCAP+MAP layer demands SCCP as layer 2.
+		Each layer can be separately configured depending on user testing tasks.
+		Configuring of layers covers only major options (does not cover all possible SS7 stack options). 
+	</para>
 	
-		<para>Before any MAP specific service can be used, the corresponding service should be activated</para>
-		
-		<programlisting language="Java" role="JAVA"><![CDATA[
-		.....		
-		// Make the supplimentary service activated
-		mapProvider.getMAPServiceSupplementary().acivate();
-        ....]]>
-	</programlisting>		
+	<section id="simulator_configuring">
+		<title>SS7 Simulator configuring 
+		</title>
 
-		<para>
-			The MAP User Application leverages <classname>MapServiceFactory</classname> to create instance of <classname>USSDString</classname>
-			and <classname>AddressString</classname>
-		</para>
+	<para>
+		You can run several instances of Simulator from one folder.
+		Each of this instances can have its own configuration options.
+		Configuration options are saved into an xml configuration file.
+		Each running instance has its own name (called "host name") and the name of configuration file depends on this host name.
+		For example if the host name is "a1", the name of the configuration file will be "a1_simulator.xml".
+		Each running Simulator instance must have different host name in order to each running Simulator instance can have different options.  
+	</para>
 
-		<programlisting
-			language="Java"
-			role="JAVA"><![CDATA[
-		MapServiceFactory servFact = mapProvider.getMapServiceFactory();
-        USSDString ussdString = servFact.createUSSDString("*125*+31628839999#",
-                null);
+	<para>
+		Before running a test all layers must be configured.
+		After test running a user can perform some actions depending on the test.
+		Results of a test are emitted as "notifications". 
+		Notifications are displayed in simulator-gui and jconsole applications in the GUI interface and also are written into a file "&LT#host name&GT#.log" and into a console.
+	</para>
 
-        AddressString msisdn = this.servFact.createAddressString(
-                AddressNature.international_number, NumberingPlan.ISDN,
-                "31628838002");]]>
-	</programlisting>
+	<para>
+		You can run and manage SS7 Simulator locally or remotely. 
+	</para>
 
-		<para>
-			The MAP User Application leverages specific <classname>MAPServiceBase</classname> to create new <classname>MAPDialog</classname>
-			and send message
-		</para>
+	
+	<section id="simulator_configuring_locally">
+		<title>SS7 Simulator locally running
+		</title>
 
-		<programlisting language="Java" role="JAVA"><![CDATA[
-		// First create Dialog
-		MAPDialogSupplementary mapDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(
-				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, MAPApplicationContextVersion.version2), destAddress,
-				destReference, origAddress, origReference);
+	<para>
+		In order to run SS7 Simulator locally you must have "simulator-core.jar" and "simulator-gui.jar" and run "simulator-gui.jar" module.
+		You can pass to the "simulator-gui.jar" the only parameter which is the "host name". For example: 
+		<programlisting>
+		simulator-gui.jar a1
+		</programlisting>
+		The application form "Connecting to a testerHost ..." will appear. You have to fill "Host name" field (if it is empty),
+		select "Create a local testerHost" option and press "Start" button. The local Simulator host will be run.   
+	</para>
 
-		// The dataCodingScheme is still byte, as I am not exactly getting how
-		// to encode/decode this.
-		byte ussdDataCodingScheme = 0x0f;
+	<para>
+		The form "SS7 Simulator: &LT#host name&GT#-local" appears.
+		The next step is selecting modules for layers 1-3 and a testing task and configuring modules (by pressing buttons "...").
+		Button "Save" is used for saving options to the disk, button "Reload" is used for reloading options from a disk.
+		When layer configuring you can press one of two buttons "Load default values for side A" and 
+		"Load default values for side B" for loading default values for testing.
+		These default values can be used if you are using SS7 Simulators in the one computer host
+		as the side A and the side B for interaction.    
+	</para>
 
-		// USSD String: *125*+31628839999#
-		// The Charset is null, here we let system use default Charset (UTF-7 as
-		// explained in GSM 03.38. However if MAP User wants, it can set its own
-		// impl of Charset
-		USSDString ussdString = servFact.createUSSDString("*125*+31628839999#", null);
+	<para>
+		After configuring press a button "Run test".
+		The form for testing will be displayed.
+		In the upper part of this form the information of layers and test state is displayed.
+		This information is refreshed every 5 seconds and can be refreshed manually by "Refresh state" button pressing.
+		After pressing "Start" button all modules are started and ready for test, after pressing "Stop" button all modules are stopped.
+		In the central part of the form notifications from testing modules are displayed.  
+		In the lower part of the form test depended information are allocated. Details of this part is displayed in the corresponded test definition.   
+		See <xref linkend="simulator_tests" />
+	</para>
+	</section>
 
-		AddressString msisdn = this.servFact.createAddressString(AddressNature.international_number,
-				NumberingPlan.ISDN, "31628838002");
 
-		mapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, msisdn);
+	<section id="simulator_configuring_remotely">
+		<title>SS7 Simulator remotely running 
+		</title>
 
-		// This will initiate the TC-BEGIN with INVOKE component
-		mapDialog.send();]]>
-	</programlisting>
+	<para>
+		If you want to run and manage SS7 Simulator remotely you must at the first step run "simulator-core.jar" application at the server host.
+		Now there are two interfaces for managing: RMI and HTML adapter. Both two styles of management can be run at the same time.  
+	</para>
+
+
+	<section id="simulator_configuring_remotely_rmi">
+		<title>RMI interface
+		</title>
+
+	<para>
+		Before starting "simulator-core" application "rmiregistry" application must be started. The format of launching "rmiregistry" is:
+		<programlisting>
+		rmiregistry 9999
+		</programlisting>
+		"9999" is the port of RMI host (we can use some port).  
+	</para>
+
+	<para>
+		The format of launching "simulator-core" is: 
+		<programlisting>
+		java -Dcom.sun.management.jmxremote org.mobicents.protocols.ss7.tools.simulator.Main name=&LT#host name&GT# rmi=9999
+		</programlisting>
+		"9999" - is the RMI port, it must be equal the port from "rmiregistry 9999" launching.
+		"&LT#host name&GT#" - is the host name of SS7 Simulator, for example "a1" (see <xref linkend="simulator_configuring" />)
+	</para>
+
+	<para>
+		The best client for management via RMI interface is "simulator-gui" application.
+		After launching "simulator-gui" we should select the option "Connect to the existing testerHost via JMX" and
+		in the default RMI connection string replace "localhost" with the proper IP address of the "simulator-core" computer
+		and the "9999" with the proper RMI port (if needed).
+		After connecting the management will be the same as if the application is run locally (see <xref linkend="simulator_configuring_locally" />).
+	</para>
+
+	<para>
+		"Jconsole" application can be also used as the client. But this application is less convenient.  
+	</para>
+	</section>
+
+
+	<section id="simulator_configuring_remotely_html">
+		<title>HTPL interface 
+		</title>
+
+	<para>
+		The format of launching "simulator-core" is: 
+		<programlisting>
+		java -Dcom.sun.management.jmxremote org.mobicents.protocols.ss7.tools.simulator.Main name=&LT#host name&GT# http=8000
+		</programlisting>
+		"8000" - is the HTTP server port, any port can be used.
+	</para>
+
+	<para>
+		HTML management is less convenient than RMI management. But it can be used if RMI is not acceptable (for example if we are behind a proxy).
+		For paramters configuring and luanching tests we can use any html brouser. Use "http://&LT#IP address&GT#:&LT#port&GT#" as an URL.
+		Results of Simulator working can be found at the console (at the server) or in the log file (file name is like "a1.log").    
+	</para>
+	</section>
 
 	</section>
-	<section
-		id="map_usage_example"> 
-		<title>&THIS.APPLICATION; MAP Usage</title>
-		<para>The complete example looks like</para>
 
-		<programlisting
-			language="Java"
-			role="JAVA"><![CDATA[
-public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryListener {
 
-	private MAPStack mapStack;
-	private MAPProvider mapProvider;
+	<section id="simulator_tests">
+		<title>SS7 Simulator test cases 
+		</title>
 
-	MapServiceFactory servFact;
+	<para>
+		Several test cases are implemened now. 
+	</para>
 
-	SccpAddress destAddress = null;
 
-	// The address created by passing the AddressNature, NumberingPlan and
-	// actual address
-	AddressString destReference = servFact.createAddressString(AddressNature.international_number,
-			NumberingPlan.land_mobile, "204208300008002");
+	<section id="simulator_test_ussdclient">
+		<title>USSD Client 
+		</title>
 
-	SccpAddress origAddress = null;
+	<para>
+		UssdClient test can perform followng tasks:
+			<itemizedlist> 
+				<listitem>
+					<para>
+						Sending a ProcessUnstructiredSs request, waiting for the answer and displaying the answer 
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Sending a UnstructiredSs response as an answer for UnstructiredSs request    
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Receiving UnstructiredSs notify and displaying it
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
 
-	AddressString origReference = servFact.createAddressString(AddressNature.international_number, NumberingPlan.ISDN,
-			"31628968300");
-
-	MAPExample(SccpProvider sccpPprovider, SccpAddress address, SccpAddress remoteAddress) {
-		origAddress = address;
-		destAddress = remoteAddress;
-
-		mapStack = new MAPStackImpl(sccpPprovider, 8);
-		mapProvider = mapStack.getMAPProvider();
-		servFact = mapProvider.getMapServiceFactory();
-
-		mapProvider.addMAPDialogListener(this);
-		mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
-	}
-
-	private static SccpProvider getSccpProvider() throws NamingException {
-
-		// no arg is ok, if we run in JBoss
-		InitialContext ctx = new InitialContext();
-		try {
-			String providerJndiName = "/mobicents/ss7/sccp";
-			return ((SccpStack) ctx.lookup(providerJndiName)).getSccpProvider();
-
-		} finally {
-			ctx.close();
-		}
-	}
-
-	private static SccpAddress createLocalAddress() {
-		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
-	}
-
-	private static SccpAddress createRemoteAddress() {
-		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
-	}
-
-	public void run() throws Exception {
-
-		// Make the supplimentary service activated
-		mapProvider.getMAPServiceSupplementary().acivate();
-
-		// First create Dialog
-		MAPDialogSupplementary mapDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(
-				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, MAPApplicationContextVersion.version2), destAddress,
-				destReference, origAddress, origReference);
-
-		// The dataCodingScheme is still byte, as I am not exactly getting how
-		// to encode/decode this.
-		byte ussdDataCodingScheme = 0x0f;
-
-		// USSD String: *125*+31628839999#
-		// The Charset is null, here we let system use default Charset (UTF-7 as
-		// explained in GSM 03.38. However if MAP User wants, it can set its own
-		// impl of Charset
-		USSDString ussdString = servFact.createUSSDString("*125*+31628839999#", null);
-
-		AddressString msisdn = this.servFact.createAddressString(AddressNature.international_number,
-				NumberingPlan.ISDN, "31628838002");
-
-		mapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, msisdn);
-
-		// This will initiate the TC-BEGIN with INVOKE component
-		mapDialog.send();
-	}
-
-	public void onProcessUnstructuredSSIndication(ProcessUnstructuredSSIndication procUnstrInd) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void onUnstructuredSSIndication(UnstructuredSSIndication unstrInd) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public static void main(String[] args) throws Exception {
-		SccpProvider sccpProvider = getSccpProvider(); // JNDI lookup of SCCP
-
-		SccpAddress localAddress = createLocalAddress();
-		SccpAddress remoteAddress = createRemoteAddress();
-
-		MAPExample example = new MAPExample(sccpProvider, localAddress, remoteAddress);
-
-		example.run();
-
-	}
-
-	@Override
-	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
-			MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
-			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason,
-			MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason,
-			MAPAbortSource abortSource, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDialogClose(MAPDialog mapDialog) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDialogDelimiter(MAPDialog mapDialog) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void onDialogResease(MAPDialog mapDialog) {
-		
-	}
-
-	@Override
-	public void onDialogTimeout(MAPDialog mapDialog) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onInvokeTimeout(MAPDialog mapDialog, Long invoke) {
-		// TODO Auto-generated method stub
-		
-	}
-
-}]]>
-	</programlisting>
+	<para>
+		You can send ProcessUnstructiredSs request and UnstructiredSs response only manually by inserting a message text and 
+		pressing buttons.
+		You can not send a new ProcessUnstructiredSs request till the response for previos request has been received (or till dialog timeout).
+		You can also manually close the current dialog by perssing "Close current dialog" button.
+		Msisdn, data coding schema and alerting pattern values can be configured before test starting. 
+	</para>
 	</section>
+
+
+	<section id="simulator_test_ussdserver">
+		<title>USSD Server 
+		</title>
+
+	<para>
+		UssdServer test can work in manual and automatic modes.
+		In the manual mode a user manually inserts the response message value and sends ProcessUnstructiredSs response (or UnstructiredSs request) to the Ussd client.
+		In the automatic mode UssdServer automatically sends a predefined message as an ProcessUnstructiredSs response ("Auto sending ProcessUnstructuredSsResponse" option)
+		or automatically sends a predefined message as an UnstructiredSs request and then 
+		sends a predefined message ProcessUnstructiredSs response ("Auto sending Unstructured_SS_Request then after response sending ProcessUnstructuredSsResponse" option).
+	</para>
+
+	<para>
+		UssdServer test can perform followng tasks:
+			<itemizedlist> 
+				<listitem>
+					<para>
+						Sending a ProcessUnstructiredSs response / UnstructiredSs request in automatic or manual modes.
+						Ussd Client must initiate a dialog using ProcessUnstructiredSs request.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Manually sending an UnstructuredSsNotify. 
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
+	</section>
+
+	</section>
+
+	</section>
+
 </chapter>
+

@@ -47,9 +47,7 @@ import org.mobicents.protocols.ss7.tools.simulator.level2.SccpManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHostMBean;
-import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
-import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerManMBean;
 
 /**
@@ -100,8 +98,10 @@ public class ConnectionForm extends JFrame {
 				if (tbUrl != null) {
 					if (e.getStateChange() == 1) {
 						tbUrl.setEnabled(false);
+						tbAppName.setEnabled(true);
 					} else {
 						tbUrl.setEnabled(true);
+						tbAppName.setEnabled(false);
 					}
 				}
 			}
@@ -126,10 +126,11 @@ public class ConnectionForm extends JFrame {
 		JButton btStart = new JButton("Start");
 		btStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (rbLocal.isSelected())
+				if (rbLocal.isSelected()) {
 					startLocal(tbAppName.getText());
-				else
+				} else {
 					startRemote(tbAppName.getText(), tbUrl.getText());
+				}
 			}
 		});
 		btStart.setBounds(138, 130, 143, 23);

@@ -53,6 +53,7 @@ import java.awt.Dimension;
 import javax.swing.JScrollPane;
 import java.awt.Dialog.ModalExclusionType;
 import java.awt.Window.Type;
+import java.awt.Dialog.ModalityType;
 
 /**
  * 
@@ -89,7 +90,6 @@ public class TestingForm extends JDialog {
 	
 	public TestingForm(JFrame owner) {
 		super(owner, true);
-		setType(Type.UTILITY);
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
