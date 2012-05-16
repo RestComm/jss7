@@ -146,7 +146,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.initialDP);
 		invoke.setOperationCode(oc);
 
-		InitialDPRequestIndicationImpl req = new InitialDPRequestIndicationImpl(serviceKey, calledPartyNumber, callingPartyNumber, callingPartysCategory,
+		InitialDPRequestImpl req = new InitialDPRequestImpl(serviceKey, calledPartyNumber, callingPartyNumber, callingPartysCategory,
 				CGEncountered, IPSSPCapabilities, locationNumber, originalCalledPartyID, extensions, highLayerCompatibility, additionalCallingPartyNumber,
 				bearerCapability, eventTypeBCSM, redirectingPartyID, redirectionInformation, cause, serviceInteractionIndicatorsTwo, carrier, cugIndex,
 				cugInterlock, cugOutgoingAccess, imsi, subscriberState, locationInformation, extBasicServiceCode, callReferenceNumber, mscAddress,
@@ -198,7 +198,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.applyChargingReport);
 		invoke.setOperationCode(oc);
 
-		ApplyChargingReportRequestIndicationImpl req = new ApplyChargingReportRequestIndicationImpl(timeDurationChargingResult);
+		ApplyChargingReportRequestImpl req = new ApplyChargingReportRequestImpl(timeDurationChargingResult);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -248,7 +248,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.applyCharging);
 		invoke.setOperationCode(oc);
 
-		ApplyChargingRequestIndicationImpl req = new ApplyChargingRequestIndicationImpl(aChBillingChargingCharacteristics, partyToCharge, extensions,
+		ApplyChargingRequestImpl req = new ApplyChargingRequestImpl(aChBillingChargingCharacteristics, partyToCharge, extensions,
 				aChChargingAddress);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
@@ -299,7 +299,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.callInformationReport);
 		invoke.setOperationCode(oc);
 
-		CallInformationReportRequestIndicationImpl req = new CallInformationReportRequestIndicationImpl(requestedInformationList, extensions, legID);
+		CallInformationReportRequestImpl req = new CallInformationReportRequestImpl(requestedInformationList, extensions, legID);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -349,7 +349,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.callInformationRequest);
 		invoke.setOperationCode(oc);
 
-		CallInformationRequestRequestIndicationImpl req = new CallInformationRequestRequestIndicationImpl(requestedInformationTypeList, extensions, legID);
+		CallInformationRequestRequestImpl req = new CallInformationRequestRequestImpl(requestedInformationTypeList, extensions, legID);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -410,7 +410,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.connect);
 		invoke.setOperationCode(oc);
 
-		ConnectRequestIndicationImpl req = new ConnectRequestIndicationImpl(destinationRoutingAddress, alertingPattern, originalCalledPartyID, extensions,
+		ConnectRequestImpl req = new ConnectRequestImpl(destinationRoutingAddress, alertingPattern, originalCalledPartyID, extensions,
 				carrier, callingPartysCategory, redirectingPartyID, redirectionInformation, genericNumbers, serviceInteractionIndicatorsTwo, chargeNumber,
 				legToBeConnected, cugInterlock, cugOutgoingAccess, suppressionOfAnnouncement, ocsIApplicable, naoliInfo, borInterrogationRequested);
 		AsnOutputStream aos = new AsnOutputStream();
@@ -501,7 +501,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.eventReportBCSM);
 		invoke.setOperationCode(oc);
 
-		EventReportBCSMRequestIndicationImpl req = new EventReportBCSMRequestIndicationImpl(eventTypeBCSM, eventSpecificInformationBCSM, legID, miscCallInfo,
+		EventReportBCSMRequestImpl req = new EventReportBCSMRequestImpl(eventTypeBCSM, eventSpecificInformationBCSM, legID, miscCallInfo,
 				extensions);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
@@ -551,7 +551,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.requestReportBCSMEvent);
 		invoke.setOperationCode(oc);
 
-		RequestReportBCSMEventRequestIndicationImpl req = new RequestReportBCSMEventRequestIndicationImpl(bcsmEventList, extensions);
+		RequestReportBCSMEventRequestImpl req = new RequestReportBCSMEventRequestImpl(bcsmEventList, extensions);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -600,7 +600,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.releaseCall);
 		invoke.setOperationCode(oc);
 
-		ReleaseCallRequestIndicationImpl req = new ReleaseCallRequestIndicationImpl(cause);
+		ReleaseCallRequestImpl req = new ReleaseCallRequestImpl(cause);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -719,7 +719,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.assistRequestInstructions);
 		invoke.setOperationCode(oc);
 
-		AssistRequestInstructionsRequestIndicationImpl req = new AssistRequestInstructionsRequestIndicationImpl(correlationID, ipSSPCapabilities, extensions);
+		AssistRequestInstructionsRequestImpl req = new AssistRequestInstructionsRequestImpl(correlationID, ipSSPCapabilities, extensions);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -773,7 +773,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.establishTemporaryConnection);
 		invoke.setOperationCode(oc);
 
-		EstablishTemporaryConnectionRequestIndicationImpl req = new EstablishTemporaryConnectionRequestIndicationImpl(assistingSSPIPRoutingAddress,
+		EstablishTemporaryConnectionRequestImpl req = new EstablishTemporaryConnectionRequestImpl(assistingSSPIPRoutingAddress,
 				correlationID, scfID, extensions, carrier, serviceInteractionIndicatorsTwo, callSegmentID, naOliInfo, chargeNumber, originalCalledPartyID,
 				callingPartyNumber, this.appCntx.getVersion().getVersion() >= 3);
 		AsnOutputStream aos = new AsnOutputStream();
@@ -869,7 +869,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.connectToResource);
 		invoke.setOperationCode(oc);
 
-		ConnectToResourceRequestIndicationImpl req = new ConnectToResourceRequestIndicationImpl(resourceAddress_IPRoutingAddress, resourceAddress_Null,
+		ConnectToResourceRequestImpl req = new ConnectToResourceRequestImpl(resourceAddress_IPRoutingAddress, resourceAddress_Null,
 				extensions, serviceInteractionIndicatorsTwo, callSegmentID);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
@@ -922,7 +922,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.resetTimer);
 		invoke.setOperationCode(oc);
 
-		ResetTimerRequestIndicationImpl req = new ResetTimerRequestIndicationImpl(timerID, timerValue, extensions, callSegmentID);
+		ResetTimerRequestImpl req = new ResetTimerRequestImpl(timerID, timerValue, extensions, callSegmentID);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -970,7 +970,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.furnishChargingInformation);
 		invoke.setOperationCode(oc);
 
-		FurnishChargingInformationRequestIndicationImpl req = new FurnishChargingInformationRequestIndicationImpl(FCIBCCCAMELsequence1);
+		FurnishChargingInformationRequestImpl req = new FurnishChargingInformationRequestImpl(FCIBCCCAMELsequence1);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -1020,7 +1020,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.sendChargingInformation);
 		invoke.setOperationCode(oc);
 
-		SendChargingInformationRequestIndicationImpl req = new SendChargingInformationRequestIndicationImpl(sciBillingChargingCharacteristics, partyToCharge,
+		SendChargingInformationRequestImpl req = new SendChargingInformationRequestImpl(sciBillingChargingCharacteristics, partyToCharge,
 				extensions);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
@@ -1077,7 +1077,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.specializedResourceReport);
 		invoke.setOperationCode(oc);
 
-		SpecializedResourceReportRequestIndicationImpl req = new SpecializedResourceReportRequestIndicationImpl(false);
+		SpecializedResourceReportRequestImpl req = new SpecializedResourceReportRequestImpl(false);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -1120,7 +1120,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.specializedResourceReport);
 		invoke.setOperationCode(oc);
 
-		SpecializedResourceReportRequestIndicationImpl req = new SpecializedResourceReportRequestIndicationImpl(true, isAllAnnouncementsComplete,
+		SpecializedResourceReportRequestImpl req = new SpecializedResourceReportRequestImpl(true, isAllAnnouncementsComplete,
 				isFirstAnnouncementStarted);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
@@ -1179,7 +1179,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.playAnnouncement);
 		invoke.setOperationCode(oc);
 
-		PlayAnnouncementRequestIndicationImpl req = new PlayAnnouncementRequestIndicationImpl(informationToSend, disconnectFromIPForbidden,
+		PlayAnnouncementRequestImpl req = new PlayAnnouncementRequestImpl(informationToSend, disconnectFromIPForbidden,
 				requestAnnouncementCompleteNotification, extensions, callSegmentID, requestAnnouncementStartedNotification);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
@@ -1237,7 +1237,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.promptAndCollectUserInformation);
 		invoke.setOperationCode(oc);
 
-		PromptAndCollectUserInformationRequestIndicationImpl req = new PromptAndCollectUserInformationRequestIndicationImpl(collectedInfo,
+		PromptAndCollectUserInformationRequestImpl req = new PromptAndCollectUserInformationRequestImpl(collectedInfo,
 				disconnectFromIPForbidden, informationToSend, extensions, callSegmentID, requestAnnouncementStartedNotification);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
@@ -1284,7 +1284,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.promptAndCollectUserInformation);
 		resultLast.setOperationCode(oc);
 
-		PromptAndCollectUserInformationResponseIndicationImpl req = new PromptAndCollectUserInformationResponseIndicationImpl(digitsResponse);
+		PromptAndCollectUserInformationResponseImpl req = new PromptAndCollectUserInformationResponseImpl(digitsResponse);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -1319,25 +1319,25 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 	@Override
 	public Long addCancelRequest_InvokeId(int customInvokeTimeout, Integer invokeID) throws CAPException {
 
-		CancelRequestIndicationImpl req = new CancelRequestIndicationImpl(invokeID);
+		CancelRequestImpl req = new CancelRequestImpl(invokeID);
 		return addCancelRequest(customInvokeTimeout, req);
 	}
 
 	@Override
 	public Long addCancelRequest_AllRequests(int customInvokeTimeout) throws CAPException {
 
-		CancelRequestIndicationImpl req = new CancelRequestIndicationImpl(true);
+		CancelRequestImpl req = new CancelRequestImpl(true);
 		return addCancelRequest(customInvokeTimeout, req);
 	}
 
 	@Override
 	public Long addCancelRequest_CallSegmentToCancel(int customInvokeTimeout, CallSegmentToCancel callSegmentToCancel) throws CAPException {
 
-		CancelRequestIndicationImpl req = new CancelRequestIndicationImpl(callSegmentToCancel);
+		CancelRequestImpl req = new CancelRequestImpl(callSegmentToCancel);
 		return addCancelRequest(customInvokeTimeout, req);
 	}
 
-	private Long addCancelRequest(int customInvokeTimeout, CancelRequestIndicationImpl req) throws CAPException {
+	private Long addCancelRequest(int customInvokeTimeout, CancelRequestImpl req) throws CAPException {
 
 		if (this.appCntx != CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF && this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfGeneric
 				&& this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV2_assistGsmSSF_to_gsmSCF

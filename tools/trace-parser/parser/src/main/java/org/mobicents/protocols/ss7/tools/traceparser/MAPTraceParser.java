@@ -47,31 +47,31 @@ import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponseIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistRequestInstructionsRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponse;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistRequestInstructionsRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallListener;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EstablishTemporaryConnectionRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponseIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ReleaseCallRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequestIndication;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequestIndication;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EstablishTemporaryConnectionRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponse;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ReleaseCallRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprsListener;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSmsListener;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
@@ -1444,150 +1444,6 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	}
 
 	@Override
-	public void onActivityTestRequestIndication(ActivityTestRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onActivityTestResponseIndication(ActivityTestResponseIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onApplyChargingReportRequestIndication(ApplyChargingReportRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onApplyChargingRequestIndication(ApplyChargingRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onAssistRequestInstructionsRequestIndication(AssistRequestInstructionsRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onCallInformationReportRequestIndication(CallInformationReportRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onCallInformationRequestRequestIndication(CallInformationRequestRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onCancelRequestIndication(CancelRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onConnectRequestIndication(ConnectRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onConnectToResourceRequestIndication(ConnectToResourceRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onContinueRequestIndication(ContinueRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDisconnectForwardConnectionRequestIndication(DisconnectForwardConnectionRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onEstablishTemporaryConnectionRequestIndication(EstablishTemporaryConnectionRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onEventReportBCSMRequestIndication(EventReportBCSMRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onFurnishChargingInformationRequestIndication(FurnishChargingInformationRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onInitialDPRequestIndication(InitialDPRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onPlayAnnouncementRequestIndication(PlayAnnouncementRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onPromptAndCollectUserInformationRequestIndication(PromptAndCollectUserInformationRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onPromptAndCollectUserInformationResponseIndication(PromptAndCollectUserInformationResponseIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onReleaseCalltRequestIndication(ReleaseCallRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onRequestReportBCSMEventRequestIndication(RequestReportBCSMEventRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onResetTimerRequestIndication(ResetTimerRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onSendChargingInformationRequestIndication(SendChargingInformationRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onSpecializedResourceReportRequestIndication(SpecializedResourceReportRequestIndication arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onCAPMessage(CAPMessage arg0) {
 		// TODO Auto-generated method stub
 		
@@ -1595,6 +1451,150 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 	@Override
 	public void onDialogRelease(CAPDialog arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onActivityTestRequestIndication(ActivityTestRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onActivityTestResponseIndication(ActivityTestResponse arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onApplyChargingReportRequestIndication(ApplyChargingReportRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onApplyChargingRequestIndication(ApplyChargingRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAssistRequestInstructionsRequestIndication(AssistRequestInstructionsRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCallInformationReportRequestIndication(CallInformationReportRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCallInformationRequestRequestIndication(CallInformationRequestRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCancelRequestIndication(CancelRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectRequestIndication(ConnectRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectToResourceRequestIndication(ConnectToResourceRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onContinueRequestIndication(ContinueRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDisconnectForwardConnectionRequestIndication(DisconnectForwardConnectionRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onEstablishTemporaryConnectionRequestIndication(EstablishTemporaryConnectionRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onEventReportBCSMRequestIndication(EventReportBCSMRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onFurnishChargingInformationRequestIndication(FurnishChargingInformationRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInitialDPRequestIndication(InitialDPRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPlayAnnouncementRequestIndication(PlayAnnouncementRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPromptAndCollectUserInformationRequestIndication(PromptAndCollectUserInformationRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPromptAndCollectUserInformationResponseIndication(PromptAndCollectUserInformationResponse arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onReleaseCalltRequestIndication(ReleaseCallRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRequestReportBCSMEventRequestIndication(RequestReportBCSMEventRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onResetTimerRequestIndication(ResetTimerRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendChargingInformationRequestIndication(SendChargingInformationRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSpecializedResourceReportRequestIndication(SpecializedResourceReportRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}

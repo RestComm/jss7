@@ -31,52 +31,52 @@ import org.mobicents.protocols.ss7.cap.api.CAPServiceListener;
  */
 public interface CAPServiceCircuitSwitchedCallListener extends CAPServiceListener {
 
-	public void onInitialDPRequestIndication(InitialDPRequestIndication ind);
+	public void onInitialDPRequestIndication(InitialDPRequest ind);
 
-	public void onRequestReportBCSMEventRequestIndication(RequestReportBCSMEventRequestIndication ind);
+	public void onRequestReportBCSMEventRequestIndication(RequestReportBCSMEventRequest ind);
 
-	public void onApplyChargingRequestIndication(ApplyChargingRequestIndication ind);
+	public void onApplyChargingRequestIndication(ApplyChargingRequest ind);
 
-	public void onEventReportBCSMRequestIndication(EventReportBCSMRequestIndication ind);
+	public void onEventReportBCSMRequestIndication(EventReportBCSMRequest ind);
 
-	public void onContinueRequestIndication(ContinueRequestIndication ind);
+	public void onContinueRequestIndication(ContinueRequest ind);
 
-	public void onApplyChargingReportRequestIndication(ApplyChargingReportRequestIndication ind);
+	public void onApplyChargingReportRequestIndication(ApplyChargingReportRequest ind);
 
-	public void onReleaseCalltRequestIndication(ReleaseCallRequestIndication ind);
+	public void onReleaseCalltRequestIndication(ReleaseCallRequest ind);
 
-	public void onConnectRequestIndication(ConnectRequestIndication ind);
+	public void onConnectRequestIndication(ConnectRequest ind);
 
-	public void onCallInformationRequestRequestIndication(CallInformationRequestRequestIndication ind);
+	public void onCallInformationRequestRequestIndication(CallInformationRequestRequest ind);
 
-	public void onCallInformationReportRequestIndication(CallInformationReportRequestIndication ind);
+	public void onCallInformationReportRequestIndication(CallInformationReportRequest ind);
 
-	public void onActivityTestRequestIndication(ActivityTestRequestIndication ind);
+	public void onActivityTestRequestIndication(ActivityTestRequest ind);
 
-	public void onActivityTestResponseIndication(ActivityTestResponseIndication ind);
+	public void onActivityTestResponseIndication(ActivityTestResponse ind);
 
-	public void onAssistRequestInstructionsRequestIndication(AssistRequestInstructionsRequestIndication ind);
+	public void onAssistRequestInstructionsRequestIndication(AssistRequestInstructionsRequest ind);
 
-	public void onEstablishTemporaryConnectionRequestIndication(EstablishTemporaryConnectionRequestIndication ind);
+	public void onEstablishTemporaryConnectionRequestIndication(EstablishTemporaryConnectionRequest ind);
 
-	public void onDisconnectForwardConnectionRequestIndication(DisconnectForwardConnectionRequestIndication ind);
+	public void onDisconnectForwardConnectionRequestIndication(DisconnectForwardConnectionRequest ind);
 
-	public void onConnectToResourceRequestIndication(ConnectToResourceRequestIndication ind);
+	public void onConnectToResourceRequestIndication(ConnectToResourceRequest ind);
 
-	public void onResetTimerRequestIndication(ResetTimerRequestIndication ind);
+	public void onResetTimerRequestIndication(ResetTimerRequest ind);
 
-	public void onFurnishChargingInformationRequestIndication(FurnishChargingInformationRequestIndication ind);
+	public void onFurnishChargingInformationRequestIndication(FurnishChargingInformationRequest ind);
 
-	public void onSendChargingInformationRequestIndication(SendChargingInformationRequestIndication ind);
+	public void onSendChargingInformationRequestIndication(SendChargingInformationRequest ind);
 
-	public void onSpecializedResourceReportRequestIndication(SpecializedResourceReportRequestIndication ind);
+	public void onSpecializedResourceReportRequestIndication(SpecializedResourceReportRequest ind);
 
-	public void onPlayAnnouncementRequestIndication(PlayAnnouncementRequestIndication ind);
+	public void onPlayAnnouncementRequestIndication(PlayAnnouncementRequest ind);
 
-	public void onPromptAndCollectUserInformationRequestIndication(PromptAndCollectUserInformationRequestIndication ind);
+	public void onPromptAndCollectUserInformationRequestIndication(PromptAndCollectUserInformationRequest ind);
 
-	public void onPromptAndCollectUserInformationResponseIndication(PromptAndCollectUserInformationResponseIndication ind);
+	public void onPromptAndCollectUserInformationResponseIndication(PromptAndCollectUserInformationResponse ind);
 
-	public void onCancelRequestIndication(CancelRequestIndication ind);
+	public void onCancelRequestIndication(CancelRequest ind);
 
 }

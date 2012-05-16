@@ -376,7 +376,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		InitialDPRequestIndicationImpl ind = new InitialDPRequestIndicationImpl(capDialogImpl.getApplicationContext().getVersion().getVersion() >= 3);
+		InitialDPRequestImpl ind = new InitialDPRequestImpl(capDialogImpl.getApplicationContext().getVersion().getVersion() >= 3);
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -406,7 +406,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		RequestReportBCSMEventRequestIndicationImpl ind = new RequestReportBCSMEventRequestIndicationImpl();
+		RequestReportBCSMEventRequestImpl ind = new RequestReportBCSMEventRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -435,7 +435,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		ApplyChargingRequestIndicationImpl ind = new ApplyChargingRequestIndicationImpl();
+		ApplyChargingRequestImpl ind = new ApplyChargingRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -464,7 +464,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		EventReportBCSMRequestIndicationImpl ind = new EventReportBCSMRequestIndicationImpl();
+		EventReportBCSMRequestImpl ind = new EventReportBCSMRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -482,7 +482,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 	private void continueRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
 
-		ContinueRequestIndicationImpl ind = new ContinueRequestIndicationImpl();
+		ContinueRequestImpl ind = new ContinueRequestImpl();
 
 		ind.setInvokeId(invokeId);
 		ind.setCAPDialog(capDialogImpl);
@@ -510,7 +510,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		ApplyChargingReportRequestIndicationImpl ind = new ApplyChargingReportRequestIndicationImpl();
+		ApplyChargingReportRequestImpl ind = new ApplyChargingReportRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -539,7 +539,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		ReleaseCallRequestIndicationImpl ind = new ReleaseCallRequestIndicationImpl();
+		ReleaseCallRequestImpl ind = new ReleaseCallRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -568,7 +568,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		ConnectRequestIndicationImpl ind = new ConnectRequestIndicationImpl();
+		ConnectRequestImpl ind = new ConnectRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -597,7 +597,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		CallInformationRequestRequestIndicationImpl ind = new CallInformationRequestRequestIndicationImpl();
+		CallInformationRequestRequestImpl ind = new CallInformationRequestRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -626,7 +626,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		CallInformationReportRequestIndicationImpl ind = new CallInformationReportRequestIndicationImpl();
+		CallInformationReportRequestImpl ind = new CallInformationReportRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -644,7 +644,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 	private void activityTestRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
 
-		ActivityTestRequestIndicationImpl ind = new ActivityTestRequestIndicationImpl();
+		ActivityTestRequestImpl ind = new ActivityTestRequestImpl();
 
 		ind.setInvokeId(invokeId);
 		ind.setCAPDialog(capDialogImpl);
@@ -661,7 +661,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 	private void activityTestResponse(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
 
-		ActivityTestResponseIndicationImpl ind = new ActivityTestResponseIndicationImpl();
+		ActivityTestResponseImpl ind = new ActivityTestResponseImpl();
 
 		ind.setInvokeId(invokeId);
 		ind.setCAPDialog(capDialogImpl);
@@ -689,7 +689,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		AssistRequestInstructionsRequestIndicationImpl ind = new AssistRequestInstructionsRequestIndicationImpl();
+		AssistRequestInstructionsRequestImpl ind = new AssistRequestInstructionsRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -718,7 +718,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		EstablishTemporaryConnectionRequestIndicationImpl ind = new EstablishTemporaryConnectionRequestIndicationImpl(capDialogImpl.getApplicationContext()
+		EstablishTemporaryConnectionRequestImpl ind = new EstablishTemporaryConnectionRequestImpl(capDialogImpl.getApplicationContext()
 				.getVersion().getVersion() >= 3);
 		ind.decodeData(ais, buf.length);
 
@@ -737,7 +737,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 	
 	private void disconnectForwardConnectionRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
 
-		DisconnectForwardConnectionRequestIndicationImpl ind = new DisconnectForwardConnectionRequestIndicationImpl();
+		DisconnectForwardConnectionRequestImpl ind = new DisconnectForwardConnectionRequestImpl();
 
 		ind.setInvokeId(invokeId);
 		ind.setCAPDialog(capDialogImpl);
@@ -765,7 +765,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		ConnectToResourceRequestIndicationImpl ind = new ConnectToResourceRequestIndicationImpl();
+		ConnectToResourceRequestImpl ind = new ConnectToResourceRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -794,7 +794,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		ResetTimerRequestIndicationImpl ind = new ResetTimerRequestIndicationImpl();
+		ResetTimerRequestImpl ind = new ResetTimerRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -823,7 +823,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		FurnishChargingInformationRequestIndicationImpl ind = new FurnishChargingInformationRequestIndicationImpl();
+		FurnishChargingInformationRequestImpl ind = new FurnishChargingInformationRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -852,7 +852,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		SendChargingInformationRequestIndicationImpl ind = new SendChargingInformationRequestIndicationImpl();
+		SendChargingInformationRequestImpl ind = new SendChargingInformationRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -888,7 +888,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		SpecializedResourceReportRequestIndicationImpl ind = new SpecializedResourceReportRequestIndicationImpl(capDialogImpl.getApplicationContext()
+		SpecializedResourceReportRequestImpl ind = new SpecializedResourceReportRequestImpl(capDialogImpl.getApplicationContext()
 				.getVersion().getVersion() < 4);
 		ind.decodeData(ais, buf.length);
 
@@ -918,7 +918,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		PlayAnnouncementRequestIndicationImpl ind = new PlayAnnouncementRequestIndicationImpl();
+		PlayAnnouncementRequestImpl ind = new PlayAnnouncementRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -948,7 +948,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		PromptAndCollectUserInformationRequestIndicationImpl ind = new PromptAndCollectUserInformationRequestIndicationImpl();
+		PromptAndCollectUserInformationRequestImpl ind = new PromptAndCollectUserInformationRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -977,7 +977,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		PromptAndCollectUserInformationResponseIndicationImpl ind = new PromptAndCollectUserInformationResponseIndicationImpl();
+		PromptAndCollectUserInformationResponseImpl ind = new PromptAndCollectUserInformationResponseImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -1005,7 +1005,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		CancelRequestIndicationImpl ind = new CancelRequestIndicationImpl();
+		CancelRequestImpl ind = new CancelRequestImpl();
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
