@@ -12,7 +12,7 @@ public enum EventType {
 	//Service EventType
 	ErrorComponent, ProviderErrorComponent, RejectComponent, InvokeTimeout, 
 	
-	// Supplimentary EventType
+	// Supplementary EventType
 	ProcessUnstructuredSSRequestIndication, ProcessUnstructuredSSResponseIndication, UnstructuredSSRequestIndication, UnstructuredSSResponseIndication, UnstructuredSSNotifyRequestIndication,
 
 	// SMS EventType

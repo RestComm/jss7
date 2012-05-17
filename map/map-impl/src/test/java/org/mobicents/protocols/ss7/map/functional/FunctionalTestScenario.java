@@ -99,6 +99,11 @@ public enum FunctionalTestScenario {
 	 * TC-END + Reject (generalProblem) without invokeId!  
 	 */
 	Action_Component_G(16),
+	
+
+	// ....................................	
+		
+		
 
 	/**
 	 * TC-BEGIN + AlertServiceCentreRequest
@@ -130,11 +135,15 @@ public enum FunctionalTestScenario {
 	 * TC-END + ForwardSMResponse_V2  
 	 */
 	Action_Sms_ForwardSM(37),
-
+	
 	/**
 	 * TC-BEGIN+INVOKE(opCode=47) -> TC-END+RRL(opCode=47) (47=reportSM-DeliveryStatus)
 	 */
 	Action_V1_A(41),
+
+	
+	// .......................................	
+		
 	/**
 	 * TC-BEGIN+INVOKE(opCode=49) -> release()
 	 */

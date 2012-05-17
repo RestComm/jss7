@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
+import java.util.Arrays;
+
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
@@ -75,11 +77,11 @@ public class Client extends EventTestHarness {
 
 	private static Logger logger = Logger.getLogger(Client.class);
 
-	private SccpAddress thisAddress;
-	private SccpAddress remoteAddress;
+	protected SccpAddress thisAddress;
+	protected SccpAddress remoteAddress;
 
 	private MAPStack mapStack;
-	private MAPProvider mapProvider;
+	protected MAPProvider mapProvider;
 
 	protected MAPParameterFactory mapParameterFactory;
 
@@ -87,7 +89,7 @@ public class Client extends EventTestHarness {
 	private String unexpected = "";
 
 	private MAPDialogSupplementary clientDialog;
-	private MAPDialogSms clientDialogSms;
+	protected MAPDialogSms clientDialogSms;
 
 	private long savedInvokeId;
 
