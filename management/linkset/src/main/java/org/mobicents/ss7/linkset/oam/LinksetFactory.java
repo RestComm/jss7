@@ -54,5 +54,33 @@ public abstract class LinksetFactory {
      * @return
      */
     public abstract String getName();
+    
+    /**
+     * Get linkset name
+     * 
+     * @return
+     */
+    public abstract String getLinksetName();
+    
+    /**
+     * Get linkset class
+     * 
+     * @return
+     */
+    public abstract Class getLinksetClass();
+    
+    /**
+     * Get link name
+     * 
+     * @return
+     */
+    public abstract String getLinkName();
+    
+    /**
+     * Get link class
+     * 
+     * @return
+     */
+    public abstract Class getLinkClass();
 
 }

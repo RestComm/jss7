@@ -27,6 +27,8 @@ import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
+
 /**
  * Instance of this class represents the logical group of links between two SP
  * 
@@ -60,7 +62,10 @@ public abstract class Linkset implements XMLSerializable {
 
     // Hold Links here. Link name as key and actual Link as Object
     protected FastMap<String, Link> links = new FastMap<String, Link>();
-
+    protected FastMap<String, Link> loadedLinks = new FastMap<String, Link>();
+    
+    protected Scheduler scheduler;
+    
     public Linkset() {
         this.initialize();
     }
@@ -73,6 +78,28 @@ public abstract class Linkset implements XMLSerializable {
         this.ni = ni;
     }
 
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
+
+    public void setScheduler(Scheduler scheduler) {
+        this.scheduler = scheduler;
+        
+        FastMap.Entry<String, Link> e = this.links.head();
+        FastMap.Entry<String, Link> end = this.links.tail();
+        for (; (e = e.getNext()) != end;) {
+        	Link link = e.getValue();
+        	link.setScheduler(scheduler);
+        }
+        
+        e = this.loadedLinks.head();
+        end = this.loadedLinks.tail();
+        for (; (e = e.getNext()) != end;) {
+        	Link link = e.getValue();
+        	link.setScheduler(scheduler);
+        }
+    }
+    
     /**
      * Initialize this linkset after creating a new instance
      */
@@ -252,6 +279,11 @@ public abstract class Linkset implements XMLSerializable {
      */
     public abstract void activateLink(String linkName) throws Exception;
 
+    public void activateLinks()
+    {
+    	this.links.putAll(this.loadedLinks);    	
+    }
+    
     /**
      * deactivate link
      * 
@@ -282,7 +314,8 @@ public abstract class Linkset implements XMLSerializable {
             for (int i = 0; i < linksCount; i++) {
                 Link link = xml.get(LINK);
                 link.setLinkSet(linkSet);
-                linkSet.links.put(link.getName(), link);
+                link.setScheduler(linkSet.getScheduler());
+                linkSet.loadedLinks.put(link.getName(), link);
             }
         }
 
@@ -291,7 +324,7 @@ public abstract class Linkset implements XMLSerializable {
                 javolution.xml.XMLFormat.OutputElement xml)
                 throws XMLStreamException {
             xml.setAttribute(LINKSET_NAME, linkSet.linksetName);
-            xml.setAttribute(LINKSET_STATE, linkSet.state);
+            xml.setAttribute(LINKSET_STATE, LinksetState.UNAVAILABLE);
             xml.setAttribute(LINKSET_MODE, linkSet.mode);
             xml.setAttribute(LINKSET_OPC, linkSet.opc);
             xml.setAttribute(LINKSET_APC, linkSet.apc);
@@ -301,7 +334,7 @@ public abstract class Linkset implements XMLSerializable {
             for (FastMap.Entry<String, Link> e = linkSet.getLinks().head(), end = linkSet
                     .getLinks().tail(); (e = e.getNext()) != end;) {
                 Link value = e.getValue();
-                xml.add(value, LINK, value.getClass().getName());
+                xml.add(value,LINK);
             }
 
         }

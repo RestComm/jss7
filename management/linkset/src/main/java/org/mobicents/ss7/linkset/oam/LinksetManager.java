@@ -34,6 +34,8 @@ import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
 
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -98,24 +100,33 @@ public class LinksetManager {
     private String persistDir = null;
 
     // Hold LinkSet here. LinkSet's name as key and actual LinkSet as Object
-    private FastMap<String, Linkset> linksets = new FastMap<String, Linkset>();
+    private FastMap<String, Linkset> linksets = new FastMap<String, Linkset>().shared();
 
     private LinksetFactoryFactory linksetFactoryFactory = null;
 
     private Layer4 layer4 = null;
 
+    private Scheduler scheduler;
+    
     public LinksetManager() {
-        binding.setAlias(Linkset.class, LINKSET);
-        binding.setAlias(Link.class, LINK);
+    	binding.setAlias(Linkset.class, LINKSET);
+        binding.setAlias(Link.class, LINK);            	
         binding.setClassAttribute(CLASS_ATTRIBUTE);
     }
 
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
+
+    public void setScheduler(Scheduler scheduler) {
+        this.scheduler = scheduler;       
+    }
+    
     public LinksetFactoryFactory getLinksetFactoryFactory() {
         return linksetFactoryFactory;
     }
 
-    public void setLinksetFactoryFactory(
-            LinksetFactoryFactory linksetFactoryFactory) {
+    public void setLinksetFactoryFactory(LinksetFactoryFactory linksetFactoryFactory) {
         this.linksetFactoryFactory = linksetFactoryFactory;
     }
 
@@ -175,13 +186,17 @@ public class LinksetManager {
      */
 
     public String showLinkset(String[] options) throws Exception {
-        StringBuffer sb = new StringBuffer();
-        for (FastMap.Entry<String, Linkset> e = this.linksets.head(), end = this.linksets
-                .tail(); (e = e.getNext()) != end;) {
-            Linkset linkset = e.getValue();
+    	StringBuffer sb = new StringBuffer();
+        FastMap.Entry<String, Linkset> e = this.linksets.head();
+        FastMap.Entry<String, Linkset> end = this.linksets.tail();
+        for (; (e = e.getNext()) != end;) {
+        	Linkset linkset = e.getValue();
             linkset.print(sb, 0, 4);
             sb.append(FormatterHelp.NEW_LINE);
         }
+        
+        if(sb.length()==0)
+        	sb.append(" ");
         
         System.out.println(sb.toString());
         
@@ -268,7 +283,6 @@ public class LinksetManager {
      * @throws Exception
      */
     public String activateLinkset(String[] options) throws Exception {
-
         if (options == null) {
             throw new Exception(LinkOAMMessages.INVALID_COMMAND);
         }
@@ -336,7 +350,6 @@ public class LinksetManager {
      * @return
      */
     public String createLink(String[] options) throws Exception {
-
         if (options == null) {
             throw new Exception(LinkOAMMessages.INVALID_COMMAND);
         }
@@ -368,7 +381,6 @@ public class LinksetManager {
      * @throws Exception
      */
     public String deleteLink(String[] options) throws Exception {
-
         if (options == null) {
             throw new Exception(LinkOAMMessages.INVALID_COMMAND);
         }
@@ -467,8 +479,8 @@ public class LinksetManager {
      * Persist
      */
     protected void store() {
-
-        // TODO : Should we keep reference to Objects rather than recreating
+    	linksetFactoryFactory.loadBinding(binding);
+    	// TODO : Should we keep reference to Objects rather than recreating
         // everytime?
         try {
             XMLObjectWriter writer = XMLObjectWriter
@@ -481,7 +493,7 @@ public class LinksetManager {
             for (FastMap.Entry<String, Linkset> e = this.linksets.head(), end = this.linksets
                     .tail(); (e = e.getNext()) != end;) {
                 Linkset value = e.getValue();
-                writer.write(value, LINKSET, value.getClass().getName());
+                writer.write(value);
             }
 
             writer.close();
@@ -496,8 +508,9 @@ public class LinksetManager {
      * @throws Exception
      */
     protected void load() throws FileNotFoundException {
-
-        XMLObjectReader reader = null;
+    	linksetFactoryFactory.loadBinding(binding);
+    	
+    	XMLObjectReader reader = null;
         try {
             reader = XMLObjectReader.newInstance(new FileInputStream(
                     persistFile.toString()));
@@ -509,12 +522,23 @@ public class LinksetManager {
             // http://markmail.org/message/c6lsehxlxv2hua5p. It shouldn't throw
             // Exception
             while (reader.hasNext()) {
-                Linkset linkset = reader.read(LINKSET);
+                Linkset linkset = reader.read();
+                linkset.setScheduler(scheduler);
+                linkset.activateLinks();
+                try
+                {
+                	linkset.activate();
+                }
+                catch(Exception e)
+                {
+                	//possibly already activated
+                }
+                
                 this.linksets.put(linkset.getName(), linkset);
             }
-        } catch (XMLStreamException ex) {
-            // this.logger.info(
-            // "Error while re-creating Linksets from persisted file", ex);
+        } catch (Exception ex) {
+            //this.logger.info(
+        	// "Error while re-creating Linksets from persisted file", ex);
         }
     }
 
@@ -528,8 +552,7 @@ public class LinksetManager {
 
         linkSetManager.setLinksetFactoryFactory(linksetFactoryFactory);
 
-        linkSetManager.createLinkset("dahdi opc 1 dpc 2 ni 3 linkset1"
-                .split(" "));
+        linkSetManager.createLinkset("dahdi opc 1 dpc 2 ni 3 linkset1".split(" "));
         linkSetManager.store();
 
         LinksetManager linkSetManager1 = new LinksetManager();
@@ -537,5 +560,4 @@ public class LinksetManager {
 
         System.out.println(linkSetManager1.linksets.size());
     }
-
 }

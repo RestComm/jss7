@@ -37,7 +37,8 @@ import org.mobicents.ss7.linkset.oam.LinksetFactory;
 public class DialogicLinksetFactory extends LinksetFactory {
 
     private static final String NAME = "dialogic";
-
+    private static final String LINKSET_NAME = "dialogiclinkset";
+    
     public DialogicLinksetFactory() {
         super();
     }
@@ -97,4 +98,43 @@ public class DialogicLinksetFactory extends LinksetFactory {
         return new DialogicLinkset(name, opc, dpc, ni, srcmod, dstmod);
     }
 
+    /**
+     * Get linkset name
+     * 
+     * @return
+     */
+    public String getLinksetName()
+    {
+    	return LINKSET_NAME;
+    }
+    
+    /**
+     * Get linkset class
+     * 
+     * @return
+     */
+    public Class getLinksetClass()
+    {
+    	return DialogicLinkset.class;
+    }
+    
+    /**
+     * Get link name
+     * 
+     * @return
+     */
+    public String getLinkName()
+    {
+    	return null;
+    }
+    
+    /**
+     * Get link class
+     * 
+     * @return
+     */
+    public Class getLinkClass()
+    {
+    	return null;
+    }
 }

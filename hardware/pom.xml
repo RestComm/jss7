@@ -21,9 +21,7 @@
 	</properties>
 
 	<modules>
-		<!--
 		<module>dahdi</module>
-		-->
 		<module>dialogic</module>
 	</modules>
 
@@ -59,7 +57,7 @@
 						true
 					</resolveTransitiveDependencies>
 					<eclipseProjectName>
-						mobicents-ss7-hardware
+						hardware
 					</eclipseProjectName>
 				</configuration>
 			</plugin>

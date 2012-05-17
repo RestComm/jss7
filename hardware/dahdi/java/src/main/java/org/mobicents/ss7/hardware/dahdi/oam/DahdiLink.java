@@ -26,6 +26,7 @@ import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.mobicents.protocols.ss7.mtp.Mtp2;
 import org.mobicents.protocols.ss7.mtp.Mtp2Listener;
 import org.mobicents.ss7.hardware.dahdi.Channel;
@@ -61,14 +62,14 @@ public class DahdiLink extends Link implements Mtp2Listener {
     private Channel channel = null;
     private Mtp2 mtp2 = null;
 
-    public DahdiLink() {
+    public DahdiLink() {    	
     }
 
     public DahdiLink(String linkName, int span, int channelID, int code) {
         super(linkName);
         this.span = span;
         this.channelID = channelID;
-        this.code = code;
+        this.code = code;        
     }
 
     @Override
@@ -78,7 +79,7 @@ public class DahdiLink extends Link implements Mtp2Listener {
             if (this.channel == null) {
                 channel = new Channel();
                 mtp2 = new Mtp2(this.linkName.toString() + "-" + this.code,
-                        this.channel); // TODO : Optimize the String usage
+                        this.channel,scheduler); // TODO : Optimize the String usage
             }
             
             this.mtp2.setMtp2Listener(this);
@@ -91,6 +92,14 @@ public class DahdiLink extends Link implements Mtp2Listener {
         }
     }
 
+    @Override
+    public void setScheduler(Scheduler scheduler)
+    {
+    	this.scheduler=scheduler;
+    	if(this.mtp2!=null)
+    		this.mtp2.setScheduler(scheduler);    	
+    }
+    
     public int getSpan() {
         return span;
     }

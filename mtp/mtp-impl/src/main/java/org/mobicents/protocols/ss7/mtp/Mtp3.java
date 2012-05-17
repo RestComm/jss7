@@ -35,6 +35,9 @@ import org.mobicents.protocols.stream.api.SelectorKey;
 import org.mobicents.protocols.stream.api.SelectorProvider;
 import org.mobicents.protocols.stream.api.StreamSelector;
 
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
+import org.mobicents.protocols.ss7.scheduler.Task;
+
 /**
  * 
  * @author kulikov
@@ -42,8 +45,8 @@ import org.mobicents.protocols.stream.api.StreamSelector;
  */
 public class Mtp3 implements Runnable {
 
-    public final static int TIMEOUT_T1_SLTM = 12;
-    public final static int TIMEOUT_T2_SLTM = 90;
+    public final static int TIMEOUT_T1_SLTM = 120;
+    public final static int TIMEOUT_T2_SLTM = 900;
     private final static int LINK_MANAGEMENT = 0;
     private final static int LINK_TESTING = 1;
     public final static int _SI_SERVICE_SCCP = 3;
@@ -87,11 +90,13 @@ public class Mtp3 implements Runnable {
     private StreamSelector selector;
     
     private MTPScheduler executor = new MTPScheduler();
-
+    private Scheduler scheduler;
+    
     private static final Logger logger = Logger.getLogger(Mtp3.class);
     
     //public Mtp3Impl(String name, Mtp1 layer1) {
-    public Mtp3(String name) {
+    public Mtp3(String name,Scheduler scheduler) {
+    	this.scheduler=scheduler;
         this.name = name;
         try {
             selector = SelectorProvider.getSelector("org.mobicents.ss7.hardware.dahdi.Selector");
@@ -105,6 +110,12 @@ public class Mtp3 implements Runnable {
         }
     }
 
+    public void setScheduler(Scheduler scheduler)
+    {
+    	if(scheduler!=null)
+    		this.scheduler=scheduler;
+    }
+    
     /**
      * Assigns originated point code
      * 
@@ -215,9 +226,9 @@ public class Mtp3 implements Runnable {
     }
 
     public void run() {
-        try {
-            FastList<SelectorKey> selected = selector.selectNow(StreamSelector.OP_READ, 20);
-            for (FastList.Node<SelectorKey> n = selected.head(), end = selected.tail(); (n = n.getNext()) != end;) {
+        try {        	
+        	FastList<SelectorKey> selected = selector.selectNow(StreamSelector.OP_READ, 20);
+        	for (FastList.Node<SelectorKey> n = selected.head(), end = selected.tail(); (n = n.getNext()) != end;) {
                 ((Mtp2)((Mtp1) n.getValue().getStream()).getLink()).doRead();
             }
                  
@@ -225,12 +236,7 @@ public class Mtp3 implements Runnable {
             for (FastList.Node<SelectorKey> n = selected.head(), end = selected.tail(); (n = n.getNext()) != end;) {
                 ((Mtp2)((Mtp1)  n.getValue().getStream()).getLink()).doWrite();
             }
-                
-            this.executor.tick();
-                
-            for (Mtp2 link : links) {
-                link.scheduler.tick();
-            }
+                                                 
         } catch (Exception e) {
                 e.printStackTrace();
         }
@@ -253,7 +259,7 @@ public class Mtp3 implements Runnable {
     	//b1    b0    0e     01     01 80 00 00    21          70    01 02 03 04 05 06 0f  CRC CRC
     	int sio = rxFrame.frame[3] & 0xFF;
     	int subserviceIndicator = (sio >> 4) & 0x0F;
-        int serviceIndicator = sio & 0x0F;
+    	int serviceIndicator = sio & 0x0F;
         int ni = (subserviceIndicator  & 0x0C) ; //local NI(network Indicator) form msg., 0x0C, since we store it as shifted value.
         // int dpc = (sif[0] & 0xff | ((sif[1] & 0x3f) << 8));
         // int opc = ((sif[1] & 0xC0) >> 6) | ((sif[2] & 0xff) << 2) | ((sif[3]
@@ -268,7 +274,7 @@ public class Mtp3 implements Runnable {
         {
         	if (logger.isEnabledFor(Level.ERROR)) {
                 logger.error(
-                        String.format("(%s) Received MSSU with bad SSI, discarding! [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "] data: ", mtp2.getName()) + Arrays.toString(rxFrame.frame));
+                        String.format("(%s) Received MSSU with bad SSI, discarding! ni:" + ni + " thisni:" + this.ni + " [si=" + serviceIndicator + ",ssi=" + subserviceIndicator + ", dpc=" + dpc + ", opc=" + opc + ", sls=" + sls + "] data: ", mtp2.getName()) + Arrays.toString(rxFrame.frame));
             }
         	return;
         }
@@ -299,7 +305,6 @@ public class Mtp3 implements Runnable {
                 h1 = (rxFrame.frame[8] & 0xf0) >>> 4;
 
                 int len = (rxFrame.frame[9] & 0xf0) >>> 4;
-
                 if (h0 == 1 && h1 == 1) {
                 	if (logger.isDebugEnabled()) {
                         logger.debug(String.format("(%s) Received SLTM", mtp2.getName()));
@@ -308,7 +313,7 @@ public class Mtp3 implements Runnable {
                     // create response
 
                     //change order of opc/dpc in SLTA !
-                    writeRoutingLabel(this.localFrame, sio, this.ni << 2, sls, opc, dpc);
+                    writeRoutingLabel(this.localFrame, sio, this.ni, sls, opc, dpc);
                     //slta[0] = (byte) sio;
                     this.localFrame[5] = 0x021;
                     // +1 cause we copy LEN byte also.
@@ -432,7 +437,7 @@ public class Mtp3 implements Runnable {
 
         //create and assign Tester;
         if (link.sltmTest == null) {
-            SLTMTest tester = new SLTMTest(link);
+            SLTMTest tester = new SLTMTest(link,scheduler);
             link.sltmTest =(tester);
 
             //start tester
@@ -484,7 +489,7 @@ public class Mtp3 implements Runnable {
 
         //notify mtp user part
         if (!linkset.isActive()) {
-            l4IsUp = false;
+        	l4IsUp = false;
             if (mtp3Listener != null) {
                 try {
                     mtp3Listener.linkDown();
@@ -513,8 +518,7 @@ public class Mtp3 implements Runnable {
     }
 
     private void restartTraffic(Mtp2 link) {
-
-        writeRoutingLabel(this.localFrame, 0, this.ni, 0, dpc, opc);
+    	writeRoutingLabel(this.localFrame, 0, this.ni, 0, dpc, opc);
 
         // H0 and H1, see Q.704 section 15.11.2+
         this.localFrame[5] = 0x17;
@@ -525,12 +529,12 @@ public class Mtp3 implements Runnable {
     private final static int PATTERN_LEN_OFFSET = PATTERN_OFFSET+2; //+2 becuase frame.len contains 2B for CRC
 
     private boolean checkPattern(Mtp2Buffer frame,int sltmLen, byte[] pattern) {
-        if (frame.len - PATTERN_LEN_OFFSET != pattern.length) {
-            return false;
+        if (sltmLen != pattern.length) {
+        	return false;
         }
         for (int i = 0; i < pattern.length; i++) {
-            if (frame.frame[ i + PATTERN_OFFSET ] != pattern[i]) {     	
-                return false;
+            if (frame.frame[ i + PATTERN_OFFSET ] != pattern[i]) {
+            	return false;
             }
         }
         return true;
@@ -543,43 +547,62 @@ public class Mtp3 implements Runnable {
 	private byte[] fetchBuffer(int size) {
 		return this.localBuffers[size];
 	}
-    protected class SLTMTest extends MTPTask {
+    protected class SLTMTest extends Task {
 
         private Mtp2 link;
         private int tryCount;        //SLTM message buffer;
         private byte[] sltm = new byte[7 + SLTM_PATTERN.length]; //this has to be separate, cause its async to Mtp3.send
         
-        private SLTMTest(Mtp2 link) {
+        private int ttl=0;
+        private boolean started=false;
+        
+        private SLTMTest(Mtp2 link,Scheduler scheduler) {
+        	super(scheduler);
             this.link = link;
         }
 
         /**
          * 
          */
+        
         public void start() {
+        	this.started = true;
+        	
             //reset count of tries
-            tryCount = 0;
+        	tryCount = 0;
 
+            this.activate(true);
+            
             //sending test message to the remote terminal
-            run();
+            ttl=Mtp3.TIMEOUT_T1_SLTM;
+            ping();            
+            scheduler.submitHeatbeat(this);
         }
         
         public void stop() {
+        	this.started = false;
+        	
             //disable handler
             cancel();
         }
 
+        public int getQueueNumber()
+    	{
+    		return scheduler.HEARTBEAT_QUEUE;
+    	}
+        
         /**
          * This methods should be called to acknowledge that current tests is passed.
          * 
          */
-        public void ack() {
-            //disable current awaiting handler
+        public void ack() {        	
+        	//disable current awaiting handler
             cancel();
             //reset number of tryies;
-            tryCount = 0;
+            tryCount = -1;
             //shcedule next ping
-            executor.schedule(this, Mtp3.TIMEOUT_T2_SLTM * 1000);
+            ttl=Mtp3.TIMEOUT_T2_SLTM;
+            scheduler.submitHeatbeat(this);
             if (logger.isDebugEnabled()) {
                 logger.debug(String.format("(%s) SLTM acknowledged, Link test passed", link.getName()));
             }
@@ -590,10 +613,10 @@ public class Mtp3 implements Runnable {
          * 
          * @param timeout  the amount of time in millesecond for awaiting response.
          */
-        public void ping(long timeout) {
+        public void ping() {
             //prepearing test message
             
-            writeRoutingLabel(sltm, 0x01, ni, link.getSls(), dpc, opc);
+        	writeRoutingLabel(sltm, 0x01, ni, link.getSls(), dpc, opc);
             //sltm[0] = (byte) 0x01; 
             sltm[5] = 0x11;
             sltm[6] = (byte) (SLTM_PATTERN.length << 4);
@@ -606,29 +629,44 @@ public class Mtp3 implements Runnable {
             tryCount++;
 
             //scheduling timeout
-            executor.schedule(this, (int)(timeout * 1000));
             if (logger.isDebugEnabled()) {
                 logger.debug(String.format("(%s) SLTM sent, try number = %d", link.getName(), tryCount));
             }
         }
         
-        public void perform() {
+        public long perform() {
+        	if(this.started)
+        		return 0;
+        	
+        	if(ttl>0)
+        	{
+        		ttl--;
+        		return 0;
+        	}
+        	
             switch (tryCount) {
-                case 0:
-                    //sending first test message
-                    ping(Mtp3.TIMEOUT_T1_SLTM);
+            	case -1:
+            		//sending first message
+            		ttl=Mtp3.TIMEOUT_T1_SLTM;
+                    ping();
+                    scheduler.submitHeatbeat(this);
+            		break;
+                case 0:                	           
+                    //first message was not answered, sending second
+                	ttl=Mtp3.TIMEOUT_T1_SLTM;
+                    ping();
+                    scheduler.submitHeatbeat(this);
                     break;
                 case 1:
-                    //first message was not answered, sending second
-                    ping(Mtp3.TIMEOUT_T1_SLTM);
-                    break;
-                case 2:
                     if (logger.isDebugEnabled()) {
                         logger.debug(String.format("(%s) SLTM message was not acknowledged, Link failed", link.getName()));
                     }
                     //second message was not answered, report failure
                     linkFailed(link);
+                    this.started=false;
             }
+            
+            return 0;
         }
     }
 

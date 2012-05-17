@@ -22,6 +22,7 @@
 
 package org.mobicents.ss7.hardware.dahdi.oam;
 
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
 import org.mobicents.ss7.linkset.oam.Linkset;
 import org.mobicents.ss7.linkset.oam.LinksetFactory;
@@ -37,10 +38,21 @@ import org.mobicents.ss7.linkset.oam.LinksetFactory;
 public class DahdiLinksetFactory extends LinksetFactory {
 
     private static final String NAME = "dahdi";
-
-    public DahdiLinksetFactory() {
+    private static final String LINKSET_NAME = "dahdilinkset";
+    private static final String LINK_NAME = "dahdilink";
+    private Scheduler scheduler;
+    
+    public DahdiLinksetFactory() {    	
     }
 
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
+
+    public void setScheduler(Scheduler scheduler) {
+        this.scheduler = scheduler;        
+    }
+    
     @Override
     public String getName() {
         return NAME;
@@ -82,7 +94,48 @@ public class DahdiLinksetFactory extends LinksetFactory {
             throw new Exception(LinkOAMMessages.INVALID_COMMAND);
         }
 
-        return new DahdiLinkset(name, opc, dpc, ni);
+        DahdiLinkset currLinkSet=new DahdiLinkset(name, opc, dpc, ni);
+        currLinkSet.setScheduler(scheduler);
+        return currLinkSet;
     }
-
+    
+    /**
+     * Get linkset name
+     * 
+     * @return
+     */
+    public String getLinksetName()
+    {
+    	return LINKSET_NAME;
+    }
+    
+    /**
+     * Get linkset class
+     * 
+     * @return
+     */
+    public Class getLinksetClass()
+    {
+    	return DahdiLinkset.class;
+    }
+    
+    /**
+     * Get link name
+     * 
+     * @return
+     */
+    public String getLinkName()
+    {
+    	return LINK_NAME;
+    }
+    
+    /**
+     * Get link class
+     * 
+     * @return
+     */
+    public Class getLinkClass()
+    {
+    	return DahdiLink.class;
+    }
 }

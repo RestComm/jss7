@@ -40,12 +40,15 @@ import org.mobicents.ss7.management.transceiver.MessageFactory;
 import org.mobicents.ss7.management.transceiver.ShellChannel;
 import org.mobicents.ss7.management.transceiver.ShellServerChannel;
 
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
+import org.mobicents.protocols.ss7.scheduler.Task;
+
 /**
  * 
  * @author amit bhayani
  * 
  */
-public class ShellExecutor {
+public class ShellExecutor extends Task {
 
     Logger logger = Logger.getLogger(ShellExecutor.class);
 
@@ -70,8 +73,8 @@ public class ShellExecutor {
 
     private int port;
 
-    public ShellExecutor() throws IOException {
-
+    public ShellExecutor(Scheduler scheduler) throws IOException {
+    	super(scheduler);    	
     }
 
     public String getAddress() {
@@ -106,8 +109,14 @@ public class ShellExecutor {
         m3UAShellExecutor = shellExecutor;
     }
 
+    public int getQueueNumber()
+	{
+		return scheduler.MANAGEMENT_QUEUE;
+	}
+    
     public void start() throws IOException {
-
+    	try
+    	{
         provider = ChannelProvider.provider();
         serverChannel = provider.openServerChannel();
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
@@ -119,8 +128,15 @@ public class ShellExecutor {
         messageFactory = ChannelProvider.provider().getMessageFactory();
 
         this.logger.info(String.format("ShellExecutor listening at %s", inetSocketAddress));
-
+                
         this.started = true;
+        this.activate(false);
+		scheduler.submit(this,scheduler.MANAGEMENT_QUEUE);
+    	}
+    	catch(Exception e)
+    	{
+    		logger.error("Exception occured",e);
+    	}
     }
 
     public void stop() {
@@ -138,10 +154,10 @@ public class ShellExecutor {
         }
     }
 
-    public void perform() {
-
-        if (started) {
-            try {
+    @Override
+    public long perform() {
+    	if (started) {
+    		try {
                 FastSet<ChannelSelectionKey> keys = selector.selectNow();
 
                 for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record.getNext()) != end;) {
@@ -199,9 +215,11 @@ public class ShellExecutor {
             } catch (IOException e) {
                 logger.error("Error while operating on ChannelSelectionKey", e);
             }
-
+    		
+    		scheduler.submit(this,scheduler.MANAGEMENT_QUEUE);    		
         }
-
+    	
+    	return 0;
     }
 
     private void accept() throws IOException {

@@ -34,6 +34,37 @@ static int setnonblock_fd(int fd) {
     return 0;	    	
 }
 
+static int openFileChannel(jint zapid,jint ioBufferSize) {
+    struct dahdi_bufferinfo bi;
+    char devname[100];
+    int res;
+    int fd;
+
+    sprintf(devname,"/dev/dahdi/%d",zapid );
+
+
+
+    fd = open(devname, O_RDWR);
+    if (fd < 0) {
+        return -1;
+    }
+
+
+    bi.txbufpolicy = DAHDI_POLICY_IMMEDIATE;
+    bi.rxbufpolicy = DAHDI_POLICY_IMMEDIATE;
+    bi.numbufs = ZAP_NUM_BUF;
+    bi.bufsize = ioBufferSize;
+ 
+    ioctl(fd, DAHDI_SET_BUFINFO, &bi);
+ 
+    res = setnonblock_fd(fd);
+    if (res < 0) {
+        return -1;
+    }
+    
+    return fd;    	
+}
+
 JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Selector_doRegister (JNIEnv *env, jobject obj, jint fd) {
     int i = channel_count;
     channel_count = channel_count + 1;
@@ -53,6 +84,38 @@ JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Selector_doUnregist
 	}
     }
     
+    channel_count = channel_count - 1;
+    
+    for (i = 0; i < channel_count; i++) {
+	fds[i] = temp[i];
+    }    
+}
+
+JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_doRegister (JNIEnv *env, jobject obj, jint fd) {
+    int i = channel_count;
+    channel_count = channel_count + 1;
+    fds[i].fd = fd;
+    fds[i].events = POLLIN|POLLPRI|POLLOUT;
+}
+
+JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_doUnregister (JNIEnv *env, jobject obj, jint fd) {
+    struct pollfd temp[16];
+    
+    int i;
+    int k=0;
+    
+    int found=0;
+    for (i = 0; i < channel_count; i++) {
+	if (fds[i].fd != fd) {
+	    temp[k++] = fds[i];
+	}
+	else
+ 	    found=1;
+    }
+    
+    if(found==0)
+       return;
+
     channel_count = channel_count - 1;
     
     for (i = 0; i < channel_count; i++) {
@@ -89,35 +152,7 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dahdi_Selector_doPoll (JN
 
 JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_openChannel
   (JNIEnv *env, jobject obj, jint zapid, jint ioBufferSize) {
-    struct dahdi_bufferinfo bi;
-    char devname[100];
-    
-    int fd;
-    int res;
-    
-    sprintf(devname,"/dev/dahdi/%d",zapid );
-
-
-
-    fd = open(devname, O_RDWR);
-    if (fd < 0) {
-        return -1;
-    }
-
-
-    bi.txbufpolicy = DAHDI_POLICY_IMMEDIATE;
-    bi.rxbufpolicy = DAHDI_POLICY_IMMEDIATE;
-    bi.numbufs = ZAP_NUM_BUF;
-    bi.bufsize = ioBufferSize;
- 
-    ioctl(fd, DAHDI_SET_BUFINFO, &bi);
- 
-    res = setnonblock_fd(fd);
-    if (res < 0) {
-        return -1;
-    }
-    
-    return fd;
+    return openFileChannel(zapid,ioBufferSize);
 }
 
 
@@ -128,9 +163,10 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_openChannel
  * Signature: ([B)I
  */
 JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_readData
-  (JNIEnv *env, jobject obj, jint fd, jbyteArray buff) {
+  (JNIEnv *env, jobject obj, jint fd, jbyteArray buff, jint ioBufferSize) {
     int res = 0;
     int count = 0;
+    int errorCount=0;
     unsigned char buffer[1024];
     jbyte *elements = (*env)->GetByteArrayElements(env, buff, 0);
   
@@ -151,9 +187,15 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_readData
 	    if (errno == EAGAIN || errno == EWOULDBLOCK) {
 		break;
 	    } else if (errno == EINTR) {
+		errorCount++;
+		if(errorCount==10)
+		    return -1;
     	    /* try again */
 	    } else if (errno == ELAST) {
     	    /* zap event */
+		errorCount++;
+		if(errorCount==10)
+		    return -1;
 	    } else {
 		    /*some unexpected error*/
     		break;
@@ -176,6 +218,7 @@ JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_writeData
   (JNIEnv *env, jobject obj, jint fd, jbyteArray buff, jint length) {
     int res;
     int len = length;
+    int errorCount=0;
     
     unsigned char buffer[len];
     jbyte *elements = (*env)->GetByteArrayElements(env, buff, 0);
@@ -196,8 +239,14 @@ JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_writeData
 		break;
 	    } else if (errno == EINTR) {
 		//try again
+		errorCount++;
+		if(errorCount==10)
+		   break;
 	    } else if (errno == ELAST) {
 		//fetch zap event
+		errorCount++;
+		if(errorCount==10)
+		   break;
 	    } else {
 		//unexpected error
 		break;

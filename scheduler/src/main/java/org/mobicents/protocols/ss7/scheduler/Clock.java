@@ -20,39 +20,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.ss7.linkset.oam;
+package org.mobicents.protocols.ss7.scheduler;
 
-import java.io.IOException;
-import org.mobicents.protocols.stream.api.Stream;
+import java.util.concurrent.TimeUnit;
 
 /**
- * The stream for underlying {@link Linkset}. 
+ * Media server internal clock.
  * 
- * @author amit bhayani
- * 
+ * @author kulikov
  */
-public abstract class LinksetStream implements Stream {
-
-    protected LinksetSelectorKey selectorKey = null;
+public interface Clock {
+    
+    /**
+     * Gets the current time.
+     * 
+     * @return current time expressed in nanoseconds.
+     */
+    public long getTime();
 
     /**
-     * Poll the respective stream for readiness
-     * 
-     * @param operation
-     * @param timeout
-     * @return
+     * Gets the current time.
+     *
+     * @param timeUnit the time measurement units.
+     * @return the value in specified units.
      */
-    public abstract boolean poll(int operation, int timeout);
+    public long getTime(TimeUnit timeUnit);
 
     /**
-     * Get the name of the Stream.
-     * 
-     * @return
+     * Gets the time measurement units.
+     *
+     * @return the time measurement units.
      */
-    public abstract String getName();
-    
-    public abstract int write(byte[] paramArrayOfByte) throws IOException;
-    
-    public abstract int read(byte[] paramArrayOfByte) throws IOException;
-
+    public TimeUnit getTimeUnit();
 }

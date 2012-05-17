@@ -20,39 +20,47 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.ss7.linkset.oam;
+package org.mobicents.protocols.ss7.scheduler;
 
-import java.io.IOException;
-import org.mobicents.protocols.stream.api.Stream;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * The stream for underlying {@link Linkset}. 
+ * Clock implementation wich uses the default OS clock.
  * 
- * @author amit bhayani
- * 
+ * @author kulikov
  */
-public abstract class LinksetStream implements Stream {
-
-    protected LinksetSelectorKey selectorKey = null;
+public class DefaultClock implements Clock {
 
     /**
-     * Poll the respective stream for readiness
-     * 
-     * @param operation
-     * @param timeout
-     * @return
+     * The default time unit: nanoseconds.
      */
-    public abstract boolean poll(int operation, int timeout);
+    private TimeUnit timeUnit = TimeUnit.NANOSECONDS;
 
     /**
-     * Get the name of the Stream.
-     * 
-     * @return
+     * (Non Java-doc.)
+     *
+     * @see org.mobicents.media.server.scheduler.Clock.getTime().
      */
-    public abstract String getName();
-    
-    public abstract int write(byte[] paramArrayOfByte) throws IOException;
-    
-    public abstract int read(byte[] paramArrayOfByte) throws IOException;
+    public long getTime() {
+        return System.nanoTime();
+    }
 
+    /**
+     * (Non Java-doc.)
+     *
+     * @see org.mobicents.media.server.scheduler.Clock.getTimeUnit().
+     */
+    public TimeUnit getTimeUnit() {
+        return timeUnit;
+    }
+
+    /**
+     * (Non Java-doc.)
+     *
+     * @see org.mobicents.media.server.scheduler.Clock.getTime().
+     */
+    public long getTime(TimeUnit timeUnit) {
+        return timeUnit.convert(System.nanoTime(), this.timeUnit);
+    }
 }
