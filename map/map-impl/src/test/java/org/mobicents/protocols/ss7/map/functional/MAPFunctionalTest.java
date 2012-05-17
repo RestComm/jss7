@@ -1757,6 +1757,9 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	}
 
+	/**
+	 * TC-BEGIN+INVOKE(opCode=49) -> release()
+	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testV1AlertServiceCentreRequest() throws Exception {
 		// Action_V1_B
@@ -1822,6 +1825,9 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	}
 
+	/**
+	 * TC-BEGIN(empty - no components) -> TC-ABORT V1
+	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testV1AlertServiceCentreRequestReject() throws Exception {
 		// Action_V1_C
@@ -1842,10 +1848,7 @@ public class MAPFunctionalTest extends SccpHarness {
 		int count = 0;
 		// Client side events
 		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
-		TestEvent te = TestEvent.createSentEvent(EventType.AlertServiceCentreIndication, null, count++, stamp);
-		clientExpectedEvents.add(te);
-
-		te = TestEvent.createReceivedEvent(EventType.DialogReject, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		TestEvent te = TestEvent.createReceivedEvent(EventType.DialogReject, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		clientExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
@@ -1855,13 +1858,16 @@ public class MAPFunctionalTest extends SccpHarness {
 		// Server side events
 		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
 
-		client.sendAlertServiceCentreRequestV1Reject();
+		client.sendEmptyV1Request();
 		waitForEnd();
 		client.compareEvents(clientExpectedEvents);
 		server.compareEvents(serverExpectedEvents);
 
 	}
 
+	/**
+	 * TC-BEGIN(unsupported opCode) -> TC-ABORT V1
+	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testV1AlertServiceCentreRequestReject2() throws Exception {
 		// Action_V1_D
@@ -1895,13 +1901,16 @@ public class MAPFunctionalTest extends SccpHarness {
 		// Server side events
 		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
 
-		client.sendAlertServiceCentreRequestV1Reject2();
+		client.sendV1BadOperationCode();
 		waitForEnd();
 		client.compareEvents(clientExpectedEvents);
 		server.compareEvents(serverExpectedEvents);
 
 	}
 
+	/**
+	 * TC-BEGIN+INVOKE(opCode=46) -> TC-CONTINUE(empty) -> TC-ABORT(UserReason) (->Abort V1)
+	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testV1ForwardShortMessageRequest() throws Exception {
 		// Action_V1_E
@@ -1948,10 +1957,18 @@ public class MAPFunctionalTest extends SccpHarness {
 			}
 
 			@Override
+			public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason,
+					MAPAbortSource abortSource, MAPExtensionContainer extensionContainer) {
+				super.onDialogProviderAbort(mapDialog, abortProviderReason, abortSource, extensionContainer);
+				
+				Assert.assertEquals(abortProviderReason, MAPAbortProviderReason.AbnormalMAPDialogue);
+			}
+
+			@Override
 			public void onDialogDelimiter(MAPDialog mapDialog) {
 				super.onDialogDelimiter(mapDialog);
 				try {
-					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ForwardShortMessageRespIndication, null, sequence++));
+//					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ForwardShortMessageRespIndication, null, sequence++));
 					mapDialog.send();
 				} catch (MAPException e) {
 					this.error("Error while sending the empty ForwardShortMessageResponse", e);
@@ -1991,9 +2008,6 @@ public class MAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		serverExpectedEvents.add(te);
 
-		te = TestEvent.createSentEvent(EventType.ForwardShortMessageRespIndication, null, count++, stamp);
-		serverExpectedEvents.add(te);
-
 		te = TestEvent.createReceivedEvent(EventType.DialogProviderAbort, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		serverExpectedEvents.add(te);
 
@@ -2011,6 +2025,10 @@ public class MAPFunctionalTest extends SccpHarness {
 	 * Below are test from testSmsService
 	 */
 
+	/**
+	 * TC-BEGIN + AlertServiceCentreRequest
+	 * TC-END  
+	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testV2AlertServiceCentreRequest() throws Exception {
 		// Action_Sms_AlertServiceCentre
@@ -2101,6 +2119,10 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	}
 
+	/**
+	 * TC-BEGIN + ForwardSMRequest_V2
+	 * TC-END + ForwardSMResponse_V2  
+	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testV2ForwardShortMessageRequest() throws Exception {
 		// Action_Sms_ForwardSM
@@ -2194,6 +2216,10 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	}
 
+	/**
+	 * TC-BEGIN + MoForwardSMRequest
+	 * TC-END + MoForwardSMResponse  
+	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testMoForwardShortMessageRequest() throws Exception {
 		// Action_Sms_MoForwardSM
@@ -2325,6 +2351,10 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	}
 
+	/**
+	 * TC-BEGIN + MtForwardSMRequest
+	 * TC-END + MtForwardSMResponse  
+	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testMtForwardShortMessageRequest() throws Exception {
 		// Action_Sms_MtForwardSM
@@ -2438,6 +2468,10 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	}
 
+	/**
+	 * TC-BEGIN + ReportSMDeliveryStatusRequest
+	 * TC-END + ReportSMDeliveryStatusResponse  
+	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testReportSMDeliveryStatusRequest() throws Exception {
 		// Action_Sms_ReportSMDeliveryStatus
@@ -2564,6 +2598,10 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	}
 
+	/**
+	 * TC-BEGIN + SendRoutingInfoForSMRequest
+	 * TC-END + SendRoutingInfoForSMResponse + InformServiceCentreRequest
+	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testSendRoutingInfoForSM() throws Exception {
 		// Action_Sms_SendRoutingInfoForSM
@@ -2722,6 +2760,12 @@ public class MAPFunctionalTest extends SccpHarness {
 	 * testMsgLength test
 	 */
 
+	/**
+	 * Sending a short SMS message (20 bytes)
+	 * This message is fit to the TC-BEGIN message with Dialog portion
+	 * 
+	 * TC-BEGIN+MtForward(Short SMS) -> TC-END+MtForward(Response)
+	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testAction_TestMsgLength_A() throws Exception {
 		// Action_Sms_MoForwardSM
@@ -2774,6 +2818,14 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	}	
 
+	/**
+	 * Sending a long SMS message (170 bytes)
+	 * This message is not fit to the TC-BEGIN message with Dialog portion
+	 * In the TC-BEGIN message only Dialog portion is sent,
+	 * MtForward message is sent in the second (TC-CONTINUE) message 
+	 * 
+	 * TC-BEGIN -> TC-CONTINUE -> TC-CONTINUE+MtForward(Long SMS) -> TC-END+MtForward(Response)
+	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testAction_TestMsgLength_B() throws Exception {
 		// Action_Sms_MoForwardSM

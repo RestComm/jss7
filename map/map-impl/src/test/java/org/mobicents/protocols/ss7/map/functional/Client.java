@@ -232,7 +232,7 @@ public class Client extends EventTestHarness {
 
 	}
 
-	public void sendAlertServiceCentreRequestV1Reject() throws Exception {
+	public void sendEmptyV1Request() throws Exception {
 
 		this.mapProvider.getMAPServiceSms().acivate();
 
@@ -246,12 +246,12 @@ public class Client extends EventTestHarness {
 
 		clientDialogSms = this.mapProvider.getMAPServiceSms().createNewDialog(appCnt, this.thisAddress, orgiReference, this.remoteAddress, destReference);
 
-		this.observerdEvents.add(TestEvent.createSentEvent(EventType.AlertServiceCentreIndication, null, sequence++));
+//		this.observerdEvents.add(TestEvent.createSentEvent(EventType.AlertServiceCentreIndication, null, sequence++));
 		clientDialogSms.send();
 
 	}
 
-	public void sendAlertServiceCentreRequestV1Reject2() throws Exception {
+	public void sendV1BadOperationCode() throws Exception {
 
 		this.mapProvider.getMAPServiceSms().acivate();
 
