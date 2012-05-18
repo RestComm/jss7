@@ -38,6 +38,7 @@
 
 	<modules>
 		<module>docs</module>
+		<module>scheduler</module>
 		<module>congestion</module>
 		<module>clock</module>
 		<module>m3ua</module>
@@ -88,6 +89,12 @@
 				<groupId>org.mobicents.protocols.sctp</groupId>
 				<artifactId>sctp-impl</artifactId>
 				<version>${sctp.version}</version>
+			</dependency>
+			<!-- Scheduler -->
+			<dependency>
+				<groupId>org.mobicents.protocols.ss7.scheduler</groupId>
+				<artifactId>scheduler</artifactId>
+				<version>${pom.version}</version>
 			</dependency>
 			<!-- Clock -->
 			<dependency>
