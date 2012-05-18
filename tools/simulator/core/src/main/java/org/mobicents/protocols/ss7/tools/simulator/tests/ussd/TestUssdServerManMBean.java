@@ -71,6 +71,10 @@ public interface TestUssdServerManMBean {
 
 	public void setAutoUnstructured_SS_RequestString(String val);
 
+	public boolean isOneNotificationFor100Dialogs();
+
+	public void setOneNotificationFor100Dialogs(boolean val);
+
 
 	public String getCurrentRequestDef();
 

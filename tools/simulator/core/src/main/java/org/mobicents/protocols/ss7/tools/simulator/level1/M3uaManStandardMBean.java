@@ -30,7 +30,6 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 
 
-
 /**
  * 
  * @author sergey vetyutnev

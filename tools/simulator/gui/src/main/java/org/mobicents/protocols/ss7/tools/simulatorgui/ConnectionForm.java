@@ -42,6 +42,8 @@ import javax.swing.ButtonGroup;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import javax.swing.JLabel;
+
+import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level2.SccpManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapManMBean;
@@ -157,8 +159,8 @@ public class ConnectionForm extends JFrame {
 		// starting the main form
 		SimulatorGuiForm frame = new SimulatorGuiForm();
 		host.addNotificationListener(frame, null, null);
-		frame.startHost(appName + "-local", false, host, host, host.getM3uaMan(), host.getSccpMan(), host.getMapMan(), host.getTestUssdClientMan(),
-				host.getTestUssdServerMan());
+		frame.startHost(appName + "-local", false, host, host, host.getM3uaMan(), host.getDialogicMan(), host.getSccpMan(), host.getMapMan(),
+				host.getTestUssdClientMan(), host.getTestUssdServerMan());
 		frame.setVisible(true);
 
 		// closing the connection form
@@ -190,6 +192,8 @@ public class ConnectionForm extends JFrame {
 			TesterHostMBean host = JMX.newMBeanProxy(mbsc, mbeanNameTesterHost, TesterHostMBean.class, true);
 			ObjectName mbeanNameM3ua = new ObjectName(tagDomain + ":type=M3uaMan");
 			M3uaManMBean m3ua = JMX.newMBeanProxy(mbsc, mbeanNameM3ua, M3uaManMBean.class, false);
+			ObjectName mbeanNameDialogic = new ObjectName(tagDomain + ":type=DialogicMan");
+			DialogicManMBean dialogic = JMX.newMBeanProxy(mbsc, mbeanNameDialogic, DialogicManMBean.class, false);
 			ObjectName mbeanNameSccp = new ObjectName(tagDomain + ":type=SccpMan");
 			SccpManMBean sccp = JMX.newMBeanProxy(mbsc, mbeanNameSccp, SccpManMBean.class, false);
 			ObjectName mbeanNameMap = new ObjectName(tagDomain + ":type=MapMan");
@@ -205,7 +209,7 @@ public class ConnectionForm extends JFrame {
 			// starting the main form
 			SimulatorGuiForm frame = new SimulatorGuiForm();
 			mbsc.addNotificationListener(mbeanNameTesterHost, frame, null, null);
-			frame.startHost(appName + "-remote", true, null, host, m3ua, sccp, map, ussdClient, ussdServer);
+			frame.startHost(appName + "-remote", true, null, host, m3ua, dialogic, sccp, map, ussdClient, ussdServer);
 			frame.setVisible(true);
 
 			// closing the connection form

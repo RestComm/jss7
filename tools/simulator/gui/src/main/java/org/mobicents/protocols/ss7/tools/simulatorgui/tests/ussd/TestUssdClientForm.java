@@ -26,6 +26,7 @@ import javax.management.Notification;
 import javax.swing.JFrame;
 
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.UssdClientAction;
 import org.mobicents.protocols.ss7.tools.simulatorgui.TestingForm;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
@@ -50,6 +51,9 @@ public class TestUssdClientForm extends TestingForm {
 	private JLabel lbResult;
 	private JLabel lbMessage;
 	private JLabel lbState;
+	private JButton btSendProcessunstructuredrequest;
+	private JButton btSendUnstructuredresponse;
+	private JButton btCloseCurrentDialog;
 
 	private TestUssdClientManMBean ussdClient; 
 
@@ -82,7 +86,7 @@ public class TestUssdClientForm extends TestingForm {
 		panel.add(tbMessage, gbc_tbMessage);
 		tbMessage.setColumns(10);
 		
-		JButton btSendProcessunstructuredrequest = new JButton("Send ProcessUnstructuredRequest");
+		btSendProcessunstructuredrequest = new JButton("Send ProcessUnstructuredRequest");
 		btSendProcessunstructuredrequest.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				sendProcessUnstructuredRequest();
@@ -94,7 +98,7 @@ public class TestUssdClientForm extends TestingForm {
 		gbc_btSendProcessunstructuredrequest.gridy = 1;
 		panel.add(btSendProcessunstructuredrequest, gbc_btSendProcessunstructuredrequest);
 		
-		JButton btSendUnstructuredresponse = new JButton("Send UnstructuredResponse");
+		btSendUnstructuredresponse = new JButton("Send UnstructuredResponse");
 		btSendUnstructuredresponse.addActionListener(new ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent e) {
 				sendUnstructuredResponse();
@@ -106,7 +110,7 @@ public class TestUssdClientForm extends TestingForm {
 		gbc_btSendUnstructuredresponse.gridy = 2;
 		panel.add(btSendUnstructuredresponse, gbc_btSendUnstructuredresponse);
 		
-		JButton btCloseCurrentDialog = new JButton("Close current Dialog");
+		btCloseCurrentDialog = new JButton("Close current Dialog");
 		btCloseCurrentDialog.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				closeCurrentDialog();
@@ -155,6 +159,13 @@ public class TestUssdClientForm extends TestingForm {
 
 	public void setData(TestUssdClientManMBean ussdClient) {
 		this.ussdClient = ussdClient;
+
+		if (ussdClient.getUssdClientAction().intValue() != UssdClientAction.VAL_MANUAL_OPERATION) {
+			tbMessage.setEnabled(false);
+			btSendProcessunstructuredrequest.setEnabled(false);
+			btSendUnstructuredresponse.setEnabled(false);
+			btCloseCurrentDialog.setEnabled(false);
+		}
 	}
 
 	private void sendProcessUnstructuredRequest() {

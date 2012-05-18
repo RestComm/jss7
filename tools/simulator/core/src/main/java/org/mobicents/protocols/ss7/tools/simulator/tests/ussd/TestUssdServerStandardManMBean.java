@@ -62,6 +62,9 @@ public class TestUssdServerStandardManMBean extends StandardMBean {
 				new MBeanAttributeInfo("AutoResponseString", String.class.getName(), "Value of auto ProcessSsUnstructured response", true, true, false),
 				new MBeanAttributeInfo("AutoUnstructured_SS_RequestString", String.class.getName(), "Value of auto SsUnstructured request", true, true, false),
 				new MBeanAttributeInfo("CurrentRequestDef", String.class.getName(), "Definition of the current request Dialog", true, false, false),
+				new MBeanAttributeInfo("OneNotificationFor100Dialogs", boolean.class.getName(), 
+						"If true there will be only one notification per every 100 received dialogs (recommended for the auto answering mode)", 
+						true, true, true),
 		};
 
 		MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(), "Index number or value") };

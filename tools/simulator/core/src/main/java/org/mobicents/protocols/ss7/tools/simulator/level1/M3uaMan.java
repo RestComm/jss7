@@ -96,10 +96,10 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 	private Functionality m3uaFunctionality = Functionality.IPSP;
 	private ExchangeType m3uaExchangeType = ExchangeType.SE;
 	private IPSPType m3uaIPSPType = IPSPType.CLIENT;
-	private As localAs;
-	private Asp localAsp;
-	private AspFactory localAspFactory;
 
+	private As localAs;
+	private AspFactory localAspFactory;
+	private Asp localAsp;
 
 	public M3uaMan() {
 		this.name = "???";

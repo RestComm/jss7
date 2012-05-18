@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import org.mobicents.protocols.ss7.tools.simulator.common.EnumeratedBase;
+import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level2.SccpManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapManMBean;
@@ -67,6 +68,7 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 	private TesterHost hostImpl;
 	private TesterHostMBean host;
 	private M3uaManMBean m3ua;
+	private DialogicManMBean dialogic;
 	private SccpManMBean sccp;
 	private MapManMBean map;
 	
@@ -214,7 +216,9 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 				}
 					break;
 				case Instance_L1.VAL_DIALOGIC: {
-					// TODO: L1 data edit - DIALOGIC
+					DialogicForm frame = new DialogicForm(getJFrame());
+					frame.setData(dialogic);
+					frame.setVisible(true);
 				}
 					break;
 				}
@@ -296,19 +300,21 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 			public void actionPerformed(ActionEvent e) {
 				host.quit();
 				getJFrame().dispose();
+				System.exit(NORMAL);
 			}
 		});
 		btTermRemote.setBounds(10, 192, 297, 23);
 		panel.add(btTermRemote);
 	}
 
-	protected void startHost(String appName, boolean isRemote, final TesterHost hostImpl, TesterHostMBean host, M3uaManMBean m3ua, SccpManMBean sccp, MapManMBean map,
-			TestUssdClientManMBean ussdClient, TestUssdServerManMBean ussdServer) {
+	protected void startHost(String appName, boolean isRemote, final TesterHost hostImpl, TesterHostMBean host, M3uaManMBean m3ua, DialogicManMBean dialogic,
+			SccpManMBean sccp, MapManMBean map, TestUssdClientManMBean ussdClient, TestUssdServerManMBean ussdServer) {
 		setTitle(getTitle() + appName);
 
 		this.hostImpl = hostImpl;
 		this.host = host;
 		this.m3ua = m3ua;
+		this.dialogic = dialogic;
 		this.sccp = sccp;
 		this.map = map;
 		this.ussdClient = ussdClient;
@@ -316,7 +322,7 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 
 		this.btTermRemote.setEnabled(isRemote);
 
-		this.tm = new javax.swing.Timer(1000, new ActionListener() {
+		this.tm = new javax.swing.Timer(500, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (hostImpl != null) {
 					hostImpl.checkStore();

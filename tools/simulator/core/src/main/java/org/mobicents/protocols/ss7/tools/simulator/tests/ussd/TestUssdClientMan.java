@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.tests.ussd;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
@@ -79,6 +81,10 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	private static final String MSISDN_NUMBERING_PLAN = "msisdnNumberingPlan";
 	private static final String DATA_CODING_SCHEME = "dataCodingScheme";
 	private static final String ALERTING_PATTERN = "alertingPattern";
+	private static final String USSD_CLIENT_ACTION = "ussdClientAction";
+	private static final String AUTO_REQUEST_STRING = "autoRequestString";
+	private static final String MAX_CONCURENT_DIALOGS = "maxConcurrentDialogs";
+	private static final String ONE_NOTIFICATION_FOR_100_DIALOGS = "oneNotificationFor100Dialogs";
 
 	private String msisdnAddress = "";
 	private AddressNature msisdnAddressNature = AddressNature.international_number;
@@ -86,12 +92,18 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	private int dataCodingScheme = 0x0F;
 	private int alertingPattern = -1;
 
+	private UssdClientAction ussdClientAction = new UssdClientAction(UssdClientAction.VAL_MANUAL_OPERATION);
+	private String autoRequestString = "???";
+	private int maxConcurrentDialogs = 10;
+	private boolean oneNotificationFor100Dialogs = false;
+
 	private final String name;
 	private TesterHost testerHost;
 	private MapMan mapMan;
 
 	private int countProcUnstReq = 0;
 	private int countProcUnstResp = 0;
+	private int countProcUnstReqNot = 0;
 	private int countUnstReq = 0;
 	private int countUnstResp = 0;
 	private int countUnstNotifReq = 0;
@@ -102,6 +114,8 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	private boolean needSendSend = false;
 	private boolean needSendClose = false;
 
+	private AtomicInteger nbConcurrentDialogs = new AtomicInteger();
+	private MessageSender sender = null;
 
 	public TestUssdClientMan() {
 		this.name = "???";
@@ -185,6 +199,57 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 		this.testerHost.markStore();
 	}
 
+
+	@Override
+	public UssdClientAction getUssdClientAction() {
+		return ussdClientAction;
+	}
+
+	@Override
+	public String getUssdClientAction_Value() {
+		return ussdClientAction.toString();
+	}
+
+	@Override
+	public void setUssdClientAction(UssdClientAction val) {
+		ussdClientAction = val;
+		this.testerHost.markStore();
+	}
+
+	@Override
+	public String getAutoRequestString() {
+		return autoRequestString;
+	}
+
+	@Override
+	public void setAutoRequestString(String val) {
+		autoRequestString = val;
+		this.testerHost.markStore();
+	}
+
+	@Override
+	public int getMaxConcurrentDialogs() {
+		return maxConcurrentDialogs;
+	}
+
+	@Override
+	public void setMaxConcurrentDialogs(int val) {
+		maxConcurrentDialogs = val;
+		this.testerHost.markStore();
+	}
+
+	@Override
+	public boolean isOneNotificationFor100Dialogs() {
+		return oneNotificationFor100Dialogs;
+	}
+
+	@Override
+	public void setOneNotificationFor100Dialogs(boolean val) {
+		oneNotificationFor100Dialogs = val;
+		this.testerHost.markStore();
+	}
+	
+	
 	@Override
 	public void putMsisdnAddressNature(String val) {
 		AddressNatureType x = AddressNatureType.createInstance(val);
@@ -197,6 +262,13 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 		NumberingPlanType x = NumberingPlanType.createInstance(val);
 		if (x != null)
 			this.setMsisdnNumberingPlan(x);
+	}
+
+	@Override
+	public void putUssdClientAction(String val) {
+		UssdClientAction x = UssdClientAction.createInstance(val);
+		if (x != null)
+			this.setUssdClientAction(x);
 	}
 
 	@Override
@@ -241,6 +313,13 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 		this.testerHost.sendNotif(SOURCE_NAME, "USSD Client has been started", "", true);
 		isStarted = true;
 		
+		if (ussdClientAction.intValue() == UssdClientAction.VAL_AUTO_SendProcessUnstructuredSSRequest) {
+			nbConcurrentDialogs = new AtomicInteger();
+			this.sender = new MessageSender();
+			Thread thr = new Thread(this.sender);
+			thr.start();
+		}
+
 		return true;
 	}
 
@@ -248,6 +327,20 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	public void stop() {
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 		isStarted = false;
+
+		if (this.sender != null) {
+			this.sender.stop();
+			try {
+				this.sender.notify();
+			} catch (Exception e) {
+			}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+			this.sender = null;
+		}
+
 		this.doRemoveDialog();
 		mapProvider.getMAPServiceSupplementary().deactivate();
 		mapProvider.getMAPServiceSupplementary().removeMAPServiceListener(this);
@@ -261,24 +354,25 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 
 	@Override
 	public String closeCurrentDialog() {
-		if (isStarted) {
-			MAPDialogSupplementary curDialog = currentDialog;
-			if (curDialog != null) {
-				try {
-					MAPUserAbortChoice choice = new MAPUserAbortChoiceImpl();
-					choice.setUserSpecificReason();
-					curDialog.abort(choice);
-					this.doRemoveDialog();
-					return "The current dialog has been closed";
-				} catch (MAPException e) {
-					this.doRemoveDialog();
-					return "Exception when closing the current dialog: " + e.toString();
-				}
-			} else {
-				return "No current dialog";
+		if (!isStarted)
+			return "The tester is not started";
+		if (this.sender != null)
+			return "The tester is not ion manual mode";
+
+		MAPDialogSupplementary curDialog = currentDialog;
+		if (curDialog != null) {
+			try {
+				MAPUserAbortChoice choice = new MAPUserAbortChoiceImpl();
+				choice.setUserSpecificReason();
+				curDialog.abort(choice);
+				this.doRemoveDialog();
+				return "The current dialog has been closed";
+			} catch (MAPException e) {
+				this.doRemoveDialog();
+				return "Exception when closing the current dialog: " + e.toString();
 			}
 		} else {
-			return "The tester is not started";
+			return "No current dialog";
 		}
 	}
 
@@ -291,23 +385,32 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	public String performProcessUnstructuredRequest(String msg) {
 		if (!isStarted)
 			return "The tester is not started";
+		if (this.sender != null)
+			return "The tester is not in manual mode";
+
 		MAPDialogSupplementary curDialog = currentDialog;
 		if (curDialog != null)
 			return "The current dialog exists. Finish it previousely";
+		if (msg == null || msg.equals(""))
+			return "USSD message is empty";
 
 		currentRequestDef = "";
 
+		return this.doPerformProcessUnstructuredRequest(msg, true);		
+	}
+
+	private String doPerformProcessUnstructuredRequest(String msg, boolean manualMode) {
+		
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
-		if (msg == null || msg.equals(""))
-			return "USSD message is empty";
 		USSDString ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg);
 		MAPApplicationContext mapUssdAppContext = MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
 				MAPApplicationContextVersion.version2);
 
 		try {
-			currentDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(mapUssdAppContext, this.mapMan.createOrigAddress(),
+			MAPDialogSupplementary curDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(mapUssdAppContext, this.mapMan.createOrigAddress(),
 					this.mapMan.createOrigReference(), this.mapMan.createDestAddress(), this.mapMan.createDestReference());
-			curDialog = currentDialog;
+			if (manualMode)
+				currentDialog = curDialog;
 			invokeId = null;
 
 			ISDNAddressString msisdn = null;
@@ -322,15 +425,24 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 
 			curDialog.send();
 
-			currentRequestDef += "Sent procUnstrSsReq=\"" + msg + "\";";
+			if (manualMode)
+				currentRequestDef += "Sent procUnstrSsReq=\"" + msg + "\";";
 			this.countProcUnstReq++;
-			String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, msisdn, alPattern);
-			this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsReq: " + msg, uData, true);
-			
+			if (this.oneNotificationFor100Dialogs) {
+				int i1 = countProcUnstReq / 100;
+				if (countProcUnstReqNot < i1) {
+					countProcUnstReqNot = i1;
+					this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsReq: " + (countProcUnstReqNot * 100) + " messages sent", "", true);
+				}
+			} else {
+				String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, msisdn, alPattern);
+				this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsReq: " + msg, uData, true);
+			}
+
 			return "ProcessUnstructuredSSRequest has been sent";
 		} catch (MAPException ex) {
 			return "Exception when sending ProcessUnstructuredSSRequest: " + ex.toString();
-		}		
+		}
 	}
 
 	private String createUssdMessageData(long dialogId, int dataCodingScheme, ISDNAddressString msisdn, AlertingPattern alPattern) {
@@ -356,21 +468,32 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 		public void write(TestUssdClientMan clt, OutputElement xml) throws XMLStreamException {
 			xml.setAttribute(DATA_CODING_SCHEME, clt.dataCodingScheme);
 			xml.setAttribute(ALERTING_PATTERN, clt.alertingPattern);
+			xml.setAttribute(MAX_CONCURENT_DIALOGS, clt.maxConcurrentDialogs);
+			xml.setAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS, clt.oneNotificationFor100Dialogs);
 
 			xml.add(clt.msisdnAddress, MSISDN_ADDRESS);
 			xml.add(clt.msisdnAddressNature.toString(), MSISDN_ADDRESS_NATURE);
 			xml.add(clt.msisdnNumberingPlan.toString(), MSISDN_NUMBERING_PLAN);
+			
+			xml.add(clt.ussdClientAction.toString(), USSD_CLIENT_ACTION);
+			xml.add(clt.autoRequestString, AUTO_REQUEST_STRING);
 		}
 
 		public void read(InputElement xml, TestUssdClientMan clt) throws XMLStreamException {
 			clt.dataCodingScheme = xml.getAttribute(DATA_CODING_SCHEME).toInt();
 			clt.alertingPattern = xml.getAttribute(ALERTING_PATTERN).toInt();
+			clt.maxConcurrentDialogs = xml.getAttribute(MAX_CONCURENT_DIALOGS).toInt();
+			clt.oneNotificationFor100Dialogs = xml.getAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS).toBoolean();
 
 			clt.msisdnAddress = (String) xml.get(MSISDN_ADDRESS, String.class);
 			String an = (String) xml.get(MSISDN_ADDRESS_NATURE, String.class);
 			clt.msisdnAddressNature = AddressNature.valueOf(an);
 			String np = (String) xml.get(MSISDN_NUMBERING_PLAN, String.class);
 			clt.msisdnNumberingPlan = NumberingPlan.valueOf(np);
+
+			String uca = (String) xml.get(USSD_CLIENT_ACTION, String.class);
+			clt.ussdClientAction = UssdClientAction.createInstance(uca);
+			clt.autoRequestString = (String) xml.get(AUTO_REQUEST_STRING, String.class);
 		}
 	};
 
@@ -378,6 +501,9 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	public String performUnstructuredResponse(String msg) {
 		if (!isStarted)
 			return "The tester is not started";
+		if (this.sender != null)
+			return "The tester is not ion manual mode";
+
 		MAPDialogSupplementary curDialog = currentDialog;
 		if (curDialog == null)
 			return "No current dialog exists. Start it previousely";
@@ -448,14 +574,19 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse ind) {
 		if (!isStarted)
 			return;
-		MAPDialogSupplementary curDialog = currentDialog;
-		if (curDialog != ind.getMAPDialog())
-			return;
 
-		currentRequestDef += "procUnstrSsResp=\"" + ind.getUSSDString().getString() + "\";";
+		if (this.sender == null) {
+			MAPDialogSupplementary curDialog = currentDialog;
+			if (curDialog != ind.getMAPDialog())
+				return;
+			currentRequestDef += "procUnstrSsResp=\"" + ind.getUSSDString().getString() + "\";";
+		}
+
 		this.countProcUnstResp++;
-		String uData = this.createUssdMessageData(curDialog.getDialogId(), ind.getUSSDDataCodingScheme(), null, null);
-		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: procUnstrSsResp: " + ind.getUSSDString().getString(), uData, true);
+		if (!this.oneNotificationFor100Dialogs) {
+			String uData = this.createUssdMessageData(ind.getMAPDialog().getDialogId(), ind.getUSSDDataCodingScheme(), null, null);
+			this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: procUnstrSsResp: " + ind.getUSSDString().getString(), uData, true);
+		}
 		
 		this.doRemoveDialog();
 	}
@@ -582,12 +713,54 @@ public class TestUssdClientMan implements TestUssdClientManMBean, Stoppable, MAP
 	public void onDialogRelease(MAPDialog mapDialog) {
 		if (this.currentDialog == mapDialog)
 			this.doRemoveDialog();
+
+		nbConcurrentDialogs.decrementAndGet();
+		if (this.sender != null) {
+			if (nbConcurrentDialogs.get() < maxConcurrentDialogs / 2)
+				this.sender.notify();
+		}
 	}
 
 	@Override
 	public void onDialogTimeout(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	private class MessageSender implements Runnable {
+		
+		private boolean needStop = false;
+
+		public void stop() {
+			needStop = true;
+		}
+
+		@Override
+		public void run() {
+			try {
+				Thread.sleep(20000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			while (true) {		
+				if (needStop)
+					break;
+
+				if (nbConcurrentDialogs.get() < maxConcurrentDialogs) {
+					doPerformProcessUnstructuredRequest(autoRequestString, false);
+					nbConcurrentDialogs.incrementAndGet();
+				}
+
+				if (nbConcurrentDialogs.get() >= maxConcurrentDialogs) {
+					try {
+						this.wait(100);
+					} catch (Exception ex) {
+					}
+				}
+			}
+		}
 	}
 }
 
