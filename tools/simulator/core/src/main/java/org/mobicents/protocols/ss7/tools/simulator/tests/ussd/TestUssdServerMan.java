@@ -83,6 +83,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 	private static final String PROCESS_SS_REQUEST_ACTION = "processSsRequestAction";
 	private static final String AUTO_RESPONSE_STRING = "autoResponseString";
 	private static final String AUTO_UNSTRUCTURED_SS_REQUEST_STRING = "autoUnstructured_SS_RequestString";
+	private static final String ONE_NOTIFICATION_FOR_100_DIALOGS = "oneNotificationFor100Dialogs";
 
 	private String msisdnAddress = "";
 	private AddressNature msisdnAddressNature = AddressNature.international_number;
@@ -92,6 +93,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 	private ProcessSsRequestAction processSsRequestAction = new ProcessSsRequestAction(ProcessSsRequestAction.VAL_MANUAL_RESPONSE);
 	private String autoResponseString = "";
 	private String autoUnstructured_SS_RequestString = "";
+	private boolean oneNotificationFor100Dialogs = false;
 
 	private final String name;
 	private TesterHost testerHost;
@@ -99,6 +101,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 
 	private int countProcUnstReq = 0;
 	private int countProcUnstResp = 0;
+	private int countProcUnstRespNot = 0;
 	private int countUnstReq = 0;
 	private int countUnstResp = 0;
 	private int countUnstNotifReq = 0;
@@ -227,6 +230,17 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 	@Override
 	public void setAutoUnstructured_SS_RequestString(String val) {
 		autoUnstructured_SS_RequestString = val;
+		this.testerHost.markStore();
+	}
+
+	@Override
+	public boolean isOneNotificationFor100Dialogs() {
+		return oneNotificationFor100Dialogs;
+	}
+
+	@Override
+	public void setOneNotificationFor100Dialogs(boolean val) {
+		oneNotificationFor100Dialogs = val;
 		this.testerHost.markStore();
 	}
 
@@ -372,6 +386,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		public void write(TestUssdServerMan srv, OutputElement xml) throws XMLStreamException {
 			xml.setAttribute(DATA_CODING_SCHEME, srv.dataCodingScheme);
 			xml.setAttribute(ALERTING_PATTERN, srv.alertingPattern);
+			xml.setAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS, srv.oneNotificationFor100Dialogs);
 
 			xml.add(srv.msisdnAddress, MSISDN_ADDRESS);
 			xml.add(srv.autoResponseString, AUTO_RESPONSE_STRING);
@@ -385,6 +400,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		public void read(InputElement xml, TestUssdServerMan srv) throws XMLStreamException {
 			srv.dataCodingScheme = xml.getAttribute(DATA_CODING_SCHEME).toInt();
 			srv.alertingPattern = xml.getAttribute(ALERTING_PATTERN).toInt();
+			srv.oneNotificationFor100Dialogs = xml.getAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS).toBoolean();
 
 			srv.msisdnAddress = (String) xml.get(MSISDN_ADDRESS, String.class);
 			srv.autoResponseString = (String) xml.get(AUTO_RESPONSE_STRING, String.class);
@@ -418,8 +434,16 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 			dd.currentRequestDef = currentRequestDef;
 		}
 		this.countProcUnstResp++;
-		String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, null, null);
-		this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + msg, uData, true);
+		if (this.oneNotificationFor100Dialogs) {
+			int i1 = countProcUnstResp / 100;
+			if (countProcUnstRespNot < i1) {
+				countProcUnstRespNot = i1;
+				this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + (countProcUnstRespNot * 100) + " messages sent", "", true);
+			}
+		} else {
+			String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, null, null);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + msg, uData, true);
+		}
 
 		return "ProcessUnstructuredSSResponse has been sent";
 	}
@@ -597,9 +621,11 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 			pref = "CurDialog: ";
 		}
 		this.countProcUnstReq++;
-		String uData = this.createUssdMessageData(ind.getMAPDialog().getDialogId(), ind.getUSSDDataCodingScheme(), ind.getMSISDNAddressString(),
-				ind.getAlertingPattern());
-		this.sendRcvdNotice("Rcvd: procUnstrSsReq: " + ind.getUSSDString().getString(), pref, uData);
+		if (!this.oneNotificationFor100Dialogs) {
+			String uData = this.createUssdMessageData(ind.getMAPDialog().getDialogId(), ind.getUSSDDataCodingScheme(), ind.getMSISDNAddressString(),
+					ind.getAlertingPattern());
+			this.sendRcvdNotice("Rcvd: procUnstrSsReq: " + ind.getUSSDString().getString(), pref, uData);
+		}
 
 		switch (this.getProcessSsRequestAction().intValue()) {
 		case ProcessSsRequestAction.VAL_MANUAL_RESPONSE: {

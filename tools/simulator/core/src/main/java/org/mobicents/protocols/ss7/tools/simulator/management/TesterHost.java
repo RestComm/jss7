@@ -37,10 +37,10 @@ import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.router.Router;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
+import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicMan;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaMan;
 import org.mobicents.protocols.ss7.tools.simulator.level2.SccpMan;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
-import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.ProcessSsRequestAction;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerMan;
 
@@ -71,6 +71,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 	private static final String INSTANCE_L3 = "instance_L3";
 	private static final String INSTANCE_TESTTASK = "instance_TestTask";
 	private static final String M3UA = "m3ua";
+	private static final String DIALOGIC = "dialogic";
 	private static final String SCCP = "sccp";
 	private static final String MAP = "map";
 	private static final String TEST_USSD_CLIENT = "testUssdClient";
@@ -99,6 +100,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 	// levels
 	M3uaMan m3ua;
+	DialogicMan dialogic;
 	SccpMan sccp;
 	MapMan map;
 	TestUssdClientMan testUssdClientMan;
@@ -111,6 +113,9 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 		this.m3ua = new M3uaMan(appName);
 		this.m3ua.setTesterHost(this);
+
+		this.dialogic = new DialogicMan(appName);
+		this.dialogic.setTesterHost(this);
 
 		this.sccp = new SccpMan(appName);
 		this.sccp.setTesterHost(this);
@@ -146,6 +151,10 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 	public M3uaMan getM3uaMan() {
 		return this.m3ua;
+	}
+
+	public DialogicMan getDialogicMan() {
+		return this.dialogic;
 	}
 
 	public SccpMan getSccpMan() {
@@ -351,8 +360,9 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			mtp3UserPart = this.m3ua.getMtp3UserPart();
 			break;
 		case Instance_L1.VAL_DIALOGIC:
-			// TODO Implement L1 = DialogicCard
-			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L1.VAL_DIALOGIC has not been implemented yet", "", true);
+			this.instance_L1_B = this.dialogic;
+			started = this.dialogic.start();
+			mtp3UserPart = this.dialogic.getMtp3UserPart();
 			break;
 
 		default:
@@ -472,6 +482,12 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 		this.isStarted = false;
 
+		// TestTask
+		if (this.instance_TestTask_B != null) {
+			this.instance_TestTask_B.stop();
+			this.instance_TestTask_B = null;
+		}
+
 		// L3
 		if (this.instance_L3_B != null) {
 			this.instance_L3_B.stop();
@@ -498,6 +514,12 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 		}
 		if (this.instance_L2_B != null) {
 			this.instance_L2_B.execute();
+		}
+		if (this.instance_L3_B != null) {
+			this.instance_L3_B.execute();
+		}
+		if (this.instance_TestTask_B != null) {
+			this.instance_TestTask_B.execute();
 		}
 	}
 
@@ -573,6 +595,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			writer.write(this.instance_TestTask.toString(), INSTANCE_TESTTASK, String.class);
 
 			writer.write(this.m3ua, M3UA, M3uaMan.class);
+			writer.write(this.dialogic, DIALOGIC, DialogicMan.class);
 			writer.write(this.sccp, SCCP, SccpMan.class);
 			writer.write(this.map, MAP, MapMan.class);
 			writer.write(this.testUssdClientMan, TEST_USSD_CLIENT, TestUssdClientMan.class);
@@ -614,6 +637,10 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.m3ua.setM3uaOpc(_m3ua.getM3uaOpc());
 			this.m3ua.setM3uaSi(_m3ua.getM3uaSi());
 
+			DialogicMan _dial = reader.read(DIALOGIC, DialogicMan.class);
+			this.dialogic.setSourceModuleId(_dial.getSourceModuleId());
+			this.dialogic.setDestinationModuleId(_dial.getDestinationModuleId());
+
 			SccpMan _sccp = reader.read(SCCP, SccpMan.class);
 			this.sccp.setDpc(_sccp.getDpc());
 			this.sccp.setOpc(_sccp.getOpc());
@@ -634,6 +661,10 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.testUssdClientMan.setMsisdnNumberingPlan(_TestUssdClientMan.getMsisdnNumberingPlan());
 			this.testUssdClientMan.setDataCodingScheme(_TestUssdClientMan.getDataCodingScheme());
 			this.testUssdClientMan.setAlertingPattern(_TestUssdClientMan.getAlertingPattern());
+			this.testUssdClientMan.setUssdClientAction(_TestUssdClientMan.getUssdClientAction());
+			this.testUssdClientMan.setAutoRequestString(_TestUssdClientMan.getAutoRequestString());
+			this.testUssdClientMan.setMaxConcurrentDialogs(_TestUssdClientMan.getMaxConcurrentDialogs());
+			this.testUssdClientMan.setOneNotificationFor100Dialogs(_TestUssdClientMan.isOneNotificationFor100Dialogs());
 
 			TestUssdServerMan _TestUssdServerMan = reader.read(TEST_USSD_SERVER, TestUssdServerMan.class);
 			this.testUssdServerMan.setMsisdnAddress(_TestUssdServerMan.getMsisdnAddress());
@@ -644,6 +675,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.testUssdServerMan.setProcessSsRequestAction(_TestUssdServerMan.getProcessSsRequestAction());
 			this.testUssdServerMan.setAutoResponseString(_TestUssdServerMan.getAutoResponseString());
 			this.testUssdServerMan.setAutoUnstructured_SS_RequestString(_TestUssdServerMan.getAutoUnstructured_SS_RequestString());
+			this.testUssdServerMan.setOneNotificationFor100Dialogs(_TestUssdServerMan.isOneNotificationFor100Dialogs());
 
 //			remoteSsns = reader.read(REMOTE_SSN, FastMap.class);
 //			remoteSpcs = reader.read(REMOTE_SPC, FastMap.class);

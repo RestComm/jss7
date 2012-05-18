@@ -55,6 +55,24 @@ public interface TestUssdClientManMBean {
 	public int getAlertingPattern();
 
 	public void setAlertingPattern(int val);
+	
+	public UssdClientAction getUssdClientAction();
+
+	public String getUssdClientAction_Value();
+
+	public void setUssdClientAction(UssdClientAction val);
+
+	public String getAutoRequestString();
+
+	public void setAutoRequestString(String val);
+
+	public int getMaxConcurrentDialogs();
+
+	public void setMaxConcurrentDialogs(int val);
+
+	public boolean isOneNotificationFor100Dialogs();
+
+	public void setOneNotificationFor100Dialogs(boolean val);
 
 
 	public String getCurrentRequestDef();
@@ -69,5 +87,7 @@ public interface TestUssdClientManMBean {
 	public void putMsisdnAddressNature(String val);
 
 	public void putMsisdnNumberingPlan(String val);
+
+	public void putUssdClientAction(String val);
 
 }

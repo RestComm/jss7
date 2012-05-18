@@ -54,6 +54,18 @@ public class TestUssdClientStandardManMBean extends StandardMBean {
 				new MBeanAttributeInfo("DataCodingScheme", int.class.getName(), "USSD DataCodingScheme (default value: 15)", true, true, false),
 				new MBeanAttributeInfo("AlertingPattern", int.class.getName(), "AlertingPattern value (-1 means no AlertingPattern parameter)", true, true, false),
 				new MBeanAttributeInfo("CurrentRequestDef", String.class.getName(), "Definition of the current request Dialog", true, false, false),
+
+				new MBeanAttributeInfo("UssdClientAction", UssdClientAction.class.getName(), 
+						"The mode of UssdClient work. When manual response user can manually send ProcessSsUnstructured request, when VAL_AUTO_SendProcessUnstructuredSSRequest the tester sends ProcessSsUnstructured requests without dealay (load test)", 
+						true, true, false),
+				new MBeanAttributeInfo("UssdClientAction_Value", String.class.getName(), 
+						"The mode of UssdClient work. When manual response user can manually send ProcessSsUnstructured request, when VAL_AUTO_SendProcessUnstructuredSSRequest the tester sends ProcessSsUnstructured requests without dealay (load test)", 
+						true, false, false),
+				new MBeanAttributeInfo("AutoRequestString", String.class.getName(), "Value of auto ProcessSsUnstructured request", true, true, false),
+				new MBeanAttributeInfo("MaxConcurrentDialogs", int.class.getName(), "The count of maximum active MAP dialogs when the auto sending mode", true, true, false),
+				new MBeanAttributeInfo("OneNotificationFor100Dialogs", boolean.class.getName(), 
+						"If true there will be only one notification per every 100 sent dialogs (recommended for the auto sending mode)", 
+						true, true, true),
 		};
 
 		MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(), "Index number or value") };
@@ -68,6 +80,9 @@ public class TestUssdClientStandardManMBean extends StandardMBean {
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
 				new MBeanOperationInfo("putMsisdnNumberingPlan", "Msisdn parameter: NumberingPlan: " + 
 						"0:unknown,1:ISDN,2:spare_2,3:data,4:telex,5:spare_5,6:land_mobile,7:spare_7,8:national,9:private_plan,15:reserved", 
+						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("putUssdClientAction", 
+						"The mode of UssdClient work. 1:VAL_MANUAL_OPERATION,2:VAL_AUTO_SendProcessUnstructuredSSRequest", 
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
 		};
 

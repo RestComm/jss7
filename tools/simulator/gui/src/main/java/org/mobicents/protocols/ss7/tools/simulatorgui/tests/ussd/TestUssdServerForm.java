@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd;
 import javax.management.Notification;
 import javax.swing.JFrame;
 
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.ProcessSsRequestAction;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerManMBean;
 import org.mobicents.protocols.ss7.tools.simulatorgui.TestingForm;
 import javax.swing.JPanel;
@@ -52,6 +53,10 @@ public class TestUssdServerForm extends TestingForm {
 	private JLabel lbMessage;
 	private JLabel lbResult;
 	private JLabel lbState;
+	private JButton btnSendProcessunstructuredresponse;
+	private JButton btnSendUnstructuredrequest;
+	private JButton btnSendUnstructurednotify;
+	private JButton btnCloseCurrentDialog;
 
 	public TestUssdServerForm(JFrame owner) {
 		super(owner);
@@ -82,7 +87,7 @@ public class TestUssdServerForm extends TestingForm {
 		gbc_tbMessage.gridy = 0;
 		panel.add(tbMessage, gbc_tbMessage);
 		
-		JButton btnSendProcessunstructuredresponse = new JButton("Send ProcessUnstructuredResponse");
+		btnSendProcessunstructuredresponse = new JButton("Send ProcessUnstructuredResponse");
 		btnSendProcessunstructuredresponse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				sendProcessUnstructuredResponse();
@@ -94,7 +99,7 @@ public class TestUssdServerForm extends TestingForm {
 		gbc_btnSendProcessunstructuredresponse.gridy = 1;
 		panel.add(btnSendProcessunstructuredresponse, gbc_btnSendProcessunstructuredresponse);
 		
-		JButton btnSendUnstructuredrequest = new JButton("Send UnstructuredRequest");
+		btnSendUnstructuredrequest = new JButton("Send UnstructuredRequest");
 		btnSendUnstructuredrequest.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				sendUnstructuredRequest();
@@ -106,7 +111,7 @@ public class TestUssdServerForm extends TestingForm {
 		gbc_btnSendUnstructuredrequest.gridy = 2;
 		panel.add(btnSendUnstructuredrequest, gbc_btnSendUnstructuredrequest);
 		
-		JButton btnSendUnstructurednotify = new JButton("Send UnstructuredNotify");
+		btnSendUnstructurednotify = new JButton("Send UnstructuredNotify");
 		btnSendUnstructurednotify.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				sendUnstructuredNotify();
@@ -118,7 +123,7 @@ public class TestUssdServerForm extends TestingForm {
 		gbc_btnSendUnstructurednotify.gridy = 3;
 		panel.add(btnSendUnstructurednotify, gbc_btnSendUnstructurednotify);
 		
-		JButton btnCloseCurrentDialog = new JButton("Close current Dialog");
+		btnCloseCurrentDialog = new JButton("Close current Dialog");
 		btnCloseCurrentDialog.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				closeCurrentDialog();
@@ -167,6 +172,14 @@ public class TestUssdServerForm extends TestingForm {
 
 	public void setData(TestUssdServerManMBean ussdServer) {
 		this.ussdServer = ussdServer;
+
+		if (ussdServer.getProcessSsRequestAction().intValue() != ProcessSsRequestAction.VAL_MANUAL_RESPONSE) {
+			tbMessage.setEnabled(false);
+			btnSendProcessunstructuredresponse.setEnabled(false);
+			btnSendUnstructuredrequest.setEnabled(false);
+			btnSendUnstructurednotify.setEnabled(false);
+			btnCloseCurrentDialog.setEnabled(false);
+		}
 	}
 
 	private void sendProcessUnstructuredResponse() {

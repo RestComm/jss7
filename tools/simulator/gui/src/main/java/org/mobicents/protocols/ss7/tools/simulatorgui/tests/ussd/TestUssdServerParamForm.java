@@ -41,6 +41,7 @@ import javax.swing.JComboBox;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JCheckBox;
 
 /**
  * 
@@ -60,6 +61,7 @@ public class TestUssdServerParamForm extends JDialog {
 	private JComboBox cbAddressNature;
 	private JComboBox cbNumberingPlan;
 	private JComboBox cbProcessSsRequestAction;
+	private JCheckBox cbOneNotificationFor100Dialogs;
 
 	public TestUssdServerParamForm(JFrame owner) {
 		super(owner, true);
@@ -67,7 +69,7 @@ public class TestUssdServerParamForm extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("USSD test server settings");
-		setBounds(100, 100, 539, 468);
+		setBounds(100, 100, 539, 508);
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -131,7 +133,7 @@ public class TestUssdServerParamForm extends JDialog {
 				loadDataA();
 			}
 		});
-		button.setBounds(10, 374, 246, 23);
+		button.setBounds(10, 412, 246, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("Load default values for side B");
@@ -140,7 +142,7 @@ public class TestUssdServerParamForm extends JDialog {
 				loadDataB();
 			}
 		});
-		button_1.setBounds(266, 374, 255, 23);
+		button_1.setBounds(266, 412, 255, 23);
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("Cancel");
@@ -149,7 +151,7 @@ public class TestUssdServerParamForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		button_2.setBounds(404, 408, 117, 23);
+		button_2.setBounds(404, 446, 117, 23);
 		panel.add(button_2);
 		
 		JButton button_3 = new JButton("Save");
@@ -160,7 +162,7 @@ public class TestUssdServerParamForm extends JDialog {
 				}
 			}
 		});
-		button_3.setBounds(180, 408, 117, 23);
+		button_3.setBounds(180, 446, 117, 23);
 		panel.add(button_3);
 		
 		JButton button_4 = new JButton("Reload");
@@ -169,7 +171,7 @@ public class TestUssdServerParamForm extends JDialog {
 				reloadData();
 			}
 		});
-		button_4.setBounds(10, 408, 144, 23);
+		button_4.setBounds(10, 446, 144, 23);
 		panel.add(button_4);
 		
 		JLabel lblProcessssrequestaction = new JLabel("The action when processing ProcessSsRequest");
@@ -198,6 +200,10 @@ public class TestUssdServerParamForm extends JDialog {
 		tbAutoUnstructured_SS_RequestString.setColumns(10);
 		tbAutoUnstructured_SS_RequestString.setBounds(10, 343, 511, 20);
 		panel.add(tbAutoUnstructured_SS_RequestString);
+		
+		cbOneNotificationFor100Dialogs = new JCheckBox("One notification for 100 dialogs (recommended for the auto sending mode)");
+		cbOneNotificationFor100Dialogs.setBounds(10, 370, 511, 23);
+		panel.add(cbOneNotificationFor100Dialogs);
 	}
 
 	public void setData(TestUssdServerManMBean ussdServer) {
@@ -221,6 +227,8 @@ public class TestUssdServerParamForm extends JDialog {
 
 		tbDataCodingScheme.setText(((Integer)this.ussdServer.getDataCodingScheme()).toString());
 		tbAlertingPattern.setText(((Integer)this.ussdServer.getAlertingPattern()).toString());
+
+		cbOneNotificationFor100Dialogs.setSelected(this.ussdServer.isOneNotificationFor100Dialogs());
 	}
 
 	private void loadDataA() {
@@ -234,6 +242,8 @@ public class TestUssdServerParamForm extends JDialog {
 
 		tbDataCodingScheme.setText("15");
 		tbAlertingPattern.setText("-1");
+
+		cbOneNotificationFor100Dialogs.setSelected(false);
 	}
 
 	private void loadDataB() {
@@ -266,6 +276,8 @@ public class TestUssdServerParamForm extends JDialog {
 
 		this.ussdServer.setDataCodingScheme(dataCodingScheme);
 		this.ussdServer.setAlertingPattern(alertingPattern);
+
+		this.ussdServer.setOneNotificationFor100Dialogs(cbOneNotificationFor100Dialogs.isSelected());
 
 		return true;
 	}

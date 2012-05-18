@@ -38,10 +38,12 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.UssdClientAction;
 import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JCheckBox;
 
 /**
  * 
@@ -59,6 +61,10 @@ public class TestUssdClientParamForm extends JDialog {
 	private JComboBox cbNumberingPlan;
 	private JTextField tbDataCodingScheme;
 	private JTextField tbAlertingPattern;
+	private JComboBox cbUssdClientAction;
+	private JTextField tbAutoRequestString;
+	private JTextField tbMaxConcurrentDialogs;
+	private JCheckBox cbOneNotificationFor100Dialogs;
 
 	public TestUssdClientParamForm(JFrame owner) {
 		super(owner, true);
@@ -66,7 +72,7 @@ public class TestUssdClientParamForm extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("USSD test client settings");
-		setBounds(100, 100, 537, 308);
+		setBounds(100, 100, 537, 511);
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -131,7 +137,7 @@ public class TestUssdClientParamForm extends JDialog {
 				loadDataA();
 			}
 		});
-		button.setBounds(10, 212, 256, 23);
+		button.setBounds(10, 415, 256, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("Load default values for side B");
@@ -140,7 +146,7 @@ public class TestUssdClientParamForm extends JDialog {
 				loadDataB();
 			}
 		});
-		button_1.setBounds(276, 212, 245, 23);
+		button_1.setBounds(276, 415, 245, 23);
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("Reload");
@@ -149,7 +155,7 @@ public class TestUssdClientParamForm extends JDialog {
 				reloadData();
 			}
 		});
-		button_2.setBounds(10, 246, 144, 23);
+		button_2.setBounds(10, 449, 144, 23);
 		panel.add(button_2);
 		
 		JButton button_3 = new JButton("Save");
@@ -160,7 +166,7 @@ public class TestUssdClientParamForm extends JDialog {
 				}
 			}
 		});
-		button_3.setBounds(277, 246, 117, 23);
+		button_3.setBounds(277, 449, 117, 23);
 		panel.add(button_3);
 		
 		JButton button_4 = new JButton("Cancel");
@@ -169,8 +175,39 @@ public class TestUssdClientParamForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		button_4.setBounds(404, 246, 117, 23);
+		button_4.setBounds(404, 449, 117, 23);
 		panel.add(button_4);
+		
+		JLabel lblUssdClientMode = new JLabel("Ussd client mode");
+		lblUssdClientMode.setBounds(10, 209, 149, 14);
+		panel.add(lblUssdClientMode);
+		
+		cbUssdClientAction = new JComboBox();
+		cbUssdClientAction.setToolTipText("<html>\r\nThe mode of UssdClient work. When manual response user can manually send ProcessSsUnstructured request, \r\n<br>\r\nwhen VAL_AUTO_SendProcessUnstructuredSSRequest the tester sends ProcessSsUnstructured requests without dealay (load test)\r\n</html>");
+		cbUssdClientAction.setBounds(10, 234, 499, 20);
+		panel.add(cbUssdClientAction);
+		
+		JLabel lblStringOfAuto = new JLabel("String of auto processUnsructuresSs request");
+		lblStringOfAuto.setBounds(10, 265, 324, 14);
+		panel.add(lblStringOfAuto);
+		
+		tbAutoRequestString = new JTextField();
+		tbAutoRequestString.setColumns(10);
+		tbAutoRequestString.setBounds(10, 287, 511, 20);
+		panel.add(tbAutoRequestString);
+		
+		JLabel lblTheCountOf = new JLabel("The count of maximum active MAP dialogs when the auto sending mode");
+		lblTheCountOf.setBounds(10, 321, 511, 14);
+		panel.add(lblTheCountOf);
+		
+		tbMaxConcurrentDialogs = new JTextField();
+		tbMaxConcurrentDialogs.setColumns(10);
+		tbMaxConcurrentDialogs.setBounds(10, 344, 98, 20);
+		panel.add(tbMaxConcurrentDialogs);
+		
+		cbOneNotificationFor100Dialogs = new JCheckBox("One notification for 100 dialogs (recommended for the auto sending mode)");
+		cbOneNotificationFor100Dialogs.setBounds(10, 371, 511, 23);
+		panel.add(cbOneNotificationFor100Dialogs);
 	}
 
 	public void setData(TestUssdClientManMBean ussdClient) {
@@ -186,21 +223,31 @@ public class TestUssdClientParamForm extends JDialog {
 	private void reloadData() {
 		M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, this.ussdClient.getMsisdnAddressNature());
 		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, this.ussdClient.getMsisdnNumberingPlan());
+		M3uaForm.setEnumeratedBaseComboBox(cbUssdClientAction, this.ussdClient.getUssdClientAction());
 
 		tbMsisdnAddress.setText(this.ussdClient.getMsisdnAddress());
+		tbAutoRequestString.setText(this.ussdClient.getAutoRequestString());
 
 		tbDataCodingScheme.setText(((Integer)this.ussdClient.getDataCodingScheme()).toString());
 		tbAlertingPattern.setText(((Integer)this.ussdClient.getAlertingPattern()).toString());
+		tbMaxConcurrentDialogs.setText(((Integer)this.ussdClient.getMaxConcurrentDialogs()).toString());
+
+		cbOneNotificationFor100Dialogs.setSelected(this.ussdClient.isOneNotificationFor100Dialogs());
 	}
 
 	private void loadDataA() {
 		M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
 		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbUssdClientAction, new UssdClientAction(UssdClientAction.VAL_MANUAL_OPERATION));
 
 		tbMsisdnAddress.setText("");
+		tbAutoRequestString.setText("");
+		tbMaxConcurrentDialogs.setText("10");
 
 		tbDataCodingScheme.setText("15");
 		tbAlertingPattern.setText("-1");
+
+		cbOneNotificationFor100Dialogs.setSelected(false);
 	}
 
 	private void loadDataB() {
@@ -210,6 +257,7 @@ public class TestUssdClientParamForm extends JDialog {
 	private boolean saveData() {
 		int dataCodingScheme = 0;
 		int alertingPattern = 0;
+		int maxConcurrentDialogs = 10;
 		try {
 			dataCodingScheme = Integer.parseInt(tbDataCodingScheme.getText());
 		} catch (Exception e) {
@@ -222,13 +270,24 @@ public class TestUssdClientParamForm extends JDialog {
 			JOptionPane.showMessageDialog(this, "Exception when parsing Alerting Pattern value: " + e.toString());
 			return false;
 		}
+		try {
+			maxConcurrentDialogs = Integer.parseInt(tbMaxConcurrentDialogs.getText());
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Exception when parsing MaxConcurrentDialogs value: " + e.toString());
+			return false;
+		}
 
 		this.ussdClient.setMsisdnAddressNature((AddressNatureType) cbAddressNature.getSelectedItem());
 		this.ussdClient.setMsisdnNumberingPlan((NumberingPlanType) cbNumberingPlan.getSelectedItem());
 		this.ussdClient.setMsisdnAddress(tbMsisdnAddress.getText());
+		this.ussdClient.setUssdClientAction((UssdClientAction) cbUssdClientAction.getSelectedItem());
+		this.ussdClient.setAutoRequestString(tbAutoRequestString.getText());
 
 		this.ussdClient.setDataCodingScheme(dataCodingScheme);
 		this.ussdClient.setAlertingPattern(alertingPattern);
+		this.ussdClient.setMaxConcurrentDialogs(maxConcurrentDialogs);
+
+		this.ussdClient.setOneNotificationFor100Dialogs(cbOneNotificationFor100Dialogs.isSelected());
 
 		return true;
 	}
