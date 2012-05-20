@@ -22,15 +22,17 @@
 
 package org.mobicents.protocols.ss7.tools.simulator;
  
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
+
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
-
-import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicManMBean;
-import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicManStandardMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaManStandardMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level2.SccpManMBean;
@@ -50,9 +52,9 @@ import com.sun.jdmk.comm.HtmlAdaptorServer;
 /**
  * 
  * @author sergey vetyutnev
- * 
+ * @author amit bhayani
  */
-public class Main {
+public class MainCore {
 
 	public static TesterHost mainGui(String appName) throws Exception {
 		TesterHost host = new TesterHost(appName);
@@ -135,6 +137,13 @@ public class Main {
 			}
 		}
 
+		MainCore main = new MainCore();
+		main.start(appName, httpPort, rmiPort);
+
+	}
+	
+	public void start(String appName, int httpPort, int rmiPort) throws MalformedObjectNameException, MBeanRegistrationException, InstanceNotFoundException,
+			IOException {
 		System.out.println("Application has been loaded...");
 
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
@@ -144,7 +153,6 @@ public class Main {
 		ObjectName adapterName = new ObjectName("SS7_Simulator_" + appName + ":name=htmladapter,port=" + httpPort);
 		ObjectName nameTesterHost = new ObjectName("SS7_Simulator_" + appName + ":type=TesterHost");
 		ObjectName nameM3uaMan = new ObjectName("SS7_Simulator_" + appName + ":type=M3uaMan");
-		ObjectName nameDialogicMan = new ObjectName("SS7_Simulator_" + appName + ":type=DialogicMan");
 		ObjectName nameSccpMan = new ObjectName("SS7_Simulator_" + appName + ":type=SccpMan");
 		ObjectName nameMapMan = new ObjectName("SS7_Simulator_" + appName + ":type=MapMan");
 		ObjectName nameUssdClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestUssdClientMan");
@@ -168,9 +176,6 @@ public class Main {
 
 			M3uaManStandardMBean m3uaMBean = new M3uaManStandardMBean(host.getM3uaMan(), M3uaManMBean.class);
 			mbs.registerMBean(m3uaMBean, nameM3uaMan);
-
-			DialogicManStandardMBean dialogicMBean = new DialogicManStandardMBean(host.getDialogicMan(), DialogicManMBean.class);
-			mbs.registerMBean(dialogicMBean, nameDialogicMan);
 
 			SccpManStandardMBean sccpMBean = new SccpManStandardMBean(host.getSccpMan(), SccpManMBean.class);
 			mbs.registerMBean(sccpMBean, nameSccpMan);
@@ -212,7 +217,11 @@ public class Main {
 		System.out.println("Waiting for commands...");
 
 		while (true) {
-			Thread.sleep(500);
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			if (host.isNeedQuit())
 				break;
 
@@ -231,7 +240,6 @@ public class Main {
 		
 		mbs.unregisterMBean(nameTesterHost);
 		mbs.unregisterMBean(nameM3uaMan);
-		mbs.unregisterMBean(nameDialogicMan);
 		mbs.unregisterMBean(nameSccpMan);
 		mbs.unregisterMBean(nameMapMan);
 		mbs.unregisterMBean(nameUssdClientManMan);
