@@ -614,6 +614,12 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 		XMLObjectReader reader = null;
 		try {
+			File fn = new File(persistFile.toString());
+			if (!fn.exists()) {
+				this.sendNotif(SOURCE_NAME, "Error while reading the Host state from file: file not found: " + persistFile.toString(), "", true);
+				return;
+			}
+			
 			reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
 
 			reader.setBinding(binding);
@@ -681,7 +687,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 //			remoteSpcs = reader.read(REMOTE_SPC, FastMap.class);
 //			concernedSpcs = reader.read(CONCERNED_SPC, FastMap.class);
 		} catch (Exception ex) {
-			this.sendNotif(SOURCE_NAME, "Error while reading the Host state in file", ex, true);
+			this.sendNotif(SOURCE_NAME, "Error while reading the Host state from file", ex, true);
 		}
 	}
 }

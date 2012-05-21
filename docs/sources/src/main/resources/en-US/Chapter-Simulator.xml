@@ -25,7 +25,7 @@
 				</listitem>
 				<listitem>
 					<para>
-						DialogicCard (not yet implemented)
+						DialogicCard
 					</para>
 				</listitem>
 					<listitem>
@@ -116,6 +116,11 @@
 		</title>
 
 	<para>
+		After compiling Simulator binaries can be found in the folder simulator/bootstrap/target/simulator-ss7.
+		Use "run.bat" or "run.sh" command file for running Simulator (from a folder simulator/bootstrap/target/simulator-ss7/bin).
+	</para>
+
+	<para>
 		You can run several instances of Simulator from one folder.
 		Each of this instances can have its own configuration options.
 		Configuration options are saved into an xml configuration file.
@@ -132,7 +137,9 @@
 	</para>
 
 	<para>
-		You can run and manage SS7 Simulator locally or remotely. 
+		You can run and manage SS7 Simulator locally or remotely.
+		If you are running Simulator locally you are using a GUI interface. 
+		If you are running Simulator remotely you can use RMI access (via a GUI interface) and HTML interface (using a HTML Browser).
 	</para>
 
 	
@@ -141,12 +148,13 @@
 		</title>
 
 	<para>
-		In order to run SS7 Simulator locally you must have "simulator-core.jar" and "simulator-gui.jar" and run "simulator-gui.jar" module.
-		You can pass to the "simulator-gui.jar" the only parameter which is the "host name". For example: 
+		In order to run SS7 Simulator locally you must run a command "run gui" (from a folder simulator/bootstrap/target/simulator-ss7/bin). 
+		You can pass the only parameter which is the "host name". Possible examples (host name is "a1"): 
 		<programlisting>
-		simulator-gui.jar a1
+		run gui -na1
+		run gui --name=a1
 		</programlisting>
-		The application form "Connecting to a testerHost ..." will appear. You have to fill "Host name" field (if it is empty),
+		The GUI application form "Connecting to a testerHost ..." will appear. You have to fill "Host name" field (if it is empty),
 		select "Create a local testerHost" option and press "Start" button. The local Simulator host will be run.   
 	</para>
 
@@ -178,7 +186,6 @@
 		</title>
 
 	<para>
-		If you want to run and manage SS7 Simulator remotely you must at the first step run "simulator-core.jar" application at the server host.
 		Now there are two interfaces for managing: RMI and HTML adapter. Both two styles of management can be run at the same time.  
 	</para>
 
@@ -188,15 +195,8 @@
 		</title>
 
 	<para>
-		Before starting "simulator-core" application "rmiregistry" application must be started. The format of launching "rmiregistry" is:
-		<programlisting>
-		rmiregistry 9999
-		</programlisting>
-		"9999" is the port of RMI host (we can use some port).  
-	</para>
-
-	<para>
-		The format of launching "simulator-core" is: 
+		// ................................................................
+		The options of launching "simulator-core" is: 
 		<programlisting>
 		java -Dcom.sun.management.jmxremote org.mobicents.protocols.ss7.tools.simulator.Main name=&LT#host name&GT# rmi=9999
 		</programlisting>

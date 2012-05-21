@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.tools.simulator;
  
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanRegistrationException;
@@ -169,6 +172,7 @@ public class MainCore {
 		TesterHost host = new TesterHost(appName);
 
 		JMXConnectorServer cs = null;
+		Registry reg = null;
 		try {
 			// registering managed beans
 			Object mbean = new TesterHostStandardMBean(host, TesterHostMBean.class, host);
@@ -194,6 +198,7 @@ public class MainCore {
 			// starting rmi connector
 			if (rmiPort > 0) {
 				System.out.println("RMI connector initializing...");
+				reg = LocateRegistry.createRegistry(rmiPort);
 				JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:" + rmiPort + "/server");
 				cs = JMXConnectorServerFactory.newJMXConnectorServer(url, null, mbs);
 				cs.start();
@@ -237,13 +242,17 @@ public class MainCore {
 		if (rmiPort > 0) {
 			cs.stop();
 		}
-		
+
 		mbs.unregisterMBean(nameTesterHost);
 		mbs.unregisterMBean(nameM3uaMan);
 		mbs.unregisterMBean(nameSccpMan);
 		mbs.unregisterMBean(nameMapMan);
 		mbs.unregisterMBean(nameUssdClientManMan);
 		mbs.unregisterMBean(nameUssdServerManMan);
+
+//		Registry.unbind(key);
+		UnicastRemoteObject.unexportObject(reg,true);  
+
 	}
 }
 
