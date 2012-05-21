@@ -80,12 +80,10 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.sctp</groupId>
 			<artifactId>sctp-api</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.sctp</groupId>
 			<artifactId>sctp-impl</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
@@ -106,7 +104,6 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 			<artifactId>mobicents-dialogic</artifactId>
-			<version>2.0.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
