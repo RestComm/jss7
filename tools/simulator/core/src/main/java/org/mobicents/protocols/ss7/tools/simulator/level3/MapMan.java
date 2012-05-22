@@ -211,14 +211,14 @@ public class MapMan implements MapManMBean, Stoppable {
 	}
 
 	public AddressString createOrigReference() {
-		if (this.origReference.equals(""))
+		if (this.origReference == null || this.origReference.equals(""))
 			return null;
 		else
 			return new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, this.origReference);
 	}
 
 	public AddressString createDestReference() {
-		if (this.destReference.equals(""))
+		if (this.destReference == null || this.destReference.equals(""))
 			return null;
 		else
 			return new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, this.destReference);

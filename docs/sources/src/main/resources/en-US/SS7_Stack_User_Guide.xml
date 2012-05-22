@@ -18,7 +18,8 @@
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-SCCP.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-TCAP.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-MAP.xml" />
-	
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Simulator.xml" />
+
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/Java_Development_Kit-Installing_Configuring_and_Running.xml"/>
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/Setting_the_JBOSS_HOME_Environment_Variable.xml"/>
 	<!-- 

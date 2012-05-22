@@ -133,7 +133,7 @@
 		Before running a test all layers must be configured.
 		After test running a user can perform some actions depending on the test.
 		Results of a test are emitted as "notifications". 
-		Notifications are displayed in simulator-gui and jconsole applications in the GUI interface and also are written into a file "&LT#host name&GT#.log" and into a console.
+		Notifications are displayed in GUI interface of Simulator and Jconsole application (also GUI interface) and also are written into a file "&LT#host name&GT#.log" and into a console.
 	</para>
 
 	<para>
@@ -157,6 +157,14 @@
 		The GUI application form "Connecting to a testerHost ..." will appear. You have to fill "Host name" field (if it is empty),
 		select "Create a local testerHost" option and press "Start" button. The local Simulator host will be run.   
 	</para>
+	<mediaobject id="Simulator_Ex1">
+		<imageobject>
+			<imagedata align="center" fileref="images/Simulator-Example1.png" format="PNG" />
+		</imageobject>
+		<caption>
+			<para>Launching Simulator in a local mode</para>
+		</caption>
+	</mediaobject>									
 
 	<para>
 		The form "SS7 Simulator: &LT#host name&GT#-local" appears.
@@ -167,6 +175,14 @@
 		These default values can be used if you are using SS7 Simulators in the one computer host
 		as the side A and the side B for interaction.    
 	</para>
+	<mediaobject id="Simulator_Ex2">
+		<imageobject>
+			<imagedata align="center" fileref="images/Simulator-Example2.png" format="PNG" />
+		</imageobject>
+		<caption>
+			<para>The main form of the Simulator</para>
+		</caption>
+	</mediaobject>									
 
 	<para>
 		After configuring press a button "Run test".
@@ -178,6 +194,15 @@
 		In the lower part of the form test depended information are allocated. Details of this part is displayed in the corresponded test definition.   
 		See <xref linkend="simulator_tests" />
 	</para>
+	<mediaobject id="Simulator_Ex3">
+		<imageobject>
+			<imagedata align="center" fileref="images/Simulator-Example3.png" format="PNG" />
+		</imageobject>
+		<caption>
+			<para>The example of the Simulator testing form</para>
+		</caption>
+	</mediaobject>									
+	
 	</section>
 
 
@@ -189,28 +214,45 @@
 		Now there are two interfaces for managing: RMI and HTML adapter. Both two styles of management can be run at the same time.  
 	</para>
 
+	<para>
+		For launching Simulator remotely we should firstly run a tester host. The format of launching a tester host is:  
+		<programlisting>
+		run core -na1 -t8001 -r9999
+		</programlisting>
+		or
+		<programlisting>
+		run core --name=a1 --http8001 --rmi9999
+		</programlisting>
+		Options "-n" (or "--name=") defines a host name ("a1").
+		Options "-r" (or "--rmi=") defines a port for rmi requests listerning (9999).
+		Options "-t" (or "--http=") defines a port for html requests listerning (8001).
+		You can use only rmi or only http connectors or both.
+	</para>
+
 
 	<section id="simulator_configuring_remotely_rmi">
 		<title>RMI interface
 		</title>
 
 	<para>
-		// ................................................................
-		The options of launching "simulator-core" is: 
+		The best client for management via RMI interface is the GUI interface of Simulator.
+		It can be launched by the same way as we launch Simulator locally: 
 		<programlisting>
-		java -Dcom.sun.management.jmxremote org.mobicents.protocols.ss7.tools.simulator.Main name=&LT#host name&GT# rmi=9999
+		run gui
 		</programlisting>
-		"9999" - is the RMI port, it must be equal the port from "rmiregistry 9999" launching.
-		"&LT#host name&GT#" - is the host name of SS7 Simulator, for example "a1" (see <xref linkend="simulator_configuring" />)
-	</para>
-
-	<para>
-		The best client for management via RMI interface is "simulator-gui" application.
-		After launching "simulator-gui" we should select the option "Connect to the existing testerHost via JMX" and
-		in the default RMI connection string replace "localhost" with the proper IP address of the "simulator-core" computer
-		and the "9999" with the proper RMI port (if needed).
+		After launching we should select the option "Connect to the existing testerHost via JMX" and
+		in the default RMI connection string replace "localhost" with the proper IP address of the tester host computer
+		and the "9999" with the proper RMI port (the port from option "-r" or "--rmi=") (if needed).
 		After connecting the management will be the same as if the application is run locally (see <xref linkend="simulator_configuring_locally" />).
 	</para>
+	<mediaobject id="Simulator_Ex4">
+		<imageobject>
+			<imagedata align="center" fileref="images/Simulator-Example4.png" format="PNG" />
+		</imageobject>
+		<caption>
+			<para>Launching Simulator GUI for a remote mode</para>
+		</caption>
+	</mediaobject>									
 
 	<para>
 		"Jconsole" application can be also used as the client. But this application is less convenient.  
@@ -223,16 +265,29 @@
 		</title>
 
 	<para>
-		The format of launching "simulator-core" is: 
-		<programlisting>
-		java -Dcom.sun.management.jmxremote org.mobicents.protocols.ss7.tools.simulator.Main name=&LT#host name&GT# http=8000
-		</programlisting>
-		"8000" - is the HTTP server port, any port can be used.
-	</para>
-
-	<para>
 		HTML management is less convenient than RMI management. But it can be used if RMI is not acceptable (for example if we are behind a proxy).
-		For paramters configuring and luanching tests we can use any html brouser. Use "http://&LT#IP address&GT#:&LT#port&GT#" as an URL.
+		For paramters configuring and luanching tests we can use any html browser. Use "http://&LT#IP address&GT#:&LT#port&GT#" as an URL.
+		The port is defined in "-t" or "--http=" options.
+	<mediaobject id="Simulator_Ex5">
+		<imageobject>
+			<imagedata align="center" fileref="images/Simulator-Example5.png" format="PNG" />
+		</imageobject>
+		<caption>
+			<para>Managing of a Simulator by a Browser (HTMP connector)</para>
+		</caption>
+	</mediaobject>
+		"TesterHost" is a main MBean in which we can select the mode for test working, start/stop testing (buttoms "Start"/"Stop"),
+		quit a tester host (buttom "quit"). Use other beans for setting options for layers and test tasks. 									
+	<mediaobject id="Simulator_Ex6">
+		<imageobject>
+			<imagedata align="center" fileref="images/Simulator-Example6.png" format="PNG" />
+		</imageobject>
+		<caption>
+			<para>TesterHost bean</para>
+		</caption>
+	</mediaobject>
+	</para>
+	<para>
 		Results of Simulator working can be found at the console (at the server) or in the log file (file name is like "a1.log").    
 	</para>
 	</section>
@@ -271,16 +326,40 @@
 						Receiving UnstructiredSs notify and displaying it
 					</para>
 				</listitem>
+				<listitem>
+					<para>
+						Spectial case for load testing: Sending to the Ussd server a flow of ProcessUnstructiredSs requests without stopping (and receiving responses).
+					</para>
+				</listitem>
 			</itemizedlist>
 	</para>
 
 	<para>
+		For working in a manual mode select the option "Manual operation", for auto sending nessages - the option "Auto sending ProcessUnstructuredSSRequest".  
 		You can send ProcessUnstructiredSs request and UnstructiredSs response only manually by inserting a message text and 
+		pressing buttons.
+		For working in the auto mode you should define the string of auto processUnstructuredSs request and the count of maximum active MAP dialogs (default value is 10).
+		The more dialogs is defined the more messages per second will be sent.
+		Msisdn, data coding schema and alerting pattern values should be also configured before test starting.
+		For auto mode we recomment to check the option "One notification for 100 dialogs" for preventing too many notifications when load testing. 
+	</para>
+
+	<para>
+		You can send ProcessUnstructiredSs request and UnstructiredSs response manually by inserting a message text and 
 		pressing buttons.
 		You can not send a new ProcessUnstructiredSs request till the response for previos request has been received (or till dialog timeout).
 		You can also manually close the current dialog by perssing "Close current dialog" button.
-		Msisdn, data coding schema and alerting pattern values can be configured before test starting. 
 	</para>
+
+	<mediaobject id="Simulator_Ex7">
+		<imageobject>
+			<imagedata align="center" fileref="images/Simulator-Example7.png" format="PNG" />
+		</imageobject>
+		<caption>
+			<para>Ussd Client option form</para>
+		</caption>
+	</mediaobject>
+
 	</section>
 
 
@@ -294,6 +373,8 @@
 		In the automatic mode UssdServer automatically sends a predefined message as an ProcessUnstructiredSs response ("Auto sending ProcessUnstructuredSsResponse" option)
 		or automatically sends a predefined message as an UnstructiredSs request and then 
 		sends a predefined message ProcessUnstructiredSs response ("Auto sending Unstructured_SS_Request then after response sending ProcessUnstructuredSsResponse" option).
+		Use "Auto sending ProcessUnstructuredSsResponse" option for UssdServer if UssdClient is used for a load test ("Auto sending ProcessUnstructuredSSRequest").
+		For load testst we recomment to check the option "One notification for 100 dialogs" for preventing too many notifications when load testing. 
 	</para>
 
 	<para>
@@ -312,6 +393,15 @@
 				</listitem>
 			</itemizedlist>
 	</para>
+	<mediaobject id="Simulator_Ex8">
+		<imageobject>
+			<imagedata align="center" fileref="images/Simulator-Example8.png" format="PNG" />
+		</imageobject>
+		<caption>
+			<para>Ussd Server option form</para>
+		</caption>
+	</mediaobject>
+
 	</section>
 
 	</section>
