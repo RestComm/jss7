@@ -43,7 +43,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.primitives.SubscriberIdentityImpl;
 
 /**
- * @author abhayani
+ * @author amit bhayani
  * 
  */
 public class AnyTimeInterrogationRequestImpl extends SubscriberInformationMessageImpl implements AnyTimeInterrogationRequest,

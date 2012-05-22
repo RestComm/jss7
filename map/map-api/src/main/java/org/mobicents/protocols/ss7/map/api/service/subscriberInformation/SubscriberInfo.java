@@ -23,6 +23,7 @@ package org.mobicents.protocols.ss7.map.api.service.subscriberInformation;
 
 import java.io.Serializable;
 
+import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
@@ -43,7 +44,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * -- a VLR it shall discard them.
  * -- If the HLR receives parameters which it has not requested, it shall discard them.
  * 
- * @author abhayani
+ * @author amit bhayani
  *
  */
 public interface SubscriberInfo extends Serializable {
@@ -53,5 +54,17 @@ public interface SubscriberInfo extends Serializable {
 	public SubscriberState getSubscriberState();
 	
 	public MAPExtensionContainer getExtensionContainer();
+	
+	public LocationInformationGPRS getLocationInformationGPRS();
+	
+	public PSSubscriberState getPSSubscriberState();
+	
+	public IMEI getIMEI();
+	
+	public MSClassmark2 getMSClassmark2();
+	
+	public GPRSMSClass getGPRSMSClass();
+	
+	public MNPInfoRes getMNPInfoRes();
 
 }

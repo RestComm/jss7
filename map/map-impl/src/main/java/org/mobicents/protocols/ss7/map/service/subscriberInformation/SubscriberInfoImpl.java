@@ -30,28 +30,150 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.GPRSMSClass;
 import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LocationInformation;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LocationInformationGPRS;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.MNPInfoRes;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.MSClassmark2;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.PSSubscriberState;
 import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.SubscriberInfo;
 import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.SubscriberState;
+import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
- * @author abhayani
+ * @author amit bhayani
  * 
  */
 public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 
+	public static final int _ID_locationInformation = 0;
+	public static final int _ID_subscriberState = 1;
+	public static final int _ID_extensionContainer = 2;
+	public static final int _ID_locationInformationGPRS = 3;
+	public static final int _ID_psSubscriberState = 4;
+	public static final int _ID_imei = 5;
+	public static final int _ID_msclassmark2 = 6;
+	public static final int _ID_gprsMSClass = 7;
+	public static final int _ID_mnpInfoRes = 8;
+
 	private LocationInformation locationInformation = null;
 	private SubscriberState subscriberState = null;
 	private MAPExtensionContainer extensionContainer = null;
+	private LocationInformationGPRS locationInformationGPRS = null;
+	private PSSubscriberState psSubscriberState = null;
+	private IMEI imei = null;
+	private MSClassmark2 msClassmark2 = null;
+	private GPRSMSClass gprsMSClass = null;
+	private MNPInfoRes mnpInfoRes = null;
 
 	/**
 	 * 
 	 */
 	public SubscriberInfoImpl() {
 		// TODO Auto-generated constructor stub
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+	 * SubscriberInfo#getLocationInformation()
+	 */
+	@Override
+	public LocationInformation getLocationInformation() {
+		return this.locationInformation;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+	 * SubscriberInfo#getSubscriberState()
+	 */
+	@Override
+	public SubscriberState getSubscriberState() {
+		return this.subscriberState;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+	 * SubscriberInfo#getExtensionContainer()
+	 */
+	@Override
+	public MAPExtensionContainer getExtensionContainer() {
+		return this.extensionContainer;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+	 * SubscriberInfo#getLocationInformationGPRS()
+	 */
+	@Override
+	public LocationInformationGPRS getLocationInformationGPRS() {
+		return this.locationInformationGPRS;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+	 * SubscriberInfo#getPSSubscriberState()
+	 */
+	@Override
+	public PSSubscriberState getPSSubscriberState() {
+		return this.psSubscriberState;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+	 * SubscriberInfo#getIMEI()
+	 */
+	@Override
+	public IMEI getIMEI() {
+		return this.imei;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+	 * SubscriberInfo#getMSClassmark2()
+	 */
+	@Override
+	public MSClassmark2 getMSClassmark2() {
+		return this.msClassmark2;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+	 * SubscriberInfo#getGPRSMSClass()
+	 */
+	@Override
+	public GPRSMSClass getGPRSMSClass() {
+		return this.gprsMSClass;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+	 * SubscriberInfo#getMNPInfoRes()
+	 */
+	@Override
+	public MNPInfoRes getMNPInfoRes() {
+		return this.mnpInfoRes;
 	}
 
 	/*
@@ -138,14 +260,14 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 
 			int tag = ais.readTag();
 			switch (tag) {
-			case 0:
+			case _ID_locationInformation:
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding locationInformation: Parameter 0 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.locationInformation = new LocationInformationImpl();
 				((LocationInformationImpl) this.locationInformation).decodeAll(ais);
 				break;
-			case 1:
+			case _ID_subscriberState:
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding SubscriberState: Parameter 1 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
@@ -155,12 +277,31 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 				this.subscriberState = new SubscriberStateImpl();
 				((SubscriberStateImpl) this.subscriberState).decodeAll(ais);
 				break;
-			case 2:
+			case _ID_extensionContainer:
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding MAPExtensionContainer: Parameter 2 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				extensionContainer = new MAPExtensionContainerImpl();
 				((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
+				break;
+
+			case _ID_locationInformationGPRS:
+				((LocationInformationGPRSImpl) locationInformationGPRS).decodeAll(ais);
+				break;
+			case _ID_psSubscriberState:
+				((PSSubscriberStateImpl) psSubscriberState).decodeAll(ais);
+				break;
+			case _ID_imei:
+				((IMEIImpl) imei).decodeAll(ais);
+				break;
+			case _ID_msclassmark2:
+				((MSClassmark2Impl) msClassmark2).decodeAll(ais);
+				break;
+			case _ID_gprsMSClass:
+				((GPRSMSClassImpl) gprsMSClass).decodeAll(ais);
+				break;
+			case _ID_mnpInfoRes:
+				((MNPInfoResImpl) mnpInfoRes).decodeAll(ais);
 				break;
 
 			default:
@@ -180,8 +321,7 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 */
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
 	}
 
 	/*
@@ -193,8 +333,14 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 */
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		// TODO Auto-generated method stub
-
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding SubscriberInfo : " + e.getMessage(), e);
+		}
 	}
 
 	/*
@@ -206,41 +352,32 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 */
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
+		if (this.locationInformation != null)
+			((LocationInformationImpl) this.locationInformation).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationInformation);
 
-	}
+		if (this.subscriberState != null)
+			((SubscriberStateImpl) this.subscriberState).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_subscriberState);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
-	 * SubscriberInfo#getLocationInformation()
-	 */
-	@Override
-	public LocationInformation getLocationInformation() {
-		return this.locationInformation;
-	}
+		if (this.extensionContainer != null)
+			((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensionContainer);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
-	 * SubscriberInfo#getSubscriberState()
-	 */
-	@Override
-	public SubscriberState getSubscriberState() {
-		return this.subscriberState;
-	}
+		if (this.locationInformationGPRS != null)
+			((LocationInformationGPRSImpl) this.locationInformationGPRS).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationInformationGPRS);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
-	 * SubscriberInfo#getExtensionContainer()
-	 */
-	@Override
-	public MAPExtensionContainer getExtensionContainer() {
-		return this.extensionContainer;
+		if (this.psSubscriberState != null)
+			((PSSubscriberStateImpl) this.psSubscriberState).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_psSubscriberState);
+
+		if (this.imei != null)
+			((IMEIImpl) this.imei).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_imei);
+
+		if (this.msClassmark2 != null)
+			((MSClassmark2Impl) this.msClassmark2).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_msclassmark2);
+
+		if (this.gprsMSClass != null)
+			((GPRSMSClassImpl) this.gprsMSClass).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_gprsMSClass);
+
+		if (this.mnpInfoRes != null)
+			((MNPInfoResImpl) this.mnpInfoRes).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_mnpInfoRes);
 	}
 
 }

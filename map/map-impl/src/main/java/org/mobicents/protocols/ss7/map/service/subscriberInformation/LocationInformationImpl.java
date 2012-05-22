@@ -44,9 +44,10 @@ import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.UserCSG
 import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
- * 
+ * @author amit bhayani
  * @author sergey vetyutnev
  * 
  */
@@ -63,10 +64,10 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 	public static final int _ID_currentLocationRetrieved = 8;
 	public static final int _ID_sai_Present = 9;
 	public static final int _ID_locationInformationEPS = 10;
-	public static final int _ID_userCSGInformation = 11;	
+	public static final int _ID_userCSGInformation = 11;
 
 	public static final String _PrimitiveName = "LocationInformation";
-	
+
 	private Integer ageOfLocationInformation;
 	private GeographicalInformation geographicalInformation;
 	private ISDNAddressString vlrNumber;
@@ -76,12 +77,11 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 	private LSAIdentity selectedLSAId;
 	private ISDNAddressString mscNumber;
 	private GeodeticInformation geodeticInformation;
-	private boolean currentLocationRetrieved;
-	private boolean saiPresent;
+	private Boolean currentLocationRetrieved;
+	private Boolean saiPresent;
 	private LocationInformationEPS locationInformationEPS;
 	private UserCSGInformation userCSGInformation;
 
-	
 	public LocationInformationImpl() {
 	}
 
@@ -103,7 +103,7 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 		this.locationInformationEPS = locationInformationEPS;
 		this.userCSGInformation = userCSGInformation;
 	}
-	
+
 	@Override
 	public Integer getAgeOfLocationInformation() {
 		return this.ageOfLocationInformation;
@@ -150,12 +150,12 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 	}
 
 	@Override
-	public boolean getCurrentLocationRetrieved() {
+	public Boolean getCurrentLocationRetrieved() {
 		return currentLocationRetrieved;
 	}
 
 	@Override
-	public boolean getSaiPresent() {
+	public Boolean getSaiPresent() {
 		return saiPresent;
 	}
 
@@ -169,7 +169,6 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 		return userCSGInformation;
 	}
 
-	
 	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
@@ -215,7 +214,7 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 	}
 
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		
+
 		this.ageOfLocationInformation = null;
 		this.geographicalInformation = null;
 		this.vlrNumber = null;
@@ -229,15 +228,15 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 		this.saiPresent = false;
 		this.locationInformationEPS = null;
 		this.userCSGInformation = null;
-		
+
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		
-		while( true ) {
-			if( ais.available()==0 )
+
+		while (true) {
+			if (ais.available() == 0)
 				break;
-			
+
 			int tag = ais.readTag();
-			
+
 			// optional parameters
 			if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
 
@@ -254,7 +253,8 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 
 				switch (tag) {
 				case _ID_geographicalInformation:
-					ais.advanceElement(); // TODO: implement it
+					this.geographicalInformation = new GeographicalInformationImpl();
+					((GeographicalInformationImpl) this.geographicalInformation).decodeAll(ais);
 					break;
 				case _ID_vlr_number:
 					this.vlrNumber = new ISDNAddressStringImpl();
@@ -271,30 +271,50 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 					((CellGlobalIdOrServiceAreaIdOrLAIImpl) this.cellGlobalIdOrServiceAreaIdOrLAI).decodeAll(ais2);
 					break;
 				case _ID_extensionContainer:
-					ais.advanceElement(); // TODO: implement it
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
 					break;
 				case _ID_selectedLSA_Id:
-					ais.advanceElement(); // TODO: implement it
+					this.selectedLSAId = new LSAIdentityImpl();
+					((LSAIdentityImpl) this.selectedLSAId).decodeAll(ais);
 					break;
 				case _ID_msc_Number:
-					ais.advanceElement(); // TODO: implement it
+					if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding LocationInformation: Parameter msc-Number bad tag class or not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+
+					this.mscNumber = new ISDNAddressStringImpl();
+					((ISDNAddressStringImpl) this.mscNumber).decodeAll(ais);
 					break;
 				case _ID_geodeticInformation:
-					ais.advanceElement(); // TODO: implement it
+					this.geodeticInformation = new GeodeticInformationImpl();
+					((GeodeticInformationImpl) this.geodeticInformation).decodeAll(ais);
 					break;
 				case _ID_currentLocationRetrieved:
-					ais.advanceElement(); // TODO: implement it
+					if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding LocationInformation: Parameter [currentLocationRetrieved	[8] NULL ] bad tag class, tag or not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.currentLocationRetrieved = true;
 					break;
 				case _ID_sai_Present:
-					ais.advanceElement(); // TODO: implement it
+					if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding LocationInformation: Parameter [sai-Present	[9] NULL ] bad tag class, tag or not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.saiPresent = true;
 					break;
 				case _ID_locationInformationEPS:
-					ais.advanceElement(); // TODO: implement it
+					this.locationInformationEPS = new LocationInformationEPSImpl();
+					((LocationInformationEPSImpl) this.locationInformationEPS).decodeAll(ais);
 					break;
 				case _ID_userCSGInformation:
-					ais.advanceElement(); // TODO: implement it
+					this.userCSGInformation = new UserCSGInformationImpl();
+					((UserCSGInformationImpl) this.userCSGInformation).decodeAll(ais);
 					break;
-					
+
 				default:
 					ais.advanceElement();
 					break;
@@ -313,7 +333,7 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
+
 		try {
 			asnOs.writeTag(tagClass, true, tag);
 			int pos = asnOs.StartContentDefiniteLength();
@@ -331,13 +351,15 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 			if (ageOfLocationInformation != null)
 				asnOs.writeInteger((int) ageOfLocationInformation);
 
-			// TODO: implement unimplemented members
-			// private GeographicalInformation geographicalInformation;
-			
+			if (this.geographicalInformation != null)
+				((GeographicalInformationImpl) this.geographicalInformation).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_geographicalInformation);
+
 			if (vlrNumber != null)
 				((ISDNAddressStringImpl) vlrNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_vlr_number);
+
 			if (locationNumber != null)
 				((LocationNumberMapImpl) locationNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationNumber);
+
 			if (cellGlobalIdOrServiceAreaIdOrLAI != null) {
 				try {
 					asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_cellGlobalIdOrServiceAreaIdOrLAI);
@@ -349,23 +371,54 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 				}
 			}
 
-			// TODO: implement unimplemented members
-			// private MAPExtensionContainer extensionContainer;
-			// private LSAIdentity selectedLSAId;
-			// private ISDNAddressString mscNumber;
-			// private GeodeticInformation geodeticInformation;
-			// private boolean currentLocationRetrieved;
-			// private boolean saiPresent;
-			// private LocationInformationEPS locationInformationEPS;
-			// private UserCSGInformation userCSGInformation;
-			
+			if (this.extensionContainer != null)
+				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensionContainer);
+
+			if (this.selectedLSAId != null)
+				((LSAIdentityImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_selectedLSA_Id);
+
+			if (this.mscNumber != null) {
+				((ISDNAddressStringImpl) this.mscNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_msc_Number);
+			}
+
+			if (this.geodeticInformation != null)
+				((GeodeticInformationImpl) this.geodeticInformation).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_geodeticInformation);
+
+			if (this.currentLocationRetrieved != null && this.currentLocationRetrieved) {
+				try {
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_currentLocationRetrieved);
+				} catch (IOException e) {
+					throw new MAPException("Error while encoding LocationInformation the optional parameter currentLocationRetrieved encoding failed ", e);
+				} catch (AsnException e) {
+					throw new MAPException("Error while encoding LocationInformation the optional parameter currentLocationRetrieved encoding failed ", e);
+				}
+			}
+
+			if (this.saiPresent != null && this.saiPresent) {
+				try {
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_sai_Present);
+				} catch (IOException e) {
+					throw new MAPException("Error while encoding LocationInformation the optional parameter sai-Present encoding failed ", e);
+				} catch (AsnException e) {
+					throw new MAPException("Error while encoding LocationInformation the optional parameter sai-Present encoding failed ", e);
+				}
+			}
+
+			if (this.locationInformationEPS != null) {
+				((LocationInformationEPSImpl) this.locationInformationEPS).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationInformationEPS);
+			}
+
+			if (this.userCSGInformation != null) {
+				((UserCSGInformationImpl) this.userCSGInformation).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_userCSGInformation);
+			}
+
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		} catch (AsnException e) {
 			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

@@ -28,59 +28,32 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPMessageType;
-import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.AnyTimeInterrogationResponse;
-import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.SubscriberInfo;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.GPRSMSClass;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.MSNetworkCapability;
+import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.MSRadioAccessCapability;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
-import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
- * @author amit bhayani
+ * @author abhayani
  * 
  */
-public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessageImpl implements AnyTimeInterrogationResponse, MAPAsnPrimitive {
+public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
 
-	private SubscriberInfo subscriberInfo = null;
-	private MAPExtensionContainer extensionContainer = null;
+	public static final String _PrimitiveName = "GPRSMSClass";
+
+	private static final int _ID_mSNetworkCapability = 0;
+	private static final int _ID_mSRadioAccessCapability = 1;
+
+	private MSNetworkCapability mSNetworkCapability;
+	private MSRadioAccessCapability mSRadioAccessCapability;
 
 	/**
 	 * 
 	 */
-	public AnyTimeInterrogationResponseImpl() {
-	}
-
-	/**
-	 * @param subscriberInfo
-	 * @param extensionContainer
-	 */
-	public AnyTimeInterrogationResponseImpl(SubscriberInfo subscriberInfo, MAPExtensionContainer extensionContainer) {
-		super();
-		this.subscriberInfo = subscriberInfo;
-		this.extensionContainer = extensionContainer;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.MAPMessage#getMessageType()
-	 */
-	@Override
-	public MAPMessageType getMessageType() {
-		return MAPMessageType.anyTimeInterrogation_Request;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.MAPMessage#getOperationCode()
-	 */
-	@Override
-	public int getOperationCode() {
-		return MAPOperationCode.anyTimeInterrogation;
+	public GPRSMSClassImpl() {
+		// TODO Auto-generated constructor stub
 	}
 
 	/*
@@ -129,10 +102,10 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding anyTimeInterrogationResponseIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding anyTimeInterrogationResponseIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -149,47 +122,39 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding anyTimeInterrogationRequestIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding anyTimeInterrogationRequestIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		this.mSNetworkCapability = null;
+		this.mSRadioAccessCapability = null;
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-
-		int tag = ais.readTag();
-
-		// decode subscriberInfo
-		if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || ais.isTagPrimitive())
-			throw new MAPParsingComponentException("Error while decoding anyTimeInterrogationResponseIndication: Parameter 0 bad tag class or not primitive",
-					MAPParsingComponentExceptionReason.MistypedParameter);
-
-		this.subscriberInfo = new SubscriberInfoImpl();
-		((SubscriberInfoImpl) this.subscriberInfo).decodeAll(ais);
-
-		if (ais.available() > 0) {
-
-			tag = ais.readTag();
-
-			// decode extensionContainer
-			if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || ais.isTagPrimitive())
-				throw new MAPParsingComponentException(
-						"Error while decoding anyTimeInterrogationResponseIndication: Parameter 1 bad tag class or not primitive",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			extensionContainer = new MAPExtensionContainerImpl();
-			((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
-		}
 
 		while (true) {
 			if (ais.available() == 0)
 				break;
-			tag = ais.readTag();
 
-			ais.advanceElement();
+			int tag = ais.readTag();
+			switch (tag) {
+			case _ID_mSNetworkCapability:
+				this.mSNetworkCapability = new MSNetworkCapabilityImpl();
+				((MSNetworkCapabilityImpl) this.mSNetworkCapability).decodeAll(ais);
+				break;
+			case _ID_mSRadioAccessCapability:
+				this.mSRadioAccessCapability = new MSRadioAccessCapabilityImpl();
+				((MSRadioAccessCapabilityImpl) this.mSRadioAccessCapability).decodeAll(ais);
+				break;
+			default:
+				ais.advanceElement();
+				break;
+
+			}
 		}
 	}
 
@@ -220,7 +185,7 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding AnyTimeInterrogationResponse : " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -233,35 +198,37 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 	 */
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		if (this.subscriberInfo == null)
-			throw new MAPException("SubscriberInfo cannot be null");
+		if (this.mSNetworkCapability == null)
+			throw new MAPException("MSNetworkCapability cannot be null");
 
-		((SubscriberInfoImpl) this.subscriberInfo).encodeAll(asnOs);
+		((MSNetworkCapabilityImpl) this.mSNetworkCapability).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_mSNetworkCapability);
 
-		if (this.extensionContainer != null)
-			((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
+		if (this.mSRadioAccessCapability != null)
+			((MSRadioAccessCapabilityImpl) this.mSRadioAccessCapability).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_mSRadioAccessCapability);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
-	 * AnyTimeInterrogationResponseIndication#getSubscriberInfo()
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.GPRSMSClass
+	 * #getMSNetworkCapability()
 	 */
 	@Override
-	public SubscriberInfo getSubscriberInfo() {
-		return this.subscriberInfo;
+	public MSNetworkCapability getMSNetworkCapability() {
+		return this.mSNetworkCapability;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
-	 * AnyTimeInterrogationResponseIndication#getExtensionContainer()
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.GPRSMSClass
+	 * #getMSRadioAccessCapability()
 	 */
 	@Override
-	public MAPExtensionContainer getExtensionContainer() {
-		return this.extensionContainer;
+	public MSRadioAccessCapability getMSRadioAccessCapability() {
+		return this.mSRadioAccessCapability;
 	}
 
 }

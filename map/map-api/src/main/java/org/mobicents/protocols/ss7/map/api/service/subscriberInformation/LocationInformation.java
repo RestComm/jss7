@@ -77,9 +77,9 @@ public interface LocationInformation {
 
 	public GeodeticInformation getGeodeticInformation();
 
-	public boolean getCurrentLocationRetrieved();
+	public Boolean getCurrentLocationRetrieved();
 
-	public boolean getSaiPresent();
+	public Boolean getSaiPresent();
 
 	public LocationInformationEPS getLocationInformationEPS();
 

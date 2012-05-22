@@ -41,6 +41,17 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
  * 
  */
 public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
+	
+	public static final int _ID_locationInformation = 0;
+	public static final int _ID_subscriberState = 1;
+	public static final int _ID_extensionContainer = 2;
+	public static final int _ID_currentLocation = 3;
+	public static final int _ID_requestedDomain = 4;
+	public static final int _ID_imei = 6;
+	public static final int _ID_msclassmark = 5;
+	public static final int _ID_mnpRequestedInfo = 7;
+	
+	
 	private Boolean locationInformation;
 	private Boolean subscriberState;
 	private MAPExtensionContainer extensionContainer;
@@ -165,56 +176,56 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 
 			int tag = ais.readTag();
 			switch (tag) {
-			case 0:
+			case _ID_locationInformation:
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				ais.readNull();
 				this.locationInformation = Boolean.TRUE;
 				break;
-			case 1:
+			case _ID_subscriberState:
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				ais.readNull();
 				this.subscriberState = Boolean.TRUE;
 				break;
-			case 2:
+			case _ID_extensionContainer:
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				extensionContainer = new MAPExtensionContainerImpl();
 				((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
 				break;
-			case 3:
+			case _ID_currentLocation:
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				ais.readNull();
 				this.currentLocation = Boolean.TRUE;
 				break;
-			case 4:
+			case _ID_requestedDomain:
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				int i1 = (int) ais.readInteger();
 				this.requestedDomain = DomainType.getInstance(i1);
 				break;
-			case 5:
+			case _ID_msclassmark:
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				ais.readNull();
 				this.msClassmark = Boolean.TRUE;
 				break;
-			case 6:
+			case _ID_imei:
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				ais.readNull();
 				this.imei = Boolean.TRUE;
 				break;
-			case 7:
+			case _ID_mnpRequestedInfo:
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
@@ -271,7 +282,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		try {
 			if (this.locationInformation != null) {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, 0);
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationInformation);
 			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding parameter locationInformation: ", e);
@@ -281,7 +292,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 
 		try {
 			if (this.subscriberState != null) {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, 1);
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_subscriberState);
 			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding parameter locationInformation: ", e);
@@ -290,11 +301,11 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 		}
 
 		if (this.extensionContainer != null)
-			((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 2);
+			((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensionContainer);
 
 		try {
 			if (this.currentLocation != null) {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, 3);
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_currentLocation);
 			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding parameter currentLocation: ", e);
@@ -304,7 +315,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 
 		try {
 			if (this.requestedDomain != null) {
-				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, 4, this.requestedDomain.getType());
+				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_requestedDomain, this.requestedDomain.getType());
 			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding parameter requestedDomain: ", e);
@@ -314,7 +325,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 
 		try {
 			if (this.imei != null) {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, 6);
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_imei);
 			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding parameter imei: ", e);
@@ -324,7 +335,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 
 		try {
 			if (this.msClassmark != null) {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, 5);
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_msclassmark);
 			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding parameter msClassmark: ", e);
@@ -334,7 +345,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 
 		try {
 			if (this.mnpRequestedInfo != null) {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, 7);
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_mnpRequestedInfo);
 			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding parameter mnpRequestedInfo: ", e);
