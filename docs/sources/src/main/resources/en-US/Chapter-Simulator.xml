@@ -133,7 +133,7 @@
 		Before running a test all layers must be configured.
 		After test running a user can perform some actions depending on the test.
 		Results of a test are emitted as "notifications". 
-		Notifications are displayed in GUI interface of Simulator and Jconsole application (also GUI interface) and also are written into a file "&LT#host name&GT#.log" and into a console.
+		Notifications are displayed in GUI interface of Simulator and Jconsole application (also GUI interface) and also are written into a file "&LT;host name&GT;.log" and into a console.
 	</para>
 
 	<para>
@@ -167,7 +167,7 @@
 	</mediaobject>									
 
 	<para>
-		The form "SS7 Simulator: &LT#host name&GT#-local" appears.
+		The form "SS7 Simulator: &LT;host name&GT;-local" appears.
 		The next step is selecting modules for layers 1-3 and a testing task and configuring modules (by pressing buttons "...").
 		Button "Save" is used for saving options to the disk, button "Reload" is used for reloading options from a disk.
 		When layer configuring you can press one of two buttons "Load default values for side A" and 
@@ -221,7 +221,7 @@
 		</programlisting>
 		or
 		<programlisting>
-		run core --name=a1 --http8001 --rmi9999
+		run core --name=a1 --http=8001 --rmi=9999
 		</programlisting>
 		Options "-n" (or "--name=") defines a host name ("a1").
 		Options "-r" (or "--rmi=") defines a port for rmi requests listerning (9999).
@@ -266,7 +266,7 @@
 
 	<para>
 		HTML management is less convenient than RMI management. But it can be used if RMI is not acceptable (for example if we are behind a proxy).
-		For paramters configuring and luanching tests we can use any html browser. Use "http://&LT#IP address&GT#:&LT#port&GT#" as an URL.
+		For paramters configuring and luanching tests we can use any html browser. Use "http://&LT;IP address&GT;:&LT;port&GT;" as an URL.
 		The port is defined in "-t" or "--http=" options.
 	<mediaobject id="Simulator_Ex5">
 		<imageobject>
