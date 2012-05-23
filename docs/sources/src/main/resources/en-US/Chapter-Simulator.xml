@@ -159,7 +159,7 @@
 	</para>
 	<mediaobject id="Simulator_Ex1">
 		<imageobject>
-			<imagedata align="center" fileref="images/Simulator-Example1.png" format="PNG" width="15cm" depth="10cm" />
+			<imagedata align="center" fileref="images/Simulator-Example1.png" format="PNG" width="15cm" depth="5cm" scale="80" />
 		</imageobject>
 		<caption>
 			<para>Launching Simulator in a local mode</para>
