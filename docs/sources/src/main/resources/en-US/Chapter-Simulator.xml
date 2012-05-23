@@ -157,10 +157,14 @@
 		The GUI application form "Connecting to a testerHost ..." will appear. You have to fill "Host name" field (if it is empty),
 		select "Create a local testerHost" option and press "Start" button. The local Simulator host will be run.   
 	</para>
-	<figure>
-       <title>Launching Simulator in a local mode</title>
-       <graphic fileref="images/Simulator-Example1.png"></graphic>
-	</figure>
+	<mediaobject id="Simulator_Ex1">
+		<imageobject>
+			<imagedata align="center" fileref="images/Simulator-Example1.png" format="PNG" width="15cm" depth="10cm" />
+		</imageobject>
+		<caption>
+			<para>Launching Simulator in a local mode</para>
+		</caption>
+	</mediaobject>									
 
 	<para>
 		The form "SS7 Simulator: &LT;host name&GT;-local" appears.
