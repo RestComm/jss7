@@ -157,14 +157,10 @@
 		The GUI application form "Connecting to a testerHost ..." will appear. You have to fill "Host name" field (if it is empty),
 		select "Create a local testerHost" option and press "Start" button. The local Simulator host will be run.   
 	</para>
-	<mediaobject id="Simulator_Ex1">
-		<imageobject>
-			<imagedata align="center" fileref="images/Simulator-Example1.png" format="PNG" />
-		</imageobject>
-		<caption>
-			<para>Launching Simulator in a local mode</para>
-		</caption>
-	</mediaobject>									
+	<figure>
+       <title>Launching Simulator in a local mode</title>
+       <graphic fileref="images/Simulator-Example1.png"></graphic>
+	</figure>
 
 	<para>
 		The form "SS7 Simulator: &LT;host name&GT;-local" appears.
@@ -175,14 +171,10 @@
 		These default values can be used if you are using SS7 Simulators in the one computer host
 		as the side A and the side B for interaction.    
 	</para>
-	<mediaobject id="Simulator_Ex2">
-		<imageobject>
-			<imagedata align="center" fileref="images/Simulator-Example2.png" format="PNG" />
-		</imageobject>
-		<caption>
-			<para>The main form of the Simulator</para>
-		</caption>
-	</mediaobject>									
+	<figure>
+       <title>The main form of the Simulator</title>
+       <graphic fileref="images/Simulator-Example2.png"></graphic>
+	</figure>
 
 	<para>
 		After configuring press a button "Run test".
@@ -194,14 +186,10 @@
 		In the lower part of the form test depended information are allocated. Details of this part is displayed in the corresponded test definition.   
 		See <xref linkend="simulator_tests" />
 	</para>
-	<mediaobject id="Simulator_Ex3">
-		<imageobject>
-			<imagedata align="center" fileref="images/Simulator-Example3.png" format="PNG" />
-		</imageobject>
-		<caption>
-			<para>The example of the Simulator testing form</para>
-		</caption>
-	</mediaobject>									
+	<figure>
+       <title>The example of the Simulator testing form</title>
+       <graphic fileref="images/Simulator-Example3.png"></graphic>
+	</figure>
 	
 	</section>
 
@@ -245,14 +233,10 @@
 		and the "9999" with the proper RMI port (the port from option "-r" or "--rmi=") (if needed).
 		After connecting the management will be the same as if the application is run locally (see <xref linkend="simulator_configuring_locally" />).
 	</para>
-	<mediaobject id="Simulator_Ex4">
-		<imageobject>
-			<imagedata align="center" fileref="images/Simulator-Example4.png" format="PNG" />
-		</imageobject>
-		<caption>
-			<para>Launching Simulator GUI for a remote mode</para>
-		</caption>
-	</mediaobject>									
+	<figure>
+       <title>Launching Simulator GUI for a remote mode</title>
+       <graphic fileref="images/Simulator-Example4.png"></graphic>
+	</figure>
 
 	<para>
 		"Jconsole" application can be also used as the client. But this application is less convenient.  
@@ -268,28 +252,22 @@
 		HTML management is less convenient than RMI management. But it can be used if RMI is not acceptable (for example if we are behind a proxy).
 		For paramters configuring and luanching tests we can use any html browser. Use "http://&LT;IP address&GT;:&LT;port&GT;" as an URL.
 		The port is defined in "-t" or "--http=" options.
-	<mediaobject id="Simulator_Ex5">
-		<imageobject>
-			<imagedata align="center" fileref="images/Simulator-Example5.png" format="PNG" />
-		</imageobject>
-		<caption>
-			<para>Managing of a Simulator by a Browser (HTMP connector)</para>
-		</caption>
-	</mediaobject>
+	<figure>
+       <title>Managing of a Simulator by a Browser (HTMP connector)</title>
+       <graphic fileref="images/Simulator-Example5.png"></graphic>
+	</figure>
 		"TesterHost" is a main MBean in which we can select the mode for test working, start/stop testing (buttoms "Start"/"Stop"),
 		quit a tester host (buttom "quit"). Use other beans for setting options for layers and test tasks. 									
-	<mediaobject id="Simulator_Ex6">
-		<imageobject>
-			<imagedata align="center" fileref="images/Simulator-Example6.png" format="PNG" />
-		</imageobject>
-		<caption>
-			<para>TesterHost bean</para>
-		</caption>
-	</mediaobject>
+	<figure>
+       <title>TesterHost bean</title>
+       <graphic fileref="images/Simulator-Example6.png"></graphic>
+	</figure>
 	</para>
 	<para>
 		Results of Simulator working can be found at the console (at the server) or in the log file (file name is like "a1.log").    
 	</para>
+	</section>
+
 	</section>
 
 	</section>
@@ -351,14 +329,10 @@
 		You can also manually close the current dialog by perssing "Close current dialog" button.
 	</para>
 
-	<mediaobject id="Simulator_Ex7">
-		<imageobject>
-			<imagedata align="center" fileref="images/Simulator-Example7.png" format="PNG" />
-		</imageobject>
-		<caption>
-			<para>Ussd Client option form</para>
-		</caption>
-	</mediaobject>
+	<figure>
+       <title>Ussd Client option form</title>
+       <graphic fileref="images/Simulator-Example7.png"></graphic>
+	</figure>
 
 	</section>
 
@@ -393,16 +367,11 @@
 				</listitem>
 			</itemizedlist>
 	</para>
-	<mediaobject id="Simulator_Ex8">
-		<imageobject>
-			<imagedata align="center" fileref="images/Simulator-Example8.png" format="PNG" />
-		</imageobject>
-		<caption>
-			<para>Ussd Server option form</para>
-		</caption>
-	</mediaobject>
 
-	</section>
+	<figure>
+       <title>Ussd Server option form</title>
+       <graphic fileref="images/Simulator-Example8.png"></graphic>
+	</figure>
 
 	</section>
 
