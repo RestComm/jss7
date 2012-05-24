@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.tools.simulator.level2;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
@@ -60,10 +62,14 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	private TesterHost testerHost;
 
 	private Mtp3UserPart mtp3UserPart;
+	private int remoteSpc = 0; // .................
+	private int localSpc = 0; // .................
+	private int localSsn; // .................
 	private int remoteSsn;
-	private int dpc = 0;
-	private int opc = 0;
 	private int ni = 0;
+	private AddressNature addressNature = AddressNature.international_number; // .................
+	private NumberingPlan numberingPlan = NumberingPlan.ISDN; // .................
+	private int translationType = 0; // .................
 
 	private SccpStackImpl sccpStack;
 	private SccpProvider sccpProvider;
@@ -95,23 +101,23 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 	@Override
 	public int getDpc() {
-		return dpc;
+		return remoteSpc;
 	}
 
 	@Override
 	public void setDpc(int val) {
-		dpc = val;
+		remoteSpc = val;
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getOpc() {
-		return opc;
+		return localSpc;
 	}
 
 	@Override
 	public void setOpc(int val) {
-		opc = val;
+		localSpc = val;
 		this.testerHost.markStore();
 	}
 
@@ -152,7 +158,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		try {
 			this.isRspcUp = true;
 			this.isRssUp = true;
-			this.initSccp(this.mtp3UserPart, this.remoteSsn, this.dpc, this.opc, this.ni);
+			this.initSccp(this.mtp3UserPart, this.remoteSsn, this.remoteSpc, this.localSpc, this.ni);
 			this.testerHost.sendNotif(SOURCE_NAME, "SCCP has been started", "", true);
 			return true;
 		} catch (Throwable e) {
@@ -180,14 +186,14 @@ public class SccpMan implements SccpManMBean, Stoppable {
 				boolean conn = !rspc.isRemoteSpcProhibited();
 				if (this.isRspcUp != conn) {
 					this.isRspcUp = conn;
-					this.testerHost.sendNotif(SOURCE_NAME, "SCCP RemoteSignalingPoint is " + (conn ? "enabled" : "disabled"), "Dpc=" + this.dpc, true);
+					this.testerHost.sendNotif(SOURCE_NAME, "SCCP RemoteSignalingPoint is " + (conn ? "enabled" : "disabled"), "Dpc=" + this.remoteSpc, true);
 				}
 			}			
 			if (rss != null) {
 				boolean conn = !rss.isRemoteSsnProhibited();
 				if (this.isRssUp != conn) {
 					this.isRssUp = conn;
-					this.testerHost.sendNotif(SOURCE_NAME, "SCCP RemoteSubSystem is " + (conn ? "enabled" : "disabled"), "Dpc=" + this.dpc + " Ssn="
+					this.testerHost.sendNotif(SOURCE_NAME, "SCCP RemoteSubSystem is " + (conn ? "enabled" : "disabled"), "Dpc=" + this.remoteSpc + " Ssn="
 							+ this.remoteSsn, true);
 				}
 			}
@@ -232,18 +238,33 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		this.sccpStack.stop();
 	}
 
+	public SccpAddress createOrigAddress() {
+		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.localSpc, null, this.localSsn);
+	}
+
+	public SccpAddress createOrigAddress( String address, int ssn ) {
+		GlobalTitle gt = null;
+		gt = GlobalTitle.getInstance(address);
+		gt = GlobalTitle.getInstance(address);
+		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt, (ssn >= 0 ? ssn : this.localSsn));
+	}
+
+//	public SccpAddress createDestAddress() {
+//		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.remotePc, null, this.remoteSsn);
+//	}
+
 	protected static final XMLFormat<SccpMan> XML = new XMLFormat<SccpMan>(SccpMan.class) {
 
 		public void write(SccpMan sccp, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(DPC, sccp.dpc);
-			xml.setAttribute(OPC, sccp.opc);
+			xml.setAttribute(DPC, sccp.remoteSpc);
+			xml.setAttribute(OPC, sccp.localSpc);
 			xml.setAttribute(NI, sccp.ni);
 			xml.setAttribute(REMOTE_SSN, sccp.remoteSsn);
 		}
 
 		public void read(InputElement xml, SccpMan sccp) throws XMLStreamException {
-			sccp.dpc = xml.getAttribute(DPC).toInt();
-			sccp.opc = xml.getAttribute(OPC).toInt();
+			sccp.remoteSpc = xml.getAttribute(DPC).toInt();
+			sccp.localSpc = xml.getAttribute(OPC).toInt();
 			sccp.ni = xml.getAttribute(NI).toInt();
 			sccp.remoteSsn = xml.getAttribute(REMOTE_SSN).toInt();
 		}
