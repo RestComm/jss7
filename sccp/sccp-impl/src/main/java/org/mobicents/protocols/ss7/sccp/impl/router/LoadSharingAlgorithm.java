@@ -23,12 +23,36 @@
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
 /**
- * 
+ * @author amit bhayani
  * @author sergey vetyutnev
  * 
  */
 public enum LoadSharingAlgorithm {
-	Undefined,
-	Bit3,
-	Bit4
+	Undefined("Undefined"), Bit3("Bit3"), Bit4("Bit4");
+
+	private static final String UNDEFINED = "Undefined";
+	private static final String BIT3 = "Bit3";
+	private static final String BIT4 = "Bit4";
+
+	private final String algo;
+
+	private LoadSharingAlgorithm(String type) {
+		this.algo = type;
+	}
+
+	public static LoadSharingAlgorithm getInstance(String type) {
+		if (UNDEFINED.equalsIgnoreCase(type)) {
+			return Undefined;
+		} else if (BIT3.equalsIgnoreCase(type)) {
+			return Bit3;
+		} else if (BIT4.equalsIgnoreCase(type)) {
+			return Bit4;
+		}
+
+		return null;
+	}
+
+	public String getAlgo() {
+		return this.algo;
+	}
 }

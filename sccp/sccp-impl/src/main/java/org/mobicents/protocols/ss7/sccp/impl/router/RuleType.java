@@ -23,10 +23,36 @@
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
 /**
- * 
+ * @author amit bhayani
  * @author sergey vetyutnev
  * 
  */
 public enum RuleType {
-	Solitary, Dominant, Loadshared;
+	Solitary("Solitary"), Dominant("Dominant"), Loadshared("Loadshared");
+
+	private static final String SOLITARY = "Solitary";
+	private static final String DOMINANT = "Dominant";
+	private static final String LOADSHARED = "Loadshared";
+
+	private final String type;
+
+	private RuleType(String type) {
+		this.type = type;
+	}
+
+	public static RuleType getInstance(String type) {
+		if (SOLITARY.equalsIgnoreCase(type)) {
+			return Solitary;
+		} else if (DOMINANT.equalsIgnoreCase(type)) {
+			return Dominant;
+		} else if (LOADSHARED.equalsIgnoreCase(type)) {
+			return Loadshared;
+		}
+
+		return null;
+	}
+	
+	public String getType(){
+		return this.type;
+	}
 }
