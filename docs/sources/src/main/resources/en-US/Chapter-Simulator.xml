@@ -116,6 +116,45 @@
 		</title>
 
 	<para>
+		For Simulator compiling the following library is needed: com.sun.jdmk:jmxtools:jar:1.2.1.
+		In order to download it manually:
+			<itemizedlist> 
+				<listitem>
+					<para>
+						Go to:
+						<ulink url="http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-java-plat-419418.html#7657-jmx-1.2.1-oth-JPR&amp;usg=AFQjCNGOqUaCB1ULVG7cMULio9u70MKocA" />
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Select "Java Management Extension (JMX) 1.2.1"
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Press "Accept License Agreement"
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Download jmx-1_2_1-ri.zip file
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Extract lib/jmxtools:jar
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						You can just put this file as ".m2/repository/com/sun/jdmk/jmxtools/1.2.1/jmxtools-1.2.1.jar" file into maven repository 
+						(if ".m2/repository" is a root of this repository) or register it.
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
+
+	<para>
 		After compiling Simulator binaries can be found in the folder simulator/bootstrap/target/simulator-ss7.
 		Use "run.bat" or "run.sh" command file for running Simulator (from a folder simulator/bootstrap/target/simulator-ss7/bin).
 	</para>
