@@ -88,6 +88,9 @@ public class DialogImplWrapper extends DialogImpl {
 		
 		for (Component c : components) {
 
+			// adding 1 to InvokeId: excluding 0 value
+			c.setInvokeId(c.getInvokeId() + 1);
+			
 			boolean rev = false;
 			if (curOpc == this.curOpcOrig) {
 				if (c.getType() != ComponentType.Invoke)

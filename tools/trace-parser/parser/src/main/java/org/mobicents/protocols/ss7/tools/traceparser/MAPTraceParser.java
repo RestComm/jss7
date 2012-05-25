@@ -78,11 +78,14 @@ import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
+import org.mobicents.protocols.ss7.map.api.MAPDialogueAS;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
@@ -126,6 +129,7 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.SmsStatusReportTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.UserData;
+import org.mobicents.protocols.ss7.map.dialog.MAPOpenInfoImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
@@ -137,6 +141,7 @@ import org.mobicents.protocols.ss7.tcap.asn.DialogAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.DialogPortion;
 import org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
+import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
@@ -826,6 +831,41 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 			buf = new byte[ais.available()];
 			ais.read(buf);
 			this.writeDataArray("\t\tDialogAPDU_" + dp.getDialogAPDU().getType().toString(), buf);
+			
+			DialogAPDU apdu = dp.getDialogAPDU();
+			if (apdu instanceof DialogRequestAPDU) {
+				DialogRequestAPDU req = (DialogRequestAPDU)apdu;
+				UserInformation userInfo = req.getUserInformation();
+				if (userInfo != null) {
+					if (par.getParseProtocol() == ParseProtocol.Map) {
+						try {
+							byte[] asnData = userInfo.getEncodeType();
+
+							AsnInputStream aisx = new AsnInputStream(asnData);
+							int tagx = aisx.readTag();
+
+							// It should be MAP_OPEN Tag
+							if (tagx == MAPOpenInfoImpl.MAP_OPEN_INFO_TAG) {
+								MAPOpenInfoImpl mapOpenInfoImpl = new MAPOpenInfoImpl();
+								mapOpenInfoImpl.decodeAll(aisx);
+								AddressString destReference = mapOpenInfoImpl.getDestReference();
+								AddressString origReference = mapOpenInfoImpl.getOrigReference();
+								
+								if (destReference != null) {
+									this.pw.println();
+									this.pw.print("DestReference: " + destReference);
+								}
+								if (origReference != null) {
+									this.pw.println();
+									this.pw.print("OrigReference: " + origReference);
+								}
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

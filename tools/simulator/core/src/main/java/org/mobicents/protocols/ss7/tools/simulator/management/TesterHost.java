@@ -648,10 +648,15 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.dialogic.setDestinationModuleId(_dial.getDestinationModuleId());
 
 			SccpMan _sccp = reader.read(SCCP, SccpMan.class);
-			this.sccp.setDpc(_sccp.getDpc());
-			this.sccp.setOpc(_sccp.getOpc());
+			this.sccp.setRemoteSpc(_sccp.getRemoteSpc());
+			this.sccp.setLocalSpc(_sccp.getLocalSpc());
 			this.sccp.setNi(_sccp.getNi());
 			this.sccp.setRemoteSsn(_sccp.getRemoteSsn());
+			this.sccp.setLocalSsn(_sccp.getLocalSsn());
+			this.sccp.setGlobalTitleType(_sccp.getGlobalTitleType());
+			this.sccp.setAddressNature(_sccp.getAddressNature());
+			this.sccp.setNumberingPlan(_sccp.getNumberingPlan());
+			this.sccp.setTranslationType(_sccp.getTranslationType());
 
 			MapMan _tcap = reader.read(MAP, MapMan.class);
 			this.map.setLocalPc(_tcap.getLocalPc());

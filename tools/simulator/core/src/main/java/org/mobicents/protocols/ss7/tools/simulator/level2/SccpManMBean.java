@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level2;
 
+import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
+import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
+
 /**
  * 
  * @author sergey vetyutnev
@@ -29,13 +32,13 @@ package org.mobicents.protocols.ss7.tools.simulator.level2;
  */
 public interface SccpManMBean {
 
-	public int getDpc();
+	public int getRemoteSpc();
 
-	public void setDpc(int val);
+	public void setRemoteSpc(int val);
 
-	public int getOpc();
+	public int getLocalSpc();
 
-	public void setOpc(int val);
+	public void setLocalSpc(int val);
 
 	public int getNi();
 
@@ -45,4 +48,38 @@ public interface SccpManMBean {
 
 	public void setRemoteSsn(int val);
 
+	public int getLocalSsn();
+
+	public void setLocalSsn(int val);
+
+	public GlobalTitleType getGlobalTitleType();
+
+	public String getGlobalTitleType_Value();
+
+	public void setGlobalTitleType(GlobalTitleType val);
+
+	public AddressNatureType getAddressNature();
+
+	public String getAddressNature_Value();
+
+	public void setAddressNature(AddressNatureType val);
+
+	public NumberingPlanType getNumberingPlan();
+
+	public String getNumberingPlan_Value();
+
+	public void setNumberingPlan(NumberingPlanType val);
+
+	public int getTranslationType();
+
+	public void setTranslationType(int val);
+
+
+	public void putGlobalTitleType(String val);
+
+	public void putAddressNature(String val);
+
+	public void putNumberingPlan(String val);
+
 }
+

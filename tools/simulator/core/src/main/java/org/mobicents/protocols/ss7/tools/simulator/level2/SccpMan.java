@@ -24,9 +24,11 @@ package org.mobicents.protocols.ss7.tools.simulator.level2;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
+
+import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
+import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
-import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
@@ -42,6 +44,8 @@ import org.mobicents.protocols.ss7.sccp.impl.router.RuleType;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
+import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
+import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 
 /**
@@ -53,23 +57,29 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 	public static String SOURCE_NAME = "SCCP";
 
-	private static final String DPC = "dpc";
-	private static final String OPC = "opc";
+	private static final String REMOTE_SPC = "remoteSpc";
+	private static final String LOCAL_SPC = "localSpc";
 	private static final String NI = "ni";
 	private static final String REMOTE_SSN = "remoteSsn";
+	private static final String LOCAL_SSN = "localSsn";
+	private static final String GLOBAL_TITLE_TYPE = "globalTitleType";
+	private static final String ADDRESS_NATURE = "addressNature";
+	private static final String NUMBERING_PLAN = "numberingPlan";
+	private static final String TRANSLATION_TYTE = "translationType";
 
 	private final String name;
 	private TesterHost testerHost;
 
 	private Mtp3UserPart mtp3UserPart;
-	private int remoteSpc = 0; // .................
-	private int localSpc = 0; // .................
-	private int localSsn; // .................
+	private int remoteSpc = 0;
+	private int localSpc = 0;
+	private int localSsn;
 	private int remoteSsn;
 	private int ni = 0;
-	private AddressNature addressNature = AddressNature.international_number; // .................
-	private NumberingPlan numberingPlan = NumberingPlan.ISDN; // .................
-	private int translationType = 0; // .................
+	private GlobalTitleType globalTitleType = new GlobalTitleType(GlobalTitleType.VAL_TT_NP_ES_NOA);
+	private NatureOfAddress natureOfAddress = NatureOfAddress.INTERNATIONAL;
+	private NumberingPlan numberingPlan = NumberingPlan.ISDN_MOBILE;
+	private int translationType = 0;
 
 	private SccpStackImpl sccpStack;
 	private SccpProvider sccpProvider;
@@ -100,23 +110,23 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 
 	@Override
-	public int getDpc() {
+	public int getRemoteSpc() {
 		return remoteSpc;
 	}
 
 	@Override
-	public void setDpc(int val) {
+	public void setRemoteSpc(int val) {
 		remoteSpc = val;
 		this.testerHost.markStore();
 	}
 
 	@Override
-	public int getOpc() {
+	public int getLocalSpc() {
 		return localSpc;
 	}
 
 	@Override
-	public void setOpc(int val) {
+	public void setLocalSpc(int val) {
 		localSpc = val;
 		this.testerHost.markStore();
 	}
@@ -141,6 +151,97 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	public void setRemoteSsn(int val) {
 		this.remoteSsn = val;
 		this.testerHost.markStore();
+	}
+
+	@Override
+	public int getLocalSsn() {
+		return this.localSsn;
+	}
+
+	@Override
+	public void setLocalSsn(int val) {
+		this.localSsn = val;
+		this.testerHost.markStore();
+	}
+
+	@Override
+	public GlobalTitleType getGlobalTitleType() {
+		return globalTitleType;
+	}
+
+	@Override
+	public String getGlobalTitleType_Value() {
+		return globalTitleType.toString();
+	}
+
+	@Override
+	public void setGlobalTitleType(GlobalTitleType val) {
+		globalTitleType = val;
+		this.testerHost.markStore();
+	}
+
+	@Override
+	public AddressNatureType getAddressNature() {
+		return new AddressNatureType(natureOfAddress.getIndicator());
+	}
+
+	@Override
+	public String getAddressNature_Value() {
+		return natureOfAddress.toString();
+	}
+
+	@Override
+	public void setAddressNature(AddressNatureType val) {
+		natureOfAddress = AddressNature.getInstance(val.intValue());
+		this.testerHost.markStore();
+	}
+
+	@Override
+	public NumberingPlanType getNumberingPlan() {
+		return new NumberingPlanType(numberingPlan.getIndicator());
+	}
+
+	@Override
+	public String getNumberingPlan_Value() {
+		return numberingPlan.toString();
+	}
+
+	@Override
+	public void setNumberingPlan(NumberingPlanType val) {
+		numberingPlan = NumberingPlan.getInstance(val.intValue());
+		this.testerHost.markStore();
+	}
+
+	@Override
+	public int getTranslationType() {
+		return translationType;
+	}
+
+	@Override
+	public void setTranslationType(int val) {
+		translationType = val;
+		this.testerHost.markStore();
+	}
+
+	@Override
+	public void putGlobalTitleType(String val) {
+		GlobalTitleType x = GlobalTitleType.createInstance(val);
+		if (x != null)
+			this.setGlobalTitleType(x);
+	}
+
+	@Override
+	public void putAddressNature(String val) {
+		AddressNatureType x = AddressNatureType.createInstance(val);
+		if (x != null)
+			this.setAddressNature(x);
+	}
+
+	@Override
+	public void putNumberingPlan(String val) {
+		NumberingPlanType x = NumberingPlanType.createInstance(val);
+		if (x != null)
+			this.setNumberingPlan(x);
 	}
 
 	@Override
@@ -244,8 +345,20 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 	public SccpAddress createOrigAddress( String address, int ssn ) {
 		GlobalTitle gt = null;
-		gt = GlobalTitle.getInstance(address);
-		gt = GlobalTitle.getInstance(address);
+		switch (this.globalTitleType.intValue()) {
+		case GlobalTitleType.VAL_NOA_ONLY:
+			gt = GlobalTitle.getInstance(this.natureOfAddress, address);
+			break;
+		case GlobalTitleType.VAL_TT_ONLY:
+			gt = GlobalTitle.getInstance(this.translationType, address);
+			break;
+		case GlobalTitleType.VAL_TT_NP_ES:
+			gt = GlobalTitle.getInstance(this.translationType, this.numberingPlan, address);
+			break;
+		case GlobalTitleType.VAL_TT_NP_ES_NOA:
+			gt = GlobalTitle.getInstance(this.translationType, this.numberingPlan, this.natureOfAddress, address);
+			break;
+		}
 		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt, (ssn >= 0 ? ssn : this.localSsn));
 	}
 
@@ -256,17 +369,32 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	protected static final XMLFormat<SccpMan> XML = new XMLFormat<SccpMan>(SccpMan.class) {
 
 		public void write(SccpMan sccp, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(DPC, sccp.remoteSpc);
-			xml.setAttribute(OPC, sccp.localSpc);
+			xml.setAttribute(REMOTE_SPC, sccp.remoteSpc);
+			xml.setAttribute(LOCAL_SPC, sccp.localSpc);
 			xml.setAttribute(NI, sccp.ni);
 			xml.setAttribute(REMOTE_SSN, sccp.remoteSsn);
+			xml.setAttribute(LOCAL_SSN, sccp.localSsn);
+			xml.setAttribute(TRANSLATION_TYTE, sccp.translationType);
+
+			xml.add(sccp.globalTitleType.toString(), GLOBAL_TITLE_TYPE);
+			xml.add(sccp.natureOfAddress.toString(), ADDRESS_NATURE);
+			xml.add(sccp.numberingPlan.toString(), NUMBERING_PLAN);
 		}
 
 		public void read(InputElement xml, SccpMan sccp) throws XMLStreamException {
-			sccp.remoteSpc = xml.getAttribute(DPC).toInt();
-			sccp.localSpc = xml.getAttribute(OPC).toInt();
+			sccp.remoteSpc = xml.getAttribute(REMOTE_SPC).toInt();
+			sccp.localSpc = xml.getAttribute(LOCAL_SPC).toInt();
 			sccp.ni = xml.getAttribute(NI).toInt();
 			sccp.remoteSsn = xml.getAttribute(REMOTE_SSN).toInt();
+			sccp.localSsn = xml.getAttribute(LOCAL_SSN).toInt();
+			sccp.translationType = xml.getAttribute(TRANSLATION_TYTE).toInt();
+
+			String gtt = (String) xml.get(GLOBAL_TITLE_TYPE, String.class);
+			sccp.globalTitleType = GlobalTitleType.createInstance(gtt);
+			String an = (String) xml.get(ADDRESS_NATURE, String.class);
+			sccp.natureOfAddress = AddressNature.valueOf(an);
+			String np = (String) xml.get(NUMBERING_PLAN, String.class);
+			sccp.numberingPlan = NumberingPlan.valueOf(np);
 		}
 	};
 }
