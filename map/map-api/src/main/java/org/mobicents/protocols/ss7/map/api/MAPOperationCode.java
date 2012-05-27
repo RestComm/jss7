@@ -31,7 +31,14 @@ package org.mobicents.protocols.ss7.map.api;
  */
 public interface MAPOperationCode {
 
-	// -- supplementary service handling operation codes
+	// -- mobility services
+	public static final int anyTimeInterrogation = 71;
+	public static final int updateLocation = 2;
+	public static final int SendParameters = 9;
+	public static final int sendAuthenticationInfo = 56;
+	public static final int checkIMEI = 43;
+
+	// -- supplementary service
 	public static final int registerSS = 10;
 	public static final int eraseSS = 11;
 	public static final int activateSS = 12;
@@ -44,8 +51,7 @@ public interface MAPOperationCode {
 	public static final int registerPassword = 17;
 	public static final int getPassword = 18;
 	
-	
-	//-- short message service operation codes
+	//-- short message service
 	public static final int  sendRoutingInfoForSM = 45;
 	public static final int  mo_forwardSM = 46;
 	public static final int  mt_forwardSM = 44;
@@ -55,13 +61,9 @@ public interface MAPOperationCode {
 	public static final int  alertServiceCentreWithoutResult = 49;
 	public static final int  readyForSM = 66;
 	
-	//Location Service Management
+	// -- location service (lms)
 	public static final int provideSubscriberLocation = 83;
 	public static final int subscriberLocationReport = 86;
-	
 	public static final int sendRoutingInfoForLCS = 85;
-	
-	//Sunscriber Information Service
-	public static final int anyTimeInterrogation = 71;
 
 }

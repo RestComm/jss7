@@ -97,6 +97,11 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSRequ
 import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSResponse;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportRequest;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequest;
@@ -157,7 +162,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
  * 
  */
 public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, CAPDialogListener, Runnable, ProcessControl, MAPServiceSmsListener,
-		MAPServiceSupplementaryListener, MAPServiceLsmListener, CAPServiceCircuitSwitchedCallListener, CAPServiceGprsListener, CAPServiceSmsListener {
+		MAPServiceSupplementaryListener, MAPServiceLsmListener, MAPServiceMobilityListener, CAPServiceCircuitSwitchedCallListener, CAPServiceGprsListener, CAPServiceSmsListener {
 
 	private Ss7ParseParameters par;
 	private Thread t;
@@ -240,11 +245,13 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 			this.mapProvider.getMAPServiceSupplementary().acivate();
 			this.mapProvider.getMAPServiceSms().acivate();
 			this.mapProvider.getMAPServiceLsm().acivate();
+			this.mapProvider.getMAPServiceMobility().acivate();
 
 			this.mapProvider.addMAPDialogListener(this);
 			this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
 			this.mapProvider.getMAPServiceSms().addMAPServiceListener(this);
 			this.mapProvider.getMAPServiceLsm().addMAPServiceListener(this);
+			this.mapProvider.getMAPServiceMobility().addMAPServiceListener(this);
 
 			this.capProvider = new CAPProviderImpl(this.tcapProvider);
 
@@ -555,7 +562,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 					return;
 
 				di.curOpcOrig = message.getIncomingOpc();
-				di.curOpc = message.getIncomingDpc();
+				di.curOpc = message.getIncomingOpc();
 				di.processBegin(tcb, localAddress, remoteAddress);
 
 				if (this.pw != null) {
@@ -1595,6 +1602,30 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 	@Override
 	public void onSpecializedResourceReportRequestIndication(SpecializedResourceReportRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendAuthenticationInfoRequest(SendAuthenticationInfoRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendAuthenticationInfoResponse(SendAuthenticationInfoResponse ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUpdateLocationRequest(UpdateLocationRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUpdateLocationResponse(UpdateLocationResponse ind) {
 		// TODO Auto-generated method stub
 		
 	}

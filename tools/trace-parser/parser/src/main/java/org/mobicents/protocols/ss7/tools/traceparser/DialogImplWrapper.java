@@ -88,6 +88,8 @@ public class DialogImplWrapper extends DialogImpl {
 		
 		for (Component c : components) {
 
+			c.setInvokeId(c.getInvokeId() + 1);
+
 			boolean rev = false;
 			if (curOpc == this.curOpcOrig) {
 				if (c.getType() != ComponentType.Invoke)
@@ -109,8 +111,10 @@ public class DialogImplWrapper extends DialogImpl {
 			case ReturnResultLast:
 				Return rr = (Return) c;
 				Invoke inv = invLst.get(c.getInvokeId());
-				if (inv != null && rr.getOperationCode() == null) {
-					rr.setOperationCode(inv.getOperationCode());
+				if (rr.getOperationCode() == null) {
+					if (inv != null) {
+						rr.setOperationCode(inv.getOperationCode());
+					}
 				}
 				break;
 			}

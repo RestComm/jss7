@@ -94,6 +94,19 @@ public class MAPApplicationContext {
 	 */
 	public static boolean availableApplicationContextVersion(MAPApplicationContextName contextName, int contextVersion) {
 		switch (contextName) {
+
+		case anyTimeEnquiryContext:
+			if (contextVersion == 3){
+				return true;
+			}
+
+		case infoRetrievalContext:
+		case networkLocUpContext:
+			if (contextVersion >= 1 && contextVersion <= 3)
+				return true;
+			else
+				return false;
+
 		case networkUnstructuredSsContext:
 		case shortMsgAlertContext:
 			if (contextVersion >= 1 && contextVersion <= 2)
@@ -114,10 +127,6 @@ public class MAPApplicationContext {
 				return true;
 			else
 				return false;	
-		case anyTimeEnquiryContext:
-			if (contextVersion == 3){
-				return true;
-			}
 		}
 		
 		return false;

@@ -62,6 +62,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm;
+import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobility;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms;
 import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.MAPServiceSubscriberInformation;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
@@ -74,6 +75,7 @@ import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortInfoImpl;
 import org.mobicents.protocols.ss7.map.errors.MAPErrorMessageFactoryImpl;
 import org.mobicents.protocols.ss7.map.errors.MAPErrorMessageImpl;
 import org.mobicents.protocols.ss7.map.service.lsm.MAPServiceLsmImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.MAPServiceMobilityImpl;
 import org.mobicents.protocols.ss7.map.service.sms.MAPServiceSmsImpl;
 import org.mobicents.protocols.ss7.map.service.subscriberInformation.MAPServiceSubscriberInformationImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplementaryImpl;
@@ -147,6 +149,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	private final transient MAPServiceSupplementary mapServiceSupplementary = new MAPServiceSupplementaryImpl(this);
 	private final transient MAPServiceSms mapServiceSms = new MAPServiceSmsImpl(this);
 	private final transient MAPServiceLsm mapServiceLsm = new MAPServiceLsmImpl(this);
+	private final transient MAPServiceMobility mapServiceMobility = new MAPServiceMobilityImpl(this);
 	private final transient MAPServiceSubscriberInformation mapServiceSubscriberInformation = new MAPServiceSubscriberInformationImpl(this);
 
 	/**
@@ -159,6 +162,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		this.mapServices.add(this.mapServiceSupplementary);
 		this.mapServices.add(this.mapServiceSms);
 		this.mapServices.add(this.mapServiceLsm);
+		this.mapServices.add(this.mapServiceMobility);
 		this.mapServices.add(this.mapServiceSubscriberInformation);
 	}
 
@@ -176,6 +180,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	
 	public MAPServiceLsm getMAPServiceLsm(){
 		return this.mapServiceLsm;
+	}
+
+	public MAPServiceMobility getMAPServiceMobility() {
+		return this.mapServiceMobility;
 	}
 	
 	/**

@@ -64,7 +64,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		super(appCntx, tcapDialog, mapProviderImpl, mapService, origReference, destReference);
 	}
 
-	
+
 	@Override
 	public Long addForwardShortMessageRequest(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, SmsSignalInfo sm_RP_UI, boolean moreMessagesToSend) throws MAPException {
 		return addForwardShortMessageRequest(_Timer_Default, sm_RP_DA, sm_RP_OA, sm_RP_UI, moreMessagesToSend);

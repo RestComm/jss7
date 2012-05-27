@@ -30,6 +30,14 @@ package org.mobicents.protocols.ss7.map.api;
  */
 public enum MAPMessageType {
 	
+	// -- mobility
+	anyTimeInterrogation_Request,
+	anyTimeInterrogation_Response,
+	sendAuthenticationInfo_Request,
+	sendAuthenticationInfo_Response,
+	updateLocation_Request,
+	updateLocation_Response,
+	
 	// -- supplementary
 	processUnstructuredSSRequest_Request,
 	processUnstructuredSSRequest_Response,
@@ -66,11 +74,7 @@ public enum MAPMessageType {
 	provideSubscriberLocation_Request,
 	provideSubscriberLocation_Response,
 	subscriberLocationReport_Request,
-	subscriberLocationReport_Response,
-	
-	// -- subscriber information
-	anyTimeInterrogation_Request,
-	anyTimeInterrogation_Response;
+	subscriberLocationReport_Response;
 
 }
 
