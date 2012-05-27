@@ -25,6 +25,10 @@ package org.mobicents.protocols.ss7.tools.simulatorgui;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
+import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapManMBean;
 
 import javax.swing.JPanel;
@@ -35,6 +39,9 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JComboBox;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
 
 /**
  * 
@@ -48,10 +55,13 @@ public class MapForm extends JDialog {
 	private static final long serialVersionUID = -2799708291291364182L;
 	private JTextField tbLocalSsn;
 	private JTextField tbRemoteSsn;
-	private JTextField tbLocalPc;
-	private JTextField tbRemotePc;
 	private JTextField tbOrigReference;
 	private JTextField tbDestReference;
+	private JTextField tbRemoteAddressDigits;
+	private JComboBox cbOrigReferenceAddressNature;
+	private JComboBox cbOrigReferenceNumberingPlan;
+	private JComboBox cbDestReferenceAddressNature;
+	private JComboBox cbDestReferenceNumberingPlan;
 
 	public MapForm(JFrame owner) {
 		super(owner, true);
@@ -59,19 +69,19 @@ public class MapForm extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("MAP settings");
-		setBounds(100, 100, 535, 324);
+		setBounds(100, 100, 582, 485);
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
 		
 		JLabel lblLocalSsn = new JLabel("Local SSN");
-		lblLocalSsn.setBounds(10, 76, 90, 14);
+		lblLocalSsn.setBounds(10, 14, 183, 14);
 		panel.add(lblLocalSsn);
 		
 		tbLocalSsn = new JTextField();
 		tbLocalSsn.setColumns(10);
-		tbLocalSsn.setBounds(203, 73, 129, 20);
+		tbLocalSsn.setBounds(203, 11, 129, 20);
 		panel.add(tbLocalSsn);
 		
 		JButton button = new JButton("Load default values for side A");
@@ -80,7 +90,7 @@ public class MapForm extends JDialog {
 				loadDataA();
 			}
 		});
-		button.setBounds(10, 216, 254, 23);
+		button.setBounds(10, 391, 254, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("Load default values for side B");
@@ -89,7 +99,7 @@ public class MapForm extends JDialog {
 				loadDataB();
 			}
 		});
-		button_1.setBounds(274, 216, 244, 23);
+		button_1.setBounds(274, 391, 244, 23);
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("Reload");
@@ -98,7 +108,7 @@ public class MapForm extends JDialog {
 				reloadData();
 			}
 		});
-		button_2.setBounds(10, 250, 144, 23);
+		button_2.setBounds(10, 425, 144, 23);
 		panel.add(button_2);
 		
 		JButton button_3 = new JButton("Save");
@@ -109,7 +119,7 @@ public class MapForm extends JDialog {
 				}
 			}
 		});
-		button_3.setBounds(274, 250, 117, 23);
+		button_3.setBounds(274, 425, 117, 23);
 		panel.add(button_3);
 		
 		JButton button_4 = new JButton("Cancel");
@@ -118,53 +128,104 @@ public class MapForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		button_4.setBounds(401, 250, 117, 23);
+		button_4.setBounds(401, 425, 117, 23);
 		panel.add(button_4);
 		
 		tbRemoteSsn = new JTextField();
 		tbRemoteSsn.setColumns(10);
-		tbRemoteSsn.setBounds(203, 104, 129, 20);
+		tbRemoteSsn.setBounds(203, 42, 129, 20);
 		panel.add(tbRemoteSsn);
 		
-		tbLocalPc = new JTextField();
-		tbLocalPc.setColumns(10);
-		tbLocalPc.setBounds(203, 11, 129, 20);
-		panel.add(tbLocalPc);
-		
-		tbRemotePc = new JTextField();
-		tbRemotePc.setColumns(10);
-		tbRemotePc.setBounds(203, 42, 129, 20);
-		panel.add(tbRemotePc);
-		
-		JLabel lblLocalPc = new JLabel("Local PC");
-		lblLocalPc.setBounds(10, 14, 90, 14);
-		panel.add(lblLocalPc);
-		
-		JLabel lblRemotePc = new JLabel("Remote PC");
-		lblRemotePc.setBounds(10, 45, 90, 14);
-		panel.add(lblRemotePc);
-		
 		JLabel lblRemoteSsn = new JLabel("Remote SSN");
-		lblRemoteSsn.setBounds(10, 107, 90, 14);
+		lblRemoteSsn.setBounds(10, 45, 183, 14);
 		panel.add(lblRemoteSsn);
 		
+		JLabel lblRemoteAddressDigits = new JLabel("Remote address digits");
+		lblRemoteAddressDigits.setBounds(10, 76, 183, 14);
+		panel.add(lblRemoteAddressDigits);
+
+		tbRemoteAddressDigits = new JTextField();
+		tbRemoteAddressDigits.setColumns(10);
+		tbRemoteAddressDigits.setBounds(203, 73, 270, 20);
+		panel.add(tbRemoteAddressDigits);
+
+		JLabel lblIfEmptyRoutingbasedondpcandssn = new JLabel("If empty ROUTING_BASED_ON_DPC_AND_SSN is used for CalledPartyAddress (remoteSpc from SCCP)");
+		lblIfEmptyRoutingbasedondpcandssn.setBounds(10, 101, 556, 14);
+		panel.add(lblIfEmptyRoutingbasedondpcandssn);
+		
+		JLabel lblIfNotEmpty = new JLabel("if not empty ROUTING_BASED_ON_GLOBAL_TITLE is used (address and Ssn from MAP)");
+		lblIfNotEmpty.setBounds(10, 119, 556, 14);
+		panel.add(lblIfNotEmpty);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panel_1.setLayout(null);
+		panel_1.setBounds(7, 144, 511, 108);
+		panel.add(panel_1);
+		
+		JLabel lblOriginationReference = new JLabel("Origination reference");
+		lblOriginationReference.setBounds(10, 0, 147, 14);
+		panel_1.add(lblOriginationReference);
+		
+		JLabel label_2 = new JLabel("AddressNature");
+		label_2.setBounds(10, 53, 136, 14);
+		panel_1.add(label_2);
+		
+		JLabel label_3 = new JLabel("NumberingPlan");
+		label_3.setBounds(10, 84, 136, 14);
+		panel_1.add(label_3);
+		
+		cbOrigReferenceAddressNature = new JComboBox();
+		cbOrigReferenceAddressNature.setBounds(179, 47, 294, 20);
+		panel_1.add(cbOrigReferenceAddressNature);
+		
+		cbOrigReferenceNumberingPlan = new JComboBox();
+		cbOrigReferenceNumberingPlan.setBounds(179, 78, 294, 20);
+		panel_1.add(cbOrigReferenceNumberingPlan);
+		
+		JLabel lblOriginationReferenceString = new JLabel("Address digits");
+		lblOriginationReferenceString.setBounds(10, 22, 169, 14);
+		panel_1.add(lblOriginationReferenceString);
+		
 		tbOrigReference = new JTextField();
+		tbOrigReference.setBounds(203, 19, 270, 20);
+		panel_1.add(tbOrigReference);
 		tbOrigReference.setColumns(10);
-		tbOrigReference.setBounds(203, 135, 270, 20);
-		panel.add(tbOrigReference);
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panel_2.setLayout(null);
+		panel_2.setBounds(7, 259, 511, 108);
+		panel.add(panel_2);
+		
+		JLabel lblDestinationReference = new JLabel("Destination reference");
+		lblDestinationReference.setBounds(10, 0, 147, 14);
+		panel_2.add(lblDestinationReference);
+		
+		JLabel label_1 = new JLabel("AddressNature");
+		label_1.setBounds(10, 53, 136, 14);
+		panel_2.add(label_1);
+		
+		JLabel label_4 = new JLabel("NumberingPlan");
+		label_4.setBounds(10, 84, 136, 14);
+		panel_2.add(label_4);
+		
+		cbDestReferenceAddressNature = new JComboBox();
+		cbDestReferenceAddressNature.setBounds(179, 47, 294, 20);
+		panel_2.add(cbDestReferenceAddressNature);
+		
+		cbDestReferenceNumberingPlan = new JComboBox();
+		cbDestReferenceNumberingPlan.setBounds(179, 78, 294, 20);
+		panel_2.add(cbDestReferenceNumberingPlan);
+		
+		JLabel label_5 = new JLabel("Address digits");
+		label_5.setBounds(10, 22, 169, 14);
+		panel_2.add(label_5);
 		
 		tbDestReference = new JTextField();
+		tbDestReference.setBounds(203, 19, 270, 20);
+		panel_2.add(tbDestReference);
 		tbDestReference.setColumns(10);
-		tbDestReference.setBounds(203, 166, 270, 20);
-		panel.add(tbDestReference);
-		
-		JLabel lblOriginationReferenceString = new JLabel("Origination reference string");
-		lblOriginationReferenceString.setBounds(10, 138, 169, 14);
-		panel.add(lblOriginationReferenceString);
-		
-		JLabel lblDestinationReferenceString = new JLabel("Destination reference string");
-		lblDestinationReferenceString.setBounds(10, 169, 169, 14);
-		panel.add(lblDestinationReferenceString);
 	}
 
 	public void setData(MapManMBean map) {
@@ -178,52 +239,50 @@ public class MapForm extends JDialog {
 	}
 
 	private void reloadData() {
-		tbLocalPc.setText(((Integer) this.map.getLocalPc()).toString());
-		tbRemotePc.setText(((Integer) this.map.getRemotePc()).toString());
+		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceAddressNature, this.map.getOrigReferenceAddressNature());
+		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceNumberingPlan, this.map.getOrigReferenceNumberingPlan());
+		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceAddressNature, this.map.getDestReferenceAddressNature());
+		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceNumberingPlan, this.map.getDestReferenceNumberingPlan());
+
 		tbLocalSsn.setText(((Integer) this.map.getLocalSsn()).toString());
 		tbRemoteSsn.setText(((Integer) this.map.getRemoteSsn()).toString());
 
 		tbOrigReference.setText(this.map.getOrigReference());
 		tbDestReference.setText(this.map.getDestReference());
+		tbRemoteAddressDigits.setText(this.map.getRemoteAddressDigits());
 	}
 
 	private void loadDataA() {
-		tbLocalPc.setText("1");
-		tbRemotePc.setText("2");
+		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+
 		tbLocalSsn.setText("8");
 		tbRemoteSsn.setText("8");
 
 		tbOrigReference.setText("");
 		tbDestReference.setText("");
+		tbRemoteAddressDigits.setText("");
 	}
 
 	private void loadDataB() {
-		tbLocalPc.setText("2");
-		tbRemotePc.setText("1");
+		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+
 		tbLocalSsn.setText("8");
 		tbRemoteSsn.setText("8");
 
 		tbOrigReference.setText("");
 		tbDestReference.setText("");
+		tbRemoteAddressDigits.setText("");
 	}
 
 	private boolean saveData() {
-		int localPc = 0;
-		int remotePc = 0;
 		int localSsn = 0;
 		int remoteSsn = 0;
-		try {
-			localPc = Integer.parseInt(tbLocalPc.getText());
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Exception when parsing Local Pc value: " + e.toString());
-			return false;
-		}
-		try {
-			remotePc = Integer.parseInt(tbRemotePc.getText());
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Exception when parsing Remote Pc value: " + e.toString());
-			return false;
-		}
 		try {
 			localSsn = Integer.parseInt(tbLocalSsn.getText());
 		} catch (Exception e) {
@@ -237,14 +296,18 @@ public class MapForm extends JDialog {
 			return false;
 		}
 
-		this.map.setLocalPc(localPc);
-		this.map.setRemotePc(remotePc);
+		this.map.setOrigReferenceAddressNature((AddressNatureType) cbOrigReferenceAddressNature.getSelectedItem());
+		this.map.setOrigReferenceNumberingPlan((NumberingPlanType) cbOrigReferenceNumberingPlan.getSelectedItem());
+		this.map.setDestReferenceAddressNature((AddressNatureType) cbDestReferenceAddressNature.getSelectedItem());
+		this.map.setDestReferenceNumberingPlan((NumberingPlanType) cbDestReferenceNumberingPlan.getSelectedItem());
+
 		this.map.setLocalSsn(localSsn);
 		this.map.setRemoteSsn(remoteSsn);
 
 		this.map.setOrigReference(tbOrigReference.getText());
 		this.map.setDestReference(tbDestReference.getText());
-		
+		this.map.setRemoteAddressDigits(tbRemoteAddressDigits.getText());
+
 		return true;
 	}
 }

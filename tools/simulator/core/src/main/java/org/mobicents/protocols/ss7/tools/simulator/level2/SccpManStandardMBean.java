@@ -29,9 +29,6 @@ import javax.management.MBeanParameterInfo;
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 
-import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
-
 /**
  * 
  * @author sergey vetyutnev
@@ -54,11 +51,14 @@ public class SccpManStandardMBean extends StandardMBean {
 				new MBeanAttributeInfo("LocalSsn", int.class.getName(), "Local SSN number", true, true, false),
 				new MBeanAttributeInfo("GlobalTitleType", GlobalTitleType.class.getName(), "GlobalTitle type for creating SccpAddress (when routing on GT)", true, true, false),
 				new MBeanAttributeInfo("GlobalTitleType_Value", String.class.getName(), "GlobalTitle type for creating SccpAddress (when routing on GT)", true, false, false),
-				new MBeanAttributeInfo("AddressNature", AddressNatureType.class.getName(), "AddressNature parameter for creating SccpAddress (when routing on GT)", true, true, false),
-				new MBeanAttributeInfo("AddressNature_Value", String.class.getName(), "AddressNature parameter for creating SccpAddress (when routing on GT)", true, false, false),
+				new MBeanAttributeInfo("NatureOfAddress", NatureOfAddressType.class.getName(), "NatureOfAddress parameter for creating SccpAddress (when routing on GT)", true, true, false),
+				new MBeanAttributeInfo("NatureOfAddress_Value", String.class.getName(), "NatureOfAddress parameter for creating SccpAddress (when routing on GT)", true, false, false),
 				new MBeanAttributeInfo("NumberingPlan", NumberingPlanType.class.getName(), "NumberingPlan parameter for creating SccpAddress (when routing on GT)", true, true, false),
 				new MBeanAttributeInfo("NumberingPlan_Value", String.class.getName(), "NumberingPlan parameter for creating SccpAddress (when routing on GT)", true, false, false),
 				new MBeanAttributeInfo("TranslationType", int.class.getName(), "Translation Type parameter for creating SccpAddress (when routing on GT)", true, true, false),
+				new MBeanAttributeInfo("CallingPartyAddressDigits", String.class.getName(), 
+						"CallingPartyAddress digits, if empty ROUTING_BASED_ON_DPC_AND_SSN is used, if not empty ROUTING_BASED_ON_GLOBAL_TITLE is used", 
+						true, true, false),
 		};
 
 		MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(), "Index number or value") };
@@ -67,11 +67,11 @@ public class SccpManStandardMBean extends StandardMBean {
 				new MBeanOperationInfo("putGlobalTitleType", "GlobalTitle type: "
 						+ "1:VAL_NOA_ONLY,2:VAL_TT_ONLY,3:VAL_TT_NP_ES,4:VAL_TT_NP_ES_NOA", 
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
-				new MBeanOperationInfo("putAddressNature", "Parameter: AddressNature: "
-						+ "0:unknown,1:international_number,2:national_significant_number,3:network_specific_number,4:subscriber_number,5:reserved,6:abbreviated_number,7:reserved_for_extension", 
+				new MBeanOperationInfo("putNatureOfAddress", "Parameter: NatureOfAddress: "
+						+ "0:UNKNOWN,1:SUBSCRIBER,2:RESERVED_NATIONAL_2,3:NATIONAL,4:INTERNATIONAL,127:RESERVED", 
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
 				new MBeanOperationInfo("putNumberingPlan", "Parameter: NumberingPlan: " + 
-						"0:unknown,1:ISDN,2:spare_2,3:data,4:telex,5:spare_5,6:land_mobile,7:spare_7,8:national,9:private_plan,15:reserved", 
+						"0:UNKNOWN,1:ISDN_TELEPHONY,2:GENERIC,3:DATA,4:TELEX,5:MERITIME_MOBILE,6:LAND_MOBILE,7:ISDN_MOBILE,14:PRIVATE,15:RESERVED", 
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
 		};
 

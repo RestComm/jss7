@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level2;
 
-import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 
 /**
  * 
@@ -58,11 +56,11 @@ public interface SccpManMBean {
 
 	public void setGlobalTitleType(GlobalTitleType val);
 
-	public AddressNatureType getAddressNature();
+	public NatureOfAddressType getNatureOfAddress();
 
-	public String getAddressNature_Value();
+	public String getNatureOfAddress_Value();
 
-	public void setAddressNature(AddressNatureType val);
+	public void setNatureOfAddress(NatureOfAddressType val);
 
 	public NumberingPlanType getNumberingPlan();
 
@@ -74,10 +72,14 @@ public interface SccpManMBean {
 
 	public void setTranslationType(int val);
 
+	public String getCallingPartyAddressDigits();
+
+	public void setCallingPartyAddressDigits(String val);
+
 
 	public void putGlobalTitleType(String val);
 
-	public void putAddressNature(String val);
+	public void putNatureOfAddress(String val);
 
 	public void putNumberingPlan(String val);
 

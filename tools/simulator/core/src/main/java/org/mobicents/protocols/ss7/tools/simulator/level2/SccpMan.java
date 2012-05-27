@@ -22,13 +22,14 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level2;
 
+import java.io.IOException;
+
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
@@ -44,8 +45,6 @@ import org.mobicents.protocols.ss7.sccp.impl.router.RuleType;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
-import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 
 /**
@@ -66,6 +65,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	private static final String ADDRESS_NATURE = "addressNature";
 	private static final String NUMBERING_PLAN = "numberingPlan";
 	private static final String TRANSLATION_TYTE = "translationType";
+	private static final String CALLING_PARTY_ADDRESS_DIGITS = "callingPartyAddressDigits";
 
 	private final String name;
 	private TesterHost testerHost;
@@ -80,6 +80,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	private NatureOfAddress natureOfAddress = NatureOfAddress.INTERNATIONAL;
 	private NumberingPlan numberingPlan = NumberingPlan.ISDN_MOBILE;
 	private int translationType = 0;
+	private String callingPartyAddressDigits = "";
 
 	private SccpStackImpl sccpStack;
 	private SccpProvider sccpProvider;
@@ -181,24 +182,29 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	}
 
 	@Override
-	public AddressNatureType getAddressNature() {
-		return new AddressNatureType(natureOfAddress.getIndicator());
+	public NatureOfAddressType getNatureOfAddress() {
+		return new NatureOfAddressType(natureOfAddress.getValue());
 	}
 
 	@Override
-	public String getAddressNature_Value() {
+	public String getNatureOfAddress_Value() {
 		return natureOfAddress.toString();
 	}
 
 	@Override
-	public void setAddressNature(AddressNatureType val) {
-		natureOfAddress = AddressNature.getInstance(val.intValue());
+	public void setNatureOfAddress(NatureOfAddressType val) {
+		try {
+			natureOfAddress = NatureOfAddress.valueOf(val.intValue());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public NumberingPlanType getNumberingPlan() {
-		return new NumberingPlanType(numberingPlan.getIndicator());
+		return new NumberingPlanType(numberingPlan.getValue());
 	}
 
 	@Override
@@ -208,7 +214,12 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 	@Override
 	public void setNumberingPlan(NumberingPlanType val) {
-		numberingPlan = NumberingPlan.getInstance(val.intValue());
+		try {
+			numberingPlan = NumberingPlan.valueOf(val.intValue());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.testerHost.markStore();
 	}
 
@@ -224,6 +235,17 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	}
 
 	@Override
+	public String getCallingPartyAddressDigits() {
+		return callingPartyAddressDigits;
+	}
+
+	@Override
+	public void setCallingPartyAddressDigits(String val) {
+		callingPartyAddressDigits = val;
+		this.testerHost.markStore();
+	}
+
+	@Override
 	public void putGlobalTitleType(String val) {
 		GlobalTitleType x = GlobalTitleType.createInstance(val);
 		if (x != null)
@@ -231,10 +253,10 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	}
 
 	@Override
-	public void putAddressNature(String val) {
-		AddressNatureType x = AddressNatureType.createInstance(val);
+	public void putNatureOfAddress(String val) {
+		NatureOfAddressType x = NatureOfAddressType.createInstance(val);
 		if (x != null)
-			this.setAddressNature(x);
+			this.setNatureOfAddress(x);
 	}
 
 	@Override
@@ -259,7 +281,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		try {
 			this.isRspcUp = true;
 			this.isRssUp = true;
-			this.initSccp(this.mtp3UserPart, this.remoteSsn, this.remoteSpc, this.localSpc, this.ni);
+			this.initSccp(this.mtp3UserPart, this.remoteSsn, this.localSsn, this.remoteSpc, this.localSpc, this.ni, this.callingPartyAddressDigits);
 			this.testerHost.sendNotif(SOURCE_NAME, "SCCP has been started", "", true);
 			return true;
 		} catch (Throwable e) {
@@ -301,7 +323,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		}
 	}
 
-	private void initSccp(Mtp3UserPart mtp3UserPart, int remoteSsn, int dpc, int opc, int ni) {
+	private void initSccp(Mtp3UserPart mtp3UserPart, int remoteSsn, int localSsn, int dpc, int opc, int ni, String callingPartyAddressDigits) {
 
 		this.sccpStack = new SccpStackImpl("TestingSccp");
 
@@ -323,14 +345,24 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		this.resource.addRemoteSpc(1, new RemoteSignalingPointCode(dpc, 0, 0));
 		this.resource.addRemoteSsn(1, new RemoteSubSystem(dpc, remoteSsn, 0, false));
 
-		// ..............................
-		this.router = this.sccpStack.getRouter();
-		this.router.addPrimaryAddress(1, new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, dpc, null, remoteSsn));
-		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance("*"), 0);
-		String mask = "R";
-		Rule rule = new Rule(RuleType.Solitary, null, pattern, mask);
-		this.router.addRule(1, rule);
-		// ..............................
+		if (callingPartyAddressDigits != null && !callingPartyAddressDigits.equals("")) {
+			this.router = this.sccpStack.getRouter();
+
+			this.router.addPrimaryAddress(1, new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, dpc, this.createGlobalTitle(""), 0));
+			this.router.addPrimaryAddress(2, new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, opc, this.createGlobalTitle(""), localSsn));
+
+			SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle("*"), 0);
+			String mask = "K";
+			Rule rule = new Rule(RuleType.Solitary, null, pattern, mask);
+			rule.setPrimaryAddressId(1);
+			this.router.addRule(1, rule);
+
+			pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle(callingPartyAddressDigits), 0);
+			mask = "R";
+			rule = new Rule(RuleType.Solitary, null, pattern, mask);
+			rule.setPrimaryAddressId(2);
+			this.router.addRule(2, rule);
+		}
 	}
 
 	private void stopSccp() {
@@ -339,11 +371,24 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		this.sccpStack.stop();
 	}
 
-	public SccpAddress createOrigAddress() {
-		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.localSpc, null, this.localSsn);
+
+	public SccpAddress createCallingPartyAddress() {
+		if (this.callingPartyAddressDigits == null || this.callingPartyAddressDigits.equals("")) {
+			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.localSpc, null, this.localSsn);
+		} else {
+			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, createGlobalTitle(this.callingPartyAddressDigits), this.localSsn);
+		}
+	}
+	
+	public SccpAddress createCalledPartyAddress() {
+		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.remoteSpc, null, this.remoteSsn);
 	}
 
-	public SccpAddress createOrigAddress( String address, int ssn ) {
+	public SccpAddress createCalledPartyAddress( String address, int ssn ) {
+		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, createGlobalTitle(address), (ssn >= 0 ? ssn : this.remoteSsn));
+	}
+
+	public GlobalTitle createGlobalTitle( String address ) {
 		GlobalTitle gt = null;
 		switch (this.globalTitleType.intValue()) {
 		case GlobalTitleType.VAL_NOA_ONLY:
@@ -359,7 +404,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 			gt = GlobalTitle.getInstance(this.translationType, this.numberingPlan, this.natureOfAddress, address);
 			break;
 		}
-		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt, (ssn >= 0 ? ssn : this.localSsn));
+		return gt;
 	}
 
 //	public SccpAddress createDestAddress() {
@@ -379,6 +424,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 			xml.add(sccp.globalTitleType.toString(), GLOBAL_TITLE_TYPE);
 			xml.add(sccp.natureOfAddress.toString(), ADDRESS_NATURE);
 			xml.add(sccp.numberingPlan.toString(), NUMBERING_PLAN);
+			xml.add(sccp.callingPartyAddressDigits, CALLING_PARTY_ADDRESS_DIGITS);
 		}
 
 		public void read(InputElement xml, SccpMan sccp) throws XMLStreamException {
@@ -392,9 +438,10 @@ public class SccpMan implements SccpManMBean, Stoppable {
 			String gtt = (String) xml.get(GLOBAL_TITLE_TYPE, String.class);
 			sccp.globalTitleType = GlobalTitleType.createInstance(gtt);
 			String an = (String) xml.get(ADDRESS_NATURE, String.class);
-			sccp.natureOfAddress = AddressNature.valueOf(an);
+			sccp.natureOfAddress = NatureOfAddress.valueOf(an);
 			String np = (String) xml.get(NUMBERING_PLAN, String.class);
 			sccp.numberingPlan = NumberingPlan.valueOf(np);
+			sccp.callingPartyAddressDigits = (String) xml.get(CALLING_PARTY_ADDRESS_DIGITS, String.class);
 		}
 	};
 }
