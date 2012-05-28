@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents</groupId>
 		<artifactId>mobicents-parent</artifactId>
-		<version>2.20</version>
+		<version>2.22</version>
 	</parent>
 
 	<artifactId>ss7-parent</artifactId>
@@ -28,7 +28,7 @@
 		<testng.version>6.2</testng.version>
 		<javolution.version>5.5.1</javolution.version>
 		<compiler.plugin.version>2.0.2</compiler.plugin.version>
-		<compile.source>1.7</compile.source>
+		<compile.source>1.5</compile.source>
 		<!-- mobicents but not strictly ss7 -->
 		<asn.version>2.0.0-SNAPSHOT</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
@@ -276,93 +276,121 @@
 	</dependencyManagement>
 
 	<profiles>
-		<profile>
-			<id>maven-release</id>
-			<modules />
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-release-plugin</artifactId>
-						<version>2.0-beta-9</version>
-						<configuration>
-							<autoVersionSubmodules>
-								true
-							</autoVersionSubmodules>
-							<tagBase>
-								https://mobicents.googlecode.com/svn/tags/protocols/ss7
-							</tagBase>
-							<preparationGoals>
-								clean install
-							</preparationGoals>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>release</id>
-			<modules />
-		</profile>
+		 <profile>
+                        <id>maven-release</id>
+                        <modules />
+                        <build>
+                                <plugins>
+                                        <plugin>
+                                                <groupId>org.apache.maven.plugins</groupId>
+                                                <artifactId>maven-release-plugin</artifactId>
+                                                <configuration>
+                                                        <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
+                                                        <preparationGoals>clean install</preparationGoals>
+                                                        <autoVersionSubmodules>true</autoVersionSubmodules>         
+                                                </configuration>
+                                        </plugin>
+                                </plugins>
+                        </build>
+                </profile>
+                <profile>
+                        <id>release</id>
+                        <modules />
+                </profile>
+                <profile>
+                      <id>release-sign-artifacts</id>
+                      <activation>
+                        <property>
+                          <name>performRelease</name>
+                          <value>true</value>
+                        </property>
+                      </activation>
+                      <build>
+                        <plugins>
+                          <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-gpg-plugin</artifactId>
+                            <executions>
+                              <execution>
+                                <id>sign-artifacts</id>
+                                <phase>install</phase>
+                                <goals>
+                                  <goal>sign</goal>
+                                </goals>
+                              </execution>
+                            </executions>
+                          </plugin>
+                        <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.1.2</version>
+                        <executions>
+                                <execution>
+                                        <id>attach-sources</id>
+                                        <phase>verify</phase>
+                                        <goals>
+                                                <goal>jar</goal>
+                                        </goals>
+                                </execution>
+                        </executions>
+                        </plugin>
+                        </plugins>
+                      </build>
+               </profile>
 	</profiles>
 	<developers>
-		<developer>
-			<id>oleg.kulikoff</id>
-			<name>Oleg Kulikoff</name>
-			<email>oleg.kulikoff@gmail.com</email>
-			<organization>JBoss/Red Hat</organization>
-			<organizationUrl>http://www.redhat.com/</organizationUrl>
-			<roles>
-				<role>Active Developer</role>
-			</roles>
-			<timezone>+3</timezone>
-		</developer>
-		<developer>
-			<id>amit.bhayani</id>
-			<name>Amit Bhayani</name>
-			<email>amit.bhayani@gmail.com</email>
-			<organization>Mobite Technologies Pvt Ltd</organization>
-			<organizationUrl>http://www.mobite.co.in/</organizationUrl>
-			<roles>
-				<role>Active Developer</role>
-			</roles>
-			<timezone>+5.5</timezone>
-		</developer>
-		<developer>
-			<id>baranowb</id>
-			<name>Bartosz Baranowski</name>
-			<email>baranowb@gmail.com</email>
-			<organization>JBoss/Red Hat</organization>
-			<organizationUrl>http://www.redhat.com/</organizationUrl>
-			<roles>
-				<role>Active Developer</role>
-			</roles>
-			<timezone>+1</timezone>
-		</developer>
+                <developer>
+                        <id>serg.vetyutnev</id>
+                        <name>Sergey</name>
+                        <email>serg.vetyutnev@gmail.com</email>
+                        <organization>TeleStax</organization>
+                        <organizationUrl>http://telestax.com/</organizationUrl>
+                        <roles>
+                                <role>Active Developer</role>
+                        </roles>
+                        <timezone>+3</timezone>
+                </developer>
+                <developer>
+                        <id>amit.bhayani</id>
+                        <name>Amit Bhayani</name>
+                        <email>amit.bhayani@gmail.com</email>
+                        <organization>TeleStax</organization>
+                        <organizationUrl>http://telestax.com/</organizationUrl>
+                        <roles>
+                                <role>Active Developer</role>
+                        </roles>
+                        <timezone>+5.5</timezone>
+                </developer>
+                <developer>
+                        <id>baranowb</id>
+                        <name>Bartosz Baranowski</name>
+                        <email>baranowb@gmail.com</email>
+                        <organization>JBoss/Red Hat</organization>
+                        <organizationUrl>http://www.redhat.com/</organizationUrl>
+                        <roles>
+                                <role>Active Developer</role>
+                        </roles>
+                        <timezone>+1</timezone>
+                </developer>
+                <developer>
+                        <id>oleg.kulikoff</id>
+                        <name>Oleg Kulikoff</name>
+                        <email>oleg.kulikoff@gmail.com</email>
+                        <organization>JBoss/Red Hat</organization>
+                        <organizationUrl>http://www.redhat.com/</organizationUrl>
+                        <roles>
+                                <role>Inactive Developer</role>
+                        </roles>
+                        <timezone>+3</timezone>
+                </developer>
 	</developers>
-	<licenses>
-		<license>
-			<name>GNU GENERAL PUBLIC LICENSE</name>
-			<url>http://www.gnu.org/licenses/gpl.html</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-	<distributionManagement>
-		<repository>
-			<id>jboss-releases-repository</id>
-			<name>JBoss Releases Repository</name>
-			<url>
-				https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
-			</url>
-		</repository>
-		<snapshotRepository>
-			<id>jboss-snapshots-repository</id>
-			<name>JBoss Snapshots Repository</name>
-			<url>
-				https://repository.jboss.org/nexus/content/repositories/snapshots/
-			</url>
-		</snapshotRepository>
-	</distributionManagement>
+        <licenses>
+                <license>
+                        <name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+                        <url>http://www.gnu.org/licenses/lgpl.html</url>
+                        <distribution>repo</distribution>
+                </license>
+        </licenses>
 	<build>
 		<plugins>
 			<plugin>
@@ -401,62 +429,92 @@
 		</plugins>
 	</build>
 
-	<scm>
-		<connection>
-			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7
-		</connection>
-		<developerConnection>
-			scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/ss7
-		</developerConnection>
-		<url>
-			http://mobicents.googlecode.com/svn/trunk/protocols/ss7
-		</url>
-	</scm>
-
-	<repositories>
-		<repository>
-			<id>maven</id>
-			<name>Maven Repository</name>
-			<url>http://repo1.maven.org/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>jboss</id>
-			<name>JBoss Repository</name>
-			<url>http://repository.jboss.org/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>jboss-snapshots</id>
-			<name>JBoss Snapshot Repository</name>
-			<url>http://snapshots.jboss.org/maven2</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-
-		<repository>
-			<id>jboss-public-repository-group</id>
-			<name>JBoss Public Maven Repository Group</name>
-			<url>
-				https://repository.jboss.org/nexus/content/groups/public/
-			</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
-	</repositories>
+        <scm>
+                <connection>scm:git:https://code.google.com/p/jss7/</connection>
+                <developerConnection>scm:git:https://code.google.com/p/jss7/</developerConnection>
+                <url>https://code.google.com/p/jss7/</url>
+        </scm>
+        <!-- repositories -->
+        <repositories>
+                <repository>
+                          <id>mobicents-public-repository-group</id>
+                          <name>Mobicens Public Maven Repository Group</name>
+                          <url>http://oss.sonatype.org/content/groups/public/</url>
+                          <layout>default</layout>
+                          <releases>
+                            <enabled>true</enabled>
+                            <updatePolicy>never</updatePolicy>
+                          </releases>
+                          <snapshots>
+                            <enabled>true</enabled>
+                            <updatePolicy>never</updatePolicy>
+                          </snapshots>
+                </repository>
+                <repository>
+                        <id>jboss-public-repository-group</id>
+                        <name>JBoss Public Maven Repository Group</name>
+                        <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+                        <layout>default</layout>
+                        <releases>
+                                <enabled>true</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </releases>
+                        <snapshots>
+                                <enabled>true</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </snapshots>
+                </repository>
+                <repository>
+                        <id>jboss-3rd-party-repository-group</id>
+                        <name>JBoss ThirdParty Releases Repository Group</name>
+                        <url>http://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
+                        <layout>default</layout>
+                        <releases>
+                                <enabled>true</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </releases>
+                        <snapshots>
+                                <enabled>true</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </snapshots>
+                </repository>
+                <repository>
+                        <id>jboss-3rd-party-upload-repository-group</id>
+                        <name>JBoss ThirdParty Upload Repository Group</name>
+                        <url>http://repository.jboss.org/nexus/content/repositories/thirdparty-upload</url>
+                        <layout>default</layout>
+                        <releases>
+                                <enabled>true</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </releases>
+                        <snapshots>
+                                <enabled>true</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </snapshots>
+                </repository>
+            <repository>
+                <id>java.net-Public</id>
+                <name>Maven Java Net Snapshots and Releases</name>
+                <url>http://download.java.net/maven/2/</url>
+                <releases>
+                                <enabled>true</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </releases>
+                        <snapshots>
+                                <enabled>true</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </snapshots>
+            </repository>               
+                <repository>
+                        <id>backup.repository.jboss.org</id>
+                        <name>JBoss Repository Backup</name>
+                        <url>http://anonsvn.jboss.org/repos/repository.jboss.org/maven2/</url>
+                        <snapshots>
+                                <enabled>true</enabled>
+                        </snapshots>
+                        <releases>
+                                <enabled>true</enabled>
+                        </releases>
+                </repository>
+        </repositories>
 </project>
