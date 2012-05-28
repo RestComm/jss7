@@ -26,6 +26,7 @@ import java.io.Serializable;
 
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm;
+import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobility;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms;
 import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.MAPServiceSubscriberInformation;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
@@ -82,5 +83,7 @@ public interface MAPProvider extends Serializable {
 	public MAPServiceLsm getMAPServiceLsm();
 	
 	public MAPServiceSubscriberInformation getMapServiceSubscriberInformation();
+	
+	public MAPServiceMobility getMAPServiceMobility();
 
 }
