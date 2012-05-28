@@ -38,5 +38,7 @@ public interface AuthenticationSetList {
 
 	public QuintupletList getQuintupletList();
 
+	public long getMapProtocolVersion();
+
 }
 

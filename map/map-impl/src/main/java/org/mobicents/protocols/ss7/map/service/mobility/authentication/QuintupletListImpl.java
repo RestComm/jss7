@@ -23,7 +23,7 @@
 package org.mobicents.protocols.ss7.map.service.mobility.authentication;
 
 import java.io.IOException;
-
+import java.util.ArrayList;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -31,9 +31,8 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationQuintuplet;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.QuintupletList;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.TripletList;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
@@ -41,66 +40,34 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
  * @author sergey vetyutnev
  * 
  */
-public class AuthenticationSetListImpl implements AuthenticationSetList, MAPAsnPrimitive {
+public class QuintupletListImpl implements QuintupletList, MAPAsnPrimitive {
 
-	public static final int _TAG_tripletList = 0;
-	public static final int _TAG_quintupletList = 1;
+	public static final String _PrimitiveName = "QuintupletList";
 
-	public static final String _PrimitiveName = "AuthenticationSetList";
+	private ArrayList<AuthenticationQuintuplet> quintupletList;
 
-	private TripletList tripletList;
-	private QuintupletList quintupletList;
-	private long mapProtocolVersion;
 
-	
-	public AuthenticationSetListImpl() {
+	public QuintupletListImpl() {
 	}
 
-	public AuthenticationSetListImpl(TripletList tripletList, long mapProtocolVersion) {
-		this.tripletList = tripletList;
-		this.mapProtocolVersion = mapProtocolVersion;
-	}
-
-	public AuthenticationSetListImpl(QuintupletList quintupletList) {
+	public QuintupletListImpl(ArrayList<AuthenticationQuintuplet> quintupletList) {
 		this.quintupletList = quintupletList;
-		this.mapProtocolVersion = 3;
-	}
-	
-
-	@Override
-	public TripletList getTripletList() {
-		return tripletList;
 	}
 
+
 	@Override
-	public QuintupletList getQuintupletList() {
+	public ArrayList<AuthenticationQuintuplet> getAuthenticationQuintuplets() {
 		return quintupletList;
 	}
 
 	@Override
-	public long getMapProtocolVersion() {
-		return mapProtocolVersion;
-	}
-
-
-	@Override
 	public int getTag() throws MAPException {
-		if (this.mapProtocolVersion >= 3) {
-			if (tripletList != null)
-				return _TAG_tripletList;
-			else
-				return _TAG_quintupletList;
-		} else {
-			return Tag.SEQUENCE;
-		}
+		return Tag.SEQUENCE;
 	}
 
 	@Override
 	public int getTagClass() {
-		if (this.mapProtocolVersion >= 3)
-			return Tag.CLASS_CONTEXT_SPECIFIC;
-		else
-			return Tag.CLASS_UNIVERSAL;
+		return Tag.CLASS_UNIVERSAL;
 	}
 
 	@Override
@@ -138,44 +105,38 @@ public class AuthenticationSetListImpl implements AuthenticationSetList, MAPAsnP
 		}
 	}
 
-	private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		this.tripletList = null;
-		this.quintupletList = null;
+		this.quintupletList = new ArrayList<AuthenticationQuintuplet>();
 
-		int tag = ais.getTag();
-
-		if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) { // MAP V3
-			switch (tag) {
-			case _TAG_tripletList:
-				this.tripletList = new TripletListImpl();
-				((TripletListImpl) this.tripletList).decodeData(ais, length);
-				break;
-			case _TAG_quintupletList:
-				this.quintupletList = new QuintupletListImpl();
-				((QuintupletListImpl) this.quintupletList).decodeData(ais, length);
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		while (true) {
+			if (ais.available() == 0)
 				break;
 
-			default:
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
-						MAPParsingComponentExceptionReason.MistypedParameter);
+			int tag = ais.readTag();
+			if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+
+				switch (tag) {
+				case Tag.SEQUENCE:
+					// authenticationTriplet
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ": Parameter AuthenticationQuintuplet is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					AuthenticationQuintupletImpl at = new AuthenticationQuintupletImpl();
+					at.decodeAll(ais);
+					this.quintupletList.add(at);
+					break;
+				}
+			} else {
+
+				ais.advanceElement();
 			}
-			mapProtocolVersion = 3;
-		} else if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) { // MAP V2
-			switch (tag) {
-			case Tag.SEQUENCE:
-			case 0: // this special case when tag & tagClass are not set 
-				this.tripletList = new TripletListImpl();
-				((TripletListImpl) this.tripletList).decodeData(ais, length);
-				break;
-			default:
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag for MAP V2",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			}
-			mapProtocolVersion = 2;
-		} else {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
-					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+		
+		if (this.quintupletList.size() < 1 || this.quintupletList.size() > 5) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": quintupletList size must be from 1 to 5, found:"
+					+ this.quintupletList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -201,34 +162,28 @@ public class AuthenticationSetListImpl implements AuthenticationSetList, MAPAsnP
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.tripletList == null && this.quintupletList == null || this.tripletList != null && this.quintupletList != null) {
-			throw new MAPException("Error while decoding " + _PrimitiveName + ": One and only one choice must be selected");
+		if (this.quintupletList == null || this.quintupletList.size() < 1 || this.quintupletList.size() > 5) {
+			throw new MAPException("QuintupletList list must contains from 1 to 5 elemets");
 		}
 
-		if (this.tripletList != null) {
-			((TripletListImpl) this.tripletList).encodeData(asnOs);
-		} else {
-			((QuintupletListImpl) this.quintupletList).encodeData(asnOs);
+		for (AuthenticationQuintuplet at : this.quintupletList) {
+			((AuthenticationQuintupletImpl) at).encodeAll(asnOs);
 		}
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("AuthenticationSetList [");
-
-		if (this.tripletList != null) {
-			sb.append(this.tripletList.toString());
-			sb.append(", ");
-		}
+		sb.append("QuintupletList [");
 
 		if (this.quintupletList != null) {
-			sb.append(this.quintupletList.toString());
-			sb.append(", ");
+			for (AuthenticationQuintuplet at : this.quintupletList) {
+				if (at != null) {
+					sb.append(at.toString());
+					sb.append(", ");
+				}
+			}
 		}
-
-		sb.append("mapProtocolVersion=");
-		sb.append(this.mapProtocolVersion);
 
 		sb.append("]");
 
