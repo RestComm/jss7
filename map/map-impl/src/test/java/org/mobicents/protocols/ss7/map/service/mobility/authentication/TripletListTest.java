@@ -51,15 +51,15 @@ public class TripletListTest {
 				8, 8, 8, 8, 8, 8 };
 	}
 
-	protected byte[] getRandData() {
+	public static byte[] getRandData() {
 		return new byte[] { 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16 };
 	}
 
-	protected byte[] getSresData() {
+	public static byte[] getSresData() {
 		return new byte[] { 4, 4, 4, 4 };
 	}
 
-	protected byte[] getKcData() {
+	public static byte[] getKcData() {
 		return new byte[] { 8, 8, 8, 8, 8, 8, 8, 8 };
 	}
 

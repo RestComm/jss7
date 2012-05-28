@@ -69,5 +69,7 @@ public interface SendAuthenticationInfoRequest extends MobilityMessage {
 
 	public boolean getAdditionalVectorsAreForEPS();
 
+	public long getMapProtocolVersion();
+
 }
 

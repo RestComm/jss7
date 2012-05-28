@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.map.service.mobility.authentication;
 
 import java.io.IOException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -92,7 +91,7 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 		this.numberOfRequestedAdditionalVectors = numberOfRequestedAdditionalVectors;
 		this.additionalVectorsAreForEPS = additionalVectorsAreForEPS;
 	}
-	
+
 	@Override
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.sendAuthenticationInfo_Request;
@@ -151,6 +150,11 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 	@Override
 	public boolean getAdditionalVectorsAreForEPS() {
 		return additionalVectorsAreForEPS;
+	}
+
+	@Override
+	public long getMapProtocolVersion() {
+		return mapProtocolVersion;
 	}
 
 
@@ -352,20 +356,121 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		// TODO Auto-generated method stub
 		
+		try {
+			if (this.mapProtocolVersion >= 3)
+				asnOs.writeTag(tagClass, false, tag);
+			else
+				asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+
+		if (this.mapProtocolVersion <= 2) {
+			if (this.imsi == null)
+				throw new MAPException("Imsi must not be null for MAP Version2");
+			((IMSIImpl) this.imsi).encodeData(asnOs);
+
+		} else {
+			try {
+				if (this.imsi == null)
+					throw new MAPException("IMSI parameter must not be null for MAP Version3");
+
+				((IMSIImpl) this.imsi).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_imsi);
+				asnOs.writeInteger(numberOfRequestedVectors);
+
+				if (segmentationProhibited)
+					asnOs.writeNull();
+				if (immediateResponsePreferred)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_immediateResponsePreferred);
+				if (reSynchronisationInfo != null) {
+					// TODO: implement it
+				}
+				if (this.extensionContainer != null)
+					((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
+				if (requestingNodeType != null)
+					asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_requestingNodeType, requestingNodeType.getCode());
+				if (this.requestingPlmnId != null)
+					((PlmnIdImpl) this.requestingPlmnId).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_requestingPLMNId);
+				if (numberOfRequestedAdditionalVectors != null)
+					asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_numberOfRequestedAdditionalVectors, numberOfRequestedAdditionalVectors);
+				if (additionalVectorsAreForEPS)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_additionalVectorsAreForEPS);
+
+			} catch (IOException e) {
+				throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+			} catch (AsnException e) {
+				throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+			}
+		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SendAuthenticationInfoRequest [");
+
+		if (this.imsi != null) {
+			sb.append("imsi=");
+			sb.append(imsi.toString());
+			sb.append(", ");
+		}
+		sb.append("numberOfRequestedVectors=");
+		sb.append(numberOfRequestedVectors);
+		sb.append(", ");		
+		if (this.segmentationProhibited) {
+			sb.append("segmentationProhibited, ");
+		}
+		if (this.immediateResponsePreferred) {
+			sb.append("immediateResponsePreferred, ");
+		}
+		if (this.reSynchronisationInfo != null) {
+			sb.append("reSynchronisationInfo=");
+			sb.append(reSynchronisationInfo.toString());
+			sb.append(", ");
+		}
+		if (this.extensionContainer != null) {
+			sb.append("extensionContainer=");
+			sb.append(extensionContainer.toString());
+			sb.append(", ");
+		}
+		if (this.requestingNodeType != null) {
+			sb.append("requestingNodeType=");
+			sb.append(requestingNodeType.toString());
+			sb.append(", ");
+		}
+		if (this.requestingPlmnId != null) {
+			sb.append("requestingPlmnId=");
+			sb.append(requestingPlmnId.toString());
+			sb.append(", ");
+		}
+		if (this.numberOfRequestedAdditionalVectors != null) {
+			sb.append("numberOfRequestedAdditionalVectors=");
+			sb.append(numberOfRequestedAdditionalVectors.toString());
+			sb.append(", ");
+		}
+		if (this.additionalVectorsAreForEPS) {
+			sb.append("additionalVectorsAreForEPS, ");
+		}
+		sb.append("mapProtocolVersion=");
+		sb.append(mapProtocolVersion);
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }
 

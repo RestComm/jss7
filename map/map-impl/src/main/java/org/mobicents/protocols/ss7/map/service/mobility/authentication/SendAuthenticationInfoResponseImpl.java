@@ -34,11 +34,15 @@ import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationQuintuplet;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpsAuthenticationSetList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
+import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
+import org.mobicents.protocols.ss7.map.service.sms.SM_RP_DAImpl;
+import org.mobicents.protocols.ss7.map.service.sms.SM_RP_OAImpl;
 
 /**
  * 
@@ -95,15 +99,26 @@ public class SendAuthenticationInfoResponseImpl extends MobilityMessageImpl impl
 		return epsAuthenticationSetList;
 	}
 
+	@Override
+	public long getMapProtocolVersion() {
+		return mapProtocolVersion;
+	}
+
 
 	@Override
 	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
+		if (this.mapProtocolVersion >= 3)
+			return SendAuthenticationInfoResponseImpl._TAG_General;
+		else
+			return Tag.SEQUENCE;
 	}
 
 	@Override
 	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
+		if (this.mapProtocolVersion >= 3)
+			return Tag.CLASS_CONTEXT_SPECIFIC;
+		else
+			return Tag.CLASS_UNIVERSAL;
 	}
 
 	@Override
@@ -196,27 +211,76 @@ public class SendAuthenticationInfoResponseImpl extends MobilityMessageImpl impl
 				}
 			}
 		} else {
-
-			// ..........................................
+			this.authenticationSetList = new AuthenticationSetListImpl();
+			((AuthenticationSetListImpl) this.authenticationSetList).decodeData(ansIS, length);
 		}
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		// TODO Auto-generated method stub
 		
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+
+		if (this.mapProtocolVersion <= 2) {
+			if (this.authenticationSetList == null)
+				throw new MAPException("authenticationSetList must not be null for MAP Version2");
+			((AuthenticationSetListImpl) this.authenticationSetList).encodeData(asnOs);
+
+		} else {
+			if (this.authenticationSetList == null && extensionContainer == null && epsAuthenticationSetList == null)
+				throw new MAPException("At least one parameter must not be null for MAP Version3");
+
+			if (this.authenticationSetList != null)
+				((AuthenticationSetListImpl) this.authenticationSetList).encodeAll(asnOs);
+			if (this.extensionContainer != null)
+				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
+			if (this.epsAuthenticationSetList != null) {
+				// TODO: implement this
+			}
+		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SendAuthenticationInfoResponse [");
+
+		if (this.authenticationSetList != null) {
+			sb.append("authenticationSetList [");
+			sb.append(authenticationSetList.toString());
+			sb.append("], ");
+		}
+		if (this.extensionContainer != null) {
+			sb.append("extensionContainer [");
+			sb.append(extensionContainer.toString());
+			sb.append("], ");
+		}
+		if (this.epsAuthenticationSetList != null) {
+			sb.append("epsAuthenticationSetList [");
+			sb.append(epsAuthenticationSetList.toString());
+			sb.append("], ");
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
+

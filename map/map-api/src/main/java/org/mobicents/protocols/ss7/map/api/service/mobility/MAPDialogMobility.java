@@ -23,6 +23,14 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility;
 
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
+import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpsAuthenticationSetList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.ReSynchronisationInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
 
 /**
  * 
@@ -31,11 +39,20 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
  */
 public interface MAPDialogMobility extends MAPDialog {
 
+	public Long addSendAuthenticationInfoRequest(long mapProtocolVersion, IMSI imsi, int numberOfRequestedVectors, boolean segmentationProhibited,
+			boolean immediateResponsePreferred, ReSynchronisationInfo reSynchronisationInfo, MAPExtensionContainer extensionContainer,
+			RequestingNodeType requestingNodeType, PlmnId requestingPlmnId, Integer numberOfRequestedAdditionalVectors, boolean additionalVectorsAreForEPS)
+			throws MAPException;
+
+	public Long addSendAuthenticationInfoRequest(int customInvokeTimeout, long mapProtocolVersion, IMSI imsi, int numberOfRequestedVectors,
+			boolean segmentationProhibited, boolean immediateResponsePreferred, ReSynchronisationInfo reSynchronisationInfo,
+			MAPExtensionContainer extensionContainer, RequestingNodeType requestingNodeType, PlmnId requestingPlmnId,
+			Integer numberOfRequestedAdditionalVectors, boolean additionalVectorsAreForEPS) throws MAPException;
+
+	public void addSendAuthenticationInfoResponse(long invokeId, long mapProtocolVersion, AuthenticationSetList authenticationSetList,
+			MAPExtensionContainer extensionContainer, EpsAuthenticationSetList epsAuthenticationSetList) throws MAPException;
 
 	// TODO: add service component adders
-//	public Long addForwardShortMessageRequest(SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, SmsSignalInfo sm_RP_UI, boolean moreMessagesToSend) throws MAPException;
-//	public Long addForwardShortMessageRequest(int customInvokeTimeout, SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA, SmsSignalInfo sm_RP_UI, boolean moreMessagesToSend)
-//			throws MAPException;
-//	public void addForwardShortMessageResponse(long invokeId) throws MAPException;
 
 }
+

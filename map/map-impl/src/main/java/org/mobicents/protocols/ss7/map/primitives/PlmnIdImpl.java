@@ -23,7 +23,9 @@
 package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
+import java.util.Arrays;
 
+import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -38,6 +40,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
  * 
  */
 public class PlmnIdImpl implements PlmnId, MAPAsnPrimitive {
+
+	public static final String _PrimitiveName = "PlmnId";
 	
 	private byte[] data;
 
@@ -75,7 +79,7 @@ public class PlmnIdImpl implements PlmnId, MAPAsnPrimitive {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding PlmnId: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -86,7 +90,7 @@ public class PlmnIdImpl implements PlmnId, MAPAsnPrimitive {
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding PlmnId: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -94,7 +98,7 @@ public class PlmnIdImpl implements PlmnId, MAPAsnPrimitive {
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException {
 		
 		if (length != 3)
-			throw new MAPParsingComponentException("Error decoding PlmnId: the PlmnId field must contain 3 octets. Contains: " + length,
+			throw new MAPParsingComponentException("Error decoding PlmnId: the " + _PrimitiveName + " field must contain 3 octets. Contains: " + length,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
 		try {
@@ -102,27 +106,57 @@ public class PlmnIdImpl implements PlmnId, MAPAsnPrimitive {
 			ansIS.read(data);
 
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding PlmnId: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
 		
+		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		// TODO Auto-generated method stub
 		
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+
+		if (this.data == null)
+			throw new MAPException("Error while encoding the " + _PrimitiveName + ": data is not defined");
+
+		if (this.data.length != 3)
+			throw new MAPException("Error while encoding the " + _PrimitiveName + ": data field length must equale 3");
+
+		asnOs.write(this.data);
 	}
 
+	@Override
+	public String toString() {
+		return "PlmnId [Data= " + this.printDataArr() + "]";
+	}
+
+	private String printDataArr() {
+		StringBuilder sb = new StringBuilder();
+		if( this.data!=null ) {
+			for( int b : this.data ) {
+				sb.append(b);
+				sb.append(" ");
+			}
+		}
+		
+		return sb.toString();
+	}
 }
+

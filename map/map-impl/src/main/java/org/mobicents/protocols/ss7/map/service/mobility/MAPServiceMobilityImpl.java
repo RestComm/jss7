@@ -40,9 +40,12 @@ import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckData;
 import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckResult;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpsAuthenticationSetList;
 import org.mobicents.protocols.ss7.map.dialog.ServingCheckDataImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.AuthenticationSetListImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoRequestImpl;
@@ -288,8 +291,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			}
 		} else {
 			if (parameter != null) {
-				if (parameter.getTag() != AuthenticationSetListImpl._TAG_tripletList || parameter.getTag() != AuthenticationSetListImpl._TAG_quintupletList
-						|| parameter.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || parameter.isPrimitive())
+				if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
 					throw new MAPParsingComponentException(
 							"Error while decoding sendAuthenticationInfoResponse: Bad tag or tagClass or parameter is primitive, received tag="
 									+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
@@ -297,6 +299,10 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 				byte[] buf = parameter.getData();
 				AsnInputStream ais = new AsnInputStream(buf);
 				ind.decodeData(ais, buf.length);
+//				AuthenticationSetListImpl ind2 = new AuthenticationSetListImpl();				
+//				ind2.decodeData(ais, buf.length);
+//
+//				ind = new SendAuthenticationInfoResponseImpl(version, ind2, null, null);
 			}
 		}
 
