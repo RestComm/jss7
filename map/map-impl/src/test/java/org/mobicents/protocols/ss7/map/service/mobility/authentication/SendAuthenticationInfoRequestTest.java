@@ -23,18 +23,11 @@
 package org.mobicents.protocols.ss7.map.service.mobility.authentication;
 
 import static org.testng.Assert.*;
-
 import java.util.Arrays;
-
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.ReSynchronisationInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoRequestImpl;
-
 import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.testng.annotations.Test;
 
@@ -65,7 +58,7 @@ public class SendAuthenticationInfoRequestTest {
 		AsnInputStream asn = new AsnInputStream(rawData);
 
 		int tag = asn.readTag();
-		SendAuthenticationInfoRequestImpl asc = new SendAuthenticationInfoRequestImpl();
+		SendAuthenticationInfoRequestImpl asc = new SendAuthenticationInfoRequestImpl(3);
 		asc.decodeAll(asn);
 
 		assertEquals( tag,Tag.SEQUENCE);
@@ -92,7 +85,7 @@ public class SendAuthenticationInfoRequestTest {
 		asn = new AsnInputStream(rawData);
 
 		tag = asn.readTag();
-		asc = new SendAuthenticationInfoRequestImpl();
+		asc = new SendAuthenticationInfoRequestImpl(3);
 		asc.decodeAll(asn);
 
 		assertEquals( tag,Tag.SEQUENCE);

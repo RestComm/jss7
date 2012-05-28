@@ -44,6 +44,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener;
 import org.mobicents.protocols.ss7.map.dialog.ServingCheckDataImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.AuthenticationSetListImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationRequestImpl;
@@ -229,12 +230,28 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
 	private void sendAuthenticationInfoRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 
-		SendAuthenticationInfoRequestImpl ind = new SendAuthenticationInfoRequestImpl();
-		if (parameter != null) {
-			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-				throw new MAPParsingComponentException(
-						"Error while decoding sendAuthenticationInfoRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+		SendAuthenticationInfoRequestImpl ind = new SendAuthenticationInfoRequestImpl(version);
+		if (version >= 3) {
+			if (parameter != null) {
+				if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+					throw new MAPParsingComponentException(
+							"Error while decoding sendAuthenticationInfoRequest V3: Bad tag or tagClass or parameter is primitive, received tag="
+									+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+
+				byte[] buf = parameter.getData();
+				AsnInputStream ais = new AsnInputStream(buf);
+				ind.decodeData(ais, buf.length);
+			}
+		} else {
+			if (parameter == null)
+				throw new MAPParsingComponentException("Error while decoding sendAuthenticationInfoRequest V2: Parameter is mandatory but not found",
 						MAPParsingComponentExceptionReason.MistypedParameter);
+
+			if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding sendAuthenticationInfoRequest V2: Bad tag or tagClass or parameter is not primitive, received tag="
+								+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 
 			byte[] buf = parameter.getData();
 			AsnInputStream ais = new AsnInputStream(buf);
@@ -256,16 +273,31 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
 	private void sendAuthenticationInfoResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 
-		SendAuthenticationInfoResponseImpl ind = new SendAuthenticationInfoResponseImpl();
-		if (parameter != null) {
-			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-				throw new MAPParsingComponentException(
-						"Error while decoding sendAuthenticationInfoResponse: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
-						MAPParsingComponentExceptionReason.MistypedParameter);
+		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+		SendAuthenticationInfoResponseImpl ind = new SendAuthenticationInfoResponseImpl(version);
+		if (version >= 3) {
+			if (parameter != null) {
+				if (parameter.getTag() != SendAuthenticationInfoResponseImpl._TAG_General || parameter.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || parameter.isPrimitive())
+					throw new MAPParsingComponentException(
+							"Error while decoding sendAuthenticationInfoResponse: Bad tag or tagClass or parameter is primitive, received tag="
+									+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 
-			byte[] buf = parameter.getData();
-			AsnInputStream ais = new AsnInputStream(buf);
-			ind.decodeData(ais, buf.length);
+				byte[] buf = parameter.getData();
+				AsnInputStream ais = new AsnInputStream(buf);
+				ind.decodeData(ais, buf.length);
+			}
+		} else {
+			if (parameter != null) {
+				if (parameter.getTag() != AuthenticationSetListImpl._TAG_tripletList || parameter.getTag() != AuthenticationSetListImpl._TAG_quintupletList
+						|| parameter.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || parameter.isPrimitive())
+					throw new MAPParsingComponentException(
+							"Error while decoding sendAuthenticationInfoResponse: Bad tag or tagClass or parameter is primitive, received tag="
+									+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+
+				byte[] buf = parameter.getData();
+				AsnInputStream ais = new AsnInputStream(buf);
+				ind.decodeData(ais, buf.length);
+			}
 		}
 
 		ind.setInvokeId(invokeId);

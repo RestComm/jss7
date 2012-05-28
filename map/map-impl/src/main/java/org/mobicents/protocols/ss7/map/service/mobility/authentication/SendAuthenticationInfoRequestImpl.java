@@ -59,6 +59,8 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 	protected static final int _TAG_numberOfRequestedAdditionalVectors = 5;
 	protected static final int _TAG_additionalVectorsAreForEPS = 6;	
 
+	public static final String _PrimitiveName = "SendAuthenticationInfoRequest";
+
 	private IMSI imsi;
 	private int numberOfRequestedVectors;
 	private boolean segmentationProhibited;
@@ -69,13 +71,16 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 	private PlmnId requestingPlmnId;
 	private Integer numberOfRequestedAdditionalVectors;
 	private boolean additionalVectorsAreForEPS;
+	private long mapProtocolVersion;
 
-	public SendAuthenticationInfoRequestImpl() {
+	public SendAuthenticationInfoRequestImpl(long mapProtocolVersion) {
+		this.mapProtocolVersion = mapProtocolVersion;
 	}
 
-	public SendAuthenticationInfoRequestImpl(IMSI imsi, int numberOfRequestedVectors, boolean segmentationProhibited, boolean immediateResponsePreferred,
-			ReSynchronisationInfo reSynchronisationInfo, MAPExtensionContainer extensionContainer, RequestingNodeType requestingNodeType,
-			PlmnId requestingPlmnId, Integer numberOfRequestedAdditionalVectors, boolean additionalVectorsAreForEPS) {
+	public SendAuthenticationInfoRequestImpl(long mapProtocolVersion, IMSI imsi, int numberOfRequestedVectors, boolean segmentationProhibited,
+			boolean immediateResponsePreferred, ReSynchronisationInfo reSynchronisationInfo, MAPExtensionContainer extensionContainer,
+			RequestingNodeType requestingNodeType, PlmnId requestingPlmnId, Integer numberOfRequestedAdditionalVectors, boolean additionalVectorsAreForEPS) {
+		this.mapProtocolVersion = mapProtocolVersion;
 		this.imsi = imsi;
 		this.numberOfRequestedVectors = numberOfRequestedVectors;
 		this.segmentationProhibited = segmentationProhibited;
@@ -151,7 +156,11 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 
 	@Override
 	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
+		if (this.mapProtocolVersion >= 3) {
+			return Tag.SEQUENCE;
+		} else {
+			return Tag.STRING_OCTET;
+		}
 	}
 
 	@Override
@@ -161,7 +170,11 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 
 	@Override
 	public boolean getIsPrimitive() {
-		return false;
+		if (this.mapProtocolVersion >= 3) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	@Override
@@ -171,10 +184,10 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding SendAuthenticationInfoRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding SendAuthenticationInfoRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -185,10 +198,10 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding SendAuthenticationInfoRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding SendAuthenticationInfoRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -206,126 +219,135 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 		numberOfRequestedAdditionalVectors = null;
 		additionalVectorsAreForEPS = false;
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		int num = 0;
-		while (true) {
-			if (ais.available() == 0)
-				break;
-
-			int tag = ais.readTag();
-
-			switch (num) {
-			case 0:
-				// imsi
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_imsi)
-					throw new MAPParsingComponentException("Error while decoding SendAuthenticationInfoRequest.imsi: Parameter 0 bad tag or tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.imsi = new IMSIImpl();
-				((IMSIImpl)this.imsi).decodeAll(ais);
-				break;
-
-			case 1:
-				// numberOfRequestedVectors
-				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.INTEGER)
-					throw new MAPParsingComponentException("Error while decoding SendAuthenticationInfoRequest.numberOfRequestedVectors: Parameter 1 bad tag class or tag or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.numberOfRequestedVectors = (int)ais.readInteger();
-				break;
-
-			default:
-				if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-					switch (tag) {
-					case _TAG_immediateResponsePreferred:
-						// immediateResponsePreferred
-						if (!ais.isTagPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding SendAuthenticationInfoRequest.immediateResponsePreferred: Parameter is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						ais.readNull();
-						this.immediateResponsePreferred = true;
-						break;
-					case _TAG_extensionContainer:
-						if (ais.isTagPrimitive())
-								throw new MAPParsingComponentException("Error while decoding SendAuthenticationInfoRequest.extensionContainer: Parameter extensionContainer is primitive",
-										MAPParsingComponentExceptionReason.MistypedParameter);
-						this.extensionContainer = new MAPExtensionContainerImpl();
-						((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
+		if (mapProtocolVersion >= 3) {
+			AsnInputStream ais = ansIS.readSequenceStreamData(length);
+			int num = 0;
+			while (true) {
+				if (ais.available() == 0)
 					break;
-					case _TAG_requestingNodeType:
-						// requestingNodeType
-						if (!ais.isTagPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding SendAuthenticationInfoRequest.requestingNodeType: Parameter is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						int i1 = (int) ais.readInteger();
-						this.requestingNodeType = RequestingNodeType.getInstance(i1);
-						break;
-					case _TAG_requestingPLMNId:
-						// requestingPlmnId
-						if (!ais.isTagPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding SendAuthenticationInfoRequest.requestingPlmnId: Parameter is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						this.requestingPlmnId = new PlmnIdImpl();
-						((PlmnIdImpl)this.requestingPlmnId).decodeAll(ais);
-						break;
-					case _TAG_numberOfRequestedAdditionalVectors:
-						// numberOfRequestedAdditionalVectors
-						if (!ais.isTagPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding SendAuthenticationInfoRequest.numberOfRequestedAdditionalVectors: Parameter is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						this.numberOfRequestedAdditionalVectors = (int)ais.readInteger();
-						break;
-					case _TAG_additionalVectorsAreForEPS:
-						// additionalVectorsAreForEPS
-						if (!ais.isTagPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding SendAuthenticationInfoRequest.additionalVectorsAreForEPS: Parameter is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						ais.readNull();
-						this.additionalVectorsAreForEPS = true;
-						break;
 
-					default:
-						ais.advanceElement();
-						break;
-					}
-				} else if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
-					
-					switch (tag) {
-					case Tag.NULL:
-						// segmentationProhibited
-						if (!ais.isTagPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding SendAuthenticationInfoRequest.segmentationProhibited: Parameter is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						ais.readNull();
-						this.segmentationProhibited = true;
-						break;
-					case Tag.SEQUENCE:
-						// re-synchronisationInfo
-						if (ais.isTagPrimitive())
-							throw new MAPParsingComponentException(
-									"Error while decoding SendAuthenticationInfoRequest.re-synchronisationInfo: Parameter is primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						// TODO: implement it
-						ais.advanceElement();
-						break;
-					}
-				} else {
+				int tag = ais.readTag();
 
-					ais.advanceElement();
+				switch (num) {
+				case 0:
+					// imsi
+					if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_imsi)
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ".imsi: Parameter 0 bad tag or tag class or not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.imsi = new IMSIImpl();
+					((IMSIImpl) this.imsi).decodeAll(ais);
+					break;
+
+				case 1:
+					// numberOfRequestedVectors
+					if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.INTEGER)
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ".numberOfRequestedVectors: Parameter 1 bad tag class or tag or not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.numberOfRequestedVectors = (int) ais.readInteger();
+					break;
+
+				default:
+					if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+						switch (tag) {
+						case _TAG_immediateResponsePreferred:
+							// immediateResponsePreferred
+							if (!ais.isTagPrimitive())
+								throw new MAPParsingComponentException(
+										"Error while decoding " + _PrimitiveName + ".immediateResponsePreferred: Parameter is not primitive",
+										MAPParsingComponentExceptionReason.MistypedParameter);
+							ais.readNull();
+							this.immediateResponsePreferred = true;
+							break;
+						case _TAG_extensionContainer:
+							if (ais.isTagPrimitive())
+								throw new MAPParsingComponentException(
+										"Error while decoding " + _PrimitiveName + ".extensionContainer: Parameter extensionContainer is primitive",
+										MAPParsingComponentExceptionReason.MistypedParameter);
+							this.extensionContainer = new MAPExtensionContainerImpl();
+							((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+							break;
+						case _TAG_requestingNodeType:
+							// requestingNodeType
+							if (!ais.isTagPrimitive())
+								throw new MAPParsingComponentException(
+										"Error while decoding " + _PrimitiveName + ".requestingNodeType: Parameter is not primitive",
+										MAPParsingComponentExceptionReason.MistypedParameter);
+							int i1 = (int) ais.readInteger();
+							this.requestingNodeType = RequestingNodeType.getInstance(i1);
+							break;
+						case _TAG_requestingPLMNId:
+							// requestingPlmnId
+							if (!ais.isTagPrimitive())
+								throw new MAPParsingComponentException(
+										"Error while decoding " + _PrimitiveName + ".requestingPlmnId: Parameter is not primitive",
+										MAPParsingComponentExceptionReason.MistypedParameter);
+							this.requestingPlmnId = new PlmnIdImpl();
+							((PlmnIdImpl) this.requestingPlmnId).decodeAll(ais);
+							break;
+						case _TAG_numberOfRequestedAdditionalVectors:
+							// numberOfRequestedAdditionalVectors
+							if (!ais.isTagPrimitive())
+								throw new MAPParsingComponentException(
+										"Error while decoding " + _PrimitiveName + ".numberOfRequestedAdditionalVectors: Parameter is not primitive",
+										MAPParsingComponentExceptionReason.MistypedParameter);
+							this.numberOfRequestedAdditionalVectors = (int) ais.readInteger();
+							break;
+						case _TAG_additionalVectorsAreForEPS:
+							// additionalVectorsAreForEPS
+							if (!ais.isTagPrimitive())
+								throw new MAPParsingComponentException(
+										"Error while decoding " + _PrimitiveName + ".additionalVectorsAreForEPS: Parameter is not primitive",
+										MAPParsingComponentExceptionReason.MistypedParameter);
+							ais.readNull();
+							this.additionalVectorsAreForEPS = true;
+							break;
+
+						default:
+							ais.advanceElement();
+							break;
+						}
+					} else if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+
+						switch (tag) {
+						case Tag.NULL:
+							// segmentationProhibited
+							if (!ais.isTagPrimitive())
+								throw new MAPParsingComponentException(
+										"Error while decoding " + _PrimitiveName + ".segmentationProhibited: Parameter is not primitive",
+										MAPParsingComponentExceptionReason.MistypedParameter);
+							ais.readNull();
+							this.segmentationProhibited = true;
+							break;
+						case Tag.SEQUENCE:
+							// re-synchronisationInfo
+							if (ais.isTagPrimitive())
+								throw new MAPParsingComponentException(
+										"Error while decoding " + _PrimitiveName + ".re-synchronisationInfo: Parameter is primitive",
+										MAPParsingComponentExceptionReason.MistypedParameter);
+							// TODO: implement it
+							ais.advanceElement();
+							break;
+						}
+					} else {
+
+						ais.advanceElement();
+					}
+					break;
 				}
-				break;
-			}
-			
-			num++;
-		}
 
-		if (num < 2)
-			throw new MAPParsingComponentException("Error while decoding SendAuthenticationInfoRequest: Needs at least 2 mandatory parameters, found " + num,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+				num++;
+			}
+
+			if (num < 2)
+				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Needs at least 2 mandatory parameters, found "
+						+ num, MAPParsingComponentExceptionReason.MistypedParameter);
+		} else {
+
+			this.imsi = new IMSIImpl();
+			((IMSIImpl) this.imsi).decodeData(ansIS, length);
+		}
 	}
 
 	@Override
