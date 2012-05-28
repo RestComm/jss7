@@ -35,19 +35,24 @@ public enum MAPApplicationContextName {
 	/**
 	 * Look at http://www.oid-info.com/get/0.4.0.0.1.0.19.2
 	 */
+
+	// -- Mobility Services
+	networkLocUpContext(1),
+	equipmentMngtContext(13),
+	infoRetrievalContext(14),
+	anyTimeEnquiryContext(29),
+
 	// -- USSD
 	networkUnstructuredSsContext(19),
 	
 	// -- SMS
-	shortMsgAlertContext(23), shortMsgMORelayContext(21), shortMsgMTRelayContext(25), shortMsgGatewayContext(20),
-	
-	// -- Location Service Management (lsm)
+	shortMsgAlertContext(23), shortMsgMORelayContext(21), shortMsgMTRelayContext(25), shortMsgMTVgcsRelayContext(41), 
+	shortMsgGatewayContext(20), mwdMngtContext(24),
+
+	// -- Location Service (lms)
 	locationSvcEnquiryContext(38),
-	
-	// -- Subscriber Information Service
-	anyTimeEnquiryContext(29),
-	
 	locationSvcGatewayContext(37);
+	
 	
 	private int code;
 

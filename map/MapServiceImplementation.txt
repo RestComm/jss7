@@ -69,7 +69,7 @@ version is incorrect
  or unsupported and AC_NotServing if not supported.
 
 - MAPServiceXxxImpl.getMAPv1ApplicationContext() method:
- if the servive supports MAP V1, then this method should return
+ if the serviñe supports MAP V1, then this method should return
  the application context name depending on the operation code for MAP V1
 
 - creating interfaces for requests (Invoke) and responses
@@ -156,4 +156,16 @@ should implement
  functional tests. Examples for functional tests are in
 "map.functional" section.
  New functional tests are also implemented here.
+
+
+Services:
+- Mobility
+- OperationAndMaintenance
+- CallHandling
+- Supplementary
+- Sms
+- Lms
+
+- subscriberInformation -> Mobility !!!
+- subscriberManagement -> Mobility
 

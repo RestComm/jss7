@@ -130,7 +130,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
 			} else if (vers > 3) {
 				long[] altOid = dialogApplicationContext.getOID();
-				altOid[7] = 2;
+				altOid[7] = 3;
 				ApplicationContextName alt = TcapFactory.createApplicationContextName(altOid);
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, alt);
 			} else {
@@ -142,7 +142,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
 			} else if (vers > 3) {
 				long[] altOid = dialogApplicationContext.getOID();
-				altOid[7] = 2;
+				altOid[7] = 3;
 				ApplicationContextName alt = TcapFactory.createApplicationContextName(altOid);
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, alt);
 			} else {

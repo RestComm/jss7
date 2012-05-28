@@ -38,7 +38,6 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 public interface MAPDialogSms extends MAPDialog {
 
 	/**
-<<<<<<< .mine
 	 * Sending MAP-FORWARD-SHORT-MESSAGE request
 	 * 
 	 * @param sm_RP_DA

@@ -194,7 +194,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 			case 0:
 				// msisdn
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_msisdn)
-					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest.msisdn: Parameter bad tag or tag class or not primitive",
+					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest.msisdn: Parameter 0 bad tag or tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.msisdn = new ISDNAddressStringImpl();
 				((ISDNAddressStringImpl)this.msisdn).decodeAll(ais);
