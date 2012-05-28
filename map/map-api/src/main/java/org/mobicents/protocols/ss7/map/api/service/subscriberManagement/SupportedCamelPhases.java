@@ -23,14 +23,14 @@
 package org.mobicents.protocols.ss7.map.api.service.subscriberManagement;
 
 /**
-*
-SupportedCamelPhases ::= BIT STRING {
-	phase1 (0),
-	phase2 (1),
-	phase3 (2),
-	phase4 (3)} (SIZE (1..16)) 
--- A node shall mark in the BIT STRING all CAMEL Phases it supports.
--- Other values than listed above shall be discarded.
+ *
+ * SupportedCamelPhases ::= BIT STRING {
+ *		phase1 (0),
+ *		phase2 (1),
+ *		phase3 (2),
+ *		phase4 (3)} (SIZE (1..16)) 
+ *	-- A node shall mark in the BIT STRING all CAMEL Phases it supports.
+ *	-- Other values than listed above shall be discarded.
  
 * 
 * @author sergey vetyutnev

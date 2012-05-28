@@ -81,7 +81,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	 * @see
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_BIT;
 	}
@@ -93,7 +92,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
 	 * ()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
@@ -105,7 +103,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
 	 * ()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
@@ -117,7 +114,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
 	 * (org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -138,7 +134,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
 	 * (org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -166,7 +161,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);
 	}
@@ -178,7 +172,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
 	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, true, tag);
@@ -197,7 +190,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		try {
 			asnOs.writeBitStringData(this.bitString);
@@ -214,7 +206,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes#
 	 * getEllipsoidPoint()
 	 */
-	@Override
 	public boolean getEllipsoidPoint() {
 		return this.bitString.get(_INDEX_ELLIPSOID_POINT);
 	}
@@ -225,7 +216,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes#
 	 * getEllipsoidPointWithUncertaintyCircle()
 	 */
-	@Override
 	public boolean getEllipsoidPointWithUncertaintyCircle() {
 		return this.bitString.get(_INDEX_ELLIPSOID_POINT_WITH_UNCERTAINTY_CIRCLE);
 	}
@@ -236,7 +226,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes#
 	 * getEllipsoidPointWithUncertaintyEllipse()
 	 */
-	@Override
 	public boolean getEllipsoidPointWithUncertaintyEllipse() {
 		return this.bitString.get(_INDEX_ELLIPSOID_POINT_WITH_UNCERTAINTY_ELLIPSE);
 	}
@@ -248,7 +237,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	 * org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes#getPolygon
 	 * ()
 	 */
-	@Override
 	public boolean getPolygon() {
 		return this.bitString.get(_INDEX_POLYGON);
 	}
@@ -259,7 +247,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes#
 	 * getEllipsoidPointWithAltitude()
 	 */
-	@Override
 	public boolean getEllipsoidPointWithAltitude() {
 		return this.bitString.get(_INDEX_ELLIPSOID_POINT_WITH_ALTITUDE);
 	}
@@ -270,7 +257,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes#
 	 * getEllipsoidPointWithAltitudeAndUncertaintyElipsoid()
 	 */
-	@Override
 	public boolean getEllipsoidPointWithAltitudeAndUncertaintyElipsoid() {
 		return this.bitString.get(_INDEX_ELLIPSOID_WITH_ALTITUDE_AND_UNCERTAINTY_ELIPSOID);
 	}
@@ -281,7 +267,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes#
 	 * getEllipsoidArc()
 	 */
-	@Override
 	public boolean getEllipsoidArc() {
 		return this.bitString.get(_INDEX_ELLIPSOID_ARC);
 	}

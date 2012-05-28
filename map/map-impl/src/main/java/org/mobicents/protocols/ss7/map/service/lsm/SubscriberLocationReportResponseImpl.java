@@ -74,12 +74,10 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 		this.extensionContainer = extensionContainer;
 	}
 
-	@Override
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.subscriberLocationReport_Response;
 	}
 
-	@Override
 	public int getOperationCode() {
 		return MAPOperationCode.subscriberLocationReport;
 	}
@@ -90,7 +88,6 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * SubscriberLocationReportResponseIndication#getExtensionContainer()
 	 */
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
@@ -101,7 +98,6 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * SubscriberLocationReportResponseIndication#getNaESRK()
 	 */
-	@Override
 	public AddressString getNaESRK() {
 		return this.naEsrk;
 	}
@@ -112,7 +108,6 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * SubscriberLocationReportResponseIndication#getNaESRD()
 	 */
-	@Override
 	public AddressString getNaESRD() {
 		return this.naEsrd;
 	}
@@ -123,7 +118,6 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 	 * @see
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
@@ -135,7 +129,6 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
 	 * ()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
@@ -147,7 +140,6 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
 	 * ()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
@@ -159,7 +151,6 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
 	 * (org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -180,7 +171,6 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
 	 * (org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -256,7 +246,6 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
@@ -268,7 +257,6 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
 	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, false, tag);
@@ -287,7 +275,6 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.extensionContainer != null) {
 			// extensionContainer ExtensionContainer OPTIONAL

@@ -30,25 +30,25 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * 
-UpdateLocationArg ::= SEQUENCE {
-	imsi			IMSI,
-	msc-Number	[1] ISDN-AddressString,
-	vlr-Number	ISDN-AddressString,
-	lmsi			[10] LMSI		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	... ,
-	vlr-Capability	[6] VLR-Capability	OPTIONAL,
-	informPreviousNetworkEntity	[11]	NULL		OPTIONAL,
-	cs-LCS-NotSupportedByUE	[12]	NULL		OPTIONAL,
-	v-gmlc-Address	[2]	GSN-Address	OPTIONAL,
-	add-info		[13] ADD-Info	OPTIONAL,
-	pagingArea	[14] PagingArea	OPTIONAL,
-	skipSubscriberDataUpdate	[15] NULL		OPTIONAL, 
-	-- The skipSubscriberDataUpdate parameter in the UpdateLocationArg and the ADD-Info
-	-- structures carry the same semantic.
-	restorationIndicator	[16]	NULL		OPTIONAL
-	 }
-
+ * 	UpdateLocationArg ::= SEQUENCE {
+ *		imsi								IMSI,
+ *		msc-Number					[1] 	ISDN-AddressString,
+ *		vlr-Number							ISDN-AddressString,
+ *		lmsi						[10] 	LMSI		OPTIONAL,
+ *		extensionContainer					ExtensionContainer	OPTIONAL,
+ *		... ,
+ *		vlr-Capability				[6] 	VLR-Capability	OPTIONAL,
+ *		informPreviousNetworkEntity	[11]	NULL		OPTIONAL,
+ *		cs-LCS-NotSupportedByUE		[12]	NULL		OPTIONAL,
+ *		v-gmlc-Address				[2]		GSN-Address	OPTIONAL,
+ *		add-info					[13] 	ADD-Info	OPTIONAL,
+ *		pagingArea					[14] 	PagingArea	OPTIONAL,
+ *		skipSubscriberDataUpdate	[15] 	NULL		OPTIONAL, 
+ *		-- The skipSubscriberDataUpdate parameter in the UpdateLocationArg and the ADD-Info
+ *		-- structures carry the same semantic.
+ *		restorationIndicator		[16]	NULL		OPTIONAL
+ *		 }
+ *
  * 
  * @author sergey vetyutnev
  * 

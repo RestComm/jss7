@@ -79,7 +79,6 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension, MAPAsnPrimi
 	 * @see
 	 * org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension#getOId()
 	 */
-	@Override
 	public long[] getOId() {
 		return this.oId;
 	}
@@ -91,7 +90,6 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension, MAPAsnPrimi
 	 * org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension#setOId
 	 * (long[])
 	 */
-	@Override
 	public void setOId(long[] oId) {
 		this.oId = oId;
 	}
@@ -102,7 +100,6 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension, MAPAsnPrimi
 	 * @see
 	 * org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension#getData()
 	 */
-	@Override
 	public byte[] getData() {
 		return this.data;
 	}
@@ -114,28 +111,23 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension, MAPAsnPrimi
 	 * org.mobicents.protocols.ss7.map.api.dialog.MAPPrivateExtension#setData
 	 * (byte[])
 	 */
-	@Override
 	public void setData(byte[] data) {
 		this.data = data;
 	}
 
 
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		// Definition from GSM 09.02 version 5.15.1 Page 690
 		// extensionContainer SEQUENCE {
@@ -164,7 +156,6 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension, MAPAsnPrimi
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		
 		try {
@@ -197,12 +188,10 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension, MAPAsnPrimi
 			this.data = null;
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -215,7 +204,6 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension, MAPAsnPrimi
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		
 		if (this.oId == null || this.oId.length < 2)

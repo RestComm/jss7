@@ -97,7 +97,6 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * 
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
@@ -108,7 +107,6 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @see
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
@@ -120,7 +118,6 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
 	 * ()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
@@ -132,7 +129,6 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
 	 * org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -153,7 +149,6 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
 	 * (org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -247,7 +242,6 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
@@ -259,7 +253,6 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
 	 * org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, false, tag);
@@ -278,7 +271,6 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		try {
 			if (this.locationInformation != null) {
@@ -360,7 +352,6 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * RequestedInfo#getLocationInformation()
 	 */
-	@Override
 	public Boolean getLocationInformation() {
 		return this.locationInformation;
 	}
@@ -371,7 +362,6 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * RequestedInfo#getSubscriberState()
 	 */
-	@Override
 	public Boolean getSubscriberState() {
 		return this.subscriberState;
 	}
@@ -382,7 +372,6 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * RequestedInfo#getExtensionContainer()
 	 */
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
@@ -393,7 +382,6 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * RequestedInfo#getCurrentLocation()
 	 */
-	@Override
 	public Boolean getCurrentLocation() {
 		return this.currentLocation;
 	}
@@ -404,7 +392,6 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * RequestedInfo#getRequestedDomain()
 	 */
-	@Override
 	public DomainType getRequestedDomain() {
 		return this.requestedDomain;
 	}
@@ -415,7 +402,6 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * RequestedInfo#getImei()
 	 */
-	@Override
 	public Boolean getImei() {
 		return this.imei;
 	}
@@ -426,7 +412,6 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * RequestedInfo#getMsClassmark()
 	 */
-	@Override
 	public Boolean getMsClassmark() {
 		return this.msClassmark;
 	}
@@ -437,9 +422,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * RequestedInfo#getMnpRequestedInfo()
 	 */
-	@Override
 	public Boolean getMnpRequestedInfo() {
 		return this.mnpRequestedInfo;
 	}
-
 }

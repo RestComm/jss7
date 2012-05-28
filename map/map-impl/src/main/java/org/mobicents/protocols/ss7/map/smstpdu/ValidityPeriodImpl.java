@@ -50,7 +50,6 @@ public class ValidityPeriodImpl implements ValidityPeriod {
 		this.enhancedFormatValue = enhancedFormatValue;
 	}
 
-	@Override
 	public ValidityPeriodFormat getValidityPeriodFormat() {
 		if (relativeFormatValue != null)
 			return ValidityPeriodFormat.fieldPresentRelativeFormat;
@@ -62,12 +61,10 @@ public class ValidityPeriodImpl implements ValidityPeriod {
 		return ValidityPeriodFormat.fieldNotPresent;
 	}
 
-	@Override
 	public Integer getRelativeFormatValue() {
 		return this.relativeFormatValue;
 	}
 
-	@Override
 	public Double getRelativeFormatHours() {
 
 		if (this.relativeFormatValue == null)
@@ -90,12 +87,10 @@ public class ValidityPeriodImpl implements ValidityPeriod {
 		return (i1 - 192) * 24.0 * 7.0;
 	}
 
-	@Override
 	public AbsoluteTimeStamp getAbsoluteFormatValue() {
 		return this.absoluteFormatValue;
 	}
 
-	@Override
 	public ValidityEnhancedFormatData getEnhancedFormatValue() {
 		return this.enhancedFormatValue;
 	}

@@ -68,7 +68,6 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientExternalID#
 	 * getExternalAddress()
 	 */
-	@Override
 	public ISDNAddressString getExternalAddress() {
 		return this.externalAddress;
 	}
@@ -79,7 +78,6 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientExternalID#
 	 * getExtensionContainer()
 	 */
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
@@ -87,7 +85,6 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
@@ -95,7 +92,6 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
@@ -103,7 +99,6 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
@@ -111,7 +106,6 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -128,7 +122,6 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -170,7 +163,6 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);			
 	}
@@ -178,7 +170,6 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, false, tag);
@@ -193,7 +184,6 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if(this.externalAddress != null){
 			((ISDNAddressStringImpl)this.externalAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 0);

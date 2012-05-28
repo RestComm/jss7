@@ -87,79 +87,64 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 		this.additionalAbsentSubscriberDiagnosticSM = additionalAbsentSubscriberDiagnosticSM;
 	}	
 
-	@Override
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.reportSM_DeliveryStatus_Request;
 	}
 
-	@Override
 	public int getOperationCode() {
 		return MAPOperationCode.reportSM_DeliveryStatus;
 	}
 
-	@Override
 	public ISDNAddressString getMsisdn() {
 		return this.msisdn;
 	}
 
-	@Override
 	public AddressString getServiceCentreAddress() {
 		return this.serviceCentreAddress;
 	}
 
-	@Override
 	public SMDeliveryOutcome getSMDeliveryOutcome() {
 		return this.sMDeliveryOutcome;
 	}
 
-	@Override
 	public Integer getAbsentSubscriberDiagnosticSM() {
 		return this.absentSubscriberDiagnosticSM;
 	}
 
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
 
-	@Override
 	public boolean getGprsSupportIndicator() {
 		return this.gprsSupportIndicator;
 	}
 
-	@Override
 	public boolean getDeliveryOutcomeIndicator() {
 		return this.deliveryOutcomeIndicator;
 	}
 
-	@Override
 	public SMDeliveryOutcome getAdditionalSMDeliveryOutcome() {
 		return this.additionalSMDeliveryOutcome;
 	}
 
-	@Override
 	public Integer getAdditionalAbsentSubscriberDiagnosticSM() {
 		return this.additionalAbsentSubscriberDiagnosticSM;
 	}
 
 	
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
 	
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -174,7 +159,6 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -318,13 +302,11 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 					MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -337,7 +319,6 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.mapProtocolVersion == 1) {

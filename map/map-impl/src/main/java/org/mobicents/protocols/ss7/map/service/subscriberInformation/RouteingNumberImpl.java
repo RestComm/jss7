@@ -27,7 +27,6 @@ public class RouteingNumberImpl extends TbcdString implements RouteingNumber {
 		this.routeingNumber = routeingNumber;
 	}
 
-	@Override
 	public String getRouteingNumber() {
 		return this.routeingNumber;
 	}
@@ -44,7 +43,6 @@ public class RouteingNumberImpl extends TbcdString implements RouteingNumber {
 		return true;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -56,7 +54,6 @@ public class RouteingNumberImpl extends TbcdString implements RouteingNumber {
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -81,13 +78,11 @@ public class RouteingNumberImpl extends TbcdString implements RouteingNumber {
 		}
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
 		try {
@@ -100,7 +95,6 @@ public class RouteingNumberImpl extends TbcdString implements RouteingNumber {
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.routeingNumber == null)

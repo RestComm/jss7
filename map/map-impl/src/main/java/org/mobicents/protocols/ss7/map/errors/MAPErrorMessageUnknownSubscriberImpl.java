@@ -60,53 +60,43 @@ public class MAPErrorMessageUnknownSubscriberImpl extends MAPErrorMessageImpl im
 	}
 	
 
-	@Override
 	public boolean isEmUnknownSubscriber() {
 		return true;
 	}
 
-	@Override
 	public MAPErrorMessageUnknownSubscriber getEmUnknownSubscriber() {
 		return this;
 	}
 
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
 
-	@Override
 	public UnknownSubscriberDiagnostic getUnknownSubscriberDiagnostic() {
 		return this.unknownSubscriberDiagnostic;
 	}
 
-	@Override
 	public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
 		this.extensionContainer = extensionContainer;
 	}
 
-	@Override
 	public void setUnknownSubscriberDiagnostic(UnknownSubscriberDiagnostic unknownSubscriberDiagnostic) {
 		this.unknownSubscriberDiagnostic = unknownSubscriberDiagnostic;
 	}	
 
 	
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -121,7 +111,6 @@ public class MAPErrorMessageUnknownSubscriberImpl extends MAPErrorMessageImpl im
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -179,13 +168,11 @@ public class MAPErrorMessageUnknownSubscriberImpl extends MAPErrorMessageImpl im
 		}
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -198,7 +185,6 @@ public class MAPErrorMessageUnknownSubscriberImpl extends MAPErrorMessageImpl im
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream aos) throws MAPException {
 
 		if (this.unknownSubscriberDiagnostic == null && this.extensionContainer == null)

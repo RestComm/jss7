@@ -59,53 +59,43 @@ public class MAPErrorMessageSubscriberBusyForMtSmsImpl extends MAPErrorMessageIm
 	}
 
 
-	@Override
 	public boolean isEmSubscriberBusyForMtSms() {
 		return true;
 	}
 
-	@Override
 	public MAPErrorMessageSubscriberBusyForMtSms getEmSubscriberBusyForMtSms() {
 		return this;
 	}
 
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
 
-	@Override
 	public Boolean getGprsConnectionSuspended() {
 		return this.gprsConnectionSuspended;
 	}
 
-	@Override
 	public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
 		this.extensionContainer = extensionContainer;
 	}
 
-	@Override
 	public void setGprsConnectionSuspended(Boolean gprsConnectionSuspended) {
 		this.gprsConnectionSuspended = gprsConnectionSuspended;
 	}
 	
 	
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -120,7 +110,6 @@ public class MAPErrorMessageSubscriberBusyForMtSmsImpl extends MAPErrorMessageIm
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -181,13 +170,10 @@ public class MAPErrorMessageSubscriberBusyForMtSmsImpl extends MAPErrorMessageIm
 			this.gprsConnectionSuspended = false;
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -200,7 +186,6 @@ public class MAPErrorMessageSubscriberBusyForMtSmsImpl extends MAPErrorMessageIm
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream aos) throws MAPException {
 
 		if (this.gprsConnectionSuspended == null && this.extensionContainer == null)

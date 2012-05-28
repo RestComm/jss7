@@ -72,27 +72,22 @@ public class LocationInfoWithLMSIImpl implements LocationInfoWithLMSI, MAPAsnPri
 	}
 
 	
-	@Override
 	public ISDNAddressString getNetworkNodeNumber() {
 		return this.networkNodeNumber;
 	}
 
-	@Override
 	public LMSI getLMSI() {
 		return this.lmsi;
 	}
 
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
 
-	@Override
 	public AdditionalNumberType getAdditionalNumberType() {
 		return this.additionalNumberType;
 	}
 
-	@Override
 	public ISDNAddressString getAdditionalNumber() {
 		return this.additionalNumber;
 	}
@@ -102,17 +97,14 @@ public class LocationInfoWithLMSIImpl implements LocationInfoWithLMSI, MAPAsnPri
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -127,7 +119,6 @@ public class LocationInfoWithLMSIImpl implements LocationInfoWithLMSI, MAPAsnPri
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -234,13 +225,11 @@ public class LocationInfoWithLMSIImpl implements LocationInfoWithLMSI, MAPAsnPri
 			this.additionalNumberType = AdditionalNumberType.msc;
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -253,7 +242,6 @@ public class LocationInfoWithLMSIImpl implements LocationInfoWithLMSI, MAPAsnPri
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		try {

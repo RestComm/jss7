@@ -56,44 +56,36 @@ public class MAPExtensionContainerImpl implements MAPExtensionContainer, MAPAsnP
 		this.pcsExtensions = pcsExtensions;
 	}
 
-	@Override
 	public ArrayList<MAPPrivateExtension> getPrivateExtensionList() {
 		return this.privateExtensionList;
 	}
 
-	@Override
 	public void setPrivateExtensionList(ArrayList<MAPPrivateExtension> privateExtensionList) {
 		this.privateExtensionList = privateExtensionList;
 	}
 
-	@Override
 	public byte[] getPcsExtensions() {
 		return this.pcsExtensions;
 	}
 
-	@Override
 	public void setPcsExtensions(byte[] pcsExtensions) {
 		this.pcsExtensions = pcsExtensions;
 	}
 
 
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		// Definition from GSM 09.02 version 5.15.1 Page 690
 		// extensionContainer SEQUENCE {
@@ -122,7 +114,6 @@ public class MAPExtensionContainerImpl implements MAPExtensionContainer, MAPAsnP
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -185,13 +176,11 @@ public class MAPExtensionContainerImpl implements MAPExtensionContainer, MAPAsnP
 		}
 	}
 	
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 	
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -204,7 +193,6 @@ public class MAPExtensionContainerImpl implements MAPExtensionContainer, MAPAsnP
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		
 		if (this.privateExtensionList == null && this.pcsExtensions == null)

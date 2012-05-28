@@ -56,23 +56,19 @@ public class LMSIImpl implements LMSI, MAPAsnPrimitive {
 		return Tag.STRING_OCTET;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
 
-	@Override
 	public byte[] getData() {
 		return this.data;
 	}
 	
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -84,7 +80,6 @@ public class LMSIImpl implements LMSI, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -110,13 +105,11 @@ public class LMSIImpl implements LMSI, MAPAsnPrimitive {
 		}
 	}
 	
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -129,7 +122,6 @@ public class LMSIImpl implements LMSI, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.data == null)

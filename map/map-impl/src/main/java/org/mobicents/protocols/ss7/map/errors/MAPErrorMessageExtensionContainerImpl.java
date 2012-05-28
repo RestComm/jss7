@@ -58,43 +58,35 @@ public class MAPErrorMessageExtensionContainerImpl extends MAPErrorMessageImpl i
 	}
 
 	
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
 
-	@Override
 	public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
 		this.extensionContainer = extensionContainer;
 	}
 	
-	@Override
 	public boolean isEmExtensionContainer() {
 		return true;
 	}
 
-	@Override
 	public MAPErrorMessageExtensionContainer getEmExtensionContainer() {
 		return this;
 	}
 
 
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -109,7 +101,6 @@ public class MAPErrorMessageExtensionContainerImpl extends MAPErrorMessageImpl i
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -160,13 +151,11 @@ public class MAPErrorMessageExtensionContainerImpl extends MAPErrorMessageImpl i
 		}
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -179,7 +168,6 @@ public class MAPErrorMessageExtensionContainerImpl extends MAPErrorMessageImpl i
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream aos) throws MAPException {
 		
 		if (this.extensionContainer == null)

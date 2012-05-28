@@ -70,7 +70,6 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_BIT;
 	}
@@ -78,7 +77,6 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
@@ -86,7 +84,6 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
@@ -94,7 +91,6 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -111,7 +107,6 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -135,7 +130,6 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);
 	}
@@ -143,7 +137,6 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, true, tag);
@@ -158,7 +151,6 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		try {
 			asnOs.writeBitStringData(this.bitString);
@@ -172,7 +164,6 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.SupportedLCSCapabilitySets#getLcsCapabilitySet1()
 	 */
-	@Override
 	public boolean getLcsCapabilitySet1() {
 		return this.bitString.get(_INDEX_LCS_CAPABILITY_SET1);
 	}
@@ -180,7 +171,6 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.SupportedLCSCapabilitySets#getLcsCapabilitySet2()
 	 */
-	@Override
 	public boolean getLcsCapabilitySet2() {
 		return this.bitString.get(_INDEX_LCS_CAPABILITY_SET2);
 	}
@@ -188,7 +178,6 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.SupportedLCSCapabilitySets#getLcsCapabilitySet3()
 	 */
-	@Override
 	public boolean getLcsCapabilitySet3() {
 		return this.bitString.get(_INDEX_LCS_CAPABILITY_SET3);
 	}
@@ -196,7 +185,6 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.SupportedLCSCapabilitySets#getLcsCapabilitySet4()
 	 */
-	@Override
 	public boolean getLcsCapabilitySet4() {
 		return this.bitString.get(_INDEX_LCS_CAPABILITY_SET4);
 	}

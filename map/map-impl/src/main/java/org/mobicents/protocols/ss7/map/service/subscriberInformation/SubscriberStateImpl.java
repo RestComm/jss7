@@ -61,18 +61,15 @@ public class SubscriberStateImpl implements SubscriberState, MAPAsnPrimitive {
 		this.notReachableReason = notReachableReason;
 	}
 
-	@Override
 	public SubscriberStateChoice getSubscriberStateChoice() {
 		return subscriberStateChoice;
 	}
 
-	@Override
 	public NotReachableReason getNotReachableReason() {
 		return notReachableReason;
 	}
 	
 	
-	@Override
 	public int getTag() throws MAPException {
 
 		if (this.subscriberStateChoice == null)
@@ -92,7 +89,6 @@ public class SubscriberStateImpl implements SubscriberState, MAPAsnPrimitive {
 		throw new MAPException("Error encoding " + _PrimitiveName + ": Bad subscriberStateChoice value");
 	}
 
-	@Override
 	public int getTagClass() {
 		if (this.subscriberStateChoice != null && this.subscriberStateChoice == SubscriberStateChoice.netDetNotReachable)
 			return Tag.CLASS_UNIVERSAL;
@@ -100,12 +96,10 @@ public class SubscriberStateImpl implements SubscriberState, MAPAsnPrimitive {
 			return Tag.CLASS_CONTEXT_SPECIFIC;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -120,7 +114,6 @@ public class SubscriberStateImpl implements SubscriberState, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -175,13 +168,11 @@ public class SubscriberStateImpl implements SubscriberState, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -194,7 +185,6 @@ public class SubscriberStateImpl implements SubscriberState, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.subscriberStateChoice == null)

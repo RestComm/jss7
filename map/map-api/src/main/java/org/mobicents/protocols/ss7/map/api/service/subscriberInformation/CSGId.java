@@ -33,6 +33,6 @@ CSG-Id ::= BIT STRING (SIZE (27))
 */
 public interface CSGId {
 
-	public byte[] getData();
+	public String getData();
 
 }

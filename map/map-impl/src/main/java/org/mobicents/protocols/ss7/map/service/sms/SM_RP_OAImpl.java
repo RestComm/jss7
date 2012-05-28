@@ -65,12 +65,10 @@ public class SM_RP_OAImpl implements SM_RP_OA, MAPAsnPrimitive {
 	}
 	
 	
-	@Override
 	public ISDNAddressString getMsisdn() {
 		return this.msisdn;
 	}
 
-	@Override
 	public AddressString getServiceCentreAddressOA() {
 		return this.serviceCentreAddressOA;
 	}
@@ -89,13 +87,11 @@ public class SM_RP_OAImpl implements SM_RP_OA, MAPAsnPrimitive {
 			return _TAG_noSM_RP_OA;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
 
 	
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -110,7 +106,6 @@ public class SM_RP_OAImpl implements SM_RP_OA, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -162,13 +157,11 @@ public class SM_RP_OAImpl implements SM_RP_OA, MAPAsnPrimitive {
 	}
 	
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -181,7 +174,6 @@ public class SM_RP_OAImpl implements SM_RP_OA, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		
 		if (this.msisdn != null)

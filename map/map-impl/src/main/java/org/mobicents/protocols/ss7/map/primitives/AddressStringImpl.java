@@ -86,22 +86,18 @@ public class AddressStringImpl extends TbcdString implements AddressString {
 		return isExtension;
 	}
 
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_OCTET;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -113,7 +109,6 @@ public class AddressStringImpl extends TbcdString implements AddressString {
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -155,13 +150,11 @@ public class AddressStringImpl extends TbcdString implements AddressString {
 		this.address = this.decodeString(ansIS, length - 1);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
 		try {
@@ -180,7 +173,6 @@ public class AddressStringImpl extends TbcdString implements AddressString {
 			throw new MAPException("Error when encoding AddressString: address length must not exceed 38 digits");
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.addressNature == null || this.numberingPlan == null || this.address == null)

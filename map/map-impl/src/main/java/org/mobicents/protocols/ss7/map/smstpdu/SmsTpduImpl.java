@@ -91,7 +91,6 @@ public abstract class SmsTpduImpl implements SmsTpdu {
 		throw new MAPException("Error creating a new SmsTpduImpl instance: unsupported Sms Tpdu type");
 	}
 
-	@Override
 	public SmsTpduType getSmsTpduType() {
 		return tpduType;
 	}

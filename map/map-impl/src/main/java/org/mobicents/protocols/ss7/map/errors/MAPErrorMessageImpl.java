@@ -52,129 +52,104 @@ public abstract class MAPErrorMessageImpl implements MAPErrorMessage, MAPAsnPrim
 		this.errorCode = errorCode;
 	}
 	
-	@Override
 	public Long getErrorCode() {
 		return errorCode;
 	}
 
 	
-	@Override
 	public boolean isEmParameterless() {
 		return false;
 	}
 
-	@Override
 	public boolean isEmExtensionContainer() {
 		return false;
 	}
 
-	@Override
 	public boolean isEmFacilityNotSup() {
 		return false;
 	}
 
-	@Override
 	public boolean isEmSMDeliveryFailure() {
 		return false;
 	}
 
-	@Override
 	public boolean isEmSystemFailure() {
 		return false;
 	}
 
-	@Override
 	public boolean isEmUnknownSubscriber() {
 		return false;
 	}
 
-	@Override
 	public boolean isEmAbsentSubscriberSM() {
 		return false;
 	}
 
-	@Override
 	public boolean isEmAbsentSubscriber() {
 		return false;
 	}
 
-	@Override
 	public boolean isEmSubscriberBusyForMtSms() {
 		return false;
 	}
 
-	@Override
 	public boolean isEmCallBarred() {
 		return false;
 	}
 
-	@Override
 	public boolean isEmUnauthorizedLCSClient() {
 		return false;
 	}
 
-	@Override
 	public boolean isEmPositionMethodFailure() {
 		return false;
 	}
 
 	
-	@Override
 	public MAPErrorMessageParameterless getEmParameterless() {
 		return null;
 	}
 
-	@Override
 	public MAPErrorMessageExtensionContainer getEmExtensionContainer() {
 		return null;
 	}
 
-	@Override
 	public MAPErrorMessageFacilityNotSup getEmFacilityNotSup() {
 		return null;
 	}
 
-	@Override
 	public MAPErrorMessageSMDeliveryFailure getEmSMDeliveryFailure() {
 		return null;
 	}
 
-	@Override
 	public MAPErrorMessageSystemFailure getEmSystemFailure() {
 		return null;
 	}
 
-	@Override
 	public MAPErrorMessageUnknownSubscriber getEmUnknownSubscriber() {
 		return null;
 	}
 
-	@Override
 	public MAPErrorMessageAbsentSubscriberSM getEmAbsentSubscriberSM() {
 		return null;
 	}
 
-	@Override
 	public MAPErrorMessageAbsentSubscriber getEmAbsentSubscriber() {
 		return null;
 	}
 
-	@Override
 	public MAPErrorMessageSubscriberBusyForMtSms getEmSubscriberBusyForMtSms() {
 		return null;
 	}
 
-	@Override
 	public MAPErrorMessageCallBarred getEmCallBarred() {
 		return null;
 	}
 
-	@Override
 	public MAPErrorMessageUnauthorizedLCSClient getEmUnauthorizedLCSClient() {
 		return null;
 	}
 
-	@Override
 	public MAPErrorMessagePositionMethodFailure getEmPositionMethodFailure() {
 		return null;
 	}

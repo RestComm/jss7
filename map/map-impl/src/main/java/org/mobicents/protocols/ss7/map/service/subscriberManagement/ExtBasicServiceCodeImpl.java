@@ -62,19 +62,16 @@ public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimi
 		this.extTeleservice = extTeleservice;
 	}
 	
-	@Override
 	public ExtBearerServiceCode getExtBearerService() {
 		return extBearerService;
 	}
 
-	@Override
 	public ExtTeleserviceCode getExtTeleservice() {
 		return extTeleservice;
 	}
 
 	
 	
-	@Override
 	public int getTag() throws MAPException {
 		if (extBearerService != null)
 			return _ID_ext_BearerService;
@@ -82,17 +79,14 @@ public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimi
 			return _ID_ext_Teleservice;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_CONTEXT_SPECIFIC;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -107,7 +101,6 @@ public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimi
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -149,13 +142,11 @@ public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimi
 		}
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -168,7 +159,6 @@ public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimi
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.extBearerService == null && this.extTeleservice == null)

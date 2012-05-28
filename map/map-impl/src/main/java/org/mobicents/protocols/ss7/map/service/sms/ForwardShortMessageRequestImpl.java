@@ -61,56 +61,46 @@ public class ForwardShortMessageRequestImpl extends SmsMessageImpl implements Fo
 		this.moreMessagesToSend = moreMessagesToSend;
 	}	
 
-	@Override
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.forwardSM_Request;
 	}
 
-	@Override
 	public int getOperationCode() {
 		return MAPOperationCode.mo_forwardSM;
 	}
 
 	
-	@Override
 	public SM_RP_DA getSM_RP_DA() {
 		return this.sM_RP_DA;
 	}
 
-	@Override
 	public SM_RP_OA getSM_RP_OA() {
 		return this.sM_RP_OA;
 	}
 
-	@Override
 	public SmsSignalInfo getSM_RP_UI() {
 		return this.sM_RP_UI;
 	}
 
-	@Override
 	public boolean getMoreMessagesToSend() {
 		return this.moreMessagesToSend;
 	}
 	
 	
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
 
 	
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -125,7 +115,6 @@ public class ForwardShortMessageRequestImpl extends SmsMessageImpl implements Fo
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -207,13 +196,10 @@ public class ForwardShortMessageRequestImpl extends SmsMessageImpl implements Fo
 					MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -226,7 +212,6 @@ public class ForwardShortMessageRequestImpl extends SmsMessageImpl implements Fo
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.sM_RP_DA == null || this.sM_RP_OA == null || this.sM_RP_UI == null)

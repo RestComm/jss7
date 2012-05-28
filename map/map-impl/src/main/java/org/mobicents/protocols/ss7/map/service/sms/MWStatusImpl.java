@@ -65,44 +65,36 @@ public class MWStatusImpl implements MWStatus, MAPAsnPrimitive {
 	}
 	
 
-	@Override
 	public boolean getScAddressNotIncluded() {
 		return this.bitString.get(_INDEX_ScAddressNotIncluded);
 	}
 
-	@Override
 	public boolean getMnrfSet() {
 		return this.bitString.get(_INDEX_MnrfSet);
 	}
 
-	@Override
 	public boolean getMcefSet() {
 		return this.bitString.get(_INDEX_McefSet);
 	}
 
-	@Override
 	public boolean getMnrgSet() {
 		return this.bitString.get(_INDEX_MnrgSet);
 	}
 	
 
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_BIT;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
 	
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -117,7 +109,6 @@ public class MWStatusImpl implements MWStatus, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -139,13 +130,11 @@ public class MWStatusImpl implements MWStatus, MAPAsnPrimitive {
 		this.bitString = ansIS.readBitStringData(length);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -158,7 +147,6 @@ public class MWStatusImpl implements MWStatus, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		try {
 			asnOs.writeBitStringData(this.bitString);

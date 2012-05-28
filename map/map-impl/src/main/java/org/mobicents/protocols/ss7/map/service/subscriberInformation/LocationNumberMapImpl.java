@@ -65,12 +65,10 @@ public class LocationNumberMapImpl implements LocationNumberMap, MAPAsnPrimitive
 		}
 	}
 	
-	@Override
 	public byte[] getData() {
 		return data;
 	}
 
-	@Override
 	public LocationNumber getLocationNumber() throws MAPException {
 		if (this.data == null)
 			throw new MAPException("The data has not been filled");
@@ -84,22 +82,18 @@ public class LocationNumberMapImpl implements LocationNumberMap, MAPAsnPrimitive
 		}
 	}
 
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_OCTET;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -114,7 +108,6 @@ public class LocationNumberMapImpl implements LocationNumberMap, MAPAsnPrimitive
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -136,13 +129,11 @@ public class LocationNumberMapImpl implements LocationNumberMap, MAPAsnPrimitive
 					+ this.data.length, MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -155,7 +146,6 @@ public class LocationNumberMapImpl implements LocationNumberMap, MAPAsnPrimitive
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		
 		if (this.data == null)

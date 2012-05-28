@@ -104,87 +104,70 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 		this.userCSGInformation = userCSGInformation;
 	}
 
-	@Override
 	public Integer getAgeOfLocationInformation() {
 		return this.ageOfLocationInformation;
 	}
 
-	@Override
 	public GeographicalInformation getGeographicalInformation() {
 		return this.geographicalInformation;
 	}
 
-	@Override
 	public ISDNAddressString getVlrNumber() {
 		return this.vlrNumber;
 	}
 
-	@Override
 	public LocationNumberMap getLocationNumber() {
 		return locationNumber;
 	}
 
-	@Override
 	public CellGlobalIdOrServiceAreaIdOrLAI getCellGlobalIdOrServiceAreaIdOrLAI() {
 		return cellGlobalIdOrServiceAreaIdOrLAI;
 	}
 
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return extensionContainer;
 	}
 
-	@Override
 	public LSAIdentity getSelectedLSAId() {
 		return selectedLSAId;
 	}
 
-	@Override
 	public ISDNAddressString getMscNumber() {
 		return mscNumber;
 	}
 
-	@Override
 	public GeodeticInformation getGeodeticInformation() {
 		return geodeticInformation;
 	}
 
-	@Override
 	public Boolean getCurrentLocationRetrieved() {
 		return currentLocationRetrieved;
 	}
 
-	@Override
 	public Boolean getSaiPresent() {
 		return saiPresent;
 	}
 
-	@Override
 	public LocationInformationEPS getLocationInformationEPS() {
 		return locationInformationEPS;
 	}
 
-	@Override
 	public UserCSGInformation getUserCSGInformation() {
 		return userCSGInformation;
 	}
 
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -199,7 +182,6 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -325,13 +307,11 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 		}
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
 		try {
@@ -344,7 +324,6 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		try {

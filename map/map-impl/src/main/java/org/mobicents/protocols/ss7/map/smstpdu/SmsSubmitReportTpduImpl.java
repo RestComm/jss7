@@ -128,47 +128,38 @@ public class SmsSubmitReportTpduImpl extends SmsTpduImpl implements SmsSubmitRep
 		}
 	}
 
-	@Override
 	public boolean getUserDataHeaderIndicator() {
 		return this.userDataHeaderIndicator;
 	}
 
-	@Override
 	public FailureCause getFailureCause() {
 		return failureCause;
 	}
 
-	@Override
 	public ParameterIndicator getParameterIndicator() {
 		return parameterIndicator;
 	}
 
-	@Override
 	public AbsoluteTimeStamp getServiceCentreTimeStamp() {
 		return serviceCentreTimeStamp;
 	}
 
-	@Override
 	public ProtocolIdentifier getProtocolIdentifier() {
 		return protocolIdentifier;
 	}
 
-	@Override
 	public DataCodingScheme getDataCodingScheme() {
 		return dataCodingScheme;
 	}
 
-	@Override
 	public int getUserDataLength() {
 		return userDataLength;
 	}
 
-	@Override
 	public UserData getUserData() {
 		return userData;
 	}
 
-	@Override
 	public byte[] encodeData() throws MAPException {
 
 		if (this.serviceCentreTimeStamp == null)

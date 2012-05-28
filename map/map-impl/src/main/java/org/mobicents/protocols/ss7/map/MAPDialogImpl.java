@@ -107,12 +107,10 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		this.origReference = origReference;
 	}
 
-	@Override
 	public void setReturnMessageOnError(boolean val) {
 		returnMessageOnError = val;
 	}
 
-	@Override
 	public boolean getReturnMessageOnError() {
 		return returnMessageOnError;
 	}
@@ -133,7 +131,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
     	return this.tcapDialog.getRemoteAddress();
     }
 
-	@Override
 	public void keepAlive() {
 		this.tcapDialog.keepAlive();
 	}
@@ -431,7 +428,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		this.userObject = userObject;
 	}
 
-	@Override
 	public int getMaxUserDataLength() {
 		return this.getTcapDialog().getMaxUserDataLength();
 	}
@@ -442,7 +438,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	 * This value must not exceed getMaxUserDataLength() value
 	 * @return
 	 */
-	@Override
 	public int getMessageUserDataLengthOnSend() throws MAPException {
 
 		try {
@@ -484,7 +479,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	 * @param prearrangedEnd
 	 * @return
 	 */
-	@Override
 	public int getMessageUserDataLengthOnClose(boolean prearrangedEnd) throws MAPException {
 
 		try {
@@ -507,7 +501,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		throw new MAPException("Bad TCAP Dialog state: " + this.tcapDialog.getState());
 	}
 	
-	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("MAPDialog: DialogId=").append(this.getDialogId()).append(" MAPDialogState=").append(this.getState())
@@ -516,7 +509,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		return sb.toString();
 	}
 
-	@Override
 	public void addEricssonData(IMSI imsi, AddressString vlrNo){
 		this.eriStyle = true;
 		this.eriImsi = imsi;

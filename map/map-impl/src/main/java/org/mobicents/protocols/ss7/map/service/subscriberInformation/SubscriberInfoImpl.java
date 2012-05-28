@@ -83,7 +83,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * SubscriberInfo#getLocationInformation()
 	 */
-	@Override
 	public LocationInformation getLocationInformation() {
 		return this.locationInformation;
 	}
@@ -94,7 +93,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * SubscriberInfo#getSubscriberState()
 	 */
-	@Override
 	public SubscriberState getSubscriberState() {
 		return this.subscriberState;
 	}
@@ -105,7 +103,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * SubscriberInfo#getExtensionContainer()
 	 */
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
@@ -116,7 +113,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * SubscriberInfo#getLocationInformationGPRS()
 	 */
-	@Override
 	public LocationInformationGPRS getLocationInformationGPRS() {
 		return this.locationInformationGPRS;
 	}
@@ -127,7 +123,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * SubscriberInfo#getPSSubscriberState()
 	 */
-	@Override
 	public PSSubscriberState getPSSubscriberState() {
 		return this.psSubscriberState;
 	}
@@ -138,7 +133,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * SubscriberInfo#getIMEI()
 	 */
-	@Override
 	public IMEI getIMEI() {
 		return this.imei;
 	}
@@ -149,7 +143,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * SubscriberInfo#getMSClassmark2()
 	 */
-	@Override
 	public MSClassmark2 getMSClassmark2() {
 		return this.msClassmark2;
 	}
@@ -160,7 +153,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * SubscriberInfo#getGPRSMSClass()
 	 */
-	@Override
 	public GPRSMSClass getGPRSMSClass() {
 		return this.gprsMSClass;
 	}
@@ -171,7 +163,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * SubscriberInfo#getMNPInfoRes()
 	 */
-	@Override
 	public MNPInfoRes getMNPInfoRes() {
 		return this.mnpInfoRes;
 	}
@@ -181,7 +172,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * 
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
@@ -192,7 +182,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * @see
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
@@ -204,7 +193,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
 	 * ()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
@@ -216,7 +204,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
 	 * org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -237,7 +224,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
 	 * (org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -319,7 +305,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
 	}
@@ -331,7 +316,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
 	 * org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, true, tag);
@@ -350,7 +334,6 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.locationInformation != null)
 			((LocationInformationImpl) this.locationInformation).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationInformation);

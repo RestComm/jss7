@@ -37,7 +37,6 @@ public class ValidityEnhancedFormatDataImpl implements ValidityEnhancedFormatDat
 		this.data = data;
 	}
 
-	@Override
 	public byte[] getData() {
 		return this.data;
 	}

@@ -54,28 +54,23 @@ public class CallReferenceNumberImpl implements CallReferenceNumber, MAPAsnPrimi
 	}
 
 
-	@Override
 	public byte[] getData() {
 		return this.data;
 	}
 
 	
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_OCTET;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -90,7 +85,6 @@ public class CallReferenceNumberImpl implements CallReferenceNumber, MAPAsnPrimi
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -113,13 +107,11 @@ public class CallReferenceNumberImpl implements CallReferenceNumber, MAPAsnPrimi
 					MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -132,7 +124,6 @@ public class CallReferenceNumberImpl implements CallReferenceNumber, MAPAsnPrimi
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.data == null || this.data.length == 0)

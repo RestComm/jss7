@@ -64,7 +64,6 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		return this.addProcessUnstructuredSSRequest(_Timer_Default, ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
 	}
 
-	@Override
 	public Long addProcessUnstructuredSSRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
 			ISDNAddressString msisdn) throws MAPException {
 
@@ -134,7 +133,6 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		return this.addUnstructuredSSRequest(_Timer_Default, ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
 	}
 
-	@Override
 	public Long addUnstructuredSSRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
 			ISDNAddressString msisdn) throws MAPException {
 
@@ -178,7 +176,6 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		return this.addUnstructuredSSNotifyRequest(_Timer_Default, ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
 	}
 
-	@Override
 	public Long addUnstructuredSSNotifyRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
 			ISDNAddressString msisdn) throws MAPException {
 
@@ -242,7 +239,6 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		this.sendReturnResultLastComponent((ReturnResultLast) returnResult);
 	}
 
-	@Override
 	public void addUnstructuredSSNotifyResponse(long invokeId) throws MAPException {
 
 		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();

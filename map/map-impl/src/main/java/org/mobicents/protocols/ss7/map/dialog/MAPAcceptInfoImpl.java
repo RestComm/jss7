@@ -76,22 +76,18 @@ public class MAPAcceptInfoImpl implements MAPAsnPrimitive {
 	}
 
 
-	@Override
 	public int getTag() throws MAPException {
 		return MAP_ACCEPT_INFO_TAG;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_CONTEXT_SPECIFIC;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -106,7 +102,6 @@ public class MAPAcceptInfoImpl implements MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -164,13 +159,11 @@ public class MAPAcceptInfoImpl implements MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, MAP_ACCEPT_INFO_TAG);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -183,9 +176,7 @@ public class MAPAcceptInfoImpl implements MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOS) throws MAPException {
-
 		if (this.extensionContainer != null)
 			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOS);
 	}

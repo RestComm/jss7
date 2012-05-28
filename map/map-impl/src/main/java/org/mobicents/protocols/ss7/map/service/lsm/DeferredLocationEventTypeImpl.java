@@ -69,7 +69,6 @@ public class DeferredLocationEventTypeImpl implements DeferredLocationEventType,
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_BIT;
 	}
@@ -77,7 +76,6 @@ public class DeferredLocationEventTypeImpl implements DeferredLocationEventType,
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
@@ -85,7 +83,6 @@ public class DeferredLocationEventTypeImpl implements DeferredLocationEventType,
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
@@ -93,7 +90,6 @@ public class DeferredLocationEventTypeImpl implements DeferredLocationEventType,
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -110,7 +106,6 @@ public class DeferredLocationEventTypeImpl implements DeferredLocationEventType,
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -134,7 +129,6 @@ public class DeferredLocationEventTypeImpl implements DeferredLocationEventType,
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);
 	}
@@ -142,7 +136,6 @@ public class DeferredLocationEventTypeImpl implements DeferredLocationEventType,
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, true, tag);
@@ -157,7 +150,6 @@ public class DeferredLocationEventTypeImpl implements DeferredLocationEventType,
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		try {
 			asnOs.writeBitStringData(this.bitString);
@@ -171,7 +163,6 @@ public class DeferredLocationEventTypeImpl implements DeferredLocationEventType,
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.DeferredLocationEventType#getMsAvailable()
 	 */
-	@Override
 	public boolean getMsAvailable() {
 		return this.bitString.get(_INDEX_MS_AVAILABLE);
 	}
@@ -179,7 +170,6 @@ public class DeferredLocationEventTypeImpl implements DeferredLocationEventType,
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.DeferredLocationEventType#getEnteringIntoArea()
 	 */
-	@Override
 	public boolean getEnteringIntoArea() {
 		return this.bitString.get(_INDEX__ENTERING_INTO_AREA);
 	}
@@ -187,7 +177,6 @@ public class DeferredLocationEventTypeImpl implements DeferredLocationEventType,
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.DeferredLocationEventType#getLeavingFromArea()
 	 */
-	@Override
 	public boolean getLeavingFromArea() {
 		return this.bitString.get(_INDEX_LEAVING_FROM_AREA);
 	}
@@ -195,7 +184,6 @@ public class DeferredLocationEventTypeImpl implements DeferredLocationEventType,
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.DeferredLocationEventType#beingInsideArea()
 	 */
-	@Override
 	public boolean getBeingInsideArea() {
 		return this.bitString.get(_INDEX_BEING_INSIDE_AREA);
 	}

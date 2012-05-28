@@ -66,32 +66,26 @@ public class SmsSignalInfoImpl implements SmsSignalInfo, MAPAsnPrimitive {
 	}
 
 
-	@Override
 	public byte[] getData() {
 		return this.data;
 	}
 
-	@Override
 	public SmsTpdu decodeTpdu(boolean mobileOriginatedMessage) throws MAPException {
 		return SmsTpduImpl.createInstance(this.data, mobileOriginatedMessage, this.gsm8Charset);
 	}
 	
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_OCTET;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -106,7 +100,6 @@ public class SmsSignalInfoImpl implements SmsSignalInfo, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -125,13 +118,10 @@ public class SmsSignalInfoImpl implements SmsSignalInfo, MAPAsnPrimitive {
 		this.data = ansIS.readOctetStringData(length);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -144,7 +134,6 @@ public class SmsSignalInfoImpl implements SmsSignalInfo, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.data == null || this.data.length == 0)

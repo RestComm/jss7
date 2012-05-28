@@ -40,12 +40,10 @@ public class ServingCheckDataImpl implements ServingCheckData {
 		this.alternativeApplicationContext = alternativeApplicationContext;
 	}
 
-	@Override
 	public ServingCheckResult getResult() {
 		return this.result;
 	}
 
-	@Override
 	public ApplicationContextName getAlternativeApplicationContext() {
 		return this.alternativeApplicationContext;
 	}
