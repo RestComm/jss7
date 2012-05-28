@@ -88,7 +88,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 			invoke.setTimeout(customInvokeTimeout);
 
 		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
-		oc.setLocalOperationCode((long) MAPOperationCode.mo_forwardSM);
+		oc.setLocalOperationCode((long) MAPOperationCode.sendAuthenticationInfo);
 		invoke.setOperationCode(oc);
 
 		SendAuthenticationInfoRequestImpl req = new SendAuthenticationInfoRequestImpl(mapProtocolVersion, imsi, numberOfRequestedVectors,
@@ -131,7 +131,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
 		// Operation Code
 		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
-		oc.setLocalOperationCode((long) MAPOperationCode.mo_forwardSM);
+		oc.setLocalOperationCode((long) MAPOperationCode.sendAuthenticationInfo);
 		resultLast.setOperationCode(oc);
 
 		if (authenticationSetList != null || extensionContainer != null || epsAuthenticationSetList != null) {
