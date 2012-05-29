@@ -22,20 +22,10 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-import java.util.Arrays;
+import static org.testng.Assert.*;
 import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
-import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
-import org.mobicents.protocols.ss7.map.primitives.PlmnIdImpl;
-import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoRequestImpl;
 import org.testng.annotations.Test;
 
 /**

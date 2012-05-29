@@ -38,8 +38,12 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.S
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VlrCapability;
 import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.OfferedCamel4CSIs;
 import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.SupportedCamelPhases;
+import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.primitives.PlmnIdImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.QuintupletListImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.TripletListImpl;
 import org.mobicents.protocols.ss7.map.service.subscriberManagement.OfferedCamel4CSIsImpl;
 import org.mobicents.protocols.ss7.map.service.subscriberManagement.SupportedCamelPhasesImpl;
 
@@ -322,20 +326,113 @@ public class VlrCapabilityImpl implements VlrCapability, MAPAsnPrimitive {
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		// TODO Auto-generated method stub
 		
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			if (supportedCamelPhases != null)
+				((SupportedCamelPhasesImpl) this.supportedCamelPhases).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_supportedCamelPhases);
+			if (this.extensionContainer != null)
+				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
+			if (solsaSupportIndicator)
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_solsaSupportIndicator);
+			if (istSupportIndicator != null)
+				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_istSupportIndicator, istSupportIndicator.getCode());
+			if (superChargerSupportedInServingNetworkEntity != null) {
+				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_superChargerSupportedInServingNetworkEntity);
+				int pos = asnOs.StartContentDefiniteLength();
+				((SuperChargerInfoImpl) this.superChargerSupportedInServingNetworkEntity).encodeAll(asnOs);
+				asnOs.FinalizeContent(pos);
+			}			
+			if (longFtnSupported)
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_longFTNSupported);			
+			if (supportedLCSCapabilitySets != null)
+				((SupportedLCSCapabilitySetsImpl) this.supportedLCSCapabilitySets)
+						.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_supportedLCSCapabilitySets);			
+			if (offeredCamel4CSIs != null)
+				((OfferedCamel4CSIsImpl) this.offeredCamel4CSIs).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_offeredCamel4CSIs);			
+			if (supportedRATTypesIndicator != null)
+				// TODO: implement it
+//				((SupportedRATTypesImpl) this.supportedRATTypesIndicator).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_supportedRATTypesIndicator);			
+			if (longGroupIDSupported)
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_longGroupIDSupported);			
+			if (mtRoamingForwardingSupported)
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_mtRoamingForwardingSupported);			
+
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("VlrCapability [");
+
+		if (this.supportedCamelPhases != null) {
+			sb.append("supportedCamelPhases=");
+			sb.append(this.supportedCamelPhases.toString());
+			sb.append(", ");
+		}
+		if (this.extensionContainer != null) {
+			sb.append("extensionContainer=");
+			sb.append(this.extensionContainer.toString());
+			sb.append(", ");
+		}
+		if (this.solsaSupportIndicator) {
+			sb.append("solsaSupportIndicator, ");
+		}
+		if (this.istSupportIndicator != null) {
+			sb.append(this.istSupportIndicator.toString());
+			sb.append(", ");
+		}
+		if (this.superChargerSupportedInServingNetworkEntity != null) {
+			sb.append(this.superChargerSupportedInServingNetworkEntity.toString());
+			sb.append(", ");
+		}
+		if (this.longFtnSupported) {
+			sb.append("longFtnSupported, ");
+		}
+		if (this.supportedLCSCapabilitySets != null) {
+			sb.append(this.supportedLCSCapabilitySets.toString());
+			sb.append(", ");
+		}
+		if (this.offeredCamel4CSIs != null) {
+			sb.append(this.offeredCamel4CSIs.toString());
+			sb.append(", ");
+		}
+		if (this.supportedRATTypesIndicator != null) {
+			sb.append(this.supportedRATTypesIndicator.toString());
+			sb.append(", ");
+		}
+		if (this.longGroupIDSupported) {
+			sb.append("longGroupIDSupported, ");
+		}
+		if (this.mtRoamingForwardingSupported) {
+			sb.append("mtRoamingForwardingSupported, ");
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }
 
