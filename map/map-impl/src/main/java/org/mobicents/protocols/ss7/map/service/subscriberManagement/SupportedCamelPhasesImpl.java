@@ -220,4 +220,23 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SupportedCamelPhases [");
+
+		if (getPhase1Supported())
+			sb.append("Phase1Supported, ");
+		if (getPhase2Supported())
+			sb.append("Phase2Supported, ");
+		if (getPhase3Supported())
+			sb.append("Phase3Supported, ");
+		if (getPhase4Supported())
+			sb.append("Phase4Supported, ");
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
+

@@ -19,10 +19,9 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
-package org.mobicents.protocols.ss7.map.service.lsm;
+package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
 import java.io.IOException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -31,7 +30,7 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.service.lsm.SupportedLCSCapabilitySets;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
@@ -44,7 +43,8 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	private static final int _INDEX_LCS_CAPABILITY_SET2 = 1;
 	private static final int _INDEX_LCS_CAPABILITY_SET3 = 2;
 	private static final int _INDEX_LCS_CAPABILITY_SET4 = 3;
-	
+	private static final int _INDEX_LCS_CAPABILITY_SET5 = 4;
+
 	//TODO : Is this correct?
 	private BitSetStrictLength bitString = new BitSetStrictLength(4);
 	
@@ -55,15 +55,18 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 		super();
 	}
 	
-	public SupportedLCSCapabilitySetsImpl(Boolean lcsCapabilitySet1, Boolean lcsCapabilitySet2, Boolean lcsCapabilitySet3, Boolean lcsCapabilitySet4) {
-		if (lcsCapabilitySet1)
+	public SupportedLCSCapabilitySetsImpl(Boolean lcsCapabilitySetRelease98_99, Boolean lcsCapabilitySetRelease4, Boolean lcsCapabilitySetRelease5,
+			Boolean lcsCapabilitySetRelease6, Boolean lcsCapabilitySetRelease7) {
+		if (lcsCapabilitySetRelease98_99)
 			this.bitString.set(_INDEX_LCS_CAPABILITY_SET1);
-		if (lcsCapabilitySet2)
+		if (lcsCapabilitySetRelease4)
 			this.bitString.set(_INDEX_LCS_CAPABILITY_SET2);
-		if (lcsCapabilitySet3)
+		if (lcsCapabilitySetRelease5)
 			this.bitString.set(_INDEX_LCS_CAPABILITY_SET3);
-		if (lcsCapabilitySet4)
+		if (lcsCapabilitySetRelease6)
 			this.bitString.set(_INDEX_LCS_CAPABILITY_SET4);
+		if (lcsCapabilitySetRelease7)
+			this.bitString.set(_INDEX_LCS_CAPABILITY_SET5);
 	}
 		
 
@@ -120,7 +123,7 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	}
 	
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		if (length == 0 || length > 4)
+		if (length < 0 || length > 2)
 			throw new MAPParsingComponentException("Error decoding SupportedLCSCapabilitySets: the SupportedLCSCapabilitySets field must contain from 2 or 4 octets. Contains: " + length,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		
@@ -164,29 +167,34 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.SupportedLCSCapabilitySets#getLcsCapabilitySet1()
 	 */
-	public boolean getLcsCapabilitySet1() {
+	public boolean getCapabilitySetRelease98_99() {
 		return this.bitString.get(_INDEX_LCS_CAPABILITY_SET1);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.SupportedLCSCapabilitySets#getLcsCapabilitySet2()
 	 */
-	public boolean getLcsCapabilitySet2() {
+	public boolean getCapabilitySetRelease4() {
 		return this.bitString.get(_INDEX_LCS_CAPABILITY_SET2);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.SupportedLCSCapabilitySets#getLcsCapabilitySet3()
 	 */
-	public boolean getLcsCapabilitySet3() {
+	public boolean getCapabilitySetRelease5() {
 		return this.bitString.get(_INDEX_LCS_CAPABILITY_SET3);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.SupportedLCSCapabilitySets#getLcsCapabilitySet4()
 	 */
-	public boolean getLcsCapabilitySet4() {
+	public boolean getCapabilitySetRelease6() {
 		return this.bitString.get(_INDEX_LCS_CAPABILITY_SET4);
+	}
+
+	@Override
+	public boolean getCapabilitySetRelease7() {
+		return this.bitString.get(_INDEX_LCS_CAPABILITY_SET5);
 	}
 
 	@Override
@@ -214,4 +222,24 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SupportedLCSCapabilitySets [");
+
+		if (getCapabilitySetRelease98_99())
+			sb.append("CapabilitySetRelease98_99, ");
+		if (getCapabilitySetRelease4())
+			sb.append("CapabilitySetRelease4, ");
+		if (getCapabilitySetRelease5())
+			sb.append("CapabilitySetRelease5, ");
+		if (getCapabilitySetRelease6())
+			sb.append("CapabilitySetRelease6, ");
+		if (getCapabilitySetRelease7())
+			sb.append("CapabilitySetRelease7, ");
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

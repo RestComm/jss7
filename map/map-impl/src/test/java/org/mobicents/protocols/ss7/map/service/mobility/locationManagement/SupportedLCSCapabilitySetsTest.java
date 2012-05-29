@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
-package org.mobicents.protocols.ss7.map.service.lsm;
+package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -34,6 +34,7 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SupportedLCSCapabilitySetsImpl;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -81,16 +82,17 @@ public class SupportedLCSCapabilitySetsTest {
 		assertEquals( tag,Tag.STRING_BIT);
 		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 
-		assertEquals( (boolean)supportedLCSCapabilityTest.getLcsCapabilitySet1(),false);
-		assertEquals( (boolean)supportedLCSCapabilityTest.getLcsCapabilitySet2(),true);
-		assertEquals( (boolean)supportedLCSCapabilityTest.getLcsCapabilitySet3(),false);
-		assertEquals( (boolean)supportedLCSCapabilityTest.getLcsCapabilitySet4(),false);
+		assertEquals( (boolean)supportedLCSCapabilityTest.getCapabilitySetRelease98_99(),false);
+		assertEquals( (boolean)supportedLCSCapabilityTest.getCapabilitySetRelease4(),true);
+		assertEquals( (boolean)supportedLCSCapabilityTest.getCapabilitySetRelease5(),false);
+		assertEquals( (boolean)supportedLCSCapabilityTest.getCapabilitySetRelease6(),false);
+		assertEquals( (boolean)supportedLCSCapabilityTest.getCapabilitySetRelease7(),false);
 	}
 	
 	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 		
-		SupportedLCSCapabilitySetsImpl supportedLCSCapabilityTest = new SupportedLCSCapabilitySetsImpl(false, true, false, false);
+		SupportedLCSCapabilitySetsImpl supportedLCSCapabilityTest = new SupportedLCSCapabilitySetsImpl(false, true, false, false, false);
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
 		supportedLCSCapabilityTest.encodeAll(asnOS);
@@ -103,7 +105,7 @@ public class SupportedLCSCapabilitySetsTest {
 	
 	@Test(groups = { "functional.serialize", "service.lsm" })
 	public void testSerialization() throws Exception {
-		SupportedLCSCapabilitySetsImpl original = new SupportedLCSCapabilitySetsImpl(false, true, false, false);
+		SupportedLCSCapabilitySetsImpl original = new SupportedLCSCapabilitySetsImpl(false, true, false, false, false);
 
 		// serialize
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -119,10 +121,11 @@ public class SupportedLCSCapabilitySetsTest {
 		SupportedLCSCapabilitySetsImpl copy = (SupportedLCSCapabilitySetsImpl) o;
 		
 		//test result
-		assertEquals(copy.getLcsCapabilitySet1(), original.getLcsCapabilitySet1());
-		assertEquals(copy.getLcsCapabilitySet2(), original.getLcsCapabilitySet2());
-		assertEquals(copy.getLcsCapabilitySet3(), original.getLcsCapabilitySet3());
-		assertEquals(copy.getLcsCapabilitySet4(), original.getLcsCapabilitySet4());
+		assertEquals(copy.getCapabilitySetRelease98_99(), original.getCapabilitySetRelease98_99());
+		assertEquals(copy.getCapabilitySetRelease4(), original.getCapabilitySetRelease4());
+		assertEquals(copy.getCapabilitySetRelease5(), original.getCapabilitySetRelease5());
+		assertEquals(copy.getCapabilitySetRelease6(), original.getCapabilitySetRelease6());
+		assertEquals(copy.getCapabilitySetRelease7(), original.getCapabilitySetRelease6());
 		
 	}
 }

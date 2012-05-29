@@ -31,6 +31,11 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationQuintuplet;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationTriplet;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.AuthenticationQuintupletImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.AuthenticationSetListImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.AuthenticationTripletImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.QuintupletListImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.TripletListImpl;
 import org.testng.annotations.Test;
 
 /**

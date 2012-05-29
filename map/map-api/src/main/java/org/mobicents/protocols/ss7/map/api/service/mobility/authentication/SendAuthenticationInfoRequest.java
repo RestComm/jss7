@@ -29,6 +29,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  * 
+ * V 3:
  * SendAuthenticationInfoArg ::= SEQUENCE {
  *	imsi			[0] IMSI,
  *	numberOfRequestedVectors	NumberOfRequestedVectors,
@@ -43,6 +44,10 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
  *	additionalVectorsAreForEPS	[6] NULL		OPTIONAL }	
  *
  * NumberOfRequestedVectors ::= INTEGER (1..5)
+ * 
+ * V 2:
+ * SendAuthenticationInfoArg ::= IMSI
+ * 
  * 
  * @author sergey vetyutnev
  * 
