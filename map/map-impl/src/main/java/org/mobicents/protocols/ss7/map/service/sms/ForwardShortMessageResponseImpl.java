@@ -34,62 +34,47 @@ import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRespon
 
 public class ForwardShortMessageResponseImpl extends SmsMessageImpl implements ForwardShortMessageResponse {
 
-	@Override
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.forwardSM_Response;
 	}
 
-	@Override
 	public int getOperationCode() {
 		return MAPOperationCode.mo_forwardSM;
 	}
 
-	@Override
 	public int getTag() throws MAPException {
 		
 		throw new MAPException("ForwardShortMessageResponseIndication has no MAP message primitive");
 	}
 
-	@Override
 	public int getTagClass() {
 
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		
 		return false;
 	}
 
 	
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-
 		throw new MAPParsingComponentException("ForwardShortMessageResponseIndication has no MAP message primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-
 		throw new MAPParsingComponentException("ForwardShortMessageResponseIndication has no MAP message primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-
 		throw new MAPException("ForwardShortMessageResponseIndication has no MAP message primitive");
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-
 		throw new MAPException("ForwardShortMessageResponseIndication has no MAP message primitive");
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-
 		throw new MAPException("ForwardShortMessageResponseIndication has no MAP message primitive");
 	}
 	

@@ -72,7 +72,6 @@ public class MAPDialogSubscriberInformationImpl extends MAPDialogImpl implements
 	 * org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString,
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer)
 	 */
-	@Override
 	public long addAnyTimeInterrogationRequest(SubscriberIdentity subscriberIdentity, RequestedInfo requestedInfo, ISDNAddressString gsmSCFAddress,
 			MAPExtensionContainer extensionContainer) throws MAPException {
 
@@ -90,7 +89,6 @@ public class MAPDialogSubscriberInformationImpl extends MAPDialogImpl implements
 	 * org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString,
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer)
 	 */
-	@Override
 	public long addAnyTimeInterrogationRequest(long customInvokeTimeout, SubscriberIdentity subscriberIdentity, RequestedInfo requestedInfo,
 			ISDNAddressString gsmSCFAddress, MAPExtensionContainer extensionContainer) throws MAPException {
 
@@ -138,7 +136,6 @@ public class MAPDialogSubscriberInformationImpl extends MAPDialogImpl implements
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * MAPDialogSubscriberInformation#addAnyTimeInterrogationResponse(long)
 	 */
-	@Override
 	public long addAnyTimeInterrogationResponse(long invokeId) throws MAPException {
 		// TODO Auto-generated method stub
 		throw new MAPException("We dont support this yet");

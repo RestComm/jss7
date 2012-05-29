@@ -86,37 +86,30 @@ public class UserDataImpl implements UserData {
 		this.isDecoded = true;
 	}
 
-	@Override
 	public DataCodingScheme getDataCodingScheme() {
 		return this.dataCodingScheme;
 	}
 
-	@Override
 	public byte[] getEncodedData() {
 		return this.encodedData;
 	}
 
-	@Override
 	public int getEncodedUserDataLength() {
 		return encodedUserDataLength;
 	}
 
-	@Override
 	public boolean getEncodedUserDataHeaderIndicator() {
 		return encodedUserDataHeaderIndicator;
 	}
 
-	@Override
 	public UserDataHeader getDecodedUserDataHeader() {
 		return decodedUserDataHeader;
 	}
 
-	@Override
 	public String getDecodedMessage() {
 		return decodedMessage;
 	}
 
-	@Override
 	public void encode() throws MAPException {
 
 		if (this.isEncoded)
@@ -211,7 +204,6 @@ public class UserDataImpl implements UserData {
 		}
 	}
 
-	@Override
 	public void decode() throws MAPException {
 
 		if (this.isDecoded)

@@ -63,63 +63,51 @@ public class MAPErrorMessageSMDeliveryFailureImpl extends MAPErrorMessageImpl im
 	}
 
 
-	@Override
 	public SMEnumeratedDeliveryFailureCause getSMEnumeratedDeliveryFailureCause() {
 		return this.sMEnumeratedDeliveryFailureCause;
 	}
 
-	@Override
 	public byte[] getSignalInfo() {
 		return this.signalInfo;
 	}
 
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
 
-	@Override
 	public void setSMEnumeratedDeliveryFailureCause(SMEnumeratedDeliveryFailureCause sMEnumeratedDeliveryFailureCause) {
 		this.sMEnumeratedDeliveryFailureCause = sMEnumeratedDeliveryFailureCause;
 	}
 
-	@Override
 	public void setSignalInfo(byte[] signalInfo) {
 		this.signalInfo = signalInfo;
 	}
 	
-	@Override
 	public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
 		this.extensionContainer = extensionContainer;
 	}
 	
-	@Override
 	public boolean isEmSMDeliveryFailure() {
 		return true;
 	}
 
-	@Override
 	public MAPErrorMessageSMDeliveryFailure getEmSMDeliveryFailure() {
 		return this;
 	}	
 
 	
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -134,7 +122,6 @@ public class MAPErrorMessageSMDeliveryFailureImpl extends MAPErrorMessageImpl im
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -202,13 +189,11 @@ public class MAPErrorMessageSMDeliveryFailureImpl extends MAPErrorMessageImpl im
 		}
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -221,7 +206,6 @@ public class MAPErrorMessageSMDeliveryFailureImpl extends MAPErrorMessageImpl im
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream aos) throws MAPException {
 
 		if (this.sMEnumeratedDeliveryFailureCause == null)

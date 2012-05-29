@@ -68,7 +68,6 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 	 * 
 	 * @see org.mobicents.protocols.ss7.map.api.MAPMessage#getMessageType()
 	 */
-	@Override
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.anyTimeInterrogation_Request;
 	}
@@ -78,7 +77,6 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 	 * 
 	 * @see org.mobicents.protocols.ss7.map.api.MAPMessage#getOperationCode()
 	 */
-	@Override
 	public int getOperationCode() {
 		return MAPOperationCode.anyTimeInterrogation;
 	}
@@ -88,7 +86,6 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 	 * 
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
@@ -99,7 +96,6 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 	 * @see
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
@@ -111,7 +107,6 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
 	 * ()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
@@ -123,7 +118,6 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
 	 * org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -144,7 +138,6 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
 	 * (org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -200,7 +193,6 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
 	}
@@ -212,7 +204,6 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
 	 * org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, true, tag);
@@ -231,7 +222,6 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.subscriberInfo == null)
 			throw new MAPException("SubscriberInfo cannot be null");
@@ -248,7 +238,6 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * AnyTimeInterrogationResponseIndication#getSubscriberInfo()
 	 */
-	@Override
 	public SubscriberInfo getSubscriberInfo() {
 		return this.subscriberInfo;
 	}
@@ -259,7 +248,6 @@ public class AnyTimeInterrogationResponseImpl extends SubscriberInformationMessa
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * AnyTimeInterrogationResponseIndication#getExtensionContainer()
 	 */
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}

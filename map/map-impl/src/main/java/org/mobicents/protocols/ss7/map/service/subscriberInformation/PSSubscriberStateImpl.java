@@ -49,7 +49,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * PSSubscriberState#isNotProvidedFromSGSNorMME()
 	 */
-	@Override
 	public boolean isNotProvidedFromSGSNorMME() {
 		return this.notProvidedFromSGSNorMME;
 	}
@@ -60,7 +59,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * PSSubscriberState#isPsDetached()
 	 */
-	@Override
 	public boolean isPsDetached() {
 		return this.psDetached;
 	}
@@ -71,7 +69,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * PSSubscriberState#isPsAttachedNotReachableForPaging()
 	 */
-	@Override
 	public boolean isPsAttachedNotReachableForPaging() {
 		return this.psAttachedNotReachableForPaging;
 	}
@@ -82,7 +79,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * PSSubscriberState#isPsAttachedReachableForPaging()
 	 */
-	@Override
 	public boolean isPsAttachedReachableForPaging() {
 		return this.psAttachedReachableForPaging;
 	}
@@ -93,7 +89,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * PSSubscriberState#isPsPDPActiveNotReachableForPaging()
 	 */
-	@Override
 	public boolean isPsPDPActiveNotReachableForPaging() {
 		return this.psPDPActiveNotReachableForPaging;
 	}
@@ -104,7 +99,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * PSSubscriberState#isPsPDPActiveReachableForPaging()
 	 */
-	@Override
 	public boolean isPsPDPActiveReachableForPaging() {
 		return this.psPDPActiveReachableForPaging;
 	}
@@ -117,7 +111,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * #setNetDetNotReachable(org.mobicents.protocols.ss7.map.api
 	 * .service.subscriberInformation.NotReachableReason)
 	 */
-	@Override
 	public void setNetDetNotReachable(NotReachableReason notReachableReason) {
 		this.netDetNotReachable = notReachableReason;
 	}
@@ -128,7 +121,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * PSSubscriberState#getNetDetNotReachable()
 	 */
-	@Override
 	public NotReachableReason getNetDetNotReachable() {
 		return this.netDetNotReachable;
 	}
@@ -138,7 +130,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * 
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		if (this.notProvidedFromSGSNorMME) {
 			return _ID_notProvidedFromSGSNorMME;
@@ -162,7 +153,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * @see
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_CONTEXT_SPECIFIC;
 	}
@@ -174,7 +164,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
 	 * ()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
@@ -186,7 +175,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
 	 * org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -207,7 +195,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
 	 * (org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -269,7 +256,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, this.getTag());
 	}
@@ -281,7 +267,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
 	 * org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, true, tag);
@@ -300,7 +285,6 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		asnOs.writeNullData();
 	}

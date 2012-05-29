@@ -38,7 +38,6 @@ public class SLRArgExtensionContainerImpl implements SLRArgExtensionContainer, M
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		// TODO Auto-generated method stub
 		return 0;
@@ -47,7 +46,6 @@ public class SLRArgExtensionContainerImpl implements SLRArgExtensionContainer, M
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass()
 	 */
-	@Override
 	public int getTagClass() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -56,7 +54,6 @@ public class SLRArgExtensionContainerImpl implements SLRArgExtensionContainer, M
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		// TODO Auto-generated method stub
 		return false;
@@ -65,7 +62,6 @@ public class SLRArgExtensionContainerImpl implements SLRArgExtensionContainer, M
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		// TODO Auto-generated method stub
 		
@@ -74,7 +70,6 @@ public class SLRArgExtensionContainerImpl implements SLRArgExtensionContainer, M
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		// TODO Auto-generated method stub
 		
@@ -83,7 +78,6 @@ public class SLRArgExtensionContainerImpl implements SLRArgExtensionContainer, M
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		// TODO Auto-generated method stub
 		
@@ -92,7 +86,6 @@ public class SLRArgExtensionContainerImpl implements SLRArgExtensionContainer, M
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		// TODO Auto-generated method stub
 		
@@ -101,7 +94,6 @@ public class SLRArgExtensionContainerImpl implements SLRArgExtensionContainer, M
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		// TODO Auto-generated method stub
 		

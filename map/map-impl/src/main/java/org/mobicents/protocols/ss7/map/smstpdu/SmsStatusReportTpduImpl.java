@@ -152,77 +152,62 @@ public class SmsStatusReportTpduImpl extends SmsTpduImpl implements SmsStatusRep
 		}
 	}
 
-	@Override
 	public boolean getUserDataHeaderIndicator() {
 		return this.userDataHeaderIndicator;
 	}
 
-	@Override
 	public boolean getMoreMessagesToSend() {
 		return this.moreMessagesToSend;
 	}
 
-	@Override
 	public boolean getForwardedOrSpawned() {
 		return this.forwardedOrSpawned;
 	}
 
-	@Override
 	public StatusReportQualifier getStatusReportQualifier() {
 		return this.statusReportQualifier;
 	}
 
-	@Override
 	public int getMessageReference() {
 		return messageReference;
 	}
 
-	@Override
 	public AddressField getRecipientAddress() {
 		return recipientAddress;
 	}
 
-	@Override
 	public AbsoluteTimeStamp getServiceCentreTimeStamp() {
 		return serviceCentreTimeStamp;
 	}
 
-	@Override
 	public AbsoluteTimeStamp getDischargeTime() {
 		return dischargeTime;
 	}
 
-	@Override
 	public Status getStatus() {
 		return status;
 	}
 
-	@Override
 	public ParameterIndicator getParameterIndicator() {
 		return parameterIndicator;
 	}
 
-	@Override
 	public ProtocolIdentifier getProtocolIdentifier() {
 		return protocolIdentifier;
 	}
 
-	@Override
 	public DataCodingScheme getDataCodingScheme() {
 		return dataCodingScheme;
 	}
 
-	@Override
 	public int getUserDataLength() {
 		return userDataLength;
 	}
 
-	@Override
 	public UserData getUserData() {
 		return userData;
 	}
 
-	@Override
 	public byte[] encodeData() throws MAPException {
 
 		if (statusReportQualifier == null || this.recipientAddress == null || this.serviceCentreTimeStamp == null || this.dischargeTime == null

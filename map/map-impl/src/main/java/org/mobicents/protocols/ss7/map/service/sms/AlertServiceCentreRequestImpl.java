@@ -59,7 +59,6 @@ public class AlertServiceCentreRequestImpl extends SmsMessageImpl implements Ale
 		this.serviceCentreAddress = serviceCentreAddress;
 	}
 
-	@Override
 	public MAPMessageType getMessageType() {
 		if (this.operationCode == MAPOperationCode.alertServiceCentre)
 			return MAPMessageType.alertServiceCentre_Request;
@@ -67,39 +66,32 @@ public class AlertServiceCentreRequestImpl extends SmsMessageImpl implements Ale
 			return MAPMessageType.alertServiceCentreWithoutResult_Request;
 	}
 
-	@Override
 	public int getOperationCode() {
 		return this.operationCode;
 	}
 
-	@Override
 	public ISDNAddressString getMsisdn() {
 		return this.msisdn;
 	}
 
-	@Override
 	public AddressString getServiceCentreAddress() {
 		return this.serviceCentreAddress;
 	}
 
 	
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
 	
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -114,7 +106,6 @@ public class AlertServiceCentreRequestImpl extends SmsMessageImpl implements Ale
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -169,13 +160,11 @@ public class AlertServiceCentreRequestImpl extends SmsMessageImpl implements Ale
 					MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 	
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -188,7 +177,6 @@ public class AlertServiceCentreRequestImpl extends SmsMessageImpl implements Ale
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		
 		if (this.msisdn == null || this.serviceCentreAddress == null)

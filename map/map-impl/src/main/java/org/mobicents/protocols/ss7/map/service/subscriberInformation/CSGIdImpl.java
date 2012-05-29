@@ -31,7 +31,6 @@ public class CSGIdImpl implements CSGId, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_BIT;
 	}
@@ -39,7 +38,6 @@ public class CSGIdImpl implements CSGId, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
@@ -47,7 +45,6 @@ public class CSGIdImpl implements CSGId, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
@@ -55,7 +52,6 @@ public class CSGIdImpl implements CSGId, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -74,7 +70,6 @@ public class CSGIdImpl implements CSGId, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -95,7 +90,6 @@ public class CSGIdImpl implements CSGId, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);
 	}
@@ -103,7 +97,6 @@ public class CSGIdImpl implements CSGId, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, true, tag);
@@ -118,7 +111,6 @@ public class CSGIdImpl implements CSGId, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		try {
 			asnOs.writeBitStringData(this.bitString);
@@ -132,9 +124,8 @@ public class CSGIdImpl implements CSGId, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.CSGId#getData()
 	 */
-	@Override
-	public byte[] getData() {
-		return bitString.toByteArray();
+	public String getData() {
+		return bitString.toString();
 	}
 
 }

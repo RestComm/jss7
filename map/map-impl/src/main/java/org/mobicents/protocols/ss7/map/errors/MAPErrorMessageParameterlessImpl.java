@@ -40,49 +40,39 @@ public class MAPErrorMessageParameterlessImpl extends MAPErrorMessageImpl implem
 		super(errorCode);
 	}
 	
-	@Override
 	public boolean isEmParameterless() {
 		return true;
 	}
 
-	@Override
 	public MAPErrorMessageParameterless getEmParameterless() {
 		return this;
 	}	
 	
 
-	@Override
 	public int getTag() throws MAPException {
 		throw new MAPException("MAPErrorMessageParameterless does not support encoding");
 	}
 
-	@Override
 	public int getTagClass() {
 		return 0;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 	}
 	

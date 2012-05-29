@@ -23,18 +23,18 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
 /**
-*
-IST-SupportIndicator ::=  ENUMERATED {
-	basicISTSupported	(0),
-	istCommandSupported	(1),
-	...}
--- exception handling:
--- reception of values > 1 shall be mapped to ' istCommandSupported '
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ *	IST-SupportIndicator ::=  ENUMERATED {
+ *		basicISTSupported	(0),
+ *		istCommandSupported	(1),
+ *		...}
+ *	-- exception handling:
+ *	-- reception of values > 1 shall be mapped to ' istCommandSupported '
+ *
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
 public enum IstSupportIndicator {
 	basicISTSupported(0), istCommandSupported(1);
 

@@ -54,17 +54,14 @@ public class CommandDataImpl implements CommandData {
 		this.isDecoded = true;
 	}
 
-	@Override
 	public byte[] getEncodedData() {
 		return this.encodedData;
 	}
 
-	@Override
 	public String getDecodedMessage() {
 		return decodedMessage;
 	}
 
-	@Override
 	public void encode() throws MAPException {
 
 		if (this.isEncoded)
@@ -83,7 +80,6 @@ public class CommandDataImpl implements CommandData {
 		bb.get(this.encodedData);
 	}
 
-	@Override
 	public void decode() throws MAPException {
 
 		if (this.isDecoded)

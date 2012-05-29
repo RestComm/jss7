@@ -65,7 +65,6 @@ public class UserDataHeaderImpl implements UserDataHeader {
 		}
 	}
 
-	@Override
 	public byte[] getEncodedData() {
 
 		if (data.size() == 0)
@@ -94,27 +93,22 @@ public class UserDataHeaderImpl implements UserDataHeader {
 		return res;
 	}
 
-	@Override
 	public Map<Integer, byte[]> getAllData() {
 		return data;
 	}
 
-	@Override
 	public void addInformationElement(int informationElementIdentifier, byte[] encodedData) {
 		this.data.put(informationElementIdentifier, encodedData);
 	}
 
-	@Override
 	public void addInformationElement(UserDataHeaderElement informationElement) {
 		this.data.put(informationElement.getEncodedInformationElementIdentifier(), informationElement.getEncodedInformationElementData());
 	}
 
-	@Override
 	public byte[] getInformationElementData(int informationElementIdentifier) {
 		return this.data.get(informationElementIdentifier);
 	}
 
-	@Override
 	public NationalLanguageLockingShiftIdentifier getNationalLanguageLockingShift() {
 		byte[] buf = this.data.get(_InformationElementIdentifier_NationalLanguageLockingShift);
 		if (buf != null && buf.length == 1)
@@ -123,7 +117,6 @@ public class UserDataHeaderImpl implements UserDataHeader {
 			return null;
 	}
 
-	@Override
 	public NationalLanguageSingleShiftIdentifier getNationalLanguageSingleShift() {
 		byte[] buf = this.data.get(_InformationElementIdentifier_NationalLanguageSingleShift);
 		if (buf != null && buf.length == 1)
@@ -132,7 +125,6 @@ public class UserDataHeaderImpl implements UserDataHeader {
 			return null;
 	}
 
-	@Override
 	public ConcatenatedShortMessagesIdentifier getConcatenatedShortMessagesIdentifier() {
 		byte[] buf = this.data.get(_InformationElementIdentifier_ConcatenatedShortMessages16bit);
 		if (buf != null && buf.length == 4)

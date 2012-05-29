@@ -54,7 +54,6 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.MNPInfoRes
 	 * #getRouteingNumber()
 	 */
-	@Override
 	public RouteingNumber getRouteingNumber() {
 		return this.routeingNumber;
 	}
@@ -66,7 +65,6 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.MNPInfoRes
 	 * #getIMSI()
 	 */
-	@Override
 	public IMSI getIMSI() {
 		return this.imsi;
 	}
@@ -78,7 +76,6 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.MNPInfoRes
 	 * #getMSISDN()
 	 */
-	@Override
 	public ISDNAddressString getMSISDN() {
 		return this.msisdn;
 	}
@@ -90,7 +87,6 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.MNPInfoRes
 	 * #getNumberPortabilityStatus()
 	 */
-	@Override
 	public NumberPortabilityStatus getNumberPortabilityStatus() {
 		return this.numberPortabilityStatus;
 	}
@@ -102,7 +98,6 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.MNPInfoRes
 	 * #getExtensionContainer()
 	 */
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
@@ -112,7 +107,6 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * 
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
@@ -123,7 +117,6 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * @see
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
@@ -135,7 +128,6 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
 	 * ()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
@@ -147,7 +139,6 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
 	 * org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -168,7 +159,6 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
 	 * (org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -234,7 +224,6 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
 	}
@@ -246,7 +235,6 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
 	 * org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, true, tag);
@@ -265,7 +253,6 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.routeingNumber != null)
 			((RouteingNumberImpl) this.routeingNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_routeingNumber);

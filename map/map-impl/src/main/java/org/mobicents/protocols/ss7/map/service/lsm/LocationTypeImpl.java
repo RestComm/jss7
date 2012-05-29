@@ -65,7 +65,6 @@ public class LocationTypeImpl implements LocationType, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.LocationType#
 	 * getLocationEstimateType()
 	 */
-	@Override
 	public LocationEstimateType getLocationEstimateType() {
 		return this.locationEstimateType;
 	}
@@ -76,7 +75,6 @@ public class LocationTypeImpl implements LocationType, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.LocationType#
 	 * getDeferredLocationEventType()
 	 */
-	@Override
 	public DeferredLocationEventType getDeferredLocationEventType() {
 		return this.deferredLocationEventType;
 	}
@@ -87,7 +85,6 @@ public class LocationTypeImpl implements LocationType, MAPAsnPrimitive {
 	 * @see
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
@@ -99,7 +96,6 @@ public class LocationTypeImpl implements LocationType, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
 	 * ()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
@@ -111,7 +107,6 @@ public class LocationTypeImpl implements LocationType, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
 	 * ()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
@@ -123,7 +118,6 @@ public class LocationTypeImpl implements LocationType, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
 	 * (org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -144,7 +138,6 @@ public class LocationTypeImpl implements LocationType, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
 	 * (org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -203,7 +196,6 @@ public class LocationTypeImpl implements LocationType, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
@@ -215,7 +207,6 @@ public class LocationTypeImpl implements LocationType, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
 	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, false, tag);
@@ -234,7 +225,6 @@ public class LocationTypeImpl implements LocationType, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.locationEstimateType == null) {
 			throw new MAPException("Error while encoding LocationType the mandatory parameter LocationEstimateType is not defined");

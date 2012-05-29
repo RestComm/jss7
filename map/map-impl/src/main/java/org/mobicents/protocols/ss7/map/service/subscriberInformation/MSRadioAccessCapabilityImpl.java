@@ -33,27 +33,22 @@ public class MSRadioAccessCapabilityImpl implements MSRadioAccessCapability, MAP
 		this.data = data;
 	}
 
-	@Override
 	public byte[] getData() {
 		return data;
 	}
 
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_OCTET;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -68,7 +63,6 @@ public class MSRadioAccessCapabilityImpl implements MSRadioAccessCapability, MAP
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -91,13 +85,11 @@ public class MSRadioAccessCapabilityImpl implements MSRadioAccessCapability, MAP
 					MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
 		try {
@@ -110,7 +102,6 @@ public class MSRadioAccessCapabilityImpl implements MSRadioAccessCapability, MAP
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.data == null)

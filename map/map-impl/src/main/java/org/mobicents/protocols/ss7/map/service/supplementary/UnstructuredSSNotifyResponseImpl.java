@@ -43,12 +43,10 @@ public class UnstructuredSSNotifyResponseImpl extends SupplementaryMessageImpl i
 		return (MAPDialogSupplementary) super.getMAPDialog();
 	}
 
-	@Override
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.unstructuredSSNotify_Response;
 	}
 
-	@Override
 	public int getOperationCode() {
 		return MAPOperationCode.unstructuredSS_Notify;
 	}
@@ -58,7 +56,6 @@ public class UnstructuredSSNotifyResponseImpl extends SupplementaryMessageImpl i
 	 * 
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
@@ -69,7 +66,6 @@ public class UnstructuredSSNotifyResponseImpl extends SupplementaryMessageImpl i
 	 * @see
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
@@ -81,7 +77,6 @@ public class UnstructuredSSNotifyResponseImpl extends SupplementaryMessageImpl i
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
 	 * ()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
@@ -93,7 +88,6 @@ public class UnstructuredSSNotifyResponseImpl extends SupplementaryMessageImpl i
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
 	 * org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		throw new MAPParsingComponentException("UnstructuredSSNotifyResponseIndication has no MAP message primitive",
 				MAPParsingComponentExceptionReason.MistypedParameter);
@@ -106,7 +100,6 @@ public class UnstructuredSSNotifyResponseImpl extends SupplementaryMessageImpl i
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
 	 * (org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		throw new MAPParsingComponentException("UnstructuredSSNotifyResponseIndication has no MAP message primitive",
 				MAPParsingComponentExceptionReason.MistypedParameter);
@@ -119,7 +112,6 @@ public class UnstructuredSSNotifyResponseImpl extends SupplementaryMessageImpl i
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		throw new MAPException("UnstructuredSSNotifyResponseIndication has no MAP message primitive");
 	}
@@ -131,7 +123,6 @@ public class UnstructuredSSNotifyResponseImpl extends SupplementaryMessageImpl i
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
 	 * org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		throw new MAPException("UnstructuredSSNotifyResponseIndication has no MAP message primitive");
 	}
@@ -143,7 +134,6 @@ public class UnstructuredSSNotifyResponseImpl extends SupplementaryMessageImpl i
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		throw new MAPException("UnstructuredSSNotifyResponseIndication has no MAP message primitive");
 	}

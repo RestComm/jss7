@@ -62,27 +62,22 @@ public class ConcatenatedShortMessagesIdentifierImpl implements ConcatenatedShor
 		}
 	}
 	
-	@Override
 	public boolean getReferenceIs16bit() {
 		return referenceIs16bit;
 	}
 
-	@Override
 	public int getReference() {
 		return reference;
 	}
 
-	@Override
 	public int getMesageSegmentCount() {
 		return mesageSegmentCount;
 	}
 
-	@Override
 	public int getMesageSegmentNumber() {
 		return mesageSegmentNumber;
 	}
 
-	@Override
 	public int getEncodedInformationElementIdentifier() {
 		if (this.getReferenceIs16bit())
 			return UserDataHeader._InformationElementIdentifier_ConcatenatedShortMessages16bit;
@@ -90,7 +85,6 @@ public class ConcatenatedShortMessagesIdentifierImpl implements ConcatenatedShor
 			return UserDataHeader._InformationElementIdentifier_ConcatenatedShortMessages8bit;
 	}
 
-	@Override
 	public byte[] getEncodedInformationElementData() {
 		byte[] res;
 		if (this.referenceIs16bit) {

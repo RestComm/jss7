@@ -58,32 +58,26 @@ public class UnstructuredSSResponseImpl extends SupplementaryMessageImpl impleme
 		super(ussdDataCodingSch, ussdString);
 	}
 
-	@Override
 	public MAPMessageType getMessageType() {
-		return MAPMessageType.processUnstructuredSSRequest_Response;
+		return MAPMessageType.unstructuredSSRequest_Response;
 	}
 
-	@Override
 	public int getOperationCode() {
 		return MAPOperationCode.unstructuredSS_Request;
 	}
 
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -98,7 +92,6 @@ public class UnstructuredSSResponseImpl extends SupplementaryMessageImpl impleme
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -141,13 +134,11 @@ public class UnstructuredSSResponseImpl extends SupplementaryMessageImpl impleme
 
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
 		try {
@@ -160,7 +151,6 @@ public class UnstructuredSSResponseImpl extends SupplementaryMessageImpl impleme
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.ussdString == null)

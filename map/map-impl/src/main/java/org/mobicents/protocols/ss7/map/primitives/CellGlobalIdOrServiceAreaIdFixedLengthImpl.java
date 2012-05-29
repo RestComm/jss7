@@ -91,12 +91,10 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl implements CellGlobalIdO
 		data[6] = (byte)(cellId % 256);
 	}
 
-	@Override
 	public byte[] getData() {
 		return data;
 	}
 
-	@Override
 	public int getMCC() throws MAPException {
 		
 		if (data == null)
@@ -122,7 +120,6 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl implements CellGlobalIdO
 		return Integer.parseInt(sMcc);
 	}
 
-	@Override
 	public int getMNC() throws MAPException {
 		
 		if (data == null)
@@ -153,7 +150,6 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl implements CellGlobalIdO
 		return Integer.parseInt(sMnc);
 	}
 
-	@Override
 	public int getLac() throws MAPException {
 
 		if (data == null)
@@ -178,22 +174,18 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl implements CellGlobalIdO
 	}
 
 	
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_OCTET;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -207,7 +199,6 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl implements CellGlobalIdO
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -233,13 +224,10 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl implements CellGlobalIdO
 		}
 	}	
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -252,7 +240,6 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl implements CellGlobalIdO
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.data == null)

@@ -66,59 +66,48 @@ public class MAPErrorMessageCallBarredImpl extends MAPErrorMessageImpl implement
 		super((long) MAPErrorCode.callBarred);
 	}
 	
-	@Override
 	public boolean isEmCallBarred() {
 		return true;
 	}
 
-	@Override
 	public MAPErrorMessageCallBarred getEmCallBarred() {
 		return this;
 	}
 
 	
-	@Override
 	public CallBarringCause getCallBarringCause() {
 		return this.callBarringCause;
 	}
 
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
 
-	@Override
 	public Boolean getUnauthorisedMessageOriginator() {
 		return this.unauthorisedMessageOriginator;
 	}
 
-	@Override
 	public long getMapProtocolVersion() {
 		return this.mapProtocolVersion;
 	}
 	
-	@Override
 	public void setCallBarringCause(CallBarringCause callBarringCause) {
 		this.callBarringCause = callBarringCause;
 	}
 
-	@Override
 	public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
 		this.extensionContainer = extensionContainer;
 	}
 
-	@Override
 	public void setUnauthorisedMessageOriginator(Boolean unauthorisedMessageOriginator) {
 		this.unauthorisedMessageOriginator = unauthorisedMessageOriginator;
 	}
 
-	@Override
 	public void setMapProtocolVersion(long mapProtocolVersion) {
 		this.mapProtocolVersion = mapProtocolVersion;
 	}	
 	
 	
-	@Override
 	public int getTag() throws MAPException {
 		if (this.mapProtocolVersion < 3)
 			return Tag.ENUMERATED;
@@ -126,12 +115,10 @@ public class MAPErrorMessageCallBarredImpl extends MAPErrorMessageImpl implement
 			return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		if (this.mapProtocolVersion < 3)
 			return true;
@@ -139,7 +126,6 @@ public class MAPErrorMessageCallBarredImpl extends MAPErrorMessageImpl implement
 			return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -154,7 +140,6 @@ public class MAPErrorMessageCallBarredImpl extends MAPErrorMessageImpl implement
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -256,7 +241,6 @@ public class MAPErrorMessageCallBarredImpl extends MAPErrorMessageImpl implement
 			this.unauthorisedMessageOriginator = false;
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.mapProtocolVersion < 3)
@@ -265,7 +249,6 @@ public class MAPErrorMessageCallBarredImpl extends MAPErrorMessageImpl implement
 			this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -281,7 +264,6 @@ public class MAPErrorMessageCallBarredImpl extends MAPErrorMessageImpl implement
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream aos) throws MAPException {
 
 		if (this.callBarringCause == null && (this.unauthorisedMessageOriginator == null || this.unauthorisedMessageOriginator == false)

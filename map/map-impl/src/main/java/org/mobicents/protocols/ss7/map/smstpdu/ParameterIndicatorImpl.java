@@ -45,12 +45,10 @@ public class ParameterIndicatorImpl implements ParameterIndicator {
 		this.code = (TP_UDLPresence ? _MASK_TP_UDL : 0) + (getTP_DCSPresence ? _MASK_TP_DCS : 0) + (getTP_PIDPresence ? _MASK_TP_PID : 0);
 	}
 
-	@Override
 	public int getCode() {
 		return code;
 	}
 
-	@Override
 	public boolean getTP_UDLPresence() {
 		if ((this.code & _MASK_TP_UDL) != 0)
 			return true;
@@ -58,7 +56,6 @@ public class ParameterIndicatorImpl implements ParameterIndicator {
 			return false;
 	}
 
-	@Override
 	public boolean getTP_DCSPresence() {
 		if ((this.code & _MASK_TP_DCS) != 0)
 			return true;
@@ -66,7 +63,6 @@ public class ParameterIndicatorImpl implements ParameterIndicator {
 			return false;
 	}
 
-	@Override
 	public boolean getTP_PIDPresence() {
 		if ((this.code & _MASK_TP_PID) != 0)
 			return true;

@@ -109,17 +109,14 @@ public class MAPStackImpl implements MAPStack, CongestionListener {
 		IDLE, CONFIGURED, RUNNING;
 	}
 
-	@Override
 	public TCAPStack getTCAPStack() {
 		return this.tcapStack;
 	}
 
-	@Override
 	public void onCongestionStart(String congName) {
 		this.mapProvider.onCongestionStart(congName);
 	}
 
-	@Override
 	public void onCongestionFinish(String congName) {
 		this.mapProvider.onCongestionFinish(congName);
 	}

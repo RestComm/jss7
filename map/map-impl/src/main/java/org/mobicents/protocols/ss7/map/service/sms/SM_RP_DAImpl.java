@@ -74,17 +74,14 @@ public class SM_RP_DAImpl implements SM_RP_DA, MAPAsnPrimitive {
 	}
 	
 	
-	@Override
 	public IMSI getIMSI() {
 		return this.imsi;
 	}
 	
-	@Override
 	public LMSI getLMSI() {
 		return this.lmsi;
 	}
 
-	@Override
 	public AddressString getServiceCentreAddressDA() {
 		return serviceCentreAddressDA;
 	}
@@ -105,13 +102,11 @@ public class SM_RP_DAImpl implements SM_RP_DA, MAPAsnPrimitive {
 			return _TAG_NoSM_RP_DA;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
 
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -126,7 +121,6 @@ public class SM_RP_DAImpl implements SM_RP_DA, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -183,13 +177,11 @@ public class SM_RP_DAImpl implements SM_RP_DA, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -202,7 +194,6 @@ public class SM_RP_DAImpl implements SM_RP_DA, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		
 		if (this.imsi != null)

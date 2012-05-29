@@ -71,7 +71,6 @@ public class MAPServiceSubscriberInformationImpl extends MAPServiceBaseImpl impl
 	 * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress,
 	 * org.mobicents.protocols.ss7.map.api.primitives.AddressString)
 	 */
-	@Override
 	public MAPDialogSubscriberInformation createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference,
 			SccpAddress destAddress, AddressString destReference) throws MAPException {
 
@@ -97,7 +96,6 @@ public class MAPServiceSubscriberInformationImpl extends MAPServiceBaseImpl impl
 	 * .ss7.map.api.service.subscriberInformation
 	 * .MAPServiceSubscriberInformationListener)
 	 */
-	@Override
 	public void addMAPServiceListener(MAPServiceSubscriberInformationListener mapServiceListener) {
 		super.addMAPServiceListener(mapServiceListener);
 	}
@@ -111,7 +109,6 @@ public class MAPServiceSubscriberInformationImpl extends MAPServiceBaseImpl impl
 	 * .ss7.map.api.service.subscriberInformation
 	 * .MAPServiceSubscriberInformationListener)
 	 */
-	@Override
 	public void removeMAPServiceListener(MAPServiceSubscriberInformationListener mapServiceListener) {
 		super.addMAPServiceListener(mapServiceListener);
 	}
@@ -123,7 +120,6 @@ public class MAPServiceSubscriberInformationImpl extends MAPServiceBaseImpl impl
 	 * org.mobicents.protocols.ss7.map.api.MAPServiceBase#isServingService(org
 	 * .mobicents.protocols.ss7.map.api.MAPApplicationContext)
 	 */
-	@Override
 	public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext) {
 		MAPApplicationContextName ctx = dialogApplicationContext.getApplicationContextName();
 		int vers = dialogApplicationContext.getApplicationContextVersion().getVersion();
@@ -146,7 +142,6 @@ public class MAPServiceSubscriberInformationImpl extends MAPServiceBaseImpl impl
 	 * (org.mobicents.protocols.ss7.map.api.MAPApplicationContext,
 	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog)
 	 */
-	@Override
 	protected MAPDialogImpl createNewDialogIncoming(MAPApplicationContext appCntx, Dialog tcapDialog) {
 		return new MAPDialogSubscriberInformationImpl(appCntx, tcapDialog, this.mapProviderImpl, this, null, null);
 	}
@@ -162,7 +157,6 @@ public class MAPServiceSubscriberInformationImpl extends MAPServiceBaseImpl impl
 	 * org.mobicents.protocols.ss7.map.api.MAPDialog, java.lang.Long,
 	 * java.lang.Long)
 	 */
-	@Override
 	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)
 			throws MAPParsingComponentException {
 

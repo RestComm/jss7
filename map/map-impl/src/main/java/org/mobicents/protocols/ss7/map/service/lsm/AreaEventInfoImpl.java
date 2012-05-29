@@ -75,7 +75,6 @@ public class AreaEventInfoImpl implements AreaEventInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.AreaEventInfo#
 	 * getAreaDefinition()
 	 */
-	@Override
 	public AreaDefinition getAreaDefinition() {
 		return this.areaDefinition;
 	}
@@ -86,7 +85,6 @@ public class AreaEventInfoImpl implements AreaEventInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.AreaEventInfo#
 	 * getOccurrenceInfo()
 	 */
-	@Override
 	public OccurrenceInfo getOccurrenceInfo() {
 		return this.occurrenceInfo;
 	}
@@ -98,7 +96,6 @@ public class AreaEventInfoImpl implements AreaEventInfo, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.lsm.AreaEventInfo#getIntervalTime
 	 * ()
 	 */
-	@Override
 	public Integer getIntervalTime() {
 		return this.intervalTime;
 	}
@@ -106,7 +103,6 @@ public class AreaEventInfoImpl implements AreaEventInfo, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
@@ -114,7 +110,6 @@ public class AreaEventInfoImpl implements AreaEventInfo, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
@@ -122,7 +117,6 @@ public class AreaEventInfoImpl implements AreaEventInfo, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
@@ -130,7 +124,6 @@ public class AreaEventInfoImpl implements AreaEventInfo, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -147,7 +140,6 @@ public class AreaEventInfoImpl implements AreaEventInfo, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -213,7 +205,6 @@ public class AreaEventInfoImpl implements AreaEventInfo, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);				
 	}
@@ -221,7 +212,6 @@ public class AreaEventInfoImpl implements AreaEventInfo, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, false, tag);
@@ -236,7 +226,6 @@ public class AreaEventInfoImpl implements AreaEventInfo, MAPAsnPrimitive {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.areaDefinition == null) {
 			throw new MAPException("Error while encoding AreaEventInfo the mandatory parameter[areaDefinition [0] AreaDefinition] is not defined");

@@ -88,7 +88,6 @@ public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.lsm.LCSQoS#getHorizontalAccuracy
 	 * ()
 	 */
-	@Override
 	public Integer getHorizontalAccuracy() {
 		return this.horizontalAccuracy;
 	}
@@ -99,7 +98,6 @@ public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.LCSQoS#
 	 * getVerticalCoordinateRequest()
 	 */
-	@Override
 	public Boolean getVerticalCoordinateRequest() {
 		return this.verticalCoordinateRequest;
 	}
@@ -111,7 +109,6 @@ public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.lsm.LCSQoS#getVerticalAccuracy
 	 * ()
 	 */
-	@Override
 	public Integer getVerticalAccuracy() {
 		return this.verticalAccuracy;
 	}
@@ -122,7 +119,6 @@ public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 	 * @see
 	 * org.mobicents.protocols.ss7.map.api.service.lsm.LCSQoS#getResponseTime()
 	 */
-	@Override
 	public ResponseTime getResponseTime() {
 		return this.responseTime;
 	}
@@ -134,7 +130,6 @@ public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.lsm.LCSQoS#getExtensionContainer
 	 * ()
 	 */
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
@@ -145,7 +140,6 @@ public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 	 * @see
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
@@ -157,7 +151,6 @@ public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
 	 * ()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_CONTEXT_SPECIFIC;
 	}
@@ -169,7 +162,6 @@ public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
 	 * ()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
@@ -181,7 +173,6 @@ public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
 	 * (org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -202,7 +193,6 @@ public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
 	 * (org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -279,7 +269,6 @@ public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
@@ -291,7 +280,6 @@ public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
 	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, false, tag);
@@ -310,7 +298,6 @@ public class LCSQoSImpl implements LCSQoS, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.horizontalAccuracy != null) {
 			try {

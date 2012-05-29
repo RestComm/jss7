@@ -37,7 +37,6 @@ public class StatusImpl implements Status {
 		this.code = code;
 	}
 
-	@Override
 	public int getCode() {
 		return this.code;
 	}

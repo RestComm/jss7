@@ -68,59 +68,47 @@ public class MoForwardShortMessageRequestImpl extends SmsMessageImpl implements 
 		this.imsi = imsi;
 	}
 
-	@Override
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.moForwardSM_Request;
 	}
 
-	@Override
 	public int getOperationCode() {
 		return MAPOperationCode.mo_forwardSM;
 	}
 
-	@Override
 	public SM_RP_DA getSM_RP_DA() {
 		return this.sm_RP_DA;
 	}
 
-	@Override
 	public SM_RP_OA getSM_RP_OA() {
 		return this.sm_RP_OA;
 	}
 
-	@Override
 	public SmsSignalInfo getSM_RP_UI() {
 		return this.sm_RP_UI;
 	}
 
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
 
-	@Override
 	public IMSI getIMSI() {
 		return this.imsi;
 	}
 
-	
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
 	
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -135,7 +123,6 @@ public class MoForwardShortMessageRequestImpl extends SmsMessageImpl implements 
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -223,13 +210,11 @@ public class MoForwardShortMessageRequestImpl extends SmsMessageImpl implements 
 					MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -242,7 +227,6 @@ public class MoForwardShortMessageRequestImpl extends SmsMessageImpl implements 
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.sm_RP_DA == null || this.sm_RP_OA == null || this.sm_RP_UI == null)
