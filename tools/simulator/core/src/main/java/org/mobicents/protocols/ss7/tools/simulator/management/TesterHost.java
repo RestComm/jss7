@@ -648,18 +648,27 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.dialogic.setDestinationModuleId(_dial.getDestinationModuleId());
 
 			SccpMan _sccp = reader.read(SCCP, SccpMan.class);
-			this.sccp.setDpc(_sccp.getDpc());
-			this.sccp.setOpc(_sccp.getOpc());
+			this.sccp.setRemoteSpc(_sccp.getRemoteSpc());
+			this.sccp.setLocalSpc(_sccp.getLocalSpc());
 			this.sccp.setNi(_sccp.getNi());
 			this.sccp.setRemoteSsn(_sccp.getRemoteSsn());
+			this.sccp.setLocalSsn(_sccp.getLocalSsn());
+			this.sccp.setGlobalTitleType(_sccp.getGlobalTitleType());
+			this.sccp.setNatureOfAddress(_sccp.getNatureOfAddress());
+			this.sccp.setNumberingPlan(_sccp.getNumberingPlan());
+			this.sccp.setTranslationType(_sccp.getTranslationType());
+			this.sccp.setCallingPartyAddressDigits(_sccp.getCallingPartyAddressDigits());
 
 			MapMan _tcap = reader.read(MAP, MapMan.class);
-			this.map.setLocalPc(_tcap.getLocalPc());
-			this.map.setRemotePc(_tcap.getRemotePc());
 			this.map.setLocalSsn(_tcap.getLocalSsn());
 			this.map.setRemoteSsn(_tcap.getRemoteSsn());
+			this.map.setRemoteAddressDigits(_tcap.getRemoteAddressDigits());
 			this.map.setOrigReference(_tcap.getOrigReference());
+			this.map.setOrigReferenceAddressNature(_tcap.getOrigReferenceAddressNature());
+			this.map.setOrigReferenceNumberingPlan(_tcap.getOrigReferenceNumberingPlan());
 			this.map.setDestReference(_tcap.getDestReference());
+			this.map.setDestReferenceAddressNature(_tcap.getDestReferenceAddressNature());
+			this.map.setDestReferenceNumberingPlan(_tcap.getDestReferenceNumberingPlan());
 
 			TestUssdClientMan _TestUssdClientMan = reader.read(TEST_USSD_CLIENT, TestUssdClientMan.class);
 			this.testUssdClientMan.setMsisdnAddress(_TestUssdClientMan.getMsisdnAddress());

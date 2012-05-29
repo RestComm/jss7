@@ -36,6 +36,9 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
+
+import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicManStandardMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaManStandardMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level2.SccpManMBean;
@@ -156,6 +159,7 @@ public class MainCore {
 		ObjectName adapterName = new ObjectName("SS7_Simulator_" + appName + ":name=htmladapter,port=" + httpPort);
 		ObjectName nameTesterHost = new ObjectName("SS7_Simulator_" + appName + ":type=TesterHost");
 		ObjectName nameM3uaMan = new ObjectName("SS7_Simulator_" + appName + ":type=M3uaMan");
+		ObjectName nameDialogicMan = new ObjectName("SS7_Simulator_" + appName + ":type=DialogicMan");
 		ObjectName nameSccpMan = new ObjectName("SS7_Simulator_" + appName + ":type=SccpMan");
 		ObjectName nameMapMan = new ObjectName("SS7_Simulator_" + appName + ":type=MapMan");
 		ObjectName nameUssdClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestUssdClientMan");
@@ -180,6 +184,9 @@ public class MainCore {
 
 			M3uaManStandardMBean m3uaMBean = new M3uaManStandardMBean(host.getM3uaMan(), M3uaManMBean.class);
 			mbs.registerMBean(m3uaMBean, nameM3uaMan);
+
+			DialogicManStandardMBean dialogicMBean = new DialogicManStandardMBean(host.getDialogicMan(), DialogicManMBean.class);
+			mbs.registerMBean(dialogicMBean, nameDialogicMan);
 
 			SccpManStandardMBean sccpMBean = new SccpManStandardMBean(host.getSccpMan(), SccpManMBean.class);
 			mbs.registerMBean(sccpMBean, nameSccpMan);
@@ -245,6 +252,7 @@ public class MainCore {
 
 		mbs.unregisterMBean(nameTesterHost);
 		mbs.unregisterMBean(nameM3uaMan);
+		mbs.unregisterMBean(nameDialogicMan);
 		mbs.unregisterMBean(nameSccpMan);
 		mbs.unregisterMBean(nameMapMan);
 		mbs.unregisterMBean(nameUssdClientManMan);

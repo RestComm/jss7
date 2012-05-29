@@ -87,7 +87,7 @@ public class DialogImplWrapper extends DialogImpl {
 			return null;
 		
 		for (Component c : components) {
-
+			// adding 1 to InvokeId: excluding 0 value
 			c.setInvokeId(c.getInvokeId() + 1);
 
 			boolean rev = false;

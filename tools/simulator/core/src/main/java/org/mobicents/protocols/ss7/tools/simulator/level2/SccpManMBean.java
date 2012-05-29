@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level2;
 
+
 /**
  * 
  * @author sergey vetyutnev
@@ -29,13 +30,13 @@ package org.mobicents.protocols.ss7.tools.simulator.level2;
  */
 public interface SccpManMBean {
 
-	public int getDpc();
+	public int getRemoteSpc();
 
-	public void setDpc(int val);
+	public void setRemoteSpc(int val);
 
-	public int getOpc();
+	public int getLocalSpc();
 
-	public void setOpc(int val);
+	public void setLocalSpc(int val);
 
 	public int getNi();
 
@@ -45,4 +46,42 @@ public interface SccpManMBean {
 
 	public void setRemoteSsn(int val);
 
+	public int getLocalSsn();
+
+	public void setLocalSsn(int val);
+
+	public GlobalTitleType getGlobalTitleType();
+
+	public String getGlobalTitleType_Value();
+
+	public void setGlobalTitleType(GlobalTitleType val);
+
+	public NatureOfAddressType getNatureOfAddress();
+
+	public String getNatureOfAddress_Value();
+
+	public void setNatureOfAddress(NatureOfAddressType val);
+
+	public NumberingPlanType getNumberingPlan();
+
+	public String getNumberingPlan_Value();
+
+	public void setNumberingPlan(NumberingPlanType val);
+
+	public int getTranslationType();
+
+	public void setTranslationType(int val);
+
+	public String getCallingPartyAddressDigits();
+
+	public void setCallingPartyAddressDigits(String val);
+
+
+	public void putGlobalTitleType(String val);
+
+	public void putNatureOfAddress(String val);
+
+	public void putNumberingPlan(String val);
+
 }
+

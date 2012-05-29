@@ -211,7 +211,11 @@ public class TestingForm extends JDialog {
 		});
 		btStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				host.stop();
+				try {
+					host.stop();
+				} catch (Throwable e1) {
+					JOptionPane.showMessageDialog(getJFrame(), "Exception: " + e1.toString());
+				}
 				btStart.setEnabled(true);
 				btStop.setEnabled(false);
 				setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -222,7 +226,11 @@ public class TestingForm extends JDialog {
 				btStart.setEnabled(false);
 				btStop.setEnabled(true);
 				setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-				host.start();
+				try {
+					host.start();
+				} catch (Throwable e1) {
+					JOptionPane.showMessageDialog(getJFrame(), "Exception: " + e1.toString());
+				}
 			}
 		});
 		
