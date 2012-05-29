@@ -43,6 +43,11 @@ import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
+import javax.swing.SwingConstants;
 
 /**
  * 
@@ -64,6 +69,10 @@ public class SccpForm extends JDialog {
 	private JComboBox cbAddressNature;
 	private JComboBox cbNumberingPlan;
 	private JTextField tbCallingPartyAddressDigits;
+	private JRadioButton rbRouteDpcSsn;
+	private JRadioButton rbRouteGt;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private JPanel panel_1;
 
 	public SccpForm(JFrame owner) {
 		super(owner, true);
@@ -71,7 +80,7 @@ public class SccpForm extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("SCCP settings");
-		setBounds(100, 100, 590, 497);
+		setBounds(100, 100, 590, 670);
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -119,7 +128,7 @@ public class SccpForm extends JDialog {
 				loadDataA();
 			}
 		});
-		button.setBounds(10, 401, 245, 23);
+		button.setBounds(10, 574, 245, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("Load default values for side B");
@@ -128,7 +137,7 @@ public class SccpForm extends JDialog {
 				loadDataB();
 			}
 		});
-		button_1.setBounds(265, 401, 234, 23);
+		button_1.setBounds(265, 574, 234, 23);
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("Reload");
@@ -137,7 +146,7 @@ public class SccpForm extends JDialog {
 				reloadData();
 			}
 		});
-		button_2.setBounds(10, 435, 144, 23);
+		button_2.setBounds(10, 608, 144, 23);
 		panel.add(button_2);
 		
 		JButton button_3 = new JButton("Save");
@@ -148,7 +157,7 @@ public class SccpForm extends JDialog {
 				}
 			}
 		});
-		button_3.setBounds(255, 435, 117, 23);
+		button_3.setBounds(255, 608, 117, 23);
 		panel.add(button_3);
 		
 		JButton button_4 = new JButton("Cancel");
@@ -157,7 +166,7 @@ public class SccpForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		button_4.setBounds(382, 435, 117, 23);
+		button_4.setBounds(382, 608, 117, 23);
 		panel.add(button_4);
 		
 		tbLocalSsn = new JTextField();
@@ -169,10 +178,10 @@ public class SccpForm extends JDialog {
 		lblLocalSsn.setBounds(10, 138, 112, 14);
 		panel.add(lblLocalSsn);
 		
-		JPanel panel_1 = new JPanel();
+		panel_1 = new JPanel();
 		panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel_1.setLayout(null);
-		panel_1.setBounds(10, 166, 564, 224);
+		panel_1.setBounds(10, 366, 564, 179);
 		panel.add(panel_1);
 		
 		JLabel lblParametersForCreating = new JLabel("Parameters for creating SccpAddress (when routing on GT)");
@@ -221,13 +230,30 @@ public class SccpForm extends JDialog {
 		tbCallingPartyAddressDigits.setBounds(219, 147, 231, 20);
 		panel_1.add(tbCallingPartyAddressDigits);
 		
-		JLabel lblNewLabel = new JLabel("If empty ROUTING_BASED_ON_DPC_AND_SSN is used for CallingPartyAddress");
-		lblNewLabel.setBounds(10, 172, 544, 14);
-		panel_1.add(lblNewLabel);
+		rbRouteDpcSsn = new JRadioButton("Route on DPC and SSN mode");
+		buttonGroup.add(rbRouteDpcSsn);
+		rbRouteDpcSsn.setBounds(6, 164, 332, 23);
+		panel.add(rbRouteDpcSsn);
 		
-		JLabel lblNewLabel_1 = new JLabel("if not empty ROUTING_BASED_ON_GLOBAL_TITLE is used");
-		lblNewLabel_1.setBounds(10, 190, 544, 14);
-		panel_1.add(lblNewLabel_1);
+		rbRouteGt = new JRadioButton("Route on GlobalTitle mode");
+		rbRouteGt.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				setRouteOnGtEnabled(e.getStateChange() == 1);
+			}
+		});
+		buttonGroup.add(rbRouteGt);
+		rbRouteGt.setBounds(10, 247, 332, 23);
+		panel.add(rbRouteGt);
+		
+		JLabel lblNewLabel = new JLabel("<html>\r\nCallingPartyAddress:  RoutingIndicator=RoutingOnDpcAndSsn, PC=localSpc, GT=null, SSN=localSsn<br>\r\nCalledPartyAddress:  RoutingIndicator=RoutingOnDpcAndSsn PC=remoteSpc, GT=null, SSN=remoteSsn\r\n</html>");
+		lblNewLabel.setVerticalAlignment(SwingConstants.TOP);
+		lblNewLabel.setBounds(10, 190, 564, 50);
+		panel.add(lblNewLabel);
+		
+		JLabel lblNewLabel_1 = new JLabel("<html>\r\nCallingPartyAddress:  RoutingIndicator=RoutingOnGt, PC=0, GT=CallingPartyAddress digits, SSN=localSsn<br>\r\nCalledPartyAddress:  RoutingIndicator=RoutingOnGt, PC=0, GT and SSN is supplied by upper levels<br>\r\nAll messages will be routed to remoteSpc except messages with CallingPartyAddress digits\r\n</html>");
+		lblNewLabel_1.setVerticalAlignment(SwingConstants.TOP);
+		lblNewLabel_1.setBounds(10, 277, 564, 78);
+		panel.add(lblNewLabel_1);
 	}
 
 	public void setData(SccpManMBean sccp) {
@@ -241,6 +267,14 @@ public class SccpForm extends JDialog {
 	}
 
 	private void reloadData() {
+		if (!this.sccp.isRouteOnGtMode()) {
+			this.rbRouteDpcSsn.setSelected(true);
+			setRouteOnGtEnabled(false);
+		} else {
+			this.rbRouteGt.setSelected(true);
+			setRouteOnGtEnabled(true);
+		}
+
 		M3uaForm.setEnumeratedBaseComboBox(cbGlobalTitleType, this.sccp.getGlobalTitleType());
 		M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, this.sccp.getNatureOfAddress());
 		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, this.sccp.getNumberingPlan());
@@ -256,6 +290,9 @@ public class SccpForm extends JDialog {
 	}
 
 	private void loadDataA() {
+		this.rbRouteDpcSsn.setSelected(true);
+		setRouteOnGtEnabled(false);
+
 		M3uaForm.setEnumeratedBaseComboBox(cbGlobalTitleType, new GlobalTitleType(GlobalTitleType.VAL_TT_NP_ES_NOA));
 		M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, new NatureOfAddressType(NatureOfAddress.INTERNATIONAL.getValue()));
 		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN_MOBILE.getValue()));
@@ -271,6 +308,9 @@ public class SccpForm extends JDialog {
 	}
 
 	private void loadDataB() {
+		this.rbRouteDpcSsn.setSelected(true);
+		setRouteOnGtEnabled(false);
+
 		M3uaForm.setEnumeratedBaseComboBox(cbGlobalTitleType, new GlobalTitleType(GlobalTitleType.VAL_TT_NP_ES_NOA));
 		M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, new NatureOfAddressType(NatureOfAddress.INTERNATIONAL.getValue()));
 		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN_MOBILE.getValue()));
@@ -329,6 +369,8 @@ public class SccpForm extends JDialog {
 			return false;
 		}
 
+		this.sccp.setRouteOnGtMode(this.rbRouteGt.isSelected());
+
 		this.sccp.setRemoteSpc(remoteSpc);
 		this.sccp.setLocalSpc(localSpc);
 		this.sccp.setNi(ni);
@@ -343,6 +385,14 @@ public class SccpForm extends JDialog {
 		this.sccp.setCallingPartyAddressDigits(tbCallingPartyAddressDigits.getText());
 
 		return true;
+	}
+	
+	private void setRouteOnGtEnabled(boolean val){
+		this.cbGlobalTitleType.setEnabled(val);
+		this.cbAddressNature.setEnabled(val);
+		this.cbNumberingPlan.setEnabled(val);
+		this.tbTranslationType.setEnabled(val);
+		this.tbCallingPartyAddressDigits.setEnabled(val);
 	}
 }
 

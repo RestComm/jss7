@@ -56,6 +56,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 	public static String SOURCE_NAME = "SCCP";
 
+	private static final String REMOTE_ON_GT_MODE = "routeOnGtMode";
 	private static final String REMOTE_SPC = "remoteSpc";
 	private static final String LOCAL_SPC = "localSpc";
 	private static final String NI = "ni";
@@ -71,6 +72,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	private TesterHost testerHost;
 
 	private Mtp3UserPart mtp3UserPart;
+	private boolean routeOnGtMode;
 	private int remoteSpc = 0;
 	private int localSpc = 0;
 	private int localSsn;
@@ -109,6 +111,17 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		return this.sccpStack;
 	}	
 
+
+	@Override
+	public boolean isRouteOnGtMode() {
+		return routeOnGtMode;
+	}
+
+	@Override
+	public void setRouteOnGtMode(boolean val) {
+		routeOnGtMode = val;
+		this.testerHost.markStore();
+	}
 
 	@Override
 	public int getRemoteSpc() {
@@ -345,7 +358,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		this.resource.addRemoteSpc(1, new RemoteSignalingPointCode(dpc, 0, 0));
 		this.resource.addRemoteSsn(1, new RemoteSubSystem(dpc, remoteSsn, 0, false));
 
-		if (callingPartyAddressDigits != null && !callingPartyAddressDigits.equals("")) {
+		if (this.routeOnGtMode) {
 			this.router = this.sccpStack.getRouter();
 
 			this.router.addPrimaryAddress(1, new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, dpc, this.createGlobalTitle(""), 0));
@@ -373,7 +386,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 
 	public SccpAddress createCallingPartyAddress() {
-		if (this.callingPartyAddressDigits == null || this.callingPartyAddressDigits.equals("")) {
+		if (this.routeOnGtMode) {
 			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.localSpc, null, this.localSsn);
 		} else {
 			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, createGlobalTitle(this.callingPartyAddressDigits), this.localSsn);
@@ -384,8 +397,12 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.remoteSpc, null, this.remoteSsn);
 	}
 
-	public SccpAddress createCalledPartyAddress( String address, int ssn ) {
-		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, createGlobalTitle(address), (ssn >= 0 ? ssn : this.remoteSsn));
+	public SccpAddress createCalledPartyAddress(String address, int ssn) {
+		if (this.routeOnGtMode) {
+			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, createGlobalTitle(address), (ssn >= 0 ? ssn : this.remoteSsn));
+		} else {
+			return createCalledPartyAddress();
+		}
 	}
 
 	public GlobalTitle createGlobalTitle( String address ) {
@@ -414,6 +431,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	protected static final XMLFormat<SccpMan> XML = new XMLFormat<SccpMan>(SccpMan.class) {
 
 		public void write(SccpMan sccp, OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(REMOTE_ON_GT_MODE, sccp.routeOnGtMode);
 			xml.setAttribute(REMOTE_SPC, sccp.remoteSpc);
 			xml.setAttribute(LOCAL_SPC, sccp.localSpc);
 			xml.setAttribute(NI, sccp.ni);
@@ -428,6 +446,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		}
 
 		public void read(InputElement xml, SccpMan sccp) throws XMLStreamException {
+			sccp.routeOnGtMode = xml.getAttribute(REMOTE_ON_GT_MODE).toBoolean();
 			sccp.remoteSpc = xml.getAttribute(REMOTE_SPC).toInt();
 			sccp.localSpc = xml.getAttribute(LOCAL_SPC).toInt();
 			sccp.ni = xml.getAttribute(NI).toInt();

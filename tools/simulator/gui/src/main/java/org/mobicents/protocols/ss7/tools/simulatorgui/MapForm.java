@@ -42,6 +42,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
+import javax.swing.SwingConstants;
 
 /**
  * 
@@ -69,7 +70,7 @@ public class MapForm extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("MAP settings");
-		setBounds(100, 100, 582, 485);
+		setBounds(100, 100, 614, 492);
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -90,7 +91,7 @@ public class MapForm extends JDialog {
 				loadDataA();
 			}
 		});
-		button.setBounds(10, 391, 254, 23);
+		button.setBounds(10, 402, 254, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("Load default values for side B");
@@ -99,7 +100,7 @@ public class MapForm extends JDialog {
 				loadDataB();
 			}
 		});
-		button_1.setBounds(274, 391, 244, 23);
+		button_1.setBounds(274, 402, 244, 23);
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("Reload");
@@ -108,7 +109,7 @@ public class MapForm extends JDialog {
 				reloadData();
 			}
 		});
-		button_2.setBounds(10, 425, 144, 23);
+		button_2.setBounds(10, 436, 144, 23);
 		panel.add(button_2);
 		
 		JButton button_3 = new JButton("Save");
@@ -119,7 +120,7 @@ public class MapForm extends JDialog {
 				}
 			}
 		});
-		button_3.setBounds(274, 425, 117, 23);
+		button_3.setBounds(274, 436, 117, 23);
 		panel.add(button_3);
 		
 		JButton button_4 = new JButton("Cancel");
@@ -128,7 +129,7 @@ public class MapForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		button_4.setBounds(401, 425, 117, 23);
+		button_4.setBounds(401, 436, 117, 23);
 		panel.add(button_4);
 		
 		tbRemoteSsn = new JTextField();
@@ -149,18 +150,15 @@ public class MapForm extends JDialog {
 		tbRemoteAddressDigits.setBounds(203, 73, 270, 20);
 		panel.add(tbRemoteAddressDigits);
 
-		JLabel lblIfEmptyRoutingbasedondpcandssn = new JLabel("If empty ROUTING_BASED_ON_DPC_AND_SSN is used for CalledPartyAddress (remoteSpc from SCCP)");
-		lblIfEmptyRoutingbasedondpcandssn.setBounds(10, 101, 556, 14);
+		JLabel lblIfEmptyRoutingbasedondpcandssn = new JLabel("<html>\r\nIf empty RoutingOnDpcAndSsn is used for CalledPartyAddress (remoteSpc from SCCP)<br>\r\nIf not empty RoutingOnGT is used (address and Ssn a defined in MAP layer)<br>\r\nThis option may be ignored by some test tasks that supply there own digits\r\n</html>");
+		lblIfEmptyRoutingbasedondpcandssn.setVerticalAlignment(SwingConstants.TOP);
+		lblIfEmptyRoutingbasedondpcandssn.setBounds(10, 101, 588, 56);
 		panel.add(lblIfEmptyRoutingbasedondpcandssn);
-		
-		JLabel lblIfNotEmpty = new JLabel("if not empty ROUTING_BASED_ON_GLOBAL_TITLE is used (address and Ssn from MAP)");
-		lblIfNotEmpty.setBounds(10, 119, 556, 14);
-		panel.add(lblIfNotEmpty);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel_1.setLayout(null);
-		panel_1.setBounds(7, 144, 511, 108);
+		panel_1.setBounds(7, 168, 511, 108);
 		panel.add(panel_1);
 		
 		JLabel lblOriginationReference = new JLabel("Origination reference");
@@ -195,7 +193,7 @@ public class MapForm extends JDialog {
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel_2.setLayout(null);
-		panel_2.setBounds(7, 259, 511, 108);
+		panel_2.setBounds(7, 283, 511, 108);
 		panel.add(panel_2);
 		
 		JLabel lblDestinationReference = new JLabel("Destination reference");

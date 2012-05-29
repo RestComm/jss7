@@ -30,6 +30,10 @@ package org.mobicents.protocols.ss7.tools.simulator.level2;
  */
 public interface SccpManMBean {
 
+	public boolean isRouteOnGtMode();
+
+	public void setRouteOnGtMode(boolean val);
+
 	public int getRemoteSpc();
 
 	public void setRemoteSpc(int val);

@@ -44,6 +44,10 @@ public class SccpManStandardMBean extends StandardMBean {
 	public MBeanInfo getMBeanInfo() {
 
 		MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[] { 
+				new MBeanAttributeInfo("RouteOnGtMode", boolean.class.getName(), 
+						"False: ROUTING_BASED_ON_DPC_AND_SSN is used for Called/CallingPartyAddresses, "+
+						"True: ROUTING_BASED_ON_GLOBAL_TITLE is used (CalledPartyAddresses digits must be supplied by upper layers)", 
+						true, true, true),
 				new MBeanAttributeInfo("RemoteSpc", int.class.getName(), "Remote Signal point code", true, true, false),
 				new MBeanAttributeInfo("LocalSpc", int.class.getName(), "Local Signal point code", true, true, false),
 				new MBeanAttributeInfo("Ni", int.class.getName(), "Network indicator", true, true, false),
@@ -57,7 +61,7 @@ public class SccpManStandardMBean extends StandardMBean {
 				new MBeanAttributeInfo("NumberingPlan_Value", String.class.getName(), "NumberingPlan parameter for creating SccpAddress (when routing on GT)", true, false, false),
 				new MBeanAttributeInfo("TranslationType", int.class.getName(), "Translation Type parameter for creating SccpAddress (when routing on GT)", true, true, false),
 				new MBeanAttributeInfo("CallingPartyAddressDigits", String.class.getName(), 
-						"CallingPartyAddress digits, if empty ROUTING_BASED_ON_DPC_AND_SSN is used, if not empty ROUTING_BASED_ON_GLOBAL_TITLE is used", 
+						"CallingPartyAddress digits for RouteOnGt mode", 
 						true, true, false),
 		};
 
