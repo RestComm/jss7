@@ -9,10 +9,9 @@
 		<version>2.22</version>
 	</parent>
 
-
 	
-	<artifactId>sccp-release</artifactId>
-	<name>Mobicents SS7 :: SCCP :: Release :: ${pom.artifactId}</name>
+	<artifactId>cap-release</artifactId>
+	<name>Mobicents SS7 :: CAP :: Release :: ${pom.artifactId}</name>
 	<profiles>
 		<profile>
 			<id>release</id>
@@ -31,19 +30,11 @@
 								<configuration>
 									<tasks>
 										<copy overwrite="true" todir="${basedir}/${release.name}">
-											<fileset dir="${basedir}/../sccp-impl/target">
+											<fileset dir="${basedir}/../cap-impl/target">
 												<include name="**.jar" />
 											</fileset>
-											<fileset dir="${basedir}/../sccp-api/target">
+											<fileset dir="${basedir}/../cap-api/target">
 												<include name="**.jar" />
-											</fileset>
-											
-											
-										</copy>
-										
-										<copy overwrite="true" todir="${basedir}/${release.name}">
-											<fileset dir="${basedir}/../sccp-impl/target">
-												<include name="asccp-impl-stack/**" />
 											</fileset>
 										</copy>
 										

@@ -31,7 +31,7 @@
 									<tasks>
 										<!-- copy docs -->
 										<copy overwrite="true" todir="${basedir}/../../release/${release.name}/docs">
-											<fileset dir="${basedir}/target/docbook/publish" />
+											<fileset dir="${basedir}/target/docbook/dockbook/publish" />
 										</copy>
 									</tasks>
 								</configuration>

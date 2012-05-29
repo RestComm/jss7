@@ -43,7 +43,7 @@
 						true
 					</resolveTransitiveDependencies>
 					<eclipseProjectName>
-						mobicents-isup-stack
+						isup
 					</eclipseProjectName>
 				</configuration>
 			</plugin>

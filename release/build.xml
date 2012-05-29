@@ -51,7 +51,7 @@
 	</target>
 
 	<target name="checkout" description="Checks out src and downloads everything that is required." depends="checkout-sources" />
-	<target name="build" description="Builds components sources and everything associated." depends="build-sources-asn,build-sources-stream,build-sources-ss7" />
+	<target name="build" description="Builds components sources and everything associated." depends="build-sources-commons,build-sources-sctp,build-sources-asn,build-sources-stream,build-sources-ss7" />
 	<target name="copy" depends="copy-asn,copy-protocols-ss7" />
 	<target name="package" description="Builds builds binary package." depends="init,clean,checkout,zip.src,build,notes,copy,zip.binary" />
 	<target name="clean">
@@ -73,6 +73,17 @@
 		</exec>
 	</target>
 
+        <target name="build-sources-commons">
+                <exec executable="${mvn.executable}" dir="${checkout.basedir}/commons">
+                        <arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
+                </exec>
+        </target>
+        
+        <target name="build-sources-sctp">
+                <exec executable="${mvn.executable}" dir="${checkout.basedir}/sctp">
+                        <arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
+                </exec>
+        </target>
 	<target name="build-sources-asn">
 		<exec executable="${mvn.executable}" dir="${checkout.basedir}/asn">
 			<arg line="install -Prelease,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
@@ -96,6 +107,7 @@
 			<filterchain>
 				<replacetokens>
 					<token key="VERSION" value="${release.version}" />
+					<token key="SCTP_VERSION" value="${sctp.version}" />
 					<token key="ASN_VERSION" value="${asn.version}" />
 					<token key="STREAM_VERSION" value="${stream.version}" />
 					<token key="SS7_VERSION" value="${ss7.version}" />
@@ -112,6 +124,21 @@
 			</fileset>
 		</copy>
 	</target>
+        <target name="copy-sctp">
+                <echo>Copy SCTP</echo>
+                <copy todir="${zip.dir}/sctp" failonerror="${failoncopy}">
+                        <fileset dir="${checkout.basedir}/sctp/release/${release.name}">
+                                <include name="**" />
+                        </fileset>
+                </copy>
+                
+                <echo>Copy SCTP Docs</echo>
+                <copy todir="${zip.dir}/sctp/docs" failonerror="${failoncopy}">
+                        <fileset dir="${checkout.basedir}/sctp/docs/jdocbook-mobicents/target/docbook/docbook/publish">
+                                <include name="**" />
+                        </fileset>
+                </copy>                 
+        </target> 
 	<target name="copy-stream">
 		<echo>Copy Stream</echo>
 		<copy todir="${zip.dir}/stream" failonerror="${failoncopy}">
