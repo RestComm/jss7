@@ -44,20 +44,35 @@ public class SccpManStandardMBean extends StandardMBean {
 	public MBeanInfo getMBeanInfo() {
 
 		MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[] { 
-				new MBeanAttributeInfo("Dpc", int.class.getName(), "Dpc", true, true, false),
-				new MBeanAttributeInfo("Opc", int.class.getName(), "Opc", true, true, false),
+				new MBeanAttributeInfo("RemoteSpc", int.class.getName(), "Remote Signal point code", true, true, false),
+				new MBeanAttributeInfo("LocalSpc", int.class.getName(), "Local Signal point code", true, true, false),
 				new MBeanAttributeInfo("Ni", int.class.getName(), "Network indicator", true, true, false),
 				new MBeanAttributeInfo("RemoteSsn", int.class.getName(), "Remote SSN number", true, true, false),
+				new MBeanAttributeInfo("LocalSsn", int.class.getName(), "Local SSN number", true, true, false),
+				new MBeanAttributeInfo("GlobalTitleType", GlobalTitleType.class.getName(), "GlobalTitle type for creating SccpAddress (when routing on GT)", true, true, false),
+				new MBeanAttributeInfo("GlobalTitleType_Value", String.class.getName(), "GlobalTitle type for creating SccpAddress (when routing on GT)", true, false, false),
+				new MBeanAttributeInfo("NatureOfAddress", NatureOfAddressType.class.getName(), "NatureOfAddress parameter for creating SccpAddress (when routing on GT)", true, true, false),
+				new MBeanAttributeInfo("NatureOfAddress_Value", String.class.getName(), "NatureOfAddress parameter for creating SccpAddress (when routing on GT)", true, false, false),
+				new MBeanAttributeInfo("NumberingPlan", NumberingPlanType.class.getName(), "NumberingPlan parameter for creating SccpAddress (when routing on GT)", true, true, false),
+				new MBeanAttributeInfo("NumberingPlan_Value", String.class.getName(), "NumberingPlan parameter for creating SccpAddress (when routing on GT)", true, false, false),
+				new MBeanAttributeInfo("TranslationType", int.class.getName(), "Translation Type parameter for creating SccpAddress (when routing on GT)", true, true, false),
+				new MBeanAttributeInfo("CallingPartyAddressDigits", String.class.getName(), 
+						"CallingPartyAddress digits, if empty ROUTING_BASED_ON_DPC_AND_SSN is used, if not empty ROUTING_BASED_ON_GLOBAL_TITLE is used", 
+						true, true, false),
 		};
 
 		MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(), "Index number or value") };
 
 		MBeanOperationInfo[] operations = new MBeanOperationInfo[] {
-//				new MBeanOperationInfo("putSctpIPChannelType", "IP channel type: SCTP or TCP: 1:TCP,2:SCTP", signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
-//
-//				new MBeanOperationInfo("putM3uaFunctionality", "M3ua functionality type: 1:IPSP,2:AS,3:SGW", signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
-//				new MBeanOperationInfo("putM3uaIPSPType", "M3ua IPSP type: 1:CLIENT,2:SERVER", signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
-//				new MBeanOperationInfo("putM3uaExchangeType", "M3ua exchange type: 1:SE,2:DE", signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("putGlobalTitleType", "GlobalTitle type: "
+						+ "1:VAL_NOA_ONLY,2:VAL_TT_ONLY,3:VAL_TT_NP_ES,4:VAL_TT_NP_ES_NOA", 
+						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("putNatureOfAddress", "Parameter: NatureOfAddress: "
+						+ "0:UNKNOWN,1:SUBSCRIBER,2:RESERVED_NATIONAL_2,3:NATIONAL,4:INTERNATIONAL,127:RESERVED", 
+						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("putNumberingPlan", "Parameter: NumberingPlan: " + 
+						"0:UNKNOWN,1:ISDN_TELEPHONY,2:GENERIC,3:DATA,4:TELEX,5:MERITIME_MOBILE,6:LAND_MOBILE,7:ISDN_MOBILE,14:PRIVATE,15:RESERVED", 
+						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
 		};
 
 		return new MBeanInfo(SccpMan.class.getName(), "Sccp Management", attributes, null, operations, null);

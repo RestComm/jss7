@@ -42,6 +42,8 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JCheckBox;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
 
 /**
  * 
@@ -76,6 +78,7 @@ public class TestUssdServerParamForm extends JDialog {
 		panel.setLayout(null);
 		
 		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel_1.setLayout(null);
 		panel_1.setBounds(10, 11, 511, 121);
 		panel.add(panel_1);

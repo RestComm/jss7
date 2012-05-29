@@ -41,6 +41,7 @@ public class AddressNatureType extends EnumeratedBase {
 		intMap.put(AddressNature.unknown.getIndicator(), AddressNature.unknown.toString());
 		intMap.put(AddressNature.international_number.getIndicator(), AddressNature.international_number.toString());
 		intMap.put(AddressNature.national_significant_number.getIndicator(), AddressNature.national_significant_number.toString());
+		intMap.put(AddressNature.network_specific_number.getIndicator(), AddressNature.network_specific_number.toString());
 		intMap.put(AddressNature.subscriber_number.getIndicator(), AddressNature.subscriber_number.toString());
 		intMap.put(AddressNature.reserved.getIndicator(), AddressNature.reserved.toString());
 		intMap.put(AddressNature.abbreviated_number.getIndicator(), AddressNature.abbreviated_number.toString());
@@ -49,6 +50,7 @@ public class AddressNatureType extends EnumeratedBase {
 		stringMap.put(AddressNature.unknown.toString(), AddressNature.unknown.getIndicator());
 		stringMap.put(AddressNature.international_number.toString(), AddressNature.international_number.getIndicator());
 		stringMap.put(AddressNature.national_significant_number.toString(), AddressNature.national_significant_number.getIndicator());
+		stringMap.put(AddressNature.network_specific_number.toString(), AddressNature.network_specific_number.getIndicator());
 		stringMap.put(AddressNature.subscriber_number.toString(), AddressNature.subscriber_number.getIndicator());
 		stringMap.put(AddressNature.reserved.toString(), AddressNature.reserved.getIndicator());
 		stringMap.put(AddressNature.abbreviated_number.toString(), AddressNature.abbreviated_number.getIndicator());

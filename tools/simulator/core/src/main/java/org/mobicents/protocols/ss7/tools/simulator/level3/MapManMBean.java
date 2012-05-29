@@ -22,20 +22,15 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level3;
 
+import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
+import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
+
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
 public interface MapManMBean {
-
-	public int getLocalPc();
-
-	public void setLocalPc(int val);
-
-	public int getRemotePc();
-
-	public void setRemotePc(int val);
 
 	public int getLocalSsn();
 
@@ -45,13 +40,51 @@ public interface MapManMBean {
 
 	public void setRemoteSsn(int val);
 
+	public String getRemoteAddressDigits();
+
+	public void setRemoteAddressDigits(String val);
+
+
 	public String getOrigReference();
 
 	public void setOrigReference(String val);
 
+	public AddressNatureType getOrigReferenceAddressNature();
+
+	public String getOrigReferenceAddressNature_Value();
+
+	public void setOrigReferenceAddressNature(AddressNatureType val);
+
+	public NumberingPlanType getOrigReferenceNumberingPlan();
+
+	public String getOrigReferenceNumberingPlan_Value();
+
+	public void setOrigReferenceNumberingPlan(NumberingPlanType val);
+
 	public String getDestReference();
 
 	public void setDestReference(String val);
+
+	public AddressNatureType getDestReferenceAddressNature();
+
+	public String getDestReferenceAddressNature_Value();
+
+	public void setDestReferenceAddressNature(AddressNatureType val);
+
+	public NumberingPlanType getDestReferenceNumberingPlan();
+
+	public String getDestReferenceNumberingPlan_Value();
+
+	public void setDestReferenceNumberingPlan(NumberingPlanType val);
+
+
+	public void putOrigReferenceAddressNature(String val);
+
+	public void putOrigReferenceNumberingPlan(String val);
+
+	public void putDestReferenceAddressNature(String val);
+
+	public void putDestReferenceNumberingPlan(String val);
 
 }
 
