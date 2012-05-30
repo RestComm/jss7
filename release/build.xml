@@ -52,7 +52,7 @@
 
 	<target name="checkout" description="Checks out src and downloads everything that is required." depends="checkout-sources" />
 	<target name="build" description="Builds components sources and everything associated." depends="build-sources-commons,build-sources-sctp,build-sources-asn,build-sources-stream,build-sources-ss7" />
-	<target name="copy" depends="copy-asn,copy-protocols-ss7" />
+	<target name="copy" depends="copy-asn,copy-sctp,copy-protocols-ss7" />
 	<target name="package" description="Builds builds binary package." depends="init,clean,checkout,zip.src,build,notes,copy,zip.binary" />
 	<target name="clean">
 		<echo>Cleaning checkout directory</echo>
@@ -123,6 +123,12 @@
 				<include name="**" />
 			</fileset>
 		</copy>
+ 		<echo>Copy ASN Docs</echo>
+                <copy todir="${zip.dir}/asn/docs" failonerror="${failoncopy}">
+                        <fileset dir="${checkout.basedir}/asn/docs/jdocbook-mobicents/target/docbook/docbook/publish">
+                                <include name="**" />
+                        </fileset>
+                </copy>  
 	</target>
         <target name="copy-sctp">
                 <echo>Copy SCTP</echo>
@@ -162,6 +168,13 @@
 			</fileset>
 		</copy>
 
+		<echo>Copy SS7 Simulator</echo>
+		<copy todir="${zip.dir}/ss7/mobicents-ss7-simulator" failonerror="${failoncopy}">
+			<fileset dir="${checkout.basedir}/ss7/tools/simulator/bootstrap/target/simulator-ss7">
+				<include name="**" />
+			</fileset>
+		</copy>
+
 		<echo>Copy Shell</echo>
 		<copy todir="${zip.dir}/ss7/shell" failonerror="${failoncopy}">
 			<fileset dir="${checkout.basedir}/ss7/management/shell/target/release">
@@ -171,17 +184,15 @@
 
 		<echo>Copy Protocols</echo>
 		<copy todir="${zip.dir}/ss7/protocols" failonerror="${failoncopy}">
-			<fileset dir="${checkout.basedir}/ss7/tcap/release/point">
+			<fileset dir="${checkout.basedir}/ss7/tcap/release/${release.name}">
 				<include name="**" />
 			</fileset>
-			<fileset dir="${checkout.basedir}/ss7/map/release/point">
+			<fileset dir="${checkout.basedir}/ss7/map/release/${release.name}">
 				<include name="**" />
 			</fileset>
-			<!---->
-			<fileset dir="${checkout.basedir}/ss7/isup/release/point">
+			<fileset dir="${checkout.basedir}/ss7/isup/release/${release.name}">
 				<include name="**" />
 			</fileset>
-			
 		</copy>
 
 		<echo>Copy Native</echo>
@@ -196,7 +207,7 @@
 
 		<echo>Copy Docs</echo>
 		<copy todir="${zip.dir}/ss7/docs" failonerror="${failoncopy}">
-			<fileset dir="${checkout.basedir}/ss7/docs/jdocbook-mobicents/target/docbook/publish">
+			<fileset dir="${checkout.basedir}/ss7/docs/jdocbook-mobicents/target/docbook/docbook/publish">
 				<include name="**" />
 			</fileset>
 		</copy>

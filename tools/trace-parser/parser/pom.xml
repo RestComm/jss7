@@ -9,7 +9,7 @@
 
 	<artifactId>ss7-trace-parser</artifactId>
 
-	<name>Mobicents Trase Parser :: Parser</name>
+	<name>Mobicents Trase Parser :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<dependency>

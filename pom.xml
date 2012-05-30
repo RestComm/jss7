@@ -53,6 +53,7 @@
 		<module>cap</module>
 		<module>service</module>
 		<module>sgw</module>
+		<module>tools</module>
 	</modules>
 
 	<!-- declare our babies -->

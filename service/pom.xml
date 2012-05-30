@@ -9,7 +9,7 @@
 
 	<artifactId>mobicents-ss7</artifactId>
 
-	<name>Mobicents SS7</name>
+	<name>Mobicents SS7 :: Service</name>
 
 	<properties>
 		<ss7.name>Mobicents SS7</ss7.name>
