@@ -30,7 +30,7 @@
 		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/asn</asn.connectionURL>
 		<sctp.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/sctp</sctp.connectionURL>
 		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/stream</stream.connectionURL>
-		<ss7.connectionURL>scm:git:https://amit.bhayani@code.google.com/p/jss7</ss7.connectionURL>
+		<ss7.connectionURL>scm:git:https://code.google.com/p/jss7/</ss7.connectionURL>
 		
 
 		
