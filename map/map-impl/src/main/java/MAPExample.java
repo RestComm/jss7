@@ -157,53 +157,45 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 
 	}
 
-	@Override
 	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
 			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
 			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason,
 			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason,
 			MAPAbortSource abortSource, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void onDialogClose(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void onDialogDelimiter(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
 		// TODO Auto-generated method stub
 
@@ -213,31 +205,26 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 		
 	}
 
-	@Override
 	public void onDialogTimeout(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onInvokeTimeout(MAPDialog mapDialog, Long invoke) {
 		// TODO Auto-generated method stub
 		
@@ -247,7 +234,6 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onProcessUnstructuredSSRequestIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequestIndication)
 	 */
-	@Override
 	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 		// TODO Auto-generated method stub
 		
@@ -256,7 +242,6 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onProcessUnstructuredSSResponseIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponseIndication)
 	 */
-	@Override
 	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse procUnstrResInd) {
 		// TODO Auto-generated method stub
 		
@@ -265,7 +250,6 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSRequestIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequestIndication)
 	 */
-	@Override
 	public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
 		// TODO Auto-generated method stub
 		
@@ -274,7 +258,6 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSResponseIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponseIndication)
 	 */
-	@Override
 	public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
 		// TODO Auto-generated method stub
 		
@@ -283,13 +266,11 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSNotifyIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyIndication)
 	 */
-	@Override
 	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
 		// TODO Auto-generated method stub
 		
@@ -298,13 +279,11 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener#onUnstructuredSSNotifyResponseIndication(org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponseIndication)
 	 */
-	@Override
 	public void onUnstructuredSSNotifyResponse(UnstructuredSSNotifyResponse unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onMAPMessage(MAPMessage mapMessage) {
 		// TODO Auto-generated method stub
 		

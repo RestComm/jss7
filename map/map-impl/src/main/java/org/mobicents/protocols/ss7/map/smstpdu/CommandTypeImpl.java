@@ -42,12 +42,10 @@ public class CommandTypeImpl implements CommandType {
 		this.code = value.getCode();
 	}
 
-	@Override
 	public int getCode() {
 		return this.code;
 	}
 
-	@Override
 	public CommandTypeValue getCommandTypeValue() {
 		return CommandTypeValue.getInstance(this.code);
 	}

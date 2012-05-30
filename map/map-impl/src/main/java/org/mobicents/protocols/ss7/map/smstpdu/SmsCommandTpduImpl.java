@@ -119,52 +119,42 @@ public class SmsCommandTpduImpl extends SmsTpduImpl implements SmsCommandTpdu {
 		commandData = new CommandDataImpl(buf);
 	}
 
-	@Override
 	public boolean getUserDataHeaderIndicator() {
 		return this.userDataHeaderIndicator;
 	}
 
-	@Override
 	public boolean getStatusReportRequest() {
 		return this.statusReportRequest;
 	}
 
-	@Override
 	public int getMessageReference() {
 		return messageReference;
 	}
 
-	@Override
 	public ProtocolIdentifier getProtocolIdentifier() {
 		return protocolIdentifier;
 	}
 
-	@Override
 	public CommandType getCommandType() {
 		return commandType;
 	}
 
-	@Override
 	public int getMessageNumber() {
 		return messageNumber;
 	}
 
-	@Override
 	public AddressField getDestinationAddress() {
 		return destinationAddress;
 	}
 
-	@Override
 	public int getCommandDataLength() {
 		return commandDataLength;
 	}
 
-	@Override
 	public CommandData getCommandData() {
 		return commandData;
 	}
 
-	@Override
 	public byte[] encodeData() throws MAPException {
 
 		if (this.protocolIdentifier == null || this.commandData == null || commandType == null || destinationAddress == null)

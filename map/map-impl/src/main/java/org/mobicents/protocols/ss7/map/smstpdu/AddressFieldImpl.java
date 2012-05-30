@@ -113,22 +113,18 @@ public class AddressFieldImpl implements AddressField {
 		return res;
 	}
 
-	@Override
 	public TypeOfNumber getTypeOfNumber() {
 		return this.typeOfNumber;
 	}
 
-	@Override
 	public NumberingPlanIdentification getNumberingPlanIdentification() {
 		return this.numberingPlanIdentification;
 	}
 
-	@Override
 	public String getAddressValue() {
 		return this.addressValue;
 	}
 
-	@Override
 	public void encodeData(OutputStream stm) throws MAPException {
 
 		if (typeOfNumber == null || numberingPlanIdentification == null || addressValue == null)

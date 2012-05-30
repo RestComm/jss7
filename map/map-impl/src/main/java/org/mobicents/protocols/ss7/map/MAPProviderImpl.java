@@ -874,7 +874,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	}
 
-	@Override
 	public void onInvokeTimeout(Invoke invoke) {
 
 		MAPDialogImpl mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(((InvokeImpl) invoke).getDialog().getDialogId());
@@ -895,7 +894,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		}
 	}
 
-	@Override
 	public void onDialogTimeout(Dialog tcapDialog) {
 		
 		MAPDialogImpl mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getDialogId());
@@ -909,7 +907,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		}
 	}
 
-	@Override
 	public void onDialogReleased(Dialog tcapDialog) {
 
 		MAPDialogImpl mapDialogImpl = this.removeDialog(tcapDialog.getDialogId());
@@ -1385,7 +1382,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	}
 
-	@Override
 	public void onTCNotice(TCNoticeIndication ind) {
 
 		Dialog tcapDialog = ind.getDialog();

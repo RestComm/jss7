@@ -85,25 +85,21 @@ import org.mobicents.protocols.ss7.map.smstpdu.ValidityPeriodImpl;
  */
 public class MAPSmsTpduParameterFactoryImpl implements MAPSmsTpduParameterFactory {
 
-	@Override
 	public SmsCommandTpdu createSmsCommandTpdu(boolean statusReportRequest, int messageReference, ProtocolIdentifier protocolIdentifier,
 			CommandType commandType, int messageNumber, AddressField destinationAddress, CommandData commandData) {
 		return new SmsCommandTpduImpl(statusReportRequest, messageReference, protocolIdentifier, commandType, messageNumber, destinationAddress, commandData);
 	}
 
-	@Override
 	public SmsDeliverReportTpdu createSmsDeliverReportTpdu(FailureCause failureCause, ProtocolIdentifier protocolIdentifier, UserData userData) {
 		return new SmsDeliverReportTpduImpl(failureCause, protocolIdentifier, userData);
 	}
 
-	@Override
 	public SmsDeliverTpdu createSmsDeliverTpdu(boolean moreMessagesToSend, boolean forwardedOrSpawned, boolean replyPathExists, boolean statusReportIndication,
 			AddressField originatingAddress, ProtocolIdentifier protocolIdentifier, AbsoluteTimeStamp serviceCentreTimeStamp, UserData userData) {
 		return new SmsDeliverTpduImpl(moreMessagesToSend, forwardedOrSpawned, replyPathExists, statusReportIndication, originatingAddress, protocolIdentifier,
 				serviceCentreTimeStamp, userData);
 	}
 
-	@Override
 	public SmsStatusReportTpdu createSmsStatusReportTpdu(boolean moreMessagesToSend, boolean forwardedOrSpawned, StatusReportQualifier statusReportQualifier,
 			int messageReference, AddressField recipientAddress, AbsoluteTimeStamp serviceCentreTimeStamp, AbsoluteTimeStamp dischargeTime, Status status,
 			ProtocolIdentifier protocolIdentifier, UserData userData) {
@@ -111,128 +107,104 @@ public class MAPSmsTpduParameterFactoryImpl implements MAPSmsTpduParameterFactor
 				serviceCentreTimeStamp, dischargeTime, status, protocolIdentifier, userData);
 	}
 
-	@Override
 	public SmsSubmitReportTpdu createSmsSubmitReportTpdu(FailureCause failureCause, AbsoluteTimeStamp serviceCentreTimeStamp,
 			ProtocolIdentifier protocolIdentifier, UserData userData) {
 		return new SmsSubmitReportTpduImpl(failureCause, serviceCentreTimeStamp, protocolIdentifier, userData);
 	}
 
-	@Override
 	public SmsSubmitTpdu createSmsSubmitTpdu(boolean rejectDuplicates, boolean replyPathExists, boolean statusReportRequest, int messageReference,
 			AddressField destinationAddress, ProtocolIdentifier protocolIdentifier, ValidityPeriod validityPeriod, UserData userData) {
 		return new SmsSubmitTpduImpl(rejectDuplicates, replyPathExists, statusReportRequest, messageReference, destinationAddress, protocolIdentifier,
 				validityPeriod, userData);
 	}
 
-	@Override
 	public AbsoluteTimeStamp createAbsoluteTimeStamp(int year, int month, int day, int hour, int minute, int second, int timeZone) {
 		return new AbsoluteTimeStampImpl(year, month, day, hour, minute, second, timeZone);
 	}
 
-	@Override
 	public AddressField createAddressField(TypeOfNumber typeOfNumber, NumberingPlanIdentification numberingPlanIdentification, String addressValue) {
 		return new AddressFieldImpl(typeOfNumber, numberingPlanIdentification, addressValue);
 	}
 
-	@Override
 	public CommandType createCommandType(int code) {
 		return new CommandTypeImpl(code);
 	}
 
-	@Override
 	public CommandType createCommandType(CommandTypeValue value) {
 		return new CommandTypeImpl(value);
 	}
 
-	@Override
 	public DataCodingScheme createDataCodingScheme(int code) {
 		return new DataCodingSchemeImpl(code);
 	}
 
-	@Override
 	public DataCodingScheme createDataCodingScheme(DataCodingGroup dataCodingGroup, DataCodingSchemaMessageClass messageClass,
 			DataCodingSchemaIndicationType dataCodingSchemaIndicationType, Boolean setIndicationActive, CharacterSet characterSet, boolean isCompressed) {
 		return new DataCodingSchemeImpl(dataCodingGroup, messageClass, dataCodingSchemaIndicationType, setIndicationActive, characterSet, isCompressed);
 	}
 
-	@Override
 	public FailureCause createFailureCause(int code) {
 		return new FailureCauseImpl(code);
 	}
 
-	@Override
 	public ParameterIndicator createParameterIndicator(boolean TP_UDLPresence, boolean getTP_DCSPresence, boolean getTP_PIDPresence) {
 		return new ParameterIndicatorImpl(TP_UDLPresence, getTP_DCSPresence, getTP_PIDPresence);
 	}
 
-	@Override
 	public ProtocolIdentifier createProtocolIdentifier(int code) {
 		return new ProtocolIdentifierImpl(code);
 	}
 
-	@Override
 	public Status createStatus(int code) {
 		return new StatusImpl(code);
 	}
 
-	@Override
 	public ValidityEnhancedFormatData createValidityEnhancedFormatData(byte[] data) {
 		return new ValidityEnhancedFormatDataImpl(data);
 	}
 
-	@Override
 	public ValidityPeriod createValidityPeriod(int relativeFormatValue) {
 		return new ValidityPeriodImpl(relativeFormatValue);
 	}
 
-	@Override
 	public ValidityPeriod createValidityPeriod(AbsoluteTimeStamp absoluteFormatValue) {
 		return new ValidityPeriodImpl(absoluteFormatValue);
 	}
 
-	@Override
 	public ValidityPeriod createValidityPeriod(ValidityEnhancedFormatData enhancedFormatValue) {
 		return new ValidityPeriodImpl(enhancedFormatValue);
 	}
 
-	@Override
 	public UserDataHeader createUserDataHeader() {
 		return new UserDataHeaderImpl();
 	}
 
-	@Override
 	public UserData createUserData(byte[] encodedData, DataCodingScheme dataCodingScheme, int encodedUserDataLength, boolean encodedUserDataHeaderIndicator,
 			Charset gsm8Charset) {
 		return new UserDataImpl(encodedData, dataCodingScheme, encodedUserDataLength, encodedUserDataHeaderIndicator, gsm8Charset);
 	}
 
-	@Override
 	public UserData createUserData(String decodedMessage, DataCodingScheme dataCodingScheme, UserDataHeader decodedUserDataHeader, Charset gsm8Charset) {
 		return new UserDataImpl(decodedMessage, dataCodingScheme, decodedUserDataHeader, gsm8Charset);
 	}
 
-	@Override
 	public CommandData createCommandData(byte[] data) {
 		return new CommandDataImpl(data);
 	}
 
-	@Override
 	public CommandData createCommandData(String decodedMessage) {
 		return new CommandDataImpl(decodedMessage);
 	}
 
-	@Override
 	public ConcatenatedShortMessagesIdentifier createConcatenatedShortMessagesIdentifier(boolean referenceIs16bit, int reference, int mesageSegmentCount,
 			int mesageSegmentNumber) {
 		return new ConcatenatedShortMessagesIdentifierImpl(referenceIs16bit, reference, mesageSegmentCount, mesageSegmentNumber);
 	}
 
-	@Override
 	public NationalLanguageLockingShiftIdentifier createNationalLanguageLockingShiftIdentifier(int nationalLanguageCode) {
 		return new NationalLanguageLockingShiftIdentifierImpl(nationalLanguageCode);
 	}
 
-	@Override
 	public NationalLanguageSingleShiftIdentifier createNationalLanguageSingleShiftIdentifier(int nationalLanguageCode) {
 		return new NationalLanguageSingleShiftIdentifierImpl(nationalLanguageCode);
 	}

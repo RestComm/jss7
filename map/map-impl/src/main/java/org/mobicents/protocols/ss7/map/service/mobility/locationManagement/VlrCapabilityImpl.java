@@ -96,78 +96,63 @@ public class VlrCapabilityImpl implements VlrCapability, MAPAsnPrimitive {
 	}	
 
 
-	@Override
 	public SupportedCamelPhases getSupportedCamelPhases() {
 		return supportedCamelPhases;
 	}
 
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return extensionContainer;
 	}
 
-	@Override
 	public boolean getSolsaSupportIndicator() {
 		return solsaSupportIndicator;
 	}
 
-	@Override
 	public IstSupportIndicator getIstSupportIndicator() {
 		return istSupportIndicator;
 	}
 
-	@Override
 	public SuperChargerInfo getSuperChargerSupportedInServingNetworkEntity() {
 		return superChargerSupportedInServingNetworkEntity;
 	}
 
-	@Override
 	public boolean getLongFtnSupported() {
 		return longFtnSupported;
 	}
 
-	@Override
 	public SupportedLCSCapabilitySets getSupportedLCSCapabilitySets() {
 		return supportedLCSCapabilitySets;
 	}
 
-	@Override
 	public OfferedCamel4CSIs getOfferedCamel4CSIs() {
 		return offeredCamel4CSIs;
 	}
 
-	@Override
 	public SupportedRATTypes getSupportedRATTypesIndicator() {
 		return supportedRATTypesIndicator;
 	}
 
-	@Override
 	public boolean getLongGroupIDSupported() {
 		return longGroupIDSupported;
 	}
 
-	@Override
 	public boolean getMtRoamingForwardingSupported() {
 		return mtRoamingForwardingSupported;
 	}
 
 
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -182,7 +167,6 @@ public class VlrCapabilityImpl implements VlrCapability, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -320,12 +304,10 @@ public class VlrCapabilityImpl implements VlrCapability, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -338,7 +320,6 @@ public class VlrCapabilityImpl implements VlrCapability, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		try {

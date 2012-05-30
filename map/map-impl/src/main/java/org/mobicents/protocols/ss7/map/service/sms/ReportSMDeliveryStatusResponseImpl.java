@@ -57,44 +57,36 @@ public class ReportSMDeliveryStatusResponseImpl extends SmsMessageImpl implement
 		this.extensionContainer = extensionContainer;
 	}
 
-	@Override
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.reportSM_DeliveryStatus_Response;
 	}
 
-	@Override
 	public int getOperationCode() {
 		return MAPOperationCode.reportSM_DeliveryStatus;
 	}
 
-	@Override
 	public ISDNAddressString getStoredMSISDN() {
 		return this.storedMSISDN;
 	}
 
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
 
 	
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
 	
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -109,7 +101,6 @@ public class ReportSMDeliveryStatusResponseImpl extends SmsMessageImpl implement
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -166,12 +157,10 @@ public class ReportSMDeliveryStatusResponseImpl extends SmsMessageImpl implement
 		}
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, false, tag);
@@ -183,7 +172,6 @@ public class ReportSMDeliveryStatusResponseImpl extends SmsMessageImpl implement
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.storedMSISDN != null)

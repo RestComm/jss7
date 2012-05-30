@@ -42,12 +42,10 @@ public abstract class Gsm7NationalLanguageIdentifierImpl implements Gsm7National
 			this.nationalLanguageCode = encodedInformationElementData[0] & 0xFF;
 	}
 	
-	@Override
 	public int getNationalLanguageCode() {
 		return nationalLanguageCode;
 	}
 
-	@Override
 	public byte[] getEncodedInformationElementData() {
 		return new byte[] { (byte) nationalLanguageCode };
 	}

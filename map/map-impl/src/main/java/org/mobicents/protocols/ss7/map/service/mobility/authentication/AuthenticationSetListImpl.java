@@ -67,23 +67,19 @@ public class AuthenticationSetListImpl implements AuthenticationSetList, MAPAsnP
 	}
 	
 
-	@Override
 	public TripletList getTripletList() {
 		return tripletList;
 	}
 
-	@Override
 	public QuintupletList getQuintupletList() {
 		return quintupletList;
 	}
 
-	@Override
 	public long getMapProtocolVersion() {
 		return mapProtocolVersion;
 	}
 
 
-	@Override
 	public int getTag() throws MAPException {
 		if (this.mapProtocolVersion >= 3) {
 			if (tripletList != null)
@@ -95,7 +91,6 @@ public class AuthenticationSetListImpl implements AuthenticationSetList, MAPAsnP
 		}
 	}
 
-	@Override
 	public int getTagClass() {
 		if (this.mapProtocolVersion >= 3)
 			return Tag.CLASS_CONTEXT_SPECIFIC;
@@ -103,13 +98,11 @@ public class AuthenticationSetListImpl implements AuthenticationSetList, MAPAsnP
 			return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -124,7 +117,6 @@ public class AuthenticationSetListImpl implements AuthenticationSetList, MAPAsnP
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -179,13 +171,11 @@ public class AuthenticationSetListImpl implements AuthenticationSetList, MAPAsnP
 		}
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -198,7 +188,6 @@ public class AuthenticationSetListImpl implements AuthenticationSetList, MAPAsnP
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.tripletList == null && this.quintupletList == null || this.tripletList != null && this.quintupletList != null) {

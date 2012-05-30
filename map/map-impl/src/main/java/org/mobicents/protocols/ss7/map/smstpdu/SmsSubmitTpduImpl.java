@@ -154,67 +154,54 @@ public class SmsSubmitTpduImpl extends SmsTpduImpl implements SmsSubmitTpdu {
 		userData = new UserDataImpl(buf, dataCodingScheme, userDataLength, userDataHeaderIndicator, gsm8Charset);
 	}
 
-	@Override
 	public boolean getRejectDuplicates() {
 		return this.rejectDuplicates;
 	}
 
-	@Override
 	public ValidityPeriodFormat getValidityPeriodFormat() {
 		return this.validityPeriodFormat;
 	}
 
-	@Override
 	public boolean getReplyPathExists() {
 		return this.replyPathExists;
 	}
 
-	@Override
 	public boolean getUserDataHeaderIndicator() {
 		return this.userDataHeaderIndicator;
 	}
 
-	@Override
 	public boolean getStatusReportRequest() {
 		return this.statusReportRequest;
 	}
 
-	@Override
 	public int getMessageReference() {
 		return messageReference;
 	}
 
-	@Override
 	public AddressField getDestinationAddress() {
 		return destinationAddress;
 	}
 
-	@Override
 	public ProtocolIdentifier getProtocolIdentifier() {
 		return protocolIdentifier;
 	}
 
-	@Override
 	public DataCodingScheme getDataCodingScheme() {
 		return dataCodingScheme;
 	}
 
-	@Override
 	public ValidityPeriod getValidityPeriod() {
 		return validityPeriod;
 	}
 
-	@Override
 	public int getUserDataLength() {
 		return userDataLength;
 	}
 
-	@Override
 	public UserData getUserData() {
 		return userData;
 	}
 
-	@Override
 	public byte[] encodeData() throws MAPException {
 
 		if (this.destinationAddress == null || this.protocolIdentifier == null || this.userData == null)

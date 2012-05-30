@@ -161,7 +161,6 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl implements CellGlobalIdO
 		return res;
 	}
 
-	@Override
 	public int getCellId() throws MAPException {
 
 		if (data == null)

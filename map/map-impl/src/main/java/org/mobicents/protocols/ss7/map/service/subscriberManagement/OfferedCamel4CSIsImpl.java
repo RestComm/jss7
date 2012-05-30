@@ -68,7 +68,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberManagement.OfferedCamel4CSIs#getOCsi()
 	 */
-	@Override
 	public boolean getOCsi() {
 		return this.bitString.get(_ID_o_csi);
 	}
@@ -76,7 +75,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberManagement.OfferedCamel4CSIs#getDCsi()
 	 */
-	@Override
 	public boolean getDCsi() {
 		return this.bitString.get(_ID_d_csi);
 	}
@@ -84,7 +82,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberManagement.OfferedCamel4CSIs#getVtCsi()
 	 */
-	@Override
 	public boolean getVtCsi() {
 		return this.bitString.get(_ID_vt_csi);
 	}
@@ -92,7 +89,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberManagement.OfferedCamel4CSIs#getTCsi()
 	 */
-	@Override
 	public boolean getTCsi() {
 		return this.bitString.get(_ID_t_csi);
 	}
@@ -100,7 +96,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberManagement.OfferedCamel4CSIs#getMtSmsCsi()
 	 */
-	@Override
 	public boolean getMtSmsCsi() {
 		return this.bitString.get(_ID_mt_sms_csi);
 	}
@@ -108,7 +103,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberManagement.OfferedCamel4CSIs#getMgCsi()
 	 */
-	@Override
 	public boolean getMgCsi() {
 		return this.bitString.get(_ID_mg_csi);
 	}
@@ -116,7 +110,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberManagement.OfferedCamel4CSIs#getPsiEnhancements()
 	 */
-	@Override
 	public boolean getPsiEnhancements() {
 		return this.bitString.get(_ID_psi_enhancements);
 	}
@@ -124,7 +117,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_BIT;
 	}
@@ -132,7 +124,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
@@ -140,7 +131,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
@@ -148,7 +138,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -165,7 +154,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -189,7 +177,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);
 	}
@@ -197,7 +184,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, true, tag);
@@ -212,7 +198,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		try {
 			asnOs.writeBitStringData(this.bitString);

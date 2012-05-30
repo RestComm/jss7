@@ -72,7 +72,6 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 	 * MAPProvider.dialog collection
 	 * 
 	 */
-	@Override
 	public MAPDialogSms createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference, SccpAddress destAddress,
 			AddressString destReference) throws MAPException {
 
@@ -95,18 +94,15 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		return new MAPDialogSmsImpl(appCntx, tcapDialog, this.mapProviderImpl, this, null, null);
 	}
 
-	@Override
 	public void addMAPServiceListener(MAPServiceSmsListener mapServiceListener) {
 		super.addMAPServiceListener(mapServiceListener);
 	}
 
-	@Override
 	public void removeMAPServiceListener(MAPServiceSmsListener mapServiceListener) {
 		super.removeMAPServiceListener(mapServiceListener);
 	}
 
 	
-	@Override
 	public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext) {
 		MAPApplicationContextName ctx = dialogApplicationContext.getApplicationContextName();
 		int vers = dialogApplicationContext.getApplicationContextVersion().getVersion();

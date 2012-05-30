@@ -124,62 +124,50 @@ public class SmsDeliverTpduImpl extends SmsTpduImpl implements SmsDeliverTpdu {
 		userData = new UserDataImpl(buf, dataCodingScheme, userDataLength, userDataHeaderIndicator, gsm8Charset);
 	}
 
-	@Override
 	public boolean getMoreMessagesToSend() {
 		return this.moreMessagesToSend;
 	}
 
-	@Override
 	public boolean getForwardedOrSpawned() {
 		return this.forwardedOrSpawned;
 	}
 
-	@Override
 	public boolean getReplyPathExists() {
 		return this.replyPathExists;
 	}
 
-	@Override
 	public boolean getUserDataHeaderIndicator() {
 		return this.userDataHeaderIndicator;
 	}
 
-	@Override
 	public boolean getStatusReportIndication() {
 		return this.statusReportIndication;
 	}
 
-	@Override
 	public AddressField getOriginatingAddress() {
 		return originatingAddress;
 	}
 
-	@Override
 	public ProtocolIdentifier getProtocolIdentifier() {
 		return protocolIdentifier;
 	}
 
-	@Override
 	public DataCodingScheme getDataCodingScheme() {
 		return dataCodingScheme;
 	}
 
-	@Override
 	public AbsoluteTimeStamp getServiceCentreTimeStamp() {
 		return serviceCentreTimeStamp;
 	}
 
-	@Override
 	public int getUserDataLength() {
 		return userDataLength;
 	}
 
-	@Override
 	public UserData getUserData() {
 		return userData;
 	}
 
-	@Override
 	public byte[] encodeData() throws MAPException {
 
 		if (this.originatingAddress == null || this.protocolIdentifier == null || this.serviceCentreTimeStamp == null || this.userData == null)

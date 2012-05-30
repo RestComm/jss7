@@ -72,12 +72,10 @@ public class DataCodingSchemeImpl implements DataCodingScheme {
 		}
 	}
 
-	@Override
 	public int getCode() {
 		return this.code;
 	}
 
-	@Override
 	public DataCodingGroup getDataCodingGroup() {
 		switch ((this.code & 0xC0) >> 6) {
 		case 0:
@@ -100,7 +98,6 @@ public class DataCodingSchemeImpl implements DataCodingScheme {
 		}
 	}
 
-	@Override
 	public DataCodingSchemaMessageClass getMessageClass() {
 		DataCodingGroup dcg = this.getDataCodingGroup();
 		switch(dcg){
@@ -117,7 +114,6 @@ public class DataCodingSchemeImpl implements DataCodingScheme {
 		}
 	}
 
-	@Override
 	public DataCodingSchemaIndicationType getDataCodingSchemaIndicationType() {
 		DataCodingGroup dcg = this.getDataCodingGroup();
 		switch (dcg) {
@@ -129,7 +125,6 @@ public class DataCodingSchemeImpl implements DataCodingScheme {
 		}
 	}
 
-	@Override
 	public Boolean getSetIndicationActive() {
 		DataCodingGroup dcg = this.getDataCodingGroup();
 		switch (dcg) {
@@ -144,7 +139,6 @@ public class DataCodingSchemeImpl implements DataCodingScheme {
 		}
 	}
 
-	@Override
 	public CharacterSet getCharacterSet() {
 
 		int cg1 = (this.code & 0xC0) >> 6;
@@ -172,7 +166,6 @@ public class DataCodingSchemeImpl implements DataCodingScheme {
 		}
 	}
 
-	@Override
 	public boolean getIsCompressed() {
 		if (((this.code & 0xC0) == 0 || (this.code & 0xC0) == 0x40) && (this.code & 0x20) != 0)
 			return true;

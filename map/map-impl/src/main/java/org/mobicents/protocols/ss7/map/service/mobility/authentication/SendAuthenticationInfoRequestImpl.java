@@ -92,73 +92,59 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 		this.additionalVectorsAreForEPS = additionalVectorsAreForEPS;
 	}
 
-	@Override
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.sendAuthenticationInfo_Request;
 	}
 
-	@Override
 	public int getOperationCode() {
 		return MAPOperationCode.sendAuthenticationInfo;
 	}
 
-	@Override
 	public IMSI getImsi() {
 		return imsi;
 	}
 
-	@Override
 	public int getNumberOfRequestedVectors() {
 		return numberOfRequestedVectors;
 	}
 
-	@Override
 	public boolean getSegmentationProhibited() {
 		return segmentationProhibited;
 	}
 
-	@Override
 	public boolean getImmediateResponsePreferred() {
 		return immediateResponsePreferred;
 	}
 
-	@Override
 	public ReSynchronisationInfo getReSynchronisationInfo() {
 		return reSynchronisationInfo;
 	}
 
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return extensionContainer;
 	}
 
-	@Override
 	public RequestingNodeType getRequestingNodeType() {
 		return requestingNodeType;
 	}
 
-	@Override
 	public PlmnId getRequestingPlmnId() {
 		return requestingPlmnId;
 	}
 
-	@Override
 	public Integer getNumberOfRequestedAdditionalVectors() {
 		return numberOfRequestedAdditionalVectors;
 	}
 
-	@Override
 	public boolean getAdditionalVectorsAreForEPS() {
 		return additionalVectorsAreForEPS;
 	}
 
-	@Override
 	public long getMapProtocolVersion() {
 		return mapProtocolVersion;
 	}
 
 
-	@Override
 	public int getTag() throws MAPException {
 		if (this.mapProtocolVersion >= 3) {
 			return Tag.SEQUENCE;
@@ -167,12 +153,10 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 		}
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		if (this.mapProtocolVersion >= 3) {
 			return false;
@@ -181,7 +165,6 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 		}
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -196,7 +179,6 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -354,13 +336,11 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 		}
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -376,7 +356,6 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.mapProtocolVersion <= 2) {

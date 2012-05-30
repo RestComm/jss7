@@ -68,7 +68,6 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 	 * org.mobicents.protocols.ss7.map.api.MAPServiceBase#isServingService(org
 	 * .mobicents.protocols.ss7.map.api.MAPApplicationContext)
 	 */
-	@Override
 	public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext) {
 		
 		int vers = dialogApplicationContext.getApplicationContextVersion().getVersion();
@@ -290,7 +289,6 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 	 * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress,
 	 * org.mobicents.protocols.ss7.map.api.dialog.AddressString)
 	 */
-	@Override
 	public MAPDialogLsm createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference, SccpAddress destAddress,
 			AddressString destReference) throws MAPException {
 		// We cannot create a dialog if the service is not activated
@@ -313,7 +311,6 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 	 * addMAPServiceListener
 	 * (org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener)
 	 */
-	@Override
 	public void addMAPServiceListener(MAPServiceLsmListener mapServiceListener) {
 		super.addMAPServiceListener(mapServiceListener);
 	}
@@ -325,7 +322,6 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 	 * removeMAPServiceListener
 	 * (org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener)
 	 */
-	@Override
 	public void removeMAPServiceListener(MAPServiceLsmListener mapServiceListener) {
 		super.removeMAPServiceListener(mapServiceListener);
 	}

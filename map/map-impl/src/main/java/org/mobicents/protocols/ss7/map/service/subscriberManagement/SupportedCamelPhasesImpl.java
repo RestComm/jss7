@@ -50,7 +50,6 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberManagement.
 	 * SupportedCamelPhases#getPhase1Supported()
 	 */
-	@Override
 	public boolean getPhase1Supported() {
 		return this.bitString.get(_INDEX_Phase1);
 	}
@@ -61,7 +60,6 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberManagement.
 	 * SupportedCamelPhases#getPhase2Supported()
 	 */
-	@Override
 	public boolean getPhase2Supported() {
 		return this.bitString.get(_INDEX_Phase2);
 	}
@@ -72,7 +70,6 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberManagement.
 	 * SupportedCamelPhases#getPhase3Supported()
 	 */
-	@Override
 	public boolean getPhase3Supported() {
 		return this.bitString.get(_INDEX_Phase3);
 	}
@@ -83,7 +80,6 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberManagement.
 	 * SupportedCamelPhases#getPhase4Supported()
 	 */
-	@Override
 	public boolean getPhase4Supported() {
 		return this.bitString.get(_INDEX_Phase4);
 	}	
@@ -93,7 +89,6 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 	 * 
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
 	 */
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_BIT;
 	}
@@ -104,7 +99,6 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 	 * @see
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
 	 */
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
@@ -116,7 +110,6 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
 	 * ()
 	 */
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
@@ -128,7 +121,6 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
 	 * org.mobicents.protocols.asn.AsnInputStream)
 	 */
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
@@ -149,7 +141,6 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
 	 * (org.mobicents.protocols.asn.AsnInputStream, int)
 	 */
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
@@ -178,7 +169,6 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);
 	}
@@ -190,7 +180,6 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
 	 * org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, true, tag);
@@ -209,7 +198,6 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		try {
 			asnOs.writeBitStringData(this.bitString);

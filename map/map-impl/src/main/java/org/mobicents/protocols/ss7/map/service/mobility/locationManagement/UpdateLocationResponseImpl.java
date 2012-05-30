@@ -39,85 +39,71 @@ import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
  */
 public class UpdateLocationResponseImpl extends MobilityMessageImpl implements UpdateLocationResponse {
 
-	@Override
 	public MAPMessageType getMessageType() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public int getOperationCode() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
 	public int getTag() throws MAPException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
 	public int getTagClass() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public ISDNAddressString getHlrNumber() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public boolean getAddCapability() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public boolean getPagingAreaCapability() {
 		// TODO Auto-generated method stub
 		return false;

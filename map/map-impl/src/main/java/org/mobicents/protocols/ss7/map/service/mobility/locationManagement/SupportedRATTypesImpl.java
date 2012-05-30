@@ -69,49 +69,38 @@ public class SupportedRATTypesImpl implements SupportedRATTypes, MAPAsnPrimitive
 			this.bitString.set(_INDEX_e_utran);
 	}
 
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.STRING_BIT;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return true;
 	}
 
-
-	@Override
 	public boolean getUtran() {
 		return this.bitString.get(_INDEX_utran);
 	}
 
-	@Override
 	public boolean getGeran() {
 		return this.bitString.get(_INDEX_geran);
 	}
 
-	@Override
 	public boolean getGan() {
 		return this.bitString.get(_INDEX_gan);
 	}
 
-	@Override
 	public boolean getIHspaEvolution() {
 		return this.bitString.get(_INDEX_i_hspa_evolution);
 	}
 
-	@Override
 	public boolean getEUtran() {
 		return this.bitString.get(_INDEX_e_utran);
 	}
 
-
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -126,7 +115,6 @@ public class SupportedRATTypesImpl implements SupportedRATTypes, MAPAsnPrimitive
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -148,12 +136,10 @@ public class SupportedRATTypesImpl implements SupportedRATTypes, MAPAsnPrimitive
 		this.bitString = ansIS.readBitStringData(length);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -166,7 +152,6 @@ public class SupportedRATTypesImpl implements SupportedRATTypes, MAPAsnPrimitive
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		try {
 			asnOs.writeBitStringData(this.bitString);

@@ -90,37 +90,30 @@ public class AbsoluteTimeStampImpl implements AbsoluteTimeStamp {
 		return (bt & 0xF) * 10 + ((bt & 0xF0) >>> 4);
 	}
 
-	@Override
 	public int getYear() {
 		return year;
 	}
 
-	@Override
 	public int getMonth() {
 		return month;
 	}
 
-	@Override
 	public int getDay() {
 		return day;
 	}
 
-	@Override
 	public int getHour() {
 		return hour;
 	}
 
-	@Override
 	public int getMinute() {
 		return minute;
 	}
 
-	@Override
 	public int getSecond() {
 		return second;
 	}
 
-	@Override
 	public int getTimeZone() {
 		return timeZone;
 	}
@@ -131,7 +124,6 @@ public class AbsoluteTimeStampImpl implements AbsoluteTimeStamp {
 		return (i1 << 4) | i2;
 	}
 
-	@Override
 	public void encodeData(OutputStream stm) throws MAPException {
 
 		try {

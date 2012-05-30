@@ -61,49 +61,40 @@ public class AuthenticationQuintupletImpl implements AuthenticationQuintuplet, M
 		this.autn = autn;
 	}
 
-	@Override
 	public byte[] getRand() {
 		return rand;
 	}
 
-	@Override
 	public byte[] getXres() {
 		return xres;
 	}
 
-	@Override
 	public byte[] getCk() {
 		return ck;
 	}
 
-	@Override
 	public byte[] getIk() {
 		return ik;
 	}
 
-	@Override
 	public byte[] getAutn() {
 		return autn;
 	}
 	
 
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -118,7 +109,6 @@ public class AuthenticationQuintupletImpl implements AuthenticationQuintuplet, M
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -218,13 +208,11 @@ public class AuthenticationQuintupletImpl implements AuthenticationQuintuplet, M
 					+ num, MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -237,7 +225,6 @@ public class AuthenticationQuintupletImpl implements AuthenticationQuintuplet, M
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.rand == null || this.xres == null || this.ck == null || this.ik == null || this.autn == null) {

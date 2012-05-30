@@ -81,69 +81,56 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 		this.sM_RP_SMEA = (SM_RP_SMEAImpl)sM_RP_SMEA;
 	}
 
-	@Override
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.sendRoutingInfoForSM_Request;
 	}
 
-	@Override
 	public int getOperationCode() {
 		return MAPOperationCode.sendRoutingInfoForSM;
 	}
 
-	@Override
 	public ISDNAddressString getMsisdn() {
 		return this.msisdn;
 	}
 
-	@Override
 	public boolean getSm_RP_PRI() {
 		return this.sm_RP_PRI;
 	}
 
-	@Override
 	public AddressString getServiceCentreAddress() {
 		return this.serviceCentreAddress;
 	}
 
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return this.extensionContainer;
 	}
 
-	@Override
 	public boolean getGprsSupportIndicator() {
 		return this.gprsSupportIndicator;
 	}
 
-	@Override
 	public SM_RP_MTI getSM_RP_MTI() {
 		return this.sM_RP_MTI;
 	}
 
-	@Override
 	public SM_RP_SMEA getSM_RP_SMEA() {
 		return this.sM_RP_SMEA;
 	}
 
 	
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
 	
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -158,7 +145,6 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -276,13 +262,11 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 					MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -295,7 +279,6 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (msisdn == null || serviceCentreAddress == null)

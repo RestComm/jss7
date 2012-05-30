@@ -191,7 +191,6 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 		return this.bitString.get(_INDEX_LCS_CAPABILITY_SET4);
 	}
 
-	@Override
 	public boolean getCapabilitySetRelease7() {
 		return this.bitString.get(_INDEX_LCS_CAPABILITY_SET5);
 	}

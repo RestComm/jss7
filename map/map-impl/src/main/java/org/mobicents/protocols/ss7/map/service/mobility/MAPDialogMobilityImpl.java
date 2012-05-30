@@ -61,7 +61,6 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		super(appCntx, tcapDialog, mapProviderImpl, mapService, origReference, destReference);
 	}
 
-	@Override
 	public Long addSendAuthenticationInfoRequest(long mapProtocolVersion, IMSI imsi, int numberOfRequestedVectors, boolean segmentationProhibited,
 			boolean immediateResponsePreferred, ReSynchronisationInfo reSynchronisationInfo, MAPExtensionContainer extensionContainer,
 			RequestingNodeType requestingNodeType, PlmnId requestingPlmnId, Integer numberOfRequestedAdditionalVectors, boolean additionalVectorsAreForEPS)
@@ -71,7 +70,6 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 				numberOfRequestedAdditionalVectors, additionalVectorsAreForEPS);
 	}
 
-	@Override
 	public Long addSendAuthenticationInfoRequest(int customInvokeTimeout, long mapProtocolVersion, IMSI imsi, int numberOfRequestedVectors,
 			boolean segmentationProhibited, boolean immediateResponsePreferred, ReSynchronisationInfo reSynchronisationInfo,
 			MAPExtensionContainer extensionContainer, RequestingNodeType requestingNodeType, PlmnId requestingPlmnId,
@@ -117,7 +115,6 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		return invokeId;
 	}
 
-	@Override
 	public void addSendAuthenticationInfoResponse(long invokeId, long mapProtocolVersion, AuthenticationSetList authenticationSetList,
 			MAPExtensionContainer extensionContainer, EpsAuthenticationSetList epsAuthenticationSetList) throws MAPException {
 

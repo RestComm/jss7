@@ -37,7 +37,6 @@ public class FailureCauseImpl implements FailureCause {
 		this.code = code;
 	}
 
-	@Override
 	public int getCode() {
 		return this.code;
 	}

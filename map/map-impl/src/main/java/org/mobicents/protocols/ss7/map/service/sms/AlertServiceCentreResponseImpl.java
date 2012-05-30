@@ -34,61 +34,45 @@ import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRespons
 
 public class AlertServiceCentreResponseImpl extends SmsMessageImpl implements AlertServiceCentreResponse {
 
-	@Override
 	public int getTag() throws MAPException {
 		
 		throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
 	}
 
-	@Override
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.alertServiceCentre_Response;
 	}
 
-	@Override
 	public int getOperationCode() {
 		return MAPOperationCode.alertServiceCentre;
 	}
 
-	@Override
 	public int getTagClass() {
 
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
-		
 		return false;
 	}
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-
 		throw new MAPParsingComponentException("AlertServiceCentreResponse has no MAP message primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-
 		throw new MAPParsingComponentException("AlertServiceCentreResponse has no MAP message primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-
 		throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-
 		throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-
 		throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
 	}
 

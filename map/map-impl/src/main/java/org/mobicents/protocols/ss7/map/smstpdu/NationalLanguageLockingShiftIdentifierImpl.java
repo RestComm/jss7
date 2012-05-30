@@ -40,7 +40,6 @@ public class NationalLanguageLockingShiftIdentifierImpl extends Gsm7NationalLang
 		super(encodedInformationElementData);
 	}
 
-	@Override
 	public int getEncodedInformationElementIdentifier() {
 		return UserDataHeader._InformationElementIdentifier_NationalLanguageLockingShift;
 	}

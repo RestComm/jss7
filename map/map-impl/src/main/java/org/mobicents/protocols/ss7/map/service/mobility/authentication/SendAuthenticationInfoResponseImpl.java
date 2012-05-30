@@ -34,15 +34,11 @@ import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationQuintuplet;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpsAuthenticationSetList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
-import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
-import org.mobicents.protocols.ss7.map.service.sms.SM_RP_DAImpl;
-import org.mobicents.protocols.ss7.map.service.sms.SM_RP_OAImpl;
 
 /**
  * 
@@ -74,38 +70,31 @@ public class SendAuthenticationInfoResponseImpl extends MobilityMessageImpl impl
 		this.epsAuthenticationSetList = epsAuthenticationSetList;
 	}
 	
-	@Override
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.sendAuthenticationInfo_Response;
 	}
 
-	@Override
 	public int getOperationCode() {
 		return MAPOperationCode.sendAuthenticationInfo;
 	}
 
-	@Override
 	public AuthenticationSetList getAuthenticationSetList() {
 		return authenticationSetList;
 	}
 
-	@Override
 	public MAPExtensionContainer getExtensionContainer() {
 		return extensionContainer;
 	}
 
-	@Override
 	public EpsAuthenticationSetList getEpsAuthenticationSetList() {
 		return epsAuthenticationSetList;
 	}
 
-	@Override
 	public long getMapProtocolVersion() {
 		return mapProtocolVersion;
 	}
 
 
-	@Override
 	public int getTag() throws MAPException {
 		if (this.mapProtocolVersion >= 3)
 			return SendAuthenticationInfoResponseImpl._TAG_General;
@@ -113,7 +102,6 @@ public class SendAuthenticationInfoResponseImpl extends MobilityMessageImpl impl
 			return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		if (this.mapProtocolVersion >= 3)
 			return Tag.CLASS_CONTEXT_SPECIFIC;
@@ -121,13 +109,11 @@ public class SendAuthenticationInfoResponseImpl extends MobilityMessageImpl impl
 			return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -142,7 +128,6 @@ public class SendAuthenticationInfoResponseImpl extends MobilityMessageImpl impl
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -216,13 +201,11 @@ public class SendAuthenticationInfoResponseImpl extends MobilityMessageImpl impl
 		}
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
@@ -235,7 +218,6 @@ public class SendAuthenticationInfoResponseImpl extends MobilityMessageImpl impl
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.mapProtocolVersion <= 2) {

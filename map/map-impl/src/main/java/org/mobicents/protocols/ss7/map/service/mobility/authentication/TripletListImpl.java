@@ -55,29 +55,24 @@ public class TripletListImpl implements TripletList, MAPAsnPrimitive {
 	}
 
 
-	@Override
 	public ArrayList<AuthenticationTriplet> getAuthenticationTriplets() {
 		return authenticationTriplets;
 	}
 
 
-	@Override
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
 
-	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
-	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
 
-	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
 		try {
@@ -92,7 +87,6 @@ public class TripletListImpl implements TripletList, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
 		try {
@@ -141,15 +135,11 @@ public class TripletListImpl implements TripletList, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
-	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
 		try {
 			asnOs.writeTag(tagClass, false, tag);
 			int pos = asnOs.StartContentDefiniteLength();
@@ -160,7 +150,6 @@ public class TripletListImpl implements TripletList, MAPAsnPrimitive {
 		}
 	}
 
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.authenticationTriplets == null || this.authenticationTriplets.size() < 1 || this.authenticationTriplets.size() > 5) {
