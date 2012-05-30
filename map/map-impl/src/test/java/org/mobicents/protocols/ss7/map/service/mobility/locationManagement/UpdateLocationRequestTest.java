@@ -23,9 +23,18 @@
 package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
 import static org.testng.Assert.*;
+import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VlrCapability;
+import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.testng.annotations.Test;
 
 /**
@@ -37,7 +46,7 @@ public class UpdateLocationRequestTest {
 
 	private byte[] getEncodedData() {
 		return new byte[] { 48, 34, 4, 8, 82, 0, 7, 2, 0, 9, -128, -8, -127, 7, -111, -105, -126, -103, 0, 0, -11, 4, 7, -111, -105, -126, -103, 0, 0, -10,
-				-90, 4, -123, 2, 6, -128 };
+				-90, 4, -123, 2, 3, -128 };
 	}
 
 	@Test
@@ -55,37 +64,45 @@ public class UpdateLocationRequestTest {
 		assertEquals(asc.getMapProtocolVersion(), 3);
 
 		IMSI imsi = asc.getImsi();
-		assertTrue(imsi.getData().equals("111222333444"));
-//		assertEquals(asc.getRequestingNodeType(), RequestingNodeType.vlr);
-//		assertEquals(asc.getNumberOfRequestedVectors(), 4);
-//
-//		assertNotNull(asc.getRequestingPlmnId());
-//		assertTrue(Arrays.equals(asc.getRequestingPlmnId().getData(), getRequestingPlmnId()));
-//		
-//		assertNull(asc.getReSynchronisationInfo());
-//		assertNull(asc.getExtensionContainer());
-//		assertNull(asc.getNumberOfRequestedAdditionalVectors());
-//
-//		assertFalse(asc.getSegmentationProhibited());
-//		assertFalse(asc.getImmediateResponsePreferred());
-//		assertTrue(asc.getAdditionalVectorsAreForEPS());
+		assertTrue(imsi.getData().equals("250070200090088"));
+
+		ISDNAddressString mscNumber = asc.getMscNumber();
+		assertTrue(mscNumber.getAddress().equals("79289900005"));
+		assertEquals(mscNumber.getAddressNature(), AddressNature.international_number);		
+		assertEquals(mscNumber.getNumberingPlan(), NumberingPlan.ISDN);		
+
+		ISDNAddressString vlrNumber = asc.getVlrNumber();
+		assertTrue(vlrNumber.getAddress().equals("79289900006"));
+		assertEquals(vlrNumber.getAddressNature(), AddressNature.international_number);		
+		assertEquals(vlrNumber.getNumberingPlan(), NumberingPlan.ISDN);		
+
+		VlrCapability vlrCap = asc.getVlrCapability();
+		assertTrue(vlrCap.getSupportedLCSCapabilitySets().getCapabilitySetRelease98_99());
+		assertFalse(vlrCap.getSupportedLCSCapabilitySets().getCapabilitySetRelease4());		
 
 	}
 
 	@Test(groups = { "functional.encode"})
 	public void testEncode() throws Exception {
 
-//		IMSIImpl imsi = new IMSIImpl("111222333444");
-//		PlmnIdImpl plmnId = new PlmnIdImpl(getRequestingPlmnId());
-//		UpdateLocationRequestImpl asc = new UpdateLocationRequestImpl(3, imsi, 4, false, false, null, null, RequestingNodeType.vlr, plmnId,
-//				null, true);
-//
-//		AsnOutputStream asnOS = new AsnOutputStream();
-//		asc.encodeAll(asnOS);
-//		
-//		byte[] encodedData = asnOS.toByteArray();
-//		byte[] rawData = getEncodedData();		
-//		assertTrue( Arrays.equals(rawData,encodedData));
+		IMSIImpl imsi = new IMSIImpl("250070200090088");
+		ISDNAddressStringImpl mscNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "79289900005");
+		ISDNAddressStringImpl vlrNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "79289900006");
+		SupportedLCSCapabilitySets supportedLCSCapabilitySets = new SupportedLCSCapabilitySetsImpl(true, false, false, false, false);
+		VlrCapability vlrCap = new VlrCapabilityImpl(null, null, false, null, null, false, supportedLCSCapabilitySets, null, null, false, false);
+		UpdateLocationRequestImpl asc = new UpdateLocationRequestImpl(3, imsi, mscNumber, null, vlrNumber, null, null, vlrCap, false, false, null, null, null,
+				false, false);
+//		long mapProtocolVersion, IMSI imsi, ISDNAddressString mscNumber, ISDNAddressString roamingNumber,
+//		ISDNAddressString vlrNumber, LMSI lmsi, MAPExtensionContainer extensionContainer, VlrCapability vlrCapability, boolean informPreviousNetworkEntity,
+//		boolean csLCSNotSupportedByUE, GSNAddress vGmlcAddress, ADDInfo addInfo, PagingArea pagingArea, boolean skipSubscriberDataUpdate,
+//		boolean restorationIndicator
+
+		AsnOutputStream asnOS = new AsnOutputStream();
+		asc.encodeAll(asnOS);
+		
+		byte[] encodedData = asnOS.toByteArray();
+		byte[] rawData = getEncodedData();		
+		assertTrue( Arrays.equals(rawData,encodedData));
 	}
 }
 

@@ -38,12 +38,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.S
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VlrCapability;
 import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.OfferedCamel4CSIs;
 import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.SupportedCamelPhases;
-import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
-import org.mobicents.protocols.ss7.map.primitives.PlmnIdImpl;
-import org.mobicents.protocols.ss7.map.service.mobility.authentication.QuintupletListImpl;
-import org.mobicents.protocols.ss7.map.service.mobility.authentication.TripletListImpl;
 import org.mobicents.protocols.ss7.map.service.subscriberManagement.OfferedCamel4CSIsImpl;
 import org.mobicents.protocols.ss7.map.service.subscriberManagement.SupportedCamelPhasesImpl;
 
@@ -281,8 +277,8 @@ public class VlrCapabilityImpl implements VlrCapability, MAPAsnPrimitive {
 					if (!ais.isTagPrimitive())
 						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".supportedRATTypesIndicator: Parameter is not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
-					// TODO: implement it
-					ais.advanceElement();
+					this.supportedRATTypesIndicator = new SupportedRATTypesImpl();
+					((SupportedRATTypesImpl) this.supportedRATTypesIndicator).decodeAll(ais);
 					break;
 				case _TAG_longGroupIDSupported:
 					// longGroupIDSupported
@@ -368,8 +364,7 @@ public class VlrCapabilityImpl implements VlrCapability, MAPAsnPrimitive {
 			if (offeredCamel4CSIs != null)
 				((OfferedCamel4CSIsImpl) this.offeredCamel4CSIs).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_offeredCamel4CSIs);			
 			if (supportedRATTypesIndicator != null)
-				// TODO: implement it
-//				((SupportedRATTypesImpl) this.supportedRATTypesIndicator).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_supportedRATTypesIndicator);			
+				((SupportedRATTypesImpl) this.supportedRATTypesIndicator).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_supportedRATTypesIndicator);
 			if (longGroupIDSupported)
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_longGroupIDSupported);			
 			if (mtRoamingForwardingSupported)
@@ -401,10 +396,12 @@ public class VlrCapabilityImpl implements VlrCapability, MAPAsnPrimitive {
 			sb.append("solsaSupportIndicator, ");
 		}
 		if (this.istSupportIndicator != null) {
+			sb.append("istSupportIndicator=");
 			sb.append(this.istSupportIndicator.toString());
 			sb.append(", ");
 		}
 		if (this.superChargerSupportedInServingNetworkEntity != null) {
+			sb.append("superChargerSupportedInServingNetworkEntity=");
 			sb.append(this.superChargerSupportedInServingNetworkEntity.toString());
 			sb.append(", ");
 		}
@@ -412,14 +409,17 @@ public class VlrCapabilityImpl implements VlrCapability, MAPAsnPrimitive {
 			sb.append("longFtnSupported, ");
 		}
 		if (this.supportedLCSCapabilitySets != null) {
+			sb.append("supportedLCSCapabilitySets=");
 			sb.append(this.supportedLCSCapabilitySets.toString());
 			sb.append(", ");
 		}
 		if (this.offeredCamel4CSIs != null) {
+			sb.append("offeredCamel4CSIs=");
 			sb.append(this.offeredCamel4CSIs.toString());
 			sb.append(", ");
 		}
 		if (this.supportedRATTypesIndicator != null) {
+			sb.append("supportedRATTypesIndicator=");
 			sb.append(this.supportedRATTypesIndicator.toString());
 			sb.append(", ");
 		}

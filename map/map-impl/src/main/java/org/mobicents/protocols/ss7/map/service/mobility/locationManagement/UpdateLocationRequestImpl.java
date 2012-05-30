@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
 import java.io.IOException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -38,7 +37,6 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
@@ -47,7 +45,6 @@ import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
-import org.mobicents.protocols.ss7.map.primitives.PlmnIdImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
 
 /**
@@ -409,20 +406,141 @@ public class UpdateLocationRequestImpl extends MobilityMessageImpl implements Up
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		// TODO Auto-generated method stub
 		
+		try {
+			asnOs.writeTag(tagClass, false, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		// TODO Auto-generated method stub
-		
+
+		try {
+			if (this.imsi == null || (this.mscNumber == null && (this.roamingNumber == null || this.mapProtocolVersion > 1)) || this.vlrNumber == null)
+				throw new MAPException("IMSI parameter must not be null");
+
+			((IMSIImpl) this.imsi).encodeAll(asnOs);
+
+			if(this.mscNumber != null)
+				((ISDNAddressStringImpl) this.mscNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_mscNumber);
+			else
+				((ISDNAddressStringImpl) this.roamingNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_roamingNumber);
+			((ISDNAddressStringImpl) this.vlrNumber).encodeAll(asnOs);
+
+			if(this.lmsi != null)
+				((LMSIImpl) this.lmsi).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_lmsi);
+			if (this.extensionContainer != null)
+				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
+			if(this.vlrCapability != null)
+				((VlrCapabilityImpl) this.vlrCapability).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_vlrCapability);
+			if (informPreviousNetworkEntity)
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_informPreviousNetworkEntity);
+			if (csLCSNotSupportedByUE)
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_csLCSNotSupportedByUE);
+			if (vGmlcAddress != null) {
+				// TODO: implement it _TAG_vGmlcAddress
+			}
+			if (addInfo != null) {
+				// TODO: implement it _TAG_addInfo
+			}
+			if (pagingArea != null) {
+				// TODO: implement it _TAG_pagingArea
+			}
+			if (skipSubscriberDataUpdate)
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_skipSubscriberDataUpdate);
+			if (restorationIndicator)
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_restorationIndicator);			
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("UpdateLocationRequest [");
+
+		if (this.imsi != null) {
+			sb.append("imsi=");
+			sb.append(imsi.toString());
+			sb.append(", ");
+		}
+		if (this.mscNumber != null) {
+			sb.append("mscNumber=");
+			sb.append(mscNumber.toString());
+			sb.append(", ");
+		}
+		if (this.roamingNumber != null) {
+			sb.append("roamingNumber=");
+			sb.append(roamingNumber.toString());
+			sb.append(", ");
+		}
+		if (this.vlrNumber != null) {
+			sb.append("vlrNumber=");
+			sb.append(vlrNumber.toString());
+			sb.append(", ");
+		}
+		if (this.lmsi != null) {
+			sb.append("lmsi=");
+			sb.append(lmsi.toString());
+			sb.append(", ");
+		}
+		if (this.extensionContainer != null) {
+			sb.append("extensionContainer=");
+			sb.append(extensionContainer.toString());
+			sb.append(", ");
+		}
+		if (this.vlrCapability != null) {
+			sb.append("vlrCapability=");
+			sb.append(vlrCapability.toString());
+			sb.append(", ");
+		}
+		if (this.informPreviousNetworkEntity) {
+			sb.append("informPreviousNetworkEntity, ");
+		}
+		if (this.csLCSNotSupportedByUE) {
+			sb.append("csLCSNotSupportedByUE, ");
+		}
+		if (this.vGmlcAddress != null) {
+			sb.append("vGmlcAddress=");
+			sb.append(vGmlcAddress.toString());
+			sb.append(", ");
+		}
+		if (this.addInfo != null) {
+			sb.append("addInfo=");
+			sb.append(addInfo.toString());
+			sb.append(", ");
+		}
+		if (this.pagingArea != null) {
+			sb.append("pagingArea=");
+			sb.append(pagingArea.toString());
+			sb.append(", ");
+		}
+		if (this.skipSubscriberDataUpdate) {
+			sb.append("skipSubscriberDataUpdate, ");
+		}
+		if (this.restorationIndicator) {
+			sb.append("restorationIndicator, ");
+		}
+		sb.append("mapProtocolVersion=");
+		sb.append(mapProtocolVersion);
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
+

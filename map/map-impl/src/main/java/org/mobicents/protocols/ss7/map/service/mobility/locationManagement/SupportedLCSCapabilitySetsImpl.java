@@ -45,8 +45,7 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	private static final int _INDEX_LCS_CAPABILITY_SET4 = 3;
 	private static final int _INDEX_LCS_CAPABILITY_SET5 = 4;
 
-	//TODO : Is this correct?
-	private BitSetStrictLength bitString = new BitSetStrictLength(4);
+	private BitSetStrictLength bitString = new BitSetStrictLength(5);
 	
 	/**
 	 * 
@@ -123,8 +122,8 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 	}
 	
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		if (length < 0 || length > 2)
-			throw new MAPParsingComponentException("Error decoding SupportedLCSCapabilitySets: the SupportedLCSCapabilitySets field must contain from 2 or 4 octets. Contains: " + length,
+		if (length < 1 || length > 3)
+			throw new MAPParsingComponentException("Error decoding SupportedLCSCapabilitySets: the SupportedLCSCapabilitySets field must contain from 1 or 3 octets. Contains: " + length,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		
 		this.bitString = ansIS.readBitStringData(length);
@@ -147,7 +146,7 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MWStatus: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding SupportedLCSCapabilitySets: " + e.getMessage(), e);
 		}
 	}
 
@@ -158,9 +157,9 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 		try {
 			asnOs.writeBitStringData(this.bitString);
 		} catch (IOException e) {
-			throw new MAPException("IOException when encoding MWStatus: " + e.getMessage(), e);
+			throw new MAPException("IOException when encoding SupportedLCSCapabilitySets: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MWStatus: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding SupportedLCSCapabilitySets: " + e.getMessage(), e);
 		}
 	}
 

@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
+
 package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
 import java.io.IOException;
@@ -39,8 +40,8 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
  */
 public class SuperChargerInfoImpl implements SuperChargerInfo, MAPAsnPrimitive {
 
-	private static final int _ID_sendSubscriberData = 0;
-	private static final int _ID_subscriberDataStored = 1;
+	public static final int _ID_sendSubscriberData = 0;
+	public static final int _ID_subscriberDataStored = 1;
 
 	public static final String _PrimitiveName = "SuperChargerInfo";
 
@@ -51,7 +52,6 @@ public class SuperChargerInfoImpl implements SuperChargerInfo, MAPAsnPrimitive {
 	 * 
 	 */
 	public SuperChargerInfoImpl() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -247,13 +247,35 @@ public class SuperChargerInfoImpl implements SuperChargerInfo, MAPAsnPrimitive {
 		if (this.sendSubscriberData != null) {
 			asnOs.writeNullData();
 		} else {
-			try {
-				asnOs.writeOctetString(this.subscriberDataStored);
-			} catch (IOException e) {
-				throw new MAPException("Error when encoding SuperChargerInfo: error while writting sendSubscriberData", e);
-			} catch (AsnException e) {
-				throw new MAPException("Error when encoding SuperChargerInfo: error while writting sendSubscriberData", e);
-			}
+			asnOs.writeOctetStringData(this.subscriberDataStored);
 		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SuperChargerInfo [");
+
+		if (sendSubscriberData!=null)
+			sb.append("sendSubscriberData, ");
+		if (subscriberDataStored != null) {
+			sb.append("subscriberDataStored=[");
+			sb.append(printDataArr(subscriberDataStored));
+			sb.append("], ");
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
+
+	private String printDataArr(byte[] arr) {
+		StringBuilder sb = new StringBuilder();
+		for (int b : arr) {
+			sb.append(b);
+			sb.append(", ");
+		}
+
+		return sb.toString();
 	}
 }

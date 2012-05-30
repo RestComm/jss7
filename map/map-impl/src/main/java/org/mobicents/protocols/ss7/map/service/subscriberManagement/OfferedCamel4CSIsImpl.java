@@ -27,7 +27,7 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	private static final int _ID_mg_csi = 5;
 	private static final int _ID_psi_enhancements = 6;
 	
-	private BitSetStrictLength bitString = new BitSetStrictLength(16);
+	private BitSetStrictLength bitString = new BitSetStrictLength(7);
 	
 	/**
 	 * 
@@ -179,8 +179,8 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	}
 	
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		if (length == 0 || length > 2)
-			throw new MAPParsingComponentException("Error decoding SupportedCamelPhases: the OfferedCamel4CSIs field must contain from 1 or 2 octets. Contains: " + length,
+		if (length == 0 || length > 3)
+			throw new MAPParsingComponentException("Error decoding SupportedCamelPhases: the OfferedCamel4CSIs field must contain from 1 or 3 octets. Contains: " + length,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		
 		this.bitString = ansIS.readBitStringData(length);
@@ -221,5 +221,30 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 		} catch (AsnException e) {
 			throw new MAPException("AsnException when encoding OfferedCamel4CSIs: " + e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("OfferedCamel4CSIs [");
+
+		if (getOCsi())
+			sb.append("o_csi, ");
+		if (getDCsi())
+			sb.append("d_csi, ");
+		if (getVtCsi())
+			sb.append("vt_csi, ");
+		if (getTCsi())
+			sb.append("t_csi, ");
+		if (getMtSmsCsi())
+			sb.append("mt_sms_csi, ");
+		if (getMgCsi())
+			sb.append("mg_csi, ");
+		if (getPsiEnhancements())
+			sb.append("psi_enhancements, ");
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }
