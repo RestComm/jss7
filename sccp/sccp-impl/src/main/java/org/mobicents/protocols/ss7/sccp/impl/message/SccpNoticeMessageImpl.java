@@ -79,22 +79,18 @@ public class SccpNoticeMessageImpl extends SccpDataNoticeTemplateMessageImpl imp
 		super(sccpStackImpl, type, incomingOpc, incomingDpc, incomingSls);
 	}
 
-	@Override
 	public ReturnCause getReturnCause() {
 		return returnCause;
 	}
 
-	@Override
 	public void setReturnCause(ReturnCause rc) {
 		this.returnCause = rc;
 	}
 
-	@Override
 	public boolean getReturnMessageOnError() {
 		return false;
 	}
 
-	@Override
 	public boolean getSccpCreatesSls() {
 		return true;
 	}

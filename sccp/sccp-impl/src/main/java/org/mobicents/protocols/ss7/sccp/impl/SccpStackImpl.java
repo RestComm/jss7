@@ -543,7 +543,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		this.sccpResource.removeAllResourses();
 	}
 	
-	@Override
 	public void onMtp3PauseMessage(Mtp3PausePrimitive msg) {
 		
 		logger.warn(String.format("Rx : %s", msg));
@@ -556,7 +555,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		sccpManagement.handleMtp3Pause(msg.getAffectedDpc());
 	}
 
-	@Override
 	public void onMtp3ResumeMessage(Mtp3ResumePrimitive msg) {
 		logger.warn(String.format("Rx : %s", msg));
 
@@ -568,7 +566,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		sccpManagement.handleMtp3Resume(msg.getAffectedDpc());
 	}
 
-	@Override
 	public void onMtp3StatusMessage(Mtp3StatusPrimitive msg) {
 		logger.warn(String.format("Rx : %s", msg));
 		if (this.state != State.RUNNING){
@@ -579,7 +576,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		sccpManagement.handleMtp3Status(msg.getCause(), msg.getAffectedDpc(), msg.getCongestionLevel());
 	}
 
-	@Override
 	public void onMtp3TransferMessage(Mtp3TransferPrimitive mtp3Msg) {
 
 		if (this.state != State.RUNNING){
@@ -785,7 +781,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 			}
 		}
 
-		@Override
 		public void run() {
 			SccpSegmentableMessageImpl msg = null;
 			synchronized (reassemplyCache) {

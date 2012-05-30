@@ -59,7 +59,7 @@ public class GetMaxUserDataLengthTest {
 	public void tearDown() {
 	}
 
-	@Test(groups = { "SccpMessage", "MessageLength",})
+	@Test(groups = { "SccpMessage", "MessageLength"})
 	public void testMessageLength() throws Exception {
 
 		SccpAddress a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);

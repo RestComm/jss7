@@ -104,7 +104,7 @@ public class SccpNoticeMessageTest {
 		return new byte[] { 20, 5, 10, 7, 00, 8, 00, 11, 00, 00, 00, 2, 66, 8, 4, 67, 1, 0, 6, 5, 00, 11, 12, 13, 14, 15 };
 	}
 
-	@Test(groups = { "SccpMessage", "functional.decode",})
+	@Test(groups = { "SccpMessage", "functional.decode"})
 	public void testDecode() throws Exception {
 
 		// ---- UDTS
@@ -182,7 +182,7 @@ public class SccpNoticeMessageTest {
 
 	}
 
-	@Test(groups = { "SccpMessage", "functional.encode",})
+	@Test(groups = { "SccpMessage", "functional.encode"})
 	public void testEncode() throws Exception {
 
 		// ---- UDTS

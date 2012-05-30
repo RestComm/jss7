@@ -77,17 +77,14 @@ public class SccpDataMessageImpl extends SccpDataNoticeTemplateMessageImpl imple
 		super(sccpStackImpl, type, incomingOpc, incomingDpc, incomingSls);
 	}
 
-	@Override
 	public ProtocolClass getProtocolClass() {
 		return protocolClass;
 	}
 
-	@Override
 	public void setProtocolClass(ProtocolClass protocolClass) {
 		this.protocolClass = protocolClass;
 	}
 	
-	@Override
 	public boolean getReturnMessageOnError() {
 		if (this.protocolClass != null)
 			return this.protocolClass.getReturnMessageOnError();
@@ -95,7 +92,6 @@ public class SccpDataMessageImpl extends SccpDataNoticeTemplateMessageImpl imple
 			return false;
 	}
 
-	@Override
 	public boolean getSccpCreatesSls() {
 		if (this.protocolClass == null || this.protocolClass.getProtocolClass() == 0)
 			return true;

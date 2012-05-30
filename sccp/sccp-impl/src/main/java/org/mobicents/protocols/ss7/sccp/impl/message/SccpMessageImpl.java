@@ -102,17 +102,14 @@ public abstract class SccpMessageImpl implements SccpMessage {
 		this.outgoingDpc = dpc;
 	}
 
-	@Override
 	public int getType() {
 		return type;
 	}
 
-	@Override
 	public boolean getIsMtpOriginated() {
 		return isMtpOriginated;
 	}
 
-	@Override
 	public int getOriginLocalSsn() {
 		return localOriginSsn;
 	}

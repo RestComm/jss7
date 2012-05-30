@@ -108,14 +108,12 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
 		return ssnToListener;
 	}
 
-	@Override
 	public void send(SccpDataMessage message) throws IOException {
 
 		SccpDataMessageImpl msg = ((SccpDataMessageImpl) message);
 		stack.send(msg);
 	}
 
-	@Override
 	public int getMaxUserDataLength(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress) {
 		return this.stack.getMaxUserDataLength(calledPartyAddress, callingPartyAddress);
 	}

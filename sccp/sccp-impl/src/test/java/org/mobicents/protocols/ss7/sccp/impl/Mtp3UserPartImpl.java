@@ -63,7 +63,6 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
 		this.otherPart = otherPart;
 	}
 
-	@Override
 	public void sendMessage(Mtp3TransferPrimitive msg) throws IOException {
 		if (saveTrafficInFile) {
 			try {

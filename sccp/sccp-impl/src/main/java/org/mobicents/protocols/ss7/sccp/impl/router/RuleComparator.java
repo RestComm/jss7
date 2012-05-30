@@ -67,7 +67,6 @@ public class RuleComparator implements Comparator<Rule> {
 	 * 
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
-	@Override
 	public int compare(Rule o1, Rule o2) {
 		String digits1 = o1.getPattern().getGlobalTitle().getDigits();
 		String digits2 = o2.getPattern().getGlobalTitle().getDigits();

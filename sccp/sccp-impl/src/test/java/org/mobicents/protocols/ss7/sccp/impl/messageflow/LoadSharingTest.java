@@ -104,7 +104,7 @@ public class LoadSharingTest extends SccpHarness {
 		return new byte[] { 11, 12, 13, 14, 15 };
 	}
 
-	@Test(groups = { "SccpMessage", "functional.transfer",})
+	@Test(groups = { "SccpMessage", "functional.transfer"})
 	public void testTransfer() throws Exception {
 
 		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, 8);

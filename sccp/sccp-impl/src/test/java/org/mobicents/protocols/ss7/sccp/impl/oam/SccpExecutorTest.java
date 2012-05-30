@@ -838,25 +838,21 @@ public class SccpExecutorTest {
 
 	class Mtp3UserPartImpl implements Mtp3UserPart {
 
-		@Override
 		public void addMtp3UserPartListener(Mtp3UserPartListener arg0) {
 			// TODO Auto-generated method stub
 			
 		}
 
-		@Override
 		public int getMaxUserDataLength(int arg0) {
 			// TODO Auto-generated method stub
 			return 0;
 		}
 
-		@Override
 		public void removeMtp3UserPartListener(Mtp3UserPartListener arg0) {
 			// TODO Auto-generated method stub
 			
 		}
 
-		@Override
 		public void sendMessage(Mtp3TransferPrimitive arg0) throws IOException {
 			// TODO Auto-generated method stub
 			

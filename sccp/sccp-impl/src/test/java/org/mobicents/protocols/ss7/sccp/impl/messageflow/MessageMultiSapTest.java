@@ -116,7 +116,7 @@ public class MessageMultiSapTest extends SccpHarness {
 		return new byte[] { 9, 0,     3, 5, 7,    2, 66, 8,    2, 66, 8,     5, 11, 12, 13, 14, 15 };
 	}
 
-	@Test(groups = { "SccpMessage", "functional.transfer",})
+	@Test(groups = { "SccpMessage", "functional.transfer"})
 	public void testTransfer() throws Exception {
 
 		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, 8);

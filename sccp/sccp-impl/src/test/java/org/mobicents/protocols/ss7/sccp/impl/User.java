@@ -120,7 +120,6 @@ public class User implements SccpListener {
 
 	SccpAddress localAddress;
 	
-	@Override
 	public void onMessage(SccpDataMessage message) {
 		this.messages.add(message);
 		System.out.println(String.format("SccpDataMessage=%s seqControl=%d", message, message.getSls()));
@@ -165,31 +164,26 @@ public class User implements SccpListener {
 		return messages;
 	}
 
-	@Override
 	public void onCoordRequest(int dpc, int ssn, int multiplicityIndicator) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onCoordResponse(int dpc, int ssn, int multiplicityIndicator) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onState(int dpc, int ssn, boolean inService, int multiplicityIndicator) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onPcState(int dpc, SignallingPointStatus status, int restrictedImportanceLevel, RemoteSccpStatus remoteSccpStatus) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onNotice(SccpNoticeMessage message) {
 		this.messages.add(message);
 		System.out.println(String.format("SccpNoticeMessage=%s seqControl=%d", message, message.getSls()));

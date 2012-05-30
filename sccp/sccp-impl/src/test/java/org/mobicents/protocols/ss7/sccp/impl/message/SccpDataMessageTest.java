@@ -139,7 +139,7 @@ public class SccpDataMessageTest {
 				22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, };
 	}
 
-	@Test(groups = { "SccpMessage", "functional.decode",})
+	@Test(groups = { "SccpMessage", "functional.decode"})
 	public void testDecode() throws Exception {
 		
 		// ---- UDT
@@ -362,7 +362,7 @@ public class SccpDataMessageTest {
 		
 	}
 
-	@Test(groups = { "SccpMessage", "functional.encode",})
+	@Test(groups = { "SccpMessage", "functional.encode"})
 	public void testEncode() throws Exception {
 
 		// ---- UDT

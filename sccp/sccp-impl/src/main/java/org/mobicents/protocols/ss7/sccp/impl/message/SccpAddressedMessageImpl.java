@@ -47,37 +47,30 @@ public abstract class SccpAddressedMessageImpl extends SccpMessageImpl implement
 		super(sccpStackImpl, type, incomingOpc, incomingDpc, incomingSls);
 	}
 
-	@Override
 	public SccpAddress getCalledPartyAddress() {
 		return calledParty;
 	}
 
-	@Override
 	public void setCalledPartyAddress(SccpAddress calledParty) {
 		this.calledParty = calledParty;
 	}
 
-	@Override
 	public SccpAddress getCallingPartyAddress() {
 		return callingParty;
 	}
 
-	@Override
 	public void setCallingPartyAddress(SccpAddress callingParty) {
 		this.callingParty = callingParty;
 	}
 
-	@Override
 	public HopCounter getHopCounter() {
 		return hopCounter;
 	}
 
-	@Override
 	public void setHopCounter(HopCounter hopCounter) {
 		this.hopCounter = (HopCounterImpl) hopCounter;
 	}
 
-	@Override
 	public boolean reduceHopCounter() {
 		if (this.hopCounter != null) {
 			int val = this.hopCounter.getValue();

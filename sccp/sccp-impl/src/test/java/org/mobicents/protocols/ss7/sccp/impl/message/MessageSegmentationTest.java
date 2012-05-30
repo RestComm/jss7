@@ -158,7 +158,7 @@ public class MessageSegmentationTest {
 		return buf1;
 	}
 
-	@Test(groups = { "SccpMessage", "functional.encode",})
+	@Test(groups = { "SccpMessage", "functional.encode"})
 	public void testEncode() throws Exception {
 
 		// -- message length exceeds the max possible length
@@ -248,7 +248,7 @@ public class MessageSegmentationTest {
 		return new byte[] { -127, -96, -122, 1 };
 	}
 	
-	@Test(groups = { "SccpMessage", "functional.encode",})
+	@Test(groups = { "SccpMessage", "functional.encode"})
 	public void testLocalRef() throws Exception {
 		SegmentationImpl segm = new SegmentationImpl(true, false, (byte) 1, 100000);
 		byte[] buf = segm.encode();

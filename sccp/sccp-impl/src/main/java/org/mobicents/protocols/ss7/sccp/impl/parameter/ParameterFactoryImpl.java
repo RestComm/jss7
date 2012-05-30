@@ -39,17 +39,14 @@ import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
  */
 public class ParameterFactoryImpl implements ParameterFactory {
 
-	@Override
 	public SccpAddress createSccpAddress(RoutingIndicator ri, int dpc, GlobalTitle gt, int ssn) {
 		return new SccpAddress(ri, dpc, gt, ssn);
 	}
 
-	@Override
     public Importance createImportance(int value) {
         return new ImportanceImpl((byte)value);
     }
 
-	@Override
     public HopCounter createHopCounter(int hopCount)
     {
     	return new HopCounterImpl(hopCount);

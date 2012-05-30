@@ -62,12 +62,10 @@ public class ProtocolClassImpl extends AbstractParameter implements ProtocolClas
 			this.msgHandling = 0;
 	}
 
-	@Override
 	public int getProtocolClass() {
 		return this.pClass;
 	}
 
-	@Override
 	public boolean getReturnMessageOnError() {
 		return (this.msgHandling & HANDLING_RET_ERR) != 0 ? true : false;
 	}

@@ -88,7 +88,7 @@ public class MessageReassemblyTest extends SccpHarness {
 		return new byte[] { 17, (byte) 129, 15, 4, 6, 10, 15, 2, 66, 8, 4, 67, 1, 0, 6, 5, 11, 12, 13, 14, 15, 16, 4, (byte) 192, 100, 0, 0, 18, 1, 7, 0 };
 	}
 
-	@Test(groups = { "SccpMessage", "functional.decode",})
+	@Test(groups = { "SccpMessage", "functional.decode"})
 	public void testReassembly() throws Exception {
 
 		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, 8);
