@@ -24,7 +24,7 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 	private static final int _INDEX_Phase3 = 2;
 	private static final int _INDEX_Phase4 = 3;
 
-	private BitSetStrictLength bitString = new BitSetStrictLength(16);
+	private BitSetStrictLength bitString = new BitSetStrictLength(4);
 
 	/**
 	 * 
@@ -164,8 +164,8 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 	
 	
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		if (length == 0 || length > 2)
-			throw new MAPParsingComponentException("Error decoding SupportedCamelPhases: the SupportedCamelPhases field must contain from 1 or 2 octets. Contains: " + length,
+		if (length < 2 || length > 3)
+			throw new MAPParsingComponentException("Error decoding SupportedCamelPhases: the SupportedCamelPhases field must contain from 2 or 3 octets. Contains: " + length,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		
 		this.bitString = ansIS.readBitStringData(length);
@@ -220,4 +220,23 @@ public class SupportedCamelPhasesImpl implements SupportedCamelPhases, MAPAsnPri
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SupportedCamelPhases [");
+
+		if (getPhase1Supported())
+			sb.append("Phase1Supported, ");
+		if (getPhase2Supported())
+			sb.append("Phase2Supported, ");
+		if (getPhase3Supported())
+			sb.append("Phase3Supported, ");
+		if (getPhase4Supported())
+			sb.append("Phase4Supported, ");
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
+

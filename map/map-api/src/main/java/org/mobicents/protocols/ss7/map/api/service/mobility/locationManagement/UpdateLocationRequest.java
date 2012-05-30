@@ -29,7 +29,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
+ * V 3:
  * 	UpdateLocationArg ::= SEQUENCE {
  *		imsi								IMSI,
  *		msc-Number					[1] 	ISDN-AddressString,
@@ -49,6 +49,18 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  *		restorationIndicator		[16]	NULL		OPTIONAL
  *		 }
  *
+ * V 2:
+ * UpdateLocationArg ::= SEQUENCE {
+ * imsi						IMSI,
+ * locationInfo				LocationInfo,
+ * vlr-Number				ISDN-AddressString,
+ * lmsi				[10] 	LMSIOPTIONAL,
+ * ...}
+ * 
+ * LocationInfo ::= CHOICE {
+ * roamingNumber	[0] 	ISDN-AddressString,
+ * -- roamingNumber must not be used in version greater 1
+ * msc-Number		[1] 	ISDN-AddressString}
  * 
  * @author sergey vetyutnev
  * 
@@ -58,6 +70,8 @@ public interface UpdateLocationRequest {
 	public IMSI getImsi();
 
 	public ISDNAddressString getMscNumber();
+
+	public ISDNAddressString getRoamingNumber();
 
 	public ISDNAddressString getVlrNumber();
 
@@ -80,6 +94,8 @@ public interface UpdateLocationRequest {
 	public boolean getSkipSubscriberDataUpdate();
 
 	public boolean getRestorationIndicator();
+
+	public long getMapProtocolVersion();
 
 }
 

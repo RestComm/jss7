@@ -164,7 +164,8 @@ Services:
 - CallHandling
 - Supplementary
 - Sms
-- Lms
+- Network-Requested PDP Context Activation
+- Lsm
 
 - subscriberInformation -> Mobility !!!
 - subscriberManagement -> Mobility

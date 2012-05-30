@@ -299,10 +299,6 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 				byte[] buf = parameter.getData();
 				AsnInputStream ais = new AsnInputStream(buf);
 				ind.decodeData(ais, buf.length);
-//				AuthenticationSetListImpl ind2 = new AuthenticationSetListImpl();				
-//				ind2.decodeData(ais, buf.length);
-//
-//				ind = new SendAuthenticationInfoResponseImpl(version, ind2, null, null);
 			}
 		}
 
@@ -321,6 +317,17 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
 	private void updateLocationRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		
+		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+		
+		if (version == 1) {
+			int i1 = 0;
+			i1++;
+		}
+		if (version == 2) {
+			int i1 = 0;
+			i1++;
+		}
+		
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding updateLocationRequest: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
@@ -331,7 +338,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		UpdateLocationRequestImpl ind = new UpdateLocationRequestImpl();
+		UpdateLocationRequestImpl ind = new UpdateLocationRequestImpl(version);
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);

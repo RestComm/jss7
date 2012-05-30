@@ -27,11 +27,15 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  *
+ * V 3:
  * SendAuthenticationInfoRes ::= [3] SEQUENCE {
  *	authenticationSetList	AuthenticationSetList 	OPTIONAL,
  *	extensionContainer	ExtensionContainer	OPTIONAL,
  *	...,
  *	eps-AuthenticationSetList	[2] EPS-AuthenticationSetList	OPTIONAL }
+ *
+ * V 2:
+ * SendAuthenticationInfoRes ::= AuthenticationSetList
  *
  * @author sergey vetyutnev
  * 
