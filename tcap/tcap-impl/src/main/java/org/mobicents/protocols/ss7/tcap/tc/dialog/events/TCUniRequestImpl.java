@@ -148,12 +148,10 @@ public class TCUniRequestImpl extends DialogRequestImpl implements TCUniRequest 
 
 	}
 
-	@Override
 	public void setReturnMessageOnError(boolean val) {
 		returnMessageOnError = val;
 	}
 
-	@Override
 	public boolean getReturnMessageOnError() {
 		return returnMessageOnError;
 	}

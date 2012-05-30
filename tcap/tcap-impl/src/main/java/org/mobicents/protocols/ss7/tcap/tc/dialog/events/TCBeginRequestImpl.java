@@ -149,12 +149,10 @@ public class TCBeginRequestImpl extends DialogRequestImpl implements TCBeginRequ
 
 	}
 
-	@Override
 	public void setReturnMessageOnError(boolean val) {
 		returnMessageOnError = val;
 	}
 
-	@Override
 	public boolean getReturnMessageOnError() {
 		return returnMessageOnError;
 	}

@@ -108,12 +108,10 @@ public class TCEndRequestImpl extends DialogRequestImpl implements TCEndRequest 
 
 	}
 
-	@Override
 	public void setReturnMessageOnError(boolean val) {
 		returnMessageOnError = val;
 	}
 
-	@Override
 	public boolean getReturnMessageOnError() {
 		return returnMessageOnError;
 	}

@@ -841,13 +841,11 @@ public class DialogImpl implements Dialog {
 
 	}
 
-	@Override
 	public int getMaxUserDataLength() {
 
 		return this.provider.getMaxUserDataLength(remoteAddress, localAddress);
 	}	
 
-	@Override
 	public int getDataLength(TCBeginRequest event) throws TCAPSendException {
 		
 		TCBeginMessageImpl tcbm = (TCBeginMessageImpl) TcapFactory.createTCBeginMessage();
@@ -886,7 +884,6 @@ public class DialogImpl implements Dialog {
 		return aos.size();
 	}
 
-	@Override
 	public int getDataLength(TCContinueRequest event) throws TCAPSendException {
 
 		TCContinueMessageImpl tcbm = (TCContinueMessageImpl) TcapFactory.createTCContinueMessage();
@@ -937,7 +934,6 @@ public class DialogImpl implements Dialog {
 		return aos.size();
 	}
 
-	@Override
 	public int getDataLength(TCEndRequest event) throws TCAPSendException {
 
 		// TC-END request primitive issued in response to a TC-BEGIN
@@ -995,7 +991,6 @@ public class DialogImpl implements Dialog {
 		return aos.size();
 	}
 
-	@Override
 	public int getDataLength(TCUniRequest event) throws TCAPSendException {
 
 		TCUniMessageImpl msg = (TCUniMessageImpl) TcapFactory.createTCUniMessage();

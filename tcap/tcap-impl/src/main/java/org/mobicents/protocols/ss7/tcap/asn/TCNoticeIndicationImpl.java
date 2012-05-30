@@ -39,42 +39,34 @@ public class TCNoticeIndicationImpl implements TCNoticeIndication {
 	private ReturnCauseValue reportCause;
 	private Dialog dialog;
 
-	@Override
 	public SccpAddress getLocalAddress() {
 		return localAddress;
 	}
 
-	@Override
 	public void setLocalAddress(SccpAddress val) {
 		localAddress = val;
 	}
 
-	@Override
 	public SccpAddress getRemoteAddress() {
 		return remoteAddress;
 	}
 
-	@Override
 	public void setRemoteAddress(SccpAddress val) {
 		remoteAddress = val;
 	}
 
-	@Override
 	public ReturnCauseValue getReportCause() {
 		return reportCause;
 	}
 
-	@Override
 	public void setReportCause(ReturnCauseValue val) {
 		reportCause = val;
 	}
 
-	@Override
 	public Dialog getDialog() {
 		return dialog;
 	}
 
-	@Override
 	public void setDialog(Dialog val) {
 		dialog = val;
 	}

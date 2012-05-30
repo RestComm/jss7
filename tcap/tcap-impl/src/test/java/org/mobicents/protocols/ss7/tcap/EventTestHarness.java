@@ -267,7 +267,6 @@ public abstract class EventTestHarness implements TCListener {
 
 	}
 
-	@Override
 	public void onTCNotice(TCNoticeIndication ind) {
 		System.err.println(this+" T["+System.currentTimeMillis()+"]onNotice");
 		TestEvent te = TestEvent.createReceivedEvent(EventType.Notice, ind, sequence++);

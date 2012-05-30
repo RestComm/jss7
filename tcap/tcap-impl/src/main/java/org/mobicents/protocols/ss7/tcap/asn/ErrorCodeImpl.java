@@ -69,7 +69,6 @@ public class ErrorCodeImpl implements ErrorCode {
 		return this.globalErrorCode;
 	}
 	
-	@Override
 	public ErrorCodeType getErrorType() {
 		return type;
 	}

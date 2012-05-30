@@ -125,12 +125,10 @@ public class TCContinueRequestImpl extends DialogRequestImpl implements TCContin
 
 	}
 
-	@Override
 	public void setReturnMessageOnError(boolean val) {
 		returnMessageOnError = val;
 	}
 
-	@Override
 	public boolean getReturnMessageOnError() {
 		return returnMessageOnError;
 	}

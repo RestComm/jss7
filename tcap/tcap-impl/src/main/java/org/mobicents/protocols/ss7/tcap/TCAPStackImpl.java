@@ -149,11 +149,9 @@ public class TCAPStackImpl implements TCAPStack {
         IDLE, CONFIGURED, RUNNING;
     }
 
-	@Override
 	public void setMaxDialogs(int v) {
 		maxDialogs = v;
 	}
-	@Override
 	public int getMaxDialogs() {
 		return maxDialogs;
 	}

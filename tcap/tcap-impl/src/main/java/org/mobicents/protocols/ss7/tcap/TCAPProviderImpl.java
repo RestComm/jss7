@@ -469,19 +469,16 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		}
 	}
 
-	@Override
 	public void onCoordRequest(int arg0, int arg1, int arg2) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onCoordResponse(int arg0, int arg1, int arg2) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onMessage(SccpDataMessage message) {
 		
 		try {
@@ -643,7 +640,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		}
 	}
 
-	@Override
 	public void onNotice(SccpNoticeMessage msg) {
 
 		DialogImpl dialog = null;
@@ -690,13 +686,11 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		}
 	}
 
-	@Override
 	public void onPcState(int arg0, SignallingPointStatus arg1, int arg2, RemoteSccpStatus arg3) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onState(int arg0, int arg1, boolean arg2, int arg3) {
 		// TODO Auto-generated method stub
 		

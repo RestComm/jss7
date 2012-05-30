@@ -73,22 +73,18 @@ public class TCUserAbortRequestImpl extends DialogRequestImpl implements TCUserA
 
 	}
 
-	@Override
 	public void setDialogServiceUserType(DialogServiceUserType dialogServiceUserType) {
 		this.dialogServiceUserType = dialogServiceUserType;
 	}
 
-	@Override
 	public DialogServiceUserType getDialogServiceUserType() {
 		return this.dialogServiceUserType;
 	}
 
-	@Override
 	public void setReturnMessageOnError(boolean val) {
 		returnMessageOnError = val;
 	}
 
-	@Override
 	public boolean getReturnMessageOnError() {
 		return returnMessageOnError;
 	}
