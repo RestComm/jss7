@@ -48,6 +48,8 @@ import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthe
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationResponseImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
@@ -110,6 +112,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		int vers = dialogApplicationContext.getApplicationContextVersion().getVersion();
 
 		switch (ctx) {
+
+		// -- Authentication management services
 		case infoRetrievalContext:
 			if (vers >= 1 && vers <= 3) {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
@@ -122,6 +126,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
 			}
 
+		// -- Location management services
+		// -- Fault recovery
 		case networkLocUpContext:
 			if (vers >= 1 && vers <= 3) {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
@@ -134,6 +140,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
 			}
 
+		// -- International mobile equipment identities management services
 		case equipmentMngtContext:
 			if (vers >= 1 && vers <= 3) {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
@@ -146,6 +153,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
 			}
 
+		// -- Subscriber Information services
 		case anyTimeEnquiryContext:
 			if (vers >= 3 && vers <= 3) {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
@@ -158,7 +166,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
 			}
 		}
-		
+
 		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
 	}
 
@@ -166,10 +174,16 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 	public MAPApplicationContext getMAPv1ApplicationContext(int operationCode, Invoke invoke) {
 
 		switch (operationCode) {
+		
+		// -- Location management services
 		case MAPOperationCode.updateLocation:
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.networkLocUpContext, MAPApplicationContextVersion.version1);
+			
+		// -- Authentication management services
 		case MAPOperationCode.SendParameters:
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.infoRetrievalContext, MAPApplicationContextVersion.version1);
+		
+		// -- International mobile equipment identities management services
 		case MAPOperationCode.checkIMEI:
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version1);
 		}
@@ -200,6 +214,18 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		int ocValueInt = (int) (long)ocValue;
 
 		switch (ocValueInt) {
+
+		// -- Location management services
+		case MAPOperationCode.updateLocation:
+			if (acn == MAPApplicationContextName.networkLocUpContext ) {
+				if (compType == ComponentType.Invoke)
+					this.updateLocationRequest(parameter, mapDialogMobilityImpl, invokeId);
+				else
+					this.updateLocationResponse(parameter, mapDialogMobilityImpl, invokeId);
+			}
+			break;
+		
+		// -- Authentication management services
 		case MAPOperationCode.sendAuthenticationInfo:
 			if (acn == MAPApplicationContextName.infoRetrievalContext && vers >= 2) {
 				if (compType == ComponentType.Invoke)
@@ -209,20 +235,89 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			}
 			break;
 
-		case MAPOperationCode.updateLocation:
-			if (acn == MAPApplicationContextName.networkLocUpContext ) {
+		// -- Subscriber Information services
+		case MAPOperationCode.anyTimeInterrogation:
+			if (acn == MAPApplicationContextName.anyTimeEnquiryContext) {
 				if (compType == ComponentType.Invoke)
-					this.updateLocationRequest(parameter, mapDialogMobilityImpl, invokeId);
+					this.processAnyTimeInterrogationRequest(parameter, mapDialogMobilityImpl, invokeId);
 				else
-					this.updateLocationResponse(parameter, mapDialogMobilityImpl, invokeId);
+					this.processAnyTimeInterrogationResponse(parameter, mapDialogMobilityImpl, invokeId);
 			}
 			break;
-			
+
 		default:
 			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
 	}
 
+	// -- Location management services
+	private void updateLocationRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+		
+		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+		if (parameter == null)
+			throw new MAPParsingComponentException("Error while decoding updateLocationRequest: Parameter is mandatory but not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new MAPParsingComponentException("Error while decoding updateLocationRequest: Bad tag or tagClass or parameter is primitive, received tag="
+					+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		UpdateLocationRequestImpl ind = new UpdateLocationRequestImpl(version);
+		ind.decodeData(ais, buf.length);
+
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
+
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			try {
+				serLis.onMAPMessage(ind);
+				((MAPServiceMobilityListener) serLis).onUpdateLocationRequest(ind);
+			} catch (Exception e) {
+				loger.error("Error processing updateLocationRequest: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void updateLocationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+	
+		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+		if (parameter == null)
+			throw new MAPParsingComponentException("Error while decoding updateLocationResponse: Parameter is mandatory but not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (version >= 2) {
+			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding updateLocationResponse V2_3: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+						MAPParsingComponentExceptionReason.MistypedParameter);
+		} else {
+			if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding updateLocationResponse V1: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+						MAPParsingComponentExceptionReason.MistypedParameter);
+		}		
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		UpdateLocationResponseImpl ind = new UpdateLocationResponseImpl(version);
+		ind.decodeData(ais, buf.length);
+
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
+
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			try {
+				serLis.onMAPMessage(ind);
+				((MAPServiceMobilityListener) serLis).onUpdateLocationResponse(ind);
+			} catch (Exception e) {
+				loger.error("Error processing updateLocationResponse: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	// -- Authentication management services
 	private void sendAuthenticationInfoRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 
 		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
@@ -307,71 +402,65 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		}
 	}
 
-	private void updateLocationRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
-		
-		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+	// -- Subscriber Information services
+	private void processAnyTimeInterrogationRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
+			throws MAPParsingComponentException {
+
 		if (parameter == null)
-			throw new MAPParsingComponentException("Error while decoding updateLocationRequest: Parameter is mandatory but not found",
+			throw new MAPParsingComponentException("Error while decoding AnyTimeInterrogationRequestIndication: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
 		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-			throw new MAPParsingComponentException("Error while decoding updateLocationRequest: Bad tag or tagClass or parameter is primitive, received tag="
-					+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new MAPParsingComponentException(
+					"Error while decoding AnyTimeInterrogationRequestIndication: Bad tag or tagClass or parameter is primitive, received tag="
+							+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		UpdateLocationRequestImpl ind = new UpdateLocationRequestImpl(version);
-		ind.decodeData(ais, buf.length);
 
+		AnyTimeInterrogationRequestImpl ind = new AnyTimeInterrogationRequestImpl();
+		ind.decodeData(ais, buf.length);
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
-				serLis.onMAPMessage(ind);
-				((MAPServiceMobilityListener) serLis).onUpdateLocationRequest(ind);
+				((MAPServiceMobilityListener) serLis).onAnyTimeInterrogationRequest(ind);
 			} catch (Exception e) {
-				loger.error("Error processing updateLocationRequest: " + e.getMessage(), e);
+				loger.error("Error processing ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e);
 			}
 		}
+
 	}
 
-	private void updateLocationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
-	
-		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+	private void processAnyTimeInterrogationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
+			throws MAPParsingComponentException {
+
 		if (parameter == null)
-			throw new MAPParsingComponentException("Error while decoding updateLocationResponse: Parameter is mandatory but not found",
+			throw new MAPParsingComponentException("Error while decoding AnyTimeInterrogationResponseIndication: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (version >= 2) {
-			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-				throw new MAPParsingComponentException(
-						"Error while decoding updateLocationResponse V2_3: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
-						MAPParsingComponentExceptionReason.MistypedParameter);
-		} else {
-			if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
-				throw new MAPParsingComponentException(
-						"Error while decoding updateLocationResponse V1: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
-						MAPParsingComponentExceptionReason.MistypedParameter);
-		}		
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new MAPParsingComponentException(
+					"Error while decoding AnyTimeInterrogationResponseIndication: Bad tag or tagClass or parameter is primitive, received tag="
+							+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		UpdateLocationResponseImpl ind = new UpdateLocationResponseImpl(version);
-		ind.decodeData(ais, buf.length);
 
+		AnyTimeInterrogationResponseImpl ind = new AnyTimeInterrogationResponseImpl();
+		ind.decodeData(ais, buf.length);
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
-				serLis.onMAPMessage(ind);
-				((MAPServiceMobilityListener) serLis).onUpdateLocationResponse(ind);
+				((MAPServiceMobilityListener) serLis).onAnyTimeInterrogationResponse(ind);
 			} catch (Exception e) {
-				loger.error("Error processing updateLocationResponse: " + e.getMessage(), e);
+				loger.error("Error processing ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e);
 			}
 		}
-	}
 
+	}
 }
 

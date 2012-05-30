@@ -37,6 +37,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
+import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
@@ -46,12 +47,15 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Reque
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VlrCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationRequestImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
@@ -247,6 +251,90 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		resultLast.setParameter(p);
 
 		this.sendReturnResultLastComponent(resultLast);
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+	 * MAPDialogSubscriberInformation
+	 * #addAnyTimeInterrogationRequest(org.mobicents
+	 * .protocols.ss7.map.api.primitives.SubscriberIdentity,
+	 * org.mobicents.protocols
+	 * .ss7.map.api.service.subscriberInformation.RequestedInfo,
+	 * org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString,
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer)
+	 */
+	public long addAnyTimeInterrogationRequest(SubscriberIdentity subscriberIdentity, RequestedInfo requestedInfo, ISDNAddressString gsmSCFAddress,
+			MAPExtensionContainer extensionContainer) throws MAPException {
+
+		return this.addAnyTimeInterrogationRequest(_Timer_Default, subscriberIdentity, requestedInfo, gsmSCFAddress, extensionContainer);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+	 * MAPDialogSubscriberInformation#addAnyTimeInterrogationRequest(long,
+	 * org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity,
+	 * org.mobicents
+	 * .protocols.ss7.map.api.service.subscriberInformation.RequestedInfo,
+	 * org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString,
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer)
+	 */
+	public long addAnyTimeInterrogationRequest(long customInvokeTimeout, SubscriberIdentity subscriberIdentity, RequestedInfo requestedInfo,
+			ISDNAddressString gsmSCFAddress, MAPExtensionContainer extensionContainer) throws MAPException {
+
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.anyTimeEnquiryContext)
+				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+			throw new MAPException("Bad application context name for AnyTimeInterrogationRequest: must be networkLocUpContext_V3");
+
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		if (customInvokeTimeout == _Timer_Default)
+			invoke.setTimeout(_Timer_m);
+		else
+			invoke.setTimeout(customInvokeTimeout);
+
+		// Operation Code
+		OperationCode oc = TcapFactory.createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.anyTimeInterrogation);
+		invoke.setOperationCode(oc);
+
+		AnyTimeInterrogationRequestImpl req = new AnyTimeInterrogationRequestImpl(subscriberIdentity, requestedInfo, gsmSCFAddress,
+				extensionContainer);
+
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		invoke.setParameter(p);
+
+		Long invokeId;
+		try {
+			invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+		} catch (TCAPException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+
+		this.sendInvokeComponent(invoke);
+
+		return invokeId;
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+	 * MAPDialogSubscriberInformation#addAnyTimeInterrogationResponse(long)
+	 */
+	public long addAnyTimeInterrogationResponse(long invokeId) throws MAPException {
+		// TODO Auto-generated method stub
+		throw new MAPException("We dont support this yet");
 	}
 
 }
