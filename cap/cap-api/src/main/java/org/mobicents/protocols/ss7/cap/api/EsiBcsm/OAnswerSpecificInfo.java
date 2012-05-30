@@ -23,7 +23,7 @@
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
-import org.mobicents.protocols.ss7.map.api.service.subscriberManagement.ExtBasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 
 /**
 *

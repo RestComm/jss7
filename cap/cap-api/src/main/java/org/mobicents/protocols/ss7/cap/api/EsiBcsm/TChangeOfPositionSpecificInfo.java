@@ -24,7 +24,7 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
 import java.util.ArrayList;
 
-import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.LocationInformation;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
 
 /**
 *

@@ -22,7 +22,10 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -47,15 +50,15 @@ import org.mobicents.protocols.ss7.inap.isup.HighLayerCompatibilityInapImpl;
 import org.mobicents.protocols.ss7.inap.isup.RedirectionInformationInapImpl;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.SubscriberStateChoice;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberStateChoice;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.service.callhandling.CallReferenceNumberImpl;
-import org.mobicents.protocols.ss7.map.service.subscriberInformation.LocationInformationImpl;
-import org.mobicents.protocols.ss7.map.service.subscriberInformation.SubscriberStateImpl;
-import org.mobicents.protocols.ss7.map.service.subscriberManagement.ExtBasicServiceCodeImpl;
-import org.mobicents.protocols.ss7.map.service.subscriberManagement.ExtTeleserviceCodeImpl;
-import org.testng.*;import org.testng.annotations.*;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationInformationImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.SubscriberStateImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtTeleserviceCodeImpl;
+import org.testng.annotations.Test;
 
 /**
  * 
