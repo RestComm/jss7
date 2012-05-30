@@ -54,7 +54,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * imsi						IMSI,
  * locationInfo				LocationInfo,
  * vlr-Number				ISDN-AddressString,
- * lmsi				[10] 	LMSIOPTIONAL,
+ * lmsi				[10] 	LMSI				OPTIONAL,
  * ...}
  * 
  * LocationInfo ::= CHOICE {

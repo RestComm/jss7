@@ -315,6 +315,10 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 							// TODO: implement it
 							ais.advanceElement();
 							break;
+
+						default:
+							ais.advanceElement();
+							break;
 						}
 					} else {
 

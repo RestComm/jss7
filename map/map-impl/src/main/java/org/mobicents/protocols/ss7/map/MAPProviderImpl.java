@@ -64,7 +64,6 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobility;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms;
-import org.mobicents.protocols.ss7.map.api.service.subscriberInformation.MAPServiceSubscriberInformation;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
 import org.mobicents.protocols.ss7.map.dialog.MAPAcceptInfoImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPCloseInfoImpl;
@@ -77,7 +76,6 @@ import org.mobicents.protocols.ss7.map.errors.MAPErrorMessageImpl;
 import org.mobicents.protocols.ss7.map.service.lsm.MAPServiceLsmImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MAPServiceMobilityImpl;
 import org.mobicents.protocols.ss7.map.service.sms.MAPServiceSmsImpl;
-import org.mobicents.protocols.ss7.map.service.subscriberInformation.MAPServiceSubscriberInformationImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplementaryImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
@@ -150,7 +148,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	private final transient MAPServiceSms mapServiceSms = new MAPServiceSmsImpl(this);
 	private final transient MAPServiceLsm mapServiceLsm = new MAPServiceLsmImpl(this);
 	private final transient MAPServiceMobility mapServiceMobility = new MAPServiceMobilityImpl(this);
-	private final transient MAPServiceSubscriberInformation mapServiceSubscriberInformation = new MAPServiceSubscriberInformationImpl(this);
 
 	/**
 	 * public common methods
@@ -163,7 +160,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		this.mapServices.add(this.mapServiceSms);
 		this.mapServices.add(this.mapServiceLsm);
 		this.mapServices.add(this.mapServiceMobility);
-		this.mapServices.add(this.mapServiceSubscriberInformation);
 	}
 
 	public TCAPProvider getTCAPProvider() {
@@ -184,13 +180,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	public MAPServiceMobility getMAPServiceMobility() {
 		return this.mapServiceMobility;
-	}
-	
-	/**
-	 * @return the mapServiceSubscriberInformation
-	 */
-	public MAPServiceSubscriberInformation getMapServiceSubscriberInformation() {
-		return mapServiceSubscriberInformation;
 	}
 
 	public void addMAPDialogListener(MAPDialogListener mapDialogListener) {

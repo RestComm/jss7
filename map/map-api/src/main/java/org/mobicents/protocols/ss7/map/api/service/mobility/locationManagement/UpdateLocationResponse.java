@@ -26,7 +26,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
+ * V3:
 UpdateLocationRes ::= SEQUENCE {
 	hlr-Number	ISDN-AddressString,
 	extensionContainer	ExtensionContainer	OPTIONAL,
@@ -34,6 +34,17 @@ UpdateLocationRes ::= SEQUENCE {
 	add-Capability	NULL			OPTIONAL,
 	pagingArea-Capability	[0]NULL			OPTIONAL }
 
+ * 
+ * V2:
+ * UpdateLocationRes ::= CHOICE {
+	hlr-Number						ISDN-AddressString,
+	-- hlr-Number must not be used in version greater 1
+	extensibleUpdateLocationRes		ExtensibleUpdateLocationRes}
+	-- extensibleUpdateLocationRes must not be used in version 1
+ * 
+ * ExtensibleUpdateLocationRes ::= SEQUENCE {
+	hlr-Number						ISDN-AddressString,
+	...}
  * 
  * @author sergey vetyutnev
  * 
@@ -47,6 +58,8 @@ public interface UpdateLocationResponse {
 	public boolean getAddCapability();
 
 	public boolean getPagingAreaCapability();
+
+	public long getMapProtocolVersion();
 
 }
 
