@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api;
 
-import java.util.Arrays;
+import javolution.util.FastMap;
 
 /**
  * 
@@ -31,22 +31,27 @@ import java.util.Arrays;
  * 
  */
 public class MAPApplicationContext {
-	
+
 	private static long[] oidTemplate = new long[] { 0, 4, 0, 0, 1, 0, 0, 0 };
+
+	private static FastMap<MAPApplicationContextName, FastMap<MAPApplicationContextVersion, MAPApplicationContext>> appContextCache = new FastMap<MAPApplicationContextName, FastMap<MAPApplicationContextVersion, MAPApplicationContext>>()
+			.shared();
 
 	private MAPApplicationContextName contextName;
 	private MAPApplicationContextVersion contextVersion;
+	
+	//Same as oidTemplate
+	private long[] res = new long[] { 0, 4, 0, 0, 1, 0, 0, 0 };
 
 	private MAPApplicationContext(MAPApplicationContextName contextName, MAPApplicationContextVersion contextVersion) {
 		this.contextName = contextName;
 		this.contextVersion = contextVersion;
+		
+		this.res[6] = this.contextName.getApplicationContextCode();
+		this.res[7] = this.contextVersion.getVersion();
 	}
 
 	public long[] getOID() {
-		long[] res = Arrays.copyOf(oidTemplate, oidTemplate.length);
-		res[6] = this.contextName.getApplicationContextCode();
-		res[7] = this.contextVersion.getVersion();
-		
 		return res;
 	}
 
@@ -58,22 +63,40 @@ public class MAPApplicationContext {
 		return this.contextVersion;
 	}
 
+	private static MAPApplicationContext getMAPApplicationContext(MAPApplicationContextName contextName, MAPApplicationContextVersion contextVersion) {
+		FastMap<MAPApplicationContextVersion, MAPApplicationContext> verCache = appContextCache.get(contextName);
+
+		if (verCache == null) {
+			verCache = new FastMap<MAPApplicationContextVersion, MAPApplicationContext>();
+			appContextCache.put(contextName, verCache);
+		}
+		
+		MAPApplicationContext mapApplicationContext = verCache.get(contextVersion);
+		
+		if(mapApplicationContext == null){
+			mapApplicationContext = new MAPApplicationContext(contextName, contextVersion);
+			verCache.put(contextVersion, mapApplicationContext);
+		}
+		
+		return mapApplicationContext;
+	}
+
 	public static MAPApplicationContext getInstance(MAPApplicationContextName contextName, MAPApplicationContextVersion contextVersion) {
 		if (MAPApplicationContext.availableApplicationContextVersion(contextName, contextVersion.getVersion()))
-			return new MAPApplicationContext(contextName, contextVersion);
+			return getMAPApplicationContext(contextName, contextVersion);
 		else
 			return null;
 	}
 
 	public static MAPApplicationContext getInstance(long[] oid) {
-		
+
 		if (oid == null || oid.length != oidTemplate.length)
 			return null;
 		for (int i1 = 0; i1 < oidTemplate.length - 2; i1++) {
 			if (oid[i1] != oidTemplate[i1])
 				return null;
 		}
-		
+
 		MAPApplicationContextName contextName = MAPApplicationContextName.getInstance(oid[6]);
 		MAPApplicationContextVersion contextVersion = MAPApplicationContextVersion.getInstance(oid[7]);
 
@@ -81,10 +104,10 @@ public class MAPApplicationContext {
 			return null;
 		if (!MAPApplicationContext.availableApplicationContextVersion(contextName, (int) oid[7]))
 			return null;
-		
-		return new MAPApplicationContext(contextName, contextVersion);
+
+		return getMAPApplicationContext(contextName, contextVersion);
 	}
-	
+
 	/**
 	 * Return if the contextVersion is available for the contextName
 	 * 
@@ -149,15 +172,14 @@ public class MAPApplicationContext {
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof MAPApplicationContext))
 			return false;
-		
-		MAPApplicationContext x = (MAPApplicationContext)obj;
+
+		MAPApplicationContext x = (MAPApplicationContext) obj;
 		if (this.contextName == x.contextName && this.contextVersion == x.contextVersion)
 			return true;
 		else
 			return false;
 	}
 
-	
 	@Override
 	public String toString() {
 		StringBuffer s = new StringBuffer();
