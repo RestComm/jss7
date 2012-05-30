@@ -40,14 +40,10 @@ import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckData;
 import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckResult;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpsAuthenticationSetList;
 import org.mobicents.protocols.ss7.map.dialog.ServingCheckDataImpl;
-import org.mobicents.protocols.ss7.map.service.mobility.authentication.AuthenticationSetListImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationRequestImpl;
@@ -314,16 +310,6 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 	private void updateLocationRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		
 		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
-		
-		if (version == 1) {
-			int i1 = 0;
-			i1++;
-		}
-		if (version == 2) {
-			int i1 = 0;
-			i1++;
-		}
-		
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding updateLocationRequest: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
@@ -351,18 +337,27 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 	}
 
 	private void updateLocationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
-		
+	
+		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding updateLocationResponse: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-			throw new MAPParsingComponentException("Error while decoding updateLocationResponse: Bad tag or tagClass or parameter is primitive, received tag="
-					+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+		if (version >= 2) {
+			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding updateLocationResponse V2_3: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+						MAPParsingComponentExceptionReason.MistypedParameter);
+		} else {
+			if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding updateLocationResponse V1: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
+						MAPParsingComponentExceptionReason.MistypedParameter);
+		}		
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		UpdateLocationResponseImpl ind = new UpdateLocationResponseImpl();
+		UpdateLocationResponseImpl ind = new UpdateLocationResponseImpl(version);
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);

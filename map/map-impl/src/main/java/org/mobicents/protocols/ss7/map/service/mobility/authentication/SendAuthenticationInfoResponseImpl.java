@@ -189,6 +189,10 @@ public class SendAuthenticationInfoResponseImpl extends MobilityMessageImpl impl
 						this.extensionContainer = new MAPExtensionContainerImpl();
 						((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
 						break;
+
+					default:
+						ais.advanceElement();
+						break;
 					}
 				} else {
 
