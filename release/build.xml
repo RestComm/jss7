@@ -193,6 +193,12 @@
 			<fileset dir="${checkout.basedir}/ss7/isup/release/${release.name}">
 				<include name="**" />
 			</fileset>
+			<fileset dir="${checkout.basedir}/ss7/cap/release/${release.name}">
+				<include name="**" />
+			</fileset>
+			<fileset dir="${checkout.basedir}/ss7/inap/release/${release.name}">
+				<include name="**" />
+			</fileset>
 		</copy>
 
 		<echo>Copy Native</echo>

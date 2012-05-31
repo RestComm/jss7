@@ -33,6 +33,12 @@
 			</fileset>			
 		</copy>
 
+		<copy overwrite="true" todir="${jboss.home}/bin/lib">
+			<fileset dir="./mobicents-ss7-service/lib">
+				<include name="javolution-5.5.1.jar" />
+			</fileset>			
+		</copy>
+
 	</target>
 
 	<target name="undeploy">
