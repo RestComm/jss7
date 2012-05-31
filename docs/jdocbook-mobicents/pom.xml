@@ -1,5 +1,6 @@
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<parent>
 		<artifactId>mobicents-ss7-docs</artifactId>
@@ -30,7 +31,8 @@
 								<configuration>
 									<tasks>
 										<!-- copy docs -->
-										<copy overwrite="true" todir="${basedir}/../../release/${release.name}/docs">
+										<copy overwrite="true"
+											todir="${basedir}/../../release/${release.name}/docs">
 											<fileset dir="${basedir}/target/docbook/docbook/publish" />
 										</copy>
 									</tasks>
@@ -77,15 +79,15 @@
 				<extensions>true</extensions>
 				<dependencies>
 					<dependency>
-						<groupId>org.jboss</groupId>
-						<artifactId>jbossorg-docbook-xslt</artifactId>
-						<version>1.1.0</version>
+						<groupId>org.mobicents.jdocbook</groupId>
+						<artifactId>telestax-xslt-ns</artifactId>
+						<version>1.0.0.FINAL</version>
 					</dependency>
 					<dependency>
-						<groupId>org.jboss</groupId>
-						<artifactId>jbossorg-jdocbook-style</artifactId>
-						<version>1.1.0</version>
+						<groupId>org.mobicents.jdocbook</groupId>
+						<artifactId>telestax-community-style</artifactId>
 						<type>jdocbook-style</type>
+						<version>1.0.0.FINAL</version>
 					</dependency>
 					<dependency>
 						<groupId>xml-resolver</groupId>
@@ -96,7 +98,7 @@
 						<groupId>saxon</groupId>
 						<artifactId>saxon</artifactId>
 						<version>6.5.3</version>
-					</dependency>					
+					</dependency>
 				</dependencies>
 				<configuration>
 					<sourceDocumentName>SS7_Stack_User_Guide.xml</sourceDocumentName>
@@ -126,14 +128,9 @@
 					</formats>
 					<options>
 						<xincludeSupported>true</xincludeSupported>
-						<!--
-							needed for uri-resolvers; can be ommitted if using 'current' uri
-							scheme
-						-->
-						<!--
-							could also locate the docbook dependency and inspect its
-							version...
-						-->
+						<!-- needed for uri-resolvers; can be ommitted if using 'current' uri 
+							scheme -->
+						<!-- could also locate the docbook dependency and inspect its version... -->
 						<docbookVersion>1.72.0</docbookVersion>
 						<injectionDateFormat>dd/MM/yyy</injectionDateFormat>
 					</options>
