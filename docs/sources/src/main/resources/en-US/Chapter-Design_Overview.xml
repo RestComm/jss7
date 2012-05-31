@@ -22,7 +22,7 @@
 		is used for communication between Level 3 and Level 4 (on different machines) and this is referred to as &THIS.PLATFORM; Signaling Gateway. The figures below illustrate the above 2 scenarios.
 	</para>
 	<para>
-	Scenario 1: The complete &THIS.PLATFORM; &THIS.APPLICATION is installed in one machine.
+	Scenario 1: The complete &THIS.PLATFORM; &THIS.APPLICATION; is installed in one machine.
 	<mediaobject id="ss7_stack_same_machine">
 		<imageobject>
 			<imagedata
@@ -65,10 +65,10 @@
 	<para>&THIS.PLATFORM; &THIS.APPLICATION;
 		consists of the following functional blocks:
 		<itemizedlist>
-				<listitem>Shell Management Client</listitem>
-		<listitem>SS7 Service Elements</listitem>
-		<listitem>Signaling Gateway</listitem>
-		<itemizedlist>
+			<listitem><para>Shell Management Client</para></listitem>
+			<listitem><para>SS7 Service Elements</para></listitem>
+			<listitem><para>Signaling Gateway</para></listitem>
+		</itemizedlist>
 	</para>
 		
 		<section
