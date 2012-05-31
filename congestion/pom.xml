@@ -44,7 +44,7 @@
 						true
 					</resolveTransitiveDependencies>
 					<eclipseProjectName>
-						mobicents-congestion
+						congestion
 					</eclipseProjectName>
 				</configuration>
 			</plugin>
