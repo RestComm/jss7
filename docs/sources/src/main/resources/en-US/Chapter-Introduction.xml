@@ -25,7 +25,7 @@ Since &THIS.PLATFORM; jSS7 is Java based, it is cross-platform and can be instal
 	       		<!-- TODO this should be placed elsewhere -->
 
 	<important>
-       		<para>Spaces where introduced in in some tables and code listings to ensure proper page render.</para>
+       		<para>Spaces were introduced in some tables and code listings to ensure proper page render.</para>
 	</important>
 	
 	  <section id="ss7_overview">
