@@ -312,8 +312,8 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 								throw new MAPParsingComponentException(
 										"Error while decoding " + _PrimitiveName + ".re-synchronisationInfo: Parameter is primitive",
 										MAPParsingComponentExceptionReason.MistypedParameter);
-							// TODO: implement it
-							ais.advanceElement();
+							this.reSynchronisationInfo = new ReSynchronisationInfoImpl();
+							((ReSynchronisationInfoImpl) this.reSynchronisationInfo).decodeAll(ais);
 							break;
 
 						default:
@@ -380,7 +380,7 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 				if (immediateResponsePreferred)
 					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_immediateResponsePreferred);
 				if (reSynchronisationInfo != null) {
-					// TODO: implement it
+					((ReSynchronisationInfoImpl) this.reSynchronisationInfo).encodeAll(asnOs);
 				}
 				if (this.extensionContainer != null)
 					((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);

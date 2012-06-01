@@ -24,7 +24,9 @@ package org.mobicents.protocols.ss7.map.primitives;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
+
 import java.util.Arrays;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -35,14 +37,14 @@ import org.testng.annotations.Test;
  * @author sergey vetyutnev
  *
  */
-public class PlmnIdTest {
+public class GSNAddressTest {
 
 	private byte[] getEncodedData() {
-		return new byte[] { 4, 3, -71, -2, -59 };
+		return new byte[] { 4, 5, 1, 1, 1, 1, 1 };
 	}
 
 	private byte[] getData() {
-		return new byte[] { -71, -2, -59 };
+		return new byte[] { 1, 1, 1, 1, 1 };
 	}
 
 	@Test(groups = { "functional.decode","primitives"})
@@ -53,7 +55,7 @@ public class PlmnIdTest {
 		AsnInputStream asn = new AsnInputStream(rawData);
 
 		int tag = asn.readTag();
-		PlmnIdImpl pi = new PlmnIdImpl();
+		GSNAddressImpl pi = new GSNAddressImpl();
 		pi.decodeAll(asn);
 
 		assertEquals( tag,Tag.STRING_OCTET);
@@ -65,7 +67,7 @@ public class PlmnIdTest {
 	@Test(groups = { "functional.encode","primitives"})
 	public void testEncode() throws Exception {
 
-		PlmnIdImpl pi = new PlmnIdImpl(getData());
+		GSNAddressImpl pi = new GSNAddressImpl(getData());
 		AsnOutputStream asnOS = new AsnOutputStream();
 		
 		pi.encodeAll(asnOS);
@@ -75,5 +77,5 @@ public class PlmnIdTest {
 		assertTrue( Arrays.equals(rawData,encodedData));
 		
 	}
-}
 
+}

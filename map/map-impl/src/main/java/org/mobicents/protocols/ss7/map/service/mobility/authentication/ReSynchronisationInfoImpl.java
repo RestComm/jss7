@@ -31,7 +31,7 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationQuintuplet;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.ReSynchronisationInfo;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
@@ -39,48 +39,30 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
  * @author sergey vetyutnev
  * 
  */
-public class AuthenticationQuintupletImpl implements AuthenticationQuintuplet, MAPAsnPrimitive {
+public class ReSynchronisationInfoImpl implements ReSynchronisationInfo, MAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "AuthenticationQuintuplet";
+	public static final String _PrimitiveName = "ReSynchronisationInfo";
 
 	private byte[] rand;
-	private byte[] xres;
-	private byte[] ck;
-	private byte[] ik;
-	private byte[] autn;
+	private byte[] auts;
+	
 
-	
-	public AuthenticationQuintupletImpl() {
+	public ReSynchronisationInfoImpl() {
 	}
-	
-	public AuthenticationQuintupletImpl(byte[] rand, byte[] xres, byte[] ck, byte[] ik, byte[] autn) {
+
+	public ReSynchronisationInfoImpl(byte[] rand, byte[] auts) {
 		this.rand = rand;
-		this.xres = xres;
-		this.ck = ck;
-		this.ik = ik;
-		this.autn = autn;
-	}
+		this.auts = auts;
+	}	
+
 
 	public byte[] getRand() {
 		return rand;
 	}
 
-	public byte[] getXres() {
-		return xres;
+	public byte[] getAuts() {
+		return auts;
 	}
-
-	public byte[] getCk() {
-		return ck;
-	}
-
-	public byte[] getIk() {
-		return ik;
-	}
-
-	public byte[] getAutn() {
-		return autn;
-	}
-	
 
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
@@ -93,7 +75,6 @@ public class AuthenticationQuintupletImpl implements AuthenticationQuintuplet, M
 	public boolean getIsPrimitive() {
 		return false;
 	}
-
 
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
@@ -125,10 +106,7 @@ public class AuthenticationQuintupletImpl implements AuthenticationQuintuplet, M
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
 		this.rand = null;
-		this.xres = null;
-		this.ck = null;
-		this.ik = null;
-		this.autn = null;
+		this.auts = null;
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		int num = 0;
@@ -152,59 +130,23 @@ public class AuthenticationQuintupletImpl implements AuthenticationQuintuplet, M
 				break;
 
 			case 1:
-				// xres
+				// auts
 				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.STRING_OCTET)
 					throw new MAPParsingComponentException(
-							"Error while decoding " + _PrimitiveName + ".xres: Parameter 1 bad tag or tag class or is not primitive",
+							"Error while decoding " + _PrimitiveName + ".auts: Parameter 1 bad tag or tag class or is not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.xres = ais.readOctetString();
-				if (this.xres.length < 4 || this.xres.length > 16)
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".xres: Bad field length: 4-16 is needed, found: "
-							+ this.xres.length, MAPParsingComponentExceptionReason.MistypedParameter);
-				break;
-
-			case 2:
-				// ck
-				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.STRING_OCTET)
-					throw new MAPParsingComponentException(
-							"Error while decoding " + _PrimitiveName + ".ck: Parameter 2 bad tag or tag class or is not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.ck = ais.readOctetString();
-				if (this.ck.length != 16)
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ck: Bad field length: 16 is needed, found: "
-							+ this.ck.length, MAPParsingComponentExceptionReason.MistypedParameter);
-				break;
-
-			case 3:
-				// ik
-				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.STRING_OCTET)
-					throw new MAPParsingComponentException(
-							"Error while decoding " + _PrimitiveName + ".ik: Parameter 3 bad tag or tag class or is not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.ik = ais.readOctetString();
-				if (this.ik.length != 16)
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ik: Bad field length: 16 is needed, found: "
-							+ this.ik.length, MAPParsingComponentExceptionReason.MistypedParameter);
-				break;
-
-			case 4:
-				// autn
-				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.STRING_OCTET)
-					throw new MAPParsingComponentException(
-							"Error while decoding " + _PrimitiveName + ".autn: Parameter 4 bad tag or tag class or is not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.autn = ais.readOctetString();
-				if (this.autn.length != 16)
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".autn: Bad field length: 16 is needed, found: "
-							+ this.autn.length, MAPParsingComponentExceptionReason.MistypedParameter);
+				this.auts = ais.readOctetString();
+				if (this.auts.length != 14)
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".sres: Bad field length: 14 is needed, found: "
+							+ this.auts.length, MAPParsingComponentExceptionReason.MistypedParameter);
 				break;
 			}
 
 			num++;
 		}
 
-		if (num < 5)
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Needs at least 5 mandatory parameters, found "
+		if (num < 2)
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Needs at least 2 mandatory parameters, found "
 					+ num, MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -216,7 +158,7 @@ public class AuthenticationQuintupletImpl implements AuthenticationQuintuplet, M
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
-			asnOs.writeTag(tagClass, false, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
@@ -227,26 +169,18 @@ public class AuthenticationQuintupletImpl implements AuthenticationQuintuplet, M
 
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.rand == null || this.xres == null || this.ck == null || this.ik == null || this.autn == null) {
-			throw new MAPException("rand, xres, ck, ik and autn fields must not be null");
+		if (this.rand == null || this.auts == null) {
+			throw new MAPException("rand, auts fields must not be null");
 		}
+		
 		if (this.rand.length != 16)
 			throw new MAPException("Wrong rand field length: must be 16, found " + this.rand.length);
-		if (this.xres.length < 4 || this.xres.length > 16)
-			throw new MAPException("Wrong xres field length: must be from 4 to 16, found " + this.xres.length);
-		if (this.ck.length != 16)
-			throw new MAPException("Wrong ck field length: must be 16, found " + this.ck.length);
-		if (this.ik.length != 16)
-			throw new MAPException("Wrong ik field length: must be 16, found " + this.ik.length);
-		if (this.autn.length != 16)
-			throw new MAPException("Wrong autn field length: must be 16, found " + this.autn.length);
-
+		if (this.auts.length != 14)
+			throw new MAPException("Wrong auts field length: must be 14, found " + this.auts.length);
+		
 		try {
 			asnOs.writeOctetString(this.rand);
-			asnOs.writeOctetString(this.xres);
-			asnOs.writeOctetString(this.ck);
-			asnOs.writeOctetString(this.ik);
-			asnOs.writeOctetString(this.autn);
+			asnOs.writeOctetString(this.auts);
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		} catch (AsnException e) {
@@ -257,32 +191,17 @@ public class AuthenticationQuintupletImpl implements AuthenticationQuintuplet, M
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("AuthenticationQuintuplet [");
+		sb.append("ReSynchronisationInfo [");
 
 		if (this.rand != null) {
 			sb.append("rand=[");
 			sb.append(printDataArr(this.rand));
 			sb.append("], ");
 		}
-		if (this.xres != null) {
-			sb.append("xres=[");
-			sb.append(printDataArr(this.xres));
+		if (this.auts != null) {
+			sb.append("auts=[");
+			sb.append(printDataArr(this.auts));
 			sb.append("], ");
-		}
-		if (this.ck != null) {
-			sb.append("ck=[");
-			sb.append(printDataArr(this.ck));
-			sb.append("]");
-		}
-		if (this.ik != null) {
-			sb.append("ik=[");
-			sb.append(printDataArr(this.ik));
-			sb.append("]");
-		}
-		if (this.autn != null) {
-			sb.append("autn=[");
-			sb.append(printDataArr(this.autn));
-			sb.append("]");
 		}
 
 		sb.append("]");

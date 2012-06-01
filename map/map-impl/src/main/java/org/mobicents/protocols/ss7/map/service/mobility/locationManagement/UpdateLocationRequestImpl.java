@@ -407,7 +407,7 @@ public class UpdateLocationRequestImpl extends MobilityMessageImpl implements Up
 
 		try {
 			if (this.imsi == null || (this.mscNumber == null && (this.roamingNumber == null || this.mapProtocolVersion > 1)) || this.vlrNumber == null)
-				throw new MAPException("IMSI, mscNumber (roamingNumber) vlrNumber and  parameter must not be null");
+				throw new MAPException("IMSI, mscNumber (roamingNumber) and vlrNumber parameter must not be null");
 
 			((IMSIImpl) this.imsi).encodeAll(asnOs);
 

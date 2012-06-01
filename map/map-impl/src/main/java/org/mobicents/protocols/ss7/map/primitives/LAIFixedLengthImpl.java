@@ -154,7 +154,7 @@ public class LAIFixedLengthImpl implements LAIFixedLength, MAPAsnPrimitive {
 		if (data == null)
 			throw new MAPException("Data must not be empty");
 		if (data.length != 5)
-			throw new MAPException("Data length must be equal 7");
+			throw new MAPException("Data length must be equal 5");
 
 		int res = (data[3] & 0xFF) * 256 + (data[4] & 0xFF);
 		return res;
@@ -170,7 +170,7 @@ public class LAIFixedLengthImpl implements LAIFixedLength, MAPAsnPrimitive {
 	}
 
 	public boolean getIsPrimitive() {
-		return false;
+		return true;
 	}
 
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {

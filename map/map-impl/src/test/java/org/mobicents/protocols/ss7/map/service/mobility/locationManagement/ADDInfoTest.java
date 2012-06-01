@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,60 +20,52 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.primitives;
+package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.testng.annotations.Test;
 
-/**
- * 
- * @author sergey vetyutnev
- *
- */
-public class PlmnIdTest {
+public class ADDInfoTest {
 
 	private byte[] getEncodedData() {
-		return new byte[] { 4, 3, -71, -2, -59 };
+		return new byte[] { 48, 12, -128, 8, 33, 67, 101, -121, 9, 33, 67, -11, -127, 0 };
 	}
-
-	private byte[] getData() {
-		return new byte[] { -71, -2, -59 };
-	}
-
-	@Test(groups = { "functional.decode","primitives"})
+	
+	@Test(groups = { "functional.decode"})
 	public void testDecode() throws Exception {
 
 		byte[] rawData = getEncodedData();
-
 		AsnInputStream asn = new AsnInputStream(rawData);
 
 		int tag = asn.readTag();
-		PlmnIdImpl pi = new PlmnIdImpl();
-		pi.decodeAll(asn);
+		ADDInfoImpl asc = new ADDInfoImpl();
+		asc.decodeAll(asn);
 
-		assertEquals( tag,Tag.STRING_OCTET);
+		assertEquals( tag,Tag.SEQUENCE);
 		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 		
-		assertTrue(Arrays.equals(getData(), pi.getData()));
+		assertTrue(asc.getImeisv().getIMEI().equals("123456789012345"));
+		assertTrue(asc.getSkipSubscriberDataUpdate());
 	}
 
-	@Test(groups = { "functional.encode","primitives"})
+	@Test(groups = { "functional.encode"})
 	public void testEncode() throws Exception {
 
-		PlmnIdImpl pi = new PlmnIdImpl(getData());
+		IMEIImpl imeisv = new IMEIImpl("123456789012345");
+		ADDInfoImpl asc = new ADDInfoImpl(imeisv, true);
+		// IMEI imeisv, boolean skipSubscriberDataUpdate
+
 		AsnOutputStream asnOS = new AsnOutputStream();
-		
-		pi.encodeAll(asnOS);
+		asc.encodeAll(asnOS);
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData();		
 		assertTrue( Arrays.equals(rawData,encodedData));
-		
 	}
 }
 

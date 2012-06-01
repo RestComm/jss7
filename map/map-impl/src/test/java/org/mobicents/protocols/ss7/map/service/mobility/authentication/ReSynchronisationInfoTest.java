@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.primitives;
+package org.mobicents.protocols.ss7.map.service.mobility.authentication;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -35,45 +35,49 @@ import org.testng.annotations.Test;
  * @author sergey vetyutnev
  *
  */
-public class PlmnIdTest {
+public class ReSynchronisationInfoTest {
 
 	private byte[] getEncodedData() {
-		return new byte[] { 4, 3, -71, -2, -59 };
+		return new byte[] { 48, 34, 4, 16, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 14, 2, 2, 2, 2, 3, 3, 3, 2, 2, 2, 2, 3, 3, 3 };
 	}
 
-	private byte[] getData() {
-		return new byte[] { -71, -2, -59 };
+	static protected byte[] getRandData() {
+		return new byte[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 	}
 
-	@Test(groups = { "functional.decode","primitives"})
+	static protected byte[] getAutsData() {
+		return new byte[] { 2, 2, 2, 2, 3, 3, 3, 2, 2, 2, 2, 3, 3, 3 };
+	}
+
+	@Test(groups = { "functional.decode"})
 	public void testDecode() throws Exception {
 
 		byte[] rawData = getEncodedData();
-
 		AsnInputStream asn = new AsnInputStream(rawData);
 
 		int tag = asn.readTag();
-		PlmnIdImpl pi = new PlmnIdImpl();
-		pi.decodeAll(asn);
+		ReSynchronisationInfoImpl asc = new ReSynchronisationInfoImpl();
+		asc.decodeAll(asn);
 
-		assertEquals( tag,Tag.STRING_OCTET);
-		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
-		
-		assertTrue(Arrays.equals(getData(), pi.getData()));
+		assertEquals(tag, Tag.SEQUENCE);
+		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+
+		assertTrue(Arrays.equals(asc.getRand(), getRandData()));
+		assertTrue(Arrays.equals(asc.getAuts(), getAutsData()));
+
 	}
 
-	@Test(groups = { "functional.encode","primitives"})
+	@Test(groups = { "functional.encode"})
 	public void testEncode() throws Exception {
 
-		PlmnIdImpl pi = new PlmnIdImpl(getData());
-		AsnOutputStream asnOS = new AsnOutputStream();
+		ReSynchronisationInfoImpl asc = new ReSynchronisationInfoImpl(getRandData(), getAutsData());
 		
-		pi.encodeAll(asnOS);
+		AsnOutputStream asnOS = new AsnOutputStream();
+		asc.encodeAll(asnOS);
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData();		
 		assertTrue( Arrays.equals(rawData,encodedData));
-		
 	}
-}
 
+}
