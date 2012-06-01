@@ -20,10 +20,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.mobility.authentication;
+package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
 import java.io.IOException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -31,9 +30,10 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.QuintupletList;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.TripletList;
+import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAC;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
+import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
@@ -41,67 +41,50 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
  * @author sergey vetyutnev
  * 
  */
-public class AuthenticationSetListImpl implements AuthenticationSetList, MAPAsnPrimitive {
+public class LocationAreaImpl implements LocationArea, MAPAsnPrimitive {
 
-	public static final int _TAG_tripletList = 0;
-	public static final int _TAG_quintupletList = 1;
+	public static final int _TAG_laiFixedLength = 0;
+	public static final int _TAG_lac = 1;
 
-	public static final String _PrimitiveName = "AuthenticationSetList";
+	public static final String _PrimitiveName = "LocationArea";
 
-	private TripletList tripletList;
-	private QuintupletList quintupletList;
-	private long mapProtocolVersion;
+	private LAIFixedLength laiFixedLength;
+	private LAC lac;	
 
 	
-	public AuthenticationSetListImpl() {
+	public LocationAreaImpl() {
 	}
 
-	public AuthenticationSetListImpl(TripletList tripletList, long mapProtocolVersion) {
-		this.tripletList = tripletList;
-		this.mapProtocolVersion = mapProtocolVersion;
+	public LocationAreaImpl(LAIFixedLength laiFixedLength) {
+		this.laiFixedLength = laiFixedLength;
 	}
 
-	public AuthenticationSetListImpl(QuintupletList quintupletList) {
-		this.quintupletList = quintupletList;
-		this.mapProtocolVersion = 3;
+	public LocationAreaImpl(LAC lac) {
+		this.lac = lac;
+	}
+
+	public LAIFixedLength getLAIFixedLength() {
+		return laiFixedLength;
+	}
+
+	public LAC getLAC() {
+		return lac;
 	}
 	
-
-	public TripletList getTripletList() {
-		return tripletList;
-	}
-
-	public QuintupletList getQuintupletList() {
-		return quintupletList;
-	}
-
-	public long getMapProtocolVersion() {
-		return mapProtocolVersion;
-	}
-
-
 	public int getTag() throws MAPException {
-		if (this.mapProtocolVersion >= 3) {
-			if (tripletList != null)
-				return _TAG_tripletList;
-			else
-				return _TAG_quintupletList;
-		} else {
-			return Tag.SEQUENCE;
-		}
+		if (this.laiFixedLength != null)
+			return _TAG_laiFixedLength;
+		else
+			return _TAG_lac;
 	}
 
 	public int getTagClass() {
-		if (this.mapProtocolVersion >= 3)
-			return Tag.CLASS_CONTEXT_SPECIFIC;
-		else
-			return Tag.CLASS_UNIVERSAL;
+		return Tag.CLASS_CONTEXT_SPECIFIC;
 	}
 
 	public boolean getIsPrimitive() {
-		return false;
+		return true;
 	}
-
 
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
@@ -132,41 +115,27 @@ public class AuthenticationSetListImpl implements AuthenticationSetList, MAPAsnP
 
 	private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		this.tripletList = null;
-		this.quintupletList = null;
+		this.laiFixedLength = null;
+		this.lac = null;
 
 		int tag = ais.getTag();
 
-		if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) { // MAP V3
-			switch (tag) {
-			case _TAG_tripletList:
-				this.tripletList = new TripletListImpl();
-				((TripletListImpl) this.tripletList).decodeData(ais, length);
-				break;
-			case _TAG_quintupletList:
-				this.quintupletList = new QuintupletListImpl();
-				((QuintupletListImpl) this.quintupletList).decodeData(ais, length);
-				break;
+		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Primitive has bad tag class or is not primitive",
+					MAPParsingComponentExceptionReason.MistypedParameter);
 
-			default:
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			}
-			mapProtocolVersion = 3;
-		} else if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) { // MAP V2
-			switch (tag) {
-			case Tag.SEQUENCE:
-			case 0: // this special case when tag & tagClass are not set 
-				this.tripletList = new TripletListImpl();
-				((TripletListImpl) this.tripletList).decodeData(ais, length);
-				break;
-			default:
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag for MAP V2",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			}
-			mapProtocolVersion = 2;
-		} else {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
+		switch (tag) {
+		case _TAG_laiFixedLength:
+			this.laiFixedLength = new LAIFixedLengthImpl();
+			((LAIFixedLengthImpl) this.laiFixedLength).decodeData(ais, length);
+			break;
+		case _TAG_lac:
+			this.lac = new LACImpl();
+			((LACImpl) this.lac).decodeData(ais, length);
+			break;
+
+		default:
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -190,34 +159,32 @@ public class AuthenticationSetListImpl implements AuthenticationSetList, MAPAsnP
 
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.tripletList == null && this.quintupletList == null || this.tripletList != null && this.quintupletList != null) {
+		if (this.laiFixedLength == null && this.lac == null || this.laiFixedLength != null && this.lac != null) {
 			throw new MAPException("Error while decoding " + _PrimitiveName + ": One and only one choice must be selected");
 		}
 
-		if (this.tripletList != null) {
-			((TripletListImpl) this.tripletList).encodeData(asnOs);
+		if (this.laiFixedLength != null) {
+			((LAIFixedLengthImpl) this.laiFixedLength).encodeData(asnOs);
 		} else {
-			((QuintupletListImpl) this.quintupletList).encodeData(asnOs);
+			((LACImpl) this.lac).encodeData(asnOs);
 		}
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("AuthenticationSetList [");
+		sb.append(_PrimitiveName);
+		sb.append(" [");
 
-		if (this.tripletList != null) {
-			sb.append(this.tripletList.toString());
+		if (this.laiFixedLength != null) {
+			sb.append(this.laiFixedLength.toString());
 			sb.append(", ");
 		}
 
-		if (this.quintupletList != null) {
-			sb.append(this.quintupletList.toString());
+		if (this.lac != null) {
+			sb.append(this.lac.toString());
 			sb.append(", ");
 		}
-
-		sb.append("mapProtocolVersion=");
-		sb.append(this.mapProtocolVersion);
 
 		sb.append("]");
 
