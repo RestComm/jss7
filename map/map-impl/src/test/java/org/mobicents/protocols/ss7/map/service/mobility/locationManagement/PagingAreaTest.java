@@ -22,13 +22,17 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import java.util.ArrayList;
 import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAC;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
 import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
 import org.testng.annotations.Test;
 
@@ -37,14 +41,10 @@ import org.testng.annotations.Test;
  * @author sergey vetyutnev
  * 
  */
-public class LocationAreaTest {
+public class PagingAreaTest {
 
 	public byte[] getData1() {
-		return new byte[] { (byte) 128, 5, 66, (byte) 249, 16, 54, (byte) 186 };
-	};
-
-	public byte[] getData2() {
-		return new byte[] { (byte) 129, 2, 54, (byte) 186 };
+		return new byte[] { 48, 11, (byte) 128, 5, 66, (byte) 249, 16, 54, (byte) 186, (byte) 129, 2, 54, (byte) 186 };
 	};
 
 	@Test(groups = { "functional.decode", "primitives" })
@@ -55,54 +55,41 @@ public class LocationAreaTest {
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
 
-		LocationAreaImpl prim = new LocationAreaImpl();
+		PagingAreaImpl prim = new PagingAreaImpl();
 		prim.decodeAll(asn);
 
-		assertEquals(tag, LocationAreaImpl._TAG_laiFixedLength);
-		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
+		assertEquals(tag, Tag.SEQUENCE);
+		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 
-		LAIFixedLength lai = prim.getLAIFixedLength();
+		ArrayList<LocationArea> lst = prim.getLocationAreas();
+
+		LAIFixedLength lai = lst.get(0).getLAIFixedLength();
 		assertEquals(lai.getMCC(), 249);
 		assertEquals(lai.getMNC(), 1);
 		assertEquals(lai.getLac(), 14010);
-		assertNull(prim.getLAC());
+		assertNull(lst.get(0).getLAC());
 
-
-		data = this.getData2();
-
-		asn = new AsnInputStream(data);
-		tag = asn.readTag();
-
-		prim = new LocationAreaImpl();
-		prim.decodeAll(asn);
-
-		assertEquals(tag, LocationAreaImpl._TAG_lac);
-		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
-
-		assertNull(prim.getLAIFixedLength());
-		LAC lac = prim.getLAC();
+		LAC lac = lst.get(1).getLAC();
 		assertEquals(lac.getLac(), 14010);
+		assertNull(lst.get(1).getLAIFixedLength());
 	}
 
 	@Test(groups = { "functional.decode", "primitives" })
 	public void testEncode() throws Exception {
 
+		ArrayList<LocationArea> lst = new ArrayList<LocationArea>();
 		LAIFixedLengthImpl lai = new LAIFixedLengthImpl(249, 1, 14010);
-		LocationAreaImpl prim = new LocationAreaImpl(lai);
+		LAC lac = new LACImpl(14010);
+		LocationAreaImpl l1 = new LocationAreaImpl(lai); 
+		LocationAreaImpl l2 = new LocationAreaImpl(lac);
+		lst.add(l1);
+		lst.add(l2);
+		PagingAreaImpl prim = new PagingAreaImpl(lst);
 
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
 
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData1()));
-
-		
-		LAC lac = new LACImpl(14010);
-		prim = new LocationAreaImpl(lac);
-
-		asn = new AsnOutputStream();
-		prim.encodeAll(asn);
-
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
 	}
 }
 
