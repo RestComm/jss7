@@ -68,6 +68,9 @@ public class SendAuthenticationInfoResponseImpl extends MobilityMessageImpl impl
 		this.authenticationSetList = authenticationSetList;
 		this.extensionContainer = extensionContainer;
 		this.epsAuthenticationSetList = epsAuthenticationSetList;
+
+		if (authenticationSetList != null)
+			((AuthenticationSetListImpl) authenticationSetList).setMapProtocolVersion(mapProtocolVersion);
 	}
 	
 	public MAPMessageType getMessageType() {
@@ -169,8 +172,8 @@ public class SendAuthenticationInfoResponseImpl extends MobilityMessageImpl impl
 							throw new MAPParsingComponentException(
 									"Error while decoding " + _PrimitiveName + ".epsAuthenticationSetList: Parameter epsAuthenticationSetList is primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
-						// TODO: implement it
-						ais.advanceElement();
+						this.epsAuthenticationSetList = new EpsAuthenticationSetListImpl();
+						((EpsAuthenticationSetListImpl)this.epsAuthenticationSetList).decodeAll(ais);
 						break;
 
 					default:
@@ -238,7 +241,7 @@ public class SendAuthenticationInfoResponseImpl extends MobilityMessageImpl impl
 			if (this.extensionContainer != null)
 				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
 			if (this.epsAuthenticationSetList != null) {
-				// TODO: implement this
+				((EpsAuthenticationSetListImpl) this.epsAuthenticationSetList).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_eps_AuthenticationSetList);
 			}
 		}
 	}

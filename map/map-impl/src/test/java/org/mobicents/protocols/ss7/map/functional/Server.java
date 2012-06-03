@@ -63,9 +63,11 @@ public class Server extends EventTestHarness {
 		this.mapProvider.addMAPDialogListener(this);
 		this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
 		this.mapProvider.getMAPServiceSms().addMAPServiceListener(this);
+		this.mapProvider.getMAPServiceMobility().addMAPServiceListener(this);
 
 		this.mapProvider.getMAPServiceSupplementary().acivate();
 		this.mapProvider.getMAPServiceSms().acivate();
+		this.mapProvider.getMAPServiceMobility().acivate();
 	}
 
 	public void debug(String message) {

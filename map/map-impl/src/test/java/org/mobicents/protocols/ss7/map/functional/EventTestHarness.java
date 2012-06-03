@@ -20,6 +20,13 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequest;
@@ -49,7 +56,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
  * @author amit bhayani
  *
  */
-public class EventTestHarness implements MAPDialogListener, MAPServiceSupplementaryListener, MAPServiceSmsListener {
+public class EventTestHarness implements MAPDialogListener, MAPServiceSupplementaryListener, MAPServiceSmsListener, MAPServiceMobilityListener {
 	
 	private Logger logger = null;
 
@@ -327,4 +334,52 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 		this.observerdEvents.add(te);		
 	}
 
+	public void onUpdateLocationRequest(UpdateLocationRequest ind) {
+		this.logger.debug("onUpdateLocationRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.UpdateLocation, ind,
+				sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	public void onUpdateLocationResponse(UpdateLocationResponse ind) {
+		this.logger.debug("onUpdateLocationResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.UpdateLocationResp, ind,
+				sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	public void onSendAuthenticationInfoRequest(SendAuthenticationInfoRequest ind) {
+		TestEvent te;
+		if (ind.getMapProtocolVersion() >= 3) {
+			this.logger.debug("onSendAuthenticationInfoRequest_V3");
+			te = TestEvent.createReceivedEvent(EventType.SendAuthenticationInfo_V3, ind, sequence++);
+		} else {
+			this.logger.debug("onSendAuthenticationInfoRequest_V2");
+			te = TestEvent.createReceivedEvent(EventType.SendAuthenticationInfo_V2, ind, sequence++);
+		}
+		this.observerdEvents.add(te);
+	}
+
+	public void onSendAuthenticationInfoResponse(SendAuthenticationInfoResponse ind) {
+		TestEvent te;
+		if (ind.getMapProtocolVersion() >= 3) {
+			this.logger.debug("onSendAuthenticationInfoResp_V3");
+			te = TestEvent.createReceivedEvent(EventType.SendAuthenticationInfoResp_V3, ind, sequence++);
+		} else {
+			this.logger.debug("onSendAuthenticationInfoResp_V2");
+			te = TestEvent.createReceivedEvent(EventType.SendAuthenticationInfoResp_V2, ind, sequence++);
+		}
+		this.observerdEvents.add(te);
+	}
+
+	public void onAnyTimeInterrogationRequest(AnyTimeInterrogationRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse response) {
+		// TODO Auto-generated method stub
+		
+	}
 }
+

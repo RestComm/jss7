@@ -31,8 +31,8 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationTriplet;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.TripletList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpcAv;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpsAuthenticationSetList;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
@@ -40,25 +40,23 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
  * @author sergey vetyutnev
  * 
  */
-public class TripletListImpl implements TripletList, MAPAsnPrimitive {
+public class EpsAuthenticationSetListImpl implements EpsAuthenticationSetList, MAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "TripletList";
+	public static final String _PrimitiveName = "EpsAuthenticationSetList";
 
-	private ArrayList<AuthenticationTriplet> authenticationTriplets;
+	private ArrayList<EpcAv> epcAvs;
 
+	public EpsAuthenticationSetListImpl() {
+	}	
 
-	public TripletListImpl() {
-	}	                         
-
-	public TripletListImpl(ArrayList<AuthenticationTriplet> authenticationTriplets) {
-		this.authenticationTriplets = authenticationTriplets;
+	public EpsAuthenticationSetListImpl(ArrayList<EpcAv> epcAv) {
+		this.epcAvs = epcAv;
 	}
+	
 
-
-	public ArrayList<AuthenticationTriplet> getAuthenticationTriplets() {
-		return authenticationTriplets;
+	public ArrayList<EpcAv> getEpcAv() {
+		return epcAvs;
 	}
-
 
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
@@ -71,7 +69,6 @@ public class TripletListImpl implements TripletList, MAPAsnPrimitive {
 	public boolean getIsPrimitive() {
 		return false;
 	}
-
 
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
@@ -102,7 +99,7 @@ public class TripletListImpl implements TripletList, MAPAsnPrimitive {
 
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		this.authenticationTriplets = new ArrayList<AuthenticationTriplet>();
+		this.epcAvs = new ArrayList<EpcAv>();
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		while (true) {
@@ -114,13 +111,13 @@ public class TripletListImpl implements TripletList, MAPAsnPrimitive {
 
 				switch (tag) {
 				case Tag.SEQUENCE:
-					// authenticationTriplet
+					// epcAvs
 					if (ais.isTagPrimitive())
 						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ": Parameter AuthenticationTriplet is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					AuthenticationTripletImpl at = new AuthenticationTripletImpl();
+								+ ": Parameter epcAvs is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					EpcAvImpl at = new EpcAvImpl();
 					at.decodeAll(ais);
-					this.authenticationTriplets.add(at);
+					this.epcAvs.add(at);
 					break;
 				}
 			} else {
@@ -129,9 +126,9 @@ public class TripletListImpl implements TripletList, MAPAsnPrimitive {
 			}
 		}
 		
-		if (this.authenticationTriplets.size() < 1 || this.authenticationTriplets.size() > 5) {
+		if (this.epcAvs.size() < 1 || this.epcAvs.size() > 5) {
 			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": authenticationTriplets must be from 1 to 5, found:"
-					+ this.authenticationTriplets.size(), MAPParsingComponentExceptionReason.MistypedParameter);
+					+ this.epcAvs.size(), MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -152,22 +149,23 @@ public class TripletListImpl implements TripletList, MAPAsnPrimitive {
 
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.authenticationTriplets == null || this.authenticationTriplets.size() < 1 || this.authenticationTriplets.size() > 5) {
-			throw new MAPException("AuthenticationTriplets list must contains from 1 to 5 elemets");
+		if (this.epcAvs == null || this.epcAvs.size() < 1 || this.epcAvs.size() > 5) {
+			throw new MAPException("EpcAvs list must contains from 1 to 5 elemets");
 		}
 
-		for (AuthenticationTriplet at : this.authenticationTriplets) {
-			((AuthenticationTripletImpl) at).encodeAll(asnOs);
+		for (EpcAv at : this.epcAvs) {
+			((EpcAvImpl) at).encodeAll(asnOs);
 		}
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("TripletList [");
+		sb.append(_PrimitiveName);
+		sb.append(" [");
 
-		if (this.authenticationTriplets != null) {
-			for (AuthenticationTriplet at : this.authenticationTriplets) {
+		if (this.epcAvs != null) {
+			for (EpcAv at : this.epcAvs) {
 				if (at != null) {
 					sb.append(at.toString());
 					sb.append(", ");

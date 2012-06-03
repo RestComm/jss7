@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
+import org.mobicents.protocols.ss7.map.api.MAPException;
+
 /**
  * 
 LAC ::= OCTET STRING (SIZE (2))
@@ -36,6 +38,8 @@ LAC ::= OCTET STRING (SIZE (2))
 public interface LAC {
 
 	public byte[] getData();
+
+	public int getLac() throws MAPException;
 
 }
 

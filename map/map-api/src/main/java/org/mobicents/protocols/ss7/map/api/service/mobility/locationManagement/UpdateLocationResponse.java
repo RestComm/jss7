@@ -50,7 +50,7 @@ UpdateLocationRes ::= SEQUENCE {
  * @author sergey vetyutnev
  * 
  */
-public interface UpdateLocationResponse  extends MobilityMessage {
+public interface UpdateLocationResponse extends MobilityMessage {
 
 	public ISDNAddressString getHlrNumber();
 

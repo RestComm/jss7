@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
-import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 
 /**
  * 

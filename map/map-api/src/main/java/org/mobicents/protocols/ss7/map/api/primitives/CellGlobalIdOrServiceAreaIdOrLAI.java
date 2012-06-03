@@ -24,6 +24,8 @@ package org.mobicents.protocols.ss7.map.api.primitives;
 
 import java.io.Serializable;
 
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAIFixedLength;
+
 /**
  * CellGlobalIdOrServiceAreaIdOrLAI ::= CHOICE {
  *    cellGlobalIdOrServiceAreaIdFixedLength [0] CellGlobalIdOrServiceAreaIdFixedLength,

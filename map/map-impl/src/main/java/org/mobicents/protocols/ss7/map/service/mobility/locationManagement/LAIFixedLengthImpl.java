@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.primitives;
+package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -32,7 +32,9 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAIFixedLength;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.primitives.TbcdString;
 
 
 /**
@@ -154,7 +156,7 @@ public class LAIFixedLengthImpl implements LAIFixedLength, MAPAsnPrimitive {
 		if (data == null)
 			throw new MAPException("Data must not be empty");
 		if (data.length != 5)
-			throw new MAPException("Data length must be equal 7");
+			throw new MAPException("Data length must be equal 5");
 
 		int res = (data[3] & 0xFF) * 256 + (data[4] & 0xFF);
 		return res;
@@ -170,7 +172,7 @@ public class LAIFixedLengthImpl implements LAIFixedLength, MAPAsnPrimitive {
 	}
 
 	public boolean getIsPrimitive() {
-		return false;
+		return true;
 	}
 
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {

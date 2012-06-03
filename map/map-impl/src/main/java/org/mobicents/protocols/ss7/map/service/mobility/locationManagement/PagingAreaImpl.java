@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.mobility.authentication;
+package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,8 +31,8 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationTriplet;
-import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.TripletList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
@@ -40,25 +40,22 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
  * @author sergey vetyutnev
  * 
  */
-public class TripletListImpl implements TripletList, MAPAsnPrimitive {
+public class PagingAreaImpl implements PagingArea, MAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "TripletList";
+	public static final String _PrimitiveName = "PagingArea";
 
-	private ArrayList<AuthenticationTriplet> authenticationTriplets;
+	private ArrayList<LocationArea> locationAreas;
 
-
-	public TripletListImpl() {
-	}	                         
-
-	public TripletListImpl(ArrayList<AuthenticationTriplet> authenticationTriplets) {
-		this.authenticationTriplets = authenticationTriplets;
+	public PagingAreaImpl() {
 	}
 
-
-	public ArrayList<AuthenticationTriplet> getAuthenticationTriplets() {
-		return authenticationTriplets;
+	public PagingAreaImpl(ArrayList<LocationArea> locationAreas) {
+		this.locationAreas = locationAreas;
 	}
 
+	public ArrayList<LocationArea> getLocationAreas() {
+		return locationAreas;
+	}
 
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
@@ -71,7 +68,6 @@ public class TripletListImpl implements TripletList, MAPAsnPrimitive {
 	public boolean getIsPrimitive() {
 		return false;
 	}
-
 
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
@@ -102,7 +98,7 @@ public class TripletListImpl implements TripletList, MAPAsnPrimitive {
 
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		this.authenticationTriplets = new ArrayList<AuthenticationTriplet>();
+		this.locationAreas = new ArrayList<LocationArea>();
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		while (true) {
@@ -110,30 +106,20 @@ public class TripletListImpl implements TripletList, MAPAsnPrimitive {
 				break;
 
 			int tag = ais.readTag();
-			if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
-
-				switch (tag) {
-				case Tag.SEQUENCE:
-					// authenticationTriplet
-					if (ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ": Parameter AuthenticationTriplet is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					AuthenticationTripletImpl at = new AuthenticationTripletImpl();
-					at.decodeAll(ais);
-					this.authenticationTriplets.add(at);
-					break;
-				}
-			} else {
-
-				ais.advanceElement();
-			}
+			if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
+				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+						+ ": Parameter locationAreas has bad tag class or is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+			LocationAreaImpl at = new LocationAreaImpl();
+			at.decodeAll(ais);
+			this.locationAreas.add(at);
 		}
 		
-		if (this.authenticationTriplets.size() < 1 || this.authenticationTriplets.size() > 5) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": authenticationTriplets must be from 1 to 5, found:"
-					+ this.authenticationTriplets.size(), MAPParsingComponentExceptionReason.MistypedParameter);
+		if (this.locationAreas.size() < 1 || this.locationAreas.size() > 5) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": locationAreas must be from 1 to 5, found:"
+					+ this.locationAreas.size(), MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
+
 
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
@@ -152,22 +138,23 @@ public class TripletListImpl implements TripletList, MAPAsnPrimitive {
 
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.authenticationTriplets == null || this.authenticationTriplets.size() < 1 || this.authenticationTriplets.size() > 5) {
-			throw new MAPException("AuthenticationTriplets list must contains from 1 to 5 elemets");
+		if (this.locationAreas == null || this.locationAreas.size() < 1 || this.locationAreas.size() > 5) {
+			throw new MAPException("LocationAreas list must contains from 1 to 5 elemets");
 		}
 
-		for (AuthenticationTriplet at : this.authenticationTriplets) {
-			((AuthenticationTripletImpl) at).encodeAll(asnOs);
+		for (LocationArea at : this.locationAreas) {
+			((LocationAreaImpl) at).encodeAll(asnOs);
 		}
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("TripletList [");
+		sb.append(_PrimitiveName);
+		sb.append(" [");
 
-		if (this.authenticationTriplets != null) {
-			for (AuthenticationTriplet at : this.authenticationTriplets) {
+		if (this.locationAreas != null) {
+			for (LocationArea at : this.locationAreas) {
 				if (at != null) {
 					sb.append(at.toString());
 					sb.append(", ");
