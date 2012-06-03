@@ -68,6 +68,9 @@ public class SendAuthenticationInfoResponseImpl extends MobilityMessageImpl impl
 		this.authenticationSetList = authenticationSetList;
 		this.extensionContainer = extensionContainer;
 		this.epsAuthenticationSetList = epsAuthenticationSetList;
+
+		if (authenticationSetList != null)
+			((AuthenticationSetListImpl) authenticationSetList).setMapProtocolVersion(mapProtocolVersion);
 	}
 	
 	public MAPMessageType getMessageType() {

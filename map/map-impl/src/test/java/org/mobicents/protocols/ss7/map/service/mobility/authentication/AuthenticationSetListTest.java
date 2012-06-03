@@ -117,7 +117,8 @@ public class AuthenticationSetListTest {
 				AuthenticationTripletTest.getKcData());
 		ats.add(at);
 		TripletListImpl tl = new TripletListImpl(ats);
-		AuthenticationSetListImpl asc = new AuthenticationSetListImpl(tl, 3);
+		AuthenticationSetListImpl asc = new AuthenticationSetListImpl(tl);
+		asc.setMapProtocolVersion(3);
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
 		asc.encodeAll(asnOS);
@@ -132,7 +133,8 @@ public class AuthenticationSetListTest {
 				AuthenticationTripletTest.getKcData());
 		ats.add(at);
 		tl = new TripletListImpl(ats);
-		asc = new AuthenticationSetListImpl(tl, 2);
+		asc = new AuthenticationSetListImpl(tl);
+		asc.setMapProtocolVersion(2);
 
 		asnOS = new AsnOutputStream();
 		asc.encodeAll(asnOS);

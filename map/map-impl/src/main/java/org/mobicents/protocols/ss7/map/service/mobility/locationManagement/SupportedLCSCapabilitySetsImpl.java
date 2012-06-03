@@ -54,8 +54,8 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 		super();
 	}
 	
-	public SupportedLCSCapabilitySetsImpl(Boolean lcsCapabilitySetRelease98_99, Boolean lcsCapabilitySetRelease4, Boolean lcsCapabilitySetRelease5,
-			Boolean lcsCapabilitySetRelease6, Boolean lcsCapabilitySetRelease7) {
+	public SupportedLCSCapabilitySetsImpl(boolean lcsCapabilitySetRelease98_99, boolean lcsCapabilitySetRelease4, boolean lcsCapabilitySetRelease5,
+			boolean lcsCapabilitySetRelease6, boolean lcsCapabilitySetRelease7) {
 		if (lcsCapabilitySetRelease98_99)
 			this.bitString.set(_INDEX_LCS_CAPABILITY_SET1);
 		if (lcsCapabilitySetRelease4)

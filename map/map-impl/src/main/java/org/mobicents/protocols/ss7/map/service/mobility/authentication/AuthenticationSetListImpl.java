@@ -56,9 +56,8 @@ public class AuthenticationSetListImpl implements AuthenticationSetList, MAPAsnP
 	public AuthenticationSetListImpl() {
 	}
 
-	public AuthenticationSetListImpl(TripletList tripletList, long mapProtocolVersion) {
+	public AuthenticationSetListImpl(TripletList tripletList) {
 		this.tripletList = tripletList;
-		this.mapProtocolVersion = mapProtocolVersion;
 	}
 
 	public AuthenticationSetListImpl(QuintupletList quintupletList) {
@@ -79,6 +78,9 @@ public class AuthenticationSetListImpl implements AuthenticationSetList, MAPAsnP
 		return mapProtocolVersion;
 	}
 
+	public void setMapProtocolVersion(long mapProtocolVersion) {
+		this.mapProtocolVersion = mapProtocolVersion;
+	}
 
 	public int getTag() throws MAPException {
 		if (this.mapProtocolVersion >= 3) {

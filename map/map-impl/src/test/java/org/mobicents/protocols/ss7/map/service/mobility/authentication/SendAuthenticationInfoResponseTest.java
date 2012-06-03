@@ -135,7 +135,8 @@ public class SendAuthenticationInfoResponseTest {
 				AuthenticationTripletTest.getKcData());
 		ats.add(at);
 		TripletListImpl tl = new TripletListImpl(ats);
-		AuthenticationSetListImpl asl = new AuthenticationSetListImpl(tl, 3);
+		AuthenticationSetListImpl asl = new AuthenticationSetListImpl(tl);
+		asl.setMapProtocolVersion(3);
 		SendAuthenticationInfoResponseImpl asc = new SendAuthenticationInfoResponseImpl(3, asl, null, null);
 		// long mapProtocolVersion, AuthenticationSetList authenticationSetList, MAPExtensionContainer extensionContainer,
 		// EpsAuthenticationSetList epsAuthenticationSetList
@@ -167,7 +168,8 @@ public class SendAuthenticationInfoResponseTest {
 				TripletListTest.getKcData());
 		ats.add(at);
 		tl = new TripletListImpl(ats);
-		asl = new AuthenticationSetListImpl(tl, 2);
+		asl = new AuthenticationSetListImpl(tl);
+		asl.setMapProtocolVersion(2);
 		asc = new SendAuthenticationInfoResponseImpl(2, asl, null, null);
 
 		asnOS = new AsnOutputStream();
