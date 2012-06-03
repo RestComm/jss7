@@ -66,7 +66,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
  * @author sergey vetyutnev
  * 
  */
-public interface UpdateLocationRequest  extends MobilityMessage {
+public interface UpdateLocationRequest extends MobilityMessage {
 
 	public IMSI getImsi();
 

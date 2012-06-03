@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.A
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VlrCapability;
+import org.mobicents.protocols.ss7.map.primitives.GSNAddressImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
@@ -317,22 +318,22 @@ public class UpdateLocationRequestImpl extends MobilityMessageImpl implements Up
 						if (!ais.isTagPrimitive())
 							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
 									+ ".vGmlcAddress: Parameter is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-						// TODO: implement it
-						ais.advanceElement();
+						this.vGmlcAddress = new GSNAddressImpl();
+						((GSNAddressImpl) this.vGmlcAddress).decodeAll(ais);
 						break;
 					case _TAG_addInfo: // addInfo
 						if (ais.isTagPrimitive())
 							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
 									+ ".addInfo: Parameter is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-						// TODO: implement it
-						ais.advanceElement();
+						this.addInfo = new ADDInfoImpl();
+						((ADDInfoImpl) this.addInfo).decodeAll(ais);
 						break;
 					case _TAG_pagingArea: // pagingArea
 						if (ais.isTagPrimitive())
 							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
 									+ ".pagingArea: Parameter is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-						// TODO: implement it
-						ais.advanceElement();
+						this.pagingArea = new PagingAreaImpl();
+						((PagingAreaImpl) this.pagingArea).decodeAll(ais);
 						break;
 					case _TAG_skipSubscriberDataUpdate:
 						// skipSubscriberDataUpdate
@@ -407,7 +408,7 @@ public class UpdateLocationRequestImpl extends MobilityMessageImpl implements Up
 
 		try {
 			if (this.imsi == null || (this.mscNumber == null && (this.roamingNumber == null || this.mapProtocolVersion > 1)) || this.vlrNumber == null)
-				throw new MAPException("IMSI, mscNumber (roamingNumber) vlrNumber and  parameter must not be null");
+				throw new MAPException("IMSI, mscNumber (roamingNumber) and vlrNumber parameter must not be null");
 
 			((IMSIImpl) this.imsi).encodeAll(asnOs);
 
@@ -428,13 +429,13 @@ public class UpdateLocationRequestImpl extends MobilityMessageImpl implements Up
 			if (csLCSNotSupportedByUE)
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_csLCSNotSupportedByUE);
 			if (vGmlcAddress != null) {
-				// TODO: implement it _TAG_vGmlcAddress
+				((GSNAddressImpl) this.vGmlcAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_vGmlcAddress);
 			}
 			if (addInfo != null) {
-				// TODO: implement it _TAG_addInfo
+				((ADDInfoImpl) this.addInfo).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_addInfo);
 			}
 			if (pagingArea != null) {
-				// TODO: implement it _TAG_pagingArea
+				((PagingAreaImpl) this.pagingArea).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_pagingArea);
 			}
 			if (skipSubscriberDataUpdate)
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_skipSubscriberDataUpdate);

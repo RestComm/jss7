@@ -66,7 +66,7 @@ public class TripletListTest {
 		return new byte[] { 8, 8, 8, 8, 8, 8, 8, 8 };
 	}
 
-	@Test
+	@Test(groups = { "functional.decode"})
 	public void testDecode() throws Exception {
 
 		byte[] rawData = getEncodedData();

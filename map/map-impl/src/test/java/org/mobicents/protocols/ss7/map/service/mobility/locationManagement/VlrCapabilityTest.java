@@ -68,7 +68,7 @@ public class VlrCapabilityTest {
 		return new byte[] { 48, 16, -126, 0, -124, 0, -122, 2, 1, 14, -121, 2, 3, 80, -120, 0, -119, 0 };
 	}
 
-	@Test
+	@Test(groups = { "functional.decode"})
 	public void testDecode() throws Exception {
 
 		byte[] rawData = getEncodedData();

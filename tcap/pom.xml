@@ -42,7 +42,7 @@
 						true
 					</resolveTransitiveDependencies>
 					<eclipseProjectName>
-						tcap
+						mobicents-tcap-stack
 					</eclipseProjectName>
 				</configuration>
 			</plugin>

@@ -34,16 +34,35 @@ import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdFixedLength;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
 import org.mobicents.protocols.ss7.map.api.primitives.FTNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationQuintuplet;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationTriplet;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpcAv;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpsAuthenticationSetList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.QuintupletList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.ReSynchronisationInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.TripletList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IstSupportIndicator;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAC;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAIFixedLength;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SuperChargerInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedRATTypes;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VlrCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeodeticInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeographicalInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LSAIdentity;
@@ -57,6 +76,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBearerServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtTeleserviceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
@@ -300,6 +321,38 @@ public interface MAPParameterFactory {
 	public LocationNumberMap createLocationNumberMap(LocationNumber locationNumber) throws MAPException;
 	public SubscriberState createSubscriberState(SubscriberStateChoice subscriberStateChoice, NotReachableReason notReachableReason);
 
+	public PlmnId createPlmnId(byte[] data);
+	public GSNAddress createGSNAddress(byte[] data);
+
+	public AuthenticationTriplet createAuthenticationTriplet(byte[] rand, byte[] sres, byte[] kc);
+	public AuthenticationQuintuplet createAuthenticationQuintuplet(byte[] rand, byte[] xres, byte[] ck, byte[] ik, byte[] autn);
+	public TripletList createTripletList(ArrayList<AuthenticationTriplet> authenticationTriplets);
+	public QuintupletList createQuintupletList(ArrayList<AuthenticationQuintuplet> quintupletList);
+	public AuthenticationSetList createAuthenticationSetList(TripletList tripletList);
+	public AuthenticationSetList createAuthenticationSetList(QuintupletList quintupletList);
+	public ReSynchronisationInfo createReSynchronisationInfo(byte[] rand, byte[] auts);
+	public EpsAuthenticationSetList createEpsAuthenticationSetList(ArrayList<EpcAv> epcAv);
+	public EpcAv createEpcAv(byte[] rand, byte[] xres, byte[] autn, byte[] kasme, MAPExtensionContainer extensionContainer);
+
+	public VlrCapability createVlrCapability(SupportedCamelPhases supportedCamelPhases, MAPExtensionContainer extensionContainer,
+			boolean solsaSupportIndicator, IstSupportIndicator istSupportIndicator, SuperChargerInfo superChargerSupportedInServingNetworkEntity,
+			boolean longFtnSupported, SupportedLCSCapabilitySets supportedLCSCapabilitySets, OfferedCamel4CSIs offeredCamel4CSIs,
+			SupportedRATTypes supportedRATTypesIndicator, boolean longGroupIDSupported, boolean mtRoamingForwardingSupported);
+	public SupportedCamelPhases createSupportedCamelPhases(boolean phase1, boolean phase2, boolean phase3, boolean phase4);
+	public SuperChargerInfo createSuperChargerInfo(Boolean sendSubscriberData);
+	public SuperChargerInfo createSuperChargerInfo(byte[] subscriberDataStored);
+	public SupportedLCSCapabilitySets createSupportedLCSCapabilitySets(boolean lcsCapabilitySetRelease98_99, boolean lcsCapabilitySetRelease4,
+			boolean lcsCapabilitySetRelease5, boolean lcsCapabilitySetRelease6, boolean lcsCapabilitySetRelease7);
+	public OfferedCamel4CSIs createOfferedCamel4CSIs(boolean oCsi, boolean dCsi, boolean vtCsi, boolean tCsi, boolean mtSMSCsi, boolean mgCsi,
+			boolean psiEnhancements);
+	public SupportedRATTypes createSupportedRATTypes(boolean utran, boolean geran, boolean gan, boolean i_hspa_evolution, boolean e_utran);
+	public ADDInfo createADDInfo(IMEI imeisv, boolean skipSubscriberDataUpdate);
+	public PagingArea createPagingArea(ArrayList<LocationArea> locationAreas);
+	public LAC createLAC(byte[] data);
+	public LAC createLAC(int lac) throws MAPException;
+	public LocationArea createLocationArea(LAIFixedLength laiFixedLength);
+	public LocationArea createLocationArea(LAC lac);
+	
 	public ExtBasicServiceCode createExtBasicServiceCode(ExtBearerServiceCode extBearerServiceCode);
 	public ExtBasicServiceCode createExtBasicServiceCode(ExtTeleserviceCode extTeleserviceCode);
 	public ExtBearerServiceCode createExtBearerServiceCode(byte[] data);

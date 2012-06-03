@@ -20,90 +20,83 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.primitives;
+package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
 import static org.testng.Assert.*;
-
 import java.util.Arrays;
-
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.testng.*;import org.testng.annotations.*;
-
+import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAC;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAIFixedLength;
+import org.testng.annotations.Test;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class LAIFixedLengthTest {
+public class LocationAreaTest {
 
-	public byte[] getData() {
-		return new byte[] { 4, 5, 82, (byte) 240, 16, 17, 92 };
-	};
-
-	public byte[] getDataVal() {
-		return new byte[] { 82, (byte) 240, 16, 17, 92 };
+	public byte[] getData1() {
+		return new byte[] { (byte) 128, 5, 66, (byte) 249, 16, 54, (byte) 186 };
 	};
 
 	public byte[] getData2() {
-		return new byte[] { 4, 5, 16, 97, 66, 1, 77 };
+		return new byte[] { (byte) 129, 2, 54, (byte) 186 };
 	};
-	
+
 	@Test(groups = { "functional.decode", "primitives" })
 	public void testDecode() throws Exception {
 
-		byte[] data = this.getData();
+		byte[] data = this.getData1();
 
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
 
-		LAIFixedLengthImpl prim = new LAIFixedLengthImpl();
+		LocationAreaImpl prim = new LocationAreaImpl();
 		prim.decodeAll(asn);
 
-		assertNotNull(prim.getData());
-		assertTrue(Arrays.equals(getDataVal(), prim.getData()));		
-		
-		assertEquals(prim.getMCC(), 250);
-		assertEquals(prim.getMNC(), 1);
-		assertEquals(prim.getLac(), 4444);
+		assertEquals(tag, LocationAreaImpl._TAG_laiFixedLength);
+		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
 
-		
+		LAIFixedLength lai = prim.getLAIFixedLength();
+		assertEquals(lai.getMCC(), 249);
+		assertEquals(lai.getMNC(), 1);
+		assertEquals(lai.getLac(), 14010);
+		assertNull(prim.getLAC());
+
+
 		data = this.getData2();
 
 		asn = new AsnInputStream(data);
 		tag = asn.readTag();
 
-		prim = new LAIFixedLengthImpl();
+		prim = new LocationAreaImpl();
 		prim.decodeAll(asn);
 
-		assertNotNull(prim.getData());
-		
-		assertEquals(prim.getMCC(), 11);
-		assertEquals(prim.getMNC(), 246);
-		assertEquals(prim.getLac(), 333);
+		assertEquals(tag, LocationAreaImpl._TAG_lac);
+		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
+
+		assertNull(prim.getLAIFixedLength());
+		LAC lac = prim.getLAC();
+		assertEquals(lac.getLac(), 14010);
 	}
-	
+
 	@Test(groups = { "functional.decode", "primitives" })
 	public void testEncode() throws Exception {
 
-		LAIFixedLengthImpl prim = new LAIFixedLengthImpl(250, 1, 4444);
+		LAIFixedLengthImpl lai = new LAIFixedLengthImpl(249, 1, 14010);
+		LocationAreaImpl prim = new LocationAreaImpl(lai);
 
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+		assertTrue(Arrays.equals(asn.toByteArray(), this.getData1()));
 
 		
-		prim = new LAIFixedLengthImpl(getDataVal());
-
-		asn = new AsnOutputStream();
-		prim.encodeAll(asn);
-
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
-
-		
-		prim = new LAIFixedLengthImpl(11, 246, 333);
+		LAC lac = new LACImpl(14010);
+		prim = new LocationAreaImpl(lac);
 
 		asn = new AsnOutputStream();
 		prim.encodeAll(asn);
@@ -111,3 +104,4 @@ public class LAIFixedLengthTest {
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
 	}
 }
+

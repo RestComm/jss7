@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.map.service.mobility.authentication;
 import static org.testng.Assert.*;
 import java.util.Arrays;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.ReSynchronisationInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.PlmnIdImpl;
@@ -46,7 +47,8 @@ public class SendAuthenticationInfoRequestTest {
 	}
 
 	private byte[] getEncodedData2() {
-		return new byte[] { 48, 21, -128, 6, 51, 51, 67, 68, 68, -12, 2, 1, 5, 5, 0, -127, 0, -125, 1, 1, -123, 1, 6 };
+		return new byte[] { 48, 57, -128, 6, 51, 51, 67, 68, 68, -12, 2, 1, 5, 5, 0, -127, 0, 48, 34, 4, 16, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4,
+				14, 2, 2, 2, 2, 3, 3, 3, 2, 2, 2, 2, 3, 3, 3, -125, 1, 1, -123, 1, 6 };
 	}
 
 	private byte[] getEncodedData_V2() {
@@ -106,8 +108,11 @@ public class SendAuthenticationInfoRequestTest {
 		assertEquals(asc.getNumberOfRequestedVectors(), 5);
 
 		assertNull(asc.getRequestingPlmnId());
-		
-		assertNull(asc.getReSynchronisationInfo());
+
+		ReSynchronisationInfo rsi = asc.getReSynchronisationInfo();
+		assertTrue(Arrays.equals(rsi.getRand(), ReSynchronisationInfoTest.getRandData()));
+		assertTrue(Arrays.equals(rsi.getAuts(), ReSynchronisationInfoTest.getAutsData()));
+
 		assertNull(asc.getExtensionContainer());
 		assertEquals((int)asc.getNumberOfRequestedAdditionalVectors(), 6);
 
@@ -164,7 +169,8 @@ public class SendAuthenticationInfoRequestTest {
 
 
 		imsi = new IMSIImpl("33333444444");
-		asc = new SendAuthenticationInfoRequestImpl(3, imsi, 5, true, true, null, null, RequestingNodeType.sgsn, null, 6, false);
+		ReSynchronisationInfoImpl rsi = new ReSynchronisationInfoImpl(ReSynchronisationInfoTest.getRandData(), ReSynchronisationInfoTest.getAutsData());
+		asc = new SendAuthenticationInfoRequestImpl(3, imsi, 5, true, true, rsi, null, RequestingNodeType.sgsn, null, 6, false);
 
 		asnOS = new AsnOutputStream();
 		asc.encodeAll(asnOS);

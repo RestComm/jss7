@@ -68,6 +68,16 @@ import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationTriplet;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.TripletList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
@@ -96,6 +106,7 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.TripletListTest;
 import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
@@ -3028,6 +3039,377 @@ public class MAPFunctionalTest extends SccpHarness {
 			}
 		}
 	};
+
+	/**
+	 * TC-BEGIN + sendAuthenticationInfoRequest_V3
+	 * TC-END + sendAuthenticationInfoResponse_V3
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testSendAuthenticationInfo_V3() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onSendAuthenticationInfoResponse(SendAuthenticationInfoResponse ind) {
+				super.onSendAuthenticationInfoResponse(ind);
+
+				AuthenticationSetList asl = ind.getAuthenticationSetList();
+				AuthenticationTriplet at = asl.getTripletList().getAuthenticationTriplets().get(0);
+
+				Assert.assertEquals(ind.getMapProtocolVersion(), 3);
+				Assert.assertEquals(asl.getMapProtocolVersion(), 3);
+				Assert.assertEquals(asl.getTripletList().getAuthenticationTriplets().size(), 1);
+				Assert.assertTrue(Arrays.equals(at.getRand(), TripletListTest.getRandData()));
+				Assert.assertTrue(Arrays.equals(at.getSres(), TripletListTest.getSresData()));
+				Assert.assertTrue(Arrays.equals(at.getKc(), TripletListTest.getKcData()));
+				Assert.assertNull(asl.getQuintupletList());
+				Assert.assertNull(ind.getEpsAuthenticationSetList());
+				Assert.assertNull(ind.getExtensionContainer());
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onSendAuthenticationInfoRequest(SendAuthenticationInfoRequest ind) {
+				super.onSendAuthenticationInfoRequest(ind);
+
+				MAPDialogMobility d = ind.getMAPDialog();
+
+				IMSI imsi = ind.getImsi();
+
+				Assert.assertEquals(ind.getMapProtocolVersion(), 3);
+				Assert.assertTrue(imsi.getData().equals("4567890"));
+				Assert.assertEquals(ind.getNumberOfRequestedVectors(), 3);
+				Assert.assertTrue(ind.getSegmentationProhibited());
+				Assert.assertTrue(ind.getImmediateResponsePreferred());
+				Assert.assertNull(ind.getReSynchronisationInfo());
+				Assert.assertNull(ind.getExtensionContainer());
+				Assert.assertEquals(ind.getRequestingNodeType(), RequestingNodeType.sgsn);
+				Assert.assertNull(ind.getRequestingPlmnId());
+				Assert.assertEquals((int)ind.getNumberOfRequestedAdditionalVectors(), 5);
+				Assert.assertFalse(ind.getAdditionalVectorsAreForEPS());
+
+				ArrayList<AuthenticationTriplet> authenticationTriplets = new ArrayList<AuthenticationTriplet>();
+				AuthenticationTriplet at = this.mapParameterFactory.createAuthenticationTriplet(TripletListTest.getRandData(), TripletListTest.getSresData(),
+						TripletListTest.getKcData());
+				authenticationTriplets.add(at);
+				TripletList tripletList = this.mapParameterFactory.createTripletList(authenticationTriplets);
+				AuthenticationSetList asl = this.mapParameterFactory.createAuthenticationSetList(tripletList);
+
+				try {
+					d.addSendAuthenticationInfoResponse(ind.getInvokeId(), asl, null, null);
+				} catch (MAPException e) {
+					this.error("Error while adding SendAuthenticationInfoResponse", e);
+					fail("Error while adding SendAuthenticationInfoResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendAuthenticationInfoResp_V3, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty SendAuthenticationInfoResp_V3", e);
+					fail("Error while sending the empty SendAuthenticationInfoResp_V3");
+				}
+			}
+		};
+		
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.SendAuthenticationInfo_V3, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendAuthenticationInfoResp_V3, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendAuthenticationInfo_V3, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.SendAuthenticationInfoResp_V3, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendSendAuthenticationInfo_V3();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * TC-BEGIN + sendAuthenticationInfoRequest_V2
+	 * TC-END + sendAuthenticationInfoResponse_V2
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testSendAuthenticationInfo_V2() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onSendAuthenticationInfoResponse(SendAuthenticationInfoResponse ind) {
+				super.onSendAuthenticationInfoResponse(ind);
+
+				AuthenticationSetList asl = ind.getAuthenticationSetList();
+				AuthenticationTriplet at = asl.getTripletList().getAuthenticationTriplets().get(0);
+
+				Assert.assertEquals(ind.getMapProtocolVersion(), 2);
+				Assert.assertEquals(asl.getMapProtocolVersion(), 2);
+				Assert.assertEquals(asl.getTripletList().getAuthenticationTriplets().size(), 1);
+				Assert.assertTrue(Arrays.equals(at.getRand(), TripletListTest.getRandData()));
+				Assert.assertTrue(Arrays.equals(at.getSres(), TripletListTest.getSresData()));
+				Assert.assertTrue(Arrays.equals(at.getKc(), TripletListTest.getKcData()));
+				Assert.assertNull(asl.getQuintupletList());
+				Assert.assertNull(ind.getEpsAuthenticationSetList());
+				Assert.assertNull(ind.getExtensionContainer());
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onSendAuthenticationInfoRequest(SendAuthenticationInfoRequest ind) {
+				super.onSendAuthenticationInfoRequest(ind);
+
+				MAPDialogMobility d = ind.getMAPDialog();
+
+				IMSI imsi = ind.getImsi();
+
+				Assert.assertEquals(ind.getMapProtocolVersion(), 2);
+				Assert.assertTrue(imsi.getData().equals("456789000"));
+				Assert.assertEquals(ind.getNumberOfRequestedVectors(), 0);
+				Assert.assertFalse(ind.getSegmentationProhibited());
+				Assert.assertFalse(ind.getImmediateResponsePreferred());
+				Assert.assertNull(ind.getReSynchronisationInfo());
+				Assert.assertNull(ind.getExtensionContainer());
+				Assert.assertNull(ind.getRequestingNodeType());
+				Assert.assertNull(ind.getRequestingPlmnId());
+				Assert.assertNull(ind.getNumberOfRequestedAdditionalVectors());
+				Assert.assertFalse(ind.getAdditionalVectorsAreForEPS());
+
+				ArrayList<AuthenticationTriplet> authenticationTriplets = new ArrayList<AuthenticationTriplet>();
+				AuthenticationTriplet at = this.mapParameterFactory.createAuthenticationTriplet(TripletListTest.getRandData(), TripletListTest.getSresData(),
+						TripletListTest.getKcData());
+				authenticationTriplets.add(at);
+				TripletList tripletList = this.mapParameterFactory.createTripletList(authenticationTriplets);
+				AuthenticationSetList asl = this.mapParameterFactory.createAuthenticationSetList(tripletList);
+
+				try {
+					d.addSendAuthenticationInfoResponse(ind.getInvokeId(), asl, null, null);
+				} catch (MAPException e) {
+					this.error("Error while adding SendAuthenticationInfoResponse", e);
+					fail("Error while adding SendAuthenticationInfoResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendAuthenticationInfoResp_V2, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty SendAuthenticationInfoResp_V2", e);
+					fail("Error while sending the empty SendAuthenticationInfoResp_V2");
+				}
+			}
+		};
+		
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.SendAuthenticationInfo_V2, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendAuthenticationInfoResp_V2, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendAuthenticationInfo_V2, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.SendAuthenticationInfoResp_V2, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendSendAuthenticationInfo_V2();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * TC-BEGIN + updateLocation
+	 * TC-END + updateLocationResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testUpdateLocation() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onUpdateLocationResponse(UpdateLocationResponse ind) {
+				super.onUpdateLocationResponse(ind);
+
+				ISDNAddressString hlrNumber = ind.getHlrNumber();
+
+				Assert.assertEquals(hlrNumber.getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(hlrNumber.getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertTrue(hlrNumber.getAddress().equals("765765765"));
+				Assert.assertNull(ind.getExtensionContainer());
+				Assert.assertTrue(ind.getAddCapability());
+				Assert.assertFalse(ind.getPagingAreaCapability());
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onUpdateLocationRequest(UpdateLocationRequest ind) {
+				super.onUpdateLocationRequest(ind);
+
+				MAPDialogMobility d = ind.getMAPDialog();
+
+				IMSI imsi = ind.getImsi();
+				ISDNAddressString mscNumber = ind.getMscNumber();
+				ISDNAddressString vlrNumber = ind.getVlrNumber();
+				LMSI lmsi = ind.getLmsi();
+				ADDInfo addInfo = ind.getADDInfo();
+
+				Assert.assertEquals(ind.getMapProtocolVersion(), 3);
+				Assert.assertTrue(imsi.getData().equals("45670000"));
+				Assert.assertEquals(mscNumber.getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(mscNumber.getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertTrue(mscNumber.getAddress().equals("8222333444"));
+				Assert.assertNull(ind.getRoamingNumber());
+				Assert.assertEquals(vlrNumber.getAddressNature(), AddressNature.network_specific_number);
+				Assert.assertEquals(vlrNumber.getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertTrue(vlrNumber.getAddress().equals("700000111"));
+				Assert.assertTrue(Arrays.equals(lmsi.getData(), new byte[] { 1, 2, 3, 4 }));
+				Assert.assertNull(ind.getExtensionContainer());
+				Assert.assertNull(ind.getVlrCapability());
+				Assert.assertTrue(ind.getInformPreviousNetworkEntity());
+				Assert.assertFalse(ind.getCsLCSNotSupportedByUE());
+				Assert.assertNull(ind.getVGmlcAddress());
+				Assert.assertTrue(addInfo.getImeisv().getIMEI().equals("987654321098765"));
+				Assert.assertNull(ind.getPagingArea());
+				Assert.assertFalse(ind.getSkipSubscriberDataUpdate());
+				Assert.assertTrue(ind.getRestorationIndicator());
+
+
+				ISDNAddressString hlrNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "765765765");
+
+				try {
+					d.addUpdateLocationResponse(ind.getInvokeId(), hlrNumber, null, true, false);
+				} catch (MAPException e) {
+					this.error("Error while adding UpdateLocationResponse", e);
+					fail("Error while adding UpdateLocationResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.UpdateLocationResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty UpdateLocationResponse", e);
+					fail("Error while sending the empty UpdateLocationResponse");
+				}
+			}
+		};
+		
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.UpdateLocation, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.UpdateLocationResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.UpdateLocation, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.UpdateLocationResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendUpdateLocation();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	
+	
+	
 	
 	private void waitForEnd() {
 		try {

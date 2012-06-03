@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
-import java.util.Arrays;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
@@ -38,11 +36,15 @@ import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
 import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
@@ -90,6 +92,7 @@ public class Client extends EventTestHarness {
 
 	private MAPDialogSupplementary clientDialog;
 	protected MAPDialogSms clientDialogSms;
+	protected MAPDialogMobility clientDialogMobility;
 
 	private long savedInvokeId;
 
@@ -105,6 +108,11 @@ public class Client extends EventTestHarness {
 		this.mapProvider.addMAPDialogListener(this);
 		this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
 		this.mapProvider.getMAPServiceSms().addMAPServiceListener(this);
+		this.mapProvider.getMAPServiceMobility().addMAPServiceListener(this);
+
+		this.mapProvider.getMAPServiceSupplementary().acivate();
+		this.mapProvider.getMAPServiceSms().acivate();
+		this.mapProvider.getMAPServiceMobility().acivate();
 	}
 
 	public void start() throws MAPException {
@@ -493,6 +501,65 @@ public class Client extends EventTestHarness {
 
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInfoForSMIndication, null, sequence++));
 		clientDialogSms.send();
+
+	}		
+
+	public void sendSendAuthenticationInfo_V3() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.infoRetrievalContext, MAPApplicationContextVersion.version3);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		IMSI imsi = this.mapParameterFactory.createIMSI("4567890");
+		clientDialogMobility.addSendAuthenticationInfoRequest(imsi, 3, true, true, null, null, RequestingNodeType.sgsn, null, 5, false);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendAuthenticationInfo_V3, null, sequence++));
+		clientDialogMobility.send();
+
+	}		
+	
+	public void sendSendAuthenticationInfo_V2() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.infoRetrievalContext, MAPApplicationContextVersion.version2);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		IMSI imsi = this.mapParameterFactory.createIMSI("456789000");
+		clientDialogMobility.addSendAuthenticationInfoRequest(imsi, 0, false, false, null, null, null, null, null, false);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendAuthenticationInfo_V2, null, sequence++));
+		clientDialogMobility.send();
+
+	}		
+
+	public void sendUpdateLocation() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.networkLocUpContext, MAPApplicationContextVersion.version3);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		IMSI imsi = this.mapParameterFactory.createIMSI("45670000");
+		ISDNAddressString mscNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "8222333444");
+		ISDNAddressString vlrNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.network_specific_number, NumberingPlan.ISDN, "700000111");
+		LMSI lmsi = this.mapParameterFactory.createLMSI(new byte[] { 1, 2, 3, 4 });
+		IMEI imeisv = this.mapParameterFactory.createIMEI("987654321098765");
+		ADDInfo addInfo = this.mapParameterFactory.createADDInfo(imeisv, false);
+		clientDialogMobility.addUpdateLocationRequest(imsi, mscNumber, null, vlrNumber, lmsi, null, null, true, false, null, addInfo, null, false, true);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.UpdateLocation, null, sequence++));
+		clientDialogMobility.send();
 
 	}		
 
