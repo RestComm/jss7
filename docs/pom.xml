@@ -16,7 +16,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<docs.application.name>SS7 Stack</docs.application.name>
+		<docs.application.name>jSS7 Stack</docs.application.name>
 		<docs.application.dirname>ss7</docs.application.dirname>
 		<docs.bookid>SS7Stack</docs.bookid>
 	</properties>

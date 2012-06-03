@@ -11,8 +11,8 @@ If this final separator is missing, then the documentation will be wrong. -->
 <!ENTITY THIS.PLATFORM "${THIS.PLATFORM}">
 <!ENTITY JEE.PLATFORM "${JEE.PLATFORM}">
 <!ENTITY BOOK_ID "${docs.bookid}_User_Guide">
-<!ENTITY YEAR "2010">
-<!ENTITY HOLDER "Red Hat Inc">
+<!ENTITY YEAR "2012">
+<!ENTITY HOLDER "TeleSTax Inc">
 <!ENTITY AUTHOR.EMAIL.AMIT "${author.email.amit}">
 <!ENTITY AUTHOR.EMAIL.BARTOSZ "${author.email.bartosz}">
 <!ENTITY AUTHOR.EMAIL.OLEG "${author.email.oleg}">

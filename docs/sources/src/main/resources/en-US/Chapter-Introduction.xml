@@ -10,7 +10,10 @@
     <section id="jss7_overview">
     	<title>&THIS.PLATFORM; jSS7 Overview</title>
 		<para>
-&THIS.PLATFORM; jSS7 (Java SS7) is the only Open Source Java based implementation of the SS7 protocol stack. It comes with JSLEE MAP and ISUP Resource Adaptors (RA) and enables legacy developers to build SS7 applications with ease. Developers only require an understanding of Resource Adaptors and focus on building applications rather than worry about the SS7 stack. &THIS.PLATFORM; jSS7 is compatible with Dialogic boards and also has inbuilt support for SIGTRAN (M3UA).
+&THIS.PLATFORM; jSS7 (Java SS7) is the only Open Source Java based implementation of the SS7 protocol stack. It comes with JSLEE MAP and ISUP Resource Adaptors (RA) and enables legacy developers to build SS7 
+applications with ease. Developers only require an understanding of Resource Adaptors and focus on building applications rather than worry about the SS7 stack. 
+&THIS.PLATFORM; jSS7 is compatible with Dialogic boards, dahdi based cards (Diguim and Sangoma) and also has inbuilt support for SIGTRAN (M3UA). &THIS.PLATFORM;  &THIS.APPLICATION; also supports TeleStax SS7 Cards which has 
+MTP2/3 support on-board and hence lower processing load on server hosting &THIS.PLATFORM; &THIS.APPLICATION;
 		</para>
 		<para>
 Since &THIS.PLATFORM; jSS7 is Java based, it is cross-platform and can be installed and used on any Operating System that supports Java. The Open Source Software gives you the flexibility to understand the readily available source code and customise the product for your Enterprise needs. 
@@ -71,6 +74,21 @@ Since &THIS.PLATFORM; jSS7 is Java based, it is cross-platform and can be instal
 		&THIS.PLATFORM;  &THIS.APPLICATION; is a software based implementation of the SS7 protocol. It provides implementation for Level 2 and above in the SS7 protocol Stack. 
 		The &THIS.PLATFORM;  &THIS.APPLICATION; is a platform in the sense that it does not provide the application itself but rather allows users to build their own SS7 applications using &THIS.PLATFORM;  &THIS.APPLICATION; as a platform.
 	</para>	
+	
+	<para>
+		Below diagram shows various SS7 protocols implemented by &THIS.PLATFORM;  &THIS.APPLICATION;   
+	</para>
+	<mediaobject>
+		<imageobject>
+			<imagedata width="300px" align="center" fileref="images/MobicentsjSS7Layers.jpg"
+				format="GIF" />
+		</imageobject>
+		<caption>
+			<para>&THIS.PLATFORM;  &THIS.APPLICATION; overview
+			</para>
+		</caption>
+	</mediaobject>	
+
 	</section>
 	<section id="tdm">
 		<title>Time Division Multiplexing</title>

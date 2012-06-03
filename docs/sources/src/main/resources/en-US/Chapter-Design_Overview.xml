@@ -76,7 +76,7 @@
 		<title>Shell Management client</title>
 				<para>
 				  <literal>Shell</literal> is a Command Line Interface (CLI) tool that will allow you to manage different aspects of &THIS.PLATFORM; &THIS.APPLICATION; in an interactive manner. 
-					It connects to different instances of &THIS.PLATFORM; &THIS.APPLICATION; which manage <literal>Linksets</literal>,
+					It connects to different instances of &THIS.PLATFORM; &THIS.APPLICATION; which manages <literal>Linksets</literal>,
 					<literal>SCCP</literal> resource, routing and <literal>M3UA</literal>. For detailed information please refer to:	<xref linkend="shell" />.
 					Usually <literal>Shell</literal> will be invoked from remote machine(remote to <literal>Linksets</literal> and application protocols).
 
@@ -105,7 +105,7 @@
 	<section
 		id="design_overview_ss7_service">
 		<title>SS7 Service Elements</title>
-				<para>SS7 Service creates an instance of &THIS.PLATFORM; SCCP Stack and binds the instance to JNDI name <literal>java:/mobicents/ss7/sccp</literal>. SS7 Service is a JMX based service deployed in JBoss Application Server. It hides the underlying details like whether Level 4 and above are connected to the &THIS.PLATFORM; Signaling Gateway via <literal>M3UA</literal> or if connected to the SS7 Hardware installed in the same machine as Level 4.</para>
+				<para>SS7 Service creates an instance of &THIS.PLATFORM; MAP Stack and binds the instance to JNDI name <literal>java:/mobicents/ss7/map</literal>. SS7 Service is a JMX based service deployed in JBoss Application Server. It hides the underlying details like whether Level 4 and above are connected to the &THIS.PLATFORM; Signaling Gateway via <literal>M3UA</literal> or if connected to the SS7 Hardware installed in the same machine as Level 4.</para>
 
 		<para>
 			The figure below depicts the elements that are deployed as part of SS7 Service.
@@ -130,7 +130,7 @@
 			<varlistentry>
 				<term>Expose protocol access points:</term>
 				<listitem>
-					<para>Access points allow users to access lower layer protocols like <literal>SCCP</literal> and interact with the <literal>SS7</literal> network through such protocols.</para>
+					<para>Access points allow users to access lower layer protocols like <literal>MAP</literal> and interact with the <literal>SS7</literal> network through such protocols.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -179,7 +179,7 @@
 			<para>
 				<literal>M3UA</literal> is a client-server protocol supporting the transport of any SS7 MTP3-User signalling (e.g. <literal>ISUP</literal> and <literal>SCCP</literal> messages) over IP. <literal>M3UA</literal> is defined
 				by the IETF SIGTRAN working group in RFC 4666. 
-				&THIS.PLATFORM; M3UA Stack can be used on the Application Server side or on the Signaling Gateway side. 
+				&THIS.PLATFORM; M3UA Stack can be used on the Application Server side or on the Signaling Gateway side or can also be used in peer-to-peer mode IPSP. 
 			</para>
 		
 			<note>
@@ -210,7 +210,7 @@
 					</caption>
 				</mediaobject>
 				<para>
-					To use M3UA Stack as an AS, the Routing Context (RC) must be known. Refer to Section <xref linkend="configuring_Rem_SGW"/> for help in configuring M3UA Stack 
+					To use M3UA Stack as an AS, the Routing Context (RC) may not be known and is optional. Refer to Section <xref linkend="configuring_Rem_SGW"/> for help in configuring M3UA Stack 
 					as an AS.
 				</para>
 			</section>
@@ -250,6 +250,7 @@
 		
 	 </section>	 
 	 
+	 <!--  
 	 <section id="mobicents_design_overview_ss7_service">
 		<title>&THIS.PLATFORM; &THIS.APPLICATION; Usage</title>
 		<para>The figure below depicts how &THIS.PLATFORM; &THIS.APPLICATION; is used.
@@ -270,5 +271,6 @@
 			</caption>
 		</mediaobject>
 	 </section>
+	 -->
 </chapter>
 
