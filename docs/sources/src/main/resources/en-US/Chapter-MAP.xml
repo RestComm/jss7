@@ -28,6 +28,7 @@
 				other messages are welcome. We will provide you all the help that you may need initially.
 		</para>
 	</note>
+
 	<section
 		id="map_usage">
 		<title>&THIS.APPLICATION; MAP 
@@ -36,12 +37,15 @@
 			The <classname>org.mobicents.protocols.ss7.map.api.MAPStack</classname>
 			interface defines the methods required to represent MAP Protocol Stack.
 			MAPStack exposes <classname>org.mobicents.protocols.ss7.map.api.MAPProvider</classname>
-			that interacts directly with MAPStack. This interface
-			defines the methods that will be used by any registered MAP User application implementing the
-			<classname>org.mobicents.protocols.ss7.map.api.MAPDialogListener</classname>
-			and
-			<classname>org.mobicents.protocols.ss7.map.api.MAPServiceListener</classname>
-			interface to listen MAP messages and dialogue handling primitives. 
+			that interacts directly with MAPStack. 
+			This interface defines the methods that will be used by any registered MAP User application.
+			MAP user application must implement interfaces to  listen MAP messages and dialogue and component handling primitives.
+			One interface is <classname>org.mobicents.protocols.ss7.map.api.MAPDialogListener</classname> 
+			(listening associated with dialog events).
+			Others are one or more interfaces for listening associated with component events based on 
+			<classname>org.mobicents.protocols.ss7.map.api.MAPServiceListener interface.</classname>
+			Each  MAP-User  interested  in  listening  messages  specific  to  MAP  Service  implements  specific MAPServiceListener. 
+			Below there is a list of implemented services:
 		</para>
 		
 		<para>
@@ -59,11 +63,11 @@
 				</listitem>
 					<listitem>
 					<para>
-						MAP-User interested only in USSD messages implements <classname>org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener</classname>
+						MAP-User interested only in LMS messages implements <classname>org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener</classname>
 					</para>
 				</listitem>				
 			</itemizedlist>
-			MAP-User interested in all the services may implement all the service listener class.
+			MAP-User interested in all the services must implement all the service listener class.
 		</para>
 		<!--  <para>
 		The class diagram looks like
@@ -87,36 +91,35 @@
 
 
 		<para>
-			The <classname>org.mobicents.protocols.ss7.map.MAPStackImpl</classname>
-			is concrete implementation of <classname>MAPStack</classname>.
-			The MAP User application creates instance of <classname>MAPStackImpl</classname>
-			passing the reference of <classname>SccpProvider</classname> and
-			Sub System Number. All incoming messages are checked for destination SSN, if it matches with the one registered with this <classname>MAPStackImpl</classname>
-			the corresponding listener is called else the peer receives error.
+			The <classname>org.mobicents.protocols.ss7.map.MAPStackImpl</classname> 
+			is concrete implementation of <classname>MAPStack.</classname>
+			The MAP User application creates an instance of <classname>MAPStackImpl</classname> 
+			passing the reference of <classname>SccpProvider</classname> and Sub System Number and 
+			then start it. All incoming messages are checked for destination SSN, 
+			if it matches with the one registered with this MAPStackImpl the corresponding listener 
+			is called else the peer receives error.
 		</para>
 
 		<programlisting
 			language="Java"
 			role="JAVA"><![CDATA[SccpProvider sccpProvider = getSccpProvider(); //JNDI lookup of SCCP Stack and get Provider
-        MAPStackImpl mapStack = new MAPStackImpl(sccpPprovider, 8);
+        MAPStackImpl mapStack = new MAPStackImpl(sccpProvider, 8);
+        mapStack.start();
         ...]]>
 		</programlisting>
 
 		<para>
-			The reference to <classname>SccpProvider</classname> is received from <classname>SccpStack</classname>.
-			To get handle to <classname>SccpStack</classname> do the JNDI look-up passing the JNDI name configured in SS7 service as explained in
-			<xref linkend="sccp_access_point" />
+			The  reference  to <classname>SccpProvider</classname>  is  received  from SccpStack.  
+			To  get  handle  to <classname>SccpStack</classname>  do the JNDI look-up passing the JNDI name configured 
+			in SS7 service as explained in <xref linkend="sccp_access_point" />.
 		</para>
 
 		<para>
-			The MAP User application should register the concrete implementation of <classname>MAPDialogListener</classname> with 
-			<classname>MAPProvider</classname> to listen for incoming MAP Dialog and MAP Primitive messages.
-		</para>
-		
-		<para>
-			The MAP User application should register the concrete implementation of <classname>MAPServiceListener</classname> with 
-			corresponding <classname>MAPServiceBase</classname> to listen for incoming MAP Service messages. Following <classname>MAPServiceBase</classname>
-			are exposed by <classname>MAPProvider</classname>
+			The MAP User application should register the concrete implementation of <classname>MAPDialogListener</classname> 
+			with <classname>MAPProvider</classname> to listen for incoming MAP Dialog and MAP Primitive messages. 
+			The MAP User application should register the concrete implementation of <classname>MAPServiceListener</classname> 
+			with  corresponding <classname>MAPServiceBase </classname> to  listen  for  incoming  MAP  Service  messages.  
+			Following MAPServiceBase are exposed by <classname>MAPProvider</classname>.
 			<itemizedlist>
 				<listitem>
 					<para>For LSM service <classname>org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm</classname></para>
@@ -129,76 +132,212 @@
 				</listitem>								
 			</itemizedlist>
 		</para>
-		
-		
 
 		<programlisting language="Java" role="JAVA"><![CDATA[
 public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryListener {
-		.....		
-		mapProvider = mapStack.getMAPProvider();
+        ....       
+        mapProvider = mapStack.getMAPProvider();
         mapProvider.addMAPDialogListener(this);
         mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
         ....
-} ]]>
+}]]>
 	</programlisting>
 	
-		<para>Before any MAP specific service can be used, the corresponding service should be activated</para>
+		<para>Before any MAP specific service can be used, the corresponding service should be activated.</para>
 		
 		<programlisting language="Java" role="JAVA"><![CDATA[
-		.....		
-		// Make the supplimentary service activated
-		mapProvider.getMAPServiceSupplementary().acivate();
+        ....
+		// Make the supplementary service activated
+        mapProvider.getMAPServiceSupplementary().acivate();
         ....]]>
 	</programlisting>		
 
 		<para>
-			The MAP User Application leverages <classname>MapServiceFactory</classname> to create instance of <classname>USSDString</classname>
-			and <classname>AddressString</classname>
+			The MAP User Application leverages <classname>MAPParameterFactory</classname> to create instances of 
+			<classname>USSDString</classname>, <classname>ISDNAddressString</classname> 
+			and many other primitives that are used by MAP services.
 		</para>
 
 		<programlisting
 			language="Java"
 			role="JAVA"><![CDATA[
-		MapServiceFactory servFact = mapProvider.getMapServiceFactory();
-        USSDString ussdString = servFact.createUSSDString("*125*+31628839999#",
+		MapParameterFactory paramFact = mapProvider.getMapServiceFactory();
+        USSDString ussdString = paramFact.createUSSDString("*125*+31628839999#",
                 null);
-
-        AddressString msisdn = this.servFact.createAddressString(
+        ISDNAddressString msisdn = this. paramFact.createISDNAddressString(
                 AddressNature.international_number, NumberingPlan.ISDN,
-                "31628838002");]]>
-	</programlisting>
+                "31628838002");
+]]></programlisting>
+
+	</section>
+
+
+	<section
+		id="map_send_request"> 
+		<title>&THIS.APPLICATION; Sending a MAP request (processUnstructuredSS-Request as an example)</title>
+		
+		<para>
+			For sending a MAP request we need at the client side:
+		</para>
+		<para>
+			- Create a new MAP Dialog
+		</para>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+// First create Dialog
+SccpAddress origAddress = createLocalAddress();
+ISDNAddressString origReference = client.getMAPProvider().getMAPParameterFactory().
+	createISDNAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "31628968300");
+SccpAddress destAddress = createRemoteAddress();
+ISDNAddressString destReference = client.getMAPProvider().getMAPParameterFactory().
+	createISDNAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "204208300008002");
+
+currentMapDialog = mapProvider.getMAPServiceSupplementary().
+	createNewDialog(MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, 
+	MAPApplicationContextVersion.version2), origAddress,
+	destReference, remoteAddress, destReference);
+]]></programlisting>
 
 		<para>
-			The MAP User Application leverages specific <classname>MAPServiceBase</classname> to create new <classname>MAPDialog</classname>
-			and send message
+			- Add an Invoke component (processUnstructuredSS-Request message)
+		</para>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+// The dataCodingScheme is still byte, as I am not exactly getting how
+// to encode/decode this.
+byte ussdDataCodingScheme = 0x0f;
+// The Charset is null, here we let system use default Charset (UTF-7 as
+// explained in GSM 03.38. However if MAP User wants, it can set its own
+// impl of Charset
+USSDString ussdString = paramFact.createUSSDString(ussdMessage, null);
+ISDNAddressString msisdn = client.getMAPProvider().getMAPParameterFactory().
+createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
+currentMapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, alertingPattern, msisdn);
+]]></programlisting>
+
+		<para>
+			- Send a TC-Begin message to the server peer
+		</para>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+currentMapDialog.send();
+]]></programlisting>
+
+		<para>
+			- Wait for a response from the server
+		</para>
+		<para>
+			At the server side when receiving TC-Begin message the following sequence of events occurs:
+		</para>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+void MAPDialogListener. onDialogRequest(MAPDialog mapDialog, AddressString destReference, 
+	AddressString origReference, MAPExtensionContainer extensionContainer);
+]]></programlisting>
+
+		<para>
+			This is the request for MAP Dialog processing. 	
+			A MAP user can reject the Dialog by invoking mapDialog.refuse() method.
 		</para>
 
-		<programlisting language="Java" role="JAVA"><![CDATA[
-		// First create Dialog
-		MAPDialogSupplementary mapDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(
-				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, MAPApplicationContextVersion.version2), destAddress,
-				destReference, origAddress, origReference);
+		<para>
+			Then the incoming primitives corresponded events (one or more) occur. In this case it is
+		</para>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+void MAPServiceSupplementaryListener.onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd);
+]]></programlisting>
+
+		<para>
+			When processing component-depended messages you can add response components. 
+			In this case it is processUnstructuredSS-Response as an example:
+		</para>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+		USSDString ussdString = ind.getUSSDString();
+		String request = ussdString.getString();
+
+		// processing USSD request
+		String response = "Your balans is 100$";
 
 		// The dataCodingScheme is still byte, as I am not exactly getting how
 		// to encode/decode this.
 		byte ussdDataCodingScheme = 0x0f;
+		USSDString ussdResponse = paramFact.createUSSDString(response, null);
 
-		// USSD String: *125*+31628839999#
-		// The Charset is null, here we let system use default Charset (UTF-7 as
-		// explained in GSM 03.38. However if MAP User wants, it can set its own
-		// impl of Charset
-		USSDString ussdString = servFact.createUSSDString("*125*+31628839999#", null);
+		try {
+			mapDialog.addProcessUnstructuredSSResponse(ind.getInvokeId(), ussdDataCodingScheme, ussdResponse);
+		} catch (MAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+]]></programlisting>
 
-		AddressString msisdn = this.servFact.createAddressString(AddressNature.international_number,
-				NumberingPlan.ISDN, "31628838002");
+		<para>
+			If the preparing the response spends much time we should return the control and prepare the answer in your thread.
+		</para>
+		<para>
+			If error or reject primitives are included into a TCAP message following events occur:
+		</para>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage);
+public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError);
+public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem);
+]]></programlisting>
 
-		mapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, msisdn);
-
-		// This will initiate the TC-BEGIN with INVOKE component
-		mapDialog.send();]]>
-	</programlisting>
-
+		<para>
+			After all incoming components have been processing onDialogDelimiter(MAPDialog mapDialog); 
+			event is invoking. 
+			If all response components have been prepared we can tell the stack to send response:
+			<itemizedlist>
+				<listitem>
+					<para><classname>currentMapDialog.mapDialog.close(false);</classname> - to send TC-END</para>
+				</listitem>
+				<listitem>
+					<para><classname>currentMapDialog .mapDialog.send();</classname> - to send TC-CONTINUE</para>
+				</listitem>
+				<listitem>
+					<para><classname>currentMapDialog.mapDialog.close(true);</classname> - sends TC-END without any components (prearrangedEnd)</para>
+				</listitem>
+			</itemizedlist>
+			If all response components have been prepared we should return the control and 
+			will send a response when all components are ready.
+		</para>
+		<para>
+			In the error case you can terminate a MAP dialog in any method by invoking
+			<itemizedlist>
+				<listitem>
+					<para><classname>currentMapDialog.abort(mapUserAbortChoice);</classname> - sends TC-U-ABORT primitive</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+		<para>
+			If no local actions or no response from a remote size for a long time timeouts occur and the following methods are invoked:
+			<itemizedlist>
+				<listitem>
+					<para><classname>MAPDialogListener.onDialogTimeout(MAPDialog mapDialog);</classname></para>
+				</listitem>
+				<listitem>
+					<para><classname>MAPServiceListener.onInvokeTimeout(MAPDialog mapDialog, Long invokeId);</classname></para>
+				</listitem>
+			</itemizedlist>
+		</para>
+		<para>
+			In <classname>onDialogTimeout()</classname> method you can invoke <classname>mapDialog.keepAlive();</classname> to prevent closing a Dialog. 
+			For preventing an Invoke timeout you should invoke <classname>resetInvokeTimer(Long invokeId);</classname> 
+			(before onInvokeTimeout() occured).
+		</para>
 	</section>
+
+
 	<section
 		id="map_usage_example"> 
 		<title>&THIS.APPLICATION; MAP Usage</title>
@@ -207,45 +346,27 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 		<programlisting
 			language="Java"
 			role="JAVA"><![CDATA[
-public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryListener {
+package org.mobicents.protocols.ss7.map;
 
-	private MAPStack mapStack;
-	private MAPProvider mapProvider;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.sccp.SccpStack;
+import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
-	MapServiceFactory servFact;
-
-	SccpAddress destAddress = null;
-
-	// The address created by passing the AddressNature, NumberingPlan and
-	// actual address
-	AddressString destReference = servFact.createAddressString(AddressNature.international_number,
-			NumberingPlan.land_mobile, "204208300008002");
-
-	SccpAddress origAddress = null;
-
-	AddressString origReference = servFact.createAddressString(AddressNature.international_number, NumberingPlan.ISDN,
-			"31628968300");
-
-	MAPExample(SccpProvider sccpPprovider, SccpAddress address, SccpAddress remoteAddress) {
-		origAddress = address;
-		destAddress = remoteAddress;
-
-		mapStack = new MAPStackImpl(sccpPprovider, 8);
-		mapProvider = mapStack.getMAPProvider();
-		servFact = mapProvider.getMapServiceFactory();
-
-		mapProvider.addMAPDialogListener(this);
-		mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
-	}
+public class Example {
 
 	private static SccpProvider getSccpProvider() throws NamingException {
-
 		// no arg is ok, if we run in JBoss
+
 		InitialContext ctx = new InitialContext();
 		try {
 			String providerJndiName = "/mobicents/ss7/sccp";
 			return ((SccpStack) ctx.lookup(providerJndiName)).getSccpProvider();
-
 		} finally {
 			ctx.close();
 		}
@@ -258,119 +379,157 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	private static SccpAddress createRemoteAddress() {
 		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
 	}
+	
+	
+	public static void startUssdClient() throws Exception {
+		SccpProvider sccpProvider = getSccpProvider(); // JNDI lookup of SCCP
+		UssdClientExample client = new UssdClientExample(sccpProvider, 8);
 
-	public void run() throws Exception {
+		client.start();
 
-		// Make the supplimentary service activated
-		mapProvider.getMAPServiceSupplementary().acivate();
+		SccpAddress origAddress = createLocalAddress();
+		ISDNAddressString origReference = client.getMAPProvider().getMAPParameterFactory()
+				.createISDNAddressString(AddressNature.international_number, 
+				NumberingPlan.land_mobile, "31628968300");
+		SccpAddress destAddress = createRemoteAddress();
+		ISDNAddressString destReference = client.getMAPProvider().getMAPParameterFactory()
+				.createISDNAddressString(AddressNature.international_number, 
+				NumberingPlan.land_mobile, "204208300008002");
 
+		ISDNAddressString msisdn = client.getMAPProvider().getMAPParameterFactory()
+				.createISDNAddressString(AddressNature.international_number, 
+				NumberingPlan.ISDN, "31628838002");
+		client.sendProcessUssdRequest(origAddress, origReference, destAddress, destReference, 
+				"*123#", null, msisdn);
+		
+		// wait for answer
+		Thread.sleep(600000);
+
+		client.stop();
+	}
+	
+	public static void startUssdServer() throws Exception {
+		SccpProvider sccpProvider = getSccpProvider(); // JNDI lookup of SCCP
+		UssdServerExample server = new UssdServerExample(sccpProvider, 8);
+
+		server.start();
+		
+		// wait for a request
+		Thread.sleep(600000);
+
+		server.stop();
+	}
+}
+]]>
+	</programlisting>
+
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.map;
+
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
+import org.mobicents.protocols.ss7.map.api.MAPDialog;
+import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
+import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPMessage;
+import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
+import org.mobicents.protocols.ss7.map.api.MAPProvider;
+import org.mobicents.protocols.ss7.map.api.MAPStack;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+
+public class UssdClientExample implements MAPDialogListener, MAPServiceSupplementaryListener {
+
+	private MAPStack mapStack;
+	private MAPProvider mapProvider;
+	private MAPParameterFactory paramFact;
+	private MAPDialogSupplementary currentMapDialog;
+
+	public UssdClientExample(SccpProvider sccpPprovider, int ssn) {
+		mapStack = new MAPStackImpl(sccpPprovider, ssn);
+		mapProvider = mapStack.getMAPProvider();
+		paramFact = mapProvider.getMAPParameterFactory();
+
+		mapProvider.addMAPDialogListener(this);
+		mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
+	}
+
+	public MAPProvider getMAPProvider() {
+		return mapProvider;
+	}
+
+	public void start() {
+		mapStack.start();
+
+		// Make the supplementary service activated
+        mapProvider.getMAPServiceSupplementary().acivate();
+
+        currentMapDialog = null;
+	}
+
+	public void stop() {
+		mapStack.stop();
+	}
+
+	public void sendProcessUssdRequest(SccpAddress origAddress, AddressString origReference, 
+			SccpAddress remoteAddress, AddressString destReference,
+			String ussdMessage, AlertingPattern alertingPattern, ISDNAddressString msisdn) 
+			throws MAPException {
 		// First create Dialog
-		MAPDialogSupplementary mapDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(
-				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, MAPApplicationContextVersion.version2), destAddress,
-				destReference, origAddress, origReference);
+		currentMapDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(
+				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, 
+				MAPApplicationContextVersion.version2), origAddress,
+				destReference, remoteAddress, destReference);
 
 		// The dataCodingScheme is still byte, as I am not exactly getting how
 		// to encode/decode this.
 		byte ussdDataCodingScheme = 0x0f;
-
-		// USSD String: *125*+31628839999#
 		// The Charset is null, here we let system use default Charset (UTF-7 as
 		// explained in GSM 03.38. However if MAP User wants, it can set its own
 		// impl of Charset
-		USSDString ussdString = servFact.createUSSDString("*125*+31628839999#", null);
+		USSDString ussdString = paramFact.createUSSDString(ussdMessage, null);
 
-		AddressString msisdn = this.servFact.createAddressString(AddressNature.international_number,
-				NumberingPlan.ISDN, "31628838002");
-
-		mapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, msisdn);
-
+		currentMapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, 
+			alertingPattern, msisdn);
 		// This will initiate the TC-BEGIN with INVOKE component
-		mapDialog.send();
-	}
-
-	public void onProcessUnstructuredSSIndication(ProcessUnstructuredSSIndication procUnstrInd) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void onUnstructuredSSIndication(UnstructuredSSIndication unstrInd) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public static void main(String[] args) throws Exception {
-		SccpProvider sccpProvider = getSccpProvider(); // JNDI lookup of SCCP
-
-		SccpAddress localAddress = createLocalAddress();
-		SccpAddress remoteAddress = createRemoteAddress();
-
-		MAPExample example = new MAPExample(sccpProvider, localAddress, remoteAddress);
-
-		example.run();
-
-	}
+		currentMapDialog.send();
+	}	
 
 	@Override
-	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
-			MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-
+	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse ind) {
+		if (currentMapDialog == ind.getMAPDialog()) {
+			USSDString ussdString = ind.getUSSDString();
+			String response = ussdString.getString();
+			// processing USSD response
+		}
 	}
 
-	@Override
-	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
-			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason,
-			MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason,
-			MAPAbortSource abortSource, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDialogClose(MAPDialog mapDialog) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDialogDelimiter(MAPDialog mapDialog) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void onDialogResease(MAPDialog mapDialog) {
-		
-	}
-
-	@Override
-	public void onDialogTimeout(MAPDialog mapDialog) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
@@ -391,12 +550,358 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	}
 
 	@Override
-	public void onInvokeTimeout(MAPDialog mapDialog, Long invoke) {
+	public void onInvokeTimeout(MAPDialog mapDialog, Long invokeId) {
 		// TODO Auto-generated method stub
 		
 	}
 
-}]]>
+	@Override
+	public void onMAPMessage(MAPMessage mapMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUnstructuredSSNotifyResponse(UnstructuredSSNotifyResponse unstrNotifyInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogDelimiter(MAPDialog mapDialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, 
+			AddressString origReference, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, 
+			AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, 
+			MAPProviderError providerError, ApplicationContextName alternativeApplicationContext, 
+			MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, 
+		MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, 
+		MAPAbortSource abortSource,
+			MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogClose(MAPDialog mapDialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogRelease(MAPDialog mapDialog) {
+		currentMapDialog = null;
+	}
+
+	@Override
+	public void onDialogTimeout(MAPDialog mapDialog) {
+		// TODO Auto-generated method stub
+		
+	}
+}
+
+]]>
 	</programlisting>
+
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.map;
+
+import org.mobicents.protocols.ss7.map.api.MAPDialog;
+import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
+import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPMessage;
+import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
+import org.mobicents.protocols.ss7.map.api.MAPProvider;
+import org.mobicents.protocols.ss7.map.api.MAPStack;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+
+public class UssdServerExample implements MAPDialogListener, MAPServiceSupplementaryListener {
+
+	private MAPStack mapStack;
+	private MAPProvider mapProvider;
+	private MAPParameterFactory paramFact;
+	private MAPDialogSupplementary currentMapDialog;
+
+	public UssdServerExample(SccpProvider sccpPprovider, int ssn) {
+		mapStack = new MAPStackImpl(sccpPprovider, ssn);
+		mapProvider = mapStack.getMAPProvider();
+		paramFact = mapProvider.getMAPParameterFactory();
+
+		mapProvider.addMAPDialogListener(this);
+		mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
+	}
+
+	public MAPProvider getMAPProvider() {
+		return mapProvider;
+	}
+
+	public void start() {
+		mapStack.start();
+
+		// Make the supplementary service activated
+        mapProvider.getMAPServiceSupplementary().acivate();
+
+        currentMapDialog = null;
+	}
+
+	public void stop() {
+		mapStack.stop();
+	}
+
+	@Override
+	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest ind) {
+
+		USSDString ussdString = ind.getUSSDString();
+		String request = ussdString.getString();
+
+		// processing USSD request
+		String response = "Your balans is 100$";
+
+		// The dataCodingScheme is still byte, as I am not exactly getting how
+		// to encode/decode this.
+		byte ussdDataCodingScheme = 0x0f;
+		USSDString ussdResponse = paramFact.createUSSDString(response, null);
+
+		try {
+			currentMapDialog.addProcessUnstructuredSSResponse(ind.getInvokeId(), 
+				ussdDataCodingScheme, ussdResponse);
+		} catch (MAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
+
+	@Override
+	public void onDialogDelimiter(MAPDialog mapDialog) {
+		// This will initiate the TC-END with ReturnResultLast component
+		try {
+			currentMapDialog.send();
+		} catch (MAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+	@Override
+	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, 
+			MAPErrorMessage mapErrorMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, 
+			MAPProviderError providerError) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInvokeTimeout(MAPDialog mapDialog, Long invokeId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onMAPMessage(MAPMessage mapMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUnstructuredSSNotifyResponse(UnstructuredSSNotifyResponse unstrNotifyInd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, 
+			AddressString origReference, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, 
+			AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, 
+			MAPProviderError providerError,
+			ApplicationContextName alternativeApplicationContext, 
+			MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, 
+			MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, 
+			MAPAbortSource abortSource,
+			MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogClose(MAPDialog mapDialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogRelease(MAPDialog mapDialog) {
+		currentMapDialog = null;
+	}
+
+	@Override
+	public void onDialogTimeout(MAPDialog mapDialog) {
+		// TODO Auto-generated method stub
+		
+	}
+}
+]]>
+	</programlisting>
+
 	</section>
+
 </chapter>
