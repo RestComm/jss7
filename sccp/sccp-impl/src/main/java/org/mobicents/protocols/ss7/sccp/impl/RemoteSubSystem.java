@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
+import javolution.text.CharArray;
 import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
@@ -127,7 +128,12 @@ public class RemoteSubSystem implements XMLSerializable {
 			ai.remoteSpc = xml.getAttribute(REMOTE_SPC).toInt();
 			ai.remoteSsn = xml.getAttribute(REMOTE_SSN).toInt();
 			ai.remoteSsnFlag = xml.getAttribute(REMOTE_SSN_FLAG).toInt();
-			ai.markProhibitedWhenSpcResuming = xml.getAttribute(MARK_PROHIBITED_WHEN_SPC_RESUMING).toBoolean();
+			CharArray charArray = xml.getAttribute(MARK_PROHIBITED_WHEN_SPC_RESUMING);
+			if(charArray == null){
+				ai.markProhibitedWhenSpcResuming = false;
+			} else {
+				ai.markProhibitedWhenSpcResuming = charArray.toBoolean();
+			}
 		}
 	};
 }
