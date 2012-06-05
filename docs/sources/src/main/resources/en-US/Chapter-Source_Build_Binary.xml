@@ -240,7 +240,7 @@ Halting VM]]></screen>
 			<title>Configuring M3UA</title>
 			<para> 
                     <literal>M3UAManagement</literal> is only needed if the underlying SS7 service will leverage <literal>M3UA</literal>.
-                    <classname>M3UAManagement</classname> configuration is further explained in <xref linkend="mobicents_m3ua_management" /> 
+                    <classname>M3UAManagement</classname> configuration is further explained in <xref linkend="Section-Shell_M3UA.xml" /> 
             </para>
 			
 					<programlisting language="XML" role="XML"><![CDATA[
@@ -287,6 +287,35 @@ Halting VM]]></screen>
                      For example in above case, when &THIS.PLATFORM; SS7 Service is started file <filename>SCTPManagement_sctp.xml</filename> 
                      will be created at <filename>$JBOSS_HOME/server/profile_name/data</filename> directory
              </para>
+             <para>                          
+                      Stack has following properties: 
+                      <variablelist>
+                              <varlistentry>
+                                      <term>singleThread</term>
+                                      <listitem>
+                                              <para>SCTP stack is implemented such that 1 thread is dedicated for IO and by default 1 thread for calling application above SCTP. Its possible to configure 
+                                              multiple threads for calling applications above in which case <literal>singleThread</literal> should be set to false and set <literal>workerThreads</literal> 
+                                              to number of threads you want.  </para>
+                                      </listitem>
+                              </varlistentry>  
+                              <varlistentry>
+                                      <term>workerThreads</term>
+                                      <listitem>
+                                              <para>Number of worker threads to call the application above SCTP. By default only one thread is used.</para>
+                                      </listitem>
+                              </varlistentry>                                                             
+                              <varlistentry>
+                                      <term>connectDelay</term>
+                                      <listitem>
+                                              <para>
+                                                      If the SCTP Socket is client-side, connectDelay specifies the delay time in milliseconds before which connection with the server will attempted.
+                                                      This delay is necessary when there is network disruption and connection between client and server breaks so that SCTP stack doesn't continuously 
+                                                      attempt to reconnect. 
+                                              </para>
+                                      </listitem>
+                              </varlistentry>                                 
+                      </variablelist>
+              </para>             
              <para>
                      <classname>org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement</classname> takes <classname>String</classname> as constructor
                      argument. The name is prepend to <literal>xml</literal> file created by M3UA stack for persisting state of M3UA resources. 
@@ -871,11 +900,15 @@ Halting VM]]></screen>
 				<step>
 					<title>Downloading the source code</title>
 					
-					<para>Use GIT to checkout a specific release source, the base URL is &THIS.RELEASE_SOURCE_CODE_URL;,
-						then add the specific release version, lets consider &THIS.VERSION;.
+					<para>Use GIT to clone repository, the base URL is &THIS.TRUNK_SOURCE_CODE_URL;,
+						then to checkout specific release version(tag) use <command>git checkout tag_name</command>, lets consider release-&THIS.VERSION;.
 					</para>
-					<programlisting>[usr]$ git clone &THIS.RELEASE_SOURCE_CODE_URL;/&THIS.APPLICATION.DIRNAME;-&THIS.VERSION;</programlisting>
-				
+					<programlisting>
+[usr]$ git clone &THIS.TRUNK_SOURCE_CODE_URL;
+[usr]$ cd jss7
+[usr]$ git checkout release-&THIS.VERSION;
+					</programlisting>
+					<para>Browse the code online at <ulink url="&THIS.RELEASE_SOURCE_CODE_URL;" /> </para>
 				</step>
 				<step>
 					<title>Building the source code</title>
@@ -890,7 +923,7 @@ Halting VM]]></screen>
 					<para>Use "dahdilinux" profile if linux server on which this code is built already has dahdi module installed. 
 					Make sure you pass "include.zap" system property pointing to correct directory where dahdi is installed</para>
 					<programlisting>
-[usr]$ cd &THIS.APPLICATION.DIRNAME;-&THIS.VERSION;
+[usr]$ cd jss7
 [usr]$ mvn install -Pdahdilinux -Dinclude.zap=/usr/include/dahdi
 				    </programlisting>
 				    
@@ -899,13 +932,13 @@ Halting VM]]></screen>
 					dialogic libraries are installed. include.dialogic.gctlib points to directory where <literal>gctload</literal> is present (generally
 					/opt/dpklnx for linux OS)</para>
 					<programlisting>
-[usr]$ cd &THIS.APPLICATION.DIRNAME;-&THIS.VERSION;
+[usr]$ cd jss7
 [usr]$ mvn install -Pdialogclinux -Dinclude.dialogic=/opt/dpklnx/INC -Dinclude.dialogic.gctlib=/opt/dpklnx
 				    </programlisting>	
 				    
 				   	<para>To build &THIS.PLATFORM; &THIS.APPLICATION; without building any native libraries use</para>
 					<programlisting>
-[usr]$ cd &THIS.APPLICATION.DIRNAME;-&THIS.VERSION;
+[usr]$ cd jss7
 [usr]$ mvn install 
 				    </programlisting>
 					<note>
@@ -917,7 +950,7 @@ Halting VM]]></screen>
 							    
 					<para>Use Ant to build the binary .</para>
 					<programlisting>
-[usr]$ cd &THIS.APPLICATION.DIRNAME;-&THIS.VERSION;/release
+[usr]$ cd jss7/release
 [usr]$ ant
 				    </programlisting>
 
@@ -932,7 +965,7 @@ Halting VM]]></screen>
 				Similar process as for
 				<xref
 					linkend="source_building" />,
-				the only change is the SVN source code URL, which is &THIS.TRUNK_SOURCE_CODE_URL;.
+				the only change is don't switch to specific tag.
 			</para>
 		</section>
 
