@@ -47,14 +47,14 @@ public class Instance_TestTask extends EnumeratedBase {
 		intMap.put(VAL_NO, "NO");
 		intMap.put(VAL_USSD_TEST_CLIENT, "USSD_TEST_CLIENT");
 		intMap.put(VAL_USSD_TEST_SERVER, "USSD_TEST_SERVER");
-		intMap.put(VAL_SMS_TEST_CLIENT, "SMS TEST CLIENT");
-		intMap.put(VAL_SMS_TEST_SERVER, "SMS TEST SERVER");
+		intMap.put(VAL_SMS_TEST_CLIENT, "SMS_TEST_CLIENT");
+		intMap.put(VAL_SMS_TEST_SERVER, "SMS_TEST_SERVER");
 
 		stringMap.put("NO", VAL_NO);
 		stringMap.put("USSD_TEST_CLIENT", VAL_USSD_TEST_CLIENT);
 		stringMap.put("USSD_TEST_SERVER", VAL_USSD_TEST_SERVER);
-		stringMap.put("SMS TEST CLIENT", VAL_SMS_TEST_CLIENT);
-		stringMap.put("SMS TEST SERVER", VAL_SMS_TEST_SERVER);
+		stringMap.put("SMS_TEST_CLIENT", VAL_SMS_TEST_CLIENT);
+		stringMap.put("SMS_TEST_SERVER", VAL_SMS_TEST_SERVER);
 	}
 
 	public Instance_TestTask() {

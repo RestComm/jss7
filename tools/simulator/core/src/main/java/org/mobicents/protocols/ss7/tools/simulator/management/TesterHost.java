@@ -641,6 +641,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			writer.write(this.map, MAP, MapMan.class);
 			writer.write(this.testUssdClientMan, TEST_USSD_CLIENT, TestUssdClientMan.class);
 			writer.write(this.testUssdServerMan, TEST_USSD_SERVER, TestUssdServerMan.class);
+			writer.write(this.testSmsClientMan, TEST_SMS_CLIENT, TestSmsClientMan.class);
+			writer.write(this.testSmsServerMan, TEST_SMS_SERVER, TestSmsServerMan.class);
 
 //			writer.write(remoteSpcs, REMOTE_SPC, FastMap.class);
 //			writer.write(concernedSpcs, CONCERNED_SPC, FastMap.class);

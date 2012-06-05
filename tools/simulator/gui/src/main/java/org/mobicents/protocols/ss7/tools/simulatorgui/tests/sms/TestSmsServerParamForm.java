@@ -33,15 +33,19 @@ import javax.swing.JComboBox;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import javax.swing.JButton;
-
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
+import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
+import org.mobicents.protocols.ss7.tools.simulator.common.MapProtocolVersion;
 import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.NumberingPlanIdentificationType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerManMBean;
-import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.ProcessSsRequestAction;
-import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TypeOfNumberType;
 import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /**
  * 
@@ -55,6 +59,11 @@ public class TestSmsServerParamForm extends JDialog {
 	
 	private JTextField tbHlrSsn;
 	private JTextField tbVlrSsn;
+	private JComboBox cbAddressNature;
+	private JComboBox cbNumberingPlan;
+	private JComboBox cbMapProtocolVersion;
+	private JComboBox cbTypeOfNumber;
+	private JComboBox cbNumberingPlanIdentification;
 
 	public TestSmsServerParamForm(JFrame owner) {
 		super(owner, true);
@@ -86,16 +95,16 @@ public class TestSmsServerParamForm extends JDialog {
 		label_3.setBounds(10, 59, 174, 14);
 		panel_1.add(label_3);
 		
-		JComboBox cbAddressNature = new JComboBox();
+		cbAddressNature = new JComboBox();
 		cbAddressNature.setBounds(194, 25, 307, 20);
 		panel_1.add(cbAddressNature);
 		
-		JComboBox cbNumberingPlan = new JComboBox();
+		cbNumberingPlan = new JComboBox();
 		cbNumberingPlan.setBounds(194, 56, 307, 20);
 		panel_1.add(cbNumberingPlan);
 		
-		JComboBox cbMapProtocolVersion = new JComboBox();
-		cbMapProtocolVersion.setBounds(367, 11, 154, 20);
+		cbMapProtocolVersion = new JComboBox();
+		cbMapProtocolVersion.setBounds(266, 11, 255, 20);
 		panel.add(cbMapProtocolVersion);
 		
 		JLabel lblMapProtocolVersion = new JLabel("MAP protocol version");
@@ -138,31 +147,58 @@ public class TestSmsServerParamForm extends JDialog {
 		lblNumberingplanidentification.setBounds(10, 59, 174, 14);
 		panel_2.add(lblNumberingplanidentification);
 		
-		JComboBox cbTypeOfNumber = new JComboBox();
+		cbTypeOfNumber = new JComboBox();
 		cbTypeOfNumber.setBounds(194, 25, 307, 20);
 		panel_2.add(cbTypeOfNumber);
 		
-		JComboBox cbNumberingPlanIdentification = new JComboBox();
+		cbNumberingPlanIdentification = new JComboBox();
 		cbNumberingPlanIdentification.setBounds(194, 56, 307, 20);
 		panel_2.add(cbNumberingPlanIdentification);
 		
 		JButton button = new JButton("Load default values for side A");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadDataA();
+			}
+		});
 		button.setBounds(10, 324, 246, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("Load default values for side B");
+		button_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadDataB();
+			}
+		});
 		button_1.setBounds(266, 324, 255, 23);
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("Cancel");
+		button_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				getJFrame().dispose();
+			}
+		});
 		button_2.setBounds(404, 358, 117, 23);
 		panel.add(button_2);
 		
 		JButton button_3 = new JButton("Save");
+		button_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (saveData()) {
+					getJFrame().dispose();
+				}
+			}
+		});
 		button_3.setBounds(180, 358, 117, 23);
 		panel.add(button_3);
 		
 		JButton button_4 = new JButton("Reload");
+		button_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				reloadData();
+			}
+		});
 		button_4.setBounds(10, 358, 144, 23);
 		panel.add(button_4);
 	}
@@ -178,33 +214,26 @@ public class TestSmsServerParamForm extends JDialog {
 	}
 
 	private void reloadData() {
-//		M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, this.ussdServer.getMsisdnAddressNature());
-//		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, this.ussdServer.getMsisdnNumberingPlan());
-//		M3uaForm.setEnumeratedBaseComboBox(cbProcessSsRequestAction, this.ussdServer.getProcessSsRequestAction());
-//
-//		tbMsisdnAddress.setText(this.ussdServer.getMsisdnAddress());
-//		tbAutoResponseString.setText(this.ussdServer.getAutoResponseString());
-//		tbAutoUnstructured_SS_RequestString.setText(this.ussdServer.getAutoUnstructured_SS_RequestString());
-//
-//		tbDataCodingScheme.setText(((Integer)this.ussdServer.getDataCodingScheme()).toString());
-//		tbAlertingPattern.setText(((Integer)this.ussdServer.getAlertingPattern()).toString());
-//
-//		cbOneNotificationFor100Dialogs.setSelected(this.ussdServer.isOneNotificationFor100Dialogs());
+		M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, this.smsServer.getAddressNature());
+		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, this.smsServer.getNumberingPlan());
+		M3uaForm.setEnumeratedBaseComboBox(cbMapProtocolVersion, this.smsServer.getMapProtocolVersion());
+		M3uaForm.setEnumeratedBaseComboBox(cbTypeOfNumber, this.smsServer.getTypeOfNumber());
+		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlanIdentification, this.smsServer.getNumberingPlanIdentification());
+
+		tbHlrSsn.setText(((Integer)this.smsServer.getHlrSsn()).toString());
+		tbVlrSsn.setText(((Integer)this.smsServer.getVlrSsn()).toString());
 	}
 
 	private void loadDataA() {
-//		M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
-//		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
-//		M3uaForm.setEnumeratedBaseComboBox(cbProcessSsRequestAction, new ProcessSsRequestAction(ProcessSsRequestAction.VAL_MANUAL_RESPONSE));
-//
-//		tbMsisdnAddress.setText("");
-//		tbAutoResponseString.setText("");
-//		tbAutoUnstructured_SS_RequestString.setText("");
-//
-//		tbDataCodingScheme.setText("15");
-//		tbAlertingPattern.setText("-1");
-//
-//		cbOneNotificationFor100Dialogs.setSelected(false);
+		M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbMapProtocolVersion, new MapProtocolVersion(MapProtocolVersion.VAL_MAP_V3));
+		M3uaForm.setEnumeratedBaseComboBox(cbTypeOfNumber, new TypeOfNumberType(TypeOfNumber.InternationalNumber.getCode()));
+		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlanIdentification, new NumberingPlanIdentificationType(
+				NumberingPlanIdentification.ISDNTelephoneNumberingPlan.getCode()));
+
+		tbHlrSsn.setText("6");
+		tbVlrSsn.setText("8");
 	}
 
 	private void loadDataB() {
@@ -212,33 +241,29 @@ public class TestSmsServerParamForm extends JDialog {
 	}
 
 	private boolean saveData() {
-//		int dataCodingScheme = 0;
-//		int alertingPattern = 0;
-//		try {
-//			dataCodingScheme = Integer.parseInt(tbDataCodingScheme.getText());
-//		} catch (Exception e) {
-//			JOptionPane.showMessageDialog(this, "Exception when parsing DataCodingScheme value: " + e.toString());
-//			return false;
-//		}
-//		try {
-//			alertingPattern = Integer.parseInt(tbAlertingPattern.getText());
-//		} catch (Exception e) {
-//			JOptionPane.showMessageDialog(this, "Exception when parsing Alerting Pattern value: " + e.toString());
-//			return false;
-//		}
-//
-//		this.ussdServer.setMsisdnAddressNature((AddressNatureType) cbAddressNature.getSelectedItem());
-//		this.ussdServer.setMsisdnNumberingPlan((NumberingPlanType) cbNumberingPlan.getSelectedItem());
-//		this.ussdServer.setProcessSsRequestAction((ProcessSsRequestAction) cbProcessSsRequestAction.getSelectedItem());
-//
-//		this.ussdServer.setMsisdnAddress(tbMsisdnAddress.getText());
-//		this.ussdServer.setAutoResponseString(tbAutoResponseString.getText());
-//		this.ussdServer.setAutoUnstructured_SS_RequestString(tbAutoUnstructured_SS_RequestString.getText());
-//
-//		this.ussdServer.setDataCodingScheme(dataCodingScheme);
-//		this.ussdServer.setAlertingPattern(alertingPattern);
-//
-//		this.ussdServer.setOneNotificationFor100Dialogs(cbOneNotificationFor100Dialogs.isSelected());
+		int hlrSsn = 0;
+		int vlrSsn = 0;
+		try {
+			hlrSsn = Integer.parseInt(tbHlrSsn.getText());
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Exception when parsing hlrSsn value: " + e.toString());
+			return false;
+		}
+		try {
+			vlrSsn = Integer.parseInt(tbVlrSsn.getText());
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Exception when parsing vlrSsn value: " + e.toString());
+			return false;
+		}
+
+		this.smsServer.setAddressNature((AddressNatureType) cbAddressNature.getSelectedItem());
+		this.smsServer.setNumberingPlan((NumberingPlanType) cbNumberingPlan.getSelectedItem());
+		this.smsServer.setMapProtocolVersion((MapProtocolVersion) cbMapProtocolVersion.getSelectedItem());
+		this.smsServer.setTypeOfNumber((TypeOfNumberType) cbTypeOfNumber.getSelectedItem());
+		this.smsServer.setNumberingPlanIdentification((NumberingPlanIdentificationType) cbNumberingPlanIdentification.getSelectedItem());
+
+		this.smsServer.setHlrSsn(hlrSsn);
+		this.smsServer.setVlrSsn(vlrSsn);
 
 		return true;
 	}
