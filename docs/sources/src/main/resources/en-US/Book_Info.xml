@@ -18,7 +18,7 @@
 	
 	<copyright>
 		<year>&YEAR;</year>
-		<holder>Red Hat, Inc.</holder>
+		<holder>TeleStax, Inc.</holder>
 	</copyright>
 	<!-- FIXME this include is throwing compile errors
 	<xi:include
