@@ -162,7 +162,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 
 	@Override
 	public void setMsisdnNumberingPlan(NumberingPlanType val) {
-		msisdnNumberingPlan = msisdnNumberingPlan.getInstance(val.intValue());
+		msisdnNumberingPlan = NumberingPlan.getInstance(val.intValue());
 		this.testerHost.markStore();
 	}
 

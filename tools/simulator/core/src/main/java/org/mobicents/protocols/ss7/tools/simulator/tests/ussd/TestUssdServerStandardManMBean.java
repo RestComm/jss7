@@ -75,6 +75,8 @@ public class TestUssdServerStandardManMBean extends StandardMBean {
 				new MBeanOperationInfo("performUnstructuredNotify", "Send UnstructedSs notify", signString, String.class.getName(), MBeanOperationInfo.ACTION),
 				new MBeanOperationInfo("closeCurrentDialog", "Closing the current dialog", null, String.class.getName(), MBeanOperationInfo.ACTION),
 
+				new MBeanOperationInfo("getCurrentRequestDef", "Get information of the current request", null, String.class.getName(), MBeanOperationInfo.ACTION),
+
 				new MBeanOperationInfo("putMsisdnAddressNature", "Msisdn parameter: AddressNature: "
 						+ "0:unknown,1:international_number,2:national_significant_number,3:network_specific_number,4:subscriber_number,5:reserved,6:abbreviated_number,7:reserved_for_extension", 
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),

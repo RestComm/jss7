@@ -22,9 +22,9 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.tests.sms;
 
-import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
-import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.common.MapProtocolVersion;
+import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 
 /**
  * 
@@ -33,13 +33,17 @@ import org.mobicents.protocols.ss7.tools.simulator.common.MapProtocolVersion;
  */
 public interface TestSmsServerManMBean {
 
-	public AddressNature getServiceCenterAddressAddressNature();
+	public AddressNatureType getAddressNature();
 
-	public void setServiceCenterAddressAddressNature(AddressNature val);
+	public String getAddressNature_Value();
 
-	public NumberingPlan getServiceCenterAddressNumberingPlan();
+	public void setAddressNature(AddressNatureType val);
 
-	public void setServiceCenterAddressNumberingPlan(NumberingPlan val);
+	public NumberingPlanType getNumberingPlan();
+
+	public String getNumberingPlan_Value();
+
+	public void setNumberingPlan(NumberingPlanType val);
 
 	// ServiceCenterAddress Address is getting from a SCCP CallingPartyAddress
 
@@ -49,12 +53,46 @@ public interface TestSmsServerManMBean {
 
 	public void setMapProtocolVersion(MapProtocolVersion val);
 
+	public int getHlrSsn();
+
+	public void setHlrSsn(int val);
+
+	public int getVlrSsn();
+
+	public void setVlrSsn(int val);
+
+	public TypeOfNumberType getTypeOfNumber();
+
+	public String getTypeOfNumber_Value();
+
+	public void setTypeOfNumber(TypeOfNumberType val);
+
+	public NumberingPlanIdentificationType getNumberingPlanIdentification();
+
+	public String getNumberingPlanIdentification_Value();
+
+	public void setNumberingPlanIdentification(NumberingPlanIdentificationType val);
+
+
+	public void putAddressNature(String val);
+
+	public void putNumberingPlan(String val);
 
 	public void putMapProtocolVersion(String val);
 
-	public String performSRIForSM_MtForwardSM(String msg, String origIsdnNumber, String targetIsdnNumber);
+	public void putTypeOfNumber(String val);
 
-	public String performMtForwardSM(String msg, String targetImsi, String vlrNumber, String origIsdnNumber, String targetIsdnNumber);
+	public void putNumberingPlanIdentification(String val);
+
+
+	public String getCurrentRequestDef();
+
+	
+	public String performSRIForSM(String destIsdnNumber);
+
+	public String performSRIForSM_MtForwardSM(String msg, String destIsdnNumber, String origIsdnNumber);
+
+	public String performMtForwardSM(String msg, String destImsi, String vlrNumber, String origIsdnNumber);
 
 	public String closeCurrentDialog();
 
