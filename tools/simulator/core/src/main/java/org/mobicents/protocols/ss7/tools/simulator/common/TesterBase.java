@@ -95,7 +95,9 @@ public abstract class TesterBase implements MAPDialogListener, MAPServiceListene
 	}
 
 	@Override
-	public void onDialogNotice(MAPDialog arg0, MAPNoticeProblemDiagnostic arg1) {
+	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic notice) {
+		String uData = "dialogNotice=" + notice.toString() + ", dlgId=" + mapDialog.getDialogId();
+		this.testerHost.sendNotif(this.className, "Rcvd: DialogNotice", uData, true);
 	}
 
 	@Override

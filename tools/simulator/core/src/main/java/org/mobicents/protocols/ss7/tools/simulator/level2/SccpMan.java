@@ -396,6 +396,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 				
 				int ruleNum = 3;
 				for (String s : ss) {
+					s = s.trim();
 					pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle(s), 0);
 					mask = "R";
 					rule = new Rule(RuleType.Solitary, null, pattern, mask);

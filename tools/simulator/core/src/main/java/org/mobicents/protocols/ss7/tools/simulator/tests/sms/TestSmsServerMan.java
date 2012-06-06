@@ -426,8 +426,27 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 
 	@Override
 	public String performMtForwardSM(String msg, String destImsi, String vlrNumber, String origIsdnNumber) {
-		// TODO Auto-generated method stub
-		return null;
+		if (!isStarted)
+			return "The tester is not started";
+		if (msg == null || msg.equals(""))
+			return "Msg is empty";
+		if (destImsi == null || destImsi.equals(""))
+			return "DestImsi is empty";
+		if (vlrNumber == null || vlrNumber.equals(""))
+			return "VlrNumber is empty";
+		if (origIsdnNumber == null || origIsdnNumber.equals(""))
+			return "OrigIsdnNumber is empty";
+
+		currentRequestDef = "";
+
+		SccpAddress sa = this.mapMan.createOrigAddress();
+		if (sa.getGlobalTitle() == null)
+			return "Sccp ROUTING_ON_GLOBAL_TYTLE mode is needed";
+		String serviceCentreAddr = sa.getGlobalTitle().getDigits();
+		
+		// return doSendSri(destIsdnNumber, serviceCentreAddr, null);
+		// ........................
+		return "";
 	}
 
 

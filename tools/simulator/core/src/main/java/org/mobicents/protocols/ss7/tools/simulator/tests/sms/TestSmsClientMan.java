@@ -28,9 +28,13 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
+import org.mobicents.protocols.ss7.map.api.dialog.Reason;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponse;
@@ -50,6 +54,9 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMReque
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMResponse;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
+import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortChoiceImpl;
+import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.common.MapProtocolVersion;
@@ -426,15 +433,43 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 	public void onSendRoutingInfoForSMRequest(SendRoutingInfoForSMRequest ind) {
 		if (!isStarted)
 			return;
-
+		
 		this.countSriReq++;
 
+		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 		MAPDialogSms curDialog = ind.getMAPDialog();
 		long invokeId = ind.getInvokeId();
+
+//		MAPUserAbortChoiceImpl choice = new MAPUserAbortChoiceImpl();
+//		choice.setUserResourceLimitation();
+//		try {
+//			curDialog.abort(choice);
+//		} catch (MAPException e1) {
+//			e1.printStackTrace();
+//		}
+
+
+//		MAPErrorMessage err = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageFacilityNotSup(null, true, false);
+//		try {
+//			curDialog.sendErrorComponent(invokeId, err);
+//		} catch (MAPException e) {
+//			e.printStackTrace();
+//		}
+
+//		Problem prb = mapProvider.getMAPParameterFactory().createProblemGeneral(GeneralProblemType.MistypedComponent);
+//		try {
+//			curDialog.sendRejectComponent(invokeId, prb);
+//		} catch (MAPException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		this.needSendClose = true;
+//		return;
+
+
 		String uData = this.createSriData(curDialog.getDialogId(), ind.getMsisdn().getAddress(), ind.getServiceCentreAddress().getAddress());
 		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: sriReq", uData, true);
 
-		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 
 		IMSI imsi = mapProvider.getMAPParameterFactory().createIMSI(this.sriResponseImsi);
 		ISDNAddressString networkNodeNumber = mapProvider.getMAPParameterFactory().createISDNAddressString(this.addressNature, this.numberingPlan, this.sriResponseVlr);
@@ -510,6 +545,16 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 	public void onAlertServiceCentreResponse(AlertServiceCentreResponse alertServiceCentreInd) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void onDialogRequest(MAPDialog dlg, AddressString arg1, AddressString arg2, MAPExtensionContainer arg3) {
+		// refuse example
+//		try {
+//			dlg.refuse(Reason.invalidDestinationReference);
+//		} catch (MAPException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	@Override
