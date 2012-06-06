@@ -1,48 +1,86 @@
 ===========================
  Mobicents SS7 Protocols Bundle
 ===========================
-               v@VERSION@
+               v2.0.0.BETA1
 
- Welcome to the Mobicents SS7 Protocols Bundle v@VERSION@ release!
+ Welcome to the Mobicents jSS7 Protocols Bundle v2.0.0.BETA1 release!
 
 --------------
  Introduction
 --------------
 
- This is the bundle release of Mobicents SS7 solution.
+This is the bundle release of Mobicents jSS7 stack.
 
- In this bundle you will find the latest released Mobicents SS7 Protocol components, with guarantees that they are all
- compatible with each other. No more non-interop releases :)
+In this bundle you will find the latest released Mobicents jSS7 Protocol components SCCP, TCAP, MAP, CAP, INAP and ISUP. Binary also includes mobicents-ss7-service which ties MTP3 to MAP stack together and binds MAP to JNDI; ready to be used by applications. In addition it includes Signaling Gateway (converting legacy SS7 MTP3 signal to M3UA over IP) and Mobicents SS7 Simulator to test the stack.
+
+------------------
+What's new in this release?
+------------------
+This release is jam packed with new features
+
+ * CAP Protocol included in the binary for first time. Only version 1 and 2 of CAP are supported. Look at Issue 1 and 10
+ * New MAP messages AnyTimeInterrogation (Issue 9), UpdateLocation (Issue 57) and SendAuthenticationInfo (Issue 58) included
+ * Support for dahdi based cards, Digum and Sangoma (Issue 29) brought back
+ * New GUI based SS7 Simulator introduced (Issue 17). This tool allows users to test SS7 stack convineintly with click of button!
+ * SCCP pointcode loadbalancing taken care (Issue 13)
+
+In addition many bugs fixed and some performance improvements.
+Complete list of issues covered in this release are listed here http://code.google.com/p/jss7/issues/list?can=1&q=Version%3D2.0.0.BETA1&sort=priority+version&groupby=version&colspec=Summary+Type+Status+ID&cells=tiles
+
+Please note that archives are now uploaded to https://oss.sonatype.org/content/groups/public. Please point to sonatype repository in your applications pom.xml
+
+		<repository>
+                          <id>mobicents-public-repository-group</id>
+                          <name>Mobicens Public Maven Repository Group</name>
+                          <url>https://oss.sonatype.org/content/groups/public</url>
+                          <layout>default</layout>
+                          <releases>
+                            <enabled>true</enabled>
+                            <updatePolicy>never</updatePolicy>
+                          </releases>
+                          <snapshots>
+                            <enabled>true</enabled>
+                            <updatePolicy>never</updatePolicy>
+                          </snapshots>
+                </repository>
+
+
+Daily build is configured at https://mobicents.ci.cloudbees.com/job/Mobicents-jSS7-2.x/
+
+
 
 ------------------
  Release Contents
 ------------------
 
-  * ASN v@ASN_VERSION@
-  * SS7 v@SS7_VERSION@
+  * ASN 2.0.0.FINAL
+  * SCTP 1.0.0.CR3 
+  * SS7 2.0.0.BETA1
 
   
 ------------------
-SVN Trunk Checkout
+Home page for each project 
 ------------------
 
-http://mobicents.googlecode.com/svn/trunk/protocols/asn
-http://mobicents.googlecode.com/svn/trunk/protocols/ss7
-
+http://code.google.com/p/jasn/
+http://code.google.com/p/sctp/
+http://code.google.com/p/jss7/
 
 ------------------
-SVN Trunk Browse
+GIT Master Browse
 ------------------
 
-http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/asn
-http://code.google.com/p/mobicents/source/browse/#svn/trunk/protocols/ss7  
+http://code.google.com/p/jasn/source/browse/
+http://code.google.com/p/sctp/source/browse/
+http://code.google.com/p/jss7/source/browse/ 
   
 ------------------
- SVN Tag Checkout
+ GIT Tag Browse
 ------------------
 
-http://mobicents.googlecode.com/svn/tags/protocols/asn/asn-@ASN_VERSION@
-http://mobicents.googlecode.com/svn/tags/protocols/ss7/ss7-@SS7_VERSION@
+http://code.google.com/p/jasn/source/browse/?name=release-2.0.0.FINAL
+http://code.google.com/p/sctp/source/browse/?name=release-1.0.0.CR3
+http://code.google.com/p/jss7/source/browse/?name=release-2.0.0.BETA1
 
 
   
@@ -50,7 +88,7 @@ http://mobicents.googlecode.com/svn/tags/protocols/ss7/ss7-@SS7_VERSION@
  How to Use it?
 ----------------
 
- Please refer to documentation in /ss7 module for detailed explanation.
+Please refer to documentation in /ss7 module for detailed explanation.
  
 
 ------------------

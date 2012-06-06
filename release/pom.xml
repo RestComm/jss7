@@ -19,17 +19,26 @@
 		<checkout.username>mobicents-read-only</checkout.username>
 		<checkout.password />
 
-			<!-- TAGS 
-		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/asn/asn-1.0.0.CR1</asn.connectionURL>
-		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/stream/stream-1.0.0.CR1</stream.connectionURL>
+		<asn.scmVersion>release-2.0.0.FINAL</asn.scmVersion>
+		<asn.scmVersionType>tag</asn.scmVersionType>
 
-		<ss7.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/mobicents-ss7-1.0.0.CR1</ss7.connectionURL>
- 		-->
-		<!-- TRUNK -->
+		<sctp.scmVersion>release-1.0.0.CR3</sctp.scmVersion>
+		<sctp.scmVersionType>tag</sctp.scmVersionType>
+
+		<ss7.scmVersion>release-2.0.0.BETA1</ss7.scmVersion>
+		<ss7.scmVersionType>tag</ss7.scmVersionType>
+
+			<!-- TAGS -->
+		<commons.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/commons/1.0.0.CR1</commons.connectionURL>
+		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/stream/stream-1.0.0.CR1</stream.connectionURL>
+ 		
+		<!-- TRUNK 
 		<commons.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/commons</commons.connectionURL>
-		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/asn</asn.connectionURL>
-		<sctp.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/sctp</sctp.connectionURL>
 		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/stream</stream.connectionURL>
+		-->
+
+		<asn.connectionURL>scm:git:https://code.google.com/p/jasn/</asn.connectionURL>
+		<sctp.connectionURL>scm:git:https://code.google.com/p/sctp/</sctp.connectionURL>
 		<ss7.connectionURL>scm:git:https://code.google.com/p/jss7/</ss7.connectionURL>
 		
 
@@ -74,8 +83,8 @@
 								</goals>
 								<phase>validate</phase>
 								<configuration>
-									<scmVersion>HEAD</scmVersion>
-									<scmVersionType>revision</scmVersionType>
+									<scmVersion>${asn.scmVersion}</scmVersion>
+									<scmVersionType>${asn.scmVersionType}</scmVersionType>
 									<skipCheckoutIfExists>true</skipCheckoutIfExists>
 									<checkoutDirectory>
 										${checkout.basedir}/asn
@@ -94,8 +103,8 @@
 								</goals>
 								<phase>validate</phase>
 								<configuration>
-									<scmVersion>HEAD</scmVersion>
-									<scmVersionType>revision</scmVersionType>
+									<scmVersion>${sctp.scmVersion}</scmVersion>
+									<scmVersionType>${sctp.scmVersionType}</scmVersionType>
 									<skipCheckoutIfExists>true</skipCheckoutIfExists>
 									<checkoutDirectory>
 										${checkout.basedir}/sctp
@@ -131,8 +140,8 @@
 								</goals>
 								<phase>validate</phase>
 								<configuration>
-									<scmVersion>HEAD</scmVersion>
-									<scmVersionType>revision</scmVersionType>
+									<scmVersion>${ss7.scmVersion}</scmVersion>
+									<scmVersionType>${ss7.scmVersionType}</scmVersionType>
 									<skipCheckoutIfExists>true</skipCheckoutIfExists>
 									<checkoutDirectory>${checkout.basedir}/ss7</checkoutDirectory>
 									<connectionUrl>${ss7.connectionURL}</connectionUrl>
