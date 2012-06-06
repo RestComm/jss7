@@ -59,6 +59,7 @@ public class TestSmsServerStandardManMBean extends StandardMBean {
 				new MBeanAttributeInfo("TypeOfNumber_Value", String.class.getName(), "TypeOfNumber parameter for SMS tpdu origAddress", true, false, false),
 				new MBeanAttributeInfo("NumberingPlanIdentification", NumberingPlanIdentificationType.class.getName(), "NumberingPlanIdentification parameter for SMS tpdu origAddress", true, true, false),
 				new MBeanAttributeInfo("NumberingPlanIdentification_Value", String.class.getName(), "NumberingPlanIdentification parameter for SMS tpdu origAddress", true, false, false),
+				new MBeanAttributeInfo("CurrentRequestDef", String.class.getName(), "Get information of the current request", true, false, false),
 		};
 
 		MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(), "Index number or value") };
@@ -84,8 +85,6 @@ public class TestSmsServerStandardManMBean extends StandardMBean {
 						performSRIForSM_MtForwardSMParam, String.class.getName(), MBeanOperationInfo.ACTION),
 				new MBeanOperationInfo("performMtForwardSM", "Send mt-forwardSM request", performMtForwardSMParam, String.class.getName(), MBeanOperationInfo.ACTION),
 				new MBeanOperationInfo("closeCurrentDialog", "Closing the current dialog", null, String.class.getName(), MBeanOperationInfo.ACTION),
-
-				new MBeanOperationInfo("getCurrentRequestDef", "Get information of the current request", null, String.class.getName(), MBeanOperationInfo.ACTION),
 
 				new MBeanOperationInfo("putAddressNature", "AddressNature parameter for AddressString creating: "
 						+ "0:unknown,1:international_number,2:national_significant_number,3:network_specific_number,4:subscriber_number,5:reserved,6:abbreviated_number,7:reserved_for_extension", 

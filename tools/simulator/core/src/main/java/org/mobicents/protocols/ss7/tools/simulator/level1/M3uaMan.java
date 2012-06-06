@@ -494,7 +494,9 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 
 		// init SCTP stack
 		this.sctpManagement = new ManagementImpl("SimSCTPServer_" + name);
-		this.sctpManagement.setSingleThread(true);
+		// set 8 threads for delivering messages
+		this.sctpManagement.setWorkerThreads(8);
+		this.sctpManagement.setSingleThread(false);
 		this.sctpManagement.setConnectDelay(10000);
 
 		this.sctpManagement.start();

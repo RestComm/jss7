@@ -46,7 +46,9 @@ import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientManMBe
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerManMBean;
+import org.mobicents.protocols.ss7.tools.simulatorgui.tests.sms.TestSmsClientForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.sms.TestSmsClientParamForm;
+import org.mobicents.protocols.ss7.tools.simulatorgui.tests.sms.TestSmsServerForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.sms.TestSmsServerParamForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd.TestUssdClientForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd.TestUssdClientParamForm;
@@ -192,6 +194,18 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 					TestUssdServerForm testUssdServerForm = new TestUssdServerForm(getJFrame());
 					testUssdServerForm.setData(ussdServer);
 					dlg = testUssdServerForm;
+				}
+					break;
+				case Instance_TestTask.VAL_SMS_TEST_CLIENT: {
+					TestSmsClientForm testSmsClientForm = new TestSmsClientForm(getJFrame());
+					testSmsClientForm.setData(smsClient);
+					dlg = testSmsClientForm;
+				}
+					break;
+				case Instance_TestTask.VAL_SMS_TEST_SERVER: {
+					TestSmsServerForm testSmsServerForm = new TestSmsServerForm(getJFrame());
+					testSmsServerForm.setData(smsServer);
+					dlg = testSmsServerForm;
 				}
 					break;
 					

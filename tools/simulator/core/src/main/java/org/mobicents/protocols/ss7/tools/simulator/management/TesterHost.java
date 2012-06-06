@@ -702,6 +702,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.sccp.setNumberingPlan(_sccp.getNumberingPlan());
 			this.sccp.setTranslationType(_sccp.getTranslationType());
 			this.sccp.setCallingPartyAddressDigits(_sccp.getCallingPartyAddressDigits());
+			this.sccp.setExtraLocalAddressDigits(_sccp.getExtraLocalAddressDigits());
 
 			MapMan _tcap = reader.read(MAP, MapMan.class);
 			this.map.setLocalSsn(_tcap.getLocalSsn());

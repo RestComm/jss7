@@ -67,6 +67,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	private static final String NUMBERING_PLAN = "numberingPlan";
 	private static final String TRANSLATION_TYTE = "translationType";
 	private static final String CALLING_PARTY_ADDRESS_DIGITS = "callingPartyAddressDigits";
+	private static final String EXTRA_LOCAL_ADDRESS_DIGITS = "extraLocalAddressDigits";
 
 	private final String name;
 	private TesterHost testerHost;
@@ -83,6 +84,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	private NumberingPlan numberingPlan = NumberingPlan.ISDN_MOBILE;
 	private int translationType = 0;
 	private String callingPartyAddressDigits = "";
+	private String extraLocalAddressDigits = "";
 
 	private SccpStackImpl sccpStack;
 	private SccpProvider sccpProvider;
@@ -259,6 +261,17 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	}
 
 	@Override
+	public String getExtraLocalAddressDigits() {
+		return extraLocalAddressDigits;
+	}
+
+	@Override
+	public void setExtraLocalAddressDigits(String val) {
+		extraLocalAddressDigits = val;
+		this.testerHost.markStore();
+	}
+
+	@Override
 	public void putGlobalTitleType(String val) {
 		GlobalTitleType x = GlobalTitleType.createInstance(val);
 		if (x != null)
@@ -294,7 +307,8 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		try {
 			this.isRspcUp = true;
 			this.isRssUp = true;
-			this.initSccp(this.mtp3UserPart, this.remoteSsn, this.localSsn, this.remoteSpc, this.localSpc, this.ni, this.callingPartyAddressDigits);
+			this.initSccp(this.mtp3UserPart, this.remoteSsn, this.localSsn, this.remoteSpc, this.localSpc, this.ni, this.callingPartyAddressDigits,
+					this.extraLocalAddressDigits);
 			this.testerHost.sendNotif(SOURCE_NAME, "SCCP has been started", "", true);
 			return true;
 		} catch (Throwable e) {
@@ -336,7 +350,8 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		}
 	}
 
-	private void initSccp(Mtp3UserPart mtp3UserPart, int remoteSsn, int localSsn, int dpc, int opc, int ni, String callingPartyAddressDigits) {
+	private void initSccp(Mtp3UserPart mtp3UserPart, int remoteSsn, int localSsn, int dpc, int opc, int ni, String callingPartyAddressDigits,
+			String extraLocalAddressDigits) {
 
 		this.sccpStack = new SccpStackImpl("TestingSccp");
 
@@ -375,6 +390,20 @@ public class SccpMan implements SccpManMBean, Stoppable {
 			rule = new Rule(RuleType.Solitary, null, pattern, mask);
 			rule.setPrimaryAddressId(2);
 			this.router.addRule(2, rule);
+
+			if (extraLocalAddressDigits != null && !extraLocalAddressDigits.equals("")) {
+				String[] ss = extraLocalAddressDigits.split(",");
+				
+				int ruleNum = 3;
+				for (String s : ss) {
+					pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle(s), 0);
+					mask = "R";
+					rule = new Rule(RuleType.Solitary, null, pattern, mask);
+					rule.setPrimaryAddressId(2);
+					this.router.addRule(ruleNum, rule);
+					ruleNum++;
+				}
+			}
 		}
 	}
 
@@ -387,9 +416,9 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 	public SccpAddress createCallingPartyAddress() {
 		if (this.routeOnGtMode) {
-			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.localSpc, null, this.localSsn);
-		} else {
 			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, createGlobalTitle(this.callingPartyAddressDigits), this.localSsn);
+		} else {
+			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.localSpc, null, this.localSsn);
 		}
 	}
 	
@@ -443,6 +472,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 			xml.add(sccp.natureOfAddress.toString(), ADDRESS_NATURE);
 			xml.add(sccp.numberingPlan.toString(), NUMBERING_PLAN);
 			xml.add(sccp.callingPartyAddressDigits, CALLING_PARTY_ADDRESS_DIGITS);
+			xml.add(sccp.extraLocalAddressDigits, EXTRA_LOCAL_ADDRESS_DIGITS);
 		}
 
 		public void read(InputElement xml, SccpMan sccp) throws XMLStreamException {
@@ -461,6 +491,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 			String np = (String) xml.get(NUMBERING_PLAN, String.class);
 			sccp.numberingPlan = NumberingPlan.valueOf(np);
 			sccp.callingPartyAddressDigits = (String) xml.get(CALLING_PARTY_ADDRESS_DIGITS, String.class);
+			sccp.extraLocalAddressDigits = (String) xml.get(EXTRA_LOCAL_ADDRESS_DIGITS, String.class);
 		}
 	};
 }

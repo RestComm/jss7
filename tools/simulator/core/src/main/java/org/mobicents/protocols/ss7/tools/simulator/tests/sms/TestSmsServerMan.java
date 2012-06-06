@@ -24,15 +24,24 @@ package org.mobicents.protocols.ss7.tools.simulator.tests.sms;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
+import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
+import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.InformServiceCentreRequest;
+import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
+import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener;
 import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageResponse;
@@ -44,6 +53,7 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMReque
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMResponse;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.common.MapProtocolVersion;
@@ -81,6 +91,15 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 	private MapMan mapMan;
 
 	private boolean isStarted = false;
+	private int countSriReq = 0;
+	private int countSriResp = 0;
+	private int countMtFsmReq = 0;
+	private int countMtFsmResp = 0;
+	private int countMoFsmReq = 0;
+	private int countMoFsmResp = 0;
+	private String currentRequestDef = "";
+	private boolean needSendSend = false;
+	private boolean needSendClose = false;
 
 
 	public TestSmsServerMan() {
@@ -273,12 +292,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 
 	@Override
 	public String getCurrentRequestDef() {
-//		if (this.currentDialog != null)
-//			return "CurDialog: " + currentRequestDef;
-//		else
-//			return "PrevDialog: " + currentRequestDef;
-		// TODO Auto-generated method stub
-		return "";
+		return "LastDialog: " + currentRequestDef;
 	}
 
 	@Override
@@ -286,28 +300,21 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		StringBuilder sb = new StringBuilder();
 		sb.append("<html>");
 		sb.append(SOURCE_NAME);
-//		sb.append(": CurDialog=");
-//		MAPDialogSupplementary curDialog = currentDialog;
-//		if (curDialog != null)
-//			sb.append(curDialog.getDialogId());
-//		else
-//			sb.append("No");
-//		sb.append(", Pending dialogs=");
-//		sb.append(this.currentDialogQuere.size());
-//		sb.append("<br>Count: processUnstructuredSSRequest-");
-//		sb.append(countProcUnstReq);
-//		sb.append(", processUnstructuredSSResponse-");
-//		sb.append(countProcUnstResp);
-//		sb.append("<br>unstructuredSSRequest-");
-//		sb.append(countUnstReq);
-//		sb.append(", unstructuredSSResponse-");
-//		sb.append(countUnstResp);
-//		sb.append(", unstructuredSSNotify-");
-//		sb.append(countUnstNotifReq);
+		sb.append(": ");
+		sb.append("<br>Count: countSriReq-");
+		sb.append(countSriReq);
+		sb.append(", countSriResp-");
+		sb.append(countSriResp);
+		sb.append("<br>countMtFsmReq-");
+		sb.append(countMtFsmReq);
+		sb.append(", countMtFsmResp-");
+		sb.append(countMtFsmResp);
+		sb.append("<br> countMoFsmReq-");
+		sb.append(countMoFsmReq);
+		sb.append(", countMoFsmResp-");
+		sb.append(countMoFsmResp);
 		sb.append("</html>");
 		return sb.toString();
-
-		// TODO Auto-generated method stub
 	}
 
 	public boolean start() {
@@ -325,9 +332,6 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 	public void stop() {
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 		isStarted = false;
-		// TODO Auto-generated method stub
-		//this.doRemoveDialog();
-		// TODO Auto-generated method stub
 		mapProvider.getMAPServiceSms().deactivate();
 		mapProvider.getMAPServiceSms().removeMAPServiceListener(this);
 		mapProvider.removeMAPDialogListener(this);
@@ -347,10 +351,73 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 
 	@Override
 	public String performSRIForSM(String destIsdnNumber) {
-		// TODO Auto-generated method stub
-		return null;
+		if (!isStarted)
+			return "The tester is not started";
+		if (destIsdnNumber == null || destIsdnNumber.equals(""))
+			return "DestIsdnNumber is empty";
+
+		currentRequestDef = "";
+
+		SccpAddress sa = this.mapMan.createOrigAddress();
+		if (sa.getGlobalTitle() == null)
+			return "Sccp ROUTING_ON_GLOBAL_TYTLE mode is needed";
+		String serviceCentreAddr = sa.getGlobalTitle().getDigits();
+		
+		return doSendSri(destIsdnNumber, serviceCentreAddr, null);
 	}
 
+	private String doSendSri(String destIsdnNumber, String serviceCentreAddr, MoMessageData messageData) {
+
+		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
+
+		MAPApplicationContextVersion vers;
+		switch(this.mapProtocolVersion.intValue()){
+		case MapProtocolVersion.VAL_MAP_V1:
+			vers = MAPApplicationContextVersion.version1;
+			break;
+		case MapProtocolVersion.VAL_MAP_V2:
+			vers = MAPApplicationContextVersion.version2;
+			break;
+		default:
+			vers = MAPApplicationContextVersion.version3;
+			break;
+		}
+		MAPApplicationContext mapAppContext = MAPApplicationContext.getInstance(MAPApplicationContextName.shortMsgGatewayContext, vers);
+		
+		ISDNAddressString msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(this.addressNature, this.numberingPlan, destIsdnNumber);
+		AddressString serviceCentreAddress = mapProvider.getMAPParameterFactory().createAddressString(this.addressNature, this.numberingPlan, serviceCentreAddr);
+
+		try {
+			MAPDialogSms curDialog = mapProvider.getMAPServiceSms().createNewDialog(mapAppContext, this.mapMan.createOrigAddress(), null,
+					this.mapMan.createDestAddress(destIsdnNumber, this.hlrSsn), null);
+			curDialog.setUserObject(messageData);
+
+			curDialog.addSendRoutingInfoForSMRequest(msisdn, true, serviceCentreAddress, null, false, null, null);
+			curDialog.send();
+
+			String sriData = createSriData(curDialog.getDialogId(), destIsdnNumber, serviceCentreAddr);
+			currentRequestDef += "Sent SriReq;";
+			this.countSriReq++;
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: sriReq", sriData, true);
+
+			return "SendRoutingInfoForSMRequest has been sent";
+		} catch (MAPException ex) {
+			return "Exception when sending SendRoutingInfoForSMRequest: " + ex.toString();
+		}
+	}
+
+	private String createSriData(long dialogId, String destIsdnNumber, String serviceCentreAddr){
+		StringBuilder sb = new StringBuilder();
+		sb.append("dialogId=");
+		sb.append(dialogId);
+		sb.append(", destIsdnNumber=\"");
+		sb.append(destIsdnNumber);
+		sb.append("\", serviceCentreAddr=\"");
+		sb.append(serviceCentreAddr);
+		sb.append("\"");
+		return sb.toString();
+	}
+	
 	@Override
 	public String performSRIForSM_MtForwardSM(String msg, String destIsdnNumber, String origIsdnNumber) {
 		// TODO Auto-generated method stub
@@ -407,9 +474,39 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 	}
 
 	@Override
-	public void onSendRoutingInfoForSMResponse(SendRoutingInfoForSMResponse sendRoutingInfoForSMRespInd) {
-		// TODO Auto-generated method stub
-		
+	public void onSendRoutingInfoForSMResponse(SendRoutingInfoForSMResponse ind) {
+		if (!isStarted)
+			return;
+
+		this.countSriResp++;
+
+		MAPDialogSms curDialog = ind.getMAPDialog();
+		long invokeId = curDialog.getDialogId();
+		LocationInfoWithLMSI li = ind.getLocationInfoWithLMSI();
+		String vlrNum = "";
+		if (li != null && li.getNetworkNodeNumber() != null)
+			vlrNum = li.getNetworkNodeNumber().getAddress();
+		currentRequestDef += "Rsvd SriResp;";
+		String uData = this.createSriRespData(invokeId, ind.getIMSI().getData(), vlrNum);
+		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: sriReq", uData, true);
+
+		if (curDialog.getUserObject() != null && vlrNum != null && !vlrNum.equals("")) {
+			// TODO Auto-generated method stub
+			// add sending mo-fmr
+			// ............................
+		}
+	}
+
+	private String createSriRespData(long dialogId, String imsi, String vlrNumber) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("dialogId=");
+		sb.append(dialogId);
+		sb.append(", imsi=\"");
+		sb.append(imsi);
+		sb.append("\", vlrNumber=\"");
+		sb.append(vlrNumber);
+		sb.append("\"");
+		return sb.toString();
 	}
 
 	@Override
@@ -442,4 +539,28 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		
 	}
 
+	@Override
+	public void onDialogDelimiter(MAPDialog mapDialog) {
+		try {
+			if (needSendSend) {
+				needSendSend = false;
+				mapDialog.send();
+			}
+		} catch (Exception e) {
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, true);
+		}
+		try {
+			if (needSendClose) {
+				needSendClose = false;
+				mapDialog.close(false);
+			}
+		} catch (Exception e) {
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, true);
+		}
+	}
+
+	private class MoMessageData {
+		public String msg;
+		public String origIsdnNumber;
+	}
 }
