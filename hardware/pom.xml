@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>ss7-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7</groupId>
-		<version>2.0.0.BETA1</version>
+		<version>2.0.0-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.mobicents.protocols.ss7.hardware</groupId>
