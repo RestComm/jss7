@@ -30,10 +30,10 @@
 		<compiler.plugin.version>2.0.2</compiler.plugin.version>
 		<compile.source>1.5</compile.source>
 		<!-- mobicents but not strictly ss7 -->
-		<asn.version>2.0.0-SNAPSHOT</asn.version>
+		<asn.version>2.0.0.FINAL</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
-		<sctp.version>1.0.0-SNAPSHOT</sctp.version>
-		<commons.version>1.0.0-SNAPSHOT</commons.version>
+		<sctp.version>1.0.0.CR3</sctp.version>
+		<commons.version>1.0.0.CR1</commons.version>
 	</properties>
 
 	<modules>
