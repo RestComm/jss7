@@ -181,10 +181,20 @@ public class TestSmsServerForm extends TestingForm {
 		panel_1.add(btnSendSriforsm);
 		
 		JButton btnSendSriforsmmtforwardsm = new JButton("Send SRIForSM + MtForwardSM");
+		btnSendSriforsmmtforwardsm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				sendSRIForSM_Mtforwardsm();
+			}
+		});
 		btnSendSriforsmmtforwardsm.setBounds(174, 0, 207, 23);
 		panel_1.add(btnSendSriforsmmtforwardsm);
 		
 		JButton btnSendMtforwardsm = new JButton("Send MtForwardSM");
+		btnSendMtforwardsm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				sendMtforwardsm();
+			}
+		});
 		btnSendMtforwardsm.setBounds(391, 0, 180, 23);
 		panel_1.add(btnSendMtforwardsm);
 		
@@ -224,6 +234,25 @@ public class TestSmsServerForm extends TestingForm {
 		this.lbMessage.setText("");
 		String msg = this.tbDestIsdnNumber.getText();
 		String res = this.smsServer.performSRIForSM(msg);
+		this.lbResult.setText(res);
+	}
+	
+	private void sendMtforwardsm() {
+		this.lbMessage.setText("");
+		String msg = this.tbMessage.getText();
+		String destImsi = this.tbImsi.getText();
+		String vlrNumber = this.tbVlrNumber.getText();
+		String origIsdnNumber = this.tbOrigIsdnNumber.getText();
+		String res = this.smsServer.performMtForwardSM(msg, destImsi, vlrNumber, origIsdnNumber);
+		this.lbResult.setText(res);
+	}
+
+	private void sendSRIForSM_Mtforwardsm() {
+		this.lbMessage.setText("");
+		String msg = this.tbMessage.getText();
+		String destIsdnNumber = this.tbDestIsdnNumber.getText();
+		String origIsdnNumber = this.tbOrigIsdnNumber.getText();
+		String res = this.smsServer.performSRIForSM_MtForwardSM(msg, destIsdnNumber, origIsdnNumber);
 		this.lbResult.setText(res);
 	}
 

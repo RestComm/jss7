@@ -45,7 +45,9 @@ public interface TestSmsServerManMBean {
 
 	public void setNumberingPlan(NumberingPlanType val);
 
-	// ServiceCenterAddress Address is getting from a SCCP CallingPartyAddress
+	public String getServiceCenterAddress();
+
+	public void setServiceCenterAddress(String val);	
 
 	public MapProtocolVersion getMapProtocolVersion();
 
@@ -73,6 +75,12 @@ public interface TestSmsServerManMBean {
 
 	public void setNumberingPlanIdentification(NumberingPlanIdentificationType val);
 
+	public SmsCodingType getSmsCodingType();
+
+	public String getSmsCodingType_Value();
+
+	public void setSmsCodingType(SmsCodingType val);
+
 
 	public void putAddressNature(String val);
 
@@ -83,6 +91,8 @@ public interface TestSmsServerManMBean {
 	public void putTypeOfNumber(String val);
 
 	public void putNumberingPlanIdentification(String val);
+
+	public void putSmsCodingType(String val);
 
 
 	public String getCurrentRequestDef();

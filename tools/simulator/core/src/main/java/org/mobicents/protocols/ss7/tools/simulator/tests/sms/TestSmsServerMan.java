@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.tests.sms;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
@@ -33,6 +35,7 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
@@ -49,11 +52,27 @@ import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageRequ
 import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.ReportSMDeliveryStatusResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
+import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMResponse;
+import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
+import org.mobicents.protocols.ss7.map.api.smstpdu.AbsoluteTimeStamp;
+import org.mobicents.protocols.ss7.map.api.smstpdu.AddressField;
+import org.mobicents.protocols.ss7.map.api.smstpdu.DataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
+import org.mobicents.protocols.ss7.map.api.smstpdu.ProtocolIdentifier;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsDeliverTpdu;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.map.api.smstpdu.UserData;
+import org.mobicents.protocols.ss7.map.smstpdu.AbsoluteTimeStampImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.AddressFieldImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.DataCodingSchemeImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.ProtocolIdentifierImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.SmsDeliverTpduImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.UserDataImpl;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.common.MapProtocolVersion;
@@ -73,19 +92,23 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 
 	private static final String ADDRESS_NATURE = "addressNature";
 	private static final String NUMBERING_PLAN = "numberingPlan";
+	private static final String SERVICE_CENTER_ADDRESS = "serviceCenterAddress";
 	private static final String MAP_PROTOCOL_VERSION = "mapProtocolVersion";
 	private static final String HLR_SSN = "hlrSsn";
 	private static final String VLR_SSN = "vlrSsn";
 	private static final String TYPE_OF_NUMBER = "typeOfNumber";
 	private static final String NUMBERING_PLAN_IDENTIFICATION = "numberingPlanIdentification";
+	private static final String SMS_CODING_TYPE = "smsCodingType";
 
 	private AddressNature addressNature = AddressNature.international_number;
 	private NumberingPlan numberingPlan = NumberingPlan.ISDN;
+	private String serviceCenterAddress = "";
 	private MapProtocolVersion mapProtocolVersion = new MapProtocolVersion(MapProtocolVersion.VAL_MAP_V3);
 	private int hlrSsn = 6;
 	private int vlrSsn = 8;
 	private TypeOfNumber typeOfNumber = TypeOfNumber.InternationalNumber;
 	private NumberingPlanIdentification numberingPlanIdentification = NumberingPlanIdentification.ISDNTelephoneNumberingPlan;
+	private SmsCodingType smsCodingType;
 
 	private final String name;
 	private MapMan mapMan;
@@ -159,6 +182,17 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 	}
 
 	@Override
+	public String getServiceCenterAddress() {
+		return serviceCenterAddress;
+	}
+
+	@Override
+	public void setServiceCenterAddress(String val) {
+		serviceCenterAddress = val;
+		this.testerHost.markStore();
+	}
+
+	@Override
 	public String getMapProtocolVersion_Value() {
 		return mapProtocolVersion.toString();
 	}
@@ -223,6 +257,22 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		this.testerHost.markStore();
 	}
 
+	@Override
+	public SmsCodingType getSmsCodingType() {
+		return smsCodingType;
+	}
+
+	@Override
+	public String getSmsCodingType_Value() {
+		return smsCodingType.toString();
+	}
+
+	@Override
+	public void setSmsCodingType(SmsCodingType val) {
+		smsCodingType = val;
+		this.testerHost.markStore();
+	}
+
 
 	@Override
 	public void putAddressNature(String val) {
@@ -259,22 +309,34 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 			this.setNumberingPlanIdentification(x);
 	}
 
+	@Override
+	public void putSmsCodingType(String val) {
+		SmsCodingType x = SmsCodingType.createInstance(val);
+		if (x != null)
+			this.setSmsCodingType(x);
+	}
+
 	protected static final XMLFormat<TestSmsServerMan> XML = new XMLFormat<TestSmsServerMan>(TestSmsServerMan.class) {
 
 		public void write(TestSmsServerMan srv, OutputElement xml) throws XMLStreamException {
 			xml.setAttribute(HLR_SSN, srv.hlrSsn);
 			xml.setAttribute(VLR_SSN, srv.vlrSsn);
 
+			xml.add(srv.serviceCenterAddress, SERVICE_CENTER_ADDRESS);
+
 			xml.add(srv.addressNature.toString(), ADDRESS_NATURE);
 			xml.add(srv.numberingPlan.toString(), NUMBERING_PLAN);
 			xml.add(srv.mapProtocolVersion.toString(), MAP_PROTOCOL_VERSION);
 			xml.add(srv.typeOfNumber.toString(), TYPE_OF_NUMBER);
 			xml.add(srv.numberingPlanIdentification.toString(), NUMBERING_PLAN_IDENTIFICATION);
+			xml.add(srv.smsCodingType.toString(), SMS_CODING_TYPE);
 		}
 
 		public void read(InputElement xml, TestSmsServerMan srv) throws XMLStreamException {
 			srv.hlrSsn = xml.getAttribute(HLR_SSN).toInt();
 			srv.vlrSsn = xml.getAttribute(VLR_SSN).toInt();
+			
+			srv.serviceCenterAddress = (String) xml.get(SERVICE_CENTER_ADDRESS, String.class);
 			
 			String an = (String) xml.get(ADDRESS_NATURE, String.class);
 			srv.addressNature = AddressNature.valueOf(an);
@@ -286,6 +348,8 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 			srv.typeOfNumber = TypeOfNumber.valueOf(ton);
 			String npi = (String) xml.get(NUMBERING_PLAN_IDENTIFICATION, String.class);
 			srv.numberingPlanIdentification = NumberingPlanIdentification.valueOf(npi);
+			String sct = (String) xml.get(SMS_CODING_TYPE, String.class);
+			srv.smsCodingType = SmsCodingType.createInstance(sct);
 		}
 	};
 
@@ -358,12 +422,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 
 		currentRequestDef = "";
 
-		SccpAddress sa = this.mapMan.createOrigAddress();
-		if (sa.getGlobalTitle() == null)
-			return "Sccp ROUTING_ON_GLOBAL_TYTLE mode is needed";
-		String serviceCentreAddr = sa.getGlobalTitle().getDigits();
-		
-		return doSendSri(destIsdnNumber, serviceCentreAddr, null);
+		return doSendSri(destIsdnNumber, this.getServiceCenterAddress(), null);
 	}
 
 	private String doSendSri(String destIsdnNumber, String serviceCentreAddr, MoMessageData messageData) {
@@ -417,11 +476,28 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		sb.append("\"");
 		return sb.toString();
 	}
-	
+
 	@Override
 	public String performSRIForSM_MtForwardSM(String msg, String destIsdnNumber, String origIsdnNumber) {
-		// TODO Auto-generated method stub
-		return null;
+		if (!isStarted)
+			return "The tester is not started";
+		if (origIsdnNumber == null || origIsdnNumber.equals(""))
+			return "OrigIsdnNumber is empty";
+		if (destIsdnNumber == null || destIsdnNumber.equals(""))
+			return "DestIsdnNumber is empty";
+		if (msg == null || msg.equals(""))
+			return "Msg is empty";
+		int maxMsgLen = this.smsCodingType.getSupportesMaxMessageLength();
+		if (msg.length() > maxMsgLen)
+			return "Simulator does not support message length for current encoding type more than " + maxMsgLen;
+
+		currentRequestDef = "";
+
+		MoMessageData mmd = new MoMessageData();
+		mmd.msg = msg;
+		mmd.origIsdnNumber = origIsdnNumber;
+
+		return doSendSri(destIsdnNumber, this.getServiceCenterAddress(), mmd);
 	}
 
 	@Override
@@ -436,36 +512,210 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 			return "VlrNumber is empty";
 		if (origIsdnNumber == null || origIsdnNumber.equals(""))
 			return "OrigIsdnNumber is empty";
+		int maxMsgLen = this.smsCodingType.getSupportesMaxMessageLength();
+		if (msg.length() > maxMsgLen)
+			return "Simulator does not support message length for current encoding type more than " + maxMsgLen;
 
 		currentRequestDef = "";
 
-		SccpAddress sa = this.mapMan.createOrigAddress();
-		if (sa.getGlobalTitle() == null)
-			return "Sccp ROUTING_ON_GLOBAL_TYTLE mode is needed";
-		String serviceCentreAddr = sa.getGlobalTitle().getDigits();
-		
-		// return doSendSri(destIsdnNumber, serviceCentreAddr, null);
-		// ........................
-		return "";
+		return doMtForwardSM(msg, destImsi, vlrNumber, origIsdnNumber, this.getServiceCenterAddress());
 	}
 
+	private String doMtForwardSM(String msg, String destImsi, String vlrNumber, String origIsdnNumber, String serviceCentreAddr) {
 
-	@Override
-	public void onForwardShortMessageRequest(ForwardShortMessageRequest forwSmInd) {
-		// TODO Auto-generated method stub
-		
+		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
+
+		MAPApplicationContextVersion vers;
+		MAPApplicationContextName acn = MAPApplicationContextName.shortMsgMTRelayContext;
+		switch(this.mapProtocolVersion.intValue()){
+		case MapProtocolVersion.VAL_MAP_V1:
+			vers = MAPApplicationContextVersion.version1;
+			acn = MAPApplicationContextName.shortMsgMORelayContext;
+			break;
+		case MapProtocolVersion.VAL_MAP_V2:
+			vers = MAPApplicationContextVersion.version2;
+			break;
+		default:
+			vers = MAPApplicationContextVersion.version3;
+			break;
+		}
+		MAPApplicationContext mapAppContext = MAPApplicationContext.getInstance(acn, vers);
+
+		IMSI imsi = mapProvider.getMAPParameterFactory().createIMSI(destImsi);
+		SM_RP_DA da = mapProvider.getMAPParameterFactory().createSM_RP_DA(imsi);
+		AddressString serviceCentreAddress = mapProvider.getMAPParameterFactory().createAddressString(this.addressNature, this.numberingPlan, serviceCentreAddr);
+		SM_RP_OA oa = mapProvider.getMAPParameterFactory().createSM_RP_OA_ServiceCentreAddressOA(serviceCentreAddress);
+
+		try {
+			AddressField originatingAddress = new AddressFieldImpl(this.typeOfNumber, this.numberingPlanIdentification, origIsdnNumber);
+			Calendar cld = new GregorianCalendar();
+			int year = cld.get(Calendar.YEAR);
+			int mon = cld.get(Calendar.MONTH);
+			int day = cld.get(Calendar.DAY_OF_MONTH);
+			int h = cld.get(Calendar.HOUR);
+			int m = cld.get(Calendar.MINUTE);
+			int s = cld.get(Calendar.SECOND);
+			int tz = cld.get(Calendar.ZONE_OFFSET);
+			AbsoluteTimeStamp serviceCentreTimeStamp = new AbsoluteTimeStampImpl(year - 2000, mon, day, h, m, s, tz / 1000 / 60 / 15);
+			DataCodingScheme dcs = new DataCodingSchemeImpl(this.smsCodingType.intValue() == SmsCodingType.VAL_GSM7 ? 0 : 8);
+			UserData userData = new UserDataImpl(msg, dcs, null, null);
+			ProtocolIdentifier pi = new ProtocolIdentifierImpl(0);
+			SmsDeliverTpdu tpdu = new SmsDeliverTpduImpl(false, false, false, false, originatingAddress, pi, serviceCentreTimeStamp, userData);
+			SmsSignalInfo si = mapProvider.getMAPParameterFactory().createSmsSignalInfo(tpdu, null);
+
+			MAPDialogSms curDialog = mapProvider.getMAPServiceSms().createNewDialog(mapAppContext, this.mapMan.createOrigAddress(), null,
+					this.mapMan.createDestAddress(vlrNumber, this.vlrSsn), null);
+
+			if (this.mapProtocolVersion.intValue() <= 2)
+				curDialog.addForwardShortMessageRequest(da, oa, si, false);
+			else
+				curDialog.addMtForwardShortMessageRequest(da, oa, si, false, null);
+			curDialog.send();
+
+			String mtData = createMtData(curDialog.getDialogId(), destImsi, vlrNumber, origIsdnNumber, serviceCentreAddr);
+			currentRequestDef += "Sent mtReq;";
+			this.countMtFsmReq++;
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtReq: " + msg, mtData, true);
+
+			return "MtForwardShortMessageRequest has been sent";
+		} catch (MAPException ex) {
+			return "Exception when sending MtForwardShortMessageRequest: " + ex.toString();
+		}
+	}
+
+	private String createMtData(long dialogId, String destImsi, String vlrNumber, String origIsdnNumber, String serviceCentreAddr) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("dialogId=");
+		sb.append(dialogId);
+		sb.append(", destImsi=\"");
+		sb.append(destImsi);
+		sb.append(", vlrNumber=\"");
+		sb.append(vlrNumber);
+		sb.append(", origIsdnNumber=\"");
+		sb.append(origIsdnNumber);
+		sb.append("\", serviceCentreAddr=\"");
+		sb.append(serviceCentreAddr);
+		sb.append("\"");
+		return sb.toString();
 	}
 
 	@Override
-	public void onForwardShortMessageResponse(ForwardShortMessageResponse forwSmRespInd) {
-		// TODO Auto-generated method stub
-		
+	public void onForwardShortMessageRequest(ForwardShortMessageRequest ind) {
+		if (!isStarted)
+			return;
+
+		MAPDialogSms curDialog = ind.getMAPDialog();
+		long invokeId = ind.getInvokeId();
+		SM_RP_DA da = ind.getSM_RP_DA();
+		SM_RP_OA oa = ind.getSM_RP_OA();
+		SmsSignalInfo si = ind.getSM_RP_UI();
+
+		if (da.getServiceCentreAddressDA() != null) { // mo message
+			this.onMoRequest(da, oa, si, curDialog);
+
+			try {
+				curDialog.addForwardShortMessageResponse(invokeId);
+				this.needSendClose = true;
+
+				this.countMoFsmResp++;
+				this.testerHost.sendNotif(SOURCE_NAME, "Sent: moResp", "", true);
+			} catch (MAPException e) {
+				this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addMoForwardShortMessageResponse : " + e.getMessage(), e, true);
+			}
+		}
 	}
 
 	@Override
-	public void onMoForwardShortMessageRequest(MoForwardShortMessageRequest moForwSmInd) {
-		// TODO Auto-generated method stub
-		
+	public void onForwardShortMessageResponse(ForwardShortMessageResponse ind) {
+		if (!isStarted)
+			return;
+
+		this.countMtFsmResp++;
+
+		MAPDialogSms curDialog = ind.getMAPDialog();
+		long invokeId = curDialog.getDialogId();
+		currentRequestDef += "Rsvd mtResp;";
+		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtResp", "", true);
+	}
+
+	@Override
+	public void onMoForwardShortMessageRequest(MoForwardShortMessageRequest ind) {
+		if (!isStarted)
+			return;
+
+		MAPDialogSms curDialog = ind.getMAPDialog();
+		long invokeId = ind.getInvokeId();
+		SM_RP_DA da = ind.getSM_RP_DA();
+		SM_RP_OA oa = ind.getSM_RP_OA();
+		SmsSignalInfo si = ind.getSM_RP_UI();
+
+		this.onMoRequest(da, oa, si, curDialog);
+
+		try {
+			curDialog.addMoForwardShortMessageResponse(invokeId, null, null);
+			this.needSendClose = true;
+
+			this.countMoFsmResp++;
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: moResp", "", true);
+		} catch (MAPException e) {
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addMoForwardShortMessageResponse : " + e.getMessage(), e, true);
+		}
+	}
+
+	private void onMoRequest(SM_RP_DA da, SM_RP_OA oa, SmsSignalInfo si, MAPDialogSms curDialog){
+
+		this.countMoFsmReq++;
+
+		String serviceCentreAddr = null;
+		if (da != null) {
+			AddressString as = da.getServiceCentreAddressDA();
+			if (as != null)
+				serviceCentreAddr = as.getAddress();
+		}
+
+		String origIsdnNumber = null;
+		if (oa != null) {
+			ISDNAddressString isdn = oa.getMsisdn();
+			if (isdn != null)
+				origIsdnNumber = isdn.getAddress();
+		}
+
+		try {
+			String msg = null;
+			String destIsdnNumber = null;
+			if (si != null) {
+				SmsTpdu tpdu = si.decodeTpdu(true);
+				if (tpdu instanceof SmsSubmitTpdu) {
+					SmsSubmitTpdu dTpdu = (SmsSubmitTpdu) tpdu;
+					AddressField af = dTpdu.getDestinationAddress();
+					if (af != null)
+						destIsdnNumber = af.getAddressValue();
+					UserData ud = dTpdu.getUserData();
+					if (ud != null) {
+						ud.decode();
+						msg = ud.getDecodedMessage();
+					}
+				}
+			}
+			String uData = this.createMoData(curDialog.getDialogId(), destIsdnNumber, origIsdnNumber, serviceCentreAddr);
+			this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: moReq: " + msg, uData, true);
+		} catch (MAPException e) {
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when decoding MoForwardShortMessageRequest tpdu : " + e.getMessage(), e, true);
+		}
+	}
+
+	private String createMoData(long dialogId, String destIsdnNumber, String origIsdnNumber, String serviceCentreAddr) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("dialogId=");
+		sb.append(dialogId);
+		sb.append(", destIsdnNumber=\"");
+		sb.append(destIsdnNumber);
+		sb.append(", origIsdnNumber=\"");
+		sb.append(origIsdnNumber);
+		sb.append("\", serviceCentreAddr=\"");
+		sb.append(serviceCentreAddr);
+		sb.append("\"");
+		return sb.toString();
 	}
 
 	@Override
@@ -481,9 +731,16 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 	}
 
 	@Override
-	public void onMtForwardShortMessageResponse(MtForwardShortMessageResponse mtForwSmRespInd) {
-		// TODO Auto-generated method stub
-		
+	public void onMtForwardShortMessageResponse(MtForwardShortMessageResponse ind) {
+		if (!isStarted)
+			return;
+
+		this.countMtFsmResp++;
+
+		MAPDialogSms curDialog = ind.getMAPDialog();
+		long invokeId = curDialog.getDialogId();
+		currentRequestDef += "Rsvd mtResp;";
+		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtResp", "", true);
 	}
 
 	@Override
@@ -506,13 +763,16 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		if (li != null && li.getNetworkNodeNumber() != null)
 			vlrNum = li.getNetworkNodeNumber().getAddress();
 		currentRequestDef += "Rsvd SriResp;";
-		String uData = this.createSriRespData(invokeId, ind.getIMSI().getData(), vlrNum);
+		String destImsi = "";
+		if (ind.getIMSI() != null)
+			destImsi = ind.getIMSI().getData();
+		String uData = this.createSriRespData(invokeId, destImsi, vlrNum);
 		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: sriReq", uData, true);
 
-		if (curDialog.getUserObject() != null && vlrNum != null && !vlrNum.equals("")) {
-			// TODO Auto-generated method stub
-			// add sending mo-fmr
-			// ............................
+		if (curDialog.getUserObject() != null && vlrNum != null && !vlrNum.equals("") && destImsi != null && !destImsi.equals("")) {
+			// sending SMS
+			MoMessageData mmd = (MoMessageData) curDialog.getUserObject();
+			doMtForwardSM(mmd.msg, destImsi, vlrNum, mmd.origIsdnNumber, this.serviceCenterAddress);
 		}
 	}
 

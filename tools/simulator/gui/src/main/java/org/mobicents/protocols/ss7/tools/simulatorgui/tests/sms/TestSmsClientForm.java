@@ -35,6 +35,8 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /**
  * 
@@ -52,6 +54,7 @@ public class TestSmsClientForm extends TestingForm {
 	private JTextField tbOrigIsdnNumber;
 	private JLabel lbState;
 	private JLabel lbMessage;
+	private JLabel lbResult;
 
 	public TestSmsClientForm(JFrame owner) {
 		super(owner);
@@ -117,6 +120,11 @@ public class TestSmsClientForm extends TestingForm {
 		panel.add(tbOrigIsdnNumber, gbc_tbOrigIsdnNumber);
 		
 		JButton btnSendMoforwardsm = new JButton("Send MoForwardSM");
+		btnSendMoforwardsm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				sendMoforwardsm();
+			}
+		});
 		GridBagConstraints gbc_btnSendMoforwardsm = new GridBagConstraints();
 		gbc_btnSendMoforwardsm.insets = new Insets(0, 0, 5, 0);
 		gbc_btnSendMoforwardsm.gridx = 1;
@@ -130,7 +138,7 @@ public class TestSmsClientForm extends TestingForm {
 		gbc_label_3.gridy = 4;
 		panel.add(label_3, gbc_label_3);
 		
-		JLabel lbResult = new JLabel("-");
+		lbResult = new JLabel("-");
 		GridBagConstraints gbc_lbResult = new GridBagConstraints();
 		gbc_lbResult.insets = new Insets(0, 0, 5, 0);
 		gbc_lbResult.gridx = 1;
@@ -162,14 +170,23 @@ public class TestSmsClientForm extends TestingForm {
 		this.smsClient = smsClient;
 	}
 
+	private void sendMoforwardsm() {
+		this.lbMessage.setText("");
+		String msg = this.tbMessage.getText();
+		String destIsdnNumber = this.tbDestIsdnNumber.getText();
+		String origIsdnNumber = this.tbOrigIsdnNumber.getText();
+		String res = this.smsClient.performMoForwardSM(msg, destIsdnNumber, origIsdnNumber);
+		this.lbResult.setText(res);
+	}
+
 	@Override
 	public void sendNotif(Notification notif) {
 		super.sendNotif(notif);
 
-//		if (notif.getMessage().startsWith("CurDialog: Rcvd: procUnstrSsReq: ")) {
-//			String s1 = notif.getMessage().substring(17);
-//			this.lbMessage.setText(s1);
-//		}
+		if (notif.getMessage().startsWith("Rcvd: mtReq: ")) {
+			String s1 = notif.getMessage().substring(13);
+			this.lbMessage.setText(s1);
+		}
 
 //		if (notif.getMessage().startsWith("CurDialog: Rcvd: unstrSsResp: ")) {
 //			String s1 = notif.getMessage().substring(17);

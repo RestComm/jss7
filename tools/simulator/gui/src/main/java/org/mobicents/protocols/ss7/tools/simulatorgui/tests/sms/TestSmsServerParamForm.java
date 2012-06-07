@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.common.MapProtocolVersion;
 import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.NumberingPlanIdentificationType;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.SmsCodingType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TypeOfNumberType;
 import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
@@ -64,6 +65,8 @@ public class TestSmsServerParamForm extends JDialog {
 	private JComboBox cbMapProtocolVersion;
 	private JComboBox cbTypeOfNumber;
 	private JComboBox cbNumberingPlanIdentification;
+	private JTextField tbServiceCenterAddress;
+	private JComboBox cbSmsCodingType;
 
 	public TestSmsServerParamForm(JFrame owner) {
 		super(owner, true);
@@ -71,7 +74,7 @@ public class TestSmsServerParamForm extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("SMS test server settings");
-		setBounds(100, 100, 539, 437);
+		setBounds(100, 100, 539, 470);
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -112,27 +115,27 @@ public class TestSmsServerParamForm extends JDialog {
 		panel.add(lblMapProtocolVersion);
 		
 		tbHlrSsn = new JTextField();
-		tbHlrSsn.setBounds(435, 147, 86, 20);
+		tbHlrSsn.setBounds(435, 172, 86, 20);
 		panel.add(tbHlrSsn);
 		tbHlrSsn.setColumns(10);
 		
 		tbVlrSsn = new JTextField();
 		tbVlrSsn.setColumns(10);
-		tbVlrSsn.setBounds(435, 178, 86, 20);
+		tbVlrSsn.setBounds(435, 203, 86, 20);
 		panel.add(tbVlrSsn);
 		
 		JLabel lblHlrSsnFor = new JLabel("HLR SSN for outgoing SccpAddress (default value: 6)");
-		lblHlrSsnFor.setBounds(10, 150, 415, 14);
+		lblHlrSsnFor.setBounds(10, 175, 415, 14);
 		panel.add(lblHlrSsnFor);
 		
 		JLabel lblVlrSsnFor = new JLabel("VLR SSN for outgoing SccpAddress (default value: 8)");
-		lblVlrSsnFor.setBounds(10, 181, 415, 14);
+		lblVlrSsnFor.setBounds(10, 206, 415, 14);
 		panel.add(lblVlrSsnFor);
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel_2.setLayout(null);
-		panel_2.setBounds(10, 209, 511, 94);
+		panel_2.setBounds(10, 234, 511, 94);
 		panel.add(panel_2);
 		
 		JLabel lblParametersForSms = new JLabel("Parameters for SMS tpdu origAddress");
@@ -161,7 +164,7 @@ public class TestSmsServerParamForm extends JDialog {
 				loadDataA();
 			}
 		});
-		button.setBounds(10, 324, 246, 23);
+		button.setBounds(10, 374, 246, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("Load default values for side B");
@@ -170,7 +173,7 @@ public class TestSmsServerParamForm extends JDialog {
 				loadDataB();
 			}
 		});
-		button_1.setBounds(266, 324, 255, 23);
+		button_1.setBounds(266, 374, 255, 23);
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("Cancel");
@@ -179,7 +182,7 @@ public class TestSmsServerParamForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		button_2.setBounds(404, 358, 117, 23);
+		button_2.setBounds(404, 408, 117, 23);
 		panel.add(button_2);
 		
 		JButton button_3 = new JButton("Save");
@@ -190,7 +193,7 @@ public class TestSmsServerParamForm extends JDialog {
 				}
 			}
 		});
-		button_3.setBounds(180, 358, 117, 23);
+		button_3.setBounds(180, 408, 117, 23);
 		panel.add(button_3);
 		
 		JButton button_4 = new JButton("Reload");
@@ -199,8 +202,25 @@ public class TestSmsServerParamForm extends JDialog {
 				reloadData();
 			}
 		});
-		button_4.setBounds(10, 358, 144, 23);
+		button_4.setBounds(10, 408, 144, 23);
 		panel.add(button_4);
+		
+		JLabel lblOriginationServiceCenter = new JLabel("Origination Service center address string");
+		lblOriginationServiceCenter.setBounds(10, 147, 339, 14);
+		panel.add(lblOriginationServiceCenter);
+		
+		tbServiceCenterAddress = new JTextField();
+		tbServiceCenterAddress.setColumns(10);
+		tbServiceCenterAddress.setBounds(367, 144, 154, 20);
+		panel.add(tbServiceCenterAddress);
+		
+		JLabel lblCharacterSetFor = new JLabel("Character set for SMS encoding");
+		lblCharacterSetFor.setBounds(10, 342, 194, 14);
+		panel.add(lblCharacterSetFor);
+		
+		cbSmsCodingType = new JComboBox();
+		cbSmsCodingType.setBounds(214, 339, 307, 20);
+		panel.add(cbSmsCodingType);
 	}
 
 	public void setData(TestSmsServerManMBean smsServer) {
@@ -219,7 +239,9 @@ public class TestSmsServerParamForm extends JDialog {
 		M3uaForm.setEnumeratedBaseComboBox(cbMapProtocolVersion, this.smsServer.getMapProtocolVersion());
 		M3uaForm.setEnumeratedBaseComboBox(cbTypeOfNumber, this.smsServer.getTypeOfNumber());
 		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlanIdentification, this.smsServer.getNumberingPlanIdentification());
+		M3uaForm.setEnumeratedBaseComboBox(cbSmsCodingType, this.smsServer.getSmsCodingType());
 
+		tbServiceCenterAddress.setText(this.smsServer.getServiceCenterAddress());
 		tbHlrSsn.setText(((Integer)this.smsServer.getHlrSsn()).toString());
 		tbVlrSsn.setText(((Integer)this.smsServer.getVlrSsn()).toString());
 	}
@@ -231,7 +253,9 @@ public class TestSmsServerParamForm extends JDialog {
 		M3uaForm.setEnumeratedBaseComboBox(cbTypeOfNumber, new TypeOfNumberType(TypeOfNumber.InternationalNumber.getCode()));
 		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlanIdentification, new NumberingPlanIdentificationType(
 				NumberingPlanIdentification.ISDNTelephoneNumberingPlan.getCode()));
+		M3uaForm.setEnumeratedBaseComboBox(cbSmsCodingType, new SmsCodingType(SmsCodingType.VAL_GSM7));
 
+		tbServiceCenterAddress.setText("");
 		tbHlrSsn.setText("6");
 		tbVlrSsn.setText("8");
 	}
@@ -261,7 +285,9 @@ public class TestSmsServerParamForm extends JDialog {
 		this.smsServer.setMapProtocolVersion((MapProtocolVersion) cbMapProtocolVersion.getSelectedItem());
 		this.smsServer.setTypeOfNumber((TypeOfNumberType) cbTypeOfNumber.getSelectedItem());
 		this.smsServer.setNumberingPlanIdentification((NumberingPlanIdentificationType) cbNumberingPlanIdentification.getSelectedItem());
+		this.smsServer.setSmsCodingType((SmsCodingType) cbSmsCodingType.getSelectedItem());
 
+		this.smsServer.setServiceCenterAddress(tbServiceCenterAddress.getText());
 		this.smsServer.setHlrSsn(hlrSsn);
 		this.smsServer.setVlrSsn(vlrSsn);
 

@@ -747,15 +747,18 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.testSmsClientMan.setSmscSsn(_TestSmsClientMan.getSmscSsn());
 			this.testSmsClientMan.setTypeOfNumber(_TestSmsClientMan.getTypeOfNumber());
 			this.testSmsClientMan.setNumberingPlanIdentification(_TestSmsClientMan.getNumberingPlanIdentification());
+			this.testSmsClientMan.setSmsCodingType(_TestSmsClientMan.getSmsCodingType());
 
 			TestSmsServerMan _TestSmsServerMan = reader.read(TEST_SMS_SERVER, TestSmsServerMan.class);
 			this.testSmsServerMan.setAddressNature(_TestSmsServerMan.getAddressNature());
 			this.testSmsServerMan.setNumberingPlan(_TestSmsServerMan.getNumberingPlan());
+			this.testSmsServerMan.setServiceCenterAddress(_TestSmsServerMan.getServiceCenterAddress());
 			this.testSmsServerMan.setMapProtocolVersion(_TestSmsServerMan.getMapProtocolVersion());
 			this.testSmsServerMan.setHlrSsn(_TestSmsServerMan.getHlrSsn());
 			this.testSmsServerMan.setVlrSsn(_TestSmsServerMan.getVlrSsn());
 			this.testSmsServerMan.setTypeOfNumber(_TestSmsServerMan.getTypeOfNumber());
 			this.testSmsServerMan.setNumberingPlanIdentification(_TestSmsServerMan.getNumberingPlanIdentification());
+			this.testSmsServerMan.setSmsCodingType(_TestSmsServerMan.getSmsCodingType());
 
 //			remoteSsns = reader.read(REMOTE_SSN, FastMap.class);
 //			remoteSpcs = reader.read(REMOTE_SPC, FastMap.class);

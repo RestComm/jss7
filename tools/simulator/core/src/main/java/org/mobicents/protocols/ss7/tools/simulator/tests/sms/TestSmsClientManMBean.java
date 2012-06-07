@@ -79,6 +79,12 @@ public interface TestSmsClientManMBean {
 
 	public void setNumberingPlanIdentification(NumberingPlanIdentificationType val);
 
+	public SmsCodingType getSmsCodingType();
+
+	public String getSmsCodingType_Value();
+
+	public void setSmsCodingType(SmsCodingType val);
+
 
 	public void putAddressNature(String val);
 
@@ -89,6 +95,8 @@ public interface TestSmsClientManMBean {
 	public void putTypeOfNumber(String val);
 
 	public void putNumberingPlanIdentification(String val);
+
+	public void putSmsCodingType(String val);
 
 
 	public String getCurrentRequestDef();

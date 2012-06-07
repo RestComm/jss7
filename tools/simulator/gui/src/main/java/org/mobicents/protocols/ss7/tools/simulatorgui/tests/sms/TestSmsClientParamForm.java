@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.common.MapProtocolVersion;
 import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.NumberingPlanIdentificationType;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.SmsCodingType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TypeOfNumberType;
 import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
@@ -68,6 +69,7 @@ public class TestSmsClientParamForm extends JDialog {
 	private JComboBox cbMapProtocolVersion;
 	private JComboBox cbTypeOfNumber;
 	private JComboBox cbNumberingPlanIdentification;
+	private JComboBox cbSmsCodingType;
 
 	public TestSmsClientParamForm(JFrame owner) {
 		super(owner, true);
@@ -75,7 +77,7 @@ public class TestSmsClientParamForm extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("SMS test client settings");
-		setBounds(100, 100, 539, 478);
+		setBounds(100, 100, 539, 502);
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -90,6 +92,7 @@ public class TestSmsClientParamForm extends JDialog {
 		panel.add(cbMapProtocolVersion);
 		
 		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel_1.setLayout(null);
 		panel_1.setBounds(10, 42, 511, 94);
 		panel.add(panel_1);
@@ -182,7 +185,7 @@ public class TestSmsClientParamForm extends JDialog {
 				loadDataA();
 			}
 		});
-		button.setBounds(10, 374, 246, 23);
+		button.setBounds(10, 406, 246, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("Reload");
@@ -191,7 +194,7 @@ public class TestSmsClientParamForm extends JDialog {
 				reloadData();
 			}
 		});
-		button_1.setBounds(10, 408, 144, 23);
+		button_1.setBounds(10, 440, 144, 23);
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("Save");
@@ -202,7 +205,7 @@ public class TestSmsClientParamForm extends JDialog {
 				}
 			}
 		});
-		button_2.setBounds(180, 408, 117, 23);
+		button_2.setBounds(180, 440, 117, 23);
 		panel.add(button_2);
 		
 		JButton button_3 = new JButton("Load default values for side B");
@@ -211,7 +214,7 @@ public class TestSmsClientParamForm extends JDialog {
 				loadDataB();
 			}
 		});
-		button_3.setBounds(266, 374, 255, 23);
+		button_3.setBounds(266, 406, 255, 23);
 		panel.add(button_3);
 		
 		JButton button_4 = new JButton("Cancel");
@@ -220,8 +223,16 @@ public class TestSmsClientParamForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		button_4.setBounds(404, 408, 117, 23);
+		button_4.setBounds(404, 440, 117, 23);
 		panel.add(button_4);
+		
+		JLabel label_4 = new JLabel("Character set for SMS encoding");
+		label_4.setBounds(10, 367, 194, 14);
+		panel.add(label_4);
+		
+		cbSmsCodingType = new JComboBox();
+		cbSmsCodingType.setBounds(214, 364, 307, 20);
+		panel.add(cbSmsCodingType);
 	}
 
 	public void setData(TestSmsClientManMBean smsClient) {
@@ -240,6 +251,7 @@ public class TestSmsClientParamForm extends JDialog {
 		M3uaForm.setEnumeratedBaseComboBox(cbMapProtocolVersion, this.smsClient.getMapProtocolVersion());
 		M3uaForm.setEnumeratedBaseComboBox(cbTypeOfNumber, this.smsClient.getTypeOfNumber());
 		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlanIdentification, this.smsClient.getNumberingPlanIdentification());
+		M3uaForm.setEnumeratedBaseComboBox(cbSmsCodingType, this.smsClient.getSmsCodingType());
 
 		tbServiceCenterAddress.setText(this.smsClient.getServiceCenterAddress());
 		tbSRIResponseImsi.setText(this.smsClient.getSRIResponseImsi());
@@ -255,6 +267,7 @@ public class TestSmsClientParamForm extends JDialog {
 		M3uaForm.setEnumeratedBaseComboBox(cbTypeOfNumber, new TypeOfNumberType(TypeOfNumber.InternationalNumber.getCode()));
 		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlanIdentification, new NumberingPlanIdentificationType(
 				NumberingPlanIdentification.ISDNTelephoneNumberingPlan.getCode()));
+		M3uaForm.setEnumeratedBaseComboBox(cbSmsCodingType, new SmsCodingType(SmsCodingType.VAL_GSM7));
 
 		tbServiceCenterAddress.setText("");
 		tbSRIResponseImsi.setText("");
@@ -281,6 +294,7 @@ public class TestSmsClientParamForm extends JDialog {
 		this.smsClient.setMapProtocolVersion((MapProtocolVersion) cbMapProtocolVersion.getSelectedItem());
 		this.smsClient.setTypeOfNumber((TypeOfNumberType) cbTypeOfNumber.getSelectedItem());
 		this.smsClient.setNumberingPlanIdentification((NumberingPlanIdentificationType) cbNumberingPlanIdentification.getSelectedItem());
+		this.smsClient.setSmsCodingType((SmsCodingType) cbSmsCodingType.getSelectedItem());
 
 		this.smsClient.setServiceCenterAddress(tbServiceCenterAddress.getText());
 		this.smsClient.setSRIResponseImsi(tbSRIResponseImsi.getText());

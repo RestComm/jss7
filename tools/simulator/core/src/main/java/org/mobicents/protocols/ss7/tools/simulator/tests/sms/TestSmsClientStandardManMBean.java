@@ -62,6 +62,7 @@ public class TestSmsClientStandardManMBean extends StandardMBean {
 				new MBeanAttributeInfo("NumberingPlanIdentification", NumberingPlanIdentificationType.class.getName(), "NumberingPlanIdentification parameter for SMS tpdu destAddress", true, true, false),
 				new MBeanAttributeInfo("NumberingPlanIdentification_Value", String.class.getName(), "NumberingPlanIdentification parameter for SMS tpdu destAddress", true, false, false),
 				new MBeanAttributeInfo("CurrentRequestDef", String.class.getName(), "Get information of the current request", true, false, false),
+				new MBeanAttributeInfo("SmsCodingType", SmsCodingType.class.getName(), "Character set for SMS encoding", true, true, false),
 		};
 
 		MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(), "Index number or value") };
@@ -90,6 +91,9 @@ public class TestSmsClientStandardManMBean extends StandardMBean {
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
 				new MBeanOperationInfo("putNumberingPlanIdentification", "NumberingPlanIdentification parameter for SMS tpdu destAddress: " +
 						"0:Unknown,1:ISDNTelephoneNumberingPlan,3:DataNumberingPlan,4:TelexNumberingPlan,5:ServiceCentreSpecificPlan1,6:ServiceCentreSpecificPlan2,8:NationalNumberingPlan,9:PrivateNumberingPlan,10:ERMESNumberingPlan,15:Reserved", 
+						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("putSmsCodingType", "Character set for SMS encoding: " +
+						"1:GSM7,2:UCS2", 
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
 		};
 
