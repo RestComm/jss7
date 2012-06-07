@@ -18,7 +18,7 @@
 		<checkout.basedir>${checkout.dir}</checkout.basedir>
 		<checkout.username>mobicents-read-only</checkout.username>
 		<checkout.password />
-
+    <!--
 		<asn.scmVersion>release-2.0.0.FINAL</asn.scmVersion>
 		<asn.scmVersionType>tag</asn.scmVersionType>
 
@@ -27,15 +27,25 @@
 
 		<ss7.scmVersion>release-2.0.0.BETA1</ss7.scmVersion>
 		<ss7.scmVersionType>tag</ss7.scmVersionType>
+    -->
+    
+  	<asn.scmVersion>HEAD</asn.scmVersion>
+		<asn.scmVersionType>revision</asn.scmVersionType>
 
-			<!-- TAGS -->
+		<sctp.scmVersion>HEAD</sctp.scmVersion>
+		<sctp.scmVersionType>revision</sctp.scmVersionType>
+
+		<ss7.scmVersion>HEAD</ss7.scmVersion>
+		<ss7.scmVersionType>revision</ss7.scmVersionType>    
+
+			<!-- TAGS 
 		<commons.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/commons/1.0.0.CR1</commons.connectionURL>
 		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/stream/stream-1.0.0.CR1</stream.connectionURL>
- 		
-		<!-- TRUNK 
+ 		-->
+		<!-- TRUNK -->
 		<commons.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/commons</commons.connectionURL>
 		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/stream</stream.connectionURL>
-		-->
+		
 
 		<asn.connectionURL>scm:git:https://code.google.com/p/jasn/</asn.connectionURL>
 		<sctp.connectionURL>scm:git:https://code.google.com/p/sctp/</sctp.connectionURL>
