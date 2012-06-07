@@ -2,13 +2,13 @@
 <project name="ss7.release.sf" default="package" basedir=".">
 
 	<!-- Components Versions -->
-	<property name="release.version" value="2.0.0.BETA1" />
+	<property name="release.version" value="2.0.0-SNAPSHOT" />
 
-	<property name="ss7.version" value="2.0.0.BETA1" />
+	<property name="ss7.version" value="2.0.0-SNAPSHOT" />
 
-	<property name="asn.version" value="2.0.0.FINAL" />
-	<property name="sctp.version" value="1.0.0.CR3" />
-	<property name="stream.version" value="1.0.0.CR1" />
+	<property name="asn.version" value="2.0.0-SNAPSHOT" />
+	<property name="sctp.version" value="1.0.0-SNAPSHOT" />
+	<property name="stream.version" value="1.0.0-SNAPSHOT" />
 	
 
 	<property name="protocols.build.list" value="parent,m3ua,mtp,isup,sccp,tcap,map" />
