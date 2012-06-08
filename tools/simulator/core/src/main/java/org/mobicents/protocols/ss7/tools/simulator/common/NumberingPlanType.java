@@ -23,8 +23,6 @@
 package org.mobicents.protocols.ss7.tools.simulator.common;
 
 import java.util.Hashtable;
-
-import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 
 /**

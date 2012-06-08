@@ -55,6 +55,7 @@ public class TestUssdServerParamForm extends JDialog {
 	private static final long serialVersionUID = 1589538832800021188L;
 
 	private TestUssdServerManMBean ussdServer;
+	
 	private JTextField tbMsisdnAddress;
 	private JTextField tbDataCodingScheme;
 	private JTextField tbAlertingPattern;

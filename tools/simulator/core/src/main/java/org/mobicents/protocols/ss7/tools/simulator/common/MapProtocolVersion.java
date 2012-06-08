@@ -20,64 +20,57 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tools.simulator.management;
+package org.mobicents.protocols.ss7.tools.simulator.common;
 
 import java.util.Hashtable;
-
-import org.mobicents.protocols.ss7.tools.simulator.common.EnumeratedBase;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class Instance_TestTask extends EnumeratedBase {
+public class MapProtocolVersion extends EnumeratedBase {
 
-	private static final long serialVersionUID = 5744729092059179670L;
-	public static final int VAL_NO = 0;
-	public static final int VAL_USSD_TEST_CLIENT = 1;
-	public static final int VAL_USSD_TEST_SERVER = 2;
-	public static final int VAL_SMS_TEST_CLIENT = 3;
-	public static final int VAL_SMS_TEST_SERVER = 4;
+	private static final long serialVersionUID = -521918125232920704L;
+
+	public static final int VAL_MAP_V1 = 1;
+	public static final int VAL_MAP_V2 = 2;
+	public static final int VAL_MAP_V3 = 3;
 
 	private static Hashtable<String, Integer> stringMap = new Hashtable<String, Integer>();
 	private static Hashtable<Integer,String> intMap = new Hashtable<Integer,String>();
 
 	static {
-		intMap.put(VAL_NO, "NO");
-		intMap.put(VAL_USSD_TEST_CLIENT, "USSD_TEST_CLIENT");
-		intMap.put(VAL_USSD_TEST_SERVER, "USSD_TEST_SERVER");
-		intMap.put(VAL_SMS_TEST_CLIENT, "SMS_TEST_CLIENT");
-		intMap.put(VAL_SMS_TEST_SERVER, "SMS_TEST_SERVER");
+		intMap.put(VAL_MAP_V1, "MAP protocol version 1");
+		intMap.put(VAL_MAP_V2, "MAP protocol version 2");
+		intMap.put(VAL_MAP_V3, "MAP protocol version 3");
 
-		stringMap.put("NO", VAL_NO);
-		stringMap.put("USSD_TEST_CLIENT", VAL_USSD_TEST_CLIENT);
-		stringMap.put("USSD_TEST_SERVER", VAL_USSD_TEST_SERVER);
-		stringMap.put("SMS_TEST_CLIENT", VAL_SMS_TEST_CLIENT);
-		stringMap.put("SMS_TEST_SERVER", VAL_SMS_TEST_SERVER);
+		stringMap.put("MAP protocol version 1", VAL_MAP_V1);
+		stringMap.put("MAP protocol version 2", VAL_MAP_V2);
+		stringMap.put("MAP protocol version 3", VAL_MAP_V3);
 	}
 
-	public Instance_TestTask() {
+	public MapProtocolVersion() {
 	}
 
-	public Instance_TestTask(int val) throws java.lang.IllegalArgumentException {
+	public MapProtocolVersion(int val) throws java.lang.IllegalArgumentException {
 		super(val);
 	}
 
-	public Instance_TestTask(Integer val) throws java.lang.IllegalArgumentException {
+	public MapProtocolVersion(Integer val) throws java.lang.IllegalArgumentException {
 		super(val);
 	}
 
-	public Instance_TestTask(String val) throws java.lang.IllegalArgumentException {
+	public MapProtocolVersion(String val) throws java.lang.IllegalArgumentException {
 		super(val);
 	}
 
-	public static Instance_TestTask createInstance(String s) {
+	public static MapProtocolVersion createInstance(String s) {
 		Integer i1 = doCreateInstance(s, stringMap, intMap);
 		if (i1 == null)
-			return new Instance_TestTask(VAL_NO);
+			return new MapProtocolVersion(VAL_MAP_V3);
 		else
-			return new Instance_TestTask(i1);
+			return new MapProtocolVersion(i1);
 	}
 
 	@Override
@@ -89,4 +82,5 @@ public class Instance_TestTask extends EnumeratedBase {
 	protected Hashtable<String, Integer> getStringTable() {
 		return stringMap;
 	}
+
 }
