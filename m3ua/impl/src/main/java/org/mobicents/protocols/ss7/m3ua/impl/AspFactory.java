@@ -474,7 +474,7 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 	protected Asp getAsp(long rc) {
 		for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
 			Asp asp = n.getValue();
-			if (asp.getAs().getRoutingContext().getRoutingContexts()[0] == rc) {
+			if (asp.getAs().getRoutingContext() != null && asp.getAs().getRoutingContext().getRoutingContexts()[0] == rc) {
 				return asp;
 			}
 		}
